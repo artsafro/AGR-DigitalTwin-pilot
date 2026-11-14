@@ -32,7 +32,7 @@ vc = _load(PKG / 'vpm_core.py', 'agr_tools_vpm_core_t')
 u10 = _load(PKG / 'udim10_core.py', 'agr_tools_udim10_core_t')
 ec = _load(PKG / 'edit_core.py', 'agr_tools_edit_core_vpm_t')
 MB = _load(ROOT / 'test-polygon/stations/M_build.py', 'agr_polygon_M_build_t')
-TILE = 4096
+TILE = 3600   # 3.6 m at 1000 px/m (1.0.1 default; was 4096)
 STEP = 3.6
 
 
@@ -352,21 +352,47 @@ def test_kept_ids_without_uv_fail_closed_and_with_uv_are_rescaled_to_the_texel()
 def test_options_period_texel_parameter_and_validation():
     o = vc.options({'period_by_id': {'7': 3.9}, 'texel_px_per_m': 1024})
     assert vc.texel_of(o, 3) == pytest.approx(1024.0) and vc.texel_of(o, 7) == pytest.approx(1024 * 3.6 / 3.9)
-    assert vc.options({})['step_m'] == 3.6 and vc.options({})['tile_px'] == 4096
+    assert vc.options({})['step_m'] == 3.6 and vc.options({})['tile_px'] == 3600
     for bad in ({'nope': 1}, {'step_m': 0}, {'glass_ids': 'all'}, {'grid_zero_m': [0, 0]}, {'unroll': 1},
                 {'period_by_id': {'x': 3}}, {'texel_px_per_m': -1}):
         with pytest.raises(ValueError):
             vc.options(bad)
 
 
-def test_glass_and_body_are_numbered_per_mesh_and_renumber_is_dense():
+def test_body_is_numbered_per_mesh_and_renumber_is_dense_glass_is_1001():
     assert lay.renumber_dense([12, 3, 31, 7]) == {3: 1001, 7: 1002, 12: 1003, 31: 1004}
     with pytest.raises(ValueError):
         lay.renumber_dense([1005])
     seen = []
     obj = vc.build([core_mesh(MB.facade())], {'glass_ids': [MB.GLASS]},
                    lambda ids: seen.append(list(ids)) or lay.renumber_dense(ids))['objects'][0]
-    assert seen == [[3, 7], [31]] and obj['findings'] == []
+    # only the body is renumbered; the glass table is 1001 for every glass id (D221)
+    assert seen == [[3, 7]] and obj['findings'] == []
+    assert vc.glass_table([40, 31]) == {31: 1001, 40: 1001}
+    with pytest.raises(ValueError):
+        vc.glass_table([1005])
+
+
+def test_two_glass_materials_stay_in_udim_1001_and_get_no_maps():
+    """D221 (reg p.31 §2.2 / 2.5.2.2.1а): a glass mesh with k glass ids lies in 1001 only (was 1001..1000+k under
+    D209, conflict C47), with no udim_gap finding; maps_table gives the glass part no maps (reg 2.4.2)."""
+    mesh = core_mesh(MB.facade())
+    glass = [f for f, i in enumerate(mesh['mat_ids']) if i == MB.GLASS]
+    assert len(glass) >= 2
+    second = MB.GLASS + 9
+    for f in glass[len(glass) // 2:]:
+        mesh['mat_ids'][f] = second
+    plan = vc.build([mesh], {'glass_ids': [MB.GLASS, second], 'address': 'Kpp_1'})
+    obj = plan['objects'][0]
+    assert obj['findings'] == []
+    g = next(p['summary'] for p in obj['parts'] if p['summary']['part'] == 'glass')
+    assert g['tiles'] == [1001]
+    assert g['udim_table'] == {str(MB.GLASS): 1001, str(second): 1001}
+    assert g['crossing_pieces'] == 0 and g['seam_internal_max_px'] <= 0.01
+    geo = next(p['geometry'] for p in obj['parts'] if p['summary']['part'] == 'glass')
+    assert all(-1e-7 <= u <= 1 + 1e-7 and -1e-7 <= v <= 1 + 1e-7 for u, v in geo['uvs'])
+    assert set(geo['mat_ids']) == {MB.GLASS, second}   # the glass materials stay apart on the faces
+    assert vc.maps_table(plan) == {'SM_Kpp_1_Main': {3: 1001, 7: 1002}}
 
 
 def test_weld_output_is_closed_where_the_source_is():
@@ -397,13 +423,25 @@ def test_weld_output_is_closed_where_the_source_is():
     assert out_len == pytest.approx(src_len, rel=1e-9)
 
 
-def test_20000_faces_within_the_time_budget():
+def _build_20000_faces():
     poly = MB.facade(height=22.0, col=0.6, floor=1.0, margin=0.15)
     mesh = core_mesh(poly)
-    assert len(mesh['tris']) >= 19000
     t = time.perf_counter()
     obj = vc.build([mesh], {'glass_ids': [MB.GLASS]})['objects'][0]
-    dt = time.perf_counter() - t
+    return mesh, obj, time.perf_counter() - t
+
+
+def test_20000_faces_build_without_findings():
+    # correctness half of the 20k-face case; the wall-clock half is the perf test below (#1212)
+    mesh, obj, _ = _build_20000_faces()
+    assert len(mesh['tris']) >= 19000
+    assert obj['findings'] == []
+
+
+@pytest.mark.perf
+def test_20000_faces_within_the_time_budget():
+    mesh, obj, dt = _build_20000_faces()
+    assert len(mesh['tris']) >= 19000
     assert obj['findings'] == []
     assert dt < 10.0, dt
 

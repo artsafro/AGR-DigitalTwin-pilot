@@ -101,7 +101,7 @@ def artist_uv(mesh, seed=7):
     return dict(mesh, uvs=uvs, face_uvs=fuv)
 
 
-def plane16(size=4.0, px_per_m=256.0, tile_px=4096, stretched=(1, 6, 9, 12, 14), sheared=(3, 8, 15)):
+def plane16(size=4.0, px_per_m=256.0, tile_px=3600, stretched=(1, 6, 9, 12, 14), sheared=(3, 8, 15)):
     """4 x 4 quads on a 4 x 4 m plane (z = 0, normal +z). UV: px_per_m texel, every quad its own UV island;
     `stretched` quads x3 along U, `sheared` quads skewed by 30 % of their width (same area). Face numbers 1-based."""
     k = px_per_m / tile_px

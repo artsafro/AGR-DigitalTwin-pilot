@@ -1,0 +1,13 @@
+{
+  "excluded": {"ELV_v005": "not available; removed by spec owner on card 2026-11-12"},
+  "packages": [
+    {"id": "vatutino_package", "kind": "vpm", "source": "C:/x/t_5e2eb833/v009/packages/vpm/SM_Vatutino_Ground.zip"},
+    {"id": "kpp1_package", "kind": "vpm", "source": "G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/SM_Kpp_1.zip"}
+  ],
+  "etalons": [
+    {"id": "vatutino_v015", "kind": "vpm", "role": "ground", "source": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/inputs/ground-v015/vpm/SM_Vatutino_Ground.fbx", "provenance": "Ground v015 route A D193; representative Ground site slice", "cases": ["unapplied_scale", "flipped_normals", "self_intersections", "duplicate_faces", "missing_ucx", "wrong_ucx_gap", "wrong_material", "wrong_texel", "wrong_name", "wrong_pivot", "leftover_object", "ground_skirt_missing"]},
+    {"id": "kpp1_r1_v002", "kind": "vpm", "role": "oks", "source": "G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/SM_Kpp_1.fbx", "provenance": "KPP1 R1 v002 #1230, existing verdicts retained, not a delivery certificate", "cases": ["unapplied_scale", "flipped_normals", "self_intersections", "duplicate_faces", "missing_ucx", "wrong_ucx_gap", "wrong_material", "missing_texture", "oversized_texture", "wrong_texel", "wrong_name", "wrong_pivot", "leftover_object"]},
+    {"id": "maf_v006_row02", "kind": "npm", "role": "ground", "source": "G:/Мой диск/AGR-assets/maf/projects/vatutino/gen-v001/rows-v006p-3/npm/VAT_MAF_T3508_02.fbx", "provenance": "MAF_GEN_0001; library/maf/catalogue.json; accepted rows 2-10 D202/D226, v006 IDs", "operands": {"maf_sizes": {"VAT_MAF_T3508_02_GroundEl": [6.6992, 2.5001, 0.45]}}, "cases": ["baked_size", "unapplied_scale", "flipped_normals", "self_intersections", "duplicate_faces", "wrong_material", "missing_texture", "oversized_texture", "wrong_name", "leftover_object", "maf_zone_merged"]},
+    {"id": "flora_run_v004", "kind": "npm", "role": "ground", "source": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/flora_fbx/pos01_101_npm.fbx", "provenance": "Flora run-v004 representative Tilia cordata Greenspire star; not final site acceptance", "cases": ["unapplied_scale", "flipped_normals", "self_intersections", "duplicate_faces", "wrong_material", "missing_texture", "oversized_texture", "wrong_name", "leftover_object", "flora_height"]}
+  ]
+}

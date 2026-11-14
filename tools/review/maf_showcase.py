@@ -17,6 +17,8 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 GROUPS = ("sport", "kids", "landscaping", "benches", "lighting")
 GROUP_LABELS = {
@@ -438,7 +440,8 @@ def _hash_of(report, sid, prof):
 def _run_job(job: Path, card: str, version="2026"):
     proc = subprocess.run([sys.executable, str(SCRIPTS / "dcc_batch.py"), "max", "--file", str(job),
                            "--card", card, "--timeout", "900", "--wait", "900", "--version", version],
-                          capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=2000)
+                          capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=2000,
+                          env=max_child_env())
     return proc
 
 

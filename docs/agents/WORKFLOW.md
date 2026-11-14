@@ -43,6 +43,12 @@ lists; they do not define a production step.
    never turned into a pass by rewording. After two failures with the same cause, stop that
    path, save the state and propose the next step. The limit is recorded in
    `jobs/<JOB>/pipeline/state.json` and enforced by the pipeline gate (`tools/git-hooks/pipeline_gate.py`). Historical record: `archive/2026-11:docs/HARNESS_PLAN.md` §8.
+   A build report counter of skipped or failed elements (`*_fail`, `skipped`, `miss`, `dropped`, ...)
+   above 0 is a failing gate, not a note (#1031): the build is not shown or reported as done until
+   every such count is 0 or the user accepts the listed exceptions (counter, exact count, quote and date).
+   Build scripts pass their report dict to `dt_ai.validate.build_counters.enforce` (or run
+   `uv run python -m dt_ai.validate.build_counters --report <report.json> --counter <name>`;
+   exit 1 = fail, also as a `RunRecord` stage); a declared counter that is missing also fails.
 7. **Hand off.** Compare the result with the Requirement (the user's wording, profile and
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
@@ -198,11 +204,19 @@ like on an empty field.
 
 ## Job contract (#130)
 
-`jobs/<ID>/STATE.md` opens with the contract. The Requirement section is copied once from the user and not
+Every `jobs/<ID>/STATE.md` starts with the three-line header below, in that order, with non-empty values.
+Summarize the current run (including stopped/closed status), its source/manifest and the next gate from job
+content; write `unknown — <why>` for an unknown value, never guess. Refresh the header when the run, source
+or next gate changes; keep the history below it intact. The header is orientation, not delivery acceptance.
+The contract follows the header. The Requirement section is copied once from the user and not
 edited afterwards; a later decision is added below it with its date or `D<n>`, never written over it. The
 handover (step 7, `/handover`) compares the result with this section item by item.
 
 ```markdown
+Current run: <run/version and status; link to run log if present>
+Source: <authoritative inputs or manifest; unresolved authority stays explicit>
+Next gate: <required answer/check and the action after it; none if the job is closed>
+
 # <ID> (<object name>) - <profile>, <date>
 
 Status: <draft | built | accepted by the user (<date>) | ...>
@@ -241,6 +255,16 @@ Rules:
   unresolved result-changing questions while preserving mandatory confirmations.
 - Disputed geometry: look first, then classify (user 2026-10-13 [D072]) - every group of a classifier's verdict, every
   question and every stop is shown isolated on the body (renders, three views, sizes) before a rule or a question.
+- Every subagent prompt and every `.claude/agents/*.md` body follows the [Prompt guide](#prompt-guide).
+
+### Prompt guide
+
+The single shared brief for any subagent prompt (named agents, general-purpose, Explore, fork). Do the one
+task you were given; anything else you notice goes into one "Open" line at the end, not into the work. Run
+independent tool calls in parallel in one message; serialize only when a call needs an earlier result. No
+filler: no restating the task, no narration of steps, no closing summary of what you did. Report numbers, not
+prose: counts, measured values with units, pass/fail per check, paths and ids, and the command that produced
+each; say "not checked" instead of guessing.
 
 ## Triggers (user 2026-10-14 [D074])
 
@@ -255,7 +279,8 @@ An event makes a skill or subagent mandatory, not optional:
 | "Is there a rule for …?" (pattern, case, conflict) | subagent `pattern-librarian` |
 | Benchmarks or the test suite must run | subagent `bench-runner` |
 | A numeric question about an FBX or a dump | subagent `mesh-reader` |
-| The user accepts a result | skill `experience-transfer` |
+| The user accepts a result | skill `experience-transfer` (Claude Code: the UserPromptSubmit hook reminds) |
+| The user corrected or rejected the agent in a session, at `/handover` | `/retro` for the session ([Session retro](#session-retro)) |
 
 A background agent that polls a long run has a timeout and reports progress. Default: stop at 6 polls or
 30 minutes, whichever comes first. Every poll writes one progress line: elapsed time, the last output line,
@@ -328,8 +353,21 @@ Each kind of fact lives in one place; the others point to it.
 | Session state (branch, next step, what waits) | `docs/HANDOFF.md` of the branch |
 | Session transcript | `logs/transcripts/` of the main checkout (local), named in the handoff |
 | Unsolved work | `docs/backlog.md`, GitHub issues |
+| A snag worked around (papercut) | `docs/papercuts/<branch>.md`, collected by `/retro` |
 
 A rule question is looked up in the order of `AGENTS.md` ("Where things are"): decision log first.
+
+### Decision ids on parallel branches (#1037)
+
+A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --fetch`: the next free id over
+`origin/main`, this branch and every open PR head (`gh pr list`). The pre-commit hook runs `check --staged
+--fetch` whenever `docs/decisions.md` is staged and blocks a commit whose new id (absent at the merge-base with
+`origin/main`) is already used by `origin/main` or by an open PR with a different row, or appears twice; exit 2
+(no base, no `gh`, unreadable PR head) blocks too. Offline, `git config twin.decisionIds main-only` skips the
+open-PR comparison but still runs `--fetch`, so with no network the check exits 2 and blocks (as
+`pre-commit:42-43` does). Two branches that allocate before either PR is open are caught by the later one's next
+commit or check: the later branch renumbers (`next`, then every `[D<n>]` reference), never the merged one. Run
+`check` once more after merging `origin/main` and before asking for review.
 
 ## Harness inventory (#129)
 
@@ -344,7 +382,13 @@ user's word): `docs/agents/harness-inventory.md`.
 The header names that command. Regeneration is idempotent; do not edit the file by hand. At most 80 lines,
 and a file of exactly 80 lines is refused. Exactly the sections Goal, In production, Harness, Next step, Links
 (`tests/test_project_state.py`). Regenerate it only on `main` after a merge. Per-object gates stay in
-`jobs/<ID>/STATE.md`. In a task branch state changes go into the handoff. An optional hand-written next step
+`jobs/<ID>/STATE.md`. In a task branch state changes go into the handoff.
+After every merge the state is regenerated by `python tools/state/after_merge.py --pr <N>`: it checks that #N is
+MERGED, fast-forwards the `main` checkout (refused when dirty), runs the generator and commits the file on local
+`main` without pushing (`git push origin main` stays an approval). Claude Code runs it automatically through the
+PostToolUse hook on `gh pr merge <N>`; other agents run it right after their merge command. `after_merge.py check`
+fails when a PR listed as open is merged or closed (`--states-json` injects states offline,
+`tests/test_state_after_merge.py`). An optional hand-written next step
 lives in `docs/PROJECT_STATE.next.md` when present (plain lines, no headings); the generator refuses to write its output
 onto that file, onto `.git`, or onto any other input.
 
@@ -362,6 +406,25 @@ hashes, code used, checks actually run, failures and fixes, reuse candidates. Ad
 `docs/cases.md`. Praise does not replace QA. A procedure becomes a general tool or skill
 only after it works on a second representative object.
 
+Small snags an agent works around are logged as one-line papercuts in `docs/papercuts/<branch>.md` (format and
+rules: `docs/papercuts/README.md`); `/retro` collects them.
+
+## Session retro
+
+Acceptance teaches what worked; the user's corrections teach what to stop doing. A session in which the user
+corrected the agent, rejected a result or interrupted it ends with a retro (`.claude/commands/retro.md`; step 7a of
+`/handover`); `/retro --since <date>` reviews several sessions at once. The loop:
+
+1. `tools/retro/condense_transcript.py` reduces transcripts to the conversation (user `!` correction / `+`
+   acceptance signals, tool errors, interrupts).
+2. Each incident gets one cause and is checked against the rules; the result is `docs/retros/<date>-<slug>.md`.
+3. Actionable items become deduplicated issues labelled `needs-triage` + `retro` (template `task.md`), never
+   `ready-for-agent`; triage or the user makes them ready, then the Kanban worker takes them like any issue.
+4. A retro issue whose mistake is visible in a transcript or an output closes only with a regression check that
+   reproduces it: an `evals/` grader (run before every merge) or a pytest. Evals only re-check known mistakes;
+   the retro is how new ones reach them.
+5. A preference or a rule only the user can set goes into one triage issue; the agent never writes the D-line.
+
 ## Permission matrix
 
 Single permission policy for all three agents (#127). `free` means read/inspect or local code
@@ -376,7 +439,7 @@ Roles in `ROLES.md` assign work, not extra permissions. More restrictive task po
 | Edit task code/docs and commit in own worktree | free | free | free | Task scope and NAMING.md; pre-commit checks |
 | Authorized DCC saves/exports to new versioned paths | versioned write | versioned write | versioned write | CAPABILITIES.md risk classes; DCC skill and output readback |
 | Publish branch (git push) | ask | ask | ask | guard: `git push origin task/example` |
-| Merge after review on the user's explicit command | ask | ask | ask | guard: `gh pr merge 127`; gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
+| Merge after review on the user's explicit command | ask | ask | ask | guard: `gh pr merge 127` (allow once with a one-shot token for a command naming #127 [D234]); gate: [Merge authorization](WORKFLOW.md#gate-merge-authorization) |
 | gh delete operations (issue, release, etc.) | ask | ask | ask | guard: `gh issue delete 127`; guard: `gh release delete v1` |
 | All gh repo operations (including reads) | ask | ask | ask | guard: `gh repo view owner/repo`; guard: `gh repo delete owner/repo` |
 | Destructive DCC tools or arbitrary DCC code | ask | ask | ask | gate: [DCC authorization](WORKFLOW.md#gate-dcc-authorization) |
@@ -416,6 +479,16 @@ Manual pre-execution gate: require review and the user's command naming the merg
 approval to code, push or open a PR is not a merge command. Applies equally to `git merge`,
 `gh pr merge`, UI and API routes. Without it stop; the gh guard prompt is not evidence that
 the command was granted. Record the command in the handoff/PR when a merge is authorized.
+When the user's chat command names the PR number («Мерджи #N»), quote it into a one-shot token
+first, from the checkout whose `origin` is the PR's repository: `py -3 .claude/hooks/guard.py merge-token N
+"<the user's literal command>"`; the guard then
+allows exactly one plain `gh pr merge N` within 10 minutes without a second prompt [D234]. Never
+write a token for a command without the number («вперед», «мержи»): ask which PR, or let the guard
+prompt be the confirmation. The token covers no other PR, no `--delete-branch`/`--admin` and no
+chained command, and no other repository (the `-R`/`--repo` value, else `GH_REPO`, else the
+`gh repo set-default` remote, else every remote of the hook's cwd must name the token's repository;
+otherwise the guard asks and keeps the token). In the pilot clone (`origin` = pilot, `upstream` =
+AGR-DigitalTwin) run `gh pr merge N -R <owner>/<repo>`.
 
 ### Gate standards procedure
 

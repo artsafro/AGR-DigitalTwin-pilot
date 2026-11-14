@@ -1,0 +1,54 @@
+{
+  "schema": "kpp1-corner-readback/1",
+  "synthetic": false,
+  "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_b1946208\\tmp\\out-r1-v002\\SM_Kpp_1.fbx",
+  "source_sha256": "1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676",
+  "blender": "5.1.2",
+  "method": "9 interior samples on each source profile outer face; BVH nearest exported surface",
+  "tolerance_m": 0.004,
+  "members": [
+    {
+      "source_block_id": "1856177",
+      "facade": "West",
+      "sample_count": 9,
+      "max_distance_m": 9.5367431640625e-07,
+      "pass": true
+    },
+    {
+      "source_block_id": "1857706",
+      "facade": "West",
+      "sample_count": 9,
+      "max_distance_m": 7.152557373046875e-07,
+      "pass": true
+    },
+    {
+      "source_block_id": "1858064",
+      "facade": "West",
+      "sample_count": 9,
+      "max_distance_m": 6.743495646333031e-07,
+      "pass": true
+    },
+    {
+      "source_block_id": "1856176",
+      "facade": "East",
+      "sample_count": 9,
+      "max_distance_m": 4.76837158203125e-07,
+      "pass": true
+    },
+    {
+      "source_block_id": "1858448",
+      "facade": "East",
+      "sample_count": 9,
+      "max_distance_m": 2.384185791015625e-07,
+      "pass": true
+    },
+    {
+      "source_block_id": "1858062",
+      "facade": "East",
+      "sample_count": 9,
+      "max_distance_m": 9.5367431640625e-07,
+      "pass": true
+    }
+  ],
+  "passed": true
+}

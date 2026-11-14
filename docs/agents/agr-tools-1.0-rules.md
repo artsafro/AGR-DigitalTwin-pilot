@@ -2,9 +2,12 @@
 
 Moved verbatim from `AGENTS.md` (context diet); the rules remain binding for every agent.
 
+Точка входа в AGR Tools — `docs/agr-tools/OVERVIEW.md`; работа с ветками, раннером и полигоном — `docs/agents/agr-tools-impl-rules.md`.
+
 Правила волны 1.0. Контракты К1–К5 — в `issue_body.md` волны. Решения Артёма 06.11.2026 приоритетнее.
 
-- **Паспорт проекта обязателен (К1).**
+- **Passport scope (K1) [D247].** `jobs/<ID>/passport.json` is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT.
+- **Паспорт проекта обязателен на маршруте AGR Tools (К1) [D247].**
   - У каждого проекта есть `jobs/<ID>/passport.json` и `PASSPORT.md`.
   - Схема — `schemas/ProjectPassport.schema.json`. Битая схема — ошибка.
   - Сцена хранит в file properties `agr_passport` путь и sha паспорта.
@@ -27,3 +30,5 @@ Moved verbatim from `AGENTS.md` (context diet); the rules remain binding for eve
   - Apply подтверждается только кнопкой в доке или UI. Подтверждение в чате не считается.
   - `agr_exec_unsafe` в мосте агента запрещён.
 - **Механика роя — Sonnet.** Лабораторные отчёты, обновление `expected`, `CHANGELOG`, документы и слияния делает Sonnet. Геометрию, архитектуру и контракты ведёт основная модель.
+
+- **Первое реальное здание через стадии 1-9 — AC08 (TEC26-OKS)**, а не здание эталонного корпуса [D228].

@@ -1,0 +1,86 @@
+{
+  "anchors_source": null,
+  "findings": [],
+  "nominal_print_scale_text": [],
+  "note": "technical extraction only; not measured geometry unless a view is calibrated, not acceptance",
+  "open_gates": [
+    "calibration",
+    "binding_review",
+    "ground_truth",
+    "approval"
+  ],
+  "openings": [],
+  "pages": [
+    {
+      "page": 1,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 2,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 3,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 4,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 5,
+      "sheet": null,
+      "status": "ok"
+    }
+  ],
+  "passed": false,
+  "schema": "album-dimensions/1",
+  "source": {
+    "name": "cod20207.pdf",
+    "page_count": 5,
+    "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce"
+  },
+  "summary": {
+    "by_binding": {
+      "unbound": 1
+    },
+    "calibrated_views": 0,
+    "unresolved": 1,
+    "values": 1,
+    "vertical_dimensions": 0,
+    "views": 0
+  },
+  "values": [
+    {
+      "bbox": [
+        40.68,
+        411.1246,
+        79.0054,
+        419.806
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p5-t0001",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 5,
+      "raw": "89689514434",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 89689514434.0,
+      "view": null
+    }
+  ],
+  "views": []
+}

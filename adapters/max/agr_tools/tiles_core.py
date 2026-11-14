@@ -8,8 +8,8 @@ UDIM step 3.6 m, a multiple of the 1.2 and 0.6 m modules):
 
 * A grey base map is a MASK PNG (RGB 8 bit): R = body grey (tone of each tile, lerp weight), G = joint coverage
   (0 body .. 255 joint, anti-aliased), B = 0. It is generated in METRES: module, joint, bond (1/2 offset of every
-  second course), period. The map holds exactly one period (default 3.6 m) at `px_per_m` (default 1024, #1024;
-  Q1 of the audit is open: 1000 or 1137.8 are parameters too), so the size is round(period * px_per_m) and the
+  second course), period. The map holds exactly one period (default 3.6 m) at `px_per_m` (default 1000, owner
+  answer 06.11 morning on audit Q1; 1024 or 1137.8 are parameters), so the size is round(period * px_per_m) and the
   effective density is size / period.
 * Seamless by construction only when the module divides the period; otherwise the module is fitted to the nearest
   integer count and the stretch is reported (> max_stretch_pct: finding). `seam_levels` measures the step across the
@@ -24,7 +24,8 @@ Defects of the recipes this replaces (regression tests in tests/max_tools/test_a
 * #1024 default 4096 px at 1024 px/m = 4.0 m: 4.0 / 0.6 = 6.67 modules -> a visible seam at every tile edge;
 * Ground recipe 100x300 with the joint OUTSIDE the module (pitch 105 x 305, tools/materials/ground_recipes.json:17):
   3.6 / 0.105 = 34.3 -> not periodic on the 3.6 m UDIM step;
-* brick 250x65 + 10 mm joint (pitch 260 mm): 3.6 / 0.26 = 13.85 -> fitted to 14 (-1.1 %, Q3 open).
+* brick 250x65 + 10 mm joint (pitch 260 mm): 3.6 / 0.26 = 13.85 -> fitted to 14 (-1.1 %, Q3 answered 06.11:
+  tolerance 1.5 % for bricks, per base map `max_stretch_pct`; the global default stays 1.2 %).
 """
 import hashlib
 import math
@@ -33,7 +34,7 @@ import zlib
 
 PNG_SIG = b'\x89PNG\r\n\x1a\n'
 DEFAULTS = {
-    'px_per_m': 1024.0,       # #1024 K3 (VPM 4K, 1024 px/m); audit Q1 open
+    'px_per_m': 1000.0,       # owner answer 06.11 morning (audit Q1): 3.6 m = 3600 px, modules whole; was 1024
     'period_m': 3.6,          # owner answer 06.11: UDIM step 3.6 m (crumb: its own 1 m period)
     'max_stretch_pct': 1.2,   # module fitted to the period: allowed stretch (audit Q3: brick -1.1 %)
     'seam_max_levels': 1.0,   # K3 acceptance: edge difference <= 1 level
@@ -46,9 +47,9 @@ DEFAULTS = {
 # bond = offset of every second course in modules, v_joints/h_joints. noise: grain (cell) size.
 BASE_MAPS = {
     'facade_600x1200': {'kind': 'tiles', 'module': (0.6, 1.2), 'joint': 0.005, 'bond': 0.0,
-                        'source': 'K3: OBR22 facade panels 600x1200, joint 5 mm (OBR22_SHARED_UV_V011.md:12-24)'},
+                        'source': 'K3: OBR22 facade panels 600x1200, joint 5 mm (OBR22_SHARED_UV_V011.md:12-24); joint 5 mm approved by the owner (Q11 06.11)'},
     'ground_100x300': {'kind': 'tiles', 'module': (0.3, 0.1), 'joint': 0.005, 'bond': 0.5,
-                       'source': 'K3: Vatutino paving «Gotika» 100x300, joint 5 mm inside the module'},
+                       'source': 'K3: Vatutino paving «Gotika» 100x300, joint 5 mm inside the module; joint 5 mm approved by the owner (Q11 06.11)'},
     'crumb_1x1': {'kind': 'noise', 'grain': 0.004, 'period': 1.0, 'tone_var': 20,
                   'source': 'K3: rubber crumb, seamless 1x1 m'},
     'tile_600x600': {'kind': 'tiles', 'module': (0.6, 0.6), 'joint': 0.005, 'bond': 0.0,
@@ -57,8 +58,10 @@ BASE_MAPS = {
                      'source': 'audit G4: plinth 300x300 (KPP1, PSU275), joint assumed 4 mm'},
     'slab_900x300': {'kind': 'tiles', 'module': (0.9, 0.3), 'joint': 0.005, 'bond': 0.5,
                      'source': 'audit G6: step slab 900x300 (Vatutino)'},
-    'brick_250x65': {'kind': 'tiles', 'module': (0.26, 0.075), 'joint': 0.010, 'bond': 0.5,
-                     'source': 'audit B1: brick 250x65, joint 10, half bond (OBR22, FACADES-ATLAS)'},
+    'brick_250x65': {'kind': 'tiles', 'module': (0.26, 0.075), 'joint': 0.010, 'bond': 0.5, 'max_stretch_pct': 1.5,
+                     'source': 'audit B1: brick 250x65, joint 10, half bond (OBR22, FACADES-ATLAS); '
+                               'Q3 06.11: 75 mm course step = 48 per 3.6 m, 14 bricks per tile (257.14 mm, -1.1 %), '
+                               'stretch tolerance 1.5 %'},
     'panel_v1200': {'kind': 'tiles', 'module': (1.2, None), 'joint': 0.005, 'bond': 0.0, 'h_joints': False,
                     'source': 'audit: sandwich panel, vertical joints 1.2 m (PSU275 1.19 -> 1.2)'},
     'panel_v600': {'kind': 'tiles', 'module': (0.6, None), 'joint': 0.005, 'bond': 0.0, 'h_joints': False,
@@ -88,7 +91,8 @@ def spec(name, overrides=None):
     ppm = _num(o.get('px_per_m', DEFAULTS['px_per_m']), 'px_per_m', 16, 8192)
     period = _num(o.get('period_m', base.get('period', DEFAULTS['period_m'])), 'period_m', 0.01, 100)
     fit = bool(o.get('fit', True))
-    max_stretch = _num(o.get('max_stretch_pct', DEFAULTS['max_stretch_pct']), 'max_stretch_pct', 0, 100)
+    max_stretch = _num(o.get('max_stretch_pct', base.get('max_stretch_pct', DEFAULTS['max_stretch_pct'])),
+                       'max_stretch_pct', 0, 100)
     size = o.get('size_px')
     size = int(round(period * ppm)) if size is None else int(_num(size, 'size_px', 1, 16384))
     findings = []

@@ -13,7 +13,7 @@ import math
 import os
 from collections import namedtuple
 
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 
 # wip=True (1.0 conveyor, #1024): the button is visible but disabled, tooltip «в работе, #1024», its macro never
 # runs an edit. Default False keeps every 0.x Action(...) call of nine fields valid.
@@ -238,7 +238,8 @@ STAGES_100 = (  # (stage id, label_ru, icon, (rows; the first is the big button)
     (8, 'НПМ → ВПМ', 'npm2vpm', ('npm.to_vpm', 'udim.udims_to_ids')),
     (9, 'Сдача', 'deliver', ('pack.deliver', 'ucx.gap', 'ucx.stairs', 'light.export', 'qa.omk_te',
                              'export.place_by_passport')),
-    ('agent', 'Агент', 'agentreq', ('agent.request', 'agent.accept')),
+    ('agent', 'Агент', 'agentreq', ('agent.request', 'agent.accept', 'handoff.export', 'handoff.import',
+                                    'handoff.verify', 'handoff.restore_materials')),
 )
 _ROWS_100 = {  # plan row id -> (icon, label_ru, reqs)
     'project.passport': ('passport', 'Паспорт проекта', '-'),
@@ -275,7 +276,25 @@ _ROWS_100 = {  # plan row id -> (icon, label_ru, reqs)
     'export.place_by_passport': ('passport', 'Поставить по паспорту', '-'),
     'agent.request': ('agentreq', 'Запрос агенту', '-'),
     'agent.accept': ('agentok', 'Приём от агента', '-'),
+    # 1.1: Max <-> Blender handoff on the agent stage (stations 1.1.1..1.1.4)
+    'handoff.export': ('handoffout', 'Хендофф: выгрузить в Blender', '-'),
+    'handoff.import': ('handoffin', 'Хендофф: принять из Blender', '-'),
+    'handoff.verify': ('handoffcheck', 'Хендофф: сверка круга', '-'),
+    'handoff.restore_materials': ('matrestore', 'Восстановить материалы', '-'),
 }
+# plan version of a stage row that is not 1.0 (its tooltip says «1.1, этап ...»)
+ROW_VERSION_100 = {'handoff.export': '1.1', 'handoff.import': '1.1', 'handoff.verify': '1.1',
+                   'handoff.restore_materials': '1.1'}
+# 1.1: stage rows with a parameter form in the dock (== params_core.TOOLS, a test pins it). Their macro opens the
+# panel form (runtime.form_ui) instead of pressing without options.
+FORM_100 = ('atlas.facade_strip', 'tex.dilate', 'tex.plug_colour', 'export.place_by_passport', 'agent.request',
+            'agent.accept', 'handoff.export', 'handoff.import', 'handoff.verify', 'handoff.restore_materials')
+# 1.1: «Claude-док» (agentbridge_max.agent_dock through runtime.agent_dock): a panel/menu action outside the plan
+# rows (no report, no preview/apply), like the open-panel macro.
+DOCK_MACRO = 'AGRToolsAgentDock'
+DOCK_LABEL = 'Claude-док'
+DOCK_TIP = '1.1, этап «Агент»: док агента Claude (свой listener, профиль modeller, «Применить» только в доке)'
+DOCK_ICON = 'agentdock'
 
 
 # Release 1.0.0 (#1024 R): all 13 branches F..U are merged (Q #1085 last), so no 1.0 row is wip. A row of a later
@@ -284,10 +303,12 @@ WIP_100 = frozenset()
 
 
 def stage_tip(tool):
-    """Tooltip head of a released 1.0 stage button: «1.0, этап <n> <stage>» (the agent stage has no number)."""
+    """Tooltip head of a released stage button: «<plan version>, этап <n> <stage>» (the agent stage has no number):
+    «1.0, этап 2 «Окна»», «1.1, этап «Агент»»."""
     for sid, label, _icon, rows_ in STAGES_100:
         if tool in rows_:
-            return '1.0, ' + ('этап «Агент»' if sid == 'agent' else 'этап {} «{}»'.format(sid, label))
+            return ROW_VERSION_100.get(tool, '1.0') + ', ' + (
+                'этап «Агент»' if sid == 'agent' else 'этап {} «{}»'.format(sid, label))
     raise KeyError('not a 1.0 stage row: ' + repr(tool))
 
 
@@ -827,6 +848,8 @@ def macro_100(a):
     (macros.run cannot reach an edit either)."""
     head = 'macroScript {} category:"{}" buttonText:"{}" tooltip:"{}" iconName:"{}"'.format(
         a.macro, CATEGORY, _ms(a.label), _ms(tooltip(a)), icon_name(a))
+    if not a.wip and a.tool in FORM_100:  # 1.1: the press opens the parameter form of the panel
+        return [head, '(on execute do python.Execute "agr_tools_runtime.form_ui(\'{}\')")'.format(a.tool)]
     if not a.wip:
         return [head, '(on execute do python.Execute "agr_tools_runtime.edit_ui(\'{}\')")'.format(a.tool)]
     return [head, '(', '    on isEnabled return false',
@@ -843,6 +866,9 @@ def macros_ms():
     lines.append('(on execute do (try (python.Execute "agr_tools_runtime.panel()") catch ('
                  'format "AGR_TOOLS_PANEL_FALLBACK %\\n" (getCurrentException()); '
                  'macros.run "{}" "{}")))'.format(CATEGORY, CLASSIC_MACRO))
+    lines.append('macroScript {} category:"{}" buttonText:"{}" tooltip:"{}" iconName:"{}{}"'.format(
+        DOCK_MACRO, CATEGORY, _ms(DOCK_LABEL), _ms(DOCK_TIP), ICON_PREFIX, DOCK_ICON))
+    lines.append('(on execute do python.Execute "agr_tools_runtime.agent_dock()")')
     for a in ACTIONS:
         lines.append('macroScript {} category:"{}" buttonText:"{}" tooltip:"{}" iconName:"{}"'.format(
             a.macro, CATEGORY, _ms(a.label), _ms(tooltip(a)), icon_name(a)))
@@ -882,6 +908,9 @@ def menu_ms():
             a = BY_TOOL[tool]
             out.append('    t{}.CreateAction "{}" {} "{}`{}"'.format(i, stable_id(a.macro), MACRO_TABLE, a.macro,
                                                                      CATEGORY))
+        if sid == 'agent':  # 1.1: the Claude dock next to the agent stage buttons
+            out.append('    t{}.CreateAction "{}" {} "{}`{}"'.format(i, stable_id(DOCK_MACRO), MACRO_TABLE,
+                                                                     DOCK_MACRO, CATEGORY))
     out += ['    ok',
             ')',
             'if (maxVersion())[1] >= 27000 do (',

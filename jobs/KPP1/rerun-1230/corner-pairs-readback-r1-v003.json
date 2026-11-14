@@ -1,0 +1,105 @@
+{
+ "issue": 1246,
+ "note": "ray-parity inside test of the exported VPM Main; v002 = control (sealed #1230 FBX), v003 = this fix",
+ "v002": {
+  "fbx": "G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/SM_Kpp_1.fbx",
+  "blender": "5.1.2",
+  "points": {
+   "SW post": [
+    -15.03,
+    -5.73,
+    5.7
+   ],
+   "SW old West fin": [
+    -15.13,
+    -5.73,
+    5.7
+   ],
+   "SW old South fin": [
+    -15.03,
+    -5.83,
+    5.7
+   ],
+   "NW post": [
+    -15.0303,
+    6.0196,
+    5.7
+   ],
+   "NW old West fin": [
+    -15.13,
+    6.0196,
+    5.7
+   ],
+   "NW old North fin": [
+    -15.0303,
+    6.12,
+    5.7
+   ],
+   "S one-view z1.2-2.7 (guessed kept)": [
+    -15.03,
+    -5.83,
+    2.0
+   ]
+  },
+  "inside_object": {
+   "SW post": "SM_Kpp_1_Main",
+   "SW old West fin": "SM_Kpp_1_Main",
+   "SW old South fin": "SM_Kpp_1_Main",
+   "NW post": "SM_Kpp_1_Main",
+   "NW old West fin": "SM_Kpp_1_Main",
+   "NW old North fin": "SM_Kpp_1_Main",
+   "S one-view z1.2-2.7 (guessed kept)": "SM_Kpp_1_Main"
+  }
+ },
+ "v003": {
+  "fbx": "C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_ed7956b8/tmp/out-r1-v003b/SM_Kpp_1.fbx",
+  "blender": "5.1.2",
+  "points": {
+   "SW post": [
+    -15.03,
+    -5.73,
+    5.7
+   ],
+   "SW old West fin": [
+    -15.13,
+    -5.73,
+    5.7
+   ],
+   "SW old South fin": [
+    -15.03,
+    -5.83,
+    5.7
+   ],
+   "NW post": [
+    -15.0303,
+    6.0196,
+    5.7
+   ],
+   "NW old West fin": [
+    -15.13,
+    6.0196,
+    5.7
+   ],
+   "NW old North fin": [
+    -15.0303,
+    6.12,
+    5.7
+   ],
+   "S one-view z1.2-2.7 (guessed kept)": [
+    -15.03,
+    -5.83,
+    2.0
+   ]
+  },
+  "inside_object": {
+   "SW post": "SM_Kpp_1_Main",
+   "SW old West fin": null,
+   "SW old South fin": null,
+   "NW post": "SM_Kpp_1_Main",
+   "NW old West fin": null,
+   "NW old North fin": null,
+   "S one-view z1.2-2.7 (guessed kept)": "SM_Kpp_1_Main"
+  }
+ },
+ "passed": true
+}

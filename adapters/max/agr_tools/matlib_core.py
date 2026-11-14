@@ -8,8 +8,10 @@ contract_core.py (the glue reads them through host_max.MaxHost); the core never 
   in `tools/materials/ral_classic.json` (one source of screen colours).
 * Mid-poly carries LIBRARY ids on faces. `table_plan` checks per object: id in the library, no id >= 1001 on working
   geometry, glass ids only on `glass` objects (and nothing else on them).
-* `renumber_dense`: the ids used by ONE mesh -> UDIM 1001.. without gaps, ascending library id. UDIM numbering is per
-  mesh (owner answer V9 06.11.2026): the OKS body starts at 1001 and the windows/glass mesh starts at 1001 too.
+* `renumber_dense`: the ids used by ONE body mesh -> UDIM 1001.. without gaps, ascending library id (D209).
+  `table_plan` keeps every id of a role-glass mesh in UDIM 1001 (D221), with delivery ids unchanged.
+* Ground table (owner answer Q7 06.11): `ground_ref` {file, sha256} of the OKS table names `ground_vNNN.json` beside it
+  (GRD + PAV records, same schema, ids shared and unique across both); `load_library` merges both into `by_id`.
 * The project table rows follow `schemas/ProjectPassport.schema.json` `materials[]` (library_id, delivery_id, mesh,
   udim, npm_region).
 
@@ -26,6 +28,7 @@ SCHEMA = 1
 LIB_ID_MAX = 1000
 UDIM_START = 1001
 UDIM_MAX_PER_MESH = 100          # VPM: Main is one slot of up to 100 UDIM (docs/domain/materials.md:14-17)
+GROUND_CLASSES = ('ground', 'paving')   # GRD / PAV of the audit: the separate Ground table (owner answer Q7 06.11)
 CLASSES = ('paint', 'panel', 'tile', 'brick', 'paving', 'ground', 'mineral', 'roof', 'metal', 'wood', 'plastic',
            'glass', 'interior')
 STATUSES = ('proposed', 'approved', 'conflict', 'quarantine')
@@ -35,7 +38,8 @@ BASE_MAPS = ('facade_600x1200', 'ground_100x300', 'crumb_1x1', 'tile_600x600', '
              'brick_250x65', 'panel_v1200', 'panel_v600')
 RECORD_KEYS = {'library_id', 'key', 'name_ru', 'class', 'ral', 'rgb_srgb', 'rgb_note', 'roughness', 'metallic',
                'emissive', 'recipe', 'base_map', 'status', 'source', 'maf_v005_id'}
-OPTIONAL_KEYS = {'opacity', 'note', 'questions'}
+OPTIONAL_KEYS = {'opacity', 'note', 'questions', 'rgb_override'}   # rgb_override: project colour, not ral_classic (Q9)
+RIB_PARAMS = ('field_m', 'ribs')    # ribbed panel (AC08/AC09, audit Q5): pattern «N ribs per field», pitch = field / N
 BYTE_FIELDS = ('roughness', 'metallic', 'emissive')
 _KEY = re.compile(r'^[a-z][a-z0-9_]{1,63}$')
 _VERSION = re.compile(r'^v\d{3}$')
@@ -115,7 +119,10 @@ def validate_library(doc, ral=None):
         rgb = r['rgb_srgb']
         if not isinstance(rgb, list) or len(rgb) != 3 or not all(_is_byte(c) for c in rgb):
             raise ValueError(at + ': rgb_srgb must be [r, g, b] bytes')
-        if ral is not None and r['ral'] is not None and rgb != hex_rgb(ral[r['ral']]):
+        if 'rgb_override' in r and r['rgb_override'] is not True:
+            raise ValueError(at + ': rgb_override must be true when present')
+        if (ral is not None and r['ral'] is not None and not r.get('rgb_override')
+                and rgb != hex_rgb(ral[r['ral']])):
             raise ValueError(at + ': rgb_srgb differs from ral_classic.json {}'.format(r['ral']))
         for k in BYTE_FIELDS:
             if not _is_byte(r[k]):
@@ -128,6 +135,10 @@ def validate_library(doc, ral=None):
                 raise ValueError(at + ': greyscale_mask needs base_map in {} (same as the record)'.format(BASE_MAPS))
         elif r['base_map'] is not None:
             raise ValueError(at + ': base_map only with recipe greyscale_mask')
+        if recipe.get('pattern') == 'ribs_per_field' and (
+                recipe['kind'] != 'metric_pattern' or recipe.get('params') != list(RIB_PARAMS) or 'rib_pitch_m' in recipe):
+            raise ValueError(at + ': ribs_per_field is a metric_pattern with params {} and no fixed rib_pitch_m'.format(
+                list(RIB_PARAMS)))
         if r['status'] not in STATUSES:
             raise ValueError(at + ': status must be one of {}'.format(STATUSES))
         if not isinstance(r['source'], dict):
@@ -139,6 +150,16 @@ def validate_library(doc, ral=None):
             if isinstance(op, bool) or not isinstance(op, (int, float)) or not 0 < op < 1:
                 raise ValueError(at + ': glass needs opacity 0..1')
     return recs
+
+
+def rib_pitch_m(field_m, ribs):
+    """Rib pitch of a ribbed panel (recipe pattern `ribs_per_field`, owner answer Q5 06.11): the field of the panel
+    divided by the number of ribs. Not a tile: the UV scale is set per facade field, never a library constant."""
+    if type(ribs) is not int or ribs < 1:
+        raise ValueError('ribs must be a positive integer: {!r}'.format(ribs))
+    if isinstance(field_m, bool) or not isinstance(field_m, (int, float)) or not 0 < field_m < float('inf'):
+        raise ValueError('field_m must be a positive finite number: {!r}'.format(field_m))
+    return field_m / ribs
 
 
 def hex_rgb(text):
@@ -198,17 +219,44 @@ def load_library(path):
     ral_path = _ral_beside(folder)  # signature fixed by branch 0: (path) only
     ral = ral_table(ral_path) if ral_path else None
     recs = validate_library(lib, ral)
+    ground = None
+    if 'ground_ref' in lib:
+        ground, grecs = _load_ground(os.path.dirname(path), lib['ground_ref'], ral)
+        stray = [r['library_id'] for r in recs if r['class'] in GROUND_CLASSES]
+        dup = {r['library_id'] for r in recs} & {r['library_id'] for r in grecs}
+        if stray or dup:
+            raise ValueError('library: ids {} belong to the Ground table / are in both tables'.format(
+                sorted(set(stray) | dup)))
+        recs = sorted(recs + grecs, key=lambda r: r['library_id'])
     return {'version': lib['version'], 'sha256': sha, 'materials': recs,
             'by_id': {r['library_id']: r for r in recs}, 'path': path, 'pointer': pointer,
-            'ral_checked': ral is not None}
+            'ral_checked': ral is not None, 'ground': ground}
+
+
+def _load_ground(folder, ref, ral):
+    """Ground table (GRD + PAV, owner answer Q7 06.11) referenced by the OKS table: `ground_ref` = {file, sha256}.
+    Same record schema; library ids are shared with the OKS table (unique across both). Returns (info, records)."""
+    if not isinstance(ref, dict) or set(ref) != {'file', 'sha256'} or not re.match(r'^ground_v\d{3}\.json$', str(ref['file'])):
+        raise ValueError('library ground_ref: {file: ground_vNNN.json, sha256} expected')
+    gpath = os.path.join(folder, ref['file'])
+    text = _read_text(gpath)
+    sha = hashlib.sha256(text).hexdigest()
+    if sha != ref['sha256']:
+        raise ValueError('ground table {} sha256 {} differs from ground_ref {}'.format(ref['file'], sha, ref['sha256']))
+    gdoc = parse(text.decode('utf-8'))
+    grecs = validate_library(gdoc, ral)
+    bad = [r['library_id'] for r in grecs if r['class'] not in GROUND_CLASSES]
+    if bad:
+        raise ValueError('Ground table: ids {} are not ground/paving class'.format(bad))
+    return {'version': gdoc['version'], 'sha256': sha, 'path': gpath}, grecs
 
 
 # ---- UDIM renumbering ------------------------------------------------------------------------------------------
 def renumber_dense(used_ids, start=1001):
     """Library ids used by ONE mesh -> UDIM tiles start.. without gaps, ascending library id (K3).
 
-    UDIM numbering is per mesh (owner answer V9 06.11.2026): the OKS body starts at 1001 and the windows/glass
-    mesh starts at 1001 too. Returns {library_id: udim}; an id <= 0 or >= 1001 is an error."""
+    Body UDIM numbering is per mesh (D209); table_plan applies the glass-only 1001 exception (D221).
+    Returns {library_id: udim}; an id <= 0 or >= 1001 is an error."""
     if isinstance(start, bool) or not isinstance(start, int) or not UDIM_START <= start <= 1999:
         raise ValueError('start must be a UDIM 1001..1999: {!r}'.format(start))
     ids = set()
@@ -260,7 +308,8 @@ def object_findings(edit, item, library):
 def table_plan(edit, items, library):
     """items: [{'handle', 'name', 'role', 'ids': {library_id: faces}}] -> (entries, table, multisub, skipped).
 
-    table: passport `materials[]` rows of the objects without findings, UDIM dense per mesh from 1001 (V9);
+    table: passport `materials[]` rows of the objects without findings, body UDIM dense per mesh from 1001 (D209),
+    all glass ids in 1001 (D221); delivery ids remain dense per mesh;
     multisub: library records of every id used by those objects (one Multi/Sub by the library)."""
     if not items:
         raise ValueError('mat.table: empty input (select the mid-poly objects)')
@@ -275,7 +324,8 @@ def table_plan(edit, items, library):
             continue
         udims = renumber_dense(it['ids'])
         for lid, udim in sorted(udims.items()):
-            table.append({'library_id': lid, 'delivery_id': udim - 1000, 'mesh': it['name'], 'udim': udim,
+            table.append({'library_id': lid, 'delivery_id': udim - 1000, 'mesh': it['name'],
+                          'udim': UDIM_START if it.get('role') == 'glass' else udim,
                           'npm_region': None})
         used |= set(udims)
     multisub = [sub_spec(library['by_id'][i]) for i in sorted(used)]
@@ -298,7 +348,7 @@ def table_doc(library, table, passport):
     """Sidecar of the passport (jobs/<ID>/materials_table*.json): passport `materials[]` rows + library pin."""
     return {'schema': 1, 'kind': 'agr.materials_table', 'library': {'version': library['version'],
                                                                      'sha256': library['sha256']},
-            'passport': passport, 'udim_rule': 'per mesh from 1001, ascending library id (V9 06.11.2026)',
+            'passport': passport, 'udim_rule': 'body per mesh from 1001, ascending library id (D209); glass only 1001 (D221)',
             'materials': table}
 
 

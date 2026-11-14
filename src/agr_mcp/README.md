@@ -17,6 +17,7 @@ is in every result and in the audit.
 | `agr_check_run(check_ids[], scene, handles\|scope\|refs)` | 38 read/select rows (released 0.1-0.9 + 1.0 read rows), one Max call | read-only, selection restored |
 | `agr_op_preview(op, scene, handles\|scope\|refs, options)` | 32 editing rows (0.8, 0.9, 1.0 small rows) | preview; server holds it, answers `preview_id` |
 | `agr_op_apply(preview_id, idempotency_key?)` | apply of a held preview | only the 11 rows of 0.8; others `needs_human` |
+| 3 handoff tools (1.1.0): `agr_handoff_export` (class `file`, operator+), `agr_handoff_import` (class `markup`, operator+), `agr_handoff_verify` (read, observer+) | rows `handoff.*` of plan version 1.1 (`catalog.py`, `max_side/max_bridge.py`, `max_side/agr_profiles.py`) | export/import: no `preview_id` = preview, with `preview_id` = apply of the held preview (new bundle folder, layer `AGENT_<req>`); import and verify take no selection; `handoff.restore_materials` only via `agr_op_preview`, apply by button (`needs_human`) |
 | `ops_d108.register(catalog)` | branch U's D108 operations (empty stub now) | appended without editing `tools.py` |
 
 Previews (`preview_store.py`): `preview_id = sha256(canonical(report))`; bound to host, Max pid
@@ -43,6 +44,23 @@ carries `ref`. Exactly one of `handles` / `refs` / `scope`.
 | `agr_xview_parity` | `tools/qa/xview_parity.compare` | offline |
 
 The selection of the pinned Max is restored after every Max call (`selection_changed` if it cannot be).
+
+## Phase 2 previews (#1021, [D231])
+
+Runtime 0.9.0 copy families, preview only (read-only, max-live, schema 1, not deprecated):
+
+| tool | wraps | apply pair (always `needs_human`, host offline, Max never called) |
+|---|---|---|
+| `agr_cleanup_preview` | `runtime.cleanup_preview(nodes, options)` | `agr_cleanup_apply` |
+| `agr_uv_nudge_preview` | `runtime.nudge_preview` | `agr_uv_nudge_apply` |
+| `agr_atlas_preview` | `runtime.atlas_preview` (PNG bytes -> `{bytes, sha256}`) | `agr_atlas_apply` |
+| `agr_ucx_preview` | `runtime.ucx_preview` | `agr_ucx_apply` |
+| `agr_export_preview` | `runtime.export_preview(nodes, target)` | `agr_export_commit` |
+
+Targets: non-empty `handles` or `scope: "selection"`. A preview that leaves or deletes a node is an error. The
+export `target` is a new absolute `.fbx` whose `.report.json` and `.partial` do not exist and are not the scene file
+(`invalid_target`, checked before Max). Apply is the button in the AGR Tools panel/dock (owner answers 06.11.2026);
+`max_bridge` refuses the five apply names with `needs_human` as a second line.
 
 ## Answer: envelope v2 (`envelope.py`)
 

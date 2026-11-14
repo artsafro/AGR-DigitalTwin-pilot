@@ -3,13 +3,16 @@
 Fills the scene stages the header-only validator leaves not_run: V002 (units and scale;
 units come from a pure-Python GlobalSettings read), V003 (triangulation,
 triangle limits, object types), V004 (applied transforms, co-directional overlap clearance, regulatory topology defect count, MAF smoothing/flipped normals/dimensions (GroundEl)), V006 (NPM embedded images),
-V008 (one UV channel, mirrored islands, glass tile, texel density when the readback has UV and one diffuse size), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap, piece shape closed/convex; coverage and offsets stay not_run),
+V008 (one UV channel, mirrored islands, glass tile), V009 (texel density from UV and the diffuse side per tile),
+V005 (color attributes, reg 4.1.1, review only),
+V012 (VPM OKS MainGlass object and glass material names), V010 (UCX presence, no material slots, triangle budget, intersections, intersection coverage, advisory gap, piece shape closed/convex; coverage and offsets stay not_run),
 V013 (origin, geometric-centre pivot, shared pivot). Triangle limits follow the 2026-10-07 decisions on conflicts #1 and #3.
 Ground FBX: Flora checks from twinqa.flora (V015 dimensions, V005 maps, V003 Flora share; #191).
 """
 import itertools
 import math
 import os
+import re
 import tempfile
 import uuid
 from fractions import Fraction
@@ -26,7 +29,8 @@ from twinqa.geometry.ucx_audit import (
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
-from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities
+from twinqa.uv import (DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, UdimDomainError, _density_finding, edge_densities,
+                       udim_of)
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -146,6 +150,38 @@ def ground_triangle_limit(profile: dict, ground_area_m2) -> tuple[int, dict]:
         if area <= Fraction(str(band["area_max"])) * 10_000:
             return band["triangles_max"], band
     return bands[-1]["triangles_max"], bands[-1]
+
+
+def z_bounds_finding(meshes, export_meta, src):
+    """Compare render-mesh world Z bounds in metres; 1 mm is an exclusive numerical budget.
+
+    None means absent evidence (not_run); supplied but malformed evidence fails closed.
+    export_meta is one FBX record with bounds_m in the same exported world frame.
+    """
+    expected = "render Z min/max differ from export_meta by < 0.001 m"
+    def result(status, observed):
+        return _f(status, "Z bounds vs export_meta", observed, expected, [10, 32, 33], src)
+    if export_meta is None:
+        return result("not_run", "export_meta not supplied; height unverified")
+    def valid_bounds(b):
+        return (isinstance(b, (list, tuple)) and len(b) == 2
+                and all(isinstance(v, (list, tuple)) and len(v) == 3 for v in b)
+                and all(_finite_number(c) for v in b for c in v)
+                and all(b[0][i] <= b[1][i] for i in range(3)))
+    if not isinstance(export_meta, dict) or not valid_bounds(export_meta.get('bounds_m')):
+        return result("fail", str(export_meta.get('error', 'invalid export_meta.bounds_m'))
+                      if isinstance(export_meta, dict) else 'invalid export_meta record')
+    geometry = [m for m in meshes if not m['name'].upper().startswith('UCX_')]
+    if not geometry or any(not valid_bounds(m.get('bounds_m')) for m in geometry):
+        return result("fail", "empty/partial/invalid render bounds_m readback")
+    if len({m['name'] for m in geometry}) != len(geometry):
+        return result("fail", "duplicate render mesh names")
+    observed = [min(m['bounds_m'][0][2] for m in geometry), max(m['bounds_m'][1][2] for m in geometry)]
+    target = [export_meta['bounds_m'][i][2] for i in (0, 1)]
+    # Rational operands avoid a rounded subtraction admitting exactly-at-budget discrepancies.
+    bad = any(abs(Fraction(str(a)) - Fraction(str(b))) >= Fraction(1, 1000)
+              for a, b in zip(observed, target))
+    return result("fail" if bad else "pass", f"{src}: readback Z {observed}, export_meta Z {target}")
 
 
 def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
@@ -595,11 +631,34 @@ def _density_bounds(src: str, status: str, reason: str) -> list[Finding]:
     ]
 
 
-def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
-    """Min 512 px/m and max 1706 px/m for non-UCX meshes. Missing UV or texture size is not_run."""
-    geometry = [mesh for mesh in meshes if mesh not in ucx]
+GLASS_SUFFIXES = ("MainGlass", "GroundGlass", "GroundElGlass")
+_SLOT = re.compile(r"_(\d+)$")
+
+
+def _tile_side(diffuse_px: dict, tile, material) -> int | None:
+    """Diffuse side of one UDIM tile from the archive PNGs ({(slot, udim): side}).
+
+    One side for the tile across all slots is used as is; otherwise the slot is read from the
+    trailing `_N` of the material name (`M_{Address}_Main_N`, reg p.34 §10.4.4). None = unknown."""
+    sides = {side for (_slot, udim), side in diffuse_px.items() if udim == tile}
+    if len(sides) == 1:
+        return next(iter(sides))
+    hit = _SLOT.search(material or "")
+    return diffuse_px.get((int(hit.group(1)), tile)) if hit else None
+
+
+def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: str,
+                            diffuse_px: dict | None = None, placeholder_px: int | None = None) -> list[Finding]:
+    """V009: min 512 px/m and max 1706 px/m for non-UCX meshes. Missing UV or texture size is not_run.
+
+    diffuse_px ({(slot, udim): side} from the archive Diffuse PNGs) gives each polygon the side of its
+    own tile; without it one diffuse size must come from the readback. Exempt (reg p.31-32 §6.1-6.2,
+    2.6.2): placeholder tiles (placeholder_px) and glass meshes (*Glass: no texture maps, reg 2.4.2)."""
+    geometry = [mesh for mesh in meshes if mesh not in ucx and not mesh["name"].endswith(GLASS_SUFFIXES)]
     if not geometry:
-        return _density_bounds(src, "not_run", "no render mesh")
+        return _density_bounds(src, "not_run", "no textured render mesh")
+    if diffuse_px:
+        return _tile_density_findings(geometry, src, diffuse_px, placeholder_px)
     side = _texture_side_px(rb)
     missing = [mesh["name"] for mesh in geometry if "uv" not in mesh.get("face_geometry", {})]
     if side is None or missing:
@@ -647,6 +706,63 @@ def _texel_density_findings(rb: dict, meshes: list[dict], ucx: list[dict], src: 
         _density_finding("texel density", low, DENSITY_MIN_PX_PER_M, "min", f"{src}: min {low:.6g} px/m", src),
         _density_finding("texel density upper", high, DENSITY_MAX_PX_PER_M, "max", f"{src}: max {high:.6g} px/m", src),
     ]
+
+
+def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
+                           placeholder_px: int | None) -> list[Finding]:
+    """Per-polygon edge densities with the diffuse side of the polygon's own UDIM tile."""
+    low = high = None
+    low_at = high_at = ""
+    exempt, unknown = 0, {}
+    try:
+        for mesh in geometry:
+            shape = mesh.get("face_geometry") or {}
+            vertices, polygons = shape.get("vertices"), shape.get("polygons")
+            polygon_uvs = shape.get("polygon_uv")
+            materials = shape.get("polygon_material") or []
+            if not isinstance(polygons, list) or not isinstance(polygon_uvs, list) \
+                    or len(polygon_uvs) != len(polygons):
+                raise ValueError(f"partial UV geometry on {mesh['name']}: no polygon_uv per polygon")
+            for index, (polygon, poly_uv) in enumerate(zip(polygons, polygon_uvs)):
+                try:
+                    poly_xyz = [vertices[i] for i in polygon]
+                except (IndexError, TypeError) as exc:
+                    raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
+                if len(poly_xyz) < 2:
+                    continue
+                try:
+                    tile = udim_of(poly_uv)
+                except UdimDomainError:  # centroid off the UDIM grid or < 3 corners (#1337): unknown tile
+                    tile = None
+                material = materials[index] if index < len(materials) else None
+                side = _tile_side(diffuse_px, tile, material)
+                if side is None:
+                    unknown.setdefault(mesh["name"], set()).add(tile)
+                    continue
+                if placeholder_px is not None and side == placeholder_px:
+                    exempt += 1
+                    continue
+                values = edge_densities(poly_xyz, poly_uv, side)
+                if values and (low is None or min(values) < low):
+                    low, low_at = min(values), f"{mesh['name']} polygon {index}, tile {tile}"
+                if values and (high is None or max(values) > high):
+                    high, high_at = max(values), f"{mesh['name']} polygon {index}, tile {tile}"
+    except ValueError as exc:
+        return _density_bounds(src, "fail", str(exc))
+    note = f"; {exempt} placeholder polygon(s) exempt" if exempt else ""
+    if low is None and exempt and not unknown:
+        return _density_bounds(src, "pass", f"all {exempt} polygon(s) on placeholder tiles (exempt)")
+    out = [
+        _density_finding("texel density", low, DENSITY_MIN_PX_PER_M, "min",
+                         f"{src}: min {low:.6g} px/m at {low_at}{note}" if low is not None else f"{src}: no edges", src),
+        _density_finding("texel density upper", high, DENSITY_MAX_PX_PER_M, "max",
+                         f"{src}: max {high:.6g} px/m at {high_at}" if high is not None else f"{src}: no edges", src),
+    ]
+    if unknown:
+        shown = {name: sorted(t for t in tiles if t is not None) or ["outside grid"] for name, tiles in unknown.items()}
+        out.append(_f("not_run", "texel density coverage", f"{src}: no Diffuse PNG for tiles {shown}",
+                      "a Diffuse map for every textured tile", [31, 32], src))
+    return out
 
 
 def _m2_text(value: float) -> str:
@@ -859,36 +975,795 @@ def _ground_hole_finding(geometry: list[dict], src: str, footprint_holes) -> Fin
               measured=coverage, threshold=GROUND_AREA_TOL_M2, margin=margin)
 
 
+def check_ground_materials(value) -> list[str]:
+    """Allow-list of Ground material names or fnmatch globs. Raises ValueError naming `ground_materials`
+    for anything but a non-empty list of non-empty strings."""
+    if isinstance(value, (str, bytes)) or not isinstance(value, (list, tuple)) or not value:
+        raise ValueError(f"ground_materials must be a non-empty list of material names or globs, got {value!r}")
+    for item in value:
+        if not isinstance(item, str) or not item.strip():
+            raise ValueError(f"ground_materials entry must be a non-empty string, got {item!r}")
+    return list(value)
+
+
+def _select_ground_faces(geometry: list[dict], ground_materials: list[str]) -> tuple[list[dict], dict]:
+    """Keep only polygons whose material matches the allow-list (exact name or fnmatch glob, case-sensitive).
+
+    Meshes without a face_geometry dict pass through unchanged so the presence check still reports them.
+    A mesh whose ``polygon_material`` is missing or not one entry per polygon raises ValueError: a filter
+    that cannot read materials must never pass. Returns the filtered meshes and a report of the drop.
+    """
+    from fnmatch import fnmatchcase
+
+    selected, excluded, kept, excluded_materials, readable = [], 0, 0, {}, False
+    for mesh in geometry:
+        shape = mesh.get("face_geometry")
+        if not isinstance(shape, dict):
+            selected.append(mesh)
+            continue
+        readable = True
+        polygons, materials = shape.get("polygons"), shape.get("polygon_material")
+        if not isinstance(polygons, (list, tuple)) or not isinstance(materials, (list, tuple)) \
+                or len(materials) != len(polygons):
+            raise ValueError(f"--ground-materials needs one polygon_material per polygon on {mesh['name']}")
+        keep = []
+        for polygon, material in zip(polygons, materials):
+            if isinstance(material, str) and any(fnmatchcase(material, pattern) for pattern in ground_materials):
+                keep.append(polygon)
+            else:
+                excluded += 1
+                excluded_materials[str(material)] = excluded_materials.get(str(material), 0) + 1
+        kept += len(keep)
+        if keep:
+            selected.append({**mesh, "face_geometry": {**shape, "polygons": keep}})
+    if readable and kept == 0:
+        raise ValueError(f"no faces match --ground-materials {ground_materials}")
+    return selected, {"ground_materials": list(ground_materials), "excluded_faces": excluded,
+                      "excluded_materials": dict(sorted(excluded_materials.items()))}
+
+
+def _filter_note(report: dict) -> str:
+    names = ", ".join(report["excluded_materials"]) or "none"
+    return (f"; filter --ground-materials {report['ground_materials']}: "
+            f"{report['excluded_faces']} face(s) excluded ({names})")
+
+
+def _with_filter(finding: Finding, report: dict) -> Finding:
+    finding.observed += _filter_note(report)
+    finding.data = {**(finding.data or {}), **report}
+    return finding
+
+
 def _ground_footprint_findings(meshes: list[dict], ucx: list[dict], src: str, ground_area_m2,
-                               footprint_holes) -> list[Finding]:
-    """Scalar area check, then the spatial hole check. UCX meshes are excluded from both."""
+                               footprint_holes, ground_materials=None) -> list[Finding]:
+    """Scalar area check, then the spatial hole check. UCX meshes are excluded from both.
+
+    ground_materials (opt-in): only faces whose material matches feed both checks; None keeps every
+    non-UCX render face (unchanged behaviour). An allow-list that matches no face fails both."""
     geometry = [mesh for mesh in meshes if mesh not in ucx]
+    if ground_materials is None:
+        return [
+            _ground_area_finding(geometry, src, ground_area_m2),
+            _ground_hole_finding(geometry, src, footprint_holes),
+        ]
+    try:
+        geometry, report = _select_ground_faces(geometry, ground_materials)
+    except ValueError as exc:
+        data = {"ground_materials": list(ground_materials), "excluded_faces": None}
+        area = _f("fail", "ground footprint coverage", f"{src}: {exc}",
+                  f"|top-down area - ground_area_m2| < {GROUND_AREA_TOL_M2} m2", [28, 29], src,
+                  data={"measured_m2": None, "expected_m2": ground_area_m2, "difference_m2": None, **data})
+        hole = _ground_hole_finding([], src, footprint_holes)
+        if footprint_holes is not None:
+            hole.status, hole.observed = "fail", f"{src}: {exc}"
+        hole.data = {**(hole.data or {}), **data}
+        return [area, hole]
     return [
-        _ground_area_finding(geometry, src, ground_area_m2),
-        _ground_hole_finding(geometry, src, footprint_holes),
+        _with_filter(_ground_area_finding(geometry, src, ground_area_m2), report),
+        _with_filter(_ground_hole_finding(geometry, src, footprint_holes), report),
     ]
+
+
+SKIRT_MIN_M = 1.0  # GND-03: Ground perimeter polygons extruded down by at least 1 m (reg p.7 §3.4, p.28 §3.7)
+_SKIRT_XY_ROUND = 4  # XY rounding (0.1 mm): a perimeter edge shorter than this in XY is degenerate (GND-03)
+_SKIRT_XY_TOL = 10.0 ** -_SKIRT_XY_ROUND  # XY distance (0.1 mm) within which a mesh edge lies on a perimeter edge
+# GND-03: minimum upward normal ratio (nz/|n|) for a Ground face to count as "surface". A skirt wall
+# is vertical (nz ~ 0), but the v015 readback has 13 _Skirt faces that are not quite vertical: their
+# nz/|n| runs up to 0.0054 (a ~0.3 deg build slant, not pure float noise). eps sits above that so the
+# geometry alone keeps the skirt walls out, and far below the steepest real surface band (nz/|n| ~ 0.148
+# at 81.5 deg) so interior step bands stay in. The material guard (below) is a second, naming-independent
+# backstop for any skirt face tilted past eps.
+_SKIRT_UP_EPS = 0.01
+
+
+def _polygon_normal(verts: list, poly) -> tuple[float, float, float]:
+    """Newell normal (unnormalised) of a polygon; ``(0, 0, 0)`` for a degenerate polygon."""
+    nx = ny = nz = 0.0
+    n = len(poly)
+    for k in range(n):
+        a = verts[poly[k]]
+        b = verts[poly[(k + 1) % n]]
+        nx += (a[1] - b[1]) * (a[2] + b[2])
+        ny += (a[2] - b[2]) * (a[0] + b[0])
+        nz += (a[0] - b[0]) * (a[1] + b[1])
+    return nx, ny, nz
+
+
+def _xy_key(x, y) -> tuple[float, float]:
+    return round(float(x), _SKIRT_XY_ROUND), round(float(y), _SKIRT_XY_ROUND)
+
+
+def _skirt_cells(x0: float, y0: float, x1: float, y1: float, cell: float) -> set[tuple[int, int]]:
+    """Grid cells of samples spaced <= ``cell / 2`` along an XY segment (every point of the
+    segment lies within ``cell / 4`` of a sample, so two segments sharing a point have samples
+    at most two cells apart per axis)."""
+    steps = int(math.ceil(math.hypot(x1 - x0, y1 - y0) / (cell / 2.0))) or 1
+    return {(math.floor((x0 + (x1 - x0) * m / steps) / cell), math.floor((y0 + (y1 - y0) * m / steps) / cell))
+            for m in range(steps + 1)}
+
+
+def _skirt_edge_drop(vi, vj, segs) -> float:
+    """Smallest skirt drop along the perimeter edge ``vi``-``vj`` (GND-03, #1133 case 1).
+
+    At every point of the edge's XY segment the drop is the top Z minus the lowest Z of the mesh
+    edges that cover that point collinearly in XY (within ``_SKIRT_XY_TOL``); the edge itself
+    covers it at drop 0, so an uncovered stretch gives 0. Between breakpoints (ends of covering
+    edges) the drop is the upper envelope of linear functions, so its minimum is at a piece end
+    or at a crossing of two of those lines: those are the points evaluated, nothing is sampled.
+    """
+    x0, y0, z0 = float(vi[0]), float(vi[1]), float(vi[2])
+    dx, dy, dz = float(vj[0]) - x0, float(vj[1]) - y0, float(vj[2]) - z0
+    l2 = dx * dx + dy * dy
+    length = math.sqrt(l2)
+    eps = _SKIRT_XY_TOL / length
+    lines = [(0.0, 1.0, 0.0, 0.0)]  # (t_lo, t_hi, drop at t=0, drop slope): the edge itself
+    for ax, ay, az, bx, by, bz in segs:
+        if abs((ax - x0) * dy - (ay - y0) * dx) / length > _SKIRT_XY_TOL:
+            continue
+        if abs((bx - x0) * dy - (by - y0) * dx) / length > _SKIRT_XY_TOL:
+            continue
+        ta = ((ax - x0) * dx + (ay - y0) * dy) / l2
+        tb = ((bx - x0) * dx + (by - y0) * dy) / l2
+        lo, hi = max(min(ta, tb), 0.0), min(max(ta, tb), 1.0)
+        if hi - lo <= eps or tb == ta:
+            continue
+        slope = (bz - az) / (tb - ta)  # segment Z(t) = az + slope * (t - ta)
+        lines.append((lo, hi, z0 - (az - slope * ta), dz - slope))
+    cuts = sorted({0.0, 1.0, *(t for ln in lines for t in ln[:2])})
+    best = math.inf
+    for t0, t1 in zip(cuts, cuts[1:]):
+        if t1 - t0 <= eps:
+            continue
+        cover = [(c, m) for lo, hi, c, m in lines if lo <= t0 + eps and hi >= t1 - eps]
+        points = [t0, t1]
+        for k, (c1, m1) in enumerate(cover):
+            for c2, m2 in cover[k + 1:]:
+                if m1 != m2:
+                    t = (c2 - c1) / (m1 - m2)
+                    if t0 < t < t1:
+                        points.append(t)
+        for t in points:
+            drop = max(c + m * t for c, m in cover)
+            if drop < best:
+                best = drop
+    return best if math.isfinite(best) else 0.0
+
+
+_RING_TURN_EPS = 1e-9  # rad: outgoing directions closer than this at a shared vertex are ambiguous
+
+
+def _boundary_rings(verts: list, boundary: list[tuple[int, int]]) -> list[list[tuple[int, int]]] | None:
+    """Split directed boundary edges into simple closed rings, or ``None`` when ambiguous (#1224).
+
+    Every vertex must have as many outgoing as incoming boundary edges (else non-manifold ->
+    ``None``). At a vertex shared by several rings (a pinch, or a hole touching the outer ring)
+    the edge after an incoming one is the first outgoing edge clockwise from the reversed incoming
+    direction in XY: the planar-face walk, which keeps the surface on the left and never crosses
+    rings. A face walk can still pass a shared vertex twice (a hole touching the outer ring is
+    one walk), so each walk is cut at every repeated vertex into simple rings, which the caller
+    classifies by signed area. Zero-length or coinciding outgoing directions -> ``None``.
+    """
+    out: dict[int, list[int]] = {}
+    in_deg: dict[int, int] = {}
+    for a, b in boundary:
+        out.setdefault(a, []).append(b)
+        in_deg[b] = in_deg.get(b, 0) + 1
+    if set(out) != set(in_deg) or any(len(out[v]) != in_deg[v] for v in out):
+        return None
+
+    def direction(v: int, w: int) -> float | None:
+        dx, dy = verts[w][0] - verts[v][0], verts[w][1] - verts[v][1]
+        return math.atan2(dy, dx) if (dx or dy) else None
+
+    nxt: dict[tuple[int, int], tuple[int, int]] = {}
+    for p, v in boundary:
+        choices = out[v]
+        if len(choices) == 1:
+            nxt[(p, v)] = (v, choices[0])
+            continue
+        back = direction(v, p)
+        if back is None:
+            return None
+        turns = []
+        for w in choices:
+            ang = direction(v, w)
+            if ang is None:
+                return None
+            cw = (back - ang) % (2 * math.pi)
+            if cw <= _RING_TURN_EPS or cw >= 2 * math.pi - _RING_TURN_EPS:
+                return None  # leaves along the incoming edge: overlapping boundary
+            turns.append((cw, w))
+        turns.sort()
+        if turns[1][0] - turns[0][0] <= _RING_TURN_EPS:
+            return None
+        nxt[(p, v)] = (v, turns[0][1])
+    if len(set(nxt.values())) != len(nxt):
+        return None  # two incoming edges claim the same outgoing edge: not a planar boundary
+
+    rings: list[list[tuple[int, int]]] = []
+    seen: set[tuple[int, int]] = set()
+    for first in boundary:
+        if first in seen:
+            continue
+        walk = []
+        e = first
+        while e not in seen:
+            seen.add(e)
+            walk.append(e)
+            e = nxt[e]
+        if e != first:
+            return None
+        # Cut the closed walk at every repeated vertex into simple rings.
+        stack: list[tuple[int, int]] = []
+        pos = {first[0]: 0}
+        for a, b in walk:
+            stack.append((a, b))
+            if b in pos:
+                i = pos[b]
+                rings.append(stack[i:])
+                for x, _ in stack[i + 1:]:
+                    pos.pop(x, None)
+                del stack[i:]
+            else:
+                pos[b] = len(stack)
+        if stack:
+            return None
+    return rings
+
+
+def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
+    """``(status, depth)`` of the Ground perimeter skirt (GND-03), or ``None`` when unmeasurable.
+
+    ``status`` is ``"fail"`` for broken (empty/partial/non-finite) face data, ``"unmeasurable"``
+    when the mesh has no upward-facing surface or no surface perimeter to measure, and ``"ok"``
+    when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
+    straight down. Only outer boundary rings of every component count as perimeter; inner holes
+    (including building cut-outs) are excluded [D251]; rings sharing a welded vertex are split there
+    by ``_boundary_rings`` (#1224). Under every outer edge the mesh must carry
+    edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
+    perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
+    The drop is measured per perimeter edge
+    (top Z vs the lowest Z under the same XY segment), never at the convex-hull corners alone: a skirt on
+    two sides of a quad leaves the two other perimeter edges uncovered, which a corner-only
+    measure cannot see. The measured depth is the smallest drop over all perimeter edges; a
+    sloped surface with relief but no skirt fails (each perimeter edge has no lower copy -> drop
+    0), and the total Z-extent is deliberately NOT the measure (it passes relief with no skirt).
+    """
+    shape = mesh.get("face_geometry")
+    if not isinstance(shape, dict):
+        return None
+    verts = shape.get("vertices")
+    polys = shape.get("polygons")
+    if not isinstance(verts, list) or not verts:
+        return "fail", 0.0
+    if not isinstance(polys, list) or not polys:
+        return "fail", 0.0
+    for v in verts:
+        if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
+            return "fail", 0.0
+        if any(isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in v[:3]):
+            return "fail", 0.0
+    for poly in polys:
+        if not isinstance(poly, (list, tuple)) or len(poly) < 3:
+            return "fail", 0.0
+        for idx in poly:
+            if isinstance(idx, bool) or not isinstance(idx, int) or idx < 0 or idx >= len(verts):
+                return "fail", 0.0
+
+    # upward-facing surface polygons: the Ground top whose perimeter the skirt must extrude. A face is
+    # surface when its normal has an upward component above the skirt-tilt tolerance (nz > eps*|n|) and
+    # its material is not a skirt wall (*_Skirt). Interior step bands are steep (75-81.5 deg, nz/|n| ~
+    # 0.15-0.26) but still surface: dropping them turns their rim into a false "perimeter" with no lower
+    # copy (drop 0). Skirt walls are near-vertical (nz ~ 0) or *_Skirt, so both tests keep them out.
+    materials = shape.get("polygon_material")
+    if materials is not None and (not isinstance(materials, list) or len(materials) != len(polys)):
+        return "fail", 0.0
+    top = []
+    for idx, p in enumerate(polys):
+        nx, ny, nz = _polygon_normal(verts, p)
+        if nz <= _SKIRT_UP_EPS * math.hypot(nx, ny, nz):
+            continue
+        if materials is not None and str(materials[idx]).endswith("_Skirt"):
+            continue
+        top.append(p)
+    if not top:
+        return "unmeasurable", None
+
+    # Upward-facing surface polygons orient outer boundaries CCW in XY and holes CW.
+    # [D251]: only outer rings need skirts, including every disconnected component.
+    # Classify each directed ring, not by global containment/size (an island inside a
+    # different component's hole is still an outer boundary of its own component).
+    edge_count: dict[tuple[int, int], int] = {}
+    directed: dict[tuple[int, int], tuple[int, int]] = {}
+    for p in top:
+        n = len(p)
+        for k in range(n):
+            a, b = p[k], p[(k + 1) % n]
+            key = (a, b) if a < b else (b, a)
+            edge_count[key] = edge_count.get(key, 0) + 1
+            directed[key] = (a, b)
+    boundary = [directed[e] for e, c in edge_count.items() if c == 1]
+    if not boundary:
+        return "unmeasurable", None
+    rings = _boundary_rings(verts, boundary)
+    if rings is None:
+        return "fail", 0.0
+    perimeter = []
+    for ring in rings:
+        start = ring[0][0]
+        # Translate before shoelace accumulation to avoid cancellation at map coordinates.
+        x0, y0 = verts[start][:2]
+        area2 = math.fsum((verts[i][0] - x0) * (verts[j][1] - y0)
+                          - (verts[j][0] - x0) * (verts[i][1] - y0) for i, j in ring)
+        if not math.isfinite(area2) or area2 == 0:
+            return "fail", 0.0
+        if area2 > 0:
+            perimeter.extend(ring)
+    if not perimeter:
+        return "fail", 0.0
+
+    # every mesh edge with an XY extent (vertical edges have none), on a uniform XY grid; the skirt
+    # bottom lies under the perimeter XY but may span several collinear perimeter edges (#1133)
+    segs: list[tuple[float, float, float, float, float, float]] = []
+    seen: set[tuple[int, int]] = set()
+    total = 0.0
+    for p in polys:
+        n = len(p)
+        for k in range(n):
+            a, b = p[k], p[(k + 1) % n]
+            key = (a, b) if a < b else (b, a)
+            if key in seen:
+                continue
+            seen.add(key)
+            va, vb = verts[a], verts[b]
+            length = math.hypot(float(vb[0]) - float(va[0]), float(vb[1]) - float(va[1]))
+            if length <= _SKIRT_XY_TOL:
+                continue  # vertical edge: zero XY length, not a perimeter copy
+            segs.append((float(va[0]), float(va[1]), float(va[2]), float(vb[0]), float(vb[1]), float(vb[2])))
+            total += length
+    cell = max(total / len(segs), 100 * _SKIRT_XY_TOL) if segs else 1.0
+    grid: dict[tuple[int, int], list[int]] = {}
+    for s, seg in enumerate(segs):
+        for c in _skirt_cells(seg[0], seg[1], seg[3], seg[4], cell):
+            grid.setdefault(c, []).append(s)
+
+    best = math.inf
+    for i, j in perimeter:
+        vi, vj = verts[i], verts[j]
+        if _xy_key(vi[0], vi[1]) == _xy_key(vj[0], vj[1]):
+            drop = 0.0  # degenerate perimeter edge: no downward skirt
+        else:
+            near: set[int] = set()
+            for cx, cy in _skirt_cells(float(vi[0]), float(vi[1]), float(vj[0]), float(vj[1]), cell):
+                for ox in range(-2, 3):
+                    for oy in range(-2, 3):
+                        near.update(grid.get((cx + ox, cy + oy), ()))
+            drop = _skirt_edge_drop(vi, vj, [segs[s] for s in near])
+        if drop < 0.0:
+            drop = 0.0
+        if drop < best:
+            best = drop
+    if not math.isfinite(best):
+        return "fail", 0.0
+    return "ok", best
+
+
+def _ground_skirt_finding(meshes: list[dict], ucx: list[dict], src: str) -> Finding:
+    """GND-03: every Ground surface's perimeter is extruded down >= 1 m (reg p.7 §3.4, p.28 §3.7)."""
+    name = "ground skirt depth"
+    expected = f"perimeter polygons extruded down >= {SKIRT_MIN_M:g} m [GND-03] (reg p.7 §3.4, p.28 §3.7)"
+    pages = [7, 28]
+    geometry = [mesh for mesh in meshes if mesh not in ucx]
+    ground = [m for m in geometry if m["name"].endswith("_Ground")]
+    if not ground:
+        return _f("not_run", name, f"{src}: no Ground surface mesh", expected, pages, src)
+    broken: list[str] = []
+    unmeasurable: list[str] = []
+    ok: list[tuple[str, float]] = []
+    for mesh in ground:
+        probe = _skirt_perimeter_drop(mesh)
+        if probe is None:
+            unmeasurable.append(mesh["name"])
+        elif probe[0] == "fail":
+            broken.append(mesh["name"])
+        elif probe[0] == "unmeasurable":
+            unmeasurable.append(mesh["name"])
+        else:
+            depth = probe[1]
+            assert depth is not None, "ok status must carry a numeric depth"
+            ok.append((mesh["name"], depth))
+    if broken:
+        shown = ", ".join(broken[:5])
+        return _f("fail", name, f"{src}: broken face geometry: {shown}", expected, pages, src)
+    failing = sorted((n, d) for n, d in ok if d < SKIRT_MIN_M)
+    if failing:
+        worst_n, worst_d = failing[0]
+        tail = f" (and {len(failing) - 1} more)" if len(failing) > 1 else ""
+        return _f("fail", name, f"{src}: {worst_n} perimeter drop {worst_d:.3f} m{tail}",
+                  expected, pages, src, measured=worst_d, threshold=SKIRT_MIN_M,
+                  margin=signed_margin(worst_d, SKIRT_MIN_M, "min"))
+    if unmeasurable:
+        shown = ", ".join(unmeasurable[:5])
+        tail = f" (and {len(unmeasurable) - 1} more)" if len(unmeasurable) > 1 else ""
+        return _f("not_run", name,
+                  f"{src}: Ground mesh(es) without measurable face geometry: {shown}{tail}",
+                  expected, pages, src)
+    best = min(d for _, d in ok)
+    return _f("pass", name, f"{src}: perimeter drop >= {SKIRT_MIN_M:g} m (min {best:.3f} m)",
+              expected, pages, src, measured=best, threshold=SKIRT_MIN_M,
+              margin=signed_margin(best, SKIRT_MIN_M, "min"))
+
+
+_MAF_FLORA_SUFFIXES = ("_GroundEl", "_GroundElGlass", "_Flora")
+MAF_FLORA_SINK_M = 0.1  # [D095]/[D100]: MAF and Flora sink 10 cm into the Ground; that band is exempt
+
+
+def _maf_flora_triangles(mesh: dict) -> tuple[list, list] | tuple[None, str]:
+    """``(verts, tris)`` of a MAF/Flora mesh fan-triangulated from ``face_geometry``.
+
+    Returns ``(None, reason)`` when the mesh has no measurable face geometry, so the caller can
+    report ``not_run`` naming the mesh instead of silently skipping it.
+    """
+    shape = mesh.get("face_geometry")
+    if not isinstance(shape, dict):
+        return None, "no face_geometry"
+    verts = shape.get("vertices")
+    polys = shape.get("polygons")
+    if not isinstance(verts, list) or not verts:
+        return None, "no vertices"
+    if not isinstance(polys, list) or not polys:
+        return None, "no polygons"
+    for v in verts:
+        if isinstance(v, bool) or not isinstance(v, (list, tuple)) or len(v) < 3:
+            return None, "malformed vertices"
+        if any(isinstance(c, bool) or not isinstance(c, (int, float)) or not math.isfinite(c) for c in v[:3]):
+            return None, "non-finite vertices"
+    tris = []
+    for poly in polys:
+        if not isinstance(poly, (list, tuple)) or len(poly) < 3:
+            return None, "malformed polygons"
+        for idx in poly:
+            if isinstance(idx, bool) or not isinstance(idx, int) or idx < 0 or idx >= len(verts):
+                return None, "invalid polygon indices"
+        for k in range(1, len(poly) - 1):
+            tris.append((poly[0], poly[k], poly[k + 1]))
+    if not tris:
+        return None, "no triangles"
+    return [tuple(float(c) for c in v[:3]) for v in verts], tris
+
+
+def _clip_tri_above(tri: list, band_z: float) -> list[list]:
+    """Part of triangle ``tri`` (three xyz) at or above ``band_z``, as 0..2 triangles."""
+    above = [i for i in range(3) if tri[i][2] >= band_z]
+    if len(above) == 3:
+        return [list(tri)]
+    if not above:
+        return []
+
+    def cross(i, j):
+        a, b = tri[i], tri[j]
+        t = (band_z - a[2]) / (b[2] - a[2])
+        return (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]), band_z)
+
+    if len(above) == 1:
+        i = above[0]
+        others = [j for j in range(3) if j != i]
+        return [[tri[i], cross(i, others[0]), cross(i, others[1])]]
+    below = [j for j in range(3) if j not in above][0]
+    a, b = [j for j in range(3) if j != below]
+    return [[tri[a], cross(a, below), cross(b, below)], [tri[a], cross(b, below), tri[b]]]
+
+
+def _point_in_closed_mesh(point, verts, tris) -> bool | None:
+    """Exact ray parity, independent of face winding; None for ambiguous rays.
+
+    Retry edge/vertex hits with different directions, never count a shared edge twice.
+    Fractions preserve the supplied float coordinates without a scale-dependent epsilon.
+    A point on the surface is not strict containment (touch remains exempt).
+    """
+    def sub(a, b):
+        return tuple(x - y for x, y in zip(a, b))
+
+    def dot(a, b):
+        return sum(x * y for x, y in zip(a, b))
+
+    def cross(a, b):
+        return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2],
+                a[0] * b[1] - a[1] * b[0])
+
+    p = tuple(Fraction(c) for c in point)
+    vv = [tuple(Fraction(c) for c in v) for v in verts]
+    for direction in ((1, 0, 0), (0, 1, 0), (0, 0, 1), (1, 2, 3), (3, 1, 2)):
+        hits, ambiguous = 0, False
+        for i, j, k in tris:
+            a, b, c = vv[i], vv[j], vv[k]
+            e1, e2, s = sub(b, a), sub(c, a), sub(p, a)
+            h = cross(direction, e2)
+            det = dot(e1, h)
+            if det == 0:
+                # Coplanar rays cannot certify parity; another direction may.
+                if dot(cross(e1, e2), s) == 0:
+                    ambiguous = True
+                    break
+                continue
+            u = dot(s, h) / det
+            q = cross(s, e1)
+            v = dot(direction, q) / det
+            t = dot(e2, q) / det
+            if u < 0 or v < 0 or u + v > 1 or t < 0:
+                continue
+            if t == 0:
+                return False
+            if u == 0 or v == 0 or u + v == 1:
+                ambiguous = True
+                break
+            hits += 1
+        if not ambiguous:
+            return hits % 2 == 1
+    return None
+
+
+def _hull_intersects_mesh_above(hull, verts: list, tris: list, band_z: float) -> bool | None:
+    """True if the convex ``hull`` (verts, tris) overlaps any mesh triangle at or above ``band_z``.
+
+    Each triangle is clipped to the half-space ``z >= band_z`` (the sunk band [D095]/[D100] is not
+    coverage) and tested against the hull with the SAT separation already used by the UCX pair
+    checks; a real penetration (< -OVERLAP_EPS_M) is an intersection, mere touching is not.
+    If no surface crosses, test hull vertices strictly above the band for volume containment.
+    Return None when closure or ray parity cannot certify the remaining volume check.
+    """
+    hv, ht = hull
+    for tri in tris:
+        for ctri in _clip_tri_above([verts[i] for i in tri], band_z):
+            if sat_separation((hv, ht), (ctri, [(0, 1, 2)])) < -OVERLAP_EPS_M:
+                return True
+    # Surface crossings do not detect a hull wholly enclosed by the element.
+    # A point strictly inside the volume is strictly inside the mesh AABB, so the AABB prefilter
+    # skips far meshes (open Flora alpha cards included) without a parity test (#1192).
+    lo = [min(v[i] for v in verts) for i in range(3)]
+    hi = [max(v[i] for v in verts) for i in range(3)]
+    candidates = [v for v in hv if v[2] > band_z and all(lo[i] < v[i] < hi[i] for i in range(3))]
+    if not candidates:
+        return False
+    # Closure is needed only for volume parity; proven surface crossings above still fail.
+    unique = {v: i for i, v in enumerate(dict.fromkeys(verts))}
+    mv = list(unique)
+    mt = [tuple(unique[verts[i]] for i in tri) for tri in tris]
+    if not is_closed(mt):
+        return None
+    uncertain = False
+    for point in candidates:
+        inside = _point_in_closed_mesh(point, mv, mt)
+        if inside is True:
+            return True
+        uncertain |= inside is None
+    return None if uncertain else False
+
+
+def _ucx_maf_flora_finding(ucx: list[dict], meshes: list[dict], src: str) -> list[Finding]:
+    """FLO-15 / MAF-22: the Ground UCX must not intersect a MAF or Flora element.
+
+    MAF (``_GroundEl``) and Flora (``_Flora``) are excluded from Ground collision (reg p.36 §13.2),
+    and both sink 10 cm into the Ground [D095]/[D100], so only the part of a MAF/Flora element
+    *above* its 10 cm sunk band is judged. Each supported (closed, convex, non-degenerate) UCX
+    piece is tested against that part of every MAF/Flora mesh with a real hull-triangle SAT
+    intersection test and closed-mesh volume containment; a proven overlap is a blocking fail.
+    Open meshes or ambiguous containment are ``not_run`` (each mesh named once) unless a surface
+    crossing is proven; containment is tested only for UCX vertices strictly inside the mesh
+    bounding box, so an open mesh away from every UCX passes (#1192).
+    A MAF/Flora mesh without measurable
+    face geometry is ``not_run`` naming the mesh, never a silent pass; an unsupported UCX piece is
+    ``not_run`` too and never hides a proven intersection.
+    """
+    name = "UCX vs MAF/Flora intersection"
+    expected = ("Ground UCX does not intersect MAF or Flora above the 10 cm sunk band "
+                "[D095]/[D100] (reg p.36 §13.2) [FLO-15, MAF-22]")
+    pages = [36]
+    maf_flora = [m for m in meshes if m["name"].endswith(_MAF_FLORA_SUFFIXES)]
+    if not maf_flora:
+        return []
+    unmeasurable, measurable = [], []
+    for m in maf_flora:
+        geom = _maf_flora_triangles(m)
+        if geom[0] is None:
+            unmeasurable.append((m["name"], geom[1]))
+        else:
+            measurable.append((m, geom[0], geom[1]))
+    pieces = [_ucx_piece(mesh) for mesh in ucx]
+    supported = [p for p in pieces if p["reason"] is None and p["hull"] is not None]
+    unresolved = [p["name"] for p in pieces if p["reason"] is not None]
+    offenders, ambiguous = [], {}
+    for p in supported:
+        for m, mverts, mtris in measurable:
+            band_z = min(v[2] for v in mverts) + MAF_FLORA_SINK_M
+            intersection = _hull_intersects_mesh_above(p["hull"], mverts, mtris, band_z)
+            if intersection is True:
+                offenders.append((p["name"], m["name"]))
+                break
+            if intersection is None:
+                ambiguous.setdefault(id(m), m["name"])
+    if offenders:
+        shown = ", ".join(f"{a} intersects {b}" for a, b in offenders[:5])
+        return [_f("fail", name, f"{src}: {len(offenders)} UCX piece(s) intersect a MAF/Flora element: {shown}",
+                   expected, pages, src)]
+    if unmeasurable or ambiguous or unresolved:
+        notes = []
+        if unmeasurable:
+            notes.append(f"{len(unmeasurable)} MAF/Flora without measurable geometry: "
+                         f"{', '.join(f'{n} ({r})' for n, r in unmeasurable[:5])}")
+        if ambiguous:
+            names = list(ambiguous.values())
+            notes.append(f"{len(names)} MAF/Flora open or ambiguous (a UCX vertex lies inside the mesh "
+                         f"bounding box; containment needs a closed mesh and an unambiguous ray): "
+                         f"{', '.join(names[:5])}")
+        if unresolved:
+            notes.append(f"{len(unresolved)} unsupported UCX piece(s): {unresolved[:5]}")
+        return [_f("not_run", name, f"{src}: {'; '.join(notes)}", expected, pages, src)]
+    return [_f("pass", name, f"{src}: no UCX piece intersects a MAF/Flora element", expected, pages, src)]
+
+
+def main_glass_findings(meshes: list[dict], stem: str, src: str) -> list[Finding]:
+    """VPM OKS main FBX: the glass object and its materials (#1029; DER-18/19; reg p.33 §10.4.2, p.34 §10.4.4).
+
+    Glass is mandatory where the building has glazing (reg 2.8, 2.8.1: one glass object), so a Main without
+    `SM_{Address}_MainGlass` is `review` (a building without glazing is valid), never a silent pass. Glass
+    materials are `M_{Address}_MainGlass_N`, N 1..7 (reg 2.8.2: at most 7); names absent from the readback: review."""
+    if not stem.startswith("SM_") or stem.endswith(("_Light", "_Ground")):
+        return []
+    address = stem[3:]
+    main, glass = f"SM_{address}_Main", f"SM_{address}_MainGlass"
+    names = {m["name"]: m for m in meshes}
+    out = []
+    if glass not in names:
+        status = "review" if main in names else "not_run"
+        out.append(_f(status, "MainGlass object", f"{src}: no {glass}" + ("" if main in names else f" and no {main}"),
+                      f"{glass} when the building has glazing (one glass object)", [33], src))
+        return out
+    out.append(_f("pass", "MainGlass object", f"{src}: {glass}", f"{glass}", [33], src))
+    mats = names[glass].get("materials")
+    if mats is None:
+        out.append(_f("review", "MainGlass materials", f"{src}: material names not in the readback",
+                      f"M_{address}_MainGlass_1..7", [34], src))
+        return out
+    pattern = re.compile(rf"^M_{re.escape(address)}_MainGlass_([1-7])$")
+    bad = [m for m in mats if not (m and pattern.match(m))]
+    out.append(_f("fail" if bad or not mats else "pass", "MainGlass materials",
+                  f"{src}: {bad or mats or 'no material'}", f"M_{address}_MainGlass_1..7", [34], src))
+    return out
+
+
+def _color_layer_names(attrs) -> list[str] | None:
+    """Names of readback color attributes; None when the value is not a list of {name: str} dicts."""
+    if not isinstance(attrs, list):
+        return None
+    names = []
+    for attr in attrs:
+        if not isinstance(attr, dict) or not isinstance(attr.get("name"), str):
+            return None
+        names.append(attr["name"])
+    return names
+
+
+def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
+    """V005 'color attributes' (reg 2026 req 4.1.1, SINTEZ lp_color_attributes / check_color_attributes).
+
+    The regulation only recommends removing color attributes (they break the UV display in 3ds Max),
+    so any layer is 'review', not 'fail'. Every mesh, UCX included, is checked: SINTEZ counts the file.
+    A mesh without the readback key (old readback JSON), a malformed value or no meshes at all is
+    not_run, never pass.
+    """
+    expected = "no color attributes (reg 4.1.1: recommended to remove)"
+    if not meshes:
+        return _f("not_run", "color attributes", f"{src}: no meshes in readback", expected, [], src)
+    unknown, found = [], {}
+    for m in meshes:
+        names = _color_layer_names(m.get("color_attributes"))
+        legacy = m.get("legacy_vertex_colors", 0)
+        legacy_ok = isinstance(legacy, int) and not isinstance(legacy, bool) and legacy >= 0
+        if names is None or not legacy_ok:
+            unknown.append(m["name"])
+            continue
+        if names or legacy:
+            found.setdefault(m["name"], []).extend(names or [f"<{legacy} legacy vertex_colors>"])
+    if unknown:
+        return _f("not_run", "color attributes",
+                  f"{src}: readback has no color_attributes for {len(unknown)} mesh(es): {unknown[:5]}",
+                  expected, [], src, data={"unknown": unknown})
+    count = sum(len(v) for v in found.values())
+    if not found:
+        return _f("pass", "color attributes", f"{src}: 0 color attributes on {len(meshes)} mesh(es)", expected,
+                  [], src, measured=0, threshold=0, data={"objects": {}})
+    labels = [f"{obj}:{name}" for obj, names in found.items() for name in names]
+    return _f("review", "color attributes", f"{src}: {count} on {len(found)} object(s): {labels[:10]}", expected,
+              [], src, measured=count, threshold=0, data={"objects": found})
 
 
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
-                   ground_area_m2=None, footprint_holes=None) -> dict[str, list[Finding]]:
+                   ground_area_m2=None, footprint_holes=None, diffuse_px=None,
+                   ground_materials=None, export_meta=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
     Ground triangle count (None keeps it at 'review'; a non-finite or non-positive value raises ValueError)
     and is the expected top-down area of the footprint-coverage finding (missing -> not_run, never pass).
     footprint_holes: optional list of XY rings, one polygon per OKS footprint hole. Ground coverage
-    inside that region is a separate finding; None leaves it not_run and never a pass of the hole claim."""
+    inside that region is a separate finding; None leaves it not_run and never a pass of the hole claim.
+    diffuse_px: VPM {(slot, udim): side px} of the archive Diffuse PNGs for V009 texel density.
+    ground_materials: optional allow-list (exact names or fnmatch globs) of Ground materials; only matching
+    faces feed the footprint area and hole checks. None keeps every non-UCX render face."""
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
+    if ground_materials is not None:
+        ground_materials = check_ground_materials(ground_materials)
     src = Path(rb["source"]).name
-    out = {"V003": [], "V004": [], "V008": [], "V010": [], "V013": [], "V006": [], "V002": []}
+    out = {"V003": [], "V004": [], "V008": [], "V009": [], "V010": [], "V013": [], "V006": [], "V002": []}
     if not rb.get("readback_ok"):
         out["V003"].append(_f("fail", "FBX readback", rb.get("error", "no meshes"), "importable FBX with meshes", [4, 24], src))
         return out
     meshes = rb["meshes"]
+    if role != "light":
+        out["V013"].append(z_bounds_finding(meshes, export_meta, src))
     ucx = [m for m in meshes if m["name"].upper().startswith("UCX_")]
     out["V002"].extend(_v002_findings(rb, meshes, src))
+    # V005: color attributes (reg 4.1.1, SINTEZ lp_color_attributes); review only, the regulation recommends removal
+    out.setdefault("V005", []).append(color_attribute_finding(meshes, src))
+    if kind == 'npm' and role != 'light':
+        # NPM opaque materials carry their texture set: reg p.8 §4.4, p.9 §4.5.
+        # Never apply this to VPM: its FBX paths MUST be cleared (reg p.30 §4.2).
+        opaque = [m for m in meshes if m not in ucx and not m['name'].endswith(GLASS_SUFFIXES)]
+        if opaque:
+            image_names = {i.get('name') for i in rb.get('images', [])}
+            facts, bad_materials = {}, []
+            for material in rb.get('materials') or []:
+                name = material.get('name')
+                if name in facts:
+                    bad_materials.append(f'duplicate material facts: {name}')
+                facts[name] = material.get('maps') or []
+            for m in opaque:
+                slots = m.get('materials') or []
+                if not slots:
+                    bad_materials.append(f"{m['name']}: no material assignment")
+                geometry = m.get('face_geometry', {})
+                if 'polygon_material' in geometry:
+                    assigned = geometry['polygon_material']
+                    polygons = geometry.get('polygons', [])
+                    if not isinstance(assigned, list):
+                        bad_materials.append(f"{m['name']}: unsupported polygon material table")
+                    else:
+                        wrong = [(i, name) for i, name in enumerate(assigned) if not name or name not in slots]
+                        if len(assigned) != len(polygons) or wrong:
+                            bad_materials.append(f"{m['name']}: unmapped polygon materials {wrong[:5]}; "
+                                                 f"{len(wrong)} invalid, {len(assigned)} assignments for {len(polygons)} polygons")
+                for name in slots:
+                    maps = facts.get(name, [])
+                    diffuse = [item.get('image') for item in maps if item.get('socket') in _DIFFUSE_SOCKETS]
+                    if not name or not diffuse or any(not image or image not in image_names for image in diffuse):
+                        bad_materials.append(f"{m['name']}: unmapped diffuse for material {name!r}")
+            out['V005'].append(_f('fail' if bad_materials else 'pass', 'material assignments',
+                                  f"{src}: {bad_materials or 'every opaque material has a bound diffuse image'}",
+                                  'each NPM opaque material resolves to its diffuse texture; glass excluded',
+                                  [8, 9], src))
     tris = sum(m["triangles"] for m in meshes if m not in ucx)  # collision is excluded (reg p.28 §3.9)
 
     # V003: triangulated on export, triangle limits, no foreign objects (reg p.6-8, 28-29)
@@ -928,7 +1803,9 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V003"].append(_f(status, "triangle count", observed, f"<= {limit}", [7, 28, 29], src, conflicts, data,
                               measured=measured, threshold=threshold_n, margin=margin))
         if role == "ground":
-            out["V003"].extend(_ground_footprint_findings(meshes, ucx, src, ground_area_m2, footprint_holes))
+            out["V003"].extend(_ground_footprint_findings(meshes, ucx, src, ground_area_m2, footprint_holes,
+                                                         ground_materials))
+            out["V003"].append(_ground_skirt_finding(meshes, ucx, src))
     foreign = [o for o in rb["other_objects"] if not (role == "light" and o["type"] in ("LIGHT", "EMPTY"))]
     if foreign:
         # Any non-mesh object, lights included, fails (conflict #14 decided 2026-10-07 [D017] as the checker)
@@ -975,6 +1852,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                                   f"{src}: {ucx_tris} UCX for {tris} model triangles", f"<= {budget}", [36, 37], src))
             out["V010"].extend(_ucx_pair_findings(ucx, src))
             out["V010"].append(_ucx_shape_finding(ucx, src))
+            if role == "ground":
+                out["V010"].extend(_ucx_maf_flora_finding(ucx, meshes, src))
             out["V010"].append(_f("not_run", "UCX coverage and offsets", "coverage of the model, offsets",
                                   "reg p.34-37", [34, 37], src))
         # V008: one UV channel, no mirrored islands, glass only in 1001 (reg p.31-32, 39)
@@ -985,9 +1864,11 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V008"].append(_f("fail" if mirrored else "pass", "mirrored islands", f"{src}: {mirrored or 'none'}", "no mirrored UV", [31], src))
         if glass:
             out["V008"].append(_f("fail", "glass tile", f"{src}: {glass}", "glass only in UDIM 1001", [31, 32], src))
-        # Texel density is the same 512..1706 px/m band as twinqa.uv (reg p.32). It does not
-        # change the channel / mirror / glass verdicts above.
-        out["V008"].extend(_texel_density_findings(rb, meshes, ucx, src))
+        # V009: texel density 512..1706 px/m (reg p.31-32 §6, [D160]); diffuse side per tile from the archive
+        placeholder = profile.get("textures", {}).get("flat_placeholder", {}).get("size_px")
+        out["V009"].extend(_texel_density_findings(rb, meshes, ucx, src, diffuse_px, placeholder))
+        if role == "oks":
+            out.setdefault("V012", []).extend(main_glass_findings(meshes, Path(rb["source"]).stem, src))
         # V013 (reg p.32-33 §9.3-9.5; conflict #19 decided 2026-10-07 [D018] as the checker)
         out["V013"].extend(_pivot_findings(meshes, ucx, src))
         out["V013"].append(_f("not_run", "MSK-77 point", "GeoJSON point vs survey coordinates and project zero",
@@ -998,12 +1879,26 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",
                               "PNG embedded in FBX", [9], src))
+        # Reg p.9 §5.2: no NPM atlas side exceeds 2048 px. Readback dimensions
+        # complement (never replace) PNG-byte checks and area-specific smaller limits.
+        images = rb.get('images', [])
+        if images:
+            bad_sizes = []
+            for image in images:
+                size = image.get('size')
+                if (not isinstance(size, (list, tuple)) or len(size) != 2
+                        or any(type(s) is not int or not 0 < s <= 2048 for s in size)):
+                    bad_sizes.append((image.get('name', '<unnamed image>'), size))
+            out["V006"].append(_f('fail' if bad_sizes else 'pass', 'texture dimensions',
+                                  f"{src}: {bad_sizes or 'all measured sides <= 2048 px'}",
+                                  'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate',
+                                  [9], src))
     if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():
             out.setdefault(stage_id, []).extend(findings)
 
     # V012: internal mesh names and UCX index grammar (reg p.11-12 §3.3, p.33-34 §4.2) -> twinqa.naming
-    out["V012"] = mesh_name_findings([m["name"] for m in meshes], kind, role, Path(rb["source"]).stem,
+    out["V012"] = out.get("V012", []) + mesh_name_findings([m["name"] for m in meshes], kind, role, Path(rb["source"]).stem,
                                      profile["naming"]["max_characters"], src)
     return out

@@ -1,0 +1,18 @@
+{
+ "manifest": "external-inputs/1",
+ "registry": "job-sources/1",
+ "job": "KPP1",
+ "asset_store": "G:/Мой диск/AGR-assets/",
+ "why": "Source registry (#1202, gap G2): where the customer sources of KPP1 live, with SHA-256. Customer DWGs are not committed (rule 57). #1239: the three АС.03 DWGs were copied byte-equal from C:/Users/artsafro/Downloads/ (original_path) into the object store G:/Мой диск/AGR-assets/KPP1/source/ with SHA256SUMS.txt; the originals were hashed before and after (unchanged). Hashes equal jobs/KPP1/cold-run-1172/inputs-manifest.json.",
+ "copied_from": "jobs/KPP1/cold-run-1172/inputs-manifest.json",
+ "files": [
+  {"path": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg", "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648", "location": "asset-store", "folder": "G:/Мой диск/AGR-assets/KPP1/source/", "kind": "customer-source", "original_path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg", "sheet": "L01 facades 1-4, 4-1, А-В, В-А", "units": "mm ($INSUNITS 4)", "role": "facade heights, openings (proposed)"},
+  {"path": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg", "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2", "location": "asset-store", "folder": "G:/Мой диск/AGR-assets/KPP1/source/", "kind": "customer-source", "original_path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg", "sheet": "L02 colour facades", "units": "mm ($INSUNITS 4)", "role": "finishes"},
+  {"path": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg", "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469", "location": "asset-store", "folder": "G:/Мой диск/AGR-assets/KPP1/source/", "kind": "customer-source", "original_path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg", "sheet": "L03 plan at 0.000", "units": "mm ($INSUNITS 4)", "role": "plan contour (plan_from_dxf, hatch)"},
+  {"path": "G:/Мой диск/AGR-assets/tec26/album/TEC26_na_RR_1.pptx", "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac", "location": "asset-store", "folder": "G:/Мой диск/AGR-assets/tec26/album/", "sheet": "ИД slides 25-30 (STATE.md)", "units": "n/a (images)", "role": "finish bands, cassette module, RAL", "kind": "customer-source"}
+ ],
+ "repo_inputs": [
+  {"path": "jobs/KPP1/object.json", "sha256": "a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c", "kind": "cached-revit-observation", "units": "m", "role": "Levels 0.000/3.900/7.909 and Revit frame; R1 authority D238/D254. Original RVT hash unavailable, not a fresh RVT readback. Repository files are direct job.yaml inputs, not absolute external-manifest files."}
+ ],
+ "synthetic": false
+}

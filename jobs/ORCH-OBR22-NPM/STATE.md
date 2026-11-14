@@ -1,3 +1,7 @@
+Current run: pilot-20261001-004/attempt-001 with supplemental review native-003; technical transfer pass, visual acceptance pending.
+Source: Approved inputs (7/7 unchanged SHA), pilot-spec.json; docs/organization/local-orchestration/EXECUTION.md records exact paths.
+Next gate: Visual acceptance of the new transfer, or a separately scoped full OKS job; delivery_passed=false.
+
 # ORCH-OBR22-NPM — локальная интеграция и пилот
 
 01.10.2026. HEAD d7ecdfd + dirty checkout, чужие изменения сохранены.

@@ -70,11 +70,27 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
     (`outputs/measure-v002/bend_rings/`), builder-ready top parts schema (`outputs/measure-v002/top_parts/`).
 
 - **P14** (Codex) Generalise the MAF generator (#790, model-maf step 3): `tools/library/maf_gen_bench.py` (pure plan
-  run + sections -> quad mesh, forms `slab_on_posts` and `clad_box`, board-pattern face UV), writer
+  run + sections -> quad mesh, form `clad_box` only since #819, board-pattern face UV), writer
   `tools/blender/maf_gen_bench_build.py`, checks `tools/library/maf_gen_bench_checks.py`; first family «Верона»
   (Vatutino `*T3508/1-10`, `jobs/VATUTINO-SITE/maf/verona-generator.md`). Move into a family registry (one form per
   MAF family: canopy, pergola, workout frame, bar counter …) with the synthetic straight / L / U tests kept as
   regression; keep the ten Vatutino rows as the acceptance set.
+- **P15** (Codex) Scene analyser for reduction: rank objects by size, find near-identical meshes (same topology,
+  transform-invariant) and propose instances; report before any change. Idea from the «3ds Max» Telegram group
+  (`docs/research/telegram-3dsmax-chat-2026-11.md`, accepted by the user 2026-11-10 [D237]).
+- **P16** (Claude) Evaluate FenceFit03.dlm (RailClone sub-evenly segments fitted to terrain) for Ground / MAF
+  fences: deterministic result, collapse to mesh, FBX readback; same research note.
+- **P17** (later) Own asset catalog (models, materials, textures, previews, relink without Max); Project Manager
+  covers it today. Same research note.
+- **P18** (Codex) Flora catalogue path for built stars (#1191, [D253]). The three accepted Telegram stars
+  (`library/flora/stars-telegram-v001.json`, `C:/x/flora-telegram-stars/v002`, ids 410-412 proposed) are not in
+  `library/flora/catalogue.json`. To get them in: (1) a generator route for built stars without an audit-scene entry,
+  or the audit run by `experiments/flora-library-audit/inspect_scene.py` on a labelled v004 scene; (2) flora-library
+  v004 = a copy of v003 plus the 6 objects (`<Latin>_NPM` / `_VPM`, maps on the approved G: paths), headless via
+  `dcc_batch.py max`, with the library version taken out of code (`LIBRARY_FILE` in `flora_catalogue.py`,
+  `rebind_flora_library_maps.py`, `build_flora_npm_light.py`, `tests/test_flora_library_rebind.py`) into one config;
+  (3) restore `C:/x/flora-library` on this machine or point the tools at the G: copy
+  `G:\Мой диск\AGR-assets\flora\v003\flora-library-v003.max`. Then regenerate the catalogue.
 
 ## Engine gaps — mixed mode (user decision 2026-10-11 [D050]; historical `archive/2026-11:docs/HARNESS_PLAN.md` §16)
 
@@ -138,6 +154,8 @@ Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §15 (user decision 2026
 - **IN8** Acceptance cases: K01 full (Revit + FBX + PDF) matches the existing specs within the K01
   tolerances, Revit / mesh contradictions listed; B02 images give an estimated spec-draft and the anchor
   question.
+- **IN9** Raster floor plan → wall outline by contrast (agent reading + scale anchor, as IN4); idea from the
+  «3ds Max» Telegram group (`docs/research/telegram-3dsmax-chat-2026-11.md`, accepted 2026-11-10).
 
 ## QA (default owner Codex)
 
@@ -158,6 +176,9 @@ Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §15 (user decision 2026
   (a shared set of mirrored twin OKS named after the twin, 014 vs 013 [D156]; own-colour padding under 8 px) were
   not accepted; settle the rule with Artem before the validator fails on it
   (`docs/deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md`) [D185]. Owner: Claude (rules), Codex (validator).
+- **Q9** Live smoke tests of AGR Tools / `agr-mcp` in a pinned 3ds Max after each change (the agent starts Max,
+  runs the tools, reads results back, closes Max). Idea from `docs/research/telegram-3dsmax-chat-2026-11.md`
+  (accepted 2026-11-10).
 
 ## Unreal and IFC
 
@@ -284,5 +305,8 @@ The harness spec upstream#118 tail (freeze `archive/2026-11:docs/HARNESS_PLAN.md
 - **H12** Branches not merged on purpose (user, 2026-10-07 [D006]): `claude/npm-models-school-kpp-ec9ced`
   (BUTOVSKAYA-NPM, work in progress), `claude/modest-ptolemy-684fb7` and `feature/kpp1-ground` (TEC26
   ground, adds `ezdxf`). Owner: user decides when to resume.
+- **H14** (Claude) Update `3dsmax-mcp` v1.7.5 → v1.7.8 (user 2026-11-10 [D237]): close 3ds Max and every agent client
+  that runs the server, `git checkout v1.7.8`, `uv sync`, `uv run python install.py --tool-profile full`, keep
+  `safe_mode = true`, rerun the read-only smoke, update `CAPABILITIES.md`.
 - **H13** (Claude) Rerun the merged `fix/export-safety` scripts on real data: KPP1 full `run_all.sh` on a new
   version, PSU275 v003/v004 re-assembly with `assemble_body_roof.py`; so far only synthetic tests pass.

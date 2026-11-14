@@ -1,0 +1,52 @@
+{
+  "sheet": "KNS V1 floor plan",
+  "dimensions": [
+    {
+      "handle": "1EF9",
+      "value_mm": 2849.999999999929,
+      "angle_deg": 339.0760739263464,
+      "reason": "non_cardinal_chain_unsupported"
+    },
+    {
+      "handle": "1EFA",
+      "value_mm": 7499.999999999864,
+      "angle_deg": 339.0760739263464,
+      "reason": "non_cardinal_chain_unsupported"
+    },
+    {
+      "handle": "1EFB",
+      "value_mm": 2850.000000002983,
+      "angle_deg": 339.0760739263464,
+      "reason": "non_cardinal_chain_unsupported"
+    },
+    {
+      "handle": "1EFE",
+      "value_mm": 4850.000026926457,
+      "angle_deg": 69.0760739259743,
+      "reason": "non_cardinal_chain_unsupported"
+    },
+    {
+      "handle": "1EFF",
+      "value_mm": 4649.999979223649,
+      "angle_deg": 69.0760739259743,
+      "reason": "non_cardinal_chain_unsupported"
+    },
+    {
+      "handle": "1F00",
+      "value_mm": 2949.957571552423,
+      "angle_deg": 69.0760739259743,
+      "reason": "non_cardinal_chain_unsupported"
+    }
+  ],
+  "found": 0,
+  "correct": 0,
+  "wrong": 0,
+  "truth": 6,
+  "recall": 0.0,
+  "precision": null,
+  "hashes": {
+    "KNS.dwg": "30e7cea0125781bdc09dfcadcbe389bd2c07cb7a4d04d15e4a760e042c5a89bd",
+    "KNS.dxf": "259993a826d47e254227db4619f05f3a3a705cc1213289082b0206baec5b445d",
+    "KNS.pdf": "a7dc8c1aefdca5408a08fa7db8c686a3442dba58b603bb890df5ced2327ed8df"
+  }
+}

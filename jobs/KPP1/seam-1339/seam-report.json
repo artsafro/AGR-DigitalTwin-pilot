@@ -1,0 +1,166 @@
+{
+  "etalon": "C:\\x\\ev_t_69ac6dc4\\kpp1-copy\\SM_Kpp_1.fbx",
+  "issue": 1339,
+  "variants": [
+    {
+      "variant": "welded",
+      "steps": {
+        "etalon_dump": "done",
+        "spec": {
+          "status": "done",
+          "questions": 31
+        },
+        "etalon_self": {
+          "passed": false,
+          "failed": [
+            "mesh",
+            "opening_planes",
+            "material_ids",
+            "orientation",
+            "horizontal_faces"
+          ],
+          "not_measured": []
+        },
+        "model": "done",
+        "export": "done",
+        "readback": "done",
+        "model_check": {
+          "passed": false,
+          "failed": [
+            "bbox",
+            "silhouettes",
+            "mesh"
+          ],
+          "not_measured": []
+        }
+      },
+      "stopped": null,
+      "roof_z": 7.909,
+      "readback": {
+        "quads": 2361,
+        "polygons": 2361,
+        "ngons": 0,
+        "triangles": 4722,
+        "roof_band_triangles": 1274,
+        "t_junctions": 0
+      },
+      "mesh": {
+        "status": "fail",
+        "value": {
+          "non_manifold": 0,
+          "non_manifold_vertices": 0,
+          "boundary": 132,
+          "open_loops_not_allowed": 0,
+          "slabs_not_inset": 1,
+          "overlaps": 0,
+          "ngons": 0
+        },
+        "boundary_edges": 132,
+        "open_loops": [
+          {
+            "kind": "bottom",
+            "edges": 132,
+            "z": -0.0,
+            "closed": true,
+            "allowed": true,
+            "embed_m": null,
+            "gap_m": null
+          }
+        ]
+      },
+      "failed": [
+        "bbox",
+        "silhouettes",
+        "mesh"
+      ]
+    },
+    {
+      "variant": "separate",
+      "steps": {
+        "etalon_dump": "done",
+        "spec": {
+          "status": "done",
+          "questions": 31
+        },
+        "etalon_self": {
+          "passed": false,
+          "failed": [
+            "mesh",
+            "opening_planes",
+            "material_ids",
+            "orientation",
+            "horizontal_faces"
+          ],
+          "not_measured": []
+        },
+        "model": "done",
+        "export": "done",
+        "readback": "done",
+        "model_check": {
+          "passed": false,
+          "failed": [
+            "bbox",
+            "silhouettes"
+          ],
+          "not_measured": []
+        }
+      },
+      "stopped": null,
+      "roof_z": 7.909,
+      "readback": {
+        "quads": 1592,
+        "polygons": 1592,
+        "ngons": 0,
+        "triangles": 3184,
+        "roof_band_triangles": 2,
+        "t_junctions": 0
+      },
+      "mesh": {
+        "status": "pass",
+        "value": {
+          "non_manifold": 0,
+          "non_manifold_vertices": 0,
+          "boundary": 238,
+          "open_loops_not_allowed": 0,
+          "slabs_not_inset": 0,
+          "overlaps": 0,
+          "ngons": 0
+        },
+        "boundary_edges": 238,
+        "open_loops": [
+          {
+            "kind": "bottom",
+            "edges": 121,
+            "z": -0.0,
+            "closed": true,
+            "allowed": true,
+            "embed_m": null,
+            "gap_m": null
+          },
+          {
+            "kind": "roof-foot",
+            "edges": 113,
+            "z": 7.909,
+            "closed": true,
+            "allowed": true,
+            "embed_m": null,
+            "gap_m": null
+          },
+          {
+            "kind": "roof-plane",
+            "edges": 4,
+            "z": 7.914,
+            "closed": true,
+            "allowed": true,
+            "embed_m": 0.02,
+            "gap_m": 0.005
+          }
+        ]
+      },
+      "failed": [
+        "bbox",
+        "silhouettes"
+      ]
+    }
+  ]
+}

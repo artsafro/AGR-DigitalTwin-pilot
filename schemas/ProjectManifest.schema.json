@@ -18,6 +18,41 @@
           "title": "Note",
           "type": "string"
         },
+        "parts_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gate 1: PartsList.approval_sha256(), excluding gate1/status; not file bytes",
+          "not": {
+            "pattern": "\\s",
+            "type": "string"
+          },
+          "title": "Parts Sha256"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "pattern": "^(https://\\S+|t_[0-9a-f]+|D[1-9][0-9]*)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "not": {
+            "pattern": "\\s",
+            "type": "string"
+          },
+          "title": "Ref"
+        },
         "schema_version": {
           "const": "1.0.0",
           "default": "1.0.0",
@@ -42,8 +77,71 @@
       "title": "Approval",
       "type": "object"
     },
+    "HeightSource": {
+      "additionalProperties": false,
+      "description": "File plus sheet/cell, level or drawing handle; never infer a vertical CRS from MSK-77.",
+      "properties": {
+        "file": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "File",
+          "type": "string"
+        },
+        "locator": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Locator",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "locator"
+      ],
+      "title": "HeightSource",
+      "type": "object"
+    },
     "Placement": {
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "project_zero_m": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "project_zero_m"
+            ]
+          },
+          "then": {
+            "properties": {
+              "height_source": {
+                "type": "object"
+              },
+              "height_system": {
+                "enum": [
+                  "BSV-77",
+                  "Baltic 1977",
+                  "MSK local",
+                  "unknown"
+                ]
+              }
+            },
+            "required": [
+              "height_system",
+              "height_source"
+            ]
+          }
+        }
+      ],
       "properties": {
         "approval": {
           "anyOf": [
@@ -64,6 +162,58 @@
           "title": "Coordinate System",
           "type": "string"
         },
+        "ground_mark_m": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ground Mark M"
+        },
+        "ground_mark_source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeightSource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "height_source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeightSource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "height_system": {
+          "anyOf": [
+            {
+              "enum": [
+                "BSV-77",
+                "Baltic 1977",
+                "MSK local",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height System"
+        },
         "insertion_xy": {
           "anyOf": [
             {
@@ -80,6 +230,29 @@
           ],
           "default": null,
           "title": "Insertion Xy"
+        },
+        "project_zero_fbx_source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeightSource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "project_zero_fbx_z_m": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Zero Fbx Z M"
         },
         "project_zero_m": {
           "anyOf": [
@@ -128,7 +301,8 @@
             "synthetic",
             "pdf",
             "model",
-            "user"
+            "user",
+            "drawing"
           ],
           "title": "Kind",
           "type": "string"
@@ -187,6 +361,21 @@
           ],
           "default": null,
           "title": "Sha256"
+        },
+        "sheet": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet"
         }
       },
       "required": [

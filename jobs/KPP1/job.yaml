@@ -1,0 +1,74 @@
+schema_version: 1.0.0
+job_id: KPP1
+run_id: issue-1255-site-v004
+synthetic: false
+path: deviation
+inputs: &inputs
+- path: jobs/KPP1/sources.json
+  sha256: 76a70233b220e4198c9af12146a1f5576ddad2018f0ba6c6875fcff070ebeaae
+  manifest: external-inputs/1
+- path: jobs/KPP1/object.json
+  sha256: a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c
+- path: docs/methods/building-body/kpp1-drawing/plan-contours.json
+  sha256: 087f1055820ec278979bb2b9e4598fa66878fc4ea1f3f5c6929dc25ad86a891f
+- path: jobs/KPP1/site-1255/placement-export.json
+  sha256: d5182a2565e8768a8fd9f41247045ef9796793851e6ea3ff2df7e5ecac3461fb
+artifacts:
+- path: jobs/KPP1/site-1255/evidence-SHA256SUMS.txt
+  sha256: e63f559a3fb86f43533d5897c5de32a1ea622f15a15563a071e40eeddc4fdd10
+deviations:
+- gate: operations
+  what_failed: "Standard route is AGR Tools stages 1-4 and export in Max [D250]; recorded R1 construction and placement ran offline."
+  what_was_tried: "Kernel-prism / Blender R1 build, rerun-1230 and rerun-1244; rigid placement site-1255 under D262. D254 makes dimensions final for R1."
+  new_tool_written: "No new tool for this checklist refresh; existing R1 job producers and site-1255/place_package.py."
+  result: "site-v004 published with readback; both validators passed=false. Final AGR Tools, visual, checker and manual gates remain open."
+gates:
+  inputs:
+    status: review
+    note: "sources.json records the three DWGs in the asset store since #1239 and the album. Cached Revit object.json supplies levels/frame [D238/D254]; original RVT hash unavailable. D262 placement inputs and external source hashes are documented in site-1255/REPORT.md and placement-export.json; the registry is not yet a complete placement-input manifest."
+    evidence: *inputs
+  parts:
+    status: review
+    note: "Existing R1 construction used D238 answers, superseded for dimensions by D254. TASK.md indexes them; it is not a hash-bound approval of a new PartsList. Historical parts remain in rerun-1209/parts-v002.json; no new approval is manufactured."
+    evidence: []
+  operations:
+    status: review
+    waits: max
+    note: "R1 construction and D256 pair exception are in rerun-1244; site-1255 applied only the D262 rigid placement. Max-only final AGR Tools remains open; historical operation results are not a current all-invariants receipt."
+    evidence:
+    - path: jobs/KPP1/rerun-1244/RUN-LOG.md
+      sha256: 181d79d956397ff4450aee6210ae722ae035d36987ec52bc618927d02182d8ae
+    - path: jobs/KPP1/site-1255/placement-export.json
+      sha256: d5182a2565e8768a8fd9f41247045ef9796793851e6ea3ff2df7e5ecac3461fb
+  budgets:
+    status: review
+    note: "Current placed exports are inventoried by site-1255 validators; no new per-part/current-run budget receipt or delivery acceptance is claimed."
+    evidence:
+    - path: jobs/KPP1/site-1255/vpm-site-v004.validate.json
+      sha256: b1423035390cd0ae3287db79f88ade887d38ac3f4538bcb8866c86e25f107c04
+    - path: jobs/KPP1/site-1255/npm-site-v004.validate.json
+      sha256: e997df2803d34cf12cd7e655de445d4478e62ac028c6c35ec5b30870ead40652
+  export_readback:
+    status: review
+    note: "site-v004 readback parity/attributes are recorded, not whole-delivery pass receipts. VPM V011 fails missing attributes; NPM V001 fails missing Ground. Survey checks, master, clearance review and manual gates remain open. D256 source pair exception is not transferred to placed pair lists."
+    evidence:
+    - path: jobs/KPP1/site-1255/readback-parity.json
+      sha256: d981aba933679a970c52f640bbc34080d2250892f8c596e6895a699a8edbfebb
+    - path: jobs/KPP1/site-1255/readback-attributes.json
+      sha256: 9b0e3bc3b001cb672fd961c1a230cddd9f8fb242e8bdd3eb2dc415b30315fc20
+  report:
+    status: review
+    note: "Current merged placement report, source authority, exact non-pass stages and durable artifact paths; historical logs remain immutable."
+    evidence:
+    - path: jobs/KPP1/site-1255/REPORT.md
+      sha256: c337c6293add89aae54c31ccd58c574cac3f1449743ce6b27bc33f714c77cfc2
+  visual:
+    status: missing
+    waits: user
+    note: "No visual approval of site-v004 recorded; v005 historical acceptance is not approval of R1/placed artifacts."
+    evidence: []
+  checker:
+    status: missing
+    waits: visual
+    note: "SINTEZ follows visual acceptance; no current merged checker receipt. Open package work #1278/#1305 is not consumed here."
+    evidence: []

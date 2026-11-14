@@ -1,0 +1,1381 @@
+{
+  "default_material": null,
+  "materials": [
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        775.6856689453125,
+        413.5237731933594,
+        851.0842895507812,
+        424.61297607421875
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 9004",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m1",
+      "merged_from": null,
+      "original_label": "Урна для мусора\nАйра УР014, 510х290х1100\nсталь RAL 9004\nАртикул: УР 014",
+      "page": 7,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        775.6832885742188,
+        458.8949279785156,
+        906.6340942382812,
+        469.9753723144531
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 9016",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m2",
+      "merged_from": null,
+      "original_label": "Велопарковка\nPunto Group BUG\n2100х1060х980(h), RAL 9016\nАртикул: PG90210098",
+      "page": 7,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.872314453125,
+        587.5203247070312,
+        961.8786010742188,
+        601.03759765625
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m9",
+        "m12",
+        "m20",
+        "m23",
+        "m25",
+        "m26",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          857.0399780273438,
+          590.1599731445312,
+          871.199951171875,
+          594.9599609375
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          233,
+          198,
+          147
+        ]
+      },
+      "material_id": "m3",
+      "merged_from": null,
+      "original_label": "- козырек над входом, метал. панели с фактурой дерева,\nцвет сосна, RAL 1001\n1",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        533.641845703125,
+        588.7210693359375,
+        770.65478515625,
+        602.2383422851562
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m7",
+        "m8",
+        "m10",
+        "m11",
+        "m13",
+        "m18",
+        "m19",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          507.72003173828125,
+          593.1599731445312,
+          514.800048828125,
+          610.0799560546875
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          235,
+          244,
+          253
+        ]
+      },
+      "material_id": "m4",
+      "merged_from": null,
+      "original_label": "-оконный блок из алюминиевого профиля системы ALT W72\n(стеклопакет СПД 6(СИ)3-16Ar-4M1-14Ar-4И) с окраской-RAL7021",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        163.44143676757812,
+        604.7833862304688,
+        197.20928955078125,
+        618.3163452148438
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7040",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          101.63999938964844,
+          609.8399047851562,
+          147.60000610351562,
+          617.6399536132812
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          77,
+          82,
+          86
+        ]
+      },
+      "material_id": "m5",
+      "merged_from": null,
+      "original_label": "- подъемно-секционные ворота с устройством электропривода,\nдистанционным управлением, с заполнением мин. плитой , EI30,\nRAL 7040",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        539.0432739257812,
+        618.4389038085938,
+        618.6294555664062,
+        632.0148315429688
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 5024",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          494.8800048828125,
+          612.719970703125,
+          520.3200073242188,
+          638.2799072265625
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          207,
+          226,
+          249
+        ]
+      },
+      "material_id": "m6",
+      "merged_from": null,
+      "original_label": "- стемалит RAL 5024",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.8868408203125,
+        651.3407592773438,
+        1060.8775634765625,
+        664.884521484375
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m8",
+        "m10",
+        "m11",
+        "m13",
+        "m15",
+        "m19",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m7",
+      "merged_from": null,
+      "original_label": "-трехслойная стеновая сэндвич панель с заполнением из мин. плит толщиной\n150мм,r=115(±15)г/м3. Наружная и внутренняя стороны – оцинкованная сталь\nтолщиной не менее 0,5 мм с 1-ым классом цинкового покрытия (не менее 275\nг/м2). Раскладка вертикальная., цвет RAL 7021",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.875732421875,
+        670.4013061523438,
+        1044.115478515625,
+        683.9772338867188
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m10",
+        "m11",
+        "m13",
+        "m15",
+        "m18",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          845.280029296875,
+          669.4799194335938,
+          857.280029296875,
+          688.5599365234375
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          73,
+          73,
+          73
+        ]
+      },
+      "material_id": "m8",
+      "merged_from": null,
+      "original_label": "- вентиляционная решетка, цвет RAL 7021\n13",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        539.0394287109375,
+        688.67919921875,
+        615.9481811523438,
+        702.1964721679688
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m3",
+        "m12",
+        "m14",
+        "m23",
+        "m25",
+        "m26",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m9",
+      "merged_from": null,
+      "original_label": "- обшивка фасада из метал. панелей с фактурой дерева,\nцвет сосна, RAL 1001\n8",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.875732421875,
+        702.4412231445312,
+        989.6238403320312,
+        716.0171508789062
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m11",
+        "m13",
+        "m15",
+        "m18",
+        "m19",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          840.3599853515625,
+          708.3599243164062,
+          862.199951171875,
+          711.9599609375
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          128,
+          128,
+          128
+        ]
+      },
+      "material_id": "m10",
+      "merged_from": null,
+      "original_label": "- нащельник, цвет RAL 7021\n14",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        539.0358276367188,
+        710.8424682617188,
+        733.4339599609375,
+        724.4183959960938
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m10",
+        "m13",
+        "m15",
+        "m18",
+        "m19",
+        "m21",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          494.8800048828125,
+          705.9599609375,
+          520.3200073242188,
+          731.3999633789062
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          70,
+          70,
+          70
+        ]
+      },
+      "material_id": "m11",
+      "merged_from": null,
+      "original_label": "- обшивка фасада из метал. панелей цвет RAL 7021",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.875732421875,
+        736.6424560546875,
+        1130.859130859375,
+        750.2183837890625
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m3",
+        "m9",
+        "m14",
+        "m20",
+        "m25",
+        "m26",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m12",
+      "merged_from": null,
+      "original_label": "15\n10\n- ламели, метал. панели с фактурой дерева, цвет сосна, RAL 1001",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        163.4368896484375,
+        746.3859252929688,
+        399.22930908203125,
+        759.9188842773438
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m10",
+        "m11",
+        "m15",
+        "m18",
+        "m19",
+        "m21",
+        "m22",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m13",
+      "merged_from": null,
+      "original_label": "- входные двери металлические оцинкованные, с заполнением мин.\nплитой, с устройством доводчиков на рычажной тяге с крышкой из\nнержавеющей стали, окрашенные, цвет полотна, рамы RAL 7021",
+      "page": 18,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.872314453125,
+        587.5203247070312,
+        961.8786010742188,
+        601.03759765625
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m9",
+        "m12",
+        "m20",
+        "m23",
+        "m25",
+        "m26",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          857.0399780273438,
+          590.1599731445312,
+          871.199951171875,
+          594.9599609375
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          233,
+          198,
+          147
+        ]
+      },
+      "material_id": "m14",
+      "merged_from": null,
+      "original_label": "- козырек над входом, метал. панели с фактурой дерева,\nцвет сосна, RAL 1001\n1",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        533.641845703125,
+        588.7210693359375,
+        770.65478515625,
+        602.2383422851562
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m7",
+        "m8",
+        "m10",
+        "m11",
+        "m13",
+        "m18",
+        "m19",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          507.72003173828125,
+          593.1599731445312,
+          514.800048828125,
+          610.0799560546875
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          235,
+          244,
+          253
+        ]
+      },
+      "material_id": "m15",
+      "merged_from": null,
+      "original_label": "-оконный блок из алюминиевого профиля системы ALT W72\n(стеклопакет СПД 6(СИ)3-16Ar-4M1-14Ar-4И) с окраской-RAL7021",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        163.44143676757812,
+        604.7833862304688,
+        197.20928955078125,
+        618.3163452148438
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7040",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          101.63999938964844,
+          609.8399047851562,
+          147.60000610351562,
+          617.6399536132812
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          77,
+          82,
+          86
+        ]
+      },
+      "material_id": "m16",
+      "merged_from": null,
+      "original_label": "- подъемно-секционные ворота с устройством электропривода,\nдистанционным управлением, с заполнением мин. плитой , EI30,\nRAL 7040",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        539.0432739257812,
+        618.4389038085938,
+        618.6294555664062,
+        632.0148315429688
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 5024",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          494.8800048828125,
+          612.719970703125,
+          520.3200073242188,
+          638.2799072265625
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          207,
+          226,
+          249
+        ]
+      },
+      "material_id": "m17",
+      "merged_from": null,
+      "original_label": "- стемалит RAL 5024",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.8868408203125,
+        651.3407592773438,
+        1060.8775634765625,
+        664.884521484375
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m8",
+        "m10",
+        "m11",
+        "m13",
+        "m15",
+        "m19",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m18",
+      "merged_from": null,
+      "original_label": "-трехслойная стеновая сэндвич панель с заполнением из мин. плит толщиной\n150мм,r=115(±15)г/м3. Наружная и внутренняя стороны – оцинкованная сталь\nтолщиной не менее 0,5 мм с 1-ым классом цинкового покрытия (не менее 275\nг/м2). Раскладка вертикальная., цвет RAL 7021",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.875732421875,
+        670.4013061523438,
+        1044.115478515625,
+        683.9772338867188
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m10",
+        "m11",
+        "m13",
+        "m15",
+        "m18",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          845.280029296875,
+          669.4799194335938,
+          857.280029296875,
+          688.5599365234375
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          73,
+          73,
+          73
+        ]
+      },
+      "material_id": "m19",
+      "merged_from": null,
+      "original_label": "- вентиляционная решетка, цвет RAL 7021\n13",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        539.0394287109375,
+        688.67919921875,
+        615.9481811523438,
+        702.1964721679688
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m3",
+        "m12",
+        "m14",
+        "m23",
+        "m25",
+        "m26",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m20",
+      "merged_from": null,
+      "original_label": "- обшивка фасада из метал. панелей с фактурой дерева,\nцвет сосна, RAL 1001\n8",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.875732421875,
+        702.4412231445312,
+        989.6238403320312,
+        716.0171508789062
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m11",
+        "m13",
+        "m15",
+        "m18",
+        "m19",
+        "m22",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          840.3599853515625,
+          708.3599243164062,
+          862.199951171875,
+          711.9599609375
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          128,
+          128,
+          128
+        ]
+      },
+      "material_id": "m21",
+      "merged_from": null,
+      "original_label": "- нащельник, цвет RAL 7021\n14",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        539.0358276367188,
+        710.8424682617188,
+        733.4339599609375,
+        724.4183959960938
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m10",
+        "m13",
+        "m15",
+        "m18",
+        "m19",
+        "m21",
+        "m24",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          494.8800048828125,
+          705.9599609375,
+          520.3200073242188,
+          731.3999633789062
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          70,
+          70,
+          70
+        ]
+      },
+      "material_id": "m22",
+      "merged_from": null,
+      "original_label": "- обшивка фасада из метал. панелей цвет RAL 7021",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        884.875732421875,
+        736.6424560546875,
+        1130.859130859375,
+        750.2183837890625
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m3",
+        "m9",
+        "m14",
+        "m20",
+        "m25",
+        "m26",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m23",
+      "merged_from": null,
+      "original_label": "15\n10\n- ламели, метал. панели с фактурой дерева, цвет сосна, RAL 1001",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        163.4368896484375,
+        746.3859252929688,
+        399.22930908203125,
+        759.9188842773438
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m10",
+        "m11",
+        "m15",
+        "m18",
+        "m19",
+        "m21",
+        "m22",
+        "m27",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m24",
+      "merged_from": null,
+      "original_label": "- входные двери металлические оцинкованные, с заполнением мин.\nплитой, с устройством доводчиков на рычажной тяге с крышкой из\nнержавеющей стали, окрашенные, цвет полотна, рамы RAL 7021",
+      "page": 19,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        94.79833221435547,
+        124.56810760498047,
+        219.3314208984375,
+        133.69558715820312
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m3",
+        "m9",
+        "m12",
+        "m14",
+        "m20",
+        "m23",
+        "m26",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m25",
+      "merged_from": null,
+      "original_label": "Козырек над входом из стального каркаса с\nкреплением на подвесах из стальных тяжей с\nобшивкой метал. панелями с фактурой дерева, цвет\nсосна, RAL 1001 с покрытием стальным\nпрофилированным листом",
+      "page": 20,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        978.4833374023438,
+        150.25802612304688,
+        1113.00634765625,
+        159.37075805664062
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m3",
+        "m9",
+        "m12",
+        "m14",
+        "m20",
+        "m23",
+        "m25",
+        "m30"
+      ],
+      "default_material": null,
+      "legend_symbol": {
+        "bbox": [
+          884.8800048828125,
+          141.11993408203125,
+          931.3200073242188,
+          176.99993896484375
+        ],
+        "kind": "filled_swatch",
+        "rgb": [
+          233,
+          198,
+          147
+        ]
+      },
+      "material_id": "m26",
+      "merged_from": null,
+      "original_label": "с обшивкой метал. панелями с фактурой\nдерева, цвет сосна, RAL 1001 с покрытием",
+      "page": 20,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        94.80000305175781,
+        219.7263641357422,
+        243.5243682861328,
+        228.85488891601562
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m10",
+        "m11",
+        "m13",
+        "m15",
+        "m18",
+        "m19",
+        "m21",
+        "m22",
+        "m24",
+        "m28",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m27",
+      "merged_from": null,
+      "original_label": "Металлическая кассета по подсистеме\n2200х1000 мм, покрытие полимерное RAL 7021",
+      "page": 20,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        94.79988098144531,
+        275.1777038574219,
+        154.16830444335938,
+        284.2904357910156
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m10",
+        "m11",
+        "m13",
+        "m15",
+        "m18",
+        "m19",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m29"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m28",
+      "merged_from": null,
+      "original_label": "Окна с применением алюминиевого профиля,\nзаполнение двухкамерным стеклопакетом, стекло\nпрозрачное нетонированное, цвет оконного\nпрофиля RAL 7021",
+      "page": 20,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        644.5147094726562,
+        317.890869140625,
+        1128.401611328125,
+        328.9814453125
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 7021",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m4",
+        "m7",
+        "m8",
+        "m10",
+        "m11",
+        "m13",
+        "m15",
+        "m18",
+        "m19",
+        "m21",
+        "m22",
+        "m24",
+        "m27",
+        "m28"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m29",
+      "merged_from": null,
+      "original_label": "Несущие элементы кровли имеют три типа:\n1. Неэксплуатируемая: металлические конструкции с покрытием из профилированного листа с\nпоследующим утеплением;\n2. Неэксплуатируемая: монолитные железобетонные конструкции с покрытием из монолитной плиты из\nжелезобетона;\n3. Эксплуатируемая: монолитные железобетонные конструкции с покрытием из монолитной плиты из\nжелезобетона.\nНа кровле по профлисту применяется утеплитель двухслойный. Верхний слой- жесткие\nтеплоизоляционные плиты , нижний - минераловатные плиты. С покрытием в виде гидроизоляционного\nковра из полимерной мембраны. На кровле по монолитному жб основанию применяется утеплитель,\nформирование уклоны из керамзитового гравия с ЦСП армированием, покрытие - полимерная\nмембрана.\nЗдание гармонично вписано в огружающую среду, находясь в диалоге с застройкой жилого комплекса и\nблагоустройством соседних территорий. За основу концептуального решения внешнего облика взяты\nконтрастные образы теплых натуральных материалов в сочетании индустриальными. При\nпродумывании концепции использовались визуальные образы современной архитектуры, ритмичность и\nпластичность природных пейзажей, колористическое решение основано на окружающей среде.\nСветлое дерево и темные металлические кассеты на фасаде гармонично соединяются, образуя\nцельный облик торгового центра. Ламели на главном фасаде подчеркивают графичность линий, задавая\nритмичность.\nОграждающие конструкции фасада - сэндвич-панель вертикальной раскладки с декоративной\nоблицовкой металлическими кассетами крупного формата под дерево и металлическими кассетами с\nполимерным покрытие в серый цвет. Базовый цвет фасада темно-серый RAL 7021, акцентами являются\nкассеты под текстуру дерева, цвет сосна RAL 1001. Со стороный технического двора и зоны разгрузки\nфасад не обшивается декоративными металлическими кассетами для создания образа технической\nскладской зоны и интуитивного обозначения в пространстве о функциональном зонировании территории\nи торгового центра. Витражные конструкции на фасаде в зоне ресторанов и фудкорта частично зашиты\nстемалитом.\nТорговый центр состоит из цельного двухэтажного объема с ярко выраженной выступающей частью с\nрестораном на втором этаже со стороны главного, восточного фасада. Главный вход заглублен\nотносительно плоскости фасада, создавая акцент на входной группе, закругленные линии приглашают\nпосетителей зайти внутрь здания.\nНа первом этаже торгового центра запроектированы бутики с одеждой, супермаркет, в глубине\nбазируется комплекс технических помещений с отдельной зоной разгрузки супермаркета и торгового\nцентра. Через главный вход мы попадаем в просторный вестибюль, представленный собою как\nдвусветное пространство с эскалатором в центре. На втором этаже, помимо битиков с одеждой\nрасположены рестораны с зоной фудкорта и развлекательный центр. Вестибюль второго этажа это\nпросторный объем со световым фонарем на кровле и зоной для отдыха посетителей. В помещениях\nресторанов и вестибюля витражное остекление на всю высоту этажа, которое увеличивает пространство\nи освещает внутреннее пространство.\nПроектом предусматривается комплексное благоустройство территории с формированием\nасфальтированных проездов и подъездов автомобилей и грузовой техники, пешеходных зон, зон отдыха\nпосетителей в виде мест для сидения под кронами деревьев, террасой для приема пищи под зонтиками\nперед главным входом. Предусмотрено расположение мест для парковки велосипедов в пешеходной\nзоне автомобильной уличной парковки перед главным входом в торговый центр. Размер парковочного\nместа для легкового транспорта составляет в длину – 5,3 м и ширину - 2,5 м.\nПри окантовке дорожных и тротуарных площадей предусмотрены бетонные бордюры, укладываемые на\nбетонное основание. Свободная от застройки, проездов и площадок территория озеленяется.\nСеть автомобильных проездов запроектирована с учетом подъезда к зданию, а также противопожарного\nобслуживания и нормативных требований. На территорию торгового центра предусмотрены въезды и\nвыезды для грузового транспорта и пожарной техники.\nВсе участки транспортной и пешеходной сети ( асфальтированные проезды, тротуары), а также\nэлементы благоустройства территории ( парковки, газоны, малые архитектурные формы) выполняются\nдо ввода здания в эксплуатацию, на этапе строительно-монтажных работ.",
+      "page": 41,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    },
+    {
+      "authority": "pdf_album_unapproved",
+      "bbox": [
+        644.5147094726562,
+        329.0514831542969,
+        1117.1304931640625,
+        340.1420593261719
+      ],
+      "binding": {
+        "kind": "unbound",
+        "reason": "region_application_requires_review"
+      },
+      "cell_status": null,
+      "code": "RAL 1001",
+      "code_system": "RAL",
+      "codes_by_engine": null,
+      "conflicts": [
+        "m3",
+        "m9",
+        "m12",
+        "m14",
+        "m20",
+        "m23",
+        "m25",
+        "m26"
+      ],
+      "default_material": null,
+      "legend_symbol": null,
+      "material_id": "m30",
+      "merged_from": null,
+      "original_label": "Несущие элементы кровли имеют три типа:\n1. Неэксплуатируемая: металлические конструкции с покрытием из профилированного листа с\nпоследующим утеплением;\n2. Неэксплуатируемая: монолитные железобетонные конструкции с покрытием из монолитной плиты из\nжелезобетона;\n3. Эксплуатируемая: монолитные железобетонные конструкции с покрытием из монолитной плиты из\nжелезобетона.\nНа кровле по профлисту применяется утеплитель двухслойный. Верхний слой- жесткие\nтеплоизоляционные плиты , нижний - минераловатные плиты. С покрытием в виде гидроизоляционного\nковра из полимерной мембраны. На кровле по монолитному жб основанию применяется утеплитель,\nформирование уклоны из керамзитового гравия с ЦСП армированием, покрытие - полимерная\nмембрана.\nЗдание гармонично вписано в огружающую среду, находясь в диалоге с застройкой жилого комплекса и\nблагоустройством соседних территорий. За основу концептуального решения внешнего облика взяты\nконтрастные образы теплых натуральных материалов в сочетании индустриальными. При\nпродумывании концепции использовались визуальные образы современной архитектуры, ритмичность и\nпластичность природных пейзажей, колористическое решение основано на окружающей среде.\nСветлое дерево и темные металлические кассеты на фасаде гармонично соединяются, образуя\nцельный облик торгового центра. Ламели на главном фасаде подчеркивают графичность линий, задавая\nритмичность.\nОграждающие конструкции фасада - сэндвич-панель вертикальной раскладки с декоративной\nоблицовкой металлическими кассетами крупного формата под дерево и металлическими кассетами с\nполимерным покрытие в серый цвет. Базовый цвет фасада темно-серый RAL 7021, акцентами являются\nкассеты под текстуру дерева, цвет сосна RAL 1001. Со стороный технического двора и зоны разгрузки\nфасад не обшивается декоративными металлическими кассетами для создания образа технической\nскладской зоны и интуитивного обозначения в пространстве о функциональном зонировании территории\nи торгового центра. Витражные конструкции на фасаде в зоне ресторанов и фудкорта частично зашиты\nстемалитом.\nТорговый центр состоит из цельного двухэтажного объема с ярко выраженной выступающей частью с\nрестораном на втором этаже со стороны главного, восточного фасада. Главный вход заглублен\nотносительно плоскости фасада, создавая акцент на входной группе, закругленные линии приглашают\nпосетителей зайти внутрь здания.\nНа первом этаже торгового центра запроектированы бутики с одеждой, супермаркет, в глубине\nбазируется комплекс технических помещений с отдельной зоной разгрузки супермаркета и торгового\nцентра. Через главный вход мы попадаем в просторный вестибюль, представленный собою как\nдвусветное пространство с эскалатором в центре. На втором этаже, помимо битиков с одеждой\nрасположены рестораны с зоной фудкорта и развлекательный центр. Вестибюль второго этажа это\nпросторный объем со световым фонарем на кровле и зоной для отдыха посетителей. В помещениях\nресторанов и вестибюля витражное остекление на всю высоту этажа, которое увеличивает пространство\nи освещает внутреннее пространство.\nПроектом предусматривается комплексное благоустройство территории с формированием\nасфальтированных проездов и подъездов автомобилей и грузовой техники, пешеходных зон, зон отдыха\nпосетителей в виде мест для сидения под кронами деревьев, террасой для приема пищи под зонтиками\nперед главным входом. Предусмотрено расположение мест для парковки велосипедов в пешеходной\nзоне автомобильной уличной парковки перед главным входом в торговый центр. Размер парковочного\nместа для легкового транспорта составляет в длину – 5,3 м и ширину - 2,5 м.\nПри окантовке дорожных и тротуарных площадей предусмотрены бетонные бордюры, укладываемые на\nбетонное основание. Свободная от застройки, проездов и площадок территория озеленяется.\nСеть автомобильных проездов запроектирована с учетом подъезда к зданию, а также противопожарного\nобслуживания и нормативных требований. На территорию торгового центра предусмотрены въезды и\nвыезды для грузового транспорта и пожарной техники.\nВсе участки транспортной и пешеходной сети ( асфальтированные проезды, тротуары), а также\nэлементы благоустройства территории ( парковки, газоны, малые архитектурные формы) выполняются\nдо ввода здания в эксплуатацию, на этапе строительно-монтажных работ.",
+      "page": 41,
+      "sheet": null,
+      "source_kind": "legend_text",
+      "status": "present",
+      "symbol_status": "not_found",
+      "text_alt": null
+    }
+  ],
+  "open_gates": [
+    "row_type_review",
+    "unit_review",
+    "region_binding",
+    "ground_truth",
+    "approval"
+  ],
+  "passed": false,
+  "schema": "album-materials/1",
+  "source": {
+    "bytes": 47786873,
+    "pages": 42,
+    "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+  },
+  "summary": {
+    "entries": 30,
+    "merged_unresolved": 0,
+    "missing": 0,
+    "present": 30,
+    "single_engine": 0,
+    "suspect": 0,
+    "unbound": 30
+  }
+}

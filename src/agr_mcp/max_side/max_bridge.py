@@ -5,8 +5,10 @@ calls `call(tool, root_hex, args_hex)`. Arguments travel hex-encoded so no MAXSc
 `call` imports the INSTALLED AGR Tools `runtime.py` from `root` (default: the newest userScripts/AGRTools-<x.y.z>
 with a runtime.py), resolves `handles` to nodes and calls exactly one `runtime.*` function: read-only, or a 0.8 edit
 (`edits_080`: preview, or apply of that preview on export copies / new files, #908), or a 0.9 row preview
-(`edits_090`, #979: mode=preview only, changes nothing). Apart from new files written by a 0.8 apply, it never
-opens, saves, imports or exports a file.
+(`edits_090`, #979: mode=preview only, changes nothing), or a phase-2 preview of the 0.9.0 copy families
+(`PHASE2_PREVIEW`, #1021: cleanup, UV nudge, atlas, UCX, checked export; no node left or deleted). Their apply /
+commit (`PHASE2_APPLY`) is the error `needs_human` here too [D231]. Apart from new files written by a 0.8 apply, it
+never opens, saves, imports or exports a file.
 
 Runtime pin (#1024, mcp-review §2.4.1): a tool group needs a MINIMUM runtime version and its entry function, not
 an exact version, so one installed runtime (0.9.0 and later) serves every group of the catalogue.
@@ -86,12 +88,22 @@ ROWS_100 = ("project.passport", "source.intake", "scene.source_class", "body.pre
             "model.glass_planes", "body.capsules", "body.roof", "mat.table", "mat.tiles", "tex.plug_colour",
             "vpm.build", "udim.rescale", "udim.distortion", "tex.dilate", "udim.plugs", "npm.build",
             "atlas.facade_strip", "npm.to_vpm", "udim.udims_to_ids", "pack.deliver", "ucx.gap", "ucx.stairs",
-            "light.export", "qa.omk_te", "export.place_by_passport", "agent.request", "agent.accept")
+            "light.export", "qa.omk_te", "export.place_by_passport", "agent.request", "agent.accept",
+            "handoff.export", "handoff.import", "handoff.verify", "handoff.restore_materials")
 READ_100 = ("scene.source_class", "tex.plug_colour", "udim.distortion", "udim.udims_to_ids", "ucx.stairs",
-            "qa.omk_te")
+            "qa.omk_te", "handoff.verify")
+# 1.1 rows of the stages (Max <-> Blender handoff, agent stage): routed like the 1.0 rows, minimum runtime 1.1.0.
+ROWS_110 = ("handoff.export", "handoff.import", "handoff.verify", "handoff.restore_materials")
+RUNTIME_110 = "1.1.0"
+# Rows whose input is the bundle, not the selection: without handles/scope the runtime gets an empty node list
+# (handoff.import reads the FBX of the bundle; verify / restore take options.layer or the given handles).
+NO_TARGET_ROWS = ("handoff.import", "handoff.verify", "handoff.restore_materials")
+# Apply over MCP of the 1.1 rows (runtime.MCP_APPLY_100): handoff.export writes only a new bundle folder,
+# handoff.import only the layer AGENT_<req>; the transfer to the role layers stays the button agent.accept [D213].
+MCP_APPLY_110 = ("handoff.export", "handoff.import")
 # Released in package version 1.0.0 (release branch R, #1024); the entry function is the real gate
 # (check_runtime), the minimum refuses older installs.
-RUNTIME_100 = "1.0.0"
+RUNTIME_100 = "1.0.1"
 # row -> (group, key, minimum runtime, entry function)
 ROUTES = {}
 ROUTES.update({r: ("fn", k, EXPECTED_RUNTIME, k) for r, k in ROWS_FN.items()})
@@ -99,13 +111,20 @@ ROUTES.update({r: ("c050", k, RUNTIME_050, "checks_050") for r, k in ROWS_050.it
 ROUTES.update({r: ("c070", k, RUNTIME_070, "checks_070") for r, k in ROWS_070.items()})
 ROUTES.update({r: ("e080", r, RUNTIME_080, "edits_080") for r in EDITS_080.values()})
 ROUTES.update({r: ("e090", r, RUNTIME_090, "edits_090") for r in EDITS_090.values()})
-ROUTES.update({r: ("e100", r, RUNTIME_100, "edits_100") for r in ROWS_100})
+ROUTES.update({r: ("e100", r, RUNTIME_110 if r in ROWS_110 else RUNTIME_100, "edits_100") for r in ROWS_100})
 READ_ROWS = frozenset(ROWS_FN) | frozenset(ROWS_050) | frozenset(ROWS_070) | frozenset(READ_080) \
     | frozenset(READ_090) | frozenset(READ_100)
 EDIT_ROWS = frozenset(ROUTES) - READ_ROWS
 # apply allowed over MCP today: the 0.8 additive / rename rows (export copies, new files, one undo record).
-APPLY_OVER_MCP = frozenset(r for r in EDITS_080.values() if r not in READ_080)
+APPLY_OVER_MCP = frozenset(r for r in EDITS_080.values() if r not in READ_080) | frozenset(MCP_APPLY_110)
 V2_TOOLS = ("agr_check_run", "agr_op_preview", "agr_op_apply")
+# AGR MCP phase 2 (#1021, plan section 5 "mutations on copies"): over MCP only the preview of the runtime 0.9.0 copy
+# families; the matching apply/commit stays the panel/dock button (owner answers 06.11.2026, [D231]).
+PHASE2_PREVIEW = {"agr_cleanup_preview": "cleanup_preview", "agr_uv_nudge_preview": "nudge_preview",
+                  "agr_atlas_preview": "atlas_preview", "agr_ucx_preview": "ucx_preview",
+                  "agr_export_preview": "export_preview"}
+PHASE2_APPLY = ("agr_cleanup_apply", "agr_uv_nudge_apply", "agr_atlas_apply", "agr_ucx_apply", "agr_export_commit")
+RUNTIME_PHASE2 = "0.9.0"
 _STATE = {"journaled": []}
 
 
@@ -127,6 +146,10 @@ def requirement(tool):
         return RUNTIME_090, "edits_090"
     if tool in FUNCTIONS:
         return EXPECTED_RUNTIME, FUNCTIONS[tool]
+    if tool in PHASE2_PREVIEW:
+        return RUNTIME_PHASE2, PHASE2_PREVIEW[tool]
+    if tool in PHASE2_APPLY:
+        raise BridgeError("needs_human", tool + " is confirmed only by a button in the AGR Tools panel/dock [D231]")
     raise BridgeError("unsupported_tool", repr(tool))
 
 
@@ -239,10 +262,13 @@ def _handle(rt, node):
     return int(rt.getHandleByAnim(node))
 
 
-def _targets(rt, args):
-    """Explicit node list for the runtime, never None (plan: Контракт выделения)."""
+def _targets(rt, args, rows=()):
+    """Explicit node list for the runtime, never None (plan: Контракт выделения). Rows of NO_TARGET_ROWS may go
+    without handles/scope: their input is the bundle (an empty list, never the user's selection)."""
     handles = list(args.get("handles") or [])
     scope = args.get("scope")
+    if rows and all(r in NO_TARGET_ROWS for r in rows) and not handles and scope is None:
+        return []
     if handles and scope:
         raise BridgeError("target_conflict", "handles and scope=" + str(scope) + " are two target sources")
     if scope == "selection":
@@ -310,6 +336,32 @@ def _guarded(rt, args, body):
     return result, {"before_count": len(before), "restored": restored, "scope": args.get("scope") or "handles"}
 
 
+def _json_default(o):
+    """bytes (atlas preview PNGs) -> length + sha256: the pipe answer is JSON (native run finding, #1021)."""
+    if isinstance(o, (bytes, bytearray)):
+        import hashlib
+        return {"bytes": len(o), "sha256": hashlib.sha256(bytes(o)).hexdigest()}
+    raise TypeError("not JSON-serializable: " + type(o).__name__)
+
+
+def _phase2_preview(rt, mod, tool, nodes, args):
+    """One runtime.<family>_preview call (#1021); it may not leave or delete a node."""
+    fn = getattr(mod, PHASE2_PREVIEW[tool])
+    before = set(_handle(rt, n) for n in rt.objects)
+    if tool == "agr_cleanup_preview":
+        raw = fn(nodes, args.get("options"))
+    elif tool == "agr_export_preview":
+        raw = fn(nodes, args["target"])
+    else:
+        raw = fn(nodes)
+    after = set(_handle(rt, n) for n in rt.objects)
+    if before - after:
+        raise RuntimeError(tool + " deleted nodes " + repr(sorted(before - after)))
+    if after - before:
+        raise RuntimeError(tool + " left new nodes " + repr(sorted(after - before)))
+    return json.loads(json.dumps(raw, allow_nan=False, sort_keys=True, default=_json_default))
+
+
 def run(tool, root, args):
     if tool in V2_TOOLS:
         return run_v2(tool, root, args)
@@ -332,6 +384,8 @@ def run(tool, root, args):
             return _edit(mod, "edits_090", EDITS_090[tool], "preview", None, nodes, args.get("options"))
         if tool in CHECKS_070:
             return mod.checks_070(CHECKS_070[tool], nodes, select=False)
+        if tool in PHASE2_PREVIEW:
+            return _phase2_preview(rt, mod, tool, nodes, args)
         return getattr(mod, function)(nodes)
     result, selection = _guarded(rt, args, body)
     return result, {"runtime_version": mod.VERSION, "runtime_file": mod.__file__, "selection": selection,
@@ -383,7 +437,7 @@ def run_v2(tool, root, args):
     if expect.get("doc") is not None and expect["doc"] != _doc(rt):
         raise BridgeError("stale_preview", "document changed since the preview: " + str(expect["doc"]) + " -> "
                           + _doc(rt))
-    nodes = _targets(rt, args)
+    nodes = _targets(rt, args, rows)
     minimum = max((r[2] for r in routes), key=version_key)
     mod = _load_runtime(_resolve_root(rt, root, minimum), minimum, None)
     for _group, _key, row_min, function in routes:

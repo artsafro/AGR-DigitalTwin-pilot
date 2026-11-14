@@ -1,0 +1,31 @@
+{
+  "blender": "5.1.2",
+  "fbx_version": 7400,
+  "elements_compared": 409,
+  "exact_property_differences": [
+    [
+      "/[8]/Objects[5]/Material",
+      1,
+      "b'M_Kpp_1_MainGlass_1\\x00\\x01Material'",
+      "b'M_Glass_01\\x00\\x01Material'"
+    ],
+    [
+      "/[8]/Objects[5]/Material[3]/Properties70[6]/P",
+      4,
+      "0.699999988079071",
+      "0.5"
+    ],
+    [
+      "/[8]/Objects[5]/Material[3]/Properties70[7]/P",
+      4,
+      "0.30000001192092896",
+      "0.5"
+    ]
+  ],
+  "geometry_uv_material_indices_embedded_pixels": "identical decoded property arrays",
+  "readback_glass_name": "M_Glass_01",
+  "readback_glass_alpha": 0.5,
+  "source_sha256": "901ead2503ee1b94ded8fedcb7c603d79c6de3781a1453241e58939952f357ff",
+  "output_sha256": "2f126a00df722108178203a40de3962eee09e1a91c4a0d7c0cf06cdded886e9d",
+  "delivery_passed": false
+}

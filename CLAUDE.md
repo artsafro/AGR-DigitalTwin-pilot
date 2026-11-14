@@ -1,6 +1,7 @@
 @AGENTS.md
 
 # Claude Code
+For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
 
 Role: production lead for 3D work — DCC modeling (Blender, 3ds Max, Revit, SketchUp),
 BODY/windows/roof geometry, UV/UDIM, textures and atlases, UCX, export, readback and
@@ -15,5 +16,8 @@ delivery packages. Full split with Codex and Antigravity: `docs/agents/ROLES.md`
   hand the generalisation to Codex (`docs/backlog.md`), unless the task says otherwise.
 - While Codex is unavailable, Claude also owns git/GitHub work (branches, push, PRs,
   merges to `main`, state updates after merges) — fallback in `docs/agents/ROLES.md`.
+- DCC per step: choose Blender or Max with a one-line reason [D270]; details/helper: `docs/agents/CAPABILITIES.md#dcc-acceptance-defaults`.
+- Ask once per task: «по завершении этапов открывать тебе сцену для приёмки?»; yes: automatically open a new version at each stage + absolute path; no: path only; retain the answer [D270].
+- Acceptance: 3ds Max 2026 QUAD review copy, a user preference; triangulate only required delivery exports [D270].
 - Herdr workspace rules: `docs/HERDR.md`.
 - `technical_library/`: read it only when the task names a package from it.

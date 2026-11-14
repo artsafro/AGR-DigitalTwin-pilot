@@ -50,7 +50,7 @@ def wip_note(model):
 
 def stages_md(suite, roadmap, model):
     """The 1.0 stage rail of «Путь» (#1024) as the panel draws it (ui_model.stage_rail): big button, second row."""
-    station = {rid: '1.0.{}'.format(i) for i, rid in enumerate(roadmap.stage_buttons(suite), 1)}
+    station = roadmap.stations(suite)  # 1.0.1..1.0.33, then the 1.1 rows of the stages (1.1.1..)
     out = ['', '## ' + model.MENU_100, '',
            'На вкладке «Путь» над блоками — ряд больших кнопок этапов (иконка, подпись, статус этапа из паспорта '
            'проекта); под каждой — вторая строка с мелкими кнопками этапа. Кнопка в работе видна, но неактивна: '

@@ -171,6 +171,21 @@ def test_write_script_ends_with_one_newline(tmp_path):
     assert "QUIT" not in script.upper()
 
 
+@pytest.mark.parametrize("user_value", [0, 1, None])
+def test_forms_restore_the_user_filedia(tmp_path, monkeypatch, user_value):
+    # pilot #1121: FILEDIA is a user registry setting; the scripts must put the user's value back.
+    monkeypatch.setattr(mod, "user_filedia", lambda: user_value)
+    feature = {"layer": "SYNTH_LEVEL", "kind": "POINT", "closed": False, "vertices_mm": [[0.0, 0.0, 0.0]]}
+    write, _ = mod.write_forms([feature], tmp_path / "a.dwg", tmp_path / "a.dxf")
+    read, _ = mod.read_forms()
+    saved = '(getvar "FILEDIA")' if user_value is None else str(user_value)
+    for script, done in ((write, "AGR_WRITE_DONE"), (read, "AGR_READ_DONE")):
+        assert script.startswith(f"(setq agr-filedia {saved})\n")
+        assert script.count('(setvar "FILEDIA" 0)') == 1  # only the guard's own setvar
+        assert script.index(done) < script.rindex("(agr-restore-filedia)\n")
+        assert "(defun *error* (msg) (agr-restore-filedia)" in script
+
+
 def test_wrapper_timeout_exit5_is_never_accepted(tmp_path, monkeypatch):
     calls = []
 

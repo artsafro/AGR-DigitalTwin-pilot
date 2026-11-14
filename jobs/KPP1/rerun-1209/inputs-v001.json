@@ -1,0 +1,43 @@
+{
+ "manifest": "external-inputs/1",
+ "job": "KPP1",
+ "run_id": "issue-1209-rerun-v001",
+ "synthetic": false,
+ "why": "Walker takes repo-relative evidence only; DWG/DXF are not committed (rule 57). Rows re-hashable by any agent with the paths.",
+ "files": [
+  {
+   "path": "C:/x/kpp1/r1209/L01.dwg",
+   "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+   "copy_of": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg",
+   "role": "facade openings, frame tops (+3.300), parapet +8.650 [D238]"
+  },
+  {
+   "path": "C:/x/kpp1/r1209/L03.dwg",
+   "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469",
+   "copy_of": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg",
+   "role": "plan hatch contour, band 0.000-3.900 [D238]"
+  },
+  {
+   "path": "C:/x/kpp1/r1209/dxf/L01.dxf",
+   "sha256": "f2b6dda8e93ad7d692efbeed78520bdb2bfd981d078c06a413f64bd687006111",
+   "tool": "AutoCAD 2025 accoreconsole _.DXFOUT _V _2018 16"
+  },
+  {
+   "path": "C:/x/kpp1/r1209/dxf/L03.dxf",
+   "sha256": "72f9397e6d924c0595379464ff70505208730952f94fbcbe13e9751af8910406",
+   "tool": "AutoCAD 2025 accoreconsole _.DXFOUT _V _2018 16"
+  },
+  {
+   "path": "C:/x/kpp1/r1209/plan-contours-L03.json",
+   "sha256": "63ad171cea0701bdf9fca13c147cb41d8653db69f79e6e6730a008766d216599",
+   "tool": "tools/methods/body/plan_from_dxf.py extract (RUN-LOG step 2)"
+  },
+  {
+   "path": "C:/x/kpp1/r1209/parts-mesh-v002.json",
+   "sha256": "618e4b756aea508e4bed04759533d682020560b657f2c478261948fcc6f4f0de",
+   "tool": "jobs/KPP1/rerun-1209/build_parts.py"
+  }
+ ],
+ "levels_note": "3.900 / 7.909 from Revit (object.json), not confirmed by the architect for R1 [D238]",
+ "evidence_dir": "G:/Мой диск/AGR-evidence/KPP1/rerun-1209/ (SHA256SUMS sha256 73ddf514ee545cb5f39b54c2c080fbab2408e344182d1d8a2fa88adfe127da3b)"
+}

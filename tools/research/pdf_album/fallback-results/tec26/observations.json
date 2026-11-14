@@ -1,0 +1,75 @@
+{
+  "schema": "album-fallback/1",
+  "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+  "passed": false,
+  "regions": [
+    {
+      "id": "tec-title",
+      "page": 3,
+      "bbox": [
+        840,
+        805,
+        1160,
+        835
+      ],
+      "kind": "source_check",
+      "ocr": {
+        "text": "Новый парогазовый блок. Визуализация 1",
+        "lines": [
+          {
+            "text": "Новый парогазовый блок. Визуализация 1",
+            "confidence": 0.97647,
+            "bbox_px": [
+              [
+                13.0,
+                17.0
+              ],
+              [
+                1309.0,
+                21.0
+              ],
+              [
+                1308.0,
+                119.0
+              ],
+              [
+                13.0,
+                115.0
+              ]
+            ]
+          }
+        ],
+        "engine": "RapidOCR 3.10.0 / Cyrillic PP-OCRv5 mobile",
+        "seconds": 0.9656920999987051,
+        "dpi": 300,
+        "image_size": [
+          1334,
+          126
+        ],
+        "status": "observed"
+      },
+      "vision": {
+        "text": "Новый парогазовый блок. Визуализация 1",
+        "engine": "Codex CLI / operator configured model",
+        "seconds": 9.001058800029568,
+        "input_tokens": 32507,
+        "output_tokens": 19,
+        "evidence": "G:/Мой диск/AGR-evidence/pdf-album/1236/t_b6312eb3-v001/vision-raw/roi-nz4ajbwc",
+        "usage_scope": "whole CLI session, not isolated image billing",
+        "status": "observed"
+      },
+      "measured_geometry": null
+    }
+  ],
+  "pages": [
+    {
+      "page": 3,
+      "calls": 1,
+      "input_tokens": 32507,
+      "output_tokens": 19,
+      "vision_seconds": 9.001058800029568,
+      "metering_complete": true,
+      "circuit_open": false
+    }
+  ]
+}

@@ -27,10 +27,24 @@ Data model of a mesh here (all lists 0-based):
 A piece (output of `cut_grid`) is {'tri': i, 'w': [[w0, w1, w2]...] barycentric weights over the source
 triangle corners, 'uv': [[u, v]...], 'mat': id}; the host interpolates its own coordinates with the weights.
 """
+import importlib.util
 import math
+import os
+
+
+def _sibling(name, alias):
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), name)
+    spec = importlib.util.spec_from_file_location(alias, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_uvlayout')  # the one UDIM function (#1337)
 
 STEP_M = 3.6          # UDIM step (owner answer 06.11.2026, ANSWERS-2026-11-06.md «Шаг UDIM»)
-TILE_PX = 4096        # pixels of one UDIM tile (VPM 4K)
+TILE_PX = 3600        # pixels of one UDIM tile: 3.6 m at 1000 px/m (owner answer 06.11 morning, audit Q1; was 4096)
+TEXEL_PX_PER_M = 1000.0  # VPM texel density px/m (owner answer 06.11 morning: every module 0.3/0.6/1.2 m lies whole)
 FIRST_UDIM = 1001
 SEAM_TOL_PX = 0.01    # L09 acceptance: seam 0 px (mod 1, <= 0.01 px)
 VERTICAL_NZ = 0.5     # |n.z| below: a wall (vertical projection); above: horizontal projection
@@ -48,10 +62,18 @@ def tile_origin(udim):
 
 
 def udim_of_cell(cu, cv):
-    """Integer UV cell -> UDIM number (only cells with 0 <= u < 10 and v >= 0 are UDIM tiles)."""
-    if not (0 <= cu < 10) or cv < 0:
-        return None
-    return FIRST_UDIM + int(cu) + 10 * int(cv)
+    """Integer UV cell -> UDIM number: udimtile_core.udim_of_cell (#1337). Cells with u outside 0..9 or v < 0
+    raise udimtile.UdimDomainError (a ValueError; None before #1337); v >= 10 gives 1101+ (None before)."""
+    return udimtile.udim_of_cell(cu, cv)
+
+
+def piece_tile_or_zero(uv):
+    """UDIM of the cell of a piece centroid for the vpm.build report; 0 = off the UDIM grid (the label the report
+    used before #1337, when udim_of_cell returned None)."""
+    try:
+        return udim_of_cell(*_cell(uv))
+    except udimtile.UdimDomainError:
+        return 0
 
 
 def renumber_dense(used_ids, start=FIRST_UDIM):

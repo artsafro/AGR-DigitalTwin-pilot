@@ -1,0 +1,29 @@
+{
+  "schema": "album-questions/1",
+  "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+  "passed": false,
+  "questions": [
+    {
+      "id": "tec-title",
+      "page": 3,
+      "bbox": [
+        840,
+        805,
+        1160,
+        835
+      ],
+      "kind": "source_check",
+      "reasons": [
+        "binding_unresolved",
+        "scale_and_units_unverified",
+        "ground_truth_not_independent",
+        "approval_open"
+      ],
+      "ocr_label": "Новый парогазовый блок. Визуализация 1",
+      "vision_label": "Новый парогазовый блок. Визуализация 1",
+      "status": "unresolved",
+      "recipient": "architect",
+      "source_question": "Visualization-only booklet: no dimensioned drawing, material schedule or calibration. Request architectural source; never measure perspective."
+    }
+  ]
+}

@@ -1,0 +1,5624 @@
+{
+  "schema": "agr-library/1",
+  "library": "windows",
+  "version": "v001",
+  "pivot": "bottom-left",
+  "inputs": [
+    {
+      "path": "library/windows/window_types.json",
+      "sha256": "923b647385e90336678b98c6d15fb21a8ed7855950a1cd758212d506e4895d30"
+    },
+    {
+      "path": "library/windows/standard.json",
+      "sha256": "36b8825c902d37a9214d3d4e660ca54743abdf9572febe6ade62cf57e0ee3427"
+    },
+    {
+      "path": "library/windows/confirmations.json",
+      "sha256": "df9ff67c8cd768b59162a55a5097a9f74339a9ba627d673442b1cf2f29ef1bb7"
+    },
+    {
+      "path": "library/windows/sources/win-typical-max-sashes-v001.json",
+      "sha256": "42131ba4a455a284fe70777c7c769644cfc8aaad54a636d19490deb33be797b5"
+    },
+    {
+      "path": "library/windows/sources/elv-tc-vpm-census-v001.json",
+      "sha256": "8fb47b74219421f1acbc3140200389b7ccee09affb06f785fc467df5da1892dc"
+    },
+    {
+      "path": "adapters/max/agr_tools/windowgen_core.py",
+      "sha256": "0cfa7fb9ec6c2349eef0a85cf3723ce75f38f83544d5bc0bfc46130557fc8bf0"
+    },
+    {
+      "path": "tools/library/window_sashes.py",
+      "sha256": "1bf6ffe72b159b83adb012787425faee48602e19173bacf3499248e04dffd481"
+    },
+    {
+      "path": "tools/library/migrate_windows.py",
+      "sha256": "98b79c45b7814eb334169b95ff17a53c9d516c32e11e4095180799cac0209ecd"
+    },
+    {
+      "path": "tools/library/build_windows_blender.py",
+      "sha256": "b9f386922d85b2cf20568dfc69971e67d918104d15f579efd201ed7c930b8c56"
+    }
+  ],
+  "showcase": {
+    "path": "previews/windows-sheet.png",
+    "sha256": "3fcd795a13923324f36d0a54ca98eeaf2144a842df7687b2a8edbc53ccd6004f"
+  },
+  "assets": [
+    {
+      "id": "W01",
+      "name": "Окно трёхпольное 3600×2900",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 1,
+      "source": {
+        "record": "W01",
+        "original_name": "Окно трёхпольное 3600×2900",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_001",
+          "merged": [
+            "CW_001",
+            "CW_002",
+            "CW_004"
+          ],
+          "pdf_pages": [
+            18,
+            19,
+            20,
+            21
+          ],
+          "match": "pixel+dimension",
+          "occurrences": 84
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W01/npm.blend",
+          "sha256": "51c114df177358ab0d24d3b4fb3fe785b9564d9afddd61b68f4aa0724c2d046b",
+          "triangles": 2,
+          "size_m": [
+            3.6,
+            0,
+            2.9
+          ],
+          "objects": [
+            "W01_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W01/vpm.blend",
+          "sha256": "afa707369e32a11265f6b63c29710cfb663f7b586d04da75e8cd7ae17f0e835f",
+          "triangles": 346,
+          "size_m": [
+            3.6,
+            0.1,
+            2.9
+          ],
+          "objects": [
+            "W01_vpm_frame",
+            "W01_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W02",
+      "name": "Окно двухпольное 2050×2850",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 2,
+      "source": {
+        "record": "W02",
+        "original_name": "Окно двухпольное 2050×2850",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "WINDOW_027",
+          "merged": [
+            "WINDOW_027",
+            "WINDOW_028",
+            "WINDOW_033"
+          ],
+          "pdf_pages": [
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 26
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W02/npm.blend",
+          "sha256": "8f12660bd516f7ca796617b15f9596f212a6e59b8550554880f464e66e4a467e",
+          "triangles": 2,
+          "size_m": [
+            2.05,
+            0,
+            2.85
+          ],
+          "objects": [
+            "W02_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W02/vpm.blend",
+          "sha256": "fb784725324868d6e1469a7a58d6f2f8a7618f1ab763c252bcea1f6f10451251",
+          "triangles": 244,
+          "size_m": [
+            2.05,
+            0.1,
+            2.85
+          ],
+          "objects": [
+            "W02_vpm_frame",
+            "W02_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W03",
+      "name": "Окно однопольное узкое 850×2850",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 3,
+      "source": {
+        "record": "W03",
+        "original_name": "Окно однопольное узкое 850×2850",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "WINDOW_025",
+          "merged": [
+            "WINDOW_025"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 7
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W03/npm.blend",
+          "sha256": "39e2e4ed68fc290e854d6f248dc73d6d72c4a390b7359acdfd41825f452571d7",
+          "triangles": 2,
+          "size_m": [
+            0.85,
+            0,
+            2.85
+          ],
+          "objects": [
+            "W03_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W03/vpm.blend",
+          "sha256": "86f0a6dea97ff215091d35ff37ec206644cc78fffa382c69ac5aaa2271c24b4e",
+          "triangles": 142,
+          "size_m": [
+            0.85,
+            0.1,
+            2.85
+          ],
+          "objects": [
+            "W03_vpm_frame",
+            "W03_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W04",
+      "name": "Витраж двухпольный с фрамугой 2100×2800",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 4,
+      "source": {
+        "record": "W04",
+        "original_name": "Витраж двухпольный с фрамугой 2100×2800",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_006",
+          "merged": [
+            "CW_006",
+            "CW_008",
+            "CW_010",
+            "CW_024"
+          ],
+          "pdf_pages": [
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 29
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W04/npm.blend",
+          "sha256": "5dbcd1db21ba5819b9d6be47f3fd4f73a3cf77ff2281e218c087b7bf096c19b6",
+          "triangles": 2,
+          "size_m": [
+            2.1,
+            0,
+            2.8
+          ],
+          "objects": [
+            "W04_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W04/vpm.blend",
+          "sha256": "1d4e69694f6afc82870b14288580b81ec146d0d33d9152e91e262faa9fa31e33",
+          "triangles": 164,
+          "size_m": [
+            2.1,
+            0.1,
+            2.8
+          ],
+          "objects": [
+            "W04_vpm_frame",
+            "W04_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W05",
+      "name": "Витраж шестипольный 5500×3880",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 5,
+      "source": {
+        "record": "W05",
+        "original_name": "Витраж шестипольный 5500×3880",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_016",
+          "merged": [
+            "CW_016",
+            "CW_017"
+          ],
+          "pdf_pages": [
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 8
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W05/npm.blend",
+          "sha256": "be67eefa28274e28dfa07901353c925ddb5f71377cede2cdf77d925e6cbb77fa",
+          "triangles": 2,
+          "size_m": [
+            5.5,
+            0,
+            3.88
+          ],
+          "objects": [
+            "W05_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W05/vpm.blend",
+          "sha256": "4e276865e3b398cee45b79901b82fd1f4314b27b1d939bf3318b9423a3381d35",
+          "triangles": 404,
+          "size_m": [
+            5.5,
+            0.1,
+            3.88
+          ],
+          "objects": [
+            "W05_vpm_frame",
+            "W05_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W06",
+      "name": "Витраж двухпольный 2100×2800",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 6,
+      "source": {
+        "record": "W06",
+        "original_name": "Витраж двухпольный 2100×2800",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_011",
+          "merged": [
+            "CW_011"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 6
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W06/npm.blend",
+          "sha256": "cce92c525079f69f28fc8297aef99c689b0a8fd3a56c1f57b6544b98a63bf287",
+          "triangles": 2,
+          "size_m": [
+            2.1,
+            0,
+            2.8
+          ],
+          "objects": [
+            "W06_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W06/vpm.blend",
+          "sha256": "246e1caf995b8340b5891250f0cea9b8a912d95b93678cc1c59b19badc7e1c9f",
+          "triangles": 104,
+          "size_m": [
+            2.1,
+            0.1,
+            2.8
+          ],
+          "objects": [
+            "W06_vpm_frame",
+            "W06_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W07",
+      "name": "Витраж трёхпольный с фрамугой 3150×2800",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 7,
+      "source": {
+        "record": "W07",
+        "original_name": "Витраж трёхпольный с фрамугой 3150×2800",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_018",
+          "merged": [
+            "CW_018"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 4
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W07/npm.blend",
+          "sha256": "f8b8e1341b9bf9c284e891acd06a1d9598ff8f13585755c86ac34e15ff55b974",
+          "triangles": 2,
+          "size_m": [
+            3.15,
+            0,
+            2.8
+          ],
+          "objects": [
+            "W07_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W07/vpm.blend",
+          "sha256": "773db830a852e733469a9c0cdbf4f069bf9fe6a7cfac5b26cad01c5c585b797c",
+          "triangles": 224,
+          "size_m": [
+            3.15,
+            0.1,
+            2.8
+          ],
+          "objects": [
+            "W07_vpm_frame",
+            "W07_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "D01",
+      "name": "Дверь остеклённая однопольная 1110×2100",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 8,
+      "source": {
+        "record": "D01",
+        "original_name": "Дверь остеклённая однопольная 1110×2100",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "DOOR_119",
+          "merged": [
+            "DOOR_119"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/D01/npm.blend",
+          "sha256": "43832ca6a63b5e9aaaa7a86c83158dada5206c7a5954b80575c3d47ed65d7aab",
+          "triangles": 2,
+          "size_m": [
+            1.11,
+            0,
+            2.095
+          ],
+          "objects": [
+            "D01_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/D01/vpm.blend",
+          "sha256": "d2566232316e62a25f84b9de8a30898dee257e97c79d30058ad399dc3663cd78",
+          "triangles": 66,
+          "size_m": [
+            1.11,
+            0.073,
+            2.095
+          ],
+          "objects": [
+            "D01_vpm_frame",
+            "D01_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "D02",
+      "name": "Дверь остеклённая двупольная неравнопольная 1650×2100",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 9,
+      "source": {
+        "record": "D02",
+        "original_name": "Дверь остеклённая двупольная неравнопольная 1650×2100",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "DOOR_102",
+          "merged": [
+            "DOOR_102"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 34
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/D02/npm.blend",
+          "sha256": "4212de92c6df35109ca4efb9d837813e0a135876e6f3140a6305724d68182578",
+          "triangles": 2,
+          "size_m": [
+            1.65,
+            0,
+            2.1
+          ],
+          "objects": [
+            "D02_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/D02/vpm.blend",
+          "sha256": "d65c172d1920309c23893bfc306abe9f5b7501786cf057fa83635e0f1f29a3be",
+          "triangles": 104,
+          "size_m": [
+            1.65,
+            0.073,
+            2.1
+          ],
+          "objects": [
+            "D02_vpm_frame",
+            "D02_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "D03",
+      "name": "Дверной блок с боковым полем и фрамугой 2775×2800",
+      "confirmation": "confirmed",
+      "status": "quarantine",
+      "reason": [
+        "native float32 vertex spacing <= 2 mm (D152 xView); retain source, no guessed weld/shape change"
+      ],
+      "preview_cell": 10,
+      "source": {
+        "record": "D03",
+        "original_name": "Дверной блок с боковым полем и фрамугой 2775×2800",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_005",
+          "merged": [
+            "CW_005",
+            "CW_020",
+            "CW_025",
+            "CW_013",
+            "CW_023",
+            "CW_015",
+            "CW_026"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "visual+FBX",
+          "occurrences": 38
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "D04",
+      "name": "Глухое полотно / 1 створка",
+      "confirmation": "unconfirmed",
+      "status": "quarantine",
+      "reason": [
+        "тип не типизирован (typed: false)"
+      ],
+      "preview_cell": 11,
+      "source": {
+        "record": "D04",
+        "original_name": "Глухое полотно / 1 створка",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "DOOR_048",
+          "merged": [
+            "DOOR_048",
+            "DOOR_049"
+          ],
+          "pdf_pages": [],
+          "match": "FBX only; facade mapping pending",
+          "occurrences": 97
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "W01_H",
+      "name": "Широкое окно / высокая версия",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 12,
+      "source": {
+        "record": "W01_H",
+        "original_name": "Широкое окно / высокая версия",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_003",
+          "merged": [
+            "CW_003",
+            "CW_007",
+            "CW_014"
+          ],
+          "pdf_pages": [
+            18,
+            19,
+            20,
+            21
+          ],
+          "match": "same subdivision, FBX size",
+          "occurrences": 31
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W01_H/npm.blend",
+          "sha256": "f19425653536265ac33f0a1222215277ad44bafba173b37f546f5a5acdd1fb4c",
+          "triangles": 2,
+          "size_m": [
+            3.6,
+            0,
+            3.2
+          ],
+          "objects": [
+            "W01_H_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W01_H/vpm.blend",
+          "sha256": "761b1e3ceac60a0e7d3bf6c54689cfc3f4c24700f85af14010700eeabe78e45e",
+          "triangles": 346,
+          "size_m": [
+            3.6,
+            0.1,
+            3.2
+          ],
+          "objects": [
+            "W01_H_vpm_frame",
+            "W01_H_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W02_H",
+      "name": "Двухсекционное / высокая версия",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 13,
+      "source": {
+        "record": "W02_H",
+        "original_name": "Двухсекционное / высокая версия",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "WINDOW_029",
+          "merged": [
+            "WINDOW_029",
+            "WINDOW_030",
+            "WINDOW_032",
+            "WINDOW_034"
+          ],
+          "pdf_pages": [
+            20,
+            21
+          ],
+          "match": "same subdivision, FBX size",
+          "occurrences": 16
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W02_H/npm.blend",
+          "sha256": "561dcdc426d8fe439f53df2e7906c0b70e69a19bc3a85af1071f7a1810489ab8",
+          "triangles": 2,
+          "size_m": [
+            2.05,
+            0,
+            3.15
+          ],
+          "objects": [
+            "W02_H_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W02_H/vpm.blend",
+          "sha256": "f2e0867aa8592538df7e33abdd8f93a49435b9adae60c88ecf91e816a59857c3",
+          "triangles": 244,
+          "size_m": [
+            2.05,
+            0.1,
+            3.15
+          ],
+          "objects": [
+            "W02_H_vpm_frame",
+            "W02_H_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W03_H",
+      "name": "Узкое / высокая версия",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 14,
+      "source": {
+        "record": "W03_H",
+        "original_name": "Узкое / высокая версия",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "WINDOW_026",
+          "merged": [
+            "WINDOW_026"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "same subdivision, FBX size",
+          "occurrences": 4
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W03_H/npm.blend",
+          "sha256": "56b18724d921bf56f37858e3a2f914e06903dccf977b61bb051502a9213eb1a0",
+          "triangles": 2,
+          "size_m": [
+            0.85,
+            0,
+            3.15
+          ],
+          "objects": [
+            "W03_H_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W03_H/vpm.blend",
+          "sha256": "7c37114ef785808e3e142e58b383b3817ae56ebe28ce462e44b29edbe629145e",
+          "triangles": 142,
+          "size_m": [
+            0.85,
+            0.1,
+            3.15
+          ],
+          "objects": [
+            "W03_H_vpm_frame",
+            "W03_H_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W01_N",
+      "name": "Широкое окно / уже",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 15,
+      "source": {
+        "record": "W01_N",
+        "original_name": "Широкое окно / уже",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_019",
+          "merged": [
+            "CW_019"
+          ],
+          "pdf_pages": [
+            18,
+            19,
+            20,
+            21
+          ],
+          "match": "same subdivision, FBX size",
+          "occurrences": 4
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W01_N/npm.blend",
+          "sha256": "38d8694436ebae51178d09a9bf5fab1a295382d3fc73241067da0c926a16238f",
+          "triangles": 2,
+          "size_m": [
+            3.2,
+            0,
+            2.9
+          ],
+          "objects": [
+            "W01_N_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W01_N/vpm.blend",
+          "sha256": "a3871b4a14085b2446aa24fbae4651e2d4cb1fe39e68338895cb71d6d93e53c2",
+          "triangles": 346,
+          "size_m": [
+            3.2,
+            0.1,
+            2.9
+          ],
+          "objects": [
+            "W01_N_vpm_frame",
+            "W01_N_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "W04_N",
+      "name": "Витраж / уже",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 16,
+      "source": {
+        "record": "W04_N",
+        "original_name": "Витраж / уже",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_009",
+          "merged": [
+            "CW_009"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "same subdivision, FBX size",
+          "occurrences": 6
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/W04_N/npm.blend",
+          "sha256": "e393baa58ba7f176d81cf9d1b387ad77154801a42d7bea3532d2d989531463c0",
+          "triangles": 2,
+          "size_m": [
+            1.8,
+            0,
+            2.8
+          ],
+          "objects": [
+            "W04_N_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/W04_N/vpm.blend",
+          "sha256": "f74203f50a7dcec673a9f5e4490f550684a57c778267749ac15cd07f8901a912",
+          "triangles": 164,
+          "size_m": [
+            1.8,
+            0.1,
+            2.8
+          ],
+          "objects": [
+            "W04_N_vpm_frame",
+            "W04_N_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "D03_W",
+      "name": "Входная группа / шире",
+      "confirmation": "unconfirmed",
+      "status": "quarantine",
+      "reason": [
+        "native float32 vertex spacing <= 2 mm (D152 xView); retain source, no guessed weld/shape change"
+      ],
+      "preview_cell": 17,
+      "source": {
+        "record": "D03_W",
+        "original_name": "Входная группа / шире",
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/openings-v003/type-map.json (user project)",
+          "fbx": "CW_012",
+          "merged": [
+            "CW_012"
+          ],
+          "pdf_pages": [
+            19,
+            20,
+            21
+          ],
+          "match": "same entrance family, FBX size",
+          "occurrences": 5
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "CW_021",
+      "name": "CW_021 (source name unspecified)",
+      "confirmation": "unconfirmed",
+      "status": "quarantine",
+      "reason": [
+        "тип не типизирован (typed: false)",
+        "нет разбивки: panes_m и opaque_m пусты"
+      ],
+      "preview_cell": 18,
+      "source": {
+        "record": "CW_021",
+        "original_name": null,
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/library-v001/curtain-types.json (user project)",
+          "fbx": "CW_021",
+          "occurrences": 4,
+          "bbox_m": [
+            3.6000006280457626,
+            0.10000034835869956,
+            2.400000069556274
+          ],
+          "counts": {
+            "panels": 3,
+            "mullions": 15,
+            "windows": 1,
+            "doors": 0
+          }
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "CW_022",
+      "name": "CW_022 (source name unspecified)",
+      "confirmation": "unconfirmed",
+      "status": "quarantine",
+      "reason": [
+        "тип не типизирован (typed: false)",
+        "нет разбивки: panes_m и opaque_m пусты"
+      ],
+      "preview_cell": 19,
+      "source": {
+        "record": "CW_022",
+        "original_name": null,
+        "provenance": {
+          "object": "SOSH1150",
+          "file": "jobs/REVIT-OPENINGS/outputs/library-v001/curtain-types.json (user project)",
+          "fbx": "CW_022",
+          "occurrences": 3,
+          "bbox_m": [
+            8.500001664107828,
+            3.4999991534920305,
+            1.4247981642697702
+          ],
+          "counts": {
+            "panels": 44,
+            "mullions": 129,
+            "windows": 0,
+            "doors": 0
+          }
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "KPP1-W01",
+      "name": "Окно однопольное 1180×1800",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 20,
+      "source": {
+        "record": "KPP1-W01",
+        "original_name": "Окно однопольное 1180×1800",
+        "provenance": {
+          "object": "tec26-kpp1",
+          "file": "jobs/KPP1/outputs/revit-twin-v003/spec-revit-twin-v013.json (spec v0.3, Revit path)",
+          "revit": "ADSK_Витраж_Без разрезки_Импосты 50х100 frame wall with MEP_Окно AGS68 windows",
+          "occurrences": 18,
+          "glass_m": [
+            1.08,
+            1.7
+          ],
+          "across_level": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/KPP1-W01/npm.blend",
+          "sha256": "32ec9bd0d084f066d231ed8e39a724ad1561f75e9f3daa1832afd30fc8428f8b",
+          "triangles": 2,
+          "size_m": [
+            1.18,
+            0,
+            1.8
+          ],
+          "objects": [
+            "KPP1-W01_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/KPP1-W01/vpm.blend",
+          "sha256": "f6520952e1cdb32b9e29b1e8f296579b6608cc5231b281591883c58bfefca80a",
+          "triangles": 66,
+          "size_m": [
+            1.18,
+            0.1,
+            1.8
+          ],
+          "objects": [
+            "KPP1-W01_vpm_frame",
+            "KPP1-W01_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "KPP1-W02",
+      "name": "Витраж однопольный 4 стекла по высоте 1180×5450",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 21,
+      "source": {
+        "record": "KPP1-W02",
+        "original_name": "Витраж однопольный 4 стекла по высоте 1180×5450",
+        "provenance": {
+          "object": "tec26-kpp1",
+          "file": "jobs/KPP1/outputs/revit-twin-v003/spec-revit-twin-v013.json (spec v0.3, Revit path)",
+          "revit": "ADSK_Витраж_Без разрезки_Импосты 50х100 frame wall with MEP_Окно AGS68 windows",
+          "occurrences": 1,
+          "glass_m": [
+            1.08,
+            5.35
+          ],
+          "across_level": "L1"
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/KPP1-W02/npm.blend",
+          "sha256": "97359649e733b745e1f4ed36d57672769d4fe1b60e0fd4f54b38217f80e7d317",
+          "triangles": 2,
+          "size_m": [
+            1.18,
+            0,
+            5.45
+          ],
+          "objects": [
+            "KPP1-W02_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/KPP1-W02/vpm.blend",
+          "sha256": "4008ccaa5f7a1ead548fb5c6f63fd77e628b37d2f8b3145354fecb40bd9832d7",
+          "triangles": 180,
+          "size_m": [
+            1.18,
+            0.1,
+            5.45
+          ],
+          "objects": [
+            "KPP1-W02_vpm_frame",
+            "KPP1-W02_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "KPP1-W03",
+      "name": "Окно двухпольное 2000×1800",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 22,
+      "source": {
+        "record": "KPP1-W03",
+        "original_name": "Окно двухпольное 2000×1800",
+        "provenance": {
+          "object": "tec26-kpp1",
+          "file": "jobs/KPP1/outputs/revit-twin-v003/spec-revit-twin-v013.json (spec v0.3, Revit path)",
+          "revit": "ADSK_Витраж_Без разрезки_Импосты 50х100 frame wall with MEP_Окно AGS68 windows",
+          "occurrences": 1,
+          "glass_m": [
+            1.9,
+            1.7
+          ],
+          "across_level": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the source has no sash data"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the source has no handing data"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/KPP1-W03/npm.blend",
+          "sha256": "dc03de73f647f538c179b9759efc22a90dbe549f13e56473eff953838541eef4",
+          "triangles": 2,
+          "size_m": [
+            2.0,
+            0,
+            1.8
+          ],
+          "objects": [
+            "KPP1-W03_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/KPP1-W03/vpm.blend",
+          "sha256": "67b1cff6a78cdc2a567ceb0219400344e7f6187ad2f24d6e52125adaec52bc28",
+          "triangles": 104,
+          "size_m": [
+            2.0,
+            0.1,
+            1.8
+          ],
+          "objects": [
+            "KPP1-W03_vpm_frame",
+            "KPP1-W03_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-01",
+      "name": "Балконный блок трёхпольный с фрамугой 2374×2714",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 23,
+      "source": {
+        "record": "WT-01",
+        "original_name": "Балконный блок трёхпольный с фрамугой 2374×2714",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Балкон_Дверь_V3_H3_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.094,
+                0.954,
+                0.65,
+                2.16
+              ],
+              [
+                1.524,
+                0.154,
+                2.28,
+                2.16
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F58",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-01/npm.blend",
+          "sha256": "a8c0157f66510f2db9bca679887e0eb81ff5529b7515d83e69cb608ebcad6c05",
+          "triangles": 2,
+          "size_m": [
+            2.374,
+            0,
+            2.714
+          ],
+          "objects": [
+            "WT-01_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-01/vpm.blend",
+          "sha256": "6797ee381cefb149e02d5fd335d8b5ade071aa0ab37b00fbb0a4331b9a6f15f8",
+          "triangles": 726,
+          "size_m": [
+            2.374,
+            0.058,
+            2.714
+          ],
+          "objects": [
+            "WT-01_vpm_frame",
+            "WT-01_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-02",
+      "name": "Окно четырёхпольное с фрамугой 3287×2614",
+      "confirmation": "confirmed",
+      "status": "quarantine",
+      "reason": [
+        "стандартный профиль неприменим: нет задней плоскости рамы и стекла, геометрия до 957 мм в глубину, лицо 57/143 мм (L10)"
+      ],
+      "preview_cell": 24,
+      "source": {
+        "record": "WT-02",
+        "original_name": "Окно четырёхпольное с фрамугой 3287×2614",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "Object007",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 4,
+            "rects_m": [
+              [
+                0.056,
+                1.182,
+                0.79,
+                2.558
+              ],
+              [
+                0.79,
+                1.182,
+                1.572,
+                2.558
+              ],
+              [
+                1.628,
+                1.182,
+                2.362,
+                2.558
+              ],
+              [
+                2.362,
+                1.182,
+                3.144,
+                2.558
+              ]
+            ],
+            "reason": "two sash depth levels overlap at the meeting stile (sliding or not is unknown); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "WT-03",
+      "name": "Окно однопольное с фрамугой 974×1944",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 25,
+      "source": {
+        "record": "WT-03",
+        "original_name": "Окно однопольное с фрамугой 974×1944",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Отлив_V2_H1_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F58",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-03/npm.blend",
+          "sha256": "8b5eaee11c174f87e60480d21522e7c71bb2b46ed0f53289ade08d8d0f7a8195",
+          "triangles": 2,
+          "size_m": [
+            0.974,
+            0,
+            1.944
+          ],
+          "objects": [
+            "WT-03_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-03/vpm.blend",
+          "sha256": "cb7f74d3116e966cbd822496367b9de1a35af92316adbaac0e28916fa3138700",
+          "triangles": 104,
+          "size_m": [
+            0.974,
+            0.058,
+            1.944
+          ],
+          "objects": [
+            "WT-03_vpm_frame",
+            "WT-03_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-04",
+      "name": "Окно двухпольное с фрамугой 1684×1944",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 26,
+      "source": {
+        "record": "WT-04",
+        "original_name": "Окно двухпольное с фрамугой 1684×1944",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Отлив_V2_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.094,
+                0.574,
+                0.754,
+                1.85
+              ],
+              [
+                0.928,
+                0.574,
+                1.59,
+                1.85
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F58",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-04/npm.blend",
+          "sha256": "6c29485edbe51605388e5b00e6ea01df9d1461dfbb95360fa57cc61300bf4f1f",
+          "triangles": 2,
+          "size_m": [
+            1.684,
+            0,
+            1.944
+          ],
+          "objects": [
+            "WT-04_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-04/vpm.blend",
+          "sha256": "ddf84eca49be523b1bff7b581115b31068b3481545d578212b08403a64d59858",
+          "triangles": 164,
+          "size_m": [
+            1.684,
+            0.058,
+            1.944
+          ],
+          "objects": [
+            "WT-04_vpm_frame",
+            "WT-04_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-05",
+      "name": "Окно трёхпольное с фрамугой 2474×1944",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 27,
+      "source": {
+        "record": "WT-05",
+        "original_name": "Окно трёхпольное с фрамугой 2474×1944",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Отлив_V2_H3_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.094,
+                0.574,
+                0.754,
+                1.85
+              ],
+              [
+                1.718,
+                0.574,
+                2.38,
+                1.85
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F58",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-05/npm.blend",
+          "sha256": "019c2a1ae722f81ea9db8541febe69db20a165b9a2db80285b0b16f18c91df13",
+          "triangles": 2,
+          "size_m": [
+            2.474,
+            0,
+            1.944
+          ],
+          "objects": [
+            "WT-05_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-05/vpm.blend",
+          "sha256": "73938d129f6a9f1aa532bac425af919651ced9afe67f7fb04c10d0f6ea6e3aa2",
+          "triangles": 400,
+          "size_m": [
+            2.474,
+            0.058,
+            1.944
+          ],
+          "objects": [
+            "WT-05_vpm_frame",
+            "WT-05_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-06",
+      "name": "Окно двухпольное с фрамугой 2014×2614",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 28,
+      "source": {
+        "record": "WT-06",
+        "original_name": "Окно двухпольное с фрамугой 2014×2614",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Балкон_Окно_V2_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.058,
+                1.182,
+                1.032,
+                2.558
+              ],
+              [
+                1.032,
+                1.182,
+                1.958,
+                2.558
+              ]
+            ],
+            "reason": "two sash depth levels overlap at the meeting stile (sliding or not is unknown); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-06/npm.blend",
+          "sha256": "41a7477311ea9d403c97df0e53c4e0ccb39fb18f5b7db4d0c25db43f1ad792f2",
+          "triangles": 2,
+          "size_m": [
+            2.014,
+            0,
+            2.614
+          ],
+          "objects": [
+            "WT-06_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-06/vpm.blend",
+          "sha256": "6ddd89e9f05070901f81f580f3af80ede7c43b5b97c106dda6d3db3767df5c94",
+          "triangles": 164,
+          "size_m": [
+            2.014,
+            0.1,
+            2.614
+          ],
+          "objects": [
+            "WT-06_vpm_frame",
+            "WT-06_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-07",
+      "name": "Окно трёхпольное с фрамугой 2514×2614",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 29,
+      "source": {
+        "record": "WT-07",
+        "original_name": "Окно трёхпольное с фрамугой 2514×2614",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Балкон_Окно_V2_H3_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.058,
+                1.182,
+                0.874,
+                2.558
+              ],
+              [
+                0.874,
+                1.182,
+                2.456,
+                2.558
+              ]
+            ],
+            "reason": "two sash depth levels overlap at the meeting stile (sliding or not is unknown); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-07/npm.blend",
+          "sha256": "c40bacb086546cb41c045db2804ad2c56af99aa1e571e589d6cc438d7e54982e",
+          "triangles": 2,
+          "size_m": [
+            2.514,
+            0,
+            2.614
+          ],
+          "objects": [
+            "WT-07_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-07/vpm.blend",
+          "sha256": "f3abc4787796b4d54ede7b27f8d6fabf3ec0da5435a833d72c7c0422b67fa4fa",
+          "triangles": 224,
+          "size_m": [
+            2.514,
+            0.1,
+            2.614
+          ],
+          "objects": [
+            "WT-07_vpm_frame",
+            "WT-07_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-08",
+      "name": "Балконный блок двухпольный с фрамугой 1474×2714",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 30,
+      "source": {
+        "record": "WT-08",
+        "original_name": "Балконный блок двухпольный с фрамугой 1474×2714",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Балкон_Дверь_V3_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.094,
+                0.954,
+                0.65,
+                2.16
+              ],
+              [
+                0.824,
+                0.154,
+                1.38,
+                2.16
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F58",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-08/npm.blend",
+          "sha256": "a61df3dbd6e573de4086801c398d8a2236cdcef9fd04b17ad4035304fd6d15b9",
+          "triangles": 2,
+          "size_m": [
+            1.474,
+            0,
+            2.714
+          ],
+          "objects": [
+            "WT-08_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-08/vpm.blend",
+          "sha256": "47f34007c620dfc60838181ef56cbf944e5be7f64307c0202628bcf70b9f8dec",
+          "triangles": 372,
+          "size_m": [
+            1.474,
+            0.058,
+            2.714
+          ],
+          "objects": [
+            "WT-08_vpm_frame",
+            "WT-08_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-09",
+      "name": "Дверь остеклённая двухпольная с фрамугой 1474×2247",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 31,
+      "source": {
+        "record": "WT-09",
+        "original_name": "Дверь остеклённая двухпольная с фрамугой 1474×2247",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Дверь_V2_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.094,
+                0.954,
+                0.65,
+                2.16
+              ],
+              [
+                0.824,
+                0.154,
+                1.38,
+                2.16
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F58",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-09/npm.blend",
+          "sha256": "5f001acb6b19149368a5e74dcc6ca5fed3f40f997944ba83adfa3c9f402a038f",
+          "triangles": 2,
+          "size_m": [
+            1.474,
+            0,
+            2.247
+          ],
+          "objects": [
+            "WT-09_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-09/vpm.blend",
+          "sha256": "82af2b3586972f6ca3b32e9ac5e36335b0ea89006592a0edc814e9e814078260",
+          "triangles": 296,
+          "size_m": [
+            1.474,
+            0.058,
+            2.247
+          ],
+          "objects": [
+            "WT-09_vpm_frame",
+            "WT-09_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-10",
+      "name": "Окно трёхпольное с фрамугой 2514×2614",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 32,
+      "source": {
+        "record": "WT-10",
+        "original_name": "Окно трёхпольное с фрамугой 2514×2614",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Большое_V2_H3_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-10/npm.blend",
+          "sha256": "a7a3b30daef9e838df7eb2d01f5b9ae35a8c1c3496900dcd4cbb74c813d803b1",
+          "triangles": 2,
+          "size_m": [
+            2.514,
+            0,
+            2.614
+          ],
+          "objects": [
+            "WT-10_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-10/vpm.blend",
+          "sha256": "7cfd2fbcec43e9662c6a59c698caf4943666379542eba3437b5d3eeff2af24d2",
+          "triangles": 224,
+          "size_m": [
+            2.514,
+            0.1,
+            2.614
+          ],
+          "objects": [
+            "WT-10_vpm_frame",
+            "WT-10_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-11",
+      "name": "Окно двухпольное с фрамугой 1694×2614",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 33,
+      "source": {
+        "record": "WT-11",
+        "original_name": "Окно двухпольное с фрамугой 1694×2614",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Большое_V2_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-11/npm.blend",
+          "sha256": "bbec0a1aba59fd13c12ecf48df2b58f4d6d7d62ddf7ca3691ed8201a4a9c2d25",
+          "triangles": 2,
+          "size_m": [
+            1.694,
+            0,
+            2.614
+          ],
+          "objects": [
+            "WT-11_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-11/vpm.blend",
+          "sha256": "ef06269e81b842628baf5f75a136bb1c32c4493e72f5a230d7270f302c55f1d5",
+          "triangles": 164,
+          "size_m": [
+            1.694,
+            0.1,
+            2.614
+          ],
+          "objects": [
+            "WT-11_vpm_frame",
+            "WT-11_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-12",
+      "name": "Окно однопольное с фрамугой 867×2614",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 34,
+      "source": {
+        "record": "WT-12",
+        "original_name": "Окно однопольное с фрамугой 867×2614",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Большое_V2_H1_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-12/npm.blend",
+          "sha256": "d6a28169b64fb33cbf799cda59c8124b00aee165c3a5648fe5e439c40a4a2f89",
+          "triangles": 2,
+          "size_m": [
+            0.867,
+            0,
+            2.614
+          ],
+          "objects": [
+            "WT-12_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-12/vpm.blend",
+          "sha256": "2af3c37f2b49bb0ae32aad74b4333a6e5ced30eb4c41c1c3ffac3a6b85344f71",
+          "triangles": 104,
+          "size_m": [
+            0.867,
+            0.1,
+            2.614
+          ],
+          "objects": [
+            "WT-12_vpm_frame",
+            "WT-12_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-13",
+      "name": "Дверь остеклённая двухпольная с глухой фрамугой 1474×3060",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 35,
+      "source": {
+        "record": "WT-13",
+        "original_name": "Дверь остеклённая двухпольная с глухой фрамугой 1474×3060",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Дверь_Вход_V2_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.068,
+                0.098,
+                0.548,
+                2.186
+              ],
+              [
+                0.582,
+                0.098,
+                1.406,
+                2.186
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-13/npm.blend",
+          "sha256": "096546310f96c28fabe711d740b48dd6ca2725c7550634b97dabf766c21f2423",
+          "triangles": 2,
+          "size_m": [
+            1.474,
+            0,
+            3.06
+          ],
+          "objects": [
+            "WT-13_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-13/vpm.blend",
+          "sha256": "585fcd1b093dd91f7be65a53283f2b50c0ed5f6c4977bd5447c382098603812d",
+          "triangles": 158,
+          "size_m": [
+            1.474,
+            0.073,
+            3.06
+          ],
+          "objects": [
+            "WT-13_vpm_frame",
+            "WT-13_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-14",
+      "name": "Дверь остеклённая однопольная с глухой фрамугой 948×3060",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 36,
+      "source": {
+        "record": "WT-14",
+        "original_name": "Дверь остеклённая однопольная с глухой фрамугой 948×3060",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Дверь_Вход_V2_H1_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 1,
+            "rects_m": [
+              [
+                0.068,
+                0.098,
+                0.88,
+                2.186
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-14/npm.blend",
+          "sha256": "629d184b14676e77bed3da1255963683e94148b5045fa5496e4d008bea0bd07a",
+          "triangles": 2,
+          "size_m": [
+            0.948,
+            0,
+            3.06
+          ],
+          "objects": [
+            "WT-14_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-14/vpm.blend",
+          "sha256": "199e5506588eece2a0256ae35aeb73b7175392e75bfab4c354f5f75974d90f05",
+          "triangles": 104,
+          "size_m": [
+            0.948,
+            0.073,
+            3.06
+          ],
+          "objects": [
+            "WT-14_vpm_frame",
+            "WT-14_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-15",
+      "name": "Дверь остеклённая трёхпольная с глухой фрамугой 2303×3060",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 37,
+      "source": {
+        "record": "WT-15",
+        "original_name": "Дверь остеклённая трёхпольная с глухой фрамугой 2303×3060",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Дверь_Вход_V2_H3_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.068,
+                0.098,
+                0.548,
+                2.186
+              ],
+              [
+                0.582,
+                0.098,
+                1.406,
+                2.186
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-15/npm.blend",
+          "sha256": "5909eed36e6ed150e183c30d3dc081784fe0e70f1d1735c00bdf1de3a7d96ab5",
+          "triangles": 2,
+          "size_m": [
+            2.303,
+            0,
+            3.06
+          ],
+          "objects": [
+            "WT-15_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-15/vpm.blend",
+          "sha256": "ab7f9f3b334c3ae06a79896d0ecd2921bf3bfb4bde0eb903e64c55fc980955e9",
+          "triangles": 350,
+          "size_m": [
+            2.303,
+            0.073,
+            3.06
+          ],
+          "objects": [
+            "WT-15_vpm_frame",
+            "WT-15_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-16",
+      "name": "Дверь остеклённая однопольная 949×2247",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 38,
+      "source": {
+        "record": "WT-16",
+        "original_name": "Дверь остеклённая однопольная 949×2247",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Дверь_Вход_V1_H1_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 1,
+            "rects_m": [
+              [
+                0.068,
+                0.098,
+                0.88,
+                2.186
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-16/npm.blend",
+          "sha256": "9bccb670a1bb1fa44fa996986f989d73d33a5316097af758944c0174a4b556dc",
+          "triangles": 2,
+          "size_m": [
+            0.949,
+            0,
+            2.247
+          ],
+          "objects": [
+            "WT-16_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-16/vpm.blend",
+          "sha256": "f19964c3bb31cdfa03b730a1ac61ea088c79a5b3b903e036fde5b8a2cdd98eec",
+          "triangles": 66,
+          "size_m": [
+            0.949,
+            0.073,
+            2.247
+          ],
+          "objects": [
+            "WT-16_vpm_frame",
+            "WT-16_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-17",
+      "name": "Окно однопольное 868×1824",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 39,
+      "source": {
+        "record": "WT-17",
+        "original_name": "Окно однопольное 868×1824",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Большое_V1_H1_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-17/npm.blend",
+          "sha256": "c1ba6246f870e9860be2cc56635581004016ad33e7ac1da7f97eaba70bf12d54",
+          "triangles": 2,
+          "size_m": [
+            0.868,
+            0,
+            1.824
+          ],
+          "objects": [
+            "WT-17_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-17/vpm.blend",
+          "sha256": "1d98d28054affc170e98c85fa994d0ea80a210f825633e40ef5a0e0a49d87547",
+          "triangles": 66,
+          "size_m": [
+            0.868,
+            0.1,
+            1.824
+          ],
+          "objects": [
+            "WT-17_vpm_frame",
+            "WT-17_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-18",
+      "name": "Окно двухпольное 1695×1824",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 40,
+      "source": {
+        "record": "WT-18",
+        "original_name": "Окно двухпольное 1695×1824",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Большое_V1_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-18/npm.blend",
+          "sha256": "97dacd86d3f02b4ead1c188d8f5dc5b029420fa503e2dad11f06bd91db309643",
+          "triangles": 2,
+          "size_m": [
+            1.695,
+            0,
+            1.824
+          ],
+          "objects": [
+            "WT-18_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-18/vpm.blend",
+          "sha256": "1da2404bb641a4532169761f39a2272c6eb1e8648109c0e8e2dec2dd7c6b4c84",
+          "triangles": 104,
+          "size_m": [
+            1.695,
+            0.1,
+            1.824
+          ],
+          "objects": [
+            "WT-18_vpm_frame",
+            "WT-18_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-19",
+      "name": "Окно трёхпольное 2514×1824",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 41,
+      "source": {
+        "record": "WT-19",
+        "original_name": "Окно трёхпольное 2514×1824",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Большое_V1_H3_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-19/npm.blend",
+          "sha256": "62e45281175993755883b1a2c938efb0e8ff4c9dcf696e89ab0d0317ae11284e",
+          "triangles": 2,
+          "size_m": [
+            2.514,
+            0,
+            1.824
+          ],
+          "objects": [
+            "WT-19_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-19/vpm.blend",
+          "sha256": "38022ed7e6dd5935e4bfb2baf2d1be4c4e6357c02d9cdf606d38f76ba523a085",
+          "triangles": 142,
+          "size_m": [
+            2.514,
+            0.1,
+            1.824
+          ],
+          "objects": [
+            "WT-19_vpm_frame",
+            "WT-19_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-20",
+      "name": "Окно четырёхпольное с фрамугой 3354×1944",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 42,
+      "source": {
+        "record": "WT-20",
+        "original_name": "Окно четырёхпольное с фрамугой 3354×1944",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Отлив_V2_H4_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.094,
+                0.574,
+                0.754,
+                1.85
+              ],
+              [
+                2.6,
+                0.574,
+                3.26,
+                1.85
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F58",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-20/npm.blend",
+          "sha256": "76bfc6c40fa4e6112e942c2b343797aeb13b1be95fcba1ea40045d44372ace20",
+          "triangles": 2,
+          "size_m": [
+            3.354,
+            0,
+            1.944
+          ],
+          "objects": [
+            "WT-20_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-20/vpm.blend",
+          "sha256": "dd4214b6ef816dd8d464704c50ccee768b6675a922807c89d7bfe21a2a4b2ccc",
+          "triangles": 476,
+          "size_m": [
+            3.354,
+            0.058,
+            1.944
+          ],
+          "objects": [
+            "WT-20_vpm_frame",
+            "WT-20_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-21",
+      "name": "Окно четырёхпольное с фрамугой 3330×2614",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 43,
+      "source": {
+        "record": "WT-21",
+        "original_name": "Окно четырёхпольное с фрамугой 3330×2614",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Окно_Большое_V2_H4_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "rects_m": [],
+            "reason": "no inner frame on another depth level: read as fixed glazing (0 sashes); not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-21/npm.blend",
+          "sha256": "c24eea5c374202a304ca104577f9c0347441fc3cee099c8786042c1d849c7872",
+          "triangles": 2,
+          "size_m": [
+            3.33,
+            0,
+            2.614
+          ],
+          "objects": [
+            "WT-21_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-21/vpm.blend",
+          "sha256": "d0424076f8601d75f01a3ea3a4c48f6bb17cedcd7d8db210da208791b15f9298",
+          "triangles": 284,
+          "size_m": [
+            3.33,
+            0.1,
+            2.614
+          ],
+          "objects": [
+            "WT-21_vpm_frame",
+            "WT-21_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-22",
+      "name": "Дверь остеклённая однопольная с фрамугой 949×3060",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 44,
+      "source": {
+        "record": "WT-22",
+        "original_name": "Дверь остеклённая однопольная с фрамугой 949×3060",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Д_Вход_Стекло_V2_H1_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 1,
+            "rects_m": [
+              [
+                0.068,
+                0.098,
+                0.88,
+                2.186
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-22/npm.blend",
+          "sha256": "438b03f8496b5c87783ddaa9c613d1b8152ca93012a53d78e49e912c48d9d248",
+          "triangles": 2,
+          "size_m": [
+            0.949,
+            0,
+            3.06
+          ],
+          "objects": [
+            "WT-22_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-22/vpm.blend",
+          "sha256": "a4e387c4ad503ac8b2bab573a5e25c28419cd42e087c6df1d05ded972e7bec06",
+          "triangles": 104,
+          "size_m": [
+            0.949,
+            0.073,
+            3.06
+          ],
+          "objects": [
+            "WT-22_vpm_frame",
+            "WT-22_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-23",
+      "name": "Дверь остеклённая двухпольная с фрамугой 1474×3060",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 45,
+      "source": {
+        "record": "WT-23",
+        "original_name": "Дверь остеклённая двухпольная с фрамугой 1474×3060",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Д_Вход_Стекло_V2_H2_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.068,
+                0.098,
+                0.548,
+                2.186
+              ],
+              [
+                0.582,
+                0.098,
+                1.404,
+                2.186
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-23/npm.blend",
+          "sha256": "3594f8c5cb88e3b2f593aa28a73ab59342f6d52aac8a9aed27c2d9ba5c7616b5",
+          "triangles": 2,
+          "size_m": [
+            1.474,
+            0,
+            3.06
+          ],
+          "objects": [
+            "WT-23_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-23/vpm.blend",
+          "sha256": "9494bd6ea28569a5e6679feb02a526629c7a5818161c426aef712546bfa02068",
+          "triangles": 158,
+          "size_m": [
+            1.474,
+            0.073,
+            3.06
+          ],
+          "objects": [
+            "WT-23_vpm_frame",
+            "WT-23_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "WT-24",
+      "name": "Дверь остеклённая трёхпольная с фрамугой 2303×3060",
+      "confirmation": "confirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 46,
+      "source": {
+        "record": "WT-24",
+        "original_name": "Дверь остеклённая трёхпольная с фрамугой 2303×3060",
+        "provenance": {
+          "object": "Win_Typical.max",
+          "file": "library/windows/sources/win-typical-max-v001.json",
+          "max_object": "New_Д_Вход_Стекло_V2_H3_000",
+          "occurrences": null
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "rects_m": [
+              [
+                0.068,
+                0.098,
+                0.548,
+                2.186
+              ],
+              [
+                0.582,
+                0.098,
+                1.404,
+                2.186
+              ]
+            ],
+            "reason": "read from the Max scene: an inner frame on its own depth level inside a field is taken as an opening sash; not confirmed by the user",
+            "source": "library/windows/sources/win-typical-max-sashes-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "the Max scene has no handle, hinge or opening-direction geometry"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/WT-24/npm.blend",
+          "sha256": "e077e3b182c4e6bf0abb7879912ef9f0fc4bf763e16fa27aeff47803e68e55c6",
+          "triangles": 2,
+          "size_m": [
+            2.303,
+            0,
+            3.06
+          ],
+          "objects": [
+            "WT-24_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/WT-24/vpm.blend",
+          "sha256": "ae058cd2df16e941a5643ff2feb91194e86b4dde85af31baac267209034de5c3",
+          "triangles": 350,
+          "size_m": [
+            2.303,
+            0.073,
+            3.06
+          ],
+          "objects": [
+            "WT-24_vpm_frame",
+            "WT-24_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-01",
+      "name": "Окно однопольное 1230×1540",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 47,
+      "source": {
+        "record": "ELV-01",
+        "original_name": "Окно однопольное 1230×1540",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "blinds-1190x1500",
+          "fbx_type": "(WN)_Blinds 1190х1500(h)",
+          "fbx_objects": [
+            "(WN)_Blinds 1190х1500(h) [14917984]"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 7
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "reason": "the FBX family is one frame ring with no sash island: read as fixed glazing (ALT W72 single field per the census); not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-01/npm.blend",
+          "sha256": "2787010fe492204a6eabb7e1001cf258932b37e632458d03dee54755fec4447a",
+          "triangles": 2,
+          "size_m": [
+            1.23,
+            0,
+            1.54
+          ],
+          "objects": [
+            "ELV-01_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-01/vpm.blend",
+          "sha256": "b106e0812c6e836b073c1f7c1b0f54700a66dd11a5206922b5ac269f4a480db4",
+          "triangles": 66,
+          "size_m": [
+            1.23,
+            0.1,
+            1.54
+          ],
+          "objects": [
+            "ELV-01_vpm_frame",
+            "ELV-01_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-02",
+      "name": "Окно двухпольное 2360×1540",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 48,
+      "source": {
+        "record": "ELV-02",
+        "original_name": "Окно двухпольное 2360×1540",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "casement-2-double-2360x1540",
+          "fbx_type": "Окно 2-Распашное - Двойные переплёты",
+          "fbx_objects": [
+            "Окно 2-Распашное - Двойные пере_8e59bf7"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 3
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two sash rings per field on two depth levels (double sashes) in the FBX family «2-Распашное - Двойные переплёты»; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-02/npm.blend",
+          "sha256": "2f323601477e4f366c77db73aab59986d7cb41247c647b9430b2ef84f7de3ef1",
+          "triangles": 2,
+          "size_m": [
+            2.36,
+            0,
+            1.54
+          ],
+          "objects": [
+            "ELV-02_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-02/vpm.blend",
+          "sha256": "9e46cfbcea333631591dc04d39e3d3f0794bab2c10a170e6de348eb4b849e5d9",
+          "triangles": 104,
+          "size_m": [
+            2.36,
+            0.1,
+            1.54
+          ],
+          "objects": [
+            "ELV-02_vpm_frame",
+            "ELV-02_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-03",
+      "name": "Окно двухпольное 1090×1540",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 49,
+      "source": {
+        "record": "ELV-03",
+        "original_name": "Окно двухпольное 1090×1540",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "casement-2-double-1090x1540",
+          "fbx_type": "Окно 2-Распашное - Двойные переплёты",
+          "fbx_objects": [
+            "Окно 2-Распашное - Двойные пере_ccf5554"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 2
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two sash rings per field on two depth levels (double sashes), the same family as the 2360 type; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-03/npm.blend",
+          "sha256": "bd0d5fc3f755d67f8535932bdea802018a4cc748df22d0680e32c9bc57a13409",
+          "triangles": 2,
+          "size_m": [
+            1.09,
+            0,
+            1.54
+          ],
+          "objects": [
+            "ELV-03_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-03/vpm.blend",
+          "sha256": "bb66b0e758bbc37d89da81d3930ba7a5684392b05642ef8b92f72c048fc2ac5e",
+          "triangles": 104,
+          "size_m": [
+            1.09,
+            0.1,
+            1.54
+          ],
+          "objects": [
+            "ELV-03_vpm_frame",
+            "ELV-03_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-04",
+      "name": "Окно двухпольное 980×1180",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 50,
+      "source": {
+        "record": "ELV-04",
+        "original_name": "Окно двухпольное 980×1180",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "vendor-2h-980x1180",
+          "fbx_type": "(WN)-RD_2H_Vendor Двустворчатое окно",
+          "fbx_objects": [
+            "(WN)-RD_2H_Vendor Двустворчатое окно 2_6f0f2dc"
+          ],
+          "booklet_sheets": [
+            18,
+            20
+          ],
+          "occurrences": 2
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two sash islands with handles in the FBX family «(WN)-RD_2H_Vendor Двустворчатое окно»; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-04/npm.blend",
+          "sha256": "d84dd0434c313d51e0e7233a3adae16d03eca6616c80b7ae33cbdd97e71770d5",
+          "triangles": 2,
+          "size_m": [
+            0.98,
+            0,
+            1.18
+          ],
+          "objects": [
+            "ELV-04_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-04/vpm.blend",
+          "sha256": "78f7beaac307c1af70bb70427f3f2fa784d74bdd2261abec4d52bb0f5b136ce1",
+          "triangles": 104,
+          "size_m": [
+            0.98,
+            0.1,
+            1.18
+          ],
+          "objects": [
+            "ELV-04_vpm_frame",
+            "ELV-04_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-05",
+      "name": "Окно однопольное 1190×1600",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 51,
+      "source": {
+        "record": "ELV-05",
+        "original_name": "Окно однопольное 1190×1600",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "vendor-1h-1190x1600",
+          "fbx_type": "(WN)-RD_2H_Vendor Одностворчатое окно",
+          "fbx_objects": [
+            "(WN)-RD_2H_Vendor Одностворчатое окно_d78e5a5"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 2
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 1,
+            "reason": "one sash island with a handle in the FBX family «(WN)-RD_2H_Vendor Одностворчатое окно»; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-05/npm.blend",
+          "sha256": "1d73b7fb6b9fd48f911d0d84fc3064351fcb0b494dd75abf804f27cd9325f432",
+          "triangles": 2,
+          "size_m": [
+            1.19,
+            0,
+            1.6
+          ],
+          "objects": [
+            "ELV-05_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-05/vpm.blend",
+          "sha256": "66bc4a3f688173012d484dd2d5e3ab04152732c4c8fcc19c4f0bab8f052850ca",
+          "triangles": 66,
+          "size_m": [
+            1.19,
+            0.1,
+            1.6
+          ],
+          "objects": [
+            "ELV-05_vpm_frame",
+            "ELV-05_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-06",
+      "name": "Дверь остеклённая двупольная неравнопольная 1700×2050",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 52,
+      "source": {
+        "record": "ELV-06",
+        "original_name": "Дверь остеклённая двупольная неравнопольная 1700×2050",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-glass-2h-1500x2050",
+          "fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1500x2050)L_Z_glass2 / R_Z_glass2",
+          "fbx_objects": [
+            "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1500x2050)L_Z_glass2_22d12f7"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 5
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two leaves (898 + 697 mm) in the FBX family; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-06/npm.blend",
+          "sha256": "27a3c1b2023084140b085782f1f3d3a836b2dcc1d4a17fc9f807d8fd6639af97",
+          "triangles": 2,
+          "size_m": [
+            1.7,
+            0,
+            2.05
+          ],
+          "objects": [
+            "ELV-06_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-06/vpm.blend",
+          "sha256": "f77fc91c5835e0ba22f8a21ce132a542acf4f446c6e620c795f571fb10be34ea",
+          "triangles": 104,
+          "size_m": [
+            1.7,
+            0.073,
+            2.05
+          ],
+          "objects": [
+            "ELV-06_vpm_frame",
+            "ELV-06_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-07",
+      "name": "Дверь остеклённая двупольная неравнопольная 1400×2140",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 53,
+      "source": {
+        "record": "ELV-07",
+        "original_name": "Дверь остеклённая двупольная неравнопольная 1400×2140",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-glass-2h-1200x2150",
+          "fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1200x2150)L_Z_glass* / (M_1200x2050)R_Z_glass2",
+          "fbx_objects": [
+            "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1200x2150)L_Z_glass*_c00db50",
+            "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1200x2050)R_Z_glass2_5eec429"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 2
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two leaves (948 + 347 mm) in the FBX family; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-07/npm.blend",
+          "sha256": "3f660e8fd9902ebd9b1775be948423a02cb0557540cf47914c4764da5d083de1",
+          "triangles": 2,
+          "size_m": [
+            1.4,
+            0,
+            2.14
+          ],
+          "objects": [
+            "ELV-07_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-07/vpm.blend",
+          "sha256": "fc7a4626ded1de63933e4abf098bf05307ea00d400b1d90b7d48280f9e9b7cbb",
+          "triangles": 104,
+          "size_m": [
+            1.4,
+            0.073,
+            2.14
+          ],
+          "objects": [
+            "ELV-07_vpm_frame",
+            "ELV-07_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-08",
+      "name": "Дверь глухая двупольная 1800×2050",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 54,
+      "source": {
+        "record": "ELV-08",
+        "original_name": "Дверь глухая двупольная 1800×2050",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-solid-2h-1600x2050",
+          "fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1600x2050)L_Z_Antipanic / R_Z_Antipanic",
+          "fbx_objects": [
+            "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1600x2050)L_Z_Antipa_064362d"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 10
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two leaves (800 + 900 mm) in the FBX family; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-08/npm.blend",
+          "sha256": "8ce38ad0a2cc3bb549e68febf9cf831b1281fe135145bdd2a283924f6ca750be",
+          "triangles": 2,
+          "size_m": [
+            1.8,
+            0,
+            2.05
+          ],
+          "objects": [
+            "ELV-08_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-08/vpm.blend",
+          "sha256": "c79f5a7502ed59d71f065fc5d6c73ffbdb284c3b86dad73c329350830505211e",
+          "triangles": 104,
+          "size_m": [
+            1.8,
+            0.073,
+            2.05
+          ],
+          "objects": [
+            "ELV-08_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-09",
+      "name": "Дверь глухая двупольная со смотровым окном 1400×2050",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 55,
+      "source": {
+        "record": "ELV-09",
+        "original_name": "Дверь глухая двупольная со смотровым окном 1400×2050",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-solid-2h-1200x2050",
+          "fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1200x2050)L_antipanic",
+          "fbx_objects": [
+            "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1200x2050)L_antipani_0668a4b"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 3
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two leaves (898 + 397 mm) in the FBX family; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-09/npm.blend",
+          "sha256": "a04da8420b3a780c8a1ca200918fe08bc3cdda863732e741b4744950ccf8d266",
+          "triangles": 2,
+          "size_m": [
+            1.4,
+            0,
+            2.05
+          ],
+          "objects": [
+            "ELV-09_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-09/vpm.blend",
+          "sha256": "bae84427dd030d12191cf14e71ed946b05fe44a174c958a8c7341b26a6f69353",
+          "triangles": 352,
+          "size_m": [
+            1.4,
+            0.073,
+            2.05
+          ],
+          "objects": [
+            "ELV-09_vpm_frame",
+            "ELV-09_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-10",
+      "name": "Дверь глухая двупольная 2400×2100",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 56,
+      "source": {
+        "record": "ELV-10",
+        "original_name": "Дверь глухая двупольная 2400×2100",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-solid-2h-2200x2050",
+          "fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_2200x2050)R_Z_Antipanic",
+          "fbx_objects": [
+            "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_2200x2050)R_Z_Antipa_38fb436"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 2
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two equal leaves in the FBX family; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-10/npm.blend",
+          "sha256": "9fcf592a4d7b39be811b13faae14974651a8e9b87887b0a2cee9d41914ba0664",
+          "triangles": 2,
+          "size_m": [
+            2.4,
+            0,
+            2.1
+          ],
+          "objects": [
+            "ELV-10_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-10/vpm.blend",
+          "sha256": "24e0d89324a880b3921fa3107c20c8cc88b1e96340cc230e10908e867464d3c9",
+          "triangles": 104,
+          "size_m": [
+            2.4,
+            0.073,
+            2.1
+          ],
+          "objects": [
+            "ELV-10_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-11",
+      "name": "Дверь глухая двупольная 2240×2170",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 57,
+      "source": {
+        "record": "ELV-11",
+        "original_name": "Дверь глухая двупольная 2240×2170",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-tp-2h-2240x2170",
+          "fbx_type": "(DR)-2H_TransformerPlant (Ext)_DG(1.4x2.1(h))",
+          "fbx_objects": [
+            "(DR)-2H_TransformerPlant (Ext)_DG(1.4x2.1(h)) [12538010]"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 2
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two equal leaves in the FBX family; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-11/npm.blend",
+          "sha256": "9f2933052a9d06c6f888178168416137814295032df4e7eb89f0e7d4c4a9ed3a",
+          "triangles": 2,
+          "size_m": [
+            2.24,
+            0,
+            2.17
+          ],
+          "objects": [
+            "ELV-11_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-11/vpm.blend",
+          "sha256": "db46847c940aebf16471f9cfa00d8163f64baae69899137563693563de4b42f3",
+          "triangles": 104,
+          "size_m": [
+            2.24,
+            0.073,
+            2.17
+          ],
+          "objects": [
+            "ELV-11_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-12",
+      "name": "Ворота секционные 3000×4000",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 58,
+      "source": {
+        "record": "ELV-12",
+        "original_name": "Ворота секционные 3000×4000",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "gate-spu-f42-3000x4000",
+          "fbx_type": "(DR)-LG Gate SPU 42 HORMANN SPU F42_3000х4000",
+          "fbx_objects": [
+            "(DR)-LG Gate SPU 42 HORMANN SPU F42_3000х4000 лево_bf7c21d"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "an overhead sectional gate has no sashes",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-12/npm.blend",
+          "sha256": "d5f1ca8353ed554996f289d6231d3084210dbd9b482a3c6020d963df01c851fe",
+          "triangles": 2,
+          "size_m": [
+            3.0,
+            0,
+            4.0
+          ],
+          "objects": [
+            "ELV-12_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-12/vpm.blend",
+          "sha256": "3a5a9232db2c83199ecd86a490c1b17f53b56619979a487f759fd7a21f66a9d3",
+          "triangles": 312,
+          "size_m": [
+            3.0,
+            0.073,
+            4.0
+          ],
+          "objects": [
+            "ELV-12_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-13",
+      "name": "Ворота секционные 3500×4000",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 59,
+      "source": {
+        "record": "ELV-13",
+        "original_name": "Ворота секционные 3500×4000",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "gate-spu-f42-3500x4000",
+          "fbx_type": "(DR)-LG Gate SPU 42 HORMANN SPU F42_3500х4000",
+          "fbx_objects": [
+            "(DR)-LG Gate SPU 42 HORMANN SPU F42_3500х4000_без _f131d6c"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 3
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "an overhead sectional gate has no sashes",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-13/npm.blend",
+          "sha256": "d8f51d523b9e6526f803dd55e0601c5d69bd016ba51b474dfbbd5074c44bf850",
+          "triangles": 2,
+          "size_m": [
+            3.5,
+            0,
+            4.0
+          ],
+          "objects": [
+            "ELV-13_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-13/vpm.blend",
+          "sha256": "2b257ba9c58df001b543089cc1e1d12a16c7650d448f09dd68799f121276547c",
+          "triangles": 312,
+          "size_m": [
+            3.5,
+            0.073,
+            4.0
+          ],
+          "objects": [
+            "ELV-13_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-14",
+      "name": "Витраж модульный однопольный 1190×9200",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 60,
+      "source": {
+        "record": "ELV-14",
+        "original_name": "Витраж модульный однопольный 1190×9200",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "cw-f50-upper-bay",
+          "fbx_type": "Системная панель С остеклением / Системная панель Стемалит (ALT F50)",
+          "fbx_objects": [
+            "east panels at x=79.0, z 4.7..13.9"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "reason": "curtain-wall panels, no sash in the FBX; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-14/npm.blend",
+          "sha256": "764083ed99d398e1e4630ec2d0563f84c12f04b2e641c4a613721b3de2586f99",
+          "triangles": 2,
+          "size_m": [
+            1.19,
+            0,
+            9.2
+          ],
+          "objects": [
+            "ELV-14_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-14/vpm.blend",
+          "sha256": "b1c4c5a527945486e69a8d2bf41d5b994d3c41b590fd581dc753c709a78e99e7",
+          "triangles": 218,
+          "size_m": [
+            1.19,
+            0.1,
+            9.2
+          ],
+          "objects": [
+            "ELV-14_vpm_frame",
+            "ELV-14_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-15",
+      "name": "Витраж модульный однопольный 1190×5600",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 61,
+      "source": {
+        "record": "ELV-15",
+        "original_name": "Витраж модульный однопольный 1190×5600",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "cw-f50-lower-bay",
+          "fbx_type": "Системная панель С остеклением / Системная панель Стемалит (ALT F50)",
+          "fbx_objects": [
+            "east panels at x=76.09, z 0.05..5.55"
+          ],
+          "booklet_sheets": [
+            18
+          ],
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "reason": "curtain-wall panels, no sash in the FBX; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-15/npm.blend",
+          "sha256": "4be04ec3a7e952162da79a321d3e234bc9d37dbeca85bfb31b08f90061b03832",
+          "triangles": 2,
+          "size_m": [
+            1.19,
+            0,
+            5.6
+          ],
+          "objects": [
+            "ELV-15_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-15/vpm.blend",
+          "sha256": "1f282ca82f9b3d8e08035664099e82a23d493725b237b9e3ef379cd9673f1877",
+          "triangles": 180,
+          "size_m": [
+            1.19,
+            0.1,
+            5.6
+          ],
+          "objects": [
+            "ELV-15_vpm_frame",
+            "ELV-15_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-16",
+      "name": "Витраж входной с дверями 7150×4650",
+      "confirmation": "unconfirmed",
+      "status": "quarantine",
+      "reason": [
+        "вырожденное стекло по стандарту (сторона < 0.1 м)"
+      ],
+      "preview_cell": 62,
+      "source": {
+        "record": "ELV-16",
+        "original_name": "Витраж входной с дверями 7150×4650",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "cw-f50-entrance",
+          "fbx_type": "Системная панель С остеклением / Системная панель Стемалит (ALT F50)",
+          "fbx_objects": [
+            "entrance panels at x=73.11, y -27.307..-20.157"
+          ],
+          "booklet_sheets": [
+            18,
+            25
+          ],
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 0,
+            "reason": "fixed curtain-wall panels; the doors are inserts with their own types",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F100",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "ELV-17",
+      "name": "Дверь карусельная 4120×2710",
+      "confirmation": "unconfirmed",
+      "status": "quarantine",
+      "reason": [
+        "нет разбивки: panes_m и opaque_m пусты"
+      ],
+      "preview_cell": 63,
+      "source": {
+        "record": "ELV-17",
+        "original_name": "Дверь карусельная 4120×2710",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "revolving-door-pos2",
+          "fbx_type": null,
+          "fbx_objects": [],
+          "booklet_sheets": [
+            14,
+            18,
+            25,
+            37
+          ],
+          "booklet_legend": "лист 18, поз. 2: «револьверные входные двери с остеклением нетонированным прозрачным, с устройством воздушно-тепловой завесы»",
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": null,
+            "reason": "the number of wings is not readable on sheets 18 / 25 (the plan hatches the drum)",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {}
+    },
+    {
+      "id": "ELV-18",
+      "name": "Дверь глухая однопольная 1050×2050",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 64,
+      "source": {
+        "record": "ELV-18",
+        "original_name": "Дверь глухая однопольная 1050×2050",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-solid-1h-900x2050",
+          "fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_900x2050)L*",
+          "fbx_objects": [
+            "(DR)-1H_RD_Swing_Base (DR)In-1H(C_900x2050)L* 3 [11667072]"
+          ],
+          "booklet_sheets": [
+            19
+          ],
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 1,
+            "reason": "one leaf island (945 mm) with a panic bar in the FBX family «(DR)-1H_RD_Swing_Base In-1H»; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-18/npm.blend",
+          "sha256": "cd3b389b03e85b308172c5c610c8234f5fa268cbc84a81c254660886f08c14de",
+          "triangles": 2,
+          "size_m": [
+            1.05,
+            0,
+            2.05
+          ],
+          "objects": [
+            "ELV-18_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-18/vpm.blend",
+          "sha256": "efc3c4b5721925daf5fa964d368b913140961bd5a60ef65e9c668cc5759c9adc",
+          "triangles": 66,
+          "size_m": [
+            1.05,
+            0.073,
+            2.05
+          ],
+          "objects": [
+            "ELV-18_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-19",
+      "name": "Дверь глухая однопольная 1250×2050",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 65,
+      "source": {
+        "record": "ELV-19",
+        "original_name": "Дверь глухая однопольная 1250×2050",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-solid-1h-1100x2050",
+          "fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L*",
+          "fbx_objects": [
+            "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L* [12594749]"
+          ],
+          "booklet_sheets": [
+            19
+          ],
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 1,
+            "reason": "one leaf island (1145 mm) with a panic bar, the same family as the 900 type; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-19/npm.blend",
+          "sha256": "3a9e9d74da37c91a8f0d5a7201f7327e908a7f63f7ab0db084c9652172224ec9",
+          "triangles": 2,
+          "size_m": [
+            1.25,
+            0,
+            2.05
+          ],
+          "objects": [
+            "ELV-19_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-19/vpm.blend",
+          "sha256": "f80bdff41971ee362a4fafe5cb546c83516c9d7380d3c75df46816311ba73583",
+          "triangles": 66,
+          "size_m": [
+            1.25,
+            0.073,
+            2.05
+          ],
+          "objects": [
+            "ELV-19_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-20",
+      "name": "Дверь глухая однопольная 1250×2250",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 66,
+      "source": {
+        "record": "ELV-20",
+        "original_name": "Дверь глухая однопольная 1250×2250",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-solid-1h-1100x2250",
+          "fbx_type": "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L*",
+          "fbx_objects": [
+            "(DR)-1H_RD_Swing_Base (DR)In-1H(C_1100x2050)L* 2 [12546315]"
+          ],
+          "booklet_sheets": [
+            19
+          ],
+          "occurrences": 1
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 1,
+            "reason": "one leaf island (1145 mm) with a panic bar, the same family as the 900 type; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-20/npm.blend",
+          "sha256": "584654d59d1c25572932f94d0a493267388025456bb9b0f4fd667c04df051160",
+          "triangles": 2,
+          "size_m": [
+            1.25,
+            0,
+            2.25
+          ],
+          "objects": [
+            "ELV-20_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-20/vpm.blend",
+          "sha256": "bfa2fe0a5f4675cb4db9ac7f1cdaa1e6a50bb733152b85540eeae474ae0a2f9f",
+          "triangles": 66,
+          "size_m": [
+            1.25,
+            0.073,
+            2.25
+          ],
+          "objects": [
+            "ELV-20_vpm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "ELV-21",
+      "name": "Дверь двупольная со смотровым окном 1800×2050",
+      "confirmation": "unconfirmed",
+      "status": "ready",
+      "reason": [],
+      "preview_cell": 67,
+      "source": {
+        "record": "ELV-21",
+        "original_name": "Дверь двупольная со смотровым окном 1800×2050",
+        "provenance": {
+          "object": "elv-tc-vpm",
+          "file": "library/windows/sources/elv-tc-vpm-census-v001.json",
+          "census_key": "door-vision-2h-1600x2050",
+          "fbx_type": "(DR)-2H_RD_Swing_Base (DR)Ext-2H(M_1600x2050)L_Z_Antipanic (the FBX leaf has no glass)",
+          "fbx_objects": [],
+          "booklet_sheets": [
+            18,
+            19
+          ],
+          "occurrences": 5
+        },
+        "unconfirmed": {
+          "sashes": {
+            "candidate": 2,
+            "reason": "two leaves (800 + 900 mm) as ELV-08; not confirmed by the user",
+            "source": "library/windows/sources/elv-tc-vpm-census-v001.json"
+          },
+          "handing": {
+            "candidate": null,
+            "reason": "handing is per placement (the FBX has L and R instances)"
+          }
+        },
+        "family": "F73",
+        "geometry": "D204 standard-generated; not original customer mesh"
+      },
+      "variants": {
+        "npm": {
+          "path": "assets/ELV-21/npm.blend",
+          "sha256": "caa54adaaf0d704ae501108e7b7504bf94546e24c1dba9fe405b3a8b0daa92d2",
+          "triangles": 2,
+          "size_m": [
+            1.8,
+            0,
+            2.05
+          ],
+          "objects": [
+            "ELV-21_npm_frame"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            }
+          ]
+        },
+        "vpm": {
+          "path": "assets/ELV-21/vpm.blend",
+          "sha256": "827e250fc6e0a846ac6cc05c691743c9c6261dce10d098c6d3fd15a130229479",
+          "triangles": 346,
+          "size_m": [
+            1.8,
+            0.073,
+            2.05
+          ],
+          "objects": [
+            "ELV-21_vpm_frame",
+            "ELV-21_vpm_glass"
+          ],
+          "materials": [
+            {
+              "id": 1,
+              "name": "matid_1"
+            },
+            {
+              "id": 4,
+              "name": "matid_4"
+            },
+            {
+              "id": 5,
+              "name": "matid_5"
+            },
+            {
+              "id": 10,
+              "name": "matid_10"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

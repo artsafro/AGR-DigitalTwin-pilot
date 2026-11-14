@@ -179,8 +179,8 @@ def plugs_apply():
 # ---- vpmmaps -------------------------------------------------------------------------------------------
 def vpmmaps():
     vm = agr._load_core('vpmmaps_core.py', 'agr_tools_vpmmaps_core')
-    lib = {i: {'library_id': i, 'key': 'k%d' % i, 'rgb_srgb': [30 * i % 256, 90, 120], 'roughness': 0.3, 'metallic': 1.0 if i == 7 else 0.0,
-               'emissive': 0.0, 'recipe': 'solid'} for i in (3, 7, 12, 31)}
+    lib = {i: {'library_id': i, 'key': 'k%d' % i, 'rgb_srgb': [30 * i % 256, 90, 120], 'roughness': 77, 'metallic': 255 if i == 7 else 0,
+               'emissive': 0, 'recipe': 'solid'} for i in (3, 7, 12, 31)}
     table = {'SM_NatAddr_Main': {3: 1001, 7: 1002, 12: 1003, 31: 1004}, 'SM_NatAddr_MainGlass': {31: 1001}}
     plan = vm.plan_maps(table, lib, str(DATA / 'maps_out'), {'slot': {'SM_NatAddr_MainGlass': 2}})
     again = vm.plan_maps(table, lib, str(DATA / 'maps_out'), {'slot': {'SM_NatAddr_MainGlass': 2}})

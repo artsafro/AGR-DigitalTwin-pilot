@@ -18,6 +18,8 @@ import datetime
 import difflib
 import hashlib
 import json
+import math
+import tempfile
 import os
 import random
 import re
@@ -62,10 +64,14 @@ def stat_of(path):
 
 def write_json_atomic(path, data):
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-    tmp = path + '.tmp'
-    with open(tmp, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-    os.replace(tmp, path)
+    fd, tmp = tempfile.mkstemp(prefix='.agr-json-', dir=os.path.dirname(os.path.abspath(path)))
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=1, allow_nan=False)
+        os.replace(tmp, path)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
 
 
 # ---- names --------------------------------------------------------------------------------------------------
@@ -268,7 +274,10 @@ MAF_CATEGORIES = (
     ('kreslo', 'Кресло'), ('stul', 'Кресло'),
     ('divan', 'Скамья'), ('skame', 'Скамья'), ('skamy', 'Скамья'),
     ('lezhak', 'Парковый лежак'), ('stol', 'Стол'), ('barnaya', 'Стол'),
-    ('urna', 'Урна'), ('tbo', 'Контейнерная площадка'),
+    ('urna', 'Урна'), ('tbo', 'Контейнерная площадка'), ('konteyner', 'Контейнерная площадка'),
+    ('evrokonteyner', 'Контейнерная площадка'), ('basketbol', 'Спортивное оборудование'),
+    ('voleybol', 'Спортивное оборудование'), ('futbol', 'Спортивное оборудование'), ('tennis', 'Спортивное оборудование'),
+    ('vorota', 'Спортивное оборудование'), ('stoykivoleyb', 'Спортивное оборудование'),
     ('naves', 'Навес'), ('pergola', 'Пергола'),
     ('kachalka', 'Качалка'), ('kacheligamak', 'Гамак'), ('gamak', 'Гамак'), ('kacheli', 'Качели'),
     ('karusel', 'Карусель'), ('gorka', 'Горка'),
@@ -329,6 +338,11 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
         for f in files:
             if f.lower().endswith('.zip'):
                 zips.append(os.path.relpath(os.path.join(dirpath, f), root).replace('\\', '/'))
+    base_root = os.path.normpath(root)
+    if override_dir is None and os.path.isdir(base_root + '_fixed'):  # convention: <library>_fixed next to it
+        override_dir = base_root + '_fixed'
+    if meta_dir is None and os.path.isdir(base_root + '_meta'):  # and <library>_meta (template JSON)
+        meta_dir = base_root + '_meta'
     if override_dir and os.path.isdir(override_dir):
         fixed = {f.lower(): f for f in os.listdir(override_dir) if f.lower().endswith('.zip')}
         zips = [os.path.relpath(os.path.join(override_dir, fixed[os.path.basename(z).lower()]), root).replace('\\', '/')
@@ -420,27 +434,58 @@ def maf_member_filter(name, use_fbx, versions):
 
 
 def extract_members(zip_path, dest, keep):
-    """Extract members whose basename passes keep() into dest (flat: basenames only, no traversal). A file that
-    already exists with the same size is reused; a different one is replaced through a temporary file.
-    Returns {basename lower: path}."""
-    os.makedirs(dest, exist_ok=True)
-    out = {}
+    """Flatten selected members; preflight all names/aliases before writing anything.
+
+    Existing files are reused only after byte comparison; conflicting files are never replaced.
+    Unique staging and exclusive publication preserve unrelated temp files and concurrent outputs.
+    """
+    out, selected, seen = {}, [], set()
     with zipfile.ZipFile(zip_path) as zf:
         for info, name in _zip_names(zf):
             base = name.replace('\\', '/').rsplit('/', 1)[-1]
             if not base or base in ('.', '..') or not keep(base):
                 continue
+            if ':' in base or base.endswith((' ', '.')):
+                raise ValueError('unsupported member: ' + name)
+            if base.casefold() in seen:
+                raise ValueError('duplicate flattened member: ' + base)
+            seen.add(base.casefold())
             target = os.path.join(dest, base)
-            if not (os.path.isfile(target) and os.path.getsize(target) == info.file_size):
-                with zf.open(info) as src, open(target + '.tmp', 'wb') as dst:
+            if same_file(zip_path, target):
+                raise ValueError('output aliases input: ' + target)
+            reuse = os.path.lexists(target)
+            if reuse:
+                with zf.open(info) as src, open(target, 'rb') as dst:
                     while True:
-                        block = src.read(1 << 20)
-                        if not block:
+                        a, b = src.read(1 << 20), dst.read(1 << 20)
+                        if a != b:
+                            raise ValueError('existing extraction differs: ' + target)
+                        if not a:
                             break
-                        dst.write(block)
-                os.replace(target + '.tmp', target)
+            selected.append((info, base, target, reuse))
+        os.makedirs(dest, exist_ok=True)
+        for info, base, target, reuse in selected:
+            if not reuse:
+                fd, tmp = tempfile.mkstemp(prefix='.agr-assets-', dir=dest)
+                try:
+                    with os.fdopen(fd, 'wb') as dst, zf.open(info) as src:
+                        while True:
+                            block = src.read(1 << 20)
+                            if not block:
+                                break
+                            dst.write(block)
+                    os.link(tmp, target)  # exclusive publication, including a racing writer
+                finally:
+                    os.unlink(tmp)
             out[base.lower()] = target
     return out
+
+
+def same_file(a, b):
+    """Case/path normalization plus hardlink/junction identity when both files exist."""
+    if os.path.normcase(os.path.realpath(a)) == os.path.normcase(os.path.realpath(b)):
+        return True
+    return os.path.exists(a) and os.path.exists(b) and os.path.samefile(a, b)
 
 
 # ---- index --------------------------------------------------------------------------------------------------
@@ -542,8 +587,14 @@ def merge_settings(saved):
         raise ValueError('textures must be project or library')
     if not set(s['versions']) <= set(VERSIONS) or not s['versions']:
         raise ValueError('versions must be a non-empty subset of high/low')
-    if float(s['fbx_scale']) <= 0:
-        raise ValueError('fbx_scale must be > 0')
+    for key in ('fbx_scale', 'gap_m', 'row_limit_m'):
+        try:
+            value = float(s[key])
+        except (TypeError, ValueError):
+            raise ValueError(key + ' must be finite numeric') from None
+        if not math.isfinite(value) or value < 0 or (key != 'gap_m' and value == 0):
+            raise ValueError(key + ' must be finite and ' + ('>= 0' if key == 'gap_m' else '> 0'))
+        s[key] = value
     return s
 
 
@@ -551,7 +602,14 @@ def merge_settings(saved):
 def import_plan(index, ids, versions=VERSIONS, in_scene=()):
     """What to merge. in_scene: set of (asset id, version) already in the scene (user props) -> skipped, so a
     second import adds nothing (lesson of lab L08: re-run must not duplicate)."""
+    ids, versions = list(ids), list(versions)
+    if len(ids) != len(set(ids)) or len(versions) != len(set(versions)):
+        raise ValueError('duplicate asset ids or versions')
+    if not versions or not set(versions) <= set(VERSIONS):
+        raise ValueError('unsupported or empty versions')
     by_id = {r['id']: r for r in index['assets']}
+    if len(by_id) != len(index['assets']):
+        raise ValueError('duplicate index ids')
     in_scene = set(tuple(x) for x in in_scene)
     rows = []
     for i in ids:
@@ -635,7 +693,7 @@ def texture_plan(paths, search_dirs, project_dir=None):
             continue
         if project_dir:
             dst = os.path.join(project_dir, os.path.basename(hit))
-            if os.path.isfile(dst) and os.path.getsize(dst) != os.path.getsize(hit):
+            if os.path.isfile(dst) and sha256_file(dst) != sha256_file(hit):
                 out['conflicts'].append(dst)
                 continue
             if not os.path.isfile(dst):

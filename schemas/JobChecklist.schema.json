@@ -54,7 +54,7 @@
     },
     "Evidence": {
       "additionalProperties": false,
-      "description": "A hashed reference. ``commit`` pins source evidence to an immutable revision (#387):\nthe ``inputs`` inventory (any path), or a supplementary source-suffixed reference in the\n``parts``/``operations`` roles; its sha256 is checked against the blob at that commit, so\nlater edits of the live file do not invalidate it. The primary parsed contract of a\n``pass`` ``parts`` gate (the PartsList) and the primary receipt of a ``pass`` ``operations``\ngate are generated semantic roles and always reject ``commit``, regardless of suffix.\nGenerated artifacts, receipts, reports and visual sheets are always hashed from the working\ntree and reject ``commit``.",
+      "description": "A hashed reference. ``commit`` pins source evidence to an immutable revision (#387):\nthe ``inputs`` inventory (any path), or a supplementary source-suffixed reference in the\n``parts``/``operations`` roles; its sha256 is checked against the blob at that commit, so\nlater edits of the live file do not invalidate it. The primary parsed contract of a\n``pass`` ``parts`` gate (the PartsList) and the primary receipt of a ``pass`` ``operations``\ngate are generated semantic roles and always reject ``commit``, regardless of suffix.\nGenerated artifacts, receipts, reports and visual sheets are always hashed from the working\ntree and reject ``commit``. ``manifest: external-inputs/1`` (inputs role only, #1202) marks\nthe file as an external-input manifest: the walker re-hashes every absolute path it lists and\nreports each row as ``equal``, ``mismatch`` (an error) or ``unreachable`` (never a pass).",
       "properties": {
         "path": {
           "minLength": 1,
@@ -79,6 +79,19 @@
           ],
           "default": null,
           "title": "Commit"
+        },
+        "manifest": {
+          "anyOf": [
+            {
+              "const": "external-inputs/1",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manifest"
         }
       },
       "required": [
@@ -90,6 +103,7 @@
     },
     "Gate": {
       "additionalProperties": false,
+      "description": "``waits`` (optional, #1204) names what a non-passed gate is parked on: ``user`` (a user\ndecision or review), ``max`` (a live 3ds Max step) or ``visual`` (the visual gate first).\nIt is counted by the walker and never makes a gate ready; a ``pass`` gate waits for nothing.\nA ``missing`` (not started) gate may omit ``note`` and ``evidence`` (#1310, F17); any other\nstatus needs a ``note``.",
       "properties": {
         "status": {
           "enum": [
@@ -102,10 +116,18 @@
           "type": "string"
         },
         "note": {
-          "minLength": 1,
-          "pattern": "\\S",
-          "title": "Note",
-          "type": "string"
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
         },
         "evidence": {
           "items": {
@@ -113,12 +135,27 @@
           },
           "title": "Evidence",
           "type": "array"
+        },
+        "waits": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "max",
+                "visual"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Waits"
         }
       },
       "required": [
-        "status",
-        "note",
-        "evidence"
+        "status"
       ],
       "title": "Gate",
       "type": "object"

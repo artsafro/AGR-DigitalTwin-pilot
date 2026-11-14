@@ -1,0 +1,18 @@
+{
+ "udim_tile": 1002,
+ "note": "Library build of three Telegram flora species [D242]; no site, so VPM tile 1002 is a placeholder (site jobs re-tile per D210). Visible heights are typical heights of the species (aster 0.35, lysimachia 0.7, achillea 0.6 m; no planting schedule): review; height_m = visible + 0.10 m sink [D100], band_m = visible +-20 % [D099]. v001 build (height_m = visible) failed the aster band and is kept as a record. Kind bush = 3 planes for perennial clumps; catalogue type flower (ids 401-499).",
+ "species": [
+  {"key": "symphyotrichum_dumosum_island_samoa", "latin": "Symphyotrichum dumosum 'Island Samoa'", "kind": "bush",
+   "height_m": 0.45, "band_m": [0.28, 0.42], "material_id": 410,
+   "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_d_atlas_1024.png",
+   "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/aster-dumosus-island-samoa/aster-dumosus-island-samoa_o_star_1024.png"},
+  {"key": "lysimachia_punctata", "latin": "Lysimachia punctata", "kind": "bush",
+   "height_m": 0.8, "band_m": [0.56, 0.84], "material_id": 411,
+   "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/lysimachia/lysimachia_d_atlas_1024.png",
+   "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/lysimachia/lysimachia_o_star_1024.png"},
+  {"key": "achillea_millefolium", "latin": "Achillea millefolium", "kind": "bush",
+   "height_m": 0.7, "band_m": [0.48, 0.72], "material_id": 412,
+   "diffuse": "G:/Мой диск/AGR-assets/flora/v003/maps/achillea/achillea_v1_d_atlas_1024.png",
+   "opacity": "G:/Мой диск/AGR-assets/flora/v003/maps/achillea/achillea_v1_o_star_1024.png"}
+ ]
+}

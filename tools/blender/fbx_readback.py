@@ -86,6 +86,10 @@ def mesh_facts(obj):
         "world_scale": list(obj.matrix_world.to_scale()),
         "parent": obj.parent.name if obj.parent else None,
         "uv_channels": len(mesh.uv_layers),
+        # SINTEZ 4.1.1 / lp_color_attributes: every color attribute layer, plus the legacy vertex_colors count
+        "color_attributes": [{"name": a.name, "domain": a.domain, "data_type": a.data_type}
+                             for a in getattr(mesh, "color_attributes", [])],
+        "legacy_vertex_colors": len(getattr(mesh, "vertex_colors", [])),
         "materials": [s.material.name if s.material else None for s in obj.material_slots],
         "udim_tiles": [],
         "mirrored_uv_triangles": 0,

@@ -225,6 +225,59 @@ Sidecar (schema 3) содержит:
 ним напрямую не применяются. Если для сдачи МАФ нужны ID v005, понадобится сопоставление «МАФ → ID» — это
 отдельный вопрос.
 
+## Все МАФ A101 по одному шаблону (07.11.2026)
+Задача Артёма: «привести все МАФ к одному шаблону, где данных не хватает — определить или найти в интернете».
+Архивы — наши. Оригиналы на Диске не меняются, исправления лежат рядом.
+
+**Шаблон `agr.maf/1`** (`assets_library.maf_template`) — это JSON-описание A101 (schema 3), в котором заполнены
+пустые поля: `title`, `category`, `description`, `tags`, `manufacturer_url`, `download_url` (страница товара),
+`dimensions_text`. Плюс блок `agr`:
+- происхождение каждого значения: интернет / ведомость проекта / название / вывод по превью;
+- сырые данные исследования с источниками;
+- материалы, применённые исправления, состояние проверки;
+- проверка высоты против каталога.
+
+**Данные из интернета.** 4 агента по группам производителей: найдено 33, частично 18, определено по названию и
+превью 57. Заполнено: название, категория и описание — 108/108, ссылка на товар — 54, каталожные габариты — 48.
+- **Исправленные имена производителей:** Igrateks = Igratex (igratex.ru), Hobbika = Hobbyka (hobbyka.ru),
+  ParkAndPlay — дилер, производитель «Феникс»; у Shelby коды пишутся с точкой (`SHLG-03.02`).
+- **Ошибки артикулов в именах архивов:** Adanat «Аэлита» `130541` / `107361` (на сайте `13054` / `10736`),
+  `Hobbyka_VeloparkovkaSpiral_15617` на деле секция «Воздух», `Shelby_IgrovoyKompleks_SHLG-03-02` и
+  `Shelby_KacheliGnezdo_SHLG-01-01` носят чужие коды. Имена архивов не меняли (A101 — истина), разбор в
+  `agr.research.notes`.
+- **Высота против каталога.** Видимая высота (габарит минус пивот) совпала у 21 из 48. У 6 позиций каталогу
+  равна ПОЛНАЯ высота модели — подозрение «нет фундамента», пивот на 200 мм поднимет объект над землёй:
+  WRK9, урна Городская, велопарковка «Спираль», стенд Игратекс, радиусная скамья, качалка «Пчела». Не
+  исправлено, нужна проверка глазами.
+
+**Исправления геометрии** (`tools/assets/max_fix_maf.py`, джоб `20261107-114448-9e3ac1f4`, копии архивов). Обе
+версии каждого архива прочитаны заново:
+- пивот в центр XY: навес и велопарковка Hobbika, амфитеатр Individ, песочница NoName, Shelby Домик и
+  Игровой элемент;
+- пивот по Z у стола DeloDesign: 956 → 200 мм над низом;
+- имя материала Low у игрового комплекса Mesto.
+
+`.max` сохранён в формате 2022, FBX перевыгружены с исходными настройками; треугольники и габариты не изменились.
+«Чужие» текстуры Mesto оказались общим атласом семейства — это предупреждение, не ошибка.
+
+**Где лежит:**
+- `G:\Мой диск\AGR-assets\maf\a101_meta\` — 108 шаблонных JSON;
+- `…\maf\a101_fixed\` — 8 исправленных архивов (тот же состав плюс шаблонный JSON);
+- `library/assets/maf_template.json` — в git.
+
+Скан МАФ сам берёт соседние `<библиотека>_fixed` и `<библиотека>_meta`. Проверка библиотеки: **105/108 без
+ошибок**; 3 МАФ с пивотом 412–500 мм над низом оставлены — возможен глубокий фундамент.
+
+**Импорт.** МАФ с ошибкой упаковки (нет текстур, нет версии) блокируется, если не задано `allow_flagged`;
+пивот и прочее попадают в отчёт.
+
+**Проекты.** Ведомость Ватутино (#313) сопоставлена с A101 по артикулу с транслитом:
+- 22 позиции есть в A101 — у них из ведомости берутся ссылка и материалы;
+- 12 собраны в проекте, в A101 их нет — записи по шаблону с именами Q28 (`Goroda_…`), файлы пока на ПК;
+- 15 без модели — список «смоделировать».
+
+Полный прогон по проектам 3DVis на большом ПК — отдельная сессия; бриф передан 07.11.
+
 ## Модуль
 
 | Файл | Что |
@@ -420,13 +473,32 @@ Max не проверялся: Артём 06.11 сказал, что это не
 Вырезка с общих атласов нужна только старым библиотекам (Union, FLORA_Union): у ассетов A101 свой набор
 текстур на каждый ассет.
 
-## Нужно в общих файлах (вносит ветка 0/R волны 1.0, здесь не трогалось)
+## Remaining panel integration (separate from the standalone browser)
 - `runtime.py`: action `assets.browser` → `assets_ui.show(assets_ui.MaxBackend())`; actions `assets.match` и
   `assets.place` — после кнопки.
 - `ui_model.py`: строка плана блока «ассеты» (этап «расстановка»): «Ассеты» (окно), «Сопоставить».
 - `ui_max.py` / `agr_tools.mcr` / `menu.ms`: macro `AGRToolsAssets` (категория AGR Tools), пункт меню.
 - Иконка `agr_assets.svg` в наборе иконок.
-- `tools/max/build_agr_tools.py`: в MZP добавить `assets_core.py`, `assets_max.py`, `assets_ui.py`.
+- Packaging is included in PR #1044: `build_agr_tools.FILES` and `install.ms` require all five assets Python modules and `assets_launch.ms`.
 - `README.md` и `GUIDE.md` панели: раздел «Ассеты».
 - Журнал: когда ветка 0 даст общий писатель К1, `assets_core.append_journal` заменяется на него. Формат строки уже
   тот же. Ключ файла — sha1 нормализованного пути сцены; это нужно подтвердить.
+
+## PR #1044 refresh (2026-11-14)
+
+The standalone browser is not a completion claim for the umbrella conveyor issue #1024.
+The historical native jobs above remain historical Max 2024 evidence, not a fresh Max 2026 run.
+This refresh merges current pilot main without rewriting the original branch history.
+
+- The MZP now ships every dynamic assets sibling and the standalone launcher; no panel action is added.
+- Source-cache copies are hash-checked on reuse; new copies use unique staging and exclusive publication.
+- ZIP extraction preflights flattened duplicate names and input aliases, verifies existing bytes rather than size,
+  refuses conflicts, and preserves predictable `.tmp` sentinels. Use a fresh versioned destination after a conflict.
+- Texture reuse compares content hashes, not file length. Invalid/non-finite scale and layout settings are rejected.
+- Duplicate import IDs/versions are errors. Unknown, unavailable or audit-blocked rows and missing/conflicting
+  textures cannot produce a `done` import report. Already-imported rows remain an intentional no-op.
+- Regression evidence: `tests/max_tools/test_agr_tools_assets_refresh.py` uses synthetic files and a mocked Max
+  boundary only. It proves no native Max/UI or source-library acceptance; current counts and exact revision are in the PR.
+
+The packed VPM pixel route, placement, panel wiring, and PR #1090 atlas changes are not implemented here.
+They are not silently imported from another open branch. No customer binaries or new library approvals are added.

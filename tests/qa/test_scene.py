@@ -70,8 +70,8 @@ def test_v008_uv_contract_excludes_collision_only(uv, expected):
     found = scene_findings(rb(mesh(name="SM_Test_Ground", uv=uv),
                               mesh(name="UCX_SM_Test_Ground_001", uv=0)), "vpm", "ground", PROFILES.vpm)
     assert statuses(found, "V008")["one UV channel"] == expected
-    assert statuses(found, "V008")["texel density"] == "not_run"
-    assert statuses(found, "V008")["texel density upper"] == "not_run"
+    assert statuses(found, "V009")["texel density"] == "not_run"
+    assert statuses(found, "V009")["texel density upper"] == "not_run"
     assert statuses(found, "V010")["UCX present"] == "pass"
     assert statuses(found, "V010")["UCX triangle budget"] == "pass"
 
@@ -80,12 +80,8 @@ def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
     assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
-    assert statuses(found, "V008") == {
-        "one UV channel": "pass",
-        "mirrored islands": "pass",
-        "texel density": "not_run",
-        "texel density upper": "not_run",
-    }
+    assert statuses(found, "V008") == {"one UV channel": "pass", "mirrored islands": "pass"}
+    assert statuses(found, "V009") == {"texel density": "not_run", "texel density upper": "not_run"}
 
 
 @pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_000, "review"),
@@ -565,14 +561,15 @@ def test_blender_roundtrip_through_validator(tmp_path, variant):
     if variant == "good":
         assert st["V002"].findings[0].status == "pass"  # Blender writes binary FBX 7400
         assert st["V002"].status == "pass"
-        assert {st[k].status for k in ("V003", "V004")} == {"pass"}
+        assert st["V004"].status == "pass"
+        # No --master: the quad master part of V003 stays not_run (DER-03); the export part passes.
+        v003 = {item.name: item.status for item in st["V003"].findings}
+        assert v003.pop("master quads") == "not_run" and set(v003.values()) == {"pass"}
         v008 = {item.name: item.status for item in st["V008"].findings}
         assert v008["one UV channel"] == "pass"
         assert v008["mirrored islands"] == "pass"
-        # The cube FBX has no diffuse size, so density stays not_run and the stage cannot pass.
-        assert v008["texel density"] == "not_run"
-        assert v008["texel density upper"] == "not_run"
-        assert st["V008"].status == "not_run"
+        # V009 now measures with the archive Diffuse side of each tile (texel density moved out of V008).
+        assert {"texel density", "texel density upper"} <= {item.name for item in st["V009"].findings}
     else:
         assert st["V003"].status == "fail" and st["V008"].status == "fail"
         assert st["V002"].status == "fail"
@@ -1822,3 +1819,190 @@ def test_651_ground_compensated_hole_and_malformed_both_fail():
                            footprint_holes=[_frame_hole_ring()])
     assert next(f for f in found["V003"] if f.name == "ground footprint hole coverage").status == "fail"
     assert next(f for f in found["V004"] if f.name == "co-directional clearance").status == "fail"
+
+
+# --- ground footprint material allow-list (research vatutino-ground-footprint-overshoot-6m2, proposal #1) ---
+PAVING = "M_X_Ground_Paving"
+TREE = "Tilia_cordata_ID101"
+
+
+def _material_ground(name="SM_X_Ground"):
+    """100 m2 square ground in PAVING plus a 4 m2 tree crown overhanging outside it in TREE (synthetic)."""
+    item = _ground_surface(name, [(0.0, 0.0, 10.0, 10.0), (10.0, 0.0, 12.0, 2.0)])
+    item["face_geometry"]["polygon_material"] = [PAVING, PAVING, TREE, TREE]
+    return item
+
+
+def _allowlist_findings(materials, extra=(), holes=None, item=None):
+    report = rb(item if item is not None else _material_ground(), *extra)
+    report["source"] = "C:/x/SM_X_Ground.fbx"
+    found = scene_findings(report, "vpm", "ground", PROFILES.vpm, ground_area_m2=100.0,
+                           footprint_holes=holes, ground_materials=materials)
+    by_name = {item.name: item for item in found["V003"]}
+    return by_name["ground footprint coverage"], by_name["ground footprint hole coverage"]
+
+
+def test_ground_materials_absent_counts_tree_crown():
+    area, _ = _allowlist_findings(None)
+    assert area.status == "fail"
+    assert area.data["difference_m2"] == pytest.approx(4.0, abs=1e-6)
+    assert "ground-materials" not in area.observed and "ground_materials" not in area.data
+
+
+def test_ground_materials_exact_name_passes_and_reports_excluded():
+    area, _ = _allowlist_findings([PAVING])
+    assert area.status == "pass"
+    assert area.data["measured_m2"] == pytest.approx(100.0, abs=1e-6)
+    assert area.data["excluded_faces"] == 2
+    assert area.data["ground_materials"] == [PAVING]
+    assert "--ground-materials" in area.observed and "2 face(s) excluded" in area.observed and TREE in area.observed
+
+
+def test_ground_materials_glob_passes():
+    area, _ = _allowlist_findings(["M_*_Ground_*"])
+    assert area.status == "pass"
+    assert area.data["excluded_faces"] == 2
+
+
+def test_ground_materials_matching_nothing_fails_both():
+    area, hole = _allowlist_findings(["M_None"], holes=[[(20.0, 20.0), (30.0, 20.0), (30.0, 30.0)]])
+    assert area.status == "fail" and hole.status == "fail"
+    assert "no faces match --ground-materials" in area.observed
+    assert "no faces match --ground-materials" in hole.observed
+
+
+def test_ground_materials_filter_feeds_hole_check():
+    crown_hole = [[(10.0, 0.0), (12.0, 0.0), (12.0, 2.0), (10.0, 2.0)]]
+    _, hole = _allowlist_findings(None, holes=crown_hole)
+    assert hole.status == "fail"
+    _, hole = _allowlist_findings([PAVING], holes=crown_hole)
+    assert hole.status == "pass"
+    assert hole.data["excluded_faces"] == 2
+
+
+@pytest.mark.parametrize("materials", [None, [PAVING], ["*"]])
+def test_ground_materials_ucx_stays_excluded(materials):
+    ucx = _ground_surface("UCX_SM_X_Ground_001", [(50.0, 50.0, 60.0, 60.0)])
+    ucx["face_geometry"]["polygon_material"] = [PAVING, PAVING]
+    area, _ = _allowlist_findings(materials, extra=(ucx,), item=_ground_surface("SM_X_Ground", [(0.0, 0.0, 10.0, 10.0)])
+                                  if materials is None else None)
+    if materials == ["*"]:
+        assert area.data["difference_m2"] == pytest.approx(4.0, abs=1e-6)
+    else:
+        assert area.status == "pass"
+
+
+def test_ground_materials_without_polygon_material_fails_closed():
+    item = _ground_surface("SM_X_Ground", [(0.0, 0.0, 10.0, 10.0)])
+    area, _ = _allowlist_findings([PAVING], item=item)
+    assert area.status == "fail" and "polygon_material" in area.observed
+
+
+def test_ground_materials_length_mismatch_fails_closed():
+    item = _material_ground()
+    item["face_geometry"]["polygon_material"] = [PAVING]
+    area, _ = _allowlist_findings([PAVING], item=item)
+    assert area.status == "fail" and "polygon_material" in area.observed
+
+
+@pytest.mark.parametrize("bad", [[], [""], "M_X", [1], ["ok", None]])
+def test_ground_materials_bad_allowlist_raises(bad):
+    with pytest.raises(ValueError, match="ground_materials"):
+        _allowlist_findings(bad)
+
+
+def test_ground_materials_cli_reaches_scene(monkeypatch, tmp_path):
+    fbx = tmp_path / "SM_X_Ground.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \x00")
+    monkeypatch.setattr(vp, "readback", lambda path, blender=None, timeout=600: rb(_material_ground()))
+    seen = {}
+    real = vp.validate
+
+    def spy(*args, **kwargs):
+        seen.update(kwargs)
+        report = real(*args, **kwargs)
+        seen["report"] = report
+        return report
+
+    monkeypatch.setattr(vp, "validate", spy)
+    vp.main([str(fbx), "--profile", "vpm", "--scene", "--ground-area-m2", "100",
+             "--ground-materials", PAVING, "--ground-materials", "Other_A,Other_B"])
+    assert seen["ground_materials"] == [PAVING, "Other_A", "Other_B"]
+    findings = [f for stage in seen["report"].stages for f in stage.findings]
+    area = next(f for f in findings if f.name == "ground footprint coverage")
+    assert area.status == "pass"
+
+
+@pytest.mark.parametrize("size,status", [([2048, 2048], "pass"), ([8192, 8192], "fail"),
+                                        ([2049, 2048], "fail"), ([0, 0], "fail"),
+                                        ([float('nan'), 512], "fail"), ([float('inf'), 512], "fail"),
+                                        (None, "fail"), ([True, 512], "fail"), ([], "fail")])
+def test_npm_readback_texture_dimensions(size, status):
+    data = rb(mesh())
+    data['images'] = [{'name': 'atlas.png', 'size': size, 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    finding = next(f for f in found['V006'] if f.name == 'texture dimensions')
+    assert finding.status == status
+    assert finding.source_pdf_pages == [9]
+
+
+def test_npm_texture_dimension_probe_generated():
+    for side in [1, 128, 256, 512, 1024, 2047, 2048, 2049, 4096, 8192]:
+        data = rb(mesh())
+        data['images'] = [{'name': f'atlas_{side}.png', 'size': [side, side], 'packed': True}]
+        found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+        assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == ('fail' if side > 2048 else 'pass')
+
+
+@pytest.mark.parametrize('maps,status', [([], 'fail'), ([{'image': 'atlas.png', 'socket': 'Base Color'}], 'pass'),
+                                       ([{'image': 'unmapped.png', 'socket': 'Base Color'}], 'fail')])
+def test_npm_material_assignment_requires_bound_diffuse(maps, status):
+    data = rb(mesh(materials=['M_Test']))
+    data['materials'] = [{'name': 'M_Test', 'maps': maps}]
+    data['images'] = [{'name': 'atlas.png', 'size': [512, 512], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    finding = next(f for f in found['V005'] if f.name == 'material assignments')
+    assert finding.status == status
+    if status == 'fail':
+        assert 'M_Test' in finding.observed
+
+
+def test_vpm_cleared_paths_are_not_npm_material_errors():
+    data = rb(mesh(materials=['M_Test']))
+    data['materials'] = [{'name': 'M_Test', 'maps': []}]
+    found = scene_findings(data, 'vpm', 'oks', PROFILES.vpm)
+    assert not any(f.name == 'material assignments' for f in found['V005'])
+
+
+@pytest.mark.parametrize('assigned', [['Ghost'], [None], []])
+def test_npm_unmapped_polygon_material_is_named(assigned):
+    data = rb(mesh(materials=['M_Test']))
+    data['meshes'][0]['face_geometry'] = {'vertices': [[0,0,0],[1,0,0],[0,1,0]],
+                                         'polygons': [[0,1,2]], 'polygon_material': assigned}
+    data['materials'] = [{'name': 'M_Test', 'maps': [{'image': 'atlas.png', 'socket': 'Base Color'}]}]
+    data['images'] = [{'name': 'atlas.png', 'size': [512,512], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    f = next(f for f in found['V005'] if f.name == 'material assignments')
+    assert f.status == 'fail'
+    assert 'SM_Test_K_1_Main' in f.observed
+    assert 'polygon' in f.observed
+
+
+def test_npm_glass_does_not_require_an_opaque_diffuse():
+    data = rb(mesh(name='SM_Test_K_1_MainGlass', materials=['M_Glass']))
+    data['materials'] = [{'name': 'M_Glass', 'maps': []}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    assert not any(f.name == 'material assignments' for f in found['V005'])
+
+
+def test_npm_material_and_oversized_image_errors_both_survive():
+    data = rb(mesh(materials=['UnknownMaterial']))
+    data['materials'] = [{'name': 'UnknownMaterial', 'maps': []}]
+    data['images'] = [{'name': 'atlas.png', 'size': [8192,8192], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    assert next(f.status for f in found['V005'] if f.name == 'material assignments') == 'fail'
+    assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == 'fail'
+
+
+
+

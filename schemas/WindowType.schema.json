@@ -18,6 +18,41 @@
           "title": "Note",
           "type": "string"
         },
+        "parts_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gate 1: PartsList.approval_sha256(), excluding gate1/status; not file bytes",
+          "not": {
+            "pattern": "\\s",
+            "type": "string"
+          },
+          "title": "Parts Sha256"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "pattern": "^(https://\\S+|t_[0-9a-f]+|D[1-9][0-9]*)$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "not": {
+            "pattern": "\\s",
+            "type": "string"
+          },
+          "title": "Ref"
+        },
         "schema_version": {
           "const": "1.0.0",
           "default": "1.0.0",
@@ -50,7 +85,8 @@
             "synthetic",
             "pdf",
             "model",
-            "user"
+            "user",
+            "drawing"
           ],
           "title": "Kind",
           "type": "string"
@@ -109,6 +145,21 @@
           ],
           "default": null,
           "title": "Sha256"
+        },
+        "sheet": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet"
         }
       },
       "required": [

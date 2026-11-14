@@ -1,0 +1,57 @@
+{
+ "receipt": "plan-repro/1",
+ "card": "t_0b1dbdbf",
+ "issue": 1172,
+ "dwg": {
+  "path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg",
+  "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469"
+ },
+ "readback": {
+  "tool": "AutoCAD 2025 accoreconsole, script: _.DXFOUT <path> _V _2018 16",
+  "dxf_sha256": "a4cd28e412c1dfa070b824a6b3f4300776f0725704588b2096fb2e007b63b647",
+  "dxf_local": "C:/x/ev_t_0b1dbdbf/dxf/L03.dxf"
+ },
+ "command": "uv run python tools/methods/body/plan_from_dxf.py extract <L03.dxf> <out.json> <account.json> --map <each line of layer-map-L03.txt> --z0 0 --levels 0,3.9,7.909 --contour-source hatch --origin-mm 25884.5,0 --frame-shift-m=-14.655,-5.355",
+ "layer_map": {
+  "path": "jobs/KPP1/cold-run-1172/layer-map-L03.txt",
+  "sha256": "c5887381e3b4ed314a64ce7b1055212048769f676bc0bda922b43ed59589f1c5",
+  "derived_from": "plan-account.json entity reasons (the #967 map is not recorded anywhere)"
+ },
+ "outputs_local": {
+  "plan-contours-v001.json": "6257e2532a3b75dfe1117ae57a3c0bcfcf29ad3b752e09a2e259fafbb1ec7256",
+  "plan-account-v001.json": "72006144d5d00e44ab157705a69d178eb4c7758792637e6891d12430260e0014"
+ },
+ "compare_with_committed": {
+  "plan-contours.json": {
+   "sha256": "087f1055820ec278979bb2b9e4598fa66878fc4ea1f3f5c6929dc25ad86a891f",
+   "equal_keys": [
+    "bands",
+    "coverage",
+    "empty_bands",
+    "frame_shift_m",
+    "levels_m",
+    "openings",
+    "origin_mm",
+    "params",
+    "provisional",
+    "schema",
+    "source_units",
+    "synthetic_drawing",
+    "units"
+   ],
+   "different_keys": [
+    "method",
+    "opening_decision",
+    "source"
+   ],
+   "tool_method": "plan wall lines from a DXF readback (tools/methods/body/plan_from_dxf.py)",
+   "committed_method": "plan wall hatch union from a DXF readback (tools/methods/body/plan_from_dxf.py, contour_source hatch)"
+  },
+  "plan-account.json": {
+   "sha256": "72006144d5d00e44ab157705a69d178eb4c7758792637e6891d12430260e0014",
+   "equal": true,
+   "entities": 2005
+  }
+ },
+ "verdict": "bands, coverage, levels, params and the entity account reproduce exactly; method/opening_decision/source of the committed file are not tool output"
+}

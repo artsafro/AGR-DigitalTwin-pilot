@@ -26,7 +26,7 @@ distortion", a primitive throws, no threshold and no machine report.
 """
 import math
 
-TILE_PX = 4096
+TILE_PX = 3600   # px of one UDIM tile: 3.6 m at 1000 px/m (owner answer 06.11 morning); default target 1000 px/m
 STEP_M = 3.6
 SCALE_TOL = 0.01      # +-1 % (vpm.build acceptance)
 ANISO_TOL = 1.02      # s1 / s2

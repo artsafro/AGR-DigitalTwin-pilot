@@ -75,7 +75,7 @@ def err(res, code):
 # ---- fake installed runtime on the real edit_core / journal_core contract -----------------------------------------
 FAKE_RUNTIME = '''
 import importlib.util, os, sys
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 CALLS = []
 STATE = {"scene": "s1"}
 NOT_IMPLEMENTED = set()
@@ -142,7 +142,7 @@ class FakeNode:
 
 @pytest.fixture
 def fake_max(tmp_path, monkeypatch):
-    root = tmp_path / "AGRTools-1.0.0"
+    root = tmp_path / "AGRTools-1.0.1"
     root.mkdir()
     (root / "runtime.py").write_text("AGR = {!r}\n".format(str(AGR).replace("\\", "/")) + FAKE_RUNTIME,
                                      encoding="utf-8")
@@ -185,9 +185,11 @@ def _independent_rules():
     checks = {r["id"] for r in PLAN["rows"] if r["mcp"] == "yes" and r["mode"] in ("read", "select")
               and (r["version"] in rel or (r["version"] == "1.0" and r["fate"] == "stage"))}
     ops = {r["id"] for r in PLAN["rows"] if r["mcp"] == "yes" and r["mode"] in ("copy", "undo", "file", "agent")
-           and r["id"] not in stage and (r["version"] in ("0.8", "0.9") or (r["version"] == "1.0"
+           and r["id"] not in stage and (r["version"] in ("0.8", "0.9") or (r["version"] in ("1.0", "1.1")
                                                                           and r["fate"] == "stage"))}
     apply = {r["id"] for r in PLAN["rows"] if r["version"] == "0.8" and r["mode"] in ("copy", "undo", "file")}
+    # 1.1 (mcp-review 3.2): the two handoff rows that write only a new bundle folder / the layer AGENT_<req>
+    apply |= {r["id"] for r in PLAN["rows"] if r["id"] in ("handoff.export", "handoff.import")}
     return stage, checks, ops, apply
 
 
@@ -207,9 +209,9 @@ def test_catalogue_is_generated_from_the_plan():
     assert set(cat["agr_check_run"].input["properties"]["check_ids"]["items"]["enum"]) == checks
     assert set(cat["agr_op_preview"].input["properties"]["op"]["enum"]) == ops
     assert set(catalog.apply_ids(PLAN)) == apply == set(max_bridge.APPLY_OVER_MCP)
-    assert len(checks) == 38 and len(ops) == 32 and len(apply) == 11
+    assert len(checks) == 38 + 1 and len(ops) == 32 + 3 and len(apply) == 11 + 2  # 1.1: +1 check (handoff.verify), +3 ops, 2 applied over MCP
     hook = {x.name for x in ops_d108.register({})}  # branch U's tools (empty with the stub)
-    assert set(tools.LISTED) | hook == set(cat) and len(cat) == 52 + 15 + 3 + len(hook)
+    assert set(tools.LISTED) | hook == set(cat) and len(cat) == 52 + 15 + 3 + 3 + 10 + len(hook)  # + agr_handoff_export/import/verify (1.1), + phase 2 (#1021)
     for n in tools.PHASE0:
         assert "Deprecated" in cat[n].description, n
     assert not cat["agr_op_apply"].read_only and set(cat["agr_op_apply"].input["properties"]) == {
@@ -322,7 +324,7 @@ def test_preview_id_is_bound_and_apply_takes_only_it(fake_max, tmp_path):
     pid = sc["preview_id"]
     assert pid == envelope.sha256(report) and sc["next_actions"] == ["agr_op_apply(preview_id='{}')".format(pid)]
     held = store.get(pid, {})
-    assert held.binding == {"host": "max-live", "instance": None, "doc": fake_max.doc, "runtime_version": "1.0.0",
+    assert held.binding == {"host": "max-live", "instance": None, "doc": fake_max.doc, "runtime_version": "1.0.1",
                             "state_hash": report["plan"]["state_hash"], "op": "model.triangulate"}
     assert held.targets == {"scene": "live", "handles": [1]}
     _, (app, again) = run_calls([("agr_op_apply", {"preview_id": pid}), ("agr_op_apply", {"preview_id": pid})],
@@ -331,7 +333,7 @@ def test_preview_id_is_bound_and_apply_takes_only_it(fake_max, tmp_path):
     assert out["result"]["plan"]["mode"] == "apply" and out["preview_id"] == pid
     assert ("080", "model.triangulate", "apply", [1], "mcp", None) in rtmod().CALLS
     assert fake_max.sent[-1][1]["preview"] == report and fake_max.sent[-1][1]["expect"] == {
-        "doc": fake_max.doc, "runtime_version": "1.0.0"}
+        "doc": fake_max.doc, "runtime_version": "1.0.1"}
     err(again, "stale_preview")
     with pytest.raises(jsonschema.ValidationError):  # apply takes only preview_id (+ idempotency_key)
         jsonschema.validate({"preview_id": pid, "preview": report}, tools.catalog()["agr_op_apply"].input)
@@ -372,7 +374,7 @@ def test_stale_preview_on_every_binding_change(fake_max, monkeypatch):
     rtmod().VERSION = "0.9.1"
     _, (res,) = run_calls([("agr_op_apply", {"preview_id": pid})], fake_max.transport, store)
     assert "runtime changed" in err(res, "stale_preview")["error"]
-    rtmod().VERSION = "1.0.0"
+    rtmod().VERSION = "1.0.1"
     # scene state changed (runtime edit_core.require_current -> StalePreview)
     pid = _held(fake_max, store)
     rtmod().STATE["scene"] = "s2"
@@ -591,3 +593,69 @@ def test_v1_schemas_are_unchanged_by_objref():
     for n in tools.PHASE0:
         props = cat[n].input.get("properties", {})
         assert "refs" not in props, n
+
+
+# ---- 1.1: Max <-> Blender handoff tools (release branch 1.1) ---------------------------------------------------------
+@pytest.fixture
+def fake_max_110(fake_max):
+    """The fake installed runtime as 1.1.0: MCP may apply handoff.export / handoff.import (runtime.MCP_APPLY_100)."""
+    text = (fake_max.root / "runtime.py").read_text(encoding="utf-8")
+    text = text.replace('VERSION = "1.0.1"', 'VERSION = "1.1.0"').replace(
+        'if group == "100" and mode == "apply" and actor != "panel":',
+        'if group == "100" and mode == "apply" and actor != "panel" and row not in ("handoff.export", '
+        '"handoff.import"):')
+    assert 'row not in ("handoff.export"' in text
+    (fake_max.root / "runtime.py").write_text(text, encoding="utf-8")
+    return fake_max
+
+
+def test_handoff_import_preview_then_apply_by_preview_id_without_a_selection(fake_max_110):
+    """RED on 1.0.1: there was no agr_handoff_import; agr_op_preview had no handoff rows and needed handles."""
+    store = preview_store.PreviewStore()
+    _, (pre,) = run_calls([("agr_handoff_import", {"scene": "live", "bundle": "C:/jobs/X/handoff/001",
+                                                   "request_id": "bh001"})], fake_max_110.transport, store)
+    sc = ok2(pre)
+    pid = sc["preview_id"]
+    assert sc["next_actions"] == ["agr_handoff_import(scene, preview_id='{}') applies it".format(pid)]
+    assert ("100", "handoff.import", "preview", [], "mcp",
+            {"bundle": "C:/jobs/X/handoff/001", "request_id": "bh001"}) in rtmod().CALLS
+    assert store.get(pid, {}).targets == {"scene": "live"}  # the input is the bundle, not the user's selection
+    _, (app,) = run_calls([("agr_handoff_import", {"scene": "live", "preview_id": pid})], fake_max_110.transport,
+                          store)
+    out = ok2(app)
+    assert out["result"]["plan"]["mode"] == "apply"
+    assert ("100", "handoff.import", "apply", [], "mcp", None) in rtmod().CALLS
+    assert out["next_actions"][0].startswith("needs_human:") and "agent.accept" in out["next_actions"][0]
+    assert [n.handle for n in fake_max_110.rt.selection] == [2]
+
+
+def test_handoff_export_needs_targets_and_applies_its_own_preview_only(fake_max_110):
+    store = preview_store.PreviewStore()
+    _, (none, pre, other) = run_calls([
+        ("agr_handoff_export", {"scene": "live", "job_dir": "C:/jobs/X"}),
+        ("agr_handoff_export", {"scene": "live", "handles": [1], "job_dir": "C:/jobs/X"}),
+        ("agr_op_preview", {"scene": "live", "handles": [1], "op": "model.triangulate"})], fake_max_110.transport,
+        store)
+    err(none, "handles_required")
+    pid, foreign = ok2(pre)["preview_id"], ok2(other)["preview_id"]
+    _, (bad, app) = run_calls([("agr_handoff_export", {"scene": "live", "preview_id": foreign}),
+                               ("agr_handoff_export", {"scene": "live", "preview_id": pid})],
+                              fake_max_110.transport, store)
+    err(bad, "stale_preview")
+    assert ok2(app)["result"]["plan"]["mode"] == "apply"
+    assert ("100", "handoff.export", "apply", [1], "mcp", None) in rtmod().CALLS
+
+
+def test_handoff_verify_is_a_read_check_and_restore_apply_is_needs_human(fake_max_110):
+    store = preview_store.PreviewStore()
+    _, (ver, rest) = run_calls([
+        ("agr_handoff_verify", {"scene": "live", "bundle": "C:/b/001", "layer": "AGENT_bh001"}),
+        ("agr_op_preview", {"scene": "live", "handles": [1], "op": "handoff.restore_materials",
+                            "options": {"bundle": "C:/b/001"}})], fake_max_110.transport, store)
+    assert ok2(ver)["result"]["tool"] == "handoff.verify"
+    assert ("100", "handoff.verify", "preview", [], "mcp", {"bundle": "C:/b/001", "layer": "AGENT_bh001"}) in \
+        rtmod().CALLS
+    sc = ok2(rest)
+    assert sc["next_actions"][0].startswith("needs_human:")
+    _, (app,) = run_calls([("agr_op_apply", {"preview_id": sc["preview_id"]})], fake_max_110.transport, store)
+    err(app, "needs_human")

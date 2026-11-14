@@ -6,13 +6,16 @@ Steps of #1024 §1.0.17 done here (the glue writes the copy and the files):
      unroll (uvlayout_core.project_k6); other ids keep their unwrap;
   2. texel: other ids are rescaled to the texel of their period around UV (0, 0) (udim.rescale rule, L09);
   3. layout into UDIM seam to seam: cut by the integer UV grid, whole shifts into the tile of the material (K6);
-  4. renumbering library ids -> UDIM 1001.. without gaps PER MESH (K3; owner answer V9 06.11.2026: body and the
-     windows/glass mesh each start at 1001), matlib_core.renumber_dense of branch L when it is implemented;
-  5. glass: faces of the glass ids go to a separate object with its own numbering;
-  9. check: seam metric (norm 0), texel per piece (+-1 %), 0 pieces across a tile line, UDIM 1001..N without gaps
-     (udim.distortion rule on the pieces).
+  4. renumbering library ids -> UDIM 1001.. without gaps PER MESH for the body (K3; owner answer V9 06.11.2026 /
+     D209), matlib_core.renumber_dense of branch L when it is implemented;
+  5. glass: faces of the glass ids go to a separate object; ALL its glass ids stay in UDIM 1001 (D221, reg p.31
+     §2.2 / 2.5.2.2.1а: transparent geometry is unwrapped inside the 1001 tile; amends D209 for glass only). The glass
+     ids share the tile with the same whole shifts, texel and seam norm; glass has no texture maps (reg 2.4.2), so two
+     glass materials over each other in 1001 sample nothing;
+  9. check: seam metric (norm 0), texel per piece (+-1 %), 0 pieces across a tile line, UDIM 1001..N without gaps on
+     the body and only 1001 on the glass (udim.distortion rule on the pieces).
 Steps 6-8 (maps D+ERM+N, tex.dilate, udim.plugs) belong to branches N; the glue calls vpmmaps_core.build_maps and
-reports `skipped` while it is a stub.
+reports `skipped` while it is a stub. The glass part gets no maps (reg 2.4.2, D221): maps_table leaves it out.
 
 Input mesh: {'key': handle, 'name', 'verts': [[x, y, z]] metres world double, 'tris', 'mat_ids',
 'uvs': [[u, v]] | None, 'uv_tris': [[a, b, c]] | None}.
@@ -20,10 +23,11 @@ Input mesh: {'key': handle, 'name', 'verts': [[x, y, z]] metres world double, 't
 import importlib.util
 import math
 import os
+import re
 
 TOOL = 'vpm.build'
-OPTION_KEYS = {'grid_zero_m', 'step_m', 'period_by_id', 'tile_px', 'texel_px_per_m', 'projected_ids', 'glass_ids',
-               'unroll', 'out_dir', 'library_path'}
+OPTION_KEYS = {'address', 'grid_zero_m', 'step_m', 'period_by_id', 'tile_px', 'texel_px_per_m', 'projected_ids', 'glass_ids',
+               'unroll', 'out_dir', 'library_path', 'map_dir'}
 GLASS_SUFFIX = '_glass'
 
 
@@ -37,6 +41,9 @@ def _sibling(name, alias):
 
 lay = _sibling('uvlayout_core.py', 'agr_tools_uvlayout_core_vpm')
 u10 = _sibling('udim10_core.py', 'agr_tools_udim10_core_vpm')
+
+
+ADDRESS_RE = re.compile(r'[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*')
 
 
 def _num(v, name, positive=True):
@@ -75,9 +82,17 @@ def options(opts):
         raise ValueError('options.tile_px must be a positive integer')
     if not isinstance(out['unroll'], bool):
         raise ValueError('options.unroll must be true or false')
-    for key in ('out_dir', 'library_path'):
+    out['map_dir'] = opts.get('map_dir')
+    for key in ('out_dir', 'library_path', 'map_dir'):
         if out[key] is not None and (not isinstance(out[key], str) or not out[key].strip()):
             raise ValueError('options.{} must be a path'.format(key))
+    # 1.0.1 (KPP1 e2e): the maps of step 6 are named T_<Address>_<map>_<slot>.<UDIM>.png (names_core); a working
+    # object name (BODY_..._001) has no address, so the address of the SM names is an option
+    addr = opts.get('address')
+    if addr is not None and (not isinstance(addr, str) or not ADDRESS_RE.fullmatch(addr)):
+        raise ValueError('options.address must be Latin letters, digits and single "_" (SM_<Address>_Main): {!r}'.format(
+            addr))
+    out['address'] = addr
     per = opts.get('period_by_id', {})
     if not isinstance(per, dict):
         raise ValueError('options.period_by_id must be {library id: metres}')
@@ -86,9 +101,9 @@ def options(opts):
         if not str(k).isdigit() or int(k) <= 0:
             raise ValueError('options.period_by_id key must be a library id: {!r}'.format(k))
         out['period_by_id'][str(int(k))] = _num(v, 'options.period_by_id[{}]'.format(k))
-    tx = opts.get('texel_px_per_m')
-    # px/m is a parameter (owner question «1000 or 1024» open, GeoAGR-private research/materials-audit-1.0 Q1):
-    # given, it fixes the pixels of one UDIM step; default tile_px / step_m (4096 / 3.6 = 1137.8 px/m).
+    tx = opts.get('texel_px_per_m', lay.TEXEL_PX_PER_M)
+    # px/m: 1000 by default (owner answer 06.11 morning, materials audit Q1: the 3.6 m UDIM tile = 3600 px, every
+    # module lies whole); a parameter. null keeps the old rule tile_px / step_m.
     out['texel_px_per_m'] = _num(tx, 'options.texel_px_per_m') if tx is not None else None
     return out
 
@@ -161,7 +176,8 @@ def build_part(mesh, faces, o, renumber, part):
     """Steps 1-4 and 9 for the faces of one output mesh. Returns (summary, geometry, findings)."""
     findings = []
     used = sorted({mesh['mat_ids'][f] for f in faces})
-    table = renumber(used)
+    # D221: every glass id of the glass mesh sits in 1001 (reg p.31 §2.2); the body keeps the dense numbering (D209)
+    table = glass_table(used) if part == 'glass' else renumber(used)
     # 'all' (default until branch L's library gives the recipes): every face, glass too, is projected (K6);
     # a list keeps the unwrap of the other ids (rescaled to their texel, step 2).
     projected = [f for f in faces if o['projected_ids'] == 'all' or mesh['mat_ids'][f] in o['projected_ids']]
@@ -217,7 +233,7 @@ def build_part(mesh, faces, o, renumber, part):
     if tex_bad:
         findings.append(('texel', sorted(tex_bad), 'texel off by more than 1 %'))
     tiles = sorted({p['tile'] for p in pieces})
-    want_tiles = list(range(lay.FIRST_UDIM, lay.FIRST_UDIM + len(table)))
+    want_tiles = [lay.FIRST_UDIM] if part == 'glass' else list(range(lay.FIRST_UDIM, lay.FIRST_UDIM + len(table)))
     if tiles != want_tiles:
         findings.append(('udim_gap', [], 'tiles {} instead of {}'.format(tiles, want_tiles)))
     geo = weld(mesh, pieces)
@@ -236,6 +252,12 @@ def build_part(mesh, faces, o, renumber, part):
                'texel_target': {str(k): round(texel_of(o, k), 4) for k in used},
                'out_tris': len(geo['tris']), 'out_verts': len(geo['verts_w'])}
     return summary, geo, findings
+
+
+def glass_table(used_ids):
+    """{library id: 1001} for every glass id of ONE glass mesh (D221; reg p.31 §2.2 / 2.5.2.2.1а)."""
+    lay.renumber_dense(used_ids)  # the same id range check as the body (1..1000 on working geometry, K3)
+    return {lid: lay.FIRST_UDIM for lid in sorted(set(used_ids))}
 
 
 def _cut_count(faces, pieces):
@@ -278,10 +300,20 @@ def build(meshes, opts, renumber=None):
     return {'options': o, 'objects': out}
 
 
+def map_mesh_name(o, part_name, part):
+    """Name under which vpmmaps_core names the maps of a part: SM_<Address>_Main / _MainGlass when options.address is
+    given (1.0.1), else the output mesh name (it must then be an SM object name already)."""
+    if o.get('address'):
+        return 'SM_{}_{}'.format(o['address'], 'MainGlass' if part == 'glass' else 'Main')
+    return part_name
+
+
 def maps_table(plan):
-    """udim_table of vpmmaps_core.build_maps (branch N): {output mesh name: {library_id: udim}}."""
-    return {p['name']: {int(k): v for k, v in p['summary']['udim_table'].items()}
-            for o in plan['objects'] if not o['findings'] for p in o['parts']}
+    """udim_table of vpmmaps_core.build_maps (branch N): {map mesh name: {library_id: udim}}. Glass parts are left
+    out: no texture maps on glass materials (reg 2.4.2, D221)."""
+    o = plan['options']
+    return {map_mesh_name(o, p['name'], p['summary']['part']): {int(k): v for k, v in p['summary']['udim_table'].items()}
+            for ob in plan['objects'] if not ob['findings'] for p in ob['parts'] if p['summary']['part'] != 'glass'}
 
 
 def table_json(plan, scene, version):

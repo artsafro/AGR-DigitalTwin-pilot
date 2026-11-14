@@ -43,5 +43,13 @@ Your final message must contain a Markdown table:
 one row per check (bbox, levels, areas, silhouettes, opening planes, material ids, mesh, decor, plates,
 `inv_xview`, …). The `inv_xview` row is the overlap gate: `dt qa xview` (`src/dt_ai/ops/inv_xview.py`,
 kernel `xview_overlaps`, #527) on the built model. A missing xview run is `not measured` with the reason.
+Where the spec has a source face or plan count (faces, plans, plates, patches), add a `source_count` row:
+expected = the spec count, measured = the count read back from the output; any difference is `fail`, so a
+silently skipped face shows up even without a counter (#1031; `uv run python -m dt_ai.validate.build_counters
+--source-count N --output-count M`, exit 1 = fail). A build report counter of skipped or failed elements
+(`*_fail`, `skipped`, `miss`, ...) above 0 is a `build_counters` row with `fail` (`--report <build report>
+--counter <name>`).
 `not measured` with the reason where a check could not run. After the table, the input paths and the commit.
 No proposals, no fixes, no guesses about the cause.
+
+Shared brief (focus, parallel calls, no filler, numbers): `docs/agents/WORKFLOW.md#prompt-guide`.

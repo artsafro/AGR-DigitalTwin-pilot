@@ -52,7 +52,7 @@
    "preview": "previews/maf/Adanat_Anapa_10779.1a.png",
    "category": "Скамья",
    "title_ru": "Скамейка «Анапа",
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -323,7 +323,7 @@
     }
    ],
    "preview": "previews/maf/Adanat_StolBremenSDvumyaSkameykami_13012.png",
-   "category": "Скамья",
+   "category": "Стол",
    "title_ru": "Стол «Бремен» с двумя скамейками",
    "measured": false,
    "warnings": [],
@@ -1031,7 +1031,7 @@
     "high",
     "low"
    ],
-   "file": "DeloDesign_StolYO_0000.zip",
+   "file": "../a101_fixed/DeloDesign_StolYO_0000.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -1181,7 +1181,7 @@
     }
    ],
    "preview": "previews/maf/Feniks_ElementPolosyPrepyatstviyNature_207240.png",
-   "category": "Спортивное оборудование",
+   "category": "Игровое оборудование",
    "title_ru": "Элемент полосы препятствий Nature",
    "measured": false,
    "warnings": [],
@@ -1234,7 +1234,7 @@
     }
    ],
    "preview": "previews/maf/Feniks_ElementPolosyPrepyatstviyNature_207420.png",
-   "category": "Спортивное оборудование",
+   "category": "Игровое оборудование",
    "title_ru": "Элемент полосы препятствий Nature",
    "measured": false,
    "warnings": [],
@@ -1537,7 +1537,7 @@
    },
    "spec": [],
    "preview": "previews/maf/Fenix_DvuhmestniiBalancir_127060.png",
-   "category": "Спортивное оборудование",
+   "category": "Качалка",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -1736,7 +1736,7 @@
     "high",
     "low"
    ],
-   "file": "Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740.zip",
+   "file": "../a101_fixed/Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -1772,7 +1772,7 @@
     }
    ],
    "preview": "previews/maf/Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740.png",
-   "category": "Навес",
+   "category": "Контейнерная площадка",
    "title_ru": "Навес под площадку ТБО «Симпл»",
    "measured": false,
    "warnings": [],
@@ -1933,7 +1933,7 @@
     "high",
     "low"
    ],
-   "file": "Hobbika_VeloparkovkaVozduh_15617.zip",
+   "file": "../a101_fixed/Hobbika_VeloparkovkaVozduh_15617.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -2159,9 +2159,9 @@
     }
    ],
    "preview": "previews/maf/Igrateks_BalansirovochnayaKochka_0322T-3.png",
-   "category": "Спортивное оборудование",
+   "category": "Игровое оборудование",
    "title_ru": "Балансировочная кочка «Игратекс»",
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -2214,7 +2214,7 @@
    "preview": "previews/maf/Igrateks_BrevnaBalansirovocnye_0906T-4.png",
    "category": "Спортивное оборудование",
    "title_ru": "Брёвна балансировочные «Игратекс»",
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -2267,7 +2267,7 @@
    "preview": "previews/maf/Igrateks_Brevno_0906T-5.png",
    "category": "Спортивное оборудование",
    "title_ru": "Бревно «Игратекс»",
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -2411,7 +2411,7 @@
    "preview": "previews/maf/Igrateks_PiramidaIzBreven_0906T-1.png",
    "category": "Игровое оборудование",
    "title_ru": null,
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -2690,7 +2690,7 @@
    },
    "spec": [],
    "preview": "previews/maf/Igratex_Vertushka_IO0208T1.png",
-   "category": "Игровое оборудование",
+   "category": "Карусель",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -2707,7 +2707,7 @@
     "high",
     "low"
    ],
-   "file": "Individ_Amfiteatr1_Individ.zip",
+   "file": "../a101_fixed/Individ_Amfiteatr1_Individ.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -2857,7 +2857,7 @@
    },
    "spec": [],
    "preview": "previews/maf/MafStore_NavesPergola_MH-21.1.png",
-   "category": "Навес",
+   "category": "Пергола",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -3041,7 +3041,7 @@
     "high",
     "low"
    ],
-   "file": "3.1_ЮС/Mesto_IgrovoyKompleks_118030.zip",
+   "file": "../a101_fixed/Mesto_IgrovoyKompleks_118030.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -3079,7 +3079,7 @@
    "preview": "previews/maf/Mesto_IgrovoyKompleks_118030.png",
    "category": "Игровой комплекс",
    "title_ru": "Игровой комплекс «Место»",
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -3132,7 +3132,7 @@
    "preview": "previews/maf/Mesto_Kachalka_161100.png",
    "category": "Качалка",
    "title_ru": "Качалка «Место»",
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -3185,7 +3185,7 @@
    "preview": "previews/maf/Mesto_Kachalka_170100.png",
    "category": "Качалка",
    "title_ru": "Качалка «Место»",
-   "measured": true,
+   "measured": false,
    "warnings": [],
    "status": "a101"
   },
@@ -3602,7 +3602,7 @@
     "high",
     "low"
    ],
-   "file": "NoName1234_Pesochica_0000.zip",
+   "file": "../a101_fixed/NoName1234_Pesochica_0000.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -3661,7 +3661,7 @@
    },
    "spec": [],
    "preview": "previews/maf/NoName3153_NoName3415_0000.png",
-   "category": null,
+   "category": "Вазон",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -3699,7 +3699,7 @@
    },
    "spec": [],
    "preview": "previews/maf/NoName4156_NoName5612_0000.png",
-   "category": null,
+   "category": "Контейнерная площадка",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -3737,7 +3737,7 @@
    },
    "spec": [],
    "preview": "previews/maf/NoName5162_NoName7123_0000.png",
-   "category": null,
+   "category": "Скамья",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -3775,7 +3775,7 @@
    },
    "spec": [],
    "preview": "previews/maf/NoName6121_NoName8542_0000.png",
-   "category": null,
+   "category": "Прочее",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -3813,7 +3813,7 @@
    },
    "spec": [],
    "preview": "previews/maf/NoName6731_NoName3783_0000.png",
-   "category": null,
+   "category": "Прочее",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -4172,7 +4172,7 @@
     "high",
     "low"
    ],
-   "file": "Shelby_Domik_SHLG-08.03.zip",
+   "file": "../a101_fixed/Shelby_Domik_SHLG-08.03.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -4210,7 +4210,7 @@
     "high",
     "low"
    ],
-   "file": "Shelby_IgrovoyElement_SHLG-06-10.zip",
+   "file": "../a101_fixed/Shelby_IgrovoyElement_SHLG-06-10.zip",
    "sidecar": true,
    "units": "mm",
    "tris": {
@@ -4573,7 +4573,7 @@
    },
    "spec": [],
    "preview": "previews/maf/Taiga_OstrovokNaPruzhinah_IO0322T-4.png",
-   "category": "Игровое оборудование",
+   "category": "Качалка",
    "title_ru": null,
    "measured": false,
    "warnings": [],
@@ -21673,18 +21673,9 @@
    {
     "id": "maf:Adanat_Anapa_10779.1a",
     "name": "Adanat_Anapa_10779.1a",
-    "category": null,
+    "category": "Скамья",
     "findings": [],
-    "warnings": [
-     {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
-     },
-     {
-      "code": "no_category",
-      "detail": "category not recognised from the title"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:Adanat_KresloKafePalissade3135_20402",
@@ -21733,7 +21724,7 @@
    {
     "id": "maf:Adanat_StolBremenSDvumyaSkameykami_13012",
     "name": "Adanat_StolBremenSDvumyaSkameykami_13012",
-    "category": "Скамья",
+    "category": "Стол",
     "findings": [],
     "warnings": []
    },
@@ -21910,16 +21901,7 @@
     "id": "maf:DeloDesign_StolYO_0000",
     "name": "DeloDesign_StolYO_0000",
     "category": "Стол",
-    "findings": [
-     {
-      "code": "pivot_height",
-      "detail": "high: 956 mm above the base"
-     },
-     {
-      "code": "pivot_height",
-      "detail": "low: 956 mm above the base"
-     }
-    ],
+    "findings": [],
     "warnings": []
    },
    {
@@ -21944,14 +21926,14 @@
    {
     "id": "maf:Feniks_ElementPolosyPrepyatstviyNature_207240",
     "name": "Feniks_ElementPolosyPrepyatstviyNature_207240",
-    "category": "Спортивное оборудование",
+    "category": "Игровое оборудование",
     "findings": [],
     "warnings": []
    },
    {
     "id": "maf:Feniks_ElementPolosyPrepyatstviyNature_207420",
     "name": "Feniks_ElementPolosyPrepyatstviyNature_207420",
-    "category": "Спортивное оборудование",
+    "category": "Игровое оборудование",
     "findings": [],
     "warnings": [
      {
@@ -21998,7 +21980,7 @@
    {
     "id": "maf:Fenix_DvuhmestniiBalancir_127060",
     "name": "Fenix_DvuhmestniiBalancir_127060",
-    "category": "Спортивное оборудование",
+    "category": "Качалка",
     "findings": [],
     "warnings": [
      {
@@ -22038,17 +22020,8 @@
    {
     "id": "maf:Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740",
     "name": "Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740",
-    "category": "Навес",
-    "findings": [
-     {
-      "code": "pivot_offset_xy",
-      "detail": "high: 53 mm"
-     },
-     {
-      "code": "pivot_offset_xy",
-      "detail": "low: 54 mm"
-     }
-    ],
+    "category": "Контейнерная площадка",
+    "findings": [],
     "warnings": []
    },
    {
@@ -22076,16 +22049,7 @@
     "id": "maf:Hobbika_VeloparkovkaVozduh_15617",
     "name": "Hobbika_VeloparkovkaVozduh_15617",
     "category": "Велопарковка",
-    "findings": [
-     {
-      "code": "pivot_offset_xy",
-      "detail": "high: 87 mm"
-     },
-     {
-      "code": "pivot_offset_xy",
-      "detail": "low: 52 mm"
-     }
-    ],
+    "findings": [],
     "warnings": []
    },
    {
@@ -22119,38 +22083,23 @@
    {
     "id": "maf:Igrateks_BalansirovochnayaKochka_0322T-3",
     "name": "Igrateks_BalansirovochnayaKochka_0322T-3",
-    "category": "Спортивное оборудование",
+    "category": "Игровое оборудование",
     "findings": [],
-    "warnings": [
-     {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:Igrateks_BrevnaBalansirovocnye_0906T-4",
     "name": "Igrateks_BrevnaBalansirovocnye_0906T-4",
     "category": "Спортивное оборудование",
     "findings": [],
-    "warnings": [
-     {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:Igrateks_Brevno_0906T-5",
     "name": "Igrateks_Brevno_0906T-5",
     "category": "Спортивное оборудование",
     "findings": [],
-    "warnings": [
-     {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:Igrateks_BrevnoListvennica4159_IO0906T-6",
@@ -22171,12 +22120,7 @@
     "name": "Igrateks_PiramidaIzBreven_0906T-1",
     "category": "Игровое оборудование",
     "findings": [],
-    "warnings": [
-     {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:Igrateks_SkamyaRadiusnaya_SRRS",
@@ -22233,7 +22177,7 @@
    {
     "id": "maf:Igratex_Vertushka_IO0208T1",
     "name": "Igratex_Vertushka_IO0208T1",
-    "category": "Игровое оборудование",
+    "category": "Карусель",
     "findings": [],
     "warnings": []
    },
@@ -22241,16 +22185,7 @@
     "id": "maf:Individ_Amfiteatr1_Individ",
     "name": "Individ_Amfiteatr1_Individ",
     "category": "Амфитеатр",
-    "findings": [
-     {
-      "code": "pivot_offset_xy",
-      "detail": "high: 437 mm"
-     },
-     {
-      "code": "pivot_offset_xy",
-      "detail": "low: 680 mm"
-     }
-    ],
+    "findings": [],
     "warnings": []
    },
    {
@@ -22270,7 +22205,7 @@
    {
     "id": "maf:MafStore_NavesPergola_MH-21.1",
     "name": "MafStore_NavesPergola_MH-21.1",
-    "category": "Навес",
+    "category": "Пергола",
     "findings": [],
     "warnings": []
    },
@@ -22306,17 +22241,8 @@
     "id": "maf:Mesto_IgrovoyKompleks_118030",
     "name": "Mesto_IgrovoyKompleks_118030",
     "category": "Игровой комплекс",
-    "findings": [
-     {
-      "code": "foreign_material",
-      "detail": "low: M_Mesto_IgrovoyKompleks_18030_low"
-     }
-    ],
+    "findings": [],
     "warnings": [
-     {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
-     },
      {
       "code": "tris_review",
       "detail": "high: 26188"
@@ -22334,10 +22260,6 @@
     "findings": [],
     "warnings": [
      {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
-     },
-     {
       "code": "low_not_reduced",
       "detail": "low = high = 2842 tris"
      }
@@ -22347,28 +22269,23 @@
     "id": "maf:Mesto_Kachalka_170100",
     "name": "Mesto_Kachalka_170100",
     "category": "Качалка",
-    "findings": [
+    "findings": [],
+    "warnings": [
      {
-      "code": "foreign_material",
-      "detail": "high: M_Mesto_IgrovoyKompleks_118030_high"
-     },
-     {
-      "code": "foreign_texture",
+      "code": "shared_texture",
       "detail": "high: Mesto_IgrovoyKompleks_118030_high_Diffuse.png"
      },
      {
-      "code": "foreign_texture",
+      "code": "shared_texture",
       "detail": "high: Mesto_IgrovoyKompleks_118030_high_ERM.png"
      },
      {
-      "code": "foreign_texture",
+      "code": "shared_texture",
       "detail": "high: Mesto_IgrovoyKompleks_118030_high_Normal.png"
-     }
-    ],
-    "warnings": [
+     },
      {
-      "code": "measured",
-      "detail": "no sidecar: values measured in Max"
+      "code": "shared_material",
+      "detail": "high: M_Mesto_IgrovoyKompleks_118030_high"
      },
      {
       "code": "low_not_reduced",
@@ -22448,76 +22365,43 @@
     "id": "maf:NoName1234_Pesochica_0000",
     "name": "NoName1234_Pesochica_0000",
     "category": "Песочница",
-    "findings": [
-     {
-      "code": "pivot_offset_xy",
-      "detail": "high: 124 mm"
-     },
-     {
-      "code": "pivot_offset_xy",
-      "detail": "low: 125 mm"
-     }
-    ],
+    "findings": [],
     "warnings": []
    },
    {
     "id": "maf:NoName3153_NoName3415_0000",
     "name": "NoName3153_NoName3415_0000",
-    "category": null,
+    "category": "Вазон",
     "findings": [],
-    "warnings": [
-     {
-      "code": "no_category",
-      "detail": "category not recognised from the title"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:NoName4156_NoName5612_0000",
     "name": "NoName4156_NoName5612_0000",
-    "category": null,
+    "category": "Контейнерная площадка",
     "findings": [],
-    "warnings": [
-     {
-      "code": "no_category",
-      "detail": "category not recognised from the title"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:NoName5162_NoName7123_0000",
     "name": "NoName5162_NoName7123_0000",
-    "category": null,
+    "category": "Скамья",
     "findings": [],
-    "warnings": [
-     {
-      "code": "no_category",
-      "detail": "category not recognised from the title"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:NoName6121_NoName8542_0000",
     "name": "NoName6121_NoName8542_0000",
-    "category": null,
+    "category": "Прочее",
     "findings": [],
-    "warnings": [
-     {
-      "code": "no_category",
-      "detail": "category not recognised from the title"
-     }
-    ]
+    "warnings": []
    },
    {
     "id": "maf:NoName6731_NoName3783_0000",
     "name": "NoName6731_NoName3783_0000",
-    "category": null,
+    "category": "Прочее",
     "findings": [],
     "warnings": [
-     {
-      "code": "no_category",
-      "detail": "category not recognised from the title"
-     },
      {
       "code": "low_not_reduced",
       "detail": "low = high = 630 tris"
@@ -22609,32 +22493,14 @@
     "id": "maf:Shelby_Domik_SHLG-08.03",
     "name": "Shelby_Domik_SHLG-08.03",
     "category": "Игровой комплекс",
-    "findings": [
-     {
-      "code": "pivot_offset_xy",
-      "detail": "high: 368 mm"
-     },
-     {
-      "code": "pivot_offset_xy",
-      "detail": "low: 360 mm"
-     }
-    ],
+    "findings": [],
     "warnings": []
    },
    {
     "id": "maf:Shelby_IgrovoyElement_SHLG-06-10",
     "name": "Shelby_IgrovoyElement_SHLG-06-10",
     "category": "Игровое оборудование",
-    "findings": [
-     {
-      "code": "pivot_offset_xy",
-      "detail": "high: 726 mm"
-     },
-     {
-      "code": "pivot_offset_xy",
-      "detail": "low: 764 mm"
-     }
-    ],
+    "findings": [],
     "warnings": []
    },
    {
@@ -22711,7 +22577,7 @@
    {
     "id": "maf:Taiga_OstrovokNaPruzhinah_IO0322T-4",
     "name": "Taiga_OstrovokNaPruzhinah_IO0322T-4",
-    "category": "Игровое оборудование",
+    "category": "Качалка",
     "findings": [],
     "warnings": []
    },
@@ -22733,14 +22599,11 @@
    }
   ],
   "counts": {
-   "foreign_material": 2,
-   "foreign_texture": 3,
    "low_not_reduced": 11,
-   "measured": 8,
-   "no_category": 6,
    "no_smoothing": 14,
-   "pivot_height": 8,
-   "pivot_offset_xy": 12,
+   "pivot_height": 6,
+   "shared_material": 1,
+   "shared_texture": 3,
    "tris_review": 2
   },
   "stats": {
@@ -22760,30 +22623,31 @@
    }
   },
   "categories": {
-   "Спортивное оборудование": 14,
-   "Игровое оборудование": 13,
-   "Пергола": 11,
-   "Скамья": 11,
+   "Игровое оборудование": 14,
+   "Скамья": 12,
+   "Пергола": 12,
+   "Спортивное оборудование": 10,
+   "Стол": 7,
    "Игровой комплекс": 7,
-   "—": 6,
-   "Стол": 6,
+   "Качалка": 7,
    "Качели": 6,
-   "Качалка": 5,
    "Кресло": 4,
-   "Навес": 3,
-   "Карусель": 3,
+   "Карусель": 4,
+   "Контейнерная площадка": 3,
    "Урна": 3,
    "Амфитеатр": 3,
    "Горка": 2,
    "Гамак": 2,
    "Велопарковка": 2,
    "Информационный стенд": 2,
+   "Прочее": 2,
+   "Навес": 1,
    "Приствольная решётка": 1,
-   "Контейнерная площадка": 1,
    "Парковый лежак": 1,
    "Парклет": 1,
-   "Песочница": 1
+   "Песочница": 1,
+   "Вазон": 1
   },
-  "clean": 96
+  "clean": 105
  }
 }

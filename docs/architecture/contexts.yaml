@@ -1,0 +1,389 @@
+# Context map of the NPM/OKS route on KPP1 (#1359). Source of truth for docs/architecture/contexts.excalidraw.
+# Labels for Artem are Russian (ru, contract); ids, paths and function names stay as in the code.
+# duplicates: path:line outside the owner. `match` = text that must be on that line (existence test).
+# `rule` = a duplicate_guard rule; rule-tagged rows under jobs/ are the guard allowlist (exact path:line).
+# Regenerate: uv run python tools/architecture/route_map.py ; check: tools/architecture/duplicate_guard.py
+title_ru: "Карта контекстов маршрута НПМ/ОКС (КПП1)"
+issue: "#1359"
+rules:
+  - id: udim-tile
+    owner: adapters/max/agr_tools/udimtile_core.py
+    ru: "своя формула UDIM 1001 + u + 10·v (или обратная) вместо общей функции"
+  - id: delivery-zip
+    owner: tools/derive/package_vpm.py
+    ru: "свой сборщик ZIP-пакета сдачи вместо общего упаковщика"
+shared_kernel:
+  id: udim
+  ru: "Общее ядро: номер тайла UDIM"
+  owner: adapters/max/agr_tools/udimtile_core.py
+  owner_ru: "одна функция UDIM (#1337), едет и в MZP AGR Tools"
+  functions:
+    - name: udim_tile
+      contract: "u, v (конечные, 0 ≤ u < 10, v ≥ 0) -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
+    - name: face_tile
+      contract: "углы UV грани (≥ 3), strict -> тайл центра грани; угол в чужом тайле — UdimCrossTileError"
+    - name: tile_origin
+      contract: "номер тайла -> (столбец, ряд) его левого нижнего угла"
+    - name: udim_of_cell
+      contract: "целые (столбец, ряд) -> номер тайла"
+  duplicates:
+    - at: "jobs/KPP1/benchmark-1318/account_readback.py:51"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/KPP1/benchmark-1318/prepare_master.py:54"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/KPP1/rerun-1230/build_blender.py:269"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/KPP1/scripts/export_npm.py:88"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/KPP1/scripts/export_npm.py:93"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/KPP1/scripts/readback_vpm.py:80"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/KPP1/scripts/vpm_uv.py:151"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/PSU275/scripts/export_npm.py:103"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/PSU275/scripts/export_npm.py:98"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/compare_facades.py:152"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/export_npm.py:92"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/export_npm.py:97"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:224"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:236"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:340"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:380"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/qa_packages.py:406"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:151"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/VATUTINO-SITE/flora_v007_blender.py:53"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/clarify_render_v001.py:52"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py:138"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py:87"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v001.py:102"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v003.py:103"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/readback_uv_fbx.py:35"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py:251"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py:252"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py:472"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py:200"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "jobs/skug26-k5-ac/scripts/uvverify.py:19"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "tools/blender/fbx_readback.py:63"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "tools/derive/export_npm.py:144"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "tools/materials/npm_atlas_udim.py:375"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "src/dt_ai/geometry/uv.py:7"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/atlas_core.py:552"
+      rule: udim-tile
+      issue: "#1141"
+    - at: "adapters/max/agr_tools/npm_core.py:109"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/udim_core.py:53"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvtile_core.py:64"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvtile_core.py:67"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/udim_core.py:50"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/udimplug_core.py:53"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/udimview_core.py:38"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvlayout_core.py:56"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvlayout_core.py:60"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/uvlayout_core.py:64"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "adapters/max/agr_tools/npm2vpm_core.py:175"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "src/dt_ai/geometry/uv.py:4"
+      rule: udim-tile
+      issue: "#1337"
+    - at: "src/twinqa/uv.py:35"
+      rule: udim-tile
+      issue: "#1337"
+contexts:
+  - id: body
+    ru: "Корпус и геометрия"
+    area: docs/domain/areas/body.md
+    owner: src/dt_ai/ops/operations.py
+    owner_ru: "операции над частями с проверкой инвариантов и откатом"
+    functions:
+      - name: run_operation
+        contract: "сцена, операция, часть, функция правки -> OperationResult; при нарушении инварианта — откат"
+      - name: embed_into_neighbour
+        contract: "сцена, часть, сосед, направление, глубина, м -> новая сцена (врезка декора, D199)"
+      - name: primitive_box
+        contract: "сцена, часть -> часть заменена коробкой в пределах силуэта"
+      - name: to_opacity_plane
+        contract: "сцена, часть -> плоскость с картой прозрачности (НПМ)"
+      - name: plan_opacity_swaps
+        contract: "сцена, кандидаты, бюджет треугольников -> список замен на плоскости"
+    duplicates:
+      - at: "jobs/KPP1/scripts/seal.py:302"
+        match: "def seal("
+        issue: "#1359"
+        ru: "свой шов и сварка Т-узлов вместо dt_ai.ops.seams.join_parts"
+      - at: "jobs/KPP1/scripts/seal.py:73"
+        match: "def t_junctions("
+        issue: "#1359"
+        ru: "свой поиск Т-узлов на швах"
+      - at: "jobs/KPP1/scripts/build_kpp1.py:194"
+        match: "def load_spec("
+        issue: "#1359"
+        ru: "сборка корпуса КПП1 целиком в скрипте задания (стадии 1–6)"
+  - id: uv-atlas
+    ru: "UV и атлас"
+    area: docs/domain/areas/uv-atlas.md
+    owner: adapters/max/agr_tools/atlas_core.py
+    owner_ru: "каноническая упаковка атласа (D225); Python-версии переводятся на неё в #1141"
+    functions:
+      - name: pack
+        contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки; ошибка — AtlasError"
+      - name: atlas_png
+        contract: "раскладка -> PNG атласа"
+      - name: flora_layout
+        contract: "вырезки текстур, max размер, отступ -> раскладка атласа флоры"
+    duplicates:
+      - at: "tools/materials/npm_atlas_udim.py:779"
+        match: "def main("
+        issue: "#1141"
+        ru: "второй (Python) генератор атласа НПМ, по нему идёт agr vpm-to-npm"
+      - at: "jobs/KPP1/scripts/make_npm_atlas.py:28"
+        match: "def main("
+        issue: "#1106"
+        ru: "атлас НПМ КПП1 в задании"
+      - at: "jobs/TEC26-OKS/scripts/make_npm_atlas.py:28"
+        match: "def main("
+        issue: "#1106"
+        ru: "копия атласа КПП1 в TEC26"
+      - at: "jobs/KPP1/scripts/vpm_uv.py:155"
+        match: "def pack_uv("
+        issue: "#1359"
+        ru: "своя раскладка UV ВПМ; файл TEC26 отличается одной строкой"
+      - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
+        match: "def pack_uv("
+        issue: "#1359"
+        ru: "почти побайтовая копия vpm_uv.py КПП1"
+  - id: package
+    ru: "Экспорт и пакет сдачи"
+    area: docs/domain/areas/package.md
+    owner: tools/derive/package_vpm.py
+    owner_ru: "общий упаковщик ВПМ (dt derive package / agr package-vpm, #1106)"
+    functions:
+      - name: main
+        contract: "папка пакета, папка текстур, [--object], [--no-geojson] -> SM_<Адрес>.zip + package_report.json; занятый путь — отказ"
+      - name: load_object
+        contract: "object.json -> имя, привязка, стёкла; пустое и неизвестное — ошибка"
+      - name: unique_object
+        contract: "пары ключ-значение JSON -> словарь; повтор ключа — ошибка"
+      - name: default_glasses
+        contract: "адрес -> предложение прозрачного стекла КПП1"
+    duplicates:
+      - at: "jobs/KPP1/rerun-1230/build_blender.py:401"
+        rule: delivery-zip
+        issue: "#1359"
+      - at: "jobs/KPP1/scripts/package_vpm.py:51"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/KPP1/site-1255/place_package.py:181"
+        rule: delivery-zip
+        issue: "#1359"
+      - at: "jobs/KPP1/site-1255/place_package.py:186"
+        rule: delivery-zip
+        issue: "#1359"
+      - at: "jobs/PSU275/scripts/package_vpm.py:53"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/TEC26-OKS/scripts/package_vpm.py:50"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/VATUTINO-SITE/npm_code.py:40"
+        rule: delivery-zip
+        issue: "#1359"
+      - at: "jobs/VATUTINO-SITE/run_delivery.py:67"
+        rule: delivery-zip
+        issue: "#1359"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v001.py:83"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v002.py:85"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v003.py:116"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v004.py:119"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v005.py:122"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "jobs/elv-tc-vpm/scripts/package_vpm_v006.py:131"
+        rule: delivery-zip
+        issue: "#1106"
+      - at: "adapters/max/agr_tools/package_core.py:457"
+        rule: delivery-zip
+        issue: "#1359"
+      - at: "src/dt_ai/publish/bundle.py:20"
+        rule: delivery-zip
+        issue: "#1359"
+  - id: validation
+    ru: "Проверка и приёмка"
+    area: docs/domain/areas/package.md
+    owner: tools/qa/validate_package.py
+    owner_ru: "проверка пакета по регламенту (agr validate)"
+    functions:
+      - name: validate_vpm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ и плотность V009"
+      - name: validate_npm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+      - name: main
+        contract: "путь к ZIP/FBX, --profile, --scene, --master, --json -> отчёт; провал — ненулевой код"
+    duplicates:
+      - at: "jobs/KPP1/scripts/qa_master.py:37"
+        match: "def world_bm("
+        issue: "#1359"
+        ru: "своя проверка мастера КПП1"
+      - at: "jobs/TEC26-OKS/scripts/qa_master.py:37"
+        match: "def world_bm("
+        issue: "#1359"
+        ru: "копия qa_master.py КПП1 (2 строки разницы)"
+      - at: "jobs/TEC26-OKS/scripts/qa_packages.py:35"
+        match: "def load("
+        issue: "#1359"
+        ru: "своя проверка пакетов TEC26"
+      - at: "jobs/KPP1/scripts/run_agr_checker.py:47"
+        match: "def dump("
+        issue: "#1359"
+        ru: "свой запуск чекера СИНТЕЗ"
+      - at: "jobs/TEC26-OKS/scripts/run_agr_checker.py:47"
+        match: "def dump("
+        issue: "#1359"
+        ru: "копия запуска чекера КПП1"
+  - id: dcc
+    ru: "Связь с DCC (Blender / 3ds Max)"
+    area: docs/agents/CAPABILITIES.md
+    owner: src/dt_ai/core/blender_runner.py
+    owner_ru: "запуск Blender без окна со свежим JSON-ответом"
+    functions:
+      - name: blender_executable
+        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+      - name: run_blender
+        contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
+    duplicates:
+      - at: "src/dt_ai/core/build.py:16"
+        match: "def run_blender("
+        issue: "#1359"
+        ru: "второй run_blender в ядре"
+      - at: "src/twinqa/scene.py:59"
+        match: "def find_blender("
+        issue: "#1359"
+        ru: "свой поиск Blender в twinqa"
+      - at: "tools/qa/run_benchmark.py:40"
+        match: "def blender_run("
+        issue: "#1359"
+        ru: "свой запуск Blender в бенчмарке"
+      - at: "jobs/VATUTINO-SITE/flora_route_a.py:394"
+        match: "def _blender("
+        issue: "#1359"
+        ru: "свой запуск Blender в задании"
+      - at: "jobs/VATUTINO-SITE/place_site.py:59"
+        match: "def blender("
+        issue: "#1359"
+        ru: "свой запуск Blender в задании"
+      - at: "jobs/OBR22-K02/scripts/run_profile_checks.py:191"
+        match: "def blender("
+        issue: "#1359"
+        ru: "свой запуск Blender в задании"
+relations:
+  - from: body
+    to: uv-atlas
+    ru: "мастер-модель (FBX/.blend)"
+  - from: uv-atlas
+    to: package
+    ru: "UV, атлас, текстуры"
+  - from: package
+    to: validation
+    ru: "ZIP / FBX сдачи"
+  - from: dcc
+    to: body
+    ru: "Blender/Max строит"
+  - from: dcc
+    to: validation
+    ru: "свежее чтение экспорта"
+  - from: udim
+    to: uv-atlas
+    ru: "номер тайла"
+  - from: udim
+    to: validation
+    ru: "номер тайла"

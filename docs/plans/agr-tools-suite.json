@@ -2169,6 +2169,86 @@
    "lab_status": null,
    "stage": "agent",
    "fate": "stage"
+  },
+  {
+   "id": "handoff.export",
+   "block": "export",
+   "label_ru": "Хендофф: выгрузить в Blender",
+   "does_ru": "Новая папка jobs/<ID>/handoff/<seq>/: model.fbx (квады и n-гоны, метры, Z вверх), manifest.json, sidecar.json (роли, OPEN_*, LEVEL_*), materials.json (копия рядом со сценой), readback_max.json; ничего не перезаписывает",
+   "source": "docs/experiments/blender-handoff.md (branch BH, #1024); docs/plans/agr-tools-1.x.md §3; owner D213/D214",
+   "verdict": "new",
+   "verdict_note": "Blender handoff (1.1)",
+   "evidence": "lab jobs 20261106-135137-44de5679 (Max 2024), 20261106-135159-664da499 (Blender 5.1.2): 0 discrepancies",
+   "reqs": "-",
+   "mode": "file",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.1",
+   "icon": "handoffout",
+   "lab_report": "docs/experiments/blender-handoff.md",
+   "lab_status": "measured",
+   "stage": "agent",
+   "fate": "stage"
+  },
+  {
+   "id": "handoff.import",
+   "block": "export",
+   "label_ru": "Хендофф: принять из Blender",
+   "does_ru": "FBX бандла из Blender только в слой AGENT_<req>: имена, user props, matID и инстансы по манифесту; пишет request.json и baseline.json, перенос в слои ролей — кнопкой «Приём от агента»",
+   "source": "docs/experiments/blender-handoff.md (branch BH, #1024); docs/plans/agr-tools-1.x.md §3; owner D213/D214",
+   "verdict": "new",
+   "verdict_note": "Blender handoff (1.1)",
+   "evidence": "lab job 20261106-135201-2d9ea983 (Max 2024): 0 discrepancies, agent.accept verdict accept",
+   "reqs": "-",
+   "mode": "undo",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.1",
+   "icon": "handoffin",
+   "lab_report": "docs/experiments/blender-handoff.md",
+   "lab_status": "measured",
+   "stage": "agent",
+   "fate": "stage"
+  },
+  {
+   "id": "handoff.verify",
+   "block": "qa",
+   "label_ru": "Хендофф: сверка круга",
+   "does_ru": "Только чтение: объекты слоя или сцены против readback_max.json бандла по таблице §3.12 (имена и роли, matID, UV/UDIM, нормали, единицы, трансформы, топология, инстансы), число расхождений",
+   "source": "docs/experiments/blender-handoff.md (branch BH, #1024); docs/plans/agr-tools-1.x.md §3; owner D213/D214",
+   "verdict": "new",
+   "verdict_note": "Blender handoff (1.1)",
+   "evidence": "docs/plans/agr-mcp-target.md §3.12; handoff_core.compare",
+   "reqs": "-",
+   "mode": "read",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.1",
+   "icon": "handoffcheck",
+   "lab_report": "docs/experiments/blender-handoff.md",
+   "lab_status": "measured",
+   "stage": "agent",
+   "fate": "stage"
+  },
+  {
+   "id": "handoff.restore_materials",
+   "block": "tex",
+   "label_ru": "Восстановить материалы",
+   "does_ru": "Переподключает материалы и карты по materials.json: подбор по имени и роли, повторно использует идентичный материал сцены или пересобирает из JSON, перечитывает каждый параметр; несопоставленные объекты — в отчёт",
+   "source": "docs/experiments/blender-handoff.md (branch BH, #1024); docs/plans/agr-tools-1.x.md §3; owner D213/D214",
+   "verdict": "new",
+   "verdict_note": "Blender handoff (1.1), owner D214",
+   "evidence": "materials.json diff 0 (BH_Multi, BH_Glass, KPP1_AR) in docs/experiments/blender-handoff.md §4",
+   "reqs": "-",
+   "mode": "undo",
+   "mcp": "yes",
+   "priority": "P1",
+   "version": "1.1",
+   "icon": "matrestore",
+   "lab_report": "docs/experiments/blender-handoff.md",
+   "lab_status": "measured",
+   "stage": "agent",
+   "fate": "stage"
   }
  ],
  "noise": [
@@ -2569,6 +2649,19 @@
    ]
   },
   {
+   "version": "1.1",
+   "title_ru": "Хендофф Max ↔ Blender в панели и MCP, формы параметров, Claude-док",
+   "status": "done",
+   "effort": "M: релизная ветка 1.1",
+   "issue": "#1024",
+   "rows": [
+    "handoff.export",
+    "handoff.import",
+    "handoff.verify",
+    "handoff.restore_materials"
+   ]
+  },
+  {
    "version": "1.x",
    "title_ru": "Хвост P3 (вспомогательные, по запросу)",
    "status": "backlog",
@@ -2595,16 +2688,16 @@
   }
  ],
  "stats": {
-  "rows": 109,
+  "rows": 113,
   "by_verdict": {
-   "new": 33,
+   "new": 37,
    "take_fix": 32,
    "merge": 21,
    "take": 10,
    "done": 13
   },
   "by_priority": {
-   "P1": 52,
+   "P1": 56,
    "P2": 37,
    "P3": 20
   },
@@ -2619,16 +2712,17 @@
    "0.8": 13,
    "0.9": 19,
    "1.0": 36,
+   "1.1": 4,
    "1.x": 16
   },
-  "mcp_yes": 102,
-  "read_only": 41,
+  "mcp_yes": 106,
+  "read_only": 42,
   "noise": 42,
   "geoagr_line_citations_verified": 29,
   "by_fate": {
-   "stage": 33,
-   "step": 3,
+   "stage": 37,
    "tail": 13,
+   "step": 3,
    "obsolete": 3
   }
  },
@@ -2815,7 +2909,11 @@
    "icon": "agentreq",
    "rows": [
     "agent.request",
-    "agent.accept"
+    "agent.accept",
+    "handoff.export",
+    "handoff.import",
+    "handoff.verify",
+    "handoff.restore_materials"
    ],
    "steps": [],
    "checks": []

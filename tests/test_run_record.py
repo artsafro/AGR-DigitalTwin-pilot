@@ -166,17 +166,102 @@ def test_concurrent_output_owner_rejected_before_command(tmp_path):
     assert not run.read()["attempts"]
 
 
-def test_timeout_preserves_partial_stdout_and_stderr(tmp_path):
+@pytest.fixture
+def timeout_tree_handles():
+    """Hold exact Windows process identities, including after exit/PID reuse."""
+    handles = []
+    if os.name != "nt":
+        yield handles
+        return
+    import ctypes
+    from ctypes import wintypes
+
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel.OpenProcess.restype = wintypes.HANDLE
+    kernel.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+    kernel.WaitForSingleObject.restype = wintypes.DWORD
+    kernel.TerminateProcess.argtypes = [wintypes.HANDLE, wintypes.UINT]
+    kernel.TerminateProcess.restype = wintypes.BOOL
+    kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel.CloseHandle.restype = wintypes.BOOL
+    try:
+        yield kernel, handles
+    finally:
+        # Test failure must not leak the deliberately long-lived descendants.
+        for handle in reversed(handles):
+            if kernel.WaitForSingleObject(handle, 0) == 258:  # WAIT_TIMEOUT
+                kernel.TerminateProcess(handle, 1)
+                kernel.WaitForSingleObject(handle, 5000)
+            kernel.CloseHandle(handle)
+
+
+@pytest.mark.parametrize("cleanup_returncode", [
+    pytest.param(None, id="native"),
+    pytest.param(255, id="reported-255", marks=pytest.mark.skipif(
+        os.name != "nt", reason="Windows taskkill diagnostic")),
+])
+def test_timeout_preserves_partial_stdout_and_stderr(
+        tmp_path, monkeypatch, timeout_tree_handles, cleanup_returncode):
     run, _ = fixture_run(tmp_path)
-    argv = [sys.executable, "-u", "-c",
-            "import sys,time; print('partial out',flush=True); print('partial err',file=sys.stderr,flush=True); time.sleep(20)"]
-    record = run.run_stage("export", argv, {"out": tmp_path / "missing"}, timeout=1)
+    pid_file = tmp_path / "tree.json"
+    script = (
+        "import json,os,subprocess,sys,time\n"
+        "from pathlib import Path\n"
+        "child = subprocess.Popen([sys._base_executable, '-c', 'import time; time.sleep(60)'])\n"
+        f"Path({str(pid_file)!r}).write_text(json.dumps([os.getpid(), child.pid]))\n"
+        "print('partial out',flush=True)\n"
+        "print('partial err',file=sys.stderr,flush=True)\n"
+        "time.sleep(60)\n"
+    ) if os.name == "nt" else (
+        "import sys,time; print('partial out',flush=True); "
+        "print('partial err',file=sys.stderr,flush=True); time.sleep(60)"
+    )
+    if os.name == "nt":
+        kernel, handles = timeout_tree_handles
+        real_run = subprocess.run
+
+        def observe_cleanup(argv, **kwargs):
+            assert argv[0] == "taskkill"
+            # The venv launcher, actual interpreter and explicit descendant must
+            # all be alive before cleanup. Open handles before taskkill can race
+            # with the launcher exiting when its child dies (#1248).
+            pids = {int(argv[2]), *json.loads(pid_file.read_text())}
+            assert len(pids) >= 2
+            for pid in sorted(pids):
+                handle = kernel.OpenProcess(0x100001, False, pid)  # SYNCHRONIZE | TERMINATE
+                assert handle, (pid, "OpenProcess failed")
+                handles.append(handle)
+                assert kernel.WaitForSingleObject(handle, 0) == 258, pid
+            result = real_run(argv, **kwargs)
+            if cleanup_returncode is not None:
+                return subprocess.CompletedProcess(argv, cleanup_returncode, result.stdout, result.stderr)
+            return result
+
+        monkeypatch.setattr(run_record_module.subprocess, "run", observe_cleanup)
+    argv = [sys.executable, "-u", "-c", script]
+    record = run.run_stage("export", argv, {"out": tmp_path / "missing"}, timeout=5)
     assert record["status"] == "interrupted"
     assert record["reason"] == "timeout"
     assert isinstance(record["spawned_pid"], int)
     if os.name == "nt":
+        assert handles, "No process-tree death evidence"
+        for handle in handles:
+            assert kernel.WaitForSingleObject(handle, 5000) == 0, record
         assert record["timeout_cleanup_argv"] == ["taskkill", "/PID", str(record["spawned_pid"]), "/T", "/F"]
-        assert record["timeout_cleanup_returncode"] == 0
+        # taskkill can report 255 after killing the interpreter because its venv
+        # launcher exits before taskkill reaches it. Exact-handle death above is
+        # the contract, not a diagnostic exit code (and never just root death).
+        assert isinstance(record["timeout_cleanup_returncode"], int)
+        if cleanup_returncode is not None:
+            assert record["timeout_cleanup_returncode"] == cleanup_returncode
+        ledger = run.read()
+        if record["timeout_cleanup_returncode"]:
+            assert ledger["stopped"] is True
+            assert ledger["stop_reason"] == "timeout_cleanup_failed"
+            assert "descendant termination unverified" in record["timeout_cleanup_error"]
+        else:
+            assert ledger["stopped"] is False
     assert "partial out" in Path(record["stdout"]).read_text()
     assert "partial err" in Path(record["stderr"]).read_text()
     assert json.loads(run.path.read_text())["attempts"][0]["stages"]["export"]["status"] == "interrupted"

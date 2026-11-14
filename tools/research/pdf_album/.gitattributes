@@ -1,0 +1,4 @@
+# Preserve byte-hashed audit references/receipts across Windows checkouts.
+fallback-reference.json -text
+fallback-results/*.json -text
+fallback-results/**/*.json -text

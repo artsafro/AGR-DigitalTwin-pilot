@@ -31,7 +31,10 @@ def test_each_missing_gate(tmp_path):
         report = p.inspect_job(job, tmp_path)
         assert report["passed"] is False
         assert len(report["gates"]) == 8
-        assert omitted in report["errors"][0]
+        # #1310 (F17): one named error per field; the omitted gate row carries its own.
+        assert any(e.startswith(f"gates.{omitted}:") for e in report["errors"])
+        row = report["gates"][GATES.index(omitted)]
+        assert row["status"] == "fail" and row["errors"] and row["ready"] is False
 
 
 def store(root, name, value):
@@ -56,6 +59,10 @@ def bundle(tmp_path):
                    "operation": "keep", "triangle_budget": {"npm": 2, "vpm": 2}}],
         "status": "confirmed", "gate1": {"actor": "synthetic test user", "date": "2026-10-20",
                                            "scope": "synthetic_fixture", "note": "TEST ONLY"}})
+    from dt_ai.core.models import PartsList
+    parts_data = json.loads((tmp_path / "parts.json").read_text())
+    parts_data["gate1"].update(ref="D111", parts_sha256=PartsList.model_validate(parts_data).approval_sha256())
+    parts = store(tmp_path, "parts.json", parts_data)
     gates = {g: {"status": "pass", "note": "SYNTHETIC contract test only", "evidence": []} for g in GATES}
     gates["inputs"]["evidence"] = [source]
     gates["parts"]["evidence"] = [parts]
@@ -90,6 +97,87 @@ def run_cli(bundle, root, *extra):
         [sys.executable, "-m", "dt_ai.procedure", str(path), "--root", str(root), *extra],
         cwd=ROOT, capture_output=True, text=True, timeout=30,
     )
+
+
+def test_gate1_binding_required_and_stale_rejected(bundle, tmp_path):
+    # Legacy lists remain readable, but cannot complete the production gate.
+    parts = json.loads((tmp_path / "parts.json").read_text())
+    parts["gate1"].pop("parts_sha256", None)
+    parts["gate1"]["ref"] = "D111"
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    result = load().inspect_job(bundle, tmp_path)
+    row = next(row for row in result["gates"] if row["gate"] == "parts")
+    assert row["status"] == "fail"
+    assert "Gate 1" in " ".join(row["errors"])
+
+    from dt_ai.core.models import PartsList
+    # A hash with no answer reference also cannot approve anything.
+    parts["gate1"]["parts_sha256"] = PartsList.model_validate(parts).approval_sha256()
+    parts["gate1"].pop("ref")
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    assert next(r for r in load().inspect_job(bundle, tmp_path)["gates"] if r["gate"] == "parts")["status"] == "fail"
+    parts["gate1"]["ref"] = "D111"
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
+    parts["parts"][0]["triangle_budget"]["vpm"] = 3
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    rebind_receipts(bundle, tmp_path)  # Updating file/receipt hashes cannot renew user approval.
+    for _ in range(2):
+        completed = run_cli(bundle, tmp_path)
+        assert completed.returncode == 1
+        row = next(r for r in json.loads(completed.stdout)["gates"] if r["gate"] == "parts")
+        assert row["status"] == "fail" and "Gate 1" in " ".join(row["errors"])
+    # SYNTHETIC approval reset only; real agents must obtain a fresh user answer first.
+    parts["gate1"]["parts_sha256"] = PartsList.model_validate(parts).approval_sha256()
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    rebind_receipts(bundle, tmp_path)
+    assert run_cli(bundle, tmp_path).returncode == 0
+
+
+@pytest.mark.parametrize("field", ["object_id", "source_tier", "synthetic", "sources", "triangle_budget",
+                                   "parts", "joints", "questions"])
+def test_gate1_content_mutations_invalidate_approval(bundle, tmp_path, field):
+    from dt_ai.core.models import PartsList
+
+    original = json.loads((tmp_path / "parts.json").read_text())
+    old_hash = original["gate1"]["parts_sha256"]
+    changes = {
+        "object_id": "OTHER", "source_tier": "D", "synthetic": False,
+        "sources": [{"kind": "drawing", "reference": "synthetic.dwg"}],
+        "triangle_budget": {"npm": 11, "vpm": 10},
+        "parts": [{**original["parts"][0], "legend_item": "new finish"}],
+        "joints": [],
+        "questions": [{"audience": "user", "text": "Finish?", "answer": "confirmed"}],
+    }
+    # A legitimate second part allows a genuine joint mutation.
+    if field == "joints":
+        original["parts"].append({**original["parts"][0], "id": "slab"})
+        old_hash = PartsList.model_validate(original).approval_sha256()
+        original["gate1"]["parts_sha256"] = old_hash
+        changes[field] = [{"parts": ["wall", "slab"], "decision": "weld", "reason": "test", "extra_edges": 0}]
+    original[field] = changes[field]
+    if field == "synthetic":
+        original["gate1"]["scope"] = "project"
+        bundle["synthetic"] = False
+    assert PartsList.model_validate(original).approval_sha256() != old_hash
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", original)]
+    rebind_receipts(bundle, tmp_path)
+    result = load().inspect_job(bundle, tmp_path)
+    row = next(row for row in result["gates"] if row["gate"] == "parts")
+    assert row["status"] == "fail" and "Gate 1" in " ".join(row["errors"])
+
+
+def test_project_gate1_rejects_synthetic_approval(bundle, tmp_path):
+    from dt_ai.core.models import PartsList
+
+    parts = json.loads((tmp_path / "parts.json").read_text())
+    parts["synthetic"] = False
+    bundle["synthetic"] = False
+    parts["gate1"]["parts_sha256"] = PartsList.model_validate(parts).approval_sha256()
+    bundle["gates"]["parts"]["evidence"] = [store(tmp_path, "parts.json", parts)]
+    result = load().inspect_job(bundle, tmp_path)
+    assert next(r for r in result["gates"] if r["gate"] == "parts")["status"] == "fail"
 
 
 def test_fresh_process_cli(bundle, tmp_path):
@@ -214,6 +302,30 @@ def test_repository_walks():
         assert any(e["verified"] for row in result["gates"] for e in row["evidence_exists"])
         assert not any(row["errors"] for row in result["gates"])
         assert {row["gate"] for row in result["gates"] if row["status"] == "missing"} >= {"visual", "checker"}
+
+
+def test_passport_scope_decision():
+    rows = (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
+    row = next((line for line in rows if line.startswith("| D247 |")), "")
+    for fact in ("2026-11-11", "passport.json", "only on the AGR Tools route",
+                 "until a second route exists", "job.yaml", "REPORT", "[passport-scope-source]"):
+        assert fact in row
+    assert ("[passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207"
+            "#issuecomment-6783203728") in rows
+
+
+@pytest.mark.parametrize("path,prefix", [
+    ("docs/procedure/TASK_TO_MODEL.md", "| inputs |"),
+    ("docs/procedure/TASK_TO_MODEL.md", "| report |"),
+    ("docs/scenarios/oks-vpm.md", "| Passport |"),
+    ("docs/agents/agr-tools-1.0-rules.md", "- **Passport scope"),
+])
+def test_passport_scope_documentation(path, prefix):
+    rows = (ROOT / path).read_text(encoding="utf-8").splitlines()
+    row = next((line for line in rows if line.startswith(prefix)), "")
+    for fact in ("passport.json", "only on the AGR Tools route", "until a second route exists",
+                 "other OKS routes", "job.yaml", "REPORT", "[D247]"):
+        assert fact in row, (path, prefix, fact)
 
 
 def test_playbook_and_schema():

@@ -302,6 +302,90 @@ EDIT_090_IN = {"type": "object", "required": ["scene"], "additionalProperties": 
                "properties": dict(_LOCATE, mode={"const": "preview"}, options=_OPTIONS)}
 
 
+def _same_path(a: Path, b: Path) -> bool:
+    try:
+        if a.exists() and b.exists():
+            return os.path.samefile(a, b)
+    except OSError:
+        pass
+    return os.path.normcase(str(a.resolve(strict=False))) == os.path.normcase(str(b.resolve(strict=False)))
+
+
+def check_new_target(target: str, scene: str | None) -> None:
+    """A phase-2 FBX target is a NEW absolute .fbx path; its report and .partial are new too; none is the scene."""
+    p = Path(target)
+    if not p.is_absolute():
+        raise ValueError(f"invalid_target: target must be an absolute path: {target}")
+    if p.suffix.lower() != ".fbx":
+        raise ValueError(f"invalid_target: target must be a .fbx path: {target}")
+    if not p.parent.is_dir():
+        raise ValueError(f"invalid_target: target folder does not exist: {p.parent}")
+    roles = (("target", p), ("report", p.with_suffix(".report.json")), ("partial", Path(str(p) + ".partial")))
+    for role, q in roles:
+        if q.exists() or q.is_symlink():
+            raise ValueError(f"invalid_target: {role} path exists, a new path is required: {q}")
+    if scene and scene != "live":
+        for role, q in roles:
+            if _same_path(q, Path(scene)):
+                raise ValueError(f"invalid_target: {role} path is the scene file: {q}")
+
+
+# AGR MCP phase 2 (#1021, plan section 5 "mutations on copies"), runtime 0.9.0. Over MCP only the preview of each
+# copy family; the apply/commit tools stay listed and answer needs_human without calling Max: apply of a 0.9 row is
+# a button in the AGR Tools panel/dock (owner answers 06.11.2026, [D231]). (preview, apply, runtime fn, what)
+PHASE2_TOOLS = (
+    ("agr_cleanup_preview", "agr_cleanup_apply", "cleanup_preview", "export cleanup plan (channels, user props, "
+     "opt-in keys)"),
+    ("agr_uv_nudge_preview", "agr_uv_nudge_apply", "nudge_preview", "whole-tile UV nudge plan"),
+    ("agr_atlas_preview", "agr_atlas_apply", "atlas_preview", "UDIM -> NPM atlas plan (PNG bytes shown as length "
+     "+ sha256)"),
+    ("agr_ucx_preview", "agr_ucx_apply", "ucx_preview", "UCX pieces, budget and audit verdict"),
+    ("agr_export_preview", "agr_export_commit", "export_preview", "checked-export gates for a new FBX path (no file)"),
+)
+_TARGET = {"type": "string", "minLength": 1, "description": "new absolute .fbx path (never an existing file)"}
+
+
+def _p2_preview_input(name: str) -> dict:
+    props, required = dict(_LOCATE), ["scene"]
+    if name == "agr_cleanup_preview":
+        props["options"] = _OPTIONS
+    if name == "agr_export_preview":
+        props["target"], required = _TARGET, required + ["target"]
+    return {"type": "object", "required": required, "additionalProperties": False, "properties": props}
+
+
+def _phase2_preview(tool: str, transport=None):
+    def handler(args: dict):
+        check_targets(args)
+        if "target" in args:
+            check_new_target(args["target"], args.get("scene"))
+        payload = max_pipe.call_bridge(tool, args, MAX_TIMEOUT, transport=transport)
+        return Outcome(payload["result"], {k: payload.get(k) for k in (
+            "runtime_version", "runtime_file", "doc", "selection")})
+    return handler
+
+
+def _phase2_needs_human(tool: str):
+    def handler(_args: dict):
+        raise ValueError(f"needs_human: {tool} is confirmed only by a button in the AGR Tools panel/dock "
+                         "(owner answers 06.11.2026, [D231]); nothing was sent to Max")
+    return handler
+
+
+def phase2_specs(max_transport=None) -> list[Spec]:
+    out = []
+    for preview, apply, fn, what in PHASE2_TOOLS:
+        out.append(Spec(preview, f"AGR Tools runtime.{fn} in the pinned open 3ds Max: {what}. Read-only: no node "
+                        "left or deleted, the selection is restored. Targets: non-empty handles or "
+                        "scope='selection'. Needs runtime 0.9.0 (#1021).",
+                        _p2_preview_input(preview), {"type": "object"}, _phase2_preview(preview, max_transport),
+                        _const("max-live"), timeout=_max_timeout))
+        out.append(Spec(apply, f"Apply of {preview} is NOT available over MCP: always answers needs_human; the user "
+                        "presses the button in the AGR Tools panel/dock [D231]. Nothing is sent to Max.",
+                        {"type": "object"}, {"type": "object"}, _phase2_needs_human(apply), _const("offline")))
+    return out
+
+
 DEPRECATED = (" Deprecated (tool_schema_version 1 tool, kept for compatibility): use the stage tools, "
               "agr_check_run, agr_op_preview / agr_op_apply.")
 
@@ -387,6 +471,7 @@ def catalog(unsafe: bool = False, max_transport=None, store=None) -> dict[str, S
             read_only=False, destructive=True, timeout=_arg_timeout(EXEC_TIMEOUT)))
     specs = [dataclasses.replace(s, description=s.description + DEPRECATED) if s.name in PHASE0 else s
              for s in specs]
+    specs += phase2_specs(max_transport)
     from . import catalog as v2
     from . import ops_d108
     specs += v2.specs(store=store, transport=max_transport)
@@ -414,7 +499,9 @@ def v2_names(plan=None) -> tuple[str, ...]:
     from . import catalog as v2
     plan = plan or v2.load_plan()
     return tuple(v2.tool_name(r["id"]) for r in v2.stage_rows(plan)) + ("agr_check_run", "agr_op_preview",
-                                                                       "agr_op_apply")
+                                                                       "agr_op_apply") + v2.HANDOFF_TOOLS
 
 
-LISTED = PHASE0 + v2_names()  # tools/list without AGR_MCP_UNSAFE (plus whatever ops_d108 registers)
+PHASE2 = tuple(n for p, a, *_ in PHASE2_TOOLS for n in (p, a))
+PHASE2_PREVIEWS = tuple(p for p, *_ in PHASE2_TOOLS)
+LISTED = PHASE0 + v2_names() + PHASE2  # tools/list without AGR_MCP_UNSAFE (plus whatever ops_d108 registers)

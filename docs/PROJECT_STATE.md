@@ -15,18 +15,18 @@ Reached so far (curated in `docs/PROJECT_STATE.milestones.md`; each line cites i
 ## In production
 
 PR merges do not imply delivery acceptance. Per-object gates stay in `jobs/<ID>/STATE.md`. Merged pull requests, newest first:
-- `82feaa8` Merge pull request #1025 from artsafro/improve/issue-986-dcc-tests-skip-not-fail-when-the-max-ses
-- `556f655` Merge pull request #1005 from artsafro/improve/issue-972-agr-mcp-locks-stale-reclaim-mutex-unlink
-- `8a401eb` Merge pull request #1008 from artsafro/job/skug26-k5-ac-vpm-texture
-- `fb201de` Merge pull request #1047 from artsafro/improve/issue-1024-lab-l09-l13
-- `9cc8773` Merge pull request #1045 from artsafro/improve/issue-1024-lab-l10-l14
-- `a875254` Merge pull request #1022 from artsafro/feature/library-window-preview
-- `979b973` Merge pull request #805 from artsafro/improve/issue-790-maf-generator-parametric-step-3-tool-fir
-- `1c303f9` Merge pull request #917 from artsafro/improve/issue-817-maf-gen-bench-checks-exit-1-on-any-fail
-- `43f9cb7` Merge pull request #1014 from artsafro/docs/state-after-pr1013
-- `933bc9b` Merge pull request #1013 from artsafro/harness/repo-hygiene-code-layout
-- `16be0a8` Merge pull request #1012 from artsafro/docs/state-after-pr1011
-- `52b587c` Merge pull request #1011 from artsafro/harness/repo-hygiene-docs
+- `241821e` Merge pull request #803 from artsafro/job/silikatny-maf-viz
+- `53dfda8` Merge pull request #1268 from artsafro/job/butovskaya-sosh1000-maf-smoothing
+- `14ab3d4` Merge pull request #1189 from artsafro/research/fab-megascans-licence
+- `dd911cb` Merge pull request #1265 from artsafro/improve/l2-sheets-v009-current-coverage
+- `515054e` Merge pull request #1269 from artsafro/improve/issue-1112-octopus-install-check-that-agr-viz-butto
+- `583d2c4` Merge pull request #1271 from artsafro/improve/issue-1255-kpp1-site-coordinates-msk-77-zero-mark-a
+- `c189699` Merge pull request #1264 from artsafro/improve/issue-1089-max-2026-crashes-on-maxusd-dll-at-batch
+- `5a9606d` Merge pull request #1263 from artsafro/improve/issue-1260-audit-capability-roadmap-149-what-is-don
+- `3186450` Merge pull request #1262 from artsafro/improve/issue-1235-pdf-album-intake-3-4-page-referenced-sch
+- `7f44626` Merge pull request #1256 from artsafro/improve/issue-1206-kpp1-cold-run-f6-partslist-sourceref-kin
+- `f1fbe9a` Merge pull request #1249 from artsafro/improve/issue-1234-pdf-album-intake-2-4-dimension-level-ope
+- `72c8008` Merge pull request #1251 from artsafro/improve/issue-1244-kpp1-r1-after-1230-v004-co-directional-5
 
 ## Harness
 
@@ -35,17 +35,13 @@ Capability B (`capability-ticket`, codex): local_pr 0 passed / 1 failed / 0 not 
 
 Open pull requests:
 - #1044 AGR Tools assets: Flora + MAF browser/import, unified agent library (#1024) [improve/issue-1024-assets-flora] draft
-- #1048 Improve: agr_tools: test that every by-path sibling module is shipped by the MZP and required by install.ms [improve/agr-tools-sibling-modules-shipped-and-required]
-- #1049 Readiness area 1: cold entry <=10k tokens on a real handoff, PROJECT_STATE milestones (#1015) [improve/issue-1015-readiness-area-1-cold-entry-10k-tokens-o]
-- #1050 Improve: Report (and optionally remove) clean worktrees of done cards that block branch reuse [improve/stale-done-card-worktrees-report]
-- #1051 Improve: dt_ai invariant open_borders_hidden: count borders buried inside another shell of the SAME part as hidden [improve/open-borders-hidden-same-part-shells]
-- #1052 agr-mcp: runtime pin as minimum + selection contract (#1024) [improve/issue-1024-mcp-runtime-pin] draft
-- #1053 Research: Job retro: skug26-k5-ac (PR #1008) [docs/research-job-retro-skug26-k5-ac-pr1008]
-- #1054 maf_gen_bench: remove the rejected forms (slab variant B, seams as geometry) (#819) [improve/issue-819-maf-gen-bench-remove-or-justify-the-reje]
-- #1055 Readiness area 9: Vatutino Ground v015 + AC08 triple in assets/manifest.json, cold retrieval check (#1017) [improve/issue-1017-readiness-area-9-add-vatutino-ground-v01]
-- #1056 Readiness area 6: ucx.triangulate on AC08 v010 copy, SINTEZ rerun, one-sided UCX case (#1016) [improve/issue-1016-readiness-area-6-ucx-triangulate-on-the]
-- #1057 lab 1.0: L11, L15, L12 reports in Max 2026 (Part of #1024) [improve/issue-1024-lab-l11-l15-l12] draft
-- #1058 AGR Tools 1.0 base: stages, contracts, journal, EDITS_100, stage rail, MCP v2, polygon 1.0 (#1024) [improve/issue-1024-agr-tools-1-0-base] draft
+- #1090 atlas.flora same-file opacity + atlas.groundel texel none for NPM MAF (#1024) [improve/issue-1024-flora-atlas-same-file-opacity] draft
+- #1098 Asset intake: delivered 3DVis projects -> A101 candidates (Part of #1024) [improve/issue-1024-asset-intake] draft
+- #1188 Materials library maps v001: layout D239, Telegram inbox -> 98 maps + manifest (plan 2.1/2.2) [feature/library-materials-maps-v001]
+- #1194 Materials library maps v002: own project textures + generated sets (step 2.5, D243) [feature/library-materials-maps-v002]
+- #1266 Unify library format and migrate clean Windows assets (#1259) [improve/issue-1259-windows-library-audit-one-library-templa]
+- #1270 Research: Substance capability report and observed runtime limits (#1258) [improve/issue-1258-research-substance-sampler-designer-for]
+- #1272 Cyrillic OCR and metered ROI fallback on approved three-album audit (#1236) [improve/issue-1236-pdf-album-intake-4-4-cyrillic-ocr-roi-vi]
 
 ## Next step
 

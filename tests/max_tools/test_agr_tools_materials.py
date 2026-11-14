@@ -51,9 +51,11 @@ def lib():
 # ==== library (K3) ===============================================================================================
 def test_library_pointer_schema_and_ral(lib):
     ptr = json.loads(LIB.read_text(encoding='utf-8'))
-    assert ptr['current'] == 'materials_v001.json' and lib['version'] == 'v001' == ptr['version']
+    assert ptr['current'] == 'materials_v002.json' and lib['version'] == 'v002' == ptr['version']
     assert lib['sha256'] == ptr['sha256'] and lib['ral_checked']
-    assert 30 <= len(lib['materials']) <= 40
+    # 30..40 records come from the materials audit; later records carry a user decision instead ([D202])
+    assert 30 <= len([r for r in lib['materials'] if r['source'].get('audit')]) <= 45
+    assert all(r['source'].get('audit') or r['source'].get('decision') for r in lib['materials'])
     ids = [r['library_id'] for r in lib['materials']]
     assert len(ids) == len(set(ids)) and {3, 7, 12, 31} <= set(ids)
     ral = json.loads((ROOT / 'tools/materials/ral_classic.json').read_text(encoding='utf-8'))['colors']
@@ -84,14 +86,14 @@ def test_library_base_maps_and_maf_cross_reference(lib):
 
 @pytest.mark.parametrize('mutate,match', [
     (lambda d: d['materials'].append(dict(d['materials'][0], key='dup_id')), 'duplicate library_id'),
-    (lambda d: d['materials'][0].update(ral='8023'), 'not in ral_classic'),
+    (lambda d: d['materials'][0].update(ral='8099'), 'not in ral_classic'),
     (lambda d: d['materials'][0].update(rgb_srgb=[1, 2, 3]), 'differs from ral_classic'),
     (lambda d: d['materials'][13].update(base_map='crumb_1x1'), 'greyscale_mask needs base_map'),
     (lambda d: d['materials'][0].update(library_id=1001), 'library_id must be an integer 1..1000'),
     (lambda d: d['materials'][0].update(roughness=0.5), 'byte 0..255'),
 ])
 def test_library_rejects(mutate, match):
-    doc = json.loads((ROOT / 'library/materials/materials_v001.json').read_text(encoding='utf-8'))
+    doc = json.loads((ROOT / 'library/materials/materials_v002.json').read_text(encoding='utf-8'))
     ral = ml.ral_table(ROOT / 'tools/materials/ral_classic.json')
     mutate(doc)
     with pytest.raises(ValueError, match=match):
@@ -99,8 +101,8 @@ def test_library_rejects(mutate, match):
 
 
 def test_library_pointer_hash_mismatch(tmp_path):
-    src = ROOT / 'library/materials/materials_v001.json'
-    (tmp_path / 'materials_v001.json').write_bytes(src.read_bytes().replace(b'"v001"', b'"v001" ', 1))
+    src = ROOT / 'library/materials/materials_v002.json'
+    (tmp_path / 'materials_v002.json').write_bytes(src.read_bytes().replace(b'"v002"', b'"v002" ', 1))
     (tmp_path / 'materials.json').write_text(LIB.read_text(encoding='utf-8'), encoding='utf-8')
     with pytest.raises(ValueError, match='sha256'):
         ml.load_library(tmp_path / 'materials.json')
@@ -152,13 +154,49 @@ def test_table_midpoly_ids_dense_and_report(lib):
     glass = next(m for m in multisub if m['id'] == 39)
     assert glass['opacity'] == 0.5 and glass['name'] == 'L039_glass_01'
     rep = ml.report(ec, 'preview', entries, table, multisub, skipped, lib, state_hash='s')
-    assert rep['status'] == 'pass' and rep['plan']['multisub']['name'] == 'AGR_Library_v001'
+    assert rep['status'] == 'pass' and rep['plan']['multisub']['name'] == 'AGR_Library_v002'
     assert ec.check_preview('mat.table', rep) is rep
     assert ml.udim_tables(table) == {'BODY_Mid_001': {3: 1001, 7: 1002, 12: 1003, 31: 1004}, 'GLASS_Mid_001': {39: 1001}}
     # passport schema rows
     schema = json.loads((ROOT / 'schemas/ProjectPassport.schema.json').read_text(encoding='utf-8'))
     import jsonschema
     jsonschema.validate(table, schema['properties']['materials'])
+
+
+def test_table_multiple_glass_ids_share_1001_preserves_body_and_delivery_ids(lib):
+    # Synthetic second glass record; the production library is not changed.
+    library = dict(lib, by_id=dict(lib['by_id']))
+    library['by_id'][40] = dict(lib['by_id'][39], library_id=40, key='glass_test_02')
+    items = _items(('GLASS_x', 'glass', [40, 39]), ('BODY_x', 'body', [31, 3, 12, 7]))
+    entries, table, multisub, skipped = ml.table_plan(ec, items, library)
+    assert all(not e['findings'] for e in entries) and not skipped
+    assert ml.udim_tables(table) == {
+        'GLASS_x': {39: 1001, 40: 1001},
+        'BODY_x': {3: 1001, 7: 1002, 12: 1003, 31: 1004},
+    }
+    assert [(r['library_id'], r['delivery_id']) for r in table if r['mesh'] == 'GLASS_x'] == [(39, 1), (40, 2)]
+    assert [m['id'] for m in multisub] == [3, 7, 12, 31, 39, 40]
+    rep = ml.report(ec, 'preview', entries, table, multisub, skipped, library, state_hash='synthetic')
+    assert rep['status'] == 'pass' and rep['plan']['table'] == table
+
+
+@pytest.mark.parametrize('mask', range(1, 64))
+def test_table_glass_generated_subsets_preserve_all_ids(lib, mask):
+    candidates = [1, 7, 39, 40, 999, 1000]
+    ids = [lid for bit, lid in enumerate(candidates) if mask & (1 << bit)]
+    library = dict(lib, by_id=dict(lib['by_id']))
+    for lid in ids:
+        library['by_id'][lid] = dict(lib['by_id'][39], library_id=lid, key='glass_test_{}'.format(lid))
+    items = _items(('GLASS_probe', 'glass', reversed(ids)))
+    before = json.dumps(items, sort_keys=True)
+    entries, table, multisub, skipped = ml.table_plan(ec, items, library)
+    assert all(not e['findings'] for e in entries) and not skipped
+    assert ml.udim_tables(table) == {'GLASS_probe': {lid: 1001 for lid in ids}}
+    assert [r['delivery_id'] for r in table] == list(range(1, len(ids) + 1))
+    assert [m['id'] for m in multisub] == ids
+    assert json.dumps(items, sort_keys=True) == before
+    assert ml.table_plan(ec, items, library)[1] == table  # repeat/reset without stale state
+    assert ml.udim_tables(json.loads(json.dumps(table))) == {'GLASS_probe': {lid: 1001 for lid in ids}}
 
 
 @pytest.mark.parametrize('spec,code,ids', [
@@ -185,13 +223,13 @@ def test_table_empty_input_and_no_faces(lib):
 # ==== mat.tiles (K3) ============================================================================================
 def test_tile_defaults_are_parameters():
     s, f = tc.spec('facade_600x1200')
-    assert (s['px_per_m'], s['period_m'], s['size_px'], s['counts']) == (1024.0, 3.6, 3686, [6, 3]) and not f
+    assert (s['px_per_m'], s['period_m'], s['size_px'], s['counts']) == (1000.0, 3.6, 3600, [6, 3]) and not f
     s, _ = tc.spec('facade_600x1200', {'px_per_m': 1000})
     assert s['size_px'] == 3600  # audit Q1: 1000 px/m -> 3600 px, every module integer
     s, _ = tc.spec('ground_100x300')
     assert s['counts'] == [12, 36] and s['bond'] == 0.5
     s, _ = tc.spec('crumb_1x1')
-    assert (s['size_px'], s['cells']) == (1024, 250)
+    assert (s['size_px'], s['cells']) == (1000, 250)   # 1 m at 1000 px/m
     with pytest.raises(ValueError):
         tc.spec('nope')
     with pytest.raises(ValueError):
@@ -227,7 +265,7 @@ def test_brick_fitted_to_period_reports_stretch():
     s, f = tc.spec('brick_250x65')
     assert s['counts'] == [14, 48] and s['stretch_pct'][0] == pytest.approx(-1.0989, abs=1e-3) and not f
     _, f = tc.spec('brick_250x65', {'max_stretch_pct': 1.0})
-    assert [c for c, _ in f] == ['module_stretched']  # Q3 open: the threshold is a parameter
+    assert [c for c, _ in f] == ['module_stretched']  # the threshold is a parameter (brick tolerance 1.5 %, Q3)
 
 
 def test_bond_with_odd_course_count_is_a_finding():

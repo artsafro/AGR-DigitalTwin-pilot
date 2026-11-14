@@ -75,7 +75,8 @@ def _layer(name):
 
 
 def export_copies(nodes, suffix=COPY_SUFFIX, layer=None):
-    """[(original, copy)] with unique names `<name><suffix>NN`; originals untouched. All or nothing."""
+    """[(original, copy)] with unique names `<name><suffix>NN` and the user-prop buffer of the original; originals
+    untouched. All or nothing."""
     rt = _rt()
     pairs = []
     target = _layer(layer) if layer else None
@@ -84,6 +85,9 @@ def export_copies(nodes, suffix=COPY_SUFFIX, layer=None):
             c = rt.copy(n)
             pairs.append((n, c))
             c.name = rt.uniqueName(str(n.name) + suffix)
+            # 1.0.1 (KPP1 e2e diag job 20261106-102248-4ac77ac1): `copy` in Max does not carry the user-defined
+            # buffer, so a copy lost `MapChannel:1 = UV` (export hygiene) and the agr_* keys of the source
+            rt.setUserPropBuffer(c, rt.getUserPropBuffer(n))
             if n.material is not None:
                 c.material = rt.copy(n.material)
             if target is not None:

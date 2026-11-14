@@ -76,3 +76,18 @@
 `python test-polygon/polygon_core.py --branch <буква>`. Строки хвоста (`fate: tail/obsolete`, версия 1.x) стоят
 без станций, с прежним `reason`; три `step`-строки 1.0 (`model.window_placer`, `tex.vpm_sets`, `atlas.unatlas`)
 не кнопки базы.
+
+## База 1.1 (#1024)
+
+База 1.1 (станции `1.1.1`–`1.1.4`) — хендофф Max ↔ Blender, `TOUR_LAST = '1.1'`, камера `_cam_База 1.1`, строки в порядке
+`roadmap.stage_buttons(suite, '1.1')`. Один фрагмент, ветка `BH` (`polygon_core.OWNER_110`, `"issue": "#1024"`,
+сцены `frag_bh_*`, билдер `BH_build`):
+
+| Файл | Кнопки |
+|---|---|
+| `BH.json` | `handoff.export`, `handoff.import`, `handoff.verify`, `handoff.restore_materials` |
+
+`handoff.export` (preview, `options.job_dir`): PASS — коробка с уникальным именем, FAIL — коробка с двойником того же имени
+(`duplicate_name`). Остальным трём нужен бандл `handoff/<seq>` на диске, а станция статична: ожидание `error` и `reason`;
+PASS и FAIL круга проверяет нативный джоб ветки BH `tests/max_tools/run_agr_tools_handoff_native.py`.
+Свои `expected/<id>.json` пишет `python test-polygon/polygon_core.py --branch BH`.
