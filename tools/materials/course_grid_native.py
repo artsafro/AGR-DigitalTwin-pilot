@@ -1,7 +1,9 @@
 """new-case: project saved/native positions into an existing fixed metre chart.
 
-Native bridge for Blender/Max Python (NumPy only in float32 encoding). No packing, normalization, vertex
-motion or guessed phase; the reference first triangle freezes the source frame.
+Native mesh/chart helpers use NumPy; pixel/interval/vector metrics additionally
+use Shapely outside the DCC process. Source frames and physical scale stay explicit.
+No file writes or fit-scale search. Vertex coalescing requires named cut-node groups;
+its surface/finish/coverage gates remain independent caller responsibilities.
 """
 import math
 
@@ -372,7 +374,7 @@ def source_joint_footprint(image, source_uv, chart_m):
     return unary_union(polygons).intersection(domain)
 
 
-def rectify_axis_joint_footprint(footprint):
+def rectify_axis_joint_footprint(footprint, *, face=None):
     """Fit explicit chart-axis 10-mm bands to a measured raster footprint.
 
     Use only on authorized minor-part joint masks. Unlike tracing 1.95-mm pixel
@@ -411,6 +413,25 @@ def rectify_axis_joint_footprint(footprint):
         c=a['center'];lo=a['lo'];hi=a['hi']
         polygons.append(box(c-.005,lo,c+.005,hi) if a['axis']==0 else box(lo,c-.005,hi,c+.005))
     result=unary_union(polygons)
+    if face is not None:
+        if face.is_empty or not face.is_valid or footprint.difference(face).area>1e-12:raise ValueError('invalid reference face clipping')
+        result=result.intersection(face)
     if footprint.difference(result.buffer(.005)).area>1e-12 or result.difference(footprint.buffer(.005)).area>1e-12:
-        raise ValueError('axis joint fit exceeds fixed 5 mm correspondence')
+        # Cap/return charts can carry a sloping source stripe. Preserve its
+        # measured long axis instead of imposing the main-wall chart axes.
+        from shapely.geometry import Polygon
+        oriented=[]
+        for part in components:
+            if part.geom_type!='Polygon' or part.area<=1e-12:continue
+            corners=list(part.minimum_rotated_rectangle.exterior.coords[:-1])
+            lengths=[math.dist(corners[i],corners[(i+1)%4]) for i in range(4)]
+            index=max(range(4),key=lambda i:lengths[i]);length=lengths[index]
+            if length==0:raise ValueError('degenerate reference joint axis')
+            direction=[(corners[(index+1)%4][k]-corners[index][k])/length for k in (0,1)];normal=[-direction[1],direction[0]]
+            center=[sum(p[k] for p in corners)/4 for k in (0,1)];half=max(length,.006)/2
+            oriented.append(Polygon([[center[k]+s*half*direction[k]+t*.005*normal[k] for k in (0,1)] for s,t in [(-1,-1),(1,-1),(1,1),(-1,1)]]))
+        result=unary_union(oriented)
+        if face is not None:result=result.intersection(face)
+        if footprint.difference(result.buffer(.005)).area>1e-12 or result.difference(footprint.buffer(.005)).area>1e-12:
+            raise ValueError('axis joint fit exceeds fixed 5 mm correspondence')
     return result

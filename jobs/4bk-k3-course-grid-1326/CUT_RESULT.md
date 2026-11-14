@@ -1,6 +1,7 @@
 # Authorized cut experiment — actual textured v014 candidate (#1326)
 
-**Status: NOT technically passed; visual direction pending. No replication.**
+**Status: NOT technically passed; v014 visual direction accepted on 2026-11-14. No replication.**
+The later source-bound repair and remaining gates are in [REPAIR_RESULT.md](REPAIR_RESULT.md).
 This is a working scene on a separate copy, not final delivery, a Max acceptance
 scene, a completed FBX export, or a request to waive any red numerical gate.
 Artem's new-cut permission is in `geometry-cut-approval.json`; earlier seam,
@@ -100,16 +101,16 @@ if required for conforming, must be reported rather than claimed bit-identical.
 - No full suite, eval receipt, PR or review request yet: task acceptance is incomplete.
   Run the full suite once through suite_slot.py only before the first actual review.
 
-## Visual direction question / continuation
+## Visual direction answered / continuation
 
-**Artem: does this actual candidate's visual direction (courses, panel-joint
-placement, corner and niche appearance) match what you want?** This asks for the
-mandatory picture verdict only; it does not ask you to approve the red topology,
-waive joint metrics, increase the tile budget, or decide another minor seam.
-Opening remains only after **«открой»**, never an automatic daytime Max switch.
+Artem accepted this visual direction on 2026-11-14: "Принимаю все, все норм
+выглядит / Согласен". Exact scope: `visual-direction-approval.json`; this is not
+a waiver of numerical QA, a shading/Normal verdict or replication permission.
+Do not ask the same visual-direction question again. Opening remains only after
+**«открой»**, never an automatic daytime Max switch.
 
-After the visual direction: repair cut topology and junction-aware joint coverage,
-certify surface and all-map correspondence, prepare/read back a final FBX/Max copy,
-then run one full suite/evals/hostile probes, merge current main without rebasing,
-recheck D275, push and open the one #1326 PR for dt-reviewer. Do not reproduce the
-current candidate across the building or describe it as technically accepted.
+Continue from [REPAIR_RESULT.md](REPAIR_RESULT.md), not these historical v014
+numbers: v020 repairs the introduced wall overlaps and the clipped carrier
+probes, but independent interior-PNG correspondence and source-baseline scope
+are still open. Final package/readback, full suite/evals/hostile probes, main
+merge and the one PR remain due only after the finished pilot. No technical pass.

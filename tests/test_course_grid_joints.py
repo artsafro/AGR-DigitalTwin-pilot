@@ -28,6 +28,13 @@ def test_axis_vector_fit_removes_pixel_stairs_without_changing_nominal_width():
     assert fitted.difference(footprint.buffer(.005)).area==0
 
 
+def test_broad_joint_reference_refuses_instead_of_guessing_lines():
+    from tools.materials.course_grid_native import rectify_axis_joint_footprint
+    from shapely.geometry import box
+    with pytest.raises(ValueError,match='unsupported'):
+        rectify_axis_joint_footprint(box(0,0,.2,.2))
+
+
 def test_clipped_thin_face_has_a_measurable_joint_not_a_missing_5mm_centre():
     face=[[0.,0.],[.003,0.],[.003,1.],[0.,1.]]
     zone=[[0.,0.],[.01,0.],[.01,1.],[0.,1.]]

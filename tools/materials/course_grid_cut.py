@@ -209,7 +209,9 @@ def native_piece_cells(piece):
             continue
         out.append(dict(metadata,chart_m=canonical.tolist(),xyz=world[indices].tolist(),
                         native_collapsed_cells=collapsed_native_cells,native_identity_bound_m=1e-9))
-    if abs(sum(Polygon(c['chart_m']).area for c in out)-poly.area)>max(1e-12,poly.area*1e-10):raise ValueError('incomplete native tessellation')
+    represented=sum(Polygon(c['chart_m']).area for c in out)
+    fragments=sum(c['area_m2'] for c in collapsed_native_cells)
+    if fragments>poly.length*1e-10 or abs(represented+fragments-poly.area)>max(1e-12,poly.area*1e-10):raise ValueError('incomplete native tessellation')
     return out
 
 
