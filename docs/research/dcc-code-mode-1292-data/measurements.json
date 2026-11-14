@@ -1,0 +1,1789 @@
+{
+  "inventory_sessions": 28,
+  "rows": [
+    {
+      "source": "C--Users-artsafro-AGR-DigitalTwin--claude-worktrees-laughing-hawking-e62961/772bc1b2-9a36-4407-9774-595ffbc82483.jsonl",
+      "title": "OBJ03 модель декора",
+      "sha256": "cc2be02006497ca92f3924caa2059056075c8a62b6fd92d905da9c024040e69f",
+      "dcc": {
+        "max": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro-AGR-DigitalTwin--claude-worktrees-3d-max-floor-modeling-742570/c8606406-2dd1-4a21-85e8-4eb14e9d1a9b.jsonl",
+      "title": "Поиск макс файл ПЗУ 275",
+      "sha256": "8dff7e83f84dd4d5279a245e609b8e5d477cf7542c6519183391ec92cd557782",
+      "dcc": {
+        "max": {
+          "calls": 27,
+          "polls": 1,
+          "exact_repeats": 1,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "agent_viewport",
+            "capture_viewport",
+            "execute_maxscript",
+            "inspect_max_file",
+            "list_max_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_bridge_status",
+          "get_session_context",
+          "inspect_max_file",
+          "isolate_and_capture_selected",
+          "list_max_instances",
+          "select_max_instance",
+          "set_viewport"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro-AGR-DigitalTwin--claude-worktrees-laughing-hawking-e62961/5e0a7e13-de78-4f85-9116-eca6e2a0829d.jsonl",
+      "title": "Экспорт сцены из Blender в 3D Max",
+      "sha256": "c007b02a77dd0dccb5c802bbf664c9d6c6b2020a0d71005c4f903aa8924f26de",
+      "dcc": {
+        "max": {
+          "calls": 18,
+          "polls": 3,
+          "exact_repeats": 2,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "max_dialogs",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 1,
+          "polls": 1,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "get_blendfile_summary_path_info"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_viewport",
+          "execute_maxscript",
+          "get_bridge_status",
+          "get_session_context",
+          "list_max_instances",
+          "max_dialogs",
+          "query_scene",
+          "select_max_instance"
+        ],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_datablocks",
+          "get_blendfile_summary_path_info",
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot/d614e212-20e5-4614-ba51-2f51c9bb7026.jsonl",
+      "title": "AGR DigitalTwin репозиторий",
+      "sha256": "826adb80a224f2e98d792c55c3d4d0fc465ec41e4b818827e6124e0ca510a6ff",
+      "dcc": {
+        "max": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "blender": {
+          "calls": 54,
+          "polls": 4,
+          "exact_repeats": 7,
+          "repeated_polls": 3,
+          "tools_observed": [
+            "execute_blender_code",
+            "get_blendfile_summary_path_info",
+            "get_objects_summary"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_path_info",
+          "get_objects_summary",
+          "get_screenshot_of_window_as_image"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot/3b2419ea-6c25-47a5-9939-a7c341d40f06.jsonl",
+      "title": "AGR DigitalTwin репозиторий",
+      "sha256": "e56b0c3eed15692b1151f9773bfc28114a2b9f68d34ea1855a8c1bbaf3831308",
+      "dcc": {
+        "max": {
+          "calls": 36,
+          "polls": 5,
+          "exact_repeats": 5,
+          "repeated_polls": 3,
+          "tools_observed": [
+            "capture_screen",
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "max_dialogs",
+            "release_max_instance",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 9,
+          "polls": 3,
+          "exact_repeats": 2,
+          "repeated_polls": 2,
+          "tools_observed": [
+            "execute_blender_code",
+            "get_blendfile_summary_path_info",
+            "get_objects_summary"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_screen",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_session_context",
+          "list_max_instances",
+          "max_dialogs",
+          "query_scene",
+          "select_max_instance"
+        ],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_datablocks",
+          "get_blendfile_summary_path_info",
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot/1a55b0bc-44f2-41dc-82fb-20b8011943f9.jsonl",
+      "title": "AGR DigitalTwin репозиторий",
+      "sha256": "7725f70d9082266556c4c77a8b9c31dcd525a784ab4134bb46c81fd89a1eefe8",
+      "dcc": {
+        "max": {
+          "calls": 8,
+          "polls": 3,
+          "exact_repeats": 3,
+          "repeated_polls": 2,
+          "tools_observed": [
+            "list_max_instances",
+            "manage_scene",
+            "release_max_instance",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "get_bridge_status",
+          "get_session_context",
+          "list_max_instances",
+          "manage_scene",
+          "query_scene",
+          "release_max_instance",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-blender-mafy-modeling-0ed872/ff97e2f2-b5ef-49ab-8232-a0a68dde6727.jsonl",
+      "title": "Моделирование мафы в Blender",
+      "sha256": "2ba99cd10fa88af142353f623ab7727d950f0a270931c78cfd4f2f02209d771c",
+      "dcc": {
+        "max": {
+          "calls": 2,
+          "polls": 2,
+          "exact_repeats": 1,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "list_max_instances"
+          ]
+        },
+        "blender": {
+          "calls": 26,
+          "polls": 2,
+          "exact_repeats": 1,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "execute_blender_code",
+            "get_blendfile_summary_path_info",
+            "get_objects_summary"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_viewport",
+          "execute_maxscript",
+          "list_max_instances",
+          "manage_scene",
+          "select_max_instance"
+        ],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_path_info",
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-dwg-visualization-prep-e9cb9b/c5595dd7-8a77-479f-8047-7b18b3bbb87a.jsonl",
+      "title": "DWG подготовка к визуализации",
+      "sha256": "783a5d757aca295b26498b3a615af17a3d87d7d3a806efe4b769040d4030d6de",
+      "dcc": {
+        "max": {
+          "calls": 14,
+          "polls": 2,
+          "exact_repeats": 4,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "execute_maxscript",
+            "list_max_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "list_max_instances",
+          "manage_scene",
+          "query_scene",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-support-walls-diffuse-texture-826917/12607103-4538-4f16-af8e-ca5c8d7ba566.jsonl",
+      "title": "Диффузка опорных стенок 3D Max",
+      "sha256": "190f3e23d7e06fed75948a377c5a19619f5a5d61d67026450de84167a305126b",
+      "dcc": {
+        "max": {
+          "calls": 34,
+          "polls": 1,
+          "exact_repeats": 3,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "agent_viewport",
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_material_slots",
+          "list_max_instances",
+          "set_viewport"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot/271fa1bc-980a-4ebd-9013-c1343624538e.jsonl",
+      "title": "VPM OKC CREDA",
+      "sha256": "f0356bb09d2389b7da948fedf4b2332f05d11fcce8a9395ced4880211d1e7df7",
+      "dcc": {
+        "max": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-gates-object-001-resize-4abcd0/b8d40379-1b36-4913-bca9-39a65c967594.jsonl",
+      "title": "Ворота Object 001 переделка размеров",
+      "sha256": "4bc8f9f09829af22a016e405b890657855e20649db1dacf5f8ca624ef0b2d036",
+      "dcc": {
+        "max": {
+          "calls": 124,
+          "polls": 5,
+          "exact_repeats": 33,
+          "repeated_polls": 4,
+          "tools_observed": [
+            "agent_viewport",
+            "capture_viewport",
+            "execute_maxscript",
+            "inspect_max_file",
+            "list_max_instances",
+            "manage_scene",
+            "select_max_instance",
+            "set_viewport"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "inspect_max_file",
+          "inspect_object",
+          "isolate_and_capture_selected",
+          "list_max_instances",
+          "manage_scene",
+          "query_scene",
+          "select_max_instance",
+          "set_viewport"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-garibaldi-npm-vpm-conversion-019d2c/86b05944-5f56-4cd3-ad2a-a87c4dfed5b6.jsonl",
+      "title": "Garibaldi NPM to VPM conversion",
+      "sha256": "c4571681d5804eba5fdb1eadd779f0125113916e3d0ff01121ec25220e76ede0",
+      "dcc": {
+        "max": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "blender": {
+          "calls": 137,
+          "polls": 15,
+          "exact_repeats": 29,
+          "repeated_polls": 14,
+          "tools_observed": [
+            "execute_blender_code",
+            "get_blendfile_summary_path_info",
+            "get_objects_summary"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_path_info",
+          "get_object_detail_summary",
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-vpm-conditioner-texture-4k-a8199d/bc045341-1087-412b-aaa6-9286e6f45ee2.jsonl",
+      "title": "VPM текстура кондиционеров 4К",
+      "sha256": "f125f4d8e58814735c5552c21bfe0ee397e979b728a17b3ad5c0adb00a67ea4b",
+      "dcc": {
+        "max": {
+          "calls": 87,
+          "polls": 5,
+          "exact_repeats": 16,
+          "repeated_polls": 4,
+          "tools_observed": [
+            "agent_viewport",
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "select_max_instance",
+            "set_viewport"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "inspect_object",
+          "list_max_instances",
+          "manage_layers",
+          "manage_scene",
+          "query_scene",
+          "select_max_instance",
+          "set_viewport"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-kasatkino-ground-mesh-8ee226/5de24b46-1c26-4074-9b52-d3a9a3e4cfe6.jsonl",
+      "title": "Kasatkino ground mesh preparation",
+      "sha256": "52cd8868c0d6d89e2911bec3e1b64801eb0be56bdb488d5f18f359505ac8e389",
+      "dcc": {
+        "max": {
+          "calls": 13,
+          "polls": 1,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "execute_maxscript",
+            "list_max_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "execute_maxscript",
+          "inspect_object",
+          "list_max_instances",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-kasatkino-ground-mesh-8ee226/b8f2a245-0687-4691-abce-0d69d88fb368.jsonl",
+      "title": "Kasatkino ground mesh preparation",
+      "sha256": "f814ecdad4a896be884a0e1f252eccc86d82ee9162209fbdeb60854746a18592",
+      "dcc": {
+        "max": {
+          "calls": 1,
+          "polls": 1,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "list_max_instances"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "execute_maxscript",
+          "get_selected_max_instance",
+          "list_max_instances",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-kasatkino-ground-mesh-8ee226/bdc7c290-70ad-4b40-9710-4bc107f79dc8.jsonl",
+      "title": "Kasatkino ground mesh preparation",
+      "sha256": "4ff9a87639b69ad63e66f9337fe4ff89859f5f2526189342ffec8af7f7570152",
+      "dcc": {
+        "max": {
+          "calls": 84,
+          "polls": 4,
+          "exact_repeats": 9,
+          "repeated_polls": 3,
+          "tools_observed": [
+            "agent_viewport",
+            "execute_maxscript",
+            "inspect_max_file",
+            "list_max_instances",
+            "select_max_instance",
+            "set_viewport"
+          ]
+        },
+        "blender": {
+          "calls": 1,
+          "polls": 1,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "get_blendfile_summary_path_info"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_bridge_status",
+          "get_session_context",
+          "inspect_max_file",
+          "list_max_instances",
+          "select_max_instance",
+          "set_viewport"
+        ],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_path_info",
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-kasatkino-ground-mesh-8ee226/16b8e6d1-cfc6-44f4-a4ec-b747c8c6adcc.jsonl",
+      "title": "Kasatkino ground mesh preparation",
+      "sha256": "25b919aaedeb3eff96945e10a3e9a34f5ef0c1c99e274dcde0f09f954534885a",
+      "dcc": {
+        "max": {
+          "calls": 80,
+          "polls": 6,
+          "exact_repeats": 11,
+          "repeated_polls": 5,
+          "tools_observed": [
+            "agent_viewport",
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "select_max_instance",
+            "set_viewport"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_session_context",
+          "list_max_instances",
+          "query_scene",
+          "select_max_instance",
+          "set_viewport"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-vertical-posts-glass-railing-9324de/c7e298dd-05aa-4b87-9033-3a78cdffc1e5.jsonl",
+      "title": "Вертикальные стойки вдоль ограждения",
+      "sha256": "a5e602d169701e19b35e66a20f12dced478fefeee4a9d6f2f7ae5754595c1832",
+      "dcc": {
+        "max": {
+          "calls": 52,
+          "polls": 3,
+          "exact_repeats": 6,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "max_dialogs",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_viewport",
+          "execute_maxscript",
+          "get_selected_max_instance",
+          "list_max_instances",
+          "max_dialogs",
+          "query_scene",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-max-2026-migration-b57e10/800a05ef-e350-43a1-98c3-11605b3baae5.jsonl",
+      "title": "Перенос скриптов и настроек в 3ds Max 2026",
+      "sha256": "7231cd40f3d23c1bd0ab579cb831ffd8cc4fb821c36dc05065de82d9572965d0",
+      "dcc": {
+        "max": {
+          "calls": 53,
+          "polls": 12,
+          "exact_repeats": 12,
+          "repeated_polls": 10,
+          "tools_observed": [
+            "capture_screen",
+            "execute_maxscript",
+            "list_max_instances",
+            "max_dialogs",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_screen",
+          "execute_maxscript",
+          "list_max_instances",
+          "max_dialogs",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-maxscript-material-cleanup-optimize-3522df/f9c15b42-545a-4510-ab1b-c237b1729e6f.jsonl",
+      "title": "MaxScript кнопки очистки и оптимизации материалов",
+      "sha256": "8d03a8f915b6e02186322b72ad713443e6f0142a06d72b5afee576e4da2b7193",
+      "dcc": {
+        "max": {
+          "calls": 149,
+          "polls": 26,
+          "exact_repeats": 28,
+          "repeated_polls": 21,
+          "tools_observed": [
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "max_dialogs",
+            "max_list_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_screen",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_selected_max_instance",
+          "list_max_instances",
+          "max_dialogs",
+          "max_list_instances",
+          "max_select_instance",
+          "max_ui_capture_window",
+          "max_ui_list_windows",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-maxscript-material-cleanup-optimize-3522df/cc0be168-0369-4f5d-863b-f44c8862e503.jsonl",
+      "title": "MaxScript кнопки очистки и оптимизации материалов",
+      "sha256": "014d2ea5bbac8fab509d91b9253f1a99a8808832b89a16f8fa21f78f0f2eba53",
+      "dcc": {
+        "max": {
+          "calls": 86,
+          "polls": 3,
+          "exact_repeats": 2,
+          "repeated_polls": 2,
+          "tools_observed": [
+            "capture_screen",
+            "execute_maxscript",
+            "execute_python",
+            "list_max_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_screen",
+          "execute_maxscript",
+          "execute_python",
+          "get_bridge_status",
+          "list_max_instances",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-remove-window-polygons-009-e91613/f53fab83-60a2-4fb8-b03f-68d0670bc188.jsonl",
+      "title": "Удаление внутренних полигонов окон в объекте 009",
+      "sha256": "7d8d26f4afe1ff1fa5f53d1fe0e0acafc2a2b4aed3fff2be5b55a1da5fd59fce",
+      "dcc": {
+        "max": {
+          "calls": 17,
+          "polls": 2,
+          "exact_repeats": 1,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 4,
+          "polls": 1,
+          "exact_repeats": 1,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "execute_blender_code",
+            "get_blendfile_summary_path_info",
+            "get_objects_summary"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_viewport",
+          "execute_maxscript",
+          "get_session_context",
+          "list_max_instances",
+          "select_max_instance"
+        ],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_path_info",
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-markup-projection-ground-29f569/b8c7ae28-2ec0-4650-b83d-783b0d40e527.jsonl",
+      "title": "Разметка на граунд SN-Касаткина",
+      "sha256": "f83afebd0e930d8ea65a733825d66acde6a02f931cd568755f48c7d736469b3c",
+      "dcc": {
+        "max": {
+          "calls": 32,
+          "polls": 4,
+          "exact_repeats": 8,
+          "repeated_polls": 2,
+          "tools_observed": [
+            "execute_maxscript",
+            "get_selected_max_instance",
+            "list_max_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_viewport",
+          "execute_maxscript",
+          "get_bridge_status",
+          "get_selected_max_instance",
+          "list_max_instances",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-object009-railing-spline-020525/94d57781-0a69-456e-b6c4-76552e1e0b25.jsonl",
+      "title": "Object009 поручень сплайн",
+      "sha256": "25c1a3c015047f3dee149a0b819c349ddc915bdf156250c234d20e42c94364bb",
+      "dcc": {
+        "max": {
+          "calls": 23,
+          "polls": 2,
+          "exact_repeats": 6,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "agent_viewport",
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "set_viewport"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_bridge_status",
+          "get_session_context",
+          "list_max_instances",
+          "set_viewport"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-busy-cori-788e0e/f305f3dd-0cdc-4854-b333-6ec42cc31763.jsonl",
+      "title": "VPM-скамейка KG-Grupp 60616832 в Max 2024",
+      "sha256": "0c40ea4481348a8c2eced4986c62181c7bf02916545ec52863f797973243dc7a",
+      "dcc": {
+        "max": {
+          "calls": 33,
+          "polls": 7,
+          "exact_repeats": 6,
+          "repeated_polls": 5,
+          "tools_observed": [
+            "capture_viewport",
+            "execute_maxscript",
+            "execute_python",
+            "get_selected_max_instance",
+            "list_max_instances",
+            "select_max_instance"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "capture_viewport",
+          "execute_maxscript",
+          "execute_python",
+          "get_selected_max_instance",
+          "list_max_instances",
+          "select_max_instance"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-max-2026-migration-b57e10/f8d74c21-7ff7-43cc-9d2d-abafcb37c0b9.jsonl",
+      "title": "MAV моделирование Старопетровский проезд",
+      "sha256": "d4577dd26e155dbcea1159a721ac2a4fcc05a232431141a8f334bbcc479a4ad5",
+      "dcc": {
+        "max": {
+          "calls": 2,
+          "polls": 2,
+          "exact_repeats": 1,
+          "repeated_polls": 1,
+          "tools_observed": [
+            "max_list_instances"
+          ]
+        },
+        "blender": {
+          "calls": 1,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "get_objects_summary"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "max_list_instances"
+        ],
+        "blender": [
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-blender-smoothing-groups-9a358a/196a34b0-9fcb-408b-997f-72d6be30dcb1.jsonl",
+      "title": "Группы сглаживания на мафах",
+      "sha256": "956d26562cadfada3bffd2f228c0f3586919404833e9a4ba19dff45d6f60e684",
+      "dcc": {
+        "max": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "blender": {
+          "calls": 26,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": [
+            "execute_blender_code"
+          ]
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [],
+        "blender": [
+          "execute_blender_code",
+          "get_blendfile_summary_path_info",
+          "get_objects_summary"
+        ],
+        "revit": []
+      }
+    },
+    {
+      "source": "C--Users-artsafro--AGR-DigitalTwin-pilot--claude-worktrees-4bk-corpus-k3-modeling-6cfe72/d1636320-7403-4d5d-a4fb-b151aa37354d.jsonl",
+      "title": "Проект 4БК: моделирование корпуса К3",
+      "sha256": "34c75749fe39ffe97e8639b34f89af762c2f2ee2d6546b4d53a15eb3894863c2",
+      "dcc": {
+        "max": {
+          "calls": 49,
+          "polls": 3,
+          "exact_repeats": 5,
+          "repeated_polls": 2,
+          "tools_observed": [
+            "agent_viewport",
+            "capture_viewport",
+            "execute_maxscript",
+            "list_max_instances",
+            "select_max_instance",
+            "set_viewport"
+          ]
+        },
+        "blender": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        },
+        "revit": {
+          "calls": 0,
+          "polls": 0,
+          "exact_repeats": 0,
+          "repeated_polls": 0,
+          "tools_observed": []
+        }
+      },
+      "loaded_tool_refs": {
+        "max": [
+          "agent_viewport",
+          "capture_viewport",
+          "execute_maxscript",
+          "get_session_context",
+          "inspect_mesh",
+          "isolate_and_capture_selected",
+          "list_max_instances",
+          "select_max_instance",
+          "set_viewport"
+        ],
+        "blender": [],
+        "revit": []
+      }
+    }
+  ],
+  "totals": {
+    "max": {
+      "sessions": 23,
+      "calls": 1024,
+      "polls": 103,
+      "exact_repeats": 163,
+      "repeated_polls": 70,
+      "median_calls_active_session": 33,
+      "tools_observed": [
+        "agent_viewport",
+        "capture_screen",
+        "capture_viewport",
+        "execute_maxscript",
+        "execute_python",
+        "get_selected_max_instance",
+        "inspect_max_file",
+        "list_max_instances",
+        "manage_scene",
+        "max_dialogs",
+        "max_list_instances",
+        "release_max_instance",
+        "select_max_instance",
+        "set_viewport"
+      ]
+    },
+    "blender": {
+      "sessions": 9,
+      "calls": 259,
+      "polls": 27,
+      "exact_repeats": 40,
+      "repeated_polls": 20,
+      "median_calls_active_session": 9,
+      "tools_observed": [
+        "execute_blender_code",
+        "get_blendfile_summary_path_info",
+        "get_objects_summary"
+      ]
+    },
+    "revit": {
+      "sessions": 0,
+      "calls": 0,
+      "polls": 0,
+      "exact_repeats": 0,
+      "repeated_polls": 0,
+      "median_calls_active_session": null,
+      "tools_observed": []
+    }
+  },
+  "static_catalogs": {
+    "max": {
+      "path": "C:\\Users\\artsafro\\tools\\3dsmax-mcp\\maxmcp\\tools",
+      "tools": [
+        "add_controller_target",
+        "add_data_channel",
+        "add_dc_script_operator",
+        "add_modifier",
+        "add_tyflow_collision",
+        "add_tyflow_event",
+        "agent_viewport",
+        "analyze_node_orientation",
+        "assign_controller",
+        "assign_material",
+        "backup_material_library",
+        "batch_file_info",
+        "batch_rename_objects",
+        "batch_replace_materials",
+        "boolean_operation",
+        "capture_multi_view",
+        "capture_screen",
+        "capture_tyflow_editor",
+        "capture_viewport",
+        "clone_objects",
+        "collapse_modifier_stack",
+        "connect_tyflow_events",
+        "connect_tyflow_operator",
+        "contact_check",
+        "cosmos_download",
+        "cosmos_import",
+        "cosmos_search",
+        "create_lights",
+        "create_material_from_textures",
+        "create_mesh",
+        "create_object",
+        "create_shell_material",
+        "create_texture_map",
+        "create_tyflow",
+        "create_tyflow_preset",
+        "curve_model",
+        "delete_effect",
+        "delete_objects",
+        "disconnect_tyflow_operator",
+        "discover_plugin_classes",
+        "discover_plugin_surface",
+        "draw_spline",
+        "edit_curve",
+        "edit_lights",
+        "edit_vertices",
+        "execute_maxscript",
+        "execute_python",
+        "geometry_qa",
+        "get_bridge_status",
+        "get_camera_sequence",
+        "get_dependencies",
+        "get_effects",
+        "get_hierarchy",
+        "get_instances",
+        "get_material_library",
+        "get_material_slots",
+        "get_materials",
+        "get_object_properties",
+        "get_plugin_capabilities",
+        "get_plugin_manifest",
+        "get_railclone_output",
+        "get_railclone_style",
+        "get_selected_max_instance",
+        "get_session_context",
+        "get_state_sets",
+        "get_tyflow_graph",
+        "get_tyflow_info",
+        "get_tyflow_particle_count",
+        "get_tyflow_particles",
+        "get_wired_params",
+        "harvest_tyflow_manifest",
+        "inspect_controller",
+        "inspect_curve",
+        "inspect_data_channel",
+        "inspect_lights",
+        "inspect_material_network",
+        "inspect_max_file",
+        "inspect_mesh",
+        "inspect_modifier_properties",
+        "inspect_object",
+        "inspect_plugin_class",
+        "inspect_plugin_constructor",
+        "inspect_plugin_instance",
+        "inspect_properties",
+        "inspect_track_view",
+        "introspect_class",
+        "introspect_instance",
+        "introspect_osl",
+        "invoke_tool",
+        "isolate_and_capture_selected",
+        "keyframe_tracks",
+        "learn_scene_patterns",
+        "lighting_capabilities",
+        "list_dc_operators",
+        "list_dc_presets",
+        "list_max_instances",
+        "list_plugin_classes",
+        "list_tyflow_operator_types",
+        "list_tyflow_operators",
+        "list_wireable_params",
+        "load_dc_preset",
+        "loft_mesh",
+        "main_thread",
+        "make_modifier_unique",
+        "manage_data_channel_stack",
+        "manage_groups",
+        "manage_layers",
+        "manage_scene",
+        "manage_selection_sets",
+        "map_class_relationships",
+        "material_roles",
+        "max_dialogs",
+        "mcg_apply_modifier",
+        "mcg_apply_patch",
+        "mcg_cleanup_workspace",
+        "mcg_compile_graph",
+        "mcg_create_graph",
+        "mcg_get_context",
+        "mcg_inspect_graph",
+        "mcg_inspect_instance",
+        "mcg_list_graphs",
+        "mcg_reload_operators",
+        "mcg_resolve_class",
+        "mcg_restore_checkpoint",
+        "mcg_search_operators",
+        "mcg_set_node_parameter",
+        "mcg_test_tool",
+        "merge_from_file",
+        "mesh_edit",
+        "modify_tyflow_operator",
+        "palette_laydown",
+        "pick_component",
+        "plugin_patch",
+        "query_scene",
+        "refresh_plugin_manifest",
+        "release_max_instance",
+        "remove_modifier",
+        "remove_tyflow_element",
+        "render_automations",
+        "render_scene",
+        "replace_material",
+        "replicate_material",
+        "reset_tyflow_simulation",
+        "resolve_node_refs",
+        "run_tool_smoke",
+        "scatter_forest_pack",
+        "scene_patch",
+        "scene_qa",
+        "script_controller",
+        "search_max_files",
+        "select_max_instance",
+        "select_objects",
+        "set_controller_props",
+        "set_data_channel_operator",
+        "set_material_properties",
+        "set_material_property",
+        "set_modifier_property",
+        "set_modifier_state",
+        "set_object_property",
+        "set_parent",
+        "set_railclone_style",
+        "set_sub_material",
+        "set_texture_map_properties",
+        "set_tyflow_physx",
+        "set_tyflow_shape",
+        "set_tyflow_wiring_ledger",
+        "set_viewport",
+        "set_visibility",
+        "smart_import",
+        "toggle_effect",
+        "transform_object",
+        "tyflow_apply_patch",
+        "tyflow_event_census",
+        "undo_last",
+        "unwire_params",
+        "walk_references",
+        "watch_scene",
+        "wire_params",
+        "write_osl_shader"
+      ],
+      "file_hashes": {
+        "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "_fstorm_material_builder.py": "7574c45dfd2dbf10b3659b99799f8390908322dbe1ea0ed33cc234a2f6c2f265",
+        "_pbr_material_builder.py": "2952eb1bb0c4027ab9a4a99ffd47358b34b37cf29bc8ee8d13aedfd4a03aa4ed",
+        "_query_scene_core.py": "05e55aec9183112ff7fc6d2ecffe79b7a6388e8022a208fa638db4847c8f3d85",
+        "_tyflow_core.py": "72bc4eedb495f59cfd3e5247ce95d24c0fd0e2bf29e598a7e9166df18bf492bb",
+        "booleans.py": "2780a19c2f3d4289db52231eae4832ceadc353019a65e9d7f80168422758dbfd",
+        "bridge.py": "aecde6119efa826e43314fc94f34bec458a66513452f9313cfb87fa68db045eb",
+        "capabilities.py": "7f34190d42830fd1179f1ce307aea7d64df60312575bc0da8b905b23494c6464",
+        "clone.py": "2f912709a7a4109e6bb1a0b2d0488dd2f32e7a74cbf9574a4e9214217e948a8d",
+        "component_pick.py": "8469da4af04553f447f836b6003dea6a3d07c6909e4145925bd1163b505f8e6c",
+        "contact_check.py": "875c44ee74e558b5d4c6fb6044da954b536cd8afce9f96aca44797a04a59185a",
+        "controllers.py": "ce71f539a0f466bf55c0823a55b6eee962c8cbcb7137671894659b857e017008",
+        "cosmos.py": "dee5b6fd8f0c46c344a1d8dd8c6fc201bb4bb01441b1424a600687ca7787f3ae",
+        "curve_edit.py": "6b15aa6953759d66e0ff7575e4bfc69fbece11a730dd504896fc1d626471b75e",
+        "curve_model.py": "e08bc651c9fec074e9d1e0a6781bbba77d12268ca03370874e67adaff128a6b1",
+        "data_channel.py": "e2d4cecc0f6bd1dff25071ab9a8edc9a5f488cc846269fc9dd45691f47011e0d",
+        "effects.py": "309c6e118444c6a88e1b2b2fd5da692d605cf57a1039ce023927c54ea3fc9af6",
+        "execute.py": "bb4a49cf4cd2a11aaa2b169180a3a245f4887d25c13e1548cacac32099e48282",
+        "file_access.py": "22dcbf43775de5f392dfb1e0ea360df940d84b07f17e79dc2958232b09ab8a01",
+        "geometry_qa.py": "0f203bc07ef9b3b090c8838eb87cb0440b0e05a9e3195d6bffb41fc465781997",
+        "hierarchy.py": "7c8e6c11493e0757961eee1e61fd2487b42e637d58d4566834018a58b1a7c5b7",
+        "identify.py": "ca1e3ab0bafe71ff45481f70576086a565f657b5b0c2639a4386fd7c4f7216c4",
+        "inspect.py": "cfcc18b4457c93a7dd71648ce958a063114a46c7b13da075be4ea838b03929b2",
+        "keyframes.py": "acd1865af7028b8fa258380be265c9d961f3aee781d6d046e54d8e44d8ee277e",
+        "learning.py": "1cfbe39fbab388c75c8b370c105c7d04a221cfb1ab0a0fdb7565c0383b66e7ff",
+        "lighting.py": "ceb17759c91884b32406676bddf2af37b850624450b4ab1f79f49033d98ac32b",
+        "loft.py": "2e7207e8ec55273701150130bed80fb5b3c01eadd8095c98970e56c9a96e073a",
+        "mainthread.py": "303668fa596aefd966d240f177e087e8c6ee04bd09c7640cceab6bb6d29fa686",
+        "material_detection.py": "3b0a387b865ba75a72851991d6234bb618b3a80a9c9c46094c0ebeb99c29fdd3",
+        "material_network.py": "d235ed2d142d94de2ecea8964cc7ef0911c5331cbecf514fa0bd2a0dc152a50e",
+        "material_ops.py": "21965e06b4419c42ff9f4ac6589d43f7561a6552fe6783eb8a076da9d3367c26",
+        "material_replace.py": "2ec4949e6099961663ab4a8c6a066143ce849b5b6d74c3054bc0e96c535939b0",
+        "material_roles.py": "35e3b1cd464258f2bf217e60b7fc098f9d143b0011c2f7e7b4f7164058aeff47",
+        "material_shell.py": "88b135f5133ab3f05a274c344e6a94a88faa656c42949ef7695e5c89d00ab314",
+        "materials.py": "25618189c5bd26ddbc21b478321e21f1437f63206bb1a7490ff8b605e3b48f88",
+        "mcg.py": "f6b98a77d2c8af7d9b982c0829f93ba2d52b1ba8aad3c96db6fa33ac3549c2dd",
+        "mesh_ops.py": "eac36ab19e491487b169a4636f63078466973eb313b30c8cd18c4cf6265cc491",
+        "modifiers.py": "f7b0446d8439637f78e916f7791fd7f5f08357f5a50f02e5638750d3d24b9791",
+        "objects.py": "b8f0170e77ad46f25c5a14ab2514a3e7d0e9631af2dc391becbe3f0c73600dd6",
+        "organize.py": "2905abbfa7c1a76e8c02f1ddfd673d573d8da9982bb372cce2cf8a43e19ffeb2",
+        "orientation.py": "5fc50f12969d8a3034a83a986bd52462992ca9f16d9cb404202aee0072a48ab7",
+        "palette_laydown.py": "133964099c8fe1d70c7ad1633270004d267ffe9508c5b958d9aa6edd894c6239",
+        "plugin_edit.py": "f8b635a2548c4b98970815c3961c34dec0d3976aed106e547c3de910b4381490",
+        "plugins.py": "09c20230ee74f6f335bb3116ad1306cf565ba1a72d5456aa5d4a0f36b1ee3f78",
+        "poly_edit.py": "9872a226c4c3b7f3c8e03085f9a9ca11d75058e1faeca0075c6d98de1358cc45",
+        "query_scene.py": "d26258709d419c23f233fe289ef345d8957b9f143413c786cb12e7037bd0bf7a",
+        "railclone.py": "00a80131539166468e0153bda3c9460aa3314d7c4382b947c1b8a58729667888",
+        "render.py": "3aeece56dff9bb83aa13a19374b9fb53b132001197a0ac27f1abe504e6ef899e",
+        "render_automations.py": "7395d15e1e5a9b50f11c0adbe441575de2030bc02cde47fb8dc3c7d5545db141",
+        "routing.py": "9d746e0f9f916c3a63cfbe15be1508dfcf15670a631bafc94dfda134aa578c95",
+        "scattering.py": "07464cff3a67c6a7dad6e0cd52d0514640334610d02657a5b49ccc9025fbd5be",
+        "scene_manage.py": "83c400376111584feee476d95abd01daf4acf576a6063228686e4d96021569e4",
+        "scene_patch.py": "15251f0b9193179ba548069cfe8a1d01c6212a1094862fb95d60475d73b71f80",
+        "scene_qa.py": "6325c6b33965bb7396ec36cc0551ab264f46c5afac09b9c1a8c557f6b5ec9400",
+        "scene_query.py": "4ff569d870bb58373d4e674f48923fabc681fa949cc10c00811da357328d4e84",
+        "selection.py": "e58535c587fcfa11224e048984cfe45931c4a5c60ac7bce11f6db15e41052ece",
+        "session_context.py": "d1d0ad83f1db636f1dfe0af1c14b0b365f4b3983e385e5c8187e4ed808f3690a",
+        "smart_import.py": "5f2805366d12dfbd1868c4eef8aae46c263ec4d7f66366cefa8d5371154c053a",
+        "splines.py": "10f1396d33fad6d9cad4be225fbf015f3b39940fce29dd6dd24bf54ec728507c",
+        "state_sets.py": "b5b13d625744779e4fc35b4cb4e1418470d20190788f8bb35e3f9f5212601c3d",
+        "tool_test.py": "4d748098a45f3b62b25233b9c1fac078af2b50e1559ba89246e43fb7f4c16e19",
+        "transform.py": "3b4b2ee49871b274dec177928dfb743b914467bf9e2cca2f2b1e75879775eae7",
+        "tyflow.py": "6dd675c6cc235d57c500d6ebe1b68e2533546aeb74ed93204489eadae6f0475a",
+        "tyflow_census.py": "4d2e4af03a8ce1ff0ba480126b542f6eb46cc449210319c46bb5dd317293abbf",
+        "tyflow_graph.py": "9505b336563c3af5217f2f48002d65d4f8e571c661c574323c954a1bf33484d5",
+        "tyflow_manifest.py": "26c3ae485946223f6135653730219825113e2c0e5ac4f11d26ca1bb46e373698",
+        "tyflow_patch.py": "2a9901e9a14d6ba23901459700d5d254df3f3a64140104a47ebe6b09f38cae65",
+        "viewport.py": "403a166ca9f44b73070d3c275b54d57b2af866f771eaab88f6649040e548e314",
+        "visibility.py": "553c75c3e0e3f5e6766bad19ff09f6d718bf99c9117919e97b916ff30b0a7d0c",
+        "wire_params.py": "566af15e2668316adf745f288eedfe7cab05bef9f114561af16302778f9e404d"
+      }
+    },
+    "blender": {
+      "path": "C:\\Users\\artsafro\\AppData\\Local\\CodexMCP\\BlenderLab103\\venv\\Lib\\site-packages\\blmcp\\tools",
+      "tools": [
+        "execute_blender_code",
+        "execute_blender_code_for_cli",
+        "get_blendfile_summary_datablocks",
+        "get_blendfile_summary_datablocks_for_cli",
+        "get_blendfile_summary_missing_files",
+        "get_blendfile_summary_missing_files_for_cli",
+        "get_blendfile_summary_of_linked_libraries",
+        "get_blendfile_summary_of_linked_libraries_for_cli",
+        "get_blendfile_summary_path_info",
+        "get_blendfile_summary_path_info_for_cli",
+        "get_blendfile_summary_usage_guess",
+        "get_blendfile_summary_usage_guess_for_cli",
+        "get_object_detail_summary",
+        "get_objects_summary",
+        "get_python_api_docs",
+        "get_screenshot_of_area_as_image",
+        "get_screenshot_of_window_as_image",
+        "get_screenshot_of_window_as_json",
+        "jump_to_tab_by_name",
+        "jump_to_tab_by_space_type",
+        "jump_to_view3d_object_by_name",
+        "jump_to_view3d_object_data_by_name",
+        "render_thumbnail_to_path",
+        "render_viewport_to_path",
+        "search_api_docs",
+        "search_manual_docs"
+      ],
+      "file_hashes": {
+        "__init__.py": "c193b9219cb12d8fb875c8d9585be1ef4a114e4a3420b61291a4456b73f89e53",
+        "_template_backup_attrs_and_assign_multi.py": "926d80e519811998348637ce220bc4f57f858c64ee21dc361876d760223ad518",
+        "_template_backup_attrs_multi.py": "c49fc67114f2784db5aca42c176c38f4e85462cdbf9e8cde8f369d398035cdb5",
+        "_template_deferred_tool_check_for_file_output.py": "c3ade3ba48b989bb90b2b4de0af5190ebfc6e7951fdc34826365468951b838d2",
+        "_template_image_downscale_to_size_limit.py": "d8ad8850fe263580dce1ae7abdd5c90b6a9bf96bc415bf166df7560444579194",
+        "execute_blender_code.py": "b25fddc355229dad1f04ac6e7080da005e0d8b0c20d6cd55d4e1e08944b9422e",
+        "get_blendfile_summary_datablocks.py": "e87f4ba850c4a2e704de128ac84363b56a34a228a72ea46c634a95c70fa287a0",
+        "get_blendfile_summary_datablocks_toolcode.py": "fe5191bcb4fb6115c4308c92b4a0cecaf6c295f7d15cd40051d1ecebc467893d",
+        "get_blendfile_summary_missing_files.py": "375d46023dd73e311b3e8e966ec272c8c8669175614710b0f5cffe0e81e812c2",
+        "get_blendfile_summary_missing_files_toolcode.py": "10ee15526f722196d3184bd3850bd2f31313209abab0ec38f70f03a200326692",
+        "get_blendfile_summary_of_linked_libraries.py": "c201b688fba15e2e4b0d9507c29e095e163255a17ca4e3edabd00b52ba771c52",
+        "get_blendfile_summary_of_linked_libraries_toolcode.py": "65dffea93a12237c9314f2531ceef460ba898a38f603603b23f8e31c8c8dce01",
+        "get_blendfile_summary_path_info.py": "710ae597491c3c99995503987bb4b406e627d1996186a0472d01eca4b8d28156",
+        "get_blendfile_summary_path_info_toolcode.py": "0d6546e4e15965bc9f0371236acbac7f4657469a40af76ab87ae6530798ccca0",
+        "get_blendfile_summary_usage_guess.py": "4dbc87a69ac5c62809eb304c275eeda0818a87ca9f81c0d140a89261d2ed3653",
+        "get_blendfile_summary_usage_guess_toolcode.py": "0b65895d4fe4a6d078f59ad85c0778a41245e3c6b270e3a0b09ee3a5a9f546fa",
+        "get_object_detail_summary.py": "f738cc14dd0eb6a626bffe0b68b8a2864eb21cfe3c711d0ce744597a686ff91d",
+        "get_object_detail_summary_toolcode.py": "a5a921fd38e164092e81d8d6d04be0258f2725b14dd750064b38a244c3f83ae6",
+        "get_objects_summary.py": "be50087ff725552c9325ab4306d275cba234ab6fc8d6d7b33bf5b51644ae776e",
+        "get_objects_summary_toolcode.py": "a0890d9b977d514ad5504b8fa24d625c45adaad266208e79f796df877357a563",
+        "get_python_api_docs.py": "a51afc611bc492fc2d24ff178ea89bc63193b62e9426d53549a8209fbe087271",
+        "get_screenshot_of_area_as_image.py": "4e2b819fb0e5962bcd8b827881e7a125707475425257084fdc98cf50a4d6107a",
+        "get_screenshot_of_area_as_image_toolcode.py": "e9a3adda5070755e7a6a6a623aa702a0b2b371891ab3eda90573eaa03901b750",
+        "get_screenshot_of_window_as_image.py": "d9c4ee4c520bf526aa222bec3c214b4f23a9efdeb3b18f928d2868099cc5ee4b",
+        "get_screenshot_of_window_as_image_toolcode.py": "979cf0c86c2421466c006e73197064c1defb56d047677a783570ec0214e916a8",
+        "get_screenshot_of_window_as_json.py": "48aec19582e7bed96209fd544f0c2ca3c7cb0a82bbd62803ebd30c45c773cb5b",
+        "get_screenshot_of_window_as_json_toolcode.py": "1540f10a6ad250e6defdb816cc36b7d69f7b4af347a216ead7272a6f68cad8af",
+        "jump_to_tab_by_name.py": "c3ec43e8b7f393cce85a8a6c47cbacea8736d8acba794d3db8a3ba6e9d93faad",
+        "jump_to_tab_by_name_toolcode.py": "06ab87ae26c621bc5d0447d209eeffb4048b6acf3b94da5dc76fac81e14f787a",
+        "jump_to_tab_by_space_type.py": "dc46c82d66aab8d8ca8c5356237d9716e2de18588a2f80903762d09e88a40948",
+        "jump_to_tab_by_space_type_toolcode.py": "8ab6ba5cb3ad13b56974aef436a9b4f7ad1936ea24ebb57c572384c1b53a308d",
+        "jump_to_view3d_object_by_name.py": "e0f1963dffd578b7e1db3b0189aa8e67ccbe8c4d477ce959ed8a7811a60715a7",
+        "jump_to_view3d_object_by_name_toolcode.py": "47a66ff78724e02c7ec4de01f4721a77e35111cdbf8914d5345e66c1acb7a074",
+        "jump_to_view3d_object_data_by_name.py": "b03c2529611850d02875a396d1a3798302bd4455634cbe0ea082cfa2fc20fbd8",
+        "jump_to_view3d_object_data_by_name_toolcode.py": "29f53df0a975d2a88466b8e235017d99569bca054d6b14c3853546b56ae8ef29",
+        "render_thumbnail_to_path.py": "e791c2fb890b45566cc81ad9f2f64ec45432c25ad310bcd957f2a5e5ed874b4b",
+        "render_thumbnail_to_path_toolcode.py": "5b7394f0ace437963b8c79eb4d6ecc644ee94d251842811a033fe38b6b51d522",
+        "render_viewport_to_path.py": "e9318aad373edcce1f5644c32b33612a7a65309912130538447f346a9a13abf9",
+        "render_viewport_to_path_toolcode.py": "c67c9675e3c0ed72d0da07b1ec2799fd2a2efd3703ad4381e5fd6bbb5630f873",
+        "search_api_docs.py": "7b31aeb7b55377d11e581b4c344ea2c59839e094d37732e9efceada67c074663",
+        "search_manual_docs.py": "2b8649a31b7e166d1df61c705d6de408387b30d1fa3b7d45da5590af6997ea39"
+      }
+    },
+    "revit": {
+      "path": "C:\\Users\\artsafro\\INTERACTIVE_TOUR\\RevitMCPServer\\dist\\index.js",
+      "sha256": "508b0698766937fc8b3875634142ca22203298678bcc260e0aa183d2d489357b",
+      "tools": [
+        "revit_apply_view_filter",
+        "revit_apply_view_template",
+        "revit_array_linear",
+        "revit_batch",
+        "revit_change_element_type",
+        "revit_check_clearance",
+        "revit_color_override_by_param",
+        "revit_configure_schedule",
+        "revit_copy_element",
+        "revit_copy_parameters",
+        "revit_create_3d_view",
+        "revit_create_aligned_dimension",
+        "revit_create_beam",
+        "revit_create_ceiling",
+        "revit_create_column",
+        "revit_create_detail_line",
+        "revit_create_filled_region",
+        "revit_create_floor",
+        "revit_create_floor_plan_view",
+        "revit_create_grid",
+        "revit_create_level",
+        "revit_create_opening_in_wall",
+        "revit_create_perspective_view",
+        "revit_create_room",
+        "revit_create_schedule",
+        "revit_create_section_view",
+        "revit_create_sheet",
+        "revit_create_text_note",
+        "revit_create_wall",
+        "revit_delete_elements",
+        "revit_duplicate_family_type",
+        "revit_duplicate_view",
+        "revit_export_view_pdf",
+        "revit_find_element_by_unique_id",
+        "revit_find_elements",
+        "revit_get_active_view",
+        "revit_get_document_info",
+        "revit_get_doors",
+        "revit_get_element_geometry",
+        "revit_get_element_info",
+        "revit_get_element_rooms",
+        "revit_get_linked_elements",
+        "revit_get_linked_files",
+        "revit_get_model_health",
+        "revit_get_parameter",
+        "revit_get_schedule_data",
+        "revit_get_selected_elements",
+        "revit_get_tags_in_view",
+        "revit_get_version",
+        "revit_get_view_image",
+        "revit_get_views",
+        "revit_get_worksets",
+        "revit_group_elements",
+        "revit_hide_elements_in_view",
+        "revit_import_parameters",
+        "revit_isolate_elements_in_view",
+        "revit_list_categories",
+        "revit_list_elements",
+        "revit_list_families",
+        "revit_list_family_types",
+        "revit_list_floor_types",
+        "revit_list_levels",
+        "revit_list_materials",
+        "revit_list_phases",
+        "revit_list_rooms",
+        "revit_list_sheets",
+        "revit_list_spaces",
+        "revit_list_view_templates",
+        "revit_list_wall_types",
+        "revit_load_family",
+        "revit_mirror_element",
+        "revit_move_element",
+        "revit_open_view",
+        "revit_override_element_graphics",
+        "revit_ping",
+        "revit_place_family_instance",
+        "revit_place_view_on_sheet",
+        "revit_query_where",
+        "revit_recipe_clash_review",
+        "revit_recipe_model_health_triage",
+        "revit_rename_element",
+        "revit_rotate_element",
+        "revit_select_elements",
+        "revit_set_level_elevation",
+        "revit_set_parameter",
+        "revit_set_parameter_batch",
+        "revit_set_section_box",
+        "revit_set_view_detail_level",
+        "revit_tag_all_in_view",
+        "revit_tag_element",
+        "revit_ungroup_elements",
+        "revit_unhide_elements_in_view",
+        "revit_update_where",
+        "revit_zoom_to_elements"
+      ]
+    }
+  }
+}

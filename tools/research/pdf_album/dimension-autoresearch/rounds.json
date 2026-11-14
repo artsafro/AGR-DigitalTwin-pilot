@@ -1,0 +1,313 @@
+{
+  "status": "stopped_plateau",
+  "reason": "R2-R4 consecutive raw TUNE gain <0.01; no kept candidate",
+  "target_reached": false,
+  "kept_rounds": 0,
+  "original_corpus_raw_sha256": "beb7ae3dca186c459239e017c1a067b43da22723459e01a324ddec4d1a757f20",
+  "canonical_corpus_sha256": "351cbe99af8fb29b838d969baaa0c18bca49eb341e9ddcfe0b08d70690918b70",
+  "rounds": [
+    {
+      "iteration": 1,
+      "description": "R1 replay under corrected v2 guard: short-span labels displaced at most two em beyond ticks",
+      "trial_commit": "42e0ae2caa4b173f1168edf6dcb165e65044fdda",
+      "revert_commit": "bce9b494b4b917fdc6319ca687445faabf43e857",
+      "trial_source_sha256": "161b8c5363f0538456a1b789963077f5827c42da4edfd3c11580082923c3255c",
+      "outcome": "iteration",
+      "tune_recall": 0.18085106382978725,
+      "retained_recall": 0.1595744680851064,
+      "replay_guard": true,
+      "tests": "fail: 1 failed / 70 passed (existing exact-eight positive-count contract)",
+      "sheets": [
+        {
+          "metrics": {
+            "found": 7,
+            "correct": 7,
+            "wrong": 0,
+            "missed": 75,
+            "truth": 82,
+            "precision": 1.0,
+            "recall": 0.08536585365853659
+          },
+          "classes": {
+            "correct_semantic_binding": 7,
+            "filtered_endpoint_identity": 57,
+            "text_found_not_bound_to_own_line": 15,
+            "overrides_or_display_rounding": 3
+          },
+          "wrong_ids": [],
+          "sheet": "L03",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 10,
+            "correct": 10,
+            "wrong": 0,
+            "missed": 2,
+            "truth": 12,
+            "precision": 1.0,
+            "recall": 0.8333333333333334
+          },
+          "classes": {
+            "correct_semantic_binding": 10,
+            "filtered_endpoint_identity": 2
+          },
+          "wrong_ids": [],
+          "sheet": "KNS",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 0,
+            "correct": 0,
+            "wrong": 0,
+            "missed": 6,
+            "truth": 6,
+            "precision": null,
+            "recall": 0.0
+          },
+          "classes": {
+            "non_cardinal_chain_unsupported": 6
+          },
+          "wrong_ids": [],
+          "sheet": "KNS-floor",
+          "split": "HOLD-OUT",
+          "precision_guard": "zero_prediction_pass",
+          "document_guard": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "R2: consolidate subpixel-parallel cardinal strokes on a half-point group grid instead of a tenth-point grid",
+      "trial_commit": "671289a246116ddef1a8caa1560cf3738180e8e9",
+      "revert_commit": "6bd7d34cc9e4020a8bfae6118f345f4f9a220c76",
+      "trial_source_sha256": "d0ee57ae8e3d9d288080401d0f46f23dc31913499bec53033dbf0c0fb5662322",
+      "outcome": "iteration",
+      "tune_recall": 0.1595744680851064,
+      "retained_recall": 0.1595744680851064,
+      "replay_guard": true,
+      "tests": "pass: 71 passed / 0 failed",
+      "sheets": [
+        {
+          "metrics": {
+            "found": 7,
+            "correct": 7,
+            "wrong": 0,
+            "missed": 75,
+            "truth": 82,
+            "precision": 1.0,
+            "recall": 0.08536585365853659
+          },
+          "classes": {
+            "correct_semantic_binding": 7,
+            "text_found_not_bound_to_own_line": 36,
+            "filtered_endpoint_identity": 36,
+            "overrides_or_display_rounding": 3
+          },
+          "wrong_ids": [],
+          "sheet": "L03",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 8,
+            "correct": 8,
+            "wrong": 0,
+            "missed": 4,
+            "truth": 12,
+            "precision": 1.0,
+            "recall": 0.6666666666666666
+          },
+          "classes": {
+            "correct_semantic_binding": 8,
+            "text_found_not_bound_to_own_line": 3,
+            "filtered_endpoint_identity": 1
+          },
+          "wrong_ids": [],
+          "sheet": "KNS",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 0,
+            "correct": 0,
+            "wrong": 0,
+            "missed": 6,
+            "truth": 6,
+            "precision": null,
+            "recall": 0.0
+          },
+          "classes": {
+            "non_cardinal_chain_unsupported": 6
+          },
+          "wrong_ids": [],
+          "sheet": "KNS-floor",
+          "split": "HOLD-OUT",
+          "precision_guard": "zero_prediction_pass",
+          "document_guard": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "R3: recognize short diagonal CAD ticks down to 0.75pt without changing endpoint identity or scale",
+      "trial_commit": "dc04f769cdd890c53a8e1130b8ee6c04d403ce32",
+      "revert_commit": "a00d096ff5f2a43dd1ae9c629a8dbc35ee5e2fea",
+      "trial_source_sha256": "f7f7ecb3798218933174350dda9dd1229634c93c21a1534588cedf7b7e7271c3",
+      "outcome": "iteration",
+      "tune_recall": 0.1595744680851064,
+      "retained_recall": 0.1595744680851064,
+      "replay_guard": true,
+      "tests": "pass: 71 passed / 0 failed",
+      "sheets": [
+        {
+          "metrics": {
+            "found": 7,
+            "correct": 7,
+            "wrong": 0,
+            "missed": 75,
+            "truth": 82,
+            "precision": 1.0,
+            "recall": 0.08536585365853659
+          },
+          "classes": {
+            "correct_semantic_binding": 7,
+            "text_found_not_bound_to_own_line": 36,
+            "filtered_endpoint_identity": 36,
+            "overrides_or_display_rounding": 3
+          },
+          "wrong_ids": [],
+          "sheet": "L03",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 8,
+            "correct": 8,
+            "wrong": 0,
+            "missed": 4,
+            "truth": 12,
+            "precision": 1.0,
+            "recall": 0.6666666666666666
+          },
+          "classes": {
+            "correct_semantic_binding": 8,
+            "text_found_not_bound_to_own_line": 3,
+            "filtered_endpoint_identity": 1
+          },
+          "wrong_ids": [],
+          "sheet": "KNS",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 0,
+            "correct": 0,
+            "wrong": 0,
+            "missed": 6,
+            "truth": 6,
+            "precision": null,
+            "recall": 0.0
+          },
+          "classes": {
+            "non_cardinal_chain_unsupported": 6
+          },
+          "wrong_ids": [],
+          "sheet": "KNS-floor",
+          "split": "HOLD-OUT",
+          "precision_guard": "zero_prediction_pass",
+          "document_guard": true
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "description": "R4: expand perpendicular parallel-label search from 2.5 to 4 text heights, keeping within-span and endpoint identity rules",
+      "trial_commit": "dab504821b330bc5908eb4f2014c1ebae5aebdd7",
+      "revert_commit": "bd2a1e4ea0fc677f9ccecc006fc874514be32125",
+      "trial_source_sha256": "848354bb2e02fc504e1dee9d1ddb74949766d0deea3d35bea67d794686de6f37",
+      "outcome": "iteration",
+      "tune_recall": 0.1595744680851064,
+      "retained_recall": 0.1595744680851064,
+      "replay_guard": true,
+      "tests": "pass: 71 passed / 0 failed",
+      "sheets": [
+        {
+          "metrics": {
+            "found": 7,
+            "correct": 7,
+            "wrong": 0,
+            "missed": 75,
+            "truth": 82,
+            "precision": 1.0,
+            "recall": 0.08536585365853659
+          },
+          "classes": {
+            "correct_semantic_binding": 7,
+            "text_found_not_bound_to_own_line": 36,
+            "filtered_endpoint_identity": 36,
+            "overrides_or_display_rounding": 3
+          },
+          "wrong_ids": [],
+          "sheet": "L03",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 8,
+            "correct": 8,
+            "wrong": 0,
+            "missed": 4,
+            "truth": 12,
+            "precision": 1.0,
+            "recall": 0.6666666666666666
+          },
+          "classes": {
+            "correct_semantic_binding": 8,
+            "text_found_not_bound_to_own_line": 3,
+            "filtered_endpoint_identity": 1
+          },
+          "wrong_ids": [],
+          "sheet": "KNS",
+          "split": "TUNE",
+          "precision_guard": "pass",
+          "document_guard": true
+        },
+        {
+          "metrics": {
+            "found": 0,
+            "correct": 0,
+            "wrong": 0,
+            "missed": 6,
+            "truth": 6,
+            "precision": null,
+            "recall": 0.0
+          },
+          "classes": {
+            "non_cardinal_chain_unsupported": 6
+          },
+          "wrong_ids": [],
+          "sheet": "KNS-floor",
+          "split": "HOLD-OUT",
+          "precision_guard": "zero_prediction_pass",
+          "document_guard": true
+        }
+      ]
+    }
+  ]
+}

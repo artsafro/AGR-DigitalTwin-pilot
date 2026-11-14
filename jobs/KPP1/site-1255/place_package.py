@@ -15,6 +15,19 @@ NOTE = ('approximate, ±0.1 m, fitted to customer NPM 0607_77_05_0009005_117_02;
         'entrance orientation not independently confirmed')
 
 
+def derive_heights(model_max_z_m):
+    # Blender's embedded Python has no Pydantic; reuse only the dependency-free arithmetic.
+    sys.path.insert(0, str(ROOT / 'src'))
+    from dt_ai.core.heights import height_values
+    datum = json.loads((HERE / 'height-datum.json').read_text(encoding='utf-8'))
+    for key in ('height_source', 'project_zero_fbx_source'):
+        if not all(datum[key].get(k, '').strip() for k in ('file', 'locator')):
+            raise ValueError('missing height provenance: ' + key)
+    if datum['project_zero_m'] != 171.05 or datum['height_system'] != 'unknown':
+        raise ValueError('height datum is not the D262/D279 selection')
+    return height_values(datum['project_zero_m'], datum['project_zero_fbx_z_m'], model_max_z_m)
+
+
 def transform_point(point, fit, profile):
     if profile not in ('npm', 'vpm'):
         raise ValueError('unsupported profile: ' + str(profile))
@@ -116,10 +129,12 @@ if __name__ == '__main__':
                                          'glossiness': 100*(1-(bsdf.inputs['Roughness'].default_value if bsdf else mat.roughness))})
             # Customer TEC26 xlsx, column Central checkpoint. Repeated whole-project areas
             # are NOT asserted to be this building's areas; unknowns stay empty and fail V011.
+            height_props = derive_heights(max((o.matrix_world @ v.co).z for o in objects
+                                             if not o.name.startswith('UCX_') for v in o.data.vertices))
             props = dict(address='проезд Востряковский, вл. 10', okrug='ЮАО', rajon='Бирюлево-Западное',
                          name='Центральная проходная', developer="ООО 'Развитие генерации ТЭЦ-26'",
                          designer="ООО 'Аспект'", cadNum='77:05:0009005:117', FNO_code='', FNO_name='',
-                         ZU_area=6.4882, h_relief=171.05, h_otn=8.65, h_abs=179.70,
+                         ZU_area=6.4882, **height_props,
                          s_obsh='', s_naz='', s_podz='', spp_gns='', act_AGR='', other=NOTE + ' [D262]')
             data = core.geojson_document(props, '',
                                          [round(v, 3) for v in fit['origin_msk_blender_xy']],

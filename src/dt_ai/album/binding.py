@@ -55,6 +55,7 @@ import hashlib
 import json
 import math
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -87,6 +88,20 @@ def _horiz(s: R.Segment) -> bool:
 
 def _vert(s: R.Segment) -> bool:
     return abs(s.p0[0] - s.p1[0]) <= 0.05
+
+
+def _span_gap(sp: dict[str, Any], r: R.TextRun, padding: float, near_side: bool) -> float | None:
+    """Perpendicular gap of a text run along span ``sp`` (``None`` when outside)."""
+    cx, cy = R._center(r.bbox)
+    if sp["orientation"] == "horizontal":
+        if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] - padding < cx < sp["b"] + padding):
+            return None
+        gap = sp["coord"] - cy if near_side else cy - sp["coord"]
+    else:
+        if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] - padding < cy < sp["b"] + padding):
+            return None
+        gap = sp["coord"] - cx if near_side else cx - sp["coord"]
+    return gap if 0 < gap <= 2.5 * r.size else None
 
 
 def _level_tips(segs: list[R.Segment], max_arm: float = 15.0) -> list[tuple[float, float, int]]:
@@ -220,8 +235,15 @@ def _merge(values: list[float], tol: float = 0.5) -> list[float]:
     return out
 
 
-def _chains(segs: list[R.Segment]) -> list[dict[str, Any]]:
-    """Dimension lines (horizontal and vertical) with the tick positions along them."""
+def _chains(segs: list[R.Segment], runs: Sequence[R.TextRun] = ()) -> list[dict[str, Any]]:
+    """Ticked lines; join inline numeric-text interruptions, never unexplained gaps.
+
+    Native CAD plots suppress the line under an inline label. Both retained ends
+    must meet the same uniquely identified, parallel numeric text box (<1/8 em,
+    capped at 1 pt).
+    This recovers paper spans only: endpoint identity and calibration still refuse
+    independently. Text outside the span never licenses extrapolation.
+    """
     ticks = _ticks(segs)
     groups: dict[tuple[str, float], list[tuple[float, float]]] = {}
     for s in segs:
@@ -236,8 +258,29 @@ def _chains(segs: list[R.Segment]) -> list[dict[str, Any]]:
     for (orient, c), ranges in groups.items():
         ranges.sort()
         merged: list[list[float]] = []
+        bridges: list[tuple[float, float, int]] = []
         for a, b in ranges:
-            if merged and a <= merged[-1][1] + 0.5:
+            inline = []
+            if merged and a > merged[-1][1] + 0.5:
+                end = merged[-1][1]
+                for run_index, run in enumerate(runs):
+                    if not all(math.isfinite(v) for v in (*run.bbox, *run.dir, run.size)):
+                        continue
+                    if orient == "horizontal":
+                        lo, hi, across0, across1 = run.bbox[0], run.bbox[2], run.bbox[1], run.bbox[3]
+                        parallel = abs(run.dir[1]) <= 1e-6 and run.dir[0] > .99
+                    else:
+                        lo, hi, across0, across1 = run.bbox[1], run.bbox[3], run.bbox[0], run.bbox[2]
+                        parallel = abs(run.dir[0]) <= 1e-6 and abs(run.dir[1]) > .99
+                    # CAD knockout extents differ from font ink bounds. Allow
+                    # <1/8 em, capped at 1 pt; exact limits still refuse.
+                    margin = min(1.0, run.size / 8)
+                    if parallel and across0 < c < across1 and abs(lo - end) < margin and abs(hi - a) < margin:
+                        inline.append(run_index)
+            bridge = len(inline) == 1 and R.check_dimension_text(runs[inline[0]].text) is not None
+            if merged and (a <= merged[-1][1] + 0.5 or bridge):
+                if bridge:
+                    bridges.append((merged[-1][1], a, inline[0]))
                 merged[-1][1] = max(merged[-1][1], b)
             else:
                 merged.append([a, b])
@@ -261,7 +304,8 @@ def _chains(segs: list[R.Segment]) -> list[dict[str, Any]]:
                             pos.append(y)
             pos = _merge(pos)
             if len(pos) >= 2:
-                chains.append({"orientation": orient, "coord": c, "ticks": pos})
+                chains.append({"orientation": orient, "coord": c, "ticks": pos,
+                               "bridges": [g for g in bridges if a <= g[0] and g[1] <= b]})
     chains.sort(key=lambda ch: (ch["orientation"], ch["coord"], ch["ticks"][0]))
     return chains
 
@@ -398,7 +442,7 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
         return {"status": status, "views": [], "values": [], "openings": [], "findings": findings,
                 "nominal_print_scale_text": []}
     bubbles, label_runs = _bubbles(runs, segs, raw)
-    chains = _chains(segs)
+    chains = _chains(segs, runs)
     rects = _rects(raw)
     label, _, _ = _views((page.rect.width, page.rect.height), segs, paths)
     nominal = [{"text": r.text, "bbox": list(r.bbox), "used_for_calibration": False}
@@ -444,26 +488,59 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
     # text along each span
     usable = [(i, r) for i, r in enumerate(runs) if i not in label_runs and i not in level_runs]
     claimed: set[int] = set()
+    # A label that licenses missing geometry cannot be replaced or stolen by
+    # another span's proximity heuristic. Retain source-run identity, not text
+    # equality: repeated numeric labels are distinct evidence.
+    authorizers = {i for ch in chains for _, _, i in ch["bridges"]}
     spans = []
     for ch in chains:
         for a, b in zip(ch["ticks"], ch["ticks"][1:]):
-            spans.append({"orientation": ch["orientation"], "coord": ch["coord"], "a": a, "b": b})
+            spans.append({"orientation": ch["orientation"], "coord": ch["coord"], "a": a, "b": b,
+                          "bridges": [g for g in ch["bridges"] if g[0] < b and a < g[1]]})
+
+    def strict_hits(sp: dict[str, Any], near_side: bool) -> list[tuple[float, int]]:
+        return sorted((g, i) for i, r in usable if i not in authorizers
+                      for g in [_span_gap(sp, r, 0.0, near_side)] if g is not None)
+
+    def owner_run(sp: dict[str, Any]) -> int | None:
+        # The run a span would take by the strict rule (near side first).
+        hits = strict_hits(sp, True) or strict_hits(sp, False)
+        return hits[0][1] if hits else None
+
+    owners: dict[int, set[int]] = {}
+    for k, o in enumerate(spans):
+        if not o["bridges"] and (run := owner_run(o)) is not None:
+            owners.setdefault(run, set()).add(k)
+    id_of = {id(o): k for k, o in enumerate(spans)}
 
     def candidates(sp: dict[str, Any], near_side: bool) -> list[tuple[float, int]]:
-        hits = []
+        if sp["bridges"]:
+            # Multiple labels or an interruption crossing a tick cannot prove
+            # one span value. Never fall back to unrelated nearby annotation.
+            if len(sp["bridges"]) != 1:
+                return []
+            lo, hi, index = sp["bridges"][0]
+            if sp["a"] <= lo and hi <= sp["b"] and any(i == index for i, _ in usable):
+                return [(0.0, index)]
+            return []
+        strict, padded = [], []
         for i, r in usable:
-            cx, cy = R._center(r.bbox)
-            if sp["orientation"] == "horizontal":
-                if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] < cx < sp["b"]):
-                    continue
-                gap = sp["coord"] - cy if near_side else cy - sp["coord"]
-            else:
-                if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] < cy < sp["b"]):
-                    continue
-                gap = sp["coord"] - cx if near_side else cx - sp["coord"]
-            if 0 < gap <= 2.5 * r.size:
-                hits.append((gap, i))
-        return sorted(hits)
+            if i in authorizers:
+                continue
+            # R1: CAD moves labels outside tiny spans to keep them legible.
+            # Preserve the strict two-em cutoff and all perpendicular/identity guards.
+            padding = 2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0
+            gap = _span_gap(sp, r, 0.0, near_side)
+            if gap is not None:
+                strict.append((gap, i))
+                continue
+            gap = _span_gap(sp, r, padding, near_side) if padding else None
+            # A label that another span owns by the strict rule is never a
+            # padded candidate here (its own span keeps it; review P1 #1332).
+            if gap is not None and not (owners.get(i, set()) - {id_of[id(sp)]}):
+                padded.append((gap, i))
+        # A strict in-span hit always beats a padded one.
+        return sorted(strict) or sorted(padded)
 
     first = [candidates(sp, True) for sp in spans]
     reserved = {h[0][1] for h in first if h}

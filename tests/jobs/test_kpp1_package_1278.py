@@ -69,6 +69,10 @@ def test_copy_snapshot_reproducible_and_never_delivery_pass(tmp_path):
                     else:
                         assert old.read(member) == new.read(member)
         receipt = json.loads((out / 'assembly.json').read_text())
+        assert receipt['decision'] == 'D285'
+        decision_row = next(line for line in (ROOT / 'docs/decisions.md').read_text(encoding='utf-8').splitlines()
+                            if line.startswith('| D285 |'))
+        assert 'KPP1 #1278' in decision_row
         assert receipt['passed'] is False
         for line in (out / 'SHA256SUMS.txt').read_text().splitlines():
             digest, name = line.split('  ', 1)

@@ -51,6 +51,8 @@ Reproduction ( `pdf-review` is an optional extra, not a dependency group):
 C1/[D010], C6, C7, C8, C11, C14, C17, C19, C21, C26, C29, C33 are referenced. Decided 2026-10-16 [D135] (user Artem): conflict #39 ([C39](../conflicts.md#npm-vpm-plan-rotation-after-reset)) clarifies that both NPM and VPM require transform rotation 0 after reset; modeling starts in world X/Y, final placement rotates geometry to the DWG OKS contour, and reset bakes the plan angle into vertex positions.
 
 ## L2 gaps
+Accepted NPM/OKS route and thin `agr` aliases: [D271], [routes/npm-oks.md](../../../routes/npm-oks.md). No new derivation implementation or delivery acceptance is implied.
+KPP1 benchmark adapter authorization: [D280]; geometry-preserving recovery from the pinned R1 FBX is not a quad-master or delivery certificate. Protocol and measured diagnostic outcome: [benchmark #1](../../research/bench-npm-derivation.md).
 
 - **DER-02:** profile-symmetric content inventory (both exports vs source); manual V015 today.
 - **DER-08:** NPM georeference in Moscow coordinates and heights (V014).

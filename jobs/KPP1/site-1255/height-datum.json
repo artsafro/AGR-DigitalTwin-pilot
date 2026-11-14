@@ -1,0 +1,16 @@
+{
+  "coordinate_system": "MSK-77",
+  "project_zero_m": 171.05,
+  "height_system": "unknown",
+  "height_source": {
+    "file": "26_КПП1_АР_МЭП_RVT22.rvt",
+    "locator": "level отм. 0,000; cached jobs/KPP1/object.json; selected by D262"
+  },
+  "project_zero_fbx_z_m": 0.0,
+  "project_zero_fbx_source": {
+    "file": "jobs/KPP1/site-1255/REPORT.md",
+    "locator": "Applied transform: VPM p = Rz(theta) * p_R1, relative Z; GeoJSON heights R1 section"
+  },
+  "source": {"kind": "model", "reference": "jobs/KPP1/site-1255/REPORT.md; D262"},
+  "status": "proposed"
+}

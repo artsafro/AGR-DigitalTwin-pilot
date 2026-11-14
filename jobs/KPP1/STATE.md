@@ -56,6 +56,9 @@ SINTEZ diagnostic (private Blender 5.1.2, process exit 0, error=null): **HP 64 v
 VPM texture/GeoJSON and NPM glass defects fixed; missing-input checks not weakened.
 No acceptance of new geometry, publication, source modification or live Max use.
 
+Prior merged placement run: `issue-1255-site-v004`; site-1255/REPORT.md (D262), based on rerun-1244 (D256); passed=false.
+Source contract: sources.json (asset-store DWGs + cached Revit object.json); R1 dimensions final D254; TASK.md indexes contract answers.
+Gate authority: job.yaml tracks open gates; visual waits-user, checker waits-visual, final AGR Tools waits-max; missing Ground/attributes and survey/manual checks remain. This #1305 branch is not merged evidence.
 
 # KPP1 (Центральная проходная) — VPM + NPM model, 2026-10-07
 

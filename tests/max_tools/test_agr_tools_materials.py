@@ -163,6 +163,42 @@ def test_table_midpoly_ids_dense_and_report(lib):
     jsonschema.validate(table, schema['properties']['materials'])
 
 
+def test_table_multiple_glass_ids_share_1001_preserves_body_and_delivery_ids(lib):
+    # Synthetic second glass record; the production library is not changed.
+    library = dict(lib, by_id=dict(lib['by_id']))
+    library['by_id'][40] = dict(lib['by_id'][39], library_id=40, key='glass_test_02')
+    items = _items(('GLASS_x', 'glass', [40, 39]), ('BODY_x', 'body', [31, 3, 12, 7]))
+    entries, table, multisub, skipped = ml.table_plan(ec, items, library)
+    assert all(not e['findings'] for e in entries) and not skipped
+    assert ml.udim_tables(table) == {
+        'GLASS_x': {39: 1001, 40: 1001},
+        'BODY_x': {3: 1001, 7: 1002, 12: 1003, 31: 1004},
+    }
+    assert [(r['library_id'], r['delivery_id']) for r in table if r['mesh'] == 'GLASS_x'] == [(39, 1), (40, 2)]
+    assert [m['id'] for m in multisub] == [3, 7, 12, 31, 39, 40]
+    rep = ml.report(ec, 'preview', entries, table, multisub, skipped, library, state_hash='synthetic')
+    assert rep['status'] == 'pass' and rep['plan']['table'] == table
+
+
+@pytest.mark.parametrize('mask', range(1, 64))
+def test_table_glass_generated_subsets_preserve_all_ids(lib, mask):
+    candidates = [1, 7, 39, 40, 999, 1000]
+    ids = [lid for bit, lid in enumerate(candidates) if mask & (1 << bit)]
+    library = dict(lib, by_id=dict(lib['by_id']))
+    for lid in ids:
+        library['by_id'][lid] = dict(lib['by_id'][39], library_id=lid, key='glass_test_{}'.format(lid))
+    items = _items(('GLASS_probe', 'glass', reversed(ids)))
+    before = json.dumps(items, sort_keys=True)
+    entries, table, multisub, skipped = ml.table_plan(ec, items, library)
+    assert all(not e['findings'] for e in entries) and not skipped
+    assert ml.udim_tables(table) == {'GLASS_probe': {lid: 1001 for lid in ids}}
+    assert [r['delivery_id'] for r in table] == list(range(1, len(ids) + 1))
+    assert [m['id'] for m in multisub] == ids
+    assert json.dumps(items, sort_keys=True) == before
+    assert ml.table_plan(ec, items, library)[1] == table  # repeat/reset without stale state
+    assert ml.udim_tables(json.loads(json.dumps(table))) == {'GLASS_probe': {lid: 1001 for lid in ids}}
+
+
 @pytest.mark.parametrize('spec,code,ids', [
     (('BODY_Udim_001', 'body', [3, 1005]), 'udim_id_on_geometry', [1005]),
     (('BODY_Unknown_001', 'body', [3, 999]), 'id_not_in_library', [999]),

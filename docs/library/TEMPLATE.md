@@ -62,7 +62,18 @@ object world transforms are identity. No unapplied modifiers, constraints, paren
 linked libraries, animation/drivers, shape keys (including inactive/Basis keys),
 hidden objects/collections, cameras, labels, helpers,
 loose geometry, duplicate faces, zero-area triangles, unused slots or orphan datablocks.
-Required parts are explicitly listed in the catalogue. Materials are used; dependencies are
+Required parts are explicitly listed in the catalogue. No color attributes, extra generic
+attributes, hidden polygons/edges/vertices, or custom properties on objects/meshes/materials.
+The only custom-property exception is material `agr_material_id` (validated against the
+catalogue). Mesh attribute whitelist is exact name/type/domain: `position` FLOAT_VECTOR/POINT,
+`.edge_verts` INT32_2D/EDGE, `.corner_vert` and `.corner_edge` INT/CORNER,
+`material_index` INT/FACE, `sharp_face` BOOLEAN/FACE, `sharp_edge` BOOLEAN/EDGE,
+`.select_vert` BOOLEAN/POINT, `.select_edge` BOOLEAN/EDGE, `.select_poly` BOOLEAN/FACE,
+and the UV layer's own FLOAT2/CORNER attribute. Selection and sharpness describe native
+editing/shading state; a dot prefix alone never grants an exception. There is no asset-supplied
+whitelist. Native readback reports each extra by owner/name or hidden element index;
+missing/malformed extras inventory fails closed.
+Materials are used; dependencies are
 local and packed (no external image paths). One finite UV layer per mesh; no claim of texel
 compliance, atlas packing or botanical accuracy follows from that check.
 
