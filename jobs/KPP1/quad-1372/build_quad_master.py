@@ -441,6 +441,36 @@ def _dedupe(bm, log=None):
     return len(dup), area
 
 
+def _check_plan(plan):
+    """Fail closed on a malformed zone plan: every number finite, axis 0..2, spread <= 5 mm, face ids unique ints."""
+    def finite(x):
+        return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+    n = plan.get('faces_count')
+    if not isinstance(n, int) or isinstance(n, bool) or n <= 0:
+        raise ValueError(f'plan faces_count {n!r} is not a positive int')
+    seen = set()
+    for k, z in enumerate(plan['zones']):
+        if z.get('axis') not in (0, 1, 2) or isinstance(z.get('axis'), bool):
+            raise ValueError(f"zone {k}: axis {z.get('axis')!r} not in 0..2")
+        if not finite(z.get('value')):
+            raise ValueError(f"zone {k}: plane value {z.get('value')!r} is not finite")
+        s = z.get('spread_m')
+        if not finite(s) or s < 0 or s > MERGE_MAX_M + 1e-5:
+            raise ValueError(f'zone {k}: spread {s!r} m outside 0..{MERGE_MAX_M} m')
+        for key in ('lo', 'hi'):
+            if len(z.get(key) or ()) != 3 or not all(finite(c) for c in z[key]):
+                raise ValueError(f'zone {k}: {key} is not 3 finite numbers')
+        faces, cents = z.get('faces') or [], z.get('centroids') or []
+        if not faces or len(faces) != len(cents):
+            raise ValueError(f'zone {k}: faces and centroids missing or of different length')
+        for f, c in zip(faces, cents):
+            if not isinstance(f, int) or isinstance(f, bool) or not 0 <= f < n or f in seen:
+                raise ValueError(f'zone {k}: face id {f!r} invalid or repeated')
+            if len(c) != 3 or not all(finite(x) for x in c):
+                raise ValueError(f'zone {k}: centroid of face {f} is not 3 finite numbers')
+            seen.add(f)
+
+
 def union_zones(obj, plan):
     """R1 overlap zones (plan_union_zones.py) -> union of the touching solids, same look (#1372, user decision).
 
@@ -667,6 +697,7 @@ def main(root, version='v001', zones_path=None):
         plan = json.loads(zones_path.read_text())
         if plan.get('source_sha256') != SOURCE_SHA or plan.get('part') != 'SM_Kpp_1_Main' or not plan.get('zones'):
             raise ValueError(f'{zones_path}: not a union plan of the approved R1 SM_Kpp_1_Main')
+        _check_plan(plan)
     suffix = '' if version == 'v001' else f'-{version}'
     out_blend, out_fbx, report = (root / f'master-quad-{version}.blend', root / f'SM_Kpp_1.quad-{version}.fbx',
                                   root / f'quad-build{suffix}.json')
