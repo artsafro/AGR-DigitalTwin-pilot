@@ -273,8 +273,7 @@ def test_kpp1_source_registry_matches_cold_run_manifest():
 def test_kpp1_job_declares_its_manifest():
     job = p._read(ROOT / "jobs/KPP1/job.yaml")
     declared = [ref for ref in job["inputs"] if ref.get("manifest") == TAG]
-    assert [ref["path"] for ref in declared] == ["jobs/KPP1/cold-run-1172/inputs-manifest.json",
-                                                 "jobs/KPP1/rerun-1209/inputs-v001.json"]
+    assert [ref["path"] for ref in declared] == ["jobs/KPP1/sources.json"]
 
 
 def test_every_manifest_shaped_kpp1_input_is_declared():
@@ -282,7 +281,7 @@ def test_every_manifest_shaped_kpp1_input_is_declared():
     job = p._read(ROOT / "jobs/KPP1/job.yaml")
     refs = [*job["inputs"], *job["gates"]["inputs"]["evidence"]]
     shaped = {ref["path"] for ref in refs if p._is_manifest((ROOT / ref["path"]).read_bytes())}
-    assert shaped == {"jobs/KPP1/cold-run-1172/inputs-manifest.json", "jobs/KPP1/rerun-1209/inputs-v001.json"}
+    assert shaped == {"jobs/KPP1/sources.json"}
     assert all(ref.get("manifest") == TAG for ref in refs if ref["path"] in shaped)
 
 
@@ -296,7 +295,7 @@ def test_kpp1_walk_inputs_gate_has_no_error_fresh_process(tmp_path):
     assert inputs["errors"] == [] and walk["errors"] == []
     assert inputs["status"] == "review" and walk["passed"] is False and proc.returncode == 1
     manifests = {row["manifest"] for row in inputs["external_inputs"]}
-    assert "jobs/KPP1/rerun-1209/inputs-v001.json" in manifests
+    assert manifests == {"jobs/KPP1/sources.json"}
 
 
 def test_procedure_documents_store_lf_and_fresh_walk():

@@ -11,5 +11,8 @@
   {"path": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg", "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469", "location": "asset-store", "folder": "G:/Мой диск/AGR-assets/KPP1/source/", "kind": "customer-source", "original_path": "C:/Users/artsafro/Downloads/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg", "sheet": "L03 plan at 0.000", "units": "mm ($INSUNITS 4)", "role": "plan contour (plan_from_dxf, hatch)"},
   {"path": "G:/Мой диск/AGR-assets/tec26/album/TEC26_na_RR_1.pptx", "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac", "location": "asset-store", "folder": "G:/Мой диск/AGR-assets/tec26/album/", "sheet": "ИД slides 25-30 (STATE.md)", "units": "n/a (images)", "role": "finish bands, cassette module, RAL", "kind": "customer-source"}
  ],
+ "repo_inputs": [
+  {"path": "jobs/KPP1/object.json", "sha256": "a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c", "kind": "cached-revit-observation", "units": "m", "role": "Levels 0.000/3.900/7.909 and Revit frame; R1 authority D238/D254. Original RVT hash unavailable, not a fresh RVT readback. Repository files are direct job.yaml inputs, not absolute external-manifest files."}
+ ],
  "synthetic": false
 }
