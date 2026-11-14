@@ -267,7 +267,8 @@ def run(args):
         (partial / 'before-after.json').write_text(json.dumps(manifest, indent=2, ensure_ascii=False),
                                                    encoding='utf-8')
         sums = [f'{sha256(p)}  {p.name}' for p in sorted(partial.iterdir()) if p.is_file()]
-        (partial / 'SHA256SUMS.txt').write_text('\n'.join(sums) + '\n', encoding='utf-8')
+        # LF only: Path.write_text would emit CRLF on Windows and break `sha256sum -c`.
+        (partial / 'SHA256SUMS.txt').write_bytes(('\n'.join(sums) + '\n').encode('utf-8'))
         if output.exists():
             raise BeforeAfterError(f'output appeared during the run (never overwritten): {output}')
         partial.rename(output)

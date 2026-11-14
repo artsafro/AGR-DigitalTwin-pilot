@@ -187,6 +187,7 @@ def test_cli_writes_labelled_pair(tmp_path, inputs, monkeypatch):
     from PIL import Image
     pair = Image.open(output / 'before-after.png')
     assert pair.width >= 80 and pair.height > 25
+    assert b'\r' not in (output / 'SHA256SUMS.txt').read_bytes(), 'sha256sum -c needs LF lines'
     sums = (output / 'SHA256SUMS.txt').read_text(encoding='utf-8')
     assert 'before-after.png' in sums and 'before.png' in sums
     assert not output.with_name(output.name + '.partial').exists()
