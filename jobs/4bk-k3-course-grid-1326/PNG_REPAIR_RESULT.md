@@ -1,7 +1,7 @@
 # Independent PNG repair and exported checkpoint (#1326)
 
 **NOT passed; no PR, replication or final delivery.** Continuation after `814da726`.
-The four original staircase xView faces remain an explicit baseline [D292]; no
+The four original staircase xView faces remain an explicit baseline [D296]; no
 extra brick trimming below protected metal, no ID7 change. Prior seam permissions
 and v014 Diffuse-direction acceptance remain settled; do not ask those again.
 
@@ -38,7 +38,7 @@ with seals and paths in `png-repair-checkpoint-v048.json`.
 | FBX readback | **4,972/4,972** cyclic XYZ/UV/material matches; both objects; **0** unmatched native faces | UV max delta **0**, XYZ max **10.884011 µm**; one UV channel each |
 | FBX transforms | Stair scale 1, wall scale 0.9999999404/1/0.9999999404; source wall orientation retained | Not claimed reset delivery transforms; this is a pilot export |
 | Exported wall xView | **0** overlapping faces / **0** overlapping vertices / **0** bow-ties | Fresh FBX, not historical native QA |
-| Exported staircase xView | Original **4** faces, **0** overlapping vertices/bow-ties | Explicit baseline [D292], **not global xView pass** |
+| Exported staircase xView | Original **4** faces, **0** overlapping vertices/bow-ties | Explicit baseline [D296], **not global xView pass** |
 | Target directional density | **3,792/3,792** triangles legal; **512.000304231–514.161132363 px/m** | Frozen target 512.1, no density fallback |
 | p5 / p50 / p95 | **512.094296773 / 512.100007001 / 512.110141622** | Native v043 readback |
 | Spread / anisotropy | `(p95-p5)/p50` **0.0000309409271**, max **1.004201523** | Within 2% / 1.02 |
@@ -147,6 +147,6 @@ answer, finish the in-scope mask semantics/remaining geometry repairs and all-ma
 readback. Correct DirectX-green display conversion is needed in Blender preview
 (the v045 comparison adds it in memory; the saved scene still has the earlier
 preview connection). Preserve artifact versions; use v049+ for new production.
-Then final picture/metrics, merge current main (no rebase), recheck D293/D292,
+Then final picture/metrics, merge current main (no rebase), recheck D293/D296,
 full suite **once through suite_slot.py**, eval receipt and path/invariant hostile
 probes, push, one PR, and dt-reviewer. No global delivery QA pass is implied.

@@ -97,6 +97,12 @@ approval)? This is NOT the already answered neutral-versus-relief question.
 
 ## Verification and continuation
 
+Pre-push collision repair: the earlier source-stair baseline identifier D292 was
+also allocated by external PR #1395. Current row/citations are mechanically D296;
+`next` returned D296 across main + two open PR heads, exact PR search and other
+active reservation scan each returned zero. Historical sealed evidence keeps its
+old spelling. The baseline content and source geometry did not change.
+
 - `8de88274` RED: source sampler absent; `8f01134f` GREEN.
 - `bb104610` RED: all-map reuse audit absent; `4d879490` GREEN.
 - The initial sampler assertion compared exact least-squares floats; it exposed
@@ -125,4 +131,4 @@ DirectX green link, final export/readback and final picture. Then finalize the
 reusable executable driver, merge current main without rebase, reconcile reserved
 D-ids, one slotted full suite, author/eval/hostile receipts, push, one PR and review.
 Earlier seam/cap/ring/visual-direction decisions and the four-face source stair
-baseline [D292] remain settled. Source/accepted files and protected ID7 stay untouched.
+baseline [D296] remain settled. Source/accepted files and protected ID7 stay untouched.

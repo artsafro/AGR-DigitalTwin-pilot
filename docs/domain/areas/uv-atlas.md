@@ -98,7 +98,7 @@ waiver. Manual gates and the NPM Ground gap remain; no full L2/L3 or delivery pa
 
 ## Notes
 
-The 4BK stylobate-only one-tile pilot [D293] follows the #1314 course-grid procedure; [its intake checkpoint](../../../jobs/4bk-k3-course-grid-1326/INTAKE.md) records source-face mapping and pending gates, not a delivery pass. Its four original staircase xView faces at the protected metal/brick junction remain an explicit source baseline, with no extra brick trim or ID7 change [D292]; this is not a global xView pass.
+The 4BK stylobate-only one-tile pilot [D293] follows the #1314 course-grid procedure; [its intake checkpoint](../../../jobs/4bk-k3-course-grid-1326/INTAKE.md) records source-face mapping and pending gates, not a delivery pass. Its four original staircase xView faces at the protected metal/brick junction remain an explicit source baseline, with no extra brick trim or ID7 change [D296]; this is not a global xView pass.
 
 The pilot must restore the original panel-joint relief/bevel in Normal, not a flat neutral band [D295]. Its [source-bound Normal checkpoint](../../../jobs/4bk-k3-course-grid-1326/NORMAL_RESTORE_GATE.md) keeps the wider bevel-support/topology permission and final all-map measurements open; it is not acceptance.
 
