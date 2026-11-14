@@ -133,6 +133,45 @@ def test_json_write_preserves_temp_sentinel(tmp_path):
     assert sentinel.read_bytes() == b'keep'
 
 
+def test_extraction_rejects_racing_writer(tmp_path, monkeypatch):
+    archive, dest = tmp_path / 'source.zip', tmp_path / 'out'
+    with zipfile.ZipFile(archive, 'w') as z:
+        z.writestr('asset.max', b'new')
+    makedirs = core.os.makedirs
+
+    def race(path, **kwargs):
+        makedirs(path, **kwargs)
+        (dest / 'asset.max').write_bytes(b'racing writer')
+
+    monkeypatch.setattr(core.os, 'makedirs', race)
+    with pytest.raises(FileExistsError):
+        core.extract_members(str(archive), str(dest), lambda _: True)
+    assert (dest / 'asset.max').read_bytes() == b'racing writer'
+
+
+@pytest.mark.parametrize('spelling', ['direct', 'relative', 'case', 'hardlink'])
+def test_input_alias_spellings_are_rejected(tmp_path, spelling):
+    archive = tmp_path / 'source.zip'
+    with zipfile.ZipFile(archive, 'w') as z:
+        z.writestr('source.zip', b'clobber')
+    dest = tmp_path
+    if spelling == 'relative':
+        dest = tmp_path / 'child' / '..'
+        (tmp_path / 'child').mkdir()
+    elif spelling == 'case':
+        if sys.platform != 'win32':
+            pytest.skip('Windows case alias')
+        dest = Path(str(tmp_path).swapcase())
+    elif spelling == 'hardlink':
+        dest = tmp_path / 'linked'
+        dest.mkdir()
+        (dest / 'source.zip').hardlink_to(archive)
+    before = archive.read_bytes()
+    with pytest.raises(ValueError, match='input'):
+        core.extract_members(str(archive), str(dest), lambda _: True)
+    assert archive.read_bytes() == before
+
+
 def test_all_assets_dependencies_ship():
     root = PKG.parents[2]
     spec = importlib.util.spec_from_file_location('refresh_builder', root / 'tools/max/build_agr_tools.py')
