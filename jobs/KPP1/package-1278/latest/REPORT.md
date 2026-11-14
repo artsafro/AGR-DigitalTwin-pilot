@@ -1,5 +1,22 @@
 # Current KPP1 package #1278 — latest R1 v003, NOT PASSED
 
+## Resumed current-main evidence (2026-11-14)
+
+Main 9d7753e1 merged without rebase; only our provisional decision is now [D285].
+D281 was returned by the allocation tool, but active card reservations occupied D281–D284;
+D285 was free on main/open PR heads and active-card comments before reservation.
+Current candidate is **package-v006**, with independent **repro-v006: 5/5 identical**.
+All ZIP/GeoJSON payloads are **3/3 byte-identical to package-v004**; only the assembly identity changes.
+Fresh current-main validator readback: both exit 1 / passed=false;
+[current checks, values, limits and owners](../resumed/CHECKS.md), raw JSON beside it.
+NPM stage findings unchanged; VPM only V013 changed after merged height validation.
+Original before/after and SINTEZ/xView below remain immutable v004 evidence, not reruns.
+Current-main exact-head full-suite receipt and 282 affected tests are reported in the PR.
+Approximate placement and unknown height system remain unchanged [D262]/[D279].
+All historical D267/D268 below denote provisional allocations, not current authority.
+
+## Historical v004/v005 measurement boundary
+
 This supersedes the historical package-v003 / R1-v002 report and tables one directory up.
 Current main was refreshed to bef05228, including #1246/#1289's newer R1 v003 corner pairs,
 #1240/#1287 and the new shared scene checks. No sibling branch was read or copied: only merged main.

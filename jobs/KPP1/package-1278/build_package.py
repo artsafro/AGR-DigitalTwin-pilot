@@ -1,4 +1,4 @@
-"""new-case: publish immutable KPP1 R1 placed-package copies under decision D268.
+"""new-case: publish immutable KPP1 R1 placed-package copies under decision D285.
 
 Usage: uv run python jobs/KPP1/package-1278/build_package.py SOURCE NEW_OUTPUT
 SOURCE is #1271's approved transform applied to latest rerun-1230 R1 v003;
@@ -188,7 +188,7 @@ def build(source, output):
         with (output / name).open('xb') as stream:
             stream.write(data)
     receipt = {
-        'decision': 'D268', 'source_decision': 'D262',
+        'decision': 'D285', 'source_decision': 'D262',
         'source_sha256': EXPECTED, 'placement': PLACEMENT,
         'zero_abs_m': 171.050, 'point_msk77': [8056.144, -9581.270],
         'ground': 'missing; Ground author',
