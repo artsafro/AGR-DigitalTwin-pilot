@@ -26,7 +26,7 @@
 | R1 master `SM_Kpp_1.fbx` (r1-v002) | `1f46b0dd…b676` (checked by both scripts) | `G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/`; copy in packet `source/` |
 | #1318 packet `packet-r1-v002` (spec, recipes, R1 adapter) | `packet-r1-v002.SHA256SUMS.txt` | `C:/x/bench-npm-kpp1/packet-r1-v002`, copied, never written |
 | R1 albedo `T_Kpp_1_001_Main_d_1.png` (renders only) | in evidence `SHA256SUMS.txt` | `C:/x/quad-1372/input/` |
-| Zone plan `union-zones.json` (generated from R1) | `47c7fa97…46f6` | packet + evidence + `union-zones-v002.json` here |
+| Zone plan `union-zones.json` (generated from R1) | `47c7fa97…46f6` | packet + evidence; `union-zones-v002.json` here is the same JSON with git LF line ends (other hash) |
 | Packet `packet-quad-v002-r6` | `packet-quad-v002-r6.SHA256SUMS.txt` (30 files) | `C:/x/quad-1372/packet-quad-v002-r6` |
 
 The v005 look renders, the delivered reference #1371, R6 (#1352) and the window generator (#1345) were not applied.
