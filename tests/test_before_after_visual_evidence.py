@@ -73,7 +73,8 @@ def test_capabilities_lists_the_helper():
 # ---------------------------------------------------------------- camera comparison
 
 CAM = {'type': 'ORTHO', 'matrix_world': [1.0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-       'lens': 50.0, 'ortho_scale': 30.0, 'sensor_width': 36.0, 'sensor_fit': 'AUTO',
+       'lens': 50.0, 'ortho_scale': 30.0, 'sensor_width': 36.0, 'sensor_height': 24.0, 'sensor_fit': 'AUTO',
+       'projection': [0.0667, 0, 0, 0, 0, 0.1067, 0, 0, 0, 0, -0.002, -1.0002, 0, 0, 0, 1],
        'shift_x': 0.0, 'shift_y': 0.0, 'clip_start': 0.1, 'clip_end': 1000.0,
        'resolution': [1600, 1000], 'pixel_aspect': [1.0, 1.0]}
 
@@ -85,7 +86,8 @@ def test_equal_cameras_pass():
 @pytest.mark.parametrize('key,value', [
     ('type', 'PERSP'), ('lens', 50.1), ('ortho_scale', 30.5), ('sensor_fit', 'VERTICAL'),
     ('shift_x', 0.01), ('clip_end', 999.0), ('resolution', [1600, 1001]),
-    ('pixel_aspect', [1.0, 2.0])])
+    ('pixel_aspect', [1.0, 2.0]), ('sensor_height', 48.0),
+    ('projection', [0.0334, 0, 0, 0, 0, 0.1067, 0, 0, 0, 0, -0.002, -1.0002, 0, 0, 0, 1])])
 def test_mismatched_camera_is_named(key, value):
     other = copy.deepcopy(CAM)
     other[key] = value
@@ -98,6 +100,23 @@ def test_mismatched_matrix_every_element():
         other = copy.deepcopy(CAM)
         other['matrix_world'][index] += 1e-3
         assert module.compare_cameras(CAM, other) == ['matrix_world'], index
+
+
+def test_mismatched_projection_every_element():
+    """Review r1 P1: any change of the effective projection (calc_matrix_camera) is a mismatch."""
+    module = load()
+    for index in range(16):
+        other = copy.deepcopy(CAM)
+        other['projection'][index] += 1e-3
+        assert module.compare_cameras(CAM, other) == ['projection'], index
+
+
+@pytest.mark.parametrize('key', ['sensor_height', 'projection'])
+def test_camera_record_without_projection_keys_is_refused(key):
+    other = copy.deepcopy(CAM)
+    del other[key]
+    with pytest.raises(ValueError, match=key):
+        load().compare_cameras(CAM, other)
 
 
 @pytest.mark.parametrize('bad', [float('nan'), float('inf'), None, 'x'])
@@ -313,3 +332,39 @@ def test_real_blender_named_mismatch_refused_and_fit_matches(tmp_path):
     manifest = json.loads((good / 'before-after.json').read_text(encoding='utf-8'))
     assert manifest['same_camera'] is True and manifest['camera']['type'] == 'ORTHO'
     assert all(math.isfinite(v) for v in manifest['camera']['matrix_world'])
+
+
+MAKE_SENSOR_SCENES = r'''
+import bpy, sys
+out = sys.argv[sys.argv.index('--') + 1:]
+for path, sensor_height in ((out[0], 24.0), (out[1], 48.0)):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0))
+    data = bpy.data.cameras.new('Shot')
+    data.type = 'PERSP'
+    data.sensor_fit = 'VERTICAL'
+    data.sensor_height = sensor_height
+    cam = bpy.data.objects.new('Shot', data)
+    bpy.context.scene.collection.objects.link(cam)
+    cam.location = (0, -10, 0)
+    cam.rotation_euler = (1.5707963, 0, 0)
+    bpy.ops.wm.save_as_mainfile(filepath=path)
+'''
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+def test_real_blender_named_sensor_height_mismatch_refused(tmp_path, capsys):
+    """Review r1 P1: same transform, sensor_fit VERTICAL, sensor_height 24 vs 48 = 2x FOV -> exit 2."""
+    module = load()
+    maker = tmp_path / 'make.py'
+    maker.write_text(MAKE_SENSOR_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'a.blend', tmp_path / 'b.blend'
+    subprocess.run([blender(), '--background', '--factory-startup', '--python-exit-code', '1',
+                    '--python', str(maker), '--', str(a), str(b)], check=True, capture_output=True)
+    bad = tmp_path / 'ev' / 'sensor'
+    assert module.main(argv(a, b, bad, '--camera-mode', 'named', '--camera-name', 'Shot',
+                            '--resolution', '320x200', '--style', 'solid')) == 2
+    err = capsys.readouterr().err
+    assert 'sensor_height' in err and 'projection' in err
+    assert not bad.exists() and not bad.with_name('sensor.partial').exists()
