@@ -1,0 +1,1311 @@
+{
+ "schema": "agr.assets.maf_measured/1",
+ "job": "20261107-113120-0acd53fb",
+ "note": "Max 2024 measurement of A101 MAF archives that ship without a sidecar (archive copies); tools/assets/max_measure_maf.py",
+ "measured": {
+  "Adanat_Anapa_10779.1a": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Adanat_Anapa_10779.1a",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Adanat_Anapa_10779.1a_high"
+     ],
+     "object_count": 1,
+     "tris": 2064,
+     "bbox": {
+      "x": 4509.9,
+      "y": 776.4,
+      "z": 998.2
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Adanat_Anapa_10779.1a_low"
+     ],
+     "object_count": 1,
+     "tris": 1534,
+     "bbox": {
+      "x": 4509.9,
+      "y": 776.4,
+      "z": 998.2
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": -0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Adanat_Anapa_10779.1a_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Adanat_Anapa_10779.1a_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Adanat_Anapa_10779.1a_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Adanat_Anapa_10779.1a_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Adanat_Anapa_10779.1a_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Adanat_Anapa_10779.1a_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Adanat_Anapa_10779.1a_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Adanat_Anapa_10779.1a_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Adanat_Anapa_10779.1a_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Adanat_Anapa_10779.1a_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 2064,
+    "low": 1534
+   }
+  },
+  "Igrateks_BalansirovochnayaKochka_0322T-3": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Igrateks_BalansirovochnayaKochka_0322T-3",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Igrateks_BalansirovochnayaKochka_0322T-3_high"
+     ],
+     "object_count": 1,
+     "tris": 344,
+     "bbox": {
+      "x": 600.0,
+      "y": 600.0,
+      "z": 795.4
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Igrateks_BalansirovochnayaKochka_0322T-3_low"
+     ],
+     "object_count": 1,
+     "tris": 208,
+     "bbox": {
+      "x": 600.0,
+      "y": 600.0,
+      "z": 791.0
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": -0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Igrateks_BalansirovochnayaKochka_0322T-3_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Igrateks_BalansirovochnayaKochka_0322T-3_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BalansirovochnayaKochka_0322T-3_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 344,
+    "low": 208
+   }
+  },
+  "Igrateks_BrevnaBalansirovocnye_0906T-4": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Igrateks_BrevnaBalansirovocnye_0906T-4",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Igrateks_BrevnaBalansirovocnye_0906T-4_high"
+     ],
+     "object_count": 1,
+     "tris": 920,
+     "bbox": {
+      "x": 4379.2,
+      "y": 2222.6,
+      "z": 2650.6
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Igrateks_BrevnaBalansirovocnye_0906T-4_low"
+     ],
+     "object_count": 1,
+     "tris": 440,
+     "bbox": {
+      "x": 4374.4,
+      "y": 2217.1,
+      "z": 2650.6
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": -0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Igrateks_BrevnaBalansirovocnye_0906T-4_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Igrateks_BrevnaBalansirovocnye_0906T-4_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_BrevnaBalansirovocnye_0906T-4_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 920,
+    "low": 440
+   }
+  },
+  "Igrateks_Brevno_0906T-5": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Igrateks_Brevno_0906T-5",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Igrateks_Brevno_0906T-5_high"
+     ],
+     "object_count": 1,
+     "tris": 750,
+     "bbox": {
+      "x": 4995.3,
+      "y": 3763.5,
+      "z": 1036.8
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Igrateks_Brevno_0906T-5_low"
+     ],
+     "object_count": 1,
+     "tris": 324,
+     "bbox": {
+      "x": 4994.0,
+      "y": 3752.9,
+      "z": 1036.8
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Igrateks_Brevno_0906T-5_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Igrateks_Brevno_0906T-5_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Igrateks_Brevno_0906T-5_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_Brevno_0906T-5_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_Brevno_0906T-5_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Igrateks_Brevno_0906T-5_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_Brevno_0906T-5_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_Brevno_0906T-5_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_Brevno_0906T-5_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_Brevno_0906T-5_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 750,
+    "low": 324
+   }
+  },
+  "Igrateks_PiramidaIzBreven_0906T-1": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Igrateks_PiramidaIzBreven_0906T-1",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Igrateks_PiramidaIzBreven_0906T-1_high"
+     ],
+     "object_count": 1,
+     "tris": 874,
+     "bbox": {
+      "x": 905.4,
+      "y": 1020.1,
+      "z": 870.6
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": -0.0,
+      "offset_y_mm": -0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Igrateks_PiramidaIzBreven_0906T-1_low"
+     ],
+     "object_count": 1,
+     "tris": 418,
+     "bbox": {
+      "x": 905.4,
+      "y": 1020.1,
+      "z": 870.6
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": -0.0,
+      "offset_y_mm": -0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Igrateks_PiramidaIzBreven_0906T-1_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Igrateks_PiramidaIzBreven_0906T-1_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Igrateks_PiramidaIzBreven_0906T-1_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 874,
+    "low": 418
+   }
+  },
+  "Mesto_IgrovoyKompleks_118030": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Mesto_IgrovoyKompleks_118030",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Mesto_IgrovoyKompleks_118030_high"
+     ],
+     "object_count": 1,
+     "tris": 26188,
+     "bbox": {
+      "x": 12666.4,
+      "y": 9632.0,
+      "z": 7979.0
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": -0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Mesto_IgrovoyKompleks_118030_low"
+     ],
+     "object_count": 1,
+     "tris": 18937,
+     "bbox": {
+      "x": 12666.4,
+      "y": 9632.0,
+      "z": 7979.0
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": -0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Mesto_IgrovoyKompleks_118030_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Mesto_IgrovoyKompleks_18030_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 26188,
+    "low": 18937
+   }
+  },
+  "Mesto_Kachalka_161100": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Mesto_Kachalka_161100",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Mesto_Kachalka_161100_high"
+     ],
+     "object_count": 1,
+     "tris": 2842,
+     "bbox": {
+      "x": 1861.4,
+      "y": 1783.3,
+      "z": 1025.8
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Mesto_Kachalka_161100_low"
+     ],
+     "object_count": 1,
+     "tris": 2842,
+     "bbox": {
+      "x": 1861.4,
+      "y": 1783.3,
+      "z": 1025.8
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": 0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Mesto_Kachalka_161100_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Mesto_Kachalka_161100_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Mesto_Kachalka_161100_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_161100_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_161100_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Mesto_Kachalka_161100_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_161100_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_161100_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_161100_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_161100_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 2842,
+    "low": 2842
+   }
+  },
+  "Mesto_Kachalka_170100": {
+   "schema": "measured-1",
+   "measured": true,
+   "name": "Mesto_Kachalka_170100",
+   "units": "mm",
+   "up_axis": "Z",
+   "versions": {
+    "high": true,
+    "low": true
+   },
+   "geometry": {
+    "high": {
+     "object_names": [
+      "Mesto_Kachalka_170100_high"
+     ],
+     "object_count": 1,
+     "tris": 2264,
+     "bbox": {
+      "x": 373.0,
+      "y": 678.1,
+      "z": 1125.4
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": -0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "low": {
+     "object_names": [
+      "Mesto_Kachalka_170100_low"
+     ],
+     "object_count": 1,
+     "tris": 2264,
+     "bbox": {
+      "x": 373.0,
+      "y": 678.1,
+      "z": 1125.4
+     },
+     "pivot": {
+      "above_bbox_base_mm": 200.0,
+      "offset_x_mm": -0.0,
+      "offset_y_mm": 0.0,
+      "inside_bbox": true
+     },
+     "transform": {
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "has_negative_scale": false,
+      "rotation_deg": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "materials": {
+    "high": [
+     {
+      "name": "M_Mesto_IgrovoyKompleks_118030_high",
+      "class": "Standardmaterial"
+     }
+    ],
+    "low": [
+     {
+      "name": "M_Mesto_Kachalka_170100_low",
+      "class": "Standardmaterial"
+     }
+    ]
+   },
+   "textures": {
+    "high": [
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_high_Diffuse.png",
+      "slot": "base_color",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_high_ERM.png",
+      "slot": "metalness",
+      "resolution": [
+       4096,
+       4096
+      ]
+     },
+     {
+      "file": "Mesto_IgrovoyKompleks_118030_high_Normal.png",
+      "slot": "bump",
+      "resolution": [
+       4096,
+       4096
+      ]
+     }
+    ],
+    "low": [
+     {
+      "file": "Mesto_Kachalka_170100_low_d.png",
+      "slot": "base_color",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_170100_low_m.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_170100_low_n.png",
+      "slot": "bump",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_170100_low_o.png",
+      "slot": "opacity",
+      "resolution": [
+       512,
+       512
+      ]
+     },
+     {
+      "file": "Mesto_Kachalka_170100_low_r.png",
+      "slot": "metalness",
+      "resolution": [
+       512,
+       512
+      ]
+     }
+    ]
+   },
+   "polycount": {
+    "high": 2264,
+    "low": 2264
+   }
+  }
+ }
+}
