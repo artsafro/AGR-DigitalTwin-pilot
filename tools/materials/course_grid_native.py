@@ -197,7 +197,7 @@ def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_fa
 
 
 def triangulate_conforming_polygon(points):
-    """Maximize the smallest triangle area while retaining EVERY boundary node.
+    """Maximize the worst aspect quality while retaining EVERY boundary node.
 
     No simplify, DCC-chosen diagonal, inserted centre or omitted collinear node.
     Return ordered corner indices; refuse a non-simple or zero-area polygon.
@@ -217,7 +217,8 @@ def triangulate_conforming_polygon(points):
                 if (i,k) not in result or (k,j) not in result:continue
                 tri=Polygon([points[i],points[k],points[j]])
                 if tri.area<=1e-12 or not tri.exterior.is_ccw or tri.difference(poly).area>max(1e-14,tri.area*1e-12):continue
-                quality=min(score[i,k],score[k,j],tri.area)
+                longest=max(math.dist(points[a],points[b])**2 for a in (i,k,j) for b in (i,k,j))
+                quality=min(score[i,k],score[k,j],tri.area/longest)
                 if quality>best:best=quality;chosen=result[i,k]+result[k,j]+[[i,k,j]]
             if chosen is not None:score[i,j]=best;result[i,j]=chosen
     if (0,n-1) not in result:raise ValueError('unrepresentable conforming triangulation')

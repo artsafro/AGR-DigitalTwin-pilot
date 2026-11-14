@@ -34,7 +34,7 @@ def test_source_endpoint_identity_and_t_junction_are_repaired_without_blind_weld
 def test_triangulation_avoids_skinny_diagonal_when_same_area_has_a_compact_ear():
     from tools.materials.course_grid_native import triangulate_conforming_polygon
     import math
-    points=[[0.,.01],[1.,.01],[1.01,0.],[1.,0.],[0.,0.]]
+    points=[[0.,0.],[1.,0.],[1.01,0.],[1.,.01],[0.,.01]]
     triangles=triangulate_conforming_polygon(points)
     def quality(t):
         from shapely.geometry import Polygon
