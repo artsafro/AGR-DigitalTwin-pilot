@@ -1,4 +1,7 @@
-"""Issue #1339: roof/parapet seam - R6 recipe step and the K01 evidence runner (jobs/KPP1/seam-1339)."""
+"""Issue #1339: roof/parapet seam - R6 recipe step and the K01 evidence runner (jobs/KPP1/seam-1339).
+
+Pattern: roof-inset-plane (tests of its R6 recipe step and evidence runner).
+"""
 import importlib.util
 import json
 import math
