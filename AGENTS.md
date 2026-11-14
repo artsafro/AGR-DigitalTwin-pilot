@@ -7,6 +7,7 @@ commands, identifiers and docs in English.
 A worker reads three things: this file, `docs/domain/areas/<area>.md`, and the card.
 Details: `docs/agents/agents-reference.md`.
 For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
+For Revit-source tasks read `routes/revit-intake.md` (read-only intake first, [D237]).
 
 ## Goal
 
