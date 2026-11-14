@@ -190,14 +190,22 @@ def native_piece_cells(piece):
                         continue
                     cells[i]=merged;cells.pop(j);changed=True;break
             if changed:break
-    out=[]
+    out=[];collapsed_native_cells=[]
     for cell in cells:
         points=np.asarray(orient(cell,sign=1).exterior.coords[:-1]);indices=[]
         for q in points:
             matches=np.flatnonzero(np.linalg.norm(xy-q,axis=1)<1e-10)
-            if len(matches)!=1:raise ValueError('unmapped/ambiguous native corner')
+            if not len(matches):raise ValueError('unmapped/ambiguous native corner')
+            if len(matches)>1 and max(np.linalg.norm(world[i]-world[matches[0]]) for i in matches)>1e-9:
+                raise ValueError('ambiguous native corner has distinct XYZ')
             indices.append(int(matches[0]))
-        out.append(dict(metadata,chart_m=points.tolist(),xyz=world[indices].tolist()))
+        canonical=xy[indices]
+        if len(set(indices))<3:
+            if cell.area>poly.length*1e-10:raise ValueError('collapsed native cell exceeds identity bound')
+            collapsed_native_cells.append(dict(area_m2=cell.area,reason='sub-nanometre proven XYZ identity'))
+            continue
+        out.append(dict(metadata,chart_m=canonical.tolist(),xyz=world[indices].tolist(),
+                        native_collapsed_cells=collapsed_native_cells,native_identity_bound_m=1e-9))
     if abs(sum(Polygon(c['chart_m']).area for c in out)-poly.area)>max(1e-12,poly.area*1e-10):raise ValueError('incomplete native tessellation')
     return out
 
