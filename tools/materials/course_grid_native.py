@@ -261,3 +261,56 @@ def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, group
         new.append(clean);sources.append(src);retained.append(fi)
     if set(sources)!=set(lineage):raise ValueError('coalescing loses source identity')
     return dict(vertices=out,faces=new,lineage=sources,input_face=retained,dropped=dropped,remap=remap,max_displacement_m=maximum)
+
+
+def joint_cross_section(face, expected_zones, observed_zones, origin, inward):
+    """Measure complete interval sets against independent face-clipped design.
+
+    A nominal owner-side centre may lie outside a thin/sloped face. At a crossing
+    the union can be wider than 10 mm. Neither is permission to omit a sample:
+    compare all expected/observed components and report the classification.
+    Empty required coverage and additional false intervals never pass.
+    """
+    from shapely.geometry import Polygon,LineString,Point
+    from shapely.ops import unary_union
+    def vector(value):
+        return isinstance(value,list) and len(value)==2 and all(not isinstance(x,bool) and isinstance(x,(int,float)) and math.isfinite(x) for x in value)
+    def polygon(value):
+        if not isinstance(value,list) or len(value)<3 or not all(vector(p) for p in value):raise ValueError('invalid joint polygon')
+        p=Polygon(value)
+        if not p.is_valid or p.area<=1e-12:raise ValueError('invalid joint surface')
+        return p
+    domain=polygon(face)
+    if not vector(origin) or not vector(inward):raise ValueError('invalid joint probe')
+    norm=math.hypot(*inward)
+    if norm==0:raise ValueError('zero joint normal')
+    normal=[x/norm for x in inward]
+    if not isinstance(expected_zones,list) or not expected_zones or not isinstance(observed_zones,list):raise ValueError('partial joint mask')
+    expected=unary_union([polygon(p) for p in expected_zones]).intersection(domain)
+    observed=unary_union([polygon(p) for p in observed_zones]).intersection(domain)
+    reach=max(math.dist(origin,p) for p in face)+.1
+    line=LineString([[origin[k]+sign*reach*normal[k] for k in (0,1)] for sign in (-1,1)])
+    def intervals(shape):
+        cut=shape.intersection(line)
+        parts=[cut] if cut.geom_type=='LineString' else list(getattr(cut,'geoms',[]))
+        out=[]
+        for part in parts:
+            if part.geom_type!='LineString' or part.length<=1e-10:continue
+            values=[sum((p[k]-origin[k])*normal[k] for k in (0,1)) for p in part.coords]
+            out.append([min(values),max(values)])
+        return sorted(out)
+    e=intervals(expected);a=intervals(observed);used=set();errors=[];endpoint_errors=[];missing=0
+    for lo,hi in e:
+        candidates=[i for i,(x,y) in enumerate(a) if i not in used and min(hi,y)>max(lo,x)]
+        if not candidates:missing+=1;continue
+        i=min(candidates,key=lambda i:abs(sum(a[i])/2-(lo+hi)/2));used.add(i)
+        x,y=a[i];errors.append(abs((x+y-lo-hi)/2)*1000);endpoint_errors.extend([abs(x-lo)*1000,abs(y-hi)*1000])
+    width=sum(hi-lo for lo,hi in e)*1000
+    classification='clipped' if width<9.98 else 'junction' if width>10.02 else 'single'
+    false=len(a)-len(used)
+    return dict(passed=bool(e) and missing==0 and false==0 and max(errors,default=math.inf)<=5 and max(endpoint_errors,default=math.inf)<=5,
+                classification=classification,expected_intervals_m=e,observed_intervals_m=a,
+                expected_width_mm=width,observed_width_mm=sum(hi-lo for lo,hi in a)*1000,
+                max_centre_error_mm=max(errors,default=None),max_endpoint_error_mm=max(endpoint_errors,default=None),
+                nominal_centre_outside_face=not domain.covers(Point([origin[k]+.005*normal[k] for k in (0,1)])),
+                missing_intervals=missing,false_intervals=false)

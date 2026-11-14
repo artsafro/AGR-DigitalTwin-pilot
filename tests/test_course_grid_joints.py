@@ -3,6 +3,18 @@ import pytest
 from tools.materials.course_grid_native import joint_cross_section
 
 
+def test_source_pixel_footprint_keeps_longitudinal_ends_and_empty_is_explicit():
+    from tools.materials.course_grid_native import source_joint_footprint
+    import numpy as np
+    image=np.full((16,16,3),255,dtype=np.uint8);image[:,4]=[40,32,32]
+    uv=[[0.,0.],[1.,0.],[1.,1.],[0.,1.]]
+    shape=source_joint_footprint(image,uv,uv)
+    assert shape.bounds==pytest.approx((.25,0,.3125,1))
+    assert shape.area==pytest.approx(.0625)
+    blank=np.full((16,16,3),255,dtype=np.uint8)
+    assert source_joint_footprint(blank,uv,uv).is_empty
+
+
 def test_clipped_thin_face_has_a_measurable_joint_not_a_missing_5mm_centre():
     face=[[0.,0.],[.003,0.],[.003,1.],[0.,1.]]
     zone=[[0.,0.],[.01,0.],[.01,1.],[0.,1.]]
