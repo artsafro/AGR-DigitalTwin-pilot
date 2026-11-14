@@ -325,6 +325,8 @@ def main(argv=None):
                     help="a 3ds Max window source (library/windows/sources/*.json); repeatable")
     ap.add_argument("--census-source", type=Path, action="append", default=[],
                     help="a job census source (library/windows/sources/*-census-*.json); repeatable")
+    ap.add_argument('--sashes', type=Path, action='append', default=[],
+                    help='reapply unconfirmed #246 sash readings AFTER the catalogue rebuild')
     ap.add_argument("--base", type=Path,
                     help="an existing window_types.json whose entries are kept as built (when the user-project inputs "
                          "are not on this machine); entries from the given census files are rebuilt")
@@ -340,6 +342,14 @@ def main(argv=None):
         raise SystemExit(f"confirmations file not found: {args.confirmations}")
     if not args.base and not all((args.type_map, args.library_v001, args.kpp1_twin, args.kpp1_spec)):
         raise SystemExit("give --type-map, --library-v001, --kpp1-twin and --kpp1-spec, or --base")
+    if args.sashes:
+        protected = [p for p in (args.base, args.type_map, args.library_v001, args.kpp1_twin,
+                                 args.kpp1_spec, args.confirmations) if p] + args.sashes + args.max_source + args.census_source
+        if any(args.output.resolve() == p.resolve() or
+               (args.output.exists() and p.exists() and args.output.samefile(p)) for p in protected):
+            raise SystemExit('--output aliases an input; sash rebuild requires a new output')
+        if args.output.exists():
+            raise SystemExit('--output exists; sash rebuild requires a new output')
     max_sources, prefixes = [], set()
     for src in args.max_source:                           # one id space per source (PR #43 review 1)
         source = json.loads(src.read_text(encoding="utf-8"))
@@ -380,8 +390,16 @@ def main(argv=None):
     types = dedupe(types)
     types = confirm(types, json.loads(args.confirmations.read_text(encoding="utf-8")))
     doc = {"schema": "window-types/1", "note": note, "types": types}
+    if args.sashes:
+        from window_sashes import apply_sashes, _repo_path
+        apply_sashes(doc, [(_repo_path(p), json.loads(p.read_text(encoding='utf-8'))) for p in args.sashes])
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    text = json.dumps(doc, ensure_ascii=False, indent=1) + '\n'
+    if args.sashes:
+        with args.output.open('x', encoding='utf-8', newline='\n') as stream:
+            stream.write(text)
+    else:
+        args.output.write_text(text, encoding='utf-8')
     print(f"window types: {len(types)} ({sum(t['status'] == 'confirmed' for t in types)} confirmed, "
           f"{sum(not t['typed'] for t in types)} not typed) -> {args.output}")
 

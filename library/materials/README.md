@@ -24,6 +24,13 @@ ID стабильны. Правка = новый `materials_vNNN.json` + нов�
 ## Карты
 
 Лежат на Google Диске `G:\Мой диск\AGR-assets\materials\`; читать только с копии (К5).
+Раскладка [D239]: `materials\v001\<library_id>\`, плейсхолдеры (NPM 128, VPM 256) `materials\placeholders\v001\`,
+флора `flora\v003\maps\<slug>\`. Опись — `maps_v001.json` (путь, sha256, размер, px/м или null, источник, вердикт
+качества); собирается `tools/materials/inbox_maps.py` по `maps_v001.spec.json`. Новые id 43–52 там же в
+`new_library_ids` — предложены, в таблицы ещё не внесены.
+`maps_v002.json` = строки v001 без изменений + новые наборы [D243]: свои текстуры сданных проектов (источник — путь
+и проект) и сгенерированные `tools/materials/texture_surfaces.py` (`synthetic: true`); профиль `d207` — мастер на
+целый период при 1000 px/м [D207], VPM/NPM — его ресэмплы. Новый id 53 (сосна) предложен.
 
 ## Вопросы аудита
 

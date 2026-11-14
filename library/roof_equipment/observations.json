@@ -1,0 +1,2546 @@
+{
+  "schema": "roof-observations/1",
+  "count_unit": "visually classified connected geometric component; NOT an assembled MEP-device count",
+  "precision": "import-world axis-aligned metres; independently controlled source dimensions unavailable; rotating a building changes XY bbox size",
+  "sources": [
+    {
+      "id": "G01",
+      "input": {
+        "id": "G01",
+        "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Alex_World\\pravki\\0707_Garibaldi_22\\0707_Garibaldi_22_01.fbx",
+        "copy": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d0a92d95\\tmp\\roof-research-v002\\inputs\\G01\\0707_Garibaldi_22_01.fbx",
+        "sha256": "fe3838b0f2a985045497015726dabdb2c62c05789ffdf571b81118a44fbe0d4c",
+        "profile": "npm",
+        "profile_authority": "LP/numbered NPM export or SM VPM naming; historic delivery candidate, not a new QA certificate"
+      },
+      "surface_triangles": 148186,
+      "ucx_objects": 0,
+      "ucx_triangles": 0,
+      "meshes": [
+        {
+          "name": "SM_Garibaldi_22_001_Main",
+          "triangles": 148186,
+          "bounds": [
+            [
+              2993.781005859375,
+              494.0380554199219,
+              211.01943969726562
+            ],
+            [
+              3139.681640625,
+              574.9672241210938,
+              270.4370422363281
+            ]
+          ],
+          "uv_layers": [
+            "Atlas_UV"
+          ],
+          "materials": [
+            "M_Garibaldi_22_001_Main_1"
+          ],
+          "ucx": false
+        }
+      ],
+      "census_sha256": "7e73f2f13c8c2f44ab027fb60c3d829480a1e36c78fa668bad141c15fbfdf17f",
+      "groups_sha256": "bdb24f0b2d66f4590fb174500d261b09db39b7411176433b026872495ad585a5",
+      "candidate_components": 494
+    },
+    {
+      "id": "G02",
+      "input": {
+        "id": "G02",
+        "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Alex_World\\pravki\\0707_Garibaldi_22\\0707_Garibaldi_22_02.fbx",
+        "copy": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d0a92d95\\tmp\\roof-research-v002\\inputs\\G02\\0707_Garibaldi_22_02.fbx",
+        "sha256": "124ffdcb1751cb09d3c2c8dd3bba05760e6e7e0ee8c529f9d70c632ac884ed65",
+        "profile": "npm",
+        "profile_authority": "LP/numbered NPM export or SM VPM naming; historic delivery candidate, not a new QA certificate"
+      },
+      "surface_triangles": 124452,
+      "ucx_objects": 0,
+      "ucx_triangles": 0,
+      "meshes": [
+        {
+          "name": "SM_Garibaldi_22_002_Main",
+          "triangles": 73306,
+          "bounds": [
+            [
+              3027.03369140625,
+              442.9339599609375,
+              210.4264678955078
+            ],
+            [
+              3110.364990234375,
+              502.315185546875,
+              252.19801330566406
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_Garibaldi_22_002_Main_1"
+          ],
+          "ucx": false
+        },
+        {
+          "name": "SM_Garibaldi_22_003_Main",
+          "triangles": 51146,
+          "bounds": [
+            [
+              3113.140869140625,
+              422.2889404296875,
+              209.35821533203125
+            ],
+            [
+              3155.517333984375,
+              463.4505615234375,
+              269.93878173828125
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_Garibaldi_22_003_Main_1"
+          ],
+          "ucx": false
+        }
+      ],
+      "census_sha256": "7ed902c94297770bd40d7264b32c2211cfc51804467dd5e2601b163b6a7c35e5",
+      "groups_sha256": "40d332941c4459c93d1f476ea68385208d7e0dee94386ffd1a92000f3a55c022",
+      "candidate_components": 517
+    },
+    {
+      "id": "OLY",
+      "input": {
+        "id": "OLY",
+        "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\Dima_Andrew\\maps\\SM_OlimpijskijPrKt_Vld_16_Str_4.fbx",
+        "copy": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d0a92d95\\tmp\\roof-research-v002\\inputs\\OLY\\SM_OlimpijskijPrKt_Vld_16_Str_4.fbx",
+        "sha256": "17c0885196c17ca179b7c8f3adb035515613b7257beb2aee68075cd90291a6e6",
+        "profile": "vpm",
+        "profile_authority": "LP/numbered NPM export or SM VPM naming; historic delivery candidate, not a new QA certificate"
+      },
+      "surface_triangles": 282723,
+      "ucx_objects": 916,
+      "ucx_triangles": 13688,
+      "meshes": [
+        {
+          "name": "SM_OlimpijskijPrKt_Vld_16_Str_4_Main",
+          "triangles": 276363,
+          "bounds": [
+            [
+              -30.39737892150879,
+              -73.52725219726562,
+              -7.635640621185303
+            ],
+            [
+              30.397371292114258,
+              73.52725982666016,
+              42.42585754394531
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_OlimpijskijPrKt_Vld_16_Str_4_001_Main_1"
+          ],
+          "ucx": false
+        },
+        {
+          "name": "SM_OlimpijskijPrKt_Vld_16_Str_4_MainGlass",
+          "triangles": 6360,
+          "bounds": [
+            [
+              -30.254167556762695,
+              -73.43325805664062,
+              -4.330136299133301
+            ],
+            [
+              30.34140968322754,
+              72.18656921386719,
+              39.85032653808594
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_OlimpijskijPrKt_Vld_16_Str_4_MainGlass_1"
+          ],
+          "ucx": false
+        }
+      ],
+      "census_sha256": "c143d02009a1b1e4e26033b6c0868514ae14bcc529876fe18c732ba13466a40e",
+      "groups_sha256": "b762a66273b29074e482c108e3960aac50fc585f89371c4ed7fabcb79e440d6d",
+      "candidate_components": 9061
+    },
+    {
+      "id": "SKO",
+      "input": {
+        "id": "SKO",
+        "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\NTR\\14_Skolkovo\\itog\\LP\\0809_BolshoyBulvar_64_01.fbx",
+        "copy": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d0a92d95\\tmp\\roof-research-v002\\inputs\\SKO\\0809_BolshoyBulvar_64_01.fbx",
+        "sha256": "fc75918665bc7469d6534d1bbcd8388f04906318c7679b4b58d911a3655a1598",
+        "profile": "npm",
+        "profile_authority": "LP/numbered NPM export or SM VPM naming; historic delivery candidate, not a new QA certificate"
+      },
+      "surface_triangles": 36005,
+      "ucx_objects": 0,
+      "ucx_triangles": 0,
+      "meshes": [
+        {
+          "name": "SM_BolshoyBulvar_64_001_Main",
+          "triangles": 35859,
+          "bounds": [
+            [
+              -10144.919921875,
+              2437.50390625,
+              182.2856903076172
+            ],
+            [
+              -10088.76171875,
+              2498.547119140625,
+              202.35543823242188
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_BolshoyBulvar_64_001_Main_1"
+          ],
+          "ucx": false
+        },
+        {
+          "name": "SM_BolshoyBulvar_64_001_MainGlass",
+          "triangles": 146,
+          "bounds": [
+            [
+              -10142.6708984375,
+              2443.514404296875,
+              187.23275756835938
+            ],
+            [
+              -10091.6640625,
+              2473.47216796875,
+              188.57357788085938
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_Glass_01"
+          ],
+          "ucx": false
+        }
+      ],
+      "census_sha256": "145eddaf69f9bfc55c735adde0ad7e1a7454ae127a26f4961d38aeaff1ecba23",
+      "groups_sha256": "d0fede27f484c90e0d7b82d28dd6b558a6b94508d7c877b640f991c956d70ce0",
+      "candidate_components": 366
+    },
+    {
+      "id": "VOL",
+      "input": {
+        "id": "VOL",
+        "source": "C:\\Users\\artsafro\\Desktop\\!3D viz\\NTR\\6\\0903_VolokolamskoeShosse_Vl_71_22_01.fbx",
+        "copy": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d0a92d95\\tmp\\roof-research-v002\\inputs\\VOL\\0903_VolokolamskoeShosse_Vl_71_22_01.fbx",
+        "sha256": "02f1ca6b0116d29ec7ce86e249e54354a9ceb01900269798de4d8385367a72c9",
+        "profile": "npm",
+        "profile_authority": "LP/numbered NPM export or SM VPM naming; historic delivery candidate, not a new QA certificate"
+      },
+      "surface_triangles": 72629,
+      "ucx_objects": 0,
+      "ucx_triangles": 0,
+      "meshes": [
+        {
+          "name": "SM_VolokolamskoeShosse_Vl_71_22_001_Main",
+          "triangles": 17672,
+          "bounds": [
+            [
+              -3711.065185546875,
+              17222.1953125,
+              126.5916519165039
+            ],
+            [
+              -3684.289306640625,
+              17265.375,
+              157.745849609375
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_VolokolamskoeShosse_Vl_71_22_001_Main_1"
+          ],
+          "ucx": false
+        },
+        {
+          "name": "SM_VolokolamskoeShosse_Vl_71_22_002_Main",
+          "triangles": 54957,
+          "bounds": [
+            [
+              -3711.172607421875,
+              17176.357421875,
+              126.59107971191406
+            ],
+            [
+              -3683.377197265625,
+              17222.650390625,
+              171.64756774902344
+            ]
+          ],
+          "uv_layers": [
+            "UVChannel_1"
+          ],
+          "materials": [
+            "M_VolokolamskoeShosse_Vl_71_22_002_Main_1"
+          ],
+          "ucx": false
+        }
+      ],
+      "census_sha256": "c225fc26ae4c7d6b0b1de1ab5277fecad1b546a0112fd27dd429aa0ffc78a4fb",
+      "groups_sha256": "1e36d8b3c66f091e992a4248afda200a0b30b1a51dced830b78c62c009f5e01a",
+      "candidate_components": 536
+    }
+  ],
+  "observations": [
+    {
+      "id": "G01-01",
+      "object": "G01",
+      "profile": "npm",
+      "type": "access_ladder",
+      "count_components": 10,
+      "triangle_range": [
+        220,
+        272
+      ],
+      "size_range_m": [
+        [
+          0.577392578125,
+          0.57537841796875,
+          4.89959716796875
+        ],
+        [
+          0.895751953125,
+          0.9005126953125,
+          4.89971923828125
+        ]
+      ],
+      "members": [
+        "G01-o0-c1858",
+        "G01-o0-c1859",
+        "G01-o0-c1895",
+        "G01-o0-c1896",
+        "G01-o0-c1902",
+        "G01-o0-c1903",
+        "G01-o0-c1915",
+        "G01-o0-c1916",
+        "G01-o0-c1923",
+        "G01-o0-c1924"
+      ]
+    },
+    {
+      "id": "G01-02",
+      "object": "G01",
+      "profile": "npm",
+      "type": "capped_polygon_vent",
+      "count_components": 25,
+      "triangle_range": [
+        64,
+        64
+      ],
+      "size_range_m": [
+        [
+          0.32958984375,
+          0.3145751953125,
+          0.621826171875
+        ],
+        [
+          0.329833984375,
+          0.314666748046875,
+          0.621856689453125
+        ]
+      ],
+      "members": [
+        "G01-o0-c1931",
+        "G01-o0-c1932",
+        "G01-o0-c1933",
+        "G01-o0-c1934",
+        "G01-o0-c1935",
+        "G01-o0-c1936",
+        "G01-o0-c1937",
+        "G01-o0-c1938",
+        "G01-o0-c1939",
+        "G01-o0-c1940",
+        "G01-o0-c1941",
+        "G01-o0-c1942",
+        "G01-o0-c1943",
+        "G01-o0-c1944",
+        "G01-o0-c1945",
+        "G01-o0-c1946",
+        "G01-o0-c1947",
+        "G01-o0-c1948",
+        "G01-o0-c1949",
+        "G01-o0-c1950",
+        "G01-o0-c1951",
+        "G01-o0-c1952",
+        "G01-o0-c1953",
+        "G01-o0-c1954",
+        "G01-o0-c1955"
+      ]
+    },
+    {
+      "id": "G01-03",
+      "object": "G01",
+      "profile": "npm",
+      "type": "flat_cap_or_shallow_box",
+      "count_components": 67,
+      "triangle_range": [
+        10,
+        12
+      ],
+      "size_range_m": [
+        [
+          0.90478515625,
+          0.90509033203125,
+          0.057342529296875
+        ],
+        [
+          4.15283203125,
+          4.8802490234375,
+          0.287506103515625
+        ]
+      ],
+      "members": [
+        "G01-o0-c136",
+        "G01-o0-c144",
+        "G01-o0-c145",
+        "G01-o0-c146",
+        "G01-o0-c147",
+        "G01-o0-c148",
+        "G01-o0-c149",
+        "G01-o0-c150",
+        "G01-o0-c151",
+        "G01-o0-c152",
+        "G01-o0-c153",
+        "G01-o0-c154",
+        "G01-o0-c155",
+        "G01-o0-c156",
+        "G01-o0-c157",
+        "G01-o0-c158",
+        "G01-o0-c159",
+        "G01-o0-c160",
+        "G01-o0-c161",
+        "G01-o0-c162",
+        "G01-o0-c163",
+        "G01-o0-c164",
+        "G01-o0-c165",
+        "G01-o0-c166",
+        "G01-o0-c167",
+        "G01-o0-c168",
+        "G01-o0-c169",
+        "G01-o0-c170",
+        "G01-o0-c171",
+        "G01-o0-c172",
+        "G01-o0-c173",
+        "G01-o0-c174",
+        "G01-o0-c175",
+        "G01-o0-c176",
+        "G01-o0-c177",
+        "G01-o0-c178",
+        "G01-o0-c181",
+        "G01-o0-c182",
+        "G01-o0-c183",
+        "G01-o0-c184",
+        "G01-o0-c185",
+        "G01-o0-c186",
+        "G01-o0-c187",
+        "G01-o0-c188",
+        "G01-o0-c189",
+        "G01-o0-c190",
+        "G01-o0-c191",
+        "G01-o0-c192",
+        "G01-o0-c193",
+        "G01-o0-c194",
+        "G01-o0-c195",
+        "G01-o0-c196",
+        "G01-o0-c197",
+        "G01-o0-c198",
+        "G01-o0-c199",
+        "G01-o0-c200",
+        "G01-o0-c201",
+        "G01-o0-c202",
+        "G01-o0-c203",
+        "G01-o0-c204",
+        "G01-o0-c205",
+        "G01-o0-c206",
+        "G01-o0-c207",
+        "G01-o0-c208",
+        "G01-o0-c209",
+        "G01-o0-c210",
+        "G01-o0-c211"
+      ]
+    },
+    {
+      "id": "G01-04",
+      "object": "G01",
+      "profile": "npm",
+      "type": "hipped_hood",
+      "count_components": 8,
+      "triangle_range": [
+        152,
+        152
+      ],
+      "size_range_m": [
+        [
+          1.941162109375,
+          1.976806640625,
+          0.5
+        ],
+        [
+          2.333251953125,
+          2.42236328125,
+          0.5
+        ]
+      ],
+      "members": [
+        "G01-o0-c1867",
+        "G01-o0-c1868",
+        "G01-o0-c1869",
+        "G01-o0-c1870",
+        "G01-o0-c1871",
+        "G01-o0-c1872",
+        "G01-o0-c1873",
+        "G01-o0-c1874"
+      ]
+    },
+    {
+      "id": "G01-05",
+      "object": "G01",
+      "profile": "npm",
+      "type": "low_polygon_aerator",
+      "count_components": 20,
+      "triangle_range": [
+        40,
+        40
+      ],
+      "size_range_m": [
+        [
+          0.3740234375,
+          0.3570556640625,
+          0.18212890625
+        ],
+        [
+          0.374267578125,
+          0.35711669921875,
+          0.18212890625
+        ]
+      ],
+      "members": [
+        "G01-o0-c1875",
+        "G01-o0-c1876",
+        "G01-o0-c1877",
+        "G01-o0-c1878",
+        "G01-o0-c1879",
+        "G01-o0-c1880",
+        "G01-o0-c1881",
+        "G01-o0-c1882",
+        "G01-o0-c1883",
+        "G01-o0-c1884",
+        "G01-o0-c1885",
+        "G01-o0-c1886",
+        "G01-o0-c1887",
+        "G01-o0-c1888",
+        "G01-o0-c1889",
+        "G01-o0-c1890",
+        "G01-o0-c1891",
+        "G01-o0-c1892",
+        "G01-o0-c1893",
+        "G01-o0-c1894"
+      ]
+    },
+    {
+      "id": "G01-06",
+      "object": "G01",
+      "profile": "npm",
+      "type": "open_shaft_body",
+      "count_components": 39,
+      "triangle_range": [
+        8,
+        8
+      ],
+      "size_range_m": [
+        [
+          1.164794921875,
+          1.165557861328125,
+          1.164215087890625
+        ],
+        [
+          3.739501953125,
+          4.46881103515625,
+          3.600677490234375
+        ]
+      ],
+      "members": [
+        "G01-o0-c12",
+        "G01-o0-c13",
+        "G01-o0-c14",
+        "G01-o0-c15",
+        "G01-o0-c16",
+        "G01-o0-c24",
+        "G01-o0-c25",
+        "G01-o0-c26",
+        "G01-o0-c27",
+        "G01-o0-c28",
+        "G01-o0-c29",
+        "G01-o0-c30",
+        "G01-o0-c31",
+        "G01-o0-c32",
+        "G01-o0-c33",
+        "G01-o0-c34",
+        "G01-o0-c35",
+        "G01-o0-c36",
+        "G01-o0-c37",
+        "G01-o0-c38",
+        "G01-o0-c39",
+        "G01-o0-c40",
+        "G01-o0-c41",
+        "G01-o0-c42",
+        "G01-o0-c44",
+        "G01-o0-c45",
+        "G01-o0-c46",
+        "G01-o0-c47",
+        "G01-o0-c48",
+        "G01-o0-c49",
+        "G01-o0-c50",
+        "G01-o0-c51",
+        "G01-o0-c52",
+        "G01-o0-c58",
+        "G01-o0-c62",
+        "G01-o0-c64",
+        "G01-o0-c67",
+        "G01-o0-c68",
+        "G01-o0-c70"
+      ]
+    },
+    {
+      "id": "G01-07",
+      "object": "G01",
+      "profile": "npm",
+      "type": "pitched_box_head",
+      "count_components": 12,
+      "triangle_range": [
+        20,
+        20
+      ],
+      "size_range_m": [
+        [
+          1.275146484375,
+          1.275665283203125,
+          1.399993896484375
+        ],
+        [
+          1.90673828125,
+          1.90765380859375,
+          1.493682861328125
+        ]
+      ],
+      "members": [
+        "G01-o0-c11",
+        "G01-o0-c1853",
+        "G01-o0-c1854",
+        "G01-o0-c2130",
+        "G01-o0-c2131",
+        "G01-o0-c2132",
+        "G01-o0-c2133",
+        "G01-o0-c2134",
+        "G01-o0-c2135",
+        "G01-o0-c2136",
+        "G01-o0-c2137",
+        "G01-o0-c2138"
+      ]
+    },
+    {
+      "id": "G01-08",
+      "object": "G01",
+      "profile": "npm",
+      "type": "plinth_shaft_body",
+      "count_components": 6,
+      "triangle_range": [
+        24,
+        24
+      ],
+      "size_range_m": [
+        [
+          2.08642578125,
+          2.08740234375,
+          1.508087158203125
+        ],
+        [
+          2.10595703125,
+          2.10687255859375,
+          1.673095703125
+        ]
+      ],
+      "members": [
+        "G01-o0-c55",
+        "G01-o0-c57",
+        "G01-o0-c59",
+        "G01-o0-c61",
+        "G01-o0-c63",
+        "G01-o0-c69"
+      ]
+    },
+    {
+      "id": "G01-09",
+      "object": "G01",
+      "profile": "npm",
+      "type": "railing_or_handrail_component",
+      "count_components": 118,
+      "triangle_range": [
+        10,
+        520
+      ],
+      "size_range_m": [
+        [
+          0.086669921875,
+          0.0867919921875,
+          0.019989013671875
+        ],
+        [
+          15.635498046875,
+          13.59991455078125,
+          0.800201416015625
+        ]
+      ],
+      "members": [
+        "G01-o0-c1997",
+        "G01-o0-c1998",
+        "G01-o0-c1999",
+        "G01-o0-c2000",
+        "G01-o0-c2001",
+        "G01-o0-c2002",
+        "G01-o0-c2003",
+        "G01-o0-c2004",
+        "G01-o0-c2005",
+        "G01-o0-c2006",
+        "G01-o0-c2007",
+        "G01-o0-c2008",
+        "G01-o0-c2009",
+        "G01-o0-c2010",
+        "G01-o0-c2011",
+        "G01-o0-c2012",
+        "G01-o0-c2013",
+        "G01-o0-c2014",
+        "G01-o0-c2015",
+        "G01-o0-c2016",
+        "G01-o0-c2017",
+        "G01-o0-c2018",
+        "G01-o0-c2019",
+        "G01-o0-c2020",
+        "G01-o0-c2021",
+        "G01-o0-c2022",
+        "G01-o0-c2023",
+        "G01-o0-c2024",
+        "G01-o0-c2025",
+        "G01-o0-c2026",
+        "G01-o0-c2027",
+        "G01-o0-c2028",
+        "G01-o0-c2029",
+        "G01-o0-c2030",
+        "G01-o0-c2031",
+        "G01-o0-c2032",
+        "G01-o0-c2033",
+        "G01-o0-c2034",
+        "G01-o0-c2035",
+        "G01-o0-c2036",
+        "G01-o0-c2037",
+        "G01-o0-c2038",
+        "G01-o0-c2039",
+        "G01-o0-c2040",
+        "G01-o0-c2041",
+        "G01-o0-c2042",
+        "G01-o0-c2043",
+        "G01-o0-c2044",
+        "G01-o0-c2045",
+        "G01-o0-c2046",
+        "G01-o0-c2047",
+        "G01-o0-c2048",
+        "G01-o0-c2049",
+        "G01-o0-c2050",
+        "G01-o0-c2051",
+        "G01-o0-c2052",
+        "G01-o0-c2053",
+        "G01-o0-c2054",
+        "G01-o0-c2055",
+        "G01-o0-c2056",
+        "G01-o0-c2057",
+        "G01-o0-c2058",
+        "G01-o0-c2059",
+        "G01-o0-c2060",
+        "G01-o0-c2061",
+        "G01-o0-c2062",
+        "G01-o0-c2063",
+        "G01-o0-c2064",
+        "G01-o0-c2065",
+        "G01-o0-c2066",
+        "G01-o0-c2067",
+        "G01-o0-c2068",
+        "G01-o0-c2069",
+        "G01-o0-c2070",
+        "G01-o0-c2071",
+        "G01-o0-c2072",
+        "G01-o0-c2073",
+        "G01-o0-c2074",
+        "G01-o0-c2075",
+        "G01-o0-c2076",
+        "G01-o0-c2077",
+        "G01-o0-c2078",
+        "G01-o0-c2079",
+        "G01-o0-c2080",
+        "G01-o0-c2081",
+        "G01-o0-c2082",
+        "G01-o0-c2083",
+        "G01-o0-c2084",
+        "G01-o0-c2085",
+        "G01-o0-c2086",
+        "G01-o0-c2087",
+        "G01-o0-c2088",
+        "G01-o0-c2089",
+        "G01-o0-c2090",
+        "G01-o0-c2091",
+        "G01-o0-c2092",
+        "G01-o0-c2093",
+        "G01-o0-c2094",
+        "G01-o0-c2095",
+        "G01-o0-c2096",
+        "G01-o0-c2097",
+        "G01-o0-c2098",
+        "G01-o0-c2099",
+        "G01-o0-c2100",
+        "G01-o0-c2101",
+        "G01-o0-c2102",
+        "G01-o0-c2103",
+        "G01-o0-c2104",
+        "G01-o0-c2105",
+        "G01-o0-c2106",
+        "G01-o0-c2107",
+        "G01-o0-c2108",
+        "G01-o0-c2109",
+        "G01-o0-c2110",
+        "G01-o0-c2111",
+        "G01-o0-c2112",
+        "G01-o0-c2113",
+        "G01-o0-c2114"
+      ]
+    },
+    {
+      "id": "G01-10",
+      "object": "G01",
+      "profile": "npm",
+      "type": "rimmed_shaft_body",
+      "count_components": 8,
+      "triangle_range": [
+        24,
+        32
+      ],
+      "size_range_m": [
+        [
+          1.421875,
+          1.45562744140625,
+          1.100006103515625
+        ],
+        [
+          1.772705078125,
+          1.77362060546875,
+          2.10003662109375
+        ]
+      ],
+      "members": [
+        "G01-o0-c56",
+        "G01-o0-c60",
+        "G01-o0-c65",
+        "G01-o0-c71",
+        "G01-o0-c72",
+        "G01-o0-c77",
+        "G01-o0-c79",
+        "G01-o0-c80"
+      ]
+    },
+    {
+      "id": "G01-11",
+      "object": "G01",
+      "profile": "npm",
+      "type": "roof_enclosure_body",
+      "count_components": 5,
+      "triangle_range": [
+        184,
+        304
+      ],
+      "size_range_m": [
+        [
+          11.4375,
+          12.373016357421875,
+          4.626739501953125
+        ],
+        [
+          16.928955078125,
+          17.439453125,
+          4.819366455078125
+        ]
+      ],
+      "members": [
+        "G01-o0-c563",
+        "G01-o0-c1849",
+        "G01-o0-c1850",
+        "G01-o0-c1851",
+        "G01-o0-c1852"
+      ]
+    },
+    {
+      "id": "G01-12",
+      "object": "G01",
+      "profile": "npm",
+      "type": "stepped_shaft_body",
+      "count_components": 3,
+      "triangle_range": [
+        34,
+        52
+      ],
+      "size_range_m": [
+        [
+          2.383056640625,
+          2.78729248046875,
+          2.689971923828125
+        ],
+        [
+          2.387939453125,
+          2.794921875,
+          3.097503662109375
+        ]
+      ],
+      "members": [
+        "G01-o0-c43",
+        "G01-o0-c76",
+        "G01-o0-c78"
+      ]
+    },
+    {
+      "id": "G02-01",
+      "object": "G02",
+      "profile": "npm",
+      "type": "access_ladder",
+      "count_components": 10,
+      "triangle_range": [
+        204,
+        220
+      ],
+      "size_range_m": [
+        [
+          0.565185546875,
+          0.88726806640625,
+          4.85589599609375
+        ],
+        [
+          0.575439453125,
+          0.8956298828125,
+          4.8997039794921875
+        ]
+      ],
+      "members": [
+        "G02-o0-c2",
+        "G02-o0-c3",
+        "G02-o0-c37",
+        "G02-o0-c38",
+        "G02-o0-c72",
+        "G02-o0-c73",
+        "G02-o1-c424",
+        "G02-o1-c425",
+        "G02-o1-c460",
+        "G02-o1-c461"
+      ]
+    },
+    {
+      "id": "G02-02",
+      "object": "G02",
+      "profile": "npm",
+      "type": "capped_polygon_vent",
+      "count_components": 24,
+      "triangle_range": [
+        130,
+        130
+      ],
+      "size_range_m": [
+        [
+          0.32958984375,
+          0.3297119140625,
+          0.621826171875
+        ],
+        [
+          0.3330078125,
+          0.332977294921875,
+          0.621856689453125
+        ]
+      ],
+      "members": [
+        "G02-o0-c149",
+        "G02-o0-c150",
+        "G02-o0-c151",
+        "G02-o0-c152",
+        "G02-o0-c153",
+        "G02-o0-c154",
+        "G02-o0-c155",
+        "G02-o0-c156",
+        "G02-o0-c157",
+        "G02-o0-c158",
+        "G02-o0-c159",
+        "G02-o0-c160",
+        "G02-o0-c161",
+        "G02-o0-c162",
+        "G02-o0-c164",
+        "G02-o1-c308",
+        "G02-o1-c309",
+        "G02-o1-c310",
+        "G02-o1-c311",
+        "G02-o1-c312",
+        "G02-o1-c313",
+        "G02-o1-c314",
+        "G02-o1-c315",
+        "G02-o1-c316"
+      ]
+    },
+    {
+      "id": "G02-03",
+      "object": "G02",
+      "profile": "npm",
+      "type": "flat_cap_or_shallow_box",
+      "count_components": 40,
+      "triangle_range": [
+        10,
+        12
+      ],
+      "size_range_m": [
+        [
+          0.906005859375,
+          0.905487060546875,
+          0.149993896484375
+        ],
+        [
+          3.788818359375,
+          4.3450927734375,
+          0.7158203125
+        ]
+      ],
+      "members": [
+        "G02-o0-c413",
+        "G02-o0-c415",
+        "G02-o0-c417",
+        "G02-o0-c426",
+        "G02-o0-c427",
+        "G02-o0-c428",
+        "G02-o0-c429",
+        "G02-o0-c430",
+        "G02-o0-c431",
+        "G02-o0-c432",
+        "G02-o0-c433",
+        "G02-o0-c434",
+        "G02-o0-c435",
+        "G02-o0-c436",
+        "G02-o0-c437",
+        "G02-o0-c438",
+        "G02-o0-c439",
+        "G02-o0-c440",
+        "G02-o0-c441",
+        "G02-o0-c443",
+        "G02-o0-c444",
+        "G02-o1-c345",
+        "G02-o1-c346",
+        "G02-o1-c352",
+        "G02-o1-c353",
+        "G02-o1-c354",
+        "G02-o1-c355",
+        "G02-o1-c356",
+        "G02-o1-c357",
+        "G02-o1-c360",
+        "G02-o1-c364",
+        "G02-o1-c369",
+        "G02-o1-c370",
+        "G02-o1-c371",
+        "G02-o1-c374",
+        "G02-o1-c375",
+        "G02-o1-c376",
+        "G02-o1-c377",
+        "G02-o1-c378",
+        "G02-o1-c379"
+      ]
+    },
+    {
+      "id": "G02-04",
+      "object": "G02",
+      "profile": "npm",
+      "type": "flat_capped_shaft_assembly",
+      "count_components": 18,
+      "triangle_range": [
+        44,
+        76
+      ],
+      "size_range_m": [
+        [
+          2.047607421875,
+          2.005279541015625,
+          1.4308929443359375
+        ],
+        [
+          3.7841796875,
+          3.784210205078125,
+          2.9346923828125
+        ]
+      ],
+      "members": [
+        "G02-o0-c445",
+        "G02-o0-c446",
+        "G02-o0-c447",
+        "G02-o0-c448",
+        "G02-o0-c449",
+        "G02-o0-c450",
+        "G02-o0-c451",
+        "G02-o0-c452",
+        "G02-o0-c453",
+        "G02-o0-c454",
+        "G02-o0-c455",
+        "G02-o0-c456",
+        "G02-o0-c457",
+        "G02-o0-c458",
+        "G02-o0-c459",
+        "G02-o0-c460",
+        "G02-o0-c461",
+        "G02-o0-c462"
+      ]
+    },
+    {
+      "id": "G02-05",
+      "object": "G02",
+      "profile": "npm",
+      "type": "hipped_hood_top",
+      "count_components": 3,
+      "triangle_range": [
+        16,
+        16
+      ],
+      "size_range_m": [
+        [
+          1.89111328125,
+          1.9241943359375,
+          0.238433837890625
+        ],
+        [
+          2.203125,
+          2.20330810546875,
+          0.293792724609375
+        ]
+      ],
+      "members": [
+        "G02-o1-c351",
+        "G02-o1-c361",
+        "G02-o1-c372"
+      ]
+    },
+    {
+      "id": "G02-06",
+      "object": "G02",
+      "profile": "npm",
+      "type": "hood_support_frame",
+      "count_components": 3,
+      "triangle_range": [
+        112,
+        112
+      ],
+      "size_range_m": [
+        [
+          1.328369140625,
+          1.3656005859375,
+          0.316680908203125
+        ],
+        [
+          1.57470703125,
+          1.574615478515625,
+          0.39019775390625
+        ]
+      ],
+      "members": [
+        "G02-o1-c350",
+        "G02-o1-c362",
+        "G02-o1-c373"
+      ]
+    },
+    {
+      "id": "G02-07",
+      "object": "G02",
+      "profile": "npm",
+      "type": "hooded_shaft_assembly",
+      "count_components": 6,
+      "triangle_range": [
+        192,
+        192
+      ],
+      "size_range_m": [
+        [
+          1.922607421875,
+          1.88909912109375,
+          1.92999267578125
+        ],
+        [
+          2.17919921875,
+          2.31793212890625,
+          1.92999267578125
+        ]
+      ],
+      "members": [
+        "G02-o0-c107",
+        "G02-o0-c108",
+        "G02-o0-c109",
+        "G02-o0-c110",
+        "G02-o0-c111",
+        "G02-o0-c112"
+      ]
+    },
+    {
+      "id": "G02-08",
+      "object": "G02",
+      "profile": "npm",
+      "type": "low_polygon_aerator",
+      "count_components": 20,
+      "triangle_range": [
+        82,
+        82
+      ],
+      "size_range_m": [
+        [
+          0.374267578125,
+          0.37420654296875,
+          0.18212890625
+        ],
+        [
+          0.3779296875,
+          0.3779296875,
+          0.18212890625
+        ]
+      ],
+      "members": [
+        "G02-o0-c137",
+        "G02-o0-c138",
+        "G02-o0-c139",
+        "G02-o0-c140",
+        "G02-o0-c141",
+        "G02-o0-c142",
+        "G02-o0-c143",
+        "G02-o0-c144",
+        "G02-o0-c145",
+        "G02-o0-c146",
+        "G02-o0-c147",
+        "G02-o0-c148",
+        "G02-o1-c307",
+        "G02-o1-c317",
+        "G02-o1-c318",
+        "G02-o1-c319",
+        "G02-o1-c320",
+        "G02-o1-c321",
+        "G02-o1-c322",
+        "G02-o1-c323"
+      ]
+    },
+    {
+      "id": "G02-09",
+      "object": "G02",
+      "profile": "npm",
+      "type": "open_shaft_body",
+      "count_components": 12,
+      "triangle_range": [
+        8,
+        8
+      ],
+      "size_range_m": [
+        [
+          0.9287109375,
+          0.92889404296875,
+          1.26239013671875
+        ],
+        [
+          3.376708984375,
+          3.376739501953125,
+          3.851531982421875
+        ]
+      ],
+      "members": [
+        "G02-o0-c423",
+        "G02-o0-c424",
+        "G02-o0-c425",
+        "G02-o0-c574",
+        "G02-o0-c576",
+        "G02-o0-c578",
+        "G02-o1-c367",
+        "G02-o1-c368",
+        "G02-o1-c530",
+        "G02-o1-c533",
+        "G02-o1-c536",
+        "G02-o1-c537"
+      ]
+    },
+    {
+      "id": "G02-10",
+      "object": "G02",
+      "profile": "npm",
+      "type": "pitched_box_head",
+      "count_components": 8,
+      "triangle_range": [
+        20,
+        20
+      ],
+      "size_range_m": [
+        [
+          1.0380859375,
+          1.038177490234375,
+          1.3213653564453125
+        ],
+        [
+          1.510498046875,
+          1.477691650390625,
+          1.7437744140625
+        ]
+      ],
+      "members": [
+        "G02-o0-c571",
+        "G02-o0-c572",
+        "G02-o0-c573",
+        "G02-o0-c575",
+        "G02-o0-c577",
+        "G02-o0-c579",
+        "G02-o1-c555",
+        "G02-o1-c556"
+      ]
+    },
+    {
+      "id": "G02-11",
+      "object": "G02",
+      "profile": "npm",
+      "type": "railing_or_handrail_component",
+      "count_components": 32,
+      "triangle_range": [
+        12,
+        918
+      ],
+      "size_range_m": [
+        [
+          1.3359375,
+          1.216888427734375,
+          0.019989013671875
+        ],
+        [
+          11.098876953125,
+          10.905181884765625,
+          0.80023193359375
+        ]
+      ],
+      "members": [
+        "G02-o0-c33",
+        "G02-o0-c34",
+        "G02-o0-c35",
+        "G02-o0-c36",
+        "G02-o0-c68",
+        "G02-o0-c69",
+        "G02-o0-c70",
+        "G02-o0-c71",
+        "G02-o0-c103",
+        "G02-o0-c104",
+        "G02-o0-c105",
+        "G02-o0-c106",
+        "G02-o1-c324",
+        "G02-o1-c325",
+        "G02-o1-c326",
+        "G02-o1-c327",
+        "G02-o1-c328",
+        "G02-o1-c329",
+        "G02-o1-c330",
+        "G02-o1-c331",
+        "G02-o1-c332",
+        "G02-o1-c333",
+        "G02-o1-c334",
+        "G02-o1-c335",
+        "G02-o1-c336",
+        "G02-o1-c337",
+        "G02-o1-c338",
+        "G02-o1-c339",
+        "G02-o1-c340",
+        "G02-o1-c341",
+        "G02-o1-c342",
+        "G02-o1-c343"
+      ]
+    },
+    {
+      "id": "G02-12",
+      "object": "G02",
+      "profile": "npm",
+      "type": "rimmed_shaft_body",
+      "count_components": 13,
+      "triangle_range": [
+        24,
+        50
+      ],
+      "size_range_m": [
+        [
+          1.139892578125,
+          1.159912109375,
+          1.42999267578125
+        ],
+        [
+          2.595458984375,
+          3.09332275390625,
+          3.258392333984375
+        ]
+      ],
+      "members": [
+        "G02-o1-c344",
+        "G02-o1-c347",
+        "G02-o1-c348",
+        "G02-o1-c349",
+        "G02-o1-c358",
+        "G02-o1-c363",
+        "G02-o1-c538",
+        "G02-o1-c539",
+        "G02-o1-c540",
+        "G02-o1-c541",
+        "G02-o1-c542",
+        "G02-o1-c543",
+        "G02-o1-c557"
+      ]
+    },
+    {
+      "id": "G02-13",
+      "object": "G02",
+      "profile": "npm",
+      "type": "roof_enclosure_body",
+      "count_components": 3,
+      "triangle_range": [
+        34,
+        288
+      ],
+      "size_range_m": [
+        [
+          4.72216796875,
+          6.06988525390625,
+          0.662841796875
+        ],
+        [
+          17.501953125,
+          11.093536376953125,
+          4.296783447265625
+        ]
+      ],
+      "members": [
+        "G02-o1-c525",
+        "G02-o1-c526",
+        "G02-o1-c527"
+      ]
+    },
+    {
+      "id": "G02-14",
+      "object": "G02",
+      "profile": "npm",
+      "type": "round_vertical_stub",
+      "count_components": 26,
+      "triangle_range": [
+        34,
+        34
+      ],
+      "size_range_m": [
+        [
+          0.050537109375,
+          0.0506591796875,
+          0.5196990966796875
+        ],
+        [
+          0.50244140625,
+          0.50225830078125,
+          1.8000030517578125
+        ]
+      ],
+      "members": [
+        "G02-o0-c113",
+        "G02-o0-c114",
+        "G02-o0-c115",
+        "G02-o0-c116",
+        "G02-o0-c117",
+        "G02-o0-c118",
+        "G02-o0-c119",
+        "G02-o0-c120",
+        "G02-o0-c121",
+        "G02-o0-c122",
+        "G02-o0-c123",
+        "G02-o0-c124",
+        "G02-o0-c125",
+        "G02-o0-c126",
+        "G02-o0-c127",
+        "G02-o0-c128",
+        "G02-o0-c129",
+        "G02-o0-c130",
+        "G02-o0-c131",
+        "G02-o0-c132",
+        "G02-o0-c133",
+        "G02-o0-c134",
+        "G02-o0-c135",
+        "G02-o0-c136",
+        "G02-o0-c163",
+        "G02-o0-c165"
+      ]
+    },
+    {
+      "id": "G02-15",
+      "object": "G02",
+      "profile": "npm",
+      "type": "stepped_shaft_body",
+      "count_components": 6,
+      "triangle_range": [
+        30,
+        48
+      ],
+      "size_range_m": [
+        [
+          1.61474609375,
+          1.357757568359375,
+          1.874603271484375
+        ],
+        [
+          3.424560546875,
+          3.056365966796875,
+          2.899993896484375
+        ]
+      ],
+      "members": [
+        "G02-o1-c528",
+        "G02-o1-c529",
+        "G02-o1-c531",
+        "G02-o1-c532",
+        "G02-o1-c534",
+        "G02-o1-c535"
+      ]
+    },
+    {
+      "id": "OLY-01",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "box_fan_candidate",
+      "count_components": 1,
+      "triangle_range": [
+        64,
+        64
+      ],
+      "size_range_m": [
+        [
+          0.3330049514770508,
+          0.3480110168457031,
+          0.4000053405761719
+        ],
+        [
+          0.3330049514770508,
+          0.3480110168457031,
+          0.4000053405761719
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11234"
+      ]
+    },
+    {
+      "id": "OLY-02",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "hipped_hood_top",
+      "count_components": 15,
+      "triangle_range": [
+        6,
+        6
+      ],
+      "size_range_m": [
+        [
+          1.2690057754516602,
+          1.1989974975585938,
+          0.2389984130859375
+        ],
+        [
+          2.3190059661865234,
+          2.3190155029296875,
+          0.31150054931640625
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11312",
+        "OLY-o0-c11313",
+        "OLY-o0-c11314",
+        "OLY-o0-c11315",
+        "OLY-o0-c11316",
+        "OLY-o0-c11317",
+        "OLY-o0-c11318",
+        "OLY-o0-c11319",
+        "OLY-o0-c11320",
+        "OLY-o0-c11321",
+        "OLY-o0-c11322",
+        "OLY-o0-c11323",
+        "OLY-o0-c11324",
+        "OLY-o0-c11325",
+        "OLY-o0-c11326"
+      ]
+    },
+    {
+      "id": "OLY-03",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "roof_enclosure_body",
+      "count_components": 1,
+      "triangle_range": [
+        551,
+        551
+      ],
+      "size_range_m": [
+        [
+          5.175217628479004,
+          10.909996032714844,
+          4.660030364990234
+        ],
+        [
+          5.175217628479004,
+          10.909996032714844,
+          4.660030364990234
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11445"
+      ]
+    },
+    {
+      "id": "OLY-04",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "round_pipe_network",
+      "count_components": 6,
+      "triangle_range": [
+        216,
+        1344
+      ],
+      "size_range_m": [
+        [
+          0.3352012634277344,
+          1.6366195678710938,
+          0.23999786376953125
+        ],
+        [
+          4.931488037109375,
+          4.523342132568359,
+          3.9945068359375
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11075",
+        "OLY-o0-c11106",
+        "OLY-o0-c11110",
+        "OLY-o0-c11132",
+        "OLY-o0-c11133",
+        "OLY-o0-c11134"
+      ]
+    },
+    {
+      "id": "OLY-05",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "round_service_disc_or_stub",
+      "count_components": 24,
+      "triangle_range": [
+        96,
+        114
+      ],
+      "size_range_m": [
+        [
+          0.09999847412109375,
+          0.0472259521484375,
+          0.09999847412109375
+        ],
+        [
+          0.9139976501464844,
+          0.9108848571777344,
+          0.5865402221679688
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11137",
+        "OLY-o0-c11138",
+        "OLY-o0-c11145",
+        "OLY-o0-c11146",
+        "OLY-o0-c11147",
+        "OLY-o0-c11148",
+        "OLY-o0-c11149",
+        "OLY-o0-c11150",
+        "OLY-o0-c11151",
+        "OLY-o0-c11152",
+        "OLY-o0-c11153",
+        "OLY-o0-c11154",
+        "OLY-o0-c11156",
+        "OLY-o0-c11157",
+        "OLY-o0-c11164",
+        "OLY-o0-c11165",
+        "OLY-o0-c11166",
+        "OLY-o0-c11167",
+        "OLY-o0-c11168",
+        "OLY-o0-c11169",
+        "OLY-o0-c11170",
+        "OLY-o0-c11171",
+        "OLY-o0-c11172",
+        "OLY-o0-c11173"
+      ]
+    },
+    {
+      "id": "OLY-06",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "round_transition_piece",
+      "count_components": 3,
+      "triangle_range": [
+        180,
+        198
+      ],
+      "size_range_m": [
+        [
+          0.29599761962890625,
+          0.9892578125,
+          0.29103851318359375
+        ],
+        [
+          0.43047332763671875,
+          1.0254287719726562,
+          0.4239349365234375
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11237",
+        "OLY-o0-c11238",
+        "OLY-o0-c11239"
+      ]
+    },
+    {
+      "id": "OLY-07",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "screened_service_enclosure",
+      "count_components": 9,
+      "triangle_range": [
+        90,
+        258
+      ],
+      "size_range_m": [
+        [
+          3.0889511108398438,
+          2.546070098876953,
+          3.2378578186035156
+        ],
+        [
+          3.1193065643310547,
+          9.206071853637695,
+          3.2755584716796875
+        ]
+      ],
+      "members": [
+        "OLY-o0-c10817",
+        "OLY-o0-c10818",
+        "OLY-o0-c10819",
+        "OLY-o0-c10820",
+        "OLY-o0-c10821",
+        "OLY-o0-c10822",
+        "OLY-o0-c10823",
+        "OLY-o0-c10824",
+        "OLY-o0-c11446"
+      ]
+    },
+    {
+      "id": "OLY-08",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "service_duct_box_or_transition",
+      "count_components": 325,
+      "triangle_range": [
+        8,
+        572
+      ],
+      "size_range_m": [
+        [
+          0.04000091552734375,
+          0.149993896484375,
+          0.1756744384765625
+        ],
+        [
+          13.561551094055176,
+          24.696657180786133,
+          4.2499847412109375
+        ]
+      ],
+      "members": [
+        "OLY-o0-c10994",
+        "OLY-o0-c10995",
+        "OLY-o0-c10996",
+        "OLY-o0-c10997",
+        "OLY-o0-c10998",
+        "OLY-o0-c10999",
+        "OLY-o0-c11000",
+        "OLY-o0-c11001",
+        "OLY-o0-c11002",
+        "OLY-o0-c11003",
+        "OLY-o0-c11004",
+        "OLY-o0-c11005",
+        "OLY-o0-c11006",
+        "OLY-o0-c11007",
+        "OLY-o0-c11008",
+        "OLY-o0-c11009",
+        "OLY-o0-c11010",
+        "OLY-o0-c11011",
+        "OLY-o0-c11012",
+        "OLY-o0-c11013",
+        "OLY-o0-c11014",
+        "OLY-o0-c11015",
+        "OLY-o0-c11016",
+        "OLY-o0-c11017",
+        "OLY-o0-c11018",
+        "OLY-o0-c11019",
+        "OLY-o0-c11020",
+        "OLY-o0-c11021",
+        "OLY-o0-c11022",
+        "OLY-o0-c11023",
+        "OLY-o0-c11024",
+        "OLY-o0-c11025",
+        "OLY-o0-c11026",
+        "OLY-o0-c11027",
+        "OLY-o0-c11028",
+        "OLY-o0-c11029",
+        "OLY-o0-c11030",
+        "OLY-o0-c11031",
+        "OLY-o0-c11032",
+        "OLY-o0-c11033",
+        "OLY-o0-c11034",
+        "OLY-o0-c11035",
+        "OLY-o0-c11036",
+        "OLY-o0-c11037",
+        "OLY-o0-c11038",
+        "OLY-o0-c11039",
+        "OLY-o0-c11040",
+        "OLY-o0-c11041",
+        "OLY-o0-c11042",
+        "OLY-o0-c11043",
+        "OLY-o0-c11044",
+        "OLY-o0-c11045",
+        "OLY-o0-c11046",
+        "OLY-o0-c11047",
+        "OLY-o0-c11049",
+        "OLY-o0-c11050",
+        "OLY-o0-c11051",
+        "OLY-o0-c11052",
+        "OLY-o0-c11053",
+        "OLY-o0-c11054",
+        "OLY-o0-c11055",
+        "OLY-o0-c11056",
+        "OLY-o0-c11057",
+        "OLY-o0-c11058",
+        "OLY-o0-c11059",
+        "OLY-o0-c11062",
+        "OLY-o0-c11063",
+        "OLY-o0-c11064",
+        "OLY-o0-c11065",
+        "OLY-o0-c11066",
+        "OLY-o0-c11067",
+        "OLY-o0-c11068",
+        "OLY-o0-c11069",
+        "OLY-o0-c11070",
+        "OLY-o0-c11072",
+        "OLY-o0-c11073",
+        "OLY-o0-c11076",
+        "OLY-o0-c11077",
+        "OLY-o0-c11078",
+        "OLY-o0-c11079",
+        "OLY-o0-c11080",
+        "OLY-o0-c11081",
+        "OLY-o0-c11082",
+        "OLY-o0-c11083",
+        "OLY-o0-c11084",
+        "OLY-o0-c11085",
+        "OLY-o0-c11086",
+        "OLY-o0-c11087",
+        "OLY-o0-c11088",
+        "OLY-o0-c11089",
+        "OLY-o0-c11090",
+        "OLY-o0-c11091",
+        "OLY-o0-c11092",
+        "OLY-o0-c11093",
+        "OLY-o0-c11094",
+        "OLY-o0-c11095",
+        "OLY-o0-c11096",
+        "OLY-o0-c11097",
+        "OLY-o0-c11098",
+        "OLY-o0-c11099",
+        "OLY-o0-c11100",
+        "OLY-o0-c11101",
+        "OLY-o0-c11102",
+        "OLY-o0-c11103",
+        "OLY-o0-c11104",
+        "OLY-o0-c11105",
+        "OLY-o0-c11108",
+        "OLY-o0-c11109",
+        "OLY-o0-c11111",
+        "OLY-o0-c11112",
+        "OLY-o0-c11113",
+        "OLY-o0-c11114",
+        "OLY-o0-c11115",
+        "OLY-o0-c11116",
+        "OLY-o0-c11117",
+        "OLY-o0-c11118",
+        "OLY-o0-c11119",
+        "OLY-o0-c11120",
+        "OLY-o0-c11121",
+        "OLY-o0-c11122",
+        "OLY-o0-c11123",
+        "OLY-o0-c11124",
+        "OLY-o0-c11125",
+        "OLY-o0-c11126",
+        "OLY-o0-c11127",
+        "OLY-o0-c11128",
+        "OLY-o0-c11129",
+        "OLY-o0-c11130",
+        "OLY-o0-c11131",
+        "OLY-o0-c11135",
+        "OLY-o0-c11136",
+        "OLY-o0-c11139",
+        "OLY-o0-c11140",
+        "OLY-o0-c11141",
+        "OLY-o0-c11142",
+        "OLY-o0-c11143",
+        "OLY-o0-c11144",
+        "OLY-o0-c11155",
+        "OLY-o0-c11158",
+        "OLY-o0-c11159",
+        "OLY-o0-c11160",
+        "OLY-o0-c11161",
+        "OLY-o0-c11162",
+        "OLY-o0-c11163",
+        "OLY-o0-c11174",
+        "OLY-o0-c11175",
+        "OLY-o0-c11176",
+        "OLY-o0-c11177",
+        "OLY-o0-c11178",
+        "OLY-o0-c11179",
+        "OLY-o0-c11180",
+        "OLY-o0-c11181",
+        "OLY-o0-c11182",
+        "OLY-o0-c11183",
+        "OLY-o0-c11184",
+        "OLY-o0-c11185",
+        "OLY-o0-c11186",
+        "OLY-o0-c11187",
+        "OLY-o0-c11188",
+        "OLY-o0-c11189",
+        "OLY-o0-c11190",
+        "OLY-o0-c11191",
+        "OLY-o0-c11192",
+        "OLY-o0-c11193",
+        "OLY-o0-c11194",
+        "OLY-o0-c11195",
+        "OLY-o0-c11196",
+        "OLY-o0-c11197",
+        "OLY-o0-c11198",
+        "OLY-o0-c11199",
+        "OLY-o0-c11200",
+        "OLY-o0-c11201",
+        "OLY-o0-c11202",
+        "OLY-o0-c11203",
+        "OLY-o0-c11204",
+        "OLY-o0-c11205",
+        "OLY-o0-c11206",
+        "OLY-o0-c11207",
+        "OLY-o0-c11208",
+        "OLY-o0-c11209",
+        "OLY-o0-c11210",
+        "OLY-o0-c11211",
+        "OLY-o0-c11212",
+        "OLY-o0-c11213",
+        "OLY-o0-c11214",
+        "OLY-o0-c11215",
+        "OLY-o0-c11216",
+        "OLY-o0-c11217",
+        "OLY-o0-c11218",
+        "OLY-o0-c11219",
+        "OLY-o0-c11220",
+        "OLY-o0-c11221",
+        "OLY-o0-c11222",
+        "OLY-o0-c11223",
+        "OLY-o0-c11224",
+        "OLY-o0-c11225",
+        "OLY-o0-c11226",
+        "OLY-o0-c11227",
+        "OLY-o0-c11228",
+        "OLY-o0-c11229",
+        "OLY-o0-c11230",
+        "OLY-o0-c11231",
+        "OLY-o0-c11232",
+        "OLY-o0-c11233",
+        "OLY-o0-c11235",
+        "OLY-o0-c11236",
+        "OLY-o0-c11241",
+        "OLY-o0-c11270",
+        "OLY-o0-c11294",
+        "OLY-o0-c11295",
+        "OLY-o0-c11296",
+        "OLY-o0-c11297",
+        "OLY-o0-c11298",
+        "OLY-o0-c11299",
+        "OLY-o0-c11300",
+        "OLY-o0-c11301",
+        "OLY-o0-c11302",
+        "OLY-o0-c11303",
+        "OLY-o0-c11304",
+        "OLY-o0-c11305",
+        "OLY-o0-c11306",
+        "OLY-o0-c11307",
+        "OLY-o0-c11308",
+        "OLY-o0-c11309",
+        "OLY-o0-c11310",
+        "OLY-o0-c11311",
+        "OLY-o0-c11328",
+        "OLY-o0-c11329",
+        "OLY-o0-c11330",
+        "OLY-o0-c11331",
+        "OLY-o0-c11332",
+        "OLY-o0-c11333",
+        "OLY-o0-c11334",
+        "OLY-o0-c11335",
+        "OLY-o0-c11336",
+        "OLY-o0-c11337",
+        "OLY-o0-c11338",
+        "OLY-o0-c11339",
+        "OLY-o0-c11340",
+        "OLY-o0-c11342",
+        "OLY-o0-c11343",
+        "OLY-o0-c11344",
+        "OLY-o0-c11345",
+        "OLY-o0-c11346",
+        "OLY-o0-c11347",
+        "OLY-o0-c11348",
+        "OLY-o0-c11349",
+        "OLY-o0-c11350",
+        "OLY-o0-c11351",
+        "OLY-o0-c11352",
+        "OLY-o0-c11353",
+        "OLY-o0-c11354",
+        "OLY-o0-c11355",
+        "OLY-o0-c11356",
+        "OLY-o0-c11357",
+        "OLY-o0-c11358",
+        "OLY-o0-c11359",
+        "OLY-o0-c11360",
+        "OLY-o0-c11361",
+        "OLY-o0-c11362",
+        "OLY-o0-c11363",
+        "OLY-o0-c11364",
+        "OLY-o0-c11365",
+        "OLY-o0-c11366",
+        "OLY-o0-c11367",
+        "OLY-o0-c11368",
+        "OLY-o0-c11369",
+        "OLY-o0-c11370",
+        "OLY-o0-c11371",
+        "OLY-o0-c11372",
+        "OLY-o0-c11373",
+        "OLY-o0-c11374",
+        "OLY-o0-c11375",
+        "OLY-o0-c11376",
+        "OLY-o0-c11377",
+        "OLY-o0-c11378",
+        "OLY-o0-c11379",
+        "OLY-o0-c11380",
+        "OLY-o0-c11381",
+        "OLY-o0-c11382",
+        "OLY-o0-c11383",
+        "OLY-o0-c11384",
+        "OLY-o0-c11385",
+        "OLY-o0-c11386",
+        "OLY-o0-c11387",
+        "OLY-o0-c11388",
+        "OLY-o0-c11389",
+        "OLY-o0-c11390",
+        "OLY-o0-c11391",
+        "OLY-o0-c11392",
+        "OLY-o0-c11393",
+        "OLY-o0-c11394",
+        "OLY-o0-c11395",
+        "OLY-o0-c11396",
+        "OLY-o0-c11397",
+        "OLY-o0-c11398",
+        "OLY-o0-c11399",
+        "OLY-o0-c11400",
+        "OLY-o0-c11401",
+        "OLY-o0-c11402",
+        "OLY-o0-c11403",
+        "OLY-o0-c11404",
+        "OLY-o0-c11405",
+        "OLY-o0-c11406",
+        "OLY-o0-c11407",
+        "OLY-o0-c11409",
+        "OLY-o0-c11410",
+        "OLY-o0-c11411",
+        "OLY-o0-c11412",
+        "OLY-o0-c11413",
+        "OLY-o0-c11414",
+        "OLY-o0-c11415",
+        "OLY-o0-c11416",
+        "OLY-o0-c11417",
+        "OLY-o0-c11418",
+        "OLY-o0-c11419",
+        "OLY-o0-c11420",
+        "OLY-o0-c11421",
+        "OLY-o0-c11422",
+        "OLY-o0-c11423",
+        "OLY-o0-c11424",
+        "OLY-o0-c11425",
+        "OLY-o0-c11426",
+        "OLY-o0-c11427",
+        "OLY-o0-c11428"
+      ]
+    },
+    {
+      "id": "OLY-09",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "service_panel_or_frame",
+      "count_components": 7,
+      "triangle_range": [
+        8,
+        24
+      ],
+      "size_range_m": [
+        [
+          0.06609725952148438,
+          0.42595672607421875,
+          0.37999725341796875
+        ],
+        [
+          2.5,
+          1.0800018310546875,
+          2.4259109497070312
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11060",
+        "OLY-o0-c11061",
+        "OLY-o0-c11071",
+        "OLY-o0-c11074",
+        "OLY-o0-c11107",
+        "OLY-o0-c11240",
+        "OLY-o0-c11341"
+      ]
+    },
+    {
+      "id": "OLY-10",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "shallow_roof_plate_or_plinth",
+      "count_components": 39,
+      "triangle_range": [
+        8,
+        32
+      ],
+      "size_range_m": [
+        [
+          0.916900634765625,
+          1.148895263671875,
+          0.18000030517578125
+        ],
+        [
+          13.004996538162231,
+          22.719955444335938,
+          0.7018318176269531
+        ]
+      ],
+      "members": [
+        "OLY-o0-c10769",
+        "OLY-o0-c10770",
+        "OLY-o0-c10771",
+        "OLY-o0-c10772",
+        "OLY-o0-c10773",
+        "OLY-o0-c10774",
+        "OLY-o0-c10776",
+        "OLY-o0-c10777",
+        "OLY-o0-c10778",
+        "OLY-o0-c10779",
+        "OLY-o0-c10780",
+        "OLY-o0-c10781",
+        "OLY-o0-c10782",
+        "OLY-o0-c10783",
+        "OLY-o0-c10784",
+        "OLY-o0-c10785",
+        "OLY-o0-c10786",
+        "OLY-o0-c10787",
+        "OLY-o0-c10789",
+        "OLY-o0-c10790",
+        "OLY-o0-c10791",
+        "OLY-o0-c10793",
+        "OLY-o0-c10794",
+        "OLY-o0-c10795",
+        "OLY-o0-c10796",
+        "OLY-o0-c10797",
+        "OLY-o0-c10798",
+        "OLY-o0-c10799",
+        "OLY-o0-c10800",
+        "OLY-o0-c10801",
+        "OLY-o0-c10802",
+        "OLY-o0-c10803",
+        "OLY-o0-c10804",
+        "OLY-o0-c10805",
+        "OLY-o0-c10806",
+        "OLY-o0-c10807",
+        "OLY-o0-c10808",
+        "OLY-o0-c10809",
+        "OLY-o0-c10811"
+      ]
+    },
+    {
+      "id": "OLY-11",
+      "object": "OLY",
+      "profile": "vpm",
+      "type": "thin_service_network",
+      "count_components": 28,
+      "triangle_range": [
+        18,
+        420
+      ],
+      "size_range_m": [
+        [
+          0.151519775390625,
+          0.1695709228515625,
+          0.199920654296875
+        ],
+        [
+          9.307369232177734,
+          24.90102767944336,
+          3.0243988037109375
+        ]
+      ],
+      "members": [
+        "OLY-o0-c11242",
+        "OLY-o0-c11243",
+        "OLY-o0-c11248",
+        "OLY-o0-c11249",
+        "OLY-o0-c11252",
+        "OLY-o0-c11253",
+        "OLY-o0-c11261",
+        "OLY-o0-c11262",
+        "OLY-o0-c11263",
+        "OLY-o0-c11264",
+        "OLY-o0-c11265",
+        "OLY-o0-c11266",
+        "OLY-o0-c11268",
+        "OLY-o0-c11269",
+        "OLY-o0-c11429",
+        "OLY-o0-c11430",
+        "OLY-o0-c11431",
+        "OLY-o0-c11434",
+        "OLY-o0-c11435",
+        "OLY-o0-c11436",
+        "OLY-o0-c11437",
+        "OLY-o0-c11438",
+        "OLY-o0-c11439",
+        "OLY-o0-c11440",
+        "OLY-o0-c11441",
+        "OLY-o0-c11442",
+        "OLY-o0-c11443",
+        "OLY-o0-c11444"
+      ]
+    },
+    {
+      "id": "SKO-01",
+      "object": "SKO",
+      "profile": "npm",
+      "type": "access_ladder_bridge",
+      "count_components": 1,
+      "triangle_range": [
+        670,
+        670
+      ],
+      "size_range_m": [
+        [
+          1.076171875,
+          1.232666015625,
+          4.7301025390625
+        ],
+        [
+          1.076171875,
+          1.232666015625,
+          4.7301025390625
+        ]
+      ],
+      "members": [
+        "SKO-o0-c45"
+      ]
+    },
+    {
+      "id": "SKO-02",
+      "object": "SKO",
+      "profile": "npm",
+      "type": "flat_cap_or_shallow_box",
+      "count_components": 3,
+      "triangle_range": [
+        12,
+        12
+      ],
+      "size_range_m": [
+        [
+          2.9765625,
+          3.178466796875,
+          0.0500030517578125
+        ],
+        [
+          3.240234375,
+          3.322021484375,
+          0.0500030517578125
+        ]
+      ],
+      "members": [
+        "SKO-o0-c341",
+        "SKO-o0-c347",
+        "SKO-o0-c353"
+      ]
+    },
+    {
+      "id": "SKO-03",
+      "object": "SKO",
+      "profile": "npm",
+      "type": "rimmed_shaft_body",
+      "count_components": 3,
+      "triangle_range": [
+        50,
+        50
+      ],
+      "size_range_m": [
+        [
+          2.7685546875,
+          2.84814453125,
+          2.004547119140625
+        ],
+        [
+          2.76953125,
+          2.84814453125,
+          2.2926025390625
+        ]
+      ],
+      "members": [
+        "SKO-o0-c336",
+        "SKO-o0-c342",
+        "SKO-o0-c348"
+      ]
+    },
+    {
+      "id": "SKO-04",
+      "object": "SKO",
+      "profile": "npm",
+      "type": "screen_cross_brace",
+      "count_components": 8,
+      "triangle_range": [
+        44,
+        44
+      ],
+      "size_range_m": [
+        [
+          2.1484375,
+          2.287353515625,
+          3.6337127685546875
+        ],
+        [
+          5.0869140625,
+          4.025146484375,
+          3.64208984375
+        ]
+      ],
+      "members": [
+        "SKO-o0-c370",
+        "SKO-o0-c371",
+        "SKO-o0-c375",
+        "SKO-o0-c376",
+        "SKO-o0-c403",
+        "SKO-o0-c404",
+        "SKO-o0-c408",
+        "SKO-o0-c409"
+      ]
+    },
+    {
+      "id": "SKO-05",
+      "object": "SKO",
+      "profile": "npm",
+      "type": "screen_support_on_block",
+      "count_components": 76,
+      "triangle_range": [
+        32,
+        34
+      ],
+      "size_range_m": [
+        [
+          0.8681640625,
+          0.8681640625,
+          2.2633056640625
+        ],
+        [
+          0.869140625,
+          0.868408203125,
+          2.2633056640625
+        ]
+      ],
+      "members": [
+        "SKO-o0-c61",
+        "SKO-o0-c62",
+        "SKO-o0-c63",
+        "SKO-o0-c64",
+        "SKO-o0-c65",
+        "SKO-o0-c66",
+        "SKO-o0-c67",
+        "SKO-o0-c68",
+        "SKO-o0-c69",
+        "SKO-o0-c70",
+        "SKO-o0-c71",
+        "SKO-o0-c72",
+        "SKO-o0-c73",
+        "SKO-o0-c74",
+        "SKO-o0-c75",
+        "SKO-o0-c76",
+        "SKO-o0-c77",
+        "SKO-o0-c78",
+        "SKO-o0-c79",
+        "SKO-o0-c80",
+        "SKO-o0-c81",
+        "SKO-o0-c82",
+        "SKO-o0-c83",
+        "SKO-o0-c84",
+        "SKO-o0-c85",
+        "SKO-o0-c86",
+        "SKO-o0-c87",
+        "SKO-o0-c88",
+        "SKO-o0-c89",
+        "SKO-o0-c90",
+        "SKO-o0-c91",
+        "SKO-o0-c92",
+        "SKO-o0-c93",
+        "SKO-o0-c94",
+        "SKO-o0-c95",
+        "SKO-o0-c96",
+        "SKO-o0-c287",
+        "SKO-o0-c289",
+        "SKO-o0-c290",
+        "SKO-o0-c291",
+        "SKO-o0-c292",
+        "SKO-o0-c293",
+        "SKO-o0-c294",
+        "SKO-o0-c295",
+        "SKO-o0-c296",
+        "SKO-o0-c297",
+        "SKO-o0-c298",
+        "SKO-o0-c299",
+        "SKO-o0-c300",
+        "SKO-o0-c301",
+        "SKO-o0-c302",
+        "SKO-o0-c303",
+        "SKO-o0-c304",
+        "SKO-o0-c305",
+        "SKO-o0-c306",
+        "SKO-o0-c307",
+        "SKO-o0-c308",
+        "SKO-o0-c309",
+        "SKO-o0-c310",
+        "SKO-o0-c311",
+        "SKO-o0-c312",
+        "SKO-o0-c313",
+        "SKO-o0-c314",
+        "SKO-o0-c315",
+        "SKO-o0-c316",
+        "SKO-o0-c317",
+        "SKO-o0-c318",
+        "SKO-o0-c319",
+        "SKO-o0-c320",
+        "SKO-o0-c321",
+        "SKO-o0-c322",
+        "SKO-o0-c323",
+        "SKO-o0-c324",
+        "SKO-o0-c325",
+        "SKO-o0-c326",
+        "SKO-o0-c327"
+      ]
+    },
+    {
+      "id": "VOL-01",
+      "object": "VOL",
+      "profile": "npm",
+      "type": "layered_box_head",
+      "count_components": 2,
+      "triangle_range": [
+        46,
+        46
+      ],
+      "size_range_m": [
+        [
+          1.29638671875,
+          1.642578125,
+          0.8042449951171875
+        ],
+        [
+          2.05517578125,
+          1.931640625,
+          0.80426025390625
+        ]
+      ],
+      "members": [
+        "VOL-o0-c7",
+        "VOL-o1-c1129"
+      ]
+    },
+    {
+      "id": "VOL-02",
+      "object": "VOL",
+      "profile": "npm",
+      "type": "roof_enclosure_body",
+      "count_components": 1,
+      "triangle_range": [
+        42,
+        42
+      ],
+      "size_range_m": [
+        [
+          7.645751953125,
+          5.265625,
+          1.8953704833984375
+        ],
+        [
+          7.645751953125,
+          5.265625,
+          1.8953704833984375
+        ]
+      ],
+      "members": [
+        "VOL-o1-c1128"
+      ]
+    }
+  ],
+  "context_or_unclassified": {
+    "reason": "context/unclassified: facade, roof body, screen structure or ambiguous isolated fragment; not counted as a named device; inspect native sheet before reuse",
+    "count": 9877,
+    "counts_by_object": {
+      "G01": 173,
+      "G02": 293,
+      "OLY": 8603,
+      "SKO": 275,
+      "VOL": 533
+    },
+    "external_path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-evidence/1257-roof-equipment/research-v002/observations-final-v2.json",
+    "sha256": "91a4e8e08ca2c6b4960c271d1fe4f4f0c1580ef6a28e01b3a14f34696b591b5a"
+  }
+}

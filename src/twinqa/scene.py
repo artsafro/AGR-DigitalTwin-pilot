@@ -29,7 +29,8 @@ from twinqa.geometry.ucx_audit import (
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
-from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities, udim_of
+from twinqa.uv import (DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, UdimDomainError, _density_finding, edge_densities,
+                       udim_of)
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -149,6 +150,38 @@ def ground_triangle_limit(profile: dict, ground_area_m2) -> tuple[int, dict]:
         if area <= Fraction(str(band["area_max"])) * 10_000:
             return band["triangles_max"], band
     return bands[-1]["triangles_max"], bands[-1]
+
+
+def z_bounds_finding(meshes, export_meta, src):
+    """Compare render-mesh world Z bounds in metres; 1 mm is an exclusive numerical budget.
+
+    None means absent evidence (not_run); supplied but malformed evidence fails closed.
+    export_meta is one FBX record with bounds_m in the same exported world frame.
+    """
+    expected = "render Z min/max differ from export_meta by < 0.001 m"
+    def result(status, observed):
+        return _f(status, "Z bounds vs export_meta", observed, expected, [10, 32, 33], src)
+    if export_meta is None:
+        return result("not_run", "export_meta not supplied; height unverified")
+    def valid_bounds(b):
+        return (isinstance(b, (list, tuple)) and len(b) == 2
+                and all(isinstance(v, (list, tuple)) and len(v) == 3 for v in b)
+                and all(_finite_number(c) for v in b for c in v)
+                and all(b[0][i] <= b[1][i] for i in range(3)))
+    if not isinstance(export_meta, dict) or not valid_bounds(export_meta.get('bounds_m')):
+        return result("fail", str(export_meta.get('error', 'invalid export_meta.bounds_m'))
+                      if isinstance(export_meta, dict) else 'invalid export_meta record')
+    geometry = [m for m in meshes if not m['name'].upper().startswith('UCX_')]
+    if not geometry or any(not valid_bounds(m.get('bounds_m')) for m in geometry):
+        return result("fail", "empty/partial/invalid render bounds_m readback")
+    if len({m['name'] for m in geometry}) != len(geometry):
+        return result("fail", "duplicate render mesh names")
+    observed = [min(m['bounds_m'][0][2] for m in geometry), max(m['bounds_m'][1][2] for m in geometry)]
+    target = [export_meta['bounds_m'][i][2] for i in (0, 1)]
+    # Rational operands avoid a rounded subtraction admitting exactly-at-budget discrepancies.
+    bad = any(abs(Fraction(str(a)) - Fraction(str(b))) >= Fraction(1, 1000)
+              for a, b in zip(observed, target))
+    return result("fail" if bad else "pass", f"{src}: readback Z {observed}, export_meta Z {target}")
 
 
 def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
@@ -697,7 +730,10 @@ def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
                     raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
                 if len(poly_xyz) < 2:
                     continue
-                tile = udim_of(poly_uv)
+                try:
+                    tile = udim_of(poly_uv)
+                except UdimDomainError:  # centroid off the UDIM grid or < 3 corners (#1337): unknown tile
+                    tile = None
                 material = materials[index] if index < len(materials) else None
                 side = _tile_side(diffuse_px, tile, material)
                 if side is None:
@@ -1665,7 +1701,7 @@ def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
                    ground_area_m2=None, footprint_holes=None, diffuse_px=None,
-                   ground_materials=None) -> dict[str, list[Finding]]:
+                   ground_materials=None, export_meta=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
@@ -1686,10 +1722,48 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V003"].append(_f("fail", "FBX readback", rb.get("error", "no meshes"), "importable FBX with meshes", [4, 24], src))
         return out
     meshes = rb["meshes"]
+    if role != "light":
+        out["V013"].append(z_bounds_finding(meshes, export_meta, src))
     ucx = [m for m in meshes if m["name"].upper().startswith("UCX_")]
     out["V002"].extend(_v002_findings(rb, meshes, src))
     # V005: color attributes (reg 4.1.1, SINTEZ lp_color_attributes); review only, the regulation recommends removal
     out.setdefault("V005", []).append(color_attribute_finding(meshes, src))
+    if kind == 'npm' and role != 'light':
+        # NPM opaque materials carry their texture set: reg p.8 §4.4, p.9 §4.5.
+        # Never apply this to VPM: its FBX paths MUST be cleared (reg p.30 §4.2).
+        opaque = [m for m in meshes if m not in ucx and not m['name'].endswith(GLASS_SUFFIXES)]
+        if opaque:
+            image_names = {i.get('name') for i in rb.get('images', [])}
+            facts, bad_materials = {}, []
+            for material in rb.get('materials') or []:
+                name = material.get('name')
+                if name in facts:
+                    bad_materials.append(f'duplicate material facts: {name}')
+                facts[name] = material.get('maps') or []
+            for m in opaque:
+                slots = m.get('materials') or []
+                if not slots:
+                    bad_materials.append(f"{m['name']}: no material assignment")
+                geometry = m.get('face_geometry', {})
+                if 'polygon_material' in geometry:
+                    assigned = geometry['polygon_material']
+                    polygons = geometry.get('polygons', [])
+                    if not isinstance(assigned, list):
+                        bad_materials.append(f"{m['name']}: unsupported polygon material table")
+                    else:
+                        wrong = [(i, name) for i, name in enumerate(assigned) if not name or name not in slots]
+                        if len(assigned) != len(polygons) or wrong:
+                            bad_materials.append(f"{m['name']}: unmapped polygon materials {wrong[:5]}; "
+                                                 f"{len(wrong)} invalid, {len(assigned)} assignments for {len(polygons)} polygons")
+                for name in slots:
+                    maps = facts.get(name, [])
+                    diffuse = [item.get('image') for item in maps if item.get('socket') in _DIFFUSE_SOCKETS]
+                    if not name or not diffuse or any(not image or image not in image_names for image in diffuse):
+                        bad_materials.append(f"{m['name']}: unmapped diffuse for material {name!r}")
+            out['V005'].append(_f('fail' if bad_materials else 'pass', 'material assignments',
+                                  f"{src}: {bad_materials or 'every opaque material has a bound diffuse image'}",
+                                  'each NPM opaque material resolves to its diffuse texture; glass excluded',
+                                  [8, 9], src))
     tris = sum(m["triangles"] for m in meshes if m not in ucx)  # collision is excluded (reg p.28 §3.9)
 
     # V003: triangulated on export, triangle limits, no foreign objects (reg p.6-8, 28-29)
@@ -1805,6 +1879,20 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",
                               "PNG embedded in FBX", [9], src))
+        # Reg p.9 §5.2: no NPM atlas side exceeds 2048 px. Readback dimensions
+        # complement (never replace) PNG-byte checks and area-specific smaller limits.
+        images = rb.get('images', [])
+        if images:
+            bad_sizes = []
+            for image in images:
+                size = image.get('size')
+                if (not isinstance(size, (list, tuple)) or len(size) != 2
+                        or any(type(s) is not int or not 0 < s <= 2048 for s in size)):
+                    bad_sizes.append((image.get('name', '<unnamed image>'), size))
+            out["V006"].append(_f('fail' if bad_sizes else 'pass', 'texture dimensions',
+                                  f"{src}: {bad_sizes or 'all measured sides <= 2048 px'}",
+                                  'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate',
+                                  [9], src))
     if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():

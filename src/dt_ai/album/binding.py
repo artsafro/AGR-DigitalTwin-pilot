@@ -23,14 +23,20 @@ Rules (each has a test in ``tests/test_album_binding.py``):
   span whose ends sit on the level lines of two level marks of the view), else ``unbound`` with the reason.
 - Level marks: the level line is found ONLY through the mark symbol: a shelf under (or over) the text covering
   >= half of it, and an arrow/triangle tip (two ~45 deg arms pointing back to the text) at a shelf end, either
-  within 1.5 text heights or reached by one vertical stem (Revit). No tip -> ``unbound no_level_line``; two
+  within 1.5 text heights or reached by one vertical stem (Revit, either direction).
+  Tip arms are bounded relative to text size as well as the legacy 15 pt minimum budget.
+  A tight closed rectangle containing exactly one level text is a plan ``spot_level``:
+  its ``spot_bbox`` locates the tag, ``level_y`` stays null, and it NEVER feeds
+  ``level_pair`` or elevation-line consistency. No tip/box -> ``unbound no_level_line``; two
   distinct tips, or one tip claimed by two marks -> ``level_line_ambiguous``; never the nearest line. Bound marks
   of one view (>= 3 distinct values) must fit one linear value(y) (Theil-Sen); an outlier beyond 1 pt is
   ``unbound level_value_inconsistent`` with a D112 finding, its drawn line kept as ``level_y_drawn``. Only bound
   marks bind as ``level`` and feed ``level_pair``; the absolute elevation written under a mark is kept raw.
   Every dimension-like text token (>= 3 digits) that no span claims is a value with ``unbound`` /
   ``no_dimension_line``; nothing is dropped.
-- Axes: a stroked circle holding exactly one axis-label run. A bubble with a radial line takes the line
+- Axes: a stroked circle holding exactly one axis-label run (including closed polygon
+  loops inside compound paths and two native semicircle strokes). PyMuPDF applies nested
+  XObject transforms before recognition; non-circular or open loops are not bubbles. A bubble with a radial line takes the line
   orientation; otherwise >= 2 bubbles on one row are vertical axes (x), on one column horizontal axes (y).
 - Scale: per view, ONLY from model anchors ``{page, axes:[a, b], model_mm}`` taken from an independent
   DWG/BIM source whose SHA-256 differs from the PDF. >= 2 independent anchors (different axis pairs, different
@@ -49,6 +55,7 @@ import hashlib
 import json
 import math
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -83,14 +90,28 @@ def _vert(s: R.Segment) -> bool:
     return abs(s.p0[0] - s.p1[0]) <= 0.05
 
 
-def _level_tips(segs: list[R.Segment]) -> list[tuple[float, float, int]]:
+def _span_gap(sp: dict[str, Any], r: R.TextRun, padding: float, near_side: bool) -> float | None:
+    """Perpendicular gap of a text run along span ``sp`` (``None`` when outside)."""
+    cx, cy = R._center(r.bbox)
+    if sp["orientation"] == "horizontal":
+        if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] - padding < cx < sp["b"] + padding):
+            return None
+        gap = sp["coord"] - cy if near_side else cy - sp["coord"]
+    else:
+        if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] - padding < cy < sp["b"] + padding):
+            return None
+        gap = sp["coord"] - cx if near_side else cx - sp["coord"]
+    return gap if 0 < gap <= 2.5 * r.size else None
+
+
+def _level_tips(segs: list[R.Segment], max_arm: float = 15.0) -> list[tuple[float, float, int]]:
     """Arrow/triangle apexes of level marks: >= 2 short ~45 deg strokes ending in one point, one going left and
     one going right, both to the same side (``side`` = +1 arms below the apex, -1 above). A dimension tick
     drawn as two half-strokes leaves to opposite sides and is not a tip."""
     ends: dict[tuple[int, int], list[tuple[float, float, float, float]]] = {}
     for s in segs:
         dx, dy = s.p1[0] - s.p0[0], s.p1[1] - s.p0[1]
-        if _horiz(s) or _vert(s) or not 1.0 <= math.hypot(dx, dy) <= 15.0 or not 0.4 <= abs(dy) / abs(dx) <= 2.5:
+        if _horiz(s) or _vert(s) or not 1.0 <= math.hypot(dx, dy) <= max_arm or not 0.4 <= abs(dy) / abs(dx) <= 2.5:
             continue
         for (px, py), (qx, qy) in ((s.p0, s.p1), (s.p1, s.p0)):
             ends.setdefault((round(px / 0.3), round(py / 0.3)), []).append((px, py, qx - px, qy - py))
@@ -125,20 +146,46 @@ def _level_line(r: R.TextRun, segs: list[R.Segment], tips: list[tuple[float, flo
     for y, lo, hi, away in shelves:
         for e in (lo, hi):
             for tx, ty, side in tips:
-                if abs(tx - e) > 0.6 or side != -away:
+                if abs(tx - e) > 0.6:
                     continue
                 d = (ty - y) * away
-                if -0.5 <= d <= 1.5 * s_:
-                    found.add((tx, ty))
-                elif 0 < d <= 6.0 * s_ and any(
-                        _vert(v) and abs(v.p0[0] - e) <= 0.6
-                        and abs(min(v.p0[1], v.p1[1]) - min(y, ty)) <= 0.6
-                        and abs(max(v.p0[1], v.p1[1]) - max(y, ty)) <= 0.6 for v in segs):
+                direct = side == -away and -0.5 <= d <= 1.5 * s_
+                stem = (0 < abs(ty - y) <= 6.0 * s_ and side * (y - ty) > 0
+                        and any(
+                            _vert(v) and abs(v.p0[0] - e) <= 0.6
+                            and abs(min(v.p0[1], v.p1[1]) - min(y, ty)) <= 0.6
+                            and abs(max(v.p0[1], v.p1[1]) - max(y, ty)) <= 0.6 for v in segs))
+                if direct or stem:
                     found.add((tx, ty))
     ys: dict[float, tuple[float, float]] = {}
     for p in sorted(found):
         ys.setdefault(round(p[1] * 2) / 2, p)  # tips on one line (+-0.25 pt) are one level line
     return list(ys.values())
+
+
+def _spot_box(r: R.TextRun, segs: list[R.Segment], runs: list[R.TextRun]) -> R.Box | None:
+    """A tight, closed four-sided plan-height tag, never an elevation line."""
+    x0, y0, x1, y1 = r.bbox
+    hs = [s for s in segs if _horiz(s) and x0 - r.size <= min(s.p0[0], s.p1[0]) <= x0
+          and x1 <= max(s.p0[0], s.p1[0]) <= x1 + r.size
+          and y0 - r.size <= s.p0[1] <= y1 + r.size]
+    boxes = set()
+    for top in hs:
+        for bottom in hs:
+            lo, hi = sorted((top.p0[0], top.p1[0]))
+            by = bottom.p0[1]
+            ty = top.p0[1]
+            if not (ty <= y0 and by >= y1 and by - ty <= 2.5 * r.size
+                    and abs(min(bottom.p0[0], bottom.p1[0]) - lo) <= 0.3
+                    and abs(max(bottom.p0[0], bottom.p1[0]) - hi) <= 0.3):
+                continue
+            if all(any(_vert(v) and abs(v.p0[0] - x) <= 0.3
+                       and abs(min(v.p0[1], v.p1[1]) - ty) <= 0.3
+                       and abs(max(v.p0[1], v.p1[1]) - by) <= 0.3 for v in segs) for x in (lo, hi)):
+                inside = [o for o in runs if lo < R._center(o.bbox)[0] < hi and ty < R._center(o.bbox)[1] < by]
+                if len(inside) == 1 and inside[0] is r:
+                    boxes.add((lo, ty, hi, by))
+    return next(iter(boxes)) if len(boxes) == 1 else None
 
 
 def _level_outliers(levels: list[dict[str, Any]]) -> list[tuple[str, dict[str, Any], float]]:
@@ -188,14 +235,21 @@ def _merge(values: list[float], tol: float = 0.5) -> list[float]:
     return out
 
 
-def _chains(segs: list[R.Segment]) -> list[dict[str, Any]]:
-    """Dimension lines (horizontal and vertical) with the tick positions along them."""
+def _chains(segs: list[R.Segment], runs: Sequence[R.TextRun] = ()) -> list[dict[str, Any]]:
+    """Ticked lines; join inline numeric-text interruptions, never unexplained gaps.
+
+    Native CAD plots suppress the line under an inline label. Both retained ends
+    must meet the same uniquely identified, parallel numeric text box (<1/8 em,
+    capped at 1 pt).
+    This recovers paper spans only: endpoint identity and calibration still refuse
+    independently. Text outside the span never licenses extrapolation.
+    """
     ticks = _ticks(segs)
     groups: dict[tuple[str, float], list[tuple[float, float]]] = {}
     for s in segs:
-        if _horiz(s) and abs(s.p1[0] - s.p0[0]) > 4.0:
+        if _horiz(s) and abs(s.p1[0] - s.p0[0]) > 0.05:
             key, rng = ("horizontal", round((s.p0[1] + s.p1[1]) / 2.0, 1)), sorted((s.p0[0], s.p1[0]))
-        elif _vert(s) and abs(s.p1[1] - s.p0[1]) > 4.0:
+        elif _vert(s) and abs(s.p1[1] - s.p0[1]) > 0.05:
             key, rng = ("vertical", round((s.p0[0] + s.p1[0]) / 2.0, 1)), sorted((s.p0[1], s.p1[1]))
         else:
             continue
@@ -204,8 +258,29 @@ def _chains(segs: list[R.Segment]) -> list[dict[str, Any]]:
     for (orient, c), ranges in groups.items():
         ranges.sort()
         merged: list[list[float]] = []
+        bridges: list[tuple[float, float, int]] = []
         for a, b in ranges:
-            if merged and a <= merged[-1][1] + 0.5:
+            inline = []
+            if merged and a > merged[-1][1] + 0.5:
+                end = merged[-1][1]
+                for run_index, run in enumerate(runs):
+                    if not all(math.isfinite(v) for v in (*run.bbox, *run.dir, run.size)):
+                        continue
+                    if orient == "horizontal":
+                        lo, hi, across0, across1 = run.bbox[0], run.bbox[2], run.bbox[1], run.bbox[3]
+                        parallel = abs(run.dir[1]) <= 1e-6 and run.dir[0] > .99
+                    else:
+                        lo, hi, across0, across1 = run.bbox[1], run.bbox[3], run.bbox[0], run.bbox[2]
+                        parallel = abs(run.dir[0]) <= 1e-6 and abs(run.dir[1]) > .99
+                    # CAD knockout extents differ from font ink bounds. Allow
+                    # <1/8 em, capped at 1 pt; exact limits still refuse.
+                    margin = min(1.0, run.size / 8)
+                    if parallel and across0 < c < across1 and abs(lo - end) < margin and abs(hi - a) < margin:
+                        inline.append(run_index)
+            bridge = len(inline) == 1 and R.check_dimension_text(runs[inline[0]].text) is not None
+            if merged and (a <= merged[-1][1] + 0.5 or bridge):
+                if bridge:
+                    bridges.append((merged[-1][1], a, inline[0]))
                 merged[-1][1] = max(merged[-1][1], b)
             else:
                 merged.append([a, b])
@@ -229,7 +304,8 @@ def _chains(segs: list[R.Segment]) -> list[dict[str, Any]]:
                             pos.append(y)
             pos = _merge(pos)
             if len(pos) >= 2:
-                chains.append({"orientation": orient, "coord": c, "ticks": pos})
+                chains.append({"orientation": orient, "coord": c, "ticks": pos,
+                               "bridges": [g for g in bridges if a <= g[0] and g[1] <= b]})
     chains.sort(key=lambda ch: (ch["orientation"], ch["coord"], ch["ticks"][0]))
     return chains
 
@@ -366,7 +442,7 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
         return {"status": status, "views": [], "values": [], "openings": [], "findings": findings,
                 "nominal_print_scale_text": []}
     bubbles, label_runs = _bubbles(runs, segs, raw)
-    chains = _chains(segs)
+    chains = _chains(segs, runs)
     rects = _rects(raw)
     label, _, _ = _views((page.rect.width, page.rect.height), segs, paths)
     nominal = [{"text": r.text, "bbox": list(r.bbox), "used_for_calibration": False}
@@ -377,7 +453,13 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
     # distinct tip -> unbound (never the nearest line); + raw absolute elevation below the mark
     levels = []
     level_runs: set[int] = set()
-    tips = _level_tips(segs)
+    tips = _level_tips(segs, max([15.0] + [2.0 * r.size for r in runs if R.parse_level_text(r.text) is not None]))
+    spot_segs = list(segs)
+    for box in rects:
+        x0_, y0_, x1_, y1_ = box
+        spot_segs.extend(R.Segment(a, b, 0.0, None, -1) for a, b in (
+            ((x0_, y0_), (x1_, y0_)), ((x1_, y0_), (x1_, y1_)),
+            ((x1_, y1_), (x0_, y1_)), ((x0_, y1_), (x0_, y0_))))
     for i, r in enumerate(runs):
         v = R.parse_level_text(r.text)
         if v is None:
@@ -389,8 +471,9 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
                 absolute = o.text
                 level_runs.add(k)
                 break
-        found = _level_line(r, segs, tips)
-        levels.append({"run": i, "text": r.text, "value_m": v, "absolute_text": absolute,
+        spot = _spot_box(r, spot_segs, runs)
+        found = [] if spot else _level_line(r, segs, tips)
+        levels.append({"run": i, "text": r.text, "value_m": v, "absolute_text": absolute, "spot_bbox": spot,
                        "level_y": found[0][1] if len(found) == 1 else None,
                        "tip": found[0] if len(found) == 1 else None,
                        "line_reason": None if len(found) == 1 else ("no_level_line" if not found else "level_line_ambiguous")})
@@ -405,26 +488,59 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
     # text along each span
     usable = [(i, r) for i, r in enumerate(runs) if i not in label_runs and i not in level_runs]
     claimed: set[int] = set()
+    # A label that licenses missing geometry cannot be replaced or stolen by
+    # another span's proximity heuristic. Retain source-run identity, not text
+    # equality: repeated numeric labels are distinct evidence.
+    authorizers = {i for ch in chains for _, _, i in ch["bridges"]}
     spans = []
     for ch in chains:
         for a, b in zip(ch["ticks"], ch["ticks"][1:]):
-            spans.append({"orientation": ch["orientation"], "coord": ch["coord"], "a": a, "b": b})
+            spans.append({"orientation": ch["orientation"], "coord": ch["coord"], "a": a, "b": b,
+                          "bridges": [g for g in ch["bridges"] if g[0] < b and a < g[1]]})
+
+    def strict_hits(sp: dict[str, Any], near_side: bool) -> list[tuple[float, int]]:
+        return sorted((g, i) for i, r in usable if i not in authorizers
+                      for g in [_span_gap(sp, r, 0.0, near_side)] if g is not None)
+
+    def owner_run(sp: dict[str, Any]) -> int | None:
+        # The run a span would take by the strict rule (near side first).
+        hits = strict_hits(sp, True) or strict_hits(sp, False)
+        return hits[0][1] if hits else None
+
+    owners: dict[int, set[int]] = {}
+    for k, o in enumerate(spans):
+        if not o["bridges"] and (run := owner_run(o)) is not None:
+            owners.setdefault(run, set()).add(k)
+    id_of = {id(o): k for k, o in enumerate(spans)}
 
     def candidates(sp: dict[str, Any], near_side: bool) -> list[tuple[float, int]]:
-        hits = []
+        if sp["bridges"]:
+            # Multiple labels or an interruption crossing a tick cannot prove
+            # one span value. Never fall back to unrelated nearby annotation.
+            if len(sp["bridges"]) != 1:
+                return []
+            lo, hi, index = sp["bridges"][0]
+            if sp["a"] <= lo and hi <= sp["b"] and any(i == index for i, _ in usable):
+                return [(0.0, index)]
+            return []
+        strict, padded = [], []
         for i, r in usable:
-            cx, cy = R._center(r.bbox)
-            if sp["orientation"] == "horizontal":
-                if not (abs(r.dir[1]) <= 1e-6 and r.dir[0] > 0 and sp["a"] < cx < sp["b"]):
-                    continue
-                gap = sp["coord"] - cy if near_side else cy - sp["coord"]
-            else:
-                if not (abs(r.dir[0]) <= 1e-6 and abs(r.dir[1]) > 0.99 and sp["a"] < cy < sp["b"]):
-                    continue
-                gap = sp["coord"] - cx if near_side else cx - sp["coord"]
-            if 0 < gap <= 2.5 * r.size:
-                hits.append((gap, i))
-        return sorted(hits)
+            if i in authorizers:
+                continue
+            # R1: CAD moves labels outside tiny spans to keep them legible.
+            # Preserve the strict two-em cutoff and all perpendicular/identity guards.
+            padding = 2 * r.size if sp["b"] - sp["a"] < 2 * r.size else 0
+            gap = _span_gap(sp, r, 0.0, near_side)
+            if gap is not None:
+                strict.append((gap, i))
+                continue
+            gap = _span_gap(sp, r, padding, near_side) if padding else None
+            # A label that another span owns by the strict rule is never a
+            # padded candidate here (its own span keeps it; review P1 #1332).
+            if gap is not None and not (owners.get(i, set()) - {id_of[id(sp)]}):
+                padded.append((gap, i))
+        # A strict in-span hit always beats a padded one.
+        return sorted(strict) or sorted(padded)
 
     first = [candidates(sp, True) for sp in spans]
     reserved = {h[0][1] for h in first if h}
@@ -536,6 +652,7 @@ def _bind_page(pymupdf: Any, page: Any, number: int, sheet: str | None) -> dict[
                        "bbox": list(r.bbox), "span": None, "method": "pdf-vector-text",
                        "level_y": lv["level_y"], "level_y_drawn": lv.get("level_y_drawn"), "absolute_text": lv["absolute_text"],
                        "binding": ({"type": "unbound", "reason": "no_view"} if not lv["view"]
+                                   else {"type": "spot_level", "level": r.text, "spot_bbox": list(lv["spot_bbox"])} if lv["spot_bbox"]
                                    else {"type": "unbound", "reason": lv["line_reason"]} if lv["level_y"] is None
                                    else {"type": "level", "level": r.text, "level_y": lv["level_y"]})})
     for i, r in usable:

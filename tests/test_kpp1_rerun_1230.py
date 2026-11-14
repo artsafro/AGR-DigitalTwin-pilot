@@ -190,3 +190,170 @@ def test_stair_window_without_lines_fails_closed(tmp_path):
     doc.saveas(p)
     with pytest.raises(SystemExit, match="no S-STRS"):
         mod.stair_boxes(p)
+
+
+# --- #1246: a corner post seen edge-on in two perpendicular views is ONE measured member ---------------
+_INV = {"Южный": lambda u: u * 1000, "Северный": lambda u: 70955 - u * 1000,
+        "Западный": lambda u: 92848 - u * 1000, "Восточный": lambda u: 102956 + u * 1000}
+_POST = "Прямоугольный импост - 200х75 мм"
+
+
+def _corner_item(mod, facade, lo, hi, za, zb, block=_POST):
+    """An L01 insert whose measured along-facade extent is lo..hi in the OBJECT frame (m)."""
+    along = 0 if mod.R9.FACADES[facade]["axis"] == "y" else 1
+    x0, x1 = sorted((_INV[facade](lo - mod.R9.SHIFT[along]), _INV[facade](hi - mod.R9.SHIFT[along])))
+    return {"facade": facade, "block": block, "rect": (x0, x1, za * 1000, zb * 1000)}
+
+
+def _vol_overlap(a, b):
+    return all(min(a["max"][k], b["max"][k]) - max(a["min"][k], b["min"][k]) > 0.001 for k in range(3))
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("corner, facade, measured, xy", [
+    ("SW", "Южный", (-15.075, -14.985), ((-15.075, -5.775), (-14.985, -5.685))),
+    ("NW", "Северный", (-15.0753, -14.9853), ((-15.0753, 5.9746), (-14.9853, 6.0646))),
+])
+def test_corner_post_seen_in_two_views_is_one_measured_member(corner, facade, measured, xy, reverse):
+    mod = _parts()
+    west = (-5.775, -5.685) if corner == "SW" else (5.9746, 6.0646)
+    items = [_corner_item(mod, facade, *measured, 4.85, 6.65, block=f"{_POST}-A-О_АР_Ф_{facade}"),
+             _corner_item(mod, "Западный", *west, 4.85, 6.65, block=f"{_POST}-B-О_АР_Ф_Западный")]
+    built, dropped = mod.place_mullions([], items[::(-1 if reverse else 1)], [], [])
+    assert dropped == []
+    assert len(built) == 1, built            # not a cross of two guessed 210 mm boxes
+    m = built[0]
+    assert m["min"] == pytest.approx([xy[0][0], xy[0][1], 4.85])
+    assert m["max"] == pytest.approx([xy[1][0], xy[1][1], 6.65])
+    assert m["placement"].startswith("corner member: seen in two perpendicular views")
+    assert sorted(v["facade"] for v in m["views"]) == sorted([facade, "Западный"])
+    assert sorted(v["block"] for v in m["views"]) == sorted(i["block"] for i in items)
+
+
+def test_corner_seen_in_one_view_keeps_profile_depth():
+    mod = _parts()
+    items = [_corner_item(mod, "Южный", -15.075, -14.985, 1.2, 2.7),          # Южный only (#1246 example)
+             _corner_item(mod, "Западный", -5.775, -5.685, 4.85, 6.65)]       # West only, other z
+    built, dropped = mod.place_mullions([], items, [], [])
+    assert dropped == [] and len(built) == 2
+    south, west = sorted(built, key=lambda b: b["min"][2])
+    assert south["placement"] == west["placement"] == "corner member: no built perpendicular counterpart"
+    assert south["max"][1] - south["min"][1] == pytest.approx(0.21)          # declared 200 mm + 10 mm embed
+    assert west["max"][0] - west["min"][0] == pytest.approx(0.21)
+    assert not _vol_overlap(south, west)
+
+
+def test_partial_z_overlap_keeps_only_one_view_remainder_guessed():
+    mod = _parts()
+    items = [_corner_item(mod, "Южный", -15.075, -14.985, 4.775, 6.65),
+             _corner_item(mod, "Западный", -5.775, -5.685, 4.85, 6.65)]
+    built, dropped = mod.place_mullions([], items, [], [])
+    assert dropped == []
+    pair = [b for b in built if "views" in b]
+    rest = [b for b in built if "views" not in b]
+    assert len(pair) == len(rest) == 1
+    assert pair[0]["min"][2] == pytest.approx(4.85) and pair[0]["max"][2] == pytest.approx(6.65)
+    assert rest[0]["facade"] == "Южный"
+    assert (rest[0]["min"][2], rest[0]["max"][2]) == pytest.approx((4.775, 4.85))
+    assert rest[0]["rect_m"][2:] == pytest.approx([4.775, 4.85])
+
+
+@pytest.mark.parametrize("overlap_mm, paired", [(0.1, False), (1.0, False), (1.1, True), (75.0, True)])
+def test_corner_pair_z_overlap_threshold(overlap_mm, paired):
+    mod = _parts()
+    top = 6.65
+    items = [_corner_item(mod, "Южный", -15.075, -14.985, 4.85, top),
+             _corner_item(mod, "Западный", -5.775, -5.685, top - overlap_mm / 1000, top + 0.075)]
+    built, dropped = mod.place_mullions([], items, [], [])
+    assert dropped == []
+    assert any("views" in b for b in built) is paired
+
+
+def test_v002_corner_replay_builds_no_perpendicular_cross():
+    """Real data: the 27 corner projections of parts-schedule-r1-v002.json, fed back into place_mullions."""
+    mod = _parts()
+    corner = [b for b in _load("parts-schedule-r1-v002.json")["mullions"] if b["placement"].startswith("corner")]
+    assert len(corner) == 27
+    items = []
+    for b in corner:
+        ua, ub, za, zb = b["rect_m"]
+        x0, x1 = sorted((_INV[b["facade"]](ua), _INV[b["facade"]](ub)))
+        items.append({"facade": b["facade"], "block": b["block"], "rect": (x0, x1, za * 1000, zb * 1000)})
+    built, dropped = mod.place_mullions([], items, [], [])
+    assert dropped == []
+    pairs = [b for b in built if "views" in b]
+    assert len(pairs) == 7                     # SW 3 + NW 4 perpendicular pairs; east corners are one-view
+    seen = {v["block"] for b in pairs for v in b["views"]} | {b["block"] for b in built if "views" not in b}
+    assert seen == {b["block"] for b in corner}
+    crosses = [(a["block"], b["block"]) for i, a in enumerate(built) for b in built[i + 1:] if _vol_overlap(a, b)]
+    assert crosses == []
+    sw = [b for b in pairs if b["min"][2] == pytest.approx(4.85) and b["min"][1] < 0]
+    assert len(sw) == 1
+    assert sw[0]["min"][:2] == pytest.approx([-15.075, -5.7754]) and sw[0]["max"][:2] == pytest.approx([-14.985, -5.6854])
+
+
+@pytest.mark.parametrize("seed", range(200))
+def test_corner_pair_probe_never_builds_overlapping_fins(seed):
+    """Generated: random z segmentations of one SW post in both views -> no two built boxes overlap > 1 mm,
+    every merged member is the measured 2D intersection, every view z (> 1 mm) is covered by a member."""
+    import random
+    rnd = random.Random(seed)
+    mod = _parts()
+    xs, ys = (-15.075, -14.985), (-5.775, -5.685)
+
+    def segs():
+        cuts = sorted({rnd.randint(0, 9000) for _ in range(rnd.randint(1, 5))} | {0, 9000})
+        return [(a / 1000, b / 1000) for a, b in zip(cuts, cuts[1:]) if b > a and rnd.random() < 0.7]
+    south, west = segs(), segs()
+    items = ([_corner_item(mod, "Южный", *xs, a, b, block=f"{_POST}-S{a}") for a, b in south]
+             + [_corner_item(mod, "Западный", *ys, a, b, block=f"{_POST}-W{a}") for a, b in west])
+    rnd.shuffle(items)
+    built, dropped = mod.place_mullions([], items, [], [])
+    assert dropped == []
+    assert not [(a, b) for i, a in enumerate(built) for b in built[i + 1:] if _vol_overlap(a, b)]
+    for b in built:
+        if "views" in b:
+            assert b["min"][:2] == pytest.approx([xs[0], ys[0]]) and b["max"][:2] == pytest.approx([xs[1], ys[1]])
+    for z0, z1 in south + west:
+        for k in range(int(z0 * 1000) + 1, int(z1 * 1000), 50):
+            z = k / 1000
+            assert any(b["min"][2] <= z <= b["max"][2] for b in built), (z, south, west)
+
+
+def test_v002_corner_replay_reports_only_real_slivers():
+    """Every unbuilt z remainder of a paired view is listed, and is > 0 and <= 1 mm (no empty entries)."""
+    mod = _parts()
+    corner = [b for b in _load("parts-schedule-r1-v002.json")["mullions"] if b["placement"].startswith("corner")]
+    items = []
+    for b in corner:
+        ua, ub, za, zb = b["rect_m"]
+        x0, x1 = sorted((_INV[b["facade"]](ua), _INV[b["facade"]](ub)))
+        items.append({"facade": b["facade"], "block": b["block"], "rect": (x0, x1, za * 1000, zb * 1000)})
+    built, _ = mod.place_mullions([], items, [], [])
+    slivers = [s for b in built for v in b.get("views", []) for s in v.get("unbuilt_slivers_z_m", [])]
+    assert slivers                                     # 6.65..6.6501 and 4.8499..4.85 at the SW post
+    assert all(0 < (b - a) * 1000 <= 1.0 for a, b in slivers), slivers
+
+
+def test_r1_v003_schedule_and_exported_readback_have_no_corner_cross():
+    """Real L01 rerun after #1246: 7 reported pairs, no box overlap > 1 mm, exported VPM has no fins."""
+    sched = _load("parts-schedule-r1-v003.json")
+    built = sched["mullions"]
+    assert sched["mullion_inserts"] == 244 and sched["mullions_dropped"] == []
+    assert built[:217] == _load("parts-schedule-v001.json")["mullions"]
+    pairs = [b for b in built if "views" in b]
+    assert len(pairs) == 7 and len(built) == 240
+    corner = built[217:]
+    assert not [(a["block"], b["block"]) for i, a in enumerate(corner) for b in corner[i + 1:] if _vol_overlap(a, b)]
+    rb = _load("corner-pairs-readback-r1-v003.json")
+    assert rb["passed"] is True  # only this scoped witness, not delivery acceptance
+    assert all(v for k, v in rb["v002"]["inside_object"].items() if "fin" in k)       # control: v002 had fins
+    assert not any(v for k, v in rb["v003"]["inside_object"].items() if "fin" in k)
+    for name in ("SM_Kpp_1.zip.r1-v003.validate.json", "0000_Kpp_1_01.r1-v003.validate.json"):
+        rep = _load(name)
+        assert rep["passed"] is False
+        topo = [f for f in _findings(rep, "V004") if f["name"] == "topology defects"]
+        assert topo and all(f["status"] == "pass" for f in topo)
+        clear = [f for f in _findings(rep, "V004") if f["name"] == "co-directional clearance"]
+        assert clear and all(": 0 < 5 mm" in f["observed"] for f in clear)
+    assert _load("build-report-r1-v003.json")["mullions_built"] == 240

@@ -14,6 +14,9 @@ Changes against #1209 (issue #1230):
   perpendicular member matches its profile, height endpoints (20 mm) and physical corner. Otherwise the
   measured rectangle is built at that facade's outer plane using the declared profile depth, without snapping
   it onto the body. Interior no-hit inserts remain reported; nothing is dropped silently (#1209 kept 7 of 171).
+- corner pairs (#1246): two such projections from perpendicular views at the same physical corner (profile-depth
+  boxes overlap in plan, heights overlap > PAIR_MIN_MM) are ONE member from both measured extents (z = overlap),
+  reported under `views`; the profile-depth guess stays only for the height seen in one view.
 - Stair: the exterior stair at the east facade from L03 `S-STRS-____-OTLN` (plan: flight 1 treads x 55215..57215,
   y 2320..3680 mm) and L01 (Восточный / Южный views: landing +2.100, upper flight along the wall to the
   landing +3.600..+3.900, width 1 200 mm, 300 mm from the wall). Rises are approximations of the facade
@@ -43,6 +46,7 @@ _spec.loader.exec_module(R9)
 GLASS_BACK = 0.08                    # glass plane in front of the recess back (build_blender FRAME / GLASS)
 PROFILES = {"200х75": (0.075, 0.200), "50х100": (0.050, 0.100)}   # face width, depth (m)
 EMBED_M = 0.010
+PAIR_MIN_MM = 1.0                    # z overlap / remainder <= 1 mm is drawing round-off (6.6501 vs 6.65) (#1246)
 L03_ORIGIN_MM = 25884.5              # plan_from_dxf --origin-mm (Revit x = (X - origin) / 1000)
 STAIR_WINDOW_MM = (54000.0, 1500.0, 58000.0, 4500.0)   # L03 plan window east of the wall (x0, y0, x1, y1)
 
@@ -150,6 +154,7 @@ def place_mullions(bands, items, sched, report):
     # Resolve only against the directly built inventory, never another unresolved
     # projection (and never recursively alias two dropped inserts to one another).
     direct = list(boxes)
+    corner = []
     for f, name, rect, depth in edge_items:
         match = edge_counterpart(f, name, rect, direct)
         if match is not None:
@@ -157,12 +162,74 @@ def place_mullions(bands, items, sched, report):
                           "reason": "edge-on view: verified built member of the perpendicular facade",
                           "counterpart_index": match, "counterpart_block": direct[match]["block"]})
         else:
-            # Preserve the measured projection and use the declared profile depth,
-            # just as for on-facade members. No snapping to a convenient body face.
-            boxes.append({"facade": f, "block": name, "rect_m": list(rect),
-                          "placement": "corner member: no built perpendicular counterpart",
-                          **R9.cutter(f, rect, -depth, EMBED_M)})
+            corner.append((f, name, rect, depth))
+    boxes.extend(corner_members(corner))
     return boxes, drops
+
+
+def _overlap_mm(a0, a1, b0, b1):
+    return round((min(a1, b1) - max(a0, b0)) * 1000.0, 6)
+
+
+def corner_members(corner):
+    """Build the edge-on corner projections that have no directly built counterpart (#1246).
+
+    Two projections from perpendicular views are the same physical corner post when their
+    profile-depth boxes overlap in plan and their heights overlap by more than PAIR_MIN_MM. Such a
+    pair becomes ONE member: x and y from the two measured along-facade extents, z = their overlap
+    (`views` names both inserts). Only the height of a projection that no perpendicular view covers
+    keeps the declared profile depth (measured rectangle, depth outward from that facade's outer plane,
+    EMBED_M behind it). Remainders of at most PAIR_MIN_MM are drawing round-off and are listed as
+    `unbuilt_slivers_z_m` on the pair, never dropped silently.
+    """
+    guess = [R9.cutter(f, rect, -depth, EMBED_M) for f, _, rect, depth in corner]
+    axis = [R9.FACADES[f]["axis"] for f, _, _, _ in corner]
+    pairs = []
+    for i, (_, _, ri, _) in enumerate(corner):
+        for j, (_, _, rj, _) in enumerate(corner):
+            if axis[i] != "y" or axis[j] != "x":
+                continue
+            gi, gj = guess[i], guess[j]
+            if (all(min(gi["max"][k], gj["max"][k]) > max(gi["min"][k], gj["min"][k]) for k in (0, 1))
+                    and _overlap_mm(ri[2], ri[3], rj[2], rj[3]) > PAIR_MIN_MM):
+                pairs.append((i, j))
+    slivers = {k: [] for k in range(len(corner))}
+    remainders = {}
+    for k, (f, name, rect, depth) in enumerate(corner):
+        cover = sorted((max(corner[i][2][2], corner[j][2][2]), min(corner[i][2][3], corner[j][2][3]))
+                       for i, j in pairs if k in (i, j))
+        if not cover:
+            remainders[k] = [rect[2:]]
+            continue
+        segs, z = [], rect[2]
+        for c0, c1 in cover + [(rect[3], rect[3])]:
+            if _overlap_mm(z, c0, z, c0) > 0:
+                segs.append((z, c0))
+            z = max(z, c1)
+        remainders[k] = [s for s in segs if _overlap_mm(*s, *s) > PAIR_MIN_MM]
+        slivers[k] = [[round(a, 6), round(b, 6)] for a, b in segs if _overlap_mm(a, b, a, b) <= PAIR_MIN_MM]
+    out = []
+    for k, (f, name, rect, depth) in enumerate(corner):
+        for i, j in pairs:
+            if min(i, j) != k:
+                continue
+            gi, gj = guess[i], guess[j]
+            za, zb = max(corner[i][2][2], corner[j][2][2]), min(corner[i][2][3], corner[j][2][3])
+            views = [{"facade": corner[n][0], "block": corner[n][1], "rect_m": list(corner[n][2]),
+                      **({"unbuilt_slivers_z_m": slivers[n]} if slivers[n] else {})} for n in (i, j)]
+            out.append({"facade": f"{corner[i][0]}+{corner[j][0]}", "block": corner[i][1],
+                        "placement": "corner member: seen in two perpendicular views (measured intersection)",
+                        "views": views,
+                        "min": [gi["min"][0], gj["min"][1], round(za, 4)],
+                        "max": [gi["max"][0], gj["max"][1], round(zb, 4)]})
+        for za, zb in remainders[k]:
+            # Seen in this view only: preserve the measured projection and use the declared
+            # profile depth, as for on-facade members. No snapping to a convenient body face.
+            part = (rect[0], rect[1], za, zb)
+            out.append({"facade": f, "block": name, "rect_m": list(part),
+                        "placement": "corner member: no built perpendicular counterpart",
+                        **R9.cutter(f, part, -depth, EMBED_M)})
+    return out
 
 
 def stair_boxes(l03_path: Path):

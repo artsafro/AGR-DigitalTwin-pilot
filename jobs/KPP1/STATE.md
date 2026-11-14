@@ -1,6 +1,72 @@
-Current run: #1209 rerun after Gate 1 [D238], offline VPM + derived NPM; both passed=false (rerun-1209/RUN-LOG.md).
-Source: АС.03 copied DWGs (cold-run-1172/inputs-manifest.json); provisional roof/parapet [D249]; architect levels question open.
-Next gate: Review PR #1216 with exact validator blockers; visual waits-user, checker waits-visual; Max steps waits-max.
+Current run: `issue-1255-site-v004`; site-1255/REPORT.md (D262), based on rerun-1244 (D256); passed=false.
+Source: sources.json (asset-store DWGs + cached Revit object.json); R1 dimensions final D254; TASK.md indexes contract answers.
+Next gate: job.yaml tracks open gates; visual waits-user, checker waits-visual, final AGR Tools waits-max; missing Ground/attributes and survey/manual checks remain. Open #1305 is not merged evidence.
+
+Package candidate: #1278 R1 package-v006, copy-only assembly + material/PNG/coordinate repairs; NPM/VPM passed=false [D285].
+Source: latest rerun-1230 R1 v003 (#1246 merged), via the #1271 approved transform; approximate MSK-77 fit, zero 171.050 [D262].
+
+## Package #1278 (2026-11-13) — NOT PASSED [D285]
+
+Artem authorized assembly without the unavailable approved Ground FBX or KPP1-specific
+`s_obsh/s_naz/s_podz/spp_gns` sheet; no synthetic Ground or site-wide area substitution [D285].
+**Approximate fit without 180-degree rotation; entrance orientation not independently confirmed** [D262].
+Point [8056.144, -9581.270], zero 171.050 m; placement is not a survey certificate.
+
+One-command reproduction into a NEW destination (parent exists):
+
+```bash
+uv run python jobs/KPP1/package-1278/build_package.py "G:/Мой диск/AGR-evidence/1278-kpp1-package/site-r1-v003" "G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v006"
+```
+
+Current candidate: `G:/Мой диск/AGR-evidence/1278-kpp1-package/package-v006/`.
+ZIP/GeoJSON payloads are 3/3 byte-identical to the measured package-v004; only the assembly decision ID changed to D285.
+ZIP NPM + ZIP VPM + GeoJSON built; independent repeat **5/5 byte-identical** assembly outputs.
+NPM glass name/alpha corrected (M_Glass_01 / 0.5); 409 native FBX elements compared,
+exactly three material-property differences, no geometry/UV/slot/UCX changes.
+Four flat VPM Diffuse maps 2048->256 px, all 12 triplet colours preserved; ERM/Normal already 256px.
+GeoJSON -9581.270 lexical precision fixed without changing values.
+Fresh `validate_package --scene` on both ZIPs at main 9d7753e1: exit 1, **passed=false**.
+Current-main readback and every value/limit/owner: [resumed checks](package-1278/resumed/CHECKS.md).
+Package-v006/repro-v006: 5/5 identical; ZIP/GeoJSON 3/3 identical to measured v004.
+Decision D285 supersedes only our provisional D268; raw historical evidence stays unchanged.
+Height system remains unknown [D279]; no 1.40 m shift or ground-mark substitution.
+All V001–V017 checks, observed values, limits and before/after statuses: [CHECKS](package-1278/latest/CHECKS.md).
+Full commands, evidence hashes, sources and diagnostics: [REPORT](package-1278/latest/REPORT.md).
+
+| Remaining stage | Value / status | Limit / missing input | Owner |
+|---|---|---|---|
+| V001 NPM | fail: 1 FBX, no 0000_Kpp_1_Ground.fbx | 2..21, approved Ground absent [D285] | Ground author / Artem |
+| V011 VPM FNO | fail: FNO_code/name empty | mandatory classifier pair from upload [D220] | SINTEZ |
+| V011 VPM areas | fail: s_obsh/s_naz/s_podz/spp_gns empty | truthful KPP1-specific sheet absent [D285] | Artem / architect |
+| V003 both | not_run: no quad master | non-triangulated work FBX; VPM faces <=4m [D021] | KPP1 master author / Artem |
+| V004 NPM | review: 0 below 5mm, 108 in band, 20266 above 20mm; min/median/max 13.695/6870.2359/31170.3557mm | 5–20mm; classification of rotated pairs absent | KPP1 geometry author / Artem |
+| V004 VPM | review: 0 below 5mm, 159 in band, 105614 above 20mm; min/median/max 14.7994/7345.9993/31170.3993mm | 5–20mm; original [D256] lists do not waive new lists | KPP1 geometry author / Artem |
+| V010 VPM | not_run: UCX coverage/offset subset | independent coverage/offset evidence, reg p.34–37 absent | Artem / collision reviewer |
+| V012 VPM | review: SM_Kpp_1 index ambiguity | single OKS allowed by [D019]; automatic index resolution absent | Validator maintainer / Artem |
+| V013 VPM height | not_run: export_meta absent, Z unverified | independently hash-bound exported Z endpoints; delta <0.001 m | KPP1 export author / Artem |
+| V013 VPM | not_run: survey point subset | survey alignment, <=0.5m placement; no authoritative tie [D262] | Survey author / Artem; validator subset absent |
+| V014 NPM | not_run: implementation absent | Moscow coordinates/heights/plan-angle verification, reg p.10 | Validator maintainer / Artem |
+| V015 both | not_run: architectural sign-off absent | approved-project match | Artem |
+| V016 VPM | not_run: collision sign-off absent | clear passages / height-zone offsets | Artem |
+| V017 both | not_run: placement sign-off absent | point/zero/orientation vs plan; <=0.5m VPM | Artem / survey author |
+| xView VPM | fail: 85 faces / 0 vertices, 128 pairs | 0/0 at 5/2mm; corrected approved geometry/native parity absent | KPP1 geometry author / Artem model review |
+| SINTEZ HP/LP 2.1.1 | checker fail: .sig absent (0 errors, 1 recommendation) | genuine UKEP, not verified by us [D163] | Artem / applicant |
+| SINTEZ HP 2.2.1 / 2.2.6 | fail: empty FNO pair | classifier code/name | SINTEZ |
+| SINTEZ LP 2.1.2 / 2.1.6 | fail: 1 FBX / Ground absent | 2..21, mandatory Ground | Ground author |
+| SINTEZ LP 2.10.3.1 | fail: 0000; checker suggests 0607 | upload-confirmed code; placeholder preserved [D262]/[D235] | SINTEZ / Artem |
+| Final AGR Tools | not_run: no live Max check | native final AGR Tools evidence | Artem frees Max / AGR Tools operator |
+
+Fresh latest R1-v003 placed-FBX xView: VPM 85/0 fail, NPM 0/0 pass (after material repair).
+Historical R1-v002 unplaced 112/12 and placed 99/0 are not current; geometry improvement belongs to #1246, not #1278.
+SINTEZ diagnostic (private Blender 5.1.2, process exit 0, error=null): **HP 64 verified / 3 failed /
+53 undefined; LP 39 / 4 / 29**. Undefined/manual checks stay open; all IDs in
+`package-1278/latest/sintez-summary.json`. No upload/FNO issuance or final checker gate signed.
+VPM texture/GeoJSON and NPM glass defects fixed; missing-input checks not weakened.
+No acceptance of new geometry, publication, source modification or live Max use.
+
+Prior merged placement run: `issue-1255-site-v004`; site-1255/REPORT.md (D262), based on rerun-1244 (D256); passed=false.
+Source contract: sources.json (asset-store DWGs + cached Revit object.json); R1 dimensions final D254; TASK.md indexes contract answers.
+Gate authority: job.yaml tracks open gates; visual waits-user, checker waits-visual, final AGR Tools waits-max; missing Ground/attributes and survey/manual checks remain. This #1305 branch is not merged evidence.
 
 # KPP1 (Центральная проходная) — VPM + NPM model, 2026-10-07
 

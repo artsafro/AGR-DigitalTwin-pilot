@@ -10,7 +10,7 @@
 - Актуальная версия: `library/windows/window_types.json` (в git).
 - Данные в git: `library/windows/window_types.json`, `confirmations.json`, `sources/`.
 - Генератор: кнопка `win.generate` (`windowgen_core`) строит меш типа по стандарту. Сборка записей — `tools/library/build_window_types.py`.
-- Появится в ветке J: `standard.json`, `drafts/`, лист превью, статусы и карантин.
+- Reusable review release: [Windows README](windows/README.md), `catalogue.json`; common [library template](../docs/library/TEMPLATE.md) and [audit](../docs/library/AUDIT.md). Source JSON remains authoritative; quarantine is not an offered asset.
 
 ## Материалы
 

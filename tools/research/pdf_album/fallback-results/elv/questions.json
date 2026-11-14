@@ -1,0 +1,74 @@
+{
+  "schema": "album-questions/1",
+  "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+  "passed": false,
+  "questions": [
+    {
+      "id": "elv-legend",
+      "page": 18,
+      "bbox": [
+        490,
+        610,
+        790,
+        730
+      ],
+      "kind": "material",
+      "reasons": [
+        "binding_unresolved",
+        "scale_and_units_unverified",
+        "ground_truth_not_independent",
+        "approval_open",
+        "ocr_vision_disagreement"
+      ],
+      "ocr_label": "- стемалит RAL 5024\n– стекло закаленное типа триплекс, прозрачное\nнетонированное\n- обшивка фасада из метал. панелей с фактурой дерева,\nцвет сосна, RAL 1001\n- обшивка фасада из метал. панелей цвет РАL 7021",
+      "vision_label": "- стемалит RAL 5024\n- стекло закаленное типа триплекс, прозрачное\nнетонированное\n- обшивка фасада из метал. панелей с фактурой дерева,\nцвет сосна, RAL 1001\n- обшивка фасада из метал. панелей цвет RAL 7021",
+      "status": "unresolved",
+      "recipient": "architect"
+    },
+    {
+      "id": "elv-rows",
+      "page": 27,
+      "bbox": [
+        98,
+        153,
+        315,
+        194
+      ],
+      "kind": "schedule",
+      "reasons": [
+        "binding_unresolved",
+        "scale_and_units_unverified",
+        "ground_truth_not_independent",
+        "approval_open",
+        "ocr_vision_disagreement"
+      ],
+      "ocr_label": "1.D.17\nГардероб персонала ТЦ\n10.77\n1.D.18\nГардероб персонала ТЦ\n11.54\n1.0.01\nДиспетчерская\n15.65",
+      "vision_label": "1.D.17\tГардероб персонала ТЦ\t10.77\n1.D.18\tГардероб персонала ТЦ\t11.54\n1.O.01\tДиспетчерская\t15.65",
+      "status": "unresolved",
+      "recipient": "architect"
+    },
+    {
+      "id": "elv-chain",
+      "page": 18,
+      "bbox": [
+        360,
+        222,
+        880,
+        257
+      ],
+      "kind": "dimension",
+      "reasons": [
+        "binding_unresolved",
+        "scale_and_units_unverified",
+        "ground_truth_not_independent",
+        "approval_open",
+        "ocr_vision_disagreement"
+      ],
+      "ocr_label": "5300\n8400\n8400\n8400\n8400\n0078\n5300\n52600",
+      "vision_label": "5300  8400  8400  8400  8400  8400  5300\n52600",
+      "status": "unresolved",
+      "recipient": "architect",
+      "source_question": "axis/view binding, scale and units unverified"
+    }
+  ]
+}

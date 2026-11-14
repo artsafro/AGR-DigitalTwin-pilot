@@ -26,12 +26,11 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 
 | # | Step | Done when | Status |
 |---|---|---|---|
-| 2.1 | Approve the layout: `materials\v001\<library_id>\`, `materials\placeholders\v001\`, `flora\v003\maps\<slug>\`, manifest `library/materials/maps_v001.json` | user decision recorded `[D<n>]` | next (user) |
-| 2.2 | Process the inbox: neutral names, NPM 128 + VPM 256 placeholders, flora split to diffuse RGB + `_o`, power-of-two resize, px/m check against [D207] | manifest rows with sha256, size, px/m, source msg id; validators pass | after 2.1 |
+| 2.1 | Approve the layout: `materials\v001\<library_id>\`, `materials\placeholders\v001\`, `flora\v003\maps\<slug>\`, manifest `library/materials/maps_v001.json` | user decision recorded `[D<n>]` | done: [D239] |
+| 2.2 | Process the inbox: neutral names, NPM 128 + VPM 256 placeholders, flora split to diffuse RGB + `_o`, power-of-two resize, px/m check against [D207] | manifest rows with sha256, size, px/m, source msg id; validators pass | done: 98 maps in `library/materials/maps_v001.json` by `tools/materials/inbox_maps.py` (spec `maps_v001.spec.json`); new ids 43–52 proposed, not yet table rows |
 | 2.3 | MAF atlas 512 bake from 53407 by `library/maf/material_ids_v005.json`; pine as its own WOOD2 slot if the user agrees | atlas passes the MAF atlas rules | review: pine = own id 33 [D240]; `material_ids_v007.json` (v006 + `wood_pine`), 512 atlas `library/maf/atlas_512_v007.json` (`jobs/maf-atlas-512/`, r2 log end); accepted visually 2026-11-10 [D240]; for new MAF only, library MAF keep their UV / atlas (no re-mapping) [D240] |
-| 2.4 | New flora species (daisy white / yellow, lavender, wheat, loosestrife, yarrow) into `library/flora/catalogue.json` | rows + maps, `model-flora` tests pass | after 2.2 |
-| 2.5 | Fill the missing sets from Megascans (gravel, pebbles, mulch, rubber crumb, roll lawn, roofs, facade masks, pine): check the Fab licence for commercial delivery first | licence note + rows in the manifest | blocked: licence |
-| 2.6 | Inventory of the Yandex «ALL textures» folder (69813) — listing only, no import | list with sizes and origin | later |
+| 2.4 | New flora species (daisy white / yellow, lavender, wheat, loosestrife, yarrow) into `library/flora/catalogue.json` | rows + maps, `model-flora` tests pass | partial: 12 candidates in `maps_v001.json` `flora_candidates`; 3 species approved and built (NPM star + VPM shell, `library/flora/stars-telegram-v001.json`, ids 410-412 proposed) [D242], accepted with heights confirmed [D253]; catalogue rows need a library version with these objects + a generator route for non-audit sources (open, #1191); 9 wait for Latin names |
+| 2.5 | Fill the missing sets (gravel, pebbles, mulch, rubber crumb, roll lawn, roofs, facade masks, pine) from our own textures (Telegram inbox, tiles of our delivered projects), then generate the rest (`synthetic: true`, 1000 px/m); external CC0 / Megascans not used [D243] (the Fab licence research stays background: `docs/research/fab-megascans-licence-2026-11.md`) | rows in `library/materials/maps_v002.json` | in review: 116 maps (own: gravel, mulch, rubber crumb, roll lawn, pine, rows marked `provenance`; generated: facade / paving masks, brick, pebbles, roofs with roll seams) by `inbox_maps.py` + `texture_surfaces.py`; pine id 53 proposed |
 
 ## Phase 3 — 3ds Max tooling
 
@@ -55,4 +54,4 @@ One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later
 
 Max Ultra MCP, opencode, rea, DragShift, allesimfluss, UV Unfoldr, new requirements PDF / IFC post / window atlas
 rule / SintezAgrChecker / AlexYo_AssetImporter from «АГР - Holding» (user 2026-11-10 [D237]), the DLSS exe from
-@neuroviza (untrusted binary).
+@neuroviza (untrusted binary), the inventory of the Yandex «ALL textures» folder (69813, former step 2.6; user 2026-11-10 [D241]).
