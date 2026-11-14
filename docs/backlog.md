@@ -256,6 +256,15 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
   per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
   effort M
+- **R21** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Blender part assembly — append part .blend files, place
+  module instances at level offsets (k·3.15), export a non-triangulated FBX + a slot→image manifest JSON; seen 6 times
+  (assembly v001–v006 via sed-edited copies of one script); effort S
+- **R22** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Max scene refresh from such an FBX — delete the layer's
+  generated objects except a keep-list, import #add, rebuild one Multi/Sub (Physical) per part group from the manifest
+  (Bitmap / MultiTile), assign, save a new version; seen 3 times (3k_v002→v004); effort M
+- **R23** proposal 2026-11-14, job/4bk-k3-vpm - pattern: АКП joint UV by left-edge stacking (Artem's method — every
+  joint is an edge, panels share one texel and stack by their joint edge on one painted line; long faces with mid
+  joints go to a second tile); seen 1 user explanation + 3 agent runs re-deriving joint layouts; effort M
 
 ## Harness and organization (default owner Codex)
 
