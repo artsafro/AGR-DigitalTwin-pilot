@@ -287,7 +287,11 @@ def _status(rec):
             dims = [d for d in rec['library_dims'] if d]
             if dims and not any(d['ok'] for d in dims):
                 return 'variant', 'A101 article, size off > 10 %'
-            return 'exists', 'A101 article' + ('' if dims else ' (no spec size to check)')
+            if dims:
+                return 'exists', 'A101 article'
+            if any(rec.get('dims_mm') or []):
+                return 'exists', 'A101 article (size NOT checked: library model has no bbox)'
+            return 'exists', 'A101 article (no spec size to check)'
         if rec['project_sets']:
             return 'exists', 'project set ' + rec['project_sets'][0]['set_id'] + ' (not yet A101 format)'
     else:
