@@ -27,7 +27,7 @@ import shapely
 from PIL import Image
 
 from twinqa.report import Finding
-from twinqa.uv import tile_origin, udim_of
+from twinqa.uv import LAST_TILE, UdimDomainError, tile_origin, udim_of
 
 EPS = 1e-6
 UDIM_PAGES = [31]  # reg p.31 §2.1.2-2.1.3: geometry in one tile, tiles from 1001
@@ -243,9 +243,13 @@ def measure_features_per_face(uv_rows, texture_path, *, alpha_threshold=128, exp
     invalid = []  # faces with a non-simple or zero-area UV polygon: a finding, never counted
     for f in faces:
         ident = {"name": f.name, "face": f.face, "material": f.material}
-        own = udim_of(f.uv)
-        if own is None:
-            findings.append(_fail("uv_features.wrong_tile", f"{f.name} face {f.face}: centroid outside UDIM grid",
+        try:
+            own = udim_of(f.uv)
+        except UdimDomainError:  # centroid off the UDIM grid (#1337: udim_of never returns None)
+            own = None
+        if own is None or own > LAST_TILE:
+            seen_at = f"tile {own}" if own is not None else "centroid outside UDIM grid"
+            findings.append(_fail("uv_features.wrong_tile", f"{f.name} face {f.face}: {seen_at}",
                                   f"tile {tile}" if tile else "tile 1001..1100", ident, UDIM_PAGES))
             continue
         if tile is not None and own != tile:

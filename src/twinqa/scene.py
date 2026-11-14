@@ -29,7 +29,8 @@ from twinqa.geometry.ucx_audit import (
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
-from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities, udim_of
+from twinqa.uv import (DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, UdimDomainError, _density_finding, edge_densities,
+                       udim_of)
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -729,7 +730,10 @@ def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
                     raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
                 if len(poly_xyz) < 2:
                     continue
-                tile = udim_of(poly_uv)
+                try:
+                    tile = udim_of(poly_uv)
+                except UdimDomainError:  # centroid off the UDIM grid or < 3 corners (#1337): unknown tile
+                    tile = None
                 material = materials[index] if index < len(materials) else None
                 side = _tile_side(diffuse_px, tile, material)
                 if side is None:
