@@ -1,6 +1,13 @@
 # Source Normal restoration: support/permission checkpoint (#1326)
 
 **NOT passed. No new scene, map, topology, replication, PR or review.**
+
+**Answered 2026-11-14 23:48 [D297]:** Artem authorized the recommended minimal
+outer-bevel-support planar cuts on a new copy, preserving the 10 mm colour seam,
+original relief scale, courses, density, surface and one tile. The scope question
+below is historical and must not be asked again. Continue from
+`BEVEL_SUPPORT_FIT.md`; `bevel-support-cut-approval.json` records the answer.
+
 Artem's 2026-11-14 22:13 answer is recorded as [D295] and
 `source-normal-approval.json`: restore the original joint relief/bevel; a flat
 neutral Normal is no longer a candidate. Do not repeat that material question.

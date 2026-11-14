@@ -65,16 +65,21 @@ def sample_chart_field(image, source_uv, chart_m, points_m):
     fx=(x-ix)[:,None];fy=(y-iy)[:,None]
     a=image[iy,ix].astype(float);b=image[iy,np.minimum(ix+1,w-1)].astype(float)
     c=image[np.minimum(iy+1,h-1),ix].astype(float);d=image[np.minimum(iy+1,h-1),np.minimum(ix+1,w-1)].astype(float)
-    return ((a*(1-fx)+b*fx)*(1-fy)+(c*(1-fx)+d*fx)*fy).tolist()
+    sampled = (a*(1-fx)+b*fx)*(1-fy)+(c*(1-fx)+d*fx)*fy
+    if not np.isfinite(sampled).all():
+        raise ValueError('nonfinite interpolated source field')
+    return sampled.tolist()
 
 
 def compose_relief_normal(base_rgb, relief_xy, source_axes, target_axes):
     """Add original signed groove to unchanged base, transporting tangent axes.
 
     Replays n=normalize((base/127.5-1)+groove) from the source renderer.
-    Axes are orthonormal +U/+V in one common world frame. Coplanar orientation
-    may change; scale, shear, mirrors and tilted source/target planes are errors.
-    This has no spatial-width parameter: the caller samples physical support.
+    Axes are orthonormal encoded +R/+G directions in one common world frame
+    (+U/+V for OpenGL, +U/-V for DirectX). Both frames must use the same encoding.
+    Coplanar orientation may change; scale, shear, mirrors and tilted source/target
+    planes are errors. This has no spatial-width parameter: the caller samples
+    physical support. No implicit DirectX/OpenGL green conversion is performed.
     """
     base = base_rgb
     for values, dimension, name in ((base, 3, 'base_rgb'), (relief_xy, 2, 'relief_xy'),
@@ -98,9 +103,13 @@ def compose_relief_normal(base_rgb, relief_xy, source_axes, target_axes):
         raise ValueError('nonorthonormal/mirrored/noncoplanar tangent axes')
     vectors = base / 127.5 - 1
     vectors[:, :2] += relief @ source @ target.T
-    lengths = np.linalg.norm(vectors, axis=1)
-    if np.any(lengths <= 1e-12) or np.any(vectors[:, 2] <= 0):
+    if not np.isfinite(vectors).all():
+        raise ValueError('nonfinite transported Normal')
+    magnitudes = np.max(np.abs(vectors), axis=1)
+    if np.any(magnitudes <= 1e-12) or np.any(vectors[:, 2] <= 0):
         raise ValueError('unsupported non-forward Normal')
+    vectors /= magnitudes[:, None]
+    lengths = np.linalg.norm(vectors, axis=1)
     return ((vectors / lengths[:, None] + 1) * 127.5).tolist()
 
 

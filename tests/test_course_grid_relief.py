@@ -31,6 +31,16 @@ def test_source_renderer_equation_can_be_replayed_without_normal_rescaling():
     assert np.array(result)==pytest.approx(np.array([[217.6561146012848,127.5,217.6561146012848]]))
 
 
+def test_directx_axes_keep_encoded_green_sign_explicit():
+    from tools.materials.course_grid_appearance import compose_relief_normal
+    # Both frames use +U/-V: the same physical rotation changes encoded G in
+    # the opposite direction to the OpenGL control above. No image flip occurs.
+    source=[[1.,0.,0.],[0.,-1.,0.]]
+    target=[[0.,1.,0.],[1.,0.,0.]]
+    result=compose_relief_normal([[127.5,127.5,255.]],[[1.,0.]],source,target)
+    assert np.array(result)==pytest.approx(np.array([[127.5,217.6561146012848,217.6561146012848]]))
+
+
 @pytest.mark.parametrize('case', ['empty','partial','nan','inf','boolean','mirror','tilt','scale','shear','range','backward','zero'])
 def test_relief_partial_or_unsupported_frames_refuse(case):
     from tools.materials.course_grid_appearance import compose_relief_normal

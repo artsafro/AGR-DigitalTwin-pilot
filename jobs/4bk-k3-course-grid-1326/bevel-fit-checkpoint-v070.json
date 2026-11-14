@@ -1,0 +1,126 @@
+{
+  "passed": false,
+  "status": "tested_one_tile_catalog_incomplete_budget_decision_needed",
+  "decision": "D297",
+  "source_hashes_verified": 10,
+  "native_scene_export_hashes_verified": 2,
+  "source_faces": 771,
+  "protected_source_faces": 1244,
+  "support_patches": 803,
+  "source_affine_groups": 751,
+  "one_tile_placed": 235,
+  "one_tile_unplaced": 516,
+  "two_tile_proposal_placed": 751,
+  "two_tile_proposal_unplaced": 0,
+  "prior_expanded_png_findings_open": 102,
+  "summary": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v070\\summary.json",
+    "sha256": "9aa7d02e981bb2b9c06a0134ad5d77aead1bb5557b3f9c09accc231548cea9e3"
+  },
+  "picture": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v067\\support-fit-NOT-A-MODEL.png",
+    "sha256": "5654add24d4468be2ff66c0f730f1057ebded1a15c41b54dd05564950c70e241"
+  },
+  "seals": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v050\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v051\\SHA256SUMS.txt",
+      "sha256": "165ea484a41dbced17422735b66ff36be26b7ceb88c73540f0004f66e3848b5f",
+      "files": 7
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v052\\SHA256SUMS.txt",
+      "sha256": "d3ad2ad0de48f1b39350bcba3fc72ffdda1798ecb46ce1fabee0db580871dbbc",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v053\\SHA256SUMS.txt",
+      "sha256": "b7a9a87c560f0cebcbb3603ca47ae34e064bcfc8d63e0ea1aa2c1d022ae65e51",
+      "files": 5
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v054\\SHA256SUMS.txt",
+      "sha256": "3d18253096d3d416317afb5e737fba316c2e2a69b4f131412be55d040dd6cb18",
+      "files": 6
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v055\\SHA256SUMS.txt",
+      "sha256": "edb7d001c07facbfd9dc79cb05e671b804f5852659b2f40f828e2344868fc168",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v056\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v057\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v058\\SHA256SUMS.txt",
+      "sha256": "363dda33a8d3f1cfcb301960cb8c923deaec79cb97489f1233cc7527d5155364",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v059\\SHA256SUMS.txt",
+      "sha256": "e93813ae64ef1d0560093bc24937d0fb79d24818d1e84e3ef72f1288b864004e",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v060\\SHA256SUMS.txt",
+      "sha256": "2988c401fb83dd02b681559e700d97d931c113ed2b0ff0f5a2d5d1b902716c6a",
+      "files": 2
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v061\\SHA256SUMS.txt",
+      "sha256": "0e3c42061b685f322c71352704d3698d9015166f4f97de5c6b39d1b1b4e0884e",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v063\\SHA256SUMS.txt",
+      "sha256": "f557c3aceff3e9a94f040cd62a05ef2b113a329bea65819c9f7a50f24ff55131",
+      "files": 6
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v064\\SHA256SUMS.txt",
+      "sha256": "6c68af567b3696a18c2d37a55ba924c8f5a0cdc1119d5f64dbbaeb23cb84c5cb",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v065\\SHA256SUMS.txt",
+      "sha256": "e8219d3bbb78586078828672707736279e0dc1b09ef3739f7892176a0ee7e8a5",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v066\\SHA256SUMS.txt",
+      "sha256": "e2082c1ec9e85cfe4e1c21cd54cdbaab285e2264525bc462606608dd285a4441",
+      "files": 2
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v067\\SHA256SUMS.txt",
+      "sha256": "b04e5c1925c89892845f61571cf3a7e0846270056cdabdadf269c9cdfaa9bbff",
+      "files": 2
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v068\\SHA256SUMS.txt",
+      "sha256": "c9ef0207886175f8278402f2e1ef596ff0c19b5e38dc301e49d90c2e59905108",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v069\\SHA256SUMS.txt",
+      "sha256": "1053b8a1c8c847e9f74f96e7c7ab46f4b10840eb0defedf4ba4855f4cf19e5c4",
+      "files": 5
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v070\\SHA256SUMS.txt",
+      "sha256": "05cc13f0a19d7ff50a550382fb4b11a534177236faf1bee892fb07398e611e67",
+      "files": 37
+    }
+  ]
+}
