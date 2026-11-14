@@ -36,8 +36,8 @@ Full commands, evidence hashes, sources and diagnostics: [REPORT](package-1278/l
 | Remaining stage | Value / status | Limit / missing input | Owner |
 |---|---|---|---|
 | V001 NPM | fail: 1 FBX, no 0000_Kpp_1_Ground.fbx | 2..21, approved Ground absent [D285] | Ground author / Artem |
-| V011 VPM FNO | fail: FNO_code/name empty | mandatory classifier pair from upload [D220] | SINTEZ |
-| V011 VPM areas | fail: s_obsh/s_naz/s_podz/spp_gns empty | truthful KPP1-specific sheet absent [D285] | Artem / architect |
+| V011 VPM FNO | v008 (#1371): FNO 013 006 005 / «Объект электроснабжения иного типа» from delivered `_002` [D288]; no V011 FNO finding | SINTEZ cross-check still open [D220] | SINTEZ |
+| V011 VPM areas | v008 (#1371): s_obsh/s_naz 27124.36, spp_gns 28480.58 = project sums [D288]; fail only: s_podz empty | project underground-area total absent; never 0 [D288] | Artem / architect |
 | V003 both | not_run: no quad master | non-triangulated work FBX; VPM faces <=4m [D021] | KPP1 master author / Artem |
 | V004 NPM | review: 0 below 5mm, 108 in band, 20266 above 20mm; min/median/max 13.695/6870.2359/31170.3557mm | 5–20mm; classification of rotated pairs absent | KPP1 geometry author / Artem |
 | V004 VPM | review: 0 below 5mm, 159 in band, 105614 above 20mm; min/median/max 14.7994/7345.9993/31170.3993mm | 5–20mm; original [D256] lists do not waive new lists | KPP1 geometry author / Artem |

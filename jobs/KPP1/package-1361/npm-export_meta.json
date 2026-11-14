@@ -1,0 +1,16 @@
+{
+  "address": "Kpp_1",
+  "h_otn_model_max_z_m": 8.649999618530273,
+  "thumbnail": "G:\\Мой диск\\AGR-evidence\\1361-shared-packaging\\kpp1-v002\\vpm\\thumbnail_256.jpg",
+  "profile": "npm",
+  "exported_files": [
+    "0000_Kpp_1_01.fbx"
+  ],
+  "provenance": {
+    "address": "cold-run FBX filename; Kpp_1 naming placeholder, legal address unknown (STATE.md:77-78); question: confirm delivery address token",
+    "h_otn_model_max_z_m": "G:\\Мой диск\\AGR-evidence\\1313-kpp1-cold-run-3\\derive-v001\\readback.json: meshes[].bounds_m maximum Z, cold-run hash verified",
+    "thumbnail": "G:\\Мой диск\\AGR-evidence\\1255-kpp1-msk77\\site-v004\\thumbnail_256.jpg; copied unchanged; site-v004 REPORT.md:60 real render",
+    "profile": "cold-run-1313/RUN-LOG.md:45; NPM derived vs approved R1 VPM",
+    "exported_files": "verified cold-run-1313/evidence-SHA256SUMS.txt; copied unchanged"
+  }
+}

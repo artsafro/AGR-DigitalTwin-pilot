@@ -19,7 +19,7 @@ YAMLS = [ROOT / route_map.EVENTS, ROOT / route_map.CONTEXTS]
 # ---------------------------------------------------------------- generator: drift, references, labels
 def test_committed_files_equal_generator_output():
     _, _, files = route_map.render(ROOT)
-    assert len(files) == 4
+    assert len(files) == 8  # NPM, VPM (#1383), Ground (#1383) routes + context map, .excalidraw + .svg each
     for rel, text in files.items():
         assert (ROOT / rel).read_bytes() == text.encode("utf-8"), f"{rel} drifted; rerun route_map.py"
 
@@ -244,7 +244,7 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     assert {k[0] for k in allowed} == set(guard.RULES)
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
-    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 15
+    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
     assert len([k for k in jobs if k[0] == "udim-tile"]) == 32   # #1387: one row per copy (same line may hold 2)
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
@@ -288,7 +288,8 @@ def _guard_root(tmp_path, files, rows=""):
         p = tmp_path / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(text, encoding="utf-8")
-    (tmp_path / "jobs").mkdir(exist_ok=True)
+    for top in ("jobs", "tools", "src"):   # #1376: udim-tile guards jobs/ + tools/ + src/; each must exist
+        (tmp_path / top).mkdir(exist_ok=True)
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text("contexts:\n  - id: x\n    duplicates:\n" + rows if rows else "contexts:\n  - id: x\n",
                    encoding="utf-8")

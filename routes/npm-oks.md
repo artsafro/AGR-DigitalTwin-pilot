@@ -68,8 +68,7 @@ The [route map](../docs/architecture/npm-oks-route.svg) draws these as branches 
   Path B: directly by material ID, each ID = a finish from the specification/sources; texture from the
   library (`library/materials/`), an existing diffuse, or a newly generated diffuse that is added to the
   library, then laid onto the atlas (`dt derive atlas`, the atlas half of `agr vpm-to-npm`).
-- **Packaging (step 6).** VPM: `agr package-vpm`. NPM: the NPM packager of #1361 (not on `main` yet;
-  no command until it merges).
+- **Packaging (step 6).** VPM: `agr package-vpm`. NPM: `agr package-npm` (#1361).
 - **Roof and openings (steps 3–4).** Roof inside a parapet per [R6](../docs/procedure/node-r6-oks-body-facade.md)
   step 4; windows per [R4](../docs/procedure/node-r4-window-glazing.md) step 1 (library window with a
   small inset if one fits, else the window generator).

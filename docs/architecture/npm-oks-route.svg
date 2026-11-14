@@ -289,9 +289,9 @@
 </text>
 <text x="1505.0" y="701.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="13">Ветка: сдаём НПМ</tspan>
-<tspan x="1505.0" dy="16.25">→ упаковщик НПМ (#1361; пока</tspan>
-<tspan x="1505.0" dy="16.25">не в main — команды agr/dt</tspan>
-<tspan x="1505.0" dy="16.25">нет) [D292]</tspan>
+<tspan x="1505.0" dy="16.25">→ упаковщик НПМ (#1361)</tspan>
+<tspan x="1505.0" dy="16.25">Команда: agr package-npm</tspan>
+<tspan x="1505.0" dy="16.25">[D292]</tspan>
 </text>
 <text x="1505.0" y="802.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="13">⚠ Пакет: 9 своих упаковщиков</tspan>

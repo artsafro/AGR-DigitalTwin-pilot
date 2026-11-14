@@ -1,10 +1,21 @@
+import importlib.util
 import math
+from pathlib import Path
+
+_ownspec = importlib.util.spec_from_file_location(
+    "udimtile_core_dt_ai", Path(__file__).resolve().parents[3] / "adapters/max/agr_tools/udimtile_core.py")
+_udimtile = importlib.util.module_from_spec(_ownspec)  # the one UDIM function (#1337, #1376)
+_ownspec.loader.exec_module(_udimtile)
 
 
-def tile_origin(tile: int):
+def _regulated_tile_origin(tile: int):
+    """UDIM tile -> (u_tile, v_tile) via udimtile_core.tile_origin, limited to the regulation grid 1001..1100."""
     if type(tile) is not int or not 1001 <= tile <= 1100:
         raise ValueError("UDIM must be 1001..1100")
-    return (tile - 1001) % 10, (tile - 1001) // 10
+    return _udimtile.tile_origin(tile)
+
+
+tile_origin = _regulated_tile_origin
 
 
 def tile_quad(tile: int, size: int, padding: int):

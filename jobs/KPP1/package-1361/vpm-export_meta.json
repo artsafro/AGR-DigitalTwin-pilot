@@ -1,0 +1,16 @@
+{
+  "address": "Kpp_1",
+  "h_otn_model_max_z_m": 8.65,
+  "thumbnail": "G:\\Мой диск\\AGR-evidence\\1361-shared-packaging\\kpp1-v002\\vpm\\thumbnail_256.jpg",
+  "profile": "vpm",
+  "exported_files": [
+    "SM_Kpp_1.fbx"
+  ],
+  "provenance": {
+    "address": "cold-run FBX filename; Kpp_1 naming placeholder, legal address unknown (STATE.md:77-78); question: confirm delivery address token",
+    "h_otn_model_max_z_m": "jobs/KPP1/site-1255/REPORT.md:73; approved R1 model top rounded to 2 decimals; not V013 bounds evidence",
+    "thumbnail": "G:\\Мой диск\\AGR-evidence\\1255-kpp1-msk77\\site-v004\\thumbnail_256.jpg; copied unchanged; site-v004 REPORT.md:60 real render",
+    "profile": "cold-run-1313/RUN-LOG.md:45; NPM derived vs approved R1 VPM",
+    "exported_files": "verified cold-run-1313/evidence-SHA256SUMS.txt; copied unchanged"
+  }
+}

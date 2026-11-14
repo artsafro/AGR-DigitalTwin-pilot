@@ -88,7 +88,7 @@ def test_branch_schema_errors_name_the_key(mutate, needle):
 @pytest.mark.parametrize("mutate,needle", [
     (lambda e: e["stages"][3]["branches"][0]["rules"].append("D999"), "D999"),
     (lambda e: e["stages"][3]["branches"][0]["evidence"].append("jobs/KPP1/nope.md"), "jobs/KPP1/nope.md"),
-    (lambda e: e["stages"][5]["branches"][1].update(commands=["agr package-npm"]), "agr package-npm"),
+    (lambda e: e["stages"][5]["branches"][1].update(commands=["agr package-nope"]), "agr package-nope"),
 ])
 def test_unknown_branch_reference_is_reported(mutate, needle):
     events, contexts = _events()

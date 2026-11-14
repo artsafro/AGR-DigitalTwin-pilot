@@ -160,11 +160,13 @@ stages:
           - tools/derive/package_vpm.py
       - id: package-npm
         when_ru: "сдаём НПМ"
-        ru: "упаковщик НПМ (#1361; пока не в main — команды agr/dt нет)"
+        ru: "упаковщик НПМ (#1361)"
+        commands:
+          - "agr package-npm"
         rules:
           - D292
         evidence:
-          - tools/derive/export_npm.py
+          - tools/derive/package_npm.py
   - id: readback
     event_ru: "Экспорт заново прочитан в новом процессе"
     actor: agent
