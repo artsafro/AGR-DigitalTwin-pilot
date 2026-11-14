@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-technical-continuation-v007-r1
+run_id: cold-1315-shrub-replication-v009-r2
 synthetic: false
 path: deviation
 inputs: &inputs
@@ -34,10 +34,15 @@ deviations:
   what_was_tried: Real-export RED/GREEN paired-sheet metric repair and exact-coordinate MAF seams in r1. Boolean union and coplanar dissolve rejected. Independent double-plane audit disproves old float32 UCX427 alarm; actual-export sampled distances and pair relations measured. Exact star cuts exceed NPM budget and still fail; no policy waiver applied.
   new_tool_written: No shared production/checker module. Job-local drivers and rejected experiments sealed externally under evidence-v007.json.
   result: Same38MAF/4582plants; NPM172437/VPM806914. Whole-file xView FAIL3386/47072faces. C44 interpretation or changed library-copy representation needs model-owner decision; other technical repairs remain worker-owned.
+- gate: operations
+  what_failed: D291 isolated shrub construction passes, but joined actual hedges still yield41370NPM defects; complete r2 xView and package validators FAIL. Native Blender drops39/48malformed MAF faces.
+  what_was_tried: Exact accepted shrubs replicated4576times;4582plants/38MAF retained; one interim Flora atlas. Common rotation34defects,minimum crown21,exact imprint7defects/35xViewfaces on actual8plant group all rejected. Separate disjoint-cell option native exports0/0/0both, but crowns68.1-79.4percent violate retained band; not applied.
+  new_tool_written: No shared module or checker edit. Job-local drivers/readback/probes sealed in evidence-v009.json.
+  result: Actual157141NPM/617840VPM;604raw mesh arrays equal r1to r2,4620controls each. D291 pilot gate closed. New model-owner choice is individual crown clipping in dense hedge copies, not a C44 waiver; all other technical repairs remain worker-owned.
 gates:
   inputs:
     status: review
-    note: D287 accepts composition38MAF/4582plants, not article matches or technical QA; RoyalRed interim allowed with explicit label.4source/9used-library hashes equal. Eight original non-Acer map files missing; A101 candidates pinned but not silently bound. Gaps remain listed.
+    note: D291 accepts exact v008r2 shrub replication;D287 composition retained.4source/9geometry-library/3A101-original-map hashes equal. Hydrangea/Luteus exact-Text interim maps and permitted RoyalRed bound;2unresolved map identities stay grey. No article match/material/technical acceptance inferred; gaps listed.
     evidence: *inputs
   parts:
     status: pass
@@ -48,31 +53,31 @@ gates:
   operations:
     status: fail
     waits: user
-    note: D289 authorizes changed Flora copies, but requires separate pilot picture approval before site-wide use. v008/r2 four-bush pilot exported xView0/0/0 per profile; full site remains unchanged v007/r1 FAIL. See CONTINUATION-v008.md and pilot-summary-v008-r2.json. Other technical FAILs remain worker-owned.
+    note: D291 pilot picture gate CLOSED;4576shrubs actually replicated. Whole-file QA remains FAIL. After3bounded repairs, a separate actual8plant cell-trim option exports xView0/0/0both but loses individual crown to68.1-79.4percent vs retained80percent. Need model-owner choice permitting this explicit crown loss or another hedge representation; NOT approval of technical FAILs. See CONTINUATION-v009.md; other repairs remain worker-owned.
     evidence: &summary
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v007-r1.json
-      sha256: c5e429ac98259b33400f81c0447517fee2c72e352d296b957662413aa677a1f6
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v009-r2.json
+      sha256: c0cca5ff26f8532e1c17599d103bea5784d8d151586b875fc80b10987ca17fb5
   budgets:
     status: review
-    note: Actual NPM172437<=180000,VPM806914<=2625000;UCX6876<=40346. Same instance counts, no deletion. Exact-star-cut experiment would exceed180000, rejected. Texture/density and final technical budgets remain incomplete.
+    note: Actual raw NPM157141<=180000,VPM617840<=2625000;UCX6876<=30892. Same4582plants/38MAF,no deletion; individual copied crowns4582of4582within20percent each profile. One2048RGBdiffuse/opacity NPMFlora atlas packed;VPMdensity/UDIM and remaining material budgets incomplete. MAF-imprint237654NPM is rejected projection,not built site.
     evidence: *summary
   export_readback:
     status: review
-    note: Fresh r1 native Max and actual-FBX reconstruction agree604/604bboxes<=3.8microns;4620controls each,units100. Double planes600convex,old427float32normal false alarm;175688surface samples<=79.836mm,not continuous proof. UCX213wide neighbours and topology open. Native NPM validator executesFAIL,VPM computation times out/crashes after import.
+    note: Fresh native Blender5.1.2 imports both actual r2FBXs but drops39/48MAFfaces;not exact geometry census. Actual-FBX reconstruction157141/617840,604of604r1to r2mesh arrays exact,4620controls each,units100. Prior600UCX/31448Groundvertices/58896Groundfaces exact to v007;historical175688samples<=79.836mm NOT continuous proof. Both r2public validators executeFAIL; no stale timeout/green receipt promoted.
     evidence: *summary
   report:
     status: review
-    note: v007 four-area continuation,real-source regressions and C44/synthetic-separated witness; prior906/969/1178 comparison retained. New immutable89-file Drive seal. No delivered/readiness claim.
+    note: v009 four-area continuation; actual site replication,three failed non-shape repairs and isolated crown-option model choice. Historical906/969/1178 report-only comparison after build,not construction hints. Immutable135-file Drive seal. No delivery/readiness claim.
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v007.md
-      sha256: 9459c15a0d69552e198c837e7d7657553ffaf124c8e5f178517335ad7ab27bdd
-    - path: jobs/SIL13-COLD-1315/evidence-v007.json
-      sha256: 33dea2864969f2dd9a8ab9e6f80a551bd11e2e8b49592af122be60745e1725c6
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v009.md
+      sha256: 821bfea1000e50774593e19187215687a978c2afacef268b658b27d6a5b5c9d2
+    - path: jobs/SIL13-COLD-1315/evidence-v009.json
+      sha256: a419e37626d9f41ed728660a2f1e68c6fad34e2e4adfc02818ab2a7f557f14f5
   visual:
     status: review
-    note: D287 closes v006/r5 composition/candidate picture choice. Final textured/technical delivery visual gate remains open; do not ask the accepted composition again or infer a technical/material waiver.
+    note: D287 composition and D291 isolated-shrub picture gates CLOSED. Actual full-site r2 and separate geometry-only crown-trim option are on versioned v009sheet. New model-owner choice only for crown loss in overlapping hedges; final textured delivery visual review remains separate. Grey/interim limits explicit,no inferred material or checker acceptance.
     evidence: *summary
   checker:
     status: missing
-    note: Full SINTEZ not run; final technical/visual gates incomplete. r1 NPM native validatorFAIL,VPM12machine not_run after600s timeout; diagnostic825s topology access violation is not a pass. No stale r4/r5 receipt promoted.
+    note: Full SINTEZ not run; final technical/visual gates incomplete. Actual r2NPMpublic2pass/3fail/1review/2not_run;VPM3pass/3fail/1review/5not_run. Complete package is NOT passed; rejected wrong-area/filter diagnostics retained separately,not promoted.
     evidence: []

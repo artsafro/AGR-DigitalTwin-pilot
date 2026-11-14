@@ -1,8 +1,13 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v008/r2 changed-copy bush pilot awaiting picture approval [D289], not delivered**.
-See [CONTINUATION-v008.md](CONTINUATION-v008.md): isolated exported controls xView0/0/0
-at NPM2mm/VPM5mm; full site remains unchanged v007/r1 and still fails technical QA.
+Current status: **v009/r2 actual site replication [D291], not delivered**.
+See [CONTINUATION-v009.md](CONTINUATION-v009.md): 4,576 accepted changed-copy shrubs
+replicated, all4,582 plants/38MAF retained, actual157,141/617,840 render triangles.
+One interim Flora atlas packed/read back; whole-site validators still FAIL. Three
+bounded hedge repairs failed. A separate cell-trim eight-plant option is xView-clean
+but shrinks individual crowns below the retained band; model-owner decision needed,
+NOT approval of technical FAILs. The old isolated shrub picture gate is CLOSED.
+Historical v008/r2 pilot is documented in [CONTINUATION-v008.md](CONTINUATION-v008.md).
 Historical v007/r1 continuation follows; its then-open C44 route decision is answered by D289.
 
 Historical v007 status: **v007/r1 technical continuation; v006/r5 composition accepted [D287], not delivered**.

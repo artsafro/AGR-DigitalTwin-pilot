@@ -59,7 +59,7 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v008.md](CONTINUATION-v008.md). [D281] answers
+Current continuation is [CONTINUATION-v009.md](CONTINUATION-v009.md). [D281] answers
 G1–G3; [D284] supplies the standing sliver/TIN/draw-order rule without repeated small
 questions. First pilot geometry remains [D283]; zero/5.6 m plan remain [D282].
 [D287] closes the v006/r5 picture choice: all 38 MAF kept as accepted-by-picture,
@@ -81,8 +81,13 @@ VPM default600s timeout and unchanged-reader topology crash, not importer failur
 [D289] / issue comment 6878796926 authorizes a changed-copy Flora representation,
 not a C44 waiver: retain species, all 4,582 instances, planting points and accepted
 height/crown ranges; keep NPM <=180,000. Show a separate small construction pilot
-and wait for its picture approval before site-wide application. The unchanged
-v007/r1 site remains the full-site baseline; the new pilot is not site placement.
+and wait for its picture approval before site-wide application. [D291] / issue comment
+6880380487 accepts the v008/r2 shrub shape/centre/Hydrangea without edits. This gate
+is CLOSED: v009/r1 actually replicates 4,576 shrubs, retaining all 4,582 plants,
+38 MAF and planting points; NPM157,141/VPM617,840 render triangles. v009/r2 adds
+one interim Flora atlas without changing geometry. No technical/delivery waiver.
+Aggregate hedge contacts remain FAIL despite isolated-pilot success; the original
+v007/r1 is historical, not the current full-site export.
 Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.
 Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Syringa

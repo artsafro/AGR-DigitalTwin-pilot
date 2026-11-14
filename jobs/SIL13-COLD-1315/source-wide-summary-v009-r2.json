@@ -1,0 +1,992 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-shrub-replication-v009-r2",
+  "authority": "D291",
+  "authority_ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6880380487",
+  "scope": "r2 exact r1 geometry, actual 4576 accepted shrub-copy replacements and interim Flora atlas; NOT delivered",
+  "profiles": {
+    "NPM": {
+      "ground_triangles": 58896,
+      "flora_triangles": 64124,
+      "maf_triangles": 34121,
+      "total_triangles": 157141,
+      "export_sha256": "7e6e828c13ffe742ad73ec96bfaf73e329683c2a76a865e6126988619ed1fc81",
+      "external_fbx": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v009/r2/NPM/SM_SIL13_Ground.fbx",
+      "r2_fbx_sha256": "52135464fd94f98d300117ef5332cc0b40560462dd801d0c4e1d6d45aaf67da9",
+      "native_blender_triangles": 157102,
+      "native_removed_faces": 39,
+      "controls_retained": 4620,
+      "derived_shrubs": 4576,
+      "material_controls": 4582,
+      "seating_readback_controls": 4620,
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "xview_basis": "actual exported r1 arrays exact-equal to actual exported r2 arrays; NOT UV equivalence",
+      "xview_totals": {
+        "overlapping_vertices": 1030,
+        "overlapping_faces": 3239,
+        "vertex_pairs": 602,
+        "face_pairs": 5309,
+        "face_pairs_by_kind": {
+          "contact": 322,
+          "area": 1407,
+          "area+contact": 3580
+        },
+        "bowtie_vertices": 669,
+        "bowtie_pairs": 52,
+        "parts_without_faces": 0
+      },
+      "public_validator_exit": 1,
+      "public_validator_machine_stage_counts": {
+        "pass": 2,
+        "fail": 3,
+        "review": 1,
+        "not_run": 2
+      },
+      "public_fails": [
+        {
+          "stage": "V003",
+          "name": "ground skirt depth",
+          "observed": "SM_SIL13_Ground.fbx: SM_SIL13_Ground perimeter drop 0.006 m"
+        },
+        {
+          "stage": "V004",
+          "name": "topology defects",
+          "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Flora (duplicates_and_self_intersections=41370)', 'SM_SIL13_GroundEl (duplicates_and_self_intersections=15286, isolated_vertices=9, isolated_polygons=1)']"
+        },
+        {
+          "stage": "V004",
+          "name": "MAF flipped normals",
+          "observed": "SM_SIL13_Ground.fbx: SM_SIL13_GroundEl: flipped 1444, inconsistent 0, undetermined 305"
+        },
+        {
+          "stage": "V004",
+          "name": "co-directional clearance",
+          "observed": "SM_SIL13_Ground.fbx: 70528 co-directional overlapping pairs: 2869 < 5 mm, 52795 in band, 14864 > 20 mm; distance mm min/median/max 0/5.9996/176684.7486; histogram {'0-1': 2837, '1-5': 32, '5-10': 52770, '10-20': 25, '20-50': 85, '50-100': 545, '100-1000': 7650, '1000+': 6584}; worst: ['SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7500 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7502 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7666 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7683 d=0.0 mm', 'SM_SIL13_GroundEl#7398/SM_SIL13_GroundEl#7684 d=0.0 mm']"
+        },
+        {
+          "stage": "V005",
+          "name": "material assignments",
+          "observed": "SM_SIL13_Ground.fbx: [\"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_1'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_2'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_3'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_4'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_5'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_6'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_7'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_8'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_9'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_10'\", \"SM_SIL13_GroundEl: unmapped diffuse for material 'M_SIL13_Ground_12'\"]"
+        }
+      ]
+    },
+    "VPM": {
+      "ground_triangles": 58896,
+      "flora_triangles": 390804,
+      "maf_triangles": 168140,
+      "total_triangles": 617840,
+      "export_sha256": "6e0e2353218ef7f0e8a2d9e4b0f13670403c0585fd632c3dc66fef497a1434ba",
+      "external_fbx": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v009/r2/VPM/SM_SIL13_Ground.fbx",
+      "r2_fbx_sha256": "5e3c6ea63c7d8d8ab3b1ae5b9d4ac9bb34684d1dffa6366e13370faa533005d9",
+      "native_blender_triangles": 617792,
+      "native_removed_faces": 48,
+      "controls_retained": 4620,
+      "derived_shrubs": 4576,
+      "material_controls": 4582,
+      "seating_readback_controls": 4620,
+      "max_sinking_error_m": 2.384185793236071e-08,
+      "xview_basis": "actual exported r1 arrays exact-equal to actual exported r2 arrays; NOT UV equivalence",
+      "xview_totals": {
+        "overlapping_vertices": 70,
+        "overlapping_faces": 49309,
+        "vertex_pairs": 35,
+        "face_pairs": 129085,
+        "face_pairs_by_kind": {
+          "contact": 41137,
+          "area": 37648,
+          "area+contact": 50300
+        },
+        "bowtie_vertices": 298,
+        "bowtie_pairs": 13,
+        "parts_without_faces": 0
+      },
+      "public_validator_exit": 1,
+      "public_validator_machine_stage_counts": {
+        "pass": 3,
+        "fail": 3,
+        "review": 1,
+        "not_run": 5
+      },
+      "public_fails": [
+        {
+          "stage": "V003",
+          "name": "ground skirt depth",
+          "observed": "SM_SIL13_Ground.fbx: broken face geometry: SM_SIL13_Ground"
+        },
+        {
+          "stage": "V004",
+          "name": "topology defects",
+          "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Ground (duplicates_and_self_intersections=693570)']"
+        },
+        {
+          "stage": "V004",
+          "name": "co-directional clearance",
+          "observed": "SM_SIL13_Ground.fbx: 579012 co-directional overlapping pairs: 47707 < 5 mm, 87692 in band, 443613 > 20 mm; distance mm min/median/max 0/324.976/176684.7583; histogram {'0-1': 23436, '1-5': 24271, '5-10': 69603, '10-20': 18089, '20-50': 60951, '50-100': 33369, '100-1000': 224667, '1000+': 124626}; worst: ['SM_SIL13_Ground#67096/SM_SIL13_Ground#67228 d=0.0 mm', 'SM_SIL13_Ground#67096/SM_SIL13_Ground#67229 d=0.0 mm', 'SM_SIL13_Ground#67097/SM_SIL13_Ground#67228 d=0.0 mm', 'SM_SIL13_Ground#67097/SM_SIL13_Ground#67229 d=0.0 mm', 'SM_SIL13_Ground#67108/SM_SIL13_Ground#67216 d=0.0 mm']"
+        },
+        {
+          "stage": "V008",
+          "name": "mirrored islands",
+          "observed": "SM_SIL13_Ground.fbx: {'SM_SIL13_Ground': 78130}"
+        }
+      ]
+    }
+  },
+  "source_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "equal": true
+    }
+  ],
+  "library_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "equal": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "equal": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "equal": true
+    }
+  ],
+  "flora_atlas": {
+    "passed": false,
+    "scope": "placed Flora set only; no complete Ground package pass",
+    "size_px": [
+      2048,
+      2048
+    ],
+    "species": [
+      {
+        "latin": "Acer_platanoides",
+        "atlas_tile_index": 0,
+        "library_material_id": "not_audited",
+        "pixel_rect": [
+          8,
+          8,
+          666,
+          1008
+        ],
+        "uv_rect": [
+          0.00390625,
+          0.50390625,
+          0.3251953125,
+          0.4921875
+        ],
+        "source": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+        "source_sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+        "status": "INTERIM Royal Red; green A.platanoides missing in library [D287]"
+      },
+      {
+        "latin": "Hydrangea_arborescens",
+        "atlas_tile_index": 1,
+        "library_material_id": "not_audited",
+        "pixel_rect": [
+          690,
+          8,
+          666,
+          1008
+        ],
+        "uv_rect": [
+          0.3369140625,
+          0.50390625,
+          0.3251953125,
+          0.4921875
+        ],
+        "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\maps\\gortenzia_drevovidnaya_t2_h100_low.png",
+        "source_sha256": "4f8707d101874e02877bb69b9d8bae1d0c561c81fbfad41ed692382cfbaa21ec",
+        "status": "INTERIM exact Text candidate"
+      },
+      {
+        "latin": "Physocarpus_opulifolius",
+        "atlas_tile_index": 2,
+        "library_material_id": "not_audited",
+        "pixel_rect": [
+          1372,
+          8,
+          666,
+          1008
+        ],
+        "uv_rect": [
+          0.669921875,
+          0.50390625,
+          0.3251953125,
+          0.4921875
+        ],
+        "source": null,
+        "source_sha256": null,
+        "status": "GREY UNRESTORED: no exact-species Text match [D289]"
+      },
+      {
+        "latin": "Physocarpus_opulifolius_Luteus",
+        "atlas_tile_index": 3,
+        "library_material_id": "not_audited",
+        "pixel_rect": [
+          8,
+          1032,
+          666,
+          1008
+        ],
+        "uv_rect": [
+          0.00390625,
+          0.00390625,
+          0.3251953125,
+          0.4921875
+        ],
+        "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\maps\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+        "source_sha256": "83652de7531cea42127451fb8a7ce70a6a0c2238489e1dcf2da521f95f1b5df7",
+        "status": "INTERIM exact Text candidate"
+      },
+      {
+        "latin": "Syringa_vulgaris",
+        "atlas_tile_index": 4,
+        "library_material_id": "not_audited",
+        "pixel_rect": [
+          690,
+          1032,
+          666,
+          1008
+        ],
+        "uv_rect": [
+          0.3369140625,
+          0.00390625,
+          0.3251953125,
+          0.4921875
+        ],
+        "source": null,
+        "source_sha256": null,
+        "status": "GREY UNRESTORED: no exact-species Text match [D289]"
+      }
+    ],
+    "density": "VPM density NOT certified; atlas is preliminary restoration, not final UDIM coverage"
+  },
+  "map_copy_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2"
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\maps\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "4f8707d101874e02877bb69b9d8bae1d0c561c81fbfad41ed692382cfbaa21ec"
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v008-r2\\maps\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "83652de7531cea42127451fb8a7ce70a6a0c2238489e1dcf2da521f95f1b5df7"
+    }
+  ],
+  "geometry_equal_meshes": 604,
+  "map_original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93"
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1"
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2"
+    }
+  ],
+  "npm_flora_texture_readback": {
+    "nodes": [
+      {
+        "name": "T_SIL13_Flora_d_1.png",
+        "filepath": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v009\\r2\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_d_1.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "packed": true
+      },
+      {
+        "name": "T_SIL13_Flora_o_1.png",
+        "filepath": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v009\\r2\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_o_1.png",
+        "size": [
+          2048,
+          2048
+        ],
+        "packed": true
+      }
+    ],
+    "png_mode": "RGB",
+    "atlas_sets": 1,
+    "canonical_library_ids": "not audited; no invented identity claim"
+  },
+  "contact_classification": {
+    "NPM": {
+      "counts": {
+        "Flora/Flora/cross-instance": 56,
+        "GroundEl/GroundEl/same-instance": 5245,
+        "GroundEl/GroundEl/cross-instance": 8
+      },
+      "examples": {
+        "Flora/Flora/cross-instance": {
+          "a": [
+            "Flora",
+            "33FC3FE+33FC417_11",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v006\\flora\\Physocarpus_opulifolius_NPM.fbx"
+          ],
+          "b": [
+            "Flora",
+            "33FC3FE+33FC417_2687",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v006\\flora\\Physocarpus_opulifolius_NPM.fbx"
+          ],
+          "face_pair": {
+            "a": 777,
+            "b": 38239,
+            "kind": "area+contact",
+            "separation_m": 0.0036427076306602135,
+            "centre": [
+              -19.911889464310654,
+              -39.195960196156605,
+              -0.17875200510025024
+            ]
+          }
+        },
+        "GroundEl/GroundEl/same-instance": {
+          "a": [
+            "GroundEl",
+            "33FB381",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx"
+          ],
+          "b": [
+            "GroundEl",
+            "33FB381",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx"
+          ],
+          "face_pair": {
+            "a": 209,
+            "b": 346,
+            "kind": "area+contact",
+            "separation_m": 0.0,
+            "centre": [
+              -20.26534274059143,
+              -43.312606675827666,
+              -0.05916177978118261
+            ]
+          }
+        },
+        "GroundEl/GroundEl/cross-instance": {
+          "a": [
+            "GroundEl",
+            "33FB3B3",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx"
+          ],
+          "b": [
+            "GroundEl",
+            "33FB3B4",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx"
+          ],
+          "face_pair": {
+            "a": 29609,
+            "b": 29610,
+            "kind": "area",
+            "separation_m": 0.0,
+            "centre": [
+              29.973042795455346,
+              0.12050023447190336,
+              -0.208420030772686
+            ]
+          }
+        }
+      },
+      "xview_totals": {
+        "overlapping_vertices": 1030,
+        "overlapping_faces": 3239,
+        "vertex_pairs": 602,
+        "face_pairs": 5309,
+        "face_pairs_by_kind": {
+          "contact": 322,
+          "area": 1407,
+          "area+contact": 3580
+        },
+        "bowtie_vertices": 669,
+        "bowtie_pairs": 52,
+        "parts_without_faces": 0
+      }
+    },
+    "VPM": {
+      "counts": {
+        "Ground/GroundEl/cross-instance": 114,
+        "Flora/Flora/cross-instance": 33931,
+        "Flora/GroundEl/cross-instance": 36,
+        "GroundEl/GroundEl/same-instance": 94823,
+        "GroundEl/GroundEl/cross-instance": 45,
+        "UCX/UCX/same-instance": 136
+      },
+      "examples": {
+        "Ground/GroundEl/cross-instance": {
+          "a": [
+            "Ground",
+            "Ground",
+            "Ground"
+          ],
+          "b": [
+            "GroundEl",
+            "33FB3AD",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx"
+          ],
+          "face_pair": {
+            "a": 35774,
+            "b": 617581,
+            "kind": "area+contact",
+            "separation_m": 0.0005729028322718627,
+            "centre": [
+              36.00719254301137,
+              8.058153041927383,
+              -0.093713557968537
+            ]
+          }
+        },
+        "Flora/Flora/cross-instance": {
+          "a": [
+            "Flora",
+            "33F02B8",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v006\\flora\\Syringa_vulgaris_VPM.fbx"
+          ],
+          "b": [
+            "Flora",
+            "33FC3FE+33FC417_891",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v006\\flora\\Physocarpus_opulifolius_VPM.fbx"
+          ],
+          "face_pair": {
+            "a": 65921,
+            "b": 143538,
+            "kind": "area+contact",
+            "separation_m": 0.00438690185546875,
+            "centre": [
+              1.9689862520098598,
+              71.82670229005473,
+              -0.36271438002586365
+            ]
+          }
+        },
+        "Flora/GroundEl/cross-instance": {
+          "a": [
+            "Flora",
+            "33FC3FE+33FC417_2224",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v006\\flora\\Physocarpus_opulifolius_VPM.fbx"
+          ],
+          "b": [
+            "GroundEl",
+            "33FB581",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx"
+          ],
+          "face_pair": {
+            "a": 255501,
+            "b": 613078,
+            "kind": "area+contact",
+            "separation_m": 0.0006712386758880842,
+            "centre": [
+              33.186286347064126,
+              -0.6471679727424358,
+              0.3588099579016367
+            ]
+          }
+        },
+        "GroundEl/GroundEl/same-instance": {
+          "a": [
+            "GroundEl",
+            "33FB381",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx"
+          ],
+          "b": [
+            "GroundEl",
+            "33FB381",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx"
+          ],
+          "face_pair": {
+            "a": 449710,
+            "b": 452834,
+            "kind": "area",
+            "separation_m": 0.0006448594124967416,
+            "centre": [
+              -19.819209090610084,
+              -43.72891599351489,
+              0.23592836658159894
+            ]
+          }
+        },
+        "GroundEl/GroundEl/cross-instance": {
+          "a": [
+            "GroundEl",
+            "33FB381",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx"
+          ],
+          "b": [
+            "GroundEl",
+            "33FB382",
+            "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx"
+          ],
+          "face_pair": {
+            "a": 449735,
+            "b": 455880,
+            "kind": "area",
+            "separation_m": 0.0008606117485570053,
+            "centre": [
+              -19.14208598532606,
+              -44.13522696947515,
+              0.23602686325709027
+            ]
+          }
+        },
+        "UCX/UCX/same-instance": {
+          "a": [
+            "UCX",
+            "UCX_SM_SIL13_Ground_003",
+            "UCX_SM_SIL13_Ground_003"
+          ],
+          "b": [
+            "UCX",
+            "UCX_SM_SIL13_Ground_003",
+            "UCX_SM_SIL13_Ground_003"
+          ],
+          "face_pair": {
+            "a": 5,
+            "b": 7,
+            "kind": "area",
+            "separation_m": 0.0,
+            "centre": [
+              38.347543170060284,
+              -88.2928573144628,
+              -0.7865927865107853
+            ]
+          }
+        }
+      },
+      "xview_totals": {
+        "overlapping_vertices": 70,
+        "overlapping_faces": 49309,
+        "vertex_pairs": 35,
+        "face_pairs": 129085,
+        "face_pairs_by_kind": {
+          "contact": 41137,
+          "area": 37648,
+          "area+contact": 50300
+        },
+        "bowtie_vertices": 298,
+        "bowtie_pairs": 13,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "hedge_repairs": {
+    "passed": false,
+    "scope": "real actual-export eight-plant witnesses; NOT full-site fixes",
+    "rows": [
+      {
+        "route": "unchanged",
+        "real_instances": 8,
+        "triangles": 112,
+        "topology": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 42,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 42,
+          "tol_m": 0.002
+        },
+        "npz": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v009\\hedge-unchanged.npz",
+        "handles": [
+          "33FC3FE+33FC417_11",
+          "33FC3FE+33FC417_2687",
+          "33FC3FE+33FC417_1560",
+          "33FC3FE+33FC417_1205",
+          "33FC3FE+33FC417_3055",
+          "33FC3FE+33FC417_2226",
+          "33FC3FE+33FC417_2309",
+          "33FC3FE+33FC417_419"
+        ]
+      },
+      {
+        "route": "common_rotation",
+        "real_instances": 8,
+        "triangles": 112,
+        "topology": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 34,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 34,
+          "tol_m": 0.002
+        },
+        "npz": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v009\\hedge-common_rotation.npz",
+        "handles": [
+          "33FC3FE+33FC417_11",
+          "33FC3FE+33FC417_2687",
+          "33FC3FE+33FC417_1560",
+          "33FC3FE+33FC417_1205",
+          "33FC3FE+33FC417_3055",
+          "33FC3FE+33FC417_2226",
+          "33FC3FE+33FC417_2309",
+          "33FC3FE+33FC417_419"
+        ]
+      },
+      {
+        "route": "minimum_crown",
+        "real_instances": 8,
+        "triangles": 112,
+        "topology": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 21,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 21,
+          "tol_m": 0.002
+        },
+        "npz": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v009\\hedge-minimum_crown.npz",
+        "handles": [
+          "33FC3FE+33FC417_11",
+          "33FC3FE+33FC417_2687",
+          "33FC3FE+33FC417_1560",
+          "33FC3FE+33FC417_1205",
+          "33FC3FE+33FC417_3055",
+          "33FC3FE+33FC417_2226",
+          "33FC3FE+33FC417_2309",
+          "33FC3FE+33FC417_419"
+        ]
+      }
+    ]
+  },
+  "cell_option": {
+    "passed": false,
+    "scope": "new model option on actual eight plants, NOT site-wide approval",
+    "cell_gap_m": 0.006,
+    "profiles": {
+      "NPM": {
+        "rows": [
+          {
+            "handle": "33FC3FE+33FC417_11",
+            "before_crown_m": 0.6716956972413328,
+            "after_crown_m": 0.5550337193196171,
+            "crown_ratio": 0.8263172171552554,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_419",
+            "before_crown_m": 0.6163673517327446,
+            "after_crown_m": 0.5439942571711072,
+            "crown_ratio": 0.8825812328343143,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_1205",
+            "before_crown_m": 0.6571998654742544,
+            "after_crown_m": 0.5594808816634895,
+            "crown_ratio": 0.8513100976667912,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_1560",
+            "before_crown_m": 0.6250610311181646,
+            "after_crown_m": 0.5460641886973292,
+            "crown_ratio": 0.8736173933615429,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_2226",
+            "before_crown_m": 0.6997642566454942,
+            "after_crown_m": 0.5722186165224876,
+            "crown_ratio": 0.8177305586678141,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_2309",
+            "before_crown_m": 0.6026840084536502,
+            "after_crown_m": 0.601715572846345,
+            "crown_ratio": 0.9983931287478658,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_2687",
+            "before_crown_m": 0.710655199793699,
+            "after_crown_m": 0.5118229255626403,
+            "crown_ratio": 0.7202127356715619,
+            "within_20percent": false,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_3055",
+            "before_crown_m": 0.6305751732288094,
+            "after_crown_m": 0.6305751732288094,
+            "crown_ratio": 1.0,
+            "within_20percent": true,
+            "planting_point_retained": true
+          }
+        ],
+        "drops": [],
+        "triangles": 112,
+        "xview_totals": {
+          "overlapping_vertices": 0,
+          "overlapping_faces": 0,
+          "vertex_pairs": 0,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        },
+        "xview_passed": true,
+        "topology": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "crown_band_failures": 1
+      },
+      "VPM": {
+        "rows": [
+          {
+            "handle": "33FC3FE+33FC417_11",
+            "before_crown_m": 0.7178687927450298,
+            "after_crown_m": 0.5697787953392677,
+            "crown_ratio": 0.7937088240881921,
+            "within_20percent": false,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_419",
+            "before_crown_m": 0.6589298366520389,
+            "after_crown_m": 0.5696663320639068,
+            "crown_ratio": 0.864532610874518,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_1205",
+            "before_crown_m": 0.7017173823454854,
+            "after_crown_m": 0.5842207970086406,
+            "crown_ratio": 0.8325585366802326,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_1560",
+            "before_crown_m": 0.6672363244280746,
+            "after_crown_m": 0.5473748743677476,
+            "crown_ratio": 0.8203613237587642,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_2226",
+            "before_crown_m": 0.7469711350267971,
+            "after_crown_m": 0.5979671038759307,
+            "crown_ratio": 0.8005223707265194,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_2309",
+            "before_crown_m": 0.6444778314552266,
+            "after_crown_m": 0.6247102415805585,
+            "crown_ratio": 0.9693277426935958,
+            "within_20percent": true,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_2687",
+            "before_crown_m": 0.7594184746994088,
+            "after_crown_m": 0.517048518710574,
+            "crown_ratio": 0.6808479592430654,
+            "within_20percent": false,
+            "planting_point_retained": true
+          },
+          {
+            "handle": "33FC3FE+33FC417_3055",
+            "before_crown_m": 0.6734657220872684,
+            "after_crown_m": 0.6734657220872684,
+            "crown_ratio": 1.0,
+            "within_20percent": true,
+            "planting_point_retained": true
+          }
+        ],
+        "drops": [],
+        "triangles": 672,
+        "xview_totals": {
+          "overlapping_vertices": 0,
+          "overlapping_faces": 0,
+          "vertex_pairs": 0,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        },
+        "xview_passed": true,
+        "topology": {
+          "duplicate_vertices": 0,
+          "duplicate_edges": 0,
+          "duplicate_polygons": 0,
+          "self_intersections": 0,
+          "isolated_vertices": 0,
+          "isolated_edges": 0,
+          "isolated_polygons": 0,
+          "zero_length_edges": 0,
+          "duplicates_and_self_intersections": 0,
+          "tol_m": 0.002
+        },
+        "crown_band_failures": 2
+      }
+    }
+  },
+  "cell_option_native_readback": {
+    "passed": false,
+    "scope": "geometry-only isolated eight-plant model option; crowns fail band",
+    "profiles": {
+      "NPM": {
+        "triangles": 112,
+        "native_import": true,
+        "xview_totals": {
+          "overlapping_vertices": 0,
+          "overlapping_faces": 0,
+          "vertex_pairs": 0,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        }
+      },
+      "VPM": {
+        "triangles": 672,
+        "native_import": true,
+        "xview_totals": {
+          "overlapping_vertices": 0,
+          "overlapping_faces": 0,
+          "vertex_pairs": 0,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        }
+      }
+    }
+  },
+  "rejected_maf_imprint_projection": {
+    "render_triangles": 237654,
+    "limit": 180000,
+    "projection_only": true,
+    "xview": {
+      "overlapping_vertices": 3143,
+      "overlapping_faces": 4139,
+      "vertex_pairs": 3903,
+      "face_pairs": 10270,
+      "face_pairs_by_kind": {
+        "contact": 1917,
+        "area": 4519,
+        "area+contact": 3834
+      },
+      "bowtie_vertices": 60,
+      "bowtie_pairs": 39,
+      "parts_without_faces": 0
+    }
+  },
+  "remaining": [
+    "model-owner choice for crown-trim hedge construction; not applied to site",
+    "Ground skirts/curbs/materials and VPM UDIM/density",
+    "MAF topology/normals and canonical library IDs",
+    "UCX gaps/continuous coverage and contacts",
+    "grey unresolved maps, final visual and SINTEZ",
+    "22 MAF rows/Abies1/RedSunset4/flowerbed133m2 gaps remain explicit"
+  ],
+  "rejected_receipts": [
+    "validator-VPM-r1.json: wrong area7872, reject footprint measurement",
+    "validator-VPM-r1-correct-area.json: material filter matched no .001 materials, reject footprint measurement"
+  ]
+}
