@@ -132,3 +132,49 @@ def partition_joint_zones(row, zones):
                 source_area_m2=poly.area,joint_area_m2=joint.area,
                 planar_fit_residual_m=residual,overlay_grid_m=1e-12,
                 passed=False,status='partition_only')
+
+
+def layout_joint_partition(partitions, *, repeat_m, texel_px_m, tile_px, border_px, gap_px):
+    """Fold brick by full repeat; translate constant joint polygons into a
+    disjoint field. Caller must declare constant D/ERM/N joint content; this
+    is not source-normal groove equivalence and remains a candidate.
+    """
+    from tools.materials.course_grid_fit import fold_chart
+    if not isinstance(partitions,list) or not partitions:raise ValueError('empty partitions')
+    if isinstance(gap_px,bool) or not isinstance(gap_px,(int,float)) or not math.isfinite(gap_px) or gap_px<32:
+        raise ValueError('gap_px must be finite and >=32')
+    pieces=[];seen=set()
+    for r in partitions:
+        if not isinstance(r,dict) or not r.get('pieces') or r.get('dropped_faces')!=[]:
+            raise ValueError('partial partition')
+        key=tuple(r['source'])
+        if key in seen:raise ValueError(f'duplicate source {key}')
+        seen.add(key)
+        for p in r['pieces']:
+            if p.get('source')!=r['source'] or type(p.get('joint')) is not bool:
+                raise ValueError(f'unmapped piece {key}')
+            _points(p.get('xyz'),3,'xyz')
+            pieces.append(dict(p,object=key[0],face=len(pieces)))
+    brick=[p for p in pieces if not p['joint']]
+    if not brick:raise ValueError('no brick field')
+    f=fold_chart(brick,repeat_m=repeat_m,texel_px_m=texel_px_m,tile_px=tile_px,border_px=border_px)
+    by_id={p['face']:p for p in f['faces']}
+    start=math.ceil(max(q[0]*tile_px for p in f['faces'] for q in p['uv']))+gap_px
+    faces=[];unplaced=list(f['unplaced'])
+    for p in pieces:
+        if not p['joint']:
+            q=by_id[p['face']]
+            trans=[q['translation_m'][k]+border_px/texel_px_m for k in (0,1)]
+            uv=q['uv']
+        else:
+            xy=_points(p['chart_m'],2,'chart_m')
+            trans=([start/texel_px_m,border_px/texel_px_m]-xy.min(0)).tolist()
+            uv=((xy+trans)*texel_px_m/tile_px).tolist()
+            if any(v*tile_px<border_px-1e-8 or v*tile_px>tile_px-border_px+1e-8 for q in uv for v in q):
+                unplaced.append([p['object'],p['face']])
+        faces.append(dict(p,uv=uv,translation_m=trans))
+    return dict(status='partition_layout_overflow' if unplaced else 'partition_layout_candidate',passed=False,
+                faces=faces,unplaced=unplaced,dropped_faces=[],joint_field_min_px=[start,border_px],
+                texel_px_m=texel_px_m,tile_px=tile_px,border_px=border_px,gap_px=gap_px,repeat_m=repeat_m,
+                limitations=['constant joint D/ERM/N only; source groove normals not preserved',
+                             'export, density, topology, masks and human acceptance remain open'])

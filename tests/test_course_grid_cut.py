@@ -2,7 +2,7 @@
 import copy
 import pytest
 from shapely.geometry import Polygon
-from tools.materials.course_grid_cut import partition_joint_zones, layout_joint_partition
+from tools.materials.course_grid_cut import partition_joint_zones, layout_joint_partition, edge_joint_zone
 
 
 def face():
@@ -56,6 +56,16 @@ def test_joint_only_constant_field_has_full_gap_from_periodic_brick():
     for f in out['faces']:
         for p,q in zip(f['chart_m'],f['uv']):
             assert q==pytest.approx([(p[k]+f['translation_m'][k])*512/4096 for k in (0,1)])
+
+
+def test_edge_strip_reaches_slanted_end_without_micrometre_corner_spur():
+    row=face();row['chart_m']=[[0,0],[2,0],[2,1],[0,1.000001]]
+    row['xyz']=[[u,0,v] for u,v in row['chart_m']]
+    zone=edge_joint_zone(row['chart_m'],[3,0],width_m=.01)
+    out=partition_joint_zones(row,[zone])
+    assert len(out['pieces'])==2
+    assert all(len(p['chart_m'])==4 for p in out['pieces'])
+    assert sum(Polygon(p['chart_m']).area for p in out['pieces'])==pytest.approx(2.000001)
 
 
 def test_exact_ten_mm_inset_keeps_area_surface_winding_and_lineage():
