@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2720 950" width="2720" height="950" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2720 1484" width="2720" height="1484" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2720" height="950" fill="#ffffff"/>
+<rect x="10" y="-30" width="2720" height="1484" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
@@ -24,23 +24,31 @@
 <rect x="850" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="850" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="850" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="850" y="590" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="850" y="756.0" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="850" y="590" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="850" y="691.0" width="230" height="68.75" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="850" y="775.75" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="850" y="893.0" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="850" y="994.0" width="230" height="231.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="850" y="1241.25" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1160" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1120" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1080" y1="225.0" x2="1120" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1120" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1120" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1120" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1120" y="590" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1120" y="707.25" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1120" y="590" width="230" height="117.5" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1120" y="723.5" width="230" height="198.75" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1120" y="938.25" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1120" y="1055.5" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1430" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1390" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1350" y1="225.0" x2="1390" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1390" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1390" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1390" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1390" y="590" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1390" y="590" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1390" y="691.0" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1390" y="792.0" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1700" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1660" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1620" y1="225.0" x2="1660" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -71,7 +79,7 @@
 <tspan x="40" dy="28">Маршрут НПМ / ОКС на КПП1: событийный штурм (#1359)</tspan>
 </text>
 <text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
-<tspan x="40" dy="16">Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время)</tspan>
+<tspan x="40" dy="16">Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время); бирюзовый — ветка (выбор по задаче)</tspan>
 </text>
 <text x="155.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="155.0" dy="15">Агент</tspan>
@@ -130,40 +138,73 @@
 <text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="15">Агент</tspan>
 </text>
-<text x="965.0" y="203.75" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<text x="965.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="17">4. Модель построена</tspan>
-<tspan x="965.0" dy="21.25">(мастер R1)</tspan>
+<tspan x="965.0" dy="21.25">(мастер или сразу НПМ</tspan>
+<tspan x="965.0" dy="21.25">— по задаче)</tspan>
 </text>
 <text x="965.0" y="327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="14">Команда:</tspan>
 <tspan x="965.0" dy="17.5">dt spec compare</tspan>
 </text>
 <text x="965.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="965.0" dy="14">Правила: D254, D038, D204,</tspan>
-<tspan x="965.0" dy="17.5">D255</tspan>
+<tspan x="965.0" dy="14">Правила: D290, D254, D038,</tspan>
+<tspan x="965.0" dy="17.5">D204, D255</tspan>
 </text>
 <text x="965.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="14">Контекст: Корпус и</tspan>
 <tspan x="965.0" dy="17.5">геометрия</tspan>
 </text>
 <text x="965.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="13">Ветка: задача ВПМ + НПМ</tspan>
+<tspan x="965.0" dy="16.25">→ строим ВПМ или mid-poly</tspan>
+<tspan x="965.0" dy="16.25">мастер, НПМ выводим из него</tspan>
+<tspan x="965.0" dy="16.25">[D290, D010]</tspan>
+</text>
+<text x="965.0" y="701.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="13">Ветка: задача только НПМ</tspan>
+<tspan x="965.0" dy="16.25">→ строим НПМ сразу, без</tspan>
+<tspan x="965.0" dy="16.25">mid-poly мастера [D290]</tspan>
+</text>
+<text x="965.0" y="785.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="13">Ветка: окно из библиотеки</tspan>
+<tspan x="965.0" dy="16.25">подходит к проёму</tspan>
+<tspan x="965.0" dy="16.25">→ ставим библиотечное окно с</tspan>
+<tspan x="965.0" dy="16.25">небольшим врезом контура в</tspan>
+<tspan x="965.0" dy="16.25">проём [D290, D258]</tspan>
+</text>
+<text x="965.0" y="903.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="13">Ветка: подходящего окна в</tspan>
+<tspan x="965.0" dy="16.25">библиотеке нет</tspan>
+<tspan x="965.0" dy="16.25">→ окно строит генератор окон</tspan>
+<tspan x="965.0" dy="16.25">(#1338 / #1345) [D290]</tspan>
+</text>
+<text x="965.0" y="1004.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">⚠ Шов парапет / кровля:</tspan>
 <tspan x="965.0" dy="16.25">толщина парапета и плита</tspan>
 <tspan x="965.0" dy="16.25">кровли были под вопросом</tspan>
 <tspan x="965.0" dy="16.25">архитектору (D249), закрыты</tspan>
 <tspan x="965.0" dy="16.25">только D254; вставная кровля</tspan>
 <tspan x="965.0" dy="16.25">переделана в v007; замер шва</tspan>
-<tspan x="965.0" dy="16.25">— #1339 [D249, D254, D038,</tspan>
+<tspan x="965.0" dy="16.25">— #1339. Решено (D290, R6</tspan>
+<tspan x="965.0" dy="16.25">#1352): кровля врезана</tspan>
+<tspan x="965.0" dy="16.25">контуром в стены парапета и</tspan>
+<tspan x="965.0" dy="16.25">поднята на несколько мм над</tspan>
+<tspan x="965.0" dy="16.25">низом парапета, не вровень</tspan>
+<tspan x="965.0" dy="16.25">[D290, D249, D254, D038,</tspan>
 <tspan x="965.0" dy="16.25">D039]</tspan>
 </text>
-<text x="965.0" y="766.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="965.0" y="1251.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">⚠ Окна: проёмы Revit и меша</tspan>
 <tspan x="965.0" dy="16.25">не совпали (spec-compare</tspan>
 <tspan x="965.0" dy="16.25">v002: «no match» только по</tspan>
 <tspan x="965.0" dy="16.25">проёмам); витраж C35 дал пары</tspan>
 <tspan x="965.0" dy="16.25">V004 (D256); генератор окон</tspan>
-<tspan x="965.0" dy="16.25">#1338 — пока только замер</tspan>
-<tspan x="965.0" dy="16.25">[D204, D256, D258]</tspan>
+<tspan x="965.0" dy="16.25">#1338 — пока только замер.</tspan>
+<tspan x="965.0" dy="16.25">Решено (D290): библиотечное</tspan>
+<tspan x="965.0" dy="16.25">окно с небольшим врезом, если</tspan>
+<tspan x="965.0" dy="16.25">подходит, иначе генератор</tspan>
+<tspan x="965.0" dy="16.25">[D290, D204, D256, D258]</tspan>
 </text>
 <text x="1235.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="15">Агент</tspan>
@@ -178,25 +219,48 @@
 <tspan x="1235.0" dy="17.5">dt derive atlas</tspan>
 </text>
 <text x="1235.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1235.0" dy="14">Правила: D278, D280, D221,</tspan>
-<tspan x="1235.0" dy="17.5">D225</tspan>
+<tspan x="1235.0" dy="14">Правила: D290, D278, D280,</tspan>
+<tspan x="1235.0" dy="17.5">D221, D225</tspan>
 </text>
 <text x="1235.0" y="521.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Контекст: UV и атлас</tspan>
 </text>
 <text x="1235.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="13">Ветка: путь А: через UDIM</tspan>
+<tspan x="1235.0" dy="16.25">→ мастер развёрнут в UDIM,</tspan>
+<tspan x="1235.0" dy="16.25">атлас НПМ собран из UDIM</tspan>
+<tspan x="1235.0" dy="16.25">(npm_atlas_udim; команды</tspan>
+<tspan x="1235.0" dy="16.25">agr/dt нет) [D290, D209,</tspan>
+<tspan x="1235.0" dy="16.25">D221]</tspan>
+</text>
+<text x="1235.0" y="733.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="13">Ветка: путь Б: напрямую по ID</tspan>
+<tspan x="1235.0" dy="16.25">материалов</tspan>
+<tspan x="1235.0" dy="16.25">→ ID = отделка из</tspan>
+<tspan x="1235.0" dy="16.25">спецификации; текстура из</tspan>
+<tspan x="1235.0" dy="16.25">библиотеки, или готовый</tspan>
+<tspan x="1235.0" dy="16.25">диффуз, или новый</tspan>
+<tspan x="1235.0" dy="16.25">сгенерированный диффуз</tspan>
+<tspan x="1235.0" dy="16.25">(добавляем в библиотеку),</tspan>
+<tspan x="1235.0" dy="16.25">затем на атлас</tspan>
+<tspan x="1235.0" dy="16.25">Команда: dt derive atlas</tspan>
+<tspan x="1235.0" dy="16.25">[D290, D278]</tspan>
+</text>
+<text x="1235.0" y="948.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="13">⚠ UDIM: 30 своих формул в</tspan>
 <tspan x="1235.0" dy="16.25">jobs/ и 4 расходящиеся копии</tspan>
 <tspan x="1235.0" dy="16.25">до #1337; vpm_uv.py TEC26 =</tspan>
 <tspan x="1235.0" dy="16.25">КПП1 с разницей в одну строку</tspan>
 <tspan x="1235.0" dy="16.25">[D209, D221]</tspan>
 </text>
-<text x="1235.0" y="717.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="1235.0" y="1065.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="13">⚠ Два атласа: канон Max</tspan>
 <tspan x="1235.0" dy="16.25">atlas_core (D225) и Python</tspan>
-<tspan x="1235.0" dy="16.25">npm_atlas_udim, по которому</tspan>
-<tspan x="1235.0" dy="16.25">идёт agr vpm-to-npm; перевод</tspan>
-<tspan x="1235.0" dy="16.25">в #1141 открыт [D225, D278]</tspan>
+<tspan x="1235.0" dy="16.25">npm_atlas_udim (путь А,</tspan>
+<tspan x="1235.0" dy="16.25">D290); agr vpm-to-npm идёт</tspan>
+<tspan x="1235.0" dy="16.25">через dt derive atlas (путь</tspan>
+<tspan x="1235.0" dy="16.25">Б); перевод в #1141 открыт</tspan>
+<tspan x="1235.0" dy="16.25">[D290, D225, D278]</tspan>
 </text>
 <text x="1505.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="15">Агент</tspan>
@@ -211,13 +275,25 @@
 <tspan x="1505.0" dy="17.5">agr package-vpm</tspan>
 </text>
 <text x="1505.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1505.0" dy="14">Правила: D198, D224</tspan>
+<tspan x="1505.0" dy="14">Правила: D290, D198, D224</tspan>
 </text>
 <text x="1505.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="14">Контекст: Экспорт и пакет</tspan>
 <tspan x="1505.0" dy="17.5">сдачи</tspan>
 </text>
 <text x="1505.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="13">Ветка: сдаём ВПМ</tspan>
+<tspan x="1505.0" dy="16.25">→ упаковщик ВПМ</tspan>
+<tspan x="1505.0" dy="16.25">Команда: agr package-vpm</tspan>
+<tspan x="1505.0" dy="16.25">[D290, D224]</tspan>
+</text>
+<text x="1505.0" y="701.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="13">Ветка: сдаём НПМ</tspan>
+<tspan x="1505.0" dy="16.25">→ упаковщик НПМ (#1361; пока</tspan>
+<tspan x="1505.0" dy="16.25">не в main — команды agr/dt</tspan>
+<tspan x="1505.0" dy="16.25">нет) [D290]</tspan>
+</text>
+<text x="1505.0" y="802.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="13">⚠ Пакет: 9 своих упаковщиков</tspan>
 <tspan x="1505.0" dy="16.25">ВПМ в jobs/ (+5 других ZIP);</tspan>
 <tspan x="1505.0" dy="16.25">один FBX не проходит —</tspan>

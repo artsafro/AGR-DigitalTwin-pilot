@@ -1,4 +1,4 @@
-"""#1375: branching stages of the NPM/OKS route (Artem's decisions 2026-11-14, D289)."""
+"""#1375: branching stages of the NPM/OKS route (Artem's decisions 2026-11-14, D290)."""
 import copy
 import json
 import re
@@ -27,18 +27,18 @@ def _branches(events):
     return {s["id"]: {b["id"] for b in s.get("branches", [])} for s in events["stages"] if s.get("branches")}
 
 
-def test_route_has_the_decided_branches_each_citing_d289():
+def test_route_has_the_decided_branches_each_citing_d290():
     events, _ = _events()
     assert _branches(events) == EXPECTED
     for s in events["stages"]:
         for b in s.get("branches", []):
-            assert "D289" in b["rules"], (s["id"], b["id"])
+            assert "D290" in b["rules"], (s["id"], b["id"])
     roof = next(h for h in events["hotspots"] if h["id"] == "parapet-roof-seam")
-    assert "D289" in roof["rules"]
+    assert "D290" in roof["rules"]
 
 
-def test_d289_row_records_the_five_decisions():
-    rows = re.findall(r"^\| D289 \|.*$", (ROOT / "docs/decisions.md").read_text(encoding="utf-8"), re.M)
+def test_d290_row_records_the_five_decisions():
+    rows = re.findall(r"^\| D290 \|.*$", (ROOT / "docs/decisions.md").read_text(encoding="utf-8"), re.M)
     assert len(rows) == 1
     row = rows[0]
     for needle in ("NPM-only", "mid-poly", "UDIM", "material ID", "library", "#1361", "parapet", "window generator"):
@@ -49,11 +49,11 @@ def test_every_branch_is_drawn_with_its_condition_and_rules():
     events, contexts = _events()
     doc = json.loads(route_map.route_board(events, contexts).excalidraw())
     texts = {e["id"]: e["text"] for e in doc["elements"] if e["type"] == "text"}
-    joined = "\n".join(texts.values())
+    joined = " ".join(" ".join(t.split()) for t in texts.values())
     for s in events["stages"]:
         for b in s.get("branches", []):
-            assert b["when_ru"] in joined and b["ru"] in joined, b["id"]
-    assert "зелёный — ветка" in joined
+            assert " ".join(b["when_ru"].split()) in joined and " ".join(b["ru"].split()) in joined, b["id"]
+    assert "бирюзовый — ветка" in joined
 
 
 def test_board_without_branches_is_unchanged_by_the_branch_feature():
@@ -63,8 +63,8 @@ def test_board_without_branches_is_unchanged_by_the_branch_feature():
     for s in plain["stages"]:
         s.pop("branches", None)
     svg = route_map.route_board(plain, contexts).svg()
-    assert "ветка" not in svg
-    assert "#b2f2bb" not in svg
+    assert "ветка" not in svg.lower()
+    assert "#c3fae8" not in svg
 
 
 @pytest.mark.parametrize("mutate,needle", [
@@ -97,12 +97,12 @@ def test_unknown_branch_reference_is_reported(mutate, needle):
     assert any(needle in p and "branch" in p for p in problems), problems
 
 
-def test_route_and_recipes_cite_d289_and_drop_the_unconditional_mid_poly_master():
+def test_route_and_recipes_cite_d290_and_drop_the_unconditional_mid_poly_master():
     route = (ROOT / "routes/npm-oks.md").read_text(encoding="utf-8")
-    assert "[D289]" in route
+    assert "[D290]" in route
     assert "One mid-poly master;" not in route
     assert "NPM-only" in route
     for rel in ("docs/procedure/node-r4-window-glazing.md", "docs/procedure/node-r6-oks-body-facade.md"):
-        assert "D289" in (ROOT / rel).read_text(encoding="utf-8"), rel
+        assert "D290" in (ROOT / rel).read_text(encoding="utf-8"), rel
     r4 = (ROOT / "docs/procedure/node-r4-window-glazing.md").read_text(encoding="utf-8")
     assert "library/windows/window_types.json" in r4 and "windowgen_core" in r4
