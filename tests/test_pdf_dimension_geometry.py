@@ -79,10 +79,12 @@ def test_native_replay_fresh_process_and_no_output_api(tmp_path):
     import json
     import subprocess
     import sys
+    import pytest
+    # The fresh subprocess imports PyMuPDF; skip before spawning when the extra is absent.
+    pytest.importorskip('pymupdf', reason="requires the optional 'pdf-review' extra (PyMuPDF)")
     from tools.research.pdf_album import dimension_autoresearch as E
     if not all(__import__('pathlib').Path(s['files']['pdf']['path']).is_file()
                for s in json.loads(E.CORPUS.read_text())['sheets']):
-        import pytest
         pytest.skip('workstation frozen corpus not mounted')
     p = subprocess.run([sys.executable, '-m', 'tools.research.pdf_album.dimension_geometry'],
                        capture_output=True, text=True, encoding='utf8', check=True)
