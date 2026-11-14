@@ -94,5 +94,5 @@ on the reconstructed copy. **Neither V001 nor whole-delivery acceptance is close
 - Survey/manual V015–V017, visual, SINTEZ, signature/publication: existing KPP1 owners,
   unchanged from cold-run #3. Technical packing is not user acceptance.
 
-Nine historical VPM packager paths and the #1359 allowlist TODO are in
-`docs/research/shared-packaging-1361.md`. #1359's open PR #1368 was not copied or edited.
+Nine historical VPM packager paths and their existing #1359 allowlist coverage are
+in `docs/research/shared-packaging-1361.md`. PR #1368 was integrated only via main.

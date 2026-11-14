@@ -116,6 +116,8 @@ The card's prose says eight, but repository discovery finds **nine** files:
 - `jobs/elv-tc-vpm/scripts/package_vpm_v005.py`
 - `jobs/elv-tc-vpm/scripts/package_vpm_v006.py`
 
-The #1359 guard is not on the base main (PR #1368 is open). Its TODO is to allowlist
-these nine historical paths with #1361 as the extraction reference and point shared
-ZIP writing to `adapters/max/agr_tools/package_core.py`. No unmerged guard is copied.
+The #1359 guard is now on main (merged PR #1368); all nine historical paths are
+already in `docs/architecture/contexts.yaml` with their #1106 references, and stay
+untouched. This branch refreshes only its own moved shared-writer/exporter line
+anchors and generated diagrams. The unrelated KPP1 allowlist drift on main belongs
+to #1387; this branch does not duplicate that repair.
