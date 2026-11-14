@@ -186,6 +186,7 @@ def test_real_native_replay_and_repeat():
     import subprocess
     import sys
     import pytest
+    pytest.importorskip('pymupdf', reason="requires the optional 'pdf-review' extra (PyMuPDF)")
     from tools.research.pdf_album import dimension_autoresearch as A
     sheets = json.loads(A.CORPUS.read_text(encoding='utf8'))['sheets']
     from pathlib import Path
