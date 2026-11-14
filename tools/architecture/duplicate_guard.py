@@ -12,15 +12,21 @@ Rules (stdlib `ast`, no imports of the scanned code):
   delivery package writer: `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword).
 
 The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml: every jobs/ finding must be listed
-there with its exact path:line and an issue reference, and every listed row (also the documented copies outside
-jobs/) must still be found (no stale rows).
+there with an issue reference, and every listed row (also the documented copies outside jobs/) must still be found
+(no stale rows). A row is keyed by `at: "path.py::qualname"` - the file and the enclosing function/class
+(`<module>` at top level), never by a bare line number (#1387): lines inserted above or inside the function do not
+make it NEW or STALE. Optional `hash:` (10 hex, `sha1(ast.unparse(node))`, printed with every NEW COPY) pins one
+copy inside the function; a row without it covers every copy of that rule in that function.
 Usage: python tools/architecture/duplicate_guard.py [--root REPO] [--json]; exit 0 clean, 1 violations,
 2 unreadable input (a file that does not parse is an error naming it, never skipped).
 """
 import argparse
 import ast
+import hashlib
 import json
+import re
 import sys
+from collections import namedtuple
 from pathlib import Path
 
 if __package__ in (None, ""):
@@ -77,34 +83,35 @@ def _udim_hits(tree):
     def _is_minus_1001(node):
         return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
 
-    hits = set()
+    hits = {}
     for node in ast.walk(tree):
         # a job-local definition carrying an owned function name is a copy whatever its body
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name in OWNED_NAMES["udim-tile"]:
-            hits.add(node.lineno)
+            hits[id(node)] = node
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             terms = _add_terms(node)
             if any(_const(t, 1001) for t in terms) and any(_is_times_ten(t) for t in terms):
-                hits.add(node.lineno)
+                hits[id(node)] = node
         if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Mod, ast.FloorDiv)) \
                 and _const(node.right, 10) and _is_minus_1001(node.left):
-            hits.add(node.lineno)
+            hits[id(node)] = node
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "divmod" \
                 and len(node.args) == 2 and _is_minus_1001(node.args[0]) and _const(node.args[1], 10):
-            hits.add(node.lineno)
+            hits[id(node)] = node
     # two-step inverse: `i = tile - 1001` then `i % 10` / `i // 10` (reported on the assignment line)
     offsets = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign) and _is_minus_1001(node.value):
             for target in node.targets:
                 if isinstance(target, ast.Name):
-                    offsets.setdefault(target.id, node.lineno)
+                    offsets.setdefault(target.id, node)
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Mod, ast.FloorDiv)) \
                 and _const(node.right, 10) and isinstance(node.left, ast.Name) and node.left.id in offsets:
-            hits.add(offsets[node.left.id])
-    return hits
+            assign = offsets[node.left.id]
+            hits[id(assign)] = assign
+    return list(hits.values())
 
 
 def _is_zipfile_call(func):
@@ -114,7 +121,7 @@ def _is_zipfile_call(func):
 
 
 def _zip_hits(tree):
-    hits = set()
+    hits = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.Call) and _is_zipfile_call(node.func):
             mode = node.args[1] if len(node.args) > 1 else None
@@ -125,17 +132,69 @@ def _zip_hits(tree):
                 continue
             if isinstance(mode, ast.Constant) and isinstance(mode.value, str):
                 if mode.value in WRITE_MODES:
-                    hits.add(node.lineno)
+                    hits[id(node)] = node
             else:  # a computed mode cannot be proven read-only: fail closed
-                hits.add(node.lineno)
-    return hits
+                hits[id(node)] = node
+    return list(hits.values())
 
 
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits}
+MODULE = "<module>"
+QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
+HASH = re.compile(r"^[0-9a-f]{10}$")
+AT = re.compile(rf"^(?P<path>[^:]+\.py)::(?P<qual>{QUALNAME})$")
+SCOPES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+
+# rule, file (posix, repo-relative), enclosing def/class qualname, sha1[:10] of ast.unparse(node), first line
+Finding = namedtuple("Finding", "rule path qualname digest line")
+
+
+def _scopes(tree):
+    """{id(node): qualname of the def/class whose body holds it}. Decorators, defaults, annotations and bases run
+    in the enclosing scope; a def's own node gets its own qualname (a copy named like the owner IS that def)."""
+    out = {}
+
+    def visit(node, qual):
+        for field, value in ast.iter_fields(node):
+            inner = isinstance(node, SCOPES) and field == "body"
+            for child in value if isinstance(value, list) else [value]:
+                if isinstance(child, ast.AST):
+                    here = f"{qual}.{node.name}" if inner and qual != MODULE else node.name if inner else qual
+                    out[id(child)] = here
+                    if isinstance(child, SCOPES):
+                        out[id(child)] = child.name if here == MODULE else f"{here}.{child.name}"
+                    visit(child, here)
+
+    visit(tree, MODULE)
+    return out
+
+
+def _digest(node):
+    text = f"def {node.name}" if isinstance(node, SCOPES) else ast.unparse(node)
+    return hashlib.sha1(" ".join(text.split()).encode("utf-8")).hexdigest()[:10]
+
+
+def _findings(tree, rel):
+    scopes = _scopes(tree)
+    out = []
+    for rule, check in CHECKS.items():
+        hits = check(tree)
+        ids = {id(h) for h in hits}
+        nested = {id(sub) for h in hits if not isinstance(h, SCOPES)
+                  for sub in ast.walk(h) if sub is not h and id(sub) in ids}
+        for node in hits:
+            if id(node) not in nested:   # an expression inside another reported expression is the same copy
+                out.append(Finding(rule, rel, scopes[id(node)], _digest(node), node.lineno))
+    return out
+
+
+def scan_text(source, rel="<text>"):
+    """Findings of one source text (tests, probes); SyntaxError raises."""
+    return sorted(set(_findings(ast.parse(source, filename=rel), rel)))
 
 
 def scan(root, scope="jobs"):
-    """Return sorted findings [(rule, 'path:line')] for every *.py under root/scope; SyntaxError raises."""
+    """Return sorted findings [Finding] for every *.py under root/scope; SyntaxError raises naming the file."""
     root = Path(root)
     base = root / scope
     if not base.is_dir():
@@ -148,47 +207,65 @@ def scan(root, scope="jobs"):
             tree = ast.parse(source, filename=rel)
         except SyntaxError as exc:
             raise SyntaxError(f"{rel}: cannot parse ({exc.msg}, line {exc.lineno})") from None
-        for rule, check in CHECKS.items():
-            for line in check(tree):
-                findings.add((rule, f"{rel}:{line}"))
+        findings.update(_findings(tree, rel))
     return sorted(findings)
 
 
 def allowlist(contexts):
-    """Rule-tagged duplicates of contexts.yaml -> {(rule, 'path:line'): issue}. Unknown rules raise."""
+    """Rule-tagged duplicates of contexts.yaml -> {(rule, path, qualname, hash | None): issue}.
+
+    Unknown rules, a missing issue, an `at` that is not `path.py::qualname`, a malformed hash, a repeated row and a
+    function row overlapping a hash row of the same function raise ValueError naming the row."""
     allowed = {}
     for ctx in contexts.get("contexts", []) + [contexts.get("shared_kernel", {})]:
         for dup in ctx.get("duplicates", []):
             rule = dup.get("rule")
             if rule is None:
                 continue
+            at = str(dup.get("at", ""))
             if rule not in RULES:
-                raise ValueError(f"unknown guard rule {rule!r} at {dup.get('at')}")
+                raise ValueError(f"unknown guard rule {rule!r} at {at}")
             issue = dup.get("issue", "")
-            if not str(issue).startswith("#"):
-                raise ValueError(f"guard allowlist entry {dup.get('at')} has no issue reference")
-            key = (rule, dup["at"])
+            if not re.match(r"^#[0-9]+$", str(issue)):
+                raise ValueError(f"guard allowlist entry {at} has no issue reference")
+            m = AT.match(at)
+            if not m:
+                raise ValueError(f"guard allowlist entry {at!r}: 'at' must be path.py::function (#1387), "
+                                 "not a line number")
+            digest = dup.get("hash")
+            if digest is not None:
+                digest = str(digest)   # an unquoted all-digit hash parses as int; compare as text
+                if not HASH.match(digest):
+                    raise ValueError(f"guard allowlist entry {at}: hash {digest!r} is not 10 lowercase hex digits")
+            key = (rule, m["path"], m["qual"], digest)
             if key in allowed:
-                raise ValueError(f"duplicate allowlist entry {rule} {dup['at']}")
+                raise ValueError(f"duplicate allowlist entry {rule} {at}")
             allowed[key] = issue
+    for rule, path, qual, digest in allowed:
+        if digest is None and any(k[:3] == (rule, path, qual) and k[3] for k in allowed):
+            raise ValueError(f"allowlist entry {rule} {path}::{qual} without hash overlaps its hash rows")
     return allowed
 
 
+def _covers(key, finding):
+    rule, path, qual, digest = key
+    return (rule, path, qual) == finding[:3] and digest in (None, finding.digest)
+
+
 def compare(findings, allowed, scope="jobs"):
-    """-> (new, stale): `scope` findings not in the allowlist, allowlist rows no longer found.
+    """-> (new, stale): `scope` findings no row covers, allowlist rows that cover no finding.
 
     Rows outside `scope` are documentation of copies elsewhere: they must still be found (else stale), but new
     copies outside `scope` are not guarded yet."""
-    found = set(findings)
     prefix = scope.rstrip("/") + "/"
-    new = sorted(k for k in found - set(allowed) if k[1].startswith(prefix))
-    stale = sorted(set(allowed) - found)
+    new = sorted(f for f in set(findings) if f.path.startswith(prefix) and not any(_covers(k, f) for k in allowed))
+    stale = sorted(k for k in allowed if not any(_covers(k, f) for f in findings))
     return new, stale
 
 
 def scan_for(root, allowed, scope="jobs"):
     """Scan `scope` plus every top-level folder an allowlist row points to."""
-    tops = {scope} | {at.split("/", 1)[0] for _, at in allowed}
+    tops = {scope} | {key[1].split("/", 1)[0] for key in allowed}
     findings = []
     for top in sorted(tops):
         findings += scan(root, top)
@@ -209,11 +286,15 @@ def main(argv=None):
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     if args.json:
-        print(json.dumps({"new": new, "stale": stale}, indent=1))
-    for rule, at in new:
-        print(f"NEW COPY [{rule}] {at}: use {RULES[rule]} instead (or list it in contexts.yaml with an issue)")
-    for rule, at in stale:
-        print(f"STALE ALLOWLIST [{rule}] {at}: not found any more; remove or fix the row in contexts.yaml")
+        print(json.dumps({"new": [f._asdict() for f in new],
+                          "stale": [dict(zip(("rule", "path", "qualname", "hash"), k)) for k in stale]}, indent=1))
+    for f in new:
+        print(f"NEW COPY [{f.rule}] {f.path}:{f.line} in {f.qualname} (hash {f.digest}): use {RULES[f.rule]} "
+              f"instead (or list `{f.path}::{f.qualname}` in contexts.yaml with an issue)")
+    for rule, path, qual, digest in stale:
+        pin = f" hash {digest}" if digest else ""
+        print(f"STALE ALLOWLIST [{rule}] {path}::{qual}{pin}: not found any more; remove or fix the row in "
+              "contexts.yaml")
     return 1 if new or stale else 0
 
 

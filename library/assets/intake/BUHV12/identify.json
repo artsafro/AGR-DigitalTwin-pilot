@@ -1,0 +1,1284 @@
+{
+ "schema": "agr.assets.intake/1",
+ "project": "BUHV12",
+ "tolerance": 0.1,
+ "counts": {
+  "new_model": 14,
+  "variant": 5,
+  "not_identified": 1,
+  "out_of_scope": 11,
+  "exists": 1
+ },
+ "rows": [
+  {
+   "key": "Спецификация МАФ/И02/1",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "И02",
+   "name": "Баскетбольный щит с кольцом",
+   "article": "SPE100",
+   "maker": "Маф Маркет или аналог",
+   "qty": 1,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "MafMarket_BasketbolnyySchitSKoltsom_SPE100",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e09_g001"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "pole with backboard 1.42x1.35x4.54 m",
+   "scene": [
+    {
+     "id": "blago:blago_e09_g001",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 1417,
+      "y": 1347,
+      "z": 4536
+     },
+     "tris": 156,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 1,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e09_g001"
+  },
+  {
+   "key": "Спецификация МАФ/И03.1/2",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "И03.1",
+   "name": "Стойки волейбольные телескопические Тонус",
+   "article": "SG-1550",
+   "maker": "Спортивные города или аналог",
+   "qty": 1,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e20_g001"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "2 posts 2.5 m = one pair of stands (spec qty 1 set)",
+   "scene": [
+    {
+     "id": "blago:blago_e20_g001",
+     "name": null,
+     "count": 2,
+     "size_mm": {
+      "x": 365,
+      "y": 121,
+      "z": 2500
+     },
+     "tris": 120,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 2,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e20_g001"
+  },
+  {
+   "key": "Спецификация МАФ/И03.2/3",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "И03.2",
+   "name": "Сетка волейбольная тренировочная D=3,0 мм",
+   "article": "SG-06",
+   "maker": "Спортивные города или аналог",
+   "qty": 1,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e20_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "net 11.3 m x 1.22 m",
+   "scene": [
+    {
+     "id": "blago:blago_e20_g000",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 11335,
+      "y": 130,
+      "z": 1220
+     },
+     "tris": 196,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 1,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e20_g000"
+  },
+  {
+   "key": "Спецификация МАФ/И09/4",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "И09",
+   "name": "Детский игровой комплекс",
+   "article": "SHP0029",
+   "maker": "Шелби или аналог",
+   "qty": 1,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "Shelbi_DetskiyIgrovoyKompleks_SHP0029",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e06_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "climbing frame 4.2x3.6x2.2 m; И09/И010 assigned by size order, confirm by DWG point",
+   "scene": [
+    {
+     "id": "blago:blago_e06_g000",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 4199,
+      "y": 3633,
+      "z": 2219
+     },
+     "tris": 1261,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 1,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e06_g000"
+  },
+  {
+   "key": "Спецификация МАФ/И010/5",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "И010",
+   "name": "Детский игровой комплекс",
+   "article": "SHP0034",
+   "maker": "Шелби или аналог",
+   "qty": 1,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "Shelbi_DetskiyIgrovoyKompleks_SHP0034",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e06_g001"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "climbing frame 3.6x2.8x1.8 m; see И09",
+   "scene": [
+    {
+     "id": "blago:blago_e06_g001",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 3552,
+      "y": 2795,
+      "z": 1755
+     },
+     "tris": 1101,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 1,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e06_g001"
+  },
+  {
+   "key": "Спецификация МАФ/М2/6",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М2",
+   "name": "Скамья прямая",
+   "article": "L1",
+   "maker": "ПаркПро или аналог",
+   "qty": 1,
+   "dims_mm": [
+    3000,
+    500,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "Parkpro_SkamyaPryamaya_L1",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e05_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": null,
+   "scene": [
+    {
+     "id": "blago:blago_e05_g000",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 2963,
+      "y": 531,
+      "z": 558
+     },
+     "tris": 244,
+     "scene": "blago",
+     "dims": {
+      "ok": true,
+      "worst": 0.062,
+      "pairs": [
+       [
+        3000,
+        2963
+       ],
+       [
+        500,
+        531
+       ]
+      ]
+     }
+    }
+   ],
+   "scene_count": 1,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e05_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М3/7",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М3",
+   "name": "Урна «Crystal»",
+   "article": "CS330x",
+   "maker": "Маф Маркет или аналог",
+   "qty": 4,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 4,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "MafMarket_UrnaCrystal_CS330x",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e10_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "4 three-section bins 0.78x0.27x0.98 m",
+   "scene": [
+    {
+     "id": "blago:blago_e10_g000",
+     "name": null,
+     "count": 4,
+     "size_mm": {
+      "x": 778,
+      "y": 266,
+      "z": 984
+     },
+     "tris": 232,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 4,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e10_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М5/8",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М5",
+   "name": "Флагшток с закрытым подъемным механизмом 9-12 метров",
+   "article": null,
+   "maker": "Флаг.ру или аналог",
+   "qty": 3,
+   "dims_mm": [
+    null,
+    null,
+    9000
+   ],
+   "dwg_count": 3,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "FlagRu_FlagshtokSZakrytymPodemnymMekhanizmom912Metrov_0000",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e04_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "flagpole 12.27 m; the schedule says 9-12 m",
+   "scene": [
+    {
+     "id": "blago:blago_e04_g000",
+     "name": null,
+     "count": 3,
+     "size_mm": {
+      "x": 629,
+      "y": 123,
+      "z": 12273
+     },
+     "tris": 306,
+     "scene": "blago",
+     "dims": {
+      "ok": false,
+      "worst": 0.364,
+      "pairs": [
+       [
+        9000,
+        12273
+       ]
+      ]
+     }
+    }
+   ],
+   "scene_count": 3,
+   "status": "variant",
+   "why": "scene model off the schedule size by 36 % (not rescaled): blago:blago_e04_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М6/9",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М6",
+   "name": "Навес",
+   "article": "L16",
+   "maker": "ПаркПро или аналог",
+   "qty": 1,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [
+    "Hobbika_UkorochenniNavesPodPloshadkySimpl4156_56740"
+   ],
+   "project_sets": [],
+   "proposed_name": "Parkpro_Naves_L16",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e08_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "canopy over a table 5.9x2.6x2.8 m",
+   "scene": [
+    {
+     "id": "blago:blago_e08_g000",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 5893,
+      "y": 2591,
+      "z": 2837
+     },
+     "tris": 1364,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 1,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e08_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М7/10",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М7",
+   "name": "Евроконтейнер",
+   "article": "22.C19 серый (20.807.2; крышка 21.050",
+   "maker": "Агропак или аналог",
+   "qty": 3,
+   "dims_mm": [
+    1377,
+    1077,
+    1369
+   ],
+   "dwg_count": 3,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e03_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "plain box (10 tris), no container detail",
+   "scene": [
+    {
+     "id": "blago:blago_e03_g000",
+     "name": null,
+     "count": 3,
+     "size_mm": {
+      "x": 1355,
+      "y": 988,
+      "z": 1300
+     },
+     "tris": 10,
+     "scene": "blago",
+     "dims": {
+      "ok": true,
+      "worst": 0.083,
+      "pairs": [
+       [
+        1377,
+        1355
+       ],
+       [
+        1077,
+        988
+       ],
+       [
+        1369,
+        1300
+       ]
+      ]
+     }
+    }
+   ],
+   "scene_count": 3,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e03_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М8/11",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М8",
+   "name": "Велопарковка VELOBOX (ВЕЛОБОКС)",
+   "article": "ВП 043",
+   "maker": "Айра или аналог",
+   "qty": 2,
+   "dims_mm": [
+    2000,
+    1200,
+    500
+   ],
+   "dwg_count": 2,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "Ayra_VeloparkovkaVeloboxVeloboks_VP043",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e02_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": null,
+   "scene": [
+    {
+     "id": "blago:blago_e02_g000",
+     "name": null,
+     "count": 2,
+     "size_mm": {
+      "x": 1998,
+      "y": 1199,
+      "z": 532
+     },
+     "tris": 1244,
+     "scene": "blago",
+     "dims": {
+      "ok": true,
+      "worst": 0.064,
+      "pairs": [
+       [
+        2000,
+        1998
+       ],
+       [
+        1200,
+        1199
+       ],
+       [
+        500,
+        532
+       ]
+      ]
+     }
+    }
+   ],
+   "scene_count": 2,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e02_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М9/12",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М9",
+   "name": "Контейнерная площадка для ТБО «МАФ - 6»",
+   "article": "12644",
+   "maker": "Хоббика или аналог",
+   "qty": 1,
+   "dims_mm": [
+    null,
+    null,
+    null
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "Hobbyka_KonteynernayaPloschadkaDlyaTboMaf6_12644",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e18_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "roofed enclosure 6.1x2.1x2.4 m, 2580 tris",
+   "scene": [
+    {
+     "id": "blago:blago_e18_g000",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 6085,
+      "y": 2107,
+      "z": 2404
+     },
+     "tris": 2580,
+     "scene": "blago",
+     "dims": null
+    }
+   ],
+   "scene_count": 1,
+   "status": "new_model",
+   "why": "scene kind blago:blago_e18_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М10/13",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М10",
+   "name": "Скамья",
+   "article": "L2",
+   "maker": "ПаркПро или аналог",
+   "qty": 3,
+   "dims_mm": [
+    2000,
+    600,
+    450
+   ],
+   "dwg_count": 3,
+   "library": [],
+   "library_by_name": [
+    "Adanat_Anapa_10779.1a",
+    "Igrateks_SkamyaRadiusnaya_SRRS",
+    "NoName_Skameya_0101-2",
+    "NoName_Skameya_0101-3",
+    "NoName_Skameya_0101-4",
+    "NoName_Skameya_0101-5"
+   ],
+   "project_sets": [],
+   "proposed_name": "Parkpro_Skamya_L2",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "blago:blago_e07_g000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "bench with back; schedule H 450 is probably the seat height",
+   "scene": [
+    {
+     "id": "blago:blago_e07_g000",
+     "name": null,
+     "count": 3,
+     "size_mm": {
+      "x": 1994,
+      "y": 681,
+      "z": 942
+     },
+     "tris": 136,
+     "scene": "blago",
+     "dims": {
+      "ok": false,
+      "worst": 1.093,
+      "pairs": [
+       [
+        2000,
+        1994
+       ],
+       [
+        600,
+        681
+       ],
+       [
+        450,
+        942
+       ]
+      ]
+     }
+    }
+   ],
+   "scene_count": 3,
+   "status": "variant",
+   "why": "scene model off the schedule size by 109 % (not rescaled): blago:blago_e07_g000"
+  },
+  {
+   "key": "Спецификация МАФ/М15/14",
+   "kind": "maf",
+   "table": "Спецификация МАФ",
+   "row": "М15",
+   "name": "Евроконтейнер",
+   "article": "24.C21 gray",
+   "maker": "Агропак или аналог",
+   "qty": 1,
+   "dims_mm": [
+    582,
+    721,
+    1069
+   ],
+   "dwg_count": 1,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "Agropak_Evrokonteyner_24.C21gray",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "Спецификация ограждений/О-1/1",
+   "kind": "groundel",
+   "table": "Спецификация ограждений",
+   "row": "О-1",
+   "name": "Ограждение спортивное (H=3м), RAL7016",
+   "article": "Тип 005",
+   "qty": 106,
+   "unit": "м.п.",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ограждений/О-2/2",
+   "kind": "groundel",
+   "table": "Спецификация ограждений",
+   "row": "О-2",
+   "name": "Ограждение территории металлическое (H=2,5м), RAL7016",
+   "article": "Тип П-(2,5)-М-01",
+   "qty": 187,
+   "unit": "м.п.",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ограждений/О-3/3",
+   "kind": "groundel",
+   "table": "Спецификация ограждений",
+   "row": "О-3",
+   "name": "Ограждение территории металлическое (H=2,2м), RAL7016",
+   "article": "Тип П-(2,5)-М-01",
+   "qty": 3,
+   "unit": "м.п.",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ограждений/О-4/4",
+   "kind": "groundel",
+   "table": "Спецификация ограждений",
+   "row": "О-4",
+   "name": "Ограждение территории металлическое (H=3м), RAL7016",
+   "article": "Тип П-(2,5)-М-01",
+   "qty": 8,
+   "unit": "м.п.",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ограждений/О-5/5",
+   "kind": "groundel",
+   "table": "Спецификация ограждений",
+   "row": "О-5",
+   "name": "Ограждение подпорных стен и лестниц (H=1,1м), RAL7016",
+   "article": "Тип П-1,1-М-01",
+   "qty": 99,
+   "unit": "м.п.",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ворот и кал/В-1/1",
+   "kind": "groundel",
+   "table": "Спецификация ворот и калиток",
+   "row": "В-1",
+   "name": "Ворота, 4500х2500 (ШхВ), RAL7016",
+   "article": "Тип П-(2,5)-М-01",
+   "qty": 1,
+   "unit": "шт",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ворот и кал/В-2/2",
+   "kind": "groundel",
+   "table": "Спецификация ворот и калиток",
+   "row": "В-2",
+   "name": "Ворота, 4500х3000 (ШхВ), RAL7016",
+   "article": "Тип П-(3)-М-01",
+   "qty": 1,
+   "unit": "шт",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ворот и кал/К-1/3",
+   "kind": "groundel",
+   "table": "Спецификация ворот и калиток",
+   "row": "К-1",
+   "name": "Калитка 1130х2500 (ШхВ), RAL7016",
+   "article": "Тип П-(2,5)-М-01",
+   "qty": 1,
+   "unit": "шт",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ворот и кал/К-2/4",
+   "kind": "groundel",
+   "table": "Спецификация ворот и калиток",
+   "row": "К-2",
+   "name": "Калитка 1130х2200 (ШхВ), RAL7016",
+   "article": "Тип П-(2,2)-М-01",
+   "qty": 1,
+   "unit": "шт",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ворот и кал/К-3/5",
+   "kind": "groundel",
+   "table": "Спецификация ворот и калиток",
+   "row": "К-3",
+   "name": "Калитка 1130х3000 (ШхВ), RAL7016",
+   "article": "Тип П-(3)-М-01",
+   "qty": 1,
+   "unit": "шт",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Спецификация ворот и кал/К-4/6",
+   "kind": "groundel",
+   "table": "Спецификация ворот и калиток",
+   "row": "К-4",
+   "name": "Калитка 1000х2030 (ШхВ)(спортивное ограждение), RAL7016",
+   "article": "Тип В",
+   "qty": 2,
+   "unit": "шт",
+   "status": "out_of_scope",
+   "why": "fence/gate: GroundEl, not the MAF library"
+  },
+  {
+   "key": "Ведомость озеленения/2/1",
+   "kind": "flora",
+   "row": "2",
+   "name": "Ель обыкновенная (европейская)",
+   "cultivar": null,
+   "latin": null,
+   "plant_kind": "tree",
+   "qty": 1,
+   "height_m": null,
+   "container": "ком 1,0х1,0х0,4 м",
+   "dwg_count": 1,
+   "library_level": "genus",
+   "library": [
+    "elka_t1_h400",
+    "elka_t2_h300"
+   ],
+   "scene_versions": {
+    "high": [
+     "shkola_flora:shkola_flora_k003"
+    ],
+    "low": [
+     "shkola_flora:shkola_flora_k002"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "1 of the 4 Sosna_Derevo instances stands at the DWG Ель point (-57.5, -11.9 m)",
+   "scene": [
+    {
+     "id": "shkola_flora:shkola_flora_k003",
+     "name": "Sosna_Derevo_High001",
+     "count": 4,
+     "size_mm": {
+      "x": 2047.2,
+      "y": 2134.9,
+      "z": 4787.8
+     },
+     "tris": 14266,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k002",
+     "name": "LP_Sosna_V2_derevo_High003",
+     "count": 4,
+     "size_mm": {
+      "x": 2158.9,
+      "y": 2158.9,
+      "z": 5041.8
+     },
+     "tris": 464,
+     "scene": "shkola_flora",
+     "dims": null
+    }
+   ],
+   "scene_count": 4,
+   "status": "exists",
+   "why": "A101 elka = Ель обыкновенная (confirm); the scene puts the generic conifer of row 6 here"
+  },
+  {
+   "key": "Ведомость озеленения/4/2",
+   "kind": "flora",
+   "row": "4",
+   "name": "Клен Татарский (Acer tataricum)",
+   "cultivar": "Татарский",
+   "latin": "Acer tataricum",
+   "plant_kind": "tree",
+   "qty": 3,
+   "height_m": null,
+   "container": "ком 0,5х0,5х0,4 м",
+   "dwg_count": 3,
+   "library_level": "genus",
+   "library": [
+    "klen_ginnala_t1_h150",
+    "klen_ginnala_t2_h150",
+    "klen_t1_h175",
+    "klen_t2_h175",
+    "klen_t3_h350",
+    "klen_t4_h350",
+    "klen_t5_h500",
+    "klen_t6_h500",
+    "klen_t7_h550",
+    "klen_t8_h700"
+   ],
+   "scene_versions": {
+    "high": [
+     "shkola_flora:shkola_flora_k004"
+    ],
+    "low": [
+     "shkola_flora:shkola_flora_k005"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": null,
+   "scene": [
+    {
+     "id": "shkola_flora:shkola_flora_k004",
+     "name": "HP_Клен татарский004",
+     "count": 3,
+     "size_mm": {
+      "x": 3963.7,
+      "y": 3530.7,
+      "z": 3479.6
+     },
+     "tris": 5098,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k005",
+     "name": "LP_Клен татарский004",
+     "count": 3,
+     "size_mm": {
+      "x": 3137.2,
+      "y": 3130.3,
+      "z": 3607.6
+     },
+     "tris": 331,
+     "scene": "shkola_flora",
+     "dims": null
+    }
+   ],
+   "scene_count": 3,
+   "status": "new_model",
+   "why": "scene kind shkola_flora:shkola_flora_k004, shkola_flora:shkola_flora_k005 (nearest genus: klen_ginnala_t1_h150, klen_ginnala_t2_h150, klen_t1_h175)"
+  },
+  {
+   "key": "Ведомость озеленения/6/3",
+   "kind": "flora",
+   "row": "6",
+   "name": "Сосна кедровая европейская (Pinus cembra)",
+   "cultivar": null,
+   "latin": "Pinus cembra",
+   "plant_kind": "tree",
+   "qty": 3,
+   "height_m": null,
+   "container": "ком 1,0х1,0х0,4 м",
+   "dwg_count": 3,
+   "library_level": "genus",
+   "library": [
+    "sosna_gornaya_t1_h60"
+   ],
+   "scene_versions": {
+    "high": [
+     "shkola_flora:shkola_flora_k003"
+    ],
+    "low": [
+     "shkola_flora:shkola_flora_k002"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "Sosna_Derevo x4 = 3 Сосна кедровая + 1 Ель (same model); count 4 vs spec 3",
+   "scene": [
+    {
+     "id": "shkola_flora:shkola_flora_k003",
+     "name": "Sosna_Derevo_High001",
+     "count": 4,
+     "size_mm": {
+      "x": 2047.2,
+      "y": 2134.9,
+      "z": 4787.8
+     },
+     "tris": 14266,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k002",
+     "name": "LP_Sosna_V2_derevo_High003",
+     "count": 4,
+     "size_mm": {
+      "x": 2158.9,
+      "y": 2158.9,
+      "z": 5041.8
+     },
+     "tris": 464,
+     "scene": "shkola_flora",
+     "dims": null
+    }
+   ],
+   "scene_count": 4,
+   "status": "new_model",
+   "why": "scene kind shkola_flora:shkola_flora_k003, shkola_flora:shkola_flora_k002 (nearest genus: sosna_gornaya_t1_h60)"
+  },
+  {
+   "key": "Ведомость озеленения/10/4",
+   "kind": "flora",
+   "row": "10",
+   "name": "Пузыреплодник клинолистный (Physocarpus opulifolius Luteus",
+   "cultivar": "Luteus",
+   "latin": "Physocarpus opulifolius Luteus",
+   "plant_kind": "shrub",
+   "qty": 105,
+   "height_m": null,
+   "container": "ком 0,5х0,4 м",
+   "dwg_count": 105,
+   "library_level": "exact",
+   "library": [
+    "puzyreplodnik_kalinolistnyj_t1_h150",
+    "puzyreplodnik_kalinolistnyj_t2_h150",
+    "puzyreplodnik_kalinolistnyj_t3_h150"
+   ],
+   "scene_versions": {
+    "high": [
+     "shkola_flora:shkola_flora_k008"
+    ],
+    "low": [
+     "shkola_flora:shkola_flora_k007"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": null,
+   "scene": [
+    {
+     "id": "shkola_flora:shkola_flora_k008",
+     "name": "Озеленение <Кустарники_Новоселье : Пузыреплодник клинолистный (Physocarpus opulifolius Luteus>",
+     "count": 105,
+     "size_mm": {
+      "x": 1720.5,
+      "y": 1686.8,
+      "z": 1271.7
+     },
+     "tris": 184,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k007",
+     "name": "Озеленение <Кустарники_Новоселье : Пузыреплодник клинолистный (Physocarpus opulifolius Luteus>",
+     "count": 105,
+     "size_mm": {
+      "x": 2127.0,
+      "y": 2118.2,
+      "z": 1397.4
+     },
+     "tris": 10,
+     "scene": "shkola_flora",
+     "dims": null
+    }
+   ],
+   "scene_count": 105,
+   "status": "variant",
+   "why": "species in library, cultivar Luteus not"
+  },
+  {
+   "key": "Ведомость озеленения/12/5",
+   "kind": "flora",
+   "row": "12",
+   "name": "Сосна горная (Sherwood Compact)",
+   "cultivar": "Sherwood Compact",
+   "latin": "Sherwood Compact",
+   "plant_kind": "shrub",
+   "qty": 5,
+   "height_m": null,
+   "container": "ком 0,5х0,4 м",
+   "dwg_count": 5,
+   "library_level": "exact",
+   "library": [
+    "sosna_gornaya_t1_h60"
+   ],
+   "scene_versions": {
+    "high": [
+     "shkola_flora:shkola_flora_k001"
+    ],
+    "low": [
+     "shkola_flora:shkola_flora_k000"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": null,
+   "scene": [
+    {
+     "id": "shkola_flora:shkola_flora_k001",
+     "name": "Object065",
+     "count": 5,
+     "size_mm": {
+      "x": 1677.0,
+      "y": 1623.7,
+      "z": 1392.2
+     },
+     "tris": 1024,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k000",
+     "name": "Sosna_gornaya_LP002",
+     "count": 5,
+     "size_mm": {
+      "x": 1619.1,
+      "y": 1674.8,
+      "z": 1369.7
+     },
+     "tris": 10,
+     "scene": "shkola_flora",
+     "dims": null
+    }
+   ],
+   "scene_count": 5,
+   "status": "variant",
+   "why": "species in library, cultivar Sherwood Compact not"
+  },
+  {
+   "key": "Ведомость озеленения/15/6",
+   "kind": "flora",
+   "row": "15",
+   "name": "Микробиота перекрестнопарная (Microbiota decussata)",
+   "cultivar": null,
+   "latin": "Microbiota decussata",
+   "plant_kind": "shrub",
+   "qty": 15,
+   "height_m": null,
+   "container": "ком 0,2х0,2 м",
+   "dwg_count": 15,
+   "library_level": null,
+   "library": [],
+   "scene_versions": {
+    "high": [
+     "shkola_flora:shkola_flora_k006"
+    ],
+    "low": [
+     "shkola_flora:shkola_flora_k011"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "objects are named Mozh_* (можжевельник) but stand at the 15 Микробиота points",
+   "scene": [
+    {
+     "id": "shkola_flora:shkola_flora_k006",
+     "name": "Mozh_HP001",
+     "count": 15,
+     "size_mm": {
+      "x": 1879.3,
+      "y": 1838.0,
+      "z": 1606.8
+     },
+     "tris": 168,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k011",
+     "name": "Mozh_HP013",
+     "count": 15,
+     "size_mm": {
+      "x": 2209.5,
+      "y": 2046.9,
+      "z": 1714.9
+     },
+     "tris": 10,
+     "scene": "shkola_flora",
+     "dims": null
+    }
+   ],
+   "scene_count": 15,
+   "status": "new_model",
+   "why": "scene kind shkola_flora:shkola_flora_k006, shkola_flora:shkola_flora_k011"
+  },
+  {
+   "key": "Ведомость озеленения/16/7",
+   "kind": "flora",
+   "row": "16",
+   "name": "Туя западная Смарагд (Smsragd)",
+   "cultivar": "Smsragd",
+   "latin": "Smsragd",
+   "plant_kind": "shrub",
+   "qty": 7,
+   "height_m": null,
+   "container": "ком 0,5х0,4 м",
+   "dwg_count": 7,
+   "library_level": "genus",
+   "library": [
+    "flora_v003:Thuja_occidentalis"
+   ],
+   "scene_versions": {
+    "high": [
+     "shkola_flora:shkola_flora_k010"
+    ],
+    "low": [
+     "shkola_flora:shkola_flora_k012",
+     "shkola_flora:shkola_flora_k009"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": null,
+   "scene": [
+    {
+     "id": "shkola_flora:shkola_flora_k010",
+     "name": "туя_HP",
+     "count": 7,
+     "size_mm": {
+      "x": 2158.9,
+      "y": 2160.5,
+      "z": 4698.4
+     },
+     "tris": 28,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k012",
+     "name": "туя_HP002",
+     "count": 6,
+     "size_mm": {
+      "x": 2158.9,
+      "y": 2158.9,
+      "z": 4698.4
+     },
+     "tris": 8,
+     "scene": "shkola_flora",
+     "dims": null
+    },
+    {
+     "id": "shkola_flora:shkola_flora_k009",
+     "name": "туя",
+     "count": 1,
+     "size_mm": {
+      "x": 2158.9,
+      "y": 2158.9,
+      "z": 4698.4
+     },
+     "tris": 8,
+     "scene": "shkola_flora",
+     "dims": null
+    }
+   ],
+   "scene_count": 7,
+   "status": "variant",
+   "why": "Туя западная = Thuja occidentalis (v003); cultivar Smaragd not in the library"
+  }
+ ]
+}
