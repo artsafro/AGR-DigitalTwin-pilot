@@ -2,7 +2,7 @@
 import copy
 import pytest
 
-from tools.materials.course_grid_fit import fold_chart
+from tools.materials.course_grid_fit import fold_chart, fit_mask_samples
 
 
 def face(points, index=0):
@@ -56,3 +56,34 @@ def test_legal_density_and_containment_boundaries_are_inclusive():
                      texel_px_m=density,tile_px=4096,border_px=32)
         assert r['unplaced']==[]
         assert r['passed'] is False
+
+
+def test_mask_conflict_uses_another_full_repeat_copy_never_overwrites():
+    a=face([[0,0],[1,0],[1,1],[0,1]])
+    b=dict(a,face=1)
+    # Same lattice phase, incompatible panel-mask samples: two copies required.
+    samples=[{'object':'synthetic','face':0,'samples':[[.5,.5,True]]},
+             {'object':'synthetic','face':1,'samples':[[.5,.5,False]]}]
+    result=fit_mask_samples([a,b],samples,repeat_m=4,texel_px_m=512,
+                           tile_px=4096,border_px=32,seed=0)
+    assert result['unplaced']==[]
+    assert result['faces'][0]['translation_m'] != result['faces'][1]['translation_m']
+    assert result['passed'] is False
+    # With a 7 m repeat only one copy of this phase fits. It must report a drop.
+    failed=fit_mask_samples([a,b],samples,repeat_m=7,texel_px_m=512,
+                           tile_px=4096,border_px=32,seed=0)
+    assert len(failed['unplaced'])==1
+    assert failed['status']=='sample_fit_exhausted'
+    assert len(failed['faces'])+len(failed['unplaced'])==2
+    assert failed['witnesses'][0]['conflict_pixels']>=1
+
+
+@pytest.mark.parametrize('bad', [[],[{'object':'unknown','face':0,'samples':[[0,0,True]]}],
+    [{'object':'synthetic','face':0,'samples':[]}],
+    [{'object':'synthetic','face':0,'samples':[[float('nan'),0,True]]}],
+    [{'object':'synthetic','face':0,'samples':[[0,0,1]]}]])
+def test_mask_mapping_must_be_complete_and_valid(bad):
+    with pytest.raises(ValueError):
+        fit_mask_samples([face([[0,0],[1,0],[0,1]])],bad,repeat_m=4,
+                         texel_px_m=512,tile_px=4096,border_px=32,seed=0)
+
