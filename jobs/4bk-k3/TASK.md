@@ -158,6 +158,28 @@ brick block RIGHT of the tower in «1 эт_2.jpg» (the dark АКП block on the
 the plinth; «швы там по логике проёмов» → 10 mm joints on the brick: verticals at corners and opening reveals,
 panels 1–2 m, horizontal at opening heads (the panel layout of the 124 cuts).
 
+## Joint UV method (Artem, 2026-11-12)
+
+> «Эджи вертикальные, которые идут от каждого проёма ... выбираю, что швы будут идти по левому эджу ... делаю всем
+> полигонам один тексель, выравниваю по горизонтали, align по левому edge ... левый край рисую вертикальный шов на
+> текстуре и кладу все полигоны друг по другу левым краем на этот шов.»
+
+Every joint is a geometry edge (cut at openings / panel edges); panels share one texel, are straightened and stacked
+by their left (joint) edge onto one painted joint line; the texture = plain field + one joint line per direction.
+Target: ID2 АКП of the whole building in 2 tiles = 2 IDs (ID2, ID11), regular bitmaps visible in the Max viewport.
+Refinement: «где не нарезано — шва не будет ... нарезать = уплотнение геометрии ... один тайл, где всё укладывается по
+нарезке, а длинный полигон, которому нужен шов посередине, — в отдельном тайле» → tile A = stacked panels on existing
+cuts; tile B = long faces with intermediate joints painted individually, no extra cuts.
+2 tiles gave only 420 px/m (< 512 [D160]); Artem: «Давай 3 тайла» → tower АКП = 3 tiles / 3 IDs (ID2, ID11, ID12)
+at ≥ 512 px/m, no cuts.
+
+## Two VPM deliveries (Artem, 2026-11-12)
+
+> «Поскольку стилобат отдельно стоящее здание, это будет отдельная ВПМ ... ВПМ большого корпуса с его текстурами и ВПМ
+> мелкого корпуса с его текстурами. Не обязательно подгонять один к другому.»
+
+Two OKS packages: the K3 tower and the small stylobate, each with its own textures, IDs and UDIM numbering.
+
 ## Open
 
 Address, stem `SM_<Address>_NNN`, naming reference, GeoJSON — from Artem later.
