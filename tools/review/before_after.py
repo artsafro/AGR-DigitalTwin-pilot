@@ -35,8 +35,12 @@ BLENDER_SCRIPT = Path(__file__).resolve().parent / 'before_after_blender.py'
 SUFFIXES = {'.fbx', '.blend'}
 MODES = {'fit', 'named'}
 STYLES = {'solid', 'wire', 'material', 'texture'}
-CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'shift_x', 'shift_y', 'clip_start', 'clip_end')
-CAMERA_KEYS = {'type', 'matrix_world', 'sensor_fit', 'resolution', 'pixel_aspect', *CAMERA_FLOATS}
+CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'sensor_height', 'shift_x', 'shift_y',
+                 'clip_start', 'clip_end')
+# 'projection' = camera.calc_matrix_camera(depsgraph, x, y, scale_x, scale_y) flattened: the effective
+# projection, so any parameter that changes the image (incl. ones not listed above) is a mismatch.
+CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution', 'pixel_aspect',
+               *CAMERA_FLOATS}
 RENDER_KEYS = ('engine', 'style')
 TOLERANCE = 1e-6
 
@@ -70,7 +74,7 @@ def _normal(camera):
         raise ValueError(f"camera sensor_fit is not a string: {camera['sensor_fit']!r}")
     out = {key: _finite(camera[key], key) for key in CAMERA_FLOATS}
     out.update(type=camera['type'], sensor_fit=camera['sensor_fit'],
-               matrix_world=_vector(camera, 'matrix_world', 16),
+               matrix_world=_vector(camera, 'matrix_world', 16), projection=_vector(camera, 'projection', 16),
                resolution=_vector(camera, 'resolution', 2), pixel_aspect=_vector(camera, 'pixel_aspect', 2))
     return out
 

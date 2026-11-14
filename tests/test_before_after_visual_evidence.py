@@ -332,6 +332,11 @@ def test_real_blender_named_mismatch_refused_and_fit_matches(tmp_path):
     manifest = json.loads((good / 'before-after.json').read_text(encoding='utf-8'))
     assert manifest['same_camera'] is True and manifest['camera']['type'] == 'ORTHO'
     assert all(math.isfinite(v) for v in manifest['camera']['matrix_world'])
+    assert all(math.isfinite(v) for v in manifest['camera']['projection'])
+    wire = tmp_path / 'ev' / 'wire'
+    assert module.main(argv(a, b, wire, '--resolution', '64x40', '--style', 'wire')) == 0
+    evidence = json.loads((wire / 'render-evidence.json').read_text(encoding='utf-8'))
+    assert [evidence[r]['mesh_objects'] for r in ('before', 'after')] == [1, 1]  # r1 P3: no wire copies
 
 
 MAKE_SENSOR_SCENES = r'''

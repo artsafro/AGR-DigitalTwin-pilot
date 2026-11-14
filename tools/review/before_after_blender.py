@@ -110,13 +110,18 @@ def setup(scene, fitted):
 
 def record(scene, camera):
     data = camera.data
+    res = [scene.render.resolution_x * scene.render.resolution_percentage // 100,
+           scene.render.resolution_y * scene.render.resolution_percentage // 100]
+    aspect = [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y]
+    projection = camera.calc_matrix_camera(bpy.context.evaluated_depsgraph_get(), x=res[0], y=res[1],
+                                           scale_x=aspect[0], scale_y=aspect[1])
     return {'type': data.type, 'matrix_world': [v for row in camera.matrix_world for v in row],
+            'projection': [v for row in projection for v in row],
             'lens': data.lens, 'ortho_scale': data.ortho_scale, 'sensor_width': data.sensor_width,
+            'sensor_height': data.sensor_height,
             'sensor_fit': data.sensor_fit, 'shift_x': data.shift_x, 'shift_y': data.shift_y,
             'clip_start': data.clip_start, 'clip_end': data.clip_end,
-            'resolution': [scene.render.resolution_x * scene.render.resolution_percentage // 100,
-                           scene.render.resolution_y * scene.render.resolution_percentage // 100],
-            'pixel_aspect': [scene.render.pixel_aspect_x, scene.render.pixel_aspect_y]}
+            'resolution': res, 'pixel_aspect': aspect}
 
 
 fitted = None
@@ -127,9 +132,10 @@ if request['mode'] == 'fit':
 evidence = {}
 for role in ('before', 'after'):
     scene = load(cfg[role])
+    mesh_count = len(meshes(scene))  # before setup(): the 'wire' style adds wireframe copies (r1 P3)
     camera = setup(scene, fitted)
     scene.render.filepath = str(out / f'{role}.png')
     bpy.ops.render.render(write_still=True)
-    evidence[role] = {'camera': record(scene, camera), 'mesh_objects': len(meshes(scene)),
+    evidence[role] = {'camera': record(scene, camera), 'mesh_objects': mesh_count,
                       'render': {'engine': scene.render.engine, 'style': request['style']}}
 (out / 'render-evidence.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
