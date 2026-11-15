@@ -74,6 +74,21 @@ def test_tooltips_say_what_and_requirement():
         assert '"' not in tip
 
 
+@pytest.mark.parametrize('action_id, plan_id', [
+    ('nudge', 'udim.nudge'), ('nudge_apply', 'udim.nudge'),
+    ('cleanup', 'export.cleanup'), ('cleanup_apply', 'export.cleanup'),
+    ('texel', 'udim.texel'), ('geojson', 'qa.geojson'),
+    ('matid', 'qa.matid'), ('names', 'qa.names'),
+])
+def test_legacy_requirement_ids_match_canonical_plan(action_id, plan_id):
+    """#862: tooltips must cite the exact canonical ids, including apply aliases."""
+    suite = json.loads((ROOT / 'docs/plans/agr-tools-suite.json').read_text(encoding='utf-8'))
+    plan_row = next(row for row in suite['rows'] if row['id'] == plan_id)
+    action = m.action(action_id)
+    assert action.reqs == tuple(plan_row['reqs'].split())
+    assert m.tooltip(action).endswith('Треб.: ' + ', '.join(plan_row['reqs'].split()))
+
+
 @pytest.mark.parametrize('bad', ['', 'XVIEW', 'unknown', None, 'cleanup_apply '])
 def test_unknown_action_is_an_error_naming_it(bad):
     with pytest.raises(KeyError, match='unknown AGR Tools action'):
