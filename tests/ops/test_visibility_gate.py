@@ -235,6 +235,57 @@ def test_degenerate_face_reported_as_dropped():
     assert rep["passed"] is False
 
 
+# ---- probes: broadphase + culls are exact; repeat runs identical --------------------------------------------------
+
+def _random_scene(seed):
+    rng = np.random.default_rng(seed)
+    parts = []
+    for i in range(6):
+        lo = rng.uniform(-5, 5, 3)
+        lo[2] = abs(lo[2])
+        parts.append(box(f"B{i}", tuple(lo), tuple(lo + rng.uniform(0.2, 3, 3)), "brick"))
+    for i in range(4):
+        q = rng.uniform(-6, 6, (3, 3))
+        q[:, 2] = np.abs(q[:, 2])
+        parts.append(vg.VPart(f"T{i}", q, ((0, 1, 2),), ("glass" if i == 0 else "post",)))
+    return parts
+
+
+@pytest.mark.parametrize("seed", range(20))
+def test_probe_occluded_matches_brute_force(seed):
+    """BVH capsule broadphase + plane cull + nearest-first rounds == brute-force Moller-Trumbore over every triangle."""
+    rng = np.random.default_rng(1000 + seed)
+    tris = rng.uniform(-5, 5, (300, 3, 3))
+    tri_face = np.arange(300) // 2
+    bvh = vg.BVH(tris)
+    targets = np.stack([vg.face_samples(tris[2 * k]) for k in range(150)])
+    normals = np.cross(tris[0::2, 1] - tris[0::2, 0], tris[0::2, 2] - tris[0::2, 0])
+    normals /= np.linalg.norm(normals, axis=1)[:, None]
+    for eye in rng.uniform(-30, 30, (3, 3)):
+        got = bvh.occluded(eye, targets, np.arange(150), tri_face, 1e-4, normals, np.full(150, 1))   # need 1: never decided early, so exact
+        d = targets.reshape(-1, 3) - eye
+        dist = np.linalg.norm(d, axis=1)
+        d /= dist[:, None]
+        rr = np.repeat(np.arange(len(d)), 300)
+        tt = np.tile(np.arange(300), len(d))
+        th, ok = vg._mt(np.broadcast_to(eye, (len(rr), 3)), d[rr], tris[tt, 0], tris[tt, 1] - tris[tt, 0],
+                        tris[tt, 2] - tris[tt, 0])
+        ok &= (th > 1e-9) & (th < dist[rr] - 1e-4) & (tri_face[tt] != np.repeat(np.arange(150), 16)[rr])
+        ref = np.zeros(len(d), bool)
+        ref[rr[ok]] = True
+        assert np.array_equal(got.reshape(-1), ref)
+        for n in (4, 16):         # early decision: the n-of-16 verdict equals the brute-force verdict
+            early = bvh.occluded(eye, targets, np.arange(150), tri_face, 1e-4, normals, np.full(150, n))
+            assert np.array_equal((~early).sum(1) >= n, (~ref.reshape(150, 16)).sum(1) >= n)
+
+
+@pytest.mark.parametrize("seed", range(5))
+def test_probe_random_scene_runs_identical(seed):
+    parts = _random_scene(seed)
+    a = json.dumps(vg.check(parts, [], cfg()), sort_keys=True)
+    assert a == json.dumps(vg.check(parts, [], cfg()), sort_keys=True)
+
+
 # ---- CLI, fresh process ---------------------------------------------------------------------------------------------
 
 def _cli(*args):
