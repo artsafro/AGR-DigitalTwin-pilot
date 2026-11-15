@@ -1,5 +1,7 @@
 """#1379 compaction step 4: checks + the SINTEZ route command.
 
+Pattern: n/a | new-case: tests of `agr checker`, the sintez-checker / master-qa guard rules and the job shims.
+
 The 5 validation rows of the #1359 map: the SINTEZ checker launch (KPP1 + TEC26 copy) moved to the one owner
 tools/blender/sintez_checker.py behind `agr checker` (tools/qa/sintez_checker.py, launched through blender_runner);
 the master QA (KPP1 + TEC26 copy) moved to tools/blender/qa_master.py; the 4 job files are shims that run the owners.
