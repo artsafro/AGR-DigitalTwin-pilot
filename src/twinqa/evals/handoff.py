@@ -48,19 +48,27 @@ _DELEGATION = (
     re.compile(r"\bdelegat\w*\b[^.\n]{0,40}\bfull[- ]suite\b", re.IGNORECASE),
 )
 _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
+# "the reviewer, not the author, runs the tests" negates the author, not the hand-over.
+_NOT_AUTHOR = re.compile(r"\b(?:not|never)\s+(?:by\s+)?(?:the\s+)?authors?\b", re.IGNORECASE)
+
+
+def _negated(line, match):
+    """not/never/no in the same clause before ``match`` (40 chars, cut at . ; : ! ?) or inside it."""
+    before = re.split(r"[.;:!?]", line[max(0, match.start() - 40):match.start()])[-1]
+    return any(_NEGATION.search(_NOT_AUTHOR.sub(" ", text)) for text in (before, match[0]))
 
 
 def delegation(line):
     """The first non-negated "tests handed to the reviewer" match in ``line``, or None.
 
     Every match is tried (``finditer``), so a negated phrase earlier on the line cannot hide a real
-    delegation after it. A match is negated by not/never/no within 40 chars before it or inside it
+    delegation after it; negation does not reach across a clause boundary (review r2 witness).
+    A match is negated by not/never/no before it in its clause or inside it
     (``tests are not left to the reviewer``).
     """
     for pattern in _DELEGATION:
         for match in pattern.finditer(line):
-            if not (_NEGATION.search(line[max(0, match.start() - 40):match.start()])
-                    or _NEGATION.search(match[0])):
+            if not _negated(line, match):
                 return match
     return None
 
