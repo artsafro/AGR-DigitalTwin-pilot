@@ -45,10 +45,9 @@
 <rect x="1700" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1660" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1620" y1="225.0" x2="1660" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="1660" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1660" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1660" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1660" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1660" y="617.5" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1970" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1930" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1890" y1="225.0" x2="1930" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -264,8 +263,9 @@
 <tspan x="1775.0" dy="21.25">→ проверка и страница</tspan>
 <tspan x="1775.0" dy="21.25">регламента</tspan>
 </text>
-<text x="1775.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1775.0" dy="14">Нет команды agr/dt</tspan>
+<text x="1775.0" y="355.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Команда:</tspan>
+<tspan x="1775.0" dy="17.5">agr checker</tspan>
 </text>
 <text x="1775.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="14">Правила: D104, D220</tspan>
@@ -273,13 +273,6 @@
 <text x="1775.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="14">Контекст: Чекер СИНТЕЗ и</tspan>
 <tspan x="1775.0" dy="17.5">загрузка</tspan>
-</text>
-<text x="1775.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1775.0" dy="13">⚠ Общей команды СИНТЕЗ нет:</tspan>
-<tspan x="1775.0" dy="16.25">jobs/KPP1/scripts/run_agr_che</tspan>
-<tspan x="1775.0" dy="16.25">cker.py скопирован в ТЭЦ26;</tspan>
-<tspan x="1775.0" dy="16.25">Ватутино — fail (LP 34 / 10 /</tspan>
-<tspan x="1775.0" dy="16.25">28) [D104]</tspan>
 </text>
 <text x="2045.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="15">Агент</tspan>

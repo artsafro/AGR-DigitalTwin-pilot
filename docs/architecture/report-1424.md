@@ -26,7 +26,7 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 120; живой обход 32, обёртка 4, исторические 75, своя обязанность 9; разных живых копий 31.
+Строк дублей во всех картах: 117; живой обход 30, обёртка 4, исторические 74, своя обязанность 9; разных живых копий 30.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
 |---|---|---|---|
@@ -34,7 +34,6 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 | Общее ядро: номер тайла UDIM | 11 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py` | нет карточки |
 | UV и атлас | 1 | `tools/materials/npm_atlas_udim.py` | #1380 |
 | Коллизии UCX (только ВПМ) | 1 | `jobs/KPP1/scripts/vpm_ucx.py` | #1404 |
-| Проверка и приёмка | 1 | `jobs/KPP1/scripts/run_agr_checker.py` | #1379 |
 | Экспорт и пакет сдачи | 1 | `jobs/VATUTINO-SITE/npm_code.py` | нет карточки |
 
 ### Порядок оставшихся шагов сжатия (по живым обходам)
@@ -42,9 +41,9 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 | № | Шаг | Живых обходов |
 |---|---|---|
 | 1 | нет карточки | 28 |
-| 2 | #1379 | 1 |
-| 3 | #1380 | 1 |
-| 4 | #1404 | 1 |
+| 2 | #1380 | 1 |
+| 3 | #1404 | 1 |
+| 4 | #1379 | 0 |
 | 5 | #1381 | 0 |
 | 6 | #1397 | 0 |
 | 7 | #1405 | 0 |
@@ -66,7 +65,7 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
    `src/`). Нужна карточка «Сжатие 1c».
 3. **#1397 completed:** live Ground, Flora, methods and DreamSim UDIM helpers now call `udimtile_core`.
    Source intake keeps its raw tile diagnostic as `own-duty` (arbitrary UVs, not a delivery UDIM).
-4. **#1379 (1)** — запуск чекера СИНТЕЗ: маршруты НПМ / ВПМ / пакет идут через `jobs/KPP1/scripts/run_agr_checker.py`.
+4. **#1379 (0)** — запуск чекера СИНТЕЗ объединён: маршруты НПМ / ВПМ / пакет идут через `agr checker` и общего владельца `tools/blender/sintez_checker.py`.
 5. **#1380 (1)** — `tools/materials/npm_atlas_udim.py`, путь А атласа НПМ (после #1141).
 6. **#1404 (1)** — UCX ВПМ через `jobs/KPP1/scripts/vpm_ucx.py`.
 7. **Без карточки (1)** — `jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip`: этап «загрузка» маршрута пакета пишет

@@ -44,6 +44,12 @@ rules:
   - id: blender-launch
     owner: src/dt_ai/core/blender_runner.py
     ru: "своя командная строка Blender (--background + --python) вместо общего blender_command / run_blender; охрана jobs/, tools/, src/ (#1378)"
+  - id: sintez-checker
+    owner: tools/blender/sintez_checker.py
+    ru: "свой запуск чекера СИНТЕЗ (calculate_all_checks) вместо общего скрипта за командой agr checker; охрана jobs/, tools/, src/ (#1379)"
+  - id: master-qa
+    owner: tools/blender/qa_master.py
+    ru: "своя проверка мастера в Blender (def world_bm) вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/ (#1379)"
 shared_kernel:
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
@@ -544,31 +550,22 @@ contexts:
       - name: main
         contract: "путь к ZIP/FBX, --profile, --scene, --master, --json -> отчёт; провал — ненулевой код"
     duplicates:
-      - at: "jobs/KPP1/scripts/qa_master.py:37"
-        match: "def world_bm("
-        issue: "#1359"
-        ru: "своя проверка мастера КПП1"
-        status: historical
-      - at: "jobs/TEC26-OKS/scripts/qa_master.py:37"
-        match: "def world_bm("
-        issue: "#1359"
-        ru: "копия qa_master.py КПП1 (2 строки разницы)"
-        status: historical
       - at: "jobs/TEC26-OKS/scripts/qa_packages.py:35"
         match: "def load("
-        issue: "#1359"
-        ru: "своя проверка пакетов TEC26"
+        issue: "#1379"
+        ru: "остаётся: проверки пакетов именно ТЭЦ26 (стыки фасадов по листу цветового решения, нарезка по дампу Max), которых нет в validate_package; общие стадии — agr validate"
         status: historical
-      - at: "jobs/KPP1/scripts/run_agr_checker.py:47"
-        match: "def dump("
-        issue: "#1359"
-        ru: "свой запуск чекера СИНТЕЗ"
-        status: live-bypass
-        step: "#1379"
-      - at: "jobs/TEC26-OKS/scripts/run_agr_checker.py:47"
-        match: "def dump("
-        issue: "#1359"
-        ru: "копия запуска чекера КПП1"
+      - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>"
+        rule: sintez-checker
+        issue: "#1379"
+        hash: "24c2c8e59a"
+        ru: "остаётся: замороженная версия v003 запуска чекера сдачи elv-tc-vpm (версионированный скрипт не переписывается); новый запуск — agr checker"
+        status: historical
+      - at: "jobs/PSU275/scripts/qa_master_psu275.py::world_bm"
+        rule: master-qa
+        issue: "#1379"
+        hash: "33bd57b6d9"
+        ru: "остаётся: вариант ПСУ275 (лучи не стартуют внутри масс открытой оболочки), сдача delivery-v003 принята 2026-10-07"
         status: historical
   - id: dcc
     ru: "Связь с DCC (Blender / 3ds Max)"
