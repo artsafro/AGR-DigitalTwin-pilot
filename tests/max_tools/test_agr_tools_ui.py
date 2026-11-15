@@ -79,6 +79,10 @@ def test_tooltips_say_what_and_requirement():
     ('cleanup', 'export.cleanup'), ('cleanup_apply', 'export.cleanup'),
     ('texel', 'udim.texel'), ('geojson', 'qa.geojson'),
     ('matid', 'qa.matid'), ('names', 'qa.names'),
+    ('xview', 'qa.xview'), ('tris', 'qa.tris'),
+    ('textures', 'tex.check'), ('pivot', 'qa.pivot'),
+    ('atlas', 'atlas.npm'), ('atlas_apply', 'atlas.npm'),
+    ('ucx', 'ucx.build'), ('ucx_apply', 'ucx.build'),
 ])
 def test_legacy_requirement_ids_match_canonical_plan(action_id, plan_id):
     """#862: tooltips must cite the exact canonical ids, including apply aliases."""
@@ -87,6 +91,16 @@ def test_legacy_requirement_ids_match_canonical_plan(action_id, plan_id):
     action = m.action(action_id)
     assert action.reqs == tuple(plan_row['reqs'].split())
     assert m.tooltip(action).endswith('Треб.: ' + ', '.join(plan_row['reqs'].split()))
+
+
+@pytest.mark.parametrize('action', m.ACTIONS, ids=lambda action: action.id)
+def test_every_action_requirement_id_appears_in_canonical_plan(action):
+    """#1517: cover all panel actions, not only the known legacy mismatches."""
+    suite = json.loads((ROOT / 'docs/plans/agr-tools-suite.json').read_text(encoding='utf-8'))
+    canonical_ids = {req for row in suite['rows'] for req in row['reqs'].split()}
+    # The plan itself uses '-' for tools without a regulatory requirement.
+    assert action.reqs
+    assert set(action.reqs) <= canonical_ids, (action.id, set(action.reqs) - canonical_ids)
 
 
 @pytest.mark.parametrize('bad', ['', 'XVIEW', 'unknown', None, 'cleanup_apply '])
