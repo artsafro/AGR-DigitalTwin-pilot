@@ -585,17 +585,18 @@ def test_guard_research_stash_push_contract_1225():
 
 # #1226 (PR #1186 review 3): every whole-tree pathspec spelling, glob or exclude-only pathspec for
 # checkout/restore discards many files at once and must ask like `.`; single-file pathspecs stay allowed.
+# Unquoted `(` is a shell syntax error, so real magic pathspecs are quoted; unquoted ones still ask.
 WHOLE_TREE_SPECS_1226 = [
     ".", "./", ".//", "./.", "././", ".\\", "..", "../", "../..", ":/", ":/.", ":/./", ":(top)", ":(top).",
-    ":(top)/", ":(top,glob)", ":(glob,top)*", ":(TOP)", "*", "**", "./*", ":/*", "*/*", "**/*", "'*'", '"*"',
-    "'./'", "?", "[a-z]*", "*.py", "src/*.py", ":(glob)**/*.md", ":!docs", ":^docs", ":(exclude)docs",
+    ":(top)/", "':(top)'", "':(top,glob)'", "':(glob,top)*'", "':(TOP)'", "*", "**", "./*", ":/*", "*/*", "**/*", "'*'", '"*"',
+    "'./'", "?", "[a-z]*", "*.py", "src/*.py", "':(glob)**/*.md'", "':(top'", ":!docs", ":^docs", ":(exclude)docs",
     ":/!docs", "':!docs'",
 ]
 WHOLE_TREE_FORMS_1226 = ["checkout {}", "checkout -- {}", "checkout HEAD -- {}", "checkout main {}",
                          "restore {}", "restore -- {}", "restore --source=HEAD~1 {}", "restore -W {}",
                          "checkout -q -- x.txt {}", "restore {} x.txt"]
-SINGLE_FILE_SPECS_1226 = ["x.txt", "docs/x.md", "./x.txt", ":/docs/x.md", ":(top)docs/x.md", ".gitignore",
-                          "src/.env.example", "../x.txt", ":(literal)x.txt", ".github/workflows/ci.yml"]
+SINGLE_FILE_SPECS_1226 = ["x.txt", "docs/x.md", "./x.txt", ":/docs/x.md", "':(top)docs/x.md'", ".gitignore",
+                          "src/.env.example", "../x.txt", "':(literal)x.txt'", "':(literal)*'", ".github/workflows/ci.yml"]
 SINGLE_FILE_FORMS_1226 = ["checkout -- {}", "checkout HEAD -- {}", "checkout main -- {}", "restore {}",
                           "restore --source=HEAD~1 -- {}"]
 
@@ -629,5 +630,5 @@ def test_guard_whole_tree_pathspecs_generated_probe_1226():
                for s in SINGLE_FILE_SPECS_1226]
     wrong_allow = [c for c in asked if shell_reason(c) is None]
     wrong_ask = [(c, shell_reason(c)) for c in allowed if shell_reason(c) is not None]
-    assert len(asked) == 7 * 10 * len(WHOLE_TREE_SPECS_1226) and len(allowed) == 7 * 5 * 10
+    assert len(asked) == 7 * 10 * len(WHOLE_TREE_SPECS_1226) and len(allowed) == 7 * 5 * len(SINGLE_FILE_SPECS_1226)
     assert wrong_allow == [] and wrong_ask == []

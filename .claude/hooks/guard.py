@@ -271,6 +271,29 @@ def _long(flags, word, keep):
     return False
 
 
+def _many_paths_pathspec(spec):
+    """True when a checkout/restore pathspec can name more than one file (#1226): the whole tree in any
+    spelling (`.`, `./`, `..`, `:/`, `:(top)`), a glob (`*`, `?`, `[`), or an exclude-only pathspec
+    (`:!x`, `:^x`, `:(exclude)x`, which means everything else). Malformed magic fails closed."""
+    s = spec.strip("'\"").replace("\\", "/")
+    magic = set()
+    if s.startswith(":("):
+        end = s.find(")")
+        if end < 0:
+            return True
+        magic = {m.split("=", 1)[0].strip().lower() for m in s[2:end].split(",")}
+        s = s[end + 1:]
+    elif s.startswith(":"):
+        short = re.match(r":([/!^]*):?", s)
+        if short:
+            magic, s = set(short.group(1)), s[short.end():]
+    if magic & {"exclude", "!", "^"}:
+        return True
+    if "literal" not in magic and re.search(r"[*?\[]", s):
+        return True
+    return all(p in ("", ".", "..") for p in s.split("/"))
+
+
 def _git_subcommand_reason(sub, args):
     """Reason a git subcommand with its arguments is hazardous, else None. Flags stop at `--`."""
     flags, positional = [], []
@@ -294,7 +317,8 @@ def _git_subcommand_reason(sub, args):
         delete = _short(flags, "d") or _long(flags, "delete", 1)
         if _short(flags, "D") or (delete and (_short(flags, "f") or _long(flags, "force", 4))):
             return "force branch delete"
-    if sub in ("checkout", "restore") and "." in positional:
+    if sub in ("checkout", "restore") and (any(_many_paths_pathspec(p) for p in positional)
+                                           or _long(flags, "pathspec-from-file", 10)):
         return _DISCARDS
     if sub in ("checkout", "switch") and (force or _long(flags, "discard-changes", 2)):
         return _DISCARDS
