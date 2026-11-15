@@ -26,6 +26,7 @@ shared_kernel:
       match: "def run("
       issue: "#1393"
       ru: "своя расстановка участка в задании поверх движка"
+      status: wrapper
 contexts:
   - id: dcc
     grid: "0/1"

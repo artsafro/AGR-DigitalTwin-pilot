@@ -123,6 +123,7 @@ contexts:
         match: "def run("
         issue: "#1383"
         ru: "своя расстановка участка в задании поверх движка"
+        status: wrapper
   - id: ucx
     grid: "3/3"
     ru: "Коллизии UCX рельефа (только ВПМ)"
@@ -139,6 +140,7 @@ contexts:
         match: "GROUND_UCX"
         issue: "#1383"
         ru: "UCX Ground из готовых FBX по путям C:/x"
+        status: historical
 relations:
   - from: dcc
     to: heights
