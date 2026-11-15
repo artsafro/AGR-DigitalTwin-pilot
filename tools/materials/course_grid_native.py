@@ -37,6 +37,80 @@ def project_saved_points(points, reference_xyz, reference_chart):
     return out
 
 
+def interpolate_source_chart(points, reference_chart, source_local_xyz):
+    """Interpolate the ORIGINAL source fan directly in the DCC's local frame.
+
+    Do not round a world-space point and then invert a float32 object matrix:
+    that round trip can create off-edge micrometre spikes in thin cap cells.
+    Original corners are returned exactly; warped faces retain their source fan.
+    """
+    import numpy as np
+    for rows, dim, minimum, name in ((points, 2, 1, 'points'),
+            (reference_chart, 2, 3, 'reference_chart'),
+            (source_local_xyz, 3, 3, 'source_local_xyz')):
+        if not isinstance(rows, list) or len(rows) < minimum or any(
+                not isinstance(p, list) or len(p) != dim or any(
+                    isinstance(x, bool) or not isinstance(x, (int, float))
+                    or not math.isfinite(x) for x in p) for p in rows):
+            raise ValueError(f'invalid {name}')
+    if len(reference_chart) != len(source_local_xyz):
+        raise ValueError('partial source fan')
+    chart = np.asarray(reference_chart, dtype=float)
+    local = np.asarray(source_local_xyz, dtype=float)
+    if (np.linalg.matrix_rank(chart-chart[0], tol=1e-12) != 2
+            or np.linalg.matrix_rank(local-local[0], tol=1e-12) < 2):
+        raise ValueError('degenerate source fan')
+    result = []
+    for point in np.asarray(points, dtype=float):
+        corners = np.flatnonzero(np.linalg.norm(chart - point, axis=1) <= 1e-12)
+        if len(corners) == 1:
+            result.append(source_local_xyz[int(corners[0])].copy()); continue
+        found = None
+        for i in range(1, len(chart) - 1):
+            matrix = np.column_stack([chart[i] - chart[0], chart[i+1] - chart[0]])
+            if abs(np.linalg.det(matrix)) <= 1e-14:
+                continue
+            a, b = np.linalg.solve(matrix, point - chart[0])
+            if min(a, b) >= -1e-9 and a + b <= 1 + 1e-9:
+                found = local[0] + a * (local[i]-local[0]) + b * (local[i+1]-local[0])
+                break
+        if found is None or not np.isfinite(found).all():
+            raise ValueError(f'outside/degenerate source fan: {point.tolist()}')
+        result.append(found.tolist())
+    return result
+
+
+def split_native_loop(vertex_ids):
+    """Split ONLY exact repeated vertex identities, preserving each directed edge.
+
+    Return indices into the input loop. Record zero-area cycles explicitly;
+    callers must independently prove their geometric area and source coverage.
+    No distance weld, coordinate change or implicit surface-deletion authority.
+    """
+    if (not isinstance(vertex_ids, list) or len(vertex_ids) < 3
+            or any(type(i) is not int or i < 0 for i in vertex_ids)):
+        raise ValueError('invalid native loop')
+    pending = [list(range(len(vertex_ids)))]; loops = []; collapsed = []
+    while pending:
+        cycle = pending.pop(); seen = {}; split = False
+        for j, index in enumerate(cycle):
+            value = vertex_ids[index]
+            if value in seen:
+                i = seen[value]
+                pending.extend([cycle[i:j], cycle[j:] + cycle[:i]])
+                split = True; break
+            seen[value] = j
+        if split:
+            continue
+        if len(cycle) < 3:
+            collapsed.append(cycle)
+        else:
+            loops.append(cycle)
+    if not loops:
+        raise ValueError('native loop has no surface cycle')
+    return dict(loops=loops, collapsed=collapsed)
+
+
 def rigid_triangle_uv(xyz, reference_uv, *, texel_px_m, tile_px):
     """Rectify an explicitly authorized minor triangle at the frozen density.
 

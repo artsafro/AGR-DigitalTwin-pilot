@@ -1,7 +1,13 @@
 # Wider-bevel support fit checkpoint (#1326)
 
+**Historical v050–070 snapshot. Budget question answered 2026-11-15 [D304]: two sequential tiles allowed.**
+Continue at [TWO_TILE_NORMAL_RESULT.md](TWO_TILE_NORMAL_RESULT.md); do not ask the budget or bevel-cut question again.
+Current canonical citations are D302/D303/D304; immutable earlier evidence retains D293/D297/D301 spellings.
+
+The following numbers and NOT-applied statements describe the earlier snapshot, not the current candidate.
+
 **NOT passed. No new native scene, pilot texture, production UV or replication.**
-The outer-bevel cut question is answered [D297]: minimal planar cuts on a NEW
+The outer-bevel cut question is answered [D303]: minimal planar cuts on a NEW
 copy at the measured original Normal support are authorized, preserving the
 10 mm colour band, original relief scale, courses, frozen density, surface and
 one tile. Do not repeat the earlier Normal, seam, cap/ring, visual-direction or
@@ -88,8 +94,8 @@ unchanged; its earlier measurements stay historical in `PNG_REPAIR_RESULT.md`.
 - Latest affected command:
   `uv run pytest -q tests/test_course_grid*.py tests/test_decisions.py tests/max_tools/test_agr_tools_vpm_layout.py --basetemp=C:/x/t_d517d7c6-affected-relief-v070 -p no:cacheprovider`
   → **274 passed / 1 deselected / 0 failed**, **17.47 s**.
-- Initial affected run: 272 passed / 1 failed because D297 lacked its area-sheet
-  anchor. Added the real [D297] policy to `uv-atlas.md`, did not weaken the test.
+- Initial affected run: 272 passed / 1 failed because D303 lacked its area-sheet
+  anchor. Added the real [D303] policy to `uv-atlas.md`, did not weaken the test.
 - Actual source replay through the helper: **1,000/1,000** sampled active points;
   all **92,386** active vectors have max unit-vector error **7.8682e-8** against
   decoded frozen Normal. Source RGB triplets are not exactly unit vectors:
@@ -123,7 +129,7 @@ baking, versioned native construction and all remaining QA.
 **Question for Artem:** authorize that two-tile budget, or keep one tile strictly
 and continue a different appearance-reuse/cut strategy? The tested 370 extra
 plain-brick cuts do not solve one tile, so they are not presented as a painless
-working alternative. No extra tile/cut is applied until the answer, per [D293].
+working alternative. No extra tile/cut is applied until the answer, per [D302].
 
 This is NOT a request to waive the **102** expanded independent PNG findings,
 the four thin legacy-trace classifications, all-map support/interval/Normal-frame

@@ -13,7 +13,7 @@ or a textured acceptance result.
   edges of the stair wall. Exact answer: `seam-approval.json`. The earlier question in
   `CHART_POLICY.md` is answered. No authorized break has been applied yet.
 - Open only a separate versioned Max 2026 copy after **«открой»**; daytime Max untouched.
-- [D293]: 38 courses / 3.15 m, Bricks1 unchanged, one-tile target, fixed physical scale,
+- [D302]: 38 courses / 3.15 m, Bricks1 unchanged, one-tile target, fixed physical scale,
   10 mm owner-inside joint with centre 5 mm inward, no density reduction or geometry cuts.
 
 ## One remaining question, with recommendation

@@ -1,6 +1,6 @@
 {
-  "status": "authorized_not_yet_applied",
-  "decision": "D297",
+  "status": "applied_to_versioned_copy_technical_qa_open",
+  "decision": "D303",
   "actor": "Artem",
   "date": "2026-11-14",
   "reference": "Kanban t_d517d7c6 USER DECISION at 23:48: принимаю рекомендации",
