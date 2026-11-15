@@ -83,6 +83,10 @@ identity or whole-library acceptance. Never remove or alter published assets to 
 
 ## Light NPM variants (#347)
 
+Lightening runs only on library copies, never on library originals [D301]. New copies live per job / project,
+not in the library, are named `<original>__<job>` and are listed in the job manifest so they can be cleaned after
+the delivery.
+
 `npm-light.json` is the optional, generated input for the three Vatutino light variants
 (105 / 204 / 103). It appends `npm_light` to those species; it does not replace their
 existing NPM/VPM records, IDs, maps or library file. Rebuild with the command above plus
