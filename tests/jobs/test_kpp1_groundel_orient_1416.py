@@ -108,18 +108,69 @@ def test_r1_topology_fail_is_not_covered_by_ground_prose(monkeypatch, tmp_path):
         _audit_fixture(monkeypatch, tmp_path, data["findings"], report)
 
 
+def _synthetic_rows(*rows):
+    return [*rows, {"stage": "V004", "name": "MAF flipped normals", "evidence": GROUND, "status": "pass"}]
+
+
+def test_ground_waivers_do_not_need_open_item_prose(monkeypatch, tmp_path):
+    rows = [{"stage": stage, "name": name, "evidence": evidence, "status": status}
+            for stage, name, evidence, status in sorted(D313_WAIVED)]
+    _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(*rows), "## Open items\n")
+
+
+@pytest.mark.parametrize("text", [
+    "V004 topology defects", "intro V004 topology defects", "* V004 topology defects",
+    "\n## History\n- V004 topology defects", "- V004 topology defects extra",
+])
+def test_non_bullet_or_later_section_is_not_an_open_item(monkeypatch, tmp_path, text):
+    row = {"stage": "V004", "name": "topology defects", "evidence": "0000_Kpp_1_01.fbx", "status": "fail"}
+    with pytest.raises(AssertionError, match="topology defects"):
+        _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row), "## Open items\n" + text)
+
+
+def test_explicit_open_item_bullet_covers_non_pass(monkeypatch, tmp_path):
+    row = {"stage": "V004", "name": "topology defects", "evidence": "0000_Kpp_1_01.fbx", "status": "fail"}
+    _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row),
+                   "## Open items\n- V004 topology defects — fail — 0000_Kpp_1_01.fbx\n")
+
+
+@pytest.mark.parametrize("rows", [[], [{"stage": "V004", "name": "topology defects", "status": "fail"}]])
+def test_empty_or_missing_evidence_fails_closed(monkeypatch, tmp_path, rows):
+    with pytest.raises((AssertionError, KeyError)):
+        _audit_fixture(monkeypatch, tmp_path, rows, "## Open items\n- V004 topology defects\n")
+
+
+def test_waiver_key_matrix(monkeypatch, tmp_path):
+    # Independent literal oracle: only these three Ground fail identities are waived.
+    cases = [("V003", "ground skirt depth"), ("V004", "topology defects"),
+             ("V004", "co-directional clearance")]
+    for stage, name in cases:
+        for target in (GROUND, "0000_Kpp_1_01.fbx", "other.fbx", ""):
+            for status in ("fail", "review", "not_run", "unsupported", "", math.nan, math.inf):
+                row = {"stage": stage, "name": name, "evidence": target, "status": status}
+                for rows in (_synthetic_rows(row, row), list(reversed(_synthetic_rows(row)))):
+                    if target == GROUND and status == "fail":
+                        _audit_fixture(monkeypatch, tmp_path, rows, "## Open items\n")
+                    else:
+                        with pytest.raises(AssertionError, match=name):
+                            _audit_fixture(monkeypatch, tmp_path, rows, "## Open items\n")
+
+
 def test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open():
     data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
     report = (JOB / "REPORT.md").read_text(encoding="utf-8")
-    open_block = report.split("## Open items", 1)[1]
+    open_block = report.split("## Open items", 1)[1].split("\n## ", 1)[0]
+    open_bullets = "\n".join(line for line in open_block.splitlines() if line.startswith("- "))
     assert data["findings"], "empty findings list is not a pass"
     seen = set()
     for f in data["findings"]:
-        key = (f["stage"], f["name"])
-        seen.add(key)
+        key = (f["stage"], f["name"], f["evidence"], f["status"])
+        seen.add(key[:2])
         if f["status"] == "pass":
             continue
-        assert key in D313_WAIVED or re.search(rf"{f['stage']}\b[^\n]*{re.escape(f['name'])}", open_block), key
+        assert key in D313_WAIVED or re.search(
+            rf"^- {re.escape(f['stage'])}\b[^\n]*{re.escape(f['name'])}(?= —|$)",
+            open_bullets, re.MULTILINE), key
     assert ("V004", "MAF flipped normals") in seen
     maf_row = next(f for f in data["findings"] if f["name"] == "MAF flipped normals")
     assert maf_row["status"] != "fail", maf_row
