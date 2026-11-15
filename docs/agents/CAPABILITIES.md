@@ -376,7 +376,8 @@ Shared packaging `agr package-npm` / `agr package-vpm` and export metadata: [con
 
 Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step instead of the job copies
 `jobs/{KPP1,PSU275,TEC26-OKS}/scripts/{make_npm_atlas,export_npm,package_vpm}.py`, which stay as frozen records):
-- `dt derive atlas <spec> <new out> [--address A --index N]` (`tools/derive/npm_atlas.py`), `dt derive npm --blender B
+- `dt derive atlas <spec> <new out> --master <master> [--address A --index N]` (`tools/derive/npm_atlas.py`;
+  `npm_atlas.json` carries the master SHA-256 + UDIM tiles, #1505), `dt derive npm --blender B
   <master.blend> <spec> <atlas dir> <new out> [prefix] [--address --index --pivot x,y --keep-quads]`
   (`tools/derive/export_npm.py`), `dt derive package <pkg dir> <textures> [--object object.json] [--no-geojson]`
   (`tools/derive/package_vpm.py`; per-job name / H_RELIEF / glass in `object.json`, not in code); FBX readback parity
