@@ -83,11 +83,17 @@ contexts:
     grid: "2/3"
     ru: "Экспорт и пакеты НПМ / ВПМ"
     area: docs/domain/areas/package.md
-    owner: tools/derive/package_vpm.py
-    owner_ru: "общий упаковщик ВПМ (agr package-vpm); НПМ — agr package-npm (#1361)"
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
     functions:
-      - name: main
-        contract: "папка пакета, текстуры, [--object] -> SM_<Адрес>.zip + package_report.json; занятый путь — отказ"
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
   - id: npm
     grid: "2/2"
     ru: "НПМ МАФ и Флора на атласе"
