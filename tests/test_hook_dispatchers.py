@@ -209,6 +209,53 @@ def test_shared_guard_stays_silent_on_bare_python():
     assert got.returncode == 0 and got.stdout == ""
 
 
+# --- UTF-8 hook transport (#1363) -----------------------------------------------------------------------------
+
+def _utf8_call(script, raw, tmp_path, *, utf8=None, locale=False):
+    env = _prompt_env(tmp_path / "usage.jsonl")
+    for key in ("PYTHONUTF8", "PYTHONIOENCODING"):
+        env.pop(key, None)
+    if utf8 is not None:
+        env["PYTHONIOENCODING"] = "utf-8" if utf8 else "cp1251"
+    args = [sys.executable] + (["-X", "utf8=0"] if locale else [])
+    return subprocess.run(args + [str(script)], input=raw, capture_output=True,
+                          env=env, cwd=ROOT, timeout=30)
+
+
+@pytest.mark.parametrize("locale", [False, True], ids=["native", "locale"])
+def test_utf8_prompt_without_encoding_env(tmp_path, locale):
+    raw = json.dumps({"prompt": "Почти все принимаю, правки ..."}, ensure_ascii=False).encode("utf-8")
+    result = _utf8_call(PROMPT, raw, tmp_path, locale=locale)
+    assert result.returncode == 0, result.stderr
+    spec = importlib.util.spec_from_file_location("prompt_utf8_test", PROMPT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.ACCEPT_NUDGE in json.loads(result.stdout or b"{}").get("hookSpecificOutput", {}).get("additionalContext", "")
+
+
+@pytest.mark.parametrize("locale", [False, True], ids=["native", "locale"])
+def test_utf8_guard_without_encoding_env(tmp_path, locale):
+    raw = json.dumps({"tool_name": "Bash", "tool_input": {
+        "command": 'rm "G:/Мой диск/AGR-assets/пример/source.fbx"'}}, ensure_ascii=False).encode("utf-8")
+    baseline = _utf8_call(GUARD, raw, tmp_path, utf8=True)
+    actual = _utf8_call(GUARD, raw, tmp_path, locale=locale)
+    assert actual.returncode == baseline.returncode == 0
+    expected = json.loads(baseline.stdout)
+    assert expected["hookSpecificOutput"]["permissionDecision"] == "ask"
+    assert json.loads(actual.stdout) == expected
+
+
+def test_utf8_prompt_sequence(tmp_path):
+    for prompt in ("", "Почти все принимаю, правки ...", "не принято, переделай", "Почти все принимаю, правки ..."):
+        raw = json.dumps({"prompt": prompt}, ensure_ascii=False).encode("utf-8")
+        result = _utf8_call(PROMPT, raw, tmp_path, locale=True)
+        assert result.returncode == 0, result.stderr
+        assert (b"experience-transfer" in result.stdout) == prompt.startswith("Почти")
+    for raw in (b"", b'{"prompt":'):
+        result = _utf8_call(PROMPT, raw, tmp_path, locale=True)
+        assert result.returncode == 0 and result.stdout == b""
+
+
 # --- UserPromptSubmit ---------------------------------------------------------------------------------------
 
 def _response(tokens):
