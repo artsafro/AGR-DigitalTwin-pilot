@@ -28,7 +28,9 @@ def save(root, kind='background', part='L2', status='active'):
 
 def invoke(build, tool='SendMessage', args=None, script=GUARD, swarm=True):
     env = {k: v for k, v in os.environ.items() if not k.startswith('AGR_SWARM_')}
-    if swarm:
+    if swarm == 'agent-only':
+        env['AGR_SWARM_AGENT_ID'] = 'l2'
+    elif swarm:
         env.update(AGR_SWARM_BUILD_ROOT=str(build), AGR_SWARM_AGENT_ID='l2')
     payload = {'tool_name': tool, 'tool_input': args if args is not None else {
         'recipient': 'l2', 'content': 'Part: L2\nContinue the assigned part.'}, 'cwd': str(build)}
@@ -124,7 +126,7 @@ def test_invalid_registry(build, bad):
 
 @pytest.mark.parametrize('args,swarm', [({}, True), ({'recipient': 'l2'}, True),
     ({'recipient': 'unknown', 'content': 'Part: L2'}, True),
-    ({'recipient': 'l2', 'content': 'Part: L2'}, False),
+
     ({'recipient': 'l2', 'part': 'windows-B', 'content': 'Part: L2'}, True)])
 def test_missing_message_scope(build, args, swarm):
     assert decision(invoke(build, args=args, swarm=swarm)) == 'deny'
@@ -132,6 +134,22 @@ def test_missing_message_scope(build, args, swarm):
 
 def test_non_swarm_read(build):
     assert invoke(build, 'Read', {'file_path': 'unrelated'}, swarm=False) == {}
+
+
+@pytest.mark.parametrize('script', [GUARD, ROOT / '.claude/hooks/pretool.py'])
+def test_non_swarm_sendmessage(build, script):
+    result = invoke(build, script=script, swarm=False, args={
+        'to': 'unregistered', 'summary': 'Ordinary session', 'message': 'Continue.'})
+    assert decision(result) == 'allow'
+    assert 'swarm' not in json.dumps(result).lower()
+
+
+@pytest.mark.parametrize('script', [GUARD, ROOT / '.claude/hooks/pretool.py'])
+def test_swarm_agent_without_root(build, script):
+    result = invoke(build, script=script, swarm='agent-only', args={
+        'to': 'l2', 'summary': 'Continue', 'message': 'Part: L2'})
+    assert decision(result) == 'deny'
+    assert 'output root must be an absolute' in result['hookSpecificOutput']['permissionDecisionReason']
 
 
 @pytest.mark.parametrize('suffix,outside', [('x.txt', False), ('sub/../x.txt', False),
