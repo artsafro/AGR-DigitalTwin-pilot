@@ -421,6 +421,16 @@ for label in ['baseline', *mutations, 'combined']:
     # Red outline makes the review witness unmistakable; separately test colour too.
     if label in ('show_object_outline', 'combined'):
         scene.display.shading.object_outline_color = (1, 0, 0)
+    if label == 'combined':
+        # Combine new flags with earlier setup invariants and hostile PNG stamps.
+        scene.display.shading.light = 'MATCAP'
+        scene.display.shading.show_cavity = True
+        scene.display.shading.show_shadows = True
+        scene.display.shading.color_type = 'RANDOM'
+        scene.display.shading.single_color = (0.1, 0.2, 0.3)
+        scene.render.use_stamp = True
+        scene.render.use_stamp_note = True
+        scene.render.stamp_note_text = 'synthetic inherited note'
     path = root / (label + '.blend')
     bpy.ops.wm.save_as_mainfile(filepath=str(path))
     bpy.ops.wm.open_mainfile(filepath=str(path), load_ui=False)
