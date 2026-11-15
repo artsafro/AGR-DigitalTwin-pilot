@@ -87,6 +87,7 @@ def setup(scene, fitted, thickness):
     scene.view_settings.look = 'None'
     scene.view_settings.exposure = 0.0
     scene.view_settings.gamma = 1.0
+    scene.view_settings.use_curve_mapping = False
     if request['mode'] == 'named':
         camera = scene.objects.get(request['name'])
         if camera is None or camera.type != 'CAMERA':
@@ -127,6 +128,7 @@ def render_record(scene, wires):
             'view_transform': scene.view_settings.view_transform,
             'look': scene.view_settings.look, 'exposure': scene.view_settings.exposure,
             'gamma': scene.view_settings.gamma,
+            'use_curve_mapping': scene.view_settings.use_curve_mapping,
             'display_device': scene.display_settings.display_device,
             'world_color': list(scene.world.color), 'world_use_nodes': scene.world.use_nodes,
             'background_type': shading.background_type,

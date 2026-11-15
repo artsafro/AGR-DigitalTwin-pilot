@@ -41,7 +41,7 @@ CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'sensor_height', 'shift_
 # projection, so any parameter that changes the image (incl. ones not listed above) is a mismatch.
 CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution', 'pixel_aspect',
                *CAMERA_FLOATS}
-RENDER_KEYS = {'engine', 'style', 'view_transform', 'look', 'exposure', 'gamma',
+RENDER_KEYS = {'engine', 'style', 'view_transform', 'look', 'exposure', 'gamma', 'use_curve_mapping',
                'display_device', 'world_color', 'world_use_nodes', 'background_type',
                'background_color', 'thickness'}
 TOLERANCE = 1e-6
@@ -110,8 +110,9 @@ def compare_render_state(before, after):
         for key in ('view_transform', 'look', 'display_device'):
             if not isinstance(state[key], str) or not state[key].strip():
                 raise ValueError(f'render {key} must be a nonempty string')
-        if not isinstance(state['world_use_nodes'], bool):
-            raise ValueError('render world_use_nodes must be a boolean')
+        for key in ('world_use_nodes', 'use_curve_mapping'):
+            if not isinstance(state[key], bool):
+                raise ValueError(f'render {key} must be a boolean')
         for key in ('exposure', 'gamma'):
             _finite(state[key], f'render.{key}')
         if state['gamma'] <= 0:

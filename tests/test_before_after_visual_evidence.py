@@ -156,6 +156,7 @@ def write_png(path, colour):
 
 RENDER = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire', 'view_transform': 'Standard',
           'look': 'None', 'exposure': 0.0, 'gamma': 1.0, 'display_device': 'sRGB',
+          'use_curve_mapping': False,
           'world_color': [0.05, 0.05, 0.05], 'world_use_nodes': False,
           'background_type': 'VIEWPORT', 'background_color': [0.05, 0.05, 0.05],
           'thickness': 0.0012}
@@ -238,7 +239,7 @@ def test_cli_refuses_mismatched_cameras_and_writes_nothing(tmp_path, inputs, mon
     ('engine', 'CYCLES'), ('style', 'solid'), ('view_transform', 'AgX'),
     ('look', 'AgX - Medium High Contrast'), ('exposure', 2.0), ('gamma', 1.5),
     ('display_device', 'Display P3'), ('world_color', [1.0, 0.0, 0.0]),
-    ('world_use_nodes', True), ('background_type', 'WORLD'),
+    ('world_use_nodes', True), ('use_curve_mapping', True), ('background_type', 'WORLD'),
     ('background_color', [0.0, 0.0, 0.0]), ('thickness', 0.0012000001)])
 def test_cli_refuses_changed_render_state(tmp_path, inputs, monkeypatch, capsys, key, value):
     module = load()
@@ -256,7 +257,8 @@ def test_cli_refuses_changed_render_state(tmp_path, inputs, monkeypatch, capsys,
     lambda r: r.update(thickness=None), lambda r: r.update(thickness=True),
     lambda r: r.update(world_color=[0, 0]), lambda r: r.update(background_color=[0, 0, float('nan')]),
     lambda r: r.update(world_use_nodes=1), lambda r: r.update(look=''),
-    lambda r: r.update(background_type='unknown')])
+    lambda r: r.update(background_type='unknown'),
+    lambda r: r.pop('use_curve_mapping'), lambda r: r.update(use_curve_mapping=1)])
 def test_cli_refuses_invalid_render_state(tmp_path, inputs, monkeypatch, mutate):
     module = load()
     monkeypatch.setattr(module, 'run_blender', fake_runner(mutate_render=mutate))
@@ -266,7 +268,7 @@ def test_cli_refuses_invalid_render_state(tmp_path, inputs, monkeypatch, mutate)
 
 
 def test_render_state_generated_presence_and_numeric_probes():
-    """Exhaust all 4096 presence subsets, then nonfinite values in every numeric component."""
+    """Exhaust all 8192 presence subsets, then nonfinite values in every numeric component."""
     module = load()
     keys = list(RENDER)
     for mask in range(1 << len(keys)):
@@ -286,6 +288,31 @@ def test_render_state_generated_presence_and_numeric_probes():
                     state[key] = bad
                 with pytest.raises(ValueError, match=key):
                     module.compare_render_state(state, state)
+
+
+@pytest.mark.parametrize('value', [None, 0, 1, 'False', '', [], {}, float('nan'), float('inf')])
+def test_render_state_refuses_nonboolean_curve_mapping(value):
+    module = load()
+    state = dict(RENDER, use_curve_mapping=value)
+    with pytest.raises(ValueError, match='use_curve_mapping.*boolean'):
+        module.compare_render_state(state, state)
+
+
+def test_render_state_missing_curve_mapping_refused():
+    module = load()
+    state = dict(RENDER)
+    del state['use_curve_mapping']
+    with pytest.raises(ValueError, match='use_curve_mapping'):
+        module.compare_render_state(state, state)
+
+
+def test_render_state_curve_mapping_mismatch_and_reset():
+    module = load()
+    changed = dict(RENDER, use_curve_mapping=True)
+    for _ in range(3):
+        assert module.compare_render_state(RENDER, changed) == ['use_curve_mapping']
+        assert module.compare_render_state(changed, RENDER) == ['use_curve_mapping']
+        assert module.compare_render_state(RENDER, dict(RENDER)) == []
 
 
 def test_render_state_repeated_failure_and_reset():
@@ -471,6 +498,7 @@ def test_real_blender_normalizes_saved_render_state(tmp_path, change, style, mod
     assert left == right
     assert left['exposure'] == 0.0 and left['gamma'] == 1.0
     assert left['look'] == 'None' and left['view_transform'] == 'Standard'
+    assert left['use_curve_mapping'] is False
     assert left['display_device'] == 'sRGB' and left['background_type'] == 'VIEWPORT'
     assert left['background_color'] == pytest.approx([0.05] * 3)
     assert left['world_color'] == pytest.approx([0.05] * 3)
@@ -482,6 +510,8 @@ def test_real_blender_normalizes_saved_render_state(tmp_path, change, style, mod
     if change not in ('extent', 'combined'):
         from PIL import Image
         assert Image.open(output / 'before.png').tobytes() == Image.open(output / 'after.png').tobytes()
+        if change == 'curve':
+            assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes()
 
 
 MAKE_SENSOR_SCENES = r'''
