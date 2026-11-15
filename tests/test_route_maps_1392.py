@@ -23,7 +23,7 @@ VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv"
           "readback", "validate", "sintez", "delivered"]
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
              "package", "validate", "sintez"]
-RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice"}, "ground-route": set()}
+RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice"}, "ground-route": {"urns-outside"}}  # #1412: D302
 
 
 def _routes():
@@ -164,6 +164,12 @@ def test_every_red_box_is_explained_and_resolved_ones_are_gone(name, title):
     assert not hot & RESOLVED[name]
     for row in re.findall(r"^\| `[a-z0-9-]+` \| (?:открыта|снята|обновлена) \| (.*) \|$", section, re.M):
         assert len(row.strip()) > 15 and route_map.CYRILLIC.search(row)
+
+
+def test_urns_outside_closed_by_d302_on_placement_1412():
+    assert "urns-outside" not in {h["id"] for h in _routes()["ground-route"]["hotspots"]}
+    assert "D302" in _stage(_routes()["ground-route"], "placement")["rules"]
+    assert re.search(r"^\| `urns-outside` \| снята \| .*\[D302\]", REPORT.read_text(encoding="utf-8"), re.M)
 
 
 def test_stale_vpm_hotspot_facts_are_updated():
