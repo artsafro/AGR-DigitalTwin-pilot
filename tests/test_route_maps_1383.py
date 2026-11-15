@@ -87,6 +87,31 @@ def test_vpm_master_topology_before_export():
         assert "dt qa xview" in next(s for s in events["stages"] if s["id"] == sid)["commands"]
 
 
+@pytest.mark.parametrize("command,expected", [
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json>", True),
+    ("", False),
+    ("uv run python tools/qa/master_topology.py", False),
+    ("uv run python tools/qa/master_topology.py <master>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <master>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out NaN", False),
+    ("uv run python tools/qa/master_topology.py <master> --out inf", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json> --out <new.json>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json> ; dt qa xview", False),
+    ("uv run python tools/qa/unknown.py <master> --out <new.json>", False),
+    ("python tools/qa/master_topology.py <master> --out <new.json>", False),
+])
+def test_master_topology_command_template(command, expected):
+    assert route_map.command_exists(command) is expected
+
+
+def test_vpm_master_topology_rendered():
+    for suffix in (".excalidraw", ".svg"):
+        text = (ROOT / route_map.OUTPUTS["vpm-route"].with_suffix(suffix)).read_text(encoding="utf-8")
+        assert "tools/qa/master_topology.py" in text
+        assert "D312" in text
+
+
 def test_vpm_hotspots_cover_the_named_objects():
     """KPP1, PSU275, TEC26, ELV and 4BK evidence each back at least one VPM hot spot."""
     hot = _routes()["vpm-route"]["hotspots"]
