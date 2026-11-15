@@ -146,8 +146,51 @@ def record_export(fbx, *, source, top: float | str = 'unknown', thumbnail='unkno
     return path
 
 
+def parse_top(raw):
+    """CLI --top: 'unknown' or a finite float; NaN/inf/overflow/garbage are refused, never recorded."""
+    if raw == 'unknown':
+        return raw
+    try:
+        value = float(raw)
+    except ValueError:
+        raise ValueError(f'--top must be a finite number or unknown, got {raw!r}') from None
+    if not math.isfinite(value):
+        raise ValueError(f'--top must be a finite number or unknown, got {raw!r}')
+    return value
+
+
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__)
+    """`check PATH` (also the legacy bare `PATH`) validates; `record FBX --source S` writes a new sidecar.
+
+    Called by `agr export-meta` (src/dt_ai/cli/agr.py) and importable inside 3ds Max (AGR Tools, no deps).
+    """
+    import os
+    import sys
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] == ['record']:
+        ap = argparse.ArgumentParser(prog='agr export-meta record', description='Write a NEW export_meta sidecar.')
+        ap.add_argument('fbx')
+        ap.add_argument('--source', required=True, help='what produced the FBX (provenance)')
+        ap.add_argument('--top', default='unknown', help='measured export-frame render top, m, or unknown')
+        ap.add_argument('--thumbnail', default='unknown')
+        ap.add_argument('--address')
+        ap.add_argument('--profile', choices=('npm', 'vpm', 'unknown'))
+        ap.add_argument('--out', help='default: <FBX>.export_meta.json; never replaced')
+        args = ap.parse_args(argv[1:])
+        top = parse_top(args.top)
+        if args.out is not None:
+            fbx, out = Path(args.fbx), Path(args.out)
+            if out.suffix.lower() != '.json':
+                raise ValueError(f'--out must be a .json file, got {out}')
+            if os.path.abspath(out) == os.path.abspath(fbx) or (out.exists() and fbx.exists() and os.path.samefile(out, fbx)):
+                raise ValueError(f'--out {out} resolves to the input FBX')
+        path = record_export(args.fbx, source=args.source, top=top, thumbnail=args.thumbnail,
+                             metadata_path=args.out, address=args.address, profile=args.profile)
+        print(f'export_meta written: {path}')
+        return 0
+    if argv[:1] == ['check']:
+        argv = argv[1:]
+    ap = argparse.ArgumentParser(prog='agr export-meta check', description=__doc__)
     ap.add_argument('path')
     args = ap.parse_args(argv)
     load_meta(args.path)

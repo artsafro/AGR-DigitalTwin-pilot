@@ -43,8 +43,10 @@ Do not substitute A101 atlases on the old v003 geometry. Visual requests/answers
 ## МАФ
 
 - Диск: `G:\Мой диск\AGR-assets\maf\`.
-- Актуальная версия: `library/maf/material_ids_v005.json` (с `material_ids_v005.md`).
-- Данные в git: `library/maf/` (каталог, раскладка атласа v005, аудит).
+- Актуальная версия списка ID материалов: `library/maf/material_ids_v007.json` (с `material_ids_v007.md`): v006 + ID 33 `wood_pine` (сосна, отдельный слот WOOD2), D240. Изменения от предыдущих версий: `library/maf/material_ids_v006_change.json`, `library/maf/material_ids_v007_change.json`.
+- Предыдущая версия v005 — первая рабочая (D181); не актуальна, новые МАФ на неё не назначаются.
+- Атлас 512 v007 (`library/maf/atlas_512_v007.json`) — только для новых МАФ; у библиотечных МАФ развёртка и атлас остаются прежними, ничего не переназначается (D240).
+- Данные в git: `library/maf/` (каталог, раскладки атласа v005 / v006, атлас 512 v007, аудит).
 
 ## Flora
 
