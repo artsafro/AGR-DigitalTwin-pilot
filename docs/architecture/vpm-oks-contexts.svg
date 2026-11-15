@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2735 1443" width="2735" height="1443" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2735 1478" width="2735" height="1478" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2735" height="1443" fill="#ffffff"/>
+<rect x="10" y="-30" width="2735" height="1478" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -9,21 +9,21 @@
 <rect x="1870" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="40.0" y="676.5" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="676.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="676.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="676.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="676.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="850.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1019.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1228.0" width="470" height="155.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1054.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1263.0" width="470" height="155.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="510" y1="436.25" x2="650" y2="436.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="885.0" y1="525.0" x2="275.0" y2="676.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="510.0" y1="800.25" x2="650.0" y2="782.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="885.0" y1="889.0" x2="1190.0" y2="1019.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="885.0" y1="889.0" x2="1190.0" y2="1054.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1120" y1="436.25" x2="1260" y2="427.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1190.0" y1="287.5" x2="1495.0" y2="347.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1730" y1="427.5" x2="1870" y2="436.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="2105.0" y1="525.0" x2="1495.0" y2="676.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1019.0" x2="1495.0" y2="959.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1730.0" y1="817.75" x2="1870.0" y2="756.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="1054.0" x2="1495.0" y2="994.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1730.0" y1="835.25" x2="1870.0" y2="756.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута ВПМ / ОКС (UCX) — D293 (#1392)</tspan>
 </text>
@@ -134,7 +134,9 @@
 <tspan x="1268.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
 <tspan x="1268.0" dy="17.5">время упаковки — ошибка</tspan>
 <tspan x="1268.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
-<tspan x="1268.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
+<tspan x="1268.0" dy="17.5">ZIP + полный отчёт проверки; ГОТОВО.txt только после</tspan>
+<tspan x="1268.0" dy="17.5">автопроверок, V015–V017 ждут Артёма [D323]; иначе</tspan>
+<tspan x="1268.0" dy="17.5">ОШИБКА.txt</tspan>
 </text>
 <text x="1878.0" y="686.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Проверки, xView, СИНТЕЗ</tspan>
@@ -152,7 +154,7 @@
 <tspan x="1878.0" dy="15.0">замороженная версия v003 запуска чекера; копии КПП1 и ТЭЦ26 стали</tspan>
 <tspan x="1878.0" dy="15.0">обёртками (#1379) (#1379)</tspan>
 </text>
-<text x="963.0" y="1029.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1064.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Коллизии UCX (только ВПМ)</tspan>
 <tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
 <tspan x="963.0" dy="17.5">канон UCX (D225): выпуклые куски и зазоры между ними</tspan>
@@ -164,7 +166,7 @@
 <tspan x="963.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="963.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="963.0" y="1238.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1273.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 5</tspan>
 <tspan x="963.0" dy="15.0">• jobs/KPP1/scripts/vpm_ucx.py:50 — свои куски UCX КПП1 (#1383)</tspan>
 <tspan x="963.0" dy="15.0">• jobs/PSU275/scripts/vpm_ucx.py:45 — свои UCX ПСУ275 (#1383)</tspan>
@@ -188,8 +190,8 @@
 <text x="580.0" y="782.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="580.0" dy="14">проёмы врезаны</tspan>
 </text>
-<rect x="1007.5" y="936.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1037.5" y="936.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1007.5" y="953.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1037.5" y="953.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1037.5" dy="14">оболочка с</tspan>
 <tspan x="1037.5" dy="17.5">кровлей</tspan>
 </text>
@@ -210,12 +212,12 @@
 <tspan x="1800.0" dy="14">НПМ в</tspan>
 <tspan x="1800.0" dy="17.5">координатах</tspan>
 </text>
-<rect x="1312.5" y="980.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1342.5" y="980.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1312.5" y="1015.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1342.5" y="1015.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1342.5" dy="14">коллизии UCX_</tspan>
 </text>
-<rect x="1770.0" y="778.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="778.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1770.0" y="786.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="786.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

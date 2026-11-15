@@ -17,7 +17,7 @@ Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
 not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
 
-    py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--standards DIR] [--json]
+    py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--recheck-target copy.zip] [--standards DIR] [--json]
 
 Recheck (issue #511): is a stored report's verdict still true now? current (target sha256 and
 standards digest unchanged; exit = the stored exit code), stale_standards (exit 3),
@@ -628,14 +628,15 @@ def write_new(out: Path, data: bytes, inputs: list[Path]):
         partial.unlink()
 
 
-def run_recheck(old: Path, out: Path, standards: Path, as_json: bool) -> int:
+def run_recheck(old: Path, out: Path, standards: Path, as_json: bool, target: Path | None = None) -> int:
     try:
         old_bytes = old.read_bytes()
         snap = read_snapshot(standards)  # digest and stage schema from the same bytes
         validator = snapshot_validator(snap)
         result = recheck(old_bytes, str(old), snapshot_digest(snap), code_commit(),
-                         expected_stages=lambda kind: expected_stages(validator, kind))
-        write_new(out, json_bytes(result), [old, Path(result["target"])])
+                         expected_stages=lambda kind: expected_stages(validator, kind), recheck_target=target)
+        stored_target = Path(json.loads(old_bytes)["target"])
+        write_new(out, json_bytes(result), [old, stored_target, Path(result["target"])])
     except (OSError, ValueError, KeyError, TypeError, yaml.YAMLError) as exc:
         print(f"Error: recheck: {exc}", file=sys.stderr)
         return 2
@@ -655,6 +656,7 @@ def main(argv=None) -> int:
                     help="exporter export_meta.json with fbx_records (#1342), or a JSON mapping exact FBX "
                          "filenames to {bounds_m, fbx_sha256}; feeds V013 Z bounds")
     ap.add_argument("--recheck", type=Path, metavar="OLD_REPORT", help="re-read a stored report.json (needs --output)")
+    ap.add_argument("--recheck-target", type=Path, metavar="ZIP", help="check this copy instead of the stored target")
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
     ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
                     help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
@@ -676,8 +678,11 @@ def main(argv=None) -> int:
                 or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None
                 or args.ground_materials is not None or args.export_meta is not None
                 or args.build_manifest is not None):
-            ap.error("--recheck takes only --output, --standards and --json")
-        return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
+            ap.error("--recheck takes only --recheck-target, --output, --standards and --json")
+        return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json,
+                           args.recheck_target)
+    if args.recheck_target is not None:
+        ap.error("--recheck-target is only for --recheck")
     if args.output is not None:
         ap.error("--output is only for --recheck")
     if args.target is None:
