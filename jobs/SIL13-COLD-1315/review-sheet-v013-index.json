@@ -1,0 +1,16 @@
+{
+  "passed": false,
+  "scope": "corrected2500pxreviewlayoutonly; main65file seal unchanged; review-v2 is superseded original-layout duplicate, not current user sheet",
+  "files": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v013\\review-v3\\review-sheet-v013-r2-NOT-ACCEPTED.png",
+      "sha256": "9ed5e69a05aed5c08bbcd7fbe9f4b9be22fe916ab46d1b032dab2a894e063562",
+      "bytes": 1473249
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v013\\review-v3\\make_sheet_v2.py",
+      "sha256": "fcceb0db54e96cccc679654c3f661b4cc9c181416070c850e2af9b8b546106bc",
+      "bytes": 1462
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-accepted-continuous-hedges-v012-r1
+run_id: cold-1315-maf-copy-pilot-v013-r2
 synthetic: false
 path: deviation
 inputs: &id001
@@ -84,6 +84,11 @@ deviations:
   new_tool_written: Job-local drivers/tests/diagnostics sealed in evidence-v012.json; no shared module/checker/library changes.
   result: Actual162159NPM334422VPM;all4582IDs/38MAF retained;NPMFlora0faces0vertices0bowties0area;minimum crown78.225/78.655percent. Whole validatorsFAIL.
     New copy-only MAF constructive/thin-detail repair choice is distinct from closed hedge gates.
+- gate: operations
+  what_failed: Original native Bench02537overlapping faces; source-bound6.2mm frame union r1 leaves14faces/8nearvertices at tiny seat joints, rejected.
+  what_was_tried: D305copy-only pilot; measured frame holes retained, micro-bevels squared; r2seat back+4.910mm/top-0.699mm aligns real insets. Two actual FBXs/raw/native readbacks and independent sampled surface diagnostics.
+  new_tool_written: Eleven job-local drivers/tests379lines sealed in evidence-v013.json; no shared module/checker/library changes.
+  result: Separate116triangleNPM/VPMpilot exactnativefaces,raw/native publicxView0faces0vertices0bowties0area; overallbbox exact and sampled displacement<6.072mm. Fullsitev012bytes unchanged and technicalFAIL retained. RequiredD305before-after picture before any replication.
 gates:
   inputs:
     status: review
@@ -99,11 +104,10 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D301hedge picture CLOSED. Correct one-based witnesses:actual NPMFlora0/0/0 and0area;all4582census/38MAF retained. New copy-only MAF
-      joint/thin-detail scope/C44 choice needs model owner; no failed technical check offered for approval.
+    note: D305MAFcopy repair scope CLOSED. Separate source-bound Bench025pilot116triangles both,raw/native xView0/0/0/0area; required construction-picture acceptance BEFORE replication. Fullsitev012byte-unchanged,all4582census/38MAF retained. No technicalFAIL offered for approval.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v012-r1.json
-      sha256: 0ce0edbef4281ab574911d74b1975e1c0cfd292ba93d7d34623d710db2427791
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v013-r2.json
+      sha256: 087b6ec94347f29b9bc85d72cac510d2320f7903c93cd0128913ad6c1e6b636a
     waits: user
   budgets:
     status: review
@@ -117,17 +121,17 @@ gates:
     evidence: *id002
   report:
     status: review
-    note: v012four-area evidence/commands/real failures and new model boundary;835actual tagged skirt controls>=1m but public perimeter0.006mFAIL
-      retained, not waived.
+    note: v013separate changed-copy pilot; newD305before-after gate, not another scope question. Fullsitev012four-area failures unchanged, no waiver.214affectedtests green,Fullsuite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v012.md
-      sha256: 399a9308a83abfa2f1ca35ecf8c4bc53491fb66c69711c890e93058bb3c2e892
-    - path: jobs/SIL13-COLD-1315/evidence-v012.json
-      sha256: a05ee6c06c4fd6c1ebf917258c81196cab2efe7c4ee092013d7a21dca9194d30
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v013.md
+      sha256: b7f68b1fb2bf430df88eb3c5c79cc3c05fbe88b3630a5f83bcfaf7dc6a88e259
+    - path: jobs/SIL13-COLD-1315/evidence-v013.json
+      sha256: 4fc5e87eebc2d87a519c00c7b68443778b7d6920aab0509c8da4a587b813df46
+    - path: jobs/SIL13-COLD-1315/review-sheet-v013-index.json
+      sha256: 9ed513f6c13738e9f98c632843e044c6030bee7cf55c50a451a24cf982ee7b7b
   visual:
     status: review
-    note: D287composition/D291shrub/D294pilot/D298route/D301continuous-construction gates CLOSED. Actual native site render and library/REJECTEDBoolean
-      comparison retained; final textured user approval not yet requested.
+    note: D287composition/D291shrub/D294pilot/D298route/D301hedge/D305repair-scope CLOSED. NewD305separate Bench025before-after construction picture pending, geometry-only not final materials/visual approval. Fullsiteunchanged.
     evidence: *id002
   checker:
     status: missing

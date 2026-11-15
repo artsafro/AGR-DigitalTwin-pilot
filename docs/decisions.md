@@ -324,6 +324,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D301 | 2026-11-15 | Silikatny #1315: accept the continuous-volume hedge construction of the v011/r2 90-plant pilot, including silhouette and common top envelope, without shape edits. Replicate the construction to the whole site on copies, retaining D298 census and >=68% crown-support constraints. This closes the D300 construction-picture gate only; technical QA, textures, final visual acceptance and SINTEZ remain mandatory. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem «да, принимаю», owning card t_d9ae7dc0 and issue #1315 comment 6890885700 |
 
+| D305 | 2026-11-15 | Silikatny #1315: authorize constructive repair of COPIES of the seven library MAF types, including real insets/joints and, where necessary, thickening measured 3-5mm details to6.2mm. Keep all38IDs/counts/points/rotations and overall dimensions within D094. Library originals stay untouched. Show a separate before/after pilot first; replicate only after Artem accepts it. No substitute models, MAF-from-PDF, checker waiver or final delivery acceptance. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem «принимаю рекомендации», owning card t_d9ae7dc0 and issue #1315 comment 6892163018 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

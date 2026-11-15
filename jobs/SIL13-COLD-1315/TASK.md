@@ -110,6 +110,15 @@ NPM Flora xView is now 0 faces /0 vertices /0 bowties, but whole-site technical 
 still FAILs. See `CONTINUATION-v012.md` for the new MAF source-construction choice;
 this is not another Flora or composition gate.
 
+[D305] / issue comment6892163018 authorizes constructive repair of COPIES of the
+seven library MAF types, including real insets/joints and necessary3-5mm details
+to6.2mm; retain38IDs/counts/points/rotations and overall dimensions under[D094].
+Library originals stay untouched. Separate before/after pilot FIRST, replication
+ONLY after Artem accepts it. v013/r2 Bench025 pilot uses measured source frame
+holes/slab,116triangles each, exported raw/native xView0/0/0/0area; it is NOT in
+the site. See `CONTINUATION-v013.md` for its new construction-picture gate. The
+previous copy-repair scope question is CLOSED, not asked again.
+
 Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.
 Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Syringa

@@ -1,0 +1,567 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-maf-copy-pilot-v013-r2",
+  "decision": "D305",
+  "scope": "isolated Bench025 changed-copy construction pilot; NOT full-site replication/delivery",
+  "full_site_changed": false,
+  "full_site_baseline": {
+    "path": "jobs/SIL13-COLD-1315/source-wide-summary-v012-r1.json",
+    "sha256": "0ce0edbef4281ab574911d74b1975e1c0cfd292ba93d7d34623d710db2427791",
+    "render_triangles": {
+      "NPM": 162159,
+      "VPM": 334422
+    },
+    "plants": 4582,
+    "MAF": 38,
+    "technical_QA": "FAIL, unchanged"
+  },
+  "pilot": {
+    "passed": false,
+    "scope": "separate changed-copy model pilot only, NOT site or material acceptance",
+    "decision": "D305",
+    "source": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+    "source_sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+    "source_unchanged": true,
+    "source_component_count": 3,
+    "source_vertices": 101,
+    "source_triangles": 190,
+    "output_vertices": 56,
+    "output_triangles": 116,
+    "bbox_max_delta_m": 0.0,
+    "thickness_m": 0.0062,
+    "controls": [
+      {
+        "kind": "frame-leg",
+        "source_vertex_ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "outer_min": [
+          0.2000274658203125,
+          0.15485763549804688,
+          2.9802322387695312e-08
+        ],
+        "outer_max": [
+          0.4500274658203125,
+          0.4048271179199219,
+          0.45005471177137224
+        ],
+        "inner_min": [
+          0.1900274658203125,
+          0.16105763549804689,
+          0.0062000298023223875
+        ],
+        "inner_max": [
+          0.4600274658203125,
+          0.3986271179199219,
+          0.44385471177137226
+        ],
+        "wall_m": 0.0062
+      },
+      {
+        "kind": "frame-leg",
+        "source_vertex_ids": [
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100
+        ],
+        "outer_min": [
+          1.5502166748046875,
+          0.15485763549804688,
+          0.0
+        ],
+        "outer_max": [
+          1.8002166748046875,
+          0.4048271179199219,
+          0.4500547415736946
+        ],
+        "inner_min": [
+          1.5402166748046875,
+          0.16105763549804689,
+          0.0062
+        ],
+        "inner_max": [
+          1.8102166748046875,
+          0.3986271179199219,
+          0.44385474157369464
+        ],
+        "wall_m": 0.0062
+      },
+      {
+        "kind": "seat",
+        "source_vertex_ids": [
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68
+        ],
+        "outer_min": [
+          0.0,
+          0.0,
+          0.374636150074366
+        ],
+        "outer_max": [
+          2.0,
+          0.4048271179199219,
+          0.44385474157369464
+        ],
+        "change": "square <=3mm source bevels; embed back seat edge4.91mm and lower seat top0.70mm onto6.2mm frame inner plane"
+      }
+    ],
+    "full_site_changed": false,
+    "copies_only": true,
+    "source_origin": [
+      -69.25560760498047,
+      -59.62261199951172,
+      -6.423063314286992e-05
+    ],
+    "notes": [
+      "Two source frame holes retained; shared contact faces removed by exact solid union.",
+      "Three source micro-bevelled components reconstructed using measured planar bounds.",
+      "Seat bevel squaring and 6.2mm walls need separate user picture approval.",
+      "NPM and VPM share this small midpoly pilot; no simplification substitution."
+    ]
+  },
+  "readback": {
+    "passed": false,
+    "scope": "isolated pilot raw/native readback; not full site QA or approval",
+    "version": "5.1.2",
+    "profiles": {
+      "NPM": {
+        "fbx_sha256": "93211b24b2e5ab99f9343edbc65fbb38a4e6f53dd234992047d84373144a08a1",
+        "raw_triangle_count": 116,
+        "native_triangle_count": 116,
+        "faces_equal": true,
+        "vertex_max_delta_m": 3.53911107087157e-08,
+        "bbox_m": [
+          [
+            -3.5391110486671096e-08,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.4048272967338562,
+            0.45005473494529724
+          ]
+        ],
+        "material_slots": 1,
+        "uv_channels": 1,
+        "units": "metres",
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          8.742277657347586e-08
+        ]
+      },
+      "VPM": {
+        "fbx_sha256": "aa0941cf0fa707ae963f064525e4b6a789462c2be54305585dbe946ff6860e16",
+        "raw_triangle_count": 116,
+        "native_triangle_count": 116,
+        "faces_equal": true,
+        "vertex_max_delta_m": 3.53911107087157e-08,
+        "bbox_m": [
+          [
+            -3.5391110486671096e-08,
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.4048272967338562,
+            0.45005473494529724
+          ]
+        ],
+        "material_slots": 1,
+        "uv_channels": 1,
+        "units": "metres",
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          8.742277657347586e-08
+        ]
+      }
+    }
+  },
+  "surface_audit": {
+    "passed": false,
+    "scope": "sampled symmetric surface displacement; not exact Hausdorff bound or model approval",
+    "profiles_geometry_equal": true,
+    "directions": {
+      "source_to_pilot": {
+        "samples": 17290,
+        "max_m": 0.006071362224853772,
+        "p99_m": 0.0053333430266745115,
+        "mean_m": 0.0008639512266941196,
+        "worst_point": [
+          1.6654993693033853,
+          0.39868227640787757,
+          0.44398337272044347
+        ]
+      },
+      "pilot_to_source": {
+        "samples": 10556,
+        "max_m": 0.006013604362054963,
+        "p99_m": 0.005403025814366898,
+        "mean_m": 0.0009277686489507683,
+        "worst_point": [
+          -3.5391110680797495e-08,
+          0.4048271179199219,
+          0.37463614344596863
+        ]
+      }
+    },
+    "unchanged_original_and_fullsite_checks": [
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+        "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+        "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+        "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+        "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+        "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+        "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+        "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+        "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+        "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+        "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+        "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+        "unchanged": true
+      },
+      {
+        "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+        "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+        "unchanged": true
+      },
+      {
+        "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+        "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+        "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+        "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+        "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+        "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+        "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+        "unchanged": true
+      }
+    ]
+  },
+  "xview": {
+    "NPM": {
+      "pilot": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "VPM": {
+      "pilot": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "public_validators": {
+    "NPM": {
+      "passed": false,
+      "machine_stage_counts": {
+        "pass": 1,
+        "fail": 3,
+        "review": 1,
+        "not_run": 3
+      },
+      "scope": "isolated geometry-only pilot, not delivery; naming/maps/UV/pivots/GroundUCX incomplete"
+    },
+    "VPM": {
+      "passed": false,
+      "machine_stage_counts": {
+        "pass": 2,
+        "fail": 4,
+        "review": 1,
+        "not_run": 5
+      },
+      "scope": "isolated geometry-only pilot, not delivery; naming/maps/UV/pivots/GroundUCX incomplete"
+    }
+  },
+  "required_gate": {
+    "waits": "user",
+    "scope": "D305 separate Bench025 construction/silhouette before-after approval before site replication",
+    "answer_authorizing_route": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6892163018",
+    "sheet": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v013\\review-v3\\review-sheet-v013-r2-NOT-ACCEPTED.png",
+    "sheet_sha256": "9ed5e69a05aed5c08bbcd7fbe9f4b9be22fe916ab46d1b032dab2a894e063562"
+  },
+  "tests": {
+    "passed": 214,
+    "failed": 0,
+    "seconds": 3.53,
+    "log_sha256": "11445957a99e49cbe6b8eb12ee245477866393f47b1535bf29a64a661f658cb4",
+    "command": "env PYTEST_ADDOPTS= uv run pytest -q tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tmp/cold-v011/test_hedge_contract.py tmp/cold-v012/test_witness_indices.py tmp/cold-v012/test_export_controls.py tmp/cold-v013/test_maf_pilot.py tmp/cold-v013/test_pilot_structure.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0-v013-final",
+    "source_RED": "1failed,37faces vs0;GREEN both actual exports0faces",
+    "decision_RED": "1failed, D305 missing;GREEN recorded",
+    "full_suite": "deferred to merge batch (rule 68)"
+  },
+  "code": [
+    {
+      "path": "audit_pilot.py",
+      "lines": 39,
+      "sha256": "b6705b1791efcd4cb8af8c56f597f8332d44989ef54050fb6a601543be0fff2a"
+    },
+    {
+      "path": "build_pilot.py",
+      "lines": 47,
+      "sha256": "c04d79c4b054597ae2451907a73772efcb6e1df72dbbc89a187397397a8b6d37"
+    },
+    {
+      "path": "build_pilot_r2.py",
+      "lines": 52,
+      "sha256": "b60171824fefc1b76cafed832daeae4b77bf604afcfc115d0a87653928480315"
+    },
+    {
+      "path": "export_render_pilot.py",
+      "lines": 47,
+      "sha256": "19bfad4e9e9aa0cda4b25ebc920dba8f1e07330304eb8477e9d1c3bb2520c553"
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "lines": 29,
+      "sha256": "03c0eacd87a194ac4fcbc08e0e43cac312ee8a82ffca8ff5c6ff96097789b231"
+    },
+    {
+      "path": "make_sheet.py",
+      "lines": 28,
+      "sha256": "067ce84b8901100c27432c55c4b3492fb65a63f6697d57dce43d4a6b53477b4f"
+    },
+    {
+      "path": "prepare_r2.py",
+      "lines": 10,
+      "sha256": "4a214e7bf06502a45860898e478ce9205619b29c3dc62f9c7da2afa5a3459e27"
+    },
+    {
+      "path": "readback_pilot.py",
+      "lines": 30,
+      "sha256": "9be19410234f573aa88aaa489e59f63f5ee495d983c03a113bc1737963597d5d"
+    },
+    {
+      "path": "render_joint_views.py",
+      "lines": 15,
+      "sha256": "95432af481dfd0e6ebdf2174dc8669e222d4c37621cab9d6a0a356e5533ad496"
+    },
+    {
+      "path": "test_maf_pilot.py",
+      "lines": 38,
+      "sha256": "3d7a553770cf55381ef7370b0bcb90316f24fe05b0cbcd1c2dac5b149e57eed7"
+    },
+    {
+      "path": "test_pilot_structure.py",
+      "lines": 44,
+      "sha256": "729213c6d7d113538f5a4b5f2f81c8facc1a3f8b46f6d4f71cdfaba4d94ef327"
+    }
+  ]
+}

@@ -1,6 +1,14 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v012/r1 accepted continuous hedge construction [D301], not delivered**.
+Current status: **v013/r2 separate changed-copy Bench025 pilot [D305], not accepted**.
+See [CONTINUATION-v013.md](CONTINUATION-v013.md):190source→116pilot triangles,
+actual raw/native NPM/VPM xView0faces/0vertices/0bowties/0area; both frame holes
+retained, overall bbox exact,6.2mm walls and measured seat/frame joint edits.
+The authorized scope question is CLOSED; new before/after picture acceptance is
+required before any site replication. Full-site v012/r1 remains byte-unchanged,
+with all4,582plant census/38MAF and its known technical FAILs. No final delivery.
+
+Historical status: **v012/r1 accepted continuous hedge construction [D301], not delivered**.
 See [CONTINUATION-v012.md](CONTINUATION-v012.md): all4,582plant IDs/points/heights
 and38MAF retained; actual162,159/334,422render triangles. Correct one-based public
 xView witness decoding removes all NPMFlora faces/vertices/bowties; actual crown
