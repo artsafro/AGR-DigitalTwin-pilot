@@ -110,15 +110,19 @@ Require `## Author receipts` in the PR body with the following lines:
 
 ### Handoff evidence check (#584)
 
-The author owns the full suite: a PR body never hands it to the reviewer, and evidence that is
-missing, "not run" or "not measured" is not a pass. Before `review_requested` the PR body has each
+The author runs the tests: a PR body never hands them to the reviewer, and evidence that is
+missing, "not run" or "not measured" is not a pass. Each card runs the AFFECTED tests (the changed
+modules' tests, the tests that import them, the new regressions) before every review request; the full
+suite runs ONCE in the merge batch (`merge_batch.py` / `merge_after_review.py`) before main, and a red
+batch suite sends the PR back to rework [D297]. Before `review_requested` the PR body has each
 line below exactly once (`.github/pull_request_template.md`, "Evidence"), and this read-only check exits 0:
 ```bash
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
-- `Full suite:` run through `suite_slot.py` (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head sha, `N passed`, `0 failed` (a failure only
-  with its `known #<issue>` owner). After a rework (rule 49) it may name an ancestor of the head, and then an
-  `Affected tests:` line on the head with `0 failed` is required.
+- `Affected tests:` names the head sha, the command, `N passed`, `0 failed`; `not run`, `pending`, `n/a` are not a run.
+- `Full suite: deferred to merge batch (D297)` (optional; any other deferral wording is an error). A real
+  `suite_slot.py` run (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head or an ancestor is still accepted,
+  `N passed`, `0 failed` (a failure only with its `known #<issue>` owner).
 - `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
 - `Before (RED):` names a commit before the head and has ≥ 1 failed or error, or `n/a: <reason>`.
   `After (GREEN):` names the head and has ≥ 1 passed and 0 failed; it has no `n/a`. A GREEN or
