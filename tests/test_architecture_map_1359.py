@@ -270,6 +270,23 @@ UDIM_COPIES = [
     "du, dv = divmod(tile - 1001, 10)\n",
     "i = udim - 1001\nx = (i % 10, i // 10)\n",
 ]
+# #1370: single-row and split-constant expressions still implement the owner's duty.
+UDIM_1370 = [
+    "tile = int(np.floor(uv[:,0].mean())) + 1001",
+    "uv = uv - [tile - 1001, 0]",
+    "uv = pixels/size + [tile-1001, 0]",
+    "x = x - (tile - 1001)",
+    "tile = 1000 + 1 + u + 10*v",
+    "tile = 1 + u + v*10 + 1000",
+]
+
+
+@pytest.mark.parametrize("code", UDIM_1370)
+def test_guard_1370_udim_copy(tmp_path, code, capsys):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/copy.py": code})) == 1
+    assert "NEW COPY [udim-tile]" in capsys.readouterr().out
+
+
 ZIP_COPIES = [
     "import zipfile\nwith zipfile.ZipFile(p, 'w') as z: pass\n",
     "import zipfile\nwith zipfile.ZipFile(p, \"x\", zipfile.ZIP_DEFLATED) as z: pass\n",
