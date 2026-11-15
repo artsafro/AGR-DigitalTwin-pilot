@@ -1,7 +1,7 @@
 # Working-master topology before export — #1420
 
 Read-only diagnostics, 2026-11-15. No geometry repairs, scene saves, delivery replacement
-or user acceptance. Rule [D308]: prefer quads, allow/report unavoidable triangles,
+or user acceptance. Rule [D312]: prefer quads, allow/report unavoidable triangles,
 fail any n-gon (>4 sides) **before export triangulation**. The check does not decide
 whether a particular triangle could have been avoided.
 

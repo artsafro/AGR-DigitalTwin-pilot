@@ -2,7 +2,7 @@
 
 Shared stdlib core for Max AGR Tools and agent CLI. Input is the evaluated working
 master BEFORE export triangulation, not delivery readback. Triangles are allowed;
-quads are preferred; any n-gon fails (D308). Face IDs are object-local, 1-based.
+quads are preferred; any n-gon fails (D312). Face IDs are object-local, 1-based.
 This check cannot decide whether a triangle could have been avoided.
 """
 

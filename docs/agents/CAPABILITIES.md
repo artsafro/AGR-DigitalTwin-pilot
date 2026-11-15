@@ -313,7 +313,7 @@ Pipeline core:
   and checked-export tool, not a delivery validator; version, install, native evidence: its `README.md`,
   `CHANGELOG.md`; native runners in `tests/max_tools/`. Entry page for agents (1.0 conveyor, MCP v2, passport,
   libraries, owner decisions): `docs/agr-tools/OVERVIEW.md`.
-  Pre-export master polygon QA [D308]: `runtime.master_topology(nodes)` and agent CLI
+  Pre-export master polygon QA [D312]: `runtime.master_topology(nodes)` and agent CLI
   `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json`, one shared stdlib core;
   real read-only ELV/KPP1/PSU275 reports in `jobs/master-topology-1420/REPORT.md` (not delivery acceptance).
 
