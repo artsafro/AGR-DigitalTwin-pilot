@@ -44,8 +44,19 @@ def test_all_arrows_bind_steps_or_artifacts_never_pink_lists(name):
                 box = by_id[arrow[key]["elementId"]]
                 assert box["type"] == "rectangle"
                 assert box["backgroundColor"] != route_map.COLORS["hotspot"]
-        texts = "\n".join(e.get("text", "") for e in board.elements)
-        assert not re.search(r"\.py:[0-9]|\.py::", texts)
+        # Main's owner provenance can name the exact launcher/implementation line.
+        # Only that documented text in its own working node is exempt: duplicate
+        # addresses and every short-scheme label remain subject to the guard.
+        owner_notes = {
+            "e" + route_map._h(f"ctx/{c['id']}/text")[:15]: " ".join(c["owner_ru"].split())
+            for c in [cmap["shared_kernel"], *cmap["contexts"]]
+        }
+        for element in board.elements:
+            text = " ".join(element.get("text", "").split())
+            note = owner_notes.get(element["id"])
+            if note:
+                text = text.replace(note, "", 1)
+            assert not re.search(r"\.py:[0-9]|\.py::", text)
 
 
 @pytest.mark.parametrize("kind", ["empty", "partial", "unknown", "repeat", "reorder", "nan", "inf", "eight", "extra"])
