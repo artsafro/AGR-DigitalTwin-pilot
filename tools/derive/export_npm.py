@@ -13,6 +13,11 @@ M_<A>_<NNN>_Main_1 (Base Color <- _d_, Alpha <- colour of _o_), glass M_Glass_01
 textures embedded (reg p.9 §5.1), triangulated unless --keep-quads (review copy, never a delivery), transforms
 applied, pivot = plan centre Z 0 (or the shared --pivot of a multi-OKS package). Writes <out>/<prefix>_<A>_<NN>.fbx,
 <out>/../export_npm_meta.json and <out>/../NPM_export_tri.blend (both refused if they already exist).
+#1505: <atlas_dir>/npm_atlas.json must be bound to this master (`master.sha256` = SHA-256 of <master.blend>, `udims`
+= its finish tiles; tools/derive/npm_atlas.py --master): otherwise refused before any write (atlas_unbound /
+atlas_master_mismatch / atlas_udim_mismatch). After the FBX: export_meta.json stores master_sha256 and
+<out>/../derivation/<fbx>.derivation.json (master path + master_sha256 + FBX sha256) is written for
+`agr build-manifest build --derivation <out>/../derivation`; a master edited during the export is refused.
 """
 import argparse
 import importlib.util
@@ -31,6 +36,10 @@ _OWNER = os.path.normpath(os.path.join(HERE, "..", "..", "adapters", "max", "agr
 _ownspec = importlib.util.spec_from_file_location("udimtile_core_export_npm", _OWNER)
 _udimtile = importlib.util.module_from_spec(_ownspec)
 _ownspec.loader.exec_module(_udimtile)
+_BM = os.path.normpath(os.path.join(HERE, "..", "..", "adapters", "max", "agr_tools", "build_manifest.py"))
+_bmspec = importlib.util.spec_from_file_location("build_manifest_export_npm", _BM)
+_bm = importlib.util.module_from_spec(_bmspec)
+_bmspec.loader.exec_module(_bm)
 
 
 def face_udim(cu, cv):
@@ -78,8 +87,9 @@ def main(argv):
     meta_path = os.path.join(out, "..", "export_npm_meta.json")
     blend_path = os.path.join(out, "..", "NPM_export_tri.blend")
     shared_meta_path = os.path.join(out, 'export_meta.json')
+    store = _bm.derivation_store(out)  # <out>/../derivation/: export-time record for the build manifest (#1505)
     inputs = [os.path.realpath(p) for p in (a.master, a.spec, a.atlas_dir)]
-    for p in (out, meta_path, blend_path):
+    for p in (out, meta_path, blend_path, store):
         r = os.path.realpath(p)
         if any(r == q or r.startswith(q + os.sep) or q.startswith(r + os.sep) for q in inputs):
             raise SystemExit(f"output {p} aliases an input")
@@ -89,6 +99,12 @@ def main(argv):
     atlas = json.load(open(os.path.join(a.atlas_dir, "npm_atlas.json"), encoding="utf-8"))
     texture_spec = json.load(open(a.spec, encoding="utf-8"))
     by_udim = validate_atlas(atlas, texture_spec)
+    # #1505: the atlas must be bound to exactly this master revision; hashed before the master is opened
+    master_sha = _bm.sha256_file(a.master)
+    try:
+        _bm.check_atlas_master(atlas, master_sha)
+    except _bm.AtlasBindingError as exc:
+        raise SystemExit(f"refused: {exc}") from None
     os.makedirs(out, exist_ok=True)
     if os.listdir(out):
         raise SystemExit(f"NPM out dir {out} is not empty")
@@ -250,6 +266,8 @@ def main(argv):
     for o in sc.objects:
         o.select_set(o in vis)
     fbx = os.path.join(out, f"{a.prefix}_{A}_{NN}.fbx")
+    if os.path.lexists(os.path.join(store, os.path.basename(fbx) + _bm.DERIVATION_SUFFIX)):
+        raise SystemExit(f"derivation record for {os.path.basename(fbx)} already exists in {store}; new version")
     bpy.ops.export_scene.fbx(filepath=fbx, use_selection=True, object_types={"MESH"},
                              axis_forward="Y", axis_up="Z", apply_unit_scale=True, apply_scale_options="FBX_SCALE_UNITS",
                              global_scale=1.0, bake_space_transform=False, use_mesh_modifiers=False,
@@ -262,8 +280,12 @@ def main(argv):
     sys.path.insert(0, HERE)
     from export_meta import record_export
     exported_top = max((o.matrix_world @ v.co).z for o in vis for v in o.data.vertices)
-    record_export(fbx, source=a.master, top=float(exported_top), metadata_path=shared_meta_path)
-    report.update({"fbx": fbx, "main_tris": tri(main), "glass_tris": tri(glass) if glass else 0})
+    record_export(fbx, source=a.master, top=float(exported_top), metadata_path=shared_meta_path,
+                  master=a.master, master_sha256=master_sha)
+    record = _bm.write_export_derivation([fbx], a.master, store, _bm.git_commit(os.path.join(HERE, "..", "..")),
+                                         master_sha256=master_sha, inputs=[a.spec, a.atlas_dir])
+    report.update({"fbx": fbx, "main_tris": tri(main), "glass_tris": tri(glass) if glass else 0,
+                   "master_sha256": master_sha, "derivation": record})
     with open(meta_path, "x") as fh:
         json.dump(report, fh, indent=1)
     bpy.ops.wm.save_as_mainfile(filepath=blend_path)

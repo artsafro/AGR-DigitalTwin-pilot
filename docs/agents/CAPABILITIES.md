@@ -376,7 +376,8 @@ Shared packaging `agr package-npm` / `agr package-vpm` and export metadata: [con
 
 Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step instead of the job copies
 `jobs/{KPP1,PSU275,TEC26-OKS}/scripts/{make_npm_atlas,export_npm,package_vpm}.py`, which stay as frozen records):
-- `dt derive atlas <spec> <new out> [--address A --index N]` (`tools/derive/npm_atlas.py`), `dt derive npm --blender B
+- `dt derive atlas <spec> <new out> --master <master> [--address A --index N]` (`tools/derive/npm_atlas.py`;
+  `npm_atlas.json` carries the master SHA-256 + UDIM tiles, #1505), `dt derive npm --blender B
   <master.blend> <spec> <atlas dir> <new out> [prefix] [--address --index --pivot x,y --keep-quads]`
   (`tools/derive/export_npm.py`), `dt derive package <pkg dir> <textures> [--object object.json] [--no-geojson]`
   (`tools/derive/package_vpm.py`; per-job name / H_RELIEF / glass in `object.json`, not in code); FBX readback parity
@@ -388,8 +389,9 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
   replayed. Tests `tests/test_shared_tools_1106.py`.
 
 Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
-cores, keeping the Max side per the AC08 route [D228]; routing the Blender/Python versions to them is deferred to
-#1141, starts after #1105 [D225]):
+cores, keeping the Max side per the AC08 route [D228] [D225]; #1141 (the routing) was closed as split on 2026-11-15:
+UCX -> #1404, atlas -> #1380, placement -> #1407, one core behind the CLI and the Max button -> epic #1374, live-Max
+proof of the cores -> #1105. Which side owns UCX building and placement is open: conflicts C49):
 
 | Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
 |---|---|---|---|
