@@ -59,7 +59,7 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v011.md](CONTINUATION-v011.md). [D313] rejects
+Current continuation is [CONTINUATION-v011.md](CONTINUATION-v011.md). [D318] rejects
 v010's31–32% crowns and authorizes continuous hedge-run volumes with>=68% retained
 constituent crowns and all original IDs/counts/points/heights in the census.
 Real v011/r2 candidate exports retain4,582plants/38MAF,162,743/334,928render
@@ -68,7 +68,7 @@ All47nonhedge copies and Ground/MAF/600UCX actual arrays remain unchanged.
 Individual heights are census facts, not independent bboxes of a merged volume;
 envelope top differences up to0.181/0.222m are disclosed. A separate90plant
 changed-construction pilot awaits the required [D314] picture choice; this is not
-a repeat of [D313], composition or earlier shrub-star approval. Technical FAILs
+a repeat of [D318], composition or earlier shrub-star approval. Technical FAILs
 remain worker-owned. Later r3/r5 topology experiments are rejected, not promoted.
 [D294] remains the historical cell-pilot answer, not approval of the rejected
 whole-site v010 candidate. [D281] answers

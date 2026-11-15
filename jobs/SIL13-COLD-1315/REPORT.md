@@ -27,7 +27,7 @@ Whole-file validators stillFAIL. Native39/48MAFface loss remains; a fresh native
 original-library Bench025 already fails37faces. A new copy-only MAF constructive
 repair/C44 model choice is explicit; no technical waiver or library edit requested.
 
-Historical status: **v011/r2 continuous hedge-volume candidate [D313], not delivered**.
+Historical status: **v011/r2 continuous hedge-volume candidate [D318], not delivered**.
 See [CONTINUATION-v011.md](CONTINUATION-v011.md):4,535hedge census plants merged
 into physical run volumes; all4,582plant IDs/points/heights and38MAF retained.
 Actual162,743/334,928render triangles; independent actual-export support minimum
@@ -37,7 +37,7 @@ are disclosed. Separate90plant construction pilot/native readback is ready for
 [D314] picture choice; technical xView/validator FAILs are NOT offered for approval.
 Rejected r3/r5 experiments are retained; r2 is the preferred candidate, not final.
 
-Historical v010/r1 **REJECTED by [D313]**: cell-trim yielded31–32% crowns despite
+Historical v010/r1 **REJECTED by [D318]**: cell-trim yielded31–32% crowns despite
 retaining IDs/points/heights. [CONTINUATION-v010.md](CONTINUATION-v010.md) retains
 the measured failure; [D294] did not approve that new whole-site loss.
 
