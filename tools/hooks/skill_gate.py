@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from hook_input import read_stdin
 import usage_log  # noqa: E402
 
 # MCP server name in the tool name -> project skill (plugin skill for 3ds Max).
@@ -70,7 +71,7 @@ def check(payload):
 
 def main():
     try:
-        payload = json.loads(sys.stdin.read() or "{}")
+        payload = json.loads(read_stdin() or "{}")
         out = check(payload) if isinstance(payload, dict) else {}
     except Exception:
         out = {}

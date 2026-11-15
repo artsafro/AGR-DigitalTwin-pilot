@@ -256,6 +256,53 @@ def test_utf8_prompt_sequence(tmp_path):
         assert result.returncode == 0 and result.stdout == b""
 
 
+def _hook_input():
+    spec = importlib.util.spec_from_file_location("hook_input_test", ROOT / "tools/hooks/hook_input.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_hook_input_generated_unicode(monkeypatch):
+    import io
+    import random
+    rng = random.Random(1363)
+    reader = _hook_input()
+    for _ in range(100):
+        text = "Мой диск/" + "".join(chr(rng.choice((0x41, 0x451, 0x4e2d, 0x1f642, rng.randrange(0x400, 0x500)))) for _ in range(30))
+        with io.TextIOWrapper(io.BytesIO(text.encode("utf-8")), encoding="cp1251") as stream:
+            monkeypatch.setattr(sys, "stdin", stream)
+            assert reader.read_stdin() == text
+            assert reader.read_stdin() == ""
+
+
+def test_hook_input_text_stream(monkeypatch):
+    import io
+    monkeypatch.setattr(sys, "stdin", io.StringIO("Мой диск/пример"))
+    assert _hook_input().read_stdin() == "Мой диск/пример"
+
+
+def test_hook_input_invalid_utf8(monkeypatch):
+    import io
+    with io.TextIOWrapper(io.BytesIO(b"\xff"), encoding="cp1251") as stream:
+        monkeypatch.setattr(sys, "stdin", stream)
+        with pytest.raises(UnicodeDecodeError):
+            _hook_input().read_stdin()
+
+
+@pytest.mark.parametrize("relative", [
+    "tools/hooks/prompt_hooks.py", "tools/hooks/context_watch.py", "tools/hooks/skill_gate.py",
+    "tools/hooks/usage_log.py", "tools/hooks/session_context.py", "tools/hooks/pi_guard_adapter.py",
+    ".claude/hooks/guard.py", ".claude/hooks/pretool.py", ".claude/hooks/pipeline_gate.py", ".claude/hooks/subagents.py",
+])
+def test_all_payload_hooks_use_utf8_reader(relative):
+    import ast
+    tree = ast.parse((ROOT / relative).read_text(encoding="utf-8"))
+    calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call)]
+    assert any(isinstance(node.func, ast.Name) and node.func.id == "read_stdin" for node in calls)
+    assert not any(isinstance(node.func, ast.Attribute) and ast.unparse(node.func.value) == "sys.stdin" for node in calls)
+
+
 # --- UserPromptSubmit ---------------------------------------------------------------------------------------
 
 def _response(tokens):
