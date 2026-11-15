@@ -36,7 +36,8 @@ _OMISSION = re.compile(r"\b(?:not (?:re-?)?run|not measured|pending|todo|tbd|non
 _TESTS = (r"(?:full[- ]suite|(?:test[- ])?suite|test[- ]files?|tests?(?![/\\.]\w)|pytest)\b")
 _REVIEWER = r"\breviewers?\b(?!['’]s)"
 _DELEGATION = (
-    re.compile(_REVIEWER + r"(?P<gap>[^.;\n]{0,40}?)\b(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes)"
+    re.compile(_REVIEWER + r"(?P<gap>[^.;\n]{0,40}?)\b"
+               r"(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes|verify|verifies|check|checks)"
                r"\s+(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
                + _TESTS, re.IGNORECASE),
     re.compile(r"\b" + _TESTS + r"[^.;\n]{0,30}\b(?:delegated|deferred|left|handed|passed on)\b"
@@ -45,6 +46,9 @@ _DELEGATION = (
                r"\s+(?:to|for|by) (?:the )?" + _REVIEWER, re.IGNORECASE),
     re.compile(r"\b(?:delegat|leav|hand|pass)\w*\b[^.;\n]{0,40}\b" + _TESTS + r"[^.;\n]{0,20}\b(?:to|for)\s+"
                r"(?:the )?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s+to\s+be\s+(?:run|checked|verified)\s+by\s+(?:the\s+)?"
+               + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s*:\s*(?:the\s+)?" + _REVIEWER, re.IGNORECASE),
     re.compile(r"\bdelegat\w*\b[^.\n]{0,40}\bfull[- ]suite\b", re.IGNORECASE),
 )
 _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
