@@ -21,6 +21,9 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "hooks"))
+from hook_input import read_stdin
+
 PRODUCTION_EXT = r"\.(fbx|blend|max|uasset|umap|obj|abc|usd[az]?|glb|gltf|rvt|skp|dwg|psd|exr|tiff?|png|tga)\b"
 
 # (regex, reason) checked against shell commands (Bash and PowerShell / cmd).
@@ -670,7 +673,7 @@ def inside(path: Path, root: Path) -> bool:
 
 def main() -> None:
     try:
-        raw = sys.stdin.read()
+        raw = read_stdin()
         if not raw.strip():
             allow(False)
         data = json.loads(raw)
