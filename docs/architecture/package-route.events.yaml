@@ -170,12 +170,13 @@ stages:
       - jobs/VATUTINO-SITE/npm_code.py
       - docs/deliveries/vatutino-site-2026-11-09.md
   - id: customer
-    event_ru: "Передача заказчику; подпись УКЭП — заказчика"
+    event_ru: "Пакет — Артёму: архив или сцена 3ds Max с квадами; приёмку и передачу заказчику делает Артём; подпись УКЭП — заказчика"
     actor: artem
     context: package
     rules:
       - D163
       - D220
+      - D300
     evidence:
       - docs/domain/areas/package.md
 hotspots:
@@ -211,11 +212,3 @@ hotspots:
     evidence:
       - jobs/TEC26-OKS/scripts/run_agr_checker.py
       - docs/deliveries/vatutino-site-2026-11-09.md
-  - id: customer-channel
-    stage: customer
-    ru: "ВОПРОС: кто и каким каналом передаёт пакет заказчику, когда регламент этого требует, и что агент готовит к подписи УКЭП — в репо шага нет"
-    rules:
-      - D163
-    evidence:
-      - docs/domain/areas/package.md
-      - docs/domain/validation.md

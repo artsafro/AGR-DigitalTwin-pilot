@@ -70,6 +70,12 @@ evidence contract, **not** a new geometry checker, user-authentication service o
 publication authorization. Producers and the reviewer must verify receipt truth.
 Never synthesize a receipt to fill a missing check or a human decision.
 
+**Delivery to Artem [D300].** The finished package goes to Artem, never straight to the customer: either an
+archive (the `agr package-npm` / `agr package-vpm` output with its report) or a 3ds Max scene with quads (the
+QUAD review copy [D270]); give him the absolute path. Artem does the acceptance and the hand-off to the customer;
+the agent has no customer channel and records Artem's answer (date, scope, ref) in the job report. Interim
+(stand-in) Flora maps may ship in this delivery; Artem checks the look at its end [D299].
+
 **Look-finished step (D227, report-only).** After the overlap postcondition, run the look-finished checks (seams, broken edge loops, decor gaps; ELV/skug26 retros) on the export and put every finding into the job report. Per [D227] the step is REPORT-ONLY for now: findings do not block delivery and do not flip `passed`. It becomes blocking only after it has run without false failures on 2-3 already accepted jobs (a later user decision).
 
 **Overlap postcondition of every build / fix step (#527, D152).** After each step that writes geometry
