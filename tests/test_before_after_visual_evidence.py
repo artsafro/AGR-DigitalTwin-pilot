@@ -165,6 +165,9 @@ def fake_runner(after_camera=None, touch=None):
         record = {'before': {'camera': CAM, 'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}},
                   'after': {'camera': after_camera or CAM,
                             'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}}}
+        for role in ('before', 'after'):
+            record[role]['render'].update(use_border=False, use_multiview=False,
+                                          image_views_format='INDIVIDUAL')
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
         return record
     return run
@@ -290,13 +293,98 @@ def test_fresh_process_cli_help_and_refusal(tmp_path, inputs):
     assert not (tmp_path / 'ev' / 'z').exists()
 
 
-# ---------------------------------------------------------------- real Blender (optional)
+@pytest.mark.parametrize('key,value', [
+    ('use_border', True), ('use_multiview', True), ('image_views_format', 'STEREO_3D'),
+    ('use_border', None), ('use_multiview', None), ('image_views_format', None)])
+def test_cli_refuses_changed_output_setting(tmp_path, inputs, monkeypatch, capsys, key, value):
+    module = load()
+    original = fake_runner()
+
+    def runner(*args, **kwargs):
+        record = original(*args, **kwargs)
+        for role in ('before', 'after'):
+            record[role]['render'].update(use_border=False, use_multiview=False,
+                                          image_views_format='INDIVIDUAL')
+        if value is None:
+            del record['after']['render'][key]
+        else:
+            record['after']['render'][key] = value
+        return record
+
+    monkeypatch.setattr(module, 'run_blender', runner)
+    output = tmp_path / 'ev' / 'changed'
+    assert module.main(argv(*inputs, output)) == 2
+    assert key in capsys.readouterr().err
+    assert not output.exists() and not output.with_name('changed.partial').exists()
+
 
 def blender():
     sys.path.insert(0, str(ROOT / 'src'))
     from dt_ai.core.blender_runner import blender_executable
     exe = blender_executable()
     return exe if Path(exe).is_file() else None
+
+
+OUTPUT_SCENES = r'''
+import bpy, sys
+root, mutation = sys.argv[sys.argv.index('--') + 1:]
+assert bpy.app.version[:3] == (5, 1, 2), bpy.app.version_string
+for role in ('before', 'after'):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.context.scene.unit_settings.system = 'METRIC'
+    bpy.ops.mesh.primitive_cube_add()
+    scene = bpy.context.scene
+    # Make distinct source bytes without changing geometry or visible content.
+    scene['synthetic_role'] = role
+    r = scene.render
+    if role == 'after':
+        if mutation in ('border', 'crop', 'combined'):
+            r.use_border = True
+            r.use_crop_to_border = mutation != 'border'
+            r.border_max_x = 0.5
+        if mutation in ('multiview', 'combined'):
+            r.use_multiview = True
+            r.views_format = 'STEREO_3D'
+        if mutation in ('image_views_format', 'multiview', 'combined'):
+            r.image_settings.views_format = 'STEREO_3D'
+        if mutation == 'combined':
+            scene.display.shading.show_xray = True
+            scene.display.shading.show_object_outline = True
+        if mutation == 'reset':
+            r.use_border = r.use_multiview = True
+            r.use_border = r.use_multiview = False
+    bpy.ops.wm.save_as_mainfile(filepath=root + '/' + role + '.blend')
+'''
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('mutation', ['border', 'crop', 'multiview', 'image_views_format',
+                                      'combined', 'reset'])
+def test_real_blender_output_settings_normalized(tmp_path, mutation):
+    from dt_ai.core.blender_runner import run_blender
+    module = load()
+    maker = tmp_path / 'make-output.py'
+    maker.write_text(OUTPUT_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'before.blend', tmp_path / 'after.blend'
+    run_blender(maker, [tmp_path, mutation], outputs=[a, b],
+                log_path=tmp_path / 'maker.log')
+    hashes = [module.sha256(p) for p in (a, b)]
+    output = tmp_path / 'ev' / mutation
+    child = subprocess.run([sys.executable, str(SCRIPT), *argv(a, b, output,
+                            '--resolution', '64x40', '--style', 'solid')],
+                            capture_output=True, text=True)
+    assert child.returncode == 0, child.stdout + child.stderr
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    assert evidence['before']['render'] == evidence['after']['render']
+    assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes()
+    for key, expected in (('use_border', False), ('use_multiview', False),
+                          ('image_views_format', 'INDIVIDUAL')):
+        assert evidence['before']['render'][key] == expected
+    assert [module.sha256(p) for p in (a, b)] == hashes
+
+
+# ---------------------------------------------------------------- real Blender (optional)
 
 
 MAKE_SCENES = r'''
