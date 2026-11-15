@@ -396,8 +396,32 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
     ground_materials is an optional allow-list (names or globs): only those faces feed both footprint findings.
     diffuse_px {(slot, udim): side px} from the archive Diffuse PNGs feeds the VPM V009 texel density."""
     import tempfile
+    # Archive-wide placeholders become independent per-file coverage, never a
+    # claim that one readable FBX represents all siblings. Empty inventories keep
+    # the original placeholders.
+    covered = {"V002": "units and scale", "V008": "UV channel and islands",
+               "V006": "embedded atlases", "V009": "texel density"}
+    if fbx:
+        for stage_id, placeholder in covered.items():
+            if stage_id in st:
+                st[stage_id].findings = [f for f in st[stage_id].findings
+                                         if not (f.name == placeholder and f.evidence == SCENE_NOTE)]
     with tempfile.TemporaryDirectory() as tmp:
         for name, data in sorted(fbx.items()):
+            role = fbx_role(name)
+            required = {"V002", "V003", "V004", "V005"}
+            if kind == "npm":
+                required.add("V006")
+            if role != "light":
+                required.add("V013")
+                if kind == "vpm":
+                    required.update(("V008", "V009", "V010"))
+            pending = {}
+            for stage_id in sorted(required & st.keys()):
+                pending[stage_id] = finding("not_run", covered.get(stage_id, "scene checks"),
+                                            f"{name}: no scene result", st[stage_id].check,
+                                            st[stage_id].source_pdf_pages, name)
+                st[stage_id].findings.append(pending[stage_id])
             path = Path(tmp) / Path(name).name
             path.write_bytes(data)
             try:
@@ -422,16 +446,10 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                 _no_texture_findings(found, fbx_role(name), name, rb)
             for stage_id, findings in found.items():
                 if stage_id in st:
+                    if findings and stage_id in pending:
+                        st[stage_id].findings.remove(pending[stage_id])
                     st[stage_id].findings.extend(findings)
             notes.append(f"scene readback: {name} in Blender {rb.get('blender')}")
-    covered = {"V008": "UV channel and islands", "V006": "embedded atlases", "V009": "texel density"}
-    for stage_id, placeholder in covered.items():
-        if stage_id in st and len(st[stage_id].findings) > 1:
-            st[stage_id].findings = [f for f in st[stage_id].findings
-                                     if not (f.name == placeholder and f.evidence == SCENE_NOTE)]
-    v002 = st.get("V002")
-    if v002 is not None and any(f.name == "system units" for f in v002.findings):
-        v002.findings = [f for f in v002.findings if f.name != "units and scale"]
 
 
 def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
