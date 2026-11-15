@@ -212,6 +212,17 @@ def test_export_zip_acceptance(tmp_path):
     assert {p_.name: _sha(p_) for p_ in run.iterdir()} == stamp
 
 
+def test_exit_two_never_writes_ready_and_names_open_codes(tmp_path):
+    d = acceptance_folder(tmp_path)
+    table = {'exit_code': 2, 'stages': [
+        {'id': 'V001', 'check': 'manifest', 'gate': 'blocking', 'status': 'not_run',
+         'non_pass': ['not_run: build manifest: missing'], 'codes': [], 'open_codes': ['manifest_missing']} ]}
+    r = pc.zip_apply(ec, pc.zip_preview(ec, d), lambda _: table)
+    run = Path(r['plan']['run_folder'])
+    assert not (run / pc.MARK_OK).exists()
+    assert 'manifest_missing' in (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+
+
 def test_stale_preview_writes_nothing(tmp_path):
     d = acceptance_folder(tmp_path)
     p = pc.zip_preview(ec, d)
