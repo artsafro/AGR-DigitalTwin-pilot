@@ -65,13 +65,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "fontSize": 16,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "top",
    "containerId": null,
-   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -579,6 +579,10 @@
     {
      "type": "arrow",
      "id": "ef06b28c2269b1c7"
+    },
+    {
+     "type": "arrow",
+     "id": "e5996c5d29bf5355"
     }
    ],
    "updated": 1,
@@ -627,7 +631,7 @@
    "x": 955.0,
    "y": 934.0,
    "width": 470,
-   "height": 65.0,
+   "height": 35.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -649,10 +653,6 @@
     {
      "type": "text",
      "id": "ef7cc50781ab05b4"
-    },
-    {
-     "type": "arrow",
-     "id": "e5996c5d29bf5355"
     }
    ],
    "updated": 1,
@@ -665,7 +665,7 @@
    "x": 963.0,
    "y": 944.0,
    "width": 454,
-   "height": 45.0,
+   "height": 15.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -685,13 +685,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/package_vpm.py:50 — свой писатель ZIP\nстарого упаковщика ТЭЦ26 (заморожен) (#1393)",
+   "text": "Дубли вне владельца: 1",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ed012c0e59699081",
-   "originalText": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/package_vpm.py:50 — свой писатель ZIP\nстарого упаковщика ТЭЦ26 (заморожен) (#1393)",
+   "originalText": "Дубли вне владельца: 1",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -699,7 +699,7 @@
    "id": "e89f7e0e63e2fdf9",
    "type": "rectangle",
    "x": 955.0,
-   "y": 1059.0,
+   "y": 1029.0,
    "width": 470,
    "height": 125.0,
    "angle": 0,
@@ -737,7 +737,7 @@
    "id": "ef7093cdc86ed328",
    "type": "text",
    "x": 963.0,
-   "y": 1069.0,
+   "y": 1039.0,
    "width": 454,
    "height": 105.0,
    "angle": 0,
@@ -773,9 +773,9 @@
    "id": "ed319371ca8c4f40",
    "type": "rectangle",
    "x": 955.0,
-   "y": 1198.0,
+   "y": 1168.0,
    "width": 470,
-   "height": 65.0,
+   "height": 35.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -807,9 +807,9 @@
    "id": "e7ce9eed157c440c",
    "type": "text",
    "x": 963.0,
-   "y": 1208.0,
+   "y": 1178.0,
    "width": 454,
-   "height": 45.0,
+   "height": 15.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -829,13 +829,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/run_agr_checker.py:18 — копия запуска\nчекера КПП1 в ТЭЦ26 (#1393)",
+   "text": "Дубли вне владельца: 1",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ed319371ca8c4f40",
-   "originalText": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/run_agr_checker.py:18 — копия запуска\nчекера КПП1 в ТЭЦ26 (#1393)",
+   "originalText": "Дубли вне владельца: 1",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1501,9 +1501,9 @@
    "id": "e5996c5d29bf5355",
    "type": "arrow",
    "x": 1190.0,
-   "y": 999.0,
+   "y": 920.0,
    "width": 0.0,
-   "height": 60.0,
+   "height": 109.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1537,7 +1537,7 @@
     ],
     [
      0.0,
-     60.0
+     109.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1545,7 +1545,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "ed012c0e59699081",
+    "elementId": "e1648b9a5855f96c",
     "focus": 0,
     "gap": 4
    },
@@ -1559,7 +1559,7 @@
    "id": "e4774ed93774aa02",
    "type": "text",
    "x": 1130.0,
-   "y": 1020.0,
+   "y": 965.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,

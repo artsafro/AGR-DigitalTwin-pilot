@@ -30,3 +30,153 @@ def test_two_views_for_every_route():
         assert "Критерий завершения миграции" in files[table]
         assert "Причина различий" in files[table]
         assert "Живые обходы" in files[table]
+
+
+@pytest.mark.parametrize("name", list(route_map.route_events()))
+def test_all_arrows_bind_steps_or_artifacts_never_pink_lists(name):
+    events = route_map.load_routes(ROOT)[name]
+    maps = route_map.load_context_maps(ROOT)
+    cmap = maps[route_map.ROUTE_MAP_OF.get(name, "contexts")]
+    for board in (route_map.short_route_board(events, cmap, maps), route_map.contexts_board(None, cmap)):
+        by_id = {e["id"]: e for e in board.elements}
+        for arrow in (e for e in board.elements if e["type"] == "arrow"):
+            for key in ("startBinding", "endBinding"):
+                box = by_id[arrow[key]["elementId"]]
+                assert box["type"] == "rectangle"
+                assert box["backgroundColor"] != route_map.COLORS["hotspot"]
+        texts = "\n".join(e.get("text", "") for e in board.elements)
+        assert not re.search(r"\.py:[0-9]|\.py::", texts)
+
+
+@pytest.mark.parametrize("kind", ["empty", "partial", "unknown", "repeat", "reorder", "nan", "inf", "eight", "extra"])
+def test_malformed_short_view_fails_closed(kind):
+    events = route_map.load_routes(ROOT)["route"]
+    maps = route_map.load_context_maps(ROOT)
+    steps = events["scheme"]["steps"]
+    if kind == "empty":
+        events["scheme"] = {}
+    elif kind == "partial":
+        steps[0].pop("artifact_ru")
+    elif kind in ("unknown", "repeat", "reorder"):
+        steps[0]["stages"] = {"unknown": "unmapped", "repeat": "sources,sources", "reorder": "parts,sources,gate1"}[kind]
+    elif kind in ("nan", "inf"):
+        steps[0]["ru"] = float(kind)
+    elif kind == "extra":
+        steps[0]["unmapped"] = "Неизвестное поле"
+    else:
+        steps.extend(copy.deepcopy(steps[:3]))
+    with pytest.raises(route_map.SchemaError):
+        route_map.short_route_board(events, maps["contexts"], maps)
+
+
+def test_every_stage_drop_is_rejected_generated_probe():
+    events = route_map.load_routes(ROOT)
+    maps = route_map.load_context_maps(ROOT)
+    caught = total = 0
+    for name, ev in events.items():
+        for i, step in enumerate(ev["scheme"]["steps"]):
+            for stage in step["stages"].split(","):
+                bad = copy.deepcopy(ev)
+                bad["scheme"]["steps"][i]["stages"] = ",".join(s for s in step["stages"].split(",") if s != stage)
+                total += 1
+                with pytest.raises(route_map.SchemaError):
+                    route_map.short_route_board(bad, maps[route_map.ROUTE_MAP_OF.get(name, "contexts")], maps)
+                caught += 1
+    assert caught == total == 74
+
+
+def test_status_counts_use_existing_registry_and_deduplicate_repeated_map_rows():
+    maps = route_map.load_context_maps(ROOT)
+    ev = route_map.load_routes(ROOT)["package-route"]
+    # Synthetic rows: one live bypass, one history, wrapper and own-duty; repeat across maps counts once.
+    base = maps["package-contexts"]["contexts"][1]
+    base["duplicates"] = [dict(at=f"jobs/synthetic/{s}.py:1", issue="#1425", match="synthetic", ru="Причина",
+                               status=s, **({"step": "#1429"} if s == "live-bypass" else {}),
+                               **({"why": "Отдельная обязанность"} if s == "own-duty" else {}))
+                          for s in ("live-bypass", "historical", "wrapper", "own-duty")]
+    maps["repeat"] = copy.deepcopy(maps["package-contexts"])
+    text = route_map.owners_markdown(ev, maps["package-contexts"], maps)
+    assert "[1 — записи]" in text
+    assert text.count("[`jobs/synthetic/live-bypass.py:1`]") == 1
+    assert "issues/1429" in text
+    base["duplicates"][0]["status"] = "unsupported"
+    with pytest.raises(route_map.SchemaError, match="unsupported"):
+        route_map.owners_markdown(ev, maps["package-contexts"], maps)
+
+
+def _copy_arch(tmp_path):
+    import shutil
+    shutil.copytree(ROOT / "docs/architecture", tmp_path / "docs/architecture")
+    return tmp_path
+
+
+@pytest.mark.parametrize("kind", ["input", "output", "partial", "hardlink"])
+def test_aliases_and_foreign_partial_refused_before_any_write(tmp_path, monkeypatch, kind):
+    root = _copy_arch(tmp_path)
+    target = root / route_map.OUTPUTS["route"].with_suffix(".svg")
+    if kind == "partial":
+        target.with_name(target.name + ".partial").write_bytes(b"foreign")
+    elif kind == "hardlink":
+        target.unlink()
+        target.hardlink_to(root / route_map.EVENTS)
+    elif kind == "input":
+        # Rename the configured input onto the exact output path; portable without symlink privileges.
+        target.write_bytes((root / route_map.EVENTS).read_bytes())
+        monkeypatch.setattr(route_map, "EVENTS", route_map.OUTPUTS["route"].with_suffix(".svg"))
+    else:
+        monkeypatch.setitem(route_map.OUTPUTS, "vpm-route", route_map.OUTPUTS["route"])
+    before = {p: p.read_bytes() for p in (root / "docs/architecture").iterdir() if p.is_file()}
+    assert route_map.main(["--root", str(root)]) == 2
+    assert before == {p: p.read_bytes() for p in before}
+
+
+def test_input_change_during_render_is_refused(tmp_path, monkeypatch):
+    root = _copy_arch(tmp_path)
+    original = route_map.render_all
+    target = root / route_map.OUTPUTS["route"].with_suffix(".svg")
+    before = target.read_bytes()
+    def changing(path):
+        result = original(path)
+        with (root / route_map.EVENTS).open("a", encoding="utf-8") as fh:
+            fh.write("\n# source changed during run\n")
+        return result
+    monkeypatch.setattr(route_map, "render_all", changing)
+    assert route_map.main(["--root", str(root)]) == 2
+    assert target.read_bytes() == before
+
+
+def test_seven_groups_boundary_is_supported_and_revision_tracks_source():
+    events = route_map.load_routes(ROOT)["route"]
+    maps = route_map.load_context_maps(ROOT)
+    steps = events["scheme"]["steps"]
+    first = steps[0]
+    steps[:1] = [dict(first, stages=s) for s in first["stages"].split(",")]
+    assert len(steps) == 7
+    old = route_map.view_revision(events, maps)
+    board = route_map.short_route_board(events, maps["contexts"], maps)
+    assert old in route_map.owners_markdown(events, maps["contexts"], maps)
+    events["scheme"]["source_ru"] += " новая ревизия"
+    assert route_map.view_revision(events, maps) != old
+    assert board.elements
+
+
+@pytest.mark.parametrize("suffix", ["-scheme.svg", "-scheme.excalidraw", "-owners.md"])
+def test_new_view_stale_output_is_reported(tmp_path, capsys, suffix):
+    import shutil
+    root = _copy_arch(tmp_path)
+    shutil.copy2(ROOT / "docs/decisions.md", root / "docs/decisions.md")
+    stem = route_map.OUTPUTS["route"]
+    target = root / stem.with_name(stem.name + suffix)
+    target.write_bytes(b"synthetic stale output")
+    assert route_map.main(["--root", str(root), "--check"]) == 1
+    assert f"drift: {target.relative_to(root).as_posix()}" in capsys.readouterr().out
+
+
+def test_conflicting_duplicate_status_cannot_silently_win():
+    maps = route_map.load_context_maps(ROOT)
+    cmap = maps["contexts"]
+    maps["repeated"] = copy.deepcopy(cmap)
+    row = maps["repeated"]["shared_kernel"]["duplicates"][0]
+    row["status"] = "wrapper"
+    with pytest.raises(route_map.SchemaError, match="conflicting statuses"):
+        route_map.owners_markdown(route_map.load_routes(ROOT)["route"], cmap, maps)

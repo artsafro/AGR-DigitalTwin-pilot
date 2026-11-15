@@ -10,6 +10,29 @@
 # Checked by tests/test_route_maps_1393.py. Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут «Пакет и сдача» (НПМ + ВПМ): событийный штурм (#1361, Ватутино 2026-11-09, КПП1)"
 route: package
+scheme:
+  source_ru: "Сцена НПМ / ВПМ, ревизия и SHA-256 исходников; связь с FBX через существующий export_meta"
+  steps:
+    - stages: "export,meta"
+      ru: "Выгрузить FBX и записать export_meta"
+      artifact_ru: "FBX + карты; export_meta рядом с FBX, вне ZIP"
+      gate_ru: "Неизвестные факты — unknown, не выдуманный ноль"
+    - stages: "readback,geojson"
+      ru: "Прочитать FBX; для ВПМ подготовить GeoJSON"
+      artifact_ru: "Свежий readback; GeoJSON по эталону заказчика"
+      gate_ru: "MSK-77 — наша работа, FNO — СИНТЕЗ; нет данных — отказ"
+    - stages: "package"
+      ru: "Собрать ZIP общим package_core"
+      artifact_ru: "ZIP НПМ либо ВПМ и результат package check"
+      gate_ru: "Неполный пакет не становится готовым"
+    - stages: "validate,sintez,report"
+      ru: "Проверить те же файлы и составить отчёт"
+      artifact_ru: "V001–V017, xView, СИНТЕЗ; отчёт с путями и SHA-256"
+      gate_ru: "Отказ / not_run не равны pass; ручные шлюзы отдельно"
+    - stages: "accept,upload,customer"
+      ru: "Передать Артёму на приёмку и публикацию"
+      artifact_ru: "Архив или сцена Max QUAD; передача заказчику — Артём"
+      gate_ru: "Визуальная приёмка отдельно; УКЭП — заказчик"
 object: "VATUTINO-SITE (0000_Vatutino.zip, SM_Vatutino_Ground.zip), KPP1 (package-1361)"
 issue: "#1393"
 actors:

@@ -65,13 +65,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "fontSize": 16,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "top",
    "containerId": null,
-   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -103,6 +103,14 @@
     {
      "type": "text",
      "id": "e8ea9db6e5319b62"
+    },
+    {
+     "type": "arrow",
+     "id": "e8a66e1032e2f488"
+    },
+    {
+     "type": "arrow",
+     "id": "e302963783a00205"
     }
    ],
    "updated": 1,
@@ -151,7 +159,7 @@
    "x": 955.0,
    "y": 336.5,
    "width": 470,
-   "height": 650.0,
+   "height": 65.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -173,14 +181,6 @@
     {
      "type": "text",
      "id": "e8dcf0347e2d36f1"
-    },
-    {
-     "type": "arrow",
-     "id": "e8a66e1032e2f488"
-    },
-    {
-     "type": "arrow",
-     "id": "e302963783a00205"
     }
    ],
    "updated": 1,
@@ -193,7 +193,7 @@
    "x": 963.0,
    "y": 346.5,
    "width": 454,
-   "height": 630.0,
+   "height": 45.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -213,13 +213,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 55\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)\n• jobs/KPP1/benchmark-1318/account_readback.py: main\n• jobs/KPP1/benchmark-1318/prepare_master.py: main\n• jobs/KPP1/rerun-1230/build_blender.py: uv_finish\n• jobs/KPP1/scripts/export_npm.py: <module>\n• jobs/KPP1/scripts/readback_vpm.py: <module>\n• jobs/KPP1/scripts/vpm_uv.py: tile_offset\n• jobs/PSU275/scripts/export_npm.py: <module>\n• jobs/TEC26-OKS/scripts/compare_facades.py: main\n• jobs/TEC26-OKS/scripts/export_npm.py: <module>\n• jobs/TEC26-OKS/scripts/qa_packages.py: facade_joint_checks,\nfacade_joint_checks.vpm_tile_of, main\n• jobs/TEC26-OKS/scripts/vpm_uv.py: tile_offset\n• jobs/VATUTINO-SITE/flora_v007_blender.py: cmd_readback\n• jobs/elv-tc-vpm/scripts/clarify_render_v001.py: tile_of\n• jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py: <module>\n• jobs/elv-tc-vpm/scripts/readback_delivery_v001.py: <module>\n• jobs/elv-tc-vpm/scripts/readback_delivery_v003.py: <module>\n• jobs/elv-tc-vpm/scripts/readback_uv_fbx.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_full.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_pilot.py: <module>\n• jobs/skug26-k5-ac/scripts/uvverify.py: <module>\n• adapters/max/agr_tools/atlas_core.py: pack\n• adapters/max/agr_tools/npm_core.py: tile_of\n• adapters/max/agr_tools/udim_core.py: tile_origin\n• adapters/max/agr_tools/uvtile_core.py: tile_of_id, tile_origin\n• adapters/max/agr_tools/udimplug_core.py: tile_offset\n• adapters/max/agr_tools/udimview_core.py: face_tile\n• adapters/max/agr_tools/uvlayout_core.py: tile_origin,\nudim_of_cell\n• adapters/max/agr_tools/npm2vpm_core.py: tile_origin\n• src/dt_ai/geometry/ground_cake.py: uv_tile_report\n• tools/blender/ground_json_to_fbx.py: readback\n• tools/experiments/dreamsim_ac08.py: _tile\n• tools/flora/build_flora_star.py: _bpy_build, udim_offset\n• tools/methods/methods_metrics.py: _udim\n• tools/methods/windows/windows_variants.py: tile_offset\n• tools/source/measure_spec_blender.py: udim",
+   "text": "Дубли вне владельца: 55\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e7436c9fc6c53677",
-   "originalText": "Дубли вне владельца: 55\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)\n• jobs/KPP1/benchmark-1318/account_readback.py: main\n• jobs/KPP1/benchmark-1318/prepare_master.py: main\n• jobs/KPP1/rerun-1230/build_blender.py: uv_finish\n• jobs/KPP1/scripts/export_npm.py: <module>\n• jobs/KPP1/scripts/readback_vpm.py: <module>\n• jobs/KPP1/scripts/vpm_uv.py: tile_offset\n• jobs/PSU275/scripts/export_npm.py: <module>\n• jobs/TEC26-OKS/scripts/compare_facades.py: main\n• jobs/TEC26-OKS/scripts/export_npm.py: <module>\n• jobs/TEC26-OKS/scripts/qa_packages.py: facade_joint_checks,\nfacade_joint_checks.vpm_tile_of, main\n• jobs/TEC26-OKS/scripts/vpm_uv.py: tile_offset\n• jobs/VATUTINO-SITE/flora_v007_blender.py: cmd_readback\n• jobs/elv-tc-vpm/scripts/clarify_render_v001.py: tile_of\n• jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py: <module>\n• jobs/elv-tc-vpm/scripts/readback_delivery_v001.py: <module>\n• jobs/elv-tc-vpm/scripts/readback_delivery_v003.py: <module>\n• jobs/elv-tc-vpm/scripts/readback_uv_fbx.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_full.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py: <module>\n• jobs/elv-tc-vpm/scripts/uv_tex_pilot.py: <module>\n• jobs/skug26-k5-ac/scripts/uvverify.py: <module>\n• adapters/max/agr_tools/atlas_core.py: pack\n• adapters/max/agr_tools/npm_core.py: tile_of\n• adapters/max/agr_tools/udim_core.py: tile_origin\n• adapters/max/agr_tools/uvtile_core.py: tile_of_id, tile_origin\n• adapters/max/agr_tools/udimplug_core.py: tile_offset\n• adapters/max/agr_tools/udimview_core.py: face_tile\n• adapters/max/agr_tools/uvlayout_core.py: tile_origin,\nudim_of_cell\n• adapters/max/agr_tools/npm2vpm_core.py: tile_origin\n• src/dt_ai/geometry/ground_cake.py: uv_tile_report\n• tools/blender/ground_json_to_fbx.py: readback\n• tools/experiments/dreamsim_ac08.py: _tile\n• tools/flora/build_flora_star.py: _bpy_build, udim_offset\n• tools/methods/methods_metrics.py: _udim\n• tools/methods/windows/windows_variants.py: tile_offset\n• tools/source/measure_spec_blender.py: udim",
+   "originalText": "Дубли вне владельца: 55\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -227,7 +227,7 @@
    "id": "ed237514149addda",
    "type": "rectangle",
    "x": 40,
-   "y": 1046.5,
+   "y": 461.5,
    "width": 470,
    "height": 265.0,
    "angle": 0,
@@ -255,6 +255,10 @@
     {
      "type": "arrow",
      "id": "e4414b2c1871542b"
+    },
+    {
+     "type": "arrow",
+     "id": "ef95d128700adec0"
     }
    ],
    "updated": 1,
@@ -265,7 +269,7 @@
    "id": "ea9040dfc02df157",
    "type": "text",
    "x": 48,
-   "y": 1056.5,
+   "y": 471.5,
    "width": 454,
    "height": 245.0,
    "angle": 0,
@@ -301,9 +305,9 @@
    "id": "ebbc87b6742c8172",
    "type": "rectangle",
    "x": 40,
-   "y": 1325.5,
+   "y": 740.5,
    "width": 470,
-   "height": 110.0,
+   "height": 35.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -325,10 +329,6 @@
     {
      "type": "text",
      "id": "e0ca1096fb1a75ea"
-    },
-    {
-     "type": "arrow",
-     "id": "ef95d128700adec0"
     }
    ],
    "updated": 1,
@@ -339,9 +339,9 @@
    "id": "e0ca1096fb1a75ea",
    "type": "text",
    "x": 48,
-   "y": 1335.5,
+   "y": 750.5,
    "width": 454,
-   "height": 90.0,
+   "height": 15.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -361,13 +361,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 3\n• jobs/KPP1/scripts/seal.py:302 — свой шов и сварка Т-узлов вместо\ndt_ai.ops.seams.join_parts (#1359)\n• jobs/KPP1/scripts/seal.py:73 — свой поиск Т-узлов на швах (#1359)\n• jobs/KPP1/scripts/build_kpp1.py:194 — сборка корпуса КПП1 целиком\nв скрипте задания (стадии 1–6) (#1359)",
+   "text": "Дубли вне владельца: 3",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ebbc87b6742c8172",
-   "originalText": "Дубли вне владельца: 3\n• jobs/KPP1/scripts/seal.py:302 — свой шов и сварка Т-узлов вместо\ndt_ai.ops.seams.join_parts (#1359)\n• jobs/KPP1/scripts/seal.py:73 — свой поиск Т-узлов на швах (#1359)\n• jobs/KPP1/scripts/build_kpp1.py:194 — сборка корпуса КПП1 целиком\nв скрипте задания (стадии 1–6) (#1359)",
+   "originalText": "Дубли вне владельца: 3",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -375,7 +375,7 @@
    "id": "e3b32b4a8117835a",
    "type": "rectangle",
    "x": 650,
-   "y": 1046.5,
+   "y": 461.5,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -421,7 +421,7 @@
    "id": "e235e3fa5de9ad90",
    "type": "text",
    "x": 658,
-   "y": 1056.5,
+   "y": 471.5,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -457,9 +457,9 @@
    "id": "e99c9ff8d7aad5df",
    "type": "rectangle",
    "x": 650,
-   "y": 1273.0,
+   "y": 688.0,
    "width": 470,
-   "height": 185.0,
+   "height": 35.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -491,9 +491,9 @@
    "id": "e6464ee46504a376",
    "type": "text",
    "x": 658,
-   "y": 1283.0,
+   "y": 698.0,
    "width": 454,
-   "height": 165.0,
+   "height": 15.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -513,13 +513,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 5\n• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор\nатласа НПМ, по нему идёт agr vpm-to-npm (#1141)\n• jobs/KPP1/scripts/make_npm_atlas.py:28 — атлас НПМ КПП1 в задании\n(#1106)\n• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — копия атласа КПП1 в\nTEC26 (#1106)\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ; файл\nTEC26 отличается одной строкой (#1359)\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия\nvpm_uv.py КПП1 (#1359)",
+   "text": "Дубли вне владельца: 5",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e99c9ff8d7aad5df",
-   "originalText": "Дубли вне владельца: 5\n• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор\nатласа НПМ, по нему идёт agr vpm-to-npm (#1141)\n• jobs/KPP1/scripts/make_npm_atlas.py:28 — атлас НПМ КПП1 в задании\n(#1106)\n• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — копия атласа КПП1 в\nTEC26 (#1106)\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ; файл\nTEC26 отличается одной строкой (#1359)\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия\nvpm_uv.py КПП1 (#1359)",
+   "originalText": "Дубли вне владельца: 5",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -527,7 +527,7 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 1260,
-   "y": 1046.5,
+   "y": 461.5,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -569,7 +569,7 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 1268,
-   "y": 1056.5,
+   "y": 471.5,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -605,9 +605,9 @@
    "id": "ed012c0e59699081",
    "type": "rectangle",
    "x": 1260,
-   "y": 1343.0,
+   "y": 758.0,
    "width": 470,
-   "height": 395.0,
+   "height": 65.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -639,9 +639,9 @@
    "id": "ef7cc50781ab05b4",
    "type": "text",
    "x": 1268,
-   "y": 1353.0,
+   "y": 768.0,
    "width": 454,
-   "height": 375.0,
+   "height": 45.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -661,13 +661,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 23\nПравило проверки: свой писатель ZIP вместо общего _write_zip;\nохрана jobs/, tools/, src/ (#1377)\n• jobs/KPP1/rerun-1230/build_blender.py: main\n• jobs/KPP1/scripts/package_vpm.py: <module>\n• jobs/KPP1/delivered-1371/build_v008.py: build\n• jobs/KPP1/package-1278/build_package.py: repair_artifacts\n• jobs/KPP1/site-1255/place_package.py: <module>\n• jobs/PSU275/scripts/package_vpm.py: <module>\n• jobs/TEC26-OKS/scripts/package_vpm.py: <module>\n• jobs/VATUTINO-SITE/npm_code.py: rename_npm_zip\n• jobs/VATUTINO-SITE/run_delivery.py: main\n• jobs/elv-tc-vpm/scripts/package_vpm_v001.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v002.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v003.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v004.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v005.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v006.py: <module>\n• tools/assets/build_maf_template.py: repack\n• tools/max/build_agr_tools.py: _zip\n• tools/methods/ucx/run_benchmarks.py: package\n• tools/methods/windows/run_benchmarks.py: package\n• tools/research/checker_mutation.py: freeze\n• tools/sintez_parity.py: run_live\n• src/dt_ai/publish/bundle.py: package",
+   "text": "Дубли вне владельца: 23\nПравило проверки: свой писатель ZIP вместо общего _write_zip;\nохрана jobs/, tools/, src/ (#1377)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ed012c0e59699081",
-   "originalText": "Дубли вне владельца: 23\nПравило проверки: свой писатель ZIP вместо общего _write_zip;\nохрана jobs/, tools/, src/ (#1377)\n• jobs/KPP1/rerun-1230/build_blender.py: main\n• jobs/KPP1/scripts/package_vpm.py: <module>\n• jobs/KPP1/delivered-1371/build_v008.py: build\n• jobs/KPP1/package-1278/build_package.py: repair_artifacts\n• jobs/KPP1/site-1255/place_package.py: <module>\n• jobs/PSU275/scripts/package_vpm.py: <module>\n• jobs/TEC26-OKS/scripts/package_vpm.py: <module>\n• jobs/VATUTINO-SITE/npm_code.py: rename_npm_zip\n• jobs/VATUTINO-SITE/run_delivery.py: main\n• jobs/elv-tc-vpm/scripts/package_vpm_v001.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v002.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v003.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v004.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v005.py: <module>\n• jobs/elv-tc-vpm/scripts/package_vpm_v006.py: <module>\n• tools/assets/build_maf_template.py: repack\n• tools/max/build_agr_tools.py: _zip\n• tools/methods/ucx/run_benchmarks.py: package\n• tools/methods/windows/run_benchmarks.py: package\n• tools/research/checker_mutation.py: freeze\n• tools/sintez_parity.py: run_live\n• src/dt_ai/publish/bundle.py: package",
+   "originalText": "Дубли вне владельца: 23\nПравило проверки: свой писатель ZIP вместо общего _write_zip;\nохрана jobs/, tools/, src/ (#1377)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -675,7 +675,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 1870,
-   "y": 1046.5,
+   "y": 461.5,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -706,6 +706,10 @@
     },
     {
      "type": "arrow",
+     "id": "e63629d813723557"
+    },
+    {
+     "type": "arrow",
      "id": "e302963783a00205"
     }
    ],
@@ -717,7 +721,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 1878,
-   "y": 1056.5,
+   "y": 471.5,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -753,9 +757,9 @@
    "id": "e43fe4f37d52ebfe",
    "type": "rectangle",
    "x": 1870,
-   "y": 1255.5,
+   "y": 670.5,
    "width": 470,
-   "height": 185.0,
+   "height": 35.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -777,10 +781,6 @@
     {
      "type": "text",
      "id": "eb444d1905179d98"
-    },
-    {
-     "type": "arrow",
-     "id": "e63629d813723557"
     }
    ],
    "updated": 1,
@@ -791,9 +791,9 @@
    "id": "eb444d1905179d98",
    "type": "text",
    "x": 1878,
-   "y": 1265.5,
+   "y": 680.5,
    "width": 454,
-   "height": 165.0,
+   "height": 15.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -813,13 +813,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 5\n• jobs/KPP1/scripts/qa_master.py:37 — своя проверка мастера КПП1\n(#1359)\n• jobs/TEC26-OKS/scripts/qa_master.py:37 — копия qa_master.py КПП1\n(2 строки разницы) (#1359)\n• jobs/TEC26-OKS/scripts/qa_packages.py:35 — своя проверка пакетов\nTEC26 (#1359)\n• jobs/KPP1/scripts/run_agr_checker.py:47 — свой запуск чекера\nСИНТЕЗ (#1359)\n• jobs/TEC26-OKS/scripts/run_agr_checker.py:47 — копия запуска\nчекера КПП1 (#1359)",
+   "text": "Дубли вне владельца: 5",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e43fe4f37d52ebfe",
-   "originalText": "Дубли вне владельца: 5\n• jobs/KPP1/scripts/qa_master.py:37 — своя проверка мастера КПП1\n(#1359)\n• jobs/TEC26-OKS/scripts/qa_master.py:37 — копия qa_master.py КПП1\n(2 строки разницы) (#1359)\n• jobs/TEC26-OKS/scripts/qa_packages.py:35 — своя проверка пакетов\nTEC26 (#1359)\n• jobs/KPP1/scripts/run_agr_checker.py:47 — свой запуск чекера\nСИНТЕЗ (#1359)\n• jobs/TEC26-OKS/scripts/run_agr_checker.py:47 — копия запуска\nчекера КПП1 (#1359)",
+   "originalText": "Дубли вне владельца: 5",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -827,7 +827,7 @@
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
    "x": 955.0,
-   "y": 1798.0,
+   "y": 883.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -869,7 +869,7 @@
    "id": "ed4e9eac2280ec03",
    "type": "text",
    "x": 963.0,
-   "y": 1808.0,
+   "y": 893.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -905,9 +905,9 @@
    "id": "e7c3b463ea5ad90f",
    "type": "rectangle",
    "x": 955.0,
-   "y": 2024.5,
+   "y": 1109.5,
    "width": 470,
-   "height": 380.0,
+   "height": 80.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -939,9 +939,9 @@
    "id": "e32db9413dafe301",
    "type": "text",
    "x": 963.0,
-   "y": 2034.5,
+   "y": 1119.5,
    "width": 454,
-   "height": 360.0,
+   "height": 60.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -961,13 +961,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)\n• jobs/KPP1/benchmark-1318/run_benchmark.py: main\n• jobs/KPP1/quad-1372/run_checks.py: main\n• jobs/VATUTINO-SITE/run_delivery.py: main, main.dcc\n• jobs/VATUTINO-SITE/scene_checks.py: main\n• src/dt_ai/cli/shared_tools.py: command\n• tools/flora/build_flora_npm_light.py: execute\n• tools/flora/build_flora_star.py: _blender\n• tools/library/check_library.py: native_inspect\n• tools/library/maf_material_ids.py: main\n• tools/library/migrate_windows.py: main\n• tools/materials/bind_ground_textures.py: _run_blender\n• tools/methods/body/run_benchmarks.py: _blender\n• tools/methods/ground/build_variant.py: _blender\n• tools/methods/parametric_parts/mesh_recipe.py: _blender_fbx\n• tools/methods/run_variant.py: run_extra\n• tools/methods/ucx/run_benchmarks.py: main\n• tools/methods/windows/run_benchmarks.py: main\n• tools/research/checker_mutation.py: freeze\n• tools/research/fbx_reader_compare.py: _blender\n• tools/sintez_parity.py: run_live.run",
+   "text": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e7c3b463ea5ad90f",
-   "originalText": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)\n• jobs/KPP1/benchmark-1318/run_benchmark.py: main\n• jobs/KPP1/quad-1372/run_checks.py: main\n• jobs/VATUTINO-SITE/run_delivery.py: main, main.dcc\n• jobs/VATUTINO-SITE/scene_checks.py: main\n• src/dt_ai/cli/shared_tools.py: command\n• tools/flora/build_flora_npm_light.py: execute\n• tools/flora/build_flora_star.py: _blender\n• tools/library/check_library.py: native_inspect\n• tools/library/maf_material_ids.py: main\n• tools/library/migrate_windows.py: main\n• tools/materials/bind_ground_textures.py: _run_blender\n• tools/methods/body/run_benchmarks.py: _blender\n• tools/methods/ground/build_variant.py: _blender\n• tools/methods/parametric_parts/mesh_recipe.py: _blender_fbx\n• tools/methods/run_variant.py: run_extra\n• tools/methods/ucx/run_benchmarks.py: main\n• tools/methods/windows/run_benchmarks.py: main\n• tools/research/checker_mutation.py: freeze\n• tools/research/fbx_reader_compare.py: _blender\n• tools/sintez_parity.py: run_live.run",
+   "originalText": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -975,7 +975,7 @@
    "id": "e4414b2c1871542b",
    "type": "arrow",
    "x": 510,
-   "y": 1179.0,
+   "y": 594.0,
    "width": 140,
    "height": 26.25,
    "angle": 0,
@@ -1033,7 +1033,7 @@
    "id": "ec8c1eb7b1bf9505",
    "type": "text",
    "x": 520.0,
-   "y": 1147.88,
+   "y": 562.88,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1069,7 +1069,7 @@
    "id": "ef80d7ce7bfb6c50",
    "type": "arrow",
    "x": 1120,
-   "y": 1152.75,
+   "y": 567.75,
    "width": 140,
    "height": 35.0,
    "angle": 0,
@@ -1127,7 +1127,7 @@
    "id": "e647a70c1b18162d",
    "type": "text",
    "x": 1130.0,
-   "y": 1152.25,
+   "y": 567.25,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1163,7 +1163,7 @@
    "id": "e195ad748a2fcc73",
    "type": "arrow",
    "x": 1730,
-   "y": 1187.75,
+   "y": 602.75,
    "width": 140,
    "height": 43.75,
    "angle": 0,
@@ -1221,7 +1221,7 @@
    "id": "e5b126af16a90368",
    "type": "text",
    "x": 1740.0,
-   "y": 1156.88,
+   "y": 571.88,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1256,10 +1256,10 @@
   {
    "id": "ef95d128700adec0",
    "type": "arrow",
-   "x": 1190.0,
-   "y": 1798.0,
-   "width": 915.0,
-   "height": 362.5,
+   "x": 955.0,
+   "y": 989.25,
+   "width": 445.0,
+   "height": 395.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1292,8 +1292,8 @@
      0
     ],
     [
-     -915.0,
-     -362.5
+     -445.0,
+     -395.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1306,7 +1306,7 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "ebbc87b6742c8172",
+    "elementId": "ed237514149addda",
     "focus": 0,
     "gap": 4
    }
@@ -1315,7 +1315,7 @@
    "id": "e1713a01e405b29a",
    "type": "text",
    "x": 672.5,
-   "y": 1598.75,
+   "y": 773.62,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1351,9 +1351,9 @@
    "id": "e63629d813723557",
    "type": "arrow",
    "x": 1190.0,
-   "y": 1798.0,
+   "y": 883.0,
    "width": 915.0,
-   "height": 357.5,
+   "height": 226.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1387,7 +1387,7 @@
     ],
     [
      915.0,
-     -357.5
+     -226.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1400,7 +1400,7 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "e43fe4f37d52ebfe",
+    "elementId": "e7b912642e1534e2",
     "focus": 0,
     "gap": 4
    }
@@ -1409,7 +1409,7 @@
    "id": "e2956f09d14c6626",
    "type": "text",
    "x": 1587.5,
-   "y": 1601.25,
+   "y": 751.75,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1445,9 +1445,9 @@
    "id": "e8a66e1032e2f488",
    "type": "arrow",
    "x": 1190.0,
-   "y": 986.5,
+   "y": 322.5,
    "width": 305.0,
-   "height": 60.0,
+   "height": 139.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1481,7 +1481,7 @@
     ],
     [
      -305.0,
-     60.0
+     139.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1489,7 +1489,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "e7436c9fc6c53677",
+    "elementId": "e5fc34e422e7f3b2",
     "focus": 0,
     "gap": 4
    },
@@ -1503,7 +1503,7 @@
    "id": "e730527004bd695c",
    "type": "text",
    "x": 977.5,
-   "y": 1007.5,
+   "y": 383.0,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1539,9 +1539,9 @@
    "id": "e302963783a00205",
    "type": "arrow",
    "x": 1425.0,
-   "y": 661.5,
+   "y": 216.25,
    "width": 445.0,
-   "height": 482.5,
+   "height": 342.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1575,7 +1575,7 @@
     ],
     [
      445.0,
-     482.5
+     342.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1583,7 +1583,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "e7436c9fc6c53677",
+    "elementId": "e5fc34e422e7f3b2",
     "focus": 0,
     "gap": 4
    },
@@ -1597,7 +1597,7 @@
    "id": "e5ad51a41db3e644",
    "type": "text",
    "x": 1587.5,
-   "y": 893.75,
+   "y": 378.62,
    "width": 120,
    "height": 17.5,
    "angle": 0,
