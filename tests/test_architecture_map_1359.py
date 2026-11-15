@@ -96,7 +96,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 5
+    assert len(contexts["contexts"]) == 11  # #1441: missing owners, roof, VPM UV copy
 
 
 @pytest.mark.parametrize("command,ok", [
@@ -110,7 +110,10 @@ def test_command_exists(command, ok):
 
 
 def _loaded():
-    return mini_yaml.load(YAMLS[0]), mini_yaml.load(YAMLS[1])
+    events, contexts = mini_yaml.load(YAMLS[0]), mini_yaml.load(YAMLS[1])
+    # Mutation probes target the body contract, independent of added owner inventory rows (#1441).
+    contexts["contexts"].sort(key=lambda c: c["id"] != "body")
+    return events, contexts
 
 
 @pytest.mark.parametrize("mutate,needle", [

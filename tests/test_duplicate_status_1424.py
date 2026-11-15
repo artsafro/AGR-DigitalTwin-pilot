@@ -191,7 +191,7 @@ def test_cli_exit_1_on_a_new_live_bypass(monkeypatch, capsys):
     assert guard.main([]) == 1
     out = capsys.readouterr().out
     live = sum(1 for r in guard.rows_of(guard.load_maps(ROOT)) if r.status == "live-bypass")
-    assert out.count("STATUS NEW LIVE BYPASS") == live == 30   # #1397 removes 11 UDIM rows; #1379 removes 2 checker rows
+    assert out.count("STATUS NEW LIVE BYPASS") == live == 41   # #1441 roots plus merged #1397/#1379 migrations
 
 
 def test_finished_jobs_evidence_must_exist_and_match(tmp_path):
@@ -251,7 +251,8 @@ def _oracle(status, live, job, wrapper, baselined):
     ok = {"wrapper": wrapper,
           "historical": not live and job == "J",
           "live-bypass": live and not wrapper and baselined,
-          "own-duty": True}[status]
+          "own-duty": True,
+          "superseded": not live}[status]
     return ok
 
 
@@ -276,7 +277,7 @@ def test_probe_status_problems_equal_an_independent_oracle(tmp_path):
         assert got == _oracle(status, live, job, wrapper, base or status != "live-bypass"), (rel, status, live,
                                                                                             job, wrapper, base)
         passed += 1
-    assert passed == 64
+    assert passed == 80
 
 
 # ---------------------------------------------------------------- table

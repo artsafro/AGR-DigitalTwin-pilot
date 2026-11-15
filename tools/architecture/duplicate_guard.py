@@ -405,7 +405,7 @@ def scan_for(root, allowed, scope=None):
 
 
 # ---------------------------------------------------------------- status of every duplicates row (#1424)
-STATUSES = ("live-bypass", "wrapper", "historical", "own-duty")
+STATUSES = ("live-bypass", "wrapper", "historical", "own-duty", "superseded")
 STEP = re.compile(r"^(#[0-9]+|-)$")
 # the remaining compaction steps the live bypasses are ordered over (#1424 issue text; #1397 = step 1b, open)
 COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406", "#1407", "#1410")
@@ -423,6 +423,18 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "af2bc2e385"),
     ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
     ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
+    # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
+    ("contexts", "jobs/KPP1/scripts/vpm_uv.py::tile_offset", "ec9495a822"),
+    ("contexts", "jobs/TEC26-OKS/scripts/vpm_uv.py::tile_offset", "ec9495a822"),
+    ("contexts", "jobs/KPP1/scripts/build_kpp1.py:421", ""),
+    ("contexts", "jobs/KPP1/scripts/seal.py:302", ""),
+    ("contexts", "jobs/KPP1/scripts/seal.py:73", ""),
+    ("contexts", "jobs/TEC26-OKS/scripts/vpm_uv.py:155", ""),
+    ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
+    ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
+    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "54a2d44744"),
+    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "eb17152aa7"),
+    ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
@@ -444,7 +456,8 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
     ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
     ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
-    ("vpm-contexts", "jobs/KPP1/scripts/vpm_ucx.py:50", ""),
+    ("vpm-contexts", "jobs/TEC26-OKS/scripts/vpm_uv.py:155", ""),
+
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))
@@ -475,8 +488,8 @@ def rows_of(maps):
                 if status not in STATUSES:
                     raise ValueError(f"{where}: status {status!r} must be one of {', '.join(STATUSES)} (#1424)")
                 why = str(d.get("why") or "").strip()
-                if status == "own-duty" and not re.search(r"[А-Яа-яЁё]", why):
-                    raise ValueError(f"{where}: own-duty needs `why` in Russian: which other duty, why not a copy")
+                if status in ("own-duty", "superseded") and not re.search(r"[А-Яа-яЁё]", why):
+                    raise ValueError(f"{where}: {status} needs `why` in Russian: other duty or replacement draft")
                 step = d.get("step")
                 if status == "live-bypass" and (step is None or not STEP.match(str(step))):
                     raise ValueError(f"{where}: live-bypass needs `step` (#<compaction issue> or \"-\" = no card)")
@@ -510,6 +523,16 @@ def _owner_names(tree, owner):
             if any(isinstance(s, ast.Constant) and isinstance(s.value, str) and s.value.replace("\\", "/")
                    .endswith(f"{stem}.py") for s in ast.walk(node.value)):
                 names.update(t.id for t in node.targets if isinstance(t, ast.Name))
+    # Importlib loaders may return the owner module (#1441, geom_core()). Merely
+    # mentioning its path in a diagnostic helper must not turn that helper into a wrapper.
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            nodes = list(ast.walk(node))
+            if (any(isinstance(n, ast.Name) and n.id in names for n in nodes)
+                    and any(isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+                            and n.func.attr == "exec_module" for n in nodes)
+                    and any(isinstance(n, ast.Return) and isinstance(n.value, ast.Name) for n in nodes)):
+                names.add(node.name)
     return names
 
 
@@ -589,6 +612,8 @@ def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BA
         wrapper = calls_owner(root, r)
         if r.status == "wrapper" and not wrapper:
             problems.append(f"{where}: status wrapper, but it does not call its owner {r.owner}")
+        if r.status == "superseded" and chain:
+            problems.append(f"{where}: status superseded, but a live command/route uses it: {via}")
         if r.status == "historical":
             job = "/".join(r.rel.split("/")[:2])
             if chain:
@@ -644,6 +669,7 @@ def bypass_table(rows, steps=COMPACTION_STEPS):
     out = ["### Живые обходы по областям", "",
            f"Строк дублей во всех картах: {len(rows)}; живой обход {total['live-bypass']}, обёртка {total['wrapper']}, "
            f"исторические {total['historical']}, своя обязанность {total['own-duty']}; разных живых копий {len(live)}.",
+           f"Заменённые черновики (не сдача): {total['superseded']}.",
            "",
            "| Область | Живых обходов | Файлы | Шаг сжатия |", "|---|---|---|---|"]
     for key in sorted(by_ctx, key=lambda k: (-len(by_ctx[k]), k)):

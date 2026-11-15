@@ -9,7 +9,13 @@
 - `wrapper` — обёртка: функция строки зовёт владельца (импорт или `_sibling('<владелец>.py')`);
 - `historical` — исторический: ни одна живая цепочка его не достигает, и он лежит в задании из `finished_jobs`
   (`contexts.yaml`: задание с принятым или сданным результатом и файл-доказательство);
-- `own-duty` — своя обязанность, не копия; `why` говорит какая.
+- `own-duty` — своя обязанность, не копия; `why` говорит какая;
+- `superseded` — заменённый черновик (не сдача), с обязательным `why` и без живой цепочки (#1441).
+
+**Сверка #1441:** ЭЛВ не сдан (Артём, 15.11); v001–v005 — заменённые черновики, v006 — живой кандидат.
+#1104 остаётся parked. Построчные доказательства и исправления: [report-1441.md](report-1441.md).
+`entrypoints` в contexts.yaml добавляет пропущенные текущие команды shell и кандидатов: путь и текст
+файла-доказательства проверяются на каждом запуске. Это статическая достижимость, не исполнение DCC.
 
 Живые корни (`tools/architecture/call_chains.py`): команды `dt`, `agr`, `agr-mcp` из `pyproject.toml`; файлы MZP
 AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; каждый `.py`, который называет маршрут (владельцы
@@ -26,30 +32,36 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 123; живой обход 30, обёртка 4, исторические 80, своя обязанность 9; разных живых копий 30.
+Строк дублей во всех картах: 124; живой обход 41, обёртка 6, исторические 42, своя обязанность 23; разных живых копий 40.
+Заменённые черновики (не сдача): 12.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
 |---|---|---|---|
 | Связь с DCC (Blender / 3ds Max) | 16 | `src/dt_ai/cli/shared_tools.py`, `tools/flora/build_flora_npm_light.py`, `tools/flora/build_flora_star.py`, `tools/library/check_library.py`, `tools/library/migrate_windows.py`, `tools/materials/bind_ground_textures.py`, `tools/methods/body/run_benchmarks.py`, `tools/methods/ground/build_variant.py`, `tools/methods/parametric_parts/mesh_recipe.py`, `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py`, `tools/methods/windows/run_benchmarks.py`, `tools/research/checker_mutation.py`, `tools/research/fbx_reader_compare.py`, `tools/sintez_parity.py` | нет карточки |
-| Общее ядро: номер тайла UDIM | 11 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py` | нет карточки |
+| Общее ядро: номер тайла UDIM | 15 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py`, `jobs/KPP1/scripts/vpm_uv.py`, `jobs/TEC26-OKS/scripts/vpm_uv.py`, `jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py` | нет карточки |
+| Корпус и геометрия | 2 | `jobs/KPP1/scripts/seal.py` | #1381 |
+| Экспорт и пакет сдачи | 2 | `jobs/TEC26-OKS/scripts/package_vpm.py`, `jobs/elv-tc-vpm/scripts/package_vpm_v006.py` | #1377 |
 | UV и атлас | 1 | `tools/materials/npm_atlas_udim.py` | #1380 |
-| Коллизии UCX (только ВПМ) | 1 | `jobs/KPP1/scripts/vpm_ucx.py` | #1404 |
+| Копия раскладки UV ВПМ | 1 | `jobs/TEC26-OKS/scripts/vpm_uv.py` | нет карточки |
+| Кровля и плита | 1 | `jobs/KPP1/scripts/build_kpp1.py` | #1381 |
+| Пакеты НПМ / ВПМ и передача | 1 | `jobs/TEC26-OKS/scripts/package_vpm.py` | #1377 |
 | Экспорт и пакет сдачи | 1 | `jobs/VATUTINO-SITE/npm_code.py` | нет карточки |
 
 ### Порядок оставшихся шагов сжатия (по живым обходам)
 
 | № | Шаг | Живых обходов |
 |---|---|---|
-| 1 | нет карточки | 28 |
-| 2 | #1380 | 1 |
-| 3 | #1404 | 1 |
-| 4 | #1379 | 0 |
-| 5 | #1381 | 0 |
+| 1 | нет карточки | 33 |
+| 2 | #1381 | 3 |
+| 3 | #1377 | 3 |
+| 4 | #1380 | 1 |
+| 5 | #1379 | 0 |
 | 6 | #1397 | 0 |
-| 7 | #1405 | 0 |
-| 8 | #1406 | 0 |
-| 9 | #1407 | 0 |
-| 10 | #1410 | 0 |
+| 7 | #1404 | 0 |
+| 8 | #1405 | 0 |
+| 9 | #1406 | 0 |
+| 10 | #1407 | 0 |
+| 11 | #1410 | 0 |
 
 ### Рекомендуемый порядок сжатия
 
@@ -67,9 +79,12 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
    Source intake keeps its raw tile diagnostic as `own-duty` (arbitrary UVs, not a delivery UDIM).
 4. **#1379 (0)** — запуск чекера СИНТЕЗ объединён: маршруты НПМ / ВПМ / пакет идут через `agr checker` и общего владельца `tools/blender/sintez_checker.py`.
 5. **#1380 (1)** — `tools/materials/npm_atlas_udim.py`, путь А атласа НПМ (после #1141).
-6. **#1404 (1)** — UCX ВПМ через `jobs/KPP1/scripts/vpm_ucx.py`.
+6. **#1404 (0 относительно ucx10_core)** — построитель UCX и измеритель зазора имеют разные обязанности.
 7. **Без карточки (1)** — `jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip`: этап «загрузка» маршрута пакета пишет
    ZIP сам; закрыть вместе с командой загрузки (#1379 — ближайший шаг).
-8. **#1381, #1405, #1406, #1407, #1410 (0)** — живых обходов нет: копии корпуса КПП1 (#1381) исторические; свой запуск
-   Blender в `jobs/VATUTINO-SITE/place_site.py` (#1407) убран в #1378 (теперь `run_blender`); #1405, #1406, #1410 —
-   недостающие команды (красные блоки маршрутов), а не дубли; их порядок задаёт маршрут, не этот реестр.
+8. **#1381 (3)** — живая кровля KPP1 и две строки швов; `run_stage.sh` достигает `build_kpp1` и `seal`.
+9. **Владелец #1377 (3 строки)** — TEC26 ZIP (описательная и hash-pinned строки) и кандидат ELV v006:
+   будущая миграция на package_core; закрытый предыдущий шаг не доказывает перенос этих файлов.
+10. **#1405, #1406, #1407, #1410 (0)** — place_site уже вызывает run_blender; остальные — недостающие команды.
+11. **Без карточки: ещё 4 формулы UDIM и TEC26 pack_uv.** Текущие KPP1/TEC26 и кандидат ELV v008,
+    не сданные исторические копии. Числа таблицы — `(at, hash)`, не уникальные обязанности.
