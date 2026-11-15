@@ -26,6 +26,7 @@ def _load(path, name):
 cli = _load(ROOT / 'tools/derive/build_manifest.py', 'build_manifest_cli_1423')
 vp = _load(ROOT / 'tools/qa/validate_package.py', 'validate_package_1423')
 pc = _load(ROOT / 'adapters/max/agr_tools/package_core.py', 'package_core_1423')
+ec = _load(ROOT / 'adapters/max/agr_tools/edit_core.py', 'edit_core_1423')
 
 NPM = {'0000_Kpp_1_01.fbx': b'Kaydara FBX Binary  \x00 oks part 01', '0000_Kpp_1_Ground.fbx': b'Kaydara FBX Binary  \x00 ground'}
 
@@ -315,10 +316,30 @@ def _v001_manifest(report):
 
 def test_validate_package_reads_manifest_beside_zip(tmp_path):
     master, _, package, _ = good(tmp_path)
-    assert _v001_manifest(vp.validate(package, 'npm', vp.load_profiles())) == [('pass', None)]
+    assert _v001_manifest(vp.validate(package, 'npm', vp.load_profiles(), master=master)) == [('pass', None)]
     master.write_bytes(b'edited')
     rep = vp.validate(package, 'npm', vp.load_profiles(), master=master)
     assert ('fail', 'manifest_master_stale') in _v001_manifest(rep) and rep.exit_code == 1
+
+
+def test_valid_manifest_without_master_is_never_pass(tmp_path, capsys):
+    """r1 P1: no master given -> the stale check did not run -> V001 not_run manifest_master_unchecked, no pass;
+    via the core, validate_package.main and package_core.qa_package (Max qa.package passes no master)."""
+    master, _, package, _ = good(tmp_path)
+    assert [(s, c) for s, c, _ in findings(package)] == [('not_run', 'manifest_master_unchecked')]
+    assert vp.main([str(package), '--profile', 'npm', '--json']) != 0
+    rep = json.loads(capsys.readouterr().out)
+    (v001,) = [s for s in rep['stages'] if s['id'] == 'V001']
+    rows = [(f['status'], (f.get('data') or {}).get('code')) for f in v001['findings'] if f['name'] == 'build manifest']
+    assert rows == [('not_run', 'manifest_master_unchecked')] and v001['status'] != 'pass'
+    r = pc.qa_package(ec, package, pc.subprocess_runner, sys.executable, ROOT, profile='npm', scene=False)
+    (table,) = r['plan']['reports']
+    (st,) = [s for s in table['stages'] if s['id'] == 'V001']
+    assert st['status'] != 'pass' and any(x.startswith('not_run: build manifest:') and 'manifest_master_unchecked' in x
+                                          for x in st['non_pass'])
+    assert r['plan']['exit_code'] != 0
+    master.write_bytes(b'edited')  # with the master given the stale check still refuses
+    assert codes(findings(package, master)) == ['manifest_master_stale']
 
 
 def test_validate_package_cli_fresh_process_refuses_stale(tmp_path):
