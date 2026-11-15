@@ -318,6 +318,16 @@ def _git_subcommand_reason(sub, args):
             return "git reset --hard discards work"
         if _long(flags, "merge", 2):
             return "git reset --merge can discard work"
+        if _long(flags, "keep", 1):
+            return "git reset --keep moves HEAD and the branch"
+    # These creation forms can reset an existing branch. Do not inspect branch existence:
+    # global -C/--git-dir options and concurrent ref changes make that check unreliable.
+    if sub == "switch" and (any(re.match(r"-q*C", f) for f in flags)
+                            or _long(flags, "force-create", 7)):
+        return "git switch -C can reset an existing branch"
+    if sub == "checkout" and (any(re.match(r"-[ql]*B", f) for f in flags)
+                              or _long(flags, "reset", 3)):
+        return "git checkout -B can reset an existing branch"
     if sub == "clean":
         return "git clean deletes untracked files"
     if sub == "branch":
