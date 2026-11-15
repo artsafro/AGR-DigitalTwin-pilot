@@ -632,7 +632,6 @@ def test_deferred_full_suite_with_affected_on_head_passes(tmp_path, repo, evals,
 @pytest.mark.parametrize("value", [
     None,
     "- Full suite: deferred to merge batch (D297)",
-    "- Full suite: Deferred to the merge batch (D297)",
     "- Full suite: deferred to merge batch (rule 68)",
     "- **Full suite:** `deferred to merge batch (D297)`",
 ])
@@ -677,6 +676,8 @@ def test_affected_tests_on_old_sha_fails(tmp_path, repo, evals, capsys, at):
     "- Full suite: deferred to merge batch (D297); 0 passed",
     "- Full suite: deferred to CI (D297)",
     "- Full suite: deferred to merge batch (D297) <reason>",
+    "- Full suite: Deferred to the merge batch (D297)",  # review r1 P3: exact wording only
+    "- Full suite: deferred to the merge batch (D297)",
     "- Full suite:",
 ])
 def test_malformed_deferral_fails(tmp_path, repo, evals, capsys, value):
@@ -730,3 +731,51 @@ def test_template_evidence_follows_d297():
     assert "- Full suite: deferred to merge batch (D297)" in template
     assert "- Affected tests: <" in template
     assert "rule 49" not in template
+
+
+# Review r1 (PR #1401) P1: handing ANY tests to the reviewer fails, not only the full suite.
+@pytest.mark.parametrize("where, text", [
+    ("affected", "; the reviewer runs the remaining test files"),
+    ("prose", "The reviewer runs the affected tests.\n"),
+    ("prose", "Reviewer: please run the tests.\n"),
+    ("prose", "The tests are left to the reviewer.\n"),
+    ("prose", "The remaining tests are for the reviewer to run.\n"),
+    ("prose", "I leave the test files to the reviewer.\n"),
+    ("prose", "Reviewers should rerun all tests.\n"),
+    ("prose", "Tests delegated to the reviewer.\n"),
+    ("affected", " (reviewer runs pytest on the rest)"),
+])
+def test_tests_delegated_to_reviewer_fail(tmp_path, repo, evals, capsys, where, text):
+    _, shas = repo
+    parts = lines(shas, evals)
+    extra = ""
+    if where == "affected":
+        parts["affected"] += text
+    else:
+        extra = text
+    out = rejected(tmp_path, body(parts, extra), shas["head"], evals, capsys, "delegated to the reviewer")
+    assert "OK" not in out.out
+
+
+@pytest.mark.parametrize("text", [
+    "The reviewer does not run the tests.\n",
+    "The author never hands tests to the reviewer.\n",
+    "Reviewer did not run the tests; reviewer ran 34 tests to spot-check.\n",
+    "Added a regression test for the reviewer's P1.\n",
+    "Review r1: the GREEN run on test_x failed before the fix.\n",
+    "Do not leave the tests to the reviewer.\n",
+])
+def test_tests_reviewer_negation_controls_pass(tmp_path, repo, evals, capsys, text):
+    _, shas = repo
+    code, out = run(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_template_reviewer_sentences_pass(tmp_path, repo, evals, capsys):
+    """Every template line that mentions the reviewer (e.g. 'never hands tests to the reviewer') passes."""
+    _, shas = repo
+    template = (ROOT / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
+    prose = [line for line in template.splitlines() if "reviewer" in line.lower() and "<" not in line]
+    assert prose
+    code, out = run(tmp_path, body(lines(shas, evals), "\n".join(prose) + "\n"), shas["head"], evals, capsys)
+    assert code == 0, (prose, out.err)
