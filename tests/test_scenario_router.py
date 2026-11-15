@@ -198,6 +198,12 @@ def test_table_points_at_real_files():
 def test_card_links_and_decisions_exist(card):
     text = card.read_text(encoding="utf-8")
     for target in re.findall(r"\]\(([^)#]+)(?:#[^)]*)?\)", text):
+        if target.startswith(("https://", "http://")):
+            # External decision sources are not repository-relative files.
+            from urllib.parse import urlsplit
+
+            assert urlsplit(target).netloc, f"{card.name}: malformed external link {target}"
+            continue
         assert (card.parent / target).resolve().exists(), f"{card.name}: {target}"
     for path in re.findall(r"`((?:jobs|tools|src|library|docs|\.agents)/[^`*<> ]+)`", text):
         assert (ROOT / path).exists(), f"{card.name}: {path}"
