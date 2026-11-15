@@ -21,6 +21,35 @@ cfg = json.loads(Path(sys.argv[sys.argv.index('--') + 1]).read_text(encoding='ut
 request = cfg['request']
 out = Path(cfg['output_dir'])
 
+# Fixed Blender 5.1 Workbench policy, independent of either saved .blend.
+# Record even inactive controls so a future style/light change cannot inherit them.
+WORKBENCH_SHADING = {
+    'show_object_outline': False,
+    'object_outline_color': (0.0, 0.0, 0.0),
+    'show_xray': False,
+    'show_specular_highlight': True,
+    'studio_light': 'Default',
+    'studiolight_rotate_z': 0.0,
+    'xray_alpha': 0.5,
+    'show_backface_culling': False,
+    'use_dof': False,
+}
+WORKBENCH_DISPLAY = {
+    'render_aa': '8',
+    'light_direction': (1 / math.sqrt(3),) * 3,
+}
+
+
+def workbench_record(scene):
+    """Actual post-render readback, not a copy of the intended policy."""
+    values = {}
+    for owner, policy in ((scene.display.shading, WORKBENCH_SHADING),
+                          (scene.display, WORKBENCH_DISPLAY)):
+        for key in policy:
+            value = getattr(owner, key)
+            values[key] = value if isinstance(value, (str, bool, float)) else list(value)
+    return values
+
 
 def load(path):
     if path.lower().endswith('.blend'):
@@ -69,9 +98,18 @@ def setup(scene, fitted):
     render.pixel_aspect_x = render.pixel_aspect_y = 1.0
     render.film_transparent = False
     render.use_stamp = False
+    # use_stamp controls the visible overlay only. The individual toggles also
+    # write PNG metadata (source path, date, render time), breaking byte parity.
+    for prop in render.bl_rna.properties:
+        if prop.identifier.startswith('use_stamp_') and prop.type == 'BOOLEAN':
+            setattr(render, prop.identifier, False)
     render.image_settings.file_format = 'PNG'
     shading = scene.display.shading
+    # studio_light's enum depends on light: select STUDIO before its preset.
     shading.light = 'STUDIO'
+    for owner, policy in ((shading, WORKBENCH_SHADING), (scene.display, WORKBENCH_DISPLAY)):
+        for key, value in policy.items():
+            setattr(owner, key, value)
     shading.show_cavity = False
     shading.show_shadows = False
     shading.color_type = {'solid': 'SINGLE', 'wire': 'OBJECT', 'material': 'MATERIAL',
@@ -137,5 +175,6 @@ for role in ('before', 'after'):
     scene.render.filepath = str(out / f'{role}.png')
     bpy.ops.render.render(write_still=True)
     evidence[role] = {'camera': record(scene, camera), 'mesh_objects': mesh_count,
-                      'render': {'engine': scene.render.engine, 'style': request['style']}}
+                      'render': {'engine': scene.render.engine, 'style': request['style'],
+                                 'workbench': workbench_record(scene)}}
 (out / 'render-evidence.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')

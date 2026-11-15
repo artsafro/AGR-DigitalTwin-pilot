@@ -383,18 +383,9 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
     ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
-    ("contexts", "src/dt_ai/geometry/ground_cake.py::uv_tile_report", "331763c046"),
-    ("contexts", "tools/blender/ground_json_to_fbx.py::readback", "abdf135e7a"),
-    ("contexts", "tools/experiments/dreamsim_ac08.py::_tile", "971a042bbe"),
-    ("contexts", "tools/flora/build_flora_star.py::_bpy_build", "31ff54af03"),
-    ("contexts", "tools/flora/build_flora_star.py::_bpy_build", "85e04a9a85"),
-    ("contexts", "tools/flora/build_flora_star.py::udim_offset", "31ff54af03"),
-    ("contexts", "tools/flora/build_flora_star.py::udim_offset", "85e04a9a85"),
+
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
-    ("contexts", "tools/methods/methods_metrics.py::_udim", "ded8ff2561"),
-    ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "31ff54af03"),
-    ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "85e04a9a85"),
-    ("contexts", "tools/source/measure_spec_blender.py::udim", "ded8ff2561"),
+
     # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
     ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
     ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),

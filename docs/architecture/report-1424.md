@@ -26,12 +26,11 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 127; живой обход 41, обёртка 4, исторические 74, своя обязанность 8; разных живых копий 41.
+Строк дублей во всех картах: 117; живой обход 30, обёртка 4, исторические 74, своя обязанность 9; разных живых копий 30.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
 |---|---|---|---|
 | Связь с DCC (Blender / 3ds Max) | 16 | `src/dt_ai/cli/shared_tools.py`, `tools/flora/build_flora_npm_light.py`, `tools/flora/build_flora_star.py`, `tools/library/check_library.py`, `tools/library/migrate_windows.py`, `tools/materials/bind_ground_textures.py`, `tools/methods/body/run_benchmarks.py`, `tools/methods/ground/build_variant.py`, `tools/methods/parametric_parts/mesh_recipe.py`, `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py`, `tools/methods/windows/run_benchmarks.py`, `tools/research/checker_mutation.py`, `tools/research/fbx_reader_compare.py`, `tools/sintez_parity.py` | нет карточки |
-| Общее ядро: номер тайла UDIM | 11 | `src/dt_ai/geometry/ground_cake.py`, `tools/blender/ground_json_to_fbx.py`, `tools/experiments/dreamsim_ac08.py`, `tools/flora/build_flora_star.py`, `tools/methods/methods_metrics.py`, `tools/methods/windows/windows_variants.py`, `tools/source/measure_spec_blender.py` | #1397 |
 | Общее ядро: номер тайла UDIM | 11 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py` | нет карточки |
 | UV и атлас | 1 | `tools/materials/npm_atlas_udim.py` | #1380 |
 | Коллизии UCX (только ВПМ) | 1 | `jobs/KPP1/scripts/vpm_ucx.py` | #1404 |
@@ -42,11 +41,11 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 | № | Шаг | Живых обходов |
 |---|---|---|
 | 1 | нет карточки | 28 |
-| 2 | #1397 | 11 |
-| 3 | #1380 | 1 |
-| 4 | #1404 | 1 |
-| 5 | #1379 | 0 |
-| 6 | #1381 | 0 |
+| 2 | #1380 | 1 |
+| 3 | #1404 | 1 |
+| 4 | #1379 | 0 |
+| 5 | #1381 | 0 |
+| 6 | #1397 | 0 |
 | 7 | #1405 | 0 |
 | 8 | #1406 | 0 |
 | 9 | #1407 | 0 |
@@ -64,8 +63,8 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
    `udimplug_core`, `udimview_core`, `uvlayout_core`, `npm2vpm_core`, `atlas_core`) считают тайл сами, хотя рядом
    лежит `udimtile_core` (#1337). Ни один открытый шаг их не покрывает (#1376 закрыт, #1397 — только `tools/` и
    `src/`). Нужна карточка «Сжатие 1c».
-3. **#1397 (11)** — UDIM в живых маршрутах Ground (`ground_cake`), Флора (`build_flora_star`) и в инструментах
-   `tools/` (методы, эксперимент, замер исходника; для `measure_spec_blender` сначала решение: сырой тайл или отказ).
+3. **#1397 completed:** live Ground, Flora, methods and DreamSim UDIM helpers now call `udimtile_core`.
+   Source intake keeps its raw tile diagnostic as `own-duty` (arbitrary UVs, not a delivery UDIM).
 4. **#1379 (0)** — запуск чекера СИНТЕЗ объединён: маршруты НПМ / ВПМ / пакет идут через `agr checker` и общего владельца `tools/blender/sintez_checker.py`.
 5. **#1380 (1)** — `tools/materials/npm_atlas_udim.py`, путь А атласа НПМ (после #1141).
 6. **#1404 (1)** — UCX ВПМ через `jobs/KPP1/scripts/vpm_ucx.py`.
