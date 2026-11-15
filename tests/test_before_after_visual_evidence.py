@@ -292,6 +292,69 @@ def test_fresh_process_cli_help_and_refusal(tmp_path, inputs):
 
 # ---------------------------------------------------------------- real Blender (optional)
 
+PNG_STATE = {'use_world_space_lighting': False, 'dither_intensity': 1.0,
+             'color_mode': 'RGB', 'color_depth': '8', 'compression': 15}
+
+MAKE_PNG_STATE_SCENES = r'''
+import bpy, json, sys
+from pathlib import Path
+root, key = sys.argv[sys.argv.index('--') + 1:]
+mutations = {
+    'use_world_space_lighting': True, 'dither_intensity': 0.0,
+    'color_mode': 'BW', 'color_depth': '16', 'compression': 100,
+}
+for role in ('before', 'after'):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.mesh.primitive_cube_add()
+    scene = bpy.context.scene
+    scene.unit_settings.system = 'METRIC'
+    scene.unit_settings.scale_length = 1.0
+    # Isolate #1483 from stamp metadata owned by #1468/#1478.
+    for prop in scene.render.bl_rna.properties:
+        if prop.identifier.startswith('use_stamp'):
+            setattr(scene.render, prop.identifier, False)
+    scene.render.image_settings.color_mode = 'RGB'
+    scene.render.image_settings.color_depth = '8'
+    scene.render.image_settings.compression = 15
+    scene.render.dither_intensity = 1.0
+    scene.display.shading.use_world_space_lighting = False
+    if role == 'after':
+        changes = mutations if key == 'combined' else {key: mutations[key]}
+        for name, value in changes.items():
+            owner = (scene.display.shading if name == 'use_world_space_lighting'
+                     else scene.render if name == 'dither_intensity'
+                     else scene.render.image_settings)
+            setattr(owner, name, value)
+        if key == 'combined':
+            scene.display.shading.light = 'MATCAP'
+            scene.display.shading.show_cavity = True
+            scene.display.shading.show_shadows = True
+    bpy.ops.wm.save_as_mainfile(filepath=str(Path(root) / (role + '.blend')))
+'''
+
+
+@pytest.mark.skipif(os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('key', [*PNG_STATE, 'combined'])
+def test_real_blender_png_state_is_normalized(tmp_path, key):
+    """#1483: each saved setting and their combination must give byte-equal PNGs."""
+    from dt_ai.core.blender_runner import run_blender
+    module = load()
+    maker = tmp_path / 'make-png-state.py'
+    maker.write_text(MAKE_PNG_STATE_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'before.blend', tmp_path / 'after.blend'
+    run_blender(maker, [tmp_path, key], outputs=[a, b], log_path=tmp_path / 'maker.log')
+    hashes = [module.sha256(p) for p in (a, b)]
+    output = tmp_path / 'evidence'
+    assert module.main(argv(a, b, output, '--style', 'solid', '--resolution', '64x40')) == 0
+    assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes(), key
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    assert evidence['before']['render'] == evidence['after']['render']
+    for name, expected in PNG_STATE.items():
+        assert evidence['before']['render'][name] == expected, name
+    assert [module.sha256(p) for p in (a, b)] == hashes
+
+
 def blender():
     sys.path.insert(0, str(ROOT / 'src'))
     from dt_ai.core.blender_runner import blender_executable
