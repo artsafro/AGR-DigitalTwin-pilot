@@ -457,6 +457,10 @@ for index, path in enumerate(out[:2]):
             scene.view_settings.use_curve_mapping = True
             scene.view_settings.curve_mapping.curves[3].points[1].location = (1.0, 0.4)
             scene.view_settings.curve_mapping.update()
+        if out[2] in ('whitebalance', 'combined'):
+            scene.view_settings.use_white_balance = True
+            scene.view_settings.white_balance_temperature = 2500
+            scene.view_settings.white_balance_tint = -20
         if out[2] in ('gamma', 'combined'):
             scene.view_settings.gamma = 1.8
         if out[2] in ('look', 'combined'):
@@ -478,6 +482,7 @@ for index, path in enumerate(out[:2]):
                     reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
 @pytest.mark.parametrize('change,style,mode', [
     ('exposure', 'wire', 'fit'), ('exposure', 'solid', 'fit'), ('extent', 'wire', 'fit'),
+    ('whitebalance', 'solid', 'fit'), ('whitebalance', 'wire', 'fit'), ('whitebalance', 'solid', 'named'),
     ('curve', 'solid', 'fit'), ('curve', 'wire', 'fit'), ('curve', 'solid', 'named'),
     ('gamma', 'wire', 'fit'), ('look', 'wire', 'fit'), ('display', 'wire', 'fit'),
     ('world', 'material', 'fit'), ('background', 'texture', 'fit'),
@@ -510,7 +515,7 @@ def test_real_blender_normalizes_saved_render_state(tmp_path, change, style, mod
     if change not in ('extent', 'combined'):
         from PIL import Image
         assert Image.open(output / 'before.png').tobytes() == Image.open(output / 'after.png').tobytes()
-        if change == 'curve':
+        if change in ('curve', 'whitebalance'):
             assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes()
 
 
