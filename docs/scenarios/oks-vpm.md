@@ -74,6 +74,11 @@ for the UV, texel and UCX stages; `dt qa xview` [D152]; SINTEZ AGR Checker befor
 
 ## Known gaps (do not assume a tool exists)
 
-No shared NPM↔VPM derive command (T-DER-2); `_Light.fbx` content has no validator stage; decor embed [D199] and
-loop continuity [D200] are not checked automatically; the GeoJSON generator `export.geojson_write` is not
-delivery-ready until the customer examples are studied [D220].
+Before showing a BODY part (`standard`), run
+`uv run python tools/qa/body_layout.py MASTER.blend --profile VPM-OKS --part BODY_OBJECT --out NEW.json`.
+This invokes `twinqa.look.part_layout_report`: per-part wall diagonals, sliver strips,
+triangle fans (face ids/positions; report-only [D227]) **and** independent `quad_dominance` [D129].
+Thresholds are named orchestrator defaults, user may change; [definitions/evidence](../research/body-wall-layout-1446.md).
+Decor embed [D199] and T-junction continuity [D200] also exist in `src/twinqa/look.py`.
+No shared NPM↔VPM derive command (T-DER-2); `_Light.fbx` content has no validator stage;
+the GeoJSON generator `export.geojson_write` is not delivery-ready until the customer examples are studied [D220].
