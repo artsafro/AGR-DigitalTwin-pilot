@@ -293,7 +293,7 @@ def _guard_root(tmp_path, files, rows=""):
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text("contexts:\n  - id: x\n    duplicates:\n" + rows if rows else "contexts:\n  - id: x\n",
                    encoding="utf-8")
-    return ["--root", str(tmp_path), "--contexts", str(ctx)]
+    return ["--root", str(tmp_path), "--contexts", str(ctx), "--copies-only"]
 
 
 @pytest.mark.parametrize("code", UDIM_COPIES + ZIP_COPIES)
@@ -364,7 +364,7 @@ def test_guard_red_on_synthetic_copy_inside_the_real_repo_tree(tmp_path, capsys)
 
     for top in ("jobs", "adapters", "tools", "src"):
         shutil.copytree(ROOT / top, tmp_path / top, ignore=only_py)
-    args = ["--root", str(tmp_path), "--contexts", str(ROOT / route_map.CONTEXTS)]
+    args = ["--root", str(tmp_path), "--contexts", str(ROOT / route_map.CONTEXTS), "--copies-only"]
     assert guard.main(args) == 0
     (tmp_path / "jobs/KPP1/scripts/new_udim.py").write_text("t = 1001 + u + 10 * v\n", encoding="utf-8")
     assert guard.main(args) == 1

@@ -60,7 +60,7 @@ def _root(tmp_path, files, contexts="contexts:\n  - id: x\n"):
         p.write_text(text, encoding="utf-8")
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text(contexts, encoding="utf-8")
-    return ["--root", str(tmp_path), "--contexts", str(ctx)]
+    return ["--root", str(tmp_path), "--contexts", str(ctx), "--copies-only"]   # #1424: synthetic root, no maps
 
 
 def _row(at, ru=None, rule="blender-launch"):
@@ -106,7 +106,7 @@ def test_owner_file_is_not_its_own_copy():
 
 def test_every_blender_launch_row_names_its_reason_and_this_issue():
     rows = _launch_rows()
-    assert len(rows) == 25, [d["at"] for d in rows]   # 8 jobs/ + 16 tools/ + 1 src/ command lines, hash-pinned
+    assert len(rows) == 24, [d["at"] for d in rows]   # 7 jobs/ + 16 tools/ + 1 src/ (ORCH pilot calls the owner, #1424)
     assert all(str(d.get("ru", "")).strip() and d["issue"] == "#1378" for d in rows), rows
 
 
