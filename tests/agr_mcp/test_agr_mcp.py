@@ -1206,7 +1206,11 @@ def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch, r
     swapped = {"done": False, "count": 0}
 
     def swap():
-        if swapped["done"] or not path.exists():
+        if swapped["done"]:
+            return
+        try:
+            real_stat(path)  # Path.exists() would re-enter the patched os.stat on Python 3.13+.
+        except FileNotFoundError:
             return
         swapped["done"] = True
         assert json.loads(path.read_bytes())["card"] == "dead"
