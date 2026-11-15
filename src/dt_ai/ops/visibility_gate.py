@@ -8,6 +8,11 @@ Method (fixed):
 - Viewpoints, in this order: a dome around the checked parts, pedestrian rings (eye height above the ground), and
   close eyes on both sides of every pane at +/-`close.distance_m` along its normal (a checked face whose material
   matches `close.pane_materials`; a close eye only looks at faces within `close.radius_m`).
+- Eye containment: each context mesh is split into shells (faces joined through edges used exactly twice). An eye
+  inside a closed shell - all three fixed parity rays odd - is dropped and listed in `eyes.dropped` with the occluder
+  name (it would see only faces buried in that solid). An eye in the bounding box of an open shell, or with
+  disagreeing parity rays, is kept, listed in `eyes.undecided` by occluder name and fails the gate: no side is
+  picked silently.
 - Rays: eye -> fixed target samples on the face. A ray is blocked by the first face it hits before the target,
   front or back (no back-face culling). Only checked-part faces whose material matches `materials.transparent`
   (glass, grille, railing glass) let rays through; context meshes are opaque in every material.
@@ -27,7 +32,7 @@ Fail-closed: no checked parts, duplicate or clashing names, NaN / inf vertices, 
 does not match the faces, a material in neither `materials.transparent` nor `materials.opaque` (named), an unknown
 config key, an n outside 1..16 or another jitter mode raise ValueError. A degenerate (zero-area) checked face goes to
 `dropped` with its reason and fails the gate. `passed` = no hidden, no back-visible, no not_allowed open edge, nothing
-dropped. Out of scope: overlaps (`dt qa xview` stays the overlap gate).
+dropped, no undecided eye. Out of scope: overlaps (`dt qa xview` stays the overlap gate).
 Pattern: none | new-case: deterministic first-hit visibility gate (numpy BVH, fixed jitter, real context occluders).
 """
 import copy
@@ -478,6 +483,110 @@ def _open_edges(v: np.ndarray, faces, keep_face) -> tuple:
     return boundary, nonman
 
 
+def _shells(v: np.ndarray, faces, keep_face) -> list:
+    """Shells of a mesh: faces joined through edges used by exactly two faces (after the weld).
+
+    Returns [(face indices, open edge count)]; a shell is closed when each of its edges is used exactly twice by its
+    own faces. Overlapping solids merged in one mesh (coincident walls give edges used 4 times) split into shells."""
+    keys = np.round(v / WELD_M).astype(np.int64)
+    _, weld = np.unique(keys, axis=0, return_inverse=True)
+    weld = weld.reshape(-1)
+    use: dict = {}
+    for fi, f in enumerate(faces):
+        if not keep_face[fi]:
+            continue
+        for a, b in zip(f, f[1:] + f[:1]):
+            k = (min(weld[a], weld[b]), max(weld[a], weld[b]))
+            if k[0] != k[1]:
+                use.setdefault(k, []).append(fi)
+    root = list(range(len(faces)))
+
+    def find(x):
+        while root[x] != x:
+            root[x] = root[root[x]]
+            x = root[x]
+        return x
+
+    for k in sorted(use):
+        fs = use[k]
+        if len(fs) == 2:
+            ra, rb = find(fs[0]), find(fs[1])
+            if ra != rb:
+                root[max(ra, rb)] = min(ra, rb)
+    groups: dict = {}
+    for fi in range(len(faces)):
+        if keep_face[fi]:
+            groups.setdefault(find(fi), []).append(fi)
+    out = []
+    for r in sorted(groups):
+        fset = groups[r]
+        cnt: dict = {}
+        for fi in fset:
+            f = faces[fi]
+            for a, b in zip(f, f[1:] + f[:1]):
+                k = (min(weld[a], weld[b]), max(weld[a], weld[b]))
+                if k[0] != k[1]:
+                    cnt[k] = cnt.get(k, 0) + 1
+        out.append((fset, sum(1 for x in cnt.values() if x != 2)))
+    return out
+
+
+# fixed, generic (not axis-aligned) parity-ray directions: an eye is inside a closed shell when all three are odd
+_INSIDE_DIRS = np.array([[0.5773, 0.6123, 0.5401], [-0.7071, 0.3162, -0.6325], [0.2673, -0.8018, 0.5345]])
+_INSIDE_DIRS = _INSIDE_DIRS / np.linalg.norm(_INSIDE_DIRS, axis=1)[:, None]
+_RANK = {"outside": 0, "undecided": 1, "inside": 2}
+
+
+def eye_containment(points, context) -> list:
+    """Per eye: (status, occluder, reason); status 'inside' / 'undecided' / 'outside'.
+
+    Every context mesh (in name order) is split into shells (`_shells`). A closed shell whose bounding box holds the
+    eye casts three fixed parity rays (hits at one distance counted once): all odd -> inside, all even -> outside,
+    mixed -> undecided. An open shell whose bounding box holds the eye -> undecided: no side is picked. The strongest
+    status wins (inside > undecided > outside); ties keep the first occluder in name order."""
+    pts = np.asarray(points, dtype=np.float64).reshape(-1, 3)
+    out: list[tuple[str, str | None, str | None]] = [("outside", None, None)] * len(pts)
+
+    def put(i, st, name, why):
+        if _RANK[st] > _RANK[out[i][0]]:
+            out[i] = (st, name, why)
+
+    k = len(_INSIDE_DIRS)
+    for p in sorted(context, key=lambda q: q.name):
+        v = _validate(p, "context")
+        keep = [float(np.linalg.norm(_newell(v[list(f)]))) > DEGENERATE_M2 for f in p.faces]
+        for si, (fset, n_open) in enumerate(_shells(v, p.faces, keep)):
+            sv = v[sorted({i for fi in fset for i in p.faces[fi]})]
+            lo, hi = sv.min(0) - 1e-9, sv.max(0) + 1e-9
+            cand = [i for i in np.flatnonzero(np.all((pts > lo) & (pts < hi), axis=1)).tolist()
+                    if out[i][0] != "inside"]
+            if not cand:
+                continue
+            if n_open:
+                why = (f"eye in the bounding box of open shell {si} of context {p.name!r} ({n_open} open edges): "
+                       "inside / outside cannot be decided")
+                for i in cand:
+                    put(i, "undecided", p.name, why)
+                continue
+            bvh = BVH(np.concatenate([_fan(v[list(p.faces[fi])]) for fi in fset]))
+            o = np.repeat(pts[cand], k, axis=0)
+            d = np.tile(_INSIDE_DIRS, (len(cand), 1))
+            r, _tt, t = bvh.hits(o, d, np.full(len(o), 1e-9), np.full(len(o), np.inf),
+                                 lambda rr, tt, tv: np.ones(len(rr), bool), any_hit=False)
+            cnt = np.zeros(len(o), np.int64)
+            for ri, _tk in {(int(a), int(round(float(b) / 1e-7))) for a, b in zip(r.tolist(), t.tolist())}:
+                cnt[ri] += 1
+            odd = (cnt % 2 == 1).reshape(len(cand), k)
+            for j, i in enumerate(cand):
+                rays = cnt[j * k:(j + 1) * k].tolist()
+                if odd[j].all():
+                    put(i, "inside", p.name, f"inside closed shell {si} of context {p.name!r} (parity rays {rays})")
+                elif odd[j].any():
+                    put(i, "undecided", p.name,
+                        f"parity rays disagree in closed shell {si} of context {p.name!r} ({rays} crossings)")
+    return out
+
+
 def check(parts, context, config: dict | None = None) -> dict:
     """Visibility report of `parts` (checked meshes) among `context` (opaque occluders, not checked)."""
     c = resolve_config(config)
@@ -551,6 +660,18 @@ def check(parts, context, config: dict | None = None) -> dict:
         if _match(p.materials[fi], c["close"]["pane_materials"]) and F_area[g] >= c["close"]["min_pane_area_m2"]:
             panes.append((int(F_part[g]), p.name, fi, F_cen[g], F_n[g]))
     eyes = _eyes(c, slo, shi, ground_z, panes)
+    # an eye inside a closed opaque context solid sees only what is buried in it: dropped by name (review r2 P1-1);
+    # an eye whose side cannot be decided (open occluder) is kept, listed by name and fails the gate
+    eyes_dropped, eyes_undecided, kept = [], [], []
+    for e, (st, occ_name, why) in zip(eyes, eye_containment([e[1] for e in eyes], context)):
+        rec = {"id": e[0], "pos": _r(e[1]), "occluder": occ_name, "reason": why}
+        if st == "inside":
+            eyes_dropped.append(rec)
+            continue
+        if st == "undecided":
+            eyes_undecided.append(rec)
+        kept.append(e)
+    eyes = kept
 
     # samples of every checked, non-degenerate face
     chk = np.flatnonzero(F_checked & F_ok)
@@ -678,15 +799,16 @@ def check(parts, context, config: dict | None = None) -> dict:
                "back_visible": sum(len(r["back_visible"]) for r in reports),
                "open_edges": {k: sum(len(r["open_edges"][k]) for r in reports)
                               for k in [cl["name"] for cl in classes] + ["not_allowed"]},
-               "dropped": len(dropped)}
+               "dropped": len(dropped), "eyes_undecided": len(eyes_undecided)}
     passed = not summary["hidden"] and not summary["back_visible"] and not summary["open_edges"]["not_allowed"] \
-        and not dropped
+        and not dropped and not eyes_undecided
     return {"tool": "dt qa visibility", "version": VERSION, "issue": 1447, "passed": passed,
             "method": {**c, "samples": SAMPLES, "ground_z_used": round(ground_z, 6)},
             "eyes": {"dome": sum(e[0].startswith("dome:") for e in eyes),
                      "ring": sum(e[0].startswith("ring:") for e in eyes),
                      "close": sum(e[0].startswith("close:") for e in eyes),
-                     "list": [{"id": e[0], "pos": _r(e[1])} for e in eyes]},
+                     "list": [{"id": e[0], "pos": _r(e[1])} for e in eyes],
+                     "dropped": eyes_dropped, "undecided": eyes_undecided},
             "summary": summary, "parts": reports, "context": ctx, "dropped": dropped}
 
 
@@ -694,7 +816,8 @@ def summary_lines(rep: dict) -> list:
     s = rep["summary"]
     lines = [f"dt qa visibility: {'PASSED' if rep['passed'] else 'NOT PASSED'} - {s['hidden']} hidden, "
              f"{s['back_visible']} back-visible faces, open edges {s['open_edges']}, {s['dropped']} dropped; "
-             f"eyes dome {rep['eyes']['dome']} / ring {rep['eyes']['ring']} / close {rep['eyes']['close']}"]
+             f"eyes dome {rep['eyes']['dome']} / ring {rep['eyes']['ring']} / close {rep['eyes']['close']}, "
+             f"dropped {len(rep['eyes']['dropped'])} / undecided {len(rep['eyes']['undecided'])}"]
     for r in rep["parts"]:
         oe = {k: len(x) for k, x in r["open_edges"].items() if x}
         lines.append(f"  {r['part']}: {r['faces']} faces, {len(r['hidden'])} hidden, {len(r['back_visible'])} "

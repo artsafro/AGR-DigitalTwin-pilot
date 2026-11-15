@@ -165,8 +165,10 @@ def test_close_eye_inside_closed_context_dropped_buried_hidden_with_a_op12_e2(re
     assert buried["back_visible"] == [] and buried["visible_from"] == []
     dropped = rep["eyes"]["dropped"]
     assert len(dropped) == 1 and dropped[0]["occluder"] == "Tower_Real"
-    assert dropped[0]["pos"] == [-2.0, 0.0, 1.75] and "inside closed context" in dropped[0]["reason"]
-    assert rep["eyes"]["undecided"] == []
+    assert dropped[0]["pos"] == [-2.0, 0.0, 1.75] and "inside closed shell" in dropped[0]["reason"]
+    # the street-side eye stands in the bounding box of the open Corridor sheets: kept and named, never silent
+    assert [u["occluder"] for u in rep["eyes"]["undecided"]] == ["Corridor"]
+    assert rep["passed"] is False
     reveal = next(p for p in rep["parts"] if p["part"] == "BodyA_Reveal")
     assert reveal["hidden"] == [] and {v["eye"].split(":")[0] for v in reveal["visible_from"]} == {"close"}
     visible, hidden = _visible_faces(rep, POST.name)
@@ -180,10 +182,11 @@ def test_close_eye_in_open_context_reported_undecided_by_name():
     b = ctx[0]
     open_b = vg.VPart("Open_Block", b.vertices, b.faces[1:], b.materials[1:])     # B0 bottom removed
     rep = vg.check(parts, [open_b, ctx[1]], cfg())
-    und = rep["eyes"]["undecided"]
-    assert [u["occluder"] for u in und] == ["Open_Block"] and "open" in und[0]["reason"]
+    und = {u["pos"][0]: u for u in rep["eyes"]["undecided"]}
+    assert und[-2.0]["occluder"] == "Open_Block" and "open shell" in und[-2.0]["reason"]
+    assert und[2.0]["occluder"] == "Corridor"
     assert rep["eyes"]["dropped"] == []
-    assert rep["summary"]["eyes_undecided"] == 1 and rep["passed"] is False
+    assert rep["summary"]["eyes_undecided"] == 2 and rep["passed"] is False
 
 
 @pytest.mark.parametrize("seed", range(5))
@@ -194,6 +197,15 @@ def test_probe_inside_closed_box_matches_bounds(seed):
     pts = rng.uniform((-4, -5, -2), (6, 3, 7), (40, 3))
     got = vg.eye_containment(pts, [blk])
     exp = [bool(np.all((p > (-2, -3, 0)) & (p < (4, 1, 5)))) for p in pts]
+    assert [g[0] == "inside" for g in got] == exp
+    assert all(g[0] in ("inside", "outside") for g in got)
+    # two overlapping boxes merged in one mesh (union): inside iff inside either box
+    b2 = box("B2", (1, -1, 2), (7, 2.5, 6), "context")
+    union = vg.VPart("Union", np.concatenate([blk.vertices, b2.vertices]),
+                     blk.faces + tuple(tuple(i + 8 for i in f) for f in b2.faces), ("context",) * 12)
+    got = vg.eye_containment(pts, [union])
+    exp = [bool(np.all((p > (-2, -3, 0)) & (p < (4, 1, 5))) or np.all((p > (1, -1, 2)) & (p < (7, 2.5, 6))))
+           for p in pts]
     assert [g[0] == "inside" for g in got] == exp
     assert all(g[0] in ("inside", "outside") for g in got)
 
