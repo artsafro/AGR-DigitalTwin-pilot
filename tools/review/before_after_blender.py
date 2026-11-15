@@ -87,11 +87,13 @@ def setup(scene, fitted, thickness):
     scene.world = bpy.data.worlds.new('BeforeAfterWorld')
     scene.world.color = (0.05, 0.05, 0.05)
     scene.display_settings.display_device = 'sRGB'
+    scene.display_settings.emulation = 'AUTO'
     scene.view_settings.view_transform = 'Standard'
     scene.view_settings.look = 'None'
     scene.view_settings.exposure = 0.0
     scene.view_settings.gamma = 1.0
     scene.view_settings.use_curve_mapping = False
+    scene.view_settings.use_white_balance = False
     if request['mode'] == 'named':
         camera = scene.objects.get(request['name'])
         if camera is None or camera.type != 'CAMERA':
@@ -133,6 +135,8 @@ def render_record(scene, wires):
             'look': scene.view_settings.look, 'exposure': scene.view_settings.exposure,
             'gamma': scene.view_settings.gamma,
             'use_curve_mapping': scene.view_settings.use_curve_mapping,
+            'use_white_balance': scene.view_settings.use_white_balance,
+            'emulation': scene.display_settings.emulation,
             'display_device': scene.display_settings.display_device,
             'world_color': list(scene.world.color), 'world_use_nodes': scene.world.use_nodes,
             'background_type': shading.background_type,

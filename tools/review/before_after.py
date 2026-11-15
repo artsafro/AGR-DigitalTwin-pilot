@@ -42,6 +42,7 @@ CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'sensor_height', 'shift_
 CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution', 'pixel_aspect',
                *CAMERA_FLOATS}
 RENDER_KEYS = {'engine', 'style', 'view_transform', 'look', 'exposure', 'gamma', 'use_curve_mapping',
+               'use_white_balance', 'emulation',
                'display_device', 'world_color', 'world_use_nodes', 'background_type',
                'background_color', 'thickness'}
 TOLERANCE = 1e-6
@@ -104,13 +105,14 @@ def compare_render_state(before, after):
         if keys != RENDER_KEYS:
             raise ValueError(f'render keys missing {sorted(RENDER_KEYS - keys)} unknown {sorted(keys - RENDER_KEYS)}')
         for key, allowed in (('engine', {'BLENDER_WORKBENCH'}), ('style', STYLES),
+                             ('emulation', {'AUTO', 'OFF'}),
                              ('background_type', {'WORLD', 'VIEWPORT', 'THEME'})):
             if not isinstance(state[key], str) or state[key] not in allowed:
                 raise ValueError(f'render {key} unsupported: {state[key]!r}')
         for key in ('view_transform', 'look', 'display_device'):
             if not isinstance(state[key], str) or not state[key].strip():
                 raise ValueError(f'render {key} must be a nonempty string')
-        for key in ('world_use_nodes', 'use_curve_mapping'):
+        for key in ('world_use_nodes', 'use_curve_mapping', 'use_white_balance'):
             if not isinstance(state[key], bool):
                 raise ValueError(f'render {key} must be a boolean')
         for key in ('exposure', 'gamma'):
