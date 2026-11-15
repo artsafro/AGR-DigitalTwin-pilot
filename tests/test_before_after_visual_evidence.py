@@ -154,7 +154,7 @@ def write_png(path, colour):
     Image.new('RGB', (40, 25), colour).save(path)
 
 
-def fake_runner(after_camera=None, touch=None):
+def fake_runner(after_camera=None, touch=None, render_mutate=None):
     def run(script, args, *, executable=None, output_json=None, outputs=(), timeout=900, log_path=None):
         cfg = json.loads(Path(args[0]).read_text(encoding='utf-8'))
         out = Path(cfg['output_dir'])
@@ -165,9 +165,11 @@ def fake_runner(after_camera=None, touch=None):
         state = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire',
                  'color_management': 'FOLLOW_SCENE', 'use_sequencer': False,
                  'use_compositing': False, 'use_border': False, 'use_multiview': False,
-                 'image_views_format': 'INDIVIDUAL'}
+                 'image_views_format': 'INDIVIDUAL', **PNG_STATE}
         record = {'before': {'camera': CAM, 'render': dict(state)},
                   'after': {'camera': after_camera or CAM, 'render': dict(state)}}
+        if render_mutate:
+            render_mutate(record['after']['render'])
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
         return record
     return run
@@ -251,6 +253,26 @@ def test_output_pipeline_evidence_fails_closed(tmp_path, inputs, monkeypatch, ke
     original = snapshot(tmp_path)
     assert module.main(argv(*inputs, output)) == 2
     assert snapshot(tmp_path) == original
+
+
+@pytest.mark.parametrize('key,value', [
+    ('use_world_space_lighting', True), ('dither_intensity', 0.0),
+    ('color_mode', 'BW'), ('color_depth', '16'), ('compression', 100)])
+@pytest.mark.parametrize('missing', [False, True])
+def test_cli_refuses_changed_or_missing_png_state(tmp_path, inputs, monkeypatch, capsys, key, value, missing):
+    module = load()
+    def mutate(render):
+        if missing:
+            del render[key]
+        else:
+            render[key] = value
+    monkeypatch.setattr(module, 'run_blender', fake_runner(render_mutate=mutate))
+    output = tmp_path / 'ev' / 'out'
+    original = snapshot(tmp_path / 'in')
+    assert module.main(argv(*inputs, output)) == 2
+    assert key in capsys.readouterr().err
+    assert not output.exists() and not output.with_name('out.partial').exists()
+    assert snapshot(tmp_path / 'in') == original
 
 
 def test_cli_refuses_input_changed_during_run(tmp_path, inputs, monkeypatch):
@@ -341,6 +363,69 @@ def test_cli_refuses_changed_output_setting(tmp_path, inputs, monkeypatch, capsy
     assert module.main(argv(*inputs, output)) == 2
     assert key in capsys.readouterr().err
     assert not output.exists() and not output.with_name('changed.partial').exists()
+
+
+PNG_STATE = {'use_world_space_lighting': False, 'dither_intensity': 1.0,
+             'color_mode': 'RGB', 'color_depth': '8', 'compression': 15}
+
+MAKE_PNG_STATE_SCENES = r'''
+import bpy, json, sys
+from pathlib import Path
+root, key = sys.argv[sys.argv.index('--') + 1:]
+mutations = {
+    'use_world_space_lighting': True, 'dither_intensity': 0.0,
+    'color_mode': 'BW', 'color_depth': '16', 'compression': 100,
+}
+for role in ('before', 'after'):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.mesh.primitive_cube_add()
+    scene = bpy.context.scene
+    scene.unit_settings.system = 'METRIC'
+    scene.unit_settings.scale_length = 1.0
+    # Isolate #1483 from stamp metadata owned by #1468/#1478.
+    for prop in scene.render.bl_rna.properties:
+        if prop.identifier.startswith('use_stamp'):
+            setattr(scene.render, prop.identifier, False)
+    scene.render.image_settings.color_mode = 'RGB'
+    scene.render.image_settings.color_depth = '8'
+    scene.render.image_settings.compression = 15
+    scene.render.dither_intensity = 1.0
+    scene.display.shading.use_world_space_lighting = False
+    if role == 'after':
+        changes = mutations if key == 'combined' else {key: mutations[key]}
+        for name, value in changes.items():
+            owner = (scene.display.shading if name == 'use_world_space_lighting'
+                     else scene.render if name == 'dither_intensity'
+                     else scene.render.image_settings)
+            setattr(owner, name, value)
+        if key == 'combined':
+            scene.display.shading.light = 'MATCAP'
+            scene.display.shading.show_cavity = True
+            scene.display.shading.show_shadows = True
+    bpy.ops.wm.save_as_mainfile(filepath=str(Path(root) / (role + '.blend')))
+'''
+
+
+@pytest.mark.skipif(os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('key', [*PNG_STATE, 'combined'])
+def test_real_blender_png_state_is_normalized(tmp_path, key):
+    """#1483: each saved setting and their combination must give byte-equal PNGs."""
+    from dt_ai.core.blender_runner import run_blender
+    module = load()
+    maker = tmp_path / 'make-png-state.py'
+    maker.write_text(MAKE_PNG_STATE_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'before.blend', tmp_path / 'after.blend'
+    run_blender(maker, [tmp_path, key], outputs=[a, b], log_path=tmp_path / 'maker.log')
+    hashes = [module.sha256(p) for p in (a, b)]
+    output = tmp_path / 'evidence'
+    assert module.main(argv(a, b, output, '--style', 'solid', '--resolution', '64x40')) == 0
+    assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes(), key
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    assert evidence['before']['render'] == evidence['after']['render']
+    for name, expected in PNG_STATE.items():
+        assert evidence['before']['render'][name] == expected, name
+    assert [module.sha256(p) for p in (a, b)] == hashes
 
 
 def blender():

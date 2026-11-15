@@ -74,7 +74,10 @@ def test_checker_merge_keeps_build_manifest_and_tightens_status_ratchet():
                    for _, at, _ in guard.LIVE_BYPASS_BASELINE)
     retained = [r for r in rows if r.rule in ("sintez-checker", "master-qa")]
     assert len(retained) == 2
-    assert all(r.status == "historical" for r in retained)
+    assert {r.rel: r.status for r in retained} == {
+        "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py": "own-duty",  # #1441: ELV is not delivered
+        "jobs/PSU275/scripts/qa_master_psu275.py": "historical",
+    }
 
 
 def test_new_rules_guard_jobs_tools_src_and_need_a_reason():
