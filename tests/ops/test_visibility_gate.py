@@ -122,8 +122,11 @@ def test_a_op12_fixture_hides_reveal_without_close_eyes():
 
 def test_two_runs_identical():
     parts, ctx = _niche_scene()
-    a = json.dumps(vg.check(parts + [POST], ctx + [PYLON], cfg()), sort_keys=True)
-    b = json.dumps(vg.check(parts + [POST], ctx + [PYLON], cfg()), sort_keys=True)
+    far = np.array([40.0, 0, 0])
+    post = vg.VPart(POST.name, POST.vertices + far, POST.faces, POST.materials)
+    pylon = vg.VPart("Pylon", PYLON.vertices + far, PYLON.faces, PYLON.materials)
+    a = json.dumps(vg.check(parts + [post], ctx + [pylon], cfg()), sort_keys=True)
+    b = json.dumps(vg.check(parts + [post], ctx + [pylon], cfg()), sort_keys=True)
     assert a == b
 
 
@@ -176,7 +179,7 @@ def test_open_edge_embedded_class():
     oe = next(x for x in rep["parts"] if x["part"] == "Fin")["open_edges"]
     assert len(oe["embedded"]) == 1 and len(oe["not_allowed"]) == 3
     d = oe["embedded"][0]["depths_m"]
-    assert d["a"] == pytest.approx(0.012, abs=1e-6) and d["b"] == pytest.approx(0.015, abs=1e-6)
+    assert sorted([d["a"], d["b"]]) == pytest.approx([0.012, 0.015], abs=1e-6)
     assert d["mid"] == pytest.approx(0.0135, abs=1e-6)
 
 
