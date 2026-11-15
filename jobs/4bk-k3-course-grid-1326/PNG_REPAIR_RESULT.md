@@ -147,6 +147,6 @@ answer, finish the in-scope mask semantics/remaining geometry repairs and all-ma
 readback. Correct DirectX-green display conversion is needed in Blender preview
 (the v045 comparison adds it in memory; the saved scene still has the earlier
 preview connection). Preserve artifact versions; use v049+ for new production.
-Then final picture/metrics, merge current main (no rebase), recheck D302/D296,
+Then final picture/metrics, merge current main (no rebase), recheck D309/D296,
 full suite **once through suite_slot.py**, eval receipt and path/invariant hostile
 probes, push, one PR, and dt-reviewer. No global delivery QA pass is implied.

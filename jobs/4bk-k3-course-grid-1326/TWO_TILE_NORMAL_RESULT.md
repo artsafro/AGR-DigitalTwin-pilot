@@ -1,17 +1,19 @@
 # Actual two-tile source-relief candidate (#1326)
 
+**Historical v071–100 snapshot.** Artem confirmed v096's Normal/joint/course visual direction on 2026-11-15 10:12 [D310]. Do not repeat that target question. Continue at [NUMERICAL_REPAIR_RESULT.md](NUMERICAL_REPAIR_RESULT.md) for the repaired geometry and NEW thin-colour-core images. Immutable v071–165 files retain earlier D302/D306 spellings; only current tracked citations were renumbered after #1419/#1418 collisions.
+
 **NOT passed. Technical QA is RED. No replication, delivery acceptance, PR or code review.**
 
 ## Answered policies and scope
 
 Artem's 2026-11-15 08:10 «да, принимаю» authorizes **two sequential UDIM tiles**
 for this stylobate-brick pilot [D304]. It supersedes only the initial one-tile
-budget [D302]. Original joint relief is required [D295]; minimal outer-bevel
+budget [D309]. Original joint relief is required [D295]; minimal outer-bevel
 support cuts on a new copy remain authorized [D303]. The four original stair
 faces are only the specifically accepted source baseline [D296], not a waiver
 of new contacts or other source pairs. Do not ask any of these questions again.
 
-Canonical registry spellings are now D302/D303/D304. Immutable v071–100 evidence,
+Canonical registry spellings are now D309/D303/D304. Immutable v071–100 evidence,
 materials and filenames retain D293/D297/D301 where they used the earlier
 spellings. The D301 reservation race was resolved from board timestamps:
 #1315 08:19:14, this card 08:19:16; this card renumbered itself. Earlier D293/D297

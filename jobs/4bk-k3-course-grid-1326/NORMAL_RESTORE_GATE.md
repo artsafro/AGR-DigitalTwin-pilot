@@ -123,7 +123,7 @@ old spelling. The baseline content and source geometry did not change.
   `passed=true`. This helper has no file writes or alias/publication promises.
 - The recovered D295 row initially preceded D292 and failed
   `tests/test_decisions.py::test_log_format`; repaired by moving **our own row**
-  after the pilot-contract entry (now D302), not weakening the increasing-ID test or copying another card's IDs.
+  after the pilot-contract entry (now D309), not weakening the increasing-ID test or copying another card's IDs.
 - Affected suite: `uv run pytest -q tests/test_course_grid*.py tests/test_decisions.py
   tests/max_tools/test_agr_tools_vpm_layout.py --basetemp=C:/x/t_d517d7c6-affected-normal-v049b
   -p no:cacheprovider` → **249 passed / 1 deselected / 0 failed**, 16.24 s.

@@ -9,7 +9,7 @@
   "tiles": [1001, 1002],
   "scope": "4BK stylobate brick pilot, source-affine proposal placing 751/751 groups",
   "preserve": ["original Normal relief", "10 mm colour seam", "previous courses", "frozen density", "surface", "protected source finish IDs"],
-  "supersedes_only": "the original one-tile budget in D302",
+  "supersedes_only": "the original one-tile budget in D309",
   "not_authorized": ["third tile", "broader plain-brick cuts", "density fallback", "source overwrite", "technical gate waiver", "replication before visual verdict"],
   "historical_artifact_spelling": "D301 in immutable v071-v100 evidence; canonical row renumbered after the two-second reservation race"
 }

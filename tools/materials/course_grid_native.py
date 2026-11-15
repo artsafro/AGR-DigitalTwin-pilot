@@ -296,6 +296,35 @@ def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_fa
                 unused_vertices=sorted(set(range(len(vertices)))-{i for f in out for i in f}))
 
 
+def remove_native_backtracks(points):
+    """Report and remove only sub-nanometre, sub-picometre-area retraced spurs.
+
+    Keep forward collinear conforming nodes. No vertex motion, surface-notch
+    simplification or implicit source drop. Return original corner indices so
+    callers retain XYZ/UV/material lineage and report each omitted excursion.
+    """
+    if (not isinstance(points, list) or len(points) < 3 or any(
+            not isinstance(p, list) or len(p) != 2 or any(isinstance(v, bool)
+                or not isinstance(v, (int, float)) or not math.isfinite(v) for v in p)
+            for p in points)):
+        raise ValueError('invalid native backtrack polygon')
+    indices = list(range(len(points))); removed = []; area_change = 0.
+    while len(indices) > 3:
+        changed = False
+        for j, i in enumerate(indices):
+            a, p, b = points[indices[j-1]], points[i], points[indices[(j+1)%len(indices)]]
+            edge = [b[k]-a[k] for k in (0,1)]; size = sum(v*v for v in edge)
+            if not size: continue
+            t = sum((p[k]-a[k])*edge[k] for k in (0,1))/size
+            cross = abs(edge[0]*(p[1]-a[1])-edge[1]*(p[0]-a[0]))
+            if (0 <= t <= 1 or cross/math.sqrt(size) > 1e-9
+                    or area_change+cross/2 > 1e-12):
+                continue
+            indices.pop(j); removed.append(i); area_change += cross/2; changed = True; break
+        if not changed: break
+    return dict(indices=indices, removed=removed, signed_area_change_m2=area_change)
+
+
 def triangulate_conforming_polygon(points, *, triangle_allowed=None):
     """Maximize the worst aspect quality while retaining EVERY boundary node.
 
@@ -435,6 +464,57 @@ def extend_support_to_boundary(support, face, *, maximum_m):
     return result
 
 
+def simplify_support_outward(support, face, *, maximum_m):
+    """Remove only bounded reentrant raster notches, retaining all old support.
+
+    No mesh weld or movement of original source geometry. Each proposed corner
+    removal must add only area inside the face and the ORIGINAL support's
+    envelope. Large concavities and unrepresentable candidates remain intact.
+    Callers must retain patch identity and rerun native/all-map certification.
+    """
+    from shapely.geometry import Polygon
+    from shapely.geometry.polygon import orient
+    from shapely.ops import unary_union
+    if (isinstance(maximum_m, bool) or not isinstance(maximum_m, (int, float))
+            or not math.isfinite(maximum_m) or not 0 < maximum_m <= .0021):
+        raise ValueError('invalid maximum_m')
+    if (not isinstance(face, Polygon) or face.is_empty or not face.is_valid
+            or support.geom_type not in ('Polygon', 'MultiPolygon')
+            or not support.is_valid or support.difference(face).area > 1e-12):
+        raise ValueError('invalid source face/support')
+    if support.is_empty: return support
+    components = [support] if support.geom_type == 'Polygon' else list(support.geoms)
+    result = []
+    for component in components:
+        if component.interiors:
+            result.append(component); continue
+        original = component
+        envelope = original.buffer(maximum_m)
+        current = orient(component, sign=1)
+        while True:
+            points = list(current.exterior.coords[:-1]); choice = None
+            for i, point in enumerate(points):
+                prev, nxt = points[i-1], points[(i+1)%len(points)]
+                turn = ((point[0]-prev[0])*(nxt[1]-point[1])
+                        -(point[1]-prev[1])*(nxt[0]-point[0]))
+                if turn >= 0 or len(points) <= 3: continue
+                candidate = Polygon(points[:i]+points[i+1:])
+                if (not candidate.is_valid or current.difference(candidate).area > 1e-12
+                        or candidate.difference(face).area > 1e-12
+                        or candidate.difference(envelope).area > 1e-12):
+                    continue
+                score = candidate.area-current.area
+                if choice is None or score < choice[0]: choice = score, candidate
+            if choice is None: break
+            current = choice[1]
+        result.append(current)
+    merged = unary_union(result)
+    if (not merged.is_valid or support.difference(merged).area > 1e-12
+            or merged.difference(support.buffer(maximum_m)).area > 1e-12):
+        raise ValueError('outward cleanup exceeds support/envelope')
+    return merged
+
+
 def joint_cross_section(face, expected_zones, observed_zones, origin, inward):
     """Measure complete interval sets against independent face-clipped design.
 
@@ -486,6 +566,52 @@ def joint_cross_section(face, expected_zones, observed_zones, origin, inward):
                 max_centre_error_mm=max(errors,default=None),max_endpoint_error_mm=max(endpoint_errors,default=None),
                 nominal_centre_outside_face=not domain.covers(Point([origin[k]+.005*normal[k] for k in (0,1)])),
                 missing_intervals=missing,false_intervals=false)
+
+
+def raster_cell_intersections(mask, centres_px, pixel_axes_px):
+    """Conservative positive-area intersection of affine pixels with source cells.
+
+    mask[y,x] names [x,x+1] x [y,y+1] in the caller's explicit raster frame.
+    The two rows of pixel_axes_px are complete target-pixel edge vectors in
+    that same frame. Use four separating axes, not point samples/bilinear
+    thresholds; exact touching does not paint a neighbour. At most four source
+    pixels per edge are supported (no implicit scale reduction or wrapping).
+    This preserves a source mask, not a 10mm design-width/colour acceptance.
+    """
+    import numpy as np
+    if (not isinstance(mask, np.ndarray) or mask.dtype != np.bool_
+            or mask.ndim != 2 or not mask.size):
+        raise ValueError('invalid source mask')
+    centres = np.asarray(centres_px, dtype=float)
+    axes = np.asarray(pixel_axes_px, dtype=float)
+    if (centres.ndim != 2 or centres.shape[1:] != (2,) or not len(centres)
+            or not np.isfinite(centres).all() or axes.shape != (2, 2)
+            or not np.isfinite(axes).all() or abs(np.linalg.det(axes)) <= 1e-12
+            or max(np.linalg.norm(axes, axis=1)) > 4):
+        raise ValueError('invalid/unbounded raster cell frame')
+    height, width = mask.shape
+    if (centres.min() < -4 or (centres > [width+4, height+4]).any()):
+        raise ValueError('raster cell centres outside supported source envelope')
+    normals = np.array([[1.,0.], [0.,1.], [-axes[0,1], axes[0,0]],
+                        [-axes[1,1], axes[1,0]]])
+    limits = (np.abs(axes @ normals.T).sum(axis=0)
+              + np.abs(normals).sum(axis=1)) / 2
+    extent = np.abs(axes).sum(axis=0) / 2
+    radius = np.ceil(extent + .5).astype(int)
+    base = np.floor(centres).astype(int)
+    covered = np.zeros(len(centres), dtype=bool)
+    for dy in range(-int(radius[1]), int(radius[1])+1):
+        for dx in range(-int(radius[0]), int(radius[0])+1):
+            pixels = base + [dx, dy]
+            valid = ((pixels >= 0).all(axis=1)
+                     & (pixels < [width, height]).all(axis=1) & ~covered)
+            ids = np.flatnonzero(valid)
+            if not len(ids): continue
+            ids = ids[mask[pixels[ids,1], pixels[ids,0]]]
+            delta = pixels[ids] + .5 - centres[ids]
+            inside = (np.abs(delta @ normals.T) < limits).all(axis=1)
+            covered[ids[inside]] = True
+    return covered
 
 
 def source_joint_footprint(image, source_uv, chart_m):

@@ -2,7 +2,7 @@
 
 **Historical v050–070 snapshot. Budget question answered 2026-11-15 [D304]: two sequential tiles allowed.**
 Continue at [TWO_TILE_NORMAL_RESULT.md](TWO_TILE_NORMAL_RESULT.md); do not ask the budget or bevel-cut question again.
-Current canonical citations are D302/D303/D304; immutable earlier evidence retains D293/D297/D301 spellings.
+Current canonical citations are D309/D303/D304; immutable earlier evidence retains D293/D297/D301 spellings.
 
 The following numbers and NOT-applied statements describe the earlier snapshot, not the current candidate.
 
@@ -129,7 +129,7 @@ baking, versioned native construction and all remaining QA.
 **Question for Artem:** authorize that two-tile budget, or keep one tile strictly
 and continue a different appearance-reuse/cut strategy? The tested 370 extra
 plain-brick cuts do not solve one tile, so they are not presented as a painless
-working alternative. No extra tile/cut is applied until the answer, per [D302].
+working alternative. No extra tile/cut is applied until the answer, per [D309].
 
 This is NOT a request to waive the **102** expanded independent PNG findings,
 the four thin legacy-trace classifications, all-map support/interval/Normal-frame
