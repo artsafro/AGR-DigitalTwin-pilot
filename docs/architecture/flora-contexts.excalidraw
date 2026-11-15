@@ -775,7 +775,7 @@
    "x": 955.0,
    "y": 971.5,
    "width": 470,
-   "height": 160.0,
+   "height": 282.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -817,7 +817,7 @@
    "x": 963.0,
    "y": 981.5,
    "width": 454,
-   "height": 140.0,
+   "height": 262.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -837,13 +837,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Экспорт и пакеты (Флора в Ground FBX)\nВладелец: tools/derive/package_vpm.py\nобщий упаковщик ВПМ (agr package-vpm); НПМ — agr\npackage-npm (#1361)\n\nmain: папка пакета, текстуры, [--object] ->\nSM_<Адрес>.zip + package_report.json; занятый путь —\nотказ",
+   "text": "Экспорт и пакеты (Флора в Ground FBX)\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1648b9a5855f96c",
-   "originalText": "Экспорт и пакеты (Флора в Ground FBX)\nВладелец: tools/derive/package_vpm.py\nобщий упаковщик ВПМ (agr package-vpm); НПМ — agr\npackage-npm (#1361)\n\nmain: папка пакета, текстуры, [--object] ->\nSM_<Адрес>.zip + package_report.json; занятый путь —\nотказ",
+   "originalText": "Экспорт и пакеты (Флора в Ground FBX)\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -925,7 +925,7 @@
    "id": "e3b1e74958f468e1",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 1209.0,
+   "y": 1314.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -963,7 +963,7 @@
    "id": "e9c69cbeaa3ccc77",
    "type": "text",
    "x": 1573.0,
-   "y": 1219.0,
+   "y": 1324.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -1659,7 +1659,7 @@
    "x": 1800.0,
    "y": 1149.0,
    "width": 0.0,
-   "height": 60.0,
+   "height": 165.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1693,7 +1693,7 @@
     ],
     [
      0.0,
-     60.0
+     165.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1715,7 +1715,7 @@
    "id": "e2cd0763e471d256",
    "type": "text",
    "x": 1740.0,
-   "y": 1170.0,
+   "y": 1222.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1753,7 +1753,7 @@
    "x": 1565.0,
    "y": 1060.25,
    "width": 140.0,
-   "height": 8.75,
+   "height": 52.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1787,7 +1787,7 @@
     ],
     [
      -140.0,
-     -8.75
+     52.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1809,7 +1809,7 @@
    "id": "e4ab9c0e6b1a460f",
    "type": "text",
    "x": 1435.0,
-   "y": 1037.88,
+   "y": 1068.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1845,9 +1845,9 @@
    "id": "e4f552790d995798",
    "type": "arrow",
    "x": 955.0,
-   "y": 1051.5,
+   "y": 1112.75,
    "width": 140.0,
-   "height": 0.0,
+   "height": 61.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1881,7 +1881,7 @@
     ],
     [
      -140.0,
-     0.0
+     -61.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1903,7 +1903,7 @@
    "id": "e321747c08b4204e",
    "type": "text",
    "x": 825.0,
-   "y": 1042.5,
+   "y": 1073.12,
    "width": 120,
    "height": 17.5,
    "angle": 0,
