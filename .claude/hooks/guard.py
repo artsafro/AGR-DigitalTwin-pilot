@@ -692,9 +692,13 @@ def main() -> None:
         target = (tin.get("file_path") or tin.get("notebook_path", "")) if isinstance(tin, dict) else ""
 
     # Swarm routing is fail-closed; output boundaries are advisory, not a sandbox.
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-    from tools.hooks.swarm import check_message, write_warning
+    # Import lazily: non-swarm calls must not depend on tools/hooks/swarm.py
+    # (sandboxed guard copies); a missing module on a swarm call still fails closed.
     args = targs if is_antigravity else tin
+    swarm_active = bool(os.environ.get("AGR_SWARM_BUILD_ROOT") or os.environ.get("AGR_SWARM_AGENT_ID"))
+    if tool == "SendMessage" or swarm_active:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+        from tools.hooks.swarm import check_message, write_warning
     if tool == "SendMessage":
         reason = check_message(args, os.environ.get("AGR_SWARM_BUILD_ROOT"))
         if reason:
@@ -706,7 +710,7 @@ def main() -> None:
                     "permissionDecisionReason": reason}}))
             return
     swarm_note = write_warning(tool, args, os.environ.get("AGR_SWARM_BUILD_ROOT"), data.get("cwd")) \
-        if os.environ.get("AGR_SWARM_BUILD_ROOT") or os.environ.get("AGR_SWARM_AGENT_ID") else None
+        if swarm_active else None
 
     def guarded_ask(reason):
         ask("\n".join(x for x in (reason, swarm_note) if x), is_antigravity)
