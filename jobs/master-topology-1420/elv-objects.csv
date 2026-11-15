@@ -1,0 +1,3 @@
+name,status,faces,triangles,triangle_share,quads,ngons
+SM_Elevatornaya_Vl_1_A_001_Main,fail,20303,423,0.020834359454267842,19442,438
+SM_Elevatornaya_Vl_1_A_001_MainGlass,pass,521,20,0.03838771593090211,501,0

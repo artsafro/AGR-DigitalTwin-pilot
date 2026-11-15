@@ -13,8 +13,9 @@ ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "packag
 # Repo scripts run unchanged with the caller's arguments; the scripts own validation and writes.
 # export-meta (#1409): core adapters/max/agr_tools/export_meta.py, also importable inside 3ds Max (AGR Tools).
 # checker (#1379): the SINTEZ stage command; Blender side tools/blender/sintez_checker.py via blender_runner.
+# build-manifest (#1423): core adapters/max/agr_tools/build_manifest.py (delivery set consistency, FBX export owner).
 SCRIPTS = {"validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
-           "checker": "tools/qa/sintez_checker.py"}
+           "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py"}
 
 
 STUBS = {

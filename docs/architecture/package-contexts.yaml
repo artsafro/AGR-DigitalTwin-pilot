@@ -97,6 +97,7 @@ contexts:
         match: "zipfile.ZipFile(zpath"
         issue: "#1393"
         ru: "свой писатель ZIP старого упаковщика ТЭЦ26 (заморожен)"
+        status: historical
   - id: sintez
     grid: "1.5/3"
     ru: "Чекер СИНТЕЗ и загрузка архива"
@@ -111,6 +112,7 @@ contexts:
         match: "check_highpoly_lowpoly"
         issue: "#1379"
         ru: "остаётся: замороженная версия v003 запуска чекера elv-tc-vpm; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
+        status: historical
 relations:
   - from: dcc
     to: export

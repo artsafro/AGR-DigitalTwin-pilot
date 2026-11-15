@@ -64,6 +64,19 @@ def test_merged_rows_left_the_map_and_the_kept_row_has_a_reason():
     assert {r["id"]: r["owner"] for r in ctx["rules"]}["master-qa"] == guard.RULES["master-qa"]
 
 
+def test_checker_merge_keeps_build_manifest_and_tightens_status_ratchet():
+    """The #1424/#1423 main merge must keep both commands and remove only fixed bypasses."""
+    assert agr.SCRIPTS["checker"] == "tools/qa/sintez_checker.py"
+    assert agr.SCRIPTS["build-manifest"] == "tools/derive/build_manifest.py"
+    rows = guard.rows_of(guard.load_maps(ROOT))
+    assert not any(r.rel in SHIMS and r.context == "validation" for r in rows)
+    assert not any(at == "jobs/KPP1/scripts/run_agr_checker.py:47"
+                   for _, at, _ in guard.LIVE_BYPASS_BASELINE)
+    retained = [r for r in rows if r.rule in ("sintez-checker", "master-qa")]
+    assert len(retained) == 2
+    assert all(r.status == "historical" for r in retained)
+
+
 def test_new_rules_guard_jobs_tools_src_and_need_a_reason():
     for rule in ("sintez-checker", "master-qa"):
         assert guard.GUARDED[rule] == ("jobs", "tools", "src")
@@ -94,7 +107,7 @@ def test_guard_red_on_synthetic_copy(tmp_path, code, rule, capsys):
     (tmp_path / "jobs/NEW/copy.py").write_text(code, encoding="utf-8")
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text("contexts:\n  - id: x\n", encoding="utf-8")
-    assert guard.main(["--root", str(tmp_path), "--contexts", str(ctx)]) == 1
+    assert guard.main(["--root", str(tmp_path), "--contexts", str(ctx), "--copies-only"]) == 1
     assert f"NEW COPY [{rule}]" in capsys.readouterr().out
 
 

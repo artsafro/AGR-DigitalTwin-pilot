@@ -120,6 +120,8 @@ Ground or a KPP1-specific area schedule, with every non-pass stage/value/limit/m
 reported in [STATE](../../../jobs/KPP1/STATE.md). It does not waive PKG-03/PKG-21 or delivery gates.
 [D288] replaces the KPP1-specific area part: per reg p.54 rows 14-17 the KPP1 VPM GeoJSON carries
 the project sums (s_obsh/s_naz 27124.36, spp_gns 28480.58); s_podz stays empty until project data.
+[D306] KPP1 `s_podz`: Artem asks the customer; the agent first searches the project sections (TEP tables)
+and reports findings with page/slide refs; absent a number the field waits - never invented, never 0.
 
 ## L2 gaps
 

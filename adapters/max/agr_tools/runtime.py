@@ -637,6 +637,35 @@ def _reject_vertex_boundary(points, tolerance):
         cells.setdefault(key, []).append(p)
 
 
+def master_topology(nodes=None):
+    """Read polygon degrees on evaluated Poly copies BEFORE any export triangulation.
+
+    Callable from the AGR Tools Python listener; never changes source geometry or
+    selection. Full per-object triangle counts/shares remain visible in the result.
+    """
+    rt = _rt()
+    inventory, source_ids, dropped = [], [], []
+    for n in _targets(nodes):
+        copy = _poly_copy(n)
+        try:
+            # pymxs BitArray iterates boolean flags, NOT selected face IDs.
+            dead = {i for i, flag in enumerate(rt.polyop.getDeadFaces(copy), 1) if flag}
+            live = [i for i in range(1, int(rt.polyop.getNumFaces(copy)) + 1) if i not in dead]
+            inventory.append({'name': str(n.name), 'face_degrees': [
+                len(rt.polyop.getFaceVerts(copy, i)) for i in live]})
+            source_ids.append(live)
+            if dead:
+                dropped.append({'name': str(n.name), 'face_ids': sorted(dead),
+                                'reason': 'native dead polygon slots'})
+        finally:
+            rt.delete(copy)
+    report = _load_core('master_topology_core.py', 'agr_tools_master_topology').check(inventory)
+    for row, ids in zip(report['objects'], source_ids):
+        row['ngon_face_ids'] = [ids[i - 1] for i in row['ngon_face_ids']]
+    report['dropped'] = dropped
+    return report
+
+
 def xview(nodes=None, on_item=None):
     """Native checker on evaluated temporary copies; original geometry is untouched."""
     rt = _rt()
@@ -2050,6 +2079,9 @@ def _export_scene(nodes):
     pieces = [n for n in nodes if str(n.name).startswith('UCX_')]
     if not render:
         raise ValueError('empty render set')
+    topology = master_topology(render)
+    if topology['status'] != 'pass':
+        raise ValueError('master topology failed before export triangulation: ' + json.dumps(topology))
     objects = []
     for n in render:
         verts, faces, ids = _tri_mesh(n)

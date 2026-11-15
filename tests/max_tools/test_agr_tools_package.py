@@ -197,7 +197,9 @@ def test_export_zip_acceptance(tmp_path):
         assert sorted(z.namelist()) == ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx']
     assert {n: _sha(d / n) for n in before} == before  # decoys and sources untouched
     for table in r['plan']['reports']:
-        assert _stage(table, 'V001')['status'] == 'pass', table
+        v001 = _stage(table, 'V001')  # #1423: no build manifest beside these ZIPs -> not_run, nothing else open
+        assert v001['status'] == 'not_run' and v001['non_pass'] and all(
+            f.startswith('not_run: build manifest:') for f in v001['non_pass']), table
         assert _stage(table, 'V012')['status'] != 'fail', table  # VPM OKS name is review (conflict #20)
 
     # a second run never touches the first: a new run folder, the earlier one is reported as a folder, not packed

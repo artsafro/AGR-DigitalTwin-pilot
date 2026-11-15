@@ -3,9 +3,37 @@
 # duplicates: outside the owner. Described rows: `at` = path:line, `match` = text that must be on that line.
 # `rule` = a duplicate_guard rule; rule-tagged rows are the guard allowlist, keyed by `at: path.py::function`
 # (`<module>` at top level; #1387: never a bare line) + optional `hash` (printed by the guard) pinning one copy.
+# `status` (#1424, every row of every context map, derived from real call chains by duplicate_guard + call_chains):
+#   live-bypass = a live command/route reaches the file and it does not call the owner (`step`: compaction issue,
+#   "-" = no card yet; NEW rows fail against LIVE_BYPASS_BASELINE); wrapper = calls the owner; historical = no live
+#   chain AND inside a `finished_jobs` folder; own-duty = other responsibility, `why` says which (Russian).
 # Regenerate: uv run python tools/architecture/route_map.py ; check: tools/architecture/duplicate_guard.py
 title_ru: "Карта контекстов маршрута НПМ/ОКС (КПП1)"
 issue: "#1359"
+# #1424: job folders with an accepted / delivered result; `historical` copies may live only inside them.
+# evidence = the file (or folder) recording that result, match = text it must contain (a folder: an entry name).
+finished_jobs:
+  - job: jobs/KPP1
+    evidence: jobs/KPP1/delivered-1371/REPORT.md
+    match: "delivered customer project intake"
+  - job: jobs/TEC26-OKS
+    evidence: jobs/TEC26-OKS/STATE.md
+    match: "Artem accepted the v008 panels"
+  - job: jobs/PSU275
+    evidence: jobs/PSU275/STATE.md
+    match: "delivery-v003 accepted on 2026-10-07"
+  - job: jobs/elv-tc-vpm
+    evidence: jobs/elv-tc-vpm/PASSPORT.md
+    match: "Delivery v005 is the current candidate, accepted by the user 2026-11-05"
+  - job: jobs/skug26-k5-ac
+    evidence: jobs/skug26-k5-ac/STATE.md
+    match: "accepted by the user"
+  - job: jobs/OBR22-K02
+    evidence: jobs/OBR22-K02/APPROVED_VERSIONS.json
+    match: "accepted_by_user"
+  - job: jobs/VATUTINO-SITE
+    evidence: docs/deliveries/vatutino-site-2026-11-09.md
+    match: "Vatutino site slice"
 rules:
   - id: udim-tile
     owner: adapters/max/agr_tools/udimtile_core.py
@@ -41,233 +69,310 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "6b2c6ef699"
+      status: historical
     - at: "jobs/KPP1/benchmark-1318/prepare_master.py::main"
       rule: udim-tile
       issue: "#1337"
       hash: "6b2c6ef699"
+      status: historical
     - at: "jobs/KPP1/rerun-1230/build_blender.py::uv_finish"
       rule: udim-tile
       issue: "#1337"
       hash: "90068fbcb4"
+      status: historical
     - at: "jobs/KPP1/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      status: historical
     - at: "jobs/KPP1/scripts/readback_vpm.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "c13b738f14"
+      status: historical
     - at: "jobs/KPP1/scripts/vpm_uv.py::tile_offset"
       rule: udim-tile
       issue: "#1337"
       hash: "ec9495a822"
+      status: historical
     - at: "jobs/PSU275/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/compare_facades.py::main"
       rule: udim-tile
       issue: "#1337"
       hash: "4d341406e8"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/qa_packages.py::facade_joint_checks.vpm_tile_of"
       rule: udim-tile
       issue: "#1337"
       hash: "8655980b06"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/qa_packages.py::facade_joint_checks"
       rule: udim-tile
       issue: "#1337"
       hash: "32aac84cf1"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/qa_packages.py::main"
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/qa_packages.py::main"
       rule: udim-tile
       issue: "#1337"
       hash: "971a042bbe"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/qa_packages.py::main"
       rule: udim-tile
       issue: "#1337"
       hash: "6688d0464d"
+      status: historical
     - at: "jobs/TEC26-OKS/scripts/vpm_uv.py::tile_offset"
       rule: udim-tile
       issue: "#1337"
       hash: "ec9495a822"
+      status: historical
     - at: "jobs/VATUTINO-SITE/flora_v007_blender.py::cmd_readback"
       rule: udim-tile
       issue: "#1337"
       hash: "31ff54af03"
+      status: historical
     - at: "jobs/VATUTINO-SITE/flora_v007_blender.py::cmd_readback"
       rule: udim-tile
       issue: "#1337"
       hash: "85e04a9a85"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/clarify_render_v001.py::tile_of"
       rule: udim-tile
       issue: "#1337"
       hash: "ded8ff2561"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "ef506142a8"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "4b4c6b2b46"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "8655980b06"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v003.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "8655980b06"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/readback_uv_fbx.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "8655980b06"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
+      status: historical
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
+      status: historical
     - at: "jobs/skug26-k5-ac/scripts/uvverify.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "d0179a710c"
+      status: historical
     - at: "adapters/max/agr_tools/atlas_core.py::pack"
       rule: udim-tile
       issue: "#1141"
       hash: "402002d484"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/npm_core.py::tile_of"
       rule: udim-tile
       issue: "#1337"
       hash: "ded8ff2561"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
       hash: "fa20d4136a"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/uvtile_core.py::tile_of_id"
       rule: udim-tile
       issue: "#1337"
       hash: "2eed51e648"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/uvtile_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
       hash: "af2bc2e385"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
       hash: "af2bc2e385"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/udimplug_core.py::tile_offset"
       rule: udim-tile
       issue: "#1337"
       hash: "d163d10dca"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/udimview_core.py::face_tile"
       rule: udim-tile
       issue: "#1337"
       hash: "8fa30eddc4"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
       hash: "af2bc2e385"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
       hash: "8b58df8f2d"
+      status: live-bypass
+      step: "-"
     - at: "adapters/max/agr_tools/uvlayout_core.py::udim_of_cell"
       rule: udim-tile
       issue: "#1337"
       hash: "af1c03c2ab"
+      status: wrapper
     - at: "adapters/max/agr_tools/npm2vpm_core.py::tile_origin"
       rule: udim-tile
       issue: "#1337"
       hash: "af2bc2e385"
+      status: live-bypass
+      step: "-"
     - at: "src/dt_ai/geometry/ground_cake.py::uv_tile_report"
       rule: udim-tile
       issue: "#1397"
       hash: "331763c046"
       ru: "маршрут Ground, не НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/blender/ground_json_to_fbx.py::readback"
       rule: udim-tile
       issue: "#1397"
       hash: "abdf135e7a"
       ru: "маршрут Ground, не НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/experiments/dreamsim_ac08.py::_tile"
       rule: udim-tile
       issue: "#1397"
       hash: "971a042bbe"
       ru: "эксперимент, не маршрут НПМ: перевод или пометка «исторический» в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/flora/build_flora_star.py::_bpy_build"
       rule: udim-tile
       issue: "#1397"
       hash: "31ff54af03"
       ru: "маршрут Flora, не НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/flora/build_flora_star.py::_bpy_build"
       rule: udim-tile
       issue: "#1397"
       hash: "85e04a9a85"
       ru: "маршрут Flora, не НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/flora/build_flora_star.py::udim_offset"
       rule: udim-tile
       issue: "#1397"
       hash: "31ff54af03"
       ru: "маршрут Flora, не НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/flora/build_flora_star.py::udim_offset"
       rule: udim-tile
       issue: "#1397"
       hash: "85e04a9a85"
       ru: "маршрут Flora, не НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/methods/methods_metrics.py::_udim"
       rule: udim-tile
       issue: "#1397"
       hash: "ded8ff2561"
       ru: "каталог методов, не маршрут НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/methods/windows/windows_variants.py::tile_offset"
       rule: udim-tile
       issue: "#1397"
       hash: "31ff54af03"
       ru: "каталог методов, не маршрут НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/methods/windows/windows_variants.py::tile_offset"
       rule: udim-tile
       issue: "#1397"
       hash: "85e04a9a85"
       ru: "каталог методов, не маршрут НПМ: перевод в #1397"
+      status: live-bypass
+      step: "#1397"
     - at: "tools/source/measure_spec_blender.py::udim"
       rule: udim-tile
       issue: "#1397"
       hash: "ded8ff2561"
       ru: "UV исходника произвольны (вне 0..10): нужно решение, сырой тайл или отказ (#1397)"
+      status: live-bypass
+      step: "#1397"
 contexts:
   - id: body
     ru: "Корпус и геометрия"
@@ -290,14 +395,17 @@ contexts:
         match: "def seal("
         issue: "#1359"
         ru: "свой шов и сварка Т-узлов вместо dt_ai.ops.seams.join_parts"
+        status: historical
       - at: "jobs/KPP1/scripts/seal.py:73"
         match: "def t_junctions("
         issue: "#1359"
         ru: "свой поиск Т-узлов на швах"
+        status: historical
       - at: "jobs/KPP1/scripts/build_kpp1.py:194"
         match: "def load_spec("
         issue: "#1359"
         ru: "сборка корпуса КПП1 целиком в скрипте задания (стадии 1–6)"
+        status: historical
   - id: uv-atlas
     ru: "UV и атлас"
     area: docs/domain/areas/uv-atlas.md
@@ -315,22 +423,28 @@ contexts:
         match: "def main("
         issue: "#1141"
         ru: "второй (Python) генератор атласа НПМ, по нему идёт agr vpm-to-npm"
+        status: live-bypass
+        step: "#1380"
       - at: "jobs/KPP1/scripts/make_npm_atlas.py:28"
         match: "def main("
         issue: "#1106"
         ru: "атлас НПМ КПП1 в задании"
+        status: historical
       - at: "jobs/TEC26-OKS/scripts/make_npm_atlas.py:28"
         match: "def main("
         issue: "#1106"
         ru: "копия атласа КПП1 в TEC26"
+        status: historical
       - at: "jobs/KPP1/scripts/vpm_uv.py:155"
         match: "def pack_uv("
         issue: "#1359"
         ru: "своя раскладка UV ВПМ; файл TEC26 отличается одной строкой"
+        status: historical
       - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
         match: "def pack_uv("
         issue: "#1359"
         ru: "почти побайтовая копия vpm_uv.py КПП1"
+        status: historical
   - id: package
     ru: "Экспорт и пакет сдачи"
     area: docs/domain/areas/package.md
@@ -351,116 +465,147 @@ contexts:
         issue: "#1377"
         hash: "61d21d75df"
         ru: "исторический прогон КПП1 R1 v003 (#1230): ZIP уже записан и закреплён хешами; новая сборка — jobs/KPP1/package-1361"
+        status: historical
       - at: "jobs/KPP1/scripts/package_vpm.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "61d21d75df"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (КПП1)"
+        status: historical
       - at: "jobs/KPP1/delivered-1371/build_v008.py::build"
         rule: delivery-zip
         issue: "#1377"
         hash: "c60e2e4447"
         ru: "атрибутная пересборка ВПМ v008 КПП1 по [D288]: копирует члены ZIP v006 байт-в-байт и меняет только GeoJSON; не новая упаковка, package_core не подходит"
+        status: historical
       - at: "jobs/KPP1/package-1278/build_package.py::repair_artifacts"
         rule: delivery-zip
         issue: "#1377"
         hash: "95db9b43b2"
         ru: "исторические неизменяемые копии КПП1 по D285 (#1278); новая сборка — jobs/KPP1/package-1361"
+        status: historical
       - at: "jobs/KPP1/site-1255/place_package.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "0b3e81abf3"
         ru: "исторический пакет расстановки КПП1 R1 по D262 (#1255); выход версионный, повтор — новая версия"
+        status: historical
       - at: "jobs/KPP1/site-1255/place_package.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "cd78aa9bb8"
         ru: "исторический пакет расстановки КПП1 R1 по D262 (#1255), второй ZIP (НПМ)"
+        status: historical
       - at: "jobs/PSU275/scripts/package_vpm.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "61d21d75df"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ПСУ275)"
+        status: historical
       - at: "jobs/TEC26-OKS/scripts/package_vpm.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "61d21d75df"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ТЭЦ-26; побайтовый паритет с владельцем проверяет тест #1361)"
+        status: historical
       - at: "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
         rule: delivery-zip
         issue: "#1377"
         hash: "c099bec414"
-        ru: "исторический драйвер сданной поставки Ватутино v009 (2026-11-09): переименование НПМ-ZIP с кодом района"
+        ru: "переименование НПМ-ZIP с кодом района: живой этап «загрузка» маршрута пакета, пишет ZIP сам, а не через владельца (#1424)"
+        status: live-bypass
+        step: "-"
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
         rule: delivery-zip
         issue: "#1377"
         hash: "bc783edf3f"
         ru: "исторический драйвер сданной поставки Ватутино v009 (docs/deliveries/vatutino-site-2026-11-09.md)"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v001.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v001; v002–v005 приняты, PR #969)"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v002.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v002; v002–v005 приняты, PR #969)"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v003.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v003; v002–v005 приняты, PR #969)"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v004.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v004; v002–v005 приняты, PR #969)"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v005.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v005; v002–v005 приняты, PR #969)"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v006; v002–v005 приняты, PR #969)"
+        status: historical
       - at: "tools/assets/build_maf_template.py::repack"
         rule: delivery-zip
         issue: "#1377"
         hash: "060ddc5ec1"
         ru: "перепаковка архива шаблона МАФ (исходный порядок + исправленные .max/FBX), не пакет сдачи"
+        status: own-duty
+        why: "перепаковка архива шаблона МАФ (исходный порядок + исправленные .max/FBX), не пакет сдачи по регламенту"
       - at: "tools/max/build_agr_tools.py::_zip"
         rule: delivery-zip
         issue: "#1377"
         hash: "7e7c2ad684"
         ru: "сборка MZP AGR Tools (внутри едет сам владелец package_core), не пакет сдачи"
+        status: own-duty
+        why: "сборка MZP AGR Tools (внутри едет сам владелец package_core), не пакет сдачи"
       - at: "tools/methods/ucx/run_benchmarks.py::package"
         rule: delivery-zip
         issue: "#1377"
         hash: "3235a265a9"
         ru: "вход бенчмарка методов UCX (FBX варианта + текстуры исходника), не пакет сдачи"
+        status: own-duty
+        why: "вход бенчмарка методов UCX (FBX варианта + текстуры), не пакет сдачи"
       - at: "tools/methods/windows/run_benchmarks.py::package"
         rule: delivery-zip
         issue: "#1377"
         hash: "0083df7615"
         ru: "дописывает PNG варианта в ZIP бенчмарка окон, не пакет сдачи"
+        status: own-duty
+        why: "дописывает PNG варианта в ZIP бенчмарка окон, не пакет сдачи"
       - at: "tools/research/checker_mutation.py::freeze"
         rule: delivery-zip
         issue: "#1377"
         hash: "a1ec950117"
         ru: "намеренно испорченные пакеты для исследования проверяющего (владелец их отказал бы), не сдача"
+        status: own-duty
+        why: "намеренно испорченные пакеты для исследования проверяющего: владелец их отказал бы, это не сдача"
       - at: "tools/sintez_parity.py::run_live"
         rule: delivery-zip
         issue: "#1377"
         hash: "28bb7ef3ef"
         ru: "синтетический пакет для паритета SINTEZ (данные синтетические), не сдача"
+        status: own-duty
+        why: "синтетический пакет для паритета SINTEZ (данные синтетические), не сдача"
       - at: "src/dt_ai/publish/bundle.py::package"
         rule: delivery-zip
         issue: "#1377"
         hash: "99f325f2cd"
         ru: "архив разработки dt build (байты из памяти, фиксированная дата), не пакет сдачи по регламенту"
+        status: own-duty
+        why: "архив разработки dt build (байты из памяти, фиксированная дата), не пакет сдачи по регламенту"
   - id: validation
     ru: "Проверка и приёмка"
     area: docs/domain/areas/package.md
@@ -478,16 +623,19 @@ contexts:
         match: "def load("
         issue: "#1379"
         ru: "остаётся: проверки пакетов именно ТЭЦ26 (стыки фасадов по листу цветового решения, нарезка по дампу Max), которых нет в validate_package; общие стадии — agr validate"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>"
         rule: sintez-checker
         issue: "#1379"
         hash: "24c2c8e59a"
         ru: "остаётся: замороженная версия v003 запуска чекера сдачи elv-tc-vpm (версионированный скрипт не переписывается); новый запуск — agr checker"
+        status: historical
       - at: "jobs/PSU275/scripts/qa_master_psu275.py::world_bm"
         rule: master-qa
         issue: "#1379"
         hash: "33bd57b6d9"
         ru: "остаётся: вариант ПСУ275 (лучи не стартуют внутри масс открытой оболочки), сдача delivery-v003 принята 2026-10-07"
+        status: historical
   - id: dcc
     ru: "Связь с DCC (Blender / 3ds Max)"
     area: docs/agents/CAPABILITIES.md
@@ -506,126 +654,162 @@ contexts:
         issue: "#1378"
         hash: "521434ca86"
         ru: "исторический бенчмарк КПП1 (#1318): прогон закреплён хешами, не переписываем"
+        status: historical
       - at: "jobs/KPP1/benchmark-1318/run_benchmark.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "7d6d85c534"
         ru: "исторический бенчмарк КПП1 (#1318): прогон закреплён хешами, не переписываем"
+        status: historical
       - at: "jobs/KPP1/quad-1372/run_checks.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "521434ca86"
         ru: "исторический прогон КПП1 QUAD (#1372): доказательства закреплены хешами, не переписываем"
+        status: historical
       - at: "jobs/KPP1/quad-1372/run_checks.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "ed8f96ffe7"
         ru: "исторический прогон КПП1 QUAD (#1372): доказательства закреплены хешами, не переписываем"
-      - at: "jobs/ORCH-OBR22-NPM/scripts/run_profile_pilot.py::command"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "b456ea68aa"
-        ru: "пилот оркестрации на синтетике (не сдача), старый скрипт задания: перевод отдельной карточкой"
+        status: historical
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "8ff22a5634"
         ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+        status: historical
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main.dcc"
         rule: blender-launch
         issue: "#1378"
         hash: "fdd33d010a"
         ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+        status: historical
       - at: "jobs/VATUTINO-SITE/scene_checks.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "17382a99ff"
         ru: "проверки сцены #298 Ватутино: прогон принятой версии, запуск не меняем"
+        status: historical
       - at: "src/dt_ai/cli/shared_tools.py::command"
         rule: blender-launch
         issue: "#1378"
         hash: "5a31c914e8"
         ru: "команда `dt derive` отдаёт argv дочернему процессу (уже с --disable-autoexec): перевод на blender_command отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/flora/build_flora_npm_light.py::execute"
         rule: blender-launch
         issue: "#1378"
         hash: "41b1d5662a"
         ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/flora/build_flora_npm_light.py::execute"
         rule: blender-launch
         issue: "#1378"
         hash: "83b1fa0042"
         ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/flora/build_flora_star.py::_blender"
         rule: blender-launch
         issue: "#1378"
         hash: "e5c254530a"
         ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/library/check_library.py::native_inspect"
         rule: blender-launch
         issue: "#1378"
         hash: "c85d66fb6e"
         ru: "инструмент библиотеки: перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/library/maf_material_ids.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "7a61653774"
         ru: "текст команды в отчёте для ручного запуска, не запуск"
+        status: own-duty
+        why: "текст команды Blender в отчёте для ручного запуска человеком, сам ничего не запускает"
       - at: "tools/library/migrate_windows.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "9d1268b5a7"
         ru: "инструмент библиотеки: перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/materials/bind_ground_textures.py::_run_blender"
         rule: blender-launch
         issue: "#1378"
         hash: "707f4be9fd"
         ru: "привязка текстур Ground (маршрут Ground): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/methods/body/run_benchmarks.py::_blender"
         rule: blender-launch
         issue: "#1378"
         hash: "18f971bee9"
         ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/methods/ground/build_variant.py::_blender"
         rule: blender-launch
         issue: "#1378"
         hash: "37235a2e47"
         ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx"
         rule: blender-launch
         issue: "#1378"
         hash: "f5a8a5aa67"
         ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/methods/run_variant.py::run_extra"
         rule: blender-launch
         issue: "#1378"
         hash: "d4b2fad230"
         ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/methods/ucx/run_benchmarks.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "9c40344e89"
         ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/methods/windows/run_benchmarks.py::main"
         rule: blender-launch
         issue: "#1378"
         hash: "c2afb4241e"
         ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/research/checker_mutation.py::freeze"
         rule: blender-launch
         issue: "#1378"
         hash: "3457dc7d0e"
         ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/research/fbx_reader_compare.py::_blender"
         rule: blender-launch
         issue: "#1378"
         hash: "8b777603c2"
         ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
       - at: "tools/sintez_parity.py::run_live.run"
         rule: blender-launch
         issue: "#1378"
         hash: "56b4b34392"
         ru: "синтетическая сверка с СИНТЕЗ (#432), не сдача: перевод отдельной карточкой"
+        status: live-bypass
+        step: "-"
 relations:
   - from: body
     to: uv-atlas
