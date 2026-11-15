@@ -83,8 +83,11 @@ def test_non_finite_vertex_fails_closed():
             plan.readback_flips([(bad, 0, 0)] + CUBE_V[1:], [list(f) for f in CUBE_F])
 
 
-# D313 waives the customer Ground's own modelling defects; everything else not "pass" must be open in REPORT.md
-D313_WAIVED = {("V003", "ground skirt depth"), ("V004", "topology defects"), ("V004", "co-directional clearance")}
+# D313 waives the customer Ground's own modelling defects (fails of the Ground FBX only); everything else that
+# is not "pass" - including R1 rows with the same finding name - must be listed in REPORT.md "## Open items"
+GROUND = "0000_Kpp_1_Ground.fbx"
+D313_WAIVED = {("V003", "ground skirt depth", GROUND, "fail"), ("V004", "topology defects", GROUND, "fail"),
+               ("V004", "co-directional clearance", GROUND, "fail")}
 
 
 def test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open():
