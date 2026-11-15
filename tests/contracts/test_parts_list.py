@@ -82,6 +82,52 @@ def test_finish_ref_repeated_failure_reset():
     assert PartsList.model_validate(finish_listing()).parts[0].finish_refs
 
 
+@pytest.mark.parametrize("alias", ["sheet.jpg", "./sheet.jpg", "SHEET.JPG", "crops/../sheet.jpg"])
+def test_finish_sheet_duplicate_alias(alias):
+    data = finish_listing()
+    data["finish_sheets"].append({"image": alias, "multi_building": False})
+    with pytest.raises(ValidationError, match="duplicate finish sheet"):
+        PartsList.model_validate(data)
+
+
+@pytest.mark.parametrize("key,value", [
+    ("finish_sheets", []), ("finish_sheets", [{}]),
+    ("finish_sheets", [{"image": "sheet.jpg", "multi_building": "true"}]),
+    ("finish_refs", []), ("finish_refs", [{}]),
+])
+def test_finish_metadata_empty_partial_unsupported(key, value):
+    data = finish_listing()
+    target = data if key == "finish_sheets" else data["parts"][0]
+    target[key] = value
+    with pytest.raises(ValidationError):
+        PartsList.model_validate(data)
+
+
+def test_finish_single_sheet_without_crop_and_reference_order():
+    data = finish_listing()
+    data["finish_sheets"][0]["multi_building"] = False
+    data["parts"][0]["finish_refs"] = [{"image": "sheet.jpg"}]
+    assert PartsList.model_validate(data).parts[0].finish_refs[0].bbox is None
+    data = finish_listing()
+    second = {"image": "other.jpg", "multi_building": False}
+    data["finish_sheets"].insert(0, second)
+    assert PartsList.model_validate(data).parts[0].finish_refs[0].bbox
+    assert PartsList.model_validate(data).approval_sha256() != make().approval_sha256()
+
+
+def test_finish_generated_bbox_probe():
+    # Exhaust an independent integer-grid oracle including zero-size boundaries.
+    from itertools import product
+    from dt_ai.parts.model import FinishRef
+    for left, top, right, bottom in product(range(4), repeat=4):
+        bbox = [left, top, right, bottom]
+        if right > left and bottom > top:
+            assert FinishRef(image="sheet.jpg", bbox=bbox).bbox == bbox
+        else:
+            with pytest.raises(ValidationError):
+                FinishRef(image="sheet.jpg", bbox=bbox)
+
+
 def test_finish_crop_rule_documented():
     from pathlib import Path
     root = Path(__file__).resolve().parents[2]
