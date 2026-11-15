@@ -164,6 +164,13 @@ def test_shell_write_warning(build):
     assert 'swarm warning' in json.dumps(out).lower()
 
 
+@pytest.mark.parametrize('script', [GUARD, ROOT / '.claude/hooks/pretool.py'])
+@pytest.mark.parametrize('tool', ['Write', 'Bash'])
+def test_malformed_swarm_write_warns(build, script, tool):
+    out = invoke(build, tool=tool, args=['malformed'], script=script)
+    assert 'swarm warning' in out['hookSpecificOutput']['additionalContext'].lower()
+
+
 def test_dispatcher_sendmessage(build):
     save(build, kind='workflow')
     assert decision(invoke(build, script=ROOT / '.claude/hooks/pretool.py')) == 'deny'
