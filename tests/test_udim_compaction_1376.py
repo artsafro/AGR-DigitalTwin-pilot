@@ -76,9 +76,9 @@ def test_guard_red_on_new_udim_copy_in_tools_src_jobs(tmp_path, rel, code, capsy
 
 
 @pytest.mark.parametrize("rel", ["tools/x/zipper.py", "src/x/zipper.py"])
-def test_delivery_zip_rule_still_guards_jobs_only(tmp_path, rel):
-    """Step 2 (package owner, #1377) is not merged: ZIP writers outside jobs/ are not guarded yet."""
-    assert guard.main(_root(tmp_path, {rel: "import zipfile\nzipfile.ZipFile(p, 'w')\n"})) == 0
+def test_delivery_zip_rule_guards_tools_and_src_after_1377(tmp_path, rel):
+    """Step 2 (package owner, #1377) merged: a ZIP writer in tools/ or src/ is a new copy now."""
+    assert guard.main(_root(tmp_path, {rel: "import zipfile\nzipfile.ZipFile(p, 'w')\n"})) == 1
 
 
 @pytest.mark.parametrize("top", ["tools", "src"])

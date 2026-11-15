@@ -1,23 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2124" width="2360" height="2124" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2220" width="2360" height="2220" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="2124" fill="#ffffff"/>
+<rect x="10" y="-30" width="2360" height="2220" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="336.5" width="470" height="650.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40" y="1046.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="40" y="1325.5" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="650" y="1046.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650" y="1273.0" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260" y="1046.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260" y="1325.5" width="470" height="320.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260" y="1046.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260" y="1343.0" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1870" y="1046.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="1255.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1705.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1879.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1798.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1972.0" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="510" y1="1179.0" x2="650" y2="1152.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120" y1="1152.75" x2="1260" y2="1179.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1730" y1="1179.0" x2="1870" y2="1144.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1705.5" x2="275.0" y2="1435.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1705.5" x2="2105.0" y2="1440.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120" y1="1152.75" x2="1260" y2="1187.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1730" y1="1187.75" x2="1870" y2="1144.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="1798.0" x2="275.0" y2="1435.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="1798.0" x2="2105.0" y2="1440.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1190.0" y1="986.5" x2="885.0" y2="1046.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1425.0" y1="661.5" x2="1870.0" y2="1144.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
@@ -135,24 +135,25 @@
 </text>
 <text x="1268" y="1056.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268" dy="14">Экспорт и пакет сдачи</tspan>
-<tspan x="1268" dy="17.5">Владелец: tools/derive/package_vpm.py</tspan>
-<tspan x="1268" dy="17.5">общий упаковщик ВПМ (dt derive package / agr package-vpm,</tspan>
-<tspan x="1268" dy="17.5">#1106)</tspan>
+<tspan x="1268" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
+<tspan x="1268" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
+<tspan x="1268" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
+<tspan x="1268" dy="17.5">(#1361, #1377)</tspan>
 <tspan x="1268" dy="17.5"></tspan>
-<tspan x="1268" dy="17.5">main: папка пакета, папка текстур, [--object],</tspan>
-<tspan x="1268" dy="17.5">[--no-geojson] -&gt; SM_&lt;Адрес&gt;.zip + package_report.json;</tspan>
-<tspan x="1268" dy="17.5">занятый путь — отказ</tspan>
-<tspan x="1268" dy="17.5">load_object: object.json -&gt; имя, привязка, стёкла; пустое</tspan>
-<tspan x="1268" dy="17.5">и неизвестное — ошибка</tspan>
-<tspan x="1268" dy="17.5">unique_object: пары ключ-значение JSON -&gt; словарь; повтор</tspan>
-<tspan x="1268" dy="17.5">ключа — ошибка</tspan>
-<tspan x="1268" dy="17.5">default_glasses: адрес -&gt; предложение прозрачного стекла</tspan>
-<tspan x="1268" dy="17.5">КПП1</tspan>
+<tspan x="1268" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
+<tspan x="1268" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
+<tspan x="1268" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
+<tspan x="1268" dy="17.5">плохое имя — ошибка до записи</tspan>
+<tspan x="1268" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
+<tspan x="1268" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
+<tspan x="1268" dy="17.5">время упаковки — ошибка</tspan>
+<tspan x="1268" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
+<tspan x="1268" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="1268" y="1335.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268" dy="12">Дубли вне владельца: 18</tspan>
-<tspan x="1268" dy="15.0">Правило проверки: свой сборщик ZIP-пакета сдачи вместо общего</tspan>
-<tspan x="1268" dy="15.0">упаковщика</tspan>
+<text x="1268" y="1353.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268" dy="12">Дубли вне владельца: 23</tspan>
+<tspan x="1268" dy="15.0">Правило проверки: свой писатель ZIP вместо общего _write_zip;</tspan>
+<tspan x="1268" dy="15.0">охрана jobs/, tools/, src/ (#1377)</tspan>
 <tspan x="1268" dy="15.0">• jobs/KPP1/rerun-1230/build_blender.py: main</tspan>
 <tspan x="1268" dy="15.0">• jobs/KPP1/scripts/package_vpm.py: &lt;module&gt;</tspan>
 <tspan x="1268" dy="15.0">• jobs/KPP1/delivered-1371/build_v008.py: build</tspan>
@@ -168,7 +169,12 @@
 <tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v004.py: &lt;module&gt;</tspan>
 <tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v005.py: &lt;module&gt;</tspan>
 <tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v006.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• adapters/max/agr_tools/package_core.py: _write_zip</tspan>
+<tspan x="1268" dy="15.0">• tools/assets/build_maf_template.py: repack</tspan>
+<tspan x="1268" dy="15.0">• tools/max/build_agr_tools.py: _zip</tspan>
+<tspan x="1268" dy="15.0">• tools/methods/ucx/run_benchmarks.py: package</tspan>
+<tspan x="1268" dy="15.0">• tools/methods/windows/run_benchmarks.py: package</tspan>
+<tspan x="1268" dy="15.0">• tools/research/checker_mutation.py: freeze</tspan>
+<tspan x="1268" dy="15.0">• tools/sintez_parity.py: run_live</tspan>
 <tspan x="1268" dy="15.0">• src/dt_ai/publish/bundle.py: package</tspan>
 </text>
 <text x="1878" y="1056.5" font-size="14" text-anchor="start" fill="#1e1e1e">
@@ -196,7 +202,7 @@
 <tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/run_agr_checker.py:47 — копия запуска</tspan>
 <tspan x="1878" dy="15.0">чекера КПП1 (#1359)</tspan>
 </text>
-<text x="963.0" y="1715.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1808.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Связь с DCC (Blender / 3ds Max)</tspan>
 <tspan x="963.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="963.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
@@ -206,7 +212,7 @@
 <tspan x="963.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="963.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="963.0" y="1889.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1982.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 6</tspan>
 <tspan x="963.0" dy="15.0">• src/dt_ai/core/build.py:16 — второй run_blender в ядре (#1359)</tspan>
 <tspan x="963.0" dy="15.0">• src/twinqa/scene.py:59 — свой поиск Blender в twinqa (#1359)</tspan>
@@ -224,22 +230,22 @@
 <tspan x="580.0" dy="14">мастер-модель</tspan>
 <tspan x="580.0" dy="17.5">(FBX/.blend)</tspan>
 </text>
-<rect x="1160.0" y="1147.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="1147.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1160.0" y="1152.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="1152.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1190.0" dy="14">UV, атлас,</tspan>
 <tspan x="1190.0" dy="17.5">текстуры</tspan>
 </text>
-<rect x="1770.0" y="1152.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1152.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1770.0" y="1156.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="1156.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="702.5" y="1552.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="732.5" y="1552.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="702.5" y="1598.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="732.5" y="1598.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="732.5" dy="14">Blender/Max</tspan>
 <tspan x="732.5" dy="17.5">строит</tspan>
 </text>
-<rect x="1617.5" y="1555.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="1555.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1617.5" y="1601.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1647.5" y="1601.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1647.5" dy="14">свежее чтение</tspan>
 <tspan x="1647.5" dy="17.5">экспорта</tspan>
 </text>

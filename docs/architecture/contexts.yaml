@@ -11,8 +11,8 @@ rules:
     owner: adapters/max/agr_tools/udimtile_core.py
     ru: "своя формула UDIM 1001 + u + 10·v (или обратная) вместо общей функции; охрана jobs/, tools/, src/ (#1376)"
   - id: delivery-zip
-    owner: tools/derive/package_vpm.py
-    ru: "свой сборщик ZIP-пакета сдачи вместо общего упаковщика"
+    owner: adapters/max/agr_tools/package_core.py
+    ru: "свой писатель ZIP вместо общего _write_zip; охрана jobs/, tools/, src/ (#1377)"
 shared_kernel:
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
@@ -325,90 +325,133 @@ contexts:
   - id: package
     ru: "Экспорт и пакет сдачи"
     area: docs/domain/areas/package.md
-    owner: tools/derive/package_vpm.py
-    owner_ru: "общий упаковщик ВПМ (dt derive package / agr package-vpm, #1106)"
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
     functions:
-      - name: main
-        contract: "папка пакета, папка текстур, [--object], [--no-geojson] -> SM_<Адрес>.zip + package_report.json; занятый путь — отказ"
-      - name: load_object
-        contract: "object.json -> имя, привязка, стёкла; пустое и неизвестное — ошибка"
-      - name: unique_object
-        contract: "пары ключ-значение JSON -> словарь; повтор ключа — ошибка"
-      - name: default_glasses
-        contract: "адрес -> предложение прозрачного стекла КПП1"
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
     duplicates:
       - at: "jobs/KPP1/rerun-1230/build_blender.py::main"
         rule: delivery-zip
-        issue: "#1359"
+        issue: "#1377"
         hash: "61d21d75df"
+        ru: "исторический прогон КПП1 R1 v003 (#1230): ZIP уже записан и закреплён хешами; новая сборка — jobs/KPP1/package-1361"
       - at: "jobs/KPP1/scripts/package_vpm.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "61d21d75df"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (КПП1)"
       - at: "jobs/KPP1/delivered-1371/build_v008.py::build"
         rule: delivery-zip
-        issue: "#1371"
+        issue: "#1377"
         hash: "c60e2e4447"
+        ru: "атрибутная пересборка ВПМ v008 КПП1 по [D288]: копирует члены ZIP v006 байт-в-байт и меняет только GeoJSON; не новая упаковка, package_core не подходит"
       - at: "jobs/KPP1/package-1278/build_package.py::repair_artifacts"
         rule: delivery-zip
         issue: "#1377"
         hash: "95db9b43b2"
+        ru: "исторические неизменяемые копии КПП1 по D285 (#1278); новая сборка — jobs/KPP1/package-1361"
       - at: "jobs/KPP1/site-1255/place_package.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "0b3e81abf3"
+        ru: "исторический пакет расстановки КПП1 R1 по D262 (#1255); выход версионный, повтор — новая версия"
       - at: "jobs/KPP1/site-1255/place_package.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "cd78aa9bb8"
+        ru: "исторический пакет расстановки КПП1 R1 по D262 (#1255), второй ZIP (НПМ)"
       - at: "jobs/PSU275/scripts/package_vpm.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "61d21d75df"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ПСУ275)"
       - at: "jobs/TEC26-OKS/scripts/package_vpm.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "61d21d75df"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ТЭЦ-26; побайтовый паритет с владельцем проверяет тест #1361)"
       - at: "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
         rule: delivery-zip
-        issue: "#1359"
+        issue: "#1377"
         hash: "c099bec414"
+        ru: "исторический драйвер сданной поставки Ватутино v009 (2026-11-09): переименование НПМ-ZIP с кодом района"
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
         rule: delivery-zip
-        issue: "#1359"
+        issue: "#1377"
         hash: "bc783edf3f"
+        ru: "исторический драйвер сданной поставки Ватутино v009 (docs/deliveries/vatutino-site-2026-11-09.md)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v001.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "99b52810a1"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v001; v002–v005 приняты, PR #969)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v002.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "99b52810a1"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v002; v002–v005 приняты, PR #969)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v003.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "99b52810a1"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v003; v002–v005 приняты, PR #969)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v004.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "99b52810a1"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v004; v002–v005 приняты, PR #969)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v005.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "99b52810a1"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v005; v002–v005 приняты, PR #969)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>"
         rule: delivery-zip
-        issue: "#1106"
+        issue: "#1377"
         hash: "99b52810a1"
-      - at: "adapters/max/agr_tools/package_core.py::_write_zip"
+        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v006; v002–v005 приняты, PR #969)"
+      - at: "tools/assets/build_maf_template.py::repack"
         rule: delivery-zip
-        issue: "#1359"
-        hash: "bd74c2bb7c"
+        issue: "#1377"
+        hash: "060ddc5ec1"
+        ru: "перепаковка архива шаблона МАФ (исходный порядок + исправленные .max/FBX), не пакет сдачи"
+      - at: "tools/max/build_agr_tools.py::_zip"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "7e7c2ad684"
+        ru: "сборка MZP AGR Tools (внутри едет сам владелец package_core), не пакет сдачи"
+      - at: "tools/methods/ucx/run_benchmarks.py::package"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "3235a265a9"
+        ru: "вход бенчмарка методов UCX (FBX варианта + текстуры исходника), не пакет сдачи"
+      - at: "tools/methods/windows/run_benchmarks.py::package"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "0083df7615"
+        ru: "дописывает PNG варианта в ZIP бенчмарка окон, не пакет сдачи"
+      - at: "tools/research/checker_mutation.py::freeze"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "a1ec950117"
+        ru: "намеренно испорченные пакеты для исследования проверяющего (владелец их отказал бы), не сдача"
+      - at: "tools/sintez_parity.py::run_live"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "28bb7ef3ef"
+        ru: "синтетический пакет для паритета SINTEZ (данные синтетические), не сдача"
       - at: "src/dt_ai/publish/bundle.py::package"
         rule: delivery-zip
-        issue: "#1359"
+        issue: "#1377"
         hash: "99f325f2cd"
+        ru: "архив разработки dt build (байты из памяти, фиксированная дата), не пакет сдачи по регламенту"
   - id: validation
     ru: "Проверка и приёмка"
     area: docs/domain/areas/package.md

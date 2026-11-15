@@ -8,11 +8,14 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `(tile - 1001) % 10` / `// 10` / `divmod(tile - 1001, 10)` / `i = tile - 1001` then `i % 10` or `i // 10`.
   1001 and 10 also match a name bound to that int anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`), and any
   job-local `def` named udim_tile / udim_of_cell / tile_origin / face_tile is a copy (PR #1368 r1).
-- `delivery-zip`  owner tools/derive/package_vpm.py (`dt derive package`, #1106). Flags a job-local
-  delivery package writer: `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword).
+- `delivery-zip`  owner adapters/max/agr_tools/package_core.py (`_write_zip`, #1361/#1377): the one ZIP writer
+  behind `agr package-npm` / `agr package-vpm` (tools/derive facades) and AGR Tools. Flags any other writer:
+  `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed). Every
+  delivery-zip allowlist row must say why it stays (`ru`): a historical delivery of a finished job (never rewritten)
+  or an archive that is not a delivery package (MZP, benchmark, checker research, dev bundle).
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
-and src/ now call the owner); `delivery-zip` jobs/ only until the package owner is settled (#1377). Each guarded
+and src/ now call the owner); `delivery-zip` jobs/ + tools/ + src/ (#1377: owner settled). Each guarded
 folder must exist (a missing one is an error, not an empty pass).
 The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml: every finding in a guarded scope
 must be listed there with an issue reference, and every listed row (also the documented copies outside the guarded
@@ -40,11 +43,13 @@ else:
 
 RULES = {
     "udim-tile": "adapters/max/agr_tools/udimtile_core.py",
-    "delivery-zip": "tools/derive/package_vpm.py",
+    "delivery-zip": "adapters/max/agr_tools/package_core.py",
 }
 WRITE_MODES = {"w", "x", "a"}
-# top-level folders where a new copy fails, per rule (#1376 widened udim-tile from jobs/ to tools/ + src/)
-GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs",)}
+# top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
+GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src")}
+# rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
+REASON_REQUIRED = {"delivery-zip"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"}}
@@ -233,6 +238,9 @@ def allowlist(contexts):
             issue = dup.get("issue", "")
             if not re.match(r"^#[0-9]+$", str(issue)):
                 raise ValueError(f"guard allowlist entry {at} has no issue reference")
+            if rule in REASON_REQUIRED and not str(dup.get("ru") or "").strip():
+                raise ValueError(f"guard allowlist entry {at} ({rule}) has no reason (`ru`): say why it stays "
+                                 f"outside {RULES[rule]}")
             m = AT.match(at)
             if not m:
                 raise ValueError(f"guard allowlist entry {at!r}: 'at' must be path.py::function (#1387), "
