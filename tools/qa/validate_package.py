@@ -50,6 +50,19 @@ from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck
 from twinqa.scene import check_ground_area, check_ground_materials, readback, scene_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
 
+
+def load_z_meta(path: Path):
+    """--export-meta through the shared ExportMeta owner (adapters/max/agr_tools/export_meta.py, #1342)."""
+    import importlib.util
+    owner = Path(__file__).resolve().parents[2] / "adapters" / "max" / "agr_tools" / "export_meta.py"
+    spec = importlib.util.spec_from_file_location("agr_export_meta_owner", owner)
+    if spec is None or spec.loader is None:
+        raise ValueError(f"export_meta owner missing: {owner}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.load_z_meta(path)
+
+
 STEM = re.compile(r"^[A-Za-z0-9_]+$")
 NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>[A-Za-z0-9_]+)$")
 VPM_STEM = re.compile(r"^SM_[A-Za-z0-9_]+$")
@@ -638,7 +651,9 @@ def main(argv=None) -> int:
     ap.add_argument("--json", action="store_true", help="machine-readable report")
     ap.add_argument("--standards", type=Path, help="standards folder (default: <repo>/standards)")
     ap.add_argument("--scene", action="store_true", help="read every FBX back in background Blender")
-    ap.add_argument("--export-meta", type=Path, help="JSON mapping exact FBX filenames to world bounds_m records")
+    ap.add_argument("--export-meta", type=Path,
+                    help="exporter export_meta.json with fbx_records (#1342), or a JSON mapping exact FBX "
+                         "filenames to {bounds_m, fbx_sha256}; feeds V013 Z bounds")
     ap.add_argument("--recheck", type=Path, metavar="OLD_REPORT", help="re-read a stored report.json (needs --output)")
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
     ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
@@ -678,10 +693,14 @@ def main(argv=None) -> int:
         print("Error: --build-manifest applies to a ZIP package", file=sys.stderr)
         return 2
     try:
+        export_meta = load_z_meta(args.export_meta) if args.export_meta else None
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+    try:
         result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
                           args.footprint_holes, args.master, ground_materials=args.ground_materials,
-                          export_meta=json.loads(args.export_meta.read_text(encoding="utf-8")) if args.export_meta else None,
-                          manifest=args.build_manifest)
+                          export_meta=export_meta, manifest=args.build_manifest)
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2

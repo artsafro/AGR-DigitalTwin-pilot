@@ -1,0 +1,16 @@
+{
+  "schema": "pilot-visual-stage-approval/1",
+  "actor": "Artem",
+  "date": "2026-11-15",
+  "time_as_recorded": "13:27",
+  "ref": "kanban:t_d517d7c6:USER DECISION 2026-11-15 13:27",
+  "quote": "на все да",
+  "decision": "D317",
+  "scope": "restored thin colour cores on ends/caps in v160; retain them and continue technical checks/repairs without replication",
+  "accepted_evidence": "G:/Мой диск/AGR-evidence/1326-stylobate-course-grid/normal-v165/actual-thin-colour-three-way.png",
+  "accepted_evidence_sha256": "c59630b61c6fb4161c371ae54718dcf36c5e7b900ecce54c10ea93242e98fa95",
+  "normal_direction_already_answered": "D310",
+  "replication_authorized": false,
+  "final_delivery_accepted": false,
+  "pilot_passed": false
+}

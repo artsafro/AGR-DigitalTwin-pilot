@@ -14,12 +14,16 @@ Dual-protocol support:
 import json
 import math
 import os
+import posixpath
 import re
 import shlex
 import subprocess
 import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "hooks"))
+from hook_input import read_stdin
 
 PRODUCTION_EXT = r"\.(fbx|blend|max|uasset|umap|obj|abc|usd[az]?|glb|gltf|rvt|skp|dwg|psd|exr|tiff?|png|tga)\b"
 
@@ -271,6 +275,32 @@ def _long(flags, word, keep):
     return False
 
 
+def _many_paths_pathspec(spec):
+    """True when a checkout/restore pathspec can name more than one file (#1226): the whole tree in any
+    spelling (`.`, `./`, `..`, `:/`, `:(top)`), a glob (`*`, `?`, `[`), or an exclude-only pathspec
+    (`:!x`, `:^x`, `:(exclude)x`, which means everything else). Malformed magic fails closed."""
+    s = spec.strip("'\"").replace("\\", "/")
+    magic = set()
+    if s.startswith(":("):
+        end = s.find(")")
+        if end < 0:
+            return True
+        magic = {m.split("=", 1)[0].strip().lower() for m in s[2:end].split(",")}
+        s = s[end + 1:]
+    elif s.startswith(":"):
+        short = re.match(r":([/!^]*):?", s)
+        if short:
+            magic, s = set(short.group(1)), s[short.end():]
+    if magic & {"exclude", "!", "^"}:
+        return True
+    if "literal" not in magic and re.search(r"[*?\[]", s):
+        return True
+    # Normalise `..` segments (PR #1455 r1): `docs/..`, `docs/./..`, `a/b/../..` are the top again. The spec
+    # names a whole tree when nothing but `..` steps remain; `docs/../a.txt` stays a single file.
+    norm = posixpath.normpath(s) if s else "."
+    return all(p == ".." for p in norm.split("/") if p not in ("", "."))
+
+
 def _git_subcommand_reason(sub, args):
     """Reason a git subcommand with its arguments is hazardous, else None. Flags stop at `--`."""
     flags, positional = [], []
@@ -294,7 +324,8 @@ def _git_subcommand_reason(sub, args):
         delete = _short(flags, "d") or _long(flags, "delete", 1)
         if _short(flags, "D") or (delete and (_short(flags, "f") or _long(flags, "force", 4))):
             return "force branch delete"
-    if sub in ("checkout", "restore") and "." in positional:
+    if sub in ("checkout", "restore") and (any(_many_paths_pathspec(p) for p in positional)
+                                           or _long(flags, "pathspec-from-file", 10)):
         return _DISCARDS
     if sub in ("checkout", "switch") and (force or _long(flags, "discard-changes", 2)):
         return _DISCARDS
@@ -670,7 +701,7 @@ def inside(path: Path, root: Path) -> bool:
 
 def main() -> None:
     try:
-        raw = sys.stdin.read()
+        raw = read_stdin()
         if not raw.strip():
             allow(False)
         data = json.loads(raw)

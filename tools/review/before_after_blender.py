@@ -21,6 +21,35 @@ cfg = json.loads(Path(sys.argv[sys.argv.index('--') + 1]).read_text(encoding='ut
 request = cfg['request']
 out = Path(cfg['output_dir'])
 
+# Fixed Blender 5.1 Workbench policy, independent of either saved .blend.
+# Record even inactive controls so a future style/light change cannot inherit them.
+WORKBENCH_SHADING = {
+    'show_object_outline': False,
+    'object_outline_color': (0.0, 0.0, 0.0),
+    'show_xray': False,
+    'show_specular_highlight': True,
+    'studio_light': 'Default',
+    'studiolight_rotate_z': 0.0,
+    'xray_alpha': 0.5,
+    'show_backface_culling': False,
+    'use_dof': False,
+}
+WORKBENCH_DISPLAY = {
+    'render_aa': '8',
+    'light_direction': (1 / math.sqrt(3),) * 3,
+}
+
+
+def workbench_record(scene):
+    """Actual post-render readback, not a copy of the intended policy."""
+    values = {}
+    for owner, policy in ((scene.display.shading, WORKBENCH_SHADING),
+                          (scene.display, WORKBENCH_DISPLAY)):
+        for key in policy:
+            value = getattr(owner, key)
+            values[key] = value if isinstance(value, (str, bool, float)) else list(value)
+    return values
+
 
 def load(path):
     if path.lower().endswith('.blend'):
@@ -67,16 +96,29 @@ def setup(scene, fitted):
     render.engine = 'BLENDER_WORKBENCH'
     render.resolution_x, render.resolution_y, render.resolution_percentage = width, height, 100
     render.pixel_aspect_x = render.pixel_aspect_y = 1.0
+    # Saved crop/stereo state must not change the comparison's frame or eyes.
+    render.use_border = False
+    render.use_multiview = False
+    render.image_settings.views_format = 'INDIVIDUAL'
     render.film_transparent = False
     render.use_stamp = False
+    # use_stamp controls the visible overlay only. The individual toggles also
+    # write PNG metadata (source path, date, render time), breaking byte parity.
+    for prop in render.bl_rna.properties:
+        if prop.identifier.startswith('use_stamp_') and prop.type == 'BOOLEAN':
+            setattr(render, prop.identifier, False)
     render.image_settings.file_format = 'PNG'
     render.image_settings.color_mode = 'RGB'
     render.image_settings.color_depth = '8'
     render.image_settings.compression = 15
     render.dither_intensity = 1.0
     shading = scene.display.shading
+    # studio_light's enum depends on light: select STUDIO before its preset.
     shading.light = 'STUDIO'
     shading.use_world_space_lighting = False
+    for owner, policy in ((shading, WORKBENCH_SHADING), (scene.display, WORKBENCH_DISPLAY)):
+        for key, value in policy.items():
+            setattr(owner, key, value)
     shading.show_cavity = False
     shading.show_shadows = False
     shading.color_type = {'solid': 'SINGLE', 'wire': 'OBJECT', 'material': 'MATERIAL',
@@ -147,5 +189,9 @@ for role in ('before', 'after'):
                                  'dither_intensity': scene.render.dither_intensity,
                                  'color_mode': scene.render.image_settings.color_mode,
                                  'color_depth': scene.render.image_settings.color_depth,
-                                 'compression': scene.render.image_settings.compression}}
+                                 'compression': scene.render.image_settings.compression,
+                                 'use_border': scene.render.use_border,
+                                 'use_multiview': scene.render.use_multiview,
+                                 'image_views_format': scene.render.image_settings.views_format,
+                                 'workbench': workbench_record(scene)}}
 (out / 'render-evidence.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')

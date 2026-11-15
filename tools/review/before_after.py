@@ -42,7 +42,8 @@ CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'sensor_height', 'shift_
 CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution', 'pixel_aspect',
                *CAMERA_FLOATS}
 RENDER_KEYS = ('engine', 'style', 'use_world_space_lighting', 'dither_intensity',
-               'color_mode', 'color_depth', 'compression')
+               'color_mode', 'color_depth', 'compression',
+               'use_border', 'use_multiview', 'image_views_format')
 TOLERANCE = 1e-6
 
 
