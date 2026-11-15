@@ -31,7 +31,8 @@ PACKAGE_STAGES = ["export", "meta", "readback", "geojson", "package", "validate"
 QUESTIONS = {"maf-route": "ucx-fences", "flora-route": "stand-in-replace", "package-route": "customer-channel"}
 # #1412: red blocks closed by Artem's 2026-11-15 decisions -> block id: (stage that cites it, D-row)
 RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
-            "flora-route": {"stand-in-replace": ("maps", "D299"), "lod-rule": ("lod", "D301")},
+            "flora-route": {"stand-in-replace": ("maps", "D299"), "lod-rule": ("lod", "D301"),
+                            "vpm-identity": ("star", "D311")},  # #1421
             "package-route": {"customer-channel": ("customer", "D300")}}
 
 
@@ -133,7 +134,7 @@ def test_red_boxes_are_drawn_one_per_hotspot(name):
     events = _routes()[name]
     board = route_map.route_board(events, _contexts())
     pink = [e for e in board.elements if e["type"] == "rectangle" and e["backgroundColor"] == route_map.COLORS["hotspot"]]
-    assert len(pink) == len(events["hotspots"]) >= 5
+    assert len(pink) == len(events["hotspots"]) >= 4  # #1421 closed flora vpm-identity
 
 
 @pytest.mark.parametrize("name", sorted(ROUTES))

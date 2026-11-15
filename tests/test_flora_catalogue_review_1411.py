@@ -8,6 +8,20 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 RECEIPT = ROOT / 'docs/library/flora-review-1411.json'
+# #1421: after Artem reviewed these sheets, D311 marked the shown NPM/VPM pairs confirmed-interim.
+D311 = {'id': 'D311', 'date': '2026-11-15'}
+
+
+def reviewed_sha256(catalogue):
+    """sha256 of the catalogue exactly as reviewed in #1411: D311 identity fields reverted, nothing else."""
+    reviewed = copy.deepcopy(catalogue)
+    for row in reviewed['species']:
+        decision = row.pop('vpm_identity_decision')
+        if decision is not None:
+            assert decision == D311 and row['vpm_identity'] == 'confirmed-interim', row['latin']
+            row['vpm_identity'] = 'unverified'
+    text = json.dumps(reviewed, ensure_ascii=False, indent=1) + '\n'
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
 def test_review_packet_covers_every_species_without_approving_catalogue():
@@ -15,7 +29,7 @@ def test_review_packet_covers_every_species_without_approving_catalogue():
     packet = json.loads(RECEIPT.read_text(encoding='utf-8'))
     catalogue_path = ROOT / 'library/flora/catalogue.json'
     catalogue = json.loads(catalogue_path.read_text(encoding='utf-8'))
-    assert packet['catalogue_sha256'] == hashlib.sha256(catalogue_path.read_bytes()).hexdigest()
+    assert packet['catalogue_sha256'] == reviewed_sha256(catalogue)
     species = catalogue['species']
     assert [r['material_id'] for r in packet['rows']] == [s['material_id'] for s in species]
     assert len({r['material_id'] for r in packet['rows']}) == len(species)
@@ -35,7 +49,7 @@ def test_review_packet_covers_every_species_without_approving_catalogue():
             else:
                 assert row['native_triangles'][profile] is None
         if source['objects']['VPM']:
-            assert source['vpm_identity'] == 'unverified'
+            assert source['vpm_identity'] == 'confirmed-interim'  # D311 (#1421) after Artem reviewed these sheets
             assert row['surface_305']['verdict'] == 'different'
             for direction in ('npm', 'vpm'):
                 metric = row['surface_305'][direction]

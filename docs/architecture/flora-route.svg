@@ -35,15 +35,14 @@
 <rect x="1120" y="782.25" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="1120" y="899.5" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="1400" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="1390" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="1350" y1="265.0" x2="1390" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1390" y="170" width="230" height="211.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1350" y1="265.0" x2="1390" y2="275.62" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1390" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="1390" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1390" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1390" y="681.25" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1670" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1660" y="170" width="230" height="211.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="1620" y1="233.12" x2="1660" y2="275.62" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1620" y1="275.62" x2="1660" y2="275.62" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1660" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="1660" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1660" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
@@ -236,23 +235,21 @@
 <tspan x="1505.0" dy="21.25">(плоскости с картой) и</tspan>
 <tspan x="1505.0" dy="21.25">ВПМ = оболочка звезды;</tspan>
 <tspan x="1505.0" dy="21.25">детальный куст —</tspan>
-<tspan x="1505.0" dy="21.25">только по запросу</tspan>
+<tspan x="1505.0" dy="21.25">только по запросу;</tspan>
+<tspan x="1505.0" dy="21.25">совпадение НПМ / ВПМ</tspan>
+<tspan x="1505.0" dy="21.25">каталога v003 принято</tspan>
+<tspan x="1505.0" dy="21.25">на первое время</tspan>
+<tspan x="1505.0" dy="21.25">(confirmed-interim)</tspan>
 </text>
 <text x="1505.0" y="427.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="14">Нет команды agr/dt</tspan>
 </text>
 <text x="1505.0" y="532.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1505.0" dy="14">Правила: D102, D232</tspan>
+<tspan x="1505.0" dy="14">Правила: D102, D232, D311</tspan>
 </text>
 <text x="1505.0" y="603.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="14">Контекст: НПМ-звезда и</tspan>
 <tspan x="1505.0" dy="17.5">ВПМ-оболочка</tspan>
-</text>
-<text x="1505.0" y="691.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1505.0" dy="13">⚠ Совпадение поверхностей НПМ</tspan>
-<tspan x="1505.0" dy="16.25">/ ВПМ библиотеки не проверено</tspan>
-<tspan x="1505.0" dy="16.25">(VPM identity: unverified,</tspan>
-<tspan x="1505.0" dy="16.25">#305)</tspan>
 </text>
 <text x="1775.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="15">Агент: Blender / Max /</tspan>
