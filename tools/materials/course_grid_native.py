@@ -296,11 +296,13 @@ def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_fa
                 unused_vertices=sorted(set(range(len(vertices)))-{i for f in out for i in f}))
 
 
-def triangulate_conforming_polygon(points):
+def triangulate_conforming_polygon(points, *, triangle_allowed=None):
     """Maximize the worst aspect quality while retaining EVERY boundary node.
 
     No simplify, DCC-chosen diagonal, inserted centre or omitted collinear node.
     Return ordered corner indices; refuse a non-simple or zero-area polygon.
+    An optional triangle_allowed predicate can exclude native-unencodable
+    diagonals BEFORE dynamic programming chooses a complete partition.
     """
     from shapely.geometry import Polygon
     if not isinstance(points,list) or len(points)<3 or any(not isinstance(p,list) or len(p)!=2 or any(
@@ -317,6 +319,12 @@ def triangulate_conforming_polygon(points):
                 if (i,k) not in result or (k,j) not in result:continue
                 tri=Polygon([points[i],points[k],points[j]])
                 if tri.area<=1e-12 or not tri.exterior.is_ccw or tri.difference(poly).area>max(1e-14,tri.area*1e-12):continue
+                if triangle_allowed is not None:
+                    allowed = triangle_allowed([i, k, j])
+                    if type(allowed) is not bool:
+                        raise ValueError('triangle_allowed must return bool')
+                    if not allowed:
+                        continue
                 longest=max(math.dist(points[a],points[b])**2 for a in (i,k,j) for b in (i,k,j))
                 quality=min(score[i,k],score[k,j],tri.area/longest)
                 if quality>best:best=quality;chosen=result[i,k]+result[k,j]+[[i,k,j]]
@@ -364,6 +372,67 @@ def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, group
         new.append(clean);sources.append(src);retained.append(fi)
     if set(sources)!=set(lineage):raise ValueError('coalescing loses source identity')
     return dict(vertices=out,faces=new,lineage=sources,input_face=retained,dropped=dropped,remap=remap,max_displacement_m=maximum)
+
+
+def extend_support_to_boundary(support, face, *, maximum_m):
+    """Extend near-boundary support tips OUTWARD before partition/tessellation.
+
+    The original surface is unchanged. Sweep each existing support edge only
+    to its endpoint projections on the original face boundary, within an
+    explicit <=2.1mm cutter envelope. Union retains every old relief pixel;
+    never simplify away a narrow source strip or move an original corner.
+    This is a proposed cutter change: callers must remeasure placement gaps,
+    source support, all-map sampling and native topology before acceptance.
+    """
+    from shapely.geometry import Polygon, MultiPoint, Point
+    from shapely.ops import unary_union
+    if (isinstance(maximum_m, bool) or not isinstance(maximum_m, (int, float))
+            or not math.isfinite(maximum_m) or not 0 < maximum_m <= .0021):
+        raise ValueError('invalid maximum_m')
+    if (not isinstance(face, Polygon) or not face.is_valid or face.is_empty
+            or face.area <= 1e-12 or face.interiors):
+        raise ValueError('invalid source face')
+    if (support.geom_type not in ('Polygon', 'MultiPolygon') or not support.is_valid
+            or support.difference(face).area > 1e-12):
+        raise ValueError('invalid/outside source support')
+    if support.is_empty:
+        return support
+    components = [support] if support.geom_type == 'Polygon' else list(support.geoms)
+    additions = [support]
+    for component in components:
+        for ring in [component.exterior, *component.interiors]:
+            points = list(ring.coords[:-1]); projected = []
+            for point in points:
+                candidates = []
+                boundary = list(face.exterior.coords)
+                for a, b in zip(boundary, boundary[1:]):
+                    edge = [b[k]-a[k] for k in (0, 1)]
+                    size = sum(v*v for v in edge)
+                    if not size:
+                        continue
+                    t = max(0., min(1., sum((point[k]-a[k])*edge[k] for k in (0, 1))/size))
+                    q = tuple(a[k]+t*edge[k] for k in (0, 1))
+                    # Preserve the unconstrained coordinate exactly on axis edges.
+                    if edge[0] == 0: q = (a[0], max(min(point[1], max(a[1], b[1])), min(a[1], b[1])))
+                    if edge[1] == 0: q = (max(min(point[0], max(a[0], b[0])), min(a[0], b[0])), a[1])
+                    candidates.append(q)
+                target = min(candidates, key=lambda q: math.dist(q, point))
+                projected.append(target if math.dist(point, target) <= maximum_m else point)
+            for i, point in enumerate(points):
+                j = (i + 1) % len(points)
+                swept = MultiPoint([point, points[j], projected[i], projected[j]]).convex_hull
+                if swept.area > 0:
+                    additions.append(swept.intersection(face))
+    result = unary_union(additions).intersection(face)
+    # Boundary-only intersections carry zero surface area. Do not forward
+    # these GEOS roundoff contact lines as mesh partition components.
+    if result.geom_type == 'GeometryCollection':
+        result = unary_union([g for g in result.geoms
+                              if g.geom_type in ('Polygon', 'MultiPolygon')])
+    if (not result.is_valid or support.difference(result).area > 1e-12
+            or result.difference(support.buffer(maximum_m)).area > 1e-12):
+        raise ValueError('boundary extension exceeds coverage/envelope')
+    return result
 
 
 def joint_cross_section(face, expected_zones, observed_zones, origin, inward):

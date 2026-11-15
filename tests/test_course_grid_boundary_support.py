@@ -18,6 +18,18 @@ def test_boundary_support_extension_fills_tapered_tip_not_the_source_surface():
     assert native.extend_support_to_boundary(result, face, maximum_m=.0021).equals(result)
 
 
+def test_slanted_source_boundary_emits_only_surface_not_roundoff_contact_lines():
+    face = Polygon([[62.02808325545378,81.89753222484573],
+        [62.027949549637334,79.71736675333496],[62.05795274966022,79.71736248837597],
+        [62.058084581327314,81.89753178467706]])
+    support = Polygon([[62.05795274966,79.717362488376],[62.058084581327,81.897531784677],
+        [62.047491353032,81.897531940097],[62.047360292817,79.729910862811],
+        [62.027950319023,79.729912116139],[62.027949549637,79.717366753335]])
+    result = native.extend_support_to_boundary(support, face, maximum_m=.0021)
+    assert result.geom_type in ('Polygon', 'MultiPolygon')
+    assert support.difference(result).area <= 1e-12
+
+
 def test_boundary_extension_does_not_move_interior_support_or_cross_empty_face():
     face = box(0,0,1,1); support = box(.2,.2,.3,.3)
     assert native.extend_support_to_boundary(support,face,maximum_m=.0021).equals(support)
