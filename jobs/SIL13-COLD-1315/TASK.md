@@ -59,7 +59,7 @@ symbols extracted, 52/52 inside the approved boundary and preserved by DXF readb
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,
 not authority to substitute linden for Red Sunset. Flora candidates remain subject to identity/size checks.
 MAF: all 32 DOCX rows accounted for; no certified SKU-to-model match yet (not proof of disk-wide absence).
-Current continuation is [CONTINUATION-v011.md](CONTINUATION-v011.md). [D298] rejects
+Current continuation is [CONTINUATION-v011.md](CONTINUATION-v011.md). [D313] rejects
 v010's31–32% crowns and authorizes continuous hedge-run volumes with>=68% retained
 constituent crowns and all original IDs/counts/points/heights in the census.
 Real v011/r2 candidate exports retain4,582plants/38MAF,162,743/334,928render
@@ -67,8 +67,8 @@ triangles; independently measured support minima78.225%/78.655%,0below68%.
 All47nonhedge copies and Ground/MAF/600UCX actual arrays remain unchanged.
 Individual heights are census facts, not independent bboxes of a merged volume;
 envelope top differences up to0.181/0.222m are disclosed. A separate90plant
-changed-construction pilot awaits the required [D300] picture choice; this is not
-a repeat of [D298], composition or earlier shrub-star approval. Technical FAILs
+changed-construction pilot awaits the required [D314] picture choice; this is not
+a repeat of [D313], composition or earlier shrub-star approval. Technical FAILs
 remain worker-owned. Later r3/r5 topology experiments are rejected, not promoted.
 [D294] remains the historical cell-pilot answer, not approval of the rejected
 whole-site v010 candidate. [D281] answers
@@ -90,7 +90,7 @@ positive at427: all600 convex. Sampled coverage175,688 points <=79.836mm; no con
 maximum claim, wide-neighbour set remains open. NPM native public validator FAIL;
 VPM default600s timeout and unchanged-reader topology crash, not importer failure.
 
-[D300] / issue comment 6878796926 authorizes a changed-copy Flora representation,
+[D314] / issue comment 6878796926 authorizes a changed-copy Flora representation,
 not a C44 waiver: retain species, all 4,582 instances, planting points and accepted
 height/crown ranges; keep NPM <=180,000. Show a separate small construction pilot
 and wait for its picture approval before site-wide application. [D291] / issue comment
@@ -100,9 +100,9 @@ is CLOSED: v009/r1 actually replicates 4,576 shrubs, retaining all 4,582 plants,
 one interim Flora atlas without changing geometry. No technical/delivery waiver.
 Aggregate hedge contacts remain FAIL despite isolated-pilot success; the original
 v007/r1 is historical, not the current full-site export.
-[D301] / issue comment 6890885700 accepts the v011/r2 90-plant continuous hedge
+[D315] / issue comment 6890885700 accepts the v011/r2 90-plant continuous hedge
 silhouette and common top envelope without edits for site-wide replication. The
-[D300] construction-picture gate is CLOSED. v012/r1 retains the site-wide volumes,
+[D314] construction-picture gate is CLOSED. v012/r1 retains the site-wide volumes,
 corrects one-based xView witness handling in a bounded numerical edge repair,
 and exports actual 162,159 NPM /334,422 VPM render triangles. All 4,582 census
 records, 38 MAF and planting points remain; the 68% floor is not reopened.
@@ -118,6 +118,18 @@ ONLY after Artem accepts it. v013/r2 Bench025 pilot uses measured source frame
 holes/slab,116triangles each, exported raw/native xView0/0/0/0area; it is NOT in
 the site. See `CONTINUATION-v013.md` for its new construction-picture gate. The
 previous copy-repair scope question is CLOSED, not asked again.
+
+[D316] / issue comment6893485374 ACCEPTS Bench025v013/r2 and authorizes the same
+constructive approach on the other MAF copies. That pilot gate is CLOSED. v014
+actually replicates the exact accepted116triangle bench to2/2existing copies,
+162011NPM/334274VPMrender triangles; all38MAF/4582census remain,36otherMAF and
+Ground/Flora/600UCX actual arrays exact. Other-type failed attempts are NOT adopted.
+A NEW Table016 representation option would merge76real wood planks/physical slots
+into a continuous tabletop/four seat sectors, preserving four real access gaps.
+This is beyond the earlier small joint/wall repair, not another D316 question.
+The actual2108triangle raw/native-clean option remains UNADOPTED until Artem's
+one representation choice. See `CONTINUATION-v014.md`; the r1missing-seat option
+and old smooth-shaded sheet are superseded. Whole-site technical FAILs remain.
 
 Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.

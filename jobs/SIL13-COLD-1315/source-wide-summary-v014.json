@@ -1,0 +1,820 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-bench-replication-and-table-choice-v014",
+  "decision": "D316",
+  "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6893485374",
+  "decision_aliases": {
+    "path": "jobs\\SIL13-COLD-1315\\decision-aliases-v014.json",
+    "sha256": "874f09b219d6d23906d41f3beb22659fc1bb09536ecea4dbcb8815cc129269b1",
+    "map": [
+      {
+        "historical": "D298",
+        "current": "D313",
+        "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6885424060"
+      },
+      {
+        "historical": "D300",
+        "current": "D314",
+        "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6878796926"
+      },
+      {
+        "historical": "D301",
+        "current": "D315",
+        "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6890885700"
+      },
+      {
+        "historical": "D311",
+        "current": "D316",
+        "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6893485374"
+      }
+    ]
+  },
+  "scope": "accepted exact Bench0252/2; other36MAF unchanged; NEW continuousTable016 option is NOT adopted",
+  "profiles": {
+    "NPM": {
+      "actual_render_triangles": 162011,
+      "native_render_triangles": 161972,
+      "native_other_MAF_removed_faces": 39,
+      "Ground_Flora_UCX_actual_arrays_exact": true,
+      "retained_census": 4582,
+      "census_evidence_sha256": "a73de30654efb8791b7727b315c85a3d287507339bd557899c0358c062666453",
+      "changed_MAF": 2,
+      "unchanged_MAF": 36,
+      "fbx_sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "unchanged_meshes": 2,
+      "all38handles": [
+        "33FB381",
+        "33FB382",
+        "33FB383",
+        "33FB384",
+        "33FB385",
+        "33FB386",
+        "33FB3A5",
+        "33FB3A6",
+        "33FB3A7",
+        "33FB3A8",
+        "33FB3A9",
+        "33FB3AA",
+        "33FB3AB",
+        "33FB3B0",
+        "33FB3B1",
+        "33FB3B2",
+        "33FB3BE",
+        "33FB3BF",
+        "33FB3BC",
+        "33FB3BD",
+        "33FB590",
+        "33FB387",
+        "33FB388",
+        "33FB389",
+        "33FB38A",
+        "33FB38B",
+        "33FB38C",
+        "33FB3B3",
+        "33FB3B4",
+        "33FB3B5",
+        "33FB3B6",
+        "33FB3B7",
+        "33FB3B8",
+        "33FB3B9",
+        "33FB3BA",
+        "33FB581",
+        "33FB3AD",
+        "33FB3AE"
+      ],
+      "public_xview": {
+        "overlapping_vertices": 1026,
+        "overlapping_faces": 3122,
+        "vertex_pairs": 600,
+        "face_pairs": 5105,
+        "face_pairs_by_kind": {
+          "contact": 320,
+          "area": 1321,
+          "area+contact": 3464
+        },
+        "bowtie_vertices": 669,
+        "bowtie_pairs": 50,
+        "parts_without_faces": 0
+      },
+      "public_validator": {
+        "passed": false,
+        "machine_stage_counts": {
+          "pass": 2,
+          "fail": 3,
+          "review": 1,
+          "not_run": 2
+        }
+      }
+    },
+    "VPM": {
+      "actual_render_triangles": 334274,
+      "native_render_triangles": 334226,
+      "native_other_MAF_removed_faces": 48,
+      "Ground_Flora_UCX_actual_arrays_exact": true,
+      "retained_census": 4582,
+      "census_evidence_sha256": "a73de30654efb8791b7727b315c85a3d287507339bd557899c0358c062666453",
+      "changed_MAF": 2,
+      "unchanged_MAF": 36,
+      "fbx_sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "unchanged_meshes": 600,
+      "all38handles": [
+        "33FB381",
+        "33FB382",
+        "33FB383",
+        "33FB384",
+        "33FB385",
+        "33FB386",
+        "33FB3A5",
+        "33FB3A6",
+        "33FB3A7",
+        "33FB3A8",
+        "33FB3A9",
+        "33FB3AA",
+        "33FB3AB",
+        "33FB3B0",
+        "33FB3B1",
+        "33FB3B2",
+        "33FB3BE",
+        "33FB3BF",
+        "33FB3BC",
+        "33FB3BD",
+        "33FB590",
+        "33FB387",
+        "33FB388",
+        "33FB389",
+        "33FB38A",
+        "33FB38B",
+        "33FB38C",
+        "33FB3B3",
+        "33FB3B4",
+        "33FB3B5",
+        "33FB3B6",
+        "33FB3B7",
+        "33FB3B8",
+        "33FB3B9",
+        "33FB3BA",
+        "33FB581",
+        "33FB3AD",
+        "33FB3AE"
+      ],
+      "public_xview": {
+        "overlapping_vertices": 44,
+        "overlapping_faces": 44977,
+        "vertex_pairs": 22,
+        "face_pairs": 95070,
+        "face_pairs_by_kind": {
+          "contact": 41070,
+          "area": 6777,
+          "area+contact": 47223
+        },
+        "bowtie_vertices": 298,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "public_validator": {
+        "passed": false,
+        "machine_stage_counts": {
+          "pass": 3,
+          "fail": 3,
+          "review": 1,
+          "not_run": 5
+        }
+      }
+    }
+  },
+  "unadopted_option": {
+    "passed": false,
+    "site_adopted": false,
+    "status": "NEW_MODEL_REPRESENTATION_CHOICE",
+    "source_to_option_sampled": {
+      "samples": 28052,
+      "max_m": 0.019125187769532204,
+      "p95_m": 0.009718932583928109,
+      "mean_m": 0.0026226920025121518
+    },
+    "option_to_source_sampled": {
+      "samples": 9488,
+      "max_m": 0.039623236283659935,
+      "p95_m": 0.024037431038939468,
+      "mean_m": 0.0044913722233982396
+    },
+    "not_exact_Hausdorff": true,
+    "closed": true,
+    "volume_positive": true,
+    "actual_triangles": 2108,
+    "access_gap_probes": {
+      "inside_points": 1000,
+      "inside_pass": 1000,
+      "gap_points": 1000,
+      "gap_outside_pass": 1000,
+      "seeds": 20
+    }
+  },
+  "option_readback": {
+    "passed": false,
+    "scope": "isolated pilot raw/native readback; not full site QA or approval",
+    "version": "5.1.2",
+    "profiles": {
+      "NPM": {
+        "fbx_sha256": "c532e07877825e3250021f30dced41d9a497470dacd759a41e39984ff16d2730",
+        "raw_triangle_count": 2108,
+        "native_triangle_count": 2108,
+        "faces_equal": true,
+        "vertex_max_delta_m": 1.1809211075686221e-07,
+        "bbox_m": [
+          [
+            5.127357508172281e-05,
+            4.793334301211871e-05,
+            -0.001221932703629136
+          ],
+          [
+            2.273888111114502,
+            2.2738828659057617,
+            0.7486550211906433
+          ]
+        ],
+        "material_slots": 1,
+        "uv_channels": 1,
+        "units": "metres",
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          8.742277657347586e-08
+        ]
+      },
+      "VPM": {
+        "fbx_sha256": "15571c985643b5c3ca3017820849b75dc5ebae58e706fee1c5d12a030da7fa4f",
+        "raw_triangle_count": 2108,
+        "native_triangle_count": 2108,
+        "faces_equal": true,
+        "vertex_max_delta_m": 1.1809211075686221e-07,
+        "bbox_m": [
+          [
+            5.127357508172281e-05,
+            4.793334301211871e-05,
+            -0.001221932703629136
+          ],
+          [
+            2.273888111114502,
+            2.2738828659057617,
+            0.7486550211906433
+          ]
+        ],
+        "material_slots": 1,
+        "uv_channels": 1,
+        "units": "metres",
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          8.742277657347586e-08
+        ]
+      }
+    }
+  },
+  "option_controls": [
+    {
+      "kind": "measured metal support",
+      "source_component": 76
+    },
+    {
+      "kind": "measured metal support",
+      "source_component": 77
+    },
+    {
+      "kind": "measured metal support",
+      "source_component": 78
+    },
+    {
+      "kind": "measured metal support",
+      "source_component": 79
+    },
+    {
+      "kind": "continuous tabletop NEW OPTION",
+      "source_wood_components": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "source_ring_component": 89,
+      "central_cap_component": 80,
+      "radius_m": 0.7300033998640367,
+      "bottom_m": 0.7050317879766226,
+      "top_m": 0.7486549969762564
+    },
+    {
+      "kind": "continuous seat sector NEW OPTION",
+      "source_backing_component": 84,
+      "bottom_m": 0.4056550320237875,
+      "top_m": 0.4481895323842764
+    },
+    {
+      "kind": "continuous seat sector NEW OPTION",
+      "source_backing_component": 86,
+      "bottom_m": 0.4056550022214651,
+      "top_m": 0.4481895323842764
+    },
+    {
+      "kind": "continuous seat sector NEW OPTION",
+      "source_backing_component": 87,
+      "bottom_m": 0.4056550916284323,
+      "top_m": 0.4481895323842764
+    },
+    {
+      "kind": "continuous seat sector NEW OPTION",
+      "source_backing_component": 88,
+      "bottom_m": 0.4056550916284323,
+      "top_m": 0.4481895323842764
+    }
+  ],
+  "public_xview_option": {
+    "NPM": {
+      "raw": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "VPM": {
+      "raw": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "failed_repair_routes": {
+    "source": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 2236,
+        "overlapping_faces": 9083,
+        "vertex_pairs": 1620,
+        "face_pairs": 17683,
+        "face_pairs_by_kind": {
+          "contact": 8803,
+          "area": 942,
+          "area+contact": 7938
+        },
+        "bowtie_vertices": 106,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "a06127855132ff874aa49c6ba8d487f3ea3e92be569965d333510afebbec57f2"
+    },
+    "r1": {
+      "passed": false,
+      "overlapping_faces": 43729,
+      "overlapping_vertices": 41718,
+      "report_sha256": "d34f15e09fc447a5e14b5763d60ba2ef4fd87227e464e189d0f053263addf16d"
+    },
+    "r2_partial": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 832,
+        "overlapping_faces": 803,
+        "vertex_pairs": 602,
+        "face_pairs": 1102,
+        "face_pairs_by_kind": {
+          "contact": 353,
+          "area": 167,
+          "area+contact": 582
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 19,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "1def4fe03e62c51dc5e4b0482a7fc5d35536ebcdbab3ac2321dbfe191f2d0968"
+    },
+    "r3_masks": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 7690,
+        "overlapping_faces": 3103,
+        "vertex_pairs": 146003,
+        "face_pairs": 5925,
+        "face_pairs_by_kind": {
+          "contact": 1952,
+          "area": 1955,
+          "area+contact": 2018
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 781,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "2823ce9d44d1f78d50cfd0fd8ee84fb3393c8afc6d01e7c617e5b599bd6aa73c"
+    },
+    "r3_net_lod": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 14,
+        "overlapping_faces": 300,
+        "vertex_pairs": 7,
+        "face_pairs": 850,
+        "face_pairs_by_kind": {
+          "contact": 15,
+          "area": 523,
+          "area+contact": 312
+        },
+        "bowtie_vertices": 5,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "cd6ef9288bd1271000e5e116f86d5cb3583d2a7021d072f5f895833cce148bab"
+    }
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    }
+  ],
+  "required_gate": {
+    "waits": "user",
+    "scope": "NEW Table016: allow merging76physical wood planks/slots into continuous tabletop/four seat sectors for12copies, or retain physical slots? Not D316 repair-scope/Bench/hedge/composition approval.",
+    "sheet": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v014\\review-sheet-v014-Table016-r4-FLAT-D316-NOT-ADOPTED.png",
+    "sheet_sha256": "8ab03521e337ea262cd96d57bff0e01c453be195523a23d069cad897bc36227c",
+    "site_adopted": false
+  },
+  "tests": {
+    "checkpoint_passed": 226,
+    "checkpoint_deselected": 1,
+    "checkpoint_seconds": 17.17,
+    "unresolved_complete_set_repair_failed": 1,
+    "unresolved_reason": "r1 43729faces!=0; deliberately separately reported, not a green repair",
+    "checkpoint_log_sha256": "62c962a0d0588ff43f6648caf97fe9b227136f5b7c2997815fd76a5c72db4094",
+    "unresolved_log_sha256": "acb5c77a91ece46ac1e7c8ae1442d1a2226a78f1937fea99e3f498f4e9770af1",
+    "red_authority": "1failed,missingD316 on ebd9a143;GREEN recorded",
+    "red_option": "4failed,retainedr2 12faces;GREEN actualr4 raw/native4/4",
+    "full_suite": "deferred to merge batch (rule68)"
+  },
+  "tool_accounting": {
+    "direct_headless_Blender_invocations": 12,
+    "public_validator_native_readers": 2,
+    "Max_bridge_read_only_calls": 4,
+    "agent_total_tool_calls": "not measured",
+    "new_shared_python_modules": 0
+  },
+  "code": [
+    {
+      "path": "audit_v014.py",
+      "lines": 53,
+      "sha256": "e54ba853988f8c923a93be07087cbadeba2604b3c46b6843b1cfca29df223e3c"
+    },
+    {
+      "path": "bounded_seams.py",
+      "lines": 15,
+      "sha256": "0ac1ba4b5a01c132587177234962def1714ac602db9fd5cdec84f53f8d654bc0"
+    },
+    {
+      "path": "build_table_option.py",
+      "lines": 37,
+      "sha256": "eec86eca0b676af0103b5a1732d5abbbb996d89900cf84a57a8eb98950d85f4e"
+    },
+    {
+      "path": "build_table_option_r2.py",
+      "lines": 37,
+      "sha256": "0ac9f296f84138e35c97273fe4a603f08852f213de96734bd2bf313fce2fbafc"
+    },
+    {
+      "path": "build_table_option_r3.py",
+      "lines": 37,
+      "sha256": "bb807a0782abbbd863e49dc295ff3492ea75e5686fa39aa2b10be73d40931586"
+    },
+    {
+      "path": "build_table_option_r4.py",
+      "lines": 37,
+      "sha256": "851baf9a1d5c9fa5e4be1b76d56e7aa814d5d68f539f1359f1ea7e1b41cc7649"
+    },
+    {
+      "path": "cleanup_r3_boundary.py",
+      "lines": 18,
+      "sha256": "498aec1cf0038429e295771ae1da22247f7a20f0438cf35cec52c3de620c35ea"
+    },
+    {
+      "path": "cleanup_r3_bounded.py",
+      "lines": 25,
+      "sha256": "23eb86d4da13c926a01ff77b1ffdc089196a890951618afa96767d17849e61bf"
+    },
+    {
+      "path": "cleanup_r3_lod.py",
+      "lines": 19,
+      "sha256": "ae6d7f9b0d20b88b1b412178453942b34a83b49652195b8d65541a64f66e97bd"
+    },
+    {
+      "path": "cleanup_r3_net.py",
+      "lines": 25,
+      "sha256": "01eae713d800de831456c6d9cc134dfa697df8f56580cb5ff2ed2c4c925fe0b1"
+    },
+    {
+      "path": "diagnose_seams.py",
+      "lines": 21,
+      "sha256": "1b8ccb6b0e199f6d2fbd665b8529a0c99df639d91216f023ff49ef227a25adef"
+    },
+    {
+      "path": "export_table_option.py",
+      "lines": 30,
+      "sha256": "92013262b2cda209f0006299b06fe2ca6876a24dd2d124bf349cd95d2e7e8d4d"
+    },
+    {
+      "path": "export_table_option_r4.py",
+      "lines": 30,
+      "sha256": "1da7ad46ff141af101569f8f0857e81983cf0b8bbcf4d3dbc2e73dcc3c924c11"
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "lines": 43,
+      "sha256": "45b9b1390a22dfa6277ba03ab2c535cdebc55b84ff0451a9a4c27ec1e0cbd6ad"
+    },
+    {
+      "path": "inspect_sources.py",
+      "lines": 43,
+      "sha256": "deaa95a8df10bce9b47fb20ff5f6d22959345efff2228b9a4f24313095c9c592"
+    },
+    {
+      "path": "make_sheet.py",
+      "lines": 16,
+      "sha256": "9fb0a75d04954ba65858f524c4dea1e10e3c683ea49a6254f2788db1877ff6c5"
+    },
+    {
+      "path": "make_sheet_current.py",
+      "lines": 16,
+      "sha256": "db2ca6cd7ba99491f710b61284a3c540a706d1d26e8ebb827feb053d2b14c367"
+    },
+    {
+      "path": "make_sheet_flat.py",
+      "lines": 16,
+      "sha256": "6811e466677fbe171733b04267d75c62fa036865373a0cd840422bac98dedf92"
+    },
+    {
+      "path": "native_readback_r1.py",
+      "lines": 28,
+      "sha256": "9269ba2c23d9e6ad9345ade2fbfde29c93aa86e23f6493afa3a077628c979efe"
+    },
+    {
+      "path": "prepare_current_sheet.py",
+      "lines": 5,
+      "sha256": "5df7cde86136fe7e19e31cc7dfa1fc133239a155b5245359b054383396b26e52"
+    },
+    {
+      "path": "prepare_flat_views.py",
+      "lines": 7,
+      "sha256": "1d678a6a2b5e3a767b7f3fcfb20e2b807a23e3d77c2654f37c1cc48c335e2aab"
+    },
+    {
+      "path": "prepare_option_export_r4.py",
+      "lines": 7,
+      "sha256": "dc3fceebda50303f058f5e8a11d769fe8a0f52ce633287ac9482248cfa452d41"
+    },
+    {
+      "path": "prepare_option_r2.py",
+      "lines": 11,
+      "sha256": "434e15e36079fcdd40a97ddcd51312aa3a306e85efb171d70d2ad1c5890df459"
+    },
+    {
+      "path": "prepare_option_r3.py",
+      "lines": 11,
+      "sha256": "5eb954da811129d207314955d493ed848f5cc95bda68070afc6c121bb196a72e"
+    },
+    {
+      "path": "prepare_option_r4.py",
+      "lines": 12,
+      "sha256": "d3b41360685ce0fdf20dc55008f382c45fc420322eb969969aaecf972588a504"
+    },
+    {
+      "path": "prepare_readback.py",
+      "lines": 7,
+      "sha256": "624f23e09d006e8054c68b7fbb01b86e51fbffe55cd138f32f3719edcb7f200a"
+    },
+    {
+      "path": "raw_readback_r1.py",
+      "lines": 50,
+      "sha256": "826171e71126ec6bee19dc426f62c5dcfeb66c5eedcc603318af176eb30706c4"
+    },
+    {
+      "path": "readback_option_r4.py",
+      "lines": 30,
+      "sha256": "8633bb181cfee023d4704620e87ff08fd6c58914da07c4f0323d73ed0d7765f3"
+    },
+    {
+      "path": "render_option_only.py",
+      "lines": 16,
+      "sha256": "8569a0d8958ebd87bbc5b6694f6b99e845649c723816e1cb18c489a2d87f0fa6"
+    },
+    {
+      "path": "render_option_r4_flat.py",
+      "lines": 16,
+      "sha256": "71e6778c6dd266c84133cddbabfc1c703b4a640a5b9e003b5922b9245f14a8a8"
+    },
+    {
+      "path": "repair_r3_source_masks.py",
+      "lines": 65,
+      "sha256": "c9ecefb7b9b94f6f0bec720387b0daa8e936d4ab5578d814fb9d0d3cb7784d09"
+    },
+    {
+      "path": "repair_set_r1.py",
+      "lines": 77,
+      "sha256": "fc01864956a263954cd472923e16cbc9d34e34884892e949ffe6ef88c31aaaa2"
+    },
+    {
+      "path": "repair_set_r2.py",
+      "lines": 63,
+      "sha256": "540fb1f2be462167ac9daa1a7ec69a6165b9e96ae4b9a623270c2aec961342e6"
+    },
+    {
+      "path": "repair_set_r3.py",
+      "lines": 52,
+      "sha256": "c6776ebefe93ef46cd21abdcf6292571a047a9e42aa133216b446ae6aac0d40e"
+    },
+    {
+      "path": "replicate_bench.py",
+      "lines": 45,
+      "sha256": "eaf7f2f89125da709005fa858e17bccc18699f0f9e4ce29ebeddacafb2e067ce"
+    },
+    {
+      "path": "test_checkpoint_controls.py",
+      "lines": 61,
+      "sha256": "35e006f9b5f7cb120712f605614e7b658d62426d6a8183bdc6f042f7737fa653"
+    },
+    {
+      "path": "test_replication.py",
+      "lines": 21,
+      "sha256": "3b47574bf6b6319f0122fc60fa462e414733b9fe8ad7b4e79ba6f827693a0fce"
+    },
+    {
+      "path": "view_canopy_components.py",
+      "lines": 17,
+      "sha256": "88c3e2400780b89e21cd4d843c666784c24587432bf0e387425c2e67fadd09c2"
+    }
+  ],
+  "independent_audit": {
+    "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v014\\actual-audit-v014.json",
+    "sha256": "dede0a03610c64d05e8f57d835798d66a1be9f5e312430b7b2c07b2628340d61"
+  }
+}

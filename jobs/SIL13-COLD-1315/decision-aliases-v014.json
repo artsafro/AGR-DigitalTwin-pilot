@@ -1,0 +1,15 @@
+{
+  "scope": "SIL13-COLD-1315 only; historical sealed evidence retains its IDs at execution time",
+  "semantic_change": false,
+  "current_registry": "docs/decisions.md",
+  "aliases": [
+    {"historical": "D298", "current": "D313", "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6885424060"},
+    {"historical": "D300", "current": "D314", "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6878796926"},
+    {"historical": "D301", "current": "D315", "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6890885700"},
+    {"historical": "D311", "current": "D316", "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6893485374"}
+  ],
+  "reason": "Foreign main #1412 allocations collide with earlier pushed pilot checkpoints; open PR1422 also used the reserved D311. Own current rows/citations mechanically renumbered, foreign branches untouched; no construction gate reopened.",
+  "reservation_evidence": "card t_d9ae7dc0 comments7598 (D311,2026-11-15T11:23:36Z) and7613 (D313-D316); later PR1422 plan2026-11-15T11:24:01Z",
+  "guard": "decision_ids.py check: ok, no new id reused (origin/main,4 open PR heads)",
+  "historical_documents": "v001-v013 continuations and generated raw/summary receipts are historical, not current registry authority. Resolve their Silikatny IDs through this map; never interpret them as unrelated newly merged main decisions. Their bytes/hashes are retained."
+}
