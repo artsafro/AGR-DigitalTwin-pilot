@@ -15,6 +15,7 @@ import route_map  # noqa: E402
 EXPECTED = {
     "model": {"vpm-npm-master", "npm-only-direct", "window-library", "window-generator"},
     "uv": {"atlas-udim", "atlas-material-ids"},
+    "npm": {"job-copy", "budget-options", "flora-opacity"},  # #1440: later decisions, not D292
     "export": {"package-vpm", "package-npm"},
 }
 
@@ -32,7 +33,8 @@ def test_route_has_the_decided_branches_each_citing_d292():
     assert _branches(events) == EXPECTED
     for s in events["stages"]:
         for b in s.get("branches", []):
-            assert "D292" in b["rules"], (s["id"], b["id"])
+            expected_rule = {"job-copy": "D301", "budget-options": "D010", "flora-opacity": "D299"}.get(b["id"], "D292")
+            assert expected_rule in b["rules"], (s["id"], b["id"])
     roof = next(h for h in events["hotspots"] if h["id"] == "parapet-roof-seam")
     assert "D292" in roof["rules"]
 

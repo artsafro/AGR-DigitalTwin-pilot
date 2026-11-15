@@ -4,13 +4,15 @@
 # branches (#1375, D292): a task-dependent choice inside one stage: id, when_ru, ru, rules, evidence, [commands].
 # rules: D-rows of docs/decisions.md. evidence: repo paths that exist. context: id from contexts.yaml.
 # Regenerate: uv run python tools/architecture/route_map.py
-title_ru: "Маршрут НПМ / ОКС на КПП1: событийный штурм"
+title_ru: "Маршрут НПМ / ОКС v2 на КПП1: событийный штурм"
 route: oks-npm
 object: KPP1
 issue: "#1359"
 actors:
   - id: agent
     ru: "Агент"
+  - id: agent-dcc
+    ru: "Агент: Blender / Max / AGR Tools"
   - id: artem
     ru: "Артём"
   - id: checker
@@ -51,7 +53,7 @@ stages:
       - jobs/KPP1/cold-run-1172/parts-v001.json
   - id: model
     event_ru: "Модель построена (мастер или сразу НПМ — по задаче)"
-    actor: agent
+    actor: agent-dcc
     context: body
     commands:
       - "dt spec compare"
@@ -61,6 +63,8 @@ stages:
       - D038
       - D204
       - D255
+      - D293
+      - D312
     evidence:
       - jobs/KPP1/STATE.md
       - jobs/KPP1/spec-compare-v003.md
@@ -100,7 +104,7 @@ stages:
           - jobs/KPP1/windowgen-1338/README.md
   - id: uv
     event_ru: "UV и атлас НПМ готовы"
-    actor: agent
+    actor: agent-dcc
     context: uv-atlas
     commands:
       - "agr vpm-to-npm"
@@ -111,6 +115,7 @@ stages:
       - D280
       - D221
       - D225
+      - D293
     evidence:
       - docs/research/bench-npm-derivation.md
     branches:
@@ -134,19 +139,56 @@ stages:
         evidence:
           - tools/derive/npm_atlas.py
           - library/materials/maps_v001.json
-  - id: export
-    event_ru: "Экспорт и пакет собраны"
-    actor: agent
-    context: package
+  - id: npm
+    event_ru: "Версия НПМ на атласе готова перед экспортом; UCX нет"
+    actor: agent-dcc
+    context: uv-atlas
     commands:
       - "dt derive npm"
-      - "agr package-vpm"
+    rules:
+      - D292
+      - D293
+      - D301
+    evidence:
+      - routes/npm-oks.md
+      - tools/derive/export_npm.py
+      - docs/domain/areas/derivation.md
+    branches:
+      - id: job-copy
+        when_ru: "облегчаем библиотечный объект"
+        ru: "только копия <original>__<job> вне библиотеки; оригинал не меняем; копия в манифесте задания для очистки после сдачи"
+        rules:
+          - D301
+        evidence:
+          - library/flora/README.md
+      - id: budget-options
+        when_ru: "выбираем бюджет НПМ"
+        ru: "агент приносит варианты 50k / 60k / 70k, Артём сокращает; это варианты задания, не замена нормативному лимиту (#1412)"
+        rules:
+          - D010
+        evidence:
+          - docs/architecture/report-1359.md
+      - id: flora-opacity
+        when_ru: "в сдаче есть Flora"
+        ru: "Flora ВСЕГДА с opacity: НПМ — отдельная opacity-карта формирует силуэт; ВПМ — Diffuse с alpha. Временные карты допустимы, вид Артём проверяет в конце (#1412)"
+        rules:
+          - D299
+        evidence:
+          - docs/architecture/report-1359.md
+  - id: export
+    event_ru: "Экспорт и пакет собраны"
+    actor: agent-dcc
+    context: package
+    commands:
+      - "agr package-npm"
     rules:
       - D292
       - D198
       - D224
+      - D293
     evidence:
       - jobs/KPP1/STATE.md
+      - adapters/max/agr_tools/package_core.py
     branches:
       - id: package-vpm
         when_ru: "сдаём ВПМ"
@@ -169,12 +211,13 @@ stages:
           - tools/derive/package_npm.py
   - id: readback
     event_ru: "Экспорт заново прочитан в новом процессе"
-    actor: agent
+    actor: agent-dcc
     context: dcc
     commands:
       - "dt qa xview"
     rules:
       - D273
+      - D293
     evidence:
       - docs/research/bench-npm-derivation.md
   - id: validate
@@ -203,16 +246,50 @@ stages:
       - jobs/KPP1/final-check-1293/run_max.py
       - tools/qa/sintez_checker.py
   - id: delivered
-    event_ru: "Сдано: Артём принял визуально, пакет передан"
+    event_ru: "Архив или Max-сцена с квадами переданы Артёму; он принимает и передаёт заказчику"
     actor: artem
     context: package
     rules:
       - D270
       - D262
       - D271
+      - D300
     evidence:
       - jobs/KPP1/REPORT.md
 hotspots:
+  - id: tool-choice
+    stage: model
+    ru: "Решено D293: агент выбирает Blender / Max / AGR Tools на каждом шаге и пишет почему одной строкой; инструмент не назначен всему маршруту. D312: мастер — квады где возможно; неизбежные треугольники считаем по объекту и доле граней, n-gon >4 запрещён до триангуляции экспорта"
+    rules:
+      - D293
+      - D312
+    evidence:
+      - docs/domain/areas/body.md
+  - id: tile-scale
+    stage: uv
+    ru: "4096 tile: сторона квада 3.8–4 m; UV-острова могут перекрываться / stack (Артём 2026-11-15, #1380 comment-6893094521); это не универсальный лимит НПМ ОКС"
+    rules:
+      - D021
+    evidence:
+      - docs/architecture/report-1359.md
+  - id: site-interface
+    stage: npm
+    ru: "Только если в задании есть участок (D293): плоский Ground → ID/текстуры → проекция на рельеф → поправка текстур + юбка → UCX только ВПМ → МАФ/Flora → НПМ на атласе до экспорта. МАФ-ограды/навесы без UCX; не попавшие на поверхность объекты удаляем с записью причины"
+    rules:
+      - D293
+      - D298
+      - D302
+    evidence:
+      - docs/architecture/ground-route.events.yaml
+      - docs/architecture/maf-route.events.yaml
+  - id: dcc-runner
+    stage: readback
+    ru: "Закрыто #1378: владелец команд Blender — blender_runner.blender_command / run_blender; старые драйверы перечислены с причинами, не новые точки входа"
+    rules:
+      - D273
+    evidence:
+      - src/dt_ai/core/blender_runner.py
+      - docs/architecture/contexts.yaml
   - id: parapet-roof-seam
     stage: model
     ru: "Шов парапет / кровля: толщина парапета и плита кровли были под вопросом архитектору (D249), закрыты только D254; вставная кровля переделана в v007; замер шва — #1339. Решено (D292, R6 #1352): кровля врезана контуром в стены парапета и поднята на несколько мм над низом парапета, не вровень"
@@ -238,7 +315,7 @@ hotspots:
       - jobs/KPP1/windowgen-1338/README.md
   - id: udim
     stage: uv
-    ru: "UDIM: 30 своих формул в jobs/ и 4 расходящиеся копии до #1337; vpm_uv.py TEC26 = КПП1 с разницей в одну строку"
+    ru: "Закрыто #1376: живой маршрут НПМ использует udimtile_core; охрана jobs/ + tools/ + src/. Исторические копии не переписываем; остальные адреса/причины — contexts.yaml (#1424)"
     rules:
       - D209
       - D221
@@ -257,13 +334,14 @@ hotspots:
       - adapters/max/agr_tools/atlas_core.py
   - id: package
     stage: export
-    ru: "Пакет: 9 своих упаковщиков ВПМ в jobs/ (+5 других ZIP); один FBX не проходит — V001/V011/V013 требуют ZIP и GeoJSON"
+    ru: "Закрыто #1377 / #1361: единственный писатель ZIP сдачи — package_core._write_zip; agr package-npm / package-vpm и AGR Tools используют его. Исторические упаковщики сохранены. Один FBX не заменяет ZIP + GeoJSON и проверки V001/V011/V013"
     rules:
       - D224
       - D198
     evidence:
       - tools/derive/package_vpm.py
       - jobs/KPP1/LESSONS.md
+      - adapters/max/agr_tools/package_core.py
   - id: xview-overlaps
     stage: validate
     ru: "xView: 112 / 116 перекрытых граней на мастере и экспорте (#1343) — не пройдено; V015 / V017 ждут ручной проверки"
