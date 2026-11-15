@@ -577,10 +577,32 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                             not isinstance(s, dict) or not {'id', 'status', 'check', 'gate'} <= set(s)
                             for s in table['stages']):
                         raise ValueError('partial validator stages for ' + a['name'])
+                    # Embedded Max stays stdlib-only; pin these profile inventories to
+                    # DELIVERY_VALIDATOR.yaml in the contract regression.
+                    profile = 'npm' if re.match(r'^[0-9]{4}_', a['name']) else 'vpm'
+                    numbers = ((1, 2, 3, 4, 5, 6, 12, 14, 15, 17) if profile == 'npm'
+                               else (1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17))
+                    expected = {'V{:03d}'.format(n) for n in numbers}
+                    ids = [s['id'] for s in table['stages']]
+                    if (any(not isinstance(sid, str) for sid in ids)
+                            or len(ids) != len(expected) or set(ids) != expected):
+                        missing = sorted(expected - {sid for sid in ids if isinstance(sid, str)})
+                        raise ValueError('invalid validator stage inventory for {}: missing {}; '
+                                         'expected exactly {}'.format(a['name'], ', '.join(missing),
+                                                                      ', '.join(sorted(expected))))
                     full_report = table.get('validation_report')
-                    if full_report is not None:
-                        with open(target + '.validation.json', 'x', encoding='utf-8') as fh:
-                            json.dump(full_report, fh, ensure_ascii=False, indent=2, allow_nan=False)
+                    if not isinstance(full_report, dict) or not full_report:
+                        raise ValueError('missing validation_report for ' + a['name'])
+                    try:
+                        stored_table = stage_table(full_report)
+                    except (KeyError, TypeError, ValueError) as exc:
+                        raise ValueError('invalid validation_report for ' + a['name']) from exc
+                    if (stored_table['profile'] != profile or table.get('profile') != profile
+                            or stored_table['exit_code'] != table['exit_code']
+                            or stored_table['stages'] != table['stages']):
+                        raise ValueError('validation_report disagrees with validator table for ' + a['name'])
+                    with open(target + '.validation.json', 'x', encoding='utf-8') as fh:
+                        json.dump(full_report, fh, ensure_ascii=False, indent=2, allow_nan=False)
                     reports.append({k: v for k, v in table.items() if k != 'validation_report'})
                     findings += stage_findings(edit, table)
                     open_stages = [s for s in table['stages'] if s['status'] != 'pass']

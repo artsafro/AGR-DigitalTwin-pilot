@@ -262,12 +262,89 @@ def test_ready_requires_full_report_and_stage_inventory(tmp_path, defect):
     assert ('validation_report' if defect == 'missing_report' else 'V001') in text
 
 
+@pytest.mark.parametrize('profile', ['npm', 'vpm'])
+@pytest.mark.parametrize('number', range(1, 18))
+def test_every_missing_or_wrong_profile_stage_refuses_ready(tmp_path, profile, number):
+    d = acceptance_folder(tmp_path)
+    # Select one profile so both independent profile inventories are attacked.
+    for path in list(d.iterdir()):
+        if path.name.startswith('0123_') != (profile == 'npm'):
+            path.unlink()
+    before = {path.name: path.read_bytes() for path in d.iterdir()}
+    sid = 'V{:03d}'.format(number)
+
+    def validator(target):
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        ids = [stage['id'] for stage in table['stages']]
+        if sid in ids:
+            table['stages'] = [stage for stage in table['stages'] if stage['id'] != sid]
+        else:
+            table['stages'].append({'id': sid, 'check': sid, 'gate': 'blocking', 'status': 'pass'})
+        return table
+
+    with pytest.raises(ValueError, match='stage inventory'):
+        pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
+    (run,) = d.glob(pc.RUN_PREFIX + '*')
+    assert not (run / pc.MARK_OK).exists()
+    text = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert 'stage inventory' in text
+    assert ('0123_X.zip' if profile == 'npm' else 'SM_X.zip') in text
+    assert {path.name: path.read_bytes() for path in d.iterdir() if path.is_file()} == before
+
+
+@pytest.mark.parametrize('defect', ['duplicate', 'unknown', 'wrong_report_profile', 'report_stages',
+                                   'report_status', 'empty_report', 'unwritable_report'])
+def test_validator_evidence_counterexamples_fail_closed(tmp_path, monkeypatch, defect):
+    import builtins
+    import copy
+    d = acceptance_folder(tmp_path)
+    original_open = builtins.open
+
+    def guarded_open(path, *args, **kwargs):
+        if str(path).endswith('.validation.json'):
+            raise OSError('synthetic sidecar write failure')
+        return original_open(path, *args, **kwargs)
+
+    if defect == 'unwritable_report':
+        monkeypatch.setattr(builtins, 'open', guarded_open)
+
+    def validator(target):
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        if defect == 'duplicate':
+            table['stages'].append(copy.deepcopy(table['stages'][0]))
+        elif defect == 'unknown':
+            table['stages'][0]['id'] = 'V999'
+        elif defect == 'wrong_report_profile':
+            table['validation_report']['profile'] = 'vpm'
+        elif defect == 'report_stages':
+            table['validation_report']['stages'].pop()
+        elif defect == 'report_status':
+            table['validation_report']['stages'][0]['status'] = 'fail'
+        elif defect == 'empty_report':
+            table['validation_report'] = {}
+        return table
+
+    with pytest.raises((ValueError, OSError)):
+        pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
+    (run,) = d.glob(pc.RUN_PREFIX + '*')
+    assert not (run / pc.MARK_OK).exists()
+    assert (run / pc.MARK_FAIL).exists()
+
+
+def test_synthetic_profile_inventories_match_locked_validator():
+    from twinqa.profiles import expected_stages, read_snapshot, snapshot_validator
+    spec = snapshot_validator(read_snapshot())
+    for profile, target in [('npm', '0123_X.zip'), ('vpm', 'SM_X.zip')]:
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        assert [stage['id'] for stage in table['stages']] == [sid for sid, _, _ in expected_stages(spec, profile)]
+
+
 def test_exit_two_never_writes_ready_and_names_open_codes(tmp_path):
     d = acceptance_folder(tmp_path)
     table = {'exit_code': 2, 'stages': [
         {'id': 'V001', 'check': 'manifest', 'gate': 'blocking', 'status': 'not_run',
          'non_pass': ['not_run: build manifest: missing'], 'codes': [], 'open_codes': ['manifest_missing']} ]}
-    r = pc.zip_apply(ec, pc.zip_preview(ec, d), lambda _: table)
+    r = pc.zip_apply(ec, pc.zip_preview(ec, d), lambda target: _complete_validator_table(table, target))
     run = Path(r['plan']['run_folder'])
     assert not (run / pc.MARK_OK).exists()
     assert 'manifest_missing' in (run / pc.MARK_FAIL).read_text(encoding='utf-8')
@@ -279,7 +356,7 @@ def test_manual_reviews_only_ready_with_explicit_pending_line(tmp_path, exit_cod
         {'id': sid, 'check': 'review', 'gate': 'manual_review', 'status': 'review',
          'non_pass': ['review: acceptance: pending'], 'codes': [], 'open_codes': []}
         for sid in ('V015', 'V016', 'V017')]}
-    r = pc.zip_apply(ec, pc.zip_preview(ec, acceptance_folder(tmp_path)), lambda _: table)
+    r = pc.zip_apply(ec, pc.zip_preview(ec, acceptance_folder(tmp_path)), lambda target: _complete_validator_table(table, target))
     text = (Path(r['plan']['run_folder']) / pc.MARK_OK).read_text(encoding='utf-8')
     assert 'ждут ручной приёмки Артёма: V015, V016, V017' in text
 
@@ -324,9 +401,9 @@ def test_second_zip_exit_two_named_in_error(tmp_path):
     def validator(target):
         calls.append(Path(target).name)
         status = 'pass' if len(calls) == 1 else 'not_run'
-        return {'exit_code': 0 if status == 'pass' else 2, 'stages': [
+        return _complete_validator_table({'exit_code': 0 if status == 'pass' else 2, 'stages': [
             {'id': 'V001', 'check': 'manifest', 'gate': 'blocking', 'status': status,
-             'non_pass': [], 'codes': [], 'open_codes': ['manifest_missing'] if status == 'not_run' else []}]}
+             'non_pass': [], 'codes': [], 'open_codes': ['manifest_missing'] if status == 'not_run' else []}]}, target)
 
     r = pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
     assert calls == ['0123_X.zip', 'SM_X.zip']
@@ -348,7 +425,7 @@ def test_marker_generated_status_matrix(tmp_path, exit_code, auto_status, manual
         for sid, gate, status in [('V001', 'blocking', auto_status), ('V015', 'manual_review', manual_status)]]}
     d = acceptance_folder(tmp_path)
     before = {f.name: f.read_bytes() for f in d.iterdir()}
-    r = pc.zip_apply(ec, pc.zip_preview(ec, d), lambda _: table)
+    r = pc.zip_apply(ec, pc.zip_preview(ec, d), lambda target: _complete_validator_table(table, target))
     run = Path(r['plan']['run_folder'])
     expected = (auto_status == 'pass' and manual_status != 'fail' and
                 (exit_code == 0 or (exit_code == 2 and manual_status in ('review', 'not_run'))))
