@@ -15,7 +15,7 @@ with --scene and no --master that part of V003 stays not_run.
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
-not_run (never pass). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
+not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
 
     py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--standards DIR] [--json]
 

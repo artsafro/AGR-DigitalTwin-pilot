@@ -404,7 +404,11 @@ def manifest_findings(manifest_bytes, members, package_name, package_sha256=None
         detail = '; '.join('{} derived from master {} (build master {})'.format(ns, r[:12], master[:12])
                            for r, ns in sorted(stale.items()))
         out.append(('fail', 'manifest_master_mismatch', 'artifacts name different master revisions: ' + detail))
-    if master_sha256 is not None and master_sha256 != master:
+    if master_sha256 is None:
+        # no master given -> the stale check did not run; never pass without it (#1423 r1 P1)
+        out.append(('not_run', 'manifest_master_unchecked', 'manifest_master_unchecked: master not given, the build '
+                    'master {} was not compared with the current master (agr validate --master)'.format(master[:12])))
+    elif master_sha256 != master:
         out.append(('fail', 'manifest_master_stale', 'master now {} != build master {}: rebuild every artifact'.format(
             master_sha256[:12], master[:12])))
     checks = {c['id']: c for c in m['checks']}

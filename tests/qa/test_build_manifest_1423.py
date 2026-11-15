@@ -327,6 +327,7 @@ def test_valid_manifest_without_master_is_never_pass(tmp_path, capsys):
     via the core, validate_package.main and package_core.qa_package (Max qa.package passes no master)."""
     master, _, package, _ = good(tmp_path)
     assert [(s, c) for s, c, _ in findings(package)] == [('not_run', 'manifest_master_unchecked')]
+    capsys.readouterr()  # drop the build CLI output
     assert vp.main([str(package), '--profile', 'npm', '--json']) != 0
     rep = json.loads(capsys.readouterr().out)
     (v001,) = [s for s in rep['stages'] if s['id'] == 'V001']
@@ -413,4 +414,6 @@ def test_probe_random_single_mutation_never_passes(tmp_path):
         n += 1
         rows = run(m)
         assert not any(s == 'pass' for s, _, _ in rows) and any(s == 'fail' for s, _, _ in rows), m
+        no_master = bm.manifest_findings(bm.dumps(m), members, package.name, pkg_sha, None, str(tmp_path))
+        assert not any(s == 'pass' for s, _, _ in no_master), m  # r1 P1: without the master never pass
     assert n >= 250
