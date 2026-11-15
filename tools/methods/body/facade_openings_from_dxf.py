@@ -89,6 +89,22 @@ def _segments(entity):
     return segments
 
 
+def _overlapping(segments):
+    """True when two axis-aligned segments share a positive-length piece (duplicate/overlap).
+
+    Exact comparison of the original coordinates; no summed lengths, no tolerance (#1324).
+    """
+    spans = []
+    for s in segments:
+        (ax, ay), (bx, by) = s.coords
+        spans.append(('h', ay, *sorted((ax, bx))) if ay == by else ('v', ax, *sorted((ay, by))))
+    for i, (axis, line, lo, hi) in enumerate(spans):
+        for other_axis, other_line, other_lo, other_hi in spans[i + 1:]:
+            if axis == other_axis and line == other_line and max(lo, other_lo) < min(hi, other_hi):
+                return True
+    return False
+
+
 def extract(source: Path, mapping: Path) -> dict:
     """Return measured dimensions and full entity accounting; no filesystem writes."""
     source, mapping = Path(source), Path(mapping)
@@ -144,7 +160,7 @@ def extract(source: Path, mapping: Path) -> dict:
         outline = unary_union(segments)
         left, bottom, right, top = outline.bounds
         boundary = box(left, bottom, right, top).boundary
-        if left >= right or bottom >= top or not outline.equals(boundary) or sum(s.length for s in segments) != outline.length:
+        if left >= right or bottom >= top or not outline.equals(boundary) or _overlapping(segments):
             raise ValueError(f'opening {oid}: incomplete, duplicate or nonrectangular outline')
         frame = config['facades'][facade]
         ox, oy = frame['origin_mm']

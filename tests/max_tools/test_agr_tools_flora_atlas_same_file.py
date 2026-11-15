@@ -76,7 +76,7 @@ def test_texel_none_routes_to_the_oks_mode_of_pack():
     assert "mode='oks' if options.get('texel') == 'none' else 'ground'" in text
 
 
-def _preview(monkeypatch, tmp_path, other_folder=False):
+def _preview(monkeypatch, tmp_path, other_folder=False, px=None, channels=4):
     """Synthetic PNGs; only the Max scene boundary is replaced, not image IO or atlas planning."""
     g, core = _glue(), _core()
     spec = importlib.util.spec_from_file_location('edit_core_same', ROOT / 'adapters/max/agr_tools/edit_core.py')
@@ -85,7 +85,7 @@ def _preview(monkeypatch, tmp_path, other_folder=False):
     tq = core.texqa()
     source = tmp_path / 'diffuse' / 'tree.png'
     source.parent.mkdir()
-    source.write_bytes(tq.write_png(2, 2, bytes([10, 80, 20, 0, 10, 80, 20, 255] * 2), 4))
+    source.write_bytes(tq.write_png(2, 2, bytes(px or [10, 80, 20, 0, 10, 80, 20, 255] * 2), channels))
     opacity = source
     if other_folder:
         opacity = tmp_path / 'opacity' / 'tree.png'
@@ -125,3 +125,46 @@ def test_preview_accepts_same_rgba_file_and_reports_one_face(monkeypatch, tmp_pa
     assert 'opacity_mismatch' not in str(report)
     assert report['plan']['atlas']['opacity'] is True
     assert report['plan']['done'] == [{'object': 'Synthetic_flora', 'faces': 1, 'instance_of': None}]
+
+
+# #1382: the same-file decision comes before the alpha test. An opaque diffuse that is its own opacity map has no
+# cutout; before the fix it fell into the separate-opacity branch and its RED channel became the atlas alpha.
+OPAQUE_RGBA = [200, 80, 20, 255, 0, 80, 20, 255] * 2  # red = 0 on two pixels: channel(0) would cut them out
+OPAQUE_RGB = [200, 80, 20, 0, 80, 20] * 2
+
+
+def _codes(report):
+    return [f['code'] for o in report['objects'] for f in o['findings']]
+
+
+@pytest.mark.parametrize('px, channels', [(OPAQUE_RGBA, 4), (OPAQUE_RGB, 3)], ids=['rgba_fully_opaque', 'rgb_no_alpha'])
+def test_preview_same_file_opaque_diffuse_has_no_cutout(monkeypatch, tmp_path, px, channels):
+    report = _preview(monkeypatch, tmp_path, px=px, channels=channels)
+    assert _codes(report) == []
+    assert report['plan']['atlas']['opacity'] is False
+    assert report['plan']['done'] == [{'object': 'Synthetic_flora', 'faces': 1, 'instance_of': None}]
+
+
+def test_preview_same_file_partial_alpha_control_keeps_cutout(monkeypatch, tmp_path):
+    report = _preview(monkeypatch, tmp_path, px=[200, 80, 20, 0, 0, 80, 20, 255] * 2)
+    assert _codes(report) == []
+    assert report['plan']['atlas']['opacity'] is True
+
+
+def test_probe_same_file_opacity_follows_diffuse_alpha_only(monkeypatch, tmp_path):
+    """Generated probe (seed 1382, 60 cases): opacity is True iff the diffuse has an alpha value < 255."""
+    import random
+    rnd = random.Random(1382)
+    for i in range(60):
+        channels = rnd.choice([3, 4])
+        px = []
+        for _ in range(4):
+            px += [rnd.choice([0, 255, rnd.randrange(256)]) for _ in range(3)]
+            if channels == 4:
+                px.append(rnd.choice([255, 255, 255, rnd.randrange(256)]))
+        case = tmp_path / str(i)
+        case.mkdir()
+        report = _preview(monkeypatch, case, px=px, channels=channels)
+        expected = channels == 4 and min(px[3::4]) < 255
+        assert _codes(report) == [], (i, px)
+        assert report['plan']['atlas']['opacity'] is expected, (i, channels, px)

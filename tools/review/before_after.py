@@ -41,7 +41,8 @@ CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'sensor_height', 'shift_
 # projection, so any parameter that changes the image (incl. ones not listed above) is a mismatch.
 CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution', 'pixel_aspect',
                *CAMERA_FLOATS}
-RENDER_KEYS = ('engine', 'style', 'color_management', 'use_sequencer', 'use_compositing')
+RENDER_KEYS = ('engine', 'style', 'color_management', 'use_sequencer', 'use_compositing',
+               'use_border', 'use_multiview', 'image_views_format')
 TOLERANCE = 1e-6
 
 

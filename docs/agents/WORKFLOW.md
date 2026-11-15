@@ -37,6 +37,17 @@ lists; they do not define a production step.
 5. **Execute** in narrow stages. Pure computation in `src/`, DCC calls in adapters/tools,
    object parameters in the job, manual decisions in a record with their source. Every
    rerun writes a new versioned output; keep manifests and hashes.
+   **Accepted geometry is frozen:** immediately record each user-accepted part's version,
+   path and SHA-256 in `jobs/<ID>/accepted.json`; preserve the user's answer reference.
+   UV, textures, UCX and export briefs cite that accepted set, never "latest", and run
+   [`accepted_set.py`](../../tools/state/accepted_set.py) before reading geometry.
+   Post-acceptance technical findings go to the user **once as a consolidated list**, with
+   named helpers/points in a separate review scene; retain the sent-list reference in the job.
+   Do not launch geometry fix rounds or a new geometry version without his explicit decision.
+   Diagnostics, user acceptance and publication remain separate: a QA failure does not unfreeze
+   geometry or waive a mandatory delivery gate. Evidence: 4bk-k3 floor 1 A accepted
+   2026-11-14 17:31, then five QA rounds v005–v009 and texture work on v008e instead of
+   body A v004 / windows A v003 / roof A v003. See the [fixed format and incident evidence](../procedure/ACCEPTED_GEOMETRY.md).
 6. **Verify independently.** The executor's report, exit 0 or a child agent's summary is
    not evidence. Read the actual files back. Classify a failure (source / tool / code /
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is

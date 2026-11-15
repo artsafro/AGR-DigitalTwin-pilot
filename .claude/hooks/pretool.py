@@ -26,6 +26,9 @@ import sys
 import traceback
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "hooks"))
+from hook_input import read_stdin
+
 HERE = Path(__file__).resolve().parent
 # (module file, tool names it runs for; None = every tool the settings matcher sends)
 PARTS = [
@@ -214,7 +217,7 @@ def dispatch(raw):
 
 
 def main():
-    out, err, code = dispatch(sys.stdin.read())
+    out, err, code = dispatch(read_stdin())
     if out:
         sys.stdout.write(out)
     if err:

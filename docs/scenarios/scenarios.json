@@ -50,8 +50,8 @@
     {
       "id": "ground-vpm",
       "title": "Ground + MAF + Flora + UCX, VPM",
-      "status": "todo",
-      "card": null,
+      "status": "ready",
+      "card": "docs/scenarios/ground-vpm.md",
       "reads": ["docs/domain/requirements-2026.md", "docs/domain/areas/ground-surface.md", "docs/domain/areas/groundel-maf.md", "docs/domain/areas/flora.md", "docs/domain/areas/ucx.md", ".agents/skills/model-ground/SKILL.md"]
     }
   ]

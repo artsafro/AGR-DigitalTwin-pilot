@@ -1,0 +1,19 @@
+{
+  "schema": "chart-seam-approval/1",
+  "actor": "Artem",
+  "date": "2026-11-14",
+  "ref": "kanban:t_d517d7c6:USER DECISION:2026-11-14 06:05",
+  "answer_verbatim": "YES - reset the horizontal bond phase inside ONE existing vertical panel seam per closed main-wall contour (recommended 0/54 and 1344/1398 on K3_StylobateWalls.001); horizontal courses stay continuous in height; no new cuts; list both in the report.",
+  "source_manifest": "faces.json",
+  "source_manifest_sha256": "f6bad16b50b6dda50dd3aecf69c755bb2c6a516925e71bf81645440492296106",
+  "authorized_seams": [
+    {"object": "K3_StylobateWalls.001", "faces": [0, 54], "vertices": [254, 1364], "mode": "horizontal_phase"},
+    {"object": "K3_StylobateWalls.001", "faces": [1344, 1398], "vertices": [2, 1419], "mode": "horizontal_phase"}
+  ],
+  "geometry_changes_authorized": false,
+  "vertical_course_discontinuity_authorized": false,
+  "every_applied_break_must_be_reported": true,
+  "production_uvs_written": false,
+  "pilot_passed": false,
+  "note": "Answers LOOP_POLICY.md; stair thin-end/underside permission is separate seam-approval.json. No additional main-wall seams authorized."
+}
