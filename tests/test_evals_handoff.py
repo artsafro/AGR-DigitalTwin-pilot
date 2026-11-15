@@ -744,6 +744,8 @@ def test_template_evidence_follows_d297():
     ("prose", "Reviewers should rerun all tests.\n"),
     ("prose", "Tests delegated to the reviewer.\n"),
     ("affected", " (reviewer runs pytest on the rest)"),
+    ("prose", "The reviewer does not run the lint; the reviewer runs the tests.\n"),
+    ("prose", "The reviewer, not the author, runs the tests.\n"),
 ])
 def test_tests_delegated_to_reviewer_fail(tmp_path, repo, evals, capsys, where, text):
     _, shas = repo
