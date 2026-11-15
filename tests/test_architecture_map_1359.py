@@ -73,11 +73,27 @@ def test_npm_v2_tool_choice_atlas_and_current_owners():
         assert "Закрыто" in hotspots[name]["ru"]
 
 
+@pytest.mark.parametrize("needle", [
+    "<original>__<job>", "оригинал не меняем", "ВСЕГДА с opacity",
+    "отдельная opacity-карта формирует силуэт", "Diffuse с alpha",
+    "50k / 60k / 70k", "3.8–4 m", "перекрываться / stack",
+    "n-gon >4 запрещён", "почему одной строкой", "МАФ-ограды/навесы без UCX",
+    "удаляем с записью причины", "UCX только ВПМ",
+])
+def test_npm_v2_rules_reach_rendered_view(needle):
+    """Generated-view probe: no copy/opacity/topology/placement rule is dropped."""
+    events, contexts = _loaded()
+    board = route_map.route_board(events, contexts)
+    doc = json.loads(board.excalidraw())
+    text = " ".join(" ".join(e["text"].split()) for e in doc["elements"] if e["type"] == "text")
+    assert needle in text
+
+
 def test_route_covers_the_issue_stages_and_hotspots():
     events = mini_yaml.load(ROOT / route_map.EVENTS)
     assert [s["id"] for s in events["stages"]] == [
-        "sources", "parts", "gate1", "model", "uv", "export", "readback", "validate", "sintez", "delivered"]
-    assert {"agent", "artem", "checker"} == {a["id"] for a in events["actors"]}
+        "sources", "parts", "gate1", "model", "uv", "npm", "export", "readback", "validate", "sintez", "delivered"]
+    assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
     assert len(contexts["contexts"]) == 5
