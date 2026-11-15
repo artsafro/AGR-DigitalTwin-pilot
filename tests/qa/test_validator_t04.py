@@ -93,8 +93,8 @@ def test_scene_coverage_all_readback_subsets(monkeypatch, mask, kind):
         return result
 
     monkeypatch.setattr(vp, "readback", readback)
-    expected_stages = {"V002", "V003", "V004", "V005", "V013"}
-    expected_stages |= {"V006"} if kind == "npm" else {"V008", "V009", "V010"}
+    expected_stages = {"V002", "V003", "V004", "V005"}
+    expected_stages |= {"V006"} if kind == "npm" else {"V008", "V009", "V010", "V013"}
     for order in (names, list(reversed(names))):
         for failures in (unread, unread, set()):
             original = unread
