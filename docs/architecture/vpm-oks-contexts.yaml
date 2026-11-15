@@ -56,12 +56,23 @@ contexts:
         match: "def pack_uv("
         issue: "#1359"
         ru: "своя раскладка UV ВПМ КПП1"
-        status: historical
+        status: own-duty
+        why: "раскладка ВПМ по периоду отделки и плотности, не атлас НПМ; build_kpp1 -> pack_uv"
+  - id: vpm-uv-copy
+    ru: "Копия раскладки UV ВПМ"
+    area: docs/domain/areas/uv-atlas.md
+    owner: jobs/KPP1/scripts/vpm_uv.py
+    owner_ru: "ВПМ pack_uv по периодам; не atlas_core НПМ"
+    functions:
+      - name: pack_uv
+        contract: "меш, отделки, спецификация -> раскладка ВПМ"
+    duplicates:
       - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
         match: "def pack_uv("
         issue: "#1359"
         ru: "копия vpm_uv.py КПП1 (одна строка разницы)"
-        status: historical
+        status: live-bypass
+        step: "-"
   - id: npm
     ru: "НПМ в тех же координатах (ВПМ → НПМ)"
     area: docs/domain/areas/derivation.md
@@ -127,7 +138,8 @@ contexts:
         match: "def dump("
         issue: "#1379"
         ru: "остаётся: замороженная версия v003 запуска чекера; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
-        status: historical
+        status: own-duty
+        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
   - id: ucx
     ru: "Коллизии UCX (только ВПМ)"
     area: docs/domain/areas/ucx.md
@@ -145,28 +157,48 @@ contexts:
         match: "def pieces("
         issue: "#1383"
         ru: "свои куски UCX КПП1"
-        status: live-bypass
-        step: "#1404"
+        status: own-duty
+        why: "специфичное разбиение здания на куски, не измерение зазоров ucx10_core"
       - at: "jobs/PSU275/scripts/vpm_ucx.py:45"
         match: "UCX_SM_"
         issue: "#1383"
         ru: "свои UCX ПСУ275"
-        status: historical
+        status: own-duty
+        why: "построение UCX по зданию; overlap не измеряет минимальный зазор ucx10_core"
+  - id: ucx-triangulation
+    ru: "Триангуляция готовых UCX"
+    area: docs/domain/areas/ucx.md
+    owner: adapters/max/agr_tools/geom_core.py
+    owner_ru: "ucx_plan; обёртки TEC26 не строят зазоры ucx10_core"
+    functions:
+      - name: ucx_plan
+        contract: "готовые выпуклые куски -> план триангуляции"
+    duplicates:
       - at: "jobs/TEC26-OKS/scripts/ucx_tri_core.py:44"
         match: "def triangulate_piece("
         issue: "#1383"
-        ru: "своя триангуляция UCX ТЭЦ26"
-        status: historical
+        ru: "обёртка geom_core() -> ucx_plan"
+        status: wrapper
+  - id: ucx-triangulation-cli
+    ru: "Запуск триангуляции UCX"
+    area: docs/domain/areas/ucx.md
+    owner: jobs/TEC26-OKS/scripts/ucx_tri_core.py
+    owner_ru: "обёртка geom_core.ucx_plan"
+    functions:
+      - name: triangulate_piece
+        contract: "вершины и грани UCX -> треугольники через geom_core.ucx_plan"
+    duplicates:
       - at: "jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29"
         match: "UCX_"
         issue: "#1383"
-        ru: "запуск триангуляции UCX ТЭЦ26 AC08"
-        status: historical
+        ru: "обёртка core.triangulate_piece -> geom_core.ucx_plan"
+        status: wrapper
       - at: "jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24"
         match: "UCX_"
         issue: "#1383"
-        ru: "свои UCX СРЕDА по частям (960 UCX)"
-        status: historical
+        ru: "диагностика отклонения Main от UCX по частям (не построитель)"
+        status: own-duty
+        why: "только читает меши UCX и измеряет расстояния, не строит 960 UCX"
 relations:
   - from: dcc
     to: body
