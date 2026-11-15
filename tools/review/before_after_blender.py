@@ -96,6 +96,10 @@ def setup(scene, fitted):
     render.engine = 'BLENDER_WORKBENCH'
     render.resolution_x, render.resolution_y, render.resolution_percentage = width, height, 100
     render.pixel_aspect_x = render.pixel_aspect_y = 1.0
+    # Saved crop/stereo state must not change the comparison's frame or eyes.
+    render.use_border = False
+    render.use_multiview = False
+    render.image_settings.views_format = 'INDIVIDUAL'
     render.film_transparent = False
     render.use_stamp = False
     # use_stamp controls the visible overlay only. The individual toggles also
@@ -176,5 +180,8 @@ for role in ('before', 'after'):
     bpy.ops.render.render(write_still=True)
     evidence[role] = {'camera': record(scene, camera), 'mesh_objects': mesh_count,
                       'render': {'engine': scene.render.engine, 'style': request['style'],
+                                 'use_border': scene.render.use_border,
+                                 'use_multiview': scene.render.use_multiview,
+                                 'image_views_format': scene.render.image_settings.views_format,
                                  'workbench': workbench_record(scene)}}
 (out / 'render-evidence.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')

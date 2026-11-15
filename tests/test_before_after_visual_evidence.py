@@ -165,6 +165,9 @@ def fake_runner(after_camera=None, touch=None):
         record = {'before': {'camera': CAM, 'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}},
                   'after': {'camera': after_camera or CAM,
                             'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}}}
+        for role in ('before', 'after'):
+            record[role]['render'].update(use_border=False, use_multiview=False,
+                                          image_views_format='INDIVIDUAL')
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
         return record
     return run
@@ -291,7 +294,8 @@ def test_fresh_process_cli_help_and_refusal(tmp_path, inputs):
 
 
 @pytest.mark.parametrize('key,value', [
-    ('use_border', True), ('use_multiview', True), ('image_views_format', 'STEREO_3D')])
+    ('use_border', True), ('use_multiview', True), ('image_views_format', 'STEREO_3D'),
+    ('use_border', None), ('use_multiview', None), ('image_views_format', None)])
 def test_cli_refuses_changed_output_setting(tmp_path, inputs, monkeypatch, capsys, key, value):
     module = load()
     original = fake_runner()
@@ -301,7 +305,10 @@ def test_cli_refuses_changed_output_setting(tmp_path, inputs, monkeypatch, capsy
         for role in ('before', 'after'):
             record[role]['render'].update(use_border=False, use_multiview=False,
                                           image_views_format='INDIVIDUAL')
-        record['after']['render'][key] = value
+        if value is None:
+            del record['after']['render'][key]
+        else:
+            record['after']['render'][key] = value
         return record
 
     monkeypatch.setattr(module, 'run_blender', runner)
