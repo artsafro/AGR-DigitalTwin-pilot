@@ -82,7 +82,7 @@ def test_every_stage_drop_is_rejected_generated_probe():
                 with pytest.raises(route_map.SchemaError):
                     route_map.short_route_board(bad, maps[route_map.ROUTE_MAP_OF.get(name, "contexts")], maps)
                 caught += 1
-    assert caught == total == 74
+    assert caught == total == 76
 
 
 def test_status_counts_use_existing_registry_and_deduplicate_repeated_map_rows():

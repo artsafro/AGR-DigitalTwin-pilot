@@ -250,12 +250,14 @@ stages:
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
     actor: checker
     context: validation
+    commands:
+      - agr checker
     rules:
       - D220
       - D104
     evidence:
       - jobs/VATUTINO-SITE/site-route-20261109.md
-      - jobs/KPP1/scripts/run_agr_checker.py
+      - tools/qa/sintez_checker.py
 hotspots:
   - id: hatch-colours
     stage: surfaces

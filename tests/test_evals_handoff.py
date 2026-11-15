@@ -733,6 +733,124 @@ def test_template_evidence_follows_d297():
     assert "rule 49" not in template
 
 
+# Review r2 (PR #1401), #1403: shorthand and active verify are delegation.
+@pytest.mark.parametrize("text", [
+    pytest.param("Remaining tests: reviewer.", id="shorthand"),
+    pytest.param("The reviewer should verify the test suite.", id="verify"),
+    pytest.param("Tests to be run by the reviewer.", id="passive"),
+])
+def test_passive_verify_shorthand_rejected(tmp_path, repo, evals, capsys, text):
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text + "\n"),
+             shas["head"], evals, capsys, "tests delegated to the reviewer")
+
+
+@pytest.mark.parametrize("text", [
+    pytest.param("The reviewer does not run the tests.", id="not-run"),
+    pytest.param("No tests are handed to the reviewer.", id="no-handover"),
+    pytest.param("The reviewer's P1 tests now pass.", id="possessive"),
+])
+def test_passive_verify_controls_pass(tmp_path, repo, evals, capsys, text):
+    _, shas = repo
+    code, out = run(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_passive_verify_generated_probe():
+    """Synthetic exhaustive 3 nouns x 6 forms x 2 recipients x 2 polarities = 72 checks."""
+    from twinqa.evals.handoff import delegation
+
+    forms = [
+        ("{r} should verify {n}.", "{r} should not verify {n}."),
+        ("{r} should check {n}.", "{r} should not check {n}."),
+        ("{n} to be run by {r}.", "No {n} to be run by {r}."),
+        ("{n} to be checked by {r}.", "No {n} to be checked by {r}."),
+        ("{n} to be verified by {r}.", "No {n} to be verified by {r}."),
+        ("{n}: {r}.", "No {n}: {r}."),
+    ]
+    for noun in ("tests", "test files", "test suite"):
+        for reviewer in ("the reviewer", "reviewers"):
+            for positive, negative in forms:
+                for form, expected in ((positive, True), (negative, False)):
+                    text = form.format(n=noun, r=reviewer)
+                    assert (delegation(text) is not None) == expected, text
+
+
+def test_passive_verify_order_repeat_reset(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    clean = "The reviewer does not verify the tests."
+    bad = "Tests to be checked by the reviewer."
+    for text in (clean + "; " + bad, bad + "; " + clean, bad + "\n" + bad):
+        for _ in range(2):
+            rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+                     "tests delegated to the reviewer")
+        code, out = run(tmp_path, body(lines(shas, evals), clean), shas["head"], evals, capsys)
+        assert code == 0, out.err
+
+
+@pytest.mark.parametrize("partial", [False, True], ids=["empty", "partial"])
+def test_passive_verify_empty_partial(tmp_path, repo, evals, capsys, partial):
+    _, shas = repo
+    text = lines(shas, evals)["affected"] if partial else ""
+    rejected(tmp_path, text, shas["head"], evals, capsys, "missing Regression evals")
+
+
+def test_passive_verify_combined_guards(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    parts = lines(shas, evals)
+    parts["green"] = f"- After (GREEN): {shas['head'][:9]} 4 passed, nan failed"
+    parts["affected"] = parts["affected"].replace(shas["head"][:9], shas["red"][:9])
+    text = ("Remaining tests: reviewer.\nThe reviewer should verify the test suite.\n"
+            "Tests to be run by the reviewer.\nReviewer please run the tests.")
+    out = rejected(tmp_path, body(parts, text), shas["head"], evals, capsys,
+                   "malformed count 'nan failed'", "Affected tests not on head", "tests delegated to the reviewer")
+    assert out.err.count("tests delegated to the reviewer") == 4
+
+
+def test_passive_verify_quoted_paths_pass(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    text = ("`Remaining tests: reviewer.`\n```\nTests to be verified by the reviewer.\n```\n"
+            "The reviewer should check tests/test_x.py.\n"
+            "The reviewer should verify test_x.\nThe reviewer’s P1 tests now pass.")
+    code, out = run(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+def test_passive_verify_fresh_process_read_only(tmp_path, repo, evals):
+    """Exercise the real CLI in fresh processes, keeping aliased input and all files unchanged."""
+    _, shas = repo
+    path = tmp_path / "fresh-body.md"
+    alias = tmp_path / "body-alias.md"
+    path.write_text("", encoding="utf-8")
+    os.link(path, alias)
+    rows = [
+        ("Remaining tests: reviewer.", 1),
+        ("The reviewer should verify the test suite.", 1),
+        ("Tests to be run by the reviewer.", 1),
+        ("The reviewer does not run the tests.", 0),
+        ("No tests are handed to the reviewer.", 0),
+        ("The reviewer's P1 tests now pass.", 0),
+    ]
+    # Duplicate failing input then reset to the clean body in fresh processes.
+    for text, expected in rows + [rows[0], ("", 0)]:
+        path.write_text(body(lines(shas, evals), text), encoding="utf-8")
+        before = {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+        env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+        proc = subprocess.run(
+            [sys.executable, "-m", "dt_ai.cli.main", "evals", "--check-handoff", str(alias),
+             "--sha", shas["head"], "--output", str(evals)],
+            capture_output=True, text=True, env=env, timeout=60,
+        )
+        assert proc.returncode == expected, (text, proc.stdout, proc.stderr)
+        if expected:
+            assert "tests delegated to the reviewer" in proc.stderr
+            assert "OK" not in proc.stdout
+        else:
+            assert "OK: handoff evidence complete" in proc.stdout
+        after = {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+        assert after == before
+
+
 # Review r1 (PR #1401) P1: handing ANY tests to the reviewer fails, not only the full suite.
 @pytest.mark.parametrize("where, text", [
     ("affected", "; the reviewer runs the remaining test files"),

@@ -56,7 +56,7 @@ local_contexts:
     owner: src/twinqa/geojson.py
   - id: sintez
     ru: "Чекер СИНТЕЗ и загрузка"
-    owner: jobs/KPP1/scripts/run_agr_checker.py
+    owner: tools/blender/sintez_checker.py
 stages:
   - id: export
     event_ru: "FBX НПМ / ВПМ выгружены: триангуляция только на экспорте; рабочий FBX без триангуляции — рядом, не в пакете"
@@ -159,11 +159,13 @@ stages:
     event_ru: "Чекер СИНТЕЗ на тех же ZIP: каждая находка → проверка и страница регламента"
     actor: checker
     context: sintez
+    commands:
+      - agr checker
     rules:
       - D104
       - D220
     evidence:
-      - jobs/KPP1/scripts/run_agr_checker.py
+      - tools/qa/sintez_checker.py
       - docs/research/sintez-agr-checker-dissection.md
   - id: report
     event_ru: "Отчёт сдачи docs/deliveries/<сдача>-<дата>.md: пути + SHA-256, каждая проверка, вердикт"
@@ -230,11 +232,3 @@ hotspots:
     ru: "Ни один пакет ещё не прошёл (passed=false везде); 9 строк PKG без проверки: набор архивов (PKG-05), счёт объектов, светильники PKG-14..18"
     evidence:
       - docs/domain/areas/package.md
-  - id: sintez-runner
-    stage: sintez
-    ru: "Общей команды СИНТЕЗ нет: jobs/KPP1/scripts/run_agr_checker.py скопирован в ТЭЦ26; Ватутино — fail (LP 34 / 10 / 28)"
-    rules:
-      - D104
-    evidence:
-      - jobs/TEC26-OKS/scripts/run_agr_checker.py
-      - docs/deliveries/vatutino-site-2026-11-09.md

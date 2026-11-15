@@ -10,7 +10,7 @@
 <rect x="1260" y="461.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260" y="758.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1870" y="461.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870" y="670.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870" y="670.5" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="955.0" y="883.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="1109.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <polyline points="510,594.0 530,594.0 530,676.5 1140,676.5 1140,567.75 1120,567.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -40,7 +40,7 @@
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
 <text x="963.0" y="346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 55</tspan>
+<tspan x="963.0" dy="12">Дубли вне владельца: 45</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей функции; охрана jobs/, tools/, src/ (#1376)</tspan>
 </text>
@@ -114,7 +114,12 @@
 <tspan x="1878" dy="17.5">--json -&gt; отчёт; провал — ненулевой код</tspan>
 </text>
 <text x="1878" y="680.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878" dy="12">Дубли вне владельца: 5</tspan>
+<tspan x="1878" dy="12">Дубли вне владельца: 3</tspan>
+<tspan x="1878" dy="15.0">Правило проверки: своя проверка мастера в Blender (def world_bm)</tspan>
+<tspan x="1878" dy="15.0">вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/</tspan>
+<tspan x="1878" dy="15.0">(#1379); свой запуск чекера СИНТЕЗ (calculate_all_checks) вместо</tspan>
+<tspan x="1878" dy="15.0">общего скрипта за командой agr checker; охрана jobs/, tools/, src/</tspan>
+<tspan x="1878" dy="15.0">(#1379)</tspan>
 </text>
 <text x="963.0" y="893.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Связь с DCC (Blender / 3ds Max)</tspan>

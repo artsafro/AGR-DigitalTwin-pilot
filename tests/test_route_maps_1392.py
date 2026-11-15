@@ -19,11 +19,12 @@ REPORT = ARCH / "report-routes-vpm-ground.md"
 ROUTES = {"vpm-route": "vpm-contexts", "ground-route": "ground-contexts"}   # route -> its context map
 MAP_FILES = {"vpm-contexts": "vpm-oks-contexts", "ground-contexts": "ground-contexts"}
 DCC_ACTOR = "Агент: Blender / Max / AGR Tools"
-VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "npm", "package",
+VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "master-topology", "npm", "package",
           "readback", "validate", "sintez", "delivered"]
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
              "package", "validate", "sintez"]
-RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice"}, "ground-route": {"urns-outside"}}  # #1412: D302
+RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner"},  # sintez-runner: #1379 (PR #1431)
+            "ground-route": {"urns-outside"}}  # #1412: D302
 
 
 def _routes():

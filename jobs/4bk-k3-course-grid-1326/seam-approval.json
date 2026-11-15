@@ -1,0 +1,21 @@
+{
+  "schema": "chart-seam-approval/1",
+  "actor": "Artem",
+  "date": "2026-11-13",
+  "ref": "kanban:t_d517d7c6:USER DECISION:2026-11-13 22:27",
+  "answer_verbatim": "YES - the brick pattern may break along EXISTING edges of thin end faces / the bottom of the stair wall (e.g. ID1 faces 450/467 and 450/468 at vertex 516), keeping all 771 brick faces and continuous courses on the main walls; no new geometric cuts. List every such break in the report.",
+  "source_manifest": "faces.json",
+  "source_manifest_sha256": "f6bad16b50b6dda50dd3aecf69c755bb2c6a516925e71bf81645440492296106",
+  "authorized_object": "K3_StylobateStair.001",
+  "authorized_surface_class": "thin end faces / bottom of stair wall",
+  "existing_edges_only": true,
+  "keep_target_faces": 771,
+  "keep_protected_faces": 1244,
+  "geometry_changes_authorized": false,
+  "main_wall_course_discontinuity_authorized": false,
+  "every_applied_break_must_be_reported": true,
+  "applied_breaks": [],
+  "production_uvs_written": false,
+  "pilot_passed": false,
+  "note": "Supersedes the pending stair-seam question in CHART_POLICY.md, not main-wall ring closure. No seam has been applied."
+}

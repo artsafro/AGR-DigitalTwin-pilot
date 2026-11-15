@@ -9,6 +9,8 @@ xView 2 mm / 5 mm / cos 0.9999 (0.81 deg) from dt_ai.ops.inv_xview, UCX checks f
 from __future__ import annotations
 
 import math
+import importlib.util
+from pathlib import Path
 import statistics
 
 import numpy as np
@@ -21,6 +23,11 @@ from twinqa.scene import PROJECT_TRIANGLE_TARGET, _texture_side_px, _ucx_piece, 
 from twinqa.uv import edge_densities
 
 SCHEMA = "methods-row/1"
+_spec = importlib.util.spec_from_file_location(
+    "udimtile_core_methods", Path(__file__).resolve().parents[2] / "adapters/max/agr_tools/udimtile_core.py")
+assert _spec is not None and _spec.loader is not None
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 CLASSES = ("building-body", "windows-glazing", "ground-terrain", "ucx-collisions", "texturing-by-drawings",
            "sources")
 FIT_MAX_POINTS = 60_000  # model surface samples for the UCX fit (deterministic stride above this)
@@ -111,7 +118,7 @@ def ucx_check(rb: dict, profile: dict) -> dict:
 def _udim(uv) -> int | None:
     u = sum(p[0] for p in uv) / len(uv)
     v = sum(p[1] for p in uv) / len(uv)
-    return 1001 + int(math.floor(u)) + 10 * int(math.floor(v)) if 0 <= u < 10 and v >= 0 else None
+    return _udimtile.udim_tile(u, v) if 0 <= u < 10 and v >= 0 else None
 
 
 def texel(rb: dict, tile_sides: dict | None = None) -> dict:

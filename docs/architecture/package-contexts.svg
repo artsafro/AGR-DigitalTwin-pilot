@@ -114,7 +114,7 @@
 </text>
 <text x="963.0" y="1039.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
-<tspan x="963.0" dy="17.5">Владелец: jobs/KPP1/scripts/run_agr_checker.py</tspan>
+<tspan x="963.0" dy="17.5">Владелец: tools/blender/sintez_checker.py</tspan>
 <tspan x="963.0" dy="17.5">запуск чекера AGR 1.6.1 в Blender на ZIP; находки —</tspan>
 <tspan x="963.0" dy="17.5">доказательство, не вердикт</tspan>
 <tspan x="963.0" dy="17.5"></tspan>

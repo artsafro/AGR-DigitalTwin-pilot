@@ -45,6 +45,7 @@ for obj in bpy.context.scene.objects:
     uv = mesh.uv_layers.active.data if mesh.uv_layers.active else None
 
     def udim(t, uv=uv):
+        """Raw tile diagnostic, not a delivery UDIM; arbitrary source UVs stay readable (#1397)."""
         u = sum(uv[i].uv[0] for i in t.loops) / 3
         v = sum(uv[i].uv[1] for i in t.loops) / 3
         return 1001 + int(math.floor(u)) + 10 * int(math.floor(v))

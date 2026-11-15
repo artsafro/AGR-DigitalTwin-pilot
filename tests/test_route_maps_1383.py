@@ -19,7 +19,7 @@ NEW = {"vpm-route": "vpm-oks-route", "ground-route": "ground-route"}
 REPORT = ARCH / "report-routes-vpm-ground.md"
 
 # v2 (#1392, D293): an NPM stage before the export; Ground relief after the flat ground (tests/test_route_maps_1392.py)
-VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "npm", "package",
+VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "master-topology", "npm", "package",
               "readback", "validate", "sintez", "delivered"]
 GROUND_STAGES = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
                  "package", "validate", "sintez"]
@@ -71,6 +71,63 @@ def test_stage_order_follows_the_issue():
 def test_every_reference_of_the_new_routes_exists(name):
     routes, contexts = _routes(), _contexts()
     assert route_map.verify_references(ROOT, routes[name], contexts) == []
+
+
+def test_vpm_master_topology_before_export():
+    events = _routes()["vpm-route"]
+    ids = [s["id"] for s in events["stages"]]
+    master = [s for s in events["stages"] if "D312" in s["rules"]]
+    assert len(master) == 1
+    stage = master[0]
+    assert stage["id"] == "master-topology"
+    assert ids.index("ucx") < ids.index(stage["id"]) < ids.index("npm") < ids.index("package")
+    assert stage["commands"] == [
+        "uv run python tools/qa/master_topology.py <master> --out <new.json>",
+        "dt qa xview",
+    ]
+    assert "tools/qa/master_topology.py" in stage["evidence"]
+    assert "триангуляц" in stage["event_ru"].lower()
+    for sid in ("readback", "validate"):
+        assert "dt qa xview" in next(s for s in events["stages"] if s["id"] == sid)["commands"]
+
+
+@pytest.mark.parametrize("command,expected", [
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json>", True),
+    ("", False),
+    ("uv run python tools/qa/master_topology.py", False),
+    ("uv run python tools/qa/master_topology.py <master>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <master>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out NaN", False),
+    ("uv run python tools/qa/master_topology.py <master> --out inf", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json> --out <new.json>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json> ; dt qa xview", False),
+    ("uv run python tools/qa/unknown.py <master> --out <new.json>", False),
+    ("python tools/qa/master_topology.py <master> --out <new.json>", False),
+])
+def test_master_topology_command_template(command, expected):
+    assert route_map.command_exists(command) is expected
+
+
+def test_master_topology_command_generated_mutations():
+    words = "uv run python tools/qa/master_topology.py <master> --out <new.json>".split()
+    mutations = []
+    for i in range(len(words)):
+        mutations.extend([
+            words[:i] + words[i + 1:],
+            words[:i] + ["unsupported"] + words[i + 1:],
+            words[:i] + [words[i]] + words[i:],
+        ])
+    assert len(mutations) == 21
+    for tokens in mutations:
+        assert not route_map.command_exists(" ".join(tokens)), tokens
+
+
+def test_vpm_master_topology_rendered():
+    for suffix in (".excalidraw", ".svg"):
+        text = (ROOT / route_map.OUTPUTS["vpm-route"].with_suffix(suffix)).read_text(encoding="utf-8")
+        assert "tools/qa/master_topology.py" in text
+        assert "D312" in text
 
 
 def test_vpm_hotspots_cover_the_named_objects():
