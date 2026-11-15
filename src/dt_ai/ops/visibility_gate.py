@@ -5,9 +5,9 @@ Retro 2026-11-15 (job 4bk-k3): checks v004-v009 each rebuilt the visibility meth
 the one fixed method; every knob is in the report (`method`).
 
 Method (fixed):
-- Viewpoints, in this order: a dome around the checked parts, pedestrian rings (eye height above the ground), and one
-  close eye `close.distance_m` in front of every pane (a checked face whose material matches `close.pane_materials`,
-  along its normal; a close eye only looks at faces within `close.radius_m`).
+- Viewpoints, in this order: a dome around the checked parts, pedestrian rings (eye height above the ground), and
+  close eyes on both sides of every pane at +/-`close.distance_m` along its normal (a checked face whose material
+  matches `close.pane_materials`; a close eye only looks at faces within `close.radius_m`).
 - Rays: eye -> fixed target samples on the face. A ray is blocked by the first face it hits before the target,
   front or back (no back-face culling). Only checked-part faces whose material matches `materials.transparent`
   (glass, grille, railing glass) let rays through; context meshes are opaque in every material.
@@ -448,12 +448,14 @@ def _eyes(c: dict, lo: np.ndarray, hi: np.ndarray, ground_z: float, panes: list)
                                                            ground_z + r["eye_height_m"]]), None))
     cl, seen = c["close"], set()
     for pid, part, face, cen, n in panes:
-        pos = cen + cl["distance_m"] * n
-        key = tuple(np.round(pos / cl["merge_m"]).astype(np.int64).tolist())
-        if key in seen:
-            continue
-        seen.add(key)
-        eyes.append((f"close:{part}:f{face}", pos, cl["radius_m"]))
+        # A pane's winding does not identify the exterior (single-sided FBX glass).
+        for side in (1, -1):
+            pos = cen + side * cl["distance_m"] * n
+            key = tuple(np.round(pos / cl["merge_m"]).astype(np.int64).tolist())
+            if key in seen:
+                continue
+            seen.add(key)
+            eyes.append((f"close:{part}:f{face}:{side:+d}", pos, cl["radius_m"]))
     return eyes
 
 

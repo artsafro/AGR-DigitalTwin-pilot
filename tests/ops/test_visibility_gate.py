@@ -127,6 +127,7 @@ def test_reversed_pane_close_eyes_preserve_a_op12_and_e2(reverse_pane, reverse_p
         parts.reverse()
         ctx.reverse()
     rep = vg.check(parts, ctx, cfg())
+    assert rep["eyes"]["close"] == 2
     reveal = next(p for p in rep["parts"] if p["part"] == "BodyA_Reveal")
     assert reveal["hidden"] == [], reveal["hidden"]
     assert {v["eye"].split(":")[0] for v in reveal["visible_from"]} == {"close"}
