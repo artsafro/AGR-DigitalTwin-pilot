@@ -111,6 +111,31 @@ def test_a_op12_reveal_seen_only_from_close_eye_is_visible():
     assert {v["eye"].split(":")[0] for v in p["visible_from"]} == {"close"}
 
 
+@pytest.mark.parametrize("reverse_pane", [False, True])
+@pytest.mark.parametrize("reverse_parts", [False, True])
+def test_reversed_pane_close_eyes_preserve_a_op12_and_e2(reverse_pane, reverse_parts):
+    """Synthetic combined R2 witness: winding must not repeat A_OP12 or E2 deletion."""
+    parts, ctx = _niche_scene()
+    if reverse_pane:
+        pane = parts[-1]
+        parts[-1] = vg.VPart(pane.name, pane.vertices,
+                             tuple(tuple(reversed(f)) for f in pane.faces), pane.materials)
+    far = np.array([40.0, 0, 0])
+    parts.append(vg.VPart(POST.name, POST.vertices + far, POST.faces, POST.materials))
+    ctx.append(vg.VPart("Pylon", PYLON.vertices + far, PYLON.faces, PYLON.materials))
+    if reverse_parts:
+        parts.reverse()
+        ctx.reverse()
+    rep = vg.check(parts, ctx, cfg())
+    reveal = next(p for p in rep["parts"] if p["part"] == "BodyA_Reveal")
+    assert reveal["hidden"] == [], reveal["hidden"]
+    assert {v["eye"].split(":")[0] for v in reveal["visible_from"]} == {"close"}
+    visible, hidden = _visible_faces(rep, POST.name)
+    assert {1, 2, 3, 4} <= visible
+    assert 0 in hidden
+    assert rep == vg.check(parts, ctx, cfg())
+
+
 def test_a_op12_fixture_hides_reveal_without_close_eyes():
     parts, ctx = _niche_scene()
     rep = vg.check(parts, ctx, cfg(close={"distance_m": 2.0, "radius_m": 12.0, "pane_materials": []}))
