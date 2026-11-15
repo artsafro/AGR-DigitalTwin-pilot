@@ -104,6 +104,48 @@ def test_status_counts_use_existing_registry_and_deduplicate_repeated_map_rows()
         route_map.owners_markdown(ev, maps["package-contexts"], maps)
 
 
+def _segment_hits_rect(p, q, rect):
+    """Independent closed slab intersection; touching an unrelated list counts too."""
+    lo, hi = 0.0, 1.0
+    for axis, size in (("x", "width"), ("y", "height")):
+        i = 0 if axis == "x" else 1
+        delta = q[i] - p[i]
+        left, right = rect[axis], rect[axis] + rect[size]
+        if delta == 0:
+            if not left <= p[i] <= right:
+                return False
+        else:
+            a, b = sorted(((left - p[i]) / delta, (right - p[i]) / delta))
+            lo, hi = max(lo, a), min(hi, b)
+            if lo > hi:
+                return False
+    return True
+
+
+@pytest.mark.parametrize("name", list(route_map.OUTPUTS))
+def test_arrow_polylines_never_intersect_pink_lists(name):
+    _, _, files = route_map.render_all(ROOT)
+    # Include detailed routes, context maps and the new short schemes.
+    stem = route_map.OUTPUTS[name]
+    paths = [stem.with_suffix(".excalidraw")]
+    scheme = stem.with_name(stem.name + "-scheme").with_suffix(".excalidraw")
+    if scheme in files:
+        paths.append(scheme)
+    for path in paths:
+        elements = json.loads(files[path])["elements"]
+        pink = [e for e in elements if e["type"] == "rectangle"
+                and e["backgroundColor"] == route_map.COLORS["hotspot"]]
+        hits = []
+        for arrow in (e for e in elements if e["type"] == "arrow"):
+            ends = {arrow[key]["elementId"] for key in ("startBinding", "endBinding")}
+            points = [(arrow["x"] + x, arrow["y"] + y) for x, y in arrow["points"]]
+            for rect in pink:
+                if rect["id"] not in ends and any(_segment_hits_rect(p, q, rect)
+                                                 for p, q in zip(points, points[1:])):
+                    hits.append((arrow["id"], rect["id"]))
+        assert not hits, f"{path}: pink crossings {hits}"
+
+
 def _copy_arch(tmp_path):
     import shutil
     shutil.copytree(ROOT / "docs/architecture", tmp_path / "docs/architecture")
