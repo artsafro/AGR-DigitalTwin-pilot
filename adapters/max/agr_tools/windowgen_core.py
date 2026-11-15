@@ -5,7 +5,8 @@ Pure logic for `win_generate` (win.generate) and the window meshes win.place ins
 Contract K2 (#1024) with the owner answers 06.11.2026 and lab L10 (docs/experiments/win.generate.md):
 * [D322] supersedes the seating part of [D204] for every site: use an explicit Revit-type
   frame_profile_m when supplied, otherwise the measured FAMILY profile in standard.json;
-* glass/grille panels overlap the light 15..20 mm per edge (default 20) at real frame mid-depth;
+* glass/grille panels request 15..20 mm cover per edge (default 20) at real frame mid-depth;
+  actual cover is bounded by the outline and half the facing field gap, with reductions reported;
   glass is a separate part/object; NPM opaque atlas planes remain unchanged;
 * optional interiors are independent set-back boxes around the opening (+44 mm sides, +130 mm head/sill),
   never frame extrusions or frame material; grille openings refuse interiors; existing scenes are not edited;
@@ -342,18 +343,46 @@ class _Builder:
         return len(self.faces) - 1
 
 
+def _infill_cover(index, rect, all_fields, width, height, requested):
+    """Per-edge cover bounded by the outline and half each facing clear-field gap.
+
+    Test the requested perpendicular extents, not only the clear lights: staggered
+    fields can meet after expansion even when their original projections do not.
+    Opaque fields also reserve their half-gap, though their own cover remains zero.
+    """
+    limits = [rect[0], rect[1], width - rect[2], height - rect[3]]
+    expanded = [rect[0] - requested, rect[1] - requested,
+                rect[2] + requested, rect[3] + requested]
+    for j, (kind, other) in enumerate(all_fields):
+        if j == index or other[2] <= other[0] or other[3] <= other[1]:
+            continue
+        other_cover = requested if kind in ('glass', 'grille') else 0.0
+        neighbour = [other[0] - other_cover, other[1] - other_cover,
+                     other[2] + other_cover, other[3] + other_cover]
+        for axis, perpendicular in ((0, 'z'), (1, 'x')):
+            if _overlap(expanded, neighbour, perpendicular) <= 0:
+                continue
+            if other[axis + 2] <= rect[axis]:
+                limits[axis] = min(limits[axis], (rect[axis] - other[axis + 2]) / 2)
+            if other[axis] >= rect[axis + 2]:
+                limits[axis + 2] = min(limits[axis + 2], (other[axis] - rect[axis + 2]) / 2)
+    return [round(max(0.0, min(requested, limit)), 12) for limit in limits]
+
+
 def build_type(entry, standard, options=None):
     """One window type mesh by the library standard (K2).
 
     entry: a record of library/windows/window_types.json (id, role, width_m, height_m, panes_m, opaque_m, ...);
     standard: library/windows/standard.json (load_standard); options: variant ('vpm'|'npm'),
-    infill_overlap_m (15..20 mm), interior (explicit setback_m > frame depth and depth_m > 20 mm).
+    infill_overlap_m (requested 15..20 mm; clamped to the available frame per edge),
+    interior (explicit setback_m > frame depth and depth_m > 20 mm).
     Source frame_profile_m: required face_m/depth_m/impost_m, optional face_top_m/face_bottom_m.
     Interiors require glass-only openings; split mixed grille/glass openings before requesting interiors.
     Returns {'verts': [[x, y, z]...] metres in the type frame, 'faces': [[i...]...] (quads), 'mat_ids': [...],
     'parts': {'frame': [face idx], 'glass': [face idx]}, 'face_axis_m': y of the frame face (0.0),
     'face_axis': '-y', 'depth_m', 'frame_mid_m', 'glass_y_m', 'size_m': [W, depth, H], 'family', 'fields',
-    'status': 'ok'|'quarantine', 'why': [str]}."""
+    'status': 'ok'|'quarantine', 'why': [str],
+    'clamped_infill_edges': [{index, kind, edge, requested_m, cover_m}] for reduced covers}."""
     standard = load_standard(standard)
     opts = dict(options or {})
     variant = opts.pop('variant', 'vpm')
@@ -369,6 +398,7 @@ def build_type(entry, standard, options=None):
     b = _Builder()
     parts = {'frame': [], 'glass': [], 'grille': [], 'capsule': []}
     dropped_fields = []
+    clamped_infill_edges = []
     depth = fam['depth_m']
     gy = depth / 2.0  # [D322]: general standard, supersedes the D204 glass offset
     st = standardize(entry, fam, standard['criteria']) if fields(entry) else {'fields': [], 'deviation_m': 0.0}
@@ -418,9 +448,15 @@ def build_type(entry, standard, options=None):
                                            'reason': 'degenerate after family standardization'})
                     continue
                 raise ValueError('degenerate {} field {}'.format(kind, r))
-            cover = overlap if kind in ('glass', 'grille') else 0.0
-            quad = [(x0-cover, gy, z0-cover), (x1+cover, gy, z0-cover),
-                    (x1+cover, gy, z1+cover), (x0-cover, gy, z1+cover)]
+            covers = (_infill_cover(field_index, r, st['fields'], W, H, overlap)
+                      if kind in ('glass', 'grille') else [0.0] * 4)
+            for edge, cover in zip(('left', 'bottom', 'right', 'top'), covers):
+                if kind in ('glass', 'grille') and cover < overlap:
+                    clamped_infill_edges.append({'index': field_index, 'kind': kind, 'edge': edge,
+                                                 'requested_m': overlap, 'cover_m': cover})
+            left, bottom, right, top = covers
+            quad = [(x0-left, gy, z0-bottom), (x1+right, gy, z0-bottom),
+                    (x1+right, gy, z1+top), (x0-left, gy, z1+top)]
             if kind == 'glass':
                 parts['glass'].append(b.quad(quad, MAT_GLASS, (0, -1, 0)))
             elif kind == 'grille':
@@ -440,7 +476,8 @@ def build_type(entry, standard, options=None):
     return {'verts': b.verts, 'faces': b.faces, 'mat_ids': b.mat_ids, 'parts': parts, 'face_axis_m': 0.0,
             'face_axis': '-y', 'depth_m': depth, 'frame_mid_m': depth / 2.0, 'glass_y_m': gy,
             'size_m': [W, depth, H], 'family': fam_name, 'fields': st['fields'], 'variant': variant,
-            'status': q['status'], 'why': q['why'], 'dropped_fields': dropped_fields}
+            'status': q['status'], 'why': q['why'], 'dropped_fields': dropped_fields,
+            'clamped_infill_edges': clamped_infill_edges}
 
 
 def part_mesh(mesh, part):

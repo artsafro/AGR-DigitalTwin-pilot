@@ -46,6 +46,10 @@ certificate, no C35 decision is implied, and no unconfirmed sash/handing is a de
 - Glass and grille panels are single planes at **real frame mid-depth**, with **15-20 mm per-edge
   cover under the frame** (default 20 mm). `fields` remain the clear lights, not enlarged panel bounds.
   `build_type(..., {'infill_overlap_m': 0.017})` may preserve a measured cover in that range.
+  This is the requested cover: each edge is clamped to the outer outline or half the facing
+  clear-field gap (#1526), including staggered neighbours. A narrow frame can therefore give
+  less than 15 mm actual cover. `clamped_infill_edges` reports field index/kind, edge,
+  requested metres and actual metres; no report means no reduction. Opaque infills are unchanged.
 - Supply `entry.frame_profile_m` from the Revit type: `face_m`, `depth_m`, `impost_m`;
   optional `face_top_m`/`face_bottom_m`. Never infer it from decorative material colour.
   Without source dimensions use the family profile (faces 54-65 mm, about 50-70 mm), not thin strips.
