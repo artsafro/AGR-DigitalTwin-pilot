@@ -49,7 +49,7 @@ _DELEGATION = (
     re.compile(r"\b" + _TESTS + r"\s+(?:(?:are|is)\s+to|to|will)\s+be\s+"
                r"(?:run|executed|checked|verified)\s+by\s+(?:the\s+)?" + _REVIEWER, re.IGNORECASE),
     re.compile(r"\b" + _TESTS + r"\s*:\s*(?:the\s+)?" + _REVIEWER
-               + r"(?=\s*(?:[.;!?\n]|$))", re.IGNORECASE),
+               + r"(?=\s*(?:[.;!?\n(]|$|to\s+(?:run|rerun|re-run|execute|verify|check)\b))", re.IGNORECASE),
     re.compile(r"\bdelegat\w*\b[^.\n]{0,40}\bfull[- ]suite\b", re.IGNORECASE),
 )
 _EXECUTION_TESTS = re.compile(

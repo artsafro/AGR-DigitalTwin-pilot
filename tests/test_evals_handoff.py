@@ -822,6 +822,21 @@ def test_reviewer_clause_generated_probe():
             for action in ("check", "verify"):
                 cases.append((f"The reviewer can {action} the tests {actor} {verb}: 398 passed.", False))
     assert len(cases) == 645
+    # R1 fixes combined with completed-author clauses and the earlier noun/recipient controls.
+    for noun in ("tests", "test files", "test suite"):
+        for recipient in ("reviewer", "the reviewer", "reviewers"):
+            for tail in (" to run.", " to rerun.", " to re-run.", " to execute.",
+                         " to verify.", " to check.", " (rule 68)."):
+                cases.append((f"{noun}: {recipient}{tail}", True))
+    for actor in ("I", "we", "the author"):
+        for completed in ("ran", "executed", "checked", "verified"):
+            for inspection in ("check", "verify"):
+                prefix = f"The reviewer should {inspection} the tests {actor} {completed}"
+                for action in ("run", "rerun", "re-run", "execute"):
+                    for noun in ("tests", "test files", "full suite"):
+                        cases.extend(((f"{prefix} and then {action} the {noun}.", True),
+                                      (f"{prefix} and then do not {action} the {noun}.", False),
+                                      (f"{prefix}. I {action} the {noun}.", False)))
     for text, expected in cases:
         for _ in range(2):
             assert (delegation(text) is not None) == expected, text
