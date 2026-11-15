@@ -69,6 +69,10 @@ def setup(scene, fitted, thickness):
     render.pixel_aspect_x = render.pixel_aspect_y = 1.0
     render.film_transparent = False
     render.use_stamp = False
+    # These flags also control PNG metadata even when the visible stamp is off.
+    for prop in render.bl_rna.properties:
+        if prop.identifier.startswith('use_stamp_') and prop.type == 'BOOLEAN':
+            setattr(render, prop.identifier, False)
     render.image_settings.file_format = 'PNG'
     shading = scene.display.shading
     shading.light = 'STUDIO'
