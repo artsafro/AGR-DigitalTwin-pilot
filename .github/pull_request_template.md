@@ -5,8 +5,8 @@
 ## Evidence
 
 <!-- `uv run dt evals --check-handoff <this body file> --sha <full HEAD sha> --output <worktree>/tmp/evals`
-must exit 0 before review_requested (#584). The author runs the affected tests on the head and never hands
-tests to the reviewer; the full suite runs once in the merge batch before main [D297]. -->
+must exit 0 before review_requested (#584). The author runs the affected tests on the head;
+the author never hands tests to the reviewer; the full suite runs once in the merge batch before main [D297]. -->
 
 - Before (RED): <pre-fix commit sha, command, N failed/errors; or n/a: <reason>>
 - After (GREEN): <head sha, command, N passed, 0 failed, evidence path; never n/a>

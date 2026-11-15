@@ -779,3 +779,22 @@ def test_template_reviewer_sentences_pass(tmp_path, repo, evals, capsys):
     assert prose
     code, out = run(tmp_path, body(lines(shas, evals), "\n".join(prose) + "\n"), shas["head"], evals, capsys)
     assert code == 0, (prose, out.err)
+
+
+def test_delegation_probe_generated():
+    """Probe: 6 nouns x (3 run + 3 hand-over) phrasings = 36 delegations, each caught; the same 36 with a
+    negation ('not'/'never') are all clean (36 + 36 = 72 cases)."""
+    from twinqa.evals.handoff import delegation
+    nouns = ["tests", "the affected tests", "the remaining test files", "the full suite", "pytest", "all tests"]
+    run_forms = ["The reviewer runs {n}.", "Reviewer: please run {n}.", "Reviewers will rerun {n}."]
+    hand_forms = ["{N} are left to the reviewer.", "I leave {n} to the reviewer.", "{N} go to the reviewer."]
+    neg_run = ["The reviewer does not run {n}.", "Reviewer: never run {n}.", "Reviewers will not rerun {n}."]
+    neg_hand = ["{N} are not left to the reviewer.", "I never leave {n} to the reviewer.",
+                "No {n} go to the reviewer."]
+    def fill(form, noun):
+        return form.format(n=noun, N=noun[0].upper() + noun[1:])
+    caught = [delegation(fill(f, n)) is not None for n in nouns for f in run_forms + hand_forms]
+    clean = [delegation(fill(f, n)) is None for n in nouns for f in neg_run + neg_hand]
+    assert (sum(caught), sum(clean)) == (36, 36), (
+        [fill(f, n) for n in nouns for f in run_forms + hand_forms if delegation(fill(f, n)) is None],
+        [fill(f, n) for n in nouns for f in neg_run + neg_hand if delegation(fill(f, n)) is not None])
