@@ -16,7 +16,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import subprocess
 import sys
 import time
 from collections import Counter
@@ -26,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from dt_ai.placement import engine  # noqa: E402
 from tools import placement_site as ps  # noqa: E402
-from twinqa.scene import find_blender  # noqa: E402
+from dt_ai.core.blender_runner import BlenderRunError, blender_command, run_blender  # noqa: E402
 
 CFG = {"adapter": Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json"),
        "ground": Path("C:/x/t_d94665f2/ground_v014"),
@@ -56,16 +55,26 @@ def sha(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+PLACEMENT_ARITY = {"facts": 2, "instance": 4}   # tools/blender/placement_instance.py commands
+
+
 def blender(*args) -> dict:
-    cmd = [find_blender(), "--background", "--factory-startup", "--python-exit-code", "1", "--python",
-           str(SCRIPT), "--", *map(str, args)]
+    """One placement_instance.py step through the shared headless runner (#1378); every promised file must be fresh.
+    facts spec facts.json -> facts.json; instance spec plan blend readback.json -> readback.json + blend."""
+    if not args or args[0] not in PLACEMENT_ARITY or len(args) - 1 != PLACEMENT_ARITY[args[0]]:
+        raise ValueError(f"placement_instance.py: unknown command or wrong argument count {list(map(str, args))}; "
+                         f"expected one of {PLACEMENT_ARITY}")
+    report = Path(args[-1])
+    outputs = [Path(args[3])] if args[0] == "instance" else []
     t = time.time()
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
-    rec = {"cmd": " ".join(f'"{c}"' if " " in c else c for c in cmd), "exit_code": r.returncode,
-           "seconds": round(time.time() - t, 1)}
-    if r.returncode:
-        raise SystemExit(f"blender failed {rec}\n{r.stdout[-3000:]}\n{r.stderr[-3000:]}")
-    return rec
+    try:
+        run_blender(SCRIPT, list(args), output_json=report, outputs=outputs, timeout=3600,
+                    log_path=report.with_name(report.name + ".blender.log"))
+    except BlenderRunError as exc:
+        raise SystemExit(f"blender failed {exc}") from exc
+    cmd = blender_command(SCRIPT, args)
+    return {"cmd": " ".join(f'"{c}"' if " " in c else c for c in cmd), "exit_code": 0,
+            "seconds": round(time.time() - t, 1)}
 
 
 def _rel(p: Path) -> str:

@@ -113,7 +113,7 @@
 </text>
 <text x="658.0" y="909.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
-<tspan x="658.0" dy="15.0">• jobs/VATUTINO-SITE/place_site.py:78 — своя расстановка участка в</tspan>
+<tspan x="658.0" dy="15.0">• jobs/VATUTINO-SITE/place_site.py:87 — своя расстановка участка в</tspan>
 <tspan x="658.0" dy="15.0">задании поверх движка (#1383)</tspan>
 </text>
 <text x="1268.0" y="1034.0" font-size="14" text-anchor="start" fill="#1e1e1e">

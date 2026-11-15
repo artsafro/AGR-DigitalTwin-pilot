@@ -23,6 +23,15 @@ def blender_executable(executable=None) -> str:
     return str(executable or os.environ.get('TWINQA_BLENDER') or DEFAULT_BLENDER)
 
 
+def blender_command(script, args=(), *, executable=None) -> list:
+    """The one headless Blender command line (#1378): pinned executable, no window, factory settings,
+    no auto-run scripts in opened .blend files, a Python error is exit 1. The guard rule `blender-launch`
+    (tools/architecture/duplicate_guard.py) flags any other command line built outside this module."""
+    return [blender_executable(executable), '--background', '--factory-startup',
+            '--disable-autoexec', '--python-exit-code', '1', '--python', str(script),
+            '--', *map(str, args)]
+
+
 class BlenderRunError(RuntimeError):
     """Every launch/process/evidence failure carries the same serializable envelope."""
     def __init__(self, envelope):
@@ -47,9 +56,7 @@ def run_blender(script, args=(), *, executable=None, output_json=None, outputs=(
     No existing output is removed. Unchanged pre-existing files, timestamps older
     than launch, empty files and malformed JSON cannot count as current evidence.
     """
-    command = [blender_executable(executable), '--background', '--factory-startup',
-               '--disable-autoexec', '--python-exit-code', '1', '--python', str(script),
-               '--', *map(str, args)]
+    command = blender_command(script, args, executable=executable)
     log = Path(log_path or Path.cwd() / 'logs' / 'blender' / (uuid.uuid4().hex + '.log')).resolve()
     code = None
     def fail(kind, message, cause=None):
