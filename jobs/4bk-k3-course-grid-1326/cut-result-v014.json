@@ -1,0 +1,193 @@
+{
+  "status": "textured_candidate_visual_checkpoint_QA_FAILED",
+  "passed": false,
+  "decision": "geometry-cut-approval.json",
+  "evidence": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014",
+  "scene": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014\\stylobate_cut_candidate_v014.blend",
+    "sha256": "07f2accfbfca6eae2fb9496b923cda0fe50d1ca889eb2fea59e75ba66d7173d3"
+  },
+  "picture": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014\\textured-candidate-sheet.png",
+    "sha256": "33a48884ed8e7e8d3f1c449942a30381d860ea7ede53daa921fb9ba8775f0f77",
+    "kind": "actual unlit Diffuse-only result, not a shading/Normal acceptance"
+  },
+  "preview_attachment": {
+    "id": 19,
+    "sha256": "0d2a8af2e16ac77e7fbb5948e0201f76618c126f559409f4a1dd4b0930b9ddcc"
+  },
+  "source_hashes_preserved": 10,
+  "metrics": {
+    "status": "fresh_candidate_readback",
+    "passed": false,
+    "blender": "5.1.2",
+    "source_faces_accounted": 2015,
+    "protected_exact": 1244,
+    "protected_total": 1244,
+    "output_target_faces": 1958,
+    "output_faces": 3202,
+    "degenerate_triangles": [],
+    "mirrored_triangles": [],
+    "invalid_polygons": [],
+    "density": {
+      "measured_triangles": 3616,
+      "min_px_m": 512.0010758336114,
+      "max_px_m": 519.1743931036419,
+      "p5": 512.0924789189626,
+      "p50": 512.1000174941794,
+      "p95": 512.1080443901774,
+      "spread": 3.0395373331519876e-05,
+      "max_anisotropy": 1.0139538259585237,
+      "out_of_band_triangles": 0
+    },
+    "tile": {
+      "uv_min": [
+        0.009624047204852104,
+        0.008055675774812698
+      ],
+      "uv_max": [
+        0.98769611120224,
+        0.8151996731758118
+      ],
+      "unique_union_percent": 50.169482465956605,
+      "padded_union_percent": 52.55383451207922,
+      "brick_joint_gap_px": 41.30966721098144
+    },
+    "cuts": {
+      "source_faces_with_joint_cuts": 631,
+      "segments": 1012
+    },
+    "open": [
+      "complete exported panel mask centre/width and false-joint coverage",
+      "source-to-output full course-edge coverage",
+      "surface and xView topology gates",
+      "UV component count",
+      "Artem visual acceptance; no replication"
+    ],
+    "normal_strategy": "neutral constant joint field; source groove normals not preserved",
+    "source_copy_only": true
+  },
+  "supplementary": {
+    "status": "supplementary_candidate_metrics",
+    "passed": false,
+    "phase": {
+      "main_triangles": 546,
+      "main_vertex_max_px": 0.00011847450365414236,
+      "all_triangle_vertex_max_px": 0.0008388968960231447,
+      "main_continuous_edges": 365,
+      "main_complete_edge_samples": 7665,
+      "main_edge_max_px": 0.005426308787616652
+    },
+    "joints": {
+      "source_carried_paths": 651,
+      "paired_paths": 651,
+      "unpaired": [],
+      "samples": 31899,
+      "missing_samples": 44,
+      "max_centre_error_mm": 15.000000001817563,
+      "min_width_mm": 5.205422761790146,
+      "max_width_mm": 39.99999999636494,
+      "convention": "10 mm owner-side joint, expected centre 5 mm inward; error relative to that approved centre",
+      "limitations": [
+        "49 finite path samples, not a continuous-path certificate",
+        "42 legacy interior-mask units retain 5-mm analysis-grid uncertainty; full width/false-joint coverage open",
+        "Normal neutral field does not preserve source groove normals"
+      ]
+    },
+    "map_checks": [
+      {
+        "role": "Diffuse",
+        "joint_polygons": 798,
+        "field_failures": [],
+        "interpretation": "uniform configured field, NOT a groove-normal or false-joint classifier"
+      },
+      {
+        "role": "ERM",
+        "joint_polygons": 798,
+        "field_failures": [],
+        "interpretation": "uniform configured field, NOT a groove-normal or false-joint classifier"
+      },
+      {
+        "role": "Normal",
+        "joint_polygons": 798,
+        "field_failures": [],
+        "interpretation": "uniform configured field, NOT a groove-normal or false-joint classifier"
+      }
+    ],
+    "uv_components": {
+      "method": "exact endpoint UV equality across shared mesh edges; not bbox or chart count",
+      "source": 500,
+      "result": 1251
+    },
+    "open": [
+      "xView: 516 new wall overlapping faces and 2297 overlapping vertices; source walls were clean",
+      "complete interior-joint/false-joint and continuous-path certificate",
+      "native FBX/Max copy and full result-package readback",
+      "Artem visual verdict; no replication or delivery pass"
+    ]
+  },
+  "cuts": {
+    "ideal_joint_boundary_segments": 1012,
+    "source_faces": 631,
+    "actual_new_edge_segments": 4546,
+    "roles": {
+      "connectivity-or-unmatched-internal-edge": 679,
+      "source-boundary-subdivision": 2840,
+      "joint-boundary": 1027
+    },
+    "complete_location_manifest": {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014\\all-new-edge-locations.json",
+      "sha256": "7682f56e1ca624aa28a6b10775ab757f967ad46a01d8f1a65834e635f11ee0fa"
+    }
+  },
+  "source_xview": {
+    "overlapping_vertices": 0,
+    "overlapping_faces": 4,
+    "vertex_pairs": 0,
+    "face_pairs": 2,
+    "face_pairs_by_kind": {
+      "contact": 0,
+      "area": 0,
+      "area+contact": 2
+    },
+    "bowtie_vertices": 0,
+    "bowtie_pairs": 0,
+    "parts_without_faces": 0
+  },
+  "result_xview": {
+    "overlapping_vertices": 2297,
+    "overlapping_faces": 520,
+    "vertex_pairs": 1154,
+    "face_pairs": 406,
+    "face_pairs_by_kind": {
+      "contact": 314,
+      "area": 8,
+      "area+contact": 84
+    },
+    "bowtie_vertices": 167,
+    "bowtie_pairs": 147,
+    "parts_without_faces": 0
+  },
+  "frozen_density": {
+    "nominal_px_m": 512.1,
+    "previous_compact_target": 512,
+    "reason": "fixed inward legal-bound/native-storage guard, not density search or fit shrink",
+    "directed_encoding": "37 low-plinth triangles only; <=2 float32 ULP from rigid chart, max encoding error 0.000203414621 px; no main-wall changes"
+  },
+  "tests": {
+    "affected_passed": 185,
+    "deselected": 1,
+    "failed": 0,
+    "command": "uv run pytest -q tests/test_course_grid_native.py tests/test_course_grid_cut.py tests/test_course_grid_cut_generated.py tests/test_course_grid_fit.py tests/test_course_grid_general_fans.py tests/test_course_grid_chart.py tests/test_course_grid_audit.py tests/test_decisions.py tests/max_tools/test_agr_tools_vpm_layout.py -p no:cacheprovider --basetemp=C:/x/t_d517d7c6-affected-v014",
+    "full_suite": "not yet run: no PR or first review requested"
+  },
+  "visual_acceptance": "pending",
+  "max_opened": false,
+  "replication": false,
+  "next": [
+    "Artem: visual direction of actual candidate only; no waiver of red QA",
+    "Repair cut topology: snap only proven float32 source-vertex duplicates and conform split edges, retaining surface/finish/lineage; remeasure all gates",
+    "Resolve raster-junction ambiguity and 44 missing carrier samples without hiding failed coverage; complete interior/false joint and Normal QA",
+    "Recreate final FBX/Max version and read back; run full suite once via suite_slot, eval receipts, merge main/recheck D309, one PR and dt-reviewer"
+  ]
+}

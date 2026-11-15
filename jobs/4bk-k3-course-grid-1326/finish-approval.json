@@ -1,0 +1,18 @@
+{
+  "schema": "finish-cohort-approval/1",
+  "source_manifest": "faces.json",
+  "source_manifest_sha256": "f6bad16b50b6dda50dd3aecf69c755bb2c6a516925e71bf81645440492296106",
+  "actor": "Artem",
+  "date": "2026-11-13",
+  "ref": "kanban:t_d517d7c6:comment:USER DECISION 2026-11-13 18:43 UTC",
+  "answer": "YES - brick cohort = only the 771 existing ID1 faces (705 walls + 66 stairs); ID4 reveals/sills, ID10 frames, ID7 metal untouched.",
+  "target_material_id_1based": 1,
+  "target_faces": 771,
+  "protected_faces": 1244,
+  "protected_material_ids_1based": [4, 7, 10],
+  "geometry_changes_authorized": false,
+  "replication_authorized": false,
+  "chart_seam_exceptions_authorized": false,
+  "proposed_joint_convention": "10 mm full joint inside owning panel, centre 5 mm inward from the edge; not applied yet",
+  "pilot_passed": false
+}

@@ -15,6 +15,8 @@ Pure Python (shapely + numpy); the DCC side only turns the returned arrays into 
 from __future__ import annotations
 
 import math
+import importlib.util
+from pathlib import Path
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 
@@ -25,6 +27,11 @@ from shapely.geometry import MultiPoint, MultiPolygon, Point, Polygon, box
 from shapely.ops import unary_union
 
 GRID = 1e-6
+_spec = importlib.util.spec_from_file_location(
+    "udimtile_core_ground", Path(__file__).resolve().parents[3] / "adapters/max/agr_tools/udimtile_core.py")
+assert _spec is not None and _spec.loader is not None
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 _TRI_REPAIRS: list[str] = []  # pieces whose triangulation needed a make_valid repair (reported by build_flat)
 
 
@@ -1632,7 +1639,7 @@ def uv_tile_report(uv: np.ndarray, eps: float = 1e-9) -> dict:
     lo = np.floor(uv.min(axis=1) + eps)
     straddle = np.any(uv.max(axis=1) > lo + 1 + eps, axis=1)
     bad_range = (lo[:, 0] < 0) | (lo[:, 0] > 9) | (lo[:, 1] < 0)
-    tiles = sorted({int(1001 + i + 10 * j) for i, j in lo[~straddle & ~bad_range].astype(int).tolist()})
+    tiles = sorted({_udimtile.udim_of_cell(i, j) for i, j in lo[~straddle & ~bad_range].astype(int).tolist()})
     return {"triangles": int(len(uv)), "straddling": int(straddle.sum()), "outside_udim_range": int(bad_range.sum()),
             "tiles": tiles, "u_range": [float(uv[..., 0].min()), float(uv[..., 0].max())] if len(uv) else None,
             "v_range": [float(uv[..., 1].min()), float(uv[..., 1].max())] if len(uv) else None}

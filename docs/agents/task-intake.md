@@ -51,6 +51,7 @@ Common:
 - Scope: what changes, what must NOT be touched (geometry, topology, UV, UCX, material IDs, names, other objects).
 - Etalon: «как у X» in numbers — which file, which parameters (texel, tile size, map types, naming, palette).
 - Inputs: which sheet / slide / file is the authority per item; which one wins on conflict (e.g. DWG `_R1` vs PDF).
+- Multi-building/part sheets: mark `finish_sheets[].multi_building: true`; record each part's `finish_refs: [{image, bbox, crop}]` (original-image pixel bbox `[left, top, right, bottom]`, top-left origin, right/bottom exclusive), save a crop beside the analysis in external evidence, record the finish read from it in `legend_item`, and give subagent briefs the crop path rather than the sheet name; verify crop content/existence and image bounds before Gate 1.
 - Output: what is delivered (VPM / NPM / both, package names, where) and the picture it is accepted by.
 - Fallback: what to do when it does not fit or the source is silent.
 - Pilot: which piece goes first.

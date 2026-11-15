@@ -1,0 +1,304 @@
+{
+  "status": "needs_seam_policy",
+  "passed": false,
+  "repeat_m": 3.978947368421052,
+  "texel_px_m": 512,
+  "phase_tolerance_px": 0.1,
+  "input_faces": 771,
+  "vertical_faces": 684,
+  "shared_vertical_edges": 430,
+  "limitations": [
+    "necessary condition only; fixed scale and horizontal outward U",
+    "source vertex indices only; no welding or partial-edge matching",
+    "complete vertical edges only; nonvertical faces not analysed",
+    "no bitmap symmetry inference, seam authorization or tile capacity verdict"
+  ],
+  "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d517d7c6\\tmp\\1326_faces_v003.json",
+  "source_sha256": "cd696c230c00413a226212eb6039007aa8dd848d73ad6c64713e57bf213d3550",
+  "blender": "5.1.2 background, read-only",
+  "metres_per_unit": 1.0,
+  "source_face_count": 2015,
+  "protected_face_count": 1244,
+  "all_source_hashes_equal": 10,
+  "source_copy_unchanged": true,
+  "geometry_material_uv_equal_to_previous_readback": true,
+  "production_uvs_written": false,
+  "cycles": [
+    {
+      "object": "K3_StylobateStair.001",
+      "faces": [
+        474,
+        472,
+        470,
+        449,
+        447,
+        445,
+        496,
+        443,
+        441,
+        490,
+        439,
+        482,
+        486,
+        454,
+        488,
+        484,
+        485,
+        494,
+        480,
+        478,
+        500,
+        476
+      ],
+      "circulation_m": 31.929994103653314,
+      "travel_m": 31.929994103653303,
+      "nearest_repeat_count": 8,
+      "wrapped_residual_px": 50.38856001786735,
+      "requires_seam_at_frozen_scale": true
+    },
+    {
+      "object": "K3_StylobateWalls.001",
+      "faces": [
+        1375,
+        1374,
+        1373,
+        1372,
+        1371,
+        1370,
+        1369,
+        1368,
+        1367,
+        1366,
+        1365,
+        1364,
+        1363,
+        1362,
+        1361,
+        1360,
+        1359,
+        1358,
+        1357,
+        1356,
+        1355,
+        1354,
+        1353,
+        1486,
+        1352,
+        1351,
+        1350,
+        1349,
+        1348,
+        1347,
+        1346,
+        1345,
+        1344,
+        1398,
+        1397,
+        1396,
+        1395,
+        1394,
+        1393,
+        1392,
+        1391,
+        1390,
+        1389,
+        1388,
+        1387,
+        1487,
+        1488,
+        1489,
+        1490,
+        1491,
+        1492,
+        1386,
+        1385,
+        1384,
+        1383,
+        1382,
+        1483,
+        1381,
+        1484,
+        1380,
+        1485,
+        1379,
+        1378,
+        1377,
+        1376
+      ],
+      "circulation_m": -86.23479512929117,
+      "travel_m": 86.23479512929109,
+      "nearest_repeat_count": -22,
+      "wrapped_residual_px": 666.6480516976517,
+      "requires_seam_at_frozen_scale": true
+    },
+    {
+      "object": "K3_StylobateWalls.001",
+      "faces": [
+        31,
+        30,
+        29,
+        28,
+        27,
+        26,
+        25,
+        24,
+        23,
+        22,
+        21,
+        20,
+        19,
+        18,
+        17,
+        16,
+        15,
+        14,
+        13,
+        12,
+        11,
+        10,
+        9,
+        1453,
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        0,
+        54,
+        53,
+        52,
+        51,
+        50,
+        49,
+        48,
+        47,
+        46,
+        45,
+        44,
+        43,
+        1444,
+        1435,
+        1426,
+        1417,
+        1408,
+        1399,
+        42,
+        41,
+        40,
+        39,
+        38,
+        1477,
+        37,
+        1468,
+        36,
+        1459,
+        35,
+        34,
+        33,
+        32
+      ],
+      "circulation_m": 89.64196722996559,
+      "travel_m": 89.64196722996576,
+      "nearest_repeat_count": 23,
+      "wrapped_residual_px": 959.3969887839266,
+      "requires_seam_at_frozen_scale": true
+    }
+  ],
+  "candidate_main_wall_terminations": [
+    {
+      "object": "K3_StylobateWalls.001",
+      "vertices": [
+        2,
+        1419
+      ],
+      "faces": [
+        1344,
+        1398
+      ],
+      "midpoint_m": [
+        112.49063873291016,
+        43.68496322631836,
+        5.345764636993408
+      ],
+      "endpoints_m": [
+        [
+          112.49063873291016,
+          43.68496322631836,
+          5.643616199493408
+        ],
+        [
+          112.49063873291016,
+          43.68496322631836,
+          5.047913074493408
+        ]
+      ]
+    },
+    {
+      "object": "K3_StylobateWalls.001",
+      "vertices": [
+        254,
+        1364
+      ],
+      "faces": [
+        0,
+        54
+      ],
+      "midpoint_m": [
+        112.7184829711914,
+        43.3373908996582,
+        4.446808576583862
+      ],
+      "endpoints_m": [
+        [
+          112.7184829711914,
+          43.3373908996582,
+          3.250000476837158
+        ],
+        [
+          112.7184829711914,
+          43.3373908996582,
+          5.643616676330566
+        ]
+      ]
+    }
+  ],
+  "candidate_terminations_authorized": false,
+  "unanalysed_face_count": 87,
+  "evidence_storage": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\ring-policy-v003",
+  "evidence_files": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\ring-policy-v003\\1326_faces_v003.json",
+      "sha256": "cd696c230c00413a226212eb6039007aa8dd848d73ad6c64713e57bf213d3550",
+      "bytes": 1135833
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\ring-policy-v003\\1326_faces_v003.py",
+      "sha256": "719dbb27af89951df1c90c5389942d3d83a9942af29c0e746d0b1054a13f11c4",
+      "bytes": 1277
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\ring-policy-v003\\1326_seal_rings.py",
+      "sha256": "1f8b78be0ec01d2ab35fab12d89184768680e30f58bd91036b0fc00b5545bf2f",
+      "bytes": 4830
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\ring-policy-v003\\course_grid_audit.py",
+      "sha256": "1e169deec9f27dbff54838adabfd2d40408d2bf41679e9c0eee7be495ae7496c",
+      "bytes": 12815
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\ring-policy-v003\\main-wall-rings-labelled.png",
+      "sha256": "2035fd1a3bcd90a322c95c5fb0cd4d058356a0cbc44bf52c04a530ded6fc1992",
+      "bytes": 25579
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\ring-policy-v003\\vertical-cycles.json",
+      "sha256": "6448165ea35cabe020d947e09ab15006aba6ca9a9e8ec1bc53bebf17e6931199",
+      "bytes": 59608
+    }
+  ],
+  "pilot_passed": false
+}

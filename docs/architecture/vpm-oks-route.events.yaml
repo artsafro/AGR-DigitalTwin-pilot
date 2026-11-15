@@ -1,6 +1,6 @@
 # Event storm of the VPM/OKS route (#1383; v2 per Artem 2026-11-14, D293, #1392). Source of truth for docs/architecture/vpm-oks-route.excalidraw.
 # Same method as the NPM map (#1359): Russian labels for Artem; commands, D-rows, paths and ids as in the repo.
-# commands: existing `agr` / `dt` commands only; a stage without one is drawn dashed «Нет команды agr/dt».
+# commands: existing `agr` / `dt` commands and the D312 master_topology script template; stages without commands are dashed.
 # rules: D-rows of docs/decisions.md. evidence: repo paths that exist (KPP1, PSU275, TEC26, ELV, 4BK research).
 # context: id from contexts.yaml or from local_contexts below; every stage context is also listed with the same
 # owner in this route's own context map vpm-oks-contexts.yaml (#1392, route_coverage).
@@ -148,6 +148,21 @@ stages:
     evidence:
       - docs/domain/areas/ucx.md
       - jobs/KPP1/scripts/vpm_ucx.py
+  - id: master-topology
+    event_ru: "QA мастера до триангуляции экспорта: топология и xView, отказы записаны"
+    actor: agent
+    context: validation
+    commands:
+      - "uv run python tools/qa/master_topology.py <master> --out <new.json>"
+      - "dt qa xview"
+    rules:
+      - D312
+      - D152
+      - D173
+    evidence:
+      - tools/qa/master_topology.py
+      - docs/domain/areas/body.md
+      - jobs/master-topology-1420/REPORT.md
   - id: npm
     event_ru: "НПМ-версия в тех же координатах готова (атлас)"
     actor: agent-dcc
@@ -229,12 +244,14 @@ stages:
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
     actor: checker
     context: validation
+    commands:
+      - agr checker
     rules:
       - D220
       - D104
     evidence:
       - jobs/KPP1/package-1278/sintez-v003-summary.json
-      - jobs/KPP1/scripts/run_agr_checker.py
+      - tools/qa/sintez_checker.py
   - id: delivered
     event_ru: "Сдано: Артём принял в открытой сцене, пакет передан"
     actor: artem
@@ -315,14 +332,6 @@ hotspots:
     evidence:
       - jobs/KPP1/package-1278/latest/REPORT.md
       - docs/retros/2026-11-05-elv-tc-vpm-claude.md
-  - id: sintez-runner
-    stage: sintez
-    ru: "СИНТЕЗ КПП1 v003: HP 64 / 3 провала / 53 не определено, LP 39 / 4 / 29; общей команды agr/dt нет"
-    rules:
-      - D220
-    evidence:
-      - jobs/KPP1/package-1278/latest/REPORT.md
-      - jobs/KPP1/scripts/run_agr_checker.py
   - id: album-review
     stage: delivered
     ru: "СРЕDА после приёмки: разбор альбома — 25 замечаний, 7 наших (гранёные кривые, отлив, лишние детали без источника)"

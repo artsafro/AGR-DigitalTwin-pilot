@@ -1,25 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2510" width="2360" height="2510" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2420" width="2360" height="2420" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="2510" fill="#ffffff"/>
+<rect x="10" y="-30" width="2360" height="2420" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
-<rect x="955.0" y="336.5" width="470" height="695.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="40" y="1091.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40" y="1370.5" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="650" y="1091.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650" y="1318.0" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260" y="1091.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260" y="1388.0" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1870" y="1091.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870" y="1300.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1843.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="2069.5" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<line x1="510" y1="1224.0" x2="650" y2="1197.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120" y1="1197.75" x2="1260" y2="1232.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1730" y1="1232.75" x2="1870" y2="1189.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1843.0" x2="275.0" y2="1480.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1843.0" x2="2105.0" y2="1485.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1031.5" x2="885.0" y2="1091.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1425.0" y1="684.0" x2="1870.0" y2="1189.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="955.0" y="336.5" width="470" height="605.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="40" y="1001.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40" y="1280.5" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="650" y="1001.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650" y="1228.0" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260" y="1001.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260" y="1298.0" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870" y="1001.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870" y="1210.5" width="470" height="200.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1753.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1979.5" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<line x1="510" y1="1134.0" x2="650" y2="1107.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120" y1="1107.75" x2="1260" y2="1142.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1730" y1="1142.75" x2="1870" y2="1099.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="1753.0" x2="275.0" y2="1390.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="1753.0" x2="2105.0" y2="1410.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="941.5" x2="885.0" y2="1001.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1425.0" y1="639.0" x2="1870.0" y2="1099.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута НПМ/ОКС (КПП1) (#1359)</tspan>
 </text>
@@ -40,7 +40,7 @@
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
 <text x="963.0" y="346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 61</tspan>
+<tspan x="963.0" dy="12">Дубли вне владельца: 51</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей функции; охрана jobs/, tools/, src/ (#1376)</tspan>
 <tspan x="963.0" dy="15.0">• jobs/OBR22-K02/scripts/check_npm_vpm_scale.py: &lt;module&gt;</tspan>
@@ -78,15 +78,9 @@
 <tspan x="963.0" dy="15.0">• adapters/max/agr_tools/uvlayout_core.py: tile_origin,</tspan>
 <tspan x="963.0" dy="15.0">udim_of_cell</tspan>
 <tspan x="963.0" dy="15.0">• adapters/max/agr_tools/npm2vpm_core.py: tile_origin</tspan>
-<tspan x="963.0" dy="15.0">• src/dt_ai/geometry/ground_cake.py: uv_tile_report</tspan>
-<tspan x="963.0" dy="15.0">• tools/blender/ground_json_to_fbx.py: readback</tspan>
-<tspan x="963.0" dy="15.0">• tools/experiments/dreamsim_ac08.py: _tile</tspan>
-<tspan x="963.0" dy="15.0">• tools/flora/build_flora_star.py: _bpy_build, udim_offset</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/methods_metrics.py: _udim</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/windows/windows_variants.py: tile_offset</tspan>
 <tspan x="963.0" dy="15.0">• tools/source/measure_spec_blender.py: udim</tspan>
 </text>
-<text x="48" y="1101.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="48" y="1011.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="48" dy="14">Корпус и геометрия</tspan>
 <tspan x="48" dy="17.5">Владелец: src/dt_ai/ops/operations.py</tspan>
 <tspan x="48" dy="17.5">операции над частями с проверкой инвариантов и откатом</tspan>
@@ -102,7 +96,7 @@
 <tspan x="48" dy="17.5">plan_opacity_swaps: сцена, кандидаты, бюджет</tspan>
 <tspan x="48" dy="17.5">треугольников -&gt; список замен на плоскости</tspan>
 </text>
-<text x="48" y="1380.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="48" y="1290.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="48" dy="12">Дубли вне владельца: 3</tspan>
 <tspan x="48" dy="15.0">• jobs/KPP1/scripts/seal.py:302 — свой шов и сварка Т-узлов вместо</tspan>
 <tspan x="48" dy="15.0">dt_ai.ops.seams.join_parts (#1359)</tspan>
@@ -110,7 +104,7 @@
 <tspan x="48" dy="15.0">• jobs/KPP1/scripts/build_kpp1.py:194 — сборка корпуса КПП1 целиком</tspan>
 <tspan x="48" dy="15.0">в скрипте задания (стадии 1–6) (#1359)</tspan>
 </text>
-<text x="658" y="1101.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="658" y="1011.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658" dy="14">UV и атлас</tspan>
 <tspan x="658" dy="17.5">Владелец: adapters/max/agr_tools/atlas_core.py</tspan>
 <tspan x="658" dy="17.5">каноническая упаковка атласа (D225); Python-версии</tspan>
@@ -123,7 +117,7 @@
 <tspan x="658" dy="17.5">flora_layout: вырезки текстур, max размер, отступ -&gt;</tspan>
 <tspan x="658" dy="17.5">раскладка атласа флоры</tspan>
 </text>
-<text x="658" y="1328.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="658" y="1238.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="658" dy="12">Дубли вне владельца: 5</tspan>
 <tspan x="658" dy="15.0">• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор</tspan>
 <tspan x="658" dy="15.0">атласа НПМ, по нему идёт agr vpm-to-npm (#1141)</tspan>
@@ -136,7 +130,7 @@
 <tspan x="658" dy="15.0">• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия</tspan>
 <tspan x="658" dy="15.0">vpm_uv.py КПП1 (#1359)</tspan>
 </text>
-<text x="1268" y="1101.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268" y="1011.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268" dy="14">Экспорт и пакет сдачи</tspan>
 <tspan x="1268" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
 <tspan x="1268" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
@@ -153,7 +147,7 @@
 <tspan x="1268" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
 <tspan x="1268" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="1268" y="1398.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1268" y="1308.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268" dy="12">Дубли вне владельца: 23</tspan>
 <tspan x="1268" dy="15.0">Правило проверки: свой писатель ZIP вместо общего _write_zip;</tspan>
 <tspan x="1268" dy="15.0">охрана jobs/, tools/, src/ (#1377)</tspan>
@@ -180,7 +174,7 @@
 <tspan x="1268" dy="15.0">• tools/sintez_parity.py: run_live</tspan>
 <tspan x="1268" dy="15.0">• src/dt_ai/publish/bundle.py: package</tspan>
 </text>
-<text x="1878" y="1101.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878" y="1011.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878" dy="14">Проверка и приёмка</tspan>
 <tspan x="1878" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
 <tspan x="1878" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
@@ -192,20 +186,21 @@
 <tspan x="1878" dy="17.5">main: путь к ZIP/FBX, --profile, --scene, --master,</tspan>
 <tspan x="1878" dy="17.5">--json -&gt; отчёт; провал — ненулевой код</tspan>
 </text>
-<text x="1878" y="1310.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878" dy="12">Дубли вне владельца: 5</tspan>
-<tspan x="1878" dy="15.0">• jobs/KPP1/scripts/qa_master.py:37 — своя проверка мастера КПП1</tspan>
-<tspan x="1878" dy="15.0">(#1359)</tspan>
-<tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/qa_master.py:37 — копия qa_master.py КПП1</tspan>
-<tspan x="1878" dy="15.0">(2 строки разницы) (#1359)</tspan>
-<tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/qa_packages.py:35 — своя проверка пакетов</tspan>
-<tspan x="1878" dy="15.0">TEC26 (#1359)</tspan>
-<tspan x="1878" dy="15.0">• jobs/KPP1/scripts/run_agr_checker.py:47 — свой запуск чекера</tspan>
-<tspan x="1878" dy="15.0">СИНТЕЗ (#1359)</tspan>
-<tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/run_agr_checker.py:47 — копия запуска</tspan>
-<tspan x="1878" dy="15.0">чекера КПП1 (#1359)</tspan>
+<text x="1878" y="1220.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878" dy="12">Дубли вне владельца: 3</tspan>
+<tspan x="1878" dy="15.0">Правило проверки: своя проверка мастера в Blender (def world_bm)</tspan>
+<tspan x="1878" dy="15.0">вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/</tspan>
+<tspan x="1878" dy="15.0">(#1379); свой запуск чекера СИНТЕЗ (calculate_all_checks) вместо</tspan>
+<tspan x="1878" dy="15.0">общего скрипта за командой agr checker; охрана jobs/, tools/, src/</tspan>
+<tspan x="1878" dy="15.0">(#1379)</tspan>
+<tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/qa_packages.py:35 — остаётся: проверки</tspan>
+<tspan x="1878" dy="15.0">пакетов именно ТЭЦ26 (стыки фасадов по листу цветового решения,</tspan>
+<tspan x="1878" dy="15.0">нарезка по дампу Max), которых нет в validate_package; общие стадии</tspan>
+<tspan x="1878" dy="15.0">— agr validate (#1379)</tspan>
+<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/PSU275/scripts/qa_master_psu275.py: world_bm</tspan>
 </text>
-<text x="963.0" y="1853.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1763.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Связь с DCC (Blender / 3ds Max)</tspan>
 <tspan x="963.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="963.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
@@ -218,7 +213,7 @@
 <tspan x="963.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="963.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="963.0" y="2079.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1989.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 24</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
 <tspan x="963.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
@@ -244,36 +239,36 @@
 <tspan x="963.0" dy="15.0">• tools/research/fbx_reader_compare.py: _blender</tspan>
 <tspan x="963.0" dy="15.0">• tools/sintez_parity.py: run_live.run</tspan>
 </text>
-<rect x="550.0" y="1192.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="580.0" y="1192.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="550.0" y="1102.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="580.0" y="1102.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="580.0" dy="14">мастер-модель</tspan>
 <tspan x="580.0" dy="17.5">(FBX/.blend)</tspan>
 </text>
-<rect x="1160.0" y="1197.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="1197.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1160.0" y="1107.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="1107.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1190.0" dy="14">UV, атлас,</tspan>
 <tspan x="1190.0" dy="17.5">текстуры</tspan>
 </text>
-<rect x="1770.0" y="1201.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1201.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1770.0" y="1111.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="1111.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="702.5" y="1643.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="732.5" y="1643.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="702.5" y="1553.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="732.5" y="1553.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="732.5" dy="14">Blender/Max</tspan>
 <tspan x="732.5" dy="17.5">строит</tspan>
 </text>
-<rect x="1617.5" y="1646.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="1646.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1617.5" y="1563.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1647.5" y="1563.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1647.5" dy="14">свежее чтение</tspan>
 <tspan x="1647.5" dy="17.5">экспорта</tspan>
 </text>
-<rect x="1007.5" y="1052.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1037.5" y="1052.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1007.5" y="962.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1037.5" y="962.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1037.5" dy="14">номер тайла</tspan>
 </text>
-<rect x="1617.5" y="927.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="927.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1617.5" y="860.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1647.5" y="860.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1647.5" dy="14">номер тайла</tspan>
 </text>
 </svg>

@@ -11,7 +11,7 @@
 <rect x="650.0" y="676.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="676.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="676.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="850.5" width="470" height="95.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870.0" y="850.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="955.0" y="1019.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="1228.0" width="470" height="155.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="510" y1="436.25" x2="650" y2="436.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -147,11 +147,10 @@
 <tspan x="1878.0" dy="17.5">находки НПМ</tspan>
 </text>
 <text x="1878.0" y="860.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878.0" dy="12">Дубли вне владельца: 2</tspan>
-<tspan x="1878.0" dy="15.0">• jobs/KPP1/scripts/run_agr_checker.py:47 — свой запуск чекера</tspan>
-<tspan x="1878.0" dy="15.0">СИНТЕЗ (#1359)</tspan>
-<tspan x="1878.0" dy="15.0">• jobs/TEC26-OKS/scripts/run_agr_checker.py:47 — копия запуска</tspan>
-<tspan x="1878.0" dy="15.0">чекера КПП1 (#1359)</tspan>
+<tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
+<tspan x="1878.0" dy="15.0">• jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47 — остаётся:</tspan>
+<tspan x="1878.0" dy="15.0">замороженная версия v003 запуска чекера; копии КПП1 и ТЭЦ26 стали</tspan>
+<tspan x="1878.0" dy="15.0">обёртками (#1379) (#1379)</tspan>
 </text>
 <text x="963.0" y="1029.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Коллизии UCX (только ВПМ)</tspan>

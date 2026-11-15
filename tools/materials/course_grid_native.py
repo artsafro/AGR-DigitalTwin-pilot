@@ -1,0 +1,911 @@
+"""new-case: project saved/native positions into an existing fixed metre chart.
+
+Native mesh/chart helpers use NumPy; pixel/interval/vector metrics additionally
+use Shapely outside the DCC process. Source frames and physical scale stay explicit.
+No file writes or fit-scale search. Vertex coalescing requires named cut-node groups;
+its surface/finish/coverage gates remain independent caller responsibilities.
+"""
+import math
+
+
+def project_saved_points(points, reference_xyz, reference_chart):
+    """Project actual stored XYZ, not ideal pre-cast cutter coordinates.
+
+    Retain the source chart origin and its first-triangle linear map. This
+    avoids interpreting native float32 storage noise as UV stretch in 10-mm
+    strips. The caller must measure residuals and all directional densities.
+    """
+    for rows,dim,name in [(points,3,'points'),(reference_xyz,3,'reference_xyz'),(reference_chart,2,'reference_chart')]:
+        if not isinstance(rows,list) or not rows or any(not isinstance(p,list) or len(p)!=dim or any(
+            isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in rows):
+            raise ValueError(f'invalid {name}')
+    if len(reference_xyz)<3 or len(reference_xyz)!=len(reference_chart):raise ValueError('partial reference frame')
+    dot=lambda a,b:sum(x*y for x,y in zip(a,b))
+    sub=lambda a,b:[x-y for x,y in zip(a,b)]
+    e,f=[sub(p,reference_xyz[0]) for p in reference_xyz[1:3]]
+    aa,ab,bb=dot(e,e),dot(e,f),dot(f,f)
+    determinant=aa*bb-ab*ab
+    if not math.isfinite(determinant) or determinant<=max(aa*bb*1e-14,1e-24):raise ValueError('degenerate source frame')
+    u,v=[sub(p,reference_chart[0]) for p in reference_chart[1:3]]
+    out=[]
+    for point in points:
+        delta=sub(point,reference_xyz[0]);a,b=dot(delta,e),dot(delta,f)
+        s=(a*bb-b*ab)/determinant;t=(b*aa-a*ab)/determinant
+        q=[reference_chart[0][k]+s*u[k]+t*v[k] for k in (0,1)]
+        if not all(math.isfinite(x) for x in q):raise ValueError('nonfinite projected chart')
+        out.append(q)
+    return out
+
+
+def interpolate_source_chart(points, reference_chart, source_local_xyz):
+    """Interpolate the ORIGINAL source fan directly in the DCC's local frame.
+
+    Do not round a world-space point and then invert a float32 object matrix:
+    that round trip can create off-edge micrometre spikes in thin cap cells.
+    Original corners are returned exactly; warped faces retain their source fan.
+    """
+    import numpy as np
+    for rows, dim, minimum, name in ((points, 2, 1, 'points'),
+            (reference_chart, 2, 3, 'reference_chart'),
+            (source_local_xyz, 3, 3, 'source_local_xyz')):
+        if not isinstance(rows, list) or len(rows) < minimum or any(
+                not isinstance(p, list) or len(p) != dim or any(
+                    isinstance(x, bool) or not isinstance(x, (int, float))
+                    or not math.isfinite(x) for x in p) for p in rows):
+            raise ValueError(f'invalid {name}')
+    if len(reference_chart) != len(source_local_xyz):
+        raise ValueError('partial source fan')
+    chart = np.asarray(reference_chart, dtype=float)
+    local = np.asarray(source_local_xyz, dtype=float)
+    if (np.linalg.matrix_rank(chart-chart[0], tol=1e-12) != 2
+            or np.linalg.matrix_rank(local-local[0], tol=1e-12) < 2):
+        raise ValueError('degenerate source fan')
+    result = []
+    for point in np.asarray(points, dtype=float):
+        corners = np.flatnonzero(np.linalg.norm(chart - point, axis=1) <= 1e-12)
+        if len(corners) == 1:
+            result.append(source_local_xyz[int(corners[0])].copy()); continue
+        found = None
+        for i in range(1, len(chart) - 1):
+            matrix = np.column_stack([chart[i] - chart[0], chart[i+1] - chart[0]])
+            if abs(np.linalg.det(matrix)) <= 1e-14:
+                continue
+            a, b = np.linalg.solve(matrix, point - chart[0])
+            if min(a, b) >= -1e-9 and a + b <= 1 + 1e-9:
+                found = local[0] + a * (local[i]-local[0]) + b * (local[i+1]-local[0])
+                break
+        if found is None or not np.isfinite(found).all():
+            raise ValueError(f'outside/degenerate source fan: {point.tolist()}')
+        result.append(found.tolist())
+    return result
+
+
+def split_native_loop(vertex_ids):
+    """Split ONLY exact repeated vertex identities, preserving each directed edge.
+
+    Return indices into the input loop. Record zero-area cycles explicitly;
+    callers must independently prove their geometric area and source coverage.
+    No distance weld, coordinate change or implicit surface-deletion authority.
+    """
+    if (not isinstance(vertex_ids, list) or len(vertex_ids) < 3
+            or any(type(i) is not int or i < 0 for i in vertex_ids)):
+        raise ValueError('invalid native loop')
+    pending = [list(range(len(vertex_ids)))]; loops = []; collapsed = []
+    while pending:
+        cycle = pending.pop(); seen = {}; split = False
+        for j, index in enumerate(cycle):
+            value = vertex_ids[index]
+            if value in seen:
+                i = seen[value]
+                pending.extend([cycle[i:j], cycle[j:] + cycle[:i]])
+                split = True; break
+            seen[value] = j
+        if split:
+            continue
+        if len(cycle) < 3:
+            collapsed.append(cycle)
+        else:
+            loops.append(cycle)
+    if not loops:
+        raise ValueError('native loop has no surface cycle')
+    return dict(loops=loops, collapsed=collapsed)
+
+
+def rigid_triangle_uv(xyz, reference_uv, *, texel_px_m, tile_px):
+    """Rectify an explicitly authorized minor triangle at the frozen density.
+
+    Keep its longest source edge's UV heading and anchor; unfold its true stored
+    surface, not its projection onto a neighbouring face. No pack rotation.
+    """
+    if len(xyz)!=3 or len(reference_uv)!=3:raise ValueError('triangle required')
+    project_saved_points(xyz,xyz,reference_uv)  # finite/degenerate frame checks
+    if isinstance(texel_px_m,bool) or not isinstance(texel_px_m,(int,float)) or not math.isfinite(texel_px_m) or not 512<=texel_px_m<=1706:
+        raise ValueError('illegal texel_px_m')
+    if type(tile_px) is not int or tile_px not in (2048,4096):raise ValueError('unsupported tile_px')
+    sub=lambda a,b:[x-y for x,y in zip(a,b)]
+    dot=lambda a,b:sum(x*y for x,y in zip(a,b))
+    i,j=max(((0,1),(1,2),(2,0)),key=lambda ij:math.dist(xyz[ij[0]],xyz[ij[1]]))
+    k=3-i-j
+    edge=sub(xyz[j],xyz[i]);length=math.sqrt(dot(edge,edge));direction=[v/length for v in edge]
+    off=sub(xyz[k],xyz[i]);s=dot(off,direction);height=math.sqrt(sum((off[d]-s*direction[d])**2 for d in range(3)))
+    heading=sub(reference_uv[j],reference_uv[i]);size=math.hypot(*heading)
+    if size<=0 or height<=0:raise ValueError('degenerate triangle heading')
+    u=[v/size for v in heading];v=[-u[1],u[0]]
+    if dot(sub(reference_uv[k],reference_uv[i]),v)<0:v=[-a for a in v]
+    factor=texel_px_m/tile_px
+    out=[list(q) for q in reference_uv];out[i]=list(reference_uv[i])
+    out[j]=[out[i][d]+length*u[d]*factor for d in (0,1)]
+    out[k]=[out[i][d]+(s*u[d]+height*v[d])*factor for d in (0,1)]
+    return out
+
+
+def encode_triangle_uv(xyz, ideal_uv, *, tile_px, tile_u=0):
+    """Choose a directed float32 encoding within 0.01 pixel of a rigid chart.
+
+    Fixed-density geometry and packing are already frozen. Search only the two
+    neighbouring float32 representable values per coordinate, not pixels or a
+    density scale. Refuse if format quantization cannot satisfy legal bounds.
+    ideal_uv and the returned coordinates are ABSOLUTE UDIM coordinates. Adding
+    a tile offset after encoding changes the float32 lattice and invalidates
+    the certificate. tile_u names one column in the first UDIM row explicitly.
+    """
+    import itertools
+    import numpy as np
+    if type(tile_px) is not int or tile_px not in (2048,4096):raise ValueError('unsupported tile_px')
+    if type(tile_u) is not int or not 0 <= tile_u <= 9:raise ValueError('unsupported tile_u')
+    if len(xyz)!=3 or len(ideal_uv)!=3:raise ValueError('triangle required')
+    project_saved_points(xyz,xyz,ideal_uv)
+    x=np.asarray(xyz,dtype=float);ideal=np.asarray(ideal_uv,dtype=float)
+    e=x[1:]-x[0];a=e[0]/np.linalg.norm(e[0]);n=np.cross(e[0],e[1]);n/=np.linalg.norm(n);b=np.cross(n,a)
+    physical=np.c_[e@a,e@b];inverse=np.linalg.inv(physical)
+    rounded=ideal.astype(np.float32).ravel()
+    if not np.isfinite(rounded).all():raise ValueError('float32 UV overflow')
+    for radius in (1,2):
+        choices=[]
+        for v in rounded:
+            low=[];high=[];lo=v;hi=v
+            for _ in range(radius):
+                lo=np.nextafter(lo,np.float32(-np.inf));hi=np.nextafter(hi,np.float32(np.inf));low.append(lo);high.append(hi)
+            choices.append(low[::-1]+[v]+high)
+        candidates=np.asarray(list(itertools.product(*choices)),dtype=float).reshape(-1,3,2)
+        delta=(candidates[:,1:]-candidates[:,:1])*tile_px
+        jac=np.einsum('ij,njk->nik',inverse,delta)
+        singular=np.linalg.svd(jac,compute_uv=False)
+        errors=np.max(np.linalg.norm(candidates-ideal,axis=2),axis=1)*tile_px
+        ok=(singular[:,1]>=512)&(singular[:,0]<=1706)&(singular[:,0]/singular[:,1]<=1.02)&(errors<=.01)
+        ok &= ((np.linalg.det(delta)>0)
+               & (candidates[:,:,0].min(axis=1)>=tile_u)
+               & (candidates[:,:,0].max(axis=1)<=tile_u+1)
+               & (candidates[:,:,1].min(axis=1)>=0)
+               & (candidates[:,:,1].max(axis=1)<=1))
+        good=np.flatnonzero(ok)
+        if len(good):
+            best=min(good,key=lambda i:(errors[i],float(np.sum((candidates[i]-ideal)**2))))
+            return dict(uv=candidates[best].tolist(),singular_px_m=singular[best].tolist(),
+                        max_encoding_error_px=float(errors[best]),ulp_radius=radius)
+    raise ValueError('native float32 encoding exceeds density/anisotropy/subpixel budget')
+
+
+def conform_source_mesh(vertices, faces, lineage, uv, source_vertices, source_faces, *, epsilon_m=2e-5, collapsed_sources=()):
+    """Resolve only source-proven duplicate endpoints, then node shared edges.
+
+    Coordinates must be in the same metre frame. Original vertices remain in
+    their original slots; unused duplicates are reported, not silently deleted.
+    This is not a 2-mm weld: disconnected source surfaces never share identity.
+    The caller must certify native tessellation, surface and interpolated UVs.
+    """
+    import numpy as np
+    from collections import defaultdict
+    def points(value, dim, name):
+        if not isinstance(value,list) or not value or any(not isinstance(p,list) or len(p)!=dim or any(
+            isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in value):
+            raise ValueError('invalid '+name)
+    points(vertices,3,'vertices');points(source_vertices,3,'source_vertices')
+    if isinstance(epsilon_m,bool) or not isinstance(epsilon_m,(int,float)) or not math.isfinite(epsilon_m) or not 0<epsilon_m<=2e-5:
+        raise ValueError('invalid epsilon_m')
+    if not isinstance(faces,list) or not faces or len(faces)!=len(lineage) or len(faces)!=len(uv):raise ValueError('partial faces/lineage/uv')
+    if not isinstance(source_faces,dict) or not source_faces:raise ValueError('empty source_faces')
+    for key,face in source_faces.items():
+        if type(key) is not int or len(face)<3 or len(set(face))!=len(face) or any(type(i) is not int or not 0<=i<len(source_vertices) for i in face):
+            raise ValueError('invalid source face '+str(key))
+    for face,src,coords in zip(faces,lineage,uv):
+        if type(src) is not int or src not in source_faces:raise ValueError('unmapped source face '+str(src))
+        if len(face)<3 or len(set(face))!=len(face) or any(type(i) is not int or not 0<=i<len(vertices) for i in face):raise ValueError('invalid face')
+        points(coords,2,'uv')
+        if len(coords)!=len(face):raise ValueError('partial uv')
+    nsource=len(source_vertices)
+    if vertices[:nsource]!=source_vertices:raise ValueError('original vertex prefix changed')
+    v=np.array(vertices,dtype=float);owners=defaultdict(set)
+    for face,src in zip(faces,lineage):
+        for i in face:owners[i].add(src)
+    edges={src:{tuple(sorted((a,b))) for a,b in zip(f,f[1:]+f[:1])} for src,f in source_faces.items()}
+    def on_edge(p, edge):
+        a,b=v[list(edge)];d=b-a;length=float(d@d)
+        if length==0:return False
+        t=float((p-a)@d/length)
+        return 0<=t<=1 and np.linalg.norm(p-a-t*d)<=epsilon_m
+    def compatible(i,j):
+        if owners[i]&owners[j]:return True
+        for a in owners[i]:
+            for b in owners[j]:
+                if any(on_edge(v[i],e) and on_edge(v[j],e) for e in edges[a]&edges[b]):return True
+        return False
+    remap=list(range(len(v)));changes=[]
+    # Original source vertex identity wins; only the actual owning source
+    # face may nominate an endpoint, not an arbitrary nearby surface.
+    for i in sorted(owners):
+        if i<nsource:continue
+        candidates={j for src in owners[i] for j in source_faces[src] if np.linalg.norm(v[i]-v[j])<=epsilon_m}
+        if len(candidates)>1:raise ValueError('ambiguous source endpoint '+str(i))
+        if candidates:
+            j=candidates.pop();remap[i]=j;changes.append({'from':i,'to':j,'distance_m':float(np.linalg.norm(v[i]-v[j]))})
+    active=sorted(i for i in owners if remap[i]==i)
+    # Bound each merge directly to its representative (no distance chains).
+    for ii,i in enumerate(active):
+        if remap[i]!=i:continue
+        for j in active[ii+1:]:
+            if j<nsource or remap[j]!=j:continue
+            if np.linalg.norm(v[i]-v[j])<=epsilon_m and compatible(i,j):
+                remap[j]=i;changes.append({'from':j,'to':i,'distance_m':float(np.linalg.norm(v[i]-v[j]))})
+    for i in range(len(remap)):
+        while remap[i]!=remap[remap[i]]:remap[i]=remap[remap[i]]
+    if not isinstance(collapsed_sources,(list,tuple)) or any(type(s) is not int or s not in source_faces for s in collapsed_sources):raise ValueError('invalid collapse source scope')
+    newfaces=[];newuv=[];new_lineage=[];input_face=[];dropped=[]
+    for fi,(face,src,coords) in enumerate(zip(faces,lineage,uv)):
+        mapped=[remap[i] for i in face];keep=[i for i in range(len(face)) if mapped[i]!=mapped[i-1]]
+        clean=[mapped[i] for i in keep]
+        if len(set(clean))<3:
+            if src not in collapsed_sources:raise ValueError('conforming would collapse a face')
+            dropped.append(dict(face=fi,source=src,reason='explicit minor scope: proven sub-native identity collapsed connectivity cell'))
+            continue
+        if len(set(clean))!=len(clean):raise ValueError('conforming repeats nonconsecutive vertex')
+        newfaces.append(clean);newuv.append([coords[i] for i in keep]);new_lineage.append(src);input_face.append(fi)
+    if set(new_lineage)!=set(lineage):raise ValueError('conforming loses source identity')
+    owners=defaultdict(set)
+    for f,src in zip(newfaces,new_lineage):
+        for i in f:owners[i].add(src)
+    active=np.array(sorted(owners),dtype=int);positions=v[active];out=[];outuv=[];insertions=[]
+    for fi,(face,src,coords) in enumerate(zip(newfaces,new_lineage,newuv)):
+        nf=[];nu=[]
+        for k,a in enumerate(face):
+            b=face[(k+1)%len(face)];d=v[b]-v[a];length=float(d@d)
+            if length==0:raise ValueError('zero length edge')
+            ts=(positions-v[a])@d/length
+            ds=np.linalg.norm(positions-v[a]-ts[:,None]*d,axis=1)
+            candidates=active[(ts>0)&(ts<1)&(ds<=epsilon_m)]
+            cuts=[]
+            for j in candidates:
+                j=int(j)
+                if j in face:continue
+                distances=[]
+                for edge_index,x in enumerate(face):
+                    y=face[(edge_index+1)%len(face)];edge=v[y]-v[x];size=float(edge@edge)
+                    fraction=float(np.clip((v[j]-v[x])@edge/size,0,1)) if size else 0.
+                    distances.append(float(np.linalg.norm(v[j]-v[x]-fraction*edge)))
+                if min(range(len(face)),key=lambda edge_index:distances[edge_index])!=k:continue
+                if src not in owners[j] and not any(on_edge(v[a],e) and on_edge(v[b],e) and on_edge(v[j],e)
+                    for other in owners[j] for e in edges[src]&edges[other]):continue
+                t=float((v[j]-v[a])@d/length);cuts.append((t,j))
+            nf.append(a);nu.append(list(coords[k]))
+            for t,j in sorted(cuts):
+                nf.append(j);nu.append([(1-t)*coords[k][z]+t*coords[(k+1)%len(face)][z] for z in (0,1)])
+                insertions.append({'face':fi,'edge':[a,b],'vertex':j})
+        if len(set(nf))!=len(nf):raise ValueError('repeated conforming vertex')
+        out.append(nf);outuv.append(nu)
+    return dict(vertices=[list(p) for p in vertices],faces=out,uv=outuv,remap=remap,merges=changes,insertions=insertions,input_face=input_face,dropped_faces=dropped,
+                unused_vertices=sorted(set(range(len(vertices)))-{i for f in out for i in f}))
+
+
+def remove_native_backtracks(points):
+    """Report and remove only sub-nanometre, sub-picometre-area retraced spurs.
+
+    Keep forward collinear conforming nodes. No vertex motion, surface-notch
+    simplification or implicit source drop. Return original corner indices so
+    callers retain XYZ/UV/material lineage and report each omitted excursion.
+    """
+    if (not isinstance(points, list) or len(points) < 3 or any(
+            not isinstance(p, list) or len(p) != 2 or any(isinstance(v, bool)
+                or not isinstance(v, (int, float)) or not math.isfinite(v) for v in p)
+            for p in points)):
+        raise ValueError('invalid native backtrack polygon')
+    indices = list(range(len(points))); removed = []; area_change = 0.
+    while len(indices) > 3:
+        changed = False
+        for j, i in enumerate(indices):
+            a, p, b = points[indices[j-1]], points[i], points[indices[(j+1)%len(indices)]]
+            edge = [b[k]-a[k] for k in (0,1)]; size = sum(v*v for v in edge)
+            if not size: continue
+            t = sum((p[k]-a[k])*edge[k] for k in (0,1))/size
+            cross = abs(edge[0]*(p[1]-a[1])-edge[1]*(p[0]-a[0]))
+            if (0 <= t <= 1 or cross/math.sqrt(size) > 1e-9
+                    or area_change+cross/2 > 1e-12):
+                continue
+            indices.pop(j); removed.append(i); area_change += cross/2; changed = True; break
+        if not changed: break
+    return dict(indices=indices, removed=removed, signed_area_change_m2=area_change)
+
+
+def triangulate_conforming_polygon(points, *, triangle_allowed=None):
+    """Maximize the worst aspect quality while retaining EVERY boundary node.
+
+    No simplify, DCC-chosen diagonal, inserted centre or omitted collinear node.
+    Return ordered corner indices; refuse a non-simple or zero-area polygon.
+    An optional triangle_allowed predicate can exclude native-unencodable
+    diagonals BEFORE dynamic programming chooses a complete partition.
+    """
+    from shapely.geometry import Polygon
+    if not isinstance(points,list) or len(points)<3 or any(not isinstance(p,list) or len(p)!=2 or any(
+        isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in points):
+        raise ValueError('invalid conforming polygon')
+    poly=Polygon(points);n=len(points)
+    if not poly.is_valid or poly.area<=1e-12 or not poly.exterior.is_ccw:raise ValueError('invalid conforming winding/surface')
+    score={};result={}
+    for i in range(n-1):score[i,i+1]=math.inf;result[i,i+1]=[]
+    for span in range(2,n):
+        for i in range(n-span):
+            j=i+span;best=-1;chosen=None
+            for k in range(i+1,j):
+                if (i,k) not in result or (k,j) not in result:continue
+                tri=Polygon([points[i],points[k],points[j]])
+                if tri.area<=1e-12 or not tri.exterior.is_ccw or tri.difference(poly).area>max(1e-14,tri.area*1e-12):continue
+                if triangle_allowed is not None:
+                    allowed = triangle_allowed([i, k, j])
+                    if type(allowed) is not bool:
+                        raise ValueError('triangle_allowed must return bool')
+                    if not allowed:
+                        continue
+                longest=max(math.dist(points[a],points[b])**2 for a in (i,k,j) for b in (i,k,j))
+                quality=min(score[i,k],score[k,j],tri.area/longest)
+                if quality>best:best=quality;chosen=result[i,k]+result[k,j]+[[i,k,j]]
+            if chosen is not None:score[i,j]=best;result[i,j]=chosen
+    if (0,n-1) not in result:raise ValueError('unrepresentable conforming triangulation')
+    triangles=result[0,n-1]
+    if len(triangles)!=n-2 or {i for t in triangles for i in t}!=set(range(n)):raise ValueError('incomplete conforming triangulation')
+    return triangles
+
+
+def triangulate_native_boundary(points):
+    """Tessellate an existing native boundary without moving/dropping its nodes.
+
+    Float32 nodes on a long shared edge need not be exactly collinear. A Newell
+    fan can turn that storage noise into a spurious near-parallel sliver facing
+    an adjacent surface. Use an oriented best-fit chart and the existing complete
+    aspect-safe triangulator instead. This changes only internal diagonals;
+    callers retain XYZ, UV corner association, material and source lineage and
+    independently check surface/readback equivalence. Not a geometry weld.
+    """
+    import numpy as np
+    if (not isinstance(points, list) or len(points) < 3 or any(
+            not isinstance(p, list) or len(p) != 3 or any(
+                isinstance(x, bool) or not isinstance(x, (int, float))
+                or not math.isfinite(x) for x in p) for p in points)):
+        raise ValueError('invalid native boundary')
+    xyz = np.asarray(points, dtype=float)
+    centred = xyz - xyz[0]
+    _, singular, basis = np.linalg.svd(centred, full_matrices=False)
+    if singular[1] <= max(singular[0] * 1e-12, 1e-12):
+        raise ValueError('degenerate native boundary')
+    chart = centred @ basis[:2].T
+    area2 = sum(a[0]*b[1] - a[1]*b[0] for a, b in zip(chart, np.roll(chart, -1, axis=0)))
+    if abs(area2) <= 2e-12:
+        raise ValueError('degenerate native boundary')
+    if area2 < 0:
+        chart[:, 1] *= -1
+    return triangulate_conforming_polygon(chart.tolist())
+
+
+def canonical_native_boundary(points):
+    """Choose only a cyclic serialization anchor, preserving every directed edge.
+
+    A convex polygon with native near-collinear boundary nodes can have a bad
+    first-vertex fan. A cyclic loop start is not a geometry/topology/UV edit.
+    Refuse a concave/no-safe-fan polygon instead of adding a protected diagonal.
+    """
+    import numpy as np
+    from shapely.geometry import Polygon
+    # Reuse the finite/rank/winding validation; its triangles are NOT applied.
+    triangulate_native_boundary(points)
+    xyz=np.asarray(points,dtype=float);p=xyz-xyz[0]
+    _,_,basis=np.linalg.svd(p,full_matrices=False);xy=p@basis[:2].T
+    polygon=Polygon(xy);count=len(points);candidates=[]
+    for first in range(count):
+        ids=[(first+i)%count for i in range(count)];quality=[]
+        for i in range(1,count-1):
+            tri=xy[[ids[0],ids[i],ids[i+1]]]
+            shape=Polygon(tri)
+            if shape.area<=1e-12 or shape.difference(polygon.buffer(1e-12)).area>1e-14:break
+            edges=np.roll(tri,-1,axis=0)-tri
+            quality.append(float(shape.area/np.sum(edges*edges)))
+        if len(quality)==count-2:candidates.append((min(quality),-first,ids))
+    if not candidates:raise ValueError('no stable cyclic boundary fan')
+    return max(candidates)[2]
+
+
+def plan_boundary_finalization(rows, targets, *, method='triangulate'):
+    """Build a fixed-node diagonal plan for explicitly named source/materials.
+
+    A target is one existing polygon, not authority to change another finish or
+    drop a source. The DCC adapter must compare the full corner associations
+    before applying this plan; planning does not certify exported geometry.
+    """
+    import copy
+    if method not in ('triangulate','cyclic-anchor'):raise ValueError('invalid finalization method')
+    if not isinstance(rows,list) or not isinstance(targets,list) or not targets:
+        raise ValueError('missing explicit finalization targets')
+    keys=set();result=[]
+    for target in targets:
+        if not isinstance(target,dict) or set(target)!={'object','source_face','material_id'}:
+            raise ValueError('invalid finalization target')
+        if (not isinstance(target['object'],str) or not target['object']
+                or type(target['source_face']) is not int or target['source_face']<0
+                or type(target['material_id']) is not int or target['material_id']<1):
+            raise ValueError('invalid finalization source/material identifier')
+        key=(target['object'],target['source_face'])
+        if key in keys:raise ValueError('duplicate finalization target')
+        keys.add(key)
+        found=[r for r in rows if (r['object'],r['source_face'])==key]
+        if len(found)!=1 or found[0]['material_id']!=target['material_id']:
+            raise ValueError(f'missing/ambiguous source or stale material: {key}')
+        row=copy.deepcopy(found[0]);n=len(row['local_xyz'])
+        if (len(row['vertices'])!=n or len(row['uv'])!=n
+                or len(set(row['vertices']))!=n):
+            raise ValueError('partial native corner association')
+        for q in row['uv']:
+            if not isinstance(q,list) or len(q)!=2 or any(
+                    isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in q):
+                raise ValueError('invalid native UV')
+        row['operation']=method
+        if method=='cyclic-anchor':row['boundary_loops']=[canonical_native_boundary(row['local_xyz'])]
+        else:row['triangles']=triangulate_native_boundary(row['local_xyz'])
+        result.append(row)
+    return result
+
+
+def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, groups, allow_original_anchor=False):
+    """Apply explicit minor-cut node groups bounded to 2 mm, never auto-weld.
+
+    Original vertices cannot move or be removed. Report every collapsed cell;
+    refuse loss of ANY source identity. Surface, finish, joint-width and native
+    readback gates remain the caller's responsibility, not implied by success.
+    """
+    if not isinstance(vertices,list) or not vertices or any(not isinstance(p,list) or len(p)!=3 or any(
+        isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in vertices):raise ValueError('invalid vertices')
+    if type(original_vertex_count) is not int or not 0<original_vertex_count<=len(vertices):raise ValueError('invalid original_vertex_count')
+    if not isinstance(faces,list) or not faces or len(faces)!=len(lineage):raise ValueError('partial faces/lineage')
+    if any(len(f)<3 or len(set(f))!=len(f) or any(type(i) is not int or not 0<=i<len(vertices) for i in f) for f in faces):raise ValueError('invalid faces')
+    if any(type(s) is not int or s<0 for s in lineage):raise ValueError('invalid source identity')
+    if not isinstance(groups,list) or not groups:raise ValueError('empty explicit groups')
+    out=[list(v) for v in vertices];remap=list(range(len(vertices)));seen=set();maximum=0
+    for group in groups:
+        if not isinstance(group,dict) or set(group)!={'vertices','position'}:raise ValueError('invalid explicit group')
+        ids=group['vertices'];p=group['position']
+        if not isinstance(ids,list) or len(ids)<2 or len(set(ids))!=len(ids) or any(type(i) is not int or not 0<=i<len(vertices) or i in seen for i in ids):raise ValueError('original/duplicate/invalid cut-node group')
+        if not isinstance(p,list) or len(p)!=3 or any(isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p):raise ValueError('nonfinite/partial cut-node position')
+        anchors=[i for i in ids if i<original_vertex_count]
+        if type(allow_original_anchor) is not bool or anchors and not allow_original_anchor or len(anchors)>1 or anchors and p!=vertices[anchors[0]]:
+            raise ValueError('original anchor must remain unchanged and unique')
+        motion=max(math.dist(vertices[i],p) for i in ids)
+        if motion>.002:raise ValueError('cut-node movement exceeds 2 mm')
+        maximum=max(maximum,motion);rep=min(ids);out[rep]=list(p)
+        for i in ids:remap[i]=rep
+        seen.update(ids)
+    new=[];sources=[];dropped=[];retained=[]
+    for fi,(f,src) in enumerate(zip(faces,lineage)):
+        mapped=[remap[i] for i in f];clean=[i for k,i in enumerate(mapped) if i!=mapped[k-1]]
+        if len(set(clean))<3:
+            dropped.append(dict(face=fi,source=src,reason='explicit cut-node coalescence; collapsed connectivity cell'));continue
+        if len(set(clean))!=len(clean):raise ValueError('coalescing creates repeated nonconsecutive vertex')
+        new.append(clean);sources.append(src);retained.append(fi)
+    if set(sources)!=set(lineage):raise ValueError('coalescing loses source identity')
+    return dict(vertices=out,faces=new,lineage=sources,input_face=retained,dropped=dropped,remap=remap,max_displacement_m=maximum)
+
+
+def extend_support_to_boundary(support, face, *, maximum_m):
+    """Extend near-boundary support tips OUTWARD before partition/tessellation.
+
+    The original surface is unchanged. Sweep each existing support edge only
+    to its endpoint projections on the original face boundary, within an
+    explicit <=2.1mm cutter envelope. Union retains every old relief pixel;
+    never simplify away a narrow source strip or move an original corner.
+    This is a proposed cutter change: callers must remeasure placement gaps,
+    source support, all-map sampling and native topology before acceptance.
+    """
+    from shapely.geometry import Polygon, MultiPoint, Point
+    from shapely.ops import unary_union
+    if (isinstance(maximum_m, bool) or not isinstance(maximum_m, (int, float))
+            or not math.isfinite(maximum_m) or not 0 < maximum_m <= .0021):
+        raise ValueError('invalid maximum_m')
+    if (not isinstance(face, Polygon) or not face.is_valid or face.is_empty
+            or face.area <= 1e-12 or face.interiors):
+        raise ValueError('invalid source face')
+    if (support.geom_type not in ('Polygon', 'MultiPolygon') or not support.is_valid
+            or support.difference(face).area > 1e-12):
+        raise ValueError('invalid/outside source support')
+    if support.is_empty:
+        return support
+    components = [support] if support.geom_type == 'Polygon' else list(support.geoms)
+    additions = [support]
+    for component in components:
+        for ring in [component.exterior, *component.interiors]:
+            points = list(ring.coords[:-1]); projected = []
+            for point in points:
+                candidates = []
+                boundary = list(face.exterior.coords)
+                for a, b in zip(boundary, boundary[1:]):
+                    edge = [b[k]-a[k] for k in (0, 1)]
+                    size = sum(v*v for v in edge)
+                    if not size:
+                        continue
+                    t = max(0., min(1., sum((point[k]-a[k])*edge[k] for k in (0, 1))/size))
+                    q = tuple(a[k]+t*edge[k] for k in (0, 1))
+                    # Preserve the unconstrained coordinate exactly on axis edges.
+                    if edge[0] == 0: q = (a[0], max(min(point[1], max(a[1], b[1])), min(a[1], b[1])))
+                    if edge[1] == 0: q = (max(min(point[0], max(a[0], b[0])), min(a[0], b[0])), a[1])
+                    candidates.append(q)
+                target = min(candidates, key=lambda q: math.dist(q, point))
+                projected.append(target if math.dist(point, target) <= maximum_m else point)
+            for i, point in enumerate(points):
+                j = (i + 1) % len(points)
+                swept = MultiPoint([point, points[j], projected[i], projected[j]]).convex_hull
+                if swept.area > 0:
+                    additions.append(swept.intersection(face))
+    result = unary_union(additions).intersection(face)
+    # Boundary-only intersections carry zero surface area. Do not forward
+    # these GEOS roundoff contact lines as mesh partition components.
+    if result.geom_type == 'GeometryCollection':
+        result = unary_union([g for g in result.geoms
+                              if g.geom_type in ('Polygon', 'MultiPolygon')])
+    if (not result.is_valid or support.difference(result).area > 1e-12
+            or result.difference(support.buffer(maximum_m)).area > 1e-12):
+        raise ValueError('boundary extension exceeds coverage/envelope')
+    return result
+
+
+def simplify_support_outward(support, face, *, maximum_m):
+    """Remove only bounded reentrant raster notches, retaining all old support.
+
+    No mesh weld or movement of original source geometry. Each proposed corner
+    removal must add only area inside the face and the ORIGINAL support's
+    envelope. Large concavities and unrepresentable candidates remain intact.
+    Callers must retain patch identity and rerun native/all-map certification.
+    """
+    from shapely.geometry import Polygon
+    from shapely.geometry.polygon import orient
+    from shapely.ops import unary_union
+    if (isinstance(maximum_m, bool) or not isinstance(maximum_m, (int, float))
+            or not math.isfinite(maximum_m) or not 0 < maximum_m <= .0021):
+        raise ValueError('invalid maximum_m')
+    if (not isinstance(face, Polygon) or face.is_empty or not face.is_valid
+            or support.geom_type not in ('Polygon', 'MultiPolygon')
+            or not support.is_valid or support.difference(face).area > 1e-12):
+        raise ValueError('invalid source face/support')
+    if support.is_empty: return support
+    components = [support] if support.geom_type == 'Polygon' else list(support.geoms)
+    result = []
+    for component in components:
+        if component.interiors:
+            result.append(component); continue
+        original = component
+        envelope = original.buffer(maximum_m)
+        current = orient(component, sign=1)
+        while True:
+            points = list(current.exterior.coords[:-1]); choice = None
+            for i, point in enumerate(points):
+                prev, nxt = points[i-1], points[(i+1)%len(points)]
+                turn = ((point[0]-prev[0])*(nxt[1]-point[1])
+                        -(point[1]-prev[1])*(nxt[0]-point[0]))
+                if turn >= 0 or len(points) <= 3: continue
+                candidate = Polygon(points[:i]+points[i+1:])
+                if (not candidate.is_valid or current.difference(candidate).area > 1e-12
+                        or candidate.difference(face).area > 1e-12
+                        or candidate.difference(envelope).area > 1e-12):
+                    continue
+                score = candidate.area-current.area
+                if choice is None or score < choice[0]: choice = score, candidate
+            if choice is None: break
+            current = choice[1]
+        result.append(current)
+    merged = unary_union(result)
+    if (not merged.is_valid or support.difference(merged).area > 1e-12
+            or merged.difference(support.buffer(maximum_m)).area > 1e-12):
+        raise ValueError('outward cleanup exceeds support/envelope')
+    return merged
+
+
+def joint_cross_section(face, expected_zones, observed_zones, origin, inward):
+    """Measure complete interval sets against independent face-clipped design.
+
+    A nominal owner-side centre may lie outside a thin/sloped face. At a crossing
+    the union can be wider than 10 mm. Neither is permission to omit a sample:
+    compare all expected/observed components and report the classification.
+    Empty required coverage and additional false intervals never pass.
+    """
+    from shapely.geometry import Polygon,LineString,Point
+    from shapely.ops import unary_union
+    def vector(value):
+        return isinstance(value,list) and len(value)==2 and all(not isinstance(x,bool) and isinstance(x,(int,float)) and math.isfinite(x) for x in value)
+    def polygon(value):
+        if not isinstance(value,list) or len(value)<3 or not all(vector(p) for p in value):raise ValueError('invalid joint polygon')
+        p=Polygon(value)
+        if not p.is_valid or p.area<=1e-12:raise ValueError('invalid joint surface')
+        return p
+    domain=polygon(face)
+    if not vector(origin) or not vector(inward):raise ValueError('invalid joint probe')
+    norm=math.hypot(*inward)
+    if norm==0:raise ValueError('zero joint normal')
+    normal=[x/norm for x in inward]
+    if not isinstance(expected_zones,list) or not expected_zones or not isinstance(observed_zones,list):raise ValueError('partial joint mask')
+    expected=unary_union([polygon(p) for p in expected_zones]).intersection(domain)
+    observed=unary_union([polygon(p) for p in observed_zones]).intersection(domain)
+    reach=max(math.dist(origin,p) for p in face)+.1
+    line=LineString([[origin[k]+sign*reach*normal[k] for k in (0,1)] for sign in (-1,1)])
+    def intervals(shape):
+        cut=shape.intersection(line)
+        parts=[cut] if cut.geom_type=='LineString' else list(getattr(cut,'geoms',[]))
+        out=[]
+        for part in parts:
+            if part.geom_type!='LineString' or part.length<=1e-10:continue
+            values=[sum((p[k]-origin[k])*normal[k] for k in (0,1)) for p in part.coords]
+            out.append([min(values),max(values)])
+        # GEOS may node one connected line into many touching components at
+        # raster-cell/triangle corners. Measure its 1D union, not component count.
+        # Only sub-nanometre arithmetic gaps merge; real pixel/geometry gaps stay.
+        merged=[]
+        for lo,hi in sorted(out):
+            if merged and lo<=merged[-1][1]+1e-10:
+                merged[-1][1]=max(merged[-1][1],hi)
+            else:merged.append([lo,hi])
+        return merged
+    e=intervals(expected);a=intervals(observed);used=set();errors=[];endpoint_errors=[];missing=0
+    for lo,hi in e:
+        candidates=[i for i,(x,y) in enumerate(a) if i not in used and min(hi,y)>max(lo,x)]
+        if not candidates:missing+=1;continue
+        i=min(candidates,key=lambda i:abs(sum(a[i])/2-(lo+hi)/2));used.add(i)
+        x,y=a[i];errors.append(abs((x+y-lo-hi)/2)*1000);endpoint_errors.extend([abs(x-lo)*1000,abs(y-hi)*1000])
+    width=sum(hi-lo for lo,hi in e)*1000
+    classification='clipped' if width<9.98 else 'junction' if width>10.02 else 'single'
+    false=len(a)-len(used)
+    return dict(passed=bool(e) and missing==0 and false==0 and max(errors,default=math.inf)<=5 and max(endpoint_errors,default=math.inf)<=5,
+                classification=classification,expected_intervals_m=e,observed_intervals_m=a,
+                expected_width_mm=width,observed_width_mm=sum(hi-lo for lo,hi in a)*1000,
+                max_centre_error_mm=max(errors,default=None),max_endpoint_error_mm=max(endpoint_errors,default=None),
+                nominal_centre_outside_face=not domain.covers(Point([origin[k]+.005*normal[k] for k in (0,1)])),
+                missing_intervals=missing,false_intervals=false)
+
+
+def raster_cell_intersections(mask, centres_px, pixel_axes_px):
+    """Conservative positive-area intersection of affine pixels with source cells.
+
+    mask[y,x] names [x,x+1] x [y,y+1] in the caller's explicit raster frame.
+    The two rows of pixel_axes_px are complete target-pixel edge vectors in
+    that same frame. Use four separating axes, not point samples/bilinear
+    thresholds; exact touching does not paint a neighbour. At most four source
+    pixels per edge are supported (no implicit scale reduction or wrapping).
+    This preserves a source mask, not a 10mm design-width/colour acceptance.
+    """
+    import numpy as np
+    if (not isinstance(mask, np.ndarray) or mask.dtype != np.bool_
+            or mask.ndim != 2 or not mask.size):
+        raise ValueError('invalid source mask')
+    centres = np.asarray(centres_px, dtype=float)
+    axes = np.asarray(pixel_axes_px, dtype=float)
+    if (centres.ndim != 2 or centres.shape[1:] != (2,) or not len(centres)
+            or not np.isfinite(centres).all() or axes.shape != (2, 2)
+            or not np.isfinite(axes).all() or abs(np.linalg.det(axes)) <= 1e-12
+            or max(np.linalg.norm(axes, axis=1)) > 4):
+        raise ValueError('invalid/unbounded raster cell frame')
+    height, width = mask.shape
+    if (centres.min() < -4 or (centres > [width+4, height+4]).any()):
+        raise ValueError('raster cell centres outside supported source envelope')
+    normals = np.array([[1.,0.], [0.,1.], [-axes[0,1], axes[0,0]],
+                        [-axes[1,1], axes[1,0]]])
+    limits = (np.abs(axes @ normals.T).sum(axis=0)
+              + np.abs(normals).sum(axis=1)) / 2
+    extent = np.abs(axes).sum(axis=0) / 2
+    radius = np.ceil(extent + .5).astype(int)
+    base = np.floor(centres).astype(int)
+    covered = np.zeros(len(centres), dtype=bool)
+    for dy in range(-int(radius[1]), int(radius[1])+1):
+        for dx in range(-int(radius[0]), int(radius[0])+1):
+            pixels = base + [dx, dy]
+            valid = ((pixels >= 0).all(axis=1)
+                     & (pixels < [width, height]).all(axis=1) & ~covered)
+            ids = np.flatnonzero(valid)
+            if not len(ids): continue
+            ids = ids[mask[pixels[ids,1], pixels[ids,0]]]
+            delta = pixels[ids] + .5 - centres[ids]
+            inside = (np.abs(delta @ normals.T) < limits).all(axis=1)
+            covered[ids[inside]] = True
+    return covered
+
+
+def union_joint_footprints(footprints, *, precision_m):
+    """Union measured chart masks at an explicit sub-nanometre precision.
+
+    Independent affine inverses can put the SAME native edge on opposite sides
+    of a probe by ~1e-14m. Snap-round only the measurement polygons, never mesh
+    positions, UVs or PNGs. Keep the unsnapped evidence and report the changed
+    area separately. This is not permission to close real raster/geometry gaps.
+    """
+    from shapely import union_all
+    if (isinstance(precision_m,bool) or not isinstance(precision_m,(int,float))
+            or not math.isfinite(precision_m) or not 0<precision_m<=1e-9):
+        raise ValueError('footprint measurement precision must be <=1nm')
+    if not isinstance(footprints,list) or not footprints or any(
+            p.geom_type not in ('Polygon','MultiPolygon','GeometryCollection')
+            or not p.is_valid for p in footprints):
+        raise ValueError('invalid measured footprint set')
+    return union_all(footprints,grid_size=precision_m)
+
+
+def source_joint_footprint(image, source_uv, chart_m):
+    """Read the delivered (40,32,32), L1<=4 mask at original pixel edges.
+
+    Input RGB uint8 image uses PNG's top-down row order. Only the actual face UV
+    bbox is scanned. No legacy 5-mm resampling or implicit endpoint truncation.
+    A measured empty bitmap footprint is an explicit empty geometry, not a pass.
+    """
+    import numpy as np
+    from shapely.geometry import Polygon
+    from shapely.ops import unary_union
+    if not isinstance(image,np.ndarray) or image.dtype!=np.uint8 or image.ndim!=3 or image.shape[2]!=3 or min(image.shape[:2])<1:raise ValueError('unsupported source RGB image')
+    # Reuse finite/dimension and nondegenerate affine-frame validation.
+    for rows in (source_uv,chart_m):
+        if not isinstance(rows,list) or len(rows)<3 or any(not isinstance(p,list) or len(p)!=2 or any(
+            isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in p) for p in rows):raise ValueError('invalid source UV/chart')
+    if len(source_uv)!=len(chart_m):raise ValueError('partial source UV/chart')
+    uv=np.asarray(source_uv,dtype=float);chart=np.asarray(chart_m,dtype=float);domain=Polygon(chart)
+    if not domain.is_valid or domain.area<=1e-12 or uv.min()<0 or uv.max()>1:raise ValueError('unsupported source UV domain')
+    h,w=image.shape[:2];pixels=uv*np.array([w,h]);a=np.c_[pixels-pixels[0],np.ones(len(pixels))]
+    matrix=np.linalg.lstsq(a,chart-chart[0],rcond=None)[0]
+    if np.linalg.matrix_rank(matrix[:2])!=2 or np.max(np.linalg.norm(a@matrix-(chart-chart[0]),axis=1))>2e-5:raise ValueError('unsupported nonaffine source UV frame')
+    lo=np.maximum(0,np.floor(pixels.min(0)).astype(int));hi=np.minimum([w-1,h-1],np.ceil(pixels.max(0)).astype(int))
+    active={};rectangles=[]
+    for y in range(int(lo[1]),int(hi[1])+2):
+        runs=[]
+        if y<=hi[1]:
+            row=image[h-1-y,lo[0]:hi[0]+1].astype(np.int16)
+            xs=np.flatnonzero(np.abs(row-[40,32,32]).sum(1)<=4)+lo[0]
+            if len(xs):
+                for group in np.split(xs,np.flatnonzero(np.diff(xs)>1)+1):runs.append((int(group[0]),int(group[-1])+1))
+        for run,start in list(active.items()):
+            if run not in runs:rectangles.append([run[0],start,run[1],y]);del active[run]
+        for run in runs:active.setdefault(run,y)
+    polygons=[]
+    for x0,y0,x1,y1 in rectangles:
+        p=np.array([[x0,y0],[x1,y0],[x1,y1],[x0,y1]],dtype=float)
+        polygons.append(Polygon(np.c_[p-pixels[0],np.ones(4)]@matrix+chart[0]))
+    return unary_union(polygons).intersection(domain)
+
+
+def rectify_axis_joint_footprint(footprint, *, face=None):
+    """Fit explicit chart-axis 10-mm bands to a measured raster footprint.
+
+    Use only on authorized minor-part joint masks. Unlike tracing 1.95-mm pixel
+    stairs into topology, fit nominal-width lines, merge collinear fragments and
+    prove BOTH false/missing shape containment at the fixed 5-mm contract.
+    Refuse broad/diagonal source shapes rather than silently reinterpreting them.
+    """
+    from shapely.geometry import box
+    from shapely.ops import unary_union
+    if footprint.is_empty:return footprint
+    if not footprint.is_valid:raise ValueError('invalid reference joint footprint')
+    components=[footprint] if footprint.geom_type=='Polygon' else list(getattr(footprint,'geoms',[]))
+    bands=[]
+    for part in components:
+        if part.geom_type!='Polygon' or part.area<=1e-12:continue
+        x0,y0,x1,y1=part.bounds;dx=x1-x0;dy=y1-y0
+        if min(dx,dy)>.025:raise ValueError('unsupported broad/diagonal reference joint')
+        axis=0 if dx<=dy else 1
+        center=(x0+x1)/2 if axis==0 else (y0+y1)/2
+        lo,hi=(y0,y1) if axis==0 else (x0,x1)
+        if hi-lo<.01:lo,hi=(lo+hi)/2-.005,(lo+hi)/2+.005
+        bands.append(dict(axis=axis,center=center,lo=lo,hi=hi,weight=part.area))
+    changed=True
+    while changed:
+        changed=False
+        for i,a in enumerate(bands):
+            for j in range(i+1,len(bands)):
+                b=bands[j]
+                if a['axis']!=b['axis'] or abs(a['center']-b['center'])>.004 or max(a['lo'],b['lo'])-min(a['hi'],b['hi'])>.005:continue
+                weight=a['weight']+b['weight']
+                a.update(center=(a['center']*a['weight']+b['center']*b['weight'])/weight,lo=min(a['lo'],b['lo']),hi=max(a['hi'],b['hi']),weight=weight)
+                bands.pop(j);changed=True;break
+            if changed:break
+    polygons=[]
+    for a in bands:
+        c=a['center'];lo=a['lo'];hi=a['hi']
+        polygons.append(box(c-.005,lo,c+.005,hi) if a['axis']==0 else box(lo,c-.005,hi,c+.005))
+    result=unary_union(polygons)
+    if face is not None:
+        if face.is_empty or not face.is_valid or footprint.difference(face).area>1e-12:raise ValueError('invalid reference face clipping')
+        result=result.intersection(face)
+    if footprint.difference(result.buffer(.005)).area>1e-12 or result.difference(footprint.buffer(.005)).area>1e-12:
+        # Cap/return charts can carry a sloping source stripe. Preserve its
+        # measured long axis instead of imposing the main-wall chart axes.
+        from shapely.geometry import Polygon
+        oriented=[]
+        for part in components:
+            if part.geom_type!='Polygon' or part.area<=1e-12:continue
+            corners=list(part.minimum_rotated_rectangle.exterior.coords[:-1])
+            lengths=[math.dist(corners[i],corners[(i+1)%4]) for i in range(4)]
+            index=max(range(4),key=lambda i:lengths[i]);length=lengths[index]
+            if length==0:raise ValueError('degenerate reference joint axis')
+            direction=[(corners[(index+1)%4][k]-corners[index][k])/length for k in (0,1)];normal=[-direction[1],direction[0]]
+            center=[sum(p[k] for p in corners)/4 for k in (0,1)];half=max(length,.006)/2
+            oriented.append(Polygon([[center[k]+s*half*direction[k]+t*.005*normal[k] for k in (0,1)] for s,t in [(-1,-1),(1,-1),(1,1),(-1,1)]]))
+        result=unary_union(oriented)
+        if face is not None:result=result.intersection(face)
+        if footprint.difference(result.buffer(.005)).area>1e-12 or result.difference(footprint.buffer(.005)).area>1e-12:
+            raise ValueError('axis joint fit exceeds fixed 5 mm correspondence')
+    return result
+
+
+def restore_repeat_translation(previous_uv, chart_point, *, repeat_m, texel_px_m, tile_px, border_px):
+    """Recover a known brick-field lattice translation after cut-node movement.
+
+    Only the chart translation is recovered, never individual vertices, scale
+    or rotation. Refuse displacement greater than one pixel rather than guessing
+    an unrecognized phase class. Joint-field placements must not call this API.
+    """
+    for row in (previous_uv, chart_point):
+        if not isinstance(row, list) or len(row) != 2 or any(
+                isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) for x in row):
+            raise ValueError('invalid phase reference')
+    for value in (repeat_m, texel_px_m, border_px):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise ValueError('invalid phase scale')
+    if type(tile_px) is not int or tile_px not in (2048, 4096) or not 512 <= texel_px_m <= 1706 or 2 * border_px >= tile_px:
+        raise ValueError('unsupported phase tile/density')
+    result = []
+    for uv, point in zip(previous_uv, chart_point):
+        shift = uv * tile_px / texel_px_m - point
+        anchor = border_px / texel_px_m
+        exact = anchor + round((shift - anchor) / repeat_m) * repeat_m
+        if abs(shift - exact) * texel_px_m > 1:
+            raise ValueError('unrecognized phase class exceeds one pixel')
+        result.append(exact)
+    return result
+
+
+def vectorize_joint_footprint(footprint, *, face):
+    """Retain measured tapered strip ends without tracing raster stair vertices.
+
+    Authorized minor-part masks only. Nearby source pixel components may be
+    joined, but every resulting polygon must remain within 5 mm of the actual
+    source in BOTH directions. This is not permission to fill arbitrary holes
+    or to replace a broad/unsupported reference with a guessed nominal joint.
+    """
+    from shapely.ops import unary_union
+    if face.geom_type != 'Polygon' or not face.is_valid or face.area <= 1e-12:
+        raise ValueError('invalid reference face')
+    if footprint.is_empty:
+        return footprint
+    if not footprint.is_valid or footprint.geom_type not in ('Polygon', 'MultiPolygon'):
+        raise ValueError('unsupported reference joint footprint')
+    if footprint.difference(face.buffer(1e-10)).area > 1e-12:
+        raise ValueError('reference footprint outside face')
+    parts = [footprint] if footprint.geom_type == 'Polygon' else list(footprint.geoms)
+    groups = []
+    for part in parts:
+        # A stripe may be sloped, but a broad patch is not a panel joint.
+        corners = list(part.minimum_rotated_rectangle.exterior.coords)
+        if min(math.dist(a, b) for a, b in zip(corners, corners[1:])) > .025:
+            raise ValueError('unsupported broad reference joint')
+        nearby = [i for i, group in enumerate(groups) if group.distance(part) < .005]
+        merged = unary_union([part] + [groups[i] for i in nearby])
+        groups = [group for i, group in enumerate(groups) if i not in nearby]
+        groups.append(merged)
+    from shapely import snap
+    result = unary_union([g.convex_hull.simplify(.0021, preserve_topology=True)
+                          for g in groups]).intersection(face)
+    # Select unchanged source corners BEFORE topology, rather than repairing a
+    # triangulated foldover afterward. Every resulting mask still has to satisfy
+    # the independent 5-mm source-shape bound below.
+    result = snap(result, face, .0021).intersection(face)
+    if not result.is_valid:
+        raise ValueError('invalid corner-anchored joint footprint')
+    if (footprint.difference(result.buffer(.005)).area > 1e-12 or
+            result.difference(footprint.buffer(.005)).area > 1e-12):
+        raise ValueError('vector joint fit exceeds fixed 5 mm correspondence')
+    return result

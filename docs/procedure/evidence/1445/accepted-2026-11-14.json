@@ -1,0 +1,25 @@
+{
+  "schema": "accepted-set/1",
+  "job": "4bk-k3",
+  "evidence": "Historical acceptance scope from TASK.md at 6aa786d9; files rehashed for issue 1445 dry run, not proof of historical bytes or current production approval.",
+  "accepted": [
+    {
+      "part": "gf_body_A",
+      "version": "v004",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/build/gf_parts/gf_body_A/gf_body_A_v004.blend",
+      "sha256": "88e56689be9f78e94e207381eb2b99424897aa509062709e15fc082fc7165c6a"
+    },
+    {
+      "part": "gf_windows_A",
+      "version": "v003",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/build/gf_parts/gf_windows_A/v003/gf_windows_A_v003.blend",
+      "sha256": "68ce3fc7014c65abbb37290d5ae4f2730d256459c2e07355b70adb98ab93425e"
+    },
+    {
+      "part": "gf_roof_A",
+      "version": "v003",
+      "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/build/gf_parts/gf_roof_A/gf_roof_A_v003.blend",
+      "sha256": "8402a26707a5589ce7e889d49a9c7d94d0f71d3e6f70cb1ccdbb01b64d862a23"
+    }
+  ]
+}
