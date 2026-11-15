@@ -3,6 +3,7 @@
 Pattern: n/a | new-case: version-bound A101 retrieval, approval and immutable v003 inputs.
 """
 import hashlib
+import os
 import subprocess
 import sys
 from copy import deepcopy
@@ -133,8 +134,19 @@ def _cold_snippet():
     return text.split('```python', 1)[1].split('```', 1)[0]
 
 
+def _run_cold_snippet(tmp_path, mode, prefix=''):
+    env = os.environ.copy()
+    env.pop('PYTHONOPTIMIZE', None)
+    flags = ['-O'] if mode == 'flag' else []
+    if mode == 'environment':
+        env['PYTHONOPTIMIZE'] = '1'
+    return subprocess.run([sys.executable, *flags, '-c', prefix + _cold_snippet()],
+                          cwd=tmp_path, env=env, capture_output=True, text=True)
+
+
+@pytest.mark.parametrize('mode', ['normal', 'flag', 'environment'])
 @pytest.mark.parametrize('bad', ['empty', 'partial', 'unsupported', 'nan', 'infinity', 'zero', 'duplicate', 'traversal', 'absolute'])
-def test_documented_download_refuses_invalid_manifest_before_writes(tmp_path, bad):
+def test_documented_download_refuses_invalid_manifest_before_writes(tmp_path, bad, mode):
     # Synthetic refusal probes: network is forbidden, never pretend these are real assets.
     manifest = deepcopy(load('library/outside-retrieval-v001.json'))
     first = manifest['assets'][0]['files'][0]
@@ -158,8 +170,7 @@ def test_documented_download_refuses_invalid_manifest_before_writes(tmp_path, ba
     input_path.write_text(json.dumps(manifest), encoding='utf-8')
     before = input_path.read_bytes()
     prefix = "import urllib.request\ndef denied(*a, **kw): raise RuntimeError('NETWORK_MUST_NOT_RUN')\nurllib.request.urlopen = denied\n"
-    result = subprocess.run([sys.executable, '-c', prefix + _cold_snippet()], cwd=tmp_path,
-                            capture_output=True, text=True)
+    result = _run_cold_snippet(tmp_path, mode, prefix)
     assert result.returncode != 0
     assert not (tmp_path / 'cold-download-v001').exists(), result.stderr
     assert 'NETWORK_MUST_NOT_RUN' not in result.stderr
