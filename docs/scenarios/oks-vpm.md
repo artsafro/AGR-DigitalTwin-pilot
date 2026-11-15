@@ -40,6 +40,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Body, windows, capsules, roof | **standard**: AGR Tools stages 1–4 (Max) [D250]; job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
 | Materials, UDIM, textures | AGR Tools stages 5–6; `tools/materials/` | partial; texel checked by V009 |
 | UCX | AGR Tools `ucx_core`; etalon `jobs/KPP1/scripts/` | job scripts, no Main UCX case accepted |
+| Master QA before export | `runtime.master_topology(nodes)` in AGR Tools; `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json` for agents (also work FBX / JSON inventory); run beside xView **before** delivery triangulation [D308] | n-gons fail; per-object triangle count/share reported; quads pass; checked Max export refuses a failed master before its triangle snapshot |
 | Export, readback | Max export [D212]; `tools/blender/fbx_readback.py`; `dt qa xview` | proven |
 | Package and checks | AGR Tools stage 9; `tools/qa/validate_package.py`; SINTEZ AGR Checker | validator V001–V013 partial; no package has reached passed=true yet |
 

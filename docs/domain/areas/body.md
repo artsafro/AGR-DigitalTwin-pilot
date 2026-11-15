@@ -50,6 +50,17 @@ manual gates remain required. Partial coverage is explicitly qualified.
 | BODY-Y — Scene collection ceiling | reg p.28 §3.2 | No transferred VPM layer mandate; cleanup under BODY-B | At most 1 default layer/collection | Inspect source scene collections; FBX mesh-only checks do not establish the source layer count | none | [Scene organization](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | BODY-Z — Roof screen enclosure | [D067]; [D086] | Silhouette enclosure via the linked pattern; source-module top follows source | Closed shell of the screen's thickness inward (spec v0.7 `thickness_m`, #91); bounded draft-pattern support, not official VPM certification | Check marked screen outline, roof boundary classification and the shell's thickness/closed-solid guards; a profile other than `npm_min`/`mid` still stops | `tests/test_spec_extract.py` (screen extraction); `tests/qa/test_from_spec.py` (mid/VPM shell build, thickness fallback, grid/closed-solid guards, touch/overlap stop); `src/twinqa/geometry/checks.py:check_mesh` (partial: enclosure boundary classification) | [Roof screen enclosure](../patterns/roof-screen-enclosure.md) |
 
+## Master topology before export [D308]
+
+The editable master prefers quads; unavoidable triangles are allowed and reported
+(count and face share per object). Any polygon with >4 sides fails. Run
+`uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json` (or a
+non-triangulated work FBX), or `agr_tools_runtime.master_topology(nodes)` in Max,
+next to xView **before** export triangulation. Checked Max export invokes the same
+core before taking a triangle snapshot. This is separate from BODY-N's exported
+triangle rule and does not certify that each triangle was unavoidable. Read-only
+ELV/KPP1/PSU275 evidence: [report](../../../jobs/master-topology-1420/REPORT.md).
+
 ## Image verification and review evidence
 
 The supplied PDF has 56 physical pages. Rendered with PyMuPDF 1.28.2 at scale 1.5 and
