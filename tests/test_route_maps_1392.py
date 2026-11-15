@@ -179,7 +179,7 @@ def test_generator_writes_the_two_new_context_maps():
     names = {p.name for p in files}
     for stem in MAP_FILES.values():
         assert {f"{stem}.excalidraw", f"{stem}.svg"} <= names
-    assert len(files) == 12
+    assert len(files) == 24   # #1393: + MAF, Flora, package routes and their context maps
     for name, stem in MAP_FILES.items():
         assert route_map.OUTPUTS[name] == Path("docs/architecture") / stem
         for suffix in (".excalidraw", ".svg"):

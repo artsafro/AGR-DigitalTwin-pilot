@@ -1,0 +1,280 @@
+# Event storm of the Flora route, NPM + VPM (#1393, follow-up of #1383 / #1392, Artem 2026-11-14).
+# Source of truth for docs/architecture/flora-route.excalidraw / .svg. Same method and generator as the NPM/OKS map
+# (#1359) and the VPM OKS / Ground maps (#1383, #1392): Russian labels for Artem; commands, D-rows, paths and ids as
+# in the repo. commands: existing `agr` / `dt` commands only; a stage without one is drawn dashed «Нет команды agr/dt».
+# rules: D-rows of docs/decisions.md. evidence: repo paths that exist (model-flora skill, Flora sheet, library/flora,
+# block #426 route A, Vatutino route-A run v004). Steps are tool-agnostic [D293 (1)].
+# Interim maps = the named stand-ins of D245 (marked `stand-in`, red on the species sheet [D246]); LOD = the light
+# NPM variants of #347, built only on a copy of the library (library/flora/README.md).
+# NPM stage: conversion VPM -> NPM OR parallel placement of both [D293 (5)].
+# context: id from contexts.yaml or local_contexts; every stage context is in flora-contexts.yaml (route_coverage).
+# hotspots = RED boxes: a fact the repo leaves open or a step it does not define (a question, not an invention).
+# Checked by tests/test_route_maps_1393.py. Regenerate: uv run python tools/architecture/route_map.py
+title_ru: "Маршрут Флоры (НПМ + ВПМ): событийный штурм (библиотека v003 / A101, маршрут A Ватутино v007)"
+route: flora
+object: "VATUTINO-SITE (Flora route A, placement v007), library/flora"
+issue: "#1393"
+actors:
+  - id: agent
+    ru: "Агент"
+  - id: agent-dcc
+    ru: "Агент: Blender / Max / AGR Tools"
+  - id: artem
+    ru: "Артём"
+local_contexts:
+  - id: flora-library
+    ru: "Библиотека Флоры (каталог v003, A101, карты)"
+    owner: src/dt_ai/materials/flora_catalogue.py
+  - id: flora-checks
+    ru: "Проверки Флоры (размер, доля бюджета, карты)"
+    owner: src/twinqa/flora.py
+  - id: flora-maps
+    ru: "Карты вида (диффуз + прозрачность)"
+    owner: src/dt_ai/materials/flora.py
+  - id: flora-star
+    ru: "НПМ-звезда и ВПМ-оболочка"
+    owner: tools/flora/build_flora_star.py
+  - id: flora-light
+    ru: "Облегчённые НПМ (LOD) на копиях"
+    owner: tools/flora/build_flora_npm_light.py
+  - id: flora-atlas
+    ru: "Атлас Флоры из расставленной сцены"
+    owner: tools/library/flora_atlas_from_scene.py
+  - id: placement
+    ru: "Расстановка МАФ и Флоры"
+    owner: src/dt_ai/placement/engine.py
+  - id: npm
+    ru: "НПМ Флоры на атласе"
+    owner: adapters/max/agr_tools/flora_atlas_max.py
+stages:
+  - id: sources
+    event_ru: "Ведомость озеленения и точки СПОЗУ прочитаны: вид (рус + лат), число, высота и крона"
+    actor: agent
+    context: dcc
+    rules:
+      - D186
+      - D099
+    evidence:
+      - .agents/skills/model-flora/SKILL.md
+      - docs/domain/areas/flora.md
+  - id: beds
+    event_ru: "Клумбы: «просто клумба» — текстура Ground; перечислены растения — модели; крупные кусты — всегда модели"
+    actor: agent
+    context: flora-library
+    rules:
+      - D101
+    evidence:
+      - docs/domain/areas/flora.md
+      - .agents/skills/model-flora/SKILL.md
+  - id: species
+    event_ru: "Виды из библиотеки: каталог v003, A101 (G:/Мой диск/AGR-assets/flora), карты maps.json"
+    actor: agent
+    context: flora-library
+    rules:
+      - D232
+      - D239
+    evidence:
+      - library/flora/README.md
+      - library/flora/catalogue.json
+      - library/flora/maps.json
+      - library/assets/UNIFIED.md
+  - id: size
+    event_ru: "Размер по ведомости: высота и крона ±20 %, цвет листвы — по спецификации или по фото вида"
+    actor: agent
+    context: flora-checks
+    rules:
+      - D099
+      - D246
+    evidence:
+      - src/twinqa/flora.py
+      - jobs/VATUTINO-SITE/flora-species.md
+  - id: maps
+    event_ru: "Карты вида: одобренная пара или временная замена (stand-in) до точных карт"
+    actor: agent
+    context: flora-maps
+    rules:
+      - D245
+      - D243
+    evidence:
+      - docs/pipeline-flora-textures.md
+      - jobs/VATUTINO-SITE/flora-route-a-v004.md
+    branches:
+      - id: approved
+        when_ru: "есть одобренная пара"
+        ru: "одобрены только эти байты / объект, не другая версия"
+        rules:
+          - D245
+        evidence:
+          - library/flora/maps.json
+      - id: stand-in
+        when_ru: "точной карты нет"
+        ru: "временная замена из одобренных пар: помечена stand-in, красная в листе видов"
+        rules:
+          - D245
+          - D246
+        evidence:
+          - jobs/VATUTINO-SITE/flora-species.md
+      - id: new
+        when_ru: "новый вид"
+        ru: "2K вид спереди на белом → вырезка → ч/б прозрачность → одобрение Артёма"
+        rules:
+          - D242
+          - D253
+        evidence:
+          - src/dt_ai/materials/flora.py
+          - docs/pipeline-flora-textures.md
+  - id: star
+    event_ru: "НПМ-звезда (плоскости с картой) и ВПМ = оболочка звезды; детальный куст — только по запросу"
+    actor: agent-dcc
+    context: flora-star
+    rules:
+      - D102
+      - D232
+    evidence:
+      - tools/flora/build_flora_star.py
+      - docs/plans/flora-426-route-2026-11.md
+  - id: lod
+    event_ru: "Облегчённые НПМ (LOD) — только на копии библиотеки; оригиналы и сцены не меняются"
+    actor: agent-dcc
+    context: flora-light
+    rules:
+      - D167
+      - D097
+    evidence:
+      - library/flora/README.md
+      - library/flora/npm-light.json
+  - id: placement
+    event_ru: "Расстановка по точкам СПОЗУ: утопление 10 см, поворот Z и масштаб ±10 %, сид записан"
+    actor: agent
+    context: placement
+    rules:
+      - D100
+      - D095
+    evidence:
+      - src/dt_ai/placement/engine.py
+      - jobs/VATUTINO-SITE/place_site.py
+      - jobs/VATUTINO-SITE/placement-report.md
+  - id: npm
+    event_ru: "НПМ-версия Флоры в тех же точках"
+    actor: agent-dcc
+    context: npm
+    rules:
+      - D293
+      - D102
+      - D097
+    evidence:
+      - adapters/max/agr_tools/flora_atlas_max.py
+      - docs/plans/flora-426-route-2026-11.md
+    branches:
+      - id: convert
+        when_ru: "ВПМ уже расставлена"
+        ru: "конвертация ВПМ → НПМ: в тех же точках звёзды НПМ (ВПМ — их оболочки)"
+        rules:
+          - D293
+          - D102
+        evidence:
+          - tools/flora/build_flora_star.py
+      - id: parallel
+        when_ru: "расстановка с нуля"
+        ru: "звезда НПМ и оболочка ВПМ ставятся вместе в одни точки"
+        rules:
+          - D293
+        evidence:
+          - src/dt_ai/placement/engine.py
+  - id: atlas
+    event_ru: "Атласы из расставленной сцены: НПМ — один 2048 (без альфы, прозрачность отдельно); ВПМ — свой 4096, UDIM после Ground"
+    actor: agent
+    context: flora-atlas
+    rules:
+      - D246
+      - D210
+      - D155
+      - D020
+    evidence:
+      - tools/library/flora_atlas_from_scene.py
+      - jobs/VATUTINO-SITE/flora-route-a-v004.md
+  - id: checks
+    event_ru: "Проверки на чтении экспорта: размер, доля 70 000, список карт, валидатор (FLO-01..17)"
+    actor: agent
+    context: validation
+    commands:
+      - "agr validate"
+    rules:
+      - D099
+      - D097
+      - D155
+    evidence:
+      - src/twinqa/flora.py
+      - .agents/skills/model-flora/SKILL.md
+  - id: gate
+    event_ru: "Артём: визуальный шлюз — лист видов (замены красным) и расстановка"
+    actor: artem
+    context: validation
+    rules:
+      - D246
+      - D104
+    evidence:
+      - jobs/VATUTINO-SITE/flora-route-a-v004.md
+  - id: package
+    event_ru: "Флора в Ground FBX → маршрут «Пакет и сдача»"
+    actor: agent
+    context: package
+    commands:
+      - "agr package-npm"
+      - "agr package-vpm"
+    rules:
+      - D235
+    evidence:
+      - docs/architecture/package-route.events.yaml
+      - jobs/VATUTINO-SITE/site-route-20261109.md
+hotspots:
+  - id: stand-in-replace
+    stage: maps
+    ru: "ВОПРОС: временные карты (stand-in, D245) — «точные карты позже»: кто и когда их заменяет и можно ли сдавать заказчику со stand-in — в репо не решено"
+    rules:
+      - D245
+      - D246
+    evidence:
+      - jobs/VATUTINO-SITE/flora-route-a-v004.md
+  - id: library-v003
+    stage: species
+    ru: "Библиотека v003: привязка карт к UV сломана у 99 из 99 объектов (#377, запаркована D232); у Ватутино 8 из 11 найденных видов — замены"
+    rules:
+      - D232
+    evidence:
+      - docs/plans/flora-426-route-2026-11.md
+  - id: vpm-identity
+    stage: star
+    ru: "Совпадение поверхностей НПМ / ВПМ библиотеки не проверено (VPM identity: unverified, #305)"
+    evidence:
+      - library/flora/README.md
+      - library/flora/vpm-surface-identity.json
+  - id: lod-rule
+    stage: lod
+    ru: "«LOD только на копиях» записано в README библиотеки (#347), строки D нет; облегчены 3 вида (105 / 204 / 103), они не расставлены"
+    rules:
+      - D167
+    evidence:
+      - library/flora/README.md
+      - library/flora/npm-light.json
+  - id: placement-tool
+    stage: placement
+    ru: "Расстановка: движок dt_ai.placement вызывается из jobs/VATUTINO-SITE/place_site.py; команды agr / dt нет"
+    rules:
+      - D232
+    evidence:
+      - jobs/VATUTINO-SITE/place_site.py
+  - id: budget
+    stage: npm
+    ru: "Бюджет НПМ: Флора 70 000 из 180 000 (D097); Ватутино 118 774 до облегчения, 64 454 с LOD; режет Артём (D167)"
+    rules:
+      - D097
+      - D167
+    evidence:
+      - docs/plans/flora-426-route-2026-11.md
+  - id: c18-opacity
+    stage: checks
+    ru: "Нет карты прозрачности — review, конфликт C18 открыт; 11 из 17 строк FLO без автопроверки"
+    evidence:
+      - docs/domain/areas/flora.md
+      - docs/domain/conflicts.md

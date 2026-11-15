@@ -1,10 +1,10 @@
 """Excalidraw + SVG generator for the route event storms and the context maps (#1359; VPM OKS + Ground #1383;
-VPM OKS / Ground context maps #1392).
+VPM OKS / Ground context maps #1392; MAF, Flora and package/delivery routes + their context maps #1393).
 
 Pattern: n/a | new-case: stdlib generator docs/architecture/*.yaml -> .excalidraw + .svg (Russian labels).
 
 Inputs (source of truth): docs/architecture/contexts.yaml and one events YAML per route (ROUTE_EVENTS:
-npm-oks-route, vpm-oks-route, ground-route .events.yaml). A route may declare `local_contexts` (id, ru, owner)
+npm-oks-route, vpm-oks-route, ground-route, maf-route, flora-route, package-route .events.yaml). A route may declare `local_contexts` (id, ru, owner)
 for stages whose context has no owner in contexts.yaml; they are visible only inside that route.
 Context maps (CONTEXT_MAPS): contexts.yaml (NPM/OKS, drawn with the NPM route, guard allowlist) plus one map per
 route (#1392: vpm-oks-contexts.yaml, ground-contexts.yaml, same schema); `--check` also proves that each route's
@@ -48,20 +48,33 @@ GROUND_EVENTS = ARCH / "ground-route.events.yaml"
 CONTEXTS = ARCH / "contexts.yaml"
 VPM_CONTEXTS = ARCH / "vpm-oks-contexts.yaml"
 GROUND_CONTEXTS = ARCH / "ground-contexts.yaml"
+MAF_EVENTS = ARCH / "maf-route.events.yaml"            # #1393
+FLORA_EVENTS = ARCH / "flora-route.events.yaml"
+PACKAGE_EVENTS = ARCH / "package-route.events.yaml"
+MAF_CONTEXTS = ARCH / "maf-contexts.yaml"
+FLORA_CONTEXTS = ARCH / "flora-contexts.yaml"
+PACKAGE_CONTEXTS = ARCH / "package-contexts.yaml"
 OUTPUTS = {"route": ARCH / "npm-oks-route", "vpm-route": ARCH / "vpm-oks-route",
            "ground-route": ARCH / "ground-route", "contexts": ARCH / "contexts",
-           "vpm-contexts": ARCH / "vpm-oks-contexts", "ground-contexts": ARCH / "ground-contexts"}
-ROUTE_MAP_OF = {"vpm-route": "vpm-contexts", "ground-route": "ground-contexts"}  # #1392: route -> its context map
+           "vpm-contexts": ARCH / "vpm-oks-contexts", "ground-contexts": ARCH / "ground-contexts",
+           "maf-route": ARCH / "maf-route", "flora-route": ARCH / "flora-route",
+           "package-route": ARCH / "package-route", "maf-contexts": ARCH / "maf-contexts",
+           "flora-contexts": ARCH / "flora-contexts", "package-contexts": ARCH / "package-contexts"}
+ROUTE_MAP_OF = {"vpm-route": "vpm-contexts", "ground-route": "ground-contexts",   # #1392: route -> its context map
+                "maf-route": "maf-contexts", "flora-route": "flora-contexts",     # #1393
+                "package-route": "package-contexts"}
 
 
 def route_events():
     """Route name -> events YAML (read at call time so a monkeypatched path is honoured)."""
-    return {"route": EVENTS, "vpm-route": VPM_EVENTS, "ground-route": GROUND_EVENTS}
+    return {"route": EVENTS, "vpm-route": VPM_EVENTS, "ground-route": GROUND_EVENTS,
+            "maf-route": MAF_EVENTS, "flora-route": FLORA_EVENTS, "package-route": PACKAGE_EVENTS}
 
 
 def context_maps():
     """Context map name -> YAML (#1392; read at call time like route_events)."""
-    return {"contexts": CONTEXTS, "vpm-contexts": VPM_CONTEXTS, "ground-contexts": GROUND_CONTEXTS}
+    return {"contexts": CONTEXTS, "vpm-contexts": VPM_CONTEXTS, "ground-contexts": GROUND_CONTEXTS,
+            "maf-contexts": MAF_CONTEXTS, "flora-contexts": FLORA_CONTEXTS, "package-contexts": PACKAGE_CONTEXTS}
 
 COLORS = {  # Event Storming sticky colours
     "actor": "#fff3bf", "event": "#ffc078", "command": "#a5d8ff", "rule": "#d0bfff",
