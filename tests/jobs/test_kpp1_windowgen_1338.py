@@ -188,6 +188,21 @@ def test_isolated_plan_places_each_type_and_unknown_is_error():
         kw.isolated_plan(["KPP1-W99"], TYPES, STANDARD)
 
 
+@pytest.mark.parametrize("key,value,diagnostic", [
+    ("bbox", [[0, 0, 0]], "bbox"),
+    ("bbox", [[0, 0], [1, 1]], "bbox"),
+    ("glass", [[0, 0, 1, 1]], "glass"),
+    ("parts", {"glass": 1, "extra": 5}, "extra"),
+])
+def test_compare_readback_rejects_issue_1348_mutations(key, value, diagnostic):
+    # Synthetic summary: independent of library dimensions and generator output.
+    want = {"verts": 4, "faces": 1, "bbox": [[0, 0, 0], [1, 1, 1]],
+            "glass": [[0, 0, 1, 1, 0]], "parts": {"glass": 1}}
+    got = copy.deepcopy(want)
+    got[key] = value
+    assert any(diagnostic in d for d in kw.compare_readback(want, got))
+
+
 def test_compare_readback_detects_each_difference():
     s = kw.mesh_summary(kw.isolated_plan(["KPP1-W03"], TYPES, STANDARD)["KPP1-W03"]["mesh"])
     assert kw.compare_readback(s, copy.deepcopy(s)) == []
