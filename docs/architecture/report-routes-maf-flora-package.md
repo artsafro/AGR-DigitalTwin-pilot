@@ -142,7 +142,7 @@ stand-in разрешена — D299) / новый вид с
 |---|---|---|
 | `readback` | нет команды | навык `validate-delivery`, `python -m dt_ai.validate.build_counters` |
 | `geojson` | нет команды | GeoJSON заказчика как эталон; проверка — стадия V011 валидатора |
-| `sintez` | нет команды | `jobs/KPP1/scripts/run_agr_checker.py`, скопирован в ТЭЦ26 |
+| `sintez` | `agr checker` (#1379) | `tools/qa/sintez_checker.py` над `tools/blender/sintez_checker.py`; КПП1 и ТЭЦ26 — обёртки |
 | `report` | нет команды | `docs/deliveries/<сдача>-<дата>.md` по навыку `validate-delivery` |
 | `accept` | нет команды (человеческий шлюз) | Артём принимает сцену в 3ds Max |
 | `upload` | нет команды (человеческий шлюз) | Артём загружает архив; переименование — `jobs/VATUTINO-SITE/npm_code.py` |
@@ -154,7 +154,6 @@ stand-in разрешена — D299) / новый вид с
 - `legacy-packagers` — 9 старых упаковщиков в jobs/ заморожены.
 - `geojson-tool` — своего инструмента GeoJSON нет; эталон — файл заказчика (D220).
 - `never-passed` — ни один пакет не прошёл; 9 строк PKG без проверки.
-- `sintez-runner` — общей команды СИНТЕЗ нет; Ватутино — fail.
 
 ### Красные блоки: решение
 
@@ -164,10 +163,10 @@ stand-in разрешена — D299) / новый вид с
 | `legacy-packagers` | открыта | старые упаковщики под охраной `duplicate_guard` (contexts.yaml); новые сдачи — только общими командами |
 | `geojson-tool` | открыта | D220: сначала изучить GeoJSON заказчика, потом свой инструмент; `export.geojson_write` не готов |
 | `never-passed` | открыта | `passed=false` везде; светильники PKG-14..18 и набор архивов PKG-05 без проверки |
-| `sintez-runner` | открыта | общей команды СИНТЕЗ нет (доработка 2 карты ВПМ ОКС) |
+| `sintez-runner` | снята | #1379: команда `agr checker` над одним запуском чекера `tools/blender/sintez_checker.py`; копии КПП1 и ТЭЦ26 — обёртки; Ватутино fail (LP 34 / 10 / 28) остаётся фактом сдачи |
 | `customer-channel` | снята | решение Артёма [D300]: пакет уходит Артёму — архивом или сценой 3ds Max с квадами; приёмку и передачу заказчику делает Артём; шаг записан в `docs/procedure/TASK_TO_MODEL.md` |
 
 ### Предлагаемые доработки (не в этой задаче)
 
-1. Общая команда СИНТЕЗ (`agr sintez` над `run_agr_checker.py`) — уже предложена картами НПМ и ВПМ ОКС.
+1. Общая команда СИНТЕЗ — сделана в #1379: `agr checker`.
 2. Производитель полей V013 (`bounds_m`, `fbx_sha256`) в `agr export-meta record` — после #1342.

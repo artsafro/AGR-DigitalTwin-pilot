@@ -114,6 +114,11 @@ Non-package ZIP writers seen by the scan and deliberately not listed (not delive
    15 job writers are historical deliveries (9 VPM packagers among them), 7 tools/src archives are not packages.
 3. **One SINTEZ/checker command** (`agr checker` alias over the existing runner) from
    `jobs/KPP1/scripts/run_agr_checker.py` + TEC26 copy, so stage 9 has a command.
+   Done in #1379: `agr checker FOLDER --output NEW.json` (`tools/qa/sintez_checker.py`) runs the one launch
+   `tools/blender/sintez_checker.py` through `blender_runner` on a private copy of the ZIPs; the master QA moved to
+   `tools/blender/qa_master.py`; the KPP1/TEC26 job files are shims; guard rules `sintez-checker` + `master-qa`.
+   Rows that stay with a reason: elv-tc-vpm `run_agr_checker_v003.py` (frozen), PSU275 `qa_master_psu275.py`
+   (variant), TEC26 `qa_packages.py` (job-specific package checks validate_package does not own).
 4. **One Blender runner**: route `dt_ai/core/build.py`, `twinqa/scene.py find_blender`, `tools/qa/run_benchmark.py`
    through `blender_runner`.
 5. **Audit stage 1 for the whole repo** with this method (other routes: VPM, Ground, MAF, Flora), adding guard

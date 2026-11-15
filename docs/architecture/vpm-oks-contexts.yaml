@@ -121,14 +121,10 @@ contexts:
       - name: validate_npm_zip
         contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
     duplicates:
-      - at: "jobs/KPP1/scripts/run_agr_checker.py:47"
+      - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47"
         match: "def dump("
-        issue: "#1359"
-        ru: "свой запуск чекера СИНТЕЗ"
-      - at: "jobs/TEC26-OKS/scripts/run_agr_checker.py:47"
-        match: "def dump("
-        issue: "#1359"
-        ru: "копия запуска чекера КПП1"
+        issue: "#1379"
+        ru: "остаётся: замороженная версия v003 запуска чекера; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
   - id: ucx
     ru: "Коллизии UCX (только ВПМ)"
     area: docs/domain/areas/ucx.md

@@ -12,7 +12,9 @@ from pathlib import Path
 ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"]}
 # Repo scripts run unchanged with the caller's arguments; the scripts own validation and writes.
 # export-meta (#1409): core adapters/max/agr_tools/export_meta.py, also importable inside 3ds Max (AGR Tools).
-SCRIPTS = {"validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py"}
+# checker (#1379): the SINTEZ stage command; Blender side tools/blender/sintez_checker.py via blender_runner.
+SCRIPTS = {"validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
+           "checker": "tools/qa/sintez_checker.py"}
 
 
 STUBS = {

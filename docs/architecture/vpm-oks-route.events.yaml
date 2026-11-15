@@ -229,12 +229,14 @@ stages:
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
     actor: checker
     context: validation
+    commands:
+      - agr checker
     rules:
       - D220
       - D104
     evidence:
       - jobs/KPP1/package-1278/sintez-v003-summary.json
-      - jobs/KPP1/scripts/run_agr_checker.py
+      - tools/qa/sintez_checker.py
   - id: delivered
     event_ru: "Сдано: Артём принял в открытой сцене, пакет передан"
     actor: artem
@@ -315,14 +317,6 @@ hotspots:
     evidence:
       - jobs/KPP1/package-1278/latest/REPORT.md
       - docs/retros/2026-11-05-elv-tc-vpm-claude.md
-  - id: sintez-runner
-    stage: sintez
-    ru: "СИНТЕЗ КПП1 v003: HP 64 / 3 провала / 53 не определено, LP 39 / 4 / 29; общей команды agr/dt нет"
-    rules:
-      - D220
-    evidence:
-      - jobs/KPP1/package-1278/latest/REPORT.md
-      - jobs/KPP1/scripts/run_agr_checker.py
   - id: album-review
     stage: delivered
     ru: "СРЕDА после приёмки: разбор альбома — 25 замечаний, 7 наших (гранёные кривые, отлив, лишние детали без источника)"
