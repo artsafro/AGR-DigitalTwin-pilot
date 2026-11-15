@@ -214,6 +214,54 @@ def test_export_zip_acceptance(tmp_path):
     assert {p_.name: _sha(p_) for p_ in run.iterdir()} == stamp
 
 
+def _complete_validator_table(table, target):
+    """Synthetic complete report; literal profile inventory independent of package_core."""
+    import copy
+    profile = 'npm' if Path(target).name.startswith('0123_') else 'vpm'
+    numbers = ([1, 2, 3, 4, 5, 6, 12, 14, 15, 17] if profile == 'npm'
+               else [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17])
+    overrides = {s['id']: s for s in table['stages']}
+    stages = []
+    for number in numbers:
+        sid = 'V{:03d}'.format(number)
+        stage = copy.deepcopy(overrides.get(sid, {
+            'id': sid, 'check': sid, 'gate': 'blocking', 'status': 'pass'}))
+        stage['findings'] = [
+            {'status': stage['status'], 'name': 'synthetic', 'observed': code, 'data': {'code': code}}
+            for code in stage.get('codes', []) + stage.get('open_codes', [])]
+        stages.append(stage)
+    full = {'profile': profile, 'target': str(target), 'exit_code': table['exit_code'],
+            'stages': stages, 'notes': ['Synthetic marker-policy fixture, not measured validation.']}
+    result = pc.stage_table(full)
+    result['validation_report'] = full
+    return result
+
+
+@pytest.mark.parametrize('defect', ['missing_report', 'partial_stages'])
+def test_ready_requires_full_report_and_stage_inventory(tmp_path, defect):
+    d = acceptance_folder(tmp_path)
+
+    def validator(target):
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        if defect == 'missing_report':
+            del table['validation_report']
+        else:
+            table['exit_code'] = 2
+            table['stages'] = [{'id': 'V015', 'check': 'review', 'gate': 'manual_review',
+                                'status': 'review', 'non_pass': [], 'codes': [], 'open_codes': []}]
+        return table
+
+    try:
+        pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
+    except ValueError:
+        pass
+    (run,) = d.glob(pc.RUN_PREFIX + '*')
+    assert not (run / pc.MARK_OK).exists()
+    text = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert '0123_X.zip' in text
+    assert ('validation_report' if defect == 'missing_report' else 'V001') in text
+
+
 def test_exit_two_never_writes_ready_and_names_open_codes(tmp_path):
     d = acceptance_folder(tmp_path)
     table = {'exit_code': 2, 'stages': [
