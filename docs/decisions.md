@@ -315,6 +315,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D304 | 2026-11-15 | #1326 may use two sequential UDIM tiles for the 4BK stylobate brick pilot, following the proposal placing 751/751 source-affine groups. Preserve original Normal relief, 10 mm colour seams, previous courses, frozen density and surface. Supersedes only the earlier one-tile budget; does not waive pending PNG, topology, all-map, export or visual gates, or authorize broader plain-brick cuts. | `jobs/4bk-k3-course-grid-1326/BEVEL_SUPPORT_FIT.md`, `docs/domain/areas/uv-atlas.md` | Artem «да, принимаю», USER DECISION on Kanban t_d517d7c6, 2026-11-15 08:10; D301 reservation was two seconds after #1315, so only this row renumbered; v071–098 evidence retains D301 |
 
+| D306 | 2026-11-15 | #1326 visual direction of the restored original Normal and joints/courses on the two-UDIM v096 lit views is confirmed. Keep this direction and continue numerical repairs (PNG misses, directional failures, degenerates/mirrors and xView) without replication. This is not acceptance of red technical QA or final delivery. | `jobs/4bk-k3-course-grid-1326/TWO_TILE_NORMAL_RESULT.md`, `docs/domain/areas/uv-atlas.md` | Artem «принимаю рекомендации», USER DECISION on Kanban t_d517d7c6, 2026-11-15 10:12 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

@@ -139,16 +139,20 @@ def rigid_triangle_uv(xyz, reference_uv, *, texel_px_m, tile_px):
     return out
 
 
-def encode_triangle_uv(xyz, ideal_uv, *, tile_px):
+def encode_triangle_uv(xyz, ideal_uv, *, tile_px, tile_u=0):
     """Choose a directed float32 encoding within 0.01 pixel of a rigid chart.
 
     Fixed-density geometry and packing are already frozen. Search only the two
     neighbouring float32 representable values per coordinate, not pixels or a
     density scale. Refuse if format quantization cannot satisfy legal bounds.
+    ideal_uv and the returned coordinates are ABSOLUTE UDIM coordinates. Adding
+    a tile offset after encoding changes the float32 lattice and invalidates
+    the certificate. tile_u names one column in the first UDIM row explicitly.
     """
     import itertools
     import numpy as np
     if type(tile_px) is not int or tile_px not in (2048,4096):raise ValueError('unsupported tile_px')
+    if type(tile_u) is not int or not 0 <= tile_u <= 9:raise ValueError('unsupported tile_u')
     if len(xyz)!=3 or len(ideal_uv)!=3:raise ValueError('triangle required')
     project_saved_points(xyz,xyz,ideal_uv)
     x=np.asarray(xyz,dtype=float);ideal=np.asarray(ideal_uv,dtype=float)
@@ -169,7 +173,11 @@ def encode_triangle_uv(xyz, ideal_uv, *, tile_px):
         singular=np.linalg.svd(jac,compute_uv=False)
         errors=np.max(np.linalg.norm(candidates-ideal,axis=2),axis=1)*tile_px
         ok=(singular[:,1]>=512)&(singular[:,0]<=1706)&(singular[:,0]/singular[:,1]<=1.02)&(errors<=.01)
-        ok &= (np.linalg.det(delta)>0)&(candidates.min(axis=(1,2))>=0)&(candidates.max(axis=(1,2))<=1)
+        ok &= ((np.linalg.det(delta)>0)
+               & (candidates[:,:,0].min(axis=1)>=tile_u)
+               & (candidates[:,:,0].max(axis=1)<=tile_u+1)
+               & (candidates[:,:,1].min(axis=1)>=0)
+               & (candidates[:,:,1].max(axis=1)<=1))
         good=np.flatnonzero(ok)
         if len(good):
             best=min(good,key=lambda i:(errors[i],float(np.sum((candidates[i]-ideal)**2))))
