@@ -245,7 +245,7 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
-    assert len([k for k in jobs if k[0] == "udim-tile"]) == 32   # #1387: one row per copy (same line may hold 2)
+    assert len([k for k in jobs if k[0] == "udim-tile"]) == 38   # #1370: six single-row OBR22 copies added to the #1387 hash-pinned rows
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
 
@@ -304,6 +304,94 @@ ARCHIVE_1370 = [
 def test_guard_1370_archive_copy(tmp_path, code, capsys):
     assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/copy.py": code})) == 1
     assert "NEW COPY [delivery-zip]" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("code", [
+    "", "tile = 1001 + u", "x = tile - 1001", "uv = uv - [tile - 1000, 0]",
+    "tile = int(np.floor(uv[:,0].mean())) + 1000", "x = 1000 + 2 + u + 10*v",
+    "from zipfile import ZipFile as Z; Z('a.zip')",
+    "from zipfile import ZipFile as Z; Z('a.zip', mode='r')",
+    "shutil.make_archive('pkg', 'gztar', d)",
+    "from shutil import make_archive as pack; pack('pkg', format='tar')",
+    "from other import Z; Z('a.zip', 'w')",
+])
+def test_guard_1370_non_copies(tmp_path, code):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/ok.py": code})) == 0
+
+
+def test_guard_1370_generated_splits():
+    from itertools import permutations
+    for first in range(0, 1002, 37):
+        for terms in permutations([str(first), str(1001 - first), "u", "10*v"]):
+            findings = guard.scan_text("tile = " + " + ".join(terms), "jobs/NEWJOB/copy.py")
+            assert any(f.rule == "udim-tile" for f in findings), terms
+
+
+def test_guard_1370_generated_archive_aliases():
+    for alias in ("Z", "Writer", "_zip"):
+        for mode in ("'w'", "'x'", "'a'", "None", "float('nan')", "float('inf')"):
+            source = f"from zipfile import ZipFile as {alias}; {alias}(p, mode={mode})"
+            assert [f.rule for f in guard.scan_text(source)] == ["delivery-zip"]
+        for fmt in ("'zip'", "None", "float('nan')", "float('inf')"):
+            source = f"from shutil import make_archive as {alias}; {alias}(p, format={fmt})"
+            assert [f.rule for f in guard.scan_text(source)] == ["delivery-zip"]
+    assert [f.rule for f in guard.scan_text("shutil.make_archive('pkg')")] == ["delivery-zip"]
+
+
+def test_guard_1370_combines_earlier_fixes():
+    source = """FIRST = 1001
+WIDTH = 10
+from zipfile import ZipFile as Z
+
+def outer():
+    def tile_origin(tile):
+        return (tile - FIRST) % WIDTH, (tile - FIRST) // WIDTH
+    tile = int(np.floor(uv[:,0].mean())) + FIRST
+    local = uv - [tile - FIRST, 0]
+    Z('a.zip', mode=mode)
+    shutil.make_archive('pkg', 'zip', d)
+"""
+    findings = guard.scan_text(source, "jobs/NEWJOB/copy.py")
+    assert {f.qualname for f in findings} == {"outer", "outer.tile_origin"}
+    assert sum(f.rule == "udim-tile" for f in findings) == 5
+    assert sum(f.rule == "delivery-zip" for f in findings) == 2
+    assert guard.scan_text("\n" * 10 + source, "jobs/NEWJOB/copy.py") == [
+        f._replace(line=f.line + 10) for f in findings]
+
+
+def test_guard_1370_real_instances():
+    expected = {
+        "check_npm_vpm_scale.py": {39},
+        "floor_shared_uv_blender.py": {84, 88},
+        "prepare_floor_shared_uv.py": {129, 181, 183},
+    }
+    allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
+    for name, lines in expected.items():
+        rel = "jobs/OBR22-K02/scripts/" + name
+        findings = guard.scan_text((ROOT / rel).read_bytes(), rel)
+        assert {f.line for f in findings if f.rule == "udim-tile"} == lines
+        assert guard.compare(findings, {k: v for k, v in allowed.items() if k[1] == rel}) == ([], [])
+        assert {v for k, v in allowed.items() if k[1] == rel and k[0] == "udim-tile"} == {"#1370"}
+
+
+def test_guard_1370_reset_and_read_only(tmp_path):
+    import subprocess
+    code = UDIM_1370[0] + "\n" + ARCHIVE_1370[0]
+    args = _guard_root(tmp_path, {"jobs/NEWJOB/copy.py": code})
+    source = tmp_path / "jobs/NEWJOB/copy.py"
+    alias = tmp_path / "jobs/NEWJOB/alias.py"
+    alias.hardlink_to(source)
+    partial = tmp_path / "foreign.partial"
+    partial.write_bytes(b"foreign")
+    for text, status in [(code, 1), (code, 1), ("", 0), (code, 1), ("def (:", 2)]:
+        source.write_text(text, encoding="utf-8")
+        before = {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+        result = subprocess.run([sys.executable, str(ROOT / "tools/architecture/duplicate_guard.py"), *args],
+                                capture_output=True, text=True, timeout=60)
+        assert result.returncode == status, result.stdout + result.stderr
+        if status == 1:
+            assert "NEW COPY [udim-tile]" in result.stdout and "NEW COPY [delivery-zip]" in result.stdout
+        assert {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
 ZIP_COPIES = [

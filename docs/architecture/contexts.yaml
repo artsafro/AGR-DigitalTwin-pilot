@@ -59,6 +59,37 @@ shared_kernel:
     - name: udim_of_cell
       contract: "целые (столбец, ряд) -> номер тайла"
   duplicates:
+    # #1370: single-row formulas in the accepted OBR22 job; retain frozen sources, never rewrite them.
+    - at: "jobs/OBR22-K02/scripts/check_npm_vpm_scale.py::<module>"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "79deee7cc0"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/floor_shared_uv_blender.py::<module>"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "79deee7cc0"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/floor_shared_uv_blender.py::<module>"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "8aced9a623"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::main"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "41b909b6af"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::main"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "5ff23faadf"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::map_face"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "79deee7cc0"
+      status: historical
     - at: "jobs/KPP1/benchmark-1318/account_readback.py::main"
       rule: udim-tile
       issue: "#1337"
