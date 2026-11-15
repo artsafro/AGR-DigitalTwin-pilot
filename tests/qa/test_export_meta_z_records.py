@@ -106,6 +106,25 @@ def test_cli_bare_mapping_still_accepted(tmp_path, monkeypatch, capsys, fbx):
     assert v013(out.out) == ['pass']
 
 
+def test_cli_export_meta_alias_of_fbx_refused(tmp_path, monkeypatch, capsys, fbx):
+    before = fbx.read_bytes()
+    monkeypatch.setattr(vp, 'readback', lambda p: rb(mesh()))
+    code = vp.main([str(fbx), '--profile', 'vpm', '--scene', '--json', '--export-meta', str(fbx)])
+    out = capsys.readouterr()
+    assert code != 0 and 'export_meta' in out.err and not out.out and fbx.read_bytes() == before
+
+
+def test_schema_describes_fbx_records(fbx):
+    from jsonschema import Draft202012Validator
+    schema = json.loads((ROOT / 'schemas/ExportMeta.schema.json').read_text(encoding='utf-8'))
+    validator = Draft202012Validator(schema)
+    meta = exporter_meta(fbx)
+    meta['fbx'] = 'C:/x/' + NAME
+    assert not list(validator.iter_errors(meta))
+    meta['fbx_records'][NAME]['fbx_sha256'] = 'ABC'
+    assert list(validator.iter_errors(meta))
+
+
 def _bad_records(fbx, rng):
     """Generated malformed fbx_records: every one must be refused by validate_meta, never passed."""
     good = owner().fbx_record(fbx, BOUNDS)
