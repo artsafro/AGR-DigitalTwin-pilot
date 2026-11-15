@@ -5,8 +5,9 @@
 
 A skill counts as loaded when the session's transcript has a Skill call for it or the user ran it as /<skill>, or
 when logs/agent-usage.jsonl has it for this session (the transcript is written asynchronously and may lag).
-Subagents are not gated: they are read only and preload their skills in .claude/agents/*.md. Unreadable input
-or transcript: the call passes (the gate reminds, it does not secure).
+Subagents skip skill-load reminders only; Max mutations always require an in-process PID prefix.
+Unreadable transcripts do not waive PID admission. The skill reminder remains fail-open; the PID check
+is conservative lexical admission, not a script sandbox or a user-authorization ledger.
 """
 import json
 import re
@@ -58,7 +59,65 @@ def loaded(skill, payload):
                and _matches(r.get("name"), skill) for r in usage_log.read())
 
 
+# Stateless admission: selection receipts cannot close the check/dispatch race (#1364).
+# Accept only a canonical, unconditional prefix, never a guard found inside arbitrary code.
+MAX_GUARD = re.compile(
+    r'\s*local\s+pc\s*=\s*dotNetClass\s+"System\.Diagnostics\.Process"\s*;\s*'
+    r'if\s*\(pc\.GetCurrentProcess\(\)\)\.Id\s*!=\s*[1-9][0-9]*\s+'
+    r'do\s+throw\s+"wrong Max"\s*;\s*', re.I)
+PY_GUARD = re.compile(
+    r'import os\nif os\.getpid\(\) != [1-9][0-9]*:\n'
+    r'    raise RuntimeError\("wrong Max"\)\n')
+MAX_QUERIES = {"objects.count", "selection.count", "maxFileName", "maxFilePath", "getSaveRequired()"}
+MAX_INSPECTION = {"get_selected_max_instance", "list_max_instances", "get_bridge_status",
+                  "get_object_properties", "geometry_qa", "inspect_max_file"}
+
+
+def max_pid_check(payload):
+    """Deny unprovable Max mutations even for subagents or unreadable transcripts.
+
+    This is a lexical accident guard, not an adversarial-code sandbox. It does not
+    attest user authorization, that a supplied PID belongs to this task, or Max's
+    runtime global bindings. Native mutation tools must use guarded script equivalents.
+    """
+    tool = payload.get("tool_name", "")
+    if not isinstance(tool, str) or not tool.lower().startswith("mcp__3dsmax-mcp__"):
+        return {}
+    operation = tool.split("__", 2)[-1]
+    args = payload.get("tool_input")
+    if not isinstance(args, dict):
+        args = {}
+    # Selection changes routing, not the scene; authorization still applies separately.
+    if operation in MAX_INSPECTION or operation == "select_max_instance":
+        return {}
+    if operation == "inspect_mesh" and args.get("capture", False) is False:
+        return {}
+    if operation == "query_scene" and args.get("action") in ("overview", "selection"):
+        return {}
+    code = args.get("code")
+    if isinstance(code, str):
+        if operation == "execute_maxscript" and code.strip() in MAX_QUERIES:
+            return {}
+        guard = MAX_GUARD if operation == "execute_maxscript" else PY_GUARD
+        if operation in ("execute_maxscript", "execute_python") and guard.match(code):
+            return {}
+    return {"hookSpecificOutput": {
+        "hookEventName": "PreToolUse", "permissionDecision": "deny",
+        "permissionDecisionReason": (
+            "Max PID guard required for this mutation/unknown call. Pin the authorized PID, then use "
+            'execute_maxscript code starting with: local pc = dotNetClass "System.Diagnostics.Process"; '
+            'if (pc.GetCurrentProcess()).Id != <pid> do throw "wrong Max"; '
+            'For execute_python use: import os\\nif os.getpid() != <pid>:\\n'
+            '    raise RuntimeError("wrong Max")\\n. '
+            "Use a guarded script instead of scene_patch/manage_scene/other native mutations. "
+            "A get_selected_max_instance receipt is not atomic with execution and does not waive this guard. "
+            "See 3dsmax-mcp-dev; user authorization is still required.")}}
+
+
 def check(payload):
+    pid_decision = max_pid_check(payload)
+    if pid_decision:
+        return pid_decision
     if payload.get("agent_id"):
         return {}
     skill = required(payload.get("tool_name"))
