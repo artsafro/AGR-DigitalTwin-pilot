@@ -12,6 +12,10 @@ UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readba
 Manual stages (V015-V017) always need a signed review.
 --master reads the quad work FBX back (DER-03, [D021], [D198]): V003 "master quads" / "master quad size";
 with --scene and no --master that part of V003 stays not_run.
+Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
+"build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
+check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
+not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
 
     py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--standards DIR] [--json]
 
@@ -30,6 +34,9 @@ from pathlib import Path, PurePosixPath
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from adapters.max.agr_tools import build_manifest  # noqa: E402  (#1423 delivery set consistency)
 
 from twinqa.bundle import BundleError, read_bundle, size_status  # noqa: E402
 from twinqa.fbx_header import check_fbx_header  # noqa: E402
@@ -411,6 +418,27 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
         v002.findings = [f for f in v002.findings if f.name != "units and scale"]
 
 
+def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
+                       master: Path | None, manifest: Path | None, notes: list[str]):
+    """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written."""
+    path = manifest if manifest is not None else Path(build_manifest.manifest_path(target))
+    if os.path.normcase(str(path.resolve())) == os.path.normcase(str(target.resolve())):
+        raise ValueError(f"build manifest {path} is the package itself")
+    raw = path.read_bytes() if path.is_file() else None
+    if manifest is not None and raw is None:
+        raise ValueError(f"build manifest {manifest} does not exist")
+    members = {n: digest(d) for n, d in files.items()}
+    master_sha = build_manifest.sha256_file(master) if master is not None else None
+    v1 = st["V001"]
+    for status, code, detail in build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
+                                                                 str(path.resolve().parent)):
+        v1.findings.append(finding(status, "build manifest", detail, "one master revision; hashes of every zipped "
+                                   "artifact and check report match; required checks passed (#1423)",
+                                   v1.source_pdf_pages, path.name, data={"code": code} if status != "pass" else None))
+    if raw is not None:
+        notes.append(f"build manifest: {path.name}")
+
+
 def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list[str]):
     """DER-03 quad master: read the work FBX back, or leave V003 'master quads' not_run ([D021], [D198])."""
     if "V003" not in st:
@@ -432,7 +460,8 @@ def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list
 
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
              ground_area_m2: float | None = None, footprint_holes=None,
-             master: Path | None = None, ground_materials: list[str] | None = None, export_meta=None) -> ValidationReport:
+             master: Path | None = None, ground_materials: list[str] | None = None, export_meta=None,
+             manifest: Path | None = None) -> ValidationReport:
     if export_meta is not None and not isinstance(export_meta, dict):
         raise ValueError("export_meta must map exact FBX filenames to bounds_m records")
     if ground_area_m2 is not None:
@@ -493,6 +522,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
+        add_build_manifest(st, target, data, files, master, manifest, notes)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
                       ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta)
@@ -615,6 +645,8 @@ def main(argv=None) -> int:
                     help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
     ap.add_argument("--master", type=Path, metavar="WORK_FBX",
                     help="quad work FBX of this delivery (DER-03, [D198]); read back with --scene")
+    ap.add_argument("--build-manifest", type=Path, metavar="FILE",
+                    help="build manifest of a ZIP (default: <stem>.build.json beside it; #1423)")
     ap.add_argument("--footprint-holes", type=_holes_arg, default=None, metavar="JSON",
                     help="JSON list of OKS footprint-hole rings [[[x,y],...], ...]; hole coverage is not_run without it")
     ap.add_argument("--ground-materials", type=_ground_materials_arg, action="append", default=None,
@@ -627,7 +659,8 @@ def main(argv=None) -> int:
     if args.recheck is not None:
         if (args.target is not None or args.output is None or args.profile or args.scene
                 or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None
-                or args.ground_materials is not None or args.export_meta is not None):
+                or args.ground_materials is not None or args.export_meta is not None
+                or args.build_manifest is not None):
             ap.error("--recheck takes only --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
     if args.output is not None:
@@ -641,9 +674,17 @@ def main(argv=None) -> int:
     if args.master is not None and not args.master.is_file():
         print(f"Error: {args.master} does not exist", file=sys.stderr)
         return 1
-    result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
-                      args.footprint_holes, args.master, ground_materials=args.ground_materials,
-                      export_meta=json.loads(args.export_meta.read_text(encoding="utf-8")) if args.export_meta else None)
+    if args.build_manifest is not None and args.target.suffix.lower() != ".zip":
+        print("Error: --build-manifest applies to a ZIP package", file=sys.stderr)
+        return 2
+    try:
+        result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
+                          args.footprint_holes, args.master, ground_materials=args.ground_materials,
+                          export_meta=json.loads(args.export_meta.read_text(encoding="utf-8")) if args.export_meta else None,
+                          manifest=args.build_manifest)
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 2
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code
