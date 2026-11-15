@@ -137,12 +137,17 @@ actual Tables raw/native-clean0/0/0/0area,38MAF/4582census retained. VPM334274ra
 triangles and EVERY actual mesh array stay exact againstv014; physical slats/gaps
 are not replaced by NPM surfaces. Plank divisions on NPM still need texture work.
 That representation choice is CLOSED. Three VPM source-profile/joint repair routes
-remain rejected (latest bounded cleanup70faces/0vertices). NEW scope question:
-allow a separate source-bound parameterized VPMpilot, all76individual slats and
-real geometric slots>=6.2mm retained, frame/rings rebuilt, or require exact original
-slot widths/profile shapes? Recommend the new pilot and before/after picture
-before replication; no failed mesh/whole-site technical QA is offered for approval.
-See `CONTINUATION-v015.md`; resume from `site-table-r1`, NOT rejected VPM candidates.
+remain rejected (latest bounded cleanup70faces/0vertices). [D321] / issue comment
+6901183418 closes the later parametric-pilot scope: ONE VPMcopy with76physical
+slats, geometric gaps>=6.2mm, rebuilt rings/frame; show a before/after mesh
+screenshot without opening Max for Artem. Replicate12VPMcopies only after explicit
+yes. NPM[D319]stays unchanged. v016/r3b now supplies that6606triangle pilot and
+four actual before/after views; actual raw/native xView18faces/0vertices/0bowties
+remainsFAIL. New picture gate concerns construction/silhouette ONLY, not another
+scope decision or technical waiver. Do not replicate a failing artifact, even
+with a picture yes. Source access windows retained after a tests-first r3regression;
+sampled shape changes93.226/87.010mm disclosed, NOT exact Hausdorff.
+See `CONTINUATION-v016.md`; resume SITE fromv015/site-table-r1, never a failed pilot.
 
 Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.

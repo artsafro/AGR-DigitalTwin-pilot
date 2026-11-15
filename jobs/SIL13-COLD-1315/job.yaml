@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-NPM-only-table-adoption-VPM-slot-scope-v015
+run_id: cold-1315-one-VPM-physical-slat-pilot-v016
 synthetic: false
 path: deviation
 inputs: &id001
@@ -99,10 +99,15 @@ deviations:
   what_was_tried: D319accepted NPM-only Table016r4 adopted12of12; every VPM mesh array exact againstv014. Four raw/native readbacks and24actual placed NPMTable xView checks clean. VPM solids, aligned profiles and radial embeds retained as failed candidates; no NPMsurface transferred toVPM.
   new_tool_written: 20job-local drivers/adapters576literal lines sealed externally in evidence-v015.json; no shared module/checker/library changes.
   result: Actual172487NPM334274VPM,38MAF4582census retained,otherNPM26MAFGroundFlora600UCXexact. NativeotherMAF15/48face loss remains. NEW scope question is a separate parameterized VPM76physical-slat/frame pilot with geometric slots>=6.2mm; no failed candidate offered for approval. Whole validators and two repair regressions remain FAIL.
+- gate: operations
+  what_failed: Three distinct parametric VPM pilot routes fail343/71/19xViewfaces; numerical retessellation regresses22. The r3angular-neighbour rule wrongly filled source access windows, caught by a real regression.
+  what_was_tried: D321one-copy76slat/frame pilot; conformal ring grids, aligned levels, bounded2.1mm weld/full maps and source-angular-window correctionr3b. Actual FBX/raw-native readbacks and four mesh screenshots, no Max opened for user.
+  new_tool_written: Eighteen job-local drivers/adapters/tests661literal lines sealed externally in evidence-v016.json; no shared module/checker/library changes.
+  result: Current r3b6606triangles,raw/native18faces0vertices0bowtiesFAIL; bboxdelta0.031mm,76woodcontrols/72emptyslots/288emptyaccesspoints. Both v015siteFBXs unchanged. D321scope closed; new picture gate is silhouette only, never approval of technicalFAIL or replication of failing artifact.
 gates:
   inputs:
     status: review
-    note: All20original/source/library/map/bench/old-site checks rehash equal, including both v014resume FBXs. Missing source/grey/species gaps remain. Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
+    note: All22original/source/library/map/bench/old-site checks rehash equal, including both v014resume FBXs. Missing source/grey/species gaps remain. Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
     evidence: *id001
   parts:
     status: pass
@@ -112,32 +117,32 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D319NPM-only Table016r4 actually replicated12of12,actualplaced raw/native24of24clean. Every VPM mesh array exact againstv014; physical slats/gaps retained. Three VPMprofile/joint repair routes remain rejected,latest cleanup70faces. NEW scope question is a separate source-bound parameterized VPM76slat/frame pilot retaining geometric gaps>=6.2mm, not NPMsolid adoption or approval of technicalFAILs.
+    note: D321scope closed,ONE VPM76slat/frame pilot constructed. Current r3b6606triangles/raw-native18faces0vertices0bowtiesFAIL. Three distinct repairs and source-access regression retained. Technical contacts remain worker-owned; no site adoption or NPM change.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v015.json
-      sha256: ccc3dbfe6d9e0224303a581030d38b9a87cc9cb9a5e7a9bad14cb7d9511d7b20
-    waits: user
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v016-r2.json
+      sha256: ff04035907716b29ed96635226ebf6aba786c23f5b29de71dd41c7749cbe8e47
   budgets:
     status: review
     note: Actual172487NPM<=180000,7513remaining;334274VPM<=2625000;600UCX6876tri. Flora actual arrays exact againstv014, previous support78.225/78.655percent remains applicable, not remeasured. Materials/UV/density incomplete; no VPMexperimental counts promoted to site.
     evidence: *id002
   export_readback:
     status: review
-    note: Fourfresh full-site raw/native readbacks;all12adoptedNPMTables2108facesexacteach,raw/native24of24 xView0faces0vertices0bowties0area. Other26NPMMAF/Ground/Flora exact;allVPM38MAFGroundFlora600UCXexact. NativeotherMAF15/48face loss unresolved;whole native xViewFAIL,not whole-file pass.
+    note: Actual isolated VPMpilot6606triangles/raw-nativefacesexact,maxcoordinate0.119um; fresh factory reset/native FBX import and separate raw-byte reader. PilotxViewFAIL18faces. Both full-sitev015FBXs byte-unchanged,old native15/48face loss/wholefileFAILs retained,not rerun or certified.
     evidence: *id002
   report:
     status: review
-    note: v015D319NPMTable12copyadoption,VPMphysicalslotsunchanged;254checkpoint controls green,2deselected unresolvedregressions separately2failed43729/70faces.101immutablefiles161260310bytes sealed;20originalhashesequal.Whole native validatorsFAIL.Fullsuite deferred to merge batch(rule68).
+    note: v016D321ONEVPMpilot;258checkpoint controls green/5deselected separately5failed.77immutableDrivefiles18058563bytessealed,22original/resumehashesequal. Full-site validators remainFAIL on unchangedfiles,not rerun.Fullsuite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v015.md
-      sha256: e54674c188369bd76be47a26b8b879dabed041b67e6924385d185f8de25237f5
-    - path: jobs/SIL13-COLD-1315/evidence-v015.json
-      sha256: d557ad81c98fd09088ab51a7421e70200d4cfde1c66fc8f856dfbd9dd98419aa
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v016.md
+      sha256: 975f4dfc87bebcd3941dfca4bbdb1176e9893d34c03abcbabac528e7ca1f3522
+    - path: jobs/SIL13-COLD-1315/evidence-v016.json
+      sha256: 0cc92f09c7c77045e9d1d915e07b7b9ed91a9bd5f2a21ccb33f3b55ef453199c
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: D287composition/D291shrub/D294pilot/D318route/D315hedge/D305repair-scope/D316Bench/D319NPMTable gates CLOSED. New VPMparameterized76slat/frame pilot NOT BUILT; current sheet only actualsource and acceptedNPMgeometry. No NPMsolid surfaces inVPM; finalvisual/material acceptance not requested.
+    note: D321scope and previous composition/Bench/NPM/hedge gates CLOSED. NEW D321before-after construction/silhouette picture required for ONEVPM76slat/framepilot. Four actual mesh screenshots,sourceleft/pilotright,no Max opened. Technical18faces remainworker-owned,not offeredforapproval;no replication before explicit yes AND clean QA. Finalvisual/material acceptance not requested.
+    waits: user
     evidence: *id002
   checker:
     status: missing

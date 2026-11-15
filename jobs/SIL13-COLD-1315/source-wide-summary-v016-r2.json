@@ -1,0 +1,402 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-one-VPM-physical-slat-pilot-v016",
+  "decision": "D321",
+  "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6901183418",
+  "site_adopted": false,
+  "audit": {
+    "passed": false,
+    "technical_status": "FAIL",
+    "site_adopted": false,
+    "decision": "D321",
+    "source_sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+    "source": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+    "pilot_fbx_sha256": "78b4752fa43276fcea4b5816ea6a7d1ecec458f99b1a0bf709cffb97a79deaa0",
+    "actual_triangles": 6606,
+    "native_raw_faces_exact": true,
+    "native_raw_max_coordinate_delta_m": 1.1838665647800894e-07,
+    "actual_size_m": [
+      2.27399462694666,
+      2.2739949198912655,
+      0.7486550211906433
+    ],
+    "bbox_delta_m": 3.075599670410156e-05,
+    "wood_parts": 76,
+    "wood_centroid_occupancy": {
+      "filled": 76,
+      "total": 76
+    },
+    "wood_slot_midpoints": {
+      "filled": 0,
+      "total": 72,
+      "min_planar_wood_separation_m": 0.007999999999999851,
+      "note": "full exported solid at wood-top-layer heights; ignores legitimate inner cap; backing below wood layer not counted as closed slot"
+    },
+    "source_access_windows": {
+      "filled": 0,
+      "total": 288
+    },
+    "sampled_surface_distance_m": {
+      "seed": 1315,
+      "samples_each": 2000,
+      "source_to_pilot_max": 0.09322627743237968,
+      "pilot_to_source_max": 0.08701016068934052,
+      "NOT_exact_Hausdorff": true
+    },
+    "originals": [
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+        "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+        "equal": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+        "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+        "equal": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+        "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+        "equal": true
+      }
+    ],
+    "xview": {
+      "pre": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 28,
+        "vertex_pairs": 0,
+        "face_pairs": 24,
+        "face_pairs_by_kind": {
+          "contact": 19,
+          "area": 2,
+          "area+contact": 3
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "raw": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 18,
+        "vertex_pairs": 0,
+        "face_pairs": 17,
+        "face_pairs_by_kind": {
+          "contact": 9,
+          "area": 3,
+          "area+contact": 5
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 18,
+        "vertex_pairs": 0,
+        "face_pairs": 17,
+        "face_pairs_by_kind": {
+          "contact": 9,
+          "area": 3,
+          "area+contact": 5
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "remaining": "Technical contacts/area pairs unresolved; no replication or technical waiver requested. Picture is construction/silhouette only."
+  },
+  "actual_slot_sections": {
+    "table": {
+      "height_m": 0.735,
+      "radius_m": 0.5,
+      "angular_samples": 40000,
+      "empty_runs": 28,
+      "minimum_empty_chord_lower_bound_m": 0.011545096513675317,
+      "section_polygons": 1,
+      "rounding_m": 1e-06
+    },
+    "seat": {
+      "height_m": 0.439,
+      "radius_m": 0.98,
+      "angular_samples": 40000,
+      "empty_runs": 48,
+      "minimum_empty_chord_lower_bound_m": 0.010005929139257009,
+      "section_polygons": 52,
+      "rounding_m": 1e-06
+    }
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "attachment": {
+    "id": 34,
+    "filename": "v016-r3b-480px-mesh-preview-NOT-ACCEPTED.jpg",
+    "sha256": "b861f6ae22a22371baafd810ef6edd811c05c44bef6e6f7e4f80535068b2583e",
+    "decoded_size_px": [
+      480,
+      203
+    ],
+    "bytes": 1869,
+    "byte_equal": true
+  },
+  "tests": {
+    "checkpoint_passed": 258,
+    "deselected_separately_failed": 5,
+    "green_log_sha256": "60a0fc5a0924f01dbce8976862bee3634efe705fbee7ac388f09bb5b48e5fa0a",
+    "open_red_log_sha256": "50f281969d60dafbe5ffb044591bd9191d1997ace15bd56856bb81a993d0a24d",
+    "initial_red_failures": 6,
+    "access_window_regression_red_failures": 1,
+    "full_suite": "deferred to merge batch (rule68)"
+  },
+  "code": [
+    {
+      "path": "audit_pilot.py",
+      "sha256": "11fd063f6b434f0ea6f0d5a6bbe3bde8f3a495ef2541bcc39c6cdb43aa8257e7",
+      "literal_lines": 40
+    },
+    {
+      "path": "build_pilot.py",
+      "sha256": "359ff07c5e296b6259c153873c41df57ca7893ea1b72aeeb74df4e8d000018f3",
+      "literal_lines": 64
+    },
+    {
+      "path": "build_pilot_r2.py",
+      "sha256": "ae55c3eb9902b0c096f79c60f8667c20c3a779cda4e2748e31cd6cc01906caf6",
+      "literal_lines": 69
+    },
+    {
+      "path": "build_pilot_r3.py",
+      "sha256": "ccda9a7497f2244bfcc1b893a6f825f9aab561a1d800bfc74bd306c4b3287bec",
+      "literal_lines": 79
+    },
+    {
+      "path": "build_pilot_r3b.py",
+      "sha256": "875f7d39ff4e6824be718890ccbe77d2a149a6a1d789c2512601c283b13404ce",
+      "literal_lines": 80
+    },
+    {
+      "path": "export_and_show.py",
+      "sha256": "bc50f5e70169e99cd0f1fe3a6b5165b33f7a9b70bf3ffd2fd843f4f86c28bf28",
+      "literal_lines": 32
+    },
+    {
+      "path": "export_and_show_r3b.py",
+      "sha256": "c5617e0438473f94bcdb13fc289b3976e4336e4a1ca8bba38d3f6d43c115407f",
+      "literal_lines": 33
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "sha256": "2ed49d5bf265928593d298806b00ab21db2f022043d2fce702da27348ccb53e9",
+      "literal_lines": 27
+    },
+    {
+      "path": "finish_r3.py",
+      "sha256": "b3366e7226ac4c150fe34400a7fb622b1c2fecb189831ef721d18ddb39a49a4d",
+      "literal_lines": 13
+    },
+    {
+      "path": "fix_access.py",
+      "sha256": "309c8fb7185f8d60664eec6df6ad85e0586968790dedda50817aa2d17350a1ed",
+      "literal_lines": 10
+    },
+    {
+      "path": "make_sheet.py",
+      "sha256": "df3db1af88ded91f1c7f7e880c940c122334bc02082312a6491f7baf3d3acfac",
+      "literal_lines": 20
+    },
+    {
+      "path": "prepare_r2.py",
+      "sha256": "d1cf37a716450ff3eaedc59173adb55780dc71503d4be838425f1900268968b1",
+      "literal_lines": 37
+    },
+    {
+      "path": "prepare_r3.py",
+      "sha256": "8b4c7f6fa3a004e2a27ec1591ec54f31e76afef37374ef6769ff6bc444349953",
+      "literal_lines": 25
+    },
+    {
+      "path": "prepare_raw.py",
+      "sha256": "c31f2df13860f920fab538476e1fb9c10b707514dd7b4c6aa3493b1e6ccd8d87",
+      "literal_lines": 7
+    },
+    {
+      "path": "raw_readback.py",
+      "sha256": "4bc6aa542ac7faa230adf66d574d8d7ce36f79dae49b4da739c4b6af402aece4",
+      "literal_lines": 50
+    },
+    {
+      "path": "section_slots.py",
+      "sha256": "d9436616417fb170167b5140aa58c893857be58e7dfe55e37c24c4befd01fb82",
+      "literal_lines": 22
+    },
+    {
+      "path": "test_access_gaps.py",
+      "sha256": "2e5cac94ef26aa7799b9413e651080561309e02473e686075cc8295d36870e44",
+      "literal_lines": 19
+    },
+    {
+      "path": "test_parametric_pilot.py",
+      "sha256": "1e3227b7535a6e8b47847b186de5828a824ee49689af64859bf86b6bac1e9d12",
+      "literal_lines": 34
+    }
+  ],
+  "tool_accounting": {
+    "owned_Blender_scene_invocations": 5,
+    "version_queries": 1,
+    "live_Max_scene_mutations": 0,
+    "shared_modules_added": 0,
+    "agent_tool_calls": "not measured",
+    "public_validator_native_readers": 1
+  },
+  "required_gate": "New D321 before/after construction/silhouette only; retain technical FAIL, no replication until explicit yes and clean QA.",
+  "prior_site_validators": "unchanged full-site FBXs; old native FAILs retained, not rerun or claimed fresh",
+  "resume_site": "v015/site-table-r1; never a rejected pilot",
+  "current_picture_only": "r3b; earlier r3 filled access windows and is superseded",
+  "picture": {
+    "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v016\\review-sheet-v016-r3b-TECHNICAL-FAIL-NOT-ACCEPTED.png",
+    "sha256": "8855fa064b3769ffcabcabf9e2ef7533f30bc9243f3783628a4cdbaddeade1ba",
+    "size_px": [
+      1500,
+      2500
+    ]
+  },
+  "schema_note": "sheet is a reserved procedure visual-receipt field requiring repo-relative path; picture carries external display metadata instead. Main immutable77file snapshot kept unchanged.",
+  "standalone_native": {
+    "passed": false,
+    "triangles": 6606,
+    "arrays_exact_previous_native": true,
+    "fbx_sha256": "78b4752fa43276fcea4b5816ea6a7d1ecec458f99b1a0bf709cffb97a79deaa0",
+    "mode": "standalone clean process Blender5.1.2 native FBX import; technical FAIL retained"
+  },
+  "pilot_public_validator": {
+    "passed": false,
+    "exit_code": 1,
+    "machine_stage_counts": {
+      "pass": 2,
+      "fail": 5,
+      "review": 0,
+      "not_run": 5
+    },
+    "notes": [
+      "scene readback: Table016_VPM_PILOT_NOT_DELIVERED.fbx in Blender 5.1.2"
+    ]
+  },
+  "late_code": {
+    "fresh_native.py": {
+      "sha256": "e0afbd1cf8b70f81e22a8c3cd9f4f9193d012d7320ed380bc7cabf0e9d499da1",
+      "literal_lines": 14
+    }
+  }
+}

@@ -330,6 +330,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D319 | 2026-11-15 | Silikatny #1315: accept Table016 r4 continuous construction for the 12 NPM copies only: solid tabletop and four seats, with slat divisions to be restored later by texture. VPM must keep the physical slats and gaps as geometry until Artem says otherwise; the answer covers the NPM recommendation only. Library originals stay untouched; all38 MAF IDs/counts/points/rotations, D094 dimensions, technical QA, materials and final delivery gates remain mandatory. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem: «принимаю рекомендации», https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6896446736 |
 
+| D321 | 2026-11-15 | Silikatny #1315: authorize ONE separate source-bound parametric Table016 VPM pilot with 76 physical slats, geometric gaps >=6.2mm and a rebuilt frame/ring carcass, retaining the 12 IDs/points/rotations and overall dimensions under D094. Show Artem a before/after mesh screenshot without opening Max for him. Replicate to the 12 VPM copies only after his explicit yes; NPM remains as accepted under D319. Library originals and technical/final-delivery checks remain unchanged. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem: YES to the separate pilot, https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6901183418 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

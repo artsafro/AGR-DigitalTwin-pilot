@@ -1,6 +1,17 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v015 NPM Table016 adopted12/12 [D319]; VPM physical slots preserved; not delivered**.
+Current status: **v016 ONE VPM76slat Table016 pilot [D321], picture pending; technical FAIL, not replicated**.
+See [CONTINUATION-v016.md](CONTINUATION-v016.md): actual6606triangle FBX,
+raw/native18xViewfaces/0vertices/0bowties (FAIL), source access windows retained,
+76wood occupancy controls/72empty slot samples/288empty source access probes.
+Actual bbox delta0.031mm; sampled shape change93.226/87.010mm (NOT Hausdorff).
+Before/after screenshots show source left/pilot right; no Max opened for Artem.
+Both full-site v015FBXs remain byte-unchanged, including12existingVPMTables and
+accepted NPM[D319]. Required[D321]picture is construction/silhouette only, not
+approval of technical failures; no replication until explicit yes AND clean QA.
+Current full sheet: `v016/review-sheet-v016-r3b-TECHNICAL-FAIL-NOT-ACCEPTED.png`.
+
+Historical status: **v015 NPM Table016 adopted12/12 [D319]; VPM physical slots preserved; not delivered**.
 See [CONTINUATION-v015.md](CONTINUATION-v015.md):172487NPM/334274VPM raw render
 triangles,172472/334226native; other-MAF face loss15/48 remainsFAIL. All38MAF/
 4582census retained;26otherNPMMAF/Ground/Flora/600UCX exact, every VPM mesh array
