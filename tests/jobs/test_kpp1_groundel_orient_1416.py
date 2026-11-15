@@ -108,6 +108,19 @@ def test_r1_topology_fail_is_not_covered_by_ground_prose(monkeypatch, tmp_path):
         _audit_fixture(monkeypatch, tmp_path, data["findings"], report)
 
 
+@pytest.mark.parametrize("name,evidence", [
+    ("co-directional clearance", "0000_Kpp_1_01.fbx"),
+    ("ground footprint coverage", GROUND),
+])
+def test_changed_status_is_not_covered_by_stale_bullet(monkeypatch, tmp_path, name, evidence):
+    data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
+    report = (JOB / "REPORT.md").read_text(encoding="utf-8")
+    next(f for f in data["findings"] if f["name"] == name
+         and f["evidence"] == evidence)["status"] = "fail"
+    with pytest.raises(AssertionError, match=name):
+        _audit_fixture(monkeypatch, tmp_path, data["findings"], report)
+
+
 def _synthetic_rows(*rows):
     return [*rows, {"stage": "V004", "name": "MAF flipped normals", "evidence": GROUND, "status": "pass"}]
 
