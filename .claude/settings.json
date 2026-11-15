@@ -106,7 +106,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash|PowerShell|Write|Edit|NotebookEdit",
+        "matcher": "Bash|PowerShell|Write|Edit|NotebookEdit|SendMessage",
         "hooks": [
           {
             "type": "command",

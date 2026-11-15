@@ -417,6 +417,10 @@ Delivery QA:
   TOOL ONLY (#166).
 - Overlap gate `dt qa xview` (`src/dt_ai/ops/inv_xview.py`, `xview_gate.py`, #527) — WORKING; 3ds Max xView runner
   `tools/qa/xview_dump.ms` (#528), parity `tools/qa/xview_parity.py`, frozen benchmark `tools/qa/xview_bench.py`.
+- VPM visibility gate `dt qa visibility` (`src/dt_ai/ops/visibility_gate.py`, Blender dump
+  `tools/blender/visibility_dump.py`, #1447) — WORKING: hidden / back-visible faces (first-hit rays, fixed
+  `target-fixed-16` jitter, dome + rings + close eyes, `--context` real occluders) and open edges by class (embed at
+  midpoint and both ends). Replaces job-local visibility scripts; xView stays the overlap gate.
 - Face overlap check `tools/qa/check_clearance.py` — WORKING.
 - Benchmark run `tools/qa/run_benchmark.py`, geometry checks `tools/qa/check_geometry.py` — WORKING on synthetic
   etalons only.

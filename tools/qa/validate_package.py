@@ -60,7 +60,10 @@ def load_z_meta(path: Path):
         raise ValueError(f"export_meta owner missing: {owner}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.load_z_meta(path)
+    payload = module.load_z_meta(path)
+    if not isinstance(payload, dict):
+        raise ValueError(f"export_meta {path}: expected a JSON object at top level")
+    return payload
 
 
 STEM = re.compile(r"^[A-Za-z0-9_]+$")
@@ -698,7 +701,7 @@ def main(argv=None) -> int:
         print("Error: --build-manifest applies to a ZIP package", file=sys.stderr)
         return 2
     try:
-        export_meta = load_z_meta(args.export_meta) if args.export_meta else None
+        export_meta = load_z_meta(args.export_meta) if args.export_meta is not None else None
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
