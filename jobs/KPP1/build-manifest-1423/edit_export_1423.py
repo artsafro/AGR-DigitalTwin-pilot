@@ -6,7 +6,7 @@ Pattern: n/a | new-case: proof-only Blender driver of the #1423 stale-set test; 
     blender -b --factory-startup -noaudio --python edit_export_1423.py -- vpm  IN.fbx OUT.fbx REPORT.json
 
 roof: the top roof faces (normal z > 0.95 within 5 cm of the highest such face) of the largest mesh go up 0.30 m.
-vpm:  meshes joined into SM_Kpp_1_001_Main, triangulated, + convex hull UCX_SM_Kpp_1_001_Main_01.
+vpm:  the master meshes kept (SM_Kpp_1_Main, MainGlass, UCX_SM_Kpp_1_Main_NNN); render meshes triangulated.
 OUT and REPORT must not exist (new files only).
 """
 import json
@@ -47,33 +47,18 @@ def main():
         report.update({'object': obj.name, 'roof_faces': len(roof), 'roof_vertices': len(verts),
                        'roof_top_z_before': round(top, 4), 'lift_m': ROOF_LIFT_M})
     elif mode == 'vpm':
-        bpy.ops.object.select_all(action='DESELECT')
+        # the master's own meshes (SM_Kpp_1_Main, MainGlass, UCX_SM_Kpp_1_Main_NNN) are kept; render meshes triangulated
+        tris = {}
         for o in meshes:
-            o.select_set(True)
-        bpy.context.view_layer.objects.active = meshes[0]
-        if len(meshes) > 1:
-            bpy.ops.object.join()
-        main_obj = bpy.context.view_layer.objects.active
-        main_obj.name = main_obj.data.name = 'SM_Kpp_1_001_Main'
-        bm = bmesh.new()
-        bm.from_mesh(main_obj.data)
-        bmesh.ops.triangulate(bm, faces=bm.faces[:])
-        bm.to_mesh(main_obj.data)
-        hull = bmesh.new()
-        for v in bm.verts:
-            hull.verts.new(v.co)
-        bmesh.ops.convex_hull(hull, input=hull.verts[:])
-        loose = [v for v in hull.verts if not v.link_faces]
-        bmesh.ops.delete(hull, geom=loose, context='VERTS')
-        bm.free()
-        me = bpy.data.meshes.new('UCX_SM_Kpp_1_001_Main_01')
-        hull.to_mesh(me)
-        hull.free()
-        ucx = bpy.data.objects.new('UCX_SM_Kpp_1_001_Main_01', me)
-        ucx.matrix_world = main_obj.matrix_world.copy()
-        bpy.context.scene.collection.objects.link(ucx)
-        report.update({'main': main_obj.name, 'main_triangles': len(main_obj.data.polygons),
-                       'ucx': ucx.name, 'ucx_faces': len(me.polygons)})
+            if o.name.startswith('UCX_'):
+                continue
+            bm = bmesh.new()
+            bm.from_mesh(o.data)
+            bmesh.ops.triangulate(bm, faces=bm.faces[:])
+            bm.to_mesh(o.data)
+            bm.free()
+            tris[o.name] = len(o.data.polygons)
+        report.update({'triangles': tris, 'ucx': sorted(o.name for o in meshes if o.name.startswith('UCX_'))})
     else:
         raise SystemExit('mode must be roof or vpm')
     bpy.ops.export_scene.fbx(filepath=out, use_selection=False, add_leaf_bones=False, bake_anim=False,

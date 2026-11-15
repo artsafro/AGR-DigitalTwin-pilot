@@ -42,17 +42,22 @@ def agr(*args):
 
 
 def blender(exe, mode, src, out, rep):
-    code, out_text, err = run([exe, '-b', '--factory-startup', '-noaudio', '--python', HERE / 'edit_export_1423.py',
-                               '--', mode, src, out, rep], timeout=1800)
-    if code != 0 or 'EDIT-EXPORT-OK' not in out_text:
-        raise RuntimeError('blender {} failed: {}'.format(mode, (err or out_text)[-1500:]))
-    return json.loads(Path(rep).read_text(encoding='utf-8'))
+    """Fresh background Blender through the shared runner (src/dt_ai/core/blender_runner.py)."""
+    from dt_ai.core.blender_runner import run_blender
+    return run_blender(HERE / 'edit_export_1423.py', [mode, src, out, rep], executable=exe, output_json=rep,
+                       outputs=(out,), timeout=1800, log_path=Path(rep).with_suffix('.blender.log'))
 
 
 def zip_flat(target, files):
-    with zipfile.ZipFile(target, 'x', zipfile.ZIP_DEFLATED) as z:
-        for f in files:
-            z.write(f, arcname=Path(f).name)
+    """Flat ZIP through the one ZIP owner package_core._write_zip (all files in one folder)."""
+    folder = {str(Path(f).parent) for f in files}
+    if len(folder) != 1:
+        raise ValueError('zip_flat: files from several folders: {}'.format(sorted(folder)))
+    archive = {'name': Path(target).name, 'members': [{'name': Path(f).name} for f in files],
+               'limit': pc.LIMITS['vpm_ground']}
+    written, size = pc._write_zip(folder.pop(), archive, str(target))
+    if written is None:
+        raise ValueError('zip_flat: over the limit')
 
 
 def manifest_rows(package, master=None):
@@ -124,7 +129,9 @@ def main():
     rec_b = record([E / 'vpm-B' / 'SM_Kpp_1.fbx'], master_b, E / 'rec' / 'vpm-B-fbx.derivation.json')
     rec_tex_a = record(tex, master_a, E / 'rec' / 'vpm-A-textures.derivation.json')
     vpm_zip_b = E / 'pkg-B' / 'SM_Kpp_1.zip'
-    zip_flat(vpm_zip_b, [E / 'vpm-B' / 'SM_Kpp_1.fbx'] + tex)
+    for t in tex:
+        shutil.copyfile(t, E / 'vpm-B' / t.name)
+    zip_flat(vpm_zip_b, [E / 'vpm-B' / 'SM_Kpp_1.fbx'] + [E / 'vpm-B' / t.name for t in tex])
     proof['build_B'] = build(vpm_zip_b, master_b, [rec_b, rec_tex_a], BRIDGE)
     proof['validate_B'] = manifest_rows(vpm_zip_b, master_b)
     npm_in_b = E / 'pkg-B' / '0000_Kpp_1.zip'
