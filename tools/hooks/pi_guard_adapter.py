@@ -12,6 +12,9 @@ from pathlib import Path
 import subprocess
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from hook_input import read_stdin
+
 ROOT = Path(__file__).resolve().parents[2]
 TOOLS = {"bash": "Bash", "powershell": "PowerShell", "edit": "Edit", "write": "Write"}
 HOOKS = ("guard.py", "pipeline_gate.py")
@@ -123,7 +126,7 @@ def evaluate(call):
 
 def main():
     try:
-        result = evaluate(json.load(sys.stdin))
+        result = evaluate(json.loads(read_stdin()))
     except Exception as exc:
         result = {"decision": "block", "reason": f"Pi guard adapter failed: {type(exc).__name__}: {exc}"}
     print(json.dumps(result))

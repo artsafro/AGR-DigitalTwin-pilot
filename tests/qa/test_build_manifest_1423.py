@@ -150,7 +150,8 @@ def test_required_check_not_finished_or_skipped_is_not_ready(tmp_path, status, f
     m = json.loads(mp.read_text(encoding='utf-8'))
     m['checks'][0]['status'], m['checks'][0]['finished'] = status, finished
     mp.write_bytes(bm.dumps(m))
-    assert codes(findings(package, master)) == ['manifest_check_not_ready']
+    # #1434: the untouched report still says pass/finished, so it now also disagrees with the edited manifest entry
+    assert codes(findings(package, master)) == ['manifest_check_not_ready', 'manifest_report_hash']
 
 
 def test_no_readback_means_required_check_did_not_run(tmp_path):
@@ -417,3 +418,87 @@ def test_probe_random_single_mutation_never_passes(tmp_path):
         no_master = bm.manifest_findings(bm.dumps(m), members, package.name, pkg_sha, None, str(tmp_path))
         assert not any(s == 'pass' for s, _, _ in no_master), m  # r1 P1: without the master never pass
     assert n >= 250
+
+
+# ---- #1434: report content bound to the manifest, fail-closed dimensions, kind = kind_of(name) ------------
+def _forge_report(package, edit):
+    """Rewrite the readback report and re-hash it into the manifest (the manifest still says fbx_readback pass)."""
+    rp, mp = Path(bm.readback_path(package)), Path(bm.manifest_path(package))
+    rep = json.loads(rp.read_text(encoding='utf-8'))
+    edit(rep)
+    rp.write_bytes(bm.dumps(rep))
+    m = json.loads(mp.read_text(encoding='utf-8'))
+    m['checks'][0]['report_sha256'] = bm.sha256_file(rp)
+    mp.write_bytes(bm.dumps(m))
+    return m
+
+
+@pytest.mark.parametrize('edit,needle', [
+    (lambda r: r.update({'status': 'fail'}), 'status'),
+    (lambda r: r.update({'finished': False}), 'finished'),
+    (lambda r: r['files'][0].update({'sha256': '1' * 64}), 'files'),
+    (lambda r: r['files'].pop(0), 'files'),
+    (lambda r: r['files'][0].update({'status': 'fail'}), 'file status'),
+])
+def test_report_content_must_agree_with_manifest_check(tmp_path, edit, needle):
+    """#1434 P1 probe: report says fail, manifest says fbx_readback pass with a matching report_sha256 -> fail."""
+    master, _, package, _ = good(tmp_path)
+    m = _forge_report(package, edit)
+    assert m['checks'][0]['status'] == 'pass' and m['checks'][0]['finished'] is True
+    rows = findings(package, master)
+    assert codes(rows) == ['manifest_report_hash'], rows
+    assert any(needle in d for s, c, d in rows if c == 'manifest_report_hash'), rows
+
+
+def test_report_unreadable_is_refused(tmp_path):
+    master, _, package, _ = good(tmp_path)
+    rp, mp = Path(bm.readback_path(package)), Path(bm.manifest_path(package))
+    rp.write_bytes(b'{"status": "pass", "status": "fail"}')
+    m = json.loads(mp.read_text(encoding='utf-8'))
+    m['checks'][0]['report_sha256'] = bm.sha256_file(rp)
+    mp.write_bytes(bm.dumps(m))
+    assert codes(findings(package, master)) == ['manifest_report_hash']
+
+
+@pytest.mark.parametrize('mesh,needle', [
+    ({'bounds_m': [[], []]}, 'dimensions not read'),
+    ({'bounds_m': [[0, 0, 0], [math.inf, 1, 1]]}, 'dimensions not read'),
+    ({'bounds_m': [[0, 0], [1, 1]]}, 'dimensions not read'),
+    ({'bounds_m': [[0, 0, 0, 0], [1, 1, 1, 1]]}, 'dimensions not read'),
+    ({'bounds_m': [[0, 0, 0]]}, 'dimensions not read'),
+    ({'bounds_m': [[0, 0, 'a'], [1, 1, 1]]}, 'dimensions not read'),
+    ({'bounds_m': [[0, 0, True], [1, 1, 1]]}, 'dimensions not read'),
+    ({'bounds_m': None}, 'dimensions not read'),
+    ({'location': []}, 'location not read'),
+    ({'location': [0, 0]}, 'location not read'),
+    ({'location': [0, math.inf, 0]}, 'location not read'),
+    ({'location': [0, math.nan, 0]}, 'location not read'),
+    ({'location': [0, 'x', 0]}, 'location not read'),
+    ({'location': None}, 'location not read'),
+])
+def test_readback_summary_needs_three_finite_dimensions_and_location(mesh, needle):
+    """#1434 P2 probes: bounds_m=[[],[]] and [[0,0,0],[inf,1,1]] fail; the same rule for location."""
+    rb = good_rb('a.fbx')
+    rb['meshes'][0].update(mesh)
+    s = bm.readback_summary('a.fbx', '0' * 64, rb)
+    assert s['status'] == 'fail' and any(needle in p for p in s['problems']), s['problems']
+
+
+def test_readback_summary_missing_location_fails():
+    rb = good_rb('a.fbx')
+    del rb['meshes'][0]['location']
+    s = bm.readback_summary('a.fbx', '0' * 64, rb)
+    assert s['status'] == 'fail' and any('location not read' in p for p in s['problems']), s['problems']
+
+
+@pytest.mark.parametrize('kind', ['texture', 'ucx_fbx', 'collision'])
+def test_artifact_kind_must_match_kind_of_name(tmp_path, kind):
+    """#1434 P3: kind texture on an .fbx is refused by parse_manifest."""
+    master, _, package, _ = good(tmp_path)
+    mp = Path(bm.manifest_path(package))
+    m = json.loads(mp.read_text(encoding='utf-8'))
+    a = m['artifacts'][0]
+    assert a['name'].endswith('.fbx') and bm.kind_of(a['name']) != kind
+    a['kind'] = kind
+    mp.write_bytes(bm.dumps(m))
+    assert codes(findings(package, master)) == ['manifest_unreadable']

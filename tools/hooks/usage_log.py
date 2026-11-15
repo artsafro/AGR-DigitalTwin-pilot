@@ -19,6 +19,9 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from hook_input import read_stdin
+
 COMMAND_TAG = re.compile(r"<command-name>/?([^<\s]+)</command-name>")
 
 
@@ -272,7 +275,7 @@ def main(argv):
         print(f"unknown mode {mode!r}", file=sys.stderr)
         return 2
     try:
-        payload = json.loads(sys.stdin.read() or "{}")
+        payload = json.loads(read_stdin() or "{}")
         if isinstance(payload, dict):
             write(payload)
     except Exception:                                # logging is never a reason to fail a call
