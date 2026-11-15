@@ -776,6 +776,16 @@ def test_reviewer_completed_reruns_rejected(tmp_path, repo, evals, capsys, actio
              "tests delegated to the reviewer")
 
 
+def test_reviewer_inspection_then_execution_rejected(tmp_path, repo, evals, capsys):
+    from twinqa.evals.handoff import delegation
+
+    text = "The reviewer should check the tests I ran and then run the full suite."
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "full suite delegated to the reviewer")
+
+
 def test_reviewer_clause_generated_probe():
     """Synthetic clause boundaries/passive matrix, including earlier negation/order controls."""
     from twinqa.evals.handoff import delegation
