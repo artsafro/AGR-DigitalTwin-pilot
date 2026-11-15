@@ -37,10 +37,9 @@ _TESTS = (r"(?:full[- ]suite|(?:test[- ])?suite|test[- ]files?|tests?(?![/\\.]\w
 _REVIEWER = r"\breviewers?\b(?!['’]s)"
 _DELEGATION = (
     re.compile(_REVIEWER + r"(?P<gap>[^.;\n]{0,40}?)\b"
-               r"(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes|verify|verifies|check|checks)"
+               r"(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes|(?P<inspection>verify|verifies|check|checks))"
                r"\s+(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
-               + _TESTS + r"(?!\s+(?:I|we|the\s+author)\s+(?:ran|executed|checked|verified)\b)",
-               re.IGNORECASE),
+               + _TESTS, re.IGNORECASE),
     re.compile(r"\b" + _TESTS + r"[^.;\n]{0,30}\b(?:delegated|deferred|left|handed|passed on)\b"
                r"[^.;\n]{0,30}" + _REVIEWER, re.IGNORECASE),
     re.compile(r"\b" + _TESTS + r"(?:\s+(?:are|is|go|goes|were|remain|remains|stay|stays|run|over))*"
@@ -76,6 +75,11 @@ def delegation(line):
     """
     for pattern in _DELEGATION:
         for match in pattern.finditer(line):
+            # Checking completed author work is review; requesting another run is delegation.
+            if match.groupdict().get("inspection") and re.match(
+                    r"\s+(?:I|we|the\s+author)\s+(?:ran|executed|checked|verified)\b",
+                    line[match.end():], re.IGNORECASE):
+                continue
             if not _negated(line, match):
                 return match
     return None
