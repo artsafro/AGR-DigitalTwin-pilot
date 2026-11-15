@@ -696,10 +696,10 @@ def main() -> None:
     # (sandboxed guard copies); a missing module on a swarm call still fails closed.
     args = targs if is_antigravity else tin
     swarm_active = bool(os.environ.get("AGR_SWARM_BUILD_ROOT") or os.environ.get("AGR_SWARM_AGENT_ID"))
-    if tool == "SendMessage" or swarm_active:
+    if swarm_active:
         sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
         from tools.hooks.swarm import check_message, write_warning
-    if tool == "SendMessage":
+    if tool == "SendMessage" and swarm_active:
         reason = check_message(args, os.environ.get("AGR_SWARM_BUILD_ROOT"))
         if reason:
             if is_antigravity:

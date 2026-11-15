@@ -26,7 +26,7 @@ def save(root, kind='background', part='L2', status='active'):
     (root / '_swarm/writers.json').write_text(json.dumps(data), encoding='utf-8')
 
 
-def invoke(build, tool='SendMessage', args=None, script=GUARD, swarm=True):
+def invoke(build, tool='SendMessage', args=None, script=GUARD, swarm: bool | str = True):
     env = {k: v for k, v in os.environ.items() if not k.startswith('AGR_SWARM_')}
     if swarm == 'agent-only':
         env['AGR_SWARM_AGENT_ID'] = 'l2'
