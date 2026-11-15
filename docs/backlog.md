@@ -179,6 +179,8 @@ Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §15 (user decision 2026
 - **Q9** Live smoke tests of AGR Tools / `agr-mcp` in a pinned 3ds Max after each change (the agent starts Max,
   runs the tools, reads results back, closes Max). Idea from `docs/research/telegram-3dsmax-chat-2026-11.md`
   (accepted 2026-11-10).
+- **Q10** Shared VPM visibility checker `dt qa visibility`: moved to issue #1447 (implemented there:
+  `src/dt_ai/ops/visibility_gate.py`). The method and its knobs live in the module docstring, not here.
 
 ## Unreal and IFC
 
