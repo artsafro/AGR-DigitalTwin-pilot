@@ -641,7 +641,8 @@ def test_guard_branch_pointer_moves_ask_1458(command, protocol):
 @pytest.mark.parametrize("protocol", ["claude", "antigravity"])
 @pytest.mark.parametrize("command", [
     "git switch -c new", "git checkout -b new", "git switch -qc new", "git checkout -qb new",
-    "git switch --create new", "git checkout -- -Bmain", "git switch -- -Cmain",
+    "git switch --create new", "git switch -cnewC", "git checkout -bnewB",
+    "git checkout -- -Bmain", "git switch -- -Cmain",
     "git reset HEAD -- --keep", "git commit -m 'git switch -C main'",
     "git log --grep='git reset --keep HEAD~1'",
 ])
