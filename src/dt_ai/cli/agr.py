@@ -12,7 +12,9 @@ from pathlib import Path
 ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"]}
 # Repo scripts run unchanged with the caller's arguments; the scripts own validation and writes.
 # export-meta (#1409): core adapters/max/agr_tools/export_meta.py, also importable inside 3ds Max (AGR Tools).
-SCRIPTS = {"validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py"}
+# build-manifest (#1423): core adapters/max/agr_tools/build_manifest.py (delivery set consistency, FBX export owner).
+SCRIPTS = {"validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
+           "build-manifest": "tools/derive/build_manifest.py"}
 
 
 STUBS = {
