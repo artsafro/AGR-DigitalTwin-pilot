@@ -13,6 +13,13 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed). Every
   delivery-zip allowlist row must say why it stays (`ru`): a historical delivery of a finished job (never rewritten)
   or an archive that is not a delivery package (MZP, benchmark, checker research, dev bundle).
+- `blender-launch`  owner src/dt_ai/core/blender_runner.py (`blender_command` / `run_blender`, #1378): the one
+  headless Blender launch (pinned executable, --factory-startup --disable-autoexec, isolated user config, fresh
+  evidence). Flags any other Blender command line: a list/tuple display holding a headless flag (`--background`,
+  `-b`) and a script flag (`--python`, `-P`, `--python-expr`, `--python-text`) as string constants, or one string
+  (also an f-string part) holding both as words. Docstrings and bare string statements are not launches. Every
+  blender-launch row must say why it stays (`ru`).
+The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
 and src/ now call the owner); `delivery-zip` jobs/ + tools/ + src/ (#1377: owner settled). Each guarded
@@ -44,12 +51,14 @@ else:
 RULES = {
     "udim-tile": "adapters/max/agr_tools/udimtile_core.py",
     "delivery-zip": "adapters/max/agr_tools/package_core.py",
+    "blender-launch": "src/dt_ai/core/blender_runner.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
-GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src")}
+GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
+           "blender-launch": ("jobs", "tools", "src")}   # #1378: owner exists, guarded from the start
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"}}
@@ -148,7 +157,35 @@ def _zip_hits(tree):
     return list(hits.values())
 
 
-CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits}
+HEADLESS_FLAGS = {"--background", "-b"}
+SCRIPT_FLAGS = {"--python", "-P", "--python-expr", "--python-text"}
+
+
+def _is_launch(words):
+    return bool(words & HEADLESS_FLAGS) and bool(words & SCRIPT_FLAGS)
+
+
+def _blender_hits(tree):
+    """Blender command lines: a list/tuple display with a headless and a script flag (string constants), or one
+    string constant holding both as words. Docstrings / bare string statements (`ast.Expr`) are prose."""
+    prose = {id(node.value) for node in ast.walk(tree) if isinstance(node, ast.Expr)}
+    hits = {}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.List, ast.Tuple)):
+            words = {e.value for e in node.elts if isinstance(e, ast.Constant) and isinstance(e.value, str)}
+            if _is_launch(words):
+                hits[id(node)] = node
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in prose:
+            if _is_launch(set(node.value.split())):
+                hits[id(node)] = node
+        elif isinstance(node, ast.JoinedStr) and id(node) not in prose:
+            words = set(" ".join(v.value for v in node.values if isinstance(v, ast.Constant)).split())
+            if _is_launch(words):
+                hits[id(node)] = node
+    return list(hits.values())
+
+
+CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -188,6 +225,8 @@ def _findings(tree, rel):
     scopes = _scopes(tree)
     out = []
     for rule, check in CHECKS.items():
+        if rel == RULES[rule]:   # the owner is not a copy of itself
+            continue
         hits = check(tree)
         ids = {id(h) for h in hits}
         nested = {id(sub) for h in hits if not isinstance(h, SCOPES)

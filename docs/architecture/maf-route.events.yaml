@@ -191,11 +191,12 @@ stages:
           - tools/materials/atlas_maf.py
           - tools/library/maf_atlas_ids.py
   - id: ucx
-    event_ru: "UCX: для МАФ не строятся, UCX поверхности Ground остаётся (только ВПМ)"
+    event_ru: "UCX: для МАФ не строятся (ограждения и навесы — при любой толщине), UCX поверхности Ground остаётся (только ВПМ)"
     actor: agent
     context: ucx
     rules:
       - D293
+      - D298
     evidence:
       - docs/domain/areas/groundel-maf.md
       - docs/domain/areas/ucx.md
@@ -273,12 +274,6 @@ hotspots:
     evidence:
       - jobs/VATUTINO-SITE/place_site.py
       - docs/plans/425-maf-route-2026-11.md
-  - id: ucx-fences
-    stage: ucx
-    ru: "ВОПРОС: «UCX где нужно» — репо говорит «Для МАФ коллизии не делаются» (MAF-22), а регламент p.36 §13.2 снимает UCX только с навесов / ограждений ≤ 5 см; нужен ли UCX ограждению или навесу МАФ толще 5 см?"
-    evidence:
-      - docs/domain/areas/groundel-maf.md
-      - docs/domain/areas/ucx.md
   - id: checks-coverage
     stage: checks
     ru: "Автопроверки МАФ частичные: 8 из 24 строк без проверки (L2 gaps, причина у каждой); maf_findings — только НПМ GroundEl"

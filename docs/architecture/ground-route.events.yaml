@@ -140,13 +140,14 @@ stages:
       - docs/domain/areas/ucx.md
       - docs/domain/areas/ground-surface.md
   - id: placement
-    event_ru: "МАФ и Флора расставлены из библиотеки по точкам / JSON"
+    event_ru: "МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт"
     actor: agent
     context: placement
     rules:
       - D095
       - D100
       - D166
+      - D302
     evidence:
       - jobs/VATUTINO-SITE/placement-report.md
       - jobs/VATUTINO-SITE/place_site.py
@@ -294,11 +295,6 @@ hotspots:
       - tools/ground/build_ground_v015.py
       - jobs/VATUTINO-SITE/assemble_delivery.py
       - jobs/VATUTINO-SITE/ground-build-v014.md
-  - id: urns-outside
-    stage: placement
-    ru: "Урны 15E288 / 15E289 вне поверхности v015 (GroundIndex.height = None); исключение было только для v014 — нужно новое слово Артёма"
-    evidence:
-      - jobs/VATUTINO-SITE/site-route-20261109.md
   - id: budget
     stage: npm
     ru: "Бюджет НПМ 180 000 (GND-04): Ground 46 479 + МАФ 55 403 + Флора 64 454 = 166 336; ВПМ Флора 443 788 — делит Артём (D167)"

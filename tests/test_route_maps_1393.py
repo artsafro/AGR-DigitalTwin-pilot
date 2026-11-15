@@ -29,7 +29,13 @@ FLORA_STAGES = ["sources", "beds", "species", "size", "maps", "star", "lod", "pl
 PACKAGE_STAGES = ["export", "meta", "readback", "geojson", "package", "validate", "sintez", "report", "accept",
                   "upload", "customer"]
 QUESTIONS = {"maf-route": "ucx-fences", "flora-route": "stand-in-replace", "package-route": "customer-channel"}
-RESOLVED = {"maf-route": {"library-version"}, "flora-route": set(), "package-route": set()}  # #1409
+# #1412: red blocks closed by Artem's 2026-11-15 decisions -> block id: (stage that cites it, D-row)
+RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
+            "flora-route": {"stand-in-replace": ("maps", "D299"), "lod-rule": ("lod", "D301"),
+                            "vpm-identity": ("star", "D311")},  # #1421
+            "package-route": {"customer-channel": ("customer", "D300")}}
+# #1409: red blocks fixed without a D-row (box removed from the map, report row «снята»)
+FIXED = {"maf-route": {"library-version"}, "flora-route": set(), "package-route": set()}
 
 
 def _routes():
@@ -130,15 +136,34 @@ def test_red_boxes_are_drawn_one_per_hotspot(name):
     events = _routes()[name]
     board = route_map.route_board(events, _contexts())
     pink = [e for e in board.elements if e["type"] == "rectangle" and e["backgroundColor"] == route_map.COLORS["hotspot"]]
-    assert len(pink) == len(events["hotspots"]) >= 6
+    assert len(pink) == len(events["hotspots"]) >= 4  # #1421 closed flora vpm-identity
 
 
 @pytest.mark.parametrize("name", sorted(ROUTES))
 def test_undefined_steps_are_red_questions_not_inventions(name):
+    # #1412: Artem answered every open question; none may stay drawn as a question or as a red box
     hot = {h["id"]: h for h in _routes()[name]["hotspots"]}
-    assert hot[QUESTIONS[name]]["ru"].startswith("ВОПРОС:")
-    questions = {h for h, v in hot.items() if v["ru"].startswith("ВОПРОС")}
-    assert questions == {QUESTIONS[name]}
+    assert QUESTIONS[name] not in hot
+    assert {h for h, v in hot.items() if v["ru"].startswith("ВОПРОС")} == set()
+
+
+@pytest.mark.parametrize("name", sorted(ROUTES))
+def test_resolved_red_blocks_cite_their_d_row_1412(name):
+    rows = {m for m in re.findall(r"^\| (D\d+) \|", (ROOT / "docs/decisions.md").read_text(encoding="utf-8"), re.M)}
+    hot = {h["id"] for h in _routes()[name]["hotspots"]}
+    section = _section(TITLES[name])
+    for block, (stage, d) in RESOLVED[name].items():
+        assert block not in hot, block
+        assert d in rows and d in _stage(_routes()[name], stage)["rules"], (block, d)
+        assert re.search(rf"^\| `{block}` \| снята \| .*\[{d}\]", section, re.M), block
+
+
+def test_task_to_model_has_delivery_to_artem_step_1412():
+    text = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
+    step = re.search(r"\*\*Delivery to Artem \[D300\]\.\*\*(.*?)\n\n", text, re.S)
+    assert step, "TASK_TO_MODEL lacks the Delivery to Artem [D300] step"
+    body = " ".join(step.group(1).split())
+    assert "archive" in body and "3ds Max scene with quads" in body and "Artem does the acceptance" in body
 
 
 # ---------------------------------------------------------------- route content (issue scope)
@@ -244,10 +269,11 @@ def test_report_lists_every_bare_stage_and_every_red_box(name):
     hot = {h["id"] for h in events["hotspots"]}
     assert set(re.findall(r"^- `([a-z0-9-]+)`", section, re.M)) == hot
     status = dict(re.findall(r"^\| `([a-z0-9-]+)` \| (открыта|снята|обновлена) \|", section, re.M))
-    # #1409: a fixed red box leaves the YAML (no red box on the map) and stays in the report as «снята».
-    assert set(status) == hot | RESOLVED[name], sorted(set(status) ^ (hot | RESOLVED[name]))
-    assert {k for k, v in status.items() if v == "снята"} == RESOLVED[name]
-    assert not hot & RESOLVED[name]
+    # #1409/#1412: a closed red box leaves the YAML (no red box on the map) and stays in the report as «снята».
+    closed = set(RESOLVED[name]) | FIXED[name]
+    assert set(status) == hot | closed, sorted(set(status) ^ (hot | closed))
+    assert {k for k, v in status.items() if v == "снята"} == closed
+    assert not hot & closed
     assert "Предлагаемые" in section
 
 

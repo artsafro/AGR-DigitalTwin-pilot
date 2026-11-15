@@ -60,7 +60,7 @@ def test_current_library_records_survive_without_identity():
     stable = ('latin', 'npm', 'vpm', 'objects', 'vpm_status', 'material_id', 'maps')
     assert [[row[k] for k in stable] for row in rebuilt['species']] == [
         [row[k] for k in stable] for row in previous['species']]
-    assert {row['vpm_identity'] for row in rebuilt['species'] if row['vpm']} == {'unverified'}
+    assert {row['vpm_identity'] for row in rebuilt['species'] if row['vpm']} == {'confirmed-interim'}  # D311 carried
     assert fc.check(rebuilt) == []
 
 

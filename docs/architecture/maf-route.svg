@@ -61,15 +61,14 @@
 <rect x="1930" y="1102.75" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1930" y="1220.0" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="2200" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="2160" y1="225.0" x2="2200" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2200" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2160" y1="225.0" x2="2200" y2="243.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="2200" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="2200" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2200" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="2200" y="617.5" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2510" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2470" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="2430" y1="225.0" x2="2470" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="2430" y1="243.75" x2="2470" y2="233.13" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="2470" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2470" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2470" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
@@ -341,9 +340,11 @@
 <text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="15">Агент</tspan>
 </text>
-<text x="2315.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<text x="2315.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="17">9. UCX: для МАФ не</tspan>
-<tspan x="2315.0" dy="21.25">строятся, UCX</tspan>
+<tspan x="2315.0" dy="21.25">строятся (ограждения и</tspan>
+<tspan x="2315.0" dy="21.25">навесы — при любой</tspan>
+<tspan x="2315.0" dy="21.25">толщине), UCX</tspan>
 <tspan x="2315.0" dy="21.25">поверхности Ground</tspan>
 <tspan x="2315.0" dy="21.25">остаётся (только ВПМ)</tspan>
 </text>
@@ -351,20 +352,10 @@
 <tspan x="2315.0" dy="14">Нет команды agr/dt</tspan>
 </text>
 <text x="2315.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="14">Правила: D293</tspan>
+<tspan x="2315.0" dy="14">Правила: D293, D298</tspan>
 </text>
 <text x="2315.0" y="548.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="14">Контекст: Коллизии UCX</tspan>
-</text>
-<text x="2315.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="13">⚠ ВОПРОС: «UCX где нужно» —</tspan>
-<tspan x="2315.0" dy="16.25">репо говорит «Для МАФ</tspan>
-<tspan x="2315.0" dy="16.25">коллизии не делаются»</tspan>
-<tspan x="2315.0" dy="16.25">(MAF-22), а регламент p.36</tspan>
-<tspan x="2315.0" dy="16.25">§13.2 снимает UCX только с</tspan>
-<tspan x="2315.0" dy="16.25">навесов / ограждений ≤ 5 см;</tspan>
-<tspan x="2315.0" dy="16.25">нужен ли UCX ограждению или</tspan>
-<tspan x="2315.0" dy="16.25">навесу МАФ толще 5 см?</tspan>
 </text>
 <text x="2585.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="15">Агент</tspan>

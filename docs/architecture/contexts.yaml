@@ -13,6 +13,9 @@ rules:
   - id: delivery-zip
     owner: adapters/max/agr_tools/package_core.py
     ru: "свой писатель ZIP вместо общего _write_zip; охрана jobs/, tools/, src/ (#1377)"
+  - id: blender-launch
+    owner: src/dt_ai/core/blender_runner.py
+    ru: "своя командная строка Blender (--background + --python) вместо общего blender_command / run_blender; охрана jobs/, tools/, src/ (#1378)"
 shared_kernel:
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
@@ -493,33 +496,136 @@ contexts:
     functions:
       - name: blender_executable
         contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+      - name: blender_command
+        contract: "скрипт, аргументы -> одна командная строка Blender без окна (закреплённая версия, без автозапуска)"
       - name: run_blender
         contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
     duplicates:
-      - at: "src/dt_ai/core/build.py:16"
-        match: "def run_blender("
-        issue: "#1359"
-        ru: "второй run_blender в ядре"
-      - at: "src/twinqa/scene.py:59"
-        match: "def find_blender("
-        issue: "#1359"
-        ru: "свой поиск Blender в twinqa"
-      - at: "tools/qa/run_benchmark.py:40"
-        match: "def blender_run("
-        issue: "#1359"
-        ru: "свой запуск Blender в бенчмарке"
-      - at: "jobs/VATUTINO-SITE/flora_route_a.py:394"
-        match: "def _blender("
-        issue: "#1359"
-        ru: "свой запуск Blender в задании"
-      - at: "jobs/VATUTINO-SITE/place_site.py:59"
-        match: "def blender("
-        issue: "#1359"
-        ru: "свой запуск Blender в задании"
-      - at: "jobs/OBR22-K02/scripts/run_profile_checks.py:191"
-        match: "def blender("
-        issue: "#1359"
-        ru: "свой запуск Blender в задании"
+      - at: "jobs/KPP1/benchmark-1318/run_benchmark.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "521434ca86"
+        ru: "исторический бенчмарк КПП1 (#1318): прогон закреплён хешами, не переписываем"
+      - at: "jobs/KPP1/benchmark-1318/run_benchmark.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "7d6d85c534"
+        ru: "исторический бенчмарк КПП1 (#1318): прогон закреплён хешами, не переписываем"
+      - at: "jobs/KPP1/quad-1372/run_checks.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "521434ca86"
+        ru: "исторический прогон КПП1 QUAD (#1372): доказательства закреплены хешами, не переписываем"
+      - at: "jobs/KPP1/quad-1372/run_checks.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "ed8f96ffe7"
+        ru: "исторический прогон КПП1 QUAD (#1372): доказательства закреплены хешами, не переписываем"
+      - at: "jobs/ORCH-OBR22-NPM/scripts/run_profile_pilot.py::command"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "b456ea68aa"
+        ru: "пилот оркестрации на синтетике (не сдача), старый скрипт задания: перевод отдельной карточкой"
+      - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "8ff22a5634"
+        ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+      - at: "jobs/VATUTINO-SITE/run_delivery.py::main.dcc"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "fdd33d010a"
+        ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+      - at: "jobs/VATUTINO-SITE/scene_checks.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "17382a99ff"
+        ru: "проверки сцены #298 Ватутино: прогон принятой версии, запуск не меняем"
+      - at: "src/dt_ai/cli/shared_tools.py::command"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "5a31c914e8"
+        ru: "команда `dt derive` отдаёт argv дочернему процессу (уже с --disable-autoexec): перевод на blender_command отдельной карточкой"
+      - at: "tools/flora/build_flora_npm_light.py::execute"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "41b1d5662a"
+        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
+      - at: "tools/flora/build_flora_npm_light.py::execute"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "83b1fa0042"
+        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
+      - at: "tools/flora/build_flora_star.py::_blender"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "e5c254530a"
+        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
+      - at: "tools/library/check_library.py::native_inspect"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "c85d66fb6e"
+        ru: "инструмент библиотеки: перевод отдельной карточкой"
+      - at: "tools/library/maf_material_ids.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "7a61653774"
+        ru: "текст команды в отчёте для ручного запуска, не запуск"
+      - at: "tools/library/migrate_windows.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "9d1268b5a7"
+        ru: "инструмент библиотеки: перевод отдельной карточкой"
+      - at: "tools/materials/bind_ground_textures.py::_run_blender"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "707f4be9fd"
+        ru: "привязка текстур Ground (маршрут Ground): перевод отдельной карточкой"
+      - at: "tools/methods/body/run_benchmarks.py::_blender"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "18f971bee9"
+        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+      - at: "tools/methods/ground/build_variant.py::_blender"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "37235a2e47"
+        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+      - at: "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "f5a8a5aa67"
+        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+      - at: "tools/methods/run_variant.py::run_extra"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "d4b2fad230"
+        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+      - at: "tools/methods/ucx/run_benchmarks.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "9c40344e89"
+        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+      - at: "tools/methods/windows/run_benchmarks.py::main"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "c2afb4241e"
+        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
+      - at: "tools/research/checker_mutation.py::freeze"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "3457dc7d0e"
+        ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
+      - at: "tools/research/fbx_reader_compare.py::_blender"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "8b777603c2"
+        ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
+      - at: "tools/sintez_parity.py::run_live.run"
+        rule: blender-launch
+        issue: "#1378"
+        hash: "56b4b34392"
+        ru: "синтетическая сверка с СИНТЕЗ (#432), не сдача: перевод отдельной карточкой"
 relations:
   - from: body
     to: uv-atlas

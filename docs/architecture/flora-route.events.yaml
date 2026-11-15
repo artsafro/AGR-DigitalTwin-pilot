@@ -89,12 +89,13 @@ stages:
       - src/twinqa/flora.py
       - jobs/VATUTINO-SITE/flora-species.md
   - id: maps
-    event_ru: "Карты вида: одобренная пара или временная замена (stand-in) до точных карт"
+    event_ru: "Карты вида: одобренная пара или временная замена (stand-in) до точных карт; сдача Артёму со stand-in разрешена, вид Артём проверяет в конце сдачи"
     actor: agent
     context: flora-maps
     rules:
       - D245
       - D243
+      - D299
     evidence:
       - docs/pipeline-flora-textures.md
       - jobs/VATUTINO-SITE/flora-route-a-v004.md
@@ -124,22 +125,25 @@ stages:
           - src/dt_ai/materials/flora.py
           - docs/pipeline-flora-textures.md
   - id: star
-    event_ru: "НПМ-звезда (плоскости с картой) и ВПМ = оболочка звезды; детальный куст — только по запросу"
+    event_ru: "НПМ-звезда (плоскости с картой) и ВПМ = оболочка звезды; детальный куст — только по запросу; совпадение НПМ / ВПМ каталога v003 принято на первое время (confirmed-interim)"
     actor: agent-dcc
     context: flora-star
     rules:
       - D102
       - D232
+      - D311
     evidence:
       - tools/flora/build_flora_star.py
       - docs/plans/flora-426-route-2026-11.md
+      - library/flora/catalogue.json
   - id: lod
-    event_ru: "Облегчённые НПМ (LOD) — только на копии библиотеки; оригиналы и сцены не меняются"
+    event_ru: "Облегчённые НПМ (LOD) — только на копии библиотеки; оригиналы не меняются; копии — в job, имя <оригинал>__<job>, список в манифесте job для очистки после сдачи"
     actor: agent-dcc
     context: flora-light
     rules:
       - D167
       - D097
+      - D301
     evidence:
       - library/flora/README.md
       - library/flora/npm-light.json
@@ -228,14 +232,6 @@ stages:
       - docs/architecture/package-route.events.yaml
       - jobs/VATUTINO-SITE/site-route-20261109.md
 hotspots:
-  - id: stand-in-replace
-    stage: maps
-    ru: "ВОПРОС: временные карты (stand-in, D245) — «точные карты позже»: кто и когда их заменяет и можно ли сдавать заказчику со stand-in — в репо не решено"
-    rules:
-      - D245
-      - D246
-    evidence:
-      - jobs/VATUTINO-SITE/flora-route-a-v004.md
   - id: library-v003
     stage: species
     ru: "Библиотека v003: привязка карт к UV сломана у 99 из 99 объектов (#377, запаркована D232); у Ватутино 8 из 11 найденных видов — замены"
@@ -243,20 +239,6 @@ hotspots:
       - D232
     evidence:
       - docs/plans/flora-426-route-2026-11.md
-  - id: vpm-identity
-    stage: star
-    ru: "Совпадение поверхностей НПМ / ВПМ библиотеки не проверено (VPM identity: unverified, #305)"
-    evidence:
-      - library/flora/README.md
-      - library/flora/vpm-surface-identity.json
-  - id: lod-rule
-    stage: lod
-    ru: "«LOD только на копиях» записано в README библиотеки (#347), строки D нет; облегчены 3 вида (105 / 204 / 103), они не расставлены"
-    rules:
-      - D167
-    evidence:
-      - library/flora/README.md
-      - library/flora/npm-light.json
   - id: placement-tool
     stage: placement
     ru: "Расстановка: движок dt_ai.placement вызывается из jobs/VATUTINO-SITE/place_site.py; команды agr / dt нет"

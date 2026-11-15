@@ -49,8 +49,9 @@ See the [version-bound visual loop](../../docs/library/visual-loop.md).
   with no deviation claims. **VPM identity: unverified, see #305**.
   The historical sampling classifier has been disabled; #305 owns a future surface-coverage check.
   The optional `identity` CLI inventories pairs from a source dump without classifying geometry.
-- `vpm-surface-identity.json` - NPM/VPM surface-identity report (#305), report only: `catalogue.json` and its
-  `vpm_identity: unverified` stay unchanged until the user decides. One row per catalogue species with
+- `vpm-surface-identity.json` - NPM/VPM surface-identity report (#305), report only (its
+  `catalogue_vpm_identity: unverified` is the catalogue state when the report was made; the user then decided
+  `confirmed-interim` [D311]). One row per catalogue species with
   `same` / `different` / `unverified` / `error` / `no_vpm`. `same` needs two-way area coverage (every NPM face
   area strictly within 0.1 mm of the VPM and vice versa) and equal summed face area, in the D100 pivot frame;
   any uncovered or extra area >= 1 mm^2 is `different`, anything between is `unverified`.
@@ -82,6 +83,10 @@ published MAX/maps must remain unchanged. This is map-binding evidence, not geom
 identity or whole-library acceptance. Never remove or alter published assets to test isolation.
 
 ## Light NPM variants (#347)
+
+Lightening runs only on library copies, never on library originals [D301]. New copies live per job / project,
+not in the library, are named `<original>__<job>` and are listed in the job manifest so they can be cleaned after
+the delivery.
 
 `npm-light.json` is the optional, generated input for the three Vatutino light variants
 (105 / 204 / 103). It appends `npm_light` to those species; it does not replace their
@@ -134,11 +139,17 @@ A new species takes the next free number of its range.
 
 ## VPM
 
-**VPM identity: unverified, see #305**. This applies to every retained NPM/VPM pair.
+**VPM identity: confirmed-interim by user decision [D311]** (Artem 2026-11-15, #1421): the NPM/VPM identity
+of every retained pair, as shown on the #1411 review sheets, is accepted for now; a later full review may revisit
+it. This is a user decision, not a geometric proof: geometry stays unverified (#305).
 `vpm_status: available` means an object exists in the saved library, not that its geometry or profile
-suitability has been verified. Each non-null `vpm` has `vpm_identity: unverified` and
+suitability has been verified. Each non-null `vpm` has `vpm_identity: confirmed-interim`,
+`vpm_identity_decision: {id: D311, date: 2026-11-15}` and
 `vpm_evidence: {relation: unverified, translation_dev_m: null, scaled_dev_rel: null}`.
-Absent VPM records keep null identity/evidence and their existing `unconfirmed` or `none` status.
+A VPM without a decision is `vpm_identity: unverified` with `vpm_identity_decision: null`; plain `confirmed` is
+rejected by the check. A rebuild with `--previous` keeps a decision only for the same NPM/VPM source pair; a new
+pair is `unverified` until the user decides (`build --identity-decision D<n>:YYYY-MM-DD` marks all pairs).
+Absent VPM records keep null identity/decision/evidence and their existing `unconfirmed` or `none` status.
 
 `species-curation.json` records `library_selection` (`NPM`, `VPM` source entry IDs and `vpm_status`)
 for each built species. This is the source-choice snapshot of the v002 geometry (published binary
