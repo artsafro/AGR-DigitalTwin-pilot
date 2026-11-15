@@ -646,4 +646,8 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
+    # Russian report on a non-UTF-8 Windows console/pipe (no PYTHONUTF8): never crash on print.
+    for _s in (sys.stdout, sys.stderr):
+        if hasattr(_s, "reconfigure"):
+            _s.reconfigure(encoding="utf-8", errors="replace")
     sys.exit(main())
