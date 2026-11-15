@@ -123,7 +123,7 @@ def test_fresh_process_cli_is_green_twice():
 
 # ---------------------------------------------------------------- guard behaviour (acceptance rows)
 @pytest.mark.parametrize("rel", ["tools/x/launch.py", "src/x/launch.py", "jobs/J/launch.py"])
-@pytest.mark.parametrize("cmd", ["[exe, '--background', '--python', s]", "(exe, '-b', '-P', s)",
+@pytest.mark.parametrize("cmd", ["[exe, '--background', '--python', s, '--python-exit-code', '1']", "(exe, '-b', '-P', s)",
                                  "[exe, '-b', blend, '--python-expr', code]", "[exe, '--background', '--python-text', t]",
                                  "f'{exe} --background --python {s}'", "'blender -b -P x.py'"])
 def test_new_blender_launch_in_tools_src_jobs_is_a_new_copy(tmp_path, rel, cmd, capsys):
@@ -133,7 +133,7 @@ def test_new_blender_launch_in_tools_src_jobs_is_a_new_copy(tmp_path, rel, cmd, 
 
 
 @pytest.mark.parametrize("text", [
-    "subprocess.run([exe, '--background', blend])\n",            # headless without a script: not a launch copy
+    "subprocess.run([exe, '--background', blend, '--python-exit-code', '1'])\n",  # headless without a script: not a launch copy
     "subprocess.run([exe, '--python', s])\n",                     # script without headless
     "def f():\n    '''Run blender --background --python x.py.'''\n",  # docstring
     "'blender -b -P x.py is the old way'\n",                      # bare string statement
