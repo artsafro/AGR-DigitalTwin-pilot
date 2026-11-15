@@ -19,7 +19,7 @@ YAMLS = [ROOT / route_map.EVENTS, ROOT / route_map.CONTEXTS]
 # ---------------------------------------------------------------- generator: drift, references, labels
 def test_committed_files_equal_generator_output():
     _, _, files = route_map.render(ROOT)
-    assert len(files) == 8  # NPM, VPM (#1383), Ground (#1383) routes + context map, .excalidraw + .svg each
+    assert len(files) == 12  # NPM, VPM, Ground routes + NPM, VPM, Ground context maps (#1392), .excalidraw + .svg
     for rel, text in files.items():
         assert (ROOT / rel).read_bytes() == text.encode("utf-8"), f"{rel} drifted; rerun route_map.py"
 

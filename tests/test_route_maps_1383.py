@@ -18,9 +18,10 @@ ARCH = ROOT / "docs/architecture"
 NEW = {"vpm-route": "vpm-oks-route", "ground-route": "ground-route"}
 REPORT = ARCH / "report-routes-vpm-ground.md"
 
-VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "package",
+# v2 (#1392, D293): an NPM stage before the export; Ground relief after the flat ground (tests/test_route_maps_1392.py)
+VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "npm", "package",
               "readback", "validate", "sintez", "delivered"]
-GROUND_STAGES = ["sources", "zero", "surfaces", "relief", "quads", "textures", "skirt", "ucx", "placement",
+GROUND_STAGES = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
                  "package", "validate", "sintez"]
 
 
@@ -37,7 +38,8 @@ def test_generator_knows_three_routes_and_writes_eight_files():
     assert set(route_map.route_events()) == {"route", "vpm-route", "ground-route"}
     files = route_map.render_all(ROOT)[2]
     names = sorted(p.name for p in files)
-    assert names == sorted(f"{n}.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "contexts")
+    assert names == sorted(f"{n}.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "contexts",
+                                                "vpm-oks-contexts", "ground-contexts")   # + two maps (#1392)
                            for s in ("excalidraw", "svg"))
 
 
@@ -54,7 +56,7 @@ def test_stage_order_follows_the_issue():
     assert [s["id"] for s in routes["vpm-route"]["stages"]] == VPM_STAGES
     assert [s["id"] for s in routes["ground-route"]["stages"]] == GROUND_STAGES
     for name in NEW:
-        assert routes[name]["issue"] == "#1383"
+        assert routes[name]["issue"] == "#1392"   # v2 of the #1383 maps
 
 
 @pytest.mark.parametrize("name", sorted(NEW))
