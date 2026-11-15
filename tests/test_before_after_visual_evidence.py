@@ -426,6 +426,10 @@ for index, path in enumerate(out[:2]):
     if index:
         if out[2] in ('exposure', 'combined'):
             scene.view_settings.exposure = 2
+        if out[2] in ('curve', 'combined'):
+            scene.view_settings.use_curve_mapping = True
+            scene.view_settings.curve_mapping.curves[3].points[1].location = (1.0, 0.4)
+            scene.view_settings.curve_mapping.update()
         if out[2] in ('gamma', 'combined'):
             scene.view_settings.gamma = 1.8
         if out[2] in ('look', 'combined'):
@@ -447,6 +451,7 @@ for index, path in enumerate(out[:2]):
                     reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
 @pytest.mark.parametrize('change,style,mode', [
     ('exposure', 'wire', 'fit'), ('exposure', 'solid', 'fit'), ('extent', 'wire', 'fit'),
+    ('curve', 'solid', 'fit'), ('curve', 'wire', 'fit'), ('curve', 'solid', 'named'),
     ('gamma', 'wire', 'fit'), ('look', 'wire', 'fit'), ('display', 'wire', 'fit'),
     ('world', 'material', 'fit'), ('background', 'texture', 'fit'),
     ('combined', 'wire', 'fit'), ('combined', 'wire', 'named')])
