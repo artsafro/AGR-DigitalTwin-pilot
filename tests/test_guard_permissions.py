@@ -581,3 +581,60 @@ def test_guard_research_stash_push_contract_1225():
     assert 'asks as "git push publishes to a remote"' not in note
     assert guard("git stash push -u -m tag") == "allow"
     assert guard("git stash push -u -m tag", "antigravity") == "allow"
+
+
+# #1226 (PR #1186 review 3): every whole-tree pathspec spelling, glob or exclude-only pathspec for
+# checkout/restore discards many files at once and must ask like `.`; single-file pathspecs stay allowed.
+# Unquoted `(` is a shell syntax error, so real magic pathspecs are quoted; unquoted ones still ask.
+WHOLE_TREE_SPECS_1226 = [
+    ".", "./", ".//", "./.", "././", ".\\", "..", "../", "../..", ":/", ":/.", ":/./", ":(top)", ":(top).",
+    ":(top)/", "':(top)'", "':(top,glob)'", "':(glob,top)*'", "':(TOP)'", "*", "**", "./*", ":/*", "*/*", "**/*", "'*'", '"*"',
+    "'./'", "?", "[a-z]*", "*.py", "src/*.py", "':(glob)**/*.md'", "':(top'", ":!docs", ":^docs", ":(exclude)docs",
+    ":/!docs", "':!docs'",
+    # PR #1455 review r1: a `..` segment that climbs back to the top is the whole tree too.
+    "docs/..", "./docs/..", "docs/./..", "a/b/../..", "docs/../", "docs/..//", ":/docs/..", "':(top)docs/..'",
+    "docs\\..", "a/../b/..", "docs/../..",
+]
+WHOLE_TREE_FORMS_1226 = ["checkout {}", "checkout -- {}", "checkout HEAD -- {}", "checkout main {}",
+                         "restore {}", "restore -- {}", "restore --source=HEAD~1 {}", "restore -W {}",
+                         "checkout -q -- x.txt {}", "restore {} x.txt"]
+SINGLE_FILE_SPECS_1226 = ["x.txt", "docs/x.md", "./x.txt", ":/docs/x.md", "':(top)docs/x.md'", ".gitignore",
+                          "src/.env.example", "../x.txt", "':(literal)x.txt'", "':(literal)*'", ".github/workflows/ci.yml",
+                          "docs/../a.txt", "a/b/../c.txt", "./docs/../x.txt", ":/docs/../x.txt", "../../x.txt"]
+SINGLE_FILE_FORMS_1226 = ["checkout -- {}", "checkout HEAD -- {}", "checkout main -- {}", "restore {}",
+                          "restore --source=HEAD~1 -- {}"]
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git checkout ./", "git checkout :/", "git restore ./", "git restore :/", "git checkout -- *",
+    "git checkout :(top)", "git restore -- '*'", "git checkout -- ':!docs'",
+    "git restore --pathspec-from-file=list.txt", "git checkout main --pathspec-from-file=-",
+    "git checkout -- docs/..", "git checkout -- ./docs/..", "git checkout -- docs/./..", "git restore a/b/../..",
+])
+def test_guard_whole_tree_pathspecs_ask_1226(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git checkout main", "git checkout -- x.txt", "git restore x.txt", "git checkout HEAD -- docs/x.md",
+    "git checkout :/fix-typo", "git restore --staged x.txt", "git checkout -b feature/x",
+    "git checkout -- docs/../a.txt",
+])
+def test_guard_single_file_checkout_allowed_1226(command, protocol):
+    assert guard(command, protocol) == "allow"
+
+
+def test_guard_whole_tree_pathspecs_generated_probe_1226():
+    """Generated probe: every spelling x every checkout/restore form x every git global option asks;
+    every single-file spelling x form x global option stays allowed."""
+    shell_reason = _load_guard().shell_reason
+    asked = [f"git {g}{f.format(s)}" for g in GIT_GLOBALS for f in WHOLE_TREE_FORMS_1226
+             for s in WHOLE_TREE_SPECS_1226]
+    allowed = [f"git {g}{f.format(s)}" for g in GIT_GLOBALS for f in SINGLE_FILE_FORMS_1226
+               for s in SINGLE_FILE_SPECS_1226]
+    wrong_allow = [c for c in asked if shell_reason(c) is None]
+    wrong_ask = [(c, shell_reason(c)) for c in allowed if shell_reason(c) is not None]
+    assert len(asked) == 7 * 10 * len(WHOLE_TREE_SPECS_1226) and len(allowed) == 7 * 5 * len(SINGLE_FILE_SPECS_1226)
+    assert wrong_allow == [] and wrong_ask == []
