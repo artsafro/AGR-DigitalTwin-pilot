@@ -733,6 +733,38 @@ def test_template_evidence_follows_d297():
     assert "rule 49" not in template
 
 
+# #1469: reviewer-led evidence is not shorthand delegation.
+@pytest.mark.parametrize("text", [
+    pytest.param("New tests: reviewer r1 witnesses (3 rows), 12 passed.", id="witnesses"),
+    pytest.param("Regression tests: reviewer probes from round 1 now pass.", id="probes"),
+    pytest.param("Tests to be run by the reviewer: none.", id="none"),
+    pytest.param("The reviewer can check the tests I ran: 398 passed.", id="completed"),
+])
+def test_reviewer_clause_controls(tmp_path, repo, evals, capsys, text):
+    from twinqa.evals.handoff import delegation
+
+    assert delegation(text) is None
+    _, shas = repo
+    code, out = run(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+@pytest.mark.parametrize("text", [
+    pytest.param("Tests to be executed by the reviewer.", id="executed"),
+    pytest.param("Tests are to be run by the reviewer.", id="are-to-be"),
+    pytest.param("Tests will be run by the reviewer.", id="will-be"),
+    pytest.param("Remaining tests: reviewer.", id="remaining"),
+    pytest.param("Tests: Reviewer", id="end"),
+])
+def test_reviewer_clause_delegations(tmp_path, repo, evals, capsys, text):
+    from twinqa.evals.handoff import delegation
+
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "tests delegated to the reviewer")
+
+
 # Review r2 (PR #1401), #1403: shorthand and active verify are delegation.
 @pytest.mark.parametrize("text", [
     pytest.param("Remaining tests: reviewer.", id="shorthand"),
