@@ -154,7 +154,7 @@ def write_png(path, colour):
     Image.new('RGB', (40, 25), colour).save(path)
 
 
-def fake_runner(after_camera=None, touch=None):
+def fake_runner(after_camera=None, touch=None, render_mutate=None):
     def run(script, args, *, executable=None, output_json=None, outputs=(), timeout=900, log_path=None):
         cfg = json.loads(Path(args[0]).read_text(encoding='utf-8'))
         out = Path(cfg['output_dir'])
@@ -165,6 +165,10 @@ def fake_runner(after_camera=None, touch=None):
         record = {'before': {'camera': CAM, 'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}},
                   'after': {'camera': after_camera or CAM,
                             'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}}}
+        for role in ('before', 'after'):
+            record[role]['render'].update(PNG_STATE)
+        if render_mutate:
+            render_mutate(record['after']['render'])
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
         return record
     return run
@@ -223,6 +227,26 @@ def test_cli_refuses_mismatched_cameras_and_writes_nothing(tmp_path, inputs, mon
     assert not output.exists() and not output.with_name('out.partial').exists()
     assert snapshot(tmp_path / 'in') == before_state
     assert not (tmp_path / 'ev').exists(), 'created parent directories are removed on refusal'
+
+
+@pytest.mark.parametrize('key,value', [
+    ('use_world_space_lighting', True), ('dither_intensity', 0.0),
+    ('color_mode', 'BW'), ('color_depth', '16'), ('compression', 100)])
+@pytest.mark.parametrize('missing', [False, True])
+def test_cli_refuses_changed_or_missing_png_state(tmp_path, inputs, monkeypatch, capsys, key, value, missing):
+    module = load()
+    def mutate(render):
+        if missing:
+            del render[key]
+        else:
+            render[key] = value
+    monkeypatch.setattr(module, 'run_blender', fake_runner(render_mutate=mutate))
+    output = tmp_path / 'ev' / 'out'
+    original = snapshot(tmp_path / 'in')
+    assert module.main(argv(*inputs, output)) == 2
+    assert key in capsys.readouterr().err
+    assert not output.exists() and not output.with_name('out.partial').exists()
+    assert snapshot(tmp_path / 'in') == original
 
 
 def test_cli_refuses_input_changed_during_run(tmp_path, inputs, monkeypatch):

@@ -70,8 +70,13 @@ def setup(scene, fitted):
     render.film_transparent = False
     render.use_stamp = False
     render.image_settings.file_format = 'PNG'
+    render.image_settings.color_mode = 'RGB'
+    render.image_settings.color_depth = '8'
+    render.image_settings.compression = 15
+    render.dither_intensity = 1.0
     shading = scene.display.shading
     shading.light = 'STUDIO'
+    shading.use_world_space_lighting = False
     shading.show_cavity = False
     shading.show_shadows = False
     shading.color_type = {'solid': 'SINGLE', 'wire': 'OBJECT', 'material': 'MATERIAL',
@@ -137,5 +142,10 @@ for role in ('before', 'after'):
     scene.render.filepath = str(out / f'{role}.png')
     bpy.ops.render.render(write_still=True)
     evidence[role] = {'camera': record(scene, camera), 'mesh_objects': mesh_count,
-                      'render': {'engine': scene.render.engine, 'style': request['style']}}
+                      'render': {'engine': scene.render.engine, 'style': request['style'],
+                                 'use_world_space_lighting': scene.display.shading.use_world_space_lighting,
+                                 'dither_intensity': scene.render.dither_intensity,
+                                 'color_mode': scene.render.image_settings.color_mode,
+                                 'color_depth': scene.render.image_settings.color_depth,
+                                 'compression': scene.render.image_settings.compression}}
 (out / 'render-evidence.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
