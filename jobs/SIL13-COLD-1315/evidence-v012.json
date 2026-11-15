@@ -1,0 +1,617 @@
+{
+  "passed": false,
+  "scope": "actual accepted hedge replication, real technical failures and rejected MAF Boolean, no delivery acceptance",
+  "root": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012",
+  "files": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\actual-census-r1-NPM.json",
+      "relative_path": "actual-census-r1-NPM.json",
+      "sha256": "50e997f0b3bba1fba11d5c222b5f4a14695578237d4ae2e10a3d31c19ea49b3f",
+      "bytes": 3620493
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\actual-census-r1-VPM.json",
+      "relative_path": "actual-census-r1-VPM.json",
+      "sha256": "f9841a7645371905d0b409d9dd74fe67f30abecd18b3f90b409602508e69ba48",
+      "bytes": 3617377
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\actual-export-audit-r1.json",
+      "relative_path": "actual-export-audit-r1.json",
+      "sha256": "23e6c6b10d82f2bbd555a998cfac554dc244ab2181f190e444928533be0f25aa",
+      "bytes": 340782
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\actual-export-NPM-site-NOT-DELIVERED.png",
+      "relative_path": "actual-export-NPM-site-NOT-DELIVERED.png",
+      "sha256": "96ef5c0954933c625a49b136932aace181dcc3827efef2721837e7fd0dc86287",
+      "bytes": 1277492
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\audit-r1-connected.log",
+      "relative_path": "audit-r1-connected.log",
+      "sha256": "ba23b2f52969ca321d48efbbb134327093ca8f9202a1e37c05bbc538f1098e94",
+      "bytes": 296
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\audit-r1-diagnostic.log",
+      "relative_path": "audit-r1-diagnostic.log",
+      "sha256": "210173127b9401a3c81ae9af57153c50028f121c54fecb1f7a8c4bab0825d0be",
+      "bytes": 1082
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\audit-r1.log",
+      "relative_path": "audit-r1.log",
+      "sha256": "a18911b6061888437b3eebc00041014c321b2c400d77c99bfe117d1559946e6f",
+      "bytes": 931
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\audit_export_r1.py",
+      "relative_path": "audit_export_r1.py",
+      "sha256": "5826dd6028a8b78310a55c2ea088a3e947426b036e00e72839b690976db5820a",
+      "bytes": 8036
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\bench-original-native.json",
+      "relative_path": "bench-original-native.json",
+      "sha256": "58eaea265f6484cf4d11d9796ec348df365be1116379b1f32d19eb9c9f47ecd2",
+      "bytes": 661
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\bench-original-native.log",
+      "relative_path": "bench-original-native.log",
+      "sha256": "00161d7ceab4495d3380dcba87e49c5b3fdbf20a3adb084e3c5301db41abf8ae",
+      "bytes": 1913
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\bench-original-native.npz",
+      "relative_path": "bench-original-native.npz",
+      "sha256": "c8d89aee75a21d260a28ec898feb673c9b4086d4414e537f848f6bdf20f11af0",
+      "bytes": 9824
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\build-r1.log",
+      "relative_path": "build-r1.log",
+      "sha256": "a9f5d7cca92c4cb3436ba01178ff7504dd06ecb9fc9f6d42c2cc600516741ee6",
+      "bytes": 908
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\build_candidate_r1.py",
+      "relative_path": "build_candidate_r1.py",
+      "sha256": "964e0ac965b0524b2c4b2d4c530e2030e34476586642cd753e1ae3a161371b25",
+      "bytes": 5339
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\docs-red.log",
+      "relative_path": "docs-red.log",
+      "sha256": "ce7af4432f0e6d201b8fd80d3492ac0409aa755249844a887be5d8078502515b",
+      "bytes": 1044
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\envelope-hedges-r1-NPM.npz",
+      "relative_path": "envelope-hedges-r1-NPM.npz",
+      "sha256": "161e224d5a1200b7744dbc251711ca7a1a13a1f48f78c157ee7377f983d599af",
+      "bytes": 5745724
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\envelope-hedges-r1-VPM.npz",
+      "relative_path": "envelope-hedges-r1-VPM.npz",
+      "sha256": "98525cbe5a519e753951f009cb64fedd92df1416ececf1c57e828dadccc783b2",
+      "bytes": 8182660
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\envelope-hedges-r1.json",
+      "relative_path": "envelope-hedges-r1.json",
+      "sha256": "92ec456025bcabc755b654cfb24b23eafc8d7dbccc047f65d4bf9d26cf666fb6",
+      "bytes": 6492054
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\finalize.log",
+      "relative_path": "finalize.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\finalize_checkpoint.py",
+      "relative_path": "finalize_checkpoint.py",
+      "sha256": "79a7d538c01a0a249c104834b916560d56af4b7fd04ed5efb27d0e32b4481c0e",
+      "bytes": 7439
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\hedges-r1-NPM.npz",
+      "relative_path": "hedges-r1-NPM.npz",
+      "sha256": "458b51b1e987788612b094cc222a0e40074d422d0c16cd93651c4df036b7cc7f",
+      "bytes": 3005916
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\hedges-r1-VPM.npz",
+      "relative_path": "hedges-r1-VPM.npz",
+      "sha256": "f55b51c88d04d11ff68f0894d07da9cbd7965d39fa1f1556616ab0c5dd8dd0e7",
+      "bytes": 4282292
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\inspect_maf.py",
+      "relative_path": "inspect_maf.py",
+      "sha256": "1c1685efa1e2ea7d147157058a718151a8705b594f47a607e961d7ba62eb334d",
+      "bytes": 2230
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\inspect_original_bench.py",
+      "relative_path": "inspect_original_bench.py",
+      "sha256": "3259b8ebc19e3a84ea280dfedbb34e20d785a81f346aa7c845d58ecb49611b68",
+      "bytes": 3522
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\inspect_witnesses.py",
+      "relative_path": "inspect_witnesses.py",
+      "sha256": "9b1e7ef453d7d623e348da99b27269857b8667574fddc6aa4ddec8b26cad417f",
+      "bytes": 1808
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\MAF-bench-before-rejected-union-GEOMETRY-ONLY.png",
+      "relative_path": "MAF-bench-before-rejected-union-GEOMETRY-ONLY.png",
+      "sha256": "e74bf4d158949fd026a15fdbe53ea1f3dae293b2cd56e4d826401225dd62b233",
+      "bytes": 992909
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\MAF-bench-comparison-GEOMETRY-ONLY.blend",
+      "relative_path": "MAF-bench-comparison-GEOMETRY-ONLY.blend",
+      "sha256": "90c4c2783aa2fc41a9fb32a62cc2893cee200c20c5b9d78241f0a67ff89db10e",
+      "bytes": 100601
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-bench-red.log",
+      "relative_path": "maf-bench-red.log",
+      "sha256": "dc31f2ff0727b1207206e754eed2149f4bea8a664cc8f4a953c13b9b2ec4eae6",
+      "bytes": 1103
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-bench-union.log",
+      "relative_path": "maf-bench-union.log",
+      "sha256": "ec9836a34849509fee98f4fa9b4fafd1060c4755c11b1c243e68f441ab4fbdd8",
+      "bytes": 1106
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-isolated-NPM.npz",
+      "relative_path": "maf-isolated-NPM.npz",
+      "sha256": "c4d31d14103a7c5909163416c630522d69729acf89b81be8ed692bcc435fe3c0",
+      "bytes": 307952
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-isolated-VPM.npz",
+      "relative_path": "maf-isolated-VPM.npz",
+      "sha256": "55c78be991f722aed5e270b59be3d8672d4d9f04c853d7e3d800fd32b5596848",
+      "bytes": 1330272
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-source-diagnosis.json",
+      "relative_path": "maf-source-diagnosis.json",
+      "sha256": "b8a6a66e1d973dc6a0195d1ced8186d35bc37149ae622aad62563f57fba1d8e7",
+      "bytes": 6041
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-union-r1-NPM.npz",
+      "relative_path": "maf-union-r1-NPM.npz",
+      "sha256": "197f58276f77dc5a906e83dec120191b5509b56644d2bf715b20c20edb98f5f3",
+      "bytes": 406184
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-union-r1-VPM.npz",
+      "relative_path": "maf-union-r1-VPM.npz",
+      "sha256": "697bb9b3e36d9e9092a77dbe37aad246ec50cb0503a1b98f4bf7852bf8bde6f3",
+      "bytes": 1427992
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\maf-union-r1.json",
+      "relative_path": "maf-union-r1.json",
+      "sha256": "eb3d513911ed5babe786f70d5d175bd1c571755f6d0d954afb79772392937d18",
+      "bytes": 97585
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\make_sheet.py",
+      "relative_path": "make_sheet.py",
+      "sha256": "5c1028c7ea8494c224ad073db168190b20e3cb1f4fa0fd3d3f1a9dda8ccb924f",
+      "bytes": 2008
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-NPM.blend",
+      "relative_path": "native-r1-NPM.blend",
+      "sha256": "cebe9f55662dcc80f08188f0361f4fe28f066d90aedc11c2033a2cee96884cfc",
+      "bytes": 6662595
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-NPM.json",
+      "relative_path": "native-r1-NPM.json",
+      "sha256": "db73799b37971bb4be74fa5824efede98eebc9f8e793456a7e11033050f86871",
+      "bytes": 2813
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-NPM.log",
+      "relative_path": "native-r1-NPM.log",
+      "sha256": "0b63670ee49652554d176c0db37a933b0fa9c791d41035116157e73c39a73bad",
+      "bytes": 959
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-NPM.npz",
+      "relative_path": "native-r1-NPM.npz",
+      "sha256": "449c40ce01e9ddd21908a4910341c4269514e453d61648241727647817b381f6",
+      "bytes": 7296492
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-VPM.blend",
+      "relative_path": "native-r1-VPM.blend",
+      "sha256": "a9eda806bc92e828600b4664dd1f88c6a259315812c859efd29bea1be7ee2781",
+      "bytes": 9121861
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-VPM.json",
+      "relative_path": "native-r1-VPM.json",
+      "sha256": "c7781990ee7d396951ca316b63a9535911d916a2fd25ecf064ab933543916e35",
+      "bytes": 223939
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-VPM.log",
+      "relative_path": "native-r1-VPM.log",
+      "sha256": "b4fc4ddbdf84bad8ecd13f563dacfbdd03a318c8df3c81e0ab8c884e2c08e159",
+      "bytes": 961
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native-r1-VPM.npz",
+      "relative_path": "native-r1-VPM.npz",
+      "sha256": "020158136a85a9ce7619219648b20336ac33c68601afa7e5de21190ea12ddaf1",
+      "bytes": 15896772
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\native_readback_r1.py",
+      "relative_path": "native_readback_r1.py",
+      "sha256": "04c83720e9678e59ae8deb643ebe07efb3db236895b70b1bb0add281ee62e568",
+      "bytes": 2332
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\prepare_audit.py",
+      "relative_path": "prepare_audit.py",
+      "sha256": "12db09b6c1a3b9adcc97d6f81613eb3a7a2eb0076ac5020ade486394066ff55c",
+      "bytes": 939
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\prepare_drivers.py",
+      "relative_path": "prepare_drivers.py",
+      "sha256": "ecabe827e588c57a304bd20c9b4ac04523380cdcc49b625c37ab4df64cb9af68",
+      "bytes": 1151
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "relative_path": "r1/NPM/SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "bytes": 7565100
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\r1\\site-NPM.blend",
+      "relative_path": "r1/site-NPM.blend",
+      "sha256": "d12d7489ce19cdf0bb17b3d75502290a5d6f29982ae10dbd54ee2d53852e439a",
+      "bytes": 6830408
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\r1\\site-VPM.blend",
+      "relative_path": "r1/site-VPM.blend",
+      "sha256": "29349fadd2a2742ba7cf047940f02f04ef1fee440cff0668210e1686b3d1daaa",
+      "bytes": 9552245
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "relative_path": "r1/VPM/SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "bytes": 11432460
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-export-r1-NPM.json",
+      "relative_path": "raw-export-r1-NPM.json",
+      "sha256": "d7bd55471e06aa79582d4ba790519284edcfbda7d7ca25e3a004d015c383c3ea",
+      "bytes": 1578
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-export-r1-NPM.npz",
+      "relative_path": "raw-export-r1-NPM.npz",
+      "sha256": "ea582fc81d4f117cd26d97fc6dbb602a37da62e9a2ef47cecfa5c8b305919beb",
+      "bytes": 7297740
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-export-r1-VPM.json",
+      "relative_path": "raw-export-r1-VPM.json",
+      "sha256": "9019ffa94bbd5bfab1244c5d1e27f9918956a0e42ccc72b1c21ca3a05b6f4618",
+      "bytes": 238735
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-export-r1-VPM.npz",
+      "relative_path": "raw-export-r1-VPM.npz",
+      "sha256": "b02a3814d9eae3f25cea57877ff85ec523d5c4dceece437ea29e8106cecfb5bc",
+      "bytes": 15898308
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-r1-NPM.log",
+      "relative_path": "raw-r1-NPM.log",
+      "sha256": "adb0809dcf08e7faeb1e1643170259378fa2e9404cd236cd0eea8823ee3a1612",
+      "bytes": 222
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-r1-VPM.log",
+      "relative_path": "raw-r1-VPM.log",
+      "sha256": "b8f02f4d465e680d50f3f05595e1e36744acf1dc402181e6d5046a51546b15d0",
+      "bytes": 166
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-readback-r1-NPM.blend",
+      "relative_path": "raw-readback-r1-NPM.blend",
+      "sha256": "69efa449b522c7ef7751b674f034bad2ba8757c8e9a979ad7db38b5cf44e80ca",
+      "bytes": 4646336
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw-readback-r1-VPM.blend",
+      "relative_path": "raw-readback-r1-VPM.blend",
+      "sha256": "3121909eefb97ca82ecd69d50c32212d0f7d7db72b24967e7e0f9a2a020e0414",
+      "bytes": 9552257
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\raw_readback_r1.py",
+      "relative_path": "raw_readback_r1.py",
+      "sha256": "a682f7f88b90ec8780f866faf0a22ae2e6b9c1eb37e088b50055ad6b5e0182b3",
+      "bytes": 5200
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\render-actual-site.log",
+      "relative_path": "render-actual-site.log",
+      "sha256": "b2a18b22edcded86fa0c0306d2ee421142dc6735389eba0dc0125778d93d7e02",
+      "bytes": 943
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\render_actual_site.py",
+      "relative_path": "render_actual_site.py",
+      "sha256": "62f2ec006642964a3eb16afd1db31762f5b4a68cbbcf6359b1eeb90cb4e3205d",
+      "bytes": 1237
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\repair-witnesses-r1.json",
+      "relative_path": "repair-witnesses-r1.json",
+      "sha256": "ef199888925322e54013aefc33cf199f79d62663915ce6149bded17d79f4747b",
+      "bytes": 324371
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\repair_witnesses.py",
+      "relative_path": "repair_witnesses.py",
+      "sha256": "667ee6ddba51bbddc9ae3af9d824677aa0676328a40d5a1109e9bcc353b9c72d",
+      "bytes": 5043
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\retain_diagnostic_witnesses.py",
+      "relative_path": "retain_diagnostic_witnesses.py",
+      "sha256": "9109b3735de87b64aa7505acee7f1147f3f898969dd907b31761c52cb6b1f315",
+      "bytes": 2251
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\review-sheet-v012-NOT-DELIVERED.png",
+      "relative_path": "review-sheet-v012-NOT-DELIVERED.png",
+      "sha256": "3e82ddc9f08748f20ea2fe0bf3c55a5ae6a1e0072e5214412c126f0192573f71",
+      "bytes": 1291083
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\site-build-v012-r1.json",
+      "relative_path": "site-build-v012-r1.json",
+      "sha256": "a73de30654efb8791b7727b315c85a3d287507339bd557899c0358c062666453",
+      "bytes": 6559600
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\source-and-skirt-witnesses.json",
+      "relative_path": "source-and-skirt-witnesses.json",
+      "sha256": "a749fe6aa8fd301e0fdd080168e4032675f1d8e5ec57910b740896e8e4af4ef0",
+      "bytes": 152106
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\test_export_controls.py",
+      "relative_path": "test_export_controls.py",
+      "sha256": "c23ca0b8be393973ab29e8ab669c5a8fb36df19a27ec3cc5b0f084b64300a469",
+      "bytes": 2063
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\test_maf_bench.py",
+      "relative_path": "test_maf_bench.py",
+      "sha256": "0538828c9dd884fc77cd1eed5857b29a4c9541ae00b3a3f8e8507906ed46e07e",
+      "bytes": 625
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\test_witness_indices.py",
+      "relative_path": "test_witness_indices.py",
+      "sha256": "9850ef30b7d0884948fedf4d4c4e3b692b47fe1bf496452ff6196b5ae025af04",
+      "bytes": 1567
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\tests-final.log",
+      "relative_path": "tests-final.log",
+      "sha256": "c921d8302ebd1c80cf0c7e77fa30ae515b81ff8aedafde3bf47610699934801e",
+      "bytes": 264
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\union_maf.py",
+      "relative_path": "union_maf.py",
+      "sha256": "f98562cfc223bc2cdcfbe7a5706e67cf377995e22e8ecf20394b8a2d03a31ac7",
+      "bytes": 2490
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\v012-bench-source-rejected-TINY-NOT-APPROVED.png",
+      "relative_path": "v012-bench-source-rejected-TINY-NOT-APPROVED.png",
+      "sha256": "73bf32267be2dfc19943f4e5125604e9a9fcfcbb5a544150a3c479b82f477924",
+      "bytes": 12614
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\validator-help.txt",
+      "relative_path": "validator-help.txt",
+      "sha256": "29cee11975f0e804c36cfef5ec287b41194a7a7165d6aec66b640438ef02aeec",
+      "bytes": 1723
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\validator-r1-NPM.err",
+      "relative_path": "validator-r1-NPM.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\validator-r1-NPM.json",
+      "relative_path": "validator-r1-NPM.json",
+      "sha256": "2bff5da43418c9aaa81c46ab581fc377a379ae81d2f0f5e8da1facd179ca3504",
+      "bytes": 17509
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\validator-r1-VPM.err",
+      "relative_path": "validator-r1-VPM.err",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\validator-r1-VPM.json",
+      "relative_path": "validator-r1-VPM.json",
+      "sha256": "a8c41fdceb65c8524ed5b2ee5daceda862d85ca48183fee85d1cbef9c29636aa",
+      "bytes": 22978
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\witness-diagnosis-NPM.json",
+      "relative_path": "witness-diagnosis-NPM.json",
+      "sha256": "85df493cb0e9ab55ba5eb05c5bc2c42892ea7905988b18fbf36da19528a15a9a",
+      "bytes": 67040
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\witness-diagnosis-VPM.json",
+      "relative_path": "witness-diagnosis-VPM.json",
+      "sha256": "a48a2aeda3ff974ff4d608cc31b7d2ac61b36e6ff0480e9e8a1b6c8cfeecae74",
+      "bytes": 57533
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\witness-green.log",
+      "relative_path": "witness-green.log",
+      "sha256": "224ce414a9bdd36ac5118ebd967e34dd8353540a7ce4f1a8907b734bc0d413b7",
+      "bytes": 101
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\witness-red.log",
+      "relative_path": "witness-red.log",
+      "sha256": "d0aaa3ed75003d4b873d67e14e2f68b714f0f1f65af057bf29fb86b4586ba51f",
+      "bytes": 1053
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\witness-threshold-red.log",
+      "relative_path": "witness-threshold-red.log",
+      "sha256": "88ccbd43683a5678da5368ea557fbd7ff056c059f7299c62c0c61b843c5c2bd0",
+      "bytes": 1733
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-bench-original-NPM.json",
+      "relative_path": "xview-bench-original-NPM.json",
+      "sha256": "f22c34fa249f4583bb5881d3ed3fb999966e1f91fa13cdf7d1b063f13f2037b4",
+      "bytes": 29975
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-bench-original-NPM.log",
+      "relative_path": "xview-bench-original-NPM.log",
+      "sha256": "6fe7423f951ccd05c4729139ef20b8c351f866a0ae9ade92bfa2134e2b3c5fca",
+      "bytes": 330
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-bench-original-VPM.json",
+      "relative_path": "xview-bench-original-VPM.json",
+      "sha256": "5b0c77939c81e3fa691d3729801869c1f43b51dcd398c54fdda71bf1f7a81b24",
+      "bytes": 29975
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-bench-original-VPM.log",
+      "relative_path": "xview-bench-original-VPM.log",
+      "sha256": "9cf926831ad6a7acd89da69ad62b33682c5c3f7e10b3f181fbd3cf852d45681a",
+      "bytes": 330
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-hedges-r1-NPM.json",
+      "relative_path": "xview-hedges-r1-NPM.json",
+      "sha256": "62d533af4018fd77abec4d202f99d5fd183ff05dffc5390ab573033f6d6c5fbd",
+      "bytes": 1243
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-hedges-r1-NPM.log",
+      "relative_path": "xview-hedges-r1-NPM.log",
+      "sha256": "639b3741bc91d16d4eb2efe5f9cac844dbdba9d7a04291e9b48155c1ce6bce61",
+      "bytes": 300
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-hedges-r1-VPM.json",
+      "relative_path": "xview-hedges-r1-VPM.json",
+      "sha256": "5d0ee006c421b6c40d2661c1acca8000591bd8a686102f1040e99a52ca55c08b",
+      "bytes": 2362
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-hedges-r1-VPM.log",
+      "relative_path": "xview-hedges-r1-VPM.log",
+      "sha256": "e855cb9a21b400c3e17ff6f14255aab97a856d1bc3bee7a9e0603bce0281b274",
+      "bytes": 305
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-maf-isolated-NPM.json",
+      "relative_path": "xview-maf-isolated-NPM.json",
+      "sha256": "209dbb680339c50b0f3cd570aa1ebcf87991955218a565469454cac5b453547d",
+      "bytes": 673569
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-maf-isolated-NPM.log",
+      "relative_path": "xview-maf-isolated-NPM.log",
+      "sha256": "52e4365d1668043bdd6472af9b67c8b854e6d2f0ef955d2a9ac389cbe31b2b23",
+      "bytes": 1029
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-maf-isolated-VPM.json",
+      "relative_path": "xview-maf-isolated-VPM.json",
+      "sha256": "e1bb231a4a47f03d87c6cebd46f3e71afb3effa819cec850473c7c5555feee2f",
+      "bytes": 5682928
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-maf-isolated-VPM.log",
+      "relative_path": "xview-maf-isolated-VPM.log",
+      "sha256": "de341b5bd5bd0f8d5ff3ae36835cf0560847df35f8695207ac6c5fa735dd50f1",
+      "bytes": 1029
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-maf-union-r1-VPM.json",
+      "relative_path": "xview-maf-union-r1-VPM.json",
+      "sha256": "d38a83d152a705a4796287bdd9bc4db1ea37aa81effa1eb5b1144e7fe345a7ad",
+      "bytes": 5666224
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-maf-union-r1-VPM.log",
+      "relative_path": "xview-maf-union-r1-VPM.log",
+      "sha256": "b1719cc5443c728728c9ff03e53c135321c513b39c511bc7fddf2588c458c179",
+      "bytes": 2043
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-r1-NPM.json",
+      "relative_path": "xview-r1-NPM.json",
+      "sha256": "65d3672248097248e1347d3654eb3b6720535a91edfa2ff739e529e86a9e9a5d",
+      "bytes": 2546134
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-r1-NPM.log",
+      "relative_path": "xview-r1-NPM.log",
+      "sha256": "59e3acfc225703c50851db030ce82e29ffdcac574612fde447407d76ce73fd22",
+      "bytes": 548
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-r1-VPM.json",
+      "relative_path": "xview-r1-VPM.json",
+      "sha256": "890e16359e28f787a444cae3afa7e0a460252340ee8d55cb05f1d20ad4d7d568",
+      "bytes": 37157267
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v012\\xview-r1-VPM.log",
+      "relative_path": "xview-r1-VPM.log",
+      "sha256": "ec2c19c30aa79aa33071e01f98beaf82967ced9002c57ca9a3dc15b2035d9b85",
+      "bytes": 5801
+    }
+  ],
+  "file_count": 101,
+  "bytes": 213842464,
+  "sha256sums_sha256": "045ce8a3d7089109bc7e5498f610853dca6e7f618f720626d085f76af617a797",
+  "decision": "D301"
+}

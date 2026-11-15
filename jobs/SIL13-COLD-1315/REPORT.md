@@ -1,6 +1,15 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v011/r2 continuous hedge-volume candidate [D298], not delivered**.
+Current status: **v012/r1 accepted continuous hedge construction [D301], not delivered**.
+See [CONTINUATION-v012.md](CONTINUATION-v012.md): all4,582plant IDs/points/heights
+and38MAF retained; actual162,159/334,422render triangles. Correct one-based public
+xView witness decoding removes all NPMFlora faces/vertices/bowties; actual crown
+support minima78.225%/78.655%,0below68%. D300construction-picture gate CLOSED.
+Whole-file validators stillFAIL. Native39/48MAFface loss remains; a fresh native
+original-library Bench025 already fails37faces. A new copy-only MAF constructive
+repair/C44 model choice is explicit; no technical waiver or library edit requested.
+
+Historical status: **v011/r2 continuous hedge-volume candidate [D298], not delivered**.
 See [CONTINUATION-v011.md](CONTINUATION-v011.md):4,535hedge census plants merged
 into physical run volumes; all4,582plant IDs/points/heights and38MAF retained.
 Actual162,743/334,928render triangles; independent actual-export support minimum

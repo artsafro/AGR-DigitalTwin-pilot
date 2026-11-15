@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-continuous-hedges-v011-r2
+run_id: cold-1315-accepted-continuous-hedges-v012-r1
 synthetic: false
 path: deviation
 inputs: &id001
@@ -75,11 +75,20 @@ deviations:
   new_tool_written: No shared module/checker changes. Owned job-local drivers, actual failures and pilot exports sealed in evidence-v011.json.
   result: Preferred r2 actual162743NPM334928VPM,4582IDs/census and38MAF retained,minimum support78.225/78.655percent; native39/48inheritedMAFface
     loss and technical FAILs remain. New continuous construction picture perD300 pending, not another D298route decision.
+- gate: operations
+  what_failed: Old v011 edge repair used one-based xView IDs as zero-based. Native MAF39/48face loss persists. Original native library bench37xViewfaces;
+    closed-component Boolean worsens bench40to70faces/38nearvertices and is rejected.
+  what_was_tried: D301accepted continuous hedges replicated; distance-checked one-based decoder and bounded actual-edge contractions; actual exports/fourreadbacks
+    and independent connected support/census audit. SevenMAFtypes isolated, original bench freshly imported read-only, C44/model boundary identified
+    before changing thin details.
+  new_tool_written: Job-local drivers/tests/diagnostics sealed in evidence-v012.json; no shared module/checker/library changes.
+  result: Actual162159NPM334422VPM;all4582IDs/38MAF retained;NPMFlora0faces0vertices0bowties0area;minimum crown78.225/78.655percent. Whole validatorsFAIL.
+    New copy-only MAF constructive/thin-detail repair choice is distinct from closed hedge gates.
 gates:
   inputs:
     status: review
-    note: 4source/9library/3original-map hashes reverified. Libraries untouched; interim/grey/source gaps retained; D298volume direction accepted,
-      changed-construction pilot pending.
+    note: 4source/9library/3original maps plus original bench hash unchanged;D301hedge construction accepted and replicated. Existing source/grey
+      gaps remain disclosed.
     evidence: *id001
   parts:
     status: pass
@@ -90,39 +99,37 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D298route and>=68percent floor CLOSED. Actual r2 continuous envelopes preserve4535hedge census and4582plants/38MAF. D300new-construction90plant
-      pilot awaits shape choice; technical FAILs not offered for approval.
+    note: D301hedge picture CLOSED. Correct one-based witnesses:actual NPMFlora0/0/0 and0area;all4582census/38MAF retained. New copy-only MAF
+      joint/thin-detail scope/C44 choice needs model owner; no failed technical check offered for approval.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v011-r2.json
-      sha256: 4f822abb6574add15cc23f16e5ce0ad6cc07b588a6933ff1888916e872723975
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v012-r1.json
+      sha256: 0ce0edbef4281ab574911d74b1975e1c0cfd292ba93d7d34623d710db2427791
     waits: user
   budgets:
     status: review
-    note: Actual162743NPM<=180000;334928VPM<=2625000;600UCX6876tri. Actual support minimum78.225/78.655percent>=68. Material/UV/density and envelope
-      seating checks incomplete.
+    note: Actual162159NPM<=180000;334422VPM<=2625000;600UCX6876tri. Actual connected-support minima78.225/78.655percent>=68. Materials/UV/density
+      incomplete.
     evidence: *id002
   export_readback:
     status: review
-    note: Actual r2 fresh raw/native reads; native removes39/48inheritedMAFfaces. Actual47nonhedges/Ground/MAF/600UCX exact. Independent4535crown
-      controls perprofile>=68; individual heights preserved in census, shared top differences<=0.181/0.222m. Whole xViewFAIL. Isolated90plant
-      native imports exactfaces<=6.65um vertices.
+    note: Fresh raw/native FBX2profiles;NPMFlora faces exact,vertices<3.815um. Inherited native MAF39/48face loss remains. Whole xViewFAIL, all
+      Ground/MAF/600UCX and47nonhedge copies exact against accepted baseline.
     evidence: *id002
   report:
     status: review
-    note: v011four-area continuation with exact exports, new representation, rejected numerical repairs, original hash controls and immutable
-      evidence; no delivery/readiness claim.
+    note: v012four-area evidence/commands/real failures and new model boundary;835actual tagged skirt controls>=1m but public perimeter0.006mFAIL
+      retained, not waived.
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v011.md
-      sha256: 933044e02c7e0e662ba3cc034e7f9078447f0bca9a77cbd6679d6a2e6f934b4e
-    - path: jobs/SIL13-COLD-1315/evidence-v011.json
-      sha256: 21f500d7d320aeda1905a59fb3839e1e45e14999db3fa6d611a18b204d6ee368
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v012.md
+      sha256: 399a9308a83abfa2f1ca35ecf8c4bc53491fb66c69711c890e93058bb3c2e892
+    - path: jobs/SIL13-COLD-1315/evidence-v012.json
+      sha256: a05ee6c06c4fd6c1ebf917258c81196cab2efe7c4ee092013d7a21dca9194d30
   visual:
     status: review
-    note: D287composition/D291star/D294pilot/D298continuous-route gates CLOSED. D300new continuous-volume construction picture pending; not final
-      textured approval. r2 fullsite and separate90plant component sheet, actual hashed exports.
+    note: D287composition/D291shrub/D294pilot/D298route/D301continuous-construction gates CLOSED. Actual native site render and library/REJECTEDBoolean
+      comparison retained; final textured user approval not yet requested.
     evidence: *id002
   checker:
     status: missing
-    note: Complete final SINTEZ not run. Actual r2 public validatorsFAIL:NPM2pass3fail1review2not_run;VPM3pass3fail1review5not_run. r5 rejected;
-      its VPMnot_run is not pass.
+    note: Complete final SINTEZ not run;actual NPM2pass3fail1review2not_run/VPM3pass3fail1review5not_run;neither is pass.
     evidence: []

@@ -100,6 +100,16 @@ is CLOSED: v009/r1 actually replicates 4,576 shrubs, retaining all 4,582 plants,
 one interim Flora atlas without changing geometry. No technical/delivery waiver.
 Aggregate hedge contacts remain FAIL despite isolated-pilot success; the original
 v007/r1 is historical, not the current full-site export.
+[D301] / issue comment 6890885700 accepts the v011/r2 90-plant continuous hedge
+silhouette and common top envelope without edits for site-wide replication. The
+[D300] construction-picture gate is CLOSED. v012/r1 retains the site-wide volumes,
+corrects one-based xView witness handling in a bounded numerical edge repair,
+and exports actual 162,159 NPM /334,422 VPM render triangles. All 4,582 census
+records, 38 MAF and planting points remain; the 68% floor is not reopened.
+NPM Flora xView is now 0 faces /0 vertices /0 bowties, but whole-site technical QA
+still FAILs. See `CONTINUATION-v012.md` for the new MAF source-construction choice;
+this is not another Flora or composition gate.
+
 Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.
 Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Syringa
