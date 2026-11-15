@@ -80,6 +80,35 @@ def test_uv_copy_guard_controls():
     assert not [f for f in guard.scan_text(text, 'tools/blender/vpm_uv.py') if f.rule == 'vpm-uv']
 
 
+def test_empty_geometry_fails_before_mutation(uv):
+    for function in (uv.texel_cut, uv.pack_uv):
+        with pytest.raises(ValueError, match='empty'):
+            function(types.SimpleNamespace(faces=[]), [], {})
+
+
+@pytest.mark.parametrize('kind', ['', None, 'unsupported'])
+def test_unknown_finish_kind_is_not_placeholder(uv, kind):
+    with pytest.raises(ValueError, match='finish.*kind'):
+        uv.lmax({'size_full': 4096, 'finishes': {'finish': {'kind': kind}}}, 'finish')
+
+
+@pytest.mark.parametrize('kwargs', [{'padding_px': math.nan}, {'padding_px': math.inf},
+    {'density_px_per_m': 0}, {'density_px_per_m': math.nan}, {'padding_px': 2048},
+    {'padding_px': -1}, {'density_px_per_m': True}])
+def test_unmeasurable_quad_policy_is_an_error(kwargs):
+    policy = load('tools/blender/vpm_uv_policy.py', 'uv_policy_negative_test')
+    with pytest.raises(ValueError):
+        policy.max_quad_side(4096, **kwargs)
+
+
+def test_partial_and_nonfinite_full_finish_are_errors(uv):
+    for finish in ({'kind': 'full', 'S': 4.096, 'P': [0.3], 'shift': [True, True]},
+                   {'kind': 'full', 'S': 4.096, 'P': [0.0, 0.3], 'shift': [True, True]},
+                   {'kind': 'full', 'S': 4.096, 'P': [math.nan, 0.3], 'shift': [True, True]}):
+        with pytest.raises(ValueError, match='finish'):
+            uv.lmax({'size_full': 4096, 'pad_m': 0.04, 'finishes': {'finish': finish}}, 'finish')
+
+
 def test_no_delivery_changes():
     paths = subprocess.check_output(['git', 'diff', '--name-only', 'origin/main', '--', 'jobs'], cwd=ROOT, text=True).splitlines()
     assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)
