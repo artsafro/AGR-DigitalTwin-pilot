@@ -44,7 +44,7 @@ def _root(tmp_path, files, contexts="contexts:\n  - id: x\n"):
         p.write_text(text, encoding="utf-8")
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text(contexts, encoding="utf-8")
-    return ["--root", str(tmp_path), "--contexts", str(ctx)]
+    return ["--root", str(tmp_path), "--contexts", str(ctx), "--copies-only"]
 
 
 def _row(at, ru=None, rule="delivery-zip"):
