@@ -291,6 +291,12 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R23** proposal 2026-11-14, job/4bk-k3-vpm - pattern: АКП joint UV by left-edge stacking (Artem's method — every
   joint is an edge, panels share one texel and stack by their joint edge on one painted line; long faces with mid
   joints go to a second tile); seen 1 user explanation + 3 agent runs re-deriving joint layouts; effort M
+- **R24** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: assemble a review .blend from named part files
+  (`assemble_files.py out typ name=path ...`, append objects read-only, one collection per part); seen 4 times
+  (K3_GF_full_review_v006–v009); effort S
+- **R25** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: build a 3ds Max QUAD review scene from a part FBX with
+  one Multi/Sub of viewport-visible UDIM bitmaps per ID, then readback (material per face, bitmap on disk, UV inside
+  its tile) and 2-3 captures; seen 9 times (STY_B_uv_review v002–v007, K3_A_tex_review v001–v003); effort M
 
 ## Harness and organization (default owner Codex)
 

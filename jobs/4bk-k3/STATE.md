@@ -1,39 +1,44 @@
-# 4bk-k3 — state (2026-11-14)
+# 4bk-k3 — state (2026-11-15)
 
-Status: **VPM modelling + UV in review by Artem; not passed.** Two VPM deliveries (tower K3, small stylobate),
-then NPM. Requirement, decisions and quotes: `TASK.md`. Inputs: `sources.json`. Parts/Gate 1: `parts/k3_parts_v001.json`.
+Status: **two buildings are at about 80 %.**
+- Tower floor 1 (A) and the stand-alone stylobate (B): Artem accepted geometry, UV and UCX.
+- Artem hand-finished both buildings into the etalon files `63_4BK_vlad/bldA.max` and `bldB.max`.
+- What is left waits on Artem: naming (address), the full texture set, GeoJSON, pivot (rotation angle), canopies (his typical model).
+- Artem is now working on the big tower (typical floors) by hand.
+
+Requirement, decisions and quotes: `TASK.md`. Inputs: `sources.json`.
 
 ## Where the work is (outside git, owner's PC)
 
-- Max scene (current): `C:\Users\artsafro\Desktop\!3D viz\!А101\63_4BK_vlad\build\3k_v004.max` (Max 2026, PID was
-  563748), layer `K3_VPM_v001`: 61 part objects + 33 `K3_AC_*` + `K3_Stylo{Windows,Doors,Glass}`; Multi/Sub per part
-  `MS_K3_{Typ,Band,Super,Roof,Stylo,AC}` + `M_K3_Glass`. Older: 3k_v001 (Vlad's scene + helpers), v002, v003.
-  Source inbox untouched.
-- Blender assembly: `…\build\blender\K3_assembly_v006.blend`; FBX `…\build\fbx\K3_assembly_v006.fbx` + manifest JSON;
-  Max material scripts `…\build\fbx\k3_materials_v00{1,2,3}.ms`; textures `…\build\textures\` (Bricks1 stays in inbox).
-- Part sources (scratchpad of session d1636320, temporary): `…\scratchpad\4bk_parts\{typ,band,super,roof,stylobate,
-  stylobate_win,ac,tower_akp}\`, scripts in `…\scratchpad\4bk_scripts\`. Copy to the build folder before the scratch
-  is cleaned.
+Root: `C:\Users\artsafro\Desktop\!3D viz\!А101\63_4BK_vlad\`.
 
-## Versions in the current assembly
-
-typ_uv_v003 (+ slats), band_uv_v003, super_uv_v004, roof_uv_v003, stylobate_uv_v003, stylo_win_v001, ac_v001.
-Tower АКП: 3 tiles T_K3_AKP_{A,B,C} = ID2/ID11/ID12 at 512 px/m (left-edge stacking). Brick: Bricks1, 38 courses
-per 3.15 m floor (1029 px/m). Stylobate brick with joints: T_K3_StyloBrick, 1 tile, 512 px/m.
+- **Etalons (Artem):** `bldA.max` (sha256 5682f5f6…1d85) and `bldB.max` (sha256 2bd42fa9…993c).
+- **Combined scene:** `scene_build_A_build_B_v002.max`, with layers Build_A, Build_B, UCX_A and UCX_B. Counts match the etalons.
+  `scene_build_A_build_B.max` is an identical first build; Artem said to keep it.
+- **Parts** in `build\gf_parts\`:
+  - A: geometry `gf_body_A_v004`, `gf_windows_A\v003`, `gf_roof_A_v003`;
+  - A UV: `*_uv_v003` (body) and `*_uv_v002` (windows, roof);
+  - B UV: `sty_*_uv_v00x`;
+  - UCX: `ucx_A\gf_ucx_A_v001.blend` (24 pieces, 316 tris) and `ucx_B\sty_ucx_B_v001.blend` (10 pieces, 148 tris).
+- **Checks:** `build\gf_parts\_check\check_v006…v009.md`.
+- **Etalon analyses:** `_review\max\artem_v007_analysis\ANALYSIS.md` and `_review\max\artem_final_analysis\ANALYSIS.md` (Artem confirmed the latter).
+- **Tower (typical floors, earlier work):** `build\3k_v004.max`, `build\session_d1636320\4bk_parts\`.
 
 ## Acceptance vs Requirement (TASK.md)
 
 | Item | State | Evidence |
 |---|---|---|
-| VPM of K3 (tower) by the end of the week (meeting 2026-11-11) | not met — model + UV done, review open | 3k_v004.max |
-| Typical parts modelled once, textured, replicated | met | typ module ×13, band ×2 |
-| Superstructure, roof + pergola + railing | met (roof v001 accepted 2026-11-12) | super_uv_v004, roof_uv_v003 |
-| Small stylobate roof, canopies, stair, windows/doors | met, in review | stylobate_uv_v003, stylo_win_v001 |
-| Materials per architect TZ (changed by later decisions in TASK.md) | met as decided | TASK.md sections |
-| Two VPM deliveries (decision 2026-11-12) | not started (split, naming, package) | — |
+| VPM of K3 tower | partly: floor 1 A at 80 %; typical floors in Artem's hands | bldA.max; 3k_v004.max |
+| Small stylobate VPM (separate delivery, 2026-11-12) | 80 %: geometry, UV, UCX accepted | bldB.max, ucx_B report |
+| Floor 1 + stylobate from Revit (2026-11-14) | met: geometry accepted (A v004, B v003) | TASK.md "accepted" sections |
+| Joints / UV / IDs / UDIM | met by Artem's hand finish; final UDIM distribution by Artem | artem_final_analysis |
+| UCX | met: A and B v001 accepted 2026-11-15 | ucx_*_v001_report.json |
+| Canopies | not started; waiting for Artem's typical model | — |
+| Naming, GeoJSON, pivot, ERM/normal | not started; waiting for address and rotation | — |
 | NPM | not started | — |
 
-## Open checks
+## Open
 
-xView in Max not run; triangle count tower ≈ 146 k + 300 AC (target 150 k per OKS FBX); package (address, stem,
-GeoJSON, naming) waits for Artem; UDIM renumbering contiguous at packaging; window drafts not in `library/windows/`.
+- Known window defects go to a separate kanban card (TASK.md "Known window defects").
+- Facade grid rule (report-only check): to write after acceptance (Artem 2026-11-15, «Сначала только отчёт»).
+- Backlog Q10: shared visibility checker (Codex).
