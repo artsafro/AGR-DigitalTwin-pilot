@@ -765,6 +765,17 @@ def test_reviewer_clause_delegations(tmp_path, repo, evals, capsys, text):
              "tests delegated to the reviewer")
 
 
+@pytest.mark.parametrize("action", ["rerun", "run"])
+def test_reviewer_completed_reruns_rejected(tmp_path, repo, evals, capsys, action):
+    from twinqa.evals.handoff import delegation
+
+    text = f"The reviewer should {action} the tests I ran: 398 passed."
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "tests delegated to the reviewer")
+
+
 def test_reviewer_clause_generated_probe():
     """Synthetic clause boundaries/passive matrix, including earlier negation/order controls."""
     from twinqa.evals.handoff import delegation
