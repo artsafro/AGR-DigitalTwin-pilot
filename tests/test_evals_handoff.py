@@ -786,6 +786,19 @@ def test_reviewer_inspection_then_execution_rejected(tmp_path, repo, evals, caps
              "full suite delegated to the reviewer")
 
 
+@pytest.mark.parametrize("text", [
+    pytest.param("Tests: reviewer to run.", id="to-run"),
+    pytest.param("Full suite: the reviewer (rule 68).", id="parenthetical"),
+])
+def test_reviewer_shorthand_tails_rejected(tmp_path, repo, evals, capsys, text):
+    from twinqa.evals.handoff import delegation
+
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "delegated to the reviewer")
+
+
 def test_reviewer_clause_generated_probe():
     """Synthetic clause boundaries/passive matrix, including earlier negation/order controls."""
     from twinqa.evals.handoff import delegation
