@@ -64,7 +64,7 @@ def _root(tmp_path, files, contexts="contexts:\n  - id: x\n"):
         p.write_text(text, encoding="utf-8")
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text(contexts, encoding="utf-8")
-    return ["--root", str(tmp_path), "--contexts", str(ctx)]
+    return ["--root", str(tmp_path), "--contexts", str(ctx), "--copies-only"]
 
 
 @pytest.mark.parametrize("rel", ["tools/derive/new.py", "src/dt_ai/new.py", "jobs/J/new.py"])

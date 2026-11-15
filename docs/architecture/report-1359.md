@@ -1,4 +1,71 @@
-# #1359 — Event Storming + context map of the NPM/OKS route on KPP1
+# NPM/OKS route v2 — #1440 (original map #1359)
+
+## Обновление для Артёма — 2026-11-15
+
+Маршрут теперь содержит **11 шагов**: исходники → части → Gate 1 → модель →
+UV/атлас → **версия НПМ на атласе** → экспорт/пакет → свежее чтение → проверки →
+СИНТЕЗ → передача Артёму. На DCC-шаге агент выбирает Blender / Max / AGR Tools
+и пишет причину одной строкой [D293]. Мастер: квады где возможно, неизбежные
+треугольники с числом и долей по объекту, n-gon >4 запрещён до триангуляции [D312].
+Ветка участка условная: это не требование строить Ground для каждой задачи ОКС.
+
+- Облегчение только на копиях `<original>__<job>` вне библиотеки, с записью
+  в манифест задания для очистки после сдачи [D301].
+- НПМ: агент приносит варианты 50k / 60k / 70k, Артём сокращает
+  ([дополнение #1412](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1412#issuecomment-6892291256));
+  это не замена нормативного лимита ОКС [D010].
+- Flora **всегда** имеет opacity: НПМ — отдельная карта формирует силуэт;
+  ВПМ — Diffuse с alpha (тот же комментарий #1412; D-row пока отсутствует).
+  Временные карты допустимы, Артём смотрит вид в конце [D299].
+- 4096 tile: сторона квада 3.8–4 m, UV-острова могут перекрываться/stack:
+  [Артём 2026-11-15, #1380 comment-6893094521](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1380#issuecomment-6893094521).
+  D021 / conflicts item 26 даёт прежний ориентир около 4 × 4 m, но не регистрирует
+  новое разрешение stack. В исходной карточке ссылка на тело #1380 неточна:
+  источник — комментарий, тело задачи про compaction 5. Новую D-row здесь не создаём.
+- Если есть участок: плоский Ground → ID/текстуры → рельеф → поправка текстур
+  + юбка → UCX только ВПМ → МАФ/Flora → НПМ на атласе [D293].
+  МАФ-ограды/навесы без UCX [D298]; не попавшие на поверхность объекты удаляются
+  с записью в отчёте [D302]. Архив или Max-сцена с квадами — Артёму, он принимает
+  и передаёт заказчику [D300].
+
+### Красные блоки: текущее состояние (не статус приёмки модели)
+
+| Block | Status / owner | Evidence |
+|---|---|---|
+| UDIM copies | Закрыто на живом маршруте #1376; `udimtile_core` | `contexts.yaml`, `tests/test_udim_compaction_1376.py` |
+| Package copies / owner | Закрыто #1377/#1361; единственный ZIP writer `package_core._write_zip`; фасады `agr package-npm` / `package-vpm` | `contexts.yaml`, `tests/test_package_compaction_1377.py` |
+| Blender launch copies | Закрыто #1378; `blender_runner.blender_command` / `run_blender` | `contexts.yaml`, `tests/test_blender_compaction_1378.py` |
+| Historical copies | Сохранены с причинами; актуальные адреса/классы #1424 — в `contexts.yaml`, не в старом списке ниже | `report-1424.md` |
+| Tool lock / master topology | Решено D293 / D312; не означает проверку реального мастера | `npm-oks-route.events.yaml` |
+| Roof / windows | Правило выбора решено D292; история исходного расхождения сохранена | `routes/npm-oks.md` |
+| Two atlases | Открыто #1141; владелец `atlas_core`, Python UDIM путь остаётся отдельным | `contexts.yaml` |
+| xView / manual gates | Не пройдено в цитируемом benchmark #1343 (112/116); V015/V017 не закрываем этой картой | `docs/research/bench-npm-derivation.md` |
+| SINTEZ CLI | Общей команды agr/dt нет; job runners остаются | `npm-oks-route.events.yaml` |
+
+### Views / evidence
+
+`npm-oks-route.events.yaml` → `uv run python tools/architecture/route_map.py` →
+`npm-oks-route.svg` + `.excalidraw`. Context view использует текущий `contexts.yaml`
+(owners после compaction 1–3); он не переписан этой задачей. #1425 / PR #1444
+ещё OPEN при обновлении: новый двухвидовой генератор не заимствуем из чужой ветки.
+PNG #1440 хранится отдельно от исторического рендера #1359, с SHA256SUMS.txt:
+`G:/Мой диск/AGR-evidence/1440-npm-oks-route-v2/v001/`.
+
+SHA-256 (перепроверены после копирования):
+- `npm-oks-route-v2.png`: `1e74206ee74cccc0777ab017ebbf94c66763a04459fe49fd4e0d545dd73202e2`
+- `npm-oks-contexts-v2.png`: `4ba37f680ff1a51600e5444fed26b231e851e72c6fea5a61b27d4fae98564228`
+
+Проверка #1440: исходная регрессия — 1 failed (нет actor agent-dcc), после
+обновления affected tests — 451 passed. `route_map.py --check` exit 0.
+Full suite: deferred to merge batch (rule 68). PNG — карта, не свидетельство QA модели.
+
+**Not done:** D-row for Flora opacity + 4096 quad rule, close C18 — decisions-fix
+follow-up (compaction 5 will register the tile rule). `docs/decisions.md` и C18
+в этой задаче не меняются. Это документация маршрута, не модель и не passed=true.
+
+## Historical #1359 snapshot (superseded counts, owners and proposed order)
+
+The remainder is the original audit evidence, not today's owner/status table.
 
 ## Кратко (для Артёма)
 
@@ -114,6 +181,11 @@ Non-package ZIP writers seen by the scan and deliberately not listed (not delive
    15 job writers are historical deliveries (9 VPM packagers among them), 7 tools/src archives are not packages.
 3. **One SINTEZ/checker command** (`agr checker` alias over the existing runner) from
    `jobs/KPP1/scripts/run_agr_checker.py` + TEC26 copy, so stage 9 has a command.
+   Done in #1379: `agr checker FOLDER --output NEW.json` (`tools/qa/sintez_checker.py`) runs the one launch
+   `tools/blender/sintez_checker.py` through `blender_runner` on a private copy of the ZIPs; the master QA moved to
+   `tools/blender/qa_master.py`; the KPP1/TEC26 job files are shims; guard rules `sintez-checker` + `master-qa`.
+   Rows that stay with a reason: elv-tc-vpm `run_agr_checker_v003.py` (frozen), PSU275 `qa_master_psu275.py`
+   (variant), TEC26 `qa_packages.py` (job-specific package checks validate_package does not own).
 4. **One Blender runner**: route `dt_ai/core/build.py`, `twinqa/scene.py find_blender`, `tools/qa/run_benchmark.py`
    through `blender_runner`.
 5. **Audit stage 1 for the whole repo** with this method (other routes: VPM, Ground, MAF, Flora), adding guard

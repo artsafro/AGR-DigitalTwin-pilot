@@ -44,7 +44,8 @@ CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution',
 RENDER_KEYS = {'engine', 'style', 'view_transform', 'look', 'exposure', 'gamma', 'use_curve_mapping',
                'use_white_balance', 'emulation',
                'display_device', 'world_color', 'world_use_nodes', 'background_type',
-               'background_color', 'thickness'}
+               'background_color', 'thickness', 'use_border', 'use_multiview',
+               'image_views_format', 'workbench'}
 TOLERANCE = 1e-6
 
 
@@ -106,15 +107,19 @@ def compare_render_state(before, after):
             raise ValueError(f'render keys missing {sorted(RENDER_KEYS - keys)} unknown {sorted(keys - RENDER_KEYS)}')
         for key, allowed in (('engine', {'BLENDER_WORKBENCH'}), ('style', STYLES),
                              ('emulation', {'AUTO', 'OFF'}),
+                             ('image_views_format', {'INDIVIDUAL', 'STEREO_3D'}),
                              ('background_type', {'WORLD', 'VIEWPORT', 'THEME'})):
             if not isinstance(state[key], str) or state[key] not in allowed:
                 raise ValueError(f'render {key} unsupported: {state[key]!r}')
         for key in ('view_transform', 'look', 'display_device'):
             if not isinstance(state[key], str) or not state[key].strip():
                 raise ValueError(f'render {key} must be a nonempty string')
-        for key in ('world_use_nodes', 'use_curve_mapping', 'use_white_balance'):
+        for key in ('world_use_nodes', 'use_curve_mapping', 'use_white_balance',
+                    'use_border', 'use_multiview'):
             if not isinstance(state[key], bool):
                 raise ValueError(f'render {key} must be a boolean')
+        if not isinstance(state['workbench'], dict):
+            raise ValueError('render workbench must be an object')
         for key in ('exposure', 'gamma'):
             _finite(state[key], f'render.{key}')
         if state['gamma'] <= 0:

@@ -22,6 +22,7 @@ binding); its report is the required check `fbx_readback`.
 import datetime
 import hashlib
 import json
+import math
 import os
 import re
 import zipfile
@@ -194,6 +195,15 @@ def ucx_binding(names):
     return out
 
 
+def _vec3(value):
+    """[x, y, z] of exactly 3 finite real numbers (bool refused), else None (#1434: fail closed)."""
+    if not isinstance(value, (list, tuple)) or len(value) != 3:
+        return None
+    if not all(isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v) for v in value):
+        return None
+    return [float(v) for v in value]
+
+
 def readback_summary(name, data_sha256, rb):
     """Export owner readback of one exported FBX: dimensions, part positions, materials, UV, UCX binding + status.
 
@@ -203,9 +213,13 @@ def readback_summary(name, data_sha256, rb):
     if not isinstance(rb, dict) or rb.get('readback_ok') is not True:
         problems.append('readback not ok')
     for m in (rb or {}).get('meshes', []) if isinstance(rb, dict) else []:
-        lo, hi = m.get('bounds_m', [[None] * 3, [None] * 3])
-        dims = [None if a is None or b is None else round(b - a, 6) for a, b in zip(lo, hi)]
-        row = {'name': m.get('name'), 'dimensions_m': dims, 'location': [round(float(v), 6) for v in m.get('location', [])],
+        bounds = m.get('bounds_m')
+        lo, hi = bounds if isinstance(bounds, (list, tuple)) and len(bounds) == 2 else (None, None)
+        lo, hi = _vec3(lo), _vec3(hi)
+        dims = None if lo is None or hi is None else [round(b - a, 6) for a, b in zip(lo, hi)]
+        loc = _vec3(m.get('location'))
+        row = {'name': m.get('name'), 'dimensions_m': dims,
+               'location': None if loc is None else [round(v, 6) for v in loc],
                'materials': list(m.get('materials', [])), 'uv_channels': m.get('uv_channels'),
                'triangles': m.get('triangles')}
         meshes.append(row)
@@ -214,8 +228,10 @@ def readback_summary(name, data_sha256, rb):
                 problems.append('{}: empty material slot'.format(row['name']))
             if not row['uv_channels']:
                 problems.append('{}: no UV channel'.format(row['name']))
-        if any(d is None or d != d for d in dims):
-            problems.append('{}: dimensions not read'.format(row['name']))
+        if dims is None or not all(math.isfinite(d) for d in dims):
+            problems.append('{}: dimensions not read (bounds_m must be 2 x 3 finite numbers)'.format(row['name']))
+        if loc is None:
+            problems.append('{}: location not read (must be 3 finite numbers)'.format(row['name']))
     if not meshes:
         problems.append('no mesh read back')
     binding = ucx_binding([m['name'] for m in meshes])
@@ -345,6 +361,9 @@ def parse_manifest(data):
             _sha(a[k], 'manifest artifact {} {}'.format(a['name'], k))
         if a['kind'] not in KINDS:
             raise ValueError('manifest artifact {} kind {!r} unsupported'.format(a['name'], a['kind']))
+        want = kind_of(str(a['name']))  # #1434 P3: kind follows the delivery name grammar
+        if a['kind'] != want:
+            raise ValueError('manifest artifact {} kind {!r} != {!r}'.format(a['name'], a['kind'], want))
         if not isinstance(a['parts'], list) or not all(isinstance(p, str) for p in a['parts']):
             raise ValueError('manifest artifact {} parts must be a list of names'.format(a['name']))
     if not isinstance(m['checks'], list):
@@ -358,6 +377,47 @@ def parse_manifest(data):
         if not isinstance(c['subjects'], dict):
             raise ValueError('manifest check {} subjects must be an object'.format(c['id']))
     return m
+
+
+def report_disagreements(path, check, members, fbx):
+    """#1434: what the check report says vs the manifest check entry and the zipped bytes; [] = they agree.
+
+    A hash-matching report proves only that the file was not edited after the build, not that it says pass."""
+    try:
+        with open(path, 'rb') as fh:
+            rep = strict_json(fh.read())
+    except (OSError, ValueError, TypeError, UnicodeDecodeError) as exc:
+        return ['unreadable: {}'.format(str(exc)[:300])]
+    if not isinstance(rep, dict):
+        return ['unreadable: not a JSON object']
+    out = []
+    if rep.get('schema') != READBACK_SCHEMA:
+        out.append('schema {!r} != {!r}'.format(rep.get('schema'), READBACK_SCHEMA))
+    if rep.get('status') != check['status']:
+        out.append('status {!r} != manifest {!r}'.format(rep.get('status'), check['status']))
+    if rep.get('finished') is not check['finished']:
+        out.append('finished {!r} != manifest {!r}'.format(rep.get('finished'), check['finished']))
+    files = rep.get('files')
+    if not isinstance(files, list) or not all(isinstance(f, dict) for f in files):
+        return out + ['files must be a list of objects']
+    got = {}
+    for f in files:
+        if f.get('name') in got:
+            out.append('files list {!r} twice'.format(f.get('name')))
+        got[f.get('name')] = f
+    sha = {n: f.get('sha256') for n, f in got.items()}
+    subj = check['subjects']
+    differ = sorted(str(n) for n in set(sha) | set(subj) if sha.get(n) != subj.get(n))
+    if differ:
+        out.append('files[].sha256 differ from the manifest subjects: {}'.format(differ))
+    off = sorted(n for n in fbx if sha.get(n) != members.get(n))
+    if off:
+        out.append('files[].sha256 differ from the zipped bytes or are missing: {}'.format(off))
+    if check['status'] == 'pass':
+        bad = sorted(str(n) for n, f in got.items() if f.get('status') != 'pass')
+        if bad:
+            out.append('file status not pass while the report passes: {}'.format(bad))
+    return out
 
 
 def manifest_findings(manifest_bytes, members, package_name, package_sha256=None, master_sha256=None,
@@ -436,6 +496,9 @@ def manifest_findings(manifest_bytes, members, package_name, package_sha256=None
             elif sha256_file(path) != c['report_sha256']:
                 out.append(('fail', 'manifest_report_hash', 'check {} report {} changed after the build'.format(
                     cid, c['report'])))
+            else:
+                out += [('fail', 'manifest_report_hash', 'check {} report {}: {}'.format(cid, c['report'], p))
+                        for p in report_disagreements(path, c, members, fbx)]
     for cid, c in sorted(checks.items()):
         if cid not in REQUIRED_CHECKS and c['required'] is True and (c['status'] != 'pass' or c['finished'] is not True):
             out.append(('fail', 'manifest_check_not_ready', 'required check {}: status {!r}, finished {!r}'.format(

@@ -56,10 +56,12 @@ contexts:
         match: "def pack_uv("
         issue: "#1359"
         ru: "своя раскладка UV ВПМ КПП1"
+        status: historical
       - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
         match: "def pack_uv("
         issue: "#1359"
         ru: "копия vpm_uv.py КПП1 (одна строка разницы)"
+        status: historical
   - id: npm
     ru: "НПМ в тех же координатах (ВПМ → НПМ)"
     area: docs/domain/areas/derivation.md
@@ -121,14 +123,11 @@ contexts:
       - name: validate_npm_zip
         contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
     duplicates:
-      - at: "jobs/KPP1/scripts/run_agr_checker.py:47"
+      - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47"
         match: "def dump("
-        issue: "#1359"
-        ru: "свой запуск чекера СИНТЕЗ"
-      - at: "jobs/TEC26-OKS/scripts/run_agr_checker.py:47"
-        match: "def dump("
-        issue: "#1359"
-        ru: "копия запуска чекера КПП1"
+        issue: "#1379"
+        ru: "остаётся: замороженная версия v003 запуска чекера; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
+        status: historical
   - id: ucx
     ru: "Коллизии UCX (только ВПМ)"
     area: docs/domain/areas/ucx.md
@@ -146,22 +145,28 @@ contexts:
         match: "def pieces("
         issue: "#1383"
         ru: "свои куски UCX КПП1"
+        status: live-bypass
+        step: "#1404"
       - at: "jobs/PSU275/scripts/vpm_ucx.py:45"
         match: "UCX_SM_"
         issue: "#1383"
         ru: "свои UCX ПСУ275"
+        status: historical
       - at: "jobs/TEC26-OKS/scripts/ucx_tri_core.py:44"
         match: "def triangulate_piece("
         issue: "#1383"
         ru: "своя триангуляция UCX ТЭЦ26"
+        status: historical
       - at: "jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29"
         match: "UCX_"
         issue: "#1383"
         ru: "запуск триангуляции UCX ТЭЦ26 AC08"
+        status: historical
       - at: "jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24"
         match: "UCX_"
         issue: "#1383"
         ru: "свои UCX СРЕDА по частям (960 UCX)"
+        status: historical
 relations:
   - from: dcc
     to: body

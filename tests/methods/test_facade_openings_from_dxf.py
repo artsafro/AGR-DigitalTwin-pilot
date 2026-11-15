@@ -245,3 +245,105 @@ def test_generated_rectangles(tmp_path):
         assert row['height_m'] == pytest.approx(h / 1000)
         assert row['sill_m'] == pytest.approx((y - 1000) / 1000 + .5)
         assert row['head_m'] == pytest.approx((y+h - 1000) / 1000 + .5)
+
+
+# --- #1324: fractional-mm rectangles; no aggregate float length equality -------------------
+WITNESS = (755.9134282751899, 8484.604284194555, 5473.886630918805, 8063.785749952365)
+
+
+def _write_case(tmp_path, name, edges=None, polyline=None, direction=1):
+    """Write a synthetic DXF + mapping with one opening W1 and a dropped annotation."""
+    folder = tmp_path / name
+    folder.mkdir()
+    doc = ezdxf.new()
+    doc.units = 4
+    msp = doc.modelspace()
+    handles = [msp.add_line(a, b).dxf.handle for a, b in edges or []]
+    if polyline:
+        handles.append(msp.add_lwpolyline(polyline, close=True).dxf.handle)
+    note = msp.add_text('synthetic')
+    source, mapping = folder / 'facade.dxf', folder / 'map.json'
+    doc.saveas(source)
+    mapping.write_text(json.dumps({
+        'facades': {'north': {'origin_mm': [1000, 1000], 'direction': direction, 'datum_m': 0.5}},
+        'openings': [{'id': 'W1', 'kind': 'window', 'facade': 'north', 'handles': handles}],
+        'drop': {note.dxf.handle: 'annotation'}}), encoding='utf-8')
+    return source, mapping, folder / 'schedule.json'
+
+
+def _corners(x, y, w, h):
+    return [(x, y), (x + w, y), (x + w, y + h), (x, y + h)]
+
+
+def _expected(x, y, w, h, direction=1):
+    left, right, bottom, top = x, x + w, y, y + h
+    horizontal = sorted((v - 1000) * .001 * direction for v in (left, right))
+    return {'left_m': horizontal[0], 'right_m': horizontal[1],
+            'sill_m': (bottom - 1000) * .001 + .5, 'head_m': (top - 1000) * .001 + .5,
+            'width_m': (right - left) * .001, 'height_m': (top - bottom) * .001}
+
+
+def _row(output):
+    row = json.loads(output.read_text(encoding='utf-8'))['openings'][0]
+    return {k: row[k] for k in ('left_m', 'right_m', 'sill_m', 'head_m', 'width_m', 'height_m')}
+
+
+def test_fractional_witness_cli_fresh_process(tmp_path):
+    import subprocess
+    import sys
+    source, mapping, output = _write_case(tmp_path, 'witness', polyline=_corners(*WITNESS))
+    result = subprocess.run([sys.executable, str(TOOL), str(source), str(mapping), str(output)],
+                            capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert _row(output) == _expected(*WITNESS)
+
+
+def test_generated_fractional_rectangles_cli(tmp_path):
+    import random
+    rng = random.Random(1324)
+    tool = load()
+    for i in range(200):
+        x, y = rng.uniform(-5000, 20000), rng.uniform(-5000, 20000)
+        w, h = rng.uniform(.001, 10000), rng.uniform(.001, 10000)
+        corners = _corners(x, y, w, h)
+        direction = rng.choice((-1, 1))
+        style = i % 4
+        if style == 0:
+            case = _write_case(tmp_path, f'g{i}', polyline=corners, direction=direction)
+        elif style == 1:  # reversed vertex order
+            case = _write_case(tmp_path, f'g{i}', polyline=corners[::-1], direction=direction)
+        else:  # LINE edges in shuffled order; style 3 also reverses every edge
+            edges = list(zip(corners, corners[1:] + corners[:1]))
+            rng.shuffle(edges)
+            if style == 3:
+                edges = [(b, a) for a, b in edges]
+            case = _write_case(tmp_path, f'g{i}', edges=edges, direction=direction)
+        source, mapping, output = case
+        assert tool.main([str(source), str(mapping), str(output)]) == 0, (i, x, y, w, h)
+        assert _row(output) == _expected(x, y, w, h, direction)
+
+
+def _negatives():
+    x, y, w, h = WITNESS
+    c = _corners(x, y, w, h)
+    edges = list(zip(c, c[1:] + c[:1]))
+    mid = x + w * .37
+    return {
+        'duplicate_edge': dict(edges=edges + [edges[0]]),
+        'duplicate_reversed': dict(edges=edges + [(edges[2][1], edges[2][0])]),
+        'duplicate_polyline': dict(edges=edges, polyline=c),
+        'overlap_partial': dict(edges=edges + [((mid, y), (x + w, y))]),
+        'overlap_tiny': dict(edges=[((x, y), (mid + 1e-6, y)), ((mid, y), (x + w, y))] + edges[1:]),
+        'gap': dict(edges=[((x, y), (mid, y)), ((mid + 1e-6, y), (x + w, y))] + edges[1:]),
+        'missing_edge': dict(edges=edges[:3]),
+        'spur_outside': dict(edges=edges + [((x + w, y), (x + w + 1.5, y))]),
+        'spur_inside': dict(edges=edges + [((mid, y), (mid, y + 1.5))]),
+    }
+
+
+@pytest.mark.parametrize('case', sorted(_negatives()))
+def test_fractional_negatives_cli(tmp_path, case, capsys):
+    source, mapping, output = _write_case(tmp_path, case, **_negatives()[case])
+    assert load().main([str(source), str(mapping), str(output)]) == 2
+    assert 'opening W1: incomplete, duplicate or nonrectangular outline' in capsys.readouterr().err
+    assert not output.exists()

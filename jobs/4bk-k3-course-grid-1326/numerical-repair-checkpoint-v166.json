@@ -1,0 +1,477 @@
+{
+  "passed": false,
+  "status": "numerical_subsets_green_new_thin_colour_visual_stage_and_remaining_technical_gates_open",
+  "branch": "improve/issue-1326-pilot-4bk-stylobate-brick-in-1-udim-keep",
+  "base": "main",
+  "pr": null,
+  "canonical_decisions": [
+    "D295",
+    "D296",
+    "D303",
+    "D304",
+    "D309",
+    "D310"
+  ],
+  "artifacts": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v159\\stylobate_two_tiles_repaired_v159.blend",
+      "sha256": "1fac66de956c8fa7ce5429b29dd24aa2e0e37910a0b8966d1b32b2daac2a5a31",
+      "bytes": 981100
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v160\\stylobate_two_tiles_repaired_v160.blend",
+      "sha256": "2c309066864d036eadbe5a5bc54fc42b5545ea3bf7d5668c9c1e03c1ebe12a76",
+      "bytes": 979742
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v160\\stylobate_pilot_v160_QA_OPEN.fbx",
+      "sha256": "c4d90a213515ce18b2bc42194a1825d06684faa8e71bf5d72e8999bfebf22cd8",
+      "bytes": 300188
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v160\\fbx-readback.json",
+      "sha256": "b579c1c9a1d20764d15a162a9f589b6ecda8b0b75b520623f841499cf80af05a",
+      "bytes": 1160
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v160\\fbx-lineage-readback.json",
+      "sha256": "04092bb23a9d96b011dea5d388ada0070ba368cc9aabe891d172d28937dce35a",
+      "bytes": 9337515
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v160\\xview.json",
+      "sha256": "e937f0ab5a77250bbfa0f0129e044614e76d73b397ed2af163abe5079364dc1a",
+      "bytes": 6267
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v161\\metrics.json",
+      "sha256": "0c714cf6a398695e768b8bdb124b2d00b55f03d5a59fac86d8674a27aee6cf9b",
+      "bytes": 1444
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v158\\independent-all-faces-png-check.json",
+      "sha256": "b2359713d911d22f9f6f1ae7934ae2cbdaf0295cad07a361f67cf2ebf6ad063d",
+      "bytes": 245445
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v162\\phase.json",
+      "sha256": "60f4fcb5025b0b13ce1a173f044d70666786e6ab12d066d0bc7a0aad21f88ecc",
+      "bytes": 318793
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v163\\source-vs-repaired-four-views.png",
+      "sha256": "fd55f9f60f36cd6961500b23c8bf2620961535ea2fac50cc47015303214eb171",
+      "bytes": 3291120
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v165\\actual-thin-colour-three-way.png",
+      "sha256": "c59630b61c6fb4161c371ae54718dcf36c5e7b900ecce54c10ea93242e98fa95",
+      "bytes": 205578
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v165\\actual-v160-colour-detail-chat.webp",
+      "sha256": "ca1e4dd5bfc57685f5024c7e787e8c7392492864d153efaaf88c5e2580470d1b",
+      "bytes": 3882
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Diffuse.1001.png",
+      "sha256": "bfefff4f005ab96b0be8fa4759519d09b92c13b0dde82ab0870cac8003b55dab",
+      "bytes": 393771
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Diffuse.1002.png",
+      "sha256": "44697d354edbb179059bbfec771778a62e4d37dc40d2c1424241771def26f73a",
+      "bytes": 459152
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_ERM.1001.png",
+      "sha256": "45b867972effa4eeac97331945268b1af5c54d85587086600b508eab2112cf79",
+      "bytes": 219469
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_ERM.1002.png",
+      "sha256": "d2f2a2b86faf8b6919ebaa626873f22fc2a680a97eb7d1f18d31f3c214f1d932",
+      "bytes": 253434
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Normal.1001.png",
+      "sha256": "a3841f3bf0a76d0e41f17a88b20e7b5bb55626ded3ef72a42ccdb8874aa3e183",
+      "bytes": 671334
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Normal.1002.png",
+      "sha256": "adfa0f6a859c14a843f004d2ef4b9d9241999929f1f4b6420866988dab832b80",
+      "bytes": 728289
+    }
+  ],
+  "seals": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v102\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v103\\SHA256SUMS.txt",
+      "sha256": "302d70f9f01308baf6e46ca48e3261f89546f0d46812ac638ad6ff4de2e02368",
+      "files": 2
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v104\\SHA256SUMS.txt",
+      "sha256": "0b3dd7bf8c5548f69d295f470bc66784ed1008e523258609a45c20e891edadbb",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v105\\SHA256SUMS.txt",
+      "sha256": "5beabb23636f3b5933ce7cdab4cb6d614fb6a55df8240b21e293bb9a9eabfd48",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v106\\SHA256SUMS.txt",
+      "sha256": "42e38d6c14ccf5f2bc58b40b8b5a4c37fb59bc1264259b045ef82313ee8ac5b2",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v107\\SHA256SUMS.txt",
+      "sha256": "15f62df6e21dba0f8d4e9cf30ecf41f3127acf8a95887f6e3dd01af07275f08c",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v108\\SHA256SUMS.txt",
+      "sha256": "3f9b65bd4ac9fa20c5a983df2683a8f40a0e61af48812135a65a34e8a460a578",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v109\\SHA256SUMS.txt",
+      "sha256": "dc8c7c09a1006669193e4312e86eb00dc162c80134c9bfb4438bba5275683948",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v110\\SHA256SUMS.txt",
+      "sha256": "b4810127a0c1f40ca822fbc82d285810d82be9d440695fecc0960a0964c9a5c8",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v111\\SHA256SUMS.txt",
+      "sha256": "30111a8b5e4ef06c24cb071ca3aed551b5e657e497c6d5d2fa36844222fac7d9",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v112\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v113\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v114\\SHA256SUMS.txt",
+      "sha256": "0da4d21deb30b4053becd2e41153402d30de2a53a13c6c0ebb41261bd4117566",
+      "files": 5
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v115\\SHA256SUMS.txt",
+      "sha256": "1f2fdbe1a80e98637fcaeafb870cb4a29df097745a7b77ca1507781d84cc9a2c",
+      "files": 7
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v116\\SHA256SUMS.txt",
+      "sha256": "324a3ac920fd980f12210d8e287bf35e52aafbdedb4b7cce40404aab34892382",
+      "files": 2
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v117\\SHA256SUMS.txt",
+      "sha256": "6b076eacca642229e13f1329d15f95cc309ca392a2a6c141f95cdadb5b43ce38",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v118\\SHA256SUMS.txt",
+      "sha256": "40b794011960fa83e7e343c9e21b1bc78cab235bdcbc99fb3cf0b09a5e4305b6",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v119\\SHA256SUMS.txt",
+      "sha256": "696643b340ddc368f84bdb7a3df1f47138342554e81f4fe18267b568a149f8f0",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v120\\SHA256SUMS.txt",
+      "sha256": "2507e439acf3818ea3f6e9b8629b4229451593e62209b94eb35b0a6aae6c8d9b",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v121\\SHA256SUMS.txt",
+      "sha256": "40b794011960fa83e7e343c9e21b1bc78cab235bdcbc99fb3cf0b09a5e4305b6",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v122\\SHA256SUMS.txt",
+      "sha256": "696643b340ddc368f84bdb7a3df1f47138342554e81f4fe18267b568a149f8f0",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v123\\SHA256SUMS.txt",
+      "sha256": "e5c556bd46ea7a5976b411c75f85245d8ef02c045767e917362cd12862873ca3",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v125\\SHA256SUMS.txt",
+      "sha256": "1047dcff3cfd67717399a247eafd7e51dfd144c311af893e368be050d793e933",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v126\\SHA256SUMS.txt",
+      "sha256": "9cdf897de2ba3ad2241c3a93fa27dbd4a8d6547a2f19325f400445423f0e833e",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v129\\SHA256SUMS.txt",
+      "sha256": "f00d51a5a24f348d8b70580409502cf2bedd45fc0b053c532cc95262c62e577b",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v130\\SHA256SUMS.txt",
+      "sha256": "9cc9336735922947e30f6c489dd4acee76998e6334cf517373f11ef1d65393fd",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v131\\SHA256SUMS.txt",
+      "sha256": "3a7c71b05658a3c99ca5425bb86a765e4890c45a16847ef27d9ea7c7fe7e3b64",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v132\\SHA256SUMS.txt",
+      "sha256": "c4ed0c95b9a165ba40cafa1ea6f3418eedf7666a3b1da08908d59acf7c1fbc55",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v133\\SHA256SUMS.txt",
+      "sha256": "9f3f5612e66075533ca8f3e8a6fe91668e626f3a45e76c637dbfa215bb579a7e",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v134\\SHA256SUMS.txt",
+      "sha256": "d2a432874d7634735a44b7779cfca1aa8b42d64c73e3fb93cb40a6db89a9cad7",
+      "files": 7
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v135\\SHA256SUMS.txt",
+      "sha256": "b0b982d20fde8fe45381b775faec370569578843059c380d4a901a4f4322f675",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v136\\SHA256SUMS.txt",
+      "sha256": "8e8f8ac55f494f5cf1862385eb541143b4f49bf846eee3a2d6c622dfbf8c8c84",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v137\\SHA256SUMS.txt",
+      "sha256": "cee467946618c3f83d05249bda8befd87e8d6c48b82ac13297c4cd77ecd7d744",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v138\\SHA256SUMS.txt",
+      "sha256": "0d2c9bdb4d1f6f4a6ad33afff703decaef57dedda439dd341cbbc148f6e59964",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v139\\SHA256SUMS.txt",
+      "sha256": "ce252831f33ed4bbc1aceab12c91249c660e6ee11fbe3dd8ede811ec4d7f1f76",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v141\\SHA256SUMS.txt",
+      "sha256": "e9a0e7b9e4d8a345d951c939a882852efd2a4f214715ea0dbadb268a1c7a1466",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v142\\SHA256SUMS.txt",
+      "sha256": "d16cfa127d847942603e03666a4a068b6d34311b6edda7ba7d7923054de091a8",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v143\\SHA256SUMS.txt",
+      "sha256": "1196a0fd175c1039cceb385503d42aebe4a1a3841a72bdb879536f9be3c0f027",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v144\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v146\\SHA256SUMS.txt",
+      "sha256": "b776804e5e3f971826941db62c8a5aeee127be4e709d8531b56bdcc4755ae7eb",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v147\\SHA256SUMS.txt",
+      "sha256": "0c0bc7e1ae68e1fd5b8212b3dffde7249d64af356823d602c40c9539749e49c0",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v148\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v149\\SHA256SUMS.txt",
+      "sha256": "e8858caab4c183f157d5a4b6f3af00c96b76c6ffb71a90c1d88b672e04cebdff",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v150\\SHA256SUMS.txt",
+      "sha256": "c4d11bad88d3b291aa46b64481f4daa37617c5c0283b67911ef0963dd418ebfa",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v151\\SHA256SUMS.txt",
+      "sha256": "d98c48ef100d104df9e9ed6afa95d217158b5e25aac680bbc7e04ffc74c0988c",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v152\\SHA256SUMS.txt",
+      "sha256": "9980bc9577889db4bf7c7f9a18b7a1c71d97b8c8d3ef0aa4251adeff062cc067",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v153\\SHA256SUMS.txt",
+      "sha256": "06a8a485724aea43870d634907f65ef697b284930a123aab1e81fca096362105",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v154\\SHA256SUMS.txt",
+      "sha256": "87745ab6cd50fcbfc57b5de30d093b1e1393f1051544c5b78a4bc333aae60ad2",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v155\\SHA256SUMS.txt",
+      "sha256": "4094d2e97a973da01658158487672fb682b42fc1cbe28806e2a48e41e0418026",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v156\\SHA256SUMS.txt",
+      "sha256": "da4cac447ceeb0946390ebcd666f374982cc86d2727cf49f540f38d0ceb10cab",
+      "files": 7
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\SHA256SUMS.txt",
+      "sha256": "1db332ff40c255e64d0cbf1edcf373eb25c5049f77e9cf2ac39dd63622bb04c2",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v158\\SHA256SUMS.txt",
+      "sha256": "732dfc90fa6b467c0712bc419b5b1431ad5d6a4a91eaf4e519f6b7db1a132663",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v159\\SHA256SUMS.txt",
+      "sha256": "d2beb2d8345c01ac7545a52add05aad1a0be53a296bdec4f61335e7bdda99e00",
+      "files": 2
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v160\\SHA256SUMS.txt",
+      "sha256": "09ecb167eb59c9e9208d2286d847beac2a5c4f0eafc8962542d5423e97205049",
+      "files": 7
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v161\\SHA256SUMS.txt",
+      "sha256": "45c03e8b1d0ceaeff206058e4db555062102325cf6edf017eaf09b3c00ad620f",
+      "files": 2
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v162\\SHA256SUMS.txt",
+      "sha256": "78fa77182da765771cf0405bd112ac6a8526ae14ec4495fb14f6dd6c8fafc913",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v163\\SHA256SUMS.txt",
+      "sha256": "4594d583c343affbb886571c8718378b4f75e1234a24d702405805fd74855cba",
+      "files": 6
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v164\\SHA256SUMS.txt",
+      "sha256": "eaba3c12768aa812c75554c7edc02e29be262af0d447605d8f872e7c65097c5f",
+      "files": 4
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v165\\SHA256SUMS.txt",
+      "sha256": "a6b004781dd9776bf7eb9b8b2c32e761348b3a6228282a406f594f9f791711f9",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v166\\SHA256SUMS.txt",
+      "sha256": "b51ce20bf82f7227d2b72aefb8d03c421125f8df23f4d57cfb37bb8459ef30f2",
+      "files": 264
+    }
+  ],
+  "source_hashes_verified": 10,
+  "prior_v045_native_export_hashes_verified": 2,
+  "verification": {
+    "affected_command": "uv run pytest -q tests/test_course_grid*.py tests/test_decisions.py tests/max_tools/test_agr_tools_vpm_layout.py --basetemp=C:/x/t_d517d7c6-affected-v166 -p no:cacheprovider",
+    "passed": 360,
+    "deselected": 1,
+    "failed": 0,
+    "seconds": 15.65,
+    "full_suite": "deferred to merge batch (rule68)",
+    "generated_raster_probe": "600/600, seed1326, independent Shapely overlap"
+  },
+  "metrics": {
+    "passed": false,
+    "status": "actual_export_QA_red",
+    "source_identities": 2015,
+    "target_sources": 771,
+    "target_triangles": 5149,
+    "measured_nonzero_triangles": 5149,
+    "degenerate_triangles": 0,
+    "density_failed": 0,
+    "density_min": 512.0029375822871,
+    "density_max": 516.4020804347442,
+    "max_anisotropy": 1.0085757365731305,
+    "spread_p95_p5_over_p50": 4.031178408982256e-05,
+    "mirrored_triangles": 0,
+    "invalid_uv_polygons": 0,
+    "pages": [
+      {
+        "tile": 1001,
+        "classes": 236,
+        "raw_union_percent": 58.49705767049021,
+        "padded_union_percent": 87.18889494996745,
+        "min_border_px": 32.81327438354492,
+        "true_min_gap_px": 33.87293065646798
+      },
+      {
+        "tile": 1002,
+        "classes": 516,
+        "raw_union_percent": 11.569223768761406,
+        "padded_union_percent": 50.779406648652746,
+        "min_border_px": 49.984375,
+        "true_min_gap_px": 34.88076500493531
+      }
+    ],
+    "uv_class_errors": [],
+    "source_topological_uv_components": 500,
+    "native_topological_uv_components": 2819,
+    "component_edge_uv_tolerance": 1e-07,
+    "notes": [
+      "FBX density uses actual imported loop triangles, not inherited native triangles",
+      "topological component counts use source/native vertex-edge identities and UV endpoints, not geometric union or logical appearance classes",
+      "no course/joint-centre/anisotropy acceptance from this red report"
+    ]
+  },
+  "open_items": [
+    "NEW thin Diffuse-core visual verdict (Normal direction already confirmed)",
+    "3 wall area-only pairs (715,62),(725,66),(729,396), zero-based: no waiver",
+    "full all-map Normal-frame/support, carrier/junction centre/width/mip certificate",
+    "full source/protected surface certificate",
+    "reusable executable bake/native finalization (not satisfied by planner/math alone)",
+    "final receipts/evals/main merge/one PR/dt-reviewer"
+  ],
+  "next_steps": [
+    "Start NEW outputs v167+; immutable v102-v166 sealed",
+    "Read NUMERICAL_REPAIR_RESULT.md; keep D310 Normal direction, D304 budget and D296 baseline answered",
+    "After new colour verdict repair only the 3 wall area-only pairs; preserve current771/771 PNG and5149/5149 directional coverage",
+    "Complete remaining numeric/core-finalization gates before review; no replication or QA pass"
+  ]
+}

@@ -7,6 +7,12 @@
   "required": ["address", "h_otn_model_max_z_m", "thumbnail"],
   "$defs": {"xyz": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}},
   "properties": {
+    "fbx_records": {"description": "#1342: exact FBX filename -> world bounds_m of render (non-UCX) geometry in the exported frame + SHA-256 of the written FBX bytes; consumed by validate_package --export-meta (V013).",
+      "type": "object", "minProperties": 1,
+      "propertyNames": {"pattern": "^[A-Za-z0-9_]+\\.fbx$"},
+      "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["bounds_m", "fbx_sha256"],
+        "properties": {"bounds_m": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/xyz"}},
+                       "fbx_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
     "fbx": {"type": "string", "pattern": "\\S"},
     "pivot_revit_internal_m": {"$ref": "#/$defs/xyz"},
     "bbox_after_pivot": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/xyz"}},
