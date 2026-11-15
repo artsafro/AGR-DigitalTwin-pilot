@@ -765,6 +765,35 @@ def test_reviewer_clause_delegations(tmp_path, repo, evals, capsys, text):
              "tests delegated to the reviewer")
 
 
+def test_reviewer_clause_generated_probe():
+    """Synthetic clause boundaries/passive matrix, including earlier negation/order controls."""
+    from twinqa.evals.handoff import delegation
+
+    cases = []
+    for noun in ("tests", "test files", "test suite"):
+        for recipient in ("reviewer", "the reviewer", "reviewers"):
+            for end in ("", ".", ";", "!", "?", "\n"):
+                cases.append((f"{noun}: {recipient}{end}", True))
+            for tail in (" witnesses (3 rows), 12 passed.", " probes now pass.", " notes."):
+                cases.append((f"{noun}: {recipient}{tail}", False))
+            for auxiliary in ("to be", "are to be", "will be"):
+                for verb in ("run", "executed", "checked", "verified"):
+                    phrase = f"{noun} {auxiliary} {verb} by {recipient}"
+                    cases.extend(((phrase + ".", True), ("No " + phrase + ".", False),
+                                  (phrase + ": none.", False),
+                                  (phrase + ": none. Tests: reviewer.", True),
+                                  (phrase + ": none pending.", True)))
+    for actor in ("I", "we", "the author"):
+        for verb in ("ran", "executed", "checked", "verified"):
+            for action in ("check", "verify"):
+                cases.append((f"The reviewer can {action} the tests {actor} {verb}: 398 passed.", False))
+    assert len(cases) == 645
+    for text, expected in cases:
+        for _ in range(2):
+            assert (delegation(text) is not None) == expected, text
+            assert delegation("") is None  # reset after every positive and negative
+
+
 # Review r2 (PR #1401), #1403: shorthand and active verify are delegation.
 @pytest.mark.parametrize("text", [
     pytest.param("Remaining tests: reviewer.", id="shorthand"),

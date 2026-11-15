@@ -39,16 +39,18 @@ _DELEGATION = (
     re.compile(_REVIEWER + r"(?P<gap>[^.;\n]{0,40}?)\b"
                r"(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes|verify|verifies|check|checks)"
                r"\s+(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
-               + _TESTS, re.IGNORECASE),
+               + _TESTS + r"(?!\s+(?:I|we|the\s+author)\s+(?:ran|executed|checked|verified)\b)",
+               re.IGNORECASE),
     re.compile(r"\b" + _TESTS + r"[^.;\n]{0,30}\b(?:delegated|deferred|left|handed|passed on)\b"
                r"[^.;\n]{0,30}" + _REVIEWER, re.IGNORECASE),
     re.compile(r"\b" + _TESTS + r"(?:\s+(?:are|is|go|goes|were|remain|remains|stay|stays|run|over))*"
                r"\s+(?:to|for|by) (?:the )?" + _REVIEWER, re.IGNORECASE),
     re.compile(r"\b(?:delegat|leav|hand|pass)\w*\b[^.;\n]{0,40}\b" + _TESTS + r"[^.;\n]{0,20}\b(?:to|for)\s+"
                r"(?:the )?" + _REVIEWER, re.IGNORECASE),
-    re.compile(r"\b" + _TESTS + r"\s+to\s+be\s+(?:run|checked|verified)\s+by\s+(?:the\s+)?"
-               + _REVIEWER, re.IGNORECASE),
-    re.compile(r"\b" + _TESTS + r"\s*:\s*(?:the\s+)?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s+(?:(?:are|is)\s+to|to|will)\s+be\s+"
+               r"(?:run|executed|checked|verified)\s+by\s+(?:the\s+)?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s*:\s*(?:the\s+)?" + _REVIEWER
+               + r"(?=\s*(?:[.;!?\n]|$))", re.IGNORECASE),
     re.compile(r"\bdelegat\w*\b[^.\n]{0,40}\bfull[- ]suite\b", re.IGNORECASE),
 )
 _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
@@ -57,7 +59,9 @@ _NOT_AUTHOR = re.compile(r"\b(?:not|never)\s+(?:by\s+)?(?:the\s+)?authors?\b", r
 
 
 def _negated(line, match):
-    """not/never/no in the same clause before ``match`` (40 chars, cut at . ; : ! ?) or inside it."""
+    """Negation in the same clause, or an explicit empty reviewer assignment (``: none``)."""
+    if re.match(r"\s*:\s*none\b(?=\s*(?:[.;!?\n]|$))", line[match.end():], re.IGNORECASE):
+        return True
     before = re.split(r"[.;:!?]", line[max(0, match.start() - 40):match.start()])[-1]
     return any(_NEGATION.search(_NOT_AUTHOR.sub(" ", text)) for text in (before, match[0]))
 
