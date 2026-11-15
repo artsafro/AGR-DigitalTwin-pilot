@@ -96,7 +96,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 5
+    assert len(contexts["contexts"]) == 6  # #1380 separates periodic VPM UV from NPM atlas
 
 
 @pytest.mark.parametrize("command,ok", [
@@ -282,7 +282,7 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
-    assert len([k for k in jobs if k[0] == "udim-tile"]) == 32   # #1387: one row per copy (same line may hold 2)
+    assert len([k for k in jobs if k[0] == "udim-tile"]) == 30   # #1380: two inverse copies now call tile_origin
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
 

@@ -1,25 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2374" width="2360" height="2374" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2640 2368" width="2640" height="2368" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="2374" fill="#ffffff"/>
+<rect x="10" y="-30" width="2640" height="2368" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
-<rect x="955.0" y="336.5" width="470" height="560.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="40" y="956.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40" y="1235.5" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="650" y="956.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650" y="1183.0" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260" y="956.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260" y="1253.0" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1870" y="956.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870" y="1165.5" width="470" height="200.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1708.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1934.5" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<line x1="510" y1="1089.0" x2="650" y2="1062.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120" y1="1062.75" x2="1260" y2="1097.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1730" y1="1097.75" x2="1870" y2="1054.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1708.0" x2="275.0" y2="1345.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="1708.0" x2="2105.0" y2="1365.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="896.5" x2="885.0" y2="956.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1425.0" y1="616.5" x2="1870.0" y2="1054.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="955.0" y="336.5" width="470" height="530.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="40" y="926.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40" y="1205.5" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="650" y="926.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650" y="1153.0" width="470" height="155.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260" y="926.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260" y="1118.0" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870" y="926.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870" y="1223.0" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="650.0" y="1678.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="1887.0" width="470" height="200.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1678.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1904.5" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<line x1="510" y1="1059.0" x2="650" y2="1032.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120" y1="1032.75" x2="1870" y2="1067.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1870" y1="1420.5" x2="1120.0" y2="1775.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1260.0" y1="1784.25" x2="510.0" y2="1260.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1260.0" y1="1784.25" x2="1120.0" y2="1775.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="866.5" x2="885.0" y2="926.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="866.5" x2="885.0" y2="1678.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута НПМ/ОКС (КПП1) (#1359)</tspan>
 </text>
@@ -40,7 +42,7 @@
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
 <text x="963.0" y="346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 45</tspan>
+<tspan x="963.0" dy="12">Дубли вне владельца: 43</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей функции; охрана jobs/, tools/, src/ (#1376)</tspan>
 <tspan x="963.0" dy="15.0">• jobs/KPP1/benchmark-1318/account_readback.py: main</tspan>
@@ -48,13 +50,11 @@
 <tspan x="963.0" dy="15.0">• jobs/KPP1/rerun-1230/build_blender.py: uv_finish</tspan>
 <tspan x="963.0" dy="15.0">• jobs/KPP1/scripts/export_npm.py: &lt;module&gt;</tspan>
 <tspan x="963.0" dy="15.0">• jobs/KPP1/scripts/readback_vpm.py: &lt;module&gt;</tspan>
-<tspan x="963.0" dy="15.0">• jobs/KPP1/scripts/vpm_uv.py: tile_offset</tspan>
 <tspan x="963.0" dy="15.0">• jobs/PSU275/scripts/export_npm.py: &lt;module&gt;</tspan>
 <tspan x="963.0" dy="15.0">• jobs/TEC26-OKS/scripts/compare_facades.py: main</tspan>
 <tspan x="963.0" dy="15.0">• jobs/TEC26-OKS/scripts/export_npm.py: &lt;module&gt;</tspan>
 <tspan x="963.0" dy="15.0">• jobs/TEC26-OKS/scripts/qa_packages.py: facade_joint_checks,</tspan>
 <tspan x="963.0" dy="15.0">facade_joint_checks.vpm_tile_of, main</tspan>
-<tspan x="963.0" dy="15.0">• jobs/TEC26-OKS/scripts/vpm_uv.py: tile_offset</tspan>
 <tspan x="963.0" dy="15.0">• jobs/VATUTINO-SITE/flora_v007_blender.py: cmd_readback</tspan>
 <tspan x="963.0" dy="15.0">• jobs/elv-tc-vpm/scripts/clarify_render_v001.py: tile_of</tspan>
 <tspan x="963.0" dy="15.0">• jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py: &lt;module&gt;</tspan>
@@ -77,7 +77,7 @@
 <tspan x="963.0" dy="15.0">• adapters/max/agr_tools/npm2vpm_core.py: tile_origin</tspan>
 <tspan x="963.0" dy="15.0">• tools/source/measure_spec_blender.py: udim</tspan>
 </text>
-<text x="48" y="966.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="48" y="936.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="48" dy="14">Корпус и геометрия</tspan>
 <tspan x="48" dy="17.5">Владелец: src/dt_ai/ops/operations.py</tspan>
 <tspan x="48" dy="17.5">операции над частями с проверкой инвариантов и откатом</tspan>
@@ -93,7 +93,7 @@
 <tspan x="48" dy="17.5">plan_opacity_swaps: сцена, кандидаты, бюджет</tspan>
 <tspan x="48" dy="17.5">треугольников -&gt; список замен на плоскости</tspan>
 </text>
-<text x="48" y="1245.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="48" y="1215.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="48" dy="12">Дубли вне владельца: 3</tspan>
 <tspan x="48" dy="15.0">• jobs/KPP1/scripts/seal.py:302 — свой шов и сварка Т-узлов вместо</tspan>
 <tspan x="48" dy="15.0">dt_ai.ops.seams.join_parts (#1359)</tspan>
@@ -101,7 +101,7 @@
 <tspan x="48" dy="15.0">• jobs/KPP1/scripts/build_kpp1.py:194 — сборка корпуса КПП1 целиком</tspan>
 <tspan x="48" dy="15.0">в скрипте задания (стадии 1–6) (#1359)</tspan>
 </text>
-<text x="658" y="966.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="658" y="936.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658" dy="14">UV и атлас</tspan>
 <tspan x="658" dy="17.5">Владелец: adapters/max/agr_tools/atlas_core.py</tspan>
 <tspan x="658" dy="17.5">каноническая упаковка атласа (D225); Python-версии</tspan>
@@ -114,158 +114,173 @@
 <tspan x="658" dy="17.5">flora_layout: вырезки текстур, max размер, отступ -&gt;</tspan>
 <tspan x="658" dy="17.5">раскладка атласа флоры</tspan>
 </text>
-<text x="658" y="1193.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="658" dy="12">Дубли вне владельца: 5</tspan>
+<text x="658" y="1163.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="658" dy="12">Дубли вне владельца: 3</tspan>
 <tspan x="658" dy="15.0">• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор</tspan>
 <tspan x="658" dy="15.0">атласа НПМ, по нему идёт agr vpm-to-npm (#1141)</tspan>
-<tspan x="658" dy="15.0">• jobs/KPP1/scripts/make_npm_atlas.py:28 — атлас НПМ КПП1 в задании</tspan>
-<tspan x="658" dy="15.0">(#1106)</tspan>
-<tspan x="658" dy="15.0">• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — копия атласа КПП1 в</tspan>
-<tspan x="658" dy="15.0">TEC26 (#1106)</tspan>
-<tspan x="658" dy="15.0">• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ; файл</tspan>
-<tspan x="658" dy="15.0">TEC26 отличается одной строкой (#1359)</tspan>
-<tspan x="658" dy="15.0">• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия</tspan>
-<tspan x="658" dy="15.0">vpm_uv.py КПП1 (#1359)</tspan>
+<tspan x="658" dy="15.0">• jobs/KPP1/scripts/make_npm_atlas.py:28 — остаётся до #1141:</tspan>
+<tspan x="658" dy="15.0">исторический атлас НПМ КПП1; delivered файлы не перегенерируются</tspan>
+<tspan x="658" dy="15.0">(#1141)</tspan>
+<tspan x="658" dy="15.0">• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — остаётся до #1141:</tspan>
+<tspan x="658" dy="15.0">историческая NPM recipe TEC26 с собственными guards, не эквивалент</tspan>
+<tspan x="658" dy="15.0">VPM UV (#1141)</tspan>
 </text>
-<text x="1268" y="966.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268" dy="14">Экспорт и пакет сдачи</tspan>
-<tspan x="1268" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
-<tspan x="1268" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
-<tspan x="1268" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
-<tspan x="1268" dy="17.5">(#1361, #1377)</tspan>
+<text x="1268" y="936.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268" dy="14">Периодическая UV-развёртка ВПМ</tspan>
+<tspan x="1268" dy="17.5">Владелец: tools/blender/vpm_uv.py</tspan>
+<tspan x="1268" dy="17.5">общая Blender bmesh-развёртка KPP1, TEC26 и PSU275</tspan>
+<tspan x="1268" dy="17.5">(#1380), не упаковка атласа НПМ</tspan>
 <tspan x="1268" dy="17.5"></tspan>
-<tspan x="1268" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
-<tspan x="1268" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
-<tspan x="1268" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
-<tspan x="1268" dy="17.5">плохое имя — ошибка до записи</tspan>
-<tspan x="1268" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
-<tspan x="1268" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
-<tspan x="1268" dy="17.5">время упаковки — ошибка</tspan>
-<tspan x="1268" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
-<tspan x="1268" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
+<tspan x="1268" dy="17.5">texel_cut: bmesh, имена отделок, spec -&gt; новый bmesh с</tspan>
+<tspan x="1268" dy="17.5">согласованными разрезами по рёбрам</tspan>
+<tspan x="1268" dy="17.5">pack_uv: bmesh, имена отделок, spec -&gt; UVMap и QA по</tspan>
+<tspan x="1268" dy="17.5">отделкам; периодические острова можно stack (D320)</tspan>
 </text>
-<text x="1268" y="1263.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268" dy="12">Дубли вне владельца: 23</tspan>
-<tspan x="1268" dy="15.0">Правило проверки: свой писатель ZIP вместо общего _write_zip;</tspan>
-<tspan x="1268" dy="15.0">охрана jobs/, tools/, src/ (#1377)</tspan>
-<tspan x="1268" dy="15.0">• jobs/KPP1/rerun-1230/build_blender.py: main</tspan>
-<tspan x="1268" dy="15.0">• jobs/KPP1/scripts/package_vpm.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/KPP1/delivered-1371/build_v008.py: build</tspan>
-<tspan x="1268" dy="15.0">• jobs/KPP1/package-1278/build_package.py: repair_artifacts</tspan>
-<tspan x="1268" dy="15.0">• jobs/KPP1/site-1255/place_package.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/PSU275/scripts/package_vpm.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/TEC26-OKS/scripts/package_vpm.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/VATUTINO-SITE/npm_code.py: rename_npm_zip</tspan>
-<tspan x="1268" dy="15.0">• jobs/VATUTINO-SITE/run_delivery.py: main</tspan>
-<tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v001.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v002.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v003.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v004.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v005.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v006.py: &lt;module&gt;</tspan>
-<tspan x="1268" dy="15.0">• tools/assets/build_maf_template.py: repack</tspan>
-<tspan x="1268" dy="15.0">• tools/max/build_agr_tools.py: _zip</tspan>
-<tspan x="1268" dy="15.0">• tools/methods/ucx/run_benchmarks.py: package</tspan>
-<tspan x="1268" dy="15.0">• tools/methods/windows/run_benchmarks.py: package</tspan>
-<tspan x="1268" dy="15.0">• tools/research/checker_mutation.py: freeze</tspan>
-<tspan x="1268" dy="15.0">• tools/sintez_parity.py: run_live</tspan>
-<tspan x="1268" dy="15.0">• src/dt_ai/publish/bundle.py: package</tspan>
+<text x="1268" y="1128.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268" dy="12">Дубли вне владельца: 1</tspan>
+<tspan x="1268" dy="15.0">Правило проверки: своя периодическая UV-развёртка или texel_cut</tspan>
+<tspan x="1268" dy="15.0">вместо общего Blender owner (#1380); не атлас НПМ</tspan>
+<tspan x="1268" dy="15.0">• jobs/KPP1/rerun-1230/build_blender.py: texel_cut</tspan>
 </text>
-<text x="1878" y="966.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878" dy="14">Проверка и приёмка</tspan>
-<tspan x="1878" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
-<tspan x="1878" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
+<text x="1878" y="936.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878" dy="14">Экспорт и пакет сдачи</tspan>
+<tspan x="1878" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
+<tspan x="1878" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
+<tspan x="1878" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
+<tspan x="1878" dy="17.5">(#1361, #1377)</tspan>
 <tspan x="1878" dy="17.5"></tspan>
-<tspan x="1878" dy="17.5">validate_vpm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
-<tspan x="1878" dy="17.5">находки ВПМ и плотность V009</tspan>
-<tspan x="1878" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
-<tspan x="1878" dy="17.5">находки НПМ</tspan>
-<tspan x="1878" dy="17.5">main: путь к ZIP/FBX, --profile, --scene, --master,</tspan>
-<tspan x="1878" dy="17.5">--json -&gt; отчёт; провал — ненулевой код</tspan>
+<tspan x="1878" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
+<tspan x="1878" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
+<tspan x="1878" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
+<tspan x="1878" dy="17.5">плохое имя — ошибка до записи</tspan>
+<tspan x="1878" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
+<tspan x="1878" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
+<tspan x="1878" dy="17.5">время упаковки — ошибка</tspan>
+<tspan x="1878" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
+<tspan x="1878" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="1878" y="1175.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878" dy="12">Дубли вне владельца: 3</tspan>
-<tspan x="1878" dy="15.0">Правило проверки: своя проверка мастера в Blender (def world_bm)</tspan>
-<tspan x="1878" dy="15.0">вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/</tspan>
-<tspan x="1878" dy="15.0">(#1379); свой запуск чекера СИНТЕЗ (calculate_all_checks) вместо</tspan>
-<tspan x="1878" dy="15.0">общего скрипта за командой agr checker; охрана jobs/, tools/, src/</tspan>
-<tspan x="1878" dy="15.0">(#1379)</tspan>
-<tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/qa_packages.py:35 — остаётся: проверки</tspan>
-<tspan x="1878" dy="15.0">пакетов именно ТЭЦ26 (стыки фасадов по листу цветового решения,</tspan>
-<tspan x="1878" dy="15.0">нарезка по дампу Max), которых нет в validate_package; общие стадии</tspan>
-<tspan x="1878" dy="15.0">— agr validate (#1379)</tspan>
-<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py: &lt;module&gt;</tspan>
-<tspan x="1878" dy="15.0">• jobs/PSU275/scripts/qa_master_psu275.py: world_bm</tspan>
+<text x="1878" y="1233.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878" dy="12">Дубли вне владельца: 23</tspan>
+<tspan x="1878" dy="15.0">Правило проверки: свой писатель ZIP вместо общего _write_zip;</tspan>
+<tspan x="1878" dy="15.0">охрана jobs/, tools/, src/ (#1377)</tspan>
+<tspan x="1878" dy="15.0">• jobs/KPP1/rerun-1230/build_blender.py: main</tspan>
+<tspan x="1878" dy="15.0">• jobs/KPP1/scripts/package_vpm.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/KPP1/delivered-1371/build_v008.py: build</tspan>
+<tspan x="1878" dy="15.0">• jobs/KPP1/package-1278/build_package.py: repair_artifacts</tspan>
+<tspan x="1878" dy="15.0">• jobs/KPP1/site-1255/place_package.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/PSU275/scripts/package_vpm.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/TEC26-OKS/scripts/package_vpm.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/VATUTINO-SITE/npm_code.py: rename_npm_zip</tspan>
+<tspan x="1878" dy="15.0">• jobs/VATUTINO-SITE/run_delivery.py: main</tspan>
+<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v001.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v002.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v003.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v004.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v005.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• jobs/elv-tc-vpm/scripts/package_vpm_v006.py: &lt;module&gt;</tspan>
+<tspan x="1878" dy="15.0">• tools/assets/build_maf_template.py: repack</tspan>
+<tspan x="1878" dy="15.0">• tools/max/build_agr_tools.py: _zip</tspan>
+<tspan x="1878" dy="15.0">• tools/methods/ucx/run_benchmarks.py: package</tspan>
+<tspan x="1878" dy="15.0">• tools/methods/windows/run_benchmarks.py: package</tspan>
+<tspan x="1878" dy="15.0">• tools/research/checker_mutation.py: freeze</tspan>
+<tspan x="1878" dy="15.0">• tools/sintez_parity.py: run_live</tspan>
+<tspan x="1878" dy="15.0">• src/dt_ai/publish/bundle.py: package</tspan>
 </text>
-<text x="963.0" y="1718.0" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="14">Связь с DCC (Blender / 3ds Max)</tspan>
-<tspan x="963.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
-<tspan x="963.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
-<tspan x="963.0" dy="17.5"></tspan>
-<tspan x="963.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
-<tspan x="963.0" dy="17.5">файл Blender; нет — ошибка</tspan>
-<tspan x="963.0" dy="17.5">blender_command: скрипт, аргументы -&gt; одна командная</tspan>
-<tspan x="963.0" dy="17.5">строка Blender без окна (закреплённая версия, без</tspan>
-<tspan x="963.0" dy="17.5">автозапуска)</tspan>
-<tspan x="963.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
-<tspan x="963.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
+<text x="658.0" y="1688.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Проверка и приёмка</tspan>
+<tspan x="658.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
+<tspan x="658.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
+<tspan x="658.0" dy="17.5"></tspan>
+<tspan x="658.0" dy="17.5">validate_vpm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="658.0" dy="17.5">находки ВПМ и плотность V009</tspan>
+<tspan x="658.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="658.0" dy="17.5">находки НПМ</tspan>
+<tspan x="658.0" dy="17.5">main: путь к ZIP/FBX, --profile, --scene, --master,</tspan>
+<tspan x="658.0" dy="17.5">--json -&gt; отчёт; провал — ненулевой код</tspan>
 </text>
-<text x="963.0" y="1944.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 24</tspan>
-<tspan x="963.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
-<tspan x="963.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
-<tspan x="963.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
-<tspan x="963.0" dy="15.0">• jobs/KPP1/benchmark-1318/run_benchmark.py: main</tspan>
-<tspan x="963.0" dy="15.0">• jobs/KPP1/quad-1372/run_checks.py: main</tspan>
-<tspan x="963.0" dy="15.0">• jobs/VATUTINO-SITE/run_delivery.py: main, main.dcc</tspan>
-<tspan x="963.0" dy="15.0">• jobs/VATUTINO-SITE/scene_checks.py: main</tspan>
-<tspan x="963.0" dy="15.0">• src/dt_ai/cli/shared_tools.py: command</tspan>
-<tspan x="963.0" dy="15.0">• tools/flora/build_flora_npm_light.py: execute</tspan>
-<tspan x="963.0" dy="15.0">• tools/flora/build_flora_star.py: _blender</tspan>
-<tspan x="963.0" dy="15.0">• tools/library/check_library.py: native_inspect</tspan>
-<tspan x="963.0" dy="15.0">• tools/library/maf_material_ids.py: main</tspan>
-<tspan x="963.0" dy="15.0">• tools/library/migrate_windows.py: main</tspan>
-<tspan x="963.0" dy="15.0">• tools/materials/bind_ground_textures.py: _run_blender</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/body/run_benchmarks.py: _blender</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/ground/build_variant.py: _blender</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/parametric_parts/mesh_recipe.py: _blender_fbx</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/run_variant.py: run_extra</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/ucx/run_benchmarks.py: main</tspan>
-<tspan x="963.0" dy="15.0">• tools/methods/windows/run_benchmarks.py: main</tspan>
-<tspan x="963.0" dy="15.0">• tools/research/checker_mutation.py: freeze</tspan>
-<tspan x="963.0" dy="15.0">• tools/research/fbx_reader_compare.py: _blender</tspan>
-<tspan x="963.0" dy="15.0">• tools/sintez_parity.py: run_live.run</tspan>
+<text x="658.0" y="1897.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="12">Дубли вне владельца: 3</tspan>
+<tspan x="658.0" dy="15.0">Правило проверки: своя проверка мастера в Blender (def world_bm)</tspan>
+<tspan x="658.0" dy="15.0">вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/</tspan>
+<tspan x="658.0" dy="15.0">(#1379); свой запуск чекера СИНТЕЗ (calculate_all_checks) вместо</tspan>
+<tspan x="658.0" dy="15.0">общего скрипта за командой agr checker; охрана jobs/, tools/, src/</tspan>
+<tspan x="658.0" dy="15.0">(#1379)</tspan>
+<tspan x="658.0" dy="15.0">• jobs/TEC26-OKS/scripts/qa_packages.py:35 — остаётся: проверки</tspan>
+<tspan x="658.0" dy="15.0">пакетов именно ТЭЦ26 (стыки фасадов по листу цветового решения,</tspan>
+<tspan x="658.0" dy="15.0">нарезка по дампу Max), которых нет в validate_package; общие стадии</tspan>
+<tspan x="658.0" dy="15.0">— agr validate (#1379)</tspan>
+<tspan x="658.0" dy="15.0">• jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py: &lt;module&gt;</tspan>
+<tspan x="658.0" dy="15.0">• jobs/PSU275/scripts/qa_master_psu275.py: world_bm</tspan>
 </text>
-<rect x="550.0" y="1057.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="580.0" y="1057.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<text x="1268.0" y="1688.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">Связь с DCC (Blender / 3ds Max)</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
+<tspan x="1268.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
+<tspan x="1268.0" dy="17.5"></tspan>
+<tspan x="1268.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
+<tspan x="1268.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="1268.0" dy="17.5">blender_command: скрипт, аргументы -&gt; одна командная</tspan>
+<tspan x="1268.0" dy="17.5">строка Blender без окна (закреплённая версия, без</tspan>
+<tspan x="1268.0" dy="17.5">автозапуска)</tspan>
+<tspan x="1268.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
+<tspan x="1268.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
+</text>
+<text x="1268.0" y="1914.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="12">Дубли вне владельца: 24</tspan>
+<tspan x="1268.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
+<tspan x="1268.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
+<tspan x="1268.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
+<tspan x="1268.0" dy="15.0">• jobs/KPP1/benchmark-1318/run_benchmark.py: main</tspan>
+<tspan x="1268.0" dy="15.0">• jobs/KPP1/quad-1372/run_checks.py: main</tspan>
+<tspan x="1268.0" dy="15.0">• jobs/VATUTINO-SITE/run_delivery.py: main, main.dcc</tspan>
+<tspan x="1268.0" dy="15.0">• jobs/VATUTINO-SITE/scene_checks.py: main</tspan>
+<tspan x="1268.0" dy="15.0">• src/dt_ai/cli/shared_tools.py: command</tspan>
+<tspan x="1268.0" dy="15.0">• tools/flora/build_flora_npm_light.py: execute</tspan>
+<tspan x="1268.0" dy="15.0">• tools/flora/build_flora_star.py: _blender</tspan>
+<tspan x="1268.0" dy="15.0">• tools/library/check_library.py: native_inspect</tspan>
+<tspan x="1268.0" dy="15.0">• tools/library/maf_material_ids.py: main</tspan>
+<tspan x="1268.0" dy="15.0">• tools/library/migrate_windows.py: main</tspan>
+<tspan x="1268.0" dy="15.0">• tools/materials/bind_ground_textures.py: _run_blender</tspan>
+<tspan x="1268.0" dy="15.0">• tools/methods/body/run_benchmarks.py: _blender</tspan>
+<tspan x="1268.0" dy="15.0">• tools/methods/ground/build_variant.py: _blender</tspan>
+<tspan x="1268.0" dy="15.0">• tools/methods/parametric_parts/mesh_recipe.py: _blender_fbx</tspan>
+<tspan x="1268.0" dy="15.0">• tools/methods/run_variant.py: run_extra</tspan>
+<tspan x="1268.0" dy="15.0">• tools/methods/ucx/run_benchmarks.py: main</tspan>
+<tspan x="1268.0" dy="15.0">• tools/methods/windows/run_benchmarks.py: main</tspan>
+<tspan x="1268.0" dy="15.0">• tools/research/checker_mutation.py: freeze</tspan>
+<tspan x="1268.0" dy="15.0">• tools/research/fbx_reader_compare.py: _blender</tspan>
+<tspan x="1268.0" dy="15.0">• tools/sintez_parity.py: run_live.run</tspan>
+</text>
+<rect x="550.0" y="1027.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="580.0" y="1027.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="580.0" dy="14">мастер-модель</tspan>
 <tspan x="580.0" dy="17.5">(FBX/.blend)</tspan>
 </text>
-<rect x="1160.0" y="1062.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="1062.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">UV, атлас,</tspan>
-<tspan x="1190.0" dy="17.5">текстуры</tspan>
+<rect x="1465.0" y="1032.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="1032.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">UV, атлас,</tspan>
+<tspan x="1495.0" dy="17.5">текстуры</tspan>
 </text>
-<rect x="1770.0" y="1066.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1066.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="1465.0" y="1589.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="1589.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="702.5" y="1508.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="732.5" y="1508.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="732.5" dy="14">Blender/Max</tspan>
-<tspan x="732.5" dy="17.5">строит</tspan>
+<rect x="855.0" y="1504.38" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="1504.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="885.0" dy="14">Blender/Max</tspan>
+<tspan x="885.0" dy="17.5">строит</tspan>
 </text>
-<rect x="1617.5" y="1518.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="1518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1647.5" dy="14">свежее чтение</tspan>
-<tspan x="1647.5" dy="17.5">экспорта</tspan>
+<rect x="1160.0" y="1761.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="1761.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1190.0" dy="14">свежее чтение</tspan>
+<tspan x="1190.0" dy="17.5">экспорта</tspan>
 </text>
-<rect x="1007.5" y="917.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1037.5" y="917.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1007.5" y="887.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1037.5" y="887.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1037.5" dy="14">номер тайла</tspan>
 </text>
-<rect x="1617.5" y="826.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="826.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1647.5" dy="14">номер тайла</tspan>
+<rect x="1007.5" y="1263.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1037.5" y="1263.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1037.5" dy="14">номер тайла</tspan>
 </text>
 </svg>

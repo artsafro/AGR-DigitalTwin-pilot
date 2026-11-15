@@ -51,17 +51,6 @@ contexts:
         contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
       - name: atlas_png
         contract: "раскладка -> PNG атласа"
-    duplicates:
-      - at: "jobs/KPP1/scripts/vpm_uv.py:155"
-        match: "def pack_uv("
-        issue: "#1359"
-        ru: "своя раскладка UV ВПМ КПП1"
-        status: historical
-      - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
-        match: "def pack_uv("
-        issue: "#1359"
-        ru: "копия vpm_uv.py КПП1 (одна строка разницы)"
-        status: historical
   - id: npm
     ru: "НПМ в тех же координатах (ВПМ → НПМ)"
     area: docs/domain/areas/derivation.md

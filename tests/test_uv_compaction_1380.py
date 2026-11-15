@@ -109,6 +109,25 @@ def test_partial_and_nonfinite_full_finish_are_errors(uv):
             uv.lmax({'size_full': 4096, 'pad_m': 0.04, 'finishes': {'finish': finish}}, 'finish')
 
 
+def test_qa_and_slicer_use_the_same_policy(uv):
+    import ast
+    tree = ast.parse((ROOT / 'tools/blender/qa_master.py').read_text(encoding='utf-8'))
+    assignment = next(n for n in tree.body if isinstance(n, ast.Assign)
+                      and any(isinstance(t, ast.Name) and t.id == 'MAX_EDGE' for t in n.targets))
+    for size, expected in ((2048, 1.96875), (4096, 3.9375)):
+        scope = {'argv': ['report.json', 'input.fbx', str(size)], 'max_quad_side': uv.max_quad_side}
+        exec(compile(ast.Module(body=[assignment], type_ignores=[]), '<qa-limit>', 'exec'), scope)
+        assert scope['MAX_EDGE'] == uv.max_quad_side(size) == expected
+
+
+def test_generated_tile_policy_probe():
+    from fractions import Fraction
+    policy = load('tools/blender/vpm_uv_policy.py', 'uv_policy_generated')
+    for size in range(128, 8193, 128):
+        assert policy.max_quad_side(size) == float(Fraction(size * 63, 65536))
+
+
 def test_no_delivery_changes():
-    paths = subprocess.check_output(['git', 'diff', '--name-only', 'origin/main', '--', 'jobs'], cwd=ROOT, text=True).splitlines()
+    base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
+    paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
     assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)

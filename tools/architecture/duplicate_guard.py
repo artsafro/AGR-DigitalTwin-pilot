@@ -24,6 +24,9 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `calculate_all_checks` (attribute or bare name). Every row must say why it stays (`ru`).
 - `master-qa`  owner tools/blender/qa_master.py (#1379): the one Blender master-geometry QA (quads, quad size, T-junctions,
   open edges, flipped normals). Flags any other `def world_bm` (its helper name). Every row must say why it stays.
+- `vpm-uv` owner tools/blender/vpm_uv.py (#1380): shared Blender periodic VPM UV + edge-ring slicer;
+  flags definitions named pack_uv / texel_cut under jobs/ + tools/ + src/. This is not the gated NPM atlas
+  owner migration (#1141). KPP1/TEC26 are import shims; PSU275 imports the shared owner directly.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -69,14 +72,16 @@ RULES = {
     "blender-launch": "src/dt_ai/core/blender_runner.py",
     "sintez-checker": "tools/blender/sintez_checker.py",
     "master-qa": "tools/blender/qa_master.py",
+    "vpm-uv": "tools/blender/vpm_uv.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
 GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
-           "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src")}   # #1379
+           "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
+           "vpm-uv": ("jobs", "tools", "src")}   # #1380: periodic VPM UV, not NPM atlas
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
@@ -218,8 +223,14 @@ def _master_hits(tree):
             and node.name in OWNED_NAMES["master-qa"]]
 
 
+def _vpm_uv_hits(tree):
+    """Definitions of the shared periodic VPM UV/slicer entry points, not mere imports or calls."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in {'pack_uv', 'texel_cut'}]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
-          "sintez-checker": _sintez_hits, "master-qa": _master_hits}
+          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
