@@ -237,12 +237,14 @@ stages:
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
     actor: checker
     context: validation
+    commands:
+      - agr checker
     rules:
       - D220
       - D270
     evidence:
       - jobs/KPP1/final-check-1293/run_max.py
-      - jobs/KPP1/scripts/run_agr_checker.py
+      - tools/qa/sintez_checker.py
   - id: delivered
     event_ru: "Архив или Max-сцена с квадами переданы Артёму; он принимает и передаёт заказчику"
     actor: artem
@@ -347,11 +349,3 @@ hotspots:
       - D280
     evidence:
       - docs/research/bench-npm-derivation.md
-  - id: sintez-runner
-    stage: sintez
-    ru: "СИНТЕЗ: нет общей команды agr/dt; запуск чекера скопирован из КПП1 в TEC26"
-    rules:
-      - D220
-    evidence:
-      - jobs/KPP1/scripts/run_agr_checker.py
-      - jobs/TEC26-OKS/scripts/run_agr_checker.py

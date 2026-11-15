@@ -78,10 +78,9 @@
 <rect x="2510" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2470" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2430" y1="225.0" x2="2470" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="2470" y="306.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2470" y="306.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2470" y="426.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2470" y="506.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="2470" y="596.25" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2780" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2740" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2700" y1="225.0" x2="2740" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -471,8 +470,9 @@
 <tspan x="2585.0" dy="21.25">отработал на тех же</tspan>
 <tspan x="2585.0" dy="21.25">файлах</tspan>
 </text>
-<text x="2585.0" y="342.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2585.0" dy="14">Нет команды agr/dt</tspan>
+<text x="2585.0" y="333.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Команда:</tspan>
+<tspan x="2585.0" dy="17.5">agr checker</tspan>
 </text>
 <text x="2585.0" y="447.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="14">Правила: D220, D270</tspan>
@@ -480,12 +480,6 @@
 <text x="2585.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="14">Контекст: Проверка и</tspan>
 <tspan x="2585.0" dy="17.5">приёмка</tspan>
-</text>
-<text x="2585.0" y="606.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2585.0" dy="13">⚠ СИНТЕЗ: нет общей команды</tspan>
-<tspan x="2585.0" dy="16.25">agr/dt; запуск чекера</tspan>
-<tspan x="2585.0" dy="16.25">скопирован из КПП1 в TEC26</tspan>
-<tspan x="2585.0" dy="16.25">[D220]</tspan>
 </text>
 <text x="2855.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="15">Артём</tspan>
