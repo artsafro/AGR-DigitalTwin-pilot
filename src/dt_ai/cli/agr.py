@@ -10,6 +10,9 @@ from pathlib import Path
 
 
 ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"]}
+# Repo scripts run unchanged with the caller's arguments; the scripts own validation and writes.
+# export-meta (#1409): core adapters/max/agr_tools/export_meta.py, also importable inside 3ds Max (AGR Tools).
+SCRIPTS = {"validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py"}
 
 
 STUBS = {
@@ -36,12 +39,14 @@ def _dispatch(args: list[str]) -> int:
         print("usage: agr COMMAND [existing tool arguments]\n\nThin aliases [D271]; no new geometry implementation.")
         for name, target in ALIASES.items():
             print(f"  {name:18} dt {' '.join(target)}")
-        print("  validate           tools/qa/validate_package.py")
+        for name, script in SCRIPTS.items():
+            print(f"  {name:18} {script}")
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
         print("\nvpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
               "Use agr vpm-to-npm --help for argument groups. Other aliases forward --help unchanged.\n"
+              "export-meta check PATH | record FBX --source S [--top Z|unknown] [--out NEW.json]\n"
               "PDF intake: dt index-pdf --help; exported topology: dt qa xview --help.\n"
               "Arguments and relative paths are unchanged; existing tools own validation and writes.")
         return 0
@@ -50,8 +55,8 @@ def _dispatch(args: list[str]) -> int:
         return 2
     if args and args[0] in ALIASES:
         return subprocess.run([sys.executable, "-m", "dt_ai.cli.main", *ALIASES[args[0]], *args[1:]], check=False).returncode
-    if args and args[0] == "validate":
-        script = Path(__file__).resolve().parents[3] / "tools/qa/validate_package.py"
+    if args and args[0] in SCRIPTS:
+        script = Path(__file__).resolve().parents[3] / SCRIPTS[args[0]]
         return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
     if args and args[0] == "vpm-to-npm":
         tail = args[1:]

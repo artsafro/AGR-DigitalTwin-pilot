@@ -52,11 +52,14 @@ stages:
     event_ru: "export_meta.json у каждого FBX: адрес-токен, верх модели, превью; неизвестное — unknown, не 0"
     actor: agent
     context: export-meta
+    commands:
+      - "agr export-meta"
     rules:
       - D279
       - D285
     evidence:
       - schemas/ExportMeta.schema.json
+      - tools/derive/export_meta.py
       - docs/research/shared-packaging-1361.md
   - id: readback
     event_ru: "Свежее чтение экспорта: топология, UV, материалы, трансформы, счётчики пропусков = 0"
@@ -182,7 +185,7 @@ stages:
 hotspots:
   - id: meta-v013
     stage: meta
-    ru: "export_meta — не квитанция проверок; поля bounds_m + fbx_sha256 для V013 у производителей нет (#1342)"
+    ru: "agr export-meta пишет и проверяет export_meta, но это не квитанция проверок; поля bounds_m + fbx_sha256 для V013 у производителей нет (#1342)"
     evidence:
       - docs/research/shared-packaging-1361.md
   - id: legacy-packagers

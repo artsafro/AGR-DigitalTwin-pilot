@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import datetime
 import json
 import math
 import re
@@ -30,7 +31,7 @@ REPO = Path(__file__).resolve().parents[3]
 _TOP_KEYS = ("schema", "library_file", "id_ranges", "retired_ids", "species", "gaps", "counts")
 _SPECIES_KEYS = (
     "material_id", "latin", "russian", "type", "geometry_basis", "note", "objects",
-    "npm", "vpm", "vpm_status", "vpm_identity", "vpm_evidence", "merged",
+    "npm", "vpm", "vpm_status", "vpm_identity", "vpm_identity_decision", "vpm_evidence", "merged",
     "height_m", "crown_diameter_m", "triangles",
     "source_scenes", "maps",
 )
@@ -47,7 +48,13 @@ _COUNT_KEYS = (
 )
 _NPM_PROFILE = {"LP": 0, "LP -> HP": 1, "unlabelled": 2}
 _VPM_PROFILE = {"HP": 0, "LP -> HP": 1}
-_VPM_IDENTITY = ("unverified",)
+_VPM_IDENTITY = ("unverified", "confirmed-interim")
+# D311 (Artem 2026-11-15, #1421): the NPM/VPM identity shown on the #1411 sheets is accepted for now. The status is
+# a user decision, not a geometric proof: vpm_evidence stays "unverified" and a later full review may revisit it.
+CONFIRMED_INTERIM = "confirmed-interim"
+_DECISION_KEYS = ("id", "date")
+_DECISION_ID = re.compile(r"D[1-9][0-9]*")
+_DECISION_DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
 _GEOMETRY_RELATIONS = ("unverified",)
 _KEPT_VPM_RELATIONS = ("unverified",)
 _EVIDENCE_KEYS = ("relation", "translation_dev_m", "scaled_dev_rel")
@@ -301,7 +308,16 @@ def build(
     previous: dict | None = None,
     identity: dict | None = None,
     npm_light: dict | None = None,
+    identity_decision: dict | None = None,
 ) -> dict:
+    """Build the catalogue. ``identity_decision`` ({"id": "D<n>", "date": "YYYY-MM-DD"}) marks every retained
+    NPM/VPM pair ``confirmed-interim``; without it a pair keeps the decision of ``previous`` only when its NPM and
+    VPM sources are the same, otherwise it is ``unverified`` (#1421, D311)."""
+    if identity_decision is not None:
+        problems = _decision_findings(identity_decision, "identity_decision")
+        if problems:
+            raise ValueError("; ".join(problems))
+    carried = _previous_decisions(previous)
     indexed = _index_audit(audit)
     library, gap_items = _split_curation(curation)
     rows = []
@@ -312,8 +328,13 @@ def build(
         chosen = select_sources([indexed[source] for source in item["sources"]], identity, item.get("library_selection"))
         map_info = _maps_for(item["latin"], maps)
         scenes = [chosen["NPM"]["scene"]]
+        decision = None
         if chosen["VPM"] is not None:
             scenes.append(chosen["VPM"]["scene"])
+            pair = (chosen["NPM"]["entry_id"], chosen["VPM"]["entry_id"])
+            decision = identity_decision if identity_decision is not None else carried.get((item["latin"], pair))
+            if decision is not None:
+                chosen["vpm_identity"] = CONFIRMED_INTERIM
         rows.append({
             "latin": item["latin"],
             "russian": item["russian"],
@@ -328,6 +349,7 @@ def build(
             "vpm": chosen["VPM"],
             "vpm_status": chosen["vpm_status"],
             "vpm_identity": chosen["vpm_identity"],
+            "vpm_identity_decision": None if decision is None else dict(decision),
             "vpm_evidence": chosen["vpm_evidence"],
             "merged": chosen["merged"],
             "height_m": chosen["NPM"]["height_m"],
@@ -440,6 +462,10 @@ def main(argv: list[str] | None = None) -> None:
     build_parser.add_argument("--previous")
     build_parser.add_argument("--identity")
     build_parser.add_argument("--npm-light")
+    build_parser.add_argument(
+        "--identity-decision",
+        help="D<n>:YYYY-MM-DD - mark every retained NPM/VPM pair confirmed-interim by this user decision (#1421)",
+    )
     identity_parser = sub.add_parser("identity")
     identity_parser.add_argument("--points", required=True)
     identity_parser.add_argument("--curation", required=True)
@@ -459,14 +485,23 @@ def main(argv: list[str] | None = None) -> None:
     if args.command == "build":
         previous = _read_json(args.previous) if args.previous else None
         identity = load_identity(_read_json(args.identity)) if args.identity else None
-        catalogue = build(
-            _read_json(args.audit),
-            _read_json(args.curation),
-            _read_json(args.maps),
-            previous,
-            identity,
-            _read_json(args.npm_light) if args.npm_light else None,
-        )
+        decision = None
+        if args.identity_decision is not None:
+            decision_id, _, decision_date = args.identity_decision.partition(":")
+            decision = {"id": decision_id, "date": decision_date}
+        try:
+            catalogue = build(
+                _read_json(args.audit),
+                _read_json(args.curation),
+                _read_json(args.maps),
+                previous,
+                identity,
+                _read_json(args.npm_light) if args.npm_light else None,
+                decision,
+            )
+        except ValueError as exc:
+            print(exc)
+            raise SystemExit(1) from exc
         findings = check(catalogue)
         if findings:
             for line in findings:
@@ -1014,12 +1049,57 @@ def _check_distinct_vpm(item: dict, where: str) -> list[str]:
     """Check disclosure only, never claim or infer geometric identity (#305)."""
     findings = []
     has_vpm = item.get("vpm") is not None
-    if item.get("vpm_identity") != ("unverified" if has_vpm else None):
-        findings.append(f"{where}.vpm_identity must be unverified for a VPM, otherwise null (see #305)")
+    identity = item.get("vpm_identity")
+    decision = item.get("vpm_identity_decision")
+    if not has_vpm:
+        if identity is not None or decision is not None:
+            findings.append(f"{where}.vpm_identity and vpm_identity_decision must be null without a VPM (see #305)")
+    elif identity == "unverified":
+        if decision is not None:
+            findings.append(f"{where}.vpm_identity_decision is set but vpm_identity is unverified (#1421)")
+    elif identity == CONFIRMED_INTERIM:
+        findings.extend(_decision_findings(decision, f"{where}.vpm_identity_decision"))
+    else:
+        findings.append(
+            f"{where}.vpm_identity {identity!r} must be unverified or confirmed-interim for a VPM (see #305, #1421)"
+        )
     expected = {"relation": "unverified", "translation_dev_m": None, "scaled_dev_rel": None} if has_vpm else None
     if item.get("vpm_evidence") != expected:
         findings.append(f"{where}.vpm_evidence must disclose unverified identity without deviations (see #305)")
     return findings
+
+
+def _decision_findings(decision, where: str) -> list[str]:
+    """A user decision is exactly {id: D<n>, date: YYYY-MM-DD} with a real calendar date (#1421)."""
+    if not isinstance(decision, dict):
+        return [f"{where} must be an object {{id: D<n>, date: YYYY-MM-DD}}"]
+    findings = _key_findings(decision, _DECISION_KEYS, where)
+    if findings:
+        return findings
+    if not isinstance(decision["id"], str) or not _DECISION_ID.fullmatch(decision["id"]):
+        findings.append(f"{where}.id {decision['id']!r} is not a D<n> decision id")
+    date = decision["date"]
+    if not isinstance(date, str) or not _DECISION_DATE.fullmatch(date):
+        findings.append(f"{where}.date {date!r} is not YYYY-MM-DD")
+    else:
+        try:
+            datetime.date.fromisoformat(date)
+        except ValueError:
+            findings.append(f"{where}.date {date!r} is not a calendar date")
+    return findings
+
+
+def _previous_decisions(previous: dict | None) -> dict:
+    """(latin, (NPM entry, VPM entry)) -> decision of the previous catalogue; another pair is not covered."""
+    carried = {}
+    for row in (previous or {}).get("species", []):
+        if not isinstance(row, dict) or row.get("vpm_identity") != CONFIRMED_INTERIM or not row.get("vpm"):
+            continue
+        decision = row.get("vpm_identity_decision")
+        if _decision_findings(decision, "previous"):
+            raise ValueError(f"previous catalogue {row.get('latin')!r} has an invalid vpm_identity_decision")
+        carried[(row["latin"], (row["npm"]["entry_id"], row["vpm"]["entry_id"]))] = dict(decision)
+    return carried
 
 
 def _check_vpm_status(item: dict, where: str) -> list[str]:

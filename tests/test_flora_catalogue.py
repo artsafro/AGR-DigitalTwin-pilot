@@ -181,7 +181,7 @@ def test_committed_catalogue_has_no_findings_and_matches_rebuild_with_identity()
     )
     assert fc.check(catalogue) == []
     assert rebuilt == catalogue
-    assert {item["vpm_identity"] for item in catalogue["species"] if item["vpm"] is not None} == {"unverified"}
+    assert {item["vpm_identity"] for item in catalogue["species"] if item["vpm"] is not None} == {"confirmed-interim"}  # D311
 
 
 def test_committed_material_ids_survive_a_rebuild_without_identity():
