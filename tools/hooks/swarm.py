@@ -69,11 +69,18 @@ def check_message(args, root_value):
         rows = load(root)  # fresh read for EVERY SendMessage; no cached ownership
         recipient = args.get('recipient', args.get('to'))
         token(recipient, 'recipient')
-        content = args.get('content', '')
-        headers = re.findall(r'^Part: ([A-Za-z0-9][A-Za-z0-9_.-]*)\s*$', content, re.MULTILINE)
-        part = args.get('part') or (headers[0] if len(headers) == 1 else None)
+        headers = []
+        for field in ('message', 'content'):
+            text = args.get(field, '')
+            if not isinstance(text, str):
+                raise ValueError(f'{field} must be a string')
+            found = re.findall(r'^Part: ([A-Za-z0-9][A-Za-z0-9_.-]*)\s*$', text, re.MULTILINE)
+            if len(found) > 1:
+                raise ValueError('ambiguous/conflicting Part header')
+            headers.extend(found)
+        part = args.get('part') or (headers[0] if headers else None)
         token(part, 'part')
-        if headers and (len(headers) != 1 or headers[0] != part):
+        if any(header != part for header in headers):
             raise ValueError('ambiguous/conflicting Part header')
         if 'recipient' in args and 'to' in args and args['recipient'] != args['to']:
             raise ValueError('conflicting recipient/to')
