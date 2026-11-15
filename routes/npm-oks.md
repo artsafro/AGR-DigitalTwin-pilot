@@ -105,8 +105,9 @@ If NPM fails after atlas success, the atlas remains; use fresh authorized output
 Units, placement, path safety, inputs and job dependencies remain the existing tool's
 contract, not new guarantees from this facade. Missing/partial group syntax starts no tool.
 
-`unwrap-atlas`, `delivery-export`, `open-in-max`, `contact-renders`, `brick-seams`
+`unwrap-atlas`, `delivery-export`, `open-in-max`, `contact-renders`
 and `ucx` always exit nonzero with today's tool/document pointer, including with `--help`.
+`brick-seams --help` describes the shared JSON calculation; its output is a candidate, not a native QA pass.
 PDF discovery stays `dt index-pdf --help`; topology discovery stays `dt qa xview --help`.
 No authorization is implied by these examples.
 
