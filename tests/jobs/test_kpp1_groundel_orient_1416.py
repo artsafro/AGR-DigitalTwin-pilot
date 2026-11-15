@@ -90,6 +90,24 @@ D313_WAIVED = {("V003", "ground skirt depth", GROUND, "fail"), ("V004", "topolog
                ("V004", "co-directional clearance", GROUND, "fail")}
 
 
+def _audit_fixture(monkeypatch, tmp_path, findings, report):
+    """Exercise the real package audit with synthetic files, never customer assets."""
+    (tmp_path / "package-npm-findings.json").write_text(
+        json.dumps({"findings": findings}), encoding="utf-8")
+    (tmp_path / "REPORT.md").write_text(report, encoding="utf-8")
+    monkeypatch.setitem(globals(), "JOB", tmp_path)
+    test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open()
+
+
+def test_r1_topology_fail_is_not_covered_by_ground_prose(monkeypatch, tmp_path):
+    data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
+    report = (JOB / "REPORT.md").read_text(encoding="utf-8")
+    next(f for f in data["findings"] if f["name"] == "topology defects"
+         and f["evidence"] == "0000_Kpp_1_01.fbx")["status"] = "fail"
+    with pytest.raises(AssertionError, match="topology defects"):
+        _audit_fixture(monkeypatch, tmp_path, data["findings"], report)
+
+
 def test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open():
     data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
     report = (JOB / "REPORT.md").read_text(encoding="utf-8")
