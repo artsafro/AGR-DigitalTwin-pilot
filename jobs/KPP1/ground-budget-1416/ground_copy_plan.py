@@ -79,3 +79,77 @@ def check_out_dir(out: str, inputs) -> str:
         if out in (i, d) or out.startswith(d + os.sep):
             raise PlanError(f"output {out} aliases / sits inside input dir {d}")
     return out
+
+
+def readback_flips(coords, polygons, weld_m=1e-5) -> set:
+    """Faces to reverse so the FBX readback rule (twinqa.geometry.maf_surface.surface_facts) sees 0 flipped
+    faces and 0 inconsistent edges: the SAME adjacency as the readback - vertices welded by position at
+    `weld_m`, zero-area faces (Newell normal ~ 0) left out, only edges shared by exactly two faces - and
+    outward by the signed volume about the component's bottom centre. Flat components only get a
+    consistent winding (the readback calls them undetermined). Reviewer P1 #1418: the bmesh topology
+    used before missed 4 GroundEl faces the readback welds differently."""
+    from collections import deque
+    table, weld = {}, []
+    for c in coords:
+        if not all(math.isfinite(x) for x in c):
+            raise PlanError(f"non-finite vertex {c}")
+        key = (round(c[0] / weld_m), round(c[1] / weld_m), round(c[2] / weld_m))
+        weld.append(table.setdefault(key, len(table)))
+
+    def newell(pts):
+        nx = ny = nz = 0.0
+        for i, a in enumerate(pts):
+            b = pts[(i + 1) % len(pts)]
+            nx += (a[1] - b[1]) * (a[2] + b[2])
+            ny += (a[2] - b[2]) * (a[0] + b[0])
+            nz += (a[0] - b[0]) * (a[1] + b[1])
+        return nx * nx + ny * ny + nz * nz
+
+    valid = [i for i, p in enumerate(polygons) if newell([coords[j] for j in p]) > 1e-24]
+    edges = {}
+    for fi in valid:
+        poly = polygons[fi]
+        for k in range(len(poly)):
+            a, b = weld[poly[k]], weld[poly[(k + 1) % len(poly)]]
+            if a != b:
+                edges.setdefault((min(a, b), max(a, b)), []).append((fi, a, b))
+    adj = {}
+    for occ in edges.values():
+        if len(occ) != 2 or occ[0][0] == occ[1][0]:
+            continue
+        (f0, s0, e0), (f1, s1, e1) = occ
+        same = (s0, e0) == (s1, e1)
+        adj.setdefault(f0, []).append((f1, same))
+        adj.setdefault(f1, []).append((f0, same))
+    flips, seen = set(), set()
+    for seed in valid:
+        if seed in seen:
+            continue
+        flip, queue, faces = {seed: False}, deque([seed]), [seed]
+        seen.add(seed)
+        while queue:
+            face = queue.popleft()
+            for other, same in adj.get(face, ()):
+                if other not in flip:
+                    flip[other] = flip[face] ^ same
+                    seen.add(other)
+                    queue.append(other)
+                    faces.append(other)
+        pts_all = [coords[j] for f in faces for j in polygons[f]]
+        xs, ys, zs = [p[0] for p in pts_all], [p[1] for p in pts_all], [p[2] for p in pts_all]
+        o = ((min(xs) + max(xs)) / 2.0, (min(ys) + max(ys)) / 2.0, min(zs))
+        diag = math.dist((min(xs), min(ys), min(zs)), (max(xs), max(ys), max(zs)))
+        vol = 0.0
+        for f in faces:
+            pts = [coords[j] for j in polygons[f]]
+            if flip[f]:
+                pts.reverse()
+            for k in range(1, len(pts) - 1):
+                a, b, c = ([p[i] - o[i] for i in range(3)] for p in (pts[0], pts[k], pts[k + 1]))
+                vol += (a[0] * (b[1] * c[2] - b[2] * c[1]) - a[1] * (b[0] * c[2] - b[2] * c[0])
+                        + a[2] * (b[0] * c[1] - b[1] * c[0])) / 6.0
+        if abs(vol) <= 1e-9 or abs(vol) <= 1e-6 * diag ** 3:
+            flips.update(f for f in faces if flip[f])
+            continue
+        flips.update(f for f in faces if flip[f] == (vol > 0))
+    return flips

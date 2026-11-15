@@ -52,7 +52,7 @@ def main(d: Path) -> None:
     for p in sorted(d.iterdir()):
         if p.is_file() and p.name != "SHA256SUMS.txt":
             lines.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()} *{p.name}")
-    (d / "SHA256SUMS.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (d / "SHA256SUMS.txt").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     print("\n".join(lines))
 
 

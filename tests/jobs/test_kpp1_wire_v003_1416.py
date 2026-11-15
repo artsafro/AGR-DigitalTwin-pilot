@@ -54,6 +54,7 @@ def test_sheet_writes_once_and_hashes_every_file(tmp_path):
     d = tmp_path / "wire"
     _fixture(d)
     wire_sheet.main(d)
+    assert b"\r" not in (d / "SHA256SUMS.txt").read_bytes()  # review P3 #1418: LF, never CRLF
     sums = (d / "SHA256SUMS.txt").read_text(encoding="utf-8").splitlines()
     assert sorted(ln.split("*")[1] for ln in sums) == sorted(
         [f"{s}.png" for s in SHOTS] + ["wire-report.json", "wire-sheet-v003.png"])

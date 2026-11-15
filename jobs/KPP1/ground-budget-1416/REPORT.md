@@ -1,5 +1,55 @@
 # KPP1 #1416 — Ground copy under 180 000 NPM triangles; s_podz search; packages rebuilt — NOT PASSED
 
+## Кратко (RU) — раунд 4 (ревью #1418 P1: «MAF flipped normals»)
+
+- **Текущий NPM пакет: `package-v002/0000_Kpp_1.zip`** (sha `c9401232…`), Ground **v004** (sha `8006f0a3…`).
+  v004 = v003 + проход ориентации по правилу чтения FBX (`ground_copy_plan.readback_flips`, то же сваривание
+  1e-5 м и те же исключённые нулевые грани, что у `twinqa.geometry.maf_surface`) + `Mesh.validate()` до
+  ориентации. Причина 4 граней: импортёр FBX выполняет `Mesh.validate()` и выбрасывает 5 треугольников,
+  ставших дубликатами после триангуляции; связность меняется, и bmesh-ориентация v003 их не видела.
+- Сравнение чтения v001 ↔ v002 (`package-v002/readback-compare-v001-v002.txt`): вершины, UV, материалы и
+  число граней совпадают во всех трёх мешах; отличается только порядок обхода 4 граней GroundEl.
+  Поэтому wireframe `wire-v003/*` (лист «до/после» тоже) остаётся верным для v004.
+- `validate-npm.json` v002: **V004 «MAF flipped normals» — `not_run`** (flipped 0, inconsistent 0,
+  561 плоских компонентов без определённой ориентации), был `fail` (flipped 4). Треугольники Ground 179 816.
+  `passed=false` остаётся: fail-строки Ground заказчика закрыты [D313], остальные строки открыты (ниже).
+- Аудит строк проверяется тестом `tests/jobs/test_kpp1_groundel_orient_1416.py` над
+  `package-npm-findings.json` (выписка из `package-v002/validate-npm.json`).
+
+```bash
+"$B" -b --factory-startup -noaudio --python derive_ground_v003.py -- "$E/v002/0000_Kpp_1_Ground.fbx" 5cc8421f…f8d3   "<1371 copies>/0607_77_05_0009005_117_Ground.fbx" d8770f47…aebd jobs/KPP1/delivered-1371/mapping.json "$E/v004"
+# DERIVE-OK total_after 179816; GroundEl validate_faces_dropped 5, readback_faces_flipped 4
+uv run agr package-npm "$E/package-v002/npm"            # exit 0, 2 FBX, problems []
+uv run python tools/qa/validate_package.py "$E/package-v002/0000_Kpp_1.zip" --profile npm --scene --json  # exit 1
+```
+`v004-attempt1` = первый прогон без `Mesh.validate()`: в Blender 0 перевёрнутых, но после чтения FBX снова 4.
+
+## Open items
+
+Каждая строка, которая не `pass` и не закрыта [D313] (fail Ground заказчика: V003 ground skirt depth,
+V004 topology defects, V004 co-directional clearance по `0000_Kpp_1_Ground.fbx`), — здесь.
+
+NPM `package-v002/validate-npm.json`:
+- V003 ground footprint coverage — not_run — 0000_Kpp_1_Ground.fbx: нет `ground_area_m2` (площадь участка минус пятно).
+- V003 ground footprint hole coverage — not_run — 0000_Kpp_1_Ground.fbx: нет эталона отверстий под пятном.
+- V003 Flora triangle share — review — 0000_Kpp_1_Ground.fbx: Flora 109 327 при ориентире 70 000 (решает Артём).
+- V003 master quads — not_run — quad-мастер не передан (`--master`; #1372 — мастер R1, не этот пакет).
+- V004 co-directional clearance — review — 0000_Kpp_1_01.fbx: R1, 0 пар < 5 мм, 20 266 пар > 20 мм (ручной просмотр).
+- V004 MAF flipped normals — not_run — 0000_Kpp_1_Ground.fbx: flipped 0, inconsistent 0, 561 плоских компонентов без ориентации.
+- V015 Flora dimensions — not_run — 0000_Kpp_1_Ground.fbx: нет ведомости озеленения.
+- V015 / V017 — ручные приёмки (manual_reviews_pending).
+- V014 — валидатора нет.
+
+VPM `package-v001/validate-vpm-v008.json` (пакет #1371 package-v008):
+- V011 s_podz empty — fail — число заказчика через Артёма [D306]; в ТЭП (TEC26_na_RR_1.pptx, слайд 59) «–».
+- V003 master quads — not_run — quad-мастер не передан.
+- V004 co-directional clearance — review — SM_Kpp_1.fbx: 0 пар < 5 мм, 105 614 пар > 20 мм.
+- V010 UCX coverage and offsets — not_run.
+- V012 archive name — review — SM_Kpp_1.
+- V013 Z bounds vs export_meta — not_run — export_meta не передан.
+- V013 MSK-77 point — not_run — точка GeoJSON против съёмки.
+- V015 / V016 / V017 — ручные приёмки.
+
 ## Кратко (RU) — раунд 3 (решение Артёма [D313], «на все да»)
 
 - **Исключение [D313]** (как [D256]): собственные дефекты моделирования Ground заказчика — V004 самопересечения

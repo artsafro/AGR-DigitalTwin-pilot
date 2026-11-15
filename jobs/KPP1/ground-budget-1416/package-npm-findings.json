@@ -1,6 +1,6 @@
 {
- "validate_json": "1416-kpp1-ground-budget/package-v001/validate-npm.json",
- "target_sha256": "d861ba2678f812836d10b6285f504018ac53eb4bea150c57405ba4fe8d139c09",
+ "validate_json": "1416-kpp1-ground-budget/package-v002/validate-npm.json",
+ "target_sha256": "c9401232760efd61f80cac7e8e8e29eaea9ea931b09faa1c07c26b06fd01e47a",
  "passed": false,
  "machine_stage_counts": {
   "pass": 5,
@@ -16,187 +16,224 @@
   {
    "stage": "V001",
    "name": "archive size",
-   "status": "pass"
+   "status": "pass",
+   "evidence": ""
   },
   {
    "stage": "V002",
    "name": "FBX header",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V002",
    "name": "FBX header",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V002",
    "name": "system units",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V002",
    "name": "scale 1:1",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V002",
    "name": "system units",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V002",
    "name": "scale 1:1",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V003",
    "name": "triangulated",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V003",
    "name": "triangle count",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V003",
    "name": "triangulated",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V003",
    "name": "triangle count",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V003",
    "name": "ground footprint coverage",
-   "status": "not_run"
+   "status": "not_run",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V003",
    "name": "ground footprint hole coverage",
-   "status": "not_run"
+   "status": "not_run",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V003",
    "name": "ground skirt depth",
-   "status": "fail"
+   "status": "fail",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V003",
    "name": "Flora triangle share",
-   "status": "review"
+   "status": "review",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V003",
    "name": "master quads",
-   "status": "not_run"
+   "status": "not_run",
+   "evidence": "DER-03"
   },
   {
    "stage": "V004",
    "name": "applied transforms",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V004",
    "name": "topology defects",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V004",
    "name": "co-directional clearance",
-   "status": "review"
+   "status": "review",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V004",
    "name": "applied transforms",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V004",
    "name": "topology defects",
-   "status": "fail"
+   "status": "fail",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V004",
    "name": "MAF smoothing",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V004",
    "name": "MAF flipped normals",
-   "status": "fail"
+   "status": "not_run",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V004",
    "name": "co-directional clearance",
-   "status": "fail"
+   "status": "fail",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V005",
    "name": "color attributes",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V005",
    "name": "material assignments",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V005",
    "name": "color attributes",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V005",
    "name": "material assignments",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V005",
    "name": "Flora maps: M_77_05_0009005_117_Flora_1",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V006",
    "name": "embedded textures",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V006",
    "name": "texture dimensions",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V006",
    "name": "embedded textures",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V006",
    "name": "texture dimensions",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V012",
    "name": "FBX names",
-   "status": "pass"
+   "status": "pass",
+   "evidence": ""
   },
   {
    "stage": "V012",
    "name": "mesh names",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_01.fbx"
   },
   {
    "stage": "V012",
    "name": "mesh names",
-   "status": "pass"
+   "status": "pass",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   },
   {
    "stage": "V015",
    "name": "Flora dimensions",
-   "status": "not_run"
+   "status": "not_run",
+   "evidence": "0000_Kpp_1_Ground.fbx"
   }
  ]
 }

@@ -5,6 +5,10 @@ are read-only inputs (hash-checked). Steps per mesh: rename to SM_Kpp_1_<suffix>
 into the vertices (identity object transform), weld vertices <= 2 mm (reg tolerance), delete faces that
 repeat a vertex set, dissolve degenerate (< 2 mm) edges, delete loose vertices/edges, and on GroundEl (MAF)
 recalculate face normals outward. Every change is counted in repair-report.json.
+Review P1 (#1418, Ground v004): the bmesh orientation missed 4 GroundEl faces that the FBX readback rule
+(twinqa.geometry.maf_surface, position weld 1e-5 m, zero-area faces left out) still counts as flipped, so a
+last pass reverses `ground_copy_plan.readback_flips` and re-checks with surface_facts itself (exit 2 when
+flipped or inconsistent stays > 0). Output v004 = v003 + that winding pass; vertices / UV / counts unchanged.
 
 Run: blender -b --factory-startup -noaudio --python derive_ground_v003.py -- <v002.fbx> <sha256> <customer.fbx> <sha256> <mapping.json> <new_out_dir>
 (the customer FBX gives back the embedded textures v002 lost.)
@@ -24,6 +28,13 @@ from mathutils import Matrix
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ground_copy_plan as plan  # noqa: E402
+import importlib.util  # noqa: E402
+
+_MS = importlib.util.spec_from_file_location(
+    "maf_surface", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..",
+                                "src", "twinqa", "geometry", "maf_surface.py"))
+maf_surface = importlib.util.module_from_spec(_MS)
+_MS.loader.exec_module(maf_surface)
 
 LIMIT = 180000
 TOL = 0.002
@@ -163,6 +174,41 @@ def repair(o, flip):
     return rep
 
 
+def readback_orient(o):
+    """Reverse the faces the FBX readback rule still counts as flipped/inconsistent, then re-check with it."""
+    me = o.data
+    # the FBX importer runs Mesh.validate(): it drops the polygons triangulation made duplicate, which
+    # rewires the adjacency the readback sees (5 GroundEl tris in v003). Apply the same cleanup here so
+    # the oriented mesh IS the readback mesh; the dropped faces are counted in the report.
+    n_before = len(me.polygons)
+    me.validate(verbose=False, clean_customdata=False)
+    dropped = n_before - len(me.polygons)
+    coords = [tuple(v.co) for v in me.vertices]
+    polys = [list(p.vertices) for p in me.polygons]
+    if not polys:
+        die(f"{o.name} has no faces")
+    try:
+        flips = plan.readback_flips(coords, polys)
+    except plan.PlanError as exc:
+        die(f"{o.name}: {exc}")
+    if flips:
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        bm.faces.ensure_lookup_table()
+        bmesh.ops.reverse_faces(bm, faces=[bm.faces[i] for i in sorted(flips)], flip_multires=False)
+        bm.normal_update()
+        bm.to_mesh(me)
+        bm.free()
+        me.update()
+    polys = [list(p.vertices) for p in me.polygons]
+    facts = maf_surface.surface_facts(coords, polys, [[(0.0, 0.0, 1.0)] * len(p) for p in polys])
+    if facts["flipped_faces"] or facts["inconsistent_edges"]:
+        die(f"{o.name}: readback still sees flipped {facts['flipped_faces']}, "
+            f"inconsistent {facts['inconsistent_edges']}")
+    return {"validate_faces_dropped": dropped, "readback_faces_flipped": len(flips), "readback_components": facts["components"],
+            "readback_undetermined_components": facts["undetermined_components"]}
+
+
 def transplant_materials(cust_objs):
     """v002 lost the embedded textures; give every v002 mesh the customer's own material datablocks
     (same names, same slot order) so the copy keeps the customer's textures. Missing / reordered
@@ -238,6 +284,8 @@ def main():
         o.data.transform(bridge @ o.matrix_world)
         o.matrix_world = Matrix.Identity(4)
         reps[new] = repair(o, flip=(new == MAF))
+        if new == MAF:
+            reps[new].update(readback_orient(o))
     after = census()
     total = sum(c["tris"] for c in after.values())
     if total > LIMIT:
