@@ -9,6 +9,8 @@ pilot validator, fixed for qa.package in AGR Tools 0.8 (#908 branch D). Each tes
 5. The readback's Blender log went to `<cwd>/logs/blender`.
 """
 import zipfile
+
+import pytest
 from pathlib import Path
 
 import validate_package as vp
@@ -40,6 +42,38 @@ def test_scene_readback_continues_after_one_unreadable_fbx(monkeypatch, tmp_path
     assert sorted(seen) == sorted([f"{STEM}.fbx", f"{STEM}_Light.fbx"]), seen  # both read, not only the first
     assert any(n.startswith(f"scene readback skipped for {seen[0]}") for n in report.notes)
     assert any(n.startswith(f"scene readback: {seen[1]}") for n in report.notes)
+
+@pytest.mark.parametrize("unread", [f"{STEM}.fbx", f"{STEM}_Light.fbx"])
+def test_unread_fbx_keeps_named_scene_not_run(monkeypatch, tmp_path, unread):
+    """Synthetic ZIP: inspect actual stage coverage, not the unrelated master verdict."""
+    files = good_files()
+    files[f"{STEM}_Light.fbx"] = files[f"{STEM}.fbx"]
+    package = tmp_path / f"{STEM}.zip"
+    with zipfile.ZipFile(package, "w") as archive:
+        for name, data in files.items():
+            archive.writestr(name, data)
+    seen = []
+
+    def readback(path):
+        name = Path(path).name
+        seen.append(name)
+        if name == unread:
+            raise RuntimeError("synthetic unreadable FBX")
+        result = rb(mesh())
+        result["source"] = str(path)
+        return result
+
+    monkeypatch.setattr(vp, "readback", readback)
+    report = vp.validate(package, "vpm", PROFILES, scene=True)
+    assert sorted(seen) == sorted([f"{STEM}.fbx", f"{STEM}_Light.fbx"])
+    expected = {"V002", "V003", "V004"}
+    if not unread.endswith("_Light.fbx"):
+        expected |= {"V008", "V009", "V010", "V013"}
+    for stage in report.stages:
+        if stage.id in expected:
+            assert any(f.status == "not_run" and f.evidence == unread
+                       and unread in f.observed for f in stage.findings), stage
+
 
 def test_add_scene_does_not_return_on_the_first_error():
     src = (ROOT / "tools/qa/validate_package.py").read_text(encoding="utf-8")
