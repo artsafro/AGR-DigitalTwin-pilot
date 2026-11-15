@@ -302,6 +302,106 @@ class BVH:
         return np.concatenate(out_r), np.concatenate(out_t), np.concatenate(out_d)
 
 
+    def capsule_pairs(self, p0, p1, rad, chunk=4000):
+        """(k, tri) for every triangle whose bounding sphere meets the capsule p0[k]-p1[k] of radius rad[k]."""
+        out_k, out_t = [], []
+        if self.n == 0 or len(p0) == 0:
+            return np.zeros(0, int), np.zeros(0, int)
+        if not hasattr(self, "nc"):
+            self.nc, self.nr = 0.5 * (self.nlo + self.nhi), 0.5 * np.linalg.norm(self.nhi - self.nlo, axis=1)
+            tc = self.a + (self.e1 + self.e2) / 3.0
+            self.tc = tc
+            self.tr = np.sqrt(np.maximum.reduce([np.einsum("ij,ij->i", x, x) for x in
+                                                 (self.a - tc, self.a + self.e1 - tc, self.a + self.e2 - tc)]))
+        for c0 in range(0, len(p0), chunk):
+            A, B, R = p0[c0:c0 + chunk], p1[c0:c0 + chunk], rad[c0:c0 + chunk]
+            AB = B - A
+            L2 = np.maximum(np.einsum("ij,ij->i", AB, AB), 1e-30)
+            fr = np.arange(len(A))
+            fn = np.zeros(len(A), int)
+            while fr.size:
+                ok = _seg_dist(self.nc[fn], A[fr], AB[fr], L2[fr]) <= R[fr] + self.nr[fn]
+                fr, fn = fr[ok], fn[ok]
+                leaf = self.left[fn] < 0
+                lr, ln = fr[leaf], fn[leaf]
+                if lr.size:
+                    cnt = self.count[ln]
+                    rr = np.repeat(lr, cnt)
+                    tt = np.repeat(self.start[ln], cnt) + np.arange(int(cnt.sum())) - np.repeat(np.cumsum(cnt) - cnt,
+                                                                                               cnt)
+                    ok = _seg_dist(self.tc[tt], A[rr], AB[rr], L2[rr]) <= R[rr] + self.tr[tt]
+                    out_k.append(rr[ok] + c0)
+                    out_t.append(tt[ok])          # sorted-order triangle index
+                inner = ~leaf
+                fr = np.concatenate([fr[inner], fr[inner]])
+                fn = np.concatenate([self.left[fn[inner]], self.right[fn[inner]]])
+        if not out_k:
+            return np.zeros(0, int), np.zeros(0, int)
+        return np.concatenate(out_k), np.concatenate(out_t)
+
+    def occluded(self, eye, targets, skip, tri_face, eps, normals=None, need=None):
+        """targets (K, S, 3) seen from eye: blocked (K, S) by an opaque triangle before the target (front or back).
+
+        tri_face: face id of each input triangle; triangles of face skip[k] never block face k's rays.
+        normals (K, 3): the target face normals; a triangle wholly beyond the lowest sample along the normal on the
+        eye's side cannot cut any eye -> sample segment (exact cull: every segment point is at least that high)."""
+        K, S = targets.shape[:2]
+        blocked = np.zeros((K, S), bool)
+        if K == 0 or self.n == 0:
+            return blocked
+        cen = targets.mean(1)
+        rad = np.sqrt((((targets - cen[:, None]) ** 2).sum(2)).max(1)) + 1e-6
+        kk, tt = self.capsule_pairs(np.repeat(eye[None], K, 0), cen, rad)
+        keep = tri_face[self.order[tt]] != skip[kk]
+        if normals is not None:
+            sig = np.sign(np.einsum("ij,ij->i", normals, eye - cen))
+            h = sig[:, None] * np.einsum("ksj,kj->ks", targets - cen[:, None], normals)
+            hmin = np.minimum(h.min(1), sig * 0.0) - 1e-9
+            n_k, c_k = normals[kk] * sig[kk, None], cen[kk]
+            hv = np.maximum.reduce([np.einsum("ij,ij->i", n_k, v - c_k) for v in
+                                    (self.a[tt], self.a[tt] + self.e1[tt], self.a[tt] + self.e2[tt])])
+            keep &= hv >= hmin[kk]
+        kk, tt = kk[keep], tt[keep]
+        if not kk.size:
+            return blocked
+        # rounds: the candidates nearest the target first (blockers of hidden faces sit there); a face leaves as soon
+        # as `need` can no longer be reached; visible faces test every candidate, so their counts are exact
+        dist_eye = np.linalg.norm(self.tc[tt] - eye, axis=1)
+        o = np.lexsort((tt, -dist_eye, kk))
+        kk, tt = kk[o], tt[o]
+        first = np.searchsorted(kk, kk, side="left")
+        rank = np.arange(len(kk)) - first
+        limit = S - (np.ones(K, int) if need is None else np.asarray(need)) + 1     # blocked >= limit: decided
+        lo, step = 0, 4
+        while True:
+            sel = (rank >= lo) & (rank < lo + step)
+            if not sel.any():
+                break
+            k, t = kk[sel], tt[sel]
+            live = blocked[k].sum(1) < limit[k]
+            k, t = k[live], t[live]
+            if k.size:
+                rk = np.repeat(k, S)
+                rs = np.tile(np.arange(S), len(k))
+                rt = np.repeat(t, S)
+                m = ~blocked[rk, rs]
+                rk, rs, rt = rk[m], rs[m], rt[m]
+                d = targets[rk, rs] - eye
+                dist = np.linalg.norm(d, axis=1)
+                d /= dist[:, None]
+                th, ok = _mt(np.broadcast_to(eye, d.shape), d, self.a[rt], self.e1[rt], self.e2[rt])
+                ok &= (th > 1e-9) & (th < dist - eps)
+                blocked[rk[ok], rs[ok]] = True
+            lo += step
+            step = min(step * 2, 4096)
+        return blocked
+
+
+def _seg_dist(c, a, ab, l2):
+    t = np.clip(np.einsum("ij,ij->i", c - a, ab) / l2, 0.0, 1.0)
+    return np.linalg.norm(a + t[:, None] * ab - c, axis=1)
+
+
 def _mt(o, d, a, e1, e2):
     """Moller-Trumbore, both sides, edges included (adjacent occluder triangles leave no crack)."""
     p = np.cross(d, e2)
@@ -468,18 +568,11 @@ def check(parts, context, config: dict | None = None) -> dict:
         cand = chk[want]
         if not cand.size:
             continue
-        tg = S[cand].reshape(-1, 3)
-        d = tg - pos
-        dist = np.linalg.norm(d, axis=1)
-        d = d / dist[:, None]
-        target = np.repeat(cand, SAMPLES)
-        o = np.repeat(pos[None], len(tg), 0)
-        r, _t, _ = occ.hits(o, d, np.full(len(tg), 1e-9), dist - eps,
-                            lambda rr, tt, t: occ_face[tt] != target[rr], any_hit=True)
-        blocked = np.zeros(len(tg), bool)
-        blocked[r] = True
-        seen = (~blocked).reshape(-1, SAMPLES).sum(1)
+        tg = S[cand]
         cside = np.einsum("ij,ij->i", F_n[cand], pos - F_cen[cand])
+        blocked = occ.occluded(pos, tg, cand, occ_face, eps, F_n[cand],
+                               np.where(cside > 0, c["front_n"], c["back_n"]))
+        seen = (~blocked).sum(1)
         for g, n_seen, s in zip(cand.tolist(), seen.tolist(), cside.tolist()):
             if s > 0 and g not in front and n_seen >= c["front_n"]:
                 front[g] = (eid, n_seen)
