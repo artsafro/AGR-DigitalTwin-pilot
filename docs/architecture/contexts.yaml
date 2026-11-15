@@ -290,83 +290,14 @@ shared_kernel:
       hash: "af2bc2e385"
       status: live-bypass
       step: "-"
-    - at: "src/dt_ai/geometry/ground_cake.py::uv_tile_report"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "331763c046"
-      ru: "маршрут Ground, не НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/blender/ground_json_to_fbx.py::readback"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "abdf135e7a"
-      ru: "маршрут Ground, не НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/experiments/dreamsim_ac08.py::_tile"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "971a042bbe"
-      ru: "эксперимент, не маршрут НПМ: перевод или пометка «исторический» в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/flora/build_flora_star.py::_bpy_build"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "31ff54af03"
-      ru: "маршрут Flora, не НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/flora/build_flora_star.py::_bpy_build"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "85e04a9a85"
-      ru: "маршрут Flora, не НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/flora/build_flora_star.py::udim_offset"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "31ff54af03"
-      ru: "маршрут Flora, не НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/flora/build_flora_star.py::udim_offset"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "85e04a9a85"
-      ru: "маршрут Flora, не НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/methods/methods_metrics.py::_udim"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "ded8ff2561"
-      ru: "каталог методов, не маршрут НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/methods/windows/windows_variants.py::tile_offset"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "31ff54af03"
-      ru: "каталог методов, не маршрут НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
-    - at: "tools/methods/windows/windows_variants.py::tile_offset"
-      rule: udim-tile
-      issue: "#1397"
-      hash: "85e04a9a85"
-      ru: "каталог методов, не маршрут НПМ: перевод в #1397"
-      status: live-bypass
-      step: "#1397"
+
     - at: "tools/source/measure_spec_blender.py::udim"
       rule: udim-tile
       issue: "#1397"
       hash: "ded8ff2561"
-      ru: "UV исходника произвольны (вне 0..10): нужно решение, сырой тайл или отказ (#1397)"
-      status: live-bypass
-      step: "#1397"
+      ru: "raw tile: диагностика произвольных UV исходника, не delivery UDIM (#1397)"
+      status: own-duty
+      why: "Другая задача: диагностика произвольных UV исходника (отрицательных и вне 0..10), raw tile не подтверждает корректность delivery UDIM."
 contexts:
   - id: body
     ru: "Корпус и геометрия"

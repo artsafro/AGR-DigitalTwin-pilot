@@ -20,6 +20,14 @@ cameras (top orthographic + four 45 degree obliques around the bounding box); co
 import math
 import json
 import sys
+import importlib.util
+from pathlib import Path
+
+_spec = importlib.util.spec_from_file_location(
+    "udimtile_core_ground_readback", Path(__file__).resolve().parents[2] / "adapters/max/agr_tools/udimtile_core.py")
+assert _spec is not None and _spec.loader is not None
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 
 import bpy
 import bmesh
@@ -145,7 +153,7 @@ def readback(fbx, src, rep, *tex):
             if max(c[0] for c in u) > tu + 1 + 1e-6 or max(c[1] for c in u) > tv + 1 + 1e-6:
                 straddle += 1
             else:
-                tiles.add(1001 + tu + 10 * tv)
+                tiles.add(_udimtile.udim_of_cell(tu, tv))
             sa = sum((u[k][0] - u[0][0]) * (u[k + 1][1] - u[0][1]) - (u[k][1] - u[0][1]) * (u[k + 1][0] - u[0][0])
                      for k in range(1, len(u) - 1))
             fa = sum(((w[k] - w[0]).cross(w[k + 1] - w[0])).dot(p.normal) for k in range(1, len(w) - 1))
