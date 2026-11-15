@@ -154,7 +154,14 @@ def write_png(path, colour):
     Image.new('RGB', (40, 25), colour).save(path)
 
 
-def fake_runner(after_camera=None, touch=None):
+RENDER = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire', 'view_transform': 'Standard',
+          'look': 'None', 'exposure': 0.0, 'gamma': 1.0, 'display_device': 'sRGB',
+          'world_color': [0.05, 0.05, 0.05], 'world_use_nodes': False,
+          'background_type': 'VIEWPORT', 'background_color': [0.05, 0.05, 0.05],
+          'thickness': 0.0012}
+
+
+def fake_runner(after_camera=None, touch=None, mutate_render=None):
     def run(script, args, *, executable=None, output_json=None, outputs=(), timeout=900, log_path=None):
         cfg = json.loads(Path(args[0]).read_text(encoding='utf-8'))
         out = Path(cfg['output_dir'])
@@ -162,9 +169,11 @@ def fake_runner(after_camera=None, touch=None):
         write_png(out / 'after.png', (50, 200, 50))
         if touch:
             touch()
-        record = {'before': {'camera': CAM, 'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}},
+        record = {'before': {'camera': CAM, 'render': copy.deepcopy(RENDER)},
                   'after': {'camera': after_camera or CAM,
-                            'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}}}
+                            'render': copy.deepcopy(RENDER)}}
+        if mutate_render:
+            mutate_render(record['after']['render'])
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
         return record
     return run
@@ -223,6 +232,69 @@ def test_cli_refuses_mismatched_cameras_and_writes_nothing(tmp_path, inputs, mon
     assert not output.exists() and not output.with_name('out.partial').exists()
     assert snapshot(tmp_path / 'in') == before_state
     assert not (tmp_path / 'ev').exists(), 'created parent directories are removed on refusal'
+
+
+@pytest.mark.parametrize('key,value', [
+    ('engine', 'CYCLES'), ('style', 'solid'), ('view_transform', 'AgX'),
+    ('look', 'AgX - Medium High Contrast'), ('exposure', 2.0), ('gamma', 1.5),
+    ('display_device', 'Display P3'), ('world_color', [1.0, 0.0, 0.0]),
+    ('world_use_nodes', True), ('background_type', 'WORLD'),
+    ('background_color', [0.0, 0.0, 0.0]), ('thickness', 0.0012000001)])
+def test_cli_refuses_changed_render_state(tmp_path, inputs, monkeypatch, capsys, key, value):
+    module = load()
+    monkeypatch.setattr(module, 'run_blender', fake_runner(mutate_render=lambda r: r.update({key: value})))
+    state = snapshot(tmp_path)
+    assert module.main(argv(*inputs, tmp_path / 'ev' / 'out')) == 2
+    assert key in capsys.readouterr().err
+    assert snapshot(tmp_path) == state
+
+
+@pytest.mark.parametrize('mutate', [
+    lambda r: r.clear(), lambda r: r.pop('exposure'), lambda r: r.update(unknown=1),
+    lambda r: r.update(exposure=float('nan')), lambda r: r.update(gamma=float('inf')),
+    lambda r: r.update(thickness=0), lambda r: r.update(thickness=-1),
+    lambda r: r.update(thickness=None), lambda r: r.update(thickness=True),
+    lambda r: r.update(world_color=[0, 0]), lambda r: r.update(background_color=[0, 0, float('nan')]),
+    lambda r: r.update(world_use_nodes=1), lambda r: r.update(look=''),
+    lambda r: r.update(background_type='unknown')])
+def test_cli_refuses_invalid_render_state(tmp_path, inputs, monkeypatch, mutate):
+    module = load()
+    monkeypatch.setattr(module, 'run_blender', fake_runner(mutate_render=mutate))
+    state = snapshot(tmp_path)
+    assert module.main(argv(*inputs, tmp_path / 'ev' / 'out')) == 2
+    assert snapshot(tmp_path) == state
+
+
+def test_render_state_generated_presence_and_numeric_probes():
+    """Exhaust all 4096 presence subsets, then nonfinite values in every numeric component."""
+    module = load()
+    keys = list(RENDER)
+    for mask in range(1 << len(keys)):
+        state = {k: copy.deepcopy(RENDER[k]) for i, k in enumerate(keys) if mask & (1 << i)}
+        if len(state) == len(keys):
+            assert module.compare_render_state(state, state) == []
+        else:
+            with pytest.raises(ValueError, match='render keys'):
+                module.compare_render_state(state, state)
+    for key in ('exposure', 'gamma', 'thickness', 'world_color', 'background_color'):
+        for index in range(3 if isinstance(RENDER[key], list) else 1):
+            for bad in (float('nan'), float('inf'), -float('inf')):
+                state = copy.deepcopy(RENDER)
+                if isinstance(state[key], list):
+                    state[key][index] = bad
+                else:
+                    state[key] = bad
+                with pytest.raises(ValueError, match=key):
+                    module.compare_render_state(state, state)
+
+
+def test_render_state_repeated_failure_and_reset():
+    module = load()
+    for _ in range(3):
+        bad = dict(RENDER, exposure=3.0)
+        assert module.compare_render_state(RENDER, bad) == ['exposure']
+        assert module.compare_render_state(bad, RENDER) == ['exposure']
+        assert module.compare_render_state(RENDER, copy.deepcopy(RENDER)) == []
 
 
 def test_cli_refuses_input_changed_during_run(tmp_path, inputs, monkeypatch):
@@ -344,18 +416,41 @@ import bpy, sys
 out = sys.argv[sys.argv.index('--') + 1:]
 for index, path in enumerate(out[:2]):
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    bpy.ops.mesh.primitive_cube_add(size=8 if index and out[2] == 'extent' else 2)
+    bpy.ops.mesh.primitive_cube_add(size=8 if index and out[2] in ('extent', 'combined') else 2)
     scene = bpy.context.scene
-    if index and out[2] == 'exposure':
-        scene.view_settings.exposure = 2
+    data = bpy.data.cameras.new('Shot')
+    cam = bpy.data.objects.new('Shot', data)
+    scene.collection.objects.link(cam)
+    cam.location = (0, -20, 0)
+    cam.rotation_euler = (1.5707963, 0, 0)
+    if index:
+        if out[2] in ('exposure', 'combined'):
+            scene.view_settings.exposure = 2
+        if out[2] in ('gamma', 'combined'):
+            scene.view_settings.gamma = 1.8
+        if out[2] in ('look', 'combined'):
+            scene.view_settings.look = 'AgX - Medium High Contrast'
+        if out[2] in ('display', 'combined'):
+            scene.display_settings.display_device = 'Display P3'
+        if out[2] in ('world', 'combined'):
+            scene.world = bpy.data.worlds.new('SyntheticWorld')
+            scene.world.color = (1, 0, 0)
+            scene.world.node_tree.nodes.get('Background').inputs['Color'].default_value = (0, 1, 0, 1)
+        if out[2] in ('background', 'combined'):
+            scene.display.shading.background_type = 'WORLD'
+            scene.display.shading.background_color = (0.8, 0.1, 0.2)
     bpy.ops.wm.save_as_mainfile(filepath=path)
 '''
 
 
 @pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
                     reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
-@pytest.mark.parametrize('change', ['exposure', 'extent'])
-def test_real_blender_normalizes_saved_render_state(tmp_path, change):
+@pytest.mark.parametrize('change,style,mode', [
+    ('exposure', 'wire', 'fit'), ('exposure', 'solid', 'fit'), ('extent', 'wire', 'fit'),
+    ('gamma', 'wire', 'fit'), ('look', 'wire', 'fit'), ('display', 'wire', 'fit'),
+    ('world', 'material', 'fit'), ('background', 'texture', 'fit'),
+    ('combined', 'wire', 'fit'), ('combined', 'wire', 'named')])
+def test_real_blender_normalizes_saved_render_state(tmp_path, change, style, mode):
     """Synthetic saved scenes: source exposure and size must not change render settings."""
     module = load()
     maker = tmp_path / 'make.py'
@@ -364,13 +459,22 @@ def test_real_blender_normalizes_saved_render_state(tmp_path, change):
     from dt_ai.core.blender_runner import run_blender
     run_blender(maker, [a, b, change], outputs=[a, b], log_path=tmp_path / 'make.log')
     output = tmp_path / 'ev' / change
-    assert module.main(argv(a, b, output, '--resolution', '64x40')) == 0
+    assert module.main(argv(a, b, output, '--resolution', '64x40', '--style', style,
+                            '--camera-mode', mode, '--camera-name', 'Shot')) == 0
     evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
     left, right = (evidence[r]['render'] for r in ('before', 'after'))
-    assert left['exposure'] == right['exposure'] == 0.0
+    assert left == right
+    assert left['exposure'] == 0.0 and left['gamma'] == 1.0
+    assert left['look'] == 'None' and left['view_transform'] == 'Standard'
+    assert left['display_device'] == 'sRGB' and left['background_type'] == 'VIEWPORT'
+    assert left['background_color'] == pytest.approx([0.05] * 3)
+    assert left['world_color'] == pytest.approx([0.05] * 3)
     assert left['thickness'] == right['thickness']
-    assert left['thickness'] == pytest.approx(0.0048 if change == 'extent' else 0.0012)
-    if change == 'exposure':
+    if style == 'wire':
+        assert left['thickness'] == pytest.approx(0.0048 if change in ('extent', 'combined') else 0.0012)
+    else:
+        assert left['thickness'] is None
+    if change not in ('extent', 'combined'):
         from PIL import Image
         assert Image.open(output / 'before.png').tobytes() == Image.open(output / 'after.png').tobytes()
 

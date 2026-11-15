@@ -61,7 +61,7 @@ def fit_camera(union):
             'ortho_scale': max(span, 1e-3), 'clip_start': extent * 1e-3, 'clip_end': extent * 5}
 
 
-def setup(scene, fitted):
+def setup(scene, fitted, thickness):
     width, height = request['resolution']
     render = scene.render
     render.engine = 'BLENDER_WORKBENCH'
@@ -77,7 +77,16 @@ def setup(scene, fitted):
     shading.color_type = {'solid': 'SINGLE', 'wire': 'OBJECT', 'material': 'MATERIAL',
                           'texture': 'TEXTURE'}[request['style']]
     shading.single_color = (0.8, 0.8, 0.8)
+    shading.background_type = 'VIEWPORT'
+    shading.background_color = (0.05, 0.05, 0.05)
+    # Workbench uses the explicit VIEWPORT colour, never inherited world nodes.
+    scene.world = bpy.data.worlds.new('BeforeAfterWorld')
+    scene.world.color = (0.05, 0.05, 0.05)
+    scene.display_settings.display_device = 'sRGB'
     scene.view_settings.view_transform = 'Standard'
+    scene.view_settings.look = 'None'
+    scene.view_settings.exposure = 0.0
+    scene.view_settings.gamma = 1.0
     if request['mode'] == 'named':
         camera = scene.objects.get(request['name'])
         if camera is None or camera.type != 'CAMERA':
@@ -93,19 +102,36 @@ def setup(scene, fitted):
         camera.location = fitted['location']
         camera.rotation_euler = fitted['rotation']
     scene.camera = camera
+    wires = []
     if request['style'] == 'wire':
         objects = meshes(scene)
-        extent = max((max(bbox(scene)[1] - bbox(scene)[0])), 1e-3)
         for obj in objects:
             obj.color = (0.82, 0.82, 0.82, 1.0)
             wire = obj.copy()
             scene.collection.objects.link(wire)
             modifier = wire.modifiers.new('BeforeAfterWire', 'WIREFRAME')
-            modifier.thickness = extent * 6e-4
+            modifier.thickness = thickness
+            wires.append(modifier)
             modifier.use_replace = True
             wire.color = (0.05, 0.05, 0.05, 1.0)
     bpy.context.view_layer.update()
-    return camera
+    return camera, wires
+
+
+def render_record(scene, wires):
+    shading = scene.display.shading
+    thicknesses = [m.thickness for m in wires]
+    if thicknesses and any(t != thicknesses[0] for t in thicknesses):
+        raise RuntimeError('mismatched wire thickness within scene')
+    return {'engine': scene.render.engine, 'style': request['style'],
+            'view_transform': scene.view_settings.view_transform,
+            'look': scene.view_settings.look, 'exposure': scene.view_settings.exposure,
+            'gamma': scene.view_settings.gamma,
+            'display_device': scene.display_settings.display_device,
+            'world_color': list(scene.world.color), 'world_use_nodes': scene.world.use_nodes,
+            'background_type': shading.background_type,
+            'background_color': list(shading.background_color),
+            'thickness': thicknesses[0] if thicknesses else None}
 
 
 def record(scene, camera):
@@ -125,17 +151,21 @@ def record(scene, camera):
 
 
 fitted = None
-if request['mode'] == 'fit':
+thickness = None
+if request['mode'] == 'fit' or request['style'] == 'wire':
     boxes = [bbox(load(cfg[role])) for role in ('before', 'after')]
-    fitted = fit_camera((Vector([min(b[0][i] for b in boxes) for i in range(3)]),
-                         Vector([max(b[1][i] for b in boxes) for i in range(3)])))
+    union = (Vector([min(b[0][i] for b in boxes) for i in range(3)]),
+             Vector([max(b[1][i] for b in boxes) for i in range(3)]))
+    thickness = max(max(union[1] - union[0]), 1e-3) * 6e-4
+    if request['mode'] == 'fit':
+        fitted = fit_camera(union)
 evidence = {}
 for role in ('before', 'after'):
     scene = load(cfg[role])
     mesh_count = len(meshes(scene))  # before setup(): the 'wire' style adds wireframe copies (r1 P3)
-    camera = setup(scene, fitted)
+    camera, wires = setup(scene, fitted, thickness)
     scene.render.filepath = str(out / f'{role}.png')
     bpy.ops.render.render(write_still=True)
     evidence[role] = {'camera': record(scene, camera), 'mesh_objects': mesh_count,
-                      'render': {'engine': scene.render.engine, 'style': request['style']}}
+                      'render': render_record(scene, wires)}
 (out / 'render-evidence.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')

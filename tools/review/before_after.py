@@ -41,7 +41,9 @@ CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'sensor_height', 'shift_
 # projection, so any parameter that changes the image (incl. ones not listed above) is a mismatch.
 CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution', 'pixel_aspect',
                *CAMERA_FLOATS}
-RENDER_KEYS = ('engine', 'style')
+RENDER_KEYS = {'engine', 'style', 'view_transform', 'look', 'exposure', 'gamma',
+               'display_device', 'world_color', 'world_use_nodes', 'background_type',
+               'background_color', 'thickness'}
 TOLERANCE = 1e-6
 
 
@@ -91,6 +93,37 @@ def compare_cameras(before, after):
     """Return the camera keys that differ (sorted); raise ValueError on a partial or non-finite record."""
     a, b = _normal(before), _normal(after)
     return sorted(key for key in CAMERA_KEYS if not _close(a[key], b[key]))
+
+
+def compare_render_state(before, after):
+    """Require complete finite state; return exact differing keys (no wire-width tolerance)."""
+    for state in (before, after):
+        if not isinstance(state, dict):
+            raise ValueError('render record must be an object')
+        keys = set(state)
+        if keys != RENDER_KEYS:
+            raise ValueError(f'render keys missing {sorted(RENDER_KEYS - keys)} unknown {sorted(keys - RENDER_KEYS)}')
+        for key, allowed in (('engine', {'BLENDER_WORKBENCH'}), ('style', STYLES),
+                             ('background_type', {'WORLD', 'VIEWPORT', 'THEME'})):
+            if not isinstance(state[key], str) or state[key] not in allowed:
+                raise ValueError(f'render {key} unsupported: {state[key]!r}')
+        for key in ('view_transform', 'look', 'display_device'):
+            if not isinstance(state[key], str) or not state[key].strip():
+                raise ValueError(f'render {key} must be a nonempty string')
+        if not isinstance(state['world_use_nodes'], bool):
+            raise ValueError('render world_use_nodes must be a boolean')
+        for key in ('exposure', 'gamma'):
+            _finite(state[key], f'render.{key}')
+        if state['gamma'] <= 0:
+            raise ValueError('render gamma must be positive')
+        for key in ('world_color', 'background_color'):
+            _vector(state, key, 3)
+        if state['style'] == 'wire':
+            if _finite(state['thickness'], 'render.thickness') <= 0:
+                raise ValueError('render thickness must be positive for wire')
+        elif state['thickness'] is not None:
+            raise ValueError('render thickness must be null for non-wire style')
+    return sorted(k for k in RENDER_KEYS if before[k] != after[k])
 
 
 def validate_request(spec):
@@ -250,7 +283,7 @@ def run(args):
                              timeout=args.timeout, log_path=partial / 'blender.log')
         try:
             differ = compare_cameras(record['before']['camera'], record['after']['camera'])
-            render_differ = [k for k in RENDER_KEYS if record['before']['render'][k] != record['after']['render'][k]]
+            render_differ = compare_render_state(record['before']['render'], record['after']['render'])
         except (KeyError, TypeError, ValueError) as exc:
             raise BeforeAfterError(f'render evidence incomplete: {exc}') from None
         if differ or render_differ:
