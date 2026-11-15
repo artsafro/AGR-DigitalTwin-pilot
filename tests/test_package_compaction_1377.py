@@ -83,9 +83,12 @@ def test_every_delivery_zip_row_names_its_reason_and_this_issue():
     assert all(str(d.get("ru", "")).strip() and d["issue"] == "#1377" for d in rows), rows
 
 
-def test_nine_vpm_packagers_are_marked_historical():
+def test_nine_vpm_packagers_distinguish_candidates_from_finished_jobs():
     rows = {d["at"].split("::")[0]: d for d in _zip_rows()}
-    assert all(p in rows and "историч" in rows[p]["ru"] for p in VPM_PACKAGERS)
+    for path in VPM_PACKAGERS:
+        expected = ('superseded' if 'elv-tc-vpm' in path and 'v006' not in path else
+                    'live-bypass' if 'elv-tc-vpm' in path or 'TEC26-OKS' in path else 'historical')
+        assert rows[path]['status'] == expected, path
 
 
 def test_repo_guard_green_and_route_map_check_green(capsys):
