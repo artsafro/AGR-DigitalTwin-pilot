@@ -339,6 +339,42 @@ def test_real_blender_named_mismatch_refused_and_fit_matches(tmp_path):
     assert [evidence[r]['mesh_objects'] for r in ('before', 'after')] == [1, 1]  # r1 P3: no wire copies
 
 
+MAKE_RENDER_SCENES = r'''
+import bpy, sys
+out = sys.argv[sys.argv.index('--') + 1:]
+for index, path in enumerate(out[:2]):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.mesh.primitive_cube_add(size=8 if index and out[2] == 'extent' else 2)
+    scene = bpy.context.scene
+    if index and out[2] == 'exposure':
+        scene.view_settings.exposure = 2
+    bpy.ops.wm.save_as_mainfile(filepath=path)
+'''
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('change', ['exposure', 'extent'])
+def test_real_blender_normalizes_saved_render_state(tmp_path, change):
+    """Synthetic saved scenes: source exposure and size must not change render settings."""
+    module = load()
+    maker = tmp_path / 'make.py'
+    maker.write_text(MAKE_RENDER_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'a.blend', tmp_path / 'b.blend'
+    from dt_ai.core.blender_runner import run_blender
+    run_blender(maker, [a, b, change], outputs=[a, b], log_path=tmp_path / 'make.log')
+    output = tmp_path / 'ev' / change
+    assert module.main(argv(a, b, output, '--resolution', '64x40')) == 0
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    left, right = (evidence[r]['render'] for r in ('before', 'after'))
+    assert left['exposure'] == right['exposure'] == 0.0
+    assert left['thickness'] == right['thickness']
+    assert left['thickness'] == pytest.approx(0.0048 if change == 'extent' else 0.0012)
+    if change == 'exposure':
+        from PIL import Image
+        assert Image.open(output / 'before.png').tobytes() == Image.open(output / 'after.png').tobytes()
+
+
 MAKE_SENSOR_SCENES = r'''
 import bpy, sys
 out = sys.argv[sys.argv.index('--') + 1:]
