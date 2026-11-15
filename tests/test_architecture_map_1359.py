@@ -287,6 +287,25 @@ def test_guard_1370_udim_copy(tmp_path, code, capsys):
     assert "NEW COPY [udim-tile]" in capsys.readouterr().out
 
 
+ARCHIVE_1370 = [
+    "from zipfile import ZipFile as Z; Z('a.zip', 'w')",
+    "from zipfile import ZipFile as Z; Z('a.zip', mode='x')",
+    "import zipfile as z; z.ZipFile('a.zip', 'a')",
+    "from zipfile import ZipFile as Z; Z('a.zip', mode=mode)",
+    "Z('a.zip', 'w'); from zipfile import ZipFile as Z",
+    "shutil.make_archive('pkg', 'zip', d)",
+    "import shutil as s; s.make_archive('pkg', format='zip', root_dir=d)",
+    "from shutil import make_archive as pack; pack('pkg', 'zip', d)",
+    "from shutil import make_archive; make_archive('pkg', fmt, d)",
+]
+
+
+@pytest.mark.parametrize("code", ARCHIVE_1370)
+def test_guard_1370_archive_copy(tmp_path, code, capsys):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/copy.py": code})) == 1
+    assert "NEW COPY [delivery-zip]" in capsys.readouterr().out
+
+
 ZIP_COPIES = [
     "import zipfile\nwith zipfile.ZipFile(p, 'w') as z: pass\n",
     "import zipfile\nwith zipfile.ZipFile(p, \"x\", zipfile.ZIP_DEFLATED) as z: pass\n",
