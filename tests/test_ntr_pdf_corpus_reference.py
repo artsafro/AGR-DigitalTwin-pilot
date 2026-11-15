@@ -80,3 +80,105 @@ def test_ntr_receipt_mutation_witnesses_fail_closed(case, tmp_path, monkeypatch)
     with pytest.raises((AssertionError, KeyError, TypeError)):
         test_ntr_pilot_complete_source_accounting()
         test_ntr_cost_boundaries_and_inventory()
+
+
+def _check_batch2(data):
+    """#1303 batch-2 receipt invariants: caps, new albums only, ledger = snapshot deltas."""
+    b = data["batch2"]
+    albums = b["albums"]
+    assert 1 <= len(albums) <= data["batch_policy"]["max_albums"] == 2
+    assert sum(a["pages"] for a in albums) <= data["batch_policy"]["max_pages"] == 40
+    first = {a["sha256"] for a in data["albums"]}
+    hashes = [a["sha256"] for a in albums]
+    assert len(set(hashes)) == len(hashes) and not first & set(hashes)
+    assert len({a["id"] for a in albums}) == len(albums)
+    snaps = b["usage_snapshots"]
+    assert len(snaps) == len(albums) + 1
+    for key in ("new_tokens", "cached_tokens"):
+        vals = [s[key] for s in snaps]
+        assert all(isinstance(v, int) and not isinstance(v, bool) and v >= 0 for v in vals)
+        assert vals == sorted(vals)
+    for i, a in enumerate(albums):
+        assert len(a["sha256"]) == 64 and a["source_unchanged"] is True
+        assert len(a["page_text_bytes"]) == a["pages"] >= 1
+        assert a["local_model_new_tokens"] == a["local_model_cached_tokens"] == 0
+        assert a["window_new_tokens"] == snaps[i + 1]["new_tokens"] - snaps[i]["new_tokens"]
+        assert a["window_cached_tokens"] == snaps[i + 1]["cached_tokens"] - snaps[i]["cached_tokens"]
+        assert math.isfinite(a["extraction_seconds"]) and a["extraction_seconds"] >= 0
+    total = sum(a["window_new_tokens"] for a in albums)
+    assert b["new_token_cap"] == 100000 and b["reserve_tokens"] == 30000
+    assert total <= b["new_token_cap"]
+    assert b["currency_cost"] is None
+    s = b["session_before_pr"]
+    assert s["new_tokens"] >= snaps[-1]["new_tokens"]
+    assert s["reserve_used"] == max(0, s["new_tokens"] - b["new_token_cap"]) <= b["reserve_tokens"]
+    assert len(b["evidence_manifest_sha256"]) == 64
+
+
+def test_ntr_batch2_receipt_and_report():
+    data = json.loads(RECEIPT.read_text(encoding="utf-8"))
+    _check_batch2(data)
+    text = REPORT.read_text(encoding="utf-8")
+    section = text.split("## Batch 2 (#1303)", 1)[1]
+    for required in ["B01 p1", "B02 p1", "Go/no-go", "NO-GO", "unknown", "11,993", "3,694",
+                     "Alutech ALT F50", "RAL 7021", "щучка дернистая", "[D267]", "1303-ntr-pdf-batch2"]:
+        assert required in section, required
+
+
+@pytest.mark.parametrize("case", ["empty", "three_albums", "too_many_pages", "first10_hash", "duplicate",
+                                  "nan", "inf", "string", "over_cap", "non_monotonic", "ledger_mismatch",
+                                  "changed_source", "zero_pages", "hidden_reserve"])
+def test_ntr_batch2_mutations_fail_closed(case):
+    data = json.loads(RECEIPT.read_text(encoding="utf-8"))
+    b = data["batch2"]
+    a0 = b["albums"][0]
+    if case == "empty":
+        data = {}
+    elif case == "three_albums":
+        b["albums"].append(dict(a0, id="B03", sha256="f" * 64))
+        b["usage_snapshots"].append(dict(b["usage_snapshots"][-1]))
+    elif case == "too_many_pages":
+        a0["pages"] = 40
+        a0["page_text_bytes"] = [1] * 40
+    elif case == "first10_hash":
+        a0["sha256"] = data["albums"][0]["sha256"]
+    elif case == "duplicate":
+        b["albums"][1] = dict(a0)
+    elif case in ("nan", "inf"):
+        b["usage_snapshots"][1]["new_tokens"] = float(case)
+    elif case == "string":
+        b["usage_snapshots"][1]["new_tokens"] = "unknown"
+    elif case == "over_cap":
+        b["usage_snapshots"][1]["new_tokens"] = b["usage_snapshots"][0]["new_tokens"] + 100001
+        b["usage_snapshots"][2]["new_tokens"] = b["usage_snapshots"][1]["new_tokens"]
+        a0["window_new_tokens"] = 100001
+        b["albums"][1]["window_new_tokens"] = 0
+    elif case == "non_monotonic":
+        b["usage_snapshots"][2]["cached_tokens"] = 0
+    elif case == "ledger_mismatch":
+        a0["window_new_tokens"] += 1
+    elif case == "changed_source":
+        a0["source_unchanged"] = False
+    elif case == "zero_pages":
+        a0["pages"] = 0
+        a0["page_text_bytes"] = []
+    elif case == "hidden_reserve":
+        b["session_before_pr"]["reserve_used"] = 0
+    with pytest.raises((AssertionError, KeyError, TypeError)):
+        _check_batch2(data)
+
+
+def test_ntr_batch2_cap_exactly_at_threshold_passes():
+    data = json.loads(RECEIPT.read_text(encoding="utf-8"))
+    b = data["batch2"]
+    s = b["usage_snapshots"]
+    s[0]["new_tokens"] = 0
+    s[1]["new_tokens"] = 100000
+    s[2]["new_tokens"] = s[1]["new_tokens"]
+    b["albums"][0]["window_new_tokens"] = 100000
+    b["albums"][1]["window_new_tokens"] = 0
+    b["session_before_pr"] = {"new_tokens": 130000, "cached_tokens": 0, "reserve_used": 30000}
+    _check_batch2(data)
+    b["session_before_pr"] = {"new_tokens": 130001, "cached_tokens": 0, "reserve_used": 30001}
+    with pytest.raises(AssertionError):
+        _check_batch2(data)

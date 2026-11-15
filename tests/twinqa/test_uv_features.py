@@ -200,3 +200,17 @@ def test_combined_background_invalid_and_counts(tmp_path):
     assert sorted(f.name for f in m["findings"]) == ["uv_features.invalid_polygon", "uv_features.unassigned"]
     assert [(c["name"], c["count"]) for c in m["counts"]] == [("A", 1)]
     assert m["border_features"] == 1
+
+
+@pytest.mark.parametrize("uv, observed", [
+    ([(0.2, 10.2), (0.8, 10.2), (0.8, 10.8)], "tile 1101"),            # v_tile = 10: was None before #1337
+    ([(-0.8, 0.2), (-0.2, 0.2), (-0.2, 0.8)], "centroid outside UDIM grid"),
+    ([(10.2, 0.2), (10.8, 0.2), (10.8, 0.8)], "centroid outside UDIM grid")])
+def test_face_outside_regulation_grid_is_wrong_tile_never_a_crash(tmp_path, uv, observed):
+    """#1337: udim_of no longer returns None; off-grid and v_tile >= 10 faces stay one wrong_tile finding."""
+    for tile in (1001, None):
+        out = count_features_per_face([_row("A", 0, 1, uv)], _texture(tmp_path), tile=tile)
+        names = [f.name for f in out]
+        assert names[0] == "uv_features.wrong_tile" and names.count("uv_features.wrong_tile") == 1, out
+        assert set(names) <= {"uv_features.wrong_tile", "uv_features.unassigned"}, names
+        assert observed in out[0].observed

@@ -1,0 +1,70 @@
+{
+ "schema": "outside-retrieval-selection-v1",
+ "shared_root": "https://drive.google.com/drive/folders/1zKszwxFRWH0DnrXYiFR7SN3bH9Iph2d6",
+ "scope": "Exact source assets, NOT certified NPM/VPM delivery or whole-library availability",
+ "assets": [
+  {
+   "asset": "MAF_0002",
+   "version_sha256": "ea43c19ac9d77ec240a79eea7f73db442025efa7dd05f06a3adc8ca71bf9c0be",
+   "authority": "library/maf/catalogue.json + library/maf/fbx_materials.json; SHA256 newly measured, not an inherited official release version",
+   "boundary": "Source FBX with constant material; Blender 5.1.2 readback has no external images",
+   "files": [
+    {
+     "path": "maf/union_v001/fbx/MAF_0002_TBO_konteyner.fbx",
+     "download_url": "https://drive.usercontent.google.com/download?id=1hX_CPFi0pAn8uNuXTUxoyJuDqudJxBy8&export=download",
+     "sha256": "ea43c19ac9d77ec240a79eea7f73db442025efa7dd05f06a3adc8ca71bf9c0be",
+     "bytes": 137264
+    }
+   ]
+  },
+  {
+   "asset": "Tilia cordata / A101 lipa_t1_h550_low",
+   "version_sha256": "a95cdd49b7a4e0dd8b495e8947165a2f62cf21301440d17e4e6927dde57c4480",
+   "authority": "library/flora/a101-native-v002.json",
+   "boundary": "One exact object in source container plus exact RGBA and lossless RGB/alpha split; other objects in container are NOT selected",
+   "files": [
+    {
+     "path": "flora/a101/FLORIO_221.max",
+     "download_url": "https://drive.usercontent.google.com/download?id=1Kdpp2GX-Rpcmz54EsQF5GzbUjL7m_0kH&export=download",
+     "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+     "bytes": 25011570
+    },
+    {
+     "name": "diffuse-v002.png",
+     "sha256": "ca3122dbfd910a70cbbccb9cca42779efecdc4b1a2bdc4f166172dbf1dcb01fe",
+     "bytes": 2343623,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_low/diffuse-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1qpCCTEYcvycmLNpH0uXogl2j89OBnZ3i&export=download"
+    },
+    {
+     "name": "lipa_t1_h550_low.png",
+     "sha256": "21fff75057b85b94cb847b8508f30ae9a555af1038f9414b5ea220d26f991525",
+     "bytes": 2819435,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_low/lipa_t1_h550_low.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1NRWTlS6Y5UmYmKhk727AMMlcQcic7hIe&export=download"
+    },
+    {
+     "name": "opacity-v002.png",
+     "sha256": "1489d9c48a0c89fe0f30b294ad05501d63992b959277f4d1ca5a2892a33b967b",
+     "bytes": 211735,
+     "path": "flora/v003/maps/tilia-cordata/lipa_t1_h550_low/opacity-v002.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1F_EVW-oB6ZrSVy-YLUMUbWWRPOImMPV5&export=download"
+    }
+   ]
+  },
+  {
+   "asset": "material-40-interior-diffuse-placeholder",
+   "version_sha256": "7838298711c57ade49821a0e371c88d41f2804ae30983c9c25e514c2feb47320",
+   "authority": "library/materials/maps_v002.json",
+   "boundary": "One published VPM diffuse placeholder map, not a complete material-40 VPM texture triplet",
+   "files": [
+    {
+     "path": "materials/placeholders/v001/interior_d_256.png",
+     "download_url": "https://drive.usercontent.google.com/download?id=1GrGLyPjxCLkN1jDDAYTTJo1bC6XaKK7B&export=download",
+     "sha256": "7838298711c57ade49821a0e371c88d41f2804ae30983c9c25e514c2feb47320",
+     "bytes": 565
+    }
+   ]
+  }
+ ]
+}

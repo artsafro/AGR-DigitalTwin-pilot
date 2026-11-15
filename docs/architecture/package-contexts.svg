@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2430 1323" width="2430" height="1323" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect x="10" y="-30" width="2430" height="1323" fill="#ffffff"/>
+<rect x="955.0" y="110" width="470" height="195.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
+<rect x="40.0" y="365.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="365.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="365.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="637.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="345.0" y="637.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="637.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="934.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1059.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1198.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<line x1="510.0" y1="453.75" x2="650.0" y2="453.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120.0" y1="453.75" x2="1565.0" y2="471.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120.0" y1="453.75" x2="1565.0" y2="726.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1800.0" y1="577.5" x2="1190.0" y2="637.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="815.0" y1="708.75" x2="955.0" y2="778.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="305.0" x2="1190.0" y2="637.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1425.0" y1="778.75" x2="1565.0" y2="726.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="999.0" x2="1190.0" y2="1059.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="28">Карта контекстов маршрута «Пакет и сдача» (НПМ + ВПМ) — #1361, D293 (#1393)</tspan>
+</text>
+<text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="16">Легенда: зелёный — модуль-владелец и его функции (контракт: вход -&gt; выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше</tspan>
+</text>
+<text x="963.0" y="120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="14">Общее ядро: один писатель ZIP для AGR Tools и обоих</tspan>
+<tspan x="963.0" dy="17.5">упаковщиков</tspan>
+<tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
+<tspan x="963.0" dy="17.5">план архивов, отказ при дублях / пустых членах /</tspan>
+<tspan x="963.0" dy="17.5">несовпадении снимка; чужие файлы не удаляет (#1361)</tspan>
+<tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">zip_plan: папка, адрес, пределы -&gt; архивы для записи +</tspan>
+<tspan x="963.0" dy="17.5">пропуски с причинами; файлы не трогает</tspan>
+<tspan x="963.0" dy="17.5">qa_package: пакет, профиль, сцена -&gt; отчёт только для</tspan>
+<tspan x="963.0" dy="17.5">чтения: проваленные стадии по файлам</tspan>
+</text>
+<text x="48.0" y="375.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="48.0" dy="14">Связь с DCC и приёмка (сцена в 3ds Max)</tspan>
+<tspan x="48.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
+<tspan x="48.0" dy="17.5">экспорт из Max или Blender (D212); приёмка — сцена Max</tspan>
+<tspan x="48.0" dy="17.5">QUAD + путь (D270)</tspan>
+<tspan x="48.0" dy="17.5"></tspan>
+<tspan x="48.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
+<tspan x="48.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
+<tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
+</text>
+<text x="658.0" y="375.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Экспорт FBX с чтением назад</tspan>
+<tspan x="658.0" dy="17.5">Владелец: adapters/max/agr_tools/export_core.py</tspan>
+<tspan x="658.0" dy="17.5">проверенный экспорт Max: FBX и отчёт пишутся вместе или</tspan>
+<tspan x="658.0" dy="17.5">не пишутся; рядом — export_meta</tspan>
+<tspan x="658.0" dy="17.5"></tspan>
+<tspan x="658.0" dy="17.5">commit: сцена, цель, источник, превью, чтение -&gt; FBX +</tspan>
+<tspan x="658.0" dy="17.5">отчёт JSON или отказ до записи</tspan>
+<tspan x="658.0" dy="17.5">readback: данные FBX -&gt; объекты, треугольники, материалы,</tspan>
+<tspan x="658.0" dy="17.5">масштаб единиц</tspan>
+</text>
+<text x="1573.0" y="375.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1573.0" dy="14">Контракт export_meta</tspan>
+<tspan x="1573.0" dy="17.5">Владелец: adapters/max/agr_tools/export_meta.py</tspan>
+<tspan x="1573.0" dy="17.5">schemas/ExportMeta.schema.json; неизвестное — unknown,</tspan>
+<tspan x="1573.0" dy="17.5">ноль не подставляется; в ZIP не идёт</tspan>
+<tspan x="1573.0" dy="17.5"></tspan>
+<tspan x="1573.0" dy="17.5">validate_meta: запись -&gt; отказ с именем поля (лишние</tspan>
+<tspan x="1573.0" dy="17.5">ключи, дубли, provenance)</tspan>
+<tspan x="1573.0" dy="17.5">record_export: экспорт, факты, provenance -&gt; запись</tspan>
+<tspan x="1573.0" dy="17.5">export_meta</tspan>
+<tspan x="1573.0" dy="17.5">load_package_meta: папка пакета, [--meta] -&gt; ближайшая</tspan>
+<tspan x="1573.0" dy="17.5">запись; несколько — отказ, без первого попавшегося</tspan>
+</text>
+<text x="1573.0" y="647.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1573.0" dy="14">Чтение экспорта, валидатор V001–V017, xView, отчёт сдачи</tspan>
+<tspan x="1573.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
+<tspan x="1573.0" dy="17.5">проверка пакета по регламенту (agr validate); not_run —</tspan>
+<tspan x="1573.0" dy="17.5">не pass</tspan>
+<tspan x="1573.0" dy="17.5"></tspan>
+<tspan x="1573.0" dy="17.5">validate_vpm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="1573.0" dy="17.5">находки ВПМ</tspan>
+<tspan x="1573.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="1573.0" dy="17.5">находки НПМ</tspan>
+</text>
+<text x="353.0" y="647.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="353.0" dy="14">GeoJSON ВПМ</tspan>
+<tspan x="353.0" dy="17.5">Владелец: src/twinqa/geojson.py</tspan>
+<tspan x="353.0" dy="17.5">V011: схема, обязательные значения, Glasses; эталон —</tspan>
+<tspan x="353.0" dy="17.5">GeoJSON заказчика (D220)</tspan>
+<tspan x="353.0" dy="17.5"></tspan>
+<tspan x="353.0" dy="17.5">geojson_findings: данные, профиль, Ground, имена стёкол</tspan>
+<tspan x="353.0" dy="17.5">-&gt; находки V011</tspan>
+</text>
+<text x="963.0" y="647.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="14">Пакеты НПМ / ВПМ и передача</tspan>
+<tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
+<tspan x="963.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
+<tspan x="963.0" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
+<tspan x="963.0" dy="17.5">(#1361, #1377)</tspan>
+<tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
+<tspan x="963.0" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
+<tspan x="963.0" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
+<tspan x="963.0" dy="17.5">плохое имя — ошибка до записи</tspan>
+<tspan x="963.0" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
+<tspan x="963.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
+<tspan x="963.0" dy="17.5">время упаковки — ошибка</tspan>
+<tspan x="963.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
+<tspan x="963.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
+</text>
+<text x="963.0" y="944.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="12">Дубли вне владельца: 1</tspan>
+<tspan x="963.0" dy="15.0">• jobs/TEC26-OKS/scripts/package_vpm.py:50 — свой писатель ZIP</tspan>
+<tspan x="963.0" dy="15.0">старого упаковщика ТЭЦ26 (заморожен) (#1393)</tspan>
+</text>
+<text x="963.0" y="1069.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
+<tspan x="963.0" dy="17.5">Владелец: jobs/KPP1/scripts/run_agr_checker.py</tspan>
+<tspan x="963.0" dy="17.5">запуск чекера AGR 1.6.1 в Blender на ZIP; находки —</tspan>
+<tspan x="963.0" dy="17.5">доказательство, не вердикт</tspan>
+<tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">dump: список проверок чекера -&gt; JSON находок</tspan>
+</text>
+<text x="963.0" y="1208.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="12">Дубли вне владельца: 1</tspan>
+<tspan x="963.0" dy="15.0">• jobs/TEC26-OKS/scripts/run_agr_checker.py:18 — копия запуска</tspan>
+<tspan x="963.0" dy="15.0">чекера КПП1 в ТЭЦ26 (#1393)</tspan>
+</text>
+<rect x="550.0" y="444.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="580.0" y="444.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="580.0" dy="14">сцена НПМ / ВПМ</tspan>
+</text>
+<rect x="1312.5" y="453.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1342.5" y="453.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1342.5" dy="14">FBX + факты</tspan>
+</text>
+<rect x="1312.5" y="581.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1342.5" y="581.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1342.5" dy="14">свежее чтение</tspan>
+</text>
+<rect x="1465.0" y="589.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="589.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">адрес, верх,</tspan>
+<tspan x="1495.0" dy="17.5">превью</tspan>
+</text>
+<rect x="855.0" y="734.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="734.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="885.0" dy="14">GeoJSON ВПМ</tspan>
+</text>
+<rect x="1160.0" y="462.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="462.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1190.0" dy="14">запись ZIP</tspan>
+</text>
+<rect x="1465.0" y="743.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="743.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">ZIP сдачи</tspan>
+</text>
+<rect x="1160.0" y="1020.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="1020.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1190.0" dy="14">те же ZIP</tspan>
+</text>
+</svg>

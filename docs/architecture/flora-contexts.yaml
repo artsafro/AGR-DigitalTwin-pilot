@@ -1,0 +1,180 @@
+# Context map of the Flora route, NPM + VPM, #1393 (follow-up of #1392, D293). Source of truth for
+# docs/architecture/flora-contexts.excalidraw / .svg. Same schema and generator as contexts.yaml (#1359).
+# Every stage context of flora-route.events.yaml is listed here with the same owner (route_map.route_coverage).
+# duplicates: described rows only (`at` = path:line, `match` = text on that line); the duplicate_guard allowlist
+# stays in contexts.yaml. A context without a `duplicates` key draws no duplicates box.
+# grid: "col/row" cell of the drawing (all contexts or none; columns >= 1 apart in a row).
+# Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
+title_ru: "Карта контекстов маршрута Флоры (НПМ + ВПМ) — D293"
+issue: "#1393"
+rules:
+  - id: described
+    owner: docs/architecture/contexts.yaml
+    ru: "дубли здесь описательные; охранный список duplicate_guard — в contexts.yaml"
+shared_kernel:
+  id: placement
+  ru: "Общее ядро: расстановка МАФ и Флоры (общая с Ground и МАФ)"
+  owner: src/dt_ai/placement/engine.py
+  owner_ru: "точка СПОЗУ без поворота, утопление 10 см, поворот Z и масштаб ±10 % (D100); НПМ и ВПМ — в одни точки (D293)"
+  functions:
+    - name: place
+      contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом"
+    - name: report_json
+      contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
+  duplicates:
+    - at: "jobs/VATUTINO-SITE/place_site.py:87"
+      match: "def run("
+      issue: "#1393"
+      ru: "своя расстановка участка в задании поверх движка"
+contexts:
+  - id: dcc
+    grid: "0/1"
+    ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"
+    area: docs/agents/CAPABILITIES.md
+    owner: src/dt_ai/core/blender_runner.py
+    owner_ru: "ведомость, DWG СПОЗУ, сцена библиотеки — только копии; агент работает там, где удобно (D293)"
+    functions:
+      - name: blender_executable
+        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+      - name: run_blender
+        contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
+  - id: flora-library
+    grid: "1/1"
+    ru: "Библиотека Флоры: каталог v003, A101, карты"
+    area: docs/domain/areas/flora.md
+    owner: src/dt_ai/materials/flora_catalogue.py
+    owner_ru: "замороженный каталог v003 (G:/Мой диск/AGR-assets/flora); правится species-curation.json, не каталог"
+    functions:
+      - name: build
+        contract: "аудит, курирование, карты, прошлый каталог -> catalogue.json"
+      - name: check
+        contract: "каталог -> находки схемы и ID материалов; пусто = OK"
+  - id: flora-maps
+    grid: "2.5/1"
+    ru: "Карты вида: одобренные, stand-in, новые"
+    area: docs/domain/areas/flora.md
+    owner: src/dt_ai/materials/flora.py
+    owner_ru: "маршрут карт: план -> вырезка -> лист на проверку -> в библиотеку только после одобрения"
+    functions:
+      - name: make_plan
+        contract: "виды -> план генерации карт"
+      - name: cutout
+        contract: "картинка, порог -> диффуз RGB и строго ч/б прозрачность, без альфы"
+      - name: publish_library
+        contract: "лист проверки, одобрения, выход -> копия одобренных карт байт в байт; ничего не перезаписывает"
+  - id: flora-checks
+    grid: "2.5/4"
+    ru: "Проверки Флоры: размер, доля бюджета, карты"
+    area: docs/domain/areas/flora.md
+    owner: src/twinqa/flora.py
+    owner_ru: "FLO-04, FLO-06, FLO-08 на чтении Ground FBX"
+    functions:
+      - name: dimension_findings
+        contract: "меши, ведомость {меш: высота, крона} -> находки ±20 % (D099)"
+      - name: budget_finding
+        contract: "меши, итог Ground, предел, доля -> находка доли Флоры (70 000, D097)"
+      - name: map_findings
+        contract: "чтение, меши Флоры -> НПМ: диффуз + отдельная прозрачность, больше ничего"
+  - id: flora-star
+    grid: "3.5/1"
+    ru: "НПМ-звезда и ВПМ-оболочка"
+    area: docs/domain/areas/flora.md
+    owner: tools/flora/build_flora_star.py
+    owner_ru: "звезда из плоскостей с картой (D102); ВПМ — оболочка каждой плоскости в своём тайле"
+    functions:
+      - name: star_mesh
+        contract: "тип, высота, рамка растения, поле -> вершины, треугольники, UV звезды НПМ"
+      - name: vpm_shell
+        contract: "звезда НПМ, тайл, толщина -> замкнутая оболочка на плоскость"
+      - name: build_species
+        contract: "вид {ключ, лат, тип, высота, диапазон, карты, ID} -> НПМ + ВПМ вида"
+  - id: flora-light
+    grid: "0.5/2"
+    ru: "Облегчённые НПМ (LOD) — только на копии"
+    area: docs/domain/areas/flora.md
+    owner: tools/flora/build_flora_npm_light.py
+    owner_ru: "копия v003 -> подмножество неизменных треугольников; оригиналы хешируются до и после (#347)"
+    functions:
+      - name: execute
+        contract: "рабочая папка, исходные сцены -> облегчённые варианты; занятая папка — отказ"
+      - name: max_stage
+        contract: "задание -> шаг 3ds Max на копии"
+      - name: blender_stage
+        contract: "задание -> независимое чтение FBX в Blender"
+  - id: npm
+    grid: "1.5/2"
+    ru: "НПМ Флоры на атласе"
+    area: docs/domain/areas/flora.md
+    owner: adapters/max/agr_tools/flora_atlas_max.py
+    owner_ru: "атлас Флоры в AGR Tools; конвертация ВПМ → НПМ или параллельно (D293)"
+    functions:
+      - name: atlas_flora
+        contract: "контекст Max, режим, узлы Флоры, превью -> атлас Флоры НПМ"
+  - id: flora-atlas
+    grid: "2.5/3"
+    ru: "Атлас Флоры из расставленной сцены"
+    area: docs/domain/areas/uv-atlas.md
+    owner: tools/library/flora_atlas_from_scene.py
+    owner_ru: "НПМ — один 2048 на участок, второго атласа нет; ВПМ — свой 4096 (D246)"
+    functions:
+      - name: build_atlas
+        contract: "сцена JSON, каталог -> один атлас на виды сцены + отчёт"
+      - name: remap_uv
+        contract: "UV, тайл -> UV внутри тайла вида с той же раскладкой"
+  - id: package
+    grid: "1.5/3"
+    ru: "Экспорт и пакеты (Флора в Ground FBX)"
+    area: docs/domain/areas/package.md
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    functions:
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
+  - id: validation
+    grid: "0.5/3"
+    ru: "Проверки пакета и визуальный шлюз"
+    area: docs/domain/areas/package.md
+    owner: tools/qa/validate_package.py
+    owner_ru: "проверка пакета по регламенту (agr validate)"
+    functions:
+      - name: validate_vpm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ"
+      - name: validate_npm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+relations:
+  - from: dcc
+    to: flora-library
+    ru: "ведомость и точки"
+  - from: flora-library
+    to: flora-maps
+    ru: "вид без карты"
+  - from: flora-maps
+    to: flora-star
+    ru: "пара карт"
+  - from: flora-star
+    to: npm
+    ru: "звезда / оболочка"
+  - from: placement
+    to: npm
+    ru: "точки Флоры"
+  - from: flora-light
+    to: npm
+    ru: "облегчённые НПМ"
+  - from: npm
+    to: flora-atlas
+    ru: "виды сцены"
+  - from: flora-atlas
+    to: flora-checks
+    ru: "карты и размеры"
+  - from: flora-atlas
+    to: package
+    ru: "атлас 2048 / 4096"
+  - from: package
+    to: validation
+    ru: "ZIP / FBX сдачи"

@@ -118,8 +118,113 @@ def test_native_kns_inline_rotated_text_gaps_keep_semantic_refusal():
         assert value['measured_mm'] is None
     assert result['passed'] is False
     bound = [v for v in result['values'] if v['kind'] == 'dimension' and v['binding']['type'] != 'unbound']
-    assert len(bound) == 8
-    assert {v['raw'] for v in bound if v['binding']['type'] == 'level_pair'} == {'600', '4520', '7650', '4700'}
+    # Count is not a correctness oracle: additional native pairs are welcome,
+    # but every positive must match value AND physical line/extension ends.
+    import json
+    from tools.research.pdf_album.dimension_autoresearch import (
+        CORPUS, geometry_matches, precision_guard, score,
+    )
+    corpus = json.loads(CORPUS.read_text(encoding='utf8'))
+    truth = next(s['truth'] for s in corpus['sheets'] if s['name'] == 'KNS')
+    scored = score(result['values'], truth)
+    assert precision_guard(scored['metrics']) == 'pass'
+    assert scored['wrong_ids'] == []
+    expected = {
+        '3414': ('axis_pair', ['1/1', '1']),
+        '3415': ('axis_pair', ['1', '2']),
+        '3416': ('axis_pair', ['2', '2/1']),
+        '3417': ('axis_pair', ['1/1', '2/1']),
+        '3418': ('level_pair', ['-13,320', '-12,720']),
+        '3419': ('level_pair', ['-12,720', '-8,200']),
+        '341A': ('level_pair', ['-8,200', '-8,000']),
+        '341B': ('level_pair', ['-8,000', '-0,350']),
+        '341C': ('level_pair', ['-0,350', '-0,100']),
+        '341D': ('level_pair', ['-0,100', '+4,600']),
+    }
+    for handle, (kind, pair) in expected.items():
+        native = next(t for t in truth if t['handle'] == handle)
+        matches = [v for v in bound if geometry_matches(v, native)
+                   and abs(v['value'] - native['measurement']) < .5]
+        assert len(matches) == 1, handle
+        key = 'axes' if kind == 'axis_pair' else 'levels'
+        assert matches[0]['binding'] == {'type': kind, key: pair}, handle
+    # The unresolved bottom pairs still need proven endpoint identity.
+    assert {r['handle'] for r in scored['handles'] if r['class'] != 'correct_semantic_binding'} == {'341E', '341F'}
+
+
+@pytest.mark.parametrize('rotation', [0, 90])
+@pytest.mark.parametrize('length', [10, 16, 20])
+@pytest.mark.parametrize('offset', [1, 15.9, 16, 16.1])
+def test_short_displaced_labels_keep_strict_two_em_bounds(tmp_path, rotation, length, offset):
+    # Synthetic vector witness: only short spans may search beyond their ticks.
+    # Exact two-em span lengths and text-center limits must remain excluded.
+    path = tmp_path / 'synthetic-displaced.pdf'
+    with fitz.open() as source, fitz.open() as doc:
+        page = source.new_page(width=300, height=300)
+        end = 100 + length
+        page.draw_line((98, 150), (end + 2, 150), width=.3)
+        for x in (100, end):
+            page.draw_line((x - 2, 152), (x + 2, 148), width=.3)
+        half_width = fitz.get_text_length('200', fontsize=8) / 2
+        page.insert_text((end + offset - half_width, 143), '200', fontsize=8)
+        target = doc.new_page(width=300, height=300)
+        target.show_pdf_page(target.rect, source, 0, rotate=rotation)
+        doc.save(path)
+    result = bind_album(path)
+    (value,) = [v for v in result['values'] if v['raw'] == '200']
+    assert (value['span'] is not None) == (length < 16 and offset < 16)
+    assert value['binding']['type'] == 'unbound'  # no semantic endpoints invented
+    assert value['measured_mm'] is None
+    assert all(v['scale']['status'] == 'unknown' for v in result['views'])
+    assert result['passed'] is False
+
+
+@pytest.mark.parametrize('rotation', [0, 90])
+@pytest.mark.parametrize('length', [8, 10, 12])
+@pytest.mark.parametrize('order', ['11first', '22first'])
+@pytest.mark.parametrize('lift', [0, 1.5])
+def test_adjacent_short_spans_keep_own_labels_under_padding(tmp_path, rotation, length, order, lift):
+    # Review P1 on #1332: R1 padding must never let a label centred inside its
+    # own span be taken by the neighbouring short span of the same chain.
+    path = tmp_path / 'synthetic-adjacent.pdf'
+    ticks = [100, 100 + length, 100 + 2 * length]
+    with fitz.open() as source, fitz.open() as doc:
+        page = source.new_page(width=300, height=300)
+        page.draw_line((98, 150), (ticks[-1] + 2, 150), width=.3)
+        for x in ticks:
+            page.draw_line((x - 2, 152), (x + 2, 148), width=.3)
+        half_width = fitz.get_text_length('11', fontsize=8) / 2
+        labels = [('11', (ticks[0] + ticks[1]) / 2, 143 - lift), ('22', (ticks[1] + ticks[2]) / 2, 143)]
+        if order == '22first':
+            labels.reverse()
+        for text, cx, y in labels:
+            page.insert_text((cx - half_width, y), text, fontsize=8)
+        target = doc.new_page(width=300, height=300)
+        target.show_pdf_page(target.rect, source, 0, rotate=rotation)
+        doc.save(path)
+    result = bind_album(path)
+    found = {v['raw']: v for v in result['values'] if v['raw'] in ('11', '22')}
+    if order == '11first':
+        # The extractor joins the two stream-adjacent runs into one ('1122' /
+        # '11 22'); that run is not a numeric span label and stays unbound.
+        assert not found
+        assert all(v['binding']['type'] == 'unbound' for v in result['values'])
+    else:
+        assert set(found) == {'11', '22'}
+    spans = {}
+    for raw, value in found.items():
+        span = value['span']
+        assert span is not None, raw  # strict in-span hit is always available
+        axis = 0 if span['p0'][1] == span['p1'][1] else 1
+        lo, hi = sorted((span['p0'][axis], span['p1'][axis]))
+        centre = (value['bbox'][axis] + value['bbox'][axis + 2]) / 2
+        assert lo < centre < hi, (raw, span, value['bbox'])  # own span, never the neighbour
+        assert value['binding']['type'] == 'unbound'
+        assert value['measured_mm'] is None
+        spans[raw] = (lo, hi)
+    assert len(set(spans.values())) == len(spans)
+    assert all(v['scale']['status'] == 'unknown' for v in result['views'])
+    assert result['passed'] is False
 
 
 def test_generated_inline_pages_never_guess_scale_or_drop_labels(tmp_path):

@@ -1,0 +1,59 @@
+{
+  "checkpoint_utc": "2026-11-13T21:02:54.575594+00:00",
+  "scope": "Native whole-pilot prefix counters, including context/discovery/preparation/failed attempts through checkpoint; handoff tail excluded. Previous blocked run separately listed.",
+  "counter_semantics": "Hermes raw input_tokens = new input; cache_read_tokens separately reported. Reasoning is not added to output. No estimated USD conversion.",
+  "native_sessions": [
+    {
+      "id": "local-5581decd2cbea4e77b2b0a58b221db5b503483063a01747cf59cc4e1c7118b24",
+      "model": "gpt-6.1-sol",
+      "started_at": 1794602098.74463,
+      "input_tokens": 187893,
+      "output_tokens": 25794,
+      "cache_read_tokens": 9046656,
+      "cache_write_tokens": 0,
+      "reasoning_tokens": 6342,
+      "tool_call_count": 109,
+      "api_call_count": 63,
+      "actual_cost_usd": null,
+      "cost_status": "included"
+    },
+    {
+      "id": "local-8ac6c2bdfd744481754d18ae04c91eb8e657f54cab0b71fb6557fb4564a3d18b",
+      "model": "gpt-6.1-sol",
+      "started_at": 1794580780.167776,
+      "input_tokens": 118145,
+      "output_tokens": 2819,
+      "cache_read_tokens": 911104,
+      "cache_write_tokens": 0,
+      "reasoning_tokens": 112,
+      "tool_call_count": 46,
+      "api_call_count": 12,
+      "actual_cost_usd": null,
+      "cost_status": "included"
+    }
+  ],
+  "current_prefix_wall_seconds": 1675.830983877182,
+  "persisted_terminal_commands": 29,
+  "persisted_shell_payload_lines": 29,
+  "persisted_inline_dash_c_payloads": 9,
+  "persisted_inline_dash_c_lines": 9,
+  "new_executable_file_lines_including_ignored": {
+    "jobs/KPP1/benchmark-1318/account_readback.py": 69,
+    "jobs/KPP1/benchmark-1318/prepare_master.py": 79,
+    "jobs/KPP1/benchmark-1318/prepare_packet.py": 59,
+    "jobs/KPP1/benchmark-1318/recipe/make_textures.py": 12,
+    "jobs/KPP1/benchmark-1318/run_benchmark.py": 91,
+    "tests/test_npm_atlas_layout_1318.py": 124,
+    "tmp/bench1318/inspect_r1.py": 7,
+    "tmp/bench1318/report.py": 56
+  },
+  "new_executable_file_count_including_ignored": 8,
+  "new_executable_lines_including_ignored": 497,
+  "shared_atlas_diff_numstat": "22\t14\ttools/derive/npm_atlas.py",
+  "python": "Python 3.14.7",
+  "benchmark_subprocess_invocations": 6,
+  "benchmark_model_api_calls": 0,
+  "billed_usd": null,
+  "budget_status": "not_applicable; no paid comparison authorized",
+  "limits": "Prefix snapshot is not final handoff total; persisted counters can lag the last tool result. Lines include blank/comment/docstring lines; shell and inline payloads reported separately, not silently excluded."
+}

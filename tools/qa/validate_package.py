@@ -365,7 +365,7 @@ def fbx_role(name: str) -> str:
 
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
               ground_area_m2: float | None = None, footprint_holes=None, diffuse_px: dict | None = None,
-              ground_materials: list[str] | None = None):
+              ground_materials: list[str] | None = None, export_meta=None):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
     ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)
     and is the expected top-down area for the Ground footprint-coverage finding.
@@ -383,9 +383,18 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                 # one unreadable FBX must not hide the others (team audit T04: a _Light import error ended the loop)
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 continue
+            height_meta = None
+            if export_meta is not None:
+                unknown = set(export_meta) - set(fbx)
+                height_meta = export_meta.get(name)
+                if unknown:
+                    height_meta = {'error': f'unmapped export_meta filenames: {sorted(unknown)}'}
+                elif not isinstance(height_meta, dict) or height_meta.get('fbx_sha256') != digest(data):
+                    height_meta = {'error': f'{name}: missing/stale export_meta fbx_sha256 or record'}
             found = scene_findings(rb, kind, fbx_role(name), profile, ground_area_m2=ground_area_m2,
                                    footprint_holes=footprint_holes, diffuse_px=diffuse_px,
-                                   ground_materials=ground_materials)
+                                   ground_materials=ground_materials,
+                                   export_meta=height_meta)
             if kind == "npm":
                 _no_texture_findings(found, fbx_role(name), name, rb)
             for stage_id, findings in found.items():
@@ -423,7 +432,9 @@ def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list
 
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
              ground_area_m2: float | None = None, footprint_holes=None,
-             master: Path | None = None, ground_materials: list[str] | None = None) -> ValidationReport:
+             master: Path | None = None, ground_materials: list[str] | None = None, export_meta=None) -> ValidationReport:
+    if export_meta is not None and not isinstance(export_meta, dict):
+        raise ValueError("export_meta must map exact FBX filenames to bounds_m records")
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
     if ground_materials is not None:
@@ -484,12 +495,12 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
-                      ground_area_m2, footprint_holes, diffuse_px, ground_materials)
+                      ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
             add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2, footprint_holes,
-                      ground_materials=ground_materials)
+                      ground_materials=ground_materials, export_meta=export_meta)
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
@@ -597,6 +608,7 @@ def main(argv=None) -> int:
     ap.add_argument("--json", action="store_true", help="machine-readable report")
     ap.add_argument("--standards", type=Path, help="standards folder (default: <repo>/standards)")
     ap.add_argument("--scene", action="store_true", help="read every FBX back in background Blender")
+    ap.add_argument("--export-meta", type=Path, help="JSON mapping exact FBX filenames to world bounds_m records")
     ap.add_argument("--recheck", type=Path, metavar="OLD_REPORT", help="re-read a stored report.json (needs --output)")
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
     ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
@@ -615,7 +627,7 @@ def main(argv=None) -> int:
     if args.recheck is not None:
         if (args.target is not None or args.output is None or args.profile or args.scene
                 or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None
-                or args.ground_materials is not None):
+                or args.ground_materials is not None or args.export_meta is not None):
             ap.error("--recheck takes only --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
     if args.output is not None:
@@ -630,7 +642,8 @@ def main(argv=None) -> int:
         print(f"Error: {args.master} does not exist", file=sys.stderr)
         return 1
     result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
-                      args.footprint_holes, args.master, ground_materials=args.ground_materials)
+                      args.footprint_holes, args.master, ground_materials=args.ground_materials,
+                      export_meta=json.loads(args.export_meta.read_text(encoding="utf-8")) if args.export_meta else None)
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code

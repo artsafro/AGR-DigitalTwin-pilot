@@ -103,7 +103,7 @@
     },
     "Gate": {
       "additionalProperties": false,
-      "description": "``waits`` (optional, #1204) names what a non-passed gate is parked on: ``user`` (a user\ndecision or review), ``max`` (a live 3ds Max step) or ``visual`` (the visual gate first).\nIt is counted by the walker and never makes a gate ready; a ``pass`` gate waits for nothing.",
+      "description": "``waits`` (optional, #1204) names what a non-passed gate is parked on: ``user`` (a user\ndecision or review), ``max`` (a live 3ds Max step) or ``visual`` (the visual gate first).\nIt is counted by the walker and never makes a gate ready; a ``pass`` gate waits for nothing.\nA ``missing`` (not started) gate may omit ``note`` and ``evidence`` (#1310, F17); any other\nstatus needs a ``note``.",
       "properties": {
         "status": {
           "enum": [
@@ -116,10 +116,18 @@
           "type": "string"
         },
         "note": {
-          "minLength": 1,
-          "pattern": "\\S",
-          "title": "Note",
-          "type": "string"
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
         },
         "evidence": {
           "items": {
@@ -147,9 +155,7 @@
         }
       },
       "required": [
-        "status",
-        "note",
-        "evidence"
+        "status"
       ],
       "title": "Gate",
       "type": "object"

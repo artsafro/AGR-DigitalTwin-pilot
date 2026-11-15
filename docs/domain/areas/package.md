@@ -115,6 +115,12 @@ Conflicts are referenced only through [the conflict register](../conflicts.md): 
 C13/[D016], C14/[D017], C20/[D019]. No conflict is decided, no new conflict was found, and no rule
 file is changed here.
 
+Job-local incomplete-package authorization: KPP1 [D285] permits copy-only assembly without
+Ground or a KPP1-specific area schedule, with every non-pass stage/value/limit/missing input/owner
+reported in [STATE](../../../jobs/KPP1/STATE.md). It does not waive PKG-03/PKG-21 or delivery gates.
+[D288] replaces the KPP1-specific area part: per reg p.54 rows 14-17 the KPP1 VPM GeoJSON carries
+the project sums (s_obsh/s_naz 27124.36, spp_gns 28480.58); s_podz stays empty until project data.
+
 ## L2 gaps
 
 Rows with `none` (**9**); these are follow-up candidates (T-PKG-2/3), not filed tickets:

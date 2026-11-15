@@ -75,6 +75,15 @@ recorded in C10. This observation does not fill the still-empty user decision in
 file. Likewise C7/C8 remain profile-interface references, not newly approved shared-tool policies.
 No new conflict entry was needed; C1 and C23 also remain linked with their existing statuses.
 
+## Drawing-only source intake
+
+Use the `analyze-architectural-source` skill's 2D branch: [`dwg_to_dxf.py`](../../../tools/methods/body/dwg_to_dxf.py)
+converts a hashed DWG copy; [`plan_from_dxf.py`](../../../tools/methods/body/plan_from_dxf.py) census/extract
+requires a sheet-specific role map and confirmed frame/levels. Facade parts use
+[`facade_openings_from_dxf.py`](../../../tools/methods/body/facade_openings_from_dxf.py): explicitly mapped
+rectangular outlines, dimensions and sill/head heights; depth and facade-to-plan placement remain manual.
+These measurements do not close BODY-A or approve architectural interpretation.
+
 ## L2 gaps
 
 Rows with `none` (11):

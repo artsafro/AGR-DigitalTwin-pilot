@@ -62,14 +62,18 @@ class Evidence(Strict):
 class Gate(Strict):
     """``waits`` (optional, #1204) names what a non-passed gate is parked on: ``user`` (a user
     decision or review), ``max`` (a live 3ds Max step) or ``visual`` (the visual gate first).
-    It is counted by the walker and never makes a gate ready; a ``pass`` gate waits for nothing."""
+    It is counted by the walker and never makes a gate ready; a ``pass`` gate waits for nothing.
+    A ``missing`` (not started) gate may omit ``note`` and ``evidence`` (#1310, F17); any other
+    status needs a ``note``."""
     status: Literal["pass", "fail", "review", "missing"]
-    note: Text
-    evidence: list[Evidence]
+    note: Text | None = None
+    evidence: list[Evidence] = Field(default_factory=list)
     waits: Literal["user", "max", "visual"] | None = None
 
     @model_validator(mode="after")
     def passed_evidence(self):
+        if self.note is None and self.status != "missing":
+            raise ValueError(f"a {self.status} gate requires a note")
         if self.status == "pass" and not self.evidence:
             raise ValueError("pass requires evidence")
         if self.status == "pass" and self.waits is not None:
@@ -339,6 +343,10 @@ def _gate(root, gate, entry, job):
         parts = PartsList.model_validate(_read(_verify(root, entry.evidence[0], "parts", generated=True)))
         if parts.synthetic != job.synthetic or parts.status != "confirmed":
             raise ValueError("parts require matching scope and Gate 1 confirmation")
+        if (parts.gate1 is None or parts.gate1.ref is None
+                or parts.gate1.scope != ("synthetic_fixture" if job.synthetic else "project")
+                or parts.gate1.parts_sha256 != parts.approval_sha256()):
+            raise ValueError("Gate 1 requires matching scope, an answer ref and matching PartsList approval_sha256")
         if any(q.answer is None for q in parts.questions):
             raise ValueError("unanswered parts question")
     elif gate == "report":
@@ -395,6 +403,49 @@ def _gate(root, gate, entry, job):
                 raise ValueError("require complete SINTEZ checker receipt, not a component check")
 
 
+def _invalid(data, exc, rows, result):
+    """Report a schema failure per field (#1310, F17): every error names its location, an
+    error under ``gates.<gate>`` marks that gate ``fail``, and a gate whose own entry is valid
+    keeps its declared status. Nothing is ready: the checklist as a whole is invalid."""
+    gates = data.get("gates") if isinstance(data, dict) else None
+    for error in exc.errors():
+        loc = ".".join(str(part) for part in error["loc"]) or "<root>"
+        message = f"{loc}: {error['msg']}"
+        result["errors"].append(message)
+        if len(error["loc"]) > 1 and error["loc"][0] == "gates" and error["loc"][1] in GATES:
+            row = rows[GATES.index(error["loc"][1])]
+            row["errors"].append(message)
+    for row in rows:
+        raw = gates.get(row["gate"]) if isinstance(gates, dict) else None
+        if row["errors"]:
+            row["status"] = "fail"
+        elif raw is not None:
+            try:
+                entry = Gate.model_validate(raw)
+            except ValidationError:
+                continue
+            row.update(status=entry.status, note=entry.note, waits=entry.waits)
+            if entry.waits:
+                result["waits"][entry.waits] += 1
+        row["ready"] = False
+    return result
+
+
+def _duplicated_inputs(root, refs):
+    """Paths listed more than once (after resolving ``./`` and case aliases; #1310, F20)."""
+    seen, repeated = {}, []
+    for ref in refs:
+        try:
+            key = os.path.normcase(str(_resolve(root, ref.path)))
+        except ValueError:
+            key = ref.path  # the per-reference check reports the bad path itself
+        if key not in seen:
+            seen[key] = ref.path
+        elif key not in repeated:
+            repeated.append(key)
+            yield ref.path if ref.path == seen[key] else f"{seen[key]} = {ref.path}"
+
+
 def inspect_job(data, root):
     """Inventory every gate; malformed contracts and incomplete evidence never pass."""
     root = Path(root)
@@ -404,8 +455,7 @@ def inspect_job(data, root):
     try:
         job = JobChecklist.model_validate(data)
     except ValidationError as exc:
-        result["errors"] = [str(exc)]
-        return result
+        return _invalid(data, exc, rows, result)
     result.update(job_id=job.job_id, run_id=job.run_id, synthetic=job.synthetic)
     ready = True
     for row in rows:
@@ -431,6 +481,9 @@ def inspect_job(data, root):
             except (OSError, ValueError, TypeError, KeyError, IndexError, yaml.YAMLError) as exc:
                 row["errors"].append(str(exc))
         if name == "inputs":
+            for role, refs in (("inputs", job.inputs), ("gates.inputs.evidence", entry.evidence)):
+                for path in _duplicated_inputs(root, refs):
+                    row["errors"].append(f"duplicated {role} path: {path}")
             external = _external_inputs(root, job, row["errors"])
             unreachable = sum(r["status"] == "unreachable" for r in external)
             row.update(external_inputs=external, unreachable=unreachable)

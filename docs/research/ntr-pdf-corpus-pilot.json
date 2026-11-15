@@ -541,5 +541,56 @@
     "reserve_tokens": 30000
   },
   "evidence_path": "G:\\Мой диск\\AGR-evidence\\1275-ntr-pdf-corpus",
-  "evidence_manifest_sha256": "588bf6e4d4154f4f8a07dc8f3917774b72b9a7b1aba7d7dd9d00907c55753d7a"
+  "evidence_manifest_sha256": "588bf6e4d4154f4f8a07dc8f3917774b72b9a7b1aba7d7dd9d00907c55753d7a",
+  "batch2": {
+    "issue": 1303,
+    "new_token_definition": "input + cache_write + output; cache_read reported separately and excluded from the cap [D267]",
+    "ntr_remaining_before": {"albums": 8, "pages": 8},
+    "albums": [
+      {
+        "id": "B01",
+        "project": "18_Avtozavodskaya",
+        "source": "B:\\Backup\\Desktop\\!3D viz\\NTR\\18_Avtozavodskaya\\LSR_Благо_озеленение.pdf",
+        "sha256": "0bac184a677985c51dd3e510d7a23b89383854337dcd2ac8052486ad97bf58be",
+        "pages": 1,
+        "page_text_bytes": [141917],
+        "unique_text_lines": 68,
+        "source_unchanged": true,
+        "extraction_seconds": 0.4626292000175454,
+        "local_model_new_tokens": 0,
+        "local_model_cached_tokens": 0,
+        "window_new_tokens": 11993,
+        "window_cached_tokens": 340071
+      },
+      {
+        "id": "B02",
+        "project": "5_1Buhvostova_School",
+        "source": "B:\\Backup\\Desktop\\!3D viz\\NTR\\5_1Buhvostova_School\\002 - 10.04.2026 - Фасады\\Схема фасада в осях 1-17.pdf",
+        "sha256": "1450b887173776185f0da8c3d5e285b2d9cbc25daeabccf5d8737184c7f2f0be",
+        "pages": 1,
+        "page_text_bytes": [117313],
+        "unique_text_lines": 127,
+        "source_unchanged": true,
+        "extraction_seconds": 0.15325020003365353,
+        "local_model_new_tokens": 0,
+        "local_model_cached_tokens": 0,
+        "window_new_tokens": 3694,
+        "window_cached_tokens": 73668
+      }
+    ],
+    "usage_snapshots": [
+      {"label": "baseline_before_B01", "new_tokens": 49484, "cached_tokens": 550775},
+      {"label": "after_B01", "new_tokens": 61477, "cached_tokens": 890846},
+      {"label": "after_B02", "new_tokens": 65171, "cached_tokens": 964514}
+    ],
+    "session_before_pr": {"new_tokens": 108470, "cached_tokens": 2457736, "reserve_used": 8470},
+    "session_id": "local-aaba62a6bfb8f8d84789dc1a150176c81635709f7d505248e225b22c4dafba3d",
+    "cost_status": "estimated",
+    "currency_cost": null,
+    "new_token_cap": 100000,
+    "reserve_tokens": 30000,
+    "boundary": "counters land after each API call: a window is snapshot-to-snapshot and lags by one call; intake before baseline and report/test/PR work after after_B02 are not album cost; final session total in PR",
+    "evidence_path": "G:\\Мой диск\\AGR-evidence\\1303-ntr-pdf-batch2",
+    "evidence_manifest_sha256": "85feb3d3c3c31b0018d857e327c5e3064f49277fdfe401982107ed689c810f32"
+  }
 }

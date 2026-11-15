@@ -6,6 +6,8 @@ embed 10-20 mm - with the reason and the extra edges welding would insert [D124]
 user confirms it (`gate1`); `status="confirmed"` without that approval does not validate.
 Pattern: `primitive-first` (docs/domain/patterns/primitive-first.md), grilling log Q8, Q12, Q19, Q29a, Q30.
 """
+import hashlib
+import json
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -21,7 +23,8 @@ PartClass = Literal["wall", "slab", "parapet", "band", "pilaster", "frame", "gla
 Operation = Literal["keep", "primitive", "contour_rebuild", "from_face", "library_replace", "detail_per_profile",
                     "to_texture"]
 BuildAs = Literal["box", "plane", "frame", "shell", "profile_extrude", "instance"]
-SourceTier = Literal["A", "B", "C"]  # A Revit + album; B structured FBX / SKP + album; C mesh soup + album [Q29a]
+# A Revit + album; B structured FBX / SKP + album; C mesh soup + album [Q29a]; D drawings-only (DWG/DXF/PDF).
+SourceTier = Literal["A", "B", "C", "D"]
 SourceKind = Literal["object", "material_id", "layer", "component", "revit_element", "region"]
 
 
@@ -93,12 +96,26 @@ class PartsList(Strict):
     object_id: Name
     source_tier: SourceTier
     sources: list[SourceRef] = Field(min_length=1)
-    triangle_budget: TriangleBudget = Field(description="whole delivery; the parts' budgets must fit")
+    triangle_budget: TriangleBudget = Field(
+        description="whole-delivery allocated project budget for NPM/VPM, not the regulatory ceiling [D276]; "
+                    "the parts' budgets must fit (OKS <=150000 per profile [D010/D161])")
     parts: list[PartEntry] = Field(min_length=1)
     joints: list[Joint] = Field(default_factory=list)
     questions: list[Question] = Field(default_factory=list)
     status: Literal["draft", "confirmed"] = "draft"
     gate1: Approval | None = None
+
+    def approval_sha256(self) -> str:
+        """Identity of the proposed content, independent of approval/status and JSON formatting.
+
+        Hash the validated, default-expanded JSON payload as UTF-8, sorted keys,
+        compact separators, unescaped Unicode and no NaN/inf. List order matters.
+        Evidence and downstream receipts still hash the complete on-disk file.
+        """
+        payload = self.model_dump(mode="json", exclude={"gate1", "status"})
+        encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"),
+                             ensure_ascii=False, allow_nan=False).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()
 
     @model_validator(mode="after")
     def consistent(self):

@@ -1,0 +1,195 @@
+# Context map of the VPM / OKS route (UCX), #1392 (Artem 2026-11-14, D293). Source of truth for
+# docs/architecture/vpm-oks-contexts.excalidraw / .svg. Same schema and generator as contexts.yaml (#1359).
+# Every stage context of vpm-oks-route.events.yaml is listed here with the same owner (route_map.route_coverage).
+# duplicates: described rows only (`at` = path:line, `match` = text on that line); the duplicate_guard allowlist
+# stays in contexts.yaml. A context without a `duplicates` key draws no duplicates box.
+# Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
+title_ru: "Карта контекстов маршрута ВПМ / ОКС (UCX) — D293"
+issue: "#1392"
+rules:
+  - id: udim-tile
+    owner: adapters/max/agr_tools/udimtile_core.py
+    ru: "своя формула UDIM 1001 + u + 10·v вместо общей функции (охрана — contexts.yaml, #1376)"
+shared_kernel:
+  id: udim
+  ru: "Общее ядро: номер тайла UDIM"
+  owner: adapters/max/agr_tools/udimtile_core.py
+  owner_ru: "одна функция UDIM (#1337); её дубли охраняет карта НПМ (contexts.yaml)"
+  functions:
+    - name: udim_tile
+      contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
+    - name: face_tile
+      contract: "углы UV грани -> тайл грани; угол в чужом тайле — UdimCrossTileError"
+contexts:
+  - id: dcc
+    ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"
+    area: docs/agents/CAPABILITIES.md
+    owner: src/dt_ai/core/blender_runner.py
+    owner_ru: "агент работает там, где удобно (D293); запуск Blender без окна со свежим JSON-ответом"
+    functions:
+      - name: blender_executable
+        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+      - name: run_blender
+        contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
+  - id: body
+    ru: "Корпус по частям"
+    area: docs/domain/areas/body.md
+    owner: src/dt_ai/ops/operations.py
+    owner_ru: "операции над частями с проверкой инвариантов и откатом (Blender / Max / AGR Tools)"
+    functions:
+      - name: run_operation
+        contract: "сцена, операция, часть, функция правки -> OperationResult; нарушен инвариант — откат"
+      - name: embed_into_neighbour
+        contract: "сцена, часть, сосед, направление, глубина -> врезка декора и навесных элементов (D199)"
+  - id: uv-atlas
+    ru: "UV по UDIM и атлас"
+    area: docs/domain/areas/uv-atlas.md
+    owner: adapters/max/agr_tools/atlas_core.py
+    owner_ru: "каноническая упаковка атласа (D225); ВПМ — UDIM, НПМ — атлас (D292 пути A / B)"
+    functions:
+      - name: pack
+        contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
+      - name: atlas_png
+        contract: "раскладка -> PNG атласа"
+    duplicates:
+      - at: "jobs/KPP1/scripts/vpm_uv.py:155"
+        match: "def pack_uv("
+        issue: "#1359"
+        ru: "своя раскладка UV ВПМ КПП1"
+      - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
+        match: "def pack_uv("
+        issue: "#1359"
+        ru: "копия vpm_uv.py КПП1 (одна строка разницы)"
+  - id: npm
+    ru: "НПМ в тех же координатах (ВПМ → НПМ)"
+    area: docs/domain/areas/derivation.md
+    owner: tools/derive/npm_atlas.py
+    owner_ru: "атлас НПМ из UDIM для agr vpm-to-npm; путь B — параллельная НПМ по ID (D293)"
+    functions:
+      - name: validate_export
+        contract: "раскладка, диффуз, прозрачность -> замер отступов по прочитанным UV и PNG"
+      - name: main
+        contract: "аргументы dt derive atlas -> атлас НПМ и отчёт; ошибка — ненулевой код"
+  - id: openings
+    ru: "Проёмы и окна"
+    area: docs/domain/areas/windows.md
+    owner: adapters/max/agr_tools/windowgen_core.py
+    owner_ru: "окно из библиотеки с утоплением или генератор окон (D292, #1338 / #1345)"
+    functions:
+      - name: load_library
+        contract: "папка библиотеки -> типы окон, стандарт, sha256 файлов"
+      - name: library_report
+        contract: "типы, стандарт -> строка на тип: pass / quarantine / duplicate с причиной"
+      - name: offerable
+        contract: "отчёт библиотеки -> id, которые можно предлагать (только pass)"
+      - name: build_type
+        contract: "тип окна, стандарт, опции -> меш окна по стандарту библиотеки"
+  - id: roof
+    ru: "Кровля, парапет, плита, ограждение"
+    area: docs/procedure/node-r6-oks-body-facade.md
+    owner: adapters/max/agr_tools/roof_core.py
+    owner_ru: "плита кровли врезана в парапет и поднята на несколько мм (R6, D292)"
+    functions:
+      - name: boundary_loops
+        contract: "грани -> замкнутые петли открытых рёбер в обходе их граней"
+      - name: slab
+        contract: "меш, петля, грани-владельцы, опции -> одна плита кровли или Ambiguous"
+      - name: plan
+        contract: "корпуса (меш в метрах, мир) -> опции, строки плит, находки"
+  - id: package
+    ru: "Экспорт и пакеты ВПМ / НПМ"
+    area: docs/domain/areas/package.md
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    functions:
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
+  - id: validation
+    ru: "Проверки, xView, СИНТЕЗ"
+    area: docs/domain/areas/package.md
+    owner: tools/qa/validate_package.py
+    owner_ru: "проверка пакета по регламенту (agr validate)"
+    functions:
+      - name: validate_vpm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ и плотность V009"
+      - name: validate_npm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+    duplicates:
+      - at: "jobs/KPP1/scripts/run_agr_checker.py:47"
+        match: "def dump("
+        issue: "#1359"
+        ru: "свой запуск чекера СИНТЕЗ"
+      - at: "jobs/TEC26-OKS/scripts/run_agr_checker.py:47"
+        match: "def dump("
+        issue: "#1359"
+        ru: "копия запуска чекера КПП1"
+  - id: ucx
+    ru: "Коллизии UCX (только ВПМ)"
+    area: docs/domain/areas/ucx.md
+    owner: adapters/max/agr_tools/ucx10_core.py
+    owner_ru: "канон UCX (D225): выпуклые куски и зазоры между ними"
+    functions:
+      - name: piece
+        contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
+      - name: separation
+        contract: "два выпуклых куска -> нижняя оценка зазора, м, и ось"
+      - name: plan
+        contract: "куски, опции -> зазор каждой соседней пары каждого семейства UCX"
+    duplicates:
+      - at: "jobs/KPP1/scripts/vpm_ucx.py:50"
+        match: "def pieces("
+        issue: "#1383"
+        ru: "свои куски UCX КПП1"
+      - at: "jobs/PSU275/scripts/vpm_ucx.py:45"
+        match: "UCX_SM_"
+        issue: "#1383"
+        ru: "свои UCX ПСУ275"
+      - at: "jobs/TEC26-OKS/scripts/ucx_tri_core.py:44"
+        match: "def triangulate_piece("
+        issue: "#1383"
+        ru: "своя триангуляция UCX ТЭЦ26"
+      - at: "jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29"
+        match: "UCX_"
+        issue: "#1383"
+        ru: "запуск триангуляции UCX ТЭЦ26 AC08"
+      - at: "jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24"
+        match: "UCX_"
+        issue: "#1383"
+        ru: "свои UCX СРЕDА по частям (960 UCX)"
+relations:
+  - from: dcc
+    to: body
+    ru: "строит"
+  - from: body
+    to: openings
+    ru: "корпус по частям"
+  - from: openings
+    to: roof
+    ru: "проёмы врезаны"
+  - from: roof
+    to: ucx
+    ru: "оболочка с кровлей"
+  - from: body
+    to: uv-atlas
+    ru: "мастер ВПМ"
+  - from: udim
+    to: uv-atlas
+    ru: "номер тайла"
+  - from: uv-atlas
+    to: npm
+    ru: "UDIM → атлас"
+  - from: npm
+    to: package
+    ru: "НПМ в координатах"
+  - from: ucx
+    to: package
+    ru: "коллизии UCX_"
+  - from: package
+    to: validation
+    ru: "ZIP / FBX сдачи"

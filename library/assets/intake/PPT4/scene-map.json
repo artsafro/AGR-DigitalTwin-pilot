@@ -1,0 +1,6 @@
+{
+ "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/01/1": {"high": ["ITOG:ITOG_e01_g016", "ITOG:ITOG_e01_g019"],
+   "note": "collapsed NPM GroundEl: bench with back, 128 + 1 elements; low-poly only (124 tris), no High source"},
+ "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/None/28": {"high": ["ITOG:ITOG_e01_g020"],
+   "note": "collapsed NPM GroundEl: table-tennis table x9; low-poly only (86 tris)"}
+}

@@ -1,0 +1,331 @@
+# Event storm of the VPM/OKS route (#1383; v2 per Artem 2026-11-14, D293, #1392). Source of truth for docs/architecture/vpm-oks-route.excalidraw.
+# Same method as the NPM map (#1359): Russian labels for Artem; commands, D-rows, paths and ids as in the repo.
+# commands: existing `agr` / `dt` commands only; a stage without one is drawn dashed «Нет команды agr/dt».
+# rules: D-rows of docs/decisions.md. evidence: repo paths that exist (KPP1, PSU275, TEC26, ELV, 4BK research).
+# context: id from contexts.yaml or from local_contexts below; every stage context is also listed with the same
+# owner in this route's own context map vpm-oks-contexts.yaml (#1392, route_coverage).
+# v2 (D293): DCC stages are tool-agnostic (actor agent-dcc), an NPM stage sits right before the export.
+# Checked by tests/test_route_maps_1383.py and tests/test_route_maps_1392.py. Regenerate: uv run python tools/architecture/route_map.py
+title_ru: "Маршрут ВПМ / ОКС v2: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК)"
+route: oks-vpm
+object: "KPP1, PSU275, TEC26-OKS, elv-tc-vpm"
+issue: "#1392"
+actors:
+  - id: agent
+    ru: "Агент"
+  - id: agent-dcc
+    ru: "Агент: Blender / Max / AGR Tools"
+  - id: artem
+    ru: "Артём"
+  - id: checker
+    ru: "Чекер СИНТЕЗ"
+local_contexts:
+  - id: ucx
+    ru: "Коллизии UCX"
+    owner: adapters/max/agr_tools/ucx10_core.py
+stages:
+  - id: sources
+    event_ru: "Исходники получены: Revit / DWG / PDF описаны"
+    actor: agent
+    context: dcc
+    commands:
+      - "agr inspect"
+      - "dt index-pdf"
+    rules:
+      - D186
+      - D008
+      - D127
+      - D237
+    evidence:
+      - routes/revit-intake.md
+      - jobs/PSU275/STATE.md
+      - jobs/elv-tc-vpm/sources.json
+      - jobs/KPP1/sources.json
+  - id: parts
+    event_ru: "Состав частей (PartsList) и бюджет треугольников"
+    actor: agent
+    context: body
+    commands:
+      - "dt inspect"
+    rules:
+      - D276
+      - D010
+      - D161
+    evidence:
+      - jobs/KPP1/cold-run-1172/parts-v001.json
+      - jobs/elv-tc-vpm/parts
+  - id: gate1
+    event_ru: "Gate 1: Артём подтвердил части"
+    actor: artem
+    context: body
+    rules:
+      - D125
+      - D238
+    evidence:
+      - jobs/KPP1/cold-run-1172/parts-v001.json
+  - id: body
+    event_ru: "Корпус построен: сразу ВПМ или mid-poly мастер (по задаче)"
+    actor: agent-dcc
+    context: body
+    commands:
+      - "dt spec compare"
+    rules:
+      - D010
+      - D161
+      - D250
+      - D255
+      - D292
+      - D293
+    evidence:
+      - jobs/PSU275/STATE.md
+      - jobs/KPP1/spec-compare-v003.md
+  - id: openings
+    event_ru: "Проёмы и окна: окно из библиотеки с утоплением или генератор"
+    actor: agent-dcc
+    context: body
+    rules:
+      - D116
+      - D204
+      - D258
+      - D029
+      - D172
+      - D292
+      - D293
+    evidence:
+      - docs/domain/areas/windows.md
+      - jobs/KPP1/windowgen-1338/README.md
+  - id: roof
+    event_ru: "Кровля, парапет, плита, ограждение: плита врезана и поднята (R6)"
+    actor: agent-dcc
+    context: body
+    rules:
+      - D038
+      - D039
+      - D208
+      - D254
+      - D292
+      - D293
+    evidence:
+      - docs/procedure/node-r6-oks-body-facade.md
+      - jobs/KPP1/seam-1339/README.md
+  - id: decor
+    event_ru: "Декор, навесные элементы, разрезанный фасад: врезаны"
+    actor: agent-dcc
+    context: body
+    rules:
+      - D199
+      - D124
+      - D174
+      - D293
+    evidence:
+      - docs/domain/areas/decor.md
+      - jobs/elv-tc-vpm/LESSONS.md
+  - id: uv
+    event_ru: "UV по UDIM и текстуры (сетка рядов, где кирпич)"
+    actor: agent-dcc
+    context: uv-atlas
+    rules:
+      - D209
+      - D221
+      - D207
+      - D216
+      - D160
+      - D293
+    evidence:
+      - docs/research/vpm-course-grid-1314.md
+      - jobs/PSU275/vpm_textures.json
+      - docs/domain/areas/uv-atlas.md
+  - id: ucx
+    event_ru: "UCX построены (только ВПМ)"
+    actor: agent
+    context: ucx
+    rules:
+      - D012
+      - D098
+      - D134
+      - D162
+      - D225
+    evidence:
+      - docs/domain/areas/ucx.md
+      - jobs/KPP1/scripts/vpm_ucx.py
+  - id: npm
+    event_ru: "НПМ-версия в тех же координатах готова (атлас)"
+    actor: agent-dcc
+    context: uv-atlas
+    commands:
+      - "agr vpm-to-npm"
+    rules:
+      - D293
+      - D292
+      - D010
+    evidence:
+      - tools/derive/npm_atlas.py
+      - tools/derive/export_npm.py
+      - docs/domain/areas/derivation.md
+    branches:
+      - id: convert
+        when_ru: "ВПМ или мастер готов"
+        ru: "конвертация ВПМ → НПМ: атлас НПМ из UDIM (путь A)"
+        commands:
+          - "agr vpm-to-npm"
+        rules:
+          - D293
+          - D292
+        evidence:
+          - tools/derive/npm_atlas.py
+      - id: parallel
+        when_ru: "НПМ ведётся параллельно"
+        ru: "НПМ строится рядом с ВПМ в тех же координатах, атлас по ID (путь B)"
+        rules:
+          - D293
+          - D292
+        evidence:
+          - docs/domain/areas/uv-atlas.md
+  - id: package
+    event_ru: "export_meta, FBX и пакеты ВПМ и НПМ собраны"
+    actor: agent
+    context: package
+    commands:
+      - "agr package-vpm"
+      - "agr package-npm"
+      - "dt derive package"
+    rules:
+      - D198
+      - D224
+      - D223
+      - D017
+      - D018
+      - D292
+    evidence:
+      - tools/derive/package_vpm.py
+      - tools/derive/package_npm.py
+      - jobs/KPP1/package-1278/latest/REPORT.md
+  - id: readback
+    event_ru: "Экспорт заново прочитан в новом процессе"
+    actor: agent
+    context: dcc
+    commands:
+      - "dt qa xview"
+    rules:
+      - D273
+      - D152
+    evidence:
+      - jobs/KPP1/package-1278/xview-summary.json
+  - id: validate
+    event_ru: "Проверки и xView выполнены, отказы записаны"
+    actor: agent
+    context: validation
+    commands:
+      - "agr validate"
+      - "dt qa xview"
+    rules:
+      - D152
+      - D173
+      - D256
+    evidence:
+      - jobs/KPP1/package-1278/latest/REPORT.md
+      - docs/retros/2026-11-05-elv-tc-vpm-claude.md
+  - id: sintez
+    event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
+    actor: checker
+    context: validation
+    rules:
+      - D220
+      - D104
+    evidence:
+      - jobs/KPP1/package-1278/sintez-v003-summary.json
+      - jobs/KPP1/scripts/run_agr_checker.py
+  - id: delivered
+    event_ru: "Сдано: Артём принял в открытой сцене, пакет передан"
+    actor: artem
+    context: package
+    rules:
+      - D104
+      - D270
+      - D198
+    evidence:
+      - jobs/elv-tc-vpm/REVIEW-album-2026-11-10.md
+      - jobs/TEC26-OKS/AC08/PILOT_REPORT.md
+hotspots:
+  - id: windows
+    stage: openings
+    ru: "Окна: проёмы Revit и меша КПП1 не совпали (spec-compare v002); окно из библиотеки с утоплением или генератор (D292); windowgen_core есть в AGR Tools (#1345), команды agr / dt нет"
+    rules:
+      - D116
+      - D204
+      - D292
+    evidence:
+      - jobs/KPP1/spec-compare-v002.md
+      - jobs/KPP1/windowgen-1338/README.md
+  - id: parapet-seam
+    stage: roof
+    ru: "Шов кровля / парапет: КПП1 переделывал вставную кровлю (#1339); СРЕDА — стыки текстуры не сходятся под парапетом (423 пересечения на 95 рёбрах)"
+    rules:
+      - D038
+      - D254
+    evidence:
+      - jobs/KPP1/seam-1339/README.md
+      - docs/retros/2026-11-05-elv-tc-vpm-claude.md
+  - id: brick-courses
+    stage: uv
+    ru: "4БК кирпич: 37 → 38 рядов, перевязка на стыке этажей, швы панелей 10 мм по красным линиям архитектора; пилот в 1 UDIM (#1326) открыт"
+    rules:
+      - D216
+      - D207
+    evidence:
+      - docs/research/vpm-course-grid-1314.md
+  - id: udim-copies
+    stage: uv
+    ru: "UDIM: номер тайла теперь один (udim_tile, #1337 / #1376), но раскладка vpm_uv.py ТЭЦ26 = КПП1 с разницей в строку; цвета ТЭЦ26 — по слайдам, v007 (стыки каждые 0,60 м) отклонён"
+    rules:
+      - D209
+      - D221
+      - D171
+    evidence:
+      - jobs/KPP1/scripts/vpm_uv.py
+      - jobs/TEC26-OKS/scripts/vpm_uv.py
+      - jobs/TEC26-OKS/STATE.md
+  - id: ucx-copies
+    stage: ucx
+    ru: "UCX: 5 своих скриптов в jobs/ (КПП1, ПСУ275, ТЭЦ26 ×2, СРЕDА), agr ucx — заглушка; ТЭЦ26 AC08: триангуляция UCX ждёт Артёма; СРЕDА — 960 UCX"
+    rules:
+      - D225
+      - D162
+    evidence:
+      - jobs/KPP1/scripts/vpm_ucx.py
+      - jobs/PSU275/scripts/vpm_ucx.py
+      - jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py
+      - jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py
+      - jobs/TEC26-OKS/AC08/PILOT_REPORT.md
+  - id: export-meta
+    stage: package
+    ru: "Пакет: agr package-npm и export_meta на main (#1361); КПП1 собран без утверждённого Ground (D285); сданный Ground не готов (D288)"
+    rules:
+      - D285
+      - D288
+      - D224
+    evidence:
+      - jobs/KPP1/package-1278/latest/REPORT.md
+  - id: xview-time
+    stage: validate
+    ru: "xView: КПП1 ВПМ — 85 перекрытых граней (128 пар), цель 0 / 0 открыта; СРЕDА — ~23 мин на прогон в Max (1395 с) ×3, агент ждал в sleep-циклах ~17 мин"
+    rules:
+      - D152
+      - D173
+    evidence:
+      - jobs/KPP1/package-1278/latest/REPORT.md
+      - docs/retros/2026-11-05-elv-tc-vpm-claude.md
+  - id: sintez-runner
+    stage: sintez
+    ru: "СИНТЕЗ КПП1 v003: HP 64 / 3 провала / 53 не определено, LP 39 / 4 / 29; общей команды agr/dt нет"
+    rules:
+      - D220
+    evidence:
+      - jobs/KPP1/package-1278/latest/REPORT.md
+      - jobs/KPP1/scripts/run_agr_checker.py
+  - id: album-review
+    stage: delivered
+    ru: "СРЕDА после приёмки: разбор альбома — 25 замечаний, 7 наших (гранёные кривые, отлив, лишние детали без источника)"
+    evidence:
+      - jobs/elv-tc-vpm/LESSONS.md
+      - jobs/elv-tc-vpm/REVIEW-album-2026-11-10.md

@@ -1,0 +1,175 @@
+# Context map of the Ground route, NPM + VPM, #1392 (Artem 2026-11-14, D293). Source of truth for
+# docs/architecture/ground-contexts.excalidraw / .svg. Same schema and generator as contexts.yaml (#1359).
+# Every stage context of ground-route.events.yaml is listed here with the same owner (route_map.route_coverage).
+# duplicates: described rows only (`at` = path:line, `match` = text on that line); the duplicate_guard allowlist
+# stays in contexts.yaml. A context without a `duplicates` key draws no duplicates box.
+# grid: "col/row" cell of the drawing (all contexts or none; columns >= 1 apart in a row).
+# Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
+title_ru: "Карта контекстов маршрута Ground (НПМ + ВПМ) — D293"
+issue: "#1392"
+rules:
+  - id: udim-tile
+    owner: adapters/max/agr_tools/udimtile_core.py
+    ru: "своя формула UDIM 1001 + u + 10·v вместо общей функции (охрана — contexts.yaml, #1376)"
+shared_kernel:
+  id: udim
+  ru: "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)"
+  owner: adapters/max/agr_tools/udimtile_core.py
+  owner_ru: "одна функция UDIM (#1337); её дубли охраняет карта НПМ (contexts.yaml)"
+  functions:
+    - name: udim_tile
+      contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
+    - name: face_tile
+      contract: "углы UV грани -> тайл грани; угол в чужом тайле — UdimCrossTileError"
+contexts:
+  - id: dcc
+    grid: "0/1"
+    ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"
+    area: docs/agents/CAPABILITIES.md
+    owner: src/dt_ai/core/blender_runner.py
+    owner_ru: "исходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает там, где удобно (D293)"
+    functions:
+      - name: blender_executable
+        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+      - name: run_blender
+        contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
+  - id: heights
+    grid: "1/1"
+    ru: "Граница участка и нулевая отметка"
+    area: docs/domain/areas/ground-surface.md
+    owner: src/dt_ai/core/heights.py
+    owner_ru: "высоты App.3 от нуля проекта (D279); граница и ноль — из проекта или агент уточняет (D293)"
+    functions:
+      - name: height_values
+        contract: "ноль проекта, м; Z нуля в FBX, м; верх модели, м -> высоты App.3 с округлением только в конце"
+  - id: ground
+    grid: "2/1"
+    ru: "Поверхность Ground: плоские покрытия → проекция на рельеф → юбка"
+    area: docs/domain/areas/ground-surface.md
+    owner: tools/ground/build_ground_v015.py
+    owner_ru: "сборка Ground Ватутино v015 (только этот участок, agr ground / dt ground v015)"
+    functions:
+      - name: geometry
+        contract: "данные участка, исходник, одобрения, вырезы -> меш Ground v015"
+      - name: restore_source_coverage
+        contract: "меш, план -> ограниченный ремонт покрытия; ненулевой остаток не прощается"
+      - name: derive
+        contract: "меш, профиль, сэмплер, защищённые, исключения -> квады и треугольники Ground"
+      - name: main
+        contract: "--job-dir и параметры -> Ground v015 и отчёт; изменился HEAD — отказ"
+  - id: uv-atlas
+    grid: "3/1"
+    ru: "Текстуры по ID: UV-острова, тайлы, UDIM / атлас"
+    area: docs/domain/areas/uv-atlas.md
+    owner: adapters/max/agr_tools/atlas_core.py
+    owner_ru: "ВПМ: UDIM = ID; НПМ: та же геометрия на атласе (D293); упаковка атласа (D225)"
+    functions:
+      - name: pack
+        contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
+      - name: atlas_png
+        contract: "раскладка -> PNG атласа"
+  - id: validation
+    grid: "2/4"
+    ru: "Проверки Ground, xView, СИНТЕЗ"
+    area: docs/domain/areas/package.md
+    owner: tools/qa/validate_package.py
+    owner_ru: "проверка пакета по регламенту (agr validate)"
+    functions:
+      - name: validate_vpm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ"
+      - name: validate_npm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+  - id: package
+    grid: "2/3"
+    ru: "Экспорт и пакеты НПМ / ВПМ"
+    area: docs/domain/areas/package.md
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    functions:
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
+  - id: npm
+    grid: "2/2"
+    ru: "НПМ МАФ и Флора на атласе"
+    area: docs/domain/areas/flora.md
+    owner: adapters/max/agr_tools/flora_atlas_max.py
+    owner_ru: "атлас МАФ (GroundEl) и Флоры в AGR Tools; конвертация ВПМ → НПМ или параллельно (D293)"
+    functions:
+      - name: atlas_groundel
+        contract: "контекст Max, режим, узлы МАФ, превью -> атлас МАФ НПМ"
+      - name: atlas_flora
+        contract: "контекст Max, режим, узлы Флоры, превью -> атлас Флоры НПМ"
+  - id: placement
+    grid: "1/2"
+    ru: "Расстановка МАФ и Флоры"
+    area: docs/domain/areas/groundel-maf.md
+    owner: src/dt_ai/placement/engine.py
+    owner_ru: "один экземпляр на точку СПОЗУ по высоте Ground; low-poly и high-poly — в одни точки (D293)"
+    functions:
+      - name: place
+        contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом"
+      - name: bottom_face_verdict
+        contract: "нижняя грань в мире -> удалить / на проверку (D095, D096)"
+      - name: report_json
+        contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
+    duplicates:
+      - at: "jobs/VATUTINO-SITE/place_site.py:87"
+        match: "def run("
+        issue: "#1383"
+        ru: "своя расстановка участка в задании поверх движка"
+  - id: ucx
+    grid: "3/3"
+    ru: "Коллизии UCX рельефа (только ВПМ)"
+    area: docs/domain/areas/ucx.md
+    owner: adapters/max/agr_tools/ucx10_core.py
+    owner_ru: "канон UCX (D225): выпуклые куски и зазоры между ними"
+    functions:
+      - name: piece
+        contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
+      - name: plan
+        contract: "куски, опции -> зазор каждой соседней пары каждого семейства UCX"
+    duplicates:
+      - at: "jobs/VATUTINO-SITE/assemble_delivery.py:25"
+        match: "GROUND_UCX"
+        issue: "#1383"
+        ru: "UCX Ground из готовых FBX по путям C:/x"
+relations:
+  - from: dcc
+    to: heights
+    ru: "исходники"
+  - from: heights
+    to: ground
+    ru: "граница и ноль"
+  - from: ground
+    to: uv-atlas
+    ru: "плоский Ground с ID"
+  - from: udim
+    to: uv-atlas
+    ru: "тайл UDIM = ID"
+  - from: ground
+    to: placement
+    ru: "рельеф для высот"
+  - from: ground
+    to: ucx
+    ru: "рельеф"
+  - from: placement
+    to: npm
+    ru: "точки МАФ / Флоры"
+  - from: npm
+    to: package
+    ru: "НПМ на атласе"
+  - from: uv-atlas
+    to: package
+    ru: "атлас / UDIM"
+  - from: ucx
+    to: package
+    ru: "коллизии UCX_"
+  - from: package
+    to: validation
+    ru: "ZIP / FBX сдачи"

@@ -110,15 +110,19 @@ Require `## Author receipts` in the PR body with the following lines:
 
 ### Handoff evidence check (#584)
 
-The author owns the full suite: a PR body never hands it to the reviewer, and evidence that is
-missing, "not run" or "not measured" is not a pass. Before `review_requested` the PR body has each
+The author runs the tests: a PR body never hands them to the reviewer, and evidence that is
+missing, "not run" or "not measured" is not a pass. Each card runs the AFFECTED tests (the changed
+modules' tests, the tests that import them, the new regressions) before every review request; the full
+suite runs ONCE in the merge batch (`merge_batch.py` / `merge_after_review.py`) before main, and a red
+batch suite sends the PR back to rework [D297]. Before `review_requested` the PR body has each
 line below exactly once (`.github/pull_request_template.md`, "Evidence"), and this read-only check exits 0:
 ```bash
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
-- `Full suite:` run through `suite_slot.py` (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head sha, `N passed`, `0 failed` (a failure only
-  with its `known #<issue>` owner). After a rework (rule 49) it may name an ancestor of the head, and then an
-  `Affected tests:` line on the head with `0 failed` is required.
+- `Affected tests:` names the head sha, the command, `N passed`, `0 failed`; `not run`, `pending`, `n/a` are not a run.
+- `Full suite: deferred to merge batch (D297)` (optional; any other deferral wording is an error). A real
+  `suite_slot.py` run (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head or an ancestor is still accepted,
+  `N passed`, `0 failed` (a failure only with its `known #<issue>` owner).
 - `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
 - `Before (RED):` names a commit before the head and has ≥ 1 failed or error, or `n/a: <reason>`.
   `After (GREEN):` names the head and has ≥ 1 passed and 0 failed; it has no `n/a`. A GREEN or
@@ -126,6 +130,31 @@ uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <wor
   Every count is a plain integer: `nan failed`, `-1 failed`, `1.5 passed` are errors, never zero.
 - `Sample output:` gives the output the acceptance asks for (path or inline), or `n/a: <reason>`.
 Exit 1 prints one `ERROR:` line per problem. Fix the evidence or run the missing step. Never edit a line to pass the check.
+
+### Visual evidence (Before/After) [D286]
+
+Canonical rule (#1360); the PR template and `REVIEW_CHECKLIST.md` link here. A PR that changes what the
+user sees - geometry, UV, materials, textures, renders, Max UI - carries BOTH a Before and an After image:
+- clearly labelled `BEFORE` / `AFTER`, each naming its version (commit, PR or file + sha256) so the baseline
+  and the changed version are identified;
+- the same camera / viewpoint, render settings and scene state on both sides;
+- a real baseline: the approved or `origin/main` output, never a mockup or a redrawn picture.
+
+After-only evidence is incomplete. If no real baseline can be produced, say so in the PR and keep it
+not-ready (draft) until one exists; the reviewer requests changes otherwise. A PR without a visible change
+writes `Visual Before/After: n/a: <why nothing visible changes>`.
+
+Helper for two FBX/.blend versions (headless Blender, one camera fitted to the union of both scenes or one
+named camera that must be identical in both; it refuses mismatched cameras, identical inputs and an output
+inside git):
+```bash
+uv run python tools/review/before_after.py --before <baseline.fbx> --after <changed.fbx> \
+  --label-before "<baseline version>" --label-after "<changed version>" \
+  --output "G:/Мой диск/AGR-evidence/<issue>-<topic>/<view>-v001" [--elevation 55] [--camera-mode named --camera-name <cam>]
+```
+It writes `before.png`, `after.png`, the labelled `before-after.png`, `before-after.json` and
+`SHA256SUMS.txt` to Drive, not git; the PR quotes the path and the hashes. Max UI changes use two
+screenshots of the same panel and state. These images are evidence, not the user's visual acceptance.
 
 ## Questions-only
 
