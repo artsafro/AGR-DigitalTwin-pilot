@@ -34,6 +34,8 @@ RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
             "flora-route": {"stand-in-replace": ("maps", "D299"), "lod-rule": ("lod", "D301"),
                             "vpm-identity": ("star", "D311")},  # #1421
             "package-route": {"customer-channel": ("customer", "D300")}}
+# #1409: red blocks fixed without a D-row (box removed from the map, report row «снята»)
+FIXED = {"maf-route": {"library-version"}, "flora-route": set(), "package-route": set()}
 
 
 def _routes():
@@ -267,8 +269,11 @@ def test_report_lists_every_bare_stage_and_every_red_box(name):
     hot = {h["id"] for h in events["hotspots"]}
     assert set(re.findall(r"^- `([a-z0-9-]+)`", section, re.M)) == hot
     status = dict(re.findall(r"^\| `([a-z0-9-]+)` \| (открыта|снята|обновлена) \|", section, re.M))
-    assert set(status) == hot | set(RESOLVED[name])
-    assert {k for k, v in status.items() if v == "снята"} == set(RESOLVED[name])
+    # #1409/#1412: a closed red box leaves the YAML (no red box on the map) and stays in the report as «снята».
+    closed = set(RESOLVED[name]) | FIXED[name]
+    assert set(status) == hot | closed, sorted(set(status) ^ (hot | closed))
+    assert {k for k, v in status.items() if v == "снята"} == closed
+    assert not hot & closed
     assert "Предлагаемые" in section
 
 

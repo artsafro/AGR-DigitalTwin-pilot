@@ -256,7 +256,7 @@ hotspots:
       - docs/plans/flora-426-route-2026-11.md
   - id: c18-opacity
     stage: checks
-    ru: "Нет карты прозрачности — review, конфликт C18 открыт; 11 из 17 строк FLO без автопроверки"
+    ru: "Нет карты прозрачности — review, конфликт C18 открыт; 7 из 17 строк FLO без автопроверки"
     evidence:
       - docs/domain/areas/flora.md
       - docs/domain/conflicts.md
