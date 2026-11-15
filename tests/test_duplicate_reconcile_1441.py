@@ -23,13 +23,28 @@ def test_council_responsibilities():
         'jobs/TEC26-OKS/scripts/ucx_tri_core.py:44': 'wrapper',
         'jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29': 'wrapper',
         'jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24': 'own-duty',
-        'jobs/KPP1/scripts/run_agr_checker.py:47': 'own-duty',
-        'jobs/TEC26-OKS/scripts/run_agr_checker.py:47': 'own-duty',
+        'jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>': 'own-duty',
     }
     for at, status in expected.items():
         found = [r for r in rows() if r.at == at]
         assert found, at
         assert all(r.status == status for r in found), (at, found)
+
+
+def test_merged_migrations_keep_the_new_owners_without_reviving_copies():
+    current = rows()
+    migrated = {
+        'jobs/KPP1/scripts/run_agr_checker.py',
+        'jobs/TEC26-OKS/scripts/run_agr_checker.py',
+        'jobs/KPP1/scripts/qa_master.py',
+        'jobs/TEC26-OKS/scripts/qa_master.py',
+    }
+    assert not any(r.rel in migrated for r in current)
+    assert guard.RULES['sintez-checker'] == 'tools/blender/sintez_checker.py'
+    assert guard.RULES['master-qa'] == 'tools/blender/qa_master.py'
+    assert not any(r.rule == 'udim-tile' and r.step == '#1397' for r in current)
+    assert any(r.rule == 'udim-tile' and r.rel == 'tools/source/measure_spec_blender.py'
+               and r.status == 'own-duty' for r in current)
 
 
 def test_current_entrypoints():

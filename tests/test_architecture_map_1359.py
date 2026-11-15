@@ -52,11 +52,48 @@ def test_every_drawn_label_is_russian():
         assert bad == [], f"{rel}: labels without Russian text: {bad}"
 
 
+def test_npm_v2_tool_choice_atlas_and_current_owners():
+    """#1440: route presentation follows D293 without certifying a model."""
+    events = mini_yaml.load(ROOT / route_map.EVENTS)
+    actors = {a["id"]: a["ru"] for a in events["actors"]}
+    assert actors["agent-dcc"] == "Агент: Blender / Max / AGR Tools"
+    stages = {s["id"]: s for s in events["stages"]}
+    for name in ("model", "uv", "npm", "export", "readback"):
+        assert stages[name]["actor"] == "agent-dcc"
+        assert "D293" in stages[name]["rules"]
+    ids = list(stages)
+    assert ids.index("uv") < ids.index("npm") < ids.index("export")
+    assert "атласе" in stages["npm"]["event_ru"]
+    assert "D312" in stages["model"]["rules"]
+    assert "adapters/max/agr_tools/package_core.py" in stages["export"]["evidence"]
+    assert "agr package-npm" in stages["export"]["commands"]
+    hotspots = {h["id"]: h for h in events["hotspots"]}
+    for name, issue in (("udim", "#1376"), ("package", "#1377"), ("dcc-runner", "#1378")):
+        assert issue in hotspots[name]["ru"]
+        assert "Закрыто" in hotspots[name]["ru"]
+
+
+@pytest.mark.parametrize("needle", [
+    "<original>__<job>", "оригинал не меняем", "ВСЕГДА с opacity",
+    "отдельная opacity-карта формирует силуэт", "Diffuse с alpha",
+    "50k / 60k / 70k", "3.8–4 m", "перекрываться / stack",
+    "n-gon >4 запрещён", "почему одной строкой", "МАФ-ограды/навесы без UCX",
+    "удаляем с записью причины", "UCX только ВПМ",
+])
+def test_npm_v2_rules_reach_rendered_view(needle):
+    """Generated-view probe: no copy/opacity/topology/placement rule is dropped."""
+    events, contexts = _loaded()
+    board = route_map.route_board(events, contexts)
+    doc = json.loads(board.excalidraw())
+    text = " ".join(" ".join(e["text"].split()) for e in doc["elements"] if e["type"] == "text")
+    assert needle in text
+
+
 def test_route_covers_the_issue_stages_and_hotspots():
     events = mini_yaml.load(ROOT / route_map.EVENTS)
     assert [s["id"] for s in events["stages"]] == [
-        "sources", "parts", "gate1", "model", "uv", "export", "readback", "validate", "sintez", "delivered"]
-    assert {"agent", "artem", "checker"} == {a["id"] for a in events["actors"]}
+        "sources", "parts", "gate1", "model", "uv", "npm", "export", "readback", "validate", "sintez", "delivered"]
+    assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
     assert len(contexts["contexts"]) == 11  # #1441: missing owners, roof, VPM UV copy

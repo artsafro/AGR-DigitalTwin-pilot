@@ -19,10 +19,16 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `-b`) and a script flag (`--python`, `-P`, `--python-expr`, `--python-text`) as string constants, or one string
   (also an f-string part) holding both as words. Docstrings and bare string statements are not launches. Every
   blender-launch row must say why it stays (`ru`).
+- `sintez-checker`  owner tools/blender/sintez_checker.py (#1379): the one launch of SINTEZ AGR Checker 1.6.1 inside
+  Blender, behind `agr checker` (tools/qa/sintez_checker.py). Flags any other call of the checker entry point
+  `calculate_all_checks` (attribute or bare name). Every row must say why it stays (`ru`).
+- `master-qa`  owner tools/blender/qa_master.py (#1379): the one Blender master-geometry QA (quads, quad size, T-junctions,
+  open edges, flipped normals). Flags any other `def world_bm` (its helper name). Every row must say why it stays.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
-and src/ now call the owner); `delivery-zip` jobs/ + tools/ + src/ (#1377: owner settled). Each guarded
+and src/ now call the owner); `delivery-zip` jobs/ + tools/ + src/ (#1377: owner settled); `blender-launch`,
+`sintez-checker`, `master-qa` jobs/ + tools/ + src/ from the start (#1378, #1379). Each guarded
 folder must exist (a missing one is an error, not an empty pass).
 The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml: every finding in a guarded scope
 must be listed there with an issue reference, and every listed row (also the documented copies outside the guarded
@@ -61,16 +67,21 @@ RULES = {
     "udim-tile": "adapters/max/agr_tools/udimtile_core.py",
     "delivery-zip": "adapters/max/agr_tools/package_core.py",
     "blender-launch": "src/dt_ai/core/blender_runner.py",
+    "sintez-checker": "tools/blender/sintez_checker.py",
+    "master-qa": "tools/blender/qa_master.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
 GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
-           "blender-launch": ("jobs", "tools", "src")}   # #1378: owner exists, guarded from the start
+           "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
+           "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src")}   # #1379
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip", "blender-launch"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa"}
 
 
-OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"}}
+OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
+               "master-qa": {"world_bm"}}
+SINTEZ_ENTRY = "calculate_all_checks"   # the checker's own "Check AGR zip-files" entry point
 
 
 def _int_names(tree):
@@ -194,7 +205,21 @@ def _blender_hits(tree):
     return list(hits.values())
 
 
-CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits}
+def _sintez_hits(tree):
+    """Calls of the SINTEZ checker entry point: `<anything>.calculate_all_checks(...)` or a bare name call."""
+    return [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (
+        isinstance(node.func, ast.Attribute) and node.func.attr == SINTEZ_ENTRY
+        or isinstance(node.func, ast.Name) and node.func.id == SINTEZ_ENTRY)]
+
+
+def _master_hits(tree):
+    """Definitions carrying the master-QA owner's helper name (`def world_bm`), whatever their body."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in OWNED_NAMES["master-qa"]]
+
+
+CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
+          "sintez-checker": _sintez_hits, "master-qa": _master_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -370,18 +395,9 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "eb17152aa7"),
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
-    ("contexts", "src/dt_ai/geometry/ground_cake.py::uv_tile_report", "331763c046"),
-    ("contexts", "tools/blender/ground_json_to_fbx.py::readback", "abdf135e7a"),
-    ("contexts", "tools/experiments/dreamsim_ac08.py::_tile", "971a042bbe"),
-    ("contexts", "tools/flora/build_flora_star.py::_bpy_build", "31ff54af03"),
-    ("contexts", "tools/flora/build_flora_star.py::_bpy_build", "85e04a9a85"),
-    ("contexts", "tools/flora/build_flora_star.py::udim_offset", "31ff54af03"),
-    ("contexts", "tools/flora/build_flora_star.py::udim_offset", "85e04a9a85"),
+
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
-    ("contexts", "tools/methods/methods_metrics.py::_udim", "ded8ff2561"),
-    ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "31ff54af03"),
-    ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "85e04a9a85"),
-    ("contexts", "tools/source/measure_spec_blender.py::udim", "ded8ff2561"),
+
     # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
     ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
     ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),
@@ -400,6 +416,7 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
     ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
     ("vpm-contexts", "jobs/TEC26-OKS/scripts/vpm_uv.py:155", ""),
+
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))
@@ -669,4 +686,8 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
+    # Russian report on a non-UTF-8 Windows console/pipe (no PYTHONUTF8): never crash on print.
+    for _s in (sys.stdout, sys.stderr):
+        if hasattr(_s, "reconfigure"):
+            _s.reconfigure(encoding="utf-8", errors="replace")
     sys.exit(main())

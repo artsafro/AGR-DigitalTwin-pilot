@@ -175,7 +175,7 @@ def shell_run(tmp_path):
 
     def run(version="v002", **overrides):
         return subprocess.run([bash, str(scripts / "run_all.sh"), version],
-                              env=env | overrides, capture_output=True, text=True, timeout=30)
+                              env=env | overrides, capture_output=True, text=True, timeout=180)  # bash fixture; 30 s timed out under a loaded host (batch 20261115f)
     return job / "outputs", run
 
 
@@ -207,7 +207,7 @@ def test_shell_subprocess_does_not_inherit_msys_conversion_opt_outs(monkeypatch,
     monkeypatch.setenv("MSYS2_ARG_CONV_EXCL", "*")
     result = subprocess.run(
         [bash, "-c", 'printf "%s|%s" "${MSYS_NO_PATHCONV-unset}" "${MSYS2_ARG_CONV_EXCL-unset}"'],
-        env=_shell_env(os.environ, tmp_path), capture_output=True, text=True, timeout=30)
+        env=_shell_env(os.environ, tmp_path), capture_output=True, text=True, timeout=180)  # bash fixture; 30 s timed out under a loaded host (batch 20261115f)
     assert result.stdout == "unset|unset"
 
 

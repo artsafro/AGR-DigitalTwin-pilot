@@ -264,7 +264,9 @@ def _dt_commands():
 
 
 def command_exists(command):
-    """'agr <alias>' or 'dt <sub> [<choice>]' exists in today's CLI (pointer stubs do not count)."""
+    """Existing agr/dt command or the exact documented D312 script template (not executed here)."""
+    if command == "uv run python tools/qa/master_topology.py <master> --out <new.json>":
+        return True
     words = command.split()
     if len(words) < 2:
         return False

@@ -103,17 +103,18 @@ contexts:
     grid: "1.5/3"
     ru: "Чекер СИНТЕЗ и загрузка архива"
     area: docs/domain/validation.md
-    owner: jobs/KPP1/scripts/run_agr_checker.py
+    owner: tools/blender/sintez_checker.py
     owner_ru: "запуск чекера AGR 1.6.1 в Blender на ZIP; находки — доказательство, не вердикт"
     functions:
       - name: dump
         contract: "список проверок чекера -> JSON находок"
     duplicates:
-      - at: "jobs/TEC26-OKS/scripts/run_agr_checker.py:18"
+      - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:18"
         match: "check_highpoly_lowpoly"
-        issue: "#1393"
-        ru: "копия запуска чекера КПП1 в ТЭЦ26"
-        status: historical
+        issue: "#1379"
+        ru: "остаётся: замороженная версия v003 запуска чекера elv-tc-vpm; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
+        status: own-duty
+        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
 relations:
   - from: dcc
     to: export

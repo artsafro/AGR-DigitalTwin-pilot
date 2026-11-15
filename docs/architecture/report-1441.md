@@ -55,6 +55,16 @@ carry explicit Russian reasons. No ELV row remains `historical` by relying on th
 
 ## Checker changes and verification limits
 
+### Main integration delta (PR #1484)
+
+The original council findings above describe the audit base. The main merge retains the completed
+#1379 SINTEZ/master-QA migration: KPP1/TEC26 shims no longer have duplicate rows; the checker rule
+still lists the frozen ELV v003 diagnostic (`own-duty`, not delivered) and PSU275 master QA
+(`historical`). The package/VPM maps also keep the frozen ELV diagnostic without a delivery claim.
+#1397's migrated UDIM formulas stay removed from the allowlist and live-bypass baseline; the source
+raw-tile diagnostic stays `own-duty`. The reconciled registry has 41 live-bypass rows, not the
+pre-merge 52. No migrated implementation was reverted; no new decision ID was allocated.
+
 - Explicit `entrypoints` have a canonical existing `.py` owner and a nonempty evidence substring in an
   existing file. They supply shell-command/candidate roots missed by Python imports. No shell interpreter
   or new runtime classifier is introduced; the rest of the existing conservative BFS remains unchanged.

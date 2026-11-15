@@ -12,7 +12,9 @@ from pathlib import Path
 
 REQUIRED = {'address', 'h_otn_model_max_z_m', 'thumbnail'}
 OPTIONAL = {'profile', 'exported_files', 'provenance', 'fbx', 'pivot_revit_internal_m',
-            'bbox_after_pivot', 'main_tris', 'glass_tris', 'ucx', 'ucx_tris'}
+            'bbox_after_pivot', 'main_tris', 'glass_tris', 'ucx', 'ucx_tris', 'fbx_records'}
+FBX_NAME = re.compile(r'[A-Za-z0-9_]+\.fbx')
+SHA256 = re.compile(r'[0-9a-f]{64}')
 
 
 def unique_object(pairs):
@@ -22,6 +24,36 @@ def unique_object(pairs):
             raise ValueError(f'duplicate JSON key {key!r}')
         result[key] = value
     return result
+
+
+def _finite(value):
+    return type(value) in (int, float) and math.isfinite(value)
+
+
+def validate_fbx_records(records):
+    """fbx_records (#1342): exact FBX filename -> {bounds_m, fbx_sha256} of the exported bytes.
+
+    bounds_m is the world AABB [[min xyz], [max xyz]] in metres of the render (non-UCX) geometry in the
+    exported frame; V013 (twinqa.scene.z_bounds_finding) compares its Z with the FBX readback.
+    """
+    if not isinstance(records, dict) or not records:
+        raise ValueError('export_meta fbx_records must be a nonempty object')
+    for name, record in records.items():
+        if not isinstance(name, str) or FBX_NAME.fullmatch(name) is None:
+            raise ValueError(f'export_meta fbx_records unsupported FBX name {name!r}')
+        if not isinstance(record, dict) or set(record) != {'bounds_m', 'fbx_sha256'}:
+            raise ValueError(f'export_meta fbx_records.{name} must hold exactly bounds_m and fbx_sha256')
+        if not isinstance(record['fbx_sha256'], str) or SHA256.fullmatch(record['fbx_sha256']) is None:
+            raise ValueError(f'export_meta fbx_records.{name}.fbx_sha256 must be 64 lowercase hex digits')
+        bounds = record['bounds_m']
+        if (not isinstance(bounds, list) or len(bounds) != 2
+                or any(not isinstance(v, list) or len(v) != 3 or not all(_finite(c) for c in v) for v in bounds)):
+            raise ValueError(f'export_meta fbx_records.{name}.bounds_m requires finite [[min xyz], [max xyz]]')
+        if any(bounds[0][i] > bounds[1][i] for i in range(3)):
+            raise ValueError(f'export_meta fbx_records.{name}.bounds_m is reversed')
+    if len({n.casefold() for n in records}) != len(records):
+        raise ValueError('export_meta fbx_records has case-duplicated FBX names')
+    return records
 
 
 def validate_meta(meta):
@@ -68,6 +100,12 @@ def validate_meta(meta):
                 raise ValueError(f'export_meta {key} requires finite xyz vectors')
         if key == 'bbox_after_pivot' and any(vectors[0][i] > vectors[1][i] for i in range(3)):
             raise ValueError('export_meta bbox_after_pivot is reversed')
+    if 'fbx_records' in meta:
+        records = validate_fbx_records(meta['fbx_records'])
+        if 'fbx' in meta and re.split(r'[\\/]', meta['fbx'])[-1] not in records:
+            raise ValueError(f"export_meta fbx_records does not name the exported fbx {meta['fbx']!r}")
+        if 'exported_files' in meta and set(records) != set(meta['exported_files']):
+            raise ValueError('export_meta fbx_records names differ from exported_files')
     if 'provenance' in meta:
         prov = meta['provenance']
         fields = set(meta) - {'provenance'}
@@ -105,6 +143,49 @@ def load_package_meta(package_dir, explicit=None):
     if len(candidates) > 1:
         raise ValueError(f'ambiguous export metadata {candidates}; choose --meta explicitly')
     return load_meta(pkg.parent / 'export_meta.json')
+
+
+def fbx_record(fbx, bounds_m):
+    """One fbx_records value: caller-measured world bounds_m and SHA-256 of the FBX bytes as written.
+
+    Call after the FBX is exported; dependency-free so headless Blender exporters can import it.
+    """
+    import hashlib
+    fbx = Path(fbx)
+    if not fbx.is_file():
+        raise ValueError(f'exported FBX missing: {fbx}')
+    record = {'bounds_m': [[float(c) if _finite(c) else c for c in v] for v in bounds_m],
+              'fbx_sha256': hashlib.sha256(fbx.read_bytes()).hexdigest()}
+    validate_fbx_records({fbx.name: record})
+    return record
+
+
+def z_meta_mapping(data):
+    """validate_package --export-meta input -> {FBX filename: {bounds_m, fbx_sha256}} (#1342 adapter).
+
+    An exporter record (ExportMeta, has `address`) yields its validated fbx_records; one without them
+    (pre-#1342 exporter) is refused, not silently turned into not_run. Anything else is the
+    hand-written per-FBX mapping and passes through to V013, which fails it closed when malformed.
+    """
+    if isinstance(data, dict) and 'address' in data:
+        meta = validate_meta(data)
+        if 'fbx_records' not in meta:
+            raise ValueError('export_meta has no fbx_records (pre-#1342 exporter): re-export the FBX '
+                             'or pass a per-FBX {bounds_m, fbx_sha256} mapping')
+        return meta['fbx_records']
+    return data
+
+
+def load_z_meta(path):
+    """Read --export-meta strictly (duplicate keys, NaN/inf refused) and adapt it with z_meta_mapping."""
+    def constant(token):
+        raise ValueError(f'non-finite JSON number {token}')
+    try:
+        data = json.loads(Path(path).read_text(encoding='utf-8'), object_pairs_hook=unique_object,
+                          parse_constant=constant)
+        return z_meta_mapping(data)
+    except (ValueError, OSError) as exc:
+        raise ValueError(f'export_meta {path}: {exc}') from exc
 
 
 def write_meta(path, meta):

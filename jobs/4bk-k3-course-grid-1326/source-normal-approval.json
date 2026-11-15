@@ -1,0 +1,10 @@
+{
+  "status": "target_confirmed_not_implemented",
+  "decision": "D295",
+  "actor": "Artem",
+  "date": "2026-11-14",
+  "reference": "Kanban t_d517d7c6 USER DECISION at 22:13: принимаю рекомендации",
+  "scope": "Restore the original stylobate brick panel-joint relief/bevel in Normal; no flat neutral joint Normal. Earlier seam, source-stair baseline and one-tile policies remain.",
+  "not_waived": ["102 expanded independent PNG findings", "final all-map readback", "frozen density", "protected finishes", "final visual evidence"],
+  "technical_acceptance": false
+}
