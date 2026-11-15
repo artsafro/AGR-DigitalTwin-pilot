@@ -1,14 +1,16 @@
-"""Excalidraw + SVG generator for the NPM/OKS route event storm and its context map (#1359).
+"""Excalidraw + SVG generator for the route event storms and the context map (#1359; VPM OKS + Ground #1383).
 
 Pattern: n/a | new-case: stdlib generator docs/architecture/*.yaml -> .excalidraw + .svg (Russian labels).
 
-Inputs (source of truth): docs/architecture/npm-oks-route.events.yaml, docs/architecture/contexts.yaml.
-Outputs (generated, never hand-edited): npm-oks-route.excalidraw/.svg, contexts.excalidraw/.svg beside them.
+Inputs (source of truth): docs/architecture/contexts.yaml and one events YAML per route (ROUTE_EVENTS:
+npm-oks-route, vpm-oks-route, ground-route .events.yaml). A route may declare `local_contexts` (id, ru, owner)
+for stages whose context has no owner in contexts.yaml; they are visible only inside that route.
+Outputs (generated, never hand-edited): <route>.excalidraw/.svg per route, contexts.excalidraw/.svg beside them.
 Deterministic: element ids, seeds and nonces are hashes of the YAML keys, `updated` is a constant, so the same
 YAML gives the same bytes. Offline, stdlib only (no network, no PyYAML; tools/architecture/mini_yaml.py).
 
 Usage:
-  uv run python tools/architecture/route_map.py            # write the four files (temp + replace)
+  uv run python tools/architecture/route_map.py            # write all route + context files (temp + replace)
   uv run python tools/architecture/route_map.py --check    # exit 1 if a committed file differs (drift),
                                                            # or a command/D-row/path/function is unknown
 PNG for Artem (offline, not committed; COORDINATION rule 57): magick -density 110 <svg> <png>.
@@ -34,12 +36,21 @@ else:
 ROOT = Path(__file__).resolve().parents[2]
 ARCH = Path("docs/architecture")
 EVENTS = ARCH / "npm-oks-route.events.yaml"
+VPM_EVENTS = ARCH / "vpm-oks-route.events.yaml"
+GROUND_EVENTS = ARCH / "ground-route.events.yaml"
 CONTEXTS = ARCH / "contexts.yaml"
-OUTPUTS = {"route": ARCH / "npm-oks-route", "contexts": ARCH / "contexts"}
+OUTPUTS = {"route": ARCH / "npm-oks-route", "vpm-route": ARCH / "vpm-oks-route",
+           "ground-route": ARCH / "ground-route", "contexts": ARCH / "contexts"}
+
+
+def route_events():
+    """Route name -> events YAML (read at call time so a monkeypatched path is honoured)."""
+    return {"route": EVENTS, "vpm-route": VPM_EVENTS, "ground-route": GROUND_EVENTS}
 
 COLORS = {  # Event Storming sticky colours
     "actor": "#fff3bf", "event": "#ffc078", "command": "#a5d8ff", "rule": "#d0bfff",
     "context": "#e9ecef", "hotspot": "#ffc9c9", "owner": "#b2f2bb", "kernel": "#ffec99", "title": "transparent",
+    "branch": "#c3fae8",  # #1375: task-dependent branch inside a stage
 }
 FONT_SANS, FONT_MONO = 2, 3
 CYRILLIC = re.compile(r"[А-Яа-яЁё]")
@@ -116,6 +127,15 @@ def check_schema(events, contexts):
             if _need(rel, end, f"relations[{i}]") not in ctx_ids:
                 raise SchemaError(f"relations[{i}]: unknown context {rel[end]!r}")
         _ru(_need(rel, "ru", f"relations[{i}]"), f"relations[{i}].ru")
+    ctx_ids = dict(ctx_ids)  # route-local contexts below stay inside this route
+    if "local_contexts" in events:
+        for i, c in enumerate(_need(events, "local_contexts", "events", list)):
+            where = f"local_contexts[{i}]"
+            cid = _need(c, "id", where)
+            if cid in ctx_ids:
+                raise SchemaError(f"{where}: duplicate context id {cid!r}")
+            ctx_ids[cid] = _ru(_need(c, "ru", where), where + ".ru")
+            _need(c, "owner", where)
     stage_ids = []
     for i, s in enumerate(_need(events, "stages", "events", list)):
         where = f"stages[{i}]"
@@ -133,6 +153,22 @@ def check_schema(events, contexts):
                 raise SchemaError(f"{where}: '{key}' must be a non-empty list of strings")
         _need(s, "rules", where, list)
         _need(s, "evidence", where, list)
+        if "branches" in s:  # #1375: a task-dependent choice inside one stage (D292)
+            branch_ids = set()
+            for j, br in enumerate(_need(s, "branches", where, list)):
+                bwhere = f"{where}.branches[{j}]"
+                bid = _need(br, "id", bwhere)
+                if bid in branch_ids:
+                    raise SchemaError(f"{bwhere}: duplicate branch id {bid!r}")
+                branch_ids.add(bid)
+                for key in ("when_ru", "ru"):
+                    _ru(_need(br, key, bwhere), f"{bwhere}.{key}")
+                for key in ("rules", "evidence"):
+                    _need(br, key, bwhere, list)
+                for key in ("commands", "rules", "evidence"):
+                    if key in br and not (isinstance(br[key], list) and br[key]
+                                          and all(isinstance(v, str) for v in br[key])):
+                        raise SchemaError(f"{bwhere}: '{key}' must be a non-empty list of strings")
     for i, h in enumerate(events.get("hotspots", [])):
         where = f"hotspots[{i}]"
         _need(h, "id", where)
@@ -198,6 +234,15 @@ def verify_references(root, events, contexts):
             d_row(d, f"stage {s['id']}")
         for p in s["evidence"]:
             path(p, f"stage {s['id']}")
+        for br in s.get("branches", []):
+            where = f"stage {s['id']} branch {br['id']}"
+            for c in br.get("commands", []):
+                if not command_exists(c):
+                    problems.append(f"{where}: command {c!r} is not an existing agr/dt command")
+            for d in br["rules"]:
+                d_row(d, where)
+            for p in br["evidence"]:
+                path(p, where)
     for h in events.get("hotspots", []):
         for d in h.get("rules", []):
             d_row(d, f"hotspot {h['id']}")
@@ -205,6 +250,9 @@ def verify_references(root, events, contexts):
             path(p, f"hotspot {h['id']}")
     for r in contexts["rules"]:
         path(r["owner"], f"rule {r['id']}")
+    for c in events.get("local_contexts", []):
+        if not (root / c["owner"]).is_file():
+            problems.append(f"local context {c['id']}: owner {c['owner']} does not exist")
     for c in [contexts["shared_kernel"]] + contexts["contexts"]:
         owner = root / c["owner"]
         if not owner.is_file():
@@ -386,10 +434,11 @@ def route_board(events, contexts):
     b = Board()
     col_w, gap = 230, 40
     b.label("route/title", 40, 0, 1400, events["title_ru"] + f" ({events['issue']})", size=28)
-    b.label("route/legend", 40, 44, 2300,
-            "Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; "
-            "сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время)",
-            size=16)
+    legend = ("Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; "
+              "сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время)")
+    if any(s.get("branches") for s in events["stages"]):  # #1375; a route without branches draws as before
+        legend += "; бирюзовый — ветка (выбор по задаче)"
+    b.label("route/legend", 40, 44, 2300, legend, size=16)
     hot_by_stage = {}
     for hs in events.get("hotspots", []):
         hot_by_stage.setdefault(hs["stage"], []).append(hs)
@@ -410,6 +459,13 @@ def route_board(events, contexts):
         b.box(k + "/rules", x, 420, col_w, "Правила: " + ", ".join(s["rules"]), COLORS["rule"], size=14, min_h=60)
         b.box(k + "/ctx", x, 500, col_w, "Контекст: " + ctx_ru[s["context"]], COLORS["context"], size=14, min_h=60)
         y = 590
+        for br in s.get("branches", []):
+            text = f"Ветка: {br['when_ru']}\n→ {br['ru']}"
+            if br.get("commands"):
+                text += "\nКоманда: " + ", ".join(br["commands"])
+            text += f" [{', '.join(br['rules'])}]"
+            el = b.box(f"{k}/branch/{br['id']}", x, y, col_w, text, COLORS["branch"], size=13)
+            y += el["height"] + 16
         for hs in hot_by_stage.get(s["id"], []):
             rules = f" [{', '.join(hs['rules'])}]" if hs.get("rules") else ""
             el = b.box(f"route/hot/{hs['id']}", x, y, col_w, "⚠ " + hs["ru"] + rules, COLORS["hotspot"], size=13)
@@ -480,35 +536,52 @@ def contexts_board(events, contexts):
     return b
 
 
-def render(root=ROOT):
+def load_routes(root=ROOT):
+    """Route name -> parsed events YAML, for every route of route_events()."""
+    return {name: mini_yaml.load(Path(root) / rel) for name, rel in route_events().items()}
+
+
+def render_all(root=ROOT):
+    """(routes, contexts, files): every route board plus the context map (drawn from the NPM route)."""
     root = Path(root)
-    events = mini_yaml.load(root / EVENTS)
+    routes = load_routes(root)
     contexts = mini_yaml.load(root / CONTEXTS)
     files = {}
-    for name, board in (("route", route_board(events, contexts)), ("contexts", contexts_board(events, contexts))):
+    boards = [(name, route_board(ev, contexts)) for name, ev in routes.items()]
+    boards.append(("contexts", contexts_board(routes["route"], contexts)))
+    for name, board in boards:
         files[OUTPUTS[name].with_suffix(".excalidraw")] = board.excalidraw()
         files[OUTPUTS[name].with_suffix(".svg")] = board.svg()
-    return events, contexts, files
+    return routes, contexts, files
+
+
+def render(root=ROOT):
+    """#1359 interface: (NPM route events, contexts, all files)."""
+    routes, contexts, files = render_all(root)
+    return routes["route"], contexts, files
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Generate the #1359 route/context Excalidraw + SVG from YAML")
+    ap = argparse.ArgumentParser(description="Generate the route/context Excalidraw + SVG from YAML (#1359, #1383)")
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--check", action="store_true", help="compare with the committed files, write nothing")
     args = ap.parse_args(argv)
     try:
-        events, contexts, files = render(args.root)
+        routes, contexts, files = render_all(args.root)
     except (OSError, mini_yaml.MiniYamlError, SchemaError, KeyError, TypeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
-    inputs = {(args.root / EVENTS).resolve(), (args.root / CONTEXTS).resolve()}
+    inputs = {(args.root / rel).resolve() for rel in route_events().values()} | {(args.root / CONTEXTS).resolve()}
     for rel in files:
         if (args.root / rel).resolve() in inputs:
             print(f"ERROR: output {rel} is an input", file=sys.stderr)
             return 2
     if args.check:
         try:
-            problems = verify_references(args.root, events, contexts)
+            problems = verify_references(args.root, {"stages": [], "hotspots": []}, contexts)  # context map
+            for name, events in routes.items():
+                problems += [f"{route_events()[name].name}: {p}"
+                             for p in verify_references(args.root, events, contexts) if p not in problems]
         except (OSError, SyntaxError, ImportError) as exc:
             print(f"ERROR: cannot verify references: {exc}", file=sys.stderr)
             return 2

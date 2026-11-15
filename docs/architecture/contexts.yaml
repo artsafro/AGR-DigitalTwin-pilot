@@ -347,6 +347,11 @@ contexts:
         issue: "#1377"
         hash: "61d21d75df"
         ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (КПП1)"
+      - at: "jobs/KPP1/delivered-1371/build_v008.py::build"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "c60e2e4447"
+        ru: "атрибутная пересборка ВПМ v008 КПП1 по [D288]: копирует члены ZIP v006 байт-в-байт и меняет только GeoJSON; не новая упаковка, package_core не подходит"
       - at: "jobs/KPP1/package-1278/build_package.py::repair_artifacts"
         rule: delivery-zip
         issue: "#1377"

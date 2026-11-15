@@ -51,10 +51,27 @@ No dependency branch or unmerged recipe file is consumed.
 | 2. Parts / user Gate 1 | Same inspect report into confirmed PartsList, no invented auto-approval | `dt_ai.core.models.PartsList`, job contract and checklist | User confirmation of exact parts hash before construction |
 | 3. BODY / operations | Geometry remains the existing approved source/engine route; no universal `agr build` promised | `src/dt_ai/spec`, `src/dt_ai/parts`, `src/dt_ai/ops` for supported cases; existing job build only for its validated object | Separate body/openings/decor, dimensions and source overlays; before/after invariants; deviation when unsupported |
 | 4. Facade detail | `agr brick-seams --job ID --config CONFIG --out NEW` only if approved source calls for brick seams | Candidate job algorithms need extraction/calibration; never apply to cassette facades automatically | Source module/phase/width, opening intersections, silhouette and unchanged protected IDs |
-| 5. NPM derivation / budgets | `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS`; `unwrap-atlas` remains a pointer | `tools/derive/{export_npm,npm_atlas}.py`, `tools/materials/npm_atlas_udim.py`; KPP1 scripts are precedents, not portable executables | One mid-poly master; profile-specific alpha/atlas, glass separated, NPM no UCX; limits from area sheets, not arbitrary raster density |
+| 5. NPM derivation / budgets | `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS`; `unwrap-atlas` remains a pointer | `tools/derive/{export_npm,npm_atlas}.py`, `tools/materials/npm_atlas_udim.py`; KPP1 scripts are precedents, not portable executables | Master by task [D292]: VPM+NPM derives NPM from one VPM / mid-poly master; NPM-only builds NPM directly, no mid-poly master. Atlas path A (UDIM) or B (material IDs); profile-specific alpha/atlas, glass separated, NPM no UCX; limits from area sheets, not arbitrary raster density |
 | 6. Delivery / export_readback | `delivery-export` remains a pointer; package `agr package-npm PACKAGE_DIR` (one ZIP owner `adapters/max/agr_tools/package_core.py`, #1377; job-local packagers are historical); `agr validate EXPORT --profile npm --scene --master MASTER --json` | Existing export/readback and `tools/qa/validate_package.py`; `uv run dt qa xview FILE --out NEW.json` after geometry writes and on export | Fresh-process exported-file topology, UV, materials, transforms; hashes; defects with values/limits, not scene-only QA |
 | 7. Report / visual | `agr open-in-max --input COPY --read-only`; Blender review if Max busy | Existing Blender runner/review scene; Max lock and version/document/unit confirmation before Max; never interrupt Artem's render | Open scene + absolute path when Artem online; otherwise one side-by-side per item + overview at standard; no gratuitous renders |
 | 8. Checker / delivery decision | Existing installed SINTEZ route; `agr validate` does not add a `--checker` mode | Existing SINTEZ runner/installed checker; final AGR Tools-in-Max only when that required route is available | Final complete checker after human visual approval on the same export hashes; manual gates stay explicit |
+
+### Branches by task [D292]
+
+The [route map](../docs/architecture/npm-oks-route.svg) draws these as branches inside a stage
+(source: `docs/architecture/npm-oks-route.events.yaml`). Pick one per task and state it in the job report.
+
+- **Master (step 3/5).** VPM+NPM: build the VPM or a mid-poly master and derive NPM from it [D010].
+  NPM-only: build NPM directly; no mid-poly master is made.
+- **Atlas (step 5).** Path A: unwrap the master to UDIMs, then build the NPM atlas from the UDIMs
+  (`tools/materials/npm_atlas_udim.py`; no `agr`/`dt` command, `unwrap-atlas` stays a pointer).
+  Path B: directly by material ID, each ID = a finish from the specification/sources; texture from the
+  library (`library/materials/`), an existing diffuse, or a newly generated diffuse that is added to the
+  library, then laid onto the atlas (`dt derive atlas`, the atlas half of `agr vpm-to-npm`).
+- **Packaging (step 6).** VPM: `agr package-vpm`. NPM: `agr package-npm` (#1361).
+- **Roof and openings (steps 3–4).** Roof inside a parapet per [R6](../docs/procedure/node-r6-oks-body-facade.md)
+  step 4; windows per [R4](../docs/procedure/node-r4-window-glazing.md) step 1 (library window with a
+  small inset if one fits, else the window generator).
 
 The agent chooses **Blender or Max per step**, from the available toolset and task context,
 and states why in one line; neither DCC is the default for every step (#1297).
