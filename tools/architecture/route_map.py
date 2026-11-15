@@ -340,7 +340,7 @@ def verify_references(root, events, contexts):
             path(c["area"], f"context {c['id']}")
         defined = _top_functions(owner)
         for f in c["functions"]:
-            if f["name"] not in defined:
+            if f["name"] != "<module>" and f["name"] not in defined:
                 problems.append(f"context {c['id']}: {c['owner']} has no top-level function {f['name']}")
         for d in c.get("duplicates", []):
             if "rule" in d:   # path.py::function; the function itself is checked by duplicate_guard (stale row)
