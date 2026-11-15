@@ -29,6 +29,7 @@ FLORA_STAGES = ["sources", "beds", "species", "size", "maps", "star", "lod", "pl
 PACKAGE_STAGES = ["export", "meta", "readback", "geojson", "package", "validate", "sintez", "report", "accept",
                   "upload", "customer"]
 QUESTIONS = {"maf-route": "ucx-fences", "flora-route": "stand-in-replace", "package-route": "customer-channel"}
+RESOLVED = {"maf-route": {"library-version"}, "flora-route": set(), "package-route": set()}  # #1409
 
 
 def _routes():
@@ -243,7 +244,10 @@ def test_report_lists_every_bare_stage_and_every_red_box(name):
     hot = {h["id"] for h in events["hotspots"]}
     assert set(re.findall(r"^- `([a-z0-9-]+)`", section, re.M)) == hot
     status = dict(re.findall(r"^\| `([a-z0-9-]+)` \| (открыта|снята|обновлена) \|", section, re.M))
-    assert set(status) == hot
+    # #1409: a fixed red box leaves the YAML (no red box on the map) and stays in the report as «снята».
+    assert set(status) == hot | RESOLVED[name], sorted(set(status) ^ (hot | RESOLVED[name]))
+    assert {k for k, v in status.items() if v == "снята"} == RESOLVED[name]
+    assert not hot & RESOLVED[name]
     assert "Предлагаемые" in section
 
 
