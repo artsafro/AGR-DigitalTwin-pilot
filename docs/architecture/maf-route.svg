@@ -14,8 +14,7 @@
 <rect x="310" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="310" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="310" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="310" y="617.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="310" y="751.0" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="310" y="617.5" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="620" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="580" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="540" y1="233.12" x2="580" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -74,7 +73,7 @@
 <rect x="2470" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2470" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2470" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="2470" y="617.5" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2470" y="617.5" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2780" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2740" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2700" y1="233.12" x2="2740" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -147,14 +146,6 @@
 <tspan x="425.0" dy="17.5">(каталог, манифесты, A101)</tspan>
 </text>
 <text x="425.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="425.0" dy="13">⚠ library/README.md называет</tspan>
-<tspan x="425.0" dy="16.25">актуальной v005, а D240</tspan>
-<tspan x="425.0" dy="16.25">записал список ID v007 (+</tspan>
-<tspan x="425.0" dy="16.25">сосна 33); какой список</tspan>
-<tspan x="425.0" dy="16.25">читает холодный агент —</tspan>
-<tspan x="425.0" dy="16.25">сверить README [D181, D240]</tspan>
-</text>
-<text x="425.0" y="761.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="425.0" dy="13">⚠ Каталог — технический</tspan>
 <tspan x="425.0" dy="16.25">аудит, не идентификация</tspan>
 <tspan x="425.0" dy="16.25">(T-MAF-1): из 931 МАФ</tspan>
@@ -398,9 +389,10 @@
 </text>
 <text x="2585.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="13">⚠ Автопроверки МАФ частичные:</tspan>
-<tspan x="2585.0" dy="16.25">14 из 24 строк без проверки</tspan>
-<tspan x="2585.0" dy="16.25">(L2 gaps); maf_findings —</tspan>
-<tspan x="2585.0" dy="16.25">только НПМ GroundEl</tspan>
+<tspan x="2585.0" dy="16.25">8 из 24 строк без проверки</tspan>
+<tspan x="2585.0" dy="16.25">(L2 gaps, причина у каждой);</tspan>
+<tspan x="2585.0" dy="16.25">maf_findings — только НПМ</tspan>
+<tspan x="2585.0" dy="16.25">GroundEl</tspan>
 </text>
 <text x="2855.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="15">Артём</tspan>

@@ -270,7 +270,7 @@ def command_exists(command):
         return False
     if words[0] == "agr":
         from dt_ai.cli import agr
-        return len(words) == 2 and words[1] in set(agr.ALIASES) | {"validate", "vpm-to-npm"}
+        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm"}
     if words[0] != "dt":
         return False
     sub = _dt_commands().get(words[1])

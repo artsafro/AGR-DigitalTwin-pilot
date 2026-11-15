@@ -235,15 +235,6 @@ stages:
       - docs/architecture/package-route.events.yaml
       - jobs/VATUTINO-SITE/site-route-20261109.md
 hotspots:
-  - id: library-version
-    stage: library
-    ru: "library/README.md называет актуальной v005, а D240 записал список ID v007 (+ сосна 33); какой список читает холодный агент — сверить README"
-    rules:
-      - D181
-      - D240
-    evidence:
-      - library/README.md
-      - library/maf/material_ids_v007.json
   - id: npm-candidates
     stage: library
     ru: "Каталог — технический аудит, не идентификация (T-MAF-1): из 931 МАФ кандидата НПМ нет у 695"
@@ -290,7 +281,7 @@ hotspots:
       - docs/domain/areas/ucx.md
   - id: checks-coverage
     stage: checks
-    ru: "Автопроверки МАФ частичные: 14 из 24 строк без проверки (L2 gaps); maf_findings — только НПМ GroundEl"
+    ru: "Автопроверки МАФ частичные: 8 из 24 строк без проверки (L2 gaps, причина у каждой); maf_findings — только НПМ GroundEl"
     evidence:
       - docs/domain/areas/groundel-maf.md
       - src/twinqa/maf_checks.py

@@ -9,10 +9,10 @@
 <rect x="350" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="310" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="270" y1="243.75" x2="310" y2="243.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="310" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="310" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="310" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="310" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="310" y="617.5" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="310" y="617.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="620" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="580" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="540" y1="243.75" x2="580" y2="233.13" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -114,8 +114,9 @@
 <tspan x="425.0" dy="21.25">неизвестное — unknown,</tspan>
 <tspan x="425.0" dy="21.25">не 0</tspan>
 </text>
-<text x="425.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="425.0" dy="14">Нет команды agr/dt</tspan>
+<text x="425.0" y="355.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Команда:</tspan>
+<tspan x="425.0" dy="17.5">agr export-meta</tspan>
 </text>
 <text x="425.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="425.0" dy="14">Правила: D279, D285</tspan>
@@ -125,10 +126,12 @@
 <tspan x="425.0" dy="17.5">export_meta</tspan>
 </text>
 <text x="425.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="425.0" dy="13">⚠ export_meta — не квитанция</tspan>
-<tspan x="425.0" dy="16.25">проверок; поля bounds_m +</tspan>
-<tspan x="425.0" dy="16.25">fbx_sha256 для V013 у</tspan>
-<tspan x="425.0" dy="16.25">производителей нет (#1342)</tspan>
+<tspan x="425.0" dy="13">⚠ agr export-meta пишет и</tspan>
+<tspan x="425.0" dy="16.25">проверяет export_meta, но это</tspan>
+<tspan x="425.0" dy="16.25">не квитанция проверок; поля</tspan>
+<tspan x="425.0" dy="16.25">bounds_m + fbx_sha256 для</tspan>
+<tspan x="425.0" dy="16.25">V013 у производителей нет</tspan>
+<tspan x="425.0" dy="16.25">(#1342)</tspan>
 </text>
 <text x="695.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="695.0" dy="15">Агент</tspan>
