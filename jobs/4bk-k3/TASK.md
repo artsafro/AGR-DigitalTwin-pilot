@@ -180,6 +180,266 @@ at ≥ 512 px/m, no cuts.
 
 Two OKS packages: the K3 tower and the small stylobate, each with its own textures, IDs and UDIM numbering.
 
+## Tower floor 1 + small stylobate from Revit (Artem, 2026-11-14)
+
+New source: Revit `STLB-04_AR_PRK_2025_K3_v001_отсоединено`, 3D view `K3_stylobate_v001` (id 23197235).
+> «сделать первый этаж башни и стилобат маленький, отдельно стоящий ... VPM ... текстуры кирпича те же ... логику швов
+> на первом этаже ... такую же, как на самом стилобате ... горизонтальные швы на верхнем этаже должны быть, наверное.»
+> «Кровлю и там, и там моделим плоской, и делаем её врезкой. Вертикальные стойки на верхних стеклянных ограждениях ...
+> ось стойки находится по центру оси стекла. Стекло у нас двойное. Козырьки мы пока не моделим ... Вент-решётки мы
+> показываем текстурой. Окна ... с интерьерами, как выполнял Влад. Текстура ID по той же логике.»
+
+Answers 2026-11-14: small stylobate rebuilt from the new Revit (old Plane053-based version = reference only for IDs and
+joints); tower floor 1 is ours now (supersedes «Не трогать: Vlad's scope») and goes into the tower VPM package; same
+branch `job/4bk-k3-vpm`. Joints on the stylobate top floor — decided at UV. Geometry in Blender, assembly in Max.
+Parts by agents (Artem): bodies report openings → window agents read openings + Revit types, use `library/windows`
+or add drafts, place them; roofs with railings separate. Stylobate has 2 levels, one overhangs the other: «первый
+уровень будет врезкой сделан и врезаться будет в верхний уровень» → **3 bodies**: tower floor 1, stylobate level 1
+(embedded into level 2), stylobate level 2. Interior elements in Revit are excluded.
+
+Revit read 2026-11-14 (view 23197235, read-only): A = tower floor 1/podium X 56.8–108.3 Y 2.1–36.4, floor 0.00, roof
+4.25–4.65, brick parapet to 5.05, glass railing 5.05–5.85 (63.5 m); 43 «Окн_Вит_Проем» openings, heads ≈ 3.15.
+B = stylobate X 103.5–126.9 Y 41.8–69.9: lower tier −0.25…3.05 brick, 17 openings (+0.15…3.00/3.05); upper tier
+3.05…9.45 curtain walls (импосты 50×70 step 1200, Стемалит, burgundy lamellae 50×500), soffit «Металл бордовый» at
+3.00; roof 8.65–9.05, frame «Стены 1» to 9.45, railing 9.45–10.25 (71.9 m), 2 roof exit boxes to 10.63. Exclude by wall
+type «Функция» = internal (140), doors (34, steel/lift), columns, shafts, furniture, plumbing, П01/П02. Canopies: 10
+«ОбщМд_Козырек_Стеклянный» (not modelled yet).
+Frame: project base point = Revit internal origin; shared N −14177.024, E −1251.298, abs 172.350 (= 0.000), angle to
+true north 39.94°. FBX of view 23197235 exported via RevitBridge `export_fbx` (doc not saved) to
+`…/63_4BK_vlad/build/revit_fbx/K3_GF_stylobate_v001.fbx` (8 180 848 B, 1719 meshes, metres, same frame as the old
+parts). Railing defaults (Artem not answered yet): double glass 2×10 mm, posts 40×40 at panel joints ~1 m, post axis
+on the centre line between sheets.
+
+v001 review decisions (Artem «Да, по рекомендациям», 2026-11-14): (1) tower overhang soffit at 4.45 (+ NW arcade) is
+built in body A (tower package); (2) railing posts: Revit section (A 25×25, B 34×34), full glass height, axis between
+the sheets; (3) OKS perimeter extended 1 m below the bottom (reg p.28 §3.6); (4) grille-only cells get a dark back
+panel; (5) stylobate roof-exit box walls = brick.
+
+Artem's v001 review in Blender (2026-11-14, 28 empties → `…/gf_parts/_review/artem_marks_v001.json`): open polygons,
+broken geometry, missing reveals and frames, flipped faces. «Двойные стёкла слишком буквально» → railing glass = ONE
+glass slab (one box with thickness), not two sheets; posts on its axis. Blind doors / grilles do not reach down (hole
+under them). A colonnade zone (columns + walls next to them, NW) badly done: half the windows and parts missing.
+Stylobate «4−»: not all frames, an open polygon sticks out; Стемалит panels have no reveals, embed nowhere, no frame on
+the upper floor. Tower floor 1 «на троечку» — rework. The v002 fix run was stopped; next round is v003.
+Correction (Artem): no soffit at 4.45 in our parts — «подшивку будет давать башня сверху»; columns embed into the
+tower's bottom polygon (supersedes decision (1) above).
+Ground drop (Artem): «опуски делаем на несколько метров вниз» → exterior perimeter extended 2.0 m below the bottom
+(−0.305 → −2.305; reg minimum 1 m). Where a window/door frame bottom is < 10 cm above the bottom of the facade, there is
+no thin strip of plinth/concrete under it: the opening is cut down to the drop bottom and the window FRAME polygon is
+extended down to −2.305 (frame goes into the ground), no ultra-thin polygons.
+Protruding open polygon (Artem): move the polygon itself down / into the neighbour (embed), do not close it with a
+flashing or extra cap faces.
+
 ## Open
 
 Address, stem `SM_<Address>_NNN`, naming reference, GeoJSON — from Artem later.
+
+### Stylobate B v003 accepted (Artem, 2026-11-14)
+
+Artem accepted the geometry of stylobate B v003 («стилобат принимаю, почти идеальный»).
+Review file: `build/gf_parts/_review/STY_review_v003.blend`.
+Parts: sty_body_L1, sty_body_L2, sty_windows_B, sty_roof_B, all at v003, xView 0/0.
+These questions are still open, and the v003 state stands until Artem answers:
+- the SW-corner flashing/soffit "knife";
+- frame width next to the lamellae (50 mm);
+- colour of the L1 sandwich panels (frame colour);
+- railing B post spacing (posts at the Revit positions, axis 8 mm outward).
+Next for B: UV and joints, then ID mapping.
+
+### Tower floor 1 (A) geometry accepted (Artem, 2026-11-14)
+
+Artem accepted the geometry of tower floor 1 («принимаю первый этаж, все норм по геометрии»). Review file:
+`build/gf_parts/_review/K3_GF_full_review_v004.blend`. Accepted parts:
+- `gf_body_A_v004`: colonnade columns rebuilt from plan sections; the east tip modelled by hand; 0 unexplained open edges; xView 0/0.
+- `gf_windows_A_v003`: 39/39 openings covered; xView 0/0 against body v004.
+- `gf_roof_A_v003`.
+
+The independent technical check of this assembly (`_check/check_v004.md`) is a separate status and was still running at the time of acceptance.
+
+Open window questions; the v003 state stands until Artem answers:
+- A_OP24: the frame head is lowered 50 mm to 3.550.
+- A_OP19/22/26: a 6 mm ledge at the sill.
+- A_OP07: one door leaf, no centre post.
+- The look of the 17 extended frames: check after Ground.
+
+Next: UV and joints for A. Floor 1 follows the stylobate joint logic, so A starts once the B UV variant is chosen.
+
+### Check v004 follow-up: open-edge class (coordinator, 2026-11-14)
+
+An open edge inside a part's shell, behind the window plane, is an allowed class when the
+checker finds it not visible from outside (0 back-side hits). We do not close such edges: closing
+faces would be hidden faces, which breaks the "exterior shell only" rule more than the open
+edges do (L2 v004 attempt: +32.8 m² hidden). The dark back panels behind grilles and Stemalit are
+visible and are not hidden faces. L2 stays at v003; v004 is archived.
+
+### Stylobate B UV v001 review in 3ds Max (Artem, 2026-11-14)
+
+Accepted: geometry, IDs, UV layout and the vertical brick joints, including their spacing and placement at the corners.
+The ground drops, plinth and interiors look right; Artem will check the interiors in detail later.
+The metal stays on variant H, the default.
+
+Changes for UV v002:
+- One brick texel everywhere. Artem cut the 12.55 m L1 wall in Max himself; we carry his cut over into L1 v004.
+- The two roof exit boxes get the roof colour/ID6 instead of brick.
+- The glass railing gets a top handrail on A and on B. Revit is closed, so the size is our assumption:
+  40×40 mm, role railing_post, glass embedded 10 mm. Check it against Revit later.
+- Floor 1 of the tower (A) will most likely get a horizontal joint above the openings. Apply this at the A UV stage.
+- Texel target is ≥ 520 px/m, not 512 (Artem, 2026-11-14). 512 is the bare norm threshold and any drift falls below it.
+  This applies to B UV v002 and to the A UV.
+
+### Check v005 follow-up (coordinator, 2026-11-14)
+
+- L2 stays at v005: v003 plus the panel cuts for the 520 px/m ID2 texel. v006 is rejected.
+- Why v006 is rejected: the checker flagged 4 L2 edges at 9.368, and those flags were false positives. In its visibility test the ray
+  skipped the back-face hits on the parapet and reached the railing glass. Closing the edges only added hidden faces.
+- Rule for the next check: a visibility ray stops at the first face it hits, front or back. Only glass and grilles are
+  transparent.
+
+### Checks v006–v009 (coordinator, 2026-11-15)
+
+Current part versions are those in `_review/K3_GF_full_review_v009.blend`.
+- A: body A v008e, windows A v006, roof A v008.
+- B: L1 uv_v004, L2 geometry v008 / uv_v006, windows B uv_v004, roof B geometry v009 / uv_v006.
+
+Reports are `_check/check_v006.md` … `check_v009.md`. At v009 these pass:
+- xView 0/0 at every level;
+- topology;
+- levels;
+- embeds;
+- quads (except 30 triangles in body A).
+
+One real item is open: two roof B edge ends at 25 mm, above the 20 mm limit. The other open items depend on the method.
+
+Rules settled:
+- The real tower geometry (K3_TypFloor, K3_Floor2Skirt) is the truth for "inside the tower". The skirt-outline prism
+  is 0.26–0.36 m off the pylon at E2. Deleting the E2 post on the prism's evidence was wrong.
+- Embeds are measured per edge: at the midpoint and at both ends, along the edge's own face.
+- A face is hidden only if no eye sees it. That includes the close eyes 2 m in front of every pane.
+- The visibility method differed from run to run, so v006–v009 do not compare one to one. Backlog Q10 asks for one
+  shared tool.
+
+Open for Artem:
+- the 30 remaining triangles in body A;
+- the plinth niche under A_OP19/22/26, closed in v007; it differs from Revit by 0.11 m;
+- the roof B SW corner post, now 13 mm off the axis corner;
+- the roof A railing visible deviations: E2 end and axis.
+
+### Stylobate B textures v007 (Artem, 2026-11-15)
+
+Review: `build/gf_parts/_review/max/STY_B_tex_review_v007.max` (textures `_uv/textures_v004`, readback pass).
+Answers:
+- Стемалит (ID12): a 256 px conventional colour for now. Artem replaces it later.
+- Burgundy metal and lamellae (ID2, ID5): keep the current conventional colour. Artem chooses later.
+- RAL 020 30 20 = 104,64,58, the value close to the real RAL, as in tower roof ID8. This is the source of truth.
+  The light typ ID3 value 191,135,137 is to be aligned later.
+- Reveals stay RAL 020 30 20.
+- Interior capsule (ID10): conventional grey, accepted.
+
+Geometry of A is frozen at v008e/v006/v008 for texturing. After Artem accepted the geometry, open defects go to him as helpers.
+- Delivery rule (Artem, 2026-11-15): the main window glass is always its own object, detached from the frames, in the final model.
+  Stylobate B v007 stays as it is: the glass is still inside the STY_WinB_* objects.
+  In tower A the glass is detached at the end, into K3GF_WinA_Glass.
+
+### Known window defects, fix later as a separate card (Artem, 2026-11-15)
+
+These are window-agent defects on stylobate B (sty_windows_B), and they likely affect windows A as well. Do NOT fix them in the current delivery. A separate task will come from the kanban board.
+1. The glass has no outline: it is not seated or embedded into the frame, and no frame lip overlaps the glass edge.
+2. The ventilation grilles have the same problem: no border, and they are not embedded into the frame or reveal.
+3. The interiors were built as a continuation of the frame. As a result, many frame-ID faces are very thin and the visible frame width is too small.
+
+Fix idea for the card:
+- Rebuild each opening from a library template (`library/windows`, frame topology rule in `docs/domain/geometry.md`):
+  - outer rectangle minus panels, with 4 quads around each panel;
+  - frame face width taken from the Revit type, or about 50–70 mm when no type is given.
+- Glass and grille panels are 10–20 mm larger than the frame light and are embedded into the frame profile [D199-style embed]. They are seated mid-depth.
+- The interior capsule is a separate box set back behind the glass. It is not extruded from the frame edge.
+- The glass is its own object (delivery rule above).
+- Then xView 0/0 and a close-eye visibility check.
+
+### UCX plan accepted (Artem, 2026-11-15, «Да, принимаю рекомендации»)
+
+Method: band envelopes as on K5 (`docs/agr/case_studies/SKUG26_K5_UCX_VPM.md`). Within each band the plan is split into convex pieces at the re-entrant corners. A single hull for all of A is not allowed.
+
+Two agents, one per package:
+- A (tower package): bands up to 4.47, then 4.47–5.08. Leave a gap to the future tower UCX above 4.47.
+- B (stylobate package): L1 up to 3.00, L2 3.00–9.45, roof, exit boxes.
+
+Decisions:
+- UCX bottom = model bottom −2.305.
+- Exploitable roofs A and B: the roof slab and the parapet ring are separate pieces. Do not fill the well behind the parapet.
+- NW arcade and colonnade of A: the passage stays free; each column gets its own prism.
+- Each exit box of B gets one box. Grilles get no UCX of their own.
+- Railing glass, handrails and posts under 5 cm get no UCX (R04).
+
+Gates:
+- each piece is convex and closed, with no material slots;
+- 0 intersections and 0 nested pieces;
+- gaps 2 mm–1 cm, target 4 mm [D098];
+- model → UCX at most 30 cm everywhere, measured one-sided (pedestrian zone) [D134];
+- full coverage of the visible facade and roof;
+- at most 15 000 triangles per package [D012].
+
+Names: `UCX_SM_{Address}_Main_NNN` with a temporary Address, renamed at packaging. Build in Blender headless, review in 3ds Max.
+
+### A geometry for UV and textures = accepted v004 set (Artem, 2026-11-15)
+
+Artem rejected the geometry in `K3_A_tex_review_v001` (body v008e). UV, textures and UCX of A use the set he accepted on 2026-11-14:
+- body A v004
+- windows A v003
+- roof A v003
+
+That is the content of `_review/K3_GF_full_review_v004.blend`. The QA-round versions v005–v008e are not used.
+Open: roof A v003 has no top handrail, which Artem asked for later.
+
+### Stylobate B geometry, UV and textures finished by Artem (2026-11-15)
+
+Artem finished the stylobate by hand in his Max scene `STY_B_tex_review_v007` and attached it into one object. He fixed these himself:
+- the Стемалит;
+- the grilles;
+- glass and grille embeds and their outlines;
+- the vertical lamellae, re-modelled so their loops and rings meet the frame vertices;
+- the materials and ID split.
+
+He considers stylobate geometry, UV and textures done. What is left for B: UCX, then the canopies.
+The analysis of his edits, written as rules for agents, goes to `_review/max/artem_v007_analysis/ANALYSIS.md`.
+
+### Long walls past the UDIM tile: cut by vertical loops (Artem, 2026-11-15)
+
+When a wall does not fit one tile (e.g. 32 m), it is cut with vertical loops: select its horizontal edges, then Connect.
+- The loop runs the full height of the strip; there are no partial cuts.
+- With joints, the cuts sit on the joints.
+- Without joints, the cuts make segments of about 4 m, each no wider than one tile.
+- The segments are then laid into the tiles.
+
+Applied to A as UV v003, on top of geometry v004. The only geometry change is the new loops. Run xView once afterwards.
+
+### UCX B v001 accepted as is (Artem, 2026-11-15)
+
+Artem accepted `ucx_B/sty_ucx_B_v001.blend` and `_review/max/STY_B_ucx_review_v001.max` as built («Да, как есть»).
+- 10 pieces, 148 triangles.
+- L1 is one piece, and L2 is one piece including the overhang and the fins.
+- Roof slab 8.75–9.05.
+- Parapet ring of 5 wedges.
+- 2 exit boxes.
+
+Open: re-run the deviation and coverage check against Artem's hand-finished stylobate once he saves it.
+
+### Stylobate B status about 80 % (Artem, 2026-11-15)
+
+Artem checked the UCX on his finished stylobate and is satisfied, so the planned re-check is not needed. Geometry, UV and UCX of B are closed.
+Waiting for the naming (address) and the model's rotation angle:
+- names (`SM_<Address>_Main`, UCX, materials, textures);
+- the full texture set (ERM and normal maps);
+- GeoJSON;
+- the pivot at the geometric centre / origin.
+Canopies (10 «ОбщМд_Козырек_Стеклянный») are not modelled yet. They were named earlier as part of B and are not in this list.
+- Canopies for B (Artem, 2026-11-15): Artem will provide a typical canopy model. We then place it at the 10 Revit positions («ОбщМд_Козырек_Стеклянный»). Wait for his model; do not model canopies ourselves.
+
+### A and B at about 80 %, Artem's hand-finished etalons (Artem, 2026-11-15)
+
+UCX A v001 accepted. Artem finished both buildings by hand in Max: attached, split by ID, no open polygons, UV, geometry and UCX. He re-modelled part of the geometry himself. On A he also re-unwrapped the brick and the АКП panels with joints and edited the maps.
+Artem does the rest himself: canopies on A and B, RALs, the final UDIM distribution.
+A combined scene `63_4BK_vlad/scene_build_A_build_B.max` has layers Build_A, Build_B, UCX_A and UCX_B.
+The analysis of his finals against our deliveries goes to `_review/max/artem_final_analysis/`.
+Artem now works on the big tower by hand.
+- Artem confirmed the final analysis (`_review/max/artem_final_analysis/ANALYSIS.md`) as correct (2026-11-15). He finishes the rest of A and B himself: n-gons go away at triangulation; he unwraps the faces that are still unwrapped and checks zero-area faces and zero-area UV islands.

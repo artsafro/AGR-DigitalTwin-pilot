@@ -179,6 +179,23 @@ Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §15 (user decision 2026
 - **Q9** Live smoke tests of AGR Tools / `agr-mcp` in a pinned 3ds Max after each change (the agent starts Max,
   runs the tools, reads results back, closes Max). Idea from `docs/research/telegram-3dsmax-chat-2026-11.md`
   (accepted 2026-11-10).
+- **Q10** Build one shared VPM visibility checker, `dt qa visibility`, to replace the ad-hoc scripts.
+  On 4bk-k3 (2026-11-14/15), checks v006, v007 and v008 each rebuilt the method from the brief, and their results
+  disagreed with each other. The run-to-run differences:
+  - shifting only the eye or shifting eye and target in parallel gave 334 against 0 back faces;
+  - a prism outline sat 0.3 m off the real tower;
+  - caps that did not close the tower's window openings;
+  - edge embeds measured by edge or by nearest vertex.
+
+  The fixed method:
+  - **Viewpoints:** a dome, pedestrian rings, and close eyes 2 m in front of every pane.
+  - **Rays:** a ray stops at the first face it hits, front or back. Only glass and grille are transparent.
+  - **Hits:** n-of-16 jitter, with the jitter mode fixed.
+  - **Context occluders:** watertight, built from the real context meshes.
+  - **Embeds:** per edge, measured at the midpoint and both ends along the edge's own face.
+  - **Output:** the allowed open-edge classes as data.
+
+  Owner: Codex. Evidence: `G:`/Desktop build `63_4BK_vlad/build/gf_parts/_check/check_v00{6,7,8}.md`.
 
 ## Unreal and IFC
 
