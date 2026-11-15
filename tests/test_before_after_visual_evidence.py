@@ -373,3 +373,116 @@ def test_real_blender_named_sensor_height_mismatch_refused(tmp_path, capsys):
     err = capsys.readouterr().err
     assert 'sensor_height' in err and 'projection' in err
     assert not bad.exists() and not bad.with_name('sensor.partial').exists()
+
+
+# #1468: synthetic native inputs, not customer model/acceptance evidence.
+WORKBENCH_MUTATIONS = {
+    'show_object_outline': True,
+    'object_outline_color': [1.0, 0.0, 0.0],
+    'show_xray': True,
+    'show_specular_highlight': False,
+    'studio_light': 'paint.sl',
+    'studiolight_rotate_z': 1.5,
+    'xray_alpha': 0.1,
+    'show_backface_culling': True,
+    'render_aa': 'OFF',
+    'light_direction': [0.0, 0.0, -1.0],
+    'use_dof': True,
+}
+WORKBENCH_EXPECTED = {
+    'show_object_outline': False,
+    'object_outline_color': [0.0, 0.0, 0.0],
+    'show_xray': False,
+    'show_specular_highlight': True,
+    'studio_light': 'Default',
+    'studiolight_rotate_z': 0.0,
+    'xray_alpha': 0.5,
+    'show_backface_culling': False,
+    'render_aa': '8',
+    'light_direction': [1 / math.sqrt(3)] * 3,
+    'use_dof': False,
+}
+MAKE_WORKBENCH_SCENES = r'''
+import bpy, json, sys
+from pathlib import Path
+root = Path(sys.argv[sys.argv.index('--') + 1])
+mutations = json.loads((root / 'mutations.json').read_text())
+readback = {}
+for label in ['baseline', *mutations, 'combined']:
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    scene = bpy.context.scene
+    assert bpy.app.background and bpy.app.version[:2] == (5, 1)
+    assert bpy.data.filepath == '' and scene.unit_settings.system == 'METRIC'
+    bpy.ops.mesh.primitive_cube_add()
+    changes = mutations if label == 'combined' else ({label: mutations[label]} if label != 'baseline' else {})
+    for key, value in changes.items():
+        owner = scene.display if key in ('render_aa', 'light_direction') else scene.display.shading
+        setattr(owner, key, value)
+    # Red outline makes the review witness unmistakable; separately test colour too.
+    if label in ('show_object_outline', 'combined'):
+        scene.display.shading.object_outline_color = (1, 0, 0)
+    if label == 'combined':
+        # Combine new flags with earlier setup invariants and hostile PNG stamps.
+        scene.display.shading.light = 'MATCAP'
+        scene.display.shading.show_cavity = True
+        scene.display.shading.show_shadows = True
+        scene.display.shading.color_type = 'RANDOM'
+        scene.display.shading.single_color = (0.1, 0.2, 0.3)
+        scene.render.use_stamp = True
+        scene.render.use_stamp_note = True
+        scene.render.stamp_note_text = 'synthetic inherited note'
+    path = root / (label + '.blend')
+    bpy.ops.wm.save_as_mainfile(filepath=str(path))
+    bpy.ops.wm.open_mainfile(filepath=str(path), load_ui=False)
+    scene = bpy.context.scene
+    values = {}
+    for key in mutations:
+        owner = scene.display if key in ('render_aa', 'light_direction') else scene.display.shading
+        value = getattr(owner, key)
+        values[key] = value if isinstance(value, (str, bool, float)) else list(value)
+    readback[label] = values
+(root / 'saved-state.json').write_text(json.dumps(readback))
+'''
+
+
+@pytest.fixture(scope='module')
+def workbench_scenes(tmp_path_factory):
+    from dt_ai.core.blender_runner import run_blender
+    root = tmp_path_factory.mktemp('synthetic-workbench')
+    maker = root / 'make.py'
+    maker.write_text(MAKE_WORKBENCH_SCENES, encoding='utf-8')
+    (root / 'mutations.json').write_text(json.dumps(WORKBENCH_MUTATIONS), encoding='utf-8')
+    saved = run_blender(maker, [root], output_json=root / 'saved-state.json',
+                        outputs=[root / (name + '.blend') for name in ['baseline', *WORKBENCH_MUTATIONS, 'combined']],
+                        log_path=root / 'make.log')
+    for key in WORKBENCH_MUTATIONS:
+        assert saved[key][key] != saved['baseline'][key], key
+    return root
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('flag,style,reverse',
+    [(key, 'solid', False) for key in WORKBENCH_MUTATIONS]
+    + [('combined', style, False) for style in ('solid', 'wire', 'material', 'texture')]
+    + [('combined', 'solid', True)])
+def test_real_blender_workbench_flags_normalized(workbench_scenes, tmp_path, flag, style, reverse):
+    module = load()
+    a, b = workbench_scenes / 'baseline.blend', workbench_scenes / (flag + '.blend')
+    if reverse:
+        a, b = b, a
+    hashes = module.sha256(a), module.sha256(b)
+    output = tmp_path / 'ev' / 'normalized'
+    assert module.main(argv(a, b, output, '--resolution', '64x40', '--style', style)) == 0
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    assert evidence['before']['render'] == evidence['after']['render']
+    assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes(), flag
+    state = evidence['before']['render']['workbench']
+    assert set(state) == set(WORKBENCH_EXPECTED)
+    for key, expected in WORKBENCH_EXPECTED.items():
+        if isinstance(expected, (float, list)):
+            assert state[key] == pytest.approx(expected), key
+        else:
+            assert state[key] == expected, key
+    assert (module.sha256(a), module.sha256(b)) == hashes
+
