@@ -1,4 +1,4 @@
-"""Joint masks use a declared sub-nanometre measurement precision, not wider gates."""
+"""new-case: explicit sub-nanometre measurement precision, not wider gates."""
 import pytest
 from shapely.geometry import box, LineString
 from shapely.ops import unary_union

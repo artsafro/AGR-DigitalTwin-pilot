@@ -317,6 +317,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D310 | 2026-11-15 | #1326 visual direction of the restored original Normal and joints/courses on the two-UDIM v096 lit views is confirmed. Keep this direction and continue numerical repairs (PNG misses, directional failures, degenerates/mirrors and xView) without replication. This is not acceptance of red technical QA or final delivery. | `jobs/4bk-k3-course-grid-1326/TWO_TILE_NORMAL_RESULT.md`, `docs/domain/areas/uv-atlas.md` | Artem «принимаю рекомендации», USER DECISION on Kanban t_d517d7c6, 2026-11-15 10:12 |
 
+| D317 | 2026-11-15 | #1326 restored thin colour cores of the joints on ends/caps in v160 are accepted. Keep them and continue technical checks and repairs without replication. This answers the new Diffuse-colour stage, not a waiver of wall area-only pairs, all-map/surface/readback gates or final delivery acceptance. | `jobs/4bk-k3-course-grid-1326/NUMERICAL_REPAIR_RESULT.md`, `docs/domain/areas/uv-atlas.md` | Artem «на все да», USER DECISION on Kanban t_d517d7c6, 2026-11-15 13:27 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

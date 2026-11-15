@@ -364,6 +364,103 @@ def triangulate_conforming_polygon(points, *, triangle_allowed=None):
     return triangles
 
 
+def triangulate_native_boundary(points):
+    """Tessellate an existing native boundary without moving/dropping its nodes.
+
+    Float32 nodes on a long shared edge need not be exactly collinear. A Newell
+    fan can turn that storage noise into a spurious near-parallel sliver facing
+    an adjacent surface. Use an oriented best-fit chart and the existing complete
+    aspect-safe triangulator instead. This changes only internal diagonals;
+    callers retain XYZ, UV corner association, material and source lineage and
+    independently check surface/readback equivalence. Not a geometry weld.
+    """
+    import numpy as np
+    if (not isinstance(points, list) or len(points) < 3 or any(
+            not isinstance(p, list) or len(p) != 3 or any(
+                isinstance(x, bool) or not isinstance(x, (int, float))
+                or not math.isfinite(x) for x in p) for p in points)):
+        raise ValueError('invalid native boundary')
+    xyz = np.asarray(points, dtype=float)
+    centred = xyz - xyz[0]
+    _, singular, basis = np.linalg.svd(centred, full_matrices=False)
+    if singular[1] <= max(singular[0] * 1e-12, 1e-12):
+        raise ValueError('degenerate native boundary')
+    chart = centred @ basis[:2].T
+    area2 = sum(a[0]*b[1] - a[1]*b[0] for a, b in zip(chart, np.roll(chart, -1, axis=0)))
+    if abs(area2) <= 2e-12:
+        raise ValueError('degenerate native boundary')
+    if area2 < 0:
+        chart[:, 1] *= -1
+    return triangulate_conforming_polygon(chart.tolist())
+
+
+def canonical_native_boundary(points):
+    """Choose only a cyclic serialization anchor, preserving every directed edge.
+
+    A convex polygon with native near-collinear boundary nodes can have a bad
+    first-vertex fan. A cyclic loop start is not a geometry/topology/UV edit.
+    Refuse a concave/no-safe-fan polygon instead of adding a protected diagonal.
+    """
+    import numpy as np
+    from shapely.geometry import Polygon
+    # Reuse the finite/rank/winding validation; its triangles are NOT applied.
+    triangulate_native_boundary(points)
+    xyz=np.asarray(points,dtype=float);p=xyz-xyz[0]
+    _,_,basis=np.linalg.svd(p,full_matrices=False);xy=p@basis[:2].T
+    polygon=Polygon(xy);count=len(points);candidates=[]
+    for first in range(count):
+        ids=[(first+i)%count for i in range(count)];quality=[]
+        for i in range(1,count-1):
+            tri=xy[[ids[0],ids[i],ids[i+1]]]
+            shape=Polygon(tri)
+            if shape.area<=1e-12 or shape.difference(polygon.buffer(1e-12)).area>1e-14:break
+            edges=np.roll(tri,-1,axis=0)-tri
+            quality.append(float(shape.area/np.sum(edges*edges)))
+        if len(quality)==count-2:candidates.append((min(quality),-first,ids))
+    if not candidates:raise ValueError('no stable cyclic boundary fan')
+    return max(candidates)[2]
+
+
+def plan_boundary_finalization(rows, targets, *, method='triangulate'):
+    """Build a fixed-node diagonal plan for explicitly named source/materials.
+
+    A target is one existing polygon, not authority to change another finish or
+    drop a source. The DCC adapter must compare the full corner associations
+    before applying this plan; planning does not certify exported geometry.
+    """
+    import copy
+    if method not in ('triangulate','cyclic-anchor'):raise ValueError('invalid finalization method')
+    if not isinstance(rows,list) or not isinstance(targets,list) or not targets:
+        raise ValueError('missing explicit finalization targets')
+    keys=set();result=[]
+    for target in targets:
+        if not isinstance(target,dict) or set(target)!={'object','source_face','material_id'}:
+            raise ValueError('invalid finalization target')
+        if (not isinstance(target['object'],str) or not target['object']
+                or type(target['source_face']) is not int or target['source_face']<0
+                or type(target['material_id']) is not int or target['material_id']<1):
+            raise ValueError('invalid finalization source/material identifier')
+        key=(target['object'],target['source_face'])
+        if key in keys:raise ValueError('duplicate finalization target')
+        keys.add(key)
+        found=[r for r in rows if (r['object'],r['source_face'])==key]
+        if len(found)!=1 or found[0]['material_id']!=target['material_id']:
+            raise ValueError(f'missing/ambiguous source or stale material: {key}')
+        row=copy.deepcopy(found[0]);n=len(row['local_xyz'])
+        if (len(row['vertices'])!=n or len(row['uv'])!=n
+                or len(set(row['vertices']))!=n):
+            raise ValueError('partial native corner association')
+        for q in row['uv']:
+            if not isinstance(q,list) or len(q)!=2 or any(
+                    isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in q):
+                raise ValueError('invalid native UV')
+        row['operation']=method
+        if method=='cyclic-anchor':row['boundary_loops']=[canonical_native_boundary(row['local_xyz'])]
+        else:row['triangles']=triangulate_native_boundary(row['local_xyz'])
+        result.append(row)
+    return result
+
+
 def coalesce_cut_nodes(vertices, faces, lineage, *, original_vertex_count, groups, allow_original_anchor=False):
     """Apply explicit minor-cut node groups bounded to 2 mm, never auto-weld.
 
@@ -550,7 +647,15 @@ def joint_cross_section(face, expected_zones, observed_zones, origin, inward):
             if part.geom_type!='LineString' or part.length<=1e-10:continue
             values=[sum((p[k]-origin[k])*normal[k] for k in (0,1)) for p in part.coords]
             out.append([min(values),max(values)])
-        return sorted(out)
+        # GEOS may node one connected line into many touching components at
+        # raster-cell/triangle corners. Measure its 1D union, not component count.
+        # Only sub-nanometre arithmetic gaps merge; real pixel/geometry gaps stay.
+        merged=[]
+        for lo,hi in sorted(out):
+            if merged and lo<=merged[-1][1]+1e-10:
+                merged[-1][1]=max(merged[-1][1],hi)
+            else:merged.append([lo,hi])
+        return merged
     e=intervals(expected);a=intervals(observed);used=set();errors=[];endpoint_errors=[];missing=0
     for lo,hi in e:
         candidates=[i for i,(x,y) in enumerate(a) if i not in used and min(hi,y)>max(lo,x)]
@@ -612,6 +717,25 @@ def raster_cell_intersections(mask, centres_px, pixel_axes_px):
             inside = (np.abs(delta @ normals.T) < limits).all(axis=1)
             covered[ids[inside]] = True
     return covered
+
+
+def union_joint_footprints(footprints, *, precision_m):
+    """Union measured chart masks at an explicit sub-nanometre precision.
+
+    Independent affine inverses can put the SAME native edge on opposite sides
+    of a probe by ~1e-14m. Snap-round only the measurement polygons, never mesh
+    positions, UVs or PNGs. Keep the unsnapped evidence and report the changed
+    area separately. This is not permission to close real raster/geometry gaps.
+    """
+    from shapely import union_all
+    if (isinstance(precision_m,bool) or not isinstance(precision_m,(int,float))
+            or not math.isfinite(precision_m) or not 0<precision_m<=1e-9):
+        raise ValueError('footprint measurement precision must be <=1nm')
+    if not isinstance(footprints,list) or not footprints or any(
+            p.geom_type not in ('Polygon','MultiPolygon','GeometryCollection')
+            or not p.is_valid for p in footprints):
+        raise ValueError('invalid measured footprint set')
+    return union_all(footprints,grid_size=precision_m)
 
 
 def source_joint_footprint(image, source_uv, chart_m):

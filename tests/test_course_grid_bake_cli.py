@@ -1,4 +1,4 @@
-"""Fresh-process reusable bake preflight refuses stale/aliased inputs before writes."""
+"""new-case: reusable bake preflight refuses stale/aliased inputs before writes."""
 import hashlib
 import json
 import subprocess
@@ -20,7 +20,7 @@ def config(tmp_path):
     return {'schema':'course-grid-bake/1','files':files,'tile_px':4096,
       'texel_px_m':512.1,'repeat_m':48*3.15/38,'tiles':[1001,1002],
       'colour_joint_rgb':[40,32,32],'erm_joint_rgb':[0,252,0],
-      'normal_encoding':'DirectX','dilation_px':16,'decision_refs':['D304','D317']}
+      'normal_encoding':'DirectX','background_origin_px':32,'dilation_px':16,'decision_refs':['D304','D317']}
 
 
 def test_bake_preflight_validates_every_frozen_input_without_creating_output(tmp_path):
@@ -31,7 +31,7 @@ def test_bake_preflight_validates_every_frozen_input_without_creating_output(tmp
     assert not out.exists()
 
 
-@pytest.mark.parametrize('failure', ['stale','missing','alias','existing','bad_scale','missing_role'])
+@pytest.mark.parametrize('failure', ['stale','missing','alias','existing','bad_scale','missing_role','duplicated_path'])
 def test_bake_preflight_fail_closed(tmp_path,failure):
     from tools.materials.course_grid_bake import validate_config
     c = config(tmp_path);out = tmp_path / 'new'
@@ -41,6 +41,7 @@ def test_bake_preflight_fail_closed(tmp_path,failure):
     if failure=='existing':out.mkdir()
     if failure=='bad_scale':c['texel_px_m'] = 420
     if failure=='missing_role':del c['files']['chart']
+    if failure=='duplicated_path':c['files']['chart']=c['files']['layout'].copy()
     with pytest.raises(ValueError):validate_config(c,out)
     if failure not in ('alias','existing'):assert not out.exists()
 

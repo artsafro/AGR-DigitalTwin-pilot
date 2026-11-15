@@ -1,4 +1,4 @@
-"""Protected loops can use a stable cyclic anchor without adding any diagonal."""
+"""new-case: protected cyclic anchors without adding any diagonal."""
 import numpy as np
 from dt_ai.ops.inv_quads import PolyMesh
 from dt_ai.ops.inv_xview import face_pairs,tolerance_for

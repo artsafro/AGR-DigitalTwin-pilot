@@ -1,6 +1,10 @@
 # Numerical repair of the actual two-tile pilot (#1326)
 
-**Not passed. No replication, delivery acceptance, PR or review request.**
+Historical v166 checkpoint. The current scoped pilot/readback and reusable
+execution evidence are in [FINAL_PILOT_RESULT.md](FINAL_PILOT_RESULT.md);
+its selected cyclic-anchor repair supersedes the open continuation below.
+
+**Not passed. No replication, delivery acceptance, PR or review request at v166.**
 
 ## Answered scope and current visual stage
 
@@ -11,13 +15,12 @@ specific source-stair baseline [D296] remain settled. Opening remains only
 on «открой», in a separate versioned copy; daytime Max was not touched.
 Scenario `oks-vpm`, level `full`; Blender 5.1.2 background avoids Max ownership.
 
-The **new** visual subject is the restored **thin Diffuse colour cores** on
-caps/ends/low parts, which the earlier v096 bitmap lost. Conservative source-cell
-transfer now restores the independently measured source PNG on all 771 faces.
-This changes edge coverage/contrast, not the accepted Normal target. Inspect the
-actual source / v096 / v160 isolated-face comparison below before accepting this
-colour-edge rendering. Recommend retaining it and continuing the remaining
-technical work without replication. This is NOT a request to waive that work.
+Artem confirmed the thin Diffuse cores on ends/caps in v160 on 2026-11-15 13:27
+[D317]. Keep them and continue technical checks/repairs without replication.
+This does not waive area-only pairs, all-map/source-surface/readback checks or
+final acceptance. The earlier Normal-direction approval [D310] remains settled.
+The historical comparison below records the accepted colour stage, not an open
+question to ask again.
 
 Initial pilot policy is now [D309]. Mechanical own-row reconciliation after
 external PRs #1419/#1418 changed D302→D309 and D306→D310. D308 was already
@@ -138,8 +141,8 @@ Full suite: deferred to merge batch (rule68). No eval/PR receipt claimed yet.
 
 ## Continuation — still owned by this card
 
-1. Obtain the NEW thin-Diffuse-core visual verdict, not another Normal target,
-   tile-budget, bevel-cut or stair-baseline answer. No replication.
+1. Answered by [D317]: retain the thin-Diffuse cores without replication. Do not
+   ask this stage again; the current continuation is in FINAL_PILOT_RESULT.md.
 2. Repair the three wall **area-only** pairs, retaining current source coverage,
    legal triangles, UV phase, source/protected geometry and hashes; no waiver.
 3. Complete independent all-map Normal-frame/support, carrier/junction/centre-width

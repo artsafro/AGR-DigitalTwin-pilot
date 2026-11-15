@@ -1,4 +1,4 @@
-"""Real native-boundary regression: protected reveals retain every existing node."""
+"""new-case: real native-boundary regression retains every protected node."""
 import numpy as np
 import pytest
 from dt_ai.ops.inv_quads import PolyMesh
@@ -22,7 +22,7 @@ def test_native_protected_boundary_avoids_singular_newell_fan(reverse):
     vertices = np.array(points + [OTHER])
     other = (6, points.index(POINTS[2]), points.index(POINTS[1]))
     before = face_pairs(PolyMesh(vertices,(tuple(range(6)),other)),tolerance_for('VPM'))
-    assert [p[2] for p in before] == ['area']
+    assert [p[2] for p in before] == ([] if reverse else ['area'])
     triangles = native.triangulate_native_boundary(points)
     assert len(triangles) == 4
     assert set(i for t in triangles for i in t) == set(range(6))

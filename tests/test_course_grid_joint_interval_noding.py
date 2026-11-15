@@ -1,4 +1,4 @@
-"""A connected 1D cross section can come from corner-touching 2D cells."""
+"""new-case: connected 1D cross sections of corner-touching 2D cells."""
 from tools.materials.course_grid_native import joint_cross_section
 
 
