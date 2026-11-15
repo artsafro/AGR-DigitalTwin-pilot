@@ -133,16 +133,23 @@ for asset in manifest['assets']:
         target.parent.mkdir(parents=True, exist_ok=True)
         with urllib.request.urlopen(record['download_url'], timeout=120) as response:
             data = response.read()
-        assert len(data) == record['bytes'], record['path']
-        assert hashlib.sha256(data).hexdigest() == record['sha256'], record['path']
+        size = len(data)
+        digest = hashlib.sha256(data).hexdigest()
+        if size != record['bytes']:
+            raise SystemExit(f"Size mismatch: {record['path']} ({size} != {record['bytes']})")
+        if digest != record['sha256']:
+            raise SystemExit(f"SHA-256 mismatch: {record['path']} ({digest} != {record['sha256']})")
         with target.open('xb') as handle:
             handle.write(data)
-        print(record['sha256'], len(data), record['path'])
+        print(digest, size, record['path'])
 ```
 
 This is a receipt/reproduction snippet for a reviewed fixed manifest, not a general
 untrusted-manifest downloader or a certified material/geometry pipeline. Hash/size
-checks fail on permission HTML, truncated or changed bytes. Existing destinations
+checks fail on permission HTML, truncated or changed bytes, including under `python -O`
+or `PYTHONOPTIMIZE=1`. Successful receipt lines report the computed SHA-256 and byte
+count. A failed record is not written or printed; earlier verified records and newly
+created directories may remain (this is not a transactional batch download). Existing destinations
 refuse rather than clobber; do not re-use source/export/report directories as output.
 
 ### Measured fresh-clone execution
