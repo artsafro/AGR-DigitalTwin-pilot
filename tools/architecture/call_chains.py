@@ -149,6 +149,19 @@ def _route_roots(root, routes, context_maps):
                 for p in br.get("evidence", []):
                     add(p, f"маршрут {name}: этап {s.get('id')}/{br.get('id')}")
     for name, cmap in context_maps.items():
+        # Explicit current job commands/candidates are not discovered by Python imports alone (#1441).
+        # Pin the actual source command as evidence, not merely the existence of an old job script.
+        for entry in cmap.get("entrypoints", []):
+            rel, evidence, match = (entry.get(k) for k in ("owner", "evidence", "match"))
+            if not all(isinstance(v, str) and v.strip() for v in (rel, evidence, match)):
+                raise ValueError(f"{name}: entrypoint needs owner, evidence and match")
+            for path in (rel, evidence):
+                candidate = Path(root) / path
+                if (not candidate.is_file() or candidate.resolve().relative_to(Path(root).resolve()).as_posix() != path):
+                    raise ValueError(f"{name}: entrypoint missing or aliased path {path}")
+            if not rel.endswith(".py") or match not in (Path(root) / evidence).read_text(encoding="utf-8"):
+                raise ValueError(f"{name}: entrypoint {rel}: stale or unsupported evidence {evidence}")
+            add(rel, f"команда / кандидат {evidence}: {match}")
         for c in [cmap.get("shared_kernel", {})] + cmap.get("contexts", []):
             add(c.get("owner"), f"карта {name}: владелец {c.get('id')}")
     return roots

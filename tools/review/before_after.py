@@ -45,7 +45,8 @@ RENDER_KEYS = {'engine', 'style', 'view_transform', 'look', 'exposure', 'gamma',
                'use_white_balance', 'emulation',
                'display_device', 'world_color', 'world_use_nodes', 'background_type',
                'background_color', 'thickness', 'use_border', 'use_multiview',
-               'image_views_format', 'workbench'}
+               'image_views_format', 'workbench', 'use_world_space_lighting',
+               'dither_intensity', 'color_mode', 'color_depth', 'compression'}
 TOLERANCE = 1e-6
 
 
@@ -107,6 +108,8 @@ def compare_render_state(before, after):
             raise ValueError(f'render keys missing {sorted(RENDER_KEYS - keys)} unknown {sorted(keys - RENDER_KEYS)}')
         for key, allowed in (('engine', {'BLENDER_WORKBENCH'}), ('style', STYLES),
                              ('emulation', {'AUTO', 'OFF'}),
+                             ('color_mode', {'BW', 'RGB', 'RGBA'}),
+                             ('color_depth', {'8', '16'}),
                              ('image_views_format', {'INDIVIDUAL', 'STEREO_3D'}),
                              ('background_type', {'WORLD', 'VIEWPORT', 'THEME'})):
             if not isinstance(state[key], str) or state[key] not in allowed:
@@ -115,13 +118,18 @@ def compare_render_state(before, after):
             if not isinstance(state[key], str) or not state[key].strip():
                 raise ValueError(f'render {key} must be a nonempty string')
         for key in ('world_use_nodes', 'use_curve_mapping', 'use_white_balance',
-                    'use_border', 'use_multiview'):
+                    'use_border', 'use_multiview', 'use_world_space_lighting'):
             if not isinstance(state[key], bool):
                 raise ValueError(f'render {key} must be a boolean')
         if not isinstance(state['workbench'], dict):
             raise ValueError('render workbench must be an object')
-        for key in ('exposure', 'gamma'):
+        for key in ('exposure', 'gamma', 'dither_intensity'):
             _finite(state[key], f'render.{key}')
+        if not 0 <= state['dither_intensity'] <= 2:
+            raise ValueError('render dither_intensity must be in 0..2')
+        compression = state['compression']
+        if isinstance(compression, bool) or not isinstance(compression, int) or not 0 <= compression <= 100:
+            raise ValueError('render compression must be an integer in 0..100')
         if state['gamma'] <= 0:
             raise ValueError('render gamma must be positive')
         for key in ('world_color', 'background_color'):

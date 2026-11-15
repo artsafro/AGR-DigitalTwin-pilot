@@ -1,3 +1,7 @@
+Current run: #1326 two-UDIM stylobate brick pilot, merged via PR #1437 (batch 20261115l)
+Source: job/4bk-k3-vpm@06546d3d (read-only); decisions D304, D309
+Next gate: Artem's visual acceptance of the pilot; replication / final 4BK delivery need a separate card
+
 # #1326 pilot state — review handoff
 
 ## Requirement

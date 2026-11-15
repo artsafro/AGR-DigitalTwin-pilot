@@ -96,8 +96,9 @@ contexts:
       - at: "jobs/TEC26-OKS/scripts/package_vpm.py:50"
         match: "zipfile.ZipFile(zpath"
         issue: "#1393"
-        ru: "свой писатель ZIP старого упаковщика ТЭЦ26 (заморожен)"
-        status: historical
+        ru: "живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core)"
+        status: live-bypass
+        step: "#1377"
   - id: sintez
     grid: "1.5/3"
     ru: "Чекер СИНТЕЗ и загрузка архива"
@@ -112,7 +113,8 @@ contexts:
         match: "check_highpoly_lowpoly"
         issue: "#1379"
         ru: "остаётся: замороженная версия v003 запуска чекера elv-tc-vpm; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
-        status: historical
+        status: own-duty
+        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
 relations:
   - from: dcc
     to: export
