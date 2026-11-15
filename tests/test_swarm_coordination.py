@@ -33,7 +33,8 @@ def invoke(build, tool='SendMessage', args=None, script=GUARD, swarm: bool | str
     elif swarm:
         env.update(AGR_SWARM_BUILD_ROOT=str(build), AGR_SWARM_AGENT_ID='l2')
     payload = {'tool_name': tool, 'tool_input': args if args is not None else {
-        'recipient': 'l2', 'content': 'Part: L2\nContinue the assigned part.'}, 'cwd': str(build)}
+        'to': 'l2', 'summary': 'Continue assigned part',
+        'message': 'Part: L2\nContinue the assigned part.'}, 'cwd': str(build)}
     run = subprocess.run([sys.executable, str(script)], input=json.dumps(payload),
                          text=True, capture_output=True, env=env, cwd=ROOT)
     assert run.returncode == 0, run.stderr
@@ -126,7 +127,6 @@ def test_invalid_registry(build, bad):
 
 @pytest.mark.parametrize('args,swarm', [({}, True), ({'recipient': 'l2'}, True),
     ({'recipient': 'unknown', 'content': 'Part: L2'}, True),
-
     ({'recipient': 'l2', 'part': 'windows-B', 'content': 'Part: L2'}, True)])
 def test_missing_message_scope(build, args, swarm):
     assert decision(invoke(build, args=args, swarm=swarm)) == 'deny'
@@ -225,15 +225,17 @@ def test_generated_ownership_probe(build):
     import runpy
     check = runpy.run_path(str(HELPER))['check_message']
     measured = 0
-    for kind, status, part, recipient in itertools.product(
+    for kind, status, part, recipient, schema in itertools.product(
             ('workflow', 'background'), ('active', 'failed', 'completed'),
-            ('L2', 'windows-B'), ('l2', 'unknown')):
+            ('L2', 'windows-B'), ('l2', 'unknown'), ('real', 'legacy')):
         save(build, kind=kind, status=status, part=part)
-        denied = check({'recipient': recipient, 'content': 'Part: L2'}, str(build))
+        args = ({'to': recipient, 'summary': 'Continue', 'message': 'Part: L2'}
+                if schema == 'real' else {'recipient': recipient, 'content': 'Part: L2'})
+        denied = check(args, str(build))
         allowed = kind == 'background' and status == 'active' and part == 'L2' and recipient == 'l2'
         assert (denied is None) == allowed
         measured += 1
-    assert measured == 24
+    assert measured == 48
 
 
 def test_registration_no_clobber_and_reset(build):

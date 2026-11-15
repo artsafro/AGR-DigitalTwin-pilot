@@ -98,6 +98,8 @@ def check_message(args, root_value):
 
 def write_warning(tool, args, root_value, cwd):
     """Conservative lexical shell advisory; file targets use resolved containment."""
+    if tool in FILE_TOOLS | SHELL_TOOLS and not isinstance(args, dict):
+        return 'swarm warning: write destination unresolved; tool input must be an object'
     if tool in FILE_TOOLS:
         targets = [args.get('file_path') or args.get('notebook_path') or args.get('TargetFile')]
     elif tool in SHELL_TOOLS:

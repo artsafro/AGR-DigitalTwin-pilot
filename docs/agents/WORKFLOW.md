@@ -332,9 +332,13 @@ before replacement; this registry does not stop processes. One agent id owns one
 
 The helper emits a brief with `Part: L2`, one absolute `Output root: ...`, and the environment to bind in
 both the coordinator and worker runtimes: `AGR_SWARM_BUILD_ROOT` and `AGR_SWARM_AGENT_ID`.
-SendMessage uses `recipient` (or `to`) and an exact `Part: L2` content line (or structured `part`).
-The [PreToolUse guard](../../.claude/hooks/guard.py) reloads the registry for every SendMessage and denies
-workflow, inactive, unknown, wrong-part or malformed routing; without a bound root it denies too.
+Claude Code subagents inherit the coordinator process environment: launch that session with these bindings
+(or configure settings `env`); exporting them in a shell subprocess cannot change an already-running session.
+SendMessage uses the real `{to, summary, message}` schema with an exact `Part: L2` line in `message`;
+legacy `recipient`/`content` and structured `part` remain supported, but conflicting headers are refused.
+The [PreToolUse guard](../../.claude/hooks/guard.py) reloads the registry for every swarm SendMessage and denies
+workflow, inactive, unknown, wrong-part or malformed routing. Neither environment binding set means ordinary
+non-swarm behavior; an agent binding without a valid absolute root still denies.
 File writes outside the resolved build root get a **swarm warning**, including drive-root scratch such as
 `C:/png_v003`; inside-root writes do not. Existing production-asset prompts still apply. Shell warnings are
 conservative lexical advisories, not a sandbox: use absolute literal destinations, never drive-root scratch,
