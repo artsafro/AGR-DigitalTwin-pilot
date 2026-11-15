@@ -626,6 +626,58 @@ def test_guard_single_file_checkout_allowed_1226(command, protocol):
     assert guard(command, protocol) == "allow"
 
 
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git switch -C main", "git checkout -B main", "git reset --keep HEAD~1",
+    "git switch -C", "git checkout -B", "git reset --keep", "git switch -C 'main",
+    "git switch -Cmain", "git checkout -Bfeature/x", "git switch -qCmain",
+    "git checkout -qBfeature/x", "git switch --force-create main", "git checkout --reset main",
+    "git reset --ke HEAD~1",
+])
+def test_guard_branch_pointer_moves_ask_1458(command, protocol):
+    assert guard(command, protocol) == "ask"
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+@pytest.mark.parametrize("command", [
+    "git switch -c new", "git checkout -b new", "git switch -qc new", "git checkout -qb new",
+    "git switch --create new", "git checkout -- -Bmain", "git switch -- -Cmain",
+    "git reset HEAD -- --keep", "git commit -m 'git switch -C main'",
+    "git log --grep='git reset --keep HEAD~1'",
+])
+def test_guard_safe_branch_creation_allowed_1458(command, protocol):
+    assert guard(command, protocol) == "allow"
+
+
+@pytest.mark.parametrize("protocol", ["claude", "antigravity"])
+def test_guard_branch_pointer_sequence_1458(protocol):
+    for _ in range(2):
+        for command, expected in [
+            ("git switch -c new", "allow"), ("git switch -C main", "ask"),
+            ("git checkout -b new", "allow"), ("git checkout -B main", "ask"),
+            ("git reset --keep HEAD~1", "ask"), ("git status", "allow"), ("", "allow"),
+        ]:
+            assert guard(command, protocol) == expected
+
+
+def test_guard_branch_pointer_moves_generated_probe_1458():
+    """Synthetic Cartesian probe combines pointer resets with earlier shell/global fixes."""
+    shell_reason = _load_guard().shell_reason
+    hazards = [
+        "switch -C main", "switch -Cfeature/x", "switch -qCmain", "switch '-C' main HEAD~1",
+        "switch --force-create main", "switch --force-c main", "checkout -B main",
+        "checkout -Bfeature/x", "checkout -qBmain", "checkout '--reset' main HEAD~1",
+        "checkout --rese main", "reset --keep HEAD~1", "reset HEAD~1 --keep", "reset --ke HEAD~1",
+    ]
+    safe = ["switch -c new", "checkout -b new", "switch -- -Cmain", "checkout -- -Bmain",
+            "reset HEAD -- --keep"]
+    asked = [w for g in GIT_GLOBALS for h in hazards for w in _wraps(f"git {g}{h}")]
+    allowed = [w for g in GIT_GLOBALS for s in safe for w in _wraps(f"git {g}{s}")]
+    assert all(shell_reason(c) is not None for c in asked)
+    assert all(shell_reason(c) is None for c in allowed)
+    print(f"1458 probe: {len(asked)} ask + {len(allowed)} allow passed")
+
+
 def test_guard_whole_tree_pathspecs_generated_probe_1226():
     """Generated probe: every spelling x every checkout/restore form x every git global option asks;
     every single-file spelling x form x global option stays allowed."""
