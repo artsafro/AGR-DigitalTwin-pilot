@@ -632,7 +632,7 @@ def test_guard_single_file_checkout_allowed_1226(command, protocol):
     "git switch -C", "git checkout -B", "git reset --keep", "git switch -C 'main",
     "git switch -Cmain", "git checkout -Bfeature/x", "git switch -qCmain",
     "git checkout -qBfeature/x", "git switch --force-create main", "git checkout --reset main",
-    "git reset --ke HEAD~1",
+    "git reset --ke HEAD~1", "git switch -mCmain", "git checkout -tBfeature/x",
 ])
 def test_guard_branch_pointer_moves_ask_1458(command, protocol):
     assert guard(command, protocol) == "ask"
