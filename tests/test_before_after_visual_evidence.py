@@ -162,9 +162,11 @@ def fake_runner(after_camera=None, touch=None):
         write_png(out / 'after.png', (50, 200, 50))
         if touch:
             touch()
-        record = {'before': {'camera': CAM, 'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}},
-                  'after': {'camera': after_camera or CAM,
-                            'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}}}
+        state = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire',
+                 'color_management': 'FOLLOW_SCENE', 'use_sequencer': False,
+                 'use_compositing': False}
+        record = {'before': {'camera': CAM, 'render': dict(state)},
+                  'after': {'camera': after_camera or CAM, 'render': dict(state)}}
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
         return record
     return run

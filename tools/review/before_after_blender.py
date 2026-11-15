@@ -70,6 +70,10 @@ def setup(scene, fitted):
     render.film_transparent = False
     render.use_stamp = False
     render.image_settings.file_format = 'PNG'
+    # Ignore saved output transforms and post-processing: compare the model, not a strip/tree.
+    render.image_settings.color_management = 'FOLLOW_SCENE'
+    render.use_sequencer = False
+    render.use_compositing = False
     shading = scene.display.shading
     shading.light = 'STUDIO'
     shading.show_cavity = False
@@ -137,5 +141,8 @@ for role in ('before', 'after'):
     scene.render.filepath = str(out / f'{role}.png')
     bpy.ops.render.render(write_still=True)
     evidence[role] = {'camera': record(scene, camera), 'mesh_objects': mesh_count,
-                      'render': {'engine': scene.render.engine, 'style': request['style']}}
+                      'render': {'engine': scene.render.engine, 'style': request['style'],
+                                 'color_management': scene.render.image_settings.color_management,
+                                 'use_sequencer': scene.render.use_sequencer,
+                                 'use_compositing': scene.render.use_compositing}}
 (out / 'render-evidence.json').write_text(json.dumps(evidence, indent=2), encoding='utf-8')
