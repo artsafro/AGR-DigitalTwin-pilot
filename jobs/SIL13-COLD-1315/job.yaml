@@ -97,7 +97,7 @@ deviations:
 gates:
   inputs:
     status: review
-    note: Original sources/libraries/maps/bench and old site bytes unchanged; missing source/grey/species gaps remain. Historical decision IDs resolve through decision-aliases-v014.json; no authority change.
+    note: Original sources/libraries/maps/bench and old site bytes unchanged; missing source/grey/species gaps remain. Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
     evidence: *id001
   parts:
     status: pass
@@ -109,8 +109,8 @@ gates:
     status: fail
     note: D316accepted116triangle Bench025 replicated2of2;36othercopies exact. Three remaining-type repair routes FAIL. NEW Table016 continuous tabletop/four-seat option would merge76physical wood planks/slots, not covered by earlier small joint repair; unadopted pending model choice. No technical waiver requested.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v014.json
-      sha256: 82a85dfd8c28c405d8f5c8c7fc98e47d8d3e8f5d6dd786d5a2e209e117a21d2f
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v014-r2.json
+      sha256: 8a5308e52ac0cf57a8b8ffdd35419ed7a5d4eef69c56718d0fba5d5563027bf5
     waits: user
   budgets:
     status: review
@@ -125,14 +125,14 @@ gates:
     note: v014acceptedBench2copyreplication and newTablephysical-plank choice.226checkpoint controls green;1complete-setrepair regression explicitlyRED;whole native validatorsFAIL. Fullsuite deferred to merge batch(rule68).
     evidence:
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v014.md
-      sha256: 02926ba1565b74ab5fb3084f01c27187b17352d1e74709aeb68044d88b4efdc1
+      sha256: df8e21cb7c8f4768faeb8fdcc923b91a16c83b4adfaa60588d9b7c0613cb9e82
     - path: jobs/SIL13-COLD-1315/evidence-v014.json
       sha256: 5d3d883f950d1180b1d3204332e688844fd47c928151074e87fe590ce8415abe
-    - path: jobs/SIL13-COLD-1315/decision-aliases-v014.json
-      sha256: 874f09b219d6d23906d41f3beb22659fc1bb09536ecea4dbcb8815cc129269b1
+    - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
+      sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: D287composition/D291shrub/D294pilot/D313route/D315hedge/D305repair-scope/D316Benchpilot CLOSED. NEW Table016 physical-plank-to-continuous-surfaces choice only;sheet FLAT-D316 current. Neutral material/finalvisual acceptance not requested.
+    note: D287composition/D291shrub/D294pilot/D318route/D315hedge/D305repair-scope/D316Benchpilot CLOSED. NEW Table016 physical-plank-to-continuous-surfaces choice only;sheet FLAT-D316 current. Neutral material/finalvisual acceptance not requested.
     evidence: *id002
   checker:
     status: missing

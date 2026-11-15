@@ -142,6 +142,16 @@ IDs and hashes; resolve them only with [decision-aliases-v014.json](decision-ali
 They are not authority for unrelated newly merged main decisions. D305 unchanged.
 The new sheet uses the canonical D316; old D311-labelled layouts are superseded.
 
+**Latest metadata revision:** the next push guard also found PR1418/#1416 using
+reservedD313. D317 was already correctly reserved by t_d517d7c6, so this branch's
+hedge row is now **D318**. [decision-aliases-v014-r2.json](decision-aliases-v014-r2.json)
+is the current mapping (D298/D313->D318;D300->D314;D301->D315;D311->D316).
+`source-wide-summary-v014-r2.json` wraps the previous summary with this metadata
+change only. Both previous files and the276-file immutable seal remain byte-equal.
+Registry/area tests rerun115passed(3.72s); guardOK(main+3openPRheads), remote
+4223ddf0 verified. No model, public-QA measurement, earlier acceptance or question
+changed. One metadata-only follow-up driver is outside the frozen38-driver batch.
+
 ## Tool/code accounting and checks
 
 This run's12 direct headless Blender invocations include7-source intake in one
