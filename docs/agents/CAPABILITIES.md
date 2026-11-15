@@ -388,8 +388,9 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
   replayed. Tests `tests/test_shared_tools_1106.py`.
 
 Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
-cores, keeping the Max side per the AC08 route [D228]; routing the Blender/Python versions to them is deferred to
-#1141, starts after #1105 [D225]):
+cores, keeping the Max side per the AC08 route [D228] [D225]; #1141 (the routing) was closed as split on 2026-11-15:
+UCX -> #1404, atlas -> #1380, placement -> #1407, one core behind the CLI and the Max button -> epic #1374, live-Max
+proof of the cores -> #1105. Which side owns UCX building and placement is open: conflicts C49):
 
 | Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
 |---|---|---|---|
