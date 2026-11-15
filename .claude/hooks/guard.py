@@ -14,6 +14,7 @@ Dual-protocol support:
 import json
 import math
 import os
+import posixpath
 import re
 import shlex
 import subprocess
@@ -291,7 +292,10 @@ def _many_paths_pathspec(spec):
         return True
     if "literal" not in magic and re.search(r"[*?\[]", s):
         return True
-    return all(p in ("", ".", "..") for p in s.split("/"))
+    # Normalise `..` segments (PR #1455 r1): `docs/..`, `docs/./..`, `a/b/../..` are the top again. The spec
+    # names a whole tree when nothing but `..` steps remain; `docs/../a.txt` stays a single file.
+    norm = posixpath.normpath(s) if s else "."
+    return all(p == ".." for p in norm.split("/") if p not in ("", "."))
 
 
 def _git_subcommand_reason(sub, args):
