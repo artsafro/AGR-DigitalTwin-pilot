@@ -22,9 +22,6 @@ finished_jobs:
   - job: jobs/PSU275
     evidence: jobs/PSU275/STATE.md
     match: "delivery-v003 accepted on 2026-10-07"
-  - job: jobs/elv-tc-vpm
-    evidence: jobs/elv-tc-vpm/PASSPORT.md
-    match: "Delivery v005 is the current candidate, accepted by the user 2026-11-05"
   - job: jobs/skug26-k5-ac
     evidence: jobs/skug26-k5-ac/STATE.md
     match: "accepted by the user"
@@ -34,6 +31,24 @@ finished_jobs:
   - job: jobs/VATUTINO-SITE
     evidence: docs/deliveries/vatutino-site-2026-11-09.md
     match: "Vatutino site slice"
+# Source-backed current commands/candidates missed by Python-only imports (#1441).
+# ELV inventory is NOT authorization to resume parked #1104.
+entrypoints:
+  - owner: jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py
+    evidence: jobs/elv-tc-vpm/TASK.md
+    match: "uv_tex_full_v008.py"
+  - owner: jobs/KPP1/scripts/build_kpp1.py
+    evidence: jobs/KPP1/scripts/run_stage.sh
+    match: "$J/scripts/build_kpp1.py"
+  - owner: jobs/TEC26-OKS/scripts/build_master.py
+    evidence: jobs/TEC26-OKS/AC09/run_building.sh
+    match: "build_master.py"
+  - owner: jobs/TEC26-OKS/scripts/package_vpm.py
+    evidence: jobs/TEC26-OKS/AC09/run_building.sh
+    match: "$S/package_vpm.py"
+  - owner: jobs/elv-tc-vpm/scripts/package_vpm_v006.py
+    evidence: jobs/elv-tc-vpm/scripts/package_vpm_v006.py
+    match: "rep_path = out_dir / \"package_report_v006.json\""
 rules:
   - id: udim-tile
     owner: adapters/max/agr_tools/udimtile_core.py
@@ -88,7 +103,8 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "ec9495a822"
-      status: historical
+      status: live-bypass
+      step: "-"
     - at: "jobs/PSU275/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
@@ -133,7 +149,8 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "ec9495a822"
-      status: historical
+      status: live-bypass
+      step: "-"
     - at: "jobs/VATUTINO-SITE/flora_v007_blender.py::cmd_readback"
       rule: udim-tile
       issue: "#1337"
@@ -148,72 +165,86 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "ded8ff2561"
-      status: historical
+      status: own-duty
+      why: "диагностический рендер чернового кандидата, не свидетельство сдачи ЭЛВ"
     - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "ef506142a8"
-      status: historical
+      status: own-duty
+      why: "исследование UV клиентского исходника, не построение и не сдача"
     - at: "jobs/elv-tc-vpm/scripts/customer_fbx_probe_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "4b4c6b2b46"
-      status: historical
+      status: own-duty
+      why: "исследование UV клиентского исходника, не построение и не сдача"
     - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v001.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "8655980b06"
-      status: historical
+      status: superseded
+      why: "замер старого черновика; заменён readback_delivery_v003.py, не сданный результат"
     - at: "jobs/elv-tc-vpm/scripts/readback_delivery_v003.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "8655980b06"
-      status: historical
+      status: own-duty
+      why: "диагностическое чтение UV кандидата, не свидетельство сдачи"
     - at: "jobs/elv-tc-vpm/scripts/readback_uv_fbx.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "8655980b06"
-      status: historical
+      status: own-duty
+      why: "диагностическое чтение UV FBX, не свидетельство сдачи"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
-      status: historical
+      status: superseded
+      why: "старый черновик UV, заменён uv_tex_full_v008.py (TASK.md)"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
-      status: historical
+      status: superseded
+      why: "старый черновик UV, заменён uv_tex_full_v008.py (TASK.md)"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
-      status: historical
+      status: superseded
+      why: "старый черновик UV, заменён uv_tex_full_v008.py (TASK.md)"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v007.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
-      status: historical
+      status: superseded
+      why: "старый черновик UV, заменён uv_tex_full_v008.py (TASK.md)"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
-      status: historical
+      status: live-bypass
+      step: "-"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
-      status: historical
+      status: live-bypass
+      step: "-"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "54a2d44744"
-      status: historical
+      status: superseded
+      why: "ранний пилот UV, заменён uv_tex_full_v008.py (TASK.md)"
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
       hash: "eb17152aa7"
-      status: historical
+      status: superseded
+      why: "ранний пилот UV, заменён uv_tex_full_v008.py (TASK.md)"
     - at: "jobs/skug26-k5-ac/scripts/uvverify.py::<module>"
       rule: udim-tile
       issue: "#1337"
@@ -368,6 +399,53 @@ shared_kernel:
       status: live-bypass
       step: "#1397"
 contexts:
+  - id: body-shell
+    ru: "Оболочка ПСУ275"
+    area: docs/domain/areas/body.md
+    owner: src/dt_ai/geometry/shell.py
+    owner_ru: "tools/run_body_shell.py -> shell_body; оболочка внутрь, не операция над готовыми частями"
+    functions:
+      - name: shell_body
+        contract: "вершины, грани, внешние нормали, толщина -> оболочка с доказательствами источника"
+  - id: ucx-build
+    ru: "Построение UCX Main / Ground"
+    area: docs/domain/areas/ucx.md
+    owner: src/dt_ai/geometry/ucx_build.py
+    owner_ru: "tools/blender/ucx_build.py -> build_main; строитель СРЕDА, не измеритель ucx10_core"
+    functions:
+      - name: build_main
+        contract: "меш Main и параметры -> выпуклые куски UCX, отчёт включения и отклонений"
+  - id: psu-ucx-build
+    ru: "ПСУ275: второй построитель UCX"
+    area: docs/domain/areas/ucx.md
+    owner: jobs/PSU275/scripts/vpm_stage5_oks.py
+    owner_ru: "scripts/run_oks.sh:22 -> vpm_stage5_oks.py:75-88; выпуклые оболочки заданных кусков"
+    functions:
+      - name: "<module>"
+        contract: "piece.ucx -> меши UCX_SM_<address>_Main_NNN; не проверка зазоров"
+  - id: vpm-udim
+    ru: "ВПМ: построение UDIM в AGR Tools"
+    area: docs/domain/areas/uv-atlas.md
+    owner: adapters/max/agr_tools/vpm_core.py
+    owner_ru: "vpm.build в Max; jobs не вызывает это ядро; не атлас НПМ"
+    functions:
+      - name: build
+        contract: "меши, параметры, перенумерация -> части ВПМ и таблица UDIM"
+  - id: roof
+    ru: "Кровля и плита"
+    area: docs/domain/areas/body.md
+    owner: adapters/max/agr_tools/roof_core.py
+    owner_ru: "общий владелец плиты кровли; KPP1 пока строит её локально"
+    functions:
+      - name: slab
+        contract: "меш и петля границы -> плита кровли или Ambiguous"
+    duplicates:
+      - at: "jobs/KPP1/scripts/build_kpp1.py:421"
+        match: "def roof("
+        issue: "#1381"
+        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; локальная плита/парапет, roof_core не вызывается"
+        status: live-bypass
+        step: "#1381"
   - id: body
     ru: "Корпус и геометрия"
     area: docs/domain/areas/body.md
@@ -389,17 +467,20 @@ contexts:
         match: "def seal("
         issue: "#1359"
         ru: "свой шов и сварка Т-узлов вместо dt_ai.ops.seams.join_parts"
-        status: historical
+        status: live-bypass
+        step: "#1381"
       - at: "jobs/KPP1/scripts/seal.py:73"
         match: "def t_junctions("
         issue: "#1359"
         ru: "свой поиск Т-узлов на швах"
-        status: historical
+        status: live-bypass
+        step: "#1381"
       - at: "jobs/KPP1/scripts/build_kpp1.py:194"
         match: "def load_spec("
         issue: "#1359"
         ru: "сборка корпуса КПП1 целиком в скрипте задания (стадии 1–6)"
-        status: historical
+        status: own-duty
+        why: "load_spec читает конфигурацию задания, не операция над частями; сборка и кровля живые (run_stage.sh)"
   - id: uv-atlas
     ru: "UV и атлас"
     area: docs/domain/areas/uv-atlas.md
@@ -433,12 +514,23 @@ contexts:
         match: "def pack_uv("
         issue: "#1359"
         ru: "своя раскладка UV ВПМ; файл TEC26 отличается одной строкой"
-        status: historical
+        status: own-duty
+        why: "раскладка ВПМ по периоду отделки и плотности, не атлас НПМ; build_kpp1 -> pack_uv"
+  - id: vpm-uv-copy
+    ru: "Копия раскладки UV ВПМ"
+    area: docs/domain/areas/uv-atlas.md
+    owner: jobs/KPP1/scripts/vpm_uv.py
+    owner_ru: "ВПМ pack_uv по периодам; не atlas_core НПМ"
+    functions:
+      - name: pack_uv
+        contract: "меш, отделки, спецификация -> раскладка ВПМ"
+    duplicates:
       - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
         match: "def pack_uv("
         issue: "#1359"
         ru: "почти побайтовая копия vpm_uv.py КПП1"
-        status: historical
+        status: live-bypass
+        step: "-"
   - id: package
     ru: "Экспорт и пакет сдачи"
     area: docs/domain/areas/package.md
@@ -500,8 +592,9 @@ contexts:
         rule: delivery-zip
         issue: "#1377"
         hash: "61d21d75df"
-        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ТЭЦ-26; побайтовый паритет с владельцем проверяет тест #1361)"
-        status: historical
+        ru: "живой локальный писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py; паритет байтов не означает вызов владельца"
+        status: live-bypass
+        step: "#1377"
       - at: "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
         rule: delivery-zip
         issue: "#1377"
@@ -519,38 +612,44 @@ contexts:
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
-        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v001; v002–v005 приняты, PR #969)"
-        status: historical
+        ru: "ЭЛВ v001 — заменённый черновик, не сданный результат"
+        status: superseded
+        why: "заменён кандидатом package_vpm_v006.py; ЭЛВ не сдан (Артём 15.11, #1441)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v002.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
-        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v002; v002–v005 приняты, PR #969)"
-        status: historical
+        ru: "ЭЛВ v002 — заменённый черновик, не сданный результат"
+        status: superseded
+        why: "заменён кандидатом package_vpm_v006.py; ЭЛВ не сдан (Артём 15.11, #1441)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v003.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
-        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v003; v002–v005 приняты, PR #969)"
-        status: historical
+        ru: "ЭЛВ v003 — заменённый черновик, не сданный результат"
+        status: superseded
+        why: "заменён кандидатом package_vpm_v006.py; ЭЛВ не сдан (Артём 15.11, #1441)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v004.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
-        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v004; v002–v005 приняты, PR #969)"
-        status: historical
+        ru: "ЭЛВ v004 — заменённый черновик, не сданный результат"
+        status: superseded
+        why: "заменён кандидатом package_vpm_v006.py; ЭЛВ не сдан (Артём 15.11, #1441)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v005.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
-        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v005; v002–v005 приняты, PR #969)"
-        status: historical
+        ru: "ЭЛВ v005 — заменённый черновик, не сданный результат"
+        status: superseded
+        why: "заменён кандидатом package_vpm_v006.py (округ #1107); ЭЛВ не сдан (Артём 15.11, #1441)"
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>"
         rule: delivery-zip
         issue: "#1377"
         hash: "99b52810a1"
-        ru: "исторический упаковщик ВПМ сданных версий; новая сдача — agr package-vpm (владелец), не переписываем (ЭЛВ v006; v002–v005 приняты, PR #969)"
-        status: historical
+        ru: "текущий кандидат ЭЛВ v006, свой ZIP; перенос на package_core в #1377; сдача parked #1104"
+        status: live-bypass
+        step: "#1377"
       - at: "tools/assets/build_maf_template.py::repack"
         rule: delivery-zip
         issue: "#1377"
@@ -632,13 +731,14 @@ contexts:
         match: "def dump("
         issue: "#1359"
         ru: "свой запуск чекера СИНТЕЗ"
-        status: live-bypass
-        step: "#1379"
+        status: own-duty
+        why: "запуск внешнего СИНТЕЗ, не twinQA validate_package; единый запуск остаётся #1379"
       - at: "jobs/TEC26-OKS/scripts/run_agr_checker.py:47"
         match: "def dump("
         issue: "#1359"
         ru: "копия запуска чекера КПП1"
-        status: historical
+        status: own-duty
+        why: "копия запуска внешнего СИНТЕЗ для AC08, не validate_package; дубль KPP1 устраняется в #1379"
   - id: dcc
     ru: "Связь с DCC (Blender / 3ds Max)"
     area: docs/agents/CAPABILITIES.md

@@ -96,8 +96,9 @@ contexts:
       - at: "jobs/TEC26-OKS/scripts/package_vpm.py:50"
         match: "zipfile.ZipFile(zpath"
         issue: "#1393"
-        ru: "свой писатель ZIP старого упаковщика ТЭЦ26 (заморожен)"
-        status: historical
+        ru: "живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core)"
+        status: live-bypass
+        step: "#1377"
   - id: sintez
     grid: "1.5/3"
     ru: "Чекер СИНТЕЗ и загрузка архива"

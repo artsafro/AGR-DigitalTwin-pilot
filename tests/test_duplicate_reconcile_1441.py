@@ -44,6 +44,7 @@ def test_current_entrypoints():
 def test_elv_not_delivered():
     maps = guard.load_maps(ROOT)
     assert 'jobs/elv-tc-vpm' not in guard.finished_jobs(ROOT, maps['contexts'])
+    assert all(r.status != 'historical' for r in rows() if r.rel.startswith('jobs/elv-tc-vpm/'))
     for version in range(1, 7):
         found = [r for r in rows() if r.at == f'jobs/elv-tc-vpm/scripts/package_vpm_v{version:03d}.py::<module>']
         assert len(found) == 1
@@ -97,3 +98,31 @@ def test_entrypoints_evidence_is_required_and_duplicates_are_idempotent(tmp_path
     (tmp_path / 'command.sh').write_text('python other.py\n', encoding='utf-8')
     with pytest.raises(ValueError, match='entrypoint'):
         call_chains._route_roots(tmp_path, {}, {'m': {'entrypoints': [entry]}})
+
+
+def test_wrapper_chain_has_real_owner_and_loader_not_just_a_path_mention(tmp_path):
+    real_rows = rows()
+    for at, owner in [
+        ('jobs/TEC26-OKS/scripts/ucx_tri_core.py:44', 'adapters/max/agr_tools/geom_core.py'),
+        ('jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29', 'jobs/TEC26-OKS/scripts/ucx_tri_core.py'),
+        ('jobs/TEC26-OKS/scripts/vpm_uv.py:155', 'jobs/KPP1/scripts/vpm_uv.py')]:
+        found = [r for r in real_rows if r.at == at]
+        assert found and all(r.owner == owner for r in found)
+        if found[0].status == 'wrapper':
+            assert guard.calls_owner(ROOT, found[0])
+    (tmp_path / 'probe.py').write_text(
+        "PATH = 'owner.py'\ndef diagnostic():\n    print(PATH)\n"
+        "def copy():\n    diagnostic()\n    return 1\n", encoding='utf-8')
+    row = guard.Row('m', 'c', 'owner.py', 'probe.py::copy', 'probe.py', 'copy', None,
+                    'wrapper', None, '', '#1441', '', '', 'test')
+    assert not guard.calls_owner(tmp_path, row)
+
+
+def test_module_level_builder_is_an_explicit_owner_not_an_invented_function():
+    import route_map
+    events, contexts, _ = route_map.render(ROOT)
+    assert route_map.verify_references(ROOT, events, contexts) == []
+    c = next(c for c in contexts['contexts'] if c['id'] == 'psu-ucx-build')
+    assert c['functions'][0]['name'] == '<module>'
+    c['functions'][0]['name'] = 'invented_builder'
+    assert any('invented_builder' in p for p in route_map.verify_references(ROOT, events, contexts))

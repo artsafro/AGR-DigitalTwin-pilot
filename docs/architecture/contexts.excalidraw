@@ -224,10 +224,430 @@
    "lineHeight": 1.25
   },
   {
-   "id": "ed237514149addda",
+   "id": "e4310e5bdd7262ad",
    "type": "rectangle",
    "x": 40,
    "y": 1046.5,
+   "width": 470,
+   "height": 142.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1345776344,
+   "version": 1,
+   "versionNonce": 1429815713,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e31de95cd6b043fc"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e31de95cd6b043fc",
+   "type": "text",
+   "x": 48,
+   "y": 1056.5,
+   "width": 454,
+   "height": 122.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 470529512,
+   "version": 1,
+   "versionNonce": 50393342,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Оболочка ПСУ275\nВладелец: src/dt_ai/geometry/shell.py\ntools/run_body_shell.py -> shell_body; оболочка внутрь,\nне операция над готовыми частями\n\nshell_body: вершины, грани, внешние нормали, толщина ->\nоболочка с доказательствами источника",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e4310e5bdd7262ad",
+   "originalText": "Оболочка ПСУ275\nВладелец: src/dt_ai/geometry/shell.py\ntools/run_body_shell.py -> shell_body; оболочка внутрь,\nне операция над готовыми частями\n\nshell_body: вершины, грани, внешние нормали, толщина ->\nоболочка с доказательствами источника",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e2d4a4ab6359f8d7",
+   "type": "rectangle",
+   "x": 650,
+   "y": 1046.5,
+   "width": 470,
+   "height": 142.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1037339567,
+   "version": 1,
+   "versionNonce": 501054221,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e2248f5fb0f4cd7d"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e2248f5fb0f4cd7d",
+   "type": "text",
+   "x": 658,
+   "y": 1056.5,
+   "width": 454,
+   "height": 122.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 411425699,
+   "version": 1,
+   "versionNonce": 626122963,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Построение UCX Main / Ground\nВладелец: src/dt_ai/geometry/ucx_build.py\ntools/blender/ucx_build.py -> build_main; строитель\nСРЕDА, не измеритель ucx10_core\n\nbuild_main: меш Main и параметры -> выпуклые куски UCX,\nотчёт включения и отклонений",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e2d4a4ab6359f8d7",
+   "originalText": "Построение UCX Main / Ground\nВладелец: src/dt_ai/geometry/ucx_build.py\ntools/blender/ucx_build.py -> build_main; строитель\nСРЕDА, не измеритель ucx10_core\n\nbuild_main: меш Main и параметры -> выпуклые куски UCX,\nотчёт включения и отклонений",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e980a3ddfe2ffe53",
+   "type": "rectangle",
+   "x": 1260,
+   "y": 1046.5,
+   "width": 470,
+   "height": 142.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 879094372,
+   "version": 1,
+   "versionNonce": 414342505,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e7d1998c5c2feb6e"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e7d1998c5c2feb6e",
+   "type": "text",
+   "x": 1268,
+   "y": 1056.5,
+   "width": 454,
+   "height": 122.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1694815189,
+   "version": 1,
+   "versionNonce": 1997754459,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "ПСУ275: второй построитель UCX\nВладелец: jobs/PSU275/scripts/vpm_stage5_oks.py\nscripts/run_oks.sh:22 -> vpm_stage5_oks.py:75-88;\nвыпуклые оболочки заданных кусков\n\n<module>: piece.ucx -> меши UCX_SM_<address>_Main_NNN; не\nпроверка зазоров",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e980a3ddfe2ffe53",
+   "originalText": "ПСУ275: второй построитель UCX\nВладелец: jobs/PSU275/scripts/vpm_stage5_oks.py\nscripts/run_oks.sh:22 -> vpm_stage5_oks.py:75-88;\nвыпуклые оболочки заданных кусков\n\n<module>: piece.ucx -> меши UCX_SM_<address>_Main_NNN; не\nпроверка зазоров",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ee4f80dd95e7611a",
+   "type": "rectangle",
+   "x": 1870,
+   "y": 1046.5,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 151758530,
+   "version": 1,
+   "versionNonce": 351401039,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "edae55e53bc4069d"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "edae55e53bc4069d",
+   "type": "text",
+   "x": 1878,
+   "y": 1056.5,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1580267213,
+   "version": 1,
+   "versionNonce": 936095030,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "ВПМ: построение UDIM в AGR Tools\nВладелец: adapters/max/agr_tools/vpm_core.py\nvpm.build в Max; jobs не вызывает это ядро; не атлас НПМ\n\nbuild: меши, параметры, перенумерация -> части ВПМ и\nтаблица UDIM",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ee4f80dd95e7611a",
+   "originalText": "ВПМ: построение UDIM в AGR Tools\nВладелец: adapters/max/agr_tools/vpm_core.py\nvpm.build в Max; jobs не вызывает это ядро; не атлас НПМ\n\nbuild: меши, параметры, перенумерация -> части ВПМ и\nтаблица UDIM",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e055eec75f5eb0b4",
+   "type": "rectangle",
+   "x": 40.0,
+   "y": 1249.0,
+   "width": 470,
+   "height": 107.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1603723438,
+   "version": 1,
+   "versionNonce": 99320484,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ea5fe04c3488d12b"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ea5fe04c3488d12b",
+   "type": "text",
+   "x": 48.0,
+   "y": 1259.0,
+   "width": 454,
+   "height": 87.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1893895766,
+   "version": 1,
+   "versionNonce": 958498749,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e055eec75f5eb0b4",
+   "originalText": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e01a0a674fb8eec4",
+   "type": "rectangle",
+   "x": 40.0,
+   "y": 1370.5,
+   "width": 470,
+   "height": 80.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 796201115,
+   "version": 1,
+   "versionNonce": 1498622935,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e8557b923cc2b0ed"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e8557b923cc2b0ed",
+   "type": "text",
+   "x": 48.0,
+   "y": 1380.5,
+   "width": 454,
+   "height": 60.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 376339254,
+   "version": 1,
+   "versionNonce": 353208346,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1\n• jobs/KPP1/scripts/build_kpp1.py:421 — run_stage.sh:13 ->\nbuild_kpp1.main -> roof; локальная плита/парапет, roof_core не\nвызывается (#1381)",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e01a0a674fb8eec4",
+   "originalText": "Дубли вне владельца: 1\n• jobs/KPP1/scripts/build_kpp1.py:421 — run_stage.sh:13 ->\nbuild_kpp1.main -> roof; локальная плита/парапет, roof_core не\nвызывается (#1381)",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed237514149addda",
+   "type": "rectangle",
+   "x": 650.0,
+   "y": 1249.0,
    "width": 470,
    "height": 265.0,
    "angle": 0,
@@ -264,8 +684,8 @@
   {
    "id": "ea9040dfc02df157",
    "type": "text",
-   "x": 48,
-   "y": 1056.5,
+   "x": 658.0,
+   "y": 1259.0,
    "width": 454,
    "height": 245.0,
    "angle": 0,
@@ -300,8 +720,8 @@
   {
    "id": "ebbc87b6742c8172",
    "type": "rectangle",
-   "x": 40,
-   "y": 1325.5,
+   "x": 650.0,
+   "y": 1528.0,
    "width": 470,
    "height": 110.0,
    "angle": 0,
@@ -338,8 +758,8 @@
   {
    "id": "e0ca1096fb1a75ea",
    "type": "text",
-   "x": 48,
-   "y": 1335.5,
+   "x": 658.0,
+   "y": 1538.0,
    "width": 454,
    "height": 90.0,
    "angle": 0,
@@ -374,8 +794,8 @@
   {
    "id": "e3b32b4a8117835a",
    "type": "rectangle",
-   "x": 650,
-   "y": 1046.5,
+   "x": 1260.0,
+   "y": 1249.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -406,10 +826,6 @@
     },
     {
      "type": "arrow",
-     "id": "ef80d7ce7bfb6c50"
-    },
-    {
-     "type": "arrow",
      "id": "e8a66e1032e2f488"
     }
    ],
@@ -420,8 +836,8 @@
   {
    "id": "e235e3fa5de9ad90",
    "type": "text",
-   "x": 658,
-   "y": 1056.5,
+   "x": 1268.0,
+   "y": 1259.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -456,10 +872,10 @@
   {
    "id": "e99c9ff8d7aad5df",
    "type": "rectangle",
-   "x": 650,
-   "y": 1273.0,
+   "x": 1260.0,
+   "y": 1475.5,
    "width": 470,
-   "height": 185.0,
+   "height": 155.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -481,6 +897,10 @@
     {
      "type": "text",
      "id": "e6464ee46504a376"
+    },
+    {
+     "type": "arrow",
+     "id": "ef80d7ce7bfb6c50"
     }
    ],
    "updated": 1,
@@ -490,10 +910,10 @@
   {
    "id": "e6464ee46504a376",
    "type": "text",
-   "x": 658,
-   "y": 1283.0,
+   "x": 1268.0,
+   "y": 1485.5,
    "width": 454,
-   "height": 165.0,
+   "height": 135.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -513,21 +933,161 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 5\n• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор\nатласа НПМ, по нему идёт agr vpm-to-npm (#1141)\n• jobs/KPP1/scripts/make_npm_atlas.py:28 — атлас НПМ КПП1 в задании\n(#1106)\n• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — копия атласа КПП1 в\nTEC26 (#1106)\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ; файл\nTEC26 отличается одной строкой (#1359)\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия\nvpm_uv.py КПП1 (#1359)",
+   "text": "Дубли вне владельца: 4\n• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор\nатласа НПМ, по нему идёт agr vpm-to-npm (#1141)\n• jobs/KPP1/scripts/make_npm_atlas.py:28 — атлас НПМ КПП1 в задании\n(#1106)\n• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — копия атласа КПП1 в\nTEC26 (#1106)\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ; файл\nTEC26 отличается одной строкой (#1359)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e99c9ff8d7aad5df",
-   "originalText": "Дубли вне владельца: 5\n• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор\nатласа НПМ, по нему идёт agr vpm-to-npm (#1141)\n• jobs/KPP1/scripts/make_npm_atlas.py:28 — атлас НПМ КПП1 в задании\n(#1106)\n• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — копия атласа КПП1 в\nTEC26 (#1106)\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ; файл\nTEC26 отличается одной строкой (#1359)\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия\nvpm_uv.py КПП1 (#1359)",
+   "originalText": "Дубли вне владельца: 4\n• tools/materials/npm_atlas_udim.py:785 — второй (Python) генератор\nатласа НПМ, по нему идёт agr vpm-to-npm (#1141)\n• jobs/KPP1/scripts/make_npm_atlas.py:28 — атлас НПМ КПП1 в задании\n(#1106)\n• jobs/TEC26-OKS/scripts/make_npm_atlas.py:28 — копия атласа КПП1 в\nTEC26 (#1106)\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ; файл\nTEC26 отличается одной строкой (#1359)",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed73172f630b51c5",
+   "type": "rectangle",
+   "x": 1870.0,
+   "y": 1249.0,
+   "width": 470,
+   "height": 107.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 133474467,
+   "version": 1,
+   "versionNonce": 1564627717,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e586c5135d46677b"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e586c5135d46677b",
+   "type": "text",
+   "x": 1878.0,
+   "y": 1259.0,
+   "width": 454,
+   "height": 87.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1027600173,
+   "version": 1,
+   "versionNonce": 989533940,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Копия раскладки UV ВПМ\nВладелец: jobs/KPP1/scripts/vpm_uv.py\nВПМ pack_uv по периодам; не atlas_core НПМ\n\npack_uv: меш, отделки, спецификация -> раскладка ВПМ",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ed73172f630b51c5",
+   "originalText": "Копия раскладки UV ВПМ\nВладелец: jobs/KPP1/scripts/vpm_uv.py\nВПМ pack_uv по периодам; не atlas_core НПМ\n\npack_uv: меш, отделки, спецификация -> раскладка ВПМ",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e5f3bede53607957",
+   "type": "rectangle",
+   "x": 1870.0,
+   "y": 1370.5,
+   "width": 470,
+   "height": 65.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 731142500,
+   "version": 1,
+   "versionNonce": 649322655,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "efd8b5b4746d6559"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "efd8b5b4746d6559",
+   "type": "text",
+   "x": 1878.0,
+   "y": 1380.5,
+   "width": 454,
+   "height": 45.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 314317122,
+   "version": 1,
+   "versionNonce": 1867618970,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия\nvpm_uv.py КПП1 (#1359)",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e5f3bede53607957",
+   "originalText": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия\nvpm_uv.py КПП1 (#1359)",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
-   "x": 1260,
-   "y": 1046.5,
+   "x": 345.0,
+   "y": 1698.0,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -568,8 +1128,8 @@
   {
    "id": "e55a50708fc05498",
    "type": "text",
-   "x": 1268,
-   "y": 1056.5,
+   "x": 353.0,
+   "y": 1708.0,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -604,8 +1164,8 @@
   {
    "id": "ed012c0e59699081",
    "type": "rectangle",
-   "x": 1260,
-   "y": 1343.0,
+   "x": 345.0,
+   "y": 1994.5,
    "width": 470,
    "height": 395.0,
    "angle": 0,
@@ -638,8 +1198,8 @@
   {
    "id": "ef7cc50781ab05b4",
    "type": "text",
-   "x": 1268,
-   "y": 1353.0,
+   "x": 353.0,
+   "y": 2004.5,
    "width": 454,
    "height": 375.0,
    "angle": 0,
@@ -674,8 +1234,8 @@
   {
    "id": "e7b912642e1534e2",
    "type": "rectangle",
-   "x": 1870,
-   "y": 1046.5,
+   "x": 955.0,
+   "y": 1698.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -706,6 +1266,10 @@
     },
     {
      "type": "arrow",
+     "id": "e63629d813723557"
+    },
+    {
+     "type": "arrow",
      "id": "e302963783a00205"
     }
    ],
@@ -716,8 +1280,8 @@
   {
    "id": "e3212abb34fd11e1",
    "type": "text",
-   "x": 1878,
-   "y": 1056.5,
+   "x": 963.0,
+   "y": 1708.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -752,8 +1316,8 @@
   {
    "id": "e43fe4f37d52ebfe",
    "type": "rectangle",
-   "x": 1870,
-   "y": 1255.5,
+   "x": 955.0,
+   "y": 1907.0,
    "width": 470,
    "height": 185.0,
    "angle": 0,
@@ -777,10 +1341,6 @@
     {
      "type": "text",
      "id": "eb444d1905179d98"
-    },
-    {
-     "type": "arrow",
-     "id": "e63629d813723557"
     }
    ],
    "updated": 1,
@@ -790,8 +1350,8 @@
   {
    "id": "eb444d1905179d98",
    "type": "text",
-   "x": 1878,
-   "y": 1265.5,
+   "x": 963.0,
+   "y": 1917.0,
    "width": 454,
    "height": 165.0,
    "angle": 0,
@@ -826,8 +1386,8 @@
   {
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
-   "x": 955.0,
-   "y": 1798.0,
+   "x": 1565.0,
+   "y": 1698.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -868,8 +1428,8 @@
   {
    "id": "ed4e9eac2280ec03",
    "type": "text",
-   "x": 963.0,
-   "y": 1808.0,
+   "x": 1573.0,
+   "y": 1708.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -904,8 +1464,8 @@
   {
    "id": "e7c3b463ea5ad90f",
    "type": "rectangle",
-   "x": 955.0,
-   "y": 2024.5,
+   "x": 1565.0,
+   "y": 1924.5,
    "width": 470,
    "height": 380.0,
    "angle": 0,
@@ -938,8 +1498,8 @@
   {
    "id": "e32db9413dafe301",
    "type": "text",
-   "x": 963.0,
-   "y": 2034.5,
+   "x": 1573.0,
+   "y": 1934.5,
    "width": 454,
    "height": 360.0,
    "angle": 0,
@@ -974,9 +1534,9 @@
   {
    "id": "e4414b2c1871542b",
    "type": "arrow",
-   "x": 510,
-   "y": 1179.0,
-   "width": 140,
+   "x": 1120.0,
+   "y": 1381.5,
+   "width": 140.0,
    "height": 26.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -1010,7 +1570,7 @@
      0
     ],
     [
-     140,
+     140.0,
      -26.25
     ]
    ],
@@ -1032,8 +1592,8 @@
   {
    "id": "ec8c1eb7b1bf9505",
    "type": "text",
-   "x": 520.0,
-   "y": 1147.88,
+   "x": 1130.0,
+   "y": 1350.38,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1068,10 +1628,10 @@
   {
    "id": "ef80d7ce7bfb6c50",
    "type": "arrow",
-   "x": 1120,
-   "y": 1152.75,
-   "width": 140,
-   "height": 35.0,
+   "x": 1260.0,
+   "y": 1553.0,
+   "width": 445.0,
+   "height": 286.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1104,8 +1664,8 @@
      0
     ],
     [
-     140,
-     35.0
+     -445.0,
+     286.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1113,7 +1673,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "e3b32b4a8117835a",
+    "elementId": "e99c9ff8d7aad5df",
     "focus": 0,
     "gap": 4
    },
@@ -1126,8 +1686,8 @@
   {
    "id": "e647a70c1b18162d",
    "type": "text",
-   "x": 1130.0,
-   "y": 1152.25,
+   "x": 977.5,
+   "y": 1678.12,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1162,9 +1722,9 @@
   {
    "id": "e195ad748a2fcc73",
    "type": "arrow",
-   "x": 1730,
-   "y": 1187.75,
-   "width": 140,
+   "x": 815.0,
+   "y": 1839.25,
+   "width": 140.0,
    "height": 43.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -1198,7 +1758,7 @@
      0
     ],
     [
-     140,
+     140.0,
      -43.75
     ]
    ],
@@ -1220,8 +1780,8 @@
   {
    "id": "e5b126af16a90368",
    "type": "text",
-   "x": 1740.0,
-   "y": 1156.88,
+   "x": 825.0,
+   "y": 1808.38,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1256,10 +1816,10 @@
   {
    "id": "ef95d128700adec0",
    "type": "arrow",
-   "x": 1190.0,
-   "y": 1798.0,
-   "width": 915.0,
-   "height": 362.5,
+   "x": 1565.0,
+   "y": 1804.25,
+   "width": 445.0,
+   "height": 221.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1292,8 +1852,8 @@
      0
     ],
     [
-     -915.0,
-     -362.5
+     -445.0,
+     -221.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1314,8 +1874,8 @@
   {
    "id": "e1713a01e405b29a",
    "type": "text",
-   "x": 672.5,
-   "y": 1598.75,
+   "x": 1282.5,
+   "y": 1675.62,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1350,10 +1910,10 @@
   {
    "id": "e63629d813723557",
    "type": "arrow",
-   "x": 1190.0,
-   "y": 1798.0,
-   "width": 915.0,
-   "height": 357.5,
+   "x": 1565.0,
+   "y": 1804.25,
+   "width": 140.0,
+   "height": 8.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1386,8 +1946,8 @@
      0
     ],
     [
-     915.0,
-     -357.5
+     -140.0,
+     -8.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1400,7 +1960,7 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "e43fe4f37d52ebfe",
+    "elementId": "e7b912642e1534e2",
     "focus": 0,
     "gap": 4
    }
@@ -1408,8 +1968,8 @@
   {
    "id": "e2956f09d14c6626",
    "type": "text",
-   "x": 1587.5,
-   "y": 1601.25,
+   "x": 1435.0,
+   "y": 1781.88,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1447,7 +2007,7 @@
    "x": 1190.0,
    "y": 986.5,
    "width": 305.0,
-   "height": 60.0,
+   "height": 262.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1480,8 +2040,8 @@
      0
     ],
     [
-     -305.0,
-     60.0
+     305.0,
+     262.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1502,8 +2062,8 @@
   {
    "id": "e730527004bd695c",
    "type": "text",
-   "x": 977.5,
-   "y": 1007.5,
+   "x": 1282.5,
+   "y": 1108.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1538,10 +2098,10 @@
   {
    "id": "e302963783a00205",
    "type": "arrow",
-   "x": 1425.0,
-   "y": 661.5,
-   "width": 445.0,
-   "height": 482.5,
+   "x": 1190.0,
+   "y": 986.5,
+   "width": 0.0,
+   "height": 711.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1574,8 +2134,8 @@
      0
     ],
     [
-     445.0,
-     482.5
+     0.0,
+     711.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1596,8 +2156,8 @@
   {
    "id": "e5ad51a41db3e644",
    "type": "text",
-   "x": 1587.5,
-   "y": 893.75,
+   "x": 1130.0,
+   "y": 1333.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
