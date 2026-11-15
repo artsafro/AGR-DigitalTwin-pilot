@@ -154,3 +154,70 @@ def test_documented_sample():
     sample = json.loads((ROOT / 'docs/agents/examples/swarm/writers.json').read_text())
     assert Path(sample['output_root']).is_absolute()
     assert sample['writers'][0]['kind'] in ('workflow', 'background')
+
+
+def test_dispatcher_preserves_swarm_warning(build):
+    out = invoke(build, 'Bash', {'command': r'mkdir C:\dbg'},
+                 script=ROOT / '.claude/hooks/pretool.py')
+    assert 'swarm warning' in out['hookSpecificOutput']['additionalContext'].lower()
+
+
+@pytest.mark.parametrize('args', [['not-a-mapping'], {'recipient': 'l2', 'content': 42},
+    {'recipient': 'l2', 'part': 'L2', 'content': 'Part: L2\nPart: windows-B'}])
+def test_malformed_message_denied(build, args):
+    assert decision(invoke(build, args=args)) == 'deny'
+
+
+def test_generated_ownership_probe(build):
+    import itertools
+    import runpy
+    check = runpy.run_path(str(HELPER))['check_message']
+    measured = 0
+    for kind, status, part, recipient in itertools.product(
+            ('workflow', 'background'), ('active', 'failed', 'completed'),
+            ('L2', 'windows-B'), ('l2', 'unknown')):
+        save(build, kind=kind, status=status, part=part)
+        denied = check({'recipient': recipient, 'content': 'Part: L2'}, str(build))
+        allowed = kind == 'background' and status == 'active' and part == 'L2' and recipient == 'l2'
+        assert (denied is None) == allowed
+        measured += 1
+    assert measured == 24
+
+
+def test_registration_no_clobber_and_reset(build):
+    path = build / '_swarm/writers.json'
+    before = path.read_bytes()
+    lock = build / '_swarm/writers.lock'
+    lock.write_text('foreign owner')
+    args = ('register', '--root', build, '--part', 'L2', '--agent-id', 'l2', '--kind', 'background')
+    assert cli(*args).returncode != 0
+    assert lock.read_text() == 'foreign owner'
+    assert path.read_bytes() == before
+    lock.unlink()
+    foreign = build / '_swarm/writers-foreign.partial'
+    foreign.write_text('foreign temporary')
+    assert cli(*args, '--status', 'completed').returncode == 0
+    assert cli(*args[:-3], 'replacement', '--kind', 'background').returncode == 0
+    assert foreign.read_text() == 'foreign temporary'
+    assert decision(invoke(build)) == 'deny'  # old id was removed, no stale authorization
+
+
+def test_windows_path_aliases(build):
+    target = str(build / 'folder/../x.txt').replace('\\', '/').upper()
+    out = invoke(build, 'Edit', {'file_path': target})
+    assert 'swarm warning' not in json.dumps(out).lower()
+
+
+def test_symlink_outside_write_warns(build, tmp_path):
+    # Windows directory junction works without developer-mode symlink privileges.
+    if os.name != 'nt':
+        (build / 'escape').symlink_to(tmp_path, target_is_directory=True)
+    else:
+        made = subprocess.run(['cmd', '/c', 'mklink', '/J', str(build / 'escape'), str(tmp_path)],
+                              capture_output=True, text=True, errors='replace')
+        assert made.returncode == 0, made.stderr
+    try:
+        out = invoke(build, 'Edit', {'file_path': str(build / 'escape/x.txt')})
+        assert 'swarm warning' in json.dumps(out).lower()
+    finally:
+        (build / 'escape').rmdir() if os.name == 'nt' else (build / 'escape').unlink()

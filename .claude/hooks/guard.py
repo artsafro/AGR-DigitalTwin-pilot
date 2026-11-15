@@ -683,13 +683,33 @@ def main() -> None:
         tool_call = data.get("toolCall", {}) or {}
         tool = tool_call.get("name", "")
         targs = tool_call.get("args", {}) or {}
-        cmd = targs.get("CommandLine", "")
-        target = targs.get("TargetFile", "")
+        cmd = targs.get("CommandLine", "") if isinstance(targs, dict) else ""
+        target = targs.get("TargetFile", "") if isinstance(targs, dict) else ""
     else:
         tool = data.get("tool_name", "")
         tin = data.get("tool_input", {}) or {}
-        cmd = tin.get("command", "")
-        target = tin.get("file_path") or tin.get("notebook_path", "")
+        cmd = tin.get("command", "") if isinstance(tin, dict) else ""
+        target = (tin.get("file_path") or tin.get("notebook_path", "")) if isinstance(tin, dict) else ""
+
+    # Swarm routing is fail-closed; output boundaries are advisory, not a sandbox.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from tools.hooks.swarm import check_message, write_warning
+    args = targs if is_antigravity else tin
+    if tool == "SendMessage":
+        reason = check_message(args, os.environ.get("AGR_SWARM_BUILD_ROOT"))
+        if reason:
+            if is_antigravity:
+                print(json.dumps({"decision": "deny", "reason": reason}))
+            else:
+                print(json.dumps({"hookSpecificOutput": {
+                    "hookEventName": "PreToolUse", "permissionDecision": "deny",
+                    "permissionDecisionReason": reason}}))
+            return
+    swarm_note = write_warning(tool, args, os.environ.get("AGR_SWARM_BUILD_ROOT"), data.get("cwd")) \
+        if os.environ.get("AGR_SWARM_BUILD_ROOT") or os.environ.get("AGR_SWARM_AGENT_ID") else None
+
+    def guarded_ask(reason):
+        ask("\n".join(x for x in (reason, swarm_note) if x), is_antigravity)
 
     # 1. Shell commands
     if tool in ("Bash", "PowerShell", "run_command", "shell", "exec_command", "local_shell"):
@@ -701,7 +721,7 @@ def main() -> None:
             if granted:
                 allow_explicit(granted, is_antigravity)
         if reason:
-            ask(reason, is_antigravity)
+            guarded_ask(reason)
 
     # 2. File write/edit commands
     elif tool in ("Write", "Edit", "NotebookEdit", "write_to_file", "replace_file_content"):
@@ -709,7 +729,7 @@ def main() -> None:
             p = Path(target)
             # Protect binary/production extensions from accidental text overwrites
             if re.search(PRODUCTION_EXT, p.name, re.IGNORECASE):
-                ask(f"writing to production asset: {p.name}", is_antigravity)
+                guarded_ask(f"writing to production asset: {p.name}")
 
             # Check boundary
             workspaces = data.get("workspacePaths", [])
@@ -722,8 +742,12 @@ def main() -> None:
 
             all_allowed = project_roots + ALLOWED_WRITE_ROOTS
             if not any(inside(p, r) for r in all_allowed):
-                ask(f"write outside project/allowed folders: {target}", is_antigravity)
+                guarded_ask(f"write outside project/allowed folders: {target}")
 
+    if swarm_note:
+        print(json.dumps({"systemMessage": swarm_note, "hookSpecificOutput": {
+            "hookEventName": "PreToolUse", "additionalContext": swarm_note}}))
+        return
     allow(is_antigravity)
 
 
