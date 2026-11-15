@@ -1,6 +1,56 @@
-# KPP1 #1416 — Ground copy under 180 000 NPM triangles; s_podz search — PACKAGING WAITS FOR ARTEM
+# KPP1 #1416 — Ground copy under 180 000 NPM triangles; s_podz search; packages rebuilt — NOT PASSED
 
-## Кратко (RU)
+## Кратко (RU) — раунд 2 (после решения Артёма [D308])
+
+- **Ground v003** (`G:/Мой диск/AGR-evidence/1416-kpp1-ground-budget/v003/0000_Kpp_1_Ground.fbx`, sha `29944746…`):
+  принятая геометрия v002 + мост #1371 (абсолютная система R1) + имена `SM_Kpp_1_{Flora,Ground,GroundEl}` +
+  ремонт V004 в копии. **179 821** треугольников (≤ 180 000). Текстуры заказчика вновь встроены (v002 их потерял),
+  единицы 1 м (v002 писал 1 см). Оригинал заказчика не тронут (хэш d8770f47… проверен скриптом).
+- **NPM пакет** `package-v001/0000_Kpp_1.zip` (`agr package-npm`, R1 байт-в-байт из #1371 v007):
+  V001 / V002 / V005 / V006 / **V012 pass** (было fail). V004 MAF normals 606 → 4, MAF smoothing pass.
+  **Итог `passed=false`** — остаются дефекты моделирования самого Ground заказчика (таблица ниже).
+- **VPM** v008 (#1371, `db4bef46…`) не изменён (новых входов для VPM нет); свежий `--scene`: V011 fail только `s_podz`.
+- **s_podz:** без изменений — ТЭП `TEC26_na_RR_1.pptx`, слайд 59: подземная часть «–»; ждём число заказчика ([D306]).
+
+## Round 2: v003 and packages ([D308])
+
+Command (Blender 5.1.2 headless):
+
+```bash
+"$B" -b --factory-startup -noaudio --python derive_ground_v003.py -- "$E/v002/0000_Kpp_1_Ground.fbx" 5cc8421f…f8d3 \
+  "<1371 copies>/0607_77_05_0009005_117_Ground.fbx" d8770f47…aebd jobs/KPP1/delivered-1371/mapping.json "$E/v003"
+uv run agr package-npm "$E/package-v001/npm"                       # exit 0, 2 FBX, no problems
+uv run python tools/qa/validate_package.py "$E/package-v001/0000_Kpp_1.zip" --profile npm --scene --json   # exit 1
+uv run python tools/qa/validate_package.py "<1371>/package-v008/SM_Kpp_1.zip" --profile vpm --scene --json   # exit 1
+```
+
+Repairs on the copy (`v003/repair-report.json`): weld <= 2 mm (GroundEl 18 verts), degenerate faces removed
+(Flora 11, GroundEl 238 -> 179 899 -> 179 821 tris), 0 duplicate faces / loose elements found, GroundEl closed shells
+oriented outward by signed volume (470 faces flipped, 566 flat components undetermined), 443 GroundEl edges > 40 deg
+made hard. Three earlier attempts kept as evidence (`v003-attempt1..3`): FACE smoothing / no textures / 1 cm units
+(attempt 1), smoothing 455 soft edges (attempt 2), flipped 2 + 9 soft edges from stale bmesh indices (attempt 3).
+
+| Stage | NPM 1371 v007 (customer Ground) | NPM 1416 package-v001 (Ground v003) | Owner of what is left |
+|---|---|---|---|
+| V001 composition | pass | pass | — |
+| V002 units / header | pass | pass | — |
+| V003 Ground budget | fail 180 934 | **pass 179 816 (readback)** | — |
+| V003 Flora share | review 110 362 / 70 000 | review 109 327 / 70 000 | Artem (indicative share) |
+| V003 skirt | fail (broken face geometry) | fail (same) | customer Ground modelling |
+| V003 footprint / holes | not_run | not_run (no ground_area_m2 / holes reference) | needs site-minus-footprint area |
+| V003 master quads | not_run | not_run | #1372 quad master is for R1, not this package's cold-run R1 member |
+| V004 topology | Flora 152 427 / Ground 16 745 / GroundEl 64 561 | Flora 150 567 / Ground 15 976 / GroundEl 63 537 | **all `self_intersections`, 0 duplicates**: crossed Flora cards and pieces sunk into terrain — customer modelling |
+| V004 MAF normals | flipped 606, inconsistent 8 | flipped 4, inconsistent 0 | 4 faces on non-manifold edges |
+| V004 MAF smoothing | pass | pass | — |
+| V004 clearance | 1 498 pairs < 5 mm | 406 pairs < 5 mm | customer modelling / Artem (D256-type exception?) |
+| V006 textures | pass | pass | — |
+| V012 names | fail | **pass** | — |
+| V014 / V015 / V017 | not_run | not_run | validator absent / manual sign-offs / no planting schedule |
+
+xView of v003 (`v003-attempt2/xview-after.json` is the same geometry minus the hard-edge / normal changes):
+overlapping faces remain (customer layers), so xView 0/0 is not reached.
+
+## Round 1 summary (RU)
 
 - **Ground (D307):** собрана наша производная копия NPM Ground заказчика: **180 934 → 179 899**
   треугольников (−1 035, лимит 180 000). Упрощена только Flora (collapse-decimate 0.9906, 1 035 треугольников);

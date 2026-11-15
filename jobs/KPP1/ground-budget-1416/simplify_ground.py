@@ -1,4 +1,4 @@
-"""KPP1 #1416: derived NPM Ground copy under the 180 000 triangle budget [D298].
+"""KPP1 #1416: derived NPM Ground copy under the 180 000 triangle budget [D307].
 
 Pattern: n/a | new-case: job script, collapse-decimate only the Flora mesh of a COPY of the
 customer NPM Ground until the whole Ground is <= the target; customer original untouched.
