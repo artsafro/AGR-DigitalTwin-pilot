@@ -697,7 +697,7 @@
    "x": 955.0,
    "y": 971.5,
    "width": 470,
-   "height": 177.5,
+   "height": 282.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -743,7 +743,7 @@
    "x": 963.0,
    "y": 981.5,
    "width": 454,
-   "height": 157.5,
+   "height": 262.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -763,13 +763,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Экспорт и пакеты (МАФ в Ground FBX)\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка",
+   "text": "Экспорт и пакеты (МАФ в Ground FBX)\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1648b9a5855f96c",
-   "originalText": "Экспорт и пакеты (МАФ в Ground FBX)\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка",
+   "originalText": "Экспорт и пакеты (МАФ в Ground FBX)\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1511,7 +1511,7 @@
    "x": 2175.0,
    "y": 822.75,
    "width": 750.0,
-   "height": 237.5,
+   "height": 290.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1545,7 +1545,7 @@
     ],
     [
      -750.0,
-     237.5
+     290.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1567,7 +1567,7 @@
    "id": "efe73db45daa3db5",
    "type": "text",
    "x": 1740.0,
-   "y": 932.5,
+   "y": 958.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1603,9 +1603,9 @@
    "id": "e6ad14001c02e179",
    "type": "arrow",
    "x": 955.0,
-   "y": 1060.25,
+   "y": 1112.75,
    "width": 140.0,
-   "height": 8.75,
+   "height": 61.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1639,7 +1639,7 @@
     ],
     [
      -140.0,
-     -8.75
+     -61.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1661,7 +1661,7 @@
    "id": "e03a3e17d08b77a6",
    "type": "text",
    "x": 825.0,
-   "y": 1046.88,
+   "y": 1073.12,
    "width": 120,
    "height": 17.5,
    "angle": 0,

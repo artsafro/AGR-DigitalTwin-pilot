@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2945 1464" width="2945" height="1464" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2945 1569" width="2945" height="1569" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2945" height="1464" fill="#ffffff"/>
+<rect x="10" y="-30" width="2945" height="1569" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="195.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="319.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40.0" y="444.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -10,9 +10,9 @@
 <rect x="345.0" y="716.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="716.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="971.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="971.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="971.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="345.0" y="971.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1209.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="1314.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <line x1="510.0" y1="532.75" x2="650.0" y2="532.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1120.0" y1="532.75" x2="1565.0" y2="541.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="2035.0" y1="541.5" x2="2175.0" y2="550.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -20,9 +20,9 @@
 <line x1="1190.0" y1="384.0" x2="1190.0" y2="716.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="815.0" y1="814.0" x2="955.0" y2="787.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1190.0" y1="859.0" x2="1800.0" y2="971.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1800.0" y1="1149.0" x2="1800.0" y2="1209.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1565.0" y1="1060.25" x2="1425.0" y2="1060.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="955.0" y1="1060.25" x2="815.0" y2="1051.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1800.0" y1="1149.0" x2="1800.0" y2="1314.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1565.0" y1="1060.25" x2="1425.0" y2="1112.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="955.0" y1="1112.75" x2="815.0" y2="1051.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Флоры (НПМ + ВПМ) — D293 (#1393)</tspan>
 </text>
@@ -132,9 +132,15 @@
 <tspan x="963.0" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
 <tspan x="963.0" dy="17.5">(#1361, #1377)</tspan>
 <tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
+<tspan x="963.0" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
+<tspan x="963.0" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
+<tspan x="963.0" dy="17.5">плохое имя — ошибка до записи</tspan>
 <tspan x="963.0" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
 <tspan x="963.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
 <tspan x="963.0" dy="17.5">время упаковки — ошибка</tspan>
+<tspan x="963.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
+<tspan x="963.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
 <text x="353.0" y="981.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="14">Проверки пакета и визуальный шлюз</tspan>
@@ -146,7 +152,7 @@
 <tspan x="353.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="353.0" dy="17.5">находки НПМ</tspan>
 </text>
-<text x="1573.0" y="1219.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1573.0" y="1324.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1573.0" dy="14">Проверки Флоры: размер, доля бюджета, карты</tspan>
 <tspan x="1573.0" dy="17.5">Владелец: src/twinqa/flora.py</tspan>
 <tspan x="1573.0" dy="17.5">FLO-04, FLO-06, FLO-08 на чтении Ground FBX</tspan>
@@ -188,17 +194,17 @@
 <text x="1495.0" y="906.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">виды сцены</tspan>
 </text>
-<rect x="1770.0" y="1170.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1170.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1770.0" y="1222.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="1222.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">карты и размеры</tspan>
 </text>
-<rect x="1465.0" y="1042.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="1042.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="1068.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="1068.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">атлас 2048 /</tspan>
 <tspan x="1495.0" dy="17.5">4096</tspan>
 </text>
-<rect x="855.0" y="1046.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="1046.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="855.0" y="1073.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="1073.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="885.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

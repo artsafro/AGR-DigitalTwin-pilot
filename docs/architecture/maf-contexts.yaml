@@ -102,8 +102,14 @@ contexts:
     owner: adapters/max/agr_tools/package_core.py
     owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
     functions:
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
       - name: _write_zip
         contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
   - id: validation
     grid: "0.5/3"
     ru: "Проверки пакета и витрина для Артёма"
