@@ -30,8 +30,17 @@ scope, e.g. the Max cores under adapters/) must still be found (no stale rows). 
 (`<module>` at top level), never by a bare line number (#1387): lines inserted above or inside the function do not
 make it NEW or STALE. Optional `hash:` (10 hex, `sha1(ast.unparse(node))`, printed with every NEW COPY) pins one
 copy inside the function; a row without it covers every copy of that rule in that function.
-Usage: python tools/architecture/duplicate_guard.py [--root REPO] [--json]; exit 0 clean, 1 violations,
-2 unreadable input (a file that does not parse is an error naming it, never skipped).
+Usage: python tools/architecture/duplicate_guard.py [--root REPO] [--json] [--table] [--copies-only]; exit 0 clean,
+1 violations, 2 unreadable input (a file that does not parse is an error naming it, never skipped).
+
+Status (#1424): every `duplicates` row of every context map (route_map.context_maps) carries `status`
+live-bypass | wrapper | historical | own-duty, checked against the real call chains (call_chains.py): a live-bypass
+must be reached by a live command/route, must not call its owner and must be in LIVE_BYPASS_BASELINE (a NEW one
+fails, a fixed one must leave the baseline); a wrapper must call its owner (for a rule in POLICY_NAMES: one of
+its policy functions); a historical row must have no live chain
+and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`. `--table` prints the Russian
+«живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
+runs only the copy scan (synthetic test roots without the maps).
 """
 import argparse
 import ast
@@ -329,22 +338,303 @@ def scan_for(root, allowed, scope=None):
     return findings
 
 
+# ---------------------------------------------------------------- status of every duplicates row (#1424)
+STATUSES = ("live-bypass", "wrapper", "historical", "own-duty")
+STEP = re.compile(r"^(#[0-9]+|-)$")
+# the remaining compaction steps the live bypasses are ordered over (#1424 issue text; #1397 = step 1b, open)
+COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406", "#1407", "#1410")
+# Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
+# listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
+LIVE_BYPASS_BASELINE = frozenset({
+    ("contexts", "adapters/max/agr_tools/atlas_core.py::pack", "402002d484"),
+    ("contexts", "adapters/max/agr_tools/npm2vpm_core.py::tile_origin", "af2bc2e385"),
+    ("contexts", "adapters/max/agr_tools/npm_core.py::tile_of", "ded8ff2561"),
+    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "af2bc2e385"),
+    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "fa20d4136a"),
+    ("contexts", "adapters/max/agr_tools/udimplug_core.py::tile_offset", "d163d10dca"),
+    ("contexts", "adapters/max/agr_tools/udimview_core.py::face_tile", "8fa30eddc4"),
+    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "8b58df8f2d"),
+    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "af2bc2e385"),
+    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
+    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
+    ("contexts", "jobs/KPP1/scripts/run_agr_checker.py:47", ""),
+    ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
+    ("contexts", "src/dt_ai/geometry/ground_cake.py::uv_tile_report", "331763c046"),
+    ("contexts", "tools/blender/ground_json_to_fbx.py::readback", "abdf135e7a"),
+    ("contexts", "tools/experiments/dreamsim_ac08.py::_tile", "971a042bbe"),
+    ("contexts", "tools/flora/build_flora_star.py::_bpy_build", "31ff54af03"),
+    ("contexts", "tools/flora/build_flora_star.py::_bpy_build", "85e04a9a85"),
+    ("contexts", "tools/flora/build_flora_star.py::udim_offset", "31ff54af03"),
+    ("contexts", "tools/flora/build_flora_star.py::udim_offset", "85e04a9a85"),
+    ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
+    ("contexts", "tools/methods/methods_metrics.py::_udim", "ded8ff2561"),
+    ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "31ff54af03"),
+    ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "85e04a9a85"),
+    ("contexts", "tools/source/measure_spec_blender.py::udim", "ded8ff2561"),
+    # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
+    ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
+    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),
+    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "83b1fa0042"),
+    ("contexts", "tools/flora/build_flora_star.py::_blender", "e5c254530a"),
+    ("contexts", "tools/library/check_library.py::native_inspect", "c85d66fb6e"),
+    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
+    ("contexts", "tools/materials/bind_ground_textures.py::_run_blender", "707f4be9fd"),
+    ("contexts", "tools/methods/body/run_benchmarks.py::_blender", "18f971bee9"),
+    ("contexts", "tools/methods/ground/build_variant.py::_blender", "37235a2e47"),
+    ("contexts", "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx", "f5a8a5aa67"),
+    ("contexts", "tools/methods/run_variant.py::run_extra", "d4b2fad230"),
+    ("contexts", "tools/methods/ucx/run_benchmarks.py::main", "9c40344e89"),
+    ("contexts", "tools/methods/windows/run_benchmarks.py::main", "c2afb4241e"),
+    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
+    ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
+    ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
+    ("vpm-contexts", "jobs/KPP1/scripts/run_agr_checker.py:47", ""),
+    ("vpm-contexts", "jobs/KPP1/scripts/vpm_ucx.py:50", ""),
+})
+Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
+                 defaults=(None,))
+# Owner functions that ARE the duty of a rule (#1424 x #1378): a row of that rule is a wrapper only when its scope
+# calls one of them; taking the executable path from blender_runner and building an own argv is still a bypass.
+POLICY_NAMES = {"blender-launch": frozenset({"blender_command", "run_blender"})}
+
+
+def _row_at(at):
+    """-> (rel, qualname | None, line | None) of a duplicates `at` (path.py::qualname or path.py:line)."""
+    if "::" in at:
+        rel, qual = at.split("::", 1)
+        return rel, qual, None
+    rel, line = at.rsplit(":", 1)
+    return rel, None, int(line)
+
+
+def rows_of(maps):
+    """Every duplicates row of every context map -> [Row]; a missing or unknown status, an own-duty row without a
+    Russian `why`, a live-bypass row without `step` (#n or "-") raise ValueError naming the row."""
+    out = []
+    for name, cmap in maps.items():
+        for ctx in [cmap.get("shared_kernel", {})] + cmap.get("contexts", []):
+            for d in ctx.get("duplicates", []):
+                at = str(d.get("at", ""))
+                where = f"{name}: {at}"
+                status = d.get("status")
+                if status not in STATUSES:
+                    raise ValueError(f"{where}: status {status!r} must be one of {', '.join(STATUSES)} (#1424)")
+                why = str(d.get("why") or "").strip()
+                if status == "own-duty" and not re.search(r"[А-Яа-яЁё]", why):
+                    raise ValueError(f"{where}: own-duty needs `why` in Russian: which other duty, why not a copy")
+                step = d.get("step")
+                if status == "live-bypass" and (step is None or not STEP.match(str(step))):
+                    raise ValueError(f"{where}: live-bypass needs `step` (#<compaction issue> or \"-\" = no card)")
+                if status != "live-bypass" and step is not None:
+                    raise ValueError(f"{where}: `step` belongs to live-bypass rows only")
+                rel, qual, line = _row_at(at)
+                digest = d.get("hash")
+                out.append(Row(name, ctx.get("id"), ctx.get("owner"), at, rel, qual, line, status,
+                               None if step is None else str(step), why, d.get("issue"),
+                               "" if digest is None else str(digest), str(d.get("ru") or ""), str(ctx.get("ru") or ctx.get("id")),
+                               d.get("rule")))
+    return out
+
+
+def _owner_names(tree, owner):
+    """Names in the file bound to the owner module: imports of it or from it, and assignments whose value names the
+    owner file (`_sibling('udimtile_core.py', ...)`, importlib spec of its path)."""
+    stem = Path(owner).stem
+    names = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                if a.name.split(".")[-1] == stem:
+                    names.add(a.asname or a.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom):
+            mod = (node.module or "").split(".")
+            for a in node.names:
+                if mod[-1:] == [stem] or a.name == stem:
+                    names.add(a.asname or a.name)
+        elif isinstance(node, ast.Assign):
+            if any(isinstance(s, ast.Constant) and isinstance(s.value, str) and s.value.replace("\\", "/")
+                   .endswith(f"{stem}.py") for s in ast.walk(node.value)):
+                names.update(t.id for t in node.targets if isinstance(t, ast.Name))
+    return names
+
+
+def _scope_node(tree, qual, line):
+    """The def/class a row points to: by qualname, or the innermost def/class holding the line; module otherwise."""
+    if qual not in (None, MODULE):
+        node, parts = tree, qual.split(".")
+        for part in parts:
+            node = next((n for n in ast.iter_child_nodes(node) if isinstance(n, SCOPES) and n.name == part), None)
+            if node is None:
+                raise ValueError(f"{qual}: no such function/class")
+        return node
+    best = tree
+    if line is not None:
+        for n in ast.walk(tree):
+            if isinstance(n, SCOPES) and n.lineno <= line <= n.end_lineno:
+                if best is tree or n.lineno >= best.lineno:
+                    best = n
+    return best
+
+
+def calls_owner(root, row):
+    """True when the row's function (or line's enclosing def) uses a name bound to its context owner; for a rule in
+    POLICY_NAMES only a use of one of its policy functions counts (`from owner import f [as g]` or `owner_mod.f`)."""
+    tree = ast.parse((Path(root) / row.rel).read_bytes(), filename=row.rel)
+    names = _owner_names(tree, row.owner)
+    if not names:
+        return False
+    scope = _scope_node(tree, row.qual, row.line)
+    policy = POLICY_NAMES.get(row.rule)
+    if policy is None:
+        return any(isinstance(n, ast.Name) and n.id in names for n in ast.walk(scope))
+    stem = Path(row.owner).stem
+    imported = {a.asname or a.name: a.name for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)
+                and (n.module or "").split(".")[-1:] == [stem] for a in n.names}
+    funcs = {local for local, name in imported.items() if name in policy}
+    modules = names - set(imported)
+    return any((isinstance(n, ast.Name) and n.id in funcs) or
+               (isinstance(n, ast.Attribute) and n.attr in policy and isinstance(n.value, ast.Name)
+                and n.value.id in modules) for n in ast.walk(scope))
+
+
+def finished_jobs(root, contexts):
+    """`finished_jobs` of contexts.yaml -> {job folder: evidence}; the evidence file must exist and hold `match`."""
+    jobs = {}
+    for i, j in enumerate(contexts.get("finished_jobs", [])):
+        job, ev, match = str(j.get("job", "")), str(j.get("evidence", "")), str(j.get("match", ""))
+        if not re.match(r"^jobs/[^/]+$", job) or not ev or not match:
+            raise ValueError(f"finished_jobs[{i}]: needs job: jobs/<folder>, evidence and match")
+        path = Path(root) / ev
+        text = path.read_text(encoding="utf-8") if path.is_file() else \
+            "\n".join(p.name for p in path.iterdir()) if path.is_dir() else None
+        if text is None:
+            raise ValueError(f"finished_jobs {job}: evidence {ev} does not exist")
+        if match not in text:
+            raise ValueError(f"finished_jobs {job}: evidence {ev} does not contain {match!r}")
+        jobs[job] = ev
+    return jobs
+
+
+def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE):
+    """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees."""
+    problems = []
+    live_keys = set()
+    for r in rows:
+        where = f"{r.map}: {r.at}" + (f" hash {r.hash}" if r.hash else "")
+        if not (Path(root) / r.rel).is_file():
+            problems.append(f"{where}: file does not exist")
+            continue
+        real = (Path(root) / r.rel).resolve()
+        if "\\" in r.rel or real.relative_to(Path(root).resolve()).as_posix() != r.rel:
+            problems.append(f"{where}: path is an alias of {real.relative_to(Path(root).resolve()).as_posix()}; "
+                            "write the repo-relative path as on disk")
+            continue
+        chain = chains.get(r.rel)
+        via = f"{' > '.join(chain)} ({roots[chain[0]]})" if chain else ""
+        wrapper = calls_owner(root, r)
+        if r.status == "wrapper" and not wrapper:
+            problems.append(f"{where}: status wrapper, but it does not call its owner {r.owner}")
+        if r.status == "historical":
+            job = "/".join(r.rel.split("/")[:2])
+            if chain:
+                problems.append(f"{where}: status historical, but a live command/route uses it: {via}")
+            if not r.rel.startswith("jobs/") or job not in finished:
+                problems.append(f"{where}: historical only inside a finished job (finished_jobs), not {job}")
+        if r.status == "live-bypass":
+            live_keys.add((r.map, r.at, r.hash))
+            if not chain:
+                problems.append(f"{where}: status live-bypass, but no live command/route reaches {r.rel}")
+            if wrapper:
+                problems.append(f"{where}: status live-bypass, but it calls the owner {r.owner}: wrapper")
+            if (r.map, r.at, r.hash) not in baseline:
+                problems.append(f"NEW LIVE BYPASS {where}: use {r.owner} instead (a live command/route must not get "
+                                f"a new copy; {via})")
+    for key in sorted(baseline - live_keys):
+        problems.append(f"FIXED LIVE BYPASS {key[0]}: {key[1]} {key[2]}: no live-bypass row any more; remove it from "
+                        "LIVE_BYPASS_BASELINE (tighten the ratchet)")
+    return problems
+
+
+def load_maps(root):
+    """Every context map of route_map (contexts.yaml first)."""
+    if __package__ in (None, ""):
+        import route_map  # noqa: E402
+    else:
+        from . import route_map
+    return {n: mini_yaml.load(Path(root) / p) for n, p in route_map.context_maps().items()}
+
+
+def live_chains(root):
+    if __package__ in (None, ""):
+        import call_chains  # noqa: E402
+    else:
+        from . import call_chains
+    return call_chains.load_live(root)
+
+
+def bypass_table(rows, steps=COMPACTION_STEPS):
+    """Russian markdown: live bypasses by area, then the remaining compaction steps ordered by live bypasses."""
+    live, seen = [], set()
+    for r in rows:   # one copy listed in two context maps is one bypass
+        if r.status == "live-bypass" and (r.at, r.hash) not in seen:
+            seen.add((r.at, r.hash))
+            live.append(r)
+    by_ctx = {}
+    for r in live:
+        by_ctx.setdefault((r.area, r.step), []).append(r)
+    counts = {s: 0 for s in steps}
+    for r in live:
+        counts[r.step] = counts.get(r.step, 0) + 1
+    total = {s: sum(1 for r in rows if r.status == s) for s in STATUSES}
+    out = ["### Живые обходы по областям", "",
+           f"Строк дублей во всех картах: {len(rows)}; живой обход {total['live-bypass']}, обёртка {total['wrapper']}, "
+           f"исторические {total['historical']}, своя обязанность {total['own-duty']}; разных живых копий {len(live)}.",
+           "",
+           "| Область | Живых обходов | Файлы | Шаг сжатия |", "|---|---|---|---|"]
+    for key in sorted(by_ctx, key=lambda k: (-len(by_ctx[k]), k)):
+        files = sorted({r.rel for r in by_ctx[key]})
+        out.append(f"| {key[0]} | {len(by_ctx[key])} | {', '.join(f'`{f}`' for f in files)} | "
+                   f"{'нет карточки' if key[1] == '-' else key[1]} |")
+    out += ["", "### Порядок оставшихся шагов сжатия (по живым обходам)", "",
+            "| № | Шаг | Живых обходов |", "|---|---|---|"]
+    order = sorted(counts, key=lambda s: (-counts[s], s == "-", steps.index(s) if s in steps else len(steps), s))
+    for i, s in enumerate(order, 1):
+        out.append(f"| {i} | {'нет карточки' if s == '-' else s} | {counts[s]} |")
+    return "\n".join(out) + "\n"
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Duplicate guard (#1359): owned functions vs copies")
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     ap.add_argument("--contexts", type=Path, default=None)
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--table", action="store_true", help="print the Russian live-bypass table + compaction order")
+    ap.add_argument("--copies-only", action="store_true",
+                    help="only the copy scan of the allowlist (synthetic test roots); skips the #1424 status check")
     args = ap.parse_args(argv)
     try:
         contexts = mini_yaml.load(args.contexts or args.root / "docs/architecture/contexts.yaml")
         allowed = allowlist(contexts)
         new, stale = compare(scan_for(args.root, allowed), allowed)
+        problems, rows = [], []
+        if not args.copies_only:
+            maps = load_maps(args.root)
+            if args.contexts:
+                maps["contexts"] = contexts
+            rows = rows_of(maps)
+            roots, chains = live_chains(args.root)
+            problems = status_problems(args.root, rows, chains, roots, finished_jobs(args.root, contexts))
     except (OSError, SyntaxError, ValueError, KeyError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
+    if args.table and rows:
+        print(bypass_table(rows))
+    for p in problems:
+        print(f"STATUS {p}")
     if args.json:
         print(json.dumps({"new": [f._asdict() for f in new],
-                          "stale": [dict(zip(("rule", "path", "qualname", "hash"), k)) for k in stale]}, indent=1))
+                          "stale": [dict(zip(("rule", "path", "qualname", "hash"), k)) for k in stale],
+                          "status": problems}, indent=1))
     for f in new:
         print(f"NEW COPY [{f.rule}] {f.path}:{f.line} in {f.qualname} (hash {f.digest}): use {RULES[f.rule]} "
               f"instead (or list `{f.path}::{f.qualname}` in contexts.yaml with an issue)")
@@ -352,8 +642,12 @@ def main(argv=None):
         pin = f" hash {digest}" if digest else ""
         print(f"STALE ALLOWLIST [{rule}] {path}::{qual}{pin}: not found any more; remove or fix the row in "
               "contexts.yaml")
-    return 1 if new or stale else 0
+    return 1 if new or stale or problems else 0
 
 
 if __name__ == "__main__":
+    # Russian report on a non-UTF-8 Windows console/pipe (no PYTHONUTF8): never crash on print.
+    for _s in (sys.stdout, sys.stderr):
+        if hasattr(_s, "reconfigure"):
+            _s.reconfigure(encoding="utf-8", errors="replace")
     sys.exit(main())

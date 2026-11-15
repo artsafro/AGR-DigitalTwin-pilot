@@ -192,12 +192,43 @@ def _counterpart(path):
     return other if os.path.isfile(other) else None
 
 
+def _build_manifest():
+    """build_manifest.py next to this file (#1423), loaded by path like the other sibling cores."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        'agr_tools_build_manifest', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build_manifest.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def cross_masters(paths):
+    """{zip basename: [(code, detail)]}: the build manifests of the checked packages must name ONE master revision
+    (#1423: a VPM rebuilt from an edited master next to a stale NPM is refused). Packages without a readable manifest
+    are judged by the validator (V001 build manifest), not here."""
+    bm = _build_manifest()
+    masters = {}
+    for p in paths:
+        mp = bm.manifest_path(p)
+        sha = bm.manifest_master(mp) if os.path.isfile(mp) else None
+        if sha is not None:
+            masters[os.path.basename(p)] = sha
+    if len(set(masters.values())) < 2:
+        return {}
+    detail = 'packages name different master revisions: ' + ', '.join(
+        '{} -> {}'.format(n, s[:12]) for n, s in sorted(masters.items()))
+    return {n: [('manifest_cross_master', detail[:900])] for n in masters}
+
+
 def qa_package(edit, path, runner, python, root, profile=None, scene=True, options=None):
     """Read-only report: one object per checked file (handle = 1-based ordinal), findings = failed stages plus the
-    OKS <-> Ground passport cross check (`geojson_cross`)."""
+    OKS <-> Ground passport cross check (`geojson_cross`) and the one-master check of the build manifests
+    (`manifest_cross_master`, #1423)."""
     targets = qa_targets(path)
     pair = [p for p in (_counterpart(targets[0]),) if p] if len(targets) == 1 else []
     cross = cross_passports(targets + pair)
+    for n, rows in cross_masters(targets + pair).items():
+        cross.setdefault(n, []).extend(rows)
     tables, objects = [], []
     for i, t in enumerate(targets, 1):
         table = validate(t, runner, python, root, profile, scene)

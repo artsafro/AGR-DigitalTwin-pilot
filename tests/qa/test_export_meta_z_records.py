@@ -114,6 +114,38 @@ def test_cli_export_meta_alias_of_fbx_refused(tmp_path, monkeypatch, capsys, fbx
     assert code != 0 and 'export_meta' in out.err and not out.out and fbx.read_bytes() == before
 
 
+@pytest.mark.parametrize('reject_manifest', [False, True])
+def test_cli_export_meta_and_build_manifest_compose(tmp_path, monkeypatch, capsys, fbx, reject_manifest):
+    """Merge regression: strict Z metadata and main's manifest validation both reach validate()."""
+    from types import SimpleNamespace
+
+    package = tmp_path / 'SM_Test_K_1.zip'
+    package.write_bytes(b'synthetic package; validate is mocked')
+    manifest = tmp_path / 'custom.build.json'
+    meta = exporter_meta(fbx)
+    meta_path = tmp_path / 'export_meta.json'
+    meta_path.write_text(json.dumps(meta), encoding='utf-8')
+    seen = {}
+
+    def validate(*args, **kwargs):
+        seen.update(kwargs)
+        if reject_manifest:
+            raise ValueError('synthetic invalid build manifest')
+        return SimpleNamespace(exit_code=0, to_dict=lambda: {'synthetic': True})
+
+    monkeypatch.setattr(vp, 'validate', validate)
+    code = vp.main([str(package), '--profile', 'vpm', '--json',
+                    '--export-meta', str(meta_path), '--build-manifest', str(manifest)])
+    out = capsys.readouterr()
+    assert seen['export_meta'] == meta['fbx_records']
+    assert seen['manifest'] == manifest
+    assert code == (2 if reject_manifest else 0)
+    if reject_manifest:
+        assert 'synthetic invalid build manifest' in out.err and not out.out
+    else:
+        assert json.loads(out.out) == {'synthetic': True}
+
+
 def test_schema_describes_fbx_records(fbx):
     from jsonschema import Draft202012Validator
     schema = json.loads((ROOT / 'schemas/ExportMeta.schema.json').read_text(encoding='utf-8'))

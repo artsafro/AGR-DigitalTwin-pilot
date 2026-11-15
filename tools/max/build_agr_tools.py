@@ -27,6 +27,7 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
          # 0.8 (#908): edit contract + stub modules of branches A-D (this list does not change in A-D)
          'edit_core.py', 'edit_max.py', 'geom_core.py', 'geom_max.py', 'tex_core.py', 'tex_max.py',
          'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py',
+         'build_manifest.py',  # #1423 delivery set consistency (loaded by package_core)
          # 0.9 (#979): stub modules of branches A-D (this list does not change in A-E3; data/ is collected below)
          'place_core.py', 'place_max.py', 'texqa_core.py', 'texqa_max.py', 'finish_core.py', 'finish_max.py',
          'uvtile_core.py', 'uvtile_max.py', 'flora_atlas_max.py', 'qa9_core.py', 'qa9_max.py', 'facade_core.py',
