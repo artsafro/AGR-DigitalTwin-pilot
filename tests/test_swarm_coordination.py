@@ -52,6 +52,33 @@ def test_sendmessage_ownership(build, case):
         assert 'swarm' in json.dumps(result).lower()
 
 
+@pytest.mark.parametrize('script', [GUARD, ROOT / '.claude/hooks/pretool.py'])
+@pytest.mark.parametrize('case,reason', [
+    ('workflow', 'workflow recipient l2'),
+    ('wrong-part', 'l2 is not the active background owner of L2'),
+    ('matching', None)])
+def test_real_sendmessage_schema(build, script, case, reason):
+    save(build, kind='workflow' if case == 'workflow' else 'background',
+         part='windows-B' if case == 'wrong-part' else 'L2')
+    result = invoke(build, script=script, args={
+        'to': 'l2', 'summary': 'Continue assigned part', 'message': 'Part: L2\nContinue.'})
+    assert decision(result) == ('deny' if reason else 'allow')
+    if reason:
+        assert reason in result['hookSpecificOutput']['permissionDecisionReason']
+
+
+@pytest.mark.parametrize('extra,reason', [
+    ({'content': 'Part: windows-B'}, 'ambiguous/conflicting Part header'),
+    ({'part': 'windows-B'}, 'ambiguous/conflicting Part header'),
+    ({'message': 'Part: L2\nPart: windows-B'}, 'ambiguous/conflicting Part header'),
+    ({'message': 42}, 'message must be a string')])
+def test_real_message_conflicts(build, extra, reason):
+    args = {'to': 'l2', 'summary': 'Continue', 'message': 'Part: L2', **extra}
+    result = invoke(build, args=args)
+    assert decision(result) == 'deny'
+    assert reason in result['hookSpecificOutput']['permissionDecisionReason']
+
+
 @pytest.mark.parametrize('case', ['outside', 'inside'])
 def test_write_warning(build, case):
     target = r'C:\png_v003\x.png' if case == 'outside' else str(build / 'parts/x.txt')
