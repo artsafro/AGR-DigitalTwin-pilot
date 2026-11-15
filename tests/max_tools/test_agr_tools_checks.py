@@ -4,6 +4,7 @@ Each GeoAGR 13.64 defect that applies (D1-D4, D6, D8) is a pair of tests: the sa
 GeoAGR-faithful variant (transcribed from GeoAGR.ms, line cited) and holds on our core.
 D5 (texel per system unit) belongs to the 0.3.0 texel readout and D7 (unreachable UI) to no button here.
 """
+import ast
 import importlib.util
 import json
 import math
@@ -369,6 +370,80 @@ def _finding_dicts(items):
         ids = list(item[2]) if len(item) > 2 else []
         out.append({'code': item[0], 'ids': ids, 'detail': item[1]})
     return out
+
+
+def _emitted_review_codes(source):
+    """#977: inspect tuple/_add code and message literals, including f-string text.
+
+    This is a syntactic drift guard, not inference of dynamically computed codes/messages.
+    Word boundaries keep ordinary 'preview' messages out of the review-level set.
+    """
+    emitted = set()
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Tuple) and len(node.elts) >= 2:
+            code, detail = node.elts[:2]
+        elif (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+              and node.func.id == '_add' and len(node.args) >= 4):
+            code, detail = node.args[2:4]
+        else:
+            continue
+        if not isinstance(code, ast.Constant) or not isinstance(code.value, str):
+            continue
+        text = ' '.join(part.value for part in ast.walk(detail)
+                        if isinstance(part, ast.Constant) and isinstance(part.value, str))
+        if re.search(r'==|\breview\b', text, re.IGNORECASE):
+            emitted.add(code.value)
+    return emitted
+
+
+@pytest.mark.parametrize('emission', [
+    "out.append(('future_at_limit', f'{value} == {limit}'))",
+    "return [('future_at_limit', 'needs REVIEW')]",
+    "_add(found, key, 'future_at_limit', f'{value} == {limit}')",
+    "_add(found, key, 'future_at_limit', 'needs review')",
+])
+def test_review_code_scanner_detects_synthetic_new_producer(emission):
+    # Synthetic code is deliberately absent from both REVIEW_CODES and CODES.
+    assert 'future_at_limit' not in core.REVIEW_CODES
+    assert 'future_at_limit' not in set().union(*core.CODES.values())
+    assert _emitted_review_codes(emission) == {'future_at_limit'}
+
+
+def test_review_code_scanner_ignores_non_findings_and_preview():
+    source = '''
+# ('comment_only', 'review')
+"('docstring_only', '==')"
+CODES = {'declared_only', 'review'}
+out.append(('ordinary', 'preview available'))
+_add(found, key, 'ordinary', 'over limit')
+'''
+    assert _emitted_review_codes(source) == set()
+
+
+def test_review_codes_cover_producer_literals():
+    for name in ('checks_core.py', 'suite_core.py', 'runtime.py'):
+        emitted = _emitted_review_codes((PKG / name).read_text(encoding='utf-8'))
+        missing = emitted - core.REVIEW_CODES
+        assert not missing, f'{name}: emitted review codes missing from REVIEW_CODES: {sorted(missing)}'
+
+
+@pytest.mark.parametrize('name', ['checks_core.py', 'suite_core.py', 'runtime.py'])
+@pytest.mark.parametrize('detail', ["f'{value} == {limit}'", "'needs review'"])
+@pytest.mark.parametrize('shape', ["out.append(('future_at_limit', {detail}))",
+                                   "_add(found, key, 'future_at_limit', {detail})"])
+def test_review_codes_guard_rejects_synthetic_producer_drift(tmp_path, monkeypatch, name, detail, shape):
+    # Change only temporary source text: no import/execution of the synthetic finding.
+    for producer in ('checks_core.py', 'suite_core.py', 'runtime.py'):
+        source = (PKG / producer).read_text(encoding='utf-8')
+        if producer == name:
+            source += '\n' + shape.format(detail=detail) + '\n'
+        (tmp_path / producer).write_text(source, encoding='utf-8')
+    monkeypatch.setitem(globals(), 'PKG', tmp_path)
+    with pytest.raises(AssertionError, match=rf'{re.escape(name)}:.*future_at_limit'):
+        test_review_codes_cover_producer_literals()
+    # Registering the new code is sufficient; the scanner does not pin today's set.
+    monkeypatch.setattr(core, 'REVIEW_CODES', core.REVIEW_CODES | {'future_at_limit'})
+    test_review_codes_cover_producer_literals()
 
 
 def test_review_level_finding_keeps_report_status_fail():
