@@ -89,11 +89,27 @@ substitute ad-hoc scripting.
 - Known issues (same run): `create_object` with `pos` fails («Invalid position parameter», nothing
   created) — create without `pos`, then `transform`; `manage_scene(save)` saves only to the current
   path — Save As to a new versioned path via MAXScript; a newly started Max registers itself and
-  becomes the default target — pin the exact PID; the agent viewport does not redraw while Max is
+  becomes the default target — pinning does not hold; guard every mutation inside the executing
+  process (see the `3dsmax-mcp-dev` skill and PID gate below); the agent viewport does not redraw while Max is
   hidden; the Max 2026 startup shows the `polyunwrapper_autoload.mse` .NET error dialog (see
   Toolchain smoke above). Source review (PR #793): `query_scene(action="class", scope="refs")`
   passes `class_name`/`superclass` to MAXScript `execute`, and the TCP fallback of `property`
   inserts `property_name` as code — safe_mode does not block that; hence the narrow read-only row.
+- PID gate (#1364): `tools/hooks/skill_gate.py` runs on Max MCP PreToolUse independently of
+  skill loading, subagents and transcript availability. Every mutation must use an unconditional
+  leading in-process PID check in `execute_maxscript.code` or `execute_python.code`; canonical
+  prefixes and the narrow read-only expression list are in `3dsmax-mcp-dev`. Native mutation
+  tools (`scene_patch`, `manage_scene`, etc.) are denied: use a guarded script equivalent.
+  Selection/readback alone is not atomic with execution. The lexical gate does not prove PID
+  ownership or user authorization and is not a sandbox for hostile code.
+- Pin-survival evidence: the #1364 incident / `docs/retros/2026-11-14-4bk-k3-modeling.md`
+  item 9 reports PID 563748 selected with `pinned: true`, then PID 570920 becoming selected/default.
+  Deterministic two-registration simulation: `tests/test_max_pid_guard.py::test_two_registrations`
+  (synthetic registry, mocked PID source; not a real server/Max measurement).
+  Live two-Max re-registration test: NOT DONE (2026-11-15, orchestrator prohibits starting,
+  registering or touching Max while the user's sessions are open). Whether v1.7.5's pin survives
+  a new registration is not freshly measured; do not infer a live pass from pytest.
+  External Claude memory pointer edit is also deferred by explicit instruction.
 - Owner: Claude (main) · scope: user (all projects)
 - Server: cl0nazepamm/3dsmax-mcp v1.7.5 (commit `bcd4e4c6`, licence MIT), `C:\Users\artsafro\tools\3dsmax-mcp`; plugin in
   `C:\ProgramData\Autodesk\ApplicationPlugins\3dsmax-mcp`; `safe_mode = true`
