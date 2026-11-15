@@ -331,6 +331,32 @@ Hooks (Claude Code): `tools/hooks/skill_gate.py` denies a DCC MCP call in the ma
 loaded; `tools/hooks/usage_log.py` logs every subagent call, skill load and /command (details:
 `docs/agents/harness-inventory.md`, "Context rotation hooks").
 
+## Swarm coordination
+
+One coordinator owns `<absolute-build-root>/_swarm/writers.json` ([synthetic sample](examples/swarm/writers.json)).
+At each launch, register the returned agent id **before messaging or permitting writes**:
+`uv run python tools/hooks/swarm.py register --root "C:/job/build/v001" --part L2 --agent-id l2 --kind background`.
+Use `--kind workflow` for Workflow agents; never SendMessage them (it can spawn duplicate writers).
+If an id is unavailable until launch, launch paused/read-only, then register and release it. Do not launch a
+replacement while the previous owner is active. Mark stopped owners with `--status completed` or `failed`
+before replacement; this registry does not stop processes. One agent id owns one part.
+
+The helper emits a brief with `Part: L2`, one absolute `Output root: ...`, and the environment to bind in
+both the coordinator and worker runtimes: `AGR_SWARM_BUILD_ROOT` and `AGR_SWARM_AGENT_ID`.
+Claude Code subagents inherit the coordinator process environment: launch that session with these bindings
+(or configure settings `env`); exporting them in a shell subprocess cannot change an already-running session.
+SendMessage uses the real `{to, summary, message}` schema with an exact `Part: L2` line in `message`;
+legacy `recipient`/`content` and structured `part` remain supported, but conflicting headers are refused.
+The [PreToolUse guard](../../.claude/hooks/guard.py) reloads the registry for every swarm SendMessage and denies
+workflow, inactive, unknown, wrong-part or malformed routing. Neither environment binding set means ordinary
+non-swarm behavior; an agent binding without a valid absolute root still denies.
+File writes outside the resolved build root get a **swarm warning**, including drive-root scratch such as
+`C:/png_v003`; inside-root writes do not. Existing production-asset prompts still apply. Shell warnings are
+conservative lexical advisories, not a sandbox: use absolute literal destinations, never drive-root scratch,
+and review dynamically constructed paths. Missing root binding on a swarm writer also warns.
+A busy coordinator lock refuses updates; recover an orphan lock only after verifying its owner stopped.
+Memory `workflow-agent-sendmessage-duplicates` should point to this section, not duplicate the procedure.
+
 ## Rule of three (user 2026-10-14 [D075])
 
 A procedure repeated across a session or jobs becomes a reusable thing; what it becomes depends on its kind:
