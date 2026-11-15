@@ -106,7 +106,7 @@ def test_owner_file_is_not_its_own_copy():
 
 def test_every_blender_launch_row_names_its_reason_and_this_issue():
     rows = _launch_rows()
-    assert len(rows) == 24, [d["at"] for d in rows]
+    assert len(rows) == 25, [d["at"] for d in rows]   # 8 jobs/ + 16 tools/ + 1 src/ command lines, hash-pinned
     assert all(str(d.get("ru", "")).strip() and d["issue"] == "#1378" for d in rows), rows
 
 

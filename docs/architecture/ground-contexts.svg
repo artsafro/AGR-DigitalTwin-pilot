@@ -9,7 +9,7 @@
 <rect x="1260.0" y="672.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="672.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="899.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1024.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1024.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1024.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1198.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1323.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -22,8 +22,8 @@
 <line x1="1120.0" y1="778.75" x2="1260.0" y2="761.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1495.0" y1="850.0" x2="1495.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="2105.0" y1="507.5" x2="1495.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1870.0" y1="1104.0" x2="1730.0" y2="1104.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1495.0" y1="1184.0" x2="1495.0" y2="1323.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1870.0" y1="1104.0" x2="1730.0" y2="1112.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1495.0" y1="1201.5" x2="1495.0" y2="1323.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Ground (НПМ + ВПМ) — D293 (#1392)</tspan>
 </text>
@@ -113,18 +113,19 @@
 </text>
 <text x="658.0" y="909.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
-<tspan x="658.0" dy="15.0">• jobs/VATUTINO-SITE/place_site.py:78 — своя расстановка участка в</tspan>
+<tspan x="658.0" dy="15.0">• jobs/VATUTINO-SITE/place_site.py:87 — своя расстановка участка в</tspan>
 <tspan x="658.0" dy="15.0">задании поверх движка (#1383)</tspan>
 </text>
 <text x="1268.0" y="1034.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Экспорт и пакеты НПМ / ВПМ</tspan>
-<tspan x="1268.0" dy="17.5">Владелец: tools/derive/package_vpm.py</tspan>
-<tspan x="1268.0" dy="17.5">общий упаковщик ВПМ (agr package-vpm); НПМ — agr</tspan>
-<tspan x="1268.0" dy="17.5">package-npm (#1361)</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
+<tspan x="1268.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
+<tspan x="1268.0" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
+<tspan x="1268.0" dy="17.5">(#1361, #1377)</tspan>
 <tspan x="1268.0" dy="17.5"></tspan>
-<tspan x="1268.0" dy="17.5">main: папка пакета, текстуры, [--object] -&gt;</tspan>
-<tspan x="1268.0" dy="17.5">SM_&lt;Адрес&gt;.zip + package_report.json; занятый путь —</tspan>
-<tspan x="1268.0" dy="17.5">отказ</tspan>
+<tspan x="1268.0" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
+<tspan x="1268.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
+<tspan x="1268.0" dy="17.5">время упаковки — ошибка</tspan>
 </text>
 <text x="1878.0" y="1034.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
@@ -190,12 +191,12 @@
 <text x="1800.0" y="756.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">атлас / UDIM</tspan>
 </text>
-<rect x="1770.0" y="1095.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1095.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1770.0" y="1099.38" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="1099.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">коллизии UCX_</tspan>
 </text>
-<rect x="1465.0" y="1244.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="1244.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="1253.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="1253.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

@@ -99,13 +99,11 @@ contexts:
   - id: package
     ru: "Экспорт и пакеты ВПМ / НПМ"
     area: docs/domain/areas/package.md
-    owner: tools/derive/package_vpm.py
-    owner_ru: "общий упаковщик ВПМ (agr package-vpm); НПМ — agr package-npm на том же ядре (#1361)"
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
     functions:
-      - name: main
-        contract: "папка пакета, текстуры, [--object] -> SM_<Адрес>.zip + package_report.json; занятый путь — отказ"
-      - name: load_object
-        contract: "object.json -> имя, привязка, стёкла; пустое и неизвестное — ошибка"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
   - id: validation
     ru: "Проверки, xView, СИНТЕЗ"
     area: docs/domain/areas/package.md

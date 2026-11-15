@@ -83,11 +83,11 @@ contexts:
     grid: "2/3"
     ru: "Экспорт и пакеты НПМ / ВПМ"
     area: docs/domain/areas/package.md
-    owner: tools/derive/package_vpm.py
-    owner_ru: "общий упаковщик ВПМ (agr package-vpm); НПМ — agr package-npm (#1361)"
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
     functions:
-      - name: main
-        contract: "папка пакета, текстуры, [--object] -> SM_<Адрес>.zip + package_report.json; занятый путь — отказ"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
   - id: npm
     grid: "2/2"
     ru: "НПМ МАФ и Флора на атласе"
@@ -113,7 +113,7 @@ contexts:
       - name: report_json
         contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
     duplicates:
-      - at: "jobs/VATUTINO-SITE/place_site.py:78"
+      - at: "jobs/VATUTINO-SITE/place_site.py:87"
         match: "def run("
         issue: "#1383"
         ru: "своя расстановка участка в задании поверх движка"

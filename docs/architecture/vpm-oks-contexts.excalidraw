@@ -697,7 +697,7 @@
    "x": 1260.0,
    "y": 676.5,
    "width": 470,
-   "height": 195.0,
+   "height": 177.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -743,7 +743,7 @@
    "x": 1268.0,
    "y": 686.5,
    "width": 454,
-   "height": 175.0,
+   "height": 157.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -763,13 +763,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Экспорт и пакеты ВПМ / НПМ\nВладелец: tools/derive/package_vpm.py\nобщий упаковщик ВПМ (agr package-vpm); НПМ — agr\npackage-npm на том же ядре (#1361)\n\nmain: папка пакета, текстуры, [--object] ->\nSM_<Адрес>.zip + package_report.json; занятый путь —\nотказ\nload_object: object.json -> имя, привязка, стёкла; пустое\nи неизвестное — ошибка",
+   "text": "Экспорт и пакеты ВПМ / НПМ\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1648b9a5855f96c",
-   "originalText": "Экспорт и пакеты ВПМ / НПМ\nВладелец: tools/derive/package_vpm.py\nобщий упаковщик ВПМ (agr package-vpm); НПМ — agr\npackage-npm на том же ядре (#1361)\n\nmain: папка пакета, текстуры, [--object] ->\nSM_<Адрес>.zip + package_report.json; занятый путь —\nотказ\nload_object: object.json -> имя, привязка, стёкла; пустое\nи неизвестное — ошибка",
+   "originalText": "Экспорт и пакеты ВПМ / НПМ\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1823,7 +1823,7 @@
    "x": 1190.0,
    "y": 1005.5,
    "width": 305.0,
-   "height": 134.0,
+   "height": 151.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1857,7 +1857,7 @@
     ],
     [
      305.0,
-     -134.0
+     -151.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1879,7 +1879,7 @@
    "id": "e370a648cb3200ee",
    "type": "text",
    "x": 1282.5,
-   "y": 929.5,
+   "y": 920.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1915,9 +1915,9 @@
    "id": "e4f552790d995798",
    "type": "arrow",
    "x": 1730.0,
-   "y": 774.0,
+   "y": 765.25,
    "width": 140.0,
-   "height": 17.5,
+   "height": 8.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1951,7 +1951,7 @@
     ],
     [
      140.0,
-     -17.5
+     -8.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1973,7 +1973,7 @@
    "id": "e321747c08b4204e",
    "type": "text",
    "x": 1740.0,
-   "y": 756.25,
+   "y": 751.88,
    "width": 120,
    "height": 17.5,
    "angle": 0,
