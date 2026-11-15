@@ -1188,7 +1188,8 @@ def test_mutex_owner_check_retries_while_a_consumer_has_it_open(tmp_path, monkey
     assert pauses, "the blocked read was not retried"
 
 
-def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch):
+@pytest.mark.parametrize("repeat_stats", [0, 1, 8])
+def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch, repeat_stats):
     """#972: POSIX stat/rename-then-remove must not delete a fresh lock swapped in at that window."""
     import os
     import time
@@ -1202,14 +1203,16 @@ def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch):
     real_stat = os.stat
     real_rename = os.rename
     real_remove = os.remove
-    swapped = {"done": False}
+    swapped = {"done": False, "count": 0}
 
     def swap():
         if swapped["done"] or not path.exists():
             return
         swapped["done"] = True
+        assert json.loads(path.read_bytes())["card"] == "dead"
         real_remove(path)
         path.write_bytes(fresh)
+        swapped["count"] += 1
 
     def stat(target, *args, **kwargs):
         result = real_stat(target, *args, **kwargs)
@@ -1225,6 +1228,11 @@ def test_posix_drop_keeps_a_lock_replaced_before_unlink(tmp_path, monkeypatch):
     monkeypatch.setattr(os, "stat", stat)
     monkeypatch.setattr(os, "rename", rename)
     assert locks._drop_stale_inode_posix(path, token) is False
+    assert swapped["done"]
+    assert swapped["count"] == 1
+    for _ in range(repeat_stats):
+        os.stat(path)
+    assert swapped["count"] == 1
     assert path.read_bytes() == fresh
     assert _leftover_names(path) == []
     assert mutex.exists()
