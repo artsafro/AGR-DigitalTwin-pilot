@@ -10,7 +10,7 @@ With an FBX path the scene is reset and the FBX is imported first (readback of a
 
 Checks per mesh object (UCX_* skipped for normals/size):
 - non_quads: faces with != 4 verts (project rule: editable master 100 % quads);
-- oversize: quads with any edge > MAX_EDGE (user rule 2026-10-07: quads up to 4 x 4 m);
+- oversize: quads with any edge > MAX_EDGE (user rule 2026-10-07 [D021]: quads up to 4 x 4 m);
 - t_junctions: a vertex lying on the interior of an edge of the same object (distance < 1 mm,
   not an endpoint, not connected to it) -> a crack in the surface unless the edge is split there;
 - open_edges: boundary edges (1 face). Reported with a count of those NOT covered by another face of
