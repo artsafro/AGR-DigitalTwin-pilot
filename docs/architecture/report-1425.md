@@ -36,6 +36,34 @@ Manual steps remain manual and conditional; there is no newly asserted successfu
 - Final exact-head affected command/counts and eval receipts are in the PR body; full suite is
   deferred to the merge batch (rule 68 / D297). No broad-suite pass is claimed here.
 
+## Review rework r2: pink-box crossings
+
+Reviewer P1-1 on `abd911bb` found seven arrow/list intersections on four context maps;
+the endpoint-only regression could not see them. Tests-first commit `925eb04d` reproduces
+exactly those four failing maps (4 failed / 8 passed). The old endpoint test is retained.
+
+Context relations now use side ports and deterministic orthogonal free-space routing around
+all rectangles. SVG writes every polyline segment rather than silently drawing only the first.
+The new independent closed-slab intersection oracle checks every arrow against every unrelated
+pink box on all 18 generated boards, including detailed routes, contexts and short schemes.
+SVG/Excalidraw point sequences must match. A generated synthetic matrix covers 32 directed
+layouts (four row offsets, four list heights, both directions); an obstructed port must raise
+before adding an arrow. Existing stage/status/publication probes run together with this fix.
+
+Six supplementary context renders are preserved separately at
+`G:/Мой диск/AGR-evidence/1425-route-maps/r2/`, without changing the r1 evidence.
+NPM was visually read back: lines go around pink boxes; the detailed context labels are still
+dense at overview scale, so the short schemes remain the primary reader entry.
+
+```text
+791526eea88b04028f82879c7175e74d6fcc9756181a62baf77ac7ed6c7030c5  contexts.png
+c559e251425c186d32b7a6f3a0d9e0048528e6a90c00f340790c3041241d8a00  vpm-oks-contexts.png
+e7d4eb762ae98fcaa3f2d328a203ef17dca0d063b05644e4c1b603264f59d426  ground-contexts.png
+9d07cdc6e947089bd0e66720a84ecc9e7680a9e4afc5592d3132736a3a3266c2  maf-contexts.png
+f84491e57686306066ee985b6d549188fbc7ee1d8f05e1f3915b2885a76dc54d  flora-contexts.png
+9534a8c0148de0f5ada437a651974b01b6fa4f7cf422350b6211e617920ed5cb  package-contexts.png
+```
+
 ## Renders for Artem
 
 ImageMagick 7 renders of generated SVGs, white background, Segoe UI, density 110.

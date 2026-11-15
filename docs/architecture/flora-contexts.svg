@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2945 1539" width="2945" height="1539" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3905 1539" width="3905" height="1539" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2945" height="1539" fill="#ffffff"/>
+<rect x="10" y="-30" width="3905" height="1539" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="195.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="319.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40.0" y="414.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -13,16 +13,16 @@
 <rect x="955.0" y="941.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="345.0" y="941.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="1284.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<line x1="510.0" y1="502.75" x2="650.0" y2="502.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120.0" y1="502.75" x2="1565.0" y2="511.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="2035.0" y1="511.5" x2="2175.0" y2="520.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="2175.0" y1="520.25" x2="1425.0" y2="757.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="305.0" x2="1190.0" y2="686.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="815.0" y1="784.0" x2="955.0" y2="757.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="829.0" x2="1800.0" y2="941.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1800.0" y1="1119.0" x2="1800.0" y2="1284.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1565.0" y1="1030.25" x2="1425.0" y2="1082.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="955.0" y1="1082.75" x2="815.0" y2="1021.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510.0,502.75 630.0,502.75 630.0,394.0 1140.0,394.0 1140.0,502.75 1120.0,502.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,502.75 1140.0,502.75 1140.0,611.5 2055.0,611.5 2055.0,511.5 2035.0,511.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,511.5 2055.0,511.5 2055.0,629.0 2665.0,629.0 2665.0,520.25 2645.0,520.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2645.0,520.25 2665.0,520.25 2665.0,757.75 1425.0,757.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,207.5 1445.0,207.5 1445.0,757.75 1425.0,757.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="815.0,784.0 835.0,784.0 835.0,849.0 1445.0,849.0 1445.0,757.75 1425.0,757.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,757.75 1445.0,757.75 1445.0,921.5 2055.0,921.5 2055.0,1030.25 2035.0,1030.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,1030.25 2055.0,1030.25 2055.0,1381.5 2035.0,1381.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,1030.25 2055.0,1030.25 2055.0,1121.5 1545.0,1121.5 1545.0,1082.75 1425.0,1082.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,1082.75 1445.0,1082.75 1445.0,921.5 835.0,921.5 835.0,1021.5 815.0,1021.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Флоры (НПМ + ВПМ) — D293 (#1393)</tspan>
 </text>
@@ -162,47 +162,47 @@
 <tspan x="1573.0" dy="17.5">map_findings: чтение, меши Флоры -&gt; НПМ: диффуз +</tspan>
 <tspan x="1573.0" dy="17.5">отдельная прозрачность, больше ничего</tspan>
 </text>
-<rect x="550.0" y="484.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="580.0" y="484.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="580.0" dy="14">ведомость и</tspan>
-<tspan x="580.0" dy="17.5">точки</tspan>
+<rect x="855.0" y="376.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="376.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="885.0" dy="14">ведомость и</tspan>
+<tspan x="885.0" dy="17.5">точки</tspan>
 </text>
-<rect x="1312.5" y="498.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1342.5" y="498.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1342.5" dy="14">вид без карты</tspan>
+<rect x="1567.5" y="602.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="602.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1597.5" dy="14">вид без карты</tspan>
 </text>
-<rect x="2075.0" y="506.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="506.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2105.0" dy="14">пара карт</tspan>
+<rect x="2330.0" y="620.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2360.0" y="620.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2360.0" dy="14">пара карт</tspan>
 </text>
-<rect x="1770.0" y="621.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="621.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">звезда /</tspan>
-<tspan x="1800.0" dy="17.5">оболочка</tspan>
+<rect x="2015.0" y="739.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2045.0" y="739.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">звезда /</tspan>
+<tspan x="2045.0" dy="17.5">оболочка</tspan>
 </text>
-<rect x="1160.0" y="486.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="486.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">точки Флоры</tspan>
+<rect x="1415.0" y="473.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="473.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">точки Флоры</tspan>
 </text>
-<rect x="855.0" y="761.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="761.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="885.0" dy="14">облегчённые НПМ</tspan>
+<rect x="1110.0" y="840.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="840.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1140.0" dy="14">облегчённые НПМ</tspan>
 </text>
-<rect x="1465.0" y="876.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="876.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1495.0" dy="14">виды сцены</tspan>
+<rect x="1720.0" y="912.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="912.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">виды сцены</tspan>
 </text>
-<rect x="1770.0" y="1192.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1192.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">карты и размеры</tspan>
+<rect x="2025.0" y="1196.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="1196.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">карты и размеры</tspan>
 </text>
-<rect x="1465.0" y="1038.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="1038.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1495.0" dy="14">атлас 2048 /</tspan>
-<tspan x="1495.0" dy="17.5">4096</tspan>
+<rect x="1770.0" y="1103.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="1103.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1800.0" dy="14">атлас 2048 /</tspan>
+<tspan x="1800.0" dy="17.5">4096</tspan>
 </text>
-<rect x="855.0" y="1043.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="1043.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="885.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="1110.0" y="912.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="912.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

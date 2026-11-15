@@ -144,6 +144,44 @@ def test_arrow_polylines_never_intersect_pink_lists(name):
                                                  for p, q in zip(points, points[1:])):
                     hits.append((arrow["id"], rect["id"]))
         assert not hits, f"{path}: pink crossings {hits}"
+        # Verify the actual SVG uses the full same route, not just its first segment.
+        import xml.etree.ElementTree as ET
+        svg = ET.fromstring(files[path.with_suffix(".svg")])
+        rendered = []
+        for element in svg:
+            if element.tag.endswith("}line"):
+                rendered.append([(float(element.attrib[f"x{i}"]), float(element.attrib[f"y{i}"])) for i in (1, 2)])
+            elif element.tag.endswith("}polyline"):
+                rendered.append([tuple(map(float, point.split(","))) for point in element.attrib["points"].split()])
+        expected = [[(round(e["x"] + x, 2), round(e["y"] + y, 2)) for x, y in e["points"]]
+                    for e in elements if e["type"] == "arrow"]
+        assert rendered == expected
+
+
+def test_generated_obstacle_sizes_keep_side_routes_clear():
+    # Synthetic layouts: different rows, aligned rows, reversed direction and several list sizes.
+    for offset in (-200, 0, 200, 400):
+        for height in (40, 100, 200, 300):
+            board = route_map.Board()
+            a = board.box("a", 0, 100, 100, "Шаг", route_map.COLORS["owner"])
+            b = board.box("b", 400, 100 + offset, 100, "Артефакт", route_map.COLORS["owner"])
+            pink = board.box("pink", 180, -50, 100, "Дубли", route_map.COLORS["hotspot"], min_h=height)
+            for source, target in ((a, b), (b, a)):
+                arrow = board.arrow(f"{source['id']}->{target['id']}", source, target, side_route=True)
+                points = [(arrow["x"] + x, arrow["y"] + y) for x, y in arrow["points"]]
+                assert not any(_segment_hits_rect(p, q, pink) for p, q in zip(points, points[1:]))
+                assert arrow["startBinding"]["elementId"] == source["id"]
+                assert arrow["endBinding"]["elementId"] == target["id"]
+
+
+def test_blocked_side_port_fails_closed():
+    board = route_map.Board()
+    a = board.box("a", 0, 0, 100, "Шаг", route_map.COLORS["owner"])
+    b = board.box("b", 400, 0, 100, "Артефакт", route_map.COLORS["owner"])
+    board.box("blocked", 110, -20, 100, "Дубли", route_map.COLORS["hotspot"], min_h=200)
+    with pytest.raises(route_map.SchemaError, match="no clear arrow route"):
+        board.arrow("blocked-arrow", a, b, side_route=True)
+    assert not any(e["type"] == "arrow" for e in board.elements)
 
 
 def _copy_arch(tmp_path):

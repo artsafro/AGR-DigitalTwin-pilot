@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2945 1284" width="2945" height="1284" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3905 1304" width="3905" height="1304" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2945" height="1284" fill="#ffffff"/>
+<rect x="10" y="-30" width="3905" height="1304" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="230.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="354.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40.0" y="449.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -11,15 +11,15 @@
 <rect x="2175.0" y="704.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="941.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="345.0" y="941.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<line x1="510.0" y1="537.75" x2="650.0" y2="546.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120.0" y1="546.5" x2="1565.0" y2="529.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="2035.0" y1="529.0" x2="2175.0" y2="537.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="885.0" y1="449.0" x2="1190.0" y2="340.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="340.0" x2="1190.0" y2="704.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="2175.0" y1="537.75" x2="1425.0" y2="775.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="846.5" x2="1190.0" y2="941.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="2175.0" y1="792.75" x2="1425.0" y2="1082.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="955.0" y1="1082.75" x2="815.0" y2="1021.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510.0,537.75 530.0,537.75 530.0,646.5 1140.0,646.5 1140.0,546.5 1120.0,546.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,546.5 1140.0,546.5 1140.0,629.0 2055.0,629.0 2055.0,529.0 2035.0,529.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,529.0 2055.0,529.0 2055.0,629.0 2665.0,629.0 2665.0,537.75 2645.0,537.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,546.5 1140.0,546.5 1140.0,409.0 1445.0,409.0 1445.0,225.0 1425.0,225.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,225.0 1445.0,225.0 1445.0,775.25 1425.0,775.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2645.0,537.75 2665.0,537.75 2665.0,684.0 2155.0,684.0 2155.0,775.25 1425.0,775.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,775.25 1445.0,775.25 1445.0,1082.75 1425.0,1082.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2645.0,792.75 2665.0,792.75 2665.0,921.5 1445.0,921.5 1445.0,1082.75 1425.0,1082.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,1082.75 1445.0,1082.75 1445.0,921.5 835.0,921.5 835.0,1021.5 815.0,1021.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута МАФ (GroundEl, НПМ + ВПМ) — D293 (#1393)</tspan>
 </text>
@@ -134,42 +134,42 @@
 <tspan x="353.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="353.0" dy="17.5">находки НПМ</tspan>
 </text>
-<rect x="550.0" y="524.12" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="580.0" y="524.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="580.0" dy="14">спецификация и</tspan>
-<tspan x="580.0" dy="17.5">точки</tspan>
+<rect x="805.0" y="628.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="628.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="835.0" dy="14">спецификация и</tspan>
+<tspan x="835.0" dy="17.5">точки</tspan>
 </text>
-<rect x="1312.5" y="528.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1342.5" y="528.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1342.5" dy="14">кандидат МАФ</tspan>
+<rect x="1567.5" y="620.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="620.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1597.5" dy="14">кандидат МАФ</tspan>
 </text>
-<rect x="2075.0" y="515.38" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="515.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2105.0" dy="14">модель в</tspan>
-<tspan x="2105.0" dy="17.5">допуске</tspan>
+<rect x="2330.0" y="611.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2360.0" y="611.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2360.0" dy="14">модель в</tspan>
+<tspan x="2360.0" dy="17.5">допуске</tspan>
 </text>
-<rect x="1007.5" y="385.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1037.5" y="385.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1037.5" dy="14">модель МАФ</tspan>
+<rect x="1262.5" y="400.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="400.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1292.5" dy="14">модель МАФ</tspan>
 </text>
-<rect x="1160.0" y="513.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="513.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">точки МАФ</tspan>
+<rect x="1415.0" y="491.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="491.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">точки МАФ</tspan>
 </text>
-<rect x="1770.0" y="647.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="647.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">ID / атлас 512</tspan>
+<rect x="1760.0" y="766.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1790.0" y="766.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1790.0" dy="14">ID / атлас 512</tspan>
 </text>
-<rect x="1160.0" y="885.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="885.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">НПМ на атласе</tspan>
+<rect x="1415.0" y="920.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="920.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">НПМ на атласе</tspan>
 </text>
-<rect x="1770.0" y="928.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="928.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">коллизии Ground</tspan>
+<rect x="2025.0" y="912.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="912.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">коллизии Ground</tspan>
 </text>
-<rect x="855.0" y="1043.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="1043.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="885.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="1110.0" y="912.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="912.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

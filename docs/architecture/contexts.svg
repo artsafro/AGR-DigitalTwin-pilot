@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 1444" width="2360" height="1444" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2380 1480" width="2380" height="1480" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="1444" fill="#ffffff"/>
+<rect x="10" y="-30" width="2380" height="1480" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="336.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40" y="461.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -13,13 +13,13 @@
 <rect x="1870" y="670.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="955.0" y="883.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="1109.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<line x1="510" y1="594.0" x2="650" y2="567.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120" y1="567.75" x2="1260" y2="602.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1730" y1="602.75" x2="1870" y2="559.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="955.0" y1="989.25" x2="510.0" y2="594.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="883.0" x2="2105.0" y2="656.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="322.5" x2="885.0" y2="461.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1425.0" y1="216.25" x2="1870.0" y2="559.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510,594.0 530,594.0 530,676.5 1140,676.5 1140,567.75 1120,567.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120,567.75 1240,567.75 1240,441.5 1750,441.5 1750,602.75 1730,602.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730,602.75 1750,602.75 1750,668.0 2360,668.0 2360,559.0 2340,559.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,989.25 1445.0,989.25 1445.0,843.0 1240.0,843.0 1240.0,676.5 630.0,676.5 630.0,594.0 510.0,594.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,989.25 1445.0,989.25 1445.0,843.0 1750.0,843.0 1750.0,668.0 2360.0,668.0 2360.0,559.0 2340.0,559.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 1140.0,441.5 1140.0,567.75 1120.0,567.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 2360.0,441.5 2360.0,559.0 2340.0,559.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута НПМ/ОКС (КПП1) (#1359)</tspan>
 </text>
@@ -135,36 +135,36 @@
 <tspan x="963.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
 <tspan x="963.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
 </text>
-<rect x="550.0" y="562.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="580.0" y="562.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="580.0" dy="14">мастер-модель</tspan>
-<tspan x="580.0" dy="17.5">(FBX/.blend)</tspan>
+<rect x="805.0" y="658.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="658.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="835.0" dy="14">мастер-модель</tspan>
+<tspan x="835.0" dy="17.5">(FBX/.blend)</tspan>
 </text>
-<rect x="1160.0" y="567.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="567.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">UV, атлас,</tspan>
-<tspan x="1190.0" dy="17.5">текстуры</tspan>
+<rect x="1465.0" y="423.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="423.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">UV, атлас,</tspan>
+<tspan x="1495.0" dy="17.5">текстуры</tspan>
 </text>
-<rect x="1770.0" y="571.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="571.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="2025.0" y="659.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="659.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="702.5" y="773.62" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="732.5" y="773.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="732.5" dy="14">Blender/Max</tspan>
-<tspan x="732.5" dy="17.5">строит</tspan>
+<rect x="905.0" y="658.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="935.0" y="658.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="935.0" dy="14">Blender/Max</tspan>
+<tspan x="935.0" dy="17.5">строит</tspan>
 </text>
-<rect x="1617.5" y="751.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="751.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1647.5" dy="14">свежее чтение</tspan>
-<tspan x="1647.5" dy="17.5">экспорта</tspan>
+<rect x="2025.0" y="650.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="650.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">свежее чтение</tspan>
+<tspan x="2055.0" dy="17.5">экспорта</tspan>
 </text>
-<rect x="1007.5" y="383.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1037.5" y="383.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1037.5" dy="14">номер тайла</tspan>
+<rect x="1262.5" y="432.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1292.5" dy="14">номер тайла</tspan>
 </text>
-<rect x="1617.5" y="378.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="378.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1647.5" dy="14">номер тайла</tspan>
+<rect x="1872.5" y="432.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1902.5" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1902.5" dy="14">номер тайла</tspan>
 </text>
 </svg>

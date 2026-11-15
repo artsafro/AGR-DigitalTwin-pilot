@@ -436,7 +436,63 @@ class Board:
     def label(self, key, x, y, w, text, size=20):
         return self._text(key, x, y, w, wrap(text, w, size), size, False, "left")
 
-    def arrow(self, key, a, b, text=None, label_w=200):
+    def _side_route(self, a, b):
+        """Shortest orthogonal side-port path through free space, clear of all boxes."""
+        import heapq
+
+        rects = [e for e in self.elements if e["type"] == "rectangle"]
+        start = (a["x"] + a["width"] + 20, a["y"] + a["height"] / 2)
+        end = (b["x"] + b["width"] + 20, b["y"] + b["height"] / 2)
+        xs = sorted({start[0], end[0]} | {v for r in rects for v in
+                    (r["x"] - 20, r["x"] + r["width"] + 20)})
+        ys = sorted({start[1], end[1]} | {v for r in rects for v in
+                    (r["y"] - 20, r["y"] + r["height"] + 20)})
+
+        def clear(p, q):
+            # Grid edges are axis-aligned; closed bounds also forbid touching a list.
+            return not any(
+                min(p[0], q[0]) <= r["x"] + r["width"] and max(p[0], q[0]) >= r["x"]
+                and min(p[1], q[1]) <= r["y"] + r["height"] and max(p[1], q[1]) >= r["y"]
+                for r in rects)
+
+        source, target = (xs.index(start[0]), ys.index(start[1])), (xs.index(end[0]), ys.index(end[1]))
+        queue, distance, previous = [(0, source)], {source: 0}, {}
+        while queue:
+            cost, node = heapq.heappop(queue)
+            if cost != distance[node]:
+                continue
+            if node == target:
+                break
+            i, j = node
+            for nxt in ((i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)):
+                u, v = nxt
+                if not (0 <= u < len(xs) and 0 <= v < len(ys)):
+                    continue
+                p, q = (xs[i], ys[j]), (xs[u], ys[v])
+                candidate = cost + abs(p[0] - q[0]) + abs(p[1] - q[1])
+                if candidate < distance.get(nxt, float("inf")) and clear(p, q):
+                    distance[nxt], previous[nxt] = candidate, node
+                    heapq.heappush(queue, (candidate, nxt))
+        if target not in distance:
+            raise SchemaError(f"no clear arrow route between {a['id']} and {b['id']}")
+        path, node = [], target
+        while True:
+            path.append((xs[node[0]], ys[node[1]]))
+            if node == source:
+                break
+            node = previous[node]
+        points = [(start[0] - 20, start[1])] + list(reversed(path)) + [(end[0] - 20, end[1])]
+        compact = []
+        for point in points:
+            while len(compact) >= 2 and (
+                compact[-2][0] == compact[-1][0] == point[0]
+                or compact[-2][1] == compact[-1][1] == point[1]
+            ):
+                compact.pop()
+            compact.append(point)
+        return compact
+
+    def arrow(self, key, a, b, text=None, label_w=200, side_route=False):
         ax, ay = a["x"] + a["width"] / 2, a["y"] + a["height"] / 2
         bx, by = b["x"] + b["width"] / 2, b["y"] + b["height"] / 2
         # leave from the box edge facing the target
@@ -448,8 +504,15 @@ class Board:
             sy = a["y"] + (a["height"] if by > ay else 0)
             ey = b["y"] + (0 if by > ay else b["height"])
             sx, ex = ax, bx
-        el = self._base(key, "arrow", sx, sy, abs(ex - sx), abs(ey - sy))
-        el.update({"roundness": {"type": 2}, "points": [[0, 0], [round(ex - sx, 2), round(ey - sy, 2)]],
+        points = self._side_route(a, b) if side_route else [(sx, sy), (ex, ey)]
+        sx, sy = points[0]
+        ex, ey = points[-1]
+        el = self._base(key, "arrow", sx, sy,
+                        max(x for x, _ in points) - min(x for x, _ in points),
+                        max(y for _, y in points) - min(y for _, y in points))
+        el.update({"roundness": None if side_route else {"type": 2},
+                   "points": ([[round(x - sx, 2), round(y - sy, 2)] for x, y in points] if side_route
+                              else [[0, 0], [round(ex - sx, 2), round(ey - sy, 2)]]),
                    "lastCommittedPoint": None, "startArrowhead": None, "endArrowhead": "arrow", "elbowed": False,
                    "startBinding": {"elementId": a["id"], "focus": 0, "gap": 4},
                    "endBinding": {"elementId": b["id"], "focus": 0, "gap": 4}})
@@ -457,7 +520,10 @@ class Board:
             box["boundElements"] = (box["boundElements"] or []) + [{"type": "arrow", "id": el["id"]}]
         if text:
             lines = wrap(text, label_w, 14)
-            t = self._text(key, sx + (ex - sx) / 2 - label_w / 2, sy + (ey - sy) / 2 - len(lines) * 9, label_w, lines, 14,
+            label_a, label_b = max(zip(points, points[1:]),
+                                   key=lambda pair: abs(pair[0][0] - pair[1][0]) + abs(pair[0][1] - pair[1][1]))
+            t = self._text(key, (label_a[0] + label_b[0]) / 2 - label_w / 2,
+                           (label_a[1] + label_b[1]) / 2 - len(lines) * 9, label_w, lines, 14,
                            False, "center", container=el["id"])
             el["boundElements"] = [{"type": "text", "id": t["id"]}]
         return el
@@ -486,9 +552,13 @@ class Board:
                 out.append(f'<rect x="{e["x"]}" y="{e["y"]}" width="{e["width"]}" height="{e["height"]}" rx="8" '
                            f'fill="{fill}" stroke="{e["strokeColor"]}"{dash}/>')
             elif e["type"] == "arrow":
-                (px, py) = e["points"][1]
-                out.append(f'<line x1="{e["x"]}" y1="{e["y"]}" x2="{round(e["x"] + px, 2)}" '
-                           f'y2="{round(e["y"] + py, 2)}" stroke="#1e1e1e" marker-end="url(#arrow)"/>')
+                if len(e["points"]) == 2:
+                    px, py = e["points"][-1]
+                    out.append(f'<line x1="{e["x"]}" y1="{e["y"]}" x2="{round(e["x"] + px, 2)}" '
+                               f'y2="{round(e["y"] + py, 2)}" stroke="#1e1e1e" marker-end="url(#arrow)"/>')
+                else:
+                    points = " ".join(f'{round(e["x"] + x, 2)},{round(e["y"] + y, 2)}' for x, y in e["points"])
+                    out.append(f'<polyline points="{points}" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>')
             elif e["type"] == "text":
                 texts.append(e)
         for e in texts:  # text above shapes and arrows
@@ -642,7 +712,7 @@ def contexts_board(events, contexts):
 def _relations(b, contexts, nodes, tails):
     for i, rel in enumerate(contexts.get("relations", [])):
         a, z = nodes[rel["from"]], nodes[rel["to"]]
-        b.arrow(f"ctx/rel/{i}/{rel['from']}->{rel['to']}", a, z, rel["ru"], label_w=120)
+        b.arrow(f"ctx/rel/{i}/{rel['from']}->{rel['to']}", a, z, rel["ru"], label_w=120, side_route=True)
     return b
 
 
