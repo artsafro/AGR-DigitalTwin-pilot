@@ -52,6 +52,10 @@ _DELEGATION = (
                + r"(?=\s*(?:[.;!?\n]|$))", re.IGNORECASE),
     re.compile(r"\bdelegat\w*\b[^.\n]{0,40}\bfull[- ]suite\b", re.IGNORECASE),
 )
+_EXECUTION_TESTS = re.compile(
+    r"\b(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes)\s+"
+    r"(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
+    + _TESTS, re.IGNORECASE)
 _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
 # "the reviewer, not the author, runs the tests" negates the author, not the hand-over.
 _NOT_AUTHOR = re.compile(r"\b(?:not|never)\s+(?:by\s+)?(?:the\s+)?authors?\b", re.IGNORECASE)
@@ -79,6 +83,12 @@ def delegation(line):
             if match.groupdict().get("inspection") and re.match(
                     r"\s+(?:I|we|the\s+author)\s+(?:ran|executed|checked|verified)\b",
                     line[match.end():], re.IGNORECASE):
+                # Exempt only the inspection, not a subsequent execution in the same clause.
+                boundary = re.search(r"[.;!?\n]", line[match.end():])
+                end = match.end() + boundary.start() if boundary else len(line)
+                for execution in _EXECUTION_TESTS.finditer(line, match.end(), end):
+                    if not _negated(line, execution):
+                        return execution
                 continue
             if not _negated(line, match):
                 return match
