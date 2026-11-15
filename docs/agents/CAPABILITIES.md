@@ -305,6 +305,10 @@ Pipeline core:
   for a visual check; not a production asset.
 - Operation library `technical_library/` — WORKING per package README.
 - Album page reader `src/dt_ai/album/` (#317) — on `main`, synthetic PDFs only.
+- Accepted geometry input gate `tools/state/accepted_set.py` — IN BRANCH (#1445): read-only,
+  part-bound file SHA-256 and structured stage-brief preflight; synthetic regressions plus real
+  4bk-k3 historical v004/v008e dry run. [Contract and limits](../procedure/ACCEPTED_GEOMETRY.md).
+  Not geometry QA, a filesystem lock or approval authentication; shared after merge only.
 - Project state `tools/state/project_state.py` — WORKING; rule `docs/agents/WORKFLOW.md`, "Project state";
   `tools/state/project_state_freshness.py` is an advisory read-only freshness check; `tools/state/after_merge.py`
   (2026-11-07, offline tests only) regenerates and commits it on local `main` after a merge (PostToolUse hook on
