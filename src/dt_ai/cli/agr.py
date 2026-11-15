@@ -23,7 +23,6 @@ STUBS = {
     "delivery-export": "dt derive npm --help; routes/npm-oks.md (export/readback)",
     "open-in-max": "routes/npm-oks.md step 7; existing Max bridge (confirm ownership first)",
     "contact-renders": "routes/npm-oks.md step 7; existing job review/contact renders, no universal command",
-    "brick-seams": "routes/npm-oks.md step 4; source-bound job algorithms, no shared implementation",
     "ucx": "docs/domain/areas/ucx.md; existing approved job collision tools, no universal command",
 }
 
@@ -44,6 +43,7 @@ def _dispatch(args: list[str]) -> int:
             print(f"  {name:18} dt {' '.join(target)}")
         for name, script in SCRIPTS.items():
             print(f"  {name:18} {script}")
+        print("  brick-seams        tools.materials.brick_seams (shared stdlib core, JSON candidate)")
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
@@ -58,6 +58,9 @@ def _dispatch(args: list[str]) -> int:
         return 2
     if args and args[0] in ALIASES:
         return subprocess.run([sys.executable, "-m", "dt_ai.cli.main", *ALIASES[args[0]], *args[1:]], check=False).returncode
+    if args and args[0] == "brick-seams":
+        script = Path(__file__).resolve().parents[3] / "tools/materials/brick_seams.py"
+        return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
     if args and args[0] in SCRIPTS:
         script = Path(__file__).resolve().parents[3] / SCRIPTS[args[0]]
         return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
