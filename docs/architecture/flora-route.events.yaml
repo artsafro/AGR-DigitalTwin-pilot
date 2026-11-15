@@ -125,15 +125,17 @@ stages:
           - src/dt_ai/materials/flora.py
           - docs/pipeline-flora-textures.md
   - id: star
-    event_ru: "НПМ-звезда (плоскости с картой) и ВПМ = оболочка звезды; детальный куст — только по запросу"
+    event_ru: "НПМ-звезда (плоскости с картой) и ВПМ = оболочка звезды; детальный куст — только по запросу; совпадение НПМ / ВПМ каталога v003 принято на первое время (confirmed-interim)"
     actor: agent-dcc
     context: flora-star
     rules:
       - D102
       - D232
+      - D311
     evidence:
       - tools/flora/build_flora_star.py
       - docs/plans/flora-426-route-2026-11.md
+      - library/flora/catalogue.json
   - id: lod
     event_ru: "Облегчённые НПМ (LOD) — только на копии библиотеки; оригиналы не меняются; копии — в job, имя <оригинал>__<job>, список в манифесте job для очистки после сдачи"
     actor: agent-dcc
@@ -237,12 +239,6 @@ hotspots:
       - D232
     evidence:
       - docs/plans/flora-426-route-2026-11.md
-  - id: vpm-identity
-    stage: star
-    ru: "Совпадение поверхностей НПМ / ВПМ библиотеки не проверено (VPM identity: unverified, #305)"
-    evidence:
-      - library/flora/README.md
-      - library/flora/vpm-surface-identity.json
   - id: placement-tool
     stage: placement
     ru: "Расстановка: движок dt_ai.placement вызывается из jobs/VATUTINO-SITE/place_site.py; команды agr / dt нет"
@@ -260,7 +256,7 @@ hotspots:
       - docs/plans/flora-426-route-2026-11.md
   - id: c18-opacity
     stage: checks
-    ru: "Нет карты прозрачности — review, конфликт C18 открыт; 11 из 17 строк FLO без автопроверки"
+    ru: "Нет карты прозрачности — review, конфликт C18 открыт; 7 из 17 строк FLO без автопроверки"
     evidence:
       - docs/domain/areas/flora.md
       - docs/domain/conflicts.md

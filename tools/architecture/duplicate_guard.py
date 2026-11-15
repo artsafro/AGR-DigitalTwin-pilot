@@ -13,6 +13,13 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed). Every
   delivery-zip allowlist row must say why it stays (`ru`): a historical delivery of a finished job (never rewritten)
   or an archive that is not a delivery package (MZP, benchmark, checker research, dev bundle).
+- `blender-launch`  owner src/dt_ai/core/blender_runner.py (`blender_command` / `run_blender`, #1378): the one
+  headless Blender launch (pinned executable, --factory-startup --disable-autoexec, isolated user config, fresh
+  evidence). Flags any other Blender command line: a list/tuple display holding a headless flag (`--background`,
+  `-b`) and a script flag (`--python`, `-P`, `--python-expr`, `--python-text`) as string constants, or one string
+  (also an f-string part) holding both as words. Docstrings and bare string statements are not launches. Every
+  blender-launch row must say why it stays (`ru`).
+The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
 and src/ now call the owner); `delivery-zip` jobs/ + tools/ + src/ (#1377: owner settled). Each guarded
@@ -29,7 +36,8 @@ Usage: python tools/architecture/duplicate_guard.py [--root REPO] [--json] [--ta
 Status (#1424): every `duplicates` row of every context map (route_map.context_maps) carries `status`
 live-bypass | wrapper | historical | own-duty, checked against the real call chains (call_chains.py): a live-bypass
 must be reached by a live command/route, must not call its owner and must be in LIVE_BYPASS_BASELINE (a NEW one
-fails, a fixed one must leave the baseline); a wrapper must call its owner; a historical row must have no live chain
+fails, a fixed one must leave the baseline); a wrapper must call its owner (for a rule in POLICY_NAMES: one of
+its policy functions); a historical row must have no live chain
 and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`. `--table` prints the Russian
 «живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
 runs only the copy scan (synthetic test roots without the maps).
@@ -52,12 +60,14 @@ else:
 RULES = {
     "udim-tile": "adapters/max/agr_tools/udimtile_core.py",
     "delivery-zip": "adapters/max/agr_tools/package_core.py",
+    "blender-launch": "src/dt_ai/core/blender_runner.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
-GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src")}
+GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
+           "blender-launch": ("jobs", "tools", "src")}   # #1378: owner exists, guarded from the start
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"}}
@@ -156,7 +166,35 @@ def _zip_hits(tree):
     return list(hits.values())
 
 
-CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits}
+HEADLESS_FLAGS = {"--background", "-b"}
+SCRIPT_FLAGS = {"--python", "-P", "--python-expr", "--python-text"}
+
+
+def _is_launch(words):
+    return bool(words & HEADLESS_FLAGS) and bool(words & SCRIPT_FLAGS)
+
+
+def _blender_hits(tree):
+    """Blender command lines: a list/tuple display with a headless and a script flag (string constants), or one
+    string constant holding both as words. Docstrings / bare string statements (`ast.Expr`) are prose."""
+    prose = {id(node.value) for node in ast.walk(tree) if isinstance(node, ast.Expr)}
+    hits = {}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.List, ast.Tuple)):
+            words = {e.value for e in node.elts if isinstance(e, ast.Constant) and isinstance(e.value, str)}
+            if _is_launch(words):
+                hits[id(node)] = node
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in prose:
+            if _is_launch(set(node.value.split())):
+                hits[id(node)] = node
+        elif isinstance(node, ast.JoinedStr) and id(node) not in prose:
+            words = set(" ".join(v.value for v in node.values if isinstance(v, ast.Constant)).split())
+            if _is_launch(words):
+                hits[id(node)] = node
+    return list(hits.values())
+
+
+CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -196,6 +234,8 @@ def _findings(tree, rel):
     scopes = _scopes(tree)
     out = []
     for rule, check in CHECKS.items():
+        if rel == RULES[rule]:   # the owner is not a copy of itself
+            continue
         hits = check(tree)
         ids = {id(h) for h in hits}
         nested = {id(sub) for h in hits if not isinstance(h, SCOPES)
@@ -319,7 +359,6 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
     ("contexts", "jobs/KPP1/scripts/run_agr_checker.py:47", ""),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
-    ("contexts", "jobs/VATUTINO-SITE/place_site.py:59", ""),
     ("contexts", "src/dt_ai/geometry/ground_cake.py::uv_tile_report", "331763c046"),
     ("contexts", "tools/blender/ground_json_to_fbx.py::readback", "abdf135e7a"),
     ("contexts", "tools/experiments/dreamsim_ac08.py::_tile", "971a042bbe"),
@@ -332,10 +371,31 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "31ff54af03"),
     ("contexts", "tools/methods/windows/windows_variants.py::tile_offset", "85e04a9a85"),
     ("contexts", "tools/source/measure_spec_blender.py::udim", "ded8ff2561"),
+    # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
+    ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
+    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),
+    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "83b1fa0042"),
+    ("contexts", "tools/flora/build_flora_star.py::_blender", "e5c254530a"),
+    ("contexts", "tools/library/check_library.py::native_inspect", "c85d66fb6e"),
+    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
+    ("contexts", "tools/materials/bind_ground_textures.py::_run_blender", "707f4be9fd"),
+    ("contexts", "tools/methods/body/run_benchmarks.py::_blender", "18f971bee9"),
+    ("contexts", "tools/methods/ground/build_variant.py::_blender", "37235a2e47"),
+    ("contexts", "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx", "f5a8a5aa67"),
+    ("contexts", "tools/methods/run_variant.py::run_extra", "d4b2fad230"),
+    ("contexts", "tools/methods/ucx/run_benchmarks.py::main", "9c40344e89"),
+    ("contexts", "tools/methods/windows/run_benchmarks.py::main", "c2afb4241e"),
+    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
+    ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
+    ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
     ("vpm-contexts", "jobs/KPP1/scripts/run_agr_checker.py:47", ""),
     ("vpm-contexts", "jobs/KPP1/scripts/vpm_ucx.py:50", ""),
 })
-Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area")
+Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
+                 defaults=(None,))
+# Owner functions that ARE the duty of a rule (#1424 x #1378): a row of that rule is a wrapper only when its scope
+# calls one of them; taking the executable path from blender_runner and building an own argv is still a bypass.
+POLICY_NAMES = {"blender-launch": frozenset({"blender_command", "run_blender"})}
 
 
 def _row_at(at):
@@ -371,7 +431,8 @@ def rows_of(maps):
                 digest = d.get("hash")
                 out.append(Row(name, ctx.get("id"), ctx.get("owner"), at, rel, qual, line, status,
                                None if step is None else str(step), why, d.get("issue"),
-                               "" if digest is None else str(digest), str(d.get("ru") or ""), str(ctx.get("ru") or ctx.get("id"))))
+                               "" if digest is None else str(digest), str(d.get("ru") or ""), str(ctx.get("ru") or ctx.get("id")),
+                               d.get("rule")))
     return out
 
 
@@ -416,13 +477,24 @@ def _scope_node(tree, qual, line):
 
 
 def calls_owner(root, row):
-    """True when the row's function (or line's enclosing def) uses a name bound to its context owner."""
+    """True when the row's function (or line's enclosing def) uses a name bound to its context owner; for a rule in
+    POLICY_NAMES only a use of one of its policy functions counts (`from owner import f [as g]` or `owner_mod.f`)."""
     tree = ast.parse((Path(root) / row.rel).read_bytes(), filename=row.rel)
     names = _owner_names(tree, row.owner)
     if not names:
         return False
     scope = _scope_node(tree, row.qual, row.line)
-    return any(isinstance(n, ast.Name) and n.id in names for n in ast.walk(scope))
+    policy = POLICY_NAMES.get(row.rule)
+    if policy is None:
+        return any(isinstance(n, ast.Name) and n.id in names for n in ast.walk(scope))
+    stem = Path(row.owner).stem
+    imported = {a.asname or a.name: a.name for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)
+                and (n.module or "").split(".")[-1:] == [stem] for a in n.names}
+    funcs = {local for local, name in imported.items() if name in policy}
+    modules = names - set(imported)
+    return any((isinstance(n, ast.Name) and n.id in funcs) or
+               (isinstance(n, ast.Attribute) and n.attr in policy and isinstance(n.value, ast.Name)
+                and n.value.id in modules) for n in ast.walk(scope))
 
 
 def finished_jobs(root, contexts):

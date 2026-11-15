@@ -19,51 +19,59 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 Охрана: новая строка `live-bypass` (нет в `LIVE_BYPASS_BASELINE`) — провал «NEW LIVE BYPASS»; строка из базы, которой
 больше нет, — провал «FIXED LIVE BYPASS» (убрать из базы, храповик затягивается); `historical` вне законченного
-задания или с живой цепочкой — провал с цепочкой; `wrapper`, который не зовёт владельца, — провал.
+задания или с живой цепочкой — провал с цепочкой; `wrapper`, который не зовёт владельца, — провал. Для правила
+`blender-launch` обёрткой считается только вызов `blender_command` / `run_blender` (`POLICY_NAMES`): взять у владельца
+один путь к Blender и собрать командную строку самому — обход.
 Пересчитать таблицу: `uv run python tools/architecture/duplicate_guard.py --table` (тест сверяет её с этим файлом).
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 112; живой обход 28, обёртка 7, исторические 70, своя обязанность 7; разных живых копий 27.
+Строк дублей во всех картах: 130; живой обход 43, обёртка 4, исторические 75, своя обязанность 8; разных живых копий 42.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
 |---|---|---|---|
+| Связь с DCC (Blender / 3ds Max) | 16 | `src/dt_ai/cli/shared_tools.py`, `tools/flora/build_flora_npm_light.py`, `tools/flora/build_flora_star.py`, `tools/library/check_library.py`, `tools/library/migrate_windows.py`, `tools/materials/bind_ground_textures.py`, `tools/methods/body/run_benchmarks.py`, `tools/methods/ground/build_variant.py`, `tools/methods/parametric_parts/mesh_recipe.py`, `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py`, `tools/methods/windows/run_benchmarks.py`, `tools/research/checker_mutation.py`, `tools/research/fbx_reader_compare.py`, `tools/sintez_parity.py` | нет карточки |
 | Общее ядро: номер тайла UDIM | 11 | `src/dt_ai/geometry/ground_cake.py`, `tools/blender/ground_json_to_fbx.py`, `tools/experiments/dreamsim_ac08.py`, `tools/flora/build_flora_star.py`, `tools/methods/methods_metrics.py`, `tools/methods/windows/windows_variants.py`, `tools/source/measure_spec_blender.py` | #1397 |
 | Общее ядро: номер тайла UDIM | 11 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py` | нет карточки |
 | UV и атлас | 1 | `tools/materials/npm_atlas_udim.py` | #1380 |
 | Коллизии UCX (только ВПМ) | 1 | `jobs/KPP1/scripts/vpm_ucx.py` | #1404 |
 | Проверка и приёмка | 1 | `jobs/KPP1/scripts/run_agr_checker.py` | #1379 |
-| Связь с DCC (Blender / 3ds Max) | 1 | `jobs/VATUTINO-SITE/place_site.py` | #1407 |
 | Экспорт и пакет сдачи | 1 | `jobs/VATUTINO-SITE/npm_code.py` | нет карточки |
 
 ### Порядок оставшихся шагов сжатия (по живым обходам)
 
 | № | Шаг | Живых обходов |
 |---|---|---|
-| 1 | нет карточки | 12 |
+| 1 | нет карточки | 28 |
 | 2 | #1397 | 11 |
 | 3 | #1379 | 1 |
 | 4 | #1380 | 1 |
 | 5 | #1404 | 1 |
-| 6 | #1407 | 1 |
-| 7 | #1381 | 0 |
-| 8 | #1405 | 0 |
-| 9 | #1406 | 0 |
+| 6 | #1381 | 0 |
+| 7 | #1405 | 0 |
+| 8 | #1406 | 0 |
+| 9 | #1407 | 0 |
 | 10 | #1410 | 0 |
 
 ### Рекомендуемый порядок сжатия
 
-1. **Новая карточка: копии UDIM в ядрах AGR Tools (11).** Восемь ядер MZP (`npm_core`, `udim_core`, `uvtile_core`,
+1. **Новая карточка: свой запуск Blender в живых инструментах (16 строк, 15 файлов).** После слияния с #1378
+   правило `blender-launch` нашло командные строки Blender мимо `blender_command` / `run_blender` в `tools/`
+   (Флора, библиотека, текстуры Ground, каталог методов, исследования, сверка СИНТЕЗ) и в `dt derive`
+   (`src/dt_ai/cli/shared_tools.py`). Четыре инструмента методов берут у владельца только путь к Blender
+   (`blender_executable`), а командную строку собирают сами (без `--disable-autoexec`, без изоляции настроек) —
+   это обход, не обёртка. Нужна карточка «Сжатие 3b».
+2. **Новая карточка: копии UDIM в ядрах AGR Tools (11).** Восемь ядер MZP (`npm_core`, `udim_core`, `uvtile_core`,
    `udimplug_core`, `udimview_core`, `uvlayout_core`, `npm2vpm_core`, `atlas_core`) считают тайл сами, хотя рядом
-   лежит `udimtile_core` (#1337). Это самый большой живой обход, и ни один открытый шаг его не покрывает
-   (#1376 закрыт, #1397 — только `tools/` и `src/`). Нужна карточка «Сжатие 1c».
-2. **#1397 (11)** — UDIM в живых маршрутах Ground (`ground_cake`), Флора (`build_flora_star`) и в инструментах
+   лежит `udimtile_core` (#1337). Ни один открытый шаг их не покрывает (#1376 закрыт, #1397 — только `tools/` и
+   `src/`). Нужна карточка «Сжатие 1c».
+3. **#1397 (11)** — UDIM в живых маршрутах Ground (`ground_cake`), Флора (`build_flora_star`) и в инструментах
    `tools/` (методы, эксперимент, замер исходника; для `measure_spec_blender` сначала решение: сырой тайл или отказ).
-3. **#1379 (1)** — запуск чекера СИНТЕЗ: маршруты НПМ / ВПМ / пакет идут через `jobs/KPP1/scripts/run_agr_checker.py`.
-4. **#1380 (1)** — `tools/materials/npm_atlas_udim.py`, путь А атласа НПМ (после #1141).
-5. **#1404 (1)** — UCX ВПМ через `jobs/KPP1/scripts/vpm_ucx.py`.
-6. **#1407 (1)** — свой запуск Blender в `jobs/VATUTINO-SITE/place_site.py` (расстановка; сам `run` уже обёртка движка).
+4. **#1379 (1)** — запуск чекера СИНТЕЗ: маршруты НПМ / ВПМ / пакет идут через `jobs/KPP1/scripts/run_agr_checker.py`.
+5. **#1380 (1)** — `tools/materials/npm_atlas_udim.py`, путь А атласа НПМ (после #1141).
+6. **#1404 (1)** — UCX ВПМ через `jobs/KPP1/scripts/vpm_ucx.py`.
 7. **Без карточки (1)** — `jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip`: этап «загрузка» маршрута пакета пишет
    ZIP сам; закрыть вместе с командой загрузки (#1379 — ближайший шаг).
-8. **#1381, #1405, #1406, #1410 (0)** — живых обходов нет: копии корпуса КПП1 (#1381) исторические, а #1405, #1406,
-   #1410 — недостающие команды (красные блоки маршрутов), а не дубли; их порядок задаёт маршрут, не этот реестр.
+8. **#1381, #1405, #1406, #1407, #1410 (0)** — живых обходов нет: копии корпуса КПП1 (#1381) исторические; свой запуск
+   Blender в `jobs/VATUTINO-SITE/place_site.py` (#1407) убран в #1378 (теперь `run_blender`); #1405, #1406, #1410 —
+   недостающие команды (красные блоки маршрутов), а не дубли; их порядок задаёт маршрут, не этот реестр.

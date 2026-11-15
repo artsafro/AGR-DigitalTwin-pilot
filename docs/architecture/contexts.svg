@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2220" width="2360" height="2220" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2464" width="2360" height="2464" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="2220" fill="#ffffff"/>
+<rect x="10" y="-30" width="2360" height="2464" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="336.5" width="470" height="650.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40" y="1046.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -11,8 +11,8 @@
 <rect x="1260" y="1343.0" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1870" y="1046.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="1255.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1798.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1972.0" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1798.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="2024.5" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="510" y1="1179.0" x2="650" y2="1152.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1120" y1="1152.75" x2="1260" y2="1187.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1730" y1="1187.75" x2="1870" y2="1144.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -209,21 +209,37 @@
 <tspan x="963.0" dy="17.5"></tspan>
 <tspan x="963.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
 <tspan x="963.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="963.0" dy="17.5">blender_command: скрипт, аргументы -&gt; одна командная</tspan>
+<tspan x="963.0" dy="17.5">строка Blender без окна (закреплённая версия, без</tspan>
+<tspan x="963.0" dy="17.5">автозапуска)</tspan>
 <tspan x="963.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="963.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="963.0" y="1982.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 6</tspan>
-<tspan x="963.0" dy="15.0">• src/dt_ai/core/build.py:16 — второй run_blender в ядре (#1359)</tspan>
-<tspan x="963.0" dy="15.0">• src/twinqa/scene.py:59 — свой поиск Blender в twinqa (#1359)</tspan>
-<tspan x="963.0" dy="15.0">• tools/qa/run_benchmark.py:40 — свой запуск Blender в бенчмарке</tspan>
-<tspan x="963.0" dy="15.0">(#1359)</tspan>
-<tspan x="963.0" dy="15.0">• jobs/VATUTINO-SITE/flora_route_a.py:394 — свой запуск Blender в</tspan>
-<tspan x="963.0" dy="15.0">задании (#1359)</tspan>
-<tspan x="963.0" dy="15.0">• jobs/VATUTINO-SITE/place_site.py:59 — свой запуск Blender в</tspan>
-<tspan x="963.0" dy="15.0">задании (#1359)</tspan>
-<tspan x="963.0" dy="15.0">• jobs/OBR22-K02/scripts/run_profile_checks.py:191 — свой запуск</tspan>
-<tspan x="963.0" dy="15.0">Blender в задании (#1359)</tspan>
+<text x="963.0" y="2034.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="12">Дубли вне владельца: 24</tspan>
+<tspan x="963.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
+<tspan x="963.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
+<tspan x="963.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
+<tspan x="963.0" dy="15.0">• jobs/KPP1/benchmark-1318/run_benchmark.py: main</tspan>
+<tspan x="963.0" dy="15.0">• jobs/KPP1/quad-1372/run_checks.py: main</tspan>
+<tspan x="963.0" dy="15.0">• jobs/VATUTINO-SITE/run_delivery.py: main, main.dcc</tspan>
+<tspan x="963.0" dy="15.0">• jobs/VATUTINO-SITE/scene_checks.py: main</tspan>
+<tspan x="963.0" dy="15.0">• src/dt_ai/cli/shared_tools.py: command</tspan>
+<tspan x="963.0" dy="15.0">• tools/flora/build_flora_npm_light.py: execute</tspan>
+<tspan x="963.0" dy="15.0">• tools/flora/build_flora_star.py: _blender</tspan>
+<tspan x="963.0" dy="15.0">• tools/library/check_library.py: native_inspect</tspan>
+<tspan x="963.0" dy="15.0">• tools/library/maf_material_ids.py: main</tspan>
+<tspan x="963.0" dy="15.0">• tools/library/migrate_windows.py: main</tspan>
+<tspan x="963.0" dy="15.0">• tools/materials/bind_ground_textures.py: _run_blender</tspan>
+<tspan x="963.0" dy="15.0">• tools/methods/body/run_benchmarks.py: _blender</tspan>
+<tspan x="963.0" dy="15.0">• tools/methods/ground/build_variant.py: _blender</tspan>
+<tspan x="963.0" dy="15.0">• tools/methods/parametric_parts/mesh_recipe.py: _blender_fbx</tspan>
+<tspan x="963.0" dy="15.0">• tools/methods/run_variant.py: run_extra</tspan>
+<tspan x="963.0" dy="15.0">• tools/methods/ucx/run_benchmarks.py: main</tspan>
+<tspan x="963.0" dy="15.0">• tools/methods/windows/run_benchmarks.py: main</tspan>
+<tspan x="963.0" dy="15.0">• tools/research/checker_mutation.py: freeze</tspan>
+<tspan x="963.0" dy="15.0">• tools/research/fbx_reader_compare.py: _blender</tspan>
+<tspan x="963.0" dy="15.0">• tools/sintez_parity.py: run_live.run</tspan>
 </text>
 <rect x="550.0" y="1147.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
 <text x="580.0" y="1147.88" font-size="14" text-anchor="middle" fill="#1e1e1e">

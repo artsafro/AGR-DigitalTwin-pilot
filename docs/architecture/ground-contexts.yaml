@@ -119,7 +119,7 @@ contexts:
       - name: report_json
         contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
     duplicates:
-      - at: "jobs/VATUTINO-SITE/place_site.py:78"
+      - at: "jobs/VATUTINO-SITE/place_site.py:87"
         match: "def run("
         issue: "#1383"
         ru: "своя расстановка участка в задании поверх движка"

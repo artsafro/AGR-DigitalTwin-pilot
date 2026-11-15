@@ -190,7 +190,8 @@ def test_cli_exit_1_on_a_new_live_bypass(monkeypatch, capsys):
     monkeypatch.setattr(guard.status_problems, "__defaults__", (frozenset(),))
     assert guard.main([]) == 1
     out = capsys.readouterr().out
-    assert out.count("STATUS NEW LIVE BYPASS") == 28
+    live = sum(1 for r in guard.rows_of(guard.load_maps(ROOT)) if r.status == "live-bypass")
+    assert out.count("STATUS NEW LIVE BYPASS") == live == 43   # 28 of #1424 + 16 blender-launch of #1378 - place_site
 
 
 def test_finished_jobs_evidence_must_exist_and_match(tmp_path):
