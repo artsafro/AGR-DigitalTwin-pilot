@@ -30,6 +30,66 @@ def make(**changes):
     return PartsList.model_validate(data)
 
 
+def finish_listing():
+    data = copy.deepcopy(LISTING)
+    data["finish_sheets"] = [{"image": "sheet.jpg", "multi_building": True}]
+    data["parts"][0]["finish_refs"] = [{"image": "sheet.jpg", "bbox": [10, 20, 100, 200],
+                                       "crop": "crops/wall.png"}]
+    return data
+
+
+def test_finish_reference_roundtrip():
+    import json
+    from pathlib import Path
+    import jsonschema
+
+    data = finish_listing()
+    result = PartsList.model_validate(data)
+    assert result.parts[0].finish_refs[0].bbox == [10, 20, 100, 200]
+    assert PartsList.model_validate_json(result.model_dump_json()) == result
+    schema = json.loads((Path(__file__).resolve().parents[2] / "schemas/PartsList.schema.json").read_text())
+    jsonschema.validate(data, schema)
+
+
+@pytest.mark.parametrize("missing", ["bbox", "crop"])
+def test_multi_building_finish_requires_crop(missing):
+    data = finish_listing()
+    del data["parts"][0]["finish_refs"][0][missing]
+    with pytest.raises(ValidationError, match=f"wall_a.*{missing}"):
+        PartsList.model_validate(data)
+
+
+@pytest.mark.parametrize("change", [
+    {"image": "unknown.jpg"}, {"image": ""}, {"crop": " "}, {"crop": "sheet.jpg"},
+    {"bbox": []}, {"bbox": [1, 2, 3]}, {"bbox": [0, 0, 0, 10]},
+    {"bbox": [10, 0, 1, 10]}, {"bbox": [-1, 0, 1, 10]},
+    {"bbox": [0, 0, float("nan"), 10]}, {"bbox": [0, 0, float("inf"), 10]},
+    {"bbox": [False, 0, 1, 10]}, {"bbox": ["0", 0, 1, 10]},
+])
+def test_finish_reference_invalid(change):
+    data = finish_listing()
+    data["parts"][0]["finish_refs"][0].update(change)
+    with pytest.raises(ValidationError):
+        PartsList.model_validate(data)
+
+
+def test_finish_ref_repeated_failure_reset():
+    data = finish_listing()
+    data["parts"][0]["finish_refs"][0].pop("bbox")
+    for _ in range(2):
+        with pytest.raises(ValidationError, match="wall_a.*bbox"):
+            PartsList.model_validate(data)
+    assert PartsList.model_validate(finish_listing()).parts[0].finish_refs
+
+
+def test_finish_crop_rule_documented():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    for path in [".agents/skills/analyze-architectural-source/SKILL.md", "docs/agents/task-intake.md"]:
+        text = (root / path).read_text(encoding="utf-8")
+        assert "finish_refs" in text and "multi_building" in text and "crop path" in text
+
+
 def test_drawings_only_source_tier():
     import json
     from pathlib import Path
