@@ -1,5 +1,28 @@
 # KPP1 #1416 — Ground copy under 180 000 NPM triangles; s_podz search; packages rebuilt — NOT PASSED
 
+## Кратко (RU) — раунд 3 (решение Артёма [D313], «на все да»)
+
+- **Исключение [D313]** (как [D256]): собственные дефекты моделирования Ground заказчика — V004 самопересечения
+  Flora 150 567 / Ground 15 976 / GroundEl 63 537, V003 skirt «broken face geometry», V004 clearance 406 пар < 5 мм —
+  приняты Артёмом для KPP1 package-v001. Валидатор их по-прежнему пишет как `fail`, поэтому `passed=false`
+  в `validate-npm.json` остаётся честным; эти строки закрыты решением, а не валидатором.
+- **Открыто (ждёт Артёма/заказчика):** `s_podz` (VPM V011, число заказчика [D306]); ручные приёмки V015 / V017;
+  `not_run` V003 footprint/holes (нет ground_area_m2), V003 master quads, V014 (валидатора нет).
+- **3ds Max не открывали** (решение Артёма). Вместо этого — wireframe Ground v003 (упакованный
+  `package-v001/npm/0000_Kpp_1_Ground.fbx`, sha `29944746…`, 179 816 треугольников при чтении), в виде quad review
+  (только для показа; FBX остаётся триангулированным): Flora 37 391 quad + 34 545 tri, Ground 7 956 + 2 979,
+  GroundEl 24 666 + 2 266. Папка `G:/Мой диск/AGR-evidence/1416-kpp1-ground-budget/wire-v003/` + `SHA256SUMS.txt`:
+  `01_overview_top.png` (весь участок, сверху), `02_densest_cell.png` (самая плотная ячейка 10 м, центр
+  8165/−9665, 15 037 полигонов), `03_skirt_edge.png` (край/юбка, юг), `04_building_edge.png` (юго-восточный угол R1),
+  сводный лист `wire-sheet-v003.png` (sha `b5f585c3…`), `wire-report.json`.
+- 179 821 в раунде 2 — счёт скрипта до экспорта; чтение FBX и валидатор дают 179 816 (оба ≤ 180 000).
+
+```bash
+G="G:/Мой диск/AGR-evidence/1416-kpp1-ground-budget"; E="$G/package-v001/npm"
+"$B" -b --factory-startup -noaudio --python wire_render.py -- "$E/0000_Kpp_1_Ground.fbx" "$E/0000_Kpp_1_01.fbx" "$G/wire-v003"
+uv run python wire_sheet.py "$G/wire-v003"   # rerun on an existing dir -> "output exists" / "exists", nothing written
+```
+
 ## Кратко (RU) — раунд 2 (после решения Артёма [D308])
 
 - **Ground v003** (`G:/Мой диск/AGR-evidence/1416-kpp1-ground-budget/v003/0000_Kpp_1_Ground.fbx`, sha `29944746…`):
@@ -42,7 +65,7 @@ made hard. Three earlier attempts kept as evidence (`v003-attempt1..3`): FACE sm
 | V004 topology | Flora 152 427 / Ground 16 745 / GroundEl 64 561 | Flora 150 567 / Ground 15 976 / GroundEl 63 537 | **all `self_intersections`, 0 duplicates**: crossed Flora cards and pieces sunk into terrain — customer modelling |
 | V004 MAF normals | flipped 606, inconsistent 8 | flipped 4, inconsistent 0 | 4 faces on non-manifold edges |
 | V004 MAF smoothing | pass | pass | — |
-| V004 clearance | 1 498 pairs < 5 mm | 406 pairs < 5 mm | customer modelling / Artem (D256-type exception?) |
+| V004 clearance | 1 498 pairs < 5 mm | 406 pairs < 5 mm | customer modelling, accepted as exception [D313] |
 | V006 textures | pass | pass | — |
 | V012 names | fail | **pass** | — |
 | V014 / V015 / V017 | not_run | not_run | validator absent / manual sign-offs / no planting schedule |
