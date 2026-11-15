@@ -1,6 +1,17 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v014 accepted Bench025 replicated2/2 [D316]; new Table016 representation choice, not delivered**.
+Current status: **v015 NPM Table016 adopted12/12 [D319]; VPM physical slots preserved; not delivered**.
+See [CONTINUATION-v015.md](CONTINUATION-v015.md):172487NPM/334274VPM raw render
+triangles,172472/334226native; other-MAF face loss15/48 remainsFAIL. All38MAF/
+4582census retained;26otherNPMMAF/Ground/Flora/600UCX exact, every VPM mesh array
+exact againstv014. All12actual placed NPM Tables raw/native xView0/0/0/0area.
+Three VPM physical-slat repair routes remain rejected; new question concerns a
+source-bound parameterized76slat/frame pilot with geometric slots>=6.2mm, NOT
+using NPM solid surfaces in VPM and NOT approval of technical failures. Whole
+validators and two separately disclosed repair regressions remainFAIL/RED.
+Current sheet: `v015/review-sheet-v015-NPM-APPLIED-VPM-SCOPE-NOT-DELIVERED.png`.
+
+Historical status: **v014 accepted Bench025 replicated2/2 [D316]; new Table016 representation choice, not delivered**.
 See [CONTINUATION-v014.md](CONTINUATION-v014.md). Actual162011NPM/334274VPM
 render triangles;38MAF/4582census retained,36otherMAF/Ground/Flora/600UCX exact.
 Whole validators FAIL;226checkpoint checks pass, one complete-set repair regression

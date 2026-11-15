@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-bench-replication-and-table-choice-v014
+run_id: cold-1315-NPM-only-table-adoption-VPM-slot-scope-v015
 synthetic: false
 path: deviation
 inputs: &id001
@@ -94,45 +94,50 @@ deviations:
   what_was_tried: D316accepted Bench025 replicated2of2;38MAF4582census retained. Source native component views, structural profiles/solids, bounded-netLOD and actual raw/native readbacks. Separate continuousTable016r4 option changes physical plank representation and is not adopted.
   new_tool_written: 38job-local drivers/adapters1119literal lines sealed externally in evidence-v014.json; no shared module/checker/library changes.
   result: Actual162011NPM334274VPM;GroundFlora600UCX36otherMAF exact. Option2108tri both,raw/native0faces0vertices0bowties0area,1000seat+1000gap probes;sampled19.126/39.624mm NOT Hausdorff. NEW plank-representation choice, not renewed D316repair scope. Whole validators and complete-set regression remain FAIL.
+- gate: operations
+  what_failed: Three VPM physical-slat source-profile repair routes remain rejected; latest bounded cleanup70faces0vertices, not a pass. Source two-plank diagnostic has0contacts3area-only pairs, not3self-intersections.
+  what_was_tried: D319accepted NPM-only Table016r4 adopted12of12; every VPM mesh array exact againstv014. Four raw/native readbacks and24actual placed NPMTable xView checks clean. VPM solids, aligned profiles and radial embeds retained as failed candidates; no NPMsurface transferred toVPM.
+  new_tool_written: 20job-local drivers/adapters576literal lines sealed externally in evidence-v015.json; no shared module/checker/library changes.
+  result: Actual172487NPM334274VPM,38MAF4582census retained,otherNPM26MAFGroundFlora600UCXexact. NativeotherMAF15/48face loss remains. NEW scope question is a separate parameterized VPM76physical-slat/frame pilot with geometric slots>=6.2mm; no failed candidate offered for approval. Whole validators and two repair regressions remain FAIL.
 gates:
   inputs:
     status: review
-    note: Original sources/libraries/maps/bench and old site bytes unchanged; missing source/grey/species gaps remain. Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
+    note: All20original/source/library/map/bench/old-site checks rehash equal, including both v014resume FBXs. Missing source/grey/species gaps remain. Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
     evidence: *id001
   parts:
     status: pass
-    note: Original site/scope Gate1 and pilot accepted. D287 confirms all38MAF/4582plant composition; D316closes Bench025pilot. Accepted-by-picture is not article-matched or technical acceptance.
+    note: Original site/scope Gate1 and pilot accepted. D287 confirms all38MAF/4582plant composition; D316closes Bench025pilot; D319closes NPM-only Table016representation choice, NOT VPM or technical acceptance.
     evidence:
     - path: jobs/SIL13-COLD-1315/parts-full-site-picture-confirmed-v007.json
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D316accepted116triangle Bench025 replicated2of2;36othercopies exact. Three remaining-type repair routes FAIL. NEW Table016 continuous tabletop/four-seat option would merge76physical wood planks/slots, not covered by earlier small joint repair; unadopted pending model choice. No technical waiver requested.
+    note: D319NPM-only Table016r4 actually replicated12of12,actualplaced raw/native24of24clean. Every VPM mesh array exact againstv014; physical slats/gaps retained. Three VPMprofile/joint repair routes remain rejected,latest cleanup70faces. NEW scope question is a separate source-bound parameterized VPM76slat/frame pilot retaining geometric gaps>=6.2mm, not NPMsolid adoption or approval of technicalFAILs.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v014-r2.json
-      sha256: 8a5308e52ac0cf57a8b8ffdd35419ed7a5d4eef69c56718d0fba5d5563027bf5
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v015.json
+      sha256: ccc3dbfe6d9e0224303a581030d38b9a87cc9cb9a5e7a9bad14cb7d9511d7b20
     waits: user
   budgets:
     status: review
-    note: Actual162011NPM<=180000;334274VPM<=2625000;600UCX6876tri. Flora actual arrays unchanged, previous connected-support minima78.225/78.655percent retained, not remeasured. Materials/UV/density incomplete. Tableoption projections are not built-site counts.
+    note: Actual172487NPM<=180000,7513remaining;334274VPM<=2625000;600UCX6876tri. Flora actual arrays exact againstv014, previous support78.225/78.655percent remains applicable, not remeasured. Materials/UV/density incomplete; no VPMexperimental counts promoted to site.
     evidence: *id002
   export_readback:
     status: review
-    note: Fourfresh full-site raw/native readbacks;Bench2of2 facesexact116each,GroundFlora600UCX36MAFexact. OtherMAF native39/48face loss unresolved. Separate unadoptedTableoption2108tri exactnative/rawboth,xView0/0/0/0area;not whole-file pass.
+    note: Fourfresh full-site raw/native readbacks;all12adoptedNPMTables2108facesexacteach,raw/native24of24 xView0faces0vertices0bowties0area. Other26NPMMAF/Ground/Flora exact;allVPM38MAFGroundFlora600UCXexact. NativeotherMAF15/48face loss unresolved;whole native xViewFAIL,not whole-file pass.
     evidence: *id002
   report:
     status: review
-    note: v014acceptedBench2copyreplication and newTablephysical-plank choice.226checkpoint controls green;1complete-setrepair regression explicitlyRED;whole native validatorsFAIL. Fullsuite deferred to merge batch(rule68).
+    note: v015D319NPMTable12copyadoption,VPMphysicalslotsunchanged;254checkpoint controls green,2deselected unresolvedregressions separately2failed43729/70faces.101immutablefiles161260310bytes sealed;20originalhashesequal.Whole native validatorsFAIL.Fullsuite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v014.md
-      sha256: df8e21cb7c8f4768faeb8fdcc923b91a16c83b4adfaa60588d9b7c0613cb9e82
-    - path: jobs/SIL13-COLD-1315/evidence-v014.json
-      sha256: 5d3d883f950d1180b1d3204332e688844fd47c928151074e87fe590ce8415abe
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v015.md
+      sha256: e54674c188369bd76be47a26b8b879dabed041b67e6924385d185f8de25237f5
+    - path: jobs/SIL13-COLD-1315/evidence-v015.json
+      sha256: d557ad81c98fd09088ab51a7421e70200d4cfde1c66fc8f856dfbd9dd98419aa
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: D287composition/D291shrub/D294pilot/D318route/D315hedge/D305repair-scope/D316Benchpilot CLOSED. NEW Table016 physical-plank-to-continuous-surfaces choice only;sheet FLAT-D316 current. Neutral material/finalvisual acceptance not requested.
+    note: D287composition/D291shrub/D294pilot/D318route/D315hedge/D305repair-scope/D316Bench/D319NPMTable gates CLOSED. New VPMparameterized76slat/frame pilot NOT BUILT; current sheet only actualsource and acceptedNPMgeometry. No NPMsolid surfaces inVPM; finalvisual/material acceptance not requested.
     evidence: *id002
   checker:
     status: missing

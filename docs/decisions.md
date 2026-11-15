@@ -328,6 +328,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 
 | D318 | 2026-11-14 | Silikatny #1315: reject v010 whole-site cell-trim with crowns down to about 32%. Any crown trimming must retain >=68% of the accepted copy. Where plants of one hedge still intersect, merge them into one continuous hedge volume per hedge run; keep every plant ID, count, planting point and height recorded in the census. Continue with this representation on copies only; no technical QA or final-delivery waiver. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | backfill (own earlier D298/D313 renumbered after foreign allocation); Artem «принимаю рекомендации», owning card t_d9ae7dc0 and issue #1315 comment 6885424060 |
 
+| D319 | 2026-11-15 | Silikatny #1315: accept Table016 r4 continuous construction for the 12 NPM copies only: solid tabletop and four seats, with slat divisions to be restored later by texture. VPM must keep the physical slats and gaps as geometry until Artem says otherwise; the answer covers the NPM recommendation only. Library originals stay untouched; all38 MAF IDs/counts/points/rotations, D094 dimensions, technical QA, materials and final delivery gates remain mandatory. | `jobs/SIL13-COLD-1315/TASK.md`; `docs/domain/areas/ground-surface.md` | Artem: «принимаю рекомендации», https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6896446736 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

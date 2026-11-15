@@ -131,6 +131,19 @@ The actual2108triangle raw/native-clean option remains UNADOPTED until Artem's
 one representation choice. See `CONTINUATION-v014.md`; the r1missing-seat option
 and old smooth-shaded sheet are superseded. Whole-site technical FAILs remain.
 
+[D319] / issue comment6896446736 ACCEPTS the r4continuous Table016 construction
+for12NPMcopies ONLY. v015actually adopts it there:172487NPMrawtriangles; all12
+actual Tables raw/native-clean0/0/0/0area,38MAF/4582census retained. VPM334274raw
+triangles and EVERY actual mesh array stay exact againstv014; physical slats/gaps
+are not replaced by NPM surfaces. Plank divisions on NPM still need texture work.
+That representation choice is CLOSED. Three VPM source-profile/joint repair routes
+remain rejected (latest bounded cleanup70faces/0vertices). NEW scope question:
+allow a separate source-bound parameterized VPMpilot, all76individual slats and
+real geometric slots>=6.2mm retained, frame/rings rebuilt, or require exact original
+slot widths/profile shapes? Recommend the new pilot and before/after picture
+before replication; no failed mesh/whole-site technical QA is offered for approval.
+See `CONTINUATION-v015.md`; resume from `site-table-r1`, NOT rejected VPM candidates.
+
 Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.
 Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Syringa

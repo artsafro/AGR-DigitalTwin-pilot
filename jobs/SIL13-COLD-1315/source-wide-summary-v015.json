@@ -1,0 +1,659 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-NPM-only-table-adoption-VPM-slot-scope-v015",
+  "decision": "D319",
+  "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6896446736",
+  "scope": "NPM twelve Tables r4 adopted; every VPM geometry array unchanged; rejected VPM source-profile experiments not adopted",
+  "profiles": {
+    "NPM": {
+      "render_triangles": 172487,
+      "native_render_triangles": 172472,
+      "native_other_MAF_face_loss": 15,
+      "changed_MAF": 12,
+      "unchanged_MAF": 26,
+      "changed_instances": [
+        {
+          "handle": "33FB381",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 1.8208258367735652e-06,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB382",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 1.9454430599807893e-07,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB383",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 2.2263192249738495e-06,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB384",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 1.3525889244192513e-06,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB385",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 1.276844379560771e-06,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB386",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 7.668068420230156e-07,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB387",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 9.059728967031333e-07,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB388",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 1.478057399140198e-06,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB389",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 9.530193949558452e-07,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB38A",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 1.817218347355265e-06,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB38B",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 7.758967086601842e-07,
+          "points_rotations_heights_retained": true
+        },
+        {
+          "handle": "33FB38C",
+          "faces": 2108,
+          "faces_exact": true,
+          "max_coordinate_delta_m": 1.9556159713829402e-07,
+          "points_rotations_heights_retained": true
+        }
+      ],
+      "unchanged_handles": [
+        "33FB3A5",
+        "33FB3A6",
+        "33FB3A7",
+        "33FB3A8",
+        "33FB3A9",
+        "33FB3AA",
+        "33FB3AB",
+        "33FB3B0",
+        "33FB3B1",
+        "33FB3B2",
+        "33FB3BE",
+        "33FB3BF",
+        "33FB3BC",
+        "33FB3BD",
+        "33FB590",
+        "33FB3B3",
+        "33FB3B4",
+        "33FB3B5",
+        "33FB3B6",
+        "33FB3B7",
+        "33FB3B8",
+        "33FB3B9",
+        "33FB3BA",
+        "33FB581",
+        "33FB3AD",
+        "33FB3AE"
+      ],
+      "all_geometry_exact": false,
+      "Ground_Flora_UCX_actual_arrays_exact": true,
+      "retained_census": 4582,
+      "retained_MAF": 38,
+      "fbx_sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "public_xview": {
+        "overlapping_vertices": 114,
+        "overlapping_faces": 2819,
+        "vertex_pairs": 72,
+        "face_pairs": 4102,
+        "face_pairs_by_kind": {
+          "contact": 255,
+          "area": 540,
+          "area+contact": 3307
+        },
+        "bowtie_vertices": 213,
+        "bowtie_pairs": 26,
+        "parts_without_faces": 0
+      },
+      "public_validator": {
+        "passed": false,
+        "exit_code": 1,
+        "machine_stage_counts": {
+          "pass": 2,
+          "fail": 3,
+          "review": 1,
+          "not_run": 2
+        }
+      },
+      "limit_render_triangles": 180000,
+      "remaining_render_triangles": 7513
+    },
+    "VPM": {
+      "render_triangles": 334274,
+      "native_render_triangles": 334226,
+      "native_other_MAF_face_loss": 48,
+      "changed_MAF": 0,
+      "unchanged_MAF": 38,
+      "changed_instances": [],
+      "unchanged_handles": [
+        "33FB381",
+        "33FB382",
+        "33FB383",
+        "33FB384",
+        "33FB385",
+        "33FB386",
+        "33FB3A5",
+        "33FB3A6",
+        "33FB3A7",
+        "33FB3A8",
+        "33FB3A9",
+        "33FB3AA",
+        "33FB3AB",
+        "33FB3B0",
+        "33FB3B1",
+        "33FB3B2",
+        "33FB3BE",
+        "33FB3BF",
+        "33FB3BC",
+        "33FB3BD",
+        "33FB590",
+        "33FB387",
+        "33FB388",
+        "33FB389",
+        "33FB38A",
+        "33FB38B",
+        "33FB38C",
+        "33FB3B3",
+        "33FB3B4",
+        "33FB3B5",
+        "33FB3B6",
+        "33FB3B7",
+        "33FB3B8",
+        "33FB3B9",
+        "33FB3BA",
+        "33FB581",
+        "33FB3AD",
+        "33FB3AE"
+      ],
+      "all_geometry_exact": true,
+      "Ground_Flora_UCX_actual_arrays_exact": true,
+      "retained_census": 4582,
+      "retained_MAF": 38,
+      "fbx_sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "public_xview": {
+        "overlapping_vertices": 44,
+        "overlapping_faces": 44979,
+        "vertex_pairs": 22,
+        "face_pairs": 95026,
+        "face_pairs_by_kind": {
+          "contact": 41074,
+          "area": 6726,
+          "area+contact": 47226
+        },
+        "bowtie_vertices": 298,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "public_validator": {
+        "passed": false,
+        "exit_code": 1,
+        "machine_stage_counts": {
+          "pass": 3,
+          "fail": 3,
+          "review": 1,
+          "not_run": 5
+        }
+      },
+      "limit_render_triangles": 2625000,
+      "remaining_render_triangles": 2290726
+    }
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input"
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input"
+    }
+  ],
+  "VPM_failed_repair_routes": {
+    "r1": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 15,
+        "overlapping_faces": 202,
+        "vertex_pairs": 11,
+        "face_pairs": 242,
+        "face_pairs_by_kind": {
+          "contact": 15,
+          "area": 104,
+          "area+contact": 123
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 2,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "b3596de50c09bbd87b9bb618c0d2f4cb6384301496834d6056068a5b9dcd27d6"
+    },
+    "r2": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 26,
+        "overlapping_faces": 297,
+        "vertex_pairs": 17,
+        "face_pairs": 312,
+        "face_pairs_by_kind": {
+          "contact": 16,
+          "area": 74,
+          "area+contact": 222
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "e442bbb926c6471d1f49dc2856ccd5f9f2feb299ca2dedb62599554b64c2f8d0"
+    },
+    "r3": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 647,
+        "overlapping_faces": 97,
+        "vertex_pairs": 419,
+        "face_pairs": 100,
+        "face_pairs_by_kind": {
+          "contact": 19,
+          "area": 11,
+          "area+contact": 70
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "da283bcb5ec27c2bb5961e017da8b068e0267a19b939a4378dc67e0a3db09d49"
+    },
+    "r3-finish": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 549,
+        "overlapping_faces": 64,
+        "vertex_pairs": 357,
+        "face_pairs": 68,
+        "face_pairs_by_kind": {
+          "contact": 19,
+          "area": 4,
+          "area+contact": 45
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "0847bb4eb333f78760c779be1b2a2b9d1ec3ad7b39bb19173f9ed47ff82c6443"
+    },
+    "r3-clean": {
+      "passed": false,
+      "totals": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 70,
+        "vertex_pairs": 0,
+        "face_pairs": 77,
+        "face_pairs_by_kind": {
+          "contact": 20,
+          "area": 10,
+          "area+contact": 47
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "report_sha256": "e1f6a79faebc78fe75ab31c85628cbc0ced848a1c4c18a385af72838205f8c97"
+    }
+  },
+  "source_slot_counterexample": {
+    "passed": false,
+    "source_components": [
+      16,
+      20
+    ],
+    "physical_planks": 2,
+    "source_projected_clearance_m": 0.004945264924930655,
+    "regulatory_public_face_threshold_m": 0.005,
+    "projected_nearest_points_xy": [
+      [
+        1.519439697265625,
+        1.7503814697265625
+      ],
+      [
+        1.5236275335645355,
+        1.7477513229034218
+      ]
+    ],
+    "source_points_unchanged": true,
+    "proposed_pilot_built": false,
+    "explanation": "source gap below unchanged5mm face threshold; retaining physical gaps does not require an NPM continuous surface, but exact source spacing cannot itself pass this clearance"
+  },
+  "source_slot_public_xview": {
+    "passed": false,
+    "thresholds": {
+      "vertex_m": 0.002,
+      "face_m": 0.005,
+      "parallel_cos_min": 0.9999
+    },
+    "totals": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 3,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 3,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "occupancy_probe_limit": "26 full-mesh occupants in wood-empty samples can include original metal; not proven closed-slot count",
+  "required_gate": {
+    "waits": "user",
+    "scope": "NEW separate source-bound parameterized VPM76physical-slat/frame pilot, geometric slots>=6.2mm and realigned interfaces, or exact original gaps/profile shapes; no NPM solid surfaces in VPM; no approval of failed candidates",
+    "new_VPM_pilot_built": false,
+    "sheet": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v015\\review-sheet-v015-NPM-APPLIED-VPM-SCOPE-NOT-DELIVERED.png",
+    "sheet_sha256": "484b71636e1fc5f7b0ff68363b8630afe229b1abf8963d1fad093921e8e46097"
+  },
+  "tests": {
+    "checkpoint_passed": 254,
+    "checkpoint_deselected": 2,
+    "checkpoint_seconds": 12.61,
+    "unresolved_failed": 2,
+    "unresolved_values": [
+      43729,
+      70
+    ],
+    "unresolved_seconds": 7.79,
+    "fresh_baseline_authority_RED": "4a3f5df2 detached worktree:1failed missingD319; no .venv copied; worktree removed",
+    "initial_RED": "4failed missingD319/outputs",
+    "row_order_self_fix": "253passed1failed ->254passed; D319 moved afterD318",
+    "logs": {
+      "tests-preseal.log": "55b352bf3728e09f1dbb402d3b02743b368759c98bdbed4eb6726a78704c486c",
+      "unresolved-red.log": "3cee33f5425a120299b8b14f087034dcc85ba5e9ed6315cece759213ddf4d007",
+      "fresh-baseline-red.log": "90bb4fed761cb8ed49e737f59ba381699f84165e875b6084021093d22815a4f3",
+      "red.log": "514dbd77e3cee72304d6a77a064e5be021bf3f8d85d4075b191d93b72525b40b",
+      "tests-row-order-red.log": "871e5e5e0d75ba7b20a2033635fdc3c0cd0065f0c284555cd32e3843d55e5fee"
+    },
+    "full_suite": "deferred to merge batch (rule68)"
+  },
+  "tool_accounting": {
+    "direct_headless_Blender_invocations": 6,
+    "public_validator_native_readers": 2,
+    "Max_read_only_ping_calls": 1,
+    "agent_total_tool_calls": "not measured",
+    "new_shared_python_modules": 0
+  },
+  "code": [
+    {
+      "path": "audit_actual.py",
+      "lines": 37,
+      "sha256": "79e5f47e09a2db88288169b8f08a9511b76aa6cf20f1cb21b2bc62defdb103d9"
+    },
+    {
+      "path": "classify_table.py",
+      "lines": 9,
+      "sha256": "f6f3600bba59fca8a505ead3d6727919bb56a20570adbda75588fecc69aac686"
+    },
+    {
+      "path": "clean_slats_r3.py",
+      "lines": 20,
+      "sha256": "a26514b645a6c625e3c724ec2f9c4f4009c7409c033a3a93f444fa202a7035bc"
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "lines": 35,
+      "sha256": "0b8ca15985cc93db825394d2dfe8d3cab1582ece69fbc57db139b32a4570b6b1"
+    },
+    {
+      "path": "isolate_actual_tables.py",
+      "lines": 10,
+      "sha256": "1986487f0dd433195803f37162898f9098e791a055099db62ef702e7e33d3977"
+    },
+    {
+      "path": "make_sheet.py",
+      "lines": 19,
+      "sha256": "5edc1b28380bbfb19a35e3213a1a6d86737dfa9a22d524de86ecce9de20ebc65"
+    },
+    {
+      "path": "native_readback_r1.py",
+      "lines": 28,
+      "sha256": "0eb9d4426aade6af0737a00e65463a6bb8804ebfdf27e24a249cd188663ada0d"
+    },
+    {
+      "path": "prepare_readback.py",
+      "lines": 6,
+      "sha256": "372f36de96aa0984a0349af0138afefd2e77356939fb44e6f8987c071656a269"
+    },
+    {
+      "path": "prepare_slats_r2.py",
+      "lines": 14,
+      "sha256": "b8bdb18cf6544ea42a344b7fdd1d28cd871b5cfa7120cb7bc4f1d53a9d3605e5"
+    },
+    {
+      "path": "prepare_slats_r3.py",
+      "lines": 12,
+      "sha256": "bc02d8a013fc5da12c6c74a664cb3d6fa4f68a5d1426a109754f148f6dcd58fe"
+    },
+    {
+      "path": "prepare_slats_r3_finish.py",
+      "lines": 11,
+      "sha256": "c1a94c2caae23ff2cd7d342a69fa854b87a41318668135208ed071c52a141165"
+    },
+    {
+      "path": "raw_readback_r1.py",
+      "lines": 50,
+      "sha256": "838e01ad0476e4b794cbb1ea87a467920968727bdb84db203b80feddc209392f"
+    },
+    {
+      "path": "render_scope.py",
+      "lines": 22,
+      "sha256": "cfeba6344432ae00780aab89555f8cd1989089f9c917de05de538f94700cf4c2"
+    },
+    {
+      "path": "repair_table_slats.py",
+      "lines": 45,
+      "sha256": "72bfc23978a9b6d15042d02ff29fcf4e3e1f1b654b67319565398babbd4ff4a3"
+    },
+    {
+      "path": "repair_table_slats_r2.py",
+      "lines": 46,
+      "sha256": "9f0dd816e3f99422dc5e445a417f63b699327a726ce1d14d925f35a29f65e496"
+    },
+    {
+      "path": "repair_table_slats_r3.py",
+      "lines": 47,
+      "sha256": "7ff4ceddae4ad05e75519625b42e6f9d61264649db1013af9cd1b741544ecae1"
+    },
+    {
+      "path": "repair_table_slats_r3_finish.py",
+      "lines": 47,
+      "sha256": "b137699a47d296c910b1a860cf36d833ba011c3d3412e56e26a13eaeb7aed773"
+    },
+    {
+      "path": "replicate_table.py",
+      "lines": 43,
+      "sha256": "e14c4d0596c1e02637314b8cb3af63331207b8f396c69215df48be2deeb0b738"
+    },
+    {
+      "path": "source_slot_counterexample.py",
+      "lines": 14,
+      "sha256": "20dd93d00b87fe9da376073ac3dc6fa3031f0fde4a86b6a9448ebfc95a8b4765"
+    },
+    {
+      "path": "test_profile_scope.py",
+      "lines": 61,
+      "sha256": "05ed28af10a111497bdcf2cb466460e0a1415e0a3f5905feb287ed382ac5e32a"
+    }
+  ],
+  "NPM_actual_table_xview": {
+    "raw": {
+      "passed": true,
+      "totals": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "native": {
+      "passed": true,
+      "totals": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "VPM_bounded_cleanup": {
+    "source_faces": 4690,
+    "output_faces": 4088,
+    "max_move_m": 0.001602847443880168
+  }
+}
