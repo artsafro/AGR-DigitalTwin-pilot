@@ -69,6 +69,24 @@ def test_every_reference_of_the_new_routes_exists(name):
     assert route_map.verify_references(ROOT, routes[name], contexts) == []
 
 
+def test_vpm_master_topology_before_export():
+    events = _routes()["vpm-route"]
+    ids = [s["id"] for s in events["stages"]]
+    master = [s for s in events["stages"] if "D312" in s["rules"]]
+    assert len(master) == 1
+    stage = master[0]
+    assert stage["id"] == "master-topology"
+    assert ids.index("ucx") < ids.index(stage["id"]) < ids.index("npm") < ids.index("package")
+    assert stage["commands"] == [
+        "uv run python tools/qa/master_topology.py <master> --out <new.json>",
+        "dt qa xview",
+    ]
+    assert "tools/qa/master_topology.py" in stage["evidence"]
+    assert "триангуляц" in stage["event_ru"].lower()
+    for sid in ("readback", "validate"):
+        assert "dt qa xview" in next(s for s in events["stages"] if s["id"] == sid)["commands"]
+
+
 def test_vpm_hotspots_cover_the_named_objects():
     """KPP1, PSU275, TEC26, ELV and 4BK evidence each back at least one VPM hot spot."""
     hot = _routes()["vpm-route"]["hotspots"]
