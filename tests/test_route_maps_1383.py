@@ -35,11 +35,15 @@ def _contexts():
 
 # ---------------------------------------------------------------- the two new routes
 def test_generator_knows_three_routes_and_writes_eight_files():
-    assert set(route_map.route_events()) == {"route", "vpm-route", "ground-route"}
+    # #1393 adds the MAF, Flora and package routes and their context maps (tests/test_route_maps_1393.py)
+    assert set(route_map.route_events()) == {"route", "vpm-route", "ground-route", "maf-route", "flora-route",
+                                             "package-route"}
     files = route_map.render_all(ROOT)[2]
     names = sorted(p.name for p in files)
     assert names == sorted(f"{n}.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "contexts",
-                                                "vpm-oks-contexts", "ground-contexts")   # + two maps (#1392)
+                                                "vpm-oks-contexts", "ground-contexts",   # + two maps (#1392)
+                                                "maf-route", "flora-route", "package-route", "maf-contexts",
+                                                "flora-contexts", "package-contexts")    # #1393
                            for s in ("excalidraw", "svg"))
 
 
