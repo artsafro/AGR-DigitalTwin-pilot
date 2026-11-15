@@ -127,7 +127,10 @@ def test_reversed_pane_close_eyes_preserve_a_op12_and_e2(reverse_pane, reverse_p
         parts.reverse()
         ctx.reverse()
     rep = vg.check(parts, ctx, cfg())
-    assert rep["eyes"]["close"] == 2
+    # the building-side eye (-2, 0, 1.75) sits inside the closed context B0: dropped by name (r3)
+    assert rep["eyes"]["close"] == 1
+    assert [(d["id"].rsplit(":", 1)[-1], d["occluder"]) for d in rep["eyes"]["dropped"]] == \
+        [("+1" if reverse_pane else "-1", "Tower_Real")]
     reveal = next(p for p in rep["parts"] if p["part"] == "BodyA_Reveal")
     assert reveal["hidden"] == [], reveal["hidden"]
     assert {v["eye"].split(":")[0] for v in reveal["visible_from"]} == {"close"}
@@ -135,6 +138,64 @@ def test_reversed_pane_close_eyes_preserve_a_op12_and_e2(reverse_pane, reverse_p
     assert {1, 2, 3, 4} <= visible
     assert 0 in hidden
     assert rep == vg.check(parts, ctx, cfg())
+
+
+BURIED = quads("Buried", [[(-1, -0.3, 1.2), (-1, 0.3, 1.2), (-1, 0.3, 2.3), (-1, -0.3, 2.3)]], ["brick"])
+
+
+@pytest.mark.parametrize("reverse_pane", [False, True])
+@pytest.mark.parametrize("reverse_parts", [False, True])
+def test_close_eye_inside_closed_context_dropped_buried_hidden_with_a_op12_e2(reverse_pane, reverse_parts):
+    """Review r2 P1-1: a close eye inside the opaque context solid must not see faces buried in it.
+
+    Combined with the reversed-pane A_OP12 row and the E2 row."""
+    parts, ctx = _niche_scene()
+    if reverse_pane:
+        pane = parts[-1]
+        parts[-1] = vg.VPart(pane.name, pane.vertices, tuple(tuple(reversed(f)) for f in pane.faces), pane.materials)
+    far = np.array([40.0, 0, 0])
+    parts += [BURIED, vg.VPart(POST.name, POST.vertices + far, POST.faces, POST.materials)]
+    ctx.append(vg.VPart("Pylon", PYLON.vertices + far, PYLON.faces, PYLON.materials))
+    if reverse_parts:
+        parts.reverse()
+        ctx.reverse()
+    rep = vg.check(parts, ctx, cfg())
+    buried = next(p for p in rep["parts"] if p["part"] == "Buried")
+    assert [h["face"] for h in buried["hidden"]] == [0], buried
+    assert buried["back_visible"] == [] and buried["visible_from"] == []
+    dropped = rep["eyes"]["dropped"]
+    assert len(dropped) == 1 and dropped[0]["occluder"] == "Tower_Real"
+    assert dropped[0]["pos"] == [-2.0, 0.0, 1.75] and "inside closed context" in dropped[0]["reason"]
+    assert rep["eyes"]["undecided"] == []
+    reveal = next(p for p in rep["parts"] if p["part"] == "BodyA_Reveal")
+    assert reveal["hidden"] == [] and {v["eye"].split(":")[0] for v in reveal["visible_from"]} == {"close"}
+    visible, hidden = _visible_faces(rep, POST.name)
+    assert {1, 2, 3, 4} <= visible and 0 in hidden
+    assert rep == vg.check(parts, ctx, cfg())
+
+
+def test_close_eye_in_open_context_reported_undecided_by_name():
+    """An open occluder around a close eye: no side is picked silently; the gate fails naming it."""
+    parts, ctx = _niche_scene()
+    b = ctx[0]
+    open_b = vg.VPart("Open_Block", b.vertices, b.faces[1:], b.materials[1:])     # B0 bottom removed
+    rep = vg.check(parts, [open_b, ctx[1]], cfg())
+    und = rep["eyes"]["undecided"]
+    assert [u["occluder"] for u in und] == ["Open_Block"] and "open" in und[0]["reason"]
+    assert rep["eyes"]["dropped"] == []
+    assert rep["summary"]["eyes_undecided"] == 1 and rep["passed"] is False
+
+
+@pytest.mark.parametrize("seed", range(5))
+def test_probe_inside_closed_box_matches_bounds(seed):
+    """Probe: parity inside-test of random eyes against a closed box equals the analytic bounds test."""
+    rng = np.random.default_rng(seed)
+    blk = box("Blk", (-2, -3, 0), (4, 1, 5), "context")
+    pts = rng.uniform((-4, -5, -2), (6, 3, 7), (40, 3))
+    got = vg.eye_containment(pts, [blk])
+    exp = [bool(np.all((p > (-2, -3, 0)) & (p < (4, 1, 5)))) for p in pts]
+    assert [g[0] == "inside" for g in got] == exp
+    assert all(g[0] in ("inside", "outside") for g in got)
 
 
 def test_a_op12_fixture_hides_reveal_without_close_eyes():
