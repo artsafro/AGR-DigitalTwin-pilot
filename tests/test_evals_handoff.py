@@ -733,6 +733,13 @@ def test_template_evidence_follows_d297():
     assert "rule 49" not in template
 
 
+# Review r2 (PR #1401), #1403: shorthand is still delegation.
+def test_passive_verify_shorthand_rejected(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), "Remaining tests: reviewer.\n"),
+             shas["head"], evals, capsys, "tests delegated to the reviewer")
+
+
 # Review r1 (PR #1401) P1: handing ANY tests to the reviewer fails, not only the full suite.
 @pytest.mark.parametrize("where, text", [
     ("affected", "; the reviewer runs the remaining test files"),
