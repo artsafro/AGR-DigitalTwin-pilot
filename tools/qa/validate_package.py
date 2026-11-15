@@ -631,6 +631,17 @@ def run_recheck(old: Path, out: Path, standards: Path, as_json: bool) -> int:
     return result["exit_code"]
 
 
+def load_z_meta(path: Path) -> dict:
+    """Load supplied export evidence as a JSON object; never confuse null with omission."""
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError("expected a JSON object at top level")
+    except (OSError, ValueError) as exc:
+        raise ValueError(f"export_meta {path}: {exc}") from exc
+    return payload
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("target", type=Path, nargs="?")
@@ -678,9 +689,14 @@ def main(argv=None) -> int:
         print("Error: --build-manifest applies to a ZIP package", file=sys.stderr)
         return 2
     try:
+        export_meta = load_z_meta(args.export_meta) if args.export_meta is not None else None
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+    try:
         result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
                           args.footprint_holes, args.master, ground_materials=args.ground_materials,
-                          export_meta=json.loads(args.export_meta.read_text(encoding="utf-8")) if args.export_meta else None,
+                          export_meta=export_meta,
                           manifest=args.build_manifest)
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)

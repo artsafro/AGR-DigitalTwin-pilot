@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 
 import pytest
+from test_scene import mesh, rb, PROFILES
+from twinqa.scene import scene_findings
 
 
 @pytest.mark.parametrize('text', ['null', '[]', '"x"', '1', 'true', 'false', '1.5',
@@ -35,8 +37,16 @@ def test_export_meta_loader_preserves_object(tmp_path, payload):
     meta = tmp_path / 'object.json'
     meta.write_text(json.dumps(payload), encoding='utf-8')
     assert vp.load_z_meta(meta) == payload
-from test_scene import mesh, rb, PROFILES
-from twinqa.scene import scene_findings
+
+
+@pytest.mark.parametrize('value', [value for n in range(-5, 6) for value in (n, str(n), [n])])
+def test_export_meta_generated_non_objects(tmp_path, value):
+    import validate_package as vp
+    meta = tmp_path / 'generated.json'
+    meta.write_text(json.dumps(value), encoding='utf-8')
+    with pytest.raises(ValueError, match='expected a JSON object') as exc:
+        vp.load_z_meta(meta)
+    assert str(meta) in str(exc.value)
 
 
 def check(meta, bounds=((-1, -1, -0.3), (1, 1, 8.35))):
