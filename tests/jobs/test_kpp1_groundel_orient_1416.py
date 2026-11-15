@@ -169,6 +169,33 @@ def test_waiver_key_matrix(monkeypatch, tmp_path):
                             _audit_fixture(monkeypatch, tmp_path, rows, "## Open items\n")
 
 
+def test_open_bullet_identity_matrix(monkeypatch, tmp_path):
+    for status in ("fail", "review", "not_run"):
+        for evidence in (GROUND, "0000_Kpp_1_01.fbx", "other.fbx"):
+            row = {"stage": "V003", "name": "ground footprint coverage",
+                   "evidence": evidence, "status": status}
+            exact = f"- V003 ground footprint coverage — {status} — {evidence}"
+            cases = [
+                (exact, True), (exact + ": details", True),
+                (exact.replace(f"— {status} —", "— unsupported —"), False),
+                (exact.replace(evidence, "wrong.fbx"), False),
+                (exact + ".stale", False),
+                (exact.replace(f"— {status} —", f"— {status}_stale —"), False),
+                (exact.replace(f" — {evidence}", f"\n- {evidence}"), False),
+                ("\n## History\n" + exact, False),
+                ("prose " + exact, False),
+                (exact.replace(f" — {evidence}", f" — wrong.fbx: see {evidence}"), False),
+            ]
+            for text, accepted in cases:
+                # Repeat both success and rejection; each call rereads private fixture files.
+                for _ in range(2):
+                    if accepted:
+                        _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row), "## Open items\n" + text)
+                    else:
+                        with pytest.raises(AssertionError, match="ground footprint coverage"):
+                            _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row), "## Open items\n" + text)
+
+
 def test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open():
     data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
     report = (JOB / "REPORT.md").read_text(encoding="utf-8")
@@ -181,9 +208,12 @@ def test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open():
         seen.add(key[:2])
         if f["status"] == "pass":
             continue
-        assert key in D313_WAIVED or re.search(
-            rf"^- {re.escape(f['stage'])}\b[^\n]*{re.escape(f['name'])}(?= —|$)",
-            open_bullets, re.MULTILINE), key
+        bullet = rf"^- {re.escape(f['stage'])} {re.escape(f['name'])} — {re.escape(str(f['status']))}"
+        if f["evidence"].lower().endswith(".fbx"):
+            bullet += rf" — {re.escape(f['evidence'])}(?=:|$)"
+        else:  # DER-03/master quads has explanatory prose, not an FBX target.
+            bullet += r"(?= —|\.|$)"
+        assert key in D313_WAIVED or re.search(bullet, open_bullets, re.MULTILINE), key
     assert ("V004", "MAF flipped normals") in seen
     maf_row = next(f for f in data["findings"] if f["name"] == "MAF flipped normals")
     assert maf_row["status"] != "fail", maf_row
