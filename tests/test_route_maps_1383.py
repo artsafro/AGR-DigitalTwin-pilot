@@ -19,7 +19,7 @@ NEW = {"vpm-route": "vpm-oks-route", "ground-route": "ground-route"}
 REPORT = ARCH / "report-routes-vpm-ground.md"
 
 # v2 (#1392, D293): an NPM stage before the export; Ground relief after the flat ground (tests/test_route_maps_1392.py)
-VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "npm", "package",
+VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "master-topology", "npm", "package",
               "readback", "validate", "sintez", "delivered"]
 GROUND_STAGES = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
                  "package", "validate", "sintez"]
@@ -103,6 +103,20 @@ def test_vpm_master_topology_before_export():
 ])
 def test_master_topology_command_template(command, expected):
     assert route_map.command_exists(command) is expected
+
+
+def test_master_topology_command_generated_mutations():
+    words = "uv run python tools/qa/master_topology.py <master> --out <new.json>".split()
+    mutations = []
+    for i in range(len(words)):
+        mutations.extend([
+            words[:i] + words[i + 1:],
+            words[:i] + ["unsupported"] + words[i + 1:],
+            words[:i] + [words[i]] + words[i:],
+        ])
+    assert len(mutations) == 21
+    for tokens in mutations:
+        assert not route_map.command_exists(" ".join(tokens)), tokens
 
 
 def test_vpm_master_topology_rendered():
