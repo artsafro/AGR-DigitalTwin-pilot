@@ -150,6 +150,46 @@ def test_warped_quad_rejected_for_every_corner_order(box, start, reverse):
         box.plan_box_uv([('warped', [key(c) for c in co], co)], 700, 1001, margin_px=0)
 
 
+@pytest.mark.parametrize('height', [0.0, 0.1, 0.4, 0.8, 1.2])
+@pytest.mark.parametrize('px', [512.0, 700.0, 1024.0, 1706.0])
+@pytest.mark.parametrize('axis_shift', range(3))
+def test_generated_warped_quad_diagonal_envelope(box, height, px, axis_shift):
+    """Synthetic exhaustive probe: 480 loop orders, both diagonals measured independently from UVs."""
+    original = [(0.1, 0.1, 0.1), (1.1, 0.1, 0.1),
+                (1.1, 1.1, 0.1 + height), (0.1, 1.1, 0.1)]
+    original = [p[axis_shift:] + p[:axis_shift] for p in original]
+    expected = px / math.sqrt(1 + 2 * height * height)
+    for reverse in (False, True):
+        for start in range(4):
+            co = original[start:] + original[:start]
+            if reverse:
+                co.reverse()
+            face = ('generated', [key(c) for c in co], co)
+            if expected < 512:
+                with pytest.raises(box.BoxUVTexelError, match="face 'generated'"):
+                    box.plan_box_uv([face], px, 1001, margin_px=0)
+            else:
+                uvs, report = box.plan_box_uv([face], px, 1001, margin_px=0)
+                # Literal diagonal partitions, independent of the production normal enumeration.
+                measured = [sv_range([co[i] for i in tri], [uvs['generated'][i] for i in tri])[0]
+                            for tri in ((0, 1, 2), (0, 2, 3), (0, 1, 3), (1, 2, 3))]
+                assert min(measured) == pytest.approx(expected, abs=1e-4)
+                assert report['texel_px_per_m'] == pytest.approx([expected, px], abs=1e-4)
+
+
+@pytest.mark.parametrize('start', range(4))
+def test_warped_quad_floor_is_inclusive_and_reset_is_clean(box, start):
+    co = [(0.1, 0.1, 0.1), (1.1, 0.1, 0.1), (1.1, 1.1, 0.9), (0.1, 1.1, 0.1)]
+    co = co[start:] + co[:start]
+    face = ('threshold', [key(c) for c in co], co)
+    at = 512 * math.sqrt(1 + 2 * 0.8 ** 2)
+    for _ in range(2):
+        with pytest.raises(box.BoxUVTexelError):
+            box.plan_box_uv([face], at * (1 - 1e-6), 1001, margin_px=0)
+        _, report = box.plan_box_uv([face], at, 1001, margin_px=0)
+        assert report['texel_px_per_m'][0] == pytest.approx(512)
+
+
 def test_collinear_corner_is_not_a_false_failure(box):
     """Pentagon with a collinear corner: a zero-area fan triangle is skipped, the face passes at 512."""
     co = [(0.0, 0.0, 0.0), (0.5, 0.0, 0.0), (1.0, 0.0, 0.0), (1.0, 0.0, 1.0), (0.0, 0.0, 1.0)]
@@ -250,8 +290,11 @@ class _Mat:
         return co
 
 
-def test_wrapper_writes_nothing_on_texel_error(box):
+@pytest.mark.parametrize('warped', [False, True])
+def test_wrapper_writes_nothing_on_texel_error(box, warped):
     _, verts, co = wall_rotated(40)
+    if warped:
+        co = [(0.1, 0.1, 0.1), (1.1, 0.1, 0.1), (1.1, 1.1, 0.9), (0.1, 1.1, 0.1)]
     mesh = type('M', (), {})()
     mesh.name, mesh.users = 'm', 1
     mesh.vertices = [_Vert(c) for c in co]
