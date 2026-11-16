@@ -1,0 +1,38 @@
+{
+  "baseline_commit": "a28638bac11f06f11b680f20d2f7a06cac75577c",
+  "inputs": [
+    {
+      "path": "C:\\Users\\artsafro\\AGR-DigitalTwin\\.claude\\worktrees\\laughing-hawking-e62961\\jobs\\KPP1\\outputs\\source-v001\\curtain.export.json",
+      "sha256": "65b1f5a17b646a1ea040219e085af3b475e062b8b340dd8dc24f2ade76400d41"
+    },
+    {
+      "path": "C:\\Users\\artsafro\\AGR-DigitalTwin\\.claude\\worktrees\\laughing-hawking-e62961\\jobs\\KPP1\\outputs\\census-v001\\curtain.objects.json",
+      "sha256": "c486ee9f10963a590409affe440a4ee9c8906cbcb708765a3ac005e12425d0e3"
+    },
+    {
+      "path": "C:\\Users\\artsafro\\AGR-DigitalTwin\\.claude\\worktrees\\laughing-hawking-e62961\\jobs\\KPP1\\outputs\\census-v001\\openings.objects.json",
+      "sha256": "5cdf48050ca844cff05c2af8ede7ad11c6b9107d912745f9fc4900b430293af8"
+    }
+  ],
+  "results": [
+    {
+      "file": "openings_spec.json",
+      "json_diff": [],
+      "byte_equal": true,
+      "before_sha256": "fbacbc8246737b37a42e742ffad756ce8dcca34bf11e8316ec54c12a9f524c6f",
+      "after_sha256": "fbacbc8246737b37a42e742ffad756ce8dcca34bf11e8316ec54c12a9f524c6f"
+    },
+    {
+      "file": "openings_dropped.json",
+      "json_diff": [],
+      "byte_equal": true,
+      "before_sha256": "28eb63fb5194714249837b5616f86d9a998ab2e2a50ac45df6f591680efa147b",
+      "after_sha256": "28eb63fb5194714249837b5616f86d9a998ab2e2a50ac45df6f591680efa147b"
+    }
+  ],
+  "source_bytes_unchanged": true,
+  "census_objects": 406,
+  "dropped_objects": 244,
+  "unknown_family_drops": 92,
+  "method": "Execute original extractor from baseline Git blob and current shared-core caller on copies of the same census; compare full decoded JSON and bytes."
+}

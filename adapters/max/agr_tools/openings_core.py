@@ -19,7 +19,9 @@ broken is rewritten here:
   coplanar wall when there is no reveal;
 * thresholds were system units -> everything here is metres (the host converts with units.SystemScale).
 """
+import copy
 import math
+import re
 
 DEFAULTS = {
     'min_side_m': 0.1,     # a border with a side below this is not an opening
@@ -522,6 +524,247 @@ def find_openings(mesh, options=None):
     opening has `branches` (one frame per wall plane, the longer first; frame = branches[0], w = their sum); a
     non-planar one has frame/w/h/depth None. Outer contours are not returned (find_openings_report lists them)."""
     return find_openings_report(mesh, options)['openings']
+
+
+# ---- saved Revit source reader (no DCC imports) --------------------------------------------------------------
+# KPP1 is an explicit legacy profile, not a generic facade/depth/door-height inference.
+# Source authority and dimensions: routes/revit-intake.md, KPP1 [D238].
+FT = 0.3048
+HOMOGLYPHS = str.maketrans("abcehkmoptxy", "авсенкмортху")
+
+
+def norm(s):
+    """Compare source family names after casefold and Latin/Cyrillic homoglyph normalization (#1336)."""
+    return s.casefold().translate(HOMOGLYPHS)
+
+
+def kpp1_facade_of(lo, hi):
+    if hi[1] < 0.6 and lo[1] < 0: return "S"
+    if lo[1] > 10.4: return "N"
+    if hi[0] < 0.6 and lo[0] < 0: return "W"
+    if lo[0] > 26.4: return "E"
+    return None
+
+
+def _source_rect(lo, hi, f):
+    a = 1 if f in "WE" else 0
+    return [round(lo[a], 3), round(hi[a], 3), round(lo[2], 3), round(hi[2], 3)]
+
+
+def _source_inside(r, outer, tol=0.012):
+    return r[0] >= outer[0] - tol and r[1] <= outer[1] + tol and r[2] >= outer[2] - tol and r[3] <= outer[3] + tol
+
+
+def _source_number(value, label):
+    if isinstance(value, bool) or not isinstance(value, (float, int)) or not math.isfinite(value):
+        raise ValueError(label + ': expected finite number')
+    return value
+
+
+def _source_bbox(lo, hi, label):
+    if not isinstance(lo, list) or not isinstance(hi, list) or len(lo) != 3 or len(hi) != 3:
+        raise ValueError(label + ': expected min/max triples')
+    for a, b in zip(lo, hi):
+        if _source_number(a, label) >= _source_number(b, label):
+            raise ValueError(label + ': degenerate or reversed bounding box')
+
+
+def _validate_revit_source(side, groups):
+    try:
+        if not isinstance(side, dict) or not isinstance(side['types'], list) or not side['types']:
+            raise ValueError('Revit sidecar: nonempty types required')
+        ids = set()
+        for t in side['types']:
+            if not isinstance(t['instances'], list):
+                raise ValueError('Revit instances must be a list')
+            for row in t['instances']:
+                eid = row['elementId']
+                if isinstance(eid, bool) or not isinstance(eid, int) or eid in ids:
+                    raise ValueError('duplicate or invalid Revit elementId: ' + repr(eid))
+                ids.add(eid)
+                if not isinstance(row['type'], str) or not row['type'].strip():
+                    raise ValueError('Revit type is empty')
+                bb = row.get('boundingBox')
+                if bb is not None:
+                    _source_bbox([bb['min'][k] for k in 'xyz'], [bb['max'][k] for k in 'xyz'], str(eid))
+        if not ids:
+            raise ValueError('Revit sidecar has no instances')
+        if not isinstance(groups, dict) or set(groups) != {'curtain', 'openings'}:
+            raise ValueError('Revit objects require curtain and openings groups')
+        names = set()
+        for group, objects in groups.items():
+            if not isinstance(objects, list):
+                raise ValueError(group + ': expected object list')
+            for row in objects:
+                name = row['name']
+                if not isinstance(name, str) or not name.strip() or name in names:
+                    raise ValueError('duplicate or empty object name: ' + repr(name))
+                names.add(name)
+                _source_bbox(row['min'], row['max'], name)
+    except (KeyError, TypeError, AttributeError) as error:
+        raise ValueError('partial Revit source: ' + str(error)) from error
+
+
+def read_revit_openings(side, groups, *, profile):
+    """Read saved export/census JSON, returning legacy (facade spec, reasoned drops).
+
+    Only the explicitly selected KPP1 profile is supported: feet sidecar bboxes, metre
+    object bboxes, the original facade thresholds and 2.1 m door convention. No claim
+    of new Revit inventory, generic BIM support or architectural approval is made.
+    Inputs are copied; the legacy field order, rounding and classification are retained.
+    """
+    if profile != 'KPP1':
+        raise ValueError('unsupported Revit openings profile: ' + repr(profile))
+    _validate_revit_source(side, groups)
+    side, groups = copy.deepcopy((side, groups))
+    inst = [i for t in side['types'] for i in t['instances'] if i.get('boundingBox') is not None]
+    bb = lambda i: ([i['boundingBox']['min'][k] * FT for k in 'xyz'],
+                    [i['boundingBox']['max'][k] * FT for k in 'xyz'])
+    objs = []
+    for g in ('curtain', 'openings'):
+        for o in groups[g]:
+            o['kind'] = re.sub(r'(_[0-9a-f]{7}(\.\d+)?| \[\d+\])$', '', o['name'])
+            o['key'], o['group'] = norm(o['kind']), g
+            objs.append(o)
+    window, glass = norm('MEP_Окно'), norm('Стеклопак')
+    mullion, door, grille = norm('Прямоугольный импост 200х75'), norm('ADSK_Дверь_'), norm('MEP_Веза_Р50')
+    facade_of, rect, inside = kpp1_facade_of, _source_rect, _source_inside
+    spec = {f: {'surrounds': [], 'doors': [], 'portals': [], 'features': [], 'grilles': []} for f in 'SNWE'}
+    used, why = set(), {}
+    hosts = [i for i in inst if i['type'].startswith('ADSK_Витраж')]
+    for s in inst:
+        lo, hi = bb(s)
+        f = facade_of(lo, hi)
+        if f is None:
+            continue
+        outer = rect(lo, hi, f)
+        if s['type'].startswith('ADSK_Обрамление порталов'):
+            spec[f]['portals'].append({'id': s['elementId'], 'rect': outer})
+        elif s['type'].startswith('ADSK_Обрамление витражей'):
+            mine = [k for k, o in enumerate(objs)
+                    if facade_of(o['min'], o['max']) == f and inside(rect(o['min'], o['max'], f), outer)]
+            bays = []
+            for h in hosts:
+                hl, hh = bb(h)
+                if facade_of(hl, hh) != f or not inside(rect(hl, hh, f), outer):
+                    continue
+                bay_rect = rect(hl, hh, f)
+                bay = {'id': h['elementId'], 'rect': bay_rect, 'windows': [], 'glass': []}
+                for k in mine:
+                    o = objs[k]
+                    if not inside(rect(o['min'], o['max'], f), bay_rect):
+                        continue
+                    if o['key'].startswith(window):
+                        bay['windows'].append(rect(o['min'], o['max'], f)); used.add(k)
+                    elif glass in o['key']:
+                        bay['glass'].append(rect(o['min'], o['max'], f)); used.add(k)
+                    elif not o['key'].startswith(mullion):
+                        why.setdefault(k, f"unknown family in bay {h['elementId']} of surround {s['elementId']}")
+                bays.append(bay)
+            mull = [k for k in mine if objs[k]['key'].startswith(mullion)]
+            used.update(mull)
+            for k in mine:
+                why.setdefault(k, f"in surround {s['elementId']}, outside every bay, not a mullion")
+            spec[f]['features' if s['elementId'] == 1832606 else 'surrounds'].append({
+                'id': s['elementId'], 'rect': outer, 'bays': bays,
+                'mullions': [rect(objs[k]['min'], objs[k]['max'], f) for k in mull]})
+    for k, o in enumerate(objs):
+        f = facade_of(o['min'], o['max'])
+        if o['key'].startswith(grille) and f is not None:
+            spec[f]['grilles'].append(rect(o['min'], o['max'], f)); used.add(k)
+        elif o['key'].startswith(door) and f is not None:
+            r = rect(o['min'], o['max'], f)
+            spec[f]['doors'].append({'name': o['kind'], 'rect': [r[0], r[1], r[2], round(r[2] + 2.1, 3)],
+                                     'double': norm('Двупольная') in o['key']})
+            used.add(k)
+        elif f is None:
+            why.setdefault(k, 'on no exterior facade')
+        else:
+            why.setdefault(k, f'facade {f}: in no curtain surround, not a door or grille')
+    dropped = [{'name': objs[k]['name'], 'group': objs[k]['group'], 'reason': why[k]}
+               for k in range(len(objs)) if k not in used]
+    return spec, dropped
+
+
+def read_drawing_openings(schedule, facades):
+    """Validate an extracted facade DXF schedule; preserve its provenance and full entity accounting.
+
+    JSON-only stdlib boundary: ezdxf/shapely and DWG conversion belong to the CLI,
+    not this module. Source geometry has already been measured by the existing reader.
+    """
+    try:
+        if set(schedule) != {'status', 'units', 'openings', 'source', 'mapping', 'entities'}:
+            raise ValueError('drawing schedule: unknown or missing keys')
+        if schedule['status'] != 'measured' or schedule['units'] != 'm':
+            raise ValueError('drawing schedule must be measured in m')
+        if not isinstance(facades, dict) or not facades:
+            raise ValueError('facade binding is empty')
+        for name, frame in facades.items():
+            if not isinstance(name, str) or not name.strip() or set(frame) != {'origin_mm', 'direction', 'datum_m'}:
+                raise ValueError('invalid facade binding: ' + repr(name))
+            if not isinstance(frame['origin_mm'], list) or len(frame['origin_mm']) != 2:
+                raise ValueError('facade origin_mm must have two coordinates')
+            for value in [*frame['origin_mm'], frame['direction'], frame['datum_m']]:
+                _source_number(value, 'facade ' + name)
+            if frame['direction'] not in (-1, 1):
+                raise ValueError('facade direction must be -1 or 1')
+        for key in ('source', 'mapping'):
+            ref = schedule[key]
+            if set(ref) != {'path', 'sha256'} or not isinstance(ref['path'], str) or not ref['path'].strip():
+                raise ValueError('invalid source ref: ' + key)
+            if not isinstance(ref['sha256'], str) or not re.fullmatch('[0-9a-f]{64}', ref['sha256']):
+                raise ValueError('invalid source SHA-256: ' + key)
+        rows, entities = schedule['openings'], schedule['entities']
+        if not isinstance(rows, list) or not rows or not isinstance(entities, list) or not entities:
+            raise ValueError('empty drawing openings or entity inventory')
+        ids, handles = set(), {}
+        for row in rows:
+            fields = {'id', 'kind', 'facade', 'source_handles', 'left_m', 'right_m', 'sill_m', 'head_m', 'width_m', 'height_m'}
+            if set(row) != fields:
+                raise ValueError('opening: unknown or missing keys')
+            oid = row['id']
+            if not isinstance(oid, str) or not oid.strip() or oid in ids:
+                raise ValueError('duplicate or empty opening id: ' + repr(oid))
+            ids.add(oid)
+            if row['kind'] not in ('window', 'door') or row['facade'] not in facades:
+                raise ValueError('unknown kind or facade for opening ' + oid)
+            for key in fields - {'id', 'kind', 'facade', 'source_handles'}:
+                _source_number(row[key], oid + ' ' + key)
+            if not (row['left_m'] < row['right_m'] and row['sill_m'] < row['head_m']
+                    and row['width_m'] > 0 and row['height_m'] > 0):
+                raise ValueError('degenerate opening ' + oid)
+            for actual, expected in [(row['width_m'], row['right_m'] - row['left_m']),
+                                     (row['height_m'], row['head_m'] - row['sill_m'])]:
+                if not math.isfinite(expected) or not math.isclose(actual, expected, rel_tol=1e-12, abs_tol=1e-12):
+                    raise ValueError('inconsistent dimensions for opening ' + oid)
+            if not isinstance(row['source_handles'], list) or not row['source_handles']:
+                raise ValueError('empty source handles for opening ' + oid)
+            for handle in row['source_handles']:
+                if not isinstance(handle, str) or not handle or handle in handles:
+                    raise ValueError('duplicate or empty source handle: ' + repr(handle))
+                handles[handle] = oid
+        seen = set()
+        for entity in entities:
+            handle = entity['handle']
+            if not isinstance(handle, str) or not handle or handle in seen:
+                raise ValueError('duplicate or empty entity handle: ' + repr(handle))
+            seen.add(handle)
+            used = entity['status'] == 'used'
+            if set(entity) != ({'handle', 'type', 'layer', 'status', 'opening'} if used else
+                               {'handle', 'type', 'layer', 'status', 'reason'}):
+                raise ValueError('entity: unknown or missing keys: ' + handle)
+            if used:
+                if handle not in handles or entity['opening'] != handles[handle]:
+                    raise ValueError('unmapped entity: ' + handle)
+            elif entity['status'] != 'dropped' or handle in handles or not isinstance(entity['reason'], str) or not entity['reason'].strip():
+                raise ValueError('entity has no valid disposition: ' + handle)
+        if not set(handles) <= seen:
+            raise ValueError('source handles missing from entity inventory')
+    except (KeyError, TypeError, AttributeError) as error:
+        raise ValueError('partial drawing schedule: ' + str(error)) from error
+    return {'format': 'agr-openings/1', 'source_kind': 'drawing', 'status': 'measured', 'units': 'm',
+            'facade_binding': copy.deepcopy(facades), 'source_refs': [copy.deepcopy(schedule[k]) for k in ('source', 'mapping')],
+            'data': copy.deepcopy(schedule)}
 
 
 def marker_fields(opening):

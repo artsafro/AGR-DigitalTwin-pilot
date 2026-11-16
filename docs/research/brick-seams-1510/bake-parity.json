@@ -1,0 +1,46 @@
+{
+  "passed": false,
+  "status": "byte_parity_measured_not_native_qa",
+  "maps": [
+    {
+      "name": "T_CourseGrid_Diffuse.1001.png",
+      "sha256": "bfefff4f005ab96b0be8fa4759519d09b92c13b0dde82ab0870cac8003b55dab",
+      "reference_sha256": "bfefff4f005ab96b0be8fa4759519d09b92c13b0dde82ab0870cac8003b55dab",
+      "byte_equal": true
+    },
+    {
+      "name": "T_CourseGrid_Diffuse.1002.png",
+      "sha256": "44697d354edbb179059bbfec771778a62e4d37dc40d2c1424241771def26f73a",
+      "reference_sha256": "44697d354edbb179059bbfec771778a62e4d37dc40d2c1424241771def26f73a",
+      "byte_equal": true
+    },
+    {
+      "name": "T_CourseGrid_ERM.1001.png",
+      "sha256": "45b867972effa4eeac97331945268b1af5c54d85587086600b508eab2112cf79",
+      "reference_sha256": "45b867972effa4eeac97331945268b1af5c54d85587086600b508eab2112cf79",
+      "byte_equal": true
+    },
+    {
+      "name": "T_CourseGrid_ERM.1002.png",
+      "sha256": "d2f2a2b86faf8b6919ebaa626873f22fc2a680a97eb7d1f18d31f3c214f1d932",
+      "reference_sha256": "d2f2a2b86faf8b6919ebaa626873f22fc2a680a97eb7d1f18d31f3c214f1d932",
+      "byte_equal": true
+    },
+    {
+      "name": "T_CourseGrid_Normal.1001.png",
+      "sha256": "a3841f3bf0a76d0e41f17a88b20e7b5bb55626ded3ef72a42ccdb8874aa3e183",
+      "reference_sha256": "a3841f3bf0a76d0e41f17a88b20e7b5bb55626ded3ef72a42ccdb8874aa3e183",
+      "byte_equal": true
+    },
+    {
+      "name": "T_CourseGrid_Normal.1002.png",
+      "sha256": "adfa0f6a859c14a843f004d2ef4b9d9241999929f1f4b6420866988dab832b80",
+      "reference_sha256": "adfa0f6a859c14a843f004d2ef4b9d9241999929f1f4b6420866988dab832b80",
+      "byte_equal": true
+    }
+  ],
+  "equal": 6,
+  "total": 6,
+  "baked_layout_sha256": "447cbea9b59357a9c59c17cf71542ffebe6f00550c3d1be3c2016ae2749e3e49",
+  "final_layout_sha256": "447cbea9b59357a9c59c17cf71542ffebe6f00550c3d1be3c2016ae2749e3e49"
+}
