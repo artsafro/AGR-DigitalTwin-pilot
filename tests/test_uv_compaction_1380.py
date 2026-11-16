@@ -145,4 +145,7 @@ def test_d320_leftovers_have_explicit_historical_reasons(path, constant, reason)
 def test_no_delivery_changes():
     base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
     paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
-    assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)
+    # #1531 also routes this live candidate's UDIM offset to the shared owner;
+    # it is source-only, not a delivery artifact or a general jobs/ exemption.
+    udim_candidate = 'jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py'
+    assert all(p == udim_candidate or p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)
