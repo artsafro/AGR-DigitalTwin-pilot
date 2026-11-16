@@ -50,6 +50,11 @@ its policy functions); a historical row must have no live chain
 and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`. `--table` prints the Russian
 «живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
 runs only the copy scan (synthetic test roots without the maps).
+
+Historical class (#1546, [D327]): `historical_scripts` = scripts of a `finished_jobs` folder that no live chain reaches
+(and no entrypoint names as evidence). They are still scanned above; the root `.ignore` holds one generated block
+(`--write-ignore`) with a HISTORICAL header line per job that hides them from agent search (ripgrep). A missing,
+stale or extra entry (a live script hidden) is a STATUS problem.
 """
 import argparse
 import ast
@@ -559,6 +564,80 @@ def finished_jobs(root, contexts):
     return jobs
 
 
+# Historical job scripts (#1546, [D327]): scripts of a finished (delivered) job that no live command/route reaches
+# and that no entrypoint names as its evidence. They stay unchanged and every scan above still reads them; a
+# generated block of the root `.ignore` hides them from agent search (ripgrep reads `.ignore` by default). The
+# per-job header line of that block marks them historical (a header inside each script would shift the `path:line`
+# rows of the context maps and change the script bytes recorded by the deliveries).
+SCRIPT_SUFFIXES = (".py", ".ms", ".rb", ".sh", ".mjs")  # the script types jobs/ tracks (.gitignore)
+IGNORE_BEGIN = "# BEGIN historical-job-scripts (#1546, [D327]) - generated: duplicate_guard.py --write-ignore"
+IGNORE_END = "# END historical-job-scripts"
+GLOB_CHARS = re.compile(r"([\\*?\[\]!#])")
+
+
+def historical_scripts(root, finished, chains, live_evidence=()):
+    """Sorted repo paths of the historical scripts: inside a finished job, not reached by a live chain."""
+    out = []
+    for job in sorted(finished):
+        for p in sorted((Path(root) / job).rglob("*")):
+            rel = p.relative_to(root).as_posix()
+            if p.is_file() and p.suffix.lower() in SCRIPT_SUFFIXES and rel not in chains and rel not in live_evidence:
+                out.append(rel)
+    return out
+
+
+def render_ignore_block(scripts):
+    """The generated `.ignore` block: one HISTORICAL header line per job, then its anchored, escaped paths."""
+    lines, job = [IGNORE_BEGIN], None
+    for rel in scripts:
+        this = "/".join(rel.split("/")[:2])
+        if this != job:
+            job = this
+            lines.append(f"# HISTORICAL [D327] {job}: delivered job; scripts kept unchanged, hidden from agent search, "
+                         "still scanned by duplicate_guard")
+        lines.append("/" + GLOB_CHARS.sub(r"\\\1", rel).replace(" ", "\\ "))
+    lines.append(IGNORE_END)
+    return "\n".join(lines) + "\n"
+
+
+def _ignore_parts(text):
+    if text.count(IGNORE_BEGIN) != 1 or text.count(IGNORE_END) != 1 or text.index(IGNORE_END) < text.index(IGNORE_BEGIN):
+        return None
+    head, rest = text.split(IGNORE_BEGIN, 1)
+    block, tail = rest.split(IGNORE_END, 1)
+    return head, IGNORE_BEGIN + block + IGNORE_END + "\n", tail[1:] if tail.startswith("\n") else tail
+
+
+def ignore_problems(root, scripts):
+    """Problems of the root `.ignore` block against the historical scripts ([] when it is exactly the render)."""
+    path = Path(root) / ".ignore"
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    parts = _ignore_parts(text)
+    if parts is None:
+        return [f".ignore: no single historical-job-scripts block ({len(scripts)} historical scripts unhidden); "
+                "run duplicate_guard.py --write-ignore"]
+    want = render_ignore_block(scripts)
+    if parts[1] == want:
+        return []
+    have = {ln for ln in parts[1].splitlines() if ln.startswith("/")}
+    need = {ln for ln in want.splitlines() if ln.startswith("/")}
+    return [f".ignore: historical block is stale: missing {sorted(need - have)[:5]} ({len(need - have)}), "
+            f"extra (live or gone) {sorted(have - need)[:5]} ({len(have - need)}); run duplicate_guard.py --write-ignore"]
+
+
+def write_ignore(root, scripts):
+    """Replace (or append) the generated block of root/.ignore; text outside the block is kept."""
+    path = Path(root) / ".ignore"
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    parts = _ignore_parts(text)
+    if parts is None and IGNORE_BEGIN in text:
+        raise ValueError(".ignore: broken historical-job-scripts block (BEGIN/END); fix it by hand")
+    head, _, tail = parts or (text + ("\n" if text and not text.endswith("\n") else ""), "", "")
+    tmp = path.with_name(".ignore.partial")
+    tmp.write_text(head + render_ignore_block(scripts) + tail, encoding="utf-8", newline="\n")
+    tmp.replace(path)
+
+
 def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE):
     """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees."""
     problems = []
@@ -658,6 +737,8 @@ def main(argv=None):
     ap.add_argument("--table", action="store_true", help="print the Russian live-bypass table + compaction order")
     ap.add_argument("--copies-only", action="store_true",
                     help="only the copy scan of the allowlist (synthetic test roots); skips the #1424 status check")
+    ap.add_argument("--write-ignore", action="store_true",
+                    help="regenerate the historical-job-scripts block of the root .ignore (#1546) before checking")
     args = ap.parse_args(argv)
     try:
         contexts = mini_yaml.load(args.contexts or args.root / "docs/architecture/contexts.yaml")
@@ -670,7 +751,13 @@ def main(argv=None):
                 maps["contexts"] = contexts
             rows = rows_of(maps)
             roots, chains = live_chains(args.root)
-            problems = status_problems(args.root, rows, chains, roots, finished_jobs(args.root, contexts))
+            finished = finished_jobs(args.root, contexts)
+            problems = status_problems(args.root, rows, chains, roots, finished)
+            evidence = {str(e.get("evidence", "")) for e in contexts.get("entrypoints", [])}
+            hidden = historical_scripts(args.root, finished, chains, evidence)
+            if args.write_ignore:
+                write_ignore(args.root, hidden)
+            problems += ignore_problems(args.root, hidden)
     except (OSError, SyntaxError, ValueError, KeyError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
