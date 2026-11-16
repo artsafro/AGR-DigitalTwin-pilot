@@ -115,6 +115,68 @@ def test_1581_warning_only_check_exits_zero(capsys, monkeypatch):
     assert "WARNING:" in capsys.readouterr().out
 
 
+# ---------------------------------------------------------------- #1581 explicit cross-map references
+
+def test_1581_ref_owner():
+    maps = _maps()
+    target = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    ref = {"ref": "package-contexts.yaml#export", "owner": "stale.py", "id": "alias"}
+    for owner in ("synthetic-first.py", "synthetic-second.py"):
+        target["owner"] = owner
+        assert route_map.resolve_context(ref, maps)["owner"] == owner
+        assert route_map.resolve_context(ref, maps)["id"] == "alias"
+    # npm is deliberately not a globally unique context id.
+    for name in ("maf-contexts", "flora-contexts", "vpm-contexts"):
+        filename = route_map.context_maps()[name].name
+        resolved = route_map.resolve_context({"ref": filename + "#npm"}, maps)
+        assert resolved["owner"] == next(c["owner"] for c in maps[name]["contexts"] if c["id"] == "npm")
+
+
+@pytest.mark.parametrize("ref", ["", "export", "#export", "package-contexts.yaml#",
+    "unknown.yaml#export", "../package-contexts.yaml#export", "package-contexts.yaml#absent",
+    "package-contexts.yaml#export#extra", None, [], float("nan"), float("inf")])
+def test_1581_bad_refs(ref):
+    with pytest.raises(route_map.SchemaError, match="ref"):
+        route_map.resolve_context({"ref": ref}, _maps())
+
+
+def test_1581_ref_cycle():
+    maps = _maps()
+    target = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    target["ref"] = "package-contexts.yaml#export"
+    with pytest.raises(route_map.SchemaError, match="cycle"):
+        route_map.resolve_context({"ref": target["ref"]}, maps)
+
+
+@pytest.mark.parametrize("name", sorted(route_map.route_events()))
+@pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
+def test_1581_missing_export(name, renderer):
+    events, maps = _routes()[name], _maps()
+    assert events["scheme"]["export_context"] == {"ref": "package-contexts.yaml#export"}
+    maps["package-contexts"]["contexts"] = [c for c in maps["package-contexts"]["contexts"] if c["id"] != "export"]
+    with pytest.raises(route_map.SchemaError, match="export"):
+        getattr(route_map, renderer)(events, maps[route_map.ROUTE_MAP_OF.get(name, "contexts")], maps)
+
+
+def test_1581_context_ref_loads_from_source(tmp_path):
+    shutil.copytree(ARCH, tmp_path / "docs/architecture")
+    path = tmp_path / route_map.context_maps()["ground-contexts"]
+    text = path.read_text(encoding="utf-8")
+    text = text.replace('  - id: npm\n', '  - id: npm\n    ref: flora-contexts.yaml#npm\n')
+    path.write_text(text, encoding="utf-8")
+    maps = route_map.load_context_maps(tmp_path)
+    target = next(c for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    actual = next(c for c in maps["ground-contexts"]["contexts"] if c["id"] == "npm")
+    assert actual["owner"] == target["owner"]
+    assert actual["functions"] == target["functions"]
+    # Source target missing: generator refuses before publishing any output.
+    source = tmp_path / route_map.context_maps()["flora-contexts"]
+    source.write_text(source.read_text(encoding="utf-8").replace('  - id: npm\n', '  - id: renamed\n'), encoding="utf-8")
+    before = {p.name: p.read_bytes() for p in path.parent.iterdir()}
+    assert route_map.main(["--root", str(tmp_path)]) == 2
+    assert before == {p.name: p.read_bytes() for p in path.parent.iterdir()}
+
+
 # ---------------------------------------------------------------- D293 recorded and cited
 def test_d293_row_exists_and_is_cited_in_both_routes_and_maps():
     decisions = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
