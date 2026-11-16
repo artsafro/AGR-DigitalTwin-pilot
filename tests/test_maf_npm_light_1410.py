@@ -1,4 +1,7 @@
-"""#1410: MAF NPM-light tool (plan #425 step 5) + shared UV transfer to the atlas (step 6), one owner each."""
+"""#1410: MAF NPM-light tool (plan #425 step 5) + shared UV transfer to the atlas (step 6), one owner each.
+
+Pattern: n/a | new-case: tests of the MAF NPM-light conversion branch and the shared atlas UV transfer owner.
+"""
 from __future__ import annotations
 
 import importlib.util
