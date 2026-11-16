@@ -106,8 +106,19 @@ def test_archived_xview_of_other_input_or_thresholds_is_refused(tmp_path, monkey
         puz.archived_pairs(p, V003)
 
 
-def test_pinned_archive_hash_is_the_card_value():
-    assert puz.ARCHIVED_XVIEW[V003] == "c588e09f1a938de93157caae2d434151c2898d924d248e55b192a10008b37ca2"
+PLACED = "eb9d105af9de642d03928078917a174e9d2f5cb46b0a8d8460fd38e6cd47cc72"  # #1278 site-r1-v003 (rotated, D262)
+
+
+def test_v003_source_is_local_r1_not_the_site_placed_copy(tmp_path):
+    """D135 / conflicts.md #39: master in world x/y; the placed copy and its archived xView are not v003 inputs."""
+    assert V003 == "76a7c97e523d6ac6475443a84f51e4b2ec588de3cbeb1b300d08adf07e97dc50"
+    assert qp.R1_V003_PLACED == PLACED and PLACED not in puz.SOURCE_SHAS
+    assert puz.SOURCE_SHAS[V003] == "r1-v003" and V003 not in puz.ARCHIVED_XVIEW
+    with pytest.raises(ValueError, match="not the approved"):
+        qp.check_source("v003", PLACED)
+    p, _ = _xview(tmp_path, PLACED, [(0, 1)])  # archived #1278 report shape: input = the placed copy
+    with pytest.raises(SystemExit, match="no archived xView report is pinned"):
+        puz.archived_pairs(p, V003)
 
 
 # --- plan diff and corners -------------------------------------------------------------------------------------------
@@ -146,6 +157,18 @@ def test_diff_every_zone_in_exactly_one_list_generated():
         matched = {j for z in d["zones"] for j in z["old_zones"]}
         assert matched.isdisjoint(d["removed_old_zones"])
         assert matched | set(d["removed_old_zones"]) == set(range(len(old)))
+
+
+def test_diff_identical_across_a_rounding_boundary_and_not_beyond_tol():
+    """Measured on R1 v003: zones within 0.03-0.1 mm were 'changed' by 0.1 mm rounding buckets."""
+    a = _zone(1, 5.975, [[0.27494, 5.975, 1.8], [0.39, 5.975, 3.6]])
+    near = _zone(1, 5.975, [[0.27503, 5.975, 1.8], [0.39, 5.975, 3.6]])   # 0.09 mm, crosses a bucket edge
+    at = _zone(1, 5.975, [[0.27504, 5.975, 1.8], [0.39, 5.975, 3.6]])     # 0.1 mm (float: just below/at)
+    far = _zone(1, 5.975, [[0.27514, 5.975, 1.8], [0.39, 5.975, 3.6]])    # 0.2 mm
+    swap = _zone(1, 5.975, [[0.39, 5.975, 3.6], [0.27494, 5.975, 1.8]])
+    dup = _zone(1, 5.975, [[0.27494, 5.975, 1.8], [0.27494, 5.975, 1.8]])  # same count, one centroid twice
+    st = [puz.diff_plans({"zones": [a]}, {"zones": [z]})["zones"][0]["status"] for z in (near, at, far, swap, dup)]
+    assert st == ["identical", "identical", "changed", "identical", "changed"]
 
 
 def test_diff_of_a_plan_with_itself_is_all_identical():

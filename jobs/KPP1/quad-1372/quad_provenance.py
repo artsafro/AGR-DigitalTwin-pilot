@@ -22,7 +22,11 @@ sys.path.insert(0, str(ROOT / 'adapters' / 'max' / 'agr_tools'))
 import build_manifest as bm  # noqa: E402  stdlib owner of derivation records (#1505/#1551)
 
 R1_V002 = '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676'
-R1_V003 = 'eb9d105af9de642d03928078917a174e9d2f5cb46b0a8d8460fd38e6cd47cc72'
+# r1-v003 = the LOCAL axis-aligned R1 of rerun-1230 (#1246, `1246-kpp1-corner-pairs/SM_Kpp_1.fbx`). The #1278
+# `site-r1-v003` copy (R1_V003_PLACED) is the same mesh rotated -6.053 deg for the site (D262): the editable master
+# is modelled in world x/y and placement stays the last (package) step [D135, conflicts.md #39], so it is refused.
+R1_V003 = '76a7c97e523d6ac6475443a84f51e4b2ec588de3cbeb1b300d08adf07e97dc50'
+R1_V003_PLACED = 'eb9d105af9de642d03928078917a174e9d2f5cb46b0a8d8460fd38e6cd47cc72'
 SOURCE_NAME = {R1_V002: 'r1-v002', R1_V003: 'r1-v003'}
 VERSION_SOURCE = {'v001': R1_V002, 'v002': R1_V002, 'v003': R1_V003}
 SCHEMA = 'agr.kpp1-quad-provenance/1'

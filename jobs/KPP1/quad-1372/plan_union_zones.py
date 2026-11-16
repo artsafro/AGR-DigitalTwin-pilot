@@ -23,6 +23,7 @@ it addresses the same faces. The output must not exist (never overwrite) and mus
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import tempfile
 
@@ -33,13 +34,15 @@ from dt_ai.ops import inv_xview, xview_gate
 
 SOURCE_SHAS = {  # accepted R1 masters, one pinned sha256 per R1 version (#1563)
     '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676': 'r1-v002',  # #1230, quad v001/v002
-    'eb9d105af9de642d03928078917a174e9d2f5cb46b0a8d8460fd38e6cd47cc72': 'r1-v003',  # rerun-1230 #1246, package #1278
+    # rerun-1230 #1246, LOCAL axis-aligned copy (1246-kpp1-corner-pairs); the #1278 site-placed copy eb9d105a is
+    # refused: the master is built in world x/y, placement is the package step [D135, conflicts.md #39]
+    '76a7c97e523d6ac6475443a84f51e4b2ec588de3cbeb1b300d08adf07e97dc50': 'r1-v003',
 }
 SOURCE_SHA = '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676'  # r1-v002 (v001/v002 masters)
-ARCHIVED_XVIEW = {  # source sha -> sha256 of its archived `dt qa xview` VPM report (#1278 diagnostics-latest-v001)
-    'eb9d105af9de642d03928078917a174e9d2f5cb46b0a8d8460fd38e6cd47cc72':
-        'c588e09f1a938de93157caae2d434151c2898d924d248e55b192a10008b37ca2',
-}
+# source sha -> sha256 of its archived `dt qa xview` VPM report. Empty on purpose: the #1278 archive
+# diagnostics-latest-v001/latest-xview-vpm.json (c588e09f...) reports the site-placed copy eb9d105a, not an
+# accepted source, so xView is recomputed on the local r1-v003 (#1563).
+ARCHIVED_XVIEW = {}
 CORNER_POSTS = {'SW': (-15.03, -5.73), 'NW': (-15.0303, 6.0196)}  # #1246 readback-v003b post centres (x, y), m
 CORNER_RADIUS_M = 0.25   # post + the old 0.1 m fins: a zone whose xy box comes this close touches the corner
 MATCH_TOL_M = 1e-4       # zones of two plans are identical when axis, plane value and face centroids agree to 0.1 mm
@@ -117,8 +120,18 @@ def zones(v, faces, pairs):
     return out
 
 
-def _cents(z):
-    return sorted(tuple(round(c / MATCH_TOL_M) for c in cen) for cen in z['centroids'])
+def _same_cents(a, b, tol=MATCH_TOL_M):
+    """True when the centroids of zones a and b pair one-to-one within `tol` (no rounding buckets: #1563 probe)."""
+    ca, cb = a['centroids'], b['centroids']
+    if len(ca) != len(cb):
+        return False
+    free = list(range(len(cb)))
+    for p in ca:
+        hit = next((j for j in free if math.dist(p, cb[j]) <= tol + 1e-9), None)
+        if hit is None:
+            return False
+        free.remove(hit)
+    return True
 
 
 def _boxes_meet(a, b, tol=PLANE_JOIN_M):
@@ -134,7 +147,7 @@ def diff_plans(old, new):
     status, used = [], set()
     for k, z in enumerate(new['zones']):
         same = [j for j, o in enumerate(old['zones']) if o['axis'] == z['axis']
-                and abs(o['value'] - z['value']) <= MATCH_TOL_M and _cents(o) == _cents(z)]
+                and abs(o['value'] - z['value']) <= MATCH_TOL_M and _same_cents(o, z)]
         near = [j for j, o in enumerate(old['zones']) if o['axis'] == z['axis']
                 and abs(o['value'] - z['value']) <= PLANE_JOIN_M and _boxes_meet(o, z)]
         kind = 'identical' if same else 'changed' if near else 'new'
