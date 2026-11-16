@@ -48,7 +48,7 @@ actors:
     ru: "Чекер СИНТЕЗ"
 local_contexts:
   - id: ucx
-    ru: "Коллизии UCX"
+    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
 stages:
   - id: sources
@@ -168,14 +168,18 @@ stages:
     event_ru: "UCX построены (только ВПМ)"
     actor: agent
     context: ucx
+    commands:
+      - "agr ucx"
     rules:
       - D012
       - D098
       - D134
       - D162
       - D225
+      - D330
     evidence:
       - docs/domain/areas/ucx.md
+      - src/dt_ai/geometry/ucx_command.py
       - jobs/KPP1/scripts/vpm_ucx.py
   - id: master-topology
     event_ru: "QA мастера до триангуляции экспорта: топология и xView, отказы записаны"
@@ -322,18 +326,6 @@ hotspots:
       - jobs/KPP1/scripts/vpm_uv.py
       - jobs/TEC26-OKS/scripts/vpm_uv.py
       - jobs/TEC26-OKS/STATE.md
-  - id: ucx-copies
-    stage: ucx
-    ru: "UCX: 5 своих скриптов в jobs/ (КПП1, ПСУ275, ТЭЦ26 ×2, СРЕDА), agr ucx — заглушка; ТЭЦ26 AC08: триангуляция UCX ждёт Артёма; СРЕDА — 960 UCX"
-    rules:
-      - D225
-      - D162
-    evidence:
-      - jobs/KPP1/scripts/vpm_ucx.py
-      - jobs/PSU275/scripts/vpm_ucx.py
-      - jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py
-      - jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py
-      - jobs/TEC26-OKS/AC08/PILOT_REPORT.md
   - id: export-meta
     stage: package
     ru: "Пакет: agr package-npm и export_meta на main (#1361); КПП1 собран без утверждённого Ground (D285); сданный Ground не готов (D288)"

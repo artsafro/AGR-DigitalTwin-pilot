@@ -401,6 +401,8 @@ def _blender_fbx(path, verts, tris, protected=()) -> None:
     zero objects. The Max and Blender control files are this exporter's binary
     (Model + Geometry + Connections) and Max imports those.
     """
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
+
     dest = os.path.abspath(path)
     parent = os.path.dirname(dest)
     os.makedirs(parent, exist_ok=True)
@@ -438,7 +440,7 @@ def _blender_fbx(path, verts, tris, protected=()) -> None:
         with open(script_name, "w", encoding="utf-8") as handle:
             handle.write(script)
         proc = subprocess.run(
-            [_BLENDER, "--background", "--factory-startup", "--python-exit-code", "1", "--python", script_name, "--", mesh_name, fbx_name],
+            blender_command(script_name, (mesh_name, fbx_name), executable=_BLENDER),
             capture_output=True,
             text=True,
             timeout=120,

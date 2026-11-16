@@ -207,7 +207,7 @@
 <tspan x="1573.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
 <text x="1573.0" y="1274.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1573.0" dy="12">Дубли вне владельца: 24</tspan>
+<tspan x="1573.0" dy="12">Дубли вне владельца: 10</tspan>
 <tspan x="1573.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
 <tspan x="1573.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
 <tspan x="1573.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>

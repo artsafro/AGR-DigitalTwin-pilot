@@ -54,10 +54,9 @@
 <rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2160" y1="225.0" x2="2200" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="2200" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2200" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2200" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
-<rect x="2200" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="2200" y="590" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2200" y="500" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="2510" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2470" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2430" y1="225.0" x2="2470" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -305,23 +304,18 @@
 <tspan x="2315.0" dy="17">9. UCX построены</tspan>
 <tspan x="2315.0" dy="21.25">(только ВПМ)</tspan>
 </text>
-<text x="2315.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="14">Нет команды agr/dt</tspan>
+<text x="2315.0" y="327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Команда:</tspan>
+<tspan x="2315.0" dy="17.5">agr ucx</tspan>
 </text>
 <text x="2315.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="14">Правила: D012, D098, D134,</tspan>
-<tspan x="2315.0" dy="17.5">D162, D225</tspan>
+<tspan x="2315.0" dy="17.5">D162, D225, D330</tspan>
 </text>
-<text x="2315.0" y="521.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="14">Контекст: Коллизии UCX</tspan>
-</text>
-<text x="2315.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="13">⚠ UCX: 5 своих скриптов в</tspan>
-<tspan x="2315.0" dy="16.25">jobs/ (КПП1, ПСУ275, ТЭЦ26</tspan>
-<tspan x="2315.0" dy="16.25">×2, СРЕDА), agr ucx —</tspan>
-<tspan x="2315.0" dy="16.25">заглушка; ТЭЦ26 AC08:</tspan>
-<tspan x="2315.0" dy="16.25">триангуляция UCX ждёт Артёма;</tspan>
-<tspan x="2315.0" dy="16.25">СРЕDА — 960 UCX [D225, D162]</tspan>
+<text x="2315.0" y="510.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Контекст: Коллизии UCX: agr</tspan>
+<tspan x="2315.0" dy="17.5">ucx (строит ucx_build,</tspan>
+<tspan x="2315.0" dy="17.5">зазоры ucx10_core, D330)</tspan>
 </text>
 <text x="2585.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="15">Агент</tspan>
