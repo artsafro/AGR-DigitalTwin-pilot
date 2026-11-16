@@ -62,7 +62,7 @@ def test_reset_and_late_check(tmp_path):
     assert grade(tmp_path, launch()+read(1, 'completed'))['passed'] is True
 
 
-@pytest.mark.parametrize('variant', ['wrong', 'error', 'sidechain', 'request-only', 'quoted', 'timeout', 'failed-status'])
+@pytest.mark.parametrize('variant', ['wrong', 'error', 'sidechain', 'request-only', 'quoted', 'timeout', 'failed-status', 'not-ready'])
 def test_non_checks(tmp_path, variant):
     check = read(20)
     if variant == 'wrong':
@@ -76,6 +76,8 @@ def test_non_checks(tmp_path, variant):
         check = check[:1]
     elif variant == 'timeout':
         check[1]['toolUseResult'] = {'retrieval_status': 'timeout'}
+    elif variant == 'not-ready':
+        check[1]['toolUseResult'] = {'retrieval_status': 'not_ready'}
     elif variant == 'failed-status':
         check[1]['toolUseResult'] = {'success': False}
     else:
