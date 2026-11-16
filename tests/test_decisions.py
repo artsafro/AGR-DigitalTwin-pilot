@@ -45,6 +45,8 @@ NOT_DECISIONS = [
     ("docs/backlog.md", "AGR_Project-uncommitted-2026-10-06.zip"),  # an archive name next to "the user plans"
     ("tests/test_ready_gate.py", "(user, 2026-10-14)"),  # a quoted chat fixture line
     ("tests/test_area_requirement_sheet.py", "Decided 2026-10-15 [{record}] (user)"),  # an f-string template asserting the format
+    ("evals/subagent-timebox/task.md", "user intervention at 2026-11-16T00:05:54"),  # a transcript timestamp
+    ("tests/test_subagent_timebox.py", "{'type': 'user', 'timestamp': '2026-11-16T00:05:54Z'"),  # a transcript fixture record
 ]
 
 
