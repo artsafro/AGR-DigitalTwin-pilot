@@ -230,7 +230,7 @@ def _georeferenced_scene(seed, offset, local_pivot=True):
         matrix[:3, :3] = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]) @ np.array(
             [[1, 0, 0], [0, ct, -st], [0, st, ct]])
         matrix[:3, 3] = pivot
-        v, t = box(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
+        v, t = box(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5 + i * 0.07)
         world = np.asarray(v) @ matrix[:3, :3].T + pivot
         r = row(i, f"UCX_SM_G_Main_{i + 1:03d}", (world.tolist(), t))
         r["world_to_local"] = np.linalg.inv(matrix).tolist() if local_pivot else np.eye(4).tolist()
@@ -268,6 +268,41 @@ def test_georeferenced_world_origin_pivot_keeps_conservative_rejection():
     rows = _georeferenced_scene(0, 20000.0, local_pivot=False)
     res = core.resolve(rows, core.gap_options({"gap_m": GAP}))
     assert not res["summary"]["ok"] and res["summary"]["pairs_ambiguous"] > 0
+
+
+@pytest.mark.parametrize("frame", [[], [[1]], "bad", np.zeros((4, 4)).tolist(),
+    [[1, 0, 0, float("nan")], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+    [[1, 0, 0, 0], [0, 1, 0, float("inf")], [0, 0, 1, 0], [0, 0, 0, 1]],
+    [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0.1, 1]]])
+def test_invalid_storage_frame_is_reported_fail_closed(frame):
+    rows = _georeferenced_scene(0, 20000)
+    rows[0]["world_to_local"] = frame
+    res = core.resolve(rows, core.gap_options({"gap_m": GAP}))
+    assert not res["summary"]["ok"]
+    assert 0 not in res["pieces"]
+    assert "world_to_local" in res["findings"][0][0][1]
+
+
+def test_blender_adapter_preserves_local_precision_before_float32_storage():
+    from types import SimpleNamespace as NS
+    from tools.blender import ucx_resolve as driver
+
+    rows = _georeferenced_scene(1, 20000)
+    objects = []
+    for r in rows:
+        inv = np.asarray(r["world_to_local"])
+        local = np.asarray(r["verts"]) @ inv[:3, :3].T + inv[:3, 3]
+        me = NS(vertices=[NS(co=v) for v in core._float32(local)],
+                loop_triangles=[NS(vertices=t) for t in r["tris"]], calc_loop_triangles=lambda: None)
+        objects.append(NS(name=r["name"], data=me, matrix_world=np.linalg.inv(inv).astype(np.float32)))
+    adapted = [driver._ucx_row(o, h, core, np) for h, o in enumerate(objects)]
+    res = core.resolve(adapted, core.gap_options({"gap_m": GAP}))
+    assert res["summary"]["ok"], res["summary"]
+    world, _ = driver._world(objects, np)
+    assert np.allclose(world, np.concatenate([r["verts"] for r in adapted]), rtol=0, atol=1e-10)
+    for h, p in res["pieces"].items():
+        stored = core._float32(core.transform_points(p["verts"], adapted[h]["world_to_local"]))
+        assert core._hull_core().convexity(stored, p["tris"])["ok"]
 
 
 # --- fail-closed probes -----------------------------------------------------------------------------------------
@@ -406,6 +441,25 @@ def test_resolve_driver_failure_is_exit_2(model, tmp_path, monkeypatch):
     a = uc.parse([str(model), str(tmp_path / "o.fbx"), "Main", "--resolve"])
     code, report = uc.run(a)
     assert code == 2 and report["steps"]["resolve"]["ok"] is False
+
+
+@pytest.mark.parametrize("alias_kind", ["same", "dotdot", "hardlink"])
+def test_resolve_fresh_process_input_alias_writes_nothing(alias_kind, model, tmp_path):
+    import subprocess
+    import sys
+
+    target = model
+    if alias_kind == "dotdot":
+        (tmp_path / "sub").mkdir()
+        target = tmp_path / "sub" / ".." / model.name
+    elif alias_kind == "hardlink":
+        target = tmp_path / "alias.fbx"
+        target.hardlink_to(model)
+    snapshot = {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    run = subprocess.run([sys.executable, "-m", "dt_ai.cli.agr", "ucx", str(model), str(target),
+                          "Main", "--resolve"], capture_output=True, text=True)
+    assert run.returncode == 4, run.stderr
+    assert {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == snapshot
 
 
 def test_resolve_driver_is_a_real_file():
