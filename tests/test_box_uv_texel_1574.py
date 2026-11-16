@@ -138,6 +138,18 @@ def test_non_planar_face_checked_per_triangle(box):
         box.plan_box_uv([face], 700, 1001, margin_px=0)
 
 
+@pytest.mark.parametrize('reverse', [False, True])
+@pytest.mark.parametrize('start', range(4))
+def test_warped_quad_rejected_for_every_corner_order(box, start, reverse):
+    """#1612: either export diagonal must meet the floor, regardless of loop start/winding."""
+    co = [(0.1, 0.1, 0.1), (1.1, 0.1, 0.1), (1.1, 1.1, 0.9), (0.1, 1.1, 0.1)]
+    co = co[start:] + co[:start]
+    if reverse:
+        co.reverse()
+    with pytest.raises(box.BoxUVTexelError, match=r"face 'warped'.*463\.6"):
+        box.plan_box_uv([('warped', [key(c) for c in co], co)], 700, 1001, margin_px=0)
+
+
 def test_collinear_corner_is_not_a_false_failure(box):
     """Pentagon with a collinear corner: a zero-area fan triangle is skipped, the face passes at 512."""
     co = [(0.0, 0.0, 0.0), (0.5, 0.0, 0.0), (1.0, 0.0, 0.0), (1.0, 0.0, 1.0), (0.0, 0.0, 1.0)]
