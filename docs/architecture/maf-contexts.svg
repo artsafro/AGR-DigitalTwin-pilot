@@ -2,7 +2,7 @@
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
 <rect x="10" y="-30" width="3905" height="1255" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="230.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
-<rect x="40.0" y="400.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="400.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="400.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="400.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="2175.0" y="400.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -10,7 +10,7 @@
 <rect x="2175.0" y="655.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="892.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="345.0" y="892.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<polyline points="510.0,488.75 530.0,488.75 530.0,597.5 1140.0,597.5 1140.0,497.5 1120.0,497.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510.0,497.5 530.0,497.5 530.0,597.5 1140.0,597.5 1140.0,497.5 1120.0,497.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,497.5 1140.0,497.5 1140.0,580.0 2055.0,580.0 2055.0,480.0 2035.0,480.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="2035.0,480.0 2055.0,480.0 2055.0,580.0 2665.0,580.0 2665.0,488.75 2645.0,488.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,497.5 1140.0,497.5 1140.0,360.0 1445.0,360.0 1445.0,225.0 1425.0,225.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -45,8 +45,9 @@
 <tspan x="48.0" dy="17.5">спецификация, DWG СПОЗУ, сцена библиотеки — только копии;</tspan>
 <tspan x="48.0" dy="17.5">агент работает там, где удобно (D293)</tspan>
 <tspan x="48.0" dy="17.5"></tspan>
-<tspan x="48.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
-<tspan x="48.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="48.0" dy="17.5">blender_executable: --blender &gt; DT_BLENDER (CLI dt qa /</tspan>
+<tspan x="48.0" dy="17.5">agr) &gt; TWINQA_BLENDER (blender_runner) &gt; установка 5.1.2;</tspan>
+<tspan x="48.0" dy="17.5">путь к Blender</tspan>
 <tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>

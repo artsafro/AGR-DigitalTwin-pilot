@@ -91,6 +91,24 @@ ZIP-пакета. Старые копии перечислены в `contexts.ya
 (3) один запуск Blender, (4) проверки и команда СИНТЕЗ, (5) атлас после #1141, (6) шов корпуса.
 Пять карточек — в конце. Если формат понравится — тот же метод становится 1-м этапом аудита всего репо (#1298).
 
+## Duplicate register refresh (#1370)
+
+The counts below in the original audit are a historical #1359 snapshot, not the current allowlist.
+After #1376/#1377/#1378/#1387/#1424 and this recognition fix, `contexts.yaml` contains **121 duplicate
+rows**, including **108 rule-tagged copies**: **61 UDIM** (38 in `jobs/`), **23 ZIP writers** (16 in
+`jobs/`) and **24 Blender launches** (7 in `jobs/`). Across all six context maps the status report is
+**136 rows: 43 live-bypass, 4 wrapper, 81 historical, 8 own-duty**; 42 distinct live copies.
+Counts are rows/AST expressions, not files; multiple expressions on one line can count separately.
+
+The six newly recognized expressions are historical single-row UDIM arithmetic in the finished OBR22
+job (`finished_jobs` evidence: `jobs/OBR22-K02/APPROVED_VERSIONS.json`, `accepted_by_user`):
+`check_npm_vpm_scale.py:39`, `floor_shared_uv_blender.py:84,88`,
+`prepare_floor_shared_uv.py:129,181,183` (all under `jobs/OBR22-K02/scripts/`). Each now has a hash-pinned
+`udim-tile` row, status `historical`, issue `#1370`; frozen job scripts are unchanged. No new live
+bypass is added or exempted. The detector also recognizes literal split bases (`1000 + 1`), aliased
+`ZipFile` imports and ZIP `shutil.make_archive` calls (including aliases; computed formats fail closed).
+Read-only ZIP opens, literal non-ZIP formats and the original non-copy controls remain allowed.
+
 ## Method
 
 - Sources of truth: `npm-oks-route.events.yaml` (stages, actors, commands, D-rows, evidence, hot spots) and

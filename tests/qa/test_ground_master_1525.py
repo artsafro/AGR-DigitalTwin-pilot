@@ -163,7 +163,7 @@ def test_single_unkeyed_master_on_a_one_role_package_still_builds(tmp_path):
 
 
 @pytest.mark.parametrize('args, word', [
-    (['flora=X'], 'flora'), (['oks=A', 'oks=B'], 'twice'), (['oks='], 'empty'), (['A', 'oks=B'], 'mix'),
+    (['terrain=X'], 'terrain'), (['oks=A', 'oks=A'], 'twice'), (['oks='], 'empty'), (['A', 'oks=B'], 'mix'),
     (['A', 'B'], 'twice'), ([], 'master')])
 def test_master_arguments_fail_closed(args, word):
     with pytest.raises(ValueError, match=word):
@@ -263,7 +263,7 @@ def test_v1_manifest_still_parses_as_one_master_for_every_role(tmp_path):
 # ---- derivation record role ----------------------------------------------------------------------------------
 def test_role_of_follows_the_delivery_name_grammar():
     assert [bm.role_of(n) for n in ('0000_Syn_Ground.fbx', 'SM_Syn_Ground.fbx', 'SM_Syn_Ground_Light.fbx',
-                                    '0000_Syn_Ground_1001.png', '0000_Syn_01.fbx', 'SM_Groundfloor_01.fbx',
+                                    'T_Syn_Ground_Diffuse_1.1001.png', '0000_Syn_01.fbx', 'SM_Groundfloor_01.fbx',
                                     'UCX_SM_Syn_01.fbx', '0000_Syn.geojson')] == [
         'ground', 'ground', 'ground', 'ground', 'oks', 'oks', 'oks', 'oks']
 
@@ -274,7 +274,7 @@ def test_record_role_is_written_and_unknown_role_is_refused(tmp_path):
     rec = bm.check_derivation(bm.strict_json((Path(store) / '0000_Syn_Ground.fbx.derivation.json').read_bytes()))
     assert rec['role'] == 'ground' and rec['master_name'] == 'ground_mesh.json'
     with pytest.raises(ValueError, match='role'):
-        bm.check_derivation(dict(rec, role='flora'))
+        bm.check_derivation(dict(rec, role='terrain'))
     with pytest.raises(ValueError, match='role'):
         bm.write_export_derivation([tmp_path / 'export-0000_Syn_Ground' / 'fbx' / '0000_Syn_Ground.fbx'], ground,
                                    tmp_path / 'other', 'abc1234', role='Ground')
@@ -382,6 +382,6 @@ def test_validate_package_cli_takes_masters_per_role(tmp_path):
                         '--master', 'ground=' + str(ground)], capture_output=True, text=True, timeout=300, cwd=ROOT)
     assert 'manifest_master' not in r.stdout, r.stdout[-2000:]
     assert 'manifest_ok' in r.stdout or 'build manifest' in r.stdout, (r.returncode, r.stdout[-2000:], r.stderr)
-    bad = subprocess.run([sys.executable, str(vp), str(pkg), '--json', '--master', 'flora=' + str(oks)],
+    bad = subprocess.run([sys.executable, str(vp), str(pkg), '--json', '--master', 'terrain=' + str(oks)],
                          capture_output=True, text=True, timeout=300, cwd=ROOT)
-    assert bad.returncode != 0 and 'flora' in bad.stderr
+    assert bad.returncode != 0 and 'terrain' in bad.stderr

@@ -13,6 +13,8 @@
 title_ru: "Маршрут Ground (НПМ + ВПМ) v2: событийный штурм (Ватутино v015, Силикатный, КПП1, ТЭЦ26)"
 route: ground
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников"
   steps:
     - stages: "sources,zero"

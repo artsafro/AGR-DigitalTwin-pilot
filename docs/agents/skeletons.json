@@ -20,6 +20,7 @@
     "ucx-oks": {"ru": "Коллизии ОКС", "calls": "AGR Tools ucx_core", "owners": ["adapters/max/agr_tools/ucx_core.py"], "entry_defs": ["accept_hull_volume", "budget_verdict"], "dup_rules": [], "gap": null},
     "master-qa": {"ru": "Проверка мастера до экспорта", "calls": "uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json [D312]", "owners": ["tools/qa/master_topology.py", "tools/blender/qa_master.py", "adapters/max/agr_tools/master_topology_core.py"], "entry_defs": ["world_bm"], "dup_rules": ["master-qa"], "gap": null},
     "readback": {"ru": "Экспорт и обратное чтение", "calls": "tools/blender/fbx_readback.py; dt qa xview [D152]", "owners": ["tools/blender/fbx_readback.py"], "entry_defs": ["mesh_facts", "material_facts", "baked_transforms"], "dup_rules": [], "gap": null},
+    "verifier": {"ru": "Проверка VLM перед показом Артёму (observe) [#1577]", "calls": "tools/qa/verifier.py --job jobs/<ID> (observe; vlm_checklist.py variant A + material rubric -> verifier.json)", "owners": ["tools/qa/verifier.py"], "entry_defs": ["parse_material_scores", "validate_report", "resolve_mode"], "dup_rules": [], "gap": null},
     "package-vpm": {"ru": "Пакет ВПМ (ZIP)", "calls": "agr package-vpm (dt derive package -> package_core._write_zip)", "owners": ["adapters/max/agr_tools/package_core.py"], "entry_defs": ["_write_zip", "zip_passport"], "dup_rules": ["delivery-zip"], "gap": null},
     "package-npm": {"ru": "Пакет НПМ (ZIP)", "calls": "agr package-npm (dt derive package-npm -> package_core._write_zip)", "owners": ["adapters/max/agr_tools/package_core.py"], "entry_defs": ["_write_zip", "zip_passport"], "dup_rules": ["delivery-zip"], "gap": null},
     "validate": {"ru": "Проверка пакета", "calls": "agr validate (tools/qa/validate_package.py)", "owners": ["tools/qa/validate_package.py"], "entry_defs": ["zip_precheck", "build_stages"], "dup_rules": [], "gap": null},
@@ -46,10 +47,10 @@
     "optimise": {"ru": "Оптимизация под бюджет НПМ", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "ProOptimizer in Max by hand; no shared command, options go to Artem [D167]"}
   },
   "cells": {
-    "oks-vpm": {"config_keys": ["passport", "sources", "profile"], "stages": ["sources-dwg", "inspect", "body", "udim", "vpm-uv", "ucx-oks", "master-qa", "readback", "package-vpm", "validate", "checker", "geojson", "light-fbx"]},
+    "oks-vpm": {"config_keys": ["passport", "sources", "profile", "verifier_mode"], "stages": ["sources-dwg", "inspect", "body", "udim", "vpm-uv", "ucx-oks", "master-qa", "readback", "verifier", "package-vpm", "validate", "checker", "geojson", "light-fbx"]},
     "oks-npm": {"config_keys": ["sources", "profile", "atlas"], "stages": ["inspect", "body", "brick-seams", "derive-npm", "master-qa", "readback", "build-manifest", "package-npm", "validate", "review-scene", "checker"]},
     "oks-npm-lite": {"config_keys": ["sources", "profile"], "stages": ["lite-route"]},
-    "ground-npm": {"config_keys": ["sources", "budget_split", "master"], "stages": ["sources-ground", "surfaces", "quads", "library", "maf-light", "flora-star", "placement", "optimise", "master-qa", "readback", "package-npm", "validate", "checker"]},
-    "ground-vpm": {"config_keys": ["sources", "zero", "ground_area_m2", "master"], "stages": ["sources-ground", "zero", "surfaces", "quads", "ground-textures", "relief", "skirt", "ucx-ground", "library", "placement", "derive-npm", "master-qa", "readback", "package-vpm", "validate", "checker"]}
+    "ground-npm": {"config_keys": ["sources", "budget_split", "master", "verifier_mode"], "stages": ["sources-ground", "surfaces", "quads", "library", "maf-light", "flora-star", "placement", "optimise", "master-qa", "readback", "verifier", "package-npm", "validate", "checker"]},
+    "ground-vpm": {"config_keys": ["sources", "zero", "ground_area_m2", "master", "verifier_mode"], "stages": ["sources-ground", "zero", "surfaces", "quads", "ground-textures", "relief", "skirt", "ucx-ground", "library", "placement", "derive-npm", "master-qa", "readback", "verifier", "package-vpm", "validate", "checker"]}
   }
 }

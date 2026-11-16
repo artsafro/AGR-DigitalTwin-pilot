@@ -12,6 +12,8 @@
 title_ru: "Маршрут МАФ (GroundEl, НПМ + ВПМ): событийный штурм (библиотека 931, Ватутино v005 / v006, «Верона»)"
 route: maf
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников"
   steps:
     - stages: "sources,library,pick"

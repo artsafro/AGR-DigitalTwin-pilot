@@ -13,6 +13,8 @@
 title_ru: "Маршрут Флоры (НПМ + ВПМ): событийный штурм (библиотека v003 / A101, маршрут A Ватутино v007)"
 route: flora
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "Ведомость озеленения и СПОЗУ: ревизия, SHA-256, виды, размеры и точки в реестре исходников"
   steps:
     - stages: "sources,beds,species"
