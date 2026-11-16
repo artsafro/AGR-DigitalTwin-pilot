@@ -169,8 +169,41 @@ def separation(a, b):
     return best, axis
 
 
-def _clip(p, n, c):
-    """Convex piece cut by the half-space n.x <= c (a plane shift when p has a face with normal n)."""
+def _cap_corners(points, n, tol=1e-6):
+    """Corners of the convex cap polygon in the plane with normal n (#1540): duplicate and collinear points
+    (within `tol` metres of a cap edge) are dropped. A float32 box whose quads are not exactly planar gives cut
+    points on its triangle diagonals that lie on a cap edge; fed to the hull they leave it open."""
+    a = (1.0, 0.0, 0.0) if abs(n[0]) < 0.9 else (0.0, 1.0, 0.0)
+    u = _unit(_cross(n, a))
+    w = _cross(n, u)
+    flat = {}
+    for p in points:
+        flat.setdefault((round(_dot(u, p), 9), round(_dot(w, p), 9)), p)
+    keys = sorted(flat)
+    if len(keys) < 3:
+        return [flat[k] for k in keys]
+
+    def far(o, x, y):
+        cr = (x[0] - o[0]) * (y[1] - o[1]) - (x[1] - o[1]) * (y[0] - o[0])
+        base = math.hypot(y[0] - o[0], y[1] - o[1])
+        return cr > tol * max(base, 1e-12)
+
+    def chain(seq):
+        out = []
+        for k in seq:
+            while len(out) >= 2 and not far(out[-2], out[-1], k):
+                out.pop()
+            out.append(k)
+        return out
+
+    lower, upper = chain(keys), chain(reversed(keys))
+    return [flat[k] for k in lower[:-1] + upper[:-1]]
+
+
+def _clip(p, n, c, clean=False):
+    """Convex piece cut by the half-space n.x <= c (a plane shift when p has a face with normal n).
+
+    clean=True (resolve, #1540) keeps only the corners of the cap polygon on the cut plane."""
     uc = _hull_core()
     pts = p['verts']
     keep = [v for v in pts if _dot(n, v) <= c + 1e-12]
@@ -192,6 +225,9 @@ def _clip(p, n, c):
         if abs(d) < 1e-9:
             v = (v[0] - d * n[0], v[1] - d * n[1], v[2] - d * n[2])
         snapped.append(v)
+    if clean:
+        on = [v for v in snapped if abs(_dot(n, v) - c) < 1e-9]
+        snapped = [v for v in snapped if abs(_dot(n, v) - c) >= 1e-9] + _cap_corners(on, n)
     verts, tris = uc._convex_hull(snapped)
     return piece([list(v) for v in verts], [list(t) for t in tris])
 
@@ -345,7 +381,7 @@ def _face_cut(small, large, target):
         if hi - off < MIN_THICK_M:
             continue
         try:
-            cut = _clip(small, (-n[0], -n[1], -n[2]), -off)
+            cut = _clip(small, (-n[0], -n[1], -n[2]), -off, clean=True)
         except ValueError:
             continue
         if _thickness(cut, n) < MIN_THICK_M - TOL_M:

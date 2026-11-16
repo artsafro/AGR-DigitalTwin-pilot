@@ -460,6 +460,7 @@ def hull_deviation(points, hulls) -> np.ndarray:
     if not np.isfinite(p).all():
         raise UcxBuildError("non-finite model points")
     out = np.full(len(p), np.inf)
+    geo = []
     for verts, tris in hulls:
         v, t = _check_mesh(verts, tris)
         a, b, c = v[t[:, 0]], v[t[:, 1]], v[t[:, 2]]
@@ -469,15 +470,23 @@ def hull_deviation(points, hulls) -> np.ndarray:
         off = (n * a[keep]).sum(axis=1)
         flip = (n @ v.mean(axis=0) - off) > 0  # orient every plane away from the centroid
         n[flip], off[flip] = -n[flip], -off[flip]
-        for s in range(0, len(p), 2000):
-            q = p[s:s + 2000]
-            lb = np.maximum((q @ n.T - off[None]).max(axis=1), 0.0)  # lower bound, exact 0 inside
-            cur = out[s:s + 2000]
-            todo = (lb > 1e-12) & (lb < cur)
-            cur = np.where(lb <= 1e-12, 0.0, cur)
+        geo.append((a, b, c, n, off))
+    for s in range(0, len(p), 2000):
+        q = p[s:s + 2000]
+        # plane lower bound per hull (exact 0 inside); exact distances only where a hull can still be nearer
+        lb = np.stack([np.maximum((q @ n.T - off[None]).max(axis=1), 0.0) for _, _, _, n, off in geo], axis=1)
+        best = np.where(lb.min(axis=1) <= 1e-12, 0.0, np.inf)
+        near = lb.argmin(axis=1)
+        for h in np.unique(near[best > 0]):  # an upper bound first: the hull with the lowest bound per point
+            sel = (best > 0) & (near == h)
+            a, b, c = geo[h][:3]
+            best[sel] = _point_tri_dist(q[sel], a, b, c).min(axis=1)
+        for h in range(len(geo)):
+            todo = (best > 0) & (lb[:, h] < best)
             if todo.any():
-                cur[todo] = np.minimum(cur[todo], _point_tri_dist(q[todo], a, b, c).min(axis=1))
-            out[s:s + 2000] = cur
+                a, b, c = geo[h][:3]
+                best[todo] = np.minimum(best[todo], _point_tri_dist(q[todo], a, b, c).min(axis=1))
+        out[s:s + 2000] = best
     return out
 
 
