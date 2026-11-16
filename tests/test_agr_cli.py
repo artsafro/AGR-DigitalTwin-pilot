@@ -160,3 +160,20 @@ def test_inspect_forwards_exact_arguments(monkeypatch):
     args = ["--manifest", "folder with spaces/job.json"]
     assert agr.main(["inspect", *args]) == 7
     run.assert_called_once_with([sys.executable, "-m", "dt_ai.cli.main", "inspect", *args], check=False)
+
+
+# --- agr dispatch (RED before #1404: the stub returned 2 with a pointer) ---------------------------------------
+def test_agr_ucx_is_a_real_command(capsys):
+    agr = importlib.import_module("dt_ai.cli.agr")
+    assert "ucx" not in agr.STUBS
+    assert agr.main(["ucx", "--help"]) == 0
+    out = capsys.readouterr().out
+    assert "ucx_build" in out and "ucx10_core" in out and "V010" in out
+
+
+def test_agr_ucx_dispatches_to_command(monkeypatch):
+    agr = importlib.import_module("dt_ai.cli.agr")
+    main = Mock(return_value=1)
+    monkeypatch.setattr("dt_ai.geometry.ucx_command.main", main)
+    assert agr.main(["ucx", "a.fbx", "b.fbx", "Main", "cell=0.5"]) == 1
+    main.assert_called_once_with(["a.fbx", "b.fbx", "Main", "cell=0.5"])
