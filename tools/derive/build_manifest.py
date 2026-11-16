@@ -1,7 +1,7 @@
 """new-case: `agr build-manifest` CLI over adapters/max/agr_tools/build_manifest.py (#1423 delivery set consistency).
 
     agr build-manifest record ARTIFACT [ARTIFACT ...] --master MASTER --out NEW.derivation.json [--builder-commit SHA]
-        [--role oks|ground|groundel|flora]
+        [--role oks|ground|groundel|flora] [--source-id PROJECT.source]
         Right after an export: which master revision (file SHA-256) these exported files were derived from.
     agr build-manifest build PACKAGE.zip --master MASTER | --master oks=BLEND --master ground=SOURCE
         --derivation REC.json [REC.json ...]
@@ -9,6 +9,9 @@
         Masters per role ([D328], #1525): OKS artifacts from the OKS master, Ground artifacts from their own source;
         a package with several roles needs `--master role=path` for each; one unkeyed --master fits a one-role package.
         [D333, D332]: GroundEl/Flora keep own roles; repeat --master role=path for independent geometry/map sources.
+        V3 requires --source-id at record time for every producer; keep it across renamed revisions (#1589).
+        All producers identified opts a single-source package into v3; partial migration remains v2.
+        Omission is legacy single-source v2 only, never an inferred identity for a multi-source build.
         The FBX export owner readback (dimensions, part positions, materials, UV, UCX-to-visual binding) runs on the
         FBX members of the ZIP (the exact bytes that are delivered) and writes `<stem>.readback.json`; then
         `<stem>.build.json` is written beside the ZIP. Both are new files (never overwritten, never an input).
@@ -62,7 +65,8 @@ def run_readback(package_zip, reader):
 
 
 def cmd_record(a):
-    rec = bm.derivation_record(a.artifacts, a.master, a.builder_commit or git_commit(), role=a.role)
+    rec = bm.derivation_record(a.artifacts, a.master, a.builder_commit or git_commit(), role=a.role,
+                               source_id=a.source_id)
     inputs = list(a.artifacts) + [a.master]
     bm.write_new(a.out, bm.dumps(rec), inputs)
     print(json.dumps({'derivation': os.path.abspath(a.out), 'master_sha256': rec['master_sha256'],
@@ -118,6 +122,7 @@ def parser():
     r = sub.add_parser('record', help='derivation record of exported files (export time)')
     r.add_argument('artifacts', nargs='+')
     r.add_argument('--master', required=True)
+    r.add_argument('--source-id', help='stable logical source id, required for v3/multi-source builds; unchanged across revisions')
     r.add_argument('--role', choices=bm.ROLES, help='package role of the artifacts (default: by name) [D328]')
     r.add_argument('--out', required=True)
     r.add_argument('--builder-commit')
