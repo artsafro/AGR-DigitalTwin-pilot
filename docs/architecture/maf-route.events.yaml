@@ -11,6 +11,29 @@
 # Checked by tests/test_route_maps_1393.py. Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут МАФ (GroundEl, НПМ + ВПМ): событийный штурм (библиотека 931, Ватутино v005 / v006, «Верона»)"
 route: maf
+scheme:
+  source_ru: "Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников"
+  steps:
+    - stages: "sources,library,pick"
+      ru: "Прочитать спецификацию и выбрать кандидатов"
+      artifact_ru: "Соответствие позиций библиотеки спецификации"
+      gate_ru: "Нет кандидата — объект называет Артём"
+    - stages: "dims,ids,vpm"
+      ru: "Сверить габариты, отделки и подготовить ВПМ"
+      artifact_ru: "МАФ ВПМ с общими ID материалов"
+      gate_ru: "Габариты и цвет соответствуют проекту"
+    - stages: "placement,npm,ucx"
+      ru: "Расставить и подготовить НПМ"
+      artifact_ru: "НПМ / ВПМ в общих точках; UCX только Ground"
+      gate_ru: "Поворот и утопление по СПОЗУ"
+    - stages: "checks,showcase"
+      ru: "Проверить экспорт и показать витрину"
+      artifact_ru: "Отчёт MAF и подписанные пары НПМ / ВПМ"
+      gate_ru: "Артём принимает витрину; отказы не скрыты"
+    - stages: "package"
+      ru: "Передать в Ground и на упаковку"
+      artifact_ru: "Ground FBX → схема «Пакет и сдача»"
+      gate_ru: "Приёмка пакета отдельно от витрины"
 object: "VATUTINO-SITE (MAF v005 / v006, «Верона»), silikatny-maf-viz"
 issue: "#1393"
 actors:

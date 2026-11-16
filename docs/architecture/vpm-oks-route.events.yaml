@@ -8,6 +8,33 @@
 # Checked by tests/test_route_maps_1383.py and tests/test_route_maps_1392.py. Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут ВПМ / ОКС v2: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК)"
 route: oks-vpm
+scheme:
+  source_ru: "КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка"
+  steps:
+    - stages: "sources,parts,gate1"
+      ru: "Описать исходники и согласовать состав"
+      artifact_ru: "Реестр исходников + PartsList + бюджет"
+      gate_ru: "Артём подтвердил Gate 1"
+    - stages: "body,openings,roof,decor"
+      ru: "Построить корпус, окна, кровлю и декор"
+      artifact_ru: "Сцена ВПМ или мастер"
+      gate_ru: "Архитектура сверена с проектом"
+    - stages: "uv,ucx,master-topology,npm"
+      ru: "Подготовить UV / UDIM, UCX и НПМ"
+      artifact_ru: "ВПМ + НПМ в общих координатах"
+      gate_ru: "Профили и атлас не подменяют друг друга"
+    - stages: "package"
+      ru: "Экспортировать и упаковать"
+      artifact_ru: "FBX + export_meta + ZIP; схема «Пакет и сдача»"
+      gate_ru: "Упаковка не означает приёмку"
+    - stages: "readback,validate,sintez"
+      ru: "Прочитать экспорт и выполнить проверки"
+      artifact_ru: "Свежий отчёт и находки СИНТЕЗ"
+      gate_ru: "Отказ / not_run не равны pass"
+    - stages: "delivered"
+      ru: "Передать результат Артёму"
+      artifact_ru: "Пакет и сцена Max QUAD"
+      gate_ru: "Артём принимает визуально; публикация отдельно"
 object: "KPP1, PSU275, TEC26-OKS, elv-tc-vpm"
 issue: "#1392"
 actors:
