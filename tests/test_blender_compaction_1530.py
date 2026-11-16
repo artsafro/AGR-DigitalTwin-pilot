@@ -1,11 +1,15 @@
-"""#1530 compaction 12: the 16 own Blender launches of tools/ + src/ call the shared launcher (`blender_command`).
+"""#1530 compaction 12: the own Blender launches of tools/ + src/ call the shared launcher (`blender_command`).
 
-Before: duplicate_guard `--table` area «Связь с DCC (Blender / 3ds Max)» held 16 live bypasses (15 files). After: each
-caller builds its argv with src/dt_ai/core/blender_runner.blender_command (pinned flags incl. --disable-autoexec and
---python-exit-code 1), the rows left contexts.yaml and LIVE_BYPASS_BASELINE; the 7 jobs/ rows stay historical and
+Before: duplicate_guard `--table` area «Связь с DCC (Blender / 3ds Max)» held 16 live bypasses (15 files). After: 14
+rows (13 files) build their argv with src/dt_ai/core/blender_runner.blender_command (pinned flags incl.
+--disable-autoexec and --python-exit-code 1) and left contexts.yaml and LIVE_BYPASS_BASELINE; 2 rows are reclassified
+own-duty because a committed artifact pins the file's sha256 (library/windows v001 catalogue, sealed checker-mutation
+runner), so editing them would break that provenance. The 7 jobs/ rows stay historical and
 tools/library/maf_material_ids.py stays own-duty (report text, not a launch).
 """
+import hashlib
 import importlib.util
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -24,7 +28,6 @@ MOVED = {   # at -> old hash (LIVE_BYPASS_BASELINE key on origin/main 6f506951)
     "tools/flora/build_flora_npm_light.py::execute": ("41b1d5662a", "83b1fa0042"),
     "tools/flora/build_flora_star.py::_blender": ("e5c254530a",),
     "tools/library/check_library.py::native_inspect": ("c85d66fb6e",),
-    "tools/library/migrate_windows.py::main": ("9d1268b5a7",),
     "tools/materials/bind_ground_textures.py::_run_blender": ("707f4be9fd",),
     "tools/methods/body/run_benchmarks.py::_blender": ("18f971bee9",),
     "tools/methods/ground/build_variant.py::_blender": ("37235a2e47",),
@@ -32,21 +35,29 @@ MOVED = {   # at -> old hash (LIVE_BYPASS_BASELINE key on origin/main 6f506951)
     "tools/methods/run_variant.py::run_extra": ("d4b2fad230",),
     "tools/methods/ucx/run_benchmarks.py::main": ("9c40344e89",),
     "tools/methods/windows/run_benchmarks.py::main": ("c2afb4241e",),
-    "tools/research/checker_mutation.py::freeze": ("3457dc7d0e",),
     "tools/research/fbx_reader_compare.py::_blender": ("8b777603c2",),
     "tools/sintez_parity.py::run_live.run": ("56b4b34392",),
 }
+# at -> (hash, the committed artifact that pins the file's sha256, how to read the pinned value)
+RECLASSIFIED = {
+    "tools/library/migrate_windows.py::main": (
+        "9d1268b5a7", "library/windows/catalogue.json",
+        lambda doc, rel: {i["path"]: i["sha256"] for i in doc["inputs"]}[rel]),
+    "tools/research/checker_mutation.py::freeze": (
+        "3457dc7d0e", "docs/research/checker-mutation-freeze.json", lambda doc, rel: doc["runner_sha256"]),
+}
 HISTORICAL_OR_OWN = {"jobs/KPP1/benchmark-1318/run_benchmark.py::main", "jobs/KPP1/quad-1372/run_checks.py::main",
                      "jobs/VATUTINO-SITE/run_delivery.py::main", "jobs/VATUTINO-SITE/run_delivery.py::main.dcc",
-                     "jobs/VATUTINO-SITE/scene_checks.py::main", "tools/library/maf_material_ids.py::main"}
+                     "jobs/VATUTINO-SITE/scene_checks.py::main", "tools/library/maf_material_ids.py::main",
+                     *RECLASSIFIED}
 
 
 def _rows():
     return guard.rows_of(guard.load_maps(ROOT))
 
 
-def test_sixteen_rows_were_moved():
-    assert sum(len(h) for h in MOVED.values()) == 16
+def test_sixteen_rows_were_moved_or_reclassified():
+    assert sum(len(h) for h in MOVED.values()) == 14 and len(RECLASSIFIED) == 2
 
 
 @pytest.mark.parametrize("at", sorted(MOVED))
@@ -63,8 +74,20 @@ def test_no_live_bypass_left_in_the_dcc_area():
     live = [r.at for r in _rows() if r.status == "live-bypass" and r.rule == "blender-launch"]
     assert live == []
     assert {r.at for r in _rows() if r.rule == "blender-launch"} == HISTORICAL_OR_OWN
-    keys = {(at, h) for at, hs in MOVED.items() for h in hs}
+    keys = {(at, h) for at, hs in MOVED.items() for h in hs} | {(at, v[0]) for at, v in RECLASSIFIED.items()}
     assert not {(k[1], k[2]) for k in guard.LIVE_BYPASS_BASELINE} & keys
+
+
+@pytest.mark.parametrize("at", sorted(RECLASSIFIED))
+def test_reclassified_launch_stays_byte_bound_to_its_committed_pin(at):
+    """A reclassified row is own-duty only while a committed artifact really pins the file's sha256 (editing it would
+    break that provenance); the row says so in Russian."""
+    digest, pin, read = RECLASSIFIED[at]
+    rel = at.split("::")[0]
+    doc = json.loads((ROOT / pin).read_text(encoding="utf-8"))
+    assert hashlib.sha256((ROOT / rel).read_bytes()).hexdigest() == read(doc, rel)
+    row = next(r for r in _rows() if r.at == at and r.rule == "blender-launch")
+    assert (row.status, row.hash) == ("own-duty", digest) and "sha256" in row.why and "#1530" in row.ru
 
 
 def test_table_has_no_dcc_row():
@@ -130,16 +153,6 @@ def test_check_library_native_inspect(capture, tmp_path):
         mod.native_inspect([tmp_path / "a.blend"], "B.exe")
     script = str(Path(mod.__file__).with_name("inspect_library_blender.py"))
     assert _is_owner_line(capture[0], "B.exe", script, [str(tmp_path / "a.blend")])
-
-
-def test_migrate_windows_main(capture, tmp_path):
-    mod = _load("tools/library/migrate_windows.py", "migrate_windows_1530")
-    out = tmp_path / "v002"
-    with pytest.raises(Launched):
-        mod.main(["--output", str(out), "--blender", "B.exe"])
-    script = str(Path(mod.__file__).with_name("build_windows_blender.py"))
-    assert _is_owner_line(capture[0], "B.exe", script, [str(ROOT), str(out.resolve())])
-    assert not out.exists()
 
 
 def test_bind_ground_textures(capture, monkeypatch):

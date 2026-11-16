@@ -76,10 +76,9 @@ def derived_paths(out: Path, address: str, adapter: Path) -> dict[str, Path]:
 
 
 def _blender(script: Path, *rest: str, timeout: int = 1800) -> subprocess.CompletedProcess:
-    from dt_ai.core.blender_runner import blender_executable
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
 
-    cmd = [blender_executable(), "--background", "--factory-startup", "--python-exit-code", "1",
-           "--python", str(script), "--", *rest]
+    cmd = blender_command(script, rest)
     return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
 
 

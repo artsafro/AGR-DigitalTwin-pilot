@@ -708,41 +708,13 @@ contexts:
         hash: "17382a99ff"
         ru: "проверки сцены #298 Ватутино: прогон принятой версии, запуск не меняем"
         status: historical
-      - at: "src/dt_ai/cli/shared_tools.py::command"
+      - at: "tools/library/migrate_windows.py::main"
         rule: blender-launch
         issue: "#1378"
-        hash: "5a31c914e8"
-        ru: "команда `dt derive` отдаёт argv дочернему процессу (уже с --disable-autoexec): перевод на blender_command отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/flora/build_flora_npm_light.py::execute"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "41b1d5662a"
-        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/flora/build_flora_npm_light.py::execute"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "83b1fa0042"
-        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/flora/build_flora_star.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "e5c254530a"
-        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/library/check_library.py::native_inspect"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "c85d66fb6e"
-        ru: "инструмент библиотеки: перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
+        hash: "9d1268b5a7"
+        ru: "мигратор опубликованной библиотеки окон v001: catalogue.json привязан к sha256 этого файла (#1530)"
+        status: own-duty
+        why: "опубликованный library/windows/catalogue.json v001 хранит sha256 этого файла во входах; правка запуска - только с новой версией библиотеки (v002), не переупаковываем"
       - at: "tools/library/maf_material_ids.py::main"
         rule: blender-launch
         issue: "#1378"
@@ -750,83 +722,13 @@ contexts:
         ru: "текст команды в отчёте для ручного запуска, не запуск"
         status: own-duty
         why: "текст команды Blender в отчёте для ручного запуска человеком, сам ничего не запускает"
-      - at: "tools/library/migrate_windows.py::main"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "9d1268b5a7"
-        ru: "инструмент библиотеки: перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/materials/bind_ground_textures.py::_run_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "707f4be9fd"
-        ru: "привязка текстур Ground (маршрут Ground): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/body/run_benchmarks.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "18f971bee9"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/ground/build_variant.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "37235a2e47"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "f5a8a5aa67"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/run_variant.py::run_extra"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "d4b2fad230"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/ucx/run_benchmarks.py::main"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "9c40344e89"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/windows/run_benchmarks.py::main"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "c2afb4241e"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
       - at: "tools/research/checker_mutation.py::freeze"
         rule: blender-launch
         issue: "#1378"
         hash: "3457dc7d0e"
-        ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/research/fbx_reader_compare.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "8b777603c2"
-        ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/sintez_parity.py::run_live.run"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "56b4b34392"
-        ru: "синтетическая сверка с СИНТЕЗ (#432), не сдача: перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
+        ru: "замороженный прогон исследования проверяющего: запечатанный корпус привязан к sha256 этого файла (#1530)"
+        status: own-duty
+        why: "замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера"
 relations:
   - from: body
     to: uv-atlas

@@ -20,7 +20,7 @@
 <rect x="955.0" y="1578.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="1787.0" width="470" height="200.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1565.0" y="1578.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1804.5" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1565.0" y="1804.5" width="470" height="185.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="1120.0" y1="1261.5" x2="1260.0" y2="1235.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1260.0" y1="1433.0" x2="815.0" y2="1719.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="815.0" y1="1719.25" x2="955.0" y2="1675.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -280,7 +280,7 @@
 <tspan x="1573.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
 <text x="1573.0" y="1814.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1573.0" dy="12">Дубли вне владельца: 24</tspan>
+<tspan x="1573.0" dy="12">Дубли вне владельца: 10</tspan>
 <tspan x="1573.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
 <tspan x="1573.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
 <tspan x="1573.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
@@ -288,22 +288,9 @@
 <tspan x="1573.0" dy="15.0">• jobs/KPP1/quad-1372/run_checks.py: main</tspan>
 <tspan x="1573.0" dy="15.0">• jobs/VATUTINO-SITE/run_delivery.py: main, main.dcc</tspan>
 <tspan x="1573.0" dy="15.0">• jobs/VATUTINO-SITE/scene_checks.py: main</tspan>
-<tspan x="1573.0" dy="15.0">• src/dt_ai/cli/shared_tools.py: command</tspan>
-<tspan x="1573.0" dy="15.0">• tools/flora/build_flora_npm_light.py: execute</tspan>
-<tspan x="1573.0" dy="15.0">• tools/flora/build_flora_star.py: _blender</tspan>
-<tspan x="1573.0" dy="15.0">• tools/library/check_library.py: native_inspect</tspan>
-<tspan x="1573.0" dy="15.0">• tools/library/maf_material_ids.py: main</tspan>
 <tspan x="1573.0" dy="15.0">• tools/library/migrate_windows.py: main</tspan>
-<tspan x="1573.0" dy="15.0">• tools/materials/bind_ground_textures.py: _run_blender</tspan>
-<tspan x="1573.0" dy="15.0">• tools/methods/body/run_benchmarks.py: _blender</tspan>
-<tspan x="1573.0" dy="15.0">• tools/methods/ground/build_variant.py: _blender</tspan>
-<tspan x="1573.0" dy="15.0">• tools/methods/parametric_parts/mesh_recipe.py: _blender_fbx</tspan>
-<tspan x="1573.0" dy="15.0">• tools/methods/run_variant.py: run_extra</tspan>
-<tspan x="1573.0" dy="15.0">• tools/methods/ucx/run_benchmarks.py: main</tspan>
-<tspan x="1573.0" dy="15.0">• tools/methods/windows/run_benchmarks.py: main</tspan>
+<tspan x="1573.0" dy="15.0">• tools/library/maf_material_ids.py: main</tspan>
 <tspan x="1573.0" dy="15.0">• tools/research/checker_mutation.py: freeze</tspan>
-<tspan x="1573.0" dy="15.0">• tools/research/fbx_reader_compare.py: _blender</tspan>
-<tspan x="1573.0" dy="15.0">• tools/sintez_parity.py: run_live.run</tspan>
 </text>
 <rect x="1160.0" y="1230.38" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
 <text x="1190.0" y="1230.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
