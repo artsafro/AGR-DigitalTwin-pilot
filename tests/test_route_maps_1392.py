@@ -72,7 +72,9 @@ def test_1581_reverse_coverage():
     events = _routes()["vpm-route"]
     cmap = _maps()["vpm-contexts"]
     orphan = copy.deepcopy(cmap["contexts"][0])
-    orphan.update(id="synthetic-orphan", grid="4/9")
+    orphan.update(id="synthetic-orphan")
+    for c in cmap["contexts"] + [orphan]:
+        c.pop("grid", None)
     orphan.pop("serves_stage", None)
     orphan.pop("no_stage", None)
     cmap["contexts"].append(orphan)
