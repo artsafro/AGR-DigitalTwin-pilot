@@ -135,14 +135,14 @@ contexts:
         match: "def pieces("
         issue: "#1383"
         ru: "свои куски UCX КПП1"
-        status: superseded
-        why: "ручные куски сданного КПП1 (D324): новый объект строит agr ucx, сданный пакет не меняется"
+        status: own-duty
+        why: "ручные куски сданного КПП1; новый объект строит agr ucx (D324), сданный пакет не меняется"
       - at: "jobs/PSU275/scripts/vpm_ucx.py:45"
         match: "UCX_SM_"
         issue: "#1383"
         ru: "свои UCX ПСУ275"
-        status: superseded
-        why: "ручные коробки законченного ПСУ275 (D324): новый объект строит agr ucx, пакет не меняется"
+        status: own-duty
+        why: "ручные коробки законченного ПСУ275; новый объект строит agr ucx (D324), пакет не меняется"
   - id: ucx-triangulation
     ru: "Триангуляция готовых UCX"
     area: docs/domain/areas/ucx.md

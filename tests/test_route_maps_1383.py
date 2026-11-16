@@ -131,10 +131,11 @@ def test_vpm_master_topology_rendered():
 
 
 def test_vpm_hotspots_cover_the_named_objects():
-    """KPP1, PSU275, TEC26, ELV and 4BK evidence each back at least one VPM hot spot."""
+    """KPP1, TEC26, ELV and 4BK evidence each back at least one VPM hot spot (PSU275's only one, ucx-copies,
+    was resolved by #1404 [D324]; its copy stays listed in vpm-oks-contexts.yaml with a reason)."""
     hot = _routes()["vpm-route"]["hotspots"]
     text = " ".join(" ".join(h["evidence"]) + " " + h["ru"] for h in hot)
-    for needle in ("jobs/KPP1/", "jobs/PSU275/", "jobs/TEC26-OKS/", "jobs/elv-tc-vpm/", "vpm-course-grid-1314"):
+    for needle in ("jobs/KPP1/", "jobs/TEC26-OKS/", "jobs/elv-tc-vpm/", "vpm-course-grid-1314"):
         assert needle in text, needle
     assert all(h["evidence"] for h in hot)
 

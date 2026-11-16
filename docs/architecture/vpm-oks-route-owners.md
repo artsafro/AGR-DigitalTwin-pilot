@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `53e43461752095ec7cc3c096928b642bce5a0a4bb3cfc9f9b46472d709a74e7e`.
+Редакция YAML SHA-256: `78e32ef303fa83589336f9090672193405985c304b4bd6432289e948cbedc4a4`.
 
 Ревизия исходников: КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка.
 
@@ -115,8 +115,8 @@
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/research/fbx_reader_compare.py::_blender`](../../tools/research/fbx_reader_compare.py) | live-bypass | исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой | Нет карточки |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/sintez_parity.py::run_live.run`](../../tools/sintez_parity.py) | live-bypass | синтетическая сверка с СИНТЕЗ (#432), не сдача: перевод отдельной карточкой | Нет карточки |
 | Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
-| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | superseded | ручные куски сданного КПП1 (D324): новый объект строит agr ucx, сданный пакет не меняется | Не требуется |
-| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | superseded | ручные коробки законченного ПСУ275 (D324): новый объект строит agr ucx, пакет не меняется | Не требуется |
+| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | own-duty | ручные куски сданного КПП1; новый объект строит agr ucx (D324), сданный пакет не меняется | Не требуется |
+| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | own-duty | ручные коробки законченного ПСУ275; новый объект строит agr ucx (D324), пакет не меняется | Не требуется |
 | Триангуляция готовых UCX | [`adapters/max/agr_tools/geom_core.py`](../../adapters/max/agr_tools/geom_core.py) | [`jobs/TEC26-OKS/scripts/ucx_tri_core.py:44`](../../jobs/TEC26-OKS/scripts/ucx_tri_core.py#L44) | wrapper | обёртка geom_core() -> ucx_plan | Не требуется |
 | Запуск триангуляции UCX | [`jobs/TEC26-OKS/scripts/ucx_tri_core.py`](../../jobs/TEC26-OKS/scripts/ucx_tri_core.py) | [`jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29`](../../jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py#L29) | wrapper | обёртка core.triangulate_piece -> geom_core.ucx_plan | Не требуется |
 | Запуск триангуляции UCX | [`jobs/TEC26-OKS/scripts/ucx_tri_core.py`](../../jobs/TEC26-OKS/scripts/ucx_tri_core.py) | [`jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24`](../../jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py#L24) | own-duty | только читает меши UCX и измеряет расстояния, не строит 960 UCX | Не требуется |
