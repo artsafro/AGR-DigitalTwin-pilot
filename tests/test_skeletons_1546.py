@@ -263,6 +263,21 @@ def test_provenance_library_syntax_error_fails(tmp_path):
         sg.check_job(tmp_path, job, SK)
 
 
+def test_provenance_library_fresh_cli_rejects_noop_then_resets(tmp_path):
+    _repo(tmp_path)
+    job = _job(tmp_path, _cfg(hooks=[_hook(PROVENANCE_SCRIPT)]),
+               {PROVENANCE_SCRIPT: "def write_provenance(): pass\n"}, name=PROVENANCE_JOB)
+    command = [sys.executable, str(GUARD), "--root", str(tmp_path), "--job", "jobs/" + PROVENANCE_JOB]
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    for _ in range(2):
+        result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+        assert result.returncode == 1 and "imported library" in result.stdout
+        assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+    (job / "skeleton.json").write_text(json.dumps(_cfg()), encoding="utf-8")
+    result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0 and result.stdout == "", result.stderr
+
+
 # --- repo scan -----------------------------------------------------------------------------------------------------
 
 def _repo(tmp_path, baseline=("jobs/DELIVERED/old.py",)):

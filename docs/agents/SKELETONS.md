@@ -158,6 +158,17 @@ uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 vie
 Example (Artem's SINTEZ error-fix case): unfold polygons / seams = `checker` → fix with the stage owners
 (`vpm-uv`, `master-qa`) through one `after` hook → `checker` again; no new analysis scripts.
 
+## Imported-library exemptions
+
+The guard owner records the following exact-path exception in `skeleton_guard.IMPORTED_LIBRARIES` (#1591):
+`jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py` is a stdlib library imported by the historical
+`jobs/KPP1/quad-1372/build_quad_master.py` and its tests. `write_provenance` is called after the build;
+it is not an `after` hook of `master-qa` and has no standalone entry point. Keep its existing import path
+and the sub-job's `skeleton.json` with an empty hook list. The guard rejects registering this library as
+a hook, including path aliases. It still checks the library for stage reimplementation, duplicate code
+and Python syntax errors. Sibling, renamed and nested files are not exempt. This does not extend the
+frozen #1546 baseline, exempt a directory, or establish a job-configurable library bypass.
+
 ## Reviewer rule [D325]
 
 A PR whose job adds its own chain of scripts instead of configuring the skeleton is returned for rework and not merged
