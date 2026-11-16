@@ -257,6 +257,60 @@ def test_repo_new_script_in_a_finished_or_legacy_job_is_flagged(tmp_path, rel):
     assert len(problems) == 1 and problems[0].startswith(rel + OUTSIDE)
 
 
+@pytest.mark.parametrize("folder", ["_template", "KPP1/_template", "KPP1/fix-1600/_template"])
+@pytest.mark.parametrize("suffix", [".py", ".ms", ".rb", ".sh", ".mjs"])
+@pytest.mark.parametrize("depth", [0, 2])
+@pytest.mark.parametrize("upper", [False, True])
+def test_repo_template_script_suffix_depth_probe(tmp_path, folder, suffix, depth, upper):
+    sk = _repo(tmp_path)
+    suffix = suffix.upper() if upper else suffix
+    script = "nested/" * depth + "run_all" + suffix
+    _job(tmp_path, None, {script: WORLD_BM}, name=folder)
+    rel = f"jobs/{folder}/{script}"
+    problems = sg.check_repo(tmp_path, sk)
+    assert len(problems) == 1 and problems[0].startswith(rel + OUTSIDE), problems
+
+
+def test_repo_template_reset_repeat_and_read_only(tmp_path):
+    sk = _repo(tmp_path)
+    job = _job(tmp_path, None, {"job.yaml": "id: TEMPLATE\n", "README.md": "Job template\n"}, name="_template")
+    assert sg.check_repo(tmp_path, sk) == []
+    script = job / "run_all.py"
+    script.write_bytes(b"")  # even an empty script cannot opt out of the contract
+    before = {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    problems = sg.check_repo(tmp_path, sk)
+    assert len(problems) == 1 and problems[0].startswith("jobs/_template/run_all.py" + OUTSIDE)
+    assert sg.check_repo(tmp_path, sk) == problems
+    assert {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+    script.unlink()  # fixture change between checks, never performed by the guard
+    assert sg.check_repo(tmp_path, sk) == []
+
+
+@pytest.mark.parametrize("folder", ["_template", "KPP1/_template"])
+def test_repo_template_skeleton_is_checked(tmp_path, folder):
+    sk = _repo(tmp_path)
+    job = _job(tmp_path, _cfg(hooks=[_hook()]), {"hooks/fix.py": WORLD_BM}, name=folder)
+    problems = sg.check_repo(tmp_path, sk)
+    assert len(problems) == 1 and problems[0].startswith(f"jobs/{folder}/hooks/fix.py:1: defines 'world_bm'")
+    (job / "hooks/fix.py").write_text("x = 1\n", encoding="utf-8")
+    assert sg.check_repo(tmp_path, sk) == []
+    (job / "skeleton.json").write_text("{", encoding="utf-8")
+    with pytest.raises(sg.ConfigError, match=f"jobs/{folder}/skeleton.json"):
+        sg.check_repo(tmp_path, sk)
+
+
+@pytest.mark.parametrize("folder", ["_template", "KPP1/_template"])
+def test_repo_template_cli_fails_closed(tmp_path, folder):
+    _repo(tmp_path)
+    _job(tmp_path, None, {"run_all.py": WORLD_BM}, name=folder)
+    for _ in range(2):
+        result = subprocess.run([sys.executable, str(GUARD), "--root", str(tmp_path) + "/."],
+                                capture_output=True, text=True)
+        assert result.returncode == 1 and result.stderr == ""
+        assert result.stdout.count("SKELETON ") == 1
+        assert f"jobs/{folder}/run_all.py" + OUTSIDE in result.stdout
+
+
 def test_repo_nested_skeleton_config_in_a_finished_job_is_read(tmp_path):
     sk = _repo(tmp_path, baseline=("jobs/KPP1/scripts/old.py",))
     _job(tmp_path, None, {"scripts/old.py": "x = 1\n"}, name="KPP1")
