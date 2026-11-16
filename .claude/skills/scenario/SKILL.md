@@ -50,6 +50,10 @@ Run the card's checks (validator stages, xView, SINTEZ) on the read-back export 
 `passed=true` only with every mandatory check and manual gate closed. Done when the report names, per stage, the
 route used, the evidence and what stays open.
 
+OKS cells (`oks-vpm`, `oks-npm`): model by the OKS modelling split [D336] (inset elements vs texture parts,
+plinth per project; list in docs/agents/SKELETONS.md, section "OKS modelling split [D336]") and write its
+`Modelling split [D336]:` line with the reason in the job report.
+
 Before showing Artem (cells `oks-vpm`, `ground-npm`, `ground-vpm`): run the skeleton `verifier` stage in observe
 mode (`tools/qa/verifier.py` → `jobs/<ID>/verifier.json`, docs/agents/SKELETONS.md) and name its main discrepancy in
 the report. The VLM confirms; positions/counts come from geometry/vectors (CrossProjection: 82 % view matching vs
