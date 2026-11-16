@@ -61,6 +61,7 @@ Procedural graders over the Claude Code transcripts of the branch (`#123`): the 
 | `engine-checked` | `engine_checked` | `transcript` | an engine run with no `independent-checker` before the "done" claim |
 | `source-inspected` | `source_inspected` | `transcript` | a source file (`.max`, `.rvt`, `.fbx`, ...) no `source-inspector` read |
 | `failure-stop` | `failure_stop` | `transcript` | a check run again after two failures with the same cause, or three |
+| `subagent-timebox` | `subagent_timebox` | `transcript` | a background Agent's unattended interval reaches its time box (default 30 min) without a correlated output read |
 | `branch-name` | `branch_name` | `transcript` | a commit on an auto-generated worktree branch, or off `<type>/<area>-<what>` |
 | `routine-question` | `routine_question` | `transcript`, `decisions`, `patterns` | a question about the agent's own implementation, or one `docs/decisions.md` / `docs/domain/patterns/INDEX.md` already answers |
 

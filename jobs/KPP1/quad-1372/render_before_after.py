@@ -1,6 +1,6 @@
 """new-case: Before (R1) / After (quad master) renders of KPP1 with the same fixed cameras (#1372, #1360 rule).
 
-    blender -b --factory-startup --python render_before_after.py -- <model.fbx> <texture.png> <out_dir> <tag>
+    blender -b --factory-startup --python render_before_after.py -- <model.fbx> <texture.png> <out_dir> <tag> [default|corners]
 
 Workbench, fixed world-space cameras (numbers below, never derived from the model, so Before and After share them):
 two overviews and three close-ups on the v002 union zones / the 5 mm step. Every camera is rendered textured
@@ -21,6 +21,13 @@ CAMERAS = {  # name: (location, target, lens mm)
     'north_panel_x12p6': ((11.0, 10.0, 7.5), (12.4, 6.0, 6.4), 35),
     'east_step_x12p42': ((13.4, 0.2, 4.4), (12.42, 0.9, 3.85), 50),
 }
+CORNER_CAMERAS = {  # #1563: SW / NW corner posts (#1246 readback-v003b centres), v002 vs v003 quad master
+    'sw_from_sw': ((-17.2, -8.0, 7.6), (-15.03, -5.73, 5.8), 35),
+    'sw_from_s': ((-14.2, -8.8, 6.2), (-15.0, -5.7, 5.9), 35),
+    'nw_from_nw': ((-17.2, 8.3, 7.6), (-15.03, 6.02, 5.8), 35),
+    'nw_from_n': ((-14.2, 9.1, 6.2), (-15.0, 6.0, 5.9), 35),
+}
+CAMERA_SETS = {'default': CAMERAS, 'corners': CORNER_CAMERAS}
 
 
 def look_at(cam, loc, target):
@@ -28,9 +35,12 @@ def look_at(cam, loc, target):
     cam.rotation_euler = (Vector(target) - Vector(loc)).to_track_quat('-Z', 'Y').to_euler()
 
 
-def main(fbx, png, out_dir, tag):
+def main(fbx, png, out_dir, tag, cams='default'):
+    if cams not in CAMERA_SETS:
+        raise SystemExit(f'unknown camera set {cams!r} (known: {", ".join(CAMERA_SETS)})')
+    cameras = CAMERA_SETS[cams]
     os.makedirs(out_dir, exist_ok=True)
-    outs = {(c, m): os.path.join(out_dir, f'{tag}_{c}_{m}.png') for c in CAMERAS for m in ('tex', 'wire')}
+    outs = {(c, m): os.path.join(out_dir, f'{tag}_{c}_{m}.png') for c in cameras for m in ('tex', 'wire')}
     taken = [p for p in outs.values() if os.path.exists(p)]
     if taken:
         raise SystemExit(f'outputs exist: {taken[:3]}')
@@ -81,7 +91,7 @@ def main(fbx, png, out_dir, tag):
             sh.color_type = 'OBJECT'
             for o in meshes:
                 o.color = (0.78, 0.78, 0.76, 1.0)
-        for c, (loc, tgt, lens) in CAMERAS.items():
+        for c, (loc, tgt, lens) in cameras.items():
             look_at(cam, loc, tgt)
             cam.data.lens = lens
             sc.render.filepath = outs[(c, mode)]
@@ -90,4 +100,4 @@ def main(fbx, png, out_dir, tag):
 
 
 if __name__ == '__main__':
-    main(*sys.argv[sys.argv.index('--') + 1:][:4])
+    main(*sys.argv[sys.argv.index('--') + 1:][:5])
