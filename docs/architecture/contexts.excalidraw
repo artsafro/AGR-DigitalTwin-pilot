@@ -509,7 +509,7 @@
    "x": 40.0,
    "y": 664.0,
    "width": 470,
-   "height": 107.5,
+   "height": 160.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -543,7 +543,7 @@
    "x": 48.0,
    "y": 674.0,
    "width": 454,
-   "height": 87.5,
+   "height": 140.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -563,13 +563,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous",
+   "text": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous\nhole_plate: план отверстия парапета, уровень, верх,\nвнешний контур -> плита кровли (сборщик задания, #1381)\nили ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e055eec75f5eb0b4",
-   "originalText": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous",
+   "originalText": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous\nhole_plate: план отверстия парапета, уровень, верх,\nвнешний контур -> плита кровли (сборщик задания, #1381)\nили ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -577,7 +577,7 @@
    "id": "e01a0a674fb8eec4",
    "type": "rectangle",
    "x": 40.0,
-   "y": 785.5,
+   "y": 838.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -611,7 +611,7 @@
    "id": "e8557b923cc2b0ed",
    "type": "text",
    "x": 48.0,
-   "y": 795.5,
+   "y": 848.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -781,13 +781,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 3",
+   "text": "Дубли вне владельца: 1",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ebbc87b6742c8172",
-   "originalText": "Дубли вне владельца: 3",
+   "originalText": "Дубли вне владельца: 1",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1573,11 +1573,11 @@
     ],
     [
      20.0,
-     -31.0
+     -26.25
     ],
     [
      120.0,
-     -31.0
+     -26.25
     ],
     [
      120.0,

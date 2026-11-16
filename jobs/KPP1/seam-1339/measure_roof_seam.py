@@ -20,7 +20,6 @@ Nothing is overwritten: the output folder must not exist and must not contain or
 import argparse
 import contextlib
 import json
-import math
 import sys
 import types
 from pathlib import Path
@@ -31,15 +30,12 @@ sys.path.insert(0, str(ROOT / "tools" / "qa"))
 
 import run_benchmark as rb  # noqa: E402
 from dt_ai.geometry import from_spec  # noqa: E402
-from twinqa.look import _t_junction_count  # noqa: E402
+from roof_parapet_seam import FLAT_M, ROOF_BAND_M, T_TOL_M, measure  # noqa: E402,F401  (#1381: the one seam check)
 
 OBJECT = ROOT / "benchmark/bench-k01-kpp1/object.json"
 TOLERANCES = ROOT / "benchmark/bench-k01-kpp1/tolerances.json"
 WELD_FROM = '        slabs.append((inner, roof, "the roof", outer))\n'
 WELD_TO = "        faces.append((inner, roof, inputs.roof_id, 1))  # #1339 before: roof welded to the parapet foot\n"
-T_TOL_M = 1e-4          # a vertex closer than 0.1 mm to another polygon's edge is a T-junction (plate gap is 5 mm)
-ROOF_BAND_M = 0.02      # roof-band triangles: horizontal, within 20 mm of the roof level (hole 7.909, plate 7.914)
-FLAT_M = 1e-4          # horizontal triangle: z spread within 0.1 mm (FBX readback is float32)
 VARIANTS = ("welded", "separate")
 
 
@@ -70,31 +66,6 @@ def engine(variant):
         yield
     finally:
         rb.build, rb.BuildInputs, rb.BuildError = saved
-
-
-def measure(dump, roof_z):
-    """Counts of one mesh dump (engine dump or readback): body quads/polygons/triangles, roof-band triangles,
-    T-junctions. Fail closed: no `body` mesh, an empty one or a non-finite coordinate is a ValueError."""
-    if not (isinstance(roof_z, (int, float)) and math.isfinite(roof_z)):
-        raise ValueError(f"roof level {roof_z!r} is not a finite number")
-    bodies = [m for m in dump.get("meshes", []) if m.get("name") == "body"]
-    if len(bodies) != 1:
-        raise ValueError(f"expected one mesh 'body', found {len(bodies)}")
-    body = bodies[0]
-    verts, tris = body.get("vertices") or [], body.get("triangles") or []
-    if not verts or not tris:
-        raise ValueError("mesh 'body' is empty")
-    if not all(math.isfinite(c) for v in verts for c in v):
-        raise ValueError("mesh 'body' has a non-finite vertex coordinate")
-    sizes = body.get("polygon_sizes") or []
-    band = 0
-    for t in tris:
-        zs = [verts[i][2] for i in t]
-        if max(zs) - min(zs) <= FLAT_M and abs(zs[0] - roof_z) <= ROOF_BAND_M:
-            band += 1
-    return {"quads": sum(1 for s in sizes if s == 4), "polygons": len(sizes), "ngons": sum(1 for s in sizes if s > 4),
-            "triangles": len(tris), "roof_band_triangles": band,
-            "t_junctions": _t_junction_count([list(v) for v in verts], [list(t) for t in tris], T_TOL_M)}
 
 
 def mesh_check(report):

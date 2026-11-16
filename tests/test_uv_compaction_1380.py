@@ -145,7 +145,6 @@ def test_d320_leftovers_have_explicit_historical_reasons(path, constant, reason)
 def test_no_delivery_changes():
     base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
     paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
-    # #1531 also routes this live candidate's UDIM offset to the shared owner;
-    # it is source-only, not a delivery artifact or a general jobs/ exemption.
-    udim_candidate = 'jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py'
-    assert all(p == udim_candidate or p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)
+    # a delivery is a file a job produced (FBX, ZIP, textures, reports); job scripts are code. #1381 also edits job
+    # scripts (KPP1 seal shim, build_kpp1.roof via roof_core), so the check is on the kind of file, not on #1380's names.
+    assert all(p.endswith('.py') for p in paths), [p for p in paths if not p.endswith('.py')]
