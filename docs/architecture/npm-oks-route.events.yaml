@@ -6,6 +6,29 @@
 # Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут НПМ / ОКС v2 на КПП1: событийный штурм"
 route: oks-npm
+scheme:
+  source_ru: "КПП1: sources.json, ревизия альбома и SHA-256 исходников; неизвестная ревизия останавливает выпуск"
+  steps:
+    - stages: "sources,parts,gate1"
+      ru: "Описать исходники и согласовать состав"
+      artifact_ru: "Реестр исходников + PartsList"
+      gate_ru: "Артём подтвердил части (Gate 1)"
+    - stages: "model,uv,npm"
+      ru: "Построить модель и собрать UV / атлас"
+      artifact_ru: "Сцена НПМ; либо мастер → НПМ"
+      gate_ru: "Состав и отделки сверены с проектом"
+    - stages: "export"
+      ru: "Выгрузить FBX и собрать пакет"
+      artifact_ru: "FBX + export_meta + ZIP; детали — схема «Пакет и сдача»"
+      gate_ru: "Упаковка не означает приёмку"
+    - stages: "readback,validate,sintez"
+      ru: "Прочитать экспорт и выполнить проверки"
+      artifact_ru: "Свежий отчёт, xView и находки СИНТЕЗ на тех же файлах"
+      gate_ru: "Отказ / not_run не равны pass"
+    - stages: "delivered"
+      ru: "Передать результат Артёму"
+      artifact_ru: "Пакет и сцена Max QUAD для приёмки"
+      gate_ru: "Визуальная приёмка Артёма отдельно от публикации"
 object: KPP1
 issue: "#1359"
 actors:
