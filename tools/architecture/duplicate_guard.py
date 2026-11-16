@@ -30,6 +30,8 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `seam-seal`  owner tools/blender/seam_seal.py (#1381): the one Blender seam seal (weld + T-junction ring splits, quads
   only; moved from jobs/KPP1/scripts/seal.py, now an import shim). Flags any other `def seal` / `def ring_split` /
   `def t_junctions` (its function names). Every row must say why it stays.
+- `window-generator` owner adapters/max/agr_tools/windowgen_core.py (#1405): definitions named build_type or
+  assign_glass under jobs/ + tools/ + src/ are refused; imports/calls remain valid. No legacy copies are allowlisted.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -77,6 +79,7 @@ RULES = {
     "master-qa": "tools/blender/qa_master.py",
     "vpm-uv": "tools/blender/vpm_uv.py",
     "seam-seal": "tools/blender/seam_seal.py",
+    "window-generator": "adapters/max/agr_tools/windowgen_core.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
@@ -84,9 +87,11 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
            "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
-           "seam-seal": ("jobs", "tools", "src")}   # #1381
+           "seam-seal": ("jobs", "tools", "src"),   # #1381
+           "window-generator": ("jobs", "tools", "src")}   # #1405: shared Max/CLI window builder
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
+                   "window-generator"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
@@ -241,8 +246,15 @@ def _seal_hits(tree):
             and node.name in OWNED_NAMES["seam-seal"]]
 
 
+def _window_hits(tree):
+    """Protect the window builder and 3D ownership entry points; mere calls are not copies."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in {'build_type', 'assign_glass'}]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
-          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits}
+          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
+          "window-generator": _window_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")

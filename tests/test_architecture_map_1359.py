@@ -96,7 +96,10 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 11  # #1441 owners + #1380 shared VPM UV replaces vpm-uv-copy
+    assert len(contexts["contexts"]) == 12  # #1405 registers the shared window generator + 3D ownership
+    windows = next(c for c in contexts['contexts'] if c['id'] == 'openings')
+    assert windows['owner'] == 'adapters/max/agr_tools/windowgen_core.py'
+    assert {f['name'] for f in windows['functions']} == {'build_type', 'assign_glass'}
 
 
 @pytest.mark.parametrize("command,ok", [
@@ -282,6 +285,8 @@ def test_guard_green_on_repo_with_allowlist(capsys):
 def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
     assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left
+    # #1405 starts with no grandfathered window implementations, not a fake exemption.
+    assert not any(k[0] == 'window-generator' for k in allowed)
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
