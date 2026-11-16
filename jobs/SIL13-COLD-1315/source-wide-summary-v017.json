@@ -1,0 +1,626 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-accepted-VPM-Table-finish-v017",
+  "decision": "D321",
+  "answer": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6903084291",
+  "picture_gate_closed": true,
+  "new_user_question": null,
+  "site_adopted": "only12VPMTables",
+  "pilot_audit": {
+    "passed": false,
+    "geometry_QA": "PASS",
+    "site_adopted": false,
+    "decision": "D321",
+    "answer": "6903084291",
+    "triangles": 4920,
+    "wood_filled": 76,
+    "slots_empty": 72,
+    "access_empty": 288,
+    "watertight": true,
+    "positive_volume_m3": 0.13089143036102321,
+    "bbox_delta_source_m": 3.075599670410156e-05,
+    "sampled_accepted_form_distance_m": {
+      "seed": 1315,
+      "samples_each": 10000,
+      "accepted_to_finish_max": 0.0026962920433735178,
+      "finish_to_accepted_max": 0.0025826827604162566,
+      "NOT_exact_Hausdorff": true
+    },
+    "xview": {
+      "pre": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "raw": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "originals": [
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+        "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704"
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+        "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2"
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+        "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76"
+      }
+    ],
+    "note": "Geometry clean only. Provisional UV/material, remaining other MAF/Ground/UCX/Flora/final gates not waived."
+  },
+  "site_audit": {
+    "passed": false,
+    "decision": "D321",
+    "render_triangles": 319154,
+    "native_render_triangles": 319154,
+    "native_face_loss": 0,
+    "changed_MAF": 12,
+    "unchanged_MAF": 26,
+    "Ground_Flora_600UCX_actual_arrays_exact": true,
+    "retained_MAF": 38,
+    "retained_plant_census": 4582,
+    "NPM_byte_unchanged_sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+    "changed_instances": [
+      {
+        "handle": "33FB381",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 1.8208160028621023e-06,
+        "placement_delta_m": 4.90744463021997e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB382",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 1.9453117516832208e-07,
+        "placement_delta_m": 5.383371187273056e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB383",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 2.226306065722383e-06,
+        "placement_delta_m": 6.7387606677016265e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB384",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 1.352579083402361e-06,
+        "placement_delta_m": 5.19494527040365e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB385",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 1.27683120609845e-06,
+        "placement_delta_m": 3.69613508155453e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB386",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 7.66797004558839e-07,
+        "placement_delta_m": 2.9749397452150106e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB387",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 9.058843559728302e-07,
+        "placement_delta_m": 4.1384886717565905e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB388",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 1.4779693628952373e-06,
+        "placement_delta_m": 5.217524183365185e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB389",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 9.53503040079795e-07,
+        "placement_delta_m": 2.2101722692013936e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB38A",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 1.8171723255022698e-06,
+        "placement_delta_m": 4.1535383417112826e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB38B",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 7.758526834322765e-07,
+        "placement_delta_m": 5.17624617657475e-06,
+        "points_rotations_heights_retained": true
+      },
+      {
+        "handle": "33FB38C",
+        "faces": 4920,
+        "faces_exact": true,
+        "coordinate_delta_m": 1.9551574226284174e-07,
+        "placement_delta_m": 3.048904833491406e-06,
+        "points_rotations_heights_retained": true
+      }
+    ],
+    "unchanged_handles": [
+      "33FB3A5",
+      "33FB3A6",
+      "33FB3A7",
+      "33FB3A8",
+      "33FB3A9",
+      "33FB3AA",
+      "33FB3AB",
+      "33FB3B0",
+      "33FB3B1",
+      "33FB3B2",
+      "33FB3BE",
+      "33FB3BF",
+      "33FB3BC",
+      "33FB3BD",
+      "33FB590",
+      "33FB3B3",
+      "33FB3B4",
+      "33FB3B5",
+      "33FB3B6",
+      "33FB3B7",
+      "33FB3B8",
+      "33FB3B9",
+      "33FB3BA",
+      "33FB581",
+      "33FB3AD",
+      "33FB3AE"
+    ]
+  },
+  "current_site": {
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v017\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "bd64ad172d382d29b547b14d0ba6b94a7d16e70f5d25b7fb9c5d3ac6d9a33db0"
+    },
+    "NPM": {
+      "path": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v015/site-table-r1/NPM/SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2"
+    }
+  },
+  "actual_VPM_site_xview": {
+    "overlapping_vertices": 44,
+    "overlapping_faces": 14191,
+    "vertex_pairs": 22,
+    "face_pairs": 22654,
+    "face_pairs_by_kind": {
+      "contact": 1162,
+      "area": 3410,
+      "area+contact": 18082
+    },
+    "bowtie_vertices": 202,
+    "bowtie_pairs": 0,
+    "parts_without_faces": 0
+  },
+  "actual_VPM_native_validator": {
+    "pass": 3,
+    "fail": 3,
+    "review": 1,
+    "not_run": 5
+  },
+  "actual_ground_filtered_validator": {
+    "pass": 3,
+    "fail": 3,
+    "review": 1,
+    "not_run": 5
+  },
+  "actual_slot_sections": {
+    "table": {
+      "height_m": 0.735,
+      "radius_m": 0.5,
+      "angular_samples": 40000,
+      "empty_runs": 28,
+      "minimum_empty_chord_lower_bound_m": 0.011545096513675317,
+      "section_polygons": 1,
+      "rounding_m": 1e-06
+    },
+    "seat": {
+      "height_m": 0.439,
+      "radius_m": 0.98,
+      "angular_samples": 40000,
+      "empty_runs": 48,
+      "minimum_empty_chord_lower_bound_m": 0.010005929139257009,
+      "section_polygons": 52,
+      "rounding_m": 1e-06
+    }
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "code": [
+    {
+      "path": "audit_corrected_sources.py",
+      "sha256": "3f06652129fbf8b93d51b9186ddc5f93c626bfd7b5300af5116f1c6c5d85b176",
+      "literal_lines": 10
+    },
+    {
+      "path": "audit_pilot.py",
+      "sha256": "20102f24e23ef04c13be18b5fd34bc6217392a29c9c30cb4399f40bda6dae953",
+      "literal_lines": 43
+    },
+    {
+      "path": "audit_site.py",
+      "sha256": "3234e64f5e35feea2e4a370d73f4494c79a73583a9ae7fd24cdf17cb98ec39d9",
+      "literal_lines": 32
+    },
+    {
+      "path": "boolean_simplify.py",
+      "sha256": "f7b93b8adb421d0b0360ecce9b788debd5f95d87b7f9a66148d17cc6789323a2",
+      "literal_lines": 12
+    },
+    {
+      "path": "build_conformal.py",
+      "sha256": "ef14478ac65fcd767d3aeedccf19d10011b234a70c2d0948bb1d2f50266f4d40",
+      "literal_lines": 16
+    },
+    {
+      "path": "classify_whole_site.py",
+      "sha256": "4a4087d5da56be7f6fab31fe45929cc8caef06516d1be9bd45687057fd099250",
+      "literal_lines": 19
+    },
+    {
+      "path": "export_pilot.py",
+      "sha256": "a1f17222fbaae128ba1a9fcfe94c3e419420b92caa51846b704dd3c64450e46f",
+      "literal_lines": 25
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "sha256": "d74bf36119ac744418d5e301bf5bc64cea742fd402a46990a08c33fefd3d7ac3",
+      "literal_lines": 30
+    },
+    {
+      "path": "finish_bike_urn.py",
+      "sha256": "6b6151f4d1ac2531168b4e1b7ad5fc9294e6ba4a5c0645ab642708dc24b1206c",
+      "literal_lines": 11
+    },
+    {
+      "path": "finish_other_types.py",
+      "sha256": "0baf03cd99ea2efdc831ebef2c417a32371decf3081d4aa5e96036320b4dcacf",
+      "literal_lines": 26
+    },
+    {
+      "path": "finish_topology.py",
+      "sha256": "0ac70fcf5e5aa9ece5972b4a4ec356eb32d65973f71de2a7293f1a9d4e5ac135",
+      "literal_lines": 8
+    },
+    {
+      "path": "finish_urn_seam.py",
+      "sha256": "947d8b758827a76f9b27c7830ac1a2178f90a9f04383016a9aa5facce6aca550",
+      "literal_lines": 10
+    },
+    {
+      "path": "fix_sand_circles.py",
+      "sha256": "3da6676fd5867ab3bea643524e8d7dbeff02b0b3a7954df2bc0e9bce0005f8dc",
+      "literal_lines": 41
+    },
+    {
+      "path": "fix_source_parts.py",
+      "sha256": "e006ad4b95c7ccec65c12f2dd3cff47c851e681ea316a91ba2d23ba7ede03615",
+      "literal_lines": 29
+    },
+    {
+      "path": "link_collapse.py",
+      "sha256": "bb13777edecc23a799b6e18216a1efb68fd052b88ade3b5b8f9f7002893f7d5e",
+      "literal_lines": 46
+    },
+    {
+      "path": "nanoweld.py",
+      "sha256": "9148576a803fac16847bc8dcd217cce08d0930874be2cf4e4a26f1e06c65beb3",
+      "literal_lines": 16
+    },
+    {
+      "path": "native_readback_r1.py",
+      "sha256": "0eb9d4426aade6af0737a00e65463a6bb8804ebfdf27e24a249cd188663ada0d",
+      "literal_lines": 28
+    },
+    {
+      "path": "prepare_adapters.py",
+      "sha256": "bf1d9ac5bf4f26bbbc7deaf9c4d2b698125aaf45a6c8677080077cb385964401",
+      "literal_lines": 7
+    },
+    {
+      "path": "prepare_four.py",
+      "sha256": "4d6936e666908c74a614ab011d48e41666aa550de8b24967bad78e480c60ec22",
+      "literal_lines": 17
+    },
+    {
+      "path": "prepare_four_final.py",
+      "sha256": "a1d6f71b7ed4df4e9bdeb80df0ca6d35b89318be76a4370f8603cb59dbaaa07b",
+      "literal_lines": 9
+    },
+    {
+      "path": "prepare_site_adapters.py",
+      "sha256": "6a4f9f80ecab1da0700907d0e0afea571d1de4f07ed98b9ffdaea1a7c45ebe56",
+      "literal_lines": 5
+    },
+    {
+      "path": "raw_readback.py",
+      "sha256": "b1bb28d1c047c1df7b443d26a23e79450c007bd509bc0296f3f06660e24be8be",
+      "literal_lines": 50
+    },
+    {
+      "path": "raw_readback_r1.py",
+      "sha256": "838e01ad0476e4b794cbb1ea87a467920968727bdb84db203b80feddc209392f",
+      "literal_lines": 50
+    },
+    {
+      "path": "render_finish.py",
+      "sha256": "35b6967a62151924560464473a89db0a4814e1adb7a91bf71462b16ac24cd8c1",
+      "literal_lines": 15
+    },
+    {
+      "path": "repair_bike_urn.py",
+      "sha256": "5c8d0e5a38cbe2eb2242f6ee19320649c62bf37809d6936e9bc43e59d48cb18e",
+      "literal_lines": 39
+    },
+    {
+      "path": "repair_canopy_r2.py",
+      "sha256": "4d3ecd206d63f9551d31c95c3f72b0f11c8192016ab61aa49da8437d7787c359",
+      "literal_lines": 10
+    },
+    {
+      "path": "repair_canopy_r3.py",
+      "sha256": "d7e6ad352b27fbf2377f259c9caafba662b1b47612dcb9eea5fd7a2c3b96a3f5",
+      "literal_lines": 47
+    },
+    {
+      "path": "repair_sand_bench.py",
+      "sha256": "16ae7f012f0aed1025c037c17a5ed17894dfe6a22cb7b461aa94e38c3e50bd05",
+      "literal_lines": 41
+    },
+    {
+      "path": "repair_sand_r3.py",
+      "sha256": "6be4c83306f21fe2990927362070adeace4f4cd7e703588efd30e5f45cd74a8a",
+      "literal_lines": 14
+    },
+    {
+      "path": "replicate_table.py",
+      "sha256": "79c03f2d02cf54cde41eb2ede4aa4a75da668aa6fe4934d1388963f80de89834",
+      "literal_lines": 46
+    },
+    {
+      "path": "section_slots.py",
+      "sha256": "a7438a3584c73ae1c6618936a4388ccb0210f6689d607dd776f6371707f2afe3",
+      "literal_lines": 22
+    },
+    {
+      "path": "test_finishing.py",
+      "sha256": "f0f4c53f17794bff5f68cf374d9ab6ea7e11f0d43cdc253f051e8ef7dd57e5f0",
+      "literal_lines": 19
+    },
+    {
+      "path": "test_link_contract.py",
+      "sha256": "91144871c394ab2fc3d29bf6e2245247a3336df7d469acb754ea4e200b6962a9",
+      "literal_lines": 35
+    },
+    {
+      "path": "test_other_types.py",
+      "sha256": "c7ac6d203a657348fc830b778ed8f27db0b80b48bea3f6af3704970838b853e4",
+      "literal_lines": 12
+    },
+    {
+      "path": "test_sand_parts.py",
+      "sha256": "bed6e01fbe28e7d0875a8e9a5a71b18f9496c3c66fbc6823291a85d500a21a74",
+      "literal_lines": 10
+    },
+    {
+      "path": "test_vpm_table_replication.py",
+      "sha256": "76853adc7d0779969419559f4c03e762a0d3e1b88a738797b3832043c4c6ef0f",
+      "literal_lines": 47
+    },
+    {
+      "path": "view_canopy.py",
+      "sha256": "177fc3ab0e8093725856b1e7fc15a50afabb0444e581e7fe4fdb5294efdcfe82",
+      "literal_lines": 6
+    }
+  ],
+  "tests": {
+    "affected_command": "env PYTEST_ADDOPTS= uv run --with shapely --with scipy --with trimesh --with rtree pytest -q tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tmp/cold-v011/test_hedge_contract.py tmp/cold-v012/test_witness_indices.py tmp/cold-v012/test_export_controls.py tmp/cold-v013/test_maf_pilot.py tmp/cold-v013/test_pilot_structure.py tmp/cold-v014/test_checkpoint_controls.py tmp/cold-v014/test_replication.py tmp/cold-v015/test_profile_scope.py tmp/cold-v016/test_parametric_pilot.py tmp/cold-v016/test_access_gaps.py tmp/cold-v017/test_finishing.py tmp/cold-v017/test_vpm_table_replication.py tmp/cold-v017/test_link_contract.py tmp/cold-v017/test_sand_parts.py -k 'not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean' -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0-v017-head",
+    "checkpoint_passed": 325,
+    "deselected_historical_failure_controls": 5,
+    "green_log_sha256": "3e4db7cb3432226ab81af6bd08b189406a49854c1ce4f8fbcc043324565bbca6",
+    "separate_open_controls": {
+      "failed": 7,
+      "passed": 3,
+      "log_sha256": "d3dda4112b1823e0d87af792aa66828031c02e44d7c18557bb2ef5577f9efacf",
+      "note": "five historical failing-artifact controls and two current isolated Canopy/Urn controls; no claim whole-site QA passes"
+    },
+    "initial_Table_RED_failures": 4,
+    "initial_other_types_RED_failures": 5,
+    "link_fail_closed_RED_failures": 5,
+    "low_post_RED_then_GREEN": true,
+    "full_suite": "deferred to merge batch (rule68)"
+  },
+  "tool_accounting": {
+    "live_Max_mutations": 0,
+    "shared_production_modules_added": 0,
+    "agent_tool_calls": "not measured",
+    "new_job_local_code_files": 37,
+    "literal_lines": 903
+  },
+  "open_items": [
+    "worker: five remaining MAF types source-fidelity/paired-budget/actual-export/native QA; only Tables adopted",
+    "worker: Ground skirt/details/materials/UV/UDIM and actual Flora/mixed contacts",
+    "worker: UCX coverage/gaps and final package export",
+    "user only AFTER repairs: final visual/material acceptance; then completeSINTEZ"
+  ],
+  "next_steps": [
+    "Keep accepted D321picture CLOSED; no new model question is pending",
+    "Resume actualSITE VPMv017/NPMv015, never an isolated clean-but-filled/raised candidate",
+    "Sand preferred isolated source-circles5332tris (38realposts), Bike900source-fixed; native/export/pairedNPMbudget still required",
+    "Bench013736tris topologyclean but reverse-source shape33mm unclosed; Canopy3routesFAIL, no adoption",
+    "Urn240source-fixed restores shelf/cavity but2nearverts; earlier162clean variant lacks shelf and is not preferred",
+    "Do not infer material/UV completion or readiness gain from Table clean QA"
+  ],
+  "hotspots": [
+    "docs/decisions.md: minimal existingOWN D321answer extension only; no new sequential ID"
+  ]
+}

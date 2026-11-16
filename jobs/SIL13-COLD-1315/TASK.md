@@ -141,13 +141,18 @@ remain rejected (latest bounded cleanup70faces/0vertices). [D321] / issue commen
 6901183418 closes the later parametric-pilot scope: ONE VPMcopy with76physical
 slats, geometric gaps>=6.2mm, rebuilt rings/frame; show a before/after mesh
 screenshot without opening Max for Artem. Replicate12VPMcopies only after explicit
-yes. NPM[D319]stays unchanged. v016/r3b now supplies that6606triangle pilot and
-four actual before/after views; actual raw/native xView18faces/0vertices/0bowties
-remainsFAIL. New picture gate concerns construction/silhouette ONLY, not another
-scope decision or technical waiver. Do not replicate a failing artifact, even
-with a picture yes. Source access windows retained after a tests-first r3regression;
-sampled shape changes93.226/87.010mm disclosed, NOT exact Hausdorff.
-See `CONTINUATION-v016.md`; resume SITE fromv015/site-table-r1, never a failed pilot.
+yes. NPM[D319]stays unchanged. Answer6903084291 (2026-11-16, «Принимаю, ок»)
+accepts the v016/r3b form/silhouette for technical finishing: this picture gate is
+CLOSED and must not be repeated. v017 eliminates actual18face failures without
+checker edits;4920triangle pilot passes pre/raw/native xView0/0/0/0,76wood/72slots/
+288access controls. Only after this geometry QA,12VPMcopies were replicated:
+319154raw/native triangles, all24placed-instance checks clean, no native face loss.
+Accepted-form sampled10k+10k deviation2.696/2.583mm, NOT exact Hausdorff.
+NPMbyte-unchanged;26otherMAF/Ground/Flora/600UCX actual arrays exact. Whole site
+still FAIL. Resume SITE fromv017/site-table-r1/VPM (NPM remainsv015); other-type
+isolated candidates are NOT adopted, even when their xView is clean. Surface probes
+found lost cavities/slots and a raised low Sand post; retain failed artifacts.
+See `CONTINUATION-v017.md`. No new user model question is pending.
 
 Other xView/skirt/details/material/atlas/UDIM/gap/native-validator repairs remain worker-owned.
 Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not invented.

@@ -1,15 +1,18 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v016 ONE VPM76slat Table016 pilot [D321], picture pending; technical FAIL, not replicated**.
-See [CONTINUATION-v016.md](CONTINUATION-v016.md): actual6606triangle FBX,
-raw/native18xViewfaces/0vertices/0bowties (FAIL), source access windows retained,
-76wood occupancy controls/72empty slot samples/288empty source access probes.
-Actual bbox delta0.031mm; sampled shape change93.226/87.010mm (NOT Hausdorff).
-Before/after screenshots show source left/pilot right; no Max opened for Artem.
-Both full-site v015FBXs remain byte-unchanged, including12existingVPMTables and
-accepted NPM[D319]. Required[D321]picture is construction/silhouette only, not
-approval of technical failures; no replication until explicit yes AND clean QA.
-Current full sheet: `v016/review-sheet-v016-r3b-TECHNICAL-FAIL-NOT-ACCEPTED.png`.
+Current status: **v017 [D321] form accepted, 12 VPM Table016 copies technically repaired;
+whole-site QA still FAIL, not delivered**. See [CONTINUATION-v017.md](CONTINUATION-v017.md).
+Answer6903084291 closes the v016 construction-picture gate, not technical/final gates.
+Pilot4920triangles, pre/raw/native xView0faces/0vertices/0bowties/0area;
+76wood/72empty slots/288empty access probes. After this clean pilot QA, actual12VPM
+copies were exported:319154raw/native triangles with NO face loss, all24raw/native
+placed-instance xView checks clean. NPMv015FBX byte-unchanged;26otherMAF/Ground/
+Flora/600UCX arrays exact. Whole VPM xView14191faces44vertices202bowties FAIL;
+public native validator3pass3fail1review5not_run. Other five-type experiments remain
+isolated/rejected; shape probes caught clean-but-filled cavities/slots/raised posts.
+No new question to Artem, no PR or delivery claim. Max was not opened or mutated.
+Current comparison: `v017/accepted-vs-finished-oblique.png` (accepted form vs actual
+finished mesh), NOT a new picture gate. Old v016 files remain immutable historical evidence.
 
 Historical status: **v015 NPM Table016 adopted12/12 [D319]; VPM physical slots preserved; not delivered**.
 See [CONTINUATION-v015.md](CONTINUATION-v015.md):172487NPM/334274VPM raw render

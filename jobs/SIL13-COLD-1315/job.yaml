@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-one-VPM-physical-slat-pilot-v016
+run_id: cold-1315-accepted-VPM-Table-finish-v017
 synthetic: false
 path: deviation
 inputs: &id001
@@ -104,6 +104,11 @@ deviations:
   what_was_tried: D321one-copy76slat/frame pilot; conformal ring grids, aligned levels, bounded2.1mm weld/full maps and source-angular-window correctionr3b. Actual FBX/raw-native readbacks and four mesh screenshots, no Max opened for user.
   new_tool_written: Eighteen job-local drivers/adapters/tests661literal lines sealed externally in evidence-v016.json; no shared module/checker/library changes.
   result: Current r3b6606triangles,raw/native18faces0vertices0bowtiesFAIL; bboxdelta0.031mm,76woodcontrols/72emptyslots/288emptyaccesspoints. Both v015siteFBXs unchanged. D321scope closed; new picture gate is silhouette only, never approval of technicalFAIL or replication of failing artifact.
+- gate: operations
+  what_failed: Accepted v016form still had18actual xViewfaces; millimetre greedy weld folded coplanar faces. Other five-type source-structural repairs remain incomplete.
+  what_was_tried: D321form answer6903084291 closes picture gate. Exact Boolean/topology simplification/nano seam merge gives4920triangle pilot clean pre/raw/native,76wood72slots288access. Only then replicate12VPMTables, actual24placed checks clean. Source-shape probes reject filled cavities/wheel slots/raised low posts in isolated other-type candidates.
+  new_tool_written: 37job-local drivers/tests903literal lines sealed externally in evidence-v017.json; no shared module/checker/library changes.
+  result: Actual319154VPMraw/native,no face loss. NPMv015byte-unchanged;26otherMAFGroundFlora600UCX arrays exact,38MAF4582census retained. WholeVPMxView14191faces44vertices202bowtiesFAIL; nativevalidator3pass3fail1review5not_run. No new user question; remaining technical work stays worker-owned.
 gates:
   inputs:
     status: review
@@ -117,32 +122,31 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D321scope closed,ONE VPM76slat/frame pilot constructed. Current r3b6606triangles/raw-native18faces0vertices0bowtiesFAIL. Three distinct repairs and source-access regression retained. Technical contacts remain worker-owned; no site adoption or NPM change.
+    note: D321scope AND picture closed by6903084291;4920triangle pilot clean pre/raw/native.12VPMTables replicated only after geometryQA,24actualplaced checks clean. Whole site stillFAIL; other5types isolated/notadopted. NPMbyte-unchanged, no library edit or technical waiver.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v016-r2.json
-      sha256: ff04035907716b29ed96635226ebf6aba786c23f5b29de71dd41c7749cbe8e47
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v017.json
+      sha256: 941c25f1096107e351d911d121f56daaccd2f156bc7ab159b62b2fb04294532f
   budgets:
     status: review
-    note: Actual172487NPM<=180000,7513remaining;334274VPM<=2625000;600UCX6876tri. Flora actual arrays exact againstv014, previous support78.225/78.655percent remains applicable, not remeasured. Materials/UV/density incomplete; no VPMexperimental counts promoted to site.
+    note: Actual172487NPM<=180000,7513remaining;319154VPM<=2625000;600UCX6876tri. Flora actual arrays unchanged, prior support78.225/78.655percent applicable, not remeasured. Materials/UV/density incomplete. Only12VPMTables adopted; five-type candidate counts never promoted to site or NPM.
     evidence: *id002
   export_readback:
     status: review
-    note: Actual isolated VPMpilot6606triangles/raw-nativefacesexact,maxcoordinate0.119um; fresh factory reset/native FBX import and separate raw-byte reader. PilotxViewFAIL18faces. Both full-sitev015FBXs byte-unchanged,old native15/48face loss/wholefileFAILs retained,not rerun or certified.
+    note: Pilot4920raw/nativefacesexact,xView0/0/0/0. Actual VPMsite319154raw/native,no face loss,26otherMAFGroundFlora600UCX arrays exact; NPMbyte-unchanged/old15face loss retained. WholeVPMpublicxView14191faces44verts202bowtiesFAIL and actual native packagevalidatorFAIL, not a delivery pass.
     evidence: *id002
   report:
     status: review
-    note: v016D321ONEVPMpilot;258checkpoint controls green/5deselected separately5failed.77immutableDrivefiles18058563bytessealed,22original/resumehashesequal. Full-site validators remainFAIL on unchangedfiles,not rerun.Fullsuite deferred to merge batch(rule68).
+    note: v017D321form closed/Table12VPMreplication;325checkpoint controls green/5historicalcontrols deselected; separate5historical+2currentisolated failures,3othercontrols pass.201immutableDrivefiles100230558bytessealed,22original/resumehashesequal. WholeVPMvalidatorFAIL. Fullsuite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v016.md
-      sha256: 975f4dfc87bebcd3941dfca4bbdb1176e9893d34c03abcbabac528e7ca1f3522
-    - path: jobs/SIL13-COLD-1315/evidence-v016.json
-      sha256: 0cc92f09c7c77045e9d1d915e07b7b9ed91a9bd5f2a21ccb33f3b55ef453199c
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v017.md
+      sha256: cd0a1e1ea2f664eb344bee44c77f5c2aea07b6cae84261d1b08bf622517d6e52
+    - path: jobs/SIL13-COLD-1315/evidence-v017.json
+      sha256: 0833a588ca058b8d167d0f69d902b243224ce5b2b62c9872b12e6692a91d24dc
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: D321scope and previous composition/Bench/NPM/hedge gates CLOSED. NEW D321before-after construction/silhouette picture required for ONEVPM76slat/framepilot. Four actual mesh screenshots,sourceleft/pilotright,no Max opened. Technical18faces remainworker-owned,not offeredforapproval;no replication before explicit yes AND clean QA. Finalvisual/material acceptance not requested.
-    waits: user
+    note: D321scope AND v016form/silhouette picture CLOSED by6903084291. Pilot finished clean then12VPMTables replicated; accepted-vs-finished screenshots are progress evidence, NOT another question. NPM/Bench/hedges/composition not reopened. Remaining technical failures worker-owned; finalvisual/material gate not yet requested, no current user wait.
     evidence: *id002
   checker:
     status: missing
