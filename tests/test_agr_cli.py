@@ -23,17 +23,23 @@ def test_single_step_aliases(alias, prefix, monkeypatch):
     run.assert_called_once_with([*expected, *args], check=False)
 
 
-@pytest.mark.parametrize("statuses,expected,calls", [([0, 0], 0, 2), ([3], 3, 1), ([0, 5], 5, 2)])
-def test_npm_chain_forwards_separate_arguments(statuses, expected, calls, monkeypatch):
+@pytest.mark.parametrize("statuses,expected,calls", [([0, 0, 0], 0, 3), ([3], 3, 1), ([0, 5], 5, 2), ([0, 0, 1], 1, 3)])
+def test_npm_chain_forwards_separate_arguments(statuses, expected, calls, monkeypatch, tmp_path):
     agr = importlib.import_module("dt_ai.cli.agr")
     run = Mock(side_effect=[Mock(returncode=s) for s in statuses])
     monkeypatch.setattr(agr.subprocess, "run", run)
+    export = tmp_path / "export"
+    export.mkdir()
+    (export / "0000_Test_01.fbx").write_bytes(b"x")  # #1580: the UV readback reads export_npm_meta.json
+    (tmp_path / "export_npm_meta.json").write_text('{"fbx": "%s"}' % (export / "0000_Test_01.fbx").as_posix())
     atlas = ["spec.json", "new atlas", "--recipe-dir", "recipes"]
-    npm = ["master.fbx", "spec.json", "new atlas", "export", "0000_Test"]
+    npm = ["master.fbx", "spec.json", "new atlas", str(export), "0000_Test"]
     assert agr.main(["vpm-to-npm", "--blender", "blender.exe", *atlas, "--then-npm", *npm]) == expected
     expected_args = [
         [sys.executable, "-m", "dt_ai.cli.main", "derive", "atlas", *atlas],
         [sys.executable, "-m", "dt_ai.cli.main", "derive", "--blender", "blender.exe", "npm", *npm],
+        [sys.executable, "-m", "twinqa.npm_uv", str((export / "0000_Test_01.fbx").resolve()),
+         str(Path("new atlas") / "npm_atlas.json"), "--blender", "blender.exe"],
     ]
     assert run.call_count == calls
     assert [c.args[0] for c in run.call_args_list] == expected_args[:calls]

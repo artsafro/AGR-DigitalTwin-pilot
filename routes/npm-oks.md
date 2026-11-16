@@ -94,7 +94,7 @@ Arguments after each single-step alias are forwarded unchanged, including `--hel
 | `agr package-npm ARGS` | `dt derive package-npm ARGS` (route step 6 package; ZIP owner `package_core._write_zip`, #1377) |
 | `agr validate ARGS` | `python tools/qa/validate_package.py ARGS` (not development-bundle `dt validate`) |
 | `agr ground ARGS` | `dt ground v015 ARGS` |
-| `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS` | `dt derive atlas ATLAS_ARGS`, then `dt derive [--blender BLENDER] npm NPM_ARGS` only on exit 0 |
+| `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS` | `dt derive atlas ATLAS_ARGS`, then `dt derive [--blender BLENDER] npm NPM_ARGS` only on exit 0, then the NPM UV readback `python -m twinqa.npm_uv <exported FBX> <ATLAS>/npm_atlas.json` (#1580: every face inside its atlas region, 8 px padding; a fail exits 1). The export refuses faces that cross UDIM tiles (`--allow-cross-tile` = legacy move, listed in `export_npm_meta.json`) |
 
 For an authorized packet: `uv run agr vpm-to-npm --blender BLENDER SPEC NEW_ATLAS --recipe-dir RECIPE --then-npm MASTER SPEC NEW_ATLAS NEW_EXPORT PREFIX`.
 `--then-npm` is reserved as the argument-group separator (exactly once); `--blender`

@@ -48,6 +48,7 @@ from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, 
                              snapshot_digest, snapshot_validator)
 from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
 from twinqa.scene import check_ground_area, check_ground_materials, readback, scene_findings  # noqa: E402
+from twinqa.npm_uv import NAME as NPM_UV_NAME, load_layout, npm_uv_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
 
 
@@ -388,8 +389,10 @@ def fbx_role(name: str) -> str:
 
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
               ground_area_m2: float | None = None, footprint_holes=None, diffuse_px: dict | None = None,
-              ground_materials: list[str] | None = None, export_meta=None):
+              ground_materials: list[str] | None = None, export_meta=None, npm_atlas: dict | None = None):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
+    npm_atlas {FBX name: npm_atlas.json dict} feeds the NPM V006 "UV atlas padding" readback (#1580); an NPM
+    OKS/Ground FBX without one keeps that finding not_run.
     ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)
     and is the expected top-down area for the Ground footprint-coverage finding.
     footprint_holes is an optional list of XY rings for the footprint-hole coverage finding.
@@ -444,6 +447,13 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                                    export_meta=height_meta)
             if kind == "npm":
                 _no_texture_findings(found, fbx_role(name), name, rb)
+                if role != "light":
+                    # #1580: the 8 px padding of the V006 stub is read from the exported UVs, never dropped
+                    atlas = (npm_atlas or {}).get(name)
+                    found.setdefault("V006", []).extend(npm_uv_findings(rb, atlas, name) if atlas is not None else [
+                        finding("not_run", NPM_UV_NAME, f"{name}: npm_atlas.json not given "
+                                f"(--npm-atlas {name}=PATH)", "every face inside its atlas region, "
+                                "8 px padding (reg p.9 §5.4)", [9], name)])
             for stage_id, findings in found.items():
                 if stage_id in st:
                     if findings and stage_id in pending:
@@ -497,10 +507,42 @@ def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list
     notes.append(f"master readback: {master.name} in Blender {rb.get('blender')}")
 
 
+def _resolve_npm_atlas(npm_atlas, target: Path, files: dict, kind, scene: bool, notes: list[str]) -> dict:
+    """{FBX name: loaded npm_atlas.json} for add_scene (#1580); every key must name an FBX of the target."""
+    if not npm_atlas:
+        return {}
+    if not scene or kind != "npm" or target.suffix.lower() not in (".zip", ".fbx"):
+        notes.append("npm_atlas unused: the UV atlas padding check runs on an NPM --scene readback of a ZIP or FBX")
+        return {}
+    names = [n for n in files if n.lower().endswith(".fbx")] if target.suffix.lower() == ".zip" else [target.name]
+    out = {}
+    for key, path in (npm_atlas.items() if isinstance(npm_atlas, dict) else npm_atlas):
+        if key is None:
+            oks = [n for n in names if fbx_role(n) == "oks"]
+            if len(oks) != 1:
+                raise ValueError(f"--npm-atlas without FBX=: needs exactly one OKS FBX, found {sorted(oks)}")
+            key = oks[0]
+        if key not in names:
+            raise ValueError(f"--npm-atlas {key}: no such FBX in {target.name} ({sorted(names)})")
+        if key in out:
+            raise ValueError(f"--npm-atlas {key} given twice")
+        path = Path(path)
+        try:
+            atlas = json.loads(path.read_text(encoding="utf-8"))
+            load_layout(atlas)
+        except (OSError, ValueError) as exc:
+            raise ValueError(f"--npm-atlas {key}={path}: {exc}") from None
+        out[key] = atlas
+    return out
+
+
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
              ground_area_m2: float | None = None, footprint_holes=None,
              master: Path | dict | None = None, ground_materials: list[str] | None = None, export_meta=None,
-             manifest: Path | None = None) -> ValidationReport:
+             manifest: Path | None = None, npm_atlas: dict | list | None = None) -> ValidationReport:
+    """npm_atlas {FBX name | None: npm_atlas.json path} or [(name | None, path)] (#1580): None = the single FBX
+    target / the only OKS FBX of the ZIP; a name that is not an FBX of the target, a name given twice, or an unusable
+    layout raises ValueError."""
     if export_meta is not None and not isinstance(export_meta, dict):
         raise ValueError("export_meta must map exact FBX filenames to bounds_m records")
     if ground_area_m2 is not None:
@@ -553,6 +595,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
                          "(the name matches neither {code4}_{Address} nor SM_{Address})")
     profile = profiles.profile(kind)
     st = build_stages(profiles, kind)
+    atlases = _resolve_npm_atlas(npm_atlas, target, files, kind, scene, notes)
 
     if suffix == ".zip":
         archive = profile["archive"]
@@ -564,12 +607,12 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         add_build_manifest(st, target, data, files, master, manifest, notes)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
-                      ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta)
+                      ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta, atlases)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
             add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2, footprint_holes,
-                      ground_materials=ground_materials, export_meta=export_meta)
+                      ground_materials=ground_materials, export_meta=export_meta, npm_atlas=atlases)
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
@@ -699,6 +742,10 @@ def main(argv=None) -> int:
                     metavar="NAMES",
                     help="Ground material names or fnmatch globs (comma-separated, repeatable); only those faces "
                          "feed the footprint area and hole checks (default: every non-UCX render face)")
+    ap.add_argument("--npm-atlas", action="append", default=None, metavar="[FBX=]NPM_ATLAS_JSON",
+                    help="npm_atlas.json of an NPM OKS FBX (repeatable; FBX= may be omitted for a single FBX or a ZIP "
+                         "with one OKS FBX): with --scene, V006 reads the exported UVs against its regions and the "
+                         "8 px padding (#1580); without it that finding stays not_run")
     args = ap.parse_args(argv)
     if args.ground_materials is not None:
         args.ground_materials = [item for group in args.ground_materials for item in group]
@@ -706,7 +753,7 @@ def main(argv=None) -> int:
         if (args.target is not None or args.output is None or args.profile or args.scene
                 or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None
                 or args.ground_materials is not None or args.export_meta is not None
-                or args.build_manifest is not None):
+                or args.build_manifest is not None or args.npm_atlas is not None):
             ap.error("--recheck takes only --recheck-target, --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json,
                            args.recheck_target)
@@ -739,10 +786,14 @@ def main(argv=None) -> int:
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
+    npm_atlas = None
+    if args.npm_atlas is not None:  # FBX=PATH when the part before the first '=' names an FBX, else a bare PATH
+        npm_atlas = [tuple(item.split("=", 1)) if item.split("=", 1)[0].lower().endswith(".fbx") and "=" in item
+                     else (None, item) for item in args.npm_atlas]
     try:
         result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
                           args.footprint_holes, args.master, ground_materials=args.ground_materials,
-                          export_meta=export_meta, manifest=args.build_manifest)
+                          export_meta=export_meta, manifest=args.build_manifest, npm_atlas=npm_atlas)
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2
