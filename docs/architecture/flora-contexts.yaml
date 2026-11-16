@@ -21,12 +21,6 @@ shared_kernel:
       contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом"
     - name: report_json
       contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
-  duplicates:
-    - at: "jobs/VATUTINO-SITE/place_site.py:87"
-      match: "def run("
-      issue: "#1393"
-      ru: "своя расстановка участка в задании поверх движка"
-      status: wrapper
 contexts:
   - id: dcc
     grid: "0/1"
@@ -36,7 +30,7 @@ contexts:
     owner_ru: "ведомость, DWG СПОЗУ, сцена библиотеки — только копии; агент работает там, где удобно (D293)"
     functions:
       - name: blender_executable
-        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
       - name: run_blender
         contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
   - id: flora-library

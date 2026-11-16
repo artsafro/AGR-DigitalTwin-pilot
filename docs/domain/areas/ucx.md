@@ -39,6 +39,25 @@ exposed UCX farther from the model is not a tolerance failure. Reverse distance 
 overhang remain diagnostics, not pass/fail gates. This does not waive R01/R02 target coverage
 or preservation of arches, courtyards and functional voids.
 
+## Command
+
+`agr ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M]` (#1404, [D330]): one command for a
+VPM body and for Ground. It builds with `ucx_build` (Blender driver `tools/blender/ucx_build.py`, options unchanged),
+reads the written FBX back in a fresh Blender process, measures every pair with `ucx10_core.plan` (the AGR Tools
+`ucx.gap` core: a pair under the gap fails; the fix is `ucx.gap` in Max on an export copy) and runs V010. It never
+overwrites OUT or its reports and never writes the model. Parity: Vatutino Ground v014 rebuilt by the command has
+the delivered UCX geometry (715/715 pieces, 8 788 triangles, max vertex deviation 0 m).
+
+`agr ucx MODEL OUT Main --resolve [--gap-m M]` (#1540): MODEL already holds its UCX (a delivered archive). The
+Blender driver `tools/blender/ucx_resolve.py` runs `ucx10_core.resolve`: every pair of UCX pieces under the gap
+(any family; default 3 mm, [D098] band) gets its SMALLER convex piece cut by the plane of one face of the larger
+piece moved out by the gap (the plane that removes the least volume and leaves >= 2 cm); a convex piece cut by a
+plane stays closed and convex, pieces only shrink, so a resolved pair stays resolved. A pair no face plane can
+resolve (nested) is ambiguous and not cut; a non-convex input piece is reported, not touched. The report
+`OUT.ucx_resolve.json` lists per pair the plane, gap before/after and volume removed, the [D012] file budget and
+the model -> UCX distance [D134] before/after; steps readback / gap check / V010 then run on OUT. Method source:
+retro of elv-tc-vpm v008 (`docs/cases.md`).
+
 ## Current limitations
 
 [Pipeline stage #10](../../pipeline.md) is "partial" (UCX shipped inside accepted KPP1, PSU275, ELV TC and Vatutino Ground v015 models; no package passed): the shared builder
@@ -47,7 +66,7 @@ or preservation of arches, courtyards and functional voids.
 (PR evidence), Ground only on synthetic surfaces. The builder's own deviation figures are construction
 self-measurements, not an L2 check of an arbitrary delivery, so R11-R13 coverage above stays `none`.
 [KPP1](../../../jobs/KPP1/scripts/vpm_ucx.py) and [PSU275](../../../jobs/PSU275/scripts/vpm_ucx.py)
-keep their job-local scripts (not re-delivered). PSU275 explicitly omits
+keep their job-local scripts (not re-delivered; [D330] lists them as superseded). PSU275 explicitly omits
 stair collision and fills parapet wells: script existence is not blanket compliance.
 V010 checks UCX presence per non-lighting VPM FBX, material slots, triangle budget and mutual intersections; convexity and coverage stay not_run. No UCX benchmark exists.
 

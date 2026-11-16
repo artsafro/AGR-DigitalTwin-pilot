@@ -11,6 +11,8 @@
 title_ru: "Маршрут «Пакет и сдача» (НПМ + ВПМ): событийный штурм (#1361, Ватутино 2026-11-09, КПП1)"
 route: package
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "Сцена НПМ / ВПМ, ревизия и SHA-256 исходников; связь с FBX через существующий export_meta"
   steps:
     - stages: "export,meta"

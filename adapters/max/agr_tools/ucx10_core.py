@@ -169,8 +169,43 @@ def separation(a, b):
     return best, axis
 
 
-def _clip(p, n, c):
-    """Convex piece cut by the half-space n.x <= c (a plane shift when p has a face with normal n)."""
+def _cap_corners(points, n, tol=1e-3):
+    """Corners of the convex cap polygon in the plane with normal n (#1540): duplicate and nearly collinear points
+    (within `tol` metres of the chord of their neighbours) are dropped. A float32 box whose quads are not exactly
+    planar gives cut points on its triangle diagonals that lie on or next to a cap edge; fed to the hull they leave
+    it open or make sliver triangles that read back non-convex. Dropping a corner of a convex polygon only shrinks
+    the cap (by < tol), so the piece only shrinks and its gap along n is unchanged."""
+    a = (1.0, 0.0, 0.0) if abs(n[0]) < 0.9 else (0.0, 1.0, 0.0)
+    u = _unit(_cross(n, a))
+    w = _cross(n, u)
+    flat = {}
+    for p in points:
+        flat.setdefault((round(_dot(u, p), 9), round(_dot(w, p), 9)), p)
+    keys = sorted(flat)
+    if len(keys) < 3:
+        return [flat[k] for k in keys]
+
+    def far(o, x, y):
+        cr = (x[0] - o[0]) * (y[1] - o[1]) - (x[1] - o[1]) * (y[0] - o[0])
+        base = math.hypot(y[0] - o[0], y[1] - o[1])
+        return cr > tol * max(base, 1e-12)
+
+    def chain(seq):
+        out = []
+        for k in seq:
+            while len(out) >= 2 and not far(out[-2], out[-1], k):
+                out.pop()
+            out.append(k)
+        return out
+
+    lower, upper = chain(keys), chain(reversed(keys))
+    return [flat[k] for k in lower[:-1] + upper[:-1]]
+
+
+def _clip(p, n, c, clean=False):
+    """Convex piece cut by the half-space n.x <= c (a plane shift when p has a face with normal n).
+
+    clean=True (resolve, #1540) keeps only the corners of the cap polygon on the cut plane."""
     uc = _hull_core()
     pts = p['verts']
     keep = [v for v in pts if _dot(n, v) <= c + 1e-12]
@@ -192,6 +227,9 @@ def _clip(p, n, c):
         if abs(d) < 1e-9:
             v = (v[0] - d * n[0], v[1] - d * n[1], v[2] - d * n[2])
         snapped.append(v)
+    if clean:
+        on = [v for v in snapped if abs(_dot(n, v) - c) < 1e-9]
+        snapped = [v for v in snapped if abs(_dot(n, v) - c) >= 1e-9] + _cap_corners(on, n)
     verts, tris = uc._convex_hull(snapped)
     return piece([list(v) for v in verts], [list(t) for t in tris])
 
@@ -327,6 +365,140 @@ def plan(pieces, opts):
                                                                                if p.get('action') == 'planes'),
                'pairs_ambiguous': sum(1 for p in pairs if p.get('action') == 'ambiguous'),
                'pieces_changed': len(changed), 'gap_m': target, 'left': left}
+    return {'pieces': out, 'pairs': pairs, 'findings': found, 'skipped': skipped, 'ambiguous': ambiguous,
+            'summary': summary}
+
+
+def _float32(verts):
+    """Vertices as an FBX float32 export stores them (struct round trip, stdlib)."""
+    import struct
+    return [list(struct.unpack('3f', struct.pack('3f', *v))) for v in verts]
+
+
+def _face_cut(small, large, target):
+    """Best cut of `small` by a face plane of `large` shifted by `target` (#1540): (removed_m3, n, c, cut) or None.
+
+    `large` lies in n.x <= c for each of its outward face planes (n, c); the cut keeps n.x >= c + target of
+    `small`, so the pair is at least `target` apart along n. The plane that removes the least volume and leaves a
+    piece at least MIN_THICK_M thick along n wins; a tie keeps the first normal (deterministic order)."""
+    best = None
+    for n in large['normals']:
+        c = _span(large, n)[1]
+        off = c + target
+        lo, hi = _span(small, n)
+        if hi - off < MIN_THICK_M:
+            continue
+        try:
+            cut = _clip(small, (-n[0], -n[1], -n[2]), -off, clean=True)
+        except ValueError:
+            continue
+        if _thickness(cut, n) < MIN_THICK_M - TOL_M:
+            continue
+        if not _hull_core().convexity(_float32(cut['verts']), cut['tris'])['ok']:
+            continue  # would read back non-convex from a float32 FBX
+        removed = small['volume'] - cut['volume']
+        if best is None or removed < best[0] - 1e-12:
+            best = (removed, n, off, cut)
+    return best
+
+
+def resolve(pieces, opts):
+    """Resolve every intersecting / too-close UCX pair by clipping the SMALLER hull (#1540, retro elv-tc-vpm).
+
+    pieces: [{handle, name, verts (world METRES), tris}]; opts: gap_options(...) (gap_m inside D098). Unlike
+    plan() (both planes of a same-family pair move by half), every pair of UCX pieces is checked (any family:
+    SINTEZ counts intersections between all collision pieces) and only the smaller piece (by volume; a tie cuts
+    the later name) is cut, by the plane of one face of the larger piece moved out by gap_m. A convex piece cut
+    by a plane stays closed and convex; pieces only shrink, so a resolved pair stays resolved. A pair with SAT gap
+    >= gap_m is never changed. A pair no face plane can resolve (nested, or the cut leaves < MIN_THICK_M) is
+    `ambiguous`: nothing is cut, summary.ok is False. Every input ends in pieces, skipped or findings.
+
+    Returns {pieces: {handle: {name, changed, verts, tris, volume_before_m3, volume_after_m3}}, pairs: [{a, b,
+    gap_before_m, code, action clip|ambiguous, clipped, by, plane {normal, offset_m}, gap_after_m,
+    volume_before_m3, volume_after_m3, volume_removed_m3}], findings, skipped, ambiguous, summary}."""
+    if not pieces:
+        raise ValueError('no UCX pieces in scope: an empty set is an error, not a pass')
+    target = opts['gap_m']
+    seen = set()
+    for row in pieces:
+        if row['handle'] in seen:
+            raise ValueError('duplicate handle {}'.format(row['handle']))
+        seen.add(row['handle'])
+    found, skipped, ambiguous, pairs = {}, [], [], []
+    work, names = {}, {}
+    for row in sorted(pieces, key=lambda r: (str(r['name']), str(r['handle']))):
+        if family(row['name']) is None:
+            skipped.append({'item': str(row['name']), 'reason': 'не UCX_<меш>_NN: не кусок коллизии'})
+            continue
+        try:
+            for v in row['verts']:
+                if len(v) != 3 or not all(math.isfinite(float(c)) for c in v):
+                    raise ValueError('non-finite or malformed vertex')
+            work[row['handle']] = piece(row['verts'], row['tris'])
+        except (ValueError, TypeError, IndexError) as exc:
+            found.setdefault(row['handle'], []).append(('ucx_not_convex', '{}: сначала ucx.triangulate / '
+                                                                          'ucx.build'.format(exc)))
+            continue
+        names[row['handle']] = str(row['name'])
+    original = dict(work)
+    order = list(names)
+    changed = set()
+    for i in range(len(order)):
+        for j in range(i + 1, len(order)):
+            ha, hb = order[i], order[j]
+            a, b = work[ha], work[hb]
+            if _aabb_far(a, b, target + TOL_M):
+                continue
+            gap0, _ = separation(a, b)
+            if gap0 >= target - TOL_M:
+                continue
+            small, large = (hb, ha) if a['volume'] >= b['volume'] else (ha, hb)
+            pair = {'a': names[ha], 'b': names[hb], 'gap_before_m': round(gap0, 7), 'code': _kind(gap0),
+                    'clipped': names[small], 'by': names[large]}
+            best = _face_cut(work[small], work[large], target)
+            if best is None:
+                pair['action'] = 'ambiguous'
+                why = 'ни одна плоскость грани {} не оставляет кусок толще {:.0f} мм'.format(names[large],
+                                                                                            MIN_THICK_M * 1000)
+                found.setdefault(small, []).append(('ucx_unresolved', why))
+                ambiguous.append({'item': '{} / {}'.format(names[ha], names[hb]), 'reason': why})
+                pairs.append(pair)
+                continue
+            removed, n, off, cut = best
+            before = work[small]['volume']
+            work[small] = cut
+            changed.add(small)
+            gap1, _ = separation(work[ha], work[hb])
+            pair.update(action='clip', plane={'normal': [round(c, 9) + 0.0 for c in n], 'offset_m': round(off, 9)},
+                        gap_after_m=round(gap1, 7), volume_before_m3=round(before, 9),
+                        volume_after_m3=round(cut['volume'], 9), volume_removed_m3=round(before - cut['volume'], 9))
+            found.setdefault(small, []).append((pair['code'], 'срезан плоскостью грани {} с зазором {:.1f} мм'.format(
+                names[large], target * 1000)))
+            pairs.append(pair)
+    amb = {(p['a'], p['b']) for p in pairs if p['action'] == 'ambiguous'}
+    left = []
+    for i in range(len(order)):
+        for j in range(i + 1, len(order)):
+            a, b = work[order[i]], work[order[j]]
+            if (names[order[i]], names[order[j]]) in amb or _aabb_far(a, b, target + TOL_M):
+                continue
+            g, _ = separation(a, b)
+            if g < target - TOL_M:
+                left.append({'a': names[order[i]], 'b': names[order[j]], 'gap_m': round(g, 7)})
+    out = {}
+    for h in order:
+        p = work[h]
+        out[h] = {'name': names[h], 'changed': h in changed,
+                  'verts': [[round(c, 9) for c in v] for v in p['verts']], 'tris': [list(t) for t in p['tris']],
+                  'volume_before_m3': round(original[h]['volume'], 9), 'volume_after_m3': round(p['volume'], 9)}
+    not_convex = sorted(h for h, fs in found.items() if any(c == 'ucx_not_convex' for c, _ in fs))
+    summary = {'pieces': len(pieces), 'pairs_resolved': sum(1 for p in pairs if p['action'] == 'clip'),
+               'pairs_ambiguous': len(amb), 'pieces_changed': len(changed), 'gap_m': target, 'left': left,
+               'not_convex': len(not_convex), 'skipped': len(skipped),
+               'triangles_before': sum(len(original[h]['tris']) for h in order),
+               'triangles_after': sum(len(work[h]['tris']) for h in order),
+               'volume_removed_m3': round(sum(p.get('volume_removed_m3', 0.0) for p in pairs), 9)}
+    summary['ok'] = bool(order) and not (amb or left or not_convex or skipped)
     return {'pieces': out, 'pairs': pairs, 'findings': found, 'skipped': skipped, 'ambiguous': ambiguous,
             'summary': summary}
 

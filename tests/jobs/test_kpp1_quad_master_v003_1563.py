@@ -23,7 +23,7 @@ def _load(name, file):
 
 
 puz = _load("plan_union_zones_1563", "plan_union_zones.py")
-qp = _load("quad_provenance_1563", "quad_provenance.py")
+qp = _load("quad_provenance_1563", "provenance-1563/hooks/quad_provenance.py")  # skeleton hook [D324]
 
 V002, V003 = qp.R1_V002, qp.R1_V003
 

@@ -7,6 +7,8 @@
 title_ru: "Маршрут НПМ / ОКС v2 на КПП1: событийный штурм"
 route: oks-npm
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "КПП1: sources.json, ревизия альбома и SHA-256 исходников; неизвестная ревизия останавливает выпуск"
   steps:
     - stages: "sources,parts,gate1"

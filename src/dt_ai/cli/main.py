@@ -308,7 +308,7 @@ def main(argv=None):
             print("\n".join(xview_gate.summary_lines(rep)))
             print(f"Report: {args.out}")
             return 0 if rep["passed"] else 1
-        elif args.command in ("derive", "ground"):
+        elif args.command in ("derive", "ground", "place"):
             from dt_ai.cli import shared_tools
             return shared_tools.run(root, args)
         elif args.command == "registry":
