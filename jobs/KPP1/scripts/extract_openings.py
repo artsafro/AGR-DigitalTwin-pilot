@@ -16,7 +16,7 @@ import json, os, re, sys
 
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'adapters/max/agr_tools'))
-from windowgen_core import assign_glass
+from windowgen_core import assign_glass, _num as finite_number
 
 FT = 0.3048
 FEATURE_IDS = {1832606}  # north vertical fin feature: listed under "features", modeled with decor (stage 4)
@@ -52,10 +52,21 @@ def inside(r, R, tol=0.012):
 def extract(src, cen):
     side = json.load(open(os.path.join(src, "curtain.export.json"), encoding="utf-8-sig"))
     inst = [i for t in side["types"] for i in t["instances"] if i.get("boundingBox")]
-    bb = lambda i: ([i["boundingBox"]["min"][k] * FT for k in "xyz"], [i["boundingBox"]["max"][k] * FT for k in "xyz"])
+    def bb(i):
+        return tuple([finite_number(i['boundingBox'][bound][k], 'source boundingBox.' + k,
+                                    positive=False) * FT for k in 'xyz'] for bound in ('min', 'max'))
     objs = []
     for g in ("curtain", "openings"):
         for o in json.load(open(os.path.join(cen, g + ".objects.json"), encoding="utf-8")):
+            # Validate before facade filtering: NaN must not become a benign interior drop.
+            for bound in ('min', 'max'):
+                coords = o.get(bound)
+                if not isinstance(coords, list) or len(coords) != 3:
+                    raise ValueError(o['name'] + ': three-coordinate ' + bound + ' required')
+                for c in coords:
+                    finite_number(c, o['name'] + '.' + bound, positive=False)
+            if any(o['min'][a] > o['max'][a] for a in range(3)):
+                raise ValueError(o['name'] + ': inverted bounds')
             o["kind"] = re.sub(r"(_[0-9a-f]{7}(\.\d+)?| \[\d+\])$", "", o["name"])
             o["key"], o["group"] = norm(o["kind"]), g
             objs.append(o)

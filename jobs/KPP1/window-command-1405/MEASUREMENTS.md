@@ -87,6 +87,7 @@ jobs/tools/src. There were no window-generator allowlist rows to remove; unrelat
 historical job duties remain untouched.
 
 Evidence: `G:/Мой диск/AGR-evidence/1405-window-command/t_fcec63fc-v001/` (first run)
-and `t_fcec63fc-v002/` (code-provenance run), then `t_fcec63fc-v003/` (final
-validated-fallback run), each with `SHA256SUMS.txt`.
+and `t_fcec63fc-v002/` (code-provenance run), then `t_fcec63fc-v003/` (validated
+fallback), and `t_fcec63fc-v004/` (final all-object finite-bound validation and
+reader provenance), each with `SHA256SUMS.txt`.
 Only small text receipts belong in git; generated PNG/OBJ/JSON bundles stay on Drive.

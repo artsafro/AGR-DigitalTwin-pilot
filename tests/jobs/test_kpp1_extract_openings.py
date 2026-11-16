@@ -141,6 +141,17 @@ def test_duplicated_source_object_is_an_error(tmp_path):
         _load().extract(str(src), str(cen))
 
 
+def test_nonfinite_object_cannot_hide_as_outside_facade(tmp_path):
+    import pytest
+    for value, suffix in ((float('nan'), 'nan'), (float('inf'), 'inf')):
+        root = tmp_path / suffix
+        root.mkdir()
+        malformed = _obj('Unknown', (value, value, value), (value, value, value))
+        src, cen = _write(root, [_glass(CYR_S, 0), malformed])
+        with pytest.raises(ValueError, match='Unknown'):
+            _load().extract(str(src), str(cen))
+
+
 def test_norm_maps_only_homoglyphs():
     mod = _load()
     assert mod.norm(LAT_C) == mod.norm(CYR_S) == "стеклопакет"
