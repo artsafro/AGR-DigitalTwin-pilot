@@ -11,11 +11,14 @@ Contract ([D324], [D325]; human view docs/agents/SKELETONS.md):
 - A Python hook re-implements a stage when it defines (def/class, any depth) one of the stage's `entry_defs` (names
   the stage owners define) or holds a copy that a duplicate_guard rule of the stage's `dup_rules` flags. The shared
   cores (`shared`, e.g. the Blender runner) are checked for every job.
-Which job folders are checked (`check_repo`): every jobs/<ID>/ with a skeleton.json; a folder with scripts and no
-skeleton.json fails unless it is a delivered job (`finished_jobs` of docs/architecture/contexts.yaml: historical,
-[D327]) or in LEGACY_JOBS (folders that existed at #1546; they opt in by adding skeleton.json). `_template` is skipped.
+Which scripts are checked (`check_repo`): every folder at any depth under jobs/ with a skeleton.json is a job and is
+checked by `check_job` (sub-jobs like jobs/KPP1/<task>-<issue>/ included; a nested skeleton.json folder is its own
+job). Every other script under jobs/ fails unless its path is in the frozen baseline of the #1546 cut
+(docs/agents/job_scripts_baseline.txt: legacy and historical scripts, [D327]); legacy means a listed path, never a
+whole job folder. `_template` is skipped.
 Every problem names the file and the stage. Usage: python tools/architecture/skeleton_guard.py [--root REPO]
-[--job jobs/ID]; exit 0 clean, 1 violations, 2 unreadable input (bad JSON, unknown scenario, syntax error).
+[--job jobs/ID]; exit 0 clean, 1 violations, 2 unreadable input (bad JSON, unknown scenario, syntax error,
+missing/invalid baseline).
 """
 import argparse
 import ast
@@ -26,18 +29,10 @@ from pathlib import Path
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import duplicate_guard  # noqa: E402
-    import mini_yaml  # noqa: E402
 else:
-    from . import duplicate_guard, mini_yaml
+    from . import duplicate_guard
 
 SKELETONS = "docs/agents/skeletons.json"
-# Job folders that existed when the contract started (#1546); they keep their scripts until they opt in.
-LEGACY_JOBS = frozenset({
-    "4bk-k3", "4bk-k3-course-grid-1326", "butovskaya-sosh1000", "COD-20207", "elv-tc-vpm", "garibaldi22",
-    "kasatkino-ground", "KERNEL-SYNTHETIC", "maf-atlas-512", "master-topology-1420", "OBJ03",
-    "ogorodnyj-proezd-zu4-3", "ORCH-OBR22-NPM", "silikatniy-uvk-pzu-viz", "silikatny-maf-viz", "SYNTH-001",
-    "vyatskaya-tow02",
-})
 
 
 class ConfigError(ValueError):
@@ -91,8 +86,9 @@ def stage_problems(source, rel, guarded):
     return out
 
 
-def check_job(root, job_dir, skeletons):
-    """Problems of one job folder that has a skeleton.json (ConfigError for unreadable input)."""
+def check_job(root, job_dir, skeletons, nested=()):
+    """Problems of one job folder that has a skeleton.json (ConfigError for unreadable input); scripts of the
+    `nested` sub-job folders (their own skeleton.json) are left to their own check."""
     root, job_dir = Path(root), Path(job_dir)
     contract = skeletons["job_contract"]
     rel_job = job_dir.relative_to(root).as_posix() if job_dir.is_relative_to(root) else str(job_dir)
@@ -147,6 +143,8 @@ def check_job(root, job_dir, skeletons):
     guarded = [(s["id"], s) for s in skeletons["shared"]] + \
         [(sid, skeletons["stages"][sid]) for sid in spec["stages"]]
     for path in _scripts(job_dir, set(contract["script_suffixes"])):
+        if any(path.is_relative_to(d) for d in nested if d.is_relative_to(job_dir)):
+            continue   # a sub-job with its own skeleton.json is checked on its own
         rel = path.relative_to(root).as_posix() if path.is_relative_to(root) else str(path)
         if path.resolve() not in listed:
             where = "outside hooks/" if not path.resolve().is_relative_to(hooks_root) else "not listed in hooks"
@@ -156,27 +154,27 @@ def check_job(root, job_dir, skeletons):
     return problems
 
 
-def check_repo(root, skeletons=None, finished=None):
-    """Problems of every job folder under root/jobs (see module docstring for which ones)."""
+def check_repo(root, skeletons=None, baseline=None):
+    """Problems of every job script under root/jobs (see module docstring for which ones)."""
     root = Path(root)
     skeletons = skeletons or load_skeletons(root)
-    if finished is None:
-        contexts = mini_yaml.load(root / "docs/architecture/contexts.yaml")
-        finished = {Path(j).name for j in duplicate_guard.finished_jobs(root, contexts)}
-    suffixes = set(skeletons["job_contract"]["script_suffixes"])
-    problems = []
+    baseline = duplicate_guard.load_job_baseline(root) if baseline is None else baseline
+    contract = skeletons["job_contract"]
     jobs = root / "jobs"
     if not jobs.is_dir():
         raise ConfigError(f"{jobs}: missing")
-    for job_dir in sorted(p for p in jobs.iterdir() if p.is_dir()):
-        name = job_dir.name
-        if name == "_template":
+    skip = lambda p: "_template" in p.relative_to(jobs).parts  # noqa: E731
+    configured = sorted(p.parent for p in jobs.rglob(contract["config"]) if p.is_file() and not skip(p))
+    problems = []
+    for job_dir in configured:   # any depth: jobs/<ID>/ and sub-jobs like jobs/KPP1/<task>-<issue>/
+        problems.extend(check_job(root, job_dir, skeletons, nested=[d for d in configured if d != job_dir]))
+    for path in _scripts(jobs, set(contract["script_suffixes"])):
+        rel = path.relative_to(root).as_posix()
+        if skip(path) or rel in baseline or any(path.is_relative_to(d) for d in configured):
             continue
-        if (job_dir / skeletons["job_contract"]["config"]).is_file():
-            problems.extend(check_job(root, job_dir, skeletons))
-        elif name not in finished and name not in LEGACY_JOBS and _scripts(job_dir, suffixes):
-            problems.append(f"jobs/{name}: has scripts but no {skeletons['job_contract']['config']}; configure the "
-                            "scenario skeleton and put small scripts in hooks/ (docs/agents/SKELETONS.md) [D324]")
+        problems.append(f"{rel}: script outside a skeleton.json folder and not in the frozen #1546 baseline "
+                        f"({duplicate_guard.JOB_BASELINE}); configure the scenario skeleton and put small scripts "
+                        "in hooks/ (docs/agents/SKELETONS.md) [D324]")
     return problems
 
 

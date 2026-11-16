@@ -295,7 +295,7 @@ def test_repo_control_baseline_historical_script_stays_hidden_and_unflagged(tmp_
         listed = {line.replace("\\", "/") for line in out.splitlines()}
         assert "jobs/KPP1/fix-1600/run_all.py" in listed and "jobs/KPP1/scripts/old.py" not in listed
     # opting in: a skeleton.json folder above a baseline script makes it a checked, visible job script
-    _job(tmp_path, _cfg(), {}, name="KPP1/scripts")
+    (tmp_path / "jobs/KPP1/scripts/skeleton.json").write_text(json.dumps(_cfg()), encoding="utf-8")
     assert dg.historical_scripts(tmp_path, finished, chains={}) == []
 
 

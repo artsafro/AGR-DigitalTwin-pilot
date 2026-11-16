@@ -7,7 +7,9 @@
 Свою цепочку скриптов вместо скелета не пишет: ревьюер возвращает такой PR на доработку, он не вливается [D325].
 Скрипты, повторившиеся в 2–3 работах, раз в неделю собирает отдельная задача, Артём видит сводку, и только там
 они переходят в скелет [D326]. Старые скрипты сданных работ оставлены без изменений, помечены историческими и
-скрыты из поиска агента; duplicate_guard их по-прежнему сканирует [D327].
+скрыты из поиска агента; duplicate_guard их по-прежнему сканирует [D327]. Исторические и старые — только пути,
+замороженные на срезе #1546 (`job_scripts_baseline.txt`), а не целые папки: новый скрипт в старой работе
+(`jobs/KPP1/<задача>-<issue>/`) видим и проверяется.
 
 Machine-readable source: [`skeletons.json`](skeletons.json) (stages, owners, entry names, hook points).
 Check: `uv run python tools/architecture/skeleton_guard.py [--job jobs/<ID>]` (exit 0 clean, 1 violations, 2 bad input).
@@ -119,8 +121,10 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
    names (`world_bm`, `pack_uv`, `_write_zip`, ...) or a copy that duplicate_guard flags — that is a re-implemented
    stage and fails `skeleton_guard` [D325].
 3. `gap` is only for a stage in the gap list below; the hook fills the gap for this job, the skeleton stays as is.
-4. Folders that existed before #1546 (`LEGACY_JOBS`) are checked once they add `skeleton.json`; any new job folder
-   with scripts must have one.
+4. `skeleton.json` may sit at any depth: a new task inside an old job (`jobs/KPP1/<task>-<issue>/skeleton.json` +
+   `hooks/`) is its own job and is checked. Only the script paths frozen at the #1546 cut
+   (`docs/agents/job_scripts_baseline.txt`, never extended) may live outside a `skeleton.json` folder; any other
+   script under `jobs/` fails, in a new or an old job folder alike. An old job opts in by adding `skeleton.json`.
 
 Example (Artem's SINTEZ error-fix case): unfold polygons / seams = `checker` → fix with the stage owners
 (`vpm-uv`, `master-qa`) through one `after` hook → `checker` again; no new analysis scripts.

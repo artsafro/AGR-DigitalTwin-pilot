@@ -51,8 +51,10 @@ and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `
 «живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
 runs only the copy scan (synthetic test roots without the maps).
 
-Historical class (#1546, [D327]): `historical_scripts` = scripts of a `finished_jobs` folder that no live chain reaches
-(and no entrypoint names as evidence). They are still scanned above; the root `.ignore` holds one generated block
+Historical class (#1546, [D327]): `historical_scripts` = scripts of a `finished_jobs` folder that are listed in the
+frozen baseline docs/agents/job_scripts_baseline.txt, sit outside any skeleton.json folder and that no live chain
+reaches (and no entrypoint names as evidence); a script added later is never historical. They are still scanned
+above; the root `.ignore` holds one generated block
 (`--write-ignore`) with a HISTORICAL header line per job that hides them from agent search (ripgrep). A missing,
 stale or extra entry (a live script hidden) is a STATUS problem.
 """
@@ -575,13 +577,50 @@ IGNORE_END = "# END historical-job-scripts"
 GLOB_CHARS = re.compile(r"([\\*?\[\]!#])")
 
 
-def historical_scripts(root, finished, chains, live_evidence=()):
-    """Sorted repo paths of the historical scripts: inside a finished job, not reached by a live chain."""
+# Frozen baseline of the job scripts at the #1546 cut (PR #1553 r1): historical/legacy is a list of script paths,
+# never a whole job folder - new work lands in sub-folders of finished jobs (jobs/KPP1/<task>-<issue>/) and must
+# stay visible and checked. A line is never added; removing one is allowed.
+JOB_BASELINE = "docs/agents/job_scripts_baseline.txt"
+SKELETON_CONFIG = "skeleton.json"
+
+
+def load_job_baseline(root):
+    """Frozen baseline -> frozenset of repo paths; missing/empty file, a path outside jobs/ or a duplicate raise."""
+    path = Path(root) / JOB_BASELINE
+    if not path.is_file():
+        raise ValueError(f"{JOB_BASELINE}: missing (the frozen #1546 baseline of job scripts)")
+    out = set()
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip() or line.startswith("#"):
+            continue
+        parts = line.split("/")
+        if line != line.strip() or parts[0] != "jobs" or len(parts) < 3 or "\\" in line \
+                or any(p in ("", ".", "..") for p in parts) or Path(line).suffix.lower() not in SCRIPT_SUFFIXES:
+            raise ValueError(f"{JOB_BASELINE}:{n}: {line!r} is not a jobs/<ID>/.../<script> path")
+        if line in out:
+            raise ValueError(f"{JOB_BASELINE}:{n}: {line} listed twice")
+        out.add(line)
+    if not out:
+        raise ValueError(f"{JOB_BASELINE}: empty")
+    return frozenset(out)
+
+
+def in_skeleton_job(root, rel):
+    """True when a folder between jobs/ and the script holds skeleton.json (the job opted in to the contract)."""
+    parts = rel.split("/")
+    return any((Path(root).joinpath(*parts[:i]) / SKELETON_CONFIG).is_file() for i in range(2, len(parts)))
+
+
+def historical_scripts(root, finished, chains, live_evidence=(), baseline=None):
+    """Sorted repo paths of the historical scripts: in the frozen baseline, inside a finished job, outside any
+    skeleton.json folder and not reached by a live chain (a new script in a finished job is never historical)."""
+    baseline = load_job_baseline(root) if baseline is None else baseline
     out = []
     for job in sorted(finished):
         for p in sorted((Path(root) / job).rglob("*")):
             rel = p.relative_to(root).as_posix()
-            if p.is_file() and p.suffix.lower() in SCRIPT_SUFFIXES and rel not in chains and rel not in live_evidence:
+            if p.is_file() and p.suffix.lower() in SCRIPT_SUFFIXES and rel in baseline and rel not in chains \
+                    and rel not in live_evidence and not in_skeleton_job(root, rel):
                 out.append(rel)
     return out
 
