@@ -126,6 +126,23 @@ def test_terminal_killed(tmp_path, channel, minute):
     assert grade(tmp_path, [r for r in rows for _ in range(2)])['passed'] is True
 
 
+@pytest.mark.parametrize('failure', ['is_error', 'success'])
+@pytest.mark.parametrize('minute', [1, 30, 31])
+def test_failed_launch(tmp_path, failure, minute):
+    failed = result(minute, 'launch', 'Launch rejected.', is_error=True) if failure == 'is_error' else {
+        **result(minute, 'launch', 'Launch rejected.'), 'toolUseResult': {'success': False}}
+    rows = launch()[:1] + [failed, record(60, 'assistant', 'Other work.')]
+    assert grade(tmp_path, rows)['passed'] is (minute < 30)
+    if minute == 1:
+        # Failed launch cleanup must not hide an independent live agent's lapse.
+        rows = launch() + [call(1, 'second', 'Agent', run_in_background=True, prompt='Synthetic')]
+        failed['message']['content'][0]['tool_use_id'] = 'second'
+        rows += [failed] + read(10, 'killed') + [record(60, 'assistant', 'Done.')]
+        assert grade(tmp_path, rows)['passed'] is True
+        rows = rows[:-3] + [record(60, 'assistant', 'No output check.')]
+        assert grade(tmp_path, rows)['passed'] is False
+
+
 def test_read_and_notification(tmp_path):
     rows = launch()+[call(20, 'readfile', 'Read', file_path='output.synthetic.txt'), result(20, 'readfile'),
                     record(40, 'user', '<task-notification><task-id>agent1</task-id><status>completed</status></task-notification>')]
