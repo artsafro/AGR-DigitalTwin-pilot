@@ -24,7 +24,8 @@ import route_map  # noqa: E402
 from dt_ai.core import blender_runner  # noqa: E402
 
 OWNER = "src/dt_ai/core/blender_runner.py"
-ROUTED = ["jobs/VATUTINO-SITE/flora_route_a.py", "jobs/VATUTINO-SITE/place_site.py"]
+# #1407: the placement launch moved from jobs/VATUTINO-SITE/place_site.py into the placement command
+ROUTED = ["jobs/VATUTINO-SITE/flora_route_a.py", "src/dt_ai/placement/site.py"]
 DELEGATES = ["src/dt_ai/core/build.py", "src/twinqa/scene.py", "tools/qa/run_benchmark.py",
              "jobs/OBR22-K02/scripts/run_profile_checks.py"]
 LAUNCH = "import subprocess\nsubprocess.run([exe, '--background', '--python', s])\n"

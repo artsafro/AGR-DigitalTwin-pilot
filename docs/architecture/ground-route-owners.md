@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `07ceaf24a5ecdac4d2cd6967d2800eed71d234ad618bc967d7b6ba3205112039`.
+Редакция YAML SHA-256: `5ac98b80801f22b3043f4a9dcbfad2cb91ae11ad477251a7bf186a3b71204e78`.
 
 Ревизия исходников: DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников.
 
@@ -111,7 +111,6 @@
 | Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | own-duty | специфичное разбиение здания на куски, не измерение зазоров ucx10_core | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | own-duty | построение UCX по зданию; overlap не измеряет минимальный зазор ucx10_core | Не требуется |
-| Расстановка МАФ и Флоры | [`src/dt_ai/placement/engine.py`](../../src/dt_ai/placement/engine.py) | [`jobs/VATUTINO-SITE/place_site.py:87`](../../jobs/VATUTINO-SITE/place_site.py#L87) | wrapper | своя расстановка участка в задании поверх движка | Не требуется |
 | Коллизии UCX рельефа (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/VATUTINO-SITE/assemble_delivery.py:25`](../../jobs/VATUTINO-SITE/assemble_delivery.py#L25) | historical | UCX Ground из готовых FBX по путям C:/x | Не требуется |
 | Пакеты НПМ / ВПМ и передача | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`jobs/TEC26-OKS/scripts/package_vpm.py:50`](../../jobs/TEC26-OKS/scripts/package_vpm.py#L50) | live-bypass | живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core) | [#1377](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1377) |
 
@@ -127,7 +126,7 @@
 | Рельеф: плоский Ground спроецирован на рельеф | D293, D153, D154 | [`jobs/VATUTINO-SITE/relief-constraints.md`](../../jobs/VATUTINO-SITE/relief-constraints.md); [`tools/ground/build_ground_v015.py`](../../tools/ground/build_ground_v015.py); [`jobs/kasatkino-ground/LESSONS.md`](../../jobs/kasatkino-ground/LESSONS.md);  |
 | Текстуры поправлены после проекции; юбка ≥ 1 м вниз по внешнему контуру | D293, D251 | [`docs/domain/areas/ground-surface.md`](../../docs/domain/areas/ground-surface.md); [`docs/research/vatutino-ground-v015-outer-skirt-gap-20-edges.md`](../../docs/research/vatutino-ground-v015-outer-skirt-gap-20-edges.md);  |
 | UCX рельефа построены (только ВПМ) | D098, D134, D012 | [`docs/domain/areas/ucx.md`](../../docs/domain/areas/ucx.md); [`docs/domain/areas/ground-surface.md`](../../docs/domain/areas/ground-surface.md);  |
-| МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт | D095, D100, D166, D302 | [`jobs/VATUTINO-SITE/placement-report.md`](../../jobs/VATUTINO-SITE/placement-report.md); [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py);  |
+| МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт | D324, D095, D100, D166, D302 | [`jobs/VATUTINO-SITE/placement-report.md`](../../jobs/VATUTINO-SITE/placement-report.md); [`src/dt_ai/placement/site.py`](../../src/dt_ai/placement/site.py); [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py);  |
 | НПМ-версия в координатах: МАФ НПМ и Флора НПМ на атласе, Ground на атласе | D293, D097, D167 | [`adapters/max/agr_tools/flora_atlas_max.py`](../../adapters/max/agr_tools/flora_atlas_max.py); [`tools/derive/npm_atlas.py`](../../tools/derive/npm_atlas.py); [`jobs/VATUTINO-SITE/site-route-20261109.md`](../../jobs/VATUTINO-SITE/site-route-20261109.md); ВПМ уже расставлена: конвертация ВПМ → НПМ: в тех же точках НПМ-модели МАФ / Флоры на атласе; расстановка с нуля: low-poly и high-poly МАФ / Флора ставятся вместе в одни точки; Ground (всегда): геометрия та же в ВПМ и НПМ; отличаются только атлас и развёртка UDIM |
 | Экспорт НПМ / ВПМ и пакеты собраны | D210, D224, D223 | [`tools/derive/package_vpm.py`](../../tools/derive/package_vpm.py); [`tools/derive/package_npm.py`](../../tools/derive/package_npm.py); [`jobs/VATUTINO-SITE/site-route-20261109.md`](../../jobs/VATUTINO-SITE/site-route-20261109.md);  |
 | Проверки Ground и xView выполнены, отказы записаны | D152, D193 | [`docs/research/xview-parity-ground-v014.md`](../../docs/research/xview-parity-ground-v014.md); [`jobs/VATUTINO-SITE/ground-v015-final-xview-session.md`](../../jobs/VATUTINO-SITE/ground-v015-final-xview-session.md);  |

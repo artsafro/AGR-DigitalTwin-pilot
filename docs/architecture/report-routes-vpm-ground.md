@@ -103,7 +103,7 @@ mid-poly мастер, D292) → проёмы и окна (библиотека 
 | `surfaces` | нет команды | скрипты job (`ground_parts.py` Ватутино), цвет ID = фон штриховки (Силикатный) |
 | `textures` | нет команды | привязка текстур в job (`ground-textures.md`) |
 | `ucx` | нет команды | UCX собраны в DCC отдельно, `assemble_delivery.py` берёт их из C:/x |
-| `placement` | нет команды | движок `dt_ai.placement` вызывается из `jobs/VATUTINO-SITE/place_site.py` |
+| `placement` | `dt place site` / `agr place` (#1407) | NPM и ВПМ в одни точки одним запуском (D293, D324); Ватутино — `jobs/VATUTINO-SITE/place_site.py` поверх команды |
 | `sintez` | `agr checker` (#1379) | тот же запуск чекера, что у ОКС |
 
 `agr ground` / `dt ground v015` есть, но собирает только Ватутино v015 (данные из `--job-dir`) и строит рельеф до
@@ -145,6 +145,6 @@ mid-poly мастер, D292) → проёмы и окна (библиотека 
 1. Обобщить `dt ground v015` до команды Ground для любого участка в порядке D293 (плоский Ground → проекция на
    рельеф → юбка), проверить на Силикатном #1315.
 2. Команда нуля проекта поверх `heights.py`: `h_relief` и проверка Z экспорта одной командой.
-3. Команда расстановки МАФ / Флоры поверх `dt_ai.placement` вместо `place_site.py` в job, сразу low-poly и
-   high-poly в одни точки.
+3. Сделано (#1407): `dt place site` / `agr place` поверх `dt_ai.placement` — low-poly и high-poly в одни точки;
+   прогон Силикатного ждёт входы #1315.
 4. UCX Ground через канон `ucx10_core.py` (D225) вместо готовых FBX из C:/x.
