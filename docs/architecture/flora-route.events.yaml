@@ -12,6 +12,29 @@
 # Checked by tests/test_route_maps_1393.py. Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут Флоры (НПМ + ВПМ): событийный штурм (библиотека v003 / A101, маршрут A Ватутино v007)"
 route: flora
+scheme:
+  source_ru: "Ведомость озеленения и СПОЗУ: ревизия, SHA-256, виды, размеры и точки в реестре исходников"
+  steps:
+    - stages: "sources,beds,species"
+      ru: "Прочитать ведомость и выбрать виды"
+      artifact_ru: "Список видов, клумб и библиотечных кандидатов"
+      gate_ru: "Виды и количество сверены с проектом"
+    - stages: "size,maps,star,lod"
+      ru: "Подготовить размеры, карты и версии растений"
+      artifact_ru: "НПМ-звёзды / оболочки ВПМ; временные замены отмечены"
+      gate_ru: "Копии LOD не изменяют библиотечный оригинал"
+    - stages: "placement,npm,atlas"
+      ru: "Расставить растения и собрать атласы"
+      artifact_ru: "НПМ / ВПМ в общих точках и разные атласы профилей"
+      gate_ru: "Сид и варианты записаны"
+    - stages: "checks,gate"
+      ru: "Проверить экспорт и показать виды"
+      artifact_ru: "Отчёт FLO, лист видов и расстановка"
+      gate_ru: "Артём проверяет виды и временные замены"
+    - stages: "package"
+      ru: "Передать в Ground и на упаковку"
+      artifact_ru: "Ground FBX → схема «Пакет и сдача»"
+      gate_ru: "Приёмка пакета отдельно от списка видов"
 object: "VATUTINO-SITE (Flora route A, placement v007), library/flora"
 issue: "#1393"
 actors:
