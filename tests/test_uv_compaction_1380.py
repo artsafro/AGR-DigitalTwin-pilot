@@ -150,5 +150,7 @@ def test_no_delivery_changes():
     # Job docs (STATE.md, REPORT.md) are not deliveries either (#1563 updates the KPP1 STATE row the card asks for),
     # nor is the job's skeleton config (`skeleton.json`, D324).
     # The #1406 Ground site command pilot keeps its input and its JSON report in the job (not a delivery).
-    ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json')
+    # The #1410 MAF NPM-light proof keeps its spec and proof atlas list in the job (inputs, not deliveries).
+    ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
+          '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json')
     assert all(p.endswith(ok) for p in paths), [p for p in paths if not p.endswith(ok)]
