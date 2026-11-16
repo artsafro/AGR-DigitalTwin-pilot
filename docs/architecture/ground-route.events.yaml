@@ -12,6 +12,33 @@
 # Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут Ground (НПМ + ВПМ) v2: событийный штурм (Ватутино v015, Силикатный, КПП1, ТЭЦ26)"
 route: ground
+scheme:
+  source_ru: "DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников"
+  steps:
+    - stages: "sources,zero"
+      ru: "Прочитать участок и определить ноль"
+      artifact_ru: "Граница, покрытия, отметки и реестр исходников"
+      gate_ru: "Неизвестные отметки уточняются, не угадываются"
+    - stages: "surfaces,quads,textures"
+      ru: "Собрать плоский Ground и текстуры по ID"
+      artifact_ru: "Поверхности с UV / UDIM и материалами"
+      gate_ru: "Покрытия сверены с легендой проекта"
+    - stages: "relief,skirt,ucx"
+      ru: "Спроецировать рельеф, добавить юбку и UCX ВПМ"
+      artifact_ru: "Рельеф и коллизии ВПМ"
+      gate_ru: "Швы и юбка проверены"
+    - stages: "placement,npm"
+      ru: "Расставить МАФ / Флору и получить НПМ"
+      artifact_ru: "Сцены НПМ / ВПМ + список удалённых объектов с причинами"
+      gate_ru: "Расстановка по СПОЗУ, пропуски видны в отчёте"
+    - stages: "package"
+      ru: "Экспортировать и упаковать"
+      artifact_ru: "Ground FBX и ZIP; схема «Пакет и сдача»"
+      gate_ru: "Упаковка не означает приёмку"
+    - stages: "validate,sintez"
+      ru: "Проверить Ground и передать Артёму"
+      artifact_ru: "Отчёт, xView и находки СИНТЕЗ"
+      gate_ru: "Отказы не скрыты; визуальная приёмка — в маршруте сдачи"
 object: "VATUTINO-SITE, silikatniy-uvk-pzu-viz, kasatkino-ground, KPP1, TEC26-OKS"
 issue: "#1392"
 actors:

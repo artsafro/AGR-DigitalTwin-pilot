@@ -154,7 +154,19 @@ def write_png(path, colour):
     Image.new('RGB', (40, 25), colour).save(path)
 
 
-def fake_runner(after_camera=None, touch=None, render_mutate=None):
+RENDER = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire', 'view_transform': 'Standard',
+          'color_management': 'FOLLOW_SCENE', 'use_sequencer': False, 'use_compositing': False,
+          'look': 'None', 'exposure': 0.0, 'gamma': 1.0, 'display_device': 'sRGB',
+          'use_curve_mapping': False, 'use_white_balance': False, 'emulation': 'AUTO',
+          'world_color': [0.05, 0.05, 0.05], 'world_use_nodes': False,
+          'background_type': 'VIEWPORT', 'background_color': [0.05, 0.05, 0.05],
+          'thickness': 0.0012, 'use_border': False, 'use_multiview': False,
+          'image_views_format': 'INDIVIDUAL', 'workbench': {},
+          'use_world_space_lighting': False, 'dither_intensity': 1.0,
+          'color_mode': 'RGB', 'color_depth': '8', 'compression': 15}
+
+
+def fake_runner(after_camera=None, touch=None, mutate_render=None):
     def run(script, args, *, executable=None, output_json=None, outputs=(), timeout=900, log_path=None):
         cfg = json.loads(Path(args[0]).read_text(encoding='utf-8'))
         out = Path(cfg['output_dir'])
@@ -162,14 +174,11 @@ def fake_runner(after_camera=None, touch=None, render_mutate=None):
         write_png(out / 'after.png', (50, 200, 50))
         if touch:
             touch()
-        state = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire',
-                 'color_management': 'FOLLOW_SCENE', 'use_sequencer': False,
-                 'use_compositing': False, 'use_border': False, 'use_multiview': False,
-                 'image_views_format': 'INDIVIDUAL', **PNG_STATE}
-        record = {'before': {'camera': CAM, 'render': dict(state)},
-                  'after': {'camera': after_camera or CAM, 'render': dict(state)}}
-        if render_mutate:
-            render_mutate(record['after']['render'])
+        record = {'before': {'camera': CAM, 'render': copy.deepcopy(RENDER)},
+                  'after': {'camera': after_camera or CAM,
+                            'render': copy.deepcopy(RENDER)}}
+        if mutate_render:
+            mutate_render(record['after']['render'])
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
         return record
     return run
@@ -256,6 +265,145 @@ def test_output_pipeline_evidence_fails_closed(tmp_path, inputs, monkeypatch, ke
 
 
 @pytest.mark.parametrize('key,value', [
+    ('engine', 'CYCLES'), ('style', 'solid'), ('view_transform', 'AgX'),
+    ('look', 'AgX - Medium High Contrast'), ('exposure', 2.0), ('gamma', 1.5),
+    ('display_device', 'Display P3'), ('world_color', [1.0, 0.0, 0.0]),
+    ('world_use_nodes', True), ('use_curve_mapping', True), ('use_white_balance', True),
+    ('emulation', 'OFF'), ('background_type', 'WORLD'),
+    ('background_color', [0.0, 0.0, 0.0]), ('thickness', 0.0012000001),
+    ('use_border', True), ('use_multiview', True), ('image_views_format', 'STEREO_3D'),
+    ('workbench', {'show_xray': True})])
+def test_cli_refuses_changed_render_state(tmp_path, inputs, monkeypatch, capsys, key, value):
+    module = load()
+    monkeypatch.setattr(module, 'run_blender', fake_runner(mutate_render=lambda r: r.update({key: value})))
+    state = snapshot(tmp_path)
+    assert module.main(argv(*inputs, tmp_path / 'ev' / 'out')) == 2
+    assert key in capsys.readouterr().err
+    assert snapshot(tmp_path) == state
+
+
+@pytest.mark.parametrize('mutate', [
+    lambda r: r.clear(), lambda r: r.pop('exposure'), lambda r: r.update(unknown=1),
+    lambda r: r.update(exposure=float('nan')), lambda r: r.update(gamma=float('inf')),
+    lambda r: r.update(thickness=0), lambda r: r.update(thickness=-1),
+    lambda r: r.update(thickness=None), lambda r: r.update(thickness=True),
+    lambda r: r.update(world_color=[0, 0]), lambda r: r.update(background_color=[0, 0, float('nan')]),
+    lambda r: r.update(world_use_nodes=1), lambda r: r.update(look=''),
+    lambda r: r.update(background_type='unknown'),
+    lambda r: r.pop('use_curve_mapping'), lambda r: r.update(use_curve_mapping=1),
+    lambda r: r.pop('use_white_balance'), lambda r: r.update(use_white_balance=1),
+    lambda r: r.pop('emulation'), lambda r: r.update(emulation=''),
+    lambda r: r.update(emulation=1), lambda r: r.update(emulation='unsupported'),
+    lambda r: r.update(use_border=1), lambda r: r.update(use_multiview=0),
+    lambda r: r.update(image_views_format='unknown'), lambda r: r.update(workbench=None)])
+def test_cli_refuses_invalid_render_state(tmp_path, inputs, monkeypatch, mutate):
+    module = load()
+    monkeypatch.setattr(module, 'run_blender', fake_runner(mutate_render=mutate))
+    state = snapshot(tmp_path)
+    assert module.main(argv(*inputs, tmp_path / 'ev' / 'out')) == 2
+    assert snapshot(tmp_path) == state
+
+
+@pytest.mark.parametrize('key,changed,wrong', [
+    ('color_management', 'OVERRIDE', True),
+    ('use_sequencer', True, 1), ('use_compositing', True, 0)])
+def test_output_pipeline_strict_schema_mutations(key, changed, wrong):
+    """Synthetic complete/reset controls and missing/type/mismatch for each new key."""
+    module = load()
+    assert module.compare_render_state(RENDER, RENDER) == []
+    missing = copy.deepcopy(RENDER)
+    del missing[key]
+    with pytest.raises(ValueError, match=key):
+        module.compare_render_state(missing, missing)
+    malformed = copy.deepcopy(RENDER)
+    malformed[key] = wrong
+    with pytest.raises(ValueError, match=key):
+        module.compare_render_state(malformed, malformed)
+    mismatch = copy.deepcopy(RENDER)
+    mismatch[key] = changed
+    assert module.compare_render_state(RENDER, mismatch) == [key]
+    assert module.compare_render_state(RENDER, RENDER) == []
+
+
+def test_render_state_generated_presence_and_numeric_probes():
+    """Exhaust each merged schema's presence subsets; cross-probe missing keys."""
+    module = load()
+    # Partition the original 19, PNG 5 and pipeline 3 keys; avoid 2**27 probes.
+    pipeline_keys = {'color_management', 'use_sequencer', 'use_compositing'}
+    groups = [set(RENDER) - PNG_STATE.keys() - pipeline_keys, set(PNG_STATE), pipeline_keys]
+    for keys in (sorted(group) for group in groups):
+        fixed = {k: v for k, v in RENDER.items() if k not in keys}
+        for mask in range(1 << len(keys)):
+            state = fixed | {k: RENDER[k] for i, k in enumerate(keys) if mask & (1 << i)}
+            if len(state) == len(RENDER):
+                assert module.compare_render_state(state, state) == []
+            else:
+                with pytest.raises(ValueError, match='render keys'):
+                    module.compare_render_state(state, state)
+    for index, group in enumerate(groups):
+        for other_group in groups[index + 1:]:
+            for old_key in group:
+                for new_key in other_group:
+                    state = {k: v for k, v in RENDER.items() if k not in (old_key, new_key)}
+                    with pytest.raises(ValueError, match='render keys'):
+                        module.compare_render_state(state, state)
+    for key in ('exposure', 'gamma', 'thickness', 'world_color', 'background_color', 'dither_intensity'):
+        for index in range(3 if isinstance(RENDER[key], list) else 1):
+            for bad in (float('nan'), float('inf'), -float('inf')):
+                state = copy.deepcopy(RENDER)
+                if isinstance(state[key], list):
+                    state[key][index] = bad
+                else:
+                    state[key] = bad
+                with pytest.raises(ValueError, match=key):
+                    module.compare_render_state(state, state)
+
+
+@pytest.mark.parametrize('value', [None, 0, 1, 'False', '', [], {}, float('nan'), float('inf')])
+@pytest.mark.parametrize('key', ['use_curve_mapping', 'use_white_balance'])
+def test_render_state_refuses_nonboolean_curve_mapping(value, key):
+    module = load()
+    state = dict(RENDER, **{key: value})
+    with pytest.raises(ValueError, match=key + '.*boolean'):
+        module.compare_render_state(state, state)
+
+
+@pytest.mark.parametrize('value', ['', 'unsupported', None, 1, True, [], float('nan')])
+def test_render_state_refuses_unsupported_emulation(value):
+    state = dict(RENDER, emulation=value)
+    with pytest.raises(ValueError, match='emulation'):
+        load().compare_render_state(state, state)
+
+
+@pytest.mark.parametrize('key', ['use_curve_mapping', 'use_white_balance', 'emulation'])
+def test_render_state_missing_curve_mapping_refused(key):
+    module = load()
+    state = dict(RENDER)
+    del state[key]
+    with pytest.raises(ValueError, match=key):
+        module.compare_render_state(state, state)
+
+
+@pytest.mark.parametrize('key', ['use_curve_mapping', 'use_white_balance', 'emulation'])
+def test_render_state_curve_mapping_mismatch_and_reset(key):
+    module = load()
+    changed = dict(RENDER, **{key: 'OFF' if key == 'emulation' else True})
+    for _ in range(3):
+        assert module.compare_render_state(RENDER, changed) == [key]
+        assert module.compare_render_state(changed, RENDER) == [key]
+        assert module.compare_render_state(RENDER, dict(RENDER)) == []
+
+
+def test_render_state_repeated_failure_and_reset():
+    module = load()
+    for _ in range(3):
+        bad = dict(RENDER, exposure=3.0)
+        assert module.compare_render_state(RENDER, bad) == ['exposure']
+        assert module.compare_render_state(bad, RENDER) == ['exposure']
+        assert module.compare_render_state(RENDER, copy.deepcopy(RENDER)) == []
+
+
+@pytest.mark.parametrize('key,value', [
     ('use_world_space_lighting', True), ('dither_intensity', 0.0),
     ('color_mode', 'BW'), ('color_depth', '16'), ('compression', 100)])
 @pytest.mark.parametrize('missing', [False, True])
@@ -266,13 +414,26 @@ def test_cli_refuses_changed_or_missing_png_state(tmp_path, inputs, monkeypatch,
             del render[key]
         else:
             render[key] = value
-    monkeypatch.setattr(module, 'run_blender', fake_runner(render_mutate=mutate))
+    monkeypatch.setattr(module, 'run_blender', fake_runner(mutate_render=mutate))
     output = tmp_path / 'ev' / 'out'
     original = snapshot(tmp_path / 'in')
     assert module.main(argv(*inputs, output)) == 2
     assert key in capsys.readouterr().err
     assert not output.exists() and not output.with_name('out.partial').exists()
     assert snapshot(tmp_path / 'in') == original
+
+
+@pytest.mark.parametrize('key,value', [
+    ('use_world_space_lighting', 0), ('use_world_space_lighting', None),
+    ('color_mode', 'unknown'), ('color_mode', []),
+    ('color_depth', '32'), ('color_depth', 8),
+    ('dither_intensity', True), ('dither_intensity', -1), ('dither_intensity', 3),
+    ('compression', True), ('compression', 1.5), ('compression', -1), ('compression', 101)])
+def test_render_state_refuses_invalid_png_state_even_when_equal(key, value):
+    state = dict(RENDER, **{key: value})
+    with pytest.raises(ValueError, match=key):
+        load().compare_render_state(state, state)
+
 
 
 def test_cli_refuses_input_changed_during_run(tmp_path, inputs, monkeypatch):
@@ -537,6 +698,65 @@ def test_real_blender_named_mismatch_refused_and_fit_matches(tmp_path):
     assert [evidence[r]['mesh_objects'] for r in ('before', 'after')] == [1, 1]  # r1 P3: no wire copies
 
 
+MAKE_RENDER_SCENES = r'''
+import bpy, sys
+out = sys.argv[sys.argv.index('--') + 1:]
+for index, path in enumerate(out[:2]):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.mesh.primitive_cube_add(size=8 if index and out[2] in ('extent', 'combined') else 2)
+    scene = bpy.context.scene
+    data = bpy.data.cameras.new('Shot')
+    cam = bpy.data.objects.new('Shot', data)
+    scene.collection.objects.link(cam)
+    cam.location = (0, -20, 0)
+    cam.rotation_euler = (1.5707963, 0, 0)
+    if index:
+        if out[2] in ('exposure', 'combined'):
+            scene.view_settings.exposure = 2
+        if out[2] in ('curve', 'combined'):
+            scene.view_settings.use_curve_mapping = True
+            scene.view_settings.curve_mapping.curves[3].points[1].location = (1.0, 0.4)
+            scene.view_settings.curve_mapping.update()
+        if out[2] in ('whitebalance', 'combined'):
+            scene.view_settings.use_white_balance = True
+            scene.view_settings.white_balance_temperature = 2500
+            scene.view_settings.white_balance_tint = -20
+        if out[2] in ('gamma', 'combined'):
+            scene.view_settings.gamma = 1.8
+        if out[2] in ('look', 'combined'):
+            scene.view_settings.look = 'AgX - Medium High Contrast'
+        if out[2] in ('display', 'combined'):
+            scene.display_settings.display_device = 'Display P3'
+        if out[2] in ('emulation', 'combined'):
+            scene.display_settings.emulation = 'OFF'
+        if out[2] in ('world', 'combined'):
+            scene.world = bpy.data.worlds.new('SyntheticWorld')
+            scene.world.color = (1, 0, 0)
+            scene.world.node_tree.nodes.get('Background').inputs['Color'].default_value = (0, 1, 0, 1)
+        if out[2] in ('background', 'combined'):
+            scene.display.shading.background_type = 'WORLD'
+            scene.display.shading.background_color = (0.8, 0.1, 0.2)
+        if out[2] == 'combined':
+            scene.render.image_settings.color_management = 'OVERRIDE'
+            scene.render.image_settings.view_settings.exposure = 3.0
+            scene.render.use_sequencer = True
+            scene.render.use_compositing = True
+            scene.display.shading.use_world_space_lighting = True
+            scene.render.dither_intensity = 0.0
+            scene.render.image_settings.color_mode = 'BW'
+            scene.render.image_settings.color_depth = '16'
+            scene.render.image_settings.compression = 100
+            scene.render.use_border = True
+            scene.render.border_max_x = 0.5
+            scene.render.use_multiview = True
+            scene.render.image_settings.views_format = 'STEREO_3D'
+            scene.display.shading.show_xray = True
+            scene.display.shading.show_object_outline = True
+            scene.display.shading.show_specular_highlight = False
+    bpy.ops.wm.save_as_mainfile(filepath=path)
+'''
+
+
 MAKE_OUTPUT_SCENES = r'''
 import bpy, sys
 paths = sys.argv[sys.argv.index('--') + 1:]
@@ -575,6 +795,100 @@ for index, path in enumerate(paths[:2]):
             assert scene.compositing_node_group == group
     bpy.ops.wm.save_as_mainfile(filepath=path)
 '''
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('change,style,mode', [
+    ('exposure', 'wire', 'fit'), ('exposure', 'solid', 'fit'), ('extent', 'wire', 'fit'),
+    ('whitebalance', 'solid', 'fit'), ('whitebalance', 'wire', 'fit'), ('whitebalance', 'solid', 'named'),
+    ('emulation', 'solid', 'fit'), ('emulation', 'wire', 'fit'),
+    ('curve', 'solid', 'fit'), ('curve', 'wire', 'fit'), ('curve', 'solid', 'named'),
+    ('gamma', 'wire', 'fit'), ('look', 'wire', 'fit'), ('display', 'wire', 'fit'),
+    ('world', 'material', 'fit'), ('background', 'texture', 'fit'),
+    ('combined', 'wire', 'fit'), ('combined', 'wire', 'named')])
+def test_real_blender_normalizes_saved_render_state(tmp_path, change, style, mode):
+    """Synthetic saved scenes: source exposure and size must not change render settings."""
+    module = load()
+    maker = tmp_path / 'make.py'
+    maker.write_text(MAKE_RENDER_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'a.blend', tmp_path / 'b.blend'
+    from dt_ai.core.blender_runner import run_blender
+    run_blender(maker, [a, b, change], outputs=[a, b], log_path=tmp_path / 'make.log')
+    output = tmp_path / 'ev' / change
+    assert module.main(argv(a, b, output, '--resolution', '64x40', '--style', style,
+                            '--camera-mode', mode, '--camera-name', 'Shot')) == 0
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    left, right = (evidence[r]['render'] for r in ('before', 'after'))
+    assert left == right
+    assert left['exposure'] == 0.0 and left['gamma'] == 1.0
+    assert left['look'] == 'None' and left['view_transform'] == 'Standard'
+    assert left['use_curve_mapping'] is False
+    assert left['use_white_balance'] is False
+    assert left['emulation'] == 'AUTO'
+    assert left['color_management'] == 'FOLLOW_SCENE'
+    assert left['use_sequencer'] is False and left['use_compositing'] is False
+    assert left['use_border'] is False and left['use_multiview'] is False
+    assert left['image_views_format'] == 'INDIVIDUAL'
+    for key, expected in PNG_STATE.items():
+        assert left[key] == expected, key
+    assert left['workbench']['show_xray'] is False
+    assert left['workbench']['show_object_outline'] is False
+    assert left['workbench']['show_specular_highlight'] is True
+    assert left['display_device'] == 'sRGB' and left['background_type'] == 'VIEWPORT'
+    assert left['background_color'] == pytest.approx([0.05] * 3)
+    assert left['world_color'] == pytest.approx([0.05] * 3)
+    assert left['thickness'] == right['thickness']
+    if style == 'wire':
+        assert left['thickness'] == pytest.approx(0.0048 if change in ('extent', 'combined') else 0.0012)
+    else:
+        assert left['thickness'] is None
+    if change not in ('extent', 'combined'):
+        from PIL import Image
+        assert Image.open(output / 'before.png').tobytes() == Image.open(output / 'after.png').tobytes()
+        if change in ('curve', 'whitebalance'):
+            assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes()
+
+
+CHECK_COLOUR_RNA = r'''
+import ast, bpy, json, sys
+from pathlib import Path
+source = ast.parse(Path(sys.argv[sys.argv.index('--') + 1]).read_text(encoding='utf-8'))
+setup = next(node for node in source.body if isinstance(node, ast.FunctionDef) and node.name == 'setup')
+assignments = {ast.unparse(target): node.value for node in ast.walk(setup)
+               if isinstance(node, ast.Assign) for target in node.targets}
+# Dependent values cannot affect output with their master switches disabled.
+# curve_mapping is a read-only pointer to mutable curves; also prove its switch off.
+gated = {'view_settings': {'white_balance_temperature', 'white_balance_tint',
+                           'white_balance_whitepoint'}, 'display_settings': set()}
+for switch in ('use_curve_mapping', 'use_white_balance'):
+    assert ast.literal_eval(assignments['scene.view_settings.' + switch]) is False, switch
+inventory = {}
+for owner in ('view_settings', 'display_settings'):
+    writable = {p.identifier for p in getattr(bpy.context.scene, owner).bl_rna.properties
+                if not p.is_readonly}
+    handled = {key.removeprefix('scene.' + owner + '.') for key in assignments
+               if key.startswith('scene.' + owner + '.')}
+    unknown = writable - handled - gated[owner]
+    assert not unknown, f'unhandled writable {owner}: {sorted(unknown)}'
+    inventory[owner] = sorted(writable)
+    print(owner, 'writable:', sorted(writable), 'gated:', sorted(gated[owner]))
+Path(sys.argv[sys.argv.index('--') + 2]).write_text(json.dumps(inventory), encoding='utf-8')
+'''
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender RNA)')
+def test_real_blender_colour_rna_has_no_unhandled_writable_properties(tmp_path):
+    """Blender upgrades must not silently add inherited colour state to this helper."""
+    script = tmp_path / 'colour_rna.py'
+    script.write_text(CHECK_COLOUR_RNA, encoding='utf-8')
+    from dt_ai.core.blender_runner import run_blender
+    report = tmp_path / 'rna.json'
+    inventory = run_blender(script, [load().BLENDER_SCRIPT, report], output_json=report,
+                           log_path=tmp_path / 'rna.log')
+    assert 'use_white_balance' in inventory['view_settings']
+    assert 'emulation' in inventory['display_settings']
 
 
 @pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
