@@ -27,7 +27,7 @@
 <tspan x="30" dy="24">Маршрут Флоры (НПМ + ВПМ) — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: 25ca0260efc4a15583aa303045aa2e3ff77f2f514004aee0d444a2dcf237284e</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: dfcaaa035557406b466d8b16ecb4dba662efdf8b2853b30d4bdd7f706e87e5f4</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: Ведомость озеленения и СПОЗУ: ревизия, SHA-256, виды, размеры и точки в реестре исходников</tspan>

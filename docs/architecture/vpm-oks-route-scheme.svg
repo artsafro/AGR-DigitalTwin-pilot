@@ -31,14 +31,14 @@
 <tspan x="30" dy="24">Маршрут ВПМ / ОКС v2 — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: f042be4dff01299a38b186cafbfd3c35400e0ac42ccd0805cab5f88319399405</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 85c3fd5b432fc3aff2a1ed1968f34816795a894447d7465598c63d91ff32cdbf</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка</tspan>
 </text>
 <text x="30" y="245" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="30" dy="14">Владелец экспорта (Max): adapters/max/agr_tools/export_core.py</tspan>
-<tspan x="30" dy="17.5">Живых обходов владельцев: 30; адреса и миграция — в таблице владельцев. Это маршрут работы, не квитанция успешной сдачи. Blender НПМ:</tspan>
+<tspan x="30" dy="17.5">Живых обходов владельцев: 20; адреса и миграция — в таблице владельцев. Это маршрут работы, не квитанция успешной сдачи. Blender НПМ:</tspan>
 <tspan x="30" dy="17.5">tools/derive/export_npm.py; ВПМ: экспортёр job.</tspan>
 </text>
 <text x="260.0" y="365.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
