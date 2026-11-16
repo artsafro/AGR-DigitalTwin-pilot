@@ -435,6 +435,19 @@ open-PR comparison but still runs `--fetch`, so with no network the check exits 
 commit or check: the later branch renumbers (`next`, then every `[D<n>]` reference), never the merged one. Run
 `check` once more after merging `origin/main` and before asking for review.
 
+### Merging PRs: generated maps and decision rows (#1558)
+
+The route/context maps in `docs/architecture/` (`*.excalidraw`, `*.svg`, `*-owners.md`) are generated and carry
+a hash of all YAML inputs, so every pair of PRs that regenerates them conflicts. `.gitattributes` marks them
+`merge=ours` (keep HEAD); the merged YAML is the only source and `route_map.py --check` is the guard. A rework
+(GitHub shows the PR CONFLICTING; GitHub ignores merge drivers) or an integration branch runs
+`python tools/architecture/regen_after_merge.py --merge origin/main` (or `--merge <pr branch>`): it installs the
+driver (`--install`, once per clone), merges, takes the HEAD maps, resolves `docs/decisions.md` with
+`python tools/decisions_merge.py` (union of D-rows, HEAD wins on the same id, id order), regenerates, runs
+`--check` and commits; after merges done by hand run it without `--merge`. Exit 1 leaves the merge for you:
+another file conflicts, or `decisions_merge.py` reported a same-id collision - the incoming row gets a new id
+(`decision_ids.py next --fetch`, then its `[D<n>]` references). Never resolve a map by hand.
+
 ## Harness inventory (#129)
 
 Every hook, permission list, guard rule set, command, subagent and git hook, the evidence for it and the rules

@@ -26,7 +26,11 @@ owner nodes, never duplicate lists; exact duplicate locations occur in the Markd
 uv run python tools/architecture/route_map.py
 uv run python tools/architecture/route_map.py --check
 uv run python tools/architecture/duplicate_guard.py
+uv run python tools/architecture/regen_after_merge.py --merge origin/main   # merge conflict on maps (#1558)
 ```
+
+Generated maps are `merge=ours` in `.gitattributes`: never resolve them by hand; merge, then regenerate
+(`docs/agents/WORKFLOW.md`, "Merging PRs: generated maps and decision rows").
 
 Both new views carry the same SHA-256 revision of their parsed YAML snapshot. This is the architecture
 source revision, **not** a fabricated revision/hash of a customer's input or an execution receipt.
