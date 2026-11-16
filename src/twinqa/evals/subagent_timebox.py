@@ -70,8 +70,13 @@ def subagent_timebox(evidence):
                 elif rec['type'] == 'user' and b.get('type') == 'tool_result':
                     key, text = b.get('tool_use_id'), _text(b.get('content'))
                     native = rec.get('toolUseResult') or {}
-                    if b.get('is_error') is True or (isinstance(native, dict) and (
-                            native.get('success') is False or native.get('retrieval_status') in ('timeout', 'error'))):
+                    failed = b.get('is_error') is True or (
+                        isinstance(native, dict) and native.get('success') is False)
+                    if failed:
+                        # Only a launch's own failed result cancels that launch, not a failed read.
+                        active.pop(key, None)
+                        continue
+                    if isinstance(native, dict) and native.get('retrieval_status') in ('timeout', 'error'):
                         continue
                     if key in active:
                         state = active[key]
