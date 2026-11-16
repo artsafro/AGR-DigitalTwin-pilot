@@ -127,6 +127,7 @@ def test_family_rule_matches_the_gap_tool():
 def test_package_validator_sees_one_ucx_per_name():
     from twinqa.naming import mesh_name_findings
     model, copies = scene()
+    model = model[:3]                     # VPM OKS: every UCX is UCX_SM_<Address>_Main_NNN, i.e. ONE family
     names = [r['name'] for r in dc.ucx_export_selection(model, copies)['nodes']]
     rows = {f.name: f.status for f in mesh_name_findings(names, 'vpm', 'oks', 'SM_TestAddr', 64, 'synthetic')}
     assert rows['UCX names'] == 'pass' and rows['mesh names'] == 'pass'
