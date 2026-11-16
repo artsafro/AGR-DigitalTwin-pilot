@@ -225,7 +225,10 @@ def _georeferenced_scene(seed, offset, local_pivot=True):
         c, s = math.cos(angle), math.sin(angle)
         pivot = np.array([offset + i * 0.65, offset + rng.uniform(-0.1, 0.1), offset])
         matrix = np.eye(4)
-        matrix[:3, :3] = [[c, -s, 0], [s, c, 0], [0, 0, 1]]
+        tilt = rng.uniform(-0.6, 0.6)
+        ct, st = math.cos(tilt), math.sin(tilt)
+        matrix[:3, :3] = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]) @ np.array(
+            [[1, 0, 0], [0, ct, -st], [0, st, ct]])
         matrix[:3, 3] = pivot
         v, t = box(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
         world = np.asarray(v) @ matrix[:3, :3].T + pivot
