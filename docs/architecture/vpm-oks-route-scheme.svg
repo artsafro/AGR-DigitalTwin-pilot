@@ -31,7 +31,7 @@
 <tspan x="30" dy="24">Маршрут ВПМ / ОКС v2 — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: f042be4dff01299a38b186cafbfd3c35400e0ac42ccd0805cab5f88319399405</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 7782862337acb5829b98751f15f8de1aee1786c5b334809ea189e15cffd88f91</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка</tspan>
