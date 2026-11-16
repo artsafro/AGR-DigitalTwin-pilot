@@ -280,6 +280,7 @@ shared_kernel:
       why: "Другая задача: диагностика произвольных UV исходника (отрицательных и вне 0..10), raw tile не подтверждает корректность delivery UDIM."
 contexts:
   - id: openings
+    no_stage: "В НПМ отдельного шага нет; контекст генератора используется стадией openings ВПМ."
     ru: "Генератор окон и владение стеклом"
     area: docs/domain/areas/windows.md
     owner: adapters/max/agr_tools/windowgen_core.py

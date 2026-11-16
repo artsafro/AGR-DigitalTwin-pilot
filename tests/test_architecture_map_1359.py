@@ -96,7 +96,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 11  # #1441 owners + #1380 shared VPM UV replaces vpm-uv-copy
+    assert len(contexts["contexts"]) == 12  # #1405 window generator + existing shared owners
 
 
 @pytest.mark.parametrize("command,ok", [
