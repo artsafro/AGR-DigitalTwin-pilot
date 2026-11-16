@@ -12,6 +12,7 @@ rules:
     owner: docs/architecture/contexts.yaml
     ru: "дубли здесь описательные; охранный список duplicate_guard — в contexts.yaml"
 shared_kernel:
+  serves_stage: package
   id: zip
   ru: "Общее ядро: один писатель ZIP для AGR Tools и обоих упаковщиков"
   owner: adapters/max/agr_tools/package_core.py
@@ -30,7 +31,7 @@ contexts:
     owner_ru: "экспорт из Max или Blender (D212); приёмка — сцена Max QUAD + путь (D270)"
     functions:
       - name: blender_executable
-        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
       - name: run_blender
         contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
   - id: export

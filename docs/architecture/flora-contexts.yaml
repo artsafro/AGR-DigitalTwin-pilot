@@ -30,7 +30,7 @@ contexts:
     owner_ru: "ведомость, DWG СПОЗУ, сцена библиотеки — только копии; агент работает там, где удобно (D293)"
     functions:
       - name: blender_executable
-        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
       - name: run_blender
         contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
   - id: flora-library

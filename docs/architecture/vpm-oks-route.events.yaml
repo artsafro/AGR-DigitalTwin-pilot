@@ -9,6 +9,8 @@
 title_ru: "Маршрут ВПМ / ОКС v2: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК)"
 route: oks-vpm
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка"
   steps:
     - stages: "sources,parts,gate1"
@@ -47,6 +49,8 @@ actors:
   - id: checker
     ru: "Чекер СИНТЕЗ"
 local_contexts:
+  - id: npm
+    ref: vpm-oks-contexts.yaml#npm
   - id: ucx
     ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
@@ -199,7 +203,7 @@ stages:
   - id: npm
     event_ru: "НПМ-версия в тех же координатах готова (атлас)"
     actor: agent-dcc
-    context: uv-atlas
+    context: npm
     commands:
       - "agr vpm-to-npm"
     rules:

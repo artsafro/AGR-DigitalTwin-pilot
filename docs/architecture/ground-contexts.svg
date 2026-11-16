@@ -2,7 +2,7 @@
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
 <rect x="10" y="-30" width="2990" height="1560" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
-<rect x="40.0" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="347.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="347.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -12,7 +12,7 @@
 <rect x="1870.0" y="997.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1189.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1340.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<polyline points="510.0,436.25 530.0,436.25 530.0,545.0 1140.0,545.0 1140.0,445.0 1120.0,445.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510.0,445.0 630.0,445.0 630.0,327.5 1140.0,327.5 1140.0,445.0 1120.0,445.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,445.0 1240.0,445.0 1240.0,327.5 1750.0,327.5 1750.0,506.25 1730.0,506.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,506.25 1750.0,506.25 1750.0,527.5 2360.0,527.5 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 2360.0,327.5 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -46,8 +46,9 @@
 <tspan x="48.0" dy="17.5">исходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает</tspan>
 <tspan x="48.0" dy="17.5">там, где удобно (D293)</tspan>
 <tspan x="48.0" dy="17.5"></tspan>
-<tspan x="48.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
-<tspan x="48.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="48.0" dy="17.5">blender_executable: --blender &gt; DT_BLENDER (CLI dt qa /</tspan>
+<tspan x="48.0" dy="17.5">agr) &gt; TWINQA_BLENDER (blender_runner) &gt; установка 5.1.2;</tspan>
+<tspan x="48.0" dy="17.5">путь к Blender</tspan>
 <tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
@@ -157,9 +158,9 @@
 <tspan x="1268.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="1268.0" dy="17.5">находки НПМ</tspan>
 </text>
-<rect x="805.0" y="536.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="536.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="835.0" dy="14">исходники</tspan>
+<rect x="855.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="885.0" dy="14">исходники</tspan>
 </text>
 <rect x="1465.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
 <text x="1495.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">

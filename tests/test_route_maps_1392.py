@@ -64,6 +64,10 @@ def test_1581_npm_context():
     assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm"
     npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm")
     assert npm["owner"] == "tools/derive/npm_atlas.py"
+    local = next(c for c in _routes()["vpm-route"]["local_contexts"] if c["id"] == "npm")
+    assert local["ref"] == "vpm-oks-contexts.yaml#npm"
+    assert local["owner"] == npm["owner"]
+    route_map.check_schema(_routes()["vpm-route"], _contexts())
 
 
 # ---------------------------------------------------------------- #1581 reverse coverage
@@ -175,6 +179,65 @@ def test_1581_context_ref_loads_from_source(tmp_path):
     before = {p.name: p.read_bytes() for p in path.parent.iterdir()}
     assert route_map.main(["--root", str(tmp_path)]) == 2
     assert before == {p.name: p.read_bytes() for p in path.parent.iterdir()}
+
+
+def test_1581_generated_missing_targets():
+    """Synthetic exhaustive deletion probe: every registered context and kernel."""
+    maps = _maps()
+    measured = 0
+    for name, cmap in maps.items():
+        filename = route_map.context_maps()[name].name
+        for c in [cmap["shared_kernel"], *cmap["contexts"]]:
+            ref = {"ref": filename + "#" + c["id"]}
+            assert route_map.resolve_context(ref, maps)["owner"] == c["owner"]
+            bad = copy.deepcopy(maps)
+            if c is cmap["shared_kernel"]:
+                bad[name]["shared_kernel"]["id"] = "synthetic-removed"
+            else:
+                bad[name]["contexts"] = [x for x in bad[name]["contexts"] if x["id"] != c["id"]]
+            for _ in range(2):
+                with pytest.raises(route_map.SchemaError, match=re.escape(ref["ref"])):
+                    route_map.resolve_context(ref, bad)
+            measured += 1
+    assert measured > 40
+    print(f"missing-target probe: {measured}/{measured}")
+
+
+@pytest.mark.parametrize("value", [{}, {"owner": "stale.py"},
+    {"ref": "package-contexts.yaml#export", "unexpected": True}])
+def test_1581_export_descriptor_rejects_unmapped_fields(value):
+    events = _routes()["route"]
+    events["scheme"]["export_context"] = value
+    with pytest.raises(route_map.SchemaError, match="export_context"):
+        route_map._scheme(events)
+
+
+def test_1581_duplicate_ref_target_is_not_first_entry():
+    maps = _maps()
+    maps["package-contexts"]["contexts"].append(copy.deepcopy(
+        next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")))
+    with pytest.raises(route_map.SchemaError, match="found 2"):
+        route_map.resolve_context({"ref": "package-contexts.yaml#export"}, maps)
+
+
+@pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
+def test_1581_renderer_uses_declared_ref_not_export_id(renderer):
+    events, maps = _routes()["route"], _maps()
+    events["scheme"]["export_context"] = {"ref": "flora-contexts.yaml#npm"}
+    expected = next(c["owner"] for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    result = getattr(route_map, renderer)(events, maps["contexts"], maps)
+    if renderer == "short_route_board":
+        assert expected in " ".join(e.get("text", "") for e in result.elements).replace("\n", "")
+    else:
+        assert expected in result
+
+
+@pytest.mark.parametrize("entry", [None, [], "export", 0, float("nan")])
+def test_1581_malformed_ref_target_is_schema_error(entry):
+    maps = _maps()
+    maps["package-contexts"]["contexts"] = [entry]
+    with pytest.raises(route_map.SchemaError):
+        route_map.resolve_context({"ref": "package-contexts.yaml#export"}, maps)
 
 
 # ---------------------------------------------------------------- D293 recorded and cited
