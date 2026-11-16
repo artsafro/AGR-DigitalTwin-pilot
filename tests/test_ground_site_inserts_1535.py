@@ -34,3 +34,24 @@ def test_placed_hatch_full_transform(sx, sy, angle):
     assert sum(p.area for p in cover.polygons) == pytest.approx(6*abs(sx*sy))
     assert cover.colour == (10, 20, 30)
     assert cover.sources == row(hatch, [ins.dxf.handle])['hatches']
+
+
+def test_self_touching_even_odd_requires_explicit_opt_in():
+    doc, hatch, ins = fixture()
+    hatch.paths.clear()
+    # Two lobes sharing a point: all edges must survive decomposition.
+    hatch.paths.add_polyline_path([(1, 2), (3, 2), (3, 4), (1, 4), (1, 2),
+                                   (-1, 2), (-1, 0), (1, 0)], is_closed=True)
+    spec = row(hatch, [ins.dxf.handle])
+    with pytest.raises(ValueError, match='not repaired'):
+        gs.covers_from_dxf(doc, [spec], .002)
+    spec['self_touching'] = 'even-odd'
+    cover = gs.covers_from_dxf(doc, [spec], .002)[0]
+    assert len(cover.polygons) == 2
+    assert sum(p.area for p in cover.polygons) == pytest.approx(8)
+    expected = Polygon([(10, 20), (12, 20), (12, 22), (10, 22)]).union(
+        Polygon([(8, 18), (10, 18), (10, 20), (8, 20)]))
+    from shapely.ops import unary_union
+    actual = unary_union(cover.polygons)
+    assert actual.symmetric_difference(expected).area == pytest.approx(0)
+    assert actual.boundary.equals(expected.boundary)
