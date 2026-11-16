@@ -564,10 +564,32 @@ def _placed_hatch_paths(doc, hatch, chain, chord):
         yield pts
 
 
-def _placed_hatch_polygon(doc, hatch, chain, chord):
+def _even_odd_ring(xy):
+    """Node existing segments without snapping; retain every positive-area odd-parity face [D336]."""
+    from shapely.geometry import LineString
+    from shapely.ops import polygonize, unary_union
+
+    if xy[0] != xy[-1]:
+        xy = [*xy, xy[0]]
+    faces = []
+    for face in polygonize(unary_union(LineString(xy))):
+        x, y = face.representative_point().coords[0]
+        odd = False
+        for (ax, ay), (bx, by) in zip(xy, xy[1:]):
+            if (ay > y) != (by > y) and x < ax + (y - ay) * (bx - ax) / (by - ay):
+                odd = not odd
+        if odd and face.area > 0:
+            faces.append(face)
+    return unary_union(faces)
+
+
+def _placed_hatch_polygon(doc, hatch, chain, chord, self_touching=None):
     result = Polygon()
     for pts in _placed_hatch_paths(doc, hatch, chain, chord):
-        ring = Polygon([(p.x, p.y) for p in pts])
+        xy = [(p.x, p.y) for p in pts]
+        ring = Polygon(xy)
+        if not ring.is_valid and self_touching == "even-odd":
+            ring = _even_odd_ring(xy)
         if len(pts) < 3 or not ring.is_valid or ring.is_empty or not math.isfinite(ring.area):
             raise ValueError(f"hatch {hatch.dxf.handle}: invalid transformed boundary ring (not repaired)")
         result = result.symmetric_difference(ring)
@@ -606,7 +628,10 @@ def covers_from_dxf(doc, rows: list, chord: float) -> list[Cover]:
             if "colour" in row and not row.get("colour_reason"):
                 raise ValueError(f"cover {row.get('id')}: spec colour needs colour_reason")
             colours.append(hatch_colour(e, row.get("colour")))
-            g = _placed_hatch_polygon(doc, e, chain, chord)
+            policy = row.get("self_touching")
+            if policy is not None and policy != "even-odd":
+                raise ValueError(f"cover {row.get('id')}: unsupported self_touching {policy!r}")
+            g = _placed_hatch_polygon(doc, e, chain, chord, policy)
             polys += list(getattr(g, "geoms", [g]))
         if len({c for c, _ in colours}) != 1:
             raise ValueError(f"cover {row.get('id')}: hatches have different background colours {colours}")
