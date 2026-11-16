@@ -54,6 +54,17 @@ is a source-contour question diagram, NOT that pilot or its acceptance.
 
 ## Current state
 
+v021 introduces ONE new NPM Ground/profile/budget scope question, NOT another
+Table/Bench025/hedge/composition gate: issue comment6922279811. May a derived
+NPM Ground differ<=8.2mm vertically from the current master, including base+whole
+skirt-2.5mm, while retaining the actual finished5064tri Bench construction in
+all7NPMcopies and leaving VPM unchanged? No answer yet. See CONTINUATION-v021.md
+and question-receipt-v021.json. All v021 options remain UNADOPTED: the projected
+179447NPMbudget is not an exported-site result;5mm local guard fails at8.179619mm,
+one inverted triangle and tiny excess domain remain worker-owned. Current resume
+artifacts are still v020/site-urn-r3 NPM and v020/site-ucx-r4 VPM. No library edit,
+instance deletion, technical waiver, finalvisual request or completed delivery.
+
 Gate 1 site/scope and source-content authority answered [D272, D290]. Boundary and all 52 source planting
 symbols extracted, 52/52 inside the approved boundary and preserved by DXF readback. Numbered callouts
 match all five point-plant schedule quantities (1, 4, 6, 17, 24). A linden-named CAD symbol is position 2/4,

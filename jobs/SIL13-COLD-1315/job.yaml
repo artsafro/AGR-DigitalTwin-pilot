@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-Urn-floor-UCX-redundancy-v020
+run_id: cold-1315-new-NPM-ground-budget-choice-v021
 synthetic: false
 path: deviation
 inputs: &id001
@@ -124,6 +124,11 @@ deviations:
   what_was_tried: D305/D316 floor-band joint moves only9Zvalues50mm belowGround, no bounds/pivot/cavity/count change; full actual shelf/Ground polygon partition,8placedchecks clean. UCX r4 retains original scene objects, removes36pieces ONLY after NEW actual57226triangle coverage proof; all564survivors/render exact in matching raw/native readbacks.
   new_tool_written: 41job-local drivers/tests1087literal lines sealed in evidence-v020.json; no shared code/checker/registry/library edits.
   result: Adopted4Urn and564UCX/6564tris; bound89.935644792mm/446541partitionvertices/0missing/0degenerate; allUCX0/0/0/0. NPM178571raw178556native/VPM311042rawnative.175wideUCXpairs and whole3595faces36bowtiesFAIL stay worker-owned; no new user question.
+- gate: operations
+  what_failed: Canopy source-capped union2782facesFAIL; strict finishing refuses zero-area/duplicate faces; MeshFix9496to14faces loses construction. GroundLOD89faces, conservative underlay2faces, local source lock0faces but full source-height comparison8.179619mm exceeds local5mm engineering guard;1invertedtriangle/excess domain remains.
+  what_was_tried: Actual component78bottom235edge cap and closed source seats; all candidates kept isolated. Material-border-locked NPMGround29532tris, conservative base+whole skirt-2.5mm and local source lock; complete57226source triangles139602polygon partitions615564vertices. No whole-site export or adoption.
+  new_tool_written: 19job-local drivers/tests290literal lines sealed in evidence-v021.json; no shared code/checker/registry/library edit.
+  result: Nothing adopted; currentv020NPM/VPM FBXbytes unchanged. NEWmodel/budget question6922279811 asks NPM-onlyGround<=8.2mm derivation/base2.5mm permission to retain all7actual5064triBenches; projected179447NPM is NOT export/readback.5mm guard/inverted triangle/wholeQA not waived. Closed gates stay closed.
 gates:
   inputs:
     status: review
@@ -137,13 +142,18 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D305/D316fouractualUrn floor joints adopted,8placedchecks clean and entirefloorbelowGround>=9.281mm; bounds/pivots/cavity/38MAF4582census retained. UCXr4original-scene subset564pieces adopted after complete89.936mmcoverage proof; allretainedarrays exact. Earlier acceptedcopies unchanged; all NPMBench/Canopy/merge/cluster/reconstructedr3trials NOTadopted. WholeQAFAIL, no new user question.
+    note: Currentv020site remains unchanged; Urn4copies and564UCX retained. All v021Canopy/Ground trials NOTadopted. TechnicalFAILs remain worker-owned; one NEWNPMGround8.2mm/base2.5mm budget-model permission question6922279811, not a waiver or repeated closed gate.
     evidence: &id002
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v020.json
       sha256: 8cdbd0fb2e9c3e93213471603b2b0375b6507100c09d67775deb1ea433970c75
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v021.json
+      sha256: 2c6a7cd10948853270b39d2d27e4b2a2e364729855f10f7f7951320fe665e24e
+    - path: jobs/SIL13-COLD-1315/question-receipt-v021.json
+      sha256: c265fa3520e99a926cd6e9dd62c28483a5f4cc7a0e2a45fdc8cffc502657a749
   budgets:
     status: review
-    note: Actual178571NPM<=180000,1429remaining;311042VPM<=2625000;564UCX6564tris. PriorFlora support retained by equality; NEWactualUCX57226triangles/446541partitionvertices/89.935644792mm upperbound,0missing/degenerate. UCXtopologyclean but175widegaps/maps/UV/density remainopen. No rejected NPMBench/Canopy trial promoted.
+    waits: user
+    note: Actualcurrent178571NPM/311042VPM unchanged. Retaining all7full5064triBenches with originalGround projects208811NPM>180000; isolatedGround29532 projects179447, NOT exported. NEWquestion6922279811 asks NPM-onlysource-derivedGround<=8.2mm including base+whole skirt-2.5mm permission, VPM unchanged; no answer yet.5mm engineeringguard FAIL,1invertedface/excess domain and all technicalQA stay worker-owned.175wideUCXgaps unchanged.
     evidence: *id002
   export_readback:
     status: review
@@ -151,19 +161,21 @@ gates:
     evidence: *id002
   report:
     status: review
-    note: v020fourUrn and certified564UCX subset,483affectedtests pass/5historicaldeselected; separatelyCURRENT4failed and isolated3failed2passed.286immutableDrivefiles351458541bytessealed,22original/resumehashesequal. No NPMBench/Canopy/merge/cluster/reconstructedr3 trial promoted. WholevalidatorsFAIL. Full suite deferred to merge batch(rule68).
+    note: v021491affectedtests pass/5historicaldeselected; separateCanopy1RED andbudgetGround2RED retained.94immutableDrivefiles24210643bytessealed,22original/resumehashesequal andbothcurrentFBXunchanged. Nothing adopted; source-height5mmguard FAIL and1invertedface explicit. NEWNPMGroundprofile/budget question6922279811 awaits user; not a technical waiver. Full suite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v020.md
-      sha256: 9706c84b831d05aa793065fef91360d2bcc7b4521a1753c6195c554b407ad6d9
-    - path: jobs/SIL13-COLD-1315/evidence-v020.json
-      sha256: f6fd7ba2d9f5252e6844d6c98919c9ef5b4d2e63cbb00411ace40e06bfe6b46e
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v021.md
+      sha256: 3a6b4fbe6fe448e3b17b317e0fc93afd8d8a74b8d9acefbae295613edd88c975
+    - path: jobs/SIL13-COLD-1315/evidence-v021.json
+      sha256: dabd250b607a175870502702fb45b82aa15f19b05f3be15ca19e76791906c6e6
+    - path: jobs/SIL13-COLD-1315/question-receipt-v021.json
+      sha256: c265fa3520e99a926cd6e9dd62c28483a5f4cc7a0e2a45fdc8cffc502657a749
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: D321scope AND v016form/silhouette picture CLOSED by6903084291. Pilot finished clean then12VPMTables replicated; accepted-vs-finished screenshots are progress evidence, NOT another question. NPM/Bench/hedges/composition not reopened. Remaining technical failures worker-owned; finalvisual/material gate not yet requested, no current user wait.
+    note: D321/NPMTable/Bench025/hedges/composition stay CLOSED. No finalvisual/material acceptance requested; wholeQA stillFAIL. Ground-only actualmesh diagnostic supports the NEWNPMprofile/budget scope question6922279811 atbudgets gate; not a rendered whole-site model or picture approval.
     evidence: *id002
   checker:
     status: missing
-    note: Complete final SINTEZ not run; actual current-site native validatorsNPM1pass4fail1review2not_run/VPM3pass3fail1review5not_run, neither is pass. Technical repairs worker-owned; no new user wait.
+    note: Complete final SINTEZ not run; unchanged v020native validatorsNPM1pass4fail1review2not_run/VPM3pass3fail1review5not_run, neither pass. No new whole-site export or validator run. Technical repairs worker-owned; NEWNPMGroundmodel permission waits separately atbudgets gate.
     evidence: []

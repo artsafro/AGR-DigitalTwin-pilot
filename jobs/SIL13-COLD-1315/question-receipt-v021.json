@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "user_answer_recorded": false,
+  "scope": "new NPM-only Ground vertical/profile/budget choice, not a technical waiver",
+  "question_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6922279811",
+  "readback_normalized_equal": true,
+  "normalized_question_sha256": "b710ab41888e1a32e49599d5bd397a2288067b0a4eba405dbcddd253fd127892",
+  "sealed_prepublication_summary_sha256": "2c6a7cd10948853270b39d2d27e4b2a2e364729855f10f7f7951320fe665e24e",
+  "recommendation": "Allow a derived NPM-only Ground <=8.2mm vertical deviation including base+entire skirt -2.5mm, retaining the actual finished Bench construction; VPM unchanged. Repair technical defects independently before any site adoption.",
+  "alternative": "Keep Ground unchanged; reject this option and choose a different authorized budget route without deleting instances.",
+  "candidate_adopted": false,
+  "current_site_version": "v020",
+  "new_decision_row": null,
+  "closed_gates_reopened": false
+}

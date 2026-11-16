@@ -1,6 +1,22 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v020 four Urn floor joints and coverage-certified564UCX adopted;
+Current status: **v021 NEW NPM Ground/profile/budget question pending; no v021 candidate adopted**.
+See [CONTINUATION-v021.md](CONTINUATION-v021.md) and
+[question-receipt-v021.json](question-receipt-v021.json). Question6922279811 asks
+whether a source-derived NPM Ground may deviate<=8.2mm vertically, including
+base+entire skirt-2.5mm, to retain all7actual5064tri Bench copies. No answer yet.
+Isolated Ground29532tris/publicxView0/0/0/0, material-border edges/XY exact;
+complete57226source-top comparison139602partitions/615564vertices measures
+-8.179619..+5.426851mm and FAILS the local5mm engineering guard (not a regulation).
+Projected wholeNPM179447tris is arithmetic only, NOT a new export/native pass.
+One inverted generated triangle/excess2.003e-8m2 remains worker-owned, never waived.
+Canopy source-solid2782facesFAIL and destructive MeshFix9496to14faces are rejected.
+Current NPM/VPM exports remain byte-identical v020; no closed gate reopened.
+Affected tests:491passed/5historical deselected; separateCanopy1RED/budgetGround2RED.
+94immutableDrivefiles24210643bytes sealed;22originals and both currentFBX hashes equal.
+No PR/review/delivery claim. Full suite: deferred to merge batch (rule68).
+
+Historical status: **v020 four Urn floor joints and coverage-certified564UCX adopted;
 whole-site QA still FAIL, NOT delivered**. See [CONTINUATION-v020.md](CONTINUATION-v020.md).
 NPM178571raw/178556native; VPM311042raw/native. Urn8placed checks clean;
 full shelf/Ground partition proves every shelf below Ground by>=9.281mm, bounds
