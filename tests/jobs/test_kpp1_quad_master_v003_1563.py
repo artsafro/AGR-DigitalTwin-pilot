@@ -233,3 +233,80 @@ def test_provenance_refuses_changed_source_and_bad_outputs(tmp_path, monkeypatch
         qp.write_provenance(tmp_path, "v003", src, digest, plan, outs, "a" * 40, True)
     assert not (tmp_path / "quad-provenance-v003.json").exists()
     assert not (tmp_path / "derivation").exists()
+
+
+# --- residual pairs of a previous build (SW/NW posts of r1-v003) ------------------------------------------------------
+
+np = pytest.importorskip("numpy")
+TRI_V = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1e-3], [0, 0, 1]], dtype=np.float64)
+TRI_F = [(0, 1, 2), (0, 3, 4)]   # face 0 in z = 0; face 1 is degenerate (collinear) and never matches
+
+
+@pytest.mark.parametrize("p,want", [((0.2, 0.2, 0.0), [0]), ((0.2, 0.2, 9e-5), [0]), ((0.2, 0.2, 2e-4), []),
+                                    ((1.2, 1.2, 0.0), []), ((0.5, 0.5, 0.0), [0]), ((0.5005, 0.5005, 0.0), [])])
+def test_faces_under_plane_and_inside_with_tolerance(p, want):
+    assert puz.faces_under(p, TRI_V, TRI_F) == want
+
+
+@pytest.mark.parametrize("p", [(float("nan"), 0, 0), (0, float("inf"), 0), (0, 0)])
+def test_faces_under_refuses_non_finite_or_short_points(p):
+    with pytest.raises(ValueError, match="3 finite numbers"):
+        puz.faces_under(p, TRI_V, TRI_F)
+
+
+class _Part:
+    def __init__(self, name, vertices, faces):
+        self.name, self.vertices, self.faces = name, vertices, faces
+
+
+def _gate(pairs):
+    return lambda part, tol, mode: {"face_pairs": [{"a": a, "b": b, "kind": "contact", "centre": [0, 0, 0]}
+                                                   for a, b in pairs]}
+
+
+def test_residual_pairs_map_master_faces_back_to_r1(monkeypatch):
+    # master: two quads lying on R1 face 0 and on R1 face 1 (1-based ids in the gate, like xView)
+    mv = np.array([[.1, .1, 0], [.3, .1, 0], [.3, .3, 0], [.1, .3, 0], [0, .1, .1], [0, .3, .1], [0, .3, .3],
+                   [0, .1, .3]], dtype=np.float64)
+    master = _Part("SM_Kpp_1_Main", mv, [(0, 1, 2, 3), (4, 5, 6, 7)])
+    r1v = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=np.float64)
+    r1f = [(0, 1, 2), (0, 2, 3)]
+    monkeypatch.setattr(puz.xview_gate, "part_gate", _gate([(1, 2)]))
+    pairs, log = puz.residual_pairs([master], r1v, r1f)
+    assert pairs == [(0, 1)] and log[0]["r1_faces"] == [[0], [1]] and log[0]["master_faces"] == [1, 2]
+    monkeypatch.setattr(puz.xview_gate, "part_gate", _gate([]))
+    assert puz.residual_pairs([master], r1v, r1f) == ([], [])          # no residual -> nothing added
+
+
+def test_residual_face_on_no_r1_face_or_missing_part_is_an_error(monkeypatch):
+    mv = np.array([[5, 5, 5], [6, 5, 5], [6, 6, 5], [5, 6, 5]], dtype=np.float64)
+    master = _Part("SM_Kpp_1_Main", mv, [(0, 1, 2, 3), (0, 1, 2, 3)])
+    monkeypatch.setattr(puz.xview_gate, "part_gate", _gate([(1, 2)]))
+    with pytest.raises(SystemExit, match="lies on no R1 face"):
+        puz.residual_pairs([master], TRI_V, TRI_F)
+    with pytest.raises(SystemExit, match="not in the residual master"):
+        puz.residual_pairs([_Part("SM_Kpp_1_MainGlass", mv, [(0, 1, 2, 3)])], TRI_V, TRI_F)
+
+
+def test_residual_aliasing_source_or_output_is_refused(tmp_path):
+    src = tmp_path / "SM_Kpp_1.fbx"
+    src.write_bytes(b"x")
+    out = tmp_path / "union-zones-v003.json"
+    for alias in (src, out):
+        with pytest.raises(SystemExit, match="aliases the source or the output"):
+            puz.main([str(src), str(out), "--residual", str(alias)])
+    assert not out.exists()
+
+
+def test_sheet_unknown_camera_set_and_existing_output_fail(tmp_path):
+    pytest.importorskip("PIL")
+    ms = _load("make_sheet_1563", "make_sheet.py")
+    with pytest.raises(SystemExit, match="unknown camera set"):
+        ms.main(tmp_path, tmp_path / "s.png", "wire", "nope")
+    with pytest.raises(SystemExit, match="missing renders"):
+        ms.main(tmp_path, tmp_path / "s.png", "wire", "corners")
+    (tmp_path / "s.png").write_bytes(b"keep")
+    with pytest.raises(SystemExit, match="exists"):
+        ms.main(tmp_path, tmp_path / "s.png", "wire", "corners")
+    assert (tmp_path / "s.png").read_bytes() == b"keep"
+    assert ms.SETS["corners"][0] == ["sw_from_sw", "sw_from_s", "nw_from_nw", "nw_from_n"]
