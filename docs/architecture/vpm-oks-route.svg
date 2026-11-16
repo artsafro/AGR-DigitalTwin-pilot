@@ -37,7 +37,6 @@
 <rect x="1390" y="300" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="1390" y="420" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1390" y="500" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1390" y="590" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1670" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1660" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1620" y1="225.0" x2="1660" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -241,14 +240,6 @@
 <text x="1505.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="14">Контекст: Корпус и</tspan>
 <tspan x="1505.0" dy="17.5">геометрия</tspan>
-</text>
-<text x="1505.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1505.0" dy="13">⚠ Шов кровля / парапет: КПП1</tspan>
-<tspan x="1505.0" dy="16.25">переделывал вставную кровлю</tspan>
-<tspan x="1505.0" dy="16.25">(#1339); СРЕDА — стыки</tspan>
-<tspan x="1505.0" dy="16.25">текстуры не сходятся под</tspan>
-<tspan x="1505.0" dy="16.25">парапетом (423 пересечения на</tspan>
-<tspan x="1505.0" dy="16.25">95 рёбрах) [D038, D254]</tspan>
 </text>
 <text x="1775.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="15">Агент: Blender / Max /</tspan>

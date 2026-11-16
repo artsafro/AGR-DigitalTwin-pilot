@@ -65,6 +65,9 @@ rules:
   - id: master-qa
     owner: tools/blender/qa_master.py
     ru: "своя проверка мастера в Blender (def world_bm) вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/ (#1379)"
+  - id: seam-seal
+    owner: tools/blender/seam_seal.py
+    ru: "свой шов в Blender (def seal / ring_split / t_junctions) вместо общего tools/blender/seam_seal.py; охрана jobs/, tools/, src/ (#1381)"
 shared_kernel:
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
@@ -376,13 +379,14 @@ contexts:
     functions:
       - name: slab
         contract: "меш и петля границы -> плита кровли или Ambiguous"
+      - name: hole_plate
+        contract: "план отверстия парапета, уровень, верх, внешний контур -> плита кровли (сборщик задания, #1381) или ошибка"
     duplicates:
-      - at: "jobs/KPP1/scripts/build_kpp1.py:421"
+      - at: "jobs/KPP1/scripts/build_kpp1.py:432"
         match: "def roof("
         issue: "#1381"
-        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; локальная плита/парапет, roof_core не вызывается"
-        status: live-bypass
-        step: "#1381"
+        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; контур и высота плиты из roof_core.hole_plate (R6 #1352, D292), стены отверстия и шахта — локально"
+        status: wrapper
   - id: body
     ru: "Корпус и геометрия"
     area: docs/domain/areas/body.md
@@ -400,18 +404,6 @@ contexts:
       - name: plan_opacity_swaps
         contract: "сцена, кандидаты, бюджет треугольников -> список замен на плоскости"
     duplicates:
-      - at: "jobs/KPP1/scripts/seal.py:302"
-        match: "def seal("
-        issue: "#1359"
-        ru: "свой шов и сварка Т-узлов вместо dt_ai.ops.seams.join_parts"
-        status: live-bypass
-        step: "#1381"
-      - at: "jobs/KPP1/scripts/seal.py:73"
-        match: "def t_junctions("
-        issue: "#1359"
-        ru: "свой поиск Т-узлов на швах"
-        status: live-bypass
-        step: "#1381"
       - at: "jobs/KPP1/scripts/build_kpp1.py:194"
         match: "def load_spec("
         issue: "#1359"

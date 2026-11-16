@@ -10,7 +10,7 @@
 <rect x="1870" y="469.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40.0" y="646.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="646.5" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="646.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="646.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="646.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="40.0" y="989.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="40.0" y="1163.0" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
@@ -22,8 +22,8 @@
 <rect x="1870.0" y="1128.0" width="470" height="95.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="510" y1="436.25" x2="650" y2="436.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="885.0" y1="525.0" x2="885.0" y2="646.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120.0" y1="770.25" x2="1260.0" y2="752.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1495.0" y1="859.0" x2="885.0" y2="989.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1120.0" y1="770.25" x2="1260.0" y2="779.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1260.0" y1="779.0" x2="1120.0" y2="1086.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1120" y1="436.25" x2="1260" y2="427.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1190.0" y1="287.5" x2="1495.0" y2="347.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1495.0" y1="586.5" x2="275.0" y2="646.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -134,6 +134,9 @@
 <tspan x="1268.0" dy="17.5">кровли или Ambiguous</tspan>
 <tspan x="1268.0" dy="17.5">plan: корпуса (меш в метрах, мир) -&gt; опции, строки плит,</tspan>
 <tspan x="1268.0" dy="17.5">находки</tspan>
+<tspan x="1268.0" dy="17.5">hole_plate: план отверстия парапета, уровень, верх,</tspan>
+<tspan x="1268.0" dy="17.5">внешний контур -&gt; плита кровли (сборщик задания, #1381)</tspan>
+<tspan x="1268.0" dy="17.5">или ошибка</tspan>
 </text>
 <text x="1878.0" y="656.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Экспорт и пакеты ВПМ / НПМ</tspan>
@@ -221,12 +224,12 @@
 <tspan x="885.0" dy="14">корпус по</tspan>
 <tspan x="885.0" dy="17.5">частям</tspan>
 </text>
-<rect x="1160.0" y="752.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="752.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1160.0" y="765.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="765.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1190.0" dy="14">проёмы врезаны</tspan>
 </text>
-<rect x="1160.0" y="906.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="906.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1160.0" y="914.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="914.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1190.0" dy="14">оболочка с</tspan>
 <tspan x="1190.0" dy="17.5">кровлей</tspan>
 </text>

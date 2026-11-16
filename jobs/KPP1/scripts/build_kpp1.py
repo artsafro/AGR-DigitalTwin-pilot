@@ -418,11 +418,30 @@ def membrane_z():
     return lambda x, y: bvh.ray_cast(Vector((x, y, 20.0)), Vector((0, 0, -1)))[0].z
 
 
+def _roof_core():
+    """The shared roof slab rule (AGR Tools body.roof, R6 #1352 / D292): adapters/max/agr_tools/roof_core.py (#1381)."""
+    import importlib.util
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "adapters", "max", "agr_tools",
+                        "roof_core.py")
+    spec = importlib.util.spec_from_file_location("agr_tools_roof_core", path)
+    core = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(core)
+    return core
+
+
 def roof(mb):
     d = 0.33 + PARAPET_IN
     xi0, xi1, yi0, yi1 = X0 + d, X1 - d, Y0 + d, Y1 - d
     x0, x1, y0, y1, zt = SHAFT
     xs, ys = [xi0, x0, x1, xi1], [yi0, y0, y1, yi1]
+    # the plate outline and height from the shared roof rule (#1381): the hole loop at LEVEL_roof grown by
+    # PLATE_OVERLAP into the parapets, PLATE_GAP above it (the delivered v006 plate, equal within 1e-9 m)
+    hole = [(x, yi0) for x in xs] + [(xi1, y) for y in ys[1:]] + [(x, yi1) for x in xs[-2::-1]] + \
+           [(xi0, y) for y in ys[-2:0:-1]]
+    plate = _roof_core().hole_plate(hole, Z_ROOF, PARAPET_TOP_IN, [(X0, Y0), (X1, Y0), (X1, Y1), (X0, Y1)],
+                                    {"lift_m": PLATE_GAP, "inset_m": PLATE_OVERLAP})
+    pxs, pys = [round(p[0], 9) for p in plate["verts"]], [round(p[1], 9) for p in plate["verts"]]
+    z_plate = round(plate["verts"][0][2], 9)
     mb.piece()
     # the hole: inner parapet faces and shaft walls from LEVEL_roof, cut where the shaft's lines cross
     for axis, val, n in ((0, xi0, Vector((1, 0, 0))), (0, xi1, Vector((-1, 0, 0))),
@@ -450,14 +469,14 @@ def roof(mb):
                      Vector((sxs[i], sys_[j + 1], zt))], UP, "Interior")
     # the plate: the hole grown by PLATE_OVERLAP (under the parapet), the shaft shrunk by it; a ring of quads
     o = PLATE_OVERLAP
-    px, py = [xi0 - o, x0 + o, x1 - o, xi1 + o], [yi0 - o, y0 + o, y1 - o, yi1 + o]
+    px, py = [min(pxs), x0 + o, x1 - o, max(pxs)], [min(pys), y0 + o, y1 - o, max(pys)]
     mb.piece()
     for i in range(3):
         for j in range(3):
             if i == 1 and j == 1:
                 continue                              # the shaft
-            mb.quad([Vector((px[i], py[j], Z_PLATE)), Vector((px[i + 1], py[j], Z_PLATE)),
-                     Vector((px[i + 1], py[j + 1], Z_PLATE)), Vector((px[i], py[j + 1], Z_PLATE))], UP, "Membrane_Logicroof")
+            mb.quad([Vector((px[i], py[j], z_plate)), Vector((px[i + 1], py[j], z_plate)),
+                     Vector((px[i + 1], py[j + 1], z_plate)), Vector((px[i], py[j + 1], z_plate))], UP, "Membrane_Logicroof")
     zm = membrane_z()
     parapet_cap(mb)
     hood(mb)

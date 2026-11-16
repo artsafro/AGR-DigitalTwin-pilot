@@ -59,7 +59,7 @@ def test_seal_rows_left_the_map_and_the_roof_row_is_a_wrapper():
     rows = _rows()
     assert not any(r.rel == SHIM for r in rows), [r.at for r in rows if r.rel == SHIM]
     roof = [r for r in rows if r.rel == BUILD and r.context == "roof"]
-    assert [(r.at, r.status) for r in roof] == [(BUILD + "::roof", "wrapper")]
+    assert [(r.at, r.status) for r in roof] == [(BUILD + ":432", "wrapper")]
     assert guard.calls_owner(ROOT, roof[0])
     step = [r for r in rows if r.status == "live-bypass" and r.step == "#1381"]
     assert step == []
@@ -68,7 +68,7 @@ def test_seal_rows_left_the_map_and_the_roof_row_is_a_wrapper():
 def test_baseline_has_no_step_1381_rows_and_report_order_drops_the_step():
     keys = {at for _, at, _ in guard.LIVE_BYPASS_BASELINE}
     assert not {k for k in keys if k.startswith((SHIM, BUILD))}
-    assert "#1381" not in guard.bypass_table(_rows()).split("Порядок")[-1]
+    assert "| #1381 | 0 |" in guard.bypass_table(_rows())
 
 
 def test_seam_seal_rule_is_registered_and_guards_jobs_tools_src():

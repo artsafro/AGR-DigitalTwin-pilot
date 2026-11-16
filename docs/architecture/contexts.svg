@@ -1,33 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2360" width="2360" height="2360" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2352" width="2360" height="2352" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="2360" fill="#ffffff"/>
+<rect x="10" y="-30" width="2360" height="2352" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="336.5" width="470" height="560.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40" y="956.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650" y="956.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260" y="956.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="956.5" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40.0" y="1159.0" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40.0" y="1280.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="40.0" y="1159.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="1333.0" width="470" height="95.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="650.0" y="1159.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="1438.0" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="650.0" y="1438.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1159.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1385.5" width="470" height="155.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1159.0" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1280.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="345.0" y="1608.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="345.0" y="1904.5" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1608.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1817.0" width="470" height="200.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1608.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1834.5" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="345.0" y="1600.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="345.0" y="1897.0" width="470" height="395.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1600.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1809.5" width="470" height="200.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1565.0" y="1600.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="1827.0" width="470" height="380.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <line x1="1120.0" y1="1291.5" x2="1260.0" y2="1265.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1260.0" y1="1463.0" x2="815.0" y2="1749.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="815.0" y1="1749.25" x2="955.0" y2="1705.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1565.0" y1="1714.25" x2="1120.0" y2="1493.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1565.0" y1="1714.25" x2="1425.0" y2="1705.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1260.0" y1="1463.0" x2="815.0" y2="1741.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="815.0" y1="1741.75" x2="955.0" y2="1698.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1565.0" y1="1706.75" x2="1120.0" y2="1470.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1565.0" y1="1706.75" x2="1425.0" y2="1698.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="1190.0" y1="896.5" x2="1495.0" y2="1159.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1190.0" y1="896.5" x2="1190.0" y2="1608.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1190.0" y1="896.5" x2="1190.0" y2="1600.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута НПМ/ОКС (КПП1) (#1359)</tspan>
 </text>
@@ -126,12 +126,16 @@
 <tspan x="48.0" dy="17.5">общий владелец плиты кровли; KPP1 пока строит её локально</tspan>
 <tspan x="48.0" dy="17.5"></tspan>
 <tspan x="48.0" dy="17.5">slab: меш и петля границы -&gt; плита кровли или Ambiguous</tspan>
+<tspan x="48.0" dy="17.5">hole_plate: план отверстия парапета, уровень, верх,</tspan>
+<tspan x="48.0" dy="17.5">внешний контур -&gt; плита кровли (сборщик задания, #1381)</tspan>
+<tspan x="48.0" dy="17.5">или ошибка</tspan>
 </text>
-<text x="48.0" y="1290.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="48.0" y="1343.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="48.0" dy="12">Дубли вне владельца: 1</tspan>
-<tspan x="48.0" dy="15.0">• jobs/KPP1/scripts/build_kpp1.py:421 — run_stage.sh:13 -&gt;</tspan>
-<tspan x="48.0" dy="15.0">build_kpp1.main -&gt; roof; локальная плита/парапет, roof_core не</tspan>
-<tspan x="48.0" dy="15.0">вызывается (#1381)</tspan>
+<tspan x="48.0" dy="15.0">• jobs/KPP1/scripts/build_kpp1.py:432 — run_stage.sh:13 -&gt;</tspan>
+<tspan x="48.0" dy="15.0">build_kpp1.main -&gt; roof; контур и высота плиты из</tspan>
+<tspan x="48.0" dy="15.0">roof_core.hole_plate (R6 #1352, D292), стены отверстия и шахта —</tspan>
+<tspan x="48.0" dy="15.0">локально (#1381)</tspan>
 </text>
 <text x="658.0" y="1169.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="14">Корпус и геометрия</tspan>
@@ -150,10 +154,7 @@
 <tspan x="658.0" dy="17.5">треугольников -&gt; список замен на плоскости</tspan>
 </text>
 <text x="658.0" y="1448.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="658.0" dy="12">Дубли вне владельца: 3</tspan>
-<tspan x="658.0" dy="15.0">• jobs/KPP1/scripts/seal.py:302 — свой шов и сварка Т-узлов вместо</tspan>
-<tspan x="658.0" dy="15.0">dt_ai.ops.seams.join_parts (#1359)</tspan>
-<tspan x="658.0" dy="15.0">• jobs/KPP1/scripts/seal.py:73 — свой поиск Т-узлов на швах (#1359)</tspan>
+<tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
 <tspan x="658.0" dy="15.0">• jobs/KPP1/scripts/build_kpp1.py:194 — сборка корпуса КПП1 целиком</tspan>
 <tspan x="658.0" dy="15.0">в скрипте задания (стадии 1–6) (#1359)</tspan>
 </text>
@@ -193,7 +194,7 @@
 <tspan x="1878.0" dy="15.0">• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — почти побайтовая копия</tspan>
 <tspan x="1878.0" dy="15.0">vpm_uv.py КПП1 (#1359)</tspan>
 </text>
-<text x="353.0" y="1618.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="353.0" y="1610.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="14">Экспорт и пакет сдачи</tspan>
 <tspan x="353.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
 <tspan x="353.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
@@ -210,7 +211,7 @@
 <tspan x="353.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
 <tspan x="353.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="353.0" y="1914.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="353.0" y="1907.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="12">Дубли вне владельца: 23</tspan>
 <tspan x="353.0" dy="15.0">Правило проверки: свой писатель ZIP вместо общего _write_zip;</tspan>
 <tspan x="353.0" dy="15.0">охрана jobs/, tools/, src/ (#1377)</tspan>
@@ -237,7 +238,7 @@
 <tspan x="353.0" dy="15.0">• tools/sintez_parity.py: run_live</tspan>
 <tspan x="353.0" dy="15.0">• src/dt_ai/publish/bundle.py: package</tspan>
 </text>
-<text x="963.0" y="1618.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1610.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Проверка и приёмка</tspan>
 <tspan x="963.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
 <tspan x="963.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
@@ -249,7 +250,7 @@
 <tspan x="963.0" dy="17.5">main: путь к ZIP/FBX, --profile, --scene, --master,</tspan>
 <tspan x="963.0" dy="17.5">--json -&gt; отчёт; провал — ненулевой код</tspan>
 </text>
-<text x="963.0" y="1827.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1819.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 3</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя проверка мастера в Blender (def world_bm)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/</tspan>
@@ -263,7 +264,7 @@
 <tspan x="963.0" dy="15.0">• jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py: &lt;module&gt;</tspan>
 <tspan x="963.0" dy="15.0">• jobs/PSU275/scripts/qa_master_psu275.py: world_bm</tspan>
 </text>
-<text x="1573.0" y="1618.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1573.0" y="1610.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1573.0" dy="14">Связь с DCC (Blender / 3ds Max)</tspan>
 <tspan x="1573.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="1573.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
@@ -276,7 +277,7 @@
 <tspan x="1573.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="1573.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="1573.0" y="1844.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1573.0" y="1837.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1573.0" dy="12">Дубли вне владельца: 24</tspan>
 <tspan x="1573.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
 <tspan x="1573.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
@@ -307,22 +308,22 @@
 <tspan x="1190.0" dy="14">мастер-модель</tspan>
 <tspan x="1190.0" dy="17.5">(FBX/.blend)</tspan>
 </text>
-<rect x="1007.5" y="1588.12" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1037.5" y="1588.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1007.5" y="1584.38" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1037.5" y="1584.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1037.5" dy="14">UV, атлас,</tspan>
 <tspan x="1037.5" dy="17.5">текстуры</tspan>
 </text>
-<rect x="855.0" y="1718.38" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="1718.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="855.0" y="1710.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="1710.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="885.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="1312.5" y="1585.62" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1342.5" y="1585.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1312.5" y="1570.62" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1342.5" y="1570.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1342.5" dy="14">Blender/Max</tspan>
 <tspan x="1342.5" dy="17.5">строит</tspan>
 </text>
-<rect x="1465.0" y="1691.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="1691.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="1684.38" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="1684.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">свежее чтение</tspan>
 <tspan x="1495.0" dy="17.5">экспорта</tspan>
 </text>
@@ -330,8 +331,8 @@
 <text x="1342.5" y="1018.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1342.5" dy="14">номер тайла</tspan>
 </text>
-<rect x="1160.0" y="1243.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="1243.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1160.0" y="1239.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="1239.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1190.0" dy="14">номер тайла</tspan>
 </text>
 </svg>
