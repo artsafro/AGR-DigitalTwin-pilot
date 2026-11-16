@@ -1,0 +1,1037 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-D335-actual-NPM-v022",
+  "base_checkpoint": "7d0f1f120c9a8e375ad01ca77799971c2732ce29",
+  "decision": {
+    "id": "D335",
+    "question": 6922279811,
+    "answer": 6927578368,
+    "answer_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6927578368",
+    "quote": "Можно",
+    "reserved_card_comment": 8352
+  },
+  "new_user_question": null,
+  "closed_gates": "D335/D321/NPMTable/Bench025/hedges/composition remain CLOSED",
+  "scope": "NPM source-derived Ground/full7Bench/byte-identical Flora atlas embedding only; all Canopy/conformal-Flora trials rejected",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v022\\site-npm-r2\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "e7b2fd439b499cd680e07bd28a7fa7b08852d85fd641ea1a2be59f4c0d4e5bef",
+      "raw_triangles": 179493,
+      "native_triangles": 179492
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v020\\site-ucx-r4\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "12b91405b9bf69dcd105584be1f8263afa829c2d2627263f9db64cc46e41cf68"
+    }
+  },
+  "retained_MAF": 38,
+  "retained_plant_census": 4582,
+  "actual_Ground": {
+    "passed": false,
+    "site_adopted": false,
+    "method": "every same-material source/candidate projected triangle intersection; affine extrema, no sampling",
+    "rows": [
+      {
+        "material": 0,
+        "source_triangles": 33595,
+        "candidate_triangles": 10077,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.004975941907218839,
+        "max_delta_z_m": 0.0007441131098506748,
+        "partition_pairs": 65551,
+        "partition_vertices": 283812,
+        "candidate_missing_area_m2": 5.4803750249754585e-12,
+        "source_missing_area_m2": 8.595360542059066e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 1,
+        "source_triangles": 6800,
+        "candidate_triangles": 3756,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.002605861210478899,
+        "max_delta_z_m": 0.003900223317592655,
+        "partition_pairs": 17156,
+        "partition_vertices": 74875,
+        "candidate_missing_area_m2": 1.9020568546864995e-12,
+        "source_missing_area_m2": 1.6996337605552914e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 2,
+        "source_triangles": 429,
+        "candidate_triangles": 183,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.0008331149504454682,
+        "max_delta_z_m": 0.0022461778372273034,
+        "partition_pairs": 1307,
+        "partition_vertices": 5813,
+        "candidate_missing_area_m2": 2.782354424982203e-13,
+        "source_missing_area_m2": 2.8909119293308444e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 3,
+        "source_triangles": 5848,
+        "candidate_triangles": 5400,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.002165854611530904,
+        "max_delta_z_m": 0.002364628933857915,
+        "partition_pairs": 21974,
+        "partition_vertices": 100620,
+        "candidate_missing_area_m2": 7.060022546098591e-13,
+        "source_missing_area_m2": 5.490682066725937e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 4,
+        "source_triangles": 7925,
+        "candidate_triangles": 6541,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.0013015579045809744,
+        "max_delta_z_m": 0.0013508158955030276,
+        "partition_pairs": 25136,
+        "partition_vertices": 112999,
+        "candidate_missing_area_m2": 2.331929557764477e-12,
+        "source_missing_area_m2": 1.86277127451034e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 5,
+        "source_triangles": 769,
+        "candidate_triangles": 425,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.0007957195956381329,
+        "max_delta_z_m": 0.0012699449034122012,
+        "partition_pairs": 1669,
+        "partition_vertices": 7097,
+        "candidate_missing_area_m2": 3.9012844739666833e-13,
+        "source_missing_area_m2": 2.636157690250919e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 6,
+        "source_triangles": 307,
+        "candidate_triangles": 263,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -1.3526388408558604e-05,
+        "max_delta_z_m": 0.0005647641456698604,
+        "partition_pairs": 1681,
+        "partition_vertices": 7817,
+        "candidate_missing_area_m2": 1.0130003796514006e-13,
+        "source_missing_area_m2": 7.950850434035751e-14,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 7,
+        "source_triangles": 419,
+        "candidate_triangles": 335,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.00045509159715414506,
+        "max_delta_z_m": 0.000807455495769327,
+        "partition_pairs": 1616,
+        "partition_vertices": 7290,
+        "candidate_missing_area_m2": 2.877787526507636e-13,
+        "source_missing_area_m2": 1.7449058453829994e-13,
+        "projected_area_delta_m2": 2.842170943040401e-14
+      },
+      {
+        "material": 8,
+        "source_triangles": 1134,
+        "candidate_triangles": 928,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.000820554163620266,
+        "max_delta_z_m": 0.0010893746514760716,
+        "partition_pairs": 2818,
+        "partition_vertices": 12286,
+        "candidate_missing_area_m2": 7.572641922163822e-14,
+        "source_missing_area_m2": 5.1577274420258785e-14,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 9,
+        "source_triangles": 1670,
+        "candidate_triangles": 1670,
+        "boundary_edges_exact": true,
+        "vertical_skirt_all_XY_exact_down_m": 0.0025,
+        "actual_export_skirt_Z_quantization_m": 5.722045898432296e-08
+      }
+    ],
+    "all_material_boundary_edges_exact": true,
+    "max_abs_vertical_delta_m": 0.004975941907218839,
+    "all_projected_domains_complete": true,
+    "note": "5mm engineering guard, not inferred regulatory/user acceptance. Source marks/master untouched; final visual/material/delivery gates open.",
+    "actual_raw_triangles": 29578,
+    "native_triangles_exact": true,
+    "raw_native_max_coordinate_delta_m": 3.812856832041689e-06,
+    "all_actual_top_normals_positive": true,
+    "raw_vs_pre_max_coordinate_delta_m": 8.041147283144312e-06,
+    "local_5mm_guard_passed": true,
+    "D335_8_2mm_bound_passed": true
+  },
+  "actual_seating": {
+    "passed": false,
+    "scope": "numeric seating only, not whole delivery",
+    "point_count": 4620,
+    "missing_points": [],
+    "maximum_ground_delta_at_pivots_m": 0.004117262424718993,
+    "Urn_complete_shelf_partitions": [
+      {
+        "handle": "33FB3AD",
+        "min_m": -0.05734805302536827,
+        "max_m": -0.03782709687948226,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.051057156836763096,
+            "max_m": -0.03782709687948227,
+            "partition_polygons": 8,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04058961159717104
+          },
+          {
+            "face": 1,
+            "min_m": -0.05321131253061229,
+            "max_m": -0.04402709752321238,
+            "partition_polygons": 8,
+            "missing_area_m2": 3.7865323450608567e-29,
+            "area_m2": 0.04209756850014022
+          },
+          {
+            "face": 2,
+            "min_m": -0.05734805302536827,
+            "max_m": -0.04471901987969856,
+            "partition_polygons": 2,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.0007548584271714125
+          },
+          {
+            "face": 3,
+            "min_m": -0.057257157480493204,
+            "max_m": -0.04406412980888369,
+            "partition_polygons": 3,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04134380671166681
+          },
+          {
+            "face": 4,
+            "min_m": -0.05105715683676304,
+            "max_m": -0.03782709687948226,
+            "partition_polygons": 7,
+            "missing_area_m2": 6.310887241768095e-30,
+            "area_m2": 0.04058961159716973
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      },
+      {
+        "handle": "33FB3AE",
+        "min_m": -0.08529315727282416,
+        "max_m": -0.006781452786691844,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.07804880345241472,
+            "max_m": -0.00678145278669362,
+            "partition_polygons": 10,
+            "missing_area_m2": 6.104871382722754e-16,
+            "area_m2": 0.04058969263496717
+          },
+          {
+            "face": 1,
+            "min_m": -0.08529315727282416,
+            "max_m": -0.01839819564433398,
+            "partition_polygons": 6,
+            "missing_area_m2": 7.129713486264677e-16,
+            "area_m2": 0.04209702313528415
+          },
+          {
+            "face": 2,
+            "min_m": -0.02689817922842863,
+            "max_m": -0.01192507250522823,
+            "partition_polygons": 6,
+            "missing_area_m2": 3.625572064791527e-16,
+            "area_m2": 0.0007547749264633189
+          },
+          {
+            "face": 3,
+            "min_m": -0.07887916741886869,
+            "max_m": -0.012981468331584978,
+            "partition_polygons": 10,
+            "missing_area_m2": 2.441623292437356e-16,
+            "area_m2": 0.041343341083120336
+          },
+          {
+            "face": 4,
+            "min_m": -0.07804880345241294,
+            "max_m": -0.006781452786691844,
+            "partition_polygons": 10,
+            "missing_area_m2": 4.312075327882192e-17,
+            "area_m2": 0.04058970509868266
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      }
+    ]
+  },
+  "actual_Bench_MAF": {
+    "passed": false,
+    "scope": "actual7Bench and Ground derivation only, whole QA remainsFAIL",
+    "profiles": {
+      "NPM": {
+        "raw_triangles": 179493,
+        "native_triangles": 179492,
+        "unchanged31MAF": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3A5",
+          "33FB3A6",
+          "33FB3A7",
+          "33FB3A8",
+          "33FB3A9",
+          "33FB3AA",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB3B3",
+          "33FB3B4",
+          "33FB3B5",
+          "33FB3B6",
+          "33FB3B7",
+          "33FB3B8",
+          "33FB3B9",
+          "33FB3BA",
+          "33FB581",
+          "33FB3AD",
+          "33FB3AE"
+        ],
+        "Flora_arrays_exact": true,
+        "controls": [
+          {
+            "handle": "33FB3AB",
+            "triangles": 5064,
+            "raw_native_vertex_delta_m": 1.7989351803748832e-06
+          },
+          {
+            "handle": "33FB3B0",
+            "triangles": 5064,
+            "raw_native_vertex_delta_m": 8.649032352536778e-07
+          },
+          {
+            "handle": "33FB3B1",
+            "triangles": 5064,
+            "raw_native_vertex_delta_m": 1.225124528048127e-06
+          },
+          {
+            "handle": "33FB3B2",
+            "triangles": 5064,
+            "raw_native_vertex_delta_m": 8.39490517989816e-07
+          },
+          {
+            "handle": "33FB3BC",
+            "triangles": 5064,
+            "raw_native_vertex_delta_m": 3.242256596536208e-07
+          },
+          {
+            "handle": "33FB3BD",
+            "triangles": 5064,
+            "raw_native_vertex_delta_m": 1.0026104604321517e-06
+          },
+          {
+            "handle": "33FB590",
+            "triangles": 5064,
+            "raw_native_vertex_delta_m": 1.9507453785649886e-07
+          }
+        ]
+      }
+    },
+    "whole_xview_owner_pairs": {
+      "raw": {
+        "MAF_0472_M_Cannopy_006 / MAF_0472_M_Cannopy_006 / area": 256,
+        "MAF_0472_M_Cannopy_006 / MAF_0472_M_Cannopy_006 / area+contact": 221,
+        "MAF_0472_M_Cannopy_006 / MAF_0472_M_Cannopy_006 / contact": 255
+      },
+      "native": {
+        "MAF_0472_M_Cannopy_006 / MAF_0472_M_Cannopy_006 / area": 255,
+        "MAF_0472_M_Cannopy_006 / MAF_0472_M_Cannopy_006 / area+contact": 221,
+        "MAF_0472_M_Cannopy_006 / MAF_0472_M_Cannopy_006 / contact": 255
+      }
+    }
+  },
+  "geometry_r1_r2_exact": "independently asserted for EVERY raw/native array; r1 geometric counters reused explicitly, not relabelled",
+  "NPM_embedded_atlas": [
+    {
+      "name": "T_SIL13_Flora_d_1.png",
+      "bytes": 1796142,
+      "sha256": "3d5368b293e54f6503ec4c05e4bb1c412a99b468fc625a75c5802c423b629ca2"
+    },
+    {
+      "name": "T_SIL13_Flora_o_1.png",
+      "bytes": 402069,
+      "sha256": "d9ca582e68e082b610d67252a8476c36e23b9e01995204e3a2afe9c7ecb2e0a1"
+    }
+  ],
+  "native_public_validator_counts": {
+    "not_run": 4,
+    "pass": 2,
+    "fail": 3,
+    "review": 1
+  },
+  "native_public_validator_stages": {
+    "V001": "not_run",
+    "V002": "pass",
+    "V003": "fail",
+    "V004": "fail",
+    "V005": "fail",
+    "V006": "pass",
+    "V012": "review",
+    "V014": "not_run",
+    "V015": "not_run",
+    "V017": "not_run"
+  },
+  "current_public_xview": {
+    "overlapping_vertices": 72,
+    "overlapping_faces": 553,
+    "vertex_pairs": 51,
+    "face_pairs": 731,
+    "face_pairs_by_kind": {
+      "contact": 255,
+      "area": 255,
+      "area+contact": 221
+    },
+    "bowtie_vertices": 53,
+    "bowtie_pairs": 26,
+    "parts_without_faces": 0
+  },
+  "current_NPM_Flora_regulatory_FAIL": {
+    "duplicate_vertices": 0,
+    "duplicate_edges": 0,
+    "duplicate_polygons": 0,
+    "self_intersections": 515,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 515,
+    "tol_m": 0.002
+  },
+  "Flora_regulatory_witness_owners": {
+    "33F02A9 / 33F02A9": 27,
+    "33F02A9 / row7_merged": 61,
+    "33F02AB / 33F02AB": 27,
+    "33F02AB / row6_merged": 16,
+    "33F02AC / 33F02AC": 27,
+    "33F02AD / 33F02AD": 27,
+    "33F02AD / row6_merged": 52,
+    "33F02AD / row7_merged": 46,
+    "33F02AE / 33F02AE": 27,
+    "33F02AE / row7_merged": 77,
+    "33F02AF / 33F02AF": 27,
+    "33F02AF / row7_merged": 11,
+    "33F02AF / row6_merged": 49,
+    "33F02B3 / row6_merged": 3,
+    "33F02B4 / row6_merged": 12,
+    "33F02B8 / row6_merged": 5,
+    "33F02C6 / 33F02C7": 6,
+    "33F02C8 / 33F02CB": 6,
+    "33F02D1 / 33F02D2": 3,
+    "33F02D3 / 33F02D6": 3,
+    "33F031B / 33F031E": 3
+  },
+  "Flora_rejected_trials": {
+    "flora-conformal-r1": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 33,
+        "overlapping_faces": 37,
+        "vertex_pairs": 22,
+        "face_pairs": 44,
+        "face_pairs_by_kind": {
+          "contact": 8,
+          "area": 10,
+          "area+contact": 26
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 19,
+        "duplicate_edges": 67,
+        "duplicate_polygons": 11,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 97,
+        "tol_m": 0.002
+      }
+    },
+    "flora-conformal-r2": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 37,
+        "vertex_pairs": 0,
+        "face_pairs": 47,
+        "face_pairs_by_kind": {
+          "contact": 8,
+          "area": 13,
+          "area+contact": 26
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      }
+    },
+    "flora-conformal-r3": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 27,
+        "vertex_pairs": 0,
+        "face_pairs": 35,
+        "face_pairs_by_kind": {
+          "contact": 8,
+          "area": 11,
+          "area+contact": 16
+        },
+        "bowtie_vertices": 7,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 0,
+        "duplicate_edges": 0,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 0,
+        "tol_m": 0.002
+      }
+    }
+  },
+  "Canopy_rejected_trials": {
+    "canopy-sliced-r1": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 1515,
+        "overlapping_faces": 5650,
+        "vertex_pairs": 1097,
+        "face_pairs": 12134,
+        "face_pairs_by_kind": {
+          "contact": 4058,
+          "area": 1281,
+          "area+contact": 6795
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "canopy-walls-r2": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 2838,
+        "overlapping_faces": 1512,
+        "vertex_pairs": 1810,
+        "face_pairs": 2333,
+        "face_pairs_by_kind": {
+          "contact": 814,
+          "area": 274,
+          "area+contact": 1245
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "canopy-regularized-r3": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 468,
+        "overlapping_faces": 395,
+        "vertex_pairs": 234,
+        "face_pairs": 389,
+        "face_pairs_by_kind": {
+          "contact": 42,
+          "area": 61,
+          "area+contact": 286
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 2,
+        "parts_without_faces": 0
+      }
+    },
+    "canopy-joints-r3d": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 480,
+        "overlapping_faces": 17,
+        "vertex_pairs": 240,
+        "face_pairs": 45,
+        "face_pairs_by_kind": {
+          "contact": 7,
+          "area": 36,
+          "area+contact": 2
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 1,
+        "parts_without_faces": 0
+      }
+    },
+    "canopy-joints-r3f": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 472,
+        "overlapping_faces": 15,
+        "vertex_pairs": 236,
+        "face_pairs": 38,
+        "face_pairs_by_kind": {
+          "contact": 7,
+          "area": 30,
+          "area+contact": 1
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 3,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "Canopy_source_correction": "components20-77 are58vertical fascia boards, not seat slats; preserve genuine intervals",
+  "remaining_UCX_wide_pairs": 175,
+  "VPM_coverage_unchanged_m": 0.089935644792,
+  "tests": {
+    "affected_passed": 508,
+    "historical_deselected": 5,
+    "affected_command": "env PYTEST_ADDOPTS= SHELF_AUDIT=tmp/cold-v020/actual-shelf.json BENCH_RESULT=tmp/cold-v019/bench-diagonal-4 'GROUND_CANDIDATE=C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\ground-r3' uv run --with shapely --with scipy --with trimesh --with rtree pytest -q tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tmp/cold-v011/test_hedge_contract.py tmp/cold-v012/test_witness_indices.py tmp/cold-v012/test_export_controls.py tmp/cold-v013/test_maf_pilot.py tmp/cold-v013/test_pilot_structure.py tmp/cold-v014/test_checkpoint_controls.py tmp/cold-v014/test_replication.py tmp/cold-v015/test_profile_scope.py tmp/cold-v016/test_parametric_pilot.py tmp/cold-v016/test_access_gaps.py tmp/cold-v017/test_finishing.py tmp/cold-v017/test_vpm_table_replication.py tmp/cold-v017/test_link_contract.py tmp/cold-v017/test_sand_parts.py tmp/cold-v018/test_three_native_r2.py tmp/cold-v018/test_three_native_npm.py tmp/cold-v018/test_ucx_complete.py tmp/cold-v018/test_midpoint_safety.py tmp/cold-v018/test_midpoint_contract.py tmp/cold-v018/test_bench_bidirectional.py tmp/cold-v019/test_bench_clearance.py tmp/cold-v019/test_v019_bench_site.py tmp/cold-v020/test_shelf_ground.py tmp/cold-v020/test_ucx_redundancy.py 'C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v021\\test_checkpoint_v021.py' 'C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_checkpoint_v022.py' 'C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_ground_derivation.py' -k 'not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean' -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0/v022-affected-r2",
+    "affected_argv": [
+      "uv",
+      "run",
+      "--with",
+      "shapely",
+      "--with",
+      "scipy",
+      "--with",
+      "trimesh",
+      "--with",
+      "rtree",
+      "pytest",
+      "-q",
+      "tests/test_decisions.py",
+      "tests/test_area_requirement_sheet.py",
+      "tests/test_ground_surface_requirement_sheet.py",
+      "tmp/cold-v011/test_hedge_contract.py",
+      "tmp/cold-v012/test_witness_indices.py",
+      "tmp/cold-v012/test_export_controls.py",
+      "tmp/cold-v013/test_maf_pilot.py",
+      "tmp/cold-v013/test_pilot_structure.py",
+      "tmp/cold-v014/test_checkpoint_controls.py",
+      "tmp/cold-v014/test_replication.py",
+      "tmp/cold-v015/test_profile_scope.py",
+      "tmp/cold-v016/test_parametric_pilot.py",
+      "tmp/cold-v016/test_access_gaps.py",
+      "tmp/cold-v017/test_finishing.py",
+      "tmp/cold-v017/test_vpm_table_replication.py",
+      "tmp/cold-v017/test_link_contract.py",
+      "tmp/cold-v017/test_sand_parts.py",
+      "tmp/cold-v018/test_three_native_r2.py",
+      "tmp/cold-v018/test_three_native_npm.py",
+      "tmp/cold-v018/test_ucx_complete.py",
+      "tmp/cold-v018/test_midpoint_safety.py",
+      "tmp/cold-v018/test_midpoint_contract.py",
+      "tmp/cold-v018/test_bench_bidirectional.py",
+      "tmp/cold-v019/test_bench_clearance.py",
+      "tmp/cold-v019/test_v019_bench_site.py",
+      "tmp/cold-v020/test_shelf_ground.py",
+      "tmp/cold-v020/test_ucx_redundancy.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v021\\test_checkpoint_v021.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_checkpoint_v022.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_ground_derivation.py",
+      "-k",
+      "not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=C:/x/t_d9ae7dc0/v022-affected-r2"
+    ],
+    "affected_environment": {
+      "PYTEST_ADDOPTS": "",
+      "SHELF_AUDIT": "tmp/cold-v020/actual-shelf.json",
+      "BENCH_RESULT": "tmp/cold-v019/bench-diagonal-4",
+      "GROUND_CANDIDATE": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\ground-r3"
+    },
+    "affected_exit": 0,
+    "affected_seconds": 90.99460099998396,
+    "affected_log_sha256": "4dbce37d263e3ad7aad502f69bb61b4139b8214b514bb20020cf248a64b5d1ba",
+    "additional_midpoint_negative_rigid_probes_passed": 18,
+    "additional_log_sha256": "eb6b116718f00ebd00ed341d51b0cd3eef94c2ee1cb046c02e5cc1b408861d79",
+    "separate_current_obligation_FAILED": 1,
+    "unresolved_log_sha256": "d3337666c12aef6afc7e5001cc91727427ba4e108db48a838082ab7265865746",
+    "output_alias_probes": {
+      "delivery_passed": false,
+      "all_probes_passed": true,
+      "probes": [
+        {
+          "class": "path alias / no clobber",
+          "witness": "same_existing_file",
+          "argv": [
+            "uv",
+            "run",
+            "--with",
+            "meshoptimizer",
+            "python",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\build_ground.py",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\ground-r3\\pre.npz"
+          ],
+          "exit_code": 1,
+          "input_and_existing_output_hashes_unchanged": true,
+          "error": "Traceback (most recent call last):\n  File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\build_ground.py\", line 6, in <module>\n    R=Path(__file__).resolve().parent;P=R.parent/'cold-v021';O=Path(sys.argv[1]);O.mkdir(exist_ok=False)\n                                                                                 ~~~~~~~^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\artsafro\\AppData\\Roaming\\uv\\python\\cpython-3.14-windows-x86_64-none\\Lib\\pathlib\\__init__.py\", line 1011, in mkdir\n    os.mkdir(self, mode)\n    ~~~~~~~~^^^^^^^^^^^^\nFileExistsError: [WinError 183] Невозможно создать файл, так как он уже существует: 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_d9ae7dc0\\\\tmp\\\\cold-v022\\\\ground-r3\\\\pre.npz'\n"
+        },
+        {
+          "class": "path alias / no clobber",
+          "witness": "resolved_existing_directory",
+          "argv": [
+            "uv",
+            "run",
+            "--with",
+            "meshoptimizer",
+            "python",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\build_ground.py",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\ground-r3\\..\\ground-r3"
+          ],
+          "exit_code": 1,
+          "input_and_existing_output_hashes_unchanged": true,
+          "error": "Traceback (most recent call last):\n  File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\build_ground.py\", line 6, in <module>\n    R=Path(__file__).resolve().parent;P=R.parent/'cold-v021';O=Path(sys.argv[1]);O.mkdir(exist_ok=False)\n                                                                                 ~~~~~~~^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\artsafro\\AppData\\Roaming\\uv\\python\\cpython-3.14-windows-x86_64-none\\Lib\\pathlib\\__init__.py\", line 1011, in mkdir\n    os.mkdir(self, mode)\n    ~~~~~~~~^^^^^^^^^^^^\nFileExistsError: [WinError 183] Невозможно создать файл, так как он уже существует: 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_d9ae7dc0\\\\tmp\\\\cold-v022\\\\ground-r3\\\\..\\\\ground-r3'\n"
+        }
+      ]
+    },
+    "full_suite": "deferred to merge batch (rule68)"
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "job_local_code": [
+    {
+      "path": "audit_seating.py",
+      "sha256": "3436ff8bb346c5a228ced9376a374ba97f5fff4b7a3fbe7bb5b8a64f177fbc33",
+      "literal_lines": 32
+    },
+    {
+      "path": "audit_site.py",
+      "sha256": "8ffe61536837bdc5237827b35bc79b19e2451c0c937652c5155e10c432913e93",
+      "literal_lines": 30
+    },
+    {
+      "path": "build_canopy_sliced.py",
+      "sha256": "4c2ba03480091ab30838a092e4fe5dff4b350f522ea4a3541cd802d525e62957",
+      "literal_lines": 26
+    },
+    {
+      "path": "build_canopy_walls.py",
+      "sha256": "037206503e67b834aaaf0e1e24d0c920f39416fa6701edcf497a13d72048a954",
+      "literal_lines": 10
+    },
+    {
+      "path": "build_canopy_walls_r2.py",
+      "sha256": "7efcceefeb9f6c66e0e2d70f7d3c6dabc093a6d5364f481d499b58558ddb603d",
+      "literal_lines": 15
+    },
+    {
+      "path": "build_ground.py",
+      "sha256": "2ca9542279ea34b99ed81592ac51357be77e481014f618522b442bb9861919f2",
+      "literal_lines": 31
+    },
+    {
+      "path": "build_site.py",
+      "sha256": "a7aa5feac866b68be95a62ae2b2a84ccc65bdb96915f190d053ae5cce969fc3d",
+      "literal_lines": 50
+    },
+    {
+      "path": "capture_flora_crossings.py",
+      "sha256": "4d2d0f370fa3eca4d2dd31baced1450c28a8d9087f74fd9979353d5ea30a1d94",
+      "literal_lines": 13
+    },
+    {
+      "path": "conformal_flora.py",
+      "sha256": "197a06b0c92c4a8282d108dabcc0bbd548777534422841a3befcc22a895124e2",
+      "literal_lines": 16
+    },
+    {
+      "path": "diagnose_canopy_residuals.py",
+      "sha256": "88608d1b12f4555bc9ca2aeef083815668fa890007a50faa94d8bfdb499debd5",
+      "literal_lines": 10
+    },
+    {
+      "path": "diagnose_flora_regulatory.py",
+      "sha256": "98df7eaaf0538fb1f58e5f9aa4a4da8e2c61fdae6d1b0704aa92d7242a8148ba",
+      "literal_lines": 8
+    },
+    {
+      "path": "diagnose_skirt.py",
+      "sha256": "636b5d3cf33a955a3ba8cd10a69b2fbbce3cd7bfa9302331ea76daae65906520",
+      "literal_lines": 17
+    },
+    {
+      "path": "embed_existing_flora.py",
+      "sha256": "30e173f3498e6c93bed86f7efa2871884fbf821224f253204db89c32719fccec",
+      "literal_lines": 20
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "sha256": "ccc7c4748d5984ca550c3613af195b3ede08ceb33ac75d5b3ac84c651d94af8e",
+      "literal_lines": 29
+    },
+    {
+      "path": "finish_canopy_regularized.py",
+      "sha256": "d1042d6a89677b77197193d9cb7182b93d521d791ba615770fcf27ef01a7f8bd",
+      "literal_lines": 11
+    },
+    {
+      "path": "inspect_ground.py",
+      "sha256": "0239b624deea0a7bbf73ad47758bb74838a8e6db0673a222faaeaeb2745f0acd",
+      "literal_lines": 9
+    },
+    {
+      "path": "midpoint_contract.py",
+      "sha256": "325a26387444c9932f68df78483f98a55f31a2e919ac0c50705f1e7f498598cb",
+      "literal_lines": 9
+    },
+    {
+      "path": "normalize_canopy_joint_seams.py",
+      "sha256": "62ec946a1fe97704f7ba60b3008268ccaa1634f59ae3425af7bf69038a389d32",
+      "literal_lines": 21
+    },
+    {
+      "path": "normalize_canopy_tier_seams.py",
+      "sha256": "c8f38c8e07d75af6cd001f3e08439e4318c3b4fa87910df2452e39e611e3c0c0",
+      "literal_lines": 5
+    },
+    {
+      "path": "normalize_flora_junctions.py",
+      "sha256": "771ab8157ecc5beb95061ce662b48b70fada82c4582cd40400b338c0300417ac",
+      "literal_lines": 25
+    },
+    {
+      "path": "probe_aliases.py",
+      "sha256": "bf34869645e6f78923653621f3788f30603f9fe4a5bceec73096347807abd0e0",
+      "literal_lines": 8
+    },
+    {
+      "path": "prove_actual_ground.py",
+      "sha256": "a721b285380ae0fddf546df7902ad02de88134e6f91b2d63ba80d2f3dc16aced",
+      "literal_lines": 19
+    },
+    {
+      "path": "prove_ground.py",
+      "sha256": "91d111af5eeff035115ce3bd2c6040ad6173b2c3e2bf671bc3694037a64ecfcd",
+      "literal_lines": 12
+    },
+    {
+      "path": "read_site.py",
+      "sha256": "3066dbc5dc2ab1dddbec05a8e267217dc134f73961f8d6b3d94e8f7fc5933841",
+      "literal_lines": 4
+    },
+    {
+      "path": "read_site_r2.py",
+      "sha256": "79f22447563c102faa5cba5be707c83fb176acf2b0898348136c97cc5b2ddaa0",
+      "literal_lines": 12
+    },
+    {
+      "path": "remove_flora_knife_slivers.py",
+      "sha256": "82a72ab15c253d160f1ef2f2bb1539865bd44d7888182e42b351d8630fa34493",
+      "literal_lines": 8
+    },
+    {
+      "path": "repair_canopy_joint_precision.py",
+      "sha256": "5c62e52d2dc4e4cc34d780318fd05d3ce55ddfffc94bbda5d0438a9b2871eceb",
+      "literal_lines": 9
+    },
+    {
+      "path": "repair_canopy_joints.py",
+      "sha256": "b367b46efccbaabca1f97e702f808726470b36ca8001cb28507ca620160761ef",
+      "literal_lines": 15
+    },
+    {
+      "path": "repair_canopy_tier_columns.py",
+      "sha256": "c2e934c3997d4b6c75e718d826a1d20f8118c8e824aaf8f225b9dae15c5c0378",
+      "literal_lines": 17
+    },
+    {
+      "path": "run_affected.py",
+      "sha256": "acb12b66ad4941605b15d65094303c1aceb9786f65dc98201c54958dd4f5bd0f",
+      "literal_lines": 6
+    },
+    {
+      "path": "test_checkpoint_v022.py",
+      "sha256": "46c5d679bb9372a9993f1afd890f4c754b7502ff36bafab1d2f1591047a0fd3c",
+      "literal_lines": 48
+    },
+    {
+      "path": "test_flora_regulatory.py",
+      "sha256": "682b7bf8a25edab45c65b77ce4b1258daa9b55053c6fe94df6a00af17638c24e",
+      "literal_lines": 7
+    },
+    {
+      "path": "test_ground_derivation.py",
+      "sha256": "b6e2495e8d31bc49740cd3c96f6d39c4b933e53b3ccaa860918a4015e5d6ac93",
+      "literal_lines": 11
+    },
+    {
+      "path": "test_midpoint_search.py",
+      "sha256": "3fa546e06e5c8a3db18a11de6905b28ec53777c1dae19d091983d46ccaa2b926",
+      "literal_lines": 15
+    },
+    {
+      "path": "test_search_probes.py",
+      "sha256": "045a804dbd5a26cb2394593cbd33a3fd672ec03cd40356cf57673e19b2dce625",
+      "literal_lines": 32
+    }
+  ],
+  "shared_code_or_checker_changes": 0,
+  "new_user_decision_rows": 1,
+  "libraries_or_live_Max_modified": false,
+  "next_steps": [
+    "Resume ONLY NPMv022/site-npm-r2 and VPMv020/site-ucx-r4; do not resume rejected Canopy/Flora trials",
+    "Closed gates remain closed; no new user question",
+    "Repair current Canopy, public Ground skirt/maps/UV, Flora515true crossings and175UCXwidegaps without weakening checkers",
+    "Use source classification/actualwitnesses; conformalFlora count0 does not certify xView, budget or source shape",
+    "Run affected tests; finalvisual/material/SINTEZ only after whole technical QA"
+  ]
+}

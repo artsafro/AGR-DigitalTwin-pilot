@@ -1,20 +1,27 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v021 NEW NPM Ground/profile/budget question pending; no v021 candidate adopted**.
-See [CONTINUATION-v021.md](CONTINUATION-v021.md) and
-[question-receipt-v021.json](question-receipt-v021.json). Question6922279811 asks
-whether a source-derived NPM Ground may deviate<=8.2mm vertically, including
-base+entire skirt-2.5mm, to retain all7actual5064tri Bench copies. No answer yet.
-Isolated Ground29532tris/publicxView0/0/0/0, material-border edges/XY exact;
-complete57226source-top comparison139602partitions/615564vertices measures
--8.179619..+5.426851mm and FAILS the local5mm engineering guard (not a regulation).
-Projected wholeNPM179447tris is arithmetic only, NOT a new export/native pass.
-One inverted generated triangle/excess2.003e-8m2 remains worker-owned, never waived.
-Canopy source-solid2782facesFAIL and destructive MeshFix9496to14faces are rejected.
-Current NPM/VPM exports remain byte-identical v020; no closed gate reopened.
-Affected tests:491passed/5historical deselected; separateCanopy1RED/budgetGround2RED.
-94immutableDrivefiles24210643bytes sealed;22originals and both currentFBX hashes equal.
-No PR/review/delivery claim. Full suite: deferred to merge batch (rule68).
+Current status: **v022 D335 answered; actual whole NPM179493raw/179492native;
+wholeQA FAIL, NOT delivered**. See [CONTINUATION-v022.md](CONTINUATION-v022.md).
+Ground29578triangles, all7full5064tri Bench013 copies, all38MAF/4582plants retained.
+Complete ACTUAL57226source-triangle comparison bounds4.975942mm, meeting the
+unchanged5mm engineering guard AND authorized8.2mm limit; all material-border
+edges retained, generated inverted triangle/tiny excess domain repaired.
+Ground publicxView0/0/0/0;7actualBenches14raw/nativeplacedchecks clean;
+31otherMAF+Floraarrays EXACT.4620pivots covered;2Urn complete shelf partitions
+remain below changed Ground by>=6.781mm. Byte-identical original/interim Flora
+atlas is actually embedded2/2; fresh nativeV006PASS, wholevalidator2pass/3fail/
+1review/4not_run. Remaining nativeface-loss1 is in Canopy, not hidden as success.
+Canopy source-sliced/wall/regularized-joint trials remain isolatedFAIL; source
+components20–77 are vertical FASCIA boards, not seat slats. ConformalFlora knife
+removes515regulatorycrossings but creates publicxView defects/extra budget, so
+NONE of those Flora/Canopy trials are adopted. CurrentFlora515regulatoryFAIL remains.
+Resume NPMv022/site-npm-r2, VPMv020/site-ucx-r4 unchanged. No new user question,
+no closed gate reopened, no finalvisual/SINTEZ/PR/review/delivery claim.
+Full suite: deferred to merge batch (rule68).
+
+Historical status: v021 NEW NPM Ground/profile/budget question, subsequently
+answered [D335]; v021 options themselves were not adopted. See
+[CONTINUATION-v021.md](CONTINUATION-v021.md) and [question-receipt-v021.json](question-receipt-v021.json).
 
 Historical status: **v020 four Urn floor joints and coverage-certified564UCX adopted;
 whole-site QA still FAIL, NOT delivered**. See [CONTINUATION-v020.md](CONTINUATION-v020.md).

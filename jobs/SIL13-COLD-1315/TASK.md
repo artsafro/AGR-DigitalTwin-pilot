@@ -54,16 +54,18 @@ is a source-contour question diagram, NOT that pilot or its acceptance.
 
 ## Current state
 
-v021 introduces ONE new NPM Ground/profile/budget scope question, NOT another
-Table/Bench025/hedge/composition gate: issue comment6922279811. May a derived
-NPM Ground differ<=8.2mm vertically from the current master, including base+whole
-skirt-2.5mm, while retaining the actual finished5064tri Bench construction in
-all7NPMcopies and leaving VPM unchanged? No answer yet. See CONTINUATION-v021.md
-and question-receipt-v021.json. All v021 options remain UNADOPTED: the projected
-179447NPMbudget is not an exported-site result;5mm local guard fails at8.179619mm,
-one inverted triangle and tiny excess domain remain worker-owned. Current resume
-artifacts are still v020/site-urn-r3 NPM and v020/site-ucx-r4 VPM. No library edit,
-instance deletion, technical waiver, finalvisual request or completed delivery.
+[D335] closes the v021 NPM Ground/profile/budget choice: Artem «Можно», answer
+6927578368 to question6922279811. NPM-only derivation<=8.2mm, including base+whole
+skirt-2.5mm, is authorized; source Ground/VPM remain untouched. v022 repairs the
+inverted triangle with a source-bound two-face diagonal and refines local source
+vertices to meet the unchanged5mm engineering guard: full ACTUAL exported-surface
+comparison bounds4.975942mm, all material-border edges retained. Real wholeNPM is
+179493raw/179492native triangles with all7full5064tri Benches, Ground29578tris,
+38MAF/4582plant census; not the old179447projection. NPMFlora original interim
+atlas is byte-identically embedded; fresh publicV006pass. Resume NPMv022/site-npm-r2
+and unchanged VPMv020/site-ucx-r4. Canopy and conformal-Flora trials are NOT adopted;
+wholeQA remainsFAIL, finalvisual/material/SINTEZ not requested. No new user question.
+See CONTINUATION-v022.md and source-wide-summary-v022.json; no source/library edit.
 
 Gate 1 site/scope and source-content authority answered [D272, D290]. Boundary and all 52 source planting
 symbols extracted, 52/52 inside the approved boundary and preserved by DXF readback. Numbered callouts

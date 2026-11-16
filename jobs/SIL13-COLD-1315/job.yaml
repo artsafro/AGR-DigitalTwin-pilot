@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-new-NPM-ground-budget-choice-v021
+run_id: cold-1315-D335-actual-NPM-v022
 synthetic: false
 path: deviation
 inputs: &id001
@@ -10,172 +10,218 @@ inputs: &id001
 artifacts: []
 deviations:
 - gate: operations
-  what_failed: Initial Ground xView 262 faces; repeated-index triangles caused FBX face loss; validators still fail. Missing maple maps and 17.008947
-    m2 covering authority prevent complete pilot.
-  what_was_tried: Local-origin TIN; exact seam weld r2 then zero-area/crop seam normalization r3; native Max copy extraction, Blender neutral
-    partial pilot; no invented maps/materials.
+  what_failed: Initial Ground xView 262 faces; repeated-index triangles caused FBX face loss; validators still fail. Missing maple maps and 17.008947 m2
+    covering authority prevent complete pilot.
+  what_was_tried: Local-origin TIN; exact seam weld r2 then zero-area/crop seam normalization r3; native Max copy extraction, Blender neutral partial pilot;
+    no invented maps/materials.
   new_tool_written: No shared module. Hashed job-local drivers under external evidence-v003.json.
-  result: Historical v003 pilot Ground 938 tris; Flora 60 NPM / 6420 VPM; xView 0/0 both FBX. First-fragment geometry subsequently accepted D283,
-    not appearance or delivery checks.
+  result: Historical v003 pilot Ground 938 tris; Flora 60 NPM / 6420 VPM; xView 0/0 both FBX. First-fragment geometry subsequently accepted D283, not appearance
+    or delivery checks.
 - gate: operations
-  what_failed: Source-wide inventory exposes unsupported relief, intersecting materials and unresolved footprint/canopy regions. New exports fail
-    xView and delivery checks.
-  what_was_tried: Transformed INSERT extraction resolves former pink area as Rubber18 without lawn assumption. Source-edge parity decomposition,
-    local TIN and flat-first diagnostic. Default header regression fails at 1 then FBX_SCALE_UNITS passes at 100 with exact 2m readback. Long
-    BMesh cleanup replaced by exact-coordinate normalization and explicit zero-area drop list; no input/library edits.
+  what_failed: Source-wide inventory exposes unsupported relief, intersecting materials and unresolved footprint/canopy regions. New exports fail xView
+    and delivery checks.
+  what_was_tried: Transformed INSERT extraction resolves former pink area as Rubber18 without lawn assumption. Source-edge parity decomposition, local TIN
+    and flat-first diagnostic. Default header regression fails at 1 then FBX_SCALE_UNITS passes at 100 with exact 2m readback. Long BMesh cleanup replaced
+    by exact-coordinate normalization and explicit zero-area drop list; no input/library edits.
   new_tool_written: No shared module; job-local drivers and actual failed reports indexed in evidence-v004.json.
-  result: Ground 46614 tris, six maples 60 NPM or 6420 VPM. UnitScaleFactor 100 verified. xView fails 465 faces and 4753 vertices each; 110 zero-area
-    drops each not waived. Source choices and worker-owned repairs remain open; no completed step/delivery claimed.
+  result: Ground 46614 tris, six maples 60 NPM or 6420 VPM. UnitScaleFactor 100 verified. xView fails 465 faces and 4753 vertices each; 110 zero-area drops
+    each not waived. Source choices and worker-owned repairs remain open; no completed step/delivery claimed.
 - gate: operations
   what_failed: Adaptive shared refinement timeout; numerical TIN singularities; independent seams and steep-layer contacts.
-  what_was_tried: Common source/TIN/grid partition; 30 singular TIN triangles excluded, all 1670 source controls retained; 3mm noding, re-anchor
-    to authorized domain, D154 Z-only clearance correction. No general proximity weld or source edits.
+  what_was_tried: Common source/TIN/grid partition; 30 singular TIN triangles excluded, all 1670 source controls retained; 3mm noding, re-anchor to authorized
+    domain, D154 Z-only clearance correction. No general proximity weld or source edits.
   new_tool_written: No shared module; real job-local drivers and failed attempts sealed in evidence-v005.json.
-  result: Both real exports xView 0 faces and 0 vertices, but 9 bowties and public validators fail. Two actual UCX attempts refuse 6832/6660 triangles
-    against incomplete-file limit 3316. No output collider or completed delivery claimed.
+  result: Both real exports xView 0 faces and 0 vertices, but 9 bowties and public validators fail. Two actual UCX attempts refuse 6832/6660 triangles against
+    incomplete-file limit 3316. No output collider or completed delivery claimed.
 - gate: operations
-  what_failed: v006 legend/hedge domain, pavement pinch, heavy NPM budget, misleading catalogue type prefix and over-simplification; native Blender
-    readback crash.
+  what_failed: v006 legend/hedge domain, pavement pinch, heavy NPM budget, misleading catalogue type prefix and over-simplification; native Blender readback
+    crash.
   what_was_tried: Actual-source domain RED/GREEN;2.1mm bounded pinch versus failed3mm; visually verified sandbox/backless bench; same-object NPM20percent
     copies with200tri floor; native Max plus raw-FBX alternative readback.
   new_tool_written: Job-local adapters/probes in immutable external v006/r5 evidence, no shared module/checker edits.
-  result: Real r5 NPM172437/VPM806914 rendertris,4620 controls per profile. Ground xView0/0/0; whole-composition FAIL,1of600 UCX nonconvex; native
-    delivery validation open. Full-site picture next, not a technical waiver.
+  result: Real r5 NPM172437/VPM806914 rendertris,4620 controls per profile. Ground xView0/0/0; whole-composition FAIL,1of600 UCX nonconvex; native delivery
+    validation open. Full-site picture next, not a technical waiver.
 - gate: operations
-  what_failed: Scaled VPM hedge shells violate spacing; copied MAF topology and mandatory Flora star crossings remain noncompliant. NPM native
-    validator FAIL; VPM public topology computation timeout/crash.
-  what_was_tried: Real-export RED/GREEN paired-sheet metric repair and exact-coordinate MAF seams in r1. Boolean union and coplanar dissolve rejected.
-    Independent double-plane audit disproves old float32 UCX427 alarm; actual-export sampled distances and pair relations measured. Exact star
-    cuts exceed NPM budget and still fail; no policy waiver applied.
+  what_failed: Scaled VPM hedge shells violate spacing; copied MAF topology and mandatory Flora star crossings remain noncompliant. NPM native validator
+    FAIL; VPM public topology computation timeout/crash.
+  what_was_tried: Real-export RED/GREEN paired-sheet metric repair and exact-coordinate MAF seams in r1. Boolean union and coplanar dissolve rejected. Independent
+    double-plane audit disproves old float32 UCX427 alarm; actual-export sampled distances and pair relations measured. Exact star cuts exceed NPM budget
+    and still fail; no policy waiver applied.
   new_tool_written: No shared production/checker module. Job-local drivers and rejected experiments sealed externally under evidence-v007.json.
-  result: Same38MAF/4582plants; NPM172437/VPM806914. Whole-file xView FAIL3386/47072faces. C44 interpretation or changed library-copy representation
-    needs model-owner decision; other technical repairs remain worker-owned.
+  result: Same38MAF/4582plants; NPM172437/VPM806914. Whole-file xView FAIL3386/47072faces. C44 interpretation or changed library-copy representation needs
+    model-owner decision; other technical repairs remain worker-owned.
 - gate: operations
-  what_failed: D291 isolated shrub construction passes, but joined actual hedges still yield41370NPM defects; complete r2 xView and package validators
-    FAIL. Native Blender drops39/48malformed MAF faces.
-  what_was_tried: Exact accepted shrubs replicated4576times;4582plants/38MAF retained; one interim Flora atlas. Common rotation34defects,minimum
-    crown21,exact imprint7defects/35xViewfaces on actual8plant group all rejected. Separate disjoint-cell option native exports0/0/0both, but
-    crowns68.1-79.4percent violate retained band; not applied.
+  what_failed: D291 isolated shrub construction passes, but joined actual hedges still yield41370NPM defects; complete r2 xView and package validators FAIL.
+    Native Blender drops39/48malformed MAF faces.
+  what_was_tried: Exact accepted shrubs replicated4576times;4582plants/38MAF retained; one interim Flora atlas. Common rotation34defects,minimum crown21,exact
+    imprint7defects/35xViewfaces on actual8plant group all rejected. Separate disjoint-cell option native exports0/0/0both, but crowns68.1-79.4percent violate
+    retained band; not applied.
   new_tool_written: No shared module or checker edit. Job-local drivers/readback/probes sealed in evidence-v009.json.
-  result: Actual157141NPM/617840VPM;604raw mesh arrays equal r1to r2,4620controls each. D291 pilot gate closed. New model-owner choice is individual
-    crown clipping in dense hedge copies, not a C44 waiver; all other technical repairs remain worker-owned.
+  result: Actual157141NPM/617840VPM;604raw mesh arrays equal r1to r2,4620controls each. D291 pilot gate closed. New model-owner choice is individual crown
+    clipping in dense hedge copies, not a C44 waiver; all other technical repairs remain worker-owned.
 - gate: operations
   what_failed: Whole-site cell-trim loses crowns to32.04/31.01percent, outside accepted pilot68.1percent. Whole-file xView/public validators remainFAIL.
-  what_was_tried: D294 applied to4535hedge copies,4582plants/38MAF/IDs/points/heights retained; four fresh raw/native readbacks and actual-export
-    audit; baseline contact-only scope probe still reaches56.64/31.01percent. Invalid lowercase profile/footprint argument calls retained and
-    corrected.
+  what_was_tried: D294 applied to4535hedge copies,4582plants/38MAF/IDs/points/heights retained; four fresh raw/native readbacks and actual-export audit;
+    baseline contact-only scope probe still reaches56.64/31.01percent. Invalid lowercase profile/footprint argument calls retained and corrected.
   new_tool_written: No shared module/checker change. Job-local drivers and actual receipts sealed externally in evidence-v010.json.
-  result: Actual157137NPM/619340VPM;NPMFlora0face pairs,VPM43non-hedge/mixedpairs. New crown loss requires model-owner choice; technical repairs
-    remain worker-owned.
+  result: Actual157137NPM/619340VPM;NPMFlora0face pairs,VPM43non-hedge/mixedpairs. New crown loss requires model-owner choice; technical repairs remain
+    worker-owned.
 - gate: operations
-  what_failed: Exact stepped union exceeds NPM budget; r1 cross-run contacts; r2 near vertices; r3 simplification/nativeVPM crash; r4 partial
-    edge-only repair; r5 all-pair merge regresses170NPMFlora faces and fails independent support audit/nativeVPM import.
-  what_was_tried: D298 derived continuous species/run envelopes; different-species separator retains>=68percent; actual r2 raw/native readback,
-    independent support/census audit and complete90plant component pilot. r3/r4/r5 rejected, never promoted.
+  what_failed: Exact stepped union exceeds NPM budget; r1 cross-run contacts; r2 near vertices; r3 simplification/nativeVPM crash; r4 partial edge-only
+    repair; r5 all-pair merge regresses170NPMFlora faces and fails independent support audit/nativeVPM import.
+  what_was_tried: D298 derived continuous species/run envelopes; different-species separator retains>=68percent; actual r2 raw/native readback, independent
+    support/census audit and complete90plant component pilot. r3/r4/r5 rejected, never promoted.
   new_tool_written: No shared module/checker changes. Owned job-local drivers, actual failures and pilot exports sealed in evidence-v011.json.
-  result: Preferred r2 actual162743NPM334928VPM,4582IDs/census and38MAF retained,minimum support78.225/78.655percent; native39/48inheritedMAFface
-    loss and technical FAILs remain. New continuous construction picture perD300 pending, not another D298route decision.
+  result: Preferred r2 actual162743NPM334928VPM,4582IDs/census and38MAF retained,minimum support78.225/78.655percent; native39/48inheritedMAFface loss and
+    technical FAILs remain. New continuous construction picture perD300 pending, not another D298route decision.
 - gate: operations
   what_failed: Old v011 edge repair used one-based xView IDs as zero-based. Native MAF39/48face loss persists. Original native library bench37xViewfaces;
     closed-component Boolean worsens bench40to70faces/38nearvertices and is rejected.
   what_was_tried: D301accepted continuous hedges replicated; distance-checked one-based decoder and bounded actual-edge contractions; actual exports/fourreadbacks
-    and independent connected support/census audit. SevenMAFtypes isolated, original bench freshly imported read-only, C44/model boundary identified
-    before changing thin details.
+    and independent connected support/census audit. SevenMAFtypes isolated, original bench freshly imported read-only, C44/model boundary identified before
+    changing thin details.
   new_tool_written: Job-local drivers/tests/diagnostics sealed in evidence-v012.json; no shared module/checker/library changes.
   result: Actual162159NPM334422VPM;all4582IDs/38MAF retained;NPMFlora0faces0vertices0bowties0area;minimum crown78.225/78.655percent. Whole validatorsFAIL.
     New copy-only MAF constructive/thin-detail repair choice is distinct from closed hedge gates.
 - gate: operations
   what_failed: Original native Bench02537overlapping faces; source-bound6.2mm frame union r1 leaves14faces/8nearvertices at tiny seat joints, rejected.
-  what_was_tried: D305copy-only pilot; measured frame holes retained, micro-bevels squared; r2seat back+4.910mm/top-0.699mm aligns real insets. Two actual FBXs/raw/native readbacks and independent sampled surface diagnostics.
+  what_was_tried: D305copy-only pilot; measured frame holes retained, micro-bevels squared; r2seat back+4.910mm/top-0.699mm aligns real insets. Two actual
+    FBXs/raw/native readbacks and independent sampled surface diagnostics.
   new_tool_written: Eleven job-local drivers/tests379lines sealed in evidence-v013.json; no shared module/checker/library changes.
-  result: Separate116triangleNPM/VPMpilot exactnativefaces,raw/native publicxView0faces0vertices0bowties0area; overallbbox exact and sampled displacement<6.072mm. Fullsitev012bytes unchanged and technicalFAIL retained. RequiredD305before-after picture before any replication.
+  result: Separate116triangleNPM/VPMpilot exactnativefaces,raw/native publicxView0faces0vertices0bowties0area; overallbbox exact and sampled displacement<6.072mm.
+    Fullsitev012bytes unchanged and technicalFAIL retained. RequiredD305before-after picture before any replication.
 - gate: operations
   what_failed: Three MAF source-set repair routes remain FAIL; sourceTable016 has76real wood planks, not removable fasteners. Remaining36copies not repaired.
-  what_was_tried: D316accepted Bench025 replicated2of2;38MAF4582census retained. Source native component views, structural profiles/solids, bounded-netLOD and actual raw/native readbacks. Separate continuousTable016r4 option changes physical plank representation and is not adopted.
+  what_was_tried: D316accepted Bench025 replicated2of2;38MAF4582census retained. Source native component views, structural profiles/solids, bounded-netLOD
+    and actual raw/native readbacks. Separate continuousTable016r4 option changes physical plank representation and is not adopted.
   new_tool_written: 38job-local drivers/adapters1119literal lines sealed externally in evidence-v014.json; no shared module/checker/library changes.
-  result: Actual162011NPM334274VPM;GroundFlora600UCX36otherMAF exact. Option2108tri both,raw/native0faces0vertices0bowties0area,1000seat+1000gap probes;sampled19.126/39.624mm NOT Hausdorff. NEW plank-representation choice, not renewed D316repair scope. Whole validators and complete-set regression remain FAIL.
+  result: Actual162011NPM334274VPM;GroundFlora600UCX36otherMAF exact. Option2108tri both,raw/native0faces0vertices0bowties0area,1000seat+1000gap probes;sampled19.126/39.624mm
+    NOT Hausdorff. NEW plank-representation choice, not renewed D316repair scope. Whole validators and complete-set regression remain FAIL.
 - gate: operations
-  what_failed: Three VPM physical-slat source-profile repair routes remain rejected; latest bounded cleanup70faces0vertices, not a pass. Source two-plank diagnostic has0contacts3area-only pairs, not3self-intersections.
-  what_was_tried: D319accepted NPM-only Table016r4 adopted12of12; every VPM mesh array exact againstv014. Four raw/native readbacks and24actual placed NPMTable xView checks clean. VPM solids, aligned profiles and radial embeds retained as failed candidates; no NPMsurface transferred toVPM.
+  what_failed: Three VPM physical-slat source-profile repair routes remain rejected; latest bounded cleanup70faces0vertices, not a pass. Source two-plank
+    diagnostic has0contacts3area-only pairs, not3self-intersections.
+  what_was_tried: D319accepted NPM-only Table016r4 adopted12of12; every VPM mesh array exact againstv014. Four raw/native readbacks and24actual placed NPMTable
+    xView checks clean. VPM solids, aligned profiles and radial embeds retained as failed candidates; no NPMsurface transferred toVPM.
   new_tool_written: 20job-local drivers/adapters576literal lines sealed externally in evidence-v015.json; no shared module/checker/library changes.
-  result: Actual172487NPM334274VPM,38MAF4582census retained,otherNPM26MAFGroundFlora600UCXexact. NativeotherMAF15/48face loss remains. NEW scope question is a separate parameterized VPM76physical-slat/frame pilot with geometric slots>=6.2mm; no failed candidate offered for approval. Whole validators and two repair regressions remain FAIL.
+  result: Actual172487NPM334274VPM,38MAF4582census retained,otherNPM26MAFGroundFlora600UCXexact. NativeotherMAF15/48face loss remains. NEW scope question
+    is a separate parameterized VPM76physical-slat/frame pilot with geometric slots>=6.2mm; no failed candidate offered for approval. Whole validators and
+    two repair regressions remain FAIL.
 - gate: operations
-  what_failed: Three distinct parametric VPM pilot routes fail343/71/19xViewfaces; numerical retessellation regresses22. The r3angular-neighbour rule wrongly filled source access windows, caught by a real regression.
-  what_was_tried: D321one-copy76slat/frame pilot; conformal ring grids, aligned levels, bounded2.1mm weld/full maps and source-angular-window correctionr3b. Actual FBX/raw-native readbacks and four mesh screenshots, no Max opened for user.
-  new_tool_written: Eighteen job-local drivers/adapters/tests661literal lines sealed externally in evidence-v016.json; no shared module/checker/library changes.
-  result: Current r3b6606triangles,raw/native18faces0vertices0bowtiesFAIL; bboxdelta0.031mm,76woodcontrols/72emptyslots/288emptyaccesspoints. Both v015siteFBXs unchanged. D321scope closed; new picture gate is silhouette only, never approval of technicalFAIL or replication of failing artifact.
+  what_failed: Three distinct parametric VPM pilot routes fail343/71/19xViewfaces; numerical retessellation regresses22. The r3angular-neighbour rule wrongly
+    filled source access windows, caught by a real regression.
+  what_was_tried: D321one-copy76slat/frame pilot; conformal ring grids, aligned levels, bounded2.1mm weld/full maps and source-angular-window correctionr3b.
+    Actual FBX/raw-native readbacks and four mesh screenshots, no Max opened for user.
+  new_tool_written: Eighteen job-local drivers/adapters/tests661literal lines sealed externally in evidence-v016.json; no shared module/checker/library
+    changes.
+  result: Current r3b6606triangles,raw/native18faces0vertices0bowtiesFAIL; bboxdelta0.031mm,76woodcontrols/72emptyslots/288emptyaccesspoints. Both v015siteFBXs
+    unchanged. D321scope closed; new picture gate is silhouette only, never approval of technicalFAIL or replication of failing artifact.
 - gate: operations
-  what_failed: Accepted v016form still had18actual xViewfaces; millimetre greedy weld folded coplanar faces. Other five-type source-structural repairs remain incomplete.
-  what_was_tried: D321form answer6903084291 closes picture gate. Exact Boolean/topology simplification/nano seam merge gives4920triangle pilot clean pre/raw/native,76wood72slots288access. Only then replicate12VPMTables, actual24placed checks clean. Source-shape probes reject filled cavities/wheel slots/raised low posts in isolated other-type candidates.
+  what_failed: Accepted v016form still had18actual xViewfaces; millimetre greedy weld folded coplanar faces. Other five-type source-structural repairs remain
+    incomplete.
+  what_was_tried: D321form answer6903084291 closes picture gate. Exact Boolean/topology simplification/nano seam merge gives4920triangle pilot clean pre/raw/native,76wood72slots288access.
+    Only then replicate12VPMTables, actual24placed checks clean. Source-shape probes reject filled cavities/wheel slots/raised low posts in isolated other-type
+    candidates.
   new_tool_written: 37job-local drivers/tests903literal lines sealed externally in evidence-v017.json; no shared module/checker/library changes.
-  result: Actual319154VPMraw/native,no face loss. NPMv015byte-unchanged;26otherMAFGroundFlora600UCX arrays exact,38MAF4582census retained. WholeVPMxView14191faces44vertices202bowtiesFAIL; nativevalidator3pass3fail1review5not_run. No new user question; remaining technical work stays worker-owned.
+  result: Actual319154VPMraw/native,no face loss. NPMv015byte-unchanged;26otherMAFGroundFlora600UCX arrays exact,38MAF4582census retained. WholeVPMxView14191faces44vertices202bowtiesFAIL;
+    nativevalidator3pass3fail1review5not_run. No new user question; remaining technical work stays worker-owned.
 - gate: operations
-  what_failed: Bike900pre/rawclean but native4faces; initial Urn seam2vertices; Bench one-sided clean MeshFix route loses source frame148.463mm; exact2mm generated edges quantize below threshold; fine Canopy union retains zero-area needles.
-  what_was_tried: D305/D316source-bound Sand/Bike/Urn repairs, preserved source heights/slots/cavity/shelf, pairedNPMLOD; actualpre/raw/nativechecks before16copy replication perprofile. Independent exhaustive actualGround-to-UCX triangle-distance partition; no sampling substituted for coverage.
+  what_failed: Bike900pre/rawclean but native4faces; initial Urn seam2vertices; Bench one-sided clean MeshFix route loses source frame148.463mm; exact2mm
+    generated edges quantize below threshold; fine Canopy union retains zero-area needles.
+  what_was_tried: D305/D316source-bound Sand/Bike/Urn repairs, preserved source heights/slots/cavity/shelf, pairedNPMLOD; actualpre/raw/nativechecks before16copy
+    replication perprofile. Independent exhaustive actualGround-to-UCX triangle-distance partition; no sampling substituted for coverage.
   new_tool_written: 65job-local drivers/adapters/tests1273literal lines sealed in evidence-v018.json; no shared module/checker/registry/library edits.
-  result: Actual178571NPM/301662VPMraw,178556/301662native;64placed checks clean,22otherMAF/profile andGround/Flora/600UCX arrays exact. Complete57226faceUCXbound0.089935645m<0.1m;213widegaps open. WholevalidatorsFAIL; isolatedBench1areaFAIL andCanopyFAIL NOTadopted. No new user question.
+  result: Actual178571NPM/301662VPMraw,178556/301662native;64placed checks clean,22otherMAF/profile andGround/Flora/600UCX arrays exact. Complete57226faceUCXbound0.089935645m<0.1m;213widegaps
+    open. WholevalidatorsFAIL; isolatedBench1areaFAIL andCanopyFAIL NOTadopted. No new user question.
 - gate: operations
-  what_failed: Bench013actualraw/native1AREA-onlypair; QEM NPMpinchededge, source-profile clean684triangle option fills rounded bevel33.253mm. Isolated-clean Urn10mmshelf trial still penetrates actualGround slope14.334mm.
-  what_was_tried: Source-bound2face diagonal flip with every vertex exact; fresh isolatedpre/raw/native then7VPMcopies,14actualplaced checks clean. Independent reverse-source and actualGroundray guards reject misleading clean candidates; no threshold changes.
+  what_failed: Bench013actualraw/native1AREA-onlypair; QEM NPMpinchededge, source-profile clean684triangle option fills rounded bevel33.253mm. Isolated-clean
+    Urn10mmshelf trial still penetrates actualGround slope14.334mm.
+  what_was_tried: Source-bound2face diagonal flip with every vertex exact; fresh isolatedpre/raw/native then7VPMcopies,14actualplaced checks clean. Independent
+    reverse-source and actualGroundray guards reject misleading clean candidates; no threshold changes.
   new_tool_written: 66job-local drivers/adapters/tests1351literal lines sealed in evidence-v019.json; no shared module/checker/registry/library changes.
-  result: Adopted ONLY7VPMBench013copies,311042raw/native,no face loss;31otherMAFGroundFlora600UCXexact,NPMv018unchanged. All601partxViewFAIL3693faces44vertices36bowties versus render-only3604/0/36; unchangedUCX89faces44vertices retained. No new user question.
+  result: Adopted ONLY7VPMBench013copies,311042raw/native,no face loss;31otherMAFGroundFlora600UCXexact,NPMv018unchanged. All601partxViewFAIL3693faces44vertices36bowties
+    versus render-only3604/0/36; unchangedUCX89faces44vertices retained. No new user question.
 - gate: operations
-  what_failed: Actual Urn shelf crosses slopingGround -35.293to+40.719mm; NPMBench envelope/native/refinement routes remain rejected. UCX pair/cluster merges retain47/26facesFAIL; first reconstructed subset introduces8.106um repeat-roundtrip drift. Canopy finishing1627facesFAIL remains isolated.
-  what_was_tried: D305/D316 floor-band joint moves only9Zvalues50mm belowGround, no bounds/pivot/cavity/count change; full actual shelf/Ground polygon partition,8placedchecks clean. UCX r4 retains original scene objects, removes36pieces ONLY after NEW actual57226triangle coverage proof; all564survivors/render exact in matching raw/native readbacks.
+  what_failed: Actual Urn shelf crosses slopingGround -35.293to+40.719mm; NPMBench envelope/native/refinement routes remain rejected. UCX pair/cluster merges
+    retain47/26facesFAIL; first reconstructed subset introduces8.106um repeat-roundtrip drift. Canopy finishing1627facesFAIL remains isolated.
+  what_was_tried: D305/D316 floor-band joint moves only9Zvalues50mm belowGround, no bounds/pivot/cavity/count change; full actual shelf/Ground polygon partition,8placedchecks
+    clean. UCX r4 retains original scene objects, removes36pieces ONLY after NEW actual57226triangle coverage proof; all564survivors/render exact in matching
+    raw/native readbacks.
   new_tool_written: 41job-local drivers/tests1087literal lines sealed in evidence-v020.json; no shared code/checker/registry/library edits.
-  result: Adopted4Urn and564UCX/6564tris; bound89.935644792mm/446541partitionvertices/0missing/0degenerate; allUCX0/0/0/0. NPM178571raw178556native/VPM311042rawnative.175wideUCXpairs and whole3595faces36bowtiesFAIL stay worker-owned; no new user question.
+  result: Adopted4Urn and564UCX/6564tris; bound89.935644792mm/446541partitionvertices/0missing/0degenerate; allUCX0/0/0/0. NPM178571raw178556native/VPM311042rawnative.175wideUCXpairs
+    and whole3595faces36bowtiesFAIL stay worker-owned; no new user question.
 - gate: operations
-  what_failed: Canopy source-capped union2782facesFAIL; strict finishing refuses zero-area/duplicate faces; MeshFix9496to14faces loses construction. GroundLOD89faces, conservative underlay2faces, local source lock0faces but full source-height comparison8.179619mm exceeds local5mm engineering guard;1invertedtriangle/excess domain remains.
-  what_was_tried: Actual component78bottom235edge cap and closed source seats; all candidates kept isolated. Material-border-locked NPMGround29532tris, conservative base+whole skirt-2.5mm and local source lock; complete57226source triangles139602polygon partitions615564vertices. No whole-site export or adoption.
+  what_failed: Canopy source-capped union2782facesFAIL; strict finishing refuses zero-area/duplicate faces; MeshFix9496to14faces loses construction. GroundLOD89faces,
+    conservative underlay2faces, local source lock0faces but full source-height comparison8.179619mm exceeds local5mm engineering guard;1invertedtriangle/excess
+    domain remains.
+  what_was_tried: Actual component78bottom235edge cap and closed source seats; all candidates kept isolated. Material-border-locked NPMGround29532tris,
+    conservative base+whole skirt-2.5mm and local source lock; complete57226source triangles139602polygon partitions615564vertices. No whole-site export
+    or adoption.
   new_tool_written: 19job-local drivers/tests290literal lines sealed in evidence-v021.json; no shared code/checker/registry/library edit.
-  result: Nothing adopted; currentv020NPM/VPM FBXbytes unchanged. NEWmodel/budget question6922279811 asks NPM-onlyGround<=8.2mm derivation/base2.5mm permission to retain all7actual5064triBenches; projected179447NPM is NOT export/readback.5mm guard/inverted triangle/wholeQA not waived. Closed gates stay closed.
+  result: Nothing adopted; currentv020NPM/VPM FBXbytes unchanged. NEWmodel/budget question6922279811 asks NPM-onlyGround<=8.2mm derivation/base2.5mm permission
+    to retain all7actual5064triBenches; projected179447NPM is NOT export/readback.5mm guard/inverted triangle/wholeQA not waived. Closed gates stay closed.
+- gate: operations
+  what_failed: v021Ground8.179619mm/local5mmguard and1invertedface; Canopy/Flora currentQA stillFAIL; exactknifeFlora97regulatory but37xViewfaces and extra
+    budget.
+  what_was_tried: D335 source-local refinement and two-face diagonal; complete actual exported57226triangle4.975942mm proof; wholeNPM7fullBenches and byte-identical2048Floraatlas
+    embedding. Canopy source-tier/wall/regularized-joint and conformalFlora3routefamilies retainedREJECTED, not adopted.
+  new_tool_written: 35job-local drivers/tests610literal lines sealed in evidence-v022.json; no shared module/checker/library edits.
+  result: Adopt ONLY NPMGround29578/full7Bench:179493raw179492native,14placedchecks clean,31otherMAF+Floraarrays exact. All4620pivots covered, Urn completepartitions6.781mmburial.
+    NativeV006PASS; wholeNPM553faces72verts53bowtiesFAIL,1Canopy face loss/currentFlora515regulatorycrossings/skirt/maps/UV/175UCXwidegaps worker-owned.
+    VPM bytes unchanged; D335 closed/no new question.
 gates:
   inputs:
     status: review
-    note: All22original/source/library/map/bench/old-site checks rehash equal, including both v014resume FBXs. Missing source/grey/species gaps remain. Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
+    note: All22original/source/library/map/bench/old-site checks rehash equal, including both v014resume FBXs. Missing source/grey/species gaps remain.
+      Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
     evidence: *id001
   parts:
     status: pass
-    note: Original site/scope Gate1 and pilot accepted. D287 confirms all38MAF/4582plant composition; D316closes Bench025pilot; D319closes NPM-only Table016representation choice, NOT VPM or technical acceptance.
+    note: Original site/scope Gate1 and pilot accepted. D287 confirms all38MAF/4582plant composition; D316closes Bench025pilot; D319closes NPM-only Table016representation
+      choice, NOT VPM or technical acceptance.
     evidence:
     - path: jobs/SIL13-COLD-1315/parts-full-site-picture-confirmed-v007.json
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: Currentv020site remains unchanged; Urn4copies and564UCX retained. All v021Canopy/Ground trials NOTadopted. TechnicalFAILs remain worker-owned; one NEWNPMGround8.2mm/base2.5mm budget-model permission question6922279811, not a waiver or repeated closed gate.
+    note: D335 answered, original Ground/VPM/libraries untouched. Actual NPM derivedGround/full7Bench adopted with scoped QA; Canopy/Flora trial variants
+      NOTadopted. Whole technicalFAIL remains worker-owned. All closed gates stay closed; no new human question.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v020.json
-      sha256: 8cdbd0fb2e9c3e93213471603b2b0375b6507100c09d67775deb1ea433970c75
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v021.json
-      sha256: 2c6a7cd10948853270b39d2d27e4b2a2e364729855f10f7f7951320fe665e24e
-    - path: jobs/SIL13-COLD-1315/question-receipt-v021.json
-      sha256: c265fa3520e99a926cd6e9dd62c28483a5f4cc7a0e2a45fdc8cffc502657a749
+    - &id003
+      path: jobs/SIL13-COLD-1315/source-wide-summary-v022.json
+      sha256: 96124315cc624f1d88aa49ff015c79f0b6e27135a9230b9efbcfa61cd667f474
+    - &id004
+      path: jobs/SIL13-COLD-1315/evidence-v022.json
+      sha256: 2f39a5d5c13279cff46035351a7ceba7068142d83c74bb4a143d1da4c89d8d52
   budgets:
     status: review
-    waits: user
-    note: Actualcurrent178571NPM/311042VPM unchanged. Retaining all7full5064triBenches with originalGround projects208811NPM>180000; isolatedGround29532 projects179447, NOT exported. NEWquestion6922279811 asks NPM-onlysource-derivedGround<=8.2mm including base+whole skirt-2.5mm permission, VPM unchanged; no answer yet.5mm engineeringguard FAIL,1invertedface/excess domain and all technicalQA stay worker-owned.175wideUCXgaps unchanged.
+    note: D335 permission CLOSED. ActualNPM179493raw/179492native<=180000,Ground29578,7Bench5064each; all38MAF/4582plants retained. NOTold179447projection.
+      Local5mmguard actuallymet at4.975942mm. VPM311042render/6564UCX bytes unchanged;175widegaps remainOPEN. Other texture/skirt/UV budgets/checks incomplete.
     evidence: *id002
   export_readback:
     status: review
-    note: CurrentNPMv020/site-urn-r3 andVPMv020/site-ucx-r4 actualexports;178571NPMraw178556native/311042VPMrawnative. Urn8placedchecks clean;564retainedUCX/render exact versus matching previousraw/native. NPM15face lossFAIL. WholeVPM565parts3595faces0vertices36bowtiesFAIL, UCXcontribution0/0/0/0. NativevalidatorsNPM1/4/1/2,VPM3/3/1/5FAIL; not delivery acceptance.
+    note: Resume NPMv022/site-npm-r2/VPMv020/site-ucx-r4 only. Four freshNPMraw/native r1/r2reads; allr1/r2geometryarrays EXACT,14placedBenchchecks clean,
+      Ground0/0/0/0. Native1Canopyface lossFAIL. WholexView553/72/53FAIL; freshpublicvalidator2pass3fail1review4not_run, V006PASS with2originalmaps actualembedded/hashmatch.
+      FullGroundproof+4620pivots+2Urnpartitions measured, not whole delivery.
     evidence: *id002
   report:
     status: review
-    note: v021491affectedtests pass/5historicaldeselected; separateCanopy1RED andbudgetGround2RED retained.94immutableDrivefiles24210643bytessealed,22original/resumehashesequal andbothcurrentFBXunchanged. Nothing adopted; source-height5mmguard FAIL and1invertedface explicit. NEWNPMGroundprofile/budget question6922279811 awaits user; not a technical waiver. Full suite deferred to merge batch(rule68).
+    note: v022508affectedpassed5historicaldeselected +18midpoint/negative/rigidprobes;2outputaliasprobes. SeparatecurrentFlora1RED/currentwholeQAFAIL retained,
+      all Canopy/Flora trialsREJECTED.208Drivefiles141006800bytessealed,22original hashes equal. D335 answer recorded, no new question. Full suite deferred
+      to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v021.md
-      sha256: 3a6b4fbe6fe448e3b17b317e0fc93afd8d8a74b8d9acefbae295613edd88c975
-    - path: jobs/SIL13-COLD-1315/evidence-v021.json
-      sha256: dabd250b607a175870502702fb45b82aa15f19b05f3be15ca19e76791906c6e6
-    - path: jobs/SIL13-COLD-1315/question-receipt-v021.json
-      sha256: c265fa3520e99a926cd6e9dd62c28483a5f4cc7a0e2a45fdc8cffc502657a749
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v022.md
+      sha256: e59f9b0370225c8b228cde6506daba4c51217ac1dbb79ec9a33869a5e161cd3f
+    - *id003
+    - *id004
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: D321/NPMTable/Bench025/hedges/composition stay CLOSED. No finalvisual/material acceptance requested; wholeQA stillFAIL. Ground-only actualmesh diagnostic supports the NEWNPMprofile/budget scope question6922279811 atbudgets gate; not a rendered whole-site model or picture approval.
+    note: 'D335/D321/NPMTable/Bench025/hedges/composition stay CLOSED. No finalvisual/material acceptance requested: wholeQA stillFAIL. CurrentactualNPM
+      includes approvedGroundroute/fullBench; trialCanopy/Flora notadopted, no new picture/model question.'
     evidence: *id002
   checker:
     status: missing
-    note: Complete final SINTEZ not run; unchanged v020native validatorsNPM1pass4fail1review2not_run/VPM3pass3fail1review5not_run, neither pass. No new whole-site export or validator run. Technical repairs worker-owned; NEWNPMGroundmodel permission waits separately atbudgets gate.
+    note: Complete finalSINTEZ notrun. FreshNPMpublicvalidator2pass3fail1review4not_run, V006PASSonly; VPM unchanged historical3pass3fail1review5not_run.
+      No deliveryPASS, no technicalwaiver, no new modelquestion.
     evidence: []
