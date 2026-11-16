@@ -86,8 +86,12 @@ def test_session_bisect_connect_on_flat_strip_is_rejected(capsys):
 
 def test_new_operation_on_the_same_strip_passes():
     before = {"Main": big_main(), "Letters": strip()}
+    snapshot = {k: (p.mesh.vertices.copy(), p.mesh.triangles.copy(), p.uv.copy()) for k, p in before.items()}
     target = 3100                                      # limit(60 296) = 3015 < 3100
     result = densify_for_ucx_budget(before, "Letters", target)
+    assert all(np.array_equal(a, b) for k, p in before.items()
+               for a, b in zip(snapshot[k], (p.mesh.vertices, p.mesh.triangles, p.uv)))   # input not mutated
+    assert result.object is not before and set(result.object) == set(before)
     assert result.applied, result.question
     assert result.report.passed and all(r.count == 0 for r in result.report.results)
     assert result.object["Main"] is before["Main"]
@@ -109,6 +113,34 @@ def test_runtime_on_a_50k_face_part_is_under_the_bound(capsys):
     assert result.applied, result.question
     assert result.notes["faces_after"] == 200_000
     assert elapsed < RUNTIME_BOUND_S
+    long_strip = {"Main": big_main(), "Strip": strip(25_000)}   # 50 000 faces, 50 002 open border edges
+    t0 = time.perf_counter()
+    result = densify_for_ucx_budget(long_strip, "Strip", 6_000)
+    elapsed = time.perf_counter() - t0
+    with capsys.disabled():
+        print(f"[#1537] same on a 25 000-quad strip (50 002 border edges): {elapsed:.2f} s")
+    assert result.applied, result.question
+    assert elapsed < RUNTIME_BOUND_S
+
+
+@pytest.mark.parametrize("seed", range(10))
+def test_probe_grid_cover_equals_brute_force(seed):
+    from dt_ai.ops.densify import _covered, _point_triangle_distance
+    rng = np.random.default_rng(seed)
+    base = rng.uniform(0, 3, (40, 3, 3))
+    base[::3, 2] = base[::3, 1]                              # every third one a segment
+    base[::5] *= [1, 1, 0]                                   # some flat
+    pick = rng.integers(0, len(base), 300)
+    w = rng.dirichlet([1, 1, 1], (300, 2))
+    items = np.einsum("pkc,pcd->pkd", w, base[pick])        # points inside base faces ...
+    items[::4] += rng.normal(0, 1e-3, (75, 2, 3))           # ... some pushed off by ~1 mm
+    items[1::7] += rng.normal(0, 2e-5, (len(items[1::7]), 2, 3))   # ... some within tol noise
+    brute = np.zeros(len(items), bool)
+    for s in range(len(base)):
+        d = [_point_triangle_distance(items[:, k], np.repeat(base[s:s + 1], len(items), 0)) for k in range(2)]
+        brute |= (d[0] <= 1e-4) & (d[1] <= 1e-4)
+    assert brute.any() and (~brute).any()
+    assert np.array_equal(_covered(items, base), brute)
 
 
 # ---- [D012] and the question ---------------------------------------------------------------------------------------
@@ -271,7 +303,7 @@ def test_probe_check_rejects_each_broken_invariant():
     assert broken(d) == set()
     v = d.mesh.vertices.copy()
     v[0] += [0, 0, -0.5]
-    assert broken(UVPart(Mesh(v, d.mesh.triangles), d.uv)) == {"bbox_unchanged"}
+    assert "bbox_unchanged" in broken(UVPart(Mesh(v, d.mesh.triangles), d.uv))   # the moved corner also opens edges
     uv = d.uv.copy()
     uv[5] = uv[5][::-1]
     assert "uv_mirrored_faces" in broken(UVPart(d.mesh, uv))
