@@ -160,7 +160,7 @@ Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Sy
 labels are pinned, not silently bound. Technical QA, final user acceptance, SINTEZ
 and publication remain incomplete; no readiness increase.
 
-## v018 current continuation
+## v018 historical continuation
 
 [CONTINUATION-v018.md](CONTINUATION-v018.md) supersedes the resume site above.
 D305/D316source-bound repair actually adopted16Sand/Bike/Urn copies in EACH profile:
@@ -174,3 +174,19 @@ actualraw/native1area-onlyFAIL; Canopy union stillFAIL. Wholepublicvalidators
 bothFAIL; finalvisual/material/SINTEZ not yet reached. Resume BOTH profiles from
 v018/site-three-r1; never promote an isolated partial-pass artifact. No new human
 question is pending. All prior model/picture gates, particularlyD321, stay closed.
+
+## v019 current continuation
+
+[CONTINUATION-v019.md](CONTINUATION-v019.md) supersedes the resume locations above:
+NPM stays v018/site-three-r1; VPM is v019/site-bench-r1. D305/D316 source-bound
+constructive finishing actually repairs7VPMBench013copies after clean isolated
+pre/raw/native QA; all14placed raw/native checks clean,311042actual triangles/no
+native face loss,31otherMAF/Ground/Flora/600UCX exact. NPM178571/178556unchanged.
+All38MAF/4582census retained. Source-filling NPMBench and slope-penetrating Urn
+paired trial are REJECTED, never resume fromsite-urn-r1. Render-only VPMxView
+3604faces0vertices36bowtiesFAIL; new all601partscope3693/44/36includes unchanged
+UCX89faces44nearvertices, not a render regression. Complete89.936mmUCXcoverage
+bound remains applicable only by actual-array equality;213widepairs remainopen.
+454affected tests pass/5historical deselected; separate4unresolvedtestsFAIL.
+No new human/model gate, no readiness/deliveryPASS; technical repairs worker-owned.
+Full suite: deferred to merge batch (rule 68).

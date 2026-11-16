@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-three-MAF-UCX-coverage-v018
+run_id: cold-1315-source-Bench013-VPM-finish-v019
 synthetic: false
 path: deviation
 inputs: &id001
@@ -114,6 +114,11 @@ deviations:
   what_was_tried: D305/D316source-bound Sand/Bike/Urn repairs, preserved source heights/slots/cavity/shelf, pairedNPMLOD; actualpre/raw/nativechecks before16copy replication perprofile. Independent exhaustive actualGround-to-UCX triangle-distance partition; no sampling substituted for coverage.
   new_tool_written: 65job-local drivers/adapters/tests1273literal lines sealed in evidence-v018.json; no shared module/checker/registry/library edits.
   result: Actual178571NPM/301662VPMraw,178556/301662native;64placed checks clean,22otherMAF/profile andGround/Flora/600UCX arrays exact. Complete57226faceUCXbound0.089935645m<0.1m;213widegaps open. WholevalidatorsFAIL; isolatedBench1areaFAIL andCanopyFAIL NOTadopted. No new user question.
+- gate: operations
+  what_failed: Bench013actualraw/native1AREA-onlypair; QEM NPMpinchededge, source-profile clean684triangle option fills rounded bevel33.253mm. Isolated-clean Urn10mmshelf trial still penetrates actualGround slope14.334mm.
+  what_was_tried: Source-bound2face diagonal flip with every vertex exact; fresh isolatedpre/raw/native then7VPMcopies,14actualplaced checks clean. Independent reverse-source and actualGroundray guards reject misleading clean candidates; no threshold changes.
+  new_tool_written: 66job-local drivers/adapters/tests1351literal lines sealed in evidence-v019.json; no shared module/checker/registry/library changes.
+  result: Adopted ONLY7VPMBench013copies,311042raw/native,no face loss;31otherMAFGroundFlora600UCXexact,NPMv018unchanged. All601partxViewFAIL3693faces44vertices36bowties versus render-only3604/0/36; unchangedUCX89faces44vertices retained. No new user question.
 gates:
   inputs:
     status: review
@@ -127,26 +132,26 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D305/D31616Sand/Bike/Urncopies adopted inEACHprofile aftercleanpre/raw/native controls;64actualplaced checks clean.22otherMAF/profile andGround/Flora/600UCX exact. D321andearlierpicturegatesclosed. Whole site stillFAIL; Bench013/Canopyisolated NOTadopted; no technical waiver or new user question.
+    note: D305/D316sevenVPMBench013copies adopted after cleanpre/raw/native controls;14actualplaced checks clean,31otherMAF/Ground/Flora/600UCXexact. NPMv018unchanged; failedNPMBench/Urnslope trials NOTadopted. D321andearliergatesclosed, wholeQAFAIL, no new user question.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v018.json
-      sha256: fd0a6c15b0b4d5c38c8cf60cdd53f1794949c5ab2ec1b4158efa5739c04bf5ba
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v019.json
+      sha256: 45cedd658bfd9b69c941d9ca5e23f8601a8bf9a516d2fbdfe005dd4f3f5e3a8d
   budgets:
     status: review
-    note: Actual178571NPM<=180000,1429remaining;301662VPM<=2625000;600UCX6876tri. Flora arrays unchanged; prior support78.225/78.655percent applicable, not remeasured. CompleteactualGroundtoUCXbound0.089935645m<0.1m,57226faces/450783partitionvertices/0unassigned.213widegaps/materials/UV/density remainopen. IsolatedBench/Canopy counts not promoted.
+    note: Actual178571NPM<=180000,1429remaining;311042VPM<=2625000;600UCX6876tri. Flora/Ground/600UCXarrays unchanged; prior crown support and complete89.936mmUCXcoverage apply by equality, not remeasured.213widepairs/UCXtopology/maps/UV/density remainopen. NPMBench/Urn trial counts not promoted.
     evidence: *id002
   export_readback:
     status: review
-    note: Actual178571NPMraw/178556native and301662VPMraw/native; all64repairedplacedinstances0faces0vertices0bowties0area,22otherMAF/profile exact. NPMother15face loss retainedFAIL. WholepublicxViewNPM728faces114verts165bowties/VPM4794faces0verts162bowtiesFAIL. ActualnativepackagevalidatorsNPM1/4/1/2,VPM3/3/1/5FAIL; not delivery acceptance.
+    note: Actual178571NPMraw/178556native and311042VPMraw/native;14newplacedBenchchecks clean,31otherVPMMAFexact. NPM15face lossFAIL. Render-onlyxViewNPM728/114/165,VPM3604/0/36FAIL; all601VPMparts3693/44/36includes unchangedUCX89faces44vertices. NativevalidatorsNPM1/4/1/2,VPM3/3/1/5FAIL; not delivery acceptance.
     evidence: *id002
   report:
     status: review
-    note: v018paired16MAFrepair andcompleteactualUCXcoverage;427checkpoint controls pass/5historicaldeselected; separately2CURRENTfailed6passed and7HISTORICALfailed32deselected.347immutableDrivefiles148336598bytessealed,22original/resumehashesequal. WholevalidatorsFAIL. Full suite deferred to merge batch(rule68).
+    note: v019sevenVPMBenchfinish,454affectedcheckpoint tests pass/5historicaldeselected; separately4unresolvedfailed.268immutableDrivefiles184461376bytessealed,22original/resumehashesequal. RejectedNPMshape/Urnslope trials notpromoted. WholevalidatorsFAIL. Full suite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v018.md
-      sha256: 961a266a7966291ea5138e1ce4172179b55e67fdf06eec60c466967ac3409a81
-    - path: jobs/SIL13-COLD-1315/evidence-v018.json
-      sha256: 6403b48c1c808eafc54d015d9a5144f42822eb0d153379126a9ce0c321f88f7a
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v019.md
+      sha256: db1609649db3a0709dea769c2eb32c038396d37a4dae50a5548b1fff2fefd8fd
+    - path: jobs/SIL13-COLD-1315/evidence-v019.json
+      sha256: 06822fe03b74e8b1cdc9530e41decc29abd4fcf74f3275381557128cec98556a
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:

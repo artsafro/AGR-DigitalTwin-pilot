@@ -1,0 +1,1026 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-source-Bench013-VPM-finish-v019",
+  "base_checkpoint": "a8c08b5b7c1decfaed5492af8bb5b35dee8cad82",
+  "new_user_question": null,
+  "closed_gates": "D321/NPMTable/Bench025/hedges/composition remain closed",
+  "scope": "D305/D316 source-bound constructive-copy approach, seven VPMBench013 only; no libraries/shared/checkers edited",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v018\\site-three-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "fe7b5e8ae85ff72b65a7871fb6af4b4564c1ca1ebaebac923fabe770818fc9a8"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v019\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "af854b03ae44c17b94b36ed8f6b2885b98aacddf77273a6e3de35d0cbfbcee3c"
+    }
+  },
+  "site_audit": {
+    "passed": false,
+    "render_triangles": 311042,
+    "native_render_triangles": 311042,
+    "native_face_loss": 0,
+    "controls": [
+      {
+        "handle": "33FB3AB",
+        "faces": 5064,
+        "placement_delta_m": 5.535625902552965e-06,
+        "faces_exact": true
+      },
+      {
+        "handle": "33FB3B0",
+        "faces": 5064,
+        "placement_delta_m": 3.7232434983991425e-06,
+        "faces_exact": true
+      },
+      {
+        "handle": "33FB3B1",
+        "faces": 5064,
+        "placement_delta_m": 3.991175171691452e-06,
+        "faces_exact": true
+      },
+      {
+        "handle": "33FB3B2",
+        "faces": 5064,
+        "placement_delta_m": 5.474353841350421e-06,
+        "faces_exact": true
+      },
+      {
+        "handle": "33FB3BC",
+        "faces": 5064,
+        "placement_delta_m": 1.4533236538660788e-06,
+        "faces_exact": true
+      },
+      {
+        "handle": "33FB3BD",
+        "faces": 5064,
+        "placement_delta_m": 3.5578748800446647e-06,
+        "faces_exact": true
+      },
+      {
+        "handle": "33FB590",
+        "faces": 5064,
+        "placement_delta_m": 1.1954383785095501e-06,
+        "faces_exact": true
+      }
+    ],
+    "unchanged_handles": [
+      "33FB381",
+      "33FB382",
+      "33FB383",
+      "33FB384",
+      "33FB385",
+      "33FB386",
+      "33FB3A5",
+      "33FB3A6",
+      "33FB3A7",
+      "33FB3A8",
+      "33FB3A9",
+      "33FB3AA",
+      "33FB3BE",
+      "33FB3BF",
+      "33FB387",
+      "33FB388",
+      "33FB389",
+      "33FB38A",
+      "33FB38B",
+      "33FB38C",
+      "33FB3B3",
+      "33FB3B4",
+      "33FB3B5",
+      "33FB3B6",
+      "33FB3B7",
+      "33FB3B8",
+      "33FB3B9",
+      "33FB3BA",
+      "33FB581",
+      "33FB3AD",
+      "33FB3AE"
+    ],
+    "Ground_Flora_600UCX_exact": true,
+    "NPM_unchanged_sha256": "fe7b5e8ae85ff72b65a7871fb6af4b4564c1ca1ebaebac923fabe770818fc9a8",
+    "retained_MAF": 38,
+    "retained_plant_census": 4582
+  },
+  "isolated_Bench": {
+    "triangles": 5064,
+    "native": {
+      "passed": false,
+      "site_adopted": false,
+      "parts": [
+        {
+          "name": "MAF_0423_M_Bench_013",
+          "triangles": 5064,
+          "faces_exact": true,
+          "coordinate_delta_m": 2.0824374558081615e-07,
+          "sha256": "254262f12e4462078bd46196b940d4a9b8a1ebfbe24474ff00c31d3746eec7d7"
+        }
+      ],
+      "UV_material": "provisional geometry only"
+    },
+    "source_controls": {
+      "passed": false,
+      "samples_each": 10000,
+      "seed": [
+        1315,
+        1316
+      ],
+      "NOT_exact_Hausdorff": true,
+      "source_exterior_max_m": 0.002712863284170384,
+      "candidate_source_max_m": 0.008478697771917364,
+      "worst_candidate_point": [
+        0.04149291382701418,
+        0.13501615240699072,
+        0.05938509238228256
+      ],
+      "nearest_source_point": [
+        0.04242706298828125,
+        0.13500685274805424,
+        0.05095801728066135
+      ],
+      "nearest_source_face": 2847,
+      "worst_source_point": [
+        0.5474254215141717,
+        0.6458102472366648,
+        0.749905956245174
+      ],
+      "bbox_delta_m": 0.004200043622404337,
+      "holes_empty": true
+    },
+    "diagonal": {
+      "passed": false,
+      "site_adopted": false,
+      "replaced_faces": [
+        1110,
+        1111
+      ],
+      "old": [
+        [
+          554,
+          556,
+          558
+        ],
+        [
+          554,
+          558,
+          555
+        ]
+      ],
+      "new": [
+        [
+          556,
+          555,
+          554
+        ],
+        [
+          555,
+          556,
+          558
+        ]
+      ],
+      "vertices_exact": true,
+      "volume_delta_m3": -2.858846111231106e-09
+    },
+    "xview": {
+      "pre": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "raw": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "public_xview": {
+    "NPM_unchanged_render_only": {
+      "overlapping_vertices": 114,
+      "overlapping_faces": 728,
+      "vertex_pairs": 72,
+      "face_pairs": 952,
+      "face_pairs_by_kind": {
+        "contact": 255,
+        "area": 337,
+        "area+contact": 360
+      },
+      "bowtie_vertices": 165,
+      "bowtie_pairs": 26,
+      "parts_without_faces": 0
+    },
+    "VPM_render_only": {
+      "overlapping_faces": 3604,
+      "overlapping_vertices": 0,
+      "bowtie_vertices": 36
+    },
+    "VPM_render_plus_600UCX_totals": {
+      "overlapping_vertices": 44,
+      "overlapping_faces": 3693,
+      "vertex_pairs": 22,
+      "face_pairs": 5733,
+      "face_pairs_by_kind": {
+        "contact": 971,
+        "area": 1552,
+        "area+contact": 3210
+      },
+      "bowtie_vertices": 36,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "VPM_render_plus_600UCX_parts": 601,
+    "scope_note": "v018 VPM selected only SM_SIL13_Ground (one part); v019 all601-part audit was actually run and FAIL. 44nearvertices/89faces in unchangedUCX are not a new render regression.",
+    "unchanged_UCX_nonzero_vertex_parts": [
+      {
+        "name": "UCX_SM_SIL13_Ground_027",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_106",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_119",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_233",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_299",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_382",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_422",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_428",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_430",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_482",
+        "vertices": 4
+      },
+      {
+        "name": "UCX_SM_SIL13_Ground_539",
+        "vertices": 4
+      }
+    ]
+  },
+  "actual_native_package_validator": {
+    "NPM_unchanged": {
+      "pass": 1,
+      "fail": 4,
+      "review": 1,
+      "not_run": 2
+    },
+    "VPM": {
+      "pass": 3,
+      "fail": 3,
+      "review": 1,
+      "not_run": 5
+    },
+    "command": "uv run python tools/qa/validate_package.py tmp/cold-v019/site-bench-r1/VPM/SM_SIL13_Ground.fbx --profile vpm --scene --ground-area-m2 9568.79964 --ground-materials 'M_SIL13_Ground_*' --json"
+  },
+  "witness_ownership": {
+    "passed": false,
+    "ground_face_range_one_based": [
+      1,
+      58896
+    ],
+    "flora_face_range_one_based": [
+      58897,
+      166282
+    ],
+    "total_face_pairs": 5597,
+    "pair_classes": {
+      "Ground | MAF:MAF_0698_M_Urn_010 | area+contact": 10,
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area+contact": 100,
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area": 5,
+      "Flora | Ground | area+contact": 3,
+      "Flora | Flora | area": 43,
+      "Flora | Flora | area+contact": 3,
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area+contact": 43,
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area": 8,
+      "MAF:MAF_0466_M_Bysicle_007 | MAF:MAF_0472_M_Cannopy_006 | area+contact": 96,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area": 1426,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area+contact": 2889,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | contact": 971
+    },
+    "first_one_based_witness_per_class": {
+      "Ground | MAF:MAF_0698_M_Urn_010 | area+contact": {
+        "a": 35773,
+        "b": 310787,
+        "kind": "area+contact",
+        "separation_m": 0.0034729093313217163,
+        "centre": [
+          36.077829360961914,
+          8.047143777211506,
+          -0.09826354682445526
+        ]
+      },
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 35846,
+        "b": 306357,
+        "kind": "area+contact",
+        "separation_m": 0.0030039857028986965,
+        "centre": [
+          32.48168341318766,
+          2.9623115460077925,
+          -0.09220505257447562
+        ]
+      },
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 55599,
+        "b": 306419,
+        "kind": "area",
+        "separation_m": 0.0031705675042709696,
+        "centre": [
+          31.03544012705485,
+          2.4708125347472105,
+          -0.09220769132177034
+        ]
+      },
+      "Flora | Ground | area+contact": {
+        "a": 57817,
+        "b": 99747,
+        "kind": "area+contact",
+        "separation_m": 0.0016262560397653503,
+        "centre": [
+          -2.180742899576823,
+          82.37506357828775,
+          -0.31145843615134555
+        ]
+      },
+      "Flora | Flora | area": {
+        "a": 65921,
+        "b": 92895,
+        "kind": "area",
+        "separation_m": 0.00438690185546875,
+        "centre": [
+          1.7684308290481567,
+          71.79729334513347,
+          -0.36271438002586365
+        ]
+      },
+      "Flora | Flora | area+contact": {
+        "a": 66749,
+        "b": 66858,
+        "kind": "area+contact",
+        "separation_m": 0.00151824951171875,
+        "centre": [
+          -21.597630182902016,
+          -7.883058150609334,
+          -0.2806755006313324
+        ]
+      },
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 80278,
+        "b": 306253,
+        "kind": "area+contact",
+        "separation_m": 0.00015299505609323027,
+        "centre": [
+          33.487793604532875,
+          -0.5208322132627169,
+          0.3594857851664225
+        ]
+      },
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 80290,
+        "b": 305986,
+        "kind": "area",
+        "separation_m": 2.0890605739795852e-05,
+        "centre": [
+          34.4866746266683,
+          0.13393125931421918,
+          0.3652558525403341
+        ]
+      },
+      "MAF:MAF_0466_M_Bysicle_007 | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 294570,
+        "b": 306440,
+        "kind": "area+contact",
+        "separation_m": 0.0011433861439936743,
+        "centre": [
+          32.16557598114014,
+          0.47048305968443555,
+          -0.18657342841227847
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 299981,
+        "b": 299998,
+        "kind": "area",
+        "separation_m": 0.0,
+        "centre": [
+          31.126829783121742,
+          2.581391493479411,
+          2.3389698664347334
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 300143,
+        "b": 300159,
+        "kind": "area+contact",
+        "separation_m": 0.0022709387215547883,
+        "centre": [
+          32.23352305094401,
+          3.7220674753189087,
+          2.179821491241455
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | contact": {
+        "a": 301743,
+        "b": 306437,
+        "kind": "contact",
+        "separation_m": null,
+        "centre": [
+          31.401655197143555,
+          4.064695517222086,
+          -0.028410730262597404
+        ]
+      }
+    },
+    "note": "Witness ownership only, not an exemption or pass. A face-pair total is not a unique face count."
+  },
+  "rejected_trials": {
+    "Urn_shelf_10mm": {
+      "site_adopted": false,
+      "isolated_clean": true,
+      "actual_paired_trial": "site-urn-r1; NOT current site",
+      "ground_ray_worst_m": -0.01433425932713095,
+      "failure_log": "urn-site-audit.log",
+      "isolated_RED": "urn-red.log",
+      "isolated_GREEN": "urn-green.log",
+      "note": "Clean isolated shelf does not certify actual slope. Fixed pivot/counts/bbox; no blanket shelf shift promoted."
+    },
+    "NPM_Bench": {
+      "site_adopted": false,
+      "QEM": "900tris leaves one edge with four incidents; rejected",
+      "guarded_QEM": "2144tris/4nearvertices; rejected",
+      "source_projection": {
+        "passed": false,
+        "samples_each": 10000,
+        "seed": [
+          1315,
+          1316
+        ],
+        "NOT_exact_Hausdorff": true,
+        "source_exterior_max_m": 0.00342880412007691,
+        "candidate_source_max_m": 0.03325287662825403,
+        "worst_candidate_point": [
+          0.0003258346794134333,
+          0.4952683717082232,
+          0.08917512771533326
+        ],
+        "nearest_source_point": [
+          0.023839037072095153,
+          0.518692776262555,
+          0.09121972757096909
+        ],
+        "nearest_source_face": 3438,
+        "worst_source_point": [
+          0.08057307385483319,
+          0.6337185049243661,
+          0.7680562685847019
+        ],
+        "bbox_delta_m": 0.002609431743621826,
+        "holes_empty": true
+      },
+      "source_projection_xview_clean_but_shape_failed": true,
+      "three_dimensional_LOD": "1182/1178tris still nearvertices/area; closure refused zero-area face. Retained FAIL, no tolerance changed."
+    }
+  },
+  "UCX_coverage": {
+    "actual_Ground_600UCX_arrays_exact": true,
+    "prior_report": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v018\\ucx-coverage-r6.json",
+    "upper_bound_m": 0.08993564479232127,
+    "scope": "unchanged one-sided coverage only;213wide pairs and actual xView UCX findings still open"
+  },
+  "tests": {
+    "affected_command": "env PYTEST_ADDOPTS= BENCH_RESULT=tmp/cold-v019/bench-diagonal-4 uv run --with shapely --with scipy --with trimesh --with rtree pytest -q tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tmp/cold-v011/test_hedge_contract.py tmp/cold-v012/test_witness_indices.py tmp/cold-v012/test_export_controls.py tmp/cold-v013/test_maf_pilot.py tmp/cold-v013/test_pilot_structure.py tmp/cold-v014/test_checkpoint_controls.py tmp/cold-v014/test_replication.py tmp/cold-v015/test_profile_scope.py tmp/cold-v016/test_parametric_pilot.py tmp/cold-v016/test_access_gaps.py tmp/cold-v017/test_finishing.py tmp/cold-v017/test_vpm_table_replication.py tmp/cold-v017/test_link_contract.py tmp/cold-v017/test_sand_parts.py tmp/cold-v018/test_three_native_r2.py tmp/cold-v018/test_three_native_npm.py tmp/cold-v018/test_ucx_complete.py tmp/cold-v018/test_midpoint_safety.py tmp/cold-v018/test_midpoint_contract.py tmp/cold-v018/test_bench_bidirectional.py tmp/cold-v019/test_bench_clearance.py tmp/cold-v019/test_v019_bench_site.py -k 'not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean' -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0-v019-affected",
+    "passed": 454,
+    "historical_deselected": 5,
+    "log_sha256": "c11d2b82afe29d092a5de3183f9201e6c9571b16af186fb0a01769da51570b7e",
+    "separate_open_controls": {
+      "command": "env PYTEST_ADDOPTS= uv run pytest -q tmp/cold-v019/test_unresolved_v019.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0-v019-open-red-r2",
+      "failed": 4,
+      "log_sha256": "e9d29fca9e16de598a33d96adb02a54740a43ba6cb10679a957a2f5d35e54476"
+    },
+    "real_RED_GREEN": "actual old raw/nativeBench1area pair RED1 then new actual pre/raw/native0/0/0/0 GREEN27; Urn isolated RED1/GREEN1 does not close actual slope FAIL",
+    "generated_patch_probes": {
+      "seeds": "1315..1334",
+      "samples_each_direction_per_seed": 250,
+      "bound_m": 0.001,
+      "passed": 20
+    },
+    "full_suite": "Full suite: deferred to merge batch (rule 68)"
+  },
+  "new_code": {
+    "shared_modules": 0,
+    "job_local_files": 66,
+    "literal_lines": 1351,
+    "files": [
+      {
+        "path": "audit_bench_site.py",
+        "sha256": "316729152237d4b94fcf49d3d48eb736b57af613d10f02ce620cc613bd6e3c5e",
+        "literal_lines": 29
+      },
+      {
+        "path": "audit_bench_source.py",
+        "sha256": "1bd1c3425f47d03fcf507b8552814fb5447de1b8011d07b275aac01329366198",
+        "literal_lines": 7
+      },
+      {
+        "path": "audit_urn_site.py",
+        "sha256": "b06ad213eaa23181fc17b622114212db973241f977a9e4f451fc2bf3901c53f6",
+        "literal_lines": 33
+      },
+      {
+        "path": "bench-diagonal-1/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-diagonal-1/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-diagonal-2/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-diagonal-2/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-diagonal-3/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-diagonal-3/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-diagonal-4/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-diagonal-4/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-diagonal-5/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-diagonal-5/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-diagonal-1/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-diagonal-1/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-diagonal-2/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-diagonal-2/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-diagonal-3/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-diagonal-3/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-diagonal-4/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-diagonal-4/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-diagonal-5/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-diagonal-5/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-diagonal-6/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-diagonal-6/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-link-r2/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-link-r2/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-manifold-r2b/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-manifold-r2b/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-manifold-r2c/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-manifold-r2c/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-manifold-r2d/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-manifold-r2d/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-profile-r3c/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-profile-r3c/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-profile-r3d/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-profile-r3d/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-npm-qem-safe-r1b/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-npm-qem-safe-r1b/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-r1/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-r1/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "classify_site.py",
+        "sha256": "3aea1bccd02d1004d9ae6a85c3b25626c20274f76dc35c80fd1f227e334c4061",
+        "literal_lines": 5
+      },
+      {
+        "path": "close_bench_npm.py",
+        "sha256": "06fa58cef784b9ecf322ad42c42f5aa312c2aa0b6e749693679c0ffdc6407364",
+        "literal_lines": 13
+      },
+      {
+        "path": "compose_sheet.py",
+        "sha256": "baf8faf200a2d17275c8a0d3d3caccbaad5fdc0171766d818e0eb81270b3220a",
+        "literal_lines": 15
+      },
+      {
+        "path": "finalize_checkpoint.py",
+        "sha256": "6a40dc9c8362d6fa32ab807c7c401a69ff6c61bba6a363541be2ec2d1f2774e6",
+        "literal_lines": 34
+      },
+      {
+        "path": "finish_bench.py",
+        "sha256": "68c3499006cb6f428d37d037cf9a7a260e3e5b159994412febcebfe8c41ba420",
+        "literal_lines": 20
+      },
+      {
+        "path": "finish_bench_manifold.py",
+        "sha256": "3b521c3da7bc94a958bd11a0287bee0ad268e2d23097935104b4e28c79b0a666",
+        "literal_lines": 9
+      },
+      {
+        "path": "finish_bench_npm_profile.py",
+        "sha256": "ff4ee42e8b007dda44eff0d1cad0b10ab8cda9932092bac43108dededc9d2e5d",
+        "literal_lines": 15
+      },
+      {
+        "path": "finish_bench_npm_seams.py",
+        "sha256": "d539b9915f38f6404d2d41465e0564031096ac6f0a293b55a9122434d7451379",
+        "literal_lines": 11
+      },
+      {
+        "path": "lod_bench.py",
+        "sha256": "3131c43798265053c9a32ec1b6d5cf1038550dd4f3154871ac4ac12d19acbafb",
+        "literal_lines": 15
+      },
+      {
+        "path": "lod_bench_guarded.py",
+        "sha256": "a7049c6fac2fac274de9552ad153e8fd904ac7725f6b3321c1edc84b89d56599",
+        "literal_lines": 27
+      },
+      {
+        "path": "lod_bench_link.py",
+        "sha256": "091dfbe2c3ea53e8e6396287df1988e1b1f94c736098a1f2a7b79f26b7bb2e78",
+        "literal_lines": 10
+      },
+      {
+        "path": "lod_bench_profile.py",
+        "sha256": "9f3aa2c8c85123758f7cb683d20e3fac9f4805f9528a16992654f7dbcabf64c5",
+        "literal_lines": 27
+      },
+      {
+        "path": "read_site.py",
+        "sha256": "685f4e4fbab3a9c45b507a769dcb9c7ba4e4d7588b49633d5433bb49f57d940e",
+        "literal_lines": 9
+      },
+      {
+        "path": "read_urn_site.py",
+        "sha256": "0b7e69dc30668c7c6bf3f85dcee13931f01b92d424218eb6ffd4c99348dbe969",
+        "literal_lines": 11
+      },
+      {
+        "path": "render_bench.py",
+        "sha256": "216cc8070c12c066168dbc2ee692e528d3a8aeb5df059e27d2d51ce0ed28dd59",
+        "literal_lines": 15
+      },
+      {
+        "path": "repair_urn_clearance.py",
+        "sha256": "6e37f0f04afd2729274ca1a351a937d77b0c549072807bd2923941a5dd9829c7",
+        "literal_lines": 16
+      },
+      {
+        "path": "replicate_bench.py",
+        "sha256": "503fe3293bb1ef08250bc5e0f630a56970ec1c39ca0765d89a9d4282abca3e2a",
+        "literal_lines": 35
+      },
+      {
+        "path": "replicate_urn.py",
+        "sha256": "713f48db731e8c3408dba4bb47e7bccf561d0f9bad7ddc57a3c4814513957932",
+        "literal_lines": 36
+      },
+      {
+        "path": "retriangulate_bench.py",
+        "sha256": "925b0e76ee460ec485844d610d89529004fee980e07782d8a6257514d14348ec",
+        "literal_lines": 31
+      },
+      {
+        "path": "test_bench_clearance.py",
+        "sha256": "4d580b00a31ea2073f1811cc38552d2dd748a4444e924350ffc8f5e3b7148fe3",
+        "literal_lines": 31
+      },
+      {
+        "path": "test_unresolved_v019.py",
+        "sha256": "1af395ed776bc84c8a11bde256db019fcdf7d474f248020426a8f41b072a4388",
+        "literal_lines": 20
+      },
+      {
+        "path": "test_urn_shelf.py",
+        "sha256": "a52b015411b658e5258abce2d8eafd9e0f95fbdc63cba1d06ac395e96ba9ab62",
+        "literal_lines": 13
+      },
+      {
+        "path": "test_v019_bench_site.py",
+        "sha256": "4edcf50bd7dbac7bbe4b3489df41c93feb60d4ca126fa7296658738acf82df83",
+        "literal_lines": 44
+      },
+      {
+        "path": "urn-clearance-r1/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "urn-clearance-r1/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      }
+    ]
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "tool_accounting": "total tool-call count unmeasured; literal job-local code only, not shared capability/readiness",
+  "open_items": [
+    "worker: paired NPM Bench source fidelity/budget/native15face loss",
+    "worker: Canopy source profiles/contacts and mixed Ground/Urn/Flora contacts",
+    "worker: Ground skirt/details/maps/UV/UDIM/density",
+    "worker: UCX213wide pairs and exact all-UCX topology",
+    "user AFTER technical repairs only: final visual/material approval then completeSINTEZ"
+  ],
+  "next_steps": [
+    "Resume NPM from v018/site-three-r1, VPM from v019/site-bench-r1",
+    "Do not adopt site-urn-r1 or clean-but-source-filling NPMBench profile",
+    "Keep closed gates closed; no human question pending",
+    "Compare render-only counters separately from all601part scope"
+  ]
+}

@@ -1,6 +1,18 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v018 paired Sand/Bike/Urn repair adopted; complete actual UCX coverage measured;
+Current status: **v019 seven VPM Bench013 copies technically finished and adopted;
+whole-site QA still FAIL, not delivered**. See [CONTINUATION-v019.md](CONTINUATION-v019.md).
+Actual VPM311042raw/native,14placed checks clean;31otherMAF/Ground/Flora/600UCX exact.
+NPM remains v018178571raw/178556native,15other-type face lossFAIL. All38MAF/4582census
+retained. Render-only VPM xView3604faces/0vertices/36bowties; all601parts3693/44/36
+FAIL, including89faces/44nearvertices in unchangedUCX. Native VPMvalidator3/3/1/5FAIL.
+Clean684triangle NPMBench trial REJECTED by33.253mm reverse-source bevel witness;
+isolated-clean Urn10mm shelf trial REJECTED by actual Ground slope−14.334mm.
+454affected checkpoint tests pass/5historical deselected; separate4unresolvedfailed.
+Resume NPMv018/site-three-r1 and VPMv019/site-bench-r1, NOT rejectedsite-urn-r1.
+No new human question/PR/delivery/readiness claim. Full suite deferred to merge batch(rule68).
+
+Historical status: **v018 paired Sand/Bike/Urn repair adopted; complete actual UCX coverage measured;
 whole-site QA still FAIL, not delivered**. See [CONTINUATION-v018.md](CONTINUATION-v018.md).
 16copies per profile (6Sand/8Bike/2Urn), all64placed raw/native xView checks clean;
 22otherMAF/profile and Ground/Flora/600UCX arrays exact. Actual178571NPM/301662VPM
