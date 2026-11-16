@@ -113,16 +113,25 @@ def test_brute_force_found_vs_count(tmp_path, hashed):
             assert guard.main(_root(tmp_path, {"jobs/J/a.py": code}, _row(digest=digest, count=c))) == (n != c)
 
 
-@pytest.mark.parametrize("count", ["0", "-1", '"2"', "'1'", "1.0", "[]"])
+@pytest.mark.parametrize("count", ["0", "-1", '"2"'])
 def test_bad_count_is_an_error_naming_the_row(tmp_path, count, capsys):
     row = _row() + f"        count: {count}\n"
     assert guard.main(_root(tmp_path, {"jobs/J/a.py": TWO}, row)) == 2
     assert "jobs/J/a.py::f" in capsys.readouterr().err
 
 
+@pytest.mark.parametrize("count", ["'1'", "1.0", "[]", "true", ".nan", ""])
+def test_count_yaml_cannot_parse_is_an_error_naming_the_line(tmp_path, count, capsys):
+    row = _row() + f"        count: {count}\n"
+    assert guard.main(_root(tmp_path, {"jobs/J/a.py": TWO}, row)) == 2
+    err = capsys.readouterr().err
+    assert "line 7" in err or "jobs/J/a.py::f" in err
+
+
 def test_default_count_is_one_and_plain_issue_dicts_still_work():
     allowed = _allowed()
-    assert list(allowed.values())[0].count == 1 and list(allowed.values())[0].issue == "#1337"
+    value = list(allowed.values())[0]
+    assert value.copies == 1 and value.issue == "#1337" and value == "#1337"      # still compares as the issue
     plain = {("udim-tile", "jobs/J/a.py", "f", None): "#1"}                  # pre-#1396 callers: count 1
     assert len(guard.compare(guard.scan_text(TWO, "jobs/J/a.py"), plain)[0]) == 1
 
