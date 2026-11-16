@@ -53,6 +53,7 @@ FLOAT_TOL_M = 1e-5       # float32 storage of R1 at ~15 m from the origin: a 5.0
 PLAN_FACE_M = 0.0051     # plan pairs up to 5.1 mm: a pair at exactly xView's 5 mm (flagged, `<=`) must not pass or
                          # fail by float rounding of the NPM recentering (#1372 v002-r3: 10 contacts at 5.000 mm)
 PLANE_JOIN_M = 0.002     # zone planes on one axis closer than this are one plane (one snap value)
+MAP_TOL_M = 1e-4         # a residual master face centroid lies on its R1 face within 0.1 mm (float32 FBX at ~15 m)
 
 
 def zones(v, faces, pairs):
@@ -194,6 +195,62 @@ def archived_pairs(path, digest):
     return path, got, {(fp['a'] - 1, fp['b'] - 1) for fp in parts[0]['face_pairs']}
 
 
+def faces_under(p, v, faces, tol=MAP_TOL_M):
+    """R1 faces (ids) the point p lies on: within `tol` of the face plane and inside it (fan triangles, `tol` slack)."""
+    p = np.asarray(p, dtype=np.float64)
+    if p.shape != (3,) or not np.all(np.isfinite(p)):
+        raise ValueError(f'point {p!r} is not 3 finite numbers')
+    hit = []
+    for f, ids in enumerate(faces):
+        q = v[list(ids)]
+        if np.any(q.max(0) + tol < p) or np.any(q.min(0) - tol > p):
+            continue
+        for k in range(1, len(q) - 1):
+            a, b, c = q[0], q[k], q[k + 1]
+            n = np.cross(b - a, c - a)
+            ln = np.linalg.norm(n)
+            if ln == 0:
+                continue
+            n /= ln
+            if abs((p - a) @ n) > tol:
+                continue
+            # inside test with slack: every edge's inward distance >= -tol
+            if all(np.cross(e1 - e0, p - e0) @ n / max(np.linalg.norm(e1 - e0), 1e-12) >= -tol
+                   for e0, e1 in ((a, b), (b, c), (c, a))):
+                hit.append(f)
+                break
+    return hit
+
+
+def residual_pairs(rparts, v, faces):
+    """Face pairs that a previous quad build of this R1 still shows at PLAN_FACE_M, mapped back to the R1 faces.
+
+    Quadification splits R1 triangles at edge midpoints, so two R1 faces that met with shared vertices but a 0.2 to
+    0.4 mm off-plane edge become an xView contact in the master (SW/NW posts of r1-v003, #1563). Each residual master
+    face is mapped to the R1 face(s) its centroid lies on (MAP_TOL_M); both sides are chained into one pair set, so the
+    same zones() rules (axis plane, spread <= 5 mm) decide. A residual face on no R1 face is an error naming it."""
+    rpart = {p.name: p for p in rparts}.get(PART)
+    if rpart is None:
+        raise SystemExit(f'{PART} not in the residual master')
+    rv = np.asarray(rpart.vertices, dtype=np.float64)
+    gate = xview_gate.part_gate(rpart, inv_xview.XviewTolerance(face_m=PLAN_FACE_M), 'inplace')
+    out, log = [], []
+    for fp in gate['face_pairs']:
+        sides = []
+        for key in ('a', 'b'):
+            ids = list(rpart.faces[fp[key] - 1])
+            c = rv[ids].mean(0)
+            r1 = faces_under(c, v, faces)
+            if not r1:
+                raise SystemExit(f'residual face {fp[key]} at {c.round(4).tolist()} lies on no R1 face')
+            sides.append(r1)
+        chain = sides[0] + sides[1]
+        out += [(min(x, y), max(x, y)) for x, y in zip(chain, chain[1:]) if x != y]
+        log.append({'master_faces': [fp['a'], fp['b']], 'kind': fp['kind'], 'centre': fp['centre'],
+                    'r1_faces': sides})
+    return out, log
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('source')
@@ -201,11 +258,12 @@ def main(argv=None):
     ap.add_argument('--blender', default=None)
     ap.add_argument('--xview-json', default=None)
     ap.add_argument('--compare', default=None)
+    ap.add_argument('--residual', default=None)
     a = ap.parse_args(argv)
     src, out = Path(a.source).resolve(), Path(a.out).resolve()
     if out == src or out.exists():
         raise SystemExit(f'output {out} exists or is the input; use a new path')
-    for extra in (a.xview_json, a.compare):
+    for extra in (a.xview_json, a.compare, a.residual):
         if extra is not None and Path(extra).resolve() in (src, out):
             raise SystemExit(f'{extra} aliases the source or the output')
     digest = hashlib.sha256(src.read_bytes()).hexdigest()
@@ -219,6 +277,13 @@ def main(argv=None):
         dump = run_blender(xview_gate.DUMP_SCRIPT, [src, npz, man], executable=a.blender, output_json=man,
                            outputs=[npz], log_path=Path(tmp) / 'dump.log')
         parts, units = xview_gate.to_metres(xview_gate.load_npz(npz), dump)
+        rparts = None
+        if a.residual:
+            rnpz, rman = Path(tmp) / 'residual.npz', Path(tmp) / 'residual.json'
+            rdump = run_blender(xview_gate.DUMP_SCRIPT, [Path(a.residual).resolve(), rnpz, rman],
+                                executable=a.blender, output_json=rman, outputs=[rnpz],
+                                log_path=Path(tmp) / 'residual.log')
+            rparts, _ = xview_gate.to_metres(xview_gate.load_npz(rnpz), rdump)
     part = {p.name: p for p in parts}.get(PART)
     if part is None:
         raise SystemExit(f'{PART} not in {src}')
@@ -226,6 +291,13 @@ def main(argv=None):
     g = xview_gate.part_gate(part, inv_xview.XviewTolerance(), 'inplace')
     gp = xview_gate.part_gate(part, inv_xview.XviewTolerance(face_m=PLAN_FACE_M), 'inplace')
     pairs = [(fp['a'] - 1, fp['b'] - 1) for fp in gp['face_pairs']]
+    residual = None
+    if rparts is not None:
+        rpairs, rlog = residual_pairs(rparts, v, part.faces)
+        residual = {'path': str(Path(a.residual).resolve()),
+                    'sha256': hashlib.sha256(Path(a.residual).read_bytes()).hexdigest(),
+                    'master_pairs': len(rlog), 'r1_pairs_added': len(set(rpairs) - set(pairs)), 'pairs': rlog}
+        pairs = sorted(set(pairs) | set(rpairs))
     xview_input = {'used': 'recomputed', 'face_m': inv_xview.XviewTolerance().face_m}
     if archived is not None:
         now = {(fp['a'] - 1, fp['b'] - 1) for fp in g['face_pairs']}
@@ -241,7 +313,7 @@ def main(argv=None):
                                                          'face_pairs': len(g['face_pairs']),
                                                          'by_kind': g['face_pairs_by_kind'],
                                                          'bowtie_vertices': len(g['bowtie_vertices'])},
-            'plan_face_m': PLAN_FACE_M, 'plan_face_pairs': len(pairs),
+            'plan_face_m': PLAN_FACE_M, 'plan_face_pairs': len(pairs), 'residual': residual,
             'spread_max_m': SPREAD_MAX_M, 'zones': zones(v, part.faces, pairs)}
     plan['corners'] = {'posts': CORNER_POSTS, 'radius_m': CORNER_RADIUS_M, 'zones': corner_zones(plan['zones'])}
     if old is not None:
