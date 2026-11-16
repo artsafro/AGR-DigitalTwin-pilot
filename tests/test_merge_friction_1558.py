@@ -245,6 +245,33 @@ def test_missing_file_is_an_error(tmp_path):
     assert dmerge(tmp_path / "absent.md").returncode == 2
 
 
+def test_foreign_partial_is_kept_and_nothing_written(tmp_path):
+    p = tmp_path / "decisions.md"
+    data = _conflict(row(2), row(3)).encode()
+    p.write_bytes(data)
+    (tmp_path / "decisions.md.partial").write_bytes(b"foreign")
+    assert dmerge(p).returncode == 2
+    assert p.read_bytes() == data
+    assert (tmp_path / "decisions.md.partial").read_bytes() == b"foreign"
+
+
+def test_regen_after_merge_stops_on_a_decision_collision(tmp_path):
+    repo = _make_repo(tmp_path)
+    git(repo, "switch", "-q", "-c", "a")
+    _append_rows(repo, [row(901, "ours row")])
+    git(repo, "commit", "-q", "-am", "a")
+    git(repo, "switch", "-q", "-c", "b", "main")
+    _append_rows(repo, [row(901, "theirs row")])
+    git(repo, "commit", "-q", "-am", "b")
+    git(repo, "switch", "-q", "a")
+    head = git(repo, "rev-parse", "HEAD").stdout
+    r = run([sys.executable, str(REGEN), "--root", str(repo), "--merge", "b", "--no-check"])
+    assert r.returncode == 1
+    assert "COLLISION D901" in r.stdout and "theirs row" in r.stdout
+    assert git(repo, "rev-parse", "HEAD").stdout == head
+    git(repo, "merge", "--abort")
+
+
 def test_link_reference_union_and_conflict(tmp_path):
     p = tmp_path / "decisions.md"
     body = "# Decision log\n\n" + HEAD_ROWS + row(1) + "\n"

@@ -181,8 +181,10 @@ def main(argv=None) -> int:
         if tmp.exists():
             print(f"ERROR: foreign temp file exists: {tmp}; nothing written", file=sys.stderr)
             return 2
+        created = False
         try:
             with open(tmp, "x", encoding="utf-8", newline="") as fh:
+                created = True
                 fh.write(resolved)
             if path.read_bytes() != raw:
                 raise OSError("file changed while resolving")
@@ -191,7 +193,7 @@ def main(argv=None) -> int:
             print(f"ERROR: {path}: {exc}; nothing written", file=sys.stderr)
             return 2
         finally:
-            if tmp.exists():
+            if created and tmp.exists():
                 tmp.unlink()
         print(f"resolved {path.as_posix()}")
     else:
