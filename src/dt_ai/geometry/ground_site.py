@@ -497,7 +497,90 @@ def hatch_colour(hatch, spec_colour=None) -> tuple[tuple, str]:
     return tuple(spec_colour), "spec"
 
 
+def _placed_hatch_paths(doc, hatch, chain, chord):
+    """Resolve an outermost-first INSERT chain, then flatten in world units (including MINSERT cells)."""
+    from ezdxf.math import Vec3
+    from ezdxf.path import from_hatch
+
+    if not isinstance(chain, list):
+        raise ValueError(f"hatch {hatch.dxf.handle}: insert_chain must be a list")
+    owner = doc.modelspace().block_record_handle
+    matrices = []
+    for ref in chain:
+        if isinstance(ref, str):
+            handle, cell = ref, None
+        elif isinstance(ref, dict) and set(ref) <= {"handle", "cell"}:
+            handle, cell = ref.get("handle"), ref.get("cell")
+        else:
+            raise ValueError(f"hatch {hatch.dxf.handle}: unsupported INSERT reference {ref!r}")
+        ins = doc.entitydb.get(handle) if isinstance(handle, str) else None
+        if ins is None or ins.dxftype() != "INSERT":
+            raise ValueError(f"INSERT {handle!r}: not an INSERT in the DXF")
+        if ins.dxf.owner != owner:
+            raise ValueError(f"INSERT {handle}: broken insert_chain owner")
+        block = ins.block()
+        if block is None:
+            raise ValueError(f"INSERT {handle}: missing block {ins.dxf.name}")
+        owner = block.block_record_handle
+        nr, nc = ins.dxf.row_count, ins.dxf.column_count
+        if nr < 1 or nc < 1:
+            raise ValueError(f"INSERT {handle}: invalid MINSERT counts {nr}, {nc}")
+        if nr > 1 or nc > 1 or cell is not None:
+            if (not isinstance(cell, list) or len(cell) != 2
+                    or any(type(v) is not int for v in cell)
+                    or not (0 <= cell[0] < nr and 0 <= cell[1] < nc)):
+                raise ValueError(f"INSERT {handle}: MINSERT requires cell [row, column] within {nr} x {nc}")
+        for name in ("xscale", "yscale", "zscale", "rotation", "row_spacing", "column_spacing"):
+            _finite(f"INSERT {handle} {name}", ins.dxf.get(name, ins.DXFATTRIBS.get(name).default))
+        if not all(math.isfinite(v) for v in (*ins.dxf.insert, *ins.dxf.extrusion)):
+            raise ValueError(f"INSERT {handle}: non-finite insert/extrusion")
+        if cell is not None:
+            # ezdxf.multi_insert semantics: spacing in OCS, rotated but NOT scaled.
+            placed = ins.copy()
+            offset = Vec3(cell[1] * ins.dxf.column_spacing, cell[0] * ins.dxf.row_spacing)
+            placed.dxf.insert += offset.rotate_deg(ins.dxf.rotation)
+        else:
+            placed = ins
+        matrix = placed.matrix44()
+        u, v = matrix.transform_direction(Vec3(1, 0, 0)), matrix.transform_direction(Vec3(0, 1, 0))
+        scale = u.magnitude
+        if (not all(math.isfinite(x) for x in matrix) or scale == 0 or v.magnitude == 0
+                or ins.dxf.zscale == 0
+                or not math.isclose(scale, v.magnitude, rel_tol=1e-12, abs_tol=0.0)
+                or abs(u.dot(v)) > 1e-12 * scale * v.magnitude
+                or abs(u.z) > 1e-12 * scale or abs(v.z) > 1e-12 * scale):
+            raise ValueError(f"INSERT {handle}: non-uniform, singular or unsupported non-planar transform")
+        matrices.append(matrix)
+    if hatch.dxf.owner != owner:
+        raise ValueError(f"hatch {hatch.dxf.handle}: insert_chain does not place its block definition")
+    for path in from_hatch(hatch):
+        for matrix in reversed(matrices):
+            path = path.transform(matrix)
+        pts = list(path.flattening(chord))
+        if not pts or not all(math.isfinite(x) for p in pts for x in p):
+            raise ValueError(f"hatch {hatch.dxf.handle}: non-finite or empty transformed boundary")
+        if any(abs(p.z - pts[0].z) > 1e-9 for p in pts):
+            raise ValueError(f"hatch {hatch.dxf.handle}: unsupported non-planar boundary")
+        yield pts
+
+
+def _placed_hatch_polygon(doc, hatch, chain, chord):
+    result = Polygon()
+    for pts in _placed_hatch_paths(doc, hatch, chain, chord):
+        ring = Polygon([(p.x, p.y) for p in pts])
+        if len(pts) < 3 or not ring.is_valid or ring.is_empty or not math.isfinite(ring.area):
+            raise ValueError(f"hatch {hatch.dxf.handle}: invalid transformed boundary ring (not repaired)")
+        result = result.symmetric_difference(ring)
+    if result.is_empty or not result.is_valid or not math.isfinite(result.area):
+        raise ValueError(f"hatch {hatch.dxf.handle}: empty or invalid transformed region")
+    return result
+
+
 def covers_from_dxf(doc, rows: list, chord: float) -> list[Cover]:
+    """String modelspace handles or {handle, insert_chain} references; repeated hatch identity is refused."""
+    chord = _finite("chord", chord, positive=True)
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("no covers: expected a non-empty list")
     covers, seen = [], {}
     msp = doc.modelspace()
     for row in rows:
@@ -505,19 +588,25 @@ def covers_from_dxf(doc, rows: list, chord: float) -> list[Cover]:
         if not handles:
             raise ValueError(f"cover {row.get('id')}: no hatch handles")
         polys, colours = [], []
-        for h in handles:
+        for ref in handles:
+            if isinstance(ref, str):
+                h, chain = ref.upper(), []
+            elif isinstance(ref, dict) and set(ref) == {"handle", "insert_chain"} and isinstance(ref["handle"], str):
+                h, chain = ref["handle"].upper(), ref["insert_chain"]
+            else:
+                raise ValueError(f"cover {row.get('id')}: unsupported hatch reference {ref!r}")
             if h in seen:
                 raise ValueError(f"hatch {h} listed by covers {seen[h]} and {row.get('id')}")
             seen[h] = row.get("id")
             e = doc.entitydb.get(h)
             if e is None or e.dxftype() != "HATCH":
                 raise ValueError(f"cover {row.get('id')}: handle {h} is not a HATCH in the DXF")
-            if e.dxf.owner != msp.block_record_handle:
-                raise ValueError(f"hatch {h} is inside a block definition: give its model-space copy")
+            if not chain and e.dxf.owner != msp.block_record_handle:
+                raise ValueError(f"hatch {h} is inside a block definition: give its insert_chain")
             if "colour" in row and not row.get("colour_reason"):
                 raise ValueError(f"cover {row.get('id')}: spec colour needs colour_reason")
             colours.append(hatch_colour(e, row.get("colour")))
-            g = hatch_polygon(e, chord)
+            g = _placed_hatch_polygon(doc, e, chain, chord)
             polys += list(getattr(g, "geoms", [g]))
         if len({c for c, _ in colours}) != 1:
             raise ValueError(f"cover {row.get('id')}: hatches have different background colours {colours}")
