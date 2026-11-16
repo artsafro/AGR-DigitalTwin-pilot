@@ -27,7 +27,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 |---|---|---|
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
-| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250] |
+| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 4 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
 | 5 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
 | 6 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
@@ -45,7 +45,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `inspect` | `agr inspect --manifest JOB.json` |
-| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев |
+| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 3 | `brick-seams` кирпичные швы | пробел |
 | 4 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
 | 5 | `master-qa` | `tools/qa/master_topology.py` |

@@ -44,6 +44,18 @@ hands over to that skill. A stage marked job scripts, manual or no tool is a kno
 keep any new code minimal (`docs/backlog.md` for the generalisation). Pilot one piece end to end, show it, then the
 rest.
 
+### Body stage: clean body grid (#1618)
+
+For the OKS `body` stage follow [body-modelling.md](../../../docs/research/body-modelling.md#5-правила) (rules
+BM-01..BM-14, measured on Artem's G22 etalon): 1) body from the floor-plan outline, vertices only at breaks and
+opening/zone lines; 2) loops only where a line has a reason (opening sill/head, finish zone, band), vertical rings
+through the whole floor module, rounded corners by radius (chord sagitta <= 2 cm), never Revit tessellation;
+3) inset, never weld, windows/roof/flashings/decor with projection (#1613), no diagonal across a typical facade;
+4) build and check ONE floor module with IDs and UV, then replicate it; 5) measure the master (typical-facade quad
+share, slivers, n-gons, module repeat; `tools/qa/body_layout.py`, `tools/qa/master_topology.py`) and show a
+wire + texture sheet of the module and one corner before replicating; 6) unique ground floor, top and roof last,
+within the triangle budget [D010]. Thresholds are review-only until Artem confirms them.
+
 ## Step 5 — Check and report
 
 Run the card's checks (validator stages, xView, SINTEZ) on the read-back export (`validate-delivery` skill).
