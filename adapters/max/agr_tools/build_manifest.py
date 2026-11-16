@@ -15,6 +15,13 @@ package_core.qa_package / `agr validate`: artifacts naming different master revi
 the build, report/subject hashes that do not match the zipped files, and a required check that did not run, did not
 finish or did not pass (skipped = not ready) are `fail`; a package without a manifest is `not_run` (never pass).
 
+Masters per role (#1525, [D324]): each part of a package keeps its own master. The role of a member follows the delivery
+name grammar (`role_of`: a `Ground` name token -> `ground`, else `oks`); OKS artifacts are derived from the OKS master
+(.blend), Ground artifacts from their own source (e.g. the ground mesh JSON of tools/blender/ground_json_to_fbx.py).
+Schema v2 keeps `masters` keyed by role; two revisions of ONE role are refused, different masters of different roles
+are not. A record whose role disagrees with the member name is refused naming the member (no false provenance).
+Schema v1 manifests (one `master`) are still read: that one master stands for every role.
+
 FBX export owner (#1423 point 2): the readback of the exported files that go into the package is
 `readback_summary` over tools/blender/fbx_readback.py (dimensions, part positions, materials, UV, UCX-to-visual name
 binding); its report is the required check `fbx_readback`.
@@ -27,7 +34,10 @@ import os
 import re
 import zipfile
 
-SCHEMA = 'agr.build_manifest/1'
+SCHEMA = 'agr.build_manifest/2'
+SCHEMA_V1 = 'agr.build_manifest/1'
+ROLES = ('oks', 'ground')  # [D324]: one master per role
+GROUND_TOKEN = re.compile(r'(?:^|_)Ground(?:_|$)')
 DERIVATION_SCHEMA = 'agr.derivation/1'
 READBACK_SCHEMA = 'agr.fbx_readback/1'
 SUFFIX = '.build.json'
@@ -37,13 +47,16 @@ EXPORT_OWNER = 'tools/derive/build_manifest.py build (export owner readback, #14
 KINDS = ('npm_fbx', 'vpm_fbx', 'light_fbx', 'ucx_fbx', 'texture', 'geojson')
 SHA = re.compile(r'^[0-9a-f]{64}$')
 COMMIT = re.compile(r'^(?:[0-9a-f]{7,40}|unknown)$')
-TOP_KEYS = {'schema', 'build_id', 'created_utc', 'package', 'master', 'transform', 'artifacts', 'checks'}
+TOP_KEYS_V1 = {'schema', 'build_id', 'created_utc', 'package', 'master', 'transform', 'artifacts', 'checks'}
+TOP_KEYS = TOP_KEYS_V1 - {'master'} | {'masters'}
 MASTER_KEYS = {'name', 'sha256', 'builder_commit'}
 TRANSFORM_KEYS = {'name', 'file', 'sha256'}
-ARTIFACT_KEYS = {'name', 'kind', 'sha256', 'derived_sha256', 'master_sha256', 'parts'}
+ARTIFACT_KEYS_V1 = {'name', 'kind', 'sha256', 'derived_sha256', 'master_sha256', 'parts'}
+ARTIFACT_KEYS = ARTIFACT_KEYS_V1 | {'role'}
 CHECK_KEYS = {'id', 'owner', 'required', 'status', 'finished', 'report', 'report_sha256', 'subjects'}
-DERIVATION_KEYS = {'schema', 'master_name', 'master_sha256', 'builder_commit', 'artifacts', 'master_path'}
-DERIVATION_REQUIRED = DERIVATION_KEYS - {'master_path'}  # master_path: #1505 export-time records; older records lack it
+DERIVATION_KEYS = {'schema', 'master_name', 'master_sha256', 'builder_commit', 'artifacts', 'master_path', 'role'}
+# master_path: #1505 export-time records; role: #1525 records; older records lack them (role then follows the name)
+DERIVATION_REQUIRED = DERIVATION_KEYS - {'master_path', 'role'}
 DERIVATION_SUFFIX = '.derivation.json'
 DERIVATION_STORE = 'derivation'  # <export root>/derivation/: beside the exported folder, never inside a package folder
 ATLAS_MASTER_KEYS = {'name', 'sha256', 'udims'}
@@ -89,6 +102,44 @@ def kind_of(name):
     if low.endswith('.geojson'):
         return 'geojson'
     raise ValueError('build manifest: no artifact kind for member ' + repr(name))
+
+
+def role_of(name):
+    """Package role of a member by the delivery name grammar ([D324]): a `Ground` token in the stem -> 'ground'
+    (`<NNNN>_<A>_Ground.fbx`, `SM_<A>_Ground.fbx`, `SM_<A>_Ground_Light.fbx`), else 'oks'."""
+    stem = os.path.splitext(os.path.basename(str(name)))[0]
+    return 'ground' if GROUND_TOKEN.search(stem) else 'oks'
+
+
+def _role(value, where):
+    if value not in ROLES:
+        raise ValueError('{} role {!r} unsupported (roles: {})'.format(where, value, ', '.join(ROLES)))
+    return value
+
+
+def master_args(values):
+    """`--master` operands -> one path (legacy, unkeyed) or {role: path} (`role=path`, [D324]); errors name the
+    operand: unknown role, a role given twice, an empty path, keyed mixed with unkeyed, no master."""
+    values = [os.fspath(v) for v in values or ()]
+    if not values:
+        raise ValueError('no --master given')
+    keyed, plain = {}, []
+    for v in values:
+        role, sep, path = v.partition('=')
+        if sep and re.fullmatch(r'[A-Za-z_]+', role):
+            _role(role, '--master ' + v)
+            if role in keyed:
+                raise ValueError('--master role {} given twice'.format(role))
+            if not path.strip():
+                raise ValueError('--master {}: empty path'.format(v))
+            keyed[role] = path
+        else:
+            plain.append(v)
+    if keyed and plain:
+        raise ValueError('--master: do not mix role=path with an unkeyed path {}'.format(plain))
+    if len(plain) > 1:
+        raise ValueError('--master given twice without a role: {}; use role=path'.format(plain))
+    return plain[0] if plain else keyed
 
 
 def strict_json(data):
@@ -143,14 +194,23 @@ def zip_members(package_zip):
 
 
 # ---- derivation records: written by the exporter at export time ---------------------------------------------
-def derivation_record(artifacts, master, builder_commit, master_sha256=None):
+def derivation_record(artifacts, master, builder_commit, master_sha256=None, role=None):
     """Record of which master revision the exported `artifacts` (paths) were derived from, hashed NOW (export time).
 
     master_sha256: the master hash the exporter read BEFORE it opened the master (#1505); a different hash now means
     the master changed during the export and is refused (`master_changed_during_export`), nothing is recorded.
-    A later master edit leaves this record behind: the build manifest then names two revisions and is refused."""
+    A later master edit leaves this record behind: the build manifest then names two revisions and is refused.
+    role ([D324]): the package role of the artifacts ('oks' | 'ground'); None takes it from the artifact names and
+    refuses artifacts of different roles in one record (one record = one master = one role)."""
     if not artifacts:
         raise ValueError('derivation: no artifact')
+    if role is None:
+        roles = sorted({role_of(os.fspath(p)) for p in artifacts})
+        if len(roles) != 1:
+            raise ValueError('derivation: artifacts of different roles {} in one record; one master per role '
+                             '[D324]'.format(roles))
+        role = roles[0]
+    _role(role, 'derivation')
     if not COMMIT.match(str(builder_commit)):
         raise ValueError('derivation: builder_commit must be a git sha or unknown')
     if master_sha256 is not None:
@@ -174,7 +234,8 @@ def derivation_record(artifacts, master, builder_commit, master_sha256=None):
             raise ValueError('derivation: empty or missing artifact ' + path)
         rec[name] = {'kind': kind_of(name), 'sha256': sha256_file(path)}
     return {'schema': DERIVATION_SCHEMA, 'master_name': os.path.basename(master), 'master_sha256': now,
-            'master_path': os.path.abspath(master), 'builder_commit': str(builder_commit), 'artifacts': rec}
+            'master_path': os.path.abspath(master), 'builder_commit': str(builder_commit), 'artifacts': rec,
+            'role': role}
 
 
 def derivation_store(export_dir):
@@ -184,13 +245,14 @@ def derivation_store(export_dir):
     return os.path.join(os.path.dirname(os.path.abspath(os.fspath(export_dir))), DERIVATION_STORE)
 
 
-def write_export_derivation(artifacts, master, store_dir, builder_commit='unknown', master_sha256=None, inputs=()):
+def write_export_derivation(artifacts, master, store_dir, builder_commit='unknown', master_sha256=None, inputs=(),
+                            role=None):
     """Exporter hook (#1505): write `<store>/<first artifact>.derivation.json` (new file, never replaced).
 
-    Every refusal (no artifact, master changed during the export, existing record, record aliasing an input) happens
-    before the store folder or the record is created."""
+    Every refusal (no artifact, master changed during the export, existing record, record aliasing an input, unknown
+    role) happens before the store folder or the record is created."""
     artifacts = [os.fspath(p) for p in artifacts]
-    rec = derivation_record(artifacts, master, builder_commit, master_sha256)
+    rec = derivation_record(artifacts, master, builder_commit, master_sha256, role)
     store_dir = os.fspath(store_dir)
     path = os.path.join(store_dir, os.path.basename(artifacts[0]) + DERIVATION_SUFFIX)
     taken = {os.path.normcase(os.path.realpath(p)) for p in list(artifacts) + [os.fspath(master)] + list(inputs)}
@@ -286,6 +348,8 @@ def check_derivation(rec):
         raise ValueError('derivation master_path must be a non-empty path')
     if rec['schema'] != DERIVATION_SCHEMA:
         raise ValueError('derivation schema {!r} != {!r}'.format(rec['schema'], DERIVATION_SCHEMA))
+    if 'role' in rec:
+        _role(rec['role'], 'derivation')
     _sha(rec['master_sha256'], 'derivation master_sha256')
     if not isinstance(rec['artifacts'], dict) or not rec['artifacts']:
         raise ValueError('derivation artifacts must be a non-empty object')
@@ -372,12 +436,36 @@ def readback_report(package_zip, summaries):
 
 
 # ---- manifest ---------------------------------------------------------------------------------------------
+def _masters_by_role(masters, roles):
+    """make_manifest `masters`: one path (legacy; valid only for a one-role package) or {role: path} ([D324])."""
+    if isinstance(masters, dict):
+        out = {_role(r, 'build manifest master'): os.fspath(p) for r, p in masters.items()}
+    elif len(roles) == 1:
+        out = {next(iter(roles)): os.fspath(masters)}
+    else:
+        raise ValueError('build manifest: package has roles {}: give one master per role (--master role=path, '
+                         '[D324])'.format(sorted(roles)))
+    missing = sorted(set(roles) - set(out))
+    if missing:
+        raise ValueError('build manifest: no master for role(s) {} (--master role=path)'.format(missing))
+    unused = sorted(set(out) - set(roles))
+    if unused:
+        raise ValueError('build manifest: master given for role(s) {} but the package has no such member'.format(
+            unused))
+    for r, p in out.items():
+        if not os.path.isfile(p):
+            raise ValueError('build manifest: no {} master file {}'.format(r, p))
+    return out
+
+
 def make_manifest(package_zip, master, builder_commit, derivations, transform, readback=None, readback_file=None,
                   build_id=None, now=None):
     """Manifest dict of one package. Every member needs a derivation record (an unrecorded member is an error naming
-    it); the master revision named by each record is kept as is, so a stale artifact shows up as a mismatch."""
+    it); the master revision named by each record is kept as is, so a stale artifact shows up as a mismatch.
+
+    master: {role: path} ([D324]: OKS from its .blend, Ground from its own source) or one path for a one-role
+    package. A record whose role disagrees with the member name grammar is refused naming the member."""
     package_zip = os.fspath(package_zip)
-    master = os.fspath(master)
     if not COMMIT.match(str(builder_commit)):
         raise ValueError('build manifest: builder_commit must be a git sha or unknown')
     members = zip_members(package_zip)
@@ -385,17 +473,24 @@ def make_manifest(package_zip, master, builder_commit, derivations, transform, r
     for rec in derivations:
         check_derivation(rec)
         for name, a in rec['artifacts'].items():
+            role = rec.get('role', role_of(name))
+            if name in members and role != role_of(name):
+                raise ValueError('build manifest: derivation record of {} names role {!r} but the member is a {!r} '
+                                 'artifact by name; each part keeps its own master [D324]'.format(
+                                     name, role, role_of(name)))
             if name in by_name and by_name[name][0] != rec['master_sha256']:
                 raise ValueError('build manifest: two derivation records for {} name different masters'.format(name))
-            by_name[name] = (rec['master_sha256'], a['sha256'])
+            by_name[name] = (rec['master_sha256'], a['sha256'], role)
     unrecorded = sorted(set(members) - set(by_name))
     if unrecorded:
         raise ValueError('build manifest: no derivation record for member(s) {}'.format(unrecorded))
+    masters = _masters_by_role(master, {by_name[n][2] for n in members})
     parts = {}
     if readback is not None:
         parts = {f['name']: sorted(m['name'] for m in f['meshes']) for f in readback['files']}
-    artifacts = [{'name': n, 'kind': kind_of(n), 'sha256': members[n], 'derived_sha256': by_name[n][1],
-                  'master_sha256': by_name[n][0], 'parts': parts.get(n, [])} for n in sorted(members)]
+    artifacts = [{'name': n, 'kind': kind_of(n), 'role': by_name[n][2], 'sha256': members[n],
+                  'derived_sha256': by_name[n][1], 'master_sha256': by_name[n][0], 'parts': parts.get(n, [])}
+                 for n in sorted(members)]
     checks = []
     if readback is not None:
         checks.append({'id': 'fbx_readback', 'owner': readback['owner'], 'required': True,
@@ -403,14 +498,16 @@ def make_manifest(package_zip, master, builder_commit, derivations, transform, r
                        'report': os.path.basename(readback_file) if readback_file else None,
                        'report_sha256': sha256_file(readback_file) if readback_file else None,
                        'subjects': {f['name']: f['sha256'] for f in readback['files']}})
-    master_sha = sha256_file(master)
+    entries = {r: {'name': os.path.basename(p), 'sha256': sha256_file(p), 'builder_commit': str(builder_commit)}
+               for r, p in sorted(masters.items())}
+    first = entries['oks' if 'oks' in entries else sorted(entries)[0]]['sha256']
     now = now or datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     stem = os.path.basename(package_zip)[:-4]
     return {'schema': SCHEMA,
-            'build_id': build_id or '{}-{}-{}'.format(stem, now, master_sha[:8]),
+            'build_id': build_id or '{}-{}-{}'.format(stem, now, first[:8]),
             'created_utc': now,
             'package': {'name': os.path.basename(package_zip), 'sha256': sha256_file(package_zip)},
-            'master': {'name': os.path.basename(master), 'sha256': master_sha, 'builder_commit': str(builder_commit)},
+            'masters': entries,
             'transform': transform, 'artifacts': artifacts, 'checks': checks}
 
 
@@ -447,18 +544,35 @@ def dumps(obj):
 
 # ---- refusal logic ------------------------------------------------------------------------------------------
 def parse_manifest(data):
+    """Strict read of a build manifest. v2 ([D324]) `masters` by role; v1 (one `master`) is normalized to v2: that one
+    master stands for every role present and each artifact gets its role from its name."""
     m = strict_json(data)
-    _keys(m, TOP_KEYS, 'manifest')
-    if m['schema'] != SCHEMA:
+    v1 = isinstance(m, dict) and m.get('schema') == SCHEMA_V1
+    _keys(m, TOP_KEYS_V1 if v1 else TOP_KEYS, 'manifest')
+    if m['schema'] not in (SCHEMA, SCHEMA_V1):
         raise ValueError('manifest schema {!r} != {!r}'.format(m['schema'], SCHEMA))
     if not isinstance(m['build_id'], str) or not m['build_id']:
         raise ValueError('manifest build_id must be a non-empty string')
     _keys(m['package'], {'name', 'sha256'}, 'manifest package')
     _sha(m['package']['sha256'], 'manifest package sha256')
-    _keys(m['master'], MASTER_KEYS, 'manifest master')
-    _sha(m['master']['sha256'], 'manifest master sha256')
-    if not COMMIT.match(str(m['master']['builder_commit'])):
-        raise ValueError('manifest master builder_commit must be a git sha or unknown')
+    if not isinstance(m['artifacts'], list) or not m['artifacts']:
+        raise ValueError('manifest artifacts must be a non-empty list')
+    if v1:
+        _keys(m['master'], MASTER_KEYS, 'manifest master')
+        for a in m['artifacts']:
+            _keys(a, ARTIFACT_KEYS_V1, 'manifest artifact')
+            a['role'] = role_of(a['name'])
+        m['masters'] = {r: dict(m['master']) for r in sorted({a['role'] for a in m['artifacts']})}
+        del m['master']
+        m['schema'] = SCHEMA
+    if not isinstance(m['masters'], dict) or not m['masters']:
+        raise ValueError('manifest masters must be a non-empty object keyed by role')
+    for r, e in m['masters'].items():
+        _role(r, 'manifest masters')
+        _keys(e, MASTER_KEYS, 'manifest masters ' + r)
+        _sha(e['sha256'], 'manifest masters {} sha256'.format(r))
+        if not COMMIT.match(str(e['builder_commit'])):
+            raise ValueError('manifest masters {} builder_commit must be a git sha or unknown'.format(r))
     _keys(m['transform'], TRANSFORM_KEYS, 'manifest transform')
     if not isinstance(m['transform']['name'], str) or not m['transform']['name'].strip():
         raise ValueError('manifest transform name required')
@@ -466,14 +580,16 @@ def parse_manifest(data):
         raise ValueError('manifest transform file and sha256 go together')
     if m['transform']['sha256'] is not None:
         _sha(m['transform']['sha256'], 'manifest transform sha256')
-    if not isinstance(m['artifacts'], list) or not m['artifacts']:
-        raise ValueError('manifest artifacts must be a non-empty list')
     seen = set()
     for a in m['artifacts']:
         _keys(a, ARTIFACT_KEYS, 'manifest artifact')
         if a['name'] in seen:
             raise ValueError('manifest artifact listed twice: ' + str(a['name']))
         seen.add(a['name'])
+        _role(a['role'], 'manifest artifact {}'.format(a['name']))
+        if a['role'] != role_of(str(a['name'])):  # [D324]: the role follows the delivery name grammar
+            raise ValueError('manifest artifact {} role {!r} != {!r} by name'.format(
+                a['name'], a['role'], role_of(str(a['name']))))
         for k in ('sha256', 'derived_sha256', 'master_sha256'):
             _sha(a[k], 'manifest artifact {} {}'.format(a['name'], k))
         if a['kind'] not in KINDS:
@@ -483,6 +599,10 @@ def parse_manifest(data):
             raise ValueError('manifest artifact {} kind {!r} != {!r}'.format(a['name'], a['kind'], want))
         if not isinstance(a['parts'], list) or not all(isinstance(p, str) for p in a['parts']):
             raise ValueError('manifest artifact {} parts must be a list of names'.format(a['name']))
+    roles = {a['role'] for a in m['artifacts']}
+    if set(m['masters']) != roles:
+        raise ValueError('manifest masters {} != artifact roles {} (one master per role present)'.format(
+            sorted(m['masters']), sorted(roles)))
     if not isinstance(m['checks'], list):
         raise ValueError('manifest checks must be a list')
     ids = set()
@@ -572,22 +692,35 @@ def manifest_findings(manifest_bytes, members, package_name, package_sha256=None
     changed = sorted(n for n, a in arts.items() if a['derived_sha256'] != a['sha256'])
     if changed:
         out.append(('fail', 'manifest_derived_changed', 'artifact changed after its export record: {}'.format(changed)))
-    master = m['master']['sha256']
+    masters = {r: e['sha256'] for r, e in m['masters'].items()}
+    current = master_sha256
+    if isinstance(current, str):
+        # one unkeyed master: valid for a one-role manifest only; else no role is checked (never a guess)
+        current = {next(iter(masters)): current} if len(masters) == 1 else {}
+    elif current is None:
+        current = {}
     revisions = {}
     for n, a in sorted(arts.items()):
-        revisions.setdefault(a['master_sha256'], []).append(n)
-    stale = {r: ns for r, ns in revisions.items() if r != master}
-    if stale:
-        detail = '; '.join('{} derived from master {} (build master {})'.format(ns, r[:12], master[:12])
-                           for r, ns in sorted(stale.items()))
+        if a['master_sha256'] != masters[a['role']]:
+            revisions.setdefault((a['role'], a['master_sha256']), []).append(n)
+    if revisions:
+        detail = '; '.join('role {}: {} derived from master {} (build {} master {})'.format(
+            r, ns, s[:12], r, masters[r][:12]) for (r, s), ns in sorted(revisions.items()))
         out.append(('fail', 'manifest_master_mismatch', 'artifacts name different master revisions: ' + detail))
-    if master_sha256 is None:
+    foreign = sorted(str(r) for r in current if r not in masters)
+    if foreign:
+        out.append(('fail', 'manifest_master_role', 'master given for role(s) {} but the package has only {} '
+                    '[D324]'.format(foreign, sorted(masters))))
+    unchecked = sorted(r for r in masters if r not in current)
+    if unchecked:
         # no master given -> the stale check did not run; never pass without it (#1423 r1 P1)
-        out.append(('not_run', 'manifest_master_unchecked', 'manifest_master_unchecked: master not given, the build '
-                    'master {} was not compared with the current master (agr validate --master)'.format(master[:12])))
-    elif master_sha256 != master:
-        out.append(('fail', 'manifest_master_stale', 'master now {} != build master {}: rebuild every artifact'.format(
-            master_sha256[:12], master[:12])))
+        out.append(('not_run', 'manifest_master_unchecked', 'manifest_master_unchecked: master not given for role(s) '
+                    '{}, the build master was not compared with the current master (agr validate --master '
+                    'role=path)'.format(', '.join('{} {}'.format(r, masters[r][:12]) for r in unchecked))))
+    for r in sorted(masters):
+        if r in current and current[r] != masters[r]:
+            out.append(('fail', 'manifest_master_stale', 'role {} master now {} != build master {}: rebuild every '
+                        '{} artifact'.format(r, str(current[r])[:12], masters[r][:12], r)))
     checks = {c['id']: c for c in m['checks']}
     fbx = sorted(n for n in members if n.lower().endswith('.fbx'))
     for cid in REQUIRED_CHECKS:
@@ -621,15 +754,16 @@ def manifest_findings(manifest_bytes, members, package_name, package_sha256=None
             out.append(('fail', 'manifest_check_not_ready', 'required check {}: status {!r}, finished {!r}'.format(
                 cid, c['status'], c['finished'])))
     if not out:
-        out.append(('pass', 'manifest_ok', 'build {}: {} artifacts from master {} (builder {}), transform {}'.format(
-            m['build_id'], len(arts), master[:12], m['master']['builder_commit'], m['transform']['name'])))
+        out.append(('pass', 'manifest_ok', 'build {}: {} artifacts from masters {} (builder {}), transform {}'.format(
+            m['build_id'], len(arts), ', '.join('{} {}'.format(r, s[:12]) for r, s in sorted(masters.items())),
+            sorted({e['builder_commit'] for e in m['masters'].values()}), m['transform']['name'])))
     return out
 
 
-def manifest_master(path):
-    """Master sha256 named by a manifest file, or None when it is unreadable/absent (cross-package check)."""
+def manifest_masters(path):
+    """{role: master sha256} named by a manifest file, or None when it is unreadable/absent (cross-package check)."""
     try:
         with open(path, 'rb') as fh:
-            return parse_manifest(fh.read())['master']['sha256']
+            return {r: e['sha256'] for r, e in parse_manifest(fh.read())['masters'].items()}
     except (OSError, ValueError, TypeError, UnicodeDecodeError):
         return None

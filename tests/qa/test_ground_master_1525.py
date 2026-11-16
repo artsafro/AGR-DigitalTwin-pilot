@@ -22,9 +22,13 @@ GROUND = {'0000_Syn_Ground.fbx': b'Kaydara FBX Binary  \x00 ground'}
 
 
 def good_rb(path):
-    return {'readback_ok': True, 'unit_scale': 1.0, 'meshes': [
-        {'name': Path(path).stem, 'location': [0, 0, 0], 'materials': ['M'], 'uv_layers': ['UVMap'],
-         'dimensions': [1, 1, 1], 'tris': 2}]}
+    """Readback stand-in (as tests/qa/test_build_manifest_1423.py): a visual mesh, its UCX, materials, one UV set."""
+    stem = Path(path).stem
+    meshes = [{'name': 'SM_' + stem, 'bounds_m': [[0, 0, 0], [1, 2, 3]], 'location': [10, 20, 0],
+               'materials': ['M_' + stem], 'uv_channels': 1, 'triangles': 12},
+              {'name': 'UCX_SM_' + stem + '_01', 'bounds_m': [[0, 0, 0], [1, 2, 3]], 'location': [10, 20, 0],
+               'materials': [], 'uv_channels': 0, 'triangles': 12}]
+    return {'readback_ok': True, 'blender': 'stub', 'meshes': meshes}
 
 
 def masters(tmp):
@@ -37,7 +41,7 @@ def masters(tmp):
 
 def export(tmp, files, master, role):
     """One export of `files` from `master`; the producer hook writes its record into the export's store."""
-    out = tmp / ('export-' + role) / 'fbx'
+    out = tmp / ('export-' + next(iter(files))[:-4]) / 'fbx'
     out.mkdir(parents=True)
     for n, d in files.items():
         (out / n).write_bytes(d)
@@ -272,7 +276,7 @@ def test_record_role_is_written_and_unknown_role_is_refused(tmp_path):
     with pytest.raises(ValueError, match='role'):
         bm.check_derivation(dict(rec, role='flora'))
     with pytest.raises(ValueError, match='role'):
-        bm.write_export_derivation([tmp_path / 'export-ground' / 'fbx' / '0000_Syn_Ground.fbx'], ground,
+        bm.write_export_derivation([tmp_path / 'export-0000_Syn_Ground' / 'fbx' / '0000_Syn_Ground.fbx'], ground,
                                    tmp_path / 'other', 'abc1234', role='Ground')
     assert not (tmp_path / 'other').exists()
 
