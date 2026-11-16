@@ -23,7 +23,8 @@ VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv"
           "readback", "validate", "sintez", "delivered"]
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
              "package", "validate", "sintez"]
-RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner"},  # sintez-runner: #1379 (PR #1431)
+RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner",  # sintez-runner: #1379 (PR #1431)
+                           "parapet-seam"},  # #1381: one roof/parapet seam check
             "ground-route": {"urns-outside"}}  # #1412: D302
 
 
@@ -186,7 +187,7 @@ def test_generator_writes_the_two_new_context_maps():
     names = {p.name for p in files}
     for stem in MAP_FILES.values():
         assert {f"{stem}.excalidraw", f"{stem}.svg"} <= names
-    assert len(files) == 24   # #1393: + MAF, Flora, package routes and their context maps
+    assert len(files) == 42   # #1425: + six short schemes (x2) and owners tables
     for name, stem in MAP_FILES.items():
         assert route_map.OUTPUTS[name] == Path("docs/architecture") / stem
         for suffix in (".excalidraw", ".svg"):

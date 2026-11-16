@@ -37,7 +37,7 @@ _TESTS = (r"(?:full[- ]suite|(?:test[- ])?suite|test[- ]files?|tests?(?![/\\.]\w
 _REVIEWER = r"\breviewers?\b(?!['’]s)"
 _DELEGATION = (
     re.compile(_REVIEWER + r"(?P<gap>[^.;\n]{0,40}?)\b"
-               r"(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes|verify|verifies|check|checks)"
+               r"(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes|(?P<inspection>verify|verifies|check|checks))"
                r"\s+(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
                + _TESTS, re.IGNORECASE),
     re.compile(r"\b" + _TESTS + r"[^.;\n]{0,30}\b(?:delegated|deferred|left|handed|passed on)\b"
@@ -46,18 +46,25 @@ _DELEGATION = (
                r"\s+(?:to|for|by) (?:the )?" + _REVIEWER, re.IGNORECASE),
     re.compile(r"\b(?:delegat|leav|hand|pass)\w*\b[^.;\n]{0,40}\b" + _TESTS + r"[^.;\n]{0,20}\b(?:to|for)\s+"
                r"(?:the )?" + _REVIEWER, re.IGNORECASE),
-    re.compile(r"\b" + _TESTS + r"\s+to\s+be\s+(?:run|checked|verified)\s+by\s+(?:the\s+)?"
-               + _REVIEWER, re.IGNORECASE),
-    re.compile(r"\b" + _TESTS + r"\s*:\s*(?:the\s+)?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s+(?:(?:are|is)\s+to|to|will)\s+be\s+"
+               r"(?:run|executed|checked|verified)\s+by\s+(?:the\s+)?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s*:\s*(?:the\s+)?" + _REVIEWER
+               + r"(?=\s*(?:[.;!?\n(]|$|to\s+(?:run|rerun|re-run|execute|verify|check)\b))", re.IGNORECASE),
     re.compile(r"\bdelegat\w*\b[^.\n]{0,40}\bfull[- ]suite\b", re.IGNORECASE),
 )
+_EXECUTION_TESTS = re.compile(
+    r"\b(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes)\s+"
+    r"(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
+    + _TESTS, re.IGNORECASE)
 _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
 # "the reviewer, not the author, runs the tests" negates the author, not the hand-over.
 _NOT_AUTHOR = re.compile(r"\b(?:not|never)\s+(?:by\s+)?(?:the\s+)?authors?\b", re.IGNORECASE)
 
 
 def _negated(line, match):
-    """not/never/no in the same clause before ``match`` (40 chars, cut at . ; : ! ?) or inside it."""
+    """Negation in the same clause, or an explicit empty reviewer assignment (``: none``)."""
+    if re.match(r"\s*:\s*none\b(?=\s*(?:[.;!?\n]|$))", line[match.end():], re.IGNORECASE):
+        return True
     before = re.split(r"[.;:!?]", line[max(0, match.start() - 40):match.start()])[-1]
     return any(_NEGATION.search(_NOT_AUTHOR.sub(" ", text)) for text in (before, match[0]))
 
@@ -72,6 +79,17 @@ def delegation(line):
     """
     for pattern in _DELEGATION:
         for match in pattern.finditer(line):
+            # Checking completed author work is review; requesting another run is delegation.
+            if match.groupdict().get("inspection") and re.match(
+                    r"\s+(?:I|we|the\s+author)\s+(?:ran|executed|checked|verified)\b",
+                    line[match.end():], re.IGNORECASE):
+                # Exempt only the inspection, not a subsequent execution in the same clause.
+                boundary = re.search(r"[.;!?\n]", line[match.end():])
+                end = match.end() + boundary.start() if boundary else len(line)
+                for execution in _EXECUTION_TESTS.finditer(line, match.end(), end):
+                    if not _negated(line, execution):
+                        return execution
+                continue
             if not _negated(line, match):
                 return match
     return None

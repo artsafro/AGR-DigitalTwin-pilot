@@ -8,6 +8,33 @@
 # Checked by tests/test_route_maps_1383.py and tests/test_route_maps_1392.py. Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут ВПМ / ОКС v2: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК)"
 route: oks-vpm
+scheme:
+  source_ru: "КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка"
+  steps:
+    - stages: "sources,parts,gate1"
+      ru: "Описать исходники и согласовать состав"
+      artifact_ru: "Реестр исходников + PartsList + бюджет"
+      gate_ru: "Артём подтвердил Gate 1"
+    - stages: "body,openings,roof,decor"
+      ru: "Построить корпус, окна, кровлю и декор"
+      artifact_ru: "Сцена ВПМ или мастер"
+      gate_ru: "Архитектура сверена с проектом"
+    - stages: "uv,ucx,master-topology,npm"
+      ru: "Подготовить UV / UDIM, UCX и НПМ"
+      artifact_ru: "ВПМ + НПМ в общих координатах"
+      gate_ru: "Профили и атлас не подменяют друг друга"
+    - stages: "package"
+      ru: "Экспортировать и упаковать"
+      artifact_ru: "FBX + export_meta + ZIP; схема «Пакет и сдача»"
+      gate_ru: "Упаковка не означает приёмку"
+    - stages: "readback,validate,sintez"
+      ru: "Прочитать экспорт и выполнить проверки"
+      artifact_ru: "Свежий отчёт и находки СИНТЕЗ"
+      gate_ru: "Отказ / not_run не равны pass"
+    - stages: "delivered"
+      ru: "Передать результат Артёму"
+      artifact_ru: "Пакет и сцена Max QUAD"
+      gate_ru: "Артём принимает визуально; публикация отдельно"
 object: "KPP1, PSU275, TEC26-OKS, elv-tc-vpm"
 issue: "#1392"
 actors:
@@ -108,6 +135,8 @@ stages:
     evidence:
       - docs/procedure/node-r6-oks-body-facade.md
       - jobs/KPP1/seam-1339/README.md
+      - tools/blender/seam_seal.py
+      - tools/qa/roof_parapet_seam.py
   - id: decor
     event_ru: "Декор, навесные элементы, разрезанный фасад: врезаны"
     actor: agent-dcc
@@ -274,15 +303,6 @@ hotspots:
     evidence:
       - jobs/KPP1/spec-compare-v002.md
       - jobs/KPP1/windowgen-1338/README.md
-  - id: parapet-seam
-    stage: roof
-    ru: "Шов кровля / парапет: КПП1 переделывал вставную кровлю (#1339); СРЕDА — стыки текстуры не сходятся под парапетом (423 пересечения на 95 рёбрах)"
-    rules:
-      - D038
-      - D254
-    evidence:
-      - jobs/KPP1/seam-1339/README.md
-      - docs/retros/2026-11-05-elv-tc-vpm-claude.md
   - id: brick-courses
     stage: uv
     ru: "4БК кирпич: 37 → 38 рядов, перевязка на стыке этажей, швы панелей 10 мм по красным линиям архитектора; пилот в 1 UDIM (#1326) открыт"

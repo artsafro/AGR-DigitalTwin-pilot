@@ -180,6 +180,41 @@ def roof_name(body_name, k):
     return 'ROOF_{}_{:03d}'.format(body_name, k)
 
 
+def hole_plate(loop_xy, level_m, top_m, outer_xy=None, raw_options=None):
+    """One slab for a parapet hole drawn by a job builder (KPP1 build_kpp1.roof, #1381): the inner parapet faces
+    stand on the plan loop `loop_xy` from `level_m` up to `top_m` and look into the hole. Same rule as `plan`
+    (R6 #1352 / D292): the slab lies `lift_m` above the loop and its outline runs `inset_m` into the parapets.
+    `outer_xy`: the outer parapet line in plan; a slab point beyond it raises Ambiguous('roof_outside_parapet').
+    Fail closed: fewer than 3 distinct points, a repeated point, a non-finite value or top_m <= level_m is a
+    ValueError; returns the slab() dict."""
+    opts = options(raw_options)
+    pts = [tuple(p) for p in loop_xy]
+    nums = [level_m, top_m] + [c for p in pts for c in p]
+    if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in nums):
+        raise ValueError('body.roof: hole loop, level and top must be finite numbers')
+    if len(pts) < 3 or any(len(p) != 2 for p in pts) or len(set(pts)) != len(pts):
+        raise ValueError('body.roof: hole loop needs >= 3 distinct (x, y) points')
+    if not top_m > level_m:
+        raise ValueError('body.roof: parapet top {!r} must be above the hole level {!r}'.format(top_m, level_m))
+    if G.area2([list(p) for p in pts]) < 0:
+        pts.reverse()
+    n = len(pts)
+    verts = [[x, y, float(level_m)] for x, y in pts] + [[x, y, float(top_m)] for x, y in pts]
+    faces = [[(i + 1) % n, i, n + i, n + (i + 1) % n] for i in range(n)]   # normals look into the hole
+    loops, owner = boundary_loops(faces)
+    loop = next((lp for lp in loops if all(i < n for i in lp)), None)
+    hull = _hull([[x, y] for x, y in (outer_xy or [])] or [v[:2] for v in verts])
+    s = slab({'verts': verts, 'faces': faces}, loop, owner, opts, hull) if loop else None
+    if s is None:
+        raise ValueError('body.roof: the hole loop is not a parapet rim')
+    if outer_xy is not None and s['outside']:
+        raise G.Ambiguous('roof_outside_parapet', '{} slab points beyond the outer parapet line'.format(
+            len(s['outside'])))
+    if s['gaps']:
+        raise G.Ambiguous('roof_gap', '{} points of the hole loop not under the slab'.format(s['gaps']))
+    return s
+
+
 def plan(bodies, raw_options=None):
     """bodies: [{'handle', 'name', 'mesh': {'verts' (m, world), 'faces'}}] -> {'options', 'rows', 'findings',
     'done', 'skipped', 'ambiguous', 'agent_requests'}."""

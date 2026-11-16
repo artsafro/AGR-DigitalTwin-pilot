@@ -19,7 +19,7 @@ YAMLS = [ROOT / route_map.EVENTS, ROOT / route_map.CONTEXTS]
 # ---------------------------------------------------------------- generator: drift, references, labels
 def test_committed_files_equal_generator_output():
     _, _, files = route_map.render(ROOT)
-    assert len(files) == 24  # NPM, VPM, Ground, MAF, Flora, package routes + their 6 context maps (#1392, #1393), x2
+    assert len(files) == 42  # 24 detailed views + 6 short schemes x2 + 6 owner tables (#1425)
     for rel, text in files.items():
         assert (ROOT / rel).read_bytes() == text.encode("utf-8"), f"{rel} drifted; rerun route_map.py"
 
@@ -96,7 +96,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 11  # #1441: missing owners, roof, VPM UV copy
+    assert len(contexts["contexts"]) == 11  # #1441 owners + #1380 shared VPM UV replaces vpm-uv-copy
 
 
 @pytest.mark.parametrize("command,ok", [
@@ -281,11 +281,11 @@ def test_guard_green_on_repo_with_allowlist(capsys):
 
 def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
-    assert {k[0] for k in allowed} == set(guard.RULES)
+    assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
-    assert len([k for k in jobs if k[0] == "udim-tile"]) == 38   # #1370: six single-row OBR22 copies added to the #1387 hash-pinned rows
+    assert len([k for k in jobs if k[0] == "udim-tile"]) == 36   # #1380 owner calls retained; #1370 adds six hash-pinned OBR22 copies
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
 

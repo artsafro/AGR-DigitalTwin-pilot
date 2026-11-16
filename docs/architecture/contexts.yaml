@@ -62,9 +62,15 @@ rules:
   - id: sintez-checker
     owner: tools/blender/sintez_checker.py
     ru: "свой запуск чекера СИНТЕЗ (calculate_all_checks) вместо общего скрипта за командой agr checker; охрана jobs/, tools/, src/ (#1379)"
+  - id: vpm-uv
+    owner: tools/blender/vpm_uv.py
+    ru: "своя периодическая UV-развёртка или texel_cut вместо общего Blender owner (#1380); не атлас НПМ"
   - id: master-qa
     owner: tools/blender/qa_master.py
     ru: "своя проверка мастера в Blender (def world_bm) вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/ (#1379)"
+  - id: seam-seal
+    owner: tools/blender/seam_seal.py
+    ru: "свой шов в Blender (def seal / ring_split / t_junctions) вместо общего tools/blender/seam_seal.py; охрана jobs/, tools/, src/ (#1381)"
 shared_kernel:
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
@@ -136,12 +142,6 @@ shared_kernel:
       issue: "#1337"
       hash: "c13b738f14"
       status: historical
-    - at: "jobs/KPP1/scripts/vpm_uv.py::tile_offset"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "ec9495a822"
-      status: live-bypass
-      step: "-"
     - at: "jobs/PSU275/scripts/export_npm.py::<module>"
       rule: udim-tile
       issue: "#1337"
@@ -182,12 +182,6 @@ shared_kernel:
       issue: "#1337"
       hash: "6688d0464d"
       status: historical
-    - at: "jobs/TEC26-OKS/scripts/vpm_uv.py::tile_offset"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "ec9495a822"
-      status: live-bypass
-      step: "-"
     - at: "jobs/VATUTINO-SITE/flora_v007_blender.py::cmd_readback"
       rule: udim-tile
       issue: "#1337"
@@ -407,13 +401,14 @@ contexts:
     functions:
       - name: slab
         contract: "меш и петля границы -> плита кровли или Ambiguous"
+      - name: hole_plate
+        contract: "план отверстия парапета, уровень, верх, внешний контур -> плита кровли (сборщик задания, #1381) или ошибка"
     duplicates:
-      - at: "jobs/KPP1/scripts/build_kpp1.py:421"
+      - at: "jobs/KPP1/scripts/build_kpp1.py:432"
         match: "def roof("
         issue: "#1381"
-        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; локальная плита/парапет, roof_core не вызывается"
-        status: live-bypass
-        step: "#1381"
+        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; контур и высота плиты из roof_core.hole_plate (R6 #1352, D292), стены отверстия и шахта — локально"
+        status: wrapper
   - id: body
     ru: "Корпус и геометрия"
     area: docs/domain/areas/body.md
@@ -431,18 +426,6 @@ contexts:
       - name: plan_opacity_swaps
         contract: "сцена, кандидаты, бюджет треугольников -> список замен на плоскости"
     duplicates:
-      - at: "jobs/KPP1/scripts/seal.py:302"
-        match: "def seal("
-        issue: "#1359"
-        ru: "свой шов и сварка Т-узлов вместо dt_ai.ops.seams.join_parts"
-        status: live-bypass
-        step: "#1381"
-      - at: "jobs/KPP1/scripts/seal.py:73"
-        match: "def t_junctions("
-        issue: "#1359"
-        ru: "свой поиск Т-узлов на швах"
-        status: live-bypass
-        step: "#1381"
       - at: "jobs/KPP1/scripts/build_kpp1.py:194"
         match: "def load_spec("
         issue: "#1359"
@@ -470,35 +453,30 @@ contexts:
         step: "#1380"
       - at: "jobs/KPP1/scripts/make_npm_atlas.py:28"
         match: "def main("
-        issue: "#1106"
-        ru: "атлас НПМ КПП1 в задании"
+        issue: "#1141"
+        ru: "остаётся до #1141: исторический атлас НПМ КПП1; delivered файлы не перегенерируются"
         status: historical
       - at: "jobs/TEC26-OKS/scripts/make_npm_atlas.py:28"
         match: "def main("
-        issue: "#1106"
-        ru: "копия атласа КПП1 в TEC26"
+        issue: "#1141"
+        ru: "остаётся до #1141: историческая NPM recipe TEC26 с собственными guards, не эквивалент VPM UV"
         status: historical
-      - at: "jobs/KPP1/scripts/vpm_uv.py:155"
-        match: "def pack_uv("
-        issue: "#1359"
-        ru: "своя раскладка UV ВПМ; файл TEC26 отличается одной строкой"
-        status: own-duty
-        why: "раскладка ВПМ по периоду отделки и плотности, не атлас НПМ; build_kpp1 -> pack_uv"
-  - id: vpm-uv-copy
-    ru: "Копия раскладки UV ВПМ"
+  - id: vpm-uv
+    ru: "Периодическая UV-развёртка ВПМ"
     area: docs/domain/areas/uv-atlas.md
-    owner: jobs/KPP1/scripts/vpm_uv.py
-    owner_ru: "ВПМ pack_uv по периодам; не atlas_core НПМ"
+    owner: tools/blender/vpm_uv.py
+    owner_ru: "общая Blender bmesh-развёртка KPP1, TEC26 и PSU275 (#1380), не упаковка атласа НПМ"
     functions:
+      - name: texel_cut
+        contract: "bmesh, имена отделок, spec -> новый bmesh с согласованными разрезами по рёбрам"
       - name: pack_uv
-        contract: "меш, отделки, спецификация -> раскладка ВПМ"
+        contract: "bmesh, имена отделок, spec -> UVMap и QA по отделкам; периодические острова можно stack (D320)"
     duplicates:
-      - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
-        match: "def pack_uv("
-        issue: "#1359"
-        ru: "почти побайтовая копия vpm_uv.py КПП1"
-        status: live-bypass
-        step: "-"
+      - at: "jobs/KPP1/rerun-1230/build_blender.py::texel_cut"
+        rule: vpm-uv
+        issue: "#1380"
+        ru: "остаётся исторический альтернативный slicer rerun-1230; frozen результат не перестраивается"
+        status: historical
   - id: package
     ru: "Экспорт и пакет сдачи"
     area: docs/domain/areas/package.md

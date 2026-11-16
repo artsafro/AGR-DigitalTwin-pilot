@@ -12,7 +12,7 @@ from pathlib import Path
 
 REQUIRED = {'address', 'h_otn_model_max_z_m', 'thumbnail'}
 OPTIONAL = {'profile', 'exported_files', 'provenance', 'fbx', 'pivot_revit_internal_m',
-            'bbox_after_pivot', 'main_tris', 'glass_tris', 'ucx', 'ucx_tris', 'fbx_records'}
+            'bbox_after_pivot', 'main_tris', 'glass_tris', 'ucx', 'ucx_tris', 'fbx_records', 'master_sha256'}
 FBX_NAME = re.compile(r'[A-Za-z0-9_]+\.fbx')
 SHA256 = re.compile(r'[0-9a-f]{64}')
 
@@ -86,6 +86,9 @@ def validate_meta(meta):
             raise ValueError('export_meta duplicated exported_files')
     if 'fbx' in meta and (not isinstance(meta['fbx'], str) or not meta['fbx'].strip()):
         raise ValueError('export_meta fbx must be a nonempty path')
+    if 'master_sha256' in meta and (not isinstance(meta['master_sha256'], str)
+                                    or SHA256.fullmatch(meta['master_sha256']) is None):
+        raise ValueError('export_meta master_sha256 must be 64 lowercase hex digits (#1505)')
     for key in ('main_tris', 'glass_tris', 'ucx', 'ucx_tris'):
         if key in meta and (type(meta[key]) is not int or meta[key] < 0):
             raise ValueError(f'export_meta {key} must be a nonnegative integer')
@@ -196,15 +199,27 @@ def write_meta(path, meta):
         fh.write(text)
 
 
-def record_export(fbx, *, source, top: float | str = 'unknown', thumbnail='unknown', metadata_path=None, address=None, profile=None):
+def record_export(fbx, *, source, top: float | str = 'unknown', thumbnail='unknown', metadata_path=None, address=None,
+                  profile=None, master=None, master_sha256=None):
     """Record only caller measurements and filename facts; never infer a legal address/datum.
 
     Per-FBX sidecars allow several exports in one directory without overwriting metadata.
     A command producing a single package can explicitly request canonical export_meta.json.
+    master (#1505): the master file the FBX was derived from; its SHA-256 is stored, not only a path. master_sha256
+    is the hash the exporter read before opening it: a different hash now is `master_changed_during_export`.
     """
+    import hashlib
     fbx = Path(fbx)
     if not fbx.is_file():
         raise ValueError(f'exported FBX missing: {fbx}')
+    master_hash = None
+    if master is not None:
+        if not Path(master).is_file():
+            raise ValueError(f'export_meta: no master file {master}')
+        master_hash = hashlib.sha256(Path(master).read_bytes()).hexdigest()
+        if master_sha256 is not None and master_hash != master_sha256:
+            raise ValueError(f'master_changed_during_export: {master} was {str(master_sha256)[:12]} when the export '
+                             f'started, now {master_hash[:12]}')
     match_vpm = re.fullmatch(r'SM_([A-Za-z0-9_]+)\.fbx', fbx.name)
     match_npm = re.fullmatch(r'[0-9]{4}_([A-Za-z0-9_]+)_(?:0[1-9]|1[0-9]|20|Ground)\.fbx', fbx.name)
     match = match_vpm or match_npm
@@ -222,6 +237,9 @@ def record_export(fbx, *, source, top: float | str = 'unknown', thumbnail='unkno
         record['provenance']['address'] = f'{source}: explicit exporter address argument (naming token, not legal-address approval)'
     if profile is not None:
         record['provenance']['profile'] = f'{source}: explicit exporter profile argument'
+    if master_hash is not None:
+        record['master_sha256'] = master_hash
+        record['provenance']['master_sha256'] = f'{master}: SHA-256 of the master file at export time (#1505)'
     path = Path(metadata_path) if metadata_path is not None else fbx.with_suffix(fbx.suffix + '.export_meta.json')
     write_meta(path, record)
     return path
