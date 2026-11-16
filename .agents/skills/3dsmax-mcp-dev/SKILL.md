@@ -39,8 +39,8 @@ user authorization for the exact mutation; safe_mode is not an authorization led
 For a registered `versioned-write`, require task authorization and a new versioned
 destination, including sidecars. Apply the
 [Permission matrix and DCC gate](../../../docs/agents/WORKFLOW.md#gate-dcc-authorization).
-Never overwrite/delete sources or accepted versions. Use a managed export copy for
-export preparation, not the working source (`docs/domain/export-import.md`).
+Never overwrite/delete sources or accepted versions. Use a managed export copy for export preparation, not the working source (`docs/domain/export-import.md`).
+Changing global DCC settings (Nitrous limits/display performance) is **ask-first**; before user review run the read-only [texture handoff check](../../../docs/procedure/REVIEW_TEXTURES.md).
 
 ## Verify and recover
 

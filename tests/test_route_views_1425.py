@@ -169,6 +169,80 @@ def test_arrow_polylines_never_intersect_pink_lists(name):
         assert rendered == expected
 
 
+def _label_hits(board):
+    by_id = {e["id"]: e for e in board}
+    hits = []
+    for text in (e for e in board if e["type"] == "text"):
+        arrow = by_id.get(text.get("containerId"), {})
+        if arrow.get("type") != "arrow":
+            continue
+        ends = {arrow[k]["elementId"] for k in ("startBinding", "endBinding")}
+        for rect in (e for e in board if e["type"] == "rectangle" and e["id"] not in ends):
+            if (text["x"] < rect["x"] + rect["width"] and text["x"] + text["width"] > rect["x"]
+                    and text["y"] < rect["y"] + rect["height"] and text["y"] + text["height"] > rect["y"]):
+                hits.append((text["text"], rect["id"]))
+    return hits
+
+
+def test_every_generated_arrow_label_clears_non_endpoint_rectangles():
+    _, _, files = route_map.render_all(ROOT)
+    boards = {p: json.loads(content)["elements"] for p, content in files.items()
+              if p.suffix == ".excalidraw"}
+    assert len(boards) == 18
+    hits = {str(p): _label_hits(elements) for p, elements in boards.items() if _label_hits(elements)}
+    assert not hits, hits
+
+
+@pytest.mark.parametrize("width", [0, -1, float("nan"), float("inf")])
+def test_side_label_invalid_width_fails_without_mutation(width):
+    board = route_map.Board()
+    a = board.box("a", 0, 0, 100, "Шаг", route_map.COLORS["owner"])
+    b = board.box("b", 400, 0, 100, "Артефакт", route_map.COLORS["owner"])
+    before = copy.deepcopy(board.elements)
+    with pytest.raises(route_map.SchemaError, match="label width"):
+        board.arrow("bad", a, b, "Подпись", label_w=width, side_route=True)
+    assert board.elements == before
+
+
+def test_blocked_side_label_fails_closed_before_bindings_and_can_retry():
+    board = route_map.Board()
+    a = board.box("a", 0, 0, 100, "Шаг", route_map.COLORS["owner"])
+    b = board.box("b", 0, 300, 100, "Артефакт", route_map.COLORS["owner"])
+    board.box("wall", 150, -100, 500, "Дубли", route_map.COLORS["hotspot"], min_h=600)
+    before = copy.deepcopy(board.elements)
+    for _ in range(2):
+        with pytest.raises(route_map.SchemaError, match="no clear arrow label position"):
+            board.arrow("rel", a, b, "Слишком широкая подпись", label_w=120, side_route=True)
+        assert board.elements == before
+        assert board.by_id == {e["id"]: e for e in before}
+    board.arrow("rel", a, b, "Узкая", label_w=40, side_route=True)
+    assert not _label_hits(board.elements)
+
+
+@pytest.mark.parametrize("offset", [-200, 0, 200, 400])
+@pytest.mark.parametrize("height", [40, 100, 200, 300])
+@pytest.mark.parametrize("width", [40, 120, 240])
+def test_generated_label_layouts_are_clear_or_atomically_refused(offset, height, width):
+    board = route_map.Board()
+    a = board.box("a", 0, 100, 100, "Шаг", route_map.COLORS["owner"])
+    b = board.box("b", 400, 100 + offset, 100, "Артефакт", route_map.COLORS["owner"])
+    board.box("pink", 180, -50, 100, "Дубли", route_map.COLORS["hotspot"], min_h=height)
+    for source, target in ((a, b), (b, a)):
+        before = copy.deepcopy(board.elements)
+        try:
+            arrow = board.arrow(f"{source['id']}->{target['id']}", source, target,
+                                "Передача артефакта между владельцами", label_w=width, side_route=True)
+        except route_map.SchemaError as exc:
+            assert "no clear arrow label position" in str(exc)
+            assert board.elements == before
+        else:
+            assert not _label_hits(board.elements)
+            points = [(arrow["x"] + x, arrow["y"] + y) for x, y in arrow["points"]]
+            for rect in (e for e in board.elements if e["type"] == "rectangle"
+                         and e["id"] not in (source["id"], target["id"])):
+                assert not any(_segment_hits_rect(p, q, rect) for p, q in zip(points, points[1:]))
+
+
 def test_generated_obstacle_sizes_keep_side_routes_clear():
     # Synthetic layouts: different rows, aligned rows, reversed direction and several list sizes.
     for offset in (-200, 0, 200, 400):

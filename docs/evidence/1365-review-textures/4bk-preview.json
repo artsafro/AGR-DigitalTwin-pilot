@@ -1,0 +1,33 @@
+{
+  "status": "pass",
+  "ids": [
+    {
+      "object": "K3_TypFloor",
+      "id": 1,
+      "status": "pass",
+      "material": "ID1_Brick_Bricks1",
+      "image": "Bricks1_Diffuse.png",
+      "packed": false,
+      "files": [
+        "C:\\Users\\artsafro\\Desktop\\!3D viz\\!\u0410101\\63_4BK_vlad\\inbox\\\u0422\u0435\u043a\u0441\u0442\u0443\u0440\u044b\\Bricks1\\Bricks1_Diffuse.png"
+      ]
+    },
+    {
+      "object": "K3_Floor2Skirt",
+      "id": 1,
+      "status": "pass",
+      "material": "ID1_Brick_Bricks1",
+      "image": "Bricks1_Diffuse.png",
+      "packed": false,
+      "files": [
+        "C:\\Users\\artsafro\\Desktop\\!3D viz\\!\u0410101\\63_4BK_vlad\\inbox\\\u0422\u0435\u043a\u0441\u0442\u0443\u0440\u044b\\Bricks1\\Bricks1_Diffuse.png"
+      ]
+    }
+  ],
+  "application": "Blender",
+  "version": "5.1.2",
+  "scene": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!\u0410101\\63_4BK_vlad\\build\\blender\\typ_module_v003_preview.blend",
+  "units": "METRIC",
+  "scene_sha256": "b90bf7c0707c5f6b9f08932841d8f25798fdcd2eab7a49d9ec975bb3a84861d0",
+  "scope_sha256": "9e72f4b208b447d7af0e4038b1cf59ec04250a8461600aa8e7ffb0ab13db3505"
+}
