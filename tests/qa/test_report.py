@@ -81,6 +81,61 @@ def recheck(old, standards, out, *extra):
 
 # --- stamps -------------------------------------------------------------------------------------------
 
+@pytest.mark.parametrize('mutation', ['unchanged', 'changed', 'missing'])
+def test_recheck_target_names_actual_copy(old, standards, tmp_path, capsys, mutation):
+    original = json.loads(old.read_text(encoding='utf-8'))
+    copy = tmp_path / 'copy.zip'
+    copy.write_bytes(Path(original['target']).read_bytes())
+    if mutation == 'changed':
+        copy.write_bytes(copy.read_bytes() + b'changed copy')
+    elif mutation == 'missing':
+        copy.unlink()
+    out = tmp_path / 'copy-recheck.json'
+    code = recheck(old, standards, out, '--recheck-target', str(copy), '--json')
+    capsys.readouterr()
+    result = json.loads(out.read_text(encoding='utf-8'))
+    assert result['target'] == str(copy)
+    assert result['target_sha256_then'] == original['target_sha256']
+    if mutation == 'unchanged':
+        assert code == 2 and result['status'] == 'current'
+        assert result['target_sha256_now'] == original['target_sha256']
+    else:
+        assert code == 4 and result['status'] == 'evidence_missing'
+        assert result['target_sha256_now'] == (digest(copy.read_bytes()) if copy.exists() else None)
+        assert result['target_sha256_now'] != original['target_sha256']
+
+
+@pytest.mark.parametrize('alias', ['copy', 'copy_partial', 'stored_missing', 'report', 'hardlink', 'foreign_partial'])
+def test_recheck_override_refuses_output_input_aliases(old, standards, tmp_path, capsys, alias):
+    data = json.loads(old.read_bytes())
+    copy = tmp_path / 'copy.zip'
+    copy.write_bytes(Path(data['target']).read_bytes())
+    out = tmp_path / 'result.json'
+    if alias == 'copy':
+        out = copy
+    elif alias == 'copy_partial':
+        copy = Path(str(out) + '.partial')  # absent input must not become the temporary output
+    elif alias == 'stored_missing':
+        out = Path(data['target'])
+        out.unlink()
+    elif alias == 'report':
+        out = old
+    elif alias == 'hardlink':
+        out.hardlink_to(copy)
+    else:
+        Path(str(out) + '.partial').write_bytes(b'foreign partial')
+    before = {p: p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()}
+    assert recheck(old, standards, out, '--recheck-target', str(copy)) != 0
+    capsys.readouterr()
+    assert {p: p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()} == before
+
+
+def test_recheck_target_requires_recheck(tmp_path):
+    with pytest.raises(SystemExit) as exc:
+        vp.main(['--recheck-target', str(tmp_path / 'copy.zip')])
+    assert exc.value.code == 2
+
+
 def test_report_stamps_standards_digest_and_code_commit_keeping_old_keys(old, standards):
     data = json.loads(old.read_text(encoding="utf-8"))
     assert OLD_KEYS <= set(data)

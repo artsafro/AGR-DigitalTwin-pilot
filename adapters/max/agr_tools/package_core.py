@@ -80,17 +80,22 @@ def stage_table(validator_json):
                if f.get('status') != 'pass']
         codes = sorted({(f.get('data') or {}).get('code') for f in s.get('findings', [])
                         if f.get('status') == 'fail'} - {None})
+        open_codes = sorted({(f.get('data') or {}).get('code') for f in s.get('findings', [])
+                             if f.get('status') in ('not_run', 'review')} - {None})
         stages.append({'id': s['id'], 'check': s['check'], 'gate': s['gate'], 'status': s['status'],
-                       'non_pass': bad[:8], 'codes': codes})
+                       'non_pass': bad[:8], 'codes': codes, 'open_codes': open_codes})
     return {'target': rep.get('target'), 'profile': rep.get('profile'), 'exit_code': int(rep['exit_code']),
             'stages': stages, 'notes': list(rep.get('notes', []))[:20]}
 
 
 def validate(target, runner, python, root, profile=None, scene=True):
     code, out = runner(validator_argv(python, root, target, profile, scene))
-    table = stage_table(out)
+    full_report = json.loads(out)
+    table = stage_table(full_report)
     if table['exit_code'] != code:
         raise RuntimeError('validator exit {} != report exit_code {}'.format(code, table['exit_code']))
+    # Retain the complete ValidationReport, not the lossy UI table, for archive rechecks.
+    table['validation_report'] = full_report
     return table
 
 
@@ -237,7 +242,7 @@ def qa_package(edit, path, runner, python, root, profile=None, scene=True, optio
     tables, objects = [], []
     for i, t in enumerate(targets, 1):
         table = validate(t, runner, python, root, profile, scene)
-        tables.append(table)
+        tables.append({k: v for k, v in table.items() if k != 'validation_report'})
         more = [edit.finding(c, (), d) for c, d in cross.get(os.path.basename(t), [])]
         objects.append(edit.entry(i, os.path.basename(t), stage_findings(edit, table) + more))
     state = {'path': os.path.abspath(os.fspath(path)), 'files': _file_state(targets + pair)}
@@ -542,7 +547,8 @@ def _write_zip(folder, archive, target):
 def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
     """Write the archives of the unaltered, still current preview into a NEW run folder `Сборка_<time>` (never into
     the delivery folder, never over an existing ZIP) and run the validator on each one written. ГОТОВО.txt only when
-    every planned archive was written and no validator stage failed, else ОШИБКА.txt (AGR_Arxiv 1.5 contract)."""
+    every automatic check passed; only V015-V017 may await Artem's manual acceptance [D323].
+    Missing validation or any other open/failed check writes ОШИБКА.txt (binary AGR_Arxiv contract)."""
     plan = preview['plan']
     current = zip_plan(plan['folder'], plan['options'].get('address'), limits)
     edit.require_current(preview, {'plan': current})
@@ -550,6 +556,7 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
         check_members(a)  # refusal before anything is written
     run = run_folder(plan['run_parent'], stamp)
     objects, done, skipped, reports, failed = [], [], [], [], []
+    pending = set()
     try:
         for i, a in enumerate(current['archives'], 1):
             if a['problems']:
@@ -568,11 +575,55 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                 done.append(a['name'])
                 if validate_fn is not None:
                     table = validate_fn(target)
-                    reports.append(table)
+                    if (not isinstance(table, dict) or type(table.get('exit_code')) is not int
+                            or table['exit_code'] not in (0, 1, 2)):
+                        raise ValueError('invalid validator result for ' + a['name'])
+                    if not isinstance(table.get('stages'), list) or any(
+                            not isinstance(s, dict) or not {'id', 'status', 'check', 'gate'} <= set(s)
+                            for s in table['stages']):
+                        raise ValueError('partial validator stages for ' + a['name'])
+                    # Embedded Max stays stdlib-only; pin these profile inventories to
+                    # DELIVERY_VALIDATOR.yaml in the contract regression.
+                    profile = 'npm' if re.match(r'^[0-9]{4}_', a['name']) else 'vpm'
+                    numbers = ((1, 2, 3, 4, 5, 6, 12, 14, 15, 17) if profile == 'npm'
+                               else (1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17))
+                    expected = {'V{:03d}'.format(n) for n in numbers}
+                    ids = [s['id'] for s in table['stages']]
+                    if (any(not isinstance(sid, str) for sid in ids)
+                            or len(ids) != len(expected) or set(ids) != expected):
+                        missing = sorted(expected - {sid for sid in ids if isinstance(sid, str)})
+                        raise ValueError('invalid validator stage inventory for {}: missing {}; '
+                                         'expected exactly {}'.format(a['name'], ', '.join(missing),
+                                                                      ', '.join(sorted(expected))))
+                    full_report = table.get('validation_report')
+                    if not isinstance(full_report, dict) or not full_report:
+                        raise ValueError('missing validation_report for ' + a['name'])
+                    try:
+                        stored_table = stage_table(full_report)
+                    except (KeyError, TypeError, ValueError) as exc:
+                        raise ValueError('invalid validation_report for ' + a['name']) from exc
+                    if (stored_table['profile'] != profile or table.get('profile') != profile
+                            or stored_table['exit_code'] != table['exit_code']
+                            or stored_table['stages'] != table['stages']):
+                        raise ValueError('validation_report disagrees with validator table for ' + a['name'])
+                    with open(target + '.validation.json', 'x', encoding='utf-8') as fh:
+                        json.dump(full_report, fh, ensure_ascii=False, indent=2, allow_nan=False)
+                    reports.append({k: v for k, v in table.items() if k != 'validation_report'})
                     findings += stage_findings(edit, table)
-                    if table['exit_code'] == 1:
-                        failed.append('{}: validator exit 1 ({})'.format(
-                            a['name'], ', '.join(s['id'] for s in table['stages'] if s['status'] == 'fail')))
+                    open_stages = [s for s in table['stages'] if s['status'] != 'pass']
+                    manual_only = bool(open_stages) and all(
+                        s['id'] in ('V015', 'V016', 'V017') and s['gate'] == 'manual_review'
+                        and s['status'] in ('review', 'not_run') for s in open_stages)
+                    # [D323]: technical readiness is not Artem's manual acceptance.
+                    if manual_only and table['exit_code'] in (0, 2):
+                        pending.update(s['id'] for s in open_stages)
+                    elif table['exit_code'] != 0 or open_stages or not table['stages']:
+                        reasons = ['{} [{}]'.format(s['id'], ', '.join(s.get('codes', []) + s.get('open_codes', [])))
+                                   for s in table['stages'] if s['status'] != 'pass']
+                        failed.append('{}: validator exit {} ({})'.format(
+                            a['name'], table['exit_code'], '; '.join(reasons)))
+                else:
+                    failed.append('{}: validator not run (validate_fn=None)'.format(a['name']))
             objects.append(edit.entry(i, a['name'], findings))
         if not current['archives']:
             failed.append('no archive in the plan')
@@ -588,7 +639,8 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
         _marker(run, False, ['export.zip: ОШИБКА', 'run stopped: {}'.format(exc)] + failed)
         raise
     _marker(run, ok, ['export.zip: ' + ('ГОТОВО' if ok else 'ОШИБКА'), 'address: ' + current['address']]
-            + ['written: ' + n for n in done] + failed)
+            + ['written: ' + n for n in done] + failed
+            + (['ждут ручной приёмки Артёма: ' + ', '.join(sorted(pending))] if ok and pending else []))
     return rep
 
 
