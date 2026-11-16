@@ -26,6 +26,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Texel | VPM diffuse 512–1706 px/m [D160]; AGR Tools grid 3.6 m per tile at 1000 px/m [D207] |
 | UDIM | body numbered per mesh from 1001 [D209]; all glass UVs in 1001, no maps on glass [D221] |
 | Windows | library first, types by form + size [D140]; families F100 / F73 / F58 [D204] |
+| Modelling split | inset elements vs texture parts, plinth per project, reason line in the job report [D336]; list: [SKELETONS.md](../agents/SKELETONS.md#oks-modelling-split-d336) |
 | Topology | xView clean: vertices 2 mm = 0, faces 5 mm = 0 [D152]; continue loops and rings [D200] |
 | Decor | embed 10–20 mm into the facade [D199] |
 | Hand-off | a non-triangulated work FBX next to the ZIP [D198]; final export from Max or Blender, Max preferred [D212] |

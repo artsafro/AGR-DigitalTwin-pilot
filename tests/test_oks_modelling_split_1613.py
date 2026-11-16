@@ -99,6 +99,10 @@ def test_report_line_good_passes():
     (GOOD.replace("; texture=panels", ""), "texture"),
     (GOOD.replace("inset=windows, stained_glass, roof, flashings, posts; ", ""), "inset"),
     (GOOD.replace("plinth=inset", "plinth=inset; plinth=one_with_body"), "twice"),
+    (GOOD.replace("inset=windows", "inset=windows, windows"), "named twice"),
+    (GOOD.replace("plinth=inset", "plinth=inset; colour=red"), "unknown field"),
+    (GOOD.split("; reason=")[0] + "; reason=<why, for this project>", "placeholder"),
+    (None, "no `Modelling split [D336]:` line"),
 ])
 def test_report_line_fails_closed(text, needle):
     problems = sg.modelling_split_problems(text, SK)
