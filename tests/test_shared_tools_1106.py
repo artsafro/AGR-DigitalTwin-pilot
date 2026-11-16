@@ -260,10 +260,15 @@ def test_atlas_preserves_tec26_ac08_recipe_with_d278_padding(tmp_path):
 
     spec = atlas_parity_spec(ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json", tmp_path / "inputs")
     rj = run([sys.executable, ROOT / "jobs/TEC26-OKS/scripts/make_npm_atlas.py", spec, tmp_path / "job"])
-    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt"])
+    master = tmp_path / "inputs/master.blend"  # synthetic master bytes: the atlas is bound to its hash (#1505)
+    master.write_bytes(b"synthetic master revision A")
+    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt", "--master", master])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
     old = json.loads((tmp_path / 'job/npm_atlas.json').read_text())
     new = json.loads((tmp_path / 'dt/npm_atlas.json').read_text())
+    import hashlib
+    assert new['master'] == {'name': 'master.blend', 'sha256': hashlib.sha256(master.read_bytes()).hexdigest(),
+                             'udims': sorted(r['udim'] for r in new['finishes'].values())}
     assert (old['pad'], new['pad']) == (6, 16)  # old delivery recipe intentionally untouched
     assert (old['region'], new['region']) == (397, 377)
     assert old['finishes'].keys() == new['finishes'].keys()
@@ -300,7 +305,8 @@ def test_atlas_fails_closed_and_writes_nothing(tmp_path, case):
     else:
         extra = ["--index", "1000"]
     before = snapshot(tmp_path)
-    r = run([sys.executable, ATLAS_TOOL, spec, out, *extra])
+    master = ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json"  # any existing file: each case must refuse on its own
+    r = run([sys.executable, ATLAS_TOOL, spec, out, "--master", master, *extra])
     assert r.returncode != 0 and "refused" in r.stderr, (r.stdout, r.stderr)
     assert snapshot(tmp_path) == before
     assert not (ROOT / "jobs/TEC26-OKS/scripts/__atlas_probe_1106").exists()

@@ -108,6 +108,10 @@ def setup(scene, fitted):
         if prop.identifier.startswith('use_stamp_') and prop.type == 'BOOLEAN':
             setattr(render, prop.identifier, False)
     render.image_settings.file_format = 'PNG'
+    # Ignore saved output transforms and post-processing: compare the model, not a strip/tree.
+    render.image_settings.color_management = 'FOLLOW_SCENE'
+    render.use_sequencer = False
+    render.use_compositing = False
     render.image_settings.color_mode = 'RGB'
     render.image_settings.color_depth = '8'
     render.image_settings.compression = 15
@@ -185,6 +189,9 @@ for role in ('before', 'after'):
     bpy.ops.render.render(write_still=True)
     evidence[role] = {'camera': record(scene, camera), 'mesh_objects': mesh_count,
                       'render': {'engine': scene.render.engine, 'style': request['style'],
+                                 'color_management': scene.render.image_settings.color_management,
+                                 'use_sequencer': scene.render.use_sequencer,
+                                 'use_compositing': scene.render.use_compositing,
                                  'use_world_space_lighting': scene.display.shading.use_world_space_lighting,
                                  'dither_intensity': scene.render.dither_intensity,
                                  'color_mode': scene.render.image_settings.color_mode,

@@ -72,7 +72,7 @@ def _dispatch(args: list[str]) -> int:
         tail = args[1:]
         if tail in (["--help"], ["-h"]):
             print("usage: agr vpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
-                  "ATLAS_ARGS: dt derive atlas --help (SPEC NEW_ATLAS --recipe-dir RECIPE)\n"
+                  "ATLAS_ARGS: dt derive atlas --help (SPEC NEW_ATLAS --master MASTER --recipe-dir RECIPE)\n"
                   "NPM_ARGS: dt derive npm --help (MASTER SPEC ATLAS NEW_EXPORT PREFIX)\n"
                   "No inferred paths, rollback or extra validation; existing tools own those contracts.\n"
                   "DT_BLENDER is used when --blender is omitted. Atlas must succeed before npm starts.")
