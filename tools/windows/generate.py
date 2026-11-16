@@ -48,6 +48,17 @@ def plan_openings(openings, lib):
         seen.add(oid)
         for k in ('w', 'h', 'inset_m'):
             core._num(o.get(k), oid + '.' + k)
+        entry = o.get('generator')
+        if entry is not None:
+            if not isinstance(entry, dict):
+                raise ValueError(oid + ': generator must be a source record')
+            allowed = set().union(*(t.keys() for t in lib['types'])) | {'frame_profile_m', 'grilles_m'}
+            if set(entry) - allowed:
+                raise ValueError('unknown generator keys: ' + repr(sorted(set(entry) - allowed)))
+            # Validate supplied fallback data even when a library fit will win.
+            mesh = core.build_type(entry, lib['standard'], {'variant': 'vpm'})
+            if mesh['status'] != 'ok':
+                raise ValueError(oid + ': invalid generator record ' + repr(mesh['why']))
         wanted = o.get('type')
         if wanted is not None:
             if wanted not in offered:
@@ -64,9 +75,6 @@ def plan_openings(openings, lib):
             entry = o.get('generator')
             if wanted is not None or not isinstance(entry, dict):
                 raise ValueError(oid + ': no library fit; explicit generator record required')
-            allowed = set().union(*(t.keys() for t in lib['types'])) | {'frame_profile_m', 'grilles_m'}
-            if set(entry) - allowed:
-                raise ValueError('unknown generator keys: ' + repr(sorted(set(entry) - allowed)))
             tid = entry.get('id')
             if tid in lib['by_id'] or any(d.get('id') == tid and d != entry for d in drafts):
                 raise ValueError('generator id collides: ' + str(tid))

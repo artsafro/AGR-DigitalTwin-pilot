@@ -45,12 +45,13 @@ def test_explicit_generator_fallback():
     assert drafts == []
 
 
-def test_generator_unknown_key_is_named():
+@pytest.mark.parametrize('width', [1.18, 1.317])
+def test_generator_unknown_key_is_named(width):
     lib = wg.load_library(str(ROOT / 'library/windows'))
     entry = dict(lib['by_id']['KPP1-W01'], id='SOURCE-DRAFT', width_m=1.317,
                  panes_m=[[.057,.057,1.26,1.743]], unknown_material='no-default')
     with pytest.raises(ValueError, match='unknown_material'):
-        command.plan_openings([{'id':'x','w':1.317,'h':1.8,'inset_m':.2,'generator':entry}], lib)
+        command.plan_openings([{'id':'x','w':width,'h':1.8,'inset_m':.2,'generator':entry}], lib)
 
 
 def test_command_refuses_existing_output(tmp_path):

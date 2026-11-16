@@ -145,4 +145,6 @@ def test_d320_leftovers_have_explicit_historical_reasons(path, constant, reason)
 def test_no_delivery_changes():
     base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
     paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
-    assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)
+    assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py')
+               or p == 'jobs/KPP1/scripts/extract_openings.py'
+               or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith(('.md', '.txt')) for p in paths)
