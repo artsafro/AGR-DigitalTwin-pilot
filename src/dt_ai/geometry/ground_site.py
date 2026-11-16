@@ -114,10 +114,25 @@ def slot_name(cover: Cover) -> str:
     return f"ID{cover.id:02d}_{cover.name}"
 
 
+def relief_margin(snap, extension):
+    """Fail-closed explicit bound for a user-authorized nearest-TIN-plane continuation."""
+    snap = _finite("snap", snap, positive=True)
+    if extension is None:
+        return snap
+    if (not isinstance(extension, dict) or set(extension) != {"max_m", "reason"}
+            or not isinstance(extension.get("reason"), str) or not extension["reason"].strip()):
+        raise ValueError("relief_extension needs exactly max_m and a non-empty reason")
+    bound = _finite("relief_extension max_m", extension["max_m"], positive=True)
+    if bound <= snap:
+        raise ValueError("relief_extension max_m must exceed snap")
+    return bound
+
+
 def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz, project_zero_m: float, *,
                origin_xy=None, cell: float = 4.0, chord: float = 0.02, step: float = 0.006, snap: float = 0.001,
                relief_tol: float = 0.01, skirt_m: float = 1.0, tex_px: int = 4096,
-               footprint_min_area: float = 1000.0, crop_box=None, unhatched: dict | None = None) -> SiteResult:
+               footprint_min_area: float = 1000.0, crop_box=None, unhatched: dict | None = None,
+               relief_extension: dict | None = None) -> SiteResult:
     """Build one site's Ground in the D293 order and return flat + projected meshes and the stage report.
 
     ``unhatched``: boundary area under no hatch (smaller than ``footprint_min_area``) lands on the base cover only
@@ -191,7 +206,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
                                  "coverage": cov, "flat_z": sorted({float(z) for z in np.unique(flat.verts[:, 2])})}
 
     # relief: same partition refined by TIN edges where a face misses the relief by > tol, then Z-only lift
-    sampler = SnapSampler(tin, snap)
+    sampler = SnapSampler(tin, relief_margin(snap, relief_extension))
     for stage in ("flat", "refined"):
         if stage == "refined":
             refined = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap, sampler=sampler,
@@ -213,6 +228,14 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
                                   "relief_error": err, "uv_unchanged_by_projection": True,
                                   "snap_margin_vertices": len(sampler.margin_uses),
                                   "snap_margin_max_m": max(sampler.margin_uses.values(), default=0.0)}
+
+    if relief_extension is not None:
+        continued = {p: d for p, d in sampler.margin_uses.items() if d > snap}
+        report["stages"]["relief"]["continuation"] = {
+            **relief_extension, "sampled_points": len(continued),
+            "max_used_m": max(continued.values(), default=0.0),
+            "samples": [{"local_xy": list(p), "distance_m": d} for p, d in sorted(continued.items())],
+            "status": "assumed_nearest_plane", "not_source_elevations": True}
 
     # texture fix + skirt (outer edges of the base layer only, holes included as their own rings, D251)
     mesh = gc.add_skirt(mesh, skirt_m, slot="Skirt")
@@ -606,6 +629,9 @@ def covers_from_dxf(doc, rows: list, chord: float) -> list[Cover]:
     covers, seen = [], {}
     msp = doc.modelspace()
     for row in rows:
+        allowed = {"id", "name", "hatches", "colour", "colour_reason", "self_touching"}
+        if not isinstance(row, dict) or set(row) - allowed:
+            raise ValueError(f"unsupported cover row or keys: {row!r}")
         handles = row.get("hatches") or []
         if not handles:
             raise ValueError(f"cover {row.get('id')}: no hatch handles")

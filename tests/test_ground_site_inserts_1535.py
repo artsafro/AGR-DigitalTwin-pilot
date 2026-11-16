@@ -85,12 +85,102 @@ def test_bounded_relief_continuation_explicit_and_reported():
     result = gs.build_site(boundary, covers, 1, points, 100,
                           relief_extension={'max_m': .11, 'reason': 'synthetic explicit permission'})
     evidence = result.report['stages']['relief']['continuation']
-    assert evidence['max_m'] == .11 and evidence['vertices'] > 0
+    assert evidence['max_m'] == .11 and evidence['sampled_points'] > 0
     assert evidence['max_used_m'] == pytest.approx(.1)
     assert result.report['passed'] is False
     with pytest.raises(ValueError, match='outside the relief TIN'):
         gs.build_site(boundary, covers, 1, points, 100,
                       relief_extension={'max_m': .05, 'reason': 'insufficient bound'})
+
+
+def test_source_bound_skinny_relief_refinement_does_not_round_off_shared_edge():
+    import numpy as np
+    pts = [(-96.47200000000001,47.026,-.9000000000000057),
+           (-89.46300000000001,41.827,-1),
+           (-85.33200000000001,38.762,-.7000000000001023),
+           (-73.006,29.618000000000002,-.7000000000001023)]
+    sampler = gs.gc.ReliefSampler(gs.gc.build_tin(pts))
+    v = [(-88.469677,41.089627),(-88.739451,41.290162),(-88.45,41.075),(-88.469703,41.089646)]
+    t = [[0,1,2],[3,2,1]]
+    out_v, out_t, rep = gs.gc._refine_relief(v,t,sampler,.01)
+    xy = np.asarray(out_v)[np.asarray(out_t)]
+    assert sampler.max_error(xy).max() <= .01
+    assert Polygon(v[:3]).union(Polygon([v[j] for j in t[1]])).symmetric_difference(
+        __import__('shapely').ops.unary_union([Polygon(x) for x in xy])).area < 1e-12
+
+
+@pytest.mark.parametrize('tiny', [1e-3, 1e-6, 1e-9])
+def test_even_odd_retains_every_positive_lobe_and_hole(tiny):
+    # Synthetic figure-eight with a much smaller non-zero lobe: no area cutoff is licensed.
+    g = gs._even_odd_ring([(0,0),(1,0),(1,1),(0,1),(0,0),(-tiny,0),(-tiny,-tiny),(0,-tiny)])
+    assert len(g.geoms) == 2
+    assert min(p.area for p in g.geoms) == pytest.approx(tiny*tiny, rel=1e-12, abs=0)
+    assert g.boundary.distance(Polygon([(0,0),(1,0),(1,1),(0,1)]).boundary) == 0
+
+
+@pytest.mark.parametrize('alias', ['resolved_spec', 'hardlink_dxf', 'partial', 'stale'])
+def test_placed_cli_alias_and_stale_refusals(tmp_path, alias):
+    import json, os, subprocess, sys
+    from pathlib import Path
+    from test_ground_site_1406 import make_spec, SITE
+    spec, data = make_spec(tmp_path)
+    dxf = Path(data['dxf']['path'])
+    doc = ezdxf.readfile(dxf)
+    hatch = doc.entitydb[data['covers'][1]['hatches'][0]]
+    block = doc.blocks.new('PLACED')
+    doc.modelspace().move_to_layout(hatch, block)
+    ins = doc.modelspace().add_blockref('PLACED', (0,0))
+    data['covers'][1]['hatches'] = [{'handle':hatch.dxf.handle, 'insert_chain':[ins.dxf.handle]}]
+    doc.saveas(dxf)
+    data['dxf']['sha256'] = gs.sha256(dxf)
+    spec.write_text(json.dumps(data),encoding='utf-8')
+    out = tmp_path/'out'
+    if alias == 'resolved_spec':
+        out = tmp_path/'unused'/'..'/spec.name
+    elif alias == 'hardlink_dxf':
+        os.link(dxf, out)
+    elif alias == 'partial':
+        (tmp_path/'out.partial').mkdir()
+        (tmp_path/'out.partial'/'foreign.txt').write_text('preserve')
+    else:
+        r = subprocess.run([sys.executable,str(SITE),str(spec),str(out)],capture_output=True,text=True)
+        assert r.returncode == 0, r.stderr
+    before = {str(p.relative_to(tmp_path)):p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()}
+    r = subprocess.run([sys.executable,str(SITE),str(spec),str(out)],capture_output=True,text=True)
+    assert r.returncode == 2
+    assert {str(p.relative_to(tmp_path)):p.read_bytes() for p in tmp_path.rglob('*') if p.is_file()} == before
+
+
+@pytest.mark.parametrize('mutation', ['unknown_row', 'changed_spec', 'changed_dxf'])
+def test_publication_refuses_unknown_mapping_and_changed_inputs(tmp_path, monkeypatch, mutation):
+    from test_ground_site_1406 import make_spec
+    from tools.ground import build_ground_site as cli
+    import json
+    from pathlib import Path
+    spec, data = make_spec(tmp_path)
+    if mutation == 'unknown_row':
+        data['covers'][0]['insert_chian'] = ['typo']
+        spec.write_text(json.dumps(data), encoding='utf-8')
+        with pytest.raises(ValueError, match='insert_chian'):
+            cli.run(spec, tmp_path/'out')
+    else:
+        original = gs.build_site
+        def changed(*args, **kwargs):
+            result = original(*args, **kwargs)
+            path = spec if mutation == 'changed_spec' else Path(data['dxf']['path'])
+            path.write_bytes(path.read_bytes()+b'\n')
+            return result
+        monkeypatch.setattr(gs, 'build_site', changed)
+        with pytest.raises(ValueError, match='changed during'):
+            cli.run(spec, tmp_path/'out')
+    assert not (tmp_path/'out').exists()
+    assert not (tmp_path/'out.partial').exists()
+
+
+@pytest.mark.parametrize('bound', [0, -1, .001, float('nan'), float('inf'), True])
+def test_relief_extension_invalid_or_at_snap_bound(bound):
+    with pytest.raises(ValueError, match='relief_extension'):
+        gs.relief_margin(.001, {'max_m': bound, 'reason':'synthetic'})
 
 
 def test_same_hatch_two_placements_refused():
