@@ -135,6 +135,8 @@ stages:
     evidence:
       - docs/procedure/node-r6-oks-body-facade.md
       - jobs/KPP1/seam-1339/README.md
+      - tools/blender/seam_seal.py
+      - tools/qa/roof_parapet_seam.py
   - id: decor
     event_ru: "Декор, навесные элементы, разрезанный фасад: врезаны"
     actor: agent-dcc
@@ -301,15 +303,6 @@ hotspots:
     evidence:
       - jobs/KPP1/spec-compare-v002.md
       - jobs/KPP1/windowgen-1338/README.md
-  - id: parapet-seam
-    stage: roof
-    ru: "Шов кровля / парапет: КПП1 переделывал вставную кровлю (#1339); СРЕDА — стыки текстуры не сходятся под парапетом (423 пересечения на 95 рёбрах)"
-    rules:
-      - D038
-      - D254
-    evidence:
-      - jobs/KPP1/seam-1339/README.md
-      - docs/retros/2026-11-05-elv-tc-vpm-claude.md
   - id: brick-courses
     stage: uv
     ru: "4БК кирпич: 37 → 38 рядов, перевязка на стыке этажей, швы панелей 10 мм по красным линиям архитектора; пилот в 1 UDIM (#1326) открыт"

@@ -23,6 +23,9 @@ set. The roof/parapet seam (step 4) is done when the exported file read back sho
 - the job report gives the Main and membrane quads before and after the split, and the membrane carries only the cuts of its own outline;
 - T-junctions 0 at the seam;
 - a closed shell: non-manifold 0, `slabs_not_inset` 0, and per slab exactly two open loops, both closed (the hole at the parapet foot and the plate outline at level + gap). The only other open loop is the bottom ring.
+  One check gives the verdict over these counts plus the texture joint under the parapet (unmatched joint crossings 0):
+  `python tools/qa/roof_parapet_seam.py --counts COUNTS.json --output NEW.json` (#1381). A count that was not measured
+  gives `incomplete`, never `pass`.
 
 Standard node completion does not imply package acceptance. Only `full` delivery
 work with all applicable fixed gates complete can claim `passed=true`; failed, review

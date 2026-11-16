@@ -55,8 +55,8 @@ def test_current_entrypoints():
     for rel in ('jobs/KPP1/scripts/build_kpp1.py', 'jobs/TEC26-OKS/scripts/package_vpm.py',
                 'jobs/TEC26-OKS/scripts/vpm_uv.py', 'jobs/elv-tc-vpm/scripts/package_vpm_v006.py'):
         assert rel in chains, rel
-    roof = [r for r in rows() if r.at == 'jobs/KPP1/scripts/build_kpp1.py:421']
-    assert roof and roof[0].status == 'live-bypass' and roof[0].step == '#1381'
+    roof = [r for r in rows() if r.rel == 'jobs/KPP1/scripts/build_kpp1.py' and r.context == 'roof']
+    assert roof and roof[0].status == 'wrapper' and roof[0].step is None   # #1381: plate from roof_core.hole_plate
 
 
 def test_elv_not_delivered():

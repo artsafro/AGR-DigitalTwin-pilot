@@ -7,8 +7,8 @@
 <rect x="650" y="461.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260" y="461.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="461.5" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40.0" y="664.0" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40.0" y="785.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="40.0" y="664.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="838.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="650.0" y="664.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="943.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="664.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -21,7 +21,7 @@
 <rect x="955.0" y="1247.0" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1565.0" y="1038.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="1264.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<polyline points="1120.0,796.5 1140.0,796.5 1140.0,765.5 1240.0,765.5 1240.0,644.0 1750.0,644.0 1750.0,770.25 1730.0,770.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,796.5 1140.0,796.5 1140.0,770.25 1240.0,770.25 1240.0,644.0 1750.0,644.0 1750.0,770.25 1730.0,770.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,770.25 1750.0,770.25 1750.0,1018.0 835.0,1018.0 835.0,1179.25 815.0,1179.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="815.0,1179.25 835.0,1179.25 835.0,1244.5 1445.0,1244.5 1445.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="2035.0,1144.25 2055.0,1144.25 2055.0,940.5 1240.0,940.5 1240.0,796.5 1120.0,796.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -93,8 +93,11 @@
 <tspan x="48.0" dy="17.5">общий владелец плиты кровли; KPP1 пока строит её локально</tspan>
 <tspan x="48.0" dy="17.5"></tspan>
 <tspan x="48.0" dy="17.5">slab: меш и петля границы -&gt; плита кровли или Ambiguous</tspan>
+<tspan x="48.0" dy="17.5">hole_plate: план отверстия парапета, уровень, верх,</tspan>
+<tspan x="48.0" dy="17.5">внешний контур -&gt; плита кровли (сборщик задания, #1381)</tspan>
+<tspan x="48.0" dy="17.5">или ошибка</tspan>
 </text>
-<text x="48.0" y="795.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="48.0" y="848.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="48.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <text x="658.0" y="674.0" font-size="14" text-anchor="start" fill="#1e1e1e">
@@ -114,7 +117,7 @@
 <tspan x="658.0" dy="17.5">треугольников -&gt; список замен на плоскости</tspan>
 </text>
 <text x="658.0" y="953.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="658.0" dy="12">Дубли вне владельца: 3</tspan>
+<tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <text x="1268.0" y="674.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">UV и атлас</tspan>

@@ -7,7 +7,7 @@
 <rect x="1260" y="347.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="40.0" y="585.0" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="585.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="585.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="585.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="585.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="759.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
@@ -19,13 +19,13 @@
 <rect x="1565.0" y="1066.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <polyline points="510,436.25 530,436.25 530,527.5 1140,527.5 1140,436.25 1120,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120,436.25 1140,436.25 1140,565.0 530.0,565.0 530.0,708.75 510.0,708.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="510.0,708.75 530.0,708.75 530.0,814.0 1140.0,814.0 1140.0,691.25 1120.0,691.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120.0,691.25 1140.0,691.25 1140.0,907.5 835.0,907.5 835.0,1025.0 815.0,1025.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510.0,708.75 530.0,708.75 530.0,852.5 1140.0,852.5 1140.0,717.5 1120.0,717.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,717.5 1140.0,717.5 1140.0,907.5 835.0,907.5 835.0,1025.0 815.0,1025.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120,436.25 1140,436.25 1140,527.5 1750,527.5 1750,427.5 1730,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 1750.0,327.5 1750.0,427.5 1730.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730,427.5 1750,427.5 1750,527.5 2360,527.5 2360,436.25 2340,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="2340,436.25 2360,436.25 2360,565.0 1750.0,565.0 1750.0,726.25 1730.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="815.0,1025.0 835.0,1025.0 835.0,887.5 1750.0,887.5 1750.0,726.25 1730.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="815.0,1025.0 835.0,1025.0 835.0,870.0 1750.0,870.0 1750.0,726.25 1730.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,726.25 1750.0,726.25 1750.0,814.0 2360.0,814.0 2360.0,665.0 2340.0,665.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута ВПМ / ОКС (UCX) — D293 (#1392)</tspan>
@@ -114,6 +114,9 @@
 <tspan x="658.0" dy="17.5">кровли или Ambiguous</tspan>
 <tspan x="658.0" dy="17.5">plan: корпуса (меш в метрах, мир) -&gt; опции, строки плит,</tspan>
 <tspan x="658.0" dy="17.5">находки</tspan>
+<tspan x="658.0" dy="17.5">hole_plate: план отверстия парапета, уровень, верх,</tspan>
+<tspan x="658.0" dy="17.5">внешний контур -&gt; плита кровли (сборщик задания, #1381)</tspan>
+<tspan x="658.0" dy="17.5">или ошибка</tspan>
 </text>
 <text x="1268.0" y="595.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Экспорт и пакеты ВПМ / НПМ</tspan>
@@ -190,8 +193,8 @@
 <tspan x="835.0" dy="14">корпус по</tspan>
 <tspan x="835.0" dy="17.5">частям</tspan>
 </text>
-<rect x="805.0" y="805.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="805.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="805.0" y="843.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="843.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">проёмы врезаны</tspan>
 </text>
 <rect x="957.5" y="889.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
@@ -216,8 +219,8 @@
 <tspan x="2055.0" dy="14">НПМ в</tspan>
 <tspan x="2055.0" dy="17.5">координатах</tspan>
 </text>
-<rect x="1262.5" y="878.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1292.5" y="878.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1262.5" y="861.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="861.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1292.5" dy="14">коллизии UCX_</tspan>
 </text>
 <rect x="2025.0" y="805.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
