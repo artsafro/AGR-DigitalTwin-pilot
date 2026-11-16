@@ -324,6 +324,7 @@ def test_real_blender_target_object_only(tmp_path, monkeypatch):
     assert bare['measure']['broken_edges'] == 0
     fail = rep['fail_closed']
     assert fail.pop('px_512') == 'ok' and fail.pop('px_1706') == 'ok'
+    assert fail['texel_rot40_px600'] == fail['texel_slope50_px512'] == 'error'   # #1574
     assert set(fail.values()) == {'error'}, fail
     gen = rep['generated']
     assert gen['fail'] == [] and gen['pass'] + gen['overflow_nothing_written'] == gen['n'] == 100

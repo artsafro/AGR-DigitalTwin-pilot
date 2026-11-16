@@ -100,7 +100,7 @@ def test_rotated_wall_at_819_reports_real_texel(box):
 
 def test_axis_aligned_report_equals_px(box):
     face = quad(0, (0.1, 0.0, 0.2), (1, 0, 0), (0, 0, 1))
-    _, rep = box.plan_box_uv([face], 512, 1001)
+    _, rep = box.plan_box_uv([face], 512, 1001, margin_px=0)
     assert rep['texel_px_per_m'] == [512.0, 512.0]
 
 
@@ -142,8 +142,25 @@ def test_collinear_corner_is_not_a_false_failure(box):
     """Pentagon with a collinear corner: a zero-area fan triangle is skipped, the face passes at 512."""
     co = [(0.0, 0.0, 0.0), (0.5, 0.0, 0.0), (1.0, 0.0, 0.0), (1.0, 0.0, 1.0), (0.0, 0.0, 1.0)]
     face = (0, [key(c) for c in co], co)
-    _, rep = box.plan_box_uv([face], 512, 1001)
+    _, rep = box.plan_box_uv([face], 512, 1001, margin_px=0)
     assert rep['texel_px_per_m'] == [512.0, 512.0]
+
+
+@pytest.mark.parametrize('offset', [0.0, 1e3, 1e4])
+def test_collinear_corner_oblique_far_from_origin_threshold(box, offset):
+    """Probe: oblique pentagon with a collinear corner far from the origin: the roundoff sliver does not move
+    the threshold; 512 / ratio * (1 + 1e-7) passes, * (1 - 1e-6) fails."""
+    r = math.radians(37)
+    du, dz = (math.cos(r), math.sin(r), 0.0), (0.0, 0.0, 1.0)
+    o = (offset + 0.31, offset + 0.17, 0.2)
+    pts = [(0, 0), (0.5, 0), (1, 0), (1, 1), (0, 1)]
+    co = [tuple(o[i] + a * du[i] + b * dz[i] for i in range(3)) for a, b in pts]
+    face = (0, [key(c) for c in co], co)
+    at = 512 / max(math.cos(r), math.sin(r))
+    _, rep = box.plan_box_uv([face], at * (1 + 1e-7), 1001, margin_px=0)
+    assert rep['texel_px_per_m'][0] >= 512
+    with pytest.raises(box.BoxUVTexelError):
+        box.plan_box_uv([face], at * (1 - 1e-6), 1001, margin_px=0)
 
 
 # ------------------------------------------------------------------ generated probe
