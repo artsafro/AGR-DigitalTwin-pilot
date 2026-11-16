@@ -215,28 +215,114 @@ def test_contract_template_skeleton_is_valid(tmp_path):
 
 # --- repo scan -----------------------------------------------------------------------------------------------------
 
-def _repo(tmp_path):
-    (tmp_path / "docs/agents").mkdir(parents=True)
+def _repo(tmp_path, baseline=("jobs/DELIVERED/old.py",)):
+    (tmp_path / "docs/agents").mkdir(parents=True, exist_ok=True)
     shutil.copy(ROOT / sg.SKELETONS, tmp_path / sg.SKELETONS)
+    (tmp_path / dg.JOB_BASELINE).write_text("# frozen\n" + "".join(f"{b}\n" for b in baseline), encoding="utf-8")
     return sg.load_skeletons(tmp_path)
 
 
+WORLD_BM = "def world_bm(o):\n    return o\n"   # the master-QA owner's helper name: a re-implemented stage
+OUTSIDE = ": script outside a skeleton.json folder and not in the frozen #1546 baseline"
+
+
 def test_repo_new_job_with_scripts_needs_a_skeleton_config(tmp_path):
-    sk = _repo(tmp_path)
+    sk = _repo(tmp_path, baseline=("jobs/DELIVERED/old.py", "jobs/elv-tc-vpm/old.py"))
     _job(tmp_path, None, {"analyse_seams.py": "x = 1\n"}, name="SINTEZ-FIX")
     _job(tmp_path, None, {"notes.md": "text\n"}, name="DOCS-ONLY")
     _job(tmp_path, None, {"old.py": "x = 1\n"}, name="DELIVERED")
     _job(tmp_path, None, {"old.py": "x = 1\n"}, name="elv-tc-vpm")
     _job(tmp_path, None, {"t.py": "x = 1\n"}, name="_template")
-    problems = sg.check_repo(tmp_path, sk, finished={"DELIVERED"})
-    assert len(problems) == 1 and problems[0].startswith("jobs/SINTEZ-FIX: has scripts but no skeleton.json")
+    problems = sg.check_repo(tmp_path, sk)
+    assert len(problems) == 1 and problems[0].startswith("jobs/SINTEZ-FIX/analyse_seams.py" + OUTSIDE)
 
 
 def test_repo_configured_legacy_job_is_checked(tmp_path):
-    sk = _repo(tmp_path)
-    _job(tmp_path, _cfg(hooks=[_hook()]), {"hooks/fix.py": "def world_bm(o):\n    return o\n"}, name="elv-tc-vpm")
-    problems = sg.check_repo(tmp_path, sk, finished=set())
+    sk = _repo(tmp_path, baseline=("jobs/elv-tc-vpm/hooks/fix.py",))
+    _job(tmp_path, _cfg(hooks=[_hook()]), {"hooks/fix.py": WORLD_BM}, name="elv-tc-vpm")
+    problems = sg.check_repo(tmp_path, sk)
     assert len(problems) == 1 and "world_bm" in problems[0]
+
+
+# PR #1553 r1 (P1): new work lands in sub-folders of finished/legacy jobs; a whole-folder exemption hid it.
+@pytest.mark.parametrize("rel", ["jobs/KPP1/fix-1600/run_all.py", "jobs/4bk-k3/fix-1601/run_all.py",
+                                 "jobs/KPP1/run_new.py", "jobs/4bk-k3/a/b/c/deep.ms"])
+def test_repo_new_script_in_a_finished_or_legacy_job_is_flagged(tmp_path, rel):
+    sk = _repo(tmp_path, baseline=("jobs/KPP1/scripts/old.py", "jobs/4bk-k3/old.py"))
+    for f in ("jobs/KPP1/scripts/old.py", "jobs/4bk-k3/old.py", rel):
+        (tmp_path / f).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / f).write_text(WORLD_BM, encoding="utf-8")
+    problems = sg.check_repo(tmp_path, sk)
+    assert len(problems) == 1 and problems[0].startswith(rel + OUTSIDE)
+
+
+def test_repo_nested_skeleton_config_in_a_finished_job_is_read(tmp_path):
+    sk = _repo(tmp_path, baseline=("jobs/KPP1/scripts/old.py",))
+    _job(tmp_path, None, {"scripts/old.py": "x = 1\n"}, name="KPP1")
+    _job(tmp_path, _cfg(hooks=[_hook()]), {"hooks/fix.py": WORLD_BM}, name="KPP1/fix-1602")
+    problems = sg.check_repo(tmp_path, sk)
+    assert len(problems) == 1 and problems[0].startswith("jobs/KPP1/fix-1602/hooks/fix.py:1: defines 'world_bm'")
+    (tmp_path / "jobs/KPP1/fix-1602/hooks/fix.py").write_text("x = 1\n", encoding="utf-8")
+    assert sg.check_repo(tmp_path, sk) == []
+    (tmp_path / "jobs/KPP1/fix-1602/skeleton.json").write_text("{", encoding="utf-8")
+    with pytest.raises(sg.ConfigError, match="fix-1602/skeleton.json"):
+        sg.check_repo(tmp_path, sk)
+
+
+def test_repo_nested_skeleton_inside_a_skeleton_job_is_its_own_job(tmp_path):
+    sk = _repo(tmp_path)
+    _job(tmp_path, _cfg(hooks=[_hook()]), {"hooks/fix.py": "x = 1\n"}, name="OUTER")
+    _job(tmp_path, _cfg(hooks=[_hook()]), {"hooks/fix.py": "x = 1\n"}, name="OUTER/sub-1")
+    assert sg.check_repo(tmp_path, sk) == []
+    (tmp_path / "jobs/OUTER/sub-1/hooks/extra.py").write_text("x = 1\n", encoding="utf-8")
+    assert sg.check_repo(tmp_path, sk) == ["jobs/OUTER/sub-1/hooks/extra.py: script not listed in hooks; "
+                                          "a job holds skeleton.json + listed hooks only [D324]"]
+
+
+def test_repo_control_baseline_historical_script_stays_hidden_and_unflagged(tmp_path):
+    sk = _repo(tmp_path, baseline=("jobs/KPP1/scripts/old.py",))
+    _job(tmp_path, None, {"scripts/old.py": WORLD_BM, "fix-1600/run_all.py": WORLD_BM}, name="KPP1")
+    finished = {"jobs/KPP1": "x"}
+    hidden = dg.historical_scripts(tmp_path, finished, chains={})
+    assert hidden == ["jobs/KPP1/scripts/old.py"]   # the new script is never historical
+    dg.write_ignore(tmp_path, hidden)
+    assert "fix-1600" not in (tmp_path / ".ignore").read_text(encoding="utf-8")
+    problems = sg.check_repo(tmp_path, sk)
+    assert len(problems) == 1 and problems[0].startswith("jobs/KPP1/fix-1600/run_all.py" + OUTSIDE)
+    rg = shutil.which("rg")
+    if rg:
+        out = subprocess.run([rg, "--files", "jobs"], cwd=tmp_path, capture_output=True, text=True).stdout
+        listed = {line.replace("\\", "/") for line in out.splitlines()}
+        assert "jobs/KPP1/fix-1600/run_all.py" in listed and "jobs/KPP1/scripts/old.py" not in listed
+    # opting in: a skeleton.json folder above a baseline script makes it a checked, visible job script
+    _job(tmp_path, _cfg(), {}, name="KPP1/scripts")
+    assert dg.historical_scripts(tmp_path, finished, chains={}) == []
+
+
+@pytest.mark.parametrize("text, match", [
+    (None, "missing"), ("# only comments\n\n", "empty"), ("jobs/A/a.py\njobs/A/a.py\n", "twice"),
+    ("tools/x.py\n", "not a jobs/"), ("jobs/a.py\n", "not a jobs/"), ("jobs/A/../B/x.py\n", "not a jobs/"),
+    ("jobs/A/notes.md\n", "not a jobs/"), (" jobs/A/a.py\n", "not a jobs/"), ("jobs\\A\\a.py\n", "not a jobs/"),
+])
+def test_repo_baseline_fail_closed(tmp_path, text, match):
+    sk = _repo(tmp_path)
+    if text is None:
+        (tmp_path / dg.JOB_BASELINE).unlink()
+    else:
+        (tmp_path / dg.JOB_BASELINE).write_text(text, encoding="utf-8")
+    with pytest.raises(ValueError, match=match):
+        sg.check_repo(tmp_path, sk)
+    with pytest.raises(ValueError, match=match):
+        dg.historical_scripts(tmp_path, {}, {})
+    (tmp_path / "jobs").mkdir(exist_ok=True)
+    r = subprocess.run([sys.executable, str(GUARD), "--root", str(tmp_path)], capture_output=True, text=True)
+    assert r.returncode == 2 and match in r.stderr
+
+
+def test_repo_real_baseline_is_frozen_at_the_cut():
+    base = dg.load_job_baseline(ROOT)
+    assert len(base) == 358 and "jobs/KPP1/scripts/build_kpp1.py" in base
+    assert not [b for b in base if dg.in_skeleton_job(ROOT, b)]
 
 
 def test_repo_real_repository_is_clean_and_cli_exit_codes(tmp_path):
