@@ -48,6 +48,16 @@ reads the written FBX back in a fresh Blender process, measures every pair with 
 overwrites OUT or its reports and never writes the model. Parity: Vatutino Ground v014 rebuilt by the command has
 the delivered UCX geometry (715/715 pieces, 8 788 triangles, max vertex deviation 0 m).
 
+`agr ucx MODEL OUT Main --resolve [--gap-m M]` (#1540): MODEL already holds its UCX (a delivered archive). The
+Blender driver `tools/blender/ucx_resolve.py` runs `ucx10_core.resolve`: every pair of UCX pieces under the gap
+(any family; default 3 mm, [D098] band) gets its SMALLER convex piece cut by the plane of one face of the larger
+piece moved out by the gap (the plane that removes the least volume and leaves >= 2 cm); a convex piece cut by a
+plane stays closed and convex, pieces only shrink, so a resolved pair stays resolved. A pair no face plane can
+resolve (nested) is ambiguous and not cut; a non-convex input piece is reported, not touched. The report
+`OUT.ucx_resolve.json` lists per pair the plane, gap before/after and volume removed, the [D012] file budget and
+the model -> UCX distance [D134] before/after; steps readback / gap check / V010 then run on OUT. Method source:
+retro of elv-tc-vpm v008 (`docs/cases.md`).
+
 ## Current limitations
 
 [Pipeline stage #10](../../pipeline.md) is "partial" (UCX shipped inside accepted KPP1, PSU275, ELV TC and Vatutino Ground v015 models; no package passed): the shared builder
