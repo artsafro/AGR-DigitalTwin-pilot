@@ -15,7 +15,7 @@ with --scene and no --master that part of V003 stays not_run.
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
-not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
+not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run); a package with OKS and Ground members takes `--master oks=PATH --master ground=PATH` ([D328]). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
 
     py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--standards DIR] [--json]
 
@@ -453,8 +453,10 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
 
 
 def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
-                       master: Path | None, manifest: Path | None, notes: list[str]):
-    """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written."""
+                       master: Path | dict | None, manifest: Path | None, notes: list[str]):
+    """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written.
+
+    master: one path, or {role: path} ([D328]: OKS master, Ground source)."""
     path = manifest if manifest is not None else Path(build_manifest.manifest_path(target))
     if os.path.normcase(str(path.resolve())) == os.path.normcase(str(target.resolve())):
         raise ValueError(f"build manifest {path} is the package itself")
@@ -462,7 +464,10 @@ def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: d
     if manifest is not None and raw is None:
         raise ValueError(f"build manifest {manifest} does not exist")
     members = {n: digest(d) for n, d in files.items()}
-    master_sha = build_manifest.sha256_file(master) if master is not None else None
+    if isinstance(master, dict):
+        master_sha = {r: build_manifest.sha256_file(p) for r, p in master.items()}
+    else:
+        master_sha = build_manifest.sha256_file(master) if master is not None else None
     v1 = st["V001"]
     for status, code, detail in build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
                                                                  str(path.resolve().parent)):
@@ -494,7 +499,7 @@ def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list
 
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
              ground_area_m2: float | None = None, footprint_holes=None,
-             master: Path | None = None, ground_materials: list[str] | None = None, export_meta=None,
+             master: Path | dict | None = None, ground_materials: list[str] | None = None, export_meta=None,
              manifest: Path | None = None) -> ValidationReport:
     if export_meta is not None and not isinstance(export_meta, dict):
         raise ValueError("export_meta must map exact FBX filenames to bounds_m records")
@@ -578,10 +583,12 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     # A scene readback of an FBX/ZIP consumes the area: VPM selects the triangle band, and both
     # profiles check Ground footprint coverage. Anywhere else the value is unused.
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
+    quad = Path(master["oks"]) if isinstance(master, dict) and "oks" in master else (
+        None if isinstance(master, dict) else master)  # [D328]: V003 reads the OKS master
     if scene_readback:
-        add_master(st, kind, master, notes)
-    elif master is not None:
-        notes.append(f"master {master.name} unused: the master check runs with --scene on a ZIP or FBX")
+        add_master(st, kind, quad, notes)
+    elif quad is not None:
+        notes.append(f"master {quad.name} unused: the master check runs with --scene on a ZIP or FBX")
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:
@@ -679,8 +686,9 @@ def main(argv=None) -> int:
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
     ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
                     help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
-    ap.add_argument("--master", type=Path, metavar="WORK_FBX",
-                    help="quad work FBX of this delivery (DER-03, [D198]); read back with --scene")
+    ap.add_argument("--master", action="append", metavar="WORK_FBX | ROLE=PATH",
+                    help="quad work FBX of this delivery (DER-03, [D198]); read back with --scene. Build manifest "
+                         "stale check per role: --master oks=PATH --master ground=PATH ([D328], #1525)")
     ap.add_argument("--build-manifest", type=Path, metavar="FILE",
                     help="build manifest of a ZIP (default: <stem>.build.json beside it; #1423)")
     ap.add_argument("--footprint-holes", type=_holes_arg, default=None, metavar="JSON",
@@ -707,9 +715,17 @@ def main(argv=None) -> int:
         print(f"Error: {args.target} does not exist", file=sys.stderr)
         return 1
     profiles = load_profiles(args.standards) if args.standards else load_profiles()
-    if args.master is not None and not args.master.is_file():
-        print(f"Error: {args.master} does not exist", file=sys.stderr)
-        return 1
+    if args.master is not None:
+        try:
+            parsed = build_manifest.master_args(args.master)
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
+        args.master = ({r: Path(p) for r, p in parsed.items()} if isinstance(parsed, dict) else Path(parsed))
+        for p in (args.master.values() if isinstance(args.master, dict) else [args.master]):
+            if not p.is_file():
+                print(f"Error: {p} does not exist", file=sys.stderr)
+                return 1
     if args.build_manifest is not None and args.target.suffix.lower() != ".zip":
         print("Error: --build-manifest applies to a ZIP package", file=sys.stderr)
         return 2

@@ -9,7 +9,9 @@ Pattern: n/a | new-case: Ground master JSON to FBX with GND-11 names and GND-12 
 build: object SM_<Address>_Ground, materials M_<Address>_Ground_<Slot> in the JSON slot order, one UV set,
 GND-12 / V013 placement: object origin at FBX zero, the mesh is shifted so that its X/Y bounding-box centre is the
 origin (Z unchanged: absolute heights, project zero = 0); the MSK-77 offset of that origin is written by code to
-<out.fbx>.placement.json ([D126]) and added back by readback.
+<out.fbx>.placement.json ([D126]) and added back by readback. It also writes the export-time derivation record
+<out.fbx>.derivation.json (#1525, [D328]): role `ground`, master = the mesh JSON (its own source, hashed before it is
+read; a change during the build is refused); `agr build-manifest build --master ground=<mesh.json>` reads it.
 readback: in a clean process, imports the FBX and compares triangles, per-face material index (raw
 material_index layer mapped through slot names), world vertex positions (sorted), unit scale, open edges
 and normals facing down on the surface; with <tex_px lo hi> also the texel density (px per linear metre) of every
@@ -46,6 +48,18 @@ def clean():
 def build(src, out, address, crs="MSK-77"):
     if crs not in ("SYNTHETIC_LOCAL", "MSK-77"):
         raise ValueError(f"unsupported crs {crs!r}; expected SYNTHETIC_LOCAL or MSK-77")
+    import os
+    root = str(Path(__file__).resolve().parents[2])
+    sys.path.insert(0, root)
+    from adapters.max.agr_tools import build_manifest as bm
+    # [D328] / #1525: the Ground FBX keeps its own master = this mesh JSON. Hash it before reading; the derivation
+    # record <out>.derivation.json (beside the FBX, like .placement.json) is refused before any write if it exists.
+    src_sha = bm.sha256_file(src)
+    if os.path.normcase(os.path.realpath(out)) == os.path.normcase(os.path.realpath(src)):
+        raise SystemExit(f"output {out} is the input mesh JSON")
+    record = os.path.abspath(out) + bm.DERIVATION_SUFFIX
+    if os.path.lexists(record) or os.path.lexists(record + ".partial"):
+        raise SystemExit(f"derivation record {record} already exists; build into a new version")
     d = json.load(open(src, encoding="utf-8"))
     clean()
     vs = d["verts"]
@@ -70,11 +84,12 @@ def build(src, out, address, crs="MSK-77"):
                              apply_scale_options="FBX_SCALE_UNITS", axis_forward="Y", axis_up="Z",
                              mesh_smooth_type="FACE", use_mesh_modifiers=False, bake_space_transform=False,
                              add_leaf_bones=False, path_mode="AUTO")
-    from pathlib import Path
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
     from adapters.max.agr_tools.export_meta import record_export
     record_export(out, source=str(src), top=float(max(v[2] for v in vs)), address=address + '_Ground', profile='vpm')
-    print(json.dumps({"built": out, "pivot": piv, "verts": len(vs), "faces": len(d["faces"])}))
+    record = bm.write_export_derivation([out], src, os.path.dirname(os.path.abspath(out)), bm.git_commit(root),
+                                        master_sha256=src_sha, inputs=[src], role="ground")
+    print(json.dumps({"built": out, "pivot": piv, "verts": len(vs), "faces": len(d["faces"]),
+                      "derivation": record, "master_sha256": src_sha}))
 
 
 def readback(fbx, src, rep, *tex):
