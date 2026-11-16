@@ -91,14 +91,14 @@ def subagent_timebox(evidence):
                         if checked and text.strip():
                             state['last'] = now
                             native = rec.get('toolUseResult') or {}
-                            if isinstance(native, dict) and native.get('status') in ('completed', 'failed', 'stopped'):
+                            if isinstance(native, dict) and native.get('status') in ('completed', 'failed', 'stopped', 'killed'):
                                 del active[launch]
             # Only genuine main-session user notifications, not quoted assistant prose.
             content = (rec.get('message') or {}).get('content')
             if rec['type'] == 'user' and isinstance(content, str) and content.lstrip().startswith('<task-notification>'):
                 agent = re.search(r'<task-id>([^<]+)</task-id>', content)
                 status = re.search(r'<status>([^<]+)</status>', content)
-                if agent and status and status[1] in ('completed', 'failed', 'stopped'):
+                if agent and status and status[1] in ('completed', 'failed', 'stopped', 'killed'):
                     for key, state in list(active.items()):
                         if state['agent'] == agent[1]:
                             del active[key]
