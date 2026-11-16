@@ -65,7 +65,8 @@ def main(packet, out, version=VERSION):
         stage('master-xview',['uv','run','dt','qa','xview',str(packet/MASTER),
             '--out',str(out/'master-xview.json'),'--blender',BLENDER])
         code = stage('derive',['uv','run','agr','vpm-to-npm','--blender',BLENDER,
-            str(packet/'spec.json'),str(out/'atlas'),'--recipe-dir',str(packet/'jobs/TEC26-OKS/scripts'),
+            str(packet/'spec.json'),str(out/'atlas'),'--master',str(packet/MASTER),
+            '--recipe-dir',str(packet/'jobs/TEC26-OKS/scripts'),
             '--cell','512','--pad','8','--then-npm',str(packet/MASTER),
             str(packet/'spec.json'),str(out/'atlas'),str(out/'export/fbx'),'0000',
             '--recipe-dir',str(packet/'jobs/TEC26-OKS/scripts')])

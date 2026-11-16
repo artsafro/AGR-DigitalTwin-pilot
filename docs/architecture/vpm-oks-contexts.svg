@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1401" width="2990" height="1401" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1454" width="2990" height="1454" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2990" height="1401" fill="#ffffff"/>
+<rect x="10" y="-30" width="2990" height="1454" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -8,25 +8,25 @@
 <rect x="1870" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="40.0" y="585.0" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="585.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="585.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="585.0" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="585.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="759.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="345.0" y="927.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="345.0" y="1154.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="927.5" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1049.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1565.0" y="927.5" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1066.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="345.0" y="962.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="345.0" y="1189.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="962.5" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1084.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1565.0" y="962.5" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="1101.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <polyline points="510,436.25 530,436.25 530,527.5 1140,527.5 1140,436.25 1120,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120,436.25 1140,436.25 1140,565.0 530.0,565.0 530.0,708.75 510.0,708.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="510.0,708.75 530.0,708.75 530.0,852.5 1140.0,852.5 1140.0,717.5 1120.0,717.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120.0,717.5 1140.0,717.5 1140.0,907.5 935.0,907.5 935.0,1033.75 815.0,1033.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,717.5 1140.0,717.5 1140.0,942.5 935.0,942.5 935.0,1068.75 815.0,1068.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120,436.25 1140,436.25 1140,527.5 1750,527.5 1750,427.5 1730,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 1750.0,327.5 1750.0,427.5 1730.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730,427.5 1750,427.5 1750,527.5 2360,527.5 2360,436.25 2340,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2340,436.25 2360,436.25 2360,565.0 1750.0,565.0 1750.0,726.25 1730.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="815.0,1033.75 835.0,1033.75 835.0,870.0 1750.0,870.0 1750.0,726.25 1730.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,726.25 1750.0,726.25 1750.0,814.0 2360.0,814.0 2360.0,665.0 2340.0,665.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340,436.25 2360,436.25 2360,565.0 1850,565.0 1850,743.75 1730.0,743.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="815.0,1068.75 835.0,1068.75 835.0,922.5 1750.0,922.5 1750.0,743.75 1730.0,743.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,743.75 1750.0,743.75 1750.0,814.0 2360.0,814.0 2360.0,665.0 2340.0,665.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута ВПМ / ОКС (UCX) — D293 (#1392)</tspan>
 </text>
@@ -133,7 +133,9 @@
 <tspan x="1268.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
 <tspan x="1268.0" dy="17.5">время упаковки — ошибка</tspan>
 <tspan x="1268.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
-<tspan x="1268.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
+<tspan x="1268.0" dy="17.5">ZIP + полный отчёт проверки; ГОТОВО.txt только после</tspan>
+<tspan x="1268.0" dy="17.5">автопроверок, V015–V017 ждут Артёма [D323]; иначе</tspan>
+<tspan x="1268.0" dy="17.5">ОШИБКА.txt</tspan>
 </text>
 <text x="1878.0" y="595.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Проверки, xView, СИНТЕЗ</tspan>
@@ -148,7 +150,7 @@
 <text x="1878.0" y="769.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="353.0" y="937.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="353.0" y="972.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="14">Коллизии UCX (только ВПМ)</tspan>
 <tspan x="353.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
 <tspan x="353.0" dy="17.5">зазоры UCX (D330: ядро на функцию); строит</tspan>
@@ -161,20 +163,20 @@
 <tspan x="353.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="353.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="353.0" y="1164.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="353.0" y="1199.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="12">Дубли вне владельца: 2</tspan>
 </text>
-<text x="963.0" y="937.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="972.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Триангуляция готовых UCX</tspan>
 <tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/geom_core.py</tspan>
 <tspan x="963.0" dy="17.5">ucx_plan; обёртки TEC26 не строят зазоры ucx10_core</tspan>
 <tspan x="963.0" dy="17.5"></tspan>
 <tspan x="963.0" dy="17.5">ucx_plan: готовые выпуклые куски -&gt; план триангуляции</tspan>
 </text>
-<text x="963.0" y="1059.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1094.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1573.0" y="937.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1573.0" y="972.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1573.0" dy="14">Запуск триангуляции UCX</tspan>
 <tspan x="1573.0" dy="17.5">Владелец: jobs/TEC26-OKS/scripts/ucx_tri_core.py</tspan>
 <tspan x="1573.0" dy="17.5">обёртка geom_core.ucx_plan</tspan>
@@ -182,7 +184,7 @@
 <tspan x="1573.0" dy="17.5">triangulate_piece: вершины и грани UCX -&gt; треугольники</tspan>
 <tspan x="1573.0" dy="17.5">через geom_core.ucx_plan</tspan>
 </text>
-<text x="1573.0" y="1076.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1573.0" y="1111.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1573.0" dy="12">Дубли вне владельца: 2</tspan>
 </text>
 <rect x="805.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
@@ -198,10 +200,10 @@
 <text x="835.0" y="843.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">проёмы врезаны</tspan>
 </text>
-<rect x="1007.5" y="890.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1037.5" y="890.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1037.5" dy="14">оболочка с</tspan>
-<tspan x="1037.5" dy="17.5">кровлей</tspan>
+<rect x="1110.0" y="812.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="812.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1140.0" dy="14">оболочка с</tspan>
+<tspan x="1140.0" dy="17.5">кровлей</tspan>
 </text>
 <rect x="1415.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
 <text x="1445.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
@@ -215,13 +217,13 @@
 <text x="2055.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">UDIM → атлас</tspan>
 </text>
-<rect x="2025.0" y="547.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="547.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2055.0" dy="14">НПМ в</tspan>
-<tspan x="2055.0" dy="17.5">координатах</tspan>
+<rect x="2075.0" y="547.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2105.0" y="547.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2105.0" dy="14">НПМ в</tspan>
+<tspan x="2105.0" dy="17.5">координатах</tspan>
 </text>
-<rect x="1262.5" y="861.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1292.5" y="861.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1262.5" y="913.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="913.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1292.5" dy="14">коллизии UCX_</tspan>
 </text>
 <rect x="2025.0" y="805.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>

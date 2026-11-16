@@ -178,9 +178,84 @@ def test_master_all_quads_under_4m_pass():
     assert got["master quads"] == "pass" and got["master quad size"] == "pass"
 
 
-def test_master_triangle_fails_quads():
+def test_master_triangle_passes_and_reports_d312():
     verts = [[0, 0, 0], [1, 0, 0], [0, 1, 0]]
-    assert master_status("npm", poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts))["master quads"] == "fail"
+    got = master_findings(master_rb(poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts)), "npm")[0]
+    assert got.status == "pass"
+    assert got.data["objects"] == [{
+        "name": "SM_Test_K_1_Main", "status": "pass", "faces": 1,
+        "triangles": 1, "triangle_share": 1.0, "quads": 0,
+        "ngons": 0, "ngon_face_ids": [],
+    }]
+    assert "SM_Test_K_1_Main" in got.observed and "triangle_share" in got.observed
+
+
+def test_master_ngon_fails_with_object_local_face_id():
+    verts, polys = quads(1.0)
+    verts.append([0, 0.5, 0])
+    polys += [[0, 1, 2], [0, 1, 2, 3, 4]]
+    got = master_findings(master_rb(poly_mesh("A", polys, verts)), "npm")[0]
+    assert got.status == "fail"
+    assert got.data["objects"][0]["triangles"] == 1
+    assert got.data["objects"][0]["triangle_share"] == 1 / 3
+    assert got.data["objects"][0]["ngon_face_ids"] == [3]
+
+
+def test_master_generated_histograms_match_shared_core():
+    from adapters.max.agr_tools.master_topology_core import check
+    from itertools import product
+
+    for triangles, quads_count, ngons in product(range(4), repeat=3):
+        if triangles + quads_count + ngons == 0:
+            continue
+        degrees = [3] * triangles + [4] * quads_count + [5] * ngons
+        meshes = [{"name": "Original.Name", "polygon_degrees": {
+            str(d): degrees.count(d) for d in set(degrees)}}]
+        finding = master_findings(master_rb(*meshes), "npm")[0]
+        expected = check([{"name": "Original.Name", "face_degrees": degrees}])
+        expected["objects"][0].pop("ngon_face_ids")  # histograms have no face order
+        assert finding.status == expected["status"]
+        assert finding.data["objects"] == expected["objects"]
+        if triangles == ngons == 0:
+            assert "all quads" in finding.observed
+
+
+def test_master_empty_and_malformed_inventories_fail_closed():
+    for histogram in ({}, {"4": 0}, {"3": -1}, {"3": float("nan")},
+                      {"4": float("inf")}, {"2": 1}, {"unsupported": 1}, {"4": True},
+                      {3.5: 1}, {True: 1}):
+        got = master_findings(master_rb({"name": "A", "polygon_degrees": histogram}), "npm")[0]
+        assert got.status == "fail", histogram
+    assert master_findings(master_rb(), "npm")[0].status == "fail"
+    assert master_findings(master_rb({"name": "A"}), "npm")[0].status == "fail"
+    mesh = {"name": "A", "polygon_degrees": {"4": 1}}
+    assert master_findings(master_rb(mesh, mesh), "npm")[0].status == "fail"
+    mesh["face_geometry"] = {"polygons": [[0, 1, 2]]}
+    assert master_findings(master_rb(mesh), "npm")[0].status == "fail"
+
+
+def test_master_fresh_process_outside_repository(tmp_path):
+    import subprocess
+    import sys
+
+    code = ('from twinqa.master import master_findings; '
+            'r = master_findings({"readback_ok": True, "meshes": '
+            '[{"name": "A", "polygon_degrees": {"3": 1}}]}, "npm")[0]; '
+            'assert r.status == "pass"; assert r.data["objects"][0]["triangles"] == 1')
+    result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path,
+                            capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+
+
+def test_master_triangle_size_uses_unchanged_side_boundaries():
+    from dt_ai.ops.inv_texel import VPM
+
+    for side, status in ((1.0, "pass"), (VPM.review_side_m, "pass"),
+                         (3.95, "review"), (VPM.hard_side_m, "review"), (4.01, "fail")):
+        verts = [[0, 0, 0], [side, 0, 0], [side / 2, side / 2, 0]]
+        got = master_status("vpm", poly_mesh("A", [[0, 1, 2]], verts))
+        assert got["master quads"] == "pass"
+        assert got["master quad size"] == status
 
 
 def test_master_quad_over_4m_fails_and_padded_band_is_review():

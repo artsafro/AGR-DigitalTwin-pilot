@@ -22,6 +22,7 @@ def run(repo, evidence):
     rt.save(bitmap)
     rt.close(bitmap)
     material = rt.StandardMaterial(name='SyntheticBrick', diffuseMap=rt.MultiTile())
+    material.showInViewport = True
     obj = rt.mesh(name='SyntheticBrick', vertices=[rt.Point3(0, 0, 0), rt.Point3(1, 0, 0), rt.Point3(0, 1, 0)],
                   faces=[rt.Point3(1, 2, 3)], material=material)
     scope = {'ids': [{'object': str(obj.name), 'id': 1, 'joint_m': .01, 'tile_m': .02}]}
@@ -35,6 +36,34 @@ def run(repo, evidence):
     assert passed['status'] == 'pass', passed
     assert gate.check_max(rt, scope) == passed
     probes = {}
+    # #1547: exercise the real gate, including contribution and viewport switches.
+    for constructor, enabled, amount, slot in [
+        (rt.StandardMaterial, 'diffuseMapEnable', 'diffuseMapAmount', 'diffuseMap'),
+        (rt.PhysicalMaterial, 'base_color_map_on', 'base_weight', 'base_color_map'),
+    ]:
+        control = constructor(name='SyntheticVisibility')
+        rt.setProperty(control, slot, rt.Bitmaptexture(filename=str(path)))
+        rt.setProperty(control, enabled, True)
+        rt.setProperty(control, amount, 1.0)
+        control.showInViewport = True
+        obj.material = control
+        cls = str(rt.classOf(control))
+        baseline = gate.check_max(rt, scope)
+        assert baseline['status'] == 'pass', baseline
+        probes[cls + '_enabled'] = baseline
+        for prop, value in [(enabled, False), (amount, 0.0), ('showInViewport', False)]:
+            original = rt.getProperty(control, prop)
+            rt.setProperty(control, prop, value)
+            for repeat in range(2):
+                rejected = gate.check_max(rt, scope)
+                assert rejected['status'] == 'fail', rejected
+                assert prop in rejected['ids'][0]['reason'], rejected
+                assert rt.getProperty(control, prop) == value
+                probes[f'{cls}_{prop}_{repeat}'] = rejected
+            rt.setProperty(control, prop, original)
+            assert gate.check_max(rt, scope) == baseline
+        rt.saveMaxFile(str(root / (cls + '-enabled-v001.max')))
+    obj.material = material
     def reject(name, declaration):
         result = gate.check_max(rt, declaration)
         assert result['status'] != 'pass', (name, result)

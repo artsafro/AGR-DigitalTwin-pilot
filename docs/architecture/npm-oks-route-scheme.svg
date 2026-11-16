@@ -27,7 +27,7 @@
 <tspan x="30" dy="24">Маршрут НПМ / ОКС v2 на КПП1 — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: 6fb671d5ffb7e209976206f369099a0ec3f529b0625d8c7b01fdd0d3d7c2a4db</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 73ecd99acdf6803f06bcd6e11e3ae8d62963f44b10f952b54de71028b5b0d945</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: КПП1: sources.json, ревизия альбома и SHA-256 исходников; неизвестная ревизия останавливает выпуск</tspan>
