@@ -246,6 +246,25 @@ def test_export_z_check_refuses(args):
         export_z_check(100.0, 0.0, PTS, None, step_m=0.006, tol_m=0.01)
 
 
+def test_export_z_derived_overflow_refused():
+    with pytest.raises(ValueError, match="finite"):
+        export_z_check(1e308, -1e308, [(0.0, 0.0, 1e308, 0)], lambda xy: [1e308])
+
+
+@pytest.mark.parametrize("case", ["drop_nan", "drop_inf", "xy_nan", "z_nan"])
+def test_skirt_nonfinite_refused(case):
+    mesh = build().mesh
+    drop = 1.0
+    if case == "drop_nan":
+        drop = float("nan")
+    elif case == "drop_inf":
+        drop = float("inf")
+    else:
+        mesh.verts[-1, 0 if case == "xy_nan" else 2] = float("nan")
+    with pytest.raises(ValueError, match="finite"):
+        gs.skirt_gaps(mesh, drop)
+
+
 # ---------------------------------------------------------------- skirt gaps (edge level, review r1 P1-2)
 
 
