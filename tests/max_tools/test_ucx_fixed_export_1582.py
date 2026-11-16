@@ -307,6 +307,58 @@ def test_deliver_exports_the_fixed_copies_and_records_them(monkeypatch, tmp_path
     assert body['ucx_export']['kept'] == ['UCX_SM_TestAddr_Ground_001']
 
 
+def test_deliver_ucx_previews_judge_export_geometry_without_skips(monkeypatch, tmp_path):
+    """#1584: real gap glue must not expand the export selection back to the originals."""
+    dm, ctx, calls, copies = _glue(monkeypatch, tmp_path)
+    ctx.options.pop('skip')
+    gap_max = _load(PKG / 'ucx10_max.py', 'agr_ucx10_max_1584')
+    uc = _load(PKG / 'ucx_core.py', 'agr_ucx_core_1584')
+    model = dm._model_nodes(None)
+    every = model + copies
+    geometry = {}
+    for n, x in zip(every, [20, 0, 0.99, 40, 0, 1.01]):
+        geometry[n.h] = uc._convex_hull([[xx, y, z] for xx in (x, x + 1) for y in (0, 1) for z in (0, 1)])
+        n.inode = types.SimpleNamespace(handle=n.h)
+    rt = types.SimpleNamespace(objects=every, isValidNode=lambda n: n in every,
+                               canConvertTo=lambda *a: True, TriMeshGeometry=object(),
+                               units=types.SimpleNamespace(SystemType='meters', SystemScale=1))
+    monkeypatch.setattr(gap_max, '_rt', lambda: rt)
+    host = types.SimpleNamespace(m_per_unit=lambda: 1., refs=lambda ns: ns,
+                                 mesh=lambda n: dict(zip(('verts', 'faces'), geometry[n.h])))
+    seen = []
+
+    def edits(tool, mode, preview=None, nodes=None, options=None, **kw):
+        if tool != 'ucx.gap':
+            return {'status': 'pass', 'objects': [], 'plan': {}}
+        gctx = types.SimpleNamespace(core=gc, edit=ctx.edit, emax=ctx.emax, host=host, options=options or {})
+        result = gap_max.ucx_gap(gctx, mode, nodes, preview)
+        seen.append(result)
+        return result
+
+    def checks(tool, nodes=None, select=False, **kw):
+        if tool in ('ucx_audit', 'preflight'):
+            selected = kw.get('ucx_export', {}).get('nodes', nodes)
+            assert [n.h for n in selected] == [1, 10, 11, 4]
+        return {'status': 'pass', 'objects': [], 'plan': {}}
+
+    ctx.agr.edits_100 = edits
+    ctx.agr.checks_070 = checks
+    # Establish that the originals really have findings, rather than faking their verdict.
+    original = edits('ucx.gap', 'preview', nodes=model)
+    assert original['status'] == 'fail'
+    pre = dm.pack_deliver(ctx, 'preview', None, None)
+    assert pre['status'] == 'pass', pre['plan']['blockers']
+    assert seen[-1]['status'] == 'pass'
+    assert {o['handle'] for o in seen[-1]['objects']} == {10, 11, 4}
+    out = dm.pack_deliver(ctx, 'apply', None, pre)
+    assert out['status'] == 'pass'
+    assert ('commit', [1, 10, 11, 4], {10: 'UCX_' + A + '_001', 11: 'UCX_' + A + '_002'}) in calls
+    body = json.loads((Path(out['plan']['run_folder']) / dc.REPORT).read_text(encoding='utf-8'))
+    assert body['options']['skip'] == {}
+    assert all(r['status'] == 'pass' for r in body['steps'] if r['id'] in ('ucx.audit', 'ucx.gap'))
+    assert [n.name for n in copies] == ['UCX_' + A + '_001_AGR_gap_001', 'UCX_' + A + '_002_AGR_gap_001']
+
+
 def test_deliver_preview_is_stale_when_a_fixed_copy_changes(monkeypatch, tmp_path):
     dm, ctx, _calls, copies = _glue(monkeypatch, tmp_path)
     pre = dm._pack_deliver(ctx, 'preview', None, None)
