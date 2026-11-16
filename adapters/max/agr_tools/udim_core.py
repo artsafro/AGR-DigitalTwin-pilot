@@ -32,7 +32,19 @@ D12 v9.2 edited the base channel under Unwrap_UVW / UVW_Xform (hidden or shifted
     evaluated stack and collapses the stack on the copy only;
 D13 ID > 100 left shared vertices moved (v9.2 V8) -> faces of a refused ID keep their own UV vertices.
 """
+import importlib.util
 import math
+from pathlib import Path
+
+
+def _sibling(name, alias):
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).with_name(name))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_ids')
 
 ID_MIN, ID_MAX = 1, 100
 MODES = ('fit', 'texel', 'keep')
@@ -50,16 +62,15 @@ def tile_of_id(mid):
 def tile_origin(tile):
     if type(tile) is not int or not 1001 <= tile <= 1100:
         raise ValueError('UDIM tile outside 1001..1100: ' + repr(tile))
-    k = tile - 1001
-    return k % 10, k // 10
+    return _udimtile.tile_origin(tile)
 
 
 def tile_of_uv(u, v):
     """UDIM tile of a point (1001 + floor(u) + 10*floor(v)), or None outside the 10-column grid."""
-    fu, fv = math.floor(u), math.floor(v)
-    if not 0 <= fu <= 9 or fv < 0:
+    try:
+        return _udimtile.udim_tile(u, v)
+    except _udimtile.UdimDomainError:
         return None
-    return 1001 + fu + 10 * fv
 
 
 def face_tile(uvs, idx, tol=INSIDE_TOL):

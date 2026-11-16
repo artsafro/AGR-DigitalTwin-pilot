@@ -136,7 +136,7 @@
 <text x="1878.0" y="1007.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
-<tspan x="1878.0" dy="17.5">зазоры UCX (D325: ядро на функцию); строит</tspan>
+<tspan x="1878.0" dy="17.5">зазоры UCX (D330: ядро на функцию); строит</tspan>
 <tspan x="1878.0" dy="17.5">src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)</tspan>
 <tspan x="1878.0" dy="17.5"></tspan>
 <tspan x="1878.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>
@@ -157,51 +157,51 @@
 <tspan x="1268.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="1268.0" dy="17.5">находки НПМ</tspan>
 </text>
-<rect x="805.0" y="536.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="536.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="805.0" y="536.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="536.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">исходники</tspan>
 </text>
-<rect x="1465.0" y="318.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="318.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">граница и ноль</tspan>
 </text>
-<rect x="2025.0" y="509.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="509.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="510.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="510.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">плоский Ground</tspan>
 <tspan x="2055.0" dy="17.5">с ID</tspan>
 </text>
-<rect x="1872.5" y="318.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1902.5" y="318.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1872.5" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1902.5" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1902.5" dy="14">тайл UDIM = ID</tspan>
 </text>
-<rect x="1415.0" y="687.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="687.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="687.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="687.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">рельеф для</tspan>
 <tspan x="1445.0" dy="17.5">высот</tspan>
 </text>
-<rect x="2025.0" y="968.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="968.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="968.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="968.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">рельеф</tspan>
 </text>
-<rect x="1415.0" y="904.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="904.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="905.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="905.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">точки МАФ /</tspan>
 <tspan x="1445.0" dy="17.5">Флоры</tspan>
 </text>
-<rect x="1720.0" y="967.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="967.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="967.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="967.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">НПМ на атласе</tspan>
 </text>
-<rect x="2025.0" y="968.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="968.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="968.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="968.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">атлас / UDIM</tspan>
 </text>
-<rect x="2075.0" y="1235.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="1235.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2075.0" y="1235.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2105.0" y="1235.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2105.0" dy="14">коллизии UCX_</tspan>
 </text>
-<rect x="1720.0" y="1270.38" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="1270.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="1270.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1270.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

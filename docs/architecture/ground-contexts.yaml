@@ -125,7 +125,7 @@ contexts:
     ru: "Коллизии UCX рельефа (только ВПМ)"
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/ucx10_core.py
-    owner_ru: "зазоры UCX (D325: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
+    owner_ru: "зазоры UCX (D330: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
     functions:
       - name: piece
         contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"

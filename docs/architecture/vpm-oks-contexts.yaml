@@ -124,7 +124,7 @@ contexts:
     ru: "Коллизии UCX (только ВПМ)"
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/ucx10_core.py
-    owner_ru: "зазоры UCX (D325: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
+    owner_ru: "зазоры UCX (D330: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
     functions:
       - name: piece
         contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
@@ -138,13 +138,13 @@ contexts:
         issue: "#1383"
         ru: "свои куски UCX КПП1"
         status: own-duty
-        why: "ручные куски сданного КПП1; новый объект строит agr ucx (D325), сданный пакет не меняется"
+        why: "ручные куски сданного КПП1; новый объект строит agr ucx (D330), сданный пакет не меняется"
       - at: "jobs/PSU275/scripts/vpm_ucx.py:45"
         match: "UCX_SM_"
         issue: "#1383"
         ru: "свои UCX ПСУ275"
         status: own-duty
-        why: "ручные коробки законченного ПСУ275; новый объект строит agr ucx (D325), пакет не меняется"
+        why: "ручные коробки законченного ПСУ275; новый объект строит agr ucx (D330), пакет не меняется"
   - id: ucx-triangulation
     ru: "Триангуляция готовых UCX"
     area: docs/domain/areas/ucx.md

@@ -130,42 +130,42 @@
 <tspan x="353.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="353.0" dy="17.5">находки НПМ</tspan>
 </text>
-<rect x="805.0" y="579.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="579.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="805.0" y="580.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="580.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">спецификация и</tspan>
 <tspan x="835.0" dy="17.5">точки</tspan>
 </text>
-<rect x="1567.5" y="571.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1597.5" y="571.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1567.5" y="571.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="571.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1597.5" dy="14">кандидат МАФ</tspan>
 </text>
-<rect x="2330.0" y="562.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2360.0" y="562.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2330.0" y="562.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2360.0" y="562.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2360.0" dy="14">модель в</tspan>
 <tspan x="2360.0" dy="17.5">допуске</tspan>
 </text>
-<rect x="1262.5" y="351.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1292.5" y="351.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1262.5" y="351.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="351.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1292.5" dy="14">модель МАФ</tspan>
 </text>
-<rect x="1415.0" y="466.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="466.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="466.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="466.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">точки МАФ</tspan>
 </text>
-<rect x="1760.0" y="717.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1790.0" y="717.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1760.0" y="717.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1790.0" y="717.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1790.0" dy="14">ID / атлас 512</tspan>
 </text>
-<rect x="1415.0" y="871.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="871.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="871.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="871.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">НПМ на атласе</tspan>
 </text>
-<rect x="2025.0" y="863.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="863.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">коллизии Ground</tspan>
 </text>
-<rect x="1110.0" y="863.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1140.0" y="863.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1110.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

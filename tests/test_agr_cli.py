@@ -53,7 +53,6 @@ def test_partial_chain_does_not_start(args, monkeypatch, capsys):
 @pytest.mark.parametrize("command,pointer", [
     ("unwrap-atlas", "dt derive atlas"), ("delivery-export", "dt derive npm"),
     ("open-in-max", "routes/npm-oks.md"), ("contact-renders", "routes/npm-oks.md"),
-    ("brick-seams", "routes/npm-oks.md"),
     ("unknown", "agr --help"), ("", "agr --help"), ("NaN", "agr --help"),
 ])
 def test_unsupported_fails_closed_with_pointer(command, pointer, monkeypatch, capsys):
@@ -127,7 +126,10 @@ def test_fresh_process_refusal_writes_nothing(command, tmp_path):
                              str(source), "--out", str(source), "NaN", "inf", "0"],
                             cwd=tmp_path, capture_output=True, text=True)
     assert result.returncode == 2
-    assert "ERROR:" in result.stderr
+    if command == 'brick-seams':
+        assert 'error:' in result.stderr
+    else:
+        assert "ERROR:" in result.stderr
     assert {p.name: p.read_bytes() for p in tmp_path.iterdir()} == before
 
 

@@ -158,47 +158,47 @@
 <tspan x="1573.0" dy="17.5">map_findings: чтение, меши Флоры -&gt; НПМ: диффуз +</tspan>
 <tspan x="1573.0" dy="17.5">отдельная прозрачность, больше ничего</tspan>
 </text>
-<rect x="855.0" y="327.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="327.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="855.0" y="327.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="885.0" dy="14">ведомость и</tspan>
 <tspan x="885.0" dy="17.5">точки</tspan>
 </text>
-<rect x="1567.5" y="553.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1597.5" y="553.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1567.5" y="553.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="553.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1597.5" dy="14">вид без карты</tspan>
 </text>
-<rect x="2330.0" y="571.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2360.0" y="571.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2330.0" y="571.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2360.0" y="571.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2360.0" dy="14">пара карт</tspan>
 </text>
-<rect x="2015.0" y="690.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2045.0" y="690.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2015.0" y="691.25" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2045.0" y="691.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="14">звезда /</tspan>
 <tspan x="2045.0" dy="17.5">оболочка</tspan>
 </text>
-<rect x="1415.0" y="449.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="449.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="449.38" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="449.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">точки Флоры</tspan>
 </text>
-<rect x="1110.0" y="791.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1140.0" y="791.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1110.0" y="791.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="791.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1140.0" dy="14">облегчённые НПМ</tspan>
 </text>
-<rect x="1720.0" y="863.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="863.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">виды сцены</tspan>
 </text>
-<rect x="2025.0" y="1147.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="1147.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="1148.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="1148.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">карты и размеры</tspan>
 </text>
-<rect x="1770.0" y="1054.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1054.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1770.0" y="1055.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="1055.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">атлас 2048 /</tspan>
 <tspan x="1800.0" dy="17.5">4096</tspan>
 </text>
-<rect x="1110.0" y="863.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1140.0" y="863.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1110.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

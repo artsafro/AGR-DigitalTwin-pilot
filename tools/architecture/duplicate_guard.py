@@ -30,7 +30,7 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `seam-seal`  owner tools/blender/seam_seal.py (#1381): the one Blender seam seal (weld + T-junction ring splits, quads
   only; moved from jobs/KPP1/scripts/seal.py, now an import shim). Flags any other `def seal` / `def ring_split` /
   `def t_junctions` (its function names). Every row must say why it stays.
-- `site-placement` owner src/dt_ai/placement/site.py (#1407, [D324]): the one site placement run (`dt place site` /
+- `site-placement` owner src/dt_ai/placement/site.py (#1407, [D329]): the one site placement run (`dt place site` /
   `agr place`, NPM + VPM at the same points [D293]). Flags any other `engine.place(...)` call, or a bare `place(...)`
   imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
 The owner file of a rule is never a copy of that rule.
@@ -56,6 +56,13 @@ its policy functions); a historical row must have no live chain
 and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`. `--table` prints the Russian
 «живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
 runs only the copy scan (synthetic test roots without the maps).
+
+Historical class (#1546, [D327]): `historical_scripts` = scripts of a `finished_jobs` folder that are listed in the
+frozen baseline docs/agents/job_scripts_baseline.txt, sit outside any skeleton.json folder and that no live chain
+reaches (and no entrypoint names as evidence); a script added later is never historical. They are still scanned
+above; the root `.ignore` holds one generated block
+(`--write-ignore`) with a HISTORICAL header line per job that hides them from agent search (ripgrep). A missing,
+stale or extra entry (a live script hidden) is a STATUS problem.
 """
 import argparse
 import ast
@@ -412,22 +419,11 @@ COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406
 # Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
 # listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
 LIVE_BYPASS_BASELINE = frozenset({
-    ("contexts", "adapters/max/agr_tools/atlas_core.py::pack", "402002d484"),
-    ("contexts", "adapters/max/agr_tools/npm2vpm_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/npm_core.py::tile_of", "ded8ff2561"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "fa20d4136a"),
-    ("contexts", "adapters/max/agr_tools/udimplug_core.py::tile_offset", "d163d10dca"),
-    ("contexts", "adapters/max/agr_tools/udimview_core.py::face_tile", "8fa30eddc4"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "8b58df8f2d"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
+
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
     ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "54a2d44744"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "eb17152aa7"),
+
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
 
@@ -569,6 +565,117 @@ def finished_jobs(root, contexts):
     return jobs
 
 
+# Historical job scripts (#1546, [D327]): scripts of a finished (delivered) job that no live command/route reaches
+# and that no entrypoint names as its evidence. They stay unchanged and every scan above still reads them; a
+# generated block of the root `.ignore` hides them from agent search (ripgrep reads `.ignore` by default). The
+# per-job header line of that block marks them historical (a header inside each script would shift the `path:line`
+# rows of the context maps and change the script bytes recorded by the deliveries).
+SCRIPT_SUFFIXES = (".py", ".ms", ".rb", ".sh", ".mjs")  # the script types jobs/ tracks (.gitignore)
+IGNORE_BEGIN = "# BEGIN historical-job-scripts (#1546, [D327]) - generated: duplicate_guard.py --write-ignore"
+IGNORE_END = "# END historical-job-scripts"
+GLOB_CHARS = re.compile(r"([\\*?\[\]!#])")
+
+
+# Frozen baseline of the job scripts at the #1546 cut (PR #1553 r1): historical/legacy is a list of script paths,
+# never a whole job folder - new work lands in sub-folders of finished jobs (jobs/KPP1/<task>-<issue>/) and must
+# stay visible and checked. A line is never added; removing one is allowed.
+JOB_BASELINE = "docs/agents/job_scripts_baseline.txt"
+SKELETON_CONFIG = "skeleton.json"
+
+
+def load_job_baseline(root):
+    """Frozen baseline -> frozenset of repo paths; missing/empty file, a path outside jobs/ or a duplicate raise."""
+    path = Path(root) / JOB_BASELINE
+    if not path.is_file():
+        raise ValueError(f"{JOB_BASELINE}: missing (the frozen #1546 baseline of job scripts)")
+    out = set()
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip() or line.startswith("#"):
+            continue
+        parts = line.split("/")
+        if line != line.strip() or parts[0] != "jobs" or len(parts) < 3 or "\\" in line \
+                or any(p in ("", ".", "..") for p in parts) or Path(line).suffix.lower() not in SCRIPT_SUFFIXES:
+            raise ValueError(f"{JOB_BASELINE}:{n}: {line!r} is not a jobs/<ID>/.../<script> path")
+        if line in out:
+            raise ValueError(f"{JOB_BASELINE}:{n}: {line} listed twice")
+        out.add(line)
+    if not out:
+        raise ValueError(f"{JOB_BASELINE}: empty")
+    return frozenset(out)
+
+
+def in_skeleton_job(root, rel):
+    """True when a folder between jobs/ and the script holds skeleton.json (the job opted in to the contract)."""
+    parts = rel.split("/")
+    return any((Path(root).joinpath(*parts[:i]) / SKELETON_CONFIG).is_file() for i in range(2, len(parts)))
+
+
+def historical_scripts(root, finished, chains, live_evidence=(), baseline=None):
+    """Sorted repo paths of the historical scripts: in the frozen baseline, inside a finished job, outside any
+    skeleton.json folder and not reached by a live chain (a new script in a finished job is never historical)."""
+    baseline = load_job_baseline(root) if baseline is None else baseline
+    out = []
+    for job in sorted(finished):
+        for p in sorted((Path(root) / job).rglob("*")):
+            rel = p.relative_to(root).as_posix()
+            if p.is_file() and p.suffix.lower() in SCRIPT_SUFFIXES and rel in baseline and rel not in chains \
+                    and rel not in live_evidence and not in_skeleton_job(root, rel):
+                out.append(rel)
+    return out
+
+
+def render_ignore_block(scripts):
+    """The generated `.ignore` block: one HISTORICAL header line per job, then its anchored, escaped paths."""
+    lines, job = [IGNORE_BEGIN], None
+    for rel in scripts:
+        this = "/".join(rel.split("/")[:2])
+        if this != job:
+            job = this
+            lines.append(f"# HISTORICAL [D327] {job}: delivered job; scripts kept unchanged, hidden from agent search, "
+                         "still scanned by duplicate_guard")
+        lines.append("/" + GLOB_CHARS.sub(r"\\\1", rel).replace(" ", "\\ "))
+    lines.append(IGNORE_END)
+    return "\n".join(lines) + "\n"
+
+
+def _ignore_parts(text):
+    if text.count(IGNORE_BEGIN) != 1 or text.count(IGNORE_END) != 1 or text.index(IGNORE_END) < text.index(IGNORE_BEGIN):
+        return None
+    head, rest = text.split(IGNORE_BEGIN, 1)
+    block, tail = rest.split(IGNORE_END, 1)
+    return head, IGNORE_BEGIN + block + IGNORE_END + "\n", tail[1:] if tail.startswith("\n") else tail
+
+
+def ignore_problems(root, scripts):
+    """Problems of the root `.ignore` block against the historical scripts ([] when it is exactly the render)."""
+    path = Path(root) / ".ignore"
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    parts = _ignore_parts(text)
+    if parts is None:
+        return [f".ignore: no single historical-job-scripts block ({len(scripts)} historical scripts unhidden); "
+                "run duplicate_guard.py --write-ignore"]
+    want = render_ignore_block(scripts)
+    if parts[1] == want:
+        return []
+    have = {ln for ln in parts[1].splitlines() if ln.startswith("/")}
+    need = {ln for ln in want.splitlines() if ln.startswith("/")}
+    return [f".ignore: historical block is stale: missing {sorted(need - have)[:5]} ({len(need - have)}), "
+            f"extra (live or gone) {sorted(have - need)[:5]} ({len(have - need)}); run duplicate_guard.py --write-ignore"]
+
+
+def write_ignore(root, scripts):
+    """Replace (or append) the generated block of root/.ignore; text outside the block is kept."""
+    path = Path(root) / ".ignore"
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    parts = _ignore_parts(text)
+    if parts is None and IGNORE_BEGIN in text:
+        raise ValueError(".ignore: broken historical-job-scripts block (BEGIN/END); fix it by hand")
+    head, _, tail = parts or (text + ("\n" if text and not text.endswith("\n") else ""), "", "")
+    tmp = path.with_name(".ignore.partial")
+    tmp.write_text(head + render_ignore_block(scripts) + tail, encoding="utf-8", newline="\n")
+    tmp.replace(path)
+
+
 def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE):
     """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees."""
     problems = []
@@ -668,6 +775,8 @@ def main(argv=None):
     ap.add_argument("--table", action="store_true", help="print the Russian live-bypass table + compaction order")
     ap.add_argument("--copies-only", action="store_true",
                     help="only the copy scan of the allowlist (synthetic test roots); skips the #1424 status check")
+    ap.add_argument("--write-ignore", action="store_true",
+                    help="regenerate the historical-job-scripts block of the root .ignore (#1546) before checking")
     args = ap.parse_args(argv)
     try:
         contexts = mini_yaml.load(args.contexts or args.root / "docs/architecture/contexts.yaml")
@@ -680,7 +789,13 @@ def main(argv=None):
                 maps["contexts"] = contexts
             rows = rows_of(maps)
             roots, chains = live_chains(args.root)
-            problems = status_problems(args.root, rows, chains, roots, finished_jobs(args.root, contexts))
+            finished = finished_jobs(args.root, contexts)
+            problems = status_problems(args.root, rows, chains, roots, finished)
+            evidence = {str(e.get("evidence", "")) for e in contexts.get("entrypoints", [])}
+            hidden = historical_scripts(args.root, finished, chains, evidence)
+            if args.write_ignore:
+                write_ignore(args.root, hidden)
+            problems += ignore_problems(args.root, hidden)
     except (OSError, SyntaxError, ValueError, KeyError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

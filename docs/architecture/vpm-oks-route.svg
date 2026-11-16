@@ -310,12 +310,12 @@
 </text>
 <text x="2315.0" y="432.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="14">Правила: D012, D098, D134,</tspan>
-<tspan x="2315.0" dy="17.5">D162, D225, D325</tspan>
+<tspan x="2315.0" dy="17.5">D162, D225, D330</tspan>
 </text>
 <text x="2315.0" y="510.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="14">Контекст: Коллизии UCX: agr</tspan>
 <tspan x="2315.0" dy="17.5">ucx (строит ucx_build,</tspan>
-<tspan x="2315.0" dy="17.5">зазоры ucx10_core, D325)</tspan>
+<tspan x="2315.0" dy="17.5">зазоры ucx10_core, D330)</tspan>
 </text>
 <text x="2585.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="15">Агент</tspan>

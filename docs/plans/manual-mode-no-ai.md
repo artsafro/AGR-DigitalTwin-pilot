@@ -28,7 +28,7 @@ on the OKS side. The agent side is `agr` (thin aliases [D271], `agr --help`) and
 | 3 | Windows / doors by opening sizes | `winplace_core.py`, `windowgen_core.py`, `library/windows/` | stage 2 `win.place`, `win.generate` | #1405 (open) | windows done; doors gap | #1509 |
 | 4 | Railings by spline | none (R3 recipe is manual) | none | none | gap | #1508 |
 | 5 | Roof membrane separate from parapet | `roof_core.py` (R6, #1352) | stage 4 `body.roof` | - | done | - |
-| 6 | Unwrap + brick/panel seams in 1 UDIM | `uvlayout_core.py` (no own button), #1326 job-specific | stage 6 `vpm.build` (no seams step) | `agr brick-seams` = unavailable | gap | #1510 |
+| 6 | Unwrap + brick/panel seams in 1 UDIM | `seams_core.py` + existing chart/fold; explicit source support pages | stage 6 `vpm.build` (no seams step) | `agr brick-seams --config JSON --out NEW.json` ([contract](../procedure/brick-seams.md)) | agent calculation only; button/native readback not done | #1510 |
 | 7 | UCX by script | `ucx10_core.py`, `capsule_core.py` | stage 3 `body.capsules`, stage 9 `ucx.gap`, `ucx.stairs` | `agr ucx` = unavailable -> #1404 (open) | Max done; agent command open | #1404 |
 | 8 | Attributes JSON + export + archive | `export_meta.py`, `package_core.py`, `passport_core.py` | stage 0 `project.passport`, stage 9 `pack.deliver` | `agr export-meta`, `package-vpm`, `package-npm` (#1361) | done | - |
 | 9 | VPM -> NPM (planes, atlas, PAD 16 [D278]) | `npm_core.py`, `atlas_core.py`, `facadeatlas_core.py` | stage 7 `npm.build` | `agr vpm-to-npm` | done | - |

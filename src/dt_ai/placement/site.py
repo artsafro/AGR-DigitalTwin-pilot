@@ -2,7 +2,7 @@
 
 Pattern: n/a | new-case: one site placement run over ``dt_ai.placement`` (engine + scene helpers) for both
 delivery versions, replacing the job-local ``jobs/VATUTINO-SITE/place_site.py`` run [D293 NPM step: parallel
-placement; D324 placement owner = dt_ai.placement].
+placement; D329 placement owner = dt_ai.placement].
 
 One run = one spec + one seed -> ``OUT/npm`` and ``OUT/vpm``. The point list, the label -> library assignment
 and the exceptions are shared by both versions; only the model of each library key (``npm`` / ``vpm``) and the

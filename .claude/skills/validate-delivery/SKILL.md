@@ -34,6 +34,15 @@ Run in priority order from `CLAUDE.md`. Each check ends as `pass`, `fail`,
 5. **Visual fidelity.** Screenshots from fixed cameras (front and angled), compared
    with the approved reference or previous accepted version.
 
+## Review scene before opening for the user (#1365)
+
+Run the read-only [review-texture gate](../../../docs/procedure/REVIEW_TEXTURES.md) on the
+exact saved review file and declared textured IDs before opening any scene for the user.
+Require linked, available/packed Base Color images in Blender; plain Bitmap per reviewed
+Max ID (no MultiTile-only diffuse). Report joint sampling at the current viewport limit;
+`fail`/`review` is not a pass. Never change global DCC settings without asking first.
+This gate is separate from regulatory delivery UDIM/slot rules and visual acceptance.
+
 ## Modelling gates (every modelling job, #1030)
 
 Manual gates on the delivered geometry, on top of the checks above and V001-V017. Each starts as

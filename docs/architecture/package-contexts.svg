@@ -123,37 +123,37 @@
 <text x="963.0" y="1178.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<rect x="855.0" y="336.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="336.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="855.0" y="336.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="885.0" dy="14">сцена НПМ / ВПМ</tspan>
 </text>
-<rect x="1770.0" y="336.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="336.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1770.0" y="336.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1800.0" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1800.0" dy="14">FBX + факты</tspan>
 </text>
-<rect x="1567.5" y="608.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1597.5" y="608.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1567.5" y="608.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="608.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1597.5" dy="14">свежее чтение</tspan>
 </text>
-<rect x="1720.0" y="599.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="599.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="600.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="600.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">адрес, верх,</tspan>
 <tspan x="1750.0" dy="17.5">превью</tspan>
 </text>
-<rect x="1110.0" y="608.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1140.0" y="608.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1110.0" y="608.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="608.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1140.0" dy="14">GeoJSON ВПМ</tspan>
 </text>
-<rect x="1415.0" y="484.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="484.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="484.38" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="484.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">запись ZIP</tspan>
 </text>
-<rect x="1720.0" y="826.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="826.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="826.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="826.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">ZIP сдачи</tspan>
 </text>
-<rect x="1415.0" y="926.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="926.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="914.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="914.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">те же ZIP</tspan>
 </text>
 </svg>

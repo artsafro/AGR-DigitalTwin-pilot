@@ -61,7 +61,7 @@ local_contexts:
     ru: "Расстановка МАФ и Флоры"
     owner: src/dt_ai/placement/engine.py
   - id: ucx
-    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D325)"
+    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
 stages:
   - id: sources
@@ -179,7 +179,7 @@ stages:
       - D098
       - D134
       - D012
-      - D325
+      - D330
     evidence:
       - docs/domain/areas/ucx.md
       - src/dt_ai/geometry/ucx_command.py
@@ -192,7 +192,7 @@ stages:
       - "dt place site"
       - "agr place"
     rules:
-      - D324
+      - D329
       - D095
       - D100
       - D166

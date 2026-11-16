@@ -178,7 +178,7 @@ stages:
       - "dt place site"
       - "agr place"
     rules:
-      - D324
+      - D329
       - D100
       - D095
     evidence:

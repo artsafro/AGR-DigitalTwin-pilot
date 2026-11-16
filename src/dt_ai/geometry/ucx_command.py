@@ -1,10 +1,10 @@
-"""`agr ucx`: one UCX command for a VPM body (Main) and for Ground [D325, narrows D225] (#1404).
+"""`agr ucx`: one UCX command for a VPM body (Main) and for Ground [D330, narrows D225] (#1404).
 
 Pattern: n/a | new-case: CLI chain over the two UCX cores (build, then readback gap + V010 check), no geometry code.
 
     agr ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M]
 
-One core per function [D325]:
+One core per function [D330]:
 1. BUILD - `src/dt_ai/geometry/ucx_build.py::build` through its Blender driver `tools/blender/ucx_build.py`
    (program: Blender, headless; why: the builder's driver imports/exports FBX with bpy, numpy core, no Max needed).
    key=value options are the driver's (cell, gap, min_cell, tol, depth, object, with) and pass unchanged.
@@ -143,7 +143,7 @@ def run(a: dict) -> tuple[int, dict]:
     from dt_ai.core.blender_runner import BlenderRunError, run_blender
     from twinqa.scene import readback, readback_log_dir
 
-    report = {"command": "agr ucx", "decision": "D325", "model": str(a["model"]), "out": str(a["out"]),
+    report = {"command": "agr ucx", "decision": "D330", "model": str(a["model"]), "out": str(a["out"]),
               "target": a["target"], "options": a["opts"], "steps": {}}
     build_args = [str(a["model"]), str(a["out"]), a["target"], *a["opts"]]
     log = readback_log_dir() / f"agr-ucx-build-{a['out'].stem}.log"

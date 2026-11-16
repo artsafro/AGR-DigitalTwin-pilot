@@ -19,7 +19,7 @@ GROUND_STEPS = ("site", "zero", "v015")
 # export-meta (#1409): core adapters/max/agr_tools/export_meta.py, also importable inside 3ds Max (AGR Tools).
 # checker (#1379): the SINTEZ stage command; Blender side tools/blender/sintez_checker.py via blender_runner.
 # build-manifest (#1423): core adapters/max/agr_tools/build_manifest.py (delivery set consistency, FBX export owner).
-SCRIPTS = {"validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
+SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
            "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py"}
 
 
@@ -28,7 +28,6 @@ STUBS = {
     "delivery-export": "dt derive npm --help; routes/npm-oks.md (export/readback)",
     "open-in-max": "routes/npm-oks.md step 7; existing Max bridge (confirm ownership first)",
     "contact-renders": "routes/npm-oks.md step 7; existing job review/contact renders, no universal command",
-    "brick-seams": "routes/npm-oks.md step 4; source-bound job algorithms, no shared implementation",
 }
 
 
@@ -49,8 +48,9 @@ def _dispatch(args: list[str]) -> int:
         for name, script in SCRIPTS.items():
             print(f"  {name:18} {script}")
         print("  ground site|zero   dt ground site SPEC NEW_OUT (any site, D293 order) | dt ground zero (#1406)")
+        print("  brick-seams        tools.materials.brick_seams (shared stdlib core, JSON candidate)")
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
-        print("  ucx                UCX Main/Ground: ucx_build -> readback -> ucx10_core gap + V010 [D325]")
+        print("  ucx                UCX Main/Ground: ucx_build -> readback -> ucx10_core gap + V010 [D330]")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
         print("\nvpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
@@ -67,11 +67,14 @@ def _dispatch(args: list[str]) -> int:
         return subprocess.run([sys.executable, "-m", "dt_ai.cli.main", "ground", *args[1:]], check=False).returncode
     if args and args[0] in ALIASES:
         return subprocess.run([sys.executable, "-m", "dt_ai.cli.main", *ALIASES[args[0]], *args[1:]], check=False).returncode
+    if args and args[0] == "brick-seams":
+        script = Path(__file__).resolve().parents[3] / "tools/materials/brick_seams.py"
+        return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
     if args and args[0] in SCRIPTS:
         script = Path(__file__).resolve().parents[3] / SCRIPTS[args[0]]
         return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
     if args and args[0] == "ucx":
-        # #1404 [D325]: one UCX command; build core ucx_build, gap core ucx10_core (also AGR Tools in Max)
+        # #1404 [D330]: one UCX command; build core ucx_build, gap core ucx10_core (also AGR Tools in Max)
         from dt_ai.geometry import ucx_command
         return ucx_command.main(args[1:])
     if args and args[0] == "vpm-to-npm":

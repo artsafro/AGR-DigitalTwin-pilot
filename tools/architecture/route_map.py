@@ -32,6 +32,7 @@ import argparse
 import ast
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -496,7 +497,37 @@ class Board:
             compact.append(point)
         return compact
 
+    def _arrow_label_position(self, points, width, height, endpoints):
+        """Try longest segments first; slide the label to free interval boundaries.
+
+        Rectangle edges expanded by the label half-size delimit every feasible
+        centre interval on an orthogonal segment. Check rounded output bounds,
+        with 2 px clearance, rather than just the centre or the route itself.
+        """
+        rects = [e for e in self.elements if e["type"] == "rectangle" and e["id"] not in endpoints]
+        segments = sorted(zip(points, points[1:]),
+                          key=lambda pair: -(abs(pair[0][0] - pair[1][0]) + abs(pair[0][1] - pair[1][1])))
+        for p, q in segments:
+            axis = 0 if p[1] == q[1] else 1
+            lo, hi = sorted((p[axis], q[axis]))
+            middle = (lo + hi) / 2
+            candidates = {lo, middle, hi}
+            coord, size, half = ("x", "width", width / 2) if axis == 0 else ("y", "height", height / 2)
+            for rect in rects:
+                candidates.update((rect[coord] - half - 2, rect[coord] + rect[size] + half + 2))
+            for value in sorted((v for v in candidates if lo <= v <= hi), key=lambda v: (abs(v - middle), v)):
+                cx, cy = (value, p[1]) if axis == 0 else (p[0], value)
+                x, y = round(cx - width / 2, 2), round(cy - height / 2, 2)
+                if not any(x < r["x"] + r["width"] + 1 and x + width > r["x"] - 1
+                           and y < r["y"] + r["height"] + 1 and y + height > r["y"] - 1 for r in rects):
+                    return x, y
+        raise SchemaError("no clear arrow label position")
+
     def arrow(self, key, a, b, text=None, label_w=200, side_route=False):
+        if text and side_route and (not isinstance(label_w, (int, float))
+                                    or not math.isfinite(label_w) or label_w <= 0):
+            raise SchemaError("arrow label width must be finite and positive")
+        lines, label_x, label_y = [], 0.0, 0.0
         ax, ay = a["x"] + a["width"] / 2, a["y"] + a["height"] / 2
         bx, by = b["x"] + b["width"] / 2, b["y"] + b["height"] / 2
         # leave from the box edge facing the target
@@ -509,6 +540,15 @@ class Board:
             ey = b["y"] + (0 if by > ay else b["height"])
             sx, ex = ax, bx
         points = self._side_route(a, b) if side_route else [(sx, sy), (ex, ey)]
+        # Place labels before mutating elements or endpoint bindings: refusal is atomic.
+        if text:
+            lines = wrap(text, label_w, 14)
+            if side_route:
+                label_x, label_y = self._arrow_label_position(points, label_w, len(lines) * 14 * 1.25,
+                                                             {a["id"], b["id"]})
+            else:
+                label_x = (points[0][0] + points[-1][0]) / 2 - label_w / 2
+                label_y = (points[0][1] + points[-1][1]) / 2 - len(lines) * 9
         sx, sy = points[0]
         ex, ey = points[-1]
         el = self._base(key, "arrow", sx, sy,
@@ -523,11 +563,7 @@ class Board:
         for box in (a, b):
             box["boundElements"] = (box["boundElements"] or []) + [{"type": "arrow", "id": el["id"]}]
         if text:
-            lines = wrap(text, label_w, 14)
-            label_a, label_b = max(zip(points, points[1:]),
-                                   key=lambda pair: abs(pair[0][0] - pair[1][0]) + abs(pair[0][1] - pair[1][1]))
-            t = self._text(key, (label_a[0] + label_b[0]) / 2 - label_w / 2,
-                           (label_a[1] + label_b[1]) / 2 - len(lines) * 9, label_w, lines, 14,
+            t = self._text(key, label_x, label_y, label_w, lines, 14,
                            False, "center", container=el["id"])
             el["boundElements"] = [{"type": "text", "id": t["id"]}]
         return el

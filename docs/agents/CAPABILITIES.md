@@ -368,7 +368,7 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
   -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
   `tests/placement/test_site_*.py`.
 - Site placement command `dt place site SPEC.json --out NEW --seed N` / `agr place` (`src/dt_ai/placement/site.py`,
-  #1407, [D324]): MAF + Flora NPM and VPM at the same points in one run (D293); spec `dt-placement-site/1`, strict
+  #1407, [D329]): MAF + Flora NPM and VPM at the same points in one run (D293); spec `dt-placement-site/1`, strict
   NPM/VPM point-ID parity (exit 4), fail-closed spec (exit 2). Scene helpers moved to `dt_ai.placement.scene`
   (`tools/placement_site.py` is an import alias). Vatutino `jobs/VATUTINO-SITE/place_site.py` = resolver over it;
   guard rule `site-placement`. Silikatny run waits for #1315.
@@ -396,14 +396,14 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
 Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
 cores, keeping the Max side per the AC08 route [D228] [D225]; #1141 (the routing) was closed as split on 2026-11-15:
 UCX -> #1404, atlas -> #1380, placement -> #1407, one core behind the CLI and the Max button -> epic #1374, live-Max
-proof of the cores -> #1105. [D325] (2026-11-16, closes conflicts C49) narrows [D225] to one core per function:
+proof of the cores -> #1105. [D330] (2026-11-16, closes conflicts C49) narrows [D225] to one core per function:
 UCX build `ucx_build`, UCX gap `ucx10_core`, placement `dt_ai.placement`; command `agr ucx` (#1404)):
 
 | Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
 |---|---|---|---|
 | UCX | `src/dt_ai/geometry/ucx_build.py` + `tools/blender/ucx_build.py` (#166, TOOL ONLY), methods `tools/methods/ucx/` | `adapters/max/agr_tools/ucx_core.py`, `ucx10_core.py` (1.0 `ucx.gap`), `ucxstairs_core.py` | `jobs/KPP1/scripts/vpm_ucx.py`, `jobs/PSU275/scripts/vpm_ucx.py`, `jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py` |
 | NPM atlas | `tools/derive/npm_atlas.py` (finish regions), `tools/materials/npm_atlas_udim.py` (#546, UDIM crop) | `adapters/max/agr_tools/atlas_core.py` (mirrors `npm_atlas_udim.pack()`), `facadeatlas_core.py` | `jobs/*/scripts/make_npm_atlas.py`, `jobs/vyatskaya-tow02/scripts/texture_atlas_blender.py` |
-| Placement | `src/dt_ai/placement/engine.py` + `scene.py` + `site.py` (`dt place site`, #316, #344, #1407, [D324]) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
+| Placement | `src/dt_ai/placement/engine.py` + `scene.py` + `site.py` (`dt place site`, #316, #344, #1407, [D329]) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of
@@ -423,7 +423,7 @@ Delivery QA:
   Max; exit 0 pass / 1 findings / 2 unreadable.
 - UCX builder `src/dt_ai/geometry/ucx_build.py`, `tools/blender/ucx_build.py`; audit `tools/blender/ucx_audit.py` —
   TOOL ONLY (#166).
-- `agr ucx MODEL OUT Main|Ground [key=value ...]` (`src/dt_ai/geometry/ucx_command.py`, #1404, [D325]) — WORKING:
+- `agr ucx MODEL OUT Main|Ground [key=value ...]` (`src/dt_ai/geometry/ucx_command.py`, #1404, [D330]) — WORKING:
   build via `tools/blender/ucx_build.py`, fresh readback, `ucx10_core.plan` gap check (measure only; the fix is
   AGR Tools `ucx.gap` in Max), V010; exit 0 pass / 1 check failed / 2 build or readback failed / 4 refused. Proven on
   Vatutino Ground v014 (geometry identical to the delivered UCX) and ELV Main.

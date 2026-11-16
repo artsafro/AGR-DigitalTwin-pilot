@@ -48,7 +48,7 @@
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
 <text x="963.0" y="346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 43</tspan>
+<tspan x="963.0" dy="12">Дубли вне владельца: 35</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей функции; охрана jobs/, tools/, src/ (#1376)</tspan>
 </text>
@@ -212,36 +212,36 @@
 <tspan x="1573.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
 <tspan x="1573.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
 </text>
-<rect x="1465.0" y="626.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="626.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="626.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="626.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">мастер-модель</tspan>
 <tspan x="1495.0" dy="17.5">(FBX/.blend)</tspan>
 </text>
-<rect x="1262.5" y="1000.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1292.5" y="1000.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1262.5" y="1000.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="1000.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1292.5" dy="14">UV, атлас,</tspan>
 <tspan x="1292.5" dy="17.5">текстуры</tspan>
 </text>
-<rect x="1110.0" y="1235.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1140.0" y="1235.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="863.0" y="1235.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="893.0" y="1235.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="893.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="1617.5" y="922.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="922.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1647.5" dy="14">Blender/Max</tspan>
-<tspan x="1647.5" dy="17.5">строит</tspan>
+<rect x="1762.0" y="923.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1792.0" y="923.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1792.0" dy="14">Blender/Max</tspan>
+<tspan x="1792.0" dy="17.5">строит</tspan>
 </text>
-<rect x="1770.0" y="1235.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1235.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">свежее чтение</tspan>
-<tspan x="1800.0" dy="17.5">экспорта</tspan>
+<rect x="1455.0" y="1118.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1485.0" y="1118.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1485.0" dy="14">свежее чтение</tspan>
+<tspan x="1485.0" dy="17.5">экспорта</tspan>
 </text>
-<rect x="1720.0" y="596.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="596.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="606.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="606.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">номер тайла</tspan>
 </text>
-<rect x="1210.0" y="720.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1240.0" y="720.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1210.0" y="644.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1240.0" y="644.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1240.0" dy="14">номер тайла</tspan>
 </text>
 </svg>
