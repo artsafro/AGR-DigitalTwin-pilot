@@ -27,6 +27,30 @@ def test_missing_mutation_target_is_a_named_error(monkeypatch):
         bench.corpus()
 
 
+def test_subagent_timebox_without_progress_read_is_a_named_error(monkeypatch):
+    # A background launch with no TaskOutput record: the mutation target is named, not a bare StopIteration.
+    launch = bench.call("Agent", {"prompt": "Time box: 30 min", "run_in_background": True}, "toolu_launch")
+    bundle = {"transcript": json.dumps(launch) + "\n"}
+    monkeypatch.setattr(bench, "references", lambda: iter([("subagent_timebox", "no-read", "pass", bundle)]))
+    with pytest.raises(bench.MutationTargetError, match="subagent_timebox.*progress read"):
+        bench.corpus()
+
+
+def test_unrelated_runtime_error_is_reraised_unchanged(monkeypatch):
+    # Only a StopIteration-caused RuntimeError becomes MutationTargetError; any other bug surfaces as is.
+    boom = RuntimeError("boom")
+
+    def broken(grader, original, rng):
+        raise boom
+        yield  # pragma: no cover - makes this a generator
+
+    monkeypatch.setattr(bench, "variants", broken)
+    with pytest.raises(RuntimeError) as info:
+        bench.corpus()
+    assert info.value is boom
+    assert not isinstance(info.value, bench.MutationTargetError)
+
+
 def test_subagent_timebox_mutants_are_killed(tmp_path):
     rng = random.Random(1)
     cases = [c for c in bench.corpus() if c["grader"] == "subagent_timebox"]
