@@ -1,4 +1,15 @@
-# #1365 implementation checkpoint — not ready for review
+# #1365 implementation checkpoint — native acceptance measured
+
+Resumed after explicit card authorization for isolated headless Max (not live pipe).
+Native receipt: `native-max.json`; 14/14 extra probes plus MultiTile fail -> Bitmap
+pass -> repeated pass. Max 2026.3, meters, viewport limit 1024. Synthetic binaries:
+`C:/x/1365-review-textures/t_3b38fc56-native-v002/`, hashes in `max-SHA256SUMS.txt`.
+Initial batch attempt failed with missing parent directory (WinError 3); creating the
+parent fixed the environment, unchanged fixture then passed. Extended probes also passed.
+The former blocker below is retained as historical context only and is resolved;
+no live scene or machine-wide setting was changed. Final affected tests and PR handoff
+are recorded in the PR body, not retroactively substituted into the historical counts.
+
 
 Branch: `improve/issue-1365-review-handoff-check-textures-visible-in`; base: `main`.
 Dependency #1390 is merged in base (`8a36a5ad`).

@@ -34,7 +34,44 @@ def run(repo, evidence):
     passed = gate.check_max(rt, scope)
     assert passed['status'] == 'pass', passed
     assert gate.check_max(rt, scope) == passed
+    probes = {}
+    def reject(name, declaration):
+        result = gate.check_max(rt, declaration)
+        assert result['status'] != 'pass', (name, result)
+        probes[name] = result
+    reject('unknown_object', {'ids': [dict(scope['ids'][0], object='Absent')]})
+    reject('unused_id', {'ids': [dict(scope['ids'][0], id=2)]})
+    reject('unmeasured_joint', {'ids': [{'object': str(obj.name), 'id': 1}]})
+    reject('threshold', {'ids': [dict(scope['ids'][0], joint_m=2 / 256, tile_m=1)]})
+    material.diffuseMap = rt.Bitmaptexture(filename=str(root / 'missing.png'))
+    reject('missing_bitmap', scope)
+    material.diffuseMap = rt.Checker()
+    reject('unsupported_map', scope)
+    material.diffuseMap = rt.Bitmaptexture(filename=str(path))
+    multi = rt.MultiMaterial(numsubs=2)
+    multi.materialIDList = rt.Array(7, 3)
+    multi.materialList = rt.Array(material, rt.StandardMaterial(name='Empty'))
+    obj.material = multi
+    rt.setFaceMatID(obj, 1, 7)
+    sparse = {'ids': [dict(scope['ids'][0], id=7)]}
+    probes['sparse_id'] = gate.check_max(rt, sparse)
+    assert probes['sparse_id']['status'] == 'pass', probes
+    rt.setFaceMatID(obj, 1, 8)
+    reject('unmapped_id', {'ids': [dict(scope['ids'][0], id=8)]})
+    rt.setFaceMatID(obj, 1, 7)
+    multi.materialIDList = rt.Array(7, 7)
+    reject('duplicate_mapping', sparse)
+    for name, declaration in [('empty', {'ids': []}), ('partial', {'ids': [{'id': 1}]}),
+                              ('duplicate', {'ids': scope['ids'] * 2}),
+                              ('nan', {'ids': [dict(scope['ids'][0], joint_m=float('nan'))]}),
+                              ('inf', {'ids': [dict(scope['ids'][0], tile_m=float('inf'))]})]:
+        try:
+            gate.check_max(rt, declaration)
+        except ValueError as exc:
+            probes[name] = {'status': 'error', 'reason': str(exc)}
+        else:
+            raise AssertionError(name)
     result = {'application': '3ds Max', 'version': str(rt.maxVersion()), 'units': str(rt.units.SystemType),
-              'synthetic': True, 'multitile': failed, 'bitmap': passed}
+              'synthetic': True, 'multitile': failed, 'bitmap': passed, 'probes': probes}
     gate.write_report(root / 'native-max.json', result, [path])
     return json.dumps(result)

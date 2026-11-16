@@ -94,11 +94,17 @@ Blender 5.1.2, headless, METRIC; two declared brick IDs in the historical 4BK pa
 - Scope SHA-256 `9e72f4b208b447d7af0e4038b1cf59ec04250a8461600aa8e7ffb0ab13db3505`.
   Source bytes were hashed before/after each check and unchanged.
 
-Max native synthetic scene run: **not measured**. Read-only identification found live
-PID 969748, Max 2026 (28000), meters, dirty `C:/Users/artsafro/Downloads/bukvi.max`, 386 objects.
-Read-only interface discovery confirmed `GetActiveViewportSetting().TextureSizeLimit = 1024`;
-`GetTextureSizeLimit()` is not a published Max 2026 method (the adapter regression covers this).
-No live scene, global setting or source was changed. This pending native run prevents
-acceptance of #1365; pytest/Blender evidence must not be substituted for it.
+Max native synthetic scene run: **measured** in isolated 3dsmaxbatch, Max 2026.3
+(28.3.0.30732), meters; MultiTile **fail** -> Bitmap **pass** -> repeated **pass**.
+Fourteen additional probes cover sparse ID 7 mapping, unknown/unused/unmapped/duplicate
+IDs, unsupported/missing maps, unmeasured and exactly-two-texel joints, and invalid scopes.
+Receipt: `docs/evidence/1365-review-textures/native-max.json`; binaries and SHA256SUMS:
+`C:/x/1365-review-textures/t_3b38fc56-native-v002/` (authorized local evidence fallback).
+Run: `dcc_batch.py max --version 2026 --card t_3b38fc56 --file tmp/run-native-max-1365.py`
+where the Python wrapper loads the fixture with `runpy.run_path` and calls `run(repo, evidence)`.
+The parent evidence directory must exist; the fixture exclusively creates its version directory.
+Viewport getter measured 1024. No global setting or user's live scene was changed.
+Historical live identification (not used for the fixture): PID 969748, dirty `bukvi.max`,
+386 objects. The resumed run used the card's explicit headless authorization only.
 
 Full suite: deferred to merge batch (rule 68).
