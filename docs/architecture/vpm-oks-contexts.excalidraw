@@ -471,7 +471,7 @@
    "x": 40.0,
    "y": 585.0,
    "width": 470,
-   "height": 247.5,
+   "height": 265.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -513,7 +513,7 @@
    "x": 48.0,
    "y": 595.0,
    "width": 454,
-   "height": 227.5,
+   "height": 245.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -533,13 +533,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Проёмы и окна\nВладелец: adapters/max/agr_tools/windowgen_core.py\nокно из библиотеки с утоплением или генератор окон (D292,\n#1338 / #1345)\n\nload_library: папка библиотеки -> типы окон, стандарт,\nsha256 файлов\nlibrary_report: типы, стандарт -> строка на тип: pass /\nquarantine / duplicate с причиной\nofferable: отчёт библиотеки -> id, которые можно\nпредлагать (только pass)\nbuild_type: тип окна, стандарт, опции -> меш окна по\nстандарту библиотеки",
+   "text": "Проёмы и окна\nВладелец: adapters/max/agr_tools/windowgen_core.py\nagr window-generate / Max win.generate: библиотека с\nутоплением или генератор D322; один 3D owner стекла\n(#1405)\n\nload_library: папка библиотеки -> типы окон, стандарт,\nsha256 файлов\nlibrary_report: типы, стандарт -> строка на тип: pass /\nquarantine / duplicate с причиной\nofferable: отчёт библиотеки -> id, которые можно\nпредлагать (только pass)\nbuild_type: тип окна, стандарт, опции -> меш окна по\nстандарту библиотеки",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e125ae7d0f5a9eef",
-   "originalText": "Проёмы и окна\nВладелец: adapters/max/agr_tools/windowgen_core.py\nокно из библиотеки с утоплением или генератор окон (D292,\n#1338 / #1345)\n\nload_library: папка библиотеки -> типы окон, стандарт,\nsha256 файлов\nlibrary_report: типы, стандарт -> строка на тип: pass /\nquarantine / duplicate с причиной\nofferable: отчёт библиотеки -> id, которые можно\nпредлагать (только pass)\nbuild_type: тип окна, стандарт, опции -> меш окна по\nстандарту библиотеки",
+   "originalText": "Проёмы и окна\nВладелец: adapters/max/agr_tools/windowgen_core.py\nagr window-generate / Max win.generate: библиотека с\nутоплением или генератор D322; один 3D owner стекла\n(#1405)\n\nload_library: папка библиотеки -> типы окон, стандарт,\nsha256 файлов\nlibrary_report: типы, стандарт -> строка на тип: pass /\nquarantine / duplicate с причиной\nofferable: отчёт библиотеки -> id, которые можно\nпредлагать (только pass)\nbuild_type: тип окна, стандарт, опции -> меш окна по\nстандарту библиотеки",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1389,7 +1389,7 @@
    "x": 1120,
    "y": 436.25,
    "width": 630.0,
-   "height": 272.5,
+   "height": 281.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1433,11 +1433,11 @@
     ],
     [
      -590.0,
-     272.5
+     281.25
     ],
     [
      -610.0,
-     272.5
+     281.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1495,7 +1495,7 @@
    "id": "e788be0927ccf5c0",
    "type": "arrow",
    "x": 510.0,
-   "y": 708.75,
+   "y": 717.5,
    "width": 630.0,
    "height": 122.75,
    "angle": 0,
@@ -1533,19 +1533,19 @@
     ],
     [
      20.0,
-     105.25
+     96.5
     ],
     [
      630.0,
-     105.25
+     96.5
     ],
     [
      630.0,
-     -17.5
+     -26.25
     ],
     [
      610.0,
-     -17.5
+     -26.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -2181,11 +2181,11 @@
     ],
     [
      20.0,
-     -137.5
+     -155.0
     ],
     [
      935.0,
-     -137.5
+     -155.0
     ],
     [
      935.0,
@@ -2215,7 +2215,7 @@
    "id": "e370a648cb3200ee",
    "type": "text",
    "x": 1232.5,
-   "y": 878.5,
+   "y": 861.0,
    "width": 120,
    "height": 17.5,
    "angle": 0,

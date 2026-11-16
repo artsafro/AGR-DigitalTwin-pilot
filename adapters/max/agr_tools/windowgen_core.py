@@ -521,6 +521,47 @@ def to_obj(mesh, name):
     return '\n'.join(lines) + '\n'
 
 
+# ---- opening ownership --------------------------------------------------------------------------------------
+def assign_glass(bays, objects, tolerance_m=0.012):
+    """Exactly one 3D bay per glass; every unassigned object is a named failing drop.
+
+    Bounds use metres on all three axes (including depth). The existing KPP1
+    extraction allowance is 12 mm; equality at its boundary is refused.
+    """
+    tol = _num(tolerance_m, 'tolerance_m')
+    for label, rows in (('bays', bays), ('objects', objects)):
+        if not isinstance(rows, list) or not rows:
+            raise ValueError(label + ': nonempty inventory required')
+        seen = set()
+        for row in rows:
+            if not isinstance(row, dict) or not isinstance(row.get('id'), str) or not row['id']:
+                raise ValueError(label + ': explicit string id required')
+            if row['id'] in seen:
+                raise ValueError(label + ': duplicate id ' + row['id'])
+            seen.add(row['id'])
+            for key in ('min', 'max'):
+                v = row.get(key)
+                if not isinstance(v, (list, tuple)) or len(v) != 3:
+                    raise ValueError(row['id'] + ': ' + key + ' must have three coordinates')
+                for c in v:
+                    _num(c, row['id'] + '.' + key, positive=False)
+            if any(row['max'][i] <= row['min'][i] for i in range(3)):
+                raise ValueError(row['id'] + ': empty/inverted 3D bounds')
+    assigned, drops = {}, []
+    for obj in objects:
+        hits = [b['id'] for b in bays if all(
+            obj['min'][i] > b['min'][i] - tol and obj['max'][i] < b['max'][i] + tol
+            for i in range(3))]
+        if len(hits) == 1:
+            assigned[obj['id']] = hits[0]
+        else:
+            drops.append({'id': obj['id'], 'reason': 'no bay in 3D' if not hits else 'multiple bays in 3D',
+                          'candidates': hits})
+    from collections import Counter
+    return {'status': 'fail' if drops else 'pass', 'assigned': assigned, 'drops': drops,
+            'drop_counts': dict(Counter(d['reason'] for d in drops)), 'input_count': len(objects)}
+
+
 # ---- drafts --------------------------------------------------------------------------------------------------
 def draft_entry(opening, standard, role='window', name=None):
     """A draft library record for an opening without a type (D116: the agent only proposes a draft; it reaches the

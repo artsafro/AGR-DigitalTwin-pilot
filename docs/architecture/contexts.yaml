@@ -327,6 +327,16 @@ shared_kernel:
       status: own-duty
       why: "Другая задача: диагностика произвольных UV исходника (отрицательных и вне 0..10), raw tile не подтверждает корректность delivery UDIM."
 contexts:
+  - id: openings
+    ru: "Генератор окон и владение стеклом"
+    area: docs/domain/areas/windows.md
+    owner: adapters/max/agr_tools/windowgen_core.py
+    owner_ru: "agr window-generate и Max win.generate вызывают одно ядро; KPP1 extraction использует общий 3D owner"
+    functions:
+      - name: build_type
+        contract: "тип, стандарт -> меш окна D322; общий для CLI и Max"
+      - name: assign_glass
+        contract: "3D bounds -> один владелец стекла или явный failing drop"
   - id: body-shell
     ru: "Оболочка ПСУ275"
     area: docs/domain/areas/body.md

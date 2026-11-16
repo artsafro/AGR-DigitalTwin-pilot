@@ -14,6 +14,10 @@ whose family is not a window, glass or mullion is reported in openings_dropped.j
 """
 import json, os, re, sys
 
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'adapters/max/agr_tools'))
+from windowgen_core import assign_glass
+
 FT = 0.3048
 FEATURE_IDS = {1832606}  # north vertical fin feature: listed under "features", modeled with decor (stage 4)
 # Latin letters that look like Cyrillic ones (after casefold); both sides of every name match go through it.
@@ -45,7 +49,7 @@ def inside(r, R, tol=0.012):
     return r[0] >= R[0] - tol and r[1] <= R[1] + tol and r[2] >= R[2] - tol and r[3] <= R[3] + tol
 
 
-def main(src, cen):
+def extract(src, cen):
     side = json.load(open(os.path.join(src, "curtain.export.json"), encoding="utf-8-sig"))
     inst = [i for t in side["types"] for i in t["instances"] if i.get("boundingBox")]
     bb = lambda i: ([i["boundingBox"]["min"][k] * FT for k in "xyz"], [i["boundingBox"]["max"][k] * FT for k in "xyz"])
@@ -56,9 +60,25 @@ def main(src, cen):
             o["key"], o["group"] = norm(o["kind"]), g
             objs.append(o)
 
+    identities = [(o['group'], o['name']) for o in objs]
+    if len(set(identities)) != len(identities):
+        raise ValueError('duplicate object identity in curtain/openings inventory')
     spec = {f: {"surrounds": [], "doors": [], "portals": [], "features": [], "grilles": []} for f in "SNWE"}
     used, why = set(), {}  # object index -> used in the spec / reason it is not (first reason kept)
     hosts = [i for i in inst if i["type"].startswith("ADSK_Витраж")]
+    bounds = []
+    for h in hosts:
+        lo, hi = bb(h)
+        if facade_of(lo, hi) is not None:
+            bounds.append({'id': str(h['elementId']), 'min': lo, 'max': hi})
+    candidates = [{'id': str(k), 'min': o['min'], 'max': o['max']} for k, o in enumerate(objs)
+                  if facade_of(o['min'], o['max']) is not None
+                  and (o['key'].startswith(WINDOW) or GLASS in o['key'])]
+    ownership = assign_glass(bounds, candidates) if candidates else {
+        'status': 'fail', 'assigned': {}, 'drops': [], 'drop_counts': {}, 'input_count': 0,
+        'why': 'no exterior window/glass candidates'}
+    for d in ownership['drops']:
+        why[int(d['id'])] = d['reason'] + ': ' + ', '.join(d['candidates'])
     for s in inst:
         lo, hi = bb(s)
         f = facade_of(lo, hi)
@@ -81,6 +101,9 @@ def main(src, cen):
                     o = objs[k]
                     if not inside(rect(o["min"], o["max"], f), B):
                         continue
+                    if o['key'].startswith(WINDOW) or GLASS in o['key']:
+                        if k in used or ownership['assigned'].get(str(k)) != str(h['elementId']):
+                            continue
                     if o["key"].startswith(WINDOW):
                         bay["windows"].append(rect(o["min"], o["max"], f)); used.add(k)
                     elif GLASS in o["key"]:
@@ -110,8 +133,16 @@ def main(src, cen):
         else:
             why.setdefault(k, f"facade {f}: in no curtain surround, not a door or grille")
 
-    dropped = [{"name": objs[k]["name"], "group": objs[k]["group"], "reason": why[k]}
+    dropped = [{"id": str(k), "name": objs[k]["name"], "group": objs[k]["group"], "reason": why[k]}
                for k in range(len(objs)) if k not in used]
+    ownership['represented_objects'] = [{'id': str(k), 'name': objs[k]['name'], 'group': objs[k]['group']}
+                                        for k in sorted(used)]
+    ownership['total_objects'] = len(objs)
+    return spec, dropped, ownership
+
+
+def main(src, cen):
+    spec, dropped, ownership = extract(src, cen)
     json.dump(spec, open(os.path.join(cen, "openings_spec.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(dropped, open(os.path.join(cen, "openings_dropped.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)
@@ -121,7 +152,8 @@ def main(src, cen):
               "windows", sum(len(b["windows"]) for s in v["surrounds"] for b in s["bays"]),
               "glass", sum(len(b["glass"]) for s in v["surrounds"] for b in s["bays"]))
     unknown = sum(d["reason"].startswith("unknown family") for d in dropped)
-    print("dropped", len(dropped), "of", len(objs), "objects; unknown families in bays:", unknown)
+    print("dropped", len(dropped), "objects; unknown families in bays:", unknown,
+          "ownership:", ownership['status'])
 
 
 if __name__ == "__main__":
