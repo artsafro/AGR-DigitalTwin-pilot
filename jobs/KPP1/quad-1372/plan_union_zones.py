@@ -2,6 +2,15 @@
 
 Run with the project venv (numpy, shapely, dt_ai):
     uv run python jobs/KPP1/quad-1372/plan_union_zones.py <R1 SM_Kpp_1.fbx> <out union-zones.json> [--blender EXE]
+        [--xview-json <archived xView JSON of that R1>] [--compare <older union-zones.json>]
+
+#1563 (master quad-v003): the R1 source is accepted by its own pinned sha256 per R1 version (`SOURCE_SHAS`:
+r1-v002 for the v001/v002 masters, r1-v003 of rerun-1230 #1246 for v003); any other file is refused.
+`--xview-json` takes the archived xView report of that R1 (`ARCHIVED_XVIEW`: pinned sha256 per source); the plan
+then checks that the same kernel at the xView 5 mm threshold gives exactly the archived face pairs (else an error)
+and records which xView input was used. `--compare` lists the zones new / changed / identical / removed against an
+older plan (matched by geometry: face ids differ between R1 versions); every zone that touches the SW / NW corner
+posts (`CORNER_POSTS`, #1246 read-back points) is listed in `corners`.
 
 Reads the approved R1 master (copy, sha-checked), dumps it with `tools/blender/xview_dump.py` (the `dt qa xview`
 dump), runs the same xView gate kernel (`xview_gate.part_gate`, 2 mm / 5 mm) on `SM_Kpp_1_Main` and groups the
@@ -22,7 +31,18 @@ import numpy as np
 from dt_ai.core.blender_runner import run_blender
 from dt_ai.ops import inv_xview, xview_gate
 
-SOURCE_SHA = '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676'  # r1-v002 SM_Kpp_1.fbx
+SOURCE_SHAS = {  # accepted R1 masters, one pinned sha256 per R1 version (#1563)
+    '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676': 'r1-v002',  # #1230, quad v001/v002
+    'eb9d105af9de642d03928078917a174e9d2f5cb46b0a8d8460fd38e6cd47cc72': 'r1-v003',  # rerun-1230 #1246, package #1278
+}
+SOURCE_SHA = '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676'  # r1-v002 (v001/v002 masters)
+ARCHIVED_XVIEW = {  # source sha -> sha256 of its archived `dt qa xview` VPM report (#1278 diagnostics-latest-v001)
+    'eb9d105af9de642d03928078917a174e9d2f5cb46b0a8d8460fd38e6cd47cc72':
+        'c588e09f1a938de93157caae2d434151c2898d924d248e55b192a10008b37ca2',
+}
+CORNER_POSTS = {'SW': (-15.03, -5.73), 'NW': (-15.0303, 6.0196)}  # #1246 readback-v003b post centres (x, y), m
+CORNER_RADIUS_M = 0.25   # post + the old 0.1 m fins: a zone whose xy box comes this close touches the corner
+MATCH_TOL_M = 1e-4       # zones of two plans are identical when axis, plane value and face centroids agree to 0.1 mm
 PART = 'SM_Kpp_1_Main'
 AXIS_MIN = 0.99
 SPREAD_MAX_M = 0.005     # user decision 2026-11-14: delete/merge within <= 5 mm
@@ -97,18 +117,90 @@ def zones(v, faces, pairs):
     return out
 
 
+def _cents(z):
+    return sorted(tuple(round(c / MATCH_TOL_M) for c in cen) for cen in z['centroids'])
+
+
+def _boxes_meet(a, b, tol=PLANE_JOIN_M):
+    return all(a['lo'][i] - tol <= b['hi'][i] and b['lo'][i] - tol <= a['hi'][i] for i in range(3))
+
+
+def diff_plans(old, new):
+    """Zones of `new` vs `old`, measured by geometry (face ids differ between R1 versions).
+
+    identical = same axis, plane value within 0.1 mm and the same face centroids (0.1 mm); changed = same axis,
+    plane values within PLANE_JOIN_M and boxes that meet, but not identical; new = no such old zone; removed = old
+    zones no new zone matches. Every zone of both plans ends in exactly one list."""
+    status, used = [], set()
+    for k, z in enumerate(new['zones']):
+        same = [j for j, o in enumerate(old['zones']) if o['axis'] == z['axis']
+                and abs(o['value'] - z['value']) <= MATCH_TOL_M and _cents(o) == _cents(z)]
+        near = [j for j, o in enumerate(old['zones']) if o['axis'] == z['axis']
+                and abs(o['value'] - z['value']) <= PLANE_JOIN_M and _boxes_meet(o, z)]
+        kind = 'identical' if same else 'changed' if near else 'new'
+        match = same or near
+        used.update(match)
+        status.append({'zone': k, 'status': kind, 'old_zones': match, 'faces': len(z['faces']),
+                       'axis': z['axis'], 'value': z['value']})
+    removed = [j for j in range(len(old['zones'])) if j not in used]
+    counts = {s: sum(1 for x in status if x['status'] == s) for s in ('new', 'changed', 'identical')}
+    counts['removed'] = len(removed)
+    return {'counts': counts, 'zones': status, 'removed_old_zones': removed,
+            'old_zones': len(old['zones']), 'new_zones': len(new['zones'])}
+
+
+def corner_zones(plan_zones, posts=CORNER_POSTS, radius=CORNER_RADIUS_M):
+    """{corner: [zone ids]} whose xy box comes within `radius` of the corner post centre."""
+    return {name: [k for k, z in enumerate(plan_zones)
+                   if z['lo'][0] - radius <= x <= z['hi'][0] + radius
+                   and z['lo'][1] - radius <= y <= z['hi'][1] + radius]
+            for name, (x, y) in posts.items()}
+
+
+def archived_pairs(path, digest):
+    """(path, sha, face pairs) of the archived xView report of source `digest`: pinned sha, same input, defaults."""
+    path = Path(path).resolve()
+    want = ARCHIVED_XVIEW.get(digest)
+    if want is None:
+        raise SystemExit(f'no archived xView report is pinned for source {digest}; run without --xview-json')
+    if not path.is_file():
+        raise SystemExit(f'{path}: archived xView report missing; rerun xView')
+    got = hashlib.sha256(path.read_bytes()).hexdigest()
+    if got != want:
+        raise SystemExit(f'{path}: sha {got} is not the archived xView report {want}; rerun xView')
+    rep = json.loads(path.read_text(encoding='utf-8'))
+    if (rep.get('input') or {}).get('sha256') != digest:
+        raise SystemExit(f'{path}: xView input is not the source {digest}')
+    tol = inv_xview.XviewTolerance()
+    th = rep.get('thresholds') or {}
+    if th.get('face_m') != tol.face_m or th.get('vertex_m') != tol.vertex_m:
+        raise SystemExit(f'{path}: thresholds {th} are not the xView defaults')
+    parts = [p for p in rep.get('parts') or () if p.get('part') == PART]
+    if len(parts) != 1:
+        raise SystemExit(f'{path}: {PART} appears {len(parts)} times')
+    return path, got, {(fp['a'] - 1, fp['b'] - 1) for fp in parts[0]['face_pairs']}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('source')
     ap.add_argument('out')
     ap.add_argument('--blender', default=None)
+    ap.add_argument('--xview-json', default=None)
+    ap.add_argument('--compare', default=None)
     a = ap.parse_args(argv)
     src, out = Path(a.source).resolve(), Path(a.out).resolve()
     if out == src or out.exists():
         raise SystemExit(f'output {out} exists or is the input; use a new path')
+    for extra in (a.xview_json, a.compare):
+        if extra is not None and Path(extra).resolve() in (src, out):
+            raise SystemExit(f'{extra} aliases the source or the output')
     digest = hashlib.sha256(src.read_bytes()).hexdigest()
-    if digest != SOURCE_SHA:
-        raise SystemExit(f'{src} is not the approved r1-v002 SM_Kpp_1.fbx (sha {digest})')
+    if digest not in SOURCE_SHAS:
+        raise SystemExit(f'{src} is not the approved R1 SM_Kpp_1.fbx of any accepted version (sha {digest}; '
+                         'approved: ' + ', '.join(f'{v} {k[:12]}' for k, v in SOURCE_SHAS.items()) + ')')
+    archived = archived_pairs(a.xview_json, digest) if a.xview_json else None
+    old = json.loads(Path(a.compare).read_text(encoding='utf-8')) if a.compare else None
     with tempfile.TemporaryDirectory(prefix='union-zones-', dir=out.parent) as tmp:
         npz, man = Path(tmp) / 'parts.npz', Path(tmp) / 'manifest.json'
         dump = run_blender(xview_gate.DUMP_SCRIPT, [src, npz, man], executable=a.blender, output_json=man,
@@ -121,16 +213,33 @@ def main(argv=None):
     g = xview_gate.part_gate(part, inv_xview.XviewTolerance(), 'inplace')
     gp = xview_gate.part_gate(part, inv_xview.XviewTolerance(face_m=PLAN_FACE_M), 'inplace')
     pairs = [(fp['a'] - 1, fp['b'] - 1) for fp in gp['face_pairs']]
-    plan = {'source': str(src), 'source_sha256': digest, 'part': PART, 'units': units,
+    xview_input = {'used': 'recomputed', 'face_m': inv_xview.XviewTolerance().face_m}
+    if archived is not None:
+        now = {(fp['a'] - 1, fp['b'] - 1) for fp in g['face_pairs']}
+        if now != archived[2]:
+            raise SystemExit(f'{archived[0]}: archived pairs differ from the kernel ({len(archived[2] - now)} only '
+                             f'archived, {len(now - archived[2])} only now); rerun xView')
+        xview_input = {'used': 'archived', 'path': str(archived[0]), 'sha256': archived[1],
+                       'face_pairs': len(archived[2]), 'pairs_equal_kernel_5mm': True,
+                       'extra_pairs_5_1mm': len(set(pairs) - archived[2])}
+    plan = {'source': str(src), 'source_sha256': digest, 'source_version': SOURCE_SHAS[digest],
+            'xview_input': xview_input, 'part': PART, 'units': units,
             'faces_count': len(part.faces), 'xview_r1': {'vertex_pairs': len(g['vertex_pairs']),
                                                          'face_pairs': len(g['face_pairs']),
                                                          'by_kind': g['face_pairs_by_kind'],
                                                          'bowtie_vertices': len(g['bowtie_vertices'])},
             'plan_face_m': PLAN_FACE_M, 'plan_face_pairs': len(pairs),
             'spread_max_m': SPREAD_MAX_M, 'zones': zones(v, part.faces, pairs)}
+    plan['corners'] = {'posts': CORNER_POSTS, 'radius_m': CORNER_RADIUS_M, 'zones': corner_zones(plan['zones'])}
+    if old is not None:
+        plan['diff'] = {'against': str(Path(a.compare).resolve()),
+                        'against_sha256': hashlib.sha256(Path(a.compare).read_bytes()).hexdigest(),
+                        **diff_plans(old, plan)}
     out.write_text(json.dumps(plan, indent=1))
     print(json.dumps({'zones': len(plan['zones']), 'faces': sum(len(z['faces']) for z in plan['zones']),
-                      'max_spread_mm': max(z['spread_m'] for z in plan['zones']) * 1000, **plan['xview_r1']}))
+                      'max_spread_mm': max((z['spread_m'] for z in plan['zones']), default=0.0) * 1000,
+                      'xview_input': xview_input['used'], 'corners': plan['corners']['zones'],
+                      'diff': plan.get('diff', {}).get('counts'), **plan['xview_r1']}))
 
 
 if __name__ == '__main__':

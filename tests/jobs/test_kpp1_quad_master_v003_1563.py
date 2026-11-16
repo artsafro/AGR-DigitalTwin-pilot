@@ -1,0 +1,212 @@
+"""new-case: #1563 KPP1 quad master v003 - per-version R1 pin, archived xView input, plan diff, provenance.
+
+Probes for the guarantees of the card: any other source is refused, the archived xView report is used only with its
+pinned hash, every zone of both plans ends in exactly one diff list, outputs are never replaced, no admission.
+"""
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import random
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+QDIR = ROOT / "jobs/KPP1/quad-1372"
+
+
+def _load(name, file):
+    spec = importlib.util.spec_from_file_location(name, QDIR / file)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+puz = _load("plan_union_zones_1563", "plan_union_zones.py")
+qp = _load("quad_provenance_1563", "quad_provenance.py")
+
+V002, V003 = qp.R1_V002, qp.R1_V003
+
+
+# --- source pin per version ---------------------------------------------------------------------------------------
+
+@pytest.mark.parametrize("version,digest", [("v001", V002), ("v002", V002), ("v003", V003)])
+def test_each_version_accepts_only_its_own_r1(version, digest):
+    assert qp.check_source(version, digest) in ("r1-v002", "r1-v003")
+    other = V003 if digest == V002 else V002
+    with pytest.raises(ValueError, match="is not the approved"):
+        qp.check_source(version, other)
+    with pytest.raises(ValueError, match="is not the approved"):
+        qp.check_source(version, "0" * 64)
+
+
+@pytest.mark.parametrize("version", ["v004", "", None, "V003", "v003 "])
+def test_unknown_version_is_refused(version):
+    with pytest.raises(ValueError, match="no pinned R1 source"):
+        qp.check_source(version, V003)
+
+
+def test_plan_of_another_source_is_refused():
+    assert qp.check_source("v003", V003, {"source_sha256": V003}) == "r1-v003"
+    for bad in ({"source_sha256": V002}, {}, {"source_sha256": None}):
+        with pytest.raises(ValueError, match="union plan source"):
+            qp.check_source("v003", V003, bad)
+
+
+def test_planner_accepts_both_r1_versions_and_nothing_else():
+    assert puz.SOURCE_SHAS == {V002: "r1-v002", V003: "r1-v003"}
+    assert puz.SOURCE_SHA == V002  # v001/v002 outputs keep their source
+
+
+def test_planner_cli_refuses_unknown_source_and_aliases(tmp_path):
+    src = tmp_path / "SM_Kpp_1.fbx"
+    src.write_bytes(b"r1-v003 lookalike")
+    out = tmp_path / "union-zones-v003.json"
+    with pytest.raises(SystemExit, match="not the approved"):
+        puz.main([str(src), str(out)])
+    with pytest.raises(SystemExit, match="aliases the source or the output"):
+        puz.main([str(src), str(out), "--xview-json", str(src)])
+    with pytest.raises(SystemExit, match="aliases the source or the output"):
+        puz.main([str(src), str(out), "--compare", str(out)])
+    assert not out.exists() and src.read_bytes() == b"r1-v003 lookalike"
+
+
+# --- archived xView input --------------------------------------------------------------------------------------------
+
+def _xview(tmp_path, digest, pairs, face_m=0.005, part="SM_Kpp_1_Main", name="xview.json"):
+    rep = {"input": {"sha256": digest}, "thresholds": {"vertex_m": 0.002, "face_m": face_m},
+           "parts": [{"part": part, "face_pairs": [{"a": a + 1, "b": b + 1} for a, b in pairs]}]}
+    p = tmp_path / name
+    p.write_text(json.dumps(rep))
+    return p, hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def test_archived_xview_used_only_with_its_pinned_hash(tmp_path, monkeypatch):
+    p, h = _xview(tmp_path, V003, [(0, 5), (2, 7)])
+    monkeypatch.setitem(puz.ARCHIVED_XVIEW, V003, h)
+    path, got, pairs = puz.archived_pairs(p, V003)
+    assert got == h and pairs == {(0, 5), (2, 7)}
+    p.write_text(p.read_text() + " ")  # one byte changed -> hash differs -> rerun xView
+    with pytest.raises(SystemExit, match="rerun xView"):
+        puz.archived_pairs(p, V003)
+    with pytest.raises(SystemExit, match="missing; rerun xView"):
+        puz.archived_pairs(tmp_path / "absent.json", V003)
+    with pytest.raises(SystemExit, match="no archived xView report is pinned"):
+        puz.archived_pairs(p, V002)
+
+
+@pytest.mark.parametrize("kw,msg", [({"digest": V002}, "input is not the source"),
+                                    ({"face_m": 0.0051}, "not the xView defaults"),
+                                    ({"part": "SM_Kpp_1_MainGlass"}, "appears 0 times")])
+def test_archived_xview_of_other_input_or_thresholds_is_refused(tmp_path, monkeypatch, kw, msg):
+    digest = kw.pop("digest", V003)
+    p, h = _xview(tmp_path, digest, [(0, 1)], **kw)
+    monkeypatch.setitem(puz.ARCHIVED_XVIEW, V003, h)
+    with pytest.raises(SystemExit, match=msg):
+        puz.archived_pairs(p, V003)
+
+
+def test_pinned_archive_hash_is_the_card_value():
+    assert puz.ARCHIVED_XVIEW[V003] == "c588e09f1a938de93157caae2d434151c2898d924d248e55b192a10008b37ca2"
+
+
+# --- plan diff and corners -------------------------------------------------------------------------------------------
+
+def _zone(axis, value, cents, lo=None, hi=None):
+    lo = lo or [min(c[i] for c in cents) for i in range(3)]
+    hi = hi or [max(c[i] for c in cents) for i in range(3)]
+    return {"axis": axis, "value": value, "centroids": cents, "faces": list(range(len(cents))), "lo": lo, "hi": hi}
+
+
+def test_diff_counts_identical_changed_new_removed():
+    a = _zone(0, 12.415, [[12.415, 0.8, 3.9], [12.415, 1.0, 4.0]])
+    b = _zone(1, 6.12, [[-10.0, 6.12, 1.0]])
+    gone = _zone(2, 7.5, [[0.0, 0.0, 7.5]])
+    b2 = _zone(1, 6.1205, [[-10.0, 6.1205, 1.0], [-10.1, 6.1205, 1.1]])
+    new = _zone(0, -15.03, [[-15.03, -5.73, 2.0]])
+    d = puz.diff_plans({"zones": [a, b, gone]}, {"zones": [dict(a), b2, new]})
+    assert d["counts"] == {"new": 1, "changed": 1, "identical": 1, "removed": 1}
+    assert d["removed_old_zones"] == [2]
+    assert [z["status"] for z in d["zones"]] == ["identical", "changed", "new"]
+
+
+def test_diff_every_zone_in_exactly_one_list_generated():
+    rnd = random.Random(1563)
+    for _ in range(200):
+        def zs():
+            return [_zone(rnd.randrange(3), round(rnd.uniform(-15, 15), 4),
+                          [[round(rnd.uniform(-15, 15), 4) for _ in range(3)] for _ in range(rnd.randint(1, 3))])
+                    for _ in range(rnd.randint(0, 6))]
+        old, new = zs(), zs()
+        if old and rnd.random() < .5:
+            new.append(dict(old[0]))
+        d = puz.diff_plans({"zones": old}, {"zones": new})
+        c = d["counts"]
+        assert c["new"] + c["changed"] + c["identical"] == len(new)
+        matched = {j for z in d["zones"] for j in z["old_zones"]}
+        assert matched.isdisjoint(d["removed_old_zones"])
+        assert matched | set(d["removed_old_zones"]) == set(range(len(old)))
+
+
+def test_diff_of_a_plan_with_itself_is_all_identical():
+    a = _zone(0, 1.0, [[1.0, 0.0, 0.0]])
+    d = puz.diff_plans({"zones": [a, a]}, {"zones": [a]})
+    assert d["counts"] == {"new": 0, "changed": 0, "identical": 1, "removed": 0}
+
+
+def test_corner_zones_at_exactly_the_radius_touch_and_beyond_do_not():
+    x, y = puz.CORNER_POSTS["SW"]
+    r = puz.CORNER_RADIUS_M
+    at = _zone(0, x + r, [[x + r, y, 1.0]])
+    beyond = _zone(0, x + r + 1e-3, [[x + r + 1e-3, y, 1.0]])
+    far = _zone(1, 0.0, [[0.0, 0.0, 1.0]])
+    got = puz.corner_zones([at, beyond, far])
+    assert got == {"SW": [0], "NW": []}
+
+
+# --- provenance record ------------------------------------------------------------------------------------------------
+
+def _packet(tmp_path, monkeypatch):
+    src = tmp_path / "source" / "SM_Kpp_1.fbx"
+    src.parent.mkdir()
+    src.write_bytes(b"fake r1 for the provenance probe (synthetic)")
+    digest = hashlib.sha256(src.read_bytes()).hexdigest()
+    monkeypatch.setitem(qp.VERSION_SOURCE, "v003", digest)
+    monkeypatch.setitem(qp.SOURCE_NAME, digest, "r1-v003")
+    outs = []
+    for n in ("master-quad-v003.blend", "SM_Kpp_1.quad-v003.fbx", "quad-build-v003.json"):
+        (tmp_path / n).write_bytes(n.encode())
+        outs.append(tmp_path / n)
+    plan = tmp_path / "union-zones-v003.json"
+    plan.write_text("{}")
+    return src, digest, outs, plan
+
+
+def test_provenance_binds_source_plan_outputs_commit_and_no_admission(tmp_path, monkeypatch):
+    src, digest, outs, plan = _packet(tmp_path, monkeypatch)
+    p = qp.write_provenance(tmp_path, "v003", src, digest, plan, outs, "a" * 40, True)
+    rec = json.loads(p.read_text(encoding="utf-8"))
+    assert rec["source"]["sha256"] == digest and rec["union_plan"]["sha256"] == qp.sha(plan)
+    assert rec["outputs"] == {o.name: qp.sha(o) for o in outs}
+    assert rec["script_commit"] == "a" * 40 and rec["admission"] is None
+    der = json.loads(Path(rec["derivation_record"]["path"]).read_text(encoding="utf-8"))
+    assert der["schema"] == "agr.derivation/1" and der["master_sha256"] == digest
+    assert der["artifacts"] == {"SM_Kpp_1.quad-v003.fbx": {"kind": "vpm_fbx", "sha256": qp.sha(outs[1])}}
+    before = p.read_bytes()
+    with pytest.raises(FileExistsError):
+        qp.write_provenance(tmp_path, "v003", src, digest, plan, outs, "a" * 40, True)
+    assert p.read_bytes() == before
+    assert not list(tmp_path.rglob("*.partial"))
+
+
+def test_provenance_refuses_changed_source_and_bad_outputs(tmp_path, monkeypatch):
+    src, digest, outs, plan = _packet(tmp_path, monkeypatch)
+    with pytest.raises(ValueError, match="exactly one work FBX"):
+        qp.write_provenance(tmp_path, "v003", src, digest, plan, [outs[0], outs[2]], "a" * 40, True)
+    with pytest.raises(ValueError, match="alias"):
+        qp.write_provenance(tmp_path, "v003", src, digest, plan, outs + [outs[0]], "a" * 40, True)
+    src.write_bytes(b"changed during the build")
+    with pytest.raises(ValueError, match="master_changed_during_export"):
+        qp.write_provenance(tmp_path, "v003", src, digest, plan, outs, "a" * 40, True)
+    assert not (tmp_path / "quad-provenance-v003.json").exists()
+    assert not (tmp_path / "derivation").exists()
