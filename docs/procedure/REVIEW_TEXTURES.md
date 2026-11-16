@@ -50,7 +50,11 @@ The report's `status` is authoritative: a successful MCP transport alone is not 
 When using MAXScript, propagate Python exceptions and inspect the JSON report separately.
 
 Supported diffuse routes are Standard `diffuseMap` and Physical `base_color_map` with a
-plain **Bitmaptexture** and a real image file. Unsupported shaders, wrappers and
+plain **Bitmaptexture** and a real image file. The material must have `showInViewport=true`;
+Standard requires `diffuseMapEnable=true` and finite positive `diffuseMapAmount`,
+Physical requires `base_color_map_on=true` and finite positive `base_weight`.
+Disabled, zero/nonfinite contribution, or unavailable properties fail naming the property;
+the checker does not activate maps or repair those values. Unsupported shaders, wrappers and
 MultiTile-only diffuse fail closed. This implementation uses the plain Bitmap option;
 it does not infer that any Blend graph is an authorized UDIM Viewer route.
 
