@@ -350,12 +350,17 @@ def test_cli_fix_with_opt_in_round_four_refused(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("case", ["out_is_render", "out_in_renders", "out_is_slide", "exists", "missing_view",
-                                  "vlm_error", "bad_answers", "bad_facades", "out_is_skeleton"])
+                                  "vlm_error", "bad_answers", "bad_facades", "out_is_skeleton", "out_alias",
+                                  "partial_exists", "out_appears_during_run"])
 def test_cli_fail_closed_writes_nothing(tmp_path, monkeypatch, case):
     job, (rd, slide) = _job(tmp_path, {"scenario": "oks-vpm", "config": {}}), _renders(tmp_path)
     extra, kw = [], {}
     if case == "out_is_render":
         extra = ["--out", str(rd / "vpm_iso.png")]
+    elif case == "out_alias":
+        extra = ["--out", str(rd / ".." / "renders" / "." / "npm_iso.png")]
+    elif case == "partial_exists":
+        (job / "verifier.json.partial").write_text("other run", encoding="utf-8")
     elif case == "out_in_renders":
         extra = ["--out", str(rd / "verifier.json")]
     elif case == "out_is_slide":
@@ -374,10 +379,24 @@ def test_cli_fail_closed_writes_nothing(tmp_path, monkeypatch, case):
     if case == "bad_facades":
         argv[argv.index("--facades") + 1] = "south=2-1,north=1-2"
     _fake_vlm(monkeypatch, **kw)
+    if case == "out_appears_during_run":      # state changes during the VLM calls: another run wrote the report
+        inner = vf.call_vlm
+
+        def racing(prompt, workdir, model):
+            out = job / "verifier.json"
+            if not out.exists():
+                out.write_text("other run", encoding="utf-8")
+            return inner(prompt, workdir, model)
+        monkeypatch.setattr(vf, "call_vlm", racing)
+        assert vf.main(argv) != 0
+        assert (job / "verifier.json").read_text(encoding="utf-8") == "other run"
+        assert not list(job.glob("*.partial"))
+        return
     before = _tree_hash(rd, slide, job)
     assert vf.main(argv) != 0
     assert _tree_hash(rd, slide, job) == before
-    assert not list(job.glob("*.partial")) and not list(rd.glob("*.partial"))
+    if case != "partial_exists":
+        assert not list(job.glob("*.partial")) and not list(rd.glob("*.partial"))
 
 
 def test_cli_fresh_process_help_and_fix_refusal(tmp_path):
