@@ -184,47 +184,47 @@
 <text x="1573.0" y="1076.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1573.0" dy="12">Дубли вне владельца: 2</tspan>
 </text>
-<rect x="805.0" y="518.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="518.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="805.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">строит</tspan>
 </text>
-<rect x="805.0" y="547.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="547.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="805.0" y="547.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="547.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">корпус по</tspan>
 <tspan x="835.0" dy="17.5">частям</tspan>
 </text>
-<rect x="805.0" y="843.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="843.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="805.0" y="843.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="843.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">проёмы врезаны</tspan>
 </text>
-<rect x="957.5" y="889.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="987.5" y="889.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="957.5" y="890.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="987.5" y="890.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="987.5" dy="14">оболочка с</tspan>
 <tspan x="987.5" dy="17.5">кровлей</tspan>
 </text>
-<rect x="1415.0" y="518.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="518.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">мастер ВПМ</tspan>
 </text>
-<rect x="1567.5" y="318.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1597.5" y="318.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1567.5" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1597.5" dy="14">номер тайла</tspan>
 </text>
-<rect x="2025.0" y="518.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="518.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">UDIM → атлас</tspan>
 </text>
-<rect x="2025.0" y="547.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="547.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="547.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="547.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">НПМ в</tspan>
 <tspan x="2055.0" dy="17.5">координатах</tspan>
 </text>
-<rect x="1262.5" y="861.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1292.5" y="861.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1262.5" y="861.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="861.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1292.5" dy="14">коллизии UCX_</tspan>
 </text>
-<rect x="2025.0" y="805.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="805.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="805.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="805.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>
