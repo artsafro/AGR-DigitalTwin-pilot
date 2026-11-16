@@ -443,24 +443,7 @@ LIVE_BYPASS_BASELINE = frozenset({
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 
-    # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
-    ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "83b1fa0042"),
-    ("contexts", "tools/flora/build_flora_star.py::_blender", "e5c254530a"),
-    ("contexts", "tools/library/check_library.py::native_inspect", "c85d66fb6e"),
-    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
-    ("contexts", "tools/materials/bind_ground_textures.py::_run_blender", "707f4be9fd"),
-    ("contexts", "tools/methods/body/run_benchmarks.py::_blender", "18f971bee9"),
-    ("contexts", "tools/methods/ground/build_variant.py::_blender", "37235a2e47"),
-    ("contexts", "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx", "f5a8a5aa67"),
-    ("contexts", "tools/methods/run_variant.py::run_extra", "d4b2fad230"),
-    ("contexts", "tools/methods/ucx/run_benchmarks.py::main", "9c40344e89"),
-    ("contexts", "tools/methods/windows/run_benchmarks.py::main", "c2afb4241e"),
-    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
-    ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
-    ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
-
+    # blender-launch: the 16 live tools/ + src/ launches of #1378/#1424 call blender_command since #1530
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))
