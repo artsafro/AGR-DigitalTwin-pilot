@@ -399,6 +399,10 @@ proof of the cores -> #1105. Which side owns UCX building and placement is open:
 | NPM atlas | `tools/derive/npm_atlas.py` (finish regions), `tools/materials/npm_atlas_udim.py` (#546, UDIM crop) | `adapters/max/agr_tools/atlas_core.py` (mirrors `npm_atlas_udim.pack()`), `facadeatlas_core.py` | `jobs/*/scripts/make_npm_atlas.py`, `jobs/vyatskaya-tow02/scripts/texture_atlas_blender.py` |
 | Placement | `src/dt_ai/placement/engine.py` + `tools/placement_site.py` (#316, #344) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
 
+- Tiling-trim box UV `tools/blender/box_uv.py` (`box_project_uv`, #1538) — TOOL ONLY: world box projection at panel
+  scale on the listed faces of one object, data API only; `uv_fingerprint`/`uv_violations` prove other objects kept
+  their UVs; synthetic fixture `tests/test_box_uv_1538.py` (real Blender 5.1).
+
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of
   the benchmark and from-source runs.
