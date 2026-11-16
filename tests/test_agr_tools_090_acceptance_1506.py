@@ -13,7 +13,10 @@ def test_owner_disposition_is_recorded_once_and_reachable():
     rows = [line for line in log.splitlines() if line.startswith("| D331 |")]
     assert len(rows) == 1
     assert "2026-11-16" in rows[0]
-    assert "6915458337" in rows[0]
+    # The row may cite the owner comment directly or through a reference link (decisions-log style, #1590).
+    refs = dict(re.findall(r"^\[([^\]]+)\]:\s*(\S+)", log, re.M))
+    cited = [refs.get(name, "") for name in re.findall(r"\]\[([^\]]+)\]", rows[0])]
+    assert "6915458337" in rows[0] or any("6915458337" in url for url in cited)
     text = DOC.read_text(encoding="utf-8")
     assert "[D331]" in text
     overview = (ROOT / "docs/agr-tools/OVERVIEW.md").read_text(encoding="utf-8")

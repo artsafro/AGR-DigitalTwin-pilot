@@ -12,6 +12,8 @@
 title_ru: "Маршрут МАФ (GroundEl, НПМ + ВПМ): событийный штурм (библиотека 931, Ватутино v005 / v006, «Верона»)"
 route: maf
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников"
   steps:
     - stages: "sources,library,pick"
@@ -167,12 +169,17 @@ stages:
     event_ru: "МАФ расставлены в координатах: поворот СПОЗУ, утопление 10 см, низ удалён только под Ground"
     actor: agent
     context: placement
+    commands:
+      - "dt place site"
+      - "agr place"
     rules:
+      - D329
       - D095
       - D096
       - D018
     evidence:
       - src/dt_ai/placement/engine.py
+      - src/dt_ai/placement/site.py
       - jobs/VATUTINO-SITE/place_site.py
       - jobs/VATUTINO-SITE/placement-report.md
   - id: npm
@@ -291,7 +298,7 @@ hotspots:
       - docs/plans/425-maf-route-2026-11.md
   - id: placement-tool
     stage: placement
-    ru: "Расстановка: движок dt_ai.placement вызывается из jobs/VATUTINO-SITE/place_site.py; команды agr / dt нет; на Ground v015 не перезапущена"
+    ru: "Расстановка на Ground v015 не перезапущена (команда dt place site есть, #1407)"
     rules:
       - D236
     evidence:

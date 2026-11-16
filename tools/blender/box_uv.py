@@ -7,11 +7,15 @@ panel joints; Artem's "UVW-map box 5-5-5 m" was accepted). docs/domain/uv-textur
 - every listed face is projected on its dominant world axis (+-X, +-Y, +-Z) in metres, scaled by
   px_per_m / texture_px, so one texture period = 1.0 UV and texel density = px_per_m;
 - the winding of the projection follows the face normal (no mirrored islands, walls keep V = world Z);
-- listed faces that share an edge and the same axis form one island; each island moves by a whole number
-  of periods (integers in UV) into the UDIM tile, so the UV jump across any edge between coplanar faces is
-  a whole number of periods and the joints stay continuous;
+- listed faces that share an edge and the same axis form one island, except across an edge that lies on a
+  world period line (both ends on u = k or v = k periods, #1573): such an edge is an island border; each
+  island moves by a whole number of periods (integers in UV) into the UDIM tile, so the UV jump across any
+  edge between coplanar faces (period-line borders included) is a whole number of periods and the joints
+  stay continuous;
 - an island that cannot fit the tile with the margin at its world phase raises BoxUVOverflow and nothing
-  is written (split it by texel cuts, tools/blender/vpm_uv.py texel_cut, or lower px_per_m within 512..1706);
+  is written. Remedy: cut the faces on world period lines (k * period_m; a cut elsewhere keeps the island
+  connected) or lower px_per_m within 512..1706. An island touching a period line has phase 0 there, so it
+  fits only with margin_px=0; tile margin vs world phase is an open conflict (docs/domain/conflicts.md);
 - UVs are written through the mesh data API (no bpy.ops, no selection, no edit mode), only to the loops of
   the listed faces of the one target object; uv_fingerprint / uv_violations prove other objects (glass,
   UCX, ...) and unlisted faces kept their UV state.
@@ -31,6 +35,7 @@ import udimtile_core  # noqa: E402
 TEXEL_MIN, TEXEL_MAX = 512.0, 1706.0   # reg p.32 §6.2, inclusive
 LAST_UDIM = 1100                        # reg p.23, p.31 §2.1.3: 10x10 grid 1001-1100
 AXES = ('+x', '-x', '+y', '-y', '+z', '-z')
+EPS = 1e-9                              # periods (5 nm at a 5 m period): period-line and tile-fit tolerance
 
 
 class BoxUVError(ValueError):
@@ -94,6 +99,22 @@ def axis_uv(co, key):
             '+y': (-x, z), '-y': (x, z)}[key]
 
 
+def _snap(p):
+    """Phase within EPS of a whole period -> that whole period (keeps a period-aligned side on the tile edge)."""
+    r = round(p)
+    return float(r) if abs(p - r) <= EPS else p
+
+
+def on_period_line(a, b, scale):
+    """True when edge a-b (planar metres) lies on one world period line u = k or v = k (UV units)."""
+    for i in (0, 1):
+        pa, pb = a[i] * scale, b[i] * scale
+        k = round(pa)
+        if abs(pa - k) <= EPS and abs(pb - k) <= EPS:
+            return True
+    return False
+
+
 def _ordered(ids):
     try:
         return sorted(ids)
@@ -127,15 +148,18 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
             f = parent[f]
         return f
 
-    edge_owner = {}
+    metres = {fid: [axis_uv(co, keys[fid]) for co in coords] for fid, _, coords in faces}
+    edge_owner, period_cuts = {}, 0
     for fid, verts, _ in faces:
+        corner = dict(zip(verts, metres[fid]))
         for a, b in zip(verts, verts[1:] + verts[:1]):
             e = (keys[fid], frozenset((a, b)))
-            if e in edge_owner:
-                parent[find(fid)] = find(edge_owner[e])
-            else:
+            if e not in edge_owner:
                 edge_owner[e] = fid
-    metres = {fid: [axis_uv(co, keys[fid]) for co in coords] for fid, _, coords in faces}
+            elif on_period_line(corner[a], corner[b], scale):
+                period_cuts += 1      # world period line: island border, the jump there is a whole period
+            else:
+                parent[find(fid)] = find(edge_owner[e])
     islands = {}
     for fid, _, _ in faces:
         islands.setdefault(find(fid), []).append(fid)
@@ -144,23 +168,27 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
         pts = [(u * scale, v * scale) for f in members for u, v in metres[f]]
         umin, vmin = min(p[0] for p in pts), min(p[1] for p in pts)
         umax, vmax = max(p[0] for p in pts), max(p[1] for p in pts)
-        ku, kv = math.floor(umin - margin), math.floor(vmin - margin)   # whole periods
-        lo_u, lo_v, hi_u, hi_v = umin - ku, vmin - kv, umax - ku, vmax - kv
+        ku, kv = math.floor(umin - margin + EPS), math.floor(vmin - margin + EPS)   # whole periods
+        hi_u, hi_v = umax - ku, vmax - kv
         entry = {'axis': keys[members[0]], 'faces': _ordered(members), 'shift': [ku, kv],
                  'span': [round(umax - umin, 6), round(vmax - vmin, 6)]}
         report_islands.append(entry)
-        if hi_u > 1 - margin + 1e-9 or hi_v > 1 - margin + 1e-9:
+        if hi_u > 1 - margin + EPS or hi_v > 1 - margin + EPS:
             overflow.append(entry)
             continue
         for f in members:
-            uvs[f] = [(u * scale - ku + tu, v * scale - kv + tv) for u, v in metres[f]]
+            uvs[f] = [(_snap(u * scale - ku) + tu, _snap(v * scale - kv) + tv) for u, v in metres[f]]
     if overflow:
         worst = overflow[0]
-        raise BoxUVOverflow(f'{len(overflow)} island(s) do not fit tile {tile} with margin {margin_px} px at their '
-                            f'world phase, first: axis {worst["axis"]} faces {worst["faces"][:8]} span '
-                            f'{worst["span"]} periods; split by texel cuts or lower px_per_m')
+        period = texture_px / px
+        raise BoxUVOverflow(
+            f'{len(overflow)} island(s) do not fit tile {tile} with margin {margin_px} px at their world phase, '
+            f'first: axis {worst["axis"]} faces {worst["faces"][:8]} span {worst["span"]} periods; cut the faces '
+            f'on world period lines (k * {period:g} m, a cut elsewhere keeps the island connected) or lower '
+            f'px_per_m; an island that touches a period line fits only with margin_px=0 (tile margin vs world '
+            f'phase: docs/domain/conflicts.md)')
     return uvs, {'tile': tile, 'px_per_m': px, 'texture_px': texture_px, 'period_m': texture_px / px,
-                 'faces': len(uvs), 'islands': report_islands}
+                 'faces': len(uvs), 'islands': report_islands, 'period_cut_edges': period_cuts}
 
 
 # ------------------------------------------------------------------ Blender wrapper (data API only)

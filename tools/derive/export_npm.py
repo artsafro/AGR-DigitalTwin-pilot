@@ -18,6 +18,12 @@ applied, pivot = plan centre Z 0 (or the shared --pivot of a multi-OKS package).
 atlas_master_mismatch / atlas_udim_mismatch). After the FBX: export_meta.json stores master_sha256 and
 <out>/../derivation/<fbx>.derivation.json (master path + master_sha256 + FBX sha256) is written for
 `agr build-manifest build --derivation <out>/../derivation`; a master edited during the export is refused.
+#1580: the tile of a face comes from udimtile_core.face_tile(strict=True): a face whose corners leave its centroid
+tile by more than FACE_TOL is refused before any write, naming the object, face index and tiles (before #1580 it was
+silently moved into the atlas region of its centroid tile). --allow-cross-tile keeps that legacy move for a master
+that needs it and lists every moved face in export_npm_meta.json (`cross_tile_moved`).
+Dry check (no write, never saves the master): blender ... --python export_npm.py -- --dry-check <master.blend>
+prints one JSON line `DRY-CHECK {...}` with the straddling faces of every *_Main after the alpha back-copy drop.
 """
 import argparse
 import importlib.util
@@ -25,10 +31,6 @@ import json
 import math
 import os
 import sys
-
-import bmesh
-import bpy
-from mathutils import Matrix, Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RECIPE = os.path.normpath(os.path.join(HERE, "..", "..", "jobs", "TEC26-OKS", "scripts"))
@@ -50,6 +52,130 @@ def face_udim(cu, cv):
     return tile, tu, tv
 
 
+def corner_tiles(corners):
+    """Sorted UDIM tiles of the corners via udimtile_core; a corner outside the UDIM domain is 'outside'."""
+    tiles = set()
+    for u, v in corners:
+        try:
+            tiles.add(_udimtile.udim_tile(u, v))
+        except ValueError:
+            tiles.add("outside")
+    return sorted(tiles, key=str)
+
+
+def classify_faces(faces, obj_name, allow_cross_tile=False):
+    """faces: iterable of (face index, [(u, v), ...]). Returns (tiles, crossing).
+
+    tiles: [(face index, tile, u_tile, v_tile)] by udimtile_core.face_tile(strict=True) (#1580, no own arithmetic);
+    crossing: [{object, face, tile, corner_tiles}] of the faces whose corners leave the centroid tile beyond FACE_TOL.
+    A crossing face is left out of `tiles` unless allow_cross_tile (legacy centroid move: then it is in both).
+    Any other domain error (NaN, u >= 10, v < 0, < 3 corners) raises ValueError naming the object and face."""
+    tiles, crossing = [], []
+    for index, corners in faces:
+        try:
+            corners = [(float(u), float(v)) for u, v in corners]
+            tile = _udimtile.face_tile(corners, strict=True)
+        except _udimtile.UdimCrossTileError:
+            tile = _udimtile.face_tile(corners, strict=False)
+            crossing.append({"object": obj_name, "face": index, "tile": tile, "corner_tiles": corner_tiles(corners)})
+            if not allow_cross_tile:
+                continue
+        except (ValueError, TypeError) as exc:
+            raise ValueError(f"{obj_name} face {index}: {exc}") from None
+        tiles.append((index, tile, *_udimtile.tile_origin(tile)))
+    return tiles, crossing
+
+
+def cross_tile_error(crossing, limit=20):
+    """One error text naming every crossing face (object, face index, centroid tile, corner tiles), first `limit`."""
+    items = [f"{c['object']} face {c['face']}: centroid tile {c['tile']}, corner tiles {c['corner_tiles']}"
+             for c in crossing[:limit]]
+    more = f"; and {len(crossing) - limit} more" if len(crossing) > limit else ""
+    return (f"{len(crossing)} face(s) cross UDIM tiles beyond FACE_TOL={_udimtile.FACE_TOL} (#1580; "
+            f"--allow-cross-tile keeps the legacy centroid move and lists them): " + "; ".join(items) + more)
+
+
+def plan_centre(vis):
+    """Plan centre (bbox centre XY, Z 0) of the visible delivery objects in world space."""
+    from mathutils import Vector
+    pts = [o.matrix_world @ v.co for o in vis for v in o.data.vertices]
+    lo = Vector([min(p[i] for p in pts) for i in range(3)])
+    hi = Vector([max(p[i] for p in pts) for i in range(3)])
+    return Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, 0.0))
+
+
+def drop_alpha_back_copies(bm, fl, alpha_ids, plan_c):
+    """Delete alpha-cut back copies (reg p.8 §3.13), keeping the copy facing away from plan_c; returns the count."""
+    import bmesh
+    from mathutils import Vector
+    alpha_faces = [f for f in bm.faces if f[fl] in alpha_ids]
+    drop = set()
+    for f in alpha_faces:
+        if f in drop:
+            continue
+        c, n = f.calc_center_median(), f.normal
+        for g in alpha_faces:
+            if g is f or g in drop or g.normal.dot(n) > -0.99:
+                continue
+            d = g.calc_center_median() - c
+            if abs(d.dot(n)) < 0.012 and (d - n * d.dot(n)).length < 0.02:
+                # pair: keep the one facing away from the plan centre (horizontal planes: keep the up one)
+                if abs(n.z) > 0.9:
+                    keep_f = n.z > 0
+                else:
+                    keep_f = (c - plan_c).dot(Vector((n.x, n.y, 0))) >= 0
+                drop.add(g if keep_f else f)
+                break
+    bmesh.ops.delete(bm, geom=list(drop), context="FACES_ONLY")
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    return len(drop)
+
+
+def bm_faces(bm, uv):
+    """[(face index, [(u, v) per corner])] of a bmesh UV layer (indices valid after ensure_lookup_table)."""
+    bm.faces.index_update()
+    bm.faces.ensure_lookup_table()
+    return [(f.index, [(loop[uv].uv.x, loop[uv].uv.y) for loop in f.loops]) for f in bm.faces]
+
+
+def dry_check(argv):
+    """Straddling faces of every *_Main of a master (after the alpha back-copy drop); never saves or writes."""
+    import bmesh
+    import bpy
+    if len(argv) != 1:
+        raise SystemExit("usage: export_npm.py -- --dry-check <master.blend>")
+    master = argv[0]
+    sha_before = _bm.sha256_file(master)
+    bpy.ops.wm.open_mainfile(filepath=master)
+    result = {"master": os.path.abspath(master), "master_sha256": sha_before, "face_tol": _udimtile.FACE_TOL,
+              "objects": {}}
+    mains = [o for o in bpy.context.scene.objects if o.type == "MESH" and o.name.endswith("_Main")]
+    if not mains:
+        raise SystemExit(f"no *_Main mesh in {master}")
+    for main in mains:
+        glass = bpy.context.scene.objects.get(main.name + "Glass")
+        vis = [o for o in (main, glass) if o is not None]
+        names = main["finish_names"].split(",") if "finish_names" in main else []
+        alpha_ids = {i for i, n in enumerate(names) if "Alpha" in n}
+        bm = bmesh.new()
+        bm.from_mesh(main.data)
+        try:
+            faces_total = len(bm.faces)
+            fl = bm.faces.layers.int.get("finish")
+            dropped = drop_alpha_back_copies(bm, fl, alpha_ids, plan_centre(vis)) if fl is not None else 0
+            uv = bm.loops.layers.uv["UVMap"]
+            _, crossing = classify_faces(bm_faces(bm, uv), main.name, allow_cross_tile=True)
+            result["objects"][main.name] = {"faces": faces_total, "alpha_back_copies_dropped": dropped,
+                                            "retained": len(bm.faces), "straddling": len(crossing),
+                                            "straddling_faces": crossing}
+        finally:
+            bm.free()
+    result["master_sha256_after"] = _bm.sha256_file(master)
+    result["master_unchanged"] = result["master_sha256_after"] == sha_before
+    print("DRY-CHECK", json.dumps(result))
+    return result
+
+
 def parse(argv):
     ap = argparse.ArgumentParser(prog="dt derive npm", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -64,6 +190,9 @@ def parse(argv):
     ap.add_argument("--source-id", help="stable source identity across revisions (default: <address>.oks.<index>.master)")
     ap.add_argument("--keep-quads", action="store_true", help="untriangulated review copy (not a delivery)")
     ap.add_argument("--recipe-dir", default=RECIPE, help="directory with export_safety.py")
+    ap.add_argument("--allow-cross-tile", action="store_true",
+                    help="legacy: move a face that crosses UDIM tiles into its centroid tile's region and list "
+                         "every moved face in export_npm_meta.json (default: refuse, #1580)")
     a = ap.parse_args(argv)
     if not 1 <= a.index <= 99:
         ap.error(f"--index {a.index} outside 1..99")
@@ -80,6 +209,11 @@ def parse(argv):
 
 
 def main(argv):
+    if argv[:1] == ["--dry-check"]:
+        return dry_check(argv[1:])
+    import bmesh
+    import bpy
+    from mathutils import Matrix, Vector
     a = parse(argv)
     sys.path.insert(0, a.recipe_dir)
     from export_safety import require_udim_regions, validate_atlas
@@ -131,10 +265,7 @@ def main(argv):
     names = main["finish_names"].split(",")
     alpha_ids = {i for i, n in enumerate(names) if "Alpha" in n}
 
-    pts = [o.matrix_world @ v.co for o in vis for v in o.data.vertices]
-    lo = Vector([min(p[i] for p in pts) for i in range(3)])
-    hi = Vector([max(p[i] for p in pts) for i in range(3)])
-    centre = Vector(((lo.x + hi.x) / 2, (lo.y + hi.y) / 2, 0.0))
+    centre = plan_centre(vis)
     own_centre = centre.copy()  # alpha back copies: keep the one facing away from this OKS plan centre
     if a.pivot_xy is not None:
         centre = Vector(a.pivot_xy + [0.0])
@@ -147,47 +278,26 @@ def main(argv):
     fl = bm.faces.layers.int["finish"]
     uv = bm.loops.layers.uv["UVMap"]
     plan_c = Vector((own_centre.x, own_centre.y, 0))
-    alpha_faces = [f for f in bm.faces if f[fl] in alpha_ids]
-    drop = set()
-    for f in alpha_faces:
-        if f in drop:
-            continue
-        c, n = f.calc_center_median(), f.normal
-        for g in alpha_faces:
-            if g is f or g in drop or g.normal.dot(n) > -0.99:
-                continue
-            d = g.calc_center_median() - c
-            if abs(d.dot(n)) < 0.012 and (d - n * d.dot(n)).length < 0.02:
-                # pair: keep the one facing away from the plan centre (horizontal planes: keep the up one)
-                if abs(n.z) > 0.9:
-                    keep_f = n.z > 0
-                else:
-                    keep_f = (c - plan_c).dot(Vector((n.x, n.y, 0))) >= 0
-                drop.add(g if keep_f else f)
-                break
-    bmesh.ops.delete(bm, geom=list(drop), context="FACES_ONLY")
-    bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
-    # Check every retained face BEFORE remapping or saving the export copy.
-    face_tiles = []
+    dropped = drop_alpha_back_copies(bm, fl, alpha_ids, plan_c)
+    # Check every retained face BEFORE remapping or saving the export copy (#1580: strict shared face_tile).
     try:
-        for f in bm.faces:
-            c = sum((loop[uv].uv for loop in f.loops), Vector((0, 0))) / len(f.loops)
-            try:
-                face_tiles.append((f, *face_udim(c.x, c.y)))
-            except ValueError as exc:
-                raise ValueError(f"face {f.index}: {exc}") from None
+        face_tiles, crossing = classify_faces(bm_faces(bm, uv), main.name, allow_cross_tile=a.allow_cross_tile)
+        if crossing and not a.allow_cross_tile:
+            raise ValueError(cross_tile_error(crossing))
         require_udim_regions((tile for _, tile, _, _ in face_tiles), by_udim)
     except ValueError:
         bm.free()
         raise
-    for f, tile, tu, tv in face_tiles:
+    for index, tile, tu, tv in face_tiles:
         r = by_udim[tile]
-        for loop in f.loops:
+        for loop in bm.faces[index].loops:
             loc = loop[uv].uv - Vector((tu, tv))
             loop[uv].uv = Vector((r["u0"], r["v0"])) + loc * r["size"]
     bm.to_mesh(main.data)
     bm.free()
-    report.update({"alpha_back_copies_removed": len(drop), "faces_without_region": 0})
+    report.update({"alpha_back_copies_removed": dropped, "faces_without_region": 0,
+                   "cross_tile_policy": "allow (legacy centroid move)" if a.allow_cross_tile else "refuse",
+                   "cross_tile_moved": crossing})
 
     # ---- clean layers / attributes not meant for delivery, apply transforms, pivot, triangulate
     for o in vis:

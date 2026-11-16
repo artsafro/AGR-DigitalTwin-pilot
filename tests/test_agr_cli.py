@@ -23,17 +23,23 @@ def test_single_step_aliases(alias, prefix, monkeypatch):
     run.assert_called_once_with([*expected, *args], check=False)
 
 
-@pytest.mark.parametrize("statuses,expected,calls", [([0, 0], 0, 2), ([3], 3, 1), ([0, 5], 5, 2)])
-def test_npm_chain_forwards_separate_arguments(statuses, expected, calls, monkeypatch):
+@pytest.mark.parametrize("statuses,expected,calls", [([0, 0, 0], 0, 3), ([3], 3, 1), ([0, 5], 5, 2), ([0, 0, 1], 1, 3)])
+def test_npm_chain_forwards_separate_arguments(statuses, expected, calls, monkeypatch, tmp_path):
     agr = importlib.import_module("dt_ai.cli.agr")
     run = Mock(side_effect=[Mock(returncode=s) for s in statuses])
     monkeypatch.setattr(agr.subprocess, "run", run)
+    export = tmp_path / "export"
+    export.mkdir()
+    (export / "0000_Test_01.fbx").write_bytes(b"x")  # #1580: the UV readback reads export_npm_meta.json
+    (tmp_path / "export_npm_meta.json").write_text('{"fbx": "%s"}' % (export / "0000_Test_01.fbx").as_posix())
     atlas = ["spec.json", "new atlas", "--recipe-dir", "recipes"]
-    npm = ["master.fbx", "spec.json", "new atlas", "export", "0000_Test"]
+    npm = ["master.fbx", "spec.json", "new atlas", str(export), "0000_Test"]
     assert agr.main(["vpm-to-npm", "--blender", "blender.exe", *atlas, "--then-npm", *npm]) == expected
     expected_args = [
         [sys.executable, "-m", "dt_ai.cli.main", "derive", "atlas", *atlas],
         [sys.executable, "-m", "dt_ai.cli.main", "derive", "--blender", "blender.exe", "npm", *npm],
+        [sys.executable, "-m", "twinqa.npm_uv", str((export / "0000_Test_01.fbx").resolve()),
+         str(Path("new atlas") / "npm_atlas.json"), "--blender", "blender.exe"],
     ]
     assert run.call_count == calls
     assert [c.args[0] for c in run.call_args_list] == expected_args[:calls]
@@ -53,7 +59,6 @@ def test_partial_chain_does_not_start(args, monkeypatch, capsys):
 @pytest.mark.parametrize("command,pointer", [
     ("unwrap-atlas", "dt derive atlas"), ("delivery-export", "dt derive npm"),
     ("open-in-max", "routes/npm-oks.md"), ("contact-renders", "routes/npm-oks.md"),
-    ("ucx", "docs/domain/areas/ucx.md"),
     ("unknown", "agr --help"), ("", "agr --help"), ("NaN", "agr --help"),
 ])
 def test_unsupported_fails_closed_with_pointer(command, pointer, monkeypatch, capsys):
@@ -113,7 +118,7 @@ def test_fresh_process_help(command):
     assert "usage:" in result.stdout
 
 
-@pytest.mark.parametrize("command", ["unwrap-atlas", "delivery-export", "open-in-max", "contact-renders", "brick-seams", "ucx", "unknown"])
+@pytest.mark.parametrize("command", ["unwrap-atlas", "delivery-export", "open-in-max", "contact-renders", "brick-seams", "unknown"])
 def test_fresh_process_refusal_writes_nothing(command, tmp_path):
     import subprocess
     source = tmp_path / "input.json"
@@ -163,3 +168,20 @@ def test_inspect_forwards_exact_arguments(monkeypatch):
     args = ["--manifest", "folder with spaces/job.json"]
     assert agr.main(["inspect", *args]) == 7
     run.assert_called_once_with([sys.executable, "-m", "dt_ai.cli.main", "inspect", *args], check=False)
+
+
+# --- agr dispatch (RED before #1404: the stub returned 2 with a pointer) ---------------------------------------
+def test_agr_ucx_is_a_real_command(capsys):
+    agr = importlib.import_module("dt_ai.cli.agr")
+    assert "ucx" not in agr.STUBS
+    assert agr.main(["ucx", "--help"]) == 0
+    out = capsys.readouterr().out
+    assert "ucx_build" in out and "ucx10_core" in out and "V010" in out
+
+
+def test_agr_ucx_dispatches_to_command(monkeypatch):
+    agr = importlib.import_module("dt_ai.cli.agr")
+    main = Mock(return_value=1)
+    monkeypatch.setattr("dt_ai.geometry.ucx_command.main", main)
+    assert agr.main(["ucx", "a.fbx", "b.fbx", "Main", "cell=0.5"]) == 1
+    main.assert_called_once_with(["a.fbx", "b.fbx", "Main", "cell=0.5"])

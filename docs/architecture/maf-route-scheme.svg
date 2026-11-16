@@ -27,14 +27,14 @@
 <tspan x="30" dy="24">Маршрут МАФ (GroundEl, НПМ + ВПМ) — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: e7bf67b4a0f821c6fecee63898b2805a2ba8827fe65b984e0a27f297c45aba6f</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: d8eb7f806b4cd625bcf73f9097066f62afc5e41f6a80c7f632ebdf167b3136f9</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников</tspan>
 </text>
 <text x="30" y="245" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="30" dy="14">Владелец экспорта (Max): adapters/max/agr_tools/export_core.py</tspan>
-<tspan x="30" dy="17.5">Живых обходов владельцев: 19; адреса и миграция — в таблице владельцев. Это маршрут работы, не квитанция успешной сдачи. Blender НПМ:</tspan>
+<tspan x="30" dy="17.5">Живых обходов владельцев: 4; адреса и миграция — в таблице владельцев. Это маршрут работы, не квитанция успешной сдачи. Blender НПМ:</tspan>
 <tspan x="30" dy="17.5">tools/derive/export_npm.py; ВПМ: экспортёр job.</tspan>
 </text>
 <text x="260.0" y="365.0" font-size="16" text-anchor="middle" fill="#1e1e1e">

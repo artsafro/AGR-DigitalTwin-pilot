@@ -32,12 +32,11 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 103; живой обход 21, обёртка 12, исторические 37, своя обязанность 21; разных живых копий 21.
+Строк дублей во всех картах: 92; живой обход 5, обёртка 9, исторические 43, своя обязанность 23; разных живых копий 5.
 Заменённые черновики (не сдача): 12.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
 |---|---|---|---|
-| Связь с DCC (Blender / 3ds Max) | 16 | `src/dt_ai/cli/shared_tools.py`, `tools/flora/build_flora_npm_light.py`, `tools/flora/build_flora_star.py`, `tools/library/check_library.py`, `tools/library/migrate_windows.py`, `tools/materials/bind_ground_textures.py`, `tools/methods/body/run_benchmarks.py`, `tools/methods/ground/build_variant.py`, `tools/methods/parametric_parts/mesh_recipe.py`, `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py`, `tools/methods/windows/run_benchmarks.py`, `tools/research/checker_mutation.py`, `tools/research/fbx_reader_compare.py`, `tools/sintez_parity.py` | нет карточки |
 | Экспорт и пакет сдачи | 2 | `jobs/TEC26-OKS/scripts/package_vpm.py`, `jobs/elv-tc-vpm/scripts/package_vpm_v006.py` | #1377 |
 | UV и атлас | 1 | `tools/materials/npm_atlas_udim.py` | #1380 |
 | Пакеты НПМ / ВПМ и передача | 1 | `jobs/TEC26-OKS/scripts/package_vpm.py` | #1377 |
@@ -47,9 +46,9 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 | № | Шаг | Живых обходов |
 |---|---|---|
-| 1 | нет карточки | 17 |
-| 2 | #1377 | 3 |
-| 3 | #1380 | 1 |
+| 1 | #1377 | 3 |
+| 2 | #1380 | 1 |
+| 3 | нет карточки | 1 |
 | 4 | #1379 | 0 |
 | 5 | #1381 | 0 |
 | 6 | #1397 | 0 |
@@ -59,14 +58,15 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 | 10 | #1407 | 0 |
 | 11 | #1410 | 0 |
 
+
 ### Рекомендуемый порядок сжатия
 
-1. **Новая карточка: свой запуск Blender в живых инструментах (16 строк, 15 файлов).** После слияния с #1378
-   правило `blender-launch` нашло командные строки Blender мимо `blender_command` / `run_blender` в `tools/`
-   (Флора, библиотека, текстуры Ground, каталог методов, исследования, сверка СИНТЕЗ) и в `dt derive`
-   (`src/dt_ai/cli/shared_tools.py`). Четыре инструмента методов берут у владельца только путь к Blender
-   (`blender_executable`), а командную строку собирают сами (без `--disable-autoexec`, без изоляции настроек) —
-   это обход, не обёртка. Нужна карточка «Сжатие 3b».
+1. **#1530 completed:** 14 of the 16 own Blender launches of `tools/` and `dt derive`
+   (`src/dt_ai/cli/shared_tools.py`) build their command line with `blender_command`. Two stay byte-identical as
+   `own-duty`, because a committed artifact pins their sha256: `tools/library/migrate_windows.py`
+   (`library/windows/catalogue.json` v001 inputs) and `tools/research/checker_mutation.py` (sealed runner,
+   `docs/research/checker-mutation-freeze.json`); they move only with a new library version / a new frozen run.
+   The 7 `jobs/` rows stay `historical`, and `tools/library/maf_material_ids.py` stays `own-duty` (report text, not a launch).
 2. **#1531 completed: UDIM bypasses 13 -> 0.** Eight MZP cores and the live ELV v008 candidate use
    `udimtile_core`; five named API wrappers stay explicitly classified as wrappers. Eight obsolete formula
    rows and all thirteen bypass-baseline keys are removed. Closed face borders, caller tolerances, centroid

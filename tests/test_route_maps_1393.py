@@ -35,7 +35,8 @@ RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
                             "vpm-identity": ("star", "D311")},  # #1421
             "package-route": {"customer-channel": ("customer", "D300")}}
 # #1409: red blocks fixed without a D-row (box removed from the map, report row «снята»)
-FIXED = {"maf-route": {"library-version"}, "flora-route": set(), "package-route": {"sintez-runner"}}   # + #1379
+FIXED = {"maf-route": {"library-version"}, "flora-route": {"placement-tool"},   # + #1407 (dt place site)
+         "package-route": {"sintez-runner"}}   # + #1379
 
 
 def _routes():
@@ -136,7 +137,7 @@ def test_red_boxes_are_drawn_one_per_hotspot(name):
     events = _routes()[name]
     board = route_map.route_board(events, _contexts())
     pink = [e for e in board.elements if e["type"] == "rectangle" and e["backgroundColor"] == route_map.COLORS["hotspot"]]
-    assert len(pink) == len(events["hotspots"]) >= 4  # #1421 closed flora vpm-identity
+    assert len(pink) == len(events["hotspots"]) >= 3  # #1421 closed flora vpm-identity, #1407 placement-tool
 
 
 @pytest.mark.parametrize("name", sorted(ROUTES))

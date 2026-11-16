@@ -195,6 +195,10 @@ collision on plants (FLO-15), triangulation (FLO-16), transforms and seating (FL
 - Needs: headless for the machine checks; human for colour, silhouette and the visual review.
 - Done when: a report with every FLO row, the evidence per row and the user's sign-off for the manual rows;
   `passed` only when nothing is `fail`, `review` or `not checked`.
+- Before the visual review goes to Artem: the skeleton `verifier` stage (observe, `tools/qa/verifier.py` →
+  `verifier.json`, docs/agents/SKELETONS.md). The VLM confirms; positions/counts come from geometry/vectors
+  (CrossProjection: 82 % view matching vs 22 % line localisation) — plant counts and positions are taken from the
+  SPOZU points and the read-back scene, never from a render.
 
 ## Report
 

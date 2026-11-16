@@ -1,29 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1556" width="2990" height="1556" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1560" width="2990" height="1560" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2990" height="1556" fill="#ffffff"/>
+<rect x="10" y="-30" width="2990" height="1560" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
-<rect x="40.0" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="347.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="347.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="347.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="347.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="672.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="672.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="899.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="994.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="994.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1168.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1336.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<polyline points="510.0,436.25 530.0,436.25 530.0,510.0 1140.0,510.0 1140.0,418.75 1120.0,418.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120.0,418.75 1140.0,418.75 1140.0,327.5 1750.0,327.5 1750.0,480.0 1730.0,480.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,480.0 1750.0,480.0 1750.0,510.0 2360.0,510.0 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1260.0" y="725.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="725.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="997.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="997.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1189.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1340.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<polyline points="510.0,445.0 630.0,445.0 630.0,327.5 1140.0,327.5 1140.0,445.0 1120.0,445.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,445.0 1240.0,445.0 1240.0,327.5 1750.0,327.5 1750.0,506.25 1730.0,506.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,506.25 1750.0,506.25 1750.0,527.5 2360.0,527.5 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 2360.0,327.5 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,480.0 1750.0,480.0 1750.0,652.5 1140.0,652.5 1140.0,778.75 1120.0,778.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,480.0 1750.0,480.0 1750.0,974.0 2360.0,974.0 2360.0,1074.0 2340.0,1074.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120.0,778.75 1140.0,778.75 1140.0,870.0 1750.0,870.0 1750.0,761.25 1730.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,761.25 1750.0,761.25 1750.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2340.0,427.5 2360.0,427.5 2360.0,974.0 1750.0,974.0 1750.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2340.0,1074.0 2360.0,1074.0 2360.0,1223.0 1850.0,1223.0 1850.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,1135.25 1750.0,1135.25 1750.0,1416.5 1730.0,1416.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,506.25 1750.0,506.25 1750.0,705.0 1140.0,705.0 1140.0,831.25 1120.0,831.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,506.25 1750.0,506.25 1750.0,977.5 2360.0,977.5 2360.0,1086.25 2340.0,1086.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,831.25 1140.0,831.25 1140.0,922.5 1750.0,922.5 1750.0,813.75 1730.0,813.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,813.75 1750.0,813.75 1750.0,1138.75 1730.0,1138.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,427.5 2360.0,427.5 2360.0,977.5 1750.0,977.5 1750.0,1138.75 1730.0,1138.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,1086.25 2360.0,1086.25 2360.0,1244.0 1850.0,1244.0 1850.0,1138.75 1730.0,1138.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,1138.75 1750.0,1138.75 1750.0,1420.0 1730.0,1420.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Ground (НПМ + ВПМ) — D293 (#1392)</tspan>
 </text>
@@ -47,8 +46,9 @@
 <tspan x="48.0" dy="17.5">исходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает</tspan>
 <tspan x="48.0" dy="17.5">там, где удобно (D293)</tspan>
 <tspan x="48.0" dy="17.5"></tspan>
-<tspan x="48.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
-<tspan x="48.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="48.0" dy="17.5">blender_executable: --blender &gt; DT_BLENDER (CLI dt qa /</tspan>
+<tspan x="48.0" dy="17.5">agr) &gt; TWINQA_BLENDER (blender_runner) &gt; установка 5.1.2;</tspan>
+<tspan x="48.0" dy="17.5">путь к Blender</tspan>
 <tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
@@ -60,22 +60,28 @@
 <tspan x="658.0" dy="17.5"></tspan>
 <tspan x="658.0" dy="17.5">height_values: ноль проекта, м; Z нуля в FBX, м; верх</tspan>
 <tspan x="658.0" dy="17.5">модели, м -&gt; высоты App.3 с округлением только в конце</tspan>
+<tspan x="658.0" dy="17.5">export_z_check: ноль проекта, Z нуля в FBX, вершины верха</tspan>
+<tspan x="658.0" dy="17.5">Ground (XY, Z, уровень), рельеф в XY -&gt; pass / fail по</tspan>
+<tspan x="658.0" dy="17.5">каждой вершине (agr zero, #1406)</tspan>
 </text>
 <text x="1268.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Поверхность Ground: плоские покрытия → проекция на рельеф</tspan>
 <tspan x="1268.0" dy="17.5">→ юбка</tspan>
-<tspan x="1268.0" dy="17.5">Владелец: tools/ground/build_ground_v015.py</tspan>
-<tspan x="1268.0" dy="17.5">сборка Ground Ватутино v015 (только этот участок, agr</tspan>
-<tspan x="1268.0" dy="17.5">ground / dt ground v015)</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: src/dt_ai/geometry/ground_site.py</tspan>
+<tspan x="1268.0" dy="17.5">Ground любого участка в порядке D293 (agr ground site /</tspan>
+<tspan x="1268.0" dy="17.5">dt ground site, #1406); Ватутино v015 — замороженная</tspan>
+<tspan x="1268.0" dy="17.5">запись dt ground v015</tspan>
 <tspan x="1268.0" dy="17.5"></tspan>
-<tspan x="1268.0" dy="17.5">geometry: данные участка, исходник, одобрения, вырезы -&gt;</tspan>
-<tspan x="1268.0" dy="17.5">меш Ground v015</tspan>
-<tspan x="1268.0" dy="17.5">restore_source_coverage: меш, план -&gt; ограниченный ремонт</tspan>
-<tspan x="1268.0" dy="17.5">покрытия; ненулевой остаток не прощается</tspan>
-<tspan x="1268.0" dy="17.5">derive: меш, профиль, сэмплер, защищённые, исключения -&gt;</tspan>
-<tspan x="1268.0" dy="17.5">квады и треугольники Ground</tspan>
-<tspan x="1268.0" dy="17.5">main: --job-dir и параметры -&gt; Ground v015 и отчёт;</tspan>
-<tspan x="1268.0" dy="17.5">изменился HEAD — отказ</tspan>
+<tspan x="1268.0" dy="17.5">build_site: граница, покрытия с ID, базовый ID, точки</tspan>
+<tspan x="1268.0" dy="17.5">рельефа, ноль -&gt; плоский Ground, проекция, юбка ≥ 1 м и</tspan>
+<tspan x="1268.0" dy="17.5">отчёт стадий</tspan>
+<tspan x="1268.0" dy="17.5">covers_from_dxf: DXF, строки покрытий (ID, имя,</tspan>
+<tspan x="1268.0" dy="17.5">штриховки) -&gt; покрытия; цвет ID = фон штриховки или цвет</tspan>
+<tspan x="1268.0" dy="17.5">из спецификации с причиной</tspan>
+<tspan x="1268.0" dy="17.5">relief_from_dxf: DXF, блок / имена отметок / слои</tspan>
+<tspan x="1268.0" dy="17.5">горизонталей -&gt; точки рельефа с родной Z</tspan>
+<tspan x="1268.0" dy="17.5">skirt_gaps: меш, опуск -&gt; внешние рёбра без квада юбки</tspan>
+<tspan x="1268.0" dy="17.5">или с опуском меньше нормы (GND-03, D251)</tspan>
 </text>
 <text x="1878.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Текстуры по ID: UV-острова, тайлы, UDIM / атлас</tspan>
@@ -87,7 +93,7 @@
 <tspan x="1878.0" dy="17.5">отступ -&gt; новые UV, тайлы UDIM, ячейки</tspan>
 <tspan x="1878.0" dy="17.5">atlas_png: раскладка -&gt; PNG атласа</tspan>
 </text>
-<text x="1268.0" y="682.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="735.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">НПМ МАФ и Флора на атласе</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/flora_atlas_max.py</tspan>
 <tspan x="1268.0" dy="17.5">атлас МАФ (GroundEl) и Флоры в AGR Tools; конвертация ВПМ</tspan>
@@ -98,7 +104,7 @@
 <tspan x="1268.0" dy="17.5">atlas_flora: контекст Max, режим, узлы Флоры, превью -&gt;</tspan>
 <tspan x="1268.0" dy="17.5">атлас Флоры НПМ</tspan>
 </text>
-<text x="658.0" y="682.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="658.0" y="735.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="14">Расстановка МАФ и Флоры</tspan>
 <tspan x="658.0" dy="17.5">Владелец: src/dt_ai/placement/engine.py</tspan>
 <tspan x="658.0" dy="17.5">один экземпляр на точку СПОЗУ по высоте Ground; low-poly</tspan>
@@ -111,10 +117,7 @@
 <tspan x="658.0" dy="17.5">report_json: отчёт -&gt; строгий JSON: тот же seed и вход -&gt;</tspan>
 <tspan x="658.0" dy="17.5">те же байты</tspan>
 </text>
-<text x="658.0" y="909.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
-</text>
-<text x="1268.0" y="1004.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1007.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Экспорт и пакеты НПМ / ВПМ</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
 <tspan x="1268.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
@@ -131,20 +134,21 @@
 <tspan x="1268.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
 <tspan x="1268.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="1878.0" y="1004.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1007.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
-<tspan x="1878.0" dy="17.5">канон UCX (D225): выпуклые куски и зазоры между ними</tspan>
+<tspan x="1878.0" dy="17.5">зазоры UCX (D330: ядро на функцию); строит</tspan>
+<tspan x="1878.0" dy="17.5">src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)</tspan>
 <tspan x="1878.0" dy="17.5"></tspan>
 <tspan x="1878.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>
 <tspan x="1878.0" dy="17.5">нормалями и рёбрами</tspan>
 <tspan x="1878.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="1878.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="1878.0" y="1178.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1199.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1268.0" y="1346.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1350.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Проверки Ground, xView, СИНТЕЗ</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
 <tspan x="1268.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
@@ -154,16 +158,16 @@
 <tspan x="1268.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="1268.0" dy="17.5">находки НПМ</tspan>
 </text>
-<rect x="805.0" y="501.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="501.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="835.0" dy="14">исходники</tspan>
+<rect x="855.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="885.0" dy="14">исходники</tspan>
 </text>
-<rect x="1415.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1445.0" dy="14">граница и ноль</tspan>
+<rect x="1465.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">граница и ноль</tspan>
 </text>
-<rect x="2025.0" y="492.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="492.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="510.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="510.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">плоский Ground</tspan>
 <tspan x="2055.0" dy="17.5">с ID</tspan>
 </text>
@@ -171,34 +175,34 @@
 <text x="1902.5" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1902.5" dy="14">тайл UDIM = ID</tspan>
 </text>
-<rect x="1415.0" y="635.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="635.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="687.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="687.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">рельеф для</tspan>
 <tspan x="1445.0" dy="17.5">высот</tspan>
 </text>
-<rect x="2025.0" y="965.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="965.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="968.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="968.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">рельеф</tspan>
 </text>
-<rect x="1415.0" y="852.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="852.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="905.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="905.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">точки МАФ /</tspan>
 <tspan x="1445.0" dy="17.5">Флоры</tspan>
 </text>
-<rect x="1720.0" y="939.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="939.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="967.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="967.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">НПМ на атласе</tspan>
 </text>
-<rect x="2025.0" y="965.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="965.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="968.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="968.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">атлас / UDIM</tspan>
 </text>
-<rect x="2075.0" y="1214.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="1214.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2075.0" y="1235.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2105.0" y="1235.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2105.0" dy="14">коллизии UCX_</tspan>
 </text>
-<rect x="1720.0" y="1267.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="1267.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="1270.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1270.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

@@ -13,7 +13,8 @@ practice is to detach an element (letters, a flat plate) and subdivide it.
   fewest levels that reach the count. Bulk numpy, no per-edge or per-pair loop; the bmesh twin of one level is
   `bmesh.ops.subdivide_edges(bm, edges=<all edges of the part>, cuts=1, use_grid_fill=True)` [D110, D131].
 - No part given -> it stops with the question which part to densify (candidates listed, Main never proposed).
-  A part named Main (a `_`-separated token `Main`) is refused unless the caller passes `allow_main=True`.
+  A part named Main (a case-insensitive `_`-separated token, ignoring a trailing `.NNN` DCC suffix) is refused
+  unless the caller passes `allow_main=True`. MainGlass remains a detached-part candidate.
 - `check_densify(before, after, part)` = the D108 invariants of this operation, relative to the source [D201]:
   no NEW degenerate 3D face, zero-area UV face, mirrored UV face or open (border) edge, part bbox and UV bounds
   unchanged, material ids kept, every other part untouched. A violator is pre-existing when it lies within `WELD_M`
@@ -277,7 +278,11 @@ def subdivide(p: UVPart, levels: int = 1) -> UVPart:
 
 
 def is_main(part: str) -> bool:
-    return "Main" in str(part).split("_")
+    """Recognise Main tokens regardless of case or a trailing DCC duplicate suffix (.NNN)."""
+    name, dot, suffix = str(part).rpartition(".")
+    if not (dot and len(suffix) == 3 and suffix.isascii() and suffix.isdecimal()):
+        name = str(part)
+    return "main" in name.casefold().split("_")
 
 
 def _triangles(obj: dict) -> int:

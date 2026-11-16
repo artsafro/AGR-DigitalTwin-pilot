@@ -8,9 +8,14 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `(tile - 1001) % 10` / `// 10` / `divmod(tile - 1001, 10)` / `i = tile - 1001` then `i % 10` or `i // 10`.
   1001 and 10 also match a name bound to that int anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`), and any
   job-local `def` named udim_tile / udim_of_cell / tile_origin / face_tile is a copy (PR #1368 r1).
+  #1370 also flags single-row `floor(...) + 1001`, `[tile - 1001, 0]` origins and
+  `x - (tile - 1001)` local coordinates. Literal additive leaves summing to 1001 match split bases
+  (`1000 + 1 + u + 10*v`). Bare `1001 + u` and `tile - 1001` remain non-copy controls.
 - `delivery-zip`  owner adapters/max/agr_tools/package_core.py (`_write_zip`, #1361/#1377): the one ZIP writer
   behind `agr package-npm` / `agr package-vpm` (tools/derive facades) and AGR Tools. Flags any other writer:
-  `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed). Every
+  `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed), including
+  `from zipfile import ZipFile as Z` aliases anywhere in the file. #1370 includes `shutil.make_archive(..., 'zip')`
+  and its from-import aliases; computed/missing formats fail closed, literal non-ZIP formats are not copies. Every
   delivery-zip allowlist row must say why it stays (`ru`): a historical delivery of a finished job (never rewritten)
   or an archive that is not a delivery package (MZP, benchmark, checker research, dev bundle).
 - `blender-launch`  owner src/dt_ai/core/blender_runner.py (`blender_command` / `run_blender`, #1378): the one
@@ -30,6 +35,9 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `seam-seal`  owner tools/blender/seam_seal.py (#1381): the one Blender seam seal (weld + T-junction ring splits, quads
   only; moved from jobs/KPP1/scripts/seal.py, now an import shim). Flags any other `def seal` / `def ring_split` /
   `def t_junctions` (its function names). Every row must say why it stays.
+- `site-placement` owner src/dt_ai/placement/site.py (#1407, [D329]): the one site placement run (`dt place site` /
+  `agr place`, NPM + VPM at the same points [D293]). Flags any other `engine.place(...)` call, or a bare `place(...)`
+  imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -84,6 +92,7 @@ RULES = {
     "master-qa": "tools/blender/qa_master.py",
     "vpm-uv": "tools/blender/vpm_uv.py",
     "seam-seal": "tools/blender/seam_seal.py",
+    "site-placement": "src/dt_ai/placement/site.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
@@ -91,9 +100,11 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
            "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
-           "seam-seal": ("jobs", "tools", "src")}   # #1381
+           "seam-seal": ("jobs", "tools", "src"),   # #1381
+           "site-placement": ("jobs", "tools", "src")}   # #1407: one site placement run, guarded from the start
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
+                   "site-placement"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
@@ -137,6 +148,18 @@ def _udim_hits(tree):
         return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Mult) and (
             _const(node.left, 10) or _const(node.right, 10))
 
+    def _is_floor(node):
+        return any(isinstance(n, ast.Call) and (
+            isinstance(n.func, ast.Name) and n.func.id == "floor" or
+            isinstance(n.func, ast.Attribute) and n.func.attr == "floor") for n in ast.walk(node))
+
+    def _has_base(terms):
+        # Sum only unambiguous integer leaves; do not evaluate scanned code or infer arbitrary variables.
+        if any(_const(t, 1001) for t in terms):
+            return True
+        integers = [t.value for t in terms if isinstance(t, ast.Constant) and type(t.value) is int]
+        return sum(integers) == 1001
+
     def _is_minus_1001(node):
         return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
 
@@ -148,8 +171,14 @@ def _udim_hits(tree):
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             terms = _add_terms(node)
-            if any(_const(t, 1001) for t in terms) and any(_is_times_ten(t) for t in terms):
+            if _has_base(terms) and any(_is_times_ten(t) or _is_floor(t) for t in terms):
                 hits[id(node)] = node
+        # Single-row UV translation: a 2D origin vector or the scalar inverse x - (tile - 1001).
+        if isinstance(node, (ast.List, ast.Tuple)) and len(node.elts) == 2 \
+                and _is_minus_1001(node.elts[0]) and _const(node.elts[1], 0):
+            hits[id(node)] = node
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _is_minus_1001(node.right):
+            hits[id(node)] = node
         if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Mod, ast.FloorDiv)) \
                 and _const(node.right, 10) and _is_minus_1001(node.left):
             hits[id(node)] = node
@@ -178,20 +207,38 @@ def _is_zipfile_call(func):
 
 
 def _zip_hits(tree):
+    # Like integer bindings, imports count anywhere in the file (fail closed on rebinding/shadowing).
+    zip_names = {"ZipFile"}
+    archive_names = {"make_archive"}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                if node.module == "zipfile" and alias.name == "ZipFile":
+                    zip_names.add(alias.asname or alias.name)
+                if node.module == "shutil" and alias.name == "make_archive":
+                    archive_names.add(alias.asname or alias.name)
+
     hits = {}
     for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and _is_zipfile_call(node.func):
-            mode = node.args[1] if len(node.args) > 1 else None
-            for kw in node.keywords:
-                if kw.arg == "mode":
-                    mode = kw.value
-            if mode is None:
-                continue
-            if isinstance(mode, ast.Constant) and isinstance(mode.value, str):
-                if mode.value in WRITE_MODES:
-                    hits[id(node)] = node
-            else:  # a computed mode cannot be proven read-only: fail closed
+        if not isinstance(node, ast.Call):
+            continue
+        archive = (isinstance(node.func, ast.Attribute) and node.func.attr == "make_archive" or
+                   isinstance(node.func, ast.Name) and node.func.id in archive_names)
+        zipfile = (_is_zipfile_call(node.func) or
+                   isinstance(node.func, ast.Name) and node.func.id in zip_names)
+        if not (archive or zipfile):
+            continue
+        mode = node.args[1] if len(node.args) > 1 else None
+        for kw in node.keywords:
+            if kw.arg == ("format" if archive else "mode"):
+                mode = kw.value
+        if mode is None and not archive:
+            continue  # ZipFile defaults to read mode; make_archive has no default format.
+        if isinstance(mode, ast.Constant) and isinstance(mode.value, str):
+            if mode.value in ({"zip"} if archive else WRITE_MODES):
                 hits[id(node)] = node
+        else:  # a computed mode/format cannot be proven read-only/non-ZIP: fail closed
+            hits[id(node)] = node
     return list(hits.values())
 
 
@@ -248,8 +295,20 @@ def _seal_hits(tree):
             and node.name in OWNED_NAMES["seam-seal"]]
 
 
+def _place_hits(tree):
+    """Calls of the placement engine run `engine.place(...)`, or a bare `place(...)` imported from
+    dt_ai.placement.engine: a site run outside the one placement command is a job-local copy (#1407)."""
+    bare = any(isinstance(n, ast.ImportFrom) and n.module == "dt_ai.placement.engine"
+               and any(a.name == "place" and a.asname in (None, "place") for a in n.names) for n in ast.walk(tree))
+    return [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (
+        isinstance(node.func, ast.Attribute) and node.func.attr == "place"
+        and isinstance(node.func.value, ast.Name) and node.func.value.id == "engine"
+        or bare and isinstance(node.func, ast.Name) and node.func.id == "place")]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
-          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits}
+          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
+          "site-placement": _place_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -411,24 +470,7 @@ LIVE_BYPASS_BASELINE = frozenset({
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 
-    # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
-    ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "83b1fa0042"),
-    ("contexts", "tools/flora/build_flora_star.py::_blender", "e5c254530a"),
-    ("contexts", "tools/library/check_library.py::native_inspect", "c85d66fb6e"),
-    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
-    ("contexts", "tools/materials/bind_ground_textures.py::_run_blender", "707f4be9fd"),
-    ("contexts", "tools/methods/body/run_benchmarks.py::_blender", "18f971bee9"),
-    ("contexts", "tools/methods/ground/build_variant.py::_blender", "37235a2e47"),
-    ("contexts", "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx", "f5a8a5aa67"),
-    ("contexts", "tools/methods/run_variant.py::run_extra", "d4b2fad230"),
-    ("contexts", "tools/methods/ucx/run_benchmarks.py::main", "9c40344e89"),
-    ("contexts", "tools/methods/windows/run_benchmarks.py::main", "c2afb4241e"),
-    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
-    ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
-    ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
-
+    # blender-launch: the 16 live tools/ + src/ launches of #1378/#1424 call blender_command since #1530
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))
