@@ -1,6 +1,7 @@
 """#1537: densify a named part for the [D012] UCX budget under the D108 invariants (no degenerate / mirrored faces).
 
 All meshes are SYNTHETIC (strips, plates, boxes built here), not data of a real object.
+Pattern: new-case: regression + probes of the densify operation (#1537).
 """
 import time
 
