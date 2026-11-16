@@ -131,10 +131,11 @@ def test_vpm_master_topology_rendered():
 
 
 def test_vpm_hotspots_cover_the_named_objects():
-    """KPP1, PSU275, TEC26, ELV and 4BK evidence each back at least one VPM hot spot."""
+    """KPP1, TEC26, ELV and 4BK evidence each back at least one VPM hot spot (PSU275's only one, ucx-copies,
+    was resolved by #1404 [D325]; its copy stays listed in vpm-oks-contexts.yaml with a reason)."""
     hot = _routes()["vpm-route"]["hotspots"]
     text = " ".join(" ".join(h["evidence"]) + " " + h["ru"] for h in hot)
-    for needle in ("jobs/KPP1/", "jobs/PSU275/", "jobs/TEC26-OKS/", "jobs/elv-tc-vpm/", "vpm-course-grid-1314"):
+    for needle in ("jobs/KPP1/", "jobs/TEC26-OKS/", "jobs/elv-tc-vpm/", "vpm-course-grid-1314"):
         assert needle in text, needle
     assert all(h["evidence"] for h in hot)
 
@@ -243,13 +244,13 @@ def test_check_detects_missing_or_edited_new_output(tmp_path, capsys, name):
 def test_check_reports_unknown_reference_in_a_new_route(tmp_path, capsys):
     root = _tmp_arch(tmp_path)
     path = root / route_map.route_events()["vpm-route"]
-    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', '"agr ucx"', 1)
-    assert '"agr ucx"' in text
+    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', '"agr brick-seams"', 1)
+    assert '"agr brick-seams"' in text
     path.write_text(text, encoding="utf-8")
     route_map.main(["--root", str(root)])          # regenerate so only the reference problem remains
     capsys.readouterr()
     assert route_map.main(["--root", str(root), "--check"]) == 1
-    assert "command 'agr ucx' is not an existing agr/dt command" in capsys.readouterr().out
+    assert "command 'agr brick-seams' is not an existing agr/dt command" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("name", sorted(NEW))

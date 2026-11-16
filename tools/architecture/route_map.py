@@ -279,7 +279,7 @@ def command_exists(command):
         from dt_ai.cli import agr
         if len(words) == 3 and words[1] == "ground":  # agr ground site|zero|v015 (#1406)
             return words[2] in agr.GROUND_STEPS
-        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm"}
+        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm", "ucx"}
     if words[0] != "dt":
         return False
     sub = _dt_commands().get(words[1])

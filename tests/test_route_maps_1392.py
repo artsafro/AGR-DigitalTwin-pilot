@@ -24,8 +24,10 @@ VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv"
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
              "package", "validate", "sintez"]
 RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner",  # sintez-runner: #1379 (PR #1431)
-                           "parapet-seam"},  # #1381: one roof/parapet seam check
-            "ground-route": {"urns-outside", "tool-bound-to-vatutino", "projection"}}  # #1412: D302; #1406
+                           "parapet-seam",  # #1381: one roof/parapet seam check
+                           "ucx-copies"},  # ucx: #1404 D325
+            "ground-route": {"urns-outside", "tool-bound-to-vatutino", "projection",  # #1412: D302; #1406
+                             "ucx-ground"}}  # ucx-ground: #1404 D325
 
 
 def _routes():
