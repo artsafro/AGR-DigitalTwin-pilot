@@ -160,12 +160,13 @@ def test_every_drawn_label_is_russian(name):
 def test_stage_without_command_is_drawn_dashed(name):
     events = _routes()[name]
     bare = [s["id"] for s in events["stages"] if not s.get("commands")]
-    assert bare, "each new route has stages without an agr/dt command"
+    # integration #1406 + #1404 + #1407: the Ground route got commands on every stage (zero..skirt, ucx,
+    # placement), so a route may have no bare stage left; then nothing is dashed.
     board = route_map.route_board(events, _contexts())
     dashed = [e for e in board.elements if e["type"] == "rectangle" and e["strokeStyle"] == "dashed"]
     assert len(dashed) == len(bare)
     texts = {e["text"] for e in board.elements if e["type"] == "text"}
-    assert "Нет команды agr/dt" in texts
+    assert ("Нет команды agr/dt" in texts) == bool(bare)
 
 
 # ---------------------------------------------------------------- report <-> YAML (drift probe)
@@ -234,7 +235,10 @@ def test_check_detects_missing_or_edited_new_output(tmp_path, capsys, name):
     rel = route_map.OUTPUTS[name]
     (root / rel.with_suffix(".svg")).unlink()
     ex = root / rel.with_suffix(".excalidraw")
-    ex.write_bytes(ex.read_bytes().replace("Нет команды".encode(), "Нет кoманды".encode(), 1))
+    data = ex.read_bytes()   # a route with no bare stage (Ground after #1406 + #1404 + #1407) has no «Нет команды»
+    needle, edited = ("Нет команды", "Нет кoманды") if "Нет команды".encode() in data else ("Агент", "Aгент")
+    assert needle.encode() in data
+    ex.write_bytes(data.replace(needle.encode(), edited.encode(), 1))
     assert route_map.main(["--root", str(root), "--check"]) == 1
     out = capsys.readouterr().out
     assert f"drift: {rel.with_suffix('.svg').as_posix()}" in out
