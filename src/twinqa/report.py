@@ -354,18 +354,19 @@ def check_stage_inventory(old: dict, expected: list[tuple[str, str, str]]):
 
 
 def recheck(old_bytes: bytes, old_path: str, standards_sha256: str, commit: str = "", *,
-            expected_stages) -> dict:
+            expected_stages, recheck_target: Path | None = None) -> dict:
     """Is the stored verdict still true now? current / stale_standards / evidence_missing.
 
     `expected_stages(profile)` gives the (id, gate, check) list of the standards being compared;
     when their digest equals the stored one, the stored stages must match it exactly, so a
     partial or re-gated report is an error, never a current pass.
+    `recheck_target` selects a copy instead of the stored path; output names that actual copy.
     A relative target resolves against the current directory, as validate_package reads it.
     """
     old = read_stored_report(old_bytes)
     if old.get("standards_sha256") == standards_sha256:
         check_stage_inventory(old, expected_stages(old["profile"]))
-    target = Path(old["target"])
+    target = Path(old["target"]) if recheck_target is None else Path(recheck_target)
     then_std = old.get("standards_sha256")
     reasons, now_sha = [], None
     if target.is_file():
@@ -382,7 +383,7 @@ def recheck(old_bytes: bytes, old_path: str, standards_sha256: str, commit: str 
     status = "evidence_missing" if "evidence_missing" in kinds else "stale_standards" if kinds else "current"
     current = status == "current"
     return {"recheck_of": old_path, "recheck_of_sha256": digest(old_bytes), "status": status,
-            "reasons": [r for _, r in reasons], "profile": old.get("profile"), "target": old["target"],
+            "reasons": [r for _, r in reasons], "profile": old.get("profile"), "target": str(target),
             "target_sha256_then": old["target_sha256"], "target_sha256_now": now_sha,
             "standards_sha256_then": then_std, "standards_sha256_now": standards_sha256,
             "code_commit_then": old.get("code_commit"), "code_commit_now": commit,

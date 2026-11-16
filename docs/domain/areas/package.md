@@ -76,6 +76,22 @@ partial rows above keep their unchecked part manual.
 - **No stage**: lighting FBX content PKG-14 to PKG-18 has no validator stage; the lighting FBX is only
   admitted by name (V001) and header (V002) and allowed to hold lights and empties (V003).
 
+## Run markers and recheck [D323]
+
+`zip_apply` retains the binary `ГОТОВО.txt` / `ОШИБКА.txt` markers. Missing validation,
+failed checks or open automatic checks (including validator exit 2) write `ОШИБКА.txt`
+with archive names and fail/open finding codes. Only pending manual reviews V015-V017
+are allowed alongside `ГОТОВО.txt`, with the line «ждут ручной приёмки Артёма: V015, V016, V017»
+(pending IDs only). This is technical readiness, not manual approval or publication.
+
+The complete validator report is saved as `<archive>.zip.validation.json` beside each
+checked ZIP, separately from the compact `report.json` stage table. Recheck a moved copy:
+`uv run python tools/qa/validate_package.py --recheck <archive>.zip.validation.json --recheck-target <copy.zip> --output <new.json> --json`.
+The output `target` names the checked copy. Missing and changed bytes both produce
+`evidence_missing`; `target_sha256_now` is null only for a missing target, otherwise its
+actual SHA-256. No package is repacked by recheck. Diagnostic `--allow-incomplete` remains
+ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
+
 ## Source-image evidence
 
 **25 requirement rows.** PyMuPDF 1.28.2 renders (matrix 2x) of physical pages **4, 6, 7, 11, 24,
