@@ -170,7 +170,9 @@ def test_contract_max_hooks_boundary(tmp_path, n, ok):
 
 @pytest.mark.parametrize("cfg,match", [
     ("", "cannot read"), ("{not json", "cannot read"), ("[]", "non-empty object"), ("{}", "non-empty object"),
-    (_cfg("oks-xyz"), "oks-xyz"), (_cfg(hooks=[_hook(stage="zero")]), "'zero' is not a stage of oks-vpm"),
+    (_cfg("oks-xyz"), "oks-xyz"), ({"scenario": ["oks-vpm"]}, "is not a cell"),
+    ({"scenario": "oks-vpm", "hooks": [{"script": "hooks/fix.py", "stage": ["x"], "point": "after"}]}, "not a stage"),
+    (_cfg(hooks=[_hook(stage="zero")]), "'zero' is not a stage of oks-vpm"),
     (_cfg(hooks=[_hook(point="instead")]), "'instead' unknown"),
     (_cfg(config={"texel": 1}), r"\['texel'\]"), ({"scenario": "oks-vpm", "pipeline": []}, "unknown keys"),
     (_cfg(hooks=[{"script": "hooks/fix.py"}]), "exactly script, stage, point"),
@@ -203,10 +205,10 @@ def test_contract_hook_that_does_not_parse_is_an_error_naming_it(tmp_path):
         sg.check_job(tmp_path, job, SK)
 
 
-def test_contract_template_skeleton_is_valid():
-    cfg = json.loads((ROOT / "jobs/_template/skeleton.json").read_text(encoding="utf-8"))
-    assert cfg["scenario"] in SK["cells"]
-    assert sg.check_job(ROOT, ROOT / "jobs/_template", SK) == []
+def test_contract_template_skeleton_is_valid(tmp_path):
+    text = (ROOT / "docs/agents/skeleton.template.json").read_text(encoding="utf-8")
+    assert json.loads(text)["scenario"] in SK["cells"]
+    assert sg.check_job(tmp_path, _job(tmp_path, text, {}), SK) == []
 
 
 # --- repo scan -----------------------------------------------------------------------------------------------------

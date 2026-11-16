@@ -98,7 +98,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 
 ## How a job configures the skeleton (one config file)
 
-`jobs/<ID>/skeleton.json` (template: [`jobs/_template/skeleton.json`](../../jobs/_template/skeleton.json)):
+`jobs/<ID>/skeleton.json` (template: [`skeleton.template.json`](skeleton.template.json); copy it into the job folder):
 
 ```json
 {"scenario": "oks-vpm",

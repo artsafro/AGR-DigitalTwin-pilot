@@ -107,7 +107,7 @@ def check_job(root, job_dir, skeletons):
     if unknown:
         raise ConfigError(f"{rel_job}/{contract['config']}: unknown keys {unknown}")
     cell = cfg.get("scenario")
-    if cell not in skeletons["cells"]:
+    if not isinstance(cell, str) or cell not in skeletons["cells"]:
         raise ConfigError(f"{rel_job}: scenario {cell!r} is not a cell of {SKELETONS}")
     spec = skeletons["cells"][cell]
     config = cfg.get("config", {})
