@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-D335-actual-NPM-v022
+run_id: cold-1315-source-bound-paired-Canopy-v023
 synthetic: false
 path: deviation
 inputs: &id001
@@ -168,6 +168,11 @@ deviations:
   result: Adopt ONLY NPMGround29578/full7Bench:179493raw179492native,14placedchecks clean,31otherMAF+Floraarrays exact. All4620pivots covered, Urn completepartitions6.781mmburial.
     NativeV006PASS; wholeNPM553faces72verts53bowtiesFAIL,1Canopy face loss/currentFlora515regulatorycrossings/skirt/maps/UV/175UCXwidegaps worker-owned.
     VPM bytes unchanged; D335 closed/no new question.
+- gate: operations
+  what_failed: Old Canopy15faces472vertices and native face loss; full repaired Canopy over NPM budget182926. New Ground optimizer exposes9.660mm/7.002mm guards and AREA-only layer pairs; global rerun regresses8.447mm/11faces. Current whole composition and Flora remainFAIL.
+  what_was_tried: Source slot restoration and signed planar joint retessellation, numeric column normalization<=43.842nm, actual isolated pre/raw/native and both placed Canopy checks. Same D335 source-master budget route with exact borders, source-neighbour locks and5INTERIORbaseZ+0.15mm; complete ACTUAL57226triangle proof,4620pivots and2completeUrn partitions. New Flora trial families rejected, not adopted.
+  new_tool_written: 49job-local drivers/tests778literal lines sealed externally in evidence-v023.json; no shared module/checker/library or dependency edits.
+  result: Adopt paired5586tri Canopy and26378NPMGround. Actual179726NPM/305856VPM raw=native,18placed checks clean,37otherMAF/profile+Flora+564UCX arrays EXACT. Full4.975942mm guard/borders/domain/normals proved. Whole part-scope101NPM/139VPMfacesFAIL; diagnostic actual-array NPMjoin127faces134pairsFAIL; freshFlora515truecrossings,skirt/maps/UV/175wideUCXgaps remain worker-owned. No new question or closed gate reopened.
 gates:
   inputs:
     status: review
@@ -183,45 +188,37 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D335 answered, original Ground/VPM/libraries untouched. Actual NPM derivedGround/full7Bench adopted with scoped QA; Canopy/Flora trial variants
-      NOTadopted. Whole technicalFAIL remains worker-owned. All closed gates stay closed; no new human question.
+    note: Paired source-bound Canopy and tighter NPM Ground adopted only after actual isolated/placed/export QA; all Flora trials NOTadopted. Source Ground/libraries unchanged. Whole mixed composition remainsFAIL and worker-owned; closed gates stay closed, no new human question.
     evidence: &id002
     - &id003
-      path: jobs/SIL13-COLD-1315/source-wide-summary-v022.json
-      sha256: 96124315cc624f1d88aa49ff015c79f0b6e27135a9230b9efbcfa61cd667f474
+      path: jobs/SIL13-COLD-1315/source-wide-summary-v023.json
+      sha256: 3370be2d06ee44f39ca9fe5b5e3c81a3b24548bf0dd4e3c14b8c6a6af76362aa
     - &id004
-      path: jobs/SIL13-COLD-1315/evidence-v022.json
-      sha256: 2f39a5d5c13279cff46035351a7ceba7068142d83c74bb4a143d1da4c89d8d52
+      path: jobs/SIL13-COLD-1315/evidence-v023.json
+      sha256: d9e8873e181cc6495bb325fbb3e15f5f653bd8d0f91633b74ae74a401d3b59b7
   budgets:
     status: review
-    note: D335 permission CLOSED. ActualNPM179493raw/179492native<=180000,Ground29578,7Bench5064each; all38MAF/4582plants retained. NOTold179447projection.
-      Local5mmguard actuallymet at4.975942mm. VPM311042render/6564UCX bytes unchanged;175widegaps remainOPEN. Other texture/skirt/UV budgets/checks incomplete.
+    note: D335 permission CLOSED. Actual179726NPMraw/native<=180000,Ground26378,Canopy5586,7fullBench5064each; all38MAF/4582plants retained. Actual VPM305856raw/native,564UCX6564tris; full4.975942mm Ground guard met, not relaxed. Texture/skirt/UV checks and175UCXwidegaps remain incomplete.
     evidence: *id002
   export_readback:
     status: review
-    note: Resume NPMv022/site-npm-r2/VPMv020/site-ucx-r4 only. Four freshNPMraw/native r1/r2reads; allr1/r2geometryarrays EXACT,14placedBenchchecks clean,
-      Ground0/0/0/0. Native1Canopyface lossFAIL. WholexView553/72/53FAIL; freshpublicvalidator2pass3fail1review4not_run, V006PASS with2originalmaps actualembedded/hashmatch.
-      FullGroundproof+4620pivots+2Urnpartitions measured, not whole delivery.
+    note: Resume ONLY NPMv023/site-npm-r1 and VPMv023/site-canopy-r1. Both raw/native full counts exact, no native face loss;18placed Canopy/Bench checks clean.37otherMAF/profile+Flora+564UCX exact. Full actual Ground/pivot/shelf proof measured. WholeQA FAIL101/139faces, NPM diagnosticjoin127faces. Both fresh public validators exit1;2originalFlora maps embedded hash-equal, V006PASS only, not whole delivery.
     evidence: *id002
   report:
     status: review
-    note: v022508affectedpassed5historicaldeselected +18midpoint/negative/rigidprobes;2outputaliasprobes. SeparatecurrentFlora1RED/currentwholeQAFAIL retained,
-      all Canopy/Flora trialsREJECTED.208Drivefiles141006800bytessealed,22original hashes equal. D335 answer recorded, no new question. Full suite deferred
-      to merge batch(rule68).
+    note: v023534affectedpassed5historicaldeselected, including4rigid/9invalid-input cases;2outputalias probes nonzero/inputs unchanged. Real pre-fix Canopy/budgetRED retained; fresh currentFlora515/wholeQA remainFAIL.360Drivefiles248104522bytessealed,22original hashes equal. No new question. Full suite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v022.md
-      sha256: e59f9b0370225c8b228cde6506daba4c51217ac1dbb79ec9a33869a5e161cd3f
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v023.md
+      sha256: 8cce92acfeed676b4936c77a993a7fbb706e2c34dd2ba05719b9301196a5bd57
     - *id003
     - *id004
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: 'D335/D321/NPMTable/Bench025/hedges/composition stay CLOSED. No finalvisual/material acceptance requested: wholeQA stillFAIL. CurrentactualNPM
-      includes approvedGroundroute/fullBench; trialCanopy/Flora notadopted, no new picture/model question.'
+    note: 'D335/D321/NPMTable/Bench025/hedges/composition stay CLOSED. Actual Canopy source/repaired mesh diagnostic is NOT final visual/material acceptance or a new gate. WholeQA stillFAIL, all Flora trialsNOTadopted; no new model/picture question.'
     evidence: *id002
   checker:
     status: missing
-    note: Complete finalSINTEZ notrun. FreshNPMpublicvalidator2pass3fail1review4not_run, V006PASSonly; VPM unchanged historical3pass3fail1review5not_run.
-      No deliveryPASS, no technicalwaiver, no new modelquestion.
+    note: Complete finalSINTEZ notrun. Fresh NPM publicvalidator2pass3fail1review4not_run and VPM3pass3fail1review8not_run, both exit1. Missing area/other operands remain review/not_run. No deliveryPASS, technicalwaiver or new modelquestion.
     evidence: []

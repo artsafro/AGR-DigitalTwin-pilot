@@ -1,0 +1,1923 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-source-bound-paired-Canopy-v023",
+  "base_checkpoint": "b5bcf914c022d6dd7ad22435cc6ea749c6edccd5",
+  "new_user_question": null,
+  "new_user_decision_rows": 0,
+  "closed_gates": "D335/D321/NPMTable/Bench025/hedges/composition remain CLOSED",
+  "scope": "Adopt ONLY paired source-bound Canopy plus tighter NPM Ground; preserve all other copied geometry; not delivery",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v023\\site-npm-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c8505b63068cb913675f6abaa37dae68e17ff000d5ed52eca00a878a447e2502",
+      "raw_triangles": 179726,
+      "native_triangles": 179726
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v023\\site-canopy-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "e9817f04920bc0adfa78d45cdcdbf4f7636c72e43c8badb490050b42cd898393",
+      "raw_triangles": 305856,
+      "native_triangles": 305856
+    }
+  },
+  "retained_MAF": 38,
+  "retained_plant_census": 4582,
+  "actual_Ground": {
+    "passed": false,
+    "site_adopted": false,
+    "method": "every same-material source/candidate projected triangle intersection; affine extrema, no sampling",
+    "rows": [
+      {
+        "material": 0,
+        "source_triangles": 33595,
+        "candidate_triangles": 7017,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.004975941907218839,
+        "max_delta_z_m": 0.002380960327367454,
+        "partition_pairs": 57473,
+        "partition_vertices": 246565,
+        "candidate_missing_area_m2": 4.659840974503933e-12,
+        "source_missing_area_m2": 8.037542653600892e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 1,
+        "source_triangles": 6800,
+        "candidate_triangles": 3714,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.002605861210478899,
+        "max_delta_z_m": 0.003900223317593099,
+        "partition_pairs": 17157,
+        "partition_vertices": 74872,
+        "candidate_missing_area_m2": 1.894886009280316e-12,
+        "source_missing_area_m2": 1.7604498588064121e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 2,
+        "source_triangles": 429,
+        "candidate_triangles": 173,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.0015303645618158918,
+        "max_delta_z_m": 0.002674121317733827,
+        "partition_pairs": 1269,
+        "partition_vertices": 5637,
+        "candidate_missing_area_m2": 2.7647469817010384e-13,
+        "source_missing_area_m2": 3.08421826489616e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 3,
+        "source_triangles": 5848,
+        "candidate_triangles": 5386,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.002165854611530904,
+        "max_delta_z_m": 0.002364628933857915,
+        "partition_pairs": 23054,
+        "partition_vertices": 105867,
+        "candidate_missing_area_m2": 7.399375115581123e-13,
+        "source_missing_area_m2": 5.872939226679152e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 4,
+        "source_triangles": 7925,
+        "candidate_triangles": 6483,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.001713048491840393,
+        "max_delta_z_m": 0.0013508158955030276,
+        "partition_pairs": 26319,
+        "partition_vertices": 118626,
+        "candidate_missing_area_m2": 2.4291229157270486e-12,
+        "source_missing_area_m2": 1.938511713821321e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 5,
+        "source_triangles": 769,
+        "candidate_triangles": 413,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.0007957195956381329,
+        "max_delta_z_m": 0.0012699449034122012,
+        "partition_pairs": 1711,
+        "partition_vertices": 7291,
+        "candidate_missing_area_m2": 3.993974815046271e-13,
+        "source_missing_area_m2": 2.7154128690596094e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 6,
+        "source_triangles": 307,
+        "candidate_triangles": 263,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -1.3526388408558604e-05,
+        "max_delta_z_m": 0.0005647641456698604,
+        "partition_pairs": 1681,
+        "partition_vertices": 7817,
+        "candidate_missing_area_m2": 1.0130003796514006e-13,
+        "source_missing_area_m2": 7.950850434035751e-14,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 7,
+        "source_triangles": 419,
+        "candidate_triangles": 331,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.00045509159715414506,
+        "max_delta_z_m": 0.000807455495769327,
+        "partition_pairs": 1846,
+        "partition_vertices": 8393,
+        "candidate_missing_area_m2": 3.2027009625075487e-13,
+        "source_missing_area_m2": 1.89371042515229e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 8,
+        "source_triangles": 1134,
+        "candidate_triangles": 928,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.000820554163620266,
+        "max_delta_z_m": 0.0010893746514760716,
+        "partition_pairs": 2881,
+        "partition_vertices": 12599,
+        "candidate_missing_area_m2": 7.447032357096872e-14,
+        "source_missing_area_m2": 5.412267618939374e-14,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 9,
+        "source_triangles": 1670,
+        "candidate_triangles": 1670,
+        "boundary_edges_exact": true,
+        "vertical_skirt_all_XY_exact_down_m": 0.0025,
+        "actual_export_skirt_Z_quantization_m": 5.722045898432296e-08
+      }
+    ],
+    "all_material_boundary_edges_exact": true,
+    "max_abs_vertical_delta_m": 0.004975941907218839,
+    "all_projected_domains_complete": true,
+    "note": "5mm engineering guard, not inferred regulatory/user acceptance. Source marks/master untouched; final visual/material/delivery gates open.",
+    "actual_raw_triangles": 26378,
+    "native_triangles_exact": true,
+    "raw_native_max_coordinate_delta_m": 3.812856832041689e-06,
+    "all_actual_top_normals_positive": true,
+    "raw_vs_pre_max_coordinate_delta_m": 8.041147283144312e-06,
+    "local_5mm_guard_passed": true,
+    "D335_8_2mm_bound_passed": true
+  },
+  "actual_seating": {
+    "passed": false,
+    "scope": "numeric seating only, not whole delivery",
+    "point_count": 4620,
+    "missing_points": [],
+    "maximum_ground_delta_at_pivots_m": 0.004111718766035777,
+    "Urn_complete_shelf_partitions": [
+      {
+        "handle": "33FB3AD",
+        "min_m": -0.05734805302536827,
+        "max_m": -0.037829603790177926,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.051057156836763096,
+            "max_m": -0.03782960379017793,
+            "partition_polygons": 5,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04058961159717104
+          },
+          {
+            "face": 1,
+            "min_m": -0.05321131253061229,
+            "max_m": -0.04402954776380389,
+            "partition_polygons": 5,
+            "missing_area_m2": 8.326672684688674e-17,
+            "area_m2": 0.04209756850014022
+          },
+          {
+            "face": 2,
+            "min_m": -0.05734805302536827,
+            "max_m": -0.044680273555569916,
+            "partition_polygons": 2,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.0007548584271714125
+          },
+          {
+            "face": 3,
+            "min_m": -0.057257157480493204,
+            "max_m": -0.044035652702778205,
+            "partition_polygons": 2,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04134380671166681
+          },
+          {
+            "face": 4,
+            "min_m": -0.05105715683676304,
+            "max_m": -0.037829603790177926,
+            "partition_polygons": 5,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04058961159716973
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      },
+      {
+        "handle": "33FB3AE",
+        "min_m": -0.08529315727282416,
+        "max_m": -0.006781452786691844,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.07804880345241472,
+            "max_m": -0.00678145278669362,
+            "partition_polygons": 10,
+            "missing_area_m2": 6.104871382722754e-16,
+            "area_m2": 0.04058969263496717
+          },
+          {
+            "face": 1,
+            "min_m": -0.08529315727282416,
+            "max_m": -0.01839819564433398,
+            "partition_polygons": 6,
+            "missing_area_m2": 7.129713486264677e-16,
+            "area_m2": 0.04209702313528415
+          },
+          {
+            "face": 2,
+            "min_m": -0.02689817922842863,
+            "max_m": -0.01192507250522823,
+            "partition_polygons": 6,
+            "missing_area_m2": 3.625572064791527e-16,
+            "area_m2": 0.0007547749264633189
+          },
+          {
+            "face": 3,
+            "min_m": -0.07887916741886869,
+            "max_m": -0.012981468331584978,
+            "partition_polygons": 10,
+            "missing_area_m2": 2.441623292437356e-16,
+            "area_m2": 0.041343341083120336
+          },
+          {
+            "face": 4,
+            "min_m": -0.07804880345241294,
+            "max_m": -0.006781452786691844,
+            "partition_polygons": 10,
+            "missing_area_m2": 4.312075327882192e-17,
+            "area_m2": 0.04058970509868266
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      }
+    ]
+  },
+  "actual_NPM_audit": {
+    "passed": false,
+    "scope": "numeric NPM partial repair, not whole delivery",
+    "profiles": {
+      "raw": {
+        "triangles": 179726,
+        "unchanged37MAF": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3A5",
+          "33FB3A6",
+          "33FB3A7",
+          "33FB3A8",
+          "33FB3A9",
+          "33FB3AA",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB3B3",
+          "33FB3B4",
+          "33FB3B5",
+          "33FB3B6",
+          "33FB3B7",
+          "33FB3B8",
+          "33FB3B9",
+          "33FB3BA",
+          "33FB3AD",
+          "33FB3AE"
+        ],
+        "Flora_exact": true,
+        "8placed_Canopy_and_Bench_checks": [
+          "Bench013_33FB3AB",
+          "Bench013_33FB3B0",
+          "Bench013_33FB3B1",
+          "Bench013_33FB3B2",
+          "Bench013_33FB3BC",
+          "Bench013_33FB3BD",
+          "Bench013_33FB590",
+          "Canopy_33FB581"
+        ]
+      },
+      "native": {
+        "triangles": 179726,
+        "unchanged37MAF": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3A5",
+          "33FB3A6",
+          "33FB3A7",
+          "33FB3A8",
+          "33FB3A9",
+          "33FB3AA",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB3B3",
+          "33FB3B4",
+          "33FB3B5",
+          "33FB3B6",
+          "33FB3B7",
+          "33FB3B8",
+          "33FB3B9",
+          "33FB3BA",
+          "33FB3AD",
+          "33FB3AE"
+        ],
+        "Flora_exact": true,
+        "8placed_Canopy_and_Bench_checks": [
+          "Bench013_33FB3AB",
+          "Bench013_33FB3B0",
+          "Bench013_33FB3B1",
+          "Bench013_33FB3B2",
+          "Bench013_33FB3BC",
+          "Bench013_33FB3BD",
+          "Bench013_33FB590",
+          "Canopy_33FB581"
+        ]
+      }
+    },
+    "retained_MAF": 38,
+    "retained_plants": 4582
+  },
+  "actual_VPM_audit": {
+    "passed": false,
+    "scope": "actual VPM partial repair, NOT delivery",
+    "profiles": {
+      "raw": {
+        "render_triangles": 305856,
+        "changed_canopy_count": 1,
+        "unchanged_MAF": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3A5",
+          "33FB3A6",
+          "33FB3A7",
+          "33FB3A8",
+          "33FB3A9",
+          "33FB3AA",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB3B3",
+          "33FB3B4",
+          "33FB3B5",
+          "33FB3B6",
+          "33FB3B7",
+          "33FB3B8",
+          "33FB3B9",
+          "33FB3BA",
+          "33FB3AD",
+          "33FB3AE"
+        ],
+        "Ground_Flora_arrays_exact": true,
+        "564UCX_arrays_exact": true,
+        "raw_native_face_loss": 0
+      },
+      "native": {
+        "render_triangles": 305856,
+        "changed_canopy_count": 1,
+        "unchanged_MAF": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3A5",
+          "33FB3A6",
+          "33FB3A7",
+          "33FB3A8",
+          "33FB3A9",
+          "33FB3AA",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB3B3",
+          "33FB3B4",
+          "33FB3B5",
+          "33FB3B6",
+          "33FB3B7",
+          "33FB3B8",
+          "33FB3B9",
+          "33FB3BA",
+          "33FB3AD",
+          "33FB3AE"
+        ],
+        "Ground_Flora_arrays_exact": true,
+        "564UCX_arrays_exact": true,
+        "raw_native_face_loss": 0
+      }
+    },
+    "retained_MAF": 38,
+    "retained_plants": 4582,
+    "NPM_unchanged": true
+  },
+  "Canopy_source_sampled_NOT_Hausdorff": {
+    "passed": false,
+    "site_adopted": false,
+    "samples_each": 16000,
+    "seeds": [
+      1315,
+      1316
+    ],
+    "NOT_exact_Hausdorff": true,
+    "source_to_candidate_all_max_m": 0.27358875611316474,
+    "source_exterior_max_m": 0.005133497749238655,
+    "candidate_source_max_m": 0.006995228513317743,
+    "bbox_delta_m": 0.003200060687959194,
+    "source_exterior_worst_point": [
+      0.024745368443958964,
+      6.112989481934114,
+      2.5608168442547763
+    ],
+    "candidate_worst_point": [
+      0.031275886793117595,
+      3.0632089398139133,
+      1.9629930295438454
+    ],
+    "nearest_source_point": [
+      0.03365436583060938,
+      3.059073899822726,
+      1.9578766339675606
+    ],
+    "nearest_source_face": 90,
+    "source_faces": 10772,
+    "candidate_faces": 5586,
+    "candidate_worst_points": [
+      {
+        "point": [
+          0.1236434465947211,
+          0.22693618239606433,
+          2.7425370548114523
+        ],
+        "nearest": [
+          0.12510701848286143,
+          0.2274558344451576,
+          2.748069635561089
+        ],
+        "distance_m": 0.005746436345695869,
+        "source_face": 216
+      },
+      {
+        "point": [
+          2.652446674045193,
+          4.331247542393135,
+          0.22501964684819953
+        ],
+        "nearest": [
+          2.648239161846876,
+          4.335460952727195,
+          0.22505932825291536
+        ],
+        "distance_m": 0.00595462510625384,
+        "source_face": 6384
+      },
+      {
+        "point": [
+          2.7760857917443844,
+          1.7924403280479928,
+          0.1687904888532284
+        ],
+        "nearest": [
+          2.7718022546898804,
+          1.7881506495331743,
+          0.16883046978484262
+        ],
+        "distance_m": 0.006062312259583589,
+        "source_face": 6225
+      },
+      {
+        "point": [
+          2.7531330949923998,
+          1.8153065600595282,
+          0.1620970960125216
+        ],
+        "nearest": [
+          2.7488452590253014,
+          1.8110127132489402,
+          0.16213703938496987
+        ],
+        "distance_m": 0.006068299035688784,
+        "source_face": 6226
+      },
+      {
+        "point": [
+          2.7002724136700267,
+          4.379073425657644,
+          0.16376645099567022
+        ],
+        "nearest": [
+          2.6958100215438217,
+          4.383542073213011,
+          0.16380853619462254
+        ],
+        "distance_m": 0.006315340499614662,
+        "source_face": 6384
+      },
+      {
+        "point": [
+          2.7838777644858905,
+          1.7848116264660419,
+          0.13040353109469516
+        ],
+        "nearest": [
+          2.7793392927502265,
+          1.7802666477610907,
+          0.13044589149120572
+        ],
+        "distance_m": 0.006423110736012066,
+        "source_face": 6225
+      },
+      {
+        "point": [
+          2.750203139722889,
+          4.4290043016722915,
+          0.12646787123041503
+        ],
+        "nearest": [
+          2.7456001398572214,
+          4.433613754072558,
+          0.12651128251289434
+        ],
+        "distance_m": 0.006514333713674068,
+        "source_face": 6384
+      },
+      {
+        "point": [
+          2.6536789739234226,
+          4.3324798459724505,
+          0.1408214524987621
+        ],
+        "nearest": [
+          2.6490758596859734,
+          4.3370894129048265,
+          0.14086486485989144
+        ],
+        "distance_m": 0.0065144955768010725,
+        "source_face": 6384
+      },
+      {
+        "point": [
+          2.7862502940263667,
+          4.465051564239679,
+          0.11925446493044622
+        ],
+        "nearest": [
+          2.781638611454976,
+          4.469669711517178,
+          0.11929795810026039
+        ],
+        "distance_m": 0.006526621796286594,
+        "source_face": 6384
+      },
+      {
+        "point": [
+          2.666464194125578,
+          4.345265104573696,
+          0.13243635334040216
+        ],
+        "nearest": [
+          2.6618305642173232,
+          4.3499052299540715,
+          0.13248005349741335
+        ],
+        "distance_m": 0.006557682469897415,
+        "source_face": 6384
+      },
+      {
+        "point": [
+          2.609337863953834,
+          4.288138602828912,
+          0.11790291606435765
+        ],
+        "nearest": [
+          2.6045957319785233,
+          4.2928873823757066,
+          0.11794763951357387
+        ],
+        "distance_m": 0.0067112385624581205,
+        "source_face": 6384
+      },
+      {
+        "point": [
+          0.031275886793117595,
+          3.0632089398139133,
+          1.9629930295438454
+        ],
+        "nearest": [
+          0.03365436583060938,
+          3.059073899822726,
+          1.9578766339675606
+        ],
+        "distance_m": 0.006995228513317743,
+        "source_face": 90
+      }
+    ]
+  },
+  "Canopy_isolated_xview": {
+    "pre": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "raw": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "native": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "Canopy_placed_xview": {
+    "raw": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "native": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "NPM_8_Canopy_Bench_placed_xview": {
+    "raw": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "native": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "NPM_embedded_atlas": [
+    {
+      "name": "T_SIL13_Flora_d_1.png",
+      "bytes": 1796142,
+      "sha256": "3d5368b293e54f6503ec4c05e4bb1c412a99b468fc625a75c5802c423b629ca2"
+    },
+    {
+      "name": "T_SIL13_Flora_o_1.png",
+      "bytes": 402069,
+      "sha256": "d9ca582e68e082b610d67252a8476c36e23b9e01995204e3a2afe9c7ecb2e0a1"
+    }
+  ],
+  "native_public_validator_counts": {
+    "NPM": {
+      "not_run": 4,
+      "pass": 2,
+      "fail": 3,
+      "review": 1
+    },
+    "VPM": {
+      "not_run": 8,
+      "pass": 3,
+      "fail": 3,
+      "review": 1
+    }
+  },
+  "native_public_validator_stages": {
+    "NPM": {
+      "V001": "not_run",
+      "V002": "pass",
+      "V003": "fail",
+      "V004": "fail",
+      "V005": "fail",
+      "V006": "pass",
+      "V012": "review",
+      "V014": "not_run",
+      "V015": "not_run",
+      "V017": "not_run"
+    },
+    "VPM": {
+      "V001": "not_run",
+      "V002": "pass",
+      "V003": "fail",
+      "V004": "fail",
+      "V005": "pass",
+      "V007": "not_run",
+      "V008": "fail",
+      "V009": "not_run",
+      "V010": "review",
+      "V011": "not_run",
+      "V012": "pass",
+      "V013": "not_run",
+      "V015": "not_run",
+      "V016": "not_run",
+      "V017": "not_run"
+    }
+  },
+  "current_public_xview_original_part_scope": {
+    "NPM": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 101,
+      "vertex_pairs": 0,
+      "face_pairs": 108,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 6,
+        "area+contact": 102
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "VPM": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 139,
+      "vertex_pairs": 0,
+      "face_pairs": 189,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 57,
+        "area+contact": 132
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "additional_NPM_diagnostic_join_NOT_export": {
+    "overlapping_vertices": 0,
+    "overlapping_faces": 127,
+    "vertex_pairs": 0,
+    "face_pairs": 134,
+    "face_pairs_by_kind": {
+      "contact": 0,
+      "area": 10,
+      "area+contact": 124
+    },
+    "bowtie_vertices": 0,
+    "bowtie_pairs": 0,
+    "parts_without_faces": 0
+  },
+  "NPM_joined_witness_owners": {
+    "SM_SIL13_Flora / MAF_0472_M_Cannopy_006:33FB581 / area": 4,
+    "SM_SIL13_Flora / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 22,
+    "MAF_0466_M_Bysicle_007:33FB3B4 / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 25,
+    "MAF_0466_M_Bysicle_007:33FB3B5 / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 54,
+    "MAF_0466_M_Bysicle_007:33FB3B5 / MAF_0472_M_Cannopy_006:33FB581 / area": 6,
+    "MAF_0466_M_Bysicle_007:33FB3B6 / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 23
+  },
+  "VPM_witness_owners": {
+    "Ground / Flora / area+contact": 3,
+    "Flora / Flora / area": 43,
+    "Flora / Flora / area+contact": 3,
+    "Flora / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 24,
+    "Flora / MAF_0472_M_Cannopy_006:33FB581 / area": 8,
+    "MAF_0466_M_Bysicle_007:33FB3B4 / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 25,
+    "MAF_0466_M_Bysicle_007:33FB3B5 / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 54,
+    "MAF_0466_M_Bysicle_007:33FB3B5 / MAF_0472_M_Cannopy_006:33FB581 / area": 6,
+    "MAF_0466_M_Bysicle_007:33FB3B6 / MAF_0472_M_Cannopy_006:33FB581 / area+contact": 23
+  },
+  "current_NPM_Flora_regulatory_FAIL": {
+    "duplicate_vertices": 0,
+    "duplicate_edges": 0,
+    "duplicate_polygons": 0,
+    "self_intersections": 515,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 515,
+    "tol_m": 0.002
+  },
+  "Flora_rejected_trials": {
+    "flora-planar-r1": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 33,
+        "overlapping_faces": 37,
+        "vertex_pairs": 22,
+        "face_pairs": 44,
+        "face_pairs_by_kind": {
+          "contact": 8,
+          "area": 10,
+          "area+contact": 26
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 19,
+        "duplicate_edges": 67,
+        "duplicate_polygons": 11,
+        "self_intersections": 5,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 102,
+        "tol_m": 0.002
+      },
+      "details": {
+        "passed": false,
+        "adopted": false,
+        "before": {
+          "vertices": 35728,
+          "faces": 71350,
+          "area": 5737.8995702312495
+        },
+        "after": {
+          "vertices": 35728,
+          "triangles": 71346,
+          "area": 5737.899184016698,
+          "bounds": [
+            [
+              -74.3779067993164,
+              -91.28575897216797,
+              -1.400079369544983
+            ],
+            [
+              74.63786315917969,
+              91.80131530761719,
+              6.262906074523926
+            ]
+          ]
+        },
+        "whole_NPM_projected": 181697
+      }
+    },
+    "flora-selective-r2b": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 25,
+        "overlapping_faces": 41,
+        "vertex_pairs": 14,
+        "face_pairs": 47,
+        "face_pairs_by_kind": {
+          "contact": 9,
+          "area": 10,
+          "area+contact": 28
+        },
+        "bowtie_vertices": 3,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 13,
+        "duplicate_edges": 51,
+        "duplicate_polygons": 1,
+        "self_intersections": 2,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 67,
+        "tol_m": 0.002
+      },
+      "details": {
+        "passed": false,
+        "adopted": false,
+        "selected_original_faces": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          98,
+          112,
+          160,
+          356,
+          357,
+          358,
+          359,
+          376,
+          377,
+          378,
+          379,
+          390,
+          391,
+          392,
+          393,
+          426,
+          427,
+          428,
+          429,
+          472,
+          473,
+          486,
+          487,
+          494,
+          495,
+          536,
+          537,
+          584,
+          585,
+          630,
+          631,
+          643,
+          663,
+          667,
+          669,
+          675,
+          677,
+          1079,
+          1139,
+          1143,
+          1149,
+          1151,
+          1349,
+          1379,
+          1391,
+          1397,
+          1653,
+          1783,
+          1809,
+          1851,
+          1897,
+          1901,
+          2034,
+          2035,
+          2038,
+          2039,
+          2040,
+          2041,
+          2930,
+          2931,
+          2950,
+          2951,
+          2982,
+          2983,
+          3148,
+          3149,
+          3152,
+          3153,
+          5591,
+          5613,
+          5851,
+          5861,
+          5981,
+          6724,
+          6725,
+          6770,
+          6771,
+          6899,
+          6931,
+          6945,
+          6947,
+          6949,
+          6961,
+          6963,
+          6971,
+          6979,
+          6983,
+          6987,
+          7034,
+          7035,
+          7107,
+          7111,
+          7135,
+          7149,
+          7151,
+          7169,
+          7179,
+          7185,
+          7195,
+          7203,
+          7213,
+          7215,
+          7221,
+          7227,
+          7233,
+          7251,
+          7272,
+          7273,
+          7274,
+          7275,
+          7276,
+          7277,
+          7308,
+          7309,
+          7372,
+          7373,
+          7382,
+          7383,
+          10710,
+          10711,
+          10804,
+          10805,
+          29801,
+          29971,
+          30079,
+          30510,
+          30511,
+          49597,
+          49599,
+          49693,
+          49751,
+          49793,
+          49821,
+          49853,
+          50038,
+          50039,
+          50040,
+          50041,
+          50045,
+          50283,
+          50347,
+          50509,
+          51127,
+          51140,
+          51141,
+          51157,
+          51211,
+          51216,
+          51217,
+          51223,
+          51261,
+          51289,
+          51307,
+          51428,
+          51429,
+          51464,
+          51465,
+          51500,
+          51501,
+          51576,
+          51577,
+          51602,
+          51603,
+          51604,
+          51605,
+          51606,
+          51607,
+          51608,
+          51609,
+          51632,
+          51633,
+          51638,
+          51639,
+          51644,
+          51645,
+          51648,
+          51649,
+          51652,
+          51653,
+          51656,
+          51657,
+          51664,
+          51665,
+          51676,
+          51677,
+          51688,
+          51689,
+          51694,
+          51695,
+          51766,
+          51767,
+          54150,
+          54162,
+          54163,
+          54188,
+          54189,
+          54194,
+          54195,
+          54200,
+          54201,
+          54224,
+          54225,
+          54226,
+          54227,
+          54230,
+          54231,
+          54244,
+          54245,
+          54252,
+          54253,
+          54270,
+          54271,
+          54292,
+          54293,
+          54308,
+          54309,
+          54310,
+          54311,
+          54312,
+          54313,
+          54314,
+          54315,
+          54320,
+          54321,
+          54322,
+          54323,
+          54328,
+          54329,
+          54396,
+          54397,
+          54410,
+          54411,
+          54412,
+          54413,
+          54414,
+          54415,
+          54426,
+          54427,
+          54460,
+          54461,
+          54490,
+          54491,
+          54510,
+          54511,
+          54516,
+          54517,
+          57144,
+          57145,
+          57150,
+          57151,
+          57156,
+          57157,
+          57162,
+          57163,
+          57186,
+          57187,
+          57188,
+          57189,
+          57228,
+          57229,
+          57230,
+          57231,
+          57242,
+          57243,
+          57250,
+          57251,
+          57264,
+          57265,
+          57280,
+          57281,
+          57294,
+          57295,
+          57400,
+          58050,
+          58051,
+          58058,
+          58059,
+          58096,
+          58097,
+          58098,
+          58099,
+          58102,
+          58103,
+          58144,
+          58145,
+          58146,
+          58147,
+          58248,
+          58249,
+          58266,
+          58267,
+          58270,
+          58271
+        ],
+        "max_centroid_map_delta_m": 1.9073859220952727e-05,
+        "triangles": 71326,
+        "whole_NPM_projected": 181677
+      }
+    },
+    "flora-planar-boundary-r3": {
+      "site_adopted": false,
+      "xview": {
+        "overlapping_vertices": 33,
+        "overlapping_faces": 37,
+        "vertex_pairs": 22,
+        "face_pairs": 44,
+        "face_pairs_by_kind": {
+          "contact": 8,
+          "area": 10,
+          "area+contact": 26
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 19,
+        "duplicate_edges": 67,
+        "duplicate_polygons": 11,
+        "self_intersections": 5,
+        "isolated_vertices": 540,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 102,
+        "tol_m": 0.002
+      },
+      "details": {
+        "passed": false,
+        "adopted": false,
+        "before": {
+          "vertices": 35728,
+          "faces": 71350,
+          "area": 5737.8995702312495
+        },
+        "after": {
+          "vertices": 35179,
+          "triangles": 70797,
+          "area": 5516.347122404307,
+          "bounds": [
+            [
+              -74.3779067993164,
+              -91.28575897216797,
+              -1.400079369544983
+            ],
+            [
+              74.63786315917969,
+              91.80131530761719,
+              6.262906074523926
+            ]
+          ]
+        },
+        "whole_NPM_projected": 181148
+      }
+    }
+  },
+  "Ground_trials_never_resume": [
+    "ground-budget-r1",
+    "ground-budget-r2",
+    "ground-budget-r3",
+    "ground-budget-r4",
+    "ground-budget-r5",
+    "ground-budget-r6",
+    "ground-budget-r7",
+    "ground-budget-r8"
+  ],
+  "current_NPM_Ground_builder": "ground-budget-r9 ONLY, raw actual comparison separately certified",
+  "remaining_UCX_wide_pairs": 175,
+  "VPM_coverage_preserved_by_exact_actual_arrays_m": 0.089935644792,
+  "tests": {
+    "affected": {
+      "argv": [
+        "uv",
+        "run",
+        "--with",
+        "shapely",
+        "--with",
+        "scipy",
+        "--with",
+        "trimesh",
+        "--with",
+        "rtree",
+        "pytest",
+        "-q",
+        "tests/test_decisions.py",
+        "tests/test_area_requirement_sheet.py",
+        "tests/test_ground_surface_requirement_sheet.py",
+        "tmp/cold-v011/test_hedge_contract.py",
+        "tmp/cold-v012/test_witness_indices.py",
+        "tmp/cold-v012/test_export_controls.py",
+        "tmp/cold-v013/test_maf_pilot.py",
+        "tmp/cold-v013/test_pilot_structure.py",
+        "tmp/cold-v014/test_checkpoint_controls.py",
+        "tmp/cold-v014/test_replication.py",
+        "tmp/cold-v015/test_profile_scope.py",
+        "tmp/cold-v016/test_parametric_pilot.py",
+        "tmp/cold-v016/test_access_gaps.py",
+        "tmp/cold-v017/test_finishing.py",
+        "tmp/cold-v017/test_vpm_table_replication.py",
+        "tmp/cold-v017/test_link_contract.py",
+        "tmp/cold-v017/test_sand_parts.py",
+        "tmp/cold-v018/test_three_native_r2.py",
+        "tmp/cold-v018/test_three_native_npm.py",
+        "tmp/cold-v018/test_ucx_complete.py",
+        "tmp/cold-v018/test_midpoint_safety.py",
+        "tmp/cold-v018/test_midpoint_contract.py",
+        "tmp/cold-v018/test_bench_bidirectional.py",
+        "tmp/cold-v019/test_bench_clearance.py",
+        "tmp/cold-v019/test_v019_bench_site.py",
+        "tmp/cold-v020/test_shelf_ground.py",
+        "tmp/cold-v020/test_ucx_redundancy.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v021\\test_checkpoint_v021.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_checkpoint_v022.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_ground_derivation.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\test_checkpoint_v023.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\test_canopy.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\test_ground_budget.py",
+        "-k",
+        "not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp=C:/x/t_d9ae7dc0/v023-affected-r2"
+      ],
+      "environment_overrides": {
+        "PYTEST_ADDOPTS": "",
+        "SHELF_AUDIT": "tmp/cold-v020/actual-shelf.json",
+        "BENCH_RESULT": "tmp/cold-v019/bench-diagonal-4",
+        "GROUND_CANDIDATE": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\ground-r3",
+        "CANOPY_RESULT": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\canopy-compact",
+        "BUDGET_GROUND": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\ground-budget-r9"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 67.11631810001563,
+      "log_sha256": "637944e1388f83812547a04ad400732fca398ea134d248df284721dbaf295a59"
+    },
+    "counts": "534passed /5historical controls deselected",
+    "red_canopy": "canopy-red2.log:1failed/1passed before repair",
+    "red_budget": "ground-budget-red.log:1failed/projected180270",
+    "alias_probes": {
+      "all_probes_passed": true,
+      "records": [
+        {
+          "class": "source-directory-alias",
+          "argv": [
+            "uv",
+            "run",
+            "--with",
+            "meshoptimizer",
+            "python",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\build_ground_budget.py",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v021"
+          ],
+          "exit_code": 1,
+          "original_hashes_equal": true,
+          "error": "Traceback (most recent call last):\n  File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\build_ground_budget.py\", line 8, in <module>\n    exec(compile(s,str(R/'ground_budget_program.py'),'exec'))\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\ground_budget_program.py\", line 6, in <module>\n    R=Path(__file__).resolve().parent\n    \n  File \"C:\\Users\\artsafro\\AppData\\Roaming\\uv\\python\\cpython-3.14-windows-x86_64-none\\Lib\\pathlib\\__init__.py\", line 1011, in mkdir\n    os.mkdir(self, mode)\n    ~~~~~~~~^^^^^^^^^^^^\nFileExistsError: [WinError 183] Невозможно создать файл, так как он уже существует: 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_d9ae7dc0\\\\tmp\\\\cold-v021'\n"
+        },
+        {
+          "class": "source-file-alias",
+          "argv": [
+            "uv",
+            "run",
+            "--with",
+            "meshoptimizer",
+            "python",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\build_ground_budget.py",
+            "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v021\\npm-ground-source.npz"
+          ],
+          "exit_code": 1,
+          "original_hashes_equal": true,
+          "error": "Traceback (most recent call last):\n  File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\build_ground_budget.py\", line 8, in <module>\n    exec(compile(s,str(R/'ground_budget_program.py'),'exec'))\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\ground_budget_program.py\", line 6, in <module>\n    R=Path(__file__).resolve().parent\n    \n  File \"C:\\Users\\artsafro\\AppData\\Roaming\\uv\\python\\cpython-3.14-windows-x86_64-none\\Lib\\pathlib\\__init__.py\", line 1011, in mkdir\n    os.mkdir(self, mode)\n    ~~~~~~~~^^^^^^^^^^^^\nFileExistsError: [WinError 183] Невозможно создать файл, так как он уже существует: 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_d9ae7dc0\\\\tmp\\\\cold-v021\\\\npm-ground-source.npz'\n"
+        }
+      ]
+    },
+    "first_run": "affected.log:533passed /5deselected before additional join witness test",
+    "full_suite": "Full suite: deferred to merge batch (rule 68)"
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "job_local_code": [
+    {
+      "path": "align_endcap.py",
+      "sha256": "eb2fd5578b9026c3b09745dfe8f2f7a977bd3e6557773975fe54ebdfa5f94457",
+      "literal_lines": 5
+    },
+    {
+      "path": "align_joints.py",
+      "sha256": "c084b64de5bde8be7da9ef7dbd6eee3f3065841077589114875ca14cdc76c3eb",
+      "literal_lines": 15
+    },
+    {
+      "path": "audit_actual_ground.py",
+      "sha256": "2706f462595903e48528f171b9a39de9e3f943190a5cc12487c0a0bddede129d",
+      "literal_lines": 7
+    },
+    {
+      "path": "audit_canopy_source.py",
+      "sha256": "969644a521c64c2cb747752e70c75bb13318bcab530e8e56d438cda9e092a8b2",
+      "literal_lines": 8
+    },
+    {
+      "path": "audit_final_sources.py",
+      "sha256": "4c77c2d371e2cd62ef53821e2d209dc77f7b5a3c29f7c3f15b10190e72245984",
+      "literal_lines": 8
+    },
+    {
+      "path": "audit_flora.py",
+      "sha256": "6f32cbdcf6f5dea5f12a809825fadb24445a16528247127fbf4b9aa3d997518f",
+      "literal_lines": 9
+    },
+    {
+      "path": "audit_npm.py",
+      "sha256": "def079206498c44b9c7b0e6d97586d7f2f38928296eb13becc7df074551a911e",
+      "literal_lines": 19
+    },
+    {
+      "path": "audit_site.py",
+      "sha256": "3cb4b94ac2024508567f04d180cdc75e7df185fd8e2269b2698f70e14612759a",
+      "literal_lines": 19
+    },
+    {
+      "path": "build_canopy.py",
+      "sha256": "b4b8f8196e7840891f5e2872689dfbb021d78c42d6398c76b633801155c5a609",
+      "literal_lines": 38
+    },
+    {
+      "path": "build_canopy_r2.py",
+      "sha256": "5f13132f7b0f6cac418d053e483c1acbf260bb26ab83c8fb4ff277d5adb5c839",
+      "literal_lines": 35
+    },
+    {
+      "path": "build_canopy_r3.py",
+      "sha256": "4d83530da2a31a19da777f0b2da248d0eaf63a6658b9c1a7392db8a7cacf09b0",
+      "literal_lines": 10
+    },
+    {
+      "path": "build_ground_budget.py",
+      "sha256": "f7b5f74faae096a2885c1814e5cd6b63a20f53d9844ac456578c126d5e13778f",
+      "literal_lines": 8
+    },
+    {
+      "path": "build_npm.py",
+      "sha256": "ebe35ccac4ba65cb7b689ba9b3c994cfcbc618b4b599fc7216e2ede9d1ffc5c4",
+      "literal_lines": 30
+    },
+    {
+      "path": "canopy-column-retessellated/export_pilot.py",
+      "sha256": "0ed989bb1bd8333722f10c8b878dd35143b250a1126e536fc2fda63e30d1d3b3",
+      "literal_lines": 6
+    },
+    {
+      "path": "canopy-compact/export_pilot.py",
+      "sha256": "5532274ea0d5f7157a8d8c6d290ec46a2b957cc9c8d87c8a7d8e379d78af7f2d",
+      "literal_lines": 6
+    },
+    {
+      "path": "canopy-endcap-aligned/export_pilot.py",
+      "sha256": "ac04d34ab6006c9831c73bc1e4a757eb6aa6da9f083446d5e541cb8e558a38eb",
+      "literal_lines": 5
+    },
+    {
+      "path": "canopy-endcap-aligned/raw_pilot.py",
+      "sha256": "79ade7b436033f08f311f8506ffa750d6b1bc3025349d989f9bee3260d9212c4",
+      "literal_lines": 4
+    },
+    {
+      "path": "classify_npm_joined.py",
+      "sha256": "a7d61761f1cc99e270478af4cf02fefe1f38b53fe8939ed1af97324a90bc1ca2",
+      "literal_lines": 11
+    },
+    {
+      "path": "classify_whole.py",
+      "sha256": "5b9485563dedcd9732fd974c33d3e1a8148aa48162306e5814d57d8c2a7d9558",
+      "literal_lines": 12
+    },
+    {
+      "path": "compact_pilot.py",
+      "sha256": "649c64dbfaac3016f5deaa7ff87572655ae25341fc5647d0ca9b5a922cddbeae",
+      "literal_lines": 4
+    },
+    {
+      "path": "compose_sheet.py",
+      "sha256": "0d08a07fe50b4eee670c8a47375328746b4092331b1e4d919c8ff838d3e04ab0",
+      "literal_lines": 8
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "sha256": "970f3b48593a0057e260ccbd2b97c04dadd5e38882c2a66ff0eb5c40f99965f3",
+      "literal_lines": 28
+    },
+    {
+      "path": "finish_canopy.py",
+      "sha256": "755b89e79a5cd2c1f265aa5de53efc78b365772348deee3a0b14670c5e9a856a",
+      "literal_lines": 5
+    },
+    {
+      "path": "finish_edges.py",
+      "sha256": "aa7d75bee9808e554f1a32f1c329cbc1aeca2db35285af07a5727cac3f44ed97",
+      "literal_lines": 23
+    },
+    {
+      "path": "finish_fan.py",
+      "sha256": "6e4981c9c9160ae2d7884f213245b01baa1809f354161dd261a00734b58e7ba5",
+      "literal_lines": 7
+    },
+    {
+      "path": "inspect_canopy.py",
+      "sha256": "5875ee8ed978358778073d2300604317364d434552bd157d5a7350220c73b5e9",
+      "literal_lines": 12
+    },
+    {
+      "path": "inspect_components.py",
+      "sha256": "802ccb0789fae770ba1ce85cea7b29663d1bd5dce951fc3801ae049f5a0473cc",
+      "literal_lines": 12
+    },
+    {
+      "path": "inspect_degeneracy.py",
+      "sha256": "e4e0148ae3a0ea55942ec5c8c16232fd0151b12ef1c706138829dc8b5b6dd0db",
+      "literal_lines": 9
+    },
+    {
+      "path": "lock_budget_interfaces.py",
+      "sha256": "d218f035e2a6ad15c6da7edcf0e50a4488d9da20bd37a5ae13d9e334c3c33ef8",
+      "literal_lines": 9
+    },
+    {
+      "path": "near_classes.py",
+      "sha256": "06241d019634b798f1c2537c079562c7de81646abe3c7c7741b25988bd5074fc",
+      "literal_lines": 7
+    },
+    {
+      "path": "normalize_column.py",
+      "sha256": "8b0fdea16521acebc2a9a27cdae4d38e247a0616ee76b9768cc55360130dcdf7",
+      "literal_lines": 7
+    },
+    {
+      "path": "planar_arrangement.py",
+      "sha256": "26ae327bc1c9a1c084e1048348e49fd55f609d09c4da5a0beec1d128f1fe0e7a",
+      "literal_lines": 61
+    },
+    {
+      "path": "planar_patches.py",
+      "sha256": "958a7d8856cca859875fbc1d2a8c476f363f60e337d841342d0af63a7c3d1eba",
+      "literal_lines": 51
+    },
+    {
+      "path": "plot_joints.py",
+      "sha256": "2e3b0c42b38da0bf359ca0982afd1769575429e4fa0fe3d91466de6f452ffdc1",
+      "literal_lines": 19
+    },
+    {
+      "path": "probe_aliases.py",
+      "sha256": "e036b78f95b39fc0d93b212a90176fe7cdff5bc305a051823812c71cc48bb61e",
+      "literal_lines": 8
+    },
+    {
+      "path": "probe_composition.py",
+      "sha256": "d0ce1e00c724316cbbf055fcb0920dc3be6cf81c7701081c75448ba57b2a22fa",
+      "literal_lines": 9
+    },
+    {
+      "path": "read_site.py",
+      "sha256": "ac113a8c543fbec1aec18aca445cd88690e5188f06431019995ab31f74df1a69",
+      "literal_lines": 12
+    },
+    {
+      "path": "refine_budget_height.py",
+      "sha256": "42cb6a61fe626a828257508162401c5650181409fd30a70ac61d2a6c6b90b3c5",
+      "literal_lines": 7
+    },
+    {
+      "path": "refine_slots.py",
+      "sha256": "2cc9ba40a973df573d84d069ec08ec4704eca1c8154b5848020a12325eed444c",
+      "literal_lines": 24
+    },
+    {
+      "path": "render_canopy.py",
+      "sha256": "819fa6569850cb563ed7d6bac250ffac181e6914d74b17382708af6d1136dcf0",
+      "literal_lines": 12
+    },
+    {
+      "path": "replicate_canopy.py",
+      "sha256": "4f570ee72b2c6824d1325d5598fc8aa15997d8204b6109bbcf9d2c6c75d9698e",
+      "literal_lines": 24
+    },
+    {
+      "path": "retessellate_flora.py",
+      "sha256": "8e12a3f77dcaee870d0799005e1d8e64522a05db3302011d7177c5635ca5794a",
+      "literal_lines": 13
+    },
+    {
+      "path": "retessellate_flora_boundary.py",
+      "sha256": "5115053c4f658b69d813f499c19bcbfd895709275b79d5dfb73ffcad62962617",
+      "literal_lines": 7
+    },
+    {
+      "path": "retriangulate.py",
+      "sha256": "ddb1d599a17759f711e1b0df9af7ee1a1b7a6cf4606e50adddb75899b567c85c",
+      "literal_lines": 34
+    },
+    {
+      "path": "run_affected.py",
+      "sha256": "b7eb617a5ce59417a9f7085a96928945cf3caa1a2e39b3c984cd54b1b8da570a",
+      "literal_lines": 6
+    },
+    {
+      "path": "selective_flora.py",
+      "sha256": "887ded18c6cd69d9127aaa432de7b5b75018129983660724bb2b1a058a9872fc",
+      "literal_lines": 26
+    },
+    {
+      "path": "test_canopy.py",
+      "sha256": "49342a667e2733d40aa5c45a9b2e697463f459200cc503f4cb972f407d810001",
+      "literal_lines": 15
+    },
+    {
+      "path": "test_checkpoint_v023.py",
+      "sha256": "500bfdf21e210e7bfb0046118f788c7e385604c678d4e33c3e761942525e6af8",
+      "literal_lines": 58
+    },
+    {
+      "path": "test_ground_budget.py",
+      "sha256": "2e55d4a471c938f44dfbb67be7cb247a8c2c9f1f2a4931975786b0ebb05b66e8",
+      "literal_lines": 6
+    }
+  ],
+  "shared_code_or_checker_changes": false,
+  "libraries_or_live_Max_modified": false,
+  "review_sheet": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v023\\canopy-review-r2\\source-bound-canopy-NOT-ACCEPTED.png",
+  "next_steps": [
+    "Resume ONLY paired NPMv023/site-npm-r1 and VPMv023/site-canopy-r1; all Flora trial variants remain REJECTED",
+    "Closed gates stay closed; no new user question",
+    "Repair joined-composition witnesses: Bike handles33FB3B4/33FB3B5/33FB3B6 versus Canopy33FB581, plus Flora/Canopy; preserve original38/4582census points/rotations and real source holes",
+    "Current NPM Flora regulatory515truecrossings remains; exact knife adds faces/budget and new planar-boundary route loses221.552m2, never promote it",
+    "Ground skirt minimum0/public>=1m, Ground/MAFmaps/UV/smoothing;175wideUCXgaps outside2-10mm remain worker-owned",
+    "Affected tests only; final user visual/material and complete SINTEZ only AFTER whole technical repairs"
+  ]
+}

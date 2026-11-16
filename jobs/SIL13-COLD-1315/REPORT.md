@@ -1,6 +1,21 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v022 D335 answered; actual whole NPM179493raw/179492native;
+Current status: **v023 actual paired Canopy repair; NPM179726/VPM305856 raw=native;
+whole QA STILL FAIL, NOT delivered**. See [CONTINUATION-v023.md](CONTINUATION-v023.md).
+Both Canopy copies5586triangles, pre/raw/native/placed clean;37otherMAF/profile,
+Flora and564UCX arrays EXACT. New NPMGround26378triangles, complete actual57226
+source-triangle4.975942mm proof, all borders/domains/normals preserved. All38MAF/
+4582plant census and7fullBenches retained,18placed checks clean,4620pivots covered,
+2Urn complete shelves buried>=6.781mm,2originalFlora maps embedded byte-identically.
+Same part-scope NPM101faces/VPM139facesFAIL; additional exact-array diagnostic NPM
+join127faces/134pairsFAIL includes cross-object Flora–Canopy contacts. Fresh Flora
+regulatory515truecrossings; all new Flora trials REJECTED, not adopted. Validators
+both exit1, no finalvisual/material/SINTEZ/PR/review claim or new user question.
+Resume ONLY v023/site-npm-r1 and v023/site-canopy-r1. Affected tests:534passed/
+5historical controls deselected; exact command in source-wide-summary-v023.json.
+Full suite: deferred to merge batch (rule 68).
+
+Historical status: **v022 D335 answered; actual whole NPM179493raw/179492native;
 wholeQA FAIL, NOT delivered**. See [CONTINUATION-v022.md](CONTINUATION-v022.md).
 Ground29578triangles, all7full5064tri Bench013 copies, all38MAF/4582plants retained.
 Complete ACTUAL57226source-triangle comparison bounds4.975942mm, meeting the

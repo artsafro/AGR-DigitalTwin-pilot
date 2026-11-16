@@ -54,7 +54,20 @@ is a source-contour question diagram, NOT that pilot or its acceptance.
 
 ## Current state
 
-[D335] closes the v021 NPM Ground/profile/budget choice: Artem «Можно», answer
+Current v023: real paired source-bound Canopy repair5586triangles per profile,
+all isolated/placed raw/native checks clean;37otherMAF/profile, Flora and564UCX
+arrays EXACT. Actual NPM179726/VPM305856 raw=native, no native face loss. Same
+[D335] source-master route now gives26378NPMGround triangles, complete ACTUAL
+57226source-triangle4.975942mm proof, same5mmguard/borders/XY/skirt, only5INTERIOR
+base vertices receive a measured150micrometre final refinement. All38MAF/4582plants
+and7fullBenches retained,4620pivots covered, Urn shelves>=6.781mm buried. Resume
+ONLY v023/site-npm-r1 + v023/site-canopy-r1. Whole QA FAIL101/139faces, additional
+exact-array diagnostic NPMjoin127faces; freshFlora515crossings, all Flora trials
+NOTadopted. Skirt/maps/UV/mixed contacts/175UCXwidegaps remain worker-owned.
+No new model/picture question, no finalvisual/SINTEZ/PR/review claim. See
+CONTINUATION-v023.md/source-wide-summary-v023.json. Full suite deferred(rule68).
+
+Historical v022: [D335] closes the v021 NPM Ground/profile/budget choice: Artem «Можно», answer
 6927578368 to question6922279811. NPM-only derivation<=8.2mm, including base+whole
 skirt-2.5mm, is authorized; source Ground/VPM remain untouched. v022 repairs the
 inverted triangle with a source-bound two-face diagonal and refines local source
