@@ -232,7 +232,7 @@ def test_repo_new_job_with_scripts_needs_a_skeleton_config(tmp_path):
     _job(tmp_path, None, {"notes.md": "text\n"}, name="DOCS-ONLY")
     _job(tmp_path, None, {"old.py": "x = 1\n"}, name="DELIVERED")
     _job(tmp_path, None, {"old.py": "x = 1\n"}, name="elv-tc-vpm")
-    _job(tmp_path, None, {"t.py": "x = 1\n"}, name="_template")
+    _job(tmp_path, None, {"job.yaml": "id: TEMPLATE\n", "README.md": "Job template\n"}, name="_template")
     problems = sg.check_repo(tmp_path, sk)
     assert len(problems) == 1 and problems[0].startswith("jobs/SINTEZ-FIX/analyse_seams.py" + OUTSIDE)
 
@@ -246,7 +246,8 @@ def test_repo_configured_legacy_job_is_checked(tmp_path):
 
 # PR #1553 r1 (P1): new work lands in sub-folders of finished/legacy jobs; a whole-folder exemption hid it.
 @pytest.mark.parametrize("rel", ["jobs/KPP1/fix-1600/run_all.py", "jobs/4bk-k3/fix-1601/run_all.py",
-                                 "jobs/KPP1/run_new.py", "jobs/4bk-k3/a/b/c/deep.ms"])
+                                 "jobs/KPP1/run_new.py", "jobs/4bk-k3/a/b/c/deep.ms",
+                                 "jobs/KPP1/_template/run_all.py", "jobs/_template/run_all.py"])
 def test_repo_new_script_in_a_finished_or_legacy_job_is_flagged(tmp_path, rel):
     sk = _repo(tmp_path, baseline=("jobs/KPP1/scripts/old.py", "jobs/4bk-k3/old.py"))
     for f in ("jobs/KPP1/scripts/old.py", "jobs/4bk-k3/old.py", rel):
