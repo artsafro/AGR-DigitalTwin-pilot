@@ -1,0 +1,25 @@
+{
+  "status": "fail",
+  "ids": [
+    {
+      "object": "K3_TypFloor",
+      "id": 1,
+      "status": "fail",
+      "material": "Material #2",
+      "reason": "Base Color needs exactly one link"
+    },
+    {
+      "object": "K3_Floor2Skirt",
+      "id": 1,
+      "status": "fail",
+      "material": "Material #2",
+      "reason": "Base Color needs exactly one link"
+    }
+  ],
+  "application": "Blender",
+  "version": "5.1.2",
+  "scene": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!\u0410101\\63_4BK_vlad\\build\\blender\\typ_module_v003.blend",
+  "units": "METRIC",
+  "scene_sha256": "9dbc4658790e66d5ce5dfb2cf42636937785138a8b5ed18c93543aef923a98c5",
+  "scope_sha256": "9e72f4b208b447d7af0e4038b1cf59ec04250a8461600aa8e7ffb0ab13db3505"
+}

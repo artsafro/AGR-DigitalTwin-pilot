@@ -65,6 +65,26 @@ def test_output_protection(tmp_path):
     assert target.read_bytes() == b'foreign report'
 
 
+def test_max_viewport_limit_uses_published_readonly_property():
+    from types import SimpleNamespace
+    rt = SimpleNamespace(NitrousGraphicsManager=SimpleNamespace(
+        GetActiveViewportSetting=lambda: SimpleNamespace(TextureSizeLimit=512)),
+        getNodeByName=lambda *args, **kwargs: None)
+    result = load().check_max(rt, {'ids': [{'object': 'Unknown', 'id': 1}]})
+    assert result['viewport_limit'] == 512
+    assert result['status'] == 'fail'
+    assert result['ids'][0]['reason'] == 'unknown object: Unknown'
+
+
+def test_skill_contract():
+    for name in ('validate-delivery', '3dsmax-mcp-dev'):
+        text = (ROOT / '.agents/skills' / name / 'SKILL.md').read_text(encoding='utf-8')
+        assert 'REVIEW_TEXTURES.md' in text
+        if name == '3dsmax-mcp-dev':
+            assert 'global' in text and 'ask-first' in text
+        assert (ROOT / '.claude/skills' / name / 'SKILL.md').read_text(encoding='utf-8') == text
+
+
 @pytest.mark.blender
 def test_native_blender_saved_file(tmp_path):
     from dt_ai.core.blender_runner import run_blender
