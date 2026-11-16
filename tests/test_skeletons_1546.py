@@ -213,6 +213,56 @@ def test_contract_template_skeleton_is_valid(tmp_path):
     assert sg.check_job(tmp_path, _job(tmp_path, text, {}), SK) == []
 
 
+# #1591: an imported provenance library must not masquerade as a runnable stage hook.
+PROVENANCE_JOB = "KPP1/quad-1372/provenance-1563"
+PROVENANCE_SCRIPT = "hooks/quad_provenance.py"
+
+
+def test_provenance_library_registration_is_honest():
+    job = ROOT / "jobs" / PROVENANCE_JOB
+    assert json.loads((job / "skeleton.json").read_text(encoding="utf-8"))["hooks"] == []
+    assert sg.check_job(ROOT, job, SK) == []
+
+
+@pytest.mark.parametrize("point", ["before", "after", "gap"])
+@pytest.mark.parametrize("script", [PROVENANCE_SCRIPT, "hooks/./quad_provenance.py"])
+def test_provenance_library_cannot_be_registered_as_hook(tmp_path, point, script):
+    job = _job(tmp_path, _cfg(hooks=[_hook(script, point=point)]),
+               {PROVENANCE_SCRIPT: "def write_provenance(): pass\n"}, name=PROVENANCE_JOB)
+    problems = sg.check_job(tmp_path, job, SK)
+    assert any("imported library" in p and "quad_provenance.py" in p for p in problems), problems
+
+
+def test_provenance_library_empty_hooks_pass(tmp_path):
+    job = _job(tmp_path, _cfg(), {PROVENANCE_SCRIPT: "def write_provenance(): pass\n"}, name=PROVENANCE_JOB)
+    assert sg.check_job(tmp_path, job, SK) == []
+    assert sg.check_repo(tmp_path, SK, baseline=set()) == []
+
+
+@pytest.mark.parametrize("name,script", [
+    (PROVENANCE_JOB, "hooks/other.py"),
+    ("KPP1/quad-1372/provenance-1591", PROVENANCE_SCRIPT),
+    (PROVENANCE_JOB, "hooks/nested/quad_provenance.py"),
+])
+def test_provenance_library_exemption_is_exact_path(tmp_path, name, script):
+    job = _job(tmp_path, _cfg(), {script: "def helper(): pass\n"}, name=name)
+    assert any("not listed in hooks" in p for p in sg.check_job(tmp_path, job, SK))
+
+
+def test_provenance_library_still_scanned_and_resets(tmp_path):
+    job = _job(tmp_path, _cfg(), {PROVENANCE_SCRIPT: "def world_bm(o): return o\n"}, name=PROVENANCE_JOB)
+    for _ in range(2):
+        assert any("world_bm" in p and "master-qa" in p for p in sg.check_job(tmp_path, job, SK))
+    (job / PROVENANCE_SCRIPT).write_text("def write_provenance(): pass\n", encoding="utf-8")
+    assert sg.check_job(tmp_path, job, SK) == []
+
+
+def test_provenance_library_syntax_error_fails(tmp_path):
+    job = _job(tmp_path, _cfg(), {PROVENANCE_SCRIPT: "def (:\n"}, name=PROVENANCE_JOB)
+    with pytest.raises(sg.ConfigError, match="quad_provenance.py: cannot parse"):
+        sg.check_job(tmp_path, job, SK)
+
+
 # --- repo scan -----------------------------------------------------------------------------------------------------
 
 def _repo(tmp_path, baseline=("jobs/DELIVERED/old.py",)):
