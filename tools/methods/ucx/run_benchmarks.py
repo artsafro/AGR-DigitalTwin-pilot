@@ -136,7 +136,7 @@ def main(argv=None) -> int:
     except (run_variant.Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_BENCHMARKS refused: {exc}", file=sys.stderr)
         return 4
-    from dt_ai.core.blender_runner import blender_executable
+    from dt_ai.core.blender_runner import blender_command, blender_executable   # one Blender command line (#1530)
 
     blender = blender_executable()
     by_id = {b["id"]: b for b in benches}
@@ -146,8 +146,7 @@ def main(argv=None) -> int:
         out.parent.mkdir(parents=True, exist_ok=True)
         for stale in (out, rep, out.with_suffix(".zip")):  # preflight proved none of them is an input
             stale.unlink(missing_ok=True)
-        cmd = [blender, "--background", "--factory-startup", "--python-exit-code", "1", "--python",
-               str(HERE / "build_variant_blender.py"), "--", str(src), str(out), variant]
+        cmd = blender_command(HERE / "build_variant_blender.py", (src, out, variant), executable=blender)
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
         report = json.loads(rep.read_text(encoding="utf-8")) if rep.is_file() else {}
         if proc.returncode != 0 or not report.get("ok") or not out.is_file():
