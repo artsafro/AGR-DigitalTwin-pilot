@@ -1,5 +1,11 @@
 """new-case: synthetic stable source identity and complete source-use accounting (#1589)."""
+import ast
 import copy
+import json
+from types import SimpleNamespace
+
+import numpy as np
+
 import itertools
 import os
 import subprocess
@@ -35,6 +41,80 @@ def bundle(tmp_path, unused=False):
         with zipfile.ZipFile(pkg, 'w') as z:
             z.write(tmp_path / '0000_Syn_Ground.fbx', '0000_Syn_Ground.fbx')
     return pkg, [str(p) for p in sources], records
+
+
+def producer_record_call(path, namespace):
+    """Execute the real export record call, without claiming DCC geometry/readback coverage."""
+    tree = ast.parse((ROOT / path).read_text(encoding='utf-8'))
+    calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call)
+             and isinstance(n.func, ast.Attribute) and n.func.attr == 'write_export_derivation']
+    assert len(calls) == 1
+    return eval(compile(ast.Expression(calls[0]), str(path), 'eval'), namespace)
+
+
+@pytest.mark.parametrize('mesh', [False, True])
+def test_real_recipe_with_legacy_oks_and_mesh_producer(tmp_path, monkeypatch, mesh):
+    from tools.materials import ground_recipes as recipes
+    recipe = json.loads((ROOT / 'tools/materials/ground_recipes.json').read_text())
+    src = tmp_path / 'recipe.json'
+    src.write_text(json.dumps(recipe))
+    out = tmp_path / 'v001'
+    monkeypatch.setattr(recipes, 'DELIVERY_DIR', out)
+    monkeypatch.setattr(recipes, 'render_map', lambda recipe, slot, profile, **kw:
+        np.zeros((recipe['profiles'][profile]['size'],) * 2 + (3,), dtype=np.uint8))
+    recipes.write_delivery(src, out, address='Syn')
+    records = [bm.strict_json(Path(p).read_bytes()) for p in
+               bm.derivation_files([Path(bm.derivation_store(out)) / out.name])]
+    oks = tmp_path / 'oks.blend'
+    oks.write_bytes(b'synthetic OKS source')
+    fbx = tmp_path / '0000_Syn_01.fbx'
+    fbx.write_bytes(b'synthetic OKS FBX')
+    records.append(bm.derivation_record([fbx], oks, 'unknown', role='oks'))
+    masters = {'oks': str(oks), 'ground': [str(src)]}
+    files = [fbx] + list(out.glob('*.png'))
+    if mesh:
+        ground = tmp_path / 'renamed_mesh_v7.json'
+        ground.write_bytes(b'synthetic mesh source')
+        gfbx = tmp_path / '0000_Syn_Ground.fbx'
+        gfbx.write_bytes(b'synthetic Ground FBX')
+        record = producer_record_call('tools/blender/ground_json_to_fbx.py',
+            dict(bm=bm, out=str(gfbx), src=str(ground), os=os, root=str(ROOT),
+                 src_sha=bm.sha256_file(ground), address='Syn', source_id=None))
+        records.append(bm.strict_json(Path(record).read_bytes()))
+        # Real OKS producer call must provide its own identity for a multi-source package.
+        records[-2]['source_id'] = 'Syn.oks.master'
+        masters['ground'].append(str(ground))
+        files.append(gfbx)
+    pkg = tmp_path / '0000_Syn.zip'
+    with zipfile.ZipFile(pkg, 'w') as z:
+        for f in files:
+            z.write(f, f.name)
+    def reader(path):
+        suffix = 'Ground' if bm.role_of(path) == 'ground' else '001_Main'
+        return {'readback_ok': True, 'meshes': [{'name': 'SM_Syn_' + suffix,
+            'bounds_m': [[0, 0, 0], [1, 1, 1]], 'location': [0, 0, 0],
+            'materials': ['synthetic'], 'uv_channels': 1, 'triangles': 2}]}
+    recfiles = []
+    for i, record in enumerate(records):
+        p = tmp_path / f'record-{i}.json'
+        p.write_bytes(bm.dumps(record))
+        recfiles.append(str(p))
+    args = ['build', str(pkg), '--derivation', *recfiles, '--transform-name', 'identity']
+    for role, paths in masters.items():
+        for path in paths if isinstance(paths, list) else [paths]:
+            args += ['--master', role + '=' + path]
+    assert cli.main(args, reader=reader) == 0
+    result = bm.manifest_findings(Path(bm.manifest_path(pkg)).read_bytes(), bm.zip_members(pkg),
+        pkg.name, bm.sha256_file(pkg), bm.master_hashes(masters), str(tmp_path))
+    assert [r[:2] for r in result] == [('pass', 'manifest_ok')]
+
+
+def test_missing_identity_names_artifact(tmp_path):
+    pkg, sources, records = bundle(tmp_path)
+    records[1]['source_id'] = 'site.recipe'
+    records[0].pop('source_id')
+    with pytest.raises(ValueError, match='0000_Syn_Ground.fbx.*source_id'):
+        bm.make_manifest(pkg, {'ground': sources}, 'unknown', records, bm.transform_entry('identity'))
 
 
 def test_two_revisions_refused(tmp_path):
