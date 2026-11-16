@@ -1,6 +1,6 @@
 {
  "schema": "window-standard/1",
- "note": "Window standard of the library (#1024 K2, branch J). Values measured in Win_Typical.max v001 (lab L10, job 20261106-020727-ce514480, docs/experiments/win.generate.md) and the owner answers 06.11.2026 (ANSWERS-2026-11-06): families F100 windows (57 x 100, mullion/transom 50 x 100), F73 doors, F58 separately (windows with a sill flashing, balcony doors); glass 80 mm from the frame face as in the source; WT-07 and WT-10 are NOT merged (different subdivision); the face axis is kept per type. Read by adapters/max/agr_tools/windowgen_core.py (win.generate) and winplace_core.py (win.place). Lengths in metres. Confirmation of the look only by the preview sheet (confirmations.json).",
+ "note": "Window standard of the library (#1024 K2, branch J). Values measured in Win_Typical.max v001 (lab L10, job 20261106-020727-ce514480, docs/experiments/win.generate.md) and the owner answers 06.11.2026 (ANSWERS-2026-11-06): families F100 windows (57 x 100, mullion/transom 50 x 100), F73 doors, F58 separately (windows with a sill flashing, balcony doors); glass now uses real frame mid-depth with 15-20 mm overlap under D322 (2026-11-15, issue #1449), superseding the historical 80 mm seating offset; measured.glass_mid_mm retains the historical source observations, not active seating; explicit Revit-type frame_profile_m overrides family dimensions; WT-07 and WT-10 are NOT merged (different subdivision); the face axis is kept per type. Read by adapters/max/agr_tools/windowgen_core.py (win.generate) and winplace_core.py (win.place). Lengths in metres. Confirmation of the look only by the preview sheet (confirmations.json).",
  "source": {
   "file": "Win_Typical.max v001 (Google Drive AGR-assets/windows/v001, read-only copy in the job folder)",
   "sha256": "59a44f670b392caffd4a09a7082376afe94322da3c2939de77eabda27987a777",
@@ -15,7 +15,7 @@
    "face_bottom_m": 0.057,
    "impost_m": 0.05,
    "depth_m": 0.1,
-   "glass_from_face_m": 0.08,
+   "glass_from_face_m": 0.05,
    "measured": {"types": ["WT-06", "WT-07", "WT-10", "WT-11", "WT-12", "WT-17", "WT-18", "WT-19", "WT-21"], "glass_mid_mm": [70.4, 80.4]}
   },
   "F73": {
@@ -25,7 +25,7 @@
    "face_bottom_m": null,
    "impost_m": 0.054,
    "depth_m": 0.073,
-   "glass_from_face_m": 0.0334,
+   "glass_from_face_m": 0.0365,
    "measured": {"types": ["WT-13", "WT-14", "WT-15", "WT-16", "WT-22", "WT-23", "WT-24"], "glass_mid_mm": [33.4, 43.4]}
   },
   "F58": {
@@ -35,7 +35,7 @@
    "face_bottom_m": 0.125,
    "impost_m": 0.145,
    "depth_m": 0.058,
-   "glass_from_face_m": 0.0384,
+   "glass_from_face_m": 0.029,
    "measured": {"types": ["WT-01", "WT-03", "WT-04", "WT-05", "WT-08", "WT-09", "WT-20"], "glass_mid_mm": [38.4]}
   }
  },

@@ -16,8 +16,6 @@ def rows():
 
 def test_council_responsibilities():
     expected = {
-        'jobs/KPP1/scripts/vpm_uv.py:155': 'own-duty',
-        'jobs/TEC26-OKS/scripts/vpm_uv.py:155': 'live-bypass',
         'jobs/KPP1/scripts/vpm_ucx.py:50': 'own-duty',
         'jobs/PSU275/scripts/vpm_ucx.py:45': 'own-duty',
         'jobs/TEC26-OKS/scripts/ucx_tri_core.py:44': 'wrapper',
@@ -38,8 +36,13 @@ def test_merged_migrations_keep_the_new_owners_without_reviving_copies():
         'jobs/TEC26-OKS/scripts/run_agr_checker.py',
         'jobs/KPP1/scripts/qa_master.py',
         'jobs/TEC26-OKS/scripts/qa_master.py',
+        'jobs/KPP1/scripts/vpm_uv.py',
+        'jobs/TEC26-OKS/scripts/vpm_uv.py',
     }
     assert not any(r.rel in migrated for r in current)
+    assert guard.RULES['vpm-uv'] == 'tools/blender/vpm_uv.py'
+    uv = next(c for c in guard.load_maps(ROOT)['contexts']['contexts'] if c['id'] == 'vpm-uv')
+    assert uv['owner'] == guard.RULES['vpm-uv']
     assert guard.RULES['sintez-checker'] == 'tools/blender/sintez_checker.py'
     assert guard.RULES['master-qa'] == 'tools/blender/qa_master.py'
     assert not any(r.rule == 'udim-tile' and r.step == '#1397' for r in current)
@@ -52,8 +55,8 @@ def test_current_entrypoints():
     for rel in ('jobs/KPP1/scripts/build_kpp1.py', 'jobs/TEC26-OKS/scripts/package_vpm.py',
                 'jobs/TEC26-OKS/scripts/vpm_uv.py', 'jobs/elv-tc-vpm/scripts/package_vpm_v006.py'):
         assert rel in chains, rel
-    roof = [r for r in rows() if r.at == 'jobs/KPP1/scripts/build_kpp1.py:421']
-    assert roof and roof[0].status == 'live-bypass' and roof[0].step == '#1381'
+    roof = [r for r in rows() if r.rel == 'jobs/KPP1/scripts/build_kpp1.py' and r.context == 'roof']
+    assert roof and roof[0].status == 'wrapper' and roof[0].step is None   # #1381: plate from roof_core.hole_plate
 
 
 def test_elv_not_delivered():
@@ -119,8 +122,7 @@ def test_wrapper_chain_has_real_owner_and_loader_not_just_a_path_mention(tmp_pat
     real_rows = rows()
     for at, owner in [
         ('jobs/TEC26-OKS/scripts/ucx_tri_core.py:44', 'adapters/max/agr_tools/geom_core.py'),
-        ('jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29', 'jobs/TEC26-OKS/scripts/ucx_tri_core.py'),
-        ('jobs/TEC26-OKS/scripts/vpm_uv.py:155', 'jobs/KPP1/scripts/vpm_uv.py')]:
+        ('jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29', 'jobs/TEC26-OKS/scripts/ucx_tri_core.py')]:
         found = [r for r in real_rows if r.at == at]
         assert found and all(r.owner == owner for r in found)
         if found[0].status == 'wrapper':

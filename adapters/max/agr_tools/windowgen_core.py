@@ -3,10 +3,13 @@
 Pure logic for `win_generate` (win.generate) and the window meshes win.place instantiates; no pymxs.
 
 Contract K2 (#1024) with the owner answers 06.11.2026 and lab L10 (docs/experiments/win.generate.md):
-* the library is a standard: frame face, depth, mullion/transom and the glass plane come from
-  library/windows/standard.json per FAMILY (F100 windows 57 x 100 with mullions 50 x 100; F73 doors; F58 windows
-  with a sill flashing and balcony doors), never from the source mesh;
-* the glass is a plane 80 mm behind the frame face (F100, as in Win_Typical.max), a separate part (role glass);
+* [D322] supersedes the seating part of [D204] for every site: use an explicit Revit-type
+  frame_profile_m when supplied, otherwise the measured FAMILY profile in standard.json;
+* glass/grille panels request 15..20 mm cover per edge (default 20) at real frame mid-depth;
+  actual cover is bounded by the outline and half the facing field gap, with reductions reported;
+  glass is a separate part/object; NPM opaque atlas planes remain unchanged;
+* optional interiors are independent set-back boxes around the opening (+44 mm sides, +130 mm head/sill),
+  never frame extrusions or frame material; grille openings refuse interiors; existing scenes are not edited;
 * the frame follows the fields of the record (`panes_m` glass, `opaque_m` opaque infill [x0, z0, x1, z1] from the
   bottom left of the opening); every field edge is moved onto the standard: an outer edge to the frame face, an
   edge facing a neighbour field to half a mullion from the middle of the gap;
@@ -24,12 +27,14 @@ import json
 import math
 import struct
 import zlib
+from typing import cast
 
 STANDARD_SCHEMA = 'window-standard/1'
 REPORT_SCHEMA = 'window-quality/1'
 DRAFT_SCHEMA = 'window-type-draft/1'
 FACE_AXES = ('-y', '+y')
 MAT_FACE, MAT_BACK, MAT_OPAQUE, MAT_GLASS = 1, 4, 5, 10
+MAT_GRILLE, MAT_CAPSULE = 11, 12
 VERDICTS = ('pass', 'quarantine', 'duplicate')
 _FAMILY_KEYS = {'face_m', 'face_top_m', 'face_bottom_m', 'impost_m', 'depth_m', 'glass_from_face_m'}
 _EPS = 1e-6
@@ -117,10 +122,25 @@ def load_standard(doc):
 
 
 def family_of(entry, standard):
-    """(family name, family params) of a library record: per-type override, else by role, else F100."""
+    """Family profile with explicit source-type dimensions taking precedence [D322]."""
     t = (standard.get('types') or {}).get(entry.get('id'), {})
-    name = t.get('family') or (standard.get('role_family') or {}).get(entry.get('role')) or 'F100'
-    return name, standard['families'][name]
+    name = t.get('family') or (standard.get('role_family') or {}).get(entry.get('role'))
+    if name not in standard['families']:
+        raise ValueError('unmapped window role/family: {}'.format(entry.get('role')))
+    fam = dict(standard['families'][name])
+    if 'frame_profile_m' in entry:
+        profile = entry['frame_profile_m']
+        allowed = _FAMILY_KEYS - {'glass_from_face_m'}
+        if not isinstance(profile, dict) or not {'face_m', 'depth_m', 'impost_m'} <= set(profile):
+            raise ValueError('frame_profile_m requires face_m, depth_m and impost_m from the source type')
+        if set(profile) - allowed:
+            raise ValueError('unknown frame_profile_m keys: {}'.format(sorted(set(profile) - allowed)))
+        for k, v in profile.items():
+            _num(v, 'frame_profile_m.' + k)
+        fam.update(profile)
+        fam['face_top_m'] = profile.get('face_top_m', profile['face_m'])
+        fam['face_bottom_m'] = profile.get('face_bottom_m', profile['face_m'])
+    return name, fam
 
 
 def face_axis(entry, standard):
@@ -131,11 +151,13 @@ def face_axis(entry, standard):
 
 # ---- fields --------------------------------------------------------------------------------------------------
 def fields(entry):
-    """[(kind 'glass'|'opaque', [x0, z0, x1, z1])] of a record, glass first."""
+    """[(kind 'glass'|'opaque'|'grille', [x0, z0, x1, z1])] of a record, glass first."""
     out = []
-    for kind, key in (('glass', 'panes_m'), ('opaque', 'opaque_m')):
+    for kind, key in (('glass', 'panes_m'), ('opaque', 'opaque_m'), ('grille', 'grilles_m')):
         for r in entry.get(key) or ():
-            x0, z0, x1, z1 = (float(c) for c in r)
+            if not isinstance(r, (list, tuple)) or len(r) != 4:
+                raise ValueError('{} must contain four-coordinate rectangles'.format(key))
+            x0, z0, x1, z1 = (cast(float, _num(c, key, positive=False)) for c in r)
             out.append((kind, [min(x0, x1), min(z0, z1), max(x0, x1), max(z0, z1)]))
     return out
 
@@ -206,7 +228,7 @@ def same_subdivision(a, b, tol=0.002):
     if abs(a['width_m'] - b['width_m']) > tol or abs(a['height_m'] - b['height_m']) > tol:
         return False
     fa, fb = fields(a), fields(b)
-    for kind in ('glass', 'opaque'):
+    for kind in ('glass', 'opaque', 'grille'):
         if not _same_rects([r for k, r in fa if k == kind], [r for k, r in fb if k == kind], tol):
             return False
     return True
@@ -227,6 +249,9 @@ def quality(entry, standard):
     W, H = entry.get('width_m'), entry.get('height_m')
     if not src:
         why.append('нет разбивки: panes_m и opaque_m пусты')
+    for index, (kind, rect) in enumerate(src):
+        if rect[2] - rect[0] <= _EPS or rect[3] - rect[1] <= _EPS:
+            why.append('degenerate {} field {}'.format(kind, index))
     lim = (standard.get('limits_m') or {}).get(entry.get('role'))
     if lim and W and H and not (lim['w'][0] <= W <= lim['w'][1] and lim['h'][0] <= H <= lim['h'][1]):
         why.append('размер {:.3f} x {:.3f} м вне пределов роли {}'.format(W, H, entry.get('role')))
@@ -318,27 +343,75 @@ class _Builder:
         return len(self.faces) - 1
 
 
+def _infill_cover(index, rect, all_fields, width, height, requested):
+    """Per-edge cover bounded by the outline and half each facing clear-field gap.
+
+    Test the requested perpendicular extents, not only the clear lights: staggered
+    fields can meet after expansion even when their original projections do not.
+    Opaque fields also reserve their half-gap, though their own cover remains zero.
+    """
+    limits = [rect[0], rect[1], width - rect[2], height - rect[3]]
+    expanded = [rect[0] - requested, rect[1] - requested,
+                rect[2] + requested, rect[3] + requested]
+    for j, (kind, other) in enumerate(all_fields):
+        if j == index or other[2] <= other[0] or other[3] <= other[1]:
+            continue
+        other_cover = requested if kind in ('glass', 'grille') else 0.0
+        neighbour = [other[0] - other_cover, other[1] - other_cover,
+                     other[2] + other_cover, other[3] + other_cover]
+        for axis, perpendicular in ((0, 'z'), (1, 'x')):
+            if _overlap(expanded, neighbour, perpendicular) <= 0:
+                continue
+            if other[axis + 2] <= rect[axis]:
+                limits[axis] = min(limits[axis], (rect[axis] - other[axis + 2]) / 2)
+            if other[axis] >= rect[axis + 2]:
+                limits[axis + 2] = min(limits[axis + 2], (other[axis] - rect[axis + 2]) / 2)
+    return [round(max(0.0, min(requested, limit)), 12) for limit in limits]
+
+
 def build_type(entry, standard, options=None):
     """One window type mesh by the library standard (K2).
 
     entry: a record of library/windows/window_types.json (id, role, width_m, height_m, panes_m, opaque_m, ...);
-    standard: library/windows/standard.json (load_standard); options: {'variant': 'vpm'|'npm'}.
+    standard: library/windows/standard.json (load_standard); options: variant ('vpm'|'npm'),
+    infill_overlap_m (requested 15..20 mm; clamped to the available frame per edge),
+    interior (explicit setback_m > frame depth and depth_m > 20 mm).
+    Source frame_profile_m: required face_m/depth_m/impost_m, optional face_top_m/face_bottom_m.
+    Interiors require glass-only openings; split mixed grille/glass openings before requesting interiors.
     Returns {'verts': [[x, y, z]...] metres in the type frame, 'faces': [[i...]...] (quads), 'mat_ids': [...],
     'parts': {'frame': [face idx], 'glass': [face idx]}, 'face_axis_m': y of the frame face (0.0),
     'face_axis': '-y', 'depth_m', 'frame_mid_m', 'glass_y_m', 'size_m': [W, depth, H], 'family', 'fields',
-    'status': 'ok'|'quarantine', 'why': [str]}."""
+    'status': 'ok'|'quarantine', 'why': [str],
+    'clamped_infill_edges': [{index, kind, edge, requested_m, cover_m}] for reduced covers}."""
     standard = load_standard(standard)
     opts = dict(options or {})
     variant = opts.pop('variant', 'vpm')
+    overlap = _num(opts.pop('infill_overlap_m', 0.020), 'infill_overlap_m')
+    if overlap is None or not 0.015 <= overlap <= 0.020:
+        raise ValueError('infill_overlap_m must be within 15..20 mm')
+    interior = opts.pop('interior', None)
     if opts or variant not in ('vpm', 'npm'):
         raise ValueError('build_type options: {variant: vpm|npm}')
     W, H = _num(entry.get('width_m'), 'width_m'), _num(entry.get('height_m'), 'height_m')
     fam_name, fam = family_of(entry, standard)
     q = quality(entry, standard)
     b = _Builder()
-    parts = {'frame': [], 'glass': []}
-    depth, gy = fam['depth_m'], fam['glass_from_face_m']
+    parts = {'frame': [], 'glass': [], 'grille': [], 'capsule': []}
+    dropped_fields = []
+    clamped_infill_edges = []
+    depth = fam['depth_m']
+    gy = depth / 2.0  # [D322]: general standard, supersedes the D204 glass offset
     st = standardize(entry, fam, standard['criteria']) if fields(entry) else {'fields': [], 'deviation_m': 0.0}
+    seat = room = 0.0
+    if interior is not None:
+        if variant != 'vpm' or not any(k == 'glass' for k, _ in st['fields']) or any(k == 'grille' for k, _ in st['fields']):
+            raise ValueError('interior requires a glazed VPM opening; no capsule behind a grille (split mixed openings)')
+        if not isinstance(interior, dict) or set(interior) != {'setback_m', 'depth_m'}:
+            raise ValueError('interior requires explicit setback_m and depth_m')
+        seat = cast(float, _num(interior['setback_m'], 'interior.setback_m'))
+        room = cast(float, _num(interior['depth_m'], 'interior.depth_m'))
+        if seat <= depth or room <= 0.020:
+            raise ValueError('interior must start behind the frame and have depth > 20 mm')
     if variant == 'npm':
         parts['frame'].append(b.quad([(0, 0, 0), (W, 0, 0), (W, 0, H), (0, 0, H)], MAT_FACE, (0, -1, 0)))
     else:
@@ -367,24 +440,50 @@ def build_type(entry, standard, options=None):
                         ((0, 1), [(x0, 0, z1), (x1, 0, z1), (x1, depth, z1), (x0, depth, z1)], (0, 0, 1))):
                     if not solid(i + di, j + dj):
                         parts['frame'].append(b.quad(pts, MAT_FACE, want))
-        for kind, r in st['fields']:
+        for field_index, (kind, r) in enumerate(st['fields']):
             x0, z0, x1, z1 = r
             if x1 - x0 <= _EPS or z1 - z0 <= _EPS:
-                continue
-            quad = [(x0, gy, z0), (x1, gy, z0), (x1, gy, z1), (x0, gy, z1)]
+                if kind == 'opaque':  # preserve legacy family normalization, but never silently drop it
+                    dropped_fields.append({'index': field_index, 'kind': kind, 'rect': r,
+                                           'reason': 'degenerate after family standardization'})
+                    continue
+                raise ValueError('degenerate {} field {}'.format(kind, r))
+            covers = (_infill_cover(field_index, r, st['fields'], W, H, overlap)
+                      if kind in ('glass', 'grille') else [0.0] * 4)
+            for edge, cover in zip(('left', 'bottom', 'right', 'top'), covers):
+                if kind in ('glass', 'grille') and cover < overlap:
+                    clamped_infill_edges.append({'index': field_index, 'kind': kind, 'edge': edge,
+                                                 'requested_m': overlap, 'cover_m': cover})
+            left, bottom, right, top = covers
+            quad = [(x0-left, gy, z0-bottom), (x1+right, gy, z0-bottom),
+                    (x1+right, gy, z1+top), (x0-left, gy, z1+top)]
             if kind == 'glass':
                 parts['glass'].append(b.quad(quad, MAT_GLASS, (0, -1, 0)))
+            elif kind == 'grille':
+                parts['grille'].append(b.quad(quad, MAT_GRILLE, (0, -1, 0)))
             else:
                 parts['frame'].append(b.quad(quad, MAT_OPAQUE, (0, -1, 0)))
+        if interior is not None:
+            # Independent open-front box around the OPENING, never an extrusion of frame edges [D322].
+            x0, x1, z0, z1, y0, y1 = -0.044, W+0.044, -0.130, H+0.130, seat, seat+room
+            for pts, normal in (
+                    ([(x0,y0,z0),(x0,y1,z0),(x0,y1,z1),(x0,y0,z1)], (1,0,0)),
+                    ([(x1,y0,z0),(x1,y1,z0),(x1,y1,z1),(x1,y0,z1)], (-1,0,0)),
+                    ([(x0,y0,z0),(x1,y0,z0),(x1,y1,z0),(x0,y1,z0)], (0,0,1)),
+                    ([(x0,y0,z1),(x1,y0,z1),(x1,y1,z1),(x0,y1,z1)], (0,0,-1)),
+                    ([(x0,y1,z0),(x1,y1,z0),(x1,y1,z1),(x0,y1,z1)], (0,-1,0))):
+                parts['capsule'].append(b.quad(pts, MAT_CAPSULE, normal))
     return {'verts': b.verts, 'faces': b.faces, 'mat_ids': b.mat_ids, 'parts': parts, 'face_axis_m': 0.0,
             'face_axis': '-y', 'depth_m': depth, 'frame_mid_m': depth / 2.0, 'glass_y_m': gy,
             'size_m': [W, depth, H], 'family': fam_name, 'fields': st['fields'], 'variant': variant,
-            'status': q['status'], 'why': q['why']}
+            'status': q['status'], 'why': q['why'], 'dropped_fields': dropped_fields,
+            'clamped_infill_edges': clamped_infill_edges}
 
 
 def part_mesh(mesh, part):
-    """Sub-mesh of one part (frame | glass) with compacted vertices."""
-    idx = mesh['parts'][part]
+    """Compact part mesh; body is every non-glass part, retaining grilles/capsules in host placement."""
+    idx = ([fi for name, faces in mesh['parts'].items() if name != 'glass' for fi in faces]
+           if part == 'body' else mesh['parts'][part])
     remap, verts, faces, ids = {}, [], [], []
     for fi in idx:
         f = []
@@ -408,7 +507,8 @@ def to_obj(mesh, name):
     for part, idx in mesh['parts'].items():
         for fi in idx:
             owner[fi] = part
-    for part in ('frame', 'glass'):
+    for part in mesh['parts']:
+        lines.append('o {}_{}'.format(name, part))
         lines.append('g {}_{}'.format(name, part))
         last = None
         for fi, f in enumerate(mesh['faces']):

@@ -41,9 +41,13 @@ CAMERA_FLOATS = ('lens', 'ortho_scale', 'sensor_width', 'sensor_height', 'shift_
 # projection, so any parameter that changes the image (incl. ones not listed above) is a mismatch.
 CAMERA_KEYS = {'type', 'matrix_world', 'projection', 'sensor_fit', 'resolution', 'pixel_aspect',
                *CAMERA_FLOATS}
-RENDER_KEYS = ('engine', 'style', 'use_world_space_lighting', 'dither_intensity',
-               'color_mode', 'color_depth', 'compression',
-               'use_border', 'use_multiview', 'image_views_format')
+RENDER_KEYS = {'engine', 'style', 'view_transform', 'look', 'exposure', 'gamma', 'use_curve_mapping',
+               'use_white_balance', 'emulation',
+               'display_device', 'world_color', 'world_use_nodes', 'background_type',
+               'background_color', 'thickness', 'use_border', 'use_multiview',
+               'image_views_format', 'workbench', 'use_world_space_lighting',
+               'dither_intensity', 'color_mode', 'color_depth', 'compression',
+               'color_management', 'use_sequencer', 'use_compositing'}
 TOLERANCE = 1e-6
 
 
@@ -93,6 +97,52 @@ def compare_cameras(before, after):
     """Return the camera keys that differ (sorted); raise ValueError on a partial or non-finite record."""
     a, b = _normal(before), _normal(after)
     return sorted(key for key in CAMERA_KEYS if not _close(a[key], b[key]))
+
+
+def compare_render_state(before, after):
+    """Require complete finite state; return exact differing keys (no wire-width tolerance)."""
+    for state in (before, after):
+        if not isinstance(state, dict):
+            raise ValueError('render record must be an object')
+        keys = set(state)
+        if keys != RENDER_KEYS:
+            raise ValueError(f'render keys missing {sorted(RENDER_KEYS - keys)} unknown {sorted(keys - RENDER_KEYS)}')
+        for key, allowed in (('engine', {'BLENDER_WORKBENCH'}), ('style', STYLES),
+                             ('color_management', {'FOLLOW_SCENE', 'OVERRIDE'}),
+                             ('emulation', {'AUTO', 'OFF'}),
+                             ('color_mode', {'BW', 'RGB', 'RGBA'}),
+                             ('color_depth', {'8', '16'}),
+                             ('image_views_format', {'INDIVIDUAL', 'STEREO_3D'}),
+                             ('background_type', {'WORLD', 'VIEWPORT', 'THEME'})):
+            if not isinstance(state[key], str) or state[key] not in allowed:
+                raise ValueError(f'render {key} unsupported: {state[key]!r}')
+        for key in ('view_transform', 'look', 'display_device'):
+            if not isinstance(state[key], str) or not state[key].strip():
+                raise ValueError(f'render {key} must be a nonempty string')
+        for key in ('world_use_nodes', 'use_curve_mapping', 'use_white_balance',
+                    'use_border', 'use_multiview', 'use_world_space_lighting',
+                    'use_sequencer', 'use_compositing'):
+            if not isinstance(state[key], bool):
+                raise ValueError(f'render {key} must be a boolean')
+        if not isinstance(state['workbench'], dict):
+            raise ValueError('render workbench must be an object')
+        for key in ('exposure', 'gamma', 'dither_intensity'):
+            _finite(state[key], f'render.{key}')
+        if not 0 <= state['dither_intensity'] <= 2:
+            raise ValueError('render dither_intensity must be in 0..2')
+        compression = state['compression']
+        if isinstance(compression, bool) or not isinstance(compression, int) or not 0 <= compression <= 100:
+            raise ValueError('render compression must be an integer in 0..100')
+        if state['gamma'] <= 0:
+            raise ValueError('render gamma must be positive')
+        for key in ('world_color', 'background_color'):
+            _vector(state, key, 3)
+        if state['style'] == 'wire':
+            if _finite(state['thickness'], 'render.thickness') <= 0:
+                raise ValueError('render thickness must be positive for wire')
+        elif state['thickness'] is not None:
+            raise ValueError('render thickness must be null for non-wire style')
+    return sorted(k for k in RENDER_KEYS if before[k] != after[k])
 
 
 def validate_request(spec):
@@ -252,7 +302,7 @@ def run(args):
                              timeout=args.timeout, log_path=partial / 'blender.log')
         try:
             differ = compare_cameras(record['before']['camera'], record['after']['camera'])
-            render_differ = [k for k in RENDER_KEYS if record['before']['render'][k] != record['after']['render'][k]]
+            render_differ = compare_render_state(record['before']['render'], record['after']['render'])
         except (KeyError, TypeError, ValueError) as exc:
             raise BeforeAfterError(f'render evidence incomplete: {exc}') from None
         if differ or render_differ:

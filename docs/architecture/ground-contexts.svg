@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2735 1586" width="2735" height="1586" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1556" width="2990" height="1556" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2735" height="1586" fill="#ffffff"/>
+<rect x="10" y="-30" width="2990" height="1556" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40.0" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="347.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -8,27 +8,27 @@
 <rect x="1870.0" y="347.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="672.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="672.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="899.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1024.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1024.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1198.0" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1366.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<line x1="510.0" y1="436.25" x2="650.0" y2="418.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120.0" y1="418.75" x2="1260.0" y2="480.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1730.0" y1="480.0" x2="1870.0" y2="427.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1425.0" y1="198.75" x2="1870.0" y2="427.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1260.0" y1="480.0" x2="1120.0" y2="778.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1495.0" y1="612.5" x2="2105.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1120.0" y1="778.75" x2="1260.0" y2="761.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1495.0" y1="850.0" x2="1495.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="2105.0" y1="507.5" x2="1495.0" y2="1024.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1870.0" y1="1104.0" x2="1730.0" y2="1165.25" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="1495.0" y1="1306.5" x2="1495.0" y2="1366.5" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="650.0" y="899.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="994.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="994.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1168.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1336.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<polyline points="510.0,436.25 530.0,436.25 530.0,510.0 1140.0,510.0 1140.0,418.75 1120.0,418.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,418.75 1140.0,418.75 1140.0,327.5 1750.0,327.5 1750.0,480.0 1730.0,480.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,480.0 1750.0,480.0 1750.0,510.0 2360.0,510.0 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 2360.0,327.5 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,480.0 1750.0,480.0 1750.0,652.5 1140.0,652.5 1140.0,778.75 1120.0,778.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,480.0 1750.0,480.0 1750.0,974.0 2360.0,974.0 2360.0,1074.0 2340.0,1074.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,778.75 1140.0,778.75 1140.0,870.0 1750.0,870.0 1750.0,761.25 1730.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,761.25 1750.0,761.25 1750.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,427.5 2360.0,427.5 2360.0,974.0 1750.0,974.0 1750.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,1074.0 2360.0,1074.0 2360.0,1223.0 1850.0,1223.0 1850.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,1135.25 1750.0,1135.25 1750.0,1416.5 1730.0,1416.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Ground (НПМ + ВПМ) — D293 (#1392)</tspan>
 </text>
 <text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
-<tspan x="40" dy="16">Легенда: зелёный — модуль-владелец и его функции (контракт: вход -&gt; выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше</tspan>
+<tspan x="40" dy="16">Легенда: зелёный — модуль-владелец и его функции (контракт: вход -&gt; выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами</tspan>
 </text>
 <text x="963.0" y="120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Общее ядро: номер тайла UDIM (UDIM = ID покрытия)</tspan>
@@ -113,10 +113,8 @@
 </text>
 <text x="658.0" y="909.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
-<tspan x="658.0" dy="15.0">• jobs/VATUTINO-SITE/place_site.py:87 — своя расстановка участка в</tspan>
-<tspan x="658.0" dy="15.0">задании поверх движка (#1383)</tspan>
 </text>
-<text x="1268.0" y="1034.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1004.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Экспорт и пакеты НПМ / ВПМ</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
 <tspan x="1268.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
@@ -133,7 +131,7 @@
 <tspan x="1268.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
 <tspan x="1268.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="1878.0" y="1034.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1004.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
 <tspan x="1878.0" dy="17.5">канон UCX (D225): выпуклые куски и зазоры между ними</tspan>
@@ -143,12 +141,10 @@
 <tspan x="1878.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="1878.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="1878.0" y="1208.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1178.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
-<tspan x="1878.0" dy="15.0">• jobs/VATUTINO-SITE/assemble_delivery.py:25 — UCX Ground из</tspan>
-<tspan x="1878.0" dy="15.0">готовых FBX по путям C:/x (#1383)</tspan>
 </text>
-<text x="1268.0" y="1376.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1346.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Проверки Ground, xView, СИНТЕЗ</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
 <tspan x="1268.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
@@ -158,51 +154,51 @@
 <tspan x="1268.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="1268.0" dy="17.5">находки НПМ</tspan>
 </text>
-<rect x="550.0" y="418.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="580.0" y="418.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="580.0" dy="14">исходники</tspan>
+<rect x="805.0" y="501.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="501.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="835.0" dy="14">исходники</tspan>
 </text>
-<rect x="1160.0" y="440.38" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="440.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">граница и ноль</tspan>
+<rect x="1415.0" y="318.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="318.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">граница и ноль</tspan>
 </text>
-<rect x="1770.0" y="435.75" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="435.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">плоский Ground</tspan>
-<tspan x="1800.0" dy="17.5">с ID</tspan>
+<rect x="2025.0" y="492.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="492.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">плоский Ground</tspan>
+<tspan x="2055.0" dy="17.5">с ID</tspan>
 </text>
-<rect x="1617.5" y="304.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="304.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1647.5" dy="14">тайл UDIM = ID</tspan>
+<rect x="1872.5" y="318.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1902.5" y="318.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1902.5" dy="14">тайл UDIM = ID</tspan>
 </text>
-<rect x="1160.0" y="611.38" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="611.38" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">рельеф для</tspan>
-<tspan x="1190.0" dy="17.5">высот</tspan>
+<rect x="1415.0" y="634.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="634.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">рельеф для</tspan>
+<tspan x="1445.0" dy="17.5">высот</tspan>
 </text>
-<rect x="1770.0" y="809.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="809.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">рельеф</tspan>
+<rect x="2025.0" y="965.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="965.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">рельеф</tspan>
 </text>
-<rect x="1160.0" y="752.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1190.0" y="752.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1190.0" dy="14">точки МАФ /</tspan>
-<tspan x="1190.0" dy="17.5">Флоры</tspan>
+<rect x="1415.0" y="852.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="852.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">точки МАФ /</tspan>
+<tspan x="1445.0" dy="17.5">Флоры</tspan>
 </text>
-<rect x="1465.0" y="928.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="928.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1495.0" dy="14">НПМ на атласе</tspan>
+<rect x="1720.0" y="939.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="939.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">НПМ на атласе</tspan>
 </text>
-<rect x="1770.0" y="756.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="756.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">атлас / UDIM</tspan>
+<rect x="2025.0" y="965.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="965.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">атлас / UDIM</tspan>
 </text>
-<rect x="1770.0" y="1125.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1800.0" y="1125.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1800.0" dy="14">коллизии UCX_</tspan>
+<rect x="2075.0" y="1214.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2105.0" y="1214.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2105.0" dy="14">коллизии UCX_</tspan>
 </text>
-<rect x="1465.0" y="1327.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="1327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1495.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="1720.0" y="1266.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1266.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

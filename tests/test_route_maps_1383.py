@@ -40,11 +40,15 @@ def test_generator_knows_three_routes_and_writes_eight_files():
                                              "package-route"}
     files = route_map.render_all(ROOT)[2]
     names = sorted(p.name for p in files)
-    assert names == sorted(f"{n}.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "contexts",
-                                                "vpm-oks-contexts", "ground-contexts",   # + two maps (#1392)
-                                                "maf-route", "flora-route", "package-route", "maf-contexts",
-                                                "flora-contexts", "package-contexts")    # #1393
-                           for s in ("excalidraw", "svg"))
+    detailed = [f"{n}.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "contexts",
+                                    "vpm-oks-contexts", "ground-contexts", "maf-route", "flora-route",
+                                    "package-route", "maf-contexts", "flora-contexts", "package-contexts")
+                for s in ("excalidraw", "svg")]
+    short = [f"{n}-scheme.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "maf-route",
+                                      "flora-route", "package-route") for s in ("excalidraw", "svg")]
+    tables = [f"{n}-owners.md" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "maf-route",
+                                      "flora-route", "package-route")]
+    assert names == sorted(detailed + short + tables)
 
 
 @pytest.mark.parametrize("name", sorted(NEW))

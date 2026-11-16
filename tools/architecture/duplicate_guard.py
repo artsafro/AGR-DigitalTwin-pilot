@@ -24,11 +24,17 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `calculate_all_checks` (attribute or bare name). Every row must say why it stays (`ru`).
 - `master-qa`  owner tools/blender/qa_master.py (#1379): the one Blender master-geometry QA (quads, quad size, T-junctions,
   open edges, flipped normals). Flags any other `def world_bm` (its helper name). Every row must say why it stays.
+- `vpm-uv` owner tools/blender/vpm_uv.py (#1380): shared Blender periodic VPM UV + edge-ring slicer;
+  flags definitions named pack_uv / texel_cut under jobs/ + tools/ + src/. This is not the gated NPM atlas
+  owner migration (#1141). KPP1/TEC26 are import shims; PSU275 imports the shared owner directly.
+- `seam-seal`  owner tools/blender/seam_seal.py (#1381): the one Blender seam seal (weld + T-junction ring splits, quads
+  only; moved from jobs/KPP1/scripts/seal.py, now an import shim). Flags any other `def seal` / `def ring_split` /
+  `def t_junctions` (its function names). Every row must say why it stays.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
 and src/ now call the owner); `delivery-zip` jobs/ + tools/ + src/ (#1377: owner settled); `blender-launch`,
-`sintez-checker`, `master-qa` jobs/ + tools/ + src/ from the start (#1378, #1379). Each guarded
+`sintez-checker`, `master-qa`, `seam-seal` jobs/ + tools/ + src/ from the start (#1378, #1379, #1381). Each guarded
 folder must exist (a missing one is an error, not an empty pass).
 The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml: every finding in a guarded scope
 must be listed there with an issue reference, and every listed row (also the documented copies outside the guarded
@@ -69,18 +75,23 @@ RULES = {
     "blender-launch": "src/dt_ai/core/blender_runner.py",
     "sintez-checker": "tools/blender/sintez_checker.py",
     "master-qa": "tools/blender/qa_master.py",
+    "vpm-uv": "tools/blender/vpm_uv.py",
+    "seam-seal": "tools/blender/seam_seal.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
 GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
-           "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src")}   # #1379
+           "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
+           "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
+           "seam-seal": ("jobs", "tools", "src")}   # #1381
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
-               "master-qa": {"world_bm"}}
+               "master-qa": {"world_bm"},
+               "seam-seal": {"seal", "ring_split", "t_junctions"}}
 SINTEZ_ENTRY = "calculate_all_checks"   # the checker's own "Check AGR zip-files" entry point
 
 
@@ -218,8 +229,20 @@ def _master_hits(tree):
             and node.name in OWNED_NAMES["master-qa"]]
 
 
+def _vpm_uv_hits(tree):
+    """Definitions of the shared periodic VPM UV/slicer entry points, not mere imports or calls."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in {'pack_uv', 'texel_cut'}]
+
+
+def _seal_hits(tree):
+    """Definitions carrying the seam-seal owner's function names (`def seal` / `ring_split` / `t_junctions`)."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in OWNED_NAMES["seam-seal"]]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
-          "sintez-checker": _sintez_hits, "master-qa": _master_hits}
+          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -383,12 +406,6 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
     ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
-    ("contexts", "jobs/KPP1/scripts/vpm_uv.py::tile_offset", "ec9495a822"),
-    ("contexts", "jobs/TEC26-OKS/scripts/vpm_uv.py::tile_offset", "ec9495a822"),
-    ("contexts", "jobs/KPP1/scripts/build_kpp1.py:421", ""),
-    ("contexts", "jobs/KPP1/scripts/seal.py:302", ""),
-    ("contexts", "jobs/KPP1/scripts/seal.py:73", ""),
-    ("contexts", "jobs/TEC26-OKS/scripts/vpm_uv.py:155", ""),
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
     ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
     ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "54a2d44744"),
@@ -415,7 +432,6 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
     ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
     ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
-    ("vpm-contexts", "jobs/TEC26-OKS/scripts/vpm_uv.py:155", ""),
 
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",

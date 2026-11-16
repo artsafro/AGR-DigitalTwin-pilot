@@ -65,13 +65,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "fontSize": 16,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "top",
    "containerId": null,
-   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -103,6 +103,10 @@
     {
      "type": "text",
      "id": "edec5de9abb756a8"
+    },
+    {
+     "type": "arrow",
+     "id": "e9fcb6d874f2a894"
     }
    ],
    "updated": 1,
@@ -151,7 +155,7 @@
    "x": 955.0,
    "y": 319.0,
    "width": 470,
-   "height": 65.0,
+   "height": 35.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -173,10 +177,6 @@
     {
      "type": "text",
      "id": "e135b12210d81506"
-    },
-    {
-     "type": "arrow",
-     "id": "e9fcb6d874f2a894"
     }
    ],
    "updated": 1,
@@ -189,7 +189,7 @@
    "x": 963.0,
    "y": 329.0,
    "width": 454,
-   "height": 45.0,
+   "height": 15.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -209,13 +209,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 1\n• jobs/VATUTINO-SITE/place_site.py:87 — своя расстановка участка в\nзадании поверх движка (#1393)",
+   "text": "Дубли вне владельца: 1",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ede9c53268854939",
-   "originalText": "Дубли вне владельца: 1\n• jobs/VATUTINO-SITE/place_site.py:87 — своя расстановка участка в\nзадании поверх движка (#1393)",
+   "originalText": "Дубли вне владельца: 1",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -223,7 +223,7 @@
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
    "x": 40.0,
-   "y": 444.0,
+   "y": 414.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -261,7 +261,7 @@
    "id": "ed4e9eac2280ec03",
    "type": "text",
    "x": 48.0,
-   "y": 454.0,
+   "y": 424.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -297,7 +297,7 @@
    "id": "ec64300e2c586133",
    "type": "rectangle",
    "x": 650.0,
-   "y": 444.0,
+   "y": 414.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -339,7 +339,7 @@
    "id": "edc9417f49164a65",
    "type": "text",
    "x": 658.0,
-   "y": 454.0,
+   "y": 424.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -375,7 +375,7 @@
    "id": "e4e08605fe13983d",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 444.0,
+   "y": 414.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -417,7 +417,7 @@
    "id": "e9db42eb04a461fc",
    "type": "text",
    "x": 1573.0,
-   "y": 454.0,
+   "y": 424.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -453,7 +453,7 @@
    "id": "ea87d811c0bc3761",
    "type": "rectangle",
    "x": 2175.0,
-   "y": 444.0,
+   "y": 414.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -495,7 +495,7 @@
    "id": "efec4c7cab82aa80",
    "type": "text",
    "x": 2183.0,
-   "y": 454.0,
+   "y": 424.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -531,7 +531,7 @@
    "id": "ee632406eec8a414",
    "type": "rectangle",
    "x": 345.0,
-   "y": 716.5,
+   "y": 686.5,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -569,7 +569,7 @@
    "id": "e7bc7c585645a517",
    "type": "text",
    "x": 353.0,
-   "y": 726.5,
+   "y": 696.5,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -605,7 +605,7 @@
    "id": "ebefb8015300e481",
    "type": "rectangle",
    "x": 955.0,
-   "y": 716.5,
+   "y": 686.5,
    "width": 470,
    "height": 142.5,
    "angle": 0,
@@ -655,7 +655,7 @@
    "id": "ee52b2029f7668ad",
    "type": "text",
    "x": 963.0,
-   "y": 726.5,
+   "y": 696.5,
    "width": 454,
    "height": 122.5,
    "angle": 0,
@@ -691,7 +691,7 @@
    "id": "e99225f63e15102b",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 971.5,
+   "y": 941.5,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -737,7 +737,7 @@
    "id": "e0a5e7feece0676b",
    "type": "text",
    "x": 1573.0,
-   "y": 981.5,
+   "y": 951.5,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -773,7 +773,7 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 955.0,
-   "y": 971.5,
+   "y": 941.5,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -815,7 +815,7 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 963.0,
-   "y": 981.5,
+   "y": 951.5,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -851,7 +851,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 345.0,
-   "y": 971.5,
+   "y": 941.5,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -889,7 +889,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 353.0,
-   "y": 981.5,
+   "y": 951.5,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -925,7 +925,7 @@
    "id": "e3b1e74958f468e1",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 1314.0,
+   "y": 1284.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -963,7 +963,7 @@
    "id": "e9c69cbeaa3ccc77",
    "type": "text",
    "x": 1573.0,
-   "y": 1324.0,
+   "y": 1294.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -999,9 +999,9 @@
    "id": "eae7405c99988339",
    "type": "arrow",
    "x": 510.0,
-   "y": 532.75,
-   "width": 140.0,
-   "height": 0.0,
+   "y": 502.75,
+   "width": 630.0,
+   "height": 108.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1012,9 +1012,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 169997421,
    "version": 1,
    "versionNonce": 203889862,
@@ -1030,11 +1028,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     140.0,
+     120.0,
+     0.0
+    ],
+    [
+     120.0,
+     -108.75
+    ],
+    [
+     630.0,
+     -108.75
+    ],
+    [
+     630.0,
+     0.0
+    ],
+    [
+     610.0,
      0.0
     ]
    ],
@@ -1056,8 +1070,8 @@
   {
    "id": "e6fb9676d8f2e381",
    "type": "text",
-   "x": 520.0,
-   "y": 514.75,
+   "x": 825.0,
+   "y": 376.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1093,9 +1107,9 @@
    "id": "e77f3b2afbd877e7",
    "type": "arrow",
    "x": 1120.0,
-   "y": 532.75,
-   "width": 445.0,
-   "height": 8.75,
+   "y": 502.75,
+   "width": 935.0,
+   "height": 108.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1106,9 +1120,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1254259014,
    "version": 1,
    "versionNonce": 1951573158,
@@ -1124,11 +1136,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     445.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     108.75
+    ],
+    [
+     935.0,
+     108.75
+    ],
+    [
+     935.0,
+     8.75
+    ],
+    [
+     915.0,
      8.75
     ]
    ],
@@ -1150,8 +1178,8 @@
   {
    "id": "e3a2d1aad8b26a14",
    "type": "text",
-   "x": 1282.5,
-   "y": 528.12,
+   "x": 1537.5,
+   "y": 602.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1187,9 +1215,9 @@
    "id": "ec61ae47892f88a6",
    "type": "arrow",
    "x": 2035.0,
-   "y": 541.5,
-   "width": 140.0,
-   "height": 8.75,
+   "y": 511.5,
+   "width": 630.0,
+   "height": 117.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1200,9 +1228,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 166870674,
    "version": 1,
    "versionNonce": 1849251347,
@@ -1218,11 +1244,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     117.5
+    ],
+    [
+     630.0,
+     117.5
+    ],
+    [
+     630.0,
+     8.75
+    ],
+    [
+     610.0,
      8.75
     ]
    ],
@@ -1244,8 +1286,8 @@
   {
    "id": "eb0b3872be60bb71",
    "type": "text",
-   "x": 2045.0,
-   "y": 536.88,
+   "x": 2300.0,
+   "y": 620.0,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1280,9 +1322,9 @@
   {
    "id": "eb4f93c2b1c798d6",
    "type": "arrow",
-   "x": 2175.0,
-   "y": 550.25,
-   "width": 750.0,
+   "x": 2645.0,
+   "y": 520.25,
+   "width": 1240.0,
    "height": 237.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -1294,9 +1336,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1618670754,
    "version": 1,
    "versionNonce": 489605074,
@@ -1312,11 +1352,19 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     -750.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     237.5
+    ],
+    [
+     -1220.0,
      237.5
     ]
    ],
@@ -1338,8 +1386,8 @@
   {
    "id": "ecefdc129f9845a9",
    "type": "text",
-   "x": 1740.0,
-   "y": 651.0,
+   "x": 1985.0,
+   "y": 739.75,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1374,10 +1422,10 @@
   {
    "id": "e9fcb6d874f2a894",
    "type": "arrow",
-   "x": 1190.0,
-   "y": 384.0,
-   "width": 0.0,
-   "height": 332.5,
+   "x": 1425.0,
+   "y": 207.5,
+   "width": 20.0,
+   "height": 550.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1388,9 +1436,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 827851703,
    "version": 1,
    "versionNonce": 281777646,
@@ -1406,12 +1452,20 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     550.25
     ],
     [
      0.0,
-     332.5
+     550.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1419,7 +1473,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "ede9c53268854939",
+    "elementId": "e1aaee826150be1a",
     "focus": 0,
     "gap": 4
    },
@@ -1432,8 +1486,8 @@
   {
    "id": "e606743a0a5c527f",
    "type": "text",
-   "x": 1130.0,
-   "y": 541.25,
+   "x": 1385.0,
+   "y": 473.62,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1469,9 +1523,9 @@
    "id": "ec87553ab808f754",
    "type": "arrow",
    "x": 815.0,
-   "y": 814.0,
-   "width": 140.0,
-   "height": 26.25,
+   "y": 784.0,
+   "width": 630.0,
+   "height": 91.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1482,9 +1536,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 18425638,
    "version": 1,
    "versionNonce": 1584098381,
@@ -1500,11 +1552,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     65.0
+    ],
+    [
+     630.0,
+     65.0
+    ],
+    [
+     630.0,
+     -26.25
+    ],
+    [
+     610.0,
      -26.25
     ]
    ],
@@ -1526,8 +1594,8 @@
   {
    "id": "e748da56e5d5bf8d",
    "type": "text",
-   "x": 825.0,
-   "y": 791.88,
+   "x": 1080.0,
+   "y": 840.0,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1562,10 +1630,10 @@
   {
    "id": "e57593ab63964101",
    "type": "arrow",
-   "x": 1190.0,
-   "y": 859.0,
-   "width": 610.0,
-   "height": 112.5,
+   "x": 1425.0,
+   "y": 757.75,
+   "width": 630.0,
+   "height": 272.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1576,9 +1644,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1283668084,
    "version": 1,
    "versionNonce": 1282490978,
@@ -1594,12 +1660,28 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     163.75
+    ],
+    [
+     630.0,
+     163.75
+    ],
+    [
+     630.0,
+     272.5
     ],
     [
      610.0,
-     112.5
+     272.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1620,8 +1702,8 @@
   {
    "id": "e24181c04d95562b",
    "type": "text",
-   "x": 1435.0,
-   "y": 906.25,
+   "x": 1690.0,
+   "y": 912.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1656,10 +1738,10 @@
   {
    "id": "eb0c289f177180a1",
    "type": "arrow",
-   "x": 1800.0,
-   "y": 1149.0,
-   "width": 0.0,
-   "height": 165.0,
+   "x": 2035.0,
+   "y": 1030.25,
+   "width": 20.0,
+   "height": 351.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1670,9 +1752,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1978275682,
    "version": 1,
    "versionNonce": 1939123774,
@@ -1688,12 +1768,20 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     351.25
     ],
     [
      0.0,
-     165.0
+     351.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1714,8 +1802,8 @@
   {
    "id": "e2cd0763e471d256",
    "type": "text",
-   "x": 1740.0,
-   "y": 1222.5,
+   "x": 1995.0,
+   "y": 1196.88,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1750,10 +1838,10 @@
   {
    "id": "ec7e189965a97a82",
    "type": "arrow",
-   "x": 1565.0,
-   "y": 1060.25,
-   "width": 140.0,
-   "height": 52.5,
+   "x": 2035.0,
+   "y": 1030.25,
+   "width": 630.0,
+   "height": 91.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1764,9 +1852,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 767809568,
    "version": 1,
    "versionNonce": 1885770576,
@@ -1782,11 +1868,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     -140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     91.25
+    ],
+    [
+     -490.0,
+     91.25
+    ],
+    [
+     -490.0,
+     52.5
+    ],
+    [
+     -610.0,
      52.5
     ]
    ],
@@ -1808,8 +1910,8 @@
   {
    "id": "e4ab9c0e6b1a460f",
    "type": "text",
-   "x": 1435.0,
-   "y": 1068.5,
+   "x": 1740.0,
+   "y": 1103.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1844,10 +1946,10 @@
   {
    "id": "e4f552790d995798",
    "type": "arrow",
-   "x": 955.0,
-   "y": 1112.75,
-   "width": 140.0,
-   "height": 61.25,
+   "x": 1425.0,
+   "y": 1082.75,
+   "width": 630.0,
+   "height": 161.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1858,9 +1960,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1075795888,
    "version": 1,
    "versionNonce": 801242419,
@@ -1876,11 +1976,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     -140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     -161.25
+    ],
+    [
+     -590.0,
+     -161.25
+    ],
+    [
+     -590.0,
+     -61.25
+    ],
+    [
+     -610.0,
      -61.25
     ]
    ],
@@ -1902,8 +2018,8 @@
   {
    "id": "e321747c08b4204e",
    "type": "text",
-   "x": 825.0,
-   "y": 1073.12,
+   "x": 1080.0,
+   "y": 912.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
