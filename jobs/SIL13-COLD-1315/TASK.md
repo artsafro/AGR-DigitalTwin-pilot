@@ -190,3 +190,23 @@ bound remains applicable only by actual-array equality;213widepairs remainopen.
 454affected tests pass/5historical deselected; separate4unresolvedtestsFAIL.
 No new human/model gate, no readiness/deliveryPASS; technical repairs worker-owned.
 Full suite: deferred to merge batch (rule 68).
+
+## v020 current continuation
+
+[CONTINUATION-v020.md](CONTINUATION-v020.md) supersedes ALL resume locations above:
+NPMv020/site-urn-r3, VPMv020/site-ucx-r4. FourUrn floor joints are technically
+finished with bounds/pivots/sourcecensus preserved, every changed shelf completely
+below actualGround by>=9.281mm;8placed raw/native checks clean. Only9Z coordinates
+per Urn changed. UCX564pieces/6564tris, actualraw/native allUCX0/0/0/0;36original
+pieces certified redundant by NEW complete57226triangle coverage proof,
+446541partitionvertices/89.935644792mm upperbound/0unassigned/0degenerate.
+Retained564UCX/render arrays EXACT against corresponding previous raw/native exports.
+175wideUCXpairs remainOPEN, not a gap waiver.38MAF/4582plants retained;
+NPM178571raw178556native/VPM311042rawnative, nativeNPM15face lossFAIL.
+WholeVPM3595faces0vertices36bowties and nativevalidator3/3/1/5FAIL.
+Rejected NPMBench/Canopy/UCXmerge/cluster/reconstructedr3 never promoted.
+483affectedpass/5historical deselected; separateCURRENT4failed, isolated3failed2passed.
+286Drivefiles351458541bytes sealed,22original/source/library/map/resume hashes equal.
+No new user question; all prior model/picture gates stay CLOSED. Technical work
+remains worker-owned; finalvisual/material and completeSINTEZ only after repairs.
+Full suite: deferred to merge batch (rule 68).

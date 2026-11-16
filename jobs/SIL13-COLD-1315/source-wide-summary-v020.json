@@ -1,0 +1,1758 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-Urn-floor-UCX-redundancy-v020",
+  "base_checkpoint": "10adbf26a34a12727403e52cc7cbad4310dd53d5",
+  "new_user_question": null,
+  "closed_gates": "D321/NPMTable/Bench025/hedges/composition remain CLOSED",
+  "scope": "D305/D316 copy-only Urn floor joint and certified redundant UCX reduction; no sources/libraries/shared/checkers edited",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v020\\site-urn-r3\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "da34d8c845473efe9aec4be6ef9b37b6f38033de201b8807deb7ea8fefc3d1bc"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v020\\site-ucx-r4\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "12b91405b9bf69dcd105584be1f8263afa829c2d2627263f9db64cc46e41cf68"
+    }
+  },
+  "retained_MAF": 38,
+  "retained_plant_census": 4582,
+  "Urn": {
+    "passed": false,
+    "scope": "four actual Urn copies, shelf clearance only; whole-site QA incomplete",
+    "controls": [
+      {
+        "profile": "NPM",
+        "handle": "33FB3AD",
+        "bbox_exact": true,
+        "other_vertices_exact": true,
+        "deleted_faces": 0,
+        "placement_delta_m": 3.5898712198445537e-06,
+        "min_m": -0.05735267395550325,
+        "max_m": -0.04032709449529647,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.051061749486483454,
+            "max_m": -0.04032709449529648,
+            "partition_polygons": 12,
+            "missing_area_m2": 7.91033905045424e-16,
+            "area_m2": 0.04058961159717104
+          },
+          {
+            "face": 1,
+            "min_m": -0.053220102168832106,
+            "max_m": -0.046527095139026586,
+            "partition_polygons": 12,
+            "missing_area_m2": 1.4869832795638693e-16,
+            "area_m2": 0.04209756850014022
+          },
+          {
+            "face": 2,
+            "min_m": -0.05735267395550325,
+            "max_m": -0.04722009838591629,
+            "partition_polygons": 4,
+            "missing_area_m2": 1.97758476261356e-16,
+            "area_m2": 0.0007548584271714125
+          },
+          {
+            "face": 3,
+            "min_m": -0.05726175013021367,
+            "max_m": -0.04658057646488645,
+            "partition_polygons": 6,
+            "missing_area_m2": 1.4742439040371647e-16,
+            "area_m2": 0.04134380671166681
+          },
+          {
+            "face": 4,
+            "min_m": -0.05106174948648351,
+            "max_m": -0.04032709449529647,
+            "partition_polygons": 6,
+            "missing_area_m2": 7.025630077706069e-17,
+            "area_m2": 0.04058961159716973
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      },
+      {
+        "profile": "NPM",
+        "handle": "33FB3AE",
+        "bbox_exact": true,
+        "other_vertices_exact": true,
+        "deleted_faces": 0,
+        "placement_delta_m": 4.601961890671191e-06,
+        "min_m": -0.08529315727282416,
+        "max_m": -0.009281450402506053,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.07804880345241472,
+            "max_m": -0.009281450402506053,
+            "partition_polygons": 10,
+            "missing_area_m2": 6.104871382722754e-16,
+            "area_m2": 0.04058969263496717
+          },
+          {
+            "face": 1,
+            "min_m": -0.08529315727282416,
+            "max_m": -0.020898193260149966,
+            "partition_polygons": 6,
+            "missing_area_m2": 7.129713486264677e-16,
+            "area_m2": 0.04209702313528415
+          },
+          {
+            "face": 2,
+            "min_m": -0.02689817922842863,
+            "max_m": -0.014425070121042438,
+            "partition_polygons": 6,
+            "missing_area_m2": 3.625572064791527e-16,
+            "area_m2": 0.0007547749264633189
+          },
+          {
+            "face": 3,
+            "min_m": -0.07887916741886869,
+            "max_m": -0.015481465947399187,
+            "partition_polygons": 10,
+            "missing_area_m2": 2.441623292437356e-16,
+            "area_m2": 0.041343341083120336
+          },
+          {
+            "face": 4,
+            "min_m": -0.07804880345241294,
+            "max_m": -0.009281450402506053,
+            "partition_polygons": 10,
+            "missing_area_m2": 4.312075327882192e-17,
+            "area_m2": 0.04058970509868266
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      },
+      {
+        "profile": "VPM",
+        "handle": "33FB3AD",
+        "bbox_exact": true,
+        "other_vertices_exact": true,
+        "deleted_faces": 0,
+        "placement_delta_m": 3.5898712198445537e-06,
+        "min_m": -0.05735267395550325,
+        "max_m": -0.04032709449529647,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.051061749486483454,
+            "max_m": -0.04032709449529648,
+            "partition_polygons": 12,
+            "missing_area_m2": 7.91033905045424e-16,
+            "area_m2": 0.04058961159717104
+          },
+          {
+            "face": 1,
+            "min_m": -0.053220102168832106,
+            "max_m": -0.046527095139026586,
+            "partition_polygons": 12,
+            "missing_area_m2": 1.4869832795638693e-16,
+            "area_m2": 0.04209756850014022
+          },
+          {
+            "face": 2,
+            "min_m": -0.05735267395550325,
+            "max_m": -0.04722009838591629,
+            "partition_polygons": 4,
+            "missing_area_m2": 1.97758476261356e-16,
+            "area_m2": 0.0007548584271714125
+          },
+          {
+            "face": 3,
+            "min_m": -0.05726175013021367,
+            "max_m": -0.04658057646488645,
+            "partition_polygons": 6,
+            "missing_area_m2": 1.4742439040371647e-16,
+            "area_m2": 0.04134380671166681
+          },
+          {
+            "face": 4,
+            "min_m": -0.05106174948648351,
+            "max_m": -0.04032709449529647,
+            "partition_polygons": 6,
+            "missing_area_m2": 7.025630077706069e-17,
+            "area_m2": 0.04058961159716973
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      },
+      {
+        "profile": "VPM",
+        "handle": "33FB3AE",
+        "bbox_exact": true,
+        "other_vertices_exact": true,
+        "deleted_faces": 0,
+        "placement_delta_m": 4.608323170174344e-06,
+        "min_m": -0.08529315727282416,
+        "max_m": -0.009281450402506053,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.07804880345241472,
+            "max_m": -0.009281450402506053,
+            "partition_polygons": 10,
+            "missing_area_m2": 6.104871382722754e-16,
+            "area_m2": 0.04058969263496717
+          },
+          {
+            "face": 1,
+            "min_m": -0.08529315727282416,
+            "max_m": -0.020898193260149966,
+            "partition_polygons": 6,
+            "missing_area_m2": 7.129713486264677e-16,
+            "area_m2": 0.04209702313528415
+          },
+          {
+            "face": 2,
+            "min_m": -0.02689817922842863,
+            "max_m": -0.014425070121042438,
+            "partition_polygons": 6,
+            "missing_area_m2": 3.625572064791527e-16,
+            "area_m2": 0.0007547749264633189
+          },
+          {
+            "face": 3,
+            "min_m": -0.07887916741886869,
+            "max_m": -0.015481465947399187,
+            "partition_polygons": 10,
+            "missing_area_m2": 2.441623292437356e-16,
+            "area_m2": 0.041343341083120336
+          },
+          {
+            "face": 4,
+            "min_m": -0.07804880345241294,
+            "max_m": -0.009281450402506053,
+            "partition_polygons": 10,
+            "missing_area_m2": 4.312075327882192e-17,
+            "area_m2": 0.04058970509868266
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      }
+    ],
+    "profiles": {
+      "NPM": {
+        "raw_triangles": 178571,
+        "native_triangles": 178556,
+        "native_face_loss": 15,
+        "unchanged_MAF": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3A5",
+          "33FB3A6",
+          "33FB3A7",
+          "33FB3A8",
+          "33FB3A9",
+          "33FB3AA",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB3B3",
+          "33FB3B4",
+          "33FB3B5",
+          "33FB3B6",
+          "33FB3B7",
+          "33FB3B8",
+          "33FB3B9",
+          "33FB3BA",
+          "33FB581"
+        ],
+        "unchanged_objects": [
+          "SM_SIL13_Flora",
+          "SM_SIL13_Ground"
+        ],
+        "Ground_Flora_600UCX_exact": true,
+        "retained_MAF": 38,
+        "retained_plant_census": 4582
+      },
+      "VPM": {
+        "raw_triangles": 311042,
+        "native_triangles": 311042,
+        "native_face_loss": 0,
+        "unchanged_MAF": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3A5",
+          "33FB3A6",
+          "33FB3A7",
+          "33FB3A8",
+          "33FB3A9",
+          "33FB3AA",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB3B3",
+          "33FB3B4",
+          "33FB3B5",
+          "33FB3B6",
+          "33FB3B7",
+          "33FB3B8",
+          "33FB3B9",
+          "33FB3BA",
+          "33FB581"
+        ],
+        "unchanged_objects": [
+          "UCX_SM_SIL13_Ground_001",
+          "UCX_SM_SIL13_Ground_002",
+          "UCX_SM_SIL13_Ground_003",
+          "UCX_SM_SIL13_Ground_004",
+          "UCX_SM_SIL13_Ground_005",
+          "UCX_SM_SIL13_Ground_006",
+          "UCX_SM_SIL13_Ground_007",
+          "UCX_SM_SIL13_Ground_008",
+          "UCX_SM_SIL13_Ground_009",
+          "UCX_SM_SIL13_Ground_010",
+          "UCX_SM_SIL13_Ground_011",
+          "UCX_SM_SIL13_Ground_012",
+          "UCX_SM_SIL13_Ground_013",
+          "UCX_SM_SIL13_Ground_014",
+          "UCX_SM_SIL13_Ground_015",
+          "UCX_SM_SIL13_Ground_016",
+          "UCX_SM_SIL13_Ground_017",
+          "UCX_SM_SIL13_Ground_018",
+          "UCX_SM_SIL13_Ground_019",
+          "UCX_SM_SIL13_Ground_020",
+          "UCX_SM_SIL13_Ground_021",
+          "UCX_SM_SIL13_Ground_022",
+          "UCX_SM_SIL13_Ground_023",
+          "UCX_SM_SIL13_Ground_024",
+          "UCX_SM_SIL13_Ground_025",
+          "UCX_SM_SIL13_Ground_026",
+          "UCX_SM_SIL13_Ground_027",
+          "UCX_SM_SIL13_Ground_028",
+          "UCX_SM_SIL13_Ground_029",
+          "UCX_SM_SIL13_Ground_030",
+          "UCX_SM_SIL13_Ground_031",
+          "UCX_SM_SIL13_Ground_032",
+          "UCX_SM_SIL13_Ground_033",
+          "UCX_SM_SIL13_Ground_034",
+          "UCX_SM_SIL13_Ground_035",
+          "UCX_SM_SIL13_Ground_036",
+          "UCX_SM_SIL13_Ground_037",
+          "UCX_SM_SIL13_Ground_038",
+          "UCX_SM_SIL13_Ground_039",
+          "UCX_SM_SIL13_Ground_040",
+          "UCX_SM_SIL13_Ground_041",
+          "UCX_SM_SIL13_Ground_042",
+          "UCX_SM_SIL13_Ground_043",
+          "UCX_SM_SIL13_Ground_044",
+          "UCX_SM_SIL13_Ground_045",
+          "UCX_SM_SIL13_Ground_046",
+          "UCX_SM_SIL13_Ground_047",
+          "UCX_SM_SIL13_Ground_048",
+          "UCX_SM_SIL13_Ground_049",
+          "UCX_SM_SIL13_Ground_050",
+          "UCX_SM_SIL13_Ground_051",
+          "UCX_SM_SIL13_Ground_052",
+          "UCX_SM_SIL13_Ground_053",
+          "UCX_SM_SIL13_Ground_054",
+          "UCX_SM_SIL13_Ground_055",
+          "UCX_SM_SIL13_Ground_056",
+          "UCX_SM_SIL13_Ground_057",
+          "UCX_SM_SIL13_Ground_058",
+          "UCX_SM_SIL13_Ground_059",
+          "UCX_SM_SIL13_Ground_060",
+          "UCX_SM_SIL13_Ground_061",
+          "UCX_SM_SIL13_Ground_062",
+          "UCX_SM_SIL13_Ground_063",
+          "UCX_SM_SIL13_Ground_064",
+          "UCX_SM_SIL13_Ground_065",
+          "UCX_SM_SIL13_Ground_066",
+          "UCX_SM_SIL13_Ground_067",
+          "UCX_SM_SIL13_Ground_068",
+          "UCX_SM_SIL13_Ground_069",
+          "UCX_SM_SIL13_Ground_070",
+          "UCX_SM_SIL13_Ground_071",
+          "UCX_SM_SIL13_Ground_072",
+          "UCX_SM_SIL13_Ground_073",
+          "UCX_SM_SIL13_Ground_074",
+          "UCX_SM_SIL13_Ground_075",
+          "UCX_SM_SIL13_Ground_076",
+          "UCX_SM_SIL13_Ground_077",
+          "UCX_SM_SIL13_Ground_078",
+          "UCX_SM_SIL13_Ground_079",
+          "UCX_SM_SIL13_Ground_080",
+          "UCX_SM_SIL13_Ground_081",
+          "UCX_SM_SIL13_Ground_082",
+          "UCX_SM_SIL13_Ground_083",
+          "UCX_SM_SIL13_Ground_084",
+          "UCX_SM_SIL13_Ground_085",
+          "UCX_SM_SIL13_Ground_086",
+          "UCX_SM_SIL13_Ground_087",
+          "UCX_SM_SIL13_Ground_088",
+          "UCX_SM_SIL13_Ground_089",
+          "UCX_SM_SIL13_Ground_090",
+          "UCX_SM_SIL13_Ground_091",
+          "UCX_SM_SIL13_Ground_092",
+          "UCX_SM_SIL13_Ground_093",
+          "UCX_SM_SIL13_Ground_094",
+          "UCX_SM_SIL13_Ground_095",
+          "UCX_SM_SIL13_Ground_096",
+          "UCX_SM_SIL13_Ground_097",
+          "UCX_SM_SIL13_Ground_098",
+          "UCX_SM_SIL13_Ground_099",
+          "UCX_SM_SIL13_Ground_100",
+          "UCX_SM_SIL13_Ground_101",
+          "UCX_SM_SIL13_Ground_102",
+          "UCX_SM_SIL13_Ground_103",
+          "UCX_SM_SIL13_Ground_104",
+          "UCX_SM_SIL13_Ground_105",
+          "UCX_SM_SIL13_Ground_106",
+          "UCX_SM_SIL13_Ground_107",
+          "UCX_SM_SIL13_Ground_108",
+          "UCX_SM_SIL13_Ground_109",
+          "UCX_SM_SIL13_Ground_110",
+          "UCX_SM_SIL13_Ground_111",
+          "UCX_SM_SIL13_Ground_112",
+          "UCX_SM_SIL13_Ground_113",
+          "UCX_SM_SIL13_Ground_114",
+          "UCX_SM_SIL13_Ground_115",
+          "UCX_SM_SIL13_Ground_116",
+          "UCX_SM_SIL13_Ground_117",
+          "UCX_SM_SIL13_Ground_118",
+          "UCX_SM_SIL13_Ground_119",
+          "UCX_SM_SIL13_Ground_120",
+          "UCX_SM_SIL13_Ground_121",
+          "UCX_SM_SIL13_Ground_122",
+          "UCX_SM_SIL13_Ground_123",
+          "UCX_SM_SIL13_Ground_124",
+          "UCX_SM_SIL13_Ground_125",
+          "UCX_SM_SIL13_Ground_126",
+          "UCX_SM_SIL13_Ground_127",
+          "UCX_SM_SIL13_Ground_128",
+          "UCX_SM_SIL13_Ground_129",
+          "UCX_SM_SIL13_Ground_130",
+          "UCX_SM_SIL13_Ground_131",
+          "UCX_SM_SIL13_Ground_132",
+          "UCX_SM_SIL13_Ground_133",
+          "UCX_SM_SIL13_Ground_134",
+          "UCX_SM_SIL13_Ground_135",
+          "UCX_SM_SIL13_Ground_136",
+          "UCX_SM_SIL13_Ground_137",
+          "UCX_SM_SIL13_Ground_138",
+          "UCX_SM_SIL13_Ground_139",
+          "UCX_SM_SIL13_Ground_140",
+          "UCX_SM_SIL13_Ground_141",
+          "UCX_SM_SIL13_Ground_142",
+          "UCX_SM_SIL13_Ground_143",
+          "UCX_SM_SIL13_Ground_144",
+          "UCX_SM_SIL13_Ground_145",
+          "UCX_SM_SIL13_Ground_146",
+          "UCX_SM_SIL13_Ground_147",
+          "UCX_SM_SIL13_Ground_148",
+          "UCX_SM_SIL13_Ground_149",
+          "UCX_SM_SIL13_Ground_150",
+          "UCX_SM_SIL13_Ground_151",
+          "UCX_SM_SIL13_Ground_152",
+          "UCX_SM_SIL13_Ground_153",
+          "UCX_SM_SIL13_Ground_154",
+          "UCX_SM_SIL13_Ground_155",
+          "UCX_SM_SIL13_Ground_156",
+          "UCX_SM_SIL13_Ground_157",
+          "UCX_SM_SIL13_Ground_158",
+          "UCX_SM_SIL13_Ground_159",
+          "UCX_SM_SIL13_Ground_160",
+          "UCX_SM_SIL13_Ground_161",
+          "UCX_SM_SIL13_Ground_162",
+          "UCX_SM_SIL13_Ground_163",
+          "UCX_SM_SIL13_Ground_164",
+          "UCX_SM_SIL13_Ground_165",
+          "UCX_SM_SIL13_Ground_166",
+          "UCX_SM_SIL13_Ground_167",
+          "UCX_SM_SIL13_Ground_168",
+          "UCX_SM_SIL13_Ground_169",
+          "UCX_SM_SIL13_Ground_170",
+          "UCX_SM_SIL13_Ground_171",
+          "UCX_SM_SIL13_Ground_172",
+          "UCX_SM_SIL13_Ground_173",
+          "UCX_SM_SIL13_Ground_174",
+          "UCX_SM_SIL13_Ground_175",
+          "UCX_SM_SIL13_Ground_176",
+          "UCX_SM_SIL13_Ground_177",
+          "UCX_SM_SIL13_Ground_178",
+          "UCX_SM_SIL13_Ground_179",
+          "UCX_SM_SIL13_Ground_180",
+          "UCX_SM_SIL13_Ground_181",
+          "UCX_SM_SIL13_Ground_182",
+          "UCX_SM_SIL13_Ground_183",
+          "UCX_SM_SIL13_Ground_184",
+          "UCX_SM_SIL13_Ground_185",
+          "UCX_SM_SIL13_Ground_186",
+          "UCX_SM_SIL13_Ground_187",
+          "UCX_SM_SIL13_Ground_188",
+          "UCX_SM_SIL13_Ground_189",
+          "UCX_SM_SIL13_Ground_190",
+          "UCX_SM_SIL13_Ground_191",
+          "UCX_SM_SIL13_Ground_192",
+          "UCX_SM_SIL13_Ground_193",
+          "UCX_SM_SIL13_Ground_194",
+          "UCX_SM_SIL13_Ground_195",
+          "UCX_SM_SIL13_Ground_196",
+          "UCX_SM_SIL13_Ground_197",
+          "UCX_SM_SIL13_Ground_198",
+          "UCX_SM_SIL13_Ground_199",
+          "UCX_SM_SIL13_Ground_200",
+          "UCX_SM_SIL13_Ground_201",
+          "UCX_SM_SIL13_Ground_202",
+          "UCX_SM_SIL13_Ground_203",
+          "UCX_SM_SIL13_Ground_204",
+          "UCX_SM_SIL13_Ground_205",
+          "UCX_SM_SIL13_Ground_206",
+          "UCX_SM_SIL13_Ground_207",
+          "UCX_SM_SIL13_Ground_208",
+          "UCX_SM_SIL13_Ground_209",
+          "UCX_SM_SIL13_Ground_210",
+          "UCX_SM_SIL13_Ground_211",
+          "UCX_SM_SIL13_Ground_212",
+          "UCX_SM_SIL13_Ground_213",
+          "UCX_SM_SIL13_Ground_214",
+          "UCX_SM_SIL13_Ground_215",
+          "UCX_SM_SIL13_Ground_216",
+          "UCX_SM_SIL13_Ground_217",
+          "UCX_SM_SIL13_Ground_218",
+          "UCX_SM_SIL13_Ground_219",
+          "UCX_SM_SIL13_Ground_220",
+          "UCX_SM_SIL13_Ground_221",
+          "UCX_SM_SIL13_Ground_222",
+          "UCX_SM_SIL13_Ground_223",
+          "UCX_SM_SIL13_Ground_224",
+          "UCX_SM_SIL13_Ground_225",
+          "UCX_SM_SIL13_Ground_226",
+          "UCX_SM_SIL13_Ground_227",
+          "UCX_SM_SIL13_Ground_228",
+          "UCX_SM_SIL13_Ground_229",
+          "UCX_SM_SIL13_Ground_230",
+          "UCX_SM_SIL13_Ground_231",
+          "UCX_SM_SIL13_Ground_232",
+          "UCX_SM_SIL13_Ground_233",
+          "UCX_SM_SIL13_Ground_234",
+          "UCX_SM_SIL13_Ground_235",
+          "UCX_SM_SIL13_Ground_236",
+          "UCX_SM_SIL13_Ground_237",
+          "UCX_SM_SIL13_Ground_238",
+          "UCX_SM_SIL13_Ground_239",
+          "UCX_SM_SIL13_Ground_240",
+          "UCX_SM_SIL13_Ground_241",
+          "UCX_SM_SIL13_Ground_242",
+          "UCX_SM_SIL13_Ground_243",
+          "UCX_SM_SIL13_Ground_244",
+          "UCX_SM_SIL13_Ground_245",
+          "UCX_SM_SIL13_Ground_246",
+          "UCX_SM_SIL13_Ground_247",
+          "UCX_SM_SIL13_Ground_248",
+          "UCX_SM_SIL13_Ground_249",
+          "UCX_SM_SIL13_Ground_250",
+          "UCX_SM_SIL13_Ground_251",
+          "UCX_SM_SIL13_Ground_252",
+          "UCX_SM_SIL13_Ground_253",
+          "UCX_SM_SIL13_Ground_254",
+          "UCX_SM_SIL13_Ground_255",
+          "UCX_SM_SIL13_Ground_256",
+          "UCX_SM_SIL13_Ground_257",
+          "UCX_SM_SIL13_Ground_258",
+          "UCX_SM_SIL13_Ground_259",
+          "UCX_SM_SIL13_Ground_260",
+          "UCX_SM_SIL13_Ground_261",
+          "UCX_SM_SIL13_Ground_262",
+          "UCX_SM_SIL13_Ground_263",
+          "UCX_SM_SIL13_Ground_264",
+          "UCX_SM_SIL13_Ground_265",
+          "UCX_SM_SIL13_Ground_266",
+          "UCX_SM_SIL13_Ground_267",
+          "UCX_SM_SIL13_Ground_268",
+          "UCX_SM_SIL13_Ground_269",
+          "UCX_SM_SIL13_Ground_270",
+          "UCX_SM_SIL13_Ground_271",
+          "UCX_SM_SIL13_Ground_272",
+          "UCX_SM_SIL13_Ground_273",
+          "UCX_SM_SIL13_Ground_274",
+          "UCX_SM_SIL13_Ground_275",
+          "UCX_SM_SIL13_Ground_276",
+          "UCX_SM_SIL13_Ground_277",
+          "UCX_SM_SIL13_Ground_278",
+          "UCX_SM_SIL13_Ground_279",
+          "UCX_SM_SIL13_Ground_280",
+          "UCX_SM_SIL13_Ground_281",
+          "UCX_SM_SIL13_Ground_282",
+          "UCX_SM_SIL13_Ground_283",
+          "UCX_SM_SIL13_Ground_284",
+          "UCX_SM_SIL13_Ground_285",
+          "UCX_SM_SIL13_Ground_286",
+          "UCX_SM_SIL13_Ground_287",
+          "UCX_SM_SIL13_Ground_288",
+          "UCX_SM_SIL13_Ground_289",
+          "UCX_SM_SIL13_Ground_290",
+          "UCX_SM_SIL13_Ground_291",
+          "UCX_SM_SIL13_Ground_292",
+          "UCX_SM_SIL13_Ground_293",
+          "UCX_SM_SIL13_Ground_294",
+          "UCX_SM_SIL13_Ground_295",
+          "UCX_SM_SIL13_Ground_296",
+          "UCX_SM_SIL13_Ground_297",
+          "UCX_SM_SIL13_Ground_298",
+          "UCX_SM_SIL13_Ground_299",
+          "UCX_SM_SIL13_Ground_300",
+          "UCX_SM_SIL13_Ground_301",
+          "UCX_SM_SIL13_Ground_302",
+          "UCX_SM_SIL13_Ground_303",
+          "UCX_SM_SIL13_Ground_304",
+          "UCX_SM_SIL13_Ground_305",
+          "UCX_SM_SIL13_Ground_306",
+          "UCX_SM_SIL13_Ground_307",
+          "UCX_SM_SIL13_Ground_308",
+          "UCX_SM_SIL13_Ground_309",
+          "UCX_SM_SIL13_Ground_310",
+          "UCX_SM_SIL13_Ground_311",
+          "UCX_SM_SIL13_Ground_312",
+          "UCX_SM_SIL13_Ground_313",
+          "UCX_SM_SIL13_Ground_314",
+          "UCX_SM_SIL13_Ground_315",
+          "UCX_SM_SIL13_Ground_316",
+          "UCX_SM_SIL13_Ground_317",
+          "UCX_SM_SIL13_Ground_318",
+          "UCX_SM_SIL13_Ground_319",
+          "UCX_SM_SIL13_Ground_320",
+          "UCX_SM_SIL13_Ground_321",
+          "UCX_SM_SIL13_Ground_322",
+          "UCX_SM_SIL13_Ground_323",
+          "UCX_SM_SIL13_Ground_324",
+          "UCX_SM_SIL13_Ground_325",
+          "UCX_SM_SIL13_Ground_326",
+          "UCX_SM_SIL13_Ground_327",
+          "UCX_SM_SIL13_Ground_328",
+          "UCX_SM_SIL13_Ground_329",
+          "UCX_SM_SIL13_Ground_330",
+          "UCX_SM_SIL13_Ground_331",
+          "UCX_SM_SIL13_Ground_332",
+          "UCX_SM_SIL13_Ground_333",
+          "UCX_SM_SIL13_Ground_334",
+          "UCX_SM_SIL13_Ground_335",
+          "UCX_SM_SIL13_Ground_336",
+          "UCX_SM_SIL13_Ground_337",
+          "UCX_SM_SIL13_Ground_338",
+          "UCX_SM_SIL13_Ground_339",
+          "UCX_SM_SIL13_Ground_340",
+          "UCX_SM_SIL13_Ground_341",
+          "UCX_SM_SIL13_Ground_342",
+          "UCX_SM_SIL13_Ground_343",
+          "UCX_SM_SIL13_Ground_344",
+          "UCX_SM_SIL13_Ground_345",
+          "UCX_SM_SIL13_Ground_346",
+          "UCX_SM_SIL13_Ground_347",
+          "UCX_SM_SIL13_Ground_348",
+          "UCX_SM_SIL13_Ground_349",
+          "UCX_SM_SIL13_Ground_350",
+          "UCX_SM_SIL13_Ground_351",
+          "UCX_SM_SIL13_Ground_352",
+          "UCX_SM_SIL13_Ground_353",
+          "UCX_SM_SIL13_Ground_354",
+          "UCX_SM_SIL13_Ground_355",
+          "UCX_SM_SIL13_Ground_356",
+          "UCX_SM_SIL13_Ground_357",
+          "UCX_SM_SIL13_Ground_358",
+          "UCX_SM_SIL13_Ground_359",
+          "UCX_SM_SIL13_Ground_360",
+          "UCX_SM_SIL13_Ground_361",
+          "UCX_SM_SIL13_Ground_362",
+          "UCX_SM_SIL13_Ground_363",
+          "UCX_SM_SIL13_Ground_364",
+          "UCX_SM_SIL13_Ground_365",
+          "UCX_SM_SIL13_Ground_366",
+          "UCX_SM_SIL13_Ground_367",
+          "UCX_SM_SIL13_Ground_368",
+          "UCX_SM_SIL13_Ground_369",
+          "UCX_SM_SIL13_Ground_370",
+          "UCX_SM_SIL13_Ground_371",
+          "UCX_SM_SIL13_Ground_372",
+          "UCX_SM_SIL13_Ground_373",
+          "UCX_SM_SIL13_Ground_374",
+          "UCX_SM_SIL13_Ground_375",
+          "UCX_SM_SIL13_Ground_376",
+          "UCX_SM_SIL13_Ground_377",
+          "UCX_SM_SIL13_Ground_378",
+          "UCX_SM_SIL13_Ground_379",
+          "UCX_SM_SIL13_Ground_380",
+          "UCX_SM_SIL13_Ground_381",
+          "UCX_SM_SIL13_Ground_382",
+          "UCX_SM_SIL13_Ground_383",
+          "UCX_SM_SIL13_Ground_384",
+          "UCX_SM_SIL13_Ground_385",
+          "UCX_SM_SIL13_Ground_386",
+          "UCX_SM_SIL13_Ground_387",
+          "UCX_SM_SIL13_Ground_388",
+          "UCX_SM_SIL13_Ground_389",
+          "UCX_SM_SIL13_Ground_390",
+          "UCX_SM_SIL13_Ground_391",
+          "UCX_SM_SIL13_Ground_392",
+          "UCX_SM_SIL13_Ground_393",
+          "UCX_SM_SIL13_Ground_394",
+          "UCX_SM_SIL13_Ground_395",
+          "UCX_SM_SIL13_Ground_396",
+          "UCX_SM_SIL13_Ground_397",
+          "UCX_SM_SIL13_Ground_398",
+          "UCX_SM_SIL13_Ground_399",
+          "UCX_SM_SIL13_Ground_400",
+          "UCX_SM_SIL13_Ground_401",
+          "UCX_SM_SIL13_Ground_402",
+          "UCX_SM_SIL13_Ground_403",
+          "UCX_SM_SIL13_Ground_404",
+          "UCX_SM_SIL13_Ground_405",
+          "UCX_SM_SIL13_Ground_406",
+          "UCX_SM_SIL13_Ground_407",
+          "UCX_SM_SIL13_Ground_408",
+          "UCX_SM_SIL13_Ground_409",
+          "UCX_SM_SIL13_Ground_410",
+          "UCX_SM_SIL13_Ground_411",
+          "UCX_SM_SIL13_Ground_412",
+          "UCX_SM_SIL13_Ground_413",
+          "UCX_SM_SIL13_Ground_414",
+          "UCX_SM_SIL13_Ground_415",
+          "UCX_SM_SIL13_Ground_416",
+          "UCX_SM_SIL13_Ground_417",
+          "UCX_SM_SIL13_Ground_418",
+          "UCX_SM_SIL13_Ground_419",
+          "UCX_SM_SIL13_Ground_420",
+          "UCX_SM_SIL13_Ground_421",
+          "UCX_SM_SIL13_Ground_422",
+          "UCX_SM_SIL13_Ground_423",
+          "UCX_SM_SIL13_Ground_424",
+          "UCX_SM_SIL13_Ground_425",
+          "UCX_SM_SIL13_Ground_426",
+          "UCX_SM_SIL13_Ground_427",
+          "UCX_SM_SIL13_Ground_428",
+          "UCX_SM_SIL13_Ground_429",
+          "UCX_SM_SIL13_Ground_430",
+          "UCX_SM_SIL13_Ground_431",
+          "UCX_SM_SIL13_Ground_432",
+          "UCX_SM_SIL13_Ground_433",
+          "UCX_SM_SIL13_Ground_434",
+          "UCX_SM_SIL13_Ground_435",
+          "UCX_SM_SIL13_Ground_436",
+          "UCX_SM_SIL13_Ground_437",
+          "UCX_SM_SIL13_Ground_438",
+          "UCX_SM_SIL13_Ground_439",
+          "UCX_SM_SIL13_Ground_440",
+          "UCX_SM_SIL13_Ground_441",
+          "UCX_SM_SIL13_Ground_442",
+          "UCX_SM_SIL13_Ground_443",
+          "UCX_SM_SIL13_Ground_444",
+          "UCX_SM_SIL13_Ground_445",
+          "UCX_SM_SIL13_Ground_446",
+          "UCX_SM_SIL13_Ground_447",
+          "UCX_SM_SIL13_Ground_448",
+          "UCX_SM_SIL13_Ground_449",
+          "UCX_SM_SIL13_Ground_450",
+          "UCX_SM_SIL13_Ground_451",
+          "UCX_SM_SIL13_Ground_452",
+          "UCX_SM_SIL13_Ground_453",
+          "UCX_SM_SIL13_Ground_454",
+          "UCX_SM_SIL13_Ground_455",
+          "UCX_SM_SIL13_Ground_456",
+          "UCX_SM_SIL13_Ground_457",
+          "UCX_SM_SIL13_Ground_458",
+          "UCX_SM_SIL13_Ground_459",
+          "UCX_SM_SIL13_Ground_460",
+          "UCX_SM_SIL13_Ground_461",
+          "UCX_SM_SIL13_Ground_462",
+          "UCX_SM_SIL13_Ground_463",
+          "UCX_SM_SIL13_Ground_464",
+          "UCX_SM_SIL13_Ground_465",
+          "UCX_SM_SIL13_Ground_466",
+          "UCX_SM_SIL13_Ground_467",
+          "UCX_SM_SIL13_Ground_468",
+          "UCX_SM_SIL13_Ground_469",
+          "UCX_SM_SIL13_Ground_470",
+          "UCX_SM_SIL13_Ground_471",
+          "UCX_SM_SIL13_Ground_472",
+          "UCX_SM_SIL13_Ground_473",
+          "UCX_SM_SIL13_Ground_474",
+          "UCX_SM_SIL13_Ground_475",
+          "UCX_SM_SIL13_Ground_476",
+          "UCX_SM_SIL13_Ground_477",
+          "UCX_SM_SIL13_Ground_478",
+          "UCX_SM_SIL13_Ground_479",
+          "UCX_SM_SIL13_Ground_480",
+          "UCX_SM_SIL13_Ground_481",
+          "UCX_SM_SIL13_Ground_482",
+          "UCX_SM_SIL13_Ground_483",
+          "UCX_SM_SIL13_Ground_484",
+          "UCX_SM_SIL13_Ground_485",
+          "UCX_SM_SIL13_Ground_486",
+          "UCX_SM_SIL13_Ground_487",
+          "UCX_SM_SIL13_Ground_488",
+          "UCX_SM_SIL13_Ground_489",
+          "UCX_SM_SIL13_Ground_490",
+          "UCX_SM_SIL13_Ground_491",
+          "UCX_SM_SIL13_Ground_492",
+          "UCX_SM_SIL13_Ground_493",
+          "UCX_SM_SIL13_Ground_494",
+          "UCX_SM_SIL13_Ground_495",
+          "UCX_SM_SIL13_Ground_496",
+          "UCX_SM_SIL13_Ground_497",
+          "UCX_SM_SIL13_Ground_498",
+          "UCX_SM_SIL13_Ground_499",
+          "UCX_SM_SIL13_Ground_500",
+          "UCX_SM_SIL13_Ground_501",
+          "UCX_SM_SIL13_Ground_502",
+          "UCX_SM_SIL13_Ground_503",
+          "UCX_SM_SIL13_Ground_504",
+          "UCX_SM_SIL13_Ground_505",
+          "UCX_SM_SIL13_Ground_506",
+          "UCX_SM_SIL13_Ground_507",
+          "UCX_SM_SIL13_Ground_508",
+          "UCX_SM_SIL13_Ground_509",
+          "UCX_SM_SIL13_Ground_510",
+          "UCX_SM_SIL13_Ground_511",
+          "UCX_SM_SIL13_Ground_512",
+          "UCX_SM_SIL13_Ground_513",
+          "UCX_SM_SIL13_Ground_514",
+          "UCX_SM_SIL13_Ground_515",
+          "UCX_SM_SIL13_Ground_516",
+          "UCX_SM_SIL13_Ground_517",
+          "UCX_SM_SIL13_Ground_518",
+          "UCX_SM_SIL13_Ground_519",
+          "UCX_SM_SIL13_Ground_520",
+          "UCX_SM_SIL13_Ground_521",
+          "UCX_SM_SIL13_Ground_522",
+          "UCX_SM_SIL13_Ground_523",
+          "UCX_SM_SIL13_Ground_524",
+          "UCX_SM_SIL13_Ground_525",
+          "UCX_SM_SIL13_Ground_526",
+          "UCX_SM_SIL13_Ground_527",
+          "UCX_SM_SIL13_Ground_528",
+          "UCX_SM_SIL13_Ground_529",
+          "UCX_SM_SIL13_Ground_530",
+          "UCX_SM_SIL13_Ground_531",
+          "UCX_SM_SIL13_Ground_532",
+          "UCX_SM_SIL13_Ground_533",
+          "UCX_SM_SIL13_Ground_534",
+          "UCX_SM_SIL13_Ground_535",
+          "UCX_SM_SIL13_Ground_536",
+          "UCX_SM_SIL13_Ground_537",
+          "UCX_SM_SIL13_Ground_538",
+          "UCX_SM_SIL13_Ground_539",
+          "UCX_SM_SIL13_Ground_540",
+          "UCX_SM_SIL13_Ground_541",
+          "UCX_SM_SIL13_Ground_542",
+          "UCX_SM_SIL13_Ground_543",
+          "UCX_SM_SIL13_Ground_544",
+          "UCX_SM_SIL13_Ground_545",
+          "UCX_SM_SIL13_Ground_546",
+          "UCX_SM_SIL13_Ground_547",
+          "UCX_SM_SIL13_Ground_548",
+          "UCX_SM_SIL13_Ground_549",
+          "UCX_SM_SIL13_Ground_550",
+          "UCX_SM_SIL13_Ground_551",
+          "UCX_SM_SIL13_Ground_552",
+          "UCX_SM_SIL13_Ground_553",
+          "UCX_SM_SIL13_Ground_554",
+          "UCX_SM_SIL13_Ground_555",
+          "UCX_SM_SIL13_Ground_556",
+          "UCX_SM_SIL13_Ground_557",
+          "UCX_SM_SIL13_Ground_558",
+          "UCX_SM_SIL13_Ground_559",
+          "UCX_SM_SIL13_Ground_560",
+          "UCX_SM_SIL13_Ground_561",
+          "UCX_SM_SIL13_Ground_562",
+          "UCX_SM_SIL13_Ground_563",
+          "UCX_SM_SIL13_Ground_564",
+          "UCX_SM_SIL13_Ground_565",
+          "UCX_SM_SIL13_Ground_566",
+          "UCX_SM_SIL13_Ground_567",
+          "UCX_SM_SIL13_Ground_568",
+          "UCX_SM_SIL13_Ground_569",
+          "UCX_SM_SIL13_Ground_570",
+          "UCX_SM_SIL13_Ground_571",
+          "UCX_SM_SIL13_Ground_572",
+          "UCX_SM_SIL13_Ground_573",
+          "UCX_SM_SIL13_Ground_574",
+          "UCX_SM_SIL13_Ground_575",
+          "UCX_SM_SIL13_Ground_576",
+          "UCX_SM_SIL13_Ground_577",
+          "UCX_SM_SIL13_Ground_578",
+          "UCX_SM_SIL13_Ground_579",
+          "UCX_SM_SIL13_Ground_580",
+          "UCX_SM_SIL13_Ground_581",
+          "UCX_SM_SIL13_Ground_582",
+          "UCX_SM_SIL13_Ground_583",
+          "UCX_SM_SIL13_Ground_584",
+          "UCX_SM_SIL13_Ground_585",
+          "UCX_SM_SIL13_Ground_586",
+          "UCX_SM_SIL13_Ground_587",
+          "UCX_SM_SIL13_Ground_588",
+          "UCX_SM_SIL13_Ground_589",
+          "UCX_SM_SIL13_Ground_590",
+          "UCX_SM_SIL13_Ground_591",
+          "UCX_SM_SIL13_Ground_592",
+          "UCX_SM_SIL13_Ground_593",
+          "UCX_SM_SIL13_Ground_594",
+          "UCX_SM_SIL13_Ground_595",
+          "UCX_SM_SIL13_Ground_596",
+          "UCX_SM_SIL13_Ground_597",
+          "UCX_SM_SIL13_Ground_598",
+          "UCX_SM_SIL13_Ground_599",
+          "UCX_SM_SIL13_Ground_600"
+        ],
+        "Ground_Flora_600UCX_exact": true,
+        "retained_MAF": 38,
+        "retained_plant_census": 4582
+      }
+    }
+  },
+  "UCX": {
+    "passed": false,
+    "geometry_coverage": true,
+    "sample_only": false,
+    "method": "convex distance to actual UCX triangles on complete XY polygon partition of actual Ground top faces",
+    "actual_piece_count": 564,
+    "UCX_upward_triangles": 1077,
+    "surface_triangles": 57226,
+    "triangles_partitioned": 57226,
+    "surface_area_m2": 15872.911976507741,
+    "partition_area_m2": 15872.911976508114,
+    "max_triangle_area_partition_error_m2": 2.0650148258027912e-14,
+    "partition_vertices": 446541,
+    "unassigned_regions": 0,
+    "unassigned": [],
+    "degenerate_projected_faces": [],
+    "surface_to_UCX_upper_bound_m": 0.08993564479232127,
+    "limit_m": 0.1,
+    "source_fbx_sha256": "12b91405b9bf69dcd105584be1f8263afa829c2d2627263f9db64cc46e41cf68",
+    "elapsed_seconds": 58.870152199990116,
+    "note": "Numerical conservative upper bound; not exact Hausdorff or final UCX gap/SINTEZ/visual acceptance."
+  },
+  "UCX_worst10": [
+    {
+      "ucx": "UCX_SM_SIL13_Ground_367",
+      "UCX_upward_triangle": 707,
+      "source_face_zero_based": 52029,
+      "point_m": [
+        29.96591262817383,
+        -3.3650108606870264,
+        -0.27607406886179087
+      ],
+      "upper_bound_m": 0.08993564479232127
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_011",
+      "UCX_upward_triangle": 23,
+      "source_face_zero_based": 18697,
+      "point_m": [
+        33.20415086810329,
+        -81.52632141113281,
+        -0.09407361240988266
+      ],
+      "upper_bound_m": 0.08990787655694818
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_361",
+      "UCX_upward_triangle": 695,
+      "source_face_zero_based": 17238,
+      "point_m": [
+        22.334541925821284,
+        -7.666997922549843,
+        -0.23397291675758172
+      ],
+      "upper_bound_m": 0.0899037996875947
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_554",
+      "UCX_upward_triangle": 1054,
+      "source_face_zero_based": 49699,
+      "point_m": [
+        2.9999938011169434,
+        71.56500244140625,
+        -0.30000001192092896
+      ],
+      "upper_bound_m": 0.08989027623202137
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_349",
+      "UCX_upward_triangle": 671,
+      "source_face_zero_based": 36092,
+      "point_m": [
+        15.327726831813985,
+        -7.616998386383057,
+        -0.3638656552833929
+      ],
+      "upper_bound_m": 0.08985558430072055
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_160",
+      "UCX_upward_triangle": 303,
+      "source_face_zero_based": 56853,
+      "point_m": [
+        -19.27724599838257,
+        -49.11599922180176,
+        -0.7001392841339111
+      ],
+      "upper_bound_m": 0.08985310409117725
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_055",
+      "UCX_upward_triangle": 108,
+      "source_face_zero_based": 32228,
+      "point_m": [
+        32.75400733947754,
+        -66.50849914550781,
+        0.16881753504276265
+      ],
+      "upper_bound_m": 0.0897964391242381
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_123",
+      "UCX_upward_triangle": 229,
+      "source_face_zero_based": 2611,
+      "point_m": [
+        1.154254749417305,
+        -54.33449935913086,
+        -0.20094066485762596
+      ],
+      "upper_bound_m": 0.08978576474412393
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_341",
+      "UCX_upward_triangle": 656,
+      "source_face_zero_based": 43999,
+      "point_m": [
+        -69.08270483956132,
+        -11.712111282348634,
+        -0.8706067064985881
+      ],
+      "upper_bound_m": 0.0897750302749932
+    },
+    {
+      "ucx": "UCX_SM_SIL13_Ground_175",
+      "UCX_upward_triangle": 332,
+      "source_face_zero_based": 14040,
+      "point_m": [
+        19.370254516601562,
+        -42.96074867248535,
+        0.06494965963065624
+      ],
+      "upper_bound_m": 0.08975193633860973
+    }
+  ],
+  "UCX_removed_originals": [
+    "UCX_SM_SIL13_Ground_003",
+    "UCX_SM_SIL13_Ground_027",
+    "UCX_SM_SIL13_Ground_031",
+    "UCX_SM_SIL13_Ground_048",
+    "UCX_SM_SIL13_Ground_049",
+    "UCX_SM_SIL13_Ground_053",
+    "UCX_SM_SIL13_Ground_066",
+    "UCX_SM_SIL13_Ground_088",
+    "UCX_SM_SIL13_Ground_090",
+    "UCX_SM_SIL13_Ground_091",
+    "UCX_SM_SIL13_Ground_102",
+    "UCX_SM_SIL13_Ground_106",
+    "UCX_SM_SIL13_Ground_110",
+    "UCX_SM_SIL13_Ground_119",
+    "UCX_SM_SIL13_Ground_124",
+    "UCX_SM_SIL13_Ground_132",
+    "UCX_SM_SIL13_Ground_133",
+    "UCX_SM_SIL13_Ground_134",
+    "UCX_SM_SIL13_Ground_135",
+    "UCX_SM_SIL13_Ground_141",
+    "UCX_SM_SIL13_Ground_199",
+    "UCX_SM_SIL13_Ground_233",
+    "UCX_SM_SIL13_Ground_241",
+    "UCX_SM_SIL13_Ground_253",
+    "UCX_SM_SIL13_Ground_299",
+    "UCX_SM_SIL13_Ground_308",
+    "UCX_SM_SIL13_Ground_322",
+    "UCX_SM_SIL13_Ground_382",
+    "UCX_SM_SIL13_Ground_419",
+    "UCX_SM_SIL13_Ground_422",
+    "UCX_SM_SIL13_Ground_428",
+    "UCX_SM_SIL13_Ground_430",
+    "UCX_SM_SIL13_Ground_470",
+    "UCX_SM_SIL13_Ground_482",
+    "UCX_SM_SIL13_Ground_495",
+    "UCX_SM_SIL13_Ground_539"
+  ],
+  "UCX_retained_arrays": "corresponding raw/raw and native/native EXACT, including render; asserted by real4tests",
+  "remaining_UCX_wide_pairs": 175,
+  "collision_triangles": 6564,
+  "public_xview": {
+    "NPM": {
+      "overlapping_vertices": 114,
+      "overlapping_faces": 728,
+      "vertex_pairs": 72,
+      "face_pairs": 952,
+      "face_pairs_by_kind": {
+        "contact": 255,
+        "area": 337,
+        "area+contact": 360
+      },
+      "bowtie_vertices": 165,
+      "bowtie_pairs": 26,
+      "parts_without_faces": 0
+    },
+    "VPM": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 3595,
+      "vertex_pairs": 0,
+      "face_pairs": 5587,
+      "face_pairs_by_kind": {
+        "contact": 971,
+        "area": 1482,
+        "area+contact": 3134
+      },
+      "bowtie_vertices": 36,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "actual_native_package_validator": {
+    "NPM": {
+      "pass": 1,
+      "fail": 4,
+      "review": 1,
+      "not_run": 2
+    },
+    "VPM": {
+      "pass": 3,
+      "fail": 3,
+      "review": 1,
+      "not_run": 5
+    }
+  },
+  "witness_ownership": {
+    "passed": false,
+    "ground_face_range_one_based": [
+      1,
+      58896
+    ],
+    "flora_face_range_one_based": [
+      58897,
+      166282
+    ],
+    "total_face_pairs": 5587,
+    "pair_classes": {
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area+contact": 100,
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area": 5,
+      "Flora | Ground | area+contact": 3,
+      "Flora | Flora | area": 43,
+      "Flora | Flora | area+contact": 3,
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area+contact": 43,
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area": 8,
+      "MAF:MAF_0466_M_Bysicle_007 | MAF:MAF_0472_M_Cannopy_006 | area+contact": 96,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area": 1426,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area+contact": 2889,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | contact": 971
+    },
+    "first_one_based_witness_per_class": {
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 35846,
+        "b": 306357,
+        "kind": "area+contact",
+        "separation_m": 0.0030039857028986965,
+        "centre": [
+          32.48168341318766,
+          2.9623115460077925,
+          -0.09220505257447562
+        ]
+      },
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 55599,
+        "b": 306419,
+        "kind": "area",
+        "separation_m": 0.0031705675042709696,
+        "centre": [
+          31.03544012705485,
+          2.4708125347472105,
+          -0.09220769132177034
+        ]
+      },
+      "Flora | Ground | area+contact": {
+        "a": 57817,
+        "b": 99747,
+        "kind": "area+contact",
+        "separation_m": 0.0016262560397653503,
+        "centre": [
+          -2.180742899576823,
+          82.37506357828775,
+          -0.31145843615134555
+        ]
+      },
+      "Flora | Flora | area": {
+        "a": 65921,
+        "b": 92895,
+        "kind": "area",
+        "separation_m": 0.00438690185546875,
+        "centre": [
+          1.7684308290481567,
+          71.79729334513347,
+          -0.36271438002586365
+        ]
+      },
+      "Flora | Flora | area+contact": {
+        "a": 66749,
+        "b": 66858,
+        "kind": "area+contact",
+        "separation_m": 0.00151824951171875,
+        "centre": [
+          -21.597630182902016,
+          -7.883058150609334,
+          -0.2806755006313324
+        ]
+      },
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 80278,
+        "b": 306253,
+        "kind": "area+contact",
+        "separation_m": 0.00015299505609323027,
+        "centre": [
+          33.487793604532875,
+          -0.5208322132627169,
+          0.3594857851664225
+        ]
+      },
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 80290,
+        "b": 305986,
+        "kind": "area",
+        "separation_m": 2.0890605739795852e-05,
+        "centre": [
+          34.4866746266683,
+          0.13393125931421918,
+          0.3652558525403341
+        ]
+      },
+      "MAF:MAF_0466_M_Bysicle_007 | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 294570,
+        "b": 306440,
+        "kind": "area+contact",
+        "separation_m": 0.0011433861439936743,
+        "centre": [
+          32.16557598114014,
+          0.47048305968443555,
+          -0.18657342841227847
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 299981,
+        "b": 299998,
+        "kind": "area",
+        "separation_m": 0.0,
+        "centre": [
+          31.126829783121742,
+          2.581391493479411,
+          2.3389698664347334
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 300143,
+        "b": 300159,
+        "kind": "area+contact",
+        "separation_m": 0.0022709387215547883,
+        "centre": [
+          32.23352305094401,
+          3.7220674753189087,
+          2.179821491241455
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | contact": {
+        "a": 301743,
+        "b": 306437,
+        "kind": "contact",
+        "separation_m": null,
+        "centre": [
+          31.401655197143555,
+          4.064695517222086,
+          -0.028410730262597404
+        ]
+      }
+    },
+    "note": "Witness ownership only, not an exemption or pass. A face-pair total is not a unique face count."
+  },
+  "rejected_trials": {
+    "NPM_envelope704": {
+      "site_adopted": false,
+      "xview_clean": true,
+      "reverse_source_sampled_m": 0.03510429756845063
+    },
+    "NPM_native860": {
+      "site_adopted": false,
+      "AREA_only_pairs": 5,
+      "reverse_source_sampled_m": 0.011734482541084475
+    },
+    "NPM_native944": {
+      "site_adopted": false,
+      "AREA_only_pairs": 4,
+      "reverse_source_sampled_m": 0.011066063816718348
+    },
+    "NPM_source_refinement": {
+      "site_adopted": false,
+      "reason": "normal inversion168 / no normal-source hit11; guard refused"
+    },
+    "NPM_local_diagonal": {
+      "site_adopted": false,
+      "reason": "no admissible improving <=1mm patch"
+    },
+    "UCX_pair582": {
+      "site_adopted": false,
+      "xview_totals": {
+        "overlapping_vertices": 40,
+        "overlapping_faces": 47,
+        "vertex_pairs": 20,
+        "face_pairs": 61,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 26,
+          "area+contact": 35
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "UCX_cluster575": {
+      "site_adopted": false,
+      "xview_totals": {
+        "overlapping_vertices": 12,
+        "overlapping_faces": 26,
+        "vertex_pairs": 6,
+        "face_pairs": 37,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 17,
+          "area+contact": 20
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "UCX_reconstructed564_r3": {
+      "site_adopted": false,
+      "reason": "strict equality found8.106231689um repeated native drift; r4 instead retains original scene arrays"
+    },
+    "Canopy7522": {
+      "site_adopted": false,
+      "xview_totals": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 1627,
+        "vertex_pairs": 0,
+        "face_pairs": 2067,
+        "face_pairs_by_kind": {
+          "contact": 166,
+          "area": 506,
+          "area+contact": 1395
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    }
+  },
+  "tests": {
+    "affected_command": "env PYTEST_ADDOPTS= SHELF_AUDIT=tmp/cold-v020/actual-shelf.json BENCH_RESULT=tmp/cold-v019/bench-diagonal-4 uv run --with shapely --with scipy --with trimesh --with rtree pytest -q tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tmp/cold-v011/test_hedge_contract.py tmp/cold-v012/test_witness_indices.py tmp/cold-v012/test_export_controls.py tmp/cold-v013/test_maf_pilot.py tmp/cold-v013/test_pilot_structure.py tmp/cold-v014/test_checkpoint_controls.py tmp/cold-v014/test_replication.py tmp/cold-v015/test_profile_scope.py tmp/cold-v016/test_parametric_pilot.py tmp/cold-v016/test_access_gaps.py tmp/cold-v017/test_finishing.py tmp/cold-v017/test_vpm_table_replication.py tmp/cold-v017/test_link_contract.py tmp/cold-v017/test_sand_parts.py tmp/cold-v018/test_three_native_r2.py tmp/cold-v018/test_three_native_npm.py tmp/cold-v018/test_ucx_complete.py tmp/cold-v018/test_midpoint_safety.py tmp/cold-v018/test_midpoint_contract.py tmp/cold-v018/test_bench_bidirectional.py tmp/cold-v019/test_bench_clearance.py tmp/cold-v019/test_v019_bench_site.py tmp/cold-v020/test_shelf_ground.py tmp/cold-v020/test_ucx_redundancy.py -k 'not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean' -p no:cacheprovider --basetemp=C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_d9ae7dc0/tmp/v020-affected",
+    "passed": 483,
+    "historical_deselected": 5,
+    "seconds": 50.63,
+    "log_sha256": "7b7c6ea9e923f24a1161f2124e5b1f69ca5b3cbaba97bd3ebb6afeeda9963f77",
+    "pytest_warning": "requested repository-local basetemp redirected by existing tests/conftest.py to C:/x/t-5fea5562; preserved log",
+    "CURRENT_open_controls": {
+      "command": "env PYTEST_ADDOPTS= uv run pytest -q tmp/cold-v020/test_unresolved_v020.py -p no:cacheprovider",
+      "failed": 4,
+      "seconds": 0.54,
+      "log_sha256": "6fc82722789554fa4f3d9418a47b46bcd6ebedfd582b496c5f256bf8da372919"
+    },
+    "isolated_rejected_controls": {
+      "failed": 3,
+      "passed": 2,
+      "seconds": 2.92,
+      "log_sha256": "cf6c3e7eab3dd8906e94625b9312348953ce0f8ac5ea7db8648f77943d838262"
+    },
+    "real_RED_GREEN": "shelf actual+UCX baseline36bad fail before changes; intermediate reconstructed r3 equality fail then real r4 geometry preservation4pass",
+    "full_suite": "Full suite: deferred to merge batch (rule 68)"
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "predecessor_export_hash_checks": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v018\\site-three-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "fe7b5e8ae85ff72b65a7871fb6af4b4564c1ca1ebaebac923fabe770818fc9a8"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v019\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "af854b03ae44c17b94b36ed8f6b2885b98aacddf77273a6e3de35d0cbfbcee3c"
+    }
+  },
+  "new_code": {
+    "shared_modules": 0,
+    "job_local_files": 41,
+    "literal_lines": 1087,
+    "files": [
+      {
+        "path": "audit_bench_envelope.py",
+        "sha256": "20d6e4b6402ba3eff18a4b7b0c76f98b259664180ed38fd74e1df3d0551f6b5c",
+        "literal_lines": 7
+      },
+      {
+        "path": "audit_site.py",
+        "sha256": "5d6a3f017420fd5317b1185759088b0a25c5ad93d90aa461c78cf9ea9cc23276",
+        "literal_lines": 39
+      },
+      {
+        "path": "bench-envelope-finish-r2/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-envelope-finish-r2/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-envelope-r1/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-envelope-r1/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-native-centered-r7/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-native-centered-r7/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-native-lod-r3/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-native-lod-r3/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "bench-native-lod-r4/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "bench-native-lod-r4/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      },
+      {
+        "path": "build_bench_envelope.py",
+        "sha256": "30d07a2fc00fc2be9fd764d7a4b45c0f984a8954413c35a87641e85584c52c24",
+        "literal_lines": 31
+      },
+      {
+        "path": "build_bench_native_lod.py",
+        "sha256": "5c851e4a6ac6a4c61b714c84211bac477670ce85f840273dd958650375f0c648",
+        "literal_lines": 18
+      },
+      {
+        "path": "certify_ucx_redundancy.py",
+        "sha256": "b277d00df3c95446d6651bd70e8ab8c634f1ea2e8579c5608d768485329c2603",
+        "literal_lines": 26
+      },
+      {
+        "path": "classify_current.py",
+        "sha256": "b455c840d8355cbdab8ba60b21512fbb208ac984c15e941c35a02d55447aee97",
+        "literal_lines": 6
+      },
+      {
+        "path": "cluster_ucx.py",
+        "sha256": "083edd4ade3b8ea20fa5aafe9e3b0a673ef8822395dc9324a718884bd2a67681",
+        "literal_lines": 61
+      },
+      {
+        "path": "coverage-program-r3.py",
+        "sha256": "fe507d1205bcd6cbd133e0cee70a722e9074b1ad7ba9f5b704401535bab33831",
+        "literal_lines": 82
+      },
+      {
+        "path": "coverage-program-r4.py",
+        "sha256": "49e953e0e715b7f13588f02a8f0dcbfc70ffe5983d586552200e7aa140a6243d",
+        "literal_lines": 82
+      },
+      {
+        "path": "diagnose_shelf.py",
+        "sha256": "fd41d17bea3aec9fdb53664b57eedd7c90d46830a7dc852cba613f291625c35c",
+        "literal_lines": 17
+      },
+      {
+        "path": "export_ucx_redundancy.py",
+        "sha256": "befec34b61948b8d853f678a05c2b78d139d9273748acfa65829a520b9f482f7",
+        "literal_lines": 32
+      },
+      {
+        "path": "finalize_checkpoint.py",
+        "sha256": "774f6797c44c3916f45a4f9d3bbb0c9c2d79c1369dbc06c65aff20643c024d5a",
+        "literal_lines": 35
+      },
+      {
+        "path": "finish_bench_envelope.py",
+        "sha256": "070043859db6dae12e2d7ee4f46ed799006ec81a7b0612eef9d1bb1b0665ce9d",
+        "literal_lines": 18
+      },
+      {
+        "path": "finish_canopy.py",
+        "sha256": "554c9b53efecc7c6c040f633769e85dc747f8d403c10de20ff29958f3e6b305f",
+        "literal_lines": 16
+      },
+      {
+        "path": "finish_native_diagonals.py",
+        "sha256": "abc728de699c03e1b4e20be9ccd336ce1d109c4e958081829575e8e9207a8174",
+        "literal_lines": 42
+      },
+      {
+        "path": "merge_ucx.py",
+        "sha256": "8fed930f8fd6fdd2af52cfa1da19007c65c7b80901e94eb1aa7f7d3a0d98d339",
+        "literal_lines": 48
+      },
+      {
+        "path": "probe_ucx_redundancy.py",
+        "sha256": "db81f58128f09e89901201d1dd825d4a8a35bae0c25b3436297019ee9be02105",
+        "literal_lines": 17
+      },
+      {
+        "path": "read_site.py",
+        "sha256": "e0dc5d059793ca9925b59ea90a6ea50453b1a4eb4e27d9c78b4af3980eaafeb3",
+        "literal_lines": 9
+      },
+      {
+        "path": "read_ucx.py",
+        "sha256": "9f24882520cad5f84d9b498fb097270cf7feb130601df0f13342f5b72958c2aa",
+        "literal_lines": 10
+      },
+      {
+        "path": "refine_bench_source.py",
+        "sha256": "f2f93f16ba5be9b14a2ff31ecd3b18c2205a7648d77ed7d9e79a84080f723d67",
+        "literal_lines": 25
+      },
+      {
+        "path": "repair_buried_floor.py",
+        "sha256": "135cc234e42339302e14353caa0a2c205ebe5121c60b357f86c26f93e98ae8f2",
+        "literal_lines": 16
+      },
+      {
+        "path": "replicate_buried_floor.py",
+        "sha256": "60b90e37d17a3213e27b708c78daab10234367a53d5c4e76337587af14548ee3",
+        "literal_lines": 14
+      },
+      {
+        "path": "shelf_ground.py",
+        "sha256": "2d21b9bbd7c562041be837ebbe05585f8d879109e996c874a5b15c7353f5832f",
+        "literal_lines": 42
+      },
+      {
+        "path": "test_bench_envelope.py",
+        "sha256": "03ed43541e16bc2c124c0613593e789e469c9d353e5aa260406a93fabd09bba4",
+        "literal_lines": 26
+      },
+      {
+        "path": "test_canopy_finishing.py",
+        "sha256": "ea7a3a606b6bd4d3630881817c29749af47e43d705e9f9348a916108841ea855",
+        "literal_lines": 8
+      },
+      {
+        "path": "test_shelf_ground.py",
+        "sha256": "8d813d654348fcc4bc5a0983b4052c8f923f39c71e814525d8e7bfd2af90acc6",
+        "literal_lines": 40
+      },
+      {
+        "path": "test_ucx_merge.py",
+        "sha256": "30426bd979a7a2baea074e002c7321451a59bc7c23a04deb3d3612b9c1e8aa2e",
+        "literal_lines": 24
+      },
+      {
+        "path": "test_ucx_redundancy.py",
+        "sha256": "a4f519aa7e4fc207082ff3833929335f0aa565eb5697140a0e8f47c7762d50d9",
+        "literal_lines": 34
+      },
+      {
+        "path": "test_unresolved_v020.py",
+        "sha256": "83dbedda2ac21ea7980b5215915de5bf0fcb43a65851584c6ab4a086d5f31692",
+        "literal_lines": 16
+      },
+      {
+        "path": "urn-buried-r1/export_three.py",
+        "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+        "literal_lines": 25
+      },
+      {
+        "path": "urn-buried-r1/raw_three.py",
+        "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+        "literal_lines": 16
+      }
+    ]
+  },
+  "tool_calls": "unmeasured; real driver and DCC logs sealed, no invented total",
+  "open_items": [
+    "worker: NPM Bench source-shaped light copy/native15face loss",
+    "worker: unchanged Canopy5286internal pairs/105Groundpairs/96Bikepairs and Flora46/51/3mixedpairs",
+    "worker: Ground skirt/details/maps/UV/UDIM/density and missing/interim/grey species maps",
+    "worker: UCX175wide-neighbour pairs, limit2-10mm, no waiver",
+    "user AFTER technical repairs: final visual/material acceptance then completeSINTEZ"
+  ],
+  "next_steps": [
+    "Resume ONLY NPMv020/site-urn-r3 and VPMv020/site-ucx-r4",
+    "Do not adopt rejected NPMBench/Canopy/UCXmerge/cluster/reconstructedr3 candidates",
+    "No new user question; retain38MAF/4582plants and all closed gates",
+    "Fix remaining technical QA, then final visual/material gate and completeSINTEZ"
+  ]
+}

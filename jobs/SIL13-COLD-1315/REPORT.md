@@ -1,6 +1,22 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v019 seven VPM Bench013 copies technically finished and adopted;
+Current status: **v020 four Urn floor joints and coverage-certified564UCX adopted;
+whole-site QA still FAIL, NOT delivered**. See [CONTINUATION-v020.md](CONTINUATION-v020.md).
+NPM178571raw/178556native; VPM311042raw/native. Urn8placed checks clean;
+full shelf/Ground partition proves every shelf below Ground by>=9.281mm, bounds
+and all other vertices exact.564UCX/6564tris, allraw/nativeUCX0/0/0/0;
+NEW complete57226Groundtriangle proof446541partitionvertices,89.935644792mm bound,
+0unassigned/degenerate.36removedUCX proven redundant, NOT36skippedGroundtargets;
+remaining564UCX and entire render arrays EXACT by corresponding exported readbacks.
+NativeV010175wide pairs remainOPEN; nooverlap/touch/belowband. Whole render3595faces/
+36bowtiesFAIL, nativeVPM3/3/1/5FAIL. No NPMBench/Canopy/reconstructedUCXtrial adopted.
+Affected tests:483passed/5historical deselected; separateCURRENT4failed and isolated3failed/2passed.
+286immutableDrivefiles351458541bytessealed,22original/source/library/map/resume hashes equal.
+Resume NPMv020/site-urn-r3 and VPMv020/site-ucx-r4 ONLY. All38MAF/4582plants retained.
+No new human question/PR/delivery/readiness claim.
+Full suite: deferred to merge batch (rule 68).
+
+Historical status: **v019 seven VPM Bench013 copies technically finished and adopted;
 whole-site QA still FAIL, not delivered**. See [CONTINUATION-v019.md](CONTINUATION-v019.md).
 Actual VPM311042raw/native,14placed checks clean;31otherMAF/Ground/Flora/600UCX exact.
 NPM remains v018178571raw/178556native,15other-type face lossFAIL. All38MAF/4582census
