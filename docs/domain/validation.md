@@ -101,6 +101,19 @@ Manual gates of every modelling job, outside V001-V017 (no validator stage cover
   decision ([D197]); the resulting V004 count is `review` per conflicts #44.
 - **G3 Edge loops.** Loops and rings continue through the mesh, no loop stopping mid-run ([D200]).
 
+### UCX budget: densify a detached part, never Main automatically (#1537)
+
+When the file's UCX exceed the [D012] limit (V010), the model may need more triangles (n >= 50 000 ->
+ceil(5 % n), cap 100 000). Use the kernel operation
+[`src/dt_ai/ops/densify.py:densify_for_ucx_budget`](../../src/dt_ai/ops/densify.py) `(object, part, target_tris)`:
+it computes the needed triangle count from [D012], subdivides ONLY the named part (every triangle -> 4, bulk, no
+per-pair loop) and keeps the D108 invariants relative to the source [D201]: no new degenerate 3D face, zero-area or
+mirrored UV face or open edge, bbox and UV bounds unchanged, other parts untouched; a break rolls back with a
+question. Without a part it stops with the question which part to densify. The user's practice (Artem, 2026-11-15):
+detach an element - letters, a flat plate - and subdivide it; never densify Main automatically (a Main part is
+refused unless confirmed). Bisecting edges and connecting midpoints (session `0a21d4de`) left 296 zero-area faces
+for SINTEZ and is rejected by `check_densify` (`tests/ops/test_densify.py`).
+
 ## SINTEZ 1.6.1 check-group mapping
 
 [2026 requirements](requirements-2026.md) contains all LP 80 / HP 154 rows and the
