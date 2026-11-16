@@ -12,7 +12,7 @@ from unittest.mock import Mock
 
 import numpy as np
 import pytest
-from shapely.geometry import Polygon, box
+from shapely.geometry import box
 
 from dt_ai.core.heights import export_z_check
 from dt_ai.geometry import ground_cake as gc

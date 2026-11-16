@@ -192,6 +192,10 @@
   "z": {
    "ground": [
     -0.468742,
+    0.260367
+   ],
+   "ground_inset1": [
+    0.086055,
     0.266367
    ],
    "skirt": [
@@ -214,18 +218,23 @@
  "project_zero_check": {
   "project_zero_m": 142.1,
   "project_zero_fbx_z_m": 0.0,
-  "export_z_range_m": [
-   -0.468742,
-   0.266367
+  "step_m": 0.006,
+  "tol_m": 0.01,
+  "checked_vertices": 378,
+  "levels": [
+   0,
+   1
   ],
-  "abs_range_m": [
-   141.631258,
-   142.366367
+  "residual_m": [
+   -0.0,
+   0.0
   ],
-  "findings": [],
+  "shift_estimate_m": 0.0,
   "h_relief": 142.1,
-  "h_otn": 0.27,
-  "h_abs": 142.37,
+  "notes": [],
+  "findings": [],
+  "h_otn": 0.26,
+  "h_abs": 142.36,
   "status": "pass",
   "zero_source": "D282: VP_5 floor-mark MTEXT 33F8EC4=142.10 beside 33F8EC5=0.000 (#1315 v003)"
  }

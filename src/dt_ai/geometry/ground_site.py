@@ -31,6 +31,7 @@ from dt_ai.geometry import ground_cake as gc
 
 STAGES = ("sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx")
 UCX_OWNER = "#1404 compaction 7 (ucx10_core.py, D225)"
+MAX_ID = 10  # UDIM = 1000 + ID in the first row 1001-1010; slot "IDnn_" parsing assumes two digits
 
 
 @dataclass
@@ -91,6 +92,9 @@ def check_covers(covers: list[Cover], base_id: int) -> None:
     ids = sorted(c.id for c in covers)
     if ids != list(range(1, len(covers) + 1)):
         raise ValueError(f"cover IDs must be 1..{len(covers)} without gaps or repeats, got {ids}")
+    if ids[-1] > MAX_ID:
+        raise ValueError(f"cover ID {ids[-1]} > {MAX_ID}: ID {MAX_ID + 1} and above leave the first UDIM row "
+                         f"(1001-{1000 + MAX_ID}); split the site or merge covers")
     names = [c.name for c in covers]
     if len(set(names)) != len(names):
         raise ValueError(f"duplicate cover names {sorted(n for n in set(names) if names.count(n) > 1)}")
@@ -280,28 +284,52 @@ def _skirt_ids_and_uv(mesh: gc.Mesh, by_name: dict, slots: dict, cell: float) ->
                 mesh.uv[f, k] = (cid - 1 + uv[v][0], uv[v][1])
 
 
-def skirt_gaps(mesh: gc.Mesh, drop_m: float) -> list:
-    """Outer (single-use) base edges whose both ends lack a skirt vertex >= ``drop_m`` lower at the same XY."""
+def skirt_gaps(mesh: gc.Mesh, drop_m: float, xy_tol: float = 1e-6) -> list:
+    """Edge-level skirt check (review r1 P1-2): every outer (single-use) base edge (a, b) needs a skirt quad - two
+    skirt triangles (a, b, la) + (b, la, lb) or (a, b, lb) + (a, lb, la) - whose lower vertices la, lb sit at the
+    XY of a and b and at least ``drop_m`` below them. An edge without such a quad is a gap with its reason."""
     count: dict = {}
     for f, lv in zip(mesh.faces, mesh.level):
         if lv == 0:
             for a, b in ((f[0], f[1]), (f[1], f[2]), (f[2], f[0])):
                 count[(min(a, b), max(a, b))] = count.get((min(a, b), max(a, b)), 0) + 1
-    lows: dict = {}
-    for f, lv in zip(mesh.faces, mesh.level):
-        if lv < 0:
-            for v in f:
-                lows.setdefault(tuple(np.round(mesh.verts[v, :2], 6)), []).append(float(mesh.verts[v, 2]))
+    tris = {frozenset(int(v) for v in f) for f, lv in zip(mesh.faces, mesh.level) if lv < 0}
+    by_edge: dict = {}
+    for t in tris:
+        for v in t:
+            for w in t:
+                if v < w:
+                    by_edge.setdefault((v, w), []).append(t)
+    xy = mesh.verts[:, :2]
+    z = mesh.verts[:, 2]
+
+    def below(top, low):
+        return low != top and float(np.abs(xy[low] - xy[top]).max()) <= xy_tol
+
     gaps = []
     for (a, b), n in count.items():
         if n != 1:
             continue
-        for v in (a, b):
-            zs = lows.get(tuple(np.round(mesh.verts[v, :2], 6)), [])
-            drop = max((float(mesh.verts[v, 2]) - z for z in zs), default=0.0)
-            if drop < drop_m - 1e-9:
-                gaps.append({"edge": [int(a), int(b)], "vertex": int(v), "drop_m": round(drop, 6)})
-                break
+        a, b = int(a), int(b)
+        best = None  # (min drop, la, lb) over every quad found on this edge
+        for t in by_edge.get((a, b), []):
+            (c,) = t - {a, b}
+            for top, other in ((a, b), (b, a)):
+                if not below(top, c):
+                    continue
+                # second triangle: (other, c, l_other) with l_other below `other`
+                for t2 in by_edge.get((min(other, c), max(other, c)), []):
+                    if t2 == t:
+                        continue
+                    (d,) = t2 - {other, c}
+                    if below(other, d):
+                        drop = min(float(z[top] - z[c]), float(z[other] - z[d]))
+                        if best is None or drop > best[0]:
+                            best = (drop, c, d)
+        if best is None:
+            gaps.append({"edge": [a, b], "reason": "no skirt quad", "drop_m": 0.0})
+        elif best[0] < drop_m - 1e-9:
+            gaps.append({"edge": [a, b], "reason": f"drop < {drop_m} m", "drop_m": round(best[0], 6)})
     return gaps
 
 
@@ -320,7 +348,8 @@ def write_obj(path: Path, mesh: gc.Mesh, slots: list, prefix: str, origin: str) 
     lines = [f"# {origin}", f"o {prefix}"]
     lines += [f"v {x:.6f} {y:.6f} {z:.6f}" for x, y, z in mesh.verts]
     vt = 1
-    groups = [("ground", mesh.level >= 0), ("skirt", mesh.level < 0)]
+    groups = [("ground" if lv == 0 else f"ground_inset{lv}", mesh.level == lv)
+              for lv in sorted({int(v) for v in mesh.level if v >= 0})] + [("skirt", mesh.level < 0)]
     for gname, mask in groups:
         lines.append(f"g {gname}")
         idx = sorted(np.nonzero(mask)[0], key=lambda i: (order[mesh.slot[i]], i))
@@ -365,10 +394,50 @@ def read_obj(path: Path) -> dict:
     for v in arr.ravel():
         if not math.isfinite(v):
             raise ValueError(f"{path}: non-finite vertex value")
+    level_of: dict = {}
+    for g, ix in groups.items():
+        if g != "ground" and not (g or "").startswith("ground_inset"):
+            continue
+        lv = 0 if g == "ground" else int(g.removeprefix("ground_inset"))
+        for i in ix:
+            if level_of.setdefault(i, lv) != lv:
+                raise ValueError(f"{path}: vertex {i + 1} in ground levels {level_of[i]} and {lv}")
     return {"vertices": len(verts), "triangles": tris,
             "z": {g: [float(arr[sorted(ix), 2].min()), float(arr[sorted(ix), 2].max())] for g, ix in groups.items()},
             "z_values": {g: arr[sorted(ix), 2].tolist() for g, ix in groups.items()},
+            "points": [(*arr[i].tolist(), lv) for i, lv in sorted(level_of.items())],
             "tiles": {m: sorted(t) for m, t in tiles.items()}}
+
+
+def ground_points(back: dict, origin_xy) -> list:
+    """Ground-top vertices of a ``read_obj`` result in source XY: ``(x + ox, y + oy, z, level)``."""
+    ox, oy = (_finite("origin_xy", v) for v in origin_xy)
+    if not back.get("points"):
+        raise ValueError("OBJ has no ground group: nothing to check (export the site with `dt ground site`)")
+    return [(x + ox, y + oy, z, lv) for x, y, z, lv in back["points"]]
+
+
+def relief_z_at(relief_xyz, margin: float = 0.001, origin_xy=(0.0, 0.0)):
+    """Absolute relief sampler for the project zero check: TIN of the source points (no extrapolation; at most
+    ``margin`` outside, the noding snap of ``build_site``). Returns ``f(list of (x, y)) -> list of Z or None``.
+    The TIN is built around ``origin_xy`` (as in ``build_site``) so that large source XY stay well conditioned."""
+    ox, oy = (_finite("origin_xy", v) for v in origin_xy)
+    pts = []
+    for p in relief_xyz:
+        if len(p) != 3:
+            raise ValueError(f"relief point {p!r}: expected (x, y, z)")
+        x, y, z = (_finite("relief point", v) for v in p)
+        pts.append((x - ox, y - oy, z))
+    tin = gc.build_tin(pts)
+    if tin.contradictory:
+        raise ValueError(f"{len(tin.contradictory)} relief points with the same XY and other Z, first "
+                         f"{tin.contradictory[0]}: resolve the source marks, no average")
+    sampler = SnapSampler(tin, _finite("margin", margin))
+
+    def at(xy):
+        z, hit = sampler.sample(np.asarray(list(xy), float).reshape(-1, 2) - [ox, oy])
+        return [float(v) if h else None for v, h in zip(z, hit)]
+    return at
 
 
 def sha256(path: Path) -> str:
@@ -450,6 +519,20 @@ def covers_from_dxf(doc, rows: list, chord: float) -> list[Cover]:
             raise ValueError(f"cover {row.get('id')}: hatches have different background colours {colours}")
         covers.append(Cover(row.get("id"), row.get("name"), polys, colours[0][0], colours[0][1], list(handles)))
     return covers
+
+
+def relief_from_spec(spec_path: Path) -> tuple[list, dict]:
+    """Relief points (absolute) of a site spec: the spec's DXF (sha256 checked) and relief selector."""
+    spec = load_spec(spec_path)
+    for key in ("dxf", "relief"):
+        if not isinstance(spec.get(key), dict):
+            raise ValueError(f"spec {spec_path} misses {key!r}")
+    dxf = Path(spec["dxf"]["path"])
+    digest = sha256(dxf)
+    if digest != spec["dxf"].get("sha256"):
+        raise ValueError(f"DXF sha256 {digest} != spec {spec['dxf'].get('sha256')}")
+    import ezdxf
+    return relief_from_dxf(ezdxf.readfile(str(dxf)), spec["relief"]), spec
 
 
 def relief_from_dxf(doc, spec: dict, chord: float = 0.01) -> list:

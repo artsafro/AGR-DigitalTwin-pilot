@@ -43,7 +43,7 @@ contexts:
       - name: height_values
         contract: "ноль проекта, м; Z нуля в FBX, м; верх модели, м -> высоты App.3 с округлением только в конце"
       - name: export_z_check
-        contract: "ноль проекта, Z нуля в FBX, Z верха Ground, диапазон рельефа -> pass / fail (agr zero, #1406)"
+        contract: "ноль проекта, Z нуля в FBX, вершины верха Ground (XY, Z, уровень), рельеф в XY -> pass / fail по каждой вершине (agr zero, #1406)"
   - id: ground
     grid: "2/1"
     ru: "Поверхность Ground: плоские покрытия → проекция на рельеф → юбка"
@@ -58,7 +58,7 @@ contexts:
       - name: relief_from_dxf
         contract: "DXF, блок / имена отметок / слои горизонталей -> точки рельефа с родной Z"
       - name: skirt_gaps
-        contract: "меш, опуск -> внешние рёбра с опуском меньше нормы (GND-03, D251)"
+        contract: "меш, опуск -> внешние рёбра без квада юбки или с опуском меньше нормы (GND-03, D251)"
   - id: uv-atlas
     grid: "3/1"
     ru: "Текстуры по ID: UV-острова, тайлы, UDIM / атлас"

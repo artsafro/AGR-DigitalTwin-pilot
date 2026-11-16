@@ -75,11 +75,12 @@ def run(spec_path: Path, out: Path) -> int:
     gs.write_obj(partial / f"{prefix}.obj", result.mesh, result.slots, prefix,
                  f"local XY = source - {rep['stages']['sources']['origin_xy_m']}; Z = mark - {zero['project_zero_m']}")
     back = gs.read_obj(partial / f"{prefix}.obj")
-    rep["readback"] = {k: v for k, v in back.items() if k != "z_values"}
-    rep["project_zero_check"] = export_z_check(zero["project_zero_m"], 0.0, back["z_values"]["ground"],
-                                               rep["stages"]["zero"]["relief_abs_range_m"],
-                                               float(params.get("relief_tol", 0.01))
-                                               + 2 * float(params.get("step", 0.006)))  # inset levels
+    rep["readback"] = {k: v for k, v in back.items() if k not in ("z_values", "points")}
+    origin_xy = rep["stages"]["sources"]["origin_xy_m"]
+    rep["project_zero_check"] = export_z_check(zero["project_zero_m"], 0.0, gs.ground_points(back, origin_xy),
+                                               gs.relief_z_at(relief, float(params.get("snap", 0.001)), origin_xy),
+                                               step_m=float(params.get("step", 0.006)),
+                                               tol_m=float(params.get("relief_tol", 0.01)))
     rep["project_zero_check"]["zero_source"] = zero["source"]
     expected = {f"M_{site}_Ground_{s}": [1000 + int(s[2:4])] for s in result.slots
                 if f"M_{site}_Ground_{s}" in back["tiles"]}
