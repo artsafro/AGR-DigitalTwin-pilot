@@ -1,0 +1,21 @@
+[
+    {
+        "PID":  1019084,
+        "Created":  "\/Date(1794817384823)\/",
+        "Title":  "* MAF_16M_6M_review_v002 [C:\\Users\\artsafro\\Desktop\\!3D viz\\!Weltbau\\6_Butovskaya\\NPM\\November_pravki\\MAF_16M_6M\\MAF_16M_6M_review_v002.blend] - Blender 5.1.2",
+        "LaunchHint":  "\"C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe\" --online-mode \"C:/Users/artsafro/Desktop/!3D viz/!Weltbau/6_Butovskaya/NPM/November_pravki/MAF_16M_6M/MAF_16M_6M_review_v002.blend\"",
+        "Owns9877":  true
+    },
+    {
+        "PID":  1012240,
+        "Created":  "\/Date(1794819120822)\/",
+        "Title":  "(Unsaved) - Blender 5.1.2",
+        "LaunchHint":  "\"C:/Program Files/Blender Foundation/Blender 5.1/blender.exe\" --factory-startup --disable-autoexec",
+        "Owns9877":  false
+    }
+]
+{
+    "LocalAddress":  "127.0.0.1",
+    "LocalPort":  9877,
+    "OwningProcess":  1019084
+}

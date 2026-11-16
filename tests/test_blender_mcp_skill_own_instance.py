@@ -81,7 +81,9 @@ def test_live_file_gate_precedes_scene_reads():
     ref = PINNING.read_text(encoding="utf-8")
     for token in ("Get-CimInstance", "Get-NetTCPConnection", "MainWindowTitle", "CommandLine",
                   "OwningProcess", "get_blendfile_summary_path_info", "REFUSE",
-                  "expected absolute path", "current open file", "before every MCP call"):
+                  "expected absolute path", "current open file", "before every MCP call",
+                  "PID 11 has `A.blend`", "PID 22 has `B.blend`", "9877 belongs to 22",
+                  "expected is `A.blend`: REFUSE", "different from the pinned PID/birth"):
         assert token in ref, token
 
 
