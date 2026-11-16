@@ -32,6 +32,9 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `def t_junctions` (its function names). Every row must say why it stays.
 - `window-generator` owner adapters/max/agr_tools/windowgen_core.py (#1405): definitions named build_type or
   assign_glass under jobs/ + tools/ + src/ are refused; imports/calls remain valid. No legacy copies are allowlisted.
+- `site-placement` owner src/dt_ai/placement/site.py (#1407, [D324]): the one site placement run (`dt place site` /
+  `agr place`, NPM + VPM at the same points [D293]). Flags any other `engine.place(...)` call, or a bare `place(...)`
+  imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -80,6 +83,7 @@ RULES = {
     "vpm-uv": "tools/blender/vpm_uv.py",
     "seam-seal": "tools/blender/seam_seal.py",
     "window-generator": "adapters/max/agr_tools/windowgen_core.py",
+    "site-placement": "src/dt_ai/placement/site.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
@@ -88,10 +92,11 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
            "seam-seal": ("jobs", "tools", "src"),   # #1381
-           "window-generator": ("jobs", "tools", "src")}   # #1405: shared Max/CLI window builder
+           "window-generator": ("jobs", "tools", "src"),   # #1405: shared Max/CLI window builder
+           "site-placement": ("jobs", "tools", "src")}   # #1407: one site placement run, guarded from the start
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
 REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
-                   "window-generator"}
+                   "window-generator", "site-placement"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
@@ -252,9 +257,20 @@ def _window_hits(tree):
             and node.name in {'build_type', 'assign_glass'}]
 
 
+def _place_hits(tree):
+    """Calls of the placement engine run `engine.place(...)`, or a bare `place(...)` imported from
+    dt_ai.placement.engine: a site run outside the one placement command is a job-local copy (#1407)."""
+    bare = any(isinstance(n, ast.ImportFrom) and n.module == "dt_ai.placement.engine"
+               and any(a.name == "place" and a.asname in (None, "place") for a in n.names) for n in ast.walk(tree))
+    return [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (
+        isinstance(node.func, ast.Attribute) and node.func.attr == "place"
+        and isinstance(node.func.value, ast.Name) and node.func.value.id == "engine"
+        or bare and isinstance(node.func, ast.Name) and node.func.id == "place")]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
           "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
-          "window-generator": _window_hits}
+          "window-generator": _window_hits, "site-placement": _place_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")

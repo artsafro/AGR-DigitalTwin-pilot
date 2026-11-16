@@ -23,12 +23,6 @@ shared_kernel:
       contract: "нижняя грань в мире -> удалить / на проверку (D095, D096)"
     - name: report_json
       contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
-  duplicates:
-    - at: "jobs/VATUTINO-SITE/place_site.py:87"
-      match: "def run("
-      issue: "#1393"
-      ru: "своя расстановка участка в задании поверх движка"
-      status: wrapper
 contexts:
   - id: dcc
     grid: "0/1"

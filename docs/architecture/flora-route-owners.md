@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `6ce0e5d19aae53623da944b548efd5636ef1dee5acd73922111eda1aaddc7c84`.
+Редакция YAML SHA-256: `09b269d28fc984324d372a4f3ab4db0b13fe90b774d76c7dcce68cf29f918423`.
 
 Ревизия исходников: Ведомость озеленения и СПОЗУ: ревизия, SHA-256, виды, размеры и точки в реестре исходников.
 
@@ -74,7 +74,6 @@
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/research/fbx_reader_compare.py::_blender`](../../tools/research/fbx_reader_compare.py) | live-bypass | исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой | Нет карточки |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/sintez_parity.py::run_live.run`](../../tools/sintez_parity.py) | live-bypass | синтетическая сверка с СИНТЕЗ (#432), не сдача: перевод отдельной карточкой | Нет карточки |
 | Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
-| Расстановка МАФ и Флоры | [`src/dt_ai/placement/engine.py`](../../src/dt_ai/placement/engine.py) | [`jobs/VATUTINO-SITE/place_site.py:87`](../../jobs/VATUTINO-SITE/place_site.py#L87) | wrapper | своя расстановка участка в задании поверх движка | Не требуется |
 | Пакеты НПМ / ВПМ и передача | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`jobs/TEC26-OKS/scripts/package_vpm.py:50`](../../jobs/TEC26-OKS/scripts/package_vpm.py#L50) | live-bypass | живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core) | [#1377](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1377) |
 
 ## Шаги и доказательства
@@ -88,7 +87,7 @@
 | Карты вида: одобренная пара или временная замена (stand-in) до точных карт; сдача Артёму со stand-in разрешена, вид Артём проверяет в конце сдачи | D245, D243, D299 | [`docs/pipeline-flora-textures.md`](../../docs/pipeline-flora-textures.md); [`jobs/VATUTINO-SITE/flora-route-a-v004.md`](../../jobs/VATUTINO-SITE/flora-route-a-v004.md); есть одобренная пара: одобрены только эти байты / объект, не другая версия; точной карты нет: временная замена из одобренных пар: помечена stand-in, красная в листе видов; новый вид: 2K вид спереди на белом → вырезка → ч/б прозрачность → одобрение Артёма |
 | НПМ-звезда (плоскости с картой) и ВПМ = оболочка звезды; детальный куст — только по запросу; совпадение НПМ / ВПМ каталога v003 принято на первое время (confirmed-interim) | D102, D232, D311 | [`tools/flora/build_flora_star.py`](../../tools/flora/build_flora_star.py); [`docs/plans/flora-426-route-2026-11.md`](../../docs/plans/flora-426-route-2026-11.md); [`library/flora/catalogue.json`](../../library/flora/catalogue.json);  |
 | Облегчённые НПМ (LOD) — только на копии библиотеки; оригиналы не меняются; копии — в job, имя <оригинал>__<job>, список в манифесте job для очистки после сдачи | D167, D097, D301 | [`library/flora/README.md`](../../library/flora/README.md); [`library/flora/npm-light.json`](../../library/flora/npm-light.json);  |
-| Расстановка по точкам СПОЗУ: утопление 10 см, поворот Z и масштаб ±10 %, сид записан | D100, D095 | [`src/dt_ai/placement/engine.py`](../../src/dt_ai/placement/engine.py); [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py); [`jobs/VATUTINO-SITE/placement-report.md`](../../jobs/VATUTINO-SITE/placement-report.md);  |
+| Расстановка по точкам СПОЗУ: утопление 10 см, поворот Z и масштаб ±10 %, сид записан | D324, D100, D095 | [`src/dt_ai/placement/engine.py`](../../src/dt_ai/placement/engine.py); [`src/dt_ai/placement/site.py`](../../src/dt_ai/placement/site.py); [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py); [`jobs/VATUTINO-SITE/placement-report.md`](../../jobs/VATUTINO-SITE/placement-report.md);  |
 | НПМ-версия Флоры в тех же точках | D293, D102, D097 | [`adapters/max/agr_tools/flora_atlas_max.py`](../../adapters/max/agr_tools/flora_atlas_max.py); [`docs/plans/flora-426-route-2026-11.md`](../../docs/plans/flora-426-route-2026-11.md); ВПМ уже расставлена: конвертация ВПМ → НПМ: в тех же точках звёзды НПМ (ВПМ — их оболочки); расстановка с нуля: звезда НПМ и оболочка ВПМ ставятся вместе в одни точки |
 | Атласы из расставленной сцены: НПМ — один 2048 (без альфы, прозрачность отдельно); ВПМ — свой 4096, UDIM после Ground | D246, D210, D155, D020 | [`tools/library/flora_atlas_from_scene.py`](../../tools/library/flora_atlas_from_scene.py); [`jobs/VATUTINO-SITE/flora-route-a-v004.md`](../../jobs/VATUTINO-SITE/flora-route-a-v004.md);  |
 | Проверки на чтении экспорта: размер, доля 70 000, список карт, валидатор (FLO-01..17) | D099, D097, D155 | [`src/twinqa/flora.py`](../../src/twinqa/flora.py); [`.agents/skills/model-flora/SKILL.md`](../../.agents/skills/model-flora/SKILL.md);  |
@@ -98,6 +97,5 @@
 ## Ограничения сегодня
 
 - Библиотека v003: привязка карт к UV сломана у 99 из 99 объектов (#377, запаркована D232); у Ватутино 8 из 11 найденных видов — замены: [`docs/plans/flora-426-route-2026-11.md`](../../docs/plans/flora-426-route-2026-11.md)
-- Расстановка: движок dt_ai.placement вызывается из jobs/VATUTINO-SITE/place_site.py; команды agr / dt нет: [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py)
 - Бюджет НПМ: Флора 70 000 из 180 000 (D097); Ватутино 118 774 до облегчения, 64 454 с LOD; режет Артём (D167): [`docs/plans/flora-426-route-2026-11.md`](../../docs/plans/flora-426-route-2026-11.md)
 - Нет карты прозрачности — review, конфликт C18 открыт; 7 из 17 строк FLO без автопроверки: [`docs/domain/areas/flora.md`](../../docs/domain/areas/flora.md); [`docs/domain/conflicts.md`](../../docs/domain/conflicts.md)

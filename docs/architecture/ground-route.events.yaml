@@ -188,13 +188,18 @@ stages:
     event_ru: "МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт"
     actor: agent
     context: placement
+    commands:
+      - "dt place site"
+      - "agr place"
     rules:
+      - D324
       - D095
       - D100
       - D166
       - D302
     evidence:
       - jobs/VATUTINO-SITE/placement-report.md
+      - src/dt_ai/placement/site.py
       - jobs/VATUTINO-SITE/place_site.py
   - id: npm
     event_ru: "НПМ-версия в координатах: МАФ НПМ и Флора НПМ на атласе, Ground на атласе"

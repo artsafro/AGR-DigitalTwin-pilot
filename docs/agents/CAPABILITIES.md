@@ -368,6 +368,11 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
 - Site placement `tools/placement_site.py` + `tools/blender/placement_instance.py` (PR #344) — TOOL ONLY: SPOZU points
   -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
   `tests/placement/test_site_*.py`.
+- Site placement command `dt place site SPEC.json --out NEW --seed N` / `agr place` (`src/dt_ai/placement/site.py`,
+  #1407, [D324]): MAF + Flora NPM and VPM at the same points in one run (D293); spec `dt-placement-site/1`, strict
+  NPM/VPM point-ID parity (exit 4), fail-closed spec (exit 2). Scene helpers moved to `dt_ai.placement.scene`
+  (`tools/placement_site.py` is an import alias). Vatutino `jobs/VATUTINO-SITE/place_site.py` = resolver over it;
+  guard rule `site-placement`. Silikatny run waits for #1315.
 - Ground producer `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106; moved from the job, whose path is now a
   shim) — WORKING: replay on the accepted v015 inputs gives masters byte-identical to the accepted build
   (NPM `c26b7feb…ca1a`, VPM `59310ac9…2eb4`); site data from `--job-dir` (default `jobs/VATUTINO-SITE`); tests
@@ -399,7 +404,7 @@ UCX build `ucx_build`, UCX gap `ucx10_core`, placement `dt_ai.placement`; comman
 |---|---|---|---|
 | UCX | `src/dt_ai/geometry/ucx_build.py` + `tools/blender/ucx_build.py` (#166, TOOL ONLY), methods `tools/methods/ucx/` | `adapters/max/agr_tools/ucx_core.py`, `ucx10_core.py` (1.0 `ucx.gap`), `ucxstairs_core.py` | `jobs/KPP1/scripts/vpm_ucx.py`, `jobs/PSU275/scripts/vpm_ucx.py`, `jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py` |
 | NPM atlas | `tools/derive/npm_atlas.py` (finish regions), `tools/materials/npm_atlas_udim.py` (#546, UDIM crop) | `adapters/max/agr_tools/atlas_core.py` (mirrors `npm_atlas_udim.pack()`), `facadeatlas_core.py` | `jobs/*/scripts/make_npm_atlas.py`, `jobs/vyatskaya-tow02/scripts/texture_atlas_blender.py` |
-| Placement | `src/dt_ai/placement/engine.py` + `tools/placement_site.py` (#316, #344) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
+| Placement | `src/dt_ai/placement/engine.py` + `scene.py` + `site.py` (`dt place site`, #316, #344, #1407, [D324]) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of
