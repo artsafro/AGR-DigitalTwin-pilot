@@ -169,6 +169,30 @@ def test_arrow_polylines_never_intersect_pink_lists(name):
         assert rendered == expected
 
 
+def _label_hits(board):
+    by_id = {e["id"]: e for e in board}
+    hits = []
+    for text in (e for e in board if e["type"] == "text"):
+        arrow = by_id.get(text.get("containerId"), {})
+        if arrow.get("type") != "arrow":
+            continue
+        ends = {arrow[k]["elementId"] for k in ("startBinding", "endBinding")}
+        for rect in (e for e in board if e["type"] == "rectangle" and e["id"] not in ends):
+            if (text["x"] < rect["x"] + rect["width"] and text["x"] + text["width"] > rect["x"]
+                    and text["y"] < rect["y"] + rect["height"] and text["y"] + text["height"] > rect["y"]):
+                hits.append((text["text"], rect["id"]))
+    return hits
+
+
+def test_every_generated_arrow_label_clears_non_endpoint_rectangles():
+    _, _, files = route_map.render_all(ROOT)
+    boards = {p: json.loads(content)["elements"] for p, content in files.items()
+              if p.suffix == ".excalidraw"}
+    assert len(boards) == 18
+    hits = {str(p): _label_hits(elements) for p, elements in boards.items() if _label_hits(elements)}
+    assert not hits, hits
+
+
 def test_generated_obstacle_sizes_keep_side_routes_clear():
     # Synthetic layouts: different rows, aligned rows, reversed direction and several list sizes.
     for offset in (-200, 0, 200, 400):
