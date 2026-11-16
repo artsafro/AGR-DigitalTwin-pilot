@@ -36,7 +36,7 @@ import re
 import zipfile
 
 SCHEMA = 'agr.build_manifest/2'
-SCHEMA_MULTI = 'agr.build_manifest/3'  # [D333]: several independent sources within one role
+SCHEMA_MULTI = 'agr.build_manifest/3'  # [D332]: several independent sources within one role
 SCHEMA_V1 = 'agr.build_manifest/1'
 ROLES = ('oks', 'ground', 'groundel', 'flora')  # [D333]: independent provenance roles
 DERIVATION_SCHEMA = 'agr.derivation/1'
@@ -560,7 +560,7 @@ def source_entries(entry):
 
 
 def master_hashes(master):
-    """Hash CLI/API paths without dropping a repeated role's independent sources [D333]."""
+    """Hash CLI/API paths without dropping a repeated role's independent sources [D332]."""
     if isinstance(master, dict):
         return {r: [sha256_file(p) for p in paths] if isinstance(paths, list) else sha256_file(paths)
                 for r, paths in master.items()}
