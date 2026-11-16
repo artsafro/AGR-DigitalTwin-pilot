@@ -162,7 +162,8 @@ def _v010(rb: dict, target: str) -> list[dict]:
 
 RESOLVE_KEYS = ("gap_m", "pairs_resolved", "pairs_ambiguous", "left", "pairs", "ucx_triangles",
                 "file_ucx_limit_D012", "within_D012", "model_to_ucx_max_m", "model_to_ucx_before_max_m",
-                "model_to_ucx_limit_m", "within_D134", "intersections_before", "intersections_after")
+                "model_to_ucx_limit_m", "within_D134", "D134_not_worse", "intersections_before", "intersections_after",
+                "not_convex", "skipped")
 
 
 def _resolve(a: dict, report: dict):

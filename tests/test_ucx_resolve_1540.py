@@ -186,6 +186,36 @@ def test_real_float32_pair_is_resolved_not_ambiguous():
     assert 0 < res["pairs"][0]["volume_removed_m3"] < 0.01
 
 
+V064 = [[43.410003662109375, -6.109167098999023, 14.04000186920166], [43.410003662109375, -6.109167575836182, 12.509797096252441],
+        [43.95000457763672, -6.097663879394531, 14.04000186920166], [43.95000457763672, -6.0976643562316895, 12.509797096252441],
+        [43.30967712402344, -5.3886613845825195, 14.04000186920166], [43.30967712402344, -5.388661861419678, 12.509797096252441],
+        [43.829376220703125, -5.23936128616333, 12.509797096252441], [43.829376220703125, -5.239360809326172, 14.04000186920166]]
+T064 = [[4, 5, 1], [1, 0, 4], [7, 2, 3], [3, 6, 7], [2, 7, 4], [4, 0, 2], [5, 6, 3], [3, 1, 5], [3, 2, 0], [0, 1, 3],
+        [7, 6, 5], [5, 4, 7]]
+V337 = [[44.2384033203125, -5.144669055938721, 4.700001239776611], [44.2384033203125, -5.1446661949157715, 13.900001525878906],
+        [44.224098205566406, -5.09476900100708, 4.700001239776611], [44.224098205566406, -5.094766139984131, 13.900001525878906],
+        [43.82121276855469, -5.264441967010498, 4.700001239776611], [43.82121276855469, -5.264439105987549, 13.900001525878906],
+        [43.806915283203125, -5.2146430015563965, 4.700001239776611], [43.806915283203125, -5.214640140533447, 13.900001525878906]]
+T337 = [[2, 3, 1], [1, 0, 2], [4, 0, 1], [1, 5, 4], [7, 3, 2], [2, 6, 7], [1, 3, 7], [7, 5, 1], [4, 6, 2], [2, 0, 4],
+        [7, 6, 4], [4, 5, 7]]
+
+
+def test_real_cut_piece_stays_convex_after_float32_round_trip():
+    """v007 _064/_337: the cut piece was convex in float64 but read back non-convex (worst 0.104 mm) from the FBX:
+    cap points 0.34 mm off a cap edge made sliver triangles. Cap corners within 1 mm are dropped (piece only
+    shrinks) and a cut that is not convex after a float32 round trip is never chosen."""
+    rows = [row(1, "UCX_SM_Elevatornaya_Vl_1_A_Main_064", (V064, T064)),
+            row(2, "UCX_SM_Elevatornaya_Vl_1_A_Main_337", (V337, T337))]
+    res = core.resolve(rows, core.gap_options({"gap_m": GAP}))
+    assert res["summary"]["ok"] is True and res["summary"]["pairs_resolved"] == 1
+    cut = res["pieces"][2]
+    hull = core._hull_core()
+    assert hull.convexity(core._float32(cut["verts"]), cut["tris"])["ok"]
+    assert all(ua.inside_convex(v, V337, T337, tol=1e-7) for v in cut["verts"])  # only shrinks
+    f32 = [{"name": r["name"], "verts": core._float32(r["verts"]), "tris": r["tris"]} for r in after_rows(res)]
+    assert not kinds(f32) & BAD
+
+
 # --- fail-closed probes -----------------------------------------------------------------------------------------
 def test_empty_scope_is_an_error():
     with pytest.raises(ValueError):

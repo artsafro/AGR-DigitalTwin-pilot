@@ -157,7 +157,8 @@ def main():
         before = ub.hull_deviation(pts, [(r["verts"], r["tris"]) for r in rows if r["tris"]])
         dev = ub.hull_deviation(pts, [(r["verts"], r["tris"]) for r in rows_after if r["tris"]])
         report.update(model_points=int(len(pts)), model_to_ucx_before_max_m=round(float(before.max()), 4),
-                      model_to_ucx_max_m=round(float(dev.max()), 4), within_D134=bool(dev.max() <= limit))
+                      model_to_ucx_max_m=round(float(dev.max()), 4), within_D134=bool(dev.max() <= limit),
+                      D134_not_worse=bool(dev.max() <= before.max() + 1e-4))
         bpy.ops.object.select_all(action="DESELECT")
         for o in meshes:
             o.select_set(True)

@@ -169,10 +169,12 @@ def separation(a, b):
     return best, axis
 
 
-def _cap_corners(points, n, tol=1e-6):
-    """Corners of the convex cap polygon in the plane with normal n (#1540): duplicate and collinear points
-    (within `tol` metres of a cap edge) are dropped. A float32 box whose quads are not exactly planar gives cut
-    points on its triangle diagonals that lie on a cap edge; fed to the hull they leave it open."""
+def _cap_corners(points, n, tol=1e-3):
+    """Corners of the convex cap polygon in the plane with normal n (#1540): duplicate and nearly collinear points
+    (within `tol` metres of the chord of their neighbours) are dropped. A float32 box whose quads are not exactly
+    planar gives cut points on its triangle diagonals that lie on or next to a cap edge; fed to the hull they leave
+    it open or make sliver triangles that read back non-convex. Dropping a corner of a convex polygon only shrinks
+    the cap (by < tol), so the piece only shrinks and its gap along n is unchanged."""
     a = (1.0, 0.0, 0.0) if abs(n[0]) < 0.9 else (0.0, 1.0, 0.0)
     u = _unit(_cross(n, a))
     w = _cross(n, u)
@@ -367,6 +369,12 @@ def plan(pieces, opts):
             'summary': summary}
 
 
+def _float32(verts):
+    """Vertices as an FBX float32 export stores them (struct round trip, stdlib)."""
+    import struct
+    return [list(struct.unpack('3f', struct.pack('3f', *v))) for v in verts]
+
+
 def _face_cut(small, large, target):
     """Best cut of `small` by a face plane of `large` shifted by `target` (#1540): (removed_m3, n, c, cut) or None.
 
@@ -386,6 +394,8 @@ def _face_cut(small, large, target):
             continue
         if _thickness(cut, n) < MIN_THICK_M - TOL_M:
             continue
+        if not _hull_core().convexity(_float32(cut['verts']), cut['tris'])['ok']:
+            continue  # would read back non-convex from a float32 FBX
         removed = small['volume'] - cut['volume']
         if best is None or removed < best[0] - 1e-12:
             best = (removed, n, off, cut)
