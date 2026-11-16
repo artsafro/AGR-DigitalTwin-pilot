@@ -131,10 +131,23 @@ def check_blender(bpy, manifest):
 def max_material(rt, material):
     """Inspect native materials without modifying or activating viewport maps."""
     cls = str(rt.classOf(material))
-    properties = {'Standardmaterial': 'diffuseMap', 'PhysicalMaterial': 'base_color_map'}
+    properties = {
+        'Standardmaterial': ('diffuseMap', 'diffuseMapEnable', 'diffuseMapAmount'),
+        'PhysicalMaterial': ('base_color_map', 'base_color_map_on', 'base_weight'),
+    }
     if cls not in properties:
         raise ValueError(f'unsupported material class: {cls}')
-    tex = rt.getProperty(material, properties[cls])
+    slot, enabled, amount = properties[cls]
+    for prop in (enabled, amount, 'showInViewport'):
+        try:
+            value = rt.getProperty(material, prop)
+        except (RuntimeError, AttributeError, TypeError) as exc:
+            raise ValueError(f'{prop} unavailable on {cls}') from exc
+        if prop == amount:
+            positive(value, prop)
+        elif value is not True:
+            raise ValueError(f'{prop} must be true on {cls}')
+    tex = rt.getProperty(material, slot)
     map_class = str(rt.classOf(tex))
     if map_class != 'Bitmaptexture':
         raise ValueError(f'diffuse requires plain Bitmaptexture, found {map_class} (MultiTile-only is not viewport reviewable)')

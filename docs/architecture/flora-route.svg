@@ -49,10 +49,9 @@
 <rect x="1970" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1930" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1890" y1="275.62" x2="1930" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="1930" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1930" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1930" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1930" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1930" y="681.25" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2210" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2160" y1="233.12" x2="2200" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -286,22 +285,17 @@
 <tspan x="2045.0" dy="21.25">поворот Z и масштаб</tspan>
 <tspan x="2045.0" dy="21.25">±10 %, сид записан</tspan>
 </text>
-<text x="2045.0" y="427.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Нет команды agr/dt</tspan>
+<text x="2045.0" y="410.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Команда:</tspan>
+<tspan x="2045.0" dy="17.5">dt place site</tspan>
+<tspan x="2045.0" dy="17.5">agr place</tspan>
 </text>
 <text x="2045.0" y="532.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Правила: D100, D095</tspan>
+<tspan x="2045.0" dy="14">Правила: D329, D100, D095</tspan>
 </text>
 <text x="2045.0" y="603.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="14">Контекст: Расстановка МАФ и</tspan>
 <tspan x="2045.0" dy="17.5">Флоры</tspan>
-</text>
-<text x="2045.0" y="691.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="13">⚠ Расстановка: движок</tspan>
-<tspan x="2045.0" dy="16.25">dt_ai.placement вызывается из</tspan>
-<tspan x="2045.0" dy="16.25">jobs/VATUTINO-SITE/place_site</tspan>
-<tspan x="2045.0" dy="16.25">.py; команды agr / dt нет</tspan>
-<tspan x="2045.0" dy="16.25">[D232]</tspan>
 </text>
 <text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="15">Агент: Blender / Max /</tspan>

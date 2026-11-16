@@ -9,7 +9,9 @@ Import pymxs inside functions so this file loads under plain pytest.
 Every step goes through the existing runtime entry points (no step logic here): checks_050 / checks_070 (select
 off), edits_090 / edits_100 (preview, then apply with that preview for the file steps), export_preview /
 export_commit (export.checked). Each nested dispatcher call is journalled by the runtime hook itself. The model of
-export.checked: the given nodes, else every visible geometry node named `SM_*` / `UCX_*` outside layer AGR_export.
+export.checked: the given nodes, else every visible geometry node named `SM_*` / `UCX_*` outside layer AGR_export;
+#1582: a ucx.gap copy `<UCX>_AGR_gap_NN` on AGR_export replaces its original (exported under the original's name,
+the original skipped and never changed; deliver_core.ucx_export_selection), recorded as `ucx_export` in deliver.json.
 The scene is never changed by pack.deliver itself; the apply writes only into a new `Сдача_<time>` folder.
 """
 import datetime
@@ -49,6 +51,47 @@ def _model_nodes(nodes):
     return sorted(out, key=_handle)
 
 
+def _gap_copies():
+    """Every UCX geometry node on layer AGR_export, scene-wide: the fixed copies of ucx.gap (#1582)."""
+    rt = _rt()
+    return [n for n in rt.objects if rt.isValidNode(n) and str(n.name).upper().startswith('UCX_')
+            and rt.superClassOf(n) == rt.GeometryClass and str(n.layer.name) == EXPORT_LAYER]
+
+
+def _export_set(ctx, model):
+    """{'nodes', 'names', 'selection'} of export.checked: the ucx.gap copies on AGR_export replace their originals,
+    under the originals' names (deliver_core.ucx_export_selection); else {'error': text} - a blocker, never the
+    old UCX."""
+    core = ctx.core
+    try:
+        copies = _gap_copies()
+        by_handle = {_handle(n): n for n in list(model) + copies}
+        sel = core.ucx_export_selection([{'handle': _handle(n), 'name': str(n.name)} for n in model],
+                                        [{'handle': _handle(n), 'name': str(n.name), 'layer': str(n.layer.name)}
+                                         for n in copies])
+    except ValueError as exc:
+        return {'error': 'ucx_export: {}'.format(exc)}
+    return {'nodes': [by_handle[r['handle']] for r in sel['nodes']], 'names': core.ucx_export_names(sel),
+            'selection': sel}
+
+
+def _export_call(export, model):
+    """(nodes, keyword args) of export_preview / export_commit; `names` only when a copy replaces an original."""
+    if export is None:
+        return model, {}
+    if 'error' in export:
+        raise ValueError(export['error'])
+    return export['nodes'], ({'names': export['names']} if export['names'] else {})
+
+
+def _ucx_field(ctx, export):
+    if export is None:
+        return None
+    if 'error' in export:
+        return {'error': export['error']}
+    return ctx.core.ucx_export_report(export['selection'])
+
+
 def _folder(opts):
     if opts.get('folder'):
         return os.path.abspath(opts['folder'])
@@ -82,8 +125,9 @@ def _run_preview(ctx, step, kind, opts, model, folder):
     raise ValueError('no preview runner for ' + step)
 
 
-def _previews(ctx, opts, model, folder):
-    """Results of every preview step + the file steps' previews (light.export, export.checked planned)."""
+def _previews(ctx, opts, model, folder, export=None):
+    """Results of every preview step + the file steps' previews (light.export, export.checked planned).
+    export: _export_set (#1582; None = the model as is)."""
     core = ctx.core
     results, reports = [], []
     for step, phase, kind in core.STEPS:
@@ -98,7 +142,8 @@ def _previews(ctx, opts, model, folder):
                 stem = _stem(opts, reports)
                 if not stem:
                     raise ValueError('нет stem SM_<Address>: options.stem или корень света <stem>_Root')
-                rep = ctx.agr.export_preview(nodes=model, target=os.path.join(folder, stem + '.fbx'))
+                rnodes, kw = _export_call(export, model)
+                rep = ctx.agr.export_preview(nodes=rnodes, target=os.path.join(folder, stem + '.fbx'), **kw)
             else:
                 rep = _run_preview(ctx, step, kind, opts, model, folder)
         except Exception as exc:  # noqa: BLE001 - a step error is a blocker in the report, never a pass
@@ -118,9 +163,14 @@ def _stem(opts, reports):
     return None
 
 
-def _state(ctx, opts, model, results):
-    return {'tool': ctx.core.TOOL, 'model': ctx.emax.snapshot(model), 'options': opts,
-            'steps': [(r['id'], r['status'], r['counts']) for r in results]}
+def _state(ctx, opts, model, results, export=None):
+    state = {'tool': ctx.core.TOOL, 'model': ctx.emax.snapshot(model), 'options': opts,
+             'steps': [(r['id'], r['status'], r['counts']) for r in results]}
+    if export and export.get('names'):  # #1582: a fixed copy edited or renamed after the preview makes it stale
+        state['ucx_export'] = [ctx.emax.snapshot(export['nodes']), sorted(export['names'].items())]
+    elif export and 'error' in export:
+        state['ucx_export'] = export['error']
+    return state
 
 
 def _passport(ctx, opts):
@@ -194,17 +244,19 @@ def _pack_deliver(ctx, mode, nodes, preview):
     opts = core.deliver_options(ctx.options if mode == 'preview' else preview['plan']['options'])
     folder = _folder(opts)
     model = _model_nodes(nodes)
+    export = _export_set(ctx, model)
     if mode == 'preview':
-        results, reports = _previews(ctx, opts, model, folder)
+        results, reports = _previews(ctx, opts, model, folder, export)
         block = core.blockers(results)
         objects = core.merge_objects(reports)
         return core.deliver_report(edit, 'preview', results, objects, block, opts,
-                                   edit.fingerprint(_state(ctx, opts, model, results)),
+                                   edit.fingerprint(_state(ctx, opts, model, results, export)),
                                    extra={'folder': folder, 'stem': _stem(opts, reports),
-                                          'model': [_handle(n) for n in model]})
+                                          'model': [_handle(n) for n in model],
+                                          'ucx_export': _ucx_field(ctx, export)})
     started = datetime.datetime.now(datetime.timezone.utc)
-    results, reports = _previews(ctx, opts, model, folder)
-    edit.require_current(preview, _state(ctx, opts, model, results))
+    results, reports = _previews(ctx, opts, model, folder, export)
+    edit.require_current(preview, _state(ctx, opts, model, results, export))
     block = core.blockers(results)
     stem = _stem(opts, reports)
     run = core.run_folder(folder)
@@ -231,11 +283,12 @@ def _pack_deliver(ctx, mode, nodes, preview):
         elif stem:
             target = os.path.join(run, stem + '.fbx')
             try:
-                ep = ctx.agr.export_preview(nodes=model, target=target)
+                enodes, kw = _export_call(export, model)
+                ep = ctx.agr.export_preview(nodes=enodes, target=target, **kw)
                 if ep.get('status') != 'pass':
                     results.append(core.step_result('export.checked', ep))
                 else:
-                    ec = ctx.agr.export_commit(nodes=model, preview=ep, target=target)
+                    ec = ctx.agr.export_commit(nodes=enodes, preview=ep, target=target, **kw)
                     results.append(core.step_result('export.checked', ec))
                     files.append(target)
             except Exception as exc:  # noqa: BLE001
@@ -277,10 +330,12 @@ def _pack_deliver(ctx, mode, nodes, preview):
         notes.append('паспорт не записан: {}'.format(exc))
         block = block + ['паспорт: {}'.format(exc)]
         stage = core.stage_entry('blocked', block, started, finished)
-    body = core.summary(results, block, files, stage, opts, run=run, passport=passport_out, notes=notes)
+    body = core.summary(results, block, files, stage, opts, run=run, passport=passport_out, notes=notes,
+                        ucx_export=_ucx_field(ctx, export))
     report_path = _write_json(os.path.join(run, core.REPORT), body)
     done = [p for p in files if p] + [report_path] + ([passport_out] if passport_out else [])
     objects = core.merge_objects(reports)
     return core.deliver_report(edit, 'apply', results, objects, block, opts, files=files, done=done,
                                extra={'folder': folder, 'run_folder': run, 'stem': stem, 'stage_entry': stage,
-                                      'passport': passport_out, 'notes': notes})
+                                      'passport': passport_out, 'notes': notes,
+                                      'ucx_export': _ucx_field(ctx, export)})

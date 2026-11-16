@@ -76,6 +76,68 @@ def test_max_viewport_limit_uses_published_readonly_property():
     assert result['ids'][0]['reason'] == 'unknown object: Unknown'
 
 
+@pytest.mark.parametrize('cls,enabled,amount', [
+    ('Standardmaterial', 'diffuseMapEnable', 'diffuseMapAmount'),
+    ('PhysicalMaterial', 'base_color_map_on', 'base_weight'),
+])
+@pytest.mark.parametrize('fault,value', [
+    ('enabled', False), ('enabled', None), ('amount', 0), ('amount', -1),
+    ('amount', float('nan')), ('amount', float('inf')), ('amount', None),
+    ('viewport', False), ('viewport', None),
+])
+def test_max_material_visibility(tmp_path, cls, enabled, amount, fault, value):
+    from types import SimpleNamespace
+    path = tmp_path / 'synthetic.png'
+    path.write_bytes(b'synthetic file evidence; bitmap dimensions supplied by native seam')
+    material = SimpleNamespace(name='Synthetic', **{enabled: True, amount: 1, 'showInViewport': True})
+    tex = SimpleNamespace(filename=str(path), bitmap=SimpleNamespace(width=256, height=256))
+    slot = 'diffuseMap' if cls == 'Standardmaterial' else 'base_color_map'
+    setattr(material, slot, tex)
+    rt = SimpleNamespace(classOf=lambda obj: cls if obj is material else 'Bitmaptexture',
+                         getProperty=lambda obj, name: getattr(obj, name))
+    prop = {'enabled': enabled, 'amount': amount, 'viewport': 'showInViewport'}[fault]
+    if value is None:
+        delattr(material, prop)
+    else:
+        setattr(material, prop, value)
+    before = vars(material).copy()
+    with pytest.raises(ValueError, match=prop):
+        load().max_material(rt, material)
+    assert vars(material) == before
+
+
+@pytest.mark.parametrize('cls,enabled,amount,slot', [
+    ('Standardmaterial', 'diffuseMapEnable', 'diffuseMapAmount', 'diffuseMap'),
+    ('PhysicalMaterial', 'base_color_map_on', 'base_weight', 'base_color_map'),
+])
+def test_max_material_visibility_reset(tmp_path, cls, enabled, amount, slot):
+    from types import SimpleNamespace
+    path = tmp_path / 'synthetic.png'
+    path.write_bytes(b'synthetic')
+    material = SimpleNamespace(name='Synthetic', **{enabled: True, amount: .5, 'showInViewport': True})
+    tex = SimpleNamespace(filename=str(path), bitmap=SimpleNamespace(width=256, height=256))
+    setattr(material, slot, tex)
+    rt = SimpleNamespace(classOf=lambda obj: cls if obj is material else 'Bitmaptexture',
+                         getProperty=lambda obj, name: getattr(obj, name))
+    gate = load()
+    expected = gate.max_material(rt, material)
+    for prop in (enabled, amount, 'showInViewport'):
+        original = getattr(material, prop)
+        setattr(material, prop, False if type(original) is bool else 0)
+        for _ in range(2):
+            with pytest.raises(ValueError, match=prop):
+                gate.max_material(rt, material)
+        setattr(material, prop, original)
+        assert gate.max_material(rt, material) == expected
+
+
+@pytest.mark.parametrize('cls', ['undefined', 'Multimaterial', 'UnknownShader'])
+def test_max_material_unsupported(cls):
+    from types import SimpleNamespace
+    with pytest.raises(ValueError, match=cls):
+        load().max_material(SimpleNamespace(classOf=lambda _: cls), None)
+
+
 def test_skill_contract():
     for name in ('validate-delivery', '3dsmax-mcp-dev'):
         text = (ROOT / '.agents/skills' / name / 'SKILL.md').read_text(encoding='utf-8')

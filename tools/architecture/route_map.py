@@ -9,7 +9,12 @@ for stages whose context has no owner in contexts.yaml; they are visible only in
 Context maps (CONTEXT_MAPS): contexts.yaml (NPM/OKS, drawn with the NPM route, guard allowlist) plus one map per
 route (#1392: vpm-oks-contexts.yaml, ground-contexts.yaml, same schema); `--check` also proves that each route's
 map lists every stage context of that route with the same owner (route_coverage). A context without a
-`duplicates` key draws no duplicates box; optional `grid: "col/row"` on every context of a map places it
+`duplicates` key draws no duplicates box. `serves_stage: <stage id>` associates a helper with its route stage;
+`no_stage: <reason>` explicitly documents an intentional stage-less context. Unannotated stage-less contexts
+(including kernels) are WARNINGs, not check failures. A context may use `ref: <registered map filename>#<id>`;
+owner, owner_ru and functions come from that exact map, never another map with the same context id.
+Each route's `scheme.export_context.ref` explicitly selects the short view's export owner. Missing/ambiguous
+targets and reference cycles raise SchemaError before publication. Optional `grid: "col/row"` on every context of a map places it
 explicitly (all or none, columns >= 1 apart). Route boards widen a 2-line actor and push the rows below a tall
 event; one-line titles/actors and <= 110 px events draw exactly as before.
 Outputs (generated, never hand-edited): <route>.excalidraw/.svg per route, <map>.excalidraw/.svg per context map.
@@ -258,6 +263,20 @@ def route_coverage(events, contexts, cmap):
             problems.append(f"context map: stage context {cid!r} is missing")
         elif cid in owners and in_map[cid] != owners[cid]:
             problems.append(f"context map: {cid!r} owner {in_map[cid]} differs from the route's {owners[cid]}")
+    stage_ids = {s["id"] for s in events["stages"]}
+    used = {s["context"] for s in events["stages"]}
+    for c in [cmap["shared_kernel"], *cmap["contexts"]]:
+        for field in ("serves_stage", "no_stage"):
+            if field in c:
+                _need(c, field, f"context {c['id']}")
+                if not c[field].strip():
+                    raise SchemaError(f"context {c['id']}: {field} must not be blank")
+        if "serves_stage" in c and c["serves_stage"] not in stage_ids:
+            raise SchemaError(f"context {c['id']}: serves_stage names unknown stage {c['serves_stage']!r}")
+        if "serves_stage" in c and "no_stage" in c:
+            raise SchemaError(f"context {c['id']}: serves_stage and no_stage are mutually exclusive")
+        if c["id"] not in used and "serves_stage" not in c and "no_stage" not in c:
+            problems.append(f"WARNING: context map: context {c['id']!r} has no stage")
     return problems
 
 
@@ -278,7 +297,9 @@ def command_exists(command):
         return False
     if words[0] == "agr":
         from dt_ai.cli import agr
-        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm"}
+        if len(words) == 3 and words[1] == "ground":  # agr ground site|zero|v015 (#1406)
+            return words[2] in agr.GROUND_STEPS
+        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm", "ucx"}
     if words[0] != "dt":
         return False
     sub = _dt_commands().get(words[1])
@@ -756,20 +777,64 @@ def _relations(b, contexts, nodes, tails):
 
 def load_routes(root=ROOT):
     """Route name -> parsed events YAML, for every route of route_events()."""
-    return {name: mini_yaml.load(Path(root) / rel) for name, rel in route_events().items()}
+    routes: dict[str, Any] = {name: mini_yaml.load(Path(root) / rel) for name, rel in route_events().items()}
+    maps = load_context_maps(root)
+    for events in routes.values():
+        if "local_contexts" in events:
+            events["local_contexts"] = [resolve_context(c, maps) for c in events["local_contexts"]]
+    return routes
+
+
+def resolve_context(context, maps, seen=()):
+    """Resolve ref: <registered map filename>#<id>, never an id in an unrelated map.
+
+    Local presentation/coverage fields may differ; owner, owner_ru and functions
+    always come from the source. Resolve against the current parsed snapshot only.
+    """
+    if not isinstance(context, dict):
+        raise SchemaError("context ref: expected a mapping")
+    if "ref" not in context:
+        return context
+    ref = _need(context, "ref", "context ref")
+    if not re.fullmatch(r"[^/#\\\\]+\.yaml#[A-Za-z0-9_-]+", ref):
+        raise SchemaError(f"context ref: invalid reference {ref!r}")
+    if ref in seen:
+        raise SchemaError(f"context ref cycle: {' -> '.join((*seen, ref))}")
+    filename, cid = ref.split("#")
+    names = [name for name, rel in context_maps().items() if rel.name == filename]
+    if len(names) != 1 or names[0] not in maps:
+        raise SchemaError(f"context ref {ref!r}: unknown map {filename!r}")
+    source = maps[names[0]]
+    candidates = [c for c in [_need(source, "shared_kernel", ref, dict),
+                              *_need(source, "contexts", ref, list)] if _need(c, "id", ref) == cid]
+    if len(candidates) != 1:
+        raise SchemaError(f"context ref {ref!r}: expected one target {cid!r}, found {len(candidates)}")
+    target = resolve_context(candidates[0], maps, (*seen, ref))
+    result = {**target, **context}
+    for key in ("owner", "owner_ru", "functions"):
+        result[key] = _need(target, key, f"context ref {ref!r}", list if key == "functions" else str)
+    return result
 
 
 def load_context_maps(root=ROOT):
-    """Context map name -> parsed YAML, for every map of context_maps()."""
-    return {name: mini_yaml.load(Path(root) / rel) for name, rel in context_maps().items()}
+    """Context maps from one snapshot, resolving explicit refs before schema/rendering."""
+    maps: dict[str, Any] = {name: mini_yaml.load(Path(root) / rel) for name, rel in context_maps().items()}
+    return {name: {**cmap,
+                   "shared_kernel": resolve_context(_need(cmap, "shared_kernel", name, dict), maps),
+                   "contexts": [resolve_context(c, maps) for c in _need(cmap, "contexts", name, list)]}
+            for name, cmap in maps.items()}
 
 
 def _scheme(events):
     """Validate the short view against the existing ordered stages; no dropped or invented step."""
     spec = _need(events, "scheme", "events", dict)
-    unknown = set(spec) - {"source_ru", "steps"}
+    unknown = set(spec) - {"source_ru", "steps", "export_context"}
     if unknown:
         raise SchemaError(f"scheme: unmapped keys {sorted(unknown)!r}")
+    export = _need(spec, "export_context", "scheme", dict)
+    _need(export, "ref", "scheme.export_context")
+    if set(export) != {"ref"}:
+        raise SchemaError(f"scheme.export_context: unmapped keys {sorted(set(export) - {'ref'})!r}")
     _ru(_need(spec, "source_ru", "scheme"), "scheme.source_ru")
     steps = _need(spec, "steps", "scheme", list)
     if not 1 <= len(steps) <= 7:
@@ -823,7 +888,7 @@ def view_revision(events, maps):
 def short_route_board(events, cmap, maps):
     spec = _scheme(events)
     rows = _owner_rows(cmap, _view_rows(maps))
-    export = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    export = resolve_context(_scheme(events)["export_context"], maps)
     b = Board()
     title = events["title_ru"].split(": событийный штурм")[0]
     b.label("short/title", 30, 0, 1050, title + " — короткая схема", size=24)
@@ -870,7 +935,7 @@ def owners_markdown(events, cmap, maps):
            "| Правило / ответственность | Владелец | Живые обходы (число + ссылка) | Причина различий | Критерий завершения миграции |",
            "|---|---|---|---|---|"]
     owners = [cmap["shared_kernel"]] + cmap["contexts"]
-    export = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    export = resolve_context(_scheme(events)["export_context"], maps)
     if export["owner"] not in {c["owner"] for c in owners}:
         owners.append(export)
     for c in owners:
@@ -989,12 +1054,18 @@ def main(argv=None):
                 problems += [f"{route_events()[name].name}: {p}"
                              for p in verify_references(args.root, events, contexts) if p not in problems]
             maps = load_context_maps(args.root)
-            for route, name in ROUTE_MAP_OF.items():   # #1392: each route's own context map
+            for route, events in routes.items():   # both coverage directions, including the NPM map
+                name = ROUTE_MAP_OF.get(route, "contexts")
                 label = context_maps()[name].name
-                problems += [f"{label}: {p}"
-                             for p in verify_references(args.root, {"stages": [], "hotspots": []}, maps[name])]
-                problems += [f"{label}: {p}" for p in route_coverage(routes[route], contexts, maps[name])]
-        except (OSError, SyntaxError, ImportError) as exc:
+                if name != "contexts":
+                    problems += [f"{label}: {p}"
+                                 for p in verify_references(args.root, {"stages": [], "hotspots": []}, maps[name])]
+                for p in route_coverage(events, contexts, maps[name]):
+                    if p.startswith("WARNING:"):
+                        print(f"WARNING: {label}: {p.removeprefix('WARNING: ')}")
+                    else:
+                        problems.append(f"{label}: {p}")
+        except (OSError, SyntaxError, ImportError, SchemaError) as exc:
             print(f"ERROR: cannot verify references: {exc}", file=sys.stderr)
             return 2
         for rel, text in files.items():

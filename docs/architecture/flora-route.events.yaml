@@ -13,6 +13,8 @@
 title_ru: "Маршрут Флоры (НПМ + ВПМ): событийный штурм (библиотека v003 / A101, маршрут A Ватутино v007)"
 route: flora
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "Ведомость озеленения и СПОЗУ: ревизия, SHA-256, виды, размеры и точки в реестре исходников"
   steps:
     - stages: "sources,beds,species"
@@ -174,11 +176,16 @@ stages:
     event_ru: "Расстановка по точкам СПОЗУ: утопление 10 см, поворот Z и масштаб ±10 %, сид записан"
     actor: agent
     context: placement
+    commands:
+      - "dt place site"
+      - "agr place"
     rules:
+      - D329
       - D100
       - D095
     evidence:
       - src/dt_ai/placement/engine.py
+      - src/dt_ai/placement/site.py
       - jobs/VATUTINO-SITE/place_site.py
       - jobs/VATUTINO-SITE/placement-report.md
   - id: npm
@@ -262,13 +269,6 @@ hotspots:
       - D232
     evidence:
       - docs/plans/flora-426-route-2026-11.md
-  - id: placement-tool
-    stage: placement
-    ru: "Расстановка: движок dt_ai.placement вызывается из jobs/VATUTINO-SITE/place_site.py; команды agr / dt нет"
-    rules:
-      - D232
-    evidence:
-      - jobs/VATUTINO-SITE/place_site.py
   - id: budget
     stage: npm
     ru: "Бюджет НПМ: Флора 70 000 из 180 000 (D097); Ватутино 118 774 до облегчения, 64 454 с LOD; режет Артём (D167)"

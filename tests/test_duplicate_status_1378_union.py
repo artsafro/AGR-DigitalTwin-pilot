@@ -25,7 +25,9 @@ BL_OWNER = "src/dt_ai/core/blender_runner.py"
 HISTORICAL = {"jobs/KPP1/benchmark-1318/run_benchmark.py::main", "jobs/KPP1/quad-1372/run_checks.py::main",
               "jobs/VATUTINO-SITE/run_delivery.py::main", "jobs/VATUTINO-SITE/run_delivery.py::main.dcc",
               "jobs/VATUTINO-SITE/scene_checks.py::main"}
-OWN_DUTY = {"tools/library/maf_material_ids.py::main"}
+OWN_DUTY = {"tools/library/maf_material_ids.py::main",
+            "tools/library/migrate_windows.py::main",       # #1530: source-bound to library/windows v001
+            "tools/research/checker_mutation.py::freeze"}   # #1530: sealed runner sha256 (frozen measurement)
 
 
 def _bl_rows():
@@ -35,7 +37,7 @@ def _bl_rows():
 
 def test_repo_blender_launch_rows_survive_and_the_guard_scan_is_clean():
     rows = _bl_rows()
-    assert len(rows) == 24, [r.at for r in rows]   # 25 rows of #1378 minus ORCH-OBR22-NPM (now calls the owner)
+    assert len(rows) == 10, [r.at for r in rows]   # 25 of #1378 minus ORCH-OBR22-NPM (#1424) minus 14 moved (#1530)
     allowed = guard.allowlist(guard.load_maps(ROOT)["contexts"])
     new, stale = guard.compare(guard.scan_for(ROOT, allowed), allowed)
     assert new == [] and stale == []
@@ -48,11 +50,7 @@ def test_repo_blender_launch_statuses():
     assert by.get("historical") == HISTORICAL
     assert by.get("own-duty") == OWN_DUTY
     assert "wrapper" not in by
-    live = by["live-bypass"]
-    assert all(a.startswith(("tools/", "src/")) for a in live) and len(live) == 15
-    for r in _bl_rows():
-        if r.status == "live-bypass":
-            assert ("contexts", r.at, r.hash) in guard.LIVE_BYPASS_BASELINE
+    assert "live-bypass" not in by   # #1530: 14 live launches call blender_command, 2 hash-bound ones are own-duty
 
 
 def test_repo_described_dcc_rows_removed_with_their_baseline_key():

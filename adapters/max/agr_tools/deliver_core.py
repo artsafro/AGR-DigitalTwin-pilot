@@ -16,10 +16,20 @@ Stage 9 goes into the project passport (K1, schemas/ProjectPassport.schema.json)
 `options.passport` or the scene file property `agr_passport`, and writes the updated copy `passport.json` into
 the run folder (never over jobs/<ID>/passport.json: the passport writer belongs to branch F, project.passport).
 A step answered `not_implemented` (another branch has not merged yet) is a blocker unless `options.skip` names it.
+
+#1582 (AI Council 2026-11-16): ucx.gap writes the fixed UCX pieces as copies `<original>_AGR_gap_NN` on layer
+AGR_export and never touches the originals; the model of export.checked skips that layer, so the archive got the OLD
+UCX. `ucx_export_selection` is the explicit step "export the fixed copies instead of the originals": a fixed copy
+goes into the export list under its original's name and the original is skipped; a family without copies exports
+its originals; the report field `ucx_export` (deliver.json) lists the replacements. CLI:
+`python deliver_core.py ucx-export <scene.json>` ({"model": [...], "copies": [...]}) prints that field, exit 2 on
+an error.
 """
 import datetime
+import json
 import os
 import re
+import sys
 
 TOOL = 'pack.deliver'
 RUN_PREFIX = 'Сдача_'
@@ -205,10 +215,10 @@ def passport_with_stage(passport, entry):
     return out
 
 
-def summary(results, block, files, stage, opts, run=None, passport=None, notes=()):
-    """The `deliver.json` body (also the plan of the report)."""
+def summary(results, block, files, stage, opts, run=None, passport=None, notes=(), ucx_export=None):
+    """The `deliver.json` body (also the plan of the report). ucx_export: ucx_export_report (#1582) or {'error'}."""
     return {'tool': TOOL, 'stage': stage, 'blockers': list(block), 'steps': list(results), 'files': list(files),
-            'run_folder': run, 'passport': passport, 'options': opts, 'notes': list(notes)}
+            'run_folder': run, 'passport': passport, 'options': opts, 'notes': list(notes), 'ucx_export': ucx_export}
 
 
 def deliver_report(edit, mode, results, objects, block, opts, state_hash=None, files=(), done=(), extra=None):
@@ -220,3 +230,135 @@ def deliver_report(edit, mode, results, objects, block, opts, state_hash=None, f
             'stage': STAGE}
     info.update(extra or {})
     return edit.report(TOOL, mode, objects, list(done), skipped, ambiguous, state_hash=state_hash, extra=info)
+
+
+# ---- #1582: the ucx.gap copies on AGR_export replace their originals in export.checked ---------------------------
+GAP_COPY_LAYER = 'AGR_export'
+GAP_COPY = re.compile(r'^(?P<source>.+)_AGR_gap_(?P<n>\d+)$')  # ucx10_max: uniqueName(<original> + '_AGR_gap_')
+UCX_PIECE = re.compile(r'^UCX_(?P<mesh>.+)_(?P<n>\d{2,3})$')  # = ucx10_core.UCX_NAME (the gap tool's family)
+
+
+def _ucx_rows(rows, label, layer):
+    if not isinstance(rows, (list, tuple)):
+        raise ValueError('{}: a list of rows expected'.format(label))
+    out = []
+    for r in rows:
+        if not isinstance(r, dict):
+            raise ValueError('{}: row {!r} is not an object'.format(label, r))
+        h, name = r.get('handle'), r.get('name')
+        if isinstance(h, bool) or type(h) is not int or h <= 0:
+            raise ValueError('{}: invalid handle {!r}'.format(label, h))
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError('{}: missing name of handle {}'.format(label, h))
+        if layer and r.get('layer') != GAP_COPY_LAYER:
+            raise ValueError('{}: {} is not on layer {} (layer {!r})'.format(label, name, GAP_COPY_LAYER,
+                                                                             r.get('layer')))
+        if layer and not name.upper().startswith('UCX_'):
+            raise ValueError('{}: {} is not a UCX piece'.format(label, name))
+        out.append({'handle': h, 'name': name})
+    return out
+
+
+def _ucx_family(name):
+    m = UCX_PIECE.match(name)
+    return m.group('mesh') if m else name
+
+
+def ucx_export_selection(model, copies):
+    """Export list of export.checked with the ucx.gap copies in place of their originals (#1582).
+
+    model: [{handle, name}] - the export model in export order (visible SM_* / UCX_* outside AGR_export);
+    copies: [{handle, name, layer}] - every UCX piece of the scene on layer AGR_export.
+    Returns {'nodes': [{handle, name, node, origin}], 'replaced', 'kept', 'ignored'}: `name` is the export name (the
+    original's), `node` the scene name, origin 'original' | 'AGR_export'. A copy `<original>_AGR_gap_NN` whose
+    original is in the model replaces it; any other copy is ignored with its reason. Errors (ValueError, naming the
+    nodes): empty model, bad rows, a handle twice, two copies of one original, two originals of one name, a family
+    with only part of its pieces copied (an old neighbour next to a moved piece is the collision ucx.gap removed).
+    The inputs are never changed."""
+    model = _ucx_rows(model, 'model', False)
+    copies = _ucx_rows(copies, 'AGR_export copies', True)
+    if not model:
+        raise ValueError('empty export model')
+    seen = set()
+    for r in model + copies:
+        if r['handle'] in seen:
+            raise ValueError('duplicate handle {} ({})'.format(r['handle'], r['name']))
+        seen.add(r['handle'])
+    by_name = {}
+    for r in model:
+        if r['name'].upper().startswith('UCX_'):
+            by_name.setdefault(r['name'], []).append(r)
+    fixed, ignored = {}, []
+    for r in sorted(copies, key=lambda x: (x['name'], x['handle'])):
+        m = GAP_COPY.match(r['name'])
+        if not m:
+            ignored.append({'handle': r['handle'], 'name': r['name'],
+                            'reason': 'not a ucx.gap copy: name is not <original>_AGR_gap_NN'})
+            continue
+        src = m.group('source')
+        if src not in by_name:
+            ignored.append({'handle': r['handle'], 'name': r['name'],
+                            'reason': 'original not in the export model: {} (hidden, unselected or deleted)'.format(
+                                src)})
+            continue
+        if len(by_name[src]) > 1:
+            raise ValueError('two originals named {} (handles {}): the copy {} is ambiguous'.format(
+                src, ', '.join(str(x['handle']) for x in by_name[src]), r['name']))
+        fixed.setdefault(src, []).append(r)
+    many = {k: v for k, v in fixed.items() if len(v) > 1}
+    if many:
+        k = sorted(many)[0]
+        raise ValueError('{} has {} ucx.gap copies on {}: {} - delete the stale ones'.format(
+            k, len(many[k]), GAP_COPY_LAYER, ', '.join(x['name'] for x in many[k])))
+    fams = {_ucx_family(k) for k in fixed}
+    missing = sorted(k for k in by_name if _ucx_family(k) in fams and k not in fixed)
+    if missing:
+        raise ValueError('family partly fixed on {}: no ucx.gap copy for {} - rerun ucx.gap on the family'.format(
+            GAP_COPY_LAYER, ', '.join(missing)))
+    nodes, replaced, kept = [], [], []
+    for r in model:
+        cp = fixed.get(r['name'])
+        if cp:
+            nodes.append({'handle': cp[0]['handle'], 'name': r['name'], 'node': cp[0]['name'],
+                          'origin': GAP_COPY_LAYER})
+            replaced.append({'name': r['name'], 'copy': cp[0]['name'], 'copy_handle': cp[0]['handle'],
+                             'original_handle': r['handle']})
+        else:
+            nodes.append({'handle': r['handle'], 'name': r['name'], 'node': r['name'], 'origin': 'original'})
+            if r['name'].upper().startswith('UCX_'):
+                kept.append(r['name'])
+    ignored.sort(key=lambda x: x['handle'])
+    return {'nodes': nodes, 'replaced': replaced, 'kept': kept, 'ignored': ignored}
+
+
+def ucx_export_names(selection):
+    """{copy handle: original name} of the replaced pieces (the runtime exports the copy under that name)."""
+    return {r['handle']: r['name'] for r in selection['nodes'] if r['origin'] == GAP_COPY_LAYER}
+
+
+def ucx_export_report(selection):
+    """The `ucx_export` field of deliver.json: which UCX came from AGR_export."""
+    return {'from_layer': GAP_COPY_LAYER, 'replaced': [dict(r) for r in selection['replaced']],
+            'kept': list(selection['kept']), 'ignored': [dict(r) for r in selection['ignored']]}
+
+
+def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    if len(argv) != 2 or argv[0] != 'ucx-export':
+        sys.stderr.write('usage: deliver_core.py ucx-export <scene.json>\n')
+        return 2
+    try:
+        with open(argv[1], 'r', encoding='utf-8') as f:
+            body = json.load(f)
+        if not isinstance(body, dict) or set(body) != {'model', 'copies'}:
+            raise ValueError('scene.json must be {"model": [...], "copies": [...]}')
+        rep = ucx_export_report(ucx_export_selection(body['model'], body['copies']))
+    except (OSError, ValueError) as exc:
+        sys.stderr.write('error: {}\n'.format(exc))
+        return 2
+    sys.stdout.write(json.dumps(rep, ensure_ascii=False, indent=1, allow_nan=False) + '\n')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

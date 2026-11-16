@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3530 1181" width="3530" height="1181" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3530 1152" width="3530" height="1152" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3530" height="1181" fill="#ffffff"/>
+<rect x="10" y="-30" width="3530" height="1152" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
@@ -9,17 +9,17 @@
 <rect x="350" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="310" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="270" y1="233.12" x2="310" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="310" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="310" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="310" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="310" y="548.75" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="310" y="638.75" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="310" y="638.75" width="230" height="215.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="590" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="580" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="540" y1="225.0" x2="580" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="580" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="580" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="580" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="580" y="548.75" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="580" y="638.75" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="580" y="638.75" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="860" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="850" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="810" y1="225.0" x2="850" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -30,7 +30,7 @@
 <rect x="1130" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1120" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1080" y1="225.0" x2="1120" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="1120" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1120" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1120" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1120" y="548.75" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="1400" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
@@ -39,27 +39,24 @@
 <rect x="1390" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1390" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1390" y="548.75" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1390" y="638.75" width="230" height="166.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1390" y="821.0" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1390" y="987.0" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1390" y="638.75" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1670" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1660" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1620" y1="225.0" x2="1660" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1660" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1660" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1660" y="548.75" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1660" y="638.75" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1660" y="638.75" width="230" height="198.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1970" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1930" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1890" y1="225.0" x2="1930" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="1930" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1930" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1930" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
-<rect x="1930" y="548.75" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1930" y="638.75" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1930" y="548.75" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="168.75" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2160" y1="225.0" x2="2200" y2="254.38" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="2200" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2200" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2200" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2200" y="548.75" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="2480" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
@@ -129,8 +126,10 @@
 <tspan x="425.0" dy="21.25">проекта или агент</tspan>
 <tspan x="425.0" dy="21.25">уточняет</tspan>
 </text>
-<text x="425.0" y="385.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="425.0" dy="14">Нет команды agr/dt</tspan>
+<text x="425.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Команда:</tspan>
+<tspan x="425.0" dy="17.5">agr zero</tspan>
+<tspan x="425.0" dy="17.5">dt ground zero</tspan>
 </text>
 <text x="425.0" y="481.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="425.0" dy="14">Правила: D279, D018, D135,</tspan>
@@ -147,10 +146,12 @@
 <tspan x="425.0" dy="16.25">КПП1 / ТЭЦ26; Силикатный</tspan>
 <tspan x="425.0" dy="16.25">(#1315) — ±0.000 из ПЗУ /</tspan>
 <tspan x="425.0" dy="16.25">ВП_5; нет в проекте — агент</tspan>
-<tspan x="425.0" dy="16.25">уточняет (D293); команды нет,</tspan>
-<tspan x="425.0" dy="16.25">только</tspan>
-<tspan x="425.0" dy="16.25">src/dt_ai/core/heights.py</tspan>
-<tspan x="425.0" dy="16.25">(#1341) [D279, D293]</tspan>
+<tspan x="425.0" dy="16.25">уточняет (D293); команда agr</tspan>
+<tspan x="425.0" dy="16.25">zero / dt ground zero</tspan>
+<tspan x="425.0" dy="16.25">проверяет Z экспорта (#1406),</tspan>
+<tspan x="425.0" dy="16.25">система высот КПП1 / ТЭЦ26</tspan>
+<tspan x="425.0" dy="16.25">по-прежнему unknown [D279,</tspan>
+<tspan x="425.0" dy="16.25">D293]</tspan>
 </text>
 <text x="695.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="695.0" dy="15">Агент: Blender / Max /</tspan>
@@ -162,8 +163,10 @@
 <tspan x="695.0" dy="21.25">штриховкам → ID</tspan>
 <tspan x="695.0" dy="21.25">материалов</tspan>
 </text>
-<text x="695.0" y="385.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="695.0" dy="14">Нет команды agr/dt</tspan>
+<text x="695.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Команда:</tspan>
+<tspan x="695.0" dy="17.5">agr ground site</tspan>
+<tspan x="695.0" dy="17.5">dt ground site</tspan>
 </text>
 <text x="695.0" y="490.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="695.0" dy="14">Правила: D218, D030, D293</tspan>
@@ -176,8 +179,11 @@
 <text x="695.0" y="648.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="695.0" dy="13">⚠ Силикатный: цвет ID = фон</tspan>
 <tspan x="695.0" dy="16.25">штриховки (bgcolor), а не</tspan>
-<tspan x="695.0" dy="16.25">цвет линий — v001 взял не</tspan>
-<tspan x="695.0" dy="16.25">тот; белая разметка на каждом</tspan>
+<tspan x="695.0" dy="16.25">цвет линий — agr ground site</tspan>
+<tspan x="695.0" dy="16.25">берёт bgcolor, без фона —</tspan>
+<tspan x="695.0" dy="16.25">только цвет из спецификации с</tspan>
+<tspan x="695.0" dy="16.25">причиной (#1406); остаётся</tspan>
+<tspan x="695.0" dy="16.25">белая разметка на каждом</tspan>
 <tspan x="695.0" dy="16.25">стыке покрытий</tspan>
 </text>
 <text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
@@ -189,9 +195,10 @@
 <tspan x="965.0" dy="21.25">треугольники, швы и</tspan>
 <tspan x="965.0" dy="21.25">вставки (квады)</tspan>
 </text>
-<text x="965.0" y="376.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<text x="965.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="14">Команда:</tspan>
-<tspan x="965.0" dy="17.5">agr ground</tspan>
+<tspan x="965.0" dy="17.5">agr ground site</tspan>
+<tspan x="965.0" dy="17.5">dt ground site</tspan>
 </text>
 <text x="965.0" y="481.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="14">Правила: D157, D129, D021,</tspan>
@@ -219,8 +226,10 @@
 <tspan x="1235.0" dy="21.25">бесшовные UV-острова,</tspan>
 <tspan x="1235.0" dy="21.25">тайлы, UDIM = ID</tspan>
 </text>
-<text x="1235.0" y="385.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1235.0" dy="14">Нет команды agr/dt</tspan>
+<text x="1235.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Команда:</tspan>
+<tspan x="1235.0" dy="17.5">agr ground site</tspan>
+<tspan x="1235.0" dy="17.5">dt ground site</tspan>
 </text>
 <text x="1235.0" y="481.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Правила: D097, D160, D210,</tspan>
@@ -240,8 +249,8 @@
 </text>
 <text x="1505.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="14">Команда:</tspan>
-<tspan x="1505.0" dy="17.5">agr ground</tspan>
-<tspan x="1505.0" dy="17.5">dt ground v015</tspan>
+<tspan x="1505.0" dy="17.5">agr ground site</tspan>
+<tspan x="1505.0" dy="17.5">dt ground site</tspan>
 </text>
 <text x="1505.0" y="490.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="14">Правила: D293, D153, D154</tspan>
@@ -252,17 +261,6 @@
 <tspan x="1505.0" dy="17.5">юбка)</tspan>
 </text>
 <text x="1505.0" y="648.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1505.0" dy="13">⚠ agr ground = только</tspan>
-<tspan x="1505.0" dy="16.25">Ватутино v015 (данные из</tspan>
-<tspan x="1505.0" dy="16.25">--job-dir,</tspan>
-<tspan x="1505.0" dy="16.25">источник-зависимый) и строит</tspan>
-<tspan x="1505.0" dy="16.25">рельеф до покрытий; на новом</tspan>
-<tspan x="1505.0" dy="16.25">участке (Силикатный #1315)</tspan>
-<tspan x="1505.0" dy="16.25">общей команды «плоский Ground</tspan>
-<tspan x="1505.0" dy="16.25">→ проекция на рельеф» нет</tspan>
-<tspan x="1505.0" dy="16.25">[D293]</tspan>
-</text>
-<text x="1505.0" y="831.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="13">⚠ Ватутино: ступень 80° на</tspan>
 <tspan x="1505.0" dy="16.25">южной границе — обрыв TIN</tspan>
 <tspan x="1505.0" dy="16.25">между двумя отметками</tspan>
@@ -271,15 +269,6 @@
 <tspan x="1505.0" dy="16.25">плане, перепад 3,73 м); вырез</tspan>
 <tspan x="1505.0" dy="16.25">под пятно — точечные</tspan>
 <tspan x="1505.0" dy="16.25">исключения [D150, D191]</tspan>
-</text>
-<text x="1505.0" y="997.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1505.0" dy="13">⚠ Касаткино: проекцию</tspan>
-<tspan x="1505.0" dy="16.25">(Conform) делал Артём сам</tspan>
-<tspan x="1505.0" dy="16.25">после приёмки плоской</tspan>
-<tspan x="1505.0" dy="16.25">FBX-подложки; теперь проекция</tspan>
-<tspan x="1505.0" dy="16.25">— шаг маршрута после текстур</tspan>
-<tspan x="1505.0" dy="16.25">(D293), общего инструмента</tspan>
-<tspan x="1505.0" dy="16.25">проекции нет [D293]</tspan>
 </text>
 <text x="1775.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="15">Агент: Blender / Max /</tspan>
@@ -291,9 +280,10 @@
 <tspan x="1775.0" dy="21.25">1 м вниз по внешнему</tspan>
 <tspan x="1775.0" dy="21.25">контуру</tspan>
 </text>
-<text x="1775.0" y="376.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<text x="1775.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="14">Команда:</tspan>
-<tspan x="1775.0" dy="17.5">agr ground</tspan>
+<tspan x="1775.0" dy="17.5">agr ground site</tspan>
+<tspan x="1775.0" dy="17.5">dt ground site</tspan>
 </text>
 <text x="1775.0" y="490.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="14">Правила: D293, D251</tspan>
@@ -310,7 +300,11 @@
 <tspan x="1775.0" dy="16.25">лежат на крутой полосе 80°;</tspan>
 <tspan x="1775.0" dy="16.25">ТЭЦ26 — «полигоны по</tspan>
 <tspan x="1775.0" dy="16.25">периметру утоплены минимум на</tspan>
-<tspan x="1775.0" dy="16.25">метр вниз» [D251]</tspan>
+<tspan x="1775.0" dy="16.25">метр вниз»; agr ground site</tspan>
+<tspan x="1775.0" dy="16.25">считает опуск каждого</tspan>
+<tspan x="1775.0" dy="16.25">внешнего ребра</tspan>
+<tspan x="1775.0" dy="16.25">(skirt_gap_edges), v015 не</tspan>
+<tspan x="1775.0" dy="16.25">правится (#1406) [D251]</tspan>
 </text>
 <text x="2045.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="15">Агент</tspan>
@@ -319,24 +313,18 @@
 <tspan x="2045.0" dy="17">8. UCX рельефа</tspan>
 <tspan x="2045.0" dy="21.25">построены (только ВПМ)</tspan>
 </text>
-<text x="2045.0" y="385.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Нет команды agr/dt</tspan>
+<text x="2045.0" y="376.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Команда:</tspan>
+<tspan x="2045.0" dy="17.5">agr ucx</tspan>
 </text>
-<text x="2045.0" y="490.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Правила: D098, D134, D012</tspan>
+<text x="2045.0" y="481.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Правила: D098, D134, D012,</tspan>
+<tspan x="2045.0" dy="17.5">D330</tspan>
 </text>
-<text x="2045.0" y="570.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Контекст: Коллизии UCX</tspan>
-</text>
-<text x="2045.0" y="648.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="13">⚠ UCX Ground: agr ucx —</tspan>
-<tspan x="2045.0" dy="16.25">заглушка; dt ground v015</tspan>
-<tspan x="2045.0" dy="16.25">строит только геометрию (ucx:</tspan>
-<tspan x="2045.0" dy="16.25">not_run); UCX v014 / v015</tspan>
-<tspan x="2045.0" dy="16.25">собраны в DCC отдельно и</tspan>
-<tspan x="2045.0" dy="16.25">подхватываются из C:/x путями</tspan>
-<tspan x="2045.0" dy="16.25">внутри assemble_delivery.py</tspan>
-<tspan x="2045.0" dy="16.25">[D225]</tspan>
+<text x="2045.0" y="558.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Контекст: Коллизии UCX: agr</tspan>
+<tspan x="2045.0" dy="17.5">ucx (строит ucx_build,</tspan>
+<tspan x="2045.0" dy="17.5">зазоры ucx10_core, D330)</tspan>
 </text>
 <text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="15">Агент</tspan>
@@ -350,12 +338,14 @@
 <tspan x="2315.0" dy="21.25">поверхность, удаляется</tspan>
 <tspan x="2315.0" dy="21.25">и пишется в отчёт</tspan>
 </text>
-<text x="2315.0" y="385.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="14">Нет команды agr/dt</tspan>
+<text x="2315.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Команда:</tspan>
+<tspan x="2315.0" dy="17.5">dt place site</tspan>
+<tspan x="2315.0" dy="17.5">agr place</tspan>
 </text>
 <text x="2315.0" y="481.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="14">Правила: D095, D100, D166,</tspan>
-<tspan x="2315.0" dy="17.5">D302</tspan>
+<tspan x="2315.0" dy="14">Правила: D329, D095, D100,</tspan>
+<tspan x="2315.0" dy="17.5">D166, D302</tspan>
 </text>
 <text x="2315.0" y="561.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="14">Контекст: Расстановка МАФ и</tspan>

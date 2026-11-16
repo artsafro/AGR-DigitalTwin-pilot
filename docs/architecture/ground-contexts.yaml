@@ -12,6 +12,7 @@ rules:
     owner: adapters/max/agr_tools/udimtile_core.py
     ru: "своя формула UDIM 1001 + u + 10·v вместо общей функции (охрана — contexts.yaml, #1376)"
 shared_kernel:
+  serves_stage: textures
   id: udim
   ru: "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)"
   owner: adapters/max/agr_tools/udimtile_core.py
@@ -30,7 +31,7 @@ contexts:
     owner_ru: "исходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает там, где удобно (D293)"
     functions:
       - name: blender_executable
-        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
       - name: run_blender
         contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
   - id: heights
@@ -42,21 +43,23 @@ contexts:
     functions:
       - name: height_values
         contract: "ноль проекта, м; Z нуля в FBX, м; верх модели, м -> высоты App.3 с округлением только в конце"
+      - name: export_z_check
+        contract: "ноль проекта, Z нуля в FBX, вершины верха Ground (XY, Z, уровень), рельеф в XY -> pass / fail по каждой вершине (agr zero, #1406)"
   - id: ground
     grid: "2/1"
     ru: "Поверхность Ground: плоские покрытия → проекция на рельеф → юбка"
     area: docs/domain/areas/ground-surface.md
-    owner: tools/ground/build_ground_v015.py
-    owner_ru: "сборка Ground Ватутино v015 (только этот участок, agr ground / dt ground v015)"
+    owner: src/dt_ai/geometry/ground_site.py
+    owner_ru: "Ground любого участка в порядке D293 (agr ground site / dt ground site, #1406); Ватутино v015 — замороженная запись dt ground v015"
     functions:
-      - name: geometry
-        contract: "данные участка, исходник, одобрения, вырезы -> меш Ground v015"
-      - name: restore_source_coverage
-        contract: "меш, план -> ограниченный ремонт покрытия; ненулевой остаток не прощается"
-      - name: derive
-        contract: "меш, профиль, сэмплер, защищённые, исключения -> квады и треугольники Ground"
-      - name: main
-        contract: "--job-dir и параметры -> Ground v015 и отчёт; изменился HEAD — отказ"
+      - name: build_site
+        contract: "граница, покрытия с ID, базовый ID, точки рельефа, ноль -> плоский Ground, проекция, юбка ≥ 1 м и отчёт стадий"
+      - name: covers_from_dxf
+        contract: "DXF, строки покрытий (ID, имя, штриховки) -> покрытия; цвет ID = фон штриховки или цвет из спецификации с причиной"
+      - name: relief_from_dxf
+        contract: "DXF, блок / имена отметок / слои горизонталей -> точки рельефа с родной Z"
+      - name: skirt_gaps
+        contract: "меш, опуск -> внешние рёбра без квада юбки или с опуском меньше нормы (GND-03, D251)"
   - id: uv-atlas
     grid: "3/1"
     ru: "Текстуры по ID: UV-острова, тайлы, UDIM / атлас"
@@ -95,6 +98,7 @@ contexts:
       - name: zip_apply
         contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
   - id: npm
+    serves_stage: npm
     grid: "2/2"
     ru: "НПМ МАФ и Флора на атласе"
     area: docs/domain/areas/flora.md
@@ -118,18 +122,12 @@ contexts:
         contract: "нижняя грань в мире -> удалить / на проверку (D095, D096)"
       - name: report_json
         contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
-    duplicates:
-      - at: "jobs/VATUTINO-SITE/place_site.py:87"
-        match: "def run("
-        issue: "#1383"
-        ru: "своя расстановка участка в задании поверх движка"
-        status: wrapper
   - id: ucx
     grid: "3/3"
     ru: "Коллизии UCX рельефа (только ВПМ)"
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/ucx10_core.py
-    owner_ru: "канон UCX (D225): выпуклые куски и зазоры между ними"
+    owner_ru: "зазоры UCX (D330: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
     functions:
       - name: piece
         contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
@@ -139,7 +137,7 @@ contexts:
       - at: "jobs/VATUTINO-SITE/assemble_delivery.py:25"
         match: "GROUND_UCX"
         issue: "#1383"
-        ru: "UCX Ground из готовых FBX по путям C:/x"
+        ru: "UCX Ground v014 / v015 — выходы ucx_build для сданного Ватутино; agr ucx повторяет v014 (#1404)"
         status: historical
 relations:
   - from: dcc

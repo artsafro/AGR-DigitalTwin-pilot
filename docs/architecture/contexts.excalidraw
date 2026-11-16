@@ -1389,7 +1389,7 @@
    "x": 1565.0,
    "y": 1038.0,
    "width": 470,
-   "height": 212.5,
+   "height": 230.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -1431,7 +1431,7 @@
    "x": 1573.0,
    "y": 1048.0,
    "width": 454,
-   "height": 192.5,
+   "height": 210.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1451,13 +1451,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "text": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e8b8779b8f489e86",
-   "originalText": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "originalText": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1465,7 +1465,7 @@
    "id": "e7c3b463ea5ad90f",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 1264.5,
+   "y": 1282.0,
    "width": 470,
    "height": 80.0,
    "angle": 0,
@@ -1499,7 +1499,7 @@
    "id": "e32db9413dafe301",
    "type": "text",
    "x": 1573.0,
-   "y": 1274.5,
+   "y": 1292.0,
    "width": 454,
    "height": 60.0,
    "angle": 0,
@@ -1521,13 +1521,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
+   "text": "Дубли вне владельца: 10\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e7c3b463ea5ad90f",
-   "originalText": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
+   "originalText": "Дубли вне владельца: 10\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1761,7 +1761,7 @@
    "x": 815.0,
    "y": 1179.25,
    "width": 630.0,
-   "height": 109.0,
+   "height": 161.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1797,11 +1797,19 @@
     ],
     [
      20.0,
-     65.25
+     -43.75
+    ],
+    [
+     120.0,
+     -43.75
+    ],
+    [
+     120.0,
+     -161.25
     ],
     [
      630.0,
-     65.25
+     -161.25
     ],
     [
      630.0,
@@ -1830,8 +1838,8 @@
   {
    "id": "e5b126af16a90368",
    "type": "text",
-   "x": 833.0,
-   "y": 1235.75,
+   "x": 1130.0,
+   "y": 1009.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1867,9 +1875,9 @@
    "id": "ef95d128700adec0",
    "type": "arrow",
    "x": 2035.0,
-   "y": 1144.25,
+   "y": 1153.0,
    "width": 935.0,
-   "height": 347.75,
+   "height": 356.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1905,19 +1913,19 @@
     ],
     [
      20.0,
-     -203.75
+     -212.5
     ],
     [
      -795.0,
-     -203.75
+     -212.5
     ],
     [
      -795.0,
-     -347.75
+     -356.5
     ],
     [
      -915.0,
-     -347.75
+     -356.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1975,9 +1983,9 @@
    "id": "e63629d813723557",
    "type": "arrow",
    "x": 2035.0,
-   "y": 1144.25,
+   "y": 1153.0,
    "width": 630.0,
-   "height": 117.5,
+   "height": 135.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2013,19 +2021,19 @@
     ],
     [
      20.0,
-     108.75
+     -135.0
     ],
     [
-     -490.0,
-     108.75
+     -590.0,
+     -135.0
     ],
     [
-     -490.0,
-     -8.75
+     -590.0,
+     -17.5
     ],
     [
      -610.0,
-     -8.75
+     -17.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2046,8 +2054,8 @@
   {
    "id": "e2956f09d14c6626",
    "type": "text",
-   "x": 1425.0,
-   "y": 1118.0,
+   "x": 1690.0,
+   "y": 1000.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,

@@ -1,12 +1,17 @@
 """Vatutino site slice: MAF + Flora placement through the #316 engine and Blender instancing (#296).
 
+Since #1407 this file only RESOLVES the Vatutino inputs (gate-1 Flora picks, MAF set, Verona rows, Flora export
+facts) into the placement order of the one site placement command ``dt_ai.placement.site`` (``dt place site`` /
+``agr place``) and runs it in its legacy mode: a missing VPM model stays a recorded parity gap
+(``results.json`` ``parity``) instead of stopping the run, so the finished delivery reproduces unchanged.
+
 Job script (not a shared tool). Inputs are COPIES / outputs outside git; the gate-1 answers of the user
 (Artem 2026-10-20) are encoded in FLORA_PICKS / the exclusion reasons. Points over missing Ground are never
 removed by handle here: the engine stops on them unless ``ground-exceptions.json`` holds a user-approved
 exception bound to the sha256 of the Ground master being placed on (a repaired Ground re-places them).
 Exit codes: 0 pass; 1 non-finite input point / engine stop / invalid or identity-changed exception (nothing instanced); 3 scene technical QA failed
 (scene equality or sinking): diagnostics kept in results.json, the scene renamed ``*.QA_FAILED.blend``. Nothing here computes placement:
-``dt_ai.placement.engine.place`` does, ``tools/placement_site.py`` wraps it, ``tools/blender/
+``dt_ai.placement.site.run`` runs it (``engine.place`` + ``dt_ai.placement.scene``), ``tools/blender/
 placement_instance.py`` instances it.
 
   uv run python jobs/VATUTINO-SITE/place_site.py --out C:/x/t_5e4ea2be/run_v001 --seed 296
@@ -14,18 +19,13 @@ placement_instance.py`` instances it.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import sys
-import time
-from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from dt_ai.placement import engine  # noqa: E402
-from tools import placement_site as ps  # noqa: E402
-from dt_ai.core.blender_runner import BlenderRunError, blender_command, run_blender  # noqa: E402
+from dt_ai.placement import site  # noqa: E402
 
 CFG = {"adapter": Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json"),
        "ground": Path("C:/x/t_d94665f2/ground_v014"),
@@ -40,7 +40,6 @@ CFG_V015 = dict(CFG, ground=Path("C:/x/t_e35c49dd/ground-v015-dcc-v001/textured"
                 verona={"shapes": ROOT / "jobs/VATUTINO-SITE/maf/verona-plan-shapes.json",
                         "build_report": Path("C:/x/vatutino-maf/gen-v001/rows-v006p-3/build-report.json"),
                         "depth": 0.6})
-SCRIPT = ROOT / "tools/blender/placement_instance.py"
 # gate-1 F2 (accepted 2026-10-20): schedule position -> library catalogue id
 FLORA_PICKS = {1: 101, 3: 120, 4: 115, 6: 105, 7: 103, 9: 205, 11: 212, 12: 204, 14: 230, 15: 223, 17: 224}
 EXACT = {11, 14, 15}
@@ -51,30 +50,8 @@ def spec_dims(v):
     return v if ok else None
 
 
-def sha(p: Path) -> str:
-    return hashlib.sha256(p.read_bytes()).hexdigest()
-
-
-PLACEMENT_ARITY = {"facts": 2, "instance": 4}   # tools/blender/placement_instance.py commands
-
-
-def blender(*args) -> dict:
-    """One placement_instance.py step through the shared headless runner (#1378); every promised file must be fresh.
-    facts spec facts.json -> facts.json; instance spec plan blend readback.json -> readback.json + blend."""
-    if not args or args[0] not in PLACEMENT_ARITY or len(args) - 1 != PLACEMENT_ARITY[args[0]]:
-        raise ValueError(f"placement_instance.py: unknown command or wrong argument count {list(map(str, args))}; "
-                         f"expected one of {PLACEMENT_ARITY}")
-    report = Path(args[-1])
-    outputs = [Path(args[3])] if args[0] == "instance" else []
-    t = time.time()
-    try:
-        run_blender(SCRIPT, list(args), output_json=report, outputs=outputs, timeout=3600,
-                    log_path=report.with_name(report.name + ".blender.log"))
-    except BlenderRunError as exc:
-        raise SystemExit(f"blender failed {exc}") from exc
-    cmd = blender_command(SCRIPT, args)
-    return {"cmd": " ".join(f'"{c}"' if " " in c else c for c in cmd), "exit_code": 0,
-            "seconds": round(time.time() - t, 1)}
+sha = site.sha
+blender = site.blender          # the one placement DCC launch (#1378) lives in the command (#1407)
 
 
 def _rel(p: Path) -> str:
@@ -84,12 +61,8 @@ def _rel(p: Path) -> str:
         return str(p)
 
 
-def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
-    out = Path(out)
-    if out.exists():
-        raise SystemExit(f"{out} exists: new versioned output dirs only")
-    out.mkdir(parents=True)
-    a_seed = seed
+def resolve(cfg: dict) -> tuple[dict, dict]:
+    """Vatutino cfg -> (placement spec of dt_ai.placement.site, provenance inputs). Reads only."""
     adapter = json.loads(cfg["adapter"].read_text(encoding="utf-8"))
     parts = json.loads(cfg["site_parts"].read_text(encoding="utf-8"))
     # #1146 v007: cfg may carry its own picks / exact set / scene version; maf_set None = Flora only
@@ -115,147 +88,60 @@ def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
               "ground_exceptions": {"path": _rel(exc_path), "sha256": sha(exc_path) if exc_path.is_file() else None,
                                     "entries": len(exceptions)},
               "flora_library": {"path": str(cfg["flora_library"]), "export_dir": str(FLORA_FBX)}}
-    flora_rows = {}
-    for f in parts["flora"]:
-        pick = picks.get(f["pos"])
-        c = next((c for c in f["cands"] if c["id"] == pick), None) if pick else None
-        flora_rows[f["block"]] = {"pos": f["pos"], "ru": f["ru"], "latin": f["latin"], "qty": f["qty"],
-                                  "h_m": [f["h_cm"][0] / 100.0, f["h_cm"][1] / 100.0], "cand": c,
-                                  "spozu_in": f["spozu_in"], "spozu_total": f["spozu_total"],
-                                  "match": "exact" if f["pos"] in exact else ("substitute" if c else "no_model")}
-    export = json.loads((FLORA_FBX / "export.json").read_text(encoding="utf-8"))["objects"]
     if verona_rows:
         inputs["verona"] = {"shapes": _rel(Path(cfg["verona"]["shapes"])), "shapes_sha256": sha(Path(cfg["verona"]["shapes"])),
                             "build_report": str(cfg["verona"]["build_report"]),
                             "build_report_sha256": sha(Path(cfg["verona"]["build_report"])), "points": verona_log}
-    results = {"seed": a_seed, "inputs": inputs, "status": "running", "variants": {}}
-    try:
-        ps.validate_points(adapter["planting"] + adapter["maf"])
-    except ps.PlacementStopped as exc:
-        results["status"], results["stopped"] = "stopped", exc.reasons
-        (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
-        print(f"STOPPED (input points) {exc.reasons[:5]}")
-        return 1
-    qa_failed = False
-    for var in ("npm", "vpm"):
-        V = var.upper()
-        vdir = out / var
-        vdir.mkdir()
-        gm_path = GROUND / f"ground_master_{var}.json"
-        gm = json.loads(gm_path.read_text(encoding="utf-8"))
-        offset = json.loads((GROUND / f"readback_{var}.json").read_text(encoding="utf-8"))["placement_offset"]
-        g_fbx = GROUND / var / "SM_Vatutino_Ground.fbx"
-        inputs[f"ground_{var}"] = {"master": str(gm_path), "master_sha256": sha(gm_path), "fbx": str(g_fbx),
-                                   "fbx_sha256": sha(g_fbx), "offset": offset}
-        libs, assign, kind_of, meta = [], {}, {}, {}
-        missing_vpm = []
-        for block, r in flora_rows.items():
-            c = r["cand"]
-            if c is None:
-                assign[block] = None
-                continue
-            obj = c["obj"].get(V)
-            if obj is None or export.get(obj) is None:
-                assign[block] = None
-                missing_vpm.append({"pos": r["pos"], "block": block, "object": c["obj"].get("NPM")})
-                continue
-            e = export[obj]
-            h = e["bbmax"][2] - e["bbmin"][2]
-            bs = ps.flora_base_scale(h, tuple(r["h_m"]))
-            fbx = FLORA_FBX / f"{obj}.fbx"
-            libs.append({"id": obj, "fbx": str(fbx), "base_scale": bs})
-            inputs.setdefault("flora_fbx", {})[obj] = sha(fbx)
-            assign[block], kind_of[obj] = obj, "flora"
-            meta[obj] = {"kind": "flora", "block": block, "h_m": r["h_m"], "base_scale": bs}
-        for p in mafset:
-            fbx = Path(p[var]["fbx"])
-            libs.append({"id": p["set_id"], "fbx": str(fbx)})
-            inputs.setdefault(f"maf_fbx_{var}", {})[p["set_id"]] = sha(fbx)
-            assign[p["spozu_block"]], kind_of[p["set_id"]] = p["set_id"], "maf"
-            meta[p["set_id"]] = {"kind": "maf", "block": p["spozu_block"], "spec": spec_dims(p["schedule_size_m"]),
-                                 "spec_raw": p["schedule_size_m"]}
-        for r in verona_rows:
-            fbx = Path(r[var]["fbx"])
-            libs.append({"id": r["set_id"], "fbx": str(fbx)})
-            inputs.setdefault(f"maf_fbx_{var}", {})[r["set_id"]] = sha(fbx)
-            assign[r["set_id"]], kind_of[r["set_id"]] = r["set_id"], "maf"
-            meta[r["set_id"]] = {"kind": "maf", "block": r["block"], "spec": None, "spec_raw": "generated, checked by #817"}
-        spec = {"libraries": libs, "ground": {"fbx": str(g_fbx)}}
-        (vdir / "spec.json").write_text(json.dumps(spec, indent=1), encoding="utf-8")
-        cmds = [dcc("facts", vdir / "spec.json", vdir / "facts.json")]
-        facts = json.loads((vdir / "facts.json").read_text(encoding="utf-8"))
-        lib = []
-        for lid, m in meta.items():
-            if m["kind"] == "flora":
-                lib.append(ps.flora_entry(lid, facts[lid], tuple(m["h_m"])))
-            else:
-                lib.append(ps.maf_entry(lid, facts[lid], m["spec"]))
-        pts = adapter["planting"] + adapter["maf"]
-        keep, excl = ps.select_points(pts, assign)
-        try:
-            keep, gx, stale = ps.apply_ground_exceptions(keep, exceptions, var, inputs[f"ground_{var}"]["master_sha256"],
-                                                         assign)
-        except ps.PlacementStopped as exc:
-            results["variants"][var] = {"stopped": exc.reasons}
-            results["status"] = "stopped"
-            (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
-            print(f"{var}: STOPPED {exc.reasons}")
-            return 1
-        excl += gx
-        assert len(keep) + len(excl) == len(pts)
-        for x in excl:
-            if x["reason"] == "no_library_model" and var == "vpm" and any(
-                    m["block"] == x["label"] for m in missing_vpm):
-                x["reason"] = "no_confirmed_vpm"
-        t = time.time()
-        rep = engine.place(keep, gm["verts"], gm["faces"], lib, a_seed, label_map=assign)
-        eng_s = round(time.time() - t, 1)
-        (vdir / "engine_report.json").write_text(engine.report_json(rep), encoding="utf-8")
-        vr = {"engine_status": rep["status"], "engine_seconds": eng_s, "totals": rep["totals"],
-              "engine_sinking": rep["sinking"], "findings": Counter(f["code"] for f in rep["findings"]),
-              "excluded": excl, "missing_vpm": missing_vpm, "facts": facts, "meta": meta,
-              "counts": rep["counts"], "commands": cmds, "library_summary": rep["library"],
-              "ground_exceptions_stale": stale}
-        results["variants"][var] = vr
-        try:
-            plan = ps.make_plan(rep, facts, offset)
-        except ps.PlacementStopped as exc:
-            vr["stopped"] = exc.reasons
-            results["status"] = "stopped"
-            (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
-            print(f"{var}: STOPPED {len(exc.reasons)} reasons, first: {exc.reasons[:5]}")
-            return 1
-        (vdir / "plan.json").write_text(json.dumps(plan), encoding="utf-8")
-        spec["run_record"] = {"seed": rep["seed"], "engine_schema": rep["schema"],
-                              "engine_report_sha256": ps.report_sha256(rep), "input_hashes": rep["input_hashes"],
-                              "totals": rep["totals"], "issue": 296, "variant": var}
-        (vdir / "spec.json").write_text(json.dumps(spec, indent=1), encoding="utf-8")
-        blend = vdir / f"VATUTINO-SITE_placement_{var}_{version}.blend"
-        cmds.append(dcc("instance", vdir / "spec.json", vdir / "plan.json", blend, vdir / "readback.json"))
-        rb = json.loads((vdir / "readback.json").read_text(encoding="utf-8"))
-        vr["scene_mismatches"] = ps.compare_scene(rep, rb, facts, offset)
-        vr["sinking_scene"] = ps.sinking(rb, kind_of=kind_of)
-        try:
-            vr["scene_triangles"] = ps.scene_triangles(rb)
-            tri_bad = []
-        except ps.PlacementStopped as exc:
-            vr["scene_triangles"], tri_bad = None, exc.reasons
-        vr["qa_failed"] = ps.qa_gate(vr["scene_mismatches"], vr["sinking_scene"]) + tri_bad
-        if vr["qa_failed"]:
-            qa_failed = True
-            bad = blend.with_name(blend.stem + ".QA_FAILED.blend")
-            blend.rename(bad)               # quarantine: never a deliverable scene name
-            blend = bad
-        vr["blend"] = {"path": str(blend), "sha256": sha(blend)}
-        vr["bottom_faces"] = {
-            "deleted": sum(i.get("bottom_faces_deleted", 0) for i in rep["instances"]),
-            "review": sum(v["action"] == "review" for i in rep["instances"] for v in i.get("bottom_faces", [])),
-            "exposed": rep["exposed_bottoms"]}
-        print(f"{var}: engine {rep['status']} {rep['totals']} mismatches {len(vr['scene_mismatches'])} "
-              f"sink {vr['sinking_scene']['per_kind']} ok={vr['sinking_scene']['ok']} qa_failed={len(vr['qa_failed'])}")
-    results["status"] = "qa_failed" if qa_failed else "pass"
-    (out / "results.json").write_text(ps.dumps(results), encoding="utf-8")
-    return 3 if qa_failed else 0
+    export = json.loads((FLORA_FBX / "export.json").read_text(encoding="utf-8"))["objects"]
+    assign, libs = {}, {}
+
+    def add(key, lib):
+        if key in libs:
+            raise site.SpecError(f"library key {key!r} names two of: Flora block, MAF block, Verona row")
+        libs[key] = lib
+
+    for f in parts["flora"]:
+        pick = picks.get(f["pos"])
+        c = next((c for c in f["cands"] if c["id"] == pick), None) if pick else None
+        if c is None:                                   # no library model: excluded as no_library_model
+            assign[f["block"]] = None
+            continue
+        lib = {"kind": "flora", "block": f["block"], "h_m": [f["h_cm"][0] / 100.0, f["h_cm"][1] / 100.0],
+               "missing": {"pos": f["pos"], "block": f["block"], "object": c["obj"].get("NPM")},
+               "match": "exact" if f["pos"] in exact else "substitute"}
+        for var in site.VARIANTS:
+            obj = c["obj"].get(var.upper())
+            e = export.get(obj) if obj is not None else None
+            lib[var] = None if e is None else {"id": obj, "fbx": str(FLORA_FBX / f"{obj}.fbx"),
+                                               "model_h_m": e["bbmax"][2] - e["bbmin"][2]}
+        assign[f["block"]] = f["block"]
+        add(f["block"], lib)
+    for p in mafset:
+        assign[p["spozu_block"]] = p["spozu_block"]
+        add(p["spozu_block"], {"kind": "maf", "block": p["spozu_block"], "spec": spec_dims(p["schedule_size_m"]),
+                               "spec_raw": p["schedule_size_m"],
+                               **{var: {"id": p["set_id"], "fbx": str(p[var]["fbx"])} for var in site.VARIANTS}})
+    for r in verona_rows:
+        assign[r["set_id"]] = r["set_id"]
+        add(r["set_id"], {"kind": "maf", "block": r["block"], "spec": None, "spec_raw": "generated, checked by #817",
+                          **{var: {"id": r["set_id"], "fbx": str(r[var]["fbx"])} for var in site.VARIANTS}})
+    spec = {"schema": site.SCHEMA, "job": "VATUTINO-SITE", "version": version, "issue": 296,
+            "points": adapter["planting"] + adapter["maf"], "exceptions": exceptions, "assign": assign,
+            "libraries": libs,
+            "ground": {var: {"master": str(GROUND / f"ground_master_{var}.json"),
+                             "readback": str(GROUND / f"readback_{var}.json"),
+                             "fbx": str(GROUND / var / "SM_Vatutino_Ground.fbx")} for var in site.VARIANTS}}
+    return spec, inputs
+
+
+def run(cfg: dict, out: Path, seed: int, dcc=blender) -> int:
+    """Resolve the Vatutino inputs and run the one site placement command (legacy mode: parity recorded)."""
+    out = Path(out)
+    if out.exists():
+        raise SystemExit(f"{out} exists: new versioned output dirs only")
+    spec, inputs = resolve(cfg)
+    order = site.normalize(spec, ROOT, strict=False)
+    return site.run(order, out, seed, dcc, strict=False, inputs=inputs)
 
 
 def main() -> int:
