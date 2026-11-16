@@ -75,6 +75,17 @@ def intersections(rows, ua, reach=0.1):
     return bad
 
 
+def _ucx_row(o, handle, core, np):
+    """Read world geometry and its actual object-local storage frame in float64."""
+    me = o.data
+    me.calc_loop_triangles()
+    mw = np.asarray(o.matrix_world, dtype=float)
+    return {"handle": handle, "name": o.name,
+            "verts": core.transform_points([tuple(v.co) for v in me.vertices], mw),
+            "world_to_local": np.linalg.inv(mw).tolist(),
+            "tris": [list(t.vertices) for t in me.loop_triangles]}
+
+
 def main():
     args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     opts, err = _parse(args)
@@ -94,7 +105,6 @@ def main():
         return 4
     import bpy
     import numpy as np
-    from mathutils import Vector
 
     ub = _load("ucx_build", "src/dt_ai/geometry/ucx_build.py")
     core = _load("agr_ucx10_core", "adapters/max/agr_tools/ucx10_core.py")
@@ -116,11 +126,7 @@ def main():
             raise ValueError(f"need UCX and model meshes, got {len(ucx)} UCX / {len(model)} model")
         rows = []
         for h, o in enumerate(ucx):
-            me = o.data
-            me.calc_loop_triangles()
-            mw = o.matrix_world
-            rows.append({"handle": h, "name": o.name, "verts": [list(mw @ v.co) for v in me.vertices],
-                         "tris": [list(t.vertices) for t in me.loop_triangles]})
+            rows.append(_ucx_row(o, h, core, np))
         report["intersections_before"] = intersections(rows, ua)
         res = core.resolve(rows, copts)
         s = res["summary"]
@@ -135,9 +141,9 @@ def main():
             if not p["changed"]:
                 continue
             o = ucx[h]
-            inv = o.matrix_world.inverted()
+            inv = rows[h]["world_to_local"]
             me = bpy.data.meshes.new(o.data.name)
-            me.from_pydata([tuple(inv @ Vector(v)) for v in p["verts"]], [],
+            me.from_pydata(core.transform_points(p["verts"], inv), [],
                            [tuple(t) for t in p["tris"]])
             me.update()
             o.data = me
@@ -185,8 +191,9 @@ def _world(objs, np):
     for o in objs:
         me = o.data
         me.calc_loop_triangles()
-        mw = o.matrix_world
-        v = np.array([tuple(mw @ x.co) for x in me.vertices], dtype=float).reshape(-1, 3)
+        mw = np.asarray(o.matrix_world, dtype=float)
+        local = np.array([tuple(x.co) for x in me.vertices], dtype=float).reshape(-1, 3)
+        v = local @ mw[:3, :3].T + mw[:3, 3]
         t = np.array([tuple(x.vertices) for x in me.loop_triangles], dtype=np.int64).reshape(-1, 3)
         vs.append(v)
         ts.append(t + off)
