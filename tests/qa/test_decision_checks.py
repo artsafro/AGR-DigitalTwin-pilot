@@ -178,9 +178,16 @@ def test_master_all_quads_under_4m_pass():
     assert got["master quads"] == "pass" and got["master quad size"] == "pass"
 
 
-def test_master_triangle_fails_quads():
+def test_master_triangle_passes_and_reports_d312():
     verts = [[0, 0, 0], [1, 0, 0], [0, 1, 0]]
-    assert master_status("npm", poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts))["master quads"] == "fail"
+    got = master_findings(master_rb(poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts)), "npm")[0]
+    assert got.status == "pass"
+    assert got.data["objects"] == [{
+        "name": "SM_Test_K_1_Main", "status": "pass", "faces": 1,
+        "triangles": 1, "triangle_share": 1.0, "quads": 0,
+        "ngons": 0, "ngon_face_ids": [],
+    }]
+    assert "SM_Test_K_1_Main" in got.observed and "triangle_share" in got.observed
 
 
 def test_master_quad_over_4m_fails_and_padded_band_is_review():
