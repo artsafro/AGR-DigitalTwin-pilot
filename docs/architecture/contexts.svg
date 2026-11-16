@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1552" width="2990" height="1552" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1570" width="2990" height="1570" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2990" height="1552" fill="#ffffff"/>
+<rect x="10" y="-30" width="2990" height="1570" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="336.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40" y="461.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -19,13 +19,13 @@
 <rect x="345.0" y="1334.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="955.0" y="1038.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="955.0" y="1247.0" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1038.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1264.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1565.0" y="1038.0" width="470" height="230.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="1282.0" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <polyline points="1120.0,796.5 1140.0,796.5 1140.0,770.25 1240.0,770.25 1240.0,644.0 1750.0,644.0 1750.0,770.25 1730.0,770.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,770.25 1750.0,770.25 1750.0,1018.0 835.0,1018.0 835.0,1179.25 815.0,1179.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="815.0,1179.25 835.0,1179.25 835.0,1244.5 1445.0,1244.5 1445.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2035.0,1144.25 2055.0,1144.25 2055.0,940.5 1240.0,940.5 1240.0,796.5 1120.0,796.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2035.0,1144.25 2055.0,1144.25 2055.0,1253.0 1545.0,1253.0 1545.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="815.0,1179.25 835.0,1179.25 835.0,1135.5 935.0,1135.5 935.0,1018.0 1445.0,1018.0 1445.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,1153.0 2055.0,1153.0 2055.0,940.5 1240.0,940.5 1240.0,796.5 1120.0,796.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,1153.0 2055.0,1153.0 2055.0,1018.0 1445.0,1018.0 1445.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 1750.0,441.5 1750.0,770.25 1730.0,770.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 1240.0,441.5 1240.0,1018.0 1445.0,1018.0 1445.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
@@ -48,7 +48,7 @@
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
 <text x="963.0" y="346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 49</tspan>
+<tspan x="963.0" dy="12">Дубли вне владельца: 41</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей функции; охрана jobs/, tools/, src/ (#1376)</tspan>
 </text>
@@ -198,16 +198,17 @@
 <tspan x="1573.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="1573.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
 <tspan x="1573.0" dy="17.5"></tspan>
-<tspan x="1573.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
-<tspan x="1573.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="1573.0" dy="17.5">blender_executable: --blender &gt; DT_BLENDER (CLI dt qa /</tspan>
+<tspan x="1573.0" dy="17.5">agr) &gt; TWINQA_BLENDER (blender_runner) &gt; установка 5.1.2;</tspan>
+<tspan x="1573.0" dy="17.5">путь к Blender</tspan>
 <tspan x="1573.0" dy="17.5">blender_command: скрипт, аргументы -&gt; одна командная</tspan>
 <tspan x="1573.0" dy="17.5">строка Blender без окна (закреплённая версия, без</tspan>
 <tspan x="1573.0" dy="17.5">автозапуска)</tspan>
 <tspan x="1573.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="1573.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="1573.0" y="1274.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1573.0" dy="12">Дубли вне владельца: 24</tspan>
+<text x="1573.0" y="1292.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1573.0" dy="12">Дубли вне владельца: 10</tspan>
 <tspan x="1573.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
 <tspan x="1573.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
 <tspan x="1573.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
@@ -222,19 +223,19 @@
 <tspan x="1292.5" dy="14">UV, атлас,</tspan>
 <tspan x="1292.5" dy="17.5">текстуры</tspan>
 </text>
-<rect x="863.0" y="1235.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="893.0" y="1235.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="893.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="1160.0" y="1009.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1190.0" y="1009.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1190.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 <rect x="1762.0" y="923.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
 <text x="1792.0" y="923.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1792.0" dy="14">Blender/Max</tspan>
 <tspan x="1792.0" dy="17.5">строит</tspan>
 </text>
-<rect x="1455.0" y="1118.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1485.0" y="1118.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1485.0" dy="14">свежее чтение</tspan>
-<tspan x="1485.0" dy="17.5">экспорта</tspan>
+<rect x="1720.0" y="1000.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1000.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">свежее чтение</tspan>
+<tspan x="1750.0" dy="17.5">экспорта</tspan>
 </text>
 <rect x="1720.0" y="606.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
 <text x="1750.0" y="606.0" font-size="14" text-anchor="middle" fill="#1e1e1e">

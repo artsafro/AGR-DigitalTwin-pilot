@@ -102,7 +102,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
 @pytest.mark.parametrize("command,ok", [
     ("agr inspect", True), ("agr validate", True), ("agr vpm-to-npm", True), ("agr package-vpm", True),
     ("dt derive atlas", True), ("dt qa xview", True), ("dt spec compare", True), ("dt inspect", True),
-    ("agr unwrap-atlas", False), ("agr ucx", False), ("agr", False), ("dt derive nonsense", False),
+    ("agr unwrap-atlas", False), ("agr ucx", True), ("agr brick-seams", False), ("agr", False), ("dt derive nonsense", False),
     ("dt nonsense", False), ("python tools/x.py", False), ("dt qa xview extra", False), ("", False),
 ])
 def test_command_exists(command, ok):
@@ -281,11 +281,11 @@ def test_guard_green_on_repo_with_allowlist(capsys):
 
 def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
-    assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left
+    assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left; #1407: site-placement neither
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
-    assert len([k for k in jobs if k[0] == "udim-tile"]) == 36   # #1380 owner calls retained; #1370 adds six hash-pinned OBR22 copies
+    assert len([k for k in jobs if k[0] == "udim-tile"]) == 34   # #1531 removes two live copies; #1370 retains six historical OBR22 copies
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
 

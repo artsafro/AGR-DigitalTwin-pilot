@@ -159,7 +159,7 @@ def main(argv=None) -> int:
     except (run_variant.Refused, OSError, KeyError, json.JSONDecodeError) as exc:
         print(f"RUN_BENCHMARKS refused: {exc}", file=sys.stderr)
         return 4
-    from dt_ai.core.blender_runner import blender_executable
+    from dt_ai.core.blender_runner import blender_command, blender_executable   # one Blender command line (#1530)
 
     blender = blender_executable()
     codes = []
@@ -177,9 +177,9 @@ def main(argv=None) -> int:
             print(f"{bid} {variant}: {(r.stdout + r.stderr).strip()[-300:]}")
             codes.append(r.returncode)
             continue
-        cmd = [blender, "--background", "--factory-startup", "--python-exit-code", "1", "--python",
-               str(HERE / "build_variant_blender.py"), "--", str(src), str(out), variant, f"tile={tile}",
-               f"texture={tex[0]}", f"texture_side={tex[1]}"]
+        cmd = blender_command(HERE / "build_variant_blender.py", (src, out, variant, f"tile={tile}",
+                                                                  f"texture={tex[0]}", f"texture_side={tex[1]}"),
+                              executable=blender)
         if gmap:
             cmd.append(f"glass_map={gmap}")
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)

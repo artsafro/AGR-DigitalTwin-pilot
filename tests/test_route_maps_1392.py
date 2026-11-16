@@ -24,8 +24,10 @@ VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv"
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
              "package", "validate", "sintez"]
 RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner",  # sintez-runner: #1379 (PR #1431)
-                           "parapet-seam"},  # #1381: one roof/parapet seam check
-            "ground-route": {"urns-outside"}}  # #1412: D302
+                           "parapet-seam",  # #1381: one roof/parapet seam check
+                           "ucx-copies"},  # ucx: #1404 D330
+            "ground-route": {"urns-outside", "tool-bound-to-vatutino", "projection",  # #1412: D302; #1406
+                             "ucx-ground"}}  # ucx-ground: #1404 D330
 
 
 def _routes():
@@ -42,6 +44,200 @@ def _contexts():
 
 def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
+
+
+# ---------------------------------------------------------------- #1581 contract and npm ownership
+@pytest.mark.parametrize("name", sorted(route_map.context_maps()))
+def test_1581_blender_contracts(name):
+    cmap = _maps()[name]
+    contracts = [f["contract"] for c in [cmap["shared_kernel"], *cmap["contexts"]]
+                 for f in c["functions"] if f["name"] == "blender_executable"]
+    assert len(contracts) == 1
+    text = contracts[0]
+    terms = ["--blender", "DT_BLENDER", "TWINQA_BLENDER", "5.1.2"]
+    assert all(term in text for term in terms)
+    assert [text.index(term) for term in terms] == sorted(text.index(term) for term in terms)
+    assert "CLI" in text and "blender_runner" in text
+
+
+def test_1581_npm_context():
+    assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm"
+    npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm")
+    assert npm["owner"] == "tools/derive/npm_atlas.py"
+    local = next(c for c in _routes()["vpm-route"]["local_contexts"] if c["id"] == "npm")
+    assert local["ref"] == "vpm-oks-contexts.yaml#npm"
+    assert local["owner"] == npm["owner"]
+    route_map.check_schema(_routes()["vpm-route"], _contexts())
+
+
+# ---------------------------------------------------------------- #1581 reverse coverage
+
+def test_1581_reverse_coverage():
+    events = _routes()["vpm-route"]
+    cmap = _maps()["vpm-contexts"]
+    orphan = copy.deepcopy(cmap["contexts"][0])
+    orphan.update(id="synthetic-orphan")
+    for c in cmap["contexts"] + [orphan]:
+        c.pop("grid", None)
+    orphan.pop("serves_stage", None)
+    orphan.pop("no_stage", None)
+    cmap["contexts"].append(orphan)
+    for _ in range(2):
+        problems = route_map.route_coverage(events, _contexts(), cmap)
+        assert [p for p in problems if "synthetic-orphan" in p] == [
+            "WARNING: context map: context 'synthetic-orphan' has no stage"]
+    orphan["no_stage"] = "Synthetic diagnostic only"
+    assert not any("synthetic-orphan" in p for p in route_map.route_coverage(events, _contexts(), cmap))
+    orphan.pop("no_stage")
+    orphan["serves_stage"] = "body"
+    assert not any("synthetic-orphan" in p for p in route_map.route_coverage(events, _contexts(), cmap))
+
+
+@pytest.mark.parametrize("field,value", [("no_stage", ""), ("no_stage", []),
+    ("no_stage", float("nan")), ("serves_stage", ""), ("serves_stage", float("inf")),
+    ("serves_stage", "missing-stage")])
+def test_1581_coverage_annotations(field, value):
+    cmap = _maps()["vpm-contexts"]
+    context = cmap["contexts"][0]
+    context.pop("no_stage", None)
+    context.pop("serves_stage", None)
+    context[field] = value
+    with pytest.raises(route_map.SchemaError, match=field):
+        route_map.route_coverage(_routes()["vpm-route"], _contexts(), cmap)
+
+
+def test_1581_warning_only_check_exits_zero(capsys, monkeypatch):
+    events = _routes()["route"]
+    maps = _maps()
+    for c in [maps["contexts"]["shared_kernel"], *maps["contexts"]["contexts"]]:
+        c.pop("no_stage", None)
+        c.pop("serves_stage", None)
+    monkeypatch.setattr(route_map, "load_context_maps", lambda root: copy.deepcopy(maps))
+    # Render from the mutated snapshot, isolating warnings from legitimate revision drift.
+    monkeypatch.setattr(route_map, "render_all", lambda root: (_routes(), maps["contexts"], {}))
+    assert route_map.main(["--check"]) == 0
+    assert "WARNING:" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------- #1581 explicit cross-map references
+
+def test_1581_ref_owner():
+    maps = _maps()
+    target = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    ref = {"ref": "package-contexts.yaml#export", "owner": "stale.py", "id": "alias"}
+    for owner in ("synthetic-first.py", "synthetic-second.py"):
+        target["owner"] = owner
+        assert route_map.resolve_context(ref, maps)["owner"] == owner
+        assert route_map.resolve_context(ref, maps)["id"] == "alias"
+    # npm is deliberately not a globally unique context id.
+    for name in ("maf-contexts", "flora-contexts", "vpm-contexts"):
+        filename = route_map.context_maps()[name].name
+        resolved = route_map.resolve_context({"ref": filename + "#npm"}, maps)
+        assert resolved["owner"] == next(c["owner"] for c in maps[name]["contexts"] if c["id"] == "npm")
+
+
+@pytest.mark.parametrize("ref", ["", "export", "#export", "package-contexts.yaml#",
+    "unknown.yaml#export", "../package-contexts.yaml#export", "package-contexts.yaml#absent",
+    "package-contexts.yaml#export#extra", None, [], float("nan"), float("inf")])
+def test_1581_bad_refs(ref):
+    with pytest.raises(route_map.SchemaError, match="ref"):
+        route_map.resolve_context({"ref": ref}, _maps())
+
+
+def test_1581_ref_cycle():
+    maps = _maps()
+    target = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    target["ref"] = "package-contexts.yaml#export"
+    with pytest.raises(route_map.SchemaError, match="cycle"):
+        route_map.resolve_context({"ref": target["ref"]}, maps)
+
+
+@pytest.mark.parametrize("name", sorted(route_map.route_events()))
+@pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
+def test_1581_missing_export(name, renderer):
+    events, maps = _routes()[name], _maps()
+    assert events["scheme"]["export_context"] == {"ref": "package-contexts.yaml#export"}
+    maps["package-contexts"]["contexts"] = [c for c in maps["package-contexts"]["contexts"] if c["id"] != "export"]
+    with pytest.raises(route_map.SchemaError, match="export"):
+        getattr(route_map, renderer)(events, maps[route_map.ROUTE_MAP_OF.get(name, "contexts")], maps)
+
+
+def test_1581_context_ref_loads_from_source(tmp_path):
+    shutil.copytree(ARCH, tmp_path / "docs/architecture")
+    path = tmp_path / route_map.context_maps()["ground-contexts"]
+    text = path.read_text(encoding="utf-8")
+    text = text.replace('  - id: npm\n', '  - id: npm\n    ref: flora-contexts.yaml#npm\n')
+    path.write_text(text, encoding="utf-8")
+    maps = route_map.load_context_maps(tmp_path)
+    target = next(c for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    actual = next(c for c in maps["ground-contexts"]["contexts"] if c["id"] == "npm")
+    assert actual["owner"] == target["owner"]
+    assert actual["functions"] == target["functions"]
+    # Source target missing: generator refuses before publishing any output.
+    source = tmp_path / route_map.context_maps()["flora-contexts"]
+    source.write_text(source.read_text(encoding="utf-8").replace('  - id: npm\n', '  - id: renamed\n'), encoding="utf-8")
+    before = {p.name: p.read_bytes() for p in path.parent.iterdir()}
+    assert route_map.main(["--root", str(tmp_path)]) == 2
+    assert before == {p.name: p.read_bytes() for p in path.parent.iterdir()}
+
+
+def test_1581_generated_missing_targets():
+    """Synthetic exhaustive deletion probe: every registered context and kernel."""
+    maps = _maps()
+    measured = 0
+    for name, cmap in maps.items():
+        filename = route_map.context_maps()[name].name
+        for c in [cmap["shared_kernel"], *cmap["contexts"]]:
+            ref = {"ref": filename + "#" + c["id"]}
+            assert route_map.resolve_context(ref, maps)["owner"] == c["owner"]
+            bad = copy.deepcopy(maps)
+            if c is cmap["shared_kernel"]:
+                bad[name]["shared_kernel"]["id"] = "synthetic-removed"
+            else:
+                bad[name]["contexts"] = [x for x in bad[name]["contexts"] if x["id"] != c["id"]]
+            for _ in range(2):
+                with pytest.raises(route_map.SchemaError, match=re.escape(ref["ref"])):
+                    route_map.resolve_context(ref, bad)
+            measured += 1
+    assert measured > 40
+    print(f"missing-target probe: {measured}/{measured}")
+
+
+@pytest.mark.parametrize("value", [{}, {"owner": "stale.py"},
+    {"ref": "package-contexts.yaml#export", "unexpected": True}])
+def test_1581_export_descriptor_rejects_unmapped_fields(value):
+    events = _routes()["route"]
+    events["scheme"]["export_context"] = value
+    with pytest.raises(route_map.SchemaError, match="export_context"):
+        route_map._scheme(events)
+
+
+def test_1581_duplicate_ref_target_is_not_first_entry():
+    maps = _maps()
+    maps["package-contexts"]["contexts"].append(copy.deepcopy(
+        next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")))
+    with pytest.raises(route_map.SchemaError, match="found 2"):
+        route_map.resolve_context({"ref": "package-contexts.yaml#export"}, maps)
+
+
+@pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
+def test_1581_renderer_uses_declared_ref_not_export_id(renderer):
+    events, maps = _routes()["route"], _maps()
+    events["scheme"]["export_context"] = {"ref": "flora-contexts.yaml#npm"}
+    expected = next(c["owner"] for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    result = getattr(route_map, renderer)(events, maps["contexts"], maps)
+    if renderer == "short_route_board":
+        assert expected in " ".join(e.get("text", "") for e in result.elements).replace("\n", "")
+    else:
+        assert expected in result
+
+
+@pytest.mark.parametrize("entry", [None, [], "export", 0, float("nan")])
+def test_1581_malformed_ref_target_is_schema_error(entry):
+    maps = _maps()
+    maps["package-contexts"]["contexts"] = [entry]
+    with pytest.raises(route_map.SchemaError):
+        route_map.resolve_context({"ref": "package-contexts.yaml#export"}, maps)
 
 
 # ---------------------------------------------------------------- D293 recorded and cited

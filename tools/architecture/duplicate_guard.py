@@ -35,6 +35,9 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `seam-seal`  owner tools/blender/seam_seal.py (#1381): the one Blender seam seal (weld + T-junction ring splits, quads
   only; moved from jobs/KPP1/scripts/seal.py, now an import shim). Flags any other `def seal` / `def ring_split` /
   `def t_junctions` (its function names). Every row must say why it stays.
+- `site-placement` owner src/dt_ai/placement/site.py (#1407, [D329]): the one site placement run (`dt place site` /
+  `agr place`, NPM + VPM at the same points [D293]). Flags any other `engine.place(...)` call, or a bare `place(...)`
+  imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -89,6 +92,7 @@ RULES = {
     "master-qa": "tools/blender/qa_master.py",
     "vpm-uv": "tools/blender/vpm_uv.py",
     "seam-seal": "tools/blender/seam_seal.py",
+    "site-placement": "src/dt_ai/placement/site.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
@@ -96,9 +100,11 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
            "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
-           "seam-seal": ("jobs", "tools", "src")}   # #1381
+           "seam-seal": ("jobs", "tools", "src"),   # #1381
+           "site-placement": ("jobs", "tools", "src")}   # #1407: one site placement run, guarded from the start
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
+                   "site-placement"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
@@ -289,8 +295,20 @@ def _seal_hits(tree):
             and node.name in OWNED_NAMES["seam-seal"]]
 
 
+def _place_hits(tree):
+    """Calls of the placement engine run `engine.place(...)`, or a bare `place(...)` imported from
+    dt_ai.placement.engine: a site run outside the one placement command is a job-local copy (#1407)."""
+    bare = any(isinstance(n, ast.ImportFrom) and n.module == "dt_ai.placement.engine"
+               and any(a.name == "place" and a.asname in (None, "place") for a in n.names) for n in ast.walk(tree))
+    return [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (
+        isinstance(node.func, ast.Attribute) and node.func.attr == "place"
+        and isinstance(node.func.value, ast.Name) and node.func.value.id == "engine"
+        or bare and isinstance(node.func, ast.Name) and node.func.id == "place")]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
-          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits}
+          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
+          "site-placement": _place_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -442,45 +460,17 @@ COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406
 # Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
 # listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
 LIVE_BYPASS_BASELINE = frozenset({
-    ("contexts", "adapters/max/agr_tools/atlas_core.py::pack", "402002d484"),
-    ("contexts", "adapters/max/agr_tools/npm2vpm_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/npm_core.py::tile_of", "ded8ff2561"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "fa20d4136a"),
-    ("contexts", "adapters/max/agr_tools/udimplug_core.py::tile_offset", "d163d10dca"),
-    ("contexts", "adapters/max/agr_tools/udimview_core.py::face_tile", "8fa30eddc4"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "8b58df8f2d"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
+
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
     ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "54a2d44744"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "eb17152aa7"),
+
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 
-    # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
-    ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "83b1fa0042"),
-    ("contexts", "tools/flora/build_flora_star.py::_blender", "e5c254530a"),
-    ("contexts", "tools/library/check_library.py::native_inspect", "c85d66fb6e"),
-    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
-    ("contexts", "tools/materials/bind_ground_textures.py::_run_blender", "707f4be9fd"),
-    ("contexts", "tools/methods/body/run_benchmarks.py::_blender", "18f971bee9"),
-    ("contexts", "tools/methods/ground/build_variant.py::_blender", "37235a2e47"),
-    ("contexts", "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx", "f5a8a5aa67"),
-    ("contexts", "tools/methods/run_variant.py::run_extra", "d4b2fad230"),
-    ("contexts", "tools/methods/ucx/run_benchmarks.py::main", "9c40344e89"),
-    ("contexts", "tools/methods/windows/run_benchmarks.py::main", "c2afb4241e"),
-    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
-    ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
-    ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
-
+    # blender-launch: the 16 live tools/ + src/ launches of #1378/#1424 call blender_command since #1530
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))

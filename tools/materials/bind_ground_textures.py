@@ -601,8 +601,9 @@ def _run_blender(script: Path, args) -> None:
     exe = os.environ.get("TWINQA_BLENDER") or (str(_BLENDER) if _BLENDER.is_file() else "")
     if not exe:
         raise BindError("Blender executable not found")
-    command = [exe, "--background", "--factory-startup", "--python-exit-code", "1",
-               "--python", str(script), "--", *map(str, args)]
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
+
+    command = blender_command(script, args, executable=exe)
     completed = subprocess.run(command, capture_output=True, text=True)
     print(json.dumps({"command": command, "exit_code": completed.returncode}), flush=True)
     if completed.returncode != 0:

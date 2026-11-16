@@ -50,6 +50,11 @@ Run the card's checks (validator stages, xView, SINTEZ) on the read-back export 
 `passed=true` only with every mandatory check and manual gate closed. Done when the report names, per stage, the
 route used, the evidence and what stays open.
 
+Before showing Artem (cells `oks-vpm`, `ground-npm`, `ground-vpm`): run the skeleton `verifier` stage in observe
+mode (`tools/qa/verifier.py` → `jobs/<ID>/verifier.json`, docs/agents/SKELETONS.md) and name its main discrepancy in
+the report. The VLM confirms; positions/counts come from geometry/vectors (CrossProjection: 82 % view matching vs
+22 % line localisation): rib, seam and opening positions and counts are read from the model and the DXF.
+
 ## Step 6 — Feed the card back
 
 When the work changed what a card says (a new etalon, a tool that now exists, a gap closed, a new decision), update

@@ -11,6 +11,7 @@ rules:
     owner: adapters/max/agr_tools/udimtile_core.py
     ru: "своя формула UDIM 1001 + u + 10·v вместо общей функции (охрана — contexts.yaml, #1376)"
 shared_kernel:
+  serves_stage: uv
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
   owner: adapters/max/agr_tools/udimtile_core.py
@@ -28,7 +29,7 @@ contexts:
     owner_ru: "агент работает там, где удобно (D293); запуск Blender без окна со свежим JSON-ответом"
     functions:
       - name: blender_executable
-        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
       - name: run_blender
         contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
   - id: body
@@ -62,6 +63,7 @@ contexts:
       - name: main
         contract: "аргументы dt derive atlas -> атлас НПМ и отчёт; ошибка — ненулевой код"
   - id: openings
+    serves_stage: openings
     ru: "Проёмы и окна"
     area: docs/domain/areas/windows.md
     owner: adapters/max/agr_tools/windowgen_core.py
@@ -76,6 +78,7 @@ contexts:
       - name: build_type
         contract: "тип окна, стандарт, опции -> меш окна по стандарту библиотеки"
   - id: roof
+    serves_stage: roof
     ru: "Кровля, парапет, плита, ограждение"
     area: docs/procedure/node-r6-oks-body-facade.md
     owner: adapters/max/agr_tools/roof_core.py
@@ -102,7 +105,7 @@ contexts:
       - name: _write_zip
         contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
       - name: zip_apply
-        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + полный отчёт проверки; ГОТОВО.txt только после автопроверок, V015–V017 ждут Артёма [D323]; иначе ОШИБКА.txt"
   - id: validation
     ru: "Проверки, xView, СИНТЕЗ"
     area: docs/domain/areas/package.md
@@ -124,7 +127,7 @@ contexts:
     ru: "Коллизии UCX (только ВПМ)"
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/ucx10_core.py
-    owner_ru: "канон UCX (D225): выпуклые куски и зазоры между ними"
+    owner_ru: "зазоры UCX (D330: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
     functions:
       - name: piece
         contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
@@ -138,15 +141,16 @@ contexts:
         issue: "#1383"
         ru: "свои куски UCX КПП1"
         status: own-duty
-        why: "специфичное разбиение здания на куски, не измерение зазоров ucx10_core"
+        why: "ручные куски сданного КПП1; новый объект строит agr ucx (D330), сданный пакет не меняется"
       - at: "jobs/PSU275/scripts/vpm_ucx.py:45"
         match: "UCX_SM_"
         issue: "#1383"
         ru: "свои UCX ПСУ275"
         status: own-duty
-        why: "построение UCX по зданию; overlap не измеряет минимальный зазор ucx10_core"
+        why: "ручные коробки законченного ПСУ275; новый объект строит agr ucx (D330), пакет не меняется"
   - id: ucx-triangulation
     ru: "Триангуляция готовых UCX"
+    serves_stage: ucx
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/geom_core.py
     owner_ru: "ucx_plan; обёртки TEC26 не строят зазоры ucx10_core"
@@ -160,6 +164,7 @@ contexts:
         ru: "обёртка geom_core() -> ucx_plan"
         status: wrapper
   - id: ucx-triangulation-cli
+    serves_stage: ucx
     ru: "Запуск триангуляции UCX"
     area: docs/domain/areas/ucx.md
     owner: jobs/TEC26-OKS/scripts/ucx_tri_core.py
