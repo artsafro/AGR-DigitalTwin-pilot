@@ -155,7 +155,7 @@
    "x": 40.0,
    "y": 365.0,
    "width": 470,
-   "height": 177.5,
+   "height": 195.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -193,7 +193,7 @@
    "x": 48.0,
    "y": 375.0,
    "width": 454,
-   "height": 157.5,
+   "height": 175.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -213,13 +213,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e8b8779b8f489e86",
-   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -929,7 +929,7 @@
    "id": "eae7405c99988339",
    "type": "arrow",
    "x": 510.0,
-   "y": 453.75,
+   "y": 462.5,
    "width": 630.0,
    "height": 108.75,
    "angle": 0,
@@ -962,24 +962,24 @@
      0.0
     ],
     [
-     120.0,
+     20.0,
      0.0
     ],
     [
-     120.0,
-     -108.75
+     20.0,
+     100.0
     ],
     [
      630.0,
-     -108.75
+     100.0
     ],
     [
      630.0,
-     0.0
+     -8.75
     ],
     [
      610.0,
-     0.0
+     -8.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1000,8 +1000,8 @@
   {
    "id": "e6fb9676d8f2e381",
    "type": "text",
-   "x": 825.0,
-   "y": 327.5,
+   "x": 775.0,
+   "y": 545.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,

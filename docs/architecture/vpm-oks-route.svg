@@ -356,8 +356,9 @@
 <text x="2855.0" y="441.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="14">Правила: D293, D292, D010</tspan>
 </text>
-<text x="2855.0" y="521.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2855.0" dy="14">Контекст: UV и атлас</tspan>
+<text x="2855.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Контекст: НПМ в тех же</tspan>
+<tspan x="2855.0" dy="17.5">координатах (ВПМ → НПМ)</tspan>
 </text>
 <text x="2855.0" y="600.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="13">Ветка: ВПМ или мастер готов</tspan>
