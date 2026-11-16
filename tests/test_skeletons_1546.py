@@ -1,5 +1,7 @@
 """#1546 scalpel agent: scenario skeletons, job hooks, historical job scripts hidden from agent search.
 
+Pattern: n/a | new-case: regression tests of skeleton_guard and the duplicate_guard historical class (#1546).
+
 Acceptance table (PR body) -> tests:
 - every scenario cell has a skeleton, its owners/entry names are real, docs list it  -> test_skeleton_*
 - a synthetic job that re-implements a skeleton stage fails, calling it passes       -> test_job_*
