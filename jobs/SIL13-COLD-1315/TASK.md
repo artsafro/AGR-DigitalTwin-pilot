@@ -159,3 +159,18 @@ Abies1 /Red Sunset4 /22MAFrows /133m2 flowerbed-rate gaps remain listed, not inv
 Eight original non-Acer maps are absent; actual A101 candidates and ambiguous Syringa
 labels are pinned, not silently bound. Technical QA, final user acceptance, SINTEZ
 and publication remain incomplete; no readiness increase.
+
+## v018 current continuation
+
+[CONTINUATION-v018.md](CONTINUATION-v018.md) supersedes the resume site above.
+D305/D316source-bound repair actually adopted16Sand/Bike/Urn copies in EACH profile:
+NPM178571raw/178556native, VPM301662/301662; all64actual placed-instance xView
+checks clean,22otherMAF/profile and Ground/Flora/600UCX arrays exact.38MAF and
+4582plant census retained. Complete actual Ground-to-UCX numerical upper bound
+0.08993564479232127m<0.1m covers57226toptriangles,450783partition vertices, no
+unassigned region. This does NOT waive213wide-neighbour gaps or final checks.
+Only these16paired copies are adopted. Bench013has source-fidelity progress but
+actualraw/native1area-onlyFAIL; Canopy union stillFAIL. Wholepublicvalidators
+bothFAIL; finalvisual/material/SINTEZ not yet reached. Resume BOTH profiles from
+v018/site-three-r1; never promote an isolated partial-pass artifact. No new human
+question is pending. All prior model/picture gates, particularlyD321, stay closed.

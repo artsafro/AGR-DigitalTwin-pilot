@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-accepted-VPM-Table-finish-v017
+run_id: cold-1315-three-MAF-UCX-coverage-v018
 synthetic: false
 path: deviation
 inputs: &id001
@@ -109,6 +109,11 @@ deviations:
   what_was_tried: D321form answer6903084291 closes picture gate. Exact Boolean/topology simplification/nano seam merge gives4920triangle pilot clean pre/raw/native,76wood72slots288access. Only then replicate12VPMTables, actual24placed checks clean. Source-shape probes reject filled cavities/wheel slots/raised low posts in isolated other-type candidates.
   new_tool_written: 37job-local drivers/tests903literal lines sealed externally in evidence-v017.json; no shared module/checker/library changes.
   result: Actual319154VPMraw/native,no face loss. NPMv015byte-unchanged;26otherMAFGroundFlora600UCX arrays exact,38MAF4582census retained. WholeVPMxView14191faces44vertices202bowtiesFAIL; nativevalidator3pass3fail1review5not_run. No new user question; remaining technical work stays worker-owned.
+- gate: operations
+  what_failed: Bike900pre/rawclean but native4faces; initial Urn seam2vertices; Bench one-sided clean MeshFix route loses source frame148.463mm; exact2mm generated edges quantize below threshold; fine Canopy union retains zero-area needles.
+  what_was_tried: D305/D316source-bound Sand/Bike/Urn repairs, preserved source heights/slots/cavity/shelf, pairedNPMLOD; actualpre/raw/nativechecks before16copy replication perprofile. Independent exhaustive actualGround-to-UCX triangle-distance partition; no sampling substituted for coverage.
+  new_tool_written: 65job-local drivers/adapters/tests1273literal lines sealed in evidence-v018.json; no shared module/checker/registry/library edits.
+  result: Actual178571NPM/301662VPMraw,178556/301662native;64placed checks clean,22otherMAF/profile andGround/Flora/600UCX arrays exact. Complete57226faceUCXbound0.089935645m<0.1m;213widegaps open. WholevalidatorsFAIL; isolatedBench1areaFAIL andCanopyFAIL NOTadopted. No new user question.
 gates:
   inputs:
     status: review
@@ -122,26 +127,26 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D321scope AND picture closed by6903084291;4920triangle pilot clean pre/raw/native.12VPMTables replicated only after geometryQA,24actualplaced checks clean. Whole site stillFAIL; other5types isolated/notadopted. NPMbyte-unchanged, no library edit or technical waiver.
+    note: D305/D31616Sand/Bike/Urncopies adopted inEACHprofile aftercleanpre/raw/native controls;64actualplaced checks clean.22otherMAF/profile andGround/Flora/600UCX exact. D321andearlierpicturegatesclosed. Whole site stillFAIL; Bench013/Canopyisolated NOTadopted; no technical waiver or new user question.
     evidence: &id002
-    - path: jobs/SIL13-COLD-1315/source-wide-summary-v017.json
-      sha256: 941c25f1096107e351d911d121f56daaccd2f156bc7ab159b62b2fb04294532f
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v018.json
+      sha256: fd0a6c15b0b4d5c38c8cf60cdd53f1794949c5ab2ec1b4158efa5739c04bf5ba
   budgets:
     status: review
-    note: Actual172487NPM<=180000,7513remaining;319154VPM<=2625000;600UCX6876tri. Flora actual arrays unchanged, prior support78.225/78.655percent applicable, not remeasured. Materials/UV/density incomplete. Only12VPMTables adopted; five-type candidate counts never promoted to site or NPM.
+    note: Actual178571NPM<=180000,1429remaining;301662VPM<=2625000;600UCX6876tri. Flora arrays unchanged; prior support78.225/78.655percent applicable, not remeasured. CompleteactualGroundtoUCXbound0.089935645m<0.1m,57226faces/450783partitionvertices/0unassigned.213widegaps/materials/UV/density remainopen. IsolatedBench/Canopy counts not promoted.
     evidence: *id002
   export_readback:
     status: review
-    note: Pilot4920raw/nativefacesexact,xView0/0/0/0. Actual VPMsite319154raw/native,no face loss,26otherMAFGroundFlora600UCX arrays exact; NPMbyte-unchanged/old15face loss retained. WholeVPMpublicxView14191faces44verts202bowtiesFAIL and actual native packagevalidatorFAIL, not a delivery pass.
+    note: Actual178571NPMraw/178556native and301662VPMraw/native; all64repairedplacedinstances0faces0vertices0bowties0area,22otherMAF/profile exact. NPMother15face loss retainedFAIL. WholepublicxViewNPM728faces114verts165bowties/VPM4794faces0verts162bowtiesFAIL. ActualnativepackagevalidatorsNPM1/4/1/2,VPM3/3/1/5FAIL; not delivery acceptance.
     evidence: *id002
   report:
     status: review
-    note: v017D321form closed/Table12VPMreplication;325checkpoint controls green/5historicalcontrols deselected; separate5historical+2currentisolated failures,3othercontrols pass.201immutableDrivefiles100230558bytessealed,22original/resumehashesequal. WholeVPMvalidatorFAIL. Fullsuite deferred to merge batch(rule68).
+    note: v018paired16MAFrepair andcompleteactualUCXcoverage;427checkpoint controls pass/5historicaldeselected; separately2CURRENTfailed6passed and7HISTORICALfailed32deselected.347immutableDrivefiles148336598bytessealed,22original/resumehashesequal. WholevalidatorsFAIL. Full suite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v017.md
-      sha256: cd0a1e1ea2f664eb344bee44c77f5c2aea07b6cae84261d1b08bf622517d6e52
-    - path: jobs/SIL13-COLD-1315/evidence-v017.json
-      sha256: 0833a588ca058b8d167d0f69d902b243224ce5b2b62c9872b12e6692a91d24dc
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v018.md
+      sha256: 961a266a7966291ea5138e1ce4172179b55e67fdf06eec60c466967ac3409a81
+    - path: jobs/SIL13-COLD-1315/evidence-v018.json
+      sha256: 6403b48c1c808eafc54d015d9a5144f42822eb0d153379126a9ce0c321f88f7a
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
@@ -150,5 +155,5 @@ gates:
     evidence: *id002
   checker:
     status: missing
-    note: Complete final SINTEZ not run; actual current-site native validatorsNPM2pass3fail1review2not_run/VPM3pass3fail1review5not_run, neither is pass.
+    note: Complete final SINTEZ not run; actual current-site native validatorsNPM1pass4fail1review2not_run/VPM3pass3fail1review5not_run, neither is pass. Technical repairs worker-owned; no new user wait.
     evidence: []

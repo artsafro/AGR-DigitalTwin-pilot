@@ -1,0 +1,2825 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-three-MAF-UCX-coverage-v018",
+  "base_checkpoint": "cdcd9aad0ad93eb05f321584a54c349e8bec2318",
+  "new_user_question": null,
+  "closed_picture_gate": "D321/6903084291; do not reopen",
+  "scope": "D305/D316 construction approach,16Sand/Bike/Urn copies in EACH profile; no shared/checker/library edits",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v018\\site-three-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "fe7b5e8ae85ff72b65a7871fb6af4b4564c1ca1ebaebac923fabe770818fc9a8"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v018\\site-three-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "d470ec8b081b77b7e9088a4017fb9b1c7278d80b82e3fb003a38c3651fb8ba47"
+    }
+  },
+  "site_audit": {
+    "passed": false,
+    "profiles": {
+      "NPM": {
+        "changed_MAF": 16,
+        "unchanged_MAF": 22,
+        "Ground_Flora_UCX_exact": true,
+        "unchanged_objects": [
+          "SM_SIL13_Flora",
+          "SM_SIL13_Ground"
+        ],
+        "controls": [
+          {
+            "handle": "33FB3A5",
+            "faces": 1728,
+            "faces_exact": true,
+            "placement_delta_m": 4.414632789107031e-06,
+            "native_coordinate_delta_m": 7.158274257790254e-07
+          },
+          {
+            "handle": "33FB3A6",
+            "faces": 1728,
+            "faces_exact": true,
+            "placement_delta_m": 4.87382504843481e-06,
+            "native_coordinate_delta_m": 4.040449113063005e-07
+          },
+          {
+            "handle": "33FB3A7",
+            "faces": 1728,
+            "faces_exact": true,
+            "placement_delta_m": 5.981711764135866e-06,
+            "native_coordinate_delta_m": 1.2679504095558514e-06
+          },
+          {
+            "handle": "33FB3A8",
+            "faces": 1728,
+            "faces_exact": true,
+            "placement_delta_m": 3.2998408650009026e-06,
+            "native_coordinate_delta_m": 2.500206264244298e-07
+          },
+          {
+            "handle": "33FB3A9",
+            "faces": 1728,
+            "faces_exact": true,
+            "placement_delta_m": 5.216381961048455e-06,
+            "native_coordinate_delta_m": 1.6712617707526078e-06
+          },
+          {
+            "handle": "33FB3AA",
+            "faces": 1728,
+            "faces_exact": true,
+            "placement_delta_m": 7.255818715634632e-06,
+            "native_coordinate_delta_m": 1.545756553866795e-06
+          },
+          {
+            "handle": "33FB3B3",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 2.7137809021360315e-06,
+            "native_coordinate_delta_m": 7.465486007163236e-08
+          },
+          {
+            "handle": "33FB3B4",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 2.829104616575151e-06,
+            "native_coordinate_delta_m": 1.227868331454829e-07
+          },
+          {
+            "handle": "33FB3B5",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 2.950542758339836e-06,
+            "native_coordinate_delta_m": 1.709188097720471e-07
+          },
+          {
+            "handle": "33FB3B6",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.0423725876360663e-06,
+            "native_coordinate_delta_m": 2.1905078284589763e-07
+          },
+          {
+            "handle": "33FB3B7",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.1863091329853432e-06,
+            "native_coordinate_delta_m": 2.6718274170889345e-07
+          },
+          {
+            "handle": "33FB3B8",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 4.017883920681697e-06,
+            "native_coordinate_delta_m": 7.153670438242443e-07
+          },
+          {
+            "handle": "33FB3B9",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.766572651997535e-06,
+            "native_coordinate_delta_m": 6.312548777032134e-07
+          },
+          {
+            "handle": "33FB3BA",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.7158669297099323e-06,
+            "native_coordinate_delta_m": 5.471427115821825e-07
+          },
+          {
+            "handle": "33FB3AD",
+            "faces": 158,
+            "faces_exact": true,
+            "placement_delta_m": 3.5898712198445537e-06,
+            "native_coordinate_delta_m": 7.129452228582522e-07
+          },
+          {
+            "handle": "33FB3AE",
+            "faces": 158,
+            "faces_exact": true,
+            "placement_delta_m": 4.601961890671191e-06,
+            "native_coordinate_delta_m": 1.2334606154240646e-06
+          }
+        ],
+        "unchanged_handles": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB581"
+        ],
+        "render_triangles": 178571,
+        "native_render_triangles": 178556,
+        "native_face_loss": 15,
+        "retained_MAF": 38,
+        "retained_plant_census": 4582
+      },
+      "VPM": {
+        "changed_MAF": 16,
+        "unchanged_MAF": 22,
+        "Ground_Flora_UCX_exact": true,
+        "unchanged_objects": [
+          "UCX_SM_SIL13_Ground_001",
+          "UCX_SM_SIL13_Ground_002",
+          "UCX_SM_SIL13_Ground_003",
+          "UCX_SM_SIL13_Ground_004",
+          "UCX_SM_SIL13_Ground_005",
+          "UCX_SM_SIL13_Ground_006",
+          "UCX_SM_SIL13_Ground_007",
+          "UCX_SM_SIL13_Ground_008",
+          "UCX_SM_SIL13_Ground_009",
+          "UCX_SM_SIL13_Ground_010",
+          "UCX_SM_SIL13_Ground_011",
+          "UCX_SM_SIL13_Ground_012",
+          "UCX_SM_SIL13_Ground_013",
+          "UCX_SM_SIL13_Ground_014",
+          "UCX_SM_SIL13_Ground_015",
+          "UCX_SM_SIL13_Ground_016",
+          "UCX_SM_SIL13_Ground_017",
+          "UCX_SM_SIL13_Ground_018",
+          "UCX_SM_SIL13_Ground_019",
+          "UCX_SM_SIL13_Ground_020",
+          "UCX_SM_SIL13_Ground_021",
+          "UCX_SM_SIL13_Ground_022",
+          "UCX_SM_SIL13_Ground_023",
+          "UCX_SM_SIL13_Ground_024",
+          "UCX_SM_SIL13_Ground_025",
+          "UCX_SM_SIL13_Ground_026",
+          "UCX_SM_SIL13_Ground_027",
+          "UCX_SM_SIL13_Ground_028",
+          "UCX_SM_SIL13_Ground_029",
+          "UCX_SM_SIL13_Ground_030",
+          "UCX_SM_SIL13_Ground_031",
+          "UCX_SM_SIL13_Ground_032",
+          "UCX_SM_SIL13_Ground_033",
+          "UCX_SM_SIL13_Ground_034",
+          "UCX_SM_SIL13_Ground_035",
+          "UCX_SM_SIL13_Ground_036",
+          "UCX_SM_SIL13_Ground_037",
+          "UCX_SM_SIL13_Ground_038",
+          "UCX_SM_SIL13_Ground_039",
+          "UCX_SM_SIL13_Ground_040",
+          "UCX_SM_SIL13_Ground_041",
+          "UCX_SM_SIL13_Ground_042",
+          "UCX_SM_SIL13_Ground_043",
+          "UCX_SM_SIL13_Ground_044",
+          "UCX_SM_SIL13_Ground_045",
+          "UCX_SM_SIL13_Ground_046",
+          "UCX_SM_SIL13_Ground_047",
+          "UCX_SM_SIL13_Ground_048",
+          "UCX_SM_SIL13_Ground_049",
+          "UCX_SM_SIL13_Ground_050",
+          "UCX_SM_SIL13_Ground_051",
+          "UCX_SM_SIL13_Ground_052",
+          "UCX_SM_SIL13_Ground_053",
+          "UCX_SM_SIL13_Ground_054",
+          "UCX_SM_SIL13_Ground_055",
+          "UCX_SM_SIL13_Ground_056",
+          "UCX_SM_SIL13_Ground_057",
+          "UCX_SM_SIL13_Ground_058",
+          "UCX_SM_SIL13_Ground_059",
+          "UCX_SM_SIL13_Ground_060",
+          "UCX_SM_SIL13_Ground_061",
+          "UCX_SM_SIL13_Ground_062",
+          "UCX_SM_SIL13_Ground_063",
+          "UCX_SM_SIL13_Ground_064",
+          "UCX_SM_SIL13_Ground_065",
+          "UCX_SM_SIL13_Ground_066",
+          "UCX_SM_SIL13_Ground_067",
+          "UCX_SM_SIL13_Ground_068",
+          "UCX_SM_SIL13_Ground_069",
+          "UCX_SM_SIL13_Ground_070",
+          "UCX_SM_SIL13_Ground_071",
+          "UCX_SM_SIL13_Ground_072",
+          "UCX_SM_SIL13_Ground_073",
+          "UCX_SM_SIL13_Ground_074",
+          "UCX_SM_SIL13_Ground_075",
+          "UCX_SM_SIL13_Ground_076",
+          "UCX_SM_SIL13_Ground_077",
+          "UCX_SM_SIL13_Ground_078",
+          "UCX_SM_SIL13_Ground_079",
+          "UCX_SM_SIL13_Ground_080",
+          "UCX_SM_SIL13_Ground_081",
+          "UCX_SM_SIL13_Ground_082",
+          "UCX_SM_SIL13_Ground_083",
+          "UCX_SM_SIL13_Ground_084",
+          "UCX_SM_SIL13_Ground_085",
+          "UCX_SM_SIL13_Ground_086",
+          "UCX_SM_SIL13_Ground_087",
+          "UCX_SM_SIL13_Ground_088",
+          "UCX_SM_SIL13_Ground_089",
+          "UCX_SM_SIL13_Ground_090",
+          "UCX_SM_SIL13_Ground_091",
+          "UCX_SM_SIL13_Ground_092",
+          "UCX_SM_SIL13_Ground_093",
+          "UCX_SM_SIL13_Ground_094",
+          "UCX_SM_SIL13_Ground_095",
+          "UCX_SM_SIL13_Ground_096",
+          "UCX_SM_SIL13_Ground_097",
+          "UCX_SM_SIL13_Ground_098",
+          "UCX_SM_SIL13_Ground_099",
+          "UCX_SM_SIL13_Ground_100",
+          "UCX_SM_SIL13_Ground_101",
+          "UCX_SM_SIL13_Ground_102",
+          "UCX_SM_SIL13_Ground_103",
+          "UCX_SM_SIL13_Ground_104",
+          "UCX_SM_SIL13_Ground_105",
+          "UCX_SM_SIL13_Ground_106",
+          "UCX_SM_SIL13_Ground_107",
+          "UCX_SM_SIL13_Ground_108",
+          "UCX_SM_SIL13_Ground_109",
+          "UCX_SM_SIL13_Ground_110",
+          "UCX_SM_SIL13_Ground_111",
+          "UCX_SM_SIL13_Ground_112",
+          "UCX_SM_SIL13_Ground_113",
+          "UCX_SM_SIL13_Ground_114",
+          "UCX_SM_SIL13_Ground_115",
+          "UCX_SM_SIL13_Ground_116",
+          "UCX_SM_SIL13_Ground_117",
+          "UCX_SM_SIL13_Ground_118",
+          "UCX_SM_SIL13_Ground_119",
+          "UCX_SM_SIL13_Ground_120",
+          "UCX_SM_SIL13_Ground_121",
+          "UCX_SM_SIL13_Ground_122",
+          "UCX_SM_SIL13_Ground_123",
+          "UCX_SM_SIL13_Ground_124",
+          "UCX_SM_SIL13_Ground_125",
+          "UCX_SM_SIL13_Ground_126",
+          "UCX_SM_SIL13_Ground_127",
+          "UCX_SM_SIL13_Ground_128",
+          "UCX_SM_SIL13_Ground_129",
+          "UCX_SM_SIL13_Ground_130",
+          "UCX_SM_SIL13_Ground_131",
+          "UCX_SM_SIL13_Ground_132",
+          "UCX_SM_SIL13_Ground_133",
+          "UCX_SM_SIL13_Ground_134",
+          "UCX_SM_SIL13_Ground_135",
+          "UCX_SM_SIL13_Ground_136",
+          "UCX_SM_SIL13_Ground_137",
+          "UCX_SM_SIL13_Ground_138",
+          "UCX_SM_SIL13_Ground_139",
+          "UCX_SM_SIL13_Ground_140",
+          "UCX_SM_SIL13_Ground_141",
+          "UCX_SM_SIL13_Ground_142",
+          "UCX_SM_SIL13_Ground_143",
+          "UCX_SM_SIL13_Ground_144",
+          "UCX_SM_SIL13_Ground_145",
+          "UCX_SM_SIL13_Ground_146",
+          "UCX_SM_SIL13_Ground_147",
+          "UCX_SM_SIL13_Ground_148",
+          "UCX_SM_SIL13_Ground_149",
+          "UCX_SM_SIL13_Ground_150",
+          "UCX_SM_SIL13_Ground_151",
+          "UCX_SM_SIL13_Ground_152",
+          "UCX_SM_SIL13_Ground_153",
+          "UCX_SM_SIL13_Ground_154",
+          "UCX_SM_SIL13_Ground_155",
+          "UCX_SM_SIL13_Ground_156",
+          "UCX_SM_SIL13_Ground_157",
+          "UCX_SM_SIL13_Ground_158",
+          "UCX_SM_SIL13_Ground_159",
+          "UCX_SM_SIL13_Ground_160",
+          "UCX_SM_SIL13_Ground_161",
+          "UCX_SM_SIL13_Ground_162",
+          "UCX_SM_SIL13_Ground_163",
+          "UCX_SM_SIL13_Ground_164",
+          "UCX_SM_SIL13_Ground_165",
+          "UCX_SM_SIL13_Ground_166",
+          "UCX_SM_SIL13_Ground_167",
+          "UCX_SM_SIL13_Ground_168",
+          "UCX_SM_SIL13_Ground_169",
+          "UCX_SM_SIL13_Ground_170",
+          "UCX_SM_SIL13_Ground_171",
+          "UCX_SM_SIL13_Ground_172",
+          "UCX_SM_SIL13_Ground_173",
+          "UCX_SM_SIL13_Ground_174",
+          "UCX_SM_SIL13_Ground_175",
+          "UCX_SM_SIL13_Ground_176",
+          "UCX_SM_SIL13_Ground_177",
+          "UCX_SM_SIL13_Ground_178",
+          "UCX_SM_SIL13_Ground_179",
+          "UCX_SM_SIL13_Ground_180",
+          "UCX_SM_SIL13_Ground_181",
+          "UCX_SM_SIL13_Ground_182",
+          "UCX_SM_SIL13_Ground_183",
+          "UCX_SM_SIL13_Ground_184",
+          "UCX_SM_SIL13_Ground_185",
+          "UCX_SM_SIL13_Ground_186",
+          "UCX_SM_SIL13_Ground_187",
+          "UCX_SM_SIL13_Ground_188",
+          "UCX_SM_SIL13_Ground_189",
+          "UCX_SM_SIL13_Ground_190",
+          "UCX_SM_SIL13_Ground_191",
+          "UCX_SM_SIL13_Ground_192",
+          "UCX_SM_SIL13_Ground_193",
+          "UCX_SM_SIL13_Ground_194",
+          "UCX_SM_SIL13_Ground_195",
+          "UCX_SM_SIL13_Ground_196",
+          "UCX_SM_SIL13_Ground_197",
+          "UCX_SM_SIL13_Ground_198",
+          "UCX_SM_SIL13_Ground_199",
+          "UCX_SM_SIL13_Ground_200",
+          "UCX_SM_SIL13_Ground_201",
+          "UCX_SM_SIL13_Ground_202",
+          "UCX_SM_SIL13_Ground_203",
+          "UCX_SM_SIL13_Ground_204",
+          "UCX_SM_SIL13_Ground_205",
+          "UCX_SM_SIL13_Ground_206",
+          "UCX_SM_SIL13_Ground_207",
+          "UCX_SM_SIL13_Ground_208",
+          "UCX_SM_SIL13_Ground_209",
+          "UCX_SM_SIL13_Ground_210",
+          "UCX_SM_SIL13_Ground_211",
+          "UCX_SM_SIL13_Ground_212",
+          "UCX_SM_SIL13_Ground_213",
+          "UCX_SM_SIL13_Ground_214",
+          "UCX_SM_SIL13_Ground_215",
+          "UCX_SM_SIL13_Ground_216",
+          "UCX_SM_SIL13_Ground_217",
+          "UCX_SM_SIL13_Ground_218",
+          "UCX_SM_SIL13_Ground_219",
+          "UCX_SM_SIL13_Ground_220",
+          "UCX_SM_SIL13_Ground_221",
+          "UCX_SM_SIL13_Ground_222",
+          "UCX_SM_SIL13_Ground_223",
+          "UCX_SM_SIL13_Ground_224",
+          "UCX_SM_SIL13_Ground_225",
+          "UCX_SM_SIL13_Ground_226",
+          "UCX_SM_SIL13_Ground_227",
+          "UCX_SM_SIL13_Ground_228",
+          "UCX_SM_SIL13_Ground_229",
+          "UCX_SM_SIL13_Ground_230",
+          "UCX_SM_SIL13_Ground_231",
+          "UCX_SM_SIL13_Ground_232",
+          "UCX_SM_SIL13_Ground_233",
+          "UCX_SM_SIL13_Ground_234",
+          "UCX_SM_SIL13_Ground_235",
+          "UCX_SM_SIL13_Ground_236",
+          "UCX_SM_SIL13_Ground_237",
+          "UCX_SM_SIL13_Ground_238",
+          "UCX_SM_SIL13_Ground_239",
+          "UCX_SM_SIL13_Ground_240",
+          "UCX_SM_SIL13_Ground_241",
+          "UCX_SM_SIL13_Ground_242",
+          "UCX_SM_SIL13_Ground_243",
+          "UCX_SM_SIL13_Ground_244",
+          "UCX_SM_SIL13_Ground_245",
+          "UCX_SM_SIL13_Ground_246",
+          "UCX_SM_SIL13_Ground_247",
+          "UCX_SM_SIL13_Ground_248",
+          "UCX_SM_SIL13_Ground_249",
+          "UCX_SM_SIL13_Ground_250",
+          "UCX_SM_SIL13_Ground_251",
+          "UCX_SM_SIL13_Ground_252",
+          "UCX_SM_SIL13_Ground_253",
+          "UCX_SM_SIL13_Ground_254",
+          "UCX_SM_SIL13_Ground_255",
+          "UCX_SM_SIL13_Ground_256",
+          "UCX_SM_SIL13_Ground_257",
+          "UCX_SM_SIL13_Ground_258",
+          "UCX_SM_SIL13_Ground_259",
+          "UCX_SM_SIL13_Ground_260",
+          "UCX_SM_SIL13_Ground_261",
+          "UCX_SM_SIL13_Ground_262",
+          "UCX_SM_SIL13_Ground_263",
+          "UCX_SM_SIL13_Ground_264",
+          "UCX_SM_SIL13_Ground_265",
+          "UCX_SM_SIL13_Ground_266",
+          "UCX_SM_SIL13_Ground_267",
+          "UCX_SM_SIL13_Ground_268",
+          "UCX_SM_SIL13_Ground_269",
+          "UCX_SM_SIL13_Ground_270",
+          "UCX_SM_SIL13_Ground_271",
+          "UCX_SM_SIL13_Ground_272",
+          "UCX_SM_SIL13_Ground_273",
+          "UCX_SM_SIL13_Ground_274",
+          "UCX_SM_SIL13_Ground_275",
+          "UCX_SM_SIL13_Ground_276",
+          "UCX_SM_SIL13_Ground_277",
+          "UCX_SM_SIL13_Ground_278",
+          "UCX_SM_SIL13_Ground_279",
+          "UCX_SM_SIL13_Ground_280",
+          "UCX_SM_SIL13_Ground_281",
+          "UCX_SM_SIL13_Ground_282",
+          "UCX_SM_SIL13_Ground_283",
+          "UCX_SM_SIL13_Ground_284",
+          "UCX_SM_SIL13_Ground_285",
+          "UCX_SM_SIL13_Ground_286",
+          "UCX_SM_SIL13_Ground_287",
+          "UCX_SM_SIL13_Ground_288",
+          "UCX_SM_SIL13_Ground_289",
+          "UCX_SM_SIL13_Ground_290",
+          "UCX_SM_SIL13_Ground_291",
+          "UCX_SM_SIL13_Ground_292",
+          "UCX_SM_SIL13_Ground_293",
+          "UCX_SM_SIL13_Ground_294",
+          "UCX_SM_SIL13_Ground_295",
+          "UCX_SM_SIL13_Ground_296",
+          "UCX_SM_SIL13_Ground_297",
+          "UCX_SM_SIL13_Ground_298",
+          "UCX_SM_SIL13_Ground_299",
+          "UCX_SM_SIL13_Ground_300",
+          "UCX_SM_SIL13_Ground_301",
+          "UCX_SM_SIL13_Ground_302",
+          "UCX_SM_SIL13_Ground_303",
+          "UCX_SM_SIL13_Ground_304",
+          "UCX_SM_SIL13_Ground_305",
+          "UCX_SM_SIL13_Ground_306",
+          "UCX_SM_SIL13_Ground_307",
+          "UCX_SM_SIL13_Ground_308",
+          "UCX_SM_SIL13_Ground_309",
+          "UCX_SM_SIL13_Ground_310",
+          "UCX_SM_SIL13_Ground_311",
+          "UCX_SM_SIL13_Ground_312",
+          "UCX_SM_SIL13_Ground_313",
+          "UCX_SM_SIL13_Ground_314",
+          "UCX_SM_SIL13_Ground_315",
+          "UCX_SM_SIL13_Ground_316",
+          "UCX_SM_SIL13_Ground_317",
+          "UCX_SM_SIL13_Ground_318",
+          "UCX_SM_SIL13_Ground_319",
+          "UCX_SM_SIL13_Ground_320",
+          "UCX_SM_SIL13_Ground_321",
+          "UCX_SM_SIL13_Ground_322",
+          "UCX_SM_SIL13_Ground_323",
+          "UCX_SM_SIL13_Ground_324",
+          "UCX_SM_SIL13_Ground_325",
+          "UCX_SM_SIL13_Ground_326",
+          "UCX_SM_SIL13_Ground_327",
+          "UCX_SM_SIL13_Ground_328",
+          "UCX_SM_SIL13_Ground_329",
+          "UCX_SM_SIL13_Ground_330",
+          "UCX_SM_SIL13_Ground_331",
+          "UCX_SM_SIL13_Ground_332",
+          "UCX_SM_SIL13_Ground_333",
+          "UCX_SM_SIL13_Ground_334",
+          "UCX_SM_SIL13_Ground_335",
+          "UCX_SM_SIL13_Ground_336",
+          "UCX_SM_SIL13_Ground_337",
+          "UCX_SM_SIL13_Ground_338",
+          "UCX_SM_SIL13_Ground_339",
+          "UCX_SM_SIL13_Ground_340",
+          "UCX_SM_SIL13_Ground_341",
+          "UCX_SM_SIL13_Ground_342",
+          "UCX_SM_SIL13_Ground_343",
+          "UCX_SM_SIL13_Ground_344",
+          "UCX_SM_SIL13_Ground_345",
+          "UCX_SM_SIL13_Ground_346",
+          "UCX_SM_SIL13_Ground_347",
+          "UCX_SM_SIL13_Ground_348",
+          "UCX_SM_SIL13_Ground_349",
+          "UCX_SM_SIL13_Ground_350",
+          "UCX_SM_SIL13_Ground_351",
+          "UCX_SM_SIL13_Ground_352",
+          "UCX_SM_SIL13_Ground_353",
+          "UCX_SM_SIL13_Ground_354",
+          "UCX_SM_SIL13_Ground_355",
+          "UCX_SM_SIL13_Ground_356",
+          "UCX_SM_SIL13_Ground_357",
+          "UCX_SM_SIL13_Ground_358",
+          "UCX_SM_SIL13_Ground_359",
+          "UCX_SM_SIL13_Ground_360",
+          "UCX_SM_SIL13_Ground_361",
+          "UCX_SM_SIL13_Ground_362",
+          "UCX_SM_SIL13_Ground_363",
+          "UCX_SM_SIL13_Ground_364",
+          "UCX_SM_SIL13_Ground_365",
+          "UCX_SM_SIL13_Ground_366",
+          "UCX_SM_SIL13_Ground_367",
+          "UCX_SM_SIL13_Ground_368",
+          "UCX_SM_SIL13_Ground_369",
+          "UCX_SM_SIL13_Ground_370",
+          "UCX_SM_SIL13_Ground_371",
+          "UCX_SM_SIL13_Ground_372",
+          "UCX_SM_SIL13_Ground_373",
+          "UCX_SM_SIL13_Ground_374",
+          "UCX_SM_SIL13_Ground_375",
+          "UCX_SM_SIL13_Ground_376",
+          "UCX_SM_SIL13_Ground_377",
+          "UCX_SM_SIL13_Ground_378",
+          "UCX_SM_SIL13_Ground_379",
+          "UCX_SM_SIL13_Ground_380",
+          "UCX_SM_SIL13_Ground_381",
+          "UCX_SM_SIL13_Ground_382",
+          "UCX_SM_SIL13_Ground_383",
+          "UCX_SM_SIL13_Ground_384",
+          "UCX_SM_SIL13_Ground_385",
+          "UCX_SM_SIL13_Ground_386",
+          "UCX_SM_SIL13_Ground_387",
+          "UCX_SM_SIL13_Ground_388",
+          "UCX_SM_SIL13_Ground_389",
+          "UCX_SM_SIL13_Ground_390",
+          "UCX_SM_SIL13_Ground_391",
+          "UCX_SM_SIL13_Ground_392",
+          "UCX_SM_SIL13_Ground_393",
+          "UCX_SM_SIL13_Ground_394",
+          "UCX_SM_SIL13_Ground_395",
+          "UCX_SM_SIL13_Ground_396",
+          "UCX_SM_SIL13_Ground_397",
+          "UCX_SM_SIL13_Ground_398",
+          "UCX_SM_SIL13_Ground_399",
+          "UCX_SM_SIL13_Ground_400",
+          "UCX_SM_SIL13_Ground_401",
+          "UCX_SM_SIL13_Ground_402",
+          "UCX_SM_SIL13_Ground_403",
+          "UCX_SM_SIL13_Ground_404",
+          "UCX_SM_SIL13_Ground_405",
+          "UCX_SM_SIL13_Ground_406",
+          "UCX_SM_SIL13_Ground_407",
+          "UCX_SM_SIL13_Ground_408",
+          "UCX_SM_SIL13_Ground_409",
+          "UCX_SM_SIL13_Ground_410",
+          "UCX_SM_SIL13_Ground_411",
+          "UCX_SM_SIL13_Ground_412",
+          "UCX_SM_SIL13_Ground_413",
+          "UCX_SM_SIL13_Ground_414",
+          "UCX_SM_SIL13_Ground_415",
+          "UCX_SM_SIL13_Ground_416",
+          "UCX_SM_SIL13_Ground_417",
+          "UCX_SM_SIL13_Ground_418",
+          "UCX_SM_SIL13_Ground_419",
+          "UCX_SM_SIL13_Ground_420",
+          "UCX_SM_SIL13_Ground_421",
+          "UCX_SM_SIL13_Ground_422",
+          "UCX_SM_SIL13_Ground_423",
+          "UCX_SM_SIL13_Ground_424",
+          "UCX_SM_SIL13_Ground_425",
+          "UCX_SM_SIL13_Ground_426",
+          "UCX_SM_SIL13_Ground_427",
+          "UCX_SM_SIL13_Ground_428",
+          "UCX_SM_SIL13_Ground_429",
+          "UCX_SM_SIL13_Ground_430",
+          "UCX_SM_SIL13_Ground_431",
+          "UCX_SM_SIL13_Ground_432",
+          "UCX_SM_SIL13_Ground_433",
+          "UCX_SM_SIL13_Ground_434",
+          "UCX_SM_SIL13_Ground_435",
+          "UCX_SM_SIL13_Ground_436",
+          "UCX_SM_SIL13_Ground_437",
+          "UCX_SM_SIL13_Ground_438",
+          "UCX_SM_SIL13_Ground_439",
+          "UCX_SM_SIL13_Ground_440",
+          "UCX_SM_SIL13_Ground_441",
+          "UCX_SM_SIL13_Ground_442",
+          "UCX_SM_SIL13_Ground_443",
+          "UCX_SM_SIL13_Ground_444",
+          "UCX_SM_SIL13_Ground_445",
+          "UCX_SM_SIL13_Ground_446",
+          "UCX_SM_SIL13_Ground_447",
+          "UCX_SM_SIL13_Ground_448",
+          "UCX_SM_SIL13_Ground_449",
+          "UCX_SM_SIL13_Ground_450",
+          "UCX_SM_SIL13_Ground_451",
+          "UCX_SM_SIL13_Ground_452",
+          "UCX_SM_SIL13_Ground_453",
+          "UCX_SM_SIL13_Ground_454",
+          "UCX_SM_SIL13_Ground_455",
+          "UCX_SM_SIL13_Ground_456",
+          "UCX_SM_SIL13_Ground_457",
+          "UCX_SM_SIL13_Ground_458",
+          "UCX_SM_SIL13_Ground_459",
+          "UCX_SM_SIL13_Ground_460",
+          "UCX_SM_SIL13_Ground_461",
+          "UCX_SM_SIL13_Ground_462",
+          "UCX_SM_SIL13_Ground_463",
+          "UCX_SM_SIL13_Ground_464",
+          "UCX_SM_SIL13_Ground_465",
+          "UCX_SM_SIL13_Ground_466",
+          "UCX_SM_SIL13_Ground_467",
+          "UCX_SM_SIL13_Ground_468",
+          "UCX_SM_SIL13_Ground_469",
+          "UCX_SM_SIL13_Ground_470",
+          "UCX_SM_SIL13_Ground_471",
+          "UCX_SM_SIL13_Ground_472",
+          "UCX_SM_SIL13_Ground_473",
+          "UCX_SM_SIL13_Ground_474",
+          "UCX_SM_SIL13_Ground_475",
+          "UCX_SM_SIL13_Ground_476",
+          "UCX_SM_SIL13_Ground_477",
+          "UCX_SM_SIL13_Ground_478",
+          "UCX_SM_SIL13_Ground_479",
+          "UCX_SM_SIL13_Ground_480",
+          "UCX_SM_SIL13_Ground_481",
+          "UCX_SM_SIL13_Ground_482",
+          "UCX_SM_SIL13_Ground_483",
+          "UCX_SM_SIL13_Ground_484",
+          "UCX_SM_SIL13_Ground_485",
+          "UCX_SM_SIL13_Ground_486",
+          "UCX_SM_SIL13_Ground_487",
+          "UCX_SM_SIL13_Ground_488",
+          "UCX_SM_SIL13_Ground_489",
+          "UCX_SM_SIL13_Ground_490",
+          "UCX_SM_SIL13_Ground_491",
+          "UCX_SM_SIL13_Ground_492",
+          "UCX_SM_SIL13_Ground_493",
+          "UCX_SM_SIL13_Ground_494",
+          "UCX_SM_SIL13_Ground_495",
+          "UCX_SM_SIL13_Ground_496",
+          "UCX_SM_SIL13_Ground_497",
+          "UCX_SM_SIL13_Ground_498",
+          "UCX_SM_SIL13_Ground_499",
+          "UCX_SM_SIL13_Ground_500",
+          "UCX_SM_SIL13_Ground_501",
+          "UCX_SM_SIL13_Ground_502",
+          "UCX_SM_SIL13_Ground_503",
+          "UCX_SM_SIL13_Ground_504",
+          "UCX_SM_SIL13_Ground_505",
+          "UCX_SM_SIL13_Ground_506",
+          "UCX_SM_SIL13_Ground_507",
+          "UCX_SM_SIL13_Ground_508",
+          "UCX_SM_SIL13_Ground_509",
+          "UCX_SM_SIL13_Ground_510",
+          "UCX_SM_SIL13_Ground_511",
+          "UCX_SM_SIL13_Ground_512",
+          "UCX_SM_SIL13_Ground_513",
+          "UCX_SM_SIL13_Ground_514",
+          "UCX_SM_SIL13_Ground_515",
+          "UCX_SM_SIL13_Ground_516",
+          "UCX_SM_SIL13_Ground_517",
+          "UCX_SM_SIL13_Ground_518",
+          "UCX_SM_SIL13_Ground_519",
+          "UCX_SM_SIL13_Ground_520",
+          "UCX_SM_SIL13_Ground_521",
+          "UCX_SM_SIL13_Ground_522",
+          "UCX_SM_SIL13_Ground_523",
+          "UCX_SM_SIL13_Ground_524",
+          "UCX_SM_SIL13_Ground_525",
+          "UCX_SM_SIL13_Ground_526",
+          "UCX_SM_SIL13_Ground_527",
+          "UCX_SM_SIL13_Ground_528",
+          "UCX_SM_SIL13_Ground_529",
+          "UCX_SM_SIL13_Ground_530",
+          "UCX_SM_SIL13_Ground_531",
+          "UCX_SM_SIL13_Ground_532",
+          "UCX_SM_SIL13_Ground_533",
+          "UCX_SM_SIL13_Ground_534",
+          "UCX_SM_SIL13_Ground_535",
+          "UCX_SM_SIL13_Ground_536",
+          "UCX_SM_SIL13_Ground_537",
+          "UCX_SM_SIL13_Ground_538",
+          "UCX_SM_SIL13_Ground_539",
+          "UCX_SM_SIL13_Ground_540",
+          "UCX_SM_SIL13_Ground_541",
+          "UCX_SM_SIL13_Ground_542",
+          "UCX_SM_SIL13_Ground_543",
+          "UCX_SM_SIL13_Ground_544",
+          "UCX_SM_SIL13_Ground_545",
+          "UCX_SM_SIL13_Ground_546",
+          "UCX_SM_SIL13_Ground_547",
+          "UCX_SM_SIL13_Ground_548",
+          "UCX_SM_SIL13_Ground_549",
+          "UCX_SM_SIL13_Ground_550",
+          "UCX_SM_SIL13_Ground_551",
+          "UCX_SM_SIL13_Ground_552",
+          "UCX_SM_SIL13_Ground_553",
+          "UCX_SM_SIL13_Ground_554",
+          "UCX_SM_SIL13_Ground_555",
+          "UCX_SM_SIL13_Ground_556",
+          "UCX_SM_SIL13_Ground_557",
+          "UCX_SM_SIL13_Ground_558",
+          "UCX_SM_SIL13_Ground_559",
+          "UCX_SM_SIL13_Ground_560",
+          "UCX_SM_SIL13_Ground_561",
+          "UCX_SM_SIL13_Ground_562",
+          "UCX_SM_SIL13_Ground_563",
+          "UCX_SM_SIL13_Ground_564",
+          "UCX_SM_SIL13_Ground_565",
+          "UCX_SM_SIL13_Ground_566",
+          "UCX_SM_SIL13_Ground_567",
+          "UCX_SM_SIL13_Ground_568",
+          "UCX_SM_SIL13_Ground_569",
+          "UCX_SM_SIL13_Ground_570",
+          "UCX_SM_SIL13_Ground_571",
+          "UCX_SM_SIL13_Ground_572",
+          "UCX_SM_SIL13_Ground_573",
+          "UCX_SM_SIL13_Ground_574",
+          "UCX_SM_SIL13_Ground_575",
+          "UCX_SM_SIL13_Ground_576",
+          "UCX_SM_SIL13_Ground_577",
+          "UCX_SM_SIL13_Ground_578",
+          "UCX_SM_SIL13_Ground_579",
+          "UCX_SM_SIL13_Ground_580",
+          "UCX_SM_SIL13_Ground_581",
+          "UCX_SM_SIL13_Ground_582",
+          "UCX_SM_SIL13_Ground_583",
+          "UCX_SM_SIL13_Ground_584",
+          "UCX_SM_SIL13_Ground_585",
+          "UCX_SM_SIL13_Ground_586",
+          "UCX_SM_SIL13_Ground_587",
+          "UCX_SM_SIL13_Ground_588",
+          "UCX_SM_SIL13_Ground_589",
+          "UCX_SM_SIL13_Ground_590",
+          "UCX_SM_SIL13_Ground_591",
+          "UCX_SM_SIL13_Ground_592",
+          "UCX_SM_SIL13_Ground_593",
+          "UCX_SM_SIL13_Ground_594",
+          "UCX_SM_SIL13_Ground_595",
+          "UCX_SM_SIL13_Ground_596",
+          "UCX_SM_SIL13_Ground_597",
+          "UCX_SM_SIL13_Ground_598",
+          "UCX_SM_SIL13_Ground_599",
+          "UCX_SM_SIL13_Ground_600"
+        ],
+        "controls": [
+          {
+            "handle": "33FB3A5",
+            "faces": 5332,
+            "faces_exact": true,
+            "placement_delta_m": 4.412475449910858e-06,
+            "native_coordinate_delta_m": 7.160938011452345e-07
+          },
+          {
+            "handle": "33FB3A6",
+            "faces": 5332,
+            "faces_exact": true,
+            "placement_delta_m": 4.865317332125585e-06,
+            "native_coordinate_delta_m": 4.0431129377793695e-07
+          },
+          {
+            "handle": "33FB3A7",
+            "faces": 5332,
+            "faces_exact": true,
+            "placement_delta_m": 5.983645758433909e-06,
+            "native_coordinate_delta_m": 1.2679504948209797e-06
+          },
+          {
+            "handle": "33FB3A8",
+            "faces": 5332,
+            "faces_exact": true,
+            "placement_delta_m": 3.3165703157145288e-06,
+            "native_coordinate_delta_m": 2.5002064774071187e-07
+          },
+          {
+            "handle": "33FB3A9",
+            "faces": 5332,
+            "faces_exact": true,
+            "placement_delta_m": 5.254579964031336e-06,
+            "native_coordinate_delta_m": 1.6712617707526078e-06
+          },
+          {
+            "handle": "33FB3AA",
+            "faces": 5332,
+            "faces_exact": true,
+            "placement_delta_m": 7.248969701834085e-06,
+            "native_coordinate_delta_m": 1.546023682408304e-06
+          },
+          {
+            "handle": "33FB3B3",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 2.71461547041163e-06,
+            "native_coordinate_delta_m": 7.465486007163236e-08
+          },
+          {
+            "handle": "33FB3B4",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 2.8258241309142562e-06,
+            "native_coordinate_delta_m": 1.227868331454829e-07
+          },
+          {
+            "handle": "33FB3B5",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 2.9364597811110116e-06,
+            "native_coordinate_delta_m": 1.7091879556119238e-07
+          },
+          {
+            "handle": "33FB3B6",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.045016291558511e-06,
+            "native_coordinate_delta_m": 2.1905078284589763e-07
+          },
+          {
+            "handle": "33FB3B7",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.1743122970162574e-06,
+            "native_coordinate_delta_m": 2.6718274170889345e-07
+          },
+          {
+            "handle": "33FB3B8",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.990313880208873e-06,
+            "native_coordinate_delta_m": 7.153670438242443e-07
+          },
+          {
+            "handle": "33FB3B9",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.7857214625347524e-06,
+            "native_coordinate_delta_m": 6.312548777032134e-07
+          },
+          {
+            "handle": "33FB3BA",
+            "faces": 870,
+            "faces_exact": true,
+            "placement_delta_m": 3.703420531131485e-06,
+            "native_coordinate_delta_m": 5.471427115821825e-07
+          },
+          {
+            "handle": "33FB3AD",
+            "faces": 158,
+            "faces_exact": true,
+            "placement_delta_m": 3.596893089152786e-06,
+            "native_coordinate_delta_m": 7.129452228582522e-07
+          },
+          {
+            "handle": "33FB3AE",
+            "faces": 158,
+            "faces_exact": true,
+            "placement_delta_m": 4.609572666680606e-06,
+            "native_coordinate_delta_m": 1.2334606154240646e-06
+          }
+        ],
+        "unchanged_handles": [
+          "33FB381",
+          "33FB382",
+          "33FB383",
+          "33FB384",
+          "33FB385",
+          "33FB386",
+          "33FB3AB",
+          "33FB3B0",
+          "33FB3B1",
+          "33FB3B2",
+          "33FB3BE",
+          "33FB3BF",
+          "33FB3BC",
+          "33FB3BD",
+          "33FB590",
+          "33FB387",
+          "33FB388",
+          "33FB389",
+          "33FB38A",
+          "33FB38B",
+          "33FB38C",
+          "33FB581"
+        ],
+        "render_triangles": 301662,
+        "native_render_triangles": 301662,
+        "native_face_loss": 0,
+        "retained_MAF": 38,
+        "retained_plant_census": 4582
+      }
+    }
+  },
+  "isolated_three_types": {
+    "NPM": {
+      "geometry": {
+        "passed": false,
+        "site_adopted": false,
+        "parts": [
+          {
+            "name": "MAF_0625_M_Sand_002",
+            "triangles": 1728,
+            "faces_exact": true,
+            "coordinate_delta_m": 2.980232238769531e-07,
+            "sha256": "4891f3b6c658234c2eca30caef7d0565445a59541fb091362ebe5bbe28767934"
+          },
+          {
+            "name": "MAF_0466_M_Bysicle_007",
+            "triangles": 870,
+            "faces_exact": true,
+            "coordinate_delta_m": 1.1920928955078125e-07,
+            "sha256": "9f44d0768d3f1d4e5275555fb6191791f0bc034f1dae56498b85fcb4b6ec2ab2"
+          },
+          {
+            "name": "MAF_0698_M_Urn_010",
+            "triangles": 158,
+            "faces_exact": true,
+            "coordinate_delta_m": 3.073364496231079e-08,
+            "sha256": "e7e478a35ee5e215525e11597d042da33efb10920d2869cbe6081205a5db70be"
+          }
+        ],
+        "UV_material": "provisional geometry only"
+      },
+      "source_controls": {
+        "cavity_empty": true,
+        "shelf_present": true,
+        "bike_slots_empty": 45,
+        "bike_slots_total": 45,
+        "sand_height_controls_passed": 38,
+        "surface_samples": [
+          {
+            "name": "MAF_0625_M_Sand_002",
+            "seeds": {
+              "source": 1315,
+              "candidate": 1316
+            },
+            "samples_each": 10000,
+            "source_to_candidate_max_m": 0.10388550929683425,
+            "candidate_to_source_max_m": 0.006380133151925758,
+            "NOT_exact_Hausdorff": true,
+            "source_exterior_max_m": 0.0011960040054495693,
+            "source_buried_over_10mm": 2647,
+            "worst_source": [
+              2.968502450375021,
+              0.9690492021663905,
+              0.10630893272988316
+            ],
+            "worst_candidate": [
+              1.9247956557964516,
+              0.19875552659634196,
+              0.20499999821186066
+            ],
+            "bbox_delta_m": 0.0032156705856323242
+          },
+          {
+            "name": "MAF_0466_M_Bysicle_007",
+            "seeds": {
+              "source": 1315,
+              "candidate": 1316
+            },
+            "samples_each": 10000,
+            "source_to_candidate_max_m": 0.0037645595710149027,
+            "candidate_to_source_max_m": 0.0035356541065174043,
+            "NOT_exact_Hausdorff": true,
+            "source_exterior_max_m": 0.0029609329424792868,
+            "source_buried_over_10mm": 0,
+            "worst_source": [
+              0.06999969482421875,
+              0.6617841270271572,
+              0.004235493894351461
+            ],
+            "worst_candidate": [
+              0.02629788424087952,
+              0.6646936024150253,
+              0.10884140567023685
+            ],
+            "bbox_delta_m": 2.384185791015625e-07
+          },
+          {
+            "name": "MAF_0698_M_Urn_010",
+            "seeds": {
+              "source": 1315,
+              "candidate": 1316
+            },
+            "samples_each": 10000,
+            "source_to_candidate_max_m": 0.005358831207478603,
+            "candidate_to_source_max_m": 0.010000398784696106,
+            "NOT_exact_Hausdorff": true,
+            "source_exterior_max_m": 0.0011430736507722962,
+            "source_buried_over_10mm": 0,
+            "worst_source": [
+              0.005628796506453199,
+              0.03892047968814446,
+              0.10019316616681863
+            ],
+            "worst_candidate": [
+              0.2531568545751265,
+              0.26290632057279256,
+              0.35171126718156165
+            ],
+            "bbox_delta_m": 6.054136747479788e-08
+          }
+        ]
+      }
+    },
+    "VPM": {
+      "geometry": {
+        "passed": false,
+        "site_adopted": false,
+        "parts": [
+          {
+            "name": "MAF_0625_M_Sand_002",
+            "triangles": 5332,
+            "faces_exact": true,
+            "coordinate_delta_m": 3.5762786865234375e-07,
+            "sha256": "2752e19d9f3cd1bb7e4f3aef30296c9e37dfe7693e1c9a9def6ec3423d4c225a"
+          },
+          {
+            "name": "MAF_0466_M_Bysicle_007",
+            "triangles": 870,
+            "faces_exact": true,
+            "coordinate_delta_m": 1.78390503036141e-07,
+            "sha256": "bbaccb62cbd7abd4484c77f3391130a49ccef46a15a34a6118484b9cfa2c84ba"
+          },
+          {
+            "name": "MAF_0698_M_Urn_010",
+            "triangles": 158,
+            "faces_exact": true,
+            "coordinate_delta_m": 5.960464477539063e-08,
+            "sha256": "4fd94f2ce404bbd8d5f2e904a2ad51a0eccee7fbdcbb1f0d396605319af3380d"
+          }
+        ],
+        "UV_material": "provisional geometry only"
+      },
+      "source_controls": {
+        "cavity_empty": true,
+        "shelf_present": true,
+        "bike_slots_empty": 45,
+        "bike_slots_total": 45,
+        "sand_height_controls_passed": 38,
+        "surface_samples": [
+          {
+            "name": "MAF_0625_M_Sand_002",
+            "seeds": {
+              "source": 1315,
+              "candidate": 1316
+            },
+            "samples_each": 10000,
+            "source_to_candidate_max_m": 0.10390146001646801,
+            "candidate_to_source_max_m": 0.006502876282488858,
+            "NOT_exact_Hausdorff": true,
+            "source_exterior_max_m": 7.303771454801763e-08,
+            "source_buried_over_10mm": 2639,
+            "worst_source": [
+              2.968502450375021,
+              0.9690492021663905,
+              0.10630893272988316
+            ],
+            "worst_candidate": [
+              0.3887829134417853,
+              1.01127783156484,
+              0.4835273553167873
+            ],
+            "bbox_delta_m": 0.0032155723311007023
+          },
+          {
+            "name": "MAF_0466_M_Bysicle_007",
+            "seeds": {
+              "source": 1315,
+              "candidate": 1316
+            },
+            "samples_each": 10000,
+            "source_to_candidate_max_m": 0.0037645595710149027,
+            "candidate_to_source_max_m": 0.0035356979137359484,
+            "NOT_exact_Hausdorff": true,
+            "source_exterior_max_m": 0.0029608680706748906,
+            "source_buried_over_10mm": 0,
+            "worst_source": [
+              0.06999969482421875,
+              0.6617841270271572,
+              0.004235493894351461
+            ],
+            "worst_candidate": [
+              0.026297942398537184,
+              0.6646936000124495,
+              0.10884140567023685
+            ],
+            "bbox_delta_m": 1.1920928955078125e-07
+          },
+          {
+            "name": "MAF_0698_M_Urn_010",
+            "seeds": {
+              "source": 1315,
+              "candidate": 1316
+            },
+            "samples_each": 10000,
+            "source_to_candidate_max_m": 0.005358834025219613,
+            "candidate_to_source_max_m": 0.010000375643256738,
+            "NOT_exact_Hausdorff": true,
+            "source_exterior_max_m": 0.00114307362989977,
+            "source_buried_over_10mm": 0,
+            "worst_source": [
+              0.005628796506453199,
+              0.03892047968814446,
+              0.10019316616681863
+            ],
+            "worst_candidate": [
+              0.25315687749050514,
+              0.2629062924922061,
+              0.35171126718156165
+            ],
+            "bbox_delta_m": 5.21540641784668e-08
+          }
+        ]
+      }
+    }
+  },
+  "actual_site_xview": {
+    "NPM": {
+      "overlapping_vertices": 114,
+      "overlapping_faces": 728,
+      "vertex_pairs": 72,
+      "face_pairs": 952,
+      "face_pairs_by_kind": {
+        "contact": 255,
+        "area": 337,
+        "area+contact": 360
+      },
+      "bowtie_vertices": 165,
+      "bowtie_pairs": 26,
+      "parts_without_faces": 0
+    },
+    "VPM": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 4794,
+      "vertex_pairs": 0,
+      "face_pairs": 7823,
+      "face_pairs_by_kind": {
+        "contact": 1150,
+        "area": 2308,
+        "area+contact": 4365
+      },
+      "bowtie_vertices": 162,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "actual_native_package_validator": {
+    "NPM": {
+      "pass": 1,
+      "fail": 4,
+      "review": 1,
+      "not_run": 2
+    },
+    "VPM": {
+      "pass": 3,
+      "fail": 3,
+      "review": 1,
+      "not_run": 5
+    }
+  },
+  "UCX_coverage": {
+    "passed": false,
+    "geometry_coverage": true,
+    "sample_only": false,
+    "method": "convex distance to actual UCX triangles on complete XY polygon partition of actual Ground top faces",
+    "actual_piece_count": 600,
+    "UCX_upward_triangles": 1119,
+    "surface_triangles": 57226,
+    "triangles_partitioned": 57226,
+    "surface_area_m2": 15872.911976507741,
+    "partition_area_m2": 15872.91197650811,
+    "max_triangle_area_partition_error_m2": 2.0650148258027912e-14,
+    "partition_vertices": 450783,
+    "unassigned_regions": 0,
+    "unassigned": [],
+    "degenerate_projected_faces": [],
+    "surface_to_UCX_upper_bound_m": 0.08993564479232127,
+    "limit_m": 0.1,
+    "source_fbx_sha256": "d470ec8b081b77b7e9088a4017fb9b1c7278d80b82e3fb003a38c3651fb8ba47",
+    "elapsed_seconds": 54.625176900066435,
+    "note": "Numerical conservative upper bound; not exact Hausdorff or final UCX gap/SINTEZ/visual acceptance."
+  },
+  "UCX_coverage_report": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v018\\ucx-coverage-r6.json",
+  "whole_site_witness_owners": {
+    "passed": false,
+    "ground_face_range_one_based": [
+      1,
+      58896
+    ],
+    "flora_face_range_one_based": [
+      58897,
+      166282
+    ],
+    "total_face_pairs": 7823,
+    "pair_classes": {
+      "Ground | MAF:MAF_0698_M_Urn_010 | area+contact": 10,
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area+contact": 100,
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area": 5,
+      "Flora | Ground | area+contact": 3,
+      "Flora | Flora | area": 43,
+      "Flora | Flora | area+contact": 3,
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area+contact": 43,
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area": 8,
+      "MAF:MAF_0423_M_Bench_013 | MAF:MAF_0423_M_Bench_013 | area+contact": 1221,
+      "MAF:MAF_0423_M_Bench_013 | MAF:MAF_0423_M_Bench_013 | area": 826,
+      "MAF:MAF_0423_M_Bench_013 | MAF:MAF_0423_M_Bench_013 | contact": 179,
+      "MAF:MAF_0466_M_Bysicle_007 | MAF:MAF_0472_M_Cannopy_006 | area+contact": 96,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area": 1426,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area+contact": 2889,
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | contact": 971
+    },
+    "first_one_based_witness_per_class": {
+      "Ground | MAF:MAF_0698_M_Urn_010 | area+contact": {
+        "a": 35773,
+        "b": 301407,
+        "kind": "area+contact",
+        "separation_m": 0.0034729093313217163,
+        "centre": [
+          36.077829360961914,
+          8.047143777211506,
+          -0.09826354682445526
+        ]
+      },
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 35846,
+        "b": 296977,
+        "kind": "area+contact",
+        "separation_m": 0.0030039857028986965,
+        "centre": [
+          32.48168341318766,
+          2.9623115460077925,
+          -0.09220505257447562
+        ]
+      },
+      "Ground | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 55599,
+        "b": 297039,
+        "kind": "area",
+        "separation_m": 0.0031705675042709696,
+        "centre": [
+          31.03544012705485,
+          2.4708125347472105,
+          -0.09220769132177034
+        ]
+      },
+      "Flora | Ground | area+contact": {
+        "a": 57817,
+        "b": 99747,
+        "kind": "area+contact",
+        "separation_m": 0.0016262560397653503,
+        "centre": [
+          -2.180742899576823,
+          82.37506357828775,
+          -0.31145843615134555
+        ]
+      },
+      "Flora | Flora | area": {
+        "a": 65921,
+        "b": 92895,
+        "kind": "area",
+        "separation_m": 0.00438690185546875,
+        "centre": [
+          1.7684308290481567,
+          71.79729334513347,
+          -0.36271438002586365
+        ]
+      },
+      "Flora | Flora | area+contact": {
+        "a": 66749,
+        "b": 66858,
+        "kind": "area+contact",
+        "separation_m": 0.00151824951171875,
+        "centre": [
+          -21.597630182902016,
+          -7.883058150609334,
+          -0.2806755006313324
+        ]
+      },
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 80278,
+        "b": 296873,
+        "kind": "area+contact",
+        "separation_m": 0.00015299505609323027,
+        "centre": [
+          33.487793604532875,
+          -0.5208322132627169,
+          0.3594857851664225
+        ]
+      },
+      "Flora | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 80290,
+        "b": 296606,
+        "kind": "area",
+        "separation_m": 2.0890605739795852e-05,
+        "centre": [
+          34.4866746266683,
+          0.13393125931421918,
+          0.3652558525403341
+        ]
+      },
+      "MAF:MAF_0423_M_Bench_013 | MAF:MAF_0423_M_Bench_013 | area+contact": {
+        "a": 227803,
+        "b": 227986,
+        "kind": "area+contact",
+        "separation_m": 0.0,
+        "centre": [
+          52.279286066691085,
+          -24.71581808725993,
+          -0.1768332819143931
+        ]
+      },
+      "MAF:MAF_0423_M_Bench_013 | MAF:MAF_0423_M_Bench_013 | area": {
+        "a": 227815,
+        "b": 228421,
+        "kind": "area",
+        "separation_m": 0.0,
+        "centre": [
+          51.91300582885742,
+          -24.903571128845215,
+          0.15216736992200214
+        ]
+      },
+      "MAF:MAF_0423_M_Bench_013 | MAF:MAF_0423_M_Bench_013 | contact": {
+        "a": 228059,
+        "b": 228524,
+        "kind": "contact",
+        "separation_m": null,
+        "centre": [
+          52.27011044820149,
+          -24.726024627685547,
+          -0.18812575439612073
+        ]
+      },
+      "MAF:MAF_0466_M_Bysicle_007 | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 285190,
+        "b": 297060,
+        "kind": "area+contact",
+        "separation_m": 0.0011433861439936743,
+        "centre": [
+          32.16557598114014,
+          0.47048305968443555,
+          -0.18657342841227847
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area": {
+        "a": 290601,
+        "b": 290618,
+        "kind": "area",
+        "separation_m": 0.0,
+        "centre": [
+          31.126829783121742,
+          2.581391493479411,
+          2.3389698664347334
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | area+contact": {
+        "a": 290763,
+        "b": 290779,
+        "kind": "area+contact",
+        "separation_m": 0.0022709387215547883,
+        "centre": [
+          32.23352305094401,
+          3.7220674753189087,
+          2.179821491241455
+        ]
+      },
+      "MAF:MAF_0472_M_Cannopy_006 | MAF:MAF_0472_M_Cannopy_006 | contact": {
+        "a": 292363,
+        "b": 297057,
+        "kind": "contact",
+        "separation_m": null,
+        "centre": [
+          31.401655197143555,
+          4.064695517222086,
+          -0.028410730262597404
+        ]
+      }
+    },
+    "note": "Witness ownership only, not an exemption or pass. A face-pair total is not a unique face count."
+  },
+  "Bench013_isolated": {
+    "site_adopted": false,
+    "source_removed_frame_MeshFix_route_rejected": true,
+    "source_boundary_route_restores_exterior_frame": true,
+    "preferred_candidate": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v018\\bench-boundary-export-r3\\isolated\\MAF_0423_M_Bench_013.fbx",
+    "native": {
+      "passed": false,
+      "site_adopted": false,
+      "parts": [
+        {
+          "name": "MAF_0423_M_Bench_013",
+          "triangles": 5064,
+          "faces_exact": true,
+          "coordinate_delta_m": 2.0824374558081615e-07,
+          "sha256": "beebd30eb0cfd43be6afb301cf747a0967f30dc0b0b74270f6374dff4d724f9c"
+        }
+      ],
+      "UV_material": "provisional geometry only"
+    },
+    "xview_raw": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 1,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 1,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "xview_native": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 1,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 1,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "remaining": "1area-only pair, not a contact; NPM paired budget/shape/native still needed",
+    "fasteners_source_accounting": [
+      {
+        "component": 0,
+        "source_faces": 1267,
+        "route": "2mm original-source surface voxels,2mm local boundary closure, large holes preserved,3.2mm frame joints",
+        "triangles": 173460
+      },
+      {
+        "component": 1,
+        "source_faces": 215,
+        "drop_reason": "only cylinder fasteners below40.4mm of source foot, fasteners not modelled under D165; geometry candidate only"
+      },
+      {
+        "component": 2,
+        "source_faces": 214,
+        "drop_reason": "only cylinder fasteners below40.4mm of source foot, fasteners not modelled under D165; geometry candidate only"
+      },
+      {
+        "component": 3,
+        "source_faces": 1267,
+        "route": "2mm original-source surface voxels,2mm local boundary closure, large holes preserved,3.2mm frame joints",
+        "triangles": 128504
+      },
+      {
+        "component": 4,
+        "source_faces": 215,
+        "drop_reason": "only cylinder fasteners below40.4mm of source foot, fasteners not modelled under D165; geometry candidate only"
+      },
+      {
+        "component": 5,
+        "source_faces": 214,
+        "drop_reason": "only cylinder fasteners below40.4mm of source foot, fasteners not modelled under D165; geometry candidate only"
+      },
+      {
+        "component": 6,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 7,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 8,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 9,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 10,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 11,
+        "source_faces": 68,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 68
+      },
+      {
+        "component": 12,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 13,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 14,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 15,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 16,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 17,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 18,
+        "source_faces": 68,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 68
+      },
+      {
+        "component": 19,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 20,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 21,
+        "source_faces": 12,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 12
+      },
+      {
+        "component": 22,
+        "source_faces": 28,
+        "route": "actual source slat with conformal X endplanes",
+        "triangles": 28
+      }
+    ],
+    "noise_cone_cap": {
+      "passed": false,
+      "site_adopted": false,
+      "drop_generated_vertex": 1244,
+      "removed_generated_face_ids": [
+        2406,
+        2407,
+        2408
+      ],
+      "removed_generated_faces": [
+        [
+          1242,
+          1244,
+          1241
+        ],
+        [
+          1241,
+          1244,
+          1245
+        ],
+        [
+          1242,
+          1245,
+          1244
+        ]
+      ],
+      "new_cap_original_vertices": [
+        1241,
+        1242,
+        1245
+      ],
+      "vertex_displacement_m": 0,
+      "source_vertex_to_final_surface_max_m": 0.0018008608317956103,
+      "volume_change_m3": -7.297287080154646e-11,
+      "triangles": 5064
+    },
+    "float32_guard": {
+      "passed": false,
+      "site_adopted": false,
+      "max_move_m": 3.160453171591567e-05,
+      "original_generated_vertices": [
+        27,
+        31,
+        53,
+        54,
+        61,
+        62,
+        169,
+        174,
+        507,
+        508,
+        532,
+        533,
+        534,
+        554,
+        555,
+        586,
+        587,
+        595,
+        596,
+        627,
+        628,
+        866,
+        868,
+        934,
+        936,
+        937,
+        963,
+        964,
+        996,
+        1005,
+        1006,
+        1010,
+        1011,
+        1013,
+        1020,
+        1036,
+        1037,
+        1043,
+        1048,
+        1079,
+        1081,
+        1096,
+        1097,
+        1158,
+        1159,
+        1165,
+        1166,
+        1223,
+        1224,
+        1294,
+        1295,
+        1416,
+        1417,
+        1524,
+        1525,
+        1573,
+        1574,
+        1613,
+        1616,
+        1655,
+        1656,
+        1815,
+        1816,
+        1922,
+        1924,
+        2122,
+        2123,
+        2153,
+        2155,
+        2170,
+        2172,
+        2189,
+        2190,
+        2228,
+        2229,
+        2231,
+        2232,
+        2237,
+        2238,
+        2385,
+        2386,
+        2471,
+        2472
+      ],
+      "offsets_m": [
+        [
+          -7.443572667964471e-12,
+          -7.446883387718373e-12,
+          -7.443572667964471e-12
+        ],
+        [
+          -7.44688425508011e-12,
+          -7.443573535326209e-12,
+          -7.44688425508011e-12
+        ],
+        [
+          9.563755371196775e-06,
+          -1.1928219635644333e-05,
+          9.563755371196775e-06
+        ],
+        [
+          -9.563769732337524e-06,
+          1.1928204694151845e-05,
+          -9.563769732337524e-06
+        ],
+        [
+          -5.355608593271555e-07,
+          -9.841921039845103e-06,
+          -1.2929478179976583e-06
+        ],
+        [
+          5.355463123038473e-07,
+          9.841906469028328e-06,
+          1.2929332584704634e-06
+        ],
+        [
+          -5.13386263863852e-06,
+          -1.4449688936157834e-05,
+          9.315819458011187e-06
+        ],
+        [
+          5.133847741367603e-06,
+          1.444967403629871e-05,
+          -9.315833709333532e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          9.03338196966974e-07,
+          -1.4767019235473189e-06
+        ],
+        [
+          -7.444718452820354e-12,
+          -9.033531278013207e-07,
+          1.4766869964044638e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          -1.4767019064776399e-06,
+          9.033382173950777e-07
+        ],
+        [
+          4.9245602200750915e-06,
+          -2.3300902142198154e-05,
+          2.0776503338648666e-05
+        ],
+        [
+          -5.020327382067313e-06,
+          -1.4879392669919778e-05,
+          -2.1180496282913186e-05
+        ],
+        [
+          -7.450193240110536e-12,
+          1.4766870155002998e-06,
+          -9.033531038760145e-07
+        ],
+        [
+          9.574493773506498e-08,
+          2.4999999999997247e-05,
+          4.039695752355854e-07
+        ],
+        [
+          -5.355608670800684e-07,
+          -9.841921187248026e-06,
+          1.2929332504196117e-06
+        ],
+        [
+          5.355462818494756e-07,
+          9.841906328467154e-06,
+          -1.2929477828677732e-06
+        ],
+        [
+          1.7978880535490967e-07,
+          -1.3099191417120792e-06,
+          1.7978880791774676e-07
+        ],
+        [
+          -1.7980372901574108e-07,
+          1.309904273827378e-06,
+          -1.7980367614245374e-07
+        ],
+        [
+          -7.446883387718373e-12,
+          -9.033531042090814e-07,
+          -1.4767019111405766e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          9.033382146750313e-07,
+          1.4766870124471865e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          -9.033531130908656e-07,
+          -1.476701855129825e-06
+        ],
+        [
+          -7.443571800602733e-12,
+          9.033382806222789e-07,
+          1.476687022550216e-06
+        ],
+        [
+          -7.44202095781521e-12,
+          -9.033530730118144e-07,
+          -1.4767018893246942e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          -7.4469319599757e-12,
+          -2.0000007462162017e-05
+        ],
+        [
+          -7.446883387718373e-12,
+          -7.4469319599757e-12,
+          1.9999992537877986e-05
+        ],
+        [
+          -7.464258378053756e-12,
+          -9.0335308533529e-07,
+          -1.4767019307915241e-06
+        ],
+        [
+          -7.434870427647233e-12,
+          9.033382081247154e-07,
+          1.476687008228339e-06
+        ],
+        [
+          -1.1928219625235992e-05,
+          -9.563769669762578e-06,
+          -9.56376969729611e-06
+        ],
+        [
+          -7.450193240110536e-12,
+          -7.4469319599757e-12,
+          -7.4469319599757e-12
+        ],
+        [
+          -7.446883387718373e-12,
+          -7.4469319599757e-12,
+          -7.4469319599757e-12
+        ],
+        [
+          5.355462492570573e-07,
+          1.2929332153799322e-06,
+          -9.841921054243308e-06
+        ],
+        [
+          -5.35560887020281e-07,
+          -1.2929478228063118e-06,
+          9.841906461693917e-06
+        ],
+        [
+          1.1928204731467482e-05,
+          9.563755353991787e-06,
+          9.563755452690614e-06
+        ],
+        [
+          -7.467694865259666e-12,
+          9.033382806222789e-07,
+          1.4766870127802534e-06
+        ],
+        [
+          -7.44202095781521e-12,
+          -9.033531311875009e-07,
+          -1.476701909086664e-06
+        ],
+        [
+          -7.43870937069957e-12,
+          9.033382001311097e-07,
+          1.476687006785049e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          -7.443601290901825e-12,
+          -2.0000007444287426e-05
+        ],
+        [
+          -7.443571800602733e-12,
+          -7.4469319599757e-12,
+          1.99999925558636e-05
+        ],
+        [
+          -7.446883387718373e-12,
+          -9.033531269686534e-07,
+          -1.4767019301809015e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          9.033382439849191e-07,
+          1.4766869614879496e-06
+        ],
+        [
+          -3.416542238599083e-06,
+          -3.416542238676712e-06,
+          4.9572714116985495e-06
+        ],
+        [
+          3.4165275906855586e-06,
+          3.416527590727192e-06,
+          -4.957286320328436e-06
+        ],
+        [
+          -7.44202095781521e-12,
+          -9.033531450652887e-07,
+          -1.4767018787775754e-06
+        ],
+        [
+          -7.467694865259666e-12,
+          9.033382341039342e-07,
+          1.4766870076732275e-06
+        ],
+        [
+          -7.450196709557488e-12,
+          -9.03353127523765e-07,
+          -1.476701922298318e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          9.033382453171868e-07,
+          1.47668696826031e-06
+        ],
+        [
+          -7.446883387718373e-12,
+          -9.03353112868821e-07,
+          -1.4767019100858647e-06
+        ],
+        [
+          -7.443571800602733e-12,
+          9.033382234457932e-07,
+          1.4766870024551793e-06
+        ],
+        [
+          9.625466854679132e-07,
+          -9.625615072506033e-07,
+          1.657910241774363e-05
+        ],
+        [
+          -9.625615071673366e-07,
+          9.625466539410488e-07,
+          -1.6579117292303547e-05
+        ],
+        [
+          -1.7980368660630575e-07,
+          -1.309919133218873e-06,
+          1.797888132260006e-07
+        ],
+        [
+          1.7978879629509947e-07,
+          1.3099042869696431e-06,
+          -1.7980368749448417e-07
+        ],
+        [
+          -7.4469319599757e-12,
+          -7.443573535326209e-12,
+          -7.446876448824469e-12
+        ],
+        [
+          -7.443601290901825e-12,
+          -7.446883387718373e-12,
+          -7.443545779750593e-12
+        ],
+        [
+          -7.4469319599757e-12,
+          -7.443573535326209e-12,
+          -7.450207117898344e-12
+        ],
+        [
+          -7.4469319599757e-12,
+          -7.446890326612277e-12,
+          -7.446876448824469e-12
+        ],
+        [
+          -7.4469319599757e-12,
+          -7.446876448824469e-12,
+          -7.446876448824469e-12
+        ],
+        [
+          -7.4469319599757e-12,
+          -7.446876448824469e-12,
+          -7.443545779750593e-12
+        ],
+        [
+          -7.4469319599757e-12,
+          -7.443545779750593e-12,
+          -7.446876448824469e-12
+        ],
+        [
+          -7.443601290901825e-12,
+          -7.446876448824469e-12,
+          -7.443545779750593e-12
+        ],
+        [
+          -7.452705119703751e-12,
+          -9.033531387370175e-07,
+          1.476687004953181e-06
+        ],
+        [
+          -7.449374450629875e-12,
+          9.033382345480234e-07,
+          -1.4767018852723801e-06
+        ],
+        [
+          -7.4469319599757e-12,
+          4.626934220763879e-06,
+          -1.1170432964294208e-05
+        ],
+        [
+          -7.443601290901825e-12,
+          -4.626949097086275e-06,
+          1.1170418077410815e-05
+        ],
+        [
+          -7.4469319599757e-12,
+          -7.443601290901825e-12,
+          -7.446876448824469e-12
+        ],
+        [
+          -7.443601290901825e-12,
+          -7.450151606747113e-12,
+          -7.446876448824469e-12
+        ],
+        [
+          -7.436495863544224e-12,
+          -9.033531219726498e-07,
+          -1.4767019010930582e-06
+        ],
+        [
+          -7.468026197443578e-12,
+          9.033382206147245e-07,
+          1.476687007895272e-06
+        ],
+        [
+          -7.4469319599757e-12,
+          -9.033531460644895e-07,
+          -1.476701903979638e-06
+        ],
+        [
+          -7.443601290901825e-12,
+          9.033382415424285e-07,
+          1.4766869774751612e-06
+        ],
+        [
+          -7.44204697866735e-12,
+          -9.033530730118144e-07,
+          -1.4767018893246942e-06
+        ],
+        [
+          -7.438716309593474e-12,
+          9.033382806222789e-07,
+          1.4766870127802534e-06
+        ],
+        [
+          -7.4469319599757e-12,
+          -9.033531394031513e-07,
+          -1.476701885994025e-06
+        ],
+        [
+          -7.4469319599757e-12,
+          9.033382398770939e-07,
+          1.4766870006788224e-06
+        ],
+        [
+          -7.434941551309748e-12,
+          -9.03353150283337e-07,
+          -1.476701876446107e-06
+        ],
+        [
+          -7.463141216135227e-12,
+          9.0333820979005e-07,
+          1.4766870217730599e-06
+        ],
+        [
+          -7.44204697866735e-12,
+          -9.033531311875009e-07,
+          -1.476701909086664e-06
+        ],
+        [
+          -7.438716309593474e-12,
+          9.033382001311097e-07,
+          1.476687006785049e-06
+        ],
+        [
+          -7.44204697866735e-12,
+          -9.033531223057167e-07,
+          -1.476701873448505e-06
+        ],
+        [
+          -7.438716309593474e-12,
+          9.033382202261464e-07,
+          1.4766870355398254e-06
+        ],
+        [
+          -7.44471151392645e-12,
+          -7.44471151392645e-12,
+          -7.44471151392645e-12
+        ],
+        [
+          -7.44471151392645e-12,
+          -7.44471151392645e-12,
+          -7.44471151392645e-12
+        ]
+      ],
+      "pairs": [
+        [
+          27,
+          31
+        ],
+        [
+          53,
+          54
+        ],
+        [
+          61,
+          62
+        ],
+        [
+          169,
+          174
+        ],
+        [
+          507,
+          508
+        ],
+        [
+          532,
+          554
+        ],
+        [
+          533,
+          534
+        ],
+        [
+          534,
+          555
+        ],
+        [
+          586,
+          587
+        ],
+        [
+          595,
+          596
+        ],
+        [
+          627,
+          628
+        ],
+        [
+          866,
+          868
+        ],
+        [
+          934,
+          1020
+        ],
+        [
+          936,
+          937
+        ],
+        [
+          963,
+          964
+        ],
+        [
+          996,
+          1013
+        ],
+        [
+          1005,
+          1006
+        ],
+        [
+          1010,
+          1011
+        ],
+        [
+          1036,
+          1037
+        ],
+        [
+          1043,
+          1048
+        ],
+        [
+          1079,
+          1081
+        ],
+        [
+          1096,
+          1097
+        ],
+        [
+          1158,
+          1159
+        ],
+        [
+          1165,
+          1166
+        ],
+        [
+          1223,
+          1224
+        ],
+        [
+          1294,
+          1295
+        ],
+        [
+          1416,
+          1417
+        ],
+        [
+          1524,
+          1525
+        ],
+        [
+          1573,
+          1574
+        ],
+        [
+          1613,
+          1616
+        ],
+        [
+          1655,
+          1656
+        ],
+        [
+          1815,
+          1816
+        ],
+        [
+          1922,
+          1924
+        ],
+        [
+          2122,
+          2123
+        ],
+        [
+          2153,
+          2155
+        ],
+        [
+          2170,
+          2172
+        ],
+        [
+          2189,
+          2190
+        ],
+        [
+          2228,
+          2229
+        ],
+        [
+          2231,
+          2232
+        ],
+        [
+          2237,
+          2238
+        ],
+        [
+          2385,
+          2386
+        ],
+        [
+          2471,
+          2472
+        ]
+      ],
+      "minimum_guard_edge_m": 0.0020399999999998544,
+      "optimizer": "Optimization terminated successfully",
+      "note": "Only derived generated voxel mesh; public2mm threshold unchanged"
+    }
+  },
+  "Canopy_isolated": {
+    "site_adopted": false,
+    "source_fine_union": {
+      "overlapping_vertices": 532,
+      "overlapping_faces": 2070,
+      "vertex_pairs": 400,
+      "face_pairs": 3192,
+      "face_pairs_by_kind": {
+        "contact": 443,
+        "area": 603,
+        "area+contact": 2146
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "fail_closed_error": "zero-area face refused by link helper; uncontracted diagnostic retained, never adopted"
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "tests": {
+    "affected_command": "env PYTEST_ADDOPTS= uv run --with shapely --with scipy --with trimesh --with rtree pytest -q tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tmp/cold-v011/test_hedge_contract.py tmp/cold-v012/test_witness_indices.py tmp/cold-v012/test_export_controls.py tmp/cold-v013/test_maf_pilot.py tmp/cold-v013/test_pilot_structure.py tmp/cold-v014/test_checkpoint_controls.py tmp/cold-v014/test_replication.py tmp/cold-v015/test_profile_scope.py tmp/cold-v016/test_parametric_pilot.py tmp/cold-v016/test_access_gaps.py tmp/cold-v017/test_finishing.py tmp/cold-v017/test_vpm_table_replication.py tmp/cold-v017/test_link_contract.py tmp/cold-v017/test_sand_parts.py tmp/cold-v018/test_three_native_r2.py tmp/cold-v018/test_three_native_npm.py tmp/cold-v018/test_ucx_complete.py tmp/cold-v018/test_midpoint_safety.py tmp/cold-v018/test_midpoint_contract.py tmp/cold-v018/test_bench_bidirectional.py -k 'not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean' -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0-v018-head",
+    "checkpoint_passed": 427,
+    "historical_controls_deselected": 5,
+    "affected_log_sha256": "6cc293aa34faad229598102fd7381f0e0cefb987fddd043db080e768406fc1d1",
+    "current_open_controls": {
+      "command": "env PYTEST_ADDOPTS= BENCH_NATIVE_DIR=bench-boundary-export-r3 uv run --with scipy --with trimesh --with rtree pytest -q tmp/cold-v018/test_three_placement.py tmp/cold-v018/test_bench_native.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0-v018-current-red",
+      "failed": 2,
+      "passed": 6,
+      "log_sha256": "b5531ea4bc04d5133af484e82e04b0e64dbdf70237de31901bf8450bcd617312",
+      "cases": [
+        "NPM other-type15face loss remains",
+        "isolated Bench0131area-only pair remains"
+      ]
+    },
+    "historical_artifact_controls": {
+      "failed": 7,
+      "deselected": 32,
+      "log_sha256": "96058142ccc237fd5d9a37a63d66b0fa5895a9428ad58c0840f9b2761e12a5e3",
+      "note": "5prior artifacts plus rejected Bench slab and loose firstUCX upperbound; not current delivered candidates"
+    },
+    "real_RED": [
+      "nativeBike4faces ->30triangle topological finishing clean",
+      "Benchmissingframe148.463mm ->boundary-route exterior probe pass",
+      "Benchfloat324vertices ->coupledguard0vertices but1areaFAIL retained",
+      "UCXloose3.16m/incomplete reports ->complete89.936mm bound"
+    ],
+    "generated_oracles": {
+      "fixed_triangle_convex_distance": 40,
+      "midpoint_safety_and_invalid": 33
+    },
+    "full_suite": "Full suite: deferred to merge batch (rule 68)"
+  },
+  "new_code": [
+    {
+      "path": "audit_npm_controls.py",
+      "sha256": "a9ee65002624296b2bc7000b0ad0621f36d965af79bd7572a01853c28ccdd173",
+      "literal_lines": 18
+    },
+    {
+      "path": "audit_placed.py",
+      "sha256": "054c25c484cc9ec77d7cb2b0ca108e27847a5f4b8f2d9ee3f4f63ef8b6bbab1d",
+      "literal_lines": 28
+    },
+    {
+      "path": "audit_seeded_sources.py",
+      "sha256": "b3f26324cbc006fb21e5daa86b401ad7a49ea3c678b84609272d00b96c7fe374",
+      "literal_lines": 7
+    },
+    {
+      "path": "audit_source_controls.py",
+      "sha256": "a20fe9affcd0786fbf3c0d2acb637a0ae60099813cda7a5d4090fd0d3b39aeda",
+      "literal_lines": 18
+    },
+    {
+      "path": "audit_ucx_coverage.py",
+      "sha256": "c4aa832406acb471645ef3d2a0c22cf629f068405d91fabf3053fbc41b138efd",
+      "literal_lines": 54
+    },
+    {
+      "path": "audit_ucx_triangles.py",
+      "sha256": "572199b3dbc1732dbdcd23e2cd0aae253092c4ae335e1bf81db1f375c4a18f9b",
+      "literal_lines": 55
+    },
+    {
+      "path": "bench-boundary-export/export_three.py",
+      "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+      "literal_lines": 25
+    },
+    {
+      "path": "bench-boundary-export/raw_three.py",
+      "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+      "literal_lines": 16
+    },
+    {
+      "path": "bench-boundary-export-r2/export_three.py",
+      "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+      "literal_lines": 25
+    },
+    {
+      "path": "bench-boundary-export-r2/raw_three.py",
+      "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+      "literal_lines": 16
+    },
+    {
+      "path": "bench-boundary-export-r3/export_three.py",
+      "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+      "literal_lines": 25
+    },
+    {
+      "path": "bench-boundary-export-r3/raw_three.py",
+      "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+      "literal_lines": 16
+    },
+    {
+      "path": "bench-full/export_three.py",
+      "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+      "literal_lines": 25
+    },
+    {
+      "path": "bench-full/raw_three.py",
+      "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+      "literal_lines": 16
+    },
+    {
+      "path": "cap_generated_cone.py",
+      "sha256": "5ba81ad4b82718b2ba7ab9ca7352375dd9d1656ffd35533b06f6a30a62103ebe",
+      "literal_lines": 24
+    },
+    {
+      "path": "certify_ucx_all_owners.py",
+      "sha256": "8d164d8d35d84f0d5a2d147c6770599031c06ffc14de7acb4d104cf393e070d0",
+      "literal_lines": 10
+    },
+    {
+      "path": "certify_ucx_margin.py",
+      "sha256": "cb2363108036c4e374397fb3c7c19a258d479cd65042a2b038696b9ed8569fe2",
+      "literal_lines": 11
+    },
+    {
+      "path": "certify_ucx_residuals.py",
+      "sha256": "5b91a2372560949aa01aab2a668cb932f5b43aa84581900d378c8aea18e34390",
+      "literal_lines": 34
+    },
+    {
+      "path": "classify_whole_site.py",
+      "sha256": "118288aae8a9cc131851f68743a9f787b4549e2a3eaf056d49ac6c14ea363323",
+      "literal_lines": 19
+    },
+    {
+      "path": "complete_ucx_partitions.py",
+      "sha256": "d041d64cd7021c068ec784645cfb67c9bb2f0bccd5484aa8ca9a783c038fb952",
+      "literal_lines": 10
+    },
+    {
+      "path": "complete_ucx_triangles.py",
+      "sha256": "e801adbac361df5dcefb7bba9659f751727eaa8cffe255700456712ab42f4bd0",
+      "literal_lines": 16
+    },
+    {
+      "path": "derive_npm.py",
+      "sha256": "bdde67032e0b4689d80494dcd1836d7ddb346089c2ae6c386b34b6da1924d4c0",
+      "literal_lines": 8
+    },
+    {
+      "path": "export_three.py",
+      "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+      "literal_lines": 25
+    },
+    {
+      "path": "finalize_bench_needle.py",
+      "sha256": "c5ff4c8a6cd087abf6e179c9c820beec54eb2199c62e32fdfc7c15cef103aa25",
+      "literal_lines": 5
+    },
+    {
+      "path": "finalize_checkpoint.py",
+      "sha256": "ac642c1341a77770014633a00d08aa0b37158e37f90896ad333bb22b733d0e94",
+      "literal_lines": 30
+    },
+    {
+      "path": "finish_bench_boundaries.py",
+      "sha256": "386db7f5cd2c3febbc3eb2870872713caff3337d4b9149fe222f73a4daac43a6",
+      "literal_lines": 8
+    },
+    {
+      "path": "finish_bench_conformal.py",
+      "sha256": "f57bff877892a9624f94b23fe4e8b70fd856d04666e269b4efe638129bbbf98d",
+      "literal_lines": 13
+    },
+    {
+      "path": "finish_bench_embeds.py",
+      "sha256": "733ef4657926bb26e5b829409404499ca37e3186cb6da6a2a9c79476a00bf928",
+      "literal_lines": 13
+    },
+    {
+      "path": "finish_bench_source.py",
+      "sha256": "8b3273368b66b96275e4a4e5c01911990b13b06b4bea0e392f852fb65ebb5ebc",
+      "literal_lines": 13
+    },
+    {
+      "path": "finish_bike.py",
+      "sha256": "4ab921e00408d465016e74a994f6670b63d011960482df8e974f7e177b201f47",
+      "literal_lines": 11
+    },
+    {
+      "path": "finish_canopy_profiles.py",
+      "sha256": "672733adbec438fc44d20c0c9f40b880ccd0401a88e98e2d8c78feab65cf3bf2",
+      "literal_lines": 7
+    },
+    {
+      "path": "flip_boundary_needles.py",
+      "sha256": "932ffd9c5567137e696b4c67c6be7229c4f515813938db92a9293e5d58352d1e",
+      "literal_lines": 30
+    },
+    {
+      "path": "guard_bench_coupled.py",
+      "sha256": "2f0afce0e4ee0eaac421b97f15bec7fb1d55f460fc867083014ff639ff5e1fa3",
+      "literal_lines": 14
+    },
+    {
+      "path": "guard_bench_float32.py",
+      "sha256": "99743259b78e77cd2f3024f24a5c8bec7aa24b2fa161a7b75d8034983ab9b0bb",
+      "literal_lines": 10
+    },
+    {
+      "path": "lod-5/export_three.py",
+      "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+      "literal_lines": 25
+    },
+    {
+      "path": "lod-5/raw_three.py",
+      "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+      "literal_lines": 16
+    },
+    {
+      "path": "midpoint_contract.py",
+      "sha256": "3a97570086739eb9b7439efac695dda478574ff90f3b527a82102c0429ad8301",
+      "literal_lines": 36
+    },
+    {
+      "path": "native_readback_r1.py",
+      "sha256": "590a86eea8a53771d5f50e52d236617374e630f75d18b57fab00a28acb48e8df",
+      "literal_lines": 28
+    },
+    {
+      "path": "prepare_site_adapters.py",
+      "sha256": "c3ec46509858740d2f4332413fe2b63795a8bacb1bf644e968b3454b82433572",
+      "literal_lines": 6
+    },
+    {
+      "path": "prepare_three.py",
+      "sha256": "e9f4aba2626ba747b8707841a84bac2d5413abc186077854530ff0465a5f2c73",
+      "literal_lines": 17
+    },
+    {
+      "path": "r2/export_three.py",
+      "sha256": "357275abb74929f5b3eccfbf67ca8a7c1bf52ae28352f46a06c270eb610157b9",
+      "literal_lines": 25
+    },
+    {
+      "path": "r2/raw_three.py",
+      "sha256": "0c734155df7d44abea82cf2b8fda8f9a3d2b2c776f4301bc53d447d0e570eef9",
+      "literal_lines": 16
+    },
+    {
+      "path": "raw_readback_r1.py",
+      "sha256": "3f7fe7306667466368ba5b063bd1a824a0e4359567a149040954ee11a8ce9130",
+      "literal_lines": 50
+    },
+    {
+      "path": "raw_three.py",
+      "sha256": "f3b3b9bfa522e089dcb5c9e3253fc96e85ac2c32e584c00bd6c171e99bce09bb",
+      "literal_lines": 16
+    },
+    {
+      "path": "refine_ucx_gap_partitions.py",
+      "sha256": "ccc1eed75cc802cdea3db7c6804a4189a448ac3e5f5b02079a27d34ed305aa88",
+      "literal_lines": 10
+    },
+    {
+      "path": "render_three.py",
+      "sha256": "2843a1453ce5b46d317e062bdfd9e497db874466b8557bd01ab85baf21d0f4c8",
+      "literal_lines": 16
+    },
+    {
+      "path": "repair_bench_boundaries.py",
+      "sha256": "92b186be58c13d353a45e9df3d55c37e0b4b7157b0131234356bf6b67225bf59",
+      "literal_lines": 23
+    },
+    {
+      "path": "repair_bench_conformal.py",
+      "sha256": "dba6bb4300e6bbb6a457313efbba7d857f8819eb646f2e5b916bb4094e5471d2",
+      "literal_lines": 8
+    },
+    {
+      "path": "repair_bench_embeds.py",
+      "sha256": "df0e5ff089eed8748db84c523605a15f41c8cb703e8786698e5691f3675e0bcc",
+      "literal_lines": 7
+    },
+    {
+      "path": "repair_bench_source.py",
+      "sha256": "48600dd0c73f9ee4f8bb02bbfb6c612012c37e16b906ce7405088b28280c1527",
+      "literal_lines": 17
+    },
+    {
+      "path": "repair_bench_source_r2.py",
+      "sha256": "853abe7db1bf297c8d37365ce4806a51c1db525c475a73db41724e32788fa326",
+      "literal_lines": 17
+    },
+    {
+      "path": "replicate_three.py",
+      "sha256": "00ca641d48c479e8a13f5ff7fbeb5520eff9f1efbddcac9366249489c60d2807",
+      "literal_lines": 43
+    },
+    {
+      "path": "retain_canopy_uncontracted.py",
+      "sha256": "f37db6f4878281ddf3692b32deba90e5eeed7f830fd4767b6b418cddcc2cbadc",
+      "literal_lines": 6
+    },
+    {
+      "path": "test_bench_bidirectional.py",
+      "sha256": "b3e0b17974965038f9873465eef7ba3294672326a47cb6ff6ef127decbb41eb9",
+      "literal_lines": 12
+    },
+    {
+      "path": "test_bench_native.py",
+      "sha256": "7c6a3ed2ff7341b20c720fba50ab0a3c1c9abb0ac36b854304512e5235b23bec",
+      "literal_lines": 18
+    },
+    {
+      "path": "test_bench_source.py",
+      "sha256": "74dd420ca75fea4fbcea9721544794acb3742af02efa121c3e933ae780de8b21",
+      "literal_lines": 12
+    },
+    {
+      "path": "test_midpoint_contract.py",
+      "sha256": "6798e5c13e8de9c7c683f50e36c628b577b44acbba8d49f3c02c8b64f795f7d6",
+      "literal_lines": 11
+    },
+    {
+      "path": "test_midpoint_safety.py",
+      "sha256": "bbef4532cb3927f7a0984f704d961fec135c4da5189ebe9fdc294ad7ff8be420",
+      "literal_lines": 35
+    },
+    {
+      "path": "test_three_native.py",
+      "sha256": "a56011c25fbd8ac73fd7d5b4f846e7752b1c8ee0349b3d4669116fe3b5eba551",
+      "literal_lines": 26
+    },
+    {
+      "path": "test_three_native_npm.py",
+      "sha256": "72226b58958dcd4789129fd78d08d1ab6b73caec49b70cb8db8945622e8c8b4c",
+      "literal_lines": 26
+    },
+    {
+      "path": "test_three_native_r2.py",
+      "sha256": "e4d33a6c312577d1e6841665e432f535af8b7a70dbc66806657513709aa98535",
+      "literal_lines": 26
+    },
+    {
+      "path": "test_three_placement.py",
+      "sha256": "bdc2ef7e7f492bfcec7173d09e6d3090b1b9f4389b3e27dca66f93c0758c1626",
+      "literal_lines": 22
+    },
+    {
+      "path": "test_ucx_complete.py",
+      "sha256": "bd4d024f449b96e9e683661d1bd7eca8bf93c7a13dc1d3146056397af4def1bb",
+      "literal_lines": 26
+    },
+    {
+      "path": "test_ucx_coverage.py",
+      "sha256": "ce6b1246536961243300f4fcf690c5810498c5a32d7cb7e87dd8b9a0a28923d2",
+      "literal_lines": 13
+    },
+    {
+      "path": "view_bench.py",
+      "sha256": "689c972b558edd41374d9831396e41c1606f535fbbdac0f48fe705893ffcd689",
+      "literal_lines": 9
+    }
+  ],
+  "tool_accounting": {
+    "new_job_local_code_files": 65,
+    "literal_lines": 1273,
+    "shared_production_modules_added": 0,
+    "live_Max_mutations": 0,
+    "agent_tool_calls": "not measured"
+  },
+  "open_items": [
+    "worker: Bench013 source-bound final area/pairedNPMbudget/placed native; Canopy source profile repair",
+    "worker: Ground skirt/details/materials/UV/UDIM and Flora/mixed contacts",
+    "worker: UCX213wide neighbour gap classification/repair; complete coverage now measured separately",
+    "user AFTER technical fixes only: final visual/material acceptance, then completeSINTEZ"
+  ],
+  "next_steps": [
+    "Resume BOTH actualSITE profiles fromv018/site-three-r1; do not adopt isolated Bench/Canopy",
+    "Keep D321/NPMTable/Bench025/hedge/composition gates closed; no new human question",
+    "Retain UCXcoverage report only while actualGround/600UCX arrays exact; rerun for changes",
+    "Use explicit trimesh sample_surface seed args, not np.random.seed alone"
+  ]
+}

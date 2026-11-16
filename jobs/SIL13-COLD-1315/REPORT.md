@@ -1,6 +1,21 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v017 [D321] form accepted, 12 VPM Table016 copies technically repaired;
+Current status: **v018 paired Sand/Bike/Urn repair adopted; complete actual UCX coverage measured;
+whole-site QA still FAIL, not delivered**. See [CONTINUATION-v018.md](CONTINUATION-v018.md).
+16copies per profile (6Sand/8Bike/2Urn), all64placed raw/native xView checks clean;
+22otherMAF/profile and Ground/Flora/600UCX arrays exact. Actual178571NPM/301662VPM
+raw triangles, native178556/301662; NPM15other-type face loss remainsFAIL.
+Complete57226face actualGround-to-UCX numerical upper bound0.089935645m<0.1m,
+450783partition vertices,0unassigned regions;213wide-neighbour gaps remain open.
+Whole public xView728NPM/4794VPMfacesFAIL; native package validators bothFAIL.
+Bench013source-boundary route restores missing frame but actual raw/native1area-only
+pair remains: isolated, NOT adopted. Canopy fine union alsoFAIL/notadopted.
+427checkpoint tests pass/5historical controls deselected; separately2CURRENTfailed/
+6passed and7HISTORICALfailed/32deselected. No new user question; all closed gates
+stay closed. Resume BOTH actual profiles fromv018/site-three-r1. No PR or delivery
+claim. Full suite: deferred to merge batch (rule 68).
+
+Historical status: **v017 [D321] form accepted, 12 VPM Table016 copies technically repaired;
 whole-site QA still FAIL, not delivered**. See [CONTINUATION-v017.md](CONTINUATION-v017.md).
 Answer6903084291 closes the v016 construction-picture gate, not technical/final gates.
 Pilot4920triangles, pre/raw/native xView0faces/0vertices/0bowties/0area;
