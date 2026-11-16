@@ -243,13 +243,13 @@ def test_check_detects_missing_or_edited_new_output(tmp_path, capsys, name):
 def test_check_reports_unknown_reference_in_a_new_route(tmp_path, capsys):
     root = _tmp_arch(tmp_path)
     path = root / route_map.route_events()["vpm-route"]
-    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', '"agr ucx"', 1)
-    assert '"agr ucx"' in text
+    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', '"agr brick-seams"', 1)
+    assert '"agr brick-seams"' in text
     path.write_text(text, encoding="utf-8")
     route_map.main(["--root", str(root)])          # regenerate so only the reference problem remains
     capsys.readouterr()
     assert route_map.main(["--root", str(root), "--check"]) == 1
-    assert "command 'agr ucx' is not an existing agr/dt command" in capsys.readouterr().out
+    assert "command 'agr brick-seams' is not an existing agr/dt command" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("name", sorted(NEW))

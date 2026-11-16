@@ -24,7 +24,6 @@ STUBS = {
     "open-in-max": "routes/npm-oks.md step 7; existing Max bridge (confirm ownership first)",
     "contact-renders": "routes/npm-oks.md step 7; existing job review/contact renders, no universal command",
     "brick-seams": "routes/npm-oks.md step 4; source-bound job algorithms, no shared implementation",
-    "ucx": "docs/domain/areas/ucx.md; existing approved job collision tools, no universal command",
 }
 
 
@@ -45,10 +44,12 @@ def _dispatch(args: list[str]) -> int:
         for name, script in SCRIPTS.items():
             print(f"  {name:18} {script}")
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
+        print("  ucx                UCX Main/Ground: ucx_build -> readback -> ucx10_core gap + V010 [D324]")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
         print("\nvpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
               "Use agr vpm-to-npm --help for argument groups. Other aliases forward --help unchanged.\n"
+              "ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M] (agr ucx --help)\n"
               "export-meta check PATH | record FBX --source S [--top Z|unknown] [--out NEW.json]\n"
               "PDF intake: dt index-pdf --help; exported topology: dt qa xview --help.\n"
               "Arguments and relative paths are unchanged; existing tools own validation and writes.")
@@ -61,6 +62,10 @@ def _dispatch(args: list[str]) -> int:
     if args and args[0] in SCRIPTS:
         script = Path(__file__).resolve().parents[3] / SCRIPTS[args[0]]
         return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
+    if args and args[0] == "ucx":
+        # #1404 [D324]: one UCX command; build core ucx_build, gap core ucx10_core (also AGR Tools in Max)
+        from dt_ai.geometry import ucx_command
+        return ucx_command.main(args[1:])
     if args and args[0] == "vpm-to-npm":
         tail = args[1:]
         if tail in (["--help"], ["-h"]):

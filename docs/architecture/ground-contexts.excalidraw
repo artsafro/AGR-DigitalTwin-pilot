@@ -787,7 +787,7 @@
    "x": 1870.0,
    "y": 994.0,
    "width": 470,
-   "height": 160.0,
+   "height": 177.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -829,7 +829,7 @@
    "x": 1878.0,
    "y": 1004.0,
    "width": 454,
-   "height": 140.0,
+   "height": 157.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -849,13 +849,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "text": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D324: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ec200d9f38e404b3",
-   "originalText": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "originalText": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D324: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -863,7 +863,7 @@
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1168.0,
+   "y": 1185.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -897,7 +897,7 @@
    "id": "ed13348e89d7b0b7",
    "type": "text",
    "x": 1878.0,
-   "y": 1178.0,
+   "y": 1195.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -1549,7 +1549,7 @@
    "x": 1730.0,
    "y": 480.0,
    "width": 630.0,
-   "height": 594.0,
+   "height": 602.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1593,11 +1593,11 @@
     ],
     [
      630.0,
-     594.0
+     602.75
     ],
     [
      610.0,
-     594.0
+     602.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1971,9 +1971,9 @@
    "id": "e2031080d0e8f8a0",
    "type": "arrow",
    "x": 2340.0,
-   "y": 1074.0,
+   "y": 1082.75,
    "width": 630.0,
-   "height": 149.0,
+   "height": 157.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2009,19 +2009,19 @@
     ],
     [
      20.0,
-     149.0
+     157.75
     ],
     [
      -490.0,
-     149.0
+     157.75
     ],
     [
      -490.0,
-     61.25
+     52.5
     ],
     [
      -610.0,
-     61.25
+     52.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2043,7 +2043,7 @@
    "id": "e8f1cd81282b7c61",
    "type": "text",
    "x": 2045.0,
-   "y": 1214.0,
+   "y": 1231.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,

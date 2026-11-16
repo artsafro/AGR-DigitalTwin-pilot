@@ -61,7 +61,7 @@ local_contexts:
     ru: "Расстановка МАФ и Флоры"
     owner: src/dt_ai/placement/engine.py
   - id: ucx
-    ru: "Коллизии UCX"
+    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D324)"
     owner: adapters/max/agr_tools/ucx10_core.py
 stages:
   - id: sources
@@ -159,12 +159,16 @@ stages:
     event_ru: "UCX рельефа построены (только ВПМ)"
     actor: agent
     context: ucx
+    commands:
+      - "agr ucx"
     rules:
       - D098
       - D134
       - D012
+      - D324
     evidence:
       - docs/domain/areas/ucx.md
+      - src/dt_ai/geometry/ucx_command.py
       - docs/domain/areas/ground-surface.md
   - id: placement
     event_ru: "МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт"
@@ -315,15 +319,6 @@ hotspots:
     evidence:
       - docs/research/vatutino-ground-v015-outer-skirt-gap-20-edges.md
       - jobs/TEC26-OKS/STATE.md
-  - id: ucx-ground
-    stage: ucx
-    ru: "UCX Ground: agr ucx — заглушка; dt ground v015 строит только геометрию (ucx: not_run); UCX v014 / v015 собраны в DCC отдельно и подхватываются из C:/x путями внутри assemble_delivery.py"
-    rules:
-      - D225
-    evidence:
-      - tools/ground/build_ground_v015.py
-      - jobs/VATUTINO-SITE/assemble_delivery.py
-      - jobs/VATUTINO-SITE/ground-build-v014.md
   - id: budget
     stage: npm
     ru: "Бюджет НПМ 180 000 (GND-04): Ground 46 479 + МАФ 55 403 + Флора 64 454 = 166 336; ВПМ Флора 443 788 — делит Артём (D167)"

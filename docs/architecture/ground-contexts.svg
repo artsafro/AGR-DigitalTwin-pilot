@@ -10,19 +10,19 @@
 <rect x="650.0" y="672.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="899.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="994.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="994.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1168.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870.0" y="994.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1185.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1336.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <polyline points="510.0,436.25 530.0,436.25 530.0,510.0 1140.0,510.0 1140.0,418.75 1120.0,418.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,418.75 1140.0,418.75 1140.0,327.5 1750.0,327.5 1750.0,480.0 1730.0,480.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,480.0 1750.0,480.0 1750.0,510.0 2360.0,510.0 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 2360.0,327.5 2360.0,427.5 2340.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,480.0 1750.0,480.0 1750.0,652.5 1140.0,652.5 1140.0,778.75 1120.0,778.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,480.0 1750.0,480.0 1750.0,974.0 2360.0,974.0 2360.0,1074.0 2340.0,1074.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,480.0 1750.0,480.0 1750.0,974.0 2360.0,974.0 2360.0,1082.75 2340.0,1082.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,778.75 1140.0,778.75 1140.0,870.0 1750.0,870.0 1750.0,761.25 1730.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,761.25 1750.0,761.25 1750.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="2340.0,427.5 2360.0,427.5 2360.0,974.0 1750.0,974.0 1750.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2340.0,1074.0 2360.0,1074.0 2360.0,1223.0 1850.0,1223.0 1850.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,1082.75 2360.0,1082.75 2360.0,1240.5 1850.0,1240.5 1850.0,1135.25 1730.0,1135.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,1135.25 1750.0,1135.25 1750.0,1416.5 1730.0,1416.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Ground (НПМ + ВПМ) — D293 (#1392)</tspan>
@@ -134,14 +134,15 @@
 <text x="1878.0" y="1004.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
-<tspan x="1878.0" dy="17.5">канон UCX (D225): выпуклые куски и зазоры между ними</tspan>
+<tspan x="1878.0" dy="17.5">зазоры UCX (D324: ядро на функцию); строит</tspan>
+<tspan x="1878.0" dy="17.5">src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)</tspan>
 <tspan x="1878.0" dy="17.5"></tspan>
 <tspan x="1878.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>
 <tspan x="1878.0" dy="17.5">нормалями и рёбрами</tspan>
 <tspan x="1878.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="1878.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="1878.0" y="1178.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1195.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <text x="1268.0" y="1346.5" font-size="14" text-anchor="start" fill="#1e1e1e">
@@ -193,8 +194,8 @@
 <text x="2055.0" y="965.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">атлас / UDIM</tspan>
 </text>
-<rect x="2075.0" y="1214.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="1214.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2075.0" y="1231.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2105.0" y="1231.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2105.0" dy="14">коллизии UCX_</tspan>
 </text>
 <rect x="1720.0" y="1266.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>

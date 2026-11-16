@@ -129,7 +129,7 @@ contexts:
     ru: "Коллизии UCX рельефа (только ВПМ)"
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/ucx10_core.py
-    owner_ru: "канон UCX (D225): выпуклые куски и зазоры между ними"
+    owner_ru: "зазоры UCX (D324: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
     functions:
       - name: piece
         contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
@@ -139,7 +139,7 @@ contexts:
       - at: "jobs/VATUTINO-SITE/assemble_delivery.py:25"
         match: "GROUND_UCX"
         issue: "#1383"
-        ru: "UCX Ground из готовых FBX по путям C:/x"
+        ru: "UCX Ground v014 / v015 — выходы ucx_build для сданного Ватутино; agr ucx повторяет v014 (#1404)"
         status: historical
 relations:
   - from: dcc

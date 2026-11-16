@@ -853,7 +853,7 @@
    "x": 345.0,
    "y": 927.5,
    "width": 470,
-   "height": 195.0,
+   "height": 212.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -895,7 +895,7 @@
    "x": 353.0,
    "y": 937.5,
    "width": 454,
-   "height": 175.0,
+   "height": 192.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -915,13 +915,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "text": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D324: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ec200d9f38e404b3",
-   "originalText": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "originalText": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D324: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -929,7 +929,7 @@
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
    "x": 345.0,
-   "y": 1136.5,
+   "y": 1154.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -963,7 +963,7 @@
    "id": "ed13348e89d7b0b7",
    "type": "text",
    "x": 353.0,
-   "y": 1146.5,
+   "y": 1164.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -1605,7 +1605,7 @@
    "x": 1120.0,
    "y": 691.25,
    "width": 325.0,
-   "height": 333.75,
+   "height": 342.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1644,16 +1644,16 @@
      216.25
     ],
     [
-     -285.0,
+     -185.0,
      216.25
     ],
     [
-     -285.0,
-     333.75
+     -185.0,
+     342.5
     ],
     [
      -305.0,
-     333.75
+     342.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1674,8 +1674,8 @@
   {
    "id": "e46226a57bf78b1e",
    "type": "text",
-   "x": 927.5,
-   "y": 889.5,
+   "x": 1080.0,
+   "y": 781.38,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2143,9 +2143,9 @@
    "id": "e9907a5818ce54f9",
    "type": "arrow",
    "x": 815.0,
-   "y": 1025.0,
+   "y": 1033.75,
    "width": 935.0,
-   "height": 298.75,
+   "height": 307.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2181,19 +2181,19 @@
     ],
     [
      20.0,
-     -137.5
+     -146.25
     ],
     [
      935.0,
-     -137.5
+     -146.25
     ],
     [
      935.0,
-     -298.75
+     -307.5
     ],
     [
      915.0,
-     -298.75
+     -307.5
     ]
    ],
    "lastCommittedPoint": null,

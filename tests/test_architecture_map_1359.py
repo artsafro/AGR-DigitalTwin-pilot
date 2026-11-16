@@ -102,7 +102,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
 @pytest.mark.parametrize("command,ok", [
     ("agr inspect", True), ("agr validate", True), ("agr vpm-to-npm", True), ("agr package-vpm", True),
     ("dt derive atlas", True), ("dt qa xview", True), ("dt spec compare", True), ("dt inspect", True),
-    ("agr unwrap-atlas", False), ("agr ucx", False), ("agr", False), ("dt derive nonsense", False),
+    ("agr unwrap-atlas", False), ("agr ucx", True), ("agr brick-seams", False), ("agr", False), ("dt derive nonsense", False),
     ("dt nonsense", False), ("python tools/x.py", False), ("dt qa xview extra", False), ("", False),
 ])
 def test_command_exists(command, ok):

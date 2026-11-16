@@ -53,7 +53,7 @@ def test_partial_chain_does_not_start(args, monkeypatch, capsys):
 @pytest.mark.parametrize("command,pointer", [
     ("unwrap-atlas", "dt derive atlas"), ("delivery-export", "dt derive npm"),
     ("open-in-max", "routes/npm-oks.md"), ("contact-renders", "routes/npm-oks.md"),
-    ("brick-seams", "routes/npm-oks.md"), ("ucx", "docs/domain/areas/ucx.md"),
+    ("brick-seams", "routes/npm-oks.md"),
     ("unknown", "agr --help"), ("", "agr --help"), ("NaN", "agr --help"),
 ])
 def test_unsupported_fails_closed_with_pointer(command, pointer, monkeypatch, capsys):
@@ -113,7 +113,7 @@ def test_fresh_process_help(command):
     assert "usage:" in result.stdout
 
 
-@pytest.mark.parametrize("command", ["unwrap-atlas", "delivery-export", "open-in-max", "contact-renders", "brick-seams", "ucx", "unknown"])
+@pytest.mark.parametrize("command", ["unwrap-atlas", "delivery-export", "open-in-max", "contact-renders", "brick-seams", "unknown"])
 def test_fresh_process_refusal_writes_nothing(command, tmp_path):
     import subprocess
     source = tmp_path / "input.json"
