@@ -156,6 +156,27 @@ def test_no_part_stops_with_the_question_which_part():
     assert result.notes["add_triangles"] == 61_981 - _tris(obj)
 
 
+@pytest.mark.parametrize("name, protected", [
+    ("SM_A_Main", True), ("SM_A_Main.001", True), ("main", True), ("SM_A_MainGlass", False),
+])
+def test_main_name_variants_require_confirmation(name, protected):
+    obj = {"Big": big_main(), name: strip()}
+    snapshot = {key: (p.mesh.vertices.copy(), p.mesh.triangles.copy(), p.uv.copy()) for key, p in obj.items()}
+    question = densify_for_ucx_budget(obj, None, 3100)
+    assert not question.applied and question.object is obj and question.report is None
+    assert (f"{name} (296 tris)" in question.question) is not protected
+    result = densify_for_ucx_budget(obj, name, 3100)
+    if protected:
+        assert not result.applied and result.object is obj and result.report is None
+        assert "never densified automatically" in result.question
+        result = densify_for_ucx_budget(obj, name, 3100, allow_main=True)
+    assert result.applied and result.report.passed, result.question
+    assert result.part == name and set(result.object) == set(obj)
+    assert result.object["Big"] is obj["Big"]
+    assert all(np.array_equal(a, b) for key, p in obj.items()
+               for a, b in zip(snapshot[key], (p.mesh.vertices, p.mesh.triangles, p.uv)))
+
+
 def test_main_is_never_densified_without_explicit_confirmation():
     obj = {"elv_Main": strip(), "Plate": plate(2, 2)}
     obj_big = {**obj, "Other": big_main()}
