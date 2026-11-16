@@ -155,7 +155,7 @@
    "x": 40.0,
    "y": 347.5,
    "width": 470,
-   "height": 177.5,
+   "height": 195.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -193,7 +193,7 @@
    "x": 48.0,
    "y": 357.5,
    "width": 454,
-   "height": 157.5,
+   "height": 175.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -213,13 +213,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nисходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает\nтам, где удобно (D293)\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nисходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает\nтам, где удобно (D293)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e8b8779b8f489e86",
-   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nисходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает\nтам, где удобно (D293)\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nисходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает\nтам, где удобно (D293)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -229,7 +229,7 @@
    "x": 650.0,
    "y": 347.5,
    "width": 470,
-   "height": 142.5,
+   "height": 195.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -271,7 +271,7 @@
    "x": 658.0,
    "y": 357.5,
    "width": 454,
-   "height": 122.5,
+   "height": 175.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -291,13 +291,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце",
+   "text": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце\nexport_z_check: ноль проекта, Z нуля в FBX, вершины верха\nGround (XY, Z, уровень), рельеф в XY -> pass / fail по\nкаждой вершине (agr zero, #1406)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "eb4da33cf7db574a",
-   "originalText": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце",
+   "originalText": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце\nexport_z_check: ноль проекта, Z нуля в FBX, вершины верха\nGround (XY, Z, уровень), рельеф в XY -> pass / fail по\nкаждой вершине (agr zero, #1406)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -307,7 +307,7 @@
    "x": 1260.0,
    "y": 347.5,
    "width": 470,
-   "height": 265.0,
+   "height": 317.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -357,7 +357,7 @@
    "x": 1268.0,
    "y": 357.5,
    "width": 454,
-   "height": 245.0,
+   "height": 297.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -377,13 +377,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: tools/ground/build_ground_v015.py\nсборка Ground Ватутино v015 (только этот участок, agr\nground / dt ground v015)\n\ngeometry: данные участка, исходник, одобрения, вырезы ->\nмеш Ground v015\nrestore_source_coverage: меш, план -> ограниченный ремонт\nпокрытия; ненулевой остаток не прощается\nderive: меш, профиль, сэмплер, защищённые, исключения ->\nквады и треугольники Ground\nmain: --job-dir и параметры -> Ground v015 и отчёт;\nизменился HEAD — отказ",
+   "text": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: src/dt_ai/geometry/ground_site.py\nGround любого участка в порядке D293 (agr ground site /\ndt ground site, #1406); Ватутино v015 — замороженная\nзапись dt ground v015\n\nbuild_site: граница, покрытия с ID, базовый ID, точки\nрельефа, ноль -> плоский Ground, проекция, юбка ≥ 1 м и\nотчёт стадий\ncovers_from_dxf: DXF, строки покрытий (ID, имя,\nштриховки) -> покрытия; цвет ID = фон штриховки или цвет\nиз спецификации с причиной\nrelief_from_dxf: DXF, блок / имена отметок / слои\nгоризонталей -> точки рельефа с родной Z\nskirt_gaps: меш, опуск -> внешние рёбра без квада юбки\nили с опуском меньше нормы (GND-03, D251)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e6d720b192cc3ebb",
-   "originalText": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: tools/ground/build_ground_v015.py\nсборка Ground Ватутино v015 (только этот участок, agr\nground / dt ground v015)\n\ngeometry: данные участка, исходник, одобрения, вырезы ->\nмеш Ground v015\nrestore_source_coverage: меш, план -> ограниченный ремонт\nпокрытия; ненулевой остаток не прощается\nderive: меш, профиль, сэмплер, защищённые, исключения ->\nквады и треугольники Ground\nmain: --job-dir и параметры -> Ground v015 и отчёт;\nизменился HEAD — отказ",
+   "originalText": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: src/dt_ai/geometry/ground_site.py\nGround любого участка в порядке D293 (agr ground site /\ndt ground site, #1406); Ватутино v015 — замороженная\nзапись dt ground v015\n\nbuild_site: граница, покрытия с ID, базовый ID, точки\nрельефа, ноль -> плоский Ground, проекция, юбка ≥ 1 м и\nотчёт стадий\ncovers_from_dxf: DXF, строки покрытий (ID, имя,\nштриховки) -> покрытия; цвет ID = фон штриховки или цвет\nиз спецификации с причиной\nrelief_from_dxf: DXF, блок / имена отметок / слои\nгоризонталей -> точки рельефа с родной Z\nskirt_gaps: меш, опуск -> внешние рёбра без квада юбки\nили с опуском меньше нормы (GND-03, D251)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -473,7 +473,7 @@
    "id": "ebefb8015300e481",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 672.5,
+   "y": 725.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -515,7 +515,7 @@
    "id": "ee52b2029f7668ad",
    "type": "text",
    "x": 1268.0,
-   "y": 682.5,
+   "y": 735.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -551,7 +551,7 @@
    "id": "e1aaee826150be1a",
    "type": "rectangle",
    "x": 650.0,
-   "y": 672.5,
+   "y": 725.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -593,7 +593,7 @@
    "id": "edec5de9abb756a8",
    "type": "text",
    "x": 658.0,
-   "y": 682.5,
+   "y": 735.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -626,80 +626,10 @@
    "lineHeight": 1.25
   },
   {
-   "id": "ede9c53268854939",
-   "type": "rectangle",
-   "x": 650.0,
-   "y": 899.0,
-   "width": 470,
-   "height": 35.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "#ffc9c9",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": {
-    "type": 3
-   },
-   "seed": 1284284821,
-   "version": 1,
-   "versionNonce": 147757024,
-   "isDeleted": false,
-   "boundElements": [
-    {
-     "type": "text",
-     "id": "e135b12210d81506"
-    }
-   ],
-   "updated": 1,
-   "link": null,
-   "locked": false
-  },
-  {
-   "id": "e135b12210d81506",
-   "type": "text",
-   "x": 658.0,
-   "y": 909.0,
-   "width": 454,
-   "height": 15.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "transparent",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": null,
-   "seed": 129104109,
-   "version": 1,
-   "versionNonce": 1576400441,
-   "isDeleted": false,
-   "boundElements": null,
-   "updated": 1,
-   "link": null,
-   "locked": false,
-   "text": "Дубли вне владельца: 1",
-   "fontSize": 12,
-   "fontFamily": 2,
-   "textAlign": "left",
-   "verticalAlign": "middle",
-   "containerId": "ede9c53268854939",
-   "originalText": "Дубли вне владельца: 1",
-   "autoResize": true,
-   "lineHeight": 1.25
-  },
-  {
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 994.0,
+   "y": 997.5,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -749,7 +679,7 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 1268.0,
-   "y": 1004.0,
+   "y": 1007.5,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -785,9 +715,9 @@
    "id": "ec200d9f38e404b3",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 994.0,
+   "y": 997.5,
    "width": 470,
-   "height": 160.0,
+   "height": 177.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -827,9 +757,9 @@
    "id": "e5ab4a0c3613fa92",
    "type": "text",
    "x": 1878.0,
-   "y": 1004.0,
+   "y": 1007.5,
    "width": 454,
-   "height": 140.0,
+   "height": 157.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -849,13 +779,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "text": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D330: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ec200d9f38e404b3",
-   "originalText": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "originalText": "Коллизии UCX рельефа (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D330: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -863,7 +793,7 @@
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1168.0,
+   "y": 1189.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -897,7 +827,7 @@
    "id": "ed13348e89d7b0b7",
    "type": "text",
    "x": 1878.0,
-   "y": 1178.0,
+   "y": 1199.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -933,7 +863,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1336.5,
+   "y": 1340.0,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -971,7 +901,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 1268.0,
-   "y": 1346.5,
+   "y": 1350.0,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -1007,9 +937,9 @@
    "id": "ec869757a061c16a",
    "type": "arrow",
    "x": 510.0,
-   "y": 436.25,
+   "y": 445.0,
    "width": 630.0,
-   "height": 91.25,
+   "height": 117.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1040,24 +970,24 @@
      0.0
     ],
     [
-     20.0,
+     120.0,
      0.0
     ],
     [
-     20.0,
-     73.75
+     120.0,
+     -117.5
     ],
     [
      630.0,
-     73.75
+     -117.5
     ],
     [
      630.0,
-     -17.5
+     0.0
     ],
     [
      610.0,
-     -17.5
+     0.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1078,8 +1008,8 @@
   {
    "id": "ed73a221f4369e6d",
    "type": "text",
-   "x": 775.0,
-   "y": 501.0,
+   "x": 825.0,
+   "y": 318.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1115,9 +1045,9 @@
    "id": "e77226c36711e551",
    "type": "arrow",
    "x": 1120.0,
-   "y": 418.75,
+   "y": 445.0,
    "width": 630.0,
-   "height": 152.5,
+   "height": 178.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1148,16 +1078,16 @@
      0.0
     ],
     [
-     20.0,
+     120.0,
      0.0
     ],
     [
-     20.0,
-     -91.25
+     120.0,
+     -117.5
     ],
     [
      630.0,
-     -91.25
+     -117.5
     ],
     [
      630.0,
@@ -1186,8 +1116,8 @@
   {
    "id": "ed977eb5248da36a",
    "type": "text",
-   "x": 1385.0,
-   "y": 318.5,
+   "x": 1435.0,
+   "y": 318.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1223,9 +1153,9 @@
    "id": "e6e2ff88d13df4fd",
    "type": "arrow",
    "x": 1730.0,
-   "y": 480.0,
+   "y": 506.25,
    "width": 630.0,
-   "height": 82.5,
+   "height": 100.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1261,19 +1191,19 @@
     ],
     [
      20.0,
-     30.0
+     21.25
     ],
     [
      630.0,
-     30.0
+     21.25
     ],
     [
      630.0,
-     -52.5
+     -78.75
     ],
     [
      610.0,
-     -52.5
+     -78.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1295,7 +1225,7 @@
    "id": "e7c7987b3ca58eaa",
    "type": "text",
    "x": 1995.0,
-   "y": 492.0,
+   "y": 510.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1403,7 +1333,7 @@
    "id": "e80e3d3cf07cebba",
    "type": "text",
    "x": 1842.5,
-   "y": 318.5,
+   "y": 318.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1439,9 +1369,9 @@
    "id": "ea58080b9e137eea",
    "type": "arrow",
    "x": 1730.0,
-   "y": 480.0,
+   "y": 506.25,
    "width": 630.0,
-   "height": 298.75,
+   "height": 325.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1477,19 +1407,19 @@
     ],
     [
      20.0,
-     172.5
+     198.75
     ],
     [
      -590.0,
-     172.5
+     198.75
     ],
     [
      -590.0,
-     298.75
+     325.0
     ],
     [
      -610.0,
-     298.75
+     325.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1511,7 +1441,7 @@
    "id": "ea9bad5a9851bf26",
    "type": "text",
    "x": 1385.0,
-   "y": 634.5,
+   "y": 687.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1547,9 +1477,9 @@
    "id": "e77852ff20987444",
    "type": "arrow",
    "x": 1730.0,
-   "y": 480.0,
+   "y": 506.25,
    "width": 630.0,
-   "height": 594.0,
+   "height": 580.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1585,19 +1515,19 @@
     ],
     [
      20.0,
-     494.0
+     471.25
     ],
     [
      630.0,
-     494.0
+     471.25
     ],
     [
      630.0,
-     594.0
+     580.0
     ],
     [
      610.0,
-     594.0
+     580.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1619,7 +1549,7 @@
    "id": "e778220192b71bf5",
    "type": "text",
    "x": 1995.0,
-   "y": 965.0,
+   "y": 968.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1655,7 +1585,7 @@
    "id": "eaa2c83cb7635ff3",
    "type": "arrow",
    "x": 1120.0,
-   "y": 778.75,
+   "y": 831.25,
    "width": 630.0,
    "height": 108.75,
    "angle": 0,
@@ -1727,7 +1657,7 @@
    "id": "e0612d0f096f2e0f",
    "type": "text",
    "x": 1385.0,
-   "y": 852.0,
+   "y": 905.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1763,9 +1693,9 @@
    "id": "e7d94c97f5526d4f",
    "type": "arrow",
    "x": 1730.0,
-   "y": 761.25,
+   "y": 813.75,
    "width": 20.0,
-   "height": 374.0,
+   "height": 325.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1801,11 +1731,11 @@
     ],
     [
      20.0,
-     374.0
+     325.0
     ],
     [
      0.0,
-     374.0
+     325.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1827,7 +1757,7 @@
    "id": "e3be59ba42305b7c",
    "type": "text",
    "x": 1690.0,
-   "y": 939.25,
+   "y": 967.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1865,7 +1795,7 @@
    "x": 2340.0,
    "y": 427.5,
    "width": 630.0,
-   "height": 707.75,
+   "height": 711.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1901,19 +1831,19 @@
     ],
     [
      20.0,
-     546.5
+     550.0
     ],
     [
      -590.0,
-     546.5
+     550.0
     ],
     [
      -590.0,
-     707.75
+     711.25
     ],
     [
      -610.0,
-     707.75
+     711.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1935,7 +1865,7 @@
    "id": "e114873988d4bf95",
    "type": "text",
    "x": 1995.0,
-   "y": 965.0,
+   "y": 968.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1971,9 +1901,9 @@
    "id": "e2031080d0e8f8a0",
    "type": "arrow",
    "x": 2340.0,
-   "y": 1074.0,
+   "y": 1086.25,
    "width": 630.0,
-   "height": 149.0,
+   "height": 157.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2009,19 +1939,19 @@
     ],
     [
      20.0,
-     149.0
+     157.75
     ],
     [
      -490.0,
-     149.0
+     157.75
     ],
     [
      -490.0,
-     61.25
+     52.5
     ],
     [
      -610.0,
-     61.25
+     52.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2043,7 +1973,7 @@
    "id": "e8f1cd81282b7c61",
    "type": "text",
    "x": 2045.0,
-   "y": 1214.0,
+   "y": 1235.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2079,7 +2009,7 @@
    "id": "ed4c74ce405ae347",
    "type": "arrow",
    "x": 1730.0,
-   "y": 1135.25,
+   "y": 1138.75,
    "width": 20.0,
    "height": 281.25,
    "angle": 0,
@@ -2143,7 +2073,7 @@
    "id": "e7b4bac8edccb0fd",
    "type": "text",
    "x": 1690.0,
-   "y": 1266.88,
+   "y": 1270.62,
    "width": 120,
    "height": 17.5,
    "angle": 0,

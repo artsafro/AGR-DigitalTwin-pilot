@@ -155,7 +155,7 @@
    "x": 40,
    "y": 347.5,
    "width": 470,
-   "height": 177.5,
+   "height": 195.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -193,7 +193,7 @@
    "x": 48,
    "y": 357.5,
    "width": 454,
-   "height": 157.5,
+   "height": 175.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -213,13 +213,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nагент работает там, где удобно (D293); запуск Blender без\nокна со свежим JSON-ответом\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nагент работает там, где удобно (D293); запуск Blender без\nокна со свежим JSON-ответом\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e8b8779b8f489e86",
-   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nагент работает там, где удобно (D293); запуск Blender без\nокна со свежим JSON-ответом\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nагент работает там, где удобно (D293); запуск Blender без\nокна со свежим JSON-ответом\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -469,7 +469,7 @@
    "id": "e125ae7d0f5a9eef",
    "type": "rectangle",
    "x": 40.0,
-   "y": 585.0,
+   "y": 602.5,
    "width": 470,
    "height": 265.0,
    "angle": 0,
@@ -511,7 +511,7 @@
    "id": "e17277d14ef0fd09",
    "type": "text",
    "x": 48.0,
-   "y": 595.0,
+   "y": 612.5,
    "width": 454,
    "height": 245.0,
    "angle": 0,
@@ -547,9 +547,9 @@
    "id": "e055eec75f5eb0b4",
    "type": "rectangle",
    "x": 650.0,
-   "y": 585.0,
+   "y": 602.5,
    "width": 470,
-   "height": 212.5,
+   "height": 265.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -589,9 +589,9 @@
    "id": "ea5fe04c3488d12b",
    "type": "text",
    "x": 658.0,
-   "y": 595.0,
+   "y": 612.5,
    "width": 454,
-   "height": 192.5,
+   "height": 245.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -611,13 +611,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Кровля, парапет, плита, ограждение\nВладелец: adapters/max/agr_tools/roof_core.py\nплита кровли врезана в парапет и поднята на несколько мм\n(R6, D292)\n\nboundary_loops: грани -> замкнутые петли открытых рёбер в\nобходе их граней\nslab: меш, петля, грани-владельцы, опции -> одна плита\nкровли или Ambiguous\nplan: корпуса (меш в метрах, мир) -> опции, строки плит,\nнаходки",
+   "text": "Кровля, парапет, плита, ограждение\nВладелец: adapters/max/agr_tools/roof_core.py\nплита кровли врезана в парапет и поднята на несколько мм\n(R6, D292)\n\nboundary_loops: грани -> замкнутые петли открытых рёбер в\nобходе их граней\nslab: меш, петля, грани-владельцы, опции -> одна плита\nкровли или Ambiguous\nplan: корпуса (меш в метрах, мир) -> опции, строки плит,\nнаходки\nhole_plate: план отверстия парапета, уровень, верх,\nвнешний контур -> плита кровли (сборщик задания, #1381)\nили ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e055eec75f5eb0b4",
-   "originalText": "Кровля, парапет, плита, ограждение\nВладелец: adapters/max/agr_tools/roof_core.py\nплита кровли врезана в парапет и поднята на несколько мм\n(R6, D292)\n\nboundary_loops: грани -> замкнутые петли открытых рёбер в\nобходе их граней\nslab: меш, петля, грани-владельцы, опции -> одна плита\nкровли или Ambiguous\nplan: корпуса (меш в метрах, мир) -> опции, строки плит,\nнаходки",
+   "originalText": "Кровля, парапет, плита, ограждение\nВладелец: adapters/max/agr_tools/roof_core.py\nплита кровли врезана в парапет и поднята на несколько мм\n(R6, D292)\n\nboundary_loops: грани -> замкнутые петли открытых рёбер в\nобходе их граней\nslab: меш, петля, грани-владельцы, опции -> одна плита\nкровли или Ambiguous\nplan: корпуса (меш в метрах, мир) -> опции, строки плит,\nнаходки\nhole_plate: план отверстия парапета, уровень, верх,\nвнешний контур -> плита кровли (сборщик задания, #1381)\nили ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -625,9 +625,9 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 585.0,
+   "y": 602.5,
    "width": 470,
-   "height": 282.5,
+   "height": 317.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -671,9 +671,9 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 1268.0,
-   "y": 595.0,
+   "y": 612.5,
    "width": 454,
-   "height": 262.5,
+   "height": 297.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -693,13 +693,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Экспорт и пакеты ВПМ / НПМ\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "text": "Экспорт и пакеты ВПМ / НПМ\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + полный отчёт проверки; ГОТОВО.txt только после\nавтопроверок, V015–V017 ждут Артёма [D323]; иначе\nОШИБКА.txt",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1648b9a5855f96c",
-   "originalText": "Экспорт и пакеты ВПМ / НПМ\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "originalText": "Экспорт и пакеты ВПМ / НПМ\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + полный отчёт проверки; ГОТОВО.txt только после\nавтопроверок, V015–V017 ждут Артёма [D323]; иначе\nОШИБКА.txt",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -707,7 +707,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 585.0,
+   "y": 602.5,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -745,7 +745,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 1878.0,
-   "y": 595.0,
+   "y": 612.5,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -781,7 +781,7 @@
    "id": "e43fe4f37d52ebfe",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 759.0,
+   "y": 776.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -815,7 +815,7 @@
    "id": "eb444d1905179d98",
    "type": "text",
    "x": 1878.0,
-   "y": 769.0,
+   "y": 786.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -851,9 +851,9 @@
    "id": "ec200d9f38e404b3",
    "type": "rectangle",
    "x": 345.0,
-   "y": 927.5,
+   "y": 980.0,
    "width": 470,
-   "height": 195.0,
+   "height": 212.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -893,9 +893,9 @@
    "id": "e5ab4a0c3613fa92",
    "type": "text",
    "x": 353.0,
-   "y": 937.5,
+   "y": 990.0,
    "width": 454,
-   "height": 175.0,
+   "height": 192.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -915,13 +915,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "text": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D330: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ec200d9f38e404b3",
-   "originalText": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nканон UCX (D225): выпуклые куски и зазоры между ними\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
+   "originalText": "Коллизии UCX (только ВПМ)\nВладелец: adapters/max/agr_tools/ucx10_core.py\nзазоры UCX (D330: ядро на функцию); строит\nsrc/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)\n\npiece: вершины, треугольники -> выпуклый кусок с\nнормалями и рёбрами\nseparation: два выпуклых куска -> нижняя оценка зазора,\nм, и ось\nplan: куски, опции -> зазор каждой соседней пары каждого\nсемейства UCX",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -929,7 +929,7 @@
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
    "x": 345.0,
-   "y": 1136.5,
+   "y": 1206.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -963,7 +963,7 @@
    "id": "ed13348e89d7b0b7",
    "type": "text",
    "x": 353.0,
-   "y": 1146.5,
+   "y": 1216.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -999,7 +999,7 @@
    "id": "e519317b1b47435c",
    "type": "rectangle",
    "x": 955.0,
-   "y": 927.5,
+   "y": 980.0,
    "width": 470,
    "height": 107.5,
    "angle": 0,
@@ -1033,7 +1033,7 @@
    "id": "e29094e01e5604dc",
    "type": "text",
    "x": 963.0,
-   "y": 937.5,
+   "y": 990.0,
    "width": 454,
    "height": 87.5,
    "angle": 0,
@@ -1069,7 +1069,7 @@
    "id": "e807a1ec46d1f932",
    "type": "rectangle",
    "x": 955.0,
-   "y": 1049.0,
+   "y": 1101.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -1103,7 +1103,7 @@
    "id": "e8a2c0412f487bf8",
    "type": "text",
    "x": 963.0,
-   "y": 1059.0,
+   "y": 1111.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -1139,7 +1139,7 @@
    "id": "e45233b249c035b3",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 927.5,
+   "y": 980.0,
    "width": 470,
    "height": 125.0,
    "angle": 0,
@@ -1173,7 +1173,7 @@
    "id": "e78de4c14754e830",
    "type": "text",
    "x": 1573.0,
-   "y": 937.5,
+   "y": 990.0,
    "width": 454,
    "height": 105.0,
    "angle": 0,
@@ -1209,7 +1209,7 @@
    "id": "e0c4dca1ed57a80e",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 1066.5,
+   "y": 1119.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -1243,7 +1243,7 @@
    "id": "e0299676f38dc74e",
    "type": "text",
    "x": 1573.0,
-   "y": 1076.5,
+   "y": 1129.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -1279,7 +1279,7 @@
    "id": "e5b5c67a33b97dac",
    "type": "arrow",
    "x": 510,
-   "y": 436.25,
+   "y": 445.0,
    "width": 630,
    "height": 91.25,
    "angle": 0,
@@ -1317,19 +1317,19 @@
     ],
     [
      20,
-     91.25
+     82.5
     ],
     [
      630,
-     91.25
+     82.5
     ],
     [
      630,
-     0.0
+     -8.75
     ],
     [
      610,
-     0.0
+     -8.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1351,7 +1351,7 @@
    "id": "efd93a013138b3ea",
    "type": "text",
    "x": 775.0,
-   "y": 518.5,
+   "y": 518.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1389,7 +1389,7 @@
    "x": 1120,
    "y": 436.25,
    "width": 630.0,
-   "height": 281.25,
+   "height": 298.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1425,19 +1425,19 @@
     ],
     [
      20,
-     128.75
+     146.25
     ],
     [
      -590.0,
-     128.75
+     146.25
     ],
     [
      -590.0,
-     281.25
+     298.75
     ],
     [
      -610.0,
-     281.25
+     298.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1459,7 +1459,7 @@
    "id": "edd5516ed2e15727",
    "type": "text",
    "x": 775.0,
-   "y": 547.0,
+   "y": 565.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1495,9 +1495,9 @@
    "id": "e788be0927ccf5c0",
    "type": "arrow",
    "x": 510.0,
-   "y": 717.5,
+   "y": 735.0,
    "width": 630.0,
-   "height": 122.75,
+   "height": 152.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1528,24 +1528,24 @@
      0.0
     ],
     [
-     20.0,
+     120.0,
      0.0
     ],
     [
-     20.0,
-     96.5
+     120.0,
+     -152.5
     ],
     [
      630.0,
-     96.5
+     -152.5
     ],
     [
      630.0,
-     -26.25
+     0.0
     ],
     [
      610.0,
-     -26.25
+     0.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1566,8 +1566,8 @@
   {
    "id": "eac5bd478bfa8c69",
    "type": "text",
-   "x": 775.0,
-   "y": 805.0,
+   "x": 825.0,
+   "y": 573.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1603,9 +1603,9 @@
    "id": "e6bc98cd3822bd1f",
    "type": "arrow",
    "x": 1120.0,
-   "y": 691.25,
+   "y": 735.0,
    "width": 325.0,
-   "height": 333.75,
+   "height": 351.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1641,19 +1641,19 @@
     ],
     [
      20.0,
-     216.25
+     225.0
     ],
     [
-     -285.0,
-     216.25
+     -185.0,
+     225.0
     ],
     [
-     -285.0,
-     333.75
+     -185.0,
+     351.25
     ],
     [
      -305.0,
-     333.75
+     351.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1674,8 +1674,8 @@
   {
    "id": "e46226a57bf78b1e",
    "type": "text",
-   "x": 927.5,
-   "y": 889.5,
+   "x": 1080.0,
+   "y": 830.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1783,7 +1783,7 @@
    "id": "e0da6ac910a99b54",
    "type": "text",
    "x": 1385.0,
-   "y": 518.5,
+   "y": 518.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1891,7 +1891,7 @@
    "id": "e730527004bd695c",
    "type": "text",
    "x": 1537.5,
-   "y": 318.5,
+   "y": 318.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1999,7 +1999,7 @@
    "id": "e752855fa0367ba0",
    "type": "text",
    "x": 1995.0,
-   "y": 518.5,
+   "y": 518.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2037,7 +2037,7 @@
    "x": 2340,
    "y": 436.25,
    "width": 630.0,
-   "height": 290.0,
+   "height": 325.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2073,19 +2073,19 @@
     ],
     [
      20,
-     128.75
+     146.25
     ],
     [
-     -590.0,
-     128.75
+     -490,
+     146.25
     ],
     [
-     -590.0,
-     290.0
+     -490,
+     325.0
     ],
     [
      -610.0,
-     290.0
+     325.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -2106,8 +2106,8 @@
   {
    "id": "e3be59ba42305b7c",
    "type": "text",
-   "x": 1995.0,
-   "y": 547.0,
+   "x": 2045.0,
+   "y": 565.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2143,9 +2143,9 @@
    "id": "e9907a5818ce54f9",
    "type": "arrow",
    "x": 815.0,
-   "y": 1025.0,
+   "y": 1086.25,
    "width": 935.0,
-   "height": 298.75,
+   "height": 325.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2181,19 +2181,19 @@
     ],
     [
      20.0,
-     -155.0
+     -146.25
     ],
     [
      935.0,
-     -155.0
+     -146.25
     ],
     [
      935.0,
-     -298.75
+     -325.0
     ],
     [
      915.0,
-     -298.75
+     -325.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -2215,7 +2215,7 @@
    "id": "e370a648cb3200ee",
    "type": "text",
    "x": 1232.5,
-   "y": 861.0,
+   "y": 931.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2251,7 +2251,7 @@
    "id": "e4f552790d995798",
    "type": "arrow",
    "x": 1730.0,
-   "y": 726.25,
+   "y": 761.25,
    "width": 630.0,
    "height": 149.0,
    "angle": 0,
@@ -2289,19 +2289,19 @@
     ],
     [
      20.0,
-     87.75
+     70.25
     ],
     [
      630.0,
-     87.75
+     70.25
     ],
     [
      630.0,
-     -61.25
+     -78.75
     ],
     [
      610.0,
-     -61.25
+     -78.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -2323,7 +2323,7 @@
    "id": "e321747c08b4204e",
    "type": "text",
    "x": 1995.0,
-   "y": 805.0,
+   "y": 822.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,

@@ -191,7 +191,8 @@ def main(argv=None):
         if args.kpp1_source:
             if args.kpp1_census is None or args.inset_m is None:
                 raise ValueError('KPP1 requires --kpp1-census and explicit --inset-m')
-            inputs += [ROOT / 'jobs/KPP1/scripts/extract_openings.py', args.kpp1_source / 'curtain.export.json',
+            inputs += [ROOT / 'jobs/KPP1/scripts/extract_openings.py', ROOT / 'adapters/max/agr_tools/openings_core.py',
+                       args.kpp1_source / 'curtain.export.json',
                        args.kpp1_census / 'curtain.objects.json', args.kpp1_census / 'openings.objects.json',
                        ROOT / 'jobs/KPP1/spec-compare-v002.md']
         elif args.kpp1_census is not None or args.inset_m is not None:

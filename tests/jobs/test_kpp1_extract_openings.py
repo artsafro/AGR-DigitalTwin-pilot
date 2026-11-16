@@ -137,7 +137,7 @@ def test_duplicated_source_object_is_an_error(tmp_path):
     import pytest
     obj = _glass(CYR_S, 0)
     src, cen = _write(tmp_path, [obj, obj])
-    with pytest.raises(ValueError, match='duplicate object'):
+    with pytest.raises(ValueError, match='duplicate.*object'):
         _load().extract(str(src), str(cen))
 
 

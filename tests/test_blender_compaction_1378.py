@@ -24,7 +24,8 @@ import route_map  # noqa: E402
 from dt_ai.core import blender_runner  # noqa: E402
 
 OWNER = "src/dt_ai/core/blender_runner.py"
-ROUTED = ["jobs/VATUTINO-SITE/flora_route_a.py", "jobs/VATUTINO-SITE/place_site.py"]
+# #1407: the placement launch moved from jobs/VATUTINO-SITE/place_site.py into the placement command
+ROUTED = ["jobs/VATUTINO-SITE/flora_route_a.py", "src/dt_ai/placement/site.py"]
 DELEGATES = ["src/dt_ai/core/build.py", "src/twinqa/scene.py", "tools/qa/run_benchmark.py",
              "jobs/OBR22-K02/scripts/run_profile_checks.py"]
 LAUNCH = "import subprocess\nsubprocess.run([exe, '--background', '--python', s])\n"
@@ -106,7 +107,7 @@ def test_owner_file_is_not_its_own_copy():
 
 def test_every_blender_launch_row_names_its_reason_and_this_issue():
     rows = _launch_rows()
-    assert len(rows) == 24, [d["at"] for d in rows]   # 7 jobs/ + 16 tools/ + 1 src/ (ORCH pilot calls the owner, #1424)
+    assert len(rows) == 10, [d["at"] for d in rows]   # 7 jobs/ + 3 tools/ own-duty; 14 tools/ + src/ call the owner (#1530)
     assert all(str(d.get("ru", "")).strip() and d["issue"] == "#1378" for d in rows), rows
 
 

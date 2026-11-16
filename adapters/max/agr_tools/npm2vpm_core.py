@@ -69,6 +69,9 @@ def _sibling(name, alias):
     return mod
 
 
+_udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_npm2vpm')
+
+
 def atlas():
     return _sibling('atlas_core.py', 'agr_tools_atlas_core_q')
 
@@ -173,8 +176,7 @@ def table_rows(doc):
 
 
 def tile_origin(udim):
-    k = udim - 1001
-    return k % 10, k // 10
+    return _udimtile.tile_origin(udim)
 
 
 def in_tile(pts, udim, tol=UV_TOL):

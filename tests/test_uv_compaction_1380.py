@@ -145,6 +145,11 @@ def test_d320_leftovers_have_explicit_historical_reasons(path, constant, reason)
 def test_no_delivery_changes():
     base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
     paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
-    assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py')
-               or p == 'jobs/KPP1/scripts/extract_openings.py'
-               or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith(('.md', '.txt')) for p in paths)
+    # a delivery is a file a job produced (FBX, ZIP, textures, reports); job scripts are code. #1381 also edits job
+    # scripts (KPP1 seal shim, build_kpp1.roof via roof_core), so the check is on the kind of file, not on #1380's names.
+    # Job docs (STATE.md, REPORT.md) are not deliveries either (#1563 updates the KPP1 STATE row the card asks for),
+    # nor is the job's skeleton config (`skeleton.json`, D324).
+    # The #1406 Ground site command pilot keeps its input and its JSON report in the job (not a delivery).
+    ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json')
+    allowed = lambda p: p.endswith(ok) or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith('.txt')
+    assert all(allowed(p) for p in paths), [p for p in paths if not allowed(p)]

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3600 1587" width="3600" height="1587" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3600 1604" width="3600" height="1604" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3600" height="1587" fill="#ffffff"/>
+<rect x="10" y="-30" width="3600" height="1604" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="955.0" y="336.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="40" y="461.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -8,8 +8,8 @@
 <rect x="1260" y="461.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="461.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="40.0" y="699.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="699.0" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="820.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="650.0" y="699.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="873.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="699.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="978.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1870.0" y="699.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -20,13 +20,13 @@
 <rect x="650.0" y="1369.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1073.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1282.0" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1073.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1299.5" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<polyline points="1730.0,831.5 1750.0,831.5 1750.0,800.5 1850.0,800.5 1850.0,679.0 2360.0,679.0 2360.0,805.25 2340.0,805.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1870.0" y="1073.0" width="470" height="230.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1317.0" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<polyline points="1730.0,831.5 1750.0,831.5 1750.0,805.25 1850.0,805.25 1850.0,679.0 2360.0,679.0 2360.0,805.25 2340.0,805.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="2340.0,805.25 2360.0,805.25 2360.0,1053.0 1140.0,1053.0 1140.0,1214.25 1120.0,1214.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,1214.25 1140.0,1214.25 1140.0,1270.5 1750.0,1270.5 1750.0,1170.5 1730.0,1170.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2340.0,1179.25 2360.0,1179.25 2360.0,980.5 1850.0,980.5 1850.0,831.5 1730.0,831.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2340.0,1179.25 2360.0,1179.25 2360.0,1288.0 1850.0,1288.0 1850.0,1170.5 1730.0,1170.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,1188.0 2360.0,1188.0 2360.0,980.5 1850.0,980.5 1850.0,831.5 1730.0,831.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,1188.0 2360.0,1188.0 2360.0,1053.0 1750.0,1053.0 1750.0,1170.5 1730.0,1170.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 1750.0,441.5 1750.0,679.0 2360.0,679.0 2360.0,805.25 2340.0,805.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 1750.0,441.5 1750.0,1170.5 1730.0,1170.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
@@ -49,7 +49,7 @@
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
 <text x="963.0" y="346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 43</tspan>
+<tspan x="963.0" dy="12">Дубли вне владельца: 35</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей функции; охрана jobs/, tools/, src/ (#1376)</tspan>
 </text>
@@ -105,8 +105,11 @@
 <tspan x="658.0" dy="17.5">общий владелец плиты кровли; KPP1 пока строит её локально</tspan>
 <tspan x="658.0" dy="17.5"></tspan>
 <tspan x="658.0" dy="17.5">slab: меш и петля границы -&gt; плита кровли или Ambiguous</tspan>
+<tspan x="658.0" dy="17.5">hole_plate: план отверстия парапета, уровень, верх,</tspan>
+<tspan x="658.0" dy="17.5">внешний контур -&gt; плита кровли (сборщик задания, #1381)</tspan>
+<tspan x="658.0" dy="17.5">или ошибка</tspan>
 </text>
-<text x="658.0" y="830.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="658.0" y="883.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <text x="1268.0" y="709.0" font-size="14" text-anchor="start" fill="#1e1e1e">
@@ -126,7 +129,7 @@
 <tspan x="1268.0" dy="17.5">треугольников -&gt; список замен на плоскости</tspan>
 </text>
 <text x="1268.0" y="988.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268.0" dy="12">Дубли вне владельца: 3</tspan>
+<tspan x="1268.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <text x="1878.0" y="709.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">UV и атлас</tspan>
@@ -207,50 +210,51 @@
 <tspan x="1878.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="1878.0" dy="17.5">запуск Blender без окна со свежим JSON-ответом</tspan>
 <tspan x="1878.0" dy="17.5"></tspan>
-<tspan x="1878.0" dy="17.5">blender_executable: путь или DT_BLENDER -&gt; исполняемый</tspan>
-<tspan x="1878.0" dy="17.5">файл Blender; нет — ошибка</tspan>
+<tspan x="1878.0" dy="17.5">blender_executable: --blender &gt; DT_BLENDER (CLI dt qa /</tspan>
+<tspan x="1878.0" dy="17.5">agr) &gt; TWINQA_BLENDER (blender_runner) &gt; установка 5.1.2;</tspan>
+<tspan x="1878.0" dy="17.5">путь к Blender</tspan>
 <tspan x="1878.0" dy="17.5">blender_command: скрипт, аргументы -&gt; одна командная</tspan>
 <tspan x="1878.0" dy="17.5">строка Blender без окна (закреплённая версия, без</tspan>
 <tspan x="1878.0" dy="17.5">автозапуска)</tspan>
 <tspan x="1878.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="1878.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="1878.0" y="1309.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878.0" dy="12">Дубли вне владельца: 24</tspan>
+<text x="1878.0" y="1327.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="12">Дубли вне владельца: 10</tspan>
 <tspan x="1878.0" dy="15.0">Правило проверки: своя командная строка Blender (--background +</tspan>
 <tspan x="1878.0" dy="15.0">--python) вместо общего blender_command / run_blender; охрана</tspan>
 <tspan x="1878.0" dy="15.0">jobs/, tools/, src/ (#1378)</tspan>
 </text>
-<rect x="2075.0" y="661.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="661.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2075.0" y="661.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2105.0" y="661.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2105.0" dy="14">мастер-модель</tspan>
 <tspan x="2105.0" dy="17.5">(FBX/.blend)</tspan>
 </text>
-<rect x="1720.0" y="1035.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="1035.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="1035.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1035.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">UV, атлас,</tspan>
 <tspan x="1750.0" dy="17.5">текстуры</tspan>
 </text>
-<rect x="1415.0" y="1261.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="1261.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="1261.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="1261.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="2075.0" y="962.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="962.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2075.0" y="963.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2105.0" y="963.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2105.0" dy="14">Blender/Max</tspan>
 <tspan x="2105.0" dy="17.5">строит</tspan>
 </text>
-<rect x="2075.0" y="1270.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="1270.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2105.0" dy="14">свежее чтение</tspan>
-<tspan x="2105.0" dy="17.5">экспорта</tspan>
+<rect x="2025.0" y="1035.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="1035.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">свежее чтение</tspan>
+<tspan x="2055.0" dy="17.5">экспорта</tspan>
 </text>
-<rect x="2025.0" y="670.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="670.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="2025.0" y="670.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="670.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">номер тайла</tspan>
 </text>
-<rect x="1720.0" y="797.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="797.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="679.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="679.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">номер тайла</tspan>
 </text>
 </svg>

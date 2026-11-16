@@ -213,13 +213,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 43\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
+   "text": "Дубли вне владельца: 35\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e7436c9fc6c53677",
-   "originalText": "Дубли вне владельца: 43\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
+   "originalText": "Дубли вне владельца: 35\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -579,7 +579,7 @@
    "x": 650.0,
    "y": 699.0,
    "width": 470,
-   "height": 107.5,
+   "height": 160.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -613,7 +613,7 @@
    "x": 658.0,
    "y": 709.0,
    "width": 454,
-   "height": 87.5,
+   "height": 140.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -633,13 +633,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous",
+   "text": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous\nhole_plate: план отверстия парапета, уровень, верх,\nвнешний контур -> плита кровли (сборщик задания, #1381)\nили ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e055eec75f5eb0b4",
-   "originalText": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous",
+   "originalText": "Кровля и плита\nВладелец: adapters/max/agr_tools/roof_core.py\nобщий владелец плиты кровли; KPP1 пока строит её локально\n\nslab: меш и петля границы -> плита кровли или Ambiguous\nhole_plate: план отверстия парапета, уровень, верх,\nвнешний контур -> плита кровли (сборщик задания, #1381)\nили ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -647,7 +647,7 @@
    "id": "e01a0a674fb8eec4",
    "type": "rectangle",
    "x": 650.0,
-   "y": 820.5,
+   "y": 873.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -681,7 +681,7 @@
    "id": "e8557b923cc2b0ed",
    "type": "text",
    "x": 658.0,
-   "y": 830.5,
+   "y": 883.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -851,13 +851,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 3",
+   "text": "Дубли вне владельца: 1",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ebbc87b6742c8172",
-   "originalText": "Дубли вне владельца: 3",
+   "originalText": "Дубли вне владельца: 1",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1459,7 +1459,7 @@
    "x": 1870.0,
    "y": 1073.0,
    "width": 470,
-   "height": 212.5,
+   "height": 230.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -1501,7 +1501,7 @@
    "x": 1878.0,
    "y": 1083.0,
    "width": 454,
-   "height": 192.5,
+   "height": 210.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1521,13 +1521,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "text": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e8b8779b8f489e86",
-   "originalText": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "originalText": "Связь с DCC (Blender / 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nзапуск Blender без окна со свежим JSON-ответом\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nblender_command: скрипт, аргументы -> одна командная\nстрока Blender без окна (закреплённая версия, без\nавтозапуска)\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1535,7 +1535,7 @@
    "id": "e7c3b463ea5ad90f",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1299.5,
+   "y": 1317.0,
    "width": 470,
    "height": 80.0,
    "angle": 0,
@@ -1569,7 +1569,7 @@
    "id": "e32db9413dafe301",
    "type": "text",
    "x": 1878.0,
-   "y": 1309.5,
+   "y": 1327.0,
    "width": 454,
    "height": 60.0,
    "angle": 0,
@@ -1591,13 +1591,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
+   "text": "Дубли вне владельца: 10\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e7c3b463ea5ad90f",
-   "originalText": "Дубли вне владельца: 24\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
+   "originalText": "Дубли вне владельца: 10\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1643,11 +1643,11 @@
     ],
     [
      20.0,
-     -31.0
+     -26.25
     ],
     [
      120.0,
-     -31.0
+     -26.25
     ],
     [
      120.0,
@@ -1685,7 +1685,7 @@
    "id": "ec8c1eb7b1bf9505",
    "type": "text",
    "x": 2045.0,
-   "y": 661.0,
+   "y": 661.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1793,7 +1793,7 @@
    "id": "e647a70c1b18162d",
    "type": "text",
    "x": 1690.0,
-   "y": 1035.0,
+   "y": 1035.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1901,7 +1901,7 @@
    "id": "e5b126af16a90368",
    "type": "text",
    "x": 1385.0,
-   "y": 1261.5,
+   "y": 1261.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1937,9 +1937,9 @@
    "id": "ef95d128700adec0",
    "type": "arrow",
    "x": 2340.0,
-   "y": 1179.25,
+   "y": 1188.0,
    "width": 630.0,
-   "height": 347.75,
+   "height": 356.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1975,19 +1975,19 @@
     ],
     [
      20.0,
-     -198.75
+     -207.5
     ],
     [
      -490.0,
-     -198.75
+     -207.5
     ],
     [
      -490.0,
-     -347.75
+     -356.5
     ],
     [
      -610.0,
-     -347.75
+     -356.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2009,7 +2009,7 @@
    "id": "e1713a01e405b29a",
    "type": "text",
    "x": 2045.0,
-   "y": 962.5,
+   "y": 963.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2045,9 +2045,9 @@
    "id": "e63629d813723557",
    "type": "arrow",
    "x": 2340.0,
-   "y": 1179.25,
+   "y": 1188.0,
    "width": 630.0,
-   "height": 117.5,
+   "height": 135.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2083,19 +2083,19 @@
     ],
     [
      20.0,
-     108.75
+     -135.0
     ],
     [
-     -490.0,
-     108.75
+     -590.0,
+     -135.0
     ],
     [
-     -490.0,
-     -8.75
+     -590.0,
+     -17.5
     ],
     [
      -610.0,
-     -8.75
+     -17.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2116,8 +2116,8 @@
   {
    "id": "e2956f09d14c6626",
    "type": "text",
-   "x": 2045.0,
-   "y": 1270.0,
+   "x": 1995.0,
+   "y": 1035.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2233,7 +2233,7 @@
    "id": "e730527004bd695c",
    "type": "text",
    "x": 1995.0,
-   "y": 670.0,
+   "y": 670.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2341,7 +2341,7 @@
    "id": "e5ad51a41db3e644",
    "type": "text",
    "x": 1690.0,
-   "y": 797.0,
+   "y": 679.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,

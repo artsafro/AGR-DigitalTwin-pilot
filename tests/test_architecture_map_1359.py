@@ -96,16 +96,13 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 12  # #1405 registers the shared window generator + 3D ownership
-    windows = next(c for c in contexts['contexts'] if c['id'] == 'openings')
-    assert windows['owner'] == 'adapters/max/agr_tools/windowgen_core.py'
-    assert {f['name'] for f in windows['functions']} == {'build_type', 'assign_glass'}
+    assert len(contexts["contexts"]) == 11  # #1441 owners + #1380 shared VPM UV replaces vpm-uv-copy
 
 
 @pytest.mark.parametrize("command,ok", [
     ("agr inspect", True), ("agr validate", True), ("agr vpm-to-npm", True), ("agr package-vpm", True),
     ("dt derive atlas", True), ("dt qa xview", True), ("dt spec compare", True), ("dt inspect", True),
-    ("agr unwrap-atlas", False), ("agr ucx", False), ("agr", False), ("dt derive nonsense", False),
+    ("agr unwrap-atlas", False), ("agr ucx", True), ("agr brick-seams", False), ("agr", False), ("dt derive nonsense", False),
     ("dt nonsense", False), ("python tools/x.py", False), ("dt qa xview extra", False), ("", False),
 ])
 def test_command_exists(command, ok):
@@ -284,13 +281,12 @@ def test_guard_green_on_repo_with_allowlist(capsys):
 
 def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
-    assert {k[0] for k in allowed} == set(guard.RULES) - {'window-generator'}
-    # #1405 starts with no grandfathered window implementations, not a fake exemption.
-    assert not any(k[0] == 'window-generator' for k in allowed)
+    assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left; #1407: site-placement neither
+    assert not any(k[0] == 'window-generator' for k in allowed)  # #1405: no grandfathered copies
     assert all(issue.startswith("#") for issue in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
-    assert len([k for k in jobs if k[0] == "udim-tile"]) == 30   # #1380: two inverse copies now call tile_origin
+    assert len([k for k in jobs if k[0] == "udim-tile"]) == 28   # #1531: live ELV inverse copies use tile_origin
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
 

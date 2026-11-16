@@ -43,6 +43,7 @@ def _sibling(name, alias):
 
 
 atlas = _sibling('atlas_core.py', 'agr_tools_atlas_core_npm')
+_udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_npm')
 
 
 def _num(v, name):
@@ -106,7 +107,7 @@ def _tri_area2(a, b, c):
 
 
 def tile_of(u, v):
-    return 1001 + int(math.floor(u)) + 10 * int(math.floor(v))
+    return _udimtile.udim_tile(u, v)
 
 
 def combine(meshes):
@@ -187,14 +188,25 @@ def plan(meshes, opts, maps):
         kind = 'glass' if mid in glass_ids else ('texture' if spec.get('map') else 'plug')
         uv_a = geo_a = 0.0
         tile_area = {}
+        off_grid = []
+        from_table = str(mid) in o['udim_table']
         for f in faces:
             p = [cm['verts'][i] for i in cm['tris'][f]]
             q = [cm['uvs'][t] for t in cm['uv_tris'][f]]
             a2, a3 = _tri_area2(*q), _tri_area3(*p)
             uv_a += a2
             geo_a += a3
-            c = tile_of(sum(x[0] for x in q) / 3.0, sum(x[1] for x in q) / 3.0)
-            tile_area[c] = tile_area.get(c, 0.0) + a3
+            if not from_table:
+                try:
+                    c = tile_of(sum(x[0] for x in q) / 3.0, sum(x[1] for x in q) / 3.0)
+                except _udimtile.UdimDomainError:
+                    off_grid.append(f)
+                else:
+                    tile_area[c] = tile_area.get(c, 0.0) + a3
+        if off_grid:
+            findings.append(('uv_off_grid', off_grid,
+                             'ID {}: UV centroid outside the UDIM domain; no VPM table entry'.format(mid)))
+            continue
         base = {'library_id': mid, 'kind': kind, 'part': sorted(parts[mid])[0], 'material': spec.get('name'),
                 'map': spec.get('map') if kind == 'texture' else None,
                 'color': list(spec.get('color') or [128, 128, 128])}

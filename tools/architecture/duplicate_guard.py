@@ -27,13 +27,19 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `vpm-uv` owner tools/blender/vpm_uv.py (#1380): shared Blender periodic VPM UV + edge-ring slicer;
   flags definitions named pack_uv / texel_cut under jobs/ + tools/ + src/. This is not the gated NPM atlas
   owner migration (#1141). KPP1/TEC26 are import shims; PSU275 imports the shared owner directly.
+- `seam-seal`  owner tools/blender/seam_seal.py (#1381): the one Blender seam seal (weld + T-junction ring splits, quads
+  only; moved from jobs/KPP1/scripts/seal.py, now an import shim). Flags any other `def seal` / `def ring_split` /
+  `def t_junctions` (its function names). Every row must say why it stays.
+- `site-placement` owner src/dt_ai/placement/site.py (#1407, [D329]): the one site placement run (`dt place site` /
+  `agr place`, NPM + VPM at the same points [D293]). Flags any other `engine.place(...)` call, or a bare `place(...)`
+  imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
 - `window-generator` owner adapters/max/agr_tools/windowgen_core.py (#1405): definitions named build_type or
   assign_glass under jobs/ + tools/ + src/ are refused; imports/calls remain valid. No legacy copies are allowlisted.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
 and src/ now call the owner); `delivery-zip` jobs/ + tools/ + src/ (#1377: owner settled); `blender-launch`,
-`sintez-checker`, `master-qa` jobs/ + tools/ + src/ from the start (#1378, #1379). Each guarded
+`sintez-checker`, `master-qa`, `seam-seal` jobs/ + tools/ + src/ from the start (#1378, #1379, #1381). Each guarded
 folder must exist (a missing one is an error, not an empty pass).
 The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml: every finding in a guarded scope
 must be listed there with an issue reference, and every listed row (also the documented copies outside the guarded
@@ -52,6 +58,13 @@ its policy functions); a historical row must have no live chain
 and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`. `--table` prints the Russian
 «живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
 runs only the copy scan (synthetic test roots without the maps).
+
+Historical class (#1546, [D327]): `historical_scripts` = scripts of a `finished_jobs` folder that are listed in the
+frozen baseline docs/agents/job_scripts_baseline.txt, sit outside any skeleton.json folder and that no live chain
+reaches (and no entrypoint names as evidence); a script added later is never historical. They are still scanned
+above; the root `.ignore` holds one generated block
+(`--write-ignore`) with a HISTORICAL header line per job that hides them from agent search (ripgrep). A missing,
+stale or extra entry (a live script hidden) is a STATUS problem.
 """
 import argparse
 import ast
@@ -75,6 +88,8 @@ RULES = {
     "sintez-checker": "tools/blender/sintez_checker.py",
     "master-qa": "tools/blender/qa_master.py",
     "vpm-uv": "tools/blender/vpm_uv.py",
+    "seam-seal": "tools/blender/seam_seal.py",
+    "site-placement": "src/dt_ai/placement/site.py",
     "window-generator": "adapters/max/agr_tools/windowgen_core.py",
 }
 WRITE_MODES = {"w", "x", "a"}
@@ -82,14 +97,18 @@ WRITE_MODES = {"w", "x", "a"}
 GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
            "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
-           "vpm-uv": ("jobs", "tools", "src"),
-           "window-generator": ("jobs", "tools", "src")}   # #1405: shared Max/CLI window builder
+           "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
+           "seam-seal": ("jobs", "tools", "src"),   # #1381
+           "site-placement": ("jobs", "tools", "src"),   # #1407: one site placement run, guarded from the start
+           "window-generator": ("jobs", "tools", "src")}
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
-REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "window-generator"}
+REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
+                   "site-placement", "window-generator"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
-               "master-qa": {"world_bm"}}
+               "master-qa": {"world_bm"},
+               "seam-seal": {"seal", "ring_split", "t_junctions"}}
 SINTEZ_ENTRY = "calculate_all_checks"   # the checker's own "Check AGR zip-files" entry point
 
 
@@ -233,6 +252,23 @@ def _vpm_uv_hits(tree):
             and node.name in {'pack_uv', 'texel_cut'}]
 
 
+def _seal_hits(tree):
+    """Definitions carrying the seam-seal owner's function names (`def seal` / `ring_split` / `t_junctions`)."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in OWNED_NAMES["seam-seal"]]
+
+
+def _place_hits(tree):
+    """Calls of the placement engine run `engine.place(...)`, or a bare `place(...)` imported from
+    dt_ai.placement.engine: a site run outside the one placement command is a job-local copy (#1407)."""
+    bare = any(isinstance(n, ast.ImportFrom) and n.module == "dt_ai.placement.engine"
+               and any(a.name == "place" and a.asname in (None, "place") for a in n.names) for n in ast.walk(tree))
+    return [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (
+        isinstance(node.func, ast.Attribute) and node.func.attr == "place"
+        and isinstance(node.func.value, ast.Name) and node.func.value.id == "engine"
+        or bare and isinstance(node.func, ast.Name) and node.func.id == "place")]
+
+
 def _window_hits(tree):
     """Protect the window builder and 3D ownership entry points; mere calls are not copies."""
     return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
@@ -240,8 +276,8 @@ def _window_hits(tree):
 
 
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
-          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits,
-          "window-generator": _window_hits}
+          "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
+          "site-placement": _place_hits, "window-generator": _window_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -393,48 +429,17 @@ COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406
 # Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
 # listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
 LIVE_BYPASS_BASELINE = frozenset({
-    ("contexts", "adapters/max/agr_tools/atlas_core.py::pack", "402002d484"),
-    ("contexts", "adapters/max/agr_tools/npm2vpm_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/npm_core.py::tile_of", "ded8ff2561"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "fa20d4136a"),
-    ("contexts", "adapters/max/agr_tools/udimplug_core.py::tile_offset", "d163d10dca"),
-    ("contexts", "adapters/max/agr_tools/udimview_core.py::face_tile", "8fa30eddc4"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "8b58df8f2d"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
+
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
-    ("contexts", "jobs/KPP1/scripts/build_kpp1.py:421", ""),
-    ("contexts", "jobs/KPP1/scripts/seal.py:302", ""),
-    ("contexts", "jobs/KPP1/scripts/seal.py:73", ""),
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
     ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "54a2d44744"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "eb17152aa7"),
+
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 
-    # blender-launch rows of #1378 merged into #1424: live tools/ + src/ launches outside blender_command / run_blender
-    ("contexts", "src/dt_ai/cli/shared_tools.py::command", "5a31c914e8"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "41b1d5662a"),
-    ("contexts", "tools/flora/build_flora_npm_light.py::execute", "83b1fa0042"),
-    ("contexts", "tools/flora/build_flora_star.py::_blender", "e5c254530a"),
-    ("contexts", "tools/library/check_library.py::native_inspect", "c85d66fb6e"),
-    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
-    ("contexts", "tools/materials/bind_ground_textures.py::_run_blender", "707f4be9fd"),
-    ("contexts", "tools/methods/body/run_benchmarks.py::_blender", "18f971bee9"),
-    ("contexts", "tools/methods/ground/build_variant.py::_blender", "37235a2e47"),
-    ("contexts", "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx", "f5a8a5aa67"),
-    ("contexts", "tools/methods/run_variant.py::run_extra", "d4b2fad230"),
-    ("contexts", "tools/methods/ucx/run_benchmarks.py::main", "9c40344e89"),
-    ("contexts", "tools/methods/windows/run_benchmarks.py::main", "c2afb4241e"),
-    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
-    ("contexts", "tools/research/fbx_reader_compare.py::_blender", "8b777603c2"),
-    ("contexts", "tools/sintez_parity.py::run_live.run", "56b4b34392"),
-
+    # blender-launch: the 16 live tools/ + src/ launches of #1378/#1424 call blender_command since #1530
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))
@@ -570,6 +575,117 @@ def finished_jobs(root, contexts):
     return jobs
 
 
+# Historical job scripts (#1546, [D327]): scripts of a finished (delivered) job that no live command/route reaches
+# and that no entrypoint names as its evidence. They stay unchanged and every scan above still reads them; a
+# generated block of the root `.ignore` hides them from agent search (ripgrep reads `.ignore` by default). The
+# per-job header line of that block marks them historical (a header inside each script would shift the `path:line`
+# rows of the context maps and change the script bytes recorded by the deliveries).
+SCRIPT_SUFFIXES = (".py", ".ms", ".rb", ".sh", ".mjs")  # the script types jobs/ tracks (.gitignore)
+IGNORE_BEGIN = "# BEGIN historical-job-scripts (#1546, [D327]) - generated: duplicate_guard.py --write-ignore"
+IGNORE_END = "# END historical-job-scripts"
+GLOB_CHARS = re.compile(r"([\\*?\[\]!#])")
+
+
+# Frozen baseline of the job scripts at the #1546 cut (PR #1553 r1): historical/legacy is a list of script paths,
+# never a whole job folder - new work lands in sub-folders of finished jobs (jobs/KPP1/<task>-<issue>/) and must
+# stay visible and checked. A line is never added; removing one is allowed.
+JOB_BASELINE = "docs/agents/job_scripts_baseline.txt"
+SKELETON_CONFIG = "skeleton.json"
+
+
+def load_job_baseline(root):
+    """Frozen baseline -> frozenset of repo paths; missing/empty file, a path outside jobs/ or a duplicate raise."""
+    path = Path(root) / JOB_BASELINE
+    if not path.is_file():
+        raise ValueError(f"{JOB_BASELINE}: missing (the frozen #1546 baseline of job scripts)")
+    out = set()
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip() or line.startswith("#"):
+            continue
+        parts = line.split("/")
+        if line != line.strip() or parts[0] != "jobs" or len(parts) < 3 or "\\" in line \
+                or any(p in ("", ".", "..") for p in parts) or Path(line).suffix.lower() not in SCRIPT_SUFFIXES:
+            raise ValueError(f"{JOB_BASELINE}:{n}: {line!r} is not a jobs/<ID>/.../<script> path")
+        if line in out:
+            raise ValueError(f"{JOB_BASELINE}:{n}: {line} listed twice")
+        out.add(line)
+    if not out:
+        raise ValueError(f"{JOB_BASELINE}: empty")
+    return frozenset(out)
+
+
+def in_skeleton_job(root, rel):
+    """True when a folder between jobs/ and the script holds skeleton.json (the job opted in to the contract)."""
+    parts = rel.split("/")
+    return any((Path(root).joinpath(*parts[:i]) / SKELETON_CONFIG).is_file() for i in range(2, len(parts)))
+
+
+def historical_scripts(root, finished, chains, live_evidence=(), baseline=None):
+    """Sorted repo paths of the historical scripts: in the frozen baseline, inside a finished job, outside any
+    skeleton.json folder and not reached by a live chain (a new script in a finished job is never historical)."""
+    baseline = load_job_baseline(root) if baseline is None else baseline
+    out = []
+    for job in sorted(finished):
+        for p in sorted((Path(root) / job).rglob("*")):
+            rel = p.relative_to(root).as_posix()
+            if p.is_file() and p.suffix.lower() in SCRIPT_SUFFIXES and rel in baseline and rel not in chains \
+                    and rel not in live_evidence and not in_skeleton_job(root, rel):
+                out.append(rel)
+    return out
+
+
+def render_ignore_block(scripts):
+    """The generated `.ignore` block: one HISTORICAL header line per job, then its anchored, escaped paths."""
+    lines, job = [IGNORE_BEGIN], None
+    for rel in scripts:
+        this = "/".join(rel.split("/")[:2])
+        if this != job:
+            job = this
+            lines.append(f"# HISTORICAL [D327] {job}: delivered job; scripts kept unchanged, hidden from agent search, "
+                         "still scanned by duplicate_guard")
+        lines.append("/" + GLOB_CHARS.sub(r"\\\1", rel).replace(" ", "\\ "))
+    lines.append(IGNORE_END)
+    return "\n".join(lines) + "\n"
+
+
+def _ignore_parts(text):
+    if text.count(IGNORE_BEGIN) != 1 or text.count(IGNORE_END) != 1 or text.index(IGNORE_END) < text.index(IGNORE_BEGIN):
+        return None
+    head, rest = text.split(IGNORE_BEGIN, 1)
+    block, tail = rest.split(IGNORE_END, 1)
+    return head, IGNORE_BEGIN + block + IGNORE_END + "\n", tail[1:] if tail.startswith("\n") else tail
+
+
+def ignore_problems(root, scripts):
+    """Problems of the root `.ignore` block against the historical scripts ([] when it is exactly the render)."""
+    path = Path(root) / ".ignore"
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    parts = _ignore_parts(text)
+    if parts is None:
+        return [f".ignore: no single historical-job-scripts block ({len(scripts)} historical scripts unhidden); "
+                "run duplicate_guard.py --write-ignore"]
+    want = render_ignore_block(scripts)
+    if parts[1] == want:
+        return []
+    have = {ln for ln in parts[1].splitlines() if ln.startswith("/")}
+    need = {ln for ln in want.splitlines() if ln.startswith("/")}
+    return [f".ignore: historical block is stale: missing {sorted(need - have)[:5]} ({len(need - have)}), "
+            f"extra (live or gone) {sorted(have - need)[:5]} ({len(have - need)}); run duplicate_guard.py --write-ignore"]
+
+
+def write_ignore(root, scripts):
+    """Replace (or append) the generated block of root/.ignore; text outside the block is kept."""
+    path = Path(root) / ".ignore"
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    parts = _ignore_parts(text)
+    if parts is None and IGNORE_BEGIN in text:
+        raise ValueError(".ignore: broken historical-job-scripts block (BEGIN/END); fix it by hand")
+    head, _, tail = parts or (text + ("\n" if text and not text.endswith("\n") else ""), "", "")
+    tmp = path.with_name(".ignore.partial")
+    tmp.write_text(head + render_ignore_block(scripts) + tail, encoding="utf-8", newline="\n")
+    tmp.replace(path)
+
+
 def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE):
     """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees."""
     problems = []
@@ -669,6 +785,8 @@ def main(argv=None):
     ap.add_argument("--table", action="store_true", help="print the Russian live-bypass table + compaction order")
     ap.add_argument("--copies-only", action="store_true",
                     help="only the copy scan of the allowlist (synthetic test roots); skips the #1424 status check")
+    ap.add_argument("--write-ignore", action="store_true",
+                    help="regenerate the historical-job-scripts block of the root .ignore (#1546) before checking")
     args = ap.parse_args(argv)
     try:
         contexts = mini_yaml.load(args.contexts or args.root / "docs/architecture/contexts.yaml")
@@ -681,7 +799,13 @@ def main(argv=None):
                 maps["contexts"] = contexts
             rows = rows_of(maps)
             roots, chains = live_chains(args.root)
-            problems = status_problems(args.root, rows, chains, roots, finished_jobs(args.root, contexts))
+            finished = finished_jobs(args.root, contexts)
+            problems = status_problems(args.root, rows, chains, roots, finished)
+            evidence = {str(e.get("evidence", "")) for e in contexts.get("entrypoints", [])}
+            hidden = historical_scripts(args.root, finished, chains, evidence)
+            if args.write_ignore:
+                write_ignore(args.root, hidden)
+            problems += ignore_problems(args.root, hidden)
     except (OSError, SyntaxError, ValueError, KeyError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2

@@ -11,6 +11,30 @@ Run the machine checks: `py -3 tools/qa/validate_package.py <zip|fbx|geojson> --
 (stages V001-V017; exit 0 passed, 1 fail, 2 review/not_run left). Stages it reports
 `not_run` need the FBX scene (tools/blender readback) or manual review — never count them as pass.
 
+## Version diff before showing or packing (#1536)
+
+Before showing or packing any new archive version, compare it with the **previous version**
+and state the declared changes, including exact object names and categories:
+`uv run python tools/qa/archive_diff.py previous.zip new.zip --expect-changed Main:uv --report diff-v002.json`.
+For the pre-pack gate, compare the previous exported FBX with the new exported FBX; rerun on
+both ZIPs after packing. Repeat `--expect-changed Object:geometry` or `Object:uv` as needed;
+bare `Object` explicitly allows all its changes, including addition/removal, materials and transforms.
+No declarations means every object must remain unchanged. A `.001`-style object/material suffix
+always fails, even when declared. Unknown declarations and unsupported/incomplete readback fail closed.
+Require exit 0 and retain the input hashes, report and declared changes; nonzero blocks showing/packing.
+A first version has no baseline: record that explicitly, never call an absent diff a pass.
+
+This read-only command supports binary FBX 7.4/7.5 and ZIPs containing them (no DCC import,
+no extraction). It reports index-corresponding vertex displacement, local bbox, topology,
+raw UV-layer changes and material names/assignments. Tolerance defaults to 1e-6 **file units**;
+nonzero displacement exactly at tolerance fails conservatively. Reindexed vertices can flag
+false differences: review them, do not claim geometric equivalence. Changed non-FBX ZIP members
+are reported and block automatically; they have no object exemption. Existing report paths are
+refused; use a fresh versioned path and consume the current exit code, not an old report.
+This gate does not replace exported-file validation, SINTEZ, manual gates or user acceptance.
+Non-mesh models, animation/skin objects and ASCII FBX are unsupported (exit 2), never silently omitted.
+Input SHA-256 snapshots detect persistent edits during readback, not changes restored between snapshots.
+
 ## Decision first: which rule set
 
 - **NPM / VPM package** → run the V001–V017 checks in `docs/domain/validation.md`;
@@ -33,6 +57,15 @@ Run in priority order from `CLAUDE.md`. Each check ends as `pass`, `fail`,
    texture-set counts; texture resolutions.
 5. **Visual fidelity.** Screenshots from fixed cameras (front and angled), compared
    with the approved reference or previous accepted version.
+
+## Review scene before opening for the user (#1365)
+
+Run the read-only [review-texture gate](../../../docs/procedure/REVIEW_TEXTURES.md) on the
+exact saved review file and declared textured IDs before opening any scene for the user.
+Require linked, available/packed Base Color images in Blender; plain Bitmap per reviewed
+Max ID (no MultiTile-only diffuse). Report joint sampling at the current viewport limit;
+`fail`/`review` is not a pass. Never change global DCC settings without asking first.
+This gate is separate from regulatory delivery UDIM/slot rules and visual acceptance.
 
 ## Modelling gates (every modelling job, #1030)
 

@@ -9,6 +9,8 @@
 title_ru: "Маршрут ВПМ / ОКС v2: событийный штурм (КПП1, ПСУ275, ТЭЦ26, СРЕDА, 4БК)"
 route: oks-vpm
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка"
   steps:
     - stages: "sources,parts,gate1"
@@ -47,8 +49,10 @@ actors:
   - id: checker
     ru: "Чекер СИНТЕЗ"
 local_contexts:
+  - id: npm
+    ref: vpm-oks-contexts.yaml#npm
   - id: ucx
-    ru: "Коллизии UCX"
+    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
 stages:
   - id: sources
@@ -138,6 +142,8 @@ stages:
     evidence:
       - docs/procedure/node-r6-oks-body-facade.md
       - jobs/KPP1/seam-1339/README.md
+      - tools/blender/seam_seal.py
+      - tools/qa/roof_parapet_seam.py
   - id: decor
     event_ru: "Декор, навесные элементы, разрезанный фасад: врезаны"
     actor: agent-dcc
@@ -169,14 +175,18 @@ stages:
     event_ru: "UCX построены (только ВПМ)"
     actor: agent
     context: ucx
+    commands:
+      - "agr ucx"
     rules:
       - D012
       - D098
       - D134
       - D162
       - D225
+      - D330
     evidence:
       - docs/domain/areas/ucx.md
+      - src/dt_ai/geometry/ucx_command.py
       - jobs/KPP1/scripts/vpm_ucx.py
   - id: master-topology
     event_ru: "QA мастера до триангуляции экспорта: топология и xView, отказы записаны"
@@ -196,7 +206,7 @@ stages:
   - id: npm
     event_ru: "НПМ-версия в тех же координатах готова (атлас)"
     actor: agent-dcc
-    context: uv-atlas
+    context: npm
     commands:
       - "agr vpm-to-npm"
     rules:
@@ -304,15 +314,6 @@ hotspots:
     evidence:
       - jobs/KPP1/spec-compare-v002.md
       - jobs/KPP1/windowgen-1338/README.md
-  - id: parapet-seam
-    stage: roof
-    ru: "Шов кровля / парапет: КПП1 переделывал вставную кровлю (#1339); СРЕDА — стыки текстуры не сходятся под парапетом (423 пересечения на 95 рёбрах)"
-    rules:
-      - D038
-      - D254
-    evidence:
-      - jobs/KPP1/seam-1339/README.md
-      - docs/retros/2026-11-05-elv-tc-vpm-claude.md
   - id: brick-courses
     stage: uv
     ru: "4БК кирпич: 37 → 38 рядов, перевязка на стыке этажей, швы панелей 10 мм по красным линиям архитектора; пилот в 1 UDIM (#1326) открыт"
@@ -332,18 +333,6 @@ hotspots:
       - jobs/KPP1/scripts/vpm_uv.py
       - jobs/TEC26-OKS/scripts/vpm_uv.py
       - jobs/TEC26-OKS/STATE.md
-  - id: ucx-copies
-    stage: ucx
-    ru: "UCX: 5 своих скриптов в jobs/ (КПП1, ПСУ275, ТЭЦ26 ×2, СРЕDА), agr ucx — заглушка; ТЭЦ26 AC08: триангуляция UCX ждёт Артёма; СРЕDА — 960 UCX"
-    rules:
-      - D225
-      - D162
-    evidence:
-      - jobs/KPP1/scripts/vpm_ucx.py
-      - jobs/PSU275/scripts/vpm_ucx.py
-      - jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py
-      - jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py
-      - jobs/TEC26-OKS/AC08/PILOT_REPORT.md
   - id: export-meta
     stage: package
     ru: "Пакет: agr package-npm и export_meta на main (#1361); КПП1 собран без утверждённого Ground (D285); сданный Ground не готов (D288)"

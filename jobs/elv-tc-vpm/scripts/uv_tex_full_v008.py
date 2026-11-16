@@ -43,9 +43,14 @@ Rules (docs/domain/uv-textures.md, materials.md; precedent jobs/KPP1/scripts/vpm
   face attribute 'mat_id' (1-35 reading scheme), the tile as 'udim'.
 """
 import bpy, bmesh, sys, os, json, math
+import importlib.util
 from mathutils import Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location('elv_udimtile', os.path.join(
+    HERE, '..', '..', '..', 'adapters', 'max', 'agr_tools', 'udimtile_core.py'))
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(HERE, "..", "..", "KPP1", "scripts"))
 from pilot_outlines import U, uA, uB  # noqa: E402
@@ -469,7 +474,7 @@ for r in faces:
         ext[r["key"]] = max(ext.get(r["key"], 0.0), max(us) - min(us), max(vs) - min(vs))
 for r in faces:
     k, t, f = r["key"], TILES[r["key"]], r["f"]
-    off = Vector((((t["udim"] - 1001) % 10), ((t["udim"] - 1001) // 10)))
+    off = Vector(_udimtile.tile_origin(t["udim"]))
     q = qa[k]
     q["faces"] += 1
     us, vs = [p[0] for p in r["uv"]], [p[1] for p in r["uv"]]

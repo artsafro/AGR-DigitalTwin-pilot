@@ -162,6 +162,10 @@ Full machine list: `docs/architecture/contexts.yaml` (`duplicates`). Line number
    `jobs/KPP1/scripts/vpm_uv.py:155`, `jobs/TEC26-OKS/scripts/vpm_uv.py:155`. After #1141.
 6. **Body** (owner `src/dt_ai/ops/operations.py`): `jobs/KPP1/scripts/seal.py:73,302` (vs `dt_ai.ops.seams.join_parts`),
    `jobs/KPP1/scripts/build_kpp1.py:194`.
+   Done in #1381: the seal moved unchanged to the one Blender seam owner `tools/blender/seam_seal.py` (guard rule
+   `seam-seal`; `join_parts` is another duty, numpy part join); `seal.py` is an import shim; `build_kpp1.roof` takes the
+   plate outline and height from `roof_core.hole_plate` (R6 #1352 / D292, wrapper); `load_spec` stays own-duty.
+   The VPM red block `parapet-seam` is closed by one check, `tools/qa/roof_parapet_seam.py`.
 
 Non-package ZIP writers seen by the scan and deliberately not listed (not delivery packages):
 `tools/max/build_agr_tools.py:245` (MZP), `tools/methods/{ucx,windows}/run_benchmarks.py`,

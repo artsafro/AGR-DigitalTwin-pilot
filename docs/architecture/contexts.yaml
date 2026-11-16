@@ -68,7 +68,11 @@ rules:
   - id: master-qa
     owner: tools/blender/qa_master.py
     ru: "своя проверка мастера в Blender (def world_bm) вместо общей tools/blender/qa_master.py; охрана jobs/, tools/, src/ (#1379)"
+  - id: seam-seal
+    owner: tools/blender/seam_seal.py
+    ru: "свой шов в Blender (def seal / ring_split / t_junctions) вместо общего tools/blender/seam_seal.py; охрана jobs/, tools/, src/ (#1381)"
 shared_kernel:
+  serves_stage: uv
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
   owner: adapters/max/agr_tools/udimtile_core.py
@@ -218,18 +222,7 @@ shared_kernel:
       hash: "eb17152aa7"
       status: superseded
       why: "старый черновик UV, заменён uv_tex_full_v008.py (TASK.md)"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "54a2d44744"
-      status: live-bypass
-      step: "-"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "eb17152aa7"
-      status: live-bypass
-      step: "-"
+
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
@@ -247,66 +240,26 @@ shared_kernel:
       issue: "#1337"
       hash: "d0179a710c"
       status: historical
-    - at: "adapters/max/agr_tools/atlas_core.py::pack"
-      rule: udim-tile
-      issue: "#1141"
-      hash: "402002d484"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/npm_core.py::tile_of"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "ded8ff2561"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "fa20d4136a"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/uvtile_core.py::tile_of_id"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "2eed51e648"
-      status: live-bypass
-      step: "-"
     - at: "adapters/max/agr_tools/uvtile_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/udimplug_core.py::tile_offset"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "d163d10dca"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/udimview_core.py::face_tile"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "8fa30eddc4"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "8b58df8f2d"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/uvlayout_core.py::udim_of_cell"
       rule: udim-tile
       issue: "#1337"
@@ -314,10 +267,9 @@ shared_kernel:
       status: wrapper
     - at: "adapters/max/agr_tools/npm2vpm_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
+      status: wrapper
 
     - at: "tools/source/measure_spec_blender.py::udim"
       rule: udim-tile
@@ -338,6 +290,7 @@ contexts:
       - name: assign_glass
         contract: "3D bounds -> один владелец стекла или явный failing drop"
   - id: body-shell
+    serves_stage: model
     ru: "Оболочка ПСУ275"
     area: docs/domain/areas/body.md
     owner: src/dt_ai/geometry/shell.py
@@ -346,6 +299,7 @@ contexts:
       - name: shell_body
         contract: "вершины, грани, внешние нормали, толщина -> оболочка с доказательствами источника"
   - id: ucx-build
+    no_stage: "UCX construction is not a separate stage of this NPM route"
     ru: "Построение UCX Main / Ground"
     area: docs/domain/areas/ucx.md
     owner: src/dt_ai/geometry/ucx_build.py
@@ -354,6 +308,7 @@ contexts:
       - name: build_main
         contract: "меш Main и параметры -> выпуклые куски UCX, отчёт включения и отклонений"
   - id: psu-ucx-build
+    no_stage: "Historical site-specific UCX construction; no NPM route stage"
     ru: "ПСУ275: второй построитель UCX"
     area: docs/domain/areas/ucx.md
     owner: jobs/PSU275/scripts/vpm_stage5_oks.py
@@ -362,6 +317,7 @@ contexts:
       - name: "<module>"
         contract: "piece.ucx -> меши UCX_SM_<address>_Main_NNN; не проверка зазоров"
   - id: vpm-udim
+    no_stage: "VPM material preparation belongs to the VPM route"
     ru: "ВПМ: построение UDIM в AGR Tools"
     area: docs/domain/areas/uv-atlas.md
     owner: adapters/max/agr_tools/vpm_core.py
@@ -370,6 +326,7 @@ contexts:
       - name: build
         contract: "меши, параметры, перенумерация -> части ВПМ и таблица UDIM"
   - id: roof
+    serves_stage: model
     ru: "Кровля и плита"
     area: docs/domain/areas/body.md
     owner: adapters/max/agr_tools/roof_core.py
@@ -377,13 +334,14 @@ contexts:
     functions:
       - name: slab
         contract: "меш и петля границы -> плита кровли или Ambiguous"
+      - name: hole_plate
+        contract: "план отверстия парапета, уровень, верх, внешний контур -> плита кровли (сборщик задания, #1381) или ошибка"
     duplicates:
-      - at: "jobs/KPP1/scripts/build_kpp1.py:421"
+      - at: "jobs/KPP1/scripts/build_kpp1.py:432"
         match: "def roof("
         issue: "#1381"
-        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; локальная плита/парапет, roof_core не вызывается"
-        status: live-bypass
-        step: "#1381"
+        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; контур и высота плиты из roof_core.hole_plate (R6 #1352, D292), стены отверстия и шахта — локально"
+        status: wrapper
   - id: body
     ru: "Корпус и геометрия"
     area: docs/domain/areas/body.md
@@ -401,18 +359,6 @@ contexts:
       - name: plan_opacity_swaps
         contract: "сцена, кандидаты, бюджет треугольников -> список замен на плоскости"
     duplicates:
-      - at: "jobs/KPP1/scripts/seal.py:302"
-        match: "def seal("
-        issue: "#1359"
-        ru: "свой шов и сварка Т-узлов вместо dt_ai.ops.seams.join_parts"
-        status: live-bypass
-        step: "#1381"
-      - at: "jobs/KPP1/scripts/seal.py:73"
-        match: "def t_junctions("
-        issue: "#1359"
-        ru: "свой поиск Т-узлов на швах"
-        status: live-bypass
-        step: "#1381"
       - at: "jobs/KPP1/scripts/build_kpp1.py:194"
         match: "def load_spec("
         issue: "#1359"
@@ -450,6 +396,7 @@ contexts:
         status: historical
   - id: vpm-uv
     ru: "Периодическая UV-развёртка ВПМ"
+    no_stage: "VPM UV preparation belongs to the VPM route"
     area: docs/domain/areas/uv-atlas.md
     owner: tools/blender/vpm_uv.py
     owner_ru: "общая Blender bmesh-развёртка KPP1, TEC26 и PSU275 (#1380), не упаковка атласа НПМ"
@@ -670,7 +617,7 @@ contexts:
     owner_ru: "запуск Blender без окна со свежим JSON-ответом"
     functions:
       - name: blender_executable
-        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
       - name: blender_command
         contract: "скрипт, аргументы -> одна командная строка Blender без окна (закреплённая версия, без автозапуска)"
       - name: run_blender
@@ -718,41 +665,13 @@ contexts:
         hash: "17382a99ff"
         ru: "проверки сцены #298 Ватутино: прогон принятой версии, запуск не меняем"
         status: historical
-      - at: "src/dt_ai/cli/shared_tools.py::command"
+      - at: "tools/library/migrate_windows.py::main"
         rule: blender-launch
         issue: "#1378"
-        hash: "5a31c914e8"
-        ru: "команда `dt derive` отдаёт argv дочернему процессу (уже с --disable-autoexec): перевод на blender_command отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/flora/build_flora_npm_light.py::execute"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "41b1d5662a"
-        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/flora/build_flora_npm_light.py::execute"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "83b1fa0042"
-        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/flora/build_flora_star.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "e5c254530a"
-        ru: "инструмент Флоры (маршрут Флора, не шесть запусков #1378): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/library/check_library.py::native_inspect"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "c85d66fb6e"
-        ru: "инструмент библиотеки: перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
+        hash: "9d1268b5a7"
+        ru: "мигратор опубликованной библиотеки окон v001: catalogue.json привязан к sha256 этого файла (#1530)"
+        status: own-duty
+        why: "опубликованный library/windows/catalogue.json v001 хранит sha256 этого файла во входах; правка запуска - только с новой версией библиотеки (v002), не переупаковываем"
       - at: "tools/library/maf_material_ids.py::main"
         rule: blender-launch
         issue: "#1378"
@@ -760,83 +679,13 @@ contexts:
         ru: "текст команды в отчёте для ручного запуска, не запуск"
         status: own-duty
         why: "текст команды Blender в отчёте для ручного запуска человеком, сам ничего не запускает"
-      - at: "tools/library/migrate_windows.py::main"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "9d1268b5a7"
-        ru: "инструмент библиотеки: перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/materials/bind_ground_textures.py::_run_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "707f4be9fd"
-        ru: "привязка текстур Ground (маршрут Ground): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/body/run_benchmarks.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "18f971bee9"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/ground/build_variant.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "37235a2e47"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/parametric_parts/mesh_recipe.py::_blender_fbx"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "f5a8a5aa67"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/run_variant.py::run_extra"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "d4b2fad230"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/ucx/run_benchmarks.py::main"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "9c40344e89"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/methods/windows/run_benchmarks.py::main"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "c2afb4241e"
-        ru: "каталог методов (бенчмарки вариантов, не маршрут сдачи): перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
       - at: "tools/research/checker_mutation.py::freeze"
         rule: blender-launch
         issue: "#1378"
         hash: "3457dc7d0e"
-        ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/research/fbx_reader_compare.py::_blender"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "8b777603c2"
-        ru: "исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
-      - at: "tools/sintez_parity.py::run_live.run"
-        rule: blender-launch
-        issue: "#1378"
-        hash: "56b4b34392"
-        ru: "синтетическая сверка с СИНТЕЗ (#432), не сдача: перевод отдельной карточкой"
-        status: live-bypass
-        step: "-"
+        ru: "замороженный прогон исследования проверяющего: запечатанный корпус привязан к sha256 этого файла (#1530)"
+        status: own-duty
+        why: "замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера"
 relations:
   - from: body
     to: uv-atlas

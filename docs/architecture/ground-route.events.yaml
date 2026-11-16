@@ -13,6 +13,8 @@
 title_ru: "Маршрут Ground (НПМ + ВПМ) v2: событийный штурм (Ватутино v015, Силикатный, КПП1, ТЭЦ26)"
 route: ground
 scheme:
+  export_context:
+    ref: package-contexts.yaml#export
   source_ru: "DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников"
   steps:
     - stages: "sources,zero"
@@ -53,7 +55,7 @@ actors:
 local_contexts:
   - id: ground
     ru: "Поверхность Ground (покрытия, рельеф, юбка)"
-    owner: tools/ground/build_ground_v015.py
+    owner: src/dt_ai/geometry/ground_site.py
   - id: heights
     ru: "Высоты и нулевая отметка"
     owner: src/dt_ai/core/heights.py
@@ -61,7 +63,7 @@ local_contexts:
     ru: "Расстановка МАФ и Флоры"
     owner: src/dt_ai/placement/engine.py
   - id: ucx
-    ru: "Коллизии UCX"
+    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
 stages:
   - id: sources
@@ -82,6 +84,9 @@ stages:
     event_ru: "Граница участка и нулевая отметка: из проекта или агент уточняет"
     actor: agent
     context: heights
+    commands:
+      - "agr zero"
+      - "dt ground zero"
     rules:
       - D279
       - D018
@@ -90,10 +95,14 @@ stages:
     evidence:
       - docs/research/placement-heights-1330.md
       - src/dt_ai/core/heights.py
+      - tools/ground/project_zero.py
   - id: surfaces
     event_ru: "Плоский Ground: покрытия разбиты по штриховкам → ID материалов"
     actor: agent-dcc
     context: ground
+    commands:
+      - "agr ground site"
+      - "dt ground site"
     rules:
       - D218
       - D030
@@ -102,12 +111,14 @@ stages:
       - jobs/VATUTINO-SITE/ground-parts.md
       - jobs/VATUTINO-SITE/ground-material-ids-v015.json
       - jobs/silikatniy-uvk-pzu-viz/LESSONS.md
+      - src/dt_ai/geometry/ground_site.py
   - id: quads
     event_ru: "Плоский Ground: треугольники, швы и вставки (квады)"
     actor: agent-dcc
     context: ground
     commands:
-      - "agr ground"
+      - "agr ground site"
+      - "dt ground site"
     rules:
       - D157
       - D129
@@ -120,6 +131,9 @@ stages:
     event_ru: "Текстуры по ID: бесшовные UV-острова, тайлы, UDIM = ID"
     actor: agent-dcc
     context: uv-atlas
+    commands:
+      - "agr ground site"
+      - "dt ground site"
     rules:
       - D097
       - D160
@@ -133,14 +147,15 @@ stages:
     actor: agent-dcc
     context: ground
     commands:
-      - "agr ground"
-      - "dt ground v015"
+      - "agr ground site"
+      - "dt ground site"
     rules:
       - D293
       - D153
       - D154
     evidence:
       - jobs/VATUTINO-SITE/relief-constraints.md
+      - tools/ground/build_ground_site.py
       - tools/ground/build_ground_v015.py
       - jobs/kasatkino-ground/LESSONS.md
   - id: skirt
@@ -148,7 +163,8 @@ stages:
     actor: agent-dcc
     context: ground
     commands:
-      - "agr ground"
+      - "agr ground site"
+      - "dt ground site"
     rules:
       - D293
       - D251
@@ -159,24 +175,33 @@ stages:
     event_ru: "UCX рельефа построены (только ВПМ)"
     actor: agent
     context: ucx
+    commands:
+      - "agr ucx"
     rules:
       - D098
       - D134
       - D012
+      - D330
     evidence:
       - docs/domain/areas/ucx.md
+      - src/dt_ai/geometry/ucx_command.py
       - docs/domain/areas/ground-surface.md
   - id: placement
     event_ru: "МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт"
     actor: agent
     context: placement
+    commands:
+      - "dt place site"
+      - "agr place"
     rules:
+      - D329
       - D095
       - D100
       - D166
       - D302
     evidence:
       - jobs/VATUTINO-SITE/placement-report.md
+      - src/dt_ai/placement/site.py
       - jobs/VATUTINO-SITE/place_site.py
   - id: npm
     event_ru: "НПМ-версия в координатах: МАФ НПМ и Флора НПМ на атласе, Ground на атласе"
@@ -261,13 +286,13 @@ stages:
 hotspots:
   - id: hatch-colours
     stage: surfaces
-    ru: "Силикатный: цвет ID = фон штриховки (bgcolor), а не цвет линий — v001 взял не тот; белая разметка на каждом стыке покрытий"
+    ru: "Силикатный: цвет ID = фон штриховки (bgcolor), а не цвет линий — agr ground site берёт bgcolor, без фона — только цвет из спецификации с причиной (#1406); остаётся белая разметка на каждом стыке покрытий"
     evidence:
       - jobs/silikatniy-uvk-pzu-viz/LESSONS.md
       - docs/procedure/node-r5-ground.md
   - id: project-zero
     stage: zero
-    ru: "Ноль проекта: h_relief = нулевая отметка (D279), система высот unknown для КПП1 / ТЭЦ26; Силикатный (#1315) — ±0.000 из ПЗУ / ВП_5; нет в проекте — агент уточняет (D293); команды нет, только src/dt_ai/core/heights.py (#1341)"
+    ru: "Ноль проекта: h_relief = нулевая отметка (D279), система высот unknown для КПП1 / ТЭЦ26; Силикатный (#1315) — ±0.000 из ПЗУ / ВП_5; нет в проекте — агент уточняет (D293); команда agr zero / dt ground zero проверяет Z экспорта (#1406), система высот КПП1 / ТЭЦ26 по-прежнему unknown"
     rules:
       - D279
       - D293
@@ -283,14 +308,6 @@ hotspots:
       - D193
     evidence:
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
-  - id: tool-bound-to-vatutino
-    stage: relief
-    ru: "agr ground = только Ватутино v015 (данные из --job-dir, источник-зависимый) и строит рельеф до покрытий; на новом участке (Силикатный #1315) общей команды «плоский Ground → проекция на рельеф» нет"
-    rules:
-      - D293
-    evidence:
-      - tools/ground/build_ground_v015.py
-      - docs/research/placement-heights-1330.md
   - id: steep-step
     stage: relief
     ru: "Ватутино: ступень 80° на южной границе — обрыв TIN между двумя отметками подпорной стены без геометрии (1079ED / 1079EE, 0,75 м в плане, перепад 3,73 м); вырез под пятно — точечные исключения"
@@ -300,30 +317,14 @@ hotspots:
     evidence:
       - docs/research/vatutino-ground-80deg-step-source.md
       - jobs/VATUTINO-SITE/ground-notch-approval-v015.json
-  - id: projection
-    stage: relief
-    ru: "Касаткино: проекцию (Conform) делал Артём сам после приёмки плоской FBX-подложки; теперь проекция — шаг маршрута после текстур (D293), общего инструмента проекции нет"
-    rules:
-      - D293
-    evidence:
-      - jobs/kasatkino-ground/LESSONS.md
   - id: skirt-gap
     stage: skirt
-    ru: "Юбка: 20 внешних рёбер Ватутино v015 дали опуск 0 (GND-03) — юбка есть, рёбра лежат на крутой полосе 80°; ТЭЦ26 — «полигоны по периметру утоплены минимум на метр вниз»"
+    ru: "Юбка: 20 внешних рёбер Ватутино v015 дали опуск 0 (GND-03) — юбка есть, рёбра лежат на крутой полосе 80°; ТЭЦ26 — «полигоны по периметру утоплены минимум на метр вниз»; agr ground site считает опуск каждого внешнего ребра (skirt_gap_edges), v015 не правится (#1406)"
     rules:
       - D251
     evidence:
       - docs/research/vatutino-ground-v015-outer-skirt-gap-20-edges.md
       - jobs/TEC26-OKS/STATE.md
-  - id: ucx-ground
-    stage: ucx
-    ru: "UCX Ground: agr ucx — заглушка; dt ground v015 строит только геометрию (ucx: not_run); UCX v014 / v015 собраны в DCC отдельно и подхватываются из C:/x путями внутри assemble_delivery.py"
-    rules:
-      - D225
-    evidence:
-      - tools/ground/build_ground_v015.py
-      - jobs/VATUTINO-SITE/assemble_delivery.py
-      - jobs/VATUTINO-SITE/ground-build-v014.md
   - id: budget
     stage: npm
     ru: "Бюджет НПМ 180 000 (GND-04): Ground 46 479 + МАФ 55 403 + Флора 64 454 = 166 336; ВПМ Флора 443 788 — делит Артём (D167)"

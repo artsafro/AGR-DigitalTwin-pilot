@@ -237,15 +237,24 @@ def test_atlas_binding_generated_probe_any_byte_flip_is_a_mismatch(tmp_path):
 
 
 # ---- synthetic complete NPM set: export-time records -> manifest ------------------------------------------------
+def ground_source(master):
+    """[D328]: the Ground FBX keeps its own master (its source), not the OKS master."""
+    src = Path(master).parent / 'ground_mesh.json'
+    if not src.exists():
+        src.write_bytes(b'{"synthetic": "ground source"}')
+    return src
+
+
 def npm_set(tmp, master):
-    """Three exports (two OKS + Ground) of one master; each exporter writes its record into its derivation store."""
+    """Three exports (two OKS + Ground); OKS records name the OKS master, the Ground record its own source ([D328])."""
     stores = []
     for name, data in NPM_SET.items():
         out = tmp / ('export-' + name[:-4]) / 'fbx'
         out.mkdir(parents=True)
         (out / name).write_bytes(data)
         store = bm.derivation_store(out)
-        bm.write_export_derivation([out / name], master, store, 'abc1234', master_sha256=bm.sha256_file(master))
+        src = ground_source(master) if bm.role_of(name) == 'ground' else master
+        bm.write_export_derivation([out / name], src, store, 'abc1234', master_sha256=bm.sha256_file(src))
         stores.append(store)
     package = tmp / '0000_Syn.zip'
     with zipfile.ZipFile(package, 'w') as z:
@@ -255,14 +264,15 @@ def npm_set(tmp, master):
 
 
 def build_and_find(package, master, stores):
-    argv = ['build', str(package), '--master', str(master), '--derivation', *map(str, stores),
-            '--transform-name', 'identity', '--builder-commit', 'abc1234']
+    argv = ['build', str(package), '--master', 'oks=' + str(master), '--master', 'ground=' + str(ground_source(master)),
+            '--derivation', *map(str, stores), '--transform-name', 'identity', '--builder-commit', 'abc1234']
     assert cli.main(argv, reader=good_rb) == 0
     with zipfile.ZipFile(package) as z:
         members = {n: bm.sha256_bytes(z.read(n)) for n in z.namelist()}
     raw = Path(bm.manifest_path(package)).read_bytes()
     return lambda: bm.manifest_findings(raw, members, package.name, bm.sha256_file(package),
-                                        bm.sha256_file(master), str(package.parent))
+                                        {'oks': bm.sha256_file(master),
+                                         'ground': bm.sha256_file(ground_source(master))}, str(package.parent))
 
 
 def test_synthetic_complete_npm_set_from_export_records_gets_manifest_pass(tmp_path):
@@ -307,12 +317,14 @@ def test_fresh_process_cli_build_reads_the_store_directory(tmp_path):
     master = master_file(tmp_path / 'in')
     package, stores = npm_set(tmp_path, master)
     r = subprocess.run([sys.executable, str(ROOT / 'tools/derive/build_manifest.py'), 'build', str(package),
-                        '--master', str(master), '--derivation', *map(str, stores), '--transform-name', 'identity',
+                        '--master', 'oks=' + str(master), '--master', 'ground=' + str(ground_source(master)),
+                        '--derivation', *map(str, stores), '--transform-name', 'identity',
                         '--builder-commit', 'abc1234', '--no-readback'], capture_output=True, text=True, timeout=120)
     assert r.returncode == 0, r.stderr
     m = bm.parse_manifest(Path(bm.manifest_path(package)).read_bytes())
     assert {a['name'] for a in m['artifacts']} == set(NPM_SET)
-    assert {a['master_sha256'] for a in m['artifacts']} == {bm.sha256_file(master)}
+    assert {a['role']: a['master_sha256'] for a in m['artifacts']} == {
+        'oks': bm.sha256_file(master), 'ground': bm.sha256_file(ground_source(master))}
 
 
 # ---- atlas generator writes the binding ------------------------------------------------------------------------
