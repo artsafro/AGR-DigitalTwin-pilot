@@ -464,10 +464,7 @@ def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: d
     if manifest is not None and raw is None:
         raise ValueError(f"build manifest {manifest} does not exist")
     members = {n: digest(d) for n, d in files.items()}
-    if isinstance(master, dict):
-        master_sha = {r: build_manifest.sha256_file(p) for r, p in master.items()}
-    else:
-        master_sha = build_manifest.sha256_file(master) if master is not None else None
+    master_sha = build_manifest.master_hashes(master)
     v1 = st["V001"]
     for status, code, detail in build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
                                                                  str(path.resolve().parent)):
@@ -583,8 +580,12 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     # A scene readback of an FBX/ZIP consumes the area: VPM selects the triangle band, and both
     # profiles check Ground footprint coverage. Anywhere else the value is unused.
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
-    quad = Path(master["oks"]) if isinstance(master, dict) and "oks" in master else (
-        None if isinstance(master, dict) else master)  # [D328]: V003 reads the OKS master
+    quad = master.get('oks') if isinstance(master, dict) else master
+    if isinstance(quad, list):
+        notes.append('multiple OKS sources: quad master not selected; V003 master check remains not_run')
+        quad = None  # [D332]: independent dependencies are not permission to choose the first source.
+    elif quad is not None:
+        quad = Path(quad)
     if scene_readback:
         add_master(st, kind, quad, notes)
     elif quad is not None:
@@ -726,8 +727,10 @@ def main(argv=None) -> int:
         except ValueError as exc:
             print(f"Error: {exc}", file=sys.stderr)
             return 2
-        args.master = ({r: Path(p) for r, p in parsed.items()} if isinstance(parsed, dict) else Path(parsed))
-        for p in (args.master.values() if isinstance(args.master, dict) else [args.master]):
+        args.master = ({r: [Path(p) for p in paths] if isinstance(paths, list) else Path(paths)
+                        for r, paths in parsed.items()} if isinstance(parsed, dict) else Path(parsed))
+        paths = [p for ps in args.master.values() for p in (ps if isinstance(ps, list) else [ps])] if isinstance(args.master, dict) else [args.master]
+        for p in paths:
             if not p.is_file():
                 print(f"Error: {p} does not exist", file=sys.stderr)
                 return 1

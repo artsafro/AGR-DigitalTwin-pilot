@@ -35,9 +35,11 @@ VPM_FILE = re.compile(r'^SM_(?P<stem>' + ADDRESS + r')(?P<ext>\.fbx|\.geojson)$'
 VPM_TEX = re.compile(r'^T_(?P<stem>' + ADDRESS + r')_(?:Diffuse|ERM|Normal)_[0-9]+\.[0-9]{4}\.png$')
 OKS_INDEX = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<index>[0-9]{3})$')
 TRAILING_NUMBER = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<number>[0-9]+)$')
-GROUND_SUFFIXES = ('GroundElGlass', 'GroundGlass', 'GroundEl', 'Ground', 'Flora')  # longest first
+GROUND_ROLES = {'GroundElGlass': 'groundel', 'GroundGlass': 'ground', 'GroundEl': 'groundel',
+                'Ground': 'ground', 'Flora': 'flora'}  # longest first; provenance roles [D331]
+GROUND_SUFFIXES = tuple(GROUND_ROLES)
 OKS_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<index>00[1-9]|01[0-9]|020)_(?P<suffix>Main|MainGlass)$')
-GROUND_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>GroundElGlass|GroundGlass|GroundEl|Ground|Flora)$')
+GROUND_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>' + '|'.join(GROUND_SUFFIXES) + r')$')
 NEAR_ORIGIN_M = 100.0  # NPM sits in MSK coordinates: a pivot this close to 0,0,0 is a placement error (lab L04)
 # FBX settings of the NPM export (lab L04: GeoAGR's are right except Triangulate, GeoAGR.ms:66578-66605)
 GROUND_FBX_PARAMS = (('Animation', False), ('Cameras', False), ('Lights', False), ('ASCII', False),
@@ -645,6 +647,25 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
 
 
 # ---- export.ground_fbx: NPM FBX split by the suffix grammar --------------------------------------------------
+def role_of(name):
+    """Provenance role shared by package manifests [D331]. File grouping remains Ground [D097].
+
+    The existing suffix vocabulary also covers texture, collision and Light names; exact tokens only.
+    GroundEl/Flora keep independent sources even inside the combined Ground FBX.
+    """
+    stem = os.path.splitext(os.path.basename(os.fspath(name)))[0]
+    tokens = stem.split('_')
+    if tokens[0] == 'T' and len(tokens) >= 4:
+        suffix = tokens[-3]
+    else:
+        if len(tokens) > 1 and tokens[-1] == 'Light':
+            tokens.pop()
+        if len(tokens) > 1 and tokens[0] == 'UCX' and tokens[-1].isdigit():
+            tokens.pop()
+        suffix = tokens[-1]
+    return GROUND_ROLES.get(suffix, 'oks')
+
+
 def classify_mesh(name):
     """('ground', address, suffix) | ('oks', address, NNN) | None. Suffix grammar of docs/domain/geometry.md:39-44;
     Flora belongs to the Ground file (D097), unlike GeoAGR's lowercase 'ground' substring test (GeoAGR.ms:66611)."""
