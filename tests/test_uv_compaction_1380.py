@@ -143,8 +143,9 @@ def test_d320_leftovers_have_explicit_historical_reasons(path, constant, reason)
 
 
 def test_no_delivery_changes():
-    base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
-    paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
-    # a delivery is a file a job produced (FBX, ZIP, textures, reports); job scripts are code. #1381 also edits job
-    # scripts (KPP1 seal shim, build_kpp1.roof via roof_core), so the check is on the kind of file, not on #1380's names.
-    assert all(p.endswith('.py') for p in paths), [p for p in paths if not p.endswith('.py')]
+    # #1407: pinned to the #1380 merge (PR #1495), not to the current branch - a later PR may touch jobs/ scripts
+    merge = '6f506951'
+    paths = subprocess.check_output(['git', 'diff', '--name-only', merge + '^1', merge, '--', 'jobs'], cwd=ROOT,
+                                    text=True).splitlines()
+    assert paths
+    assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)

@@ -99,7 +99,7 @@ mid-poly мастер, D292) → проёмы и окна (библиотека 
 | `zero` | `agr zero` / `dt ground zero` (#1406) | `h_relief` = ноль проекта (D279) и поточечная проверка Z экспорта: каждая вершина верха против рельефа в её XY |
 | `surfaces` … `skirt` | `agr ground site` / `dt ground site` (#1406) | один спец-файл участка: штриховки → ID (цвет = фон штриховки), плоский Ground, UDIM = ID, проекция, юбка ≥ 1 м |
 | `ucx` | `agr ucx` (#1404) | та же команда, цель `Ground`; UCX Ground v014 повторены, геометрия совпала (715 кусков, отклонение 0 м) |
-| `placement` | нет команды | движок `dt_ai.placement` вызывается из `jobs/VATUTINO-SITE/place_site.py` |
+| `placement` | `dt place site` / `agr place` (#1407) | NPM и ВПМ в одни точки одним запуском (D293, D324); Ватутино — `jobs/VATUTINO-SITE/place_site.py` поверх команды |
 | `sintez` | `agr checker` (#1379) | тот же запуск чекера, что у ОКС |
 
 `agr ground site` / `dt ground site` (#1406) собирает любой участок в порядке D293 из спец-файла (DXF + sha256,
@@ -141,6 +141,6 @@ D282/D283 здесь — исторические метки ветки #1315 в
 
 1. Сделано (#1406): `agr ground site` — Ground любого участка в порядке D293, проверен на Силикатном #1315.
 2. Сделано (#1406): `agr zero` — `h_relief` и проверка Z экспорта одной командой.
-3. Команда расстановки МАФ / Флоры поверх `dt_ai.placement` вместо `place_site.py` в job, сразу low-poly и
-   high-poly в одни точки.
+3. Сделано (#1407): `dt place site` / `agr place` поверх `dt_ai.placement` — low-poly и high-poly в одни точки;
+   прогон Силикатного ждёт входы #1315.
 4. UCX Ground — сделано в #1404: `agr ucx ... Ground` (D325).

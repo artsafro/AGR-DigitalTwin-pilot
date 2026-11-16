@@ -10,7 +10,8 @@ from pathlib import Path
 
 
 ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"],
-           "zero": ["ground", "zero"]}
+           "zero": ["ground", "zero"],
+           "place": ["place", "site"]}   # #1407: MAF + Flora NPM + VPM at the same points
 # agr ground (#1406): `agr ground site|zero|v015 ARGS` picks the step; any other first argument keeps the
 # frozen Vatutino record `dt ground v015 ARGS` (unchanged for existing callers).
 GROUND_STEPS = ("site", "zero", "v015")

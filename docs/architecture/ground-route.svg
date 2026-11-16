@@ -56,7 +56,7 @@
 <rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="168.75" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2160" y1="225.0" x2="2200" y2="254.38" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="2200" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2200" y="348.75" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2200" y="468.75" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2200" y="548.75" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="2480" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
@@ -338,12 +338,14 @@
 <tspan x="2315.0" dy="21.25">поверхность, удаляется</tspan>
 <tspan x="2315.0" dy="21.25">и пишется в отчёт</tspan>
 </text>
-<text x="2315.0" y="385.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="14">Нет команды agr/dt</tspan>
+<text x="2315.0" y="367.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Команда:</tspan>
+<tspan x="2315.0" dy="17.5">dt place site</tspan>
+<tspan x="2315.0" dy="17.5">agr place</tspan>
 </text>
 <text x="2315.0" y="481.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="14">Правила: D095, D100, D166,</tspan>
-<tspan x="2315.0" dy="17.5">D302</tspan>
+<tspan x="2315.0" dy="14">Правила: D324, D095, D100,</tspan>
+<tspan x="2315.0" dy="17.5">D166, D302</tspan>
 </text>
 <text x="2315.0" y="561.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="14">Контекст: Расстановка МАФ и</tspan>
