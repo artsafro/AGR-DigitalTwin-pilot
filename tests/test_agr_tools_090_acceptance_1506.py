@@ -1,4 +1,4 @@
-"""Historical release acceptance documentation; no Max or installer execution."""
+"""new-case: historical release acceptance docs; no Max or installer execution."""
 from pathlib import Path
 import re
 
