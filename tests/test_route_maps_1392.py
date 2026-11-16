@@ -46,6 +46,26 @@ def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
 
 
+# ---------------------------------------------------------------- #1581 contract and npm ownership
+@pytest.mark.parametrize("name", sorted(route_map.context_maps()))
+def test_1581_blender_contracts(name):
+    cmap = _maps()[name]
+    contracts = [f["contract"] for c in [cmap["shared_kernel"], *cmap["contexts"]]
+                 for f in c["functions"] if f["name"] == "blender_executable"]
+    assert len(contracts) == 1
+    text = contracts[0]
+    terms = ["--blender", "DT_BLENDER", "TWINQA_BLENDER", "5.1.2"]
+    assert all(term in text for term in terms)
+    assert [text.index(term) for term in terms] == sorted(text.index(term) for term in terms)
+    assert "CLI" in text and "blender_runner" in text
+
+
+def test_1581_npm_context():
+    assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm"
+    npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm")
+    assert npm["owner"] == "tools/derive/npm_atlas.py"
+
+
 # ---------------------------------------------------------------- D293 recorded and cited
 def test_d293_row_exists_and_is_cited_in_both_routes_and_maps():
     decisions = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
