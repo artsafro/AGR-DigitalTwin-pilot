@@ -33,11 +33,12 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 6 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
 | 7 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
 | 8 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
-| 9 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
-| 10 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 11 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
-| 12 | `geojson` GeoJSON | пробел |
-| 13 | `light-fbx` `_Light.fbx` | пробел |
+| 9 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/qa/verifier.py` → `verifier.json` [#1577] |
+| 10 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 11 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
+| 12 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
+| 13 | `geojson` GeoJSON | пробел |
+| 14 | `light-fbx` `_Light.fbx` | пробел |
 
 ### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
 
@@ -73,9 +74,10 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 8 | `optimise` бюджет НПМ | пробел |
 | 9 | `master-qa` | `tools/qa/master_topology.py` |
 | 10 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 11 | `package-npm` | `agr package-npm` |
-| 12 | `validate` | `agr validate` |
-| 13 | `checker` | `agr checker` |
+| 11 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
+| 12 | `package-npm` | `agr package-npm` |
+| 13 | `validate` | `agr validate` |
+| 14 | `checker` | `agr checker` |
 
 ### `ground-vpm` — Ground + МАФ + Флора + UCX, ВПМ (порядок [D293], рельеф последним)
 
@@ -94,9 +96,36 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 11 | `derive-npm` | `agr vpm-to-npm` |
 | 12 | `master-qa` | `tools/qa/master_topology.py` |
 | 13 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 14 | `package-vpm` | `agr package-vpm` |
-| 15 | `validate` | `agr validate --ground-area-m2` |
-| 16 | `checker` | `agr checker` после визуальной приёмки |
+| 14 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
+| 15 | `package-vpm` | `agr package-vpm` |
+| 16 | `validate` | `agr validate --ground-area-m2` |
+| 17 | `checker` | `agr checker` после визуальной приёмки |
+
+## Verifier step before showing Artem (#1577, observe mode)
+
+`oks-vpm`, `ground-npm` and `ground-vpm` (MAF and Flora are built inside the ground cells) run `verifier` right after
+`readback` and before the model is shown to Artem:
+
+```
+uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 views> --slide <slide.png> \
+  --facades south=<label>,north=..,east=..,west=.. [--legend jobs/<ID>/vpm_textures.json]
+```
+
+- Input: the 6 views `vpm_south/north/east/west/iso` + `npm_iso` (.png, `tools/qa/vlm_checklist.py` `VIEWS`) rendered
+  from the read-back export. VLM = Claude CLI, as in `vlm_checklist.py`.
+- It answers the fixed checklist variant A (#768: recall >= 80 %, FP <= 1) with the views forward and reversed and
+  keeps only order-consistent answers, then scores the materials on 6 axes 1-5 with a one-line reason (missing,
+  base_color, borders, scale, finish, consistency); fix order missing → base colour → borders → scale.
+- It writes `jobs/<ID>/verifier.json` (`schemas/Verifier.schema.json`): findings, the ONE main discrepancy it would
+  fix next, scores. It never overwrites a report (`--out verifier.r2.json` for a rerun) and never edits the model.
+- **Observe is the only mode.** `--mode fix` is refused unless `jobs/<ID>/skeleton.json` sets
+  `"config": {"verifier_mode": "fix"}` — only after Artem's word; at most 3 rounds. Not a delivery gate.
+- The VLM confirms; positions and counts come from geometry and drawing vectors (CrossProjection, arXiv
+  2608.00473: 82 % view matching vs 22 % line localisation). A rib/seam/door finding names *what* to check; where
+  the line is and how many come from the model and the DXF, never from the image.
+- After Artem's review the job records `verifier_review.json` (`{"reviews": [{"verifier": "verifier.json",
+  "artem_corrected": ["material:base_color"]}]}`); `uv run python tools/qa/verifier_summary.py --jobs jobs` shows per
+  job how often the main discrepancy matched his correction.
 
 ## How a job configures the skeleton (one config file)
 

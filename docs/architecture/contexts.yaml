@@ -72,6 +72,7 @@ rules:
     owner: tools/blender/seam_seal.py
     ru: "свой шов в Blender (def seal / ring_split / t_junctions) вместо общего tools/blender/seam_seal.py; охрана jobs/, tools/, src/ (#1381)"
 shared_kernel:
+  serves_stage: uv
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
   owner: adapters/max/agr_tools/udimtile_core.py
@@ -86,6 +87,37 @@ shared_kernel:
     - name: udim_of_cell
       contract: "целые (столбец, ряд) -> номер тайла"
   duplicates:
+    # #1370: single-row formulas in the accepted OBR22 job; retain frozen sources, never rewrite them.
+    - at: "jobs/OBR22-K02/scripts/check_npm_vpm_scale.py::<module>"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "79deee7cc0"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/floor_shared_uv_blender.py::<module>"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "79deee7cc0"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/floor_shared_uv_blender.py::<module>"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "8aced9a623"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::main"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "41b909b6af"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::main"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "5ff23faadf"
+      status: historical
+    - at: "jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::map_face"
+      rule: udim-tile
+      issue: "#1370"
+      hash: "79deee7cc0"
+      status: historical
     - at: "jobs/KPP1/benchmark-1318/account_readback.py::main"
       rule: udim-tile
       issue: "#1337"
@@ -279,6 +311,7 @@ shared_kernel:
       why: "Другая задача: диагностика произвольных UV исходника (отрицательных и вне 0..10), raw tile не подтверждает корректность delivery UDIM."
 contexts:
   - id: body-shell
+    serves_stage: model
     ru: "Оболочка ПСУ275"
     area: docs/domain/areas/body.md
     owner: src/dt_ai/geometry/shell.py
@@ -287,6 +320,7 @@ contexts:
       - name: shell_body
         contract: "вершины, грани, внешние нормали, толщина -> оболочка с доказательствами источника"
   - id: ucx-build
+    no_stage: "UCX construction is not a separate stage of this NPM route"
     ru: "Построение UCX Main / Ground"
     area: docs/domain/areas/ucx.md
     owner: src/dt_ai/geometry/ucx_build.py
@@ -295,6 +329,7 @@ contexts:
       - name: build_main
         contract: "меш Main и параметры -> выпуклые куски UCX, отчёт включения и отклонений"
   - id: psu-ucx-build
+    no_stage: "Historical site-specific UCX construction; no NPM route stage"
     ru: "ПСУ275: второй построитель UCX"
     area: docs/domain/areas/ucx.md
     owner: jobs/PSU275/scripts/vpm_stage5_oks.py
@@ -303,6 +338,7 @@ contexts:
       - name: "<module>"
         contract: "piece.ucx -> меши UCX_SM_<address>_Main_NNN; не проверка зазоров"
   - id: vpm-udim
+    no_stage: "VPM material preparation belongs to the VPM route"
     ru: "ВПМ: построение UDIM в AGR Tools"
     area: docs/domain/areas/uv-atlas.md
     owner: adapters/max/agr_tools/vpm_core.py
@@ -311,6 +347,7 @@ contexts:
       - name: build
         contract: "меши, параметры, перенумерация -> части ВПМ и таблица UDIM"
   - id: roof
+    serves_stage: model
     ru: "Кровля и плита"
     area: docs/domain/areas/body.md
     owner: adapters/max/agr_tools/roof_core.py
@@ -380,6 +417,7 @@ contexts:
         status: historical
   - id: vpm-uv
     ru: "Периодическая UV-развёртка ВПМ"
+    no_stage: "VPM UV preparation belongs to the VPM route"
     area: docs/domain/areas/uv-atlas.md
     owner: tools/blender/vpm_uv.py
     owner_ru: "общая Blender bmesh-развёртка KPP1, TEC26 и PSU275 (#1380), не упаковка атласа НПМ"
@@ -600,7 +638,7 @@ contexts:
     owner_ru: "запуск Blender без окна со свежим JSON-ответом"
     functions:
       - name: blender_executable
-        contract: "путь или DT_BLENDER -> исполняемый файл Blender; нет — ошибка"
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
       - name: blender_command
         contract: "скрипт, аргументы -> одна командная строка Blender без окна (закреплённая версия, без автозапуска)"
       - name: run_blender

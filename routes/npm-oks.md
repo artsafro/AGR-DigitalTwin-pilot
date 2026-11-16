@@ -96,7 +96,7 @@ Arguments after each single-step alias are forwarded unchanged, including `--hel
 | `agr ground site SPEC NEW_OUT` | `dt ground site SPEC NEW_OUT` (any site, D293 order, #1406) |
 | `agr zero ARGS` / `agr ground zero ARGS` | `dt ground zero ARGS` (h_relief D279 + export Z check, #1406) |
 | `agr ground ARGS` / `agr ground v015 ARGS` | `dt ground v015 ARGS` (frozen Vatutino record) |
-| `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS` | `dt derive atlas ATLAS_ARGS`, then `dt derive [--blender BLENDER] npm NPM_ARGS` only on exit 0 |
+| `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS` | `dt derive atlas ATLAS_ARGS`, then `dt derive [--blender BLENDER] npm NPM_ARGS` only on exit 0, then the NPM UV readback `python -m twinqa.npm_uv <exported FBX> <ATLAS>/npm_atlas.json` (#1580: every face inside its atlas region, 8 px padding; a fail exits 1). The export refuses faces that cross UDIM tiles (`--allow-cross-tile` = legacy move, listed in `export_npm_meta.json`) |
 
 For an authorized packet: `uv run agr vpm-to-npm --blender BLENDER SPEC NEW_ATLAS --recipe-dir RECIPE --then-npm MASTER SPEC NEW_ATLAS NEW_EXPORT PREFIX`.
 `--then-npm` is reserved as the argument-group separator (exactly once); `--blender`

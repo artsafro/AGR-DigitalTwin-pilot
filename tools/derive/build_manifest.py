@@ -1,13 +1,14 @@
 """new-case: `agr build-manifest` CLI over adapters/max/agr_tools/build_manifest.py (#1423 delivery set consistency).
 
     agr build-manifest record ARTIFACT [ARTIFACT ...] --master MASTER --out NEW.derivation.json [--builder-commit SHA]
-        [--role oks|ground]
+        [--role oks|ground|groundel|flora]
         Right after an export: which master revision (file SHA-256) these exported files were derived from.
     agr build-manifest build PACKAGE.zip --master MASTER | --master oks=BLEND --master ground=SOURCE
         --derivation REC.json [REC.json ...]
         --transform-name NAME [--transform-file FILE] [--builder-commit SHA] [--no-readback] [--blender EXE]
         Masters per role ([D328], #1525): OKS artifacts from the OKS master, Ground artifacts from their own source;
-        a package with both roles needs `--master role=path` for each; one unkeyed --master fits a one-role package.
+        a package with several roles needs `--master role=path` for each; one unkeyed --master fits a one-role package.
+        [D333, D332]: GroundEl/Flora keep own roles; repeat --master role=path for independent geometry/map sources.
         The FBX export owner readback (dimensions, part positions, materials, UV, UCX-to-visual binding) runs on the
         FBX members of the ZIP (the exact bytes that are delivered) and writes `<stem>.readback.json`; then
         `<stem>.build.json` is written beside the ZIP. Both are new files (never overwritten, never an input).
@@ -75,7 +76,8 @@ def cmd_build(a, reader=None):
         raise ValueError('no package ' + package)
     out_manifest, out_readback = bm.manifest_path(package), bm.readback_path(package)
     master = bm.master_args(a.master)  # one path, or {role: path} ([D328])
-    master_files = list(master.values()) if isinstance(master, dict) else [master]
+    master_files = ([p for paths in master.values() for p in (paths if isinstance(paths, list) else [paths])]
+                    if isinstance(master, dict) else [master])
     a.derivation = bm.derivation_files(a.derivation)  # a store folder (#1505) -> its *.derivation.json records
     inputs = [package] + master_files + list(a.derivation) + ([a.transform_file] if a.transform_file else [])
     taken = {os.path.normcase(os.path.realpath(p)) for p in inputs}
@@ -101,10 +103,10 @@ def cmd_build(a, reader=None):
                                     build_id=manifest['build_id'], now=manifest['created_utc'])
     bm.write_new(out_manifest, bm.dumps(manifest), inputs)
     stale = sorted({x['name'] for x in manifest['artifacts']
-                    if x['master_sha256'] != manifest['masters'][x['role']]['sha256']})
+                    if x['master_sha256'] not in {s['sha256'] for s in bm.source_entries(manifest['masters'][x['role']])}})
     print(json.dumps({'manifest': out_manifest, 'readback': out_readback if readback else None,
                       'build_id': manifest['build_id'],
-                      'masters': {r: e['sha256'] for r, e in manifest['masters'].items()},
+                      'masters': {r: [s['sha256'] for s in bm.source_entries(e)] for r, e in manifest['masters'].items()},
                       'readback_status': readback['status'] if readback else 'not_run',
                       'artifacts_from_other_masters': stale}, ensure_ascii=False))
     return 0
@@ -122,7 +124,7 @@ def parser():
     b = sub.add_parser('build', help='export owner readback + <stem>.build.json beside the ZIP')
     b.add_argument('package')
     b.add_argument('--master', required=True, action='append',
-                   help='master of the package, or ROLE=PATH once per role (oks, ground) [D328]')
+                   help='ROLE=PATH for each independent source (oks, ground, groundel, flora) [D333, D332]')
     b.add_argument('--derivation', nargs='+', required=True)
     b.add_argument('--transform-name', required=True)
     b.add_argument('--transform-file')
