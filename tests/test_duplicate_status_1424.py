@@ -191,7 +191,7 @@ def test_cli_exit_1_on_a_new_live_bypass(monkeypatch, capsys):
     assert guard.main([]) == 1
     out = capsys.readouterr().out
     live = sum(1 for r in guard.rows_of(guard.load_maps(ROOT)) if r.status == "live-bypass")
-    assert out.count("STATUS NEW LIVE BYPASS") == live == 37   # #1441 roots minus four #1380 UV bypasses
+    assert out.count("STATUS NEW LIVE BYPASS") == live == 24   # #1531 removes thirteen remaining UDIM bypasses
 
 
 def test_finished_jobs_evidence_must_exist_and_match(tmp_path):

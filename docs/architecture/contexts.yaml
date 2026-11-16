@@ -218,18 +218,7 @@ shared_kernel:
       hash: "eb17152aa7"
       status: superseded
       why: "старый черновик UV, заменён uv_tex_full_v008.py (TASK.md)"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "54a2d44744"
-      status: live-bypass
-      step: "-"
-    - at: "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "eb17152aa7"
-      status: live-bypass
-      step: "-"
+
     - at: "jobs/elv-tc-vpm/scripts/uv_tex_pilot.py::<module>"
       rule: udim-tile
       issue: "#1337"
@@ -247,66 +236,26 @@ shared_kernel:
       issue: "#1337"
       hash: "d0179a710c"
       status: historical
-    - at: "adapters/max/agr_tools/atlas_core.py::pack"
-      rule: udim-tile
-      issue: "#1141"
-      hash: "402002d484"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/npm_core.py::tile_of"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "ded8ff2561"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "fa20d4136a"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/uvtile_core.py::tile_of_id"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "2eed51e648"
-      status: live-bypass
-      step: "-"
     - at: "adapters/max/agr_tools/uvtile_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/udim_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/udimplug_core.py::tile_offset"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "d163d10dca"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/udimview_core.py::face_tile"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "8fa30eddc4"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
-    - at: "adapters/max/agr_tools/uvlayout_core.py::tile_origin"
-      rule: udim-tile
-      issue: "#1337"
-      hash: "8b58df8f2d"
-      status: live-bypass
-      step: "-"
+      status: wrapper
     - at: "adapters/max/agr_tools/uvlayout_core.py::udim_of_cell"
       rule: udim-tile
       issue: "#1337"
@@ -314,10 +263,9 @@ shared_kernel:
       status: wrapper
     - at: "adapters/max/agr_tools/npm2vpm_core.py::tile_origin"
       rule: udim-tile
-      issue: "#1337"
+      issue: "#1531"
       hash: "af2bc2e385"
-      status: live-bypass
-      step: "-"
+      status: wrapper
 
     - at: "tools/source/measure_spec_blender.py::udim"
       rule: udim-tile

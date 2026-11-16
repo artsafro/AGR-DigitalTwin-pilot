@@ -549,7 +549,7 @@ def pack(vertices, uvs, faces, face_uvs, face_materials, materials, *, mode='gro
             raise AtlasError(f"material {name!r}: UV centre outside the UDIM grid 1001..1100")
         if umn < rec['tu'] - EPS or umx > rec['tu'] + 1 + EPS or vmn < rec['tv'] - EPS or vmx > rec['tv'] + 1 + EPS:
             raise AtlasError(f"material {name!r}: UV island crosses a UDIM tile border")
-        rec['tile'] = 1001 + rec['tu'] + 10 * rec['tv']
+        rec['tile'] = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_atlas').udim_of_cell(rec['tu'], rec['tv'])
         classified = _classify_material(name, spec, dis)
         rec.update(classified)
         rec['x0'], rec['x1'] = (umn - rec['tu']) * rec['W'], (umx - rec['tu']) * rec['W']

@@ -43,6 +43,7 @@ def _sibling(name, alias):
 
 
 atlas = _sibling('atlas_core.py', 'agr_tools_atlas_core_npm')
+_udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_npm')
 
 
 def _num(v, name):
@@ -106,7 +107,7 @@ def _tri_area2(a, b, c):
 
 
 def tile_of(u, v):
-    return 1001 + int(math.floor(u)) + 10 * int(math.floor(v))
+    return _udimtile.udim_tile(u, v)
 
 
 def combine(meshes):

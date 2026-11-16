@@ -382,25 +382,14 @@ COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406
 # Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
 # listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
 LIVE_BYPASS_BASELINE = frozenset({
-    ("contexts", "adapters/max/agr_tools/atlas_core.py::pack", "402002d484"),
-    ("contexts", "adapters/max/agr_tools/npm2vpm_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/npm_core.py::tile_of", "ded8ff2561"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/udim_core.py::tile_origin", "fa20d4136a"),
-    ("contexts", "adapters/max/agr_tools/udimplug_core.py::tile_offset", "d163d10dca"),
-    ("contexts", "adapters/max/agr_tools/udimview_core.py::face_tile", "8fa30eddc4"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "8b58df8f2d"),
-    ("contexts", "adapters/max/agr_tools/uvlayout_core.py::tile_origin", "af2bc2e385"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_of_id", "2eed51e648"),
-    ("contexts", "adapters/max/agr_tools/uvtile_core.py::tile_origin", "af2bc2e385"),
+
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
     ("contexts", "jobs/KPP1/scripts/build_kpp1.py:421", ""),
     ("contexts", "jobs/KPP1/scripts/seal.py:302", ""),
     ("contexts", "jobs/KPP1/scripts/seal.py:73", ""),
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
     ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "54a2d44744"),
-    ("contexts", "jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py::<module>", "eb17152aa7"),
+
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
     ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
 

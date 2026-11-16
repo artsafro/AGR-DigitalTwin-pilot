@@ -32,13 +32,12 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 113; живой обход 37, обёртка 6, исторические 37, своя обязанность 21; разных живых копий 37.
+Строк дублей во всех картах: 105; живой обход 24, обёртка 11, исторические 37, своя обязанность 21; разных живых копий 24.
 Заменённые черновики (не сдача): 12.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
 |---|---|---|---|
 | Связь с DCC (Blender / 3ds Max) | 16 | `src/dt_ai/cli/shared_tools.py`, `tools/flora/build_flora_npm_light.py`, `tools/flora/build_flora_star.py`, `tools/library/check_library.py`, `tools/library/migrate_windows.py`, `tools/materials/bind_ground_textures.py`, `tools/methods/body/run_benchmarks.py`, `tools/methods/ground/build_variant.py`, `tools/methods/parametric_parts/mesh_recipe.py`, `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py`, `tools/methods/windows/run_benchmarks.py`, `tools/research/checker_mutation.py`, `tools/research/fbx_reader_compare.py`, `tools/sintez_parity.py` | нет карточки |
-| Общее ядро: номер тайла UDIM | 13 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py`, `jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py` | нет карточки |
 | Корпус и геометрия | 2 | `jobs/KPP1/scripts/seal.py` | #1381 |
 | Экспорт и пакет сдачи | 2 | `jobs/TEC26-OKS/scripts/package_vpm.py`, `jobs/elv-tc-vpm/scripts/package_vpm_v006.py` | #1377 |
 | UV и атлас | 1 | `tools/materials/npm_atlas_udim.py` | #1380 |
@@ -50,7 +49,7 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 | № | Шаг | Живых обходов |
 |---|---|---|
-| 1 | нет карточки | 30 |
+| 1 | нет карточки | 17 |
 | 2 | #1381 | 3 |
 | 3 | #1377 | 3 |
 | 4 | #1380 | 1 |
@@ -71,10 +70,11 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
    (`src/dt_ai/cli/shared_tools.py`). Четыре инструмента методов берут у владельца только путь к Blender
    (`blender_executable`), а командную строку собирают сами (без `--disable-autoexec`, без изоляции настроек) —
    это обход, не обёртка. Нужна карточка «Сжатие 3b».
-2. **Новая карточка: копии UDIM в ядрах AGR Tools (11).** Восемь ядер MZP (`npm_core`, `udim_core`, `uvtile_core`,
-   `udimplug_core`, `udimview_core`, `uvlayout_core`, `npm2vpm_core`, `atlas_core`) считают тайл сами, хотя рядом
-   лежит `udimtile_core` (#1337). Ни один открытый шаг их не покрывает (#1376 закрыт, #1397 — только `tools/` и
-   `src/`). Нужна карточка «Сжатие 1c».
+2. **#1531 completed: UDIM bypasses 13 -> 0.** Eight MZP cores and the live ELV v008 candidate use
+   `udimtile_core`; five named API wrappers stay explicitly classified as wrappers. Eight obsolete formula
+   rows and all thirteen bypass-baseline keys are removed. Closed face borders, caller tolerances, centroid
+   policy and regulated range checks remain with their callers. Historical/superseded scripts and deliveries
+   are unchanged. The card's original 15 count had already fallen to 13 on base `6f506951`.
 3. **#1397 completed:** live Ground, Flora, methods and DreamSim UDIM helpers now call `udimtile_core`.
    Source intake keeps its raw tile diagnostic as `own-duty` (arbitrary UVs, not a delivery UDIM).
 4. **#1379 (0)** — запуск чекера СИНТЕЗ объединён: маршруты НПМ / ВПМ / пакет идут через `agr checker` и общего владельца `tools/blender/sintez_checker.py`.
@@ -86,6 +86,5 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 9. **Владелец #1377 (3 строки)** — TEC26 ZIP (описательная и hash-pinned строки) и кандидат ELV v006:
    будущая миграция на package_core; закрытый предыдущий шаг не доказывает перенос этих файлов.
 10. **#1405, #1406, #1407, #1410 (0)** — place_site уже вызывает run_blender; остальные — недостающие команды.
-11. **Без карточки: ещё 2 формулы UDIM кандидата ELV v008.** Не сданные исторические копии.
-    KPP1/TEC26 pack_uv и tile_offset перенесены к общим владельцам в #1380.
-    Числа таблицы — `(at, hash)`, не уникальные обязанности.
+11. **#1531 completed: ELV v008 offsets use the shared tile origin.** KPP1/TEC26 pack_uv and tile_offset
+    were migrated in #1380. Table counts are `(at, hash)`, not unique responsibilities; no delivery is rebuilt.

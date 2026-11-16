@@ -14,6 +14,7 @@ PKG = ROOT / "adapters/max/agr_tools"
 
 def load(stem):
     spec = importlib.util.spec_from_file_location("probe1531_" + stem, PKG / (stem + ".py"))
+    assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -86,3 +87,66 @@ def test_live_elv_offset_uses_owner_on_all_tiles():
             ns = {"_udimtile": owner, "Vector": tuple, "t": {"udim": 1001 + col + 10 * row}}
             exec(compile(ast.Module(body=[statement], type_ignores=[]), rel, "exec"), ns)
             assert ns["off"] == (col, row)
+
+
+def test_atlas_closed_edges_tolerance_and_input_preservation():
+    import copy
+
+    atlas = load("atlas_core")
+    verts = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
+    faces = [[0, 1, 2, 3]]
+    mats = {"synthetic": {"color": (90, 120, 160), "dissolve": 1.0}}
+    for u, v, tile in ((0, 0, 1001), (1, 0, 1002), (0, 1, 1011), (9, 9, 1100)):
+        for extra in (0.0, 0.5e-6, 1e-6):
+            uv = [(u, v, 0), (u + 1 + extra, v, 0), (u + 1, v + 1, 0), (u, v + 1, 0)]
+            args = (verts, uv, faces, faces, ["synthetic"], mats)
+            before = copy.deepcopy(args)
+            result = atlas.pack(*args, mode="oks", profile="groundel", size=128)
+            assert result["tiles"] == [tile]
+            assert result["faces"] == [0] and result["dropped"] == []
+            assert len(result["face_uvs"]) == 1
+            assert args == before
+        uv[1] = (u + 1 + 2e-6, v, 0)
+        with pytest.raises(atlas.AtlasError, match="border"):
+            atlas.pack(verts, uv, faces, faces, ["synthetic"], mats, mode="oks", profile="groundel", size=128)
+    for uv in ([], [(0, 0, 0)], [(0, 0, 0), (math.nan, 0, 0), (0, 1, 0), (0, 0, 0)],
+               [(0, 0, 0), (math.inf, 0, 0), (0, 1, 0), (0, 0, 0)]):
+        with pytest.raises(atlas.AtlasError):
+            atlas.pack(verts, uv, faces, faces, ["synthetic"], mats)
+    with pytest.raises(atlas.AtlasError, match="synthetic"):
+        atlas.pack(verts, verts, faces, faces, ["synthetic"], {})
+    with pytest.raises(atlas.AtlasError, match="no faces"):
+        atlas.pack([], [], [], [], [], {})
+
+
+def test_fresh_process_sibling_imports_and_elv_bootstrap(tmp_path):
+    import subprocess
+    import sys
+
+    code = f"""import ast, importlib.util, os
+from pathlib import Path
+root = Path({str(ROOT)!r})
+for stem in ('atlas', 'npm', 'npm2vpm', 'udim', 'udimplug', 'udimview', 'uvlayout', 'uvtile'):
+    path = root / 'adapters/max/agr_tools' / (stem + '_core.py')
+    spec = importlib.util.spec_from_file_location('fresh_' + stem, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    if stem in ('npm2vpm', 'udim', 'uvlayout', 'uvtile'):
+        assert mod.tile_origin(1100) == (9, 9)
+    if stem == 'udimplug':
+        assert mod.tile_offset(1100) == (9, 9)
+path = root / 'jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py'
+tree = ast.parse(path.read_text(encoding='utf-8'))
+nodes = [n for n in tree.body if (isinstance(n, ast.Assign) and
+         any(isinstance(t, ast.Name) and t.id in ('HERE', '_spec', '_udimtile') for t in n.targets)) or
+         (isinstance(n, ast.Expr) and isinstance(n.value, ast.Call) and
+          isinstance(n.value.func, ast.Attribute) and n.value.func.attr == 'exec_module')]
+ns = {{'os': os, 'importlib': importlib, '__file__': str(path)}}
+exec(compile(ast.Module(body=nodes, type_ignores=[]), str(path), 'exec'), ns)
+assert Path(ns['_udimtile'].__file__).resolve() == root / 'adapters/max/agr_tools/udimtile_core.py'
+assert ns['_udimtile'].tile_origin(1100) == (9, 9)
+print('8 standalone imports + live ELV owner bootstrap passed')
+"""
+    result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "8 standalone imports" in result.stdout
