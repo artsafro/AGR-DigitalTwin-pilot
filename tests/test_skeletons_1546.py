@@ -140,7 +140,7 @@ def test_job_probe_every_entry_name_of_every_cell_is_flagged(tmp_path, cell, sid
 @pytest.mark.parametrize("rule,text", [
     ("delivery-zip", "import zipfile\nwith zipfile.ZipFile('o.zip', 'w') as z:\n    pass\n"),
     ("udim-tile", "def t(u, v):\n    return 1001 + u + 10 * v\n"),
-    ("blender-launch", "import subprocess\nsubprocess.run(['blender', '--background', '--python', 'x.py'])\n"),
+    ("blender-launch", "import subprocess\nsubprocess.run(['blender', '--background', '--python-exit-code', '1', '--python', 'x.py'])\n"),
     ("sintez-checker", "import m\nm.calculate_all_checks()\n"),
 ])
 def test_job_duplicate_guard_copy_of_a_stage_fails(tmp_path, rule, text):
