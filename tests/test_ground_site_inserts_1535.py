@@ -192,7 +192,7 @@ def test_same_hatch_two_placements_refused():
         gs.covers_from_dxf(doc, [spec], .002)
 
 
-@pytest.mark.parametrize('attr,value', [('xscale', 2), ('xscale', float('nan')),
+@pytest.mark.parametrize('attr,value', [('xscale', 2), ('xscale', 1.0000000000005), ('xscale', float('nan')),
     ('rotation', float('inf')), ('insert', (float('inf'), 0, 0)), ('extrusion', (0, 1, 0))])
 def test_named_unsupported_insert_transform(attr, value):
     doc, hatch, ins = fixture()

@@ -555,6 +555,8 @@ def _placed_hatch_paths(doc, hatch, chain, chord):
                 raise ValueError(f"INSERT {handle}: MINSERT requires cell [row, column] within {nr} x {nc}")
         for name in ("xscale", "yscale", "zscale", "rotation", "row_spacing", "column_spacing"):
             _finite(f"INSERT {handle} {name}", ins.dxf.get(name, ins.DXFATTRIBS.get(name).default))
+        if abs(ins.dxf.xscale) != abs(ins.dxf.yscale):
+            raise ValueError(f"INSERT {handle}: non-uniform XY scale")
         if not all(math.isfinite(v) for v in (*ins.dxf.insert, *ins.dxf.extrusion)):
             raise ValueError(f"INSERT {handle}: non-finite insert/extrusion")
         if cell is not None:
