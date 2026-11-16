@@ -30,6 +30,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ground_copy_plan as plan  # noqa: E402
 import importlib.util  # noqa: E402
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
+from adapters.max.agr_tools import build_manifest as bm  # noqa: E402
+
 _MS = importlib.util.spec_from_file_location(
     "maf_surface", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..",
                                 "src", "twinqa", "geometry", "maf_surface.py"))
@@ -246,12 +249,29 @@ def transplant_materials(cust_objs):
     return imgs
 
 
+def record_export(fbx, src, want, cust, cwant, mapping, mapping_hash, names):
+    """Record actual geometry, embedded-map and bridge dependencies per component role [D333].
+
+    The source/customer FBX both contain all three components; grouping does not turn Flora into Ground.
+    No delivery geometry or historical approved file is rewritten by this hook.
+    """
+    roles = {}
+    for name in names:
+        roles.setdefault(bm.role_of(name), []).append(name)
+    dependencies = [{'role': role, 'master': path, 'master_sha256': digest, 'parts': sorted(parts)}
+                    for role, parts in sorted(roles.items())
+                    for path, digest in ((src, want), (cust, cwant), (mapping, mapping_hash))]
+    return bm.write_export_derivation([fbx], src, os.path.join(os.path.dirname(fbx), 'derivation'),
+        master_sha256=want, role='ground', dependencies=dependencies)
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:]
     if len(argv) != 6:
         die("usage: <v002.fbx> <sha256> <customer.fbx> <sha256> <mapping.json> <new_out_dir>")
     src, want, cust, cwant, mapping = (os.path.realpath(argv[0]), argv[1], os.path.realpath(argv[2]),
                                        argv[3], os.path.realpath(argv[4]))
+    mapping_hash = sha(mapping)
     try:
         out = plan.check_out_dir(argv[5], [src, cust, mapping])
         rot, t = plan.load_bridge(mapping)
@@ -308,6 +328,7 @@ def main():
                              use_mesh_modifiers=False, mesh_smooth_type="EDGE", use_triangles=False,
                              use_custom_props=False, add_leaf_bones=False, bake_anim=False,
                              path_mode="COPY", embed_textures=True)
+    record_export(fbx, src, want, cust, cwant, mapping, mapping_hash, names.values())
     report = {"source": src, "source_sha256": got, "mapping": mapping, "bridge_rotation_row": rot,
               "bridge_translation": t, "rename": names, "textures": textures, "customer_fbx": cust, "customer_sha256": cwant, "tol_m": TOL, "repairs": reps,
               "before": before, "after": after, "total_before": sum(c["tris"] for c in before.values()),
