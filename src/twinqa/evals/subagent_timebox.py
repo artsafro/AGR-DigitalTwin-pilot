@@ -76,7 +76,7 @@ def subagent_timebox(evidence):
                         # Only a launch's own failed result cancels that launch, not a failed read.
                         active.pop(key, None)
                         continue
-                    if isinstance(native, dict) and native.get('retrieval_status') in ('timeout', 'error'):
+                    if isinstance(native, dict) and native.get('retrieval_status') in ('timeout', 'error', 'not_ready'):
                         continue
                     if key in active:
                         state = active[key]
