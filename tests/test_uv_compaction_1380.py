@@ -147,4 +147,5 @@ def test_no_delivery_changes():
     paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
     # a delivery is a file a job produced (FBX, ZIP, textures, reports); job scripts are code. #1381 also edits job
     # scripts (KPP1 seal shim, build_kpp1.roof via roof_core), so the check is on the kind of file, not on #1380's names.
-    assert all(p.endswith('.py') for p in paths), [p for p in paths if not p.endswith('.py')]
+    # Job docs (STATE.md, REPORT.md) are not deliveries either (#1563 updates the KPP1 STATE row the card asks for).
+    assert all(p.endswith(('.py', '.md')) for p in paths), [p for p in paths if not p.endswith(('.py', '.md'))]
