@@ -428,6 +428,59 @@ def main_deviation(points, result: UcxResult) -> np.ndarray:
     return out
 
 
+def _point_tri_dist(p: np.ndarray, a: np.ndarray, b: np.ndarray, c: np.ndarray) -> np.ndarray:
+    """Exact distance of each point p (N,3) to each triangle (a, b, c each (T,3)): (N, T)."""
+    n = np.cross(b - a, c - a)
+    nn = (n ** 2).sum(axis=1)
+    ok = nn > 1e-24
+    nu = n / np.sqrt(np.where(ok, nn, 1.0))[:, None]
+    d = np.einsum("ntk,tk->nt", p[:, None, :] - a[None], nu)
+    q = p[:, None, :] - d[..., None] * nu[None]
+    inside = ok[None]
+    for x, y in ((a, b), (b, c), (c, a)):
+        inside = inside & (np.einsum("ntk,tk->nt", np.cross((y - x)[None], q - x[None]), n) >= -1e-15)
+    best = np.where(inside, np.abs(d), np.inf)
+    for x, y in ((a, b), (b, c), (c, a)):
+        e = y - x
+        ee = np.maximum((e ** 2).sum(axis=1), 1e-30)
+        t = np.clip(np.einsum("ntk,tk->nt", p[:, None, :] - x[None], e) / ee, 0.0, 1.0)
+        r = p[:, None, :] - (x[None] + t[..., None] * e[None])
+        best = np.minimum(best, np.sqrt((r ** 2).sum(axis=2)))
+    return best
+
+
+def hull_deviation(points, hulls) -> np.ndarray:
+    """Exact distance from each world point to the union of convex hulls [(verts, tris)] (0 inside) [D134] (#1540).
+
+    The model -> UCX side of R11-R13 for any closed convex pieces (e.g. after a pair clip). An empty hull list,
+    an empty or non-finite hull is a UcxBuildError, never a distance."""
+    p = np.asarray(points, float).reshape(-1, 3)
+    if not len(hulls):
+        raise UcxBuildError("no UCX hulls: model -> UCX distance cannot be measured")
+    if not np.isfinite(p).all():
+        raise UcxBuildError("non-finite model points")
+    out = np.full(len(p), np.inf)
+    for verts, tris in hulls:
+        v, t = _check_mesh(verts, tris)
+        a, b, c = v[t[:, 0]], v[t[:, 1]], v[t[:, 2]]
+        n = np.cross(b - a, c - a)
+        keep = (n ** 2).sum(axis=1) > 1e-24
+        n = n[keep] / np.linalg.norm(n[keep], axis=1)[:, None]
+        off = (n * a[keep]).sum(axis=1)
+        flip = (n @ v.mean(axis=0) - off) > 0  # orient every plane away from the centroid
+        n[flip], off[flip] = -n[flip], -off[flip]
+        for s in range(0, len(p), 2000):
+            q = p[s:s + 2000]
+            lb = np.maximum((q @ n.T - off[None]).max(axis=1), 0.0)  # lower bound, exact 0 inside
+            cur = out[s:s + 2000]
+            todo = (lb > 1e-12) & (lb < cur)
+            cur = np.where(lb <= 1e-12, 0.0, cur)
+            if todo.any():
+                cur[todo] = np.minimum(cur[todo], _point_tri_dist(q[todo], a, b, c).min(axis=1))
+            out[s:s + 2000] = cur
+    return out
+
+
 class HeightField:
     """Highest surface z above plan points (NaN where no triangle covers the point)."""
 

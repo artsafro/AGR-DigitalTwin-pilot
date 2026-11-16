@@ -103,10 +103,7 @@ def test_regression_boxes_and_parapet_over_slab():
     assert par["plane"]["normal"] == [0.0, 0.0, 1.0] and abs(par["plane"]["offset_m"] - 0.223) < 1e-9
     assert abs(par["volume_removed_m3"] - 0.19 * 6.04 * 0.123) < 1e-6
     # the larger hulls are never touched
-    by = {r["name"]: r for r in out}
-    assert by["UCX_SM_T_Main_001"]["verts"] == [[float(c) for c in v] for v in ucx[0]["verts"]] or \
-        not res["pieces"][1]["changed"]
-    assert not res["pieces"][3]["changed"]
+    assert not res["pieces"][1]["changed"] and not res["pieces"][3]["changed"]
     # UCX poly count within D012
     mv, mt = arrays(model)
     tris = sum(len(r["tris"]) for r in out)
@@ -283,8 +280,7 @@ def test_resolve_chain(patch, code, model, tmp_path, monkeypatch):
     got, report = uc.run(a)
     assert got == code, report
     assert run.call_args[0][0] == uc.RESOLVE_DRIVER
-    assert run.call_args[0][1] == [str(model), str(tmp_path / "o.fbx"), f"gap={GAP}"] or \
-        run.call_args[0][1] == [str(model), str(tmp_path / "o.fbx")]
+    assert run.call_args[0][1] == [str(model), str(tmp_path / "o.fbx"), f"gap={GAP}"]
     assert "build" not in report["steps"] and report["steps"]["resolve"]["pairs_resolved"] == 2
     assert report["steps"]["gap_check"]["ok"] is True
 

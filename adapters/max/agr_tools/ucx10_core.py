@@ -331,6 +331,132 @@ def plan(pieces, opts):
             'summary': summary}
 
 
+def _face_cut(small, large, target):
+    """Best cut of `small` by a face plane of `large` shifted by `target` (#1540): (removed_m3, n, c, cut) or None.
+
+    `large` lies in n.x <= c for each of its outward face planes (n, c); the cut keeps n.x >= c + target of
+    `small`, so the pair is at least `target` apart along n. The plane that removes the least volume and leaves a
+    piece at least MIN_THICK_M thick along n wins; a tie keeps the first normal (deterministic order)."""
+    best = None
+    for n in large['normals']:
+        c = _span(large, n)[1]
+        off = c + target
+        lo, hi = _span(small, n)
+        if hi - off < MIN_THICK_M:
+            continue
+        try:
+            cut = _clip(small, (-n[0], -n[1], -n[2]), -off)
+        except ValueError:
+            continue
+        if _thickness(cut, n) < MIN_THICK_M - TOL_M:
+            continue
+        removed = small['volume'] - cut['volume']
+        if best is None or removed < best[0] - 1e-12:
+            best = (removed, n, off, cut)
+    return best
+
+
+def resolve(pieces, opts):
+    """Resolve every intersecting / too-close UCX pair by clipping the SMALLER hull (#1540, retro elv-tc-vpm).
+
+    pieces: [{handle, name, verts (world METRES), tris}]; opts: gap_options(...) (gap_m inside D098). Unlike
+    plan() (both planes of a same-family pair move by half), every pair of UCX pieces is checked (any family:
+    SINTEZ counts intersections between all collision pieces) and only the smaller piece (by volume; a tie cuts
+    the later name) is cut, by the plane of one face of the larger piece moved out by gap_m. A convex piece cut
+    by a plane stays closed and convex; pieces only shrink, so a resolved pair stays resolved. A pair with SAT gap
+    >= gap_m is never changed. A pair no face plane can resolve (nested, or the cut leaves < MIN_THICK_M) is
+    `ambiguous`: nothing is cut, summary.ok is False. Every input ends in pieces, skipped or findings.
+
+    Returns {pieces: {handle: {name, changed, verts, tris, volume_before_m3, volume_after_m3}}, pairs: [{a, b,
+    gap_before_m, code, action clip|ambiguous, clipped, by, plane {normal, offset_m}, gap_after_m,
+    volume_before_m3, volume_after_m3, volume_removed_m3}], findings, skipped, ambiguous, summary}."""
+    if not pieces:
+        raise ValueError('no UCX pieces in scope: an empty set is an error, not a pass')
+    target = opts['gap_m']
+    seen = set()
+    for row in pieces:
+        if row['handle'] in seen:
+            raise ValueError('duplicate handle {}'.format(row['handle']))
+        seen.add(row['handle'])
+    found, skipped, ambiguous, pairs = {}, [], [], []
+    work, names = {}, {}
+    for row in sorted(pieces, key=lambda r: (str(r['name']), str(r['handle']))):
+        if family(row['name']) is None:
+            skipped.append({'item': str(row['name']), 'reason': 'не UCX_<меш>_NN: не кусок коллизии'})
+            continue
+        try:
+            for v in row['verts']:
+                if len(v) != 3 or not all(math.isfinite(float(c)) for c in v):
+                    raise ValueError('non-finite or malformed vertex')
+            work[row['handle']] = piece(row['verts'], row['tris'])
+        except (ValueError, TypeError, IndexError) as exc:
+            found.setdefault(row['handle'], []).append(('ucx_not_convex', '{}: сначала ucx.triangulate / '
+                                                                          'ucx.build'.format(exc)))
+            continue
+        names[row['handle']] = str(row['name'])
+    original = dict(work)
+    order = list(names)
+    changed = set()
+    for i in range(len(order)):
+        for j in range(i + 1, len(order)):
+            ha, hb = order[i], order[j]
+            a, b = work[ha], work[hb]
+            if _aabb_far(a, b, target + TOL_M):
+                continue
+            gap0, _ = separation(a, b)
+            if gap0 >= target - TOL_M:
+                continue
+            small, large = (hb, ha) if a['volume'] >= b['volume'] else (ha, hb)
+            pair = {'a': names[ha], 'b': names[hb], 'gap_before_m': round(gap0, 7), 'code': _kind(gap0),
+                    'clipped': names[small], 'by': names[large]}
+            best = _face_cut(work[small], work[large], target)
+            if best is None:
+                pair['action'] = 'ambiguous'
+                why = 'ни одна плоскость грани {} не оставляет кусок толще {:.0f} мм'.format(names[large],
+                                                                                            MIN_THICK_M * 1000)
+                found.setdefault(small, []).append(('ucx_unresolved', why))
+                ambiguous.append({'item': '{} / {}'.format(names[ha], names[hb]), 'reason': why})
+                pairs.append(pair)
+                continue
+            removed, n, off, cut = best
+            before = work[small]['volume']
+            work[small] = cut
+            changed.add(small)
+            gap1, _ = separation(work[ha], work[hb])
+            pair.update(action='clip', plane={'normal': [round(c, 9) + 0.0 for c in n], 'offset_m': round(off, 9)},
+                        gap_after_m=round(gap1, 7), volume_before_m3=round(before, 9),
+                        volume_after_m3=round(cut['volume'], 9), volume_removed_m3=round(before - cut['volume'], 9))
+            found.setdefault(small, []).append((pair['code'], 'срезан плоскостью грани {} с зазором {:.1f} мм'.format(
+                names[large], target * 1000)))
+            pairs.append(pair)
+    amb = {(p['a'], p['b']) for p in pairs if p['action'] == 'ambiguous'}
+    left = []
+    for i in range(len(order)):
+        for j in range(i + 1, len(order)):
+            a, b = work[order[i]], work[order[j]]
+            if (names[order[i]], names[order[j]]) in amb or _aabb_far(a, b, target + TOL_M):
+                continue
+            g, _ = separation(a, b)
+            if g < target - TOL_M:
+                left.append({'a': names[order[i]], 'b': names[order[j]], 'gap_m': round(g, 7)})
+    out = {}
+    for h in order:
+        p = work[h]
+        out[h] = {'name': names[h], 'changed': h in changed,
+                  'verts': [[round(c, 9) for c in v] for v in p['verts']], 'tris': [list(t) for t in p['tris']],
+                  'volume_before_m3': round(original[h]['volume'], 9), 'volume_after_m3': round(p['volume'], 9)}
+    not_convex = sorted(h for h, fs in found.items() if any(c == 'ucx_not_convex' for c, _ in fs))
+    summary = {'pieces': len(pieces), 'pairs_resolved': sum(1 for p in pairs if p['action'] == 'clip'),
+               'pairs_ambiguous': len(amb), 'pieces_changed': len(changed), 'gap_m': target, 'left': left,
+               'not_convex': len(not_convex), 'skipped': len(skipped),
+               'triangles_before': sum(len(original[h]['tris']) for h in order),
+               'triangles_after': sum(len(work[h]['tris']) for h in order),
+               'volume_removed_m3': round(sum(p.get('volume_removed_m3', 0.0) for p in pairs), 9)}
+    summary['ok'] = bool(order) and not (amb or left or not_convex or skipped)
+    return {'pieces': out, 'pairs': pairs, 'findings': found, 'skipped': skipped, 'ambiguous': ambiguous,
+            'summary': summary}
+
+
 def gap_report(edit, mode, rows, result, opts, state_hash=None, done=(), notes=(), extra=None):
     """Edit report of ucx.gap. Preview: objects = the pieces in scope with their pair findings; done = what apply
     writes on the copies. Apply: objects = the written copies (findings only when SAT still finds a gap)."""
