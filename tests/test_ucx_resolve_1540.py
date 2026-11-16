@@ -216,6 +216,57 @@ def test_real_cut_piece_stays_convex_after_float32_round_trip():
     assert not kinds(f32) & BAD
 
 
+def _georeferenced_scene(seed, offset, local_pivot=True):
+    """Synthetic overlapping boxes, rotated in XY, with explicit object storage frames."""
+    rng = random.Random(seed)
+    rows = []
+    for i in range(rng.randint(2, 5)):
+        angle = rng.uniform(-0.6, 0.6)
+        c, s = math.cos(angle), math.sin(angle)
+        pivot = np.array([offset + i * 0.65, offset + rng.uniform(-0.1, 0.1), offset])
+        matrix = np.eye(4)
+        matrix[:3, :3] = [[c, -s, 0], [s, c, 0], [0, 0, 1]]
+        matrix[:3, 3] = pivot
+        v, t = box(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5)
+        world = np.asarray(v) @ matrix[:3, :3].T + pivot
+        r = row(i, f"UCX_SM_G_Main_{i + 1:03d}", (world.tolist(), t))
+        r["world_to_local"] = np.linalg.inv(matrix).tolist() if local_pivot else np.eye(4).tolist()
+        rows.append(r)
+    return rows
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_georeferenced_local_storage_resolves_like_origin(seed):
+    results = []
+    for offset in (0.0, 20000.0):
+        rows = _georeferenced_scene(seed, offset)
+        res = core.resolve(rows, core.gap_options({"gap_m": GAP}))
+        assert res["summary"]["ok"], (seed, offset, res["summary"])
+        assert res["summary"]["pairs_ambiguous"] == 0
+        for h, p in res["pieces"].items():
+            before = rows[h]
+            assert all(ua.inside_convex(v, before["verts"], before["tris"], tol=1e-7) for v in p["verts"])
+            inv = np.asarray(before["world_to_local"])
+            local = np.asarray(p["verts"]) @ inv[:3, :3].T + inv[:3, 3]
+            assert core._hull_core().convexity(core._float32(local), p["tris"])["ok"]
+        out = after_rows(res)
+        for r in out:
+            r["world_to_local"] = rows[r["handle"]]["world_to_local"]
+        for a, b in itertools.combinations(out, 2):
+            assert core.separation(core.piece(a["verts"], a["tris"]),
+                                   core.piece(b["verts"], b["tris"]))[0] >= GAP - core.TOL_M
+        again = core.resolve(out, core.gap_options({"gap_m": GAP}))
+        assert again["summary"]["ok"] and again["summary"]["pairs_resolved"] == 0
+        results.append([(p["a"], p["b"], p["action"]) for p in res["pairs"]])
+    assert results[0] == results[1]
+
+
+def test_georeferenced_world_origin_pivot_keeps_conservative_rejection():
+    rows = _georeferenced_scene(0, 20000.0, local_pivot=False)
+    res = core.resolve(rows, core.gap_options({"gap_m": GAP}))
+    assert not res["summary"]["ok"] and res["summary"]["pairs_ambiguous"] > 0
+
+
 # --- fail-closed probes -----------------------------------------------------------------------------------------
 def test_empty_scope_is_an_error():
     with pytest.raises(ValueError):
