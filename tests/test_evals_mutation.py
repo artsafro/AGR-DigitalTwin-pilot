@@ -19,11 +19,30 @@ def report():
     return bench.evaluate()
 
 
+def test_missing_mutation_target_is_a_named_error(monkeypatch):
+    # A pass reference without a metadata-only record cannot be reordered; fail naming it, not StopIteration.
+    bundle = {"transcript": json.dumps({"type": "assistant", "message": {"content": "only prose"}}) + "\n"}
+    monkeypatch.setattr(bench, "references", lambda: iter([("routine_question", "no-meta", "pass", bundle)]))
+    with pytest.raises(bench.MutationTargetError, match="routine_question/no-meta.*unrelated_reordering"):
+        bench.corpus()
+
+
+def test_subagent_timebox_mutants_are_killed(tmp_path):
+    rng = random.Random(1)
+    cases = [c for c in bench.corpus() if c["grader"] == "subagent_timebox"]
+    assert {c["kind"] for c in cases if c["violating"]} >= {
+        "short_timebox", "wrong_agent_check", "sidechain_check", "empty_check_result", "send_message_check"}
+    for i, case in enumerate(cases):
+        directory = tmp_path / str(i)
+        directory.mkdir()
+        assert bench.grade(case["grader"], case["bundle"], directory, rng) is (not case["violating"]), case["kind"]
+
+
 def test_corpus_coverage():
     cases = bench.corpus()
     refs = {(g, n) for g, n, v, _ in bench.references() if v == "pass"}
-    assert len(refs) == 11
-    assert len({g for g, _ in refs}) == 10
+    assert len(refs) == 12
+    assert len({g for g, _ in refs}) == 11
     assert {(c["grader"], c["reference"]) for c in cases} == refs
     for grader, name in refs:
         subset = [c for c in cases if c["grader"] == grader and c["reference"] == name]
@@ -104,14 +123,14 @@ def test_unrelated_reordering_changes_order_only():
 
 
 def test_reference_verdicts(report):
-    assert len(report["references"]) == 21
+    assert len(report["references"]) == 23
     assert report["reference_mismatches"] == 0
     assert all(r["passed"] is r["expected"] for r in report["references"])
 
 
 def test_controls_pass(report):
     controls = [o for o in report["outcomes"] if not o["violating"]]
-    assert len(controls) == 28
+    assert len(controls) == 31
     assert all(o["passed"] is True for o in controls)
 
 
@@ -120,7 +139,7 @@ def test_json_command(tmp_path):
                                cwd=tmp_path, capture_output=True, text=True, encoding="utf-8")
     assert completed.returncode == 0, completed.stderr
     report = json.loads(completed.stdout.splitlines()[-1])
-    assert report["mutants"] == 55
-    assert report["controls"] == 28
+    assert report["mutants"] == 60
+    assert report["controls"] == 31
     assert report["runtime"] > 0
     assert len(report["tool_sha256"]) == len(report["corpus_sha256"]) == 64
