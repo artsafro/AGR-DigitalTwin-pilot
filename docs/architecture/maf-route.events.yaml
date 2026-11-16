@@ -184,6 +184,9 @@ stages:
     event_ru: "НПМ-версия (low-poly) в тех же точках на одном атласе 512 GroundEl"
     actor: agent-dcc
     context: npm
+    commands:
+      - "dt derive maf-npm-light"
+      - "agr npm-light"
     rules:
       - D293
       - D164
@@ -192,15 +195,21 @@ stages:
     evidence:
       - docs/domain/areas/groundel-maf.md
       - jobs/VATUTINO-SITE/maf/site-maf-set.md
+      - tools/library/maf_npm_light.py
+      - jobs/SIL13-COLD-1315/maf-npm-light-1410/result.md
     branches:
       - id: convert
         when_ru: "ВПМ уже расставлена"
-        ru: "конвертация ВПМ → НПМ: та же модель; облегчённая — только если не влезает бюджет"
+        ru: "конвертация ВПМ → НПМ: та же модель; облегчённая — только если не влезает бюджет (≤ 400 треугольников не трогает, силуэт ≥ 0,95)"
+        commands:
+          - "dt derive maf-npm-light"
+          - "agr npm-light"
         rules:
           - D293
           - D164
         evidence:
           - docs/plans/425-maf-route-2026-11.md
+          - tools/library/maf_npm_light.py
       - id: parallel
         when_ru: "расстановка с нуля"
         ru: "low-poly (кандидат НПМ библиотеки) и high-poly ставятся вместе в одни точки"
@@ -218,6 +227,7 @@ stages:
         evidence:
           - tools/materials/atlas_maf.py
           - tools/library/maf_atlas_ids.py
+          - tools/materials/maf_uv_remap.py
   - id: ucx
     event_ru: "UCX: для МАФ не строятся (ограждения и навесы — при любой толщине), UCX поверхности Ground остаётся (только ВПМ)"
     actor: agent
@@ -269,22 +279,6 @@ hotspots:
     ru: "Каталог — технический аудит, не идентификация (T-MAF-1): из 931 МАФ кандидата НПМ нет у 695"
     evidence:
       - library/maf/README.md
-      - docs/plans/425-maf-route-2026-11.md
-  - id: npm-light-tool
-    stage: npm
-    ru: "Облегчённой НПМ-версии МАФ как инструмента нет (tools/library/maf_npm_light.py не создан; был разовый Decimate 0,35–0,6 для 4 строк)"
-    rules:
-      - D164
-      - D236
-    evidence:
-      - docs/plans/425-maf-route-2026-11.md
-  - id: uv-remap
-    stage: npm
-    ru: "Перенос UV на атлас — только внутри tools/blender/maf_site_set_build.py, общего инструмента нет"
-    rules:
-      - D236
-    evidence:
-      - tools/blender/maf_site_set_build.py
       - docs/plans/425-maf-route-2026-11.md
   - id: budget
     stage: npm
