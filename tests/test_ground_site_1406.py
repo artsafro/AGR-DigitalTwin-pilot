@@ -386,7 +386,8 @@ def built_site(tmp_path_factory):
     return spec, tmp / "out/SM_SYN_Ground.obj"
 
 
-@pytest.mark.parametrize("shift,code", [(0.0, 0), (-0.90, 1), (-0.10, 1), (0.09, 1), (1.40, 1)])
+@pytest.mark.parametrize("shift,code", [(0.0, 0), (-0.90, 1), (-0.10, 1), (0.09, 1), (1.40, 1),
+                                       (0.01, 0), (-0.01, 0), (0.0101, 1), (-0.0101, 1)])
 def test_zero_cli_pointwise_rows(built_site, shift, code):
     """Review r1 P1-1 rows on a built site: a shift inside the relief envelope exits 1."""
     spec, obj = built_site

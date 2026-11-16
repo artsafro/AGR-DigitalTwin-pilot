@@ -74,6 +74,8 @@ def export_z_check(project_zero_m, project_zero_fbx_z_m, ground_points, relief_z
         raise ValueError(f'{len(outside)} ground vertices outside the relief TIN, first {outside[:3]} '
                          '(no extrapolation: wrong origin, wrong relief source or a missing crop)')
     res = [(zero + (z - fbx) - lv * step - _finite('relief Z', r), x, y, lv) for (x, y, z, lv), r in zip(pts, rel)]
+    for residual, *_ in res:
+        _finite('derived relief residual', residual)
     over = [t for t in res if abs(t[0]) > tol + 1e-9]
     vals = sorted(t[0] for t in res)
     out: dict = dict(project_zero_m=zero, project_zero_fbx_z_m=fbx, step_m=step, tol_m=tol, checked_vertices=len(pts),

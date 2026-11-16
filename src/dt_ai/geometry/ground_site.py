@@ -288,6 +288,10 @@ def skirt_gaps(mesh: gc.Mesh, drop_m: float, xy_tol: float = 1e-6) -> list:
     """Edge-level skirt check (review r1 P1-2): every outer (single-use) base edge (a, b) needs a skirt quad - two
     skirt triangles (a, b, la) + (b, la, lb) or (a, b, lb) + (a, lb, la) - whose lower vertices la, lb sit at the
     XY of a and b and at least ``drop_m`` below them. An edge without such a quad is a gap with its reason."""
+    drop_m = _finite("drop_m", drop_m, positive=True)
+    xy_tol = _finite("xy_tol", xy_tol, positive=True)
+    if not np.isfinite(mesh.verts).all():
+        raise ValueError("skirt vertices must be finite")
     count: dict = {}
     for f, lv in zip(mesh.faces, mesh.level):
         if lv == 0:

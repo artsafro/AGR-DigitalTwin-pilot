@@ -1,5 +1,5 @@
 {
- "note": "#1406 proof of `dt ground site` on #1315 Silikatny data: the D283 pilot fragment (crop of the D282 boundary), real DXF, no job code. Not a delivery.",
+ "note": "#1406 proof on real #1315 DXF, no job code, not a delivery. D282/D283 below are historical branch-local labels at https://github.com/artsafro/AGR-DigitalTwin-pilot/commit/ff769b0b (not main decisions); the explicit crop/zero/unhatched fields define this diagnostic input. Full-site INSERT support: #1535.",
  "site": "SIL13",
  "dxf": {"path": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v001/pzu.dxf",
          "sha256": "35b537cfe7f05236bf13c2159ef4ae689118162c0f4418a2a93983437c4e3cf4"},
