@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def _load(name, rel):
     spec = importlib.util.spec_from_file_location(name, ROOT / rel)
     mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod      # verifier_summary imports `verifier`: one module, one VerifierError class
     spec.loader.exec_module(mod)
     return mod
 
