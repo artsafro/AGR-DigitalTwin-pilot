@@ -733,6 +733,116 @@ def test_template_evidence_follows_d297():
     assert "rule 49" not in template
 
 
+# #1469: reviewer-led evidence is not shorthand delegation.
+@pytest.mark.parametrize("text", [
+    pytest.param("New tests: reviewer r1 witnesses (3 rows), 12 passed.", id="witnesses"),
+    pytest.param("Regression tests: reviewer probes from round 1 now pass.", id="probes"),
+    pytest.param("Tests to be run by the reviewer: none.", id="none"),
+    pytest.param("The reviewer can check the tests I ran: 398 passed.", id="completed"),
+])
+def test_reviewer_clause_controls(tmp_path, repo, evals, capsys, text):
+    from twinqa.evals.handoff import delegation
+
+    assert delegation(text) is None
+    _, shas = repo
+    code, out = run(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys)
+    assert code == 0, out.err
+
+
+@pytest.mark.parametrize("text", [
+    pytest.param("Tests to be executed by the reviewer.", id="executed"),
+    pytest.param("Tests are to be run by the reviewer.", id="are-to-be"),
+    pytest.param("Tests will be run by the reviewer.", id="will-be"),
+    pytest.param("Remaining tests: reviewer.", id="remaining"),
+    pytest.param("Tests: Reviewer", id="end"),
+])
+def test_reviewer_clause_delegations(tmp_path, repo, evals, capsys, text):
+    from twinqa.evals.handoff import delegation
+
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "tests delegated to the reviewer")
+
+
+@pytest.mark.parametrize("action", ["rerun", "run"])
+def test_reviewer_completed_reruns_rejected(tmp_path, repo, evals, capsys, action):
+    from twinqa.evals.handoff import delegation
+
+    text = f"The reviewer should {action} the tests I ran: 398 passed."
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "tests delegated to the reviewer")
+
+
+def test_reviewer_inspection_then_execution_rejected(tmp_path, repo, evals, capsys):
+    from twinqa.evals.handoff import delegation
+
+    text = "The reviewer should check the tests I ran and then run the full suite."
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "full suite delegated to the reviewer")
+
+
+@pytest.mark.parametrize("text", [
+    pytest.param("Tests: reviewer to run.", id="to-run"),
+    pytest.param("Full suite: the reviewer (rule 68).", id="parenthetical"),
+])
+def test_reviewer_shorthand_tails_rejected(tmp_path, repo, evals, capsys, text):
+    from twinqa.evals.handoff import delegation
+
+    assert delegation(text) is not None
+    _, shas = repo
+    rejected(tmp_path, body(lines(shas, evals), text), shas["head"], evals, capsys,
+             "delegated to the reviewer")
+
+
+def test_reviewer_clause_generated_probe():
+    """Synthetic clause boundaries/passive matrix, including earlier negation/order controls."""
+    from twinqa.evals.handoff import delegation
+
+    cases = []
+    for noun in ("tests", "test files", "test suite"):
+        for recipient in ("reviewer", "the reviewer", "reviewers"):
+            for end in ("", ".", ";", "!", "?", "\n"):
+                cases.append((f"{noun}: {recipient}{end}", True))
+            for tail in (" witnesses (3 rows), 12 passed.", " probes now pass.", " notes."):
+                cases.append((f"{noun}: {recipient}{tail}", False))
+            for auxiliary in ("to be", "are to be", "will be"):
+                for verb in ("run", "executed", "checked", "verified"):
+                    phrase = f"{noun} {auxiliary} {verb} by {recipient}"
+                    cases.extend(((phrase + ".", True), ("No " + phrase + ".", False),
+                                  (phrase + ": none.", False),
+                                  (phrase + ": none. Tests: reviewer.", True),
+                                  (phrase + ": none pending.", True)))
+    for actor in ("I", "we", "the author"):
+        for verb in ("ran", "executed", "checked", "verified"):
+            for action in ("check", "verify"):
+                cases.append((f"The reviewer can {action} the tests {actor} {verb}: 398 passed.", False))
+    assert len(cases) == 645
+    # R1 fixes combined with completed-author clauses and the earlier noun/recipient controls.
+    for noun in ("tests", "test files", "test suite"):
+        for recipient in ("reviewer", "the reviewer", "reviewers"):
+            for tail in (" to run.", " to rerun.", " to re-run.", " to execute.",
+                         " to verify.", " to check.", " (rule 68)."):
+                cases.append((f"{noun}: {recipient}{tail}", True))
+    for actor in ("I", "we", "the author"):
+        for completed in ("ran", "executed", "checked", "verified"):
+            for inspection in ("check", "verify"):
+                prefix = f"The reviewer should {inspection} the tests {actor} {completed}"
+                for action in ("run", "rerun", "re-run", "execute"):
+                    for noun in ("tests", "test files", "full suite"):
+                        cases.extend(((f"{prefix} and then {action} the {noun}.", True),
+                                      (f"{prefix} and then do not {action} the {noun}.", False),
+                                      (f"{prefix}. I {action} the {noun}.", False)))
+    for text, expected in cases:
+        for _ in range(2):
+            assert (delegation(text) is not None) == expected, text
+            assert delegation("") is None  # reset after every positive and negative
+
+
 # Review r2 (PR #1401), #1403: shorthand and active verify are delegation.
 @pytest.mark.parametrize("text", [
     pytest.param("Remaining tests: reviewer.", id="shorthand"),

@@ -20,6 +20,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "jobs" / "KPP1" / "scripts"))
 import seal  # noqa: E402
+sys.path.insert(0, str(ROOT / "tools" / "blender"))
 import vpm_uv  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import clean_loops  # noqa: E402

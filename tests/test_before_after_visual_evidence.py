@@ -155,6 +155,7 @@ def write_png(path, colour):
 
 
 RENDER = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire', 'view_transform': 'Standard',
+          'color_management': 'FOLLOW_SCENE', 'use_sequencer': False, 'use_compositing': False,
           'look': 'None', 'exposure': 0.0, 'gamma': 1.0, 'display_device': 'sRGB',
           'use_curve_mapping': False, 'use_white_balance': False, 'emulation': 'AUTO',
           'world_color': [0.05, 0.05, 0.05], 'world_use_nodes': False,
@@ -238,6 +239,31 @@ def test_cli_refuses_mismatched_cameras_and_writes_nothing(tmp_path, inputs, mon
     assert not (tmp_path / 'ev').exists(), 'created parent directories are removed on refusal'
 
 
+@pytest.mark.parametrize('key,bad', [('color_management', 'OVERRIDE'),
+                                   ('use_sequencer', True), ('use_compositing', True)])
+@pytest.mark.parametrize('missing', [False, True])
+def test_output_pipeline_evidence_fails_closed(tmp_path, inputs, monkeypatch, key, bad, missing):
+    module = load()
+    runner = fake_runner()
+
+    def changed(*args, **kwargs):
+        records = runner(*args, **kwargs)
+        for role in ('before', 'after'):
+            records[role]['render'].update(color_management='FOLLOW_SCENE',
+                                           use_sequencer=False, use_compositing=False)
+        if missing:
+            del records['after']['render'][key]
+        else:
+            records['after']['render'][key] = bad
+        return records
+
+    monkeypatch.setattr(module, 'run_blender', changed)
+    output = tmp_path / 'ev' / 'out'
+    original = snapshot(tmp_path)
+    assert module.main(argv(*inputs, output)) == 2
+    assert snapshot(tmp_path) == original
+
+
 @pytest.mark.parametrize('key,value', [
     ('engine', 'CYCLES'), ('style', 'solid'), ('view_transform', 'AgX'),
     ('look', 'AgX - Medium High Contrast'), ('exposure', 2.0), ('gamma', 1.5),
@@ -278,11 +304,34 @@ def test_cli_refuses_invalid_render_state(tmp_path, inputs, monkeypatch, mutate)
     assert snapshot(tmp_path) == state
 
 
+@pytest.mark.parametrize('key,changed,wrong', [
+    ('color_management', 'OVERRIDE', True),
+    ('use_sequencer', True, 1), ('use_compositing', True, 0)])
+def test_output_pipeline_strict_schema_mutations(key, changed, wrong):
+    """Synthetic complete/reset controls and missing/type/mismatch for each new key."""
+    module = load()
+    assert module.compare_render_state(RENDER, RENDER) == []
+    missing = copy.deepcopy(RENDER)
+    del missing[key]
+    with pytest.raises(ValueError, match=key):
+        module.compare_render_state(missing, missing)
+    malformed = copy.deepcopy(RENDER)
+    malformed[key] = wrong
+    with pytest.raises(ValueError, match=key):
+        module.compare_render_state(malformed, malformed)
+    mismatch = copy.deepcopy(RENDER)
+    mismatch[key] = changed
+    assert module.compare_render_state(RENDER, mismatch) == [key]
+    assert module.compare_render_state(RENDER, RENDER) == []
+
+
 def test_render_state_generated_presence_and_numeric_probes():
     """Exhaust each merged schema's presence subsets; cross-probe missing keys."""
     module = load()
-    # Preserve all 2**19 prior probes without multiplying them by 2**5.
-    for keys in ([k for k in RENDER if k not in PNG_STATE], list(PNG_STATE)):
+    # Partition the original 19, PNG 5 and pipeline 3 keys; avoid 2**27 probes.
+    pipeline_keys = {'color_management', 'use_sequencer', 'use_compositing'}
+    groups = [set(RENDER) - PNG_STATE.keys() - pipeline_keys, set(PNG_STATE), pipeline_keys]
+    for keys in (sorted(group) for group in groups):
         fixed = {k: v for k, v in RENDER.items() if k not in keys}
         for mask in range(1 << len(keys)):
             state = fixed | {k: RENDER[k] for i, k in enumerate(keys) if mask & (1 << i)}
@@ -291,11 +340,13 @@ def test_render_state_generated_presence_and_numeric_probes():
             else:
                 with pytest.raises(ValueError, match='render keys'):
                     module.compare_render_state(state, state)
-    for old_key in RENDER.keys() - PNG_STATE.keys():
-        for new_key in PNG_STATE:
-            state = {k: v for k, v in RENDER.items() if k not in (old_key, new_key)}
-            with pytest.raises(ValueError, match='render keys'):
-                module.compare_render_state(state, state)
+    for index, group in enumerate(groups):
+        for other_group in groups[index + 1:]:
+            for old_key in group:
+                for new_key in other_group:
+                    state = {k: v for k, v in RENDER.items() if k not in (old_key, new_key)}
+                    with pytest.raises(ValueError, match='render keys'):
+                        module.compare_render_state(state, state)
     for key in ('exposure', 'gamma', 'thickness', 'world_color', 'background_color', 'dither_intensity'):
         for index in range(3 if isinstance(RENDER[key], list) else 1):
             for bad in (float('nan'), float('inf'), -float('inf')):
@@ -686,6 +737,10 @@ for index, path in enumerate(out[:2]):
             scene.display.shading.background_type = 'WORLD'
             scene.display.shading.background_color = (0.8, 0.1, 0.2)
         if out[2] == 'combined':
+            scene.render.image_settings.color_management = 'OVERRIDE'
+            scene.render.image_settings.view_settings.exposure = 3.0
+            scene.render.use_sequencer = True
+            scene.render.use_compositing = True
             scene.display.shading.use_world_space_lighting = True
             scene.render.dither_intensity = 0.0
             scene.render.image_settings.color_mode = 'BW'
@@ -698,6 +753,46 @@ for index, path in enumerate(out[:2]):
             scene.display.shading.show_xray = True
             scene.display.shading.show_object_outline = True
             scene.display.shading.show_specular_highlight = False
+    bpy.ops.wm.save_as_mainfile(filepath=path)
+'''
+
+
+MAKE_OUTPUT_SCENES = r'''
+import bpy, sys
+paths = sys.argv[sys.argv.index('--') + 1:]
+mask = int(paths[2])
+for index, path in enumerate(paths[:2]):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.mesh.primitive_cube_add()
+    scene = bpy.context.scene
+    # Isolate pipeline settings from the independently owned stamp-metadata issue.
+    for prop in scene.render.bl_rna.properties:
+        if prop.identifier.startswith('use_stamp') and prop.type == 'BOOLEAN':
+            setattr(scene.render, prop.identifier, False)
+    if index == 1:
+        scene['synthetic_variant'] = mask  # distinct input bytes even for the reset control
+        if mask & 1:
+            image = scene.render.image_settings
+            image.color_management = 'OVERRIDE'
+            image.view_settings.view_transform = 'AgX'
+            image.view_settings.exposure = 2.0
+        if mask & 2:
+            editor = scene.sequence_editor_create()
+            strip = editor.strips.new_effect('SyntheticRed', 'COLOR', channel=1,
+                                             frame_start=1, length=9)
+            strip.color = (1, 0, 0)
+            scene.render.use_sequencer = True
+            assert len(editor.strips) == 1
+        if mask & 4:
+            group = bpy.data.node_groups.new('SyntheticRed', 'CompositorNodeTree')
+            group.interface.new_socket(name='Image', in_out='OUTPUT', socket_type='NodeSocketColor')
+            rgb = group.nodes.new('CompositorNodeRGB')
+            rgb.outputs[0].default_value = (1, 0, 0, 1)
+            output = group.nodes.new('NodeGroupOutput')
+            group.links.new(rgb.outputs[0], output.inputs['Image'])
+            scene.compositing_node_group = group
+            scene.render.use_compositing = True
+            assert scene.compositing_node_group == group
     bpy.ops.wm.save_as_mainfile(filepath=path)
 '''
 
@@ -731,6 +826,8 @@ def test_real_blender_normalizes_saved_render_state(tmp_path, change, style, mod
     assert left['use_curve_mapping'] is False
     assert left['use_white_balance'] is False
     assert left['emulation'] == 'AUTO'
+    assert left['color_management'] == 'FOLLOW_SCENE'
+    assert left['use_sequencer'] is False and left['use_compositing'] is False
     assert left['use_border'] is False and left['use_multiview'] is False
     assert left['image_views_format'] == 'INDIVIDUAL'
     for key, expected in PNG_STATE.items():
@@ -792,6 +889,31 @@ def test_real_blender_colour_rna_has_no_unhandled_writable_properties(tmp_path):
                            log_path=tmp_path / 'rna.log')
     assert 'use_white_balance' in inventory['view_settings']
     assert 'emulation' in inventory['display_settings']
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('mask', range(8))
+def test_real_blender_output_pipeline_is_normalized(tmp_path, mask):
+    """Synthetic native rows: single settings, all subsets and clean reset control."""
+    module = load()
+    maker = tmp_path / 'make-output.py'
+    maker.write_text(MAKE_OUTPUT_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'a.blend', tmp_path / 'b.blend'
+    module.run_blender(maker, [a, b, str(mask)], outputs=[a, b])
+    original = (a.read_bytes(), b.read_bytes())
+    output = tmp_path / 'evidence'
+    assert module.main(argv(a, b, output, '--resolution', '64x40', '--style', 'solid')) == 0
+    assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes()
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    assert evidence['before']['render'] == evidence['after']['render']
+    expected = {'color_management': 'FOLLOW_SCENE', 'use_sequencer': False,
+                'use_compositing': False}
+    for key, value in expected.items():
+        assert evidence['before']['render'][key] == value
+    manifest = json.loads((output / 'before-after.json').read_text(encoding='utf-8'))
+    assert manifest['render'] == evidence['before']['render']
+    assert (a.read_bytes(), b.read_bytes()) == original
 
 
 MAKE_SENSOR_SCENES = r'''

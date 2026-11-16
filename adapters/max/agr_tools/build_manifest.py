@@ -42,7 +42,11 @@ MASTER_KEYS = {'name', 'sha256', 'builder_commit'}
 TRANSFORM_KEYS = {'name', 'file', 'sha256'}
 ARTIFACT_KEYS = {'name', 'kind', 'sha256', 'derived_sha256', 'master_sha256', 'parts'}
 CHECK_KEYS = {'id', 'owner', 'required', 'status', 'finished', 'report', 'report_sha256', 'subjects'}
-DERIVATION_KEYS = {'schema', 'master_name', 'master_sha256', 'builder_commit', 'artifacts'}
+DERIVATION_KEYS = {'schema', 'master_name', 'master_sha256', 'builder_commit', 'artifacts', 'master_path'}
+DERIVATION_REQUIRED = DERIVATION_KEYS - {'master_path'}  # master_path: #1505 export-time records; older records lack it
+DERIVATION_SUFFIX = '.derivation.json'
+DERIVATION_STORE = 'derivation'  # <export root>/derivation/: beside the exported folder, never inside a package folder
+ATLAS_MASTER_KEYS = {'name', 'sha256', 'udims'}
 UCX = re.compile(r'^UCX_(?P<rest>.+)$')
 
 
@@ -139,17 +143,25 @@ def zip_members(package_zip):
 
 
 # ---- derivation records: written by the exporter at export time ---------------------------------------------
-def derivation_record(artifacts, master, builder_commit):
+def derivation_record(artifacts, master, builder_commit, master_sha256=None):
     """Record of which master revision the exported `artifacts` (paths) were derived from, hashed NOW (export time).
 
+    master_sha256: the master hash the exporter read BEFORE it opened the master (#1505); a different hash now means
+    the master changed during the export and is refused (`master_changed_during_export`), nothing is recorded.
     A later master edit leaves this record behind: the build manifest then names two revisions and is refused."""
     if not artifacts:
         raise ValueError('derivation: no artifact')
     if not COMMIT.match(str(builder_commit)):
         raise ValueError('derivation: builder_commit must be a git sha or unknown')
+    if master_sha256 is not None:
+        _sha(master_sha256, 'derivation expected master_sha256')
     master = os.fspath(master)
     if not os.path.isfile(master):
         raise ValueError('derivation: no master file ' + master)
+    now = sha256_file(master)
+    if master_sha256 is not None and now != master_sha256:
+        raise ValueError('master_changed_during_export: master {} was {} when the export started, now {}'.format(
+            os.path.basename(master), master_sha256[:12], now[:12]))
     rec = {}
     for path in artifacts:
         path = os.fspath(path)
@@ -161,12 +173,117 @@ def derivation_record(artifacts, master, builder_commit):
         if not os.path.isfile(path) or not os.path.getsize(path):
             raise ValueError('derivation: empty or missing artifact ' + path)
         rec[name] = {'kind': kind_of(name), 'sha256': sha256_file(path)}
-    return {'schema': DERIVATION_SCHEMA, 'master_name': os.path.basename(master), 'master_sha256': sha256_file(master),
-            'builder_commit': str(builder_commit), 'artifacts': rec}
+    return {'schema': DERIVATION_SCHEMA, 'master_name': os.path.basename(master), 'master_sha256': now,
+            'master_path': os.path.abspath(master), 'builder_commit': str(builder_commit), 'artifacts': rec}
+
+
+def derivation_store(export_dir):
+    """Export-time record store of one export: `<parent of the exported folder>/derivation/` (#1505).
+
+    Outside the exported folder on purpose: package_vpm zips every file of its package folder."""
+    return os.path.join(os.path.dirname(os.path.abspath(os.fspath(export_dir))), DERIVATION_STORE)
+
+
+def write_export_derivation(artifacts, master, store_dir, builder_commit='unknown', master_sha256=None, inputs=()):
+    """Exporter hook (#1505): write `<store>/<first artifact>.derivation.json` (new file, never replaced).
+
+    Every refusal (no artifact, master changed during the export, existing record, record aliasing an input) happens
+    before the store folder or the record is created."""
+    artifacts = [os.fspath(p) for p in artifacts]
+    rec = derivation_record(artifacts, master, builder_commit, master_sha256)
+    store_dir = os.fspath(store_dir)
+    path = os.path.join(store_dir, os.path.basename(artifacts[0]) + DERIVATION_SUFFIX)
+    taken = {os.path.normcase(os.path.realpath(p)) for p in list(artifacts) + [os.fspath(master)] + list(inputs)}
+    for p in (path, path + '.partial'):
+        if os.path.normcase(os.path.realpath(p)) in taken:
+            raise ValueError('output {} is an input'.format(p))
+        if os.path.lexists(p):
+            raise FileExistsError('refusing to overwrite: ' + p)
+    os.makedirs(store_dir, exist_ok=True)
+    return write_new(path, dumps(rec), list(artifacts) + [os.fspath(master)] + list(inputs))
+
+
+def derivation_files(paths):
+    """`--derivation` operands: a record file as is, a store folder -> its `*.derivation.json` in name order."""
+    out = []
+    for p in paths:
+        p = os.fspath(p)
+        if os.path.isdir(p):
+            found = sorted(n for n in os.listdir(p) if n.endswith(DERIVATION_SUFFIX))
+            if not found:
+                raise ValueError('derivation store {} has no derivation record'.format(p))
+            out += [os.path.join(p, n) for n in found]
+        else:
+            out.append(p)
+    return out
+
+
+def git_commit(root):
+    """HEAD of the repository at `root`, or 'unknown' (never a guess)."""
+    import subprocess
+    try:
+        r = subprocess.run(['git', '-C', os.fspath(root), 'rev-parse', 'HEAD'], capture_output=True, text=True,
+                           timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return 'unknown'
+    sha = r.stdout.strip()
+    return sha if r.returncode == 0 and COMMIT.match(sha) else 'unknown'
+
+
+# ---- NPM atlas bound to the master (#1505) ------------------------------------------------------------------
+class AtlasBindingError(ValueError):
+    """Atlas refused for this master; `reason` is atlas_unbound | atlas_master_mismatch | atlas_udim_mismatch."""
+
+    def __init__(self, reason, detail):
+        self.reason = reason
+        super().__init__('{}: {}'.format(reason, detail))
+
+
+def _atlas_udims(finishes):
+    if not isinstance(finishes, dict) or not finishes:
+        raise AtlasBindingError('atlas_udim_mismatch', 'atlas has no finish region')
+    udims = []
+    for name, region in finishes.items():
+        udim = region.get('udim') if isinstance(region, dict) else None
+        if type(udim) is not int:
+            raise AtlasBindingError('atlas_udim_mismatch', 'finish {} has no integer UDIM'.format(name))
+        udims.append(udim)
+    return sorted(udims)
+
+
+def atlas_master_binding(master, finishes):
+    """`npm_atlas.json` key `master`: the master file name, its SHA-256 and the UDIM tiles the atlas maps."""
+    master = os.fspath(master)
+    if not os.path.isfile(master) or not os.path.getsize(master):
+        raise ValueError('atlas: empty or missing master ' + master)
+    return {'name': os.path.basename(master), 'sha256': sha256_file(master), 'udims': _atlas_udims(finishes)}
+
+
+def check_atlas_master(atlas, master_sha256):
+    """The atlas binding when it names exactly this master revision and the atlas's own UDIM set; else
+    AtlasBindingError with a named reason. A missing/malformed binding is `atlas_unbound`, never a pass."""
+    _sha(master_sha256, 'current master sha256')
+    if not isinstance(atlas, dict):
+        raise AtlasBindingError('atlas_unbound', 'npm_atlas.json is not an object')
+    b = atlas.get('master')
+    if not isinstance(b, dict) or set(b) != ATLAS_MASTER_KEYS or not isinstance(b.get('sha256'), str) \
+            or not SHA.match(b['sha256']):
+        raise AtlasBindingError('atlas_unbound', 'npm_atlas.json has no master binding {name, sha256, udims}; '
+                                'regenerate the atlas with --master')
+    if b['sha256'] != master_sha256:
+        raise AtlasBindingError('atlas_master_mismatch', 'atlas bound to master {} sha256 {}, current master {}'.format(
+            b['name'], b['sha256'][:12], master_sha256[:12]))
+    want = _atlas_udims(atlas.get('finishes'))
+    got = b['udims']
+    if not isinstance(got, list) or any(type(u) is not int for u in got) or got != want:
+        raise AtlasBindingError('atlas_udim_mismatch', 'binding udims {!r} != atlas finish udims {}'.format(got, want))
+    return b
 
 
 def check_derivation(rec):
-    _keys(rec, DERIVATION_KEYS, 'derivation')
+    _keys(rec, DERIVATION_KEYS, 'derivation', DERIVATION_REQUIRED)
+    if 'master_path' in rec and (not isinstance(rec['master_path'], str) or not rec['master_path'].strip()):
+        raise ValueError('derivation master_path must be a non-empty path')
     if rec['schema'] != DERIVATION_SCHEMA:
         raise ValueError('derivation schema {!r} != {!r}'.format(rec['schema'], DERIVATION_SCHEMA))
     _sha(rec['master_sha256'], 'derivation master_sha256')

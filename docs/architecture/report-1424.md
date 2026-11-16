@@ -32,17 +32,16 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 118; живой обход 41, обёртка 6, исторические 36, своя обязанность 23; разных живых копий 40.
+Строк дублей во всех картах: 113; живой обход 37, обёртка 6, исторические 37, своя обязанность 21; разных живых копий 37.
 Заменённые черновики (не сдача): 12.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
 |---|---|---|---|
 | Связь с DCC (Blender / 3ds Max) | 16 | `src/dt_ai/cli/shared_tools.py`, `tools/flora/build_flora_npm_light.py`, `tools/flora/build_flora_star.py`, `tools/library/check_library.py`, `tools/library/migrate_windows.py`, `tools/materials/bind_ground_textures.py`, `tools/methods/body/run_benchmarks.py`, `tools/methods/ground/build_variant.py`, `tools/methods/parametric_parts/mesh_recipe.py`, `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py`, `tools/methods/windows/run_benchmarks.py`, `tools/research/checker_mutation.py`, `tools/research/fbx_reader_compare.py`, `tools/sintez_parity.py` | нет карточки |
-| Общее ядро: номер тайла UDIM | 15 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py`, `jobs/KPP1/scripts/vpm_uv.py`, `jobs/TEC26-OKS/scripts/vpm_uv.py`, `jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py` | нет карточки |
+| Общее ядро: номер тайла UDIM | 13 | `adapters/max/agr_tools/atlas_core.py`, `adapters/max/agr_tools/npm2vpm_core.py`, `adapters/max/agr_tools/npm_core.py`, `adapters/max/agr_tools/udim_core.py`, `adapters/max/agr_tools/udimplug_core.py`, `adapters/max/agr_tools/udimview_core.py`, `adapters/max/agr_tools/uvlayout_core.py`, `adapters/max/agr_tools/uvtile_core.py`, `jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py` | нет карточки |
 | Корпус и геометрия | 2 | `jobs/KPP1/scripts/seal.py` | #1381 |
 | Экспорт и пакет сдачи | 2 | `jobs/TEC26-OKS/scripts/package_vpm.py`, `jobs/elv-tc-vpm/scripts/package_vpm_v006.py` | #1377 |
 | UV и атлас | 1 | `tools/materials/npm_atlas_udim.py` | #1380 |
-| Копия раскладки UV ВПМ | 1 | `jobs/TEC26-OKS/scripts/vpm_uv.py` | нет карточки |
 | Кровля и плита | 1 | `jobs/KPP1/scripts/build_kpp1.py` | #1381 |
 | Пакеты НПМ / ВПМ и передача | 1 | `jobs/TEC26-OKS/scripts/package_vpm.py` | #1377 |
 | Экспорт и пакет сдачи | 1 | `jobs/VATUTINO-SITE/npm_code.py` | нет карточки |
@@ -51,7 +50,7 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 | № | Шаг | Живых обходов |
 |---|---|---|
-| 1 | нет карточки | 33 |
+| 1 | нет карточки | 30 |
 | 2 | #1381 | 3 |
 | 3 | #1377 | 3 |
 | 4 | #1380 | 1 |
@@ -62,6 +61,7 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 | 9 | #1406 | 0 |
 | 10 | #1407 | 0 |
 | 11 | #1410 | 0 |
+
 
 ### Рекомендуемый порядок сжатия
 
@@ -86,5 +86,6 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 9. **Владелец #1377 (3 строки)** — TEC26 ZIP (описательная и hash-pinned строки) и кандидат ELV v006:
    будущая миграция на package_core; закрытый предыдущий шаг не доказывает перенос этих файлов.
 10. **#1405, #1406, #1407, #1410 (0)** — place_site уже вызывает run_blender; остальные — недостающие команды.
-11. **Без карточки: ещё 4 формулы UDIM и TEC26 pack_uv.** Текущие KPP1/TEC26 и кандидат ELV v008,
-    не сданные исторические копии. Числа таблицы — `(at, hash)`, не уникальные обязанности.
+11. **Без карточки: ещё 2 формулы UDIM кандидата ELV v008.** Не сданные исторические копии.
+    KPP1/TEC26 pack_uv и tile_offset перенесены к общим владельцам в #1380.
+    Числа таблицы — `(at, hash)`, не уникальные обязанности.

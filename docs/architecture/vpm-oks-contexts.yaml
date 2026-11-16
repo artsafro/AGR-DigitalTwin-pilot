@@ -51,28 +51,6 @@ contexts:
         contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
       - name: atlas_png
         contract: "раскладка -> PNG атласа"
-    duplicates:
-      - at: "jobs/KPP1/scripts/vpm_uv.py:155"
-        match: "def pack_uv("
-        issue: "#1359"
-        ru: "своя раскладка UV ВПМ КПП1"
-        status: own-duty
-        why: "раскладка ВПМ по периоду отделки и плотности, не атлас НПМ; build_kpp1 -> pack_uv"
-  - id: vpm-uv-copy
-    ru: "Копия раскладки UV ВПМ"
-    area: docs/domain/areas/uv-atlas.md
-    owner: jobs/KPP1/scripts/vpm_uv.py
-    owner_ru: "ВПМ pack_uv по периодам; не atlas_core НПМ"
-    functions:
-      - name: pack_uv
-        contract: "меш, отделки, спецификация -> раскладка ВПМ"
-    duplicates:
-      - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:155"
-        match: "def pack_uv("
-        issue: "#1359"
-        ru: "копия vpm_uv.py КПП1 (одна строка разницы)"
-        status: live-bypass
-        step: "-"
   - id: npm
     ru: "НПМ в тех же координатах (ВПМ → НПМ)"
     area: docs/domain/areas/derivation.md

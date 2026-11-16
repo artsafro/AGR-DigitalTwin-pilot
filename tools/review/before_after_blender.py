@@ -108,6 +108,10 @@ def setup(scene, fitted, thickness):
         if prop.identifier.startswith('use_stamp_') and prop.type == 'BOOLEAN':
             setattr(render, prop.identifier, False)
     render.image_settings.file_format = 'PNG'
+    # Ignore saved output transforms and post-processing: compare the model, not a strip/tree.
+    render.image_settings.color_management = 'FOLLOW_SCENE'
+    render.use_sequencer = False
+    render.use_compositing = False
     render.image_settings.color_mode = 'RGB'
     render.image_settings.color_depth = '8'
     render.image_settings.compression = 15
@@ -174,6 +178,9 @@ def render_record(scene, wires):
     if thicknesses and any(t != thicknesses[0] for t in thicknesses):
         raise RuntimeError('mismatched wire thickness within scene')
     return {'engine': scene.render.engine, 'style': request['style'],
+            'color_management': scene.render.image_settings.color_management,
+            'use_sequencer': scene.render.use_sequencer,
+            'use_compositing': scene.render.use_compositing,
             'use_world_space_lighting': shading.use_world_space_lighting,
             'dither_intensity': scene.render.dither_intensity,
             'color_mode': scene.render.image_settings.color_mode,

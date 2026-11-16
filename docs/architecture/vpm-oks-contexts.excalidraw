@@ -341,6 +341,10 @@
     {
      "type": "arrow",
      "id": "e8a66e1032e2f488"
+    },
+    {
+     "type": "arrow",
+     "id": "eaf229d781904b59"
     }
    ],
    "updated": 1,
@@ -384,224 +388,10 @@
    "lineHeight": 1.25
   },
   {
-   "id": "e99c9ff8d7aad5df",
-   "type": "rectangle",
-   "x": 1260,
-   "y": 521.5,
-   "width": 470,
-   "height": 65.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "#ffc9c9",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": {
-    "type": 3
-   },
-   "seed": 1071397470,
-   "version": 1,
-   "versionNonce": 333385270,
-   "isDeleted": false,
-   "boundElements": [
-    {
-     "type": "text",
-     "id": "e6464ee46504a376"
-    },
-    {
-     "type": "arrow",
-     "id": "eaf229d781904b59"
-    }
-   ],
-   "updated": 1,
-   "link": null,
-   "locked": false
-  },
-  {
-   "id": "e6464ee46504a376",
-   "type": "text",
-   "x": 1268,
-   "y": 531.5,
-   "width": 454,
-   "height": 45.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "transparent",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": null,
-   "seed": 775920337,
-   "version": 1,
-   "versionNonce": 88591795,
-   "isDeleted": false,
-   "boundElements": null,
-   "updated": 1,
-   "link": null,
-   "locked": false,
-   "text": "Дубли вне владельца: 1\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ КПП1\n(#1359)",
-   "fontSize": 12,
-   "fontFamily": 2,
-   "textAlign": "left",
-   "verticalAlign": "middle",
-   "containerId": "e99c9ff8d7aad5df",
-   "originalText": "Дубли вне владельца: 1\n• jobs/KPP1/scripts/vpm_uv.py:155 — своя раскладка UV ВПМ КПП1\n(#1359)",
-   "autoResize": true,
-   "lineHeight": 1.25
-  },
-  {
-   "id": "ed73172f630b51c5",
+   "id": "ebefb8015300e481",
    "type": "rectangle",
    "x": 1870,
    "y": 347.5,
-   "width": 470,
-   "height": 107.5,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "#b2f2bb",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": {
-    "type": 3
-   },
-   "seed": 133474467,
-   "version": 1,
-   "versionNonce": 1564627717,
-   "isDeleted": false,
-   "boundElements": [
-    {
-     "type": "text",
-     "id": "e586c5135d46677b"
-    }
-   ],
-   "updated": 1,
-   "link": null,
-   "locked": false
-  },
-  {
-   "id": "e586c5135d46677b",
-   "type": "text",
-   "x": 1878,
-   "y": 357.5,
-   "width": 454,
-   "height": 87.5,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "transparent",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": null,
-   "seed": 1027600173,
-   "version": 1,
-   "versionNonce": 989533940,
-   "isDeleted": false,
-   "boundElements": null,
-   "updated": 1,
-   "link": null,
-   "locked": false,
-   "text": "Копия раскладки UV ВПМ\nВладелец: jobs/KPP1/scripts/vpm_uv.py\nВПМ pack_uv по периодам; не atlas_core НПМ\n\npack_uv: меш, отделки, спецификация -> раскладка ВПМ",
-   "fontSize": 14,
-   "fontFamily": 2,
-   "textAlign": "left",
-   "verticalAlign": "middle",
-   "containerId": "ed73172f630b51c5",
-   "originalText": "Копия раскладки UV ВПМ\nВладелец: jobs/KPP1/scripts/vpm_uv.py\nВПМ pack_uv по периодам; не atlas_core НПМ\n\npack_uv: меш, отделки, спецификация -> раскладка ВПМ",
-   "autoResize": true,
-   "lineHeight": 1.25
-  },
-  {
-   "id": "e5f3bede53607957",
-   "type": "rectangle",
-   "x": 1870,
-   "y": 469.0,
-   "width": 470,
-   "height": 65.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "#ffc9c9",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": {
-    "type": 3
-   },
-   "seed": 731142500,
-   "version": 1,
-   "versionNonce": 649322655,
-   "isDeleted": false,
-   "boundElements": [
-    {
-     "type": "text",
-     "id": "efd8b5b4746d6559"
-    }
-   ],
-   "updated": 1,
-   "link": null,
-   "locked": false
-  },
-  {
-   "id": "efd8b5b4746d6559",
-   "type": "text",
-   "x": 1878,
-   "y": 479.0,
-   "width": 454,
-   "height": 45.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "transparent",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": null,
-   "seed": 314317122,
-   "version": 1,
-   "versionNonce": 1867618970,
-   "isDeleted": false,
-   "boundElements": null,
-   "updated": 1,
-   "link": null,
-   "locked": false,
-   "text": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — копия vpm_uv.py КПП1 (одна\nстрока разницы) (#1359)",
-   "fontSize": 12,
-   "fontFamily": 2,
-   "textAlign": "left",
-   "verticalAlign": "middle",
-   "containerId": "e5f3bede53607957",
-   "originalText": "Дубли вне владельца: 1\n• jobs/TEC26-OKS/scripts/vpm_uv.py:155 — копия vpm_uv.py КПП1 (одна\nстрока разницы) (#1359)",
-   "autoResize": true,
-   "lineHeight": 1.25
-  },
-  {
-   "id": "ebefb8015300e481",
-   "type": "rectangle",
-   "x": 40.0,
-   "y": 646.5,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -642,8 +432,8 @@
   {
    "id": "ee52b2029f7668ad",
    "type": "text",
-   "x": 48.0,
-   "y": 656.5,
+   "x": 1878,
+   "y": 357.5,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -678,8 +468,8 @@
   {
    "id": "e125ae7d0f5a9eef",
    "type": "rectangle",
-   "x": 650.0,
-   "y": 646.5,
+   "x": 40.0,
+   "y": 585.0,
    "width": 470,
    "height": 247.5,
    "angle": 0,
@@ -720,8 +510,8 @@
   {
    "id": "e17277d14ef0fd09",
    "type": "text",
-   "x": 658.0,
-   "y": 656.5,
+   "x": 48.0,
+   "y": 595.0,
    "width": 454,
    "height": 227.5,
    "angle": 0,
@@ -756,8 +546,8 @@
   {
    "id": "e055eec75f5eb0b4",
    "type": "rectangle",
-   "x": 1260.0,
-   "y": 646.5,
+   "x": 650.0,
+   "y": 585.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -798,8 +588,8 @@
   {
    "id": "ea5fe04c3488d12b",
    "type": "text",
-   "x": 1268.0,
-   "y": 656.5,
+   "x": 658.0,
+   "y": 595.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -834,8 +624,8 @@
   {
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
-   "x": 1870.0,
-   "y": 646.5,
+   "x": 1260.0,
+   "y": 585.0,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -880,8 +670,8 @@
   {
    "id": "e55a50708fc05498",
    "type": "text",
-   "x": 1878.0,
-   "y": 656.5,
+   "x": 1268.0,
+   "y": 595.0,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -916,8 +706,8 @@
   {
    "id": "e7b912642e1534e2",
    "type": "rectangle",
-   "x": 40.0,
-   "y": 989.0,
+   "x": 1870.0,
+   "y": 585.0,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -954,8 +744,8 @@
   {
    "id": "e3212abb34fd11e1",
    "type": "text",
-   "x": 48.0,
-   "y": 999.0,
+   "x": 1878.0,
+   "y": 595.0,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -990,8 +780,8 @@
   {
    "id": "e43fe4f37d52ebfe",
    "type": "rectangle",
-   "x": 40.0,
-   "y": 1163.0,
+   "x": 1870.0,
+   "y": 759.0,
    "width": 470,
    "height": 80.0,
    "angle": 0,
@@ -1024,8 +814,8 @@
   {
    "id": "eb444d1905179d98",
    "type": "text",
-   "x": 48.0,
-   "y": 1173.0,
+   "x": 1878.0,
+   "y": 769.0,
    "width": 454,
    "height": 60.0,
    "angle": 0,
@@ -1060,8 +850,8 @@
   {
    "id": "ec200d9f38e404b3",
    "type": "rectangle",
-   "x": 650.0,
-   "y": 989.0,
+   "x": 345.0,
+   "y": 927.5,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -1102,8 +892,8 @@
   {
    "id": "e5ab4a0c3613fa92",
    "type": "text",
-   "x": 658.0,
-   "y": 999.0,
+   "x": 353.0,
+   "y": 937.5,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -1138,8 +928,8 @@
   {
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
-   "x": 650.0,
-   "y": 1198.0,
+   "x": 345.0,
+   "y": 1136.5,
    "width": 470,
    "height": 65.0,
    "angle": 0,
@@ -1172,8 +962,8 @@
   {
    "id": "ed13348e89d7b0b7",
    "type": "text",
-   "x": 658.0,
-   "y": 1208.0,
+   "x": 353.0,
+   "y": 1146.5,
    "width": 454,
    "height": 45.0,
    "angle": 0,
@@ -1208,8 +998,8 @@
   {
    "id": "e519317b1b47435c",
    "type": "rectangle",
-   "x": 1260.0,
-   "y": 989.0,
+   "x": 955.0,
+   "y": 927.5,
    "width": 470,
    "height": 107.5,
    "angle": 0,
@@ -1242,8 +1032,8 @@
   {
    "id": "e29094e01e5604dc",
    "type": "text",
-   "x": 1268.0,
-   "y": 999.0,
+   "x": 963.0,
+   "y": 937.5,
    "width": 454,
    "height": 87.5,
    "angle": 0,
@@ -1278,8 +1068,8 @@
   {
    "id": "e807a1ec46d1f932",
    "type": "rectangle",
-   "x": 1260.0,
-   "y": 1110.5,
+   "x": 955.0,
+   "y": 1049.0,
    "width": 470,
    "height": 65.0,
    "angle": 0,
@@ -1312,8 +1102,8 @@
   {
    "id": "e8a2c0412f487bf8",
    "type": "text",
-   "x": 1268.0,
-   "y": 1120.5,
+   "x": 963.0,
+   "y": 1059.0,
    "width": 454,
    "height": 45.0,
    "angle": 0,
@@ -1348,8 +1138,8 @@
   {
    "id": "e45233b249c035b3",
    "type": "rectangle",
-   "x": 1870.0,
-   "y": 989.0,
+   "x": 1565.0,
+   "y": 927.5,
    "width": 470,
    "height": 125.0,
    "angle": 0,
@@ -1382,8 +1172,8 @@
   {
    "id": "e78de4c14754e830",
    "type": "text",
-   "x": 1878.0,
-   "y": 999.0,
+   "x": 1573.0,
+   "y": 937.5,
    "width": 454,
    "height": 105.0,
    "angle": 0,
@@ -1418,8 +1208,8 @@
   {
    "id": "e0c4dca1ed57a80e",
    "type": "rectangle",
-   "x": 1870.0,
-   "y": 1128.0,
+   "x": 1565.0,
+   "y": 1066.5,
    "width": 470,
    "height": 95.0,
    "angle": 0,
@@ -1452,8 +1242,8 @@
   {
    "id": "e0299676f38dc74e",
    "type": "text",
-   "x": 1878.0,
-   "y": 1138.0,
+   "x": 1573.0,
+   "y": 1076.5,
    "width": 454,
    "height": 75.0,
    "angle": 0,
@@ -1584,8 +1374,8 @@
    "type": "arrow",
    "x": 885.0,
    "y": 525.0,
-   "width": 0.0,
-   "height": 121.5,
+   "width": 610.0,
+   "height": 60.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1618,8 +1408,8 @@
      0
     ],
     [
-     0.0,
-     121.5
+     -610.0,
+     60.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1640,8 +1430,8 @@
   {
    "id": "edd5516ed2e15727",
    "type": "text",
-   "x": 825.0,
-   "y": 567.75,
+   "x": 520.0,
+   "y": 537.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1676,8 +1466,8 @@
   {
    "id": "e788be0927ccf5c0",
    "type": "arrow",
-   "x": 1120.0,
-   "y": 770.25,
+   "x": 510.0,
+   "y": 708.75,
    "width": 140.0,
    "height": 17.5,
    "angle": 0,
@@ -1734,8 +1524,8 @@
   {
    "id": "eac5bd478bfa8c69",
    "type": "text",
-   "x": 1130.0,
-   "y": 752.5,
+   "x": 520.0,
+   "y": 691.0,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1770,9 +1560,9 @@
   {
    "id": "e6bc98cd3822bd1f",
    "type": "arrow",
-   "x": 1495.0,
-   "y": 859.0,
-   "width": 610.0,
+   "x": 885.0,
+   "y": 797.5,
+   "width": 305.0,
    "height": 130.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -1806,7 +1596,7 @@
      0
     ],
     [
-     -610.0,
+     -305.0,
      130.0
     ]
    ],
@@ -1828,8 +1618,8 @@
   {
    "id": "e46226a57bf78b1e",
    "type": "text",
-   "x": 1130.0,
-   "y": 906.0,
+   "x": 672.5,
+   "y": 844.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2052,10 +1842,10 @@
   {
    "id": "eaf229d781904b59",
    "type": "arrow",
-   "x": 1495.0,
-   "y": 586.5,
-   "width": 1220.0,
-   "height": 60.0,
+   "x": 1730,
+   "y": 427.5,
+   "width": 140,
+   "height": 8.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2088,8 +1878,8 @@
      0
     ],
     [
-     -1220.0,
-     60.0
+     140,
+     8.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -2097,7 +1887,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "e99c9ff8d7aad5df",
+    "elementId": "e3b32b4a8117835a",
     "focus": 0,
     "gap": 4
    },
@@ -2110,8 +1900,8 @@
   {
    "id": "e752855fa0367ba0",
    "type": "text",
-   "x": 825.0,
-   "y": 607.5,
+   "x": 1740.0,
+   "y": 422.88,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2146,10 +1936,10 @@
   {
    "id": "e7d94c97f5526d4f",
    "type": "arrow",
-   "x": 510.0,
-   "y": 735.25,
-   "width": 1360.0,
-   "height": 52.5,
+   "x": 2105.0,
+   "y": 525.0,
+   "width": 610.0,
+   "height": 60.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2182,8 +1972,8 @@
      0
     ],
     [
-     1360.0,
-     52.5
+     -610.0,
+     60.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -2204,8 +1994,8 @@
   {
    "id": "e3be59ba42305b7c",
    "type": "text",
-   "x": 1130.0,
-   "y": 743.5,
+   "x": 1740.0,
+   "y": 537.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2240,9 +2030,9 @@
   {
    "id": "e9907a5818ce54f9",
    "type": "arrow",
-   "x": 1120.0,
-   "y": 1086.5,
-   "width": 750.0,
+   "x": 815.0,
+   "y": 1025.0,
+   "width": 445.0,
    "height": 298.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -2276,7 +2066,7 @@
      0
     ],
     [
-     750.0,
+     445.0,
      -298.75
     ]
    ],
@@ -2298,8 +2088,8 @@
   {
    "id": "e370a648cb3200ee",
    "type": "text",
-   "x": 1435.0,
-   "y": 928.12,
+   "x": 977.5,
+   "y": 866.62,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2334,10 +2124,10 @@
   {
    "id": "e4f552790d995798",
    "type": "arrow",
-   "x": 1870.0,
-   "y": 787.75,
-   "width": 1360.0,
-   "height": 281.25,
+   "x": 1730.0,
+   "y": 726.25,
+   "width": 140.0,
+   "height": 61.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2370,8 +2160,8 @@
      0
     ],
     [
-     -1360.0,
-     281.25
+     140.0,
+     -61.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -2392,8 +2182,8 @@
   {
    "id": "e321747c08b4204e",
    "type": "text",
-   "x": 1130.0,
-   "y": 919.38,
+   "x": 1740.0,
+   "y": 686.62,
    "width": 120,
    "height": 17.5,
    "angle": 0,

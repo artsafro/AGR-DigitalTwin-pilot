@@ -21,10 +21,17 @@ def synthetic_spec(path, count=20):
     return path
 
 
+def synthetic_master(tmp_path):
+    """Synthetic master bytes: generation binds npm_atlas.json to the master hash (#1505)."""
+    path = tmp_path / 'master.blend'
+    path.write_bytes(b'synthetic master revision A')
+    return path
+
+
 def test_export_has_sixteen_pixel_per_side_padding(tmp_path):
     source = synthetic_spec(tmp_path / 'spec.json')
     out = tmp_path / 'v001'
-    assert atlas.main([str(source), str(out)]) == 0
+    assert atlas.main([str(source), str(out), '--master', str(synthetic_master(tmp_path))]) == 0
     data = json.loads((out / 'npm_atlas.json').read_text())
     assert data['pad'] == 16
     assert data['region'] == 377
@@ -167,7 +174,7 @@ def test_generator_rejects_racing_output_hardlink(tmp_path, monkeypatch, target)
         (Path(out) / target).hardlink_to(source)
     monkeypatch.setattr(finish_map, 'fresh_out_dir', race)
     with pytest.raises(FileExistsError):
-        atlas.main([str(source), str(tmp_path / 'v001')])
+        atlas.main([str(source), str(tmp_path / 'v001'), '--master', str(synthetic_master(tmp_path))])
     assert source.read_bytes() == before
 
 
