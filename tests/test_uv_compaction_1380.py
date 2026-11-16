@@ -127,6 +127,21 @@ def test_generated_tile_policy_probe():
         assert policy.max_quad_side(size) == float(Fraction(size * 63, 65536))
 
 
+@pytest.mark.parametrize('path,constant,reason', [
+    ('jobs/vyatskaya-tow02/scripts/build_body_blender.py', 'MAX_SIDE_M = 3.8', 'closed job'),
+    ('jobs/vyatskaya-tow02/scripts/build_decor_blender.py', 'MAX_EDGE_M = 3.8', 'closed job'),
+    ('jobs/vyatskaya-tow02/scripts/build_review_fixes_blender.py', 'MAX_SIDE_M = 3.8', 'closed job'),
+    ('jobs/PSU275/scripts/qa_master_psu275.py', 'MAX_EDGE = 4.0 + 1e-4', 'historical QA'),
+])
+def test_d320_leftovers_have_explicit_historical_reasons(path, constant, reason):
+    report = (ROOT / 'docs/architecture/report-1380.md').read_text(encoding='utf-8')
+    rows = [line for line in report.splitlines() if line.startswith(f'| `{path}` |')]
+    assert len(rows) == 1, f'{path}: expected exactly one explicit exception row'
+    assert f'`{constant}`' in rows[0]
+    assert 'historical' in rows[0] and reason in rows[0]
+    assert constant in (ROOT / path).read_text(encoding='utf-8')
+
+
 def test_no_delivery_changes():
     base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
     paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
