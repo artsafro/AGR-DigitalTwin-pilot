@@ -1,4 +1,5 @@
-"""#1396: a duplicate_guard allowlist row covers `count` copies (default 1), not every copy in its function.
+"""#1396 (new-case: duplicate_guard allowlist row copy count): a duplicate_guard allowlist row covers `count`
+copies (default 1), not every copy in its function.
 
 Since #1387 rows are keyed by `path.py::qualname` (+ optional hash); without a count an identical 2nd copy pasted
 into the same function was silently covered. Covered findings > count -> the extra ones are NEW COPY; covered
