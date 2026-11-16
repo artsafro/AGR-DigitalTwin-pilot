@@ -10,6 +10,7 @@
         a package with several roles needs `--master role=path` for each; one unkeyed --master fits a one-role package.
         [D333, D332]: GroundEl/Flora keep own roles; repeat --master role=path for independent geometry/map sources.
         V3 requires --source-id at record time for every producer; keep it across renamed revisions (#1589).
+        All producers identified opts a single-source package into v3; partial migration remains v2.
         Omission is legacy single-source v2 only, never an inferred identity for a multi-source build.
         The FBX export owner readback (dimensions, part positions, materials, UV, UCX-to-visual binding) runs on the
         FBX members of the ZIP (the exact bytes that are delivered) and writes `<stem>.readback.json`; then

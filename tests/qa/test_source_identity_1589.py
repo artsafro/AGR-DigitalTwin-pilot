@@ -81,8 +81,11 @@ def test_real_recipe_with_legacy_oks_and_mesh_producer(tmp_path, monkeypatch, me
             dict(bm=bm, out=str(gfbx), src=str(ground), os=os, root=str(ROOT),
                  src_sha=bm.sha256_file(ground), address='Syn', source_id=None))
         records.append(bm.strict_json(Path(record).read_bytes()))
-        # Real OKS producer call must provide its own identity for a multi-source package.
-        records[-2]['source_id'] = 'Syn.oks.master'
+        oks_record = producer_record_call('tools/derive/export_npm.py',
+            dict(_bm=bm, fbx=str(fbx), store=str(tmp_path / 'oks-records'), os=os,
+                 HERE=str(ROOT / 'tools/derive'), master_sha=bm.sha256_file(oks), A='Syn',
+                 a=SimpleNamespace(master=str(oks), spec=str(src), atlas_dir=str(out), source_id=None, index=1)))
+        records[-2] = bm.strict_json(Path(oks_record).read_bytes())
         masters['ground'].append(str(ground))
         files.append(gfbx)
     pkg = tmp_path / '0000_Syn.zip'
@@ -107,6 +110,76 @@ def test_real_recipe_with_legacy_oks_and_mesh_producer(tmp_path, monkeypatch, me
     result = bm.manifest_findings(Path(bm.manifest_path(pkg)).read_bytes(), bm.zip_members(pkg),
         pkg.name, bm.sha256_file(pkg), bm.master_hashes(masters), str(tmp_path))
     assert [r[:2] for r in result] == [('pass', 'manifest_ok')]
+
+
+@pytest.mark.parametrize('producer', ['npm', 'vpm', 'quad'])
+def test_oks_producer_identity_survives_source_rename(tmp_path, producer):
+    source = tmp_path / 'renamed_revision.blend'
+    source.write_bytes(b'synthetic master')
+    fbx = tmp_path / '0000_Syn_01.fbx'
+    fbx.write_bytes(b'synthetic FBX')
+    store = tmp_path / 'store'
+    namespace = dict(_bm=bm, bm=bm, os=os, HERE=str(ROOT / 'tools/derive'),
+        fbx=str(fbx), store=str(store), master_sha=bm.sha256_file(source),
+        a=SimpleNamespace(master=str(source), spec=str(source), atlas_dir=str(tmp_path), source_id=None, index=1),
+        A='Syn', address='Syn', master=str(source), STORE=str(store), MASTER_SHA=bm.sha256_file(source),
+        packet=tmp_path, source=str(source), source_digest=bm.sha256_file(source), commit='unknown',
+        outputs=[str(fbx)], plan_path=None)
+    path = {'npm': 'tools/derive/export_npm.py', 'vpm': 'jobs/KPP1/scripts/export_vpm.py',
+            'quad': 'jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py'}[producer]
+    namespace['__file__'] = str(ROOT / path)
+    if producer == 'quad':
+        namespace['fbx'] = [str(fbx)]
+    record = producer_record_call(path, namespace)
+    rec = bm.strict_json(Path(record).read_bytes())
+    assert rec['source_id'] == ('Syn.oks.001.master' if producer == 'npm' else 'KPP1.oks.master')
+    assert rec['master_name'] == source.name
+
+
+def test_partial_identity_migration_does_not_hide_explicit_revision_conflict(tmp_path):
+    pkg, sources, records = bundle(tmp_path)
+    records[0]['role'] = 'oks'
+    records[0]['artifacts'] = {'0000_Syn_01.fbx': records[0]['artifacts']['0000_Syn_Ground.fbx']}
+    flora = tmp_path / 'flora.json'
+    flora.write_bytes(b'synthetic legacy Flora')
+    artifact = tmp_path / 'T_Syn_Flora_Diffuse_1.png'
+    artifact.write_bytes(b'synthetic legacy PNG')
+    records.append(bm.derivation_record([artifact], flora, 'unknown', role='flora'))
+    with zipfile.ZipFile(pkg, 'w') as z:
+        for rec in records:
+            for name in rec['artifacts']:
+                data = b'synthetic ' + name.encode() if name != artifact.name else artifact.read_bytes()
+                z.writestr(name, data)
+                rec['artifacts'][name]['sha256'] = bm.sha256_bytes(data)
+    with pytest.raises(ValueError, match='two revisions.*site.mesh'):
+        bm.make_manifest(pkg, {'oks': sources[0], 'ground': sources[1], 'flora': str(flora)},
+                         'unknown', records, bm.transform_entry('identity'))
+
+
+def test_generated_partial_migration_subsets(tmp_path):
+    names = ['0000_Syn_01.fbx', '0000_Syn_Ground.fbx', 'SM_Syn_Flora.fbx']
+    roles = ['oks', 'ground', 'flora']
+    masters, records = {}, []
+    pkg = tmp_path / '0000_Syn.zip'
+    with zipfile.ZipFile(pkg, 'w') as z:
+        for name, role in zip(names, roles):
+            source = tmp_path / (role + '.json')
+            source.write_bytes(('synthetic ' + role).encode())
+            f = tmp_path / name
+            f.write_bytes(('synthetic ' + name).encode())
+            masters[role] = str(source)
+            records.append(bm.derivation_record([f], source, 'unknown', role=role))
+            z.write(f, name)
+    for mask, reverse in itertools.product(range(8), [False, True]):
+        rows = copy.deepcopy(records)
+        for i, row in enumerate(rows):
+            if mask & (1 << i):
+                row['source_id'] = roles[i] + '.stable'
+        if reverse:
+            rows.reverse()
+        manifest = bm.make_manifest(pkg, masters, 'unknown', rows, bm.transform_entry('identity'))
+        assert manifest['schema'] == (bm.SCHEMA_MULTI if mask == 7 else bm.SCHEMA)
+        bm.parse_manifest(bm.dumps(manifest))
 
 
 def test_missing_identity_names_artifact(tmp_path):

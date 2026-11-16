@@ -119,7 +119,11 @@ Every declared source must be used by a packaged artifact or its component depen
 record outside the ZIP does not count. An unused declaration is refused naming the source.
 Legacy v1/v2 single-source records/manifests remain readable; no id is inferred from their basename,
 path or hash. Old records without ids cannot authorize a v3 build: regenerate them at export time.
-Supplying an id opts a single-source build into v3 too. Identity is producer evidence, not semantic
+A one-source-per-role package with mixed legacy/id-bearing records remains v2; a recipe id alone
+never forces a legacy OKS record into v3. All identified records opt the package into v3; any actual
+multi-source role or component dependency requires v3. Explicit conflicting identities are refused
+even during partial migration. Missing required ids name the artifact.
+Identity is producer evidence, not semantic
 proof that two producers have truthfully named the same real source.
 
 Each optional component dependency names `role`, `source_id`, `master_name`, `master_sha256`, and explicit
@@ -130,8 +134,15 @@ A changed or unchecked dependency prevents `manifest_ok`; cross-package comparis
 sources, not just the compatibility summary. Records prove consistency, not regulatory or visual acceptance.
 
 `ground_recipes.write_delivery` records all generated PNGs with `role="ground"` against the recipe
-hash captured before loading/rendering. Its stable id defaults to the recipe's original address plus
+hash captured before loading/rendering. Its stable id defaults to the recipe's original address (before `--address` overrides output names) plus
 `.ground.recipe`; `--source-id` selects another independent recipe identity, never a revision label.
+`ground_json_to_fbx.build` defaults to `<Address>.ground.mesh`; optional positional arguments after
+Address are CRS then source_id for independent meshes. NPM `export_npm` defaults to
+`<address>.oks.<three-digit-index>.master` and accepts `--source-id`; KPP1 `export_vpm` and
+`quad_provenance` use the fixed job identity `KPP1.oks.master`. These producer defaults do not depend
+on master filenames, version folders or hashes. Retain ids if output address/index changes; override
+the generic defaults only for genuinely independent sources. These are record-call seam tests,
+not new DCC execution receipts.
 Its store is `<version parent>/derivation/<version>/` so
 new versions cannot reuse stale records or collide with old texture names. Record basenames that
 would exceed the filesystem component limit are keyed by SHA-256 of the artifact name; the record

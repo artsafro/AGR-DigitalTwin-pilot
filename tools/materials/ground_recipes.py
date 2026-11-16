@@ -257,6 +257,7 @@ def delivery_directory(version: str) -> Path:
 
 
 def write_delivery(recipe_path, out_dir, *, version=None, address=None, source_id=None) -> dict:
+    """Write maps/records; default id uses the recipe's address before the output-address override."""
     # Shared exporter provenance, not a second record format [D332]. Script mode also resolves the repo.
     if str(_REPO) not in sys.path:
         sys.path.insert(0, str(_REPO))

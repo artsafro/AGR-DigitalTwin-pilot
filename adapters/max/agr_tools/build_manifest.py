@@ -645,8 +645,19 @@ def make_manifest(package_zip, master, builder_commit, derivations, transform, r
         entries[r] = dict(sources[0])
         if len(sources) > 1:
             entries[r]['sources'] = sources
+    # Even a legacy-compatible output must not erase an explicitly declared revision conflict.
+    revisions = {}
+    for artifact in artifacts:
+        digest, _, _, deps, _, sid = by_name[artifact['name']]
+        for identity, sha in [(sid, digest)] + [(d.get('source_id'), d['master_sha256']) for d in deps or []]:
+            if identity is not None:
+                if identity in revisions and revisions[identity] != sha:
+                    raise ValueError('two revisions of source_id ' + identity)
+                revisions[identity] = sha
     multi = any('sources' in e for e in entries.values()) or any('dependencies' in a for a in artifacts)
-    multi = multi or any(by_name[a['name']][5] is not None for a in artifacts)
+    # Partial migration must not make a legacy single-source role require an invented id.
+    # Fully identified packages opt into v3; genuinely multi-source packages always require it.
+    multi = multi or all(by_name[a['name']][5] is not None for a in artifacts)
     if multi:
         for artifact in artifacts:
             artifact['master_name'] = by_name[artifact['name']][4]
@@ -657,6 +668,12 @@ def make_manifest(package_zip, master, builder_commit, derivations, transform, r
                   if (r, s['name']) not in used_names]
         if unused:
             raise ValueError('unused declared source(s): ' + repr(unused))
+        for artifact in artifacts:
+            for binding in [artifact] + artifact.get('dependencies', []):
+                try:
+                    _source_id(binding.get('source_id'))
+                except ValueError as exc:
+                    raise ValueError('{}: {}'.format(artifact['name'], exc)) from exc
         for r, entry in entries.items():
             for source in source_entries(entry):
                 used = [b for b in bindings if b['role'] == r and b['master_name'] == source['name']]
