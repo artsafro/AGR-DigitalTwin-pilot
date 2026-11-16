@@ -15,7 +15,7 @@ package_core.qa_package / `agr validate`: artifacts naming different master revi
 the build, report/subject hashes that do not match the zipped files, and a required check that did not run, did not
 finish or did not pass (skipped = not ready) are `fail`; a package without a manifest is `not_run` (never pass).
 
-Masters per role (#1525, [D328], refined by #1555 [D331, D332]): package_core owns the Ground-family vocabulary.
+Masters per role (#1525, [D328], refined by #1555 [D333, D332]): package_core owns the Ground-family vocabulary.
 Ground/Glass -> ground; GroundEl/Glass -> groundel; Flora -> flora; other members -> oks. File grouping remains Ground.
 Schema v2 keeps one master per role; v3 adds `sources` to a role entry when there are independent dependencies and
 binds each artifact to master_name + master_sha256. Repeat --master role=path for independent sources, not revisions
@@ -36,9 +36,9 @@ import re
 import zipfile
 
 SCHEMA = 'agr.build_manifest/2'
-SCHEMA_MULTI = 'agr.build_manifest/3'  # [D331]: several independent sources within one role
+SCHEMA_MULTI = 'agr.build_manifest/3'  # [D333]: several independent sources within one role
 SCHEMA_V1 = 'agr.build_manifest/1'
-ROLES = ('oks', 'ground', 'groundel', 'flora')  # [D331]: independent provenance roles
+ROLES = ('oks', 'ground', 'groundel', 'flora')  # [D333]: independent provenance roles
 DERIVATION_SCHEMA = 'agr.derivation/1'
 READBACK_SCHEMA = 'agr.fbx_readback/1'
 SUFFIX = '.build.json'
@@ -107,7 +107,7 @@ def kind_of(name):
 
 
 def role_of(name):
-    """Provenance role from the packaging grammar owner [D331], also in embedded Max installs."""
+    """Provenance role from the packaging grammar owner [D333], also in embedded Max installs."""
     try:
         from .package_core import role_of as classify_role
     except ImportError:
@@ -275,7 +275,7 @@ def derivation_record(artifacts, master, builder_commit, master_sha256=None, rol
 
 
 def check_dependencies(rows):
-    """Component-level provenance in a combined Ground FBX [D331]; no default role or unbound part."""
+    """Component-level provenance in a combined Ground FBX [D333]; no default role or unbound part."""
     if not isinstance(rows, list) or not rows:
         raise ValueError('dependencies must be a non-empty list')
     seen = set()
@@ -307,7 +307,7 @@ def derivation_store(export_dir):
 
 
 def check_component_coverage(artifact):
-    """Bind component dependencies to the actual exported part inventory [D331, D332]."""
+    """Bind component dependencies to the actual exported part inventory [D333, D332]."""
     covered = {p for d in artifact.get('dependencies', []) for p in d['parts']}
     for dep in artifact.get('dependencies', []):
         if not set(dep['parts']) <= set(artifact['parts']):
@@ -560,7 +560,7 @@ def source_entries(entry):
 
 
 def master_hashes(master):
-    """Hash CLI/API paths without dropping a repeated role's independent sources [D331]."""
+    """Hash CLI/API paths without dropping a repeated role's independent sources [D333]."""
     if isinstance(master, dict):
         return {r: [sha256_file(p) for p in paths] if isinstance(paths, list) else sha256_file(paths)
                 for r, paths in master.items()}

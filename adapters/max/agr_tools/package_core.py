@@ -36,7 +36,7 @@ VPM_TEX = re.compile(r'^T_(?P<stem>' + ADDRESS + r')_(?:Diffuse|ERM|Normal)_[0-9
 OKS_INDEX = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<index>[0-9]{3})$')
 TRAILING_NUMBER = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<number>[0-9]+)$')
 GROUND_ROLES = {'GroundElGlass': 'groundel', 'GroundGlass': 'ground', 'GroundEl': 'groundel',
-                'Ground': 'ground', 'Flora': 'flora'}  # longest first; provenance roles [D331]
+                'Ground': 'ground', 'Flora': 'flora'}  # longest first; provenance roles [D333]
 GROUND_SUFFIXES = tuple(GROUND_ROLES)
 OKS_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<index>00[1-9]|01[0-9]|020)_(?P<suffix>Main|MainGlass)$')
 GROUND_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>' + '|'.join(GROUND_SUFFIXES) + r')$')
@@ -648,7 +648,7 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
 
 # ---- export.ground_fbx: NPM FBX split by the suffix grammar --------------------------------------------------
 def role_of(name):
-    """Provenance role shared by package manifests [D331]. File grouping remains Ground [D097].
+    """Provenance role shared by package manifests [D333]. File grouping remains Ground [D097].
 
     The existing suffix vocabulary also covers texture, collision and Light names; exact tokens only.
     GroundEl/Flora keep independent sources even inside the combined Ground FBX.

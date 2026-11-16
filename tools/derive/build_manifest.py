@@ -8,7 +8,7 @@
         --transform-name NAME [--transform-file FILE] [--builder-commit SHA] [--no-readback] [--blender EXE]
         Masters per role ([D328], #1525): OKS artifacts from the OKS master, Ground artifacts from their own source;
         a package with several roles needs `--master role=path` for each; one unkeyed --master fits a one-role package.
-        [D331, D332]: GroundEl/Flora keep own roles; repeat --master role=path for independent geometry/map sources.
+        [D333, D332]: GroundEl/Flora keep own roles; repeat --master role=path for independent geometry/map sources.
         The FBX export owner readback (dimensions, part positions, materials, UV, UCX-to-visual binding) runs on the
         FBX members of the ZIP (the exact bytes that are delivered) and writes `<stem>.readback.json`; then
         `<stem>.build.json` is written beside the ZIP. Both are new files (never overwritten, never an input).
@@ -124,7 +124,7 @@ def parser():
     b = sub.add_parser('build', help='export owner readback + <stem>.build.json beside the ZIP')
     b.add_argument('package')
     b.add_argument('--master', required=True, action='append',
-                   help='ROLE=PATH for each independent source (oks, ground, groundel, flora) [D331, D332]')
+                   help='ROLE=PATH for each independent source (oks, ground, groundel, flora) [D333, D332]')
     b.add_argument('--derivation', nargs='+', required=True)
     b.add_argument('--transform-name', required=True)
     b.add_argument('--transform-file')

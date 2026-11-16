@@ -92,7 +92,7 @@ The output `target` names the checked copy. Missing and changed bytes both produ
 actual SHA-256. No package is repacked by recheck. Diagnostic `--allow-incomplete` remains
 ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
 
-## Build provenance [D331, D332]
+## Build provenance [D333, D332]
 
 `package_core.role_of` is the shared suffix-grammar owner used by `build_manifest.role_of`:
 `Ground` / `GroundGlass` -> `ground`, `GroundEl` / `GroundElGlass` -> `groundel`,

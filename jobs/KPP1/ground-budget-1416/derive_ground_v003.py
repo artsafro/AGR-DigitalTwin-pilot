@@ -250,7 +250,7 @@ def transplant_materials(cust_objs):
 
 
 def record_export(fbx, src, want, cust, cwant, mapping, mapping_hash, names):
-    """Record actual geometry, embedded-map and bridge dependencies per component role [D331].
+    """Record actual geometry, embedded-map and bridge dependencies per component role [D333].
 
     The source/customer FBX both contain all three components; grouping does not turn Flora into Ground.
     No delivery geometry or historical approved file is rewritten by this hook.
