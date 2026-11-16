@@ -22,7 +22,19 @@ only a mesh without a table keeps `tile(matid) = 1000 + matid` (IDs already dens
 not in the table is refused (`plug_matid`), never guessed (1.0.1).
 Faces: {'face': int, 'matid': int, 'verts': [(x, y, z), ...]} in metres (units.SystemScale applied by the glue).
 """
+import importlib.util
 import math
+from pathlib import Path
+
+
+def _sibling(name, alias):
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).with_name(name))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_plug')
 
 PLUG_SIZE = 0.05
 PLUG_CENTRE = (0.5, 0.5)
@@ -50,10 +62,9 @@ def tile_for(matid, fixed=None, table=None):
 
 def tile_offset(udim):
     """(du, dv) of a UDIM number: 1001 -> (0, 0), 1011 -> (0, 1), 1012 -> (1, 1)."""
-    n = int(udim) - 1001
-    if not 0 <= n < MAX_TILE_ID:
+    if type(udim) is not int or not 1001 <= udim <= 1100:
         raise ValueError('UDIM must be 1001..1100: ' + repr(udim))
-    return n % TILES_PER_ROW, n // TILES_PER_ROW
+    return _udimtile.tile_origin(udim)
 
 
 def _sub(a, b):
