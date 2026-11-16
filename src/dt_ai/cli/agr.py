@@ -9,7 +9,11 @@ import sys
 from pathlib import Path
 
 
-ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"]}
+ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"],
+           "zero": ["ground", "zero"]}
+# agr ground (#1406): `agr ground site|zero|v015 ARGS` picks the step; any other first argument keeps the
+# frozen Vatutino record `dt ground v015 ARGS` (unchanged for existing callers).
+GROUND_STEPS = ("site", "zero", "v015")
 # Repo scripts run unchanged with the caller's arguments; the scripts own validation and writes.
 # export-meta (#1409): core adapters/max/agr_tools/export_meta.py, also importable inside 3ds Max (AGR Tools).
 # checker (#1379): the SINTEZ stage command; Blender side tools/blender/sintez_checker.py via blender_runner.
@@ -44,6 +48,7 @@ def _dispatch(args: list[str]) -> int:
             print(f"  {name:18} dt {' '.join(target)}")
         for name, script in SCRIPTS.items():
             print(f"  {name:18} {script}")
+        print("  ground site|zero   dt ground site SPEC NEW_OUT (any site, D293 order) | dt ground zero (#1406)")
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
@@ -56,6 +61,8 @@ def _dispatch(args: list[str]) -> int:
     if args and args[0] in STUBS:
         print(f"ERROR: {args[0]} is not implemented; use {STUBS[args[0]]}", file=sys.stderr)
         return 2
+    if args[:1] == ["ground"] and args[1:2] and args[1] in GROUND_STEPS:
+        return subprocess.run([sys.executable, "-m", "dt_ai.cli.main", "ground", *args[1:]], check=False).returncode
     if args and args[0] in ALIASES:
         return subprocess.run([sys.executable, "-m", "dt_ai.cli.main", *ALIASES[args[0]], *args[1:]], check=False).returncode
     if args and args[0] in SCRIPTS:

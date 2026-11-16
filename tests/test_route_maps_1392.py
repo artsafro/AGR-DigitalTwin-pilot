@@ -25,7 +25,7 @@ GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skir
              "package", "validate", "sintez"]
 RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner",  # sintez-runner: #1379 (PR #1431)
                            "parapet-seam"},  # #1381: one roof/parapet seam check
-            "ground-route": {"urns-outside"}}  # #1412: D302
+            "ground-route": {"urns-outside", "tool-bound-to-vatutino", "projection"}}  # #1412: D302; #1406
 
 
 def _routes():

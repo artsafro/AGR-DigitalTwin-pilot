@@ -229,7 +229,7 @@
    "x": 650.0,
    "y": 347.5,
    "width": 470,
-   "height": 142.5,
+   "height": 195.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -271,7 +271,7 @@
    "x": 658.0,
    "y": 357.5,
    "width": 454,
-   "height": 122.5,
+   "height": 175.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -291,13 +291,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце",
+   "text": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце\nexport_z_check: ноль проекта, Z нуля в FBX, вершины верха\nGround (XY, Z, уровень), рельеф в XY -> pass / fail по\nкаждой вершине (agr zero, #1406)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "eb4da33cf7db574a",
-   "originalText": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце",
+   "originalText": "Граница участка и нулевая отметка\nВладелец: src/dt_ai/core/heights.py\nвысоты App.3 от нуля проекта (D279); граница и ноль — из\nпроекта или агент уточняет (D293)\n\nheight_values: ноль проекта, м; Z нуля в FBX, м; верх\nмодели, м -> высоты App.3 с округлением только в конце\nexport_z_check: ноль проекта, Z нуля в FBX, вершины верха\nGround (XY, Z, уровень), рельеф в XY -> pass / fail по\nкаждой вершине (agr zero, #1406)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -307,7 +307,7 @@
    "x": 1260.0,
    "y": 347.5,
    "width": 470,
-   "height": 265.0,
+   "height": 317.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -357,7 +357,7 @@
    "x": 1268.0,
    "y": 357.5,
    "width": 454,
-   "height": 245.0,
+   "height": 297.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -377,13 +377,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: tools/ground/build_ground_v015.py\nсборка Ground Ватутино v015 (только этот участок, agr\nground / dt ground v015)\n\ngeometry: данные участка, исходник, одобрения, вырезы ->\nмеш Ground v015\nrestore_source_coverage: меш, план -> ограниченный ремонт\nпокрытия; ненулевой остаток не прощается\nderive: меш, профиль, сэмплер, защищённые, исключения ->\nквады и треугольники Ground\nmain: --job-dir и параметры -> Ground v015 и отчёт;\nизменился HEAD — отказ",
+   "text": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: src/dt_ai/geometry/ground_site.py\nGround любого участка в порядке D293 (agr ground site /\ndt ground site, #1406); Ватутино v015 — замороженная\nзапись dt ground v015\n\nbuild_site: граница, покрытия с ID, базовый ID, точки\nрельефа, ноль -> плоский Ground, проекция, юбка ≥ 1 м и\nотчёт стадий\ncovers_from_dxf: DXF, строки покрытий (ID, имя,\nштриховки) -> покрытия; цвет ID = фон штриховки или цвет\nиз спецификации с причиной\nrelief_from_dxf: DXF, блок / имена отметок / слои\nгоризонталей -> точки рельефа с родной Z\nskirt_gaps: меш, опуск -> внешние рёбра без квада юбки\nили с опуском меньше нормы (GND-03, D251)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e6d720b192cc3ebb",
-   "originalText": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: tools/ground/build_ground_v015.py\nсборка Ground Ватутино v015 (только этот участок, agr\nground / dt ground v015)\n\ngeometry: данные участка, исходник, одобрения, вырезы ->\nмеш Ground v015\nrestore_source_coverage: меш, план -> ограниченный ремонт\nпокрытия; ненулевой остаток не прощается\nderive: меш, профиль, сэмплер, защищённые, исключения ->\nквады и треугольники Ground\nmain: --job-dir и параметры -> Ground v015 и отчёт;\nизменился HEAD — отказ",
+   "originalText": "Поверхность Ground: плоские покрытия → проекция на рельеф\n→ юбка\nВладелец: src/dt_ai/geometry/ground_site.py\nGround любого участка в порядке D293 (agr ground site /\ndt ground site, #1406); Ватутино v015 — замороженная\nзапись dt ground v015\n\nbuild_site: граница, покрытия с ID, базовый ID, точки\nрельефа, ноль -> плоский Ground, проекция, юбка ≥ 1 м и\nотчёт стадий\ncovers_from_dxf: DXF, строки покрытий (ID, имя,\nштриховки) -> покрытия; цвет ID = фон штриховки или цвет\nиз спецификации с причиной\nrelief_from_dxf: DXF, блок / имена отметок / слои\nгоризонталей -> точки рельефа с родной Z\nskirt_gaps: меш, опуск -> внешние рёбра без квада юбки\nили с опуском меньше нормы (GND-03, D251)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -473,7 +473,7 @@
    "id": "ebefb8015300e481",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 672.5,
+   "y": 725.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -515,7 +515,7 @@
    "id": "ee52b2029f7668ad",
    "type": "text",
    "x": 1268.0,
-   "y": 682.5,
+   "y": 735.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -551,7 +551,7 @@
    "id": "e1aaee826150be1a",
    "type": "rectangle",
    "x": 650.0,
-   "y": 672.5,
+   "y": 725.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -593,7 +593,7 @@
    "id": "edec5de9abb756a8",
    "type": "text",
    "x": 658.0,
-   "y": 682.5,
+   "y": 735.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -629,7 +629,7 @@
    "id": "ede9c53268854939",
    "type": "rectangle",
    "x": 650.0,
-   "y": 899.0,
+   "y": 951.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -663,7 +663,7 @@
    "id": "e135b12210d81506",
    "type": "text",
    "x": 658.0,
-   "y": 909.0,
+   "y": 961.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -699,7 +699,7 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 994.0,
+   "y": 1046.5,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -749,7 +749,7 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 1268.0,
-   "y": 1004.0,
+   "y": 1056.5,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -785,7 +785,7 @@
    "id": "ec200d9f38e404b3",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 994.0,
+   "y": 1046.5,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -827,7 +827,7 @@
    "id": "e5ab4a0c3613fa92",
    "type": "text",
    "x": 1878.0,
-   "y": 1004.0,
+   "y": 1056.5,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -863,7 +863,7 @@
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1168.0,
+   "y": 1220.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -897,7 +897,7 @@
    "id": "ed13348e89d7b0b7",
    "type": "text",
    "x": 1878.0,
-   "y": 1178.0,
+   "y": 1230.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -933,7 +933,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1336.5,
+   "y": 1389.0,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -971,7 +971,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 1268.0,
-   "y": 1346.5,
+   "y": 1399.0,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -1009,7 +1009,7 @@
    "x": 510.0,
    "y": 436.25,
    "width": 630.0,
-   "height": 91.25,
+   "height": 108.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1045,19 +1045,19 @@
     ],
     [
      20.0,
-     73.75
+     108.75
     ],
     [
      630.0,
-     73.75
+     108.75
     ],
     [
      630.0,
-     -17.5
+     8.75
     ],
     [
      610.0,
-     -17.5
+     8.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1079,7 +1079,7 @@
    "id": "ed73a221f4369e6d",
    "type": "text",
    "x": 775.0,
-   "y": 501.0,
+   "y": 536.0,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1115,9 +1115,9 @@
    "id": "e77226c36711e551",
    "type": "arrow",
    "x": 1120.0,
-   "y": 418.75,
+   "y": 445.0,
    "width": 630.0,
-   "height": 152.5,
+   "height": 178.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1148,16 +1148,16 @@
      0.0
     ],
     [
-     20.0,
+     120.0,
      0.0
     ],
     [
-     20.0,
-     -91.25
+     120.0,
+     -117.5
     ],
     [
      630.0,
-     -91.25
+     -117.5
     ],
     [
      630.0,
@@ -1186,7 +1186,7 @@
   {
    "id": "ed977eb5248da36a",
    "type": "text",
-   "x": 1385.0,
+   "x": 1435.0,
    "y": 318.5,
    "width": 120,
    "height": 17.5,
@@ -1223,9 +1223,9 @@
    "id": "e6e2ff88d13df4fd",
    "type": "arrow",
    "x": 1730.0,
-   "y": 480.0,
+   "y": 506.25,
    "width": 630.0,
-   "height": 82.5,
+   "height": 100.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1261,19 +1261,19 @@
     ],
     [
      20.0,
-     30.0
+     21.25
     ],
     [
      630.0,
-     30.0
+     21.25
     ],
     [
      630.0,
-     -52.5
+     -78.75
     ],
     [
      610.0,
-     -52.5
+     -78.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1295,7 +1295,7 @@
    "id": "e7c7987b3ca58eaa",
    "type": "text",
    "x": 1995.0,
-   "y": 492.0,
+   "y": 509.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1439,9 +1439,9 @@
    "id": "ea58080b9e137eea",
    "type": "arrow",
    "x": 1730.0,
-   "y": 480.0,
+   "y": 506.25,
    "width": 630.0,
-   "height": 298.75,
+   "height": 325.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1477,19 +1477,19 @@
     ],
     [
      20.0,
-     172.5
+     198.75
     ],
     [
      -590.0,
-     172.5
+     198.75
     ],
     [
      -590.0,
-     298.75
+     325.0
     ],
     [
      -610.0,
-     298.75
+     325.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1511,7 +1511,7 @@
    "id": "ea9bad5a9851bf26",
    "type": "text",
    "x": 1385.0,
-   "y": 634.5,
+   "y": 687.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1547,9 +1547,9 @@
    "id": "e77852ff20987444",
    "type": "arrow",
    "x": 1730.0,
-   "y": 480.0,
+   "y": 506.25,
    "width": 630.0,
-   "height": 594.0,
+   "height": 620.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1585,19 +1585,19 @@
     ],
     [
      20.0,
-     494.0
+     520.25
     ],
     [
      630.0,
-     494.0
+     520.25
     ],
     [
      630.0,
-     594.0
+     620.25
     ],
     [
      610.0,
-     594.0
+     620.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1619,7 +1619,7 @@
    "id": "e778220192b71bf5",
    "type": "text",
    "x": 1995.0,
-   "y": 965.0,
+   "y": 1017.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1655,7 +1655,7 @@
    "id": "eaa2c83cb7635ff3",
    "type": "arrow",
    "x": 1120.0,
-   "y": 778.75,
+   "y": 831.25,
    "width": 630.0,
    "height": 108.75,
    "angle": 0,
@@ -1727,7 +1727,7 @@
    "id": "e0612d0f096f2e0f",
    "type": "text",
    "x": 1385.0,
-   "y": 852.0,
+   "y": 904.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1763,7 +1763,7 @@
    "id": "e7d94c97f5526d4f",
    "type": "arrow",
    "x": 1730.0,
-   "y": 761.25,
+   "y": 813.75,
    "width": 20.0,
    "height": 374.0,
    "angle": 0,
@@ -1827,7 +1827,7 @@
    "id": "e3be59ba42305b7c",
    "type": "text",
    "x": 1690.0,
-   "y": 939.25,
+   "y": 991.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1865,7 +1865,7 @@
    "x": 2340.0,
    "y": 427.5,
    "width": 630.0,
-   "height": 707.75,
+   "height": 760.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1901,19 +1901,19 @@
     ],
     [
      20.0,
-     546.5
+     599.0
     ],
     [
      -590.0,
-     546.5
+     599.0
     ],
     [
      -590.0,
-     707.75
+     760.25
     ],
     [
      -610.0,
-     707.75
+     760.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1935,7 +1935,7 @@
    "id": "e114873988d4bf95",
    "type": "text",
    "x": 1995.0,
-   "y": 965.0,
+   "y": 1017.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1971,7 +1971,7 @@
    "id": "e2031080d0e8f8a0",
    "type": "arrow",
    "x": 2340.0,
-   "y": 1074.0,
+   "y": 1126.5,
    "width": 630.0,
    "height": 149.0,
    "angle": 0,
@@ -2043,7 +2043,7 @@
    "id": "e8f1cd81282b7c61",
    "type": "text",
    "x": 2045.0,
-   "y": 1214.0,
+   "y": 1266.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2079,7 +2079,7 @@
    "id": "ed4c74ce405ae347",
    "type": "arrow",
    "x": 1730.0,
-   "y": 1135.25,
+   "y": 1187.75,
    "width": 20.0,
    "height": 281.25,
    "angle": 0,
@@ -2143,7 +2143,7 @@
    "id": "e7b4bac8edccb0fd",
    "type": "text",
    "x": 1690.0,
-   "y": 1266.88,
+   "y": 1319.38,
    "width": 120,
    "height": 17.5,
    "angle": 0,

@@ -22,6 +22,8 @@ DERIVE_STEPS = {
 }
 GROUND_STEPS = {
     "v015": ("python", "tools/ground/build_ground_v015.py", "Ground v015 NPM/VPM masters (layered cake + paired quads)"),
+    "site": ("python", "tools/ground/build_ground_site.py", "Ground for any site in the D293 order from a site spec (#1406)"),
+    "zero": ("python", "tools/ground/project_zero.py", "project zero h_relief (D279) + export Z check (#1406)"),
 }
 
 
@@ -31,7 +33,7 @@ def add_parsers(sub):
                         help="Blender executable for the npm step (default: DT_BLENDER)")
     derive.add_argument("step", choices=sorted(DERIVE_STEPS), help="; ".join(f"{k}: {v[2]}" for k, v in DERIVE_STEPS.items()))
     derive.add_argument("args", nargs=argparse.REMAINDER, help="arguments of the tool (see its --help)")
-    ground = sub.add_parser("ground", help="Ground producers: v015 (shared tool, #1106)")
+    ground = sub.add_parser("ground", help="Ground: site (any site, D293 order) | zero (project zero) | v015 (Vatutino record)")
     ground.add_argument("step", choices=sorted(GROUND_STEPS), help="; ".join(f"{k}: {v[2]}" for k, v in GROUND_STEPS.items()))
     ground.add_argument("args", nargs=argparse.REMAINDER, help="arguments of the tool (see its --help)")
 
