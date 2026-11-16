@@ -32,7 +32,7 @@ on the OKS side. The agent side is `agr` (thin aliases [D271], `agr --help`) and
 | 7 | UCX by script | `ucx10_core.py`, `capsule_core.py` | stage 3 `body.capsules`, stage 9 `ucx.gap`, `ucx.stairs` | `agr ucx` = unavailable -> #1404 (open) | Max done; agent command open | #1404 |
 | 8 | Attributes JSON + export + archive | `export_meta.py`, `package_core.py`, `passport_core.py` | stage 0 `project.passport`, stage 9 `pack.deliver` | `agr export-meta`, `package-vpm`, `package-npm` (#1361) | done | - |
 | 9 | VPM -> NPM (planes, atlas, PAD 16 [D278]) | `npm_core.py`, `atlas_core.py`, `facadeatlas_core.py` | stage 7 `npm.build` | `agr vpm-to-npm` | done | - |
-| 10 | Ground DWG -> Max (quads, textures by ID) | ground v015 route (`dt ground`) | none (1.x tail `model.ground_*`) | `agr ground`; #1406 (open) | Max gap | #1507 |
+| 10 | Ground DWG -> Max (quads, textures by ID) | ground v015 route (`dt ground`) | none (1.x tail `model.ground_*`) | `agr ground site`, `agr zero` (#1406) | Max gap | #1507 |
 | 11 | Ground UV islands per UDIM, skirt, collisions | ground v015, `ucx10_core.py` | none (1.x tail `ucx.ground`) | #1406, #1404 (open) | Max gap | #1507 |
 | 12 | MAF/Flora from DWG by specification JSON | `place_core.py`, `placegeo_core.py`, `assets_core.py` (#1044) | assets browser (`assets_max.py`), `placegeo_max.py`; no conveyor stage | #1407, #1410 (open) | partial | #1507 |
 | 13 | Package and export (Ground/MAF/Flora) | as row 8 | stage 9 `pack.deliver` (OKS) | `agr package-npm` / `package-vpm` | done on the cores; no Ground stage | #1507 |

@@ -93,7 +93,9 @@ Arguments after each single-step alias are forwarded unchanged, including `--hel
 | `agr package-vpm ARGS` | `dt derive package ARGS` |
 | `agr package-npm ARGS` | `dt derive package-npm ARGS` (route step 6 package; ZIP owner `package_core._write_zip`, #1377) |
 | `agr validate ARGS` | `python tools/qa/validate_package.py ARGS` (not development-bundle `dt validate`) |
-| `agr ground ARGS` | `dt ground v015 ARGS` |
+| `agr ground site SPEC NEW_OUT` | `dt ground site SPEC NEW_OUT` (any site, D293 order, #1406) |
+| `agr zero ARGS` / `agr ground zero ARGS` | `dt ground zero ARGS` (h_relief D279 + export Z check, #1406) |
+| `agr ground ARGS` / `agr ground v015 ARGS` | `dt ground v015 ARGS` (frozen Vatutino record) |
 | `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS` | `dt derive atlas ATLAS_ARGS`, then `dt derive [--blender BLENDER] npm NPM_ARGS` only on exit 0 |
 
 For an authorized packet: `uv run agr vpm-to-npm --blender BLENDER SPEC NEW_ATLAS --recipe-dir RECIPE --then-npm MASTER SPEC NEW_ATLAS NEW_EXPORT PREFIX`.

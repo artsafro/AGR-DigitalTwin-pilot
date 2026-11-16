@@ -1,0 +1,23 @@
+{
+ "note": "#1406 proof of `dt ground site` on #1315 Silikatny data: the D283 pilot fragment (crop of the D282 boundary), real DXF, no job code. Not a delivery.",
+ "site": "SIL13",
+ "dxf": {"path": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v001/pzu.dxf",
+         "sha256": "35b537cfe7f05236bf13c2159ef4ae689118162c0f4418a2a93983437c4e3cf4"},
+ "boundary": {"handle": "33FBCEF"},
+ "crop_box": [820, 11024, 850, 11046],
+ "zero": {"project_zero_m": 142.10,
+          "source": "D282: VP_5 floor-mark MTEXT 33F8EC4=142.10 beside 33F8EC5=0.000 (#1315 v003)"},
+ "covers": [
+  {"id": 1, "name": "SeededLawn", "hatches": ["33FBCB2"], "colour": [96, 150, 64],
+   "colour_reason": "hatch 33FBCB2 has no background colour; diagnostic ID colour stated here, not accepted"},
+  {"id": 2, "name": "Rubber253", "hatches": ["33FBCCD"]},
+  {"id": 3, "name": "Rubber18", "hatches": ["33FC17A"]}
+ ],
+ "base_id": 1,
+ "unhatched": {"cover_id": 1, "reason": "D283: the 17.009 m2 pink wedge has no hatch in the PZU; adjacent lawn, disclosed orchestrator assumption"},
+ "relief": {"block": "ACAD-Силикатный ВП_5 (пониженеие отметок)-Model16.10.2026",
+            "insert_names": ["Опорная точка планировки", "Отметка_треугольник"],
+            "contour_layers": ["ГП_ПОР_Горизонтали проектные"]},
+ "params": {"cell": 3.0, "chord": 0.02, "step": 0.006, "snap": 0.001, "relief_tol": 0.01, "skirt_m": 1.0,
+            "tex_px": 4096, "origin_xy": [835, 11035]}
+}

@@ -42,21 +42,23 @@ contexts:
     functions:
       - name: height_values
         contract: "ноль проекта, м; Z нуля в FBX, м; верх модели, м -> высоты App.3 с округлением только в конце"
+      - name: export_z_check
+        contract: "ноль проекта, Z нуля в FBX, Z верха Ground, диапазон рельефа -> pass / fail (agr zero, #1406)"
   - id: ground
     grid: "2/1"
     ru: "Поверхность Ground: плоские покрытия → проекция на рельеф → юбка"
     area: docs/domain/areas/ground-surface.md
-    owner: tools/ground/build_ground_v015.py
-    owner_ru: "сборка Ground Ватутино v015 (только этот участок, agr ground / dt ground v015)"
+    owner: src/dt_ai/geometry/ground_site.py
+    owner_ru: "Ground любого участка в порядке D293 (agr ground site / dt ground site, #1406); Ватутино v015 — замороженная запись dt ground v015"
     functions:
-      - name: geometry
-        contract: "данные участка, исходник, одобрения, вырезы -> меш Ground v015"
-      - name: restore_source_coverage
-        contract: "меш, план -> ограниченный ремонт покрытия; ненулевой остаток не прощается"
-      - name: derive
-        contract: "меш, профиль, сэмплер, защищённые, исключения -> квады и треугольники Ground"
-      - name: main
-        contract: "--job-dir и параметры -> Ground v015 и отчёт; изменился HEAD — отказ"
+      - name: build_site
+        contract: "граница, покрытия с ID, базовый ID, точки рельефа, ноль -> плоский Ground, проекция, юбка ≥ 1 м и отчёт стадий"
+      - name: covers_from_dxf
+        contract: "DXF, строки покрытий (ID, имя, штриховки) -> покрытия; цвет ID = фон штриховки или цвет из спецификации с причиной"
+      - name: relief_from_dxf
+        contract: "DXF, блок / имена отметок / слои горизонталей -> точки рельефа с родной Z"
+      - name: skirt_gaps
+        contract: "меш, опуск -> внешние рёбра с опуском меньше нормы (GND-03, D251)"
   - id: uv-atlas
     grid: "3/1"
     ru: "Текстуры по ID: UV-острова, тайлы, UDIM / атлас"

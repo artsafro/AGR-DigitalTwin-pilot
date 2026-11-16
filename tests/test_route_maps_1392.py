@@ -24,7 +24,7 @@ VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv"
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
              "package", "validate", "sintez"]
 RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner"},  # sintez-runner: #1379 (PR #1431)
-            "ground-route": {"urns-outside"}}  # #1412: D302
+            "ground-route": {"urns-outside", "tool-bound-to-vatutino", "projection"}}  # #1412: D302; #1406
 
 
 def _routes():
