@@ -15,7 +15,8 @@ Which scripts are checked (`check_repo`): every folder at any depth under jobs/ 
 checked by `check_job` (sub-jobs like jobs/KPP1/<task>-<issue>/ included; a nested skeleton.json folder is its own
 job). Every other script under jobs/ fails unless its path is in the frozen baseline of the #1546 cut
 (docs/agents/job_scripts_baseline.txt: legacy and historical scripts, [D327]); legacy means a listed path, never a
-whole job folder. `_template` is skipped.
+whole job folder. Non-script template files (jobs/_template/job.yaml and README.md) need no config;
+scripts and skeleton.json files are checked normally, including in any `_template` folder.
 Every problem names the file and the stage. Usage: python tools/architecture/skeleton_guard.py [--root REPO]
 [--job jobs/ID]; exit 0 clean, 1 violations, 2 unreadable input (bad JSON, unknown scenario, syntax error,
 missing/invalid baseline).
@@ -163,14 +164,13 @@ def check_repo(root, skeletons=None, baseline=None):
     jobs = root / "jobs"
     if not jobs.is_dir():
         raise ConfigError(f"{jobs}: missing")
-    skip = lambda p: "_template" in p.relative_to(jobs).parts  # noqa: E731
-    configured = sorted(p.parent for p in jobs.rglob(contract["config"]) if p.is_file() and not skip(p))
+    configured = sorted(p.parent for p in jobs.rglob(contract["config"]) if p.is_file())
     problems = []
     for job_dir in configured:   # any depth: jobs/<ID>/ and sub-jobs like jobs/KPP1/<task>-<issue>/
         problems.extend(check_job(root, job_dir, skeletons, nested=[d for d in configured if d != job_dir]))
     for path in _scripts(jobs, set(contract["script_suffixes"])):
         rel = path.relative_to(root).as_posix()
-        if skip(path) or rel in baseline or any(path.is_relative_to(d) for d in configured):
+        if rel in baseline or any(path.is_relative_to(d) for d in configured):
             continue
         problems.append(f"{rel}: script outside a skeleton.json folder and not in the frozen #1546 baseline "
                         f"({duplicate_guard.JOB_BASELINE}); configure the scenario skeleton and put small scripts "
