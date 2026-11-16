@@ -61,7 +61,8 @@ def make_spec(tmp, hole=False, vpm_bush=True, with_exception=False):
         shas = {v: tj.job.sha(tmp / "ground" / v / "master.json") for v in ("npm", "vpm")}
         (tmp / "exc.json").write_text(json.dumps({"exceptions": [
             {"handle": tj.HOLE[0], "reason": "Ground hole (synthetic)", "point": snap, "ground_master_sha256": shas,
-             "approved": {"by": "user (synthetic)", "date": "2026-11-16", "quote": "do not place (synthetic)"}}]}),
+             "approved": {"by": "synthetic approver", "date": "2000-01-01",
+                          "quote": "do not place (synthetic)"}}]}),
             encoding="utf-8")
         spec["exceptions"] = "exc.json"
     (tmp / "spec.json").write_text(json.dumps(spec, ensure_ascii=False), encoding="utf-8")
@@ -239,3 +240,39 @@ def test_guard_flags_an_engine_place_call_outside_the_command():
     owner = (ROOT / guard.RULES["site-placement"]).read_text(encoding="utf-8")
     assert guard.scan_text(owner, guard.RULES["site-placement"]) == []
     assert guard.GUARDED["site-placement"] == ("jobs", "tools", "src")
+
+
+# ---------------------------------------------------------------- real Blender (opt-in `-m blender`)
+def _box(lo, hi):
+    (x0, y0, z0), (x1, y1, z1) = lo, hi
+    v = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]]
+    return {"vertices": v, "faces": [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]]}
+
+
+@pytest.mark.blender
+def test_real_blender_cli_places_both_versions_at_the_same_points(tmp_path):
+    from dt_ai.core.blender_runner import blender_executable
+    if not Path(blender_executable()).is_file():
+        pytest.skip("pinned Blender not installed")
+    d = tmp_path / "in"
+    d.mkdir()
+    g = tj.ground()
+    (d / "master.json").write_text(json.dumps(g), encoding="utf-8")
+    mesh = {"vertices": [[x - OFFSET[0], y - OFFSET[1], z - OFFSET[2]] for x, y, z in g["verts"]], "faces": g["faces"]}
+    pts = [{"x": 92.0 + 2.0 * k, "y": 195.0 + (k % 3), "z": 0.0, "label": ["Bush", "Bench"][k % 2],
+            "handle": f"P{k}", "inside": True, "rotation": 20.0 * k, "position": None} for k in range(6)]
+    bench = _box([-0.9, -0.25, 0], [0.9, 0.25, 0.8])
+    spec = {"schema": site.SCHEMA, "job": "SYNTH-1407", "version": "v001", "issue": 1407, "points": pts,
+            "assign": {"Bush": "bush", "Bench": "bench"},
+            "libraries": {"bush": {"kind": "flora", "h_m": [0.9, 1.1],
+                                   "npm": {"id": "BUSH_NPM", "mesh": _box([-.5, -.5, 0], [.5, .5, 1]), "model_h_m": 1.0},
+                                   "vpm": {"id": "BUSH_VPM", "mesh": _box([-.5, -.5, 0], [.5, .5, 1]), "model_h_m": 1.0}},
+                          "bench": {"kind": "maf", "spec": [1.8, 0.5, 0.8], "npm": {"id": "BENCH", "mesh": bench},
+                                    "vpm": {"id": "BENCH", "mesh": bench}}},
+            "ground": {v: {"master": "master.json", "offset": OFFSET, "mesh": mesh} for v in ("npm", "vpm")}}
+    (d / "spec.json").write_text(json.dumps(spec), encoding="utf-8")
+    r = cli("place", "site", d / "spec.json", "--out", tmp_path / "out", "--seed", 1407)
+    assert r.returncode == 0, r.stdout[-2000:] + r.stderr[-2000:]
+    rb = {v: json.loads((tmp_path / "out" / v / "readback.json").read_text(encoding="utf-8")) for v in ("npm", "vpm")}
+    assert sorted(i["handle"] for i in rb["npm"]["instances"]) == sorted(i["handle"] for i in rb["vpm"]["instances"])
+    assert len(rb["npm"]["instances"]) == 6 and res(tmp_path / "out")["parity"]["identical"] is True

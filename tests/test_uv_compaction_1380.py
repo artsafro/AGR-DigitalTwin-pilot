@@ -143,6 +143,9 @@ def test_d320_leftovers_have_explicit_historical_reasons(path, constant, reason)
 
 
 def test_no_delivery_changes():
-    base = subprocess.check_output(['git', 'merge-base', 'origin/main', 'HEAD'], cwd=ROOT, text=True).strip()
-    paths = subprocess.check_output(['git', 'diff', '--name-only', base, '--', 'jobs'], cwd=ROOT, text=True).splitlines()
+    # #1407: pinned to the #1380 merge (PR #1495), not to the current branch - a later PR may touch jobs/ scripts
+    merge = '6f506951'
+    paths = subprocess.check_output(['git', 'diff', '--name-only', merge + '^1', merge, '--', 'jobs'], cwd=ROOT,
+                                    text=True).splitlines()
+    assert paths
     assert all(p.endswith('/vpm_uv.py') or p.endswith('/vpm_stage5.py') or p.endswith('/vpm_stage5_oks.py') for p in paths)
