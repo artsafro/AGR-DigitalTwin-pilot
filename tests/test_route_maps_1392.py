@@ -66,6 +66,53 @@ def test_1581_npm_context():
     assert npm["owner"] == "tools/derive/npm_atlas.py"
 
 
+# ---------------------------------------------------------------- #1581 reverse coverage
+
+def test_1581_reverse_coverage():
+    events = _routes()["vpm-route"]
+    cmap = _maps()["vpm-contexts"]
+    orphan = copy.deepcopy(cmap["contexts"][0])
+    orphan.update(id="synthetic-orphan", grid="4/9")
+    orphan.pop("serves_stage", None)
+    orphan.pop("no_stage", None)
+    cmap["contexts"].append(orphan)
+    for _ in range(2):
+        problems = route_map.route_coverage(events, _contexts(), cmap)
+        assert [p for p in problems if "synthetic-orphan" in p] == [
+            "WARNING: context map: context 'synthetic-orphan' has no stage"]
+    orphan["no_stage"] = "Synthetic diagnostic only"
+    assert not any("synthetic-orphan" in p for p in route_map.route_coverage(events, _contexts(), cmap))
+    orphan.pop("no_stage")
+    orphan["serves_stage"] = "body"
+    assert not any("synthetic-orphan" in p for p in route_map.route_coverage(events, _contexts(), cmap))
+
+
+@pytest.mark.parametrize("field,value", [("no_stage", ""), ("no_stage", []),
+    ("no_stage", float("nan")), ("serves_stage", ""), ("serves_stage", float("inf")),
+    ("serves_stage", "missing-stage")])
+def test_1581_coverage_annotations(field, value):
+    cmap = _maps()["vpm-contexts"]
+    context = cmap["contexts"][0]
+    context.pop("no_stage", None)
+    context.pop("serves_stage", None)
+    context[field] = value
+    with pytest.raises(route_map.SchemaError, match=field):
+        route_map.route_coverage(_routes()["vpm-route"], _contexts(), cmap)
+
+
+def test_1581_warning_only_check_exits_zero(capsys, monkeypatch):
+    events = _routes()["route"]
+    maps = _maps()
+    for c in [maps["contexts"]["shared_kernel"], *maps["contexts"]["contexts"]]:
+        c.pop("no_stage", None)
+        c.pop("serves_stage", None)
+    monkeypatch.setattr(route_map, "load_context_maps", lambda root: copy.deepcopy(maps))
+    # Render from the mutated snapshot, isolating warnings from legitimate revision drift.
+    monkeypatch.setattr(route_map, "render_all", lambda root: (_routes(), maps["contexts"], {}))
+    assert route_map.main(["--check"]) == 0
+    assert "WARNING:" in capsys.readouterr().out
+
+
 # ---------------------------------------------------------------- D293 recorded and cited
 def test_d293_row_exists_and_is_cited_in_both_routes_and_maps():
     decisions = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
