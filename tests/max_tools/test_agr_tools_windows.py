@@ -367,16 +367,16 @@ def test_wt11_section_by_the_f100_standard():
     assert D * 1000 == pytest.approx(100, abs=0.5)
     assert max(v[1] for v in m['verts']) == pytest.approx(D) and min(v[1] for v in m['verts']) == pytest.approx(0.0)
     gl = {m['verts'][i][1] for fi in m['parts']['glass'] for i in m['faces'][fi]}
-    assert len(gl) == 1 and gl.pop() == pytest.approx(0.08)  # one plane 80 mm from the face (owner 06.11, as in Win_Typical)
+    assert len(gl) == 1 and gl.pop() == pytest.approx(D / 2)  # [D322] supersedes the historical offset
     for (k, r), src in zip(sorted(m['fields']), sorted(T['WT-11']['panes_m'])):
         assert max(abs(a - b) for a, b in zip(r, src)) <= 0.001
 
 
-def test_glass_is_80_mm_from_the_face_not_the_frame_middle():
+def test_glass_is_at_frame_middle_superseding_old_80_mm_offset():
     m = wg.build_type(T['WT-11'], STD)
     middle = ISSUE_GLASS_AT_FRAME_MIDDLE * m['depth_m']
     assert abs(middle - 0.0804) > 0.02  # RED: the #1024 default (frame middle) is 30 mm off the source
-    assert m['glass_y_m'] == pytest.approx(0.08)  # GREEN
+    assert m['glass_y_m'] == pytest.approx(middle)  # [D322]
 
 
 def test_frame_mesh_is_closed_and_faces_minus_y():
@@ -397,7 +397,7 @@ def test_doors_get_f73_and_balcony_blocks_f58():
     assert wg.build_type(T['D02'], STD)['family'] == 'F73'
     assert wg.build_type(T['WT-01'], STD)['family'] == 'F58'
     m = wg.build_type(T['WT-13'], STD)
-    assert m['depth_m'] == pytest.approx(0.073) and m['glass_y_m'] == pytest.approx(0.0334)
+    assert m['depth_m'] == pytest.approx(0.073) and m['glass_y_m'] == pytest.approx(0.0365)
 
 
 def test_wt02_is_quarantined_standard_not_applicable():

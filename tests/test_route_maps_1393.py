@@ -62,7 +62,7 @@ def _texts(name):
 # ---------------------------------------------------------------- acceptance 1: 3 routes + 3 maps from YAML
 def test_generator_writes_three_routes_and_three_context_maps():
     files = route_map.render_all(ROOT)[2]
-    assert len(files) == 24
+    assert len(files) == 42  # #1425: six short schemes (x2) + owners tables
     for name, stem in STEMS.items():
         assert route_map.OUTPUTS[name] == Path("docs/architecture") / stem
         for suffix in (".excalidraw", ".svg"):
