@@ -48,7 +48,7 @@ actors:
     ru: "Чекер СИНТЕЗ"
 local_contexts:
   - id: ucx
-    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D324)"
+    ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D325)"
     owner: adapters/max/agr_tools/ucx10_core.py
 stages:
   - id: sources
@@ -174,7 +174,7 @@ stages:
       - D134
       - D162
       - D225
-      - D324
+      - D325
     evidence:
       - docs/domain/areas/ucx.md
       - src/dt_ai/geometry/ucx_command.py

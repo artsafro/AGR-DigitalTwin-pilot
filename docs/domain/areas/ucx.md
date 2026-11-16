@@ -41,7 +41,7 @@ or preservation of arches, courtyards and functional voids.
 
 ## Command
 
-`agr ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M]` (#1404, [D324]): one command for a
+`agr ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M]` (#1404, [D325]): one command for a
 VPM body and for Ground. It builds with `ucx_build` (Blender driver `tools/blender/ucx_build.py`, options unchanged),
 reads the written FBX back in a fresh Blender process, measures every pair with `ucx10_core.plan` (the AGR Tools
 `ucx.gap` core: a pair under the gap fails; the fix is `ucx.gap` in Max on an export copy) and runs V010. It never
@@ -56,7 +56,7 @@ the delivered UCX geometry (715/715 pieces, 8 788 triangles, max vertex deviatio
 (PR evidence), Ground only on synthetic surfaces. The builder's own deviation figures are construction
 self-measurements, not an L2 check of an arbitrary delivery, so R11-R13 coverage above stays `none`.
 [KPP1](../../../jobs/KPP1/scripts/vpm_ucx.py) and [PSU275](../../../jobs/PSU275/scripts/vpm_ucx.py)
-keep their job-local scripts (not re-delivered; [D324] lists them as superseded). PSU275 explicitly omits
+keep their job-local scripts (not re-delivered; [D325] lists them as superseded). PSU275 explicitly omits
 stair collision and fills parapet wells: script existence is not blanket compliance.
 V010 checks UCX presence per non-lighting VPM FBX, material slots, triangle budget and mutual intersections; convexity and coverage stay not_run. No UCX benchmark exists.
 

@@ -1,4 +1,4 @@
-"""#1404 [D324]: `agr ucx` = ucx_build (build) -> fresh readback -> ucx10_core.plan gap check + V010.
+"""#1404 [D325]: `agr ucx` = ucx_build (build) -> fresh readback -> ucx10_core.plan gap check + V010.
 
 Pattern: n/a | new-case: CLI chain tests with mocked Blender steps, synthetic convex boxes (synthetic data).
 """
@@ -213,7 +213,7 @@ def test_main_writes_report_once(model, tmp_path, monkeypatch):
     _wire(monkeypatch, Mock(return_value=BUILD), RB, V_OK)
     assert uc.main([str(model), str(tmp_path / "o.fbx"), "Ground"]) == 0
     rep = json.loads((tmp_path / "o.fbx.agr_ucx.json").read_text(encoding="utf-8"))
-    assert rep["exit"] == 0 and rep["steps"]["gap_check"]["pieces"] == 2 and rep["decision"] == "D324"
+    assert rep["exit"] == 0 and rep["steps"]["gap_check"]["pieces"] == 2 and rep["decision"] == "D325"
     assert uc.main([str(model), str(tmp_path / "o.fbx"), "Ground"]) == 4  # second run: report exists
 
 

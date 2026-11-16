@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `8118772933a259934e1f34fc9f42118c420b1cfe41be5ab5fe93d36934db5d9a`.
+Редакция YAML SHA-256: `df99f43012313afdecb97c3735c31f19722ffee4cf7720935283565d57fd9690`.
 
 Ревизия исходников: Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников.
 
@@ -72,8 +72,8 @@
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/research/fbx_reader_compare.py::_blender`](../../tools/research/fbx_reader_compare.py) | live-bypass | исследование (не маршрут сдачи): замороженный бенчмарк, перевод отдельной карточкой | Нет карточки |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/sintez_parity.py::run_live.run`](../../tools/sintez_parity.py) | live-bypass | синтетическая сверка с СИНТЕЗ (#432), не сдача: перевод отдельной карточкой | Нет карточки |
 | Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
-| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | own-duty | ручные куски сданного КПП1; новый объект строит agr ucx (D324), сданный пакет не меняется | Не требуется |
-| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | own-duty | ручные коробки законченного ПСУ275; новый объект строит agr ucx (D324), пакет не меняется | Не требуется |
+| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | own-duty | ручные куски сданного КПП1; новый объект строит agr ucx (D325), сданный пакет не меняется | Не требуется |
+| Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | own-duty | ручные коробки законченного ПСУ275; новый объект строит agr ucx (D325), пакет не меняется | Не требуется |
 | Расстановка МАФ и Флоры | [`src/dt_ai/placement/engine.py`](../../src/dt_ai/placement/engine.py) | [`jobs/VATUTINO-SITE/place_site.py:87`](../../jobs/VATUTINO-SITE/place_site.py#L87) | wrapper | своя расстановка участка в задании поверх движка | Не требуется |
 | Коллизии UCX рельефа (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/VATUTINO-SITE/assemble_delivery.py:25`](../../jobs/VATUTINO-SITE/assemble_delivery.py#L25) | historical | UCX Ground v014 / v015 — выходы ucx_build для сданного Ватутино; agr ucx повторяет v014 (#1404) | Не требуется |
 | Пакеты НПМ / ВПМ и передача | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`jobs/TEC26-OKS/scripts/package_vpm.py:50`](../../jobs/TEC26-OKS/scripts/package_vpm.py#L50) | live-bypass | живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core) | [#1377](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1377) |

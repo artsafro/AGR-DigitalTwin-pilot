@@ -44,7 +44,7 @@ def _dispatch(args: list[str]) -> int:
         for name, script in SCRIPTS.items():
             print(f"  {name:18} {script}")
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
-        print("  ucx                UCX Main/Ground: ucx_build -> readback -> ucx10_core gap + V010 [D324]")
+        print("  ucx                UCX Main/Ground: ucx_build -> readback -> ucx10_core gap + V010 [D325]")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
         print("\nvpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
@@ -63,7 +63,7 @@ def _dispatch(args: list[str]) -> int:
         script = Path(__file__).resolve().parents[3] / SCRIPTS[args[0]]
         return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
     if args and args[0] == "ucx":
-        # #1404 [D324]: one UCX command; build core ucx_build, gap core ucx10_core (also AGR Tools in Max)
+        # #1404 [D325]: one UCX command; build core ucx_build, gap core ucx10_core (also AGR Tools in Max)
         from dt_ai.geometry import ucx_command
         return ucx_command.main(args[1:])
     if args and args[0] == "vpm-to-npm":

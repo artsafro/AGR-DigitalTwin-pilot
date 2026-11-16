@@ -31,7 +31,7 @@
 <tspan x="30" dy="24">Маршрут Ground (НПМ + ВПМ) v2 — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: 8c0bdb529883b496440c5777937aca2e95883ff07d7052b47823c546b1c9bf59</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 4f326fe02b22536a5727fed64ad0a4580080d920459f0090fd9ef983d7066213</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников</tspan>

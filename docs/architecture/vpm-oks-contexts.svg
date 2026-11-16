@@ -148,7 +148,7 @@
 <text x="353.0" y="937.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="14">Коллизии UCX (только ВПМ)</tspan>
 <tspan x="353.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
-<tspan x="353.0" dy="17.5">зазоры UCX (D324: ядро на функцию); строит</tspan>
+<tspan x="353.0" dy="17.5">зазоры UCX (D325: ядро на функцию); строит</tspan>
 <tspan x="353.0" dy="17.5">src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)</tspan>
 <tspan x="353.0" dy="17.5"></tspan>
 <tspan x="353.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>

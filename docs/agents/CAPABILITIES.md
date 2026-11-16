@@ -391,7 +391,7 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
 Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
 cores, keeping the Max side per the AC08 route [D228] [D225]; #1141 (the routing) was closed as split on 2026-11-15:
 UCX -> #1404, atlas -> #1380, placement -> #1407, one core behind the CLI and the Max button -> epic #1374, live-Max
-proof of the cores -> #1105. [D324] (2026-11-16, closes conflicts C49) narrows [D225] to one core per function:
+proof of the cores -> #1105. [D325] (2026-11-16, closes conflicts C49) narrows [D225] to one core per function:
 UCX build `ucx_build`, UCX gap `ucx10_core`, placement `dt_ai.placement`; command `agr ucx` (#1404)):
 
 | Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
@@ -418,7 +418,7 @@ Delivery QA:
   Max; exit 0 pass / 1 findings / 2 unreadable.
 - UCX builder `src/dt_ai/geometry/ucx_build.py`, `tools/blender/ucx_build.py`; audit `tools/blender/ucx_audit.py` —
   TOOL ONLY (#166).
-- `agr ucx MODEL OUT Main|Ground [key=value ...]` (`src/dt_ai/geometry/ucx_command.py`, #1404, [D324]) — WORKING:
+- `agr ucx MODEL OUT Main|Ground [key=value ...]` (`src/dt_ai/geometry/ucx_command.py`, #1404, [D325]) — WORKING:
   build via `tools/blender/ucx_build.py`, fresh readback, `ucx10_core.plan` gap check (measure only; the fix is
   AGR Tools `ucx.gap` in Max), V010; exit 0 pass / 1 check failed / 2 build or readback failed / 4 refused. Proven on
   Vatutino Ground v014 (geometry identical to the delivered UCX) and ELV Main.
