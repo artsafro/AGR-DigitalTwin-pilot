@@ -17,7 +17,7 @@ from pathlib import Path
 import subprocess
 import sys
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[5]  # jobs/KPP1/quad-1372/provenance-1563/hooks/
 sys.path.insert(0, str(ROOT / 'adapters' / 'max' / 'agr_tools'))
 import build_manifest as bm  # noqa: E402  stdlib owner of derivation records (#1505/#1551)
 

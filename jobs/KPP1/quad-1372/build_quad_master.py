@@ -45,7 +45,7 @@ from mathutils.kdtree import KDTree
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'adapters' / 'max' / 'agr_tools'))
 from udimtile_core import face_tile  # noqa: E402  shared UDIM kernel (#1359 guard)
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'provenance-1563' / 'hooks'))  # skeleton hook [D324]
 import quad_provenance as qp  # noqa: E402  per-version source pin + provenance record (#1563)
 
 SOURCE_SHA = qp.R1_V002  # r1-v002 SM_Kpp_1.fbx (v001/v002); `qp.VERSION_SOURCE` pins every version's R1

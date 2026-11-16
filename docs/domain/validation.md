@@ -109,9 +109,10 @@ ceil(5 % n), cap 100 000). Use the kernel operation
 it computes the needed triangle count from [D012], subdivides ONLY the named part (every triangle -> 4, bulk, no
 per-pair loop) and keeps the D108 invariants relative to the source [D201]: no new degenerate 3D face, zero-area or
 mirrored UV face or open edge, bbox and UV bounds unchanged, other parts untouched; a break rolls back with a
-question. Without a part it stops with the question which part to densify. The user's practice (Artem, 2026-11-15):
-detach an element - letters, a flat plate - and subdivide it; never densify Main automatically (a Main part is
-refused unless confirmed). Bisecting edges and connecting midpoints (session `0a21d4de`) left 296 zero-area faces
+question. Without a part it stops with the question which part to densify.
+The user's practice (Artem, 2026-11-15) [D334]: detach an element - letters, a flat plate - and subdivide it;
+never densify Main automatically (a Main part is refused unless confirmed). Bisecting edges and connecting midpoints
+(session `0a21d4de`) left 296 zero-area faces
 for SINTEZ and is rejected by `check_densify` (`tests/ops/test_densify.py`).
 
 ## SINTEZ 1.6.1 check-group mapping
