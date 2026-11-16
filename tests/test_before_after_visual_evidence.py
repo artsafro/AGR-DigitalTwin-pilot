@@ -162,13 +162,12 @@ def fake_runner(after_camera=None, touch=None, render_mutate=None):
         write_png(out / 'after.png', (50, 200, 50))
         if touch:
             touch()
-        record = {'before': {'camera': CAM, 'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}},
-                  'after': {'camera': after_camera or CAM,
-                            'render': {'engine': 'BLENDER_WORKBENCH', 'style': 'wire'}}}
-        for role in ('before', 'after'):
-            record[role]['render'].update(PNG_STATE)
-            record[role]['render'].update(use_border=False, use_multiview=False,
-                                          image_views_format='INDIVIDUAL')
+        state = {'engine': 'BLENDER_WORKBENCH', 'style': 'wire',
+                 'color_management': 'FOLLOW_SCENE', 'use_sequencer': False,
+                 'use_compositing': False, 'use_border': False, 'use_multiview': False,
+                 'image_views_format': 'INDIVIDUAL', **PNG_STATE}
+        record = {'before': {'camera': CAM, 'render': dict(state)},
+                  'after': {'camera': after_camera or CAM, 'render': dict(state)}}
         if render_mutate:
             render_mutate(record['after']['render'])
         Path(output_json).write_text(json.dumps(record), encoding='utf-8')
@@ -229,6 +228,31 @@ def test_cli_refuses_mismatched_cameras_and_writes_nothing(tmp_path, inputs, mon
     assert not output.exists() and not output.with_name('out.partial').exists()
     assert snapshot(tmp_path / 'in') == before_state
     assert not (tmp_path / 'ev').exists(), 'created parent directories are removed on refusal'
+
+
+@pytest.mark.parametrize('key,bad', [('color_management', 'OVERRIDE'),
+                                   ('use_sequencer', True), ('use_compositing', True)])
+@pytest.mark.parametrize('missing', [False, True])
+def test_output_pipeline_evidence_fails_closed(tmp_path, inputs, monkeypatch, key, bad, missing):
+    module = load()
+    runner = fake_runner()
+
+    def changed(*args, **kwargs):
+        records = runner(*args, **kwargs)
+        for role in ('before', 'after'):
+            records[role]['render'].update(color_management='FOLLOW_SCENE',
+                                           use_sequencer=False, use_compositing=False)
+        if missing:
+            del records['after']['render'][key]
+        else:
+            records['after']['render'][key] = bad
+        return records
+
+    monkeypatch.setattr(module, 'run_blender', changed)
+    output = tmp_path / 'ev' / 'out'
+    original = snapshot(tmp_path)
+    assert module.main(argv(*inputs, output)) == 2
+    assert snapshot(tmp_path) == original
 
 
 @pytest.mark.parametrize('key,value', [
@@ -511,6 +535,71 @@ def test_real_blender_named_mismatch_refused_and_fit_matches(tmp_path):
     assert module.main(argv(a, b, wire, '--resolution', '64x40', '--style', 'wire')) == 0
     evidence = json.loads((wire / 'render-evidence.json').read_text(encoding='utf-8'))
     assert [evidence[r]['mesh_objects'] for r in ('before', 'after')] == [1, 1]  # r1 P3: no wire copies
+
+
+MAKE_OUTPUT_SCENES = r'''
+import bpy, sys
+paths = sys.argv[sys.argv.index('--') + 1:]
+mask = int(paths[2])
+for index, path in enumerate(paths[:2]):
+    bpy.ops.wm.read_factory_settings(use_empty=True)
+    bpy.ops.mesh.primitive_cube_add()
+    scene = bpy.context.scene
+    # Isolate pipeline settings from the independently owned stamp-metadata issue.
+    for prop in scene.render.bl_rna.properties:
+        if prop.identifier.startswith('use_stamp') and prop.type == 'BOOLEAN':
+            setattr(scene.render, prop.identifier, False)
+    if index == 1:
+        scene['synthetic_variant'] = mask  # distinct input bytes even for the reset control
+        if mask & 1:
+            image = scene.render.image_settings
+            image.color_management = 'OVERRIDE'
+            image.view_settings.view_transform = 'AgX'
+            image.view_settings.exposure = 2.0
+        if mask & 2:
+            editor = scene.sequence_editor_create()
+            strip = editor.strips.new_effect('SyntheticRed', 'COLOR', channel=1,
+                                             frame_start=1, length=9)
+            strip.color = (1, 0, 0)
+            scene.render.use_sequencer = True
+            assert len(editor.strips) == 1
+        if mask & 4:
+            group = bpy.data.node_groups.new('SyntheticRed', 'CompositorNodeTree')
+            group.interface.new_socket(name='Image', in_out='OUTPUT', socket_type='NodeSocketColor')
+            rgb = group.nodes.new('CompositorNodeRGB')
+            rgb.outputs[0].default_value = (1, 0, 0, 1)
+            output = group.nodes.new('NodeGroupOutput')
+            group.links.new(rgb.outputs[0], output.inputs['Image'])
+            scene.compositing_node_group = group
+            scene.render.use_compositing = True
+            assert scene.compositing_node_group == group
+    bpy.ops.wm.save_as_mainfile(filepath=path)
+'''
+
+
+@pytest.mark.skipif(blender() is None or os.environ.get('RUN_BLENDER_SMOKE') != '1',
+                    reason='opt in with RUN_BLENDER_SMOKE=1 (real Blender render)')
+@pytest.mark.parametrize('mask', range(8))
+def test_real_blender_output_pipeline_is_normalized(tmp_path, mask):
+    """Synthetic native rows: single settings, all subsets and clean reset control."""
+    module = load()
+    maker = tmp_path / 'make-output.py'
+    maker.write_text(MAKE_OUTPUT_SCENES, encoding='utf-8')
+    a, b = tmp_path / 'a.blend', tmp_path / 'b.blend'
+    module.run_blender(maker, [a, b, str(mask)], outputs=[a, b])
+    original = (a.read_bytes(), b.read_bytes())
+    output = tmp_path / 'evidence'
+    assert module.main(argv(a, b, output, '--resolution', '64x40', '--style', 'solid')) == 0
+    assert (output / 'before.png').read_bytes() == (output / 'after.png').read_bytes()
+    evidence = json.loads((output / 'render-evidence.json').read_text(encoding='utf-8'))
+    assert evidence['before']['render'] == evidence['after']['render']
+    expected = {'color_management': 'FOLLOW_SCENE', 'use_sequencer': False,
+                'use_compositing': False}
+    for key, value in expected.items():
+        assert evidence['before']['render'][key] == value
+    manifest = json.loads((output / 'before-after.json').read_text(encoding='utf-8'))
+    assert manifest['render'] == evidence['before']['render']
+    assert (a.read_bytes(), b.read_bytes()) == original
 
 
 MAKE_SENSOR_SCENES = r'''

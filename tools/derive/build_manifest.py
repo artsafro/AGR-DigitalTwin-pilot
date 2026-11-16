@@ -8,6 +8,8 @@
         FBX members of the ZIP (the exact bytes that are delivered) and writes `<stem>.readback.json`; then
         `<stem>.build.json` is written beside the ZIP. Both are new files (never overwritten, never an input).
         --no-readback writes a manifest without the required check: the validator refuses it (not ready).
+        --derivation also takes an exporter's record store `<export root>/derivation/` (#1505: export_npm and the
+        KPP1 export_vpm write their records there automatically); every `*.derivation.json` in it is read.
 
 Exit: 0 written (status in the JSON line; `agr validate PACKAGE.zip` gives the verdict), 2 refused, nothing written.
 """
@@ -27,12 +29,7 @@ from adapters.max.agr_tools import build_manifest as bm  # noqa: E402
 
 
 def git_commit():
-    try:
-        out = subprocess.run(['git', '-C', str(ROOT), 'rev-parse', 'HEAD'], capture_output=True, text=True, timeout=30)
-    except OSError:
-        return 'unknown'
-    sha = out.stdout.strip()
-    return sha if out.returncode == 0 and bm.COMMIT.match(sha) else 'unknown'
+    return bm.git_commit(ROOT)
 
 
 def blender_readback(path, blender=None):
@@ -73,6 +70,7 @@ def cmd_build(a, reader=None):
     if not os.path.isfile(package):
         raise ValueError('no package ' + package)
     out_manifest, out_readback = bm.manifest_path(package), bm.readback_path(package)
+    a.derivation = bm.derivation_files(a.derivation)  # a store folder (#1505) -> its *.derivation.json records
     inputs = [package, a.master] + list(a.derivation) + ([a.transform_file] if a.transform_file else [])
     taken = {os.path.normcase(os.path.realpath(p)) for p in inputs}
     for p in (out_manifest, out_readback, out_manifest + '.partial', out_readback + '.partial'):

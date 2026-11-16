@@ -13,8 +13,8 @@
 <rect x="650.0" y="943.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="664.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="890.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1870.0" y="664.0" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="785.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870.0" y="664.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="855.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="345.0" y="1038.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="345.0" y="1334.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="955.0" y="1038.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -24,7 +24,7 @@
 <polyline points="1120.0,796.5 1140.0,796.5 1140.0,765.5 1240.0,765.5 1240.0,644.0 1750.0,644.0 1750.0,770.25 1730.0,770.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1730.0,770.25 1750.0,770.25 1750.0,1018.0 835.0,1018.0 835.0,1179.25 815.0,1179.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="815.0,1179.25 835.0,1179.25 835.0,1244.5 1445.0,1244.5 1445.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2035.0,1144.25 2055.0,1144.25 2055.0,945.5 1240.0,945.5 1240.0,796.5 1120.0,796.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,1144.25 2055.0,1144.25 2055.0,940.5 1240.0,940.5 1240.0,796.5 1120.0,796.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="2035.0,1144.25 2055.0,1144.25 2055.0,1253.0 1545.0,1253.0 1545.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 1750.0,441.5 1750.0,770.25 1730.0,770.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,216.25 1445.0,216.25 1445.0,441.5 1240.0,441.5 1240.0,1018.0 1445.0,1018.0 1445.0,1135.5 1425.0,1135.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -48,7 +48,7 @@
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
 <text x="963.0" y="346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 45</tspan>
+<tspan x="963.0" dy="12">Дубли вне владельца: 43</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)</tspan>
 <tspan x="963.0" dy="15.0">вместо общей функции; охрана jobs/, tools/, src/ (#1376)</tspan>
 </text>
@@ -130,17 +130,23 @@
 <tspan x="1268.0" dy="17.5">раскладка атласа флоры</tspan>
 </text>
 <text x="1268.0" y="900.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268.0" dy="12">Дубли вне владельца: 4</tspan>
+<tspan x="1268.0" dy="12">Дубли вне владельца: 3</tspan>
 </text>
 <text x="1878.0" y="674.0" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878.0" dy="14">Копия раскладки UV ВПМ</tspan>
-<tspan x="1878.0" dy="17.5">Владелец: jobs/KPP1/scripts/vpm_uv.py</tspan>
-<tspan x="1878.0" dy="17.5">ВПМ pack_uv по периодам; не atlas_core НПМ</tspan>
+<tspan x="1878.0" dy="14">Периодическая UV-развёртка ВПМ</tspan>
+<tspan x="1878.0" dy="17.5">Владелец: tools/blender/vpm_uv.py</tspan>
+<tspan x="1878.0" dy="17.5">общая Blender bmesh-развёртка KPP1, TEC26 и PSU275</tspan>
+<tspan x="1878.0" dy="17.5">(#1380), не упаковка атласа НПМ</tspan>
 <tspan x="1878.0" dy="17.5"></tspan>
-<tspan x="1878.0" dy="17.5">pack_uv: меш, отделки, спецификация -&gt; раскладка ВПМ</tspan>
+<tspan x="1878.0" dy="17.5">texel_cut: bmesh, имена отделок, spec -&gt; новый bmesh с</tspan>
+<tspan x="1878.0" dy="17.5">согласованными разрезами по рёбрам</tspan>
+<tspan x="1878.0" dy="17.5">pack_uv: bmesh, имена отделок, spec -&gt; UVMap и QA по</tspan>
+<tspan x="1878.0" dy="17.5">отделкам; периодические острова можно stack (D320)</tspan>
 </text>
-<text x="1878.0" y="795.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="865.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
+<tspan x="1878.0" dy="15.0">Правило проверки: своя периодическая UV-развёртка или texel_cut</tspan>
+<tspan x="1878.0" dy="15.0">вместо общего Blender owner (#1380); не атлас НПМ</tspan>
 </text>
 <text x="353.0" y="1048.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="14">Экспорт и пакет сдачи</tspan>
@@ -217,8 +223,8 @@
 <text x="1140.0" y="1235.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
-<rect x="1617.5" y="927.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1647.5" y="927.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1617.5" y="922.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1647.5" y="922.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1647.5" dy="14">Blender/Max</tspan>
 <tspan x="1647.5" dy="17.5">строит</tspan>
 </text>

@@ -11,6 +11,8 @@ pilot validator, fixed for qa.package in AGR Tools 0.8 (#908 branch D). Each tes
 import zipfile
 from pathlib import Path
 
+import pytest
+
 import validate_package as vp
 from test_scene import BOX_TRIS, mesh, rb, statuses, ucx_box
 from test_validator import PROFILES, STEM, good_files
@@ -40,6 +42,101 @@ def test_scene_readback_continues_after_one_unreadable_fbx(monkeypatch, tmp_path
     assert sorted(seen) == sorted([f"{STEM}.fbx", f"{STEM}_Light.fbx"]), seen  # both read, not only the first
     assert any(n.startswith(f"scene readback skipped for {seen[0]}") for n in report.notes)
     assert any(n.startswith(f"scene readback: {seen[1]}") for n in report.notes)
+
+@pytest.mark.parametrize("unread", [f"{STEM}.fbx", f"{STEM}_Light.fbx"])
+def test_unread_fbx_keeps_named_scene_not_run(monkeypatch, tmp_path, unread):
+    """Synthetic ZIP: inspect actual stage coverage, not the unrelated master verdict."""
+    files = good_files()
+    files[f"{STEM}_Light.fbx"] = files[f"{STEM}.fbx"]
+    package = tmp_path / f"{STEM}.zip"
+    with zipfile.ZipFile(package, "w") as archive:
+        for name, data in files.items():
+            archive.writestr(name, data)
+    seen = []
+
+    def readback(path):
+        name = Path(path).name
+        seen.append(name)
+        if name == unread:
+            raise RuntimeError("synthetic unreadable FBX")
+        result = rb(mesh())
+        result["source"] = str(path)
+        return result
+
+    monkeypatch.setattr(vp, "readback", readback)
+    report = vp.validate(package, "vpm", PROFILES, scene=True)
+    assert sorted(seen) == sorted([f"{STEM}.fbx", f"{STEM}_Light.fbx"])
+    expected = {"V002", "V003", "V004"}
+    if not unread.endswith("_Light.fbx"):
+        expected |= {"V008", "V009", "V010", "V013"}
+    for stage in report.stages:
+        if stage.id in expected:
+            assert any(f.status == "not_run" and f.evidence == unread
+                       and unread in f.observed for f in stage.findings), stage
+
+
+@pytest.mark.parametrize("kind", ["npm", "vpm"])
+@pytest.mark.parametrize("mask", range(8))
+def test_scene_coverage_all_readback_subsets(monkeypatch, mask, kind):
+    """Synthetic exhaustive three-file coverage, including all-failed/all-read resets."""
+    names = [f"SM_Synthetic_{i}.fbx" for i in range(3)]
+    unread = {name for i, name in enumerate(names) if not mask & (1 << i)}
+    seen = []
+
+    def readback(path):
+        name = Path(path).name
+        seen.append(name)
+        if name in unread:
+            raise OSError("synthetic missing readback")
+        result = rb(mesh())
+        result["source"] = str(path)
+        return result
+
+    monkeypatch.setattr(vp, "readback", readback)
+    expected_stages = {"V002", "V003", "V004", "V005"}
+    expected_stages |= {"V006"} if kind == "npm" else {"V008", "V009", "V010", "V013"}
+    for order in (names, list(reversed(names))):
+        for failures in (unread, unread, set()):
+            original = unread
+            unread = failures
+            st = vp.build_stages(PROFILES, kind)
+            vp.add_scene(st, kind, PROFILES.profile(kind), dict.fromkeys(order, b"synthetic"), [])
+            assert seen[-3:] == names
+            for stage_id in expected_stages:
+                pending = {f.evidence for f in st[stage_id].findings
+                           if f.status == "not_run" and f.observed.endswith(": no scene result")}
+                assert pending == unread, (stage_id, mask, pending, unread)
+            unread = original
+
+
+def test_empty_scene_inventory_keeps_placeholders():
+    st = vp.build_stages(PROFILES, "vpm")
+    vp.check_fbx_headers(st["V002"], {})
+    before = list(st["V002"].findings)
+    vp.add_scene(st, "vpm", PROFILES.vpm, {}, [])
+    assert st["V002"].findings == before
+    assert st["V002"].status == "not_run"
+
+
+def test_partial_scene_results_keep_named_not_run(monkeypatch):
+    names = ["SM_A.fbx", "SM_B.fbx"]
+
+    def readback(path):
+        return {"source": str(path)}
+
+    def partial(result, *args, **kwargs):
+        stages = ["V003"] if Path(result["source"]).name == names[0] else ["V003", "V008"]
+        return {stage: [vp.finding("pass", "synthetic", "measured", "measured", [])]
+                for stage in stages}
+
+    monkeypatch.setattr(vp, "readback", readback)
+    monkeypatch.setattr(vp, "scene_findings", partial)
+    st = vp.build_stages(PROFILES, "vpm")
+    vp.add_scene(st, "vpm", PROFILES.vpm, dict.fromkeys(names, b"synthetic"), [])
+    assert [(f.evidence, f.status) for f in st["V008"].findings
+            if f.status == "not_run"] == [(names[0], "not_run")]
+    assert all(f.status == "pass" for f in st["V003"].findings)
+
 
 def test_add_scene_does_not_return_on_the_first_error():
     src = (ROOT / "tools/qa/validate_package.py").read_text(encoding="utf-8")

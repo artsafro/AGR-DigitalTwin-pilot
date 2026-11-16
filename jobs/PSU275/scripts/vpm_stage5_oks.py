@@ -19,6 +19,7 @@ import bpy
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "jobs" / "KPP1" / "scripts"))
 import seal  # noqa: E402
+sys.path.insert(0, str(ROOT / "tools" / "blender"))
 import vpm_uv  # noqa: E402
 
 spec_path, tex_dir, piece_json, out_blend = sys.argv[sys.argv.index("--") + 1:]

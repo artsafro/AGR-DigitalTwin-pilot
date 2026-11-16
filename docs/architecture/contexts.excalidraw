@@ -213,13 +213,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 45\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
+   "text": "Дубли вне владельца: 43\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e7436c9fc6c53677",
-   "originalText": "Дубли вне владельца: 45\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
+   "originalText": "Дубли вне владельца: 43\nПравило проверки: своя формула UDIM 1001 + u + 10·v (или обратная)\nвместо общей функции; охрана jobs/, tools/, src/ (#1376)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -933,23 +933,23 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 4",
+   "text": "Дубли вне владельца: 3",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e99c9ff8d7aad5df",
-   "originalText": "Дубли вне владельца: 4",
+   "originalText": "Дубли вне владельца: 3",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "ed73172f630b51c5",
+   "id": "e404c6529e4cd758",
    "type": "rectangle",
    "x": 1870.0,
    "y": 664.0,
    "width": 470,
-   "height": 107.5,
+   "height": 177.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -963,14 +963,14 @@
    "roundness": {
     "type": 3
    },
-   "seed": 133474467,
+   "seed": 598472678,
    "version": 1,
-   "versionNonce": 1564627717,
+   "versionNonce": 1516751956,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e586c5135d46677b"
+     "id": "e6f1beadb15c56c0"
     }
    ],
    "updated": 1,
@@ -978,12 +978,12 @@
    "locked": false
   },
   {
-   "id": "e586c5135d46677b",
+   "id": "e6f1beadb15c56c0",
    "type": "text",
    "x": 1878.0,
    "y": 674.0,
    "width": 454,
-   "height": 87.5,
+   "height": 157.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -995,31 +995,31 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1027600173,
+   "seed": 1819538585,
    "version": 1,
-   "versionNonce": 989533940,
+   "versionNonce": 899192890,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Копия раскладки UV ВПМ\nВладелец: jobs/KPP1/scripts/vpm_uv.py\nВПМ pack_uv по периодам; не atlas_core НПМ\n\npack_uv: меш, отделки, спецификация -> раскладка ВПМ",
+   "text": "Периодическая UV-развёртка ВПМ\nВладелец: tools/blender/vpm_uv.py\nобщая Blender bmesh-развёртка KPP1, TEC26 и PSU275\n(#1380), не упаковка атласа НПМ\n\ntexel_cut: bmesh, имена отделок, spec -> новый bmesh с\nсогласованными разрезами по рёбрам\npack_uv: bmesh, имена отделок, spec -> UVMap и QA по\nотделкам; периодические острова можно stack (D320)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
-   "containerId": "ed73172f630b51c5",
-   "originalText": "Копия раскладки UV ВПМ\nВладелец: jobs/KPP1/scripts/vpm_uv.py\nВПМ pack_uv по периодам; не atlas_core НПМ\n\npack_uv: меш, отделки, спецификация -> раскладка ВПМ",
+   "containerId": "e404c6529e4cd758",
+   "originalText": "Периодическая UV-развёртка ВПМ\nВладелец: tools/blender/vpm_uv.py\nобщая Blender bmesh-развёртка KPP1, TEC26 и PSU275\n(#1380), не упаковка атласа НПМ\n\ntexel_cut: bmesh, имена отделок, spec -> новый bmesh с\nсогласованными разрезами по рёбрам\npack_uv: bmesh, имена отделок, spec -> UVMap и QA по\nотделкам; периодические острова можно stack (D320)",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e5f3bede53607957",
+   "id": "e625c23305c6837f",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 785.5,
+   "y": 855.5,
    "width": 470,
-   "height": 35.0,
+   "height": 65.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffc9c9",
@@ -1033,14 +1033,14 @@
    "roundness": {
     "type": 3
    },
-   "seed": 731142500,
+   "seed": 1786048440,
    "version": 1,
-   "versionNonce": 649322655,
+   "versionNonce": 1341566445,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "efd8b5b4746d6559"
+     "id": "e7a775407bde2f28"
     }
    ],
    "updated": 1,
@@ -1048,12 +1048,12 @@
    "locked": false
   },
   {
-   "id": "efd8b5b4746d6559",
+   "id": "e7a775407bde2f28",
    "type": "text",
    "x": 1878.0,
-   "y": 795.5,
+   "y": 865.5,
    "width": 454,
-   "height": 15.0,
+   "height": 45.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1065,21 +1065,21 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 314317122,
+   "seed": 720631492,
    "version": 1,
-   "versionNonce": 1867618970,
+   "versionNonce": 977246574,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Дубли вне владельца: 1",
+   "text": "Дубли вне владельца: 1\nПравило проверки: своя периодическая UV-развёртка или texel_cut\nвместо общего Blender owner (#1380); не атлас НПМ",
    "fontSize": 12,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
-   "containerId": "e5f3bede53607957",
-   "originalText": "Дубли вне владельца: 1",
+   "containerId": "e625c23305c6837f",
+   "originalText": "Дубли вне владельца: 1\nПравило проверки: своя периодическая UV-развёртка или texel_cut\nвместо общего Blender owner (#1380); не атлас НПМ",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1905,11 +1905,11 @@
     ],
     [
      20.0,
-     -198.75
+     -203.75
     ],
     [
      -795.0,
-     -198.75
+     -203.75
     ],
     [
      -795.0,
@@ -1939,7 +1939,7 @@
    "id": "e1713a01e405b29a",
    "type": "text",
    "x": 1587.5,
-   "y": 927.5,
+   "y": 922.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
