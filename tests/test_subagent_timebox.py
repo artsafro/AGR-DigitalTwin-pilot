@@ -111,6 +111,21 @@ def test_replays_and_parallel(tmp_path):
     assert grade(tmp_path, launch()+[other]+read(20)+read(40, 'completed'))['passed'] is False
 
 
+@pytest.mark.parametrize('channel', ['notification', 'native'])
+@pytest.mark.parametrize('minute', [10, 30, 31])
+def test_terminal_killed(tmp_path, channel, minute):
+    terminal = (read(minute, 'killed') if channel == 'native' else [record(
+        minute, 'user', '<task-notification><task-id>agent1</task-id>'
+        '<status>killed</status></task-notification>')])
+    rows = launch() + terminal + [record(60, 'assistant', 'Other work.')]
+    assert grade(tmp_path, rows)['passed'] is (minute < 30)
+    # A timely progress read renews the box; terminal cleanup survives replay.
+    rows = launch() + read(20) + (read(40, 'killed') if channel == 'native' else [record(
+        40, 'user', '<task-notification><task-id>agent1</task-id>'
+        '<status>killed</status></task-notification>')]) + [record(90, 'assistant', 'Done.')]
+    assert grade(tmp_path, [r for r in rows for _ in range(2)])['passed'] is True
+
+
 def test_read_and_notification(tmp_path):
     rows = launch()+[call(20, 'readfile', 'Read', file_path='output.synthetic.txt'), result(20, 'readfile'),
                     record(40, 'user', '<task-notification><task-id>agent1</task-id><status>completed</status></task-notification>')]
