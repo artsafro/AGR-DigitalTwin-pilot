@@ -109,7 +109,20 @@ check remains `not_run` with a note rather than reading an arbitrary source.
 
 One-source-per-role builds retain schema v2. Schema v3 adds `sources` to the role entry, keeps its
 first descriptor as a compatibility summary, and binds artifacts to source name **and** hash.
-Each optional component dependency names `role`, `master_name`, `master_sha256`, and explicit
+V3 requires a stable, nonempty producer `source_id` on every source descriptor, artifact binding and
+component dependency (#1589, refinement of [D332]). Record with
+`agr build-manifest record ARTIFACT --master SOURCE --source-id PROJECT.ground.mesh --out NEW.derivation.json`.
+Keep that id unchanged across revisions, renamed files and moved copies; use different ids only for
+independent sources (several independent meshes in one role remain legal). Two hashes under one id,
+even across component roles, are refused before writing build outputs and by the manifest reader.
+Every declared source must be used by a packaged artifact or its component dependency; an unrelated
+record outside the ZIP does not count. An unused declaration is refused naming the source.
+Legacy v1/v2 single-source records/manifests remain readable; no id is inferred from their basename,
+path or hash. Old records without ids cannot authorize a v3 build: regenerate them at export time.
+Supplying an id opts a single-source build into v3 too. Identity is producer evidence, not semantic
+proof that two producers have truthfully named the same real source.
+
+Each optional component dependency names `role`, `source_id`, `master_name`, `master_sha256`, and explicit
 read-back `parts`. Different-role parts inside a combined FBX require their own dependencies;
 missing, duplicated, unknown-role and mismatched part records fail. The manifest part inventory
 must equal the hash-bound readback inventory. V1/v2 remain readable without manufacturing evidence.
@@ -117,7 +130,9 @@ A changed or unchecked dependency prevents `manifest_ok`; cross-package comparis
 sources, not just the compatibility summary. Records prove consistency, not regulatory or visual acceptance.
 
 `ground_recipes.write_delivery` records all generated PNGs with `role="ground"` against the recipe
-hash captured before loading/rendering. Its store is `<version parent>/derivation/<version>/` so
+hash captured before loading/rendering. Its stable id defaults to the recipe's original address plus
+`.ground.recipe`; `--source-id` selects another independent recipe identity, never a revision label.
+Its store is `<version parent>/derivation/<version>/` so
 new versions cannot reuse stale records or collide with old texture names. Record basenames that
 would exceed the filesystem component limit are keyed by SHA-256 of the artifact name; the record
 retains the complete artifact name. KPP1 `derive_ground_v003.py` records the derived FBX before

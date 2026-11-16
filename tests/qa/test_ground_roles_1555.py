@@ -137,12 +137,12 @@ def test_combined_ground_records_component_sources(tmp_path):
     for p in (mesh, recipe, flora):
         p.write_bytes(('synthetic ' + p.name).encode())
     dependencies = [
-        {'role': 'ground', 'master': recipe, 'master_sha256': bm.sha256_file(recipe),
+        {'role': 'ground', 'master': recipe, 'source_id': 'site.recipe', 'master_sha256': bm.sha256_file(recipe),
          'parts': ['SM_Syn_Ground']},
-        {'role': 'flora', 'master': flora, 'master_sha256': bm.sha256_file(flora),
+        {'role': 'flora', 'master': flora, 'source_id': 'site.flora', 'master_sha256': bm.sha256_file(flora),
          'parts': ['SM_Syn_Flora']}]
     path = bm.write_export_derivation([fbx], mesh, tmp_path / 'records', role='ground',
-                                      dependencies=dependencies)
+                                      dependencies=dependencies, source_id='site.mesh')
     rec = bm.strict_json(Path(path).read_bytes())
     pkg = tmp_path / '0000_Syn.zip'
     with zipfile.ZipFile(pkg, 'w') as z:
@@ -196,7 +196,8 @@ def test_independent_ground_sources_from_producer_records(tmp_path):
         master.write_bytes(('synthetic ' + master_name).encode())
         artifact = tmp_path / name
         artifact.write_bytes(('synthetic ' + name).encode())
-        records.append(bm.write_export_derivation([artifact], master, tmp_path / 'records', role=role))
+        records.append(bm.write_export_derivation([artifact], master, tmp_path / 'records', role=role,
+                                                 source_id='site.' + master.stem))
         sources.append((role, master))
         files.append(artifact)
     pkg = tmp_path / '0000_Syn.zip'

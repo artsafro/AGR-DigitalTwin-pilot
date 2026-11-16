@@ -18,10 +18,13 @@ finish or did not pass (skipped = not ready) are `fail`; a package without a man
 Masters per role (#1525, [D328], refined by #1555 [D333, D332]): package_core owns the Ground-family vocabulary.
 Ground/Glass -> ground; GroundEl/Glass -> groundel; Flora -> flora; other members -> oks. File grouping remains Ground.
 Schema v2 keeps one master per role; v3 adds `sources` to a role entry when there are independent dependencies and
-binds each artifact to master_name + master_sha256. Repeat --master role=path for independent sources, not revisions
+binds each artifact to source_id + master_name + master_sha256 (#1589). V3 requires explicit stable producer ids,
+refuses multiple hashes of one id and unused declarations. Legacy v1/v2 records do not acquire inferred ids.
+Repeat --master role=path for independent sources, not revisions
 of one source. Optional component `dependencies` bind a combined FBX's parts to their own role/source hashes. Every
 read-back part of a different role needs a dependency; the bound report's part inventory cannot be silently dropped.
-Schema v1/v2 remain readable; one-source builds retain v2. Stale revisions and false roles remain refusals.
+Schema v1/v2 remain readable; legacy records without ids retain v2 only in single-source builds.
+Stale revisions and false roles remain refusals.
 
 FBX export owner (#1423 point 2): the readback of the exported files that go into the package is
 `readback_summary` over tools/blender/fbx_readback.py (dimensions, part positions, materials, UV, UCX-to-visual name
@@ -55,10 +58,10 @@ TRANSFORM_KEYS = {'name', 'file', 'sha256'}
 ARTIFACT_KEYS_V1 = {'name', 'kind', 'sha256', 'derived_sha256', 'master_sha256', 'parts'}
 ARTIFACT_KEYS = ARTIFACT_KEYS_V1 | {'role'}
 CHECK_KEYS = {'id', 'owner', 'required', 'status', 'finished', 'report', 'report_sha256', 'subjects'}
-DERIVATION_KEYS = {'schema', 'master_name', 'master_sha256', 'builder_commit', 'artifacts', 'master_path', 'role', 'dependencies'}
+DERIVATION_KEYS = {'schema', 'master_name', 'master_sha256', 'builder_commit', 'artifacts', 'master_path', 'role', 'dependencies', 'source_id'}
 # master_path: #1505 export-time records; role: #1525 records; older records lack them (role then follows the name)
-DERIVATION_REQUIRED = DERIVATION_KEYS - {'master_path', 'role', 'dependencies'}
-DEPENDENCY_KEYS = {'role', 'master_name', 'master_sha256', 'parts'}
+DERIVATION_REQUIRED = DERIVATION_KEYS - {'master_path', 'role', 'dependencies', 'source_id'}
+DEPENDENCY_KEYS = {'role', 'master_name', 'master_sha256', 'parts', 'source_id'}
 DERIVATION_SUFFIX = '.derivation.json'
 DERIVATION_STORE = 'derivation'  # <export root>/derivation/: beside the exported folder, never inside a package folder
 ATLAS_MASTER_KEYS = {'name', 'sha256', 'udims'}
@@ -209,7 +212,7 @@ def zip_members(package_zip):
 
 
 # ---- derivation records: written by the exporter at export time ---------------------------------------------
-def derivation_record(artifacts, master, builder_commit, master_sha256=None, role=None, dependencies=None):
+def derivation_record(artifacts, master, builder_commit, master_sha256=None, role=None, dependencies=None, source_id=None):
     """Record of which master revision the exported `artifacts` (paths) were derived from, hashed NOW (export time).
 
     master_sha256: the master hash the exporter read BEFORE it opened the master (#1505); a different hash now means
@@ -253,12 +256,15 @@ def derivation_record(artifacts, master, builder_commit, master_sha256=None, rol
     record = {'schema': DERIVATION_SCHEMA, 'master_name': os.path.basename(master), 'master_sha256': now,
             'master_path': os.path.abspath(master), 'builder_commit': str(builder_commit), 'artifacts': rec,
             'role': role}
+    if source_id is not None:
+        record['source_id'] = _source_id(source_id)
     if dependencies is not None:
         if not isinstance(dependencies, list) or not dependencies:
             raise ValueError('derivation dependencies must be a non-empty list')
         rows = []
         for dep in dependencies:
-            _keys(dep, {'role', 'master', 'master_sha256', 'parts'}, 'export dependency')
+            _keys(dep, {'role', 'master', 'master_sha256', 'parts', 'source_id'}, 'export dependency',
+                  required={'role', 'master', 'master_sha256', 'parts'})
             path = os.fspath(dep['master'])
             if any(os.path.samefile(path, artifact) for artifact in artifacts):
                 raise ValueError('derivation: dependency is the artifact itself: ' + path)
@@ -269,9 +275,18 @@ def derivation_record(artifacts, master, builder_commit, master_sha256=None, rol
                 raise ValueError('master_changed_during_export: dependency ' + path)
             rows.append({'role': dep['role'], 'master_name': os.path.basename(path),
                          'master_sha256': dep['master_sha256'], 'parts': dep['parts']})
+            if 'source_id' in dep:
+                rows[-1]['source_id'] = _source_id(dep['source_id'])
         check_dependencies(rows)
         record['dependencies'] = rows
     return record
+
+
+def _source_id(value):
+    """Opaque stable producer identity, never inferred from a revision's file name or hash."""
+    if not isinstance(value, str) or not value.strip() or value != value.strip():
+        raise ValueError('source_id must be a non-empty string without surrounding whitespace')
+    return value
 
 
 def check_dependencies(rows):
@@ -280,7 +295,9 @@ def check_dependencies(rows):
         raise ValueError('dependencies must be a non-empty list')
     seen = set()
     for dep in rows:
-        _keys(dep, DEPENDENCY_KEYS, 'dependency')
+        _keys(dep, DEPENDENCY_KEYS, 'dependency', required=DEPENDENCY_KEYS - {'source_id'})
+        if 'source_id' in dep:
+            _source_id(dep['source_id'])
         _role(dep['role'], 'dependency')
         _sha(dep['master_sha256'], 'dependency master_sha256')
         if not isinstance(dep['master_name'], str) or not dep['master_name'].strip():
@@ -326,13 +343,13 @@ def derivation_filename(artifact):
 
 
 def write_export_derivation(artifacts, master, store_dir, builder_commit='unknown', master_sha256=None, inputs=(),
-                            role=None, dependencies=None):
+                            role=None, dependencies=None, source_id=None):
     """Exporter hook (#1505): write `<store>/<first artifact>.derivation.json` (new file, never replaced).
 
     Every refusal (no artifact, master changed during the export, existing record, record aliasing an input, unknown
     role) happens before the store folder or the record is created."""
     artifacts = [os.fspath(p) for p in artifacts]
-    rec = derivation_record(artifacts, master, builder_commit, master_sha256, role, dependencies)
+    rec = derivation_record(artifacts, master, builder_commit, master_sha256, role, dependencies, source_id)
     inputs = list(inputs) + [os.fspath(d['master']) for d in dependencies or []]
     store_dir = os.fspath(store_dir)
     path = os.path.join(store_dir, derivation_filename(artifacts[0]))
@@ -425,6 +442,8 @@ def check_atlas_master(atlas, master_sha256):
 
 def check_derivation(rec):
     _keys(rec, DERIVATION_KEYS, 'derivation', DERIVATION_REQUIRED)
+    if 'source_id' in rec:
+        _source_id(rec['source_id'])
     if 'master_path' in rec and (not isinstance(rec['master_path'], str) or not rec['master_path'].strip()):
         raise ValueError('derivation master_path must be a non-empty path')
     if rec['schema'] != DERIVATION_SCHEMA:
@@ -589,7 +608,7 @@ def make_manifest(package_zip, master, builder_commit, derivations, transform, r
                                      name, role, role_of(name)))
             if name in by_name and by_name[name][0] != rec['master_sha256']:
                 raise ValueError('build manifest: two derivation records for {} name different masters'.format(name))
-            row = (rec['master_sha256'], a['sha256'], role, rec.get('dependencies'), rec['master_name'])
+            row = (rec['master_sha256'], a['sha256'], role, rec.get('dependencies'), rec['master_name'], rec.get('source_id'))
             if name in by_name and by_name[name] != row:
                 raise ValueError('build manifest: conflicting derivation records for ' + name)
             by_name[name] = row
@@ -627,9 +646,27 @@ def make_manifest(package_zip, master, builder_commit, derivations, transform, r
         if len(sources) > 1:
             entries[r]['sources'] = sources
     multi = any('sources' in e for e in entries.values()) or any('dependencies' in a for a in artifacts)
+    multi = multi or any(by_name[a['name']][5] is not None for a in artifacts)
     if multi:
         for artifact in artifacts:
             artifact['master_name'] = by_name[artifact['name']][4]
+            artifact['source_id'] = by_name[artifact['name']][5]
+        bindings = [b for a in artifacts for b in [a] + a.get('dependencies', [])]
+        used_names = {(b['role'], b['master_name']) for b in bindings}
+        unused = [(r, s['name']) for r, e in entries.items() for s in source_entries(e)
+                  if (r, s['name']) not in used_names]
+        if unused:
+            raise ValueError('unused declared source(s): ' + repr(unused))
+        for r, entry in entries.items():
+            for source in source_entries(entry):
+                used = [b for b in bindings if b['role'] == r and b['master_name'] == source['name']]
+                ids = {_source_id(b.get('source_id')) for b in used}
+                if len(ids) != 1:
+                    raise ValueError('conflicting source_id for ' + source['name'])
+                source['source_id'] = next(iter(ids))
+            if 'sources' in entry:
+                entry['source_id'] = entry['sources'][0]['source_id']
+        check_source_bindings(entries, artifacts)
     first = entries['oks' if 'oks' in entries else sorted(entries)[0]]['sha256']
     now = now or datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     stem = os.path.basename(package_zip)[:-4]
@@ -673,6 +710,31 @@ def dumps(obj):
 
 
 # ---- refusal logic ------------------------------------------------------------------------------------------
+def check_source_bindings(entries, artifacts):
+    """V3: explicit producer identities, one revision per id, and no unused declared source."""
+    revisions, declared, used = {}, set(), set()
+    def bind(source_id, digest):
+        source_id = _source_id(source_id)
+        if source_id in revisions and revisions[source_id] != digest:
+            raise ValueError('two revisions of source_id ' + source_id)
+        revisions[source_id] = digest
+        return source_id
+    for role, entry in entries.items():
+        for source in source_entries(entry):
+            sid = bind(source.get('source_id'), source['sha256'])
+            declared.add((role, sid, source['name'], source['sha256']))
+    for artifact in artifacts:
+        for row in [artifact] + artifact.get('dependencies', []):
+            sid = bind(row.get('source_id'), row['master_sha256'])
+            key = (row['role'], sid, row['master_name'], row['master_sha256'])
+            if key not in declared:
+                raise ValueError('undeclared source_id {} ({})'.format(sid, row['master_name']))
+            used.add(key)
+    unused = sorted(declared - used)
+    if unused:
+        raise ValueError('unused declared source(s): ' + repr(unused))
+
+
 def parse_manifest(data):
     """Strict read of a build manifest. v2 ([D328]) `masters` by role; v1 (one `master`) is normalized to v2: that one
     master stands for every role present and each artifact gets its role from its name."""
@@ -699,14 +761,15 @@ def parse_manifest(data):
         raise ValueError('manifest masters must be a non-empty object keyed by role')
     for r, e in m['masters'].items():
         _role(r, 'manifest masters')
-        _keys(e, MASTER_KEYS | ({'sources'} if m['schema'] == SCHEMA_MULTI else set()),
-              'manifest masters ' + r, required=MASTER_KEYS)
+        source_keys = MASTER_KEYS | ({'source_id'} if m['schema'] == SCHEMA_MULTI else set())
+        _keys(e, source_keys | ({'sources'} if m['schema'] == SCHEMA_MULTI else set()),
+              'manifest masters ' + r, required=source_keys)
         sources = source_entries(e)
         if not isinstance(sources, list) or not sources:
             raise ValueError('manifest sources must be a non-empty list: ' + r)
         names = set()
         for source in sources:
-            _keys(source, MASTER_KEYS, 'manifest source ' + r)
+            _keys(source, source_keys, 'manifest source ' + r)
             if not isinstance(source['name'], str) or not source['name'].strip():
                 raise ValueError('manifest source name required: ' + r)
             if source['name'].casefold() in names:
@@ -715,7 +778,7 @@ def parse_manifest(data):
             _sha(source['sha256'], 'manifest masters {} sha256'.format(r))
             if not COMMIT.match(str(source['builder_commit'])):
                 raise ValueError('manifest masters {} builder_commit must be a git sha or unknown'.format(r))
-        if 'sources' in e and {k: e[k] for k in MASTER_KEYS} != sources[0]:
+        if 'sources' in e and {k: e[k] for k in source_keys} != sources[0]:
             raise ValueError('manifest primary source differs from sources[0]: ' + r)
     _keys(m['transform'], TRANSFORM_KEYS, 'manifest transform')
     if not isinstance(m['transform']['name'], str) or not m['transform']['name'].strip():
@@ -727,8 +790,8 @@ def parse_manifest(data):
     seen = set()
     for a in m['artifacts']:
         multi = m['schema'] == SCHEMA_MULTI
-        _keys(a, ARTIFACT_KEYS | ({'dependencies', 'master_name'} if multi else set()),
-              'manifest artifact', required=ARTIFACT_KEYS | ({'master_name'} if multi else set()))
+        _keys(a, ARTIFACT_KEYS | ({'dependencies', 'master_name', 'source_id'} if multi else set()),
+              'manifest artifact', required=ARTIFACT_KEYS | ({'master_name', 'source_id'} if multi else set()))
         if multi and (not isinstance(a['master_name'], str) or not a['master_name'].strip()):
             raise ValueError('manifest artifact master_name required')
         if 'dependencies' in a:
@@ -756,6 +819,8 @@ def parse_manifest(data):
     if set(m['masters']) != roles:
         raise ValueError('manifest masters {} != artifact roles {} (one master per role present)'.format(
             sorted(m['masters']), sorted(roles)))
+    if m['schema'] == SCHEMA_MULTI:
+        check_source_bindings(m['masters'], m['artifacts'])
     if not isinstance(m['checks'], list):
         raise ValueError('manifest checks must be a list')
     ids = set()

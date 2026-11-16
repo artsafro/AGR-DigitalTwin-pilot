@@ -258,11 +258,13 @@ def record_export(fbx, src, want, cust, cwant, mapping, mapping_hash, names):
     roles = {}
     for name in names:
         roles.setdefault(bm.role_of(name), []).append(name)
-    dependencies = [{'role': role, 'master': path, 'master_sha256': digest, 'parts': sorted(parts)}
-                    for role, parts in sorted(roles.items())
-                    for path, digest in ((src, want), (cust, cwant), (mapping, mapping_hash))]
+    dependencies = [{'role': role, 'master': path, 'master_sha256': digest, 'parts': sorted(parts),
+                     'source_id': 'KPP1.ground.' + source_id}
+                     for role, parts in sorted(roles.items())
+                     for path, digest, source_id in ((src, want, 'geometry'), (cust, cwant, 'customer'),
+                                                     (mapping, mapping_hash, 'bridge'))]
     return bm.write_export_derivation([fbx], src, os.path.join(os.path.dirname(fbx), 'derivation'),
-        master_sha256=want, role='ground', dependencies=dependencies)
+        master_sha256=want, role='ground', dependencies=dependencies, source_id='KPP1.ground.geometry')
 
 
 def main():
