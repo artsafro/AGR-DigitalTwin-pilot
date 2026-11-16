@@ -31,7 +31,7 @@ def bundle(tmp_path, unused=False):
         records = records[:1]
         with zipfile.ZipFile(pkg, 'w') as z:
             z.write(tmp_path / '0000_Syn_Ground.fbx', '0000_Syn_Ground.fbx')
-    return pkg, sources, records
+    return pkg, [str(p) for p in sources], records
 
 
 def test_two_revisions_refused(tmp_path):
