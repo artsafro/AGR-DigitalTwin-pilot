@@ -28,7 +28,7 @@ vp = _load(ROOT / 'tools/qa/validate_package.py', 'validate_package_1423')
 pc = _load(ROOT / 'adapters/max/agr_tools/package_core.py', 'package_core_1423')
 ec = _load(ROOT / 'adapters/max/agr_tools/edit_core.py', 'edit_core_1423')
 
-NPM = {'0000_Kpp_1_01.fbx': b'Kaydara FBX Binary  \x00 oks part 01', '0000_Kpp_1_Ground.fbx': b'Kaydara FBX Binary  \x00 ground'}
+NPM = {'0000_Kpp_1_01.fbx': b'Kaydara FBX Binary  \x00 oks part 01', '0000_Kpp_1_02.fbx': b'Kaydara FBX Binary  \x00 ground'}
 
 
 def good_rb(path):
@@ -95,7 +95,7 @@ def test_good_build_manifest_passes_and_names_every_artifact(tmp_path):
     master, _, package, _ = good(tmp_path)
     assert [(s, c) for s, c, _ in findings(package, master)] == [('pass', 'manifest_ok')]
     m = json.loads(Path(bm.manifest_path(package)).read_text(encoding='utf-8'))
-    assert m['master'] == {'name': 'master.fbx', 'sha256': bm.sha256_file(master), 'builder_commit': 'abc1234'}
+    assert m['masters']['oks'] == {'name': 'master.fbx', 'sha256': bm.sha256_file(master), 'builder_commit': 'abc1234'}
     assert [a['name'] for a in m['artifacts']] == sorted(NPM)
     assert m['artifacts'][0]['parts'] == ['SM_0000_Kpp_1_01', 'UCX_SM_0000_Kpp_1_01_01']
     assert m['transform'] == {'name': 'identity', 'file': None, 'sha256': None}
@@ -106,11 +106,11 @@ def test_good_build_manifest_passes_and_names_every_artifact(tmp_path):
 
 
 def test_stale_npm_after_master_edit_is_refused(tmp_path):
-    """Master edited after the OKS FBX export, Ground re-exported from the new master: two revisions -> refused."""
+    """Master edited after the OKS FBX export, part 02 re-exported from the new master: two revisions -> refused."""
     master, export, package = make_set(tmp_path)
     rec_old = record(tmp_path, master, export, ['0000_Kpp_1_01.fbx'], 'rec-old.json')
     master.write_bytes(b'master revision B: one roof part moved')
-    rec_new = record(tmp_path, master, export, ['0000_Kpp_1_Ground.fbx'], 'rec-new.json')
+    rec_new = record(tmp_path, master, export, ['0000_Kpp_1_02.fbx'], 'rec-new.json')
     assert build(package, master, [rec_old, rec_new]) == 0
     rows = findings(package, master)
     assert codes(rows) == ['manifest_master_mismatch']
@@ -174,20 +174,20 @@ def test_readback_ran_on_other_bytes(tmp_path):
     master, _, package, _ = good(tmp_path)
     mp = Path(bm.manifest_path(package))
     m = json.loads(mp.read_text(encoding='utf-8'))
-    m['checks'][0]['subjects']['0000_Kpp_1_Ground.fbx'] = '1' * 64
+    m['checks'][0]['subjects']['0000_Kpp_1_02.fbx'] = '1' * 64
     del m['checks'][0]['subjects']['0000_Kpp_1_01.fbx']
     mp.write_bytes(bm.dumps(m))
     rows = findings(package, master)
     assert codes(rows) == ['manifest_report_hash']
     detail = [d for s, c, d in rows if c == 'manifest_report_hash'][0]
-    assert "uncovered ['0000_Kpp_1_01.fbx']" in detail and '0000_Kpp_1_Ground.fbx' in detail
+    assert "uncovered ['0000_Kpp_1_01.fbx']" in detail and '0000_Kpp_1_02.fbx' in detail
 
 
 def test_unlisted_and_missing_members(tmp_path):
     master, _, package, _ = good(tmp_path)
     mp = Path(bm.manifest_path(package))
     m = json.loads(mp.read_text(encoding='utf-8'))
-    m['artifacts'][0]['name'] = '0000_Kpp_1_02.fbx'
+    m['artifacts'][0]['name'] = '0000_Kpp_1_03.fbx'
     mp.write_bytes(bm.dumps(m))
     assert {'manifest_member_unlisted', 'manifest_member_missing'} <= set(codes(findings(package, master)))
 
@@ -199,12 +199,12 @@ def test_no_manifest_is_not_run_never_pass(tmp_path):
 
 @pytest.mark.parametrize('mutate', [
     lambda m: m.update({'extra': 1}),
-    lambda m: m['master'].update({'path': 'x'}),
+    lambda m: m['masters']['oks'].update({'path': 'x'}),
     lambda m: m.update({'schema': 'agr.build_manifest/0'}),
     lambda m: m['artifacts'][0].update({'kind': 'mystery'}),
     lambda m: m['artifacts'].append(dict(m['artifacts'][0])),
     lambda m: m.update({'artifacts': []}),
-    lambda m: m['master'].update({'sha256': 'ABC'}),
+    lambda m: m['masters']['oks'].update({'sha256': 'ABC'}),
     lambda m: m['transform'].update({'name': ''}),
     lambda m: m['transform'].update({'file': 'bridge.json'}),
 ])
@@ -348,7 +348,7 @@ def test_validate_package_cli_fresh_process_refuses_stale(tmp_path):
     master, export, package = make_set(tmp_path)
     rec_old = record(tmp_path, master, export, ['0000_Kpp_1_01.fbx'], 'o.json')
     master.write_bytes(b'B')
-    rec_new = record(tmp_path, master, export, ['0000_Kpp_1_Ground.fbx'], 'n.json')
+    rec_new = record(tmp_path, master, export, ['0000_Kpp_1_02.fbx'], 'n.json')
     assert build(package, master, [rec_old, rec_new]) == 0
     proc = subprocess.run([sys.executable, '-m', 'dt_ai.cli.agr', 'validate', str(package), '--profile', 'npm',
                            '--json'], capture_output=True, cwd=str(ROOT))
@@ -375,7 +375,7 @@ def test_package_core_cross_masters_refuses_two_revisions(tmp_path):
     Path(bm.manifest_path(dst)).write_bytes(Path(bm.manifest_path(p2)).read_bytes())
     assert pc.cross_masters([str(p1), str(dst)]) == {}  # same master bytes -> one revision
     m = json.loads(Path(bm.manifest_path(dst)).read_text(encoding='utf-8'))
-    m['master']['sha256'] = 'f' * 64
+    m['masters']['oks']['sha256'] = 'f' * 64
     Path(bm.manifest_path(dst)).write_bytes(bm.dumps(m))
     out = pc.cross_masters([str(p1), str(dst)])
     assert sorted(out) == ['0000_Kpp_1.zip', 'SM_Kpp_1.zip']
@@ -397,7 +397,7 @@ def test_probe_random_single_mutation_never_passes(tmp_path):
         lambda m, i: m['artifacts'][i].update({'sha256': rng.choice('0123456789abcdef') * 64}),
         lambda m, i: m['artifacts'][i].update({'master_sha256': 'e' * 64}),
         lambda m, i: m['artifacts'][i].update({'derived_sha256': 'd' * 64}),
-        lambda m, i: m['master'].update({'sha256': 'c' * 64}),
+        lambda m, i: m['masters']['oks'].update({'sha256': 'c' * 64}),
         lambda m, i: m['checks'][0].update({'status': rng.choice(['skipped', 'not_run', 'fail', 'review', ''])}),
         lambda m, i: m['checks'][0].update({'finished': rng.choice([False, None, 0, 'true'])}),
         lambda m, i: m['checks'][0].update({'report_sha256': 'b' * 64}),

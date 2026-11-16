@@ -1,0 +1,10 @@
+{
+  "adapters/max/agr_tools/seams_core.py": "7d27f6de8dbeb25adcfa9558766157d8ac1130ef7e8ca1bf5281d7c5201e5fb7",
+  "tools/materials/brick_seams.py": "c6ee287604f3822cdba0da7c15066556b9ef33e73005c5ea5573cadeebbc1900",
+  "tools/materials/course_grid_cut.py": "59239c83081c730108317f89891b1f2bbe013555895ffbc16b6dc404f75441b9",
+  "tools/materials/course_grid_pages.py": "fdbdf6a7bd520a5ae6ae84b32d540e3072a0b907a2c0df19028306715e5b0b64",
+  "tools/materials/course_grid_chart.py": "4e887b815f1d7256be3420c7384fb217563c1da832a031e5a98432ed06c103cf",
+  "tools/materials/course_grid_fit.py": "d73835a4023ffd3c8fcc97783a8e8ccca1465607369e4b24858de69072cf500d",
+  "src/dt_ai/cli/agr.py": "77093139a05929dd0c0716d7d911f48400ca51f92de2ccb598573bce5c533ff9",
+  "tests/test_brick_seams.py": "90cf90506da86512087d0f250f94e77a5271270a8235a560028491327f5b6cee"
+}

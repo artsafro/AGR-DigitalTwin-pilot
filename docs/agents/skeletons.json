@@ -1,0 +1,55 @@
+{
+  "_comment": "Scenario skeletons (#1546, [D324]-[D327]): per cell of docs/scenarios/scenarios.json the ordered stages, the shared command/core each stage calls, and the hook points where a job's small scripts plug in. Human view: docs/agents/SKELETONS.md. Checked by tools/architecture/skeleton_guard.py and tests/test_skeletons_1546.py. entry_defs = public function names defined in the stage owners (a job script that defines one re-implements the stage); dup_rules = duplicate_guard rules owned by the stage. gap = no shared implementation (one line); a job may fill a gap stage with a hook at point 'gap'.",
+  "version": 1,
+  "job_contract": {
+    "config": "skeleton.json",
+    "hooks_dir": "hooks",
+    "max_hooks": 5,
+    "points": ["before", "after", "gap"],
+    "script_suffixes": [".py", ".ms", ".rb", ".sh", ".mjs"]
+  },
+  "shared": [
+    {"id": "blender-run", "ru": "Запуск Blender без окна", "calls": "src/dt_ai/core/blender_runner.py (run_blender)", "owners": ["src/dt_ai/core/blender_runner.py"], "entry_defs": ["blender_command", "run_blender"], "dup_rules": ["blender-launch"], "gap": null}
+  ],
+  "stages": {
+    "sources-dwg": {"ru": "Приём чертежей ОКС (DWG/DXF)", "calls": "uv run python tools/methods/body/plan_from_dxf.py (after dwg_to_dxf.py)", "owners": ["tools/methods/body/dwg_to_dxf.py", "tools/methods/body/plan_from_dxf.py", "tools/methods/body/facade_openings_from_dxf.py"], "entry_defs": ["extract_plan", "sheet_census"], "dup_rules": [], "gap": null},
+    "inspect": {"ru": "Паспорт задания и PartsList (Gate 1)", "calls": "agr inspect --manifest JOB.json (dt inspect)", "owners": ["src/dt_ai/cli/main.py", "src/dt_ai/cli/agr.py"], "entry_defs": [], "dup_rules": [], "gap": null},
+    "body": {"ru": "Бадик, окна, капсулы, крыша", "calls": "AGR Tools stages 1-4 in Max [D250]", "owners": ["adapters/max/agr_tools/body_core.py", "adapters/max/agr_tools/windowgen_core.py", "adapters/max/agr_tools/capsule_core.py", "adapters/max/agr_tools/roof_core.py"], "entry_defs": ["prepare_plan", "boundary_loops"], "dup_rules": [], "gap": null},
+    "udim": {"ru": "Материалы и UDIM", "calls": "AGR Tools stages 5-6 (udimtile_core)", "owners": ["adapters/max/agr_tools/udimtile_core.py"], "entry_defs": ["udim_tile", "udim_of_cell", "tile_origin", "face_tile"], "dup_rules": ["udim-tile"], "gap": null},
+    "vpm-uv": {"ru": "UV ВПМ (период, нарезка по 3,8-4,0 м)", "calls": "tools/blender/vpm_uv.py [D320]", "owners": ["tools/blender/vpm_uv.py"], "entry_defs": ["pack_uv", "texel_cut", "density_qa"], "dup_rules": ["vpm-uv"], "gap": null},
+    "ucx-oks": {"ru": "Коллизии ОКС", "calls": "AGR Tools ucx_core", "owners": ["adapters/max/agr_tools/ucx_core.py"], "entry_defs": ["accept_hull_volume", "budget_verdict"], "dup_rules": [], "gap": null},
+    "master-qa": {"ru": "Проверка мастера до экспорта", "calls": "uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json [D312]", "owners": ["tools/qa/master_topology.py", "tools/blender/qa_master.py", "adapters/max/agr_tools/master_topology_core.py"], "entry_defs": ["world_bm"], "dup_rules": ["master-qa"], "gap": null},
+    "readback": {"ru": "Экспорт и обратное чтение", "calls": "tools/blender/fbx_readback.py; dt qa xview [D152]", "owners": ["tools/blender/fbx_readback.py"], "entry_defs": ["mesh_facts", "material_facts", "baked_transforms"], "dup_rules": [], "gap": null},
+    "package-vpm": {"ru": "Пакет ВПМ (ZIP)", "calls": "agr package-vpm (dt derive package -> package_core._write_zip)", "owners": ["adapters/max/agr_tools/package_core.py"], "entry_defs": ["_write_zip", "zip_passport"], "dup_rules": ["delivery-zip"], "gap": null},
+    "package-npm": {"ru": "Пакет НПМ (ZIP)", "calls": "agr package-npm (dt derive package-npm -> package_core._write_zip)", "owners": ["adapters/max/agr_tools/package_core.py"], "entry_defs": ["_write_zip", "zip_passport"], "dup_rules": ["delivery-zip"], "gap": null},
+    "validate": {"ru": "Проверка пакета", "calls": "agr validate (tools/qa/validate_package.py)", "owners": ["tools/qa/validate_package.py"], "entry_defs": ["zip_precheck", "build_stages"], "dup_rules": [], "gap": null},
+    "checker": {"ru": "SINTEZ AGR Checker", "calls": "agr checker (tools/qa/sintez_checker.py)", "owners": ["tools/qa/sintez_checker.py", "tools/blender/sintez_checker.py"], "entry_defs": [], "dup_rules": ["sintez-checker"], "gap": null},
+    "geojson": {"ru": "GeoJSON сдачи", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no delivery-ready GeoJSON writer until the customer examples are studied [D220]"},
+    "light-fbx": {"ru": "_Light.fbx", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no validator stage for _Light.fbx content"},
+    "derive-npm": {"ru": "ВПМ -> НПМ (атлас и выпуск НПМ)", "calls": "agr vpm-to-npm (dt derive atlas, then dt derive npm)", "owners": ["tools/derive/npm_atlas.py", "tools/derive/export_npm.py"], "entry_defs": ["validate_export", "face_udim"], "dup_rules": [], "gap": null},
+    "brick-seams": {"ru": "Деталь фасада (кирпичные швы)", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "`agr brick-seams` unavailable: source-bound job algorithms, no shared implementation"},
+    "build-manifest": {"ru": "Манифест выпуска", "calls": "agr build-manifest record EXPORTED --master MASTER --out NEW.json", "owners": ["tools/derive/build_manifest.py"], "entry_defs": ["blender_readback", "cmd_record"], "dup_rules": [], "gap": null},
+    "review-scene": {"ru": "Сцена для приёмки", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "`agr open-in-max` / `agr contact-renders` unavailable: existing Max bridge or job review renders"},
+    "lite-route": {"ru": "Правила упрощённой НПМ", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "cell oks-npm-lite has no card and no simplification rule; reuse oks-npm stages after the user defines it"},
+    "sources-ground": {"ru": "Приём СПОЗУ (DWG)", "calls": "uv run python tools/source/inspect_ground_dxf.py", "owners": ["tools/source/inspect_ground_dxf.py"], "entry_defs": ["boundary_polygon", "hatch_region", "layer_unions"], "dup_rules": [], "gap": null},
+    "zero": {"ru": "Граница и нуль проекта", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no boundary/zero command; read PZU/vertical planning and ask if missing [D279]"},
+    "surfaces": {"ru": "Плоский Ground по покрытиям", "calls": null, "owners": ["src/dt_ai/geometry/ground_cake.py"], "entry_defs": ["build_flat", "plan_layers"], "dup_rules": [], "gap": "no generic coverings builder; ground_cake functions are building blocks only"},
+    "quads": {"ru": "Квадраты и швы Ground", "calls": "dt ground v015 (Vatutino replay only)", "owners": ["src/dt_ai/geometry/ground_quads.py", "tools/ground/build_ground_v015.py"], "entry_defs": ["pair_triangles"], "dup_rules": [], "gap": "new-site cuts/pairing have no command; `dt ground v015` replays Vatutino only"},
+    "ground-textures": {"ru": "ID и текстуры Ground", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no generic flat Ground ID/UV/texturing command"},
+    "relief": {"ru": "Проекция на рельеф", "calls": null, "owners": ["src/dt_ai/geometry/ground_cake.py"], "entry_defs": ["project_z", "build_tin"], "dup_rules": [], "gap": "no generic projection command for a new site [D293]"},
+    "skirt": {"ru": "Юбка Ground", "calls": "agr ground (frozen Vatutino producer only)", "owners": [], "entry_defs": [], "dup_rules": [], "gap": "new-site skirt [D251] is DCC work; no shared command"},
+    "ucx-ground": {"ru": "Коллизии Ground", "calls": null, "owners": ["tools/blender/ucx_build.py"], "entry_defs": ["build_into_scene", "world_arrays"], "dup_rules": [], "gap": "`agr ucx` unavailable; ucx_build.py is prior art, not a real-site command"},
+    "library": {"ru": "МАФ и Флора из библиотеки, атласы", "calls": "tools/materials/atlas_maf.py; dt_ai.materials.flora", "owners": ["tools/materials/atlas_maf.py", "src/dt_ai/materials/flora.py"], "entry_defs": ["build_atlas", "pack_uniform_tiles"], "dup_rules": [], "gap": null},
+    "maf-light": {"ru": "Лёгкая НПМ-версия МАФ", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no NPM light-version / UV-remap tool for MAF"},
+    "flora-star": {"ru": "НПМ-звёзды Флоры", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no NPM star builder for Flora [D102]"},
+    "placement": {"ru": "Расстановка МАФ и Флоры", "calls": "uv run python -m dt_ai.placement.engine", "owners": ["src/dt_ai/placement/engine.py"], "entry_defs": ["bottom_face_verdict"], "dup_rules": [], "gap": null},
+    "optimise": {"ru": "Оптимизация под бюджет НПМ", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "ProOptimizer in Max by hand; no shared command, options go to Artem [D167]"}
+  },
+  "cells": {
+    "oks-vpm": {"config_keys": ["passport", "sources", "profile"], "stages": ["sources-dwg", "inspect", "body", "udim", "vpm-uv", "ucx-oks", "master-qa", "readback", "package-vpm", "validate", "checker", "geojson", "light-fbx"]},
+    "oks-npm": {"config_keys": ["sources", "profile", "atlas"], "stages": ["inspect", "body", "brick-seams", "derive-npm", "master-qa", "readback", "build-manifest", "package-npm", "validate", "review-scene", "checker"]},
+    "oks-npm-lite": {"config_keys": ["sources", "profile"], "stages": ["lite-route"]},
+    "ground-npm": {"config_keys": ["sources", "budget_split", "master"], "stages": ["sources-ground", "surfaces", "quads", "library", "maf-light", "flora-star", "placement", "optimise", "master-qa", "readback", "package-npm", "validate", "checker"]},
+    "ground-vpm": {"config_keys": ["sources", "zero", "ground_area_m2", "master"], "stages": ["sources-ground", "zero", "surfaces", "quads", "ground-textures", "relief", "skirt", "ucx-ground", "library", "placement", "derive-npm", "master-qa", "readback", "package-vpm", "validate", "checker"]}
+  }
+}

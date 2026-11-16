@@ -209,20 +209,25 @@ def _build_manifest():
 
 def cross_masters(paths):
     """{zip basename: [(code, detail)]}: the build manifests of the checked packages must name ONE master revision
-    (#1423: a VPM rebuilt from an edited master next to a stale NPM is refused). Packages without a readable manifest
-    are judged by the validator (V001 build manifest), not here."""
+    per role (#1423: a VPM rebuilt from an edited master next to a stale NPM is refused; [D328]: the OKS master and
+    the Ground source are different roles, never a conflict). Packages without a readable manifest are judged by the
+    validator (V001 build manifest), not here."""
     bm = _build_manifest()
-    masters = {}
+    by_role = {}
     for p in paths:
         mp = bm.manifest_path(p)
-        sha = bm.manifest_master(mp) if os.path.isfile(mp) else None
-        if sha is not None:
-            masters[os.path.basename(p)] = sha
-    if len(set(masters.values())) < 2:
-        return {}
-    detail = 'packages name different master revisions: ' + ', '.join(
-        '{} -> {}'.format(n, s[:12]) for n, s in sorted(masters.items()))
-    return {n: [('manifest_cross_master', detail[:900])] for n in masters}
+        shas = bm.manifest_masters(mp) if os.path.isfile(mp) else None
+        for role, sha in (shas or {}).items():
+            by_role.setdefault(role, {})[os.path.basename(p)] = sha
+    out = {}
+    for role, masters in sorted(by_role.items()):
+        if len(set(masters.values())) < 2:
+            continue
+        detail = 'packages name different role {} master revisions: '.format(role) + ', '.join(
+            '{} -> {}'.format(n, s[:12]) for n, s in sorted(masters.items()))
+        for n in masters:
+            out.setdefault(n, []).append(('manifest_cross_master', detail[:900]))
+    return out
 
 
 def qa_package(edit, path, runner, python, root, profile=None, scene=True, options=None):
