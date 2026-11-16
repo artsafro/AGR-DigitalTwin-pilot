@@ -15,6 +15,7 @@ import pytest
 from shapely.geometry import Polygon, box
 
 from dt_ai.core.heights import export_z_check
+from dt_ai.geometry import ground_cake as gc
 from dt_ai.geometry import ground_site as gs
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -103,6 +104,15 @@ def test_base_must_be_a_cover():
         build(base_id=7)
 
 
+def test_cover_ids_beyond_first_udim_row_refused():
+    """Review r1 P3: ID 11+ would leave the first UDIM row (1001-1010); refuse naming the limit."""
+    cs = [gs.Cover(1, "A", [box(0, 0, 20, 20)], (0, 0, 0), "spec")]
+    cs += [gs.Cover(i, f"C{i}", [box(i, 1, i + 0.5, 2)], (1, 1, 1), "spec") for i in range(2, 12)]
+    with pytest.raises(ValueError, match="ID 11 .*1010"):
+        gs.check_covers(cs, 1)
+    gs.check_covers(cs[:10], 1)  # ID 10 = UDIM 1010 is the last allowed
+
+
 def test_relief_miss_is_an_error_not_extrapolated():
     half = [p for p in relief() if p[0] <= 10]
     with pytest.raises(ValueError, match="outside the relief TIN"):
@@ -165,20 +175,127 @@ def test_generated_sites_invariants(seed):
 # ---------------------------------------------------------------- export Z / project zero
 
 
-def test_export_z_check_threshold_and_shift():
-    assert export_z_check(100.0, 0.0, [0.0, 2.0], (100.0, 102.0), 0.01)["status"] == "pass"
-    assert export_z_check(100.0, 0.0, [0.0, 2.0 + 0.01], (100.0, 102.0), 0.01)["status"] == "pass"  # == tol
-    assert export_z_check(100.0, 0.0, [0.0, 2.0 + 0.0101], (100.0, 102.0), 0.01)["status"] == "fail"
-    shifted = export_z_check(101.40, 0.0, [0.0, 2.0], (100.0, 102.0), 0.01)
-    assert shifted["status"] == "fail" and shifted["h_relief"] == 101.4
-    assert export_z_check(100.0, 0.0, [0.5], None)["status"] == "fail"  # unchecked is never pass
+def rel(xy):
+    """Synthetic relief sampler: the plane inside [-1, 21]^2, None (outside the TIN) elsewhere."""
+    return [plane(x, y) if -1 <= x <= 21 and -1 <= y <= 21 else None for x, y in xy]
 
 
-@pytest.mark.parametrize("args", [(float("nan"), 0.0, [1.0]), (100.0, float("inf"), [1.0]), (100.0, 0.0, []),
-                                  (100.0, 0.0, [float("nan")]), (True, 0.0, [1.0]), (100.0, 0.0, [1.0], (2.0, 1.0))])
+PTS = [(x, y, plane(x, y) - 100.0, 0) for x in (0.0, 5.0, 20.0) for y in (0.0, 7.0, 20.0)] + \
+      [(6.0, 6.0, plane(6.0, 6.0) - 100.0 + 0.006, 1), (7.0, 8.0, plane(7.0, 8.0) - 100.0 + 0.012, 2)]
+
+
+@pytest.mark.parametrize("shift,status", [(0.0, "pass"), (-0.90, "fail"), (-0.10, "fail"), (0.09, "fail"),
+                                          (1.40, "fail"), (0.01, "pass"), (0.0101, "fail"), (-0.01, "pass"),
+                                          (-0.0101, "fail")])
+def test_export_z_pointwise_shift(shift, status):
+    """Review r1 P1-1: shifts that keep the ground inside the relief envelope must still fail (pointwise)."""
+    out = export_z_check(100.0 + shift, 0.0, PTS, rel, step_m=0.006, tol_m=0.01)
+    assert out["status"] == status, out
+    assert out["checked_vertices"] == len(PTS)
+
+
+@pytest.mark.parametrize("shift,status", [(0.25, "pass"), (-0.25, "pass"), (0.2501, "fail"), (-0.2501, "fail")])
+def test_export_z_pointwise_exactly_tol(shift, status):
+    assert export_z_check(100.0 + shift, 0.0, PTS, rel, step_m=0.006, tol_m=0.25)["status"] == status
+
+
+@pytest.mark.parametrize("seed", range(5))
+def test_export_z_pointwise_generated_shifts(seed):
+    """Probe: for random shifts s, pass <=> |s| <= tol (40 shifts per seed, envelope-preserving ones included)."""
+    rng = random.Random(seed)
+    for _ in range(40):
+        s = rng.uniform(-1.0, 1.0)
+        assert (export_z_check(100.0 + s, 0.0, PTS, rel, step_m=0.006, tol_m=0.01)["status"] == "pass") == \
+            (abs(s) <= 0.01), s
+
+
+def test_export_z_pointwise_one_vertex_off_and_fbx_offset():
+    pts = list(PTS)
+    pts[4] = (pts[4][0], pts[4][1], pts[4][2] + 0.05, 0)
+    out = export_z_check(100.0, 0.0, pts, rel, step_m=0.006, tol_m=0.01)
+    assert out["status"] == "fail" and "1 ground vertices" in out["findings"][0]
+    lifted = [(x, y, z + 3.0, lv) for x, y, z, lv in PTS]  # +-0.000 at FBX Z 3.0
+    assert export_z_check(100.0, 3.0, lifted, rel, step_m=0.006, tol_m=0.01)["status"] == "pass"
+    assert export_z_check(100.0, 0.0, lifted, rel, step_m=0.006, tol_m=0.01)["status"] == "fail"
+
+
+@pytest.mark.parametrize("pts,kw,msg", [
+    ([(30.0, 30.0, 0.0, 0)] + PTS, {}, "outside the relief"),
+    (PTS, {"step_m": 0.0}, "step_m"),
+    ([(0.0, 0.0, 0.0, -1)], {}, "level"),
+    ([(0.0, 0.0, 0.0, 1.5)], {}, "level"),
+    ([(0.0, 0.0, float("nan"), 0)], {}, "finite"),
+    ([(float("inf"), 0.0, 0.0, 0)], {}, "finite"),
+    ([], {}, "no ground"),
+    ([(0.0, 0.0, 0.0)], {}, "x, y, z, level"),
+])
+def test_export_z_pointwise_refuses(pts, kw, msg):
+    args = dict(step_m=0.006, tol_m=0.01)
+    args.update(kw)
+    with pytest.raises(ValueError, match=msg):
+        export_z_check(100.0, 0.0, pts, rel, **args)
+
+
+@pytest.mark.parametrize("args", [(float("nan"), 0.0), (100.0, float("inf")), (True, 0.0)])
 def test_export_z_check_refuses(args):
     with pytest.raises(ValueError):
-        export_z_check(*args)
+        export_z_check(*args, PTS, rel, step_m=0.006, tol_m=0.01)
+    with pytest.raises(ValueError, match="tol_m"):
+        export_z_check(100.0, 0.0, PTS, rel, step_m=0.006, tol_m=-0.01)
+    with pytest.raises(ValueError, match="relief_z_at"):
+        export_z_check(100.0, 0.0, PTS, None, step_m=0.006, tol_m=0.01)
+
+
+# ---------------------------------------------------------------- skirt gaps (edge level, review r1 P1-2)
+
+
+def _skirt_quads(mesh):
+    sk = np.nonzero(mesh.level < 0)[0]
+    return list(zip(sk[0::2], sk[1::2]))
+
+
+def _without(mesh, faces):
+    keep = np.setdiff1d(np.arange(len(mesh.faces)), list(faces))
+    return gc.Mesh(mesh.verts.copy(), mesh.faces[keep].copy(), [mesh.slot[i] for i in keep], mesh.level[keep].copy(),
+                   mesh.uv[keep].copy(), mesh.cell, dict(mesh.report))
+
+
+def test_skirt_gaps_intact_control():
+    mesh = build().mesh
+    assert len(_skirt_quads(mesh)) >= 4 and gs.skirt_gaps(mesh, 1.0) == []
+
+
+def test_skirt_gaps_every_deleted_quad_is_one_gap():
+    """Probe: deleting any one skirt quad gives exactly one gap edge (that quad's base edge)."""
+    mesh = build().mesh
+    for i, j in _skirt_quads(mesh):
+        b, a = mesh.faces[i][:2]
+        gaps = gs.skirt_gaps(_without(mesh, (i, j)), 1.0)
+        assert [sorted(g["edge"]) for g in gaps] == [sorted([int(a), int(b)])], (i, gaps)
+        assert gaps[0]["reason"] == "no skirt quad"
+
+
+def test_skirt_gaps_deleted_half_quad():
+    mesh = build().mesh
+    i, j = _skirt_quads(mesh)[0]
+    assert len(gs.skirt_gaps(_without(mesh, (j,)), 1.0)) == 1
+    assert len(gs.skirt_gaps(_without(mesh, (i,)), 1.0)) == 1
+
+
+def test_skirt_gaps_half_metre_quad():
+    mesh = build().mesh
+    i, j = _skirt_quads(mesh)[3]
+    b, a, la = mesh.faces[i]
+    na, nb = len(mesh.verts), len(mesh.verts) + 1
+    verts = np.vstack([mesh.verts, mesh.verts[a] - [0, 0, 0.5], mesh.verts[b] - [0, 0, 0.5]])
+    faces = mesh.faces.copy()
+    faces[i] = [b, a, na]
+    faces[j] = [b, na, nb]
+    m2 = gc.Mesh(verts, faces, list(mesh.slot), mesh.level.copy(), mesh.uv.copy(), mesh.cell, dict(mesh.report))
+    gaps = gs.skirt_gaps(m2, 1.0)
+    assert [sorted(g["edge"]) for g in gaps] == [sorted([int(a), int(b)])]
+    assert gaps[0]["drop_m"] == pytest.approx(0.5)
+    assert gs.skirt_gaps(m2, 0.5) == []  # exactly at threshold passes
 
 
 # ---------------------------------------------------------------- DXF adapter + CLI (synthetic DXF)
@@ -236,12 +353,40 @@ def test_cli_fresh_process_builds_and_reads_back(tmp_path):
     assert sorted(p.name for p in (tmp_path / "out").iterdir()) == ["SM_SYN_Ground.obj", "ground-flat.obj",
                                                                      "ground-report.json"]
     assert {p.name: p.read_bytes() for p in tmp_path.iterdir() if p.is_file()} == before  # inputs untouched
-    z = run(ZERO, "--project-zero-m", 100, "--zero-source", "synthetic", "--obj", tmp_path / "out/SM_SYN_Ground.obj",
-            "--relief-range", *rep["stages"]["zero"]["relief_abs_range_m"], "--tol-m", 0.022)
-    assert z.returncode == 0, z.stdout + z.stderr
-    z = run(ZERO, "--project-zero-m", 101.4, "--zero-source", "shifted", "--obj", tmp_path / "out/SM_SYN_Ground.obj",
-            "--relief-range", *rep["stages"]["zero"]["relief_abs_range_m"])
-    assert z.returncode == 1
+    assert rep["project_zero_check"]["checked_vertices"] > 0
+    back = gs.read_obj(tmp_path / "out/SM_SYN_Ground.obj")
+    assert {p[3] for p in back["points"]} == {0, 1}  # inset level written as group ground_inset1
+
+
+@pytest.fixture(scope="module")
+def built_site(tmp_path_factory):
+    tmp = tmp_path_factory.mktemp("site1406")
+    spec, _ = make_spec(tmp)
+    r = run(SITE, spec, tmp / "out")
+    assert r.returncode == 0, r.stderr
+    return spec, tmp / "out/SM_SYN_Ground.obj"
+
+
+@pytest.mark.parametrize("shift,code", [(0.0, 0), (-0.90, 1), (-0.10, 1), (0.09, 1), (1.40, 1)])
+def test_zero_cli_pointwise_rows(built_site, shift, code):
+    """Review r1 P1-1 rows on a built site: a shift inside the relief envelope exits 1."""
+    spec, obj = built_site
+    z = run(ZERO, "--project-zero-m", 100.0 + shift, "--zero-source", "synthetic", "--obj", obj, "--spec", spec)
+    assert z.returncode == code, z.stdout + z.stderr
+    out = json.loads(z.stdout)
+    assert out["checked_vertices"] > 0 and out["status"] == ("pass" if code == 0 else "fail")
+
+
+def test_zero_cli_relief_points_and_outside_tin(built_site, tmp_path):
+    spec, obj = built_site
+    pts = tmp_path / "relief.json"
+    pts.write_text(json.dumps([list(p) for p in relief()]), encoding="utf-8")
+    base = ["--project-zero-m", 100.0, "--zero-source", "s", "--obj", obj]
+    ok = run(ZERO, *base, "--relief-points", pts, "--origin-xy", 0, 0, "--step-m", 0.006)
+    assert ok.returncode == 0, ok.stdout + ok.stderr
+    far = run(ZERO, *base, "--relief-points", pts, "--origin-xy", 100, 100, "--step-m", 0.006)
+    assert far.returncode == 2 and "outside the relief" in far.stderr
+    assert run(ZERO, *base, "--relief-points", pts, "--origin-xy", 0, 0).returncode == 2  # inset level, no step
 
 
 def test_cli_hatch_without_bgcolor_and_no_spec_colour_refused(tmp_path):
@@ -284,16 +429,36 @@ def test_cli_refusals_write_nothing(tmp_path, case):
     assert sorted((p.name, p.is_dir() or p.read_bytes()) for p in tmp_path.iterdir()) == before
 
 
-@pytest.mark.parametrize("argv,code", [([], 2), (["--project-zero-m", "nan", "--zero-source", "s", "--z", "1",
-                                                   "--relief-range", "0", "2"], 2),
-                                        (["--project-zero-m", "100", "--zero-source", " ", "--z", "1",
-                                          "--relief-range", "100", "102"], 2),
-                                        (["--project-zero-m", "100", "--zero-source", "s", "--z", "1",
-                                          "--relief-range", "100", "102"], 0),
-                                        (["--project-zero-m", "100", "--zero-source", "s", "--z", "3",
-                                          "--relief-range", "100", "102"], 1)])
-def test_zero_cli_statuses(argv, code):
-    assert run(ZERO, *argv).returncode == code
+@pytest.mark.parametrize("case", ["no_relief", "zero_nan", "blank_source", "both", "nan_points", "missing_obj",
+                                  "no_args", "obj_is_spec_dxf_sha"])
+def test_zero_cli_refusals(built_site, tmp_path, case):
+    spec, obj = built_site
+    pts = tmp_path / "relief.json"
+    pts.write_text(json.dumps([list(p) for p in relief()]), encoding="utf-8")
+    a = {"--project-zero-m": ["100"], "--zero-source": ["s"], "--obj": [obj], "--spec": [spec]}
+    if case == "no_relief":
+        del a["--spec"]
+    elif case == "zero_nan":
+        a["--project-zero-m"] = ["nan"]
+    elif case == "blank_source":
+        a["--zero-source"] = [" "]
+    elif case == "both":
+        a.update({"--relief-points": [pts], "--origin-xy": [0, 0]})
+    elif case == "nan_points":
+        pts.write_text("[[0, 0, NaN], [30, 0, 1], [0, 30, 1]]", encoding="utf-8")
+        del a["--spec"]
+        a.update({"--relief-points": [pts], "--origin-xy": [0, 0], "--step-m": [0.006]})
+    elif case == "missing_obj":
+        a["--obj"] = [tmp_path / "nope.obj"]
+    elif case == "no_args":
+        a = {}
+    elif case == "obj_is_spec_dxf_sha":
+        bad = json.loads(Path(spec).read_text(encoding="utf-8"))
+        bad["dxf"]["sha256"] = "0" * 64
+        (tmp_path / "bad.json").write_text(json.dumps(bad), encoding="utf-8")
+        a["--spec"] = [tmp_path / "bad.json"]
+    r = run(ZERO, *[t for k, v in a.items() for t in (k, *v)])
+    assert r.returncode == 2, (case, r.stdout, r.stderr)
 
 
 # ---------------------------------------------------------------- routing
