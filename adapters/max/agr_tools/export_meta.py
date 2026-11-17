@@ -97,8 +97,9 @@ def export_binding(pkg, members, records, *, excluded_files=()):
                 claims.setdefault(name, set()).add((label, sha))
     labels = [label for label, _ in records]
     if not claims:
+        names = ', '.join(m['name'] for m in members if m['name'].lower().endswith('.fbx'))
         return ({'records': labels, 'members': []},
-                [f'export_meta records no exported FBX (no fbx_records / exported_files in {labels}): the ZIP cannot '
+                [f'{names}: export_meta records no exported FBX (no fbx_records / exported_files in {labels}): the ZIP cannot '
                  'be bound to the export; re-export with a current exporter or pass --meta'])
     fbx = {m['name']: _sha256(Path(pkg) / m['name']) for m in members if m['name'].lower().endswith('.fbx')}
     rows, problems = [], []
