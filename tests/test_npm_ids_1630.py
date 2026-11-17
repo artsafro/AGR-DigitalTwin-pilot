@@ -78,6 +78,45 @@ import pytest
 from PIL import Image
 
 
+def test_scenario_has_shared_stage_chain():
+    root = Path(__file__).resolve().parents[1]
+    skeletons = json.loads((root/'docs/agents/skeletons.json').read_text(encoding='utf-8'))
+    assert skeletons['cells']['npm-to-vpm']['stages'] == [
+        'npm-ids', 'npm-udim-fit', 'npm-to-vpm', 'readback', 'checker', 'package-vpm', 'validate']
+    for sid in ('npm-ids', 'npm-udim-fit', 'npm-to-vpm'):
+        assert skeletons['stages'][sid]['gap'] is None
+
+
+def test_native_approved_drop_preserves_surviving_uv_and_geometry(tmp_path):
+    from dt_ai.core.blender_runner import run_blender
+    blender = Path('C:/Program Files/Blender Foundation/Blender 5.1/blender.exe')
+    if not blender.is_file():
+        pytest.skip('native Blender 5.1 unavailable')
+    root = Path(__file__).resolve().parents[1]
+    script = tmp_path/'native.py'
+    script.write_text('''import sys, json
+from pathlib import Path
+import bpy
+sys.path.insert(0, ROOT)
+from tools.blender.npm_ids import apply
+bpy.ops.wm.read_factory_settings(use_empty=True)
+mesh=bpy.data.meshes.new('Synthetic'); mesh.from_pydata([(0,0,0),(1,0,0),(0,1,0),(2,0,0)],[],[(0,1,2),(0,3,1)])
+uv=mesh.uv_layers.new()
+for i, p in enumerate([(0,0),(1,0),(0,1),(0,0),(1,0),(0,1)]): uv.data[i].uv=p
+obj=bpy.data.objects.new('Synthetic',mesh); bpy.context.collection.objects.link(obj)
+before=[list(v.co) for v in mesh.vertices]
+apply({'objects':[{'name':'Synthetic','mat_ids':[1], 'source_polygons':[0],
+    'polygons':[{'uv':[[0,0],[1,0],[0,1]],'slot':0}], 'local':before}]}, Path(OUT)/'ids.blend')
+assert len(obj.data.polygons)==1
+assert [list(v.co) for v in obj.data.vertices]==before
+assert [list(v.uv) for v in obj.data.uv_layers.active.data]==[[0,0],[1,0],[0,1]]
+assert obj.data.polygons[0].material_index==1
+Path(OUT,'readback.json').write_text(json.dumps({'status':'ok'}))
+'''.replace('ROOT', repr(str(root))).replace('OUT', repr(str(tmp_path))), encoding='utf-8')
+    assert run_blender(script, [], executable=str(blender), output_json=tmp_path/'readback.json',
+                       log_path=tmp_path/'native.log')['status'] == 'ok'
+
+
 def test_synthetic_cells_straddle_empty(tmp_path):
     image = Image.new('RGB', (64, 64))
     for box, color in [((0, 0, 32, 32), 'red'), ((32, 0, 64, 32), 'green'),
