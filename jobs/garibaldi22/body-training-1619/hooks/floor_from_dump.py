@@ -78,6 +78,12 @@ def reveal_depth(xy, ring_poly, share=0.15):
     return min(dense) if dense else float("nan")
 
 
+def _turn(a, b, c):
+    """Signed turn at b of the path a -> b -> c, degrees (CCW positive)."""
+    t = math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(b[1] - a[1], b[0] - a[0])
+    return math.degrees((t + math.pi) % (2 * math.pi) - math.pi)
+
+
 def section(tris, z):
     """Segments where the plane z cuts each triangle (xy)."""
     segs = []
@@ -139,6 +145,10 @@ def main(argv=None):
     ap.add_argument("--edge-dist", type=float, default=0.8, help="max window distance to the contour")
     ap.add_argument("--close", type=float, default=0.5, help="closing radius bridging wall-object joints, m")
     ap.add_argument("--jog", type=float, default=0.06, help="contour simplify tolerance: jogs below it are relief, texture (BM-08/BM-09)")
+    ap.add_argument("--pre-simplify", type=float, default=0.0,
+                    help="simplify the dilated ring before erosion, m (rounded corners: 0.03; 0 = off, G22 rounds)")
+    ap.add_argument("--start-corner", action="store_true",
+                    help="start the ring at its sharpest corner, so no window spans the ring start (site 63)")
     ap.add_argument("--clip", help="JSON [[x,y],...]: keep only objects whose plan centroid is inside")
     ap.add_argument("--seal", nargs="*", default=[],
                     help="object classes whose cut joins the wall cut (round 3: windows - openings closed by their filling)")
@@ -211,7 +221,13 @@ def main(argv=None):
     blob = unary_union([LineString(s).buffer(0.05, cap_style="flat") for s in segs]).buffer(r, join_style="mitre")
     polys = list(getattr(blob, "geoms", [blob]))
     outer = max(polys, key=lambda p: Polygon(p.exterior).area)
-    ring_poly = Polygon(outer.exterior).buffer(-r - 0.05, join_style="mitre").simplify(a.jog)
+    outer_ring = Polygon(outer.exterior)
+    if a.pre_simplify > 0:
+        # site 63 tower A: a rounded corner cut from short flat-capped strips leaves a 1-5 cm staircase on the
+        # dilated ring; the mitre erosion turns it into a wedge 1.5 m into the building. Smoothing the staircase
+        # first keeps the eroded ring on the arc.
+        outer_ring = outer_ring.simplify(a.pre_simplify)
+    ring_poly = outer_ring.buffer(-r - 0.05, join_style="mitre").simplify(a.jog)
     if ring_poly.geom_type != "Polygon":
         ring_poly = max(ring_poly.geoms, key=lambda p: p.area)
     ring_poly = Polygon([c for c in ring_poly.exterior.coords])
@@ -235,6 +251,10 @@ def main(argv=None):
         ring_poly = Polygon(closed.exterior.coords).simplify(a.jog)
     if not ring_poly.exterior.is_ccw:
         ring_poly = Polygon(list(ring_poly.exterior.coords)[::-1])
+    if a.start_corner:  # a window must not span the ring start (it is dropped): start at the sharpest corner
+        cs = list(ring_poly.exterior.coords)[:-1]
+        k = max(range(len(cs)), key=lambda i: abs(_turn(cs[i - 1], cs[i], cs[(i + 1) % len(cs)])))
+        ring_poly = Polygon(cs[k:] + cs[:k])
     xy = [list(map(float, c)) for c in ring_poly.exterior.coords[:-1]]
     ext = ring_poly.exterior
     perim = ext.length
