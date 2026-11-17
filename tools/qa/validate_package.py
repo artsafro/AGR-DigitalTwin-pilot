@@ -563,7 +563,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         kind = profile_from_name(target.name)
         if kind is not None:
             notes.append(f"profile {kind.upper()} from the name grammar of {target.name}")
-    if kind is None and suffix in (".fbx", ".png"):
+    if kind is None and suffix in (".fbx", ".png", ".max"):
         kind = "npm"
     if suffix == ".zip":
         early = zip_precheck(target)
@@ -626,6 +626,8 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         notes.append("single GeoJSON: only V011 applies")
     elif suffix == ".png" and kind == "npm":
         st["V006"].findings.extend(npm_texture_findings({target.name: data}, profile))
+    elif suffix == '.max':
+        notes.append('Max scene: delivered byte identity only; native geometry and manual checks remain open')
     else:
         notes.append(f"unsupported file type {suffix}")
     # A scene readback of an FBX/ZIP consumes the area: VPM selects the triangle band, and both
@@ -681,8 +683,60 @@ FINDING_CODES = {"PNG readable": "png_not_png", "no alpha in ERM/Normal": "png_a
                  "foreign files": "foreign_files", "flat archive": "zip_nested"}
 
 
+def add_delivery_receipt(target, data, stages, notes):
+    """Bind validation to adjacent delivery reports, including the final Max review copy (#1645)."""
+    if target.suffix.lower() not in ('.zip', '.max'):
+        return
+    from adapters.max.agr_tools.package_core import check_delivery_receipt
+
+    def unique(pairs):
+        out = {}
+        for key, value in pairs:
+            if key in out:
+                raise ValueError('duplicate delivery report key: ' + key)
+            out[key] = value
+        return out
+
+    paths = [Path(str(target) + '.delivery.json')]
+    if target.suffix.lower() == '.zip':
+        paths.append(target.parent / 'package_report.json')
+    paths = [p for p in paths if os.path.lexists(p)]
+    if not paths and target.suffix.lower() != '.max':
+        return  # Historical ZIPs without a delivery report remain readable, not newly attested.
+    try:
+        if not paths:
+            raise ValueError('missing delivery report for ' + target.name)
+        line = ''
+        for path in paths:
+            body = json.loads(path.read_text(encoding='utf-8'), object_pairs_hook=unique)
+            if (target.suffix.lower() == '.zip' and path.name == 'package_report.json'
+                    and isinstance(body, dict) and 'delivered' not in body):
+                notes.append('Historical package_report.json has no delivered field; '
+                             'it provides no delivery attestation.')
+                continue
+            if not isinstance(body, dict) or 'delivered' not in body:
+                raise ValueError('missing delivered field in ' + str(path))
+            actual = check_delivery_receipt(target, body['delivered'])
+            if actual['delivered']['sha256'] != digest(data):
+                raise ValueError('delivered file changed during validation: ' + target.name)
+            # Only the verified canonical line is shown, never stale report display text.
+            line = actual['summary_ru'].splitlines()[-1]
+        if not line:
+            stages['V001'].findings.append(finding('not_run', 'delivered file',
+                'Historical package report without delivered; no delivery attestation',
+                'no delivery receipt supplied', [], data={'code': 'delivered_not_attested'}))
+            return
+        notes.append(line)
+        stages['V001'].findings.append(finding('pass', 'delivered file', line,
+            'delivered SHA-256 and size match the report', [], data={'code': 'delivered_match'}))
+    except (OSError, ValueError, TypeError) as exc:
+        stages['V001'].findings.append(finding('fail', 'delivered file', f'{target.name}: {exc}',
+            'delivered SHA-256 and size match the report', [], data={'code': 'delivered_mismatch'}))
+
+
 def report(target, data, kind, profiles, stages, notes) -> ValidationReport:
     """Every failed finding of a known kind carries data.code (qa.package corpus: one code per defect, #979)."""
+    add_delivery_receipt(target, data, stages, notes)
     for stage in stages.values():
         for f in stage.findings:
             if f.status == "fail" and "code" not in f.data and f.name in FINDING_CODES:

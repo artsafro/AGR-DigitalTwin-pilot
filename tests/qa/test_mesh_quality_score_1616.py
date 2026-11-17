@@ -487,6 +487,111 @@ def test_blender_reads_obj_fixture_like_the_core(tmp_path):
     assert rw['score'] < ri['score']
 
 
+@pytest.mark.skipif(not BLENDER.exists(), reason='Blender 5.1 not installed')
+def test_explicit_rectangle_rejoin_restores_triangulated_grid(tmp_path):
+    b = Builder('SM_Grid')
+    wall(b)
+    grid = b.obj()
+    triangles = dict(grid, faces=[t for a, b, c, d in grid['faces'] for t in ([a, b, c], [a, c, d])])
+    src = tmp_path / 'triangles.obj'
+    _write_obj(src, [triangles])
+    before = src.read_bytes()
+    raw = cli.run(src, tmp_path / 'raw.json')
+    proc = subprocess.run([sys.executable, str(ROOT / 'tools/qa/mesh_quality_score.py'),
+                           str(src), '--out', str(tmp_path / 'joined.json'), '--rejoin-rectangles'],
+                          capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr
+    joined = json.loads((tmp_path / 'joined.json').read_text())
+    assert raw['components']['tri_share'] == 1
+    assert joined['totals']['quads'] == 16 and joined['totals']['tris'] == 0
+    assert joined['score'] == mq.score([grid])['score']
+    assert joined['input']['normalization']['mode'] == 'rejoin_rectangles_1deg'
+    assert src.read_bytes() == before
+
+
+@pytest.mark.skipif(not BLENDER.exists(), reason='Blender 5.1 not installed')
+def test_rejoin_generated_rectangles_keeps_skew_and_all_objects(tmp_path):
+    objects = []
+    for i in range(12):
+        b = Builder('Rectangle_%02d' % i)
+        x, y = i * 10, i % 3
+        b.face([(x, y, 0), (x + 1 + i / 10, y, 0),
+                (x + 1 + i / 10, y, 1 + i / 20), (x, y, 1 + i / 20)], (0, -1, 0))
+        o = b.obj()
+        o['faces'] = [[0, 1, 2], [0, 2, 3]]
+        objects.append(o)
+    skew = Builder('Skew')
+    skew.face([(150, 0, 0), (152, 0, 0), (153, 0, 1), (151, 0, 1)], (0, -1, 0))
+    o = skew.obj()
+    o['faces'] = [[0, 1, 2], [0, 2, 3]]
+    objects.append(o)
+    src = tmp_path / 'generated.obj'
+    _write_obj(src, objects)
+    before = cli.sha(src)
+    r = cli.run(src, tmp_path / 'generated.json', rejoin_rectangles=True)
+    assert {o['name'] for o in r['objects']} == {o['name'] for o in objects}
+    assert r['totals']['quads'] == 12 and r['totals']['tris'] == 2
+    assert r['dropped'] == [] and cli.sha(src) == before
+
+
+def test_rejoin_path_aliases(tmp_path):
+    src = tmp_path / 'mesh.obj'
+    _write_obj(src, inset_master())
+    before = src.read_bytes()
+    alias = tmp_path / 'alias.obj'
+    import os
+    os.link(src, alias)
+    with pytest.raises(ValueError, match='aliases input'):
+        cli.run(src, alias, rejoin_rectangles=True)
+    with pytest.raises(ValueError, match='aliases input'):
+        cli.run(src, src.parent / '.' / src.name, rejoin_rectangles=True)
+    assert src.read_bytes() == alias.read_bytes() == before
+
+
+def test_rejoin_source_change_refuses_publication(tmp_path, monkeypatch):
+    src, out = tmp_path / 'mesh.obj', tmp_path / 'score.json'
+    _write_obj(src, inset_master())
+    import dt_ai.core.blender_runner as runner
+    def changed(*args, **kwargs):
+        src.write_text('changed externally', encoding='utf-8')
+        return {'objects': inset_master(), 'normalization': {'mode': 'rejoin_rectangles_1deg'}}
+    monkeypatch.setattr(runner, 'run_blender', changed)
+    with pytest.raises(ValueError, match='changed during measure'):
+        cli.run(src, out, rejoin_rectangles=True)
+    assert not out.exists()
+
+
+def test_rectangle_rejoin_refuses_recorded_json(tmp_path):
+    src = tmp_path / 'dump.json'
+    _write_dump(src, inset_master())
+    with pytest.raises(ValueError, match='native'):
+        cli.run(src, tmp_path / 'out.json', rejoin_rectangles=True)
+    assert not (tmp_path / 'out.json').exists()
+
+
+def test_committed_g22_calibration():
+    cal = json.loads((ROOT / 'docs/research/mesh-quality-1616/calibration.json').read_text(encoding='utf-8'))
+    rows = {r['id']: r for r in cal['rows']}
+    for suffix in ('01', '02'):
+        row = rows['g22-' + suffix]
+        assert row['acceptance'] == 'accepted'
+        assert row['score'] >= rows['kpp1-quad-v003']['score'] + 10
+        assert row['raw']['components']['tri_share'] == 1
+        assert row['normalization']['mode'] == 'rejoin_rectangles_1deg'
+        assert set(row['components']) == set(mq.WEIGHTS)
+        assert row['typical_facade']['mode'] == 'WARN-only'
+        assert row['typical_facade']['quad_share'] >= 0.95
+        assert row['typical_facade']['faces'] == sum(p['faces'] for p in row['typical_facade']['parts'])
+        for part in row['typical_facade']['parts']:
+            assert part['quad_share'] == 1 - part['tris'] / part['faces']
+            assert part['sliver_share'] == part['slivers'] / part['faces']
+            assert part['quad_warning'] == (part['quad_share'] < .95)
+            assert part['sliver_warning'] == (part['sliver_share'] > .005)
+    assert rows['g22-02']['typical_facade']['sliver_warning'] is True
+    assert len(rows['g22-02']['normalization']['objects']) == 2
+    assert len(rows['g22-02']['typical_facade']['parts']) == 2
+
+
 def test_committed_calibration_ranks_rejected_corners_below_accepted():
     cal = json.loads((ROOT / 'docs/research/mesh-quality-1616/calibration.json').read_text(encoding='utf-8'))
     rows = {r['id']: r for r in cal['rows']}
@@ -523,6 +628,29 @@ def test_probe_near_and_tjunction_unwelds_never_beat_welded(seed):
     welded, inset = mq.score(welded_master()), mq.score(inset_master())
     assert r['totals']['open_seam_edges'] >= 8 and r['totals']['elements'] == 1
     assert r['score'] <= welded['score'] < inset['score']
+
+
+def test_observe_loop_uses_shared_fail_closed_command(tmp_path, monkeypatch):
+    """Rule-11 guard repair only; no native improvement loop runs in this test."""
+    import mesh_quality_observe as obs
+    from types import SimpleNamespace
+    from dt_ai.core.blender_runner import blender_command
+    src = tmp_path / 'input' / 'm.blend'
+    src.parent.mkdir()
+    src.write_bytes(b'synthetic')
+    run = tmp_path / 'run'
+    monkeypatch.setattr(obs.mqs, 'run', lambda *a, **k: {'score': 80, 'components': {}})
+    calls = []
+    def failed(cmd, **kwargs):
+        calls.append(cmd)
+        return SimpleNamespace(returncode=1, stderr='synthetic child failure')
+    monkeypatch.setattr(obs.subprocess, 'run', failed)
+    assert obs.main([str(src), str(run), '--angles', '80', '--blender', 'synthetic-blender']) == 0
+    assert calls == [blender_command(ROOT / 'tools/blender/split_welded_parts_candidate.py',
+                                    [src, run / 'round-01', '80.0'], executable='synthetic-blender')]
+    rows = [json.loads(line) for line in (run / 'observe-log.jsonl').read_text().splitlines()]
+    assert rows[1]['kept'] is False and rows[1]['error'] == 'synthetic child failure'
+    assert src.read_bytes() == b'synthetic'
 
 
 def test_observe_loop_refuses_existing_or_source_run_dir(tmp_path):

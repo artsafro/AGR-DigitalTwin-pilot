@@ -488,6 +488,48 @@ def _marker(run, ok, lines):
     return name
 
 
+def delivery_receipt(target):
+    """Identity of the final delivered ZIP or Max scene, not of its members/staging copy (#1645).
+
+    This is byte identity only; it never grants geometry or manual acceptance.
+    """
+    import hashlib
+    target = os.fspath(target)
+    if os.path.splitext(target)[1].lower() not in ('.zip', '.max'):
+        raise ValueError('unsupported delivered file: ' + target)
+    if any(c in os.path.basename(target) for c in '\r\n'):
+        raise ValueError('delivered filename must be one line')
+    value, size = hashlib.sha256(), 0
+    with open(target, 'rb') as fh:
+        before = os.fstat(fh.fileno())
+        for chunk in iter(lambda: fh.read(1024 * 1024), b''):
+            value.update(chunk)
+            size += len(chunk)
+        after = os.fstat(fh.fileno())
+    now = os.stat(target)
+    signature = lambda s: (s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns)
+    if not size or size != before.st_size or signature(before) != signature(after) or signature(after) != signature(now):
+        raise ValueError('empty or changed delivered file: ' + target)
+    delivered = {'file': os.path.basename(target), 'sha256': value.hexdigest(), 'size': size}
+    line = 'delivered: {file} sha256={sha256} size={size}'.format(**delivered)
+    return {'delivered': delivered, 'summary_ru': 'Передан файл (контроль байтов, не приёмка модели):\n' + line}
+
+
+def check_delivery_receipt(target, receipt):
+    """Re-hash the delivered file; refuse partial/malformed/stale receipts, never refresh them."""
+    if not isinstance(receipt, dict) or set(receipt) != {'file', 'sha256', 'size'}:
+        raise ValueError('partial or unmapped delivered receipt: ' + repr(receipt))
+    if (not isinstance(receipt['file'], str) or not receipt['file']
+            or not isinstance(receipt['sha256'], str) or re.fullmatch(r'[0-9a-f]{64}', receipt['sha256']) is None
+            or type(receipt['size']) is not int or receipt['size'] <= 0):
+        raise ValueError('invalid delivered receipt: ' + repr(receipt))
+    actual = delivery_receipt(target)
+    if actual['delivered'] != receipt:
+        raise ValueError('delivered file differs from report: {} expected {}; actual {}'.format(
+            os.path.basename(target), receipt, actual['delivered']))
+    return actual
+
+
 def _write_zip(folder, archive, target):
     """New ZIP via an exclusive `.partial` beside the target, then a no-clobber link; no temp file is left.
     Member names are checked first: an unsafe one is refused before the `.partial` exists."""
@@ -559,6 +601,7 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
     run = run_folder(plan['run_parent'], stamp)
     objects, done, skipped, reports, failed = [], [], [], [], []
     pending = set()
+    receipts = []
     try:
         for i, a in enumerate(current['archives'], 1):
             if a['problems']:
@@ -575,8 +618,13 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                 failed.append('{}: {} B over the limit {} B'.format(a['name'], size, a['limit']))
             else:
                 done.append(a['name'])
+                receipt = delivery_receipt(target)
+                with open(target + '.delivery.json', 'x', encoding='utf-8') as fh:
+                    json.dump(receipt, fh, ensure_ascii=False, indent=2)
+                receipts.append(receipt)
                 if validate_fn is not None:
                     table = validate_fn(target)
+                    check_delivery_receipt(target, receipt['delivered'])
                     if (not isinstance(table, dict) or type(table.get('exit_code')) is not int
                             or table['exit_code'] not in (0, 1, 2)):
                         raise ValueError('invalid validator result for ' + a['name'])
@@ -608,6 +656,8 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                             or stored_table['exit_code'] != table['exit_code']
                             or stored_table['stages'] != table['stages']):
                         raise ValueError('validation_report disagrees with validator table for ' + a['name'])
+                    if full_report.get('target_sha256') != receipt['delivered']['sha256']:
+                        raise ValueError('delivered file hash differs from validation_report for ' + a['name'])
                     with open(target + '.validation.json', 'x', encoding='utf-8') as fh:
                         json.dump(full_report, fh, ensure_ascii=False, indent=2, allow_nan=False)
                     reports.append({k: v for k, v in table.items() if k != 'validation_report'})
@@ -632,6 +682,8 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
         skipped += [edit.skipped(s['item'], s['reason']) for s in current['skipped']]
         ok = not failed
         extra = {'folder': current['folder'], 'address': current['address'], 'reports': reports,
+                 'delivered': [r['delivered'] for r in receipts],
+                 'summary_ru': '\n'.join(r['summary_ru'] for r in receipts),
                  'exit_code': worst_exit(reports) if reports else None, 'run_folder': run,
                  'marker': MARK_OK if ok else MARK_FAIL}
         rep = edit.report('export.zip', 'apply', objects=objects, done=done, skipped_=skipped, extra=extra)
@@ -641,7 +693,7 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
         _marker(run, False, ['export.zip: ОШИБКА', 'run stopped: {}'.format(exc)] + failed)
         raise
     _marker(run, ok, ['export.zip: ' + ('ГОТОВО' if ok else 'ОШИБКА'), 'address: ' + current['address']]
-            + ['written: ' + n for n in done] + failed
+            + ['written: ' + n for n in done] + [r['summary_ru'] for r in receipts] + failed
             + (['ждут ручной приёмки Артёма: ' + ', '.join(sorted(pending))] if ok and pending else []))
     return rep
 

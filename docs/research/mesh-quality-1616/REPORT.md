@@ -1,5 +1,8 @@
 # Master mesh quality score by the OKS split rule [D336] (#1616)
 
+G22 delivered NPM calibration (#1634): [raw/reconstructed before-after table and D338 observations](../mesh-quality-1634.md).
+The shared `calibration.json` now also contains G22 _01/_02; historical r4 measurements below are preserved.
+
 Status: metric (r4, after review r3) + calibration + four OBSERVE loop runs. Nothing retained; no
 delivered package or master touched. Evidence (rule 57): `G:/Мой диск/AGR-evidence/1616-mesh-quality/`
 + `SHA256SUMS.txt` (r1: `calibration/`, `loop-r1/`, `sheets/`, `psu275-conversion/`; r2: `calibration-r2/`,
