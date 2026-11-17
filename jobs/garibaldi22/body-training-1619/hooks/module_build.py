@@ -1,0 +1,156 @@
+"""Hook `after` stage `body` (#1619 training polygon): build ONE typical-floor module, then replicate it.
+
+Pattern: n/a | new-case: module-first body grid by BM-01..BM-14 (contour + jamb rings + sill/head loops).
+
+blender -b --factory-startup --python module_build.py -- FLOOR.json OUT_DIR
+
+FLOOR.json (from floor_from_dump.py): rings (plan contours, CCW, metres), per ring `cuts` = sorted perimeter
+positions s of the vertical rings (jambs, zone joints), `windows` = [ring, s0, s1], `loops` = module-relative z of
+the horizontal loops (0 = module base at the sill line, BM-10), `step`, `z0`, `floors`, `insets` (boxes).
+Rules applied: BM-01 contour vertices only at breaks and cut lines; BM-02 loops only at sill/head; BM-03 verticals
+are full rings through the module; BM-04/BM-08 insets are separate closed shells in the same object, the wall
+under them is not cut; BM-10 the module is built once, checked, then copied with an identical vertex layout;
+BM-11 material IDs and UV are set on the module before replication. Writes OUT_DIR/module.blend,
+OUT_DIR/body.blend, OUT_DIR/body.fbx and OUT_DIR/build.json; OUT_DIR must be new (nothing is overwritten).
+"""
+import json
+import math
+import os
+import sys
+
+import bmesh
+import bpy
+
+args = sys.argv[sys.argv.index("--") + 1:]
+cfg_path, out = args[0], args[1]
+if os.path.exists(out):
+    sys.exit("refused: OUT_DIR exists, outputs are versioned (new folder per run)")
+cfg = json.load(open(cfg_path, encoding="utf-8"))
+os.makedirs(out)
+step, loops, floors = float(cfg["step"]), [float(z) for z in cfg["loops"]], int(cfg["floors"])
+if not (loops[0] == 0.0 and all(0 < a < b < step for a, b in zip(loops[1:], loops[2:] + [step])) or len(loops) == 1):
+    sys.exit("loops must start at 0 and rise strictly inside the step")
+TEX_M = float(cfg.get("wall_tile_m", 3.0))
+
+bpy.ops.wm.read_factory_settings(use_empty=True)
+
+
+def material(name, rgb):
+    m = bpy.data.materials.new(name)
+    m.diffuse_color = (*rgb, 1.0)
+    img_path = cfg.get("textures", {}).get(name)
+    if img_path:
+        m.use_nodes = True
+        nt = m.node_tree
+        tex = nt.nodes.new("ShaderNodeTexImage")
+        tex.image = bpy.data.images.load(img_path)
+        nt.links.new(tex.outputs["Color"], nt.nodes["Principled BSDF"].inputs["Base Color"])
+    return m
+
+
+mat_names = list(cfg["materials"])  # e.g. ["WALL_A", "WALL_B", "WINDOW", "INSET"]
+mats = [material(n, tuple(cfg["materials"][n])) for n in mat_names]
+MID = {n: i for i, n in enumerate(mat_names)}
+
+
+def ring_points(ring, cuts):
+    """Perimeter points of one ring: contour corners plus cut positions, each with its perimeter s."""
+    pts, s_acc = [], 0.0
+    n = len(ring)
+    cuts = sorted(cuts)
+    ci = 0
+    for i in range(n):
+        a, b = ring[i], ring[(i + 1) % n]
+        L = math.dist(a, b)
+        pts.append((s_acc, a[0], a[1], i))
+        while ci < len(cuts) and cuts[ci] < s_acc + L - 1e-4:
+            if cuts[ci] > s_acc + 1e-4:
+                t = (cuts[ci] - s_acc) / L
+                pts.append((cuts[ci], a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]), i))
+            ci += 1
+        s_acc += L
+    return pts, s_acc
+
+
+bm = bmesh.new()
+uv = bm.loops.layers.uv.new("UVMap")
+levels = loops + [step]
+report = {"rings": [], "insets": 0}
+for ri, ring in enumerate(cfg["rings"]):
+    pts, perim = ring_points(ring["xy"], ring.get("cuts", []))
+    wins = [(w[1], w[2], w[3] if len(w) > 3 else 0, w[4] if len(w) > 4 else 1) for w in cfg.get("windows", []) if w[0] == ri]
+    zones = ring.get("zones", [[0.0, perim, mat_names[0]]])
+    grid = [[bm.verts.new((x, y, z)) for (_, x, y, _) in pts] for z in levels]
+    n = len(pts)
+    for li in range(len(levels) - 1):
+        for k in range(n):
+            s0 = pts[k][0]
+            s1 = pts[(k + 1) % n][0] if k + 1 < n else perim
+            sm = (s0 + s1) / 2
+            f = bm.faces.new((grid[li][k], grid[li][(k + 1) % n], grid[li + 1][(k + 1) % n], grid[li + 1][k]))
+            is_win = any(a - 1e-4 <= sm <= b + 1e-4 and wl <= li < wh for a, b, wl, wh in wins)
+            zone = next((z[2] for z in zones if z[0] - 1e-4 <= sm <= z[1] + 1e-4), mat_names[0])
+            f.material_index = MID["WINDOW"] if is_win else MID[zone]
+            z0, z1 = levels[li], levels[li + 1]
+            if is_win:
+                a, b = next((a, b) for a, b, wl, wh in wins if a - 1e-4 <= sm <= b + 1e-4)
+                us = ((s0 - a) / (b - a), (s1 - a) / (b - a))
+                vs = (z0 / levels[-2] if li else 0.0, z1 / levels[-2] if len(levels) > 2 else 1.0)
+                vs = ((z0 - levels[0]) / (levels[1] - levels[0]), (z1 - levels[0]) / (levels[1] - levels[0]))
+            else:
+                us = (s0 / TEX_M, s1 / TEX_M)
+                vs = (z0 / TEX_M, z1 / TEX_M)
+            for lp, (u, v) in zip(f.loops, ((us[0], vs[0]), (us[1], vs[0]), (us[1], vs[1]), (us[0], vs[1]))):
+                lp[uv].uv = (u, v)
+    report["rings"].append({"points": n, "perimeter_m": round(perim, 3)})
+
+
+def box(cx, cy, z0, w, d, h, rot):
+    c, s = math.cos(math.radians(rot)), math.sin(math.radians(rot))
+    vs = []
+    for dz in (0, h):
+        for dx, dy in ((-w / 2, 0), (w / 2, 0), (w / 2, d), (-w / 2, d)):
+            vs.append(bm.verts.new((cx + c * dx - s * dy, cy + s * dx + c * dy, z0 + dz)))
+    q = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
+    for idx in q:
+        f = bm.faces.new([vs[i] for i in idx])
+        f.material_index = MID["INSET"]
+        for lp in f.loops:
+            lp[uv].uv = (0.5, 0.5)
+
+
+for ins in cfg.get("insets", []):
+    box(*ins["box"])
+    report["insets"] += 1
+bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+me = bpy.data.meshes.new("SM_Body_Module")
+bm.to_mesh(me)
+bm.free()
+for m in mats:
+    me.materials.append(m)
+mod_ob = bpy.data.objects.new("SM_Body_Module", me)
+bpy.context.scene.collection.objects.link(mod_ob)
+mod_ob.location.z = float(cfg["z0"])
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, "module.blend"), copy=True)
+report["module"] = {"verts": len(me.vertices), "faces": len(me.polygons),
+                    "tris": sum(1 for p in me.polygons if len(p.vertices) == 3)}
+
+# Replicate (BM-10): Array along Z by the floor step, merge the shared sill loop.
+body = mod_ob.copy()
+body.data = me.copy()
+body.name = body.data.name = "SM_Body_Main"
+bpy.context.scene.collection.objects.link(body)
+bpy.data.objects.remove(mod_ob)
+arr = body.modifiers.new("floors", "ARRAY")
+arr.count = floors
+arr.use_relative_offset, arr.use_constant_offset = False, True
+arr.constant_offset_displace = (0, 0, step)
+arr.use_merge_vertices, arr.merge_threshold = True, 1e-4
+bpy.context.view_layer.objects.active = body
+bpy.ops.object.modifier_apply(modifier="floors")
+report["body"] = {"verts": len(body.data.vertices), "faces": len(body.data.polygons), "floors": floors}
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, "body.blend"), copy=True)
+bpy.ops.export_scene.fbx(filepath=os.path.join(out, "body.fbx"), use_selection=False, mesh_smooth_type="FACE",
+                         path_mode="COPY", embed_textures=False)
+json.dump(report, open(os.path.join(out, "build.json"), "w"), indent=1)
+print("BUILT", json.dumps(report))

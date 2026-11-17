@@ -1,0 +1,10 @@
+{
+  "scenario": "oks-npm",
+  "config": {"profile": "NPM"},
+  "hooks": [
+    {"script": "hooks/revit_floor_dump.py", "stage": "body", "point": "before"},
+    {"script": "hooks/floor_from_dump.py", "stage": "body", "point": "before"},
+    {"script": "hooks/module_build.py", "stage": "body", "point": "after"},
+    {"script": "hooks/band_compare.py", "stage": "body", "point": "after"}
+  ]
+}
