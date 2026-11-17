@@ -70,6 +70,14 @@ def test_1644_class_reference(name, kind, valid):
         assert problems == [f"context parts: src/dt_ai/parts/model.py has no top-level {category} {name}"]
 
 
+def test_1644_reference_layout_is_local():
+    maps = _maps()
+    source = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "sintez")
+    assert "grid" in source
+    assert "grid" not in route_map.resolve_context({"ref": "package-contexts.yaml#sintez"}, maps)
+    assert route_map.resolve_context({"ref": "package-contexts.yaml#sintez", "grid": "3/4"}, maps)["grid"] == "3/4"
+
+
 @pytest.mark.parametrize("kind", ["", "function", "method", None, [], 1, float("nan"), float("inf")])
 def test_1644_invalid_kind(kind):
     cmap = _maps()["contexts"]
