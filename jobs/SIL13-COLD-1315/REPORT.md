@@ -1,6 +1,26 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v028 ONE isolated VPM maple pilot built; picture approval pending;
+Current status: **v029 accepted6VPMmaples applied;176094NPM/298218VPM raw=native,
+NOT delivered**. See [CONTINUATION-v029.md](CONTINUATION-v029.md),
+[source-wide-summary-v029.json](source-wide-summary-v029.json),
+[question-receipt-v029.json](question-receipt-v029.json).
+Answer6956847079 CLOSES the maple picture gate; all6actualcopies regulatory0 and
+raw/native public0/0/0/0,12placedchecks. Scaled-shell thickness repaired before
+scaling:192/192samples7.684–9.879mm; first10.509mmtrialREJECTED. Six-tree intra
+crossings29240→0; wholeFlora29615→613 (364non-maple/249maple-hedge). Whole official
+BVH108808→79869:62572Ground-Flora/16653Ground-MAF/613Flora/31Flora-MAF. Whole public
+9faces49pairsFAIL, nativevalidator3pass3fail1review5not_run/exit1. NO waiver.
+Portable r3 canonical12usedmaterials/adjacent exact interimPNG;546raw/native arrays
+and UV/material semantics EXACT against measuredr2;545UCX and retained Ground/MAF
+arrays exact, NPM/source/library hashes unchanged. Three union routesREJECTED;
+partial hidden-face trial refuses above-Ground witnesses. NEW model/rule question
+6958474507 asks ONE VPM visible-interface derivative pilot while retaining the
+10cm-buried source master/census; no clipping before answer. This is NOT another
+maple picture question. Other skirt/maps/UV/archive/final/SINTEZFAILs open;
+D339gapbandsOBSERVE.456affectedpassed;489guardsGREEN;304Drivefiles340743620bytes
+sealed/22originals equal. Full suite: deferred to merge batch(rule68).
+
+Historical status: **v028 ONE isolated VPM maple pilot built; picture approval pending;
 current pair UNCHANGED, NOT delivered**. See [CONTINUATION-v028.md](CONTINUATION-v028.md),
 [source-wide-summary-v028.json](source-wide-summary-v028.json) and
 [picture-receipt-v028.json](picture-receipt-v028.json).

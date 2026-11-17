@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-VPM-maple-picture-pilot-v028
+run_id: cold-1315-six-VPM-maples-v029
 synthetic: false
 path: deviation
 inputs: &id001
@@ -203,6 +203,11 @@ deviations:
   what_was_tried: Authorized ONE isolated VPM maple pilot under source answer6952852628; retain real trunk/large branches constructively, canonicalize only duplicate parallel crown direction, coplanar retessellation then original-assignment link cleanup. Fresh actual FBX/raw/native QA, six renders, verifier OBSERVE, packed texture-review.
   new_tool_written: No shared module, library edit, D-id or checker change. Job-local drivers/tests and failed trials sealed in evidence-v028.json.
   result: Isolated r2 361vertices750triangles; raw/native regulatory0/public0faces0vertices0pairs0bowties,32of32spacing samples7.687-9.378mm. Height unchanged; bbox edges<=3.220mm.50of1554trunk samples>2mm all internal,0exterior, sampled not Hausdorff. Current site176094NPM300120VPM/37physicalMAF38census4582plants/22original hashes unchanged. NEW picture6954553715 pending; no replication or delivery acceptance.447affectedpassed/486guardsGREEN; fullsuite deferredrule68.
+- gate: operations
+  what_failed: First scaled750tri maple copies exceed10mm at3trees, max10.509mm; wholeFlora mixed contacts remain. Three union routes and partial burial classification are NOTadopted. WholeGround interfaces expose D095/D100 versus visible delivery derivative choice, not a waiver.
+  what_was_tried: Accepted6956847079 picture applied to6VPMcopies; compensate physical shell offset before scale. Actual raw/native every placed tree and whole scopes measured; portable r3 canonical names and exact copied interimPNG, geometry/UV/material-semantic parity proved.
+  new_tool_written: No shared module/checker/D-id/library edit. Job-local drivers and all failed trials sealed in evidence-v029.json.
+  result: Actual176094NPM298218VPMraw=native;6maples regulatory0/publicall0 in12placedchecks,192of192sheet samples7.684-9.879mm. WholeFlora29615to613, wholeofficialBVH108808to79869, public9faces49pairsFAIL.37physicalMAF38census4582plants545UCXretained; NPM22originalhashesunchanged. NEW interface model question6958474507 pending, oldpictureCLOSED.456affectedpass/489guardsGREEN; fullsuite deferredrule68.
 gates:
   inputs:
     status: review
@@ -217,8 +222,15 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: v026NPMFlora515to0regulatory;actualraw/nativeFlora+wholejoinedpublic0/0/0/0.37physicalMAF38census4582plants;4535hedgesupport>=78.225percent. VPMactualFlora29615regulatory/9wholepublicfaces49pairsFAIL; VPMknifeNOTadopted. D339all148240UCXpairsmeasured/report-only; archive-metadata/Ground/maps/UVFAILsremainworker-owned, no newquestion.
+    waits: user
+    note: v029sixacceptedVPMmaples applied; actual176094NPM298218VPMraw=native,12placedchecksregulatory/publicclean,192of192sheet samples7.684-9.879mm. WholeFlora613/wholeofficial79869/public9faces49pairsFAIL. NEW modelquestion6958474507 asks ONE visible-interface derivative pilot retaining10cm-buried source master/census; no clipping before reply. OldmaplepictureCLOSED; othertechnicalFAILsOPEN, no waiver. D339gapbandsOBSERVE.
     evidence: &id002
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v029.json
+      sha256: 6ac7916f238a6f2b2b45ab5d227b977840b1c474617062299ec0473abcca29c5
+    - path: jobs/SIL13-COLD-1315/evidence-v029.json
+      sha256: 0784db5821611e4c07560da31570efda46dd16ba052f4667b43e2df202caec18
+    - path: jobs/SIL13-COLD-1315/question-receipt-v029.json
+      sha256: 1a86a1d9989b8fc7e1eb99c6983a3e2c269f9d62e953fbd20118afc66360c6c1
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v028.json
       sha256: 1f505c7369efe1632bc10507bb033a374ea66875e42c485fcd705057d4d99136
     - path: jobs/SIL13-COLD-1315/evidence-v028.json
@@ -243,16 +255,18 @@ gates:
       sha256: 2fecdacca40ee64c3f29a48461304e7d4de285479ab066c914a4779631b427b8
   budgets:
     status: review
-    note: Actual176094NPM300120VPMraw=native;37physicalMAF38census4582plants. Ground26378/58896EXACT; D335full4.975942mmproofapplicable. Unchanged545UCX6376tris/complete57226triangle89.936mmproof; D339widegapsOBSERVEreport-only. Skirt/master/maps/UVremainOPEN; actualDXFarea9568.799640m2 selectsVPMband.
+    note: Actual176094NPM298218VPMraw=native;37physicalMAF38census4582plants. Ground26378/58896EXACT; D335full4.975942mmproofapplicable. Unchanged545UCX6376tris/complete57226triangle89.936mmproof; D339widegapsOBSERVEreport-only. Skirt/master/maps/UVremainOPEN; actualDXFarea9568.799640m2 selectsVPMband.
     evidence: *id002
   export_readback:
     status: review
-    note: Resume ONLY v026/site-flora-r3/NPM andv025/site-ucx-wide-r1/VPM. Actual176094/300120raw=native; NPMFlora71246/regulatory0 and raw/nativewholejoin0/0/0/0. Ground/MAFgeometry+UV/materialsexact;VPMbyteunchanged. Sourcebbox<=7.630um/4535support>=78.225percent/2originalembeddedmapsbyteidentical. Actualarchive_diffdeclaredFlorageometryUVonlybutscene-metadataFAIL; no showing/packingwaiver. Bothpost-mainvalidators exit1.
+    note: Resume ONLY NPMv026/site-flora-r3 and VPMv029/site-maples-r3. Actual176094/298218raw=native; NPMbyteunchanged, VPM6maplesapplied. Portable r3 all546raw/nativearrays and UVexact against measuredr2;12canonicalusedmaterialsemanticassignments exact/adjacent originalinterimPNGhashsame. RetainedVPMGroundMAF545UCXarrays exact. ImmediatepredecessorarchiveFAIL remains legacyduplicatebaseline/metadata, no showing/packingwaiver; actualVPMvalidator exit1.
     evidence: *id002
   report:
     status: review
-    note: v028447affectedpassed0failed89.71s;repo_guardsGREEN486passed1warning110s. Actual isolated mapleRED4869to0raw/native, publicall0;32of32shell samples7.687-9.378mm.192Drivefiles58493246bytessealed,22originalshashesequal, sitepairunchanged. NEW picture6954553715pending, no replication or QAwaiver. Full suite deferred(rule68).
+    note: v029456affectedpassed0failed53.16s;repo_guardsGREEN489passed1warning86.67s. Real6treeRED to0actualrawnative,12placedpublicclean;192of192shellsamples.304Drivefiles340743620bytessealed/22originalshashesequal/NPMunchanged. NEW interfacequestion6958474507 pending, accepted6maples applied but no wholeQAwaiver. Full suite deferred(rule68).
     evidence:
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v029.md
+      sha256: 434755e8db6c3380f7590fd02145bf1bf1c783e1c4a6988c1b0a392bfa3af96c
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v028.md
       sha256: 8012d9e277b195804f164e59741fd58232a34ba5c69fb5f5a0660c26d4a2996a
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v026.md
@@ -263,10 +277,9 @@ gates:
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    waits: user
-    note: Source answer6952852628 CLOSED the v027 construction choice and allowed ONE VPM-only pilot, not site adoption. Isolated r2 actual750tri/regulatory0/raw-native public0/0/0/0; NEW hash-bound picture6954553715 needs separate user approval before any replication. Full1600x1850comparison onDrive; same INTERIM source pixels on both sides, no final botanical/material acceptance. AllOLDgates CLOSED, unrelatedFAILs worker-owned; no waiver.
+    note: Answer6956847079 ACCEPTS exactr2picture6954553715; sixVPMmaples actually applied. This picturegate CLOSED, not repeated. Finalbotanical/material/siteacceptance NOTclaimed; portablecopy not shown/packed whilearchivegateFAIL. NEW interfacequestion is an operations/modelpermission gate, not a second maple picture question. OtherFAILs worker-owned; no waiver.
     evidence: *id002
   checker:
     status: missing
-    note: CompletefinalSINTEZnotrun. Freshpost-main source-boundNPMmachine1pass3fail1review3not_run,VPM3pass4fail1review4not_run,bothexit1. NPMFlora/wholepubliccleanisnotVPM/master/skirt/maps/UV/manualPASS. D339UCXgapbandsOBSERVEreportedwithoutrefusalbywidesize;rawvalidatorfindingsretained. No deliveryPASS or newuserquestion.
+    note: CompletefinalSINTEZnotrun. CurrentVPMmachine3pass3fail1review5not_run/exit1; NPMpreviousmachine1pass3fail1review3not_run/exit1 onunchangedbytes. Isolatedmaplesclean is notwholeVPM/skirt/master/maps/UV/manualPASS. D339UCXgapbandsOBSERVEreport-only. NEW interface modelpermission pending; no deliveryPASS.
     evidence: []

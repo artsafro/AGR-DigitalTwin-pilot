@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "question_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6958474507",
+  "question_comment": 6958474507,
+  "question_body_sha256": "985b362861d1eae818d3ee8bd18fd7f36dbd7020916ff001caac688f1f491215",
+  "question_readback_equal": true,
+  "accepted_picture_answer": 6956847079,
+  "accepted_picture_question": 6954553715,
+  "accepted_pilot_scope": "six VPM maples, NPM unchanged; not whole-site QA waiver",
+  "question_scope": "ONE visible-only derivative pilot at actual Ground interfaces; retain buried source master/census; no rule exemption",
+  "answered": false
+}

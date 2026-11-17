@@ -22,7 +22,25 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Read back exports, run area validators, report per-area reproduction and historical comparison.
   No passed=true with an incomplete mandatory/manual gate.
 
-## v028 current continuation — ONE isolated VPM pilot; picture gate pending
+## v029 current continuation — accepted six maples; new interface representation question
+
+[CONTINUATION-v029.md](CONTINUATION-v029.md) supersedes ALL resume paths below.
+Artem6956847079 accepts the exact r2 picture and permits six VPMmaples; CLOSED.
+All6now applied,298218actualtriangles/12raw-nativeplacedchecks clean; NPM176094
+byte-unchanged.192/192shellsamples7.684–9.879mm; first scaled10.509mmtrial rejected.
+Current VPM ONLY `G:/Мой диск/AGR-evidence/1315-cold-silikatny/v029/site-maples-r3/site-VPM.blend`
+and its `VPM/SM_SIL13_Ground.fbx`; NPM ONLY v026/site-flora-r3.37physicalMAF38census,
+4582plants,545UCX and retained actual Ground/MAF arrays unchanged.
+WholeFlora613/wholeofficialBVH79869/public9faces49pairs/nativevalidatorFAIL remain.
+NEW question6958474507: permit ONE visible-only VPM derivative pilot cutting a
+partially visible buried wall/root face exactly at actualGround, retaining the
+visible surface and unchanged10cm-buried source master/census? D095/D100 delivery
+geometry interpretation is NOT guessed; no clipping or C44 exemption before reply.
+Other source/map/model gates stay closed; no new botanical or maple picture question.
+Three union trials/partial burial trial NOT adopted.456affectedpass/489guardsGREEN;
+Full suite: deferred to merge batch(rule68). See question-receipt-v029.json.
+
+## v028 historical continuation — ONE isolated VPM pilot; picture gate pending
 
 [CONTINUATION-v028.md](CONTINUATION-v028.md): source permission6952852628
 applied ONLY to one33F02A9pilot. New picture6954553715 awaits a separate «ок»;
