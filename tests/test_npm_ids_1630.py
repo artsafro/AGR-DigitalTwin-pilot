@@ -1,9 +1,12 @@
 """new-case: synthetic atlas-ID recovery and fail-closed UDIM preflight (#1630)."""
 import importlib
-import math
 import copy
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
+
 import pytest
 from PIL import Image
 
@@ -74,14 +77,6 @@ def test_cli_late_input_change_never_publishes_success(tmp_path, monkeypatch):
     assert cmd.main([str(source), str(tmp_path/'new')]) == 2
     assert not (tmp_path/'new'/'id_table.json').exists()
 
-import pytest
-from PIL import Image
-
-
-import subprocess
-import sys
-import os
-
 
 @pytest.mark.parametrize('case', ['empty', 'partial', 'nan', 'inf', 'unmapped', 'duplicate', 'unsupported'])
 def test_fresh_cli_invalid_inputs_preserve_bytes(tmp_path, case):
@@ -128,6 +123,29 @@ def test_fresh_cli_positive_stale_output_and_path_aliases(tmp_path):
         assert (output/'id_table.json').read_bytes()==receipt
     alias=tmp_path/'alias.json'; os.link(source,alias)
     assert subprocess.run([*command,str(alias)],cwd=tmp_path,capture_output=True).returncode == 2
+
+
+@pytest.mark.parametrize('triangles,valid', [([[0,1,2],[0,2,3]],True),
+    ([[0,1,2],[0,1,2]],False), ([[0,1,2],[0,1,3]],False)])
+def test_quad_protocol_complete_uv_coverage(tmp_path, triangles, valid):
+    from tools.derive.npm_ids import validate_document
+    doc=synthetic_document(tmp_path/'atlas.png');o=doc['objects'][0]
+    o['verts']=[[0,0,0],[1,0,0],[1,1,0],[0,1,0]];o['local']=copy.deepcopy(o['verts'])
+    o['uvs']=[[.1,.1],[.4,.1],[.4,.4],[.1,.4]]
+    o['tris']=o['uv_tris']=triangles;o['tri_polygons']=[0,0]
+    o['polygons'][0]['uv']=copy.deepcopy(o['uvs'])
+    if valid: validate_document(doc)
+    else:
+        with pytest.raises(ValueError,match='UV'): validate_document(doc)
+
+
+@pytest.mark.parametrize('offset', [1e-300,1e-12,1e-6])
+def test_zero_drop_threshold_rejects_every_nonzero_area(tmp_path,offset):
+    from tools.derive.npm_ids import drop_zero_area
+    doc=synthetic_document(tmp_path/'atlas.png')
+    doc['objects'][0]['verts'][2]=[0,offset,0]
+    with pytest.raises(ValueError,match='nonzero'):
+        drop_zero_area(doc,{'synthetic':[0]})
 
 
 def test_generated_face_accounting_and_repeat_reset(tmp_path):
@@ -199,6 +217,14 @@ Path(OUT,'readback.json').write_text(json.dumps({'status':'ok'}))
 '''.replace('ROOT', repr(str(root))).replace('OUT', repr(str(tmp_path))), encoding='utf-8')
     assert run_blender(script, [], executable=str(blender), output_json=tmp_path/'readback.json',
                        log_path=tmp_path/'native.log')['status'] == 'ok'
+
+
+def test_exact_pixel_tolerance_boundary_fails_closed(tmp_path):
+    from tools.library.npm_ids import recover
+    atlas=tmp_path/'synthetic.png';Image.new('RGB',(64,64),'red').save(atlas)
+    result=recover(atlas,[[[.9,.2],[64.5/64,.2],[.9,.3]]],tolerance_px=.5)
+    assert result['status']=='manual_required'
+    assert result['mat_ids']==[0] and result['straddling']==[0]
 
 
 def test_synthetic_cells_straddle_empty(tmp_path):
