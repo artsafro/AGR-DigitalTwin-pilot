@@ -12,6 +12,8 @@ export_commit (export.checked). Each nested dispatcher call is journalled by the
 export.checked: the given nodes, else every visible geometry node named `SM_*` / `UCX_*` outside layer AGR_export;
 #1582: a ucx.gap copy `<UCX>_AGR_gap_NN` on AGR_export replaces its original (exported under the original's name,
 the original skipped and never changed; deliver_core.ucx_export_selection), recorded as `ucx_export` in deliver.json.
+#1584: ucx.audit, ucx.gap and the UCX subcheck in qa.preflight judge this same set under its export names.
+Other preflight checks still judge the originals. Gap delivery previews are exact-scope and read-only.
 The scene is never changed by pack.deliver itself; the apply writes only into a new `Сдача_<time>` folder.
 """
 import datetime
@@ -109,18 +111,29 @@ def _light_options(opts, folder):
     return lo
 
 
-def _run_preview(ctx, step, kind, opts, model, folder):
+def _run_preview(ctx, step, kind, opts, model, folder, export=None):
     agr = ctx.agr
     so = opts['step_options'].get(step) or None
     if kind == 'check050':
         return agr.checks_050(CHECK050[step], nodes=model)
     if kind == 'check070':
-        return agr.checks_070(CHECK070[step], nodes=model, select=False)
+        kw = {}
+        if export is not None:
+            _export_call(export, model)  # invalid selection blocks UCX checks too; never fall back to originals
+            kw['ucx_export'] = export
+        return agr.checks_070(CHECK070[step], nodes=model, select=False, **kw)
     if kind == 'edit090':
         return agr.edits_090(step, 'preview', nodes=None, options=so)
     if step == 'light.export':
         return agr.edits_100(step, 'preview', options=_light_options(opts, folder))
     if kind == 'edit100':
+        if step == 'ucx.gap':
+            rnodes, export_kw = _export_call(export, model)
+            ucx = [n for n in rnodes if str(n.name).upper().startswith('UCX_')]
+            so = dict(so or {})
+            so['delivery_names'] = {str(_handle(n)): export_kw.get('names', {}).get(_handle(n), str(n.name))
+                                    for n in ucx}
+            return agr.edits_100(step, 'preview', nodes=ucx, options=so)
         return agr.edits_100(step, 'preview', options=so)
     raise ValueError('no preview runner for ' + step)
 
@@ -145,7 +158,7 @@ def _previews(ctx, opts, model, folder, export=None):
                 rnodes, kw = _export_call(export, model)
                 rep = ctx.agr.export_preview(nodes=rnodes, target=os.path.join(folder, stem + '.fbx'), **kw)
             else:
-                rep = _run_preview(ctx, step, kind, opts, model, folder)
+                rep = _run_preview(ctx, step, kind, opts, model, folder, export)
         except Exception as exc:  # noqa: BLE001 - a step error is a blocker in the report, never a pass
             results.append(core.step_result(step, error='{}: {}'.format(type(exc).__name__, exc)))
             continue

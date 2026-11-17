@@ -772,7 +772,7 @@ def fbx_rows(meshes):
 
 
 # --- qa.preflight -------------------------------------------------------------------------------------
-def preflight(rows, audit, scene):
+def preflight(rows, audit, scene, ucx_rows=None):
     """All checks of 0.7 in one pass, one table; nothing changes the scene.
 
     Replaces GeoAGR Prepare LowPoly GeoAGR.ms:65278 / Prepare HighPoly :65653 (destructive: D6 ResetXForm +
@@ -785,7 +785,7 @@ def preflight(rows, audit, scene):
     scene_rows = [dict(x, name=PLAN_ROW['units'] + ': ' + x['name']) for x in units(scene)]
     found, dropped, status = {}, [], {}
     for tool in PREFLIGHT:
-        f, d, _ = run(tool, rows, audit)
+        f, d, _ = run(tool, ucx_rows if tool == 'ucx_audit' and ucx_rows is not None else rows, audit)
         f = {k: [x for x in items if x[0] not in ADVISORY] for k, items in f.items()}
         status[tool] = 'fail' if any(f.values()) else 'pass'
         for key, items in f.items():
@@ -796,7 +796,7 @@ def preflight(rows, audit, scene):
     return found, dropped, {'checks': status, 'scene': {'path': str(scene.get('path')), 'findings': scene_rows}}
 
 
-def run(tool, rows, audit=None, scene=None):
+def run(tool, rows, audit=None, scene=None, ucx_rows=None):
     """scene: the scene.units dict; required by preflight (see preflight), ignored by object checks."""
     fn = {'perimeter_drop': perimeter_drop, 'material_type': material_type,
           'sets_count': sets_count, 'fbx_split': fbx_split, 'glass': glass, 'scene_hygiene': scene_hygiene,
@@ -806,7 +806,7 @@ def run(tool, rows, audit=None, scene=None):
     if tool == 'ucx_audit':
         return ucx_audit(rows, audit)
     if tool == 'preflight':
-        return preflight(rows, audit, scene)
+        return preflight(rows, audit, scene, ucx_rows=ucx_rows)
     if tool not in fn:
         raise KeyError('unknown 0.7 check: ' + repr(tool))
     return fn[tool](rows)
