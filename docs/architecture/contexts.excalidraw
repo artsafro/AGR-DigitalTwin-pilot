@@ -1237,7 +1237,7 @@
    "x": 1260.0,
    "y": 1073.0,
    "width": 470,
-   "height": 282.5,
+   "height": 370.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -1279,7 +1279,7 @@
    "x": 1268.0,
    "y": 1083.0,
    "width": 454,
-   "height": 262.5,
+   "height": 350.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1299,13 +1299,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Экспорт и пакет сдачи\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "text": "Экспорт и пакет сдачи\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377); строка квитанции итогового ZIP/Max:\ndelivery_receipt / check_delivery_receipt (#1647)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов\ndelivery_receipt: итоговый ZIP/Max-файл -> {file, sha256,\nsize}\ncheck_delivery_receipt: квитанция и файл -> ошибка при\nнесовпадении",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1648b9a5855f96c",
-   "originalText": "Экспорт и пакет сдачи\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "originalText": "Экспорт и пакет сдачи\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377); строка квитанции итогового ZIP/Max:\ndelivery_receipt / check_delivery_receipt (#1647)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов\ndelivery_receipt: итоговый ZIP/Max-файл -> {file, sha256,\nsize}\ncheck_delivery_receipt: квитанция и файл -> ошибка при\nнесовпадении",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1313,7 +1313,7 @@
    "id": "ed012c0e59699081",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1369.5,
+   "y": 1457.0,
    "width": 470,
    "height": 65.0,
    "angle": 0,
@@ -1347,7 +1347,7 @@
    "id": "ef7cc50781ab05b4",
    "type": "text",
    "x": 1268.0,
-   "y": 1379.5,
+   "y": 1467.0,
    "width": 454,
    "height": 45.0,
    "angle": 0,
@@ -1535,7 +1535,7 @@
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
    "x": 345.0,
-   "y": 1494.5,
+   "y": 1582.0,
    "width": 470,
    "height": 230.0,
    "angle": 0,
@@ -1577,7 +1577,7 @@
    "id": "ed4e9eac2280ec03",
    "type": "text",
    "x": 353.0,
-   "y": 1504.5,
+   "y": 1592.0,
    "width": 454,
    "height": 210.0,
    "angle": 0,
@@ -1613,7 +1613,7 @@
    "id": "e7c3b463ea5ad90f",
    "type": "rectangle",
    "x": 345.0,
-   "y": 1738.5,
+   "y": 1826.0,
    "width": 470,
    "height": 80.0,
    "angle": 0,
@@ -1647,7 +1647,7 @@
    "id": "e32db9413dafe301",
    "type": "text",
    "x": 353.0,
-   "y": 1748.5,
+   "y": 1836.0,
    "width": 454,
    "height": 60.0,
    "angle": 0,
@@ -1683,7 +1683,7 @@
    "id": "e89f7e0e63e2fdf9",
    "type": "rectangle",
    "x": 955.0,
-   "y": 1494.5,
+   "y": 1582.0,
    "width": 470,
    "height": 125.0,
    "angle": 0,
@@ -1717,7 +1717,7 @@
    "id": "ef7093cdc86ed328",
    "type": "text",
    "x": 963.0,
-   "y": 1504.5,
+   "y": 1592.0,
    "width": 454,
    "height": 105.0,
    "angle": 0,
@@ -1753,7 +1753,7 @@
    "id": "ed319371ca8c4f40",
    "type": "rectangle",
    "x": 955.0,
-   "y": 1633.5,
+   "y": 1721.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -1787,7 +1787,7 @@
    "id": "e7ce9eed157c440c",
    "type": "text",
    "x": 963.0,
-   "y": 1643.5,
+   "y": 1731.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -1823,7 +1823,7 @@
    "id": "efce5e1877483387",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 1494.5,
+   "y": 1582.0,
    "width": 470,
    "height": 125.0,
    "angle": 0,
@@ -1857,7 +1857,7 @@
    "id": "eac930d140cf2789",
    "type": "text",
    "x": 1573.0,
-   "y": 1504.5,
+   "y": 1592.0,
    "width": 454,
    "height": 105.0,
    "angle": 0,
@@ -2119,7 +2119,7 @@
    "x": 2340.0,
    "y": 770.25,
    "width": 630.0,
-   "height": 444.0,
+   "height": 487.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2158,16 +2158,16 @@
      282.75
     ],
     [
-     -590.0,
+     -490.0,
      282.75
     ],
     [
-     -590.0,
-     444.0
+     -490.0,
+     487.75
     ],
     [
      -610.0,
-     444.0
+     487.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -2188,8 +2188,8 @@
   {
    "id": "e7cdcc5b82f25b33",
    "type": "text",
-   "x": 1748.0,
-   "y": 1026.75,
+   "x": 2300.0,
+   "y": 885.38,
    "width": 120,
    "height": 52.5,
    "angle": 0,
@@ -2225,7 +2225,7 @@
    "id": "ee5d5c8b355620c3",
    "type": "arrow",
    "x": 1730.0,
-   "y": 1214.25,
+   "y": 1258.0,
    "width": 630.0,
    "height": 100.0,
    "angle": 0,
@@ -2263,19 +2263,19 @@
     ],
     [
      20.0,
-     56.25
+     12.5
     ],
     [
      630.0,
-     56.25
+     12.5
     ],
     [
      630.0,
-     -43.75
+     -87.5
     ],
     [
      610.0,
-     -43.75
+     -87.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2333,9 +2333,9 @@
    "id": "efbb2d5921b933ac",
    "type": "arrow",
    "x": 815.0,
-   "y": 1609.5,
+   "y": 1697.0,
    "width": 935.0,
-   "height": 778.0,
+   "height": 865.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2371,27 +2371,27 @@
     ],
     [
      20.0,
-     -260.0
+     -347.5
     ],
     [
      325.0,
-     -260.0
+     -347.5
     ],
     [
      325.0,
-     -576.5
+     -664.0
     ],
     [
      935.0,
-     -576.5
+     -664.0
     ],
     [
      935.0,
-     -778.0
+     -865.5
     ],
     [
      915.0,
-     -778.0
+     -865.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2449,9 +2449,9 @@
    "id": "ea67174522302baa",
    "type": "arrow",
    "x": 815.0,
-   "y": 1609.5,
+   "y": 1697.0,
    "width": 1545.0,
-   "height": 439.0,
+   "height": 526.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2495,19 +2495,19 @@
     ],
     [
      935.0,
-     -339.0
+     -426.5
     ],
     [
      1545.0,
-     -339.0
+     -426.5
     ],
     [
      1545.0,
-     -439.0
+     -526.5
     ],
     [
      1525.0,
-     -439.0
+     -526.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -2529,7 +2529,7 @@
    "id": "efcd29e3b1255cbe",
    "type": "text",
    "x": 1232.5,
-   "y": 1437.0,
+   "y": 1524.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,

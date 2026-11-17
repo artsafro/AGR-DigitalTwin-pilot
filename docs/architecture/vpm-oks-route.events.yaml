@@ -88,7 +88,7 @@ stages:
   - id: gate1
     event_ru: "Gate 1: Артём подтвердил части"
     actor: artem
-    context: body
+    context: parts
     rules:
       - D125
       - D238

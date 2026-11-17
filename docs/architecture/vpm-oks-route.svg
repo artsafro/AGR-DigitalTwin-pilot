@@ -164,8 +164,8 @@
 <tspan x="695.0" dy="14">Правила: D125, D238</tspan>
 </text>
 <text x="695.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="695.0" dy="14">Контекст: Корпус и</tspan>
-<tspan x="695.0" dy="17.5">геометрия</tspan>
+<tspan x="695.0" dy="14">Контекст: Состав частей</tspan>
+<tspan x="695.0" dy="17.5">(PartsList)</tspan>
 </text>
 <text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="15">Агент: Blender / Max /</tspan>
