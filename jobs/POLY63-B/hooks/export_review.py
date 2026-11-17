@@ -13,10 +13,15 @@ scene=bpy.context.scene
 scene.unit_settings.system='METRIC'; scene.unit_settings.scale_length=1
 mesh=bpy.data.meshes.new('63B Stage1'); mesh.from_pydata(d['vertices'],[],d['faces']); mesh.update()
 assert not mesh.validate(verbose=True), 'unexpected topology repair'
-ob=bpy.data.objects.new('POLY63B_Stage1_BODY',mesh); scene.collection.objects.link(ob)
+ob=bpy.data.objects.new(d.get('body_name','POLY63B_Stage1_BODY'),mesh); scene.collection.objects.link(ob)
+if 'body_role' in d: ob['agr_role'] = d['body_role']
 for name,c in [('01_Ventfacade_regular',(.45,.58,.69,1)),('02_Render_return',(.65,.50,.38,1)),('03_Ventfacade_band',(.36,.45,.53,1))]:
     mat=bpy.data.materials.new(name); mat.diffuse_color=c; mesh.materials.append(mat)
 for p,idx in zip(mesh.polygons,d['face_zones']): p.material_index=idx
+if 'polygon_uv' in d:
+    uv = mesh.uv_layers.new(name='BM11_training_repeat')
+    for p, corners in zip(mesh.polygons, d['polygon_uv'], strict=True):
+        for loop, pair in zip(p.loop_indices,corners,strict=True): uv.data[loop].uv = pair
 ob.select_set(True); bpy.context.view_layer.objects.active=ob
 for suffix in ('blend','fbx'):
     if (out/f'{stem}.{suffix}').exists(): raise FileExistsError(suffix)
