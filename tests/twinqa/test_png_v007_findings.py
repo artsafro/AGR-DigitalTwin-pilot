@@ -111,6 +111,25 @@ def _clean_vpm_set(prefix: str = PREFIX, size: int = 64) -> dict[str, bytes]:
     }
 
 
+def test_vpm_slot_alias_collision_keeps_first_file():
+    """Synthetic names _1 and _01 address one numeric slot/map/tile."""
+    pngs = _clean_vpm_set()
+    first = f"{PREFIX}_Diffuse_01.1001.png"
+    second = f"{PREFIX}_Diffuse_1.1001.png"
+    pngs[first] = _solid_png_bytes((120, 110, 100), (128, 128))
+
+    findings, sets = vpm_texture_findings(pngs, SYNTHETIC_PROFILE, PREFIX)
+
+    collisions = [f for f in findings if f.name == "duplicate map"]
+    assert len(collisions) == 1
+    assert collisions[0].status == "fail"
+    assert first in collisions[0].observed
+    assert second in collisions[0].observed
+    assert sets[(1, 1001)]["Diffuse"].name == first
+    assert sets[(1, 1001)]["Diffuse"].width == 128
+    assert not any(f.status == "pass" for f in findings)
+
+
 # ==============================================================================
 # normal_convention tests
 # ==============================================================================
