@@ -26,6 +26,21 @@ def test_synthetic_cells_straddle_empty(tmp_path):
     assert sum(r['face_count'] for r in result['table']) + len(result['straddling']) == len(faces)
 
 
+def test_facade_cells_keep_pattern_seams_inside_material(tmp_path):
+    import numpy as np
+    from tools.library.maf_atlas_cells import segment
+    a = np.zeros((128, 128, 3), dtype=np.uint8)
+    for y in range(128):
+        for x in range(128):
+            base = [45, 95, 155, 210][2*(y >= 64)+(x >= 64)]
+            a[y, x] = base - (15 if x % 12 == 0 or y % 17 == 0 else 0)
+    p = tmp_path / 'synthetic_facade.png'
+    Image.fromarray(a).save(p)
+    result = segment(str(p), profile='facade', work=128, min_cell=16)
+    assert [(c['x'], c['y'], c['w'], c['h']) for c in result['cells']] == [
+        (0, 0, 64, 64), (64, 0, 64, 64), (0, 64, 64, 64), (64, 64, 64, 64)]
+
+
 def test_udim_two_tiles_stops_with_question():
     from adapters.max.agr_tools import npm2vpm_core as core
     mesh = {'verts': [[0, 0, 0], [16, 0, 0], [0, 8, 0]],
