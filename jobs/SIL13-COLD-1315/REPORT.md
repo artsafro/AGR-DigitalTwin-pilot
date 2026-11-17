@@ -15,6 +15,12 @@ trial NOTadopted.564affectedpassed/5historicaldeselected; exactcommand/REDcontro
 in the v025 summary. No new human question; D340 and all old model gates CLOSED.
 Full suite: deferred to merge batch (rule68).
 
+Late diagnostics: [GROUND-CONNECTIVITY-PROBE-v025.md](GROUND-CONNECTIVITY-PROBE-v025.md).
+Both real Ground connectivity routes REJECTED, current models unchanged. A separate
+closed/xView-clean SYNTHETIC connected-step witness exposes a skirt-checker false
+positive (6mm interior step versus1.001m plot perimeter); independent read-only
+triage card t_66104c70 created, not a waiver or a new question to Artem.
+
 Historical status: **v024 NPM179576/VPM305706 raw=native; NEW row19 canopy identity question,
 whole QA FAIL, NOT delivered**. See [CONTINUATION-v024.md](CONTINUATION-v024.md)
 and [question-receipt-v024.json](question-receipt-v024.json).
