@@ -38,6 +38,8 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `site-placement` owner src/dt_ai/placement/site.py (#1407, [D329]): the one site placement run (`dt place site` /
   `agr place`, NPM + VPM at the same points [D293]). Flags any other `engine.place(...)` call, or a bare `place(...)`
   imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
+- `window-generator` owner adapters/max/agr_tools/windowgen_core.py (#1405): definitions named build_type or
+  assign_glass under jobs/ + tools/ + src/ are refused; imports/calls remain valid. No legacy copies are allowlisted.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -96,6 +98,7 @@ RULES = {
     "vpm-uv": "tools/blender/vpm_uv.py",
     "seam-seal": "tools/blender/seam_seal.py",
     "site-placement": "src/dt_ai/placement/site.py",
+    "window-generator": "adapters/max/agr_tools/windowgen_core.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
@@ -104,10 +107,11 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
            "seam-seal": ("jobs", "tools", "src"),   # #1381
-           "site-placement": ("jobs", "tools", "src")}   # #1407: one site placement run, guarded from the start
+           "site-placement": ("jobs", "tools", "src"),   # #1407: one site placement run, guarded from the start
+           "window-generator": ("jobs", "tools", "src")}
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
 REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
-                   "site-placement"}
+                   "site-placement", "window-generator"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
@@ -309,9 +313,15 @@ def _place_hits(tree):
         or bare and isinstance(node.func, ast.Name) and node.func.id == "place")]
 
 
+def _window_hits(tree):
+    """Protect the window builder and 3D ownership entry points; mere calls are not copies."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in {'build_type', 'assign_glass'}]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
           "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
-          "site-placement": _place_hits}
+          "site-placement": _place_hits, "window-generator": _window_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -501,6 +511,9 @@ COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406
 # Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
 # listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
 LIVE_BYPASS_BASELINE = frozenset({
+    # #1593: inventory of existing run_stage.sh writers, not new build behaviour or guard rules.
+    ("vpm-contexts", "jobs/KPP1/scripts/build_kpp1.py:198", ""),
+    ("vpm-contexts", "jobs/KPP1/scripts/build_kpp1.py:327", ""),
 
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),

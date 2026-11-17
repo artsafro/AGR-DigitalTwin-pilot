@@ -313,6 +313,17 @@ shared_kernel:
       status: own-duty
       why: "Другая задача: диагностика произвольных UV исходника (отрицательных и вне 0..10), raw tile не подтверждает корректность delivery UDIM."
 contexts:
+  - id: openings
+    no_stage: "В НПМ отдельного шага нет; контекст генератора используется стадией openings ВПМ."
+    ru: "Генератор окон и владение стеклом"
+    area: docs/domain/areas/windows.md
+    owner: adapters/max/agr_tools/windowgen_core.py
+    owner_ru: "agr window-generate и Max win.generate вызывают одно ядро; KPP1 extraction использует общий 3D owner"
+    functions:
+      - name: build_type
+        contract: "тип, стандарт -> меш окна D322; общий для CLI и Max"
+      - name: assign_glass
+        contract: "3D bounds -> один владелец стекла или явный failing drop"
   - id: body-shell
     serves_stage: model
     ru: "Оболочка ПСУ275"
@@ -389,6 +400,14 @@ contexts:
         ru: "сборка корпуса КПП1 целиком в скрипте задания (стадии 1–6)"
         status: own-duty
         why: "load_spec читает конфигурацию задания, не операция над частями; сборка и кровля живые (run_stage.sh)"
+  - id: npm
+    ru: "Экспорт НПМ с привязкой к мастеру"
+    area: docs/domain/areas/derivation.md
+    owner: tools/derive/export_npm.py
+    owner_ru: "dt derive npm пишет FBX, export_meta и запись derivation; атлас готовится отдельно"
+    functions:
+      - name: main
+        contract: "мастер и атлас -> экспортированный НПМ-FBX без UCX, метаданные и привязка к ревизии мастера"
   - id: uv-atlas
     ru: "UV и атлас"
     area: docs/domain/areas/uv-atlas.md
@@ -405,7 +424,8 @@ contexts:
       - at: "tools/materials/npm_atlas_udim.py:785"
         match: "def main("
         issue: "#1141"
-        ru: "второй (Python) генератор атласа НПМ, по нему идёт agr vpm-to-npm"
+        ru: "job-specific инструмент UV / атласа; подсказка agr unwrap-atlas в src/dt_ai/cli/agr.py:30, не исполняемый алиас"
+        # Keep live-bypass: the documented UV/atlas candidate still bypasses atlas_core; no migration here.
         status: live-bypass
         step: "#1380"
       - at: "jobs/KPP1/scripts/make_npm_atlas.py:28"
@@ -510,7 +530,7 @@ contexts:
         rule: delivery-zip
         issue: "#1377"
         hash: "bc783edf3f"
-        ru: "исторический драйвер сданной поставки Ватутино v009 (docs/deliveries/vatutino-site-2026-11-09.md)"
+        ru: "исторический драйвер среза Ватутино v009 (2026-11-09, verdict not passed; docs/deliveries/vatutino-site-2026-11-09.md); запуск не меняем"
         status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v001.py::<module>"
         rule: delivery-zip
@@ -675,13 +695,13 @@ contexts:
         rule: blender-launch
         issue: "#1378"
         hash: "8ff22a5634"
-        ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+        ru: "исторический драйвер среза Ватутино v009 (2026-11-09, verdict not passed; docs/deliveries/vatutino-site-2026-11-09.md); запуск не меняем"
         status: historical
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main.dcc"
         rule: blender-launch
         issue: "#1378"
         hash: "fdd33d010a"
-        ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+        ru: "исторический драйвер среза Ватутино v009 (2026-11-09, verdict not passed; docs/deliveries/vatutino-site-2026-11-09.md); запуск не меняем"
         status: historical
       - at: "jobs/VATUTINO-SITE/scene_checks.py::main"
         rule: blender-launch
@@ -710,13 +730,26 @@ contexts:
         ru: "замороженный прогон исследования проверяющего: запечатанный корпус привязан к sha256 этого файла (#1530)"
         status: own-duty
         why: "замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера"
+  - id: sintez
+    ref: package-contexts.yaml#sintez
+  - id: parts
+    ru: "Состав частей (PartsList)"
+    owner: src/dt_ai/parts/model.py
+    owner_ru: "модель состава частей и подтверждение Gate 1"
+    functions:
+      - name: PartsList
+        kind: class
+        contract: "Состав частей модели и подтверждение пользователя"
 relations:
   - from: body
     to: uv-atlas
     ru: "мастер-модель (FBX/.blend)"
   - from: uv-atlas
-    to: package
+    to: npm
     ru: "UV, атлас, текстуры"
+  - from: npm
+    to: package
+    ru: "НПМ-FBX и привязка к мастеру"
   - from: package
     to: validation
     ru: "ZIP / FBX сдачи"

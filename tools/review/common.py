@@ -60,9 +60,10 @@ def publish(*, task, slug, source, what, pngs, review_root, adapter, today, item
     folder = root / today.isoformat() / f"{task_n}-{slug_s}"
     scene = folder / f"{task_n}-{slug_s}.max"
     readme = folder / "README.txt"
+    receipt_path = Path(str(scene) + '.delivery.json')
     copied = [folder / path.name for path in png_paths]
     preview = folder / "preview.png"
-    outputs = [scene, readme, *copied]
+    outputs = [scene, readme, receipt_path, *copied]
     if not png_paths:
         outputs.append(preview)
     for output in outputs:
@@ -106,8 +107,20 @@ def publish(*, task, slug, source, what, pngs, review_root, adapter, today, item
                 os.replace(preview_tmp, preview)
             for src, dest in zip(png_paths, copied):
                 shutil.copyfile(src, dest)
+            # The CLI can run outside the checkout / without pytest's root pythonpath.
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                'review_package_core', REPO / 'adapters/max/agr_tools/package_core.py')
+            if spec is None or spec.loader is None:
+                raise ReviewError('shared package_core owner unavailable')
+            owner = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(owner)
+            receipt = owner.delivery_receipt(scene)
+            with receipt_path.open('x', encoding='utf-8') as fh:
+                json.dump(receipt, fh, ensure_ascii=False, indent=2)
             readme.write_text(
-                _readme(what_s, version, cameras, materials, task_n, slug_s, today.isoformat()),
+                _readme(what_s, version, cameras, materials, task_n, slug_s, today.isoformat())
+                + '\n' + receipt['summary_ru'] + '\n',
                 encoding="utf-8",
                 newline="\n",
             )

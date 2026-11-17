@@ -40,7 +40,9 @@ is not a sandbox, PID ownership verification or authorization; do not redefine n
 process APIs, and continue following the skill's risk gate.
 
 Evidence: `tests/test_max_pid_guard.py` simulates two registrations and executes the
-Python guard against a mocked PID source. Live two-Max re-registration is NOT DONE
-(2026-11-15: orchestrator forbids touching the user's open Max sessions). It does not
-establish live pin survival. External Claude memory remains untouched by instruction;
-its eventual replacement should be only a pointer to this section, not another rule copy.
+Python guard against a mocked PID source. Live two-Max re-registration (#1481,
+2026-11-17): a pin set by `select_max_instance` survives a second Max registering in the
+same MCP process (B becomes `default`, A stays `selected`/`pinned`, guarded calls run in A);
+a fresh MCP process has no pin and routes to the newest registration. Details and log
+path: `docs/agents/CAPABILITIES.md` (3dsmax-mcp entry). Pin survival does not replace the
+per-call guard. External Claude memory should be only a pointer to this section, not another rule copy.

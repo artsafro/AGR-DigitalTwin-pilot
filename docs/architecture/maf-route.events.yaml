@@ -58,7 +58,7 @@ local_contexts:
   - id: placement
     ru: "Расстановка МАФ и Флоры"
     owner: src/dt_ai/placement/engine.py
-  - id: npm
+  - id: npm-atlas
     ru: "НПМ МАФ на атласе"
     owner: adapters/max/agr_tools/flora_atlas_max.py
   - id: ucx
@@ -185,7 +185,7 @@ stages:
   - id: npm
     event_ru: "НПМ-версия (low-poly) в тех же точках на одном атласе 512 GroundEl"
     actor: agent-dcc
-    context: npm
+    context: npm-atlas
     commands:
       - "dt derive maf-npm-light"
       - "agr npm-light"

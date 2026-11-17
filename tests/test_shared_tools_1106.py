@@ -100,6 +100,11 @@ def test_package_zip_is_byte_identical_to_the_tec26_job_script(tmp_path):
     assert (tmp_path / "job/SM_Nku_1.zip").read_bytes() == (tmp_path / "dt/SM_Nku_1.zip").read_bytes()
     ra, rb = (json.loads((tmp_path / d / "package_report.json").read_text(encoding="utf-8")) for d in ("job", "dt"))
     ra.pop("zip"), rb.pop("zip")
+    import hashlib
+    payload = (tmp_path / 'dt/SM_Nku_1.zip').read_bytes()
+    assert rb.pop('delivered') == {'file': 'SM_Nku_1.zip', 'sha256': hashlib.sha256(payload).hexdigest(),
+                                  'size': len(payload)}
+    assert rb.pop('summary_ru').count('delivered: SM_Nku_1.zip sha256=') == 1
     assert ra == rb
     names = zipfile.ZipFile(tmp_path / "dt/SM_Nku_1.zip").namelist()
     assert "T_Other_Diffuse_1.1001.png" not in names and len(names) == 4
