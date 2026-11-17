@@ -55,7 +55,7 @@ step [D337]), never Revit tessellation;
 3) inset, never weld, windows/roof/flashings/posts/decor with projection [D336]; posts are geometry by default,
 panels are texture with a seam, no diagonal across a typical facade; edges only on finish-zone borders and window
 lines: the ~0.6 m panel step and an extra loop above windows are texture; dark/light cladding (from the source
-materials) get separate material IDs with a vertical at their joint [D340];
+materials) get separate material IDs with a vertical at their joint [D344];
 4) build and check ONE floor module with IDs and UV, then replicate it; 5) measure the master (typical-facade quad
 share, slivers, n-gons, module repeat; `tools/qa/body_layout.py`, `tools/qa/master_topology.py`) and show a
 wire + texture sheet of the module and one corner before replicating; 6) unique ground floor, top and roof last,

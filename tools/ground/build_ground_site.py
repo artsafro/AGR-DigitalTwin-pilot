@@ -21,10 +21,12 @@ from dt_ai.core.heights import export_z_check
 from dt_ai.geometry import ground_site as gs
 
 TOP_KEYS = {"site", "dxf", "boundary", "crop_box", "zero", "covers", "base_id", "relief", "params", "note", "unhatched"}
-PARAMS = {"cell", "chord", "step", "snap", "relief_tol", "skirt_m", "tex_px", "footprint_min_area", "origin_xy"}
+PARAMS = {"cell", "chord", "step", "snap", "relief_tol", "skirt_m", "tex_px", "footprint_min_area", "origin_xy",
+          "relief_extension"}
 
 
 def run(spec_path: Path, out: Path) -> int:
+    spec_digest = gs.sha256(spec_path)
     spec = gs.load_spec(spec_path)
     unknown = set(spec) - TOP_KEYS
     if unknown:
@@ -70,6 +72,9 @@ def run(spec_path: Path, out: Path) -> int:
     rep["stages"]["sources"].update({"dxf": str(dxf), "dxf_sha256": digest, "spec": str(spec_path),
                                      "spec_sha256": gs.sha256(spec_path), "zero_source": zero["source"]})
     prefix = f"SM_{site}_Ground"
+    if gs.sha256(spec_path) != spec_digest or gs.sha256(dxf) != digest:
+        raise ValueError("spec or DXF changed during the site build; nothing published")
+    rep["stages"]["sources"]["spec_sha256"] = spec_digest
     partial.mkdir(parents=True)
     gs.write_obj(partial / "ground-flat.obj", result.flat, result.slots, prefix, "flat-first stage, Z = level*step")
     gs.write_obj(partial / f"{prefix}.obj", result.mesh, result.slots, prefix,
@@ -78,7 +83,8 @@ def run(spec_path: Path, out: Path) -> int:
     rep["readback"] = {k: v for k, v in back.items() if k not in ("z_values", "points")}
     origin_xy = rep["stages"]["sources"]["origin_xy_m"]
     rep["project_zero_check"] = export_z_check(zero["project_zero_m"], 0.0, gs.ground_points(back, origin_xy),
-                                               gs.relief_z_at(relief, float(params.get("snap", 0.001)), origin_xy),
+                                               gs.relief_z_at(relief, gs.relief_margin(
+                                                   params.get("snap", 0.001), params.get("relief_extension")), origin_xy),
                                                step_m=float(params.get("step", 0.006)),
                                                tol_m=float(params.get("relief_tol", 0.01)))
     rep["project_zero_check"]["zero_source"] = zero["source"]
@@ -93,6 +99,8 @@ def run(spec_path: Path, out: Path) -> int:
     rep["passed"] = False
     (partial / "ground-report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1) + "\n",
                                                 encoding="utf-8", newline="\n")
+    if gs.sha256(spec_path) != spec_digest or gs.sha256(dxf) != digest:
+        raise ValueError("spec or DXF changed during output readback; partial retained, nothing published")
     os.replace(partial, out_r)
     print(json.dumps({"out": str(out_r), "geometry_status": rep["geometry_status"], "findings": rep["findings"],
                       "triangles": back["triangles"]}, ensure_ascii=False))

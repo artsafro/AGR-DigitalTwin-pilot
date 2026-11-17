@@ -1,0 +1,233 @@
+{
+ "note": "Full boundary diagnostic #1535, original DXF, all 24 in-bound covering hatches including 4 in INSERT 33FBCCB; even-odd opt-in D343. Not delivery acceptance; existing #1315 model policies remain separate.",
+ "site": "SIL13",
+ "dxf": {
+  "path": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v001/pzu.dxf",
+  "sha256": "35b537cfe7f05236bf13c2159ef4ae689118162c0f4418a2a93983437c4e3cf4"
+ },
+ "boundary": {
+  "handle": "33FBCEF"
+ },
+ "zero": {
+  "project_zero_m": 142.1,
+  "source": "VP_5 floor-mark MTEXT 33F8EC4=142.10 beside 33F8EC5=0.000 (#1315 v003; historical branch-local D282 at ff769b0b, not main's D282)"
+ },
+ "covers": [
+  {
+   "id": 1,
+   "name": "Rubber1",
+   "hatches": [
+    {
+     "handle": "33FBCB0",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FBCCA",
+     "insert_chain": []
+    },
+    {
+     "handle": "33F1841",
+     "insert_chain": [
+      "33FBCCB"
+     ]
+    },
+    {
+     "handle": "33FBCD8",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FC17A",
+     "insert_chain": []
+    }
+   ],
+   "self_touching": "even-odd"
+  },
+  {
+   "id": 2,
+   "name": "Drive2",
+   "hatches": [
+    {
+     "handle": "33FBCB1",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FBCC1",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FBCC2",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FBCC5",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FBCC6",
+     "insert_chain": []
+    }
+   ],
+   "self_touching": "even-odd"
+  },
+  {
+   "id": 3,
+   "name": "SeededLawn",
+   "hatches": [
+    {
+     "handle": "33FBCB2",
+     "insert_chain": []
+    }
+   ],
+   "colour": [
+    96,
+    150,
+    64
+   ],
+   "colour_reason": "Explicit diagnostic placeholder only; no source background colour, not material acceptance"
+  },
+  {
+   "id": 4,
+   "name": "Perennials",
+   "hatches": [
+    {
+     "handle": "33FBCB3",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FBCB4",
+     "insert_chain": []
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": "Asphalt",
+   "hatches": [
+    {
+     "handle": "33FBCBF",
+     "insert_chain": []
+    }
+   ],
+   "colour": [
+    70,
+    70,
+    70
+   ],
+   "colour_reason": "Explicit diagnostic placeholder only; no source background colour, not material acceptance"
+  },
+  {
+   "id": 6,
+   "name": "Rubber6",
+   "hatches": [
+    {
+     "handle": "33FBCC0",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FBCC9",
+     "insert_chain": []
+    },
+    {
+     "handle": "33F183F",
+     "insert_chain": [
+      "33FBCCB"
+     ]
+    },
+    {
+     "handle": "33FBCCC",
+     "insert_chain": []
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "name": "Drive7",
+   "hatches": [
+    {
+     "handle": "33FBCC3",
+     "insert_chain": []
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "name": "Rubber8",
+   "hatches": [
+    {
+     "handle": "33F183E",
+     "insert_chain": [
+      "33FBCCB"
+     ]
+    },
+    {
+     "handle": "33FBCCD",
+     "insert_chain": []
+    },
+    {
+     "handle": "33FC17F",
+     "insert_chain": []
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "name": "Rubber9",
+   "hatches": [
+    {
+     "handle": "33F1840",
+     "insert_chain": [
+      "33FBCCB"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "name": "RolledLawn",
+   "hatches": [
+    {
+     "handle": "33FBCD0",
+     "insert_chain": []
+    }
+   ],
+   "colour": [
+    70,
+    110,
+    50
+   ],
+   "colour_reason": "Explicit diagnostic placeholder only; no source background colour, not material acceptance"
+  }
+ ],
+ "base_id": 3,
+ "unhatched": {
+  "cover_id": 3,
+  "reason": "Diagnostic base assignment of unhatched remainder, disclosed per #1315 standing-rule comment-6874264219, not material acceptance."
+ },
+ "relief": {
+  "block": "ACAD-Силикатный ВП_5 (пониженеие отметок)-Model16.10.2026",
+  "insert_names": [
+   "Опорная точка планировки",
+   "Отметка_треугольник"
+  ],
+  "contour_layers": [
+   "ГП_ПОР_Горизонтали проектные"
+  ]
+ },
+ "params": {
+  "cell": 3.0,
+  "chord": 0.02,
+  "step": 0.006,
+  "snap": 0.001,
+  "relief_tol": 0.01,
+  "skirt_m": 1.0,
+  "tex_px": 4096,
+  "origin_xy": [
+   835,
+   11035
+  ],
+  "relief_extension": {
+   "max_m": 1.5,
+   "reason": "#1315 G1 + standing-rule comment-6874264219: nearest source TIN plane only on boundary remainder; 7.608474253 m2 outside hull, maximum boundary distance 1.482247067 m. Assumed, not surveyed elevations."
+  }
+ }
+}

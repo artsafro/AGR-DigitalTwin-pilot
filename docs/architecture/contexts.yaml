@@ -137,6 +137,7 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      count: 2
       status: historical
     - at: "jobs/KPP1/scripts/readback_vpm.py::<module>"
       rule: udim-tile
@@ -147,6 +148,7 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      count: 2
       status: historical
     - at: "jobs/TEC26-OKS/scripts/compare_facades.py::main"
       rule: udim-tile
@@ -157,6 +159,7 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      count: 2
       status: historical
     - at: "jobs/TEC26-OKS/scripts/qa_packages.py::facade_joint_checks.vpm_tile_of"
       rule: udim-tile

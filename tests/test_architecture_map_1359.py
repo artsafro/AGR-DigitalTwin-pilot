@@ -341,7 +341,7 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
     assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left; #1407: site-placement neither
     assert not any(k[0] == 'window-generator' for k in allowed)  # #1405: no grandfathered copies
-    assert all(issue.startswith("#") for issue in allowed.values())
+    assert all(allow.issue.startswith("#") and allow.copies >= 1 for allow in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
     assert len([k for k in jobs if k[0] == "udim-tile"]) == 34   # #1531 removes two live copies; #1370 retains six historical OBR22 copies
@@ -640,7 +640,10 @@ def test_guard_hash_row_pins_one_copy_inside_the_function(tmp_path, capsys):
     second = FN + "    du = (t - 1001) % 10\n"
     assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f", digest=digest))) == 1
     assert "NEW COPY [udim-tile] jobs/J/a.py:3 in f" in capsys.readouterr().out      # 2nd copy, other hash
-    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f"))) == 0  # no hash
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f"))) == 1  # no hash, count 1
+    assert "covers only count 1 of 2" in capsys.readouterr().out                                    # #1396
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second},
+                                  _row("jobs/J/a.py::f") + "        count: 2\n")) == 0             # no hash, count 2
     assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": FN}, _row("jobs/J/a.py::f", digest="0" * 10))) == 1
     out = capsys.readouterr().out
     assert "NEW COPY [udim-tile] jobs/J/a.py:2 in f" in out and "STALE ALLOWLIST [udim-tile] jobs/J/a.py::f" in out

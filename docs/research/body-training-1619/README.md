@@ -44,11 +44,11 @@
 Остаток штрафа v006: `one_mesh_share` 0,82 (эталон 0,65: у него больше врезанных оболочек) и `weld_share` 0,08
 (вогнутые углы плана; эталон 0,19). Разница с эталоном по сетке: в эталоне вертикали через ~0,6 м и третья петля
 (+0,35 м, корзины) — вопрос Артёму, геометрия это или текстура. Лист: `round1-k3/round1_k3_sheet.png`.
-Решение Артёма (2026-11-17, «Все принимаю, сетка ок»): см. журнал правил ниже, [D340].
+Решение Артёма (2026-11-17, «Все принимаю, сетка ок»): см. журнал правил ниже, [D344].
 
 ## Круг 2 (2026-11-17): G22 корпус 1
 
-Правила D340 внесены до модели (BM-02, BM-03, BM-11, skill `scenario`, `areas/body.md`). DCC: Blender 5.1 без окна
+Правила D344 внесены до модели (BM-02, BM-03, BM-11, skill `scenario`, `areas/body.md`). DCC: Blender 5.1 без окна
 (та же причина, что в круге 1; QUAD-FBX для Max в evidence).
 
 1. `revit_floor_dump.py` по копии `g22_src_full.blend`, рамка 480–625 × 945–1090 (52 770 объектов);
@@ -170,11 +170,29 @@ Blender 5.1 (Max не нужен: сетка строится скриптом, 
 Лист: `round4-k2-stage1/round4_k2_v002_sheet.png`; копия для Blender: `C:/x/review-k2/k2_v002_body.blend`,
 `k2_v002_body_quad.fbx` (+ `open_review_v002.py`, `SHA256SUMS_v002.txt`).
 
+### Круг 4, ревью r1 (PR #1660): UV косяков
+
+Ревьюер нашёл сжатие UV на косяках: `u = (x + y) / 3 м` даёт ширину r·|nx + ny| / 3 м — зависит от
+направления фасада (на корпусе 2 UV/geo 0,12…0,16, на фасаде под 45° ширина 0). Исправление:
+`module_build.jamb_uv` — u = расстояние вдоль горизонтального направления косяка (край проёма → рама) / 3 м.
+Чтение обратно теперь меряет UV/geo каждой грани по классам (стена / косяк / подоконник-верх), брак — вне
+[0,99; 1,01], код выхода 1. Геометрия v002r1 совпадает с v002 (вершины, грани, материалы равны; изменены
+UV 3 240 углов = 810 косяков × 4), score 83,693 без изменений.
+
+| Сборка | стена min…max | косяк min…max | подоконник/верх min…max | брак UV |
+|---|---|---|---|---|
+| v002 (старый u) | 0,9997…1,0002 | 0,1239…1,0000 | 0,9994…1,0004 | 810 |
+| v002r1 | 0,9997…1,0002 | 0,999999…1,000001 | 0,9994…1,0004 | 0 |
+
+Отчёты: `round4-k2-stage1-r1/` (`rb_k2_v002r1.json`, `rb_k2_v002_old_uvcheck.json`, `k2_v002r1.score.json`
++ `SHA256SUMS.txt`); копия для Blender: `C:/x/review-k2/k2_v002r1_body.blend`, `k2_v002r1_body_quad.fbx`
+(+ `open_review_v002r1.py`, `SHA256SUMS_v002r1.txt`).
+
 ## Журнал изменений правил по кругам
 
 | Круг | Этаж | Замечания Артёма | Что изменено (doc / skill) |
 |---|---|---|---|
-| 1 | G22 к.3 | шаг панелей ~0,6 м и петля над окнами — текстура; тёмная/светлая облицовка — свои ID с вертикалью на стыке; сетка v006 чистая (принято) | BM-02, BM-03, BM-11, §8 п. 4–6 `body-modelling.md`; summary-ru; skill `scenario`; `areas/body.md`; [D340] |
+| 1 | G22 к.3 | шаг панелей ~0,6 м и петля над окнами — текстура; тёмная/светлая облицовка — свои ID с вертикалью на стыке; сетка v006 чистая (принято) | BM-02, BM-03, BM-11, §8 п. 4–6 `body-modelling.md`; summary-ru; skill `scenario`; `areas/body.md`; [D344] |
 | 2 | G22 к.1 | v002: «полигоны уходят внутрь здания» — не принят; 4 ID как в атласе (принято); зоны башен 63 — из .rvt read-only ; v003 принят («Да, ок, все принимаю») | BM-01 «контур = наружная оболочка, проёмы закрыты заполнением, рельеф < 0,4 м = текстура, ниша — геометрией только если она есть в эталоне», гейт `envelope_check.py`; §8 п. 7–8; summary-ru; skill `scenario`; `areas/body.md`; [D341] |
 | 3 | G22 к.2 | сетка неплохая; нет проёмов; корзины — бокс врезан в стену без заднего полигона (не ниша); порядок: этап 1 бадик с проёмами на всех корпусах, потом окна с капсулами | `floor_from_dump --fill` (ремонт по гейту оболочки: впадины < 0,4 м закрываются) — инструмент; правила (проёмы, корзины) вносятся в BM после приёмки бадиков Артёмом |
 | 4 | G22 к.2 v002 (этап 1) | ждёт общей приёмки бадиков | `floor_from_dump --openings`, `module_build` проёмы с откосом из Revit — инструмент; правило в BM — после приёмки |
@@ -224,4 +242,13 @@ blender51 -b --factory-startup --python H/module_build.py -- floor_k2_v002.json 
 blender51 -b --factory-startup --python ../body-modelling-1618/dump_mesh.py -- k2_v002/body.fbx dump_k2_v002
 uv run python readback_openings.py dump_k2_v002/SM_Body_Main.npz floor_k2_v002.json rb_k2_v002.json
 uv run python band_compare.py dump_k2_v002/SM_Body_Main.npz 5.3 32.3 k2_v002 && uv run python tools/qa/mesh_quality_score.py k2_v002.mq.json --out k2_v002.score.json
+```
+
+Круг 4, ревью r1 (R5 = `C:/x/ev_1619/r5`, в `C:/x/ev_1619/r7`):
+
+```
+blender51 -b --factory-startup --python H/module_build.py -- R5/floor_k2_v002.json k2_v002r1 --tex C:/x/ev_1619/tex --max-side 3.6
+blender51 -b --factory-startup --python ../body-modelling-1618/dump_mesh.py -- k2_v002r1/body.fbx dump_k2_v002r1
+uv run python readback_openings.py dump_k2_v002r1/SM_Body_Main.npz R5/floor_k2_v002.json rb_k2_v002r1.json          # exit 0, uv_geo_defects 0
+uv run python readback_openings.py R5/dump_k2_v002/SM_Body_Main.npz R5/floor_k2_v002.json rb_k2_v002_old_uvcheck.json # exit 1, 810 jamb defects
 ```

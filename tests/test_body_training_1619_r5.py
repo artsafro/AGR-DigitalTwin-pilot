@@ -1,6 +1,9 @@
 """Round 5 of the #1619 body training polygon (stage 1 «бадик с проемами», Artem 2026-11-17): windows become
 openings with the Revit reveal depth (floor_from_dump --openings, module_build.inner_offset); baskets are deferred
-to stage 2."""
+to stage 2.
+
+Pattern: n/a | new-case: tests of #1619 stage-1 openings.
+"""
 
 import importlib.util
 import json

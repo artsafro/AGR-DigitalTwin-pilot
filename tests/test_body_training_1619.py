@@ -1,5 +1,7 @@
 """#1619 training polygon hooks: finish zones from an etalon texture, --clip, wire sheet material colours.
 
+Pattern: n/a | new-case: tests of the #1619 zones/clip/wire-sheet hooks.
+
 All geometry here is SYNTHETIC (an L-shaped test block), not customer data.
 """
 import importlib.util

@@ -1,5 +1,7 @@
 """#1619 round 3 (Artem: "polygons go into the building"): outer-envelope contour, envelope gate, inset side.
 
+Pattern: n/a | new-case: tests of the #1619 outer-envelope contour and envelope gate.
+
 All geometry here is SYNTHETIC (rectangles and an L block), not customer data.
 """
 import importlib.util

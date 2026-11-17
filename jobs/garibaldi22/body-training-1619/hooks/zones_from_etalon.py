@@ -5,14 +5,14 @@ Pattern: n/a | new-case: finish-zone material IDs read from a delivered etalon's
 uv run python zones_from_etalon.py FLOOR.json ETALON.npz DIFFUSE.png OUT.json --dz DZ [--mirror-x]
     [--palette palette.json] [--census] [--min-run 0.6] [--snap 0.15] [--max-dist 0.6] [--max-rms 0.35]
 
-Why: D340 asks for dark/light cladding IDs "from the Revit materials", but the Revit FBX exports of G22 and site 63
+Why: D344 asks for dark/light cladding IDs "from the Revit materials", but the Revit FBX exports of G22 and site 63
 carry no Material nodes (LayerElementMaterial only); the finish layout exists in Artem's delivered NPM texture.
 ETALON.npz = docs/research/body-modelling-1618/dump_mesh.py output (verts, fn, fi, uvn, uvf). The etalon is cut at
 the spandrel height of FLOOR.json (`contour_section_z` + DZ), every cut segment takes the texel colour at its UV;
 the floor contour (x mirrored with --mirror-x) is registered to the cut by rotation search + ICP (fails above
 --max-rms). Each 0.1 m of the contour takes the class of the nearest cut segment (palette nearest colour; a colour
 farther than `tol` from every palette entry is an error naming it). Runs shorter than --min-run join their
-neighbour (a panel joint is texture, D340); a zone border within --snap of an existing cut reuses that cut (BM-09).
+neighbour (a panel joint is texture, D344); a zone border within --snap of an existing cut reuses that cut (BM-09).
 Writes OUT.json = FLOOR.json + ring zones + materials + `zones_report`; --census prints the colour clusters only.
 """
 import argparse

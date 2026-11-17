@@ -71,6 +71,25 @@ def inner_offset(xy, r):
     return out
 
 
+def jamb_uv(co, outer, inner, tex_m):
+    """UV of a point on a jamb (side reveal) face: u = distance along the jamb's horizontal direction / tex_m.
+
+    The jamb runs from the wall-hole point `outer` back to the frame point `inner` (both plan xy). u is measured from
+    `outer` along that unit direction, v = z / tex_m, so the face keeps UV/geo = 1 at any facade angle. Round 5 r1
+    used u = (x + y) / tex_m: span r*|nx + ny| / tex_m, a ~7x squeeze on body 2 and zero width at 45 deg (PR #1660
+    review). Refuses non-finite input, tex_m <= 0 and a jamb shorter than 1e-6 m."""
+    vals = (co[0], co[1], co[2], outer[0], outer[1], inner[0], inner[1], tex_m)
+    if not all(isinstance(v, (int, float)) and math.isfinite(v) for v in vals):
+        raise ValueError("jamb UV needs finite numbers, got %r" % (vals,))
+    if tex_m <= 0:
+        raise ValueError("jamb UV needs tex_m > 0, got %r" % (tex_m,))
+    dx, dy = inner[0] - outer[0], inner[1] - outer[1]
+    L = math.hypot(dx, dy)
+    if L < 1e-6:
+        raise ValueError("jamb UV: zero-length jamb at %r" % (tuple(outer),))
+    return (((co[0] - outer[0]) * dx + (co[1] - outer[1]) * dy) / L / tex_m, co[2] / tex_m)
+
+
 def _run():  # Blender only; the tests import the pure helpers above
     import bmesh
     import bpy
@@ -209,12 +228,13 @@ def _run():  # Blender only; the tests import the pure helpers above
             from mathutils import Vector
             t0 = Vector((pts[ks[1]][1] - pts[ks[0]][1], pts[ks[1]][2] - pts[ks[0]][2], 0)).normalized()
             t1 = Vector((pts[ks[-1]][1] - pts[ks[-2]][1], pts[ks[-1]][2] - pts[ks[-2]][2], 0)).normalized()
-            for li in range(wl, wh):  # jambs, one quad per band level
+            j = len(ks) - 1
+            o0, o1 = (pts[ks[0]][1], pts[ks[0]][2]), (pts[ks[-1]][1], pts[ks[-1]][2])
+            for li in range(wl, wh):  # jambs, one quad per band level; u along the jamb (UV/geo = 1, jamb_uv)
                 reveal((grid[li][ks[0]], ivert(0, li), ivert(0, li + 1), grid[li + 1][ks[0]]), t0,
-                       lambda co: ((co.x + co.y) / TEX_M, co.z / TEX_M))
-                j = len(ks) - 1
+                       lambda co, o=o0, i=inner[0]: jamb_uv(co, o, i, TEX_M))
                 reveal((grid[li][ks[-1]], grid[li + 1][ks[-1]], ivert(j, li + 1), ivert(j, li)), -t1,
-                       lambda co: ((co.x + co.y) / TEX_M, co.z / TEX_M))
+                       lambda co, o=o1, i=inner[j]: jamb_uv(co, o, i, TEX_M))
             for j in range(len(ks) - 1):  # sill (faces up) and head (faces down)
                 k0, k1 = ks[j], ks[j + 1]
                 reveal((grid[wl][k0], grid[wl][k1], ivert(j + 1, wl), ivert(j, wl)), Vector((0, 0, 1)),
