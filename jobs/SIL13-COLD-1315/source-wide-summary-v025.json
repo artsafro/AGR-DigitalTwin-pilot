@@ -1,0 +1,2456 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-explicit-missing-canopy-UCX-progress-v025",
+  "base_checkpoint": "55585fe2504bfdabcf80b9ee1ba86db94729eac2",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "d5a1df805907644de5579dac30926a17439660a39267a6247fc372b278fb50e0",
+      "raw_triangles": 173990,
+      "native_triangles": 173990,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-missing-r1\\site-NPM.blend"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "43470a4cbf01dd3f7691183a0c28bea20913a84af9dd67988668b51905fbd23a",
+      "raw_triangles": 300120,
+      "native_triangles": 300120,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-r1\\site-VPM.blend"
+    }
+  },
+  "user_answer": {
+    "passed": false,
+    "question_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6943077043",
+    "answer_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6944390189",
+    "answer_id": 6944390189,
+    "answer_author": "artsafro",
+    "answer_body": "USER DECISION (Artem 2026-11-17 «1»): remove ONLY the wrong candidate MAF_0472_M_Cannopy_006 from the site copy; keep pos.19 / 33FB581 in the census and mark it explicitly as a missing library type (PM-158 «Вуд» stroller/bike canopy 7.5x1.8 m - no model in the library, add it when one exists). The other 37 physical MAF, all 4582 plants/points and rotations stay unchanged. Continue.",
+    "answer_received": true,
+    "decision_id": "D340",
+    "readback_sha256": "57c0785fc4fa575269372546ce133b9b881beef80d710d7d8db44180017f2370",
+    "site_candidate_removed": true,
+    "only_handle_removed": "33FB581",
+    "required_article": "PM-158",
+    "physical_MAF": 37,
+    "MAF_census": 38,
+    "plants": 4582,
+    "gate_closed": true,
+    "technical_delivery_approved": false
+  },
+  "closed_gates": "D340 row19 and all old D335/D321/Table/Bench/hedge/source gates CLOSED; no new human question",
+  "missing_types_report": "jobs/SIL13-COLD-1315/missing-types-v025.json",
+  "physical_MAF": 37,
+  "retained_MAF_census": 38,
+  "retained_plant_census": 4582,
+  "actual_omission_lineage": {
+    "NPM-raw": {
+      "all_retained_vertices_exact": true,
+      "all_retained_faces_exact": true,
+      "all_other_objects_exact": true,
+      "all_locations_exact": true,
+      "removed_handle": "33FB581",
+      "removed_faces": 5586,
+      "removed_vertices": 2773,
+      "physical_MAF": 37,
+      "MAF_census": 38,
+      "plants": 4582,
+      "render_triangles": 173990,
+      "UCX_objects": 0
+    },
+    "NPM-native": {
+      "all_retained_vertices_exact": true,
+      "all_retained_faces_exact": true,
+      "all_other_objects_exact": true,
+      "all_locations_exact": true,
+      "removed_handle": "33FB581",
+      "removed_faces": 5586,
+      "removed_vertices": 2773,
+      "physical_MAF": 37,
+      "MAF_census": 38,
+      "plants": 4582,
+      "render_triangles": 173990,
+      "UCX_objects": 0
+    },
+    "VPM-raw": {
+      "all_retained_vertices_exact": true,
+      "all_retained_faces_exact": true,
+      "all_other_objects_exact": true,
+      "all_locations_exact": true,
+      "removed_handle": "33FB581",
+      "removed_faces": 5586,
+      "removed_vertices": 2773,
+      "physical_MAF": 37,
+      "MAF_census": 38,
+      "plants": 4582,
+      "render_triangles": 300120,
+      "UCX_objects": 564
+    },
+    "VPM-native": {
+      "all_retained_vertices_exact": true,
+      "all_retained_faces_exact": true,
+      "all_other_objects_exact": true,
+      "all_locations_exact": true,
+      "removed_handle": "33FB581",
+      "removed_faces": 5586,
+      "removed_vertices": 2773,
+      "physical_MAF": 37,
+      "MAF_census": 38,
+      "plants": 4582,
+      "render_triangles": 300120,
+      "UCX_objects": 564
+    }
+  },
+  "actual_omission_UV_material_lineage": [
+    {
+      "profile": "NPM",
+      "actual_FBX_UV_material_inventory_assignments_smoothing_exact": true,
+      "objects": 3
+    },
+    {
+      "profile": "VPM",
+      "actual_FBX_UV_material_inventory_assignments_smoothing_exact": true,
+      "objects": 565
+    }
+  ],
+  "whole_NPM_MAF_regulatory": {
+    "duplicate_vertices": 0,
+    "duplicate_edges": 0,
+    "duplicate_polygons": 0,
+    "self_intersections": 0,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 0,
+    "tol_m": 0.002
+  },
+  "whole_NPM_Flora_regulatory": {
+    "duplicate_vertices": 0,
+    "duplicate_edges": 0,
+    "duplicate_polygons": 0,
+    "self_intersections": 515,
+    "isolated_vertices": 0,
+    "isolated_edges": 0,
+    "isolated_polygons": 0,
+    "zero_length_edges": 0,
+    "duplicates_and_self_intersections": 515,
+    "tol_m": 0.002
+  },
+  "current_render_diagnostic_join_xview": {
+    "NPM-raw": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "NPM-native": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "VPM-raw": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 9,
+      "vertex_pairs": 0,
+      "face_pairs": 49,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 43,
+        "area+contact": 6
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "VPM-native": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 9,
+      "vertex_pairs": 0,
+      "face_pairs": 49,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 43,
+        "area+contact": 6
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "current_VPM_UCX": {
+    "pieces": 545,
+    "triangles": 6376,
+    "merges": 9,
+    "old_pieces_accounted": 564,
+    "wide_before": 175,
+    "wide_after": 139,
+    "touch": 0,
+    "below_band": 0,
+    "unmeasured": 0,
+    "actual_lineage_and_findings": {
+      "raw": {
+        "render_all_arrays_exact": true,
+        "unchanged_UCX_objects_exact": 536,
+        "findings": [
+          {
+            "name": "UCX shape",
+            "status": "pass",
+            "observed": "actual-raw: 545 closed convex piece(s)",
+            "expected": "closed, convex, non-degenerate UCX pieces",
+            "source_pdf_pages": [
+              34,
+              36
+            ],
+            "evidence": "actual-raw",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null,
+            "data": {}
+          },
+          {
+            "name": "UCX intersections",
+            "status": "pass",
+            "observed": "actual-raw: no overlapping pairs among 545 pieces",
+            "expected": "no two UCX pieces intersect (reg p.36 §13.4)",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "actual-raw",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null,
+            "data": {}
+          },
+          {
+            "name": "UCX intersections coverage",
+            "status": "pass",
+            "observed": "actual-raw: every neighbour pair evaluated",
+            "expected": "every neighbour pair evaluated: closed convex non-degenerate hulls (SAT) or bounding boxes apart",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "actual-raw",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null,
+            "data": {}
+          },
+          {
+            "name": "UCX piece gap (advisory)",
+            "status": "review",
+            "observed": "actual-raw: touch=0 below_band=0 in_band=1447 wide=139 unmeasured=0; [('UCX_SM_SIL13_Ground_005', 'UCX_SM_SIL13_Ground_006', 15.8), ('UCX_SM_SIL13_Ground_012', 'UCX_SM_SIL13_Ground_013', 15.65), ('UCX_SM_SIL13_Ground_024', 'UCX_SM_SIL13_Ground_035', 69.2), ('UCX_SM_SIL13_Ground_026', 'UCX_SM_SIL13_Ground_028', 36.74), ('UCX_SM_SIL13_Ground_027', 'UCX_SM_SIL13_Ground_033', 79.8)]",
+            "expected": "neighbour gap 2 mm - 1 cm inclusive [D098] (advisory, never a failure)",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "actual-raw",
+            "conflicts": [
+              15
+            ],
+            "measured": 0.09913146678864056,
+            "threshold": 0.01,
+            "margin": -8.913146678864056,
+            "data": {}
+          }
+        ],
+        "xview_exit_code": 0
+      },
+      "native": {
+        "render_all_arrays_exact": true,
+        "unchanged_UCX_objects_exact": 536,
+        "findings": [
+          {
+            "name": "UCX shape",
+            "status": "pass",
+            "observed": "actual-native: 545 closed convex piece(s)",
+            "expected": "closed, convex, non-degenerate UCX pieces",
+            "source_pdf_pages": [
+              34,
+              36
+            ],
+            "evidence": "actual-native",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null,
+            "data": {}
+          },
+          {
+            "name": "UCX intersections",
+            "status": "pass",
+            "observed": "actual-native: no overlapping pairs among 545 pieces",
+            "expected": "no two UCX pieces intersect (reg p.36 §13.4)",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "actual-native",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null,
+            "data": {}
+          },
+          {
+            "name": "UCX intersections coverage",
+            "status": "pass",
+            "observed": "actual-native: every neighbour pair evaluated",
+            "expected": "every neighbour pair evaluated: closed convex non-degenerate hulls (SAT) or bounding boxes apart",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "actual-native",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null,
+            "data": {}
+          },
+          {
+            "name": "UCX piece gap (advisory)",
+            "status": "review",
+            "observed": "actual-native: touch=0 below_band=0 in_band=1447 wide=139 unmeasured=0; [('UCX_SM_SIL13_Ground_005', 'UCX_SM_SIL13_Ground_006', 15.8), ('UCX_SM_SIL13_Ground_012', 'UCX_SM_SIL13_Ground_013', 15.65), ('UCX_SM_SIL13_Ground_024', 'UCX_SM_SIL13_Ground_035', 69.2), ('UCX_SM_SIL13_Ground_026', 'UCX_SM_SIL13_Ground_028', 36.74), ('UCX_SM_SIL13_Ground_027', 'UCX_SM_SIL13_Ground_033', 79.8)]",
+            "expected": "neighbour gap 2 mm - 1 cm inclusive [D098] (advisory, never a failure)",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "actual-native",
+            "conflicts": [
+              15
+            ],
+            "measured": 0.09913146678863709,
+            "threshold": 0.01,
+            "margin": -8.91314667886371,
+            "data": {}
+          }
+        ],
+        "xview_exit_code": 0
+      }
+    },
+    "actual_render_UV_material_lineage": {
+      "actual_render_UV_material_smoothing_exact": true,
+      "source": "site-missing-r1",
+      "candidate": "site-ucx-wide-r1"
+    },
+    "public_xview": {
+      "raw": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "native": {
+        "overlapping_vertices": 0,
+        "overlapping_faces": 0,
+        "vertex_pairs": 0,
+        "face_pairs": 0,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      }
+    },
+    "complete_actual_coverage": {
+      "passed": false,
+      "geometry_coverage": true,
+      "sample_only": false,
+      "method": "convex distance to actual UCX triangles on complete XY polygon partition of actual Ground top faces",
+      "actual_piece_count": 545,
+      "UCX_upward_triangles": 1049,
+      "surface_triangles": 57226,
+      "triangles_partitioned": 57226,
+      "surface_area_m2": 15872.911976507741,
+      "partition_area_m2": 15872.911976508118,
+      "max_triangle_area_partition_error_m2": 2.0650148258027912e-14,
+      "partition_vertices": 445906,
+      "unassigned_regions": 0,
+      "surface_to_UCX_upper_bound_m": 0.08993564479232127,
+      "limit_m": 0.1,
+      "source_fbx_sha256": "43470a4cbf01dd3f7691183a0c28bea20913a84af9dd67988668b51905fbd23a",
+      "elapsed_seconds": 53.98855080001522,
+      "note": "Numerical conservative upper bound; not exact Hausdorff or final UCX gap/SINTEZ/visual acceptance.",
+      "report_path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\UCX-wide-coverage.json",
+      "report_sha256": "491e60abf7c0e6ec776669c0250981417b1b58e98ecae7531f8d821e7cbd83c4"
+    },
+    "mapping_report": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-build-r1.json",
+    "mapping_sha256": "c26caeb2385ab437c6f967e01d37d9eae6aa235ad4f94c8cba7ec09073ad30e5"
+  },
+  "UCX_edge_expansion_NOT_ADOPTED": {
+    "passed": false,
+    "adopted": false,
+    "pieces": 545,
+    "changed_pieces": 542,
+    "triangles": 6376,
+    "counts_XY": {
+      "below_band": 0,
+      "in_band": 1469,
+      "wide": 136,
+      "apart": 146635
+    },
+    "full_actual_coverage": "NOT measured"
+  },
+  "Flora_trials_NOT_ADOPTED": [
+    {
+      "route": "signed-planar-after-knife",
+      "xview": {
+        "overlapping_vertices": 7,
+        "overlapping_faces": 4,
+        "vertex_pairs": 4,
+        "face_pairs": 7,
+        "face_pairs_by_kind": {
+          "contact": 0,
+          "area": 4,
+          "area+contact": 3
+        },
+        "bowtie_vertices": 12,
+        "bowtie_pairs": 3,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 4,
+        "duplicate_edges": 3,
+        "duplicate_polygons": 0,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 7,
+        "tol_m": 0.002
+      }
+    },
+    {
+      "route": "submicron-postknife-plane-normalization",
+      "result": "refused degenerate CDT triangle; traceback retained; no completed QA"
+    },
+    {
+      "route": "submicron-source-plane-before-knife",
+      "xview": {
+        "overlapping_vertices": 33,
+        "overlapping_faces": 37,
+        "vertex_pairs": 22,
+        "face_pairs": 44,
+        "face_pairs_by_kind": {
+          "contact": 8,
+          "area": 10,
+          "area+contact": 26
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 0,
+        "parts_without_faces": 0
+      },
+      "regulatory": {
+        "duplicate_vertices": 19,
+        "duplicate_edges": 67,
+        "duplicate_polygons": 11,
+        "self_intersections": 0,
+        "isolated_vertices": 0,
+        "isolated_edges": 0,
+        "isolated_polygons": 0,
+        "zero_length_edges": 0,
+        "duplicates_and_self_intersections": 97,
+        "tol_m": 0.002
+      }
+    }
+  ],
+  "Ground_source_master_proofs_unchanged": {
+    "passed": false,
+    "site_adopted": false,
+    "method": "every same-material source/candidate projected triangle intersection; affine extrema, no sampling",
+    "rows": [
+      {
+        "material": 0,
+        "source_triangles": 33595,
+        "candidate_triangles": 7017,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.004975941907218839,
+        "max_delta_z_m": 0.002380960327367454,
+        "partition_pairs": 57473,
+        "partition_vertices": 246565,
+        "candidate_missing_area_m2": 4.659840974503933e-12,
+        "source_missing_area_m2": 8.037542653600892e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 1,
+        "source_triangles": 6800,
+        "candidate_triangles": 3714,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.002605861210478899,
+        "max_delta_z_m": 0.003900223317593099,
+        "partition_pairs": 17157,
+        "partition_vertices": 74872,
+        "candidate_missing_area_m2": 1.894886009280316e-12,
+        "source_missing_area_m2": 1.7604498588064121e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 2,
+        "source_triangles": 429,
+        "candidate_triangles": 173,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.0015303645618158918,
+        "max_delta_z_m": 0.002674121317733827,
+        "partition_pairs": 1269,
+        "partition_vertices": 5637,
+        "candidate_missing_area_m2": 2.7647469817010384e-13,
+        "source_missing_area_m2": 3.08421826489616e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 3,
+        "source_triangles": 5848,
+        "candidate_triangles": 5386,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.002165854611530904,
+        "max_delta_z_m": 0.002364628933857915,
+        "partition_pairs": 23054,
+        "partition_vertices": 105867,
+        "candidate_missing_area_m2": 7.399375115581123e-13,
+        "source_missing_area_m2": 5.872939226679152e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 4,
+        "source_triangles": 7925,
+        "candidate_triangles": 6483,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.001713048491840393,
+        "max_delta_z_m": 0.0013508158955030276,
+        "partition_pairs": 26319,
+        "partition_vertices": 118626,
+        "candidate_missing_area_m2": 2.4291229157270486e-12,
+        "source_missing_area_m2": 1.938511713821321e-12,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 5,
+        "source_triangles": 769,
+        "candidate_triangles": 413,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.0007957195956381329,
+        "max_delta_z_m": 0.0012699449034122012,
+        "partition_pairs": 1711,
+        "partition_vertices": 7291,
+        "candidate_missing_area_m2": 3.993974815046271e-13,
+        "source_missing_area_m2": 2.7154128690596094e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 6,
+        "source_triangles": 307,
+        "candidate_triangles": 263,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -1.3526388408558604e-05,
+        "max_delta_z_m": 0.0005647641456698604,
+        "partition_pairs": 1681,
+        "partition_vertices": 7817,
+        "candidate_missing_area_m2": 1.0130003796514006e-13,
+        "source_missing_area_m2": 7.950850434035751e-14,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 7,
+        "source_triangles": 419,
+        "candidate_triangles": 331,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.00045509159715414506,
+        "max_delta_z_m": 0.000807455495769327,
+        "partition_pairs": 1846,
+        "partition_vertices": 8393,
+        "candidate_missing_area_m2": 3.2027009625075487e-13,
+        "source_missing_area_m2": 1.89371042515229e-13,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 8,
+        "source_triangles": 1134,
+        "candidate_triangles": 928,
+        "boundary_edges_exact": true,
+        "min_delta_z_m": -0.000820554163620266,
+        "max_delta_z_m": 0.0010893746514760716,
+        "partition_pairs": 2881,
+        "partition_vertices": 12599,
+        "candidate_missing_area_m2": 7.447032357096872e-14,
+        "source_missing_area_m2": 5.412267618939374e-14,
+        "projected_area_delta_m2": 0.0
+      },
+      {
+        "material": 9,
+        "source_triangles": 1670,
+        "candidate_triangles": 1670,
+        "boundary_edges_exact": true,
+        "vertical_skirt_all_XY_exact_down_m": 0.0025,
+        "actual_export_skirt_Z_quantization_m": 5.722045898432296e-08
+      }
+    ],
+    "all_material_boundary_edges_exact": true,
+    "max_abs_vertical_delta_m": 0.004975941907218839,
+    "all_projected_domains_complete": true,
+    "note": "5mm engineering guard, not inferred regulatory/user acceptance. Source marks/master untouched; final visual/material/delivery gates open.",
+    "actual_raw_triangles": 26378,
+    "native_triangles_exact": true,
+    "raw_native_max_coordinate_delta_m": 3.812856832041689e-06,
+    "all_actual_top_normals_positive": true,
+    "raw_vs_pre_max_coordinate_delta_m": 8.041147283144312e-06,
+    "local_5mm_guard_passed": true,
+    "D335_8_2mm_bound_passed": true
+  },
+  "Ground_seating_proofs_unchanged": {
+    "passed": false,
+    "scope": "numeric seating only, not whole delivery",
+    "point_count": 4620,
+    "missing_points": [],
+    "maximum_ground_delta_at_pivots_m": 0.004111718766035777,
+    "Urn_complete_shelf_partitions": [
+      {
+        "handle": "33FB3AD",
+        "min_m": -0.05734805302536827,
+        "max_m": -0.037829603790177926,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.051057156836763096,
+            "max_m": -0.03782960379017793,
+            "partition_polygons": 5,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04058961159717104
+          },
+          {
+            "face": 1,
+            "min_m": -0.05321131253061229,
+            "max_m": -0.04402954776380389,
+            "partition_polygons": 5,
+            "missing_area_m2": 8.326672684688674e-17,
+            "area_m2": 0.04209756850014022
+          },
+          {
+            "face": 2,
+            "min_m": -0.05734805302536827,
+            "max_m": -0.044680273555569916,
+            "partition_polygons": 2,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.0007548584271714125
+          },
+          {
+            "face": 3,
+            "min_m": -0.057257157480493204,
+            "max_m": -0.044035652702778205,
+            "partition_polygons": 2,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04134380671166681
+          },
+          {
+            "face": 4,
+            "min_m": -0.05105715683676304,
+            "max_m": -0.037829603790177926,
+            "partition_polygons": 5,
+            "missing_area_m2": 0.0,
+            "area_m2": 0.04058961159716973
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      },
+      {
+        "handle": "33FB3AE",
+        "min_m": -0.08529315727282416,
+        "max_m": -0.006781452786691844,
+        "faces": [
+          {
+            "face": 0,
+            "min_m": -0.07804880345241472,
+            "max_m": -0.00678145278669362,
+            "partition_polygons": 10,
+            "missing_area_m2": 6.104871382722754e-16,
+            "area_m2": 0.04058969263496717
+          },
+          {
+            "face": 1,
+            "min_m": -0.08529315727282416,
+            "max_m": -0.01839819564433398,
+            "partition_polygons": 6,
+            "missing_area_m2": 7.129713486264677e-16,
+            "area_m2": 0.04209702313528415
+          },
+          {
+            "face": 2,
+            "min_m": -0.02689817922842863,
+            "max_m": -0.01192507250522823,
+            "partition_polygons": 6,
+            "missing_area_m2": 3.625572064791527e-16,
+            "area_m2": 0.0007547749264633189
+          },
+          {
+            "face": 3,
+            "min_m": -0.07887916741886869,
+            "max_m": -0.012981468331584978,
+            "partition_polygons": 10,
+            "missing_area_m2": 2.441623292437356e-16,
+            "area_m2": 0.041343341083120336
+          },
+          {
+            "face": 4,
+            "min_m": -0.07804880345241294,
+            "max_m": -0.006781452786691844,
+            "partition_polygons": 10,
+            "missing_area_m2": 4.312075327882192e-17,
+            "area_m2": 0.04058970509868266
+          }
+        ],
+        "method": "every projected shelf triangle intersected with actual upward Ground triangles; affine-height extrema at all polygon vertices; not sampled/Hausdorff"
+      }
+    ]
+  },
+  "source_validator_operands": {
+    "passed": false,
+    "synthetic": false,
+    "source": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v001\\pzu.dxf",
+    "source_sha256": "35b537cfe7f05236bf13c2159ef4ae689118162c0f4418a2a93983437c4e3cf4",
+    "approved_site_handle": "33FBCEF",
+    "approved_OKS_footprint_handle": "33FBD7A",
+    "site_area_m2": 12958.738864325082,
+    "OKS_footprint_m2": 3389.9392238867376,
+    "ground_area_m2": 9568.799640438345,
+    "origin_xy_m": [
+      783.905,
+      11112.780845748444
+    ],
+    "source_flattening_tolerance_m": 0.002,
+    "Ground_materials": [
+      "M_SIL13_Ground_1",
+      "M_SIL13_Ground_2",
+      "M_SIL13_Ground_3",
+      "M_SIL13_Ground_4",
+      "M_SIL13_Ground_5",
+      "M_SIL13_Ground_6",
+      "M_SIL13_Ground_7",
+      "M_SIL13_Ground_8",
+      "M_SIL13_Ground_9",
+      "M_SIL13_Ground_10"
+    ],
+    "scope": "Ground-only face filter, not Flora/MAF; original whole topology and skirt checks unchanged"
+  },
+  "actual_Ground_material_filter": [
+    {
+      "profile": "NPM",
+      "actual_Ground_faces": 26378,
+      "excluded_Flora_MAF_faces": 0,
+      "filter_exact_original_Ground_prefix": true,
+      "materials": [
+        "M_SIL13_Ground_1",
+        "M_SIL13_Ground_10",
+        "M_SIL13_Ground_2",
+        "M_SIL13_Ground_3",
+        "M_SIL13_Ground_4",
+        "M_SIL13_Ground_5",
+        "M_SIL13_Ground_6",
+        "M_SIL13_Ground_7",
+        "M_SIL13_Ground_8",
+        "M_SIL13_Ground_9"
+      ]
+    },
+    {
+      "profile": "VPM",
+      "actual_Ground_faces": 58896,
+      "excluded_Flora_MAF_faces": 241224,
+      "filter_exact_original_Ground_prefix": true,
+      "materials": [
+        "M_SIL13_Ground_1.001",
+        "M_SIL13_Ground_10.001",
+        "M_SIL13_Ground_2.001",
+        "M_SIL13_Ground_3.001",
+        "M_SIL13_Ground_4.001",
+        "M_SIL13_Ground_5.001",
+        "M_SIL13_Ground_6.001",
+        "M_SIL13_Ground_7.001",
+        "M_SIL13_Ground_8.001",
+        "M_SIL13_Ground_9.001"
+      ]
+    }
+  ],
+  "validator_commands": [
+    {
+      "profile": "NPM",
+      "argv": [
+        "uv",
+        "run",
+        "python",
+        "tools/qa/validate_package.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbx",
+        "--profile",
+        "npm",
+        "--scene",
+        "--json",
+        "--ground-area-m2",
+        "9568.799640438345",
+        "--footprint-holes",
+        "[\n  [\n    [\n      -61.607944974897464,\n      -6.157965760185107\n    ],\n    [\n      -56.737859505818165,\n      0.37692467991655576\n    ],\n    [\n      -62.511013153331646,\n      4.679330657065293\n    ],\n    [\n      -46.58914581908323,\n      26.043978012676234\n    ],\n    [\n      -49.68819488936356,\n      28.353524589436347\n    ],\n    [\n      -34.42062926801793,\n      48.84020172354576\n    ],\n    [\n      -31.321636758640807,\n      46.530579249814764\n    ],\n    [\n      -20.74779744577188,\n      60.719012261835815\n    ],\n    [\n      -14.974643843063404,\n      56.4166063179855\n    ],\n    [\n      -6.1154105277692,\n      68.30430715304647\n    ],\n    [\n      26.225356092671177,\n      5.658401342256184\n    ],\n    [\n      18.571600596567578,\n      1.705598875425494\n    ],\n    [\n      16.824072392156268,\n      5.08931311188644\n    ],\n    [\n      9.88704956475533,\n      1.506669248256003\n    ],\n    [\n      -0.370696013904535,\n      21.36859746254595\n    ],\n    [\n      -0.9663414586600538,\n      21.157435107226775\n    ],\n    [\n      -1.565411276893883,\n      20.960029202105943\n    ],\n    [\n      -2.1676742634590482,\n      20.77637901206799\n    ],\n    [\n      -2.7728992132083476,\n      20.606483801992\n    ],\n    [\n      -3.3808549209949206,\n      20.450342836757045\n    ],\n    [\n      -3.9913101816714516,\n      20.307955381245847\n    ],\n    [\n      -4.60403379009108,\n      20.179320700337485\n    ],\n    [\n      -5.218794541106604,\n      20.064438058914675\n    ],\n    [\n      -5.835361229570935,\n      19.963306721856497\n    ],\n    [\n      -6.453502650337214,\n      19.87592595404385\n    ],\n    [\n      -7.072987598258123,\n      19.802295020355814\n    ],\n    [\n      -7.693584868186804,\n      19.742413185676924\n    ],\n    [\n      -8.315063254976053,\n      19.69627971488444\n    ],\n    [\n      -8.937191553478783,\n      19.663893872859262\n    ],\n    [\n      -9.55973855854802,\n      19.645254924484107\n    ],\n    [\n      -10.182473065036675,\n      19.640362134638053\n    ],\n    [\n      -10.805163867797546,\n      19.649214768202\n    ],\n    [\n      -11.427579761683774,\n      19.671812090056847\n    ],\n    [\n      -12.049489541548269,\n      19.70815336508349\n    ],\n    [\n      -12.67066200224383,\n      19.75823785816283\n    ],\n    [\n      -13.290865938623483,\n      19.822064834173943\n    ],\n    [\n      -13.909870145540026,\n      19.89963355799773\n    ],\n    [\n      -14.527443417846598,\n      19.99094329451509\n    ],\n    [\n      -15.143354550395998,\n      20.09599330860874\n    ],\n    [\n      -15.757372338041137,\n      20.21478286515776\n    ],\n    [\n      -16.36926557563504,\n      20.347311229041225\n    ],\n    [\n      -16.97880305803062,\n      20.493577665141856\n    ],\n    [\n      -17.58575358008079,\n      20.653581438338733\n    ],\n    [\n      -18.18988593663846,\n      20.827321813514573\n    ],\n    [\n      -18.790968922556658,\n      21.014798055548454\n    ],\n    [\n      -19.388771332688066,\n      21.216009429323094\n    ],\n    [\n      -19.983061961885937,\n      21.430955199715754\n    ],\n    [\n      -42.18213334106201,\n      -8.35671490504501\n    ],\n    [\n      -35.879854610317125,\n      -13.053447979604243\n    ],\n    [\n      -32.47677100121757,\n      -8.487043819934115\n    ],\n    [\n      -17.129723599500608,\n      -19.924333125614794\n    ],\n    [\n      -24.80234757441724,\n      -30.21979044132422\n    ],\n    [\n      -29.340774707261744,\n      -26.83755653361368\n    ],\n    [\n      -30.954177881235637,\n      -29.00249040275412\n    ],\n    [\n      -61.607944974897464,\n      -6.157965760185107\n    ]\n  ]\n]",
+        "--ground-materials",
+        "M_SIL13_Ground_1,M_SIL13_Ground_10,M_SIL13_Ground_2,M_SIL13_Ground_3,M_SIL13_Ground_4,M_SIL13_Ground_5,M_SIL13_Ground_6,M_SIL13_Ground_7,M_SIL13_Ground_8,M_SIL13_Ground_9"
+      ],
+      "exit_code": 1,
+      "seconds": 61.62115419993643
+    },
+    {
+      "profile": "VPM",
+      "argv": [
+        "uv",
+        "run",
+        "python",
+        "tools/qa/validate_package.py",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-ucx-wide-r1\\VPM\\SM_SIL13_Ground.fbx",
+        "--profile",
+        "vpm",
+        "--scene",
+        "--json",
+        "--ground-area-m2",
+        "9568.799640438345",
+        "--footprint-holes",
+        "[\n  [\n    [\n      -61.607944974897464,\n      -6.157965760185107\n    ],\n    [\n      -56.737859505818165,\n      0.37692467991655576\n    ],\n    [\n      -62.511013153331646,\n      4.679330657065293\n    ],\n    [\n      -46.58914581908323,\n      26.043978012676234\n    ],\n    [\n      -49.68819488936356,\n      28.353524589436347\n    ],\n    [\n      -34.42062926801793,\n      48.84020172354576\n    ],\n    [\n      -31.321636758640807,\n      46.530579249814764\n    ],\n    [\n      -20.74779744577188,\n      60.719012261835815\n    ],\n    [\n      -14.974643843063404,\n      56.4166063179855\n    ],\n    [\n      -6.1154105277692,\n      68.30430715304647\n    ],\n    [\n      26.225356092671177,\n      5.658401342256184\n    ],\n    [\n      18.571600596567578,\n      1.705598875425494\n    ],\n    [\n      16.824072392156268,\n      5.08931311188644\n    ],\n    [\n      9.88704956475533,\n      1.506669248256003\n    ],\n    [\n      -0.370696013904535,\n      21.36859746254595\n    ],\n    [\n      -0.9663414586600538,\n      21.157435107226775\n    ],\n    [\n      -1.565411276893883,\n      20.960029202105943\n    ],\n    [\n      -2.1676742634590482,\n      20.77637901206799\n    ],\n    [\n      -2.7728992132083476,\n      20.606483801992\n    ],\n    [\n      -3.3808549209949206,\n      20.450342836757045\n    ],\n    [\n      -3.9913101816714516,\n      20.307955381245847\n    ],\n    [\n      -4.60403379009108,\n      20.179320700337485\n    ],\n    [\n      -5.218794541106604,\n      20.064438058914675\n    ],\n    [\n      -5.835361229570935,\n      19.963306721856497\n    ],\n    [\n      -6.453502650337214,\n      19.87592595404385\n    ],\n    [\n      -7.072987598258123,\n      19.802295020355814\n    ],\n    [\n      -7.693584868186804,\n      19.742413185676924\n    ],\n    [\n      -8.315063254976053,\n      19.69627971488444\n    ],\n    [\n      -8.937191553478783,\n      19.663893872859262\n    ],\n    [\n      -9.55973855854802,\n      19.645254924484107\n    ],\n    [\n      -10.182473065036675,\n      19.640362134638053\n    ],\n    [\n      -10.805163867797546,\n      19.649214768202\n    ],\n    [\n      -11.427579761683774,\n      19.671812090056847\n    ],\n    [\n      -12.049489541548269,\n      19.70815336508349\n    ],\n    [\n      -12.67066200224383,\n      19.75823785816283\n    ],\n    [\n      -13.290865938623483,\n      19.822064834173943\n    ],\n    [\n      -13.909870145540026,\n      19.89963355799773\n    ],\n    [\n      -14.527443417846598,\n      19.99094329451509\n    ],\n    [\n      -15.143354550395998,\n      20.09599330860874\n    ],\n    [\n      -15.757372338041137,\n      20.21478286515776\n    ],\n    [\n      -16.36926557563504,\n      20.347311229041225\n    ],\n    [\n      -16.97880305803062,\n      20.493577665141856\n    ],\n    [\n      -17.58575358008079,\n      20.653581438338733\n    ],\n    [\n      -18.18988593663846,\n      20.827321813514573\n    ],\n    [\n      -18.790968922556658,\n      21.014798055548454\n    ],\n    [\n      -19.388771332688066,\n      21.216009429323094\n    ],\n    [\n      -19.983061961885937,\n      21.430955199715754\n    ],\n    [\n      -42.18213334106201,\n      -8.35671490504501\n    ],\n    [\n      -35.879854610317125,\n      -13.053447979604243\n    ],\n    [\n      -32.47677100121757,\n      -8.487043819934115\n    ],\n    [\n      -17.129723599500608,\n      -19.924333125614794\n    ],\n    [\n      -24.80234757441724,\n      -30.21979044132422\n    ],\n    [\n      -29.340774707261744,\n      -26.83755653361368\n    ],\n    [\n      -30.954177881235637,\n      -29.00249040275412\n    ],\n    [\n      -61.607944974897464,\n      -6.157965760185107\n    ]\n  ]\n]",
+        "--ground-materials",
+        "M_SIL13_Ground_1.001,M_SIL13_Ground_10.001,M_SIL13_Ground_2.001,M_SIL13_Ground_3.001,M_SIL13_Ground_4.001,M_SIL13_Ground_5.001,M_SIL13_Ground_6.001,M_SIL13_Ground_7.001,M_SIL13_Ground_8.001,M_SIL13_Ground_9.001"
+      ],
+      "exit_code": 1,
+      "seconds": 129.21956300002057
+    }
+  ],
+  "native_public_validator_counts": {
+    "NPM": {
+      "not_run": 4,
+      "pass": 2,
+      "fail": 3,
+      "review": 1
+    },
+    "VPM": {
+      "not_run": 7,
+      "pass": 3,
+      "fail": 4,
+      "review": 1
+    }
+  },
+  "native_public_validator_stages": {
+    "NPM": [
+      {
+        "id": "V001",
+        "check": "архив читается; нет битых и посторонних файлов; размер и состав по профилю",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          6,
+          7
+        ],
+        "findings": [],
+        "status": "not_run"
+      },
+      {
+        "id": "V002",
+        "check": "binary FBX 7.4/2014, 1 unit = 1 m, scale 1:1",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          4
+        ],
+        "findings": [
+          {
+            "name": "FBX header",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: binary FBX version 7400",
+            "expected": "binary FBX 7400 (7.4/2014)",
+            "source_pdf_pages": [
+              4
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "system units",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 1 unit = 100 cm (UnitScaleFactor 100, OriginalUnitScaleFactor 100.0)",
+            "expected": "1 unit = 1 m (UnitScaleFactor 100)",
+            "source_pdf_pages": [
+              4,
+              24
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "scale 1:1",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: scale 1 on every mesh",
+            "expected": "local and effective (inherited) scale 1 on every mesh (1:1)",
+            "source_pdf_pages": [
+              4,
+              24
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "pass"
+      },
+      {
+        "id": "V003",
+        "check": "триангуляция, количество треугольников, типы объектов, отсутствие пустых объектов и недопустимых модификаторов",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          6,
+          7,
+          8
+        ],
+        "findings": [
+          {
+            "name": "triangulated",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: all triangles",
+            "expected": "triangulated on export",
+            "source_pdf_pages": [
+              7,
+              28
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "triangle count",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 173990",
+            "expected": "<= 180000",
+            "source_pdf_pages": [
+              7,
+              28,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 173990,
+            "threshold": 180000,
+            "margin": 0.03338888888888889
+          },
+          {
+            "name": "ground footprint coverage",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: measured 9568.779249 m2, expected 9568.79964 m2, difference -0.020391 m2; filter --ground-materials ['M_SIL13_Ground_1', 'M_SIL13_Ground_10', 'M_SIL13_Ground_2', 'M_SIL13_Ground_3', 'M_SIL13_Ground_4', 'M_SIL13_Ground_5', 'M_SIL13_Ground_6', 'M_SIL13_Ground_7', 'M_SIL13_Ground_8', 'M_SIL13_Ground_9']: 147612 face(s) excluded (M_SIL13_Flora_1, M_SIL13_Ground_12)",
+            "expected": "|top-down area - ground_area_m2| < 0.25 m2",
+            "source_pdf_pages": [
+              28,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 9568.779248977726,
+            "threshold": 9568.799640438345,
+            "margin": 0.918434157523734,
+            "data": {
+              "measured_m2": 9568.779248977726,
+              "expected_m2": 9568.799640438345,
+              "difference_m2": -0.020391460619066493,
+              "ground_materials": [
+                "M_SIL13_Ground_1",
+                "M_SIL13_Ground_10",
+                "M_SIL13_Ground_2",
+                "M_SIL13_Ground_3",
+                "M_SIL13_Ground_4",
+                "M_SIL13_Ground_5",
+                "M_SIL13_Ground_6",
+                "M_SIL13_Ground_7",
+                "M_SIL13_Ground_8",
+                "M_SIL13_Ground_9"
+              ],
+              "excluded_faces": 147612,
+              "excluded_materials": {
+                "M_SIL13_Flora_1": 69142,
+                "M_SIL13_Ground_12": 78470
+              }
+            }
+          },
+          {
+            "name": "ground footprint hole coverage",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: hole coverage 0.097313 m2, tolerance 0.25 m2; filter --ground-materials ['M_SIL13_Ground_1', 'M_SIL13_Ground_10', 'M_SIL13_Ground_2', 'M_SIL13_Ground_3', 'M_SIL13_Ground_4', 'M_SIL13_Ground_5', 'M_SIL13_Ground_6', 'M_SIL13_Ground_7', 'M_SIL13_Ground_8', 'M_SIL13_Ground_9']: 147612 face(s) excluded (M_SIL13_Flora_1, M_SIL13_Ground_12)",
+            "expected": "top-down coverage inside the footprint hole < 0.25 m2",
+            "source_pdf_pages": [
+              28,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 0.09731290156127459,
+            "threshold": 0.25,
+            "margin": 0.6107483937549016,
+            "data": {
+              "hole_coverage_m2": 0.09731290156127459,
+              "tolerance_m2": 0.25,
+              "ground_materials": [
+                "M_SIL13_Ground_1",
+                "M_SIL13_Ground_10",
+                "M_SIL13_Ground_2",
+                "M_SIL13_Ground_3",
+                "M_SIL13_Ground_4",
+                "M_SIL13_Ground_5",
+                "M_SIL13_Ground_6",
+                "M_SIL13_Ground_7",
+                "M_SIL13_Ground_8",
+                "M_SIL13_Ground_9"
+              ],
+              "excluded_faces": 147612,
+              "excluded_materials": {
+                "M_SIL13_Flora_1": 69142,
+                "M_SIL13_Ground_12": 78470
+              }
+            }
+          },
+          {
+            "name": "ground skirt depth",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: SM_SIL13_Ground perimeter drop 0.000 m",
+            "expected": "perimeter polygons extruded down >= 1 m [GND-03] (reg p.7 §3.4, p.28 §3.7)",
+            "source_pdf_pages": [
+              7,
+              28
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 0.0,
+            "threshold": 1.0,
+            "margin": -1.0
+          },
+          {
+            "name": "Flora triangle share",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: Flora 69142 of share 70000; Ground total 173990 of 180000 (within)",
+            "expected": "Flora <= 70000 project share [D097] (planning target); Ground total <= 180000 (reg p.7 §3.6, V003 triangle count)",
+            "source_pdf_pages": [
+              7
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "master quads",
+            "status": "not_run",
+            "observed": "quad work FBX not given (--master)",
+            "expected": "quad master; VPM faces <= 4 m [D021]",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "DER-03",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "V004",
+        "check": "дубликаты, изолированные элементы, нулевые рёбра; применённые трансформации",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          7,
+          8
+        ],
+        "findings": [
+          {
+            "name": "applied transforms",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: rotation 0, scale 1",
+            "expected": "rotation 0, scale 1 after reset",
+            "source_pdf_pages": [
+              8,
+              29,
+              33
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "topology defects",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Flora (duplicates_and_self_intersections=515)']",
+            "expected": "<= 100 duplicates/self-intersections at 0.002 m per mesh; 0 isolated vertices/edges/polygons; 0 zero-length edges",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "MAF smoothing",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: no soft edges above 40 deg",
+            "expected": "hard edge / split normals where faces meet above 40 deg",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "MAF flipped normals",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: SM_SIL13_GroundEl: flipped 80, inconsistent 0, undetermined 0",
+            "expected": "outward faces, consistent winding (single-sided only for NPM Flora)",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "co-directional clearance",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: 70584 co-directional overlapping pairs: 22 < 5 mm, 24675 in band, 45887 > 20 mm; distance mm min/median/max 1.2528/325.72/171988.7221; histogram {'0-1': 0, '1-5': 22, '5-10': 24645, '10-20': 30, '20-50': 6, '50-100': 2020, '100-1000': 27783, '1000+': 16078}; worst: ['SM_SIL13_GroundEl#50097/SM_SIL13_GroundEl#51984 d=1.3 mm', 'SM_SIL13_GroundEl#24545/SM_SIL13_GroundEl#26432 d=1.3 mm', 'SM_SIL13_GroundEl#55161/SM_SIL13_GroundEl#57048 d=1.3 mm', 'SM_SIL13_GroundEl#34673/SM_SIL13_GroundEl#36560 d=1.3 mm', 'SM_SIL13_GroundEl#29609/SM_SIL13_GroundEl#31496 d=1.3 mm']",
+            "expected": "co-directional overlapping faces 5-20 mm apart (pairs beyond 20 mm: review)",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [
+              30
+            ],
+            "measured": 171.98872213709097,
+            "threshold": 0.02,
+            "margin": -8598.436106854548
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "V005",
+        "check": "только разрешённые шейдеры; карты, слоты и прозрачность по профилю",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          8,
+          9
+        ],
+        "findings": [
+          {
+            "name": "color attributes",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 0 color attributes on 3 mesh(es)",
+            "expected": "no color attributes (reg 4.1.1: recommended to remove)",
+            "source_pdf_pages": [],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 0,
+            "threshold": 0,
+            "margin": null,
+            "data": {
+              "objects": {}
+            }
+          },
+          {
+            "name": "material assignments",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: [\"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_1'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_2'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_3'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_4'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_5'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_6'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_7'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_8'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_9'\", \"SM_SIL13_Ground: unmapped diffuse for material 'M_SIL13_Ground_10'\", \"SM_SIL13_GroundEl: unmapped diffuse for material 'M_SIL13_Ground_12'\"]",
+            "expected": "each NPM opaque material resolves to its diffuse texture; glass excluded",
+            "source_pdf_pages": [
+              8,
+              9
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "Flora maps: M_SIL13_Flora_1",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: diffuse + opacity",
+            "expected": "diffuse map + separate opacity map only (reg p.10 §5.13; no alpha in NPM images, reg p.9 §5.5 [D020])",
+            "source_pdf_pages": [
+              9,
+              10
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "V006",
+        "check": "PNG встроены в FBX; допустимые размеры, <=3 МБ, без alpha, 8 px padding; наборы и имена",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          9,
+          11,
+          12,
+          13
+        ],
+        "findings": [
+          {
+            "name": "embedded textures",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: all embedded",
+            "expected": "PNG embedded in FBX",
+            "source_pdf_pages": [
+              9
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "texture dimensions",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: all measured sides <= 2048 px",
+            "expected": "positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate",
+            "source_pdf_pages": [
+              9
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "pass"
+      },
+      {
+        "id": "V012",
+        "check": "имена архива/FBX/mesh/material/texture и сквозная нумерация по соответствующему профилю",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          11,
+          12,
+          13
+        ],
+        "findings": [
+          {
+            "name": "mesh names",
+            "status": "review",
+            "observed": "SM_SIL13_Ground.fbx: 3 name(s) follow the grammar; Address not derived from SM_SIL13_Ground, masks ran with any Address",
+            "expected": "SM_{Address}_Ground|GroundGlass|GroundEl|GroundElGlass|Flora; <= 254 characters, A-Z a-z 0-9 _",
+            "source_pdf_pages": [
+              11,
+              12
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "review"
+      },
+      {
+        "id": "V014",
+        "check": "геометрия в московских проектных координатах и высотах; углы соответствуют плану",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          10
+        ],
+        "findings": [],
+        "status": "not_run"
+      },
+      {
+        "id": "V015",
+        "check": "силуэт, этажи, фасады, материалы, оконные типы, первый этаж, крыша, благоустройство совпадают с утверждённым проектом",
+        "gate": "manual_review",
+        "source_pdf_pages": [
+          4,
+          7,
+          8
+        ],
+        "findings": [
+          {
+            "name": "Flora dimensions",
+            "status": "not_run",
+            "observed": "SM_SIL13_Ground.fbx: no planting schedule supplied",
+            "expected": "height and crown within 20 % of the schedule [D099]",
+            "source_pdf_pages": [
+              4,
+              24
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "not_run"
+      },
+      {
+        "id": "V017",
+        "check": "сверка точки вставки, отметки 0 и геопривязки с утверждённым DWG/СПОЗУ; у ВПМ допуск 0.5 м",
+        "gate": "manual_review",
+        "source_pdf_pages": [
+          10
+        ],
+        "findings": [],
+        "status": "not_run"
+      }
+    ],
+    "VPM": [
+      {
+        "id": "V001",
+        "check": "архив читается; нет битых и посторонних файлов; размер и состав по профилю",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          26
+        ],
+        "findings": [],
+        "status": "not_run"
+      },
+      {
+        "id": "V002",
+        "check": "binary FBX 7.4/2014, 1 unit = 1 m, scale 1:1",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          24
+        ],
+        "findings": [
+          {
+            "name": "FBX header",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: binary FBX version 7400",
+            "expected": "binary FBX 7400 (7.4/2014)",
+            "source_pdf_pages": [
+              24
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "system units",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 1 unit = 100 cm (UnitScaleFactor 100, OriginalUnitScaleFactor 100.0)",
+            "expected": "1 unit = 1 m (UnitScaleFactor 100)",
+            "source_pdf_pages": [
+              4,
+              24
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "scale 1:1",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: scale 1 on every mesh",
+            "expected": "local and effective (inherited) scale 1 on every mesh (1:1)",
+            "source_pdf_pages": [
+              4,
+              24
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "pass"
+      },
+      {
+        "id": "V003",
+        "check": "триангуляция, количество треугольников, типы объектов, отсутствие пустых объектов и недопустимых модификаторов",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          28,
+          29
+        ],
+        "findings": [
+          {
+            "name": "triangulated",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: all triangles",
+            "expected": "triangulated on export",
+            "source_pdf_pages": [
+              7,
+              28
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "triangle count",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 300120; ground_area_m2 9568.799640438345 (0.95688 ha)",
+            "expected": "<= 2625000",
+            "source_pdf_pages": [
+              7,
+              28,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 300120,
+            "threshold": 2625000,
+            "margin": 0.8856685714285715,
+            "data": {
+              "area_m2": 9568.799640438345,
+              "area_ha": 0.9568799640438345,
+              "band": {
+                "area_max": 1.0,
+                "triangles_max": 2625000
+              },
+              "basis": "территория минус пятно застройки"
+            }
+          },
+          {
+            "name": "ground footprint coverage",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: measured 9568.779249 m2, expected 9568.79964 m2, difference -0.020391 m2; filter --ground-materials ['M_SIL13_Ground_1.001', 'M_SIL13_Ground_10.001', 'M_SIL13_Ground_2.001', 'M_SIL13_Ground_3.001', 'M_SIL13_Ground_4.001', 'M_SIL13_Ground_5.001', 'M_SIL13_Ground_6.001', 'M_SIL13_Ground_7.001', 'M_SIL13_Ground_8.001', 'M_SIL13_Ground_9.001']: 241224 face(s) excluded (M_SIL13_Ground_11_INTERIM, M_SIL13_Ground_12.001)",
+            "expected": "|top-down area - ground_area_m2| < 0.25 m2",
+            "source_pdf_pages": [
+              28,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 9568.779248977742,
+            "threshold": 9568.799640438345,
+            "margin": 0.9184341575892176,
+            "data": {
+              "measured_m2": 9568.779248977742,
+              "expected_m2": 9568.799640438345,
+              "difference_m2": -0.020391460602695588,
+              "ground_materials": [
+                "M_SIL13_Ground_1.001",
+                "M_SIL13_Ground_10.001",
+                "M_SIL13_Ground_2.001",
+                "M_SIL13_Ground_3.001",
+                "M_SIL13_Ground_4.001",
+                "M_SIL13_Ground_5.001",
+                "M_SIL13_Ground_6.001",
+                "M_SIL13_Ground_7.001",
+                "M_SIL13_Ground_8.001",
+                "M_SIL13_Ground_9.001"
+              ],
+              "excluded_faces": 241224,
+              "excluded_materials": {
+                "M_SIL13_Ground_11_INTERIM": 107386,
+                "M_SIL13_Ground_12.001": 133838
+              }
+            }
+          },
+          {
+            "name": "ground footprint hole coverage",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: hole coverage 0.097313 m2, tolerance 0.25 m2; filter --ground-materials ['M_SIL13_Ground_1.001', 'M_SIL13_Ground_10.001', 'M_SIL13_Ground_2.001', 'M_SIL13_Ground_3.001', 'M_SIL13_Ground_4.001', 'M_SIL13_Ground_5.001', 'M_SIL13_Ground_6.001', 'M_SIL13_Ground_7.001', 'M_SIL13_Ground_8.001', 'M_SIL13_Ground_9.001']: 241224 face(s) excluded (M_SIL13_Ground_11_INTERIM, M_SIL13_Ground_12.001)",
+            "expected": "top-down coverage inside the footprint hole < 0.25 m2",
+            "source_pdf_pages": [
+              28,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 0.09731290156127459,
+            "threshold": 0.25,
+            "margin": 0.6107483937549016,
+            "data": {
+              "hole_coverage_m2": 0.09731290156127459,
+              "tolerance_m2": 0.25,
+              "ground_materials": [
+                "M_SIL13_Ground_1.001",
+                "M_SIL13_Ground_10.001",
+                "M_SIL13_Ground_2.001",
+                "M_SIL13_Ground_3.001",
+                "M_SIL13_Ground_4.001",
+                "M_SIL13_Ground_5.001",
+                "M_SIL13_Ground_6.001",
+                "M_SIL13_Ground_7.001",
+                "M_SIL13_Ground_8.001",
+                "M_SIL13_Ground_9.001"
+              ],
+              "excluded_faces": 241224,
+              "excluded_materials": {
+                "M_SIL13_Ground_11_INTERIM": 107386,
+                "M_SIL13_Ground_12.001": 133838
+              }
+            }
+          },
+          {
+            "name": "ground skirt depth",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: broken face geometry: SM_SIL13_Ground",
+            "expected": "perimeter polygons extruded down >= 1 m [GND-03] (reg p.7 §3.4, p.28 §3.7)",
+            "source_pdf_pages": [
+              7,
+              28
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "master quads",
+            "status": "not_run",
+            "observed": "quad work FBX not given (--master)",
+            "expected": "quad master; VPM faces <= 4 m [D021]",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "DER-03",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "V004",
+        "check": "дубликаты, изолированные элементы, нулевые рёбра; применённые трансформации",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          29
+        ],
+        "findings": [
+          {
+            "name": "applied transforms",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: rotation 0, scale 1",
+            "expected": "rotation 0, scale 1 after reset",
+            "source_pdf_pages": [
+              8,
+              29,
+              33
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "topology defects",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: ['SM_SIL13_Ground (duplicates_and_self_intersections=108808)']",
+            "expected": "<= 100 duplicates/self-intersections at 0.002 m per mesh; 0 isolated vertices/edges/polygons; 0 zero-length edges",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "co-directional clearance",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: 139259 co-directional overlapping pairs: 44 < 5 mm, 53324 in band, 85891 > 20 mm; distance mm min/median/max 0/167.9886/175519.6268; histogram {'0-1': 19, '1-5': 25, '5-10': 52960, '10-20': 364, '20-50': 521, '50-100': 3902, '100-1000': 48943, '1000+': 32525}; worst: ['SM_SIL13_Ground#67096/SM_SIL13_Ground#67228 d=0.0 mm', 'SM_SIL13_Ground#67096/SM_SIL13_Ground#67229 d=0.0 mm', 'SM_SIL13_Ground#67097/SM_SIL13_Ground#67228 d=0.0 mm', 'SM_SIL13_Ground#67097/SM_SIL13_Ground#67229 d=0.0 mm', 'SM_SIL13_Ground#67108/SM_SIL13_Ground#67216 d=0.0 mm']",
+            "expected": "co-directional overlapping faces 5-20 mm apart (pairs beyond 20 mm: review)",
+            "source_pdf_pages": [
+              8,
+              29
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [
+              30
+            ],
+            "measured": 175.51962683729604,
+            "threshold": 0.02,
+            "margin": -8774.981341864801
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "V005",
+        "check": "только разрешённые шейдеры; карты, слоты и прозрачность по профилю",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          29,
+          30,
+          32
+        ],
+        "findings": [
+          {
+            "name": "color attributes",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 0 color attributes on 546 mesh(es)",
+            "expected": "no color attributes (reg 4.1.1: recommended to remove)",
+            "source_pdf_pages": [],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 0,
+            "threshold": 0,
+            "margin": null,
+            "data": {
+              "objects": {}
+            }
+          }
+        ],
+        "status": "pass"
+      },
+      {
+        "id": "V007",
+        "check": "внешние PNG; Diffuse + ERM + Normal на используемые UDIM, 8 бит/канал, размеры, DirectX normal, alpha правила, padding",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          23,
+          30,
+          31,
+          34,
+          36
+        ],
+        "findings": [],
+        "status": "not_run"
+      },
+      {
+        "id": "V008",
+        "check": "один UV-канал, UDIM 1001..1100 подряд, без зеркальных островов, стекло только в 1001",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          31,
+          39
+        ],
+        "findings": [
+          {
+            "name": "one UV channel",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: all meshes",
+            "expected": "1 UV channel",
+            "source_pdf_pages": [
+              31
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "mirrored islands",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: {'SM_SIL13_Ground': 84568}",
+            "expected": "no mirrored UV",
+            "source_pdf_pages": [
+              31
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "V009",
+        "check": "плотность diffuse 512..1706 px/m кроме разрешённых исключений",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          31,
+          32
+        ],
+        "findings": [
+          {
+            "name": "texel density",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: min 0 px/m",
+            "expected": ">= 512 px/m",
+            "source_pdf_pages": [
+              31,
+              32
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 0.0,
+            "threshold": 512,
+            "margin": -1.0
+          },
+          {
+            "name": "texel density upper",
+            "status": "fail",
+            "observed": "SM_SIL13_Ground.fbx: max 7782.75 px/m",
+            "expected": "<= 1706 px/m",
+            "source_pdf_pages": [
+              31,
+              32
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": 7782.753073365629,
+            "threshold": 1706,
+            "margin": -3.5619889058415173
+          }
+        ],
+        "status": "fail"
+      },
+      {
+        "id": "V010",
+        "check": "UCX для каждого основного FBX; выпуклые замкнутые непересекающиеся оболочки, без слотов, с лимитом треугольников",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          34,
+          36,
+          37
+        ],
+        "findings": [
+          {
+            "name": "UCX present",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 545 UCX mesh(es)",
+            "expected": "own UCX_ collision in each non-lighting geometry FBX",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "UCX material slots",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: no slots",
+            "expected": "no material slots on UCX meshes",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "UCX triangle budget",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 6376 UCX for 300120 model triangles",
+            "expected": "<= 15006",
+            "source_pdf_pages": [
+              36,
+              37
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "UCX intersections",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: no overlapping pairs among 545 pieces",
+            "expected": "no two UCX pieces intersect (reg p.36 §13.4)",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "UCX intersections coverage",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: every neighbour pair evaluated",
+            "expected": "every neighbour pair evaluated: closed convex non-degenerate hulls (SAT) or bounding boxes apart",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "UCX piece gap (advisory)",
+            "status": "review",
+            "observed": "SM_SIL13_Ground.fbx: touch=0 below_band=0 in_band=1447 wide=139 unmeasured=0; [('UCX_SM_SIL13_Ground_005', 'UCX_SM_SIL13_Ground_006', 15.8), ('UCX_SM_SIL13_Ground_012', 'UCX_SM_SIL13_Ground_013', 15.65), ('UCX_SM_SIL13_Ground_024', 'UCX_SM_SIL13_Ground_035', 69.2), ('UCX_SM_SIL13_Ground_026', 'UCX_SM_SIL13_Ground_028', 36.74), ('UCX_SM_SIL13_Ground_027', 'UCX_SM_SIL13_Ground_033', 79.8)]",
+            "expected": "neighbour gap 2 mm - 1 cm inclusive [D098] (advisory, never a failure)",
+            "source_pdf_pages": [
+              36
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [
+              15
+            ],
+            "measured": 0.09913146678863709,
+            "threshold": 0.01,
+            "margin": -8.91314667886371
+          },
+          {
+            "name": "UCX shape",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 545 closed convex piece(s)",
+            "expected": "closed, convex, non-degenerate UCX pieces",
+            "source_pdf_pages": [
+              34,
+              36
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "UCX coverage and offsets",
+            "status": "not_run",
+            "observed": "coverage of the model, offsets",
+            "expected": "reg p.34-37",
+            "source_pdf_pages": [
+              34,
+              37
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "review"
+      },
+      {
+        "id": "V011",
+        "check": "UTF-8, точные ключи, типы, обязательные значения, imageBase64, массив Glasses, соответствие имени материала",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          26,
+          27,
+          51,
+          52,
+          53,
+          54,
+          55
+        ],
+        "findings": [],
+        "status": "not_run"
+      },
+      {
+        "id": "V012",
+        "check": "имена архива/FBX/mesh/material/texture и сквозная нумерация по соответствующему профилю",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          33,
+          34,
+          35,
+          36
+        ],
+        "findings": [
+          {
+            "name": "mesh names",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 1 name(s) follow the grammar",
+            "expected": "SM_{Address}_Ground|GroundGlass; <= 254 characters, A-Z a-z 0-9 _",
+            "source_pdf_pages": [
+              33,
+              34
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "UCX names",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: 545 name(s) follow the grammar",
+            "expected": "UCX_SM_{Address}_Ground_001..999; <= 254 characters, A-Z a-z 0-9 _",
+            "source_pdf_pages": [
+              34
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "pass"
+      },
+      {
+        "id": "V013",
+        "check": "локальный origin 0/0/0, общий pivot, rotation 0 после reset; GeoJSON координаты МСК-77 совпадают с точкой вставки",
+        "gate": "blocking",
+        "source_pdf_pages": [
+          32,
+          33,
+          55
+        ],
+        "findings": [
+          {
+            "name": "origin at FBX zero",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: SM_SIL13_Ground at [0.0, 0.0, 0.0]",
+            "expected": "local origin (0, 0, 0)",
+            "source_pdf_pages": [
+              32,
+              33
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "pivot at geometric centre",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: X/Y offset [0.0, 0.0] %",
+            "expected": "<= 10 % of the size",
+            "source_pdf_pages": [
+              32,
+              33
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "shared pivot",
+            "status": "pass",
+            "observed": "SM_SIL13_Ground.fbx: all meshes",
+            "expected": "every mesh shares the Main origin within 1 mm (UCX exempt)",
+            "source_pdf_pages": [
+              32,
+              33
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          },
+          {
+            "name": "MSK-77 point",
+            "status": "not_run",
+            "observed": "GeoJSON point vs survey coordinates and project zero",
+            "expected": "reg p.32-33, p.55",
+            "source_pdf_pages": [
+              32,
+              33,
+              55
+            ],
+            "evidence": "SM_SIL13_Ground.fbx",
+            "conflicts": [],
+            "measured": null,
+            "threshold": null,
+            "margin": null
+          }
+        ],
+        "status": "not_run"
+      },
+      {
+        "id": "V015",
+        "check": "силуэт, этажи, фасады, материалы, оконные типы, первый этаж, крыша, благоустройство совпадают с утверждённым проектом",
+        "gate": "manual_review",
+        "source_pdf_pages": [
+          24,
+          28,
+          29
+        ],
+        "findings": [],
+        "status": "not_run"
+      },
+      {
+        "id": "V016",
+        "check": "проходы/арки/дворы свободны, расстояние коллизий до поверхностей соответствует высотной зоне",
+        "gate": "manual_review",
+        "source_pdf_pages": [
+          36,
+          37
+        ],
+        "findings": [],
+        "status": "not_run"
+      },
+      {
+        "id": "V017",
+        "check": "сверка точки вставки, отметки 0 и геопривязки с утверждённым DWG/СПОЗУ; у ВПМ допуск 0.5 м",
+        "gate": "manual_review",
+        "source_pdf_pages": [
+          32,
+          33,
+          55
+        ],
+        "findings": [],
+        "status": "not_run"
+      }
+    ]
+  },
+  "affected_tests": {
+    "argv": [
+      "uv",
+      "run",
+      "--with",
+      "shapely",
+      "--with",
+      "scipy",
+      "--with",
+      "trimesh",
+      "--with",
+      "rtree",
+      "pytest",
+      "-q",
+      "tests/test_decisions.py",
+      "tests/test_area_requirement_sheet.py",
+      "tests/test_ground_surface_requirement_sheet.py",
+      "tmp/cold-v011/test_hedge_contract.py",
+      "tmp/cold-v012/test_witness_indices.py",
+      "tmp/cold-v012/test_export_controls.py",
+      "tmp/cold-v013/test_maf_pilot.py",
+      "tmp/cold-v013/test_pilot_structure.py",
+      "tmp/cold-v014/test_checkpoint_controls.py",
+      "tmp/cold-v014/test_replication.py",
+      "tmp/cold-v015/test_profile_scope.py",
+      "tmp/cold-v016/test_parametric_pilot.py",
+      "tmp/cold-v016/test_access_gaps.py",
+      "tmp/cold-v017/test_finishing.py",
+      "tmp/cold-v017/test_vpm_table_replication.py",
+      "tmp/cold-v017/test_link_contract.py",
+      "tmp/cold-v017/test_sand_parts.py",
+      "tmp/cold-v018/test_three_native_r2.py",
+      "tmp/cold-v018/test_three_native_npm.py",
+      "tmp/cold-v018/test_ucx_complete.py",
+      "tmp/cold-v018/test_midpoint_safety.py",
+      "tmp/cold-v018/test_midpoint_contract.py",
+      "tmp/cold-v018/test_bench_bidirectional.py",
+      "tmp/cold-v019/test_bench_clearance.py",
+      "tmp/cold-v019/test_v019_bench_site.py",
+      "tmp/cold-v020/test_shelf_ground.py",
+      "tmp/cold-v020/test_ucx_redundancy.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v021\\test_checkpoint_v021.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_checkpoint_v022.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\test_ground_derivation.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\test_checkpoint_v023.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\test_canopy.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\test_ground_budget.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v024\\test_checkpoint_v024.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v024\\test_mixed_bases.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\test_omission.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\test_ucx_progress.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\test_checkpoint_v025.py",
+      "tests/test_maf_requirement_sheet.py",
+      "-k",
+      "not test_repaired_set and not test_vpm_candidate_clean and not test_public_geometry_clean",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=C:/x/t_d9ae7dc0/v025-affected"
+    ],
+    "environment_overrides": {
+      "PYTEST_ADDOPTS": "",
+      "SHELF_AUDIT": "tmp/cold-v020/actual-shelf.json",
+      "BENCH_RESULT": "tmp/cold-v019/bench-diagonal-4",
+      "GROUND_CANDIDATE": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v022\\ground-r3",
+      "CANOPY_RESULT": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\canopy-compact",
+      "BUDGET_GROUND": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v023\\ground-budget-r9",
+      "MIXED_REPORT": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v024\\joined-NPM-native-owners.json",
+      "OMISSION_READBACK": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\readback"
+    },
+    "environment_removed": [
+      "UCX_PROGRESS_REPORT"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 125.63662690005731,
+    "log_sha256": "3d470c90aae21e300d5ccfcc44c8d076e8bc54d54c6eef1cdde33591361611f2",
+    "separate_RED_controls": "original omission4fails; predecessorUCXprogress1fails; all-bandUCX1fails(expected/current139stillopen); all3Flora trials NOT adopted"
+  },
+  "affected_result": "564 passed, 5 deselected in120.91s",
+  "separate_RED_controls": [
+    "actual predecessor omission4failed",
+    "actual predecessorUCX progress1failed175wide",
+    "full D098 band1failed, not waived by partial improvement"
+  ],
+  "full_suite": "Full suite: deferred to merge batch (rule 68)",
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "predecessor_current_site_hashes_rechecked": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v024\\site-bases-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "0d73edaf4c9dfee463ed961cc632be57bcbfb78c705ea153f6a61c07ccbc697f",
+      "raw_triangles": 179576,
+      "native_triangles": 179576
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v024\\site-bases-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "7f0a390584eea3a0d22570585e88a55e2962902174434118426d718175955a59",
+      "raw_triangles": 305706,
+      "native_triangles": 305706
+    }
+  },
+  "headless_Blender_process_logs": [
+    "build-site.log",
+    "export-UCX.log",
+    "flora-source-plane.log",
+    "Ground-filter-diagnosis.log",
+    "Ground-filter-v2.log",
+    "Ground-filter.log",
+    "read-native-NPM.log",
+    "read-native-VPM.log",
+    "read-raw-NPM.log",
+    "read-raw-VPM.log",
+    "read-UCX-native.log",
+    "read-UCX-raw.log",
+    "UCX-UV.log",
+    "UV-audit.log"
+  ],
+  "new_code": {
+    "shared_modules": 0,
+    "job_local_driver_files": 30,
+    "literal_lines": 696,
+    "files": [
+      {
+        "path": "audit_ground_filter.py",
+        "sha256": "57e2a1f31605ad9f44a5da1f370e393ea55885d918f7213a0bd9f4972bad4090",
+        "literal_lines": 8
+      },
+      {
+        "path": "audit_ground_filter_v2.py",
+        "sha256": "8391f6f606ecff880550e83fbf0009868c8d716b01603d32c3322e3d593deddd",
+        "literal_lines": 7
+      },
+      {
+        "path": "audit_site.py",
+        "sha256": "0894ae90eaeaf6d85efae22b60a1130767ba2fec2cddc9f0808e47d2c94b21f3",
+        "literal_lines": 22
+      },
+      {
+        "path": "audit_ucx.py",
+        "sha256": "107d5e78faed5254462d260605e5df87f7d2176f59d6e2d7d005eca97a1e9963",
+        "literal_lines": 22
+      },
+      {
+        "path": "audit_ucx_uv.py",
+        "sha256": "eba4a4fcf108742f276472a1d1fe8825971e238908a9ede4cf71bd146a890fc3",
+        "literal_lines": 12
+      },
+      {
+        "path": "audit_uv.py",
+        "sha256": "a33d6da585669ba273c8febb81cd52d948ff9ec19c0ad0f3303a36a447db23b6",
+        "literal_lines": 19
+      },
+      {
+        "path": "build_site.py",
+        "sha256": "d4506bed605fddecffdc0782ca8d65dd8e7694e662e9acaf70981134f2575d34",
+        "literal_lines": 50
+      },
+      {
+        "path": "certify_ucx.py",
+        "sha256": "881cc272ece21a54c9c72e83bc90d7479e70605bb67de4a5e85e5c82202da2a2",
+        "literal_lines": 8
+      },
+      {
+        "path": "coverage-program-r3.py",
+        "sha256": "8ef21a9ed7227250964fc3029bc36c5f17254f8823ef822c2250d601aaae3a3d",
+        "literal_lines": 82
+      },
+      {
+        "path": "diagnose_filter.py",
+        "sha256": "1419f29b423a1835a8664e1d0e0c1a4ade2fd41d3518d278a26f08bda19b43f2",
+        "literal_lines": 6
+      },
+      {
+        "path": "diagnose_ucx.py",
+        "sha256": "e560e48a329a3fe59dcbdc6ba466ba14141ab1bf6a10cb36db099eacf4e07834",
+        "literal_lines": 18
+      },
+      {
+        "path": "expand_ucx.py",
+        "sha256": "e6c0d74f54399d799eada9a36fa09f4d4e20448d898284b19666e792aabd1873",
+        "literal_lines": 43
+      },
+      {
+        "path": "export_ucx.py",
+        "sha256": "5f6b8781668449e1185e541eea6cfbef2b96723f7d09c1d28fa45ad775fd3a31",
+        "literal_lines": 28
+      },
+      {
+        "path": "finalize_checkpoint.py",
+        "sha256": "0222badc824d728d46211e4b1abb6844a93390e0911f0489abff816d6b817f6b",
+        "literal_lines": 43
+      },
+      {
+        "path": "flora_plane.py",
+        "sha256": "908df050f0672a02ace0b6ca6208f79af62a3769bd75bf8a171f7a99b80c27fb",
+        "literal_lines": 25
+      },
+      {
+        "path": "flora_signed.py",
+        "sha256": "a8b995201b35d203d1987fcb08573a00552a2da78ae9db4004dad86104c2261a",
+        "literal_lines": 11
+      },
+      {
+        "path": "flora_source_plane.py",
+        "sha256": "95185666cc03da68d4aa85a09197118840b5ab26bc44764d868e90a24327e46e",
+        "literal_lines": 33
+      },
+      {
+        "path": "merge_ucx_wide.py",
+        "sha256": "430a07ef928e11388530169dfb39a80de2c6f1fef4ff9a34ebf24cfdde1ea2c5",
+        "literal_lines": 61
+      },
+      {
+        "path": "read_site.py",
+        "sha256": "a8ca75b8276c57b79f81fc2f0b2a63feeacff62b1f8f645e410226f974dc1448",
+        "literal_lines": 5
+      },
+      {
+        "path": "read_ucx.py",
+        "sha256": "633721e5c3bc1f5cecabb57438b697a6b355215aa6e93768d0d70cce309a58ba",
+        "literal_lines": 6
+      },
+      {
+        "path": "run_affected.py",
+        "sha256": "fdbba727d132fd610749abb28fc79ea10d9a101fca5e4f43271b7886cd72c4ba",
+        "literal_lines": 6
+      },
+      {
+        "path": "run_qa.py",
+        "sha256": "5147c78cdf7b1436b1f06101d1d2d18670793ebc1eead42fc4d7f7bcf5f15007",
+        "literal_lines": 15
+      },
+      {
+        "path": "run_source_validators.py",
+        "sha256": "ebf150649abd9469b3c2ed41ff66acb603d72f650c4a4b15a3b0d145a1b6048f",
+        "literal_lines": 9
+      },
+      {
+        "path": "run_source_validators_v2.py",
+        "sha256": "0b4d8f919eed09c1bd4cf8f41b5db279520106381ae98f852395132ff6ad45ef",
+        "literal_lines": 8
+      },
+      {
+        "path": "run_validators.py",
+        "sha256": "53331c2e0207135bf2aa67bf018fea54aadbf2c311cd75a71a6b6b3b3885272e",
+        "literal_lines": 8
+      },
+      {
+        "path": "source_operands.py",
+        "sha256": "ca64120220e49b0a93dd23eb8a858ded3a57fb4b97eac39c2c3f26354277fc1a",
+        "literal_lines": 15
+      },
+      {
+        "path": "test_checkpoint_v025.py",
+        "sha256": "7347b99e5eee8e1c1dd72abd4bf92ef5f7b5caabfc614784ae2a34d2dec3ecdf",
+        "literal_lines": 38
+      },
+      {
+        "path": "test_omission.py",
+        "sha256": "d5f44134e2261d18a73a82ccc62759d790e3cb6bf127fbb5aa87636df506ae9d",
+        "literal_lines": 47
+      },
+      {
+        "path": "test_ucx_band.py",
+        "sha256": "b1b8d124888ffcf355c5cbc9144941a6eb2b9c485d0634b51e403d3ceed51e61",
+        "literal_lines": 9
+      },
+      {
+        "path": "test_ucx_progress.py",
+        "sha256": "2c1c5b5724729a86e9f50df39e3937fded93d34453327d548f27a51f0769fce9",
+        "literal_lines": 32
+      }
+    ],
+    "delivery": "Owned tmp/cold-v025 drivers sealed externally; not reusable shared tool claims"
+  },
+  "remaining_worker_owned": [
+    "Flora515 regulatory crossings",
+    "VPM joined9faces/49pairs mixed+Flora",
+    "Ground NPM1848unskirted outeredges;VPMmergedskirtFAIL",
+    "Ground/MAF maps, UV/smoothing/normals",
+    "139UCXwidegaps",
+    "finalvisual/material and completeSINTEZ after clean technical QA"
+  ],
+  "new_user_question": null
+}

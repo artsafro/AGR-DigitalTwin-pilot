@@ -54,7 +54,21 @@ is a source-contour question diagram, NOT that pilot or its acceptance.
 
 ## Current state
 
-Current v024: paired actual179576NPM/305706VPM raw=native;150fully buried Bike
+Current v025: [D340], Artem «1», answer6944390189 closes question6943077043.
+Remove ONLY Cannopy006/33FB581 from paired site copies; keep source row19 in38entry
+census as missing PM-158 Wood stroller/bicycle canopy7.5x1.8m. Other37physicalMAF,
+all4582plants, points/rotations unchanged. Actual NPM173990/VPM300120raw=native;
+retained render vertices/faces/locations/UV/materials/smoothing EXACT.
+WholeMAFregulatory670→0; diagnostic joinedNPM0/0/0/0, VPM9faces49pairsFAIL; Flora515.
+Actual VPM UCX545pieces6376tris, raw/nativepublicclean, complete57226triangle
+coverage89.935645mm;139widegaps stillworker-owned. Source-boundarea/holevalidators
+PASS, bothwholevalidatorsFAIL. AllFlora/newedge-expansion trialsNOTadopted.
+Resume ONLY v025/site-missing-r1/NPM and v025/site-ucx-wide-r1/VPM. No new user
+question or finalvisual/SINTEZ/PR/review claim.564affectedpass5historicaldeselected;
+see CONTINUATION-v025.md/source-wide-summary-v025.json/missing-types-v025.json.
+Full suite: deferred to merge batch(rule68). Alloldgates stayCLOSED.
+
+Historical v024: paired actual179576NPM/305706VPM raw=native;150fully buried Bike
 horizontal base faces removed/profile perD095, all vertices/retained faces/UV/materials
 EXACT. All38MAF/4582plants remain. NEW model/data question6943077043: source row19
 PM-158 bicycle shelter versus selected seating pergola Cannopy006; permit explicit

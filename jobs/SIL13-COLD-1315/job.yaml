@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-buried-bases-model-choice-v024
+run_id: cold-1315-explicit-missing-canopy-UCX-progress-v025
 synthetic: false
 path: deviation
 inputs: &id001
@@ -178,6 +178,11 @@ deviations:
   what_was_tried: D095 copy-only removal150fully buried horizontal Bike faces/profile, complete actual raw/native Ground partitions>=80.663/83.156mm. Actual paired179576NPM305706VPM raw=native; all vertices/retained faces/UV/materials EXACT. Maple common-axis experiment refuses source10.789mm nonconcurrence, NOTadopted. No visible Canopy furniture deleted or PZU point moved.
   new_tool_written: 26job-local drivers/tests484literal lines sealed externally in evidence-v024.json; no shared checker/library edits.
   result: Adopt ONLY buried-base removal;12placedBikechecks clean, all38MAF4582plants remain. NEW question6943077043 asks explicit missing row19/37physicalMAF38census or correct library shelter. Canopy removal/replacement NOTapplied pending answer. Other technicalFAILs remain worker-owned, no waiver or old gate reopened.
+- gate: operations
+  what_failed: v024wholeMAF670crossings exposed a wrong row19candidate; Flora515, skirt, maps/UV and175wideUCXgaps stillfailed.
+  what_was_tried: D340answer6944390189 removes ONLYCannopy006copy, keeps38census/37physicalMAF/4582plants. Actualpairedreadback; convex wide-gap clusters within actualGround footprint, fresh545piece export and complete57226triangle coverage. ThreeFlora trials and UCXedge-expansion remainNOTadopted.
+  new_tool_written: Thirty job-local drivers696literal lines sealed in evidence-v025.json; no sharedmodule/checker/library edit.
+  result: Actual173990NPM300120VPMraw=native; retainedrenderarrays/UV/materials/smoothing EXACT. WholeMAF670to0, joinedNPMclean/VPM9faces49pairsFAIL. Actual545UCX6376tris/publicclean/complete89.936mmcoverage,139widegapsOPEN. No newuserquestion.
 gates:
   inputs:
     status: review
@@ -186,47 +191,47 @@ gates:
     evidence: *id001
   parts:
     status: pass
-    note: Original site/scope Gate1 and pilot accepted. D287 confirms all38MAF/4582plant composition; D316closes Bench025pilot; D319closes NPM-only Table016representation
-      choice, NOT VPM or technical acceptance.
+    note: Original site/scope Gate1 and pilot accepted. D340answer6944390189 removes onlywrongrow19Cannopy006; retain38entrycensus/37physicalMAF/4582plants, sourcepoints/rotations. D335/D321/Table/Bench/hedge/sourcegates CLOSED; no technical or finaldelivery acceptance.
     evidence:
     - path: jobs/SIL13-COLD-1315/parts-full-site-picture-confirmed-v007.json
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: Adopt onlyD095buried-base removal150faces/profile; all38MAF4582plants retained. WholeMAF670regulatoryFAIL/447strict aboveGroundcrossings expose NEW row19candidate/source mismatch question6943077043. No Canopy removal/replacement/point move pending answer. Other technicalFAILs worker-owned; old gates closed.
+    note: D340applied ONLYwrongcandidate removal;37physicalMAF38census4582plants. WholeMAFregulatory0; diagnosticjoinedNPMclean/VPM9faces49pairsFAIL; Flora515. Actual545UCX6376tris/139widegapsOPEN. AllFlora/edge-expansiontrialsNOTadopted; remainingtechnicalFAILsworker-owned, no newquestion.
     evidence: &id002
     - &id003
-      path: jobs/SIL13-COLD-1315/source-wide-summary-v024.json
-      sha256: f4b2aca688757773f6368bec13a98461965ad141d1dc0173ff8a42af77a2a1f0
+      path: jobs/SIL13-COLD-1315/source-wide-summary-v025.json
+      sha256: b30d75f46f85b5321253613e05ce15eb6b250516ce1ddcd3e110466426935a61
     - &id004
-      path: jobs/SIL13-COLD-1315/evidence-v024.json
-      sha256: 12a595bbf9ee66acb97d906bebb859b9a88b05e88bdbb5d63f77ec5b11d02eb8
-    - path: jobs/SIL13-COLD-1315/question-receipt-v024.json
-      sha256: 1ec1858952b1913b249c73fe89d1971d08e2a9744972dd294e2864d70622584b
+      path: jobs/SIL13-COLD-1315/evidence-v025.json
+      sha256: 97831618291ca88ee21a3a7861802f971e8e033038f63d2fd9e680bcf764bfab
+    - path: jobs/SIL13-COLD-1315/decision-receipt-v025.json
+      sha256: de68b637e54430b067ab1c170051316cf33e265a51b1e62c16ce732a23e91d19
+    - path: jobs/SIL13-COLD-1315/missing-types-v025.json
+      sha256: 2fecdacca40ee64c3f29a48461304e7d4de285479ab066c914a4779631b427b8
   budgets:
     status: review
-    note: D335 CLOSED. Actual179576NPM305706VPMraw=native, all38MAF4582plants retained. Ground26378/58896 and564UCX6564tris EXACT, earlier full4.975942mmGround/89.936mmUCXproofs applicable. Skirt1848outeredges/maps/UV/175widegaps remainFAIL. New question is row19identity/count, not budget/technicalwaiver.
+    note: Actual173990NPM300120VPMraw=native;37physicalMAF38census4582plants. Ground26378/58896EXACT, D335full4.975942mmproofapplicable. NEWactual545UCX6376tris/complete57226triangle89.936mmproof;139widegaps/skirt/maps/UVremainOPEN. ActualDXFarea9568.799640m2 selectsVPMtriangleband; no waiver.
     evidence: *id002
   export_readback:
     status: review
-    note: Resume ONLY pairedv024/site-bases-r1/NPMandVPM. Actual179576/305706raw=native/no native face loss, all vertices/retained triangles/UV/materials EXACT,12placedBikechecks clean. NPM original-partxView0 NOTwholePASS; diagnosticjoin26NPM38VPMfacesFAIL.38isolatedMAFregulatory0 butwhole670FAIL/447strict aboveGroundcrossings. Both fresh validators exit1, VPMV009 now measuredFAIL, no missing checks hidden.
+    note: Resume ONLY v025/site-missing-r1/NPM andv025/site-ucx-wide-r1/VPM. Actual173990/300120raw=native; retainedrenderarrays/UV/materials/smoothingEXACT. WholeMAFregulatory0; diagnosticwholejoinNPM0/0/0/0,VPM9faces49pairsFAIL; Flora515. Actual545UCXraw/nativepublicclean;536unchangedoriginalobjectsEXACT. Both source-boundnativevalidators exit1, area/holePASS does not hide skirt/maps/UV/manualFAILs.
     evidence: *id002
   report:
     status: review
-    note: v024547affectedpassed5historicaldeselected79.49s. Actual mixedbaseRED108pairs toGREEN0Bikeparallelpairs; separate Maple6RED/wholeMAF670/Flora515 remainFAIL.134Drivefiles180518463bytessealed,22original hashes equal. NEW question6943077043 readbacknormalizedequal; CanopyNOTremoved. Full suite deferred to merge batch(rule68).
+    note: v025564affectedpassed5historicaldeselected120.91s. Omission4REDto5GREEN; predecessorUCXprogress1RED175wide to2GREEN139wide/fullcoverage; fullbandREDretained. ThreeFloraroutesNOTadopted.163Drivefiles250748533bytessealed,22originalhashesequal. D340applied, no newhumanquestion. Full suite deferred(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v024.md
-      sha256: 20bf0544c9f390d0cdf66a19a72597314d7b9cac8b876ffc4e222b0187c48a15
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v025.md
+      sha256: e79da6198a27a93cff47c6ef4cf76e86b6e33ef1b614cee0bb4c1cb92e2d0668
     - *id003
     - *id004
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    waits: user
-    note: 'NEW model/data question only: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6943077043 — allow explicit missing row19/37physicalMAF+38census or name correct library bicycle shelter? Canopy006 stillpresent; no deletion/replacement/pointmove. Actual full/section diagnostic NOTfinalacceptance. D335/D321/Table/Bench/hedge/source Gates stayCLOSED. TechnicalFAILs not offered for waiver.'
+    note: D340answer6944390189 CLOSED row19choice, ONLYwrongCannopy006removed/explicitmissingPM158retained. No newuserquestion. AlloldgatesstayCLOSED. Finalwhole-sitevisual/materialsign-off notrequested beforetechnicalrepairs; no technicalFAIL offeredforwaiver.
     evidence: *id002
   checker:
     status: missing
-    note: Complete finalSINTEZ notrun. Fresh NPM2pass3fail1review4not_run and VPM3pass4fail1review7not_run, both exit1; VPMV009nowmeasuredFAIL0to7782.75px/m, UV arrays retainedEXACT. Area/other operands remainreview/not_run. NEW row19choice is not technicalwaiver; no deliveryPASS.
+    note: CompletefinalSINTEZnotrun. Source-boundNPM2pass3fail1review4not_run,VPM3pass4fail1review7not_run,bothexit1. ActualDXFarea9568.799640m2/Groundfilter/holeoperands nowexercised; areaerror-0.020391m2/holecoverage0.097313m2PASS. Skirt/Flora/maps/UV/manualchecksremainFAIL/review/not_run; no deliveryPASS or newuserquestion.
     evidence: []

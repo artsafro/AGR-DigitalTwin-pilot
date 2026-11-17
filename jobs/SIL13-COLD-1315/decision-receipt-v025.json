@@ -1,0 +1,19 @@
+{
+  "passed": false,
+  "question_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6943077043",
+  "answer_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6944390189",
+  "answer_id": 6944390189,
+  "answer_author": "artsafro",
+  "answer_body": "USER DECISION (Artem 2026-11-17 «1»): remove ONLY the wrong candidate MAF_0472_M_Cannopy_006 from the site copy; keep pos.19 / 33FB581 in the census and mark it explicitly as a missing library type (PM-158 «Вуд» stroller/bike canopy 7.5x1.8 m - no model in the library, add it when one exists). The other 37 physical MAF, all 4582 plants/points and rotations stay unchanged. Continue.",
+  "answer_received": true,
+  "decision_id": "D340",
+  "readback_sha256": "57c0785fc4fa575269372546ce133b9b881beef80d710d7d8db44180017f2370",
+  "site_candidate_removed": true,
+  "only_handle_removed": "33FB581",
+  "required_article": "PM-158",
+  "physical_MAF": 37,
+  "MAF_census": 38,
+  "plants": 4582,
+  "gate_closed": true,
+  "technical_delivery_approved": false
+}

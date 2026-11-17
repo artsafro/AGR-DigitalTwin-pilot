@@ -1,0 +1,35 @@
+{
+  "passed": false,
+  "decision_id": "D340",
+  "physical_MAF": 37,
+  "MAF_census": 38,
+  "plant_census": 4582,
+  "newly_missing": [
+    {
+      "row": "19",
+      "handle": "33FB581",
+      "required_article": "PM-158",
+      "name": "Wood stroller/bicycle canopy",
+      "plan_dimensions_m": [
+        7.5,
+        1.8
+      ],
+      "source_description": "Навес для колясок и велосипедов «Вуд» (обшивка монолитным поликарбонатом), арт.  ПМ-158 | Рельеф",
+      "status": "missing-library-type",
+      "physical": false,
+      "removed_wrong_candidate": "MAF_0472_M_Cannopy_006",
+      "source_points_rotations_preserved": true,
+      "add_when_correct_library_model_exists": true,
+      "answer_url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6944390189"
+    }
+  ],
+  "other_MAF_gap_rows_unchanged_from": {
+    "path": "jobs/SIL13-COLD-1315/source-wide-summary-v006-r5.json",
+    "field": "maf_gap_rows",
+    "sha256": "9bbe5785367ec3c548d6e37afc1031ecaf0a5b8f16ccafb4be23974e0d17a26d"
+  },
+  "Flora_species_gaps_unchanged_from": {
+    "path": "jobs/SIL13-COLD-1315/source-wide-summary-v006-r5.json",
+    "field": "flora_gaps"
+  }
+}

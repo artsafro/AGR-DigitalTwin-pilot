@@ -1,6 +1,21 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v024 NPM179576/VPM305706 raw=native; NEW row19 canopy identity question,
+Current status: **v025 D340 applied; NPM173990/VPM300120 raw=native;37physical
+MAF+38census,4582plants; wholeQA STILL FAIL, NOT delivered**. See
+[CONTINUATION-v025.md](CONTINUATION-v025.md) and
+[source-wide-summary-v025.json](source-wide-summary-v025.json).
+Only wrong Cannopy006/33FB581 removed; row19 stays explicit missing PM-158.
+All remaining render arrays/locations/UV/materials/smoothing EXACT; wholeMAF
+regulatory670→0, diagnosticjoinedNPM0/0/0/0, VPM9faces49pairsFAIL, Flora515unchanged.
+Actual UCX545pieces/6376tris,536unchanged originalobjects EXACT; raw/nativepublic0/0/0/0;
+NEWcontinuous57226triangle proof89.935645mm,0unassigned;175→139widegaps stillOPEN.
+ActualDXF-derived9568.799640m2 and profile-specificGroundfilter close area/hole checks,
+not skirt/wholeQA: bothpublicvalidators exit1. All3newFlora routes and UCXedgeexpansion
+trial NOTadopted.564affectedpassed/5historicaldeselected; exactcommand/REDcontrols
+in the v025 summary. No new human question; D340 and all old model gates CLOSED.
+Full suite: deferred to merge batch (rule68).
+
+Historical status: **v024 NPM179576/VPM305706 raw=native; NEW row19 canopy identity question,
 whole QA FAIL, NOT delivered**. See [CONTINUATION-v024.md](CONTINUATION-v024.md)
 and [question-receipt-v024.json](question-receipt-v024.json).
 Only150fully buried Bike horizontal faces removed/profile perD095,>=80.663/83.156mm
