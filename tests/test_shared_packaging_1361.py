@@ -251,8 +251,16 @@ def test_embedded_sibling_binding_fresh_process(tmp_path):
     script = '''
 import sys
 from pathlib import Path
-sys.path.insert(0, sys.argv[1])
-import package_core, edit_core, export_meta
+import importlib.util
+root = Path(sys.argv[1])
+assert str(root) not in sys.path
+def load(name):
+    spec = importlib.util.spec_from_file_location('agr_tools_' + name, root / (name + '.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+package_core, edit_core, export_meta = [load(n) for n in ('package_core', 'edit_core', 'export_meta')]
+assert package_core.__package__ == ''
 folder = Path(sys.argv[2])
 for part in ('01', 'Ground'):
     fbx = folder / ('0000_Synthetic_' + part + '.fbx')
