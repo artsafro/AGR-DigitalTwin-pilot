@@ -153,4 +153,5 @@ def test_no_delivery_changes():
     # The #1410 MAF NPM-light proof keeps its spec and proof atlas list in the job (inputs, not deliveries).
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json')
-    assert all(p.endswith(ok) for p in paths), [p for p in paths if not p.endswith(ok)]
+    allowed = lambda p: p.endswith(ok) or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith('.txt')
+    assert all(allowed(p) for p in paths), [p for p in paths if not allowed(p)]

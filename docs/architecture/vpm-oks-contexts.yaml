@@ -67,7 +67,7 @@ contexts:
     ru: "Проёмы и окна"
     area: docs/domain/areas/windows.md
     owner: adapters/max/agr_tools/windowgen_core.py
-    owner_ru: "окно из библиотеки с утоплением или генератор окон (D292, #1338 / #1345)"
+    owner_ru: "agr window-generate / Max win.generate: библиотека с утоплением или генератор D322; один 3D owner стекла (#1405)"
     functions:
       - name: load_library
         contract: "папка библиотеки -> типы окон, стандарт, sha256 файлов"

@@ -6,7 +6,7 @@
 <rect x="650" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260" y="347.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40.0" y="602.5" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="602.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="602.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1260.0" y="602.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="602.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -18,8 +18,8 @@
 <rect x="1565.0" y="980.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="1119.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <polyline points="510,445.0 530,445.0 530,527.5 1140,527.5 1140,436.25 1120,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120,436.25 1140,436.25 1140,582.5 530.0,582.5 530.0,726.25 510.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="510.0,726.25 530.0,726.25 530.0,870.0 1140.0,870.0 1140.0,735.0 1120.0,735.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120,436.25 1140,436.25 1140,582.5 530.0,582.5 530.0,735.0 510.0,735.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510.0,735.0 630.0,735.0 630.0,582.5 1140.0,582.5 1140.0,735.0 1120.0,735.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,735.0 1140.0,735.0 1140.0,960.0 935.0,960.0 935.0,1086.25 815.0,1086.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120,436.25 1140,436.25 1140,527.5 1750,527.5 1750,427.5 1730,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 1750.0,327.5 1750.0,427.5 1730.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -91,8 +91,9 @@
 <text x="48.0" y="612.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="48.0" dy="14">Проёмы и окна</tspan>
 <tspan x="48.0" dy="17.5">Владелец: adapters/max/agr_tools/windowgen_core.py</tspan>
-<tspan x="48.0" dy="17.5">окно из библиотеки с утоплением или генератор окон (D292,</tspan>
-<tspan x="48.0" dy="17.5">#1338 / #1345)</tspan>
+<tspan x="48.0" dy="17.5">agr window-generate / Max win.generate: библиотека с</tspan>
+<tspan x="48.0" dy="17.5">утоплением или генератор D322; один 3D owner стекла</tspan>
+<tspan x="48.0" dy="17.5">(#1405)</tspan>
 <tspan x="48.0" dy="17.5"></tspan>
 <tspan x="48.0" dy="17.5">load_library: папка библиотеки -&gt; типы окон, стандарт,</tspan>
 <tspan x="48.0" dy="17.5">sha256 файлов</tspan>
@@ -197,9 +198,9 @@
 <tspan x="835.0" dy="14">корпус по</tspan>
 <tspan x="835.0" dy="17.5">частям</tspan>
 </text>
-<rect x="805.0" y="861.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="861.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="835.0" dy="14">проёмы врезаны</tspan>
+<rect x="855.0" y="573.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="573.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="885.0" dy="14">проёмы врезаны</tspan>
 </text>
 <rect x="1110.0" y="830.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
 <text x="1140.0" y="830.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
