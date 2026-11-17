@@ -113,8 +113,72 @@ def test_unwelded_into_another_object_is_still_a_seam():
     wall(wall_obj, skip_col=1)
     post(post_obj, ns='post')
     r = mq.score([wall_obj.obj(), post_obj.obj()])
+    welded = mq.score(welded_master())
     assert r['totals']['open_seam_edges'] == 8
+    assert r['totals']['elements'] == 1                             # seam-joined across objects
+    assert r['totals']['welded_edges'] == welded['totals']['welded_edges'] == 8
+    assert r['score'] < welded['score']                             # review r3 P1-1
     assert r['score'] < mq.score(inset_master())['score']
+
+
+def cross_object_post(dy=0.0, zs=(0, 1, 2, 3, 4)):
+    """Review r3 P1-1 witness: the post in ANOTHER object, ``dy`` m off the wall, rows cut at ``zs``;
+    the wall keeps the hole."""
+    wall_obj, post_obj = Builder('SM_Fixture_Main'), Builder('SM_Fixture_Post')
+    wall(wall_obj, skip_col=1)
+    for z0, z1 in zip(zs, zs[1:]):
+        post_obj.face([(1, -0.5 - dy, z0), (2, -0.5 - dy, z0), (2, -0.5 - dy, z1), (1, -0.5 - dy, z1)],
+                      (0, -1, 0), 'post')
+        post_obj.face([(1, -dy, z0), (1, -0.5 - dy, z0), (1, -0.5 - dy, z1), (1, -dy, z1)], (-1, 0, 0), 'post')
+        post_obj.face([(2, -dy, z0), (2, -0.5 - dy, z0), (2, -0.5 - dy, z1), (2, -dy, z1)], (1, 0, 0), 'post')
+    return [wall_obj.obj(), post_obj.obj()]
+
+
+@pytest.mark.parametrize('witness', ['dy_0', 'dy_1mm', 'dy_2mm_inclusive', 'tjunction_z0.5'])
+def test_cross_object_unweld_witnesses_r3_score_below_welded_and_inset(witness):
+    """Review r3 P1-1: a split into a separate object never raises the score by itself."""
+    master = {'dy_0': lambda: cross_object_post(0.0), 'dy_1mm': lambda: cross_object_post(0.001),
+              'dy_2mm_inclusive': lambda: cross_object_post(mq.DEFAULTS['seam_gap_m']),
+              'tjunction_z0.5': lambda: cross_object_post(0.0, (0, 0.5, 1.5, 2.5, 3.5, 4))}[witness]()
+    r, welded, inset = mq.score(master), mq.score(welded_master()), mq.score(inset_master())
+    assert r['totals']['open_seam_edges'] >= 8
+    assert r['totals']['elements'] == 1
+    assert r['totals']['welded_edges'] >= welded['totals']['welded_edges']
+    assert r['score'] <= welded['score'] < inset['score']
+    assert r['score'] < welded['score']
+
+
+def test_cross_object_inset_and_glass_controls_unchanged():
+    """D336 inset is not penalised: an inset post as its own object on an intact wall keeps the inset
+    score; a MainGlass pane in the opening joins nothing."""
+    wall_obj, post_obj = Builder('SM_Fixture_Main'), Builder('SM_Fixture_Post')
+    wall(wall_obj)
+    post(post_obj, ns='post')
+    r = mq.score([wall_obj.obj(), post_obj.obj()])
+    assert r['totals']['open_seam_edges'] == 0 and r['totals']['elements'] == 2
+    assert r['totals']['welded_edges'] == 0
+    # r3 value kept (no join, no crease); one_mesh_share is per object, so a one-element object counts
+    # as its own body - a pre-existing trait, not changed by r4
+    assert r['score'] == 85.714 > mq.score(welded_master())['score']
+    wall_obj, glass = Builder('SM_Fixture_Main'), Builder('SM_Fixture_MainGlass')
+    wall(wall_obj, skip_col=1)
+    for k in range(4):
+        glass.face([(1, 0, k), (2, 0, k), (2, 0, k + 1), (1, 0, k + 1)], (0, -1, 0), 'glass')
+    g = mq.score([wall_obj.obj(), glass.obj()])
+    assert g['totals']['elements'] == 2 and g['totals']['open_seam_edges'] == 0
+
+
+@pytest.mark.parametrize('seed', range(30))
+def test_probe_cross_object_unwelds_never_beat_welded(seed):
+    """Generated probe (review r3 P1-1): post in another object, random dy in [0, seam_gap_m], random cuts."""
+    import random
+    rnd = random.Random(2000 + seed)
+    dy = rnd.choice([0.0, mq.DEFAULTS['seam_gap_m'], rnd.uniform(0.0, mq.DEFAULTS['seam_gap_m'])])
+    zs = sorted({0.0, 4.0} | {round(rnd.uniform(0.05, 3.95), 4) for _ in range(rnd.randint(0, 6))})
+    r = mq.score(cross_object_post(dy, zs))
+    welded, inset = mq.score(welded_master()), mq.score(inset_master())
+    assert r['totals']['open_seam_edges'] >= 8 and r['totals']['elements'] == 1
+    assert r['score'] < welded['score'] < inset['score']
 
 
 def test_glass_pane_in_an_opening_is_not_a_seam():
