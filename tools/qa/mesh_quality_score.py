@@ -9,6 +9,8 @@ recorded dump JSON; the score and its components come from tools/qa/mesh_quality
 Read-only: the input hash is checked before/after; the report is published exclusively to a
 new path that must not alias the input. Exit 0 = measured, 1 = fail (n-gons / empty), 2 = error.
 The score ranks masters; it is not an acceptance.
+Explicit --rejoin-rectangles reconstructs rectangle-like coplanar pairs within 1 degree
+on diagnostic copies of triangulated deliveries (#1634); default raw scoring is unchanged.
 """
 import argparse
 import hashlib
@@ -61,7 +63,7 @@ def parse_param(text):
         return key, value
 
 
-def run(source, out, zones=None, params=None, blender=None, exclude_zones=None):
+def run(source, out, zones=None, params=None, blender=None, exclude_zones=None, *, rejoin_rectangles=False):
     """Read once, verify source freshness, publish exclusively; never reuse a report."""
     from dt_ai.ops.xview_gate import publish
     src, out = Path(source).resolve(), Path(out).resolve()
@@ -73,6 +75,8 @@ def run(source, out, zones=None, params=None, blender=None, exclude_zones=None):
         raise ValueError('unsupported master format: ' + src.suffix)
     if not src.is_file():
         raise ValueError('master not found: ' + str(src))
+    if rejoin_rectangles and src.suffix.lower() == '.json':
+        raise ValueError('rectangle rejoin requires a native mesh input, not a recorded JSON dump')
     before = sha(src)
     provenance = {'path': str(src), 'sha256': before, 'kind': src.suffix[1:].lower()}
     if src.suffix.lower() == '.json':
@@ -83,10 +87,14 @@ def run(source, out, zones=None, params=None, blender=None, exclude_zones=None):
         script = ROOT / 'tools/blender/mesh_quality_dump.py'
         with tempfile.TemporaryDirectory(prefix='mesh-quality-', dir=out.parent) as td:
             tmp = Path(td)
-            dump = run_blender(script, [src, tmp / 'dump.json'], executable=blender,
+            args = [src, tmp / 'dump.json'] + (['--rejoin-rectangles'] if rejoin_rectangles else [])
+            dump = run_blender(script, args, executable=blender,
                                output_json=tmp / 'dump.json', log_path=tmp / 'blender.log')
         provenance['blender'] = dump.get('blender')
         provenance['coverage'] = 'evaluated scene meshes before export triangulation'
+        if rejoin_rectangles:
+            provenance['coverage'] = 'diagnostic reconstructed rectangles; not original editable topology'
+            provenance['normalization'] = dump['normalization']
     if not isinstance(dump, dict) or not isinstance(dump.get('objects'), list):
         raise ValueError('dump has no objects list')
     report = load_core().score(dump['objects'], params=params, zones=zones, exclude_zones=exclude_zones)
@@ -107,12 +115,16 @@ def main(argv=None):
                         help='X0,Y0,X1,Y1 plan box left out of the measure (repeatable)')
     parser.add_argument('--param', action='append', default=[], help='key=value core parameter')
     parser.add_argument('--blender', default=None)
+    parser.add_argument('--rejoin-rectangles', action='store_true',
+                        help='diagnostic only: rejoin coplanar rectangular triangle pairs within 1 degree; '
+                             'never saves geometry; raw master scoring remains the default')
     args = parser.parse_args(argv)
     try:
         zones = [parse_zone(z) for z in args.zone] or None
         exclude = [parse_zone(z) for z in args.exclude_zone] or None
         params = dict(parse_param(p) for p in args.param)
-        report = run(args.master, args.out, zones, params, args.blender, exclude)
+        report = run(args.master, args.out, zones, params, args.blender, exclude,
+                     rejoin_rectangles=args.rejoin_rectangles)
     except (ValueError, OSError, RuntimeError) as exc:
         print(str(exc), file=sys.stderr)
         return 2
