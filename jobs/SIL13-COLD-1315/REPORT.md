@@ -1,6 +1,22 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v026 NPM Flora repaired;176094NPM/300120VPM raw=native;
+Current status: **v027 VPM maple model choice pending; current pair UNCHANGED,
+NOT delivered**. See [CONTINUATION-v027.md](CONTINUATION-v027.md),
+[source-wide-summary-v027.json](source-wide-summary-v027.json) and
+[question-receipt-v027.json](question-receipt-v027.json).
+Question: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6951392543 .
+29240/29615VPM crossings belong to six detailed source maples; three distinct
+copy-only technical routes failed, all NOT ADOPTED. Choice is a less-detailed
+VPM-only crown pilot preserving source trunk/branches and existing VPM sizes,
+or another detailed VPM library source; no six-tree site replacement before its
+separate picture gate. Old shrub/hedge/MAF gates stay CLOSED; no QA waiver.
+Metadata-copy comparison with older v025 passes but immediate-v026 diff FAILS;
+copy NOT ADOPTED. Native arrays176094 and2embeddedPNG hashes EXACT; external
+absolute `.fbm` locators missing, native uses embedding. Both current FBX hashes
+unchanged;37physicalMAF38census4582plants.227affectedpassed/guardsGREEN486.
+D339UCX gap bands OBSERVE only. Full suite: deferred to merge batch (rule68).
+
+Historical status: **v026 NPM Flora repaired;176094NPM/300120VPM raw=native;
 37physical MAF+38census/4582plants; overall NOT delivered**. See
 [CONTINUATION-v026.md](CONTINUATION-v026.md) and
 [source-wide-summary-v026.json](source-wide-summary-v026.json).

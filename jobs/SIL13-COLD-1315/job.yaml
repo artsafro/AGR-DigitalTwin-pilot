@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-NPM-Flora-regulatory-repair-v026
+run_id: cold-1315-VPM-maple-construction-choice-v027
 synthetic: false
 path: deviation
 inputs: &id001
@@ -193,6 +193,11 @@ deviations:
   what_was_tried: Complete Ground partitions remove42fullyburiedfaces and retain23others;3numericalslivers certified by complete retained-edge interval<=3.998um. ActualNPM176094raw=native/Flora71246; raw/nativeFlora AND diagnosticwholejoin public0/0/0/0 and regulatory0. All4582census/4535support>=78.225percent; Ground/MAF arrays/UV/materials exact,2original2048FloraPNGembeddedbyteidentical. D339sharedowner148240actualUCXpairs OBSERVE, no geometrychange.
   new_tool_written: 26job-local diagnostic drivers/tests527literal lines sealed in evidence-v026.json; no sharedmodel/checker/library edits. main merged b7161fd2; existing own decision rows reordered and URLs named-linked, no new D-id or rule change.
   result: Adopt NPM technical checkpoint ONLY; VPMv025/545UCX unchanged. Both post-main publicvalidators exit1; archive_diff scene-metadataFAIL remains OPEN, no showing/packing or finaldelivery claim. VPM/Ground/maps/UV/manualgatesworker-owned; wideUCXgaps report-only underD339, no newhumanquestion.
+- gate: operations
+  what_failed: v027 isolated first VPM maple has4869regulatory crossings;29240of29615wholeFlora pairs belong to six original detailed maples. Three source-card repair routes fail publicQA.
+  what_was_tried: Source-fan shell union2faces5832vertices; bounded-erroroptimizer222faces30vertices; cumulative1.995mm link574faces111vertices. ALL NOTadopted. Metadata-copy full decoded tree exact except6absoluteimagepaths/nativearrays176094exact; older-v025diffPASS but immediate-v026diffFAIL; missing external locators disclosed.
+  new_tool_written: Only job-local experimental drivers sealed in evidence-v027.json; no sharedmodule/checker/library edit or geometry adoption.
+  result: CurrentpairNPMv026/VPMv025byteunchanged. NEW model/source question6951392543 about less-detailed VPM-only crown pilot or alternate detailed library maple; no site replacement before newchoice and separatepilotpicture. AlloldgatesCLOSED, othertechnicalFAILsOPEN, no QAwaiver.227affectedpassed;repo_guardsGREEN486;fullsuite deferredrule68.
 gates:
   inputs:
     status: review
@@ -209,6 +214,12 @@ gates:
     status: fail
     note: v026NPMFlora515to0regulatory;actualraw/nativeFlora+wholejoinedpublic0/0/0/0.37physicalMAF38census4582plants;4535hedgesupport>=78.225percent. VPMactualFlora29615regulatory/9wholepublicfaces49pairsFAIL; VPMknifeNOTadopted. D339all148240UCXpairsmeasured/report-only; archive-metadata/Ground/maps/UVFAILsremainworker-owned, no newquestion.
     evidence: &id002
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v027.json
+      sha256: 08bc1a65ba3cb41f7bdc660a7f0ad46c58ced02bcd24fe5c7411ca33c88a56d5
+    - path: jobs/SIL13-COLD-1315/evidence-v027.json
+      sha256: ca0d723590924276f65ef5333de652aa515125a6e9cd5475070506d4618d128a
+    - path: jobs/SIL13-COLD-1315/question-receipt-v027.json
+      sha256: 5542c8bf6ea32f57030a276a5fbb59c0684946913ea4653fdb8110584646ab17
     - &id003
       path: jobs/SIL13-COLD-1315/source-wide-summary-v026.json
       sha256: 846f83dc3272a205e19721abb983a6a3dab99ee8fe0dd45bb17a28ef1f2ef735
@@ -239,7 +250,8 @@ gates:
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: D340answer6944390189 CLOSED row19choice, ONLYwrongCannopy006removed/explicitmissingPM158retained. No newuserquestion. AlloldgatesstayCLOSED. Finalwhole-sitevisual/materialsign-off notrequested beforetechnicalrepairs; no technicalFAIL offeredforwaiver.
+    waits: user
+    note: NEW v027 model/source question6951392543 pending for six detailed VPM maple crowns only; less-detailed paired-NPM-derived VPM pilot versus another detailed library source. No pilot built/accepted or site substitution claimed. All OLD D340/shrub/hedge/MAF gates stay CLOSED; no technical waiver, other FAILs remain worker-owned.
     evidence: *id002
   checker:
     status: missing

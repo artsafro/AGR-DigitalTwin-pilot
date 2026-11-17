@@ -1,0 +1,1052 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-VPM-maple-construction-choice-v027",
+  "base_checkpoint": "9c98c2f16fcc4aa725dbff53006016cbce0f1bce",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10",
+      "raw_triangles": 176094,
+      "native_triangles": 176094,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\site-NPM.blend"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "43470a4cbf01dd3f7691183a0c28bea20913a84af9dd67988668b51905fbd23a",
+      "raw_triangles": 300120,
+      "native_triangles": 300120,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-r1\\site-VPM.blend"
+    }
+  },
+  "current_pair_byte_unchanged": true,
+  "physical_MAF": 37,
+  "retained_MAF_census": 38,
+  "retained_plant_census": 4582,
+  "new_user_question": {
+    "answered": false,
+    "url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6951392543",
+    "comment_id": "6951392543",
+    "question_file": "model-question.md",
+    "body_sha256": "68ff78d144cb69c5c5aa7ca9c7199168791efbff1fd21ef6d076f71dd07638b5",
+    "normalized_readback_equal": true,
+    "readback_sha256": "91517623a410c604f3aac7261b1701b96ed5e089ab51db601c5afc8e42f5577a"
+  },
+  "old_gates": "CLOSED; new six-maple VPM source/construction choice only",
+  "VPM_ownership": [
+    {
+      "owners": [
+        "33F02AB",
+        "33F02AB"
+      ],
+      "pairs": 4875
+    },
+    {
+      "owners": [
+        "33F02AD",
+        "33F02AD"
+      ],
+      "pairs": 4875
+    },
+    {
+      "owners": [
+        "33F02AE",
+        "33F02AE"
+      ],
+      "pairs": 4875
+    },
+    {
+      "owners": [
+        "33F02AF",
+        "33F02AF"
+      ],
+      "pairs": 4875
+    },
+    {
+      "owners": [
+        "33F02AC",
+        "33F02AC"
+      ],
+      "pairs": 4871
+    },
+    {
+      "owners": [
+        "33F02A9",
+        "33F02A9"
+      ],
+      "pairs": 4869
+    },
+    {
+      "owners": [
+        "33F02C8",
+        "33F02CB"
+      ],
+      "pairs": 40
+    },
+    {
+      "owners": [
+        "33F02D1",
+        "33F02D2"
+      ],
+      "pairs": 40
+    },
+    {
+      "owners": [
+        "33F031B",
+        "33F031E"
+      ],
+      "pairs": 40
+    },
+    {
+      "owners": [
+        "33F02C5",
+        "33F02C7"
+      ],
+      "pairs": 32
+    },
+    {
+      "owners": [
+        "33F02C6",
+        "33F02C7"
+      ],
+      "pairs": 32
+    },
+    {
+      "owners": [
+        "33F02C1",
+        "33F02C3"
+      ],
+      "pairs": 20
+    },
+    {
+      "owners": [
+        "33F02D3",
+        "33F02D6"
+      ],
+      "pairs": 20
+    },
+    {
+      "owners": [
+        "33F031D",
+        "33F031E"
+      ],
+      "pairs": 20
+    },
+    {
+      "owners": [
+        "33F02D0",
+        "33F02D2"
+      ],
+      "pairs": 17
+    },
+    {
+      "owners": [
+        "33F02B8",
+        "row6_merged"
+      ],
+      "pairs": 16
+    },
+    {
+      "owners": [
+        "33F02CF",
+        "33F02D2"
+      ],
+      "pairs": 16
+    },
+    {
+      "owners": [
+        "33F031C",
+        "33F031E"
+      ],
+      "pairs": 16
+    },
+    {
+      "owners": [
+        "33F02B3",
+        "row6_merged"
+      ],
+      "pairs": 14
+    },
+    {
+      "owners": [
+        "33F02B4",
+        "row6_merged"
+      ],
+      "pairs": 14
+    },
+    {
+      "owners": [
+        "33F02C4",
+        "33F02C7"
+      ],
+      "pairs": 12
+    },
+    {
+      "owners": [
+        "33F02D4",
+        "33F02D6"
+      ],
+      "pairs": 8
+    },
+    {
+      "owners": [
+        "33F02C2",
+        "33F02C3"
+      ],
+      "pairs": 7
+    },
+    {
+      "owners": [
+        "33F02AD",
+        "row7_merged"
+      ],
+      "pairs": 6
+    },
+    {
+      "owners": [
+        "33F02AD",
+        "row6_merged"
+      ],
+      "pairs": 5
+    }
+  ],
+  "VPM_first_tree_components": 109,
+  "VPM_first_tree_source_faces": 1070,
+  "VPM_regulatory_total": 29615,
+  "VPM_six_maples_intra_pairs": 29240,
+  "trials_NOT_ADOPTED": {
+    "tree-shell-r1": {
+      "public": {
+        "overlapping_vertices": 5832,
+        "overlapping_faces": 2,
+        "vertex_pairs": 3518,
+        "face_pairs": 1,
+        "face_pairs_by_kind": {
+          "contact": 1,
+          "area": 0,
+          "area+contact": 0
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 35,
+        "parts_without_faces": 0
+      },
+      "pilot": {
+        "passed": false,
+        "adopted": false,
+        "source_triangles": 1070,
+        "candidate_triangles": 72418,
+        "closed": true,
+        "winding": true,
+        "volume": 1.5600427224844156,
+        "leaf_half_thickness_m": 0.0031
+      }
+    },
+    "tree-optim-r2": {
+      "public": {
+        "overlapping_vertices": 30,
+        "overlapping_faces": 222,
+        "vertex_pairs": 15,
+        "face_pairs": 503,
+        "face_pairs_by_kind": {
+          "contact": 8,
+          "area": 362,
+          "area+contact": 133
+        },
+        "bowtie_vertices": 8,
+        "bowtie_pairs": 3,
+        "parts_without_faces": 0
+      },
+      "pilot": {
+        "passed": false,
+        "adopted": false,
+        "triangles": 54628,
+        "optimizer_error_estimate_m": 0.0014999129343777895,
+        "requested_error_m": 0.0015,
+        "not_a_surface_bound": true
+      }
+    },
+    "tree-link-r3b": {
+      "public": {
+        "overlapping_vertices": 111,
+        "overlapping_faces": 574,
+        "vertex_pairs": 77,
+        "face_pairs": 1301,
+        "face_pairs_by_kind": {
+          "contact": 64,
+          "area": 938,
+          "area+contact": 299
+        },
+        "bowtie_vertices": 0,
+        "bowtie_pairs": 11,
+        "parts_without_faces": 0
+      },
+      "pilot": {
+        "passed": false,
+        "adopted": false,
+        "vertices": 31497,
+        "triangles": 62026,
+        "max_original_vertex_movement_m": 0.0019946127396101155,
+        "limit_m": 0.001995,
+        "seconds": 1.4183055000612512
+      }
+    }
+  },
+  "metadata_trial_NOT_ADOPTED": {
+    "older_v025_diff": {
+      "status": "pass",
+      "tolerance": 1e-06,
+      "expected": [
+        "SM_SIL13_Flora:geometry",
+        "SM_SIL13_Flora:uv"
+      ],
+      "objects": {
+        "SM_SIL13_Flora": {
+          "before": {
+            "vertex_count": 35118,
+            "face_count": 69142,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Flora_1"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "e43be3b495618aef685df8687eaa1ff3df305d5b71bde5420612af2d387fadfc",
+            "bbox": [
+              [
+                -74.3779067993164,
+                -91.28575897216797,
+                -1.400079369544983
+              ],
+              [
+                74.63786315917969,
+                91.80131530761719,
+                6.262906074523926
+              ]
+            ]
+          },
+          "after": {
+            "vertex_count": 35713,
+            "face_count": 71246,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Flora_1"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "d59c286d1abea8179b03470d2d2879cd8fecb913b848fd55bbb48a468f4f010c",
+            "bbox": [
+              [
+                -74.3779067993164,
+                -91.28575134277344,
+                -1.400079369544983
+              ],
+              [
+                74.63787078857422,
+                91.80131530761719,
+                6.262906074523926
+              ]
+            ]
+          },
+          "moved_count": null,
+          "above_tolerance_count": null,
+          "max_displacement": null,
+          "uv_changed": true,
+          "displacement_status": "unmeasured: object/vertex inventory changed",
+          "changes": [
+            "geometry",
+            "uv"
+          ]
+        },
+        "SM_SIL13_Ground": {
+          "before": {
+            "vertex_count": 15189,
+            "face_count": 26378,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_1",
+              "M_SIL13_Ground_2",
+              "M_SIL13_Ground_3",
+              "M_SIL13_Ground_4",
+              "M_SIL13_Ground_5",
+              "M_SIL13_Ground_6",
+              "M_SIL13_Ground_7",
+              "M_SIL13_Ground_8",
+              "M_SIL13_Ground_9",
+              "M_SIL13_Ground_10"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "c11f2b11b2bd0660f8ef00a1dceb8a4d5776ed9d52c5d8807ef10e27714a4ef8",
+            "bbox": [
+              [
+                -74.79499816894531,
+                -91.9800033569336,
+                -2.4036359786987305
+              ],
+              [
+                74.79487609863281,
+                91.9800033569336,
+                0.3731306493282318
+              ]
+            ]
+          },
+          "after": {
+            "vertex_count": 15189,
+            "face_count": 26378,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_1",
+              "M_SIL13_Ground_2",
+              "M_SIL13_Ground_3",
+              "M_SIL13_Ground_4",
+              "M_SIL13_Ground_5",
+              "M_SIL13_Ground_6",
+              "M_SIL13_Ground_7",
+              "M_SIL13_Ground_8",
+              "M_SIL13_Ground_9",
+              "M_SIL13_Ground_10"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "c11f2b11b2bd0660f8ef00a1dceb8a4d5776ed9d52c5d8807ef10e27714a4ef8",
+            "bbox": [
+              [
+                -74.79499816894531,
+                -91.9800033569336,
+                -2.4036359786987305
+              ],
+              [
+                74.79487609863281,
+                91.9800033569336,
+                0.3731306493282318
+              ]
+            ]
+          },
+          "moved_count": 0,
+          "above_tolerance_count": 0,
+          "max_displacement": 0.0,
+          "uv_changed": false,
+          "displacement_status": "index_corresponding",
+          "changes": []
+        },
+        "SM_SIL13_GroundEl": {
+          "before": {
+            "vertex_count": 39012,
+            "face_count": 78470,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_12"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "ce7f0d9dfc6a1b3104c669511f14ade52bc5db663e773f4035cd21b6080e3df4",
+            "bbox": [
+              [
+                -41.38589096069336,
+                -66.64743041992188,
+                -0.6044059991836548
+              ],
+              [
+                52.47598648071289,
+                8.155142784118652,
+                1.0818976163864136
+              ]
+            ]
+          },
+          "after": {
+            "vertex_count": 39012,
+            "face_count": 78470,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_12"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "ce7f0d9dfc6a1b3104c669511f14ade52bc5db663e773f4035cd21b6080e3df4",
+            "bbox": [
+              [
+                -41.38589096069336,
+                -66.64743041992188,
+                -0.6044059991836548
+              ],
+              [
+                52.47598648071289,
+                8.155142784118652,
+                1.0818976163864136
+              ]
+            ]
+          },
+          "moved_count": 0,
+          "above_tolerance_count": 0,
+          "max_displacement": 0.0,
+          "uv_changed": false,
+          "displacement_status": "index_corresponding",
+          "changes": []
+        }
+      },
+      "errors": [],
+      "members": {
+        "before": {
+          "SM_SIL13_Ground.fbx": "d5a1df805907644de5579dac30926a17439660a39267a6247fc372b278fb50e0"
+        },
+        "after": {
+          "SM_SIL13_Ground.fbx": "8538753bfde90dffdbdfea8349b817bcec4b166f664df4d8e62df7e9cb96767c"
+        }
+      },
+      "inputs": {
+        "previous": {
+          "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbx",
+          "sha256": "d5a1df805907644de5579dac30926a17439660a39267a6247fc372b278fb50e0"
+        },
+        "new": {
+          "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v027\\site-metadata-r3\\NPM\\SM_SIL13_Ground.fbx",
+          "sha256": "8538753bfde90dffdbdfea8349b817bcec4b166f664df4d8e62df7e9cb96767c"
+        }
+      }
+    },
+    "immediate_v026_diff": {
+      "status": "fail",
+      "tolerance": 1e-06,
+      "expected": [],
+      "objects": {
+        "SM_SIL13_Flora": {
+          "before": {
+            "vertex_count": 35713,
+            "face_count": 71246,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Flora_1"
+            ],
+            "scene_metadata_sha256": "68a4ffa4298de1ca66cf0326f9712143aa4d37a9780ded7632142d66721231ed",
+            "uv_sha256": "d59c286d1abea8179b03470d2d2879cd8fecb913b848fd55bbb48a468f4f010c",
+            "bbox": [
+              [
+                -74.3779067993164,
+                -91.28575134277344,
+                -1.400079369544983
+              ],
+              [
+                74.63787078857422,
+                91.80131530761719,
+                6.262906074523926
+              ]
+            ]
+          },
+          "after": {
+            "vertex_count": 35713,
+            "face_count": 71246,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Flora_1"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "d59c286d1abea8179b03470d2d2879cd8fecb913b848fd55bbb48a468f4f010c",
+            "bbox": [
+              [
+                -74.3779067993164,
+                -91.28575134277344,
+                -1.400079369544983
+              ],
+              [
+                74.63787078857422,
+                91.80131530761719,
+                6.262906074523926
+              ]
+            ]
+          },
+          "moved_count": 0,
+          "above_tolerance_count": 0,
+          "max_displacement": 0.0,
+          "uv_changed": false,
+          "displacement_status": "index_corresponding",
+          "changes": []
+        },
+        "SM_SIL13_Ground": {
+          "before": {
+            "vertex_count": 15189,
+            "face_count": 26378,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_1",
+              "M_SIL13_Ground_2",
+              "M_SIL13_Ground_3",
+              "M_SIL13_Ground_4",
+              "M_SIL13_Ground_5",
+              "M_SIL13_Ground_6",
+              "M_SIL13_Ground_7",
+              "M_SIL13_Ground_8",
+              "M_SIL13_Ground_9",
+              "M_SIL13_Ground_10"
+            ],
+            "scene_metadata_sha256": "68a4ffa4298de1ca66cf0326f9712143aa4d37a9780ded7632142d66721231ed",
+            "uv_sha256": "c11f2b11b2bd0660f8ef00a1dceb8a4d5776ed9d52c5d8807ef10e27714a4ef8",
+            "bbox": [
+              [
+                -74.79499816894531,
+                -91.9800033569336,
+                -2.4036359786987305
+              ],
+              [
+                74.79487609863281,
+                91.9800033569336,
+                0.3731306493282318
+              ]
+            ]
+          },
+          "after": {
+            "vertex_count": 15189,
+            "face_count": 26378,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_1",
+              "M_SIL13_Ground_2",
+              "M_SIL13_Ground_3",
+              "M_SIL13_Ground_4",
+              "M_SIL13_Ground_5",
+              "M_SIL13_Ground_6",
+              "M_SIL13_Ground_7",
+              "M_SIL13_Ground_8",
+              "M_SIL13_Ground_9",
+              "M_SIL13_Ground_10"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "c11f2b11b2bd0660f8ef00a1dceb8a4d5776ed9d52c5d8807ef10e27714a4ef8",
+            "bbox": [
+              [
+                -74.79499816894531,
+                -91.9800033569336,
+                -2.4036359786987305
+              ],
+              [
+                74.79487609863281,
+                91.9800033569336,
+                0.3731306493282318
+              ]
+            ]
+          },
+          "moved_count": 0,
+          "above_tolerance_count": 0,
+          "max_displacement": 0.0,
+          "uv_changed": false,
+          "displacement_status": "index_corresponding",
+          "changes": []
+        },
+        "SM_SIL13_GroundEl": {
+          "before": {
+            "vertex_count": 39012,
+            "face_count": 78470,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_12"
+            ],
+            "scene_metadata_sha256": "68a4ffa4298de1ca66cf0326f9712143aa4d37a9780ded7632142d66721231ed",
+            "uv_sha256": "ce7f0d9dfc6a1b3104c669511f14ade52bc5db663e773f4035cd21b6080e3df4",
+            "bbox": [
+              [
+                -41.38589096069336,
+                -66.64743041992188,
+                -0.6044059991836548
+              ],
+              [
+                52.47598648071289,
+                8.155142784118652,
+                1.0818976163864136
+              ]
+            ]
+          },
+          "after": {
+            "vertex_count": 39012,
+            "face_count": 78470,
+            "uv_layers": [
+              "UVMap"
+            ],
+            "materials": [
+              "M_SIL13_Ground_12"
+            ],
+            "scene_metadata_sha256": "609a410b6fb92e93b183106fbc4c98efaeb9194dbe4bcfb196b2f35952ff89e3",
+            "uv_sha256": "ce7f0d9dfc6a1b3104c669511f14ade52bc5db663e773f4035cd21b6080e3df4",
+            "bbox": [
+              [
+                -41.38589096069336,
+                -66.64743041992188,
+                -0.6044059991836548
+              ],
+              [
+                52.47598648071289,
+                8.155142784118652,
+                1.0818976163864136
+              ]
+            ]
+          },
+          "moved_count": 0,
+          "above_tolerance_count": 0,
+          "max_displacement": 0.0,
+          "uv_changed": false,
+          "displacement_status": "index_corresponding",
+          "changes": []
+        }
+      },
+      "errors": [
+        "scene metadata changed (settings/auxiliary objects/connections)"
+      ],
+      "members": {
+        "before": {
+          "SM_SIL13_Ground.fbx": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10"
+        },
+        "after": {
+          "SM_SIL13_Ground.fbx": "8538753bfde90dffdbdfea8349b817bcec4b166f664df4d8e62df7e9cb96767c"
+        }
+      },
+      "inputs": {
+        "previous": {
+          "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbx",
+          "sha256": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10"
+        },
+        "new": {
+          "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v027\\site-metadata-r3\\NPM\\SM_SIL13_Ground.fbx",
+          "sha256": "8538753bfde90dffdbdfea8349b817bcec4b166f664df4d8e62df7e9cb96767c"
+        }
+      }
+    },
+    "native": {
+      "passed": false,
+      "sha256": "8538753bfde90dffdbdfea8349b817bcec4b166f664df4d8e62df7e9cb96767c",
+      "render_triangles": 176094,
+      "objects": [
+        {
+          "name": "SM_SIL13_Flora",
+          "vertices": 35713,
+          "triangles": 71246,
+          "native_arrays_exact": true
+        },
+        {
+          "name": "SM_SIL13_Ground",
+          "vertices": 15189,
+          "triangles": 26378,
+          "native_arrays_exact": true
+        },
+        {
+          "name": "SM_SIL13_GroundEl",
+          "vertices": 39012,
+          "triangles": 78470,
+          "native_arrays_exact": true
+        }
+      ],
+      "embedded_images": [
+        {
+          "name": "T_SIL13_Flora_d_1.png",
+          "sha256": "3d5368b293e54f6503ec4c05e4bb1c412a99b468fc625a75c5802c423b629ca2",
+          "bytes": 1796142,
+          "size": [
+            2048,
+            2048
+          ]
+        },
+        {
+          "name": "T_SIL13_Flora_o_1.png",
+          "sha256": "d9ca582e68e082b610d67252a8476c36e23b9e01995204e3a2afe9c7ecb2e0a1",
+          "bytes": 402069,
+          "size": [
+            2048,
+            2048
+          ]
+        }
+      ]
+    },
+    "six_locator_restoration": {
+      "passed": false,
+      "adopted": false,
+      "source_hashes": {
+        "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbx": "d5a1df805907644de5579dac30926a17439660a39267a6247fc372b278fb50e0",
+        "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbx": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10"
+      },
+      "output": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v027\\site-metadata-r3\\NPM\\SM_SIL13_Ground.fbx",
+      "output_sha256": "8538753bfde90dffdbdfea8349b817bcec4b166f664df4d8e62df7e9cb96767c",
+      "changed_strings": [
+        {
+          "object": "base_color_texture\u0000\u0001Texture",
+          "node": "(b'Texture', b'FileName')",
+          "before": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_d_1.png",
+          "after": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_d_1.png"
+        },
+        {
+          "object": "alpha_texture\u0000\u0001Texture",
+          "node": "(b'Texture', b'FileName')",
+          "before": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_o_1.png",
+          "after": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_o_1.png"
+        },
+        {
+          "object": "T_SIL13_Flora_d_1.png\u0000\u0001Video",
+          "node": "(b'Video', b'Properties70', b'P')",
+          "before": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_d_1.png",
+          "after": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_d_1.png"
+        },
+        {
+          "object": "T_SIL13_Flora_d_1.png\u0000\u0001Video",
+          "node": "(b'Video', b'Filename')",
+          "before": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_d_1.png",
+          "after": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_d_1.png"
+        },
+        {
+          "object": "T_SIL13_Flora_o_1.png\u0000\u0001Video",
+          "node": "(b'Video', b'Properties70', b'P')",
+          "before": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_o_1.png",
+          "after": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_o_1.png"
+        },
+        {
+          "object": "T_SIL13_Flora_o_1.png\u0000\u0001Video",
+          "node": "(b'Video', b'Filename')",
+          "before": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_o_1.png",
+          "after": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v025\\site-missing-r1\\NPM\\SM_SIL13_Ground.fbm\\T_SIL13_Flora_o_1.png"
+        }
+      ],
+      "decoded_tree_exact_except_six_locators": true
+    },
+    "external_old_absolute_locators_available": false
+  },
+  "validator_command": {
+    "argv": [
+      "uv",
+      "run",
+      "python",
+      "tools/qa/validate_package.py",
+      "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v027\\site-metadata-r3\\NPM\\SM_SIL13_Ground.fbx",
+      "--profile",
+      "npm",
+      "--scene",
+      "--json",
+      "--ground-area-m2",
+      "9568.799640438345",
+      "--footprint-holes",
+      "[\n  [\n    [\n      -61.607944974897464,\n      -6.157965760185107\n    ],\n    [\n      -56.737859505818165,\n      0.37692467991655576\n    ],\n    [\n      -62.511013153331646,\n      4.679330657065293\n    ],\n    [\n      -46.58914581908323,\n      26.043978012676234\n    ],\n    [\n      -49.68819488936356,\n      28.353524589436347\n    ],\n    [\n      -34.42062926801793,\n      48.84020172354576\n    ],\n    [\n      -31.321636758640807,\n      46.530579249814764\n    ],\n    [\n      -20.74779744577188,\n      60.719012261835815\n    ],\n    [\n      -14.974643843063404,\n      56.4166063179855\n    ],\n    [\n      -6.1154105277692,\n      68.30430715304647\n    ],\n    [\n      26.225356092671177,\n      5.658401342256184\n    ],\n    [\n      18.571600596567578,\n      1.705598875425494\n    ],\n    [\n      16.824072392156268,\n      5.08931311188644\n    ],\n    [\n      9.88704956475533,\n      1.506669248256003\n    ],\n    [\n      -0.370696013904535,\n      21.36859746254595\n    ],\n    [\n      -0.9663414586600538,\n      21.157435107226775\n    ],\n    [\n      -1.565411276893883,\n      20.960029202105943\n    ],\n    [\n      -2.1676742634590482,\n      20.77637901206799\n    ],\n    [\n      -2.7728992132083476,\n      20.606483801992\n    ],\n    [\n      -3.3808549209949206,\n      20.450342836757045\n    ],\n    [\n      -3.9913101816714516,\n      20.307955381245847\n    ],\n    [\n      -4.60403379009108,\n      20.179320700337485\n    ],\n    [\n      -5.218794541106604,\n      20.064438058914675\n    ],\n    [\n      -5.835361229570935,\n      19.963306721856497\n    ],\n    [\n      -6.453502650337214,\n      19.87592595404385\n    ],\n    [\n      -7.072987598258123,\n      19.802295020355814\n    ],\n    [\n      -7.693584868186804,\n      19.742413185676924\n    ],\n    [\n      -8.315063254976053,\n      19.69627971488444\n    ],\n    [\n      -8.937191553478783,\n      19.663893872859262\n    ],\n    [\n      -9.55973855854802,\n      19.645254924484107\n    ],\n    [\n      -10.182473065036675,\n      19.640362134638053\n    ],\n    [\n      -10.805163867797546,\n      19.649214768202\n    ],\n    [\n      -11.427579761683774,\n      19.671812090056847\n    ],\n    [\n      -12.049489541548269,\n      19.70815336508349\n    ],\n    [\n      -12.67066200224383,\n      19.75823785816283\n    ],\n    [\n      -13.290865938623483,\n      19.822064834173943\n    ],\n    [\n      -13.909870145540026,\n      19.89963355799773\n    ],\n    [\n      -14.527443417846598,\n      19.99094329451509\n    ],\n    [\n      -15.143354550395998,\n      20.09599330860874\n    ],\n    [\n      -15.757372338041137,\n      20.21478286515776\n    ],\n    [\n      -16.36926557563504,\n      20.347311229041225\n    ],\n    [\n      -16.97880305803062,\n      20.493577665141856\n    ],\n    [\n      -17.58575358008079,\n      20.653581438338733\n    ],\n    [\n      -18.18988593663846,\n      20.827321813514573\n    ],\n    [\n      -18.790968922556658,\n      21.014798055548454\n    ],\n    [\n      -19.388771332688066,\n      21.216009429323094\n    ],\n    [\n      -19.983061961885937,\n      21.430955199715754\n    ],\n    [\n      -42.18213334106201,\n      -8.35671490504501\n    ],\n    [\n      -35.879854610317125,\n      -13.053447979604243\n    ],\n    [\n      -32.47677100121757,\n      -8.487043819934115\n    ],\n    [\n      -17.129723599500608,\n      -19.924333125614794\n    ],\n    [\n      -24.80234757441724,\n      -30.21979044132422\n    ],\n    [\n      -29.340774707261744,\n      -26.83755653361368\n    ],\n    [\n      -30.954177881235637,\n      -29.00249040275412\n    ],\n    [\n      -61.607944974897464,\n      -6.157965760185107\n    ]\n  ]\n]",
+      "--ground-materials",
+      "M_SIL13_Ground_1,M_SIL13_Ground_10,M_SIL13_Ground_2,M_SIL13_Ground_3,M_SIL13_Ground_4,M_SIL13_Ground_5,M_SIL13_Ground_6,M_SIL13_Ground_7,M_SIL13_Ground_8,M_SIL13_Ground_9"
+    ],
+    "exit_code": 1,
+    "seconds": 64.22653980005998
+  },
+  "validator_counts": {
+    "pass": 1,
+    "fail": 3,
+    "review": 1,
+    "not_run": 3
+  },
+  "affected_tests": {
+    "command": "env -u UCX_PROGRESS_REPORT PYTEST_ADDOPTS='' CANDIDATE_FBX=<worktree>/tmp/cold-v027/site-metadata-r3/NPM/SM_SIL13_Ground.fbx uv run pytest -q tests/qa/test_archive_diff.py tests/test_decisions.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tests/test_maf_requirement_sheet.py tests/test_model_flora_skill.py tests/test_scenario_router.py tmp/cold-v027/test_metadata.py tmp/cold-v027/test_checkpoint_v027.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0/v027-affected",
+    "passed": 227,
+    "failed": 0,
+    "seconds": 53.66,
+    "log_sha256": "d546dd8adf4d14bde29e0f3133545d3c840f0a0fe9aa22d4bbd059d4a087c120",
+    "RED_controls": [
+      "metadata-red.log:1failed",
+      "tree-red.log:1failed/4869crossings"
+    ]
+  },
+  "repo_guards": {
+    "result": "repo_guards: GREEN",
+    "passed": 486,
+    "seconds": 127.71,
+    "log_sha256": "19dabe9aeafbaf629f3400a0505732e5831a39fd74ead3bfd82582040011f7df"
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "new_shared_modules": [],
+  "code_inventory": [
+    {
+      "relative_path": "diagnose_metadata.py",
+      "sha256": "7b9181def4992f1d2559b6ba4b1c9c14a783ec705936362161875c7a2f3c6e61",
+      "literal_lines": 22
+    },
+    {
+      "relative_path": "diagnose_tree.py",
+      "sha256": "ff4de8dbfec034cf411fd5b98f180a7b229ed94df28c68118b4e50f0b5e15f80",
+      "literal_lines": 18
+    },
+    {
+      "relative_path": "native_metadata.py",
+      "sha256": "03cdda364b61442bb72e5e9dd63aa3831c43eda1e95f28f5c0073901eec86406",
+      "literal_lines": 25
+    },
+    {
+      "relative_path": "pilot_link.py",
+      "sha256": "eca19175ff3632be6502415db470762dde5e683b09c9dfeb7645011e8efd4159",
+      "literal_lines": 49
+    },
+    {
+      "relative_path": "pilot_optim.py",
+      "sha256": "11fc184fed40ef4f036fae89e75057c98c6afcf2cda87478907f416783e7604b",
+      "literal_lines": 8
+    },
+    {
+      "relative_path": "pilot_tree_shell.py",
+      "sha256": "6343aea60b06d06a09d0ca2988481c828dd041f5f7627c523a511d0bd20d2c0f",
+      "literal_lines": 30
+    },
+    {
+      "relative_path": "publish_question.py",
+      "sha256": "6648ed2fd2c213e92743daac7b0eff36e68da67b727cfefcac116424e4670e83",
+      "literal_lines": 6
+    },
+    {
+      "relative_path": "restore_aux_paths.py",
+      "sha256": "8da61bb6edc663dcc467086e156449243ed6d9a1f8a4d69c8ab88f5da581b84e",
+      "literal_lines": 60
+    },
+    {
+      "relative_path": "run_validator.py",
+      "sha256": "431d8ecd8e2938dc26d63acfd6495faaaabc3d49f45206e11d90ac8b070f2864",
+      "literal_lines": 7
+    },
+    {
+      "relative_path": "seal_checkpoint.py",
+      "sha256": "5dea473143c496ad41ff26adf827f409ff662ff9e5bc3bad64668fa4c03f54ec",
+      "literal_lines": 25
+    },
+    {
+      "relative_path": "test_checkpoint_v027.py",
+      "sha256": "e245effd3c2293d8615b9fa53839d056c1542dcf524f7085c02768c3f64b02f9",
+      "literal_lines": 33
+    },
+    {
+      "relative_path": "test_metadata.py",
+      "sha256": "e511963577b644504c089d5c03985c11425184ee5cfcfbd0dbc4ee852462411a",
+      "literal_lines": 12
+    }
+  ],
+  "full_suite": "deferred to merge batch (rule68)",
+  "open_items": [
+    "NEW question6951392543: six VPM maple source/construction choice",
+    "All three VPMtree trials NOTadopted; no new VPMcrown pilot built/accepted",
+    "other375Flora crossings and mixedVPM contacts remain",
+    "Ground/skirt/master/maps/UV and finalvisual/material/SINTEZ gates",
+    "archive metadata immediate-predecessor FAIL, external locators missing; restoredcopy NOTadopted",
+    "D339UCXgapbands OBSERVE report-only; independent checkertriage t_66104c70"
+  ]
+}

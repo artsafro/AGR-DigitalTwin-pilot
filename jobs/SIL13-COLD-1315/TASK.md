@@ -22,7 +22,22 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Read back exports, run area validators, report per-area reproduction and historical comparison.
   No passed=true with an incomplete mandatory/manual gate.
 
-## v026 current continuation — supersedes all resume paths below
+## v027 current continuation — current pair remains v026/v025
+
+[CONTINUATION-v027.md](CONTINUATION-v027.md): NO model adoption this run.
+Resume ONLY NPMv026/site-flora-r3 + VPMv025/site-ucx-wide-r1; hashes unchanged.
+NEW VPM six-maple crown/source choice pending on issue comment6951392543;
+see question-receipt-v027.json.29240/29615crossings isolated to six original
+VPM maples. Three source-card repair routes REJECTED. Do not replace the
+six detailed VPM crowns with NPM-derived shells without the new choice and
+separate picture gate; no shrub/hedge gate reopened. No QA waiver requested.
+Metadata experiment is NOT ADOPTED: older-v025 comparison passes, immediate
+v026 comparison stillFAIL; native geometry/maps exact, external locators missing.
+Ground/UV/maps/mixedVPM/metadata/final gates stayOPEN; D339gapbandsOBSERVEonly.
+227affectedpassed; repo_guards: GREEN (486passed).
+Full suite: deferred to merge batch (rule68).
+
+## v026 historical continuation — source of unchanged current NPM
 
 [CONTINUATION-v026.md](CONTINUATION-v026.md): use ONLY NPMv026/site-flora-r3 and
 VPMv025/site-ucx-wide-r1. Actual176094/300120raw=native; NPMFlora515→0regulatory
