@@ -203,6 +203,20 @@ def offset_post_master(dy):
     return [b.obj()]
 
 
+@pytest.mark.parametrize('dy', [0.0, 0.002, math.nextafter(0.002, math.inf), 0.0025, 0.005, 0.01])
+def test_body_hole_beyond_seam_gap_cannot_beat_welded(dy):
+    """#1631: a displaced post never repairs the wall's missing column."""
+    result = mq.score(offset_post_master(dy))
+    welded, inset = mq.score(welded_master()), mq.score(inset_master())
+    assert result['score'] <= welded['score'] < inset['score']
+
+
+def test_body_hole_without_post_is_penalized():
+    b = Builder('SM_Fixture_Main')
+    wall(b, skip_col=1)
+    assert mq.score([b.obj()])['score'] <= mq.score(welded_master())['score']
+
+
 def tjunction_post_master():
     """Review r2 P1-1 witness: post rows cut at z+0.5, so no post edge coincides with a wall hole edge."""
     b = Builder('SM_Fixture_Main')
