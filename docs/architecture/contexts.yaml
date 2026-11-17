@@ -421,7 +421,8 @@ contexts:
       - at: "tools/materials/npm_atlas_udim.py:785"
         match: "def main("
         issue: "#1141"
-        ru: "второй (Python) генератор атласа НПМ, по нему идёт agr vpm-to-npm"
+        ru: "job-specific инструмент UV / атласа; подсказка agr unwrap-atlas в src/dt_ai/cli/agr.py:30, не исполняемый алиас"
+        # Keep live-bypass: the documented UV/atlas candidate still bypasses atlas_core; no migration here.
         status: live-bypass
         step: "#1380"
       - at: "jobs/KPP1/scripts/make_npm_atlas.py:28"
@@ -726,6 +727,16 @@ contexts:
         ru: "замороженный прогон исследования проверяющего: запечатанный корпус привязан к sha256 этого файла (#1530)"
         status: own-duty
         why: "замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера"
+  - id: sintez
+    ref: package-contexts.yaml#sintez
+  - id: parts
+    ru: "Состав частей (PartsList)"
+    owner: src/dt_ai/parts/model.py
+    owner_ru: "модель состава частей и подтверждение Gate 1"
+    functions:
+      - name: PartsList
+        kind: class
+        contract: "Состав частей модели и подтверждение пользователя"
 relations:
   - from: body
     to: uv-atlas

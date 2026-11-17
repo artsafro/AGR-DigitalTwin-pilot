@@ -39,11 +39,100 @@ def _maps():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return _maps()["contexts"]
 
 
 def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
+
+
+# ---------------------------------------------------------------- #1644: explicit top-level class references
+@pytest.mark.parametrize("name,kind,valid", [
+    ("PartsList", "class", True),
+    ("MissingPartsList", "class", False),
+    ("PartsList", None, False),
+])
+def test_1644_class_reference(name, kind, valid):
+    cmap = _maps()["contexts"]
+    entry = {"name": name, "contract": "Состав частей модели"}
+    if kind is not None:
+        entry["kind"] = kind
+    cmap["contexts"] = [{"id": "parts", "ru": "Состав частей",
+        "owner": "src/dt_ai/parts/model.py", "owner_ru": "Модель состава частей",
+        "functions": [entry]}]
+    cmap["relations"] = []
+    route_map.check_contexts(cmap)
+    problems = route_map.verify_references(ROOT, {"stages": []}, cmap)
+    if valid:
+        assert problems == []
+    else:
+        category = "class" if kind else "function"
+        assert problems == [f"context parts: src/dt_ai/parts/model.py has no top-level {category} {name}"]
+
+
+@pytest.mark.parametrize("name,kind,valid", [
+    ("Top", "class", True), ("Nested", "class", False),
+    ("Top", None, False), ("sync", None, True), ("async_fn", None, True),
+    ("sync", "class", False), ("<module>", "class", False), ("<module>", None, True),
+])
+def test_1644_top_level_namespace_probe(tmp_path, name, kind, valid):
+    """Synthetic exhaustive namespace/kind controls, with no runtime import of the owner."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs/decisions.md").write_text("", encoding="utf-8")
+    (tmp_path / "owner.py").write_text(
+        "class Top:\n    class Nested: pass\ndef sync(): pass\nasync def async_fn(): pass\n",
+        encoding="utf-8")
+    entry = {"name": name, "contract": "Синтетический контракт"}
+    if kind is not None:
+        entry["kind"] = kind
+    context = {"id": "synthetic", "owner": "owner.py", "functions": [entry]}
+    cmap = {"shared_kernel": context, "contexts": [], "rules": []}
+    for _ in range(2):
+        assert (route_map.verify_references(tmp_path, {"stages": []}, cmap) == []) is valid
+
+
+def test_1644_reference_layout_is_local():
+    maps = _maps()
+    source = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "sintez")
+    assert "grid" in source
+    assert "grid" not in route_map.resolve_context({"ref": "package-contexts.yaml#sintez"}, maps)
+    assert route_map.resolve_context({"ref": "package-contexts.yaml#sintez", "grid": "3/4"}, maps)["grid"] == "3/4"
+
+
+@pytest.mark.parametrize("kind", ["", "function", "method", None, [], 1, float("nan"), float("inf")])
+def test_1644_invalid_kind(kind):
+    cmap = _maps()["contexts"]
+    cmap["shared_kernel"]["functions"][0]["kind"] = kind
+    with pytest.raises(route_map.SchemaError, match="kind"):
+        route_map.check_contexts(cmap)
+
+
+@pytest.mark.parametrize("route,map_name", [("route", "contexts"),
+    ("vpm-route", "vpm-contexts"), ("ground-route", "ground-contexts")])
+def test_1644_stage_owners(route, map_name):
+    maps, events = _maps(), _routes()[route]
+    cmap = maps[map_name]
+    sintez = next(c for c in cmap["contexts"] if c["id"] == "sintez")
+    assert sintez["ref"] == "package-contexts.yaml#sintez"
+    assert sintez["owner"] == "tools/blender/sintez_checker.py"
+    assert {f["name"] for f in sintez["functions"]} == {"dump"}
+    assert _stage(events, "sintez")["context"] == "sintez"
+    assert next(r for r in maps["contexts"]["rules"] if r["id"] == "sintez-checker")["owner"] == sintez["owner"]
+    if route != "ground-route":
+        parts = next(c for c in cmap["contexts"] if c["id"] == "parts")
+        assert _stage(events, "parts")["context"] == "parts"
+        assert parts["owner"] == "src/dt_ai/parts/model.py"
+        assert parts["functions"] == [{"name": "PartsList", "kind": "class", "contract": "Состав частей модели и подтверждение пользователя"}]
+    route_map.check_schema(events, maps["contexts"])
+    assert not [p for p in route_map.route_coverage(events, maps["contexts"], cmap) if not p.startswith("WARNING:")]
+
+
+def test_1644_atlas_duplicate_reason():
+    row = next(d for c in _maps()["contexts"]["contexts"] for d in c.get("duplicates", [])
+               if d["at"] == "tools/materials/npm_atlas_udim.py:785")
+    assert "agr vpm-to-npm" not in row["ru"]
+    assert "agr unwrap-atlas" in row["ru"] and "job-specific" in row["ru"]
+    assert row["status"] == "live-bypass"
 
 
 # ---------------------------------------------------------------- #1593 source-backed writer inventory (not a generic scanner)

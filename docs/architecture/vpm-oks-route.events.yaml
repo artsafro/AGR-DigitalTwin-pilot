@@ -75,7 +75,7 @@ stages:
   - id: parts
     event_ru: "Состав частей (PartsList) и бюджет треугольников"
     actor: agent
-    context: body
+    context: parts
     commands:
       - "dt inspect"
     rules:
@@ -283,7 +283,7 @@ stages:
   - id: sintez
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
     actor: checker
-    context: validation
+    context: sintez
     commands:
       - agr checker
     rules:

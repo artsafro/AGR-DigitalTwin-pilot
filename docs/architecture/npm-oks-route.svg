@@ -127,8 +127,8 @@
 <tspan x="425.0" dy="14">Правила: D276, D010</tspan>
 </text>
 <text x="425.0" y="603.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="425.0" dy="14">Контекст: Корпус и</tspan>
-<tspan x="425.0" dy="17.5">геометрия</tspan>
+<tspan x="425.0" dy="14">Контекст: Состав частей</tspan>
+<tspan x="425.0" dy="17.5">(PartsList)</tspan>
 </text>
 <text x="695.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="695.0" dy="15">Артём</tspan>
@@ -487,8 +487,8 @@
 <tspan x="2585.0" dy="14">Правила: D220, D270</tspan>
 </text>
 <text x="2585.0" y="603.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2585.0" dy="14">Контекст: Проверка и</tspan>
-<tspan x="2585.0" dy="17.5">приёмка</tspan>
+<tspan x="2585.0" dy="14">Контекст: Чекер СИНТЕЗ и</tspan>
+<tspan x="2585.0" dy="17.5">загрузка архива</tspan>
 </text>
 <text x="2855.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="15">Артём</tspan>
