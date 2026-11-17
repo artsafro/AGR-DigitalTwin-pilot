@@ -89,7 +89,8 @@ substitute ad-hoc scripting.
 - Known issues (same run): `create_object` with `pos` fails («Invalid position parameter», nothing
   created) — create without `pos`, then `transform`; `manage_scene(save)` saves only to the current
   path — Save As to a new versioned path via MAXScript; a newly started Max registers itself and
-  becomes the default target — pinning does not hold; guard every mutation inside the executing
+  becomes the default target — a new or unpinned MCP process follows it (a `select_max_instance` pin
+  survives only inside its own MCP process, live #1481); guard every mutation inside the executing
   process (see the `3dsmax-mcp-dev` skill and PID gate below); the agent viewport does not redraw while Max is
   hidden; the Max 2026 startup shows the `polyunwrapper_autoload.mse` .NET error dialog (see
   Toolchain smoke above). Source review (PR #793): `query_scene(action="class", scope="refs")`
@@ -106,10 +107,16 @@ substitute ad-hoc scripting.
   item 9 reports PID 563748 selected with `pinned: true`, then PID 570920 becoming selected/default.
   Deterministic two-registration simulation: `tests/test_max_pid_guard.py::test_two_registrations`
   (synthetic registry, mocked PID source; not a real server/Max measurement).
-  Live two-Max re-registration test: NOT DONE (2026-11-15, orchestrator prohibits starting,
-  registering or touching Max while the user's sessions are open). Whether v1.7.5's pin survives
-  a new registration is not freshly measured; do not infer a live pass from pytest.
-  External Claude memory pointer edit is also deferred by explicit instruction.
+  Live two-Max re-registration test (#1481, 2026-11-17, v1.7.5 `bcd4e4c6`, real stdio server,
+  two fresh 3ds Max 2026 instances with empty synthetic scenes): the pin SURVIVES. After pinning
+  A (PID 1124612, `select_max_instance` -> `pinned: true`) and starting B (PID 1142464, registered
+  in 33 s), `list_max_instances` shows B `default: true` and A `selected: true`;
+  `get_selected_max_instance` still returns A `explicit`/`pinned: true`; a PID-guarded
+  `execute_maxscript` returned 1124612 for A's guard and `wrong Max` for B's guard (routed to A).
+  A fresh unpinned MCP process has no selection and defaults to the newest registration (B), which
+  matches the #1364 incident: survival holds only inside the pinned MCP process, so the
+  per-call PID guard stays mandatory. Log: `G:/Мой диск/AGR-evidence/1481-two-max-pin/`
+  (`live_two_max_pin.log` sha256 `087c28ac…748d`, driver `live_two_max_pin.py`, `SHA256SUMS.txt`).
 - Owner: Claude (main) · scope: user (all projects)
 - Server: cl0nazepamm/3dsmax-mcp v1.7.5 (commit `bcd4e4c6`, licence MIT), `C:\Users\artsafro\tools\3dsmax-mcp`; plugin in
   `C:\ProgramData\Autodesk\ApplicationPlugins\3dsmax-mcp`; `safe_mode = true`
