@@ -5,7 +5,13 @@ scale (session 0a21d4de, elv-tc-vpm, 2026-11-16: per-tile snapping and neighbour
 panel joints; Artem's "UVW-map box 5-5-5 m" was accepted). docs/domain/uv-textures.md.
 
 - every listed face is projected on its dominant world axis (+-X, +-Y, +-Z) in metres, scaled by
-  px_per_m / texture_px, so one texture period = 1.0 UV and texel density = px_per_m;
+  px_per_m / texture_px, so one texture period = 1.0 UV. Directional texel (#1574): along the face's trace
+  on the projection plane it is px_per_m, across it px_per_m * |n_axis| (unit normal component on the
+  dominant axis, >= 1/sqrt(3)), so a rotated or sloped face gets less than px_per_m (a wall rotated 40 deg
+  at 819.2 px/m: 627.5 px/m). Both singular values of every face's UV-px / metre Jacobian (per fan
+  triangle, so a non-planar face is checked too) must lie in 512..1706, else BoxUVTexelError names the
+  faces and the least px_per_m at which they all pass; nothing is written. The report carries the range
+  as texel_px_per_m;
 - the winding of the projection follows the face normal (no mirrored islands, walls keep V = world Z);
 - listed faces that share an edge and the same axis form one island, except across an edge that lies on a
   world period line (both ends on u = k or v = k periods, #1573): such an edge is an island border; each
@@ -36,10 +42,15 @@ TEXEL_MIN, TEXEL_MAX = 512.0, 1706.0   # reg p.32 §6.2, inclusive
 LAST_UDIM = 1100                        # reg p.23, p.31 §2.1.3: 10x10 grid 1001-1100
 AXES = ('+x', '-x', '+y', '-y', '+z', '-z')
 EPS = 1e-9                              # periods (5 nm at a 5 m period): period-line and tile-fit tolerance
+TEXEL_RTOL = 1e-9                       # relative float tolerance of the inclusive texel bounds
 
 
 class BoxUVError(ValueError):
     """Invalid input for the box projection; nothing was written."""
+
+
+class BoxUVTexelError(BoxUVError):
+    """A face's directional texel is outside 512..1706 px/m; nothing was written."""
 
 
 class BoxUVOverflow(BoxUVError):
@@ -115,6 +126,52 @@ def on_period_line(a, b, scale):
     return False
 
 
+def face_texel(coords, key, px):
+    """(min, max) singular value in px/m of the map world face -> UV pixels (projection along `key` x px).
+
+    Projecting a plane with unit normal n onto the coordinate plane of axis a keeps lengths along the plane's
+    trace (singular value 1) and scales the direction across it by |n . a|; so the singular values are px
+    and px * |n_a| / |n|. Evaluated for the Newell normal and for every fan triangle whose area is at least
+    1e-6 of the face area (a non-planar face is checked per piece; slivers of collinear corners, whose
+    normal is roundoff, are skipped)."""
+    axis = 'xyz'.index(key[1])
+    face_n = newell_normal(coords)
+    face_len = math.sqrt(sum(c * c for c in face_n))
+    normals = [list(face_n)]
+    p0 = coords[0]
+    for i in range(1, len(coords) - 1):
+        d1 = [coords[i][k] - p0[k] for k in range(3)]
+        d2 = [coords[i + 1][k] - p0[k] for k in range(3)]
+        t = [d1[(k + 1) % 3] * d2[(k + 2) % 3] - d1[(k + 2) % 3] * d2[(k + 1) % 3] for k in range(3)]
+        if math.sqrt(sum(c * c for c in t)) >= 1e-6 * face_len:
+            normals.append(t)
+    ratios = [abs(n[axis]) / math.sqrt(sum(c * c for c in n)) for n in normals]
+    return px * min(ratios), px                  # |n_a| / |n| <= 1: the trace direction keeps px
+
+
+def check_texel(faces, keys, px):
+    """Per-face directional texel; raises BoxUVTexelError naming every face outside 512..1706."""
+    lo_all, hi_all, bad = math.inf, -math.inf, []
+    for fid, _, coords in faces:
+        lo, hi = face_texel([tuple(map(float, c)) for c in coords], keys[fid], px)
+        lo_all, hi_all = min(lo_all, lo), max(hi_all, hi)
+        if lo < TEXEL_MIN * (1 - TEXEL_RTOL) or hi > TEXEL_MAX * (1 + TEXEL_RTOL):
+            bad.append((lo, fid, hi))
+    if bad:
+        bad.sort(key=lambda b: b[0])
+        # texel is linear in px: the least px at which every face reaches the floor (max texel = px <= 1706)
+        need = (math.ceil(max(px * TEXEL_MIN / lo for lo, _, _ in bad) * 10) / 10
+                if all(lo > 0 for lo, _, _ in bad) else math.inf)
+        listed = ', '.join(f'face {fid!r} ({lo:.1f}..{hi:.1f} px/m)' for lo, fid, hi in bad[:8])
+        remedy = (f'raise px_per_m >= {need:.1f} (<= {TEXEL_MAX:g}), or fix the geometry'
+                  if need <= TEXEL_MAX else 'no px_per_m in range fits; fix the geometry')
+        raise BoxUVTexelError(
+            f'{len(bad)} face(s) have directional texel outside {TEXEL_MIN:g}..{TEXEL_MAX:g} px/m at px_per_m '
+            f'{px:g} (box projection compresses a rotated or sloped face by |n_axis|, reg p.32 §6.2): {listed}; '
+            f'{remedy}')
+    return [round(lo_all, 6), round(hi_all, 6)]
+
+
 def _ordered(ids):
     try:
         return sorted(ids)
@@ -125,7 +182,8 @@ def _ordered(ids):
 def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
     """faces: [(face_id, [vertex_key, ...], [(x, y, z) world, ...]), ...].
 
-    Returns (uvs, report): uvs = {face_id: [(u, v) per corner]}. Raises BoxUVError / BoxUVOverflow."""
+    Returns (uvs, report): uvs = {face_id: [(u, v) per corner]}; report['texel_px_per_m'] = [min, max]
+    directional texel over all faces. Raises BoxUVError / BoxUVTexelError / BoxUVOverflow."""
     px, (tu, tv), margin = validate_params(px_per_m, tile, texture_px, margin_px)
     faces = list(faces)
     if not faces:
@@ -149,6 +207,7 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
         return f
 
     metres = {fid: [axis_uv(co, keys[fid]) for co in coords] for fid, _, coords in faces}
+    texel = check_texel(faces, keys, px)
     edge_owner, period_cuts = {}, 0
     for fid, verts, _ in faces:
         corner = dict(zip(verts, metres[fid]))
@@ -188,7 +247,8 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
             f'px_per_m; an island that touches a period line fits only with margin_px=0 (tile margin vs world '
             f'phase: docs/domain/conflicts.md)')
     return uvs, {'tile': tile, 'px_per_m': px, 'texture_px': texture_px, 'period_m': texture_px / px,
-                 'faces': len(uvs), 'islands': report_islands, 'period_cut_edges': period_cuts}
+                 'faces': len(uvs), 'islands': report_islands, 'period_cut_edges': period_cuts,
+                 'texel_px_per_m': texel}
 
 
 # ------------------------------------------------------------------ Blender wrapper (data API only)
