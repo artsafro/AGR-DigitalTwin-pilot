@@ -87,6 +87,7 @@
 <rect x="2740" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="2740" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2740" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2740" y="681.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Маршрут НПМ / ОКС v2 на КПП1: событийный штурм (#1359)</tspan>
 </text>
@@ -144,8 +145,8 @@
 <tspan x="695.0" dy="14">Правила: D238, D186</tspan>
 </text>
 <text x="695.0" y="603.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="695.0" dy="14">Контекст: Корпус и</tspan>
-<tspan x="695.0" dy="17.5">геометрия</tspan>
+<tspan x="695.0" dy="14">Контекст: Состав частей</tspan>
+<tspan x="695.0" dy="17.5">(PartsList)</tspan>
 </text>
 <text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="15">Агент: Blender / Max /</tspan>
@@ -510,5 +511,13 @@
 <text x="2855.0" y="603.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="14">Контекст: Экспорт и пакет</tspan>
 <tspan x="2855.0" dy="17.5">сдачи</tspan>
+</text>
+<text x="2855.0" y="691.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="13">⚠ jobs/KPP1/REPORT.md — отчёт</tspan>
+<tspan x="2855.0" dy="16.25">сборки, не акт сдачи: строки</tspan>
+<tspan x="2855.0" dy="16.25">5–6 сами отделяют приёмку</tspan>
+<tspan x="2855.0" dy="16.25">производственного цикла от</tspan>
+<tspan x="2855.0" dy="16.25">сдачи пакета; записи передачи</tspan>
+<tspan x="2855.0" dy="16.25">в репозитории пока нет</tspan>
 </text>
 </svg>

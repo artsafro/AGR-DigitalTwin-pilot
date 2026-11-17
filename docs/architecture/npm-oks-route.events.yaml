@@ -70,7 +70,7 @@ stages:
   - id: gate1
     event_ru: "Gate 1: Артём подтвердил части"
     actor: artem
-    context: body
+    context: parts
     rules:
       - D238
       - D186
@@ -282,6 +282,11 @@ stages:
     evidence:
       - jobs/KPP1/REPORT.md
 hotspots:
+  - id: delivery-record-missing
+    stage: delivered
+    ru: "jobs/KPP1/REPORT.md — отчёт сборки, не акт сдачи: строки 5–6 сами отделяют приёмку производственного цикла от сдачи пакета; записи передачи в репозитории пока нет"
+    evidence:
+      - jobs/KPP1/REPORT.md
   - id: tool-choice
     stage: model
     ru: "Решено D293: агент выбирает Blender / Max / AGR Tools на каждом шаге и пишет почему одной строкой; инструмент не назначен всему маршруту. D312: мастер — квады где возможно; неизбежные треугольники считаем по объекту и доле граней, n-gon >4 запрещён до триангуляции экспорта"
