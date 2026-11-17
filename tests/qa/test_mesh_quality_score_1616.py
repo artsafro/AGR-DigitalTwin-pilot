@@ -305,7 +305,12 @@ def test_window_reveal_is_not_missing_coplanar_body():
     assert r['totals']['open_seam_edges'] == 0
 
 
-def test_open_shell_base_is_an_exterior_boundary_not_a_body_hole():
+@pytest.mark.parametrize('height, slope, expected', [
+    (0.0, 0.0, 0), (.001, 0.0, 0), (.002, 0.0, 0),
+    (math.nextafter(.002, math.inf), 0.0, 1), (.003, 0.0, 1),
+    (1.0, 0.0, 1), (0.0, .001, 1),
+])
+def test_open_shell_base_is_an_exterior_boundary_not_a_body_hole(height, slope, expected):
     """PSU275 readback reduction: bottom rim's inner circuit is the shell's exterior opening.
 
     It has no enclosing coplanar FREE boundary loop; the other free contour is at the top.
@@ -318,7 +323,13 @@ def test_open_shell_base_is_an_exterior_boundary_not_a_body_hole():
         a, c = outer[i], outer[j]
         b.face([(*a, 0), (*c, 0), (*c, 4), (*a, 4)], (a[0]+c[0]-4, a[1]+c[1]-4, 0))
         b.face([(*a, 0), (*c, 0), (*inner[j], 0), (*inner[i], 0)], (0, 0, -1))
-    assert mq.score([b.obj()])['totals']['body_holes'] == 0
+    for v in b.verts:
+        if .3 < v[0] < 3.7 and .3 < v[1] < 3.7:
+            v[2] = height + slope*v[0]
+    result = mq.score([b.obj()])
+    assert result['totals']['body_holes'] == expected
+    if expected:
+        assert result['penalties']['weld_share'] == 1.0
 
 
 def tjunction_post_master():
