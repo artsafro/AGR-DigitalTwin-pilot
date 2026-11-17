@@ -360,12 +360,13 @@ def _suite_core():
     return _load_core('suite_core.py', 'agr_tools_suite_core')
 
 
-def checks_070(tool, nodes=None, select=True):
+def checks_070(tool, nodes=None, select=True, ucx_export=None):
     """0.7.0 read-only pre-delivery checks (suite_max.py reads the scene, suite_core.py judges)."""
     import types
     glue = _load_core('checks_max.py', 'agr_tools_checks_max')
     suite_max = _load_core('suite_max.py', 'agr_tools_suite_max')
-    return suite_max.run(types.SimpleNamespace(**globals()), glue, _suite_core(), tool, nodes, select)
+    kw = {'ucx_export': ucx_export} if ucx_export is not None else {}
+    return suite_max.run(types.SimpleNamespace(**globals()), glue, _suite_core(), tool, nodes, select, **kw)
 
 
 _edit = None

@@ -61,6 +61,13 @@ core before taking a triangle snapshot. This is separate from BODY-N's exported
 triangle rule and does not certify that each triangle was unavoidable. Read-only
 ELV/KPP1/PSU275 evidence: [report](../../../jobs/master-topology-1420/REPORT.md).
 
+OKS modelling split [D336]: which parts are inset elements (windows, stained glass,
+roof, flashings, posts), which are texture (panels, with a seam), the per-project
+plinth choice and the `Modelling split [D336]:` job-report line are listed in
+[SKELETONS.md](../../agents/SKELETONS.md#oks-modelling-split-d336). The check above is
+per object: inset elements pass or fail on their own; no check may require
+welding them into the body.
+
 ## Image verification and review evidence
 
 The supplied PDF has 56 physical pages. Rendered with PyMuPDF 1.28.2 at scale 1.5 and

@@ -21,6 +21,8 @@ DERIVE_STEPS = {
     "npm": ("blender", "tools/derive/export_npm.py", "NPM OKS FBX from a VPM stage-6 master + atlas (headless Blender)"),
     "package-npm": ("python", "tools/derive/package_npm.py", "NPM flat ZIP with Ground and embedded-texture OKS FBX"),
     "package": ("python", "tools/derive/package_vpm.py", "VPM package ZIP: FBX + external PNG set (+ GeoJSON)"),
+    "maf-npm-light": ("python", "tools/library/maf_npm_light.py",
+                      "MAF NPM-light version + atlas UV for a MAF set, gated on readback (#1410, D293 conversion)"),
 }
 GROUND_STEPS = {
     "v015": ("python", "tools/ground/build_ground_v015.py", "Ground v015 NPM/VPM masters (layered cake + paired quads)"),
@@ -34,7 +36,7 @@ TABLES = {"derive": DERIVE_STEPS, "ground": GROUND_STEPS, "place": PLACE_STEPS}
 
 
 def add_parsers(sub):
-    derive = sub.add_parser("derive", help="NPM<->VPM derivation: atlas | npm | package (shared tools, #1106)")
+    derive = sub.add_parser("derive", help="NPM<->VPM derivation: atlas | npm | package | package-npm | maf-npm-light (shared tools, #1106, #1410)")
     derive.add_argument("--blender", default=os.environ.get("DT_BLENDER"),
                         help="Blender executable for the npm step (default: DT_BLENDER)")
     derive.add_argument("step", choices=sorted(DERIVE_STEPS), help="; ".join(f"{k}: {v[2]}" for k, v in DERIVE_STEPS.items()))

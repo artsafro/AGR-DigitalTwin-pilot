@@ -219,6 +219,21 @@ for name, (obj, faces, px, tile) in cases.items():
     except Exception as exc:   # noqa: BLE001 - any other type is a finding
         fail[name] = f'{type(exc).__name__}: {exc}'
 report['fail_closed'] = fail
+# #1574: directional texel of a rotated / sloped face below 512 px/m is a BoxUVTexelError, nothing written
+rot40 = mesh_object('ELV_Rot40', [(0, 0, 0), (1, 0, 0), (1, 0, 1), (0, 0, 1)], [[0, 1, 2, 3]],
+                    location=(0.1, 0.1, 0.1), rot_z=math.radians(40))
+c50, s50 = math.cos(math.radians(50)), math.sin(math.radians(50))
+slope50 = mesh_object('ELV_Slope50', [(0, 0, 0), (1, 0, 0), (1, c50, s50), (0, c50, s50)], [[0, 1, 2, 3]],
+                      location=(0.1, 0.1, 0.1))
+for name, obj, px in (('texel_rot40_px600', rot40, 600), ('texel_slope50_px512', slope50, 512)):
+    f0 = box_uv.uv_fingerprint(scene_objects())
+    try:
+        box_uv.box_project_uv(obj, [0], px, 1001)
+        fail[name] = 'NO ERROR'
+    except box_uv.BoxUVTexelError as exc:
+        fail[name] = 'error' if box_uv.uv_fingerprint(scene_objects()) == f0 else f'error but wrote: {exc}'
+    except Exception as exc:   # noqa: BLE001 - any other type is a finding
+        fail[name] = f'{type(exc).__name__}: {exc}'
 for name, px in (('px_512', 512), ('px_1706', 1706)):   # inclusive regulation bounds
     small, sf, _ = facade('ELV_' + name, wa=(1, 1.0), wb=(1, 1.0), rows=(1, 1.0), cap=0.2, location=(0.1, 0.1, 0.1))
     try:

@@ -1,0 +1,23 @@
+{
+ "schema": "dt-maf-npm-light/1",
+ "set": "SIL13-MAF-NPM-LIGHT-1410",
+ "atlas_json": "G:/Мой диск/AGR-evidence/1410-maf-npm-light/atlas/sil_maf_atlas_512.json",
+ "atlas_png": "G:/Мой диск/AGR-evidence/1410-maf-npm-light/atlas/sil_maf_atlas_512.png",
+ "smoothing_deg": 40.0,
+ "floor_tris": 400,
+ "iou_min": 0.95,
+ "positions": [
+  {"set_id": "SIL_MAF_0466", "catalogue_id": "MAF_0466", "source_fbx": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v018/isolated/MAF_0466_M_Bysicle_007.fbx",
+   "decimate_ratio": 0.8, "material_map": {"GeometryOnly_MAF_0466_M_Bysicle_007": "steel_ral7047"}, "height_rule": "overall",
+   "note": "#1315 v018 isolated copy, geometry-only; slot is a proof choice"},
+  {"set_id": "SIL_MAF_0625", "catalogue_id": "MAF_0625", "source_fbx": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v018/isolated/MAF_0625_M_Sand_002.fbx",
+   "decimate_ratio": 0.35, "material_map": {"GeometryOnly_MAF_0625_M_Sand_002": "concrete_grey"}, "height_rule": "overall",
+   "note": "#1315 v018 isolated copy, geometry-only; slot is a proof choice"},
+  {"set_id": "SIL_MAF_0698", "catalogue_id": "MAF_0698", "source_fbx": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v018/isolated/MAF_0698_M_Urn_010.fbx",
+   "decimate_ratio": 0.5, "material_map": {"GeometryOnly_MAF_0698_M_Urn_010": "steel_ral7047"}, "height_rule": "overall",
+   "note": "#1315 v018 isolated copy, 158 tris: under the 400 floor, must stay unchanged"},
+  {"set_id": "SIL_MAF_0423", "catalogue_id": "MAF_0423", "source_fbx": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/v018/bench-full/isolated/MAF_0423_M_Bench_013.fbx",
+   "decimate_ratio": 0.5, "material_map": {"GeometryOnly_MAF_0423_M_Bench_013": "larch_light_oak"}, "height_rule": "overall",
+   "note": "#1315 v018 bench-full isolated copy, geometry-only; slot is a proof choice"}
+ ]
+}
