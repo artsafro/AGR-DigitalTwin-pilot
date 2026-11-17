@@ -1,7 +1,7 @@
 # Autoresearch: merge-gate wall time (#1615)
 
-Status: contract frozen; first baseline rejected (environment failure); repaired baseline pending.
-No speed-up or acceptance claimed.
+Status: valid idle baseline is already under 30 minutes; two unchanged-corpus
+confirmations pending. No optimization or causal speed-up claimed.
 
 ## Frozen contract (before optimization)
 
@@ -86,11 +86,41 @@ contract measures the entire command including uv/startup/collection/teardown.
 | Round | Hypothesis / source | Metric | Parity | Decision |
 | --- | --- | --- | --- | --- |
 | B0 (`baseline-001`) | Unmodified test corpus from `c62ceddd`; harness HEAD `1c713b04` | 1667.3542925 s; exit 1; 27212 passed / 193 skipped / 6 failed | rejected | invalid: detached PATH selected Windows WSL bash, not Git Bash |
-| B1 (`baseline-002`) | Same test corpus, command and observer; repair subprocess PATH only | pending | pending | replacement baseline pending |
+| B1 (`baseline-002`) | Same test corpus, command and observer; repair subprocess PATH only | **1487.8959172 s (24.7983 min)**; exit 0 | 27454 nodes; 27218 passed / 187 skipped / 49 xfailed | valid baseline; target already reached, no optimization needed |
+| C1 (`confirmation-001`) | Identical corpus, command, observer and repaired PATH | pending | pending | final confirmation pending |
+| C2 (`confirmation-002`) | Identical corpus, command, observer and repaired PATH; sequential after valid C1 | pending | pending | final confirmation pending |
 
 B0 is below 1800 seconds as an **invalid observation only**, not a target success,
 retained optimization, or parity reference. No optimization has been implemented,
-retained or dropped yet. Baseline/final table and parity diff require valid execution.
+retained or dropped yet. Baseline/final table and parity diff require confirmations.
+
+### B1 validated and unchanged-corpus confirmations
+
+- `baseline-002.json`: `valid=true`, exit 0, source `bb42920d` unchanged before/after;
+  source signature empty. Six artifact hashes reverified on resume. Replayed frozen
+  validator produces the exact committed-receipt-referenced sorted node/outcome TSV.
+  All 255 slot samples contain exactly the owned holder. Idle CPU preflight 8.23196%;
+  queue wait 2180.1133 s, excluded from the 1487.8959 s command wall time.
+- `git diff c62ceddd HEAD -- tests src pyproject.toml uv.lock conftest.py` is empty:
+  no project optimization, test selection or assertion change. The existing main
+  corpus already achieves the target in the valid idle baseline; stop proposing
+  optimizations and confirm the same corpus twice. The three-run final median will
+  use B1 + C1 + C2, not the rejected B0. This is confirmation, not an alleged 5% gain.
+- Current fetched main `db55afb4` has no wall-contract file; therefore documentation
+  acceptance is not already met by main. Do not call this performance improvement
+  caused by this branch, nor compare different main revisions as parity proof.
+- Sequential launcher snapshot `launch-confirmations.ps1.txt` preserves the same
+  process-local Git Bash repair. Each measurement independently waits for a drained
+  idle slot and exits; C2 starts only after C1 exits successfully and its full
+  node/outcome bytes equal B1. No parallel measurements, no new optimization loop.
+- Resume when `C:/x/autoresearch-suite-wall/confirmation-002.json` exists, or launcher
+  exits on error (inspect `tmp/confirmations-launch-console.log`, C1/C2 runner logs).
+  Do not mutate the worktree until both children exit; inspect validity, all hashes,
+  parity and source signatures before publishing a final median.
+- Affected tests rerun before launch:
+  `uv run python -m unittest discover -s tmp/wall_harness -p 'probe_*.py' -v`:
+  **6 passed** in 7.434 s. No project module changed.
+
 
 ### B0 diagnosis and environment-only repair (2026-11-17)
 

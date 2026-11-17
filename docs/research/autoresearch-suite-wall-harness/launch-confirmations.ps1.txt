@@ -1,0 +1,20 @@
+$ErrorActionPreference = 'Stop'
+$root = 'C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_82b1bc95'
+$bashDir = 'C:/Users/artsafro/.hermes/tools/git-2.53.0+3-win32-x64/usr/bin'
+$env:PATH = $bashDir + ';' + $env:PATH
+$bash = (Get-Command bash.exe -CommandType Application | Select-Object -First 1).Source
+if ($bash.Replace('\','/') -ne ($bashDir + '/bash.exe')) { throw "Unexpected bash: $bash" }
+$version = & $bash --version
+if ($LASTEXITCODE -ne 0 -or $version[0] -notmatch 'GNU bash') { throw 'Git Bash preflight failed' }
+@{ bash = $bash; version = $version[0]; pid = $PID } | ConvertTo-Json | Out-File -Encoding utf8 -NoClobber "$root/tmp/confirmations-launch-preflight.json"
+Set-Location $root
+foreach ($name in @('confirmation-001','confirmation-002')) {
+    & "$root/.venv/Scripts/python.exe" "$root/tmp/wall_harness/measure.py" $name
+    if ($LASTEXITCODE -ne 0) { throw "Measurement failed: $name" }
+    $row = Get-Content -Raw "C:/x/autoresearch-suite-wall/$name.json" | ConvertFrom-Json
+    if (-not $row.valid) { throw "Invalid measurement: $name" }
+    $expected = [System.IO.File]::ReadAllBytes('C:/x/autoresearch-suite-wall/baseline-002.nodes.tsv')
+    $actual = [System.IO.File]::ReadAllBytes("C:/x/autoresearch-suite-wall/$name.nodes.tsv")
+    if ([Convert]::ToBase64String($expected) -ne [Convert]::ToBase64String($actual)) { throw "Node/outcome parity failed: $name" }
+}
+exit 0
