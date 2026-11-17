@@ -1,0 +1,8 @@
+{
+  "scenario": "oks-vpm",
+  "config": {
+    "profile": "VPM",
+    "sources": "G:/Мой диск/AGR-evidence/1619-body-training/tower-C/v001/floor.json"
+  },
+  "hooks": []
+}
