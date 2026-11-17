@@ -42,7 +42,7 @@ def main(argv=None):
         raise SystemExit('run dir inside the source directory')
     run.mkdir(parents=True)
     before = sha(src)
-    from dt_ai.core.blender_runner import blender_executable
+    from dt_ai.core.blender_runner import blender_command
     log = run / 'observe-log.jsonl'
     base = mqs.run(src, run / 'round-00-score.json', zones=CORNERS, blender=a.blender)
     best = {'round': 0, 'score': base['score'], 'master': str(src)}
@@ -50,8 +50,8 @@ def main(argv=None):
              'kept': True, 'master': str(src), 'master_sha256': before}]
     for i, angle in enumerate([float(x) for x in a.angles.split(',')], start=1):
         out = run / f'round-{i:02d}'
-        cmd = [blender_executable(a.blender), '--background', '--factory-startup', '--disable-autoexec',
-               '--python', str(ROOT / 'tools' / 'blender' / 'split_welded_parts_candidate.py'), '--', str(src), str(out), repr(angle)]
+        cmd = blender_command(ROOT / 'tools' / 'blender' / 'split_welded_parts_candidate.py',
+                              (src, out, repr(angle)), executable=a.blender)
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
         fbx = out / 'master.fbx'
         if proc.returncode != 0 or not fbx.is_file():
