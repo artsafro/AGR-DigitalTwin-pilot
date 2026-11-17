@@ -73,7 +73,9 @@ welding them into the body.
 Follow [BM-01..BM-14](../../research/body-modelling.md#5-правила) for the OKS body stage.
 Rounded corners use a 2 cm chord sagitta, then snap to the texture step [D337]. Edges only on finish-zone
 borders and window lines; the panel step and loops without a material/opening reason are texture; dark/light
-cladding zones get separate material IDs with a vertical at the joint [D340]. Typical-facade
+cladding zones get separate material IDs with a vertical at the joint [D340]. The body outline is the outer
+envelope only: openings sealed by their filling, no face inside or facing inward, relief < 0.4 m is texture,
+a deeper niche stays geometry only where the etalon has it; zones keep the 4 atlas IDs [D341]. Typical-facade
 thresholds are quads >= 95 %, slivers <= 0.5 % [D338]: WARN-only (OBSERVE) for the first week,
 not a blocking gate or a waiver of [D312]. Posts remain inset geometry by default [D336];
 panels are texture with a seam. Training-polygon validation is still open, not certified here.
