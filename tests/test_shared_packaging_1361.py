@@ -154,6 +154,29 @@ def test_generated_archive_output_aliases_preserve_inputs(tmp_path, monkeypatch,
     assert not Path(str(target) + '.partial').exists()
 
 
+@pytest.mark.parametrize('case', range(12))
+def test_expected_hash_refuses_before_publication(tmp_path, monkeypatch, case):
+    import hashlib
+    import os
+    original = bytes([case + 1]) * (case + 1)
+    source = tmp_path / 'a.fbx'
+    source.write_bytes(original + b'changed')
+    target = tmp_path / 'a.zip'
+    archive = {'name': 'a.zip', 'members': [{'name': 'a.fbx'}], 'limit': 10000}
+    published = []
+    link = os.link
+    def observe(src, dst):
+        published.append(dst)
+        return link(src, dst)
+    monkeypatch.setattr(os, 'link', observe)
+    with pytest.raises(ValueError, match='a.fbx'):
+        package_core._write_zip(str(tmp_path), archive, str(target),
+                                expected_sha256={'a.fbx': hashlib.sha256(original).hexdigest()})
+    assert published == []
+    assert not target.exists() and not Path(str(target) + '.partial').exists()
+    assert source.read_bytes() == original + b'changed'
+
+
 def test_package_npm_cli_exists():
     result = subprocess.run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-npm', '--help'],
                             capture_output=True, text=True, cwd=ROOT)
