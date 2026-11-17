@@ -99,7 +99,7 @@ def vpm_texture_findings(pngs: dict[str, bytes], profile: dict, prefix: str | No
     tex = profile["textures"]
     sizes = tex["allowed_square_sizes_px"]
     placeholder = tex["flat_placeholder"]["size_px"]
-    out, sets = [], {}
+    out, sets, seen = [], {}, {}
     for name, data in sorted(pngs.items()):
         m = VPM_NAME.match(name)
         if not m:
@@ -107,13 +107,21 @@ def vpm_texture_findings(pngs: dict[str, bytes], profile: dict, prefix: str | No
             continue
         if prefix and not name.startswith(prefix + "_"):
             out.append(_f("fail", "texture address", name, f"{prefix}_...", [33, 34], name))
+        kind, slot, udim = m["map"], int(m["slot"]), int(m["udim"])
+        key = (slot, udim, kind)
+        # Numeric aliases (e.g. _1 and _01) must not replace the first map.
+        # Track names separately: a decode failure can remove its facts from sets.
+        if key in seen:
+            out.append(_f("fail", "duplicate map", f"{seen[key]} and {name}: slot {slot} UDIM {udim} {kind}",
+                          "one PNG per slot, UDIM and map kind", [30, 34, 35], name))
+            continue
+        seen[key] = name
         try:
             facts = png_facts(name, data)
         except ValueError as exc:
             out.append(_f("fail", "PNG readable", f"{name}: {exc}", "valid PNG", [30], name))
             continue
-        kind, udim = m["map"], int(m["udim"])
-        sets.setdefault((int(m["slot"]), udim), {})[kind] = facts
+        sets.setdefault((slot, udim), {})[kind] = facts
         # 8 bit per channel, RGB 24 bit or RGBA 32 bit (reg p.30 §5.1.9)
         if facts.bit_depth != 8 or facts.color_type not in (2, 6):
             out.append(_f("fail", "8-bit RGB/RGBA", f"{name}: bit depth {facts.bit_depth}, colour type {facts.color_type}",

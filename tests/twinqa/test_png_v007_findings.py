@@ -130,6 +130,82 @@ def test_vpm_slot_alias_collision_keeps_first_file():
     assert not any(f.status == "pass" for f in findings)
 
 
+def test_vpm_mixed_slot_spelling_different_maps_passes():
+    """Reg p.34-35 does not explicitly prescribe slot zero-padding."""
+    pngs = _clean_vpm_set()
+    pngs[f"{PREFIX}_ERM_01.1001.png"] = pngs.pop(f"{PREFIX}_ERM_1.1001.png")
+    findings, sets = vpm_texture_findings(pngs, SYNTHETIC_PROFILE, PREFIX)
+    assert [f.status for f in findings] == ["pass"]
+    assert set(sets[(1, 1001)]) == {"Diffuse", "ERM", "Normal"}
+
+
+@pytest.mark.parametrize("kind", ["Diffuse", "ERM", "Normal"])
+@pytest.mark.parametrize("slot", [1, 2, 7])
+@pytest.mark.parametrize("padding", [1, 2, 4])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_vpm_slot_alias_collision_generated(kind, slot, padding, reverse):
+    """Synthetic exhaustive aliases, every kind, slot boundaries, insertion orders."""
+    pngs = {
+        f"{PREFIX}_{k}_{slot}.1001.png": data
+        for k, data in zip(("Diffuse", "ERM", "Normal"), _clean_vpm_set().values())
+    }
+    data = pngs[f"{PREFIX}_{kind}_{slot}.1001.png"]
+    for zeros in (padding, padding + 1):
+        pngs[f"{PREFIX}_{kind}_{'0' * zeros}{slot}.1001.png"] = data
+    if reverse:
+        pngs = dict(reversed(list(pngs.items())))
+    original = dict(pngs)
+    names = sorted(n for n in pngs if f"_{kind}_" in n)
+
+    findings, sets = vpm_texture_findings(pngs, SYNTHETIC_PROFILE, PREFIX)
+
+    collisions = [f for f in findings if f.name == "duplicate map"]
+    assert len(collisions) == 2
+    for finding, rejected in zip(collisions, names[1:]):
+        assert finding.status == "fail"
+        assert names[0] in finding.observed and rejected in finding.observed
+        assert finding.evidence == rejected
+    assert sets[(slot, 1001)][kind].name == names[0]
+    assert set(sets[(slot, 1001)]) == {"Diffuse", "ERM", "Normal"}
+    assert not any(f.status == "pass" for f in findings)
+    assert pngs == original
+
+
+@pytest.mark.parametrize("bad_data", [b"", b"not PNG", b"\x89PNG\r\n\x1a\n"])
+@pytest.mark.parametrize("bad_first", [False, True])
+def test_vpm_slot_alias_collision_unreadable_second(bad_data, bad_first):
+    """Unreadable aliases neither hide collisions nor remove first-file facts."""
+    pngs = _clean_vpm_set()
+    first = f"{PREFIX}_Diffuse_01.1001.png"
+    second = f"{PREFIX}_Diffuse_1.1001.png"
+    good = pngs[second]
+    pngs[first] = bad_data if bad_first else good
+    pngs[second] = good if bad_first else bad_data
+
+    findings, sets = vpm_texture_findings(pngs, SYNTHETIC_PROFILE, PREFIX)
+
+    collisions = [f for f in findings if f.name == "duplicate map"]
+    assert len(collisions) == 1 and collisions[0].status == "fail"
+    assert first in collisions[0].observed and second in collisions[0].observed
+    if bad_first:
+        assert "Diffuse" not in sets[(1, 1001)]
+        assert any(f.name == "PNG readable" and f.status == "fail" for f in findings)
+    else:
+        assert sets[(1, 1001)]["Diffuse"].name == first
+    assert not any(f.status == "pass" for f in findings)
+
+
+def test_vpm_slot_alias_distinct_keys_and_reset():
+    pngs = _clean_vpm_set()
+    for name, data in list(pngs.items()):
+        pngs[name.replace("_1.1001", "_01.1002")] = data
+        pngs[name.replace("_1.1001", "_2.1001")] = data
+    for _ in range(2):
+        findings, sets = vpm_texture_findings(pngs, SYNTHETIC_PROFILE, PREFIX)
+        assert [f.status for f in findings] == ["pass"]
+        assert set(sets) == {(1, 1001), (1, 1002), (2, 1001)}
+
+
 # ==============================================================================
 # normal_convention tests
 # ==============================================================================
