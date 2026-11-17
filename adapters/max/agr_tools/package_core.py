@@ -636,7 +636,12 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                     excluded = {m['name'] for other in current['archives'] if other['role'] != 'npm'
                                 for m in other['members']}
                     records = meta.export_records(folder, excluded_files=excluded, profile='npm')
-                    binding, problems = meta.export_binding(folder, a['members'], records, excluded_files=excluded)
+                    def in_archive(name):
+                        match = NPM_FBX.fullmatch(name)
+                        return match is not None and '{}_{}.zip'.format(
+                            match.group('code'), match.group('address')) == a['name']
+                    binding, problems = meta.export_binding(
+                        folder, a['members'], records, excluded_files=excluded, include_file=in_archive)
                 except Exception as exc:
                     binding = {'members': []}
                     problems = ['{}: export metadata unavailable or invalid: {}'.format(

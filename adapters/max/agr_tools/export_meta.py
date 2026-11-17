@@ -78,8 +78,12 @@ def export_records(pkg, address_path=None, *, excluded_files=(), profile=None):
     return out
 
 
-def export_binding(pkg, members, records, *, excluded_files=()):
-    """Compare planned FBX with export records; ignore only explicitly other-archive files."""
+def export_binding(pkg, members, records, *, excluded_files=(), include_file=None):
+    """Compare planned FBX with export records within the caller's archive scope.
+
+    include_file scopes claims, not existing members: deleted exports in that scope
+    must still be reported missing. CLI callers retain the complete record scope.
+    """
     claims = {}
     excluded = {n.casefold() for n in excluded_files}
     for label, meta in records:
@@ -91,7 +95,7 @@ def export_binding(pkg, members, records, *, excluded_files=()):
         for name in meta.get('exported_files', []):
             hashes.setdefault(name, set())
         for name, values in hashes.items():
-            if name.casefold() in excluded:
+            if name.casefold() in excluded or (include_file is not None and not include_file(name)):
                 continue
             for sha in values or {None}:
                 claims.setdefault(name, set()).add((label, sha))
