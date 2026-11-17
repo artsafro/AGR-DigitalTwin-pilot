@@ -1,0 +1,17 @@
+#1593 route map evidence
+Baseline: ce75cc94 (origin/main at intake; #1581/#1405 merged).
+Baseline route_map.py --check: exit 0, stdout empty (missing inventory not schema-invalid).
+Inventory: 11 described writer rows added; 2 live-bypass, 4 wrapper, 5 historical.
+Global rows: 92 -> 103; live-bypass 5 -> 7; wrapper 9 -> 13; historical 43 -> 48.
+VPM owners: BODY 0 -> 1; openings 0 -> 1; roof 0 -> 0 (historical + wrapper).
+VPM short-scheme live-bypass count: 5 -> 7.
+No changes to jobs/, vpm_uv.py, atlas_core.py or build behaviour.
+Visual evidence: G:/Мой диск/AGR-evidence/1593-route-maps/v001/
+Rendered with ImageMagick, white background, Segoe UI, same resize per before/after pair.
+Before SVG inputs: git show ce75cc94:docs/architecture/<stem>.svg.
+After SVG inputs: generated working-tree files (no manual SVG edits).
+SHA256SUMS.txt:
+f9d5c3f3d0cce415a2aa5201a9692bc610308373b7469187b5922c07f8748275  after-contexts.png
+b7186c6d4955a8fa38b57f740d2310a7deb9475763d6fdef035e61fa9fbbd672  after-scheme.png
+71b764cc55144a56576272fb58a0ed980f710c4b25cb3e620ac2aadc4d8881d7  before-contexts.png
+f79f073cecf913b13bec7a7283b1b18afbdb0d8ea512f6d85457341962842086  before-scheme.png

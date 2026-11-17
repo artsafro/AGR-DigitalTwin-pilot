@@ -9,7 +9,7 @@ route: oks-npm
 scheme:
   export_context:
     ref: package-contexts.yaml#export
-  source_ru: "КПП1: sources.json, ревизия альбома и SHA-256 исходников; неизвестная ревизия останавливает выпуск"
+  source_ru: "КПП1: sources.json — состав исходников фиксируется путями и SHA-256 (кроме RVT); build manifest отказывает при смешении ревизий одного источника (#1592), ревизию альбома сверяем вручную (D274)"
   steps:
     - stages: "sources,parts,gate1"
       ru: "Описать исходники и согласовать состав"
@@ -29,7 +29,7 @@ scheme:
       gate_ru: "Отказ / not_run не равны pass"
     - stages: "delivered"
       ru: "Передать результат Артёму"
-      artifact_ru: "Пакет и сцена Max QUAD для приёмки"
+      artifact_ru: "Пакет или сцена Max QUAD для приёмки"
       gate_ru: "Визуальная приёмка Артёма отдельно от публикации"
 object: KPP1
 issue: "#1359"
@@ -59,7 +59,7 @@ stages:
   - id: parts
     event_ru: "Состав частей (PartsList) составлен"
     actor: agent
-    context: body
+    context: parts
     commands:
       - "dt inspect"
     rules:
@@ -165,9 +165,9 @@ stages:
           - tools/derive/npm_atlas.py
           - library/materials/maps_v001.json
   - id: npm
-    event_ru: "Версия НПМ на атласе готова перед экспортом; UCX нет"
+    event_ru: "Экспортированный НПМ-FBX с привязкой к мастеру; на атласе, без UCX"
     actor: agent-dcc
-    context: uv-atlas
+    context: npm
     commands:
       - "dt derive npm"
     rules:
@@ -235,10 +235,11 @@ stages:
         evidence:
           - tools/derive/package_npm.py
   - id: readback
-    event_ru: "Экспорт заново прочитан в новом процессе"
+    event_ru: "FBX из ZIP заново прочитаны: agr build-manifest (fbx_readback), manifest_findings связывает проверку с ZIP; dt qa xview — визуальное чтение одного FBX"
     actor: agent-dcc
     context: dcc
     commands:
+      - "agr build-manifest"
       - "dt qa xview"
     rules:
       - D273
@@ -261,14 +262,13 @@ stages:
   - id: sintez
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
     actor: checker
-    context: validation
+    context: sintez
     commands:
       - agr checker
     rules:
       - D220
       - D270
     evidence:
-      - jobs/KPP1/final-check-1293/run_max.py
       - tools/qa/sintez_checker.py
   - id: delivered
     event_ru: "Архив или Max-сцена с квадами переданы Артёму; он принимает и передаёт заказчику"

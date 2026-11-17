@@ -49,7 +49,7 @@ def _maps():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return route_map.load_context_maps(ROOT)["contexts"]
 
 
 def _stage(events, sid):

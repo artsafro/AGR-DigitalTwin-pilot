@@ -30,7 +30,7 @@
 <rect x="1120" y="306.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1120" y="426.25" width="230" height="72.5" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1120" y="506.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1120" y="596.25" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1120" y="596.25" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1400" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1390" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1350" y1="233.12" x2="1390" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -147,8 +147,8 @@
 <tspan x="425.0" dy="14">Правила: D276, D010, D161</tspan>
 </text>
 <text x="425.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="425.0" dy="14">Контекст: Корпус и</tspan>
-<tspan x="425.0" dy="17.5">геометрия</tspan>
+<tspan x="425.0" dy="14">Контекст: Состав частей</tspan>
+<tspan x="425.0" dy="17.5">(PartsList)</tspan>
 </text>
 <text x="695.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="695.0" dy="15">Артём</tspan>
@@ -213,14 +213,16 @@
 <tspan x="1235.0" dy="17.5">владение стеклом</tspan>
 </text>
 <text x="1235.0" y="606.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1235.0" dy="13">⚠ Окна: проёмы Revit и меша</tspan>
-<tspan x="1235.0" dy="16.25">КПП1 не совпали (spec-compare</tspan>
-<tspan x="1235.0" dy="16.25">v002); окно из библиотеки с</tspan>
-<tspan x="1235.0" dy="16.25">утоплением или генератор</tspan>
-<tspan x="1235.0" dy="16.25">(D292); windowgen_core есть в</tspan>
-<tspan x="1235.0" dy="16.25">AGR Tools (#1345), команды</tspan>
-<tspan x="1235.0" dy="16.25">agr / dt нет [D116, D204,</tspan>
-<tspan x="1235.0" dy="16.25">D292]</tspan>
+<tspan x="1235.0" dy="13">⚠ Окна: историческое</tspan>
+<tspan x="1235.0" dy="16.25">расхождение проёмов Revit и</tspan>
+<tspan x="1235.0" dy="16.25">меша КПП1 (spec-compare</tspan>
+<tspan x="1235.0" dy="16.25">v002); текущий agr</tspan>
+<tspan x="1235.0" dy="16.25">window-generate вызывает</tspan>
+<tspan x="1235.0" dy="16.25">windowgen_core (#1405);</tspan>
+<tspan x="1235.0" dy="16.25">локальные построители и</tspan>
+<tspan x="1235.0" dy="16.25">обёртки перечислены в карте</tspan>
+<tspan x="1235.0" dy="16.25">контекстов (#1593) [D116,</tspan>
+<tspan x="1235.0" dy="16.25">D204, D292]</tspan>
 </text>
 <text x="1505.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="15">Агент: Blender / Max /</tspan>
@@ -279,8 +281,9 @@
 <tspan x="2045.0" dy="14">Правила: D209, D221, D207,</tspan>
 <tspan x="2045.0" dy="17.5">D216, D160, D293</tspan>
 </text>
-<text x="2045.0" y="527.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Контекст: UV и атлас</tspan>
+<text x="2045.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Контекст: Периодическая</tspan>
+<tspan x="2045.0" dy="17.5">UV-развёртка ВПМ</tspan>
 </text>
 <text x="2045.0" y="606.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="13">⚠ 4БК кирпич: 37 → 38 рядов,</tspan>
@@ -291,14 +294,14 @@
 <tspan x="2045.0" dy="16.25">D207]</tspan>
 </text>
 <text x="2045.0" y="739.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="13">⚠ UDIM: номер тайла теперь</tspan>
-<tspan x="2045.0" dy="16.25">один (udim_tile, #1337 /</tspan>
-<tspan x="2045.0" dy="16.25">#1376), но раскладка</tspan>
-<tspan x="2045.0" dy="16.25">vpm_uv.py ТЭЦ26 = КПП1 с</tspan>
-<tspan x="2045.0" dy="16.25">разницей в строку; цвета</tspan>
-<tspan x="2045.0" dy="16.25">ТЭЦ26 — по слайдам, v007</tspan>
-<tspan x="2045.0" dy="16.25">(стыки каждые 0,60 м)</tspan>
-<tspan x="2045.0" dy="16.25">отклонён [D209, D221, D171]</tspan>
+<tspan x="2045.0" dy="13">⚠ UV ВПМ: vpm_uv.py КПП1 и</tspan>
+<tspan x="2045.0" dy="16.25">ТЭЦ26 — обёртки runpy над</tspan>
+<tspan x="2045.0" dy="16.25">tools/blender/vpm_uv.py</tspan>
+<tspan x="2045.0" dy="16.25">(#1380), не дубли раскладки;</tspan>
+<tspan x="2045.0" dy="16.25">номер тайла — udim_tile</tspan>
+<tspan x="2045.0" dy="16.25">(#1337 / #1376); исторический</tspan>
+<tspan x="2045.0" dy="16.25">v007 ТЭЦ26 отклонён [D209,</tspan>
+<tspan x="2045.0" dy="16.25">D221, D171]</tspan>
 </text>
 <text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="15">Агент</tspan>
@@ -471,8 +474,8 @@
 <tspan x="3935.0" dy="14">Правила: D220, D104</tspan>
 </text>
 <text x="3935.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="3935.0" dy="14">Контекст: Проверка и</tspan>
-<tspan x="3935.0" dy="17.5">приёмка</tspan>
+<tspan x="3935.0" dy="14">Контекст: Чекер СИНТЕЗ и</tspan>
+<tspan x="3935.0" dy="17.5">загрузка архива</tspan>
 </text>
 <text x="4205.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="4205.0" dy="15">Артём</tspan>

@@ -26,7 +26,7 @@ ZIP_W = "import zipfile\nzipfile.ZipFile(p, 'w')\n"
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return route_map.load_context_maps(ROOT)["contexts"]
 
 
 def _zip_rows():

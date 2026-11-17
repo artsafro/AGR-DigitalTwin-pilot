@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools/architecture'))
 import call_chains
 import duplicate_guard as guard
+import route_map
 
 
 def rows():
@@ -39,7 +40,12 @@ def test_merged_migrations_keep_the_new_owners_without_reviving_copies():
         'jobs/KPP1/scripts/vpm_uv.py',
         'jobs/TEC26-OKS/scripts/vpm_uv.py',
     }
-    assert not any(r.rel in migrated for r in current)
+    # #1593 records the UV wrappers as described path:line rows, not formula copies.
+    uv_wrappers = {'jobs/KPP1/scripts/vpm_uv.py', 'jobs/TEC26-OKS/scripts/vpm_uv.py'}
+    assert not any(r.rel in migrated - uv_wrappers for r in current)
+    assert {r.rel for r in current if r.rel in uv_wrappers} == uv_wrappers
+    assert all(r.status == 'wrapper' and not r.rule and r.owner == 'tools/blender/vpm_uv.py'
+               for r in current if r.rel in uv_wrappers)
     assert guard.RULES['vpm-uv'] == 'tools/blender/vpm_uv.py'
     uv = next(c for c in guard.load_maps(ROOT)['contexts']['contexts'] if c['id'] == 'vpm-uv')
     assert uv['owner'] == guard.RULES['vpm-uv']
@@ -72,7 +78,7 @@ def test_elv_not_delivered():
 
 
 def test_missing_owners_present():
-    owners = {c['owner'] for c in guard.load_maps(ROOT)['contexts']['contexts']}
+    owners = {c['owner'] for c in route_map.load_context_maps(ROOT)['contexts']['contexts']}
     assert {'src/dt_ai/geometry/ucx_build.py', 'jobs/PSU275/scripts/vpm_stage5_oks.py',
             'src/dt_ai/geometry/shell.py', 'adapters/max/agr_tools/vpm_core.py'} <= owners
 
