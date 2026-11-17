@@ -1,0 +1,2585 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-visible-interface-pilot-v030",
+  "base_checkpoint": "10c6149d8014babb91f07cd9acfba86c8d83b7c3",
+  "main_merge": "c40f796954045fbf26c8420b8b4d842cabcfc195",
+  "cells": [
+    "ground-vpm",
+    "ground-npm unchanged"
+  ],
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10",
+      "raw_triangles": 176094,
+      "native_triangles": 176094,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\site-NPM.blend"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v029\\site-maples-r3\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "59102f8b1b04f813d14fbd63a57e53d796672d2a690c2f66dfb037900bbd9646",
+      "raw_triangles": 298218,
+      "native_triangles": 298218,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v029\\site-maples-r3\\site-VPM.blend",
+      "source_scene_sha256": "15548a7abc5011819efad978bb7527da880365ddf5cf95d40cd88c6eba6d56cf"
+    }
+  },
+  "site_pair_byte_unchanged": true,
+  "physical_MAF": 37,
+  "MAF_census": 38,
+  "plant_census": 4582,
+  "UCX": 545,
+  "closed_answer": 6959387195,
+  "decision_row": "D342 (branch only, not main)",
+  "new_question": {
+    "passed": false,
+    "question_pending": true,
+    "comment_id": 6960708487,
+    "url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6960708487",
+    "exact_target_verified": true,
+    "body_equal": true,
+    "body_sha256": "00a857f058f5322fe18bb47268ec1f331b99067e3bfa866bb524e6026529f048",
+    "closed_answer": 6959387195,
+    "proposal": "ONE VPM-only visible corner repair <=2mm in <=5mm band above actual Ground; exact-cut after; no site replication before separate picture approval",
+    "image": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v030\\failure-comparison-NOT-ADOPTED.png",
+    "image_sha256": "edff0a69ff911a3334321f3a8528d52340d1608409240dd4c2b7f6fb25e452cd"
+  },
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "source_scene": {
+    "passed": false,
+    "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v029\\site-maples-r3\\site-VPM.blend",
+    "sha256": "15548a7abc5011819efad978bb7527da880365ddf5cf95d40cd88c6eba6d56cf",
+    "pilot": {
+      "kind": "GroundEl",
+      "handle": "33FB3BD",
+      "row": "15",
+      "vertex_start": 42230,
+      "vertex_count": 2498,
+      "ground_z_m": -0.04328155517578125,
+      "visible_height_m": 0.66816476136446,
+      "total_height_m": 0.76816476136446,
+      "derived_D291": false,
+      "rotation_rad": 0.9302604913129776,
+      "source_path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "source_sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "status": "accepted-by-picture",
+      "face_start": 253346,
+      "face_count": 5064,
+      "D311_repaired": false,
+      "D319_table_repaired": false,
+      "D321_table_repaired": false,
+      "v018_three_repaired": false,
+      "v019_bench_repaired": true,
+      "v020_urn_buried": false,
+      "v023_canopy_repaired": false,
+      "v024_buried_base_removed": 0
+    },
+    "source_faces": 5064,
+    "Ground_top_triangles": 57226,
+    "material_names": [
+      "M_SIL13_Ground_1",
+      "M_SIL13_Ground_2",
+      "M_SIL13_Ground_3",
+      "M_SIL13_Ground_4",
+      "M_SIL13_Ground_5",
+      "M_SIL13_Ground_6",
+      "M_SIL13_Ground_7",
+      "M_SIL13_Ground_8",
+      "M_SIL13_Ground_9",
+      "M_SIL13_Ground_10",
+      "M_SIL13_Ground_12",
+      "M_SIL13_Ground_11"
+    ]
+  },
+  "pilot_export": {
+    "passed": false,
+    "adopted": false,
+    "materials": [
+      "M_SIL13_Ground_12"
+    ],
+    "versions": {
+      "before": {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v030\\export-r1\\before\\SM_SIL13_Ground.fbx",
+        "sha256": "e6d112bf799834ec6966e475881cad4ccf1eb3128a5f1b7faf9d3fdfb8073ae4",
+        "triangles": 5064,
+        "vertices": 2498
+      },
+      "after": {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v030\\export-r1\\after\\SM_SIL13_Ground.fbx",
+        "sha256": "d4e6a3139a5620f9ef238dfd3daba9a2c02d8ed18a903de8ca806af60da62f40",
+        "triangles": 4373,
+        "vertices": 2200
+      }
+    }
+  },
+  "pilot_precursor": {
+    "passed": false,
+    "adopted": false,
+    "source_triangles": 5064,
+    "output_triangles": 4373,
+    "output_vertices": 2200,
+    "unchanged_faces": 4225,
+    "fully_hidden_faces": 744,
+    "partly_cut_faces": 95,
+    "seconds": 7.748203599941917
+  },
+  "current_hook_seven_arrays_exact": {
+    "v": true,
+    "f": true,
+    "uv": true,
+    "mi": true,
+    "smooth": true,
+    "source_face": true,
+    "barycentric": true
+  },
+  "actual_float_roundtrip": {
+    "raw": {
+      "same_faces": true,
+      "max_coordinate_delta_m": 3.546965384515488e-06,
+      "vertex531_delta_m": 3.2236714372661447e-06
+    },
+    "native": {
+      "same_faces": true,
+      "max_coordinate_delta_m": 3.3345039991417025e-06,
+      "vertex531_delta_m": 2.86102294921875e-06
+    }
+  },
+  "actual_regulatory": {
+    "source": {
+      "passed": false,
+      "mode": "source",
+      "pilot_triangles": 5064,
+      "Ground_triangles": 20,
+      "candidates": 412,
+      "pairs": 183,
+      "ownership": [
+        {
+          "owners": [
+            "Ground",
+            "MAF"
+          ],
+          "count": 183
+        }
+      ]
+    },
+    "r1": {
+      "passed": false,
+      "mode": "r1",
+      "pilot_triangles": 4375,
+      "Ground_triangles": 20,
+      "candidates": 198,
+      "pairs": 1,
+      "ownership": [
+        {
+          "owners": [
+            "Ground",
+            "MAF"
+          ],
+          "count": 1
+        }
+      ]
+    },
+    "r1b": {
+      "passed": false,
+      "mode": "r1b",
+      "pilot_triangles": 4373,
+      "Ground_triangles": 20,
+      "candidates": 194,
+      "pairs": 0,
+      "ownership": []
+    },
+    "r2": {
+      "passed": false,
+      "mode": "r2",
+      "pilot_triangles": 4363,
+      "Ground_triangles": 20,
+      "candidates": 250,
+      "pairs": 0,
+      "ownership": []
+    },
+    "r3": {
+      "passed": false,
+      "mode": "r3",
+      "pilot_triangles": 4373,
+      "Ground_triangles": 20,
+      "candidates": 196,
+      "pairs": 0,
+      "ownership": []
+    },
+    "raw": {
+      "passed": false,
+      "mode": "raw",
+      "pilot_triangles": 4373,
+      "Ground_triangles": 20,
+      "candidates": 292,
+      "pairs": 0,
+      "ownership": []
+    },
+    "native": {
+      "passed": false,
+      "mode": "native",
+      "pilot_triangles": 4373,
+      "Ground_triangles": 20,
+      "candidates": 292,
+      "pairs": 0,
+      "ownership": []
+    }
+  },
+  "actual_public": {
+    "r1": {
+      "overlapping_vertices": 65,
+      "overlapping_faces": 0,
+      "vertex_pairs": 49,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "r1b": {
+      "overlapping_vertices": 65,
+      "overlapping_faces": 0,
+      "vertex_pairs": 49,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "r2": {
+      "overlapping_vertices": 211,
+      "overlapping_faces": 83,
+      "vertex_pairs": 119,
+      "face_pairs": 66,
+      "face_pairs_by_kind": {
+        "contact": 57,
+        "area": 0,
+        "area+contact": 9
+      },
+      "bowtie_vertices": 14,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "r3": {
+      "overlapping_vertices": 65,
+      "overlapping_faces": 0,
+      "vertex_pairs": 49,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "raw": {
+      "overlapping_vertices": 65,
+      "overlapping_faces": 0,
+      "vertex_pairs": 49,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "native": {
+      "overlapping_vertices": 65,
+      "overlapping_faces": 0,
+      "vertex_pairs": 49,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "short_corners": {
+    "passed": false,
+    "vertices": [
+      {
+        "vertices": [
+          2,
+          29
+        ],
+        "distance_m": 0.0016564986023703094,
+        "endpoints": [
+          {
+            "vertex": 2,
+            "point": [
+              -34.78251858448497,
+              -11.466084696353038,
+              -0.036303930702203474
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04151133811033096,
+            "incident_faces": [
+              0,
+              18,
+              19
+            ],
+            "max_normal_angle_deg": 4.7430432407284595
+          },
+          {
+            "vertex": 29,
+            "point": [
+              -34.78335622193952,
+              -11.467513788401234,
+              -0.036297072701920216
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04180537778731615,
+            "incident_faces": [
+              18,
+              20
+            ],
+            "max_normal_angle_deg": 50.261083311799645
+          }
+        ]
+      },
+      {
+        "vertices": [
+          4,
+          29
+        ],
+        "distance_m": 0.0018481074086359613,
+        "endpoints": [
+          {
+            "vertex": 4,
+            "point": [
+              -34.78517965938099,
+              -11.46781441979662,
+              -0.03628301371818599
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04214612113003505,
+            "incident_faces": [
+              2,
+              20,
+              21
+            ],
+            "max_normal_angle_deg": 4.879346041078701
+          },
+          {
+            "vertex": 29,
+            "point": [
+              -34.78335622193952,
+              -11.467513788401234,
+              -0.036297072701920216
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04180537778731615,
+            "incident_faces": [
+              18,
+              20
+            ],
+            "max_normal_angle_deg": 50.261083311799645
+          }
+        ]
+      },
+      {
+        "vertices": [
+          6,
+          7
+        ],
+        "distance_m": 0.0016736167915502637,
+        "endpoints": [
+          {
+            "vertex": 6,
+            "point": [
+              -34.79425811767578,
+              -11.468526840209961,
+              -0.03621326023803383
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04481808653874376,
+            "incident_faces": [
+              2,
+              3
+            ],
+            "max_normal_angle_deg": 41.203820692183406
+          },
+          {
+            "vertex": 7,
+            "point": [
+              -34.79559966569063,
+              -11.467526268982219,
+              -0.03620329494690104
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.045192810689076206,
+            "incident_faces": [
+              3,
+              22,
+              23
+            ],
+            "max_normal_angle_deg": 0.021305744294646992
+          }
+        ]
+      },
+      {
+        "vertices": [
+          7,
+          8
+        ],
+        "distance_m": 0.0010613225645868926,
+        "endpoints": [
+          {
+            "vertex": 7,
+            "point": [
+              -34.79559966569063,
+              -11.467526268982219,
+              -0.03620329494690104
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.045192810689076206,
+            "incident_faces": [
+              3,
+              22,
+              23
+            ],
+            "max_normal_angle_deg": 0.021305744294646992
+          },
+          {
+            "vertex": 8,
+            "point": [
+              -34.79645049264155,
+              -11.466891872307308,
+              -0.03619697477626014
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04546082562866826,
+            "incident_faces": [
+              4,
+              24,
+              25
+            ],
+            "max_normal_angle_deg": 0.023960791981160395
+          }
+        ]
+      },
+      {
+        "vertices": [
+          7,
+          31
+        ],
+        "distance_m": 0.0006388964910415354,
+        "endpoints": [
+          {
+            "vertex": 7,
+            "point": [
+              -34.79559966569063,
+              -11.467526268982219,
+              -0.03620329494690104
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.045192810689076206,
+            "incident_faces": [
+              3,
+              22,
+              23
+            ],
+            "max_normal_angle_deg": 0.021305744294646992
+          },
+          {
+            "vertex": 31,
+            "point": [
+              -34.796111938256345,
+              -11.467144495405417,
+              -0.03619948959047865
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.0453514175588573,
+            "incident_faces": [
+              22,
+              24
+            ],
+            "max_normal_angle_deg": 0.03413263293033569
+          }
+        ]
+      },
+      {
+        "vertices": [
+          8,
+          31
+        ],
+        "distance_m": 0.0004224261186628282,
+        "endpoints": [
+          {
+            "vertex": 8,
+            "point": [
+              -34.79645049264155,
+              -11.466891872307308,
+              -0.03619697477626014
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04546082562866826,
+            "incident_faces": [
+              4,
+              24,
+              25
+            ],
+            "max_normal_angle_deg": 0.023960791981160395
+          },
+          {
+            "vertex": 31,
+            "point": [
+              -34.796111938256345,
+              -11.467144495405417,
+              -0.03619948959047865
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.0453514175588573,
+            "incident_faces": [
+              22,
+              24
+            ],
+            "max_normal_angle_deg": 0.03413263293033569
+          }
+        ]
+      },
+      {
+        "vertices": [
+          11,
+          26
+        ],
+        "distance_m": 0.001971546144005024,
+        "endpoints": [
+          {
+            "vertex": 11,
+            "point": [
+              -34.80245113991737,
+              -11.444334759363569,
+              -0.036157998763920854
+            ],
+            "nearest_source_vertex": 23,
+            "source_distance_m": 0.04659016907372109,
+            "incident_faces": [
+              5,
+              26
+            ],
+            "max_normal_angle_deg": 7.726016759081811
+          },
+          {
+            "vertex": 26,
+            "point": [
+              -34.80247194896848,
+              -11.442363323090706,
+              -0.036158449735408146
+            ],
+            "nearest_source_vertex": 23,
+            "source_distance_m": 0.04647934634145652,
+            "incident_faces": [
+              14,
+              26,
+              27
+            ],
+            "max_normal_angle_deg": 7.702291324449058
+          }
+        ]
+      },
+      {
+        "vertices": [
+          19,
+          32
+        ],
+        "distance_m": 0.0005144253370870963,
+        "endpoints": [
+          {
+            "vertex": 19,
+            "point": [
+              -34.79136831677173,
+              -11.400395706665545,
+              -0.036256486722328965
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.039977575349373226,
+            "incident_faces": [
+              9,
+              28
+            ],
+            "max_normal_angle_deg": 40.14381297946592
+          },
+          {
+            "vertex": 32,
+            "point": [
+              -34.79148574904842,
+              -11.39989486484047,
+              -0.036255742354535825
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.03996399588335797,
+            "incident_faces": [
+              28,
+              29,
+              34
+            ],
+            "max_normal_angle_deg": 45.348120646555216
+          }
+        ]
+      },
+      {
+        "vertices": [
+          19,
+          36
+        ],
+        "distance_m": 0.0007089587627367331,
+        "endpoints": [
+          {
+            "vertex": 19,
+            "point": [
+              -34.79136831677173,
+              -11.400395706665545,
+              -0.036256486722328965
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.039977575349373226,
+            "incident_faces": [
+              9,
+              28
+            ],
+            "max_normal_angle_deg": 40.14381297946592
+          },
+          {
+            "vertex": 36,
+            "point": [
+              -34.791695207580226,
+              -11.399766612399606,
+              -0.036254177794995256
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.03989406435914014,
+            "incident_faces": [
+              34,
+              35,
+              36,
+              37
+            ],
+            "max_normal_angle_deg": 8.537736462515939e-07
+          }
+        ]
+      },
+      {
+        "vertices": [
+          20,
+          22
+        ],
+        "distance_m": 0.0003773508181465103,
+        "endpoints": [
+          {
+            "vertex": 20,
+            "point": [
+              -34.77842371589506,
+              -11.455281253141132,
+              -0.03633863846523011
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.041411370530840014,
+            "incident_faces": [
+              10,
+              11,
+              12
+            ],
+            "max_normal_angle_deg": 0.07830960484714312
+          },
+          {
+            "vertex": 22,
+            "point": [
+              -34.77847297951881,
+              -11.454907131948262,
+              -0.036338376976397184
+            ],
+            "nearest_source_vertex": 17,
+            "source_distance_m": 0.04146988813584563,
+            "incident_faces": [
+              12,
+              13,
+              16
+            ],
+            "max_normal_angle_deg": 1.046550735129816
+          }
+        ]
+      },
+      {
+        "vertices": [
+          32,
+          35
+        ],
+        "distance_m": 0.001738955574110238,
+        "endpoints": [
+          {
+            "vertex": 32,
+            "point": [
+              -34.79148574904842,
+              -11.39989486484047,
+              -0.036255742354535825
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.03996399588335797,
+            "incident_faces": [
+              28,
+              29,
+              34
+            ],
+            "max_normal_angle_deg": 45.348120646555216
+          },
+          {
+            "vertex": 35,
+            "point": [
+              -34.79296875,
+              -11.39898681640625,
+              -0.03624466501494284
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.039499088212612256,
+            "incident_faces": [
+              32,
+              36
+            ],
+            "max_normal_angle_deg": 46.151708423281185
+          }
+        ]
+      },
+      {
+        "vertices": [
+          32,
+          36
+        ],
+        "distance_m": 0.00024560947249706544,
+        "endpoints": [
+          {
+            "vertex": 32,
+            "point": [
+              -34.79148574904842,
+              -11.39989486484047,
+              -0.036255742354535825
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.03996399588335797,
+            "incident_faces": [
+              28,
+              29,
+              34
+            ],
+            "max_normal_angle_deg": 45.348120646555216
+          },
+          {
+            "vertex": 36,
+            "point": [
+              -34.791695207580226,
+              -11.399766612399606,
+              -0.036254177794995256
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.03989406435914014,
+            "incident_faces": [
+              34,
+              35,
+              36,
+              37
+            ],
+            "max_normal_angle_deg": 8.537736462515939e-07
+          }
+        ]
+      },
+      {
+        "vertices": [
+          35,
+          36
+        ],
+        "distance_m": 0.0014933461016131723,
+        "endpoints": [
+          {
+            "vertex": 35,
+            "point": [
+              -34.79296875,
+              -11.39898681640625,
+              -0.03624466501494284
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.039499088212612256,
+            "incident_faces": [
+              32,
+              36
+            ],
+            "max_normal_angle_deg": 46.151708423281185
+          },
+          {
+            "vertex": 36,
+            "point": [
+              -34.791695207580226,
+              -11.399766612399606,
+              -0.036254177794995256
+            ],
+            "nearest_source_vertex": 74,
+            "source_distance_m": 0.03989406435914014,
+            "incident_faces": [
+              34,
+              35,
+              36,
+              37
+            ],
+            "max_normal_angle_deg": 8.537736462515939e-07
+          }
+        ]
+      },
+      {
+        "vertices": [
+          524,
+          526
+        ],
+        "distance_m": 0.0019084034403743441,
+        "endpoints": [
+          {
+            "vertex": 524,
+            "point": [
+              -35.160127354675495,
+              -11.124499477502457,
+              -0.033771780795028745
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.005210459884194167,
+            "incident_faces": [
+              908,
+              926
+            ],
+            "max_normal_angle_deg": 13.985387602978875
+          },
+          {
+            "vertex": 526,
+            "point": [
+              -35.158445302471854,
+              -11.12540094312087,
+              -0.033779769179064105
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.003532102745889694,
+            "incident_faces": [
+              908,
+              925
+            ],
+            "max_normal_angle_deg": 26.08979473391976
+          }
+        ]
+      },
+      {
+        "vertices": [
+          524,
+          541
+        ],
+        "distance_m": 0.001710127936487421,
+        "endpoints": [
+          {
+            "vertex": 524,
+            "point": [
+              -35.160127354675495,
+              -11.124499477502457,
+              -0.033771780795028745
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.005210459884194167,
+            "incident_faces": [
+              908,
+              926
+            ],
+            "max_normal_angle_deg": 13.985387602978875
+          },
+          {
+            "vertex": 541,
+            "point": [
+              -35.16178512573242,
+              -11.124079704284668,
+              -0.03376068450744352
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.006698664020272575,
+            "incident_faces": [
+              920,
+              926,
+              927
+            ],
+            "max_normal_angle_deg": 22.508593208292908
+          }
+        ]
+      },
+      {
+        "vertices": [
+          529,
+          565
+        ],
+        "distance_m": 0.000922894220751355,
+        "endpoints": [
+          {
+            "vertex": 529,
+            "point": [
+              -35.2239516463719,
+              -11.144558564739814,
+              -0.03309547683287509
+            ],
+            "nearest_source_vertex": 677,
+            "source_distance_m": 0.008272683306120075,
+            "incident_faces": [
+              909,
+              962
+            ],
+            "max_normal_angle_deg": 39.949116835780345
+          },
+          {
+            "vertex": 565,
+            "point": [
+              -35.2236119934883,
+              -11.143700489675325,
+              -0.033104242964205444
+            ],
+            "nearest_source_vertex": 677,
+            "source_distance_m": 0.007484496866032191,
+            "incident_faces": [
+              962,
+              964
+            ],
+            "max_normal_angle_deg": 24.925365885651598
+          }
+        ]
+      },
+      {
+        "vertices": [
+          530,
+          531
+        ],
+        "distance_m": 0.0007080134586946992,
+        "endpoints": [
+          {
+            "vertex": 530,
+            "point": [
+              -35.15535102172735,
+              -11.128875243546366,
+              -0.033781975602806935
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0007080134586946992,
+            "incident_faces": [
+              910,
+              928,
+              929
+            ],
+            "max_normal_angle_deg": 13.585335853075563
+          },
+          {
+            "vertex": 531,
+            "point": [
+              -35.15494918823242,
+              -11.12917423248291,
+              -0.03328155726194382
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0,
+            "incident_faces": [
+              910,
+              912,
+              914,
+              915,
+              929,
+              946
+            ],
+            "max_normal_angle_deg": 51.581124811990605
+          }
+        ]
+      },
+      {
+        "vertices": [
+          530,
+          532
+        ],
+        "distance_m": 0.0006147007237421766,
+        "endpoints": [
+          {
+            "vertex": 530,
+            "point": [
+              -35.15535102172735,
+              -11.128875243546366,
+              -0.033781975602806935
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0007080134586946992,
+            "incident_faces": [
+              910,
+              928,
+              929
+            ],
+            "max_normal_angle_deg": 13.585335853075563
+          },
+          {
+            "vertex": 532,
+            "point": [
+              -35.15492674765326,
+              -11.129320044872495,
+              -0.03378249531664984
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0005222104625551318,
+            "incident_faces": [
+              910,
+              911,
+              912
+            ],
+            "max_normal_angle_deg": 36.382361853091595
+          }
+        ]
+      },
+      {
+        "vertices": [
+          530,
+          547
+        ],
+        "distance_m": 0.0017933368741254267,
+        "endpoints": [
+          {
+            "vertex": 530,
+            "point": [
+              -35.15535102172735,
+              -11.128875243546366,
+              -0.033781975602806935
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0007080134586946992,
+            "incident_faces": [
+              910,
+              928,
+              929
+            ],
+            "max_normal_angle_deg": 13.585335853075563
+          },
+          {
+            "vertex": 547,
+            "point": [
+              -35.15675046213077,
+              -11.127753812782412,
+              -0.03377788377953034
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.001532969439209788,
+            "incident_faces": [
+              925,
+              943,
+              944
+            ],
+            "max_normal_angle_deg": 4.853356349613596
+          }
+        ]
+      },
+      {
+        "vertices": [
+          530,
+          548
+        ],
+        "distance_m": 0.001509671882243129,
+        "endpoints": [
+          {
+            "vertex": 530,
+            "point": [
+              -35.15535102172735,
+              -11.128875243546366,
+              -0.033781975602806935
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0007080134586946992,
+            "incident_faces": [
+              910,
+              928,
+              929
+            ],
+            "max_normal_angle_deg": 13.585335853075563
+          },
+          {
+            "vertex": 548,
+            "point": [
+              -35.15656218616167,
+              -11.127974036711821,
+              -0.03377795734014547
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.0015036220038429663,
+            "incident_faces": [
+              928,
+              944
+            ],
+            "max_normal_angle_deg": 12.819809213723557
+          }
+        ]
+      },
+      {
+        "vertices": [
+          531,
+          532
+        ],
+        "distance_m": 0.0005222104625551318,
+        "endpoints": [
+          {
+            "vertex": 531,
+            "point": [
+              -35.15494918823242,
+              -11.12917423248291,
+              -0.03328155726194382
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0,
+            "incident_faces": [
+              910,
+              912,
+              914,
+              915,
+              929,
+              946
+            ],
+            "max_normal_angle_deg": 51.581124811990605
+          },
+          {
+            "vertex": 532,
+            "point": [
+              -35.15492674765326,
+              -11.129320044872495,
+              -0.03378249531664984
+            ],
+            "nearest_source_vertex": 661,
+            "source_distance_m": 0.0005222104625551318,
+            "incident_faces": [
+              910,
+              911,
+              912
+            ],
+            "max_normal_angle_deg": 36.382361853091595
+          }
+        ]
+      },
+      {
+        "vertices": [
+          544,
+          554
+        ],
+        "distance_m": 0.0015380290889348005,
+        "endpoints": [
+          {
+            "vertex": 544,
+            "point": [
+              -35.21685220047786,
+              -11.153534393505979,
+              -0.03309363119017971
+            ],
+            "nearest_source_vertex": 670,
+            "source_distance_m": 0.010229894438629825,
+            "incident_faces": [
+              922,
+              923,
+              951,
+              952
+            ],
+            "max_normal_angle_deg": 48.40557476541685
+          },
+          {
+            "vertex": 554,
+            "point": [
+              -35.21805391344005,
+              -11.152574494063636,
+              -0.03309009629294894
+            ],
+            "nearest_source_vertex": 670,
+            "source_distance_m": 0.010209912228524276,
+            "incident_faces": [
+              947,
+              951
+            ],
+            "max_normal_angle_deg": 0.5946517849623314
+          }
+        ]
+      },
+      {
+        "vertices": [
+          547,
+          548
+        ],
+        "distance_m": 0.00028973509458907876,
+        "endpoints": [
+          {
+            "vertex": 547,
+            "point": [
+              -35.15675046213077,
+              -11.127753812782412,
+              -0.03377788377953034
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.001532969439209788,
+            "incident_faces": [
+              925,
+              943,
+              944
+            ],
+            "max_normal_angle_deg": 4.853356349613596
+          },
+          {
+            "vertex": 548,
+            "point": [
+              -35.15656218616167,
+              -11.127974036711821,
+              -0.03377795734014547
+            ],
+            "nearest_source_vertex": 662,
+            "source_distance_m": 0.0015036220038429663,
+            "incident_faces": [
+              928,
+              944
+            ],
+            "max_normal_angle_deg": 12.819809213723557
+          }
+        ]
+      },
+      {
+        "vertices": [
+          557,
+          568
+        ],
+        "distance_m": 0.0012229823098706461,
+        "endpoints": [
+          {
+            "vertex": 557,
+            "point": [
+              -35.220880331727265,
+              -11.132476551668319,
+              -0.033204474003897075
+            ],
+            "nearest_source_vertex": 678,
+            "source_distance_m": 0.0034934197647848195,
+            "incident_faces": [
+              950,
+              972,
+              973
+            ],
+            "max_normal_angle_deg": 53.07502641558271
+          },
+          {
+            "vertex": 568,
+            "point": [
+              -35.22148042699913,
+              -11.133542111561612,
+              -0.033192084139148266
+            ],
+            "nearest_source_vertex": 678,
+            "source_distance_m": 0.0032472500511250522,
+            "incident_faces": [
+              963,
+              972
+            ],
+            "max_normal_angle_deg": 41.92452549007563
+          }
+        ]
+      },
+      {
+        "vertices": [
+          566,
+          568
+        ],
+        "distance_m": 0.0010719935661594772,
+        "endpoints": [
+          {
+            "vertex": 566,
+            "point": [
+              -35.22249659906797,
+              -11.133883352425112,
+              -0.033181166013609494
+            ],
+            "nearest_source_vertex": 679,
+            "source_distance_m": 0.002473321833960737,
+            "incident_faces": [
+              963,
+              967,
+              968
+            ],
+            "max_normal_angle_deg": 10.927657419517285
+          },
+          {
+            "vertex": 568,
+            "point": [
+              -35.22148042699913,
+              -11.133542111561612,
+              -0.033192084139148266
+            ],
+            "nearest_source_vertex": 678,
+            "source_distance_m": 0.0032472500511250522,
+            "incident_faces": [
+              963,
+              972
+            ],
+            "max_normal_angle_deg": 41.92452549007563
+          }
+        ]
+      },
+      {
+        "vertices": [
+          566,
+          570
+        ],
+        "distance_m": 0.0015839857862984974,
+        "endpoints": [
+          {
+            "vertex": 566,
+            "point": [
+              -35.22249659906797,
+              -11.133883352425112,
+              -0.033181166013609494
+            ],
+            "nearest_source_vertex": 679,
+            "source_distance_m": 0.002473321833960737,
+            "incident_faces": [
+              963,
+              967,
+              968
+            ],
+            "max_normal_angle_deg": 10.927657419517285
+          },
+          {
+            "vertex": 570,
+            "point": [
+              -35.224063873291016,
+              -11.134112358093262,
+              -0.033166371253094906
+            ],
+            "nearest_source_vertex": 679,
+            "source_distance_m": 0.0018848180442669338,
+            "incident_faces": [
+              965,
+              966,
+              967
+            ],
+            "max_normal_angle_deg": 89.98646705543435
+          }
+        ]
+      },
+      {
+        "vertices": [
+          570,
+          571
+        ],
+        "distance_m": 0.0015919524811581621,
+        "endpoints": [
+          {
+            "vertex": 570,
+            "point": [
+              -35.224063873291016,
+              -11.134112358093262,
+              -0.033166371253094906
+            ],
+            "nearest_source_vertex": 679,
+            "source_distance_m": 0.0018848180442669338,
+            "incident_faces": [
+              965,
+              966,
+              967
+            ],
+            "max_normal_angle_deg": 89.98646705543435
+          },
+          {
+            "vertex": 571,
+            "point": [
+              -35.22383408144641,
+              -11.135687613401807,
+              -0.033157476124050365
+            ],
+            "nearest_source_vertex": 679,
+            "source_distance_m": 0.002460349642388535,
+            "incident_faces": [
+              965,
+              969,
+              970
+            ],
+            "max_normal_angle_deg": 6.398465603644332
+          }
+        ]
+      },
+      {
+        "vertices": [
+          570,
+          572
+        ],
+        "distance_m": 0.0018848180442669338,
+        "endpoints": [
+          {
+            "vertex": 570,
+            "point": [
+              -35.224063873291016,
+              -11.134112358093262,
+              -0.033166371253094906
+            ],
+            "nearest_source_vertex": 679,
+            "source_distance_m": 0.0018848180442669338,
+            "incident_faces": [
+              965,
+              966,
+              967
+            ],
+            "max_normal_angle_deg": 89.98646705543435
+          },
+          {
+            "vertex": 572,
+            "point": [
+              -35.224063873291016,
+              -11.134112358093262,
+              -0.03128155320882797
+            ],
+            "nearest_source_vertex": 679,
+            "source_distance_m": 0.0,
+            "incident_faces": [
+              966,
+              967,
+              968,
+              971
+            ],
+            "max_normal_angle_deg": 89.98646705534482
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1176,
+          1180
+        ],
+        "distance_m": 0.0003424733708388516,
+        "endpoints": [
+          {
+            "vertex": 1176,
+            "point": [
+              -33.71243318475755,
+              -10.02321016686506,
+              -0.05284663865989112
+            ],
+            "nearest_source_vertex": 1286,
+            "source_distance_m": 0.029442872060493,
+            "incident_faces": [
+              2197,
+              2210,
+              2211
+            ],
+            "max_normal_angle_deg": 0.7463284585751885
+          },
+          {
+            "vertex": 1180,
+            "point": [
+              -33.71209496427785,
+              -10.023156455451415,
+              -0.052849801078444524
+            ],
+            "nearest_source_vertex": 1286,
+            "source_distance_m": 0.029365197155987656,
+            "incident_faces": [
+              2198,
+              2210
+            ],
+            "max_normal_angle_deg": 4.569274660379061
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1181,
+          1186
+        ],
+        "distance_m": 0.0006116024135151537,
+        "endpoints": [
+          {
+            "vertex": 1181,
+            "point": [
+              -33.701045989990234,
+              -10.015257835388184,
+              -0.05298641739542564
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.026295136230634848,
+            "incident_faces": [
+              2199,
+              2222,
+              2223
+            ],
+            "max_normal_angle_deg": 45.03305480793751
+          },
+          {
+            "vertex": 1186,
+            "point": [
+              -33.70113441088762,
+              -10.014652663630605,
+              -0.052988947405708274
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.026299718496017584,
+            "incident_faces": [
+              2200,
+              2224
+            ],
+            "max_normal_angle_deg": 0.016119396107579224
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1181,
+          1212
+        ],
+        "distance_m": 0.0003693989214650435,
+        "endpoints": [
+          {
+            "vertex": 1181,
+            "point": [
+              -33.701045989990234,
+              -10.015257835388184,
+              -0.05298641739542564
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.026295136230634848,
+            "incident_faces": [
+              2199,
+              2222,
+              2223
+            ],
+            "max_normal_angle_deg": 45.03305480793751
+          },
+          {
+            "vertex": 1212,
+            "point": [
+              -33.701099462332266,
+              -10.014892330342155,
+              -0.052987944858976274
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.02629620343750258,
+            "incident_faces": [
+              2222,
+              2224,
+              2225
+            ],
+            "max_normal_angle_deg": 0.026684821073269572
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1183,
+          1204
+        ],
+        "distance_m": 0.0008622059490864176,
+        "endpoints": [
+          {
+            "vertex": 1183,
+            "point": [
+              -33.705521209998125,
+              -10.021259641062855,
+              -0.052915890167799524
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.027407981959090253,
+            "incident_faces": [
+              2199,
+              2218
+            ],
+            "max_normal_angle_deg": 13.496272965659944
+          },
+          {
+            "vertex": 1204,
+            "point": [
+              -33.705861070093505,
+              -10.022052006290139,
+              -0.0529087095828685
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.027656331238477928,
+            "incident_faces": [
+              2212,
+              2218,
+              2219
+            ],
+            "max_normal_angle_deg": 58.480535542340775
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1186,
+          1212
+        ],
+        "distance_m": 0.00024220350791562452,
+        "endpoints": [
+          {
+            "vertex": 1186,
+            "point": [
+              -33.70113441088762,
+              -10.014652663630605,
+              -0.052988947405708274
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.026299718496017584,
+            "incident_faces": [
+              2200,
+              2224
+            ],
+            "max_normal_angle_deg": 0.016119396107579224
+          },
+          {
+            "vertex": 1212,
+            "point": [
+              -33.701099462332266,
+              -10.014892330342155,
+              -0.052987944858976274
+            ],
+            "nearest_source_vertex": 1287,
+            "source_distance_m": 0.02629620343750258,
+            "incident_faces": [
+              2222,
+              2224,
+              2225
+            ],
+            "max_normal_angle_deg": 0.026684821073269572
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1187,
+          1210
+        ],
+        "distance_m": 0.0010353349568179098,
+        "endpoints": [
+          {
+            "vertex": 1187,
+            "point": [
+              -33.709676333824234,
+              -10.002589977295331,
+              -0.05298182452591548
+            ],
+            "nearest_source_vertex": 1288,
+            "source_distance_m": 0.029848183152836702,
+            "incident_faces": [
+              2201,
+              2226
+            ],
+            "max_normal_angle_deg": 8.537736462515939e-07
+          },
+          {
+            "vertex": 1210,
+            "point": [
+              -33.710506439208984,
+              -10.001971244812012,
+              -0.052978131681104976
+            ],
+            "nearest_source_vertex": 1288,
+            "source_distance_m": 0.03019674179161929,
+            "incident_faces": [
+              2220,
+              2226,
+              2227
+            ],
+            "max_normal_angle_deg": 50.83111939910831
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1191,
+          1210
+        ],
+        "distance_m": 0.0016928400519404543,
+        "endpoints": [
+          {
+            "vertex": 1191,
+            "point": [
+              -33.71214797534152,
+              -10.002384530315968,
+              -0.05296195579647842
+            ],
+            "nearest_source_vertex": 1292,
+            "source_distance_m": 0.03036681573836748,
+            "incident_faces": [
+              2203,
+              2220,
+              2221
+            ],
+            "max_normal_angle_deg": 6.445395825468684
+          },
+          {
+            "vertex": 1210,
+            "point": [
+              -33.710506439208984,
+              -10.001971244812012,
+              -0.052978131681104976
+            ],
+            "nearest_source_vertex": 1288,
+            "source_distance_m": 0.03019674179161929,
+            "incident_faces": [
+              2220,
+              2226,
+              2227
+            ],
+            "max_normal_angle_deg": 50.83111939910831
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1192,
+          1197
+        ],
+        "distance_m": 0.0019147566697554706,
+        "endpoints": [
+          {
+            "vertex": 1192,
+            "point": [
+              -33.76621499637083,
+              -10.029848463385292,
+              -0.05235408350980811
+            ],
+            "nearest_source_vertex": 1331,
+            "source_distance_m": 0.027387075187357897,
+            "incident_faces": [
+              2204,
+              2207
+            ],
+            "max_normal_angle_deg": 0.5759376830446088
+          },
+          {
+            "vertex": 1197,
+            "point": [
+              -33.76435420731048,
+              -10.03029966060707,
+              -0.05236743432751861
+            ],
+            "nearest_source_vertex": 1330,
+            "source_distance_m": 0.02771270295333993,
+            "incident_faces": [
+              2206,
+              2207
+            ],
+            "max_normal_angle_deg": 7.339856149172766
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1195,
+          1198
+        ],
+        "distance_m": 0.0009257819692511547,
+        "endpoints": [
+          {
+            "vertex": 1195,
+            "point": [
+              -33.769473973105086,
+              -10.027402004054949,
+              -0.05233967941343989
+            ],
+            "nearest_source_vertex": 1332,
+            "source_distance_m": 0.02660155225578907,
+            "incident_faces": [
+              2205,
+              2230
+            ],
+            "max_normal_angle_deg": 15.184192040358585
+          },
+          {
+            "vertex": 1198,
+            "point": [
+              -33.77014923095703,
+              -10.026768684387207,
+              -0.05233738019003979
+            ],
+            "nearest_source_vertex": 1332,
+            "source_distance_m": 0.02623841267592252,
+            "incident_faces": [
+              2208,
+              2230,
+              2231
+            ],
+            "max_normal_angle_deg": 38.53007371203604
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1196,
+          1205
+        ],
+        "distance_m": 0.00011312380605838171,
+        "endpoints": [
+          {
+            "vertex": 1196,
+            "point": [
+              -33.76235196841591,
+              -10.030520320849744,
+              -0.05238323569508262
+            ],
+            "nearest_source_vertex": 1330,
+            "source_distance_m": 0.027774776630441197,
+            "incident_faces": [
+              2206,
+              2228
+            ],
+            "max_normal_angle_deg": 43.6247455799619
+          },
+          {
+            "vertex": 1205,
+            "point": [
+              -33.76226202357888,
+              -10.030451723236267,
+              -0.05238437113017791
+            ],
+            "nearest_source_vertex": 1330,
+            "source_distance_m": 0.027779239657541654,
+            "incident_faces": [
+              2214,
+              2215,
+              2228,
+              2229
+            ],
+            "max_normal_angle_deg": 29.033770556181775
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1200,
+          1201
+        ],
+        "distance_m": 0.001012713612452382,
+        "endpoints": [
+          {
+            "vertex": 1200,
+            "point": [
+              -33.77184664764565,
+              -10.015141203989595,
+              -0.0523860029914419
+            ],
+            "nearest_source_vertex": 1332,
+            "source_distance_m": 0.022916426454472717,
+            "incident_faces": [
+              2208,
+              2238
+            ],
+            "max_normal_angle_deg": 0.8273290381216403
+          },
+          {
+            "vertex": 1201,
+            "point": [
+              -33.77197846631724,
+              -10.014137115347788,
+              -0.05239032711690677
+            ],
+            "nearest_source_vertex": 1332,
+            "source_distance_m": 0.02289125673170903,
+            "incident_faces": [
+              2209,
+              2238,
+              2239
+            ],
+            "max_normal_angle_deg": 75.69887560728998
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1207,
+          1214
+        ],
+        "distance_m": 0.00035641131371110776,
+        "endpoints": [
+          {
+            "vertex": 1207,
+            "point": [
+              -33.755638581422275,
+              -10.008286168544775,
+              -0.05256075900939849
+            ],
+            "nearest_source_vertex": 1335,
+            "source_distance_m": 0.027446671241755014,
+            "incident_faces": [
+              2216,
+              2217,
+              2232,
+              2233
+            ],
+            "max_normal_angle_deg": 4.75982264611879
+          },
+          {
+            "vertex": 1214,
+            "point": [
+              -33.755994293768296,
+              -10.008308256891826,
+              -0.05255761952633376
+            ],
+            "nearest_source_vertex": 1335,
+            "source_distance_m": 0.027430341327504774,
+            "incident_faces": [
+              2232,
+              2234,
+              2235
+            ],
+            "max_normal_angle_deg": 30.371708711135074
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1207,
+          1216
+        ],
+        "distance_m": 0.0005767017295345468,
+        "endpoints": [
+          {
+            "vertex": 1207,
+            "point": [
+              -33.755638581422275,
+              -10.008286168544775,
+              -0.05256075900939849
+            ],
+            "nearest_source_vertex": 1335,
+            "source_distance_m": 0.027446671241755014,
+            "incident_faces": [
+              2216,
+              2217,
+              2232,
+              2233
+            ],
+            "max_normal_angle_deg": 4.75982264611879
+          },
+          {
+            "vertex": 1216,
+            "point": [
+              -33.75620878229504,
+              -10.008199932093772,
+              -0.05255638590245042
+            ],
+            "nearest_source_vertex": 1335,
+            "source_distance_m": 0.027422323573999704,
+            "incident_faces": [
+              2234,
+              2236
+            ],
+            "max_normal_angle_deg": 40.864425397616245
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1214,
+          1216
+        ],
+        "distance_m": 0.00024029380309577568,
+        "endpoints": [
+          {
+            "vertex": 1214,
+            "point": [
+              -33.755994293768296,
+              -10.008308256891826,
+              -0.05255761952633376
+            ],
+            "nearest_source_vertex": 1335,
+            "source_distance_m": 0.027430341327504774,
+            "incident_faces": [
+              2232,
+              2234,
+              2235
+            ],
+            "max_normal_angle_deg": 30.371708711135074
+          },
+          {
+            "vertex": 1216,
+            "point": [
+              -33.75620878229504,
+              -10.008199932093772,
+              -0.05255638590245042
+            ],
+            "nearest_source_vertex": 1335,
+            "source_distance_m": 0.027422323573999704,
+            "incident_faces": [
+              2234,
+              2236
+            ],
+            "max_normal_angle_deg": 40.864425397616245
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1628,
+          1657
+        ],
+        "distance_m": 0.0012141696368355626,
+        "endpoints": [
+          {
+            "vertex": 1628,
+            "point": [
+              -34.13576423037944,
+              -9.75331100721681,
+              -0.05071604395789179
+            ],
+            "nearest_source_vertex": 1896,
+            "source_distance_m": 0.02097978144472223,
+            "incident_faces": [
+              3096,
+              3121,
+              3122
+            ],
+            "max_normal_angle_deg": 7.142320583518984
+          },
+          {
+            "vertex": 1657,
+            "point": [
+              -34.13673124669874,
+              -9.752576793715134,
+              -0.05071181557884716
+            ],
+            "nearest_source_vertex": 1896,
+            "source_distance_m": 0.02169366195799236,
+            "incident_faces": [
+              3121,
+              3124
+            ],
+            "max_normal_angle_deg": 4.807199953266351
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1632,
+          1637
+        ],
+        "distance_m": 0.0018437583068313113,
+        "endpoints": [
+          {
+            "vertex": 1632,
+            "point": [
+              -34.127010345458984,
+              -9.691519737243652,
+              -0.04928155988454819
+            ],
+            "nearest_source_vertex": 1919,
+            "source_distance_m": 0.0,
+            "incident_faces": [
+              3098,
+              3100,
+              3101,
+              3115,
+              3127,
+              3167,
+              3173,
+              3175,
+              3176
+            ],
+            "max_normal_angle_deg": 49.228657079805416
+          },
+          {
+            "vertex": 1637,
+            "point": [
+              -34.127010345458984,
+              -9.691519737243652,
+              -0.0511253181913795
+            ],
+            "nearest_source_vertex": 1919,
+            "source_distance_m": 0.0018437583068313113,
+            "incident_faces": [
+              3101,
+              3166,
+              3167
+            ],
+            "max_normal_angle_deg": 44.34786023101937
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1635,
+          1652
+        ],
+        "distance_m": 0.0012428073275230973,
+        "endpoints": [
+          {
+            "vertex": 1635,
+            "point": [
+              -34.13906646277482,
+              -9.751175637678182,
+              -0.05069958870691233
+            ],
+            "nearest_source_vertex": 1896,
+            "source_distance_m": 0.02359679462091566,
+            "incident_faces": [
+              3099,
+              3113,
+              3114
+            ],
+            "max_normal_angle_deg": 52.211483546077396
+          },
+          {
+            "vertex": 1652,
+            "point": [
+              -34.137981807295425,
+              -9.751782315119502,
+              -0.05070550703057836
+            ],
+            "nearest_source_vertex": 1896,
+            "source_distance_m": 0.022689228353453175,
+            "incident_faces": [
+              3113,
+              3124,
+              3125
+            ],
+            "max_normal_angle_deg": 3.2119595232146514
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1642,
+          1645
+        ],
+        "distance_m": 0.0009629176379622562,
+        "endpoints": [
+          {
+            "vertex": 1642,
+            "point": [
+              -34.14382834688761,
+              -9.687481458009808,
+              -0.05100445003012936
+            ],
+            "nearest_source_vertex": 1892,
+            "source_distance_m": 0.003640108798096573,
+            "incident_faces": [
+              3103,
+              3104,
+              3105
+            ],
+            "max_normal_angle_deg": 26.722923047572987
+          },
+          {
+            "vertex": 1645,
+            "point": [
+              -34.14292201317137,
+              -9.687806626272819,
+              -0.05101038071648969
+            ],
+            "nearest_source_vertex": 1892,
+            "source_distance_m": 0.004223058106647697,
+            "incident_faces": [
+              3104,
+              3106,
+              3107
+            ],
+            "max_normal_angle_deg": 30.63125668235729
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1643,
+          1675
+        ],
+        "distance_m": 0.0017731553373738886,
+        "endpoints": [
+          {
+            "vertex": 1643,
+            "point": [
+              -34.14594756547226,
+              -9.687708057585256,
+              -0.050985232680092085
+            ],
+            "nearest_source_vertex": 1894,
+            "source_distance_m": 0.002224256402411841,
+            "incident_faces": [
+              3103,
+              3181
+            ],
+            "max_normal_angle_deg": 47.15608535893424
+          },
+          {
+            "vertex": 1675,
+            "point": [
+              -34.14700821211984,
+              -9.68912891277148,
+              -0.050968527015934274
+            ],
+            "nearest_source_vertex": 1894,
+            "source_distance_m": 0.001013550562495915,
+            "incident_faces": [
+              3164,
+              3165,
+              3181
+            ],
+            "max_normal_angle_deg": 41.04304188174232
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1645,
+          1647
+        ],
+        "distance_m": 0.00185854182076558,
+        "endpoints": [
+          {
+            "vertex": 1645,
+            "point": [
+              -34.14292201317137,
+              -9.687806626272819,
+              -0.05101038071648969
+            ],
+            "nearest_source_vertex": 1892,
+            "source_distance_m": 0.004223058106647697,
+            "incident_faces": [
+              3104,
+              3106,
+              3107
+            ],
+            "max_normal_angle_deg": 30.63125668235729
+          },
+          {
+            "vertex": 1647,
+            "point": [
+              -34.14109208836755,
+              -9.687482197700785,
+              -0.05102767272448089
+            ],
+            "nearest_source_vertex": 1892,
+            "source_distance_m": 0.005673822383873,
+            "incident_faces": [
+              3106,
+              3171,
+              3172
+            ],
+            "max_normal_angle_deg": 1.7927713310316236
+          }
+        ]
+      },
+      {
+        "vertices": [
+          1652,
+          1657
+        ],
+        "distance_m": 0.0014815997579260025,
+        "endpoints": [
+          {
+            "vertex": 1652,
+            "point": [
+              -34.137981807295425,
+              -9.751782315119502,
+              -0.05070550703057836
+            ],
+            "nearest_source_vertex": 1896,
+            "source_distance_m": 0.022689228353453175,
+            "incident_faces": [
+              3113,
+              3124,
+              3125
+            ],
+            "max_normal_angle_deg": 3.2119595232146514
+          },
+          {
+            "vertex": 1657,
+            "point": [
+              -34.13673124669874,
+              -9.752576793715134,
+              -0.05071181557884716
+            ],
+            "nearest_source_vertex": 1896,
+            "source_distance_m": 0.02169366195799236,
+            "incident_faces": [
+              3121,
+              3124
+            ],
+            "max_normal_angle_deg": 4.807199953266351
+          }
+        ]
+      }
+    ]
+  },
+  "archive_diff": {
+    "status": "pass",
+    "tolerance": 1e-06,
+    "expected": [
+      "SM_SIL13_Ground"
+    ],
+    "objects": {
+      "SM_SIL13_Ground": {
+        "before": {
+          "vertex_count": 2498,
+          "face_count": 5064,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "M_SIL13_Ground_12"
+          ],
+          "scene_metadata_sha256": "fb5ac669ba0666f3aa1865d00189e24cea3a45d78fac3ec6a8188dac53aef631",
+          "uv_sha256": "fdc00f17e3935e595574ce8e45ad5fffee2716701f14996c9455b3d4a643e7ae",
+          "bbox": [
+            [
+              -35.3038330078125,
+              -11.468526840209961,
+              -0.14748156070709229
+            ],
+            [
+              -33.701045989990234,
+              -9.626662254333496,
+              0.6248831748962402
+            ]
+          ]
+        },
+        "after": {
+          "vertex_count": 2200,
+          "face_count": 4373,
+          "uv_layers": [
+            "UVMap"
+          ],
+          "materials": [
+            "M_SIL13_Ground_12"
+          ],
+          "scene_metadata_sha256": "fb5ac669ba0666f3aa1865d00189e24cea3a45d78fac3ec6a8188dac53aef631",
+          "uv_sha256": "4e0ad730eb07e19455e0becb73faf4ef95ce46cd688fda2ac442110ba31fe69a",
+          "bbox": [
+            [
+              -35.3038330078125,
+              -11.468526840209961,
+              -0.05301567167043686
+            ],
+            [
+              -33.701045989990234,
+              -9.626662254333496,
+              0.6248831748962402
+            ]
+          ]
+        },
+        "moved_count": null,
+        "above_tolerance_count": null,
+        "max_displacement": null,
+        "uv_changed": true,
+        "displacement_status": "unmeasured: object/vertex inventory changed",
+        "changes": [
+          "geometry",
+          "uv"
+        ]
+      }
+    },
+    "errors": [],
+    "members": {
+      "before": {
+        "SM_SIL13_Ground.fbx": "e6d112bf799834ec6966e475881cad4ccf1eb3128a5f1b7faf9d3fdfb8073ae4"
+      },
+      "after": {
+        "SM_SIL13_Ground.fbx": "d4e6a3139a5620f9ef238dfd3daba9a2c02d8ed18a903de8ca806af60da62f40"
+      }
+    },
+    "inputs": {
+      "previous": {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v030\\export-r1\\before\\SM_SIL13_Ground.fbx",
+        "sha256": "e6d112bf799834ec6966e475881cad4ccf1eb3128a5f1b7faf9d3fdfb8073ae4"
+      },
+      "new": {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v030\\export-r1\\after\\SM_SIL13_Ground.fbx",
+        "sha256": "d4e6a3139a5620f9ef238dfd3daba9a2c02d8ed18a903de8ca806af60da62f40"
+      }
+    }
+  },
+  "archive_note": "Isolated diagnostics only; does not close whole-site immediate-predecessor legacy FAIL",
+  "supplemental_Urn_NOT_adopted": {
+    "regulatory": 21,
+    "public": {
+      "overlapping_vertices": 4,
+      "overlapping_faces": 0,
+      "vertex_pairs": 2,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "registered_code": [
+    {
+      "path": "jobs/SIL13-COLD-1315/hooks/visible_interface.py",
+      "sha256": "8cff8e87affb8bddb9c57c11bbb86c443ed39df41974a932bdb30d4b50123966",
+      "literal_lines": 103
+    },
+    {
+      "path": "jobs/SIL13-COLD-1315/skeleton.json",
+      "sha256": "5649b29900c2924d5363741514ebc18afe192cc2513c84fa54c027f79c891b82",
+      "literal_lines": 7
+    },
+    {
+      "path": "tests/test_sil13_visible_interface_1315.py",
+      "sha256": "e988a0a68a71ba0b1fe5221d6a403627cc943cdbf767c02f5f86230a1dcfb1b1",
+      "literal_lines": 127
+    }
+  ],
+  "affected_tests": {
+    "command": "CUT_MODE=native PYTEST_ADDOPTS='' uv run pytest -q tests/test_sil13_visible_interface_1315.py tests/qa/test_topology.py tests/ops/test_xview_gate.py tests/qa/test_archive_diff.py tests/test_scenario_router.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tests/test_maf_requirement_sheet.py tmp/cold-v030/test_actual.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0/v030-final",
+    "passed": 455,
+    "failed": 0,
+    "seconds": 118.13,
+    "new_retained_tests": 25,
+    "actual_source_RED": 183,
+    "actual_export_GREEN": 0
+  },
+  "guards": {
+    "command": "bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh",
+    "last_line": "repo_guards: GREEN",
+    "passed": 489,
+    "warnings": 1,
+    "seconds": 122.08,
+    "initial_RED": "D342 domain anchor absent; fixed with one Ground practice row"
+  },
+  "full_suite": "deferred to merge batch (rule 68)",
+  "hostile_self_review": {
+    "paths": "registered hook pure array seam, no file writers; all input/output/report paths distinct; new output dirs exist_ok=False; immutable inputs tested",
+    "duplicate_layers": "upper-envelope subtraction invariant to repeated/reversed Ground rows, retained test",
+    "stale_receipts": "current hook reproduces7actual precursor arrays EXACT; raw/native report scopes and file hashes explicit",
+    "failing_statuses": "raw/native publicFAIL retained, NO candidate adopted",
+    "no_source_loss_claim": "744hidden faces/95partial explicit source mappings; numeric-line tolerance and roundtrip disclosed; no Hausdorff claim"
+  },
+  "open_items": [
+    "NEW6960708487 visible <=2mm corner repair in<=5mm Ground-contact band",
+    "exact-cutBench4373 raw/native FAIL65nearvertices49pairs; all trials NOTadopted",
+    "unchanged whole79869/Flora613/mixed31/Groundskirt/master/maps/UV/legacyarchive/final/SINTEZFAIL",
+    "D339UCXgapbandsOBSERVEonly; independent checkertriage t_66104c70"
+  ],
+  "next_steps": [
+    "Wait for NEW visible-corner decision; no bounded visible reconstruction before answer",
+    "Keep old hidden-only/maple/source/picture permissions CLOSED",
+    "Resume full site ONLY NPMv026/site-flora-r3 + VPMv029/site-maples-r3; diagnostic Bench/Urn/wall never adopted",
+    "If allowed, ONE measured bounded pilot with source-face mapping, raw/native QA and separate picture approval before replication"
+  ]
+}

@@ -22,7 +22,22 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Read back exports, run area validators, report per-area reproduction and historical comparison.
   No passed=true with an incomplete mandatory/manual gate.
 
-## v029 current continuation — accepted six maples; new interface representation question
+## v030 current continuation — exact hidden cut built; visible microcorner choice
+
+[CONTINUATION-v030.md](CONTINUATION-v030.md) supersedes pending-question claims
+below, NOT the full-site pair. [D342]/answer6959387195 authorizes hidden-only VPM
+cuts retaining10cm master/census; that question is CLOSED. One standalone actual
+Bench013copy4373raw/native triangles has183->0Ground regulatory crossings but
+65nearvertices/49pairsFAIL. Three surface-preserving routes REJECTED, no adoption.
+NEW question6960708487 is about ONE bounded visible-corner repair<=2mm only in
+<=5mm above-Ground contact band, NOT another hidden-root permission or QAwaiver.
+Do not change visible corners or replicate before this answer and the separate
+pilot picture. Current NPM remainsv026/site-flora-r3, VPMv029/site-maples-r3;
+37physicalMAF/38census/4582plants/545UCX, library/source/master hashes unchanged.
+Other QA/material/skirt/UV/archive/final/SINTEZFAILs remain open. See v030summary
+and question receipt. Full suite: deferred to merge batch(rule68).
+
+## v029 historical continuation — accepted six maples; interface representation question
 
 [CONTINUATION-v029.md](CONTINUATION-v029.md) supersedes ALL resume paths below.
 Artem6956847079 accepts the exact r2 picture and permits six VPMmaples; CLOSED.

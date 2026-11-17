@@ -1,6 +1,22 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v029 accepted6VPMmaples applied;176094NPM/298218VPM raw=native,
+Current status: **v030 isolated hidden-only VPM interface pilot built; NOT adopted,
+NOT delivered**. See [CONTINUATION-v030.md](CONTINUATION-v030.md),
+[source-wide-summary-v030.json](source-wide-summary-v030.json),
+[question-receipt-v030.json](question-receipt-v030.json).
+Answer6959387195 closes the hidden-interface question, recorded as[D342]. One
+Bench013copy5064->4373actualraw/native triangles; same-regulatory183->0, but
+public0faces/65nearvertices/49pairsFAIL. Three distinct no-shape-change trials
+remain rejected. Actual visible source corner531 at51.58deg sits0.708/0.522mm
+from exact Ground-cut vertices; NEW question6960708487 asks permission for ONE
+<=2mm visible-corner repair in<=5mm Ground-contact band. No such repair or site
+replication before the answer and separate pilot picture. Current full pair is
+UNCHANGED NPMv026/VPMv029 (176094/298218), all census and libraries unchanged.
+Other full QA/material/UV/skirt/archive/final/SINTEZFAILs stay OPEN; D339OBSERVE.
+Affected448passed0failed66.62s; final guards in v030summary, no deliveryPASS.
+Full suite: deferred to merge batch(rule68).
+
+Historical status: **v029 accepted6VPMmaples applied;176094NPM/298218VPM raw=native,
 NOT delivered**. See [CONTINUATION-v029.md](CONTINUATION-v029.md),
 [source-wide-summary-v029.json](source-wide-summary-v029.json),
 [question-receipt-v029.json](question-receipt-v029.json).

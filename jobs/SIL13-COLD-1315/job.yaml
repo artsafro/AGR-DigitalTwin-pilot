@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-six-VPM-maples-v029
+run_id: cold-1315-visible-interface-pilot-v030
 synthetic: false
 path: deviation
 inputs: &id001
@@ -223,8 +223,14 @@ gates:
   operations:
     status: fail
     waits: user
-    note: v029sixacceptedVPMmaples applied; actual176094NPM298218VPMraw=native,12placedchecksregulatory/publicclean,192of192sheet samples7.684-9.879mm. WholeFlora613/wholeofficial79869/public9faces49pairsFAIL. NEW modelquestion6958474507 asks ONE visible-interface derivative pilot retaining10cm-buried source master/census; no clipping before reply. OldmaplepictureCLOSED; othertechnicalFAILsOPEN, no waiver. D339gapbandsOBSERVE.
+    note: D342answer6959387195 closes hidden-only interface permission. v030standaloneBench5064to4373raw/native/183to0Ground crossings, but65nearvertices49pairsFAIL. Three surface-preserving trials REJECTED. NEW question6960708487 asks ONE visible-corner repair<=2mm in<=5mmGround-contactband; actualsourcecorner51.58deg and0.708/0.522mmcontacts measured. No visible repair or site replication before answer and separatepilotpicture. CurrentNPMv026/VPMv029 unchanged, othertechnicalFAILsOPEN, D339OBSERVE.
     evidence: &id002
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v030.json
+      sha256: 643385ac7e84cf190dc1f55da56dd9237113d42059c3b23aed935f91706e91e8
+    - path: jobs/SIL13-COLD-1315/evidence-v030.json
+      sha256: 16b427d6d7660522a33d5092d7190f4c80510b9b0d33a3a5ea51505b1f58d66f
+    - path: jobs/SIL13-COLD-1315/question-receipt-v030.json
+      sha256: ca7e029db1385dd216436ad17d0595c55cb141fe3e68f1d513808293548d81ff
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v029.json
       sha256: 6ac7916f238a6f2b2b45ab5d227b977840b1c474617062299ec0473abcca29c5
     - path: jobs/SIL13-COLD-1315/evidence-v029.json
@@ -263,8 +269,10 @@ gates:
     evidence: *id002
   report:
     status: review
-    note: v029456affectedpassed0failed53.16s;repo_guardsGREEN489passed1warning86.67s. Real6treeRED to0actualrawnative,12placedpublicclean;192of192shellsamples.304Drivefiles340743620bytessealed/22originalshashesequal/NPMunchanged. NEW interfacequestion6958474507 pending, accepted6maples applied but no wholeQAwaiver. Full suite deferred(rule68).
+    note: Current pair NPMv026/VPMv029 unchanged; isolatedv030Bench4373raw/native has183to0Groundcrossings but65nearvertices/49pairsFAIL. Archive_diff standalonebefore/afterPASS with explicitobjectchange, NOT whole-site legacybaselinePASS. D342hidden-onlycut permission closed; NEW visiblecornerquestion6960708487 pending.448affectedpassed0failed66.62s; finalguards and seals in v030summary. Full suite deferred(rule68).
     evidence:
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v030.md
+      sha256: 9e594bba054853f406b7924b4979e3e6f07107d2cb6033ed0d8144addedf1bee
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v029.md
       sha256: 434755e8db6c3380f7590fd02145bf1bf1c783e1c4a6988c1b0a392bfa3af96c
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v028.md
@@ -277,7 +285,7 @@ gates:
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: Answer6956847079 ACCEPTS exactr2picture6954553715; sixVPMmaples actually applied. This picturegate CLOSED, not repeated. Finalbotanical/material/siteacceptance NOTclaimed; portablecopy not shown/packed whilearchivegateFAIL. NEW interfacequestion is an operations/modelpermission gate, not a second maple picture question. OtherFAILs worker-owned; no waiver.
+    note: Answer6956847079 ACCEPTS maple r2picture6954553715; sixVPMmaples applied and picturegateCLOSED. D342answer6959387195 closes hidden-onlyinterfacepermission. v030clay renders are failure evidence only, not a review/acceptance scene or an approved Bench form. NEW visiblecornerquestion6960708487 is model permission, not a repeat of either closed gate. Finalsite/material/manualacceptance and allotherFAILs remain open.
     evidence: *id002
   checker:
     status: missing

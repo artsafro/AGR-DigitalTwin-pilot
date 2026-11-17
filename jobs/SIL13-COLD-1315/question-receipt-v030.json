@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "question_pending": true,
+  "comment_id": 6960708487,
+  "url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6960708487",
+  "exact_target_verified": true,
+  "body_equal": true,
+  "body_sha256": "00a857f058f5322fe18bb47268ec1f331b99067e3bfa866bb524e6026529f048",
+  "closed_answer": 6959387195,
+  "proposal": "ONE VPM-only visible corner repair <=2mm in <=5mm band above actual Ground; exact-cut after; no site replication before separate picture approval",
+  "image": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v030\\failure-comparison-NOT-ADOPTED.png",
+  "image_sha256": "edff0a69ff911a3334321f3a8528d52340d1608409240dd4c2b7f6fb25e452cd"
+}

@@ -1,0 +1,7 @@
+{
+  "scenario": "ground-vpm",
+  "config": {},
+  "hooks": [
+    {"script": "hooks/visible_interface.py", "stage": "placement", "point": "after"}
+  ]
+}
