@@ -70,6 +70,42 @@ def test_1644_class_reference(name, kind, valid):
         assert problems == [f"context parts: src/dt_ai/parts/model.py has no top-level {category} {name}"]
 
 
+@pytest.mark.parametrize("kind", ["", "function", "method", None, [], 1, float("nan"), float("inf")])
+def test_1644_invalid_kind(kind):
+    cmap = _maps()["contexts"]
+    cmap["shared_kernel"]["functions"][0]["kind"] = kind
+    with pytest.raises(route_map.SchemaError, match="kind"):
+        route_map.check_contexts(cmap)
+
+
+@pytest.mark.parametrize("route,map_name", [("route", "contexts"),
+    ("vpm-route", "vpm-contexts"), ("ground-route", "ground-contexts")])
+def test_1644_stage_owners(route, map_name):
+    maps, events = _maps(), _routes()[route]
+    cmap = maps[map_name]
+    sintez = next(c for c in cmap["contexts"] if c["id"] == "sintez")
+    assert sintez["ref"] == "package-contexts.yaml#sintez"
+    assert sintez["owner"] == "tools/blender/sintez_checker.py"
+    assert {f["name"] for f in sintez["functions"]} == {"dump"}
+    assert _stage(events, "sintez")["context"] == "sintez"
+    assert next(r for r in maps["contexts"]["rules"] if r["id"] == "sintez-checker")["owner"] == sintez["owner"]
+    if route != "ground-route":
+        parts = next(c for c in cmap["contexts"] if c["id"] == "parts")
+        assert _stage(events, "parts")["context"] == "parts"
+        assert parts["owner"] == "src/dt_ai/parts/model.py"
+        assert parts["functions"] == [{"name": "PartsList", "kind": "class", "contract": "Состав частей модели и подтверждение пользователя"}]
+    route_map.check_schema(events, maps["contexts"])
+    assert not [p for p in route_map.route_coverage(events, maps["contexts"], cmap) if not p.startswith("WARNING:")]
+
+
+def test_1644_atlas_duplicate_reason():
+    row = next(d for c in _maps()["contexts"]["contexts"] for d in c.get("duplicates", [])
+               if d["at"] == "tools/materials/npm_atlas_udim.py:785")
+    assert "agr vpm-to-npm" not in row["ru"]
+    assert "agr unwrap-atlas" in row["ru"] and "job-specific" in row["ru"]
+    assert row["status"] == "live-bypass"
+
+
 # ---------------------------------------------------------------- #1593 source-backed writer inventory (not a generic scanner)
 WRITERS_1593 = [
     ("body", "jobs/KPP1/scripts/build_kpp1.py:198", "live-bypass"),
