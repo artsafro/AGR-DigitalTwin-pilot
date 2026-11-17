@@ -51,7 +51,7 @@ def main(argv=None):
     for i, angle in enumerate([float(x) for x in a.angles.split(',')], start=1):
         out = run / f'round-{i:02d}'
         cmd = blender_command(ROOT / 'tools' / 'blender' / 'split_welded_parts_candidate.py',
-                              [src, out, repr(angle)], executable=a.blender)
+                              (src, out, repr(angle)), executable=a.blender)
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
         fbx = out / 'master.fbx'
         if proc.returncode != 0 or not fbx.is_file():

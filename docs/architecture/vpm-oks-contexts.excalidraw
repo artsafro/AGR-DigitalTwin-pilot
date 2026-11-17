@@ -410,7 +410,7 @@
     },
     {
      "type": "arrow",
-     "id": "e3a8b9d69845ec11"
+     "id": "ea7d25a5e9e158a6"
     }
    ],
    "updated": 1,
@@ -606,7 +606,7 @@
    "lineHeight": 1.25
   },
   {
-   "id": "ebefb8015300e481",
+   "id": "e1c3fdcfd48b67d4",
    "type": "rectangle",
    "x": 40.0,
    "y": 634.0,
@@ -625,22 +625,22 @@
    "roundness": {
     "type": 3
    },
-   "seed": 233386411,
+   "seed": 1512866872,
    "version": 1,
-   "versionNonce": 961134570,
+   "versionNonce": 1887080474,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "ee52b2029f7668ad"
+     "id": "efbb2352165bfc95"
     },
     {
      "type": "arrow",
-     "id": "e3a8b9d69845ec11"
+     "id": "ea7d25a5e9e158a6"
     },
     {
      "type": "arrow",
-     "id": "ebbbec9d45856c14"
+     "id": "e24653bb75e394aa"
     }
    ],
    "updated": 1,
@@ -648,7 +648,7 @@
    "locked": false
   },
   {
-   "id": "ee52b2029f7668ad",
+   "id": "efbb2352165bfc95",
    "type": "text",
    "x": 48.0,
    "y": 644.0,
@@ -665,9 +665,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1534628035,
+   "seed": 1210349072,
    "version": 1,
-   "versionNonce": 1959272557,
+   "versionNonce": 1484336801,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -678,7 +678,7 @@
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
-   "containerId": "ebefb8015300e481",
+   "containerId": "e1c3fdcfd48b67d4",
    "originalText": "НПМ в тех же координатах (ВПМ → НПМ)\nВладелец: tools/derive/npm_atlas.py\nатлас НПМ из UDIM для agr vpm-to-npm; путь B —\nпараллельная НПМ по ID (D293)\n\nvalidate_export: раскладка, диффуз, прозрачность -> замер\nотступов по прочитанным UV и PNG\nmain: аргументы dt derive atlas -> атлас НПМ и отчёт;\nошибка — ненулевой код",
    "autoResize": true,
    "lineHeight": 1.25
@@ -1010,7 +1010,7 @@
     },
     {
      "type": "arrow",
-     "id": "ebbbec9d45856c14"
+     "id": "e24653bb75e394aa"
     },
     {
      "type": "arrow",
@@ -1630,6 +1630,216 @@
    "verticalAlign": "middle",
    "containerId": "e0c4dca1ed57a80e",
    "originalText": "Дубли вне владельца: 2",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e89f7e0e63e2fdf9",
+   "type": "rectangle",
+   "x": 650.0,
+   "y": 1333.0,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 4394257,
+   "version": 1,
+   "versionNonce": 296052018,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ef7093cdc86ed328"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ef7093cdc86ed328",
+   "type": "text",
+   "x": 658.0,
+   "y": 1343.0,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1300858526,
+   "version": 1,
+   "versionNonce": 248082420,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e89f7e0e63e2fdf9",
+   "originalText": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed319371ca8c4f40",
+   "type": "rectangle",
+   "x": 650.0,
+   "y": 1472.0,
+   "width": 470,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 495611946,
+   "version": 1,
+   "versionNonce": 422484910,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e7ce9eed157c440c"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e7ce9eed157c440c",
+   "type": "text",
+   "x": 658.0,
+   "y": 1482.0,
+   "width": 454,
+   "height": 15.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1711433107,
+   "version": 1,
+   "versionNonce": 79258189,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ed319371ca8c4f40",
+   "originalText": "Дубли вне владельца: 1",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "efce5e1877483387",
+   "type": "rectangle",
+   "x": 1260.0,
+   "y": 1333.0,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 710837875,
+   "version": 1,
+   "versionNonce": 18040070,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "eac930d140cf2789"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "eac930d140cf2789",
+   "type": "text",
+   "x": 1268.0,
+   "y": 1343.0,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 366967778,
+   "version": 1,
+   "versionNonce": 1339071814,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Состав частей (PartsList)\nВладелец: src/dt_ai/parts/model.py\nмодель состава частей и подтверждение Gate 1\n\nPartsList: Состав частей модели и подтверждение\nпользователя",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "efce5e1877483387",
+   "originalText": "Состав частей (PartsList)\nВладелец: src/dt_ai/parts/model.py\nмодель состава частей и подтверждение Gate 1\n\nPartsList: Состав частей модели и подтверждение\nпользователя",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -2382,7 +2592,7 @@
    "lineHeight": 1.25
   },
   {
-   "id": "e3a8b9d69845ec11",
+   "id": "ea7d25a5e9e158a6",
    "type": "arrow",
    "x": 1730,
    "y": 427.5,
@@ -2399,14 +2609,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 913681727,
+   "seed": 1300070814,
    "version": 1,
-   "versionNonce": 648097415,
+   "versionNonce": 140640435,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e816293d7433c316"
+     "id": "e9d9f079556c3403"
     }
    ],
    "updated": 1,
@@ -2448,13 +2658,13 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    }
   },
   {
-   "id": "e816293d7433c316",
+   "id": "e9d9f079556c3403",
    "type": "text",
    "x": 1080.0,
    "y": 605.25,
@@ -2471,9 +2681,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1871826026,
+   "seed": 557242070,
    "version": 1,
-   "versionNonce": 698839593,
+   "versionNonce": 1984915260,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -2484,13 +2694,13 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e3a8b9d69845ec11",
+   "containerId": "ea7d25a5e9e158a6",
    "originalText": "UDIM → атлас",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "ebbbec9d45856c14",
+   "id": "e24653bb75e394aa",
    "type": "arrow",
    "x": 510.0,
    "y": 722.75,
@@ -2507,14 +2717,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 769388618,
+   "seed": 883866343,
    "version": 1,
-   "versionNonce": 213071295,
+   "versionNonce": 1187623091,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e4b5729407d87dac"
+     "id": "ec99e9f59bc56ec3"
     }
    ],
    "updated": 1,
@@ -2551,7 +2761,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    },
@@ -2562,7 +2772,7 @@
    }
   },
   {
-   "id": "e4b5729407d87dac",
+   "id": "ec99e9f59bc56ec3",
    "type": "text",
    "x": 1435.0,
    "y": 596.5,
@@ -2579,9 +2789,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 260470408,
+   "seed": 30801129,
    "version": 1,
-   "versionNonce": 772734081,
+   "versionNonce": 943242161,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -2592,7 +2802,7 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "ebbbec9d45856c14",
+   "containerId": "e24653bb75e394aa",
    "originalText": "НПМ в\nкоординатах",
    "autoResize": true,
    "lineHeight": 1.25

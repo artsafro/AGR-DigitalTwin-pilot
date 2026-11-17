@@ -154,20 +154,23 @@ def face_texel(coords, key, px):
 
     Projecting a plane with unit normal n onto the coordinate plane of axis a keeps lengths along the plane's
     trace (singular value 1) and scales the direction across it by |n . a|; so the singular values are px
-    and px * |n_a| / |n|. Evaluated for the Newell normal and for every fan triangle whose area is at least
-    1e-6 of the face area (a non-planar face is checked per piece; slivers of collinear corners, whose
-    normal is roundoff, are skipped)."""
+    and px * |n_a| / |n|. Evaluated for the Newell normal and for fan triangles from EVERY corner,
+    so cyclic loop order cannot omit a quad diagonal (or an alternative n-gon fan). Triangles whose
+    area is below 1e-6 of the face area are skipped as collinear-corner roundoff slivers. This is a
+    conservative fan envelope, not a certificate of an exporter's arbitrary n-gon tessellation."""
     axis = 'xyz'.index(key[1])
     face_n = newell_normal(coords)
     face_len = math.sqrt(sum(c * c for c in face_n))
     normals = [list(face_n)]
-    p0 = coords[0]
-    for i in range(1, len(coords) - 1):
-        d1 = [coords[i][k] - p0[k] for k in range(3)]
-        d2 = [coords[i + 1][k] - p0[k] for k in range(3)]
-        t = [d1[(k + 1) % 3] * d2[(k + 2) % 3] - d1[(k + 2) % 3] * d2[(k + 1) % 3] for k in range(3)]
-        if math.sqrt(sum(c * c for c in t)) >= 1e-6 * face_len:
-            normals.append(t)
+    count = len(coords)
+    for start, p0 in enumerate(coords):
+        for step in range(1, count - 1):
+            p1, p2 = coords[(start + step) % count], coords[(start + step + 1) % count]
+            d1 = [p1[k] - p0[k] for k in range(3)]
+            d2 = [p2[k] - p0[k] for k in range(3)]
+            t = [d1[(k + 1) % 3] * d2[(k + 2) % 3] - d1[(k + 2) % 3] * d2[(k + 1) % 3] for k in range(3)]
+            if math.sqrt(sum(c * c for c in t)) >= 1e-6 * face_len:
+                normals.append(t)
     ratios = [abs(n[axis]) / math.sqrt(sum(c * c for c in n)) for n in normals]
     return px * min(ratios), px                  # |n_a| / |n| <= 1: the trace direction keeps px
 

@@ -96,7 +96,7 @@ contexts:
         contract: "задание -> шаг 3ds Max на копии"
       - name: blender_stage
         contract: "задание -> независимое чтение FBX в Blender"
-  - id: npm
+  - id: npm-atlas
     grid: "1.5/2"
     ru: "НПМ Флоры на атласе"
     area: docs/domain/areas/flora.md
@@ -153,15 +153,15 @@ relations:
     to: flora-star
     ru: "пара карт"
   - from: flora-star
-    to: npm
+    to: npm-atlas
     ru: "звезда / оболочка"
   - from: placement
-    to: npm
+    to: npm-atlas
     ru: "точки Флоры"
   - from: flora-light
-    to: npm
+    to: npm-atlas
     ru: "облегчённые НПМ"
-  - from: npm
+  - from: npm-atlas
     to: flora-atlas
     ru: "виды сцены"
   - from: flora-atlas

@@ -91,7 +91,7 @@ contexts:
         issue: "#1593"
         ru: "обёртка runpy; _owner на строке 5 указывает tools/blender/vpm_uv.py"
         status: wrapper
-  - id: npm
+  - id: npm-atlas
     ru: "НПМ в тех же координатах (ВПМ → НПМ)"
     area: docs/domain/areas/derivation.md
     owner: tools/derive/npm_atlas.py
@@ -256,6 +256,10 @@ contexts:
         ru: "диагностика отклонения Main от UCX по частям (не построитель)"
         status: own-duty
         why: "только читает меши UCX и измеряет расстояния, не строит 960 UCX"
+  - id: sintez
+    ref: package-contexts.yaml#sintez
+  - id: parts
+    ref: contexts.yaml#parts
 relations:
   - from: dcc
     to: body
@@ -279,9 +283,9 @@ relations:
     to: uv-atlas
     ru: "UDIM для производной НПМ"
   - from: uv-atlas
-    to: npm
+    to: npm-atlas
     ru: "UDIM → атлас"
-  - from: npm
+  - from: npm-atlas
     to: package
     ru: "НПМ в координатах"
   - from: ucx

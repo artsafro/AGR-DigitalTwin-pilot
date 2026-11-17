@@ -27,7 +27,7 @@
 <tspan x="30" dy="24">Маршрут МАФ (GroundEl, НПМ + ВПМ) — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: d28a4c2b7386eb33377c6df0795c5bbfba8642539b99606e9314d1994b6ea512</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 896bae094aa1b4d1715c55a3ac15cb84c4cc5a78300a64e57b2fc9a9a1d2b494</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников</tspan>
