@@ -53,6 +53,65 @@ def load_skeletons(root):
     return data
 
 
+_PLACEHOLDER_REASONS = {"todo", "tbd", "?", "-", "...", "n/a", "na", "none"}
+
+
+def modelling_split_problems(text, skeletons):
+    """Problems of the job report's `Modelling split [D336]:` line (#1613, OKS `body` stage `modelling_split`).
+
+    Exactly one line; `plinth=` one of the per-project choices; `inset=` and `texture=` comma lists of known parts,
+    disjoint, at least one part named; `reason=` last, non-empty and not a placeholder. Fail-closed: [] only for that.
+    """
+    split = skeletons["stages"]["body"]["modelling_split"]
+    head = split["report_line"].split(":", 1)[0] + ":"
+    lines = [ln.strip().lstrip("-* ").strip() for ln in str(text or "").splitlines()]
+    lines = [ln[len(head):] for ln in lines if ln.startswith(head)]
+    if not lines:
+        return [f"job report: no `{head}` line (the per-project split and its reason) [D336]"]
+    if len(lines) > 1:
+        return [f"job report: more than one `{head}` line ({len(lines)}) [D336]"]
+    body, problems = lines[0], []
+    fields, sep, reason = body.partition("reason=")
+    if not sep:
+        problems.append(f"`{head}` missing `reason=` (last field) [D336]")
+    elif not reason.strip() or reason.strip().lower() in _PLACEHOLDER_REASONS or reason.strip().startswith("<"):
+        problems.append(f"`{head}` reason is empty or a placeholder: {reason.strip()!r} [D336]")
+    seen = {}
+    for field in (f.strip() for f in fields.split(";")):
+        if not field:
+            continue
+        key, eq, value = field.partition("=")
+        key = key.strip()
+        if not eq or key not in ("plinth", "inset", "texture"):
+            problems.append(f"`{head}` unknown field {field!r} (known: plinth, inset, texture, reason)")
+        elif key in seen:
+            problems.append(f"`{head}` field {key}= given twice")
+        else:
+            seen[key] = value.strip()
+    for key in ("plinth", "inset", "texture"):
+        if key not in seen:
+            problems.append(f"`{head}` missing `{key}=` [D336]")
+    choices = split["per_project"]["plinth"]
+    if "plinth" in seen and seen["plinth"] not in choices:
+        problems.append(f"`{head}` plinth={seen['plinth']!r} is not one of {choices}")
+    known = set(split["inset"]) | set(split["texture"])
+    sides = {}
+    for key in ("inset", "texture"):
+        parts = [p.strip() for p in seen.get(key, "").split(",") if p.strip()]
+        for part in parts:
+            if part not in known:
+                problems.append(f"`{head}` {key}: unknown part {part!r} (known: {sorted(known)})")
+        sides[key] = set(parts)
+        if len(parts) != len(sides[key]):
+            problems.append(f"`{head}` {key}: a part is named twice: {parts}")
+    both = sorted(sides["inset"] & sides["texture"])
+    if both:
+        problems.append(f"`{head}` parts named both inset and texture: {both}")
+    if "inset" in seen and "texture" in seen and not (sides["inset"] | sides["texture"]):
+        problems.append(f"`{head}` names no part on either side")
+    return problems
+
+
 def _scripts(job_dir, suffixes):
     return sorted(p for p in Path(job_dir).rglob("*") if p.is_file() and p.suffix.lower() in suffixes)
 
