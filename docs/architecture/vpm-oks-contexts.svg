@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 4210 1503" width="4210" height="1503" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 4210 1567" width="4210" height="1567" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="4210" height="1503" fill="#ffffff"/>
+<rect x="10" y="-30" width="4210" height="1567" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -22,6 +22,9 @@
 <rect x="1260.0" y="1133.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1011.5" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1150.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="650.0" y="1333.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="1472.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1333.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <polyline points="510,445.0 530,445.0 530,527.5 1140,527.5 1140,436.25 1120,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120,436.25 1140,436.25 1140,766.5 1120.0,766.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,766.5 1240.0,766.5 1240.0,614.0 1750.0,614.0 1750.0,766.5 1730.0,766.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -217,6 +220,25 @@
 </text>
 <text x="1878.0" y="1160.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 2</tspan>
+</text>
+<text x="658.0" y="1343.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
+<tspan x="658.0" dy="17.5">Владелец: tools/blender/sintez_checker.py</tspan>
+<tspan x="658.0" dy="17.5">запуск чекера AGR 1.6.1 в Blender на ZIP; находки —</tspan>
+<tspan x="658.0" dy="17.5">доказательство, не вердикт</tspan>
+<tspan x="658.0" dy="17.5"></tspan>
+<tspan x="658.0" dy="17.5">dump: список проверок чекера -&gt; JSON находок</tspan>
+</text>
+<text x="658.0" y="1482.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="12">Дубли вне владельца: 1</tspan>
+</text>
+<text x="1268.0" y="1343.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">Состав частей (PartsList)</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: src/dt_ai/parts/model.py</tspan>
+<tspan x="1268.0" dy="17.5">модель состава частей и подтверждение Gate 1</tspan>
+<tspan x="1268.0" dy="17.5"></tspan>
+<tspan x="1268.0" dy="17.5">PartsList: Состав частей модели и подтверждение</tspan>
+<tspan x="1268.0" dy="17.5">пользователя</tspan>
 </text>
 <rect x="805.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
 <text x="835.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">

@@ -128,7 +128,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 13  # #1636: NPM export is distinct from atlas preparation
+    assert len(contexts["contexts"]) == 15  # #1644: distinct SINTEZ and PartsList owners
 
 
 @pytest.mark.parametrize("command,ok", [
@@ -142,7 +142,7 @@ def test_command_exists(command, ok):
 
 
 def _loaded():
-    events, contexts = mini_yaml.load(YAMLS[0]), mini_yaml.load(YAMLS[1])
+    events, contexts = route_map.load_routes(ROOT)["route"], route_map.load_context_maps(ROOT)["contexts"]
     # Mutation probes target the body contract, independent of added owner inventory rows (#1441).
     contexts["contexts"].sort(key=lambda c: c["id"] != "body")
     return events, contexts

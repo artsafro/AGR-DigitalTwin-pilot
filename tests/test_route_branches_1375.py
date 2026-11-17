@@ -21,7 +21,7 @@ EXPECTED = {
 
 
 def _events():
-    return mini_yaml.load(ROOT / route_map.EVENTS), mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return route_map.load_routes(ROOT)["route"], route_map.load_context_maps(ROOT)["contexts"]
 
 
 def _branches(events):

@@ -256,6 +256,10 @@ contexts:
         ru: "диагностика отклонения Main от UCX по частям (не построитель)"
         status: own-duty
         why: "только читает меши UCX и измеряет расстояния, не строит 960 UCX"
+  - id: sintez
+    ref: package-contexts.yaml#sintez
+  - id: parts
+    ref: contexts.yaml#parts
 relations:
   - from: dcc
     to: body

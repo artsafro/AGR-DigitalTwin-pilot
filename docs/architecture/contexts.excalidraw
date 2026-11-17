@@ -1534,7 +1534,7 @@
   {
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
-   "x": 955.0,
+   "x": 345.0,
    "y": 1494.5,
    "width": 470,
    "height": 230.0,
@@ -1576,7 +1576,7 @@
   {
    "id": "ed4e9eac2280ec03",
    "type": "text",
-   "x": 963.0,
+   "x": 353.0,
    "y": 1504.5,
    "width": 454,
    "height": 210.0,
@@ -1612,7 +1612,7 @@
   {
    "id": "e7c3b463ea5ad90f",
    "type": "rectangle",
-   "x": 955.0,
+   "x": 345.0,
    "y": 1738.5,
    "width": 470,
    "height": 80.0,
@@ -1646,7 +1646,7 @@
   {
    "id": "e32db9413dafe301",
    "type": "text",
-   "x": 963.0,
+   "x": 353.0,
    "y": 1748.5,
    "width": 454,
    "height": 60.0,
@@ -1676,6 +1676,216 @@
    "verticalAlign": "middle",
    "containerId": "e7c3b463ea5ad90f",
    "originalText": "Дубли вне владельца: 10\nПравило проверки: своя командная строка Blender (--background +\n--python) вместо общего blender_command / run_blender; охрана\njobs/, tools/, src/ (#1378)",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e89f7e0e63e2fdf9",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 1494.5,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 4394257,
+   "version": 1,
+   "versionNonce": 296052018,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ef7093cdc86ed328"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ef7093cdc86ed328",
+   "type": "text",
+   "x": 963.0,
+   "y": 1504.5,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1300858526,
+   "version": 1,
+   "versionNonce": 248082420,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e89f7e0e63e2fdf9",
+   "originalText": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed319371ca8c4f40",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 1633.5,
+   "width": 470,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 495611946,
+   "version": 1,
+   "versionNonce": 422484910,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e7ce9eed157c440c"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e7ce9eed157c440c",
+   "type": "text",
+   "x": 963.0,
+   "y": 1643.5,
+   "width": 454,
+   "height": 15.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1711433107,
+   "version": 1,
+   "versionNonce": 79258189,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ed319371ca8c4f40",
+   "originalText": "Дубли вне владельца: 1",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "efce5e1877483387",
+   "type": "rectangle",
+   "x": 1565.0,
+   "y": 1494.5,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 710837875,
+   "version": 1,
+   "versionNonce": 18040070,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "eac930d140cf2789"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "eac930d140cf2789",
+   "type": "text",
+   "x": 1573.0,
+   "y": 1504.5,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 366967778,
+   "version": 1,
+   "versionNonce": 1339071814,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Состав частей (PartsList)\nВладелец: src/dt_ai/parts/model.py\nмодель состава частей и подтверждение Gate 1\n\nPartsList: Состав частей модели и подтверждение\nпользователя",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "efce5e1877483387",
+   "originalText": "Состав частей (PartsList)\nВладелец: src/dt_ai/parts/model.py\nмодель состава частей и подтверждение Gate 1\n\nPartsList: Состав частей модели и подтверждение\nпользователя",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -2122,9 +2332,9 @@
   {
    "id": "efbb2d5921b933ac",
    "type": "arrow",
-   "x": 1425.0,
+   "x": 815.0,
    "y": 1609.5,
-   "width": 325.0,
+   "width": 935.0,
    "height": 778.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -2161,18 +2371,26 @@
     ],
     [
      20.0,
-     -155.0
+     -260.0
     ],
     [
      325.0,
-     -155.0
+     -260.0
     ],
     [
      325.0,
+     -576.5
+    ],
+    [
+     935.0,
+     -576.5
+    ],
+    [
+     935.0,
      -778.0
     ],
     [
-     305.0,
+     915.0,
      -778.0
     ]
    ],
@@ -2194,8 +2412,8 @@
   {
    "id": "e49102e4d3bb7103",
    "type": "text",
-   "x": 1690.0,
-   "y": 1036.0,
+   "x": 1385.0,
+   "y": 1015.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2230,9 +2448,9 @@
   {
    "id": "ea67174522302baa",
    "type": "arrow",
-   "x": 1425.0,
+   "x": 815.0,
    "y": 1609.5,
-   "width": 935.0,
+   "width": 1545.0,
    "height": 439.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -2272,23 +2490,23 @@
      -155.0
     ],
     [
-     325.0,
+     935.0,
      -155.0
     ],
     [
-     325.0,
-     -339.0
-    ],
-    [
      935.0,
      -339.0
     ],
     [
-     935.0,
+     1545.0,
+     -339.0
+    ],
+    [
+     1545.0,
      -439.0
     ],
     [
-     915.0,
+     1525.0,
      -439.0
     ]
    ],
@@ -2310,8 +2528,8 @@
   {
    "id": "efcd29e3b1255cbe",
    "type": "text",
-   "x": 1748.0,
-   "y": 1253.0,
+   "x": 1232.5,
+   "y": 1437.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
