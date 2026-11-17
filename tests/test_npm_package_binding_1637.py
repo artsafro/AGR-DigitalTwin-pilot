@@ -69,11 +69,12 @@ def test_clean_package_binds_every_member_and_reports_hashes(tmp_path):
     report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
     assert report['passed'] is False and report['status'] == 'packaged_not_validated' and report['problems'] == []
     binding = report['export_binding']
-    assert binding['source'] == 'fbx_records'
+    assert binding['records'] == ['export_meta.json']
     assert sorted(binding['members'], key=lambda m: m['name']) == [
-        {'name': OKS, 'recorded_sha256': _sha(b'synthetic OKS'), 'zip_sha256': _sha(b'synthetic OKS'), 'status': 'match'},
+        {'name': OKS, 'recorded_sha256': _sha(b'synthetic OKS'), 'zip_sha256': _sha(b'synthetic OKS'), 'status': 'match',
+         'recorded_in': ['export_meta.json']},
         {'name': GROUND, 'recorded_sha256': _sha(b'synthetic Ground'), 'zip_sha256': _sha(b'synthetic Ground'),
-         'status': 'match'}]
+         'status': 'match', 'recorded_in': ['export_meta.json']}]
 
 
 def test_foreign_fbx_added_after_export_is_refused(tmp_path):
