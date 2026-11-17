@@ -192,6 +192,94 @@ def test_generated_overflow_iff_no_whole_period_shift_fits(box):
     assert n == 400 and 0 < fits < 400
 
 
+# ------------------------------------------------------------------ #1573: world period lines are island borders
+def strip_wall(cuts_x, cuts_z=(0.0, 3.0), y=0.0):
+    """Wall outward -Y, loop-cut at every x in cuts_x and z in cuts_z; quads CCW in (x, z)."""
+    faces = []
+
+    def key(p):
+        return tuple(round(c, 9) for c in p)
+
+    for z0, z1 in zip(cuts_z, cuts_z[1:]):
+        for x0, x1 in zip(cuts_x, cuts_x[1:]):
+            co = [(x0, y, z0), (x1, y, z0), (x1, y, z1), (x0, y, z1)]
+            faces.append((len(faces), [key(c) for c in co], co))
+    return faces
+
+
+def in_tile(uvs, tile=(0, 0)):
+    return all(tile[i] <= c <= tile[i] + 1 for uv in uvs.values() for p in uv for i, c in enumerate(p))
+
+
+@pytest.mark.parametrize('xs', [[0.0, 1.25, 2.5, 5.0, 6.25, 7.5], [-12.5, -11.0, -10.0, -7.0, -5.0],
+                                [97.5, 99.0, 100.0, 102.5, 105.0]])
+def test_loop_cut_wall_at_period_line_is_two_islands(box, xs):
+    """#1573: 7.5 m wall loop-cut on the world period line (5 m at 819.2 px/m) projects in one call."""
+    faces = strip_wall(xs)
+    uvs, rep = box.plan_box_uv(faces, 819.2, 1001, margin_px=0)
+    assert len(rep['islands']) == 2
+    assert all(isl['span'][0] <= 1.0 + 1e-9 for isl in rep['islands'])
+    interior, broken = seams(box, faces, uvs)
+    assert interior > 0 and broken == 0
+    assert in_tile(uvs) and all(abs(t - 819.2) < 1e-6 for t in texels(faces, uvs))
+
+
+def test_loop_cut_wall_horizontal_period_line(box):
+    faces = strip_wall([0.3, 2.0, 4.0], cuts_z=[0.0, 2.5, 5.0, 7.5])
+    uvs, rep = box.plan_box_uv(faces, 819.2, 1001, margin_px=0)
+    assert len(rep['islands']) == 2 and seams(box, faces, uvs)[1] == 0 and in_tile(uvs)
+
+
+def test_one_world_aligned_period_strip_margin_zero(box):
+    uvs, rep = box.plan_box_uv(strip_wall([0.0, 2.5, 5.0]), 819.2, 1001, margin_px=0)
+    assert len(rep['islands']) == 1 and in_tile(uvs)
+
+
+def test_cut_off_the_period_line_stays_one_island(box):
+    with pytest.raises(box.BoxUVOverflow, match='period line'):
+        box.plan_box_uv(strip_wall([0.0, 4.9, 7.5]), 819.2, 1001, margin_px=0)
+
+
+def test_edge_touching_period_line_at_one_end_is_not_a_border(box):
+    """A diagonal edge with one endpoint on x = 5 m keeps both triangles in one island (it crosses the line)."""
+    def key(p):
+        return tuple(round(c, 9) for c in p)
+    t1 = [(4.5, 0.0, 0.0), (5.0, 0.0, 0.0), (4.5, 0.0, 3.0)]
+    t2 = [(5.0, 0.0, 0.0), (5.5, 0.0, 3.0), (4.5, 0.0, 3.0)]
+    faces = [(0, [key(c) for c in t1], t1), (1, [key(c) for c in t2], t2)]
+    with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+        box.plan_box_uv(faces, 819.2, 1001, margin_px=0)
+
+
+def test_period_cut_with_tile_margin_overflows_naming_the_conflict(box):
+    """With margin > 0 no island can touch a period line; the error says so instead of 'split by texel cuts'."""
+    with pytest.raises(box.BoxUVOverflow, match='margin_px=0') as exc:
+        box.plan_box_uv(strip_wall([0.0, 1.25, 5.0, 6.25, 7.5]), 819.2, 1001)
+    assert 'conflicts.md' in str(exc.value)
+
+
+def test_generated_period_cut_walls_fit_with_margin_zero(box):
+    """Probe: random density, origin, period cuts + random extra cuts; every piece between period lines is
+    one island, all fit the tile, seams whole periods, texel exact."""
+    rng, n = random.Random(1573), 0
+    for _ in range(300):
+        px = rng.choice([512, 819.2, 1024, 1706, rng.uniform(512, 1706)])
+        period = 4096 / px
+        k0, nper = rng.randint(-60, 60), rng.randint(1, 4)
+        x0, x1 = (k0 + rng.uniform(0.0, 0.9)) * period, (k0 + nper + rng.uniform(0.1, 1.0)) * period
+        lines = [(k0 + i) * period for i in range(1, nper + 1)]
+        xs = sorted({x0, x1, *lines, *(rng.uniform(x0, x1) for _ in range(rng.randint(0, 4)))})
+        if any(b - a < 1e-3 for a, b in zip(xs, xs[1:])):
+            continue
+        faces = strip_wall(xs, cuts_z=[0.1, 0.3 * period, 0.6 * period])
+        uvs, rep = box.plan_box_uv(faces, px, 1001, margin_px=0)
+        assert len(rep['islands']) == nper + 1, (px, xs)
+        assert in_tile(uvs) and seams(box, faces, uvs)[1] == 0
+        assert all(abs(t - px) < 1e-6 for t in texels(faces, uvs))
+        n += 1
+    assert n >= 250
+
+
 def test_generated_seams_and_texel(box):
     rng, done = random.Random(1538), 0
     for _ in range(300):
@@ -236,6 +324,7 @@ def test_real_blender_target_object_only(tmp_path, monkeypatch):
     assert bare['measure']['broken_edges'] == 0
     fail = rep['fail_closed']
     assert fail.pop('px_512') == 'ok' and fail.pop('px_1706') == 'ok'
+    assert fail['texel_rot40_px600'] == fail['texel_slope50_px512'] == 'error'   # #1574
     assert set(fail.values()) == {'error'}, fail
     gen = rep['generated']
     assert gen['fail'] == [] and gen['pass'] + gen['overflow_nothing_written'] == gen['n'] == 100

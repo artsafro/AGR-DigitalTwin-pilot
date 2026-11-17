@@ -35,7 +35,8 @@ RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
                             "vpm-identity": ("star", "D311")},  # #1421
             "package-route": {"customer-channel": ("customer", "D300")}}
 # #1409: red blocks fixed without a D-row (box removed from the map, report row «снята»)
-FIXED = {"maf-route": {"library-version"}, "flora-route": {"placement-tool"},   # + #1407 (dt place site)
+FIXED = {"maf-route": {"library-version", "npm-light-tool", "uv-remap"},   # + #1410 (dt derive maf-npm-light)
+         "flora-route": {"placement-tool"},   # + #1407 (dt place site)
          "package-route": {"sintez-runner"}}   # + #1379
 
 

@@ -375,7 +375,26 @@ def _float32(verts):
     return [list(struct.unpack('3f', struct.pack('3f', *v))) for v in verts]
 
 
-def _face_cut(small, large, target):
+def transform_points(verts, matrix):
+    """Apply an affine 4x4 matrix in Python float64, without a host float32 intermediate."""
+    return [[sum(float(matrix[i][j]) * float(v[j]) for j in range(3)) + float(matrix[i][3])
+             for i in range(3)] for v in verts]
+
+
+def _storage_frame(matrix):
+    """Validate the optional world-to-object storage frame; absent means world storage."""
+    if matrix is None:
+        return None
+    if (len(matrix) != 4 or any(len(r) != 4 for r in matrix)
+            or not all(math.isfinite(float(c)) for r in matrix for c in r)
+            or list(matrix[3]) != [0, 0, 0, 1]):
+        raise ValueError('world_to_local must be a finite affine 4x4 matrix')
+    if _dot(matrix[0][:3], _cross(matrix[1][:3], matrix[2][:3])) == 0:
+        raise ValueError('world_to_local must be nonsingular')
+    return matrix
+
+
+def _face_cut(small, large, target, world_to_local=None):
     """Best cut of `small` by a face plane of `large` shifted by `target` (#1540): (removed_m3, n, c, cut) or None.
 
     `large` lies in n.x <= c for each of its outward face planes (n, c); the cut keeps n.x >= c + target of
@@ -394,7 +413,9 @@ def _face_cut(small, large, target):
             continue
         if _thickness(cut, n) < MIN_THICK_M - TOL_M:
             continue
-        if not _hull_core().convexity(_float32(cut['verts']), cut['tris'])['ok']:
+        stored = (transform_points(cut['verts'], world_to_local)
+                  if world_to_local is not None else cut['verts'])
+        if not _hull_core().convexity(_float32(stored), cut['tris'])['ok']:
             continue  # would read back non-convex from a float32 FBX
         removed = small['volume'] - cut['volume']
         if best is None or removed < best[0] - 1e-12:
@@ -405,7 +426,9 @@ def _face_cut(small, large, target):
 def resolve(pieces, opts):
     """Resolve every intersecting / too-close UCX pair by clipping the SMALLER hull (#1540, retro elv-tc-vpm).
 
-    pieces: [{handle, name, verts (world METRES), tris}]; opts: gap_options(...) (gap_m inside D098). Unlike
+    pieces: [{handle, name, verts (world METRES), tris, world_to_local (optional affine 4x4)}];
+    Float32 convexity is checked in that object's storage frame (identity if omitted), not world space.
+    opts: gap_options(...) (gap_m inside D098). Unlike
     plan() (both planes of a same-family pair move by half), every pair of UCX pieces is checked (any family:
     SINTEZ counts intersections between all collision pieces) and only the smaller piece (by volume; a tie cuts
     the later name) is cut, by the plane of one face of the larger piece moved out by gap_m. A convex piece cut
@@ -425,12 +448,13 @@ def resolve(pieces, opts):
             raise ValueError('duplicate handle {}'.format(row['handle']))
         seen.add(row['handle'])
     found, skipped, ambiguous, pairs = {}, [], [], []
-    work, names = {}, {}
+    work, names, frames = {}, {}, {}
     for row in sorted(pieces, key=lambda r: (str(r['name']), str(r['handle']))):
         if family(row['name']) is None:
             skipped.append({'item': str(row['name']), 'reason': 'не UCX_<меш>_NN: не кусок коллизии'})
             continue
         try:
+            frames[row['handle']] = _storage_frame(row.get('world_to_local'))
             for v in row['verts']:
                 if len(v) != 3 or not all(math.isfinite(float(c)) for c in v):
                     raise ValueError('non-finite or malformed vertex')
@@ -455,7 +479,7 @@ def resolve(pieces, opts):
             small, large = (hb, ha) if a['volume'] >= b['volume'] else (ha, hb)
             pair = {'a': names[ha], 'b': names[hb], 'gap_before_m': round(gap0, 7), 'code': _kind(gap0),
                     'clipped': names[small], 'by': names[large]}
-            best = _face_cut(work[small], work[large], target)
+            best = _face_cut(work[small], work[large], target, frames[small])
             if best is None:
                 pair['action'] = 'ambiguous'
                 why = 'ни одна плоскость грани {} не оставляет кусок толще {:.0f} мм'.format(names[large],

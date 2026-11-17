@@ -7,7 +7,11 @@ Pattern: new-case: site MAF set build - join, optional Decimate light version, m
 512 atlas slots, hard edges by angle, NPM/VPM FBX export and readback. Pure rules live in
 tools/library/maf_site_set.py. Inputs are COPIES under <out_dir>/src (the config's source FBX are copied
 first by the caller); sources are never written. Writes <out_dir>/{npm,vpm}/<set_id>.fbx and
-<out_dir>/build-report.json. Exit 2 when an output exists already (new versioned folder required); exit 3,
+<out_dir>/build-report.json. Optional config keys (#1410, used by tools/library/maf_npm_light.py): "roles" (subset
+of vpm / full / npm, default ["vpm", "npm"]; "full" = the ratio-1.0 reference on the same atlas, not a VPM delivery),
+"npm_floor_tris" (a source at or under it is never decimated, reported "light": "refused_floor") and
+"dump_triangles" (readback world triangles to <out_dir>/readback/<role>/<set_id>.npy). The UV transfer into the atlas
+slot is the shared owner tools/materials/maf_uv_remap.py (via maf_site_set.uv_remap). Exit 2 when an output exists already (new versioned folder required); exit 3,
 before any export, when a material_map misses a source material without an explicit "*" or names a
 material outside the atlas.
 """
@@ -131,7 +135,7 @@ def preflight(positions):
     """Before any export: refuse existing outputs (exit 2) and incomplete material maps (exit 3)."""
     errors = []
     for pos in positions:
-        for role in ("vpm", "npm"):
+        for role in roles:
             fbx_out = out_dir / role / (pos["set_id"] + ".fbx")
             if fbx_out.exists():
                 print("refusing to overwrite", fbx_out, file=sys.stderr)
@@ -154,7 +158,7 @@ def preflight(positions):
         sys.exit(3)
 
 
-def build(pos, ratio, fbx_in, fbx_out):
+def build(pos, ratio, fbx_in, fbx_out, floor=None):
     reset()
     bpy.ops.import_scene.fbx(filepath=str(fbx_in))
     meshes = [o for o in bpy.data.objects if o.type == "MESH"]
@@ -188,6 +192,7 @@ def build(pos, ratio, fbx_in, fbx_out):
         pass
     tris_before = sum(len(p.vertices) - 2 for p in obj.data.polygons)
     flipped = cleanup(obj)
+    ratio, light = mss.light_ratio(tris_before, ratio, floor)
     if ratio < 1.0:
         mod = obj.modifiers.new("light", "DECIMATE")
         mod.decimate_type = "COLLAPSE"
@@ -209,23 +214,16 @@ def build(pos, ratio, fbx_in, fbx_out):
         wildcard += name not in pos["material_map"]
         p.material_index = order.index(resolved[name])
     mesh.attributes.remove(mesh.attributes["src_mat"])
-    # UV: box projection per face, normalised by the object bounds, mapped inside the slot rect
+    # UV: box projection per face into its slot rect - the shared owner tools/materials/maf_uv_remap.py (#1410)
     while mesh.uv_layers:
         mesh.uv_layers.remove(mesh.uv_layers[0])
     uv = mesh.uv_layers.new(name="UVMap")
-    co = [v.co for v in mesh.vertices]
-    lo = [min(c[i] for c in co) for i in range(3)]
-    span = [max(max(c[i] for c in co) - lo[i], 1e-9) for i in range(3)]
-    for p in mesh.polygons:
-        n = p.normal
-        axis = max(range(3), key=lambda i: abs(n[i]))
-        a, b = [i for i in range(3) if i != axis]
-        rect = rects[order[p.material_index]]
-        for li in p.loop_indices:
-            c = co[mesh.loops[li].vertex_index]
-            s = min(1.0, max(0.0, (c[a] - lo[a]) / span[a]))
-            t = min(1.0, max(0.0, (c[b] - lo[b]) / span[b]))
-            uv.data[li].uv = mss.remap_into_rect((s, t), rect, inset=0.02)
+    face_uvs = mss.uv_remap.box_project_uvs(
+        [tuple(v.co) for v in mesh.vertices], [list(p.vertices) for p in mesh.polygons],
+        [tuple(p.normal) for p in mesh.polygons], [rects[order[p.material_index]] for p in mesh.polygons], inset=0.02)
+    for p, corners in zip(mesh.polygons, face_uvs):
+        for li, corner in zip(p.loop_indices, corners):
+            uv.data[li].uv = corner
     # hard edges by angle
     bpy.ops.object.select_all(action="DESELECT")
     obj.select_set(True)
@@ -238,12 +236,12 @@ def build(pos, ratio, fbx_in, fbx_out):
     bpy.ops.export_scene.fbx(filepath=str(fbx_out), use_selection=True, object_types={"MESH"},
                              mesh_smooth_type="FACE", use_mesh_modifiers=True, path_mode="COPY",
                              embed_textures=True, bake_anim=False, add_leaf_bones=False)
-    return {"tris_source": tris_before, "source_materials": resolved, "wildcard_faces": wildcard,
+    return {"tris_source": tris_before, "decimate_ratio": ratio, "light": light, "source_materials": resolved, "wildcard_faces": wildcard,
             "faces_reversed_outward": flipped,
             "faces_flat_shaded": flat}
 
 
-def readback(fbx, pos):
+def readback(fbx, pos, dump=None):
     reset()
     bpy.ops.import_scene.fbx(filepath=str(fbx))
     meshes = [o for o in bpy.data.objects if o.type == "MESH"]
@@ -269,6 +267,16 @@ def readback(fbx, pos):
                 for i in range(3):
                     lo[i], hi[i] = min(lo[i], c[i]), max(hi[i], c[i])
             up.append((sum(c.z for c in pts) / len(pts), p.area, wn.z))
+    if dump is not None:
+        import numpy as np
+
+        tri = []
+        for o in meshes:
+            m = o.matrix_world
+            for lt in o.data.loop_triangles:
+                tri.append([tuple(m @ o.data.vertices[v].co) for v in lt.vertices])
+        dump.parent.mkdir(parents=True, exist_ok=True)
+        np.save(str(dump), np.asarray(tri, dtype=np.float64).reshape(-1, 3, 3))
     size = [hi[i] - lo[i] for i in range(3)]
     out = {"objects": names, "triangles": tris, "bounds_m": [lo, hi], "size_m": size,
            "uv_slots": mss.uv_slot_report(faces, rects), "images": [i.name for i in bpy.data.images]}
@@ -277,19 +285,27 @@ def readback(fbx, pos):
     return out
 
 
+ROLE_RATIO = {"vpm": None, "full": None, "npm": "decimate_ratio"}
+roles = cfg.get("roles", ["vpm", "npm"])
+if not roles or len(set(roles)) != len(roles) or any(r not in ROLE_RATIO for r in roles):
+    print("roles must be distinct names from", sorted(ROLE_RATIO), "got", roles, file=sys.stderr)
+    sys.exit(3)
+floor = cfg.get("npm_floor_tris")
 preflight(cfg["positions"])
 report = {"blender": bpy.app.version_string, "smoothing_deg": cfg["smoothing_deg"], "positions": []}
 for pos in cfg["positions"]:
     fbx_in = out_dir / "src" / Path(pos["source_fbx"]).name
     entry = {"set_id": pos["set_id"], "catalogue_id": pos["catalogue_id"]}
-    for role, ratio in (("vpm", 1.0), ("npm", pos["decimate_ratio"])):
+    for role in roles:
+        ratio = pos[ROLE_RATIO[role]] if ROLE_RATIO[role] else 1.0
         fbx_out = out_dir / role / (pos["set_id"] + ".fbx")
         if fbx_out.exists():
             print("refusing to overwrite", fbx_out, file=sys.stderr)
             sys.exit(2)
-        entry[role] = build(pos, ratio, fbx_in, fbx_out)
+        entry[role] = build(pos, ratio, fbx_in, fbx_out, floor if role == "npm" else None)
         entry[role]["fbx"] = str(fbx_out).replace("\\", "/")
-        entry[role]["readback"] = readback(fbx_out, pos)
+        dump = out_dir / "readback" / role / (pos["set_id"] + ".npy") if cfg.get("dump_triangles") else None
+        entry[role]["readback"] = readback(fbx_out, pos, dump)
     report["positions"].append(entry)
-    print("built", pos["set_id"], entry["npm"]["readback"]["triangles"], entry["vpm"]["readback"]["triangles"])
+    print("built", pos["set_id"], *(entry[r]["readback"]["triangles"] for r in roles))
 (out_dir / "build-report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")

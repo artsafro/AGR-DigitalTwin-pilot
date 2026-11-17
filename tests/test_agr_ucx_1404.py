@@ -200,6 +200,69 @@ def test_main_writes_report_once(model, tmp_path, monkeypatch):
     assert uc.main([str(model), str(tmp_path / "o.fbx"), "Ground"]) == 4  # second run: report exists
 
 
+def _real_v010_command(model, tmp_path, monkeypatch, target, gap):
+    """Synthetic readback; mock only the Blender build/import process boundaries."""
+    import dt_ai.core.blender_runner as br
+    import twinqa.scene as sc
+
+    out = tmp_path / "o.fbx"
+    pieces = two(gap)
+    if target == "Main":
+        for piece in pieces:
+            piece["name"] = piece["name"].replace("Ground", "Main")
+    meshes = [{"name": f"SM_T_{target}"}] + pieces
+    for item in meshes:
+        item.update(triangles=12, polygon_degrees={"3": 12}, materials=[],
+                    rotation_euler_deg=[0, 0, 0], scale=[1, 1, 1], location=[0, 0, 0],
+                    uv_channels=1, mirrored_uv_triangles=0, udim_tiles=[1001])
+    rb = {"source": str(out), "readback_ok": True, "meshes": meshes, "other_objects": [], "images": []}
+    snapshot = json.dumps(rb)
+    monkeypatch.setattr(br, "run_blender", Mock(return_value=dict(BUILD)))
+    readback = Mock(return_value=rb)
+    monkeypatch.setattr(sc, "readback", readback)
+
+    code = uc.main([str(model), str(out), target])
+    report = json.loads((tmp_path / "o.fbx.agr_ucx.json").read_text(encoding="utf-8"))
+    readback.assert_called_once_with(out, None)
+    assert json.dumps(rb) == snapshot
+    assert model.read_bytes() == b"synthetic model"
+    assert report["exit"] == code
+    return code, report
+
+
+@pytest.mark.parametrize("target", ["Main", "Ground"])
+def test_command_real_v010_reports_intersecting_pair(model, tmp_path, monkeypatch, target):
+    code, report = _real_v010_command(model, tmp_path, monkeypatch, target, gap=-0.05)
+    findings = report["steps"]["V010"]
+    intersections = [f for f in findings if f["name"] == "UCX intersections"]
+    assert len(intersections) == 1, findings
+    intersections = intersections[0]
+    assert intersections["status"] == "fail"
+    assert "1 overlapping pair(s)" in intersections["observed"]
+    for index in (1, 2):
+        assert f"UCX_SM_T_{target}_{index:03d}" in intersections["observed"]
+    assert "no two UCX pieces intersect" in intersections["expected"]
+    assert report["passed_checks"]["V010_no_fail"] is False
+    assert code == 1
+
+
+@pytest.mark.parametrize("target", ["Main", "Ground"])
+def test_command_real_v010_compliant_pair_has_no_failure(model, tmp_path, monkeypatch, target):
+    from twinqa.profiles import load_profiles
+
+    low_cm, high_cm = load_profiles().profile("vpm")["collision"]["recommended_gap_cm"]
+    gap = (low_cm + high_cm) / 2 / 100  # profile cm -> readback metres, strictly inside the band
+    code, report = _real_v010_command(model, tmp_path, monkeypatch, target, gap)
+    findings = report["steps"]["V010"]
+    statuses = {f["name"]: f["status"] for f in findings}
+    assert statuses["UCX intersections"] == "pass"
+    assert statuses["UCX intersections coverage"] == "pass"
+    assert statuses["UCX piece gap (advisory)"] == "pass"
+    assert not any(f["status"] == "fail" for f in findings)
+    assert report["passed_checks"] == {"build_within_tol": True, "gap": True, "V010_no_fail": True}
+    assert code == 0
+
+
 def test_explicit_gap_overrides_build_gap(model, tmp_path, monkeypatch):
     _wire(monkeypatch, Mock(return_value=BUILD), RB, V_OK)
     code, report = uc.run(_args(model, tmp_path, gap=0.006))

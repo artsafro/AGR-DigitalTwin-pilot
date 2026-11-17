@@ -373,6 +373,13 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
   NPM/VPM point-ID parity (exit 4), fail-closed spec (exit 2). Scene helpers moved to `dt_ai.placement.scene`
   (`tools/placement_site.py` is an import alias). Vatutino `jobs/VATUTINO-SITE/place_site.py` = resolver over it;
   guard rule `site-placement`. Silikatny run waits for #1315.
+- MAF NPM-light `dt derive maf-npm-light SPEC.json --out NEW` / `agr npm-light` (`tools/library/maf_npm_light.py`,
+  #1410, plan #425 steps 5-6) — TOOL ONLY: D293 conversion branch when the set does not fit the budget (D164/D167):
+  Decimate never at or under 400 tris, atlas UV through the shared owner `tools/materials/maf_uv_remap.py` (also
+  used by `maf_site_set_build.py` and `flora_atlas_from_scene.remap_uv`), gates on readback (dims [D094], silhouette
+  IoU >= 0.95, 0 UV outside slot); spec `dt-maf-npm-light/1`, exit 2 input / 3 gate / 1 DCC. Proof on #1315 MAF
+  copies: 4/4 pass, 9 990 -> 4 544 tris (`jobs/SIL13-COLD-1315/maf-npm-light-1410/result.md`); tests
+  `tests/test_maf_npm_light_1410.py`.
 - Ground producer `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106; moved from the job, whose path is now a
   shim) — WORKING: replay on the accepted v015 inputs gives masters byte-identical to the accepted build
   (NPM `c26b7feb…ca1a`, VPM `59310ac9…2eb4`); site data from `--job-dir` (default `jobs/VATUTINO-SITE`); tests

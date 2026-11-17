@@ -5,7 +5,9 @@ Pattern: n/a | new-case: AST job-contract guard over docs/agents/skeletons.json 
 Contract ([D324], [D325]; human view docs/agents/SKELETONS.md):
 - `jobs/<ID>/skeleton.json` = {"scenario": <cell of docs/scenarios/scenarios.json>, "config": {<key of the cell's
   config_keys>: ...}, "hooks": [{"script": "hooks/<name>", "stage": <stage of the cell>, "point": before|after|gap}]}.
-- Every script of the job (suffixes of job_contract.script_suffixes) lives in `hooks/` and is listed once in `hooks`;
+- Every script of the job (suffixes of job_contract.script_suffixes) lives in `hooks/` and is listed once in `hooks`,
+  except the guard-owned exact paths in IMPORTED_LIBRARIES (documented in SKELETONS.md, #1591). These imported
+  libraries cannot be registered as hooks and remain subject to syntax, stage and duplicate checks;
   at most job_contract.max_hooks hooks (5 passes, 6 fails). `gap` is allowed only on a stage without a shared
   implementation (gap != null); a stage that has one is called, never replaced.
 - A Python hook re-implements a stage when it defines (def/class, any depth) one of the stage's `entry_defs` (names
@@ -35,6 +37,13 @@ else:
 
 SKELETONS = "docs/agents/skeletons.json"
 
+# Guard-owned, exact-path library exemptions (#1591), NOT additions to the frozen D327 baseline.
+# Imported by historical build_quad_master.py after building, not run by master-qa.
+# Keep the existing import path; only hook-list membership is exempt, never stage/copy checks.
+IMPORTED_LIBRARIES = {
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+}
+
 
 class ConfigError(ValueError):
     """Unreadable or inconsistent input (exit 2)."""
@@ -51,6 +60,65 @@ def load_skeletons(root):
             if sid not in data["stages"]:
                 raise ConfigError(f"{SKELETONS}: cell {cell} names unknown stage {sid!r}")
     return data
+
+
+_PLACEHOLDER_REASONS = {"todo", "tbd", "?", "-", "...", "n/a", "na", "none"}
+
+
+def modelling_split_problems(text, skeletons):
+    """Problems of the job report's `Modelling split [D336]:` line (#1613, OKS `body` stage `modelling_split`).
+
+    Exactly one line; `plinth=` one of the per-project choices; `inset=` and `texture=` comma lists of known parts,
+    disjoint, at least one part named; `reason=` last, non-empty and not a placeholder. Fail-closed: [] only for that.
+    """
+    split = skeletons["stages"]["body"]["modelling_split"]
+    head = split["report_line"].split(":", 1)[0] + ":"
+    lines = [ln.strip().lstrip("-* ").strip() for ln in str(text or "").splitlines()]
+    lines = [ln[len(head):] for ln in lines if ln.startswith(head)]
+    if not lines:
+        return [f"job report: no `{head}` line (the per-project split and its reason) [D336]"]
+    if len(lines) > 1:
+        return [f"job report: more than one `{head}` line ({len(lines)}) [D336]"]
+    body, problems = lines[0], []
+    fields, sep, reason = body.partition("reason=")
+    if not sep:
+        problems.append(f"`{head}` missing `reason=` (last field) [D336]")
+    elif not reason.strip() or reason.strip().lower() in _PLACEHOLDER_REASONS or reason.strip().startswith("<"):
+        problems.append(f"`{head}` reason is empty or a placeholder: {reason.strip()!r} [D336]")
+    seen = {}
+    for field in (f.strip() for f in fields.split(";")):
+        if not field:
+            continue
+        key, eq, value = field.partition("=")
+        key = key.strip()
+        if not eq or key not in ("plinth", "inset", "texture"):
+            problems.append(f"`{head}` unknown field {field!r} (known: plinth, inset, texture, reason)")
+        elif key in seen:
+            problems.append(f"`{head}` field {key}= given twice")
+        else:
+            seen[key] = value.strip()
+    for key in ("plinth", "inset", "texture"):
+        if key not in seen:
+            problems.append(f"`{head}` missing `{key}=` [D336]")
+    choices = split["per_project"]["plinth"]
+    if "plinth" in seen and seen["plinth"] not in choices:
+        problems.append(f"`{head}` plinth={seen['plinth']!r} is not one of {choices}")
+    known = set(split["inset"]) | set(split["texture"])
+    sides = {}
+    for key in ("inset", "texture"):
+        parts = [p.strip() for p in seen.get(key, "").split(",") if p.strip()]
+        for part in parts:
+            if part not in known:
+                problems.append(f"`{head}` {key}: unknown part {part!r} (known: {sorted(known)})")
+        sides[key] = set(parts)
+        if len(parts) != len(sides[key]):
+            problems.append(f"`{head}` {key}: a part is named twice: {parts}")
+    both = sorted(sides["inset"] & sides["texture"])
+    if both:
+        problems.append(f"`{head}` parts named both inset and texture: {both}")
+    if "inset" in seen and "texture" in seen and not (sides["inset"] | sides["texture"]):
+        problems.append(f"`{head}` names no part on either side")
+    return problems
 
 
 def _scripts(job_dir, suffixes):
@@ -119,6 +187,7 @@ def check_job(root, job_dir, skeletons, nested=()):
         raise ConfigError(f"{rel_job}: hooks must be a list")
     problems, listed = [], {}
     hooks_root = (job_dir / contract["hooks_dir"]).resolve()
+    library_paths = {(root / rel).resolve() for rel in IMPORTED_LIBRARIES}
     for i, h in enumerate(hooks):
         if not isinstance(h, dict) or set(h) != {"script", "stage", "point"}:
             raise ConfigError(f"{rel_job}: hooks[{i}] needs exactly script, stage, point")
@@ -128,6 +197,9 @@ def check_job(root, job_dir, skeletons, nested=()):
         if point not in contract["points"]:
             raise ConfigError(f"{rel_job}: hooks[{i}] point {point!r} unknown ({contract['points']})")
         path = (job_dir / script).resolve()
+        if path in library_paths:
+            problems.append(f"{rel_job}: hooks[{i}] {script} is an imported library, not a runnable stage hook "
+                            "(docs/agents/SKELETONS.md#imported-library-exemptions)")
         if not path.is_relative_to(hooks_root):
             problems.append(f"{rel_job}: hooks[{i}] {script} is not inside {contract['hooks_dir']}/")
         elif not path.is_file():
@@ -147,7 +219,7 @@ def check_job(root, job_dir, skeletons, nested=()):
         if any(path.is_relative_to(d) for d in nested if d.is_relative_to(job_dir)):
             continue   # a sub-job with its own skeleton.json is checked on its own
         rel = path.relative_to(root).as_posix() if path.is_relative_to(root) else str(path)
-        if path.resolve() not in listed:
+        if path.resolve() not in listed and rel not in IMPORTED_LIBRARIES:
             where = "outside hooks/" if not path.resolve().is_relative_to(hooks_root) else "not listed in hooks"
             problems.append(f"{rel}: script {where}; a job holds skeleton.json + listed hooks only [D324]")
         if path.suffix.lower() == ".py":

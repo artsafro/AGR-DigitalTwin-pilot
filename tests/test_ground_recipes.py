@@ -87,10 +87,79 @@ def test_module_source_has_no_network_or_photo_loader():
             imported.update(alias.name.split(".")[0] for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module:
             imported.add(node.module.split(".")[0])
-    assert imported <= {"argparse", "hashlib", "io", "json", "math", "os", "re", "sys", "pathlib", "numpy", "PIL"}
+    assert imported <= {"argparse", "hashlib", "io", "json", "math", "os", "re", "sys", "pathlib", "numpy", "PIL", "adapters"}
     lowered = text.lower()
     for banned in ("openai", "requests.get", "urllib.request", "download", "huggingface"):
         assert banned not in lowered
+
+
+@pytest.mark.parametrize('suffix', ['', '.partial'])
+def test_delivery_refuses_stale_record_before_render(recipes, tmp_path, monkeypatch, suffix):
+    from adapters.max.agr_tools import build_manifest as bm
+    out = tmp_path / 'v001'
+    monkeypatch.setattr(recipes, 'DELIVERY_DIR', out)
+    name = recipes.texture_filename('Vatutino', recipes.CANONICAL_SLOTS[0], 'npm')
+    record = Path(bm.derivation_store(out)) / out.name / (bm.derivation_filename(name) + suffix)
+    record.parent.mkdir(parents=True)
+    record.write_bytes(b'foreign pre-existing receipt')
+    def forbidden(*args, **kwargs):
+        raise AssertionError('render started with a clobbered receipt path')
+    monkeypatch.setattr(recipes, 'render_map', forbidden)
+    with pytest.raises(recipes.GroundRecipeError, match='record'):
+        recipes.write_delivery(RECIPE_PATH, out)
+    assert record.read_bytes() == b'foreign pre-existing receipt'
+    assert not out.exists()
+
+
+def test_delivery_writes_ground_producer_record(recipes, tmp_path, monkeypatch):
+    """Synthetic constant pixels exercise the real writer/record boundary, not production texture quality."""
+    from adapters.max.agr_tools import build_manifest as bm
+    out = tmp_path / 'v001'
+    monkeypatch.setattr(recipes, 'DELIVERY_DIR', out)
+    monkeypatch.setattr(recipes, 'render_map', lambda recipe, slot, profile, **kw:
+        np.zeros((recipe['profiles'][profile]['size'],) * 2 + (3,), dtype=np.uint8))
+    manifest = recipes.write_delivery(RECIPE_PATH, out)
+    records = bm.derivation_files([Path(bm.derivation_store(out)) / out.name])
+    assert len(records) == 1
+    rec = bm.check_derivation(bm.strict_json(Path(records[0]).read_bytes()))
+    assert rec['role'] == 'ground'
+    assert rec['master_sha256'] == bm.sha256_file(RECIPE_PATH)
+    assert len(rec['artifacts']) == len(manifest['maps']) == 24
+    for name, entry in rec['artifacts'].items():
+        assert entry['sha256'] == bm.sha256_file(out / name)
+    before = {p: p.read_bytes() for p in out.iterdir()}
+    with pytest.raises(recipes.GroundRecipeError):
+        recipes.write_delivery(RECIPE_PATH, out)
+    assert before == {p: p.read_bytes() for p in out.iterdir()}
+    # Real PNG writer + real record hooks + manifest CLI; FBX bytes/readback are explicitly synthetic.
+    from tools.derive import build_manifest as cli
+    import zipfile
+    master = tmp_path / 'mesh.json'
+    master.write_bytes(b'synthetic mesh source')
+    oks = tmp_path / 'oks.blend'
+    oks.write_bytes(b'synthetic OKS source')
+    artifacts = []
+    for name, source, role in [('0000_Syn_01.fbx', oks, 'oks'), ('0000_Syn_Ground.fbx', master, 'ground')]:
+        artifact = tmp_path / name
+        artifact.write_bytes(b'synthetic FBX')
+        artifacts.append(artifact)
+        records.append(bm.write_export_derivation([artifact], source, tmp_path / 'fbx-records', role=role,
+                                                 source_id='site.' + source.stem))
+    pkg = tmp_path / '0000_Syn.zip'
+    with zipfile.ZipFile(pkg, 'w') as archive:
+        for path in artifacts + list(out.glob('*.png')):
+            archive.write(path, path.name)
+    def reader(path):
+        suffix = 'Ground' if bm.role_of(path) == 'ground' else '001_Main'
+        return {'readback_ok': True, 'meshes': [{'name': 'SM_Syn_' + suffix,
+            'bounds_m': [[0, 0, 0], [1, 1, 1]], 'location': [0, 0, 0],
+            'materials': ['synthetic'], 'uv_channels': 1, 'triangles': 2}]}
+    assert cli.main(['build', str(pkg), '--master', 'oks=' + str(oks), '--master', 'ground=' + str(master),
+        '--master', 'ground=' + str(RECIPE_PATH), '--derivation', *records, '--transform-name', 'identity'],
+        reader=reader) == 0
+    result = bm.manifest_findings(Path(bm.manifest_path(pkg)).read_bytes(), bm.zip_members(pkg), pkg.name,
+        bm.sha256_file(pkg), bm.master_hashes({'oks': oks, 'ground': [master, RECIPE_PATH]}), str(tmp_path))
+    assert [row[:2] for row in result] == [('pass', 'manifest_ok')]
 
 
 def test_shipped_recipe_covers_the_vatutino_slots(recipe):

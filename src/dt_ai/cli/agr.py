@@ -4,6 +4,7 @@ Pattern: n/a | new-case: aliases over existing CLI processes, without geometry c
 """
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -11,7 +12,8 @@ from pathlib import Path
 
 ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"],
            "zero": ["ground", "zero"],
-           "place": ["place", "site"]}   # #1407: MAF + Flora NPM + VPM at the same points
+           "place": ["place", "site"],   # #1407: MAF + Flora NPM + VPM at the same points
+           "npm-light": ["derive", "maf-npm-light"]}   # #1410: MAF NPM-light + atlas UV (D293 conversion branch)
 # agr ground (#1406): `agr ground site|zero|v015 ARGS` picks the step; any other first argument keeps the
 # frozen Vatutino record `dt ground v015 ARGS` (unchanged for existing callers).
 GROUND_STEPS = ("site", "zero", "v015")
@@ -84,7 +86,9 @@ def _dispatch(args: list[str]) -> int:
             print("usage: agr vpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
                   "ATLAS_ARGS: dt derive atlas --help (SPEC NEW_ATLAS --master MASTER --recipe-dir RECIPE)\n"
                   "NPM_ARGS: dt derive npm --help (MASTER SPEC ATLAS NEW_EXPORT PREFIX)\n"
-                  "No inferred paths, rollback or extra validation; existing tools own those contracts.\n"
+                  "No rollback; existing tools own their contracts. After npm, the NPM UV readback (#1580,\n"
+                  "python -m twinqa.npm_uv) checks the exported FBX named in NEW_EXPORT/../export_npm_meta.json\n"
+                  "against ATLAS/npm_atlas.json (every face inside its region, 8 px padding); a fail exits 1.\n"
                   "DT_BLENDER is used when --blender is omitted. Atlas must succeed before npm starts.")
             return 0
         blender = []
@@ -101,9 +105,48 @@ def _dispatch(args: list[str]) -> int:
             status = subprocess.run([sys.executable, "-m", "dt_ai.cli.main", *step], check=False).returncode
             if status != 0:
                 return status
-        return 0
+        return npm_uv_readback(tail[split + 1:], blender)
     print(f"ERROR: unknown or missing command {args[:1]!r}; use agr --help (routes/npm-oks.md)", file=sys.stderr)
     return 2
+
+
+NPM_VALUE_OPTIONS = {"--address", "--index", "--pivot", "--recipe-dir"}
+
+
+def npm_positionals(npm_args: list[str]) -> list[str]:
+    """MASTER SPEC ATLAS NEW_EXPORT [PREFIX] of dt derive npm arguments (value options skipped)."""
+    out, skip = [], False
+    for token in npm_args:
+        if skip:
+            skip = False
+        elif token in NPM_VALUE_OPTIONS:
+            skip = True
+        elif not token.startswith("--"):
+            out.append(token)
+    return out
+
+
+def npm_uv_readback(npm_args: list[str], blender: list[str]) -> int:
+    """#1580: read the exported NPM FBX back and check its UVs against npm_atlas.json (twinqa.npm_uv)."""
+    import json
+    pos = npm_positionals(npm_args)
+    if len(pos) < 4:
+        print(f"ERROR: NPM UV readback needs MASTER SPEC ATLAS NEW_EXPORT, got {pos}", file=sys.stderr)
+        return 2
+    atlas, out = Path(pos[2]) / "npm_atlas.json", Path(pos[3]).resolve()
+    meta = out.parent / "export_npm_meta.json"
+    try:
+        fbx = Path(json.loads(meta.read_text(encoding="utf-8"))["fbx"]).resolve()
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"ERROR: NPM UV readback: no exported FBX in {meta}: {exc}", file=sys.stderr)
+        return 2
+    if fbx.parent != out or not fbx.is_file():
+        print(f"ERROR: NPM UV readback: {fbx} is not an exported FBX inside {out}", file=sys.stderr)
+        return 2
+    if not blender and os.environ.get("DT_BLENDER"):
+        blender = ["--blender", os.environ["DT_BLENDER"]]  # the same Blender as the npm step
+    return subprocess.run([sys.executable, "-m", "twinqa.npm_uv", str(fbx), str(atlas), *blender],
+                          check=False).returncode
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `984fb9cf0c5cca27571f73bff3462ff4bab1fa7d7cd275fcbcd367ba92e202bf`.
+Редакция YAML SHA-256: `de3289e12496c35017436feb9a2c6391ce4e5ebabdc856ad793151a617bda73c`.
 
 Ревизия исходников: КПП1: sources.json, ревизия альбома и SHA-256 исходников; неизвестная ревизия останавливает выпуск.
 
@@ -29,6 +29,10 @@
 
 | Правило | Владелец | Место | Статус | Причина различий | Шаг миграции |
 |---|---|---|---|---|---|
+| udim-tile | [`adapters/max/agr_tools/udimtile_core.py`](../../adapters/max/agr_tools/udimtile_core.py) | [`jobs/OBR22-K02/scripts/check_npm_vpm_scale.py::<module>`](../../jobs/OBR22-K02/scripts/check_npm_vpm_scale.py) | historical | История завершённого job; не вызывается живым маршрутом | Не требуется |
+| udim-tile | [`adapters/max/agr_tools/udimtile_core.py`](../../adapters/max/agr_tools/udimtile_core.py) | [`jobs/OBR22-K02/scripts/floor_shared_uv_blender.py::<module>`](../../jobs/OBR22-K02/scripts/floor_shared_uv_blender.py) | historical | История завершённого job; не вызывается живым маршрутом | Не требуется |
+| udim-tile | [`adapters/max/agr_tools/udimtile_core.py`](../../adapters/max/agr_tools/udimtile_core.py) | [`jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::main`](../../jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py) | historical | История завершённого job; не вызывается живым маршрутом | Не требуется |
+| udim-tile | [`adapters/max/agr_tools/udimtile_core.py`](../../adapters/max/agr_tools/udimtile_core.py) | [`jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py::map_face`](../../jobs/OBR22-K02/scripts/prepare_floor_shared_uv.py) | historical | История завершённого job; не вызывается живым маршрутом | Не требуется |
 | udim-tile | [`adapters/max/agr_tools/udimtile_core.py`](../../adapters/max/agr_tools/udimtile_core.py) | [`jobs/KPP1/benchmark-1318/account_readback.py::main`](../../jobs/KPP1/benchmark-1318/account_readback.py) | historical | История завершённого job; не вызывается живым маршрутом | Не требуется |
 | udim-tile | [`adapters/max/agr_tools/udimtile_core.py`](../../adapters/max/agr_tools/udimtile_core.py) | [`jobs/KPP1/benchmark-1318/prepare_master.py::main`](../../jobs/KPP1/benchmark-1318/prepare_master.py) | historical | История завершённого job; не вызывается живым маршрутом | Не требуется |
 | udim-tile | [`adapters/max/agr_tools/udimtile_core.py`](../../adapters/max/agr_tools/udimtile_core.py) | [`jobs/KPP1/rerun-1230/build_blender.py::uv_finish`](../../jobs/KPP1/rerun-1230/build_blender.py) | historical | История завершённого job; не вызывается живым маршрутом | Не требуется |
