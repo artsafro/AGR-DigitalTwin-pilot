@@ -60,7 +60,7 @@ def _row(at, status, owner=OWNER, step=None, m="contexts", digest=""):
 def _check(root, rows, baseline=frozenset(), finished=None):
     roots, chains = call_chains.load_live(root, routes={}, context_maps={})
     finished = {"jobs/J": "jobs/J/DONE.md"} if finished is None else finished
-    return guard.status_problems(root, rows, chains, roots, finished, baseline)
+    return guard.status_problems(root, rows, chains, roots, finished, baseline, own_duty_baseline=frozenset())
 
 
 # ---------------------------------------------------------------- the repo itself
@@ -251,13 +251,13 @@ def _oracle(status, live, job, wrapper, baselined):
     ok = {"wrapper": wrapper,
           "historical": not live and job == "J",
           "live-bypass": live and not wrapper and baselined,
-          "own-duty": True,
+          "own-duty": not live or baselined,
           "superseded": not live}[status]
     return ok
 
 
 def test_probe_status_problems_equal_an_independent_oracle(tmp_path):
-    """Every status x live chain x job (finished J / unfinished K) x calls-owner x baselined: 4*2*2*2*2 = 64."""
+    """Every status x live chain x job (finished J / unfinished K) x calls-owner x baselined: 5*2*2*2*2 = 80."""
     files, cases = {}, []
     for i, (status, live, job, wrapper, base) in enumerate(itertools.product(
             guard.STATUSES, (True, False), ("J", "K"), (True, False), (True, False))):
@@ -272,10 +272,15 @@ def test_probe_status_problems_equal_an_independent_oracle(tmp_path):
     passed = 0
     for rel, status, live, job, wrapper, base in cases:
         row = _row(f"{rel}::copy", status, step="-" if status == "live-bypass" else None)
-        baseline = frozenset({("contexts", row.at, "")}) if base and status == "live-bypass" else frozenset()
-        got = guard.status_problems(root, [row], chains, roots, {"jobs/J": "jobs/J/DONE.md"}, baseline) == []
-        assert got == _oracle(status, live, job, wrapper, base or status != "live-bypass"), (rel, status, live,
-                                                                                            job, wrapper, base)
+        key = frozenset({("contexts", row.at, "")})
+        baseline = key if base and status == "live-bypass" else frozenset()
+        # #1429: a baselined own-duty key without a live chain is a stale (FIXED) key, so only live ones get it
+        own = key if base and live and status == "own-duty" else frozenset()
+        got = guard.status_problems(root, [row], chains, roots, {"jobs/J": "jobs/J/DONE.md"}, baseline,
+                                    own_duty_baseline=own) == []
+        ratcheted = status in ("live-bypass", "own-duty")
+        assert got == _oracle(status, live, job, wrapper, base or not ratcheted), (rel, status, live,
+                                                                                 job, wrapper, base)
         passed += 1
     assert passed == 80
 

@@ -63,7 +63,8 @@ live-bypass | wrapper | historical | own-duty, checked against the real call cha
 must be reached by a live command/route, must not call its owner and must be in LIVE_BYPASS_BASELINE (a NEW one
 fails, a fixed one must leave the baseline); a wrapper must call its owner (for a rule in POLICY_NAMES: one of
 its policy functions); a historical row must have no live chain
-and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`. `--table` prints the Russian
+and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`, and an own-duty row a live
+command/route reaches must be in OWN_DUTY_BASELINE (#1429: same NEW/FIXED ratchet). `--table` prints the Russian
 «живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
 runs only the copy scan (synthetic test roots without the maps).
 
@@ -526,6 +527,24 @@ LIVE_BYPASS_BASELINE = frozenset({
 
     # blender-launch: the 16 live tools/ + src/ launches of #1378/#1424 call blender_command since #1530
 })
+# Ratchet (#1429): own-duty rows a live command/route reaches, keyed like LIVE_BYPASS_BASELINE. Relabelling a live copy
+# own-duty is no way around the live-bypass ratchet: a live own-duty row not listed here is NEW and fails; a listed key
+# without its live own-duty row (row gone, relabelled, or no live chain any more) is fixed - remove it here (tighten).
+OWN_DUTY_BASELINE = frozenset({
+    ("contexts", "jobs/KPP1/scripts/build_kpp1.py:194", ""),
+    ("contexts", "src/dt_ai/publish/bundle.py::package", "99f325f2cd"),
+    ("contexts", "tools/assets/build_maf_template.py::repack", "060ddc5ec1"),
+    ("contexts", "tools/library/maf_material_ids.py::main", "7a61653774"),
+    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
+    ("contexts", "tools/max/build_agr_tools.py::_zip", "7e7c2ad684"),
+    ("contexts", "tools/methods/ucx/run_benchmarks.py::package", "3235a265a9"),
+    ("contexts", "tools/methods/windows/run_benchmarks.py::package", "0083df7615"),
+    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
+    ("contexts", "tools/research/checker_mutation.py::freeze", "a1ec950117"),
+    ("contexts", "tools/sintez_parity.py::run_live", "28bb7ef3ef"),
+    ("contexts", "tools/source/measure_spec_blender.py::udim", "ded8ff2561"),
+    ("vpm-contexts", "jobs/KPP1/scripts/vpm_ucx.py:50", ""),
+})
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))
 # Owner functions that ARE the duty of a rule (#1424 x #1378): a row of that rule is a wrapper only when its scope
@@ -771,10 +790,12 @@ def write_ignore(root, scripts):
     tmp.replace(path)
 
 
-def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE):
-    """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees."""
+def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE, *,
+                    own_duty_baseline=OWN_DUTY_BASELINE):
+    """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees.
+    Live-bypass rows and own-duty rows reached by a live chain (#1429) each pass only through their own ratchet."""
     problems = []
-    live_keys = set()
+    live_keys, own_keys = set(), set()
     for r in rows:
         where = f"{r.map}: {r.at}" + (f" hash {r.hash}" if r.hash else "")
         if not (Path(root) / r.rel).is_file():
@@ -807,9 +828,17 @@ def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BA
             if (r.map, r.at, r.hash) not in baseline:
                 problems.append(f"NEW LIVE BYPASS {where}: use {r.owner} instead (a live command/route must not get "
                                 f"a new copy; {via})")
+        if r.status == "own-duty" and chain:
+            own_keys.add((r.map, r.at, r.hash))
+            if (r.map, r.at, r.hash) not in own_duty_baseline:
+                problems.append(f"NEW OWN-DUTY {where}: {via}: a live command/route reaches it; use {r.owner} or add "
+                                "the key to OWN_DUTY_BASELINE in a reviewed change (#1429)")
     for key in sorted(baseline - live_keys):
         problems.append(f"FIXED LIVE BYPASS {key[0]}: {key[1]} {key[2]}: no live-bypass row any more; remove it from "
                         "LIVE_BYPASS_BASELINE (tighten the ratchet)")
+    for key in sorted(own_duty_baseline - own_keys):
+        problems.append(f"FIXED OWN-DUTY {key[0]}: {key[1]} {key[2]}: no own-duty row reached by a live command/route "
+                        "any more; remove it from OWN_DUTY_BASELINE (tighten the ratchet)")
     return problems
 
 
