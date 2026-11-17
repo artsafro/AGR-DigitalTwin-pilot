@@ -1,0 +1,9 @@
+{
+  "scenario": "oks-vpm",
+  "config": {"sources": "jobs/POLY63-B/sources.json", "profile": "VPM"},
+  "hooks": [
+    {"script": "hooks/body_grid.py", "stage": "body", "point": "after"},
+    {"script": "hooks/export_review.py", "stage": "readback", "point": "before"},
+    {"script": "hooks/check_readback.py", "stage": "readback", "point": "after"}
+  ]
+}

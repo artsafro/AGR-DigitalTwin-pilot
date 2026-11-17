@@ -1,0 +1,7 @@
+{
+  "scope": "#1619 stage 1, tower 63B, typical facade band in FBX world metres",
+  "fbx": {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "reader": "Blender 4.4.0"},
+  "gate1": {"directory": "G:/Мой диск/AGR-evidence/1619-body-training/gate1/", "boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7", "a101_63_buildings_z12.json": "99709c02ec058f38e395ddb4cad022521c8bef08e30e87833cfbe8ea2e07f327"},
+  "revit": {"status": "unavailable", "receipt": "Revit 2025 read-only HTTP ping: WinError 10061; no RVT opened, saved or edited", "fallback": "FBX wall type label + section geometry; no FBX material slots or confirmed finish colours"},
+  "evidence": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v002/"
+}
