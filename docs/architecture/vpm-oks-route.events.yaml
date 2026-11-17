@@ -111,10 +111,13 @@ stages:
       - jobs/PSU275/STATE.md
       - jobs/KPP1/spec-compare-v003.md
   - id: openings
-    event_ru: "Проёмы и окна: окно из библиотеки с утоплением или генератор"
+    event_ru: "Проёмы и окна: agr window-generate — библиотека с утоплением или генератор"
     actor: agent-dcc
-    context: body
+    context: openings
+    commands:
+      - "agr window-generate"
     rules:
+      - D322
       - D116
       - D204
       - D258

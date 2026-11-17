@@ -315,6 +315,7 @@ Pipeline core:
   `dt spec extract|merge-questions|compare`, `dt intake check` — WORKING on synthetic data; first real run KPP1.
 - Engine `src/dt_ai/geometry/from_spec.py` — WORKING on synthetic specs only.
 - Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
+- Window generator `agr window-generate` (`tools/windows/generate.py`, #1405) — shared stdlib `windowgen_core` with Max `win.generate`; new type OBJ bundles + explicit inset plans, not building assembly. KPP1 diagnostics fail on unexplained drops; [usage and measurements](../../jobs/KPP1/window-command-1405/MEASUREMENTS.md).
 - Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
 - Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
   type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
