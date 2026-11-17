@@ -589,16 +589,22 @@ def test_npm_binding_failure_does_not_change_vpm_outputs(tmp_path, missing_recor
     assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
 
 
+@pytest.mark.parametrize('vpm_mask', range(4))
 @pytest.mark.parametrize('records', ['sidecars', 'aggregate'])
 @pytest.mark.parametrize('mode', ['clean', 'foreign', 'edited', 'drift'])
-def test_mixed_profile_records_bind_only_npm(tmp_path, monkeypatch, records, mode):
+def test_mixed_profile_records_bind_only_npm(tmp_path, monkeypatch, records, mode, vpm_mask):
     """Synthetic review regression: VPM records never enter the NPM binding."""
     from adapters.max.agr_tools.export_meta import record_export
     d = acceptance_folder(tmp_path)
     npm = ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx']
     vpm = ['SM_X.fbx', 'SM_X_Ground.fbx']
-    for name in npm + vpm:
+    for name in npm:
         record_export(d / name, source='synthetic mixed-profile fixture')
+    for bit, name in enumerate(vpm):
+        if vpm_mask & (1 << bit):
+            record_export(d / name, source='synthetic mixed-profile fixture', profile='unknown')
+    # A VPM-profile record outside this run's planned archives is not an NPM claim.
+    record_export(d / 'SM_X_0011.fbx', source='synthetic VPM decoy', profile='vpm')
     address = tmp_path / 'export_meta.json'
     if records == 'sidecars':
         address.unlink()  # exercise address discovery, not just record filtering

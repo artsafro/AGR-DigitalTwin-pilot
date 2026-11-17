@@ -28,9 +28,12 @@ def _sha256(path):
     return value.hexdigest()
 
 
-def _sidecars(pkg):
+def _sidecars(pkg, excluded_files=(), profile=None):
+    excluded = {n.casefold() for n in excluded_files}
     return sorted(p for p in Path(pkg).glob('*.fbx.export_meta.json')
-                  if not p.name.endswith('_Light.fbx.export_meta.json'))
+                  if not p.name.endswith('_Light.fbx.export_meta.json')
+                  and p.name[:-len('.export_meta.json')].casefold() not in excluded
+                  and (profile is None or load_meta(p).get('profile') in (None, 'unknown', profile)))
 
 
 def address_meta_path(pkg, explicit=None):
@@ -51,22 +54,34 @@ def address_meta_path(pkg, explicit=None):
     return pkg.parent / 'export_meta.json'
 
 
-def export_records(pkg, address_path):
-    """Validated address record plus every FBX sidecar, deduplicated by resolved path."""
+def export_records(pkg, address_path=None, *, excluded_files=(), profile=None):
+    """Validated records, deduplicated by path; Max needs no address-sidecar choice.
+
+    Without address_path, include an optional canonical record plus all scoped sidecars.
+    CLI callers retain their explicit address record selection and ambiguity policy.
+    """
     out, seen = [], set()
-    for path in [Path(address_path)] + _sidecars(pkg):
+    if address_path is None:
+        canonical = [Path(pkg) / 'export_meta.json', Path(pkg).parent / 'export_meta.json']
+        paths = next(([p] for p in canonical if os.path.lexists(p)), [])
+    else:
+        paths = [Path(address_path)]
+    for path in paths + _sidecars(pkg, excluded_files, profile):
         key = os.path.normcase(os.path.realpath(path))
         if key in seen:
             continue
         seen.add(key)
         label = path.name if path.parent.resolve() == Path(pkg).resolve() else str(path)
-        out.append((label, load_meta(path)))
+        meta = load_meta(path)
+        if profile is None or meta.get('profile') in (None, 'unknown', profile):
+            out.append((label, meta))
     return out
 
 
-def export_binding(pkg, members, records):
-    """Compare planned FBX members with the union of export records both ways (#1637)."""
+def export_binding(pkg, members, records, *, excluded_files=()):
+    """Compare planned FBX with export records; ignore only explicitly other-archive files."""
     claims = {}
+    excluded = {n.casefold() for n in excluded_files}
     for label, meta in records:
         hashes = {}
         for name, rec in meta.get('fbx_records', {}).items():
@@ -76,6 +91,8 @@ def export_binding(pkg, members, records):
         for name in meta.get('exported_files', []):
             hashes.setdefault(name, set())
         for name, values in hashes.items():
+            if name.casefold() in excluded:
+                continue
             for sha in values or {None}:
                 claims.setdefault(name, set()).add((label, sha))
     labels = [label for label, _ in records]

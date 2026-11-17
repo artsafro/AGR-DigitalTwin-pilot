@@ -629,10 +629,14 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                     import importlib.util
                     spec = importlib.util.spec_from_file_location(
                         'agr_tools_export_meta', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'export_meta.py'))
+                    if spec is None or spec.loader is None:
+                        raise ImportError('cannot load sibling export_meta.py')
                     meta = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(meta)
-                    binding, problems = meta.export_binding(folder, a['members'],
-                                                           meta.export_records(folder, meta.address_meta_path(folder)))
+                    excluded = {m['name'] for other in current['archives'] if other['role'] != 'npm'
+                                for m in other['members']}
+                    records = meta.export_records(folder, excluded_files=excluded, profile='npm')
+                    binding, problems = meta.export_binding(folder, a['members'], records, excluded_files=excluded)
                 except Exception as exc:
                     binding = {'members': []}
                     problems = ['{}: export metadata unavailable or invalid: {}'.format(
