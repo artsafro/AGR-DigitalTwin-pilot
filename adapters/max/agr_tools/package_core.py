@@ -622,15 +622,18 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                 continue
             expected = None
             if a['role'] == 'npm':
-                if __package__:
-                    from .export_meta import address_meta_path, export_binding, export_records
-                else:  # installed embedded Max siblings (no repository/tools imports)
-                    from export_meta import address_meta_path, export_binding, export_records
                 folder = current['folder']
                 try:
-                    binding, problems = export_binding(folder, a['members'],
-                                                      export_records(folder, address_meta_path(folder)))
-                except (OSError, ValueError) as exc:
+                    # runtime._load_core loads this file by path, without a package
+                    # or a sibling sys.path entry. Resolve the shipped owner likewise.
+                    import importlib.util
+                    spec = importlib.util.spec_from_file_location(
+                        'agr_tools_export_meta', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'export_meta.py'))
+                    meta = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(meta)
+                    binding, problems = meta.export_binding(folder, a['members'],
+                                                           meta.export_records(folder, meta.address_meta_path(folder)))
+                except Exception as exc:
                     binding = {'members': []}
                     problems = ['{}: export metadata unavailable or invalid: {}'.format(
                         ', '.join(m['name'] for m in a['members']), exc)]
