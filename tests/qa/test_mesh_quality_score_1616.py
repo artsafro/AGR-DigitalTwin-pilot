@@ -203,18 +203,43 @@ def offset_post_master(dy):
     return [b.obj()]
 
 
-@pytest.mark.parametrize('dy', [0.0, 0.002, math.nextafter(0.002, math.inf), 0.0025, 0.005, 0.01])
+def interior_hole_master(dy=0.0, mode='offset'):
+    """Synthetic connected wall with a true interior cell opening and a five-sided post."""
+    b = Builder('SM_Interior_Main')
+    for i in range(4):
+        for k in range(4):
+            if (i, k) != (1, 1) or mode == 'inset':
+                b.face([(i, 0, k), (i + 1, 0, k), (i + 1, 0, k + 1), (i, 0, k + 1)], (0, -1, 0))
+    if mode == 'empty':
+        return [b.obj()]
+    ns = 'body' if mode == 'welded' else 'post'
+    y = -dy
+    b.face([(1, y-.5, 1), (2, y-.5, 1), (2, y-.5, 2), (1, y-.5, 2)], (0, -1, 0), ns)
+    for x, want in [(1, (-1, 0, 0)), (2, (1, 0, 0))]:
+        b.face([(x, y, 1), (x, y-.5, 1), (x, y-.5, 2), (x, y, 2)], want, ns)
+    for z, want in [(1, (0, 0, -1)), (2, (0, 0, 1))]:
+        b.face([(1, y, z), (2, y, z), (2, y-.5, z), (1, y-.5, z)], want, ns)
+    return [b.obj()]
+
+
+@pytest.mark.parametrize('dy', [0.0, 0.002, math.nextafter(0.002, math.inf), 0.0025, 0.005, 0.01, 1.0, 100.0])
 def test_body_hole_beyond_seam_gap_cannot_beat_welded(dy):
-    """#1631: a displaced post never repairs the wall's missing column."""
-    result = mq.score(offset_post_master(dy))
-    welded, inset = mq.score(welded_master()), mq.score(inset_master())
+    """#1631: only a true inner loop, not a slot reaching the outer contour, is a hole."""
+    result = mq.score(interior_hole_master(dy))
+    welded = mq.score(interior_hole_master(mode='welded'))
+    inset = mq.score(interior_hole_master(mode='inset'))
     assert result['score'] <= welded['score'] < inset['score']
 
 
 def test_body_hole_without_post_is_penalized():
-    b = Builder('SM_Fixture_Main')
-    wall(b, skip_col=1)
-    assert mq.score([b.obj()])['score'] <= mq.score(welded_master())['score']
+    r = mq.score(interior_hole_master(mode='empty'))
+    assert r['score'] <= mq.score(interior_hole_master(mode='welded'))['score']
+
+
+def test_open_slot_is_separate_surfaces_not_an_interior_hole():
+    """REPAIR scope: no new silhouette or distance policy for separate surfaces."""
+    for dy in (.0025, .005, .01, .1, 1.0):
+        assert mq.score(offset_post_master(dy))['score'] == 100.0
 
 
 def tjunction_post_master():
