@@ -25,7 +25,7 @@ description: 'Inspect the configured 3ds Max MCP route and safely authorize vers
 ## Per-call PID guard (#1364)
 Guard every mutation with this leading check (replace `563748` with the authorized PID):
 `local pc = dotNetClass "System.Diagnostics.Process"; if (pc.GetCurrentProcess()).Id != 563748 do throw "wrong Max";`
-Before any script/mutation, read [PID guard formats, admission limits and deferred live test](references/pid-guard.md).
+Before any script/mutation, read [PID guard formats, admission limits and live pin-survival result](references/pid-guard.md).
 
 ## Risk gate before mutation
 
