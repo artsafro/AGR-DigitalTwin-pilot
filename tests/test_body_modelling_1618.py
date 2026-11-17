@@ -88,6 +88,43 @@ def test_summary_is_russian_one_page():
     assert "1618-body-training/g22_etalon_wire_sheet.png" in text
 
 
+def test_artem_answers_replace_proposals():
+    text = DOC.read_text(encoding="utf-8")
+    summary = SUMMARY.read_text(encoding="utf-8")
+    assert "## 8. Принятые решения" in text
+    assert "стойки — обычно\n  текстура" not in text
+    assert "рельеф, панели, стойки — обычно текстура" not in summary
+    assert "**Стойки — геометрия по умолчанию**" in text
+    assert "**геометрия по умолчанию**" in summary
+    assert "[D336]" in text and "[D336]" in summary
+    for doc in (text, summary):
+        assert "[D337]" in doc and "[D338]" in doc
+        assert "WARN-only (OBSERVE)" in doc and "первую неделю" in doc
+        assert "Нужно твоё решение" not in doc
+    for path in (".agents/skills/scenario/SKILL.md", ".claude/skills/scenario/SKILL.md"):
+        skill = (ROOT / path).read_text(encoding="utf-8")
+        assert "[D337]" in skill and "[D338]" in skill
+        assert "quads >= 95 %" in skill and "slivers <= 0.5 %" in skill
+        assert "until Artem confirms" not in skill
+
+
+def test_main_split_and_new_decision_rows_survive():
+    sk = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    for row in sk.splitlines():
+        if re.match(r"^\| \d+ \| `body`", row):
+            assert "[D336]" in row and "body-modelling.md#5-правила" in row
+    decisions = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
+    rows = [r for r in decisions.splitlines() if re.match(r"^\| D33[678] \|", r)]
+    assert [r.split("|")[1].strip() for r in rows] == ["D336", "D337", "D338"]
+    for row in rows[1:]:
+        assert "2026-11-17" in row and "issuecomment-6938656989" in row
+    assert "2 cm" in rows[1] and "texture step" in rows[1]
+    assert "quads >= 95 %" in rows[2] and "slivers <= 0.5 %" in rows[2]
+    assert "WARN-only (OBSERVE)" in rows[2] and "first week" in rows[2]
+    domain = (ROOT / "docs/domain/areas/body.md").read_text(encoding="utf-8")
+    assert "[D337]" in domain and "[D338]" in domain
+
+
 def _fixture(tmp_path, faces, verts):
     """Synthetic dump: rejoined faces == exported faces (no UV needed by the census)."""
     verts = np.asarray(verts, float)
