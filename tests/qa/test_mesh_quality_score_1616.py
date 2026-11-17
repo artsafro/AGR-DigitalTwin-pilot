@@ -630,6 +630,29 @@ def test_probe_near_and_tjunction_unwelds_never_beat_welded(seed):
     assert r['score'] <= welded['score'] < inset['score']
 
 
+def test_observe_loop_uses_shared_fail_closed_command(tmp_path, monkeypatch):
+    """Rule-11 guard repair only; no native improvement loop runs in this test."""
+    import mesh_quality_observe as obs
+    from types import SimpleNamespace
+    from dt_ai.core.blender_runner import blender_command
+    src = tmp_path / 'input' / 'm.blend'
+    src.parent.mkdir()
+    src.write_bytes(b'synthetic')
+    run = tmp_path / 'run'
+    monkeypatch.setattr(obs.mqs, 'run', lambda *a, **k: {'score': 80, 'components': {}})
+    calls = []
+    def failed(cmd, **kwargs):
+        calls.append(cmd)
+        return SimpleNamespace(returncode=1, stderr='synthetic child failure')
+    monkeypatch.setattr(obs.subprocess, 'run', failed)
+    assert obs.main([str(src), str(run), '--angles', '80', '--blender', 'synthetic-blender']) == 0
+    assert calls == [blender_command(ROOT / 'tools/blender/split_welded_parts_candidate.py',
+                                    [src, run / 'round-01', '80.0'], executable='synthetic-blender')]
+    rows = [json.loads(line) for line in (run / 'observe-log.jsonl').read_text().splitlines()]
+    assert rows[1]['kept'] is False and rows[1]['error'] == 'synthetic child failure'
+    assert src.read_bytes() == b'synthetic'
+
+
 def test_observe_loop_refuses_existing_or_source_run_dir(tmp_path):
     import mesh_quality_observe as obs
     src = tmp_path / 'm.blend'
