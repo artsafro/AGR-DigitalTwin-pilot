@@ -111,10 +111,13 @@ stages:
       - jobs/PSU275/STATE.md
       - jobs/KPP1/spec-compare-v003.md
   - id: openings
-    event_ru: "Проёмы и окна: окно из библиотеки с утоплением или генератор"
+    event_ru: "Проёмы и окна: agr window-generate — библиотека с утоплением или генератор"
     actor: agent-dcc
-    context: body
+    context: openings
+    commands:
+      - "agr window-generate"
     rules:
+      - D322
       - D116
       - D204
       - D258
@@ -156,7 +159,7 @@ stages:
   - id: uv
     event_ru: "UV по UDIM и текстуры (сетка рядов, где кирпич)"
     actor: agent-dcc
-    context: uv-atlas
+    context: vpm-uv
     rules:
       - D209
       - D221
@@ -303,7 +306,7 @@ stages:
 hotspots:
   - id: windows
     stage: openings
-    ru: "Окна: проёмы Revit и меша КПП1 не совпали (spec-compare v002); окно из библиотеки с утоплением или генератор (D292); windowgen_core есть в AGR Tools (#1345), команды agr / dt нет"
+    ru: "Окна: историческое расхождение проёмов Revit и меша КПП1 (spec-compare v002); текущий agr window-generate вызывает windowgen_core (#1405); локальные построители и обёртки перечислены в карте контекстов (#1593)"
     rules:
       - D116
       - D204
@@ -321,7 +324,7 @@ hotspots:
       - docs/research/vpm-course-grid-1314.md
   - id: udim-copies
     stage: uv
-    ru: "UDIM: номер тайла теперь один (udim_tile, #1337 / #1376), но раскладка vpm_uv.py ТЭЦ26 = КПП1 с разницей в строку; цвета ТЭЦ26 — по слайдам, v007 (стыки каждые 0,60 м) отклонён"
+    ru: "UV ВПМ: vpm_uv.py КПП1 и ТЭЦ26 — обёртки runpy над tools/blender/vpm_uv.py (#1380), не дубли раскладки; номер тайла — udim_tile (#1337 / #1376); исторический v007 ТЭЦ26 отклонён"
     rules:
       - D209
       - D221

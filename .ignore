@@ -39,7 +39,6 @@
 /jobs/KPP1/scripts/export_revit_groups.mjs
 /jobs/KPP1/scripts/export_safety.py
 /jobs/KPP1/scripts/export_vpm.py
-/jobs/KPP1/scripts/extract_openings.py
 /jobs/KPP1/scripts/gui_agr_check.py
 /jobs/KPP1/scripts/inspect_source.py
 /jobs/KPP1/scripts/make_npm_atlas.py

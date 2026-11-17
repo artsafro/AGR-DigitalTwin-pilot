@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `d8eb7f806b4cd625bcf73f9097066f62afc5e41f6a80c7f632ebdf167b3136f9`.
+Редакция YAML SHA-256: `d28a4c2b7386eb33377c6df0795c5bbfba8642539b99606e9314d1994b6ea512`.
 
 Ревизия исходников: Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников.
 
@@ -75,7 +75,7 @@
 | Жёсткие рёбра по углу; ID материалов из общего списка (v007) | D259, D168, D181, D240 | [`library/maf/material_ids_v007.json`](../../library/maf/material_ids_v007.json); [`.agents/skills/model-maf/SKILL.md`](../../.agents/skills/model-maf/SKILL.md);  |
 | ВПМ-версия (high-poly): текстуры по ID, UDIM — после тайлов Ground | D210, D229 | [`library/maf/atlas_layout_v006.md`](../../library/maf/atlas_layout_v006.md); [`tools/library/maf_atlas_layout.py`](../../tools/library/maf_atlas_layout.py);  |
 | МАФ расставлены в координатах: поворот СПОЗУ, утопление 10 см, низ удалён только под Ground | D329, D095, D096, D018 | [`src/dt_ai/placement/engine.py`](../../src/dt_ai/placement/engine.py); [`src/dt_ai/placement/site.py`](../../src/dt_ai/placement/site.py); [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py); [`jobs/VATUTINO-SITE/placement-report.md`](../../jobs/VATUTINO-SITE/placement-report.md);  |
-| НПМ-версия (low-poly) в тех же точках на одном атласе 512 GroundEl | D293, D164, D167, D097 | [`docs/domain/areas/groundel-maf.md`](../../docs/domain/areas/groundel-maf.md); [`jobs/VATUTINO-SITE/maf/site-maf-set.md`](../../jobs/VATUTINO-SITE/maf/site-maf-set.md); ВПМ уже расставлена: конвертация ВПМ → НПМ: та же модель; облегчённая — только если не влезает бюджет; расстановка с нуля: low-poly (кандидат НПМ библиотеки) и high-poly ставятся вместе в одни точки; НПМ (всегда): один атлас 512 RGB на все GroundEl; номер ID в правом нижнем углу ячейки |
+| НПМ-версия (low-poly) в тех же точках на одном атласе 512 GroundEl | D293, D164, D167, D097 | [`docs/domain/areas/groundel-maf.md`](../../docs/domain/areas/groundel-maf.md); [`jobs/VATUTINO-SITE/maf/site-maf-set.md`](../../jobs/VATUTINO-SITE/maf/site-maf-set.md); [`tools/library/maf_npm_light.py`](../../tools/library/maf_npm_light.py); [`jobs/SIL13-COLD-1315/maf-npm-light-1410/result.md`](../../jobs/SIL13-COLD-1315/maf-npm-light-1410/result.md); ВПМ уже расставлена: конвертация ВПМ → НПМ: та же модель; облегчённая — только если не влезает бюджет (≤ 400 треугольников не трогает, силуэт ≥ 0,95); расстановка с нуля: low-poly (кандидат НПМ библиотеки) и high-poly ставятся вместе в одни точки; НПМ (всегда): один атлас 512 RGB на все GroundEl; номер ID в правом нижнем углу ячейки |
 | UCX: для МАФ не строятся (ограждения и навесы — при любой толщине), UCX поверхности Ground остаётся (только ВПМ) | D293, D298 | [`docs/domain/areas/groundel-maf.md`](../../docs/domain/areas/groundel-maf.md); [`docs/domain/areas/ucx.md`](../../docs/domain/areas/ucx.md);  |
 | Проверки на чтении экспорта: maf_findings, валидатор, строки MAF-01..24 | D094, D096, D152 | [`src/twinqa/maf_checks.py`](../../src/twinqa/maf_checks.py); [`.agents/skills/validate-delivery/SKILL.md`](../../.agents/skills/validate-delivery/SKILL.md);  |
 | Артём принимает витрину: пары НПМ / ВПМ рядом, справа подпись по спецификации | D104, D270 | [`docs/domain/areas/groundel-maf.md`](../../docs/domain/areas/groundel-maf.md);  |
@@ -84,8 +84,6 @@
 ## Ограничения сегодня
 
 - Каталог — технический аудит, не идентификация (T-MAF-1): из 931 МАФ кандидата НПМ нет у 695: [`library/maf/README.md`](../../library/maf/README.md); [`docs/plans/425-maf-route-2026-11.md`](../../docs/plans/425-maf-route-2026-11.md)
-- Облегчённой НПМ-версии МАФ как инструмента нет (tools/library/maf_npm_light.py не создан; был разовый Decimate 0,35–0,6 для 4 строк): [`docs/plans/425-maf-route-2026-11.md`](../../docs/plans/425-maf-route-2026-11.md)
-- Перенос UV на атлас — только внутри tools/blender/maf_site_set_build.py, общего инструмента нет: [`tools/blender/maf_site_set_build.py`](../../tools/blender/maf_site_set_build.py); [`docs/plans/425-maf-route-2026-11.md`](../../docs/plans/425-maf-route-2026-11.md)
 - Бюджет НПМ: МАФ 60 000 из 180 000 (D097); набор Ватутино 57 628 + «Верона» 1 520 = 59 148; делит Артём (D167): [`docs/plans/425-maf-route-2026-11.md`](../../docs/plans/425-maf-route-2026-11.md)
 - Расстановка на Ground v015 не перезапущена (команда dt place site есть, #1407): [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py); [`docs/plans/425-maf-route-2026-11.md`](../../docs/plans/425-maf-route-2026-11.md)
 - Автопроверки МАФ частичные: 8 из 24 строк без проверки (L2 gaps, причина у каждой); maf_findings — только НПМ GroundEl: [`docs/domain/areas/groundel-maf.md`](../../docs/domain/areas/groundel-maf.md); [`src/twinqa/maf_checks.py`](../../src/twinqa/maf_checks.py)

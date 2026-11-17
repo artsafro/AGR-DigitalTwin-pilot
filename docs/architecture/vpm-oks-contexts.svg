@@ -1,32 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1471" width="2990" height="1471" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 4210 1503" width="4210" height="1503" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2990" height="1471" fill="#ffffff"/>
+<rect x="10" y="-30" width="4210" height="1503" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650" y="539.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260" y="347.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="40.0" y="602.5" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="602.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="602.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="602.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="776.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="345.0" y="980.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="345.0" y="1206.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="980.0" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1101.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1565.0" y="980.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1565.0" y="1119.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870" y="539.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="40.0" y="634.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="634.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="913.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="634.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="913.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870.0" y="634.0" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="1011.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="40.0" y="1185.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="650.0" y="1011.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="1238.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1011.5" width="470" height="107.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1133.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1011.5" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1150.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <polyline points="510,445.0 530,445.0 530,527.5 1140,527.5 1140,436.25 1120,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120,436.25 1140,436.25 1140,582.5 530.0,582.5 530.0,726.25 510.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="510.0,726.25 530.0,726.25 530.0,870.0 1140.0,870.0 1140.0,735.0 1120.0,735.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120.0,735.0 1140.0,735.0 1140.0,960.0 935.0,960.0 935.0,1086.25 815.0,1086.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120,436.25 1140,436.25 1140,527.5 1750,527.5 1750,427.5 1730,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 1750.0,327.5 1750.0,427.5 1730.0,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730,427.5 1750,427.5 1750,527.5 2360,527.5 2360,436.25 2340,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2340,436.25 2360,436.25 2360,582.5 1850,582.5 1850,761.25 1730.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="815.0,1086.25 835.0,1086.25 835.0,940.0 1750.0,940.0 1750.0,761.25 1730.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,761.25 1750.0,761.25 1750.0,831.5 2360.0,831.5 2360.0,682.5 2340.0,682.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120,436.25 1140,436.25 1140,766.5 1120.0,766.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,766.5 1240.0,766.5 1240.0,614.0 1750.0,614.0 1750.0,766.5 1730.0,766.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,766.5 1750.0,766.5 1750.0,991.5 1240.0,991.5 1240.0,1117.75 1120.0,1117.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120,436.25 1140,436.25 1140,527.5 2360,527.5 2360,436.25 2340,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 2360.0,327.5 2360.0,436.25 2340.0,436.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340,436.25 2360,436.25 2360,527.5 1850,527.5 1850,427.5 1730,427.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730,427.5 1750,427.5 1750,614.0 530.0,614.0 530.0,722.75 510.0,722.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="510.0,722.75 630.0,722.75 630.0,614.0 2360.0,614.0 2360.0,792.75 2340.0,792.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,1117.75 1140.0,1117.75 1140.0,968.0 2360.0,968.0 2360.0,792.75 2340.0,792.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2340.0,792.75 2360.0,792.75 2360.0,991.5 530.0,991.5 530.0,1091.5 510.0,1091.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута ВПМ / ОКС (UCX) — D293 (#1392)</tspan>
 </text>
@@ -67,168 +73,197 @@
 <tspan x="658" dy="17.5">embed_into_neighbour: сцена, часть, сосед, направление,</tspan>
 <tspan x="658" dy="17.5">глубина -&gt; врезка декора и навесных элементов (D199)</tspan>
 </text>
+<text x="658" y="549.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="658" dy="12">Дубли вне владельца: 3</tspan>
+</text>
 <text x="1268" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268" dy="14">UV по UDIM и атлас</tspan>
+<tspan x="1268" dy="14">Атлас производной НПМ, не UV ВПМ</tspan>
 <tspan x="1268" dy="17.5">Владелец: adapters/max/agr_tools/atlas_core.py</tspan>
-<tspan x="1268" dy="17.5">каноническая упаковка атласа (D225); ВПМ — UDIM, НПМ —</tspan>
-<tspan x="1268" dy="17.5">атлас (D292 пути A / B)</tspan>
+<tspan x="1268" dy="17.5">упаковка атласа НПМ (D225, D292 пути A / B);</tspan>
+<tspan x="1268" dy="17.5">периодические UV ВПМ принадлежат vpm_uv.py</tspan>
 <tspan x="1268" dy="17.5"></tspan>
 <tspan x="1268" dy="17.5">pack: вершины, UV, грани, материалы, режим, размер,</tspan>
 <tspan x="1268" dy="17.5">отступ -&gt; новые UV, тайлы UDIM, ячейки</tspan>
 <tspan x="1268" dy="17.5">atlas_png: раскладка -&gt; PNG атласа</tspan>
 </text>
 <text x="1878" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878" dy="14">НПМ в тех же координатах (ВПМ → НПМ)</tspan>
-<tspan x="1878" dy="17.5">Владелец: tools/derive/npm_atlas.py</tspan>
-<tspan x="1878" dy="17.5">атлас НПМ из UDIM для agr vpm-to-npm; путь B —</tspan>
-<tspan x="1878" dy="17.5">параллельная НПМ по ID (D293)</tspan>
+<tspan x="1878" dy="14">Периодическая UV-развёртка ВПМ</tspan>
+<tspan x="1878" dy="17.5">Владелец: tools/blender/vpm_uv.py</tspan>
+<tspan x="1878" dy="17.5">общее Blender bmesh-ядро ВПМ (#1380, D320); не упаковщик</tspan>
+<tspan x="1878" dy="17.5">атласа НПМ</tspan>
 <tspan x="1878" dy="17.5"></tspan>
-<tspan x="1878" dy="17.5">validate_export: раскладка, диффуз, прозрачность -&gt; замер</tspan>
-<tspan x="1878" dy="17.5">отступов по прочитанным UV и PNG</tspan>
-<tspan x="1878" dy="17.5">main: аргументы dt derive atlas -&gt; атлас НПМ и отчёт;</tspan>
-<tspan x="1878" dy="17.5">ошибка — ненулевой код</tspan>
+<tspan x="1878" dy="17.5">texel_cut: bmesh, имена отделок, spec -&gt; разрезы по</tspan>
+<tspan x="1878" dy="17.5">периодам текстуры</tspan>
+<tspan x="1878" dy="17.5">pack_uv: bmesh, имена отделок, spec -&gt; UVMap и QA;</tspan>
+<tspan x="1878" dy="17.5">периодические острова можно stack (D320)</tspan>
 </text>
-<text x="48.0" y="612.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="48.0" dy="14">Проёмы и окна</tspan>
-<tspan x="48.0" dy="17.5">Владелец: adapters/max/agr_tools/windowgen_core.py</tspan>
-<tspan x="48.0" dy="17.5">окно из библиотеки с утоплением или генератор окон (D292,</tspan>
-<tspan x="48.0" dy="17.5">#1338 / #1345)</tspan>
+<text x="1878" y="549.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878" dy="12">Дубли вне владельца: 2</tspan>
+</text>
+<text x="48.0" y="644.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="48.0" dy="14">НПМ в тех же координатах (ВПМ → НПМ)</tspan>
+<tspan x="48.0" dy="17.5">Владелец: tools/derive/npm_atlas.py</tspan>
+<tspan x="48.0" dy="17.5">атлас НПМ из UDIM для agr vpm-to-npm; путь B —</tspan>
+<tspan x="48.0" dy="17.5">параллельная НПМ по ID (D293)</tspan>
 <tspan x="48.0" dy="17.5"></tspan>
-<tspan x="48.0" dy="17.5">load_library: папка библиотеки -&gt; типы окон, стандарт,</tspan>
-<tspan x="48.0" dy="17.5">sha256 файлов</tspan>
-<tspan x="48.0" dy="17.5">library_report: типы, стандарт -&gt; строка на тип: pass /</tspan>
-<tspan x="48.0" dy="17.5">quarantine / duplicate с причиной</tspan>
-<tspan x="48.0" dy="17.5">offerable: отчёт библиотеки -&gt; id, которые можно</tspan>
-<tspan x="48.0" dy="17.5">предлагать (только pass)</tspan>
-<tspan x="48.0" dy="17.5">build_type: тип окна, стандарт, опции -&gt; меш окна по</tspan>
-<tspan x="48.0" dy="17.5">стандарту библиотеки</tspan>
+<tspan x="48.0" dy="17.5">validate_export: раскладка, диффуз, прозрачность -&gt; замер</tspan>
+<tspan x="48.0" dy="17.5">отступов по прочитанным UV и PNG</tspan>
+<tspan x="48.0" dy="17.5">main: аргументы dt derive atlas -&gt; атлас НПМ и отчёт;</tspan>
+<tspan x="48.0" dy="17.5">ошибка — ненулевой код</tspan>
 </text>
-<text x="658.0" y="612.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="658.0" dy="14">Кровля, парапет, плита, ограждение</tspan>
-<tspan x="658.0" dy="17.5">Владелец: adapters/max/agr_tools/roof_core.py</tspan>
-<tspan x="658.0" dy="17.5">плита кровли врезана в парапет и поднята на несколько мм</tspan>
-<tspan x="658.0" dy="17.5">(R6, D292)</tspan>
+<text x="658.0" y="644.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Проёмы и окна</tspan>
+<tspan x="658.0" dy="17.5">Владелец: adapters/max/agr_tools/windowgen_core.py</tspan>
+<tspan x="658.0" dy="17.5">agr window-generate / Max win.generate: библиотека с</tspan>
+<tspan x="658.0" dy="17.5">утоплением или генератор D322; один 3D owner стекла</tspan>
+<tspan x="658.0" dy="17.5">(#1405)</tspan>
 <tspan x="658.0" dy="17.5"></tspan>
-<tspan x="658.0" dy="17.5">boundary_loops: грани -&gt; замкнутые петли открытых рёбер в</tspan>
-<tspan x="658.0" dy="17.5">обходе их граней</tspan>
-<tspan x="658.0" dy="17.5">slab: меш, петля, грани-владельцы, опции -&gt; одна плита</tspan>
-<tspan x="658.0" dy="17.5">кровли или Ambiguous</tspan>
-<tspan x="658.0" dy="17.5">plan: корпуса (меш в метрах, мир) -&gt; опции, строки плит,</tspan>
-<tspan x="658.0" dy="17.5">находки</tspan>
-<tspan x="658.0" dy="17.5">hole_plate: план отверстия парапета, уровень, верх,</tspan>
-<tspan x="658.0" dy="17.5">внешний контур -&gt; плита кровли (сборщик задания, #1381)</tspan>
-<tspan x="658.0" dy="17.5">или ошибка</tspan>
+<tspan x="658.0" dy="17.5">load_library: папка библиотеки -&gt; типы окон, стандарт,</tspan>
+<tspan x="658.0" dy="17.5">sha256 файлов</tspan>
+<tspan x="658.0" dy="17.5">library_report: типы, стандарт -&gt; строка на тип: pass /</tspan>
+<tspan x="658.0" dy="17.5">quarantine / duplicate с причиной</tspan>
+<tspan x="658.0" dy="17.5">offerable: отчёт библиотеки -&gt; id, которые можно</tspan>
+<tspan x="658.0" dy="17.5">предлагать (только pass)</tspan>
+<tspan x="658.0" dy="17.5">build_type: тип окна, стандарт, опции -&gt; меш окна по</tspan>
+<tspan x="658.0" dy="17.5">стандарту библиотеки</tspan>
 </text>
-<text x="1268.0" y="612.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1268.0" dy="14">Экспорт и пакеты ВПМ / НПМ</tspan>
-<tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
-<tspan x="1268.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
-<tspan x="1268.0" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
-<tspan x="1268.0" dy="17.5">(#1361, #1377)</tspan>
+<text x="658.0" y="923.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="12">Дубли вне владельца: 4</tspan>
+</text>
+<text x="1268.0" y="644.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">Кровля, парапет, плита, ограждение</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/roof_core.py</tspan>
+<tspan x="1268.0" dy="17.5">плита кровли врезана в парапет и поднята на несколько мм</tspan>
+<tspan x="1268.0" dy="17.5">(R6, D292)</tspan>
 <tspan x="1268.0" dy="17.5"></tspan>
-<tspan x="1268.0" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
-<tspan x="1268.0" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
-<tspan x="1268.0" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
-<tspan x="1268.0" dy="17.5">плохое имя — ошибка до записи</tspan>
-<tspan x="1268.0" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
-<tspan x="1268.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
-<tspan x="1268.0" dy="17.5">время упаковки — ошибка</tspan>
-<tspan x="1268.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
-<tspan x="1268.0" dy="17.5">ZIP + полный отчёт проверки; ГОТОВО.txt только после</tspan>
-<tspan x="1268.0" dy="17.5">автопроверок, V015–V017 ждут Артёма [D323]; иначе</tspan>
-<tspan x="1268.0" dy="17.5">ОШИБКА.txt</tspan>
+<tspan x="1268.0" dy="17.5">boundary_loops: грани -&gt; замкнутые петли открытых рёбер в</tspan>
+<tspan x="1268.0" dy="17.5">обходе их граней</tspan>
+<tspan x="1268.0" dy="17.5">slab: меш, петля, грани-владельцы, опции -&gt; одна плита</tspan>
+<tspan x="1268.0" dy="17.5">кровли или Ambiguous</tspan>
+<tspan x="1268.0" dy="17.5">plan: корпуса (меш в метрах, мир) -&gt; опции, строки плит,</tspan>
+<tspan x="1268.0" dy="17.5">находки</tspan>
+<tspan x="1268.0" dy="17.5">hole_plate: план отверстия парапета, уровень, верх,</tspan>
+<tspan x="1268.0" dy="17.5">внешний контур -&gt; плита кровли (сборщик задания, #1381)</tspan>
+<tspan x="1268.0" dy="17.5">или ошибка</tspan>
 </text>
-<text x="1878.0" y="612.5" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878.0" dy="14">Проверки, xView, СИНТЕЗ</tspan>
-<tspan x="1878.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
-<tspan x="1878.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
+<text x="1268.0" y="923.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="12">Дубли вне владельца: 2</tspan>
+</text>
+<text x="1878.0" y="644.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="14">Экспорт и пакеты ВПМ / НПМ</tspan>
+<tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
+<tspan x="1878.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
+<tspan x="1878.0" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
+<tspan x="1878.0" dy="17.5">(#1361, #1377)</tspan>
 <tspan x="1878.0" dy="17.5"></tspan>
-<tspan x="1878.0" dy="17.5">validate_vpm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
-<tspan x="1878.0" dy="17.5">находки ВПМ и плотность V009</tspan>
-<tspan x="1878.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
-<tspan x="1878.0" dy="17.5">находки НПМ</tspan>
+<tspan x="1878.0" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
+<tspan x="1878.0" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
+<tspan x="1878.0" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
+<tspan x="1878.0" dy="17.5">плохое имя — ошибка до записи</tspan>
+<tspan x="1878.0" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
+<tspan x="1878.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
+<tspan x="1878.0" dy="17.5">время упаковки — ошибка</tspan>
+<tspan x="1878.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
+<tspan x="1878.0" dy="17.5">ZIP + полный отчёт проверки; ГОТОВО.txt только после</tspan>
+<tspan x="1878.0" dy="17.5">автопроверок, V015–V017 ждут Артёма [D323]; иначе</tspan>
+<tspan x="1878.0" dy="17.5">ОШИБКА.txt</tspan>
 </text>
-<text x="1878.0" y="786.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
+<text x="48.0" y="1021.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="48.0" dy="14">Проверки, xView, СИНТЕЗ</tspan>
+<tspan x="48.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
+<tspan x="48.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
+<tspan x="48.0" dy="17.5"></tspan>
+<tspan x="48.0" dy="17.5">validate_vpm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="48.0" dy="17.5">находки ВПМ и плотность V009</tspan>
+<tspan x="48.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="48.0" dy="17.5">находки НПМ</tspan>
 </text>
-<text x="353.0" y="990.0" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="353.0" dy="14">Коллизии UCX (только ВПМ)</tspan>
-<tspan x="353.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
-<tspan x="353.0" dy="17.5">зазоры UCX (D330: ядро на функцию); строит</tspan>
-<tspan x="353.0" dy="17.5">src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)</tspan>
-<tspan x="353.0" dy="17.5"></tspan>
-<tspan x="353.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>
-<tspan x="353.0" dy="17.5">нормалями и рёбрами</tspan>
-<tspan x="353.0" dy="17.5">separation: два выпуклых куска -&gt; нижняя оценка зазора,</tspan>
-<tspan x="353.0" dy="17.5">м, и ось</tspan>
-<tspan x="353.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
-<tspan x="353.0" dy="17.5">семейства UCX</tspan>
+<text x="48.0" y="1195.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="48.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="353.0" y="1216.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="353.0" dy="12">Дубли вне владельца: 2</tspan>
+<text x="658.0" y="1021.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Коллизии UCX (только ВПМ)</tspan>
+<tspan x="658.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
+<tspan x="658.0" dy="17.5">зазоры UCX (D330: ядро на функцию); строит</tspan>
+<tspan x="658.0" dy="17.5">src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)</tspan>
+<tspan x="658.0" dy="17.5"></tspan>
+<tspan x="658.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>
+<tspan x="658.0" dy="17.5">нормалями и рёбрами</tspan>
+<tspan x="658.0" dy="17.5">separation: два выпуклых куска -&gt; нижняя оценка зазора,</tspan>
+<tspan x="658.0" dy="17.5">м, и ось</tspan>
+<tspan x="658.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
+<tspan x="658.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="963.0" y="990.0" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="14">Триангуляция готовых UCX</tspan>
-<tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/geom_core.py</tspan>
-<tspan x="963.0" dy="17.5">ucx_plan; обёртки TEC26 не строят зазоры ucx10_core</tspan>
-<tspan x="963.0" dy="17.5"></tspan>
-<tspan x="963.0" dy="17.5">ucx_plan: готовые выпуклые куски -&gt; план триангуляции</tspan>
+<text x="658.0" y="1248.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="12">Дубли вне владельца: 2</tspan>
 </text>
-<text x="963.0" y="1111.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 1</tspan>
+<text x="1268.0" y="1021.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="14">Триангуляция готовых UCX</tspan>
+<tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/geom_core.py</tspan>
+<tspan x="1268.0" dy="17.5">ucx_plan; обёртки TEC26 не строят зазоры ucx10_core</tspan>
+<tspan x="1268.0" dy="17.5"></tspan>
+<tspan x="1268.0" dy="17.5">ucx_plan: готовые выпуклые куски -&gt; план триангуляции</tspan>
 </text>
-<text x="1573.0" y="990.0" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="1573.0" dy="14">Запуск триангуляции UCX</tspan>
-<tspan x="1573.0" dy="17.5">Владелец: jobs/TEC26-OKS/scripts/ucx_tri_core.py</tspan>
-<tspan x="1573.0" dy="17.5">обёртка geom_core.ucx_plan</tspan>
-<tspan x="1573.0" dy="17.5"></tspan>
-<tspan x="1573.0" dy="17.5">triangulate_piece: вершины и грани UCX -&gt; треугольники</tspan>
-<tspan x="1573.0" dy="17.5">через geom_core.ucx_plan</tspan>
+<text x="1268.0" y="1143.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1268.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1573.0" y="1129.0" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="1573.0" dy="12">Дубли вне владельца: 2</tspan>
+<text x="1878.0" y="1021.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="14">Запуск триангуляции UCX</tspan>
+<tspan x="1878.0" dy="17.5">Владелец: jobs/TEC26-OKS/scripts/ucx_tri_core.py</tspan>
+<tspan x="1878.0" dy="17.5">обёртка geom_core.ucx_plan</tspan>
+<tspan x="1878.0" dy="17.5"></tspan>
+<tspan x="1878.0" dy="17.5">triangulate_piece: вершины и грани UCX -&gt; треугольники</tspan>
+<tspan x="1878.0" dy="17.5">через geom_core.ucx_plan</tspan>
+</text>
+<text x="1878.0" y="1160.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="12">Дубли вне владельца: 2</tspan>
 </text>
 <rect x="805.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
 <text x="835.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="835.0" dy="14">строит</tspan>
 </text>
-<rect x="805.0" y="565.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="565.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="835.0" dy="14">корпус по</tspan>
-<tspan x="835.0" dy="17.5">частям</tspan>
+<rect x="1110.0" y="583.88" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="583.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1140.0" dy="14">корпус по</tspan>
+<tspan x="1140.0" dy="17.5">частям</tspan>
 </text>
-<rect x="805.0" y="861.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="835.0" y="861.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="835.0" dy="14">проёмы врезаны</tspan>
+<rect x="1465.0" y="605.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="605.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">проёмы врезаны</tspan>
 </text>
-<rect x="1110.0" y="830.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1140.0" y="830.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1140.0" dy="14">оболочка с</tspan>
-<tspan x="1140.0" dy="17.5">кровлей</tspan>
+<rect x="1465.0" y="974.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="974.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">оболочка с</tspan>
+<tspan x="1495.0" dy="17.5">кровлей</tspan>
 </text>
-<rect x="1415.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1445.0" dy="14">мастер ВПМ</tspan>
+<rect x="1720.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">мастер ВПМ</tspan>
 </text>
-<rect x="1567.5" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1597.5" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1597.5" dy="14">номер тайла</tspan>
+<rect x="1872.5" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1902.5" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1902.5" dy="14">номер тайла</tspan>
 </text>
-<rect x="2025.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2055.0" dy="14">UDIM → атлас</tspan>
+<rect x="1760.0" y="410.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1790.0" y="410.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1790.0" dy="14">UDIM для</tspan>
+<tspan x="1790.0" dy="17.5">производной НПМ</tspan>
 </text>
-<rect x="2075.0" y="565.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2105.0" y="565.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2105.0" dy="14">НПМ в</tspan>
-<tspan x="2105.0" dy="17.5">координатах</tspan>
+<rect x="1110.0" y="605.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="605.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1140.0" dy="14">UDIM → атлас</tspan>
 </text>
-<rect x="1262.5" y="931.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1292.5" y="931.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1292.5" dy="14">коллизии UCX_</tspan>
+<rect x="1465.0" y="596.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="596.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">НПМ в</tspan>
+<tspan x="1495.0" dy="17.5">координатах</tspan>
 </text>
-<rect x="2025.0" y="822.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="822.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2055.0" dy="14">ZIP / FBX сдачи</tspan>
+<rect x="1720.0" y="959.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="959.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">коллизии UCX_</tspan>
+</text>
+<rect x="1415.0" y="982.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="982.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

@@ -89,7 +89,8 @@ substitute ad-hoc scripting.
 - Known issues (same run): `create_object` with `pos` fails («Invalid position parameter», nothing
   created) — create without `pos`, then `transform`; `manage_scene(save)` saves only to the current
   path — Save As to a new versioned path via MAXScript; a newly started Max registers itself and
-  becomes the default target — pinning does not hold; guard every mutation inside the executing
+  becomes the default target — a new or unpinned MCP process follows it (a `select_max_instance` pin
+  survives only inside its own MCP process, live #1481); guard every mutation inside the executing
   process (see the `3dsmax-mcp-dev` skill and PID gate below); the agent viewport does not redraw while Max is
   hidden; the Max 2026 startup shows the `polyunwrapper_autoload.mse` .NET error dialog (see
   Toolchain smoke above). Source review (PR #793): `query_scene(action="class", scope="refs")`
@@ -106,10 +107,16 @@ substitute ad-hoc scripting.
   item 9 reports PID 563748 selected with `pinned: true`, then PID 570920 becoming selected/default.
   Deterministic two-registration simulation: `tests/test_max_pid_guard.py::test_two_registrations`
   (synthetic registry, mocked PID source; not a real server/Max measurement).
-  Live two-Max re-registration test: NOT DONE (2026-11-15, orchestrator prohibits starting,
-  registering or touching Max while the user's sessions are open). Whether v1.7.5's pin survives
-  a new registration is not freshly measured; do not infer a live pass from pytest.
-  External Claude memory pointer edit is also deferred by explicit instruction.
+  Live two-Max re-registration test (#1481, 2026-11-17, v1.7.5 `bcd4e4c6`, real stdio server,
+  two fresh 3ds Max 2026 instances with empty synthetic scenes): the pin SURVIVES. After pinning
+  A (PID 1124612, `select_max_instance` -> `pinned: true`) and starting B (PID 1142464, registered
+  in 33 s), `list_max_instances` shows B `default: true` and A `selected: true`;
+  `get_selected_max_instance` still returns A `explicit`/`pinned: true`; a PID-guarded
+  `execute_maxscript` returned 1124612 for A's guard and `wrong Max` for B's guard (routed to A).
+  A fresh unpinned MCP process has no selection and defaults to the newest registration (B), which
+  matches the #1364 incident: survival holds only inside the pinned MCP process, so the
+  per-call PID guard stays mandatory. Log: `G:/Мой диск/AGR-evidence/1481-two-max-pin/`
+  (`live_two_max_pin.log` sha256 `087c28ac…748d`, driver `live_two_max_pin.py`, `SHA256SUMS.txt`).
 - Owner: Claude (main) · scope: user (all projects)
 - Server: cl0nazepamm/3dsmax-mcp v1.7.5 (commit `bcd4e4c6`, licence MIT), `C:\Users\artsafro\tools\3dsmax-mcp`; plugin in
   `C:\ProgramData\Autodesk\ApplicationPlugins\3dsmax-mcp`; `safe_mode = true`
@@ -315,6 +322,7 @@ Pipeline core:
   `dt spec extract|merge-questions|compare`, `dt intake check` — WORKING on synthetic data; first real run KPP1.
 - Engine `src/dt_ai/geometry/from_spec.py` — WORKING on synthetic specs only.
 - Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
+- Window generator `agr window-generate` (`tools/windows/generate.py`, #1405) — shared stdlib `windowgen_core` with Max `win.generate`; new type OBJ bundles + explicit inset plans, not building assembly. KPP1 diagnostics fail on unexplained drops; [usage and measurements](../../jobs/KPP1/window-command-1405/MEASUREMENTS.md).
 - Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
 - Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
   type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
@@ -336,6 +344,10 @@ Pipeline core:
   Pre-export master polygon QA [D312]: `runtime.master_topology(nodes)` and agent CLI
   `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json`, one shared stdlib core;
   real read-only ELV/KPP1/PSU275 reports in `jobs/master-topology-1420/REPORT.md` (not delivery acceptance).
+  Master mesh quality score by the OKS split rule [D336] (#1616): `uv run python tools/qa/mesh_quality_score.py
+  MASTER --out NEW.json [--zone ...] [--exclude-zone ...]` (score 0..100 + quads per element/slivers/poles/body
+  share/welds/long sides/irregular area/open seams; ranks, never
+  accepts); OBSERVE loop `tools/qa/mesh_quality_observe.py`; calibration `docs/research/mesh-quality-1616/REPORT.md`.
 
 Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
 - Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by
@@ -372,6 +384,13 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
   NPM/VPM point-ID parity (exit 4), fail-closed spec (exit 2). Scene helpers moved to `dt_ai.placement.scene`
   (`tools/placement_site.py` is an import alias). Vatutino `jobs/VATUTINO-SITE/place_site.py` = resolver over it;
   guard rule `site-placement`. Silikatny run waits for #1315.
+- MAF NPM-light `dt derive maf-npm-light SPEC.json --out NEW` / `agr npm-light` (`tools/library/maf_npm_light.py`,
+  #1410, plan #425 steps 5-6) — TOOL ONLY: D293 conversion branch when the set does not fit the budget (D164/D167):
+  Decimate never at or under 400 tris, atlas UV through the shared owner `tools/materials/maf_uv_remap.py` (also
+  used by `maf_site_set_build.py` and `flora_atlas_from_scene.remap_uv`), gates on readback (dims [D094], silhouette
+  IoU >= 0.95, 0 UV outside slot); spec `dt-maf-npm-light/1`, exit 2 input / 3 gate / 1 DCC. Proof on #1315 MAF
+  copies: 4/4 pass, 9 990 -> 4 544 tris (`jobs/SIL13-COLD-1315/maf-npm-light-1410/result.md`); tests
+  `tests/test_maf_npm_light_1410.py`.
 - Ground producer `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106; moved from the job, whose path is now a
   shim) — WORKING: replay on the accepted v015 inputs gives masters byte-identical to the accepted build
   (NPM `c26b7feb…ca1a`, VPM `59310ac9…2eb4`); site data from `--job-dir` (default `jobs/VATUTINO-SITE`); tests

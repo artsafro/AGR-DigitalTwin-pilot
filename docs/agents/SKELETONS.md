@@ -27,7 +27,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 |---|---|---|
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
-| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250] |
+| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 4 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
 | 5 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
 | 6 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
@@ -45,7 +45,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `inspect` | `agr inspect --manifest JOB.json` |
-| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев |
+| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 3 | `brick-seams` кирпичные швы | пробел |
 | 4 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
 | 5 | `master-qa` | `tools/qa/master_topology.py` |
@@ -100,6 +100,27 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 15 | `package-vpm` | `agr package-vpm` |
 | 16 | `validate` | `agr validate --ground-area-m2` |
 | 17 | `checker` | `agr checker` после визуальной приёмки |
+
+## OKS modelling split [D336]
+
+Stage `body` of `oks-vpm` and `oks-npm`, all OKS buildings; the rule itself is the row [D336] in
+`docs/decisions.md`, its machine form is `stages.body.modelling_split` in `skeletons.json`.
+
+- Inset elements (separate, cut into the body, own clean quads, not welded into the body):
+  `windows`, `stained_glass`, `roof`, `flashings` (roof and window), `posts`.
+- Texture, not modelled: `panels` (seam in the texture/UV).
+- Per project: `plinth` = `one_with_body` or `inset`; the final split follows the project, its textures and
+  texturing convenience.
+- Job report: one line, checked by `skeleton_guard.modelling_split_problems`:
+  `Modelling split [D336]: plinth=<one_with_body|inset>; inset=<parts>; texture=<parts>; reason=<why, for this project>`.
+
+Master/QA checks on these parts are element-wise; no check may require welding inset elements into the body:
+
+| Check | How it sees inset elements |
+|---|---|
+| `tools/qa/master_topology.py` (`master_topology_core.check`) [D312] | one row and one verdict per object; quads/n-gons per element |
+| `tools/qa/body_layout.py` | per named `--part`; a window/roof/post element is its own part |
+| `dt qa xview` [D152] (`xview_gate.part_gate`) | per part; inside one part an inset element keeps its vertices off the body's (embed/offset, as decor [D199]) so the 2 mm overlap count stays 0 - never by welding |
 
 ## Verifier step before showing Artem (#1577, observe mode)
 
@@ -157,6 +178,17 @@ uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 vie
 
 Example (Artem's SINTEZ error-fix case): unfold polygons / seams = `checker` → fix with the stage owners
 (`vpm-uv`, `master-qa`) through one `after` hook → `checker` again; no new analysis scripts.
+
+## Imported-library exemptions
+
+The guard owner records the following exact-path exception in `skeleton_guard.IMPORTED_LIBRARIES` (#1591):
+`jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py` is a stdlib library imported by the historical
+`jobs/KPP1/quad-1372/build_quad_master.py` and its tests. `write_provenance` is called after the build;
+it is not an `after` hook of `master-qa` and has no standalone entry point. Keep its existing import path
+and the sub-job's `skeleton.json` with an empty hook list. The guard rejects registering this library as
+a hook, including path aliases. It still checks the library for stage reimplementation, duplicate code
+and Python syntax errors. Sibling, renamed and nested files are not exempt. This does not extend the
+frozen #1546 baseline, exempt a directory, or establish a job-configurable library bypass.
 
 ## Reviewer rule [D325]
 

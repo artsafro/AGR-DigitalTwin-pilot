@@ -39,7 +39,12 @@ def test_merged_migrations_keep_the_new_owners_without_reviving_copies():
         'jobs/KPP1/scripts/vpm_uv.py',
         'jobs/TEC26-OKS/scripts/vpm_uv.py',
     }
-    assert not any(r.rel in migrated for r in current)
+    # #1593 records the UV wrappers as described path:line rows, not formula copies.
+    uv_wrappers = {'jobs/KPP1/scripts/vpm_uv.py', 'jobs/TEC26-OKS/scripts/vpm_uv.py'}
+    assert not any(r.rel in migrated - uv_wrappers for r in current)
+    assert {r.rel for r in current if r.rel in uv_wrappers} == uv_wrappers
+    assert all(r.status == 'wrapper' and not r.rule and r.owner == 'tools/blender/vpm_uv.py'
+               for r in current if r.rel in uv_wrappers)
     assert guard.RULES['vpm-uv'] == 'tools/blender/vpm_uv.py'
     uv = next(c for c in guard.load_maps(ROOT)['contexts']['contexts'] if c['id'] == 'vpm-uv')
     assert uv['owner'] == guard.RULES['vpm-uv']
