@@ -132,7 +132,10 @@ def test_driver_lives_outside_jobs_and_matches_sealed_copy():
     sealed = {ln.split(' *', 1)[1]: ln.split(' ', 1)[0]
               for ln in MANIFEST.read_text(encoding='utf-8').splitlines() if ' *' in ln}
     import hashlib
-    assert hashlib.sha256(DRIVER.read_bytes()).hexdigest() == sealed['./run_ac08_stages_native.py']
+    # The sealed copy on Drive is the Windows (CRLF) file the native run used; git stores it LF (eol=lf).
+    raw = DRIVER.read_bytes().replace(b'\r\n', b'\n')
+    assert sealed['./run_ac08_stages_native.py'] in {hashlib.sha256(raw).hexdigest(),
+                                                   hashlib.sha256(raw.replace(b'\n', b'\r\n')).hexdigest()}
 
 
 def test_driver_maps_ids_without_default():
