@@ -240,9 +240,9 @@ def test_file_changed_between_check_and_zip_is_refused(tmp_path, monkeypatch):
     pkg = make_pkg(tmp_path)
     write = pn.package_core._write_zip
 
-    def swap(folder, archive, target):
+    def swap(folder, archive, target, **kwargs):
         (pkg / OKS).write_bytes(b'swapped after the binding check')
-        return write(folder, archive, target)
+        return write(folder, archive, target, **kwargs)
     monkeypatch.setattr(pn.package_core, '_write_zip', swap)
     with pytest.raises(ValueError, match=OKS):
         pn.main([str(pkg)])

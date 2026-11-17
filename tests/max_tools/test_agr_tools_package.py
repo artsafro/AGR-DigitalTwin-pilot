@@ -68,6 +68,13 @@ def acceptance_folder(tmp_path):
         files['T_X_Ground_{}_1.1001.png'.format(m)] = _png(c)
     for n, data in files.items():
         (d / n).write_bytes(data)
+    # Export records are a prerequisite of NPM packaging (#1650). Keep the fixture
+    # record outside the delivery inventory so existing decoy assertions stay exact.
+    (tmp_path / 'export_meta.json').write_text(json.dumps({
+        'address': 'X', 'h_otn_model_max_z_m': 3.5, 'thumbnail': 'unknown',
+        'exported_files': ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx'],
+        'exported_sha256': {n: _sha(d / n) for n in ('0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx')}
+    }), encoding='utf-8')
     return d
 
 
@@ -565,6 +572,144 @@ def test_run_folder_goes_to_options_out(tmp_path):
     assert Path(r['plan']['run_folder']).parent == out and (Path(r['plan']['run_folder']) / pc.MARK_FAIL).is_file()
     with pytest.raises(ValueError, match='no such output folder'):
         pc.zip_apply(ec, pc.zip_preview(ec, d, options={'out': str(tmp_path / 'nope')}), _validate)
+
+
+@pytest.mark.parametrize('missing_records', [False, True])
+def test_npm_binding_failure_does_not_change_vpm_outputs(tmp_path, missing_records):
+    d = acceptance_folder(tmp_path)
+    if missing_records:
+        (tmp_path / 'export_meta.json').unlink()
+    else:
+        (d / '0123_X_03.fbx').write_bytes(b'synthetic foreign FBX')
+    rep = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    run = Path(rep['plan']['run_folder'])
+    assert sorted(p.name for p in run.glob('*.zip')) == ['SM_X.zip', 'SM_X_Ground.zip']
+    error = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert ('0123_X_01.fbx' if missing_records else '0123_X_03.fbx') in error
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
+
+
+@pytest.mark.parametrize('vpm_mask', range(4))
+@pytest.mark.parametrize('records', ['sidecars', 'aggregate'])
+@pytest.mark.parametrize('mode', ['clean', 'foreign', 'edited', 'drift'])
+def test_mixed_profile_records_bind_only_npm(tmp_path, monkeypatch, records, mode, vpm_mask):
+    """Synthetic review regression: VPM records never enter the NPM binding."""
+    from adapters.max.agr_tools.export_meta import record_export
+    d = acceptance_folder(tmp_path)
+    npm = ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx']
+    vpm = ['SM_X.fbx', 'SM_X_Ground.fbx']
+    for name in npm:
+        record_export(d / name, source='synthetic mixed-profile fixture')
+    for bit, name in enumerate(vpm):
+        if vpm_mask & (1 << bit):
+            record_export(d / name, source='synthetic mixed-profile fixture', profile='unknown')
+    # A VPM-profile record outside this run's planned archives is not an NPM claim.
+    record_export(d / 'SM_X_0011.fbx', source='synthetic VPM decoy', profile='vpm')
+    address = tmp_path / 'export_meta.json'
+    if records == 'sidecars':
+        address.unlink()  # exercise address discovery, not just record filtering
+    else:
+        meta = json.loads(address.read_text(encoding='utf-8'))
+        meta['exported_files'] += vpm
+        meta['exported_sha256'].update({n: _sha(d / n) for n in vpm})
+        (d / 'export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    if mode == 'foreign':
+        (d / '0123_X_03.fbx').write_bytes(b'synthetic foreign')
+    elif mode == 'edited':
+        (d / npm[0]).write_bytes(b'synthetic edited')
+    preview = pc.zip_preview(ec, d)
+    expected = {a['name']: {m['name']: (d / m['name']).read_bytes() for m in a['members']}
+                for a in preview['plan']['archives']}
+    write = pc._write_zip
+    def drift(folder, archive, target, **kwargs):
+        if archive['role'] == 'npm':
+            (d / npm[0]).write_bytes(b'synthetic changed after binding')
+        return write(folder, archive, target, **kwargs)
+    if mode == 'drift':
+        monkeypatch.setattr(pc, '_write_zip', drift)
+        with pytest.raises(ValueError, match=npm[0]):
+            pc.zip_apply(ec, preview)
+        run = next(d.glob('Сборка_*'))
+    else:
+        rep = pc.zip_apply(ec, preview)
+        run = Path(rep['plan']['run_folder'])
+        assert sorted(p.name for p in run.glob('*.zip')) == sorted(
+            ['SM_X.zip', 'SM_X_Ground.zip'] + (['0123_X.zip'] if mode == 'clean' else []))
+    for target in run.glob('*.zip'):
+        with zipfile.ZipFile(target) as z:
+            assert {n: z.read(n) for n in z.namelist()} == expected[target.name]
+    error = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    if mode != 'clean':
+        assert ('0123_X_03.fbx' if mode == 'foreign' else npm[0]) in error
+        assert not (run / '0123_X.zip').exists()
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
+
+
+@pytest.mark.parametrize('records', ['sidecars', 'aggregate'])
+@pytest.mark.parametrize('mode', ['clean', 'foreign', 'missing'])
+def test_npm_binding_scopes_other_address_records(tmp_path, records, mode):
+    """Synthetic r2 regression: all exporters may record decoys, not just this archive."""
+    from adapters.max.agr_tools.export_meta import record_export
+    d = acceptance_folder(tmp_path)
+    clean = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    baseline = Path(clean['plan']['run_folder'])
+    expected = {p.name: p.read_bytes() for p in baseline.glob('*.zip')}
+    # Include an overlapping address and another territory code; prefix matching
+    # alone or selecting the existing plan members would hide a missing claim.
+    for name in ['0123_X_Annex_01.fbx', '9999_Other_01.fbx']:
+        (d / name).write_bytes(FBX)
+    all_records = []
+    for fbx in d.glob('*.fbx'):
+        sidecar = record_export(fbx, source='synthetic all-sidecars fixture')
+        all_records.append(json.loads(Path(sidecar).read_text(encoding='utf-8')))
+    if records == 'aggregate':
+        meta = json.loads((tmp_path / 'export_meta.json').read_text(encoding='utf-8'))
+        meta['exported_files'] = [n for rec in all_records for n in rec['exported_files']]
+        meta['exported_sha256'] = {n: sha for rec in all_records for n, sha in rec['exported_sha256'].items()}
+        (d / 'export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    else:
+        (tmp_path / 'export_meta.json').unlink()
+    if mode == 'foreign':
+        (d / '0123_X_03.fbx').write_bytes(b'synthetic foreign')
+    elif mode == 'missing':
+        (d / '0123_X_02.fbx').unlink()
+    rep = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    run = Path(rep['plan']['run_folder'])
+    assert sorted(p.name for p in run.glob('*.zip')) == sorted(
+        ['SM_X.zip', 'SM_X_Ground.zip'] + (['0123_X.zip'] if mode == 'clean' else []))
+    for target in run.glob('*.zip'):
+        assert target.read_bytes() == expected[target.name]
+    error = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    if mode != 'clean':
+        name = '0123_X_03.fbx' if mode == 'foreign' else '0123_X_02.fbx'
+        assert name in error and ('not recorded' if mode == 'foreign' else 'missing from the package') in error
+    assert '0123_Other_01.fbx: recorded' not in error
+    assert '0123_X_Annex_01.fbx: recorded' not in error
+    assert '9999_Other_01.fbx: recorded' not in error
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
+
+
+@pytest.mark.parametrize('failure', ['loader', 'malformed'])
+def test_npm_metadata_errors_are_archive_problems(tmp_path, monkeypatch, failure):
+    d = acceptance_folder(tmp_path)
+    if failure == 'loader':
+        import importlib.util
+        original = importlib.util.spec_from_file_location
+        def broken(name, *args, **kwargs):
+            if name == 'agr_tools_export_meta':
+                raise ImportError('synthetic unavailable export_meta.py')
+            return original(name, *args, **kwargs)
+        monkeypatch.setattr(importlib.util, 'spec_from_file_location', broken)
+    else:
+        meta = json.loads((tmp_path / 'export_meta.json').read_text(encoding='utf-8'))
+        meta['profile'] = []  # unsupported value must be reported, not escape to caller
+        (tmp_path / 'export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    rep = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    run = Path(rep['plan']['run_folder'])
+    assert sorted(p.name for p in run.glob('*.zip')) == ['SM_X.zip', 'SM_X_Ground.zip']
+    text = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert '0123_X_01.fbx' in text and 'metadata unavailable or invalid' in text
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
 
 
 def test_npm_archive_holds_only_fbx_and_one_address(tmp_path):
