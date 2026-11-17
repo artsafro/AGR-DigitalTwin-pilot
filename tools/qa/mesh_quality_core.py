@@ -61,7 +61,10 @@ Components (each a share 0..1; penalty = min(1, share)):
 Interior body holes (#1631): a planar, face-directed boundary circuit winding opposite to all
 adjacent coplanar body faces is an interior loop, not an exterior contour. A reveal's perpendicular
 faces are not a missing coplanar surface. Complete projected glass coverage exempts the loop (including
-tiled/recessed panes); glass elsewhere or partial coverage does not. Ambiguous boundary graphs are
+tiled/recessed panes); glass elsewhere or partial coverage does not. Every pane vertex must be
+strictly within glass_depth_m (default 0.25 m) of the loop plane. This is a configurable diagnostic
+coverage bound, not a regulatory reveal-depth limit; a pane exactly at the bound supplies no evidence.
+Ambiguous boundary graphs are
 not classified by this diagnostic. Warped inner circuits retain the penalty rather than claiming
 planar glass coverage. Disconnected outer-contour slots are not
 holes; no distance/silhouette policy is inferred. Per the #1631 scope decision, a horizontal
@@ -89,7 +92,8 @@ ANGLE_EPS_DEG = 1e-6  # float noise of acos: an angle exactly at the threshold i
 DEFAULTS = {'tri_min_angle_deg': 10.0, 'quad_min_angle_deg': 30.0, 'flat_deg': 1.0,
             'weld_deg': 30.0, 'side_limit_m': 3.9, 'body_share_ok': 0.5, 'collision_prefix': 'UCX_',
             'glass_pattern': r'(?i)glass', 'irregular_deg': 15.0, 'seam_tol_m': 0.0001,
-            'seam_gap_m': 0.002, 'seam_angle_deg': 5.0, 'seam_min_overlap_m': 0.01}
+            'seam_gap_m': 0.002, 'seam_angle_deg': 5.0, 'seam_min_overlap_m': 0.01,
+            'glass_depth_m': 0.25}
 
 
 def _sub(a, b):
@@ -140,7 +144,8 @@ def _params(params):
             raise ValueError('unknown parameter: ' + key)
         p[key] = value
     for key in ('tri_min_angle_deg', 'quad_min_angle_deg', 'flat_deg', 'weld_deg', 'side_limit_m',
-                'irregular_deg', 'seam_tol_m', 'seam_gap_m', 'seam_angle_deg', 'seam_min_overlap_m'):
+                'irregular_deg', 'seam_tol_m', 'seam_gap_m', 'seam_angle_deg', 'seam_min_overlap_m',
+                'glass_depth_m'):
         v = p[key]
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v <= 0:
             raise ValueError(f'parameter {key} must be a finite positive number, got {v!r}')
@@ -312,7 +317,7 @@ def _near_pairs(segs, p):
     return sorted(pairs)
 
 
-def _glass_covers(loop, glass_faces, axis):
+def _glass_covers(loop, glass_faces, axis, normal, depth_m):
     """Prove projected polygon coverage by interval unions in every arrangement slab.
 
     Vertex and edge-intersection ordinates partition the plane into slabs in which
@@ -326,6 +331,11 @@ def _glass_covers(loop, glass_faces, axis):
     ymin, ymax = min(v[1] for v in target), max(v[1] for v in target)
     polygons = [target]
     for face in glass_faces:
+        # Signed plane distance, not the dropped projection coordinate: the
+        # latter admits remote panes on oblique walls. Require the entire face
+        # inside the open slab so tilted/straddling panes cannot lend coverage.
+        if not all(abs(_dot(normal, _sub(v, loop[0]))) < depth_m for v in face):
+            continue
         poly = project(face)
         if (max(v[0] for v in poly) > xmin and min(v[0] for v in poly) < xmax
                 and max(v[1] for v in poly) > ymin and min(v[1] for v in poly) < ymax):
@@ -416,7 +426,7 @@ def _body_holes(verts, faces, edges, elem_of, body, normals, p, in_zone, glass_f
             continue
         planar = all(abs(_dot(normal, _sub(v, loop[0]))) <= p['seam_tol_m'] for v in loop)
         axis = max(range(3), key=lambda i: abs(normal[i]))
-        if not planar or not _glass_covers(loop, glass_faces, axis):
+        if not planar or not _glass_covers(loop, glass_faces, axis, normal, p['glass_depth_m']):
             holes.append(circuit)
     return holes
 
