@@ -323,7 +323,9 @@ def scene_units():
             'file_in_gamma': float(rt.fileInGamma), 'file_out_gamma': float(rt.fileOutGamma), 'path': path}
 
 
-def run(agr, glue, core, tool, nodes=None, select=True):
+def run(agr, glue, core, tool, nodes=None, select=True, ucx_export=None):
+    if ucx_export is not None and select:
+        raise ValueError('UCX export preview requires select=False')
     rt = _rt()
     if tool == 'units':
         scene = scene_units()
@@ -345,7 +347,24 @@ def run(agr, glue, core, tool, nodes=None, select=True):
             audit = agr._load_core('ucx_audit_core.py', 'agr_ucx_audit_core')  # shipped slice (MZP)
         except ValueError:  # source checkout: the slice is generated at build time
             from twinqa.geometry import ucx_audit as audit
-    found, dropped, summary = core.run(tool, rows, audit, scene=scene)
+    ucx_rows = None
+    if ucx_export is not None:
+        if tool not in ('ucx_audit', 'preflight') or 'error' in ucx_export:
+            raise ValueError('invalid UCX export preview selection')
+        ucx_rows = [_row(agr, glue, n, scale, sizer) for n in ucx_export['nodes']]
+        names = ucx_export['names']
+        if set(names) - {r['key'] for r in ucx_rows}:
+            raise ValueError('UCX export names refer to missing nodes: {!r}'.format(
+                sorted(set(names) - {r['key'] for r in ucx_rows})))
+        for row in ucx_rows:
+            row['name'] = names.get(row['key'], row['name'])
+        if tool == 'ucx_audit':
+            rows = ucx_rows
+    kw = {'ucx_rows': ucx_rows} if ucx_rows is not None else {}
+    found, dropped, summary = core.run(tool, rows, audit, scene=scene, **kw)
+    if tool == 'preflight' and ucx_rows is not None:
+        # Keep source checks on their original objects; attribute export-UCX findings to the actual copies.
+        rows = rows + [r for r in ucx_rows if r['key'] not in {x['key'] for x in rows}]
     report = core.report(tool, rows, found, dropped, summary)
     if select:
         rt.select([n for n, o in zip(nodes, report['objects']) if o['findings']])
