@@ -127,9 +127,71 @@ def test_glass_pane_in_an_opening_is_not_a_seam():
     assert r['totals']['open_seam_edges'] == 0
 
 
-@pytest.mark.parametrize('gap,seam', [(0.0, 8), (0.00004, 8), (0.001, 0), (0.05, 0)])
+def offset_post_master(dy):
+    """Review r2 P1-1 witness: the post un-welded and moved ``dy`` m off the wall; the wall keeps the hole."""
+    b = Builder('SM_Fixture_Main')
+    wall(b, skip_col=1)
+    for k in range(4):
+        b.face([(1, -0.5 - dy, k), (2, -0.5 - dy, k), (2, -0.5 - dy, k + 1), (1, -0.5 - dy, k + 1)],
+               (0, -1, 0), 'post')
+        b.face([(1, -dy, k), (1, -0.5 - dy, k), (1, -0.5 - dy, k + 1), (1, -dy, k + 1)], (-1, 0, 0), 'post')
+        b.face([(2, -dy, k), (2, -0.5 - dy, k), (2, -0.5 - dy, k + 1), (2, -dy, k + 1)], (1, 0, 0), 'post')
+    return [b.obj()]
+
+
+def tjunction_post_master():
+    """Review r2 P1-1 witness: post rows cut at z+0.5, so no post edge coincides with a wall hole edge."""
+    b = Builder('SM_Fixture_Main')
+    wall(b, skip_col=1)
+    zs = [0, 0.5, 1.5, 2.5, 3.5, 4]
+    for z0, z1 in zip(zs, zs[1:]):
+        b.face([(1, -0.5, z0), (2, -0.5, z0), (2, -0.5, z1), (1, -0.5, z1)], (0, -1, 0), 'post')
+        b.face([(1, 0, z0), (1, -0.5, z0), (1, -0.5, z1), (1, 0, z1)], (-1, 0, 0), 'post')
+        b.face([(2, 0, z0), (2, -0.5, z0), (2, -0.5, z1), (2, 0, z1)], (1, 0, 0), 'post')
+    return [b.obj()]
+
+
+@pytest.mark.parametrize('witness', ['offset_0.2mm', 'offset_1mm', 'tjunction_z0.5'])
+def test_unweld_witnesses_r2_score_no_better_than_welded_and_below_inset(witness):
+    """Review r2 P1-1: near (not coincident) and T-junction seams are seams too."""
+    master = {'offset_0.2mm': lambda: offset_post_master(0.0002), 'offset_1mm': lambda: offset_post_master(0.001),
+              'tjunction_z0.5': tjunction_post_master}[witness]()
+    r, welded, inset = mq.score(master), mq.score(welded_master()), mq.score(inset_master())
+    assert r['totals']['open_seam_edges'] >= 8
+    assert r['totals']['elements'] == 1                             # seam-joined = one element
+    assert r['totals']['welded_edges'] >= welded['totals']['welded_edges']
+    assert r['score'] <= welded['score'] < inset['score']
+    assert r['score'] < welded['score']
+
+
+def test_seam_gap_is_inclusive_and_beyond_is_inset():
+    gap = mq.DEFAULTS['seam_gap_m']
+    assert mq.score(offset_post_master(gap))['totals']['open_seam_edges'] == 8
+    assert mq.score(offset_post_master(gap * 1.5))['totals']['open_seam_edges'] == 0
+
+
+def test_intact_wall_and_glass_controls_have_no_near_seams():
+    """Inset post on an intact wall and a pane in a body opening 1 mm off stay seam-free."""
+    assert mq.score(inset_master())['totals']['open_seam_edges'] == 0
+    wall_obj, glass = Builder('SM_Fixture_Main'), Builder('SM_Fixture_MainGlass')
+    wall(wall_obj, skip_col=1)
+    for k in range(4):
+        glass.face([(1, -0.001, k), (2, -0.001, k), (2, -0.001, k + 1), (1, -0.001, k + 1)], (0, -1, 0), 'glass')
+    assert mq.score([wall_obj.obj(), glass.obj()])['totals']['open_seam_edges'] == 0
+
+
+def test_thin_strip_of_one_element_is_not_a_seam():
+    """Two parallel boundary edges 1 mm apart inside ONE element (a thin trim) are not a seam."""
+    b = Builder('SM_Strip')
+    b.face([(0, 0, 0), (1, 0, 0), (1, 0, 0.001), (0, 0, 0.001)], (0, -1, 0))
+    b.face([(1, 0, 0), (2, 0, 0), (2, 0, 0.001), (1, 0, 0.001)], (0, -1, 0))
+    assert mq.score([b.obj()])['totals']['open_seam_edges'] == 0
+
+
+@pytest.mark.parametrize('gap,seam', [(0.0, 8), (0.00004, 8), (0.001, 8), (0.05, 0)])
 def test_seam_tolerance(gap, seam):
-    """Coincident within seam_tol_m (1e-4 m grid) is a seam; a real gap is an inset contact."""
+    """Within seam_gap_m (2 mm) of a body hole edge is a seam (review r2: 1 mm with the hole kept is
+    gaming); a real 5 cm gap is an inset contact."""
     b = Builder('SM_Fixture_Main')
     wall(b, skip_col=1)
     for k in range(4):
@@ -298,7 +360,9 @@ def test_fail_closed_inputs(objects):
 
 @pytest.mark.parametrize('params', [{'nope': 1}, {'weld_deg': float('nan')}, {'side_limit_m': 0},
                                     {'tri_min_angle_deg': True}, {'body_share_ok': 1.0},
-                                    {'irregular_deg': float('inf')}, {'seam_tol_m': 0}, {'seam_tol_m': -1e-4}])
+                                    {'irregular_deg': float('inf')}, {'seam_tol_m': 0}, {'seam_tol_m': -1e-4},
+                                    {'seam_gap_m': 0}, {'seam_gap_m': float('nan')}, {'seam_angle_deg': 0},
+                                    {'seam_angle_deg': 90}, {'seam_min_overlap_m': -1}])
 def test_bad_params_and_zones_raise(params):
     with pytest.raises(ValueError):
         mq.score(inset_master(), params=params)
