@@ -165,7 +165,7 @@ def test_cross_object_inset_and_glass_controls_unchanged():
     for k in range(4):
         glass.face([(1, 0, k), (2, 0, k), (2, 0, k + 1), (1, 0, k + 1)], (0, -1, 0), 'glass')
     g = mq.score([wall_obj.obj(), glass.obj()])
-    assert g['totals']['elements'] == 2 and g['totals']['open_seam_edges'] == 0
+    assert g['totals']['elements'] == 3 and g['totals']['open_seam_edges'] == 0  # wall col 0 | cols 2-3 | glass
 
 
 @pytest.mark.parametrize('seed', range(30))
