@@ -68,7 +68,7 @@ local_contexts:
   - id: placement
     ru: "Расстановка МАФ и Флоры"
     owner: src/dt_ai/placement/engine.py
-  - id: npm
+  - id: npm-atlas
     ru: "НПМ Флоры на атласе"
     owner: adapters/max/agr_tools/flora_atlas_max.py
 stages:
@@ -191,7 +191,7 @@ stages:
   - id: npm
     event_ru: "НПМ-версия Флоры в тех же точках"
     actor: agent-dcc
-    context: npm
+    context: npm-atlas
     rules:
       - D293
       - D102

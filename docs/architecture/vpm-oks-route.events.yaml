@@ -49,8 +49,8 @@ actors:
   - id: checker
     ru: "Чекер СИНТЕЗ"
 local_contexts:
-  - id: npm
-    ref: vpm-oks-contexts.yaml#npm
+  - id: npm-atlas
+    ref: vpm-oks-contexts.yaml#npm-atlas
   - id: ucx
     ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
@@ -206,7 +206,7 @@ stages:
   - id: npm
     event_ru: "НПМ-версия в тех же координатах готова (атлас)"
     actor: agent-dcc
-    context: npm
+    context: npm-atlas
     commands:
       - "agr vpm-to-npm"
     rules:

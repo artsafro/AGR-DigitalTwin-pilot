@@ -397,6 +397,14 @@ contexts:
         ru: "сборка корпуса КПП1 целиком в скрипте задания (стадии 1–6)"
         status: own-duty
         why: "load_spec читает конфигурацию задания, не операция над частями; сборка и кровля живые (run_stage.sh)"
+  - id: npm
+    ru: "Экспорт НПМ с привязкой к мастеру"
+    area: docs/domain/areas/derivation.md
+    owner: tools/derive/export_npm.py
+    owner_ru: "dt derive npm пишет FBX, export_meta и запись derivation; атлас готовится отдельно"
+    functions:
+      - name: main
+        contract: "мастер и атлас -> экспортированный НПМ-FBX без UCX, метаданные и привязка к ревизии мастера"
   - id: uv-atlas
     ru: "UV и атлас"
     area: docs/domain/areas/uv-atlas.md
@@ -723,8 +731,11 @@ relations:
     to: uv-atlas
     ru: "мастер-модель (FBX/.blend)"
   - from: uv-atlas
-    to: package
+    to: npm
     ru: "UV, атлас, текстуры"
+  - from: npm
+    to: package
+    ru: "НПМ-FBX и привязка к мастеру"
   - from: package
     to: validation
     ru: "ZIP / FBX сдачи"

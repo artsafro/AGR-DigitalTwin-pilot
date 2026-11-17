@@ -128,11 +128,13 @@ def test_1581_blender_contracts(name):
 
 
 def test_1581_npm_context():
-    assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm"
-    npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm")
+    assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm-atlas"
+    npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm-atlas")
     assert npm["owner"] == "tools/derive/npm_atlas.py"
-    local = next(c for c in _routes()["vpm-route"]["local_contexts"] if c["id"] == "npm")
-    assert local["ref"] == "vpm-oks-contexts.yaml#npm"
+    shared = next(c for c in _contexts()["contexts"] if c["id"] == "npm")
+    assert shared["owner"] == "tools/derive/export_npm.py"  # #1636: no shared-id shadow
+    local = next(c for c in _routes()["vpm-route"]["local_contexts"] if c["id"] == "npm-atlas")
+    assert local["ref"] == "vpm-oks-contexts.yaml#npm-atlas"
     assert local["owner"] == npm["owner"]
     route_map.check_schema(_routes()["vpm-route"], _contexts())
 
@@ -196,11 +198,11 @@ def test_1581_ref_owner():
         target["owner"] = owner
         assert route_map.resolve_context(ref, maps)["owner"] == owner
         assert route_map.resolve_context(ref, maps)["id"] == "alias"
-    # npm is deliberately not a globally unique context id.
+    # npm-atlas is deliberately not a globally unique context id.
     for name in ("maf-contexts", "flora-contexts", "vpm-contexts"):
         filename = route_map.context_maps()[name].name
-        resolved = route_map.resolve_context({"ref": filename + "#npm"}, maps)
-        assert resolved["owner"] == next(c["owner"] for c in maps[name]["contexts"] if c["id"] == "npm")
+        resolved = route_map.resolve_context({"ref": filename + "#npm-atlas"}, maps)
+        assert resolved["owner"] == next(c["owner"] for c in maps[name]["contexts"] if c["id"] == "npm-atlas")
 
 
 @pytest.mark.parametrize("ref", ["", "export", "#export", "package-contexts.yaml#",
@@ -233,16 +235,16 @@ def test_1581_context_ref_loads_from_source(tmp_path):
     shutil.copytree(ARCH, tmp_path / "docs/architecture")
     path = tmp_path / route_map.context_maps()["ground-contexts"]
     text = path.read_text(encoding="utf-8")
-    text = text.replace('  - id: npm\n', '  - id: npm\n    ref: flora-contexts.yaml#npm\n')
+    text = text.replace('  - id: npm\n', '  - id: npm\n    ref: flora-contexts.yaml#npm-atlas\n')
     path.write_text(text, encoding="utf-8")
     maps = route_map.load_context_maps(tmp_path)
-    target = next(c for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    target = next(c for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm-atlas")
     actual = next(c for c in maps["ground-contexts"]["contexts"] if c["id"] == "npm")
     assert actual["owner"] == target["owner"]
     assert actual["functions"] == target["functions"]
     # Source target missing: generator refuses before publishing any output.
     source = tmp_path / route_map.context_maps()["flora-contexts"]
-    source.write_text(source.read_text(encoding="utf-8").replace('  - id: npm\n', '  - id: renamed\n'), encoding="utf-8")
+    source.write_text(source.read_text(encoding="utf-8").replace('  - id: npm-atlas\n', '  - id: renamed\n'), encoding="utf-8")
     before = {p.name: p.read_bytes() for p in path.parent.iterdir()}
     assert route_map.main(["--root", str(tmp_path)]) == 2
     assert before == {p.name: p.read_bytes() for p in path.parent.iterdir()}
@@ -290,8 +292,8 @@ def test_1581_duplicate_ref_target_is_not_first_entry():
 @pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
 def test_1581_renderer_uses_declared_ref_not_export_id(renderer):
     events, maps = _routes()["route"], _maps()
-    events["scheme"]["export_context"] = {"ref": "flora-contexts.yaml#npm"}
-    expected = next(c["owner"] for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    events["scheme"]["export_context"] = {"ref": "flora-contexts.yaml#npm-atlas"}
+    expected = next(c["owner"] for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm-atlas")
     result = getattr(route_map, renderer)(events, maps["contexts"], maps)
     if renderer == "short_route_board":
         assert expected in " ".join(e.get("text", "") for e in result.elements).replace("\n", "")
