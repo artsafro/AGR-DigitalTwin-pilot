@@ -41,6 +41,30 @@ def test_facade_cells_keep_pattern_seams_inside_material(tmp_path):
         (0, 0, 64, 64), (64, 0, 64, 64), (0, 64, 64, 64), (64, 64, 64, 64)]
 
 
+def test_facade_uv_coverage_vetoes_false_pattern_cut(tmp_path):
+    from tools.library.maf_atlas_cells import segment
+    image = Image.new('RGB', (128, 128), (40, 40, 40))
+    image.paste((160, 160, 160), (64, 0, 128, 128))
+    image.paste((90, 90, 90), (0, 32, 64, 64))  # stripe inside the left material
+    p = tmp_path / 'synthetic_uv_facade.png'
+    image.save(p)
+    bounds = [[4, 4, 60, 120]] * 100 + [[68, 4, 124, 120]] * 100
+    r = segment(str(p), profile='facade', work=128, min_cell=16, uv_bounds_px=bounds)
+    assert [(c['x'], c['y'], c['w'], c['h']) for c in r['cells']] == [
+        (0, 0, 64, 128), (64, 0, 64, 128)]
+
+
+def test_facade_nonrectangular_interior_is_manual_not_glued(tmp_path):
+    from tools.library.maf_atlas_cells import segment
+    image = Image.new('RGB', (128, 128), (55, 55, 55))
+    image.paste('white', (32, 32, 96, 96))
+    p = tmp_path / 'synthetic_interior.png'
+    image.save(p)
+    result = segment(str(p), profile='facade', work=128, min_cell=16,
+                     uv_bounds_px=[[4, 4, 124, 124]])
+    assert result['cells'][0]['kind'] == 'mixed'
+
+
 def test_udim_two_tiles_stops_with_question():
     from adapters.max.agr_tools import npm2vpm_core as core
     mesh = {'verts': [[0, 0, 0], [16, 0, 0], [0, 8, 0]],

@@ -21,7 +21,20 @@ def recover(atlas_file, face_uvs, *, tolerance_px=.5, segmentation=None):
         raise ValueError('tolerance_px must be finite and nonnegative')
     if not isinstance(face_uvs, list) or not face_uvs:
         raise ValueError('no UV faces')
-    atlas = segment(str(atlas_file), **(segmentation or {}))
+    options = dict(segmentation or {})
+    if options.get('profile') == 'facade':
+        from PIL import Image
+        with Image.open(atlas_file) as image:
+            width, height = image.size
+        # Bounds are conservative source-UV coverage witnesses; final polygons
+        # still undergo exact containment and union accounting below.
+        try:
+            options['uv_bounds_px'] = [[min(p[0]*width for p in uv),
+                min((1-p[1])*height for p in uv), max(p[0]*width for p in uv),
+                max((1-p[1])*height for p in uv)] for uv in face_uvs]
+        except (TypeError, IndexError, ValueError) as exc:
+            raise ValueError('invalid facade UV faces') from exc
+    atlas = segment(str(atlas_file), **options)
     w, h = atlas['size']
     table, shapes = [], []
     for i, c in enumerate(atlas['cells'], 1):

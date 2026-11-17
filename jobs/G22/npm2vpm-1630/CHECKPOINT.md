@@ -1,4 +1,8 @@
-# Issue 1630 — blocked diagnostic checkpoint, not review-ready
+# Issue 1630 — historical first diagnostic checkpoint
+
+**Superseded by [RESUME.md](RESUME.md).** Artem answered option a; do not ask the
+old overflow-policy question below again. Latest corrected sheets and a NEW
+zero-area source-geometry decision are recorded in RESUME.md.
 
 ## Status
 

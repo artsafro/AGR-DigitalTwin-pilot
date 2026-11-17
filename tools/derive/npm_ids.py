@@ -22,7 +22,7 @@ def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def process_document(doc, *, tolerance_px=.5):
+def process_document(doc, *, tolerance_px=.5, segmentation=None):
     """Compute every assignment and group without publishing files."""
     if not isinstance(doc, dict) or not isinstance(doc.get('objects'), list) or not doc['objects']:
         raise ValueError('empty/partial input: objects required')
@@ -43,7 +43,8 @@ def process_document(doc, *, tolerance_px=.5):
             if key not in obj['atlases']:
                 raise ValueError(f'{name}: unmapped material slot {slot}')
             indices = [i for i, p in enumerate(polygons) if p['slot'] == slot]
-            result = recover(obj['atlases'][key], [polygons[i]['uv'] for i in indices], tolerance_px=tolerance_px)
+            result = recover(obj['atlases'][key], [polygons[i]['uv'] for i in indices],
+                             tolerance_px=tolerance_px, segmentation=segmentation)
             for local, mid in enumerate(result.pop('mat_ids')):
                 ids[indices[local]] = mid+offset if mid else 0
             for row in result['table']:
@@ -82,6 +83,7 @@ def main(argv=None):
     parser.add_argument('output', type=Path, help='NEW directory, never an input/output alias')
     parser.add_argument('--tolerance-px', type=float, default=.5)
     parser.add_argument('--blender')
+    parser.add_argument('--profile', choices=['maf', 'facade'], default='maf')
     parser.add_argument('--intake-only', action='store_true', help='no .blend copy; JSON and ID table only')
     args = parser.parse_args(argv)
     try:
@@ -100,7 +102,10 @@ def main(argv=None):
             doc = json.loads(source.read_text(encoding='utf-8'))
         atlases = {p for o in doc['objects'] for p in o['atlases'].values()}
         hashes = {p: digest(p) for p in atlases}
-        report = process_document(doc, tolerance_px=args.tolerance_px)
+        segmentation = (dict(profile='facade', work=2048, min_cell=32,
+                             edge_t=3, mat_diff=10, line_share=.8)
+                        if args.profile == 'facade' else None)
+        report = process_document(doc, tolerance_px=args.tolerance_px, segmentation=segmentation)
         if digest(source) != before or any(digest(p) != h for p, h in hashes.items()):
             raise ValueError('input changed during run')
         report['inputs_sha256'] = {str(source): before, **hashes}
