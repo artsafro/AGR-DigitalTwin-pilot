@@ -42,7 +42,10 @@ OPTION_KEYS = {'gap_m', 'overlap_max_m', 'mode'}
 MODES = ('gap',)
 UCX_NAME = re.compile(r'^UCX_(?P<mesh>.+)_(?P<n>\d{2,3})$')
 CODES = ('ucx_overlap', 'ucx_touch', 'ucx_gap_small', 'ucx_overlap_deep', 'ucx_too_thin', 'ucx_not_convex',
-         'ucx_gap_left')
+         'ucx_gap_left', 'ucx_cut_failed')
+REACH_M = 1.0               # D339: pairs farther than 1 m are counted, not listed
+# D339 (#1607, observe): every pair gap is only REPORTED in these bands; upper edges inclusive (+ TOL_M)
+BANDS = ('overlap', 'lt_2mm', '2_10mm', '10_100mm', '100mm_1m', 'gt_1m')
 
 
 # ---- options ----------------------------------------------------------------------------------------------
@@ -317,8 +320,18 @@ def plan(pieces, opts):
                 a_hi = _span(a, n)[1]
                 b_lo = _span(b, n)[0]
                 mid = (a_hi + b_lo) / 2.0
-                na = _clip(a, n, mid - target / 2.0)
-                nb = _clip(b, (-n[0], -n[1], -n[2]), -(mid + target / 2.0))
+                try:
+                    na = _clip(a, n, mid - target / 2.0)
+                    nb = _clip(b, (-n[0], -n[1], -n[2]), -(mid + target / 2.0))
+                except ValueError as exc:
+                    # #1607: a cut whose hull reads back open / non-convex is a finding on the pair, never a crash
+                    pair['action'] = 'ambiguous'
+                    for h in (ra['handle'], rb['handle']):
+                        add(h, 'ucx_cut_failed', 'сдвиг плоскостей не дал замкнутый выпуклый кусок: {}'.format(exc))
+                    ambiguous.append({'item': '{} / {}'.format(ra['name'], rb['name']),
+                                      'reason': 'срез не замкнут: {}'.format(exc)})
+                    pairs.append(pair)
+                    continue
                 if _thickness(na, n) < MIN_THICK_M or _thickness(nb, n) < MIN_THICK_M:
                     pair['action'] = 'ambiguous'
                     for h in (ra['handle'], rb['handle']):
@@ -367,6 +380,65 @@ def plan(pieces, opts):
                'pieces_changed': len(changed), 'gap_m': target, 'left': left}
     return {'pieces': out, 'pairs': pairs, 'findings': found, 'skipped': skipped, 'ambiguous': ambiguous,
             'summary': summary}
+
+
+def gap_band(gap):
+    """D339 band of a SAT gap in metres; edges at 2 mm / 1 cm / 10 cm / 1 m within TOL_M, upper edges inclusive."""
+    if gap is None or not math.isfinite(gap):
+        raise ValueError('gap is not finite: {}'.format(gap))
+    if gap < -TOL_M:
+        return 'overlap'
+    if gap < GAP_MIN_M - TOL_M:
+        return 'lt_2mm'
+    for name, edge in (('2_10mm', GAP_MAX_M), ('10_100mm', 0.1), ('100mm_1m', REACH_M)):
+        if gap <= edge + TOL_M:
+            return name
+    return 'gt_1m'
+
+
+def pair_census(pieces, gap_m):
+    """Measure EVERY pair of UCX pieces, inside one family and across families [D339, #1607]; nothing is cut.
+
+    pieces: [{handle, name, verts (world METRES), tris}]. Returns {reach_m, bands: {same_family|cross_family:
+    {band: count}}, pairs: [{a, b, scope, gap_m, band}] (every pair within REACH_M), warnings (cross-family pairs
+    under gap_m), not_measured: [{item, reason}]}. Bands only report (observe week): the caller never refuses by
+    them. The SAT gap is a lower bound of the distance; an AABB pre-filter at REACH_M counts far pairs as gt_1m
+    without SAT (an AABB gap > 1 m means a distance > 1 m)."""
+    rows, not_measured = [], []
+    for row in sorted(pieces, key=lambda r: (str(r['name']), r['handle'])):
+        f = family(row['name'])
+        if f is None:
+            not_measured.append({'item': str(row['name']), 'reason': 'not UCX_<mesh>_NN'})
+            continue
+        try:
+            rows.append((row, f, piece(row['verts'], row['tris'])))
+        except ValueError as exc:
+            not_measured.append({'item': str(row['name']), 'reason': str(exc)})
+    bands = {s: dict.fromkeys(BANDS, 0) for s in ('same_family', 'cross_family')}
+    listed, warnings = [], []
+    for i in range(len(rows)):
+        ra, fa, a = rows[i]
+        for j in range(i + 1, len(rows)):
+            rb, fb, b = rows[j]
+            scope = 'same_family' if fa == fb else 'cross_family'
+            if _aabb_far(a, b, REACH_M + TOL_M):
+                bands[scope]['gt_1m'] += 1
+                continue
+            g, _ = separation(a, b)
+            if g is None or not math.isfinite(g):
+                not_measured.append({'item': '{} / {}'.format(ra['name'], rb['name']), 'reason': 'gap not finite'})
+                continue
+            band = gap_band(g)
+            bands[scope][band] += 1
+            if band == 'gt_1m':
+                continue
+            listed.append({'a': str(ra['name']), 'b': str(rb['name']), 'scope': scope, 'gap_m': round(g, 7),
+                           'band': band})
+            if scope == 'cross_family' and g < gap_m - TOL_M:
+                warnings.append({'code': 'ucx_cross_family_gap', 'a': str(ra['name']), 'b': str(rb['name']),
+                                 'family_a': fa, 'family_b': fb, 'gap_m': round(g, 7), 'band': band,
+                                 'kind': _kind(g)})
+    return {'reach_m': REACH_M, 'bands': bands, 'pairs': listed, 'warnings': warnings, 'not_measured': not_measured}
 
 
 def _float32(verts):
