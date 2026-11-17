@@ -92,6 +92,25 @@ The output `target` names the checked copy. Missing and changed bytes both produ
 actual SHA-256. No package is repacked by recheck. Diagnostic `--allow-incomplete` remains
 ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
 
+## Delivered-file identity (#1645)
+
+The existing NPM/VPM `package_report.json` writers add `delivered: {file, sha256, size}`
+and `summary_ru`, containing exactly one `delivered: <file> sha256=<hex> size=<bytes>`
+line per final artifact. `export.zip` saves the same receipt in `<archive>.zip.delivery.json`,
+its run report and Russian marker; `pack.deliver` carries it into `deliver.json`.
+The existing Max review publisher hashes the **published** `.max` (not its temporary scene),
+writes `<scene>.max.delivery.json` and appends the Russian summary to `README.txt`.
+No archive members, scene topology, user approval or D300 delivery choices change.
+
+`agr validate FILE --json` automatically checks adjacent delivery receipts (ZIP:
+`package_report.json` and/or `<archive>.zip.delivery.json`; Max: `<scene>.max.delivery.json`).
+V001 `delivered file` fails with `delivered_mismatch` for malformed or changed evidence;
+SHA-256 and byte length must both match. No new flag or signing/upload step is required.
+Max byte identity does not validate its geometry: other stages remain open, never a model pass.
+Historical ZIPs without a receipt remain readable without a new delivery attestation; missing
+Max receipts fail. Move the report together with its identically named artifact.
+Hash snapshots detect persistent changes, not edits restored between reads or future writes.
+
 ## Build provenance [D333, D332]
 
 `package_core.role_of` is the shared suffix-grammar owner used by `build_manifest.role_of`:

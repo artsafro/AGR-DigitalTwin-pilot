@@ -274,6 +274,7 @@ def _pack_deliver(ctx, mode, nodes, preview):
     stem = _stem(opts, reports)
     run = core.run_folder(folder)
     files, done, notes = [], [], []
+    delivery = {}
     by_step = dict(reports)
     if not block:
         results = [r for r in results if r['id'] not in ('light.export', 'export.checked', 'export.zip')]
@@ -319,6 +320,7 @@ def _pack_deliver(ctx, mode, nodes, preview):
                     zo['address'] = opts['address']
                 zp = ctx.agr.edits_080('export.zip', 'preview', options=zo)  # 0.8 row (#908)
                 za = ctx.agr.edits_080('export.zip', 'apply', preview=zp)
+                delivery = {k: za['plan'].get(k) for k in ('delivered', 'summary_ru')}
                 results.append(core.step_result('export.zip', za))
                 files.append(za['plan'].get('run_folder'))
             except Exception as exc:  # noqa: BLE001
@@ -344,11 +346,11 @@ def _pack_deliver(ctx, mode, nodes, preview):
         block = block + ['паспорт: {}'.format(exc)]
         stage = core.stage_entry('blocked', block, started, finished)
     body = core.summary(results, block, files, stage, opts, run=run, passport=passport_out, notes=notes,
-                        ucx_export=_ucx_field(ctx, export))
+                        ucx_export=_ucx_field(ctx, export), delivery=delivery)
     report_path = _write_json(os.path.join(run, core.REPORT), body)
     done = [p for p in files if p] + [report_path] + ([passport_out] if passport_out else [])
     objects = core.merge_objects(reports)
     return core.deliver_report(edit, 'apply', results, objects, block, opts, files=files, done=done,
                                extra={'folder': folder, 'run_folder': run, 'stem': stem, 'stage_entry': stage,
                                       'passport': passport_out, 'notes': notes,
-                                      'ucx_export': _ucx_field(ctx, export)})
+                                      'ucx_export': _ucx_field(ctx, export), **delivery})
