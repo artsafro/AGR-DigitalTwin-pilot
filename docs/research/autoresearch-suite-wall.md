@@ -88,3 +88,42 @@ contract measures the entire command including uv/startup/collection/teardown.
 
 No optimization has been implemented, retained or dropped yet. Baseline and final
 comparison table and empty parity diff will be added only after real execution.
+
+## Frozen observer and resume instructions
+
+Audit snapshots: `autoresearch-suite-wall-harness/*.py.txt` (raw bytes preserved by
+local `.gitattributes`). Executable copies live only in this worktree's ignored
+`tmp/wall_harness/`; copy each snapshot there, dropping `.txt`, to reproduce.
+This extends #1227's controller-only recording approach for the **existing xdist
+merge gate**; its serial CPU observer cannot itself record the four-worker run.
+No autonomous controller, automatic commit/revert, or merge loop is initialized.
+
+- RED before implementation: `uv run python tmp/wall_harness/probe_observer.py`,
+  exit 1, two `ModuleNotFoundError` errors. The regression snapshot and contract
+  were committed first as `48b4fb55`.
+- Harness check: `uv run python -m unittest discover -s tmp/wall_harness -p 'probe_*.py' -v`:
+  6 tests passed; includes real generated n=2 pytest, nested fresh-process pytest,
+  stale-output/alias refusal, malformed records, dead/live/partial slot files,
+  process-query failure, and untracked source mutation.
+- First implementation check exposed an invalid synthetic witness: two workers
+  with identical selection are required, not an error. Corrected the witness to
+  unequal selections; no observer rule or project assertion was relaxed.
+- The runner waits for no live suite holders or merge chain/batch, plus <=10%
+  whole-host CPU over a 20-second preflight sample. It records this sample and wait
+  separately from command wall time. During the command it samples live holders
+  every five seconds and checks source stability; sampled contamination fails closed.
+  This is an observer, not a machine-wide scheduler lock: the orchestrator must
+  reserve the drained window so another caller cannot start a merge concurrently.
+- Launch **one** `measure.py baseline-001` detached from the worktree's own venv,
+  via Win32_Process.Create. It exclusively creates `baseline-001.claim.json` and
+  `baseline-001.runner.log`, waits for idle, enters suite_slot, then writes
+  `baseline-001.json` (including `valid`, versions, SHA, wall, hashes and counts).
+  The command never modifies project files. Process IDs are recorded in the claim,
+  launch receipt, inside claim and card comment; do not edit this tracked log while
+  measurement is running (source-drift checks intentionally reject that).
+- Resume only when `C:/x/autoresearch-suite-wall/baseline-001.json` exists and the
+  claimed process has exited. Read `valid` before any metric claim. A failed or
+  contaminated run remains evidence, not an accepted baseline; use a new run name
+  after diagnosing it. A launch error remains in the runner log/claim; never reuse
+  or overwrite the name. Baseline-001 is a **pending** run, not a passing result.
+

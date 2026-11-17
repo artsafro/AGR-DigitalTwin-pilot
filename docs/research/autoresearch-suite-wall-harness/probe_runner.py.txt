@@ -1,0 +1,52 @@
+"""Synthetic runner-guard probes; execute function ASTs without launching a suite."""
+import ast
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+import unittest
+from unittest.mock import Mock
+
+HERE=Path(__file__).resolve().parent
+TREE=ast.parse((HERE/'measure.py').read_text(encoding='utf-8'))
+FUNCTIONS=ast.Module(body=[n for n in TREE.body if isinstance(n,ast.FunctionDef)],type_ignores=[])
+
+class RunnerProbe(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory(dir=HERE)
+        self.root=Path(self.temp.name)
+        self.sub=Mock()
+        self.scope=dict(Path=Path,json=json,os=os,hashlib=hashlib,subprocess=self.sub,ROOT=self.root,
+                        slot={'TMP':str(self.root),'pid_alive':lambda pid:pid==123})
+        exec(compile(FUNCTIONS,'measure-functions','exec'),self.scope)
+    def tearDown(self): self.temp.cleanup()
+    def test_holders_dead_live_and_malformed(self):
+        p=self.root/'agr-suite-slot-0.lock'
+        p.write_text(json.dumps({'pid':122,'card':'merge-old'}))
+        self.assertEqual(self.scope['holders'](),[])
+        p.write_text(json.dumps({'pid':123,'card':'merge-live'}))
+        self.assertEqual(self.scope['holders']()[0]['card'],'merge-live')
+        p.write_text('partial')
+        with self.assertRaises(RuntimeError):self.scope['holders']()
+    def test_process_query_fails_closed_and_detects_chain(self):
+        self.sub.run.return_value=Mock(returncode=1,stderr='query unavailable')
+        with self.assertRaises(RuntimeError):self.scope['merges']()
+        self.sub.run.return_value=Mock(returncode=0,stdout='')
+        self.assertEqual(self.scope['merges'](),[])
+        self.sub.run.return_value=Mock(returncode=0,stdout='{"ProcessId":456}')
+        self.assertTrue(self.scope['merges']())
+    def test_source_signature_detects_untracked_mutation(self):
+        self.sub.check_output.side_effect=lambda argv,**kw:b'new.py\0' if 'ls-files' in argv else b''
+        p=self.root/'new.py'; p.write_text('a')
+        before=self.scope['tracked'](); p.write_text('b')
+        self.assertNotEqual(before,self.scope['tracked']())
+    def test_existing_alias_output_is_not_overwritten(self):
+        p=self.root/'receipt.json'
+        p.write_text('source')
+        (self.root/'sub').mkdir()
+        with self.assertRaises(FileExistsError):self.scope['emit'](self.root/'sub'/ '..'/'receipt.json',{})
+        self.assertEqual(p.read_text(),'source')
+
+if __name__=='__main__':unittest.main()
