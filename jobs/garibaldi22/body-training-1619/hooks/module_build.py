@@ -2,7 +2,8 @@
 
 Pattern: n/a | new-case: module-first body grid by BM-01..BM-14 (contour + jamb rings + sill/head loops).
 
-blender -b --factory-startup --python module_build.py -- FLOOR.json OUT_DIR
+blender -b --factory-startup --python module_build.py -- FLOOR.json OUT_DIR [--tex DIR] [--max-side M]
+(--tex: DIR/<material>.png is bound to that material when present.)
 
 FLOOR.json (from floor_from_dump.py): rings (plan contours, CCW, metres), per ring `cuts` = sorted perimeter
 positions s of the vertical rings (jambs, zone joints), `windows` = [ring, s0, s1], `loops` = module-relative z of
@@ -23,13 +24,15 @@ import bpy
 
 args = sys.argv[sys.argv.index("--") + 1:]
 cfg_path, out = args[0], args[1]
+tex_dir = args[args.index("--tex") + 1] if "--tex" in args else None
+max_side = float(args[args.index("--max-side") + 1]) if "--max-side" in args else 0.0
 if os.path.exists(out):
     sys.exit("refused: OUT_DIR exists, outputs are versioned (new folder per run)")
 cfg = json.load(open(cfg_path, encoding="utf-8"))
-os.makedirs(out)
 step, loops, floors = float(cfg["step"]), [float(z) for z in cfg["loops"]], int(cfg["floors"])
-if not (loops[0] == 0.0 and all(0 < a < b < step for a, b in zip(loops[1:], loops[2:] + [step])) or len(loops) == 1):
-    sys.exit("loops must start at 0 and rise strictly inside the step")
+if not (loops and loops[0] == 0.0 and all(a < b for a, b in zip(loops, loops[1:] + [step])) and floors >= 1):
+    sys.exit("loops must start at 0 and rise strictly inside the step; floors >= 1")
+os.makedirs(out)
 TEX_M = float(cfg.get("wall_tile_m", 3.0))
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -38,8 +41,8 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 def material(name, rgb):
     m = bpy.data.materials.new(name)
     m.diffuse_color = (*rgb, 1.0)
-    img_path = cfg.get("textures", {}).get(name)
-    if img_path:
+    img_path = os.path.join(tex_dir, name + ".png") if tex_dir else None
+    if img_path and os.path.exists(img_path):
         m.use_nodes = True
         nt = m.node_tree
         tex = nt.nodes.new("ShaderNodeTexImage")
@@ -69,6 +72,17 @@ def ring_points(ring, cuts):
                 pts.append((cuts[ci], a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]), i))
             ci += 1
         s_acc += L
+    if max_side > 0:  # BM-11: no facade face wider than max_side; extra full-height rings split it evenly
+        dense = []
+        for k, p in enumerate(pts):
+            dense.append(p)
+            q = pts[k + 1] if k + 1 < len(pts) else (s_acc, pts[0][1], pts[0][2], p[3])
+            gap = q[0] - p[0]
+            parts = math.ceil(gap / max_side - 1e-9)
+            for j in range(1, parts):
+                t = j / parts
+                dense.append((p[0] + t * gap, p[1] + t * (q[1] - p[1]), p[2] + t * (q[2] - p[2]), p[3]))
+        pts = dense
     return pts, s_acc
 
 
@@ -95,7 +109,6 @@ for ri, ring in enumerate(cfg["rings"]):
             if is_win:
                 a, b = next((a, b) for a, b, wl, wh in wins if a - 1e-4 <= sm <= b + 1e-4)
                 us = ((s0 - a) / (b - a), (s1 - a) / (b - a))
-                vs = (z0 / levels[-2] if li else 0.0, z1 / levels[-2] if len(levels) > 2 else 1.0)
                 vs = ((z0 - levels[0]) / (levels[1] - levels[0]), (z1 - levels[0]) / (levels[1] - levels[0]))
             else:
                 us = (s0 / TEX_M, s1 / TEX_M)
@@ -119,10 +132,13 @@ def box(cx, cy, z0, w, d, h, rot):
             lp[uv].uv = (0.5, 0.5)
 
 
+wall_faces = set(bm.faces)
 for ins in cfg.get("insets", []):
     box(*ins["box"])
     report["insets"] += 1
-bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+# walls keep the CCW-ring winding (outward = tangent x up); only the closed inset shells are recalculated,
+# an open tube can be flipped inward by recalc.
+bmesh.ops.recalc_face_normals(bm, faces=[f for f in bm.faces if f not in wall_faces])
 me = bpy.data.meshes.new("SM_Body_Module")
 bm.to_mesh(me)
 bm.free()

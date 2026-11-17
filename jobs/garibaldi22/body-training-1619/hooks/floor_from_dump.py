@@ -69,6 +69,8 @@ def main(argv=None):
     ap.add_argument("--ref", type=int, default=None, help="index of the reference floor in the typical run")
     ap.add_argument("--snap", type=float, default=0.03, help="merge cuts closer than this (BM-09)")
     ap.add_argument("--edge-dist", type=float, default=0.8, help="max window distance to the contour")
+    ap.add_argument("--close", type=float, default=0.5, help="closing radius bridging wall-object joints, m")
+    ap.add_argument("--jog", type=float, default=0.06, help="contour simplify tolerance: jogs below it are relief, texture (BM-08/BM-09)")
     a = ap.parse_args(argv)
     if os.path.realpath(a.out) == os.path.realpath(a.crop) or not a.out.endswith(".json"):
         sys.exit("refused: output must be a new .json, not the input")
@@ -85,7 +87,7 @@ def main(argv=None):
     wz = {o: (float(tri[by_obj[o]][:, :, 2].min()), float(tri[by_obj[o]][:, :, 2].max())) for o in win_objs}
     sills = levels([z[0] for z in wz.values()])
     # typical run: consecutive sill levels with a constant step and the modal window count
-    modal = collections.Counter(n for _, n in sills).most_common(1)[0][0]
+    modal = max(n for _, n in sills)  # the busiest sill level; typical floors hold >= 80 % of it
     cand = [s for s in sills if s[1] >= 0.8 * modal]
     best, run = [], []
     for s in cand:
@@ -106,10 +108,13 @@ def main(argv=None):
     zc = ref - 0.45
     wall_tris = np.array([t for o in by_obj if cls[o] == "walls" for t in tri[by_obj[o]]])
     segs = section(wall_tris, zc)
-    blob = unary_union([LineString(s).buffer(0.05, cap_style="flat") for s in segs])
+    # morphological closing (+r, -r, mitre) bridges the joints between separate wall objects without moving
+    # straight faces or convex corners; the outer ring of the largest piece is the facade line.
+    r = a.close
+    blob = unary_union([LineString(s).buffer(0.05, cap_style="flat") for s in segs]).buffer(r, join_style="mitre")
     polys = list(getattr(blob, "geoms", [blob]))
     outer = max(polys, key=lambda p: Polygon(p.exterior).area)
-    ring_poly = Polygon(outer.exterior).buffer(-0.05, join_style="mitre").simplify(0.02)
+    ring_poly = Polygon(outer.exterior).buffer(-r - 0.05, join_style="mitre").simplify(a.jog)
     if ring_poly.geom_type != "Polygon":
         ring_poly = max(ring_poly.geoms, key=lambda p: p.area)
     ring_poly = Polygon([c for c in ring_poly.exterior.coords])
