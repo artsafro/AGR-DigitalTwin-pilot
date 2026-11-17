@@ -122,6 +122,11 @@ retained or dropped yet. Baseline/final table and parity diff require valid exec
 - The exact launch request, executable version/path preflight and WMI result are
   preserved in this worktree's ignored `tmp/baseline-002-launch*` files. B1 uses
   exclusive `baseline-002.*` evidence names and the same drained-slot guard.
+- First B1 launcher PID `1127800` exited before creating a runner claim or starting
+  pytest: PowerShell `Get-Command` returned multiple PATH matches, and the preflight
+  correctly refused the array. Repaired discovery with `Select-Object -First 1`;
+  retain the first WMI result, relaunch with console output redirected for diagnosis.
+  This is a launcher repair, not a second measured run or discarded timing.
 
 ## Frozen observer and resume instructions
 

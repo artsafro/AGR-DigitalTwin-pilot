@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $root = 'C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_82b1bc95'
 $bashDir = 'C:/Users/artsafro/.hermes/tools/git-2.53.0+3-win32-x64/usr/bin'
 $env:PATH = $bashDir + ';' + $env:PATH
-$bash = (Get-Command bash.exe -CommandType Application).Source
+$bash = (Get-Command bash.exe -CommandType Application | Select-Object -First 1).Source
 if ($bash.Replace('\','/') -ne ($bashDir + '/bash.exe')) { throw "Unexpected bash: $bash" }
 $version = & $bash --version
 if ($LASTEXITCODE -ne 0 -or $version[0] -notmatch 'GNU bash') { throw 'Git Bash preflight failed' }
