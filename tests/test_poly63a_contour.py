@@ -1,6 +1,9 @@
 """#1619 polygon stage 1, site-63 tower A (jobs/POLY63-A): rounded corners (D337), relief steps (D341),
 finish zones from Revit wall types, and the floor_from_dump fixes found on tower A (wedge at a rounded corner,
-window across the ring start). Synthetic geometry only."""
+window across the ring start). Synthetic geometry only.
+
+Pattern: n/a | new-case: tests/test_poly63a_contour.py - site-63 tower A contour, fillet and zone hooks.
+"""
 
 import importlib.util
 import json
