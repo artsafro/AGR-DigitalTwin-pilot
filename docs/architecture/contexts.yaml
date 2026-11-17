@@ -527,7 +527,7 @@ contexts:
         rule: delivery-zip
         issue: "#1377"
         hash: "bc783edf3f"
-        ru: "исторический драйвер сданной поставки Ватутино v009 (docs/deliveries/vatutino-site-2026-11-09.md)"
+        ru: "исторический драйвер среза Ватутино v009 (2026-11-09, verdict not passed; docs/deliveries/vatutino-site-2026-11-09.md); запуск не меняем"
         status: historical
       - at: "jobs/elv-tc-vpm/scripts/package_vpm_v001.py::<module>"
         rule: delivery-zip
@@ -692,13 +692,13 @@ contexts:
         rule: blender-launch
         issue: "#1378"
         hash: "8ff22a5634"
-        ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+        ru: "исторический драйвер среза Ватутино v009 (2026-11-09, verdict not passed; docs/deliveries/vatutino-site-2026-11-09.md); запуск не меняем"
         status: historical
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main.dcc"
         rule: blender-launch
         issue: "#1378"
         hash: "fdd33d010a"
-        ru: "сборка #298 Ватутино: воспроизводит принятую сдачу, запуск не меняем (сдача не меняется)"
+        ru: "исторический драйвер среза Ватутино v009 (2026-11-09, verdict not passed; docs/deliveries/vatutino-site-2026-11-09.md); запуск не меняем"
         status: historical
       - at: "jobs/VATUTINO-SITE/scene_checks.py::main"
         rule: blender-launch
