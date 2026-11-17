@@ -101,6 +101,7 @@ RULES = {
     "window-generator": "adapters/max/agr_tools/windowgen_core.py",
 }
 WRITE_MODES = {"w", "x", "a"}
+SCAN_PATTERN = "*.py"
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
 GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
@@ -398,7 +399,7 @@ def scan(root, scope="jobs"):
     if not base.is_dir():
         raise FileNotFoundError(f"scan scope missing: {base}")
     findings = set()
-    for path in sorted(base.rglob("*.py")):
+    for path in sorted(base.rglob(SCAN_PATTERN)):
         rel = path.relative_to(root).as_posix()
         source = path.read_bytes()
         try:

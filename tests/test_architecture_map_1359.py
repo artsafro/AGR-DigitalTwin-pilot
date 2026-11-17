@@ -201,10 +201,12 @@ def test_1664_closed_hotspot_registry():
                 route_map.route_board(events, contexts)
         else:
             assert problems == []
+            maps = {**route_map.load_context_maps(ROOT), "contexts": contexts}
             for view in (route_map.route_board(events, contexts).excalidraw(),
-                         route_map.owners_markdown(events, contexts, {"contexts": contexts})):
+                         route_map.owners_markdown(events, contexts, maps)):
+                view = view.replace(r"\n", " ")  # canvas wraps long captions
                 assert "учтённых обходов нет" in view and "сверено" not in view
-                assert "проверка предусмотрена тестом test_duplicate_status_1424" in view.replace(r"\n", " ")
+                assert "проверка предусмотрена тестом test_duplicate_status_1424" in view
                 assert all(f"{top}/" in view for top in guard.GUARDED["udim-tile"])
                 assert "*.py" in view
 
@@ -213,7 +215,7 @@ def test_1664_decided_caption():
     events, contexts = _hotspot(status="decided", decision="D292(5)")
     assert route_map.verify_references(ROOT, events, contexts) == []
     for view in (route_map.route_board(events, contexts).excalidraw(),
-                 route_map.owners_markdown(events, contexts, {"contexts": contexts})):
+                 route_map.owners_markdown(events, contexts, route_map.load_context_maps(ROOT))):
         assert "D292(5)" in view
         assert "решено человеком, машиной не проверено" in view.replace(r"\n", " ")
 
@@ -245,8 +247,8 @@ def test_1664_route_facts():
     assert "jobs/KPP1/STATE.md" in stages["validate"]["evidence"] and bench not in stages["validate"]["evidence"]
 
 
-@pytest.mark.parametrize("case", ["live-bypass", "hardlink alias", "foreign partial"])
-def test_1664_cli_refuses_without_writes(tmp_path, case):
+@pytest.mark.parametrize("case", ["live-bypass", "hardlink alias", "foreign partial", "source changed"])
+def test_1664_cli_refuses_without_writes(tmp_path, case, monkeypatch, capsys):
     for rel in [*route_map.route_events().values(), *route_map.context_maps().values()]:
         dest = tmp_path / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
@@ -254,18 +256,30 @@ def test_1664_cli_refuses_without_writes(tmp_path, case):
     src = tmp_path / route_map.EVENTS
     out = tmp_path / route_map.OUTPUTS["route"].with_suffix(".svg")
     if case == "live-bypass":
-        events = mini_yaml.load(src)
-        events["hotspots"] = [dict(id="false-closure", stage="uv", ru="Архив",
-                                   evidence=["docs/decisions.md"], status="closed", guard_rule="delivery-zip")]
-        src.write_text(yaml.safe_dump(events, allow_unicode=True), encoding="utf-8")
+        text = src.read_text(encoding="utf-8").split("\nhotspots:\n")[0]
+        src.write_text(text + '\nhotspots:\n  - id: false-closure\n    stage: uv\n    ru: "Архив"\n'
+                       '    status: closed\n    guard_rule: delivery-zip\n    evidence:\n'
+                       '      - docs/decisions.md\n', encoding="utf-8")
     elif case == "hardlink alias":
         os.link(src, out)
-    else:
+    elif case == "foreign partial":
         out.with_name(out.name + ".partial").write_bytes(b"foreign")
     before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
-    proc = subprocess.run([sys.executable, str(ROOT / "tools/architecture/route_map.py"), "--root", str(tmp_path)],
-                          capture_output=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"})
-    assert proc.returncode != 0 and case in proc.stderr
+    if case == "source changed":
+        render_all = route_map.render_all
+        before[src] += b"\n# concurrent source edit\n"
+
+        def render_then_edit(root):
+            rendered = render_all(root)
+            src.write_bytes(before[src])
+            return rendered
+
+        monkeypatch.setattr(route_map, "render_all", render_then_edit)
+        assert route_map.main(["--root", str(tmp_path)]) != 0 and case in capsys.readouterr().err
+    else:
+        proc = subprocess.run([sys.executable, str(ROOT / "tools/architecture/route_map.py"), "--root", str(tmp_path)],
+                              capture_output=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"})
+        assert proc.returncode != 0 and case in proc.stderr
     assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
