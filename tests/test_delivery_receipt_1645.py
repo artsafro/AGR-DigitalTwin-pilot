@@ -111,7 +111,9 @@ def test_stale_validator_receipt_cannot_publish_ready(tmp_path):
     from tools.qa import validate_package as vp
     from twinqa.profiles import load_profiles
     for part in ('01', 'Ground'):
-        (tmp_path / f'0000_Synthetic_{part}.fbx').write_bytes(b'synthetic')
+        fbx = tmp_path / f'0000_Synthetic_{part}.fbx'
+        fbx.write_bytes(b'synthetic')
+        record_export(fbx, source='synthetic fixture')
     def stale(target):
         full = vp.validate(Path(target), 'npm', load_profiles()).to_dict()
         full['target_sha256'] = '0' * 64
@@ -247,7 +249,9 @@ def test_zip_apply_binds_report_and_marker_to_checked_bytes(tmp_path, mutate):
     from tools.qa import validate_package as vp
     from twinqa.profiles import load_profiles
     for part in ('01', 'Ground'):
-        (tmp_path / f'0000_Synthetic_{part}.fbx').write_bytes(b'synthetic')
+        fbx = tmp_path / f'0000_Synthetic_{part}.fbx'
+        fbx.write_bytes(b'synthetic')
+        record_export(fbx, source='synthetic fixture')
 
     def validate(target):
         full = vp.validate(Path(target), 'npm', load_profiles()).to_dict()

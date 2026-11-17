@@ -68,6 +68,13 @@ def acceptance_folder(tmp_path):
         files['T_X_Ground_{}_1.1001.png'.format(m)] = _png(c)
     for n, data in files.items():
         (d / n).write_bytes(data)
+    # Export records are a prerequisite of NPM packaging (#1650). Keep the fixture
+    # record outside the delivery inventory so existing decoy assertions stay exact.
+    (tmp_path / 'export_meta.json').write_text(json.dumps({
+        'address': 'X', 'h_otn_model_max_z_m': 3.5, 'thumbnail': 'unknown',
+        'exported_files': ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx'],
+        'exported_sha256': {n: _sha(d / n) for n in ('0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx')}
+    }), encoding='utf-8')
     return d
 
 
@@ -565,6 +572,21 @@ def test_run_folder_goes_to_options_out(tmp_path):
     assert Path(r['plan']['run_folder']).parent == out and (Path(r['plan']['run_folder']) / pc.MARK_FAIL).is_file()
     with pytest.raises(ValueError, match='no such output folder'):
         pc.zip_apply(ec, pc.zip_preview(ec, d, options={'out': str(tmp_path / 'nope')}), _validate)
+
+
+@pytest.mark.parametrize('missing_records', [False, True])
+def test_npm_binding_failure_does_not_change_vpm_outputs(tmp_path, missing_records):
+    d = acceptance_folder(tmp_path)
+    if missing_records:
+        (tmp_path / 'export_meta.json').unlink()
+    else:
+        (d / '0123_X_03.fbx').write_bytes(b'synthetic foreign FBX')
+    rep = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    run = Path(rep['plan']['run_folder'])
+    assert sorted(p.name for p in run.glob('*.zip')) == ['SM_X.zip', 'SM_X_Ground.zip']
+    error = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert ('0123_X_01.fbx' if missing_records else '0123_X_03.fbx') in error
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
 
 
 def test_npm_archive_holds_only_fbx_and_one_address(tmp_path):

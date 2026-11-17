@@ -5,6 +5,8 @@ new producers add profile, exported_files and per-field provenance. Unknown is e
 not an inferred zero, thumbnail or legal address. Packaging does not certify delivery QA.
 """
 import argparse
+import hashlib
+import os
 import json
 import math
 import re
@@ -16,6 +18,100 @@ OPTIONAL = {'profile', 'exported_files', 'provenance', 'fbx', 'pivot_revit_inter
             'exported_sha256'}
 FBX_NAME = re.compile(r'[A-Za-z0-9_]+\.fbx')
 SHA256 = re.compile(r'[0-9a-f]{64}')
+
+
+def _sha256(path):
+    value = hashlib.sha256()
+    with open(path, 'rb') as fh:
+        for block in iter(lambda: fh.read(1 << 20), b''):
+            value.update(block)
+    return value.hexdigest()
+
+
+def _sidecars(pkg):
+    return sorted(p for p in Path(pkg).glob('*.fbx.export_meta.json')
+                  if not p.name.endswith('_Light.fbx.export_meta.json'))
+
+
+def address_meta_path(pkg, explicit=None):
+    """Select the address record, never the first of ambiguous OKS sidecars (#1637)."""
+    pkg = Path(pkg)
+    if explicit is not None:
+        return Path(explicit)
+    if os.path.lexists(pkg / 'export_meta.json'):
+        return pkg / 'export_meta.json'
+    side = _sidecars(pkg)
+    oks = [p for p in side if not p.name.endswith('_Ground.fbx.export_meta.json')]
+    if len(side) == 1:
+        return side[0]
+    if len(oks) == 1:
+        return oks[0]
+    if side:
+        raise ValueError(f'ambiguous export metadata {side}; choose --meta explicitly')
+    return pkg.parent / 'export_meta.json'
+
+
+def export_records(pkg, address_path):
+    """Validated address record plus every FBX sidecar, deduplicated by resolved path."""
+    out, seen = [], set()
+    for path in [Path(address_path)] + _sidecars(pkg):
+        key = os.path.normcase(os.path.realpath(path))
+        if key in seen:
+            continue
+        seen.add(key)
+        label = path.name if path.parent.resolve() == Path(pkg).resolve() else str(path)
+        out.append((label, load_meta(path)))
+    return out
+
+
+def export_binding(pkg, members, records):
+    """Compare planned FBX members with the union of export records both ways (#1637)."""
+    claims = {}
+    for label, meta in records:
+        hashes = {}
+        for name, rec in meta.get('fbx_records', {}).items():
+            hashes.setdefault(name, set()).add(rec['fbx_sha256'])
+        for name, sha in meta.get('exported_sha256', {}).items():
+            hashes.setdefault(name, set()).add(sha)
+        for name in meta.get('exported_files', []):
+            hashes.setdefault(name, set())
+        for name, values in hashes.items():
+            for sha in values or {None}:
+                claims.setdefault(name, set()).add((label, sha))
+    labels = [label for label, _ in records]
+    if not claims:
+        return ({'records': labels, 'members': []},
+                [f'export_meta records no exported FBX (no fbx_records / exported_files in {labels}): the ZIP cannot '
+                 'be bound to the export; re-export with a current exporter or pass --meta'])
+    fbx = {m['name']: _sha256(Path(pkg) / m['name']) for m in members if m['name'].lower().endswith('.fbx')}
+    rows, problems = [], []
+    for name in [m['name'] for m in members if m['name'] in fbx] + sorted(set(claims) - set(fbx)):
+        have = fbx.get(name)
+        recorded_in = sorted({label for label, _ in claims.get(name, ())})
+        wants = {sha for _, sha in claims.get(name, ())}
+        want = next(iter(wants)) if len(wants) == 1 else None
+        if name not in claims:
+            status = 'not_recorded'
+            problems.append(f'{name}: FBX in the package is not recorded in any export record {labels} '
+                            '(foreign file added after export?)')
+        elif len(wants) > 1:
+            status = 'recorded_conflict'
+            problems.append(f'{name}: recorded twice with different SHA-256 {sorted(claims[name], key=str)}')
+        elif name not in fbx:
+            status = 'missing'
+            problems.append(f'{name}: recorded in {recorded_in} but missing from the package')
+        elif want is None:
+            status = 'hash_not_recorded'
+            problems.append(f'{name}: recorded in {recorded_in} with no recorded SHA-256; re-export so '
+                            'record_export stores exported_sha256')
+        elif want != have:
+            status = 'hash_mismatch'
+            problems.append(f'{name}: SHA-256 {have} differs from {recorded_in} {want} (file changed after export)')
+        else:
+            status = 'match'
+        rows.append({'name': name, 'recorded_sha256': want, 'zip_sha256': have, 'status': status,
+                     'recorded_in': recorded_in})
+    return {'records': labels, 'members': rows}, problems
 
 
 def unique_object(pairs):
