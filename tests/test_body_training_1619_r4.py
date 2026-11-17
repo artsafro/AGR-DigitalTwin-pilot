@@ -1,5 +1,8 @@
 """Round 4 of the #1619 body training polygon (G22 body 2): floor_from_dump --fill applies the envelope gate's
-repair list (texture pockets shallower than 0.4 m are closed, D341)."""
+repair list (texture pockets shallower than 0.4 m are closed, D341).
+
+Pattern: n/a | new-case: tests of #1619 --fill pockets.
+"""
 
 import importlib.util
 import json
