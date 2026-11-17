@@ -13,6 +13,10 @@
       "additionalProperties": {"type": "object", "additionalProperties": false, "required": ["bounds_m", "fbx_sha256"],
         "properties": {"bounds_m": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/xyz"}},
                        "fbx_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}},
+    "exported_sha256": {"description": "#1637: exported_files name -> SHA-256 of the FBX bytes when record_export ran; package-npm binds ZIP members to it.",
+      "type": "object", "minProperties": 1,
+      "propertyNames": {"pattern": "^[A-Za-z0-9_]+\\.fbx$"},
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
     "fbx": {"type": "string", "pattern": "\\S"},
     "master_sha256": {"description": "#1505: SHA-256 of the master file the FBX was derived from, at export time.",
       "type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -40,7 +44,8 @@
       "h_otn_model_max_z_m": {"type": "string", "pattern": "\\S"},
       "thumbnail": {"type": "string", "pattern": "\\S"},
       "profile": {"type": "string", "pattern": "\\S"},
-      "exported_files": {"type": "string", "pattern": "\\S"}
+      "exported_files": {"type": "string", "pattern": "\\S"},
+      "exported_sha256": {"type": "string", "pattern": "\\S"}
     }, "required": ["address", "h_otn_model_max_z_m", "thumbnail"]}
   }
 }

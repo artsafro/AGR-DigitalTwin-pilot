@@ -5,6 +5,8 @@ new producers add profile, exported_files and per-field provenance. Unknown is e
 not an inferred zero, thumbnail or legal address. Packaging does not certify delivery QA.
 """
 import argparse
+import hashlib
+import os
 import json
 import math
 import re
@@ -12,9 +14,126 @@ from pathlib import Path
 
 REQUIRED = {'address', 'h_otn_model_max_z_m', 'thumbnail'}
 OPTIONAL = {'profile', 'exported_files', 'provenance', 'fbx', 'pivot_revit_internal_m',
-            'bbox_after_pivot', 'main_tris', 'glass_tris', 'ucx', 'ucx_tris', 'fbx_records', 'master_sha256'}
+            'bbox_after_pivot', 'main_tris', 'glass_tris', 'ucx', 'ucx_tris', 'fbx_records', 'master_sha256',
+            'exported_sha256'}
 FBX_NAME = re.compile(r'[A-Za-z0-9_]+\.fbx')
 SHA256 = re.compile(r'[0-9a-f]{64}')
+
+
+def _sha256(path):
+    value = hashlib.sha256()
+    with open(path, 'rb') as fh:
+        for block in iter(lambda: fh.read(1 << 20), b''):
+            value.update(block)
+    return value.hexdigest()
+
+
+def _sidecars(pkg, excluded_files=(), profile=None):
+    excluded = {n.casefold() for n in excluded_files}
+    return sorted(p for p in Path(pkg).glob('*.fbx.export_meta.json')
+                  if not p.name.endswith('_Light.fbx.export_meta.json')
+                  and p.name[:-len('.export_meta.json')].casefold() not in excluded
+                  and (profile is None or load_meta(p).get('profile') in (None, 'unknown', profile)))
+
+
+def address_meta_path(pkg, explicit=None):
+    """Select the address record, never the first of ambiguous OKS sidecars (#1637)."""
+    pkg = Path(pkg)
+    if explicit is not None:
+        return Path(explicit)
+    if os.path.lexists(pkg / 'export_meta.json'):
+        return pkg / 'export_meta.json'
+    side = _sidecars(pkg)
+    oks = [p for p in side if not p.name.endswith('_Ground.fbx.export_meta.json')]
+    if len(side) == 1:
+        return side[0]
+    if len(oks) == 1:
+        return oks[0]
+    if side:
+        raise ValueError(f'ambiguous export metadata {side}; choose --meta explicitly')
+    return pkg.parent / 'export_meta.json'
+
+
+def export_records(pkg, address_path=None, *, excluded_files=(), profile=None):
+    """Validated records, deduplicated by path; Max needs no address-sidecar choice.
+
+    Without address_path, include an optional canonical record plus all scoped sidecars.
+    CLI callers retain their explicit address record selection and ambiguity policy.
+    """
+    out, seen = [], set()
+    if address_path is None:
+        canonical = [Path(pkg) / 'export_meta.json', Path(pkg).parent / 'export_meta.json']
+        paths = next(([p] for p in canonical if os.path.lexists(p)), [])
+    else:
+        paths = [Path(address_path)]
+    for path in paths + _sidecars(pkg, excluded_files, profile):
+        key = os.path.normcase(os.path.realpath(path))
+        if key in seen:
+            continue
+        seen.add(key)
+        label = path.name if path.parent.resolve() == Path(pkg).resolve() else str(path)
+        meta = load_meta(path)
+        if profile is None or meta.get('profile') in (None, 'unknown', profile):
+            out.append((label, meta))
+    return out
+
+
+def export_binding(pkg, members, records, *, excluded_files=(), include_file=None):
+    """Compare planned FBX with export records within the caller's archive scope.
+
+    include_file scopes claims, not existing members: deleted exports in that scope
+    must still be reported missing. CLI callers retain the complete record scope.
+    """
+    claims = {}
+    excluded = {n.casefold() for n in excluded_files}
+    for label, meta in records:
+        hashes = {}
+        for name, rec in meta.get('fbx_records', {}).items():
+            hashes.setdefault(name, set()).add(rec['fbx_sha256'])
+        for name, sha in meta.get('exported_sha256', {}).items():
+            hashes.setdefault(name, set()).add(sha)
+        for name in meta.get('exported_files', []):
+            hashes.setdefault(name, set())
+        for name, values in hashes.items():
+            if name.casefold() in excluded or (include_file is not None and not include_file(name)):
+                continue
+            for sha in values or {None}:
+                claims.setdefault(name, set()).add((label, sha))
+    labels = [label for label, _ in records]
+    if not claims:
+        names = ', '.join(m['name'] for m in members if m['name'].lower().endswith('.fbx'))
+        return ({'records': labels, 'members': []},
+                [f'{names}: export_meta records no exported FBX (no fbx_records / exported_files in {labels}): the ZIP cannot '
+                 'be bound to the export; re-export with a current exporter or pass --meta'])
+    fbx = {m['name']: _sha256(Path(pkg) / m['name']) for m in members if m['name'].lower().endswith('.fbx')}
+    rows, problems = [], []
+    for name in [m['name'] for m in members if m['name'] in fbx] + sorted(set(claims) - set(fbx)):
+        have = fbx.get(name)
+        recorded_in = sorted({label for label, _ in claims.get(name, ())})
+        wants = {sha for _, sha in claims.get(name, ())}
+        want = next(iter(wants)) if len(wants) == 1 else None
+        if name not in claims:
+            status = 'not_recorded'
+            problems.append(f'{name}: FBX in the package is not recorded in any export record {labels} '
+                            '(foreign file added after export?)')
+        elif len(wants) > 1:
+            status = 'recorded_conflict'
+            problems.append(f'{name}: recorded twice with different SHA-256 {sorted(claims[name], key=str)}')
+        elif name not in fbx:
+            status = 'missing'
+            problems.append(f'{name}: recorded in {recorded_in} but missing from the package')
+        elif want is None:
+            status = 'hash_not_recorded'
+            problems.append(f'{name}: recorded in {recorded_in} with no recorded SHA-256; re-export so '
+                            'record_export stores exported_sha256')
+        elif want != have:
+            status = 'hash_mismatch'
+            problems.append(f'{name}: SHA-256 {have} differs from {recorded_in} {want} (file changed after export)')
+        else:
+            status = 'match'
+        rows.append({'name': name, 'recorded_sha256': want, 'zip_sha256': have, 'status': status,
+                     'recorded_in': recorded_in})
+    return {'records': labels, 'members': rows}, problems
 
 
 def unique_object(pairs):
@@ -84,6 +203,12 @@ def validate_meta(meta):
                 raise ValueError(f'export_meta unsupported exported_files member {name!r}')
         if len(set(n.casefold() for n in files)) != len(files):
             raise ValueError('export_meta duplicated exported_files')
+    if 'exported_sha256' in meta:
+        hashes = meta['exported_sha256']
+        if 'exported_files' not in meta or not isinstance(hashes, dict) or set(hashes) != set(meta['exported_files']):
+            raise ValueError('export_meta exported_sha256 must map exactly the exported_files names (#1637)')
+        if any(not isinstance(v, str) or SHA256.fullmatch(v) is None for v in hashes.values()):
+            raise ValueError('export_meta exported_sha256 values must be 64 lowercase hex digits (#1637)')
     if 'fbx' in meta and (not isinstance(meta['fbx'], str) or not meta['fbx'].strip()):
         raise ValueError('export_meta fbx must be a nonempty path')
     if 'master_sha256' in meta and (not isinstance(meta['master_sha256'], str)
@@ -226,13 +351,15 @@ def record_export(fbx, *, source, top: float | str = 'unknown', thumbnail='unkno
     record = {'address': address if address is not None else match.group(1) if match else 'unknown',
               'h_otn_model_max_z_m': top, 'thumbnail': str(thumbnail),
               'profile': profile if profile is not None else 'vpm' if match_vpm else 'npm' if match_npm else 'unknown',
-              'exported_files': [fbx.name]}
+              'exported_files': [fbx.name],
+              'exported_sha256': {fbx.name: hashlib.sha256(fbx.read_bytes()).hexdigest()}}
     record['provenance'] = {
         'address': f'{fbx.name}: naming token only, not a certified legal address; question: confirm address token' if match else 'unknown; question: provide sourced address token',
         'h_otn_model_max_z_m': f'{source}: export-frame render-geometry top' if top != 'unknown' else 'unknown; question: supply measured export-frame render top',
         'thumbnail': str(thumbnail) if str(thumbnail) != 'unknown' else 'unknown; question: supply a sourced 256x256 JPEG',
         'profile': f'{fbx.name}: filename grammar (not delivery QA)',
-        'exported_files': f'{source}: completed exporter output'}
+        'exported_files': f'{source}: completed exporter output',
+        'exported_sha256': f'{fbx.name}: SHA-256 of the FBX bytes when the export was recorded (#1637)'}
     if address is not None:
         record['provenance']['address'] = f'{source}: explicit exporter address argument (naming token, not legal-address approval)'
     if profile is not None:

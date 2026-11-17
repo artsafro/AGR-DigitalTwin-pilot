@@ -56,9 +56,6 @@ local_contexts:
   - id: geojson
     ru: "GeoJSON ВПМ"
     owner: src/twinqa/geojson.py
-  - id: sintez
-    ru: "Чекер СИНТЕЗ и загрузка"
-    owner: tools/blender/sintez_checker.py
 stages:
   - id: export
     event_ru: "FBX НПМ / ВПМ выгружены: триангуляция только на экспорте; рабочий FBX без триангуляции — рядом, не в пакете"

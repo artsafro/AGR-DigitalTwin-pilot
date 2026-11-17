@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1560" width="2990" height="1560" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1574" width="2990" height="1574" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2990" height="1560" fill="#ffffff"/>
+<rect x="10" y="-30" width="2990" height="1574" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40.0" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="347.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
@@ -11,6 +11,8 @@
 <rect x="1260.0" y="997.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="997.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1870.0" y="1189.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1340.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1479.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1260.0" y="1340.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <polyline points="510.0,445.0 630.0,445.0 630.0,327.5 1140.0,327.5 1140.0,445.0 1120.0,445.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,445.0 1240.0,445.0 1240.0,327.5 1750.0,327.5 1750.0,506.25 1730.0,506.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -146,6 +148,17 @@
 <tspan x="1878.0" dy="17.5">семейства UCX</tspan>
 </text>
 <text x="1878.0" y="1199.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
+</text>
+<text x="1878.0" y="1350.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
+<tspan x="1878.0" dy="17.5">Владелец: tools/blender/sintez_checker.py</tspan>
+<tspan x="1878.0" dy="17.5">запуск чекера AGR 1.6.1 в Blender на ZIP; находки —</tspan>
+<tspan x="1878.0" dy="17.5">доказательство, не вердикт</tspan>
+<tspan x="1878.0" dy="17.5"></tspan>
+<tspan x="1878.0" dy="17.5">dump: список проверок чекера -&gt; JSON находок</tspan>
+</text>
+<text x="1878.0" y="1489.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <text x="1268.0" y="1350.0" font-size="14" text-anchor="start" fill="#1e1e1e">

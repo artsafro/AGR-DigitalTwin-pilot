@@ -15,7 +15,7 @@ with --scene and no --master that part of V003 stays not_run.
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
-not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run); a package with OKS and Ground members takes `--master oks=PATH --master ground=PATH` ([D328]). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
+not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run; an NPM ZIP: fail manifest_master_missing, #1637); a package with OKS and Ground members takes `--master oks=PATH --master ground=PATH` ([D328]). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
 
     py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--recheck-target copy.zip] [--standards DIR] [--json]
 
@@ -463,7 +463,7 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
 
 
 def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
-                       master: Path | dict | None, manifest: Path | None, notes: list[str]):
+                       master: Path | dict | None, manifest: Path | None, notes: list[str], kind: str | None = None):
     """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written.
 
     master: one path, or {role: path} ([D328]: OKS master, Ground source)."""
@@ -476,8 +476,16 @@ def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: d
     members = {n: digest(d) for n, d in files.items()}
     master_sha = build_manifest.master_hashes(master)
     v1 = st["V001"]
-    for status, code, detail in build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
-                                                                 str(path.resolve().parent)):
+    rows = build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
+                                            str(path.resolve().parent))
+    if kind == "npm" and raw is not None and master is None:
+        # #1637: an NPM ZIP with a build manifest and no --master is a fail, not a not_run wait like V015-V017
+        rows = [("fail", "manifest_master_missing",
+                 f"manifest_master_missing: NPM package {target.name} has build manifest {path.name} but no --master "
+                 "was given, so the build master was not compared with the current master; rerun with --master PATH "
+                 "(--master oks=PATH --master ground=PATH for OKS + Ground)")] + [
+            r for r in rows if r[1] != "manifest_master_unchecked"]
+    for status, code, detail in rows:
         v1.findings.append(finding(status, "build manifest", detail, "one master revision; hashes of every zipped "
                                    "artifact and check report match; required checks passed (#1423)",
                                    v1.source_pdf_pages, path.name, data={"code": code} if status != "pass" else None))
@@ -555,7 +563,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         kind = profile_from_name(target.name)
         if kind is not None:
             notes.append(f"profile {kind.upper()} from the name grammar of {target.name}")
-    if kind is None and suffix in (".fbx", ".png"):
+    if kind is None and suffix in (".fbx", ".png", ".max"):
         kind = "npm"
     if suffix == ".zip":
         early = zip_precheck(target)
@@ -601,7 +609,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
-        add_build_manifest(st, target, data, files, master, manifest, notes)
+        add_build_manifest(st, target, data, files, master, manifest, notes, kind)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
                       ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta, atlases)
@@ -618,6 +626,8 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         notes.append("single GeoJSON: only V011 applies")
     elif suffix == ".png" and kind == "npm":
         st["V006"].findings.extend(npm_texture_findings({target.name: data}, profile))
+    elif suffix == '.max':
+        notes.append('Max scene: delivered byte identity only; native geometry and manual checks remain open')
     else:
         notes.append(f"unsupported file type {suffix}")
     # A scene readback of an FBX/ZIP consumes the area: VPM selects the triangle band, and both
@@ -673,8 +683,60 @@ FINDING_CODES = {"PNG readable": "png_not_png", "no alpha in ERM/Normal": "png_a
                  "foreign files": "foreign_files", "flat archive": "zip_nested"}
 
 
+def add_delivery_receipt(target, data, stages, notes):
+    """Bind validation to adjacent delivery reports, including the final Max review copy (#1645)."""
+    if target.suffix.lower() not in ('.zip', '.max'):
+        return
+    from adapters.max.agr_tools.package_core import check_delivery_receipt
+
+    def unique(pairs):
+        out = {}
+        for key, value in pairs:
+            if key in out:
+                raise ValueError('duplicate delivery report key: ' + key)
+            out[key] = value
+        return out
+
+    paths = [Path(str(target) + '.delivery.json')]
+    if target.suffix.lower() == '.zip':
+        paths.append(target.parent / 'package_report.json')
+    paths = [p for p in paths if os.path.lexists(p)]
+    if not paths and target.suffix.lower() != '.max':
+        return  # Historical ZIPs without a delivery report remain readable, not newly attested.
+    try:
+        if not paths:
+            raise ValueError('missing delivery report for ' + target.name)
+        line = ''
+        for path in paths:
+            body = json.loads(path.read_text(encoding='utf-8'), object_pairs_hook=unique)
+            if (target.suffix.lower() == '.zip' and path.name == 'package_report.json'
+                    and isinstance(body, dict) and 'delivered' not in body):
+                notes.append('Historical package_report.json has no delivered field; '
+                             'it provides no delivery attestation.')
+                continue
+            if not isinstance(body, dict) or 'delivered' not in body:
+                raise ValueError('missing delivered field in ' + str(path))
+            actual = check_delivery_receipt(target, body['delivered'])
+            if actual['delivered']['sha256'] != digest(data):
+                raise ValueError('delivered file changed during validation: ' + target.name)
+            # Only the verified canonical line is shown, never stale report display text.
+            line = actual['summary_ru'].splitlines()[-1]
+        if not line:
+            stages['V001'].findings.append(finding('not_run', 'delivered file',
+                'Historical package report without delivered; no delivery attestation',
+                'no delivery receipt supplied', [], data={'code': 'delivered_not_attested'}))
+            return
+        notes.append(line)
+        stages['V001'].findings.append(finding('pass', 'delivered file', line,
+            'delivered SHA-256 and size match the report', [], data={'code': 'delivered_match'}))
+    except (OSError, ValueError, TypeError) as exc:
+        stages['V001'].findings.append(finding('fail', 'delivered file', f'{target.name}: {exc}',
+            'delivered SHA-256 and size match the report', [], data={'code': 'delivered_mismatch'}))
+
+
 def report(target, data, kind, profiles, stages, notes) -> ValidationReport:
     """Every failed finding of a known kind carries data.code (qa.package corpus: one code per defect, #979)."""
+    add_delivery_receipt(target, data, stages, notes)
     for stage in stages.values():
         for f in stage.findings:
             if f.status == "fail" and "code" not in f.data and f.name in FINDING_CODES:

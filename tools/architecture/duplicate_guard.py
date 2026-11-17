@@ -38,6 +38,8 @@ Rules (stdlib `ast`, no imports of the scanned code):
 - `site-placement` owner src/dt_ai/placement/site.py (#1407, [D329]): the one site placement run (`dt place site` /
   `agr place`, NPM + VPM at the same points [D293]). Flags any other `engine.place(...)` call, or a bare `place(...)`
   imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
+- `window-generator` owner adapters/max/agr_tools/windowgen_core.py (#1405): definitions named build_type or
+  assign_glass under jobs/ + tools/ + src/ are refused; imports/calls remain valid. No legacy copies are allowlisted.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -48,8 +50,11 @@ The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml
 must be listed there with an issue reference, and every listed row (also the documented copies outside the guarded
 scope, e.g. the Max cores under adapters/) must still be found (no stale rows). A row is keyed by `at: "path.py::qualname"` - the file and the enclosing function/class
 (`<module>` at top level), never by a bare line number (#1387): lines inserted above or inside the function do not
-make it NEW or STALE. Optional `hash:` (10 hex, `sha1(ast.unparse(node))`, printed with every NEW COPY) pins one
-copy inside the function; a row without it covers every copy of that rule in that function.
+make it NEW or STALE. Optional `hash:` (10 hex, `sha1(ast.unparse(node))`, printed with every NEW COPY) pins the
+copies with that text inside the function; a row without it matches every copy of that rule in that function.
+Optional `count:` (integer >= 1, default 1, #1396) is how many matching copies the row covers: more matching copies
+than `count` -> the extra ones (last by position) are NEW COPY (an identical paste into the same function is red);
+fewer -> the row is STALE. Two copies on one line are two findings (`col`).
 Usage: python tools/architecture/duplicate_guard.py [--root REPO] [--json] [--table] [--copies-only]; exit 0 clean,
 1 violations, 2 unreadable input (a file that does not parse is an error naming it, never skipped).
 
@@ -93,6 +98,7 @@ RULES = {
     "vpm-uv": "tools/blender/vpm_uv.py",
     "seam-seal": "tools/blender/seam_seal.py",
     "site-placement": "src/dt_ai/placement/site.py",
+    "window-generator": "adapters/max/agr_tools/windowgen_core.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
@@ -101,10 +107,11 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "sintez-checker": ("jobs", "tools", "src"), "master-qa": ("jobs", "tools", "src"),
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
            "seam-seal": ("jobs", "tools", "src"),   # #1381
-           "site-placement": ("jobs", "tools", "src")}   # #1407: one site placement run, guarded from the start
+           "site-placement": ("jobs", "tools", "src"),   # #1407: one site placement run, guarded from the start
+           "window-generator": ("jobs", "tools", "src")}
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
 REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
-                   "site-placement"}
+                   "site-placement", "window-generator"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
@@ -306,17 +313,36 @@ def _place_hits(tree):
         or bare and isinstance(node.func, ast.Name) and node.func.id == "place")]
 
 
+def _window_hits(tree):
+    """Protect the window builder and 3D ownership entry points; mere calls are not copies."""
+    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in {'build_type', 'assign_glass'}]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
           "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
-          "site-placement": _place_hits}
+          "site-placement": _place_hits, "window-generator": _window_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
 AT = re.compile(rf"^(?P<path>[^:]+\.py)::(?P<qual>{QUALNAME})$")
 SCOPES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
 
-# rule, file (posix, repo-relative), enclosing def/class qualname, sha1[:10] of ast.unparse(node), first line
-Finding = namedtuple("Finding", "rule path qualname digest line")
+# rule, file (posix, repo-relative), enclosing def/class qualname, sha1[:10] of ast.unparse(node), first line, column
+Finding = namedtuple("Finding", "rule path qualname digest line col")
+# value of an allowlist key (#1396): the issue reference itself (a str, so `== "#1337"` keeps working) carrying
+# `copies`, how many copies the row covers
+class Allow(str):
+    copies: int
+
+    def __new__(cls, issue, copies=1):
+        value = super().__new__(cls, issue)
+        value.copies = copies
+        return value
+
+    @property
+    def issue(self):
+        return str(self)
 
 
 def _scopes(tree):
@@ -356,7 +382,7 @@ def _findings(tree, rel):
                   for sub in ast.walk(h) if sub is not h and id(sub) in ids}
         for node in hits:
             if id(node) not in nested:   # an expression inside another reported expression is the same copy
-                out.append(Finding(rule, rel, scopes[id(node)], _digest(node), node.lineno))
+                out.append(Finding(rule, rel, scopes[id(node)], _digest(node), node.lineno, node.col_offset))
     return out
 
 
@@ -384,10 +410,11 @@ def scan(root, scope="jobs"):
 
 
 def allowlist(contexts):
-    """Rule-tagged duplicates of contexts.yaml -> {(rule, path, qualname, hash | None): issue}.
+    """Rule-tagged duplicates of contexts.yaml -> {(rule, path, qualname, hash | None): Allow(issue, copies)}.
 
-    Unknown rules, a missing issue, an `at` that is not `path.py::qualname`, a malformed hash, a repeated row and a
-    function row overlapping a hash row of the same function raise ValueError naming the row."""
+    Unknown rules, a missing issue, an `at` that is not `path.py::qualname`, a malformed hash, a `count` that is not
+    an integer >= 1, a repeated row and a function row overlapping a hash row of the same function raise ValueError
+    naming the row."""
     allowed = {}
     for ctx in contexts.get("contexts", []) + [contexts.get("shared_kernel", {})]:
         for dup in ctx.get("duplicates", []):
@@ -412,10 +439,13 @@ def allowlist(contexts):
                 digest = str(digest)   # an unquoted all-digit hash parses as int; compare as text
                 if not HASH.match(digest):
                     raise ValueError(f"guard allowlist entry {at}: hash {digest!r} is not 10 lowercase hex digits")
+            count = dup.get("count", 1)
+            if type(count) is not int or count < 1:   # bool, quoted text, 0 and negatives are errors, never 1
+                raise ValueError(f"guard allowlist entry {at}: count {count!r} is not an integer >= 1 (#1396)")
             key = (rule, m["path"], m["qual"], digest)
             if key in allowed:
                 raise ValueError(f"duplicate allowlist entry {rule} {at}")
-            allowed[key] = issue
+            allowed[key] = Allow(issue, count)
     for rule, path, qual, digest in allowed:
         if digest is None and any(k[:3] == (rule, path, qual) and k[3] for k in allowed):
             raise ValueError(f"allowlist entry {rule} {path}::{qual} without hash overlaps its hash rows")
@@ -432,14 +462,35 @@ def _guarded(finding, scope=None):
     return any(finding.path.startswith(top.rstrip("/") + "/") for top in tops)
 
 
-def compare(findings, allowed, scope=None):
-    """-> (new, stale): guarded findings no row covers, allowlist rows that cover no finding.
+def _count(value):
+    """Copies a row covers: Allow.copies; a plain issue string (pre-#1396 callers) covers one."""
+    return value.copies if isinstance(value, Allow) else 1
 
-    Guarded = under GUARDED[rule] (or under `scope` for every rule when given). Rows outside it are documentation
-    of copies elsewhere: they must still be found (else stale), but new copies there are not guarded yet."""
-    new = sorted(f for f in set(findings) if _guarded(f, scope) and not any(_covers(k, f) for k in allowed))
-    stale = sorted(k for k in allowed if not any(_covers(k, f) for f in findings))
-    return new, stale
+
+def _key_order(key):
+    return tuple("" if part is None else part for part in key)
+
+
+def _found(findings, key):
+    """How many distinct findings a row matches (before its `count` applies)."""
+    return sum(_covers(key, f) for f in set(findings))
+
+
+def compare(findings, allowed, scope=None):
+    """-> (new, stale): guarded findings beyond what the rows cover, rows that cover fewer findings than `count`.
+
+    A row matches the findings of its (rule, path, qualname[, hash]) and covers the first `count` of them by position
+    (#1396); the rest are new. Guarded = under GUARDED[rule] (or under `scope` for every rule when given). Rows
+    outside it are documentation of copies elsewhere: they must still be found `count` times (else stale), but new
+    copies there are not guarded yet."""
+    findings = sorted(set(findings))
+    covered, stale = set(), []
+    for key in sorted(allowed, key=_key_order):
+        matched = sorted((f for f in findings if _covers(key, f)), key=lambda f: (f.line, f.col))
+        covered.update(matched[:_count(allowed[key])])
+        if len(matched) < _count(allowed[key]):
+            stale.append(key)
+    return [f for f in findings if _guarded(f, scope) and f not in covered], stale
 
 
 def scan_for(root, allowed, scope=None):
@@ -460,6 +511,9 @@ COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406
 # Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
 # listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
 LIVE_BYPASS_BASELINE = frozenset({
+    # #1593: inventory of existing run_stage.sh writers, not new build behaviour or guard rules.
+    ("vpm-contexts", "jobs/KPP1/scripts/build_kpp1.py:198", ""),
+    ("vpm-contexts", "jobs/KPP1/scripts/build_kpp1.py:327", ""),
 
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
@@ -822,7 +876,8 @@ def main(argv=None):
     try:
         contexts = mini_yaml.load(args.contexts or args.root / "docs/architecture/contexts.yaml")
         allowed = allowlist(contexts)
-        new, stale = compare(scan_for(args.root, allowed), allowed)
+        findings = scan_for(args.root, allowed)
+        new, stale = compare(findings, allowed)
         problems, rows = [], []
         if not args.copies_only:
             maps = load_maps(args.root)
@@ -846,15 +901,20 @@ def main(argv=None):
         print(f"STATUS {p}")
     if args.json:
         print(json.dumps({"new": [f._asdict() for f in new],
-                          "stale": [dict(zip(("rule", "path", "qualname", "hash"), k)) for k in stale],
+                          "stale": [dict(zip(("rule", "path", "qualname", "hash"), k),
+                                         count=_count(allowed[k]), found=_found(findings, k)) for k in stale],
                           "status": problems}, indent=1))
     for f in new:
+        row = next((k for k in allowed if _covers(k, f)), None)
+        hint = (f"; the row `{f.path}::{f.qualname}` covers only count {_count(allowed[row])} of "
+                f"{_found(findings, row)} copies - remove the copy or raise `count`") if row else ""
         print(f"NEW COPY [{f.rule}] {f.path}:{f.line} in {f.qualname} (hash {f.digest}): use {RULES[f.rule]} "
-              f"instead (or list `{f.path}::{f.qualname}` in contexts.yaml with an issue)")
-    for rule, path, qual, digest in stale:
+              f"instead (or list `{f.path}::{f.qualname}` in contexts.yaml with an issue){hint}")
+    for key in stale:
+        rule, path, qual, digest = key
         pin = f" hash {digest}" if digest else ""
-        print(f"STALE ALLOWLIST [{rule}] {path}::{qual}{pin}: not found any more; remove or fix the row in "
-              "contexts.yaml")
+        print(f"STALE ALLOWLIST [{rule}] {path}::{qual}{pin}: found {_found(findings, key)} of count "
+              f"{_count(allowed[key])}; remove or fix the row in contexts.yaml")
     return 1 if new or stale or problems else 0
 
 

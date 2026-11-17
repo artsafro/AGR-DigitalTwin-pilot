@@ -44,11 +44,30 @@ hands over to that skill. A stage marked job scripts, manual or no tool is a kno
 keep any new code minimal (`docs/backlog.md` for the generalisation). Pilot one piece end to end, show it, then the
 rest.
 
+### Body stage: clean body grid (#1618)
+
+For the OKS `body` stage follow [body-modelling.md](../../../docs/research/body-modelling.md#5-правила) (rules
+BM-01..BM-14, measured on Artem's G22 etalon): 1) body from the floor-plan outline, vertices only at breaks and
+opening/zone lines; 2) loops only where a line has a reason (opening sill/head, finish zone, band), vertical rings
+through the whole floor module, rounded corners by radius (chord sagitta <= 2 cm, then snap to the texture
+step [D337]), never Revit tessellation;
+3) inset, never weld, windows/roof/flashings/posts/decor with projection [D336]; posts are geometry by default,
+panels are texture with a seam, no diagonal across a typical facade;
+4) build and check ONE floor module with IDs and UV, then replicate it; 5) measure the master (typical-facade quad
+share, slivers, n-gons, module repeat; `tools/qa/body_layout.py`, `tools/qa/master_topology.py`) and show a
+wire + texture sheet of the module and one corner before replicating; 6) unique ground floor, top and roof last,
+within the triangle budget [D010]. Typical-facade thresholds: quads >= 95 %, slivers <= 0.5 % [D338],
+WARN-only (OBSERVE) for the first week; no blocking gate is enabled by this decision.
+
 ## Step 5 — Check and report
 
 Run the card's checks (validator stages, xView, SINTEZ) on the read-back export (`validate-delivery` skill).
 `passed=true` only with every mandatory check and manual gate closed. Done when the report names, per stage, the
 route used, the evidence and what stays open.
+
+OKS cells (`oks-vpm`, `oks-npm`): model by the OKS modelling split [D336] (inset elements vs texture parts,
+plinth per project; list in docs/agents/SKELETONS.md, section "OKS modelling split [D336]") and write its
+`Modelling split [D336]:` line with the reason in the job report.
 
 Before showing Artem (cells `oks-vpm`, `ground-npm`, `ground-vpm`): run the skeleton `verifier` stage in observe
 mode (`tools/qa/verifier.py` → `jobs/<ID>/verifier.json`, docs/agents/SKELETONS.md) and name its main discrepancy in

@@ -219,6 +219,21 @@ for name, (obj, faces, px, tile) in cases.items():
     except Exception as exc:   # noqa: BLE001 - any other type is a finding
         fail[name] = f'{type(exc).__name__}: {exc}'
 report['fail_closed'] = fail
+# #1574: directional texel of a rotated / sloped face below 512 px/m is a BoxUVTexelError, nothing written
+rot40 = mesh_object('ELV_Rot40', [(0, 0, 0), (1, 0, 0), (1, 0, 1), (0, 0, 1)], [[0, 1, 2, 3]],
+                    location=(0.1, 0.1, 0.1), rot_z=math.radians(40))
+c50, s50 = math.cos(math.radians(50)), math.sin(math.radians(50))
+slope50 = mesh_object('ELV_Slope50', [(0, 0, 0), (1, 0, 0), (1, c50, s50), (0, c50, s50)], [[0, 1, 2, 3]],
+                      location=(0.1, 0.1, 0.1))
+for name, obj, px in (('texel_rot40_px600', rot40, 600), ('texel_slope50_px512', slope50, 512)):
+    f0 = box_uv.uv_fingerprint(scene_objects())
+    try:
+        box_uv.box_project_uv(obj, [0], px, 1001)
+        fail[name] = 'NO ERROR'
+    except box_uv.BoxUVTexelError as exc:
+        fail[name] = 'error' if box_uv.uv_fingerprint(scene_objects()) == f0 else f'error but wrote: {exc}'
+    except Exception as exc:   # noqa: BLE001 - any other type is a finding
+        fail[name] = f'{type(exc).__name__}: {exc}'
 for name, px in (('px_512', 512), ('px_1706', 1706)):   # inclusive regulation bounds
     small, sf, _ = facade('ELV_' + name, wa=(1, 1.0), wb=(1, 1.0), rows=(1, 1.0), cap=0.2, location=(0.1, 0.1, 0.1))
     try:
@@ -226,6 +241,65 @@ for name, px in (('px_512', 512), ('px_1706', 1706)):   # inclusive regulation b
         fail[name] = 'ok' if measure(small, sf)['broken_edges'] == 0 else 'broken'
     except box_uv.BoxUVError as exc:
         fail[name] = f'error: {exc}'
+
+# ------------------------------------------------------------------ #1600: native float32 storage + world matrix
+period_cases = []
+for px in (1000, 1706):
+    period = T / px
+    for offset in (0, 3, 2000, -2000):
+        for delta_px in (0, 1):
+            xs = [(offset + f) * period + (delta_px / px if f == 1 else 0)
+                  for f in (0.1, 1, 1.5)]
+            verts = [(x, 0, z) for x in xs for z in (0.1 * period, 0.6 * period)]
+            obj = mesh_object('ELV_Period1600', verts, [[0, 2, 3, 1], [2, 4, 5, 3]],
+                              uv=lambda i: (7.25, 3.5))
+            before_uv = loop_uvs(obj, [0, 1])
+            if delta_px:
+                try:
+                    box_uv.box_project_uv(obj, [0, 1], px, 1012, margin_px=0)
+                    raise AssertionError('off-line cut accepted')
+                except box_uv.BoxUVOverflow:
+                    assert loop_uvs(obj, [0, 1]) == before_uv
+            else:
+                result = box_uv.box_project_uv(obj, [0, 1], px, 1012, margin_px=0)
+                assert len(result['islands']) == 2 and result['period_cut_edges'] == 1
+                assert measure(obj, [0, 1])['broken_edges'] == 0
+                assert all(1 <= c <= 2 for uv in loop_uvs(obj, [0, 1]) for c in uv)
+            period_cases.append({'px': px, 'offset': offset, 'delta_px': delta_px, 'ok': True})
+report['period_float32'] = period_cases
+
+translated_cases = []
+for offset in (0, 3):
+    for rotation, pivot_periods in ((0, 0), (-math.pi / 2, 0), (0, 64), (-math.pi / 2, 64),
+                                    (0, -64), (-math.pi / 2, -64)):
+        for delta_px in (0, 1):
+            px = 1706
+            period = T / px
+            location = (offset + 0.37 + pivot_periods) * period
+            xs = [(offset + f) * period - location + (delta_px / px if f == 1 else 0)
+                  for f in (0.1, 1, 1.5)]
+            # Inverse of the exact 0/-90 degree rotation, before native float32 storage.
+            verts = [((x, 0, z) if rotation == 0 else (0, x, z))
+                     for x in xs for z in (0.1 * period, 0.6 * period)]
+            obj = mesh_object('ELV_Translated1600', verts, [[0, 2, 3, 1], [2, 4, 5, 3]],
+                              uv=lambda i: (7.25, 3.5))
+            obj.location.x = location
+            obj.rotation_euler.z = rotation
+            bpy.context.view_layer.update()
+            before_uv = loop_uvs(obj, [0, 1])
+            if delta_px:
+                try:
+                    box_uv.box_project_uv(obj, [0, 1], px, 1012, margin_px=0)
+                    raise AssertionError('translated off-line cut accepted')
+                except box_uv.BoxUVOverflow:
+                    assert loop_uvs(obj, [0, 1]) == before_uv
+            else:
+                result = box_uv.box_project_uv(obj, [0, 1], px, 1012, margin_px=0)
+                assert len(result['islands']) == 2 and result['period_cut_edges'] == 1
+                assert all(1 <= c <= 2 for uv in loop_uvs(obj, [0, 1]) for c in uv)
+            translated_cases.append({'offset': offset, 'rotation': rotation, 'pivot_periods': pivot_periods,
+                                     'delta_px': delta_px, 'ok': True})
+report['translated_float32'] = translated_cases
 
 # ------------------------------------------------------------------ generated probes
 rng = random.Random(1538)

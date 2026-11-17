@@ -116,6 +116,42 @@ def test_empty_dumps_give_empty_bays_and_no_drops(tmp_path):
     assert dropped == []
 
 
+def test_duplicate_bays_and_wrong_depth_are_explicit_drops(tmp_path):
+    curtain = [_glass(CYR_S, 0), _obj(CYR_S + ' deep', (2, -.1, .2), (2.4, .5, 1.5))]
+    src, cen = _write(tmp_path, curtain)
+    source = src / 'curtain.export.json'
+    side = json.loads(source.read_text(encoding='utf-8'))
+    bay = dict(side['types'][0]['instances'][1], elementId=12)
+    side['types'][0]['instances'].append(bay)
+    source.write_text(json.dumps(side), encoding='utf-8')
+    _load().main(str(src), str(cen))
+    spec = json.loads((cen / 'openings_spec.json').read_text(encoding='utf-8'))
+    drops = json.loads((cen / 'openings_dropped.json').read_text(encoding='utf-8'))
+    assert sum(len(b['glass']) for s in spec['S']['surrounds'] for b in s['bays']) == 0
+    assert len(drops) == 2
+    assert 'multiple bays in 3D' in drops[0]['reason']
+    assert 'no bay in 3D' in drops[1]['reason']
+
+
+def test_duplicated_source_object_is_an_error(tmp_path):
+    import pytest
+    obj = _glass(CYR_S, 0)
+    src, cen = _write(tmp_path, [obj, obj])
+    with pytest.raises(ValueError, match='duplicate.*object'):
+        _load().extract(str(src), str(cen))
+
+
+def test_nonfinite_object_cannot_hide_as_outside_facade(tmp_path):
+    import pytest
+    for value, suffix in ((float('nan'), 'nan'), (float('inf'), 'inf')):
+        root = tmp_path / suffix
+        root.mkdir()
+        malformed = _obj('Unknown', (value, value, value), (value, value, value))
+        src, cen = _write(root, [_glass(CYR_S, 0), malformed])
+        with pytest.raises(ValueError, match='Unknown'):
+            _load().extract(str(src), str(cen))
+
+
 def test_norm_maps_only_homoglyphs():
     mod = _load()
     assert mod.norm(LAT_C) == mod.norm(CYR_S) == "стеклопакет"

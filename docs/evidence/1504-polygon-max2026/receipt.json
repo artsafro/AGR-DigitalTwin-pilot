@@ -1,0 +1,132 @@
+{
+  "source_commit": "9b7945d0b6ce0058020f63215b6497eb507190ef",
+  "job_id": "20261116-231246-t_aa346b71-native-v001",
+  "max_build": "28.3.0.30732",
+  "max_version": "2026.3",
+  "native_exit": 0,
+  "diffs": 0,
+  "known_bug": 0,
+  "runs": 127,
+  "stations": 94,
+  "rows": 876,
+  "mode": "synthetic batch; staged current-main runtime; not UI acceptance",
+  "evidence_path": "G:/Мой диск/AGR-evidence/1504-polygon-max2026/20261116-231246-t_aa346b71-native-v001",
+  "bases": [
+    {
+      "version": "0.1",
+      "station_total": 3,
+      "station_pass": 3,
+      "row_total": 8,
+      "row_pass": 8
+    },
+    {
+      "version": "0.2",
+      "station_total": 2,
+      "station_pass": 2,
+      "row_total": 5,
+      "row_pass": 5
+    },
+    {
+      "version": "0.3",
+      "station_total": 2,
+      "station_pass": 2,
+      "row_total": 3,
+      "row_pass": 3
+    },
+    {
+      "version": "0.4",
+      "station_total": 1,
+      "station_pass": 1,
+      "row_total": 2,
+      "row_pass": 2
+    },
+    {
+      "version": "0.5",
+      "station_total": 5,
+      "station_pass": 5,
+      "row_total": 167,
+      "row_pass": 167
+    },
+    {
+      "version": "0.6",
+      "station_total": 0,
+      "station_pass": 0,
+      "row_total": 0,
+      "row_pass": 0
+    },
+    {
+      "version": "0.7",
+      "station_total": 12,
+      "station_pass": 12,
+      "row_total": 498,
+      "row_pass": 498
+    },
+    {
+      "version": "0.8",
+      "station_total": 13,
+      "station_pass": 13,
+      "row_total": 27,
+      "row_pass": 27
+    },
+    {
+      "version": "0.9",
+      "station_total": 19,
+      "station_pass": 19,
+      "row_total": 70,
+      "row_pass": 70
+    },
+    {
+      "version": "1.0",
+      "station_total": 33,
+      "station_pass": 33,
+      "row_total": 91,
+      "row_pass": 91
+    },
+    {
+      "version": "1.1",
+      "station_total": 4,
+      "station_pass": 4,
+      "row_total": 5,
+      "row_pass": 5
+    }
+  ],
+  "required_stations": {
+    "1.0.3": {
+      "button": "scene.source_class",
+      "passed": true,
+      "rows": 2
+    },
+    "1.0.5": {
+      "button": "model.attach_by_material",
+      "passed": true,
+      "rows": 4
+    },
+    "1.0.6": {
+      "button": "model.move_apart",
+      "passed": true,
+      "rows": 2
+    },
+    "1.0.7": {
+      "button": "model.grid_cleanup",
+      "passed": true,
+      "rows": 2
+    },
+    "1.0.8": {
+      "button": "scene.small_parts",
+      "passed": true,
+      "rows": 7
+    },
+    "1.0.11": {
+      "button": "model.glass_planes",
+      "passed": true,
+      "rows": 3
+    }
+  },
+  "hashes": {
+    "report.json": "e8c11e80ae4c03fcc0ae4b6fa3630dea386dfe04e674063673e27376399626ba",
+    "actual.json": "3fb68aca7ea12ee4a049db4a5c5bb3a8caf019ae840f13c781490806ad8eb693",
+    "max.log": "96e311906a6ec59c570a2f6a2438e1436cf5675f2923aa00adb13b248e65c703",
+    "station-results.png": "9551db5f0dc3778b579e742cf56b7bd40573d6cf55ee56707f048c5d19d4ed55"
+  },
+  "sealed_files": 322
+}

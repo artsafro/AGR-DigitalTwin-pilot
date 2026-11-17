@@ -42,17 +42,56 @@ contexts:
         contract: "сцена, операция, часть, функция правки -> OperationResult; нарушен инвариант — откат"
       - name: embed_into_neighbour
         contract: "сцена, часть, сосед, направление, глубина -> врезка декора и навесных элементов (D199)"
+    duplicates:
+      - at: "jobs/KPP1/scripts/build_kpp1.py:198"
+        match: "def body("
+        issue: "#1593"
+        ru: "свой корпус КПП1; run_stage.sh:13 вызывает build_kpp1.main, без run_operation; путь не заморожен .ignore [D327]"
+        status: live-bypass
+        step: "-"
+      - at: "jobs/PSU275/scripts/assemble_body_roof.py:62"
+        match: "def main("
+        issue: "#1593"
+        ru: "историческая сборка корпуса и кровли ПСУ275; .ignore:97 [D327], не живой обход"
+        status: historical
+      - at: "jobs/OBR22-K02/scripts/build_exterior_surface.py:43"
+        match: "def build("
+        issue: "#1593"
+        ru: "исторический построитель фасада Обр22; .ignore:67 [D327], сданные скрипты не меняются"
+        status: historical
   - id: uv-atlas
-    ru: "UV по UDIM и атлас"
+    no_stage: "NPM atlas responsibility used by the derived NPM branch, not VPM UV preparation"
+    ru: "Атлас производной НПМ, не UV ВПМ"
     area: docs/domain/areas/uv-atlas.md
     owner: adapters/max/agr_tools/atlas_core.py
-    owner_ru: "каноническая упаковка атласа (D225); ВПМ — UDIM, НПМ — атлас (D292 пути A / B)"
+    owner_ru: "упаковка атласа НПМ (D225, D292 пути A / B); периодические UV ВПМ принадлежат vpm_uv.py"
     functions:
       - name: pack
         contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
       - name: atlas_png
         contract: "раскладка -> PNG атласа"
-  - id: npm
+  - id: vpm-uv
+    ru: "Периодическая UV-развёртка ВПМ"
+    area: docs/domain/areas/uv-atlas.md
+    owner: tools/blender/vpm_uv.py
+    owner_ru: "общее Blender bmesh-ядро ВПМ (#1380, D320); не упаковщик атласа НПМ"
+    functions:
+      - name: texel_cut
+        contract: "bmesh, имена отделок, spec -> разрезы по периодам текстуры"
+      - name: pack_uv
+        contract: "bmesh, имена отделок, spec -> UVMap и QA; периодические острова можно stack (D320)"
+    duplicates:
+      - at: "jobs/KPP1/scripts/vpm_uv.py:6"
+        match: "runpy.run_path(str(_owner))"
+        issue: "#1593"
+        ru: "обёртка runpy; _owner на строке 5 указывает tools/blender/vpm_uv.py"
+        status: wrapper
+      - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:6"
+        match: "runpy.run_path(str(_owner))"
+        issue: "#1593"
+        ru: "обёртка runpy; _owner на строке 5 указывает tools/blender/vpm_uv.py"
+        status: wrapper
+  - id: npm-atlas
     ru: "НПМ в тех же координатах (ВПМ → НПМ)"
     area: docs/domain/areas/derivation.md
     owner: tools/derive/npm_atlas.py
@@ -67,7 +106,7 @@ contexts:
     ru: "Проёмы и окна"
     area: docs/domain/areas/windows.md
     owner: adapters/max/agr_tools/windowgen_core.py
-    owner_ru: "окно из библиотеки с утоплением или генератор окон (D292, #1338 / #1345)"
+    owner_ru: "agr window-generate / Max win.generate: библиотека с утоплением или генератор D322; один 3D owner стекла (#1405)"
     functions:
       - name: load_library
         contract: "папка библиотеки -> типы окон, стандарт, sha256 файлов"
@@ -77,6 +116,28 @@ contexts:
         contract: "отчёт библиотеки -> id, которые можно предлагать (только pass)"
       - name: build_type
         contract: "тип окна, стандарт, опции -> меш окна по стандарту библиотеки"
+    duplicates:
+      - at: "jobs/KPP1/scripts/build_kpp1.py:327"
+        match: "def openings("
+        issue: "#1593"
+        ru: "свои рамы и стекло КПП1 через relief, без windowgen_core; run_stage.sh:13; путь не заморожен .ignore [D327]"
+        status: live-bypass
+        step: "-"
+      - at: "jobs/PSU275/scripts/opening_fills.py:183"
+        match: "frame = box(*outline).difference("
+        issue: "#1593"
+        ru: "исторические рамы ПСУ275; .ignore:119 [D327], не живой обход"
+        status: historical
+      - at: "jobs/OBR22-K02/scripts/build_shell_windows.py:76"
+        match: "frame=outer.difference("
+        issue: "#1593"
+        ru: "исторические рамы Обр22; .ignore:71 [D327], не текущий генератор"
+        status: historical
+      - at: "jobs/KPP1/scripts/kpp1_windowgen.py:75"
+        match: "return wg.build_type("
+        issue: "#1593"
+        ru: "обёртка build_type; import windowgen_core as wg на строке 26"
+        status: wrapper
   - id: roof
     serves_stage: roof
     ru: "Кровля, парапет, плита, ограждение"
@@ -92,6 +153,17 @@ contexts:
         contract: "корпуса (меш в метрах, мир) -> опции, строки плит, находки"
       - name: hole_plate
         contract: "план отверстия парапета, уровень, верх, внешний контур -> плита кровли (сборщик задания, #1381) или ошибка"
+    duplicates:
+      - at: "jobs/PSU275/scripts/roof_wells.py:70"
+        match: "def add_face("
+        issue: "#1593"
+        ru: "исторический построитель кровли ПСУ275; .ignore:127 [D327], не живой обход"
+        status: historical
+      - at: "jobs/KPP1/scripts/build_kpp1.py:432"
+        match: "def roof("
+        issue: "#1593"
+        ru: "обёртка плиты: строка 441 вызывает roof_core.hole_plate (#1381); стены отверстия и шахта локальны"
+        status: wrapper
   - id: package
     ru: "Экспорт и пакеты ВПМ / НПМ"
     area: docs/domain/areas/package.md
@@ -184,6 +256,10 @@ contexts:
         ru: "диагностика отклонения Main от UCX по частям (не построитель)"
         status: own-duty
         why: "только читает меши UCX и измеряет расстояния, не строит 960 UCX"
+  - id: sintez
+    ref: package-contexts.yaml#sintez
+  - id: parts
+    ref: contexts.yaml#parts
 relations:
   - from: dcc
     to: body
@@ -198,15 +274,18 @@ relations:
     to: ucx
     ru: "оболочка с кровлей"
   - from: body
-    to: uv-atlas
+    to: vpm-uv
     ru: "мастер ВПМ"
   - from: udim
-    to: uv-atlas
+    to: vpm-uv
     ru: "номер тайла"
+  - from: vpm-uv
+    to: uv-atlas
+    ru: "UDIM для производной НПМ"
   - from: uv-atlas
-    to: npm
+    to: npm-atlas
     ru: "UDIM → атлас"
-  - from: npm
+  - from: npm-atlas
     to: package
     ru: "НПМ в координатах"
   - from: ucx

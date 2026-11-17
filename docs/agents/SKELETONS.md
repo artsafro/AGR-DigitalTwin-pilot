@@ -27,7 +27,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 |---|---|---|
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
-| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250] |
+| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 4 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
 | 5 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
 | 6 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
@@ -45,7 +45,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `inspect` | `agr inspect --manifest JOB.json` |
-| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев |
+| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 3 | `brick-seams` кирпичные швы | пробел |
 | 4 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
 | 5 | `master-qa` | `tools/qa/master_topology.py` |
@@ -55,6 +55,30 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 9 | `validate` | `agr validate` |
 | 10 | `review-scene` сцена для приёмки | пробел |
 | 11 | `checker` | `agr checker` |
+
+### `npm-to-vpm` — existing NPM -> VPM (OKS cells `oks-npm` -> `oks-vpm`)
+
+| # | Stage | Shared owner / command |
+|---|---|---|
+| 1 | `npm-ids` | `agr npm-ids SOURCE NEW_OUT --profile facade`; `tools/library/npm_ids.recover` reuses `maf_atlas_cells.segment`; skip only with an existing valid `npm_table.json` |
+| 2 | `npm-udim-fit` | `npm2vpm_core.udim_fit_gate`: world metres, 4096 tile, 512-1706 px/m, region extent / texel / straddle per ID; STOP before conversion writes on non-fit, ask one grouped question with seam cuts / extra tiles / allowed density / other |
+| 3 | `npm-to-vpm` | AGR Tools `npm.to_vpm`, `npm2vpm_core.plan`: `regions` without table, `table` with `npm_table.json`; core plan mode is read-only, not a native VPM certificate |
+| 4 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview EXPORTED --out NEW.json`; topology, UV, materials, transforms |
+| 5 | `checker` | `agr checker`; no checker/package on a blocked conversion plan |
+| 6 | `package-vpm` | `agr package-vpm` -> `package_core._write_zip` after required approvals |
+| 7 | `validate` | `agr validate` on the actual package |
+
+Each stage retains the standard `before` / `after` hook points (one named stage,
+no parallel conversion chain); no `gap` hook replaces a shared owner. One config:
+`jobs/G22/npm2vpm-1630/skeleton.json`. IDs from atlas cells are provisional layout
+labels, **not** library-material approval. Unresolved/mixed/straddling faces are
+listed with source indices and remain ID0; they block conversion. JSON mode writes
+`mesh_ids.json` + `id_table.json`; FBX mode adds a native `.blend` copy only when
+the assignment and preflight are complete. Exit 1 = diagnostic/blocked, 2 = invalid
+input or execution failure; neither is a pass. Prior delivered packages stay intact.
+An explicit cleanup approval records exact source polygon drops on a new copy,
+never a general geometry repair. A selected seam policy does not waive mixed
+material boundaries, singular UV metrics, texel bounds or native readback.
 
 ### `oks-npm-lite` — ОКС, упрощённая НПМ
 
@@ -100,6 +124,27 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 15 | `package-vpm` | `agr package-vpm` |
 | 16 | `validate` | `agr validate --ground-area-m2` |
 | 17 | `checker` | `agr checker` после визуальной приёмки |
+
+## OKS modelling split [D336]
+
+Stage `body` of `oks-vpm` and `oks-npm`, all OKS buildings; the rule itself is the row [D336] in
+`docs/decisions.md`, its machine form is `stages.body.modelling_split` in `skeletons.json`.
+
+- Inset elements (separate, cut into the body, own clean quads, not welded into the body):
+  `windows`, `stained_glass`, `roof`, `flashings` (roof and window), `posts`.
+- Texture, not modelled: `panels` (seam in the texture/UV).
+- Per project: `plinth` = `one_with_body` or `inset`; the final split follows the project, its textures and
+  texturing convenience.
+- Job report: one line, checked by `skeleton_guard.modelling_split_problems`:
+  `Modelling split [D336]: plinth=<one_with_body|inset>; inset=<parts>; texture=<parts>; reason=<why, for this project>`.
+
+Master/QA checks on these parts are element-wise; no check may require welding inset elements into the body:
+
+| Check | How it sees inset elements |
+|---|---|
+| `tools/qa/master_topology.py` (`master_topology_core.check`) [D312] | one row and one verdict per object; quads/n-gons per element |
+| `tools/qa/body_layout.py` | per named `--part`; a window/roof/post element is its own part |
+| `dt qa xview` [D152] (`xview_gate.part_gate`) | per part; inside one part an inset element keeps its vertices off the body's (embed/offset, as decor [D199]) so the 2 mm overlap count stays 0 - never by welding |
 
 ## Verifier step before showing Artem (#1577, observe mode)
 
@@ -157,6 +202,17 @@ uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 vie
 
 Example (Artem's SINTEZ error-fix case): unfold polygons / seams = `checker` → fix with the stage owners
 (`vpm-uv`, `master-qa`) through one `after` hook → `checker` again; no new analysis scripts.
+
+## Imported-library exemptions
+
+The guard owner records the following exact-path exception in `skeleton_guard.IMPORTED_LIBRARIES` (#1591):
+`jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py` is a stdlib library imported by the historical
+`jobs/KPP1/quad-1372/build_quad_master.py` and its tests. `write_provenance` is called after the build;
+it is not an `after` hook of `master-qa` and has no standalone entry point. Keep its existing import path
+and the sub-job's `skeleton.json` with an empty hook list. The guard rejects registering this library as
+a hook, including path aliases. It still checks the library for stage reimplementation, duplicate code
+and Python syntax errors. Sibling, renamed and nested files are not exempt. This does not extend the
+frozen #1546 baseline, exempt a directory, or establish a job-configurable library bypass.
 
 ## Reviewer rule [D325]
 

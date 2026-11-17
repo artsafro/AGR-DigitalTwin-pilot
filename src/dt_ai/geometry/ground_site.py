@@ -590,7 +590,7 @@ def _placed_hatch_paths(doc, hatch, chain, chord):
 
 
 def _even_odd_ring(xy):
-    """Node existing segments without snapping; retain every positive-area odd-parity face [D336]."""
+    """Node existing segments without snapping; retain every positive-area odd-parity face [D343]."""
     from shapely.geometry import LineString
     from shapely.ops import polygonize, unary_union
 

@@ -25,7 +25,7 @@ MINSERT cells. A repeated identity is a named error, not a union. Use separate r
 multiple placements of one definition. This deliberately conservative contract avoids silent merging.
 Unknown cover/reference keys, missing handles and broken chains are errors.
 
-### Explicit self-touching interpretation [D336]
+### Explicit self-touching interpretation [D343]
 
 The default refuses invalid rings. Only an explicitly authorized source row may add
 `"self_touching":"even-odd"`. Invalid flattened rings are noded along their existing segments,
@@ -73,7 +73,7 @@ exit 0; geometry_status=built; 37911 exported/read-back triangles; passed=false
   are placed through real INSERT `33FBCCB`, rotation **208.9900925356413 degrees**.
 - Complete recursive source inventory: 24 selected + 297 reasoned drops (non-cover layers or
   outside the site); 0 extraction errors. The full per-instance inventory is in external evidence.
-- Only `33F1841` and `33FBCC1` need even-odd interpretation; their rows opt in [D336].
+- Only `33F1841` and `33FBCC1` need even-odd interpretation; their rows opt in [D343].
 - 1685 source relief points; original support remainder **7.608474253 m²**;
   maximum original boundary-to-support distance **1.482247067 m**.
   19 continuation sample points exceed snap, actual maximum **1.482384392 m** after noding,

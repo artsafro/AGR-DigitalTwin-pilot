@@ -106,11 +106,11 @@
     },
     {
      "type": "arrow",
-     "id": "e8a66e1032e2f488"
+     "id": "e9dc4d2052f502e3"
     },
     {
      "type": "arrow",
-     "id": "e302963783a00205"
+     "id": "e3d54d0254ca3246"
     }
    ],
    "updated": 1,
@@ -224,9 +224,79 @@
    "lineHeight": 1.25
   },
   {
-   "id": "e4310e5bdd7262ad",
+   "id": "e125ae7d0f5a9eef",
    "type": "rectangle",
    "x": 40,
+   "y": 461.5,
+   "width": 470,
+   "height": 177.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 901782885,
+   "version": 1,
+   "versionNonce": 341073814,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e17277d14ef0fd09"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e17277d14ef0fd09",
+   "type": "text",
+   "x": 48,
+   "y": 471.5,
+   "width": 454,
+   "height": 157.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 509844240,
+   "version": 1,
+   "versionNonce": 622446676,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Генератор окон и владение стеклом\nВладелец: adapters/max/agr_tools/windowgen_core.py\nagr window-generate и Max win.generate вызывают одно\nядро; KPP1 extraction использует общий 3D owner\n\nbuild_type: тип, стандарт -> меш окна D322; общий для CLI\nи Max\nassign_glass: 3D bounds -> один владелец стекла или явный\nfailing drop",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e125ae7d0f5a9eef",
+   "originalText": "Генератор окон и владение стеклом\nВладелец: adapters/max/agr_tools/windowgen_core.py\nagr window-generate и Max win.generate вызывают одно\nядро; KPP1 extraction использует общий 3D owner\n\nbuild_type: тип, стандарт -> меш окна D322; общий для CLI\nи Max\nassign_glass: 3D bounds -> один владелец стекла или явный\nfailing drop",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e4310e5bdd7262ad",
+   "type": "rectangle",
+   "x": 650,
    "y": 461.5,
    "width": 470,
    "height": 142.5,
@@ -260,7 +330,7 @@
   {
    "id": "e31de95cd6b043fc",
    "type": "text",
-   "x": 48,
+   "x": 658,
    "y": 471.5,
    "width": 454,
    "height": 122.5,
@@ -296,7 +366,7 @@
   {
    "id": "e2d4a4ab6359f8d7",
    "type": "rectangle",
-   "x": 650,
+   "x": 1260,
    "y": 461.5,
    "width": 470,
    "height": 142.5,
@@ -330,7 +400,7 @@
   {
    "id": "e2248f5fb0f4cd7d",
    "type": "text",
-   "x": 658,
+   "x": 1268,
    "y": 471.5,
    "width": 454,
    "height": 122.5,
@@ -366,7 +436,7 @@
   {
    "id": "e980a3ddfe2ffe53",
    "type": "rectangle",
-   "x": 1260,
+   "x": 1870,
    "y": 461.5,
    "width": 470,
    "height": 142.5,
@@ -400,7 +470,7 @@
   {
    "id": "e7d1998c5c2feb6e",
    "type": "text",
-   "x": 1268,
+   "x": 1878,
    "y": 471.5,
    "width": 454,
    "height": 122.5,
@@ -436,8 +506,8 @@
   {
    "id": "ee4f80dd95e7611a",
    "type": "rectangle",
-   "x": 1870,
-   "y": 461.5,
+   "x": 40.0,
+   "y": 699.0,
    "width": 470,
    "height": 125.0,
    "angle": 0,
@@ -470,8 +540,8 @@
   {
    "id": "edae55e53bc4069d",
    "type": "text",
-   "x": 1878,
-   "y": 471.5,
+   "x": 48.0,
+   "y": 709.0,
    "width": 454,
    "height": 105.0,
    "angle": 0,
@@ -506,8 +576,8 @@
   {
    "id": "e055eec75f5eb0b4",
    "type": "rectangle",
-   "x": 40.0,
-   "y": 664.0,
+   "x": 650.0,
+   "y": 699.0,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -540,8 +610,8 @@
   {
    "id": "ea5fe04c3488d12b",
    "type": "text",
-   "x": 48.0,
-   "y": 674.0,
+   "x": 658.0,
+   "y": 709.0,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -576,8 +646,8 @@
   {
    "id": "e01a0a674fb8eec4",
    "type": "rectangle",
-   "x": 40.0,
-   "y": 838.0,
+   "x": 650.0,
+   "y": 873.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -610,8 +680,8 @@
   {
    "id": "e8557b923cc2b0ed",
    "type": "text",
-   "x": 48.0,
-   "y": 848.0,
+   "x": 658.0,
+   "y": 883.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -646,8 +716,8 @@
   {
    "id": "ed237514149addda",
    "type": "rectangle",
-   "x": 650.0,
-   "y": 664.0,
+   "x": 1260.0,
+   "y": 699.0,
    "width": 470,
    "height": 265.0,
    "angle": 0,
@@ -678,7 +748,7 @@
     },
     {
      "type": "arrow",
-     "id": "ef95d128700adec0"
+     "id": "efbb2d5921b933ac"
     }
    ],
    "updated": 1,
@@ -688,8 +758,8 @@
   {
    "id": "ea9040dfc02df157",
    "type": "text",
-   "x": 658.0,
-   "y": 674.0,
+   "x": 1268.0,
+   "y": 709.0,
    "width": 454,
    "height": 245.0,
    "angle": 0,
@@ -724,8 +794,8 @@
   {
    "id": "ebbc87b6742c8172",
    "type": "rectangle",
-   "x": 650.0,
-   "y": 943.0,
+   "x": 1260.0,
+   "y": 978.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -758,8 +828,8 @@
   {
    "id": "e0ca1096fb1a75ea",
    "type": "text",
-   "x": 658.0,
-   "y": 953.0,
+   "x": 1268.0,
+   "y": 988.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -792,10 +862,88 @@
    "lineHeight": 1.25
   },
   {
+   "id": "ebefb8015300e481",
+   "type": "rectangle",
+   "x": 1870.0,
+   "y": 699.0,
+   "width": 470,
+   "height": 142.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 233386411,
+   "version": 1,
+   "versionNonce": 961134570,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ee52b2029f7668ad"
+    },
+    {
+     "type": "arrow",
+     "id": "e887484a11c59d50"
+    },
+    {
+     "type": "arrow",
+     "id": "eb3f8e3762270cb4"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ee52b2029f7668ad",
+   "type": "text",
+   "x": 1878.0,
+   "y": 709.0,
+   "width": 454,
+   "height": 122.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1534628035,
+   "version": 1,
+   "versionNonce": 1959272557,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Экспорт НПМ с привязкой к мастеру\nВладелец: tools/derive/export_npm.py\ndt derive npm пишет FBX, export_meta и запись derivation;\nатлас готовится отдельно\n\nmain: мастер и атлас -> экспортированный НПМ-FBX без UCX,\nметаданные и привязка к ревизии мастера",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ebefb8015300e481",
+   "originalText": "Экспорт НПМ с привязкой к мастеру\nВладелец: tools/derive/export_npm.py\ndt derive npm пишет FBX, export_meta и запись derivation;\nатлас готовится отдельно\n\nmain: мастер и атлас -> экспортированный НПМ-FBX без UCX,\nметаданные и привязка к ревизии мастера",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
    "id": "e3b32b4a8117835a",
    "type": "rectangle",
-   "x": 1260.0,
-   "y": 664.0,
+   "x": 40.0,
+   "y": 1073.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -826,11 +974,11 @@
     },
     {
      "type": "arrow",
-     "id": "ef80d7ce7bfb6c50"
+     "id": "e887484a11c59d50"
     },
     {
      "type": "arrow",
-     "id": "e8a66e1032e2f488"
+     "id": "e9dc4d2052f502e3"
     }
    ],
    "updated": 1,
@@ -840,8 +988,8 @@
   {
    "id": "e235e3fa5de9ad90",
    "type": "text",
-   "x": 1268.0,
-   "y": 674.0,
+   "x": 48.0,
+   "y": 1083.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -876,8 +1024,8 @@
   {
    "id": "e99c9ff8d7aad5df",
    "type": "rectangle",
-   "x": 1260.0,
-   "y": 890.5,
+   "x": 40.0,
+   "y": 1299.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -910,8 +1058,8 @@
   {
    "id": "e6464ee46504a376",
    "type": "text",
-   "x": 1268.0,
-   "y": 900.5,
+   "x": 48.0,
+   "y": 1309.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -946,8 +1094,8 @@
   {
    "id": "e404c6529e4cd758",
    "type": "rectangle",
-   "x": 1870.0,
-   "y": 664.0,
+   "x": 650.0,
+   "y": 1073.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -980,8 +1128,8 @@
   {
    "id": "e6f1beadb15c56c0",
    "type": "text",
-   "x": 1878.0,
-   "y": 674.0,
+   "x": 658.0,
+   "y": 1083.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -1016,8 +1164,8 @@
   {
    "id": "e625c23305c6837f",
    "type": "rectangle",
-   "x": 1870.0,
-   "y": 855.5,
+   "x": 650.0,
+   "y": 1264.5,
    "width": 470,
    "height": 65.0,
    "angle": 0,
@@ -1050,8 +1198,8 @@
   {
    "id": "e7a775407bde2f28",
    "type": "text",
-   "x": 1878.0,
-   "y": 865.5,
+   "x": 658.0,
+   "y": 1274.5,
    "width": 454,
    "height": 45.0,
    "angle": 0,
@@ -1086,8 +1234,8 @@
   {
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
-   "x": 345.0,
-   "y": 1038.0,
+   "x": 1260.0,
+   "y": 1073.0,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -1114,11 +1262,11 @@
     },
     {
      "type": "arrow",
-     "id": "ef80d7ce7bfb6c50"
+     "id": "eb3f8e3762270cb4"
     },
     {
      "type": "arrow",
-     "id": "e195ad748a2fcc73"
+     "id": "ee5d5c8b355620c3"
     }
    ],
    "updated": 1,
@@ -1128,8 +1276,8 @@
   {
    "id": "e55a50708fc05498",
    "type": "text",
-   "x": 353.0,
-   "y": 1048.0,
+   "x": 1268.0,
+   "y": 1083.0,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -1164,8 +1312,8 @@
   {
    "id": "ed012c0e59699081",
    "type": "rectangle",
-   "x": 345.0,
-   "y": 1334.5,
+   "x": 1260.0,
+   "y": 1369.5,
    "width": 470,
    "height": 65.0,
    "angle": 0,
@@ -1198,8 +1346,8 @@
   {
    "id": "ef7cc50781ab05b4",
    "type": "text",
-   "x": 353.0,
-   "y": 1344.5,
+   "x": 1268.0,
+   "y": 1379.5,
    "width": 454,
    "height": 45.0,
    "angle": 0,
@@ -1234,8 +1382,8 @@
   {
    "id": "e7b912642e1534e2",
    "type": "rectangle",
-   "x": 955.0,
-   "y": 1038.0,
+   "x": 1870.0,
+   "y": 1073.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -1262,15 +1410,15 @@
     },
     {
      "type": "arrow",
-     "id": "e195ad748a2fcc73"
+     "id": "ee5d5c8b355620c3"
     },
     {
      "type": "arrow",
-     "id": "e63629d813723557"
+     "id": "ea67174522302baa"
     },
     {
      "type": "arrow",
-     "id": "e302963783a00205"
+     "id": "e3d54d0254ca3246"
     }
    ],
    "updated": 1,
@@ -1280,8 +1428,8 @@
   {
    "id": "e3212abb34fd11e1",
    "type": "text",
-   "x": 963.0,
-   "y": 1048.0,
+   "x": 1878.0,
+   "y": 1083.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -1316,8 +1464,8 @@
   {
    "id": "e43fe4f37d52ebfe",
    "type": "rectangle",
-   "x": 955.0,
-   "y": 1247.0,
+   "x": 1870.0,
+   "y": 1282.0,
    "width": 470,
    "height": 110.0,
    "angle": 0,
@@ -1350,8 +1498,8 @@
   {
    "id": "eb444d1905179d98",
    "type": "text",
-   "x": 963.0,
-   "y": 1257.0,
+   "x": 1878.0,
+   "y": 1292.0,
    "width": 454,
    "height": 90.0,
    "angle": 0,
@@ -1386,8 +1534,8 @@
   {
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
-   "x": 1565.0,
-   "y": 1038.0,
+   "x": 345.0,
+   "y": 1494.5,
    "width": 470,
    "height": 230.0,
    "angle": 0,
@@ -1414,11 +1562,11 @@
     },
     {
      "type": "arrow",
-     "id": "ef95d128700adec0"
+     "id": "efbb2d5921b933ac"
     },
     {
      "type": "arrow",
-     "id": "e63629d813723557"
+     "id": "ea67174522302baa"
     }
    ],
    "updated": 1,
@@ -1428,8 +1576,8 @@
   {
    "id": "ed4e9eac2280ec03",
    "type": "text",
-   "x": 1573.0,
-   "y": 1048.0,
+   "x": 353.0,
+   "y": 1504.5,
    "width": 454,
    "height": 210.0,
    "angle": 0,
@@ -1464,8 +1612,8 @@
   {
    "id": "e7c3b463ea5ad90f",
    "type": "rectangle",
-   "x": 1565.0,
-   "y": 1282.0,
+   "x": 345.0,
+   "y": 1738.5,
    "width": 470,
    "height": 80.0,
    "angle": 0,
@@ -1498,8 +1646,8 @@
   {
    "id": "e32db9413dafe301",
    "type": "text",
-   "x": 1573.0,
-   "y": 1292.0,
+   "x": 353.0,
+   "y": 1748.5,
    "width": 454,
    "height": 60.0,
    "angle": 0,
@@ -1532,12 +1680,222 @@
    "lineHeight": 1.25
   },
   {
+   "id": "e89f7e0e63e2fdf9",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 1494.5,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 4394257,
+   "version": 1,
+   "versionNonce": 296052018,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ef7093cdc86ed328"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ef7093cdc86ed328",
+   "type": "text",
+   "x": 963.0,
+   "y": 1504.5,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1300858526,
+   "version": 1,
+   "versionNonce": 248082420,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e89f7e0e63e2fdf9",
+   "originalText": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed319371ca8c4f40",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 1633.5,
+   "width": 470,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 495611946,
+   "version": 1,
+   "versionNonce": 422484910,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e7ce9eed157c440c"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e7ce9eed157c440c",
+   "type": "text",
+   "x": 963.0,
+   "y": 1643.5,
+   "width": 454,
+   "height": 15.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1711433107,
+   "version": 1,
+   "versionNonce": 79258189,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ed319371ca8c4f40",
+   "originalText": "Дубли вне владельца: 1",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "efce5e1877483387",
+   "type": "rectangle",
+   "x": 1565.0,
+   "y": 1494.5,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 710837875,
+   "version": 1,
+   "versionNonce": 18040070,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "eac930d140cf2789"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "eac930d140cf2789",
+   "type": "text",
+   "x": 1573.0,
+   "y": 1504.5,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 366967778,
+   "version": 1,
+   "versionNonce": 1339071814,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Состав частей (PartsList)\nВладелец: src/dt_ai/parts/model.py\nмодель состава частей и подтверждение Gate 1\n\nPartsList: Состав частей модели и подтверждение\nпользователя",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "efce5e1877483387",
+   "originalText": "Состав частей (PartsList)\nВладелец: src/dt_ai/parts/model.py\nмодель состава частей и подтверждение Gate 1\n\nPartsList: Состав частей модели и подтверждение\nпользователя",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
    "id": "e4414b2c1871542b",
    "type": "arrow",
-   "x": 1120.0,
-   "y": 796.5,
-   "width": 630.0,
-   "height": 152.5,
+   "x": 1730.0,
+   "y": 831.5,
+   "width": 1240.0,
+   "height": 347.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1573,27 +1931,19 @@
     ],
     [
      20.0,
-     -26.25
+     221.5
     ],
     [
-     120.0,
-     -26.25
+     -1200.0,
+     221.5
     ],
     [
-     120.0,
-     -152.5
+     -1200.0,
+     347.75
     ],
     [
-     630.0,
-     -152.5
-    ],
-    [
-     630.0,
-     -26.25
-    ],
-    [
-     610.0,
-     -26.25
+     -1220.0,
+     347.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1614,8 +1964,8 @@
   {
    "id": "ec8c1eb7b1bf9505",
    "type": "text",
-   "x": 1435.0,
-   "y": 626.5,
+   "x": 1080.0,
+   "y": 1035.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1648,11 +1998,11 @@
    "lineHeight": 1.25
   },
   {
-   "id": "ef80d7ce7bfb6c50",
+   "id": "e887484a11c59d50",
    "type": "arrow",
-   "x": 1730.0,
-   "y": 770.25,
-   "width": 935.0,
+   "x": 510.0,
+   "y": 1179.25,
+   "width": 1850.0,
    "height": 409.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -1665,14 +2015,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 205472259,
+   "seed": 1017844645,
    "version": 1,
-   "versionNonce": 40362669,
+   "versionNonce": 1973141144,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e647a70c1b18162d"
+     "id": "e5ced2d67fb3e967"
     }
    ],
    "updated": 1,
@@ -1689,19 +2039,27 @@
     ],
     [
      20.0,
-     247.75
+     -146.25
     ],
     [
-     -895.0,
-     247.75
+     1240.0,
+     -146.25
     ],
     [
-     -895.0,
-     409.0
+     1240.0,
+     -335.25
     ],
     [
-     -915.0,
-     409.0
+     1850.0,
+     -335.25
+    ],
+    [
+     1850.0,
+     -409.0
+    ],
+    [
+     1830.0,
+     -409.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1714,16 +2072,16 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "e1648b9a5855f96c",
+    "elementId": "ebefb8015300e481",
     "focus": 0,
     "gap": 4
    }
   },
   {
-   "id": "e647a70c1b18162d",
+   "id": "e5ced2d67fb3e967",
    "type": "text",
-   "x": 1232.5,
-   "y": 1000.5,
+   "x": 1080.0,
+   "y": 1015.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1737,9 +2095,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 638562339,
+   "seed": 1754336940,
    "version": 1,
-   "versionNonce": 1014907745,
+   "versionNonce": 955442701,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1750,18 +2108,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "ef80d7ce7bfb6c50",
+   "containerId": "e887484a11c59d50",
    "originalText": "UV, атлас,\nтекстуры",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e195ad748a2fcc73",
+   "id": "eb3f8e3762270cb4",
    "type": "arrow",
-   "x": 815.0,
-   "y": 1179.25,
+   "x": 2340.0,
+   "y": 770.25,
    "width": 630.0,
-   "height": 161.25,
+   "height": 444.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1773,14 +2131,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 121511196,
+   "seed": 1127857098,
    "version": 1,
-   "versionNonce": 168305397,
+   "versionNonce": 1589750964,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e5b126af16a90368"
+     "id": "e7cdcc5b82f25b33"
     }
    ],
    "updated": 1,
@@ -1797,19 +2155,119 @@
     ],
     [
      20.0,
-     -43.75
+     282.75
     ],
     [
-     120.0,
-     -43.75
+     -590.0,
+     282.75
     ],
     [
-     120.0,
-     -161.25
+     -590.0,
+     444.0
+    ],
+    [
+     -610.0,
+     444.0
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "ebefb8015300e481",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e7cdcc5b82f25b33",
+   "type": "text",
+   "x": 1748.0,
+   "y": 1026.75,
+   "width": 120,
+   "height": 52.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1739339219,
+   "version": 1,
+   "versionNonce": 1571001671,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "НПМ-FBX и\nпривязка к\nмастеру",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "eb3f8e3762270cb4",
+   "originalText": "НПМ-FBX и\nпривязка к\nмастеру",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ee5d5c8b355620c3",
+   "type": "arrow",
+   "x": 1730.0,
+   "y": 1214.25,
+   "width": 630.0,
+   "height": 100.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1337647763,
+   "version": 1,
+   "versionNonce": 698400259,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e72968da34b57d0e"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     56.25
     ],
     [
      630.0,
-     -161.25
+     56.25
     ],
     [
      630.0,
@@ -1836,10 +2294,10 @@
    }
   },
   {
-   "id": "e5b126af16a90368",
+   "id": "e72968da34b57d0e",
    "type": "text",
-   "x": 1130.0,
-   "y": 1009.25,
+   "x": 1995.0,
+   "y": 1261.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1853,9 +2311,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1412668913,
+   "seed": 88104692,
    "version": 1,
-   "versionNonce": 1217280820,
+   "versionNonce": 1714329427,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1866,18 +2324,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e195ad748a2fcc73",
+   "containerId": "ee5d5c8b355620c3",
    "originalText": "ZIP / FBX сдачи",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "ef95d128700adec0",
+   "id": "efbb2d5921b933ac",
    "type": "arrow",
-   "x": 2035.0,
-   "y": 1153.0,
+   "x": 815.0,
+   "y": 1609.5,
    "width": 935.0,
-   "height": 356.5,
+   "height": 778.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1889,14 +2347,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1997209028,
+   "seed": 1618559431,
    "version": 1,
-   "versionNonce": 1187594321,
+   "versionNonce": 1815774437,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e1713a01e405b29a"
+     "id": "e49102e4d3bb7103"
     }
    ],
    "updated": 1,
@@ -1913,19 +2371,27 @@
     ],
     [
      20.0,
-     -212.5
+     -260.0
     ],
     [
-     -795.0,
-     -212.5
+     325.0,
+     -260.0
     ],
     [
-     -795.0,
-     -356.5
+     325.0,
+     -576.5
     ],
     [
-     -915.0,
-     -356.5
+     935.0,
+     -576.5
+    ],
+    [
+     935.0,
+     -778.0
+    ],
+    [
+     915.0,
+     -778.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1944,10 +2410,10 @@
    }
   },
   {
-   "id": "e1713a01e405b29a",
+   "id": "e49102e4d3bb7103",
    "type": "text",
-   "x": 1732.0,
-   "y": 923.0,
+   "x": 1385.0,
+   "y": 1015.5,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1961,9 +2427,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 231136601,
+   "seed": 923622526,
    "version": 1,
-   "versionNonce": 1705533294,
+   "versionNonce": 1892802131,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1974,18 +2440,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "ef95d128700adec0",
+   "containerId": "efbb2d5921b933ac",
    "originalText": "Blender/Max\nстроит",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e63629d813723557",
+   "id": "ea67174522302baa",
    "type": "arrow",
-   "x": 2035.0,
-   "y": 1153.0,
-   "width": 630.0,
-   "height": 135.0,
+   "x": 815.0,
+   "y": 1609.5,
+   "width": 1545.0,
+   "height": 439.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1997,14 +2463,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 315190916,
+   "seed": 1974752314,
    "version": 1,
-   "versionNonce": 1143053036,
+   "versionNonce": 1456858036,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e2956f09d14c6626"
+     "id": "efcd29e3b1255cbe"
     }
    ],
    "updated": 1,
@@ -2021,19 +2487,27 @@
     ],
     [
      20.0,
-     -135.0
+     -155.0
     ],
     [
-     -590.0,
-     -135.0
+     935.0,
+     -155.0
     ],
     [
-     -590.0,
-     -17.5
+     935.0,
+     -339.0
     ],
     [
-     -610.0,
-     -17.5
+     1545.0,
+     -339.0
+    ],
+    [
+     1545.0,
+     -439.0
+    ],
+    [
+     1525.0,
+     -439.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -2052,10 +2526,10 @@
    }
   },
   {
-   "id": "e2956f09d14c6626",
+   "id": "efcd29e3b1255cbe",
    "type": "text",
-   "x": 1690.0,
-   "y": 1000.5,
+   "x": 1232.5,
+   "y": 1437.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -2069,9 +2543,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 349671340,
+   "seed": 1917941077,
    "version": 1,
-   "versionNonce": 1325418794,
+   "versionNonce": 1964122187,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -2082,18 +2556,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e63629d813723557",
+   "containerId": "ea67174522302baa",
    "originalText": "свежее чтение\nэкспорта",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e8a66e1032e2f488",
+   "id": "e9dc4d2052f502e3",
    "type": "arrow",
    "x": 1425.0,
    "y": 216.25,
-   "width": 325.0,
-   "height": 554.0,
+   "width": 935.0,
+   "height": 963.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2105,14 +2579,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 194972992,
+   "seed": 1369104839,
    "version": 1,
-   "versionNonce": 1531901486,
+   "versionNonce": 2607878,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e730527004bd695c"
+     "id": "e5095dee502fddef"
     }
    ],
    "updated": 1,
@@ -2132,16 +2606,24 @@
      225.25
     ],
     [
-     325.0,
+     -185.0,
      225.25
     ],
     [
-     325.0,
-     554.0
+     -185.0,
+     836.75
     ],
     [
-     305.0,
-     554.0
+     -895.0,
+     836.75
+    ],
+    [
+     -895.0,
+     963.0
+    ],
+    [
+     -915.0,
+     963.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -2160,10 +2642,10 @@
    }
   },
   {
-   "id": "e730527004bd695c",
+   "id": "e5095dee502fddef",
    "type": "text",
-   "x": 1690.0,
-   "y": 606.0,
+   "x": 825.0,
+   "y": 1044.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2177,9 +2659,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1653838554,
+   "seed": 1025954729,
    "version": 1,
-   "versionNonce": 1987196261,
+   "versionNonce": 1208030137,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -2190,18 +2672,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e8a66e1032e2f488",
+   "containerId": "e9dc4d2052f502e3",
    "originalText": "номер тайла",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e302963783a00205",
+   "id": "e3d54d0254ca3246",
    "type": "arrow",
    "x": 1425.0,
    "y": 216.25,
-   "width": 205.0,
-   "height": 919.25,
+   "width": 935.0,
+   "height": 954.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -2213,14 +2695,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 942613563,
+   "seed": 1255450864,
    "version": 1,
-   "versionNonce": 1576812526,
+   "versionNonce": 520276845,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e5ad51a41db3e644"
+     "id": "ee34a66f624eea39"
     }
    ],
    "updated": 1,
@@ -2240,24 +2722,24 @@
      225.25
     ],
     [
-     -185.0,
+     325.0,
      225.25
     ],
     [
-     -185.0,
-     801.75
+     325.0,
+     836.75
     ],
     [
-     20.0,
-     801.75
+     935.0,
+     836.75
     ],
     [
-     20.0,
-     919.25
+     935.0,
+     954.25
     ],
     [
-     0.0,
-     919.25
+     915.0,
+     954.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -2276,10 +2758,10 @@
    }
   },
   {
-   "id": "e5ad51a41db3e644",
+   "id": "ee34a66f624eea39",
    "type": "text",
-   "x": 1180.0,
-   "y": 644.5,
+   "x": 1690.0,
+   "y": 679.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -2293,9 +2775,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1520247939,
+   "seed": 149661039,
    "version": 1,
-   "versionNonce": 1680638172,
+   "versionNonce": 1868595694,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -2306,7 +2788,7 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e302963783a00205",
+   "containerId": "e3d54d0254ca3246",
    "originalText": "номер тайла",
    "autoResize": true,
    "lineHeight": 1.25

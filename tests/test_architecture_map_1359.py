@@ -16,6 +16,64 @@ import route_map  # noqa: E402
 YAMLS = [ROOT / route_map.EVENTS, ROOT / route_map.CONTEXTS]
 
 
+# ---------------------------------------------------------------- #1636: source-backed route wording, not delivery certification
+@pytest.mark.parametrize("item", ["context", "npm", "sources", "readback", "sintez", "delivered"])
+def test_1636_npm_route_matches_current_tools(item):
+    events = mini_yaml.load(ROOT / route_map.EVENTS)
+    contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
+    stages = {s["id"]: s for s in events["stages"]}
+    if item == "context":
+        assert stages["npm"]["context"] == "npm"
+        npm = next(c for c in contexts["contexts"] if c["id"] == "npm")
+        assert npm["owner"] == "tools/derive/export_npm.py"
+        assert {f["name"] for f in npm["functions"]} == {"main"}
+    elif item == "npm":
+        assert "Экспортированный НПМ-FBX с привязкой к мастеру" in stages["npm"]["event_ru"]
+        assert "перед экспортом" not in stages["npm"]["event_ru"]
+    elif item == "sources":
+        source = events["scheme"]["source_ru"]
+        assert "состав исходников фиксируется путями и SHA-256 (кроме RVT)" in source
+        assert "неизвестная ревизия останавливает выпуск" not in source
+        assert "#1592" in source
+    elif item == "readback":
+        stage = stages[item]
+        assert {"agr build-manifest", "dt qa xview"} <= set(stage["commands"])
+        assert "fbx_readback" in stage["event_ru"] and "manifest_findings" in stage["event_ru"]
+        assert "ZIP" in stage["event_ru"] and "одного FBX" in stage["event_ru"]
+    elif item == "sintez":
+        assert stages[item]["evidence"] == ["tools/qa/sintez_checker.py"]
+    else:
+        step = next(s for s in events["scheme"]["steps"] if s["stages"] == "delivered")
+        assert step["artifact_ru"] == "Пакет или сцена Max QUAD для приёмки"
+        assert "D262" in stages[item]["rules"]  # unresolved relocation stays out of scope
+
+
+@pytest.mark.parametrize("rule,qualname", [
+    ("delivery-zip", "main"), ("blender-launch", "main"), ("blender-launch", "main.dcc"),
+])
+def test_1652_vatutino_history_does_not_claim_delivery_acceptance(rule, qualname):
+    contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
+    at = f"jobs/VATUTINO-SITE/run_delivery.py::{qualname}"
+    rows = [row for context in contexts["contexts"] for row in context.get("duplicates", [])
+            if row["at"] == at and row["rule"] == rule]
+    assert len(rows) == 1
+    row = rows[0]
+    assert row["status"] == "historical"
+    sheet = ROOT / "docs/deliveries/vatutino-site-2026-11-09.md"
+    assert "Verdict: **not passed**" in sheet.read_text(encoding="utf-8")
+    assert "verdict not passed" in row["ru"]
+    assert "v009" in row["ru"] and "2026-11-09" in row["ru"]
+    assert "запуск не меняем" in row["ru"]
+    owners = {rel: text for rel, text in route_map.render(ROOT)[2].items()
+              if rel.name.endswith("-owners.md")}
+    assert len(owners) == 6
+    for rel, text in owners.items():
+        matching = [line for line in text.splitlines()
+                    if line.startswith(f"| {rule} |") and f"run_delivery.py::{qualname}`" in line]
+        assert len(matching) == 1, rel
+        assert f"| historical | {row['ru']} |" in matching[0], rel
+
+
 # ---------------------------------------------------------------- generator: drift, references, labels
 def test_committed_files_equal_generator_output():
     _, _, files = route_map.render(ROOT)
@@ -96,7 +154,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 11  # #1441 owners + #1380 shared VPM UV replaces vpm-uv-copy
+    assert len(contexts["contexts"]) == 15  # #1644: distinct SINTEZ and PartsList owners
 
 
 @pytest.mark.parametrize("command,ok", [
@@ -110,7 +168,7 @@ def test_command_exists(command, ok):
 
 
 def _loaded():
-    events, contexts = mini_yaml.load(YAMLS[0]), mini_yaml.load(YAMLS[1])
+    events, contexts = route_map.load_routes(ROOT)["route"], route_map.load_context_maps(ROOT)["contexts"]
     # Mutation probes target the body contract, independent of added owner inventory rows (#1441).
     contexts["contexts"].sort(key=lambda c: c["id"] != "body")
     return events, contexts
@@ -282,7 +340,8 @@ def test_guard_green_on_repo_with_allowlist(capsys):
 def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
     assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left; #1407: site-placement neither
-    assert all(issue.startswith("#") for issue in allowed.values())
+    assert not any(k[0] == 'window-generator' for k in allowed)  # #1405: no grandfathered copies
+    assert all(allow.issue.startswith("#") and allow.copies >= 1 for allow in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
     assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
     assert len([k for k in jobs if k[0] == "udim-tile"]) == 34   # #1531 removes two live copies; #1370 retains six historical OBR22 copies
@@ -581,7 +640,10 @@ def test_guard_hash_row_pins_one_copy_inside_the_function(tmp_path, capsys):
     second = FN + "    du = (t - 1001) % 10\n"
     assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f", digest=digest))) == 1
     assert "NEW COPY [udim-tile] jobs/J/a.py:3 in f" in capsys.readouterr().out      # 2nd copy, other hash
-    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f"))) == 0  # no hash
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f"))) == 1  # no hash, count 1
+    assert "covers only count 1 of 2" in capsys.readouterr().out                                    # #1396
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second},
+                                  _row("jobs/J/a.py::f") + "        count: 2\n")) == 0             # no hash, count 2
     assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": FN}, _row("jobs/J/a.py::f", digest="0" * 10))) == 1
     out = capsys.readouterr().out
     assert "NEW COPY [udim-tile] jobs/J/a.py:2 in f" in out and "STALE ALLOWLIST [udim-tile] jobs/J/a.py::f" in out

@@ -81,6 +81,8 @@ def test_npm_uses_exporter_sidecar_and_never_packs_it(tmp_path):
     fbx.write_bytes(b'synthetic OKS')
     (pkg / '0000_Synthetic_Ground.fbx').write_bytes(b'synthetic Ground')
     record_export(fbx, source='synthetic fixture', top=3.5)
+    record_export(pkg / '0000_Synthetic_Ground.fbx', source='synthetic ground route', top=0.2,
+                  address='Synthetic_Ground', profile='vpm')  # #1637: Ground recorded by its own route
     result = subprocess.run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-npm', str(pkg)],
                             capture_output=True, text=True, cwd=ROOT)
     assert result.returncode == 0, result.stderr
@@ -150,6 +152,133 @@ def test_generated_archive_output_aliases_preserve_inputs(tmp_path, monkeypatch,
         package_core._write_zip(str(tmp_path), archive, str(target))
     assert source.read_bytes() == b'synthetic input'
     assert not Path(str(target) + '.partial').exists()
+
+
+@pytest.mark.parametrize('case', range(12))
+def test_expected_hash_refuses_before_publication(tmp_path, monkeypatch, case):
+    import hashlib
+    import os
+    original = bytes([case + 1]) * (case + 1)
+    source = tmp_path / 'a.fbx'
+    source.write_bytes(original + b'changed')
+    target = tmp_path / 'a.zip'
+    archive = {'name': 'a.zip', 'members': [{'name': 'a.fbx'}], 'limit': 10000}
+    published = []
+    link = os.link
+    def observe(src, dst):
+        published.append(dst)
+        return link(src, dst)
+    monkeypatch.setattr(os, 'link', observe)
+    with pytest.raises(ValueError, match='a.fbx'):
+        package_core._write_zip(str(tmp_path), archive, str(target),
+                                expected_sha256={'a.fbx': hashlib.sha256(original).hexdigest()})
+    assert published == []
+    assert not target.exists() and not Path(str(target) + '.partial').exists()
+    assert source.read_bytes() == original + b'changed'
+
+
+@pytest.mark.parametrize('mode', ['clean', 'foreign', 'edited', 'unrecorded', 'stale_during_write'])
+@pytest.mark.parametrize('path', ['cli', 'max'])
+def test_binding_before_publication_on_both_paths(tmp_path, monkeypatch, mode, path):
+    from adapters.max.agr_tools import edit_core
+    from adapters.max.agr_tools.export_meta import record_export
+    from tools.derive import package_npm
+    import os
+    import zipfile
+    pkg = tmp_path / 'fbx'
+    pkg.mkdir()
+    for part in ('01', 'Ground'):
+        fbx = pkg / f'0000_Synthetic_{part}.fbx'
+        fbx.write_bytes(b'synthetic ' + part.encode())
+        if mode != 'unrecorded':
+            record_export(fbx, source='synthetic fixture')
+    if mode == 'foreign':
+        (pkg / '0000_Synthetic_02.fbx').write_bytes(b'foreign')
+    if mode == 'edited':
+        (pkg / '0000_Synthetic_01.fbx').write_bytes(b'edited')
+    published = []
+    link, write = os.link, package_core._write_zip
+    def observe(src, dst):
+        published.append(dst)
+        return link(src, dst)
+    def swap(folder, archive, target, **kwargs):
+        if mode == 'stale_during_write':
+            (pkg / '0000_Synthetic_01.fbx').write_bytes(b'changed after binding')
+        return write(folder, archive, target, **kwargs)
+    monkeypatch.setattr(os, 'link', observe)
+    monkeypatch.setattr(package_core, '_write_zip', swap)
+    if path == 'cli':
+        if mode == 'clean':
+            assert package_npm.main([str(pkg)]) == 0
+        else:
+            with pytest.raises((ValueError, OSError)):
+                package_npm.main([str(pkg)])
+        targets = list(tmp_path.glob('*.zip'))
+    else:
+        preview = package_core.zip_preview(edit_core, str(pkg))
+        if mode == 'stale_during_write':
+            with pytest.raises((ValueError, OSError)):
+                package_core.zip_apply(edit_core, preview)
+        else:
+            package_core.zip_apply(edit_core, preview)
+        run = next(pkg.glob('Сборка_*'))
+        text = (run / package_core.MARK_FAIL).read_text(encoding='utf-8')
+        assert not (run / package_core.MARK_OK).exists()  # validator deliberately absent
+        if mode in ('foreign', 'edited', 'stale_during_write'):
+            assert ('0000_Synthetic_02.fbx' if mode == 'foreign' else '0000_Synthetic_01.fbx') in text
+        targets = list(run.glob('*.zip'))
+    assert len(published) == len(targets) == (1 if mode == 'clean' else 0)
+    assert not list(tmp_path.rglob('*.partial'))
+    if targets:
+        with zipfile.ZipFile(targets[0]) as z:
+            assert {n: z.read(n) for n in z.namelist()} == {
+                '0000_Synthetic_01.fbx': b'synthetic 01',
+                '0000_Synthetic_Ground.fbx': b'synthetic Ground'}
+
+
+@pytest.mark.parametrize('expected', [{'unknown.fbx': '0' * 64}, {'a.fbx': ''}, {'a.fbx': None},
+                                      {'a.fbx': float('nan')}, {'a.fbx': float('inf')}, {'a.fbx': '0' * 63}])
+def test_expected_hash_contract_fails_closed(tmp_path, expected):
+    (tmp_path / 'a.fbx').write_bytes(b'synthetic')
+    archive = {'name': 'a.zip', 'members': [{'name': 'a.fbx'}], 'limit': 10000}
+    with pytest.raises(ValueError, match='member'):
+        package_core._write_zip(str(tmp_path), archive, str(tmp_path / 'a.zip'), expected_sha256=expected)
+    assert sorted(p.name for p in tmp_path.iterdir()) == ['a.fbx']
+
+
+def test_embedded_sibling_binding_fresh_process(tmp_path):
+    """Installed Max siblings must not need repository/tools namespaces."""
+    script = '''
+import sys
+from pathlib import Path
+import importlib.util
+root = Path(sys.argv[1])
+assert str(root) not in sys.path
+def load(name):
+    spec = importlib.util.spec_from_file_location('agr_tools_' + name, root / (name + '.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+package_core, edit_core, export_meta = [load(n) for n in ('package_core', 'edit_core', 'export_meta')]
+assert package_core.__package__ == ''
+folder = Path(sys.argv[2])
+for part in ('01', 'Ground'):
+    fbx = folder / ('0000_Synthetic_' + part + '.fbx')
+    fbx.write_bytes(b'synthetic')
+    export_meta.record_export(fbx, source='synthetic fixture')
+rep = package_core.zip_apply(edit_core, package_core.zip_preview(edit_core, str(folder)))
+run = Path(rep['plan']['run_folder'])
+assert len(list(run.glob('*.zip'))) == 1
+assert (run / package_core.MARK_FAIL).exists()
+(folder / '0000_Synthetic_02.fbx').write_bytes(b'foreign')
+rep = package_core.zip_apply(edit_core, package_core.zip_preview(edit_core, str(folder)))
+run = Path(rep['plan']['run_folder'])
+assert not list(run.glob('*.zip'))
+assert '0000_Synthetic_02.fbx' in (run / package_core.MARK_FAIL).read_text(encoding='utf-8')
+'''
+    result = subprocess.run([sys.executable, '-I', '-c', script, str(ROOT / 'adapters/max/agr_tools'), str(tmp_path)],
+                            cwd=tmp_path, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
 
 
 def test_package_npm_cli_exists():

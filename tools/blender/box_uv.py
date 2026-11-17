@@ -5,7 +5,13 @@ scale (session 0a21d4de, elv-tc-vpm, 2026-11-16: per-tile snapping and neighbour
 panel joints; Artem's "UVW-map box 5-5-5 m" was accepted). docs/domain/uv-textures.md.
 
 - every listed face is projected on its dominant world axis (+-X, +-Y, +-Z) in metres, scaled by
-  px_per_m / texture_px, so one texture period = 1.0 UV and texel density = px_per_m;
+  px_per_m / texture_px, so one texture period = 1.0 UV. Directional texel (#1574): along the face's trace
+  on the projection plane it is px_per_m, across it px_per_m * |n_axis| (unit normal component on the
+  dominant axis, >= 1/sqrt(3)), so a rotated or sloped face gets less than px_per_m (a wall rotated 40 deg
+  at 819.2 px/m: 627.5 px/m). Both singular values of every face's UV-px / metre Jacobian (per fan
+  triangle, so a non-planar face is checked too) must lie in 512..1706, else BoxUVTexelError names the
+  faces and the least px_per_m at which they all pass; nothing is written. The report carries the range
+  as texel_px_per_m;
 - the winding of the projection follows the face normal (no mirrored islands, walls keep V = world Z);
 - listed faces that share an edge and the same axis form one island, except across an edge that lies on a
   world period line (both ends on u = k or v = k periods, #1573): such an edge is an island border; each
@@ -16,6 +22,9 @@ panel joints; Artem's "UVW-map box 5-5-5 m" was accepted). docs/domain/uv-textur
   is written. Remedy: cut the faces on world period lines (k * period_m; a cut elsewhere keeps the island
   connected) or lower px_per_m within 512..1706. An island touching a period line has phase 0 there, so it
   fits only with margin_px=0; tile margin vs world phase is an open conflict (docs/domain/conflicts.md);
+- period borders and tile fit share float32 world-phase normalization (#1600): three float32 ULPs
+  at the input magnitude (sum of absolute transform terms), capped at half a texture pixel. UVs use
+  that same normalized phase (including before whole-period subtraction); cuts outside that budget stay connected;
 - UVs are written through the mesh data API (no bpy.ops, no selection, no edit mode), only to the loops of
   the listed faces of the one target object; uv_fingerprint / uv_violations prove other objects (glass,
   UCX, ...) and unlisted faces kept their UV state.
@@ -35,11 +44,17 @@ import udimtile_core  # noqa: E402
 TEXEL_MIN, TEXEL_MAX = 512.0, 1706.0   # reg p.32 §6.2, inclusive
 LAST_UDIM = 1100                        # reg p.23, p.31 §2.1.3: 10x10 grid 1001-1100
 AXES = ('+x', '-x', '+y', '-y', '+z', '-z')
-EPS = 1e-9                              # periods (5 nm at a 5 m period): period-line and tile-fit tolerance
+EPS = 1e-9                              # periods: residual float64 arithmetic tolerance
+PERIOD_SNAP_PX = 0.5                    # never correct a world phase by more than half a texel
+TEXEL_RTOL = 1e-9                       # relative float tolerance of the inclusive texel bounds
 
 
 class BoxUVError(ValueError):
     """Invalid input for the box projection; nothing was written."""
+
+
+class BoxUVTexelError(BoxUVError):
+    """A face's directional texel is outside 512..1706 px/m; nothing was written."""
 
 
 class BoxUVOverflow(BoxUVError):
@@ -105,14 +120,82 @@ def _snap(p):
     return float(r) if abs(p - r) <= EPS else p
 
 
-def on_period_line(a, b, scale):
-    """True when edge a-b (planar metres) lies on one world period line u = k or v = k (UV units)."""
+def _period_coord(metres, scale, texture_px, magnitude=None):
+    """Canonical world phase for both island borders and tile fit (#1600).
+
+    Blender world coordinates are float32: allow three ULPs at the ORIGINAL input
+    magnitude, plus float64 arithmetic slack. The wrapper includes translation and
+    absolute local*matrix terms, not just the possibly cancelled result. Without
+    transform metadata the planner uses the world magnitude. Cap at half a texel; at
+    larger coordinates unresolved cuts deliberately remain fail-closed. Normalize
+    before subtracting the island shift, otherwise that magnitude would be lost.
+    This is rounding correction, not permission to pack or rescale an island.
+    """
+    p = metres * scale
+    magnitude = abs(metres) if magnitude is None else max(abs(metres), magnitude)
+    ulps = 3 * math.ldexp(1.0, math.frexp(magnitude)[1] - 24) * scale
+    tolerance = min(PERIOD_SNAP_PX / texture_px, max(EPS, ulps + EPS))
+    k = round(p)
+    return float(k) if abs(p - k) <= tolerance else p
+
+
+def on_period_line(a, b, scale, texture_px=4096, a_magnitude=None, b_magnitude=None):
+    """True when both endpoints normalize to the SAME world period line."""
     for i in (0, 1):
-        pa, pb = a[i] * scale, b[i] * scale
-        k = round(pa)
-        if abs(pa - k) <= EPS and abs(pb - k) <= EPS:
+        pa = _period_coord(a[i], scale, texture_px, None if a_magnitude is None else a_magnitude[i])
+        pb = _period_coord(b[i], scale, texture_px, None if b_magnitude is None else b_magnitude[i])
+        if pa == round(pa) and pb == pa:
             return True
     return False
+
+
+def face_texel(coords, key, px):
+    """(min, max) singular value in px/m of the map world face -> UV pixels (projection along `key` x px).
+
+    Projecting a plane with unit normal n onto the coordinate plane of axis a keeps lengths along the plane's
+    trace (singular value 1) and scales the direction across it by |n . a|; so the singular values are px
+    and px * |n_a| / |n|. Evaluated for the Newell normal and for fan triangles from EVERY corner,
+    so cyclic loop order cannot omit a quad diagonal (or an alternative n-gon fan). Triangles whose
+    area is below 1e-6 of the face area are skipped as collinear-corner roundoff slivers. This is a
+    conservative fan envelope, not a certificate of an exporter's arbitrary n-gon tessellation."""
+    axis = 'xyz'.index(key[1])
+    face_n = newell_normal(coords)
+    face_len = math.sqrt(sum(c * c for c in face_n))
+    normals = [list(face_n)]
+    count = len(coords)
+    for start, p0 in enumerate(coords):
+        for step in range(1, count - 1):
+            p1, p2 = coords[(start + step) % count], coords[(start + step + 1) % count]
+            d1 = [p1[k] - p0[k] for k in range(3)]
+            d2 = [p2[k] - p0[k] for k in range(3)]
+            t = [d1[(k + 1) % 3] * d2[(k + 2) % 3] - d1[(k + 2) % 3] * d2[(k + 1) % 3] for k in range(3)]
+            if math.sqrt(sum(c * c for c in t)) >= 1e-6 * face_len:
+                normals.append(t)
+    ratios = [abs(n[axis]) / math.sqrt(sum(c * c for c in n)) for n in normals]
+    return px * min(ratios), px                  # |n_a| / |n| <= 1: the trace direction keeps px
+
+
+def check_texel(faces, keys, px):
+    """Per-face directional texel; raises BoxUVTexelError naming every face outside 512..1706."""
+    lo_all, hi_all, bad = math.inf, -math.inf, []
+    for fid, _, coords in faces:
+        lo, hi = face_texel([tuple(map(float, c)) for c in coords], keys[fid], px)
+        lo_all, hi_all = min(lo_all, lo), max(hi_all, hi)
+        if lo < TEXEL_MIN * (1 - TEXEL_RTOL) or hi > TEXEL_MAX * (1 + TEXEL_RTOL):
+            bad.append((lo, fid, hi))
+    if bad:
+        bad.sort(key=lambda b: b[0])
+        # texel is linear in px: the least px at which every face reaches the floor (max texel = px <= 1706)
+        need = (math.ceil(max(px * TEXEL_MIN / lo for lo, _, _ in bad) * 10) / 10
+                if all(lo > 0 for lo, _, _ in bad) else math.inf)
+        listed = ', '.join(f'face {fid!r} ({lo:.1f}..{hi:.1f} px/m)' for lo, fid, hi in bad[:8])
+        remedy = (f'raise px_per_m >= {need:.1f} (<= {TEXEL_MAX:g}), or fix the geometry'
+                  if need <= TEXEL_MAX else 'no px_per_m in range fits; fix the geometry')
+        raise BoxUVTexelError(
+            f'{len(bad)} face(s) have directional texel outside {TEXEL_MIN:g}..{TEXEL_MAX:g} px/m at px_per_m '
+            f'{px:g} (box projection compresses a rotated or sloped face by |n_axis|, reg p.32 §6.2): {listed}; '
+            f'{remedy}')
+    return [round(lo_all, 6), round(hi_all, 6)]
 
 
 def _ordered(ids):
@@ -122,10 +205,13 @@ def _ordered(ids):
         return sorted(ids, key=repr)
 
 
-def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
+def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8, world_magnitudes=None):
     """faces: [(face_id, [vertex_key, ...], [(x, y, z) world, ...]), ...].
 
-    Returns (uvs, report): uvs = {face_id: [(u, v) per corner]}. Raises BoxUVError / BoxUVOverflow."""
+    Optional world_magnitudes maps each vertex key to nonnegative XYZ sums of absolute
+    transform input terms (metres), for float32 matrix arithmetic uncertainty.
+    Returns (uvs, report): uvs = {face_id: [(u, v) per corner]}; report['texel_px_per_m'] = [min, max]
+    directional texel over all faces. Raises BoxUVError / BoxUVTexelError / BoxUVOverflow."""
     px, (tu, tv), margin = validate_params(px_per_m, tile, texture_px, margin_px)
     faces = list(faces)
     if not faces:
@@ -149,14 +235,30 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
         return f
 
     metres = {fid: [axis_uv(co, keys[fid]) for co in coords] for fid, _, coords in faces}
+    magnitudes = {}
+    for fid, verts, coords in faces:
+        values = []
+        for vertex, co in zip(verts, coords):
+            if world_magnitudes is None:
+                mag = tuple(abs(c) for c in co)
+            else:
+                if vertex not in world_magnitudes:
+                    raise BoxUVError(f'missing world magnitude for vertex {vertex!r}')
+                mag = world_magnitudes[vertex]
+                if len(mag) != 3 or any(_finite(c, 'world magnitude') < 0 for c in mag):
+                    raise BoxUVError(f'invalid world magnitude for vertex {vertex!r}: {mag!r}')
+            values.append(tuple(abs(c) for c in axis_uv(mag, keys[fid])))
+        magnitudes[fid] = values
+    texel = check_texel(faces, keys, px)
     edge_owner, period_cuts = {}, 0
     for fid, verts, _ in faces:
         corner = dict(zip(verts, metres[fid]))
+        corner_mag = dict(zip(verts, magnitudes[fid]))
         for a, b in zip(verts, verts[1:] + verts[:1]):
             e = (keys[fid], frozenset((a, b)))
             if e not in edge_owner:
                 edge_owner[e] = fid
-            elif on_period_line(corner[a], corner[b], scale):
+            elif on_period_line(corner[a], corner[b], scale, texture_px, corner_mag[a], corner_mag[b]):
                 period_cuts += 1      # world period line: island border, the jump there is a whole period
             else:
                 parent[find(fid)] = find(edge_owner[e])
@@ -164,8 +266,11 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
     for fid, _, _ in faces:
         islands.setdefault(find(fid), []).append(fid)
     uvs, overflow, report_islands = {}, [], []
+    phases = {f: [tuple(_period_coord(c, scale, texture_px, m) for c, m in zip(p, mag))
+                  for p, mag in zip(coords, magnitudes[f])]
+              for f, coords in metres.items()}
     for members in islands.values():
-        pts = [(u * scale, v * scale) for f in members for u, v in metres[f]]
+        pts = [p for f in members for p in phases[f]]
         umin, vmin = min(p[0] for p in pts), min(p[1] for p in pts)
         umax, vmax = max(p[0] for p in pts), max(p[1] for p in pts)
         ku, kv = math.floor(umin - margin + EPS), math.floor(vmin - margin + EPS)   # whole periods
@@ -177,7 +282,7 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
             overflow.append(entry)
             continue
         for f in members:
-            uvs[f] = [(_snap(u * scale - ku) + tu, _snap(v * scale - kv) + tv) for u, v in metres[f]]
+            uvs[f] = [(_snap(u - ku) + tu, _snap(v - kv) + tv) for u, v in phases[f]]
     if overflow:
         worst = overflow[0]
         period = texture_px / px
@@ -186,9 +291,12 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
             f'first: axis {worst["axis"]} faces {worst["faces"][:8]} span {worst["span"]} periods; cut the faces '
             f'on world period lines (k * {period:g} m, a cut elsewhere keeps the island connected) or lower '
             f'px_per_m; an island that touches a period line fits only with margin_px=0 (tile margin vs world '
-            f'phase: docs/domain/conflicts.md)')
+            f'phase: docs/domain/conflicts.md). Float32 resolution limit: corrections are capped at '
+            f'{PERIOD_SNAP_PX:g} texel; if an exact cut still fails at large coordinates, move the '
+            f'geometry and its pivot nearer the origin before cutting')
     return uvs, {'tile': tile, 'px_per_m': px, 'texture_px': texture_px, 'period_m': texture_px / px,
-                 'faces': len(uvs), 'islands': report_islands, 'period_cut_edges': period_cuts}
+                 'faces': len(uvs), 'islands': report_islands, 'period_cut_edges': period_cuts,
+                 'texel_px_per_m': texel}
 
 
 # ------------------------------------------------------------------ Blender wrapper (data API only)
@@ -217,10 +325,16 @@ def box_project_uv(obj, faces, px_per_m, tile, *, texture_px=4096, margin_px=8, 
     ids = _face_ids(faces, len(mesh.polygons))
     mw = obj.matrix_world
     plan_in = []
+    world_magnitudes = {}
     for i in ids:
         poly = mesh.polygons[i]
+        for v in poly.vertices:
+            co = mesh.vertices[v].co
+            world_magnitudes[v] = tuple(abs(float(mw[a][3])) + sum(
+                abs(float(mw[a][b]) * float(co[b])) for b in range(3)) for a in range(3))
         plan_in.append((i, list(poly.vertices), [tuple(mw @ mesh.vertices[v].co) for v in poly.vertices]))
-    uvs, report = plan_box_uv(plan_in, px_per_m, tile, texture_px=texture_px, margin_px=margin_px)
+    uvs, report = plan_box_uv(plan_in, px_per_m, tile, texture_px=texture_px, margin_px=margin_px,
+                              world_magnitudes=world_magnitudes)
     layer = mesh.uv_layers.get(uv_name) if uv_name else mesh.uv_layers.active
     created = layer is None
     if created:
