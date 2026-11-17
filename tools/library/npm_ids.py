@@ -68,7 +68,12 @@ def recover(atlas_file, face_uvs, *, tolerance_px=.5, segmentation=None):
             unassigned.append(f)
         else:
             i = hit[0]
-            if not shapes[i].buffer(tolerance_px, join_style=2).covers(poly):
+            x0, y0, x1, y1 = table[i]['cell_box_px']
+            excess = max(0., max(max(x0-x, x-x1, y0-y, y-y1) for x, y in pts))
+            # Equality at the tolerance cap is unresolved, not proof of containment.
+            # Exact cell-border points (excess == 0) remain valid, including tol=0.
+            if ((excess > 0 and excess >= tolerance_px) or
+                    not shapes[i].buffer(tolerance_px, join_style=2).covers(poly)):
                 straddling.append(f)
             else:
                 assigned[-1] = i+1

@@ -1,7 +1,9 @@
 """new-case: isolated Blender mesh intake/apply boundary for agr npm-ids (#1630).
 
 Only imports copies. Mode extract writes JSON; apply sets provisional IDs on a new
-blend copy. No VPM conversion, no session connection, no geometry/UV edits.
+blend copy. No VPM conversion or live session connection. Exact approved
+zero-area source-face drops are supported on the copy with explicit lineage;
+surviving vertex positions and polygon UVs are preserved.
 """
 import argparse
 import colorsys
@@ -10,7 +12,7 @@ from pathlib import Path
 import sys
 
 import bpy
-from mathutils import Vector
+
 
 
 def extract(source):
@@ -57,11 +59,47 @@ def extract(source):
 
 
 def apply(doc, output):
+    output = Path(output).resolve()
+    if output.exists() or output.suffix.lower() != '.blend':
+        raise ValueError('native copy output must be a new .blend')
+    # Preflight every record before changing any mesh. Source indices are explicit;
+    # only exactly-zero world-area polygons may disappear from this diagnostic copy.
+    prepared = []
     for record in doc['objects']:
         obj = bpy.data.objects[record['name']]
         ids = record['mat_ids']
-        if len(ids) != len(obj.data.polygons) or any(type(i) is not int or i < 0 for i in ids):
-            raise ValueError(f'{obj.name}: incomplete ID assignment')
+        keep = record.get('source_polygons', list(range(len(obj.data.polygons))))
+        if (not isinstance(keep, list) or any(type(i) is not int or not 0 <= i < len(obj.data.polygons) for i in keep)
+                or keep != sorted(set(keep)) or len(ids) != len(keep)
+                or any(type(i) is not int or i < 0 for i in ids)):
+            raise ValueError(f'{obj.name}: incomplete ID assignment/source lineage')
+        if 'local' in record and [list(v.co) for v in obj.data.vertices] != record['local']:
+            raise ValueError(f'{obj.name}: source geometry changed')
+        if 'polygons' in record:
+            actual_uv = [[list(obj.data.uv_layers.active.data[i].uv) for i in obj.data.polygons[p].loop_indices] for p in keep]
+            if actual_uv != [p['uv'] for p in record['polygons']]:
+                raise ValueError(f'{obj.name}: source UV changed')
+        dropped = set(range(len(obj.data.polygons))) - set(keep)
+        obj.data.calc_loop_triangles()
+        for tri in obj.data.loop_triangles:
+            if tri.polygon_index not in dropped:
+                continue
+            xyz = [list(obj.matrix_world @ obj.data.vertices[i].co) for i in tri.vertices]
+            a, b = [[xyz[j][k]-xyz[0][k] for k in range(3)] for j in (1, 2)]
+            if any(v != 0 for v in (a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0])):
+                raise ValueError(f'{obj.name}: refusing nonzero polygon drop {tri.polygon_index}')
+        prepared.append((obj, ids, dropped))
+    for obj, ids, dropped in prepared:
+        if dropped:
+            import bmesh
+            bm = bmesh.new()
+            try:
+                bm.from_mesh(obj.data)
+                bm.faces.ensure_lookup_table()
+                bmesh.ops.delete(bm, geom=[bm.faces[i] for i in sorted(dropped)], context='FACES_ONLY')
+                bm.to_mesh(obj.data)
+            finally:
+                bm.free()
         obj.data.materials.clear()
         for mid in range(max(ids)+1):
             mat = bpy.data.materials.new(f'ID_{mid:03d}_PROVISIONAL' if mid else 'ID_UNASSIGNED')

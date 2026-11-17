@@ -1,8 +1,9 @@
 # Issue 1630 — historical first diagnostic checkpoint
 
 **Superseded by [RESUME.md](RESUME.md).** Artem answered option a; do not ask the
-old overflow-policy question below again. Latest corrected sheets and a NEW
-zero-area source-geometry decision are recorded in RESUME.md.
+old overflow-policy question below again. Both historical questions are answered;
+final diagnostic copies/readback and the exact remaining conversion finding are
+in [RESULT.md](RESULT.md).
 
 ## Status
 

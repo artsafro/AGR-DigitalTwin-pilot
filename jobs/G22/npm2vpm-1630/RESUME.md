@@ -1,5 +1,9 @@
 # Issue 1630 — corrected-cell checkpoint, NOT review-ready
 
+**Historical checkpoint: superseded by [RESULT.md](RESULT.md).** The exact two
+source-face drops were approved on the card and applied only on a new diagnostic
+copy. Do not repeat the answered cleanup or option-a questions below.
+
 ## Answered policy
 
 Artem 2026-11-17 USER DECISION on this card: recheck ID4 first, then seam cuts

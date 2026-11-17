@@ -21,6 +21,7 @@
     "ucx": null
   },
   "cells": [
+    {"id": "npm-to-vpm", "title": "Existing NPM to VPM conversion workflow (explicit config)", "status": "ready", "card": "docs/scenarios/npm-to-vpm.md", "reads": ["docs/domain/areas/derivation.md", "docs/domain/areas/uv-atlas.md"]},
     {
       "id": "oks-vpm",
       "title": "OKS building, VPM",

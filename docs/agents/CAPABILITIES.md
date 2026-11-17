@@ -387,6 +387,13 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
 
 Shared packaging `agr package-npm` / `agr package-vpm` and export metadata: [contract](../research/shared-packaging-1361.md) (#1361); ZIP owner `adapters/max/agr_tools/package_core.py`.
 
+`agr npm-ids SOURCE NEW_OUT [--profile facade] [--intake-only]` (#1630) — TOOL ONLY:
+shared `tools/library/npm_ids.py` + existing `maf_atlas_cells.segment`; provisional
+per-face cell IDs, JSON mesh copy/table and guarded Blender copy. Mixed regions / UV
+straddles listed, never guessed. Reusable `npm2vpm_core.udim_fit_gate` blocks before
+conversion writes; G22 diagnostics, not VPM delivery: `jobs/G22/npm2vpm-1630/RESULT.md`.
+Tests: `tests/test_npm_ids_1630.py`. Scenario: `npm-to-vpm` in `SKELETONS.md`.
+
 Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step instead of the job copies
 `jobs/{KPP1,PSU275,TEC26-OKS}/scripts/{make_npm_atlas,export_npm,package_vpm}.py`, which stay as frozen records):
 - `dt derive atlas <spec> <new out> --master <master> [--address A --index N]` (`tools/derive/npm_atlas.py`;

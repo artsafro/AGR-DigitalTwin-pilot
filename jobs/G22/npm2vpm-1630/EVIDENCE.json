@@ -1,0 +1,15 @@
+{
+  "evidence_root": "G:/Мой диск/AGR-evidence/1630-npm2vpm-g22/",
+  "status": "diagnostic_only_conversion_blocked",
+  "source_manifest": "C:/x/npm2vpm-g22/SHA256SUMS.txt",
+  "source_hashes_verified": 32,
+  "native_exact_readback_meshes": 3,
+  "approved_source_drops": {"SM_Garibaldi_22_002_Main": [68903, 69759]},
+  "manifests_sha256": {
+    "t_9d398e0d-v005-01/SHA256SUMS.txt": "79467a41144c96db834aa3bae5779c1f91deab32762ad4c13ffac792f807d27f",
+    "t_9d398e0d-v006-02/SHA256SUMS.txt": "a9050a5738729e9bdb84237caeec95a7c1756892734f17b61e692dec180cad27",
+    "t_9d398e0d-v007-final-audit/SHA256SUMS.txt": "6af075c8688c5d53ca4c6ce41d247900789c1d62a9c95742ee0ca7739c3ff9b3",
+    "t_9d398e0d-before-after-01-v001/SHA256SUMS.txt": "f4e30f897d94d3d7c0106ccb994e51e980c09d81e58adf0ee0a45c26a4e57b28",
+    "t_9d398e0d-before-after-02-v001/SHA256SUMS.txt": "edd428902efb050e972b0fb980fdf80d36586d6624e719ac0010f6ad746b107c"
+  }
+}
