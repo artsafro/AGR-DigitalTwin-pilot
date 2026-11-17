@@ -4,5 +4,5 @@
     "profile": "VPM",
     "sources": "G:/Мой диск/AGR-evidence/1619-body-training/tower-C/v001/floor.json"
   },
-  "hooks": []
+  "hooks": [{"stage": "body", "point": "after", "script": "hooks/build_body.py"}]
 }
