@@ -48,6 +48,32 @@ def test_1636_npm_route_matches_current_tools(item):
         assert "D262" in stages[item]["rules"]  # unresolved relocation stays out of scope
 
 
+@pytest.mark.parametrize("rule,qualname", [
+    ("delivery-zip", "main"), ("blender-launch", "main"), ("blender-launch", "main.dcc"),
+])
+def test_1652_vatutino_history_does_not_claim_delivery_acceptance(rule, qualname):
+    contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
+    at = f"jobs/VATUTINO-SITE/run_delivery.py::{qualname}"
+    rows = [row for context in contexts["contexts"] for row in context.get("duplicates", [])
+            if row["at"] == at and row["rule"] == rule]
+    assert len(rows) == 1
+    row = rows[0]
+    assert row["status"] == "historical"
+    sheet = ROOT / "docs/deliveries/vatutino-site-2026-11-09.md"
+    assert "Verdict: **not passed**" in sheet.read_text(encoding="utf-8")
+    assert "verdict not passed" in row["ru"]
+    assert "v009" in row["ru"] and "2026-11-09" in row["ru"]
+    assert "запуск не меняем" in row["ru"]
+    owners = {rel: text for rel, text in route_map.render(ROOT)[2].items()
+              if rel.name.endswith("-owners.md")}
+    assert len(owners) == 6
+    for rel, text in owners.items():
+        matching = [line for line in text.splitlines()
+                    if line.startswith(f"| {rule} |") and f"run_delivery.py::{qualname}`" in line]
+        assert len(matching) == 1, rel
+        assert f"| historical | {row['ru']} |" in matching[0], rel
+
+
 # ---------------------------------------------------------------- generator: drift, references, labels
 def test_committed_files_equal_generator_output():
     _, _, files = route_map.render(ROOT)
