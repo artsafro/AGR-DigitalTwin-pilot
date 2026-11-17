@@ -436,6 +436,29 @@ def test_committed_calibration_ranks_rejected_corners_below_accepted():
     assert all(r['status'] == 'measured' for r in rows.values())
     assert rows['kpp1-quad-v003-rest']['exclude_zones'] == rejected['zones'] != []
     assert cal['weights'] == mq.WEIGHTS and cal['params'] == mq.DEFAULTS
+    # review r2: PSU275 (accepted) stays on top after the near-seam pass
+    assert rows['psu275-main']['score'] == max(r['score'] for r in rows.values())
+    assert rows['psu275-main']['totals']['open_seam_edges'] == 0
+
+
+@pytest.mark.parametrize('seed', range(30))
+def test_probe_near_and_tjunction_unwelds_never_beat_welded(seed):
+    """Generated probe (review r2 P1-1): the post moved off by a random dy in [0, seam_gap_m] and cut at
+    random heights (T-junctions) scores <= welded and < inset."""
+    import random
+    rnd = random.Random(1000 + seed)
+    dy = rnd.uniform(0.0, mq.DEFAULTS['seam_gap_m'])
+    zs = sorted({0.0, 4.0} | {round(rnd.uniform(0.05, 3.95), 4) for _ in range(rnd.randint(1, 6))})
+    b = Builder('SM_Probe_Main')
+    wall(b, skip_col=1)
+    for z0, z1 in zip(zs, zs[1:]):
+        b.face([(1, -0.5 - dy, z0), (2, -0.5 - dy, z0), (2, -0.5 - dy, z1), (1, -0.5 - dy, z1)], (0, -1, 0), 'post')
+        b.face([(1, -dy, z0), (1, -0.5 - dy, z0), (1, -0.5 - dy, z1), (1, -dy, z1)], (-1, 0, 0), 'post')
+        b.face([(2, -dy, z0), (2, -0.5 - dy, z0), (2, -0.5 - dy, z1), (2, -dy, z1)], (1, 0, 0), 'post')
+    r = mq.score([b.obj()])
+    welded, inset = mq.score(welded_master()), mq.score(inset_master())
+    assert r['totals']['open_seam_edges'] >= 8 and r['totals']['elements'] == 1
+    assert r['score'] <= welded['score'] < inset['score']
 
 
 def test_observe_loop_refuses_existing_or_source_run_dir(tmp_path):

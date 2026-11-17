@@ -35,14 +35,25 @@ Components (each a share 0..1; penalty = min(1, share)):
   off 90 deg. Facade quads are rectangles; a skewed quad is a cut line dragged across a surface.
   Area, not count: a large skewed quad on a wall is visible, a skewed 1 cm trim face is not.
   Triangles always count (one of their corners is at least 30 deg off 90).
-- ``open_seam_share`` (review r1 P1-2, un-weld gaming): boundary edges that coincide (vertex positions
-  on a ``seam_tol_m`` grid, default 0.1 mm) with another boundary edge - in the same object or in
-  another one. Such a part is cut out of the body without the body keeping its opening/recess,
-  which [D336] requires of an inset element. Seam-joined parts of one object are therefore measured
-  as ONE welded element (elements, body, creases, poles), and the seam edges cost on top:
-  share = seam edges / measured edges. Un-welding alone can only lower the score. Glass objects
-  (``glass_pattern``) take no part in seams: a pane fills its frame opening by regulation
+- ``open_seam_share`` (review r1 P1-2 and r2 P1-1, un-weld gaming): open seams between boundary edges,
+  share = seam pairs / measured edges. Such a part is cut out of the body without the body keeping its
+  opening/recess, which [D336] requires of an inset element. Two passes:
+  (1) exact: boundary edges of one object that coincide on a ``seam_tol_m`` grid (0.1 mm) are vertex-
+  merged, so the part is measured as the ONE welded element it was (elements, body, creases, poles);
+  (2) near: every remaining boundary edge of a non-glass object against the boundary edges of the
+  OTHER elements (same or another object) - directions within ``seam_angle_deg`` (5 deg), perpendicular
+  distance <= ``seam_gap_m`` (2 mm, inclusive) at both ends of the shared stretch, shared stretch longer
+  than min(``seam_min_overlap_m`` 1 cm, half the shorter edge). This catches a part moved a fraction of
+  a millimetre off its hole and T-junctions (cut lines not matching). In-object near pairs join their
+  elements, and inside the body each pair counts as the (concave) edge it replaces, so un-welding
+  alone can only lower the score. Two boundary edges of ONE element (a thin trim strip) never pair.
+  2 mm: two texels at 1 px/mm, no visible gap; on the accepted PSU275 no near pair exists up to 5 mm,
+  and the first ones at 10 mm are between two inset elements, none on a body edge. Window reveals are
+  told apart by that: the reveal is body surface, so a frame inset into it has no body BOUNDARY edge
+  within the gap (measured on PSU275: none within 10 mm).
+  Glass objects (``glass_pattern``) take no part in seams: a pane fills its frame opening by regulation
   (Main/MainGlass); accepted PSU275 glass shares 10 320 boundary edges with its Main frames.
+  Per-object rows count their own seams; pairs between two objects are added to the totals only.
 
 score = 100 * (1 - sum(weight * penalty) / sum(weights)) (weights in ``WEIGHTS``), so every
 component costs at most its weight share of the 100 points.
@@ -59,7 +70,8 @@ WEIGHTS = {'tri_share': 1.0, 'ngon_share': 2.0, 'sliver_share': 2.0, 'pole_share
 ANGLE_EPS_DEG = 1e-6  # float noise of acos: an angle exactly at the threshold is not a sliver
 DEFAULTS = {'tri_min_angle_deg': 10.0, 'quad_min_angle_deg': 30.0, 'flat_deg': 1.0,
             'weld_deg': 30.0, 'side_limit_m': 3.9, 'body_share_ok': 0.5, 'collision_prefix': 'UCX_',
-            'glass_pattern': r'(?i)glass', 'irregular_deg': 15.0, 'seam_tol_m': 0.0001}
+            'glass_pattern': r'(?i)glass', 'irregular_deg': 15.0, 'seam_tol_m': 0.0001,
+            'seam_gap_m': 0.002, 'seam_angle_deg': 5.0, 'seam_min_overlap_m': 0.01}
 
 
 def _sub(a, b):
@@ -110,10 +122,12 @@ def _params(params):
             raise ValueError('unknown parameter: ' + key)
         p[key] = value
     for key in ('tri_min_angle_deg', 'quad_min_angle_deg', 'flat_deg', 'weld_deg', 'side_limit_m',
-                'irregular_deg', 'seam_tol_m'):
+                'irregular_deg', 'seam_tol_m', 'seam_gap_m', 'seam_angle_deg', 'seam_min_overlap_m'):
         v = p[key]
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v <= 0:
             raise ValueError(f'parameter {key} must be a finite positive number, got {v!r}')
+    if p['seam_angle_deg'] >= 90:
+        raise ValueError(f"parameter seam_angle_deg must be below 90, got {p['seam_angle_deg']!r}")
     if not 0 < p['body_share_ok'] < 1:
         raise ValueError(f"parameter body_share_ok must be in (0, 1), got {p['body_share_ok']!r}")
     return p
@@ -205,27 +219,89 @@ def _seam_welded_faces(obj, tol, seam_keys):
     return faces, seam_here
 
 
-def measure_object(obj, p, zones=None, exclude=None, seam_keys=frozenset()):
-    """Stats of one object: faces whose centroid is inside ``zones`` and outside ``exclude``
-    (topology from the whole object). ``seam_keys``: boundary-edge keys shared by >= 2 edges."""
-    _check_object(obj)
-    verts = obj['verts']
-    nf = len(obj['faces'])
-    faces, seam_here = _seam_welded_faces(obj, p['seam_tol_m'], seam_keys)
-    # elements = vertex-connected face sets
-    parent = list(range(len(verts)))
+def _face_elements(nverts, faces, near=()):
+    """Element root per face: vertex-connected face sets, plus the face pairs in ``near`` joined."""
+    parent = list(range(nverts))
 
     def find(i):
         while parent[i] != i:
             parent[i] = parent[parent[i]]
             i = parent[i]
         return i
+
+    def union(i, j):
+        ri, rj = find(i), find(j)
+        if ri != rj:
+            parent[rj] = ri
     for f in faces:
-        r0 = find(f[0])
         for i in f[1:]:
-            r = find(i)
-            if r != r0:
-                parent[r] = r0
+            union(f[0], i)
+    for fi, fj in near:
+        union(faces[fi][0], faces[fj][0])
+    return [find(f[0]) for f in faces]
+
+
+def _near_overlap(p1, q1, p2, q2, p):
+    """True if segment 2 runs along segment 1: directions within ``seam_angle_deg``, perpendicular
+    distance <= ``seam_gap_m`` at both ends of the shared stretch, and the shared (projected) stretch
+    longer than min(``seam_min_overlap_m``, half the shorter segment). Edges meeting end to end share
+    no stretch and never match."""
+    d1, d2 = _sub(q1, p1), _sub(q2, p2)
+    l1, l2 = _norm(d1), _norm(d2)
+    if l1 == 0 or l2 == 0:
+        return False
+    u1 = (d1[0] / l1, d1[1] / l1, d1[2] / l1)
+    if abs(_dot(u1, d2)) / l2 < math.cos(math.radians(p['seam_angle_deg'])):
+        return False
+    t2, s2 = _dot(_sub(p2, p1), u1), _dot(_sub(q2, p1), u1)
+    lo, hi = max(0.0, min(t2, s2)), min(l1, max(t2, s2))
+    if hi - lo <= min(p['seam_min_overlap_m'], 0.5 * min(l1, l2)):
+        return False
+    for t in (lo, hi):
+        w = (t - t2) / (s2 - t2)
+        x = (p2[0] + w * d2[0], p2[1] + w * d2[1], p2[2] + w * d2[2])
+        if _norm(_sub(x, (p1[0] + t * u1[0], p1[1] + t * u1[1], p1[2] + t * u1[2]))) > p['seam_gap_m'] + 1e-9:
+            return False
+    return True
+
+
+def _near_pairs(segs, p):
+    """Pairs (i, j), i < j, of boundary segments ``(object, face, element, P, Q)`` of different elements
+    that run along each other (``_near_overlap``). Uniform grid: every segment is sampled at half a cell,
+    candidates come from the 27 cells around each sample; a cell of >= 4 x gap keeps every pair within
+    gap inside that neighbourhood."""
+    cell = max(0.25, 4.0 * p['seam_gap_m'])
+    grid, cells_of = {}, []
+    for i, (_, _, _, a, b) in enumerate(segs):
+        n = max(1, int(math.ceil(_norm(_sub(b, a)) / (cell / 2.0))))
+        cs = {tuple(int(math.floor((a[k] + (b[k] - a[k]) * s / n) / cell)) for k in range(3)) for s in range(n + 1)}
+        cells_of.append(cs)
+        for c in cs:
+            grid.setdefault(c, []).append(i)
+    pairs = set()
+    for i, (oi, fi, ei, a, b) in enumerate(segs):
+        seen = set()
+        for c in cells_of[i]:
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    for dz in (-1, 0, 1):
+                        for j in grid.get((c[0] + dx, c[1] + dy, c[2] + dz), ()):
+                            if j > i and j not in seen:
+                                seen.add(j)
+                                oj, fj, ej, a2, b2 = segs[j]
+                                if (oi, ei) != (oj, ej) and _near_overlap(a, b, a2, b2, p):
+                                    pairs.add((i, j))
+    return sorted(pairs)
+
+
+def measure_object(obj, p, zones=None, exclude=None, merged=None, near=()):
+    """Stats of one object: faces whose centroid is inside ``zones`` and outside ``exclude``
+    (topology from the whole object). ``merged``: (faces with the exact in-object seams welded,
+    {seam key: [face ids]}); ``near``: in-object near-seam face pairs (fi, fj), joined and creased."""
+    _check_object(obj)
+    verts = obj['verts']
+    nf = len(obj['faces'])
+    faces, seam_here = merged if merged is not None else ([list(f) for f in obj['faces']], {})
     pts = [[verts[i] for i in f] for f in obj['faces']]
     normals, areas, cents = [], [], []
     for fp in pts:
@@ -235,7 +311,7 @@ def measure_object(obj, p, zones=None, exclude=None, seam_keys=frozenset()):
         normals.append((nv[0] / ln, nv[1] / ln, nv[2] / ln) if ln > 0 else (0.0, 0.0, 0.0))
         k = len(fp)
         cents.append((sum(q[0] for q in fp) / k, sum(q[1] for q in fp) / k, sum(q[2] for q in fp) / k))
-    elem_of = [find(f[0]) for f in faces]
+    elem_of = _face_elements(len(verts), faces, near)
     elem_area = {}
     for fi, e in enumerate(elem_of):
         elem_area[e] = elem_area.get(e, 0.0) + areas[fi]
@@ -266,6 +342,14 @@ def measure_object(obj, p, zones=None, exclude=None, seam_keys=frozenset()):
         n1, n2 = normals[f1], normals[f2]
         if _dot(n1, n2) < weld_cos and _dot(n1, _sub(cents[f2], cents[f1])) > 1e-9:
             welded += 1
+    for f1, f2 in near:  # a near seam inside the body is measured as the welded edge it replaces
+        if not (in_zone[f1] or in_zone[f2]) or elem_of[f1] != body:
+            continue
+        manifold += 1
+        n1, n2 = normals[f1], normals[f2]
+        if _dot(n1, n2) < weld_cos and _dot(n1, _sub(cents[f2], cents[f1])) > 1e-9:
+            welded += 1
+    near_in_zone = sum(1 for f1, f2 in near if in_zone[f1] or in_zone[f2])
     flat_cos = math.cos(math.radians(p['flat_deg']))
     flat = poles = 0
     for v, fl in enumerate(vfaces):
@@ -325,7 +409,7 @@ def measure_object(obj, p, zones=None, exclude=None, seam_keys=frozenset()):
             'elements': len(zone_elems), 'inset_elements': len(zone_elems - {body}),
             'body_elements': int(body in zone_elems), 'inset_faces': inset_faces, 'body_faces': body_faces,
             'irregular_faces': irregular, 'area': area, 'irregular_area': irregular_area,
-            'edges': zone_edges, 'open_seam_edges': len(zone_seams), '_seam_keys': zone_seams,
+            'edges': zone_edges, 'open_seam_edges': len(zone_seams) + near_in_zone, '_in_zone': in_zone,
             'quad_share': quads / measured if measured else None, 'glass_object': glass,
             'min_element_quad_share': min(elem_shares) if elem_shares else None,
             'elements_not_all_quads': sum(1 for s in elem_shares if s < 1.0)}
@@ -359,24 +443,38 @@ def score(objects, params=None, zones=None, exclude_zones=None):
             continue
         _check_object(obj)
         kept.append(obj)
-    counts = {}
-    for obj in kept:
-        if _is_glass(obj, p):
-            continue  # glazing fills an opening by regulation (Main/MainGlass, [D336]); not a body seam
-        for key, owners in _boundary_keys(obj, p['seam_tol_m']).items():
-            counts[key] = counts.get(key, 0) + len(owners)
-    seam_keys = frozenset(k for k, c in counts.items() if c >= 2)
-    rows, seams = [], set()
-    for obj in kept:
-        row = measure_object(obj, p, zones, exclude_zones, frozenset() if _is_glass(obj, p) else seam_keys)
-        seams |= row.pop('_seam_keys')
+    tol = p['seam_tol_m']
+    merged, segs = [], []
+    for oi, obj in enumerate(kept):
+        if _is_glass(obj, p):  # glazing fills an opening by regulation (Main/MainGlass, [D336]); not a body seam
+            merged.append(([list(f) for f in obj['faces']], {}))
+            continue
+        keys = frozenset(k for k, owners in _boundary_keys(obj, tol).items() if len(owners) >= 2)
+        m = _seam_welded_faces(obj, tol, keys)
+        merged.append(m)
+        elem = _face_elements(len(obj['verts']), m[0])
+        for (a, b), fl in _edge_faces(m[0]).items():
+            if len(fl) == 1:
+                segs.append((oi, fl[0], elem[fl[0]], obj['verts'][a], obj['verts'][b]))
+    near_local, near_cross = [[] for _ in kept], []
+    for i, j in _near_pairs(segs, p):
+        oi, fi = segs[i][:2]
+        oj, fj = segs[j][:2]
+        if oi == oj:
+            near_local[oi].append((fi, fj))
+        else:
+            near_cross.append((oi, fi, oj, fj))
+    rows, in_zone = [], []
+    for oi, obj in enumerate(kept):
+        row = measure_object(obj, p, zones, exclude_zones, merged[oi], near_local[oi])
+        in_zone.append(row.pop('_in_zone'))
         rows.append(row)
     tot = {k: sum(r[k] for r in rows) for k in ('faces', 'tris', 'quads', 'ngons', 'slivers', 'long_faces',
                                                  'flat_vertices', 'poles', 'manifold_edges', 'welded_edges',
                                                  'elements', 'inset_elements', 'body_elements', 'body_faces',
                                                  'inset_faces', 'irregular_faces', 'area', 'irregular_area',
-                                                 'edges', 'elements_not_all_quads')}
-    tot['open_seam_edges'] = len(seams)  # a seam between two objects counts once
+                                                 'edges', 'elements_not_all_quads', 'open_seam_edges')}
+    tot['open_seam_edges'] += sum(1 for oi, fi, oj, fj in near_cross if in_zone[oi][fi] or in_zone[oj][fj])
     solid = sum(r['faces'] for r in rows if not r['glass_object'])
     problems = []
     if not tot['faces']:
