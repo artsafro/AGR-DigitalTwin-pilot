@@ -15,7 +15,7 @@ with --scene and no --master that part of V003 stays not_run.
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
-not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run); a package with OKS and Ground members takes `--master oks=PATH --master ground=PATH` ([D328]). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
+not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run; an NPM ZIP: fail manifest_master_missing, #1637); a package with OKS and Ground members takes `--master oks=PATH --master ground=PATH` ([D328]). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
 
     py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--recheck-target copy.zip] [--standards DIR] [--json]
 
@@ -463,7 +463,7 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
 
 
 def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
-                       master: Path | dict | None, manifest: Path | None, notes: list[str]):
+                       master: Path | dict | None, manifest: Path | None, notes: list[str], kind: str | None = None):
     """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written.
 
     master: one path, or {role: path} ([D328]: OKS master, Ground source)."""
@@ -476,8 +476,16 @@ def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: d
     members = {n: digest(d) for n, d in files.items()}
     master_sha = build_manifest.master_hashes(master)
     v1 = st["V001"]
-    for status, code, detail in build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
-                                                                 str(path.resolve().parent)):
+    rows = build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
+                                            str(path.resolve().parent))
+    if kind == "npm" and raw is not None and master is None:
+        # #1637: an NPM ZIP with a build manifest and no --master is a fail, not a not_run wait like V015-V017
+        rows = [("fail", "manifest_master_missing",
+                 f"manifest_master_missing: NPM package {target.name} has build manifest {path.name} but no --master "
+                 "was given, so the build master was not compared with the current master; rerun with --master PATH "
+                 "(--master oks=PATH --master ground=PATH for OKS + Ground)")] + [
+            r for r in rows if r[1] != "manifest_master_unchecked"]
+    for status, code, detail in rows:
         v1.findings.append(finding(status, "build manifest", detail, "one master revision; hashes of every zipped "
                                    "artifact and check report match; required checks passed (#1423)",
                                    v1.source_pdf_pages, path.name, data={"code": code} if status != "pass" else None))
@@ -601,7 +609,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
-        add_build_manifest(st, target, data, files, master, manifest, notes)
+        add_build_manifest(st, target, data, files, master, manifest, notes, kind)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
                       ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta, atlases)
