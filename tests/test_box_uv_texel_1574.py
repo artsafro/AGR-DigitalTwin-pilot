@@ -234,6 +234,9 @@ class _Vert:
 
 
 class _Mat:
+    def __getitem__(self, row):
+        return tuple(float(row == col) for col in range(4))
+
     def __matmul__(self, co):
         return co
 

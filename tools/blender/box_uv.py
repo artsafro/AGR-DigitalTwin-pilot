@@ -22,9 +22,9 @@ panel joints; Artem's "UVW-map box 5-5-5 m" was accepted). docs/domain/uv-textur
   is written. Remedy: cut the faces on world period lines (k * period_m; a cut elsewhere keeps the island
   connected) or lower px_per_m within 512..1706. An island touching a period line has phase 0 there, so it
   fits only with margin_px=0; tile margin vs world phase is an open conflict (docs/domain/conflicts.md);
-- period borders and tile fit share float32 world-phase normalization (#1600): half a float32 ULP
-  at the original coordinate magnitude, capped at half a texture pixel. UVs use that same normalized
-  phase (including before whole-period subtraction); cuts outside that budget stay connected;
+- period borders and tile fit share float32 world-phase normalization (#1600): three float32 ULPs
+  at the input magnitude (sum of absolute transform terms), capped at half a texture pixel. UVs use
+  that same normalized phase (including before whole-period subtraction); cuts outside that budget stay connected;
 - UVs are written through the mesh data API (no bpy.ops, no selection, no edit mode), only to the loops of
   the listed faces of the one target object; uv_fingerprint / uv_violations prove other objects (glass,
   UCX, ...) and unlisted faces kept their UV state.
@@ -120,27 +120,30 @@ def _snap(p):
     return float(r) if abs(p - r) <= EPS else p
 
 
-def _period_coord(metres, scale, texture_px):
+def _period_coord(metres, scale, texture_px, magnitude=None):
     """Canonical world phase for both island borders and tile fit (#1600).
 
-    Blender world coordinates are float32: allow half an ULP at the ORIGINAL metre
-    magnitude, plus float64 arithmetic slack. Cap correction at half a texel; at
+    Blender world coordinates are float32: allow three ULPs at the ORIGINAL input
+    magnitude, plus float64 arithmetic slack. The wrapper includes translation and
+    absolute local*matrix terms, not just the possibly cancelled result. Without
+    transform metadata the planner uses the world magnitude. Cap at half a texel; at
     larger coordinates unresolved cuts deliberately remain fail-closed. Normalize
     before subtracting the island shift, otherwise that magnitude would be lost.
     This is rounding correction, not permission to pack or rescale an island.
     """
     p = metres * scale
-    half_ulp = math.ldexp(1.0, math.frexp(abs(metres))[1] - 25) * scale
-    tolerance = min(PERIOD_SNAP_PX / texture_px, max(EPS, half_ulp + EPS))
+    magnitude = abs(metres) if magnitude is None else max(abs(metres), magnitude)
+    ulps = 3 * math.ldexp(1.0, math.frexp(magnitude)[1] - 24) * scale
+    tolerance = min(PERIOD_SNAP_PX / texture_px, max(EPS, ulps + EPS))
     k = round(p)
     return float(k) if abs(p - k) <= tolerance else p
 
 
-def on_period_line(a, b, scale, texture_px=4096):
+def on_period_line(a, b, scale, texture_px=4096, a_magnitude=None, b_magnitude=None):
     """True when both endpoints normalize to the SAME world period line."""
     for i in (0, 1):
-        pa = _period_coord(a[i], scale, texture_px)
-        pb = _period_coord(b[i], scale, texture_px)
+        pa = _period_coord(a[i], scale, texture_px, None if a_magnitude is None else a_magnitude[i])
+        pb = _period_coord(b[i], scale, texture_px, None if b_magnitude is None else b_magnitude[i])
         if pa == round(pa) and pb == pa:
             return True
     return False
@@ -199,9 +202,11 @@ def _ordered(ids):
         return sorted(ids, key=repr)
 
 
-def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
+def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8, world_magnitudes=None):
     """faces: [(face_id, [vertex_key, ...], [(x, y, z) world, ...]), ...].
 
+    Optional world_magnitudes maps each vertex key to nonnegative XYZ sums of absolute
+    transform input terms (metres), for float32 matrix arithmetic uncertainty.
     Returns (uvs, report): uvs = {face_id: [(u, v) per corner]}; report['texel_px_per_m'] = [min, max]
     directional texel over all faces. Raises BoxUVError / BoxUVTexelError / BoxUVOverflow."""
     px, (tu, tv), margin = validate_params(px_per_m, tile, texture_px, margin_px)
@@ -227,15 +232,30 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
         return f
 
     metres = {fid: [axis_uv(co, keys[fid]) for co in coords] for fid, _, coords in faces}
+    magnitudes = {}
+    for fid, verts, coords in faces:
+        values = []
+        for vertex, co in zip(verts, coords):
+            if world_magnitudes is None:
+                mag = tuple(abs(c) for c in co)
+            else:
+                if vertex not in world_magnitudes:
+                    raise BoxUVError(f'missing world magnitude for vertex {vertex!r}')
+                mag = world_magnitudes[vertex]
+                if len(mag) != 3 or any(_finite(c, 'world magnitude') < 0 for c in mag):
+                    raise BoxUVError(f'invalid world magnitude for vertex {vertex!r}: {mag!r}')
+            values.append(tuple(abs(c) for c in axis_uv(mag, keys[fid])))
+        magnitudes[fid] = values
     texel = check_texel(faces, keys, px)
     edge_owner, period_cuts = {}, 0
     for fid, verts, _ in faces:
         corner = dict(zip(verts, metres[fid]))
+        corner_mag = dict(zip(verts, magnitudes[fid]))
         for a, b in zip(verts, verts[1:] + verts[:1]):
             e = (keys[fid], frozenset((a, b)))
             if e not in edge_owner:
                 edge_owner[e] = fid
-            elif on_period_line(corner[a], corner[b], scale, texture_px):
+            elif on_period_line(corner[a], corner[b], scale, texture_px, corner_mag[a], corner_mag[b]):
                 period_cuts += 1      # world period line: island border, the jump there is a whole period
             else:
                 parent[find(fid)] = find(edge_owner[e])
@@ -243,7 +263,8 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
     for fid, _, _ in faces:
         islands.setdefault(find(fid), []).append(fid)
     uvs, overflow, report_islands = {}, [], []
-    phases = {f: [tuple(_period_coord(c, scale, texture_px) for c in p) for p in coords]
+    phases = {f: [tuple(_period_coord(c, scale, texture_px, m) for c, m in zip(p, mag))
+                  for p, mag in zip(coords, magnitudes[f])]
               for f, coords in metres.items()}
     for members in islands.values():
         pts = [p for f in members for p in phases[f]]
@@ -267,7 +288,9 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
             f'first: axis {worst["axis"]} faces {worst["faces"][:8]} span {worst["span"]} periods; cut the faces '
             f'on world period lines (k * {period:g} m, a cut elsewhere keeps the island connected) or lower '
             f'px_per_m; an island that touches a period line fits only with margin_px=0 (tile margin vs world '
-            f'phase: docs/domain/conflicts.md)')
+            f'phase: docs/domain/conflicts.md). Float32 resolution limit: corrections are capped at '
+            f'{PERIOD_SNAP_PX:g} texel; if an exact cut still fails at large coordinates, move the '
+            f'geometry and its pivot nearer the origin before cutting')
     return uvs, {'tile': tile, 'px_per_m': px, 'texture_px': texture_px, 'period_m': texture_px / px,
                  'faces': len(uvs), 'islands': report_islands, 'period_cut_edges': period_cuts,
                  'texel_px_per_m': texel}
@@ -299,10 +322,16 @@ def box_project_uv(obj, faces, px_per_m, tile, *, texture_px=4096, margin_px=8, 
     ids = _face_ids(faces, len(mesh.polygons))
     mw = obj.matrix_world
     plan_in = []
+    world_magnitudes = {}
     for i in ids:
         poly = mesh.polygons[i]
+        for v in poly.vertices:
+            co = mesh.vertices[v].co
+            world_magnitudes[v] = tuple(abs(float(mw[a][3])) + sum(
+                abs(float(mw[a][b]) * float(co[b])) for b in range(3)) for a in range(3))
         plan_in.append((i, list(poly.vertices), [tuple(mw @ mesh.vertices[v].co) for v in poly.vertices]))
-    uvs, report = plan_box_uv(plan_in, px_per_m, tile, texture_px=texture_px, margin_px=margin_px)
+    uvs, report = plan_box_uv(plan_in, px_per_m, tile, texture_px=texture_px, margin_px=margin_px,
+                              world_magnitudes=world_magnitudes)
     layer = mesh.uv_layers.get(uv_name) if uv_name else mesh.uv_layers.active
     created = layer is None
     if created:

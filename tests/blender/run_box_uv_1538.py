@@ -270,11 +270,12 @@ report['period_float32'] = period_cases
 
 translated_cases = []
 for offset in (0, 3):
-    for rotation in (0, -math.pi / 2):
+    for rotation, pivot_periods in ((0, 0), (-math.pi / 2, 0), (0, 64), (-math.pi / 2, 64),
+                                    (0, -64), (-math.pi / 2, -64)):
         for delta_px in (0, 1):
             px = 1706
             period = T / px
-            location = (offset + 0.37) * period
+            location = (offset + 0.37 + pivot_periods) * period
             xs = [(offset + f) * period - location + (delta_px / px if f == 1 else 0)
                   for f in (0.1, 1, 1.5)]
             # Inverse of the exact 0/-90 degree rotation, before native float32 storage.
@@ -296,7 +297,8 @@ for offset in (0, 3):
                 result = box_uv.box_project_uv(obj, [0, 1], px, 1012, margin_px=0)
                 assert len(result['islands']) == 2 and result['period_cut_edges'] == 1
                 assert all(1 <= c <= 2 for uv in loop_uvs(obj, [0, 1]) for c in uv)
-            translated_cases.append({'offset': offset, 'rotation': rotation, 'delta_px': delta_px, 'ok': True})
+            translated_cases.append({'offset': offset, 'rotation': rotation, 'pivot_periods': pivot_periods,
+                                     'delta_px': delta_px, 'ok': True})
 report['translated_float32'] = translated_cases
 
 # ------------------------------------------------------------------ generated probes
