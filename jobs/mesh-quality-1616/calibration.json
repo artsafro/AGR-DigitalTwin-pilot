@@ -1,0 +1,222 @@
+{
+ "issue": 1616,
+ "tool": "tools/qa/mesh_quality_score.py",
+ "weights": {
+  "tri_share": 1.0,
+  "ngon_share": 2.0,
+  "sliver_share": 2.0,
+  "pole_share": 1.0,
+  "one_mesh_share": 2.0,
+  "weld_share": 1.0,
+  "long_share": 1.0
+ },
+ "params": {
+  "tri_min_angle_deg": 10.0,
+  "quad_min_angle_deg": 30.0,
+  "flat_deg": 1.0,
+  "weld_deg": 30.0,
+  "side_limit_m": 3.9,
+  "body_share_ok": 0.5,
+  "collision_prefix": "UCX_",
+  "glass_pattern": "(?i)glass"
+ },
+ "rows": [
+  {
+   "id": "kpp1-quad-v002",
+   "label": "KPP1 quad-v002 whole",
+   "acceptance": "none",
+   "acceptance_note": "not accepted (superseded by v003, #1563)",
+   "score": 72.754,
+   "status": "measured",
+   "components": {
+    "tri_share": 0.0,
+    "ngon_share": 0.0,
+    "sliver_share": 0.232562,
+    "pole_share": 0.168938,
+    "one_mesh_share": 0.999305,
+    "weld_share": 0.093254,
+    "long_share": 9.7e-05
+   },
+   "totals": {
+    "faces": 62091,
+    "quads": 62091,
+    "tris": 0,
+    "ngons": 0,
+    "slivers": 14440,
+    "poles": 6807,
+    "flat_vertices": 40293,
+    "elements": 45,
+    "inset_elements": 44,
+    "body_faces": 61796,
+    "welded_edges": 11524,
+    "long_faces": 6
+   },
+   "zones": [],
+   "input_sha256": "fb566ff5e10ed92f5e75afe4a355ca212df569c456f58e18819d1edbb85553bb",
+   "input": "C:/x/ev_1616/inputs/master-quad-v002.blend"
+  },
+  {
+   "id": "kpp1-quad-v002-corners",
+   "label": "KPP1 quad-v002 SW/NW corners",
+   "acceptance": "none",
+   "acceptance_note": "not accepted (before of the rejected sheet)",
+   "score": 72.924,
+   "status": "measured",
+   "components": {
+    "tri_share": 0.0,
+    "ngon_share": 0.0,
+    "sliver_share": 0.224302,
+    "pole_share": 0.169538,
+    "one_mesh_share": 0.997735,
+    "weld_share": 0.098477,
+    "long_share": 0.0
+   },
+   "totals": {
+    "faces": 6197,
+    "quads": 6197,
+    "tris": 0,
+    "ngons": 0,
+    "slivers": 1390,
+    "poles": 679,
+    "flat_vertices": 4005,
+    "elements": 8,
+    "inset_elements": 7,
+    "body_faces": 6167,
+    "welded_edges": 1235,
+    "long_faces": 0
+   },
+   "zones": [
+    [
+     -17.5,
+     -8.2,
+     -12.5,
+     -3.2
+    ],
+    [
+     -17.5,
+     3.5,
+     -12.5,
+     8.5
+    ]
+   ],
+   "input_sha256": "fb566ff5e10ed92f5e75afe4a355ca212df569c456f58e18819d1edbb85553bb",
+   "input": "C:/x/ev_1616/inputs/master-quad-v002.blend"
+  },
+  {
+   "id": "kpp1-quad-v003",
+   "label": "KPP1 quad-v003 whole",
+   "acceptance": "partial",
+   "acceptance_note": "accepted except corners (Artem 2026-11-16, #1609)",
+   "score": 72.749,
+   "status": "measured",
+   "components": {
+    "tri_share": 0.0,
+    "ngon_share": 0.0,
+    "sliver_share": 0.233161,
+    "pole_share": 0.169463,
+    "one_mesh_share": 0.99917,
+    "weld_share": 0.092521,
+    "long_share": 9.7e-05
+   },
+   "totals": {
+    "faces": 61717,
+    "quads": 61717,
+    "tris": 0,
+    "ngons": 0,
+    "slivers": 14390,
+    "poles": 6797,
+    "flat_vertices": 40109,
+    "elements": 45,
+    "inset_elements": 44,
+    "body_faces": 61414,
+    "welded_edges": 11359,
+    "long_faces": 6
+   },
+   "zones": [],
+   "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
+   "input": "C:/x/ev_1616/inputs/master-quad-v003.blend"
+  },
+  {
+   "id": "kpp1-quad-v003-corners",
+   "label": "KPP1 quad-v003 SW/NW corners",
+   "acceptance": "rejected",
+   "acceptance_note": "rejected",
+   "score": 73.017,
+   "status": "measured",
+   "components": {
+    "tri_share": 0.0,
+    "ngon_share": 0.0,
+    "sliver_share": 0.22102,
+    "pole_share": 0.174416,
+    "one_mesh_share": 0.997589,
+    "weld_share": 0.091474,
+    "long_share": 0.0
+   },
+   "totals": {
+    "faces": 5823,
+    "quads": 5823,
+    "tris": 0,
+    "ngons": 0,
+    "slivers": 1287,
+    "poles": 664,
+    "flat_vertices": 3807,
+    "elements": 8,
+    "inset_elements": 7,
+    "body_faces": 5793,
+    "welded_edges": 1075,
+    "long_faces": 0
+   },
+   "zones": [
+    [
+     -17.5,
+     -8.2,
+     -12.5,
+     -3.2
+    ],
+    [
+     -17.5,
+     3.5,
+     -12.5,
+     8.5
+    ]
+   ],
+   "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
+   "input": "C:/x/ev_1616/inputs/master-quad-v003.blend"
+  },
+  {
+   "id": "psu275-main",
+   "label": "PSU275 SM_Psu_1_Main+MainGlass",
+   "acceptance": "accepted",
+   "acceptance_note": "accepted",
+   "score": 99.514,
+   "status": "measured",
+   "components": {
+    "tri_share": 0.0,
+    "ngon_share": 0.0,
+    "sliver_share": 0.007129,
+    "pole_share": 0.002201,
+    "one_mesh_share": 0.37195,
+    "weld_share": 0.032154,
+    "long_share": 0.0
+   },
+   "totals": {
+    "faces": 39276,
+    "quads": 39276,
+    "tris": 0,
+    "ngons": 0,
+    "slivers": 280,
+    "poles": 22,
+    "flat_vertices": 9997,
+    "elements": 2955,
+    "inset_elements": 2954,
+    "body_faces": 13597,
+    "welded_edges": 837,
+    "long_faces": 0
+   },
+   "zones": [],
+   "input_sha256": "41200c110342c507b674fbe94955502939d15268f12c3dd5e88284fdd0159524",
+   "input": "C:/x/ev_1616/inputs/PSU275_Main_quads_v001.fbx"
+  }
+ ],
+ "evidence": "G:/Мой диск/AGR-evidence/1616-mesh-quality/ + SHA256SUMS.txt"
+}

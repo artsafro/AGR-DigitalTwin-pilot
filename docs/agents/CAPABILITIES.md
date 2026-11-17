@@ -336,6 +336,9 @@ Pipeline core:
   Pre-export master polygon QA [D312]: `runtime.master_topology(nodes)` and agent CLI
   `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json`, one shared stdlib core;
   real read-only ELV/KPP1/PSU275 reports in `jobs/master-topology-1420/REPORT.md` (not delivery acceptance).
+  Master mesh quality score by the OKS split rule [D336] (#1616): `uv run python tools/qa/mesh_quality_score.py
+  MASTER --out NEW.json [--zone ...]` (score 0..100 + quads/slivers/poles/body share/welds/long sides; ranks, never
+  accepts); OBSERVE loop `tools/qa/mesh_quality_observe.py`; calibration `jobs/mesh-quality-1616/REPORT.md`.
 
 Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
 - Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by
