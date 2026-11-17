@@ -145,6 +145,8 @@ def check_contexts(contexts):
         _ru(_need(c, "owner_ru", where), where + ".owner_ru")
         for j, f in enumerate(_need(c, "functions", where, list)):
             _need(f, "name", f"{where}.functions[{j}]")
+            if "kind" in f and f["kind"] != "class":
+                raise SchemaError(f"{where}.functions[{j}]: 'kind' must be class when present")
             _ru(_need(f, "contract", f"{where}.functions[{j}]"), f"{where}.functions[{j}].contract")
         for j, d in enumerate(c.get("duplicates", [])):
             dwhere = f"{where}.duplicates[{j}]"
@@ -366,9 +368,13 @@ def verify_references(root, events, contexts):
         if "area" in c:
             path(c["area"], f"context {c['id']}")
         defined = _top_functions(owner)
+        classes = {n.name for n in ast.parse(owner.read_bytes(), filename=str(owner)).body
+                   if isinstance(n, ast.ClassDef)} if any(f.get("kind") == "class" for f in c["functions"]) else set()
         for f in c["functions"]:
-            if f["name"] != "<module>" and f["name"] not in defined:
-                problems.append(f"context {c['id']}: {c['owner']} has no top-level function {f['name']}")
+            kind = "class" if f.get("kind") == "class" else "function"
+            names = classes if kind == "class" else defined
+            if f["name"] not in names and not (kind == "function" and f["name"] == "<module>"):
+                problems.append(f"context {c['id']}: {c['owner']} has no top-level {kind} {f['name']}")
         for d in c.get("duplicates", []):
             if "rule" in d:   # path.py::function; the function itself is checked by duplicate_guard (stale row)
                 rel, line = d["at"].split("::", 1)[0], None
@@ -811,6 +817,8 @@ def resolve_context(context, maps, seen=()):
         raise SchemaError(f"context ref {ref!r}: expected one target {cid!r}, found {len(candidates)}")
     target = resolve_context(candidates[0], maps, (*seen, ref))
     result = {**target, **context}
+    if "grid" not in context:  # placement belongs to this map, not the referenced owner's map
+        result.pop("grid", None)
     for key in ("owner", "owner_ru", "functions"):
         result[key] = _need(target, key, f"context ref {ref!r}", list if key == "functions" else str)
     return result

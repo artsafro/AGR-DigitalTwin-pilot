@@ -39,11 +39,100 @@ def _maps():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return _maps()["contexts"]
 
 
 def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
+
+
+# ---------------------------------------------------------------- #1644: explicit top-level class references
+@pytest.mark.parametrize("name,kind,valid", [
+    ("PartsList", "class", True),
+    ("MissingPartsList", "class", False),
+    ("PartsList", None, False),
+])
+def test_1644_class_reference(name, kind, valid):
+    cmap = _maps()["contexts"]
+    entry = {"name": name, "contract": "Состав частей модели"}
+    if kind is not None:
+        entry["kind"] = kind
+    cmap["contexts"] = [{"id": "parts", "ru": "Состав частей",
+        "owner": "src/dt_ai/parts/model.py", "owner_ru": "Модель состава частей",
+        "functions": [entry]}]
+    cmap["relations"] = []
+    route_map.check_contexts(cmap)
+    problems = route_map.verify_references(ROOT, {"stages": []}, cmap)
+    if valid:
+        assert problems == []
+    else:
+        category = "class" if kind else "function"
+        assert problems == [f"context parts: src/dt_ai/parts/model.py has no top-level {category} {name}"]
+
+
+@pytest.mark.parametrize("name,kind,valid", [
+    ("Top", "class", True), ("Nested", "class", False),
+    ("Top", None, False), ("sync", None, True), ("async_fn", None, True),
+    ("sync", "class", False), ("<module>", "class", False), ("<module>", None, True),
+])
+def test_1644_top_level_namespace_probe(tmp_path, name, kind, valid):
+    """Synthetic exhaustive namespace/kind controls, with no runtime import of the owner."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs/decisions.md").write_text("", encoding="utf-8")
+    (tmp_path / "owner.py").write_text(
+        "class Top:\n    class Nested: pass\ndef sync(): pass\nasync def async_fn(): pass\n",
+        encoding="utf-8")
+    entry = {"name": name, "contract": "Синтетический контракт"}
+    if kind is not None:
+        entry["kind"] = kind
+    context = {"id": "synthetic", "owner": "owner.py", "functions": [entry]}
+    cmap = {"shared_kernel": context, "contexts": [], "rules": []}
+    for _ in range(2):
+        assert (route_map.verify_references(tmp_path, {"stages": []}, cmap) == []) is valid
+
+
+def test_1644_reference_layout_is_local():
+    maps = _maps()
+    source = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "sintez")
+    assert "grid" in source
+    assert "grid" not in route_map.resolve_context({"ref": "package-contexts.yaml#sintez"}, maps)
+    assert route_map.resolve_context({"ref": "package-contexts.yaml#sintez", "grid": "3/4"}, maps)["grid"] == "3/4"
+
+
+@pytest.mark.parametrize("kind", ["", "function", "method", None, [], 1, float("nan"), float("inf")])
+def test_1644_invalid_kind(kind):
+    cmap = _maps()["contexts"]
+    cmap["shared_kernel"]["functions"][0]["kind"] = kind
+    with pytest.raises(route_map.SchemaError, match="kind"):
+        route_map.check_contexts(cmap)
+
+
+@pytest.mark.parametrize("route,map_name", [("route", "contexts"),
+    ("vpm-route", "vpm-contexts"), ("ground-route", "ground-contexts")])
+def test_1644_stage_owners(route, map_name):
+    maps, events = _maps(), _routes()[route]
+    cmap = maps[map_name]
+    sintez = next(c for c in cmap["contexts"] if c["id"] == "sintez")
+    assert sintez["ref"] == "package-contexts.yaml#sintez"
+    assert sintez["owner"] == "tools/blender/sintez_checker.py"
+    assert {f["name"] for f in sintez["functions"]} == {"dump"}
+    assert _stage(events, "sintez")["context"] == "sintez"
+    assert next(r for r in maps["contexts"]["rules"] if r["id"] == "sintez-checker")["owner"] == sintez["owner"]
+    if route != "ground-route":
+        parts = next(c for c in cmap["contexts"] if c["id"] == "parts")
+        assert _stage(events, "parts")["context"] == "parts"
+        assert parts["owner"] == "src/dt_ai/parts/model.py"
+        assert parts["functions"] == [{"name": "PartsList", "kind": "class", "contract": "Состав частей модели и подтверждение пользователя"}]
+    route_map.check_schema(events, maps["contexts"])
+    assert not [p for p in route_map.route_coverage(events, maps["contexts"], cmap) if not p.startswith("WARNING:")]
+
+
+def test_1644_atlas_duplicate_reason():
+    row = next(d for c in _maps()["contexts"]["contexts"] for d in c.get("duplicates", [])
+               if d["at"] == "tools/materials/npm_atlas_udim.py:785")
+    assert "agr vpm-to-npm" not in row["ru"]
+    assert "agr unwrap-atlas" in row["ru"] and "job-specific" in row["ru"]
+    assert row["status"] == "live-bypass"
 
 
 # ---------------------------------------------------------------- #1593 source-backed writer inventory (not a generic scanner)
@@ -128,11 +217,13 @@ def test_1581_blender_contracts(name):
 
 
 def test_1581_npm_context():
-    assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm"
-    npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm")
+    assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm-atlas"
+    npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm-atlas")
     assert npm["owner"] == "tools/derive/npm_atlas.py"
-    local = next(c for c in _routes()["vpm-route"]["local_contexts"] if c["id"] == "npm")
-    assert local["ref"] == "vpm-oks-contexts.yaml#npm"
+    shared = next(c for c in _contexts()["contexts"] if c["id"] == "npm")
+    assert shared["owner"] == "tools/derive/export_npm.py"  # #1636: no shared-id shadow
+    local = next(c for c in _routes()["vpm-route"]["local_contexts"] if c["id"] == "npm-atlas")
+    assert local["ref"] == "vpm-oks-contexts.yaml#npm-atlas"
     assert local["owner"] == npm["owner"]
     route_map.check_schema(_routes()["vpm-route"], _contexts())
 
@@ -196,11 +287,11 @@ def test_1581_ref_owner():
         target["owner"] = owner
         assert route_map.resolve_context(ref, maps)["owner"] == owner
         assert route_map.resolve_context(ref, maps)["id"] == "alias"
-    # npm is deliberately not a globally unique context id.
+    # npm-atlas is deliberately not a globally unique context id.
     for name in ("maf-contexts", "flora-contexts", "vpm-contexts"):
         filename = route_map.context_maps()[name].name
-        resolved = route_map.resolve_context({"ref": filename + "#npm"}, maps)
-        assert resolved["owner"] == next(c["owner"] for c in maps[name]["contexts"] if c["id"] == "npm")
+        resolved = route_map.resolve_context({"ref": filename + "#npm-atlas"}, maps)
+        assert resolved["owner"] == next(c["owner"] for c in maps[name]["contexts"] if c["id"] == "npm-atlas")
 
 
 @pytest.mark.parametrize("ref", ["", "export", "#export", "package-contexts.yaml#",
@@ -233,16 +324,16 @@ def test_1581_context_ref_loads_from_source(tmp_path):
     shutil.copytree(ARCH, tmp_path / "docs/architecture")
     path = tmp_path / route_map.context_maps()["ground-contexts"]
     text = path.read_text(encoding="utf-8")
-    text = text.replace('  - id: npm\n', '  - id: npm\n    ref: flora-contexts.yaml#npm\n')
+    text = text.replace('  - id: npm\n', '  - id: npm\n    ref: flora-contexts.yaml#npm-atlas\n')
     path.write_text(text, encoding="utf-8")
     maps = route_map.load_context_maps(tmp_path)
-    target = next(c for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    target = next(c for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm-atlas")
     actual = next(c for c in maps["ground-contexts"]["contexts"] if c["id"] == "npm")
     assert actual["owner"] == target["owner"]
     assert actual["functions"] == target["functions"]
     # Source target missing: generator refuses before publishing any output.
     source = tmp_path / route_map.context_maps()["flora-contexts"]
-    source.write_text(source.read_text(encoding="utf-8").replace('  - id: npm\n', '  - id: renamed\n'), encoding="utf-8")
+    source.write_text(source.read_text(encoding="utf-8").replace('  - id: npm-atlas\n', '  - id: renamed\n'), encoding="utf-8")
     before = {p.name: p.read_bytes() for p in path.parent.iterdir()}
     assert route_map.main(["--root", str(tmp_path)]) == 2
     assert before == {p.name: p.read_bytes() for p in path.parent.iterdir()}
@@ -290,8 +381,8 @@ def test_1581_duplicate_ref_target_is_not_first_entry():
 @pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
 def test_1581_renderer_uses_declared_ref_not_export_id(renderer):
     events, maps = _routes()["route"], _maps()
-    events["scheme"]["export_context"] = {"ref": "flora-contexts.yaml#npm"}
-    expected = next(c["owner"] for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm")
+    events["scheme"]["export_context"] = {"ref": "flora-contexts.yaml#npm-atlas"}
+    expected = next(c["owner"] for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm-atlas")
     result = getattr(route_map, renderer)(events, maps["contexts"], maps)
     if renderer == "short_route_board":
         assert expected in " ".join(e.get("text", "") for e in result.elements).replace("\n", "")

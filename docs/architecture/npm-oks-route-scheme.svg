@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -30 1460 995" width="1460" height="995" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
 <rect x="0" y="-30" width="1460" height="995" fill="#ffffff"/>
-<rect x="30" y="140" width="1050" height="38.75" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="30" y="140" width="1050" height="57.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="30" y="355" width="460" height="60.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="610" y="355" width="470" height="40.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="30" y="310" width="460" height="36.25" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
@@ -27,10 +27,11 @@
 <tspan x="30" dy="24">Маршрут НПМ / ОКС v2 на КПП1 — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: 1909eba0d26b5686891bb86dcbef6c195dda22789456357ef22cc20a1bbfdbd4</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 1e92de07adef197661b903d5ad17fe8414937463e96e3b35a6233244a9185758</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
-<tspan x="555.0" dy="15">Ревизия исходников: КПП1: sources.json, ревизия альбома и SHA-256 исходников; неизвестная ревизия останавливает выпуск</tspan>
+<tspan x="555.0" dy="15">Ревизия исходников: КПП1: sources.json — состав исходников фиксируется путями и SHA-256 (кроме RVT); build manifest</tspan>
+<tspan x="555.0" dy="18.75">отказывает при смешении ревизий одного источника (#1592), ревизию альбома сверяем вручную (D274)</tspan>
 </text>
 <text x="30" y="245" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="30" dy="14">Владелец экспорта (Max): adapters/max/agr_tools/export_core.py</tspan>
@@ -76,6 +77,6 @@
 <tspan x="260.0" dy="20.0">публикации</tspan>
 </text>
 <text x="845.0" y="865.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="845.0" dy="16">Артефакт: Пакет и сцена Max QUAD для приёмки</tspan>
+<tspan x="845.0" dy="16">Артефакт: Пакет или сцена Max QUAD для приёмки</tspan>
 </text>
 </svg>
