@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-source-bound-paired-Canopy-v023
+run_id: cold-1315-buried-bases-model-choice-v024
 synthetic: false
 path: deviation
 inputs: &id001
@@ -173,6 +173,11 @@ deviations:
   what_was_tried: Source slot restoration and signed planar joint retessellation, numeric column normalization<=43.842nm, actual isolated pre/raw/native and both placed Canopy checks. Same D335 source-master budget route with exact borders, source-neighbour locks and5INTERIORbaseZ+0.15mm; complete ACTUAL57226triangle proof,4620pivots and2completeUrn partitions. New Flora trial families rejected, not adopted.
   new_tool_written: 49job-local drivers/tests778literal lines sealed externally in evidence-v023.json; no shared module/checker/library or dependency edits.
   result: Adopt paired5586tri Canopy and26378NPMGround. Actual179726NPM/305856VPM raw=native,18placed checks clean,37otherMAF/profile+Flora+564UCX arrays EXACT. Full4.975942mm guard/borders/domain/normals proved. Whole part-scope101NPM/139VPMfacesFAIL; diagnostic actual-array NPMjoin127faces134pairsFAIL; freshFlora515truecrossings,skirt/maps/UV/175wideUCXgaps remain worker-owned. No new question or closed gate reopened.
+- gate: operations
+  what_failed: Whole mixed-MAF regulatory667v023to670v024, all Bike-Canopy, despite38isolatedMAFsclean and publicparallelBikepairs108to0. Source row19PM-158bicycle shelter is represented by seating-pergola candidateCannopy006.447strict ABOVE-Ground transverse pairs prove visible construction clash, not buried bottoms or micro-joints.
+  what_was_tried: D095 copy-only removal150fully buried horizontal Bike faces/profile, complete actual raw/native Ground partitions>=80.663/83.156mm. Actual paired179576NPM305706VPM raw=native; all vertices/retained faces/UV/materials EXACT. Maple common-axis experiment refuses source10.789mm nonconcurrence, NOTadopted. No visible Canopy furniture deleted or PZU point moved.
+  new_tool_written: 26job-local drivers/tests484literal lines sealed externally in evidence-v024.json; no shared checker/library edits.
+  result: Adopt ONLY buried-base removal;12placedBikechecks clean, all38MAF4582plants remain. NEW question6943077043 asks explicit missing row19/37physicalMAF38census or correct library shelter. Canopy removal/replacement NOTapplied pending answer. Other technicalFAILs remain worker-owned, no waiver or old gate reopened.
 gates:
   inputs:
     status: review
@@ -188,37 +193,40 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: Paired source-bound Canopy and tighter NPM Ground adopted only after actual isolated/placed/export QA; all Flora trials NOTadopted. Source Ground/libraries unchanged. Whole mixed composition remainsFAIL and worker-owned; closed gates stay closed, no new human question.
+    note: Adopt onlyD095buried-base removal150faces/profile; all38MAF4582plants retained. WholeMAF670regulatoryFAIL/447strict aboveGroundcrossings expose NEW row19candidate/source mismatch question6943077043. No Canopy removal/replacement/point move pending answer. Other technicalFAILs worker-owned; old gates closed.
     evidence: &id002
     - &id003
-      path: jobs/SIL13-COLD-1315/source-wide-summary-v023.json
-      sha256: 3370be2d06ee44f39ca9fe5b5e3c81a3b24548bf0dd4e3c14b8c6a6af76362aa
+      path: jobs/SIL13-COLD-1315/source-wide-summary-v024.json
+      sha256: f4b2aca688757773f6368bec13a98461965ad141d1dc0173ff8a42af77a2a1f0
     - &id004
-      path: jobs/SIL13-COLD-1315/evidence-v023.json
-      sha256: d9e8873e181cc6495bb325fbb3e15f5f653bd8d0f91633b74ae74a401d3b59b7
+      path: jobs/SIL13-COLD-1315/evidence-v024.json
+      sha256: 12a595bbf9ee66acb97d906bebb859b9a88b05e88bdbb5d63f77ec5b11d02eb8
+    - path: jobs/SIL13-COLD-1315/question-receipt-v024.json
+      sha256: 1ec1858952b1913b249c73fe89d1971d08e2a9744972dd294e2864d70622584b
   budgets:
     status: review
-    note: D335 permission CLOSED. Actual179726NPMraw/native<=180000,Ground26378,Canopy5586,7fullBench5064each; all38MAF/4582plants retained. Actual VPM305856raw/native,564UCX6564tris; full4.975942mm Ground guard met, not relaxed. Texture/skirt/UV checks and175UCXwidegaps remain incomplete.
+    note: D335 CLOSED. Actual179576NPM305706VPMraw=native, all38MAF4582plants retained. Ground26378/58896 and564UCX6564tris EXACT, earlier full4.975942mmGround/89.936mmUCXproofs applicable. Skirt1848outeredges/maps/UV/175widegaps remainFAIL. New question is row19identity/count, not budget/technicalwaiver.
     evidence: *id002
   export_readback:
     status: review
-    note: Resume ONLY NPMv023/site-npm-r1 and VPMv023/site-canopy-r1. Both raw/native full counts exact, no native face loss;18placed Canopy/Bench checks clean.37otherMAF/profile+Flora+564UCX exact. Full actual Ground/pivot/shelf proof measured. WholeQA FAIL101/139faces, NPM diagnosticjoin127faces. Both fresh public validators exit1;2originalFlora maps embedded hash-equal, V006PASS only, not whole delivery.
+    note: Resume ONLY pairedv024/site-bases-r1/NPMandVPM. Actual179576/305706raw=native/no native face loss, all vertices/retained triangles/UV/materials EXACT,12placedBikechecks clean. NPM original-partxView0 NOTwholePASS; diagnosticjoin26NPM38VPMfacesFAIL.38isolatedMAFregulatory0 butwhole670FAIL/447strict aboveGroundcrossings. Both fresh validators exit1, VPMV009 now measuredFAIL, no missing checks hidden.
     evidence: *id002
   report:
     status: review
-    note: v023534affectedpassed5historicaldeselected, including4rigid/9invalid-input cases;2outputalias probes nonzero/inputs unchanged. Real pre-fix Canopy/budgetRED retained; fresh currentFlora515/wholeQA remainFAIL.360Drivefiles248104522bytessealed,22original hashes equal. No new question. Full suite deferred to merge batch(rule68).
+    note: v024547affectedpassed5historicaldeselected79.49s. Actual mixedbaseRED108pairs toGREEN0Bikeparallelpairs; separate Maple6RED/wholeMAF670/Flora515 remainFAIL.134Drivefiles180518463bytessealed,22original hashes equal. NEW question6943077043 readbacknormalizedequal; CanopyNOTremoved. Full suite deferred to merge batch(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v023.md
-      sha256: 8cce92acfeed676b4936c77a993a7fbb706e2c34dd2ba05719b9301196a5bd57
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v024.md
+      sha256: 20bf0544c9f390d0cdf66a19a72597314d7b9cac8b876ffc4e222b0187c48a15
     - *id003
     - *id004
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: 'D335/D321/NPMTable/Bench025/hedges/composition stay CLOSED. Actual Canopy source/repaired mesh diagnostic is NOT final visual/material acceptance or a new gate. WholeQA stillFAIL, all Flora trialsNOTadopted; no new model/picture question.'
+    waits: user
+    note: 'NEW model/data question only: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6943077043 — allow explicit missing row19/37physicalMAF+38census or name correct library bicycle shelter? Canopy006 stillpresent; no deletion/replacement/pointmove. Actual full/section diagnostic NOTfinalacceptance. D335/D321/Table/Bench/hedge/source Gates stayCLOSED. TechnicalFAILs not offered for waiver.'
     evidence: *id002
   checker:
     status: missing
-    note: Complete finalSINTEZ notrun. Fresh NPM publicvalidator2pass3fail1review4not_run and VPM3pass3fail1review8not_run, both exit1. Missing area/other operands remain review/not_run. No deliveryPASS, technicalwaiver or new modelquestion.
+    note: Complete finalSINTEZ notrun. Fresh NPM2pass3fail1review4not_run and VPM3pass4fail1review7not_run, both exit1; VPMV009nowmeasuredFAIL0to7782.75px/m, UV arrays retainedEXACT. Area/other operands remainreview/not_run. NEW row19choice is not technicalwaiver; no deliveryPASS.
     evidence: []

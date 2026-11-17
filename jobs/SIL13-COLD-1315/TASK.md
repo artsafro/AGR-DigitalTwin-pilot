@@ -54,7 +54,19 @@ is a source-contour question diagram, NOT that pilot or its acceptance.
 
 ## Current state
 
-Current v023: real paired source-bound Canopy repair5586triangles per profile,
+Current v024: paired actual179576NPM/305706VPM raw=native;150fully buried Bike
+horizontal base faces removed/profile perD095, all vertices/retained faces/UV/materials
+EXACT. All38MAF/4582plants remain. NEW model/data question6943077043: source row19
+PM-158 bicycle shelter versus selected seating pergola Cannopy006; permit explicit
+missing row19 with37physicalMAF+38census or name correct library shelter? No removal,
+replacement or point movement applied pending answer.447strict above-Ground pairs
+prove a visible construction clash, not a micro-joint repair; all38isolatedMAFs0,
+wholeMAF670regulatoryFAIL, Flora515 unchanged. Other technicalFAILs remain worker-owned.
+Resume ONLY v024/site-bases-r1/NPM and /VPM; see CONTINUATION-v024.md and
+question-receipt-v024.json.547affectedpassed/5historicaldeselected; Full suite:
+deferred to merge batch(rule68). Closed D335/D321/Table/Bench/hedge gates stay closed.
+
+Historical v023: real paired source-bound Canopy repair5586triangles per profile,
 all isolated/placed raw/native checks clean;37otherMAF/profile, Flora and564UCX
 arrays EXACT. Actual NPM179726/VPM305856 raw=native, no native face loss. Same
 [D335] source-master route now gives26378NPMGround triangles, complete ACTUAL

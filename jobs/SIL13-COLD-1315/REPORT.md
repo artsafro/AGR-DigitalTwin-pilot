@@ -1,6 +1,21 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v023 actual paired Canopy repair; NPM179726/VPM305856 raw=native;
+Current status: **v024 NPM179576/VPM305706 raw=native; NEW row19 canopy identity question,
+whole QA FAIL, NOT delivered**. See [CONTINUATION-v024.md](CONTINUATION-v024.md)
+and [question-receipt-v024.json](question-receipt-v024.json).
+Only150fully buried Bike horizontal faces removed/profile perD095,>=80.663/83.156mm
+complete-partition burial; all vertices/retained triangles/UV/materials EXACT.
+All38MAF/4582plants retained, Canopy candidate NOT removed/replaced;12placed Bike
+checks clean. NPM original-part xView0 is NOT composition/regulatory success:
+diagnostic join26NPM/38VPMfacesFAIL; all38isolated MAF regulatory0 but wholeMAF
+667→670crossings,447strict ABOVE-Ground pairs up to351.844mm. Source row19 is
+PM-158 bicycle shelter, selected Cannopy006 is a seating pergola. Question6943077043
+asks explicit missing row19/37physicalMAF+38census or correct library shelter;
+no answer yet/no model change. Other technicalFAILs stay worker-owned. Fresh
+validators BOTHexit1;547affectedpassed/5historicaldeselected, separate Maple6RED
+NOTadopted. Full suite: deferred to merge batch (rule68).
+
+Historical status: **v023 actual paired Canopy repair; NPM179726/VPM305856 raw=native;
 whole QA STILL FAIL, NOT delivered**. See [CONTINUATION-v023.md](CONTINUATION-v023.md).
 Both Canopy copies5586triangles, pre/raw/native/placed clean;37otherMAF/profile,
 Flora and564UCX arrays EXACT. New NPMGround26378triangles, complete actual57226
