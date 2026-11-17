@@ -71,12 +71,27 @@ def main(argv=None):
     ap.add_argument("--edge-dist", type=float, default=0.8, help="max window distance to the contour")
     ap.add_argument("--close", type=float, default=0.5, help="closing radius bridging wall-object joints, m")
     ap.add_argument("--jog", type=float, default=0.06, help="contour simplify tolerance: jogs below it are relief, texture (BM-08/BM-09)")
+    ap.add_argument("--clip", help="JSON [[x,y],...]: keep only objects whose plan centroid is inside")
     a = ap.parse_args(argv)
     if os.path.realpath(a.out) == os.path.realpath(a.crop) or not a.out.endswith(".json"):
         sys.exit("refused: output must be a new .json, not the input")
     keys = json.load(open(a.keys, encoding="utf-8")) if a.keys else KEYS
     d = np.load(a.crop)
     tri, obj, names = d["tri"], d["obj"], [str(n) for n in d["names"]]
+    clipped = 0
+    if a.clip:  # keep objects whose plan centroid lies inside the polygon (a neighbour body inside the crop box)
+        poly = Polygon(json.load(open(a.clip, encoding="utf-8")))
+        if not poly.is_valid or poly.area <= 0:
+            sys.exit("refused: --clip polygon is empty or invalid")
+        cnt = np.bincount(obj, minlength=len(names)).astype(float)
+        cx = np.bincount(obj, weights=tri[:, :, 0].mean(1), minlength=len(names)) / np.maximum(cnt, 1)
+        cy = np.bincount(obj, weights=tri[:, :, 1].mean(1), minlength=len(names)) / np.maximum(cnt, 1)
+        keep_obj = np.array([poly.contains(Point(x, y)) for x, y in zip(cx, cy)])
+        clipped = int((~keep_obj & (cnt > 0)).sum())
+        m = keep_obj[obj]
+        tri, obj = tri[m], obj[m]
+        if not len(tri):
+            sys.exit("refused: --clip leaves no triangles")
     cls = classify(names, keys)
     by_obj = collections.defaultdict(list)
     for i, o in enumerate(obj):
@@ -184,7 +199,8 @@ def main(argv=None):
         "materials": {"WALL_A": [0.75, 0.73, 0.70], "WINDOW": [0.15, 0.2, 0.3], "INSET": [0.3, 0.3, 0.3]},
         "dropped": dropped,
         "counts": {"contour_vertices": len(xy), "cuts": len(merged), "windows_ref": len(ref_wins),
-                   "windows_used": len(windows), "insets": len(insets), "perimeter_m": round(perim, 3)},
+                   "windows_used": len(windows), "insets": len(insets), "perimeter_m": round(perim, 3),
+                   "objects_clipped": clipped},
     }
     with open(a.out, "x", encoding="utf-8") as f:
         json.dump(spec, f, ensure_ascii=False, indent=1)

@@ -8,6 +8,7 @@ Colours: grey quad (shade by normal), orange = triangle kept after the 1 deg cop
 from the view's lower-left corner. Refuses to write over the input.
 """
 import argparse
+import json
 import math
 import os
 import sys
@@ -95,6 +96,7 @@ def main(argv=None):
     ap.add_argument("--window", type=float, nargs=4)
     ap.add_argument("--title", default="")
     ap.add_argument("--texture", help="diffuse PNG: z-buffered textured view + visible rejoined edges")
+    ap.add_argument("--mat-rgb", help="JSON list [[r,g,b], ...] by material index: colour quads by material ID")
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if os.path.abspath(a.out) == os.path.abspath(a.npz) or not a.out.lower().endswith(".png"):
@@ -106,6 +108,13 @@ def main(argv=None):
     faces = unpack(d["jn"], d["ji"])
     if not faces:
         sys.exit("empty mesh")
+    mat_rgb, jm = None, d["jmats"]
+    fi_of = {id(f): k for k, f in enumerate(faces)}
+    if a.mat_rgb:  # quads filled with their material colour (#1619: finish-zone IDs on the sheet)
+        mat_rgb = json.load(open(a.mat_rgb, encoding="utf-8"))
+        miss = sorted(set(int(m) for m in jm) - set(range(len(mat_rgb))))
+        if miss:
+            sys.exit("material index %s has no colour in %s" % (miss, a.mat_rgb))
     t = math.radians(-a.rot)
     R = np.array([[math.cos(t), -math.sin(t), 0], [math.sin(t), math.cos(t), 0], [0, 0, 1]])
     base = d["verts"].min(0)
@@ -165,6 +174,10 @@ def main(argv=None):
             continue
         g = int(170 + 70 * sh)
         fill = {"q": (g, g, g), "t": (255, 190, 110), "s": (240, 70, 60)}[kind]
+        if mat_rgb is not None and kind == "q":
+            c = mat_rgb[int(jm[fi_of[id(f)]])]
+            k = 0.7 + 0.3 * sh
+            fill = tuple(int(x * k) for x in c)
         dr.polygon(list(zip(xs.tolist(), ys.tolist())), fill=fill, outline=(0, 0, 0), width=lw)
     dr.rectangle([0, 0, w, 26], fill="white")
     dr.text((8, 6), f"{a.title} view={a.view} rot={a.rot} ppm={a.ppm} window={a.window}  grey=quad orange=triangle red=sliver",

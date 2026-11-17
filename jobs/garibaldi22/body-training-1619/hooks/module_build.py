@@ -93,7 +93,10 @@ report = {"rings": [], "insets": 0}
 for ri, ring in enumerate(cfg["rings"]):
     pts, perim = ring_points(ring["xy"], ring.get("cuts", []))
     wins = [(w[1], w[2], w[3] if len(w) > 3 else 0, w[4] if len(w) > 4 else 1) for w in cfg.get("windows", []) if w[0] == ri]
-    zones = ring.get("zones", [[0.0, perim, mat_names[0]]])
+    zones = ring.get("zones", [[0.0, perim, "WALL_A"]])
+    for z in zones:
+        if z[2] not in MID:
+            sys.exit("zone material %r is not in materials" % z[2])
     grid = [[bm.verts.new((x, y, z)) for (_, x, y, _) in pts] for z in levels]
     n = len(pts)
     for li in range(len(levels) - 1):
@@ -103,7 +106,9 @@ for ri, ring in enumerate(cfg["rings"]):
             sm = (s0 + s1) / 2
             f = bm.faces.new((grid[li][k], grid[li][(k + 1) % n], grid[li + 1][(k + 1) % n], grid[li + 1][k]))
             is_win = any(a - 1e-4 <= sm <= b + 1e-4 and wl <= li < wh for a, b, wl, wh in wins)
-            zone = next((z[2] for z in zones if z[0] - 1e-4 <= sm <= z[1] + 1e-4), mat_names[0])
+            zone = next((z[2] for z in zones if z[0] - 1e-4 <= sm <= z[1] + 1e-4), None)
+            if zone is None:
+                sys.exit("ring %d face at s=%.3f is in no finish zone" % (ri, sm))
             f.material_index = MID["WINDOW"] if is_win else MID[zone]
             z0, z1 = levels[li], levels[li + 1]
             if is_win:
