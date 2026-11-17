@@ -187,7 +187,8 @@ def test_export_zip_acceptance(tmp_path):
     assert run.parent == d and run.name == 'Сборка_20261105_120000' and r['plan']['marker'] == pc.MARK_FAIL
     assert sorted(set(os.listdir(d)) - set(before)) == [run.name]  # the delivery folder gets only the run folder
     assert sorted(os.listdir(run)) == sorted(
-        r['plan']['done'] + [n + '.validation.json' for n in r['plan']['done']] + ['report.json', pc.MARK_FAIL])
+        r['plan']['done'] + [n + suffix for n in r['plan']['done']
+                            for suffix in ('.validation.json', '.delivery.json')] + ['report.json', pc.MARK_FAIL])
     assert json.loads((run / 'report.json').read_text(encoding='utf-8')) == r
     with zipfile.ZipFile(run / 'SM_X.zip') as z:
         names = z.namelist()
@@ -231,6 +232,7 @@ def _complete_validator_table(table, target):
             for code in stage.get('codes', []) + stage.get('open_codes', [])]
         stages.append(stage)
     full = {'profile': profile, 'target': str(target), 'exit_code': table['exit_code'],
+            'target_sha256': _sha(Path(target)) if Path(target).is_file() else '0' * 64,
             'stages': stages, 'notes': ['Synthetic marker-policy fixture, not measured validation.']}
     result = pc.stage_table(full)
     result['validation_report'] = full
