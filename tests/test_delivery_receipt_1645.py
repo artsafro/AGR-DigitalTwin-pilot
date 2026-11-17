@@ -154,6 +154,42 @@ def test_validate_rehashes_delivery_receipt(tmp_path, suffix, edit):
         assert receipt['summary_ru'].splitlines()[-1] in body['notes']
 
 
+@pytest.mark.parametrize('has_delivery', [False, True])
+@pytest.mark.parametrize('swapped', [False, True])
+def test_historical_package_report_is_not_delivery_attestation(tmp_path, has_delivery, swapped):
+    """Synthetic pre-#1645 reports remain readable; explicit receipts still bind ZIP bytes."""
+    import zipfile
+    target = tmp_path / '0000_Synthetic.zip'
+    with zipfile.ZipFile(target, 'w') as archive:
+        archive.writestr('0000_Synthetic_01.fbx', b'synthetic')
+        archive.writestr('0000_Synthetic_Ground.fbx', b'synthetic')
+        archive.comment = b'synthetic comment'
+    report = {'zip': str(target), 'files': ['0000_Synthetic_01.fbx', '0000_Synthetic_Ground.fbx']}
+    if has_delivery:
+        report.update(pc.delivery_receipt(target))
+    (tmp_path / 'package_report.json').write_text(json.dumps(report), encoding='utf-8')
+    if swapped:
+        # Keep the ZIP readable and its size unchanged; only receipt binding can detect this.
+        data = target.read_bytes()
+        target.write_bytes(data[:-1] + bytes([data[-1] ^ 1]))
+    result = cli('validate', target, '--profile', 'npm', '--json')
+    body = json.loads(result.stdout)
+    checks = [f for s in body['stages'] if s['id'] == 'V001'
+              for f in s['findings'] if f['name'] == 'delivered file']
+    assert len(checks) == 1
+    if not has_delivery:
+        assert checks[0]['status'] == 'info'
+        assert checks[0]['data']['code'] == 'delivered_not_attested'
+        assert not any(f['status'] == 'fail' and f['data'].get('code') == 'delivered_mismatch'
+                       for s in body['stages'] for f in s['findings'])
+        assert not any(note.startswith('delivered:') for note in body['notes'])
+    else:
+        assert checks[0]['status'] == ('fail' if swapped else 'pass')
+        assert checks[0]['data']['code'] == ('delivered_mismatch' if swapped else 'delivered_match')
+        if swapped:
+            assert result.returncode == 1
+
+
 def test_pack_deliver_summary_keeps_archive_receipt(tmp_path):
     from adapters.max.agr_tools import deliver_core as dc
     target = tmp_path / 'synthetic.zip'
