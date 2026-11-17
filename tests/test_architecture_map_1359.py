@@ -16,6 +16,38 @@ import route_map  # noqa: E402
 YAMLS = [ROOT / route_map.EVENTS, ROOT / route_map.CONTEXTS]
 
 
+# ---------------------------------------------------------------- #1636: source-backed route wording, not delivery certification
+@pytest.mark.parametrize("item", ["context", "npm", "sources", "readback", "sintez", "delivered"])
+def test_1636_npm_route_matches_current_tools(item):
+    events = mini_yaml.load(ROOT / route_map.EVENTS)
+    contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
+    stages = {s["id"]: s for s in events["stages"]}
+    if item == "context":
+        assert stages["npm"]["context"] == "npm"
+        npm = next(c for c in contexts["contexts"] if c["id"] == "npm")
+        assert npm["owner"] == "tools/derive/export_npm.py"
+        assert {f["name"] for f in npm["functions"]} == {"main"}
+    elif item == "npm":
+        assert "Экспортированный НПМ-FBX с привязкой к мастеру" in stages["npm"]["event_ru"]
+        assert "перед экспортом" not in stages["npm"]["event_ru"]
+    elif item == "sources":
+        source = events["scheme"]["source_ru"]
+        assert "состав исходников фиксируется путями и SHA-256 (кроме RVT)" in source
+        assert "неизвестная ревизия останавливает выпуск" not in source
+        assert "#1592" in source
+    elif item == "readback":
+        stage = stages[item]
+        assert {"agr build-manifest", "dt qa xview"} <= set(stage["commands"])
+        assert "fbx_readback" in stage["event_ru"] and "manifest_findings" in stage["event_ru"]
+        assert "ZIP" in stage["event_ru"] and "одного FBX" in stage["event_ru"]
+    elif item == "sintez":
+        assert stages[item]["evidence"] == ["tools/qa/sintez_checker.py"]
+    else:
+        step = next(s for s in events["scheme"]["steps"] if s["stages"] == "delivered")
+        assert step["artifact_ru"] == "Пакет или сцена Max QUAD для приёмки"
+        assert "D262" in stages[item]["rules"]  # unresolved relocation stays out of scope
+
+
 # ---------------------------------------------------------------- generator: drift, references, labels
 def test_committed_files_equal_generator_output():
     _, _, files = route_map.render(ROOT)
