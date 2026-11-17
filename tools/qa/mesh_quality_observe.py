@@ -19,7 +19,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
 sys.path.insert(0, str(ROOT / 'tools' / 'qa'))
-import mesh_quality_score as mqs  # noqa: E402  (report: jobs/mesh-quality-1616/REPORT.md)
+import mesh_quality_score as mqs  # noqa: E402  (report: docs/research/mesh-quality-1616/REPORT.md)
 
 CORNERS = [[-17.5, -8.2, -12.5, -3.2], [-17.5, 3.5, -12.5, 8.5]]   # KPP1 SW / NW corner posts (#1563 sheet)
 

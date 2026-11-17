@@ -69,8 +69,8 @@ Reading:
 80/60/45/30 deg on a copy, re-measures, and logs keep/discard. Limitation: KPP1 has no `skeleton.json`,
 so the loop post-processes a copy of the finished master with the hook script instead of rebuilding
 through the skeleton; the "would change: body-stage after hook" line is what it would propose, not a
-measured skeleton rebuild. The logs `observe-log-r1.jsonl` / `observe-log-r2.jsonl` are force-added
-copies (`/jobs/**` is git-ignored); the hashed originals are on G:.
+measured skeleton rebuild. The logs `observe-log-r1.jsonl` / `observe-log-r2.jsonl` are copies
+(kept under docs/research, not jobs/: job folders hold deliveries only); the hashed originals are on G:.
 
 ### loop-r2 (metric r2, 2026-11-17) - log `observe-log-r2.jsonl`
 

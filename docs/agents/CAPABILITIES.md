@@ -339,7 +339,7 @@ Pipeline core:
   Master mesh quality score by the OKS split rule [D336] (#1616): `uv run python tools/qa/mesh_quality_score.py
   MASTER --out NEW.json [--zone ...] [--exclude-zone ...]` (score 0..100 + quads per element/slivers/poles/body
   share/welds/long sides/irregular area/open seams; ranks, never
-  accepts); OBSERVE loop `tools/qa/mesh_quality_observe.py`; calibration `jobs/mesh-quality-1616/REPORT.md`.
+  accepts); OBSERVE loop `tools/qa/mesh_quality_observe.py`; calibration `docs/research/mesh-quality-1616/REPORT.md`.
 
 Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
 - Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by

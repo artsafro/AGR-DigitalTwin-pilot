@@ -360,7 +360,7 @@ def test_blender_reads_obj_fixture_like_the_core(tmp_path):
 
 
 def test_committed_calibration_ranks_rejected_corners_below_accepted():
-    cal = json.loads((ROOT / 'jobs/mesh-quality-1616/calibration.json').read_text(encoding='utf-8'))
+    cal = json.loads((ROOT / 'docs/research/mesh-quality-1616/calibration.json').read_text(encoding='utf-8'))
     rows = {r['id']: r for r in cal['rows']}
     rejected = rows['kpp1-quad-v003-corners']
     accepted = [r for r in rows.values() if r['acceptance'] == 'accepted']

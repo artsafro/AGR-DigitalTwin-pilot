@@ -48,7 +48,7 @@ score = 100 * (1 - sum(weight * penalty) / sum(weights)) (weights in ``WEIGHTS``
 component costs at most its weight share of the 100 points.
 Pass/fail is NOT the score: ``status`` is ``fail`` on any n-gon or an empty measured set,
 ``measured`` otherwise. The score ranks masters; it never grants acceptance.
-Calibration (KPP1 quad-v002/v003, PSU275): jobs/mesh-quality-1616/REPORT.md.
+Calibration (KPP1 quad-v002/v003, PSU275): docs/research/mesh-quality-1616/REPORT.md.
 """
 import math
 import re
