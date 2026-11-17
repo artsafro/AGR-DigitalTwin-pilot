@@ -4,6 +4,7 @@ import importlib.util
 import json
 import math
 import random
+import struct
 from pathlib import Path
 
 import pytest
@@ -298,6 +299,33 @@ def test_generated_seams_and_texel(box):
         assert seams(box, faces, per_tile_snap(uvs))[1] > 0
         done += 1
     assert done >= 50
+
+
+# ------------------------------------------------------------------ #1600: Blender float32 world coordinates
+
+def float32(value):
+    return struct.unpack('f', struct.pack('f', value))[0]
+
+
+@pytest.mark.parametrize('px', [1000, 1706])
+@pytest.mark.parametrize('offset', [0, 3, 2000, -2000])
+@pytest.mark.parametrize('horizontal', [False, True])
+def test_float32_period_cut_fits(box, px, offset, horizontal):
+    period = 4096 / px
+    cuts = [float32((offset + f) * period) for f in (0.1, 1, 1.5)]
+    small = [float32(0.1 * period), float32(0.6 * period)]
+    faces = strip_wall(small, cuts_z=cuts) if horizontal else strip_wall(cuts, cuts_z=small)
+    uvs, rep = box.plan_box_uv(faces, px, 1012, margin_px=0)
+    assert len(rep['islands']) == 2 and rep['period_cut_edges'] == 1
+    assert set(uvs) == {0, 1} and in_tile(uvs, (1, 1))
+    assert seams(box, faces, uvs) == (1, 0)
+    # Float32 source quantization is corrected by less than half a texel.
+    for fid, _, coords in faces:
+        shift = next(i['shift'] for i in rep['islands'] if fid in i['faces'])
+        for co, uv in zip(coords, uvs[fid]):
+            expected = box.axis_uv(co, '-y')
+            assert all(abs((uv[i] - 1 + shift[i]) * 4096 - expected[i] * px) <= 0.5 + 1e-6
+                       for i in (0, 1))
 
 
 # ------------------------------------------------------------------ real Blender
