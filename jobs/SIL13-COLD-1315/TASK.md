@@ -22,7 +22,23 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Read back exports, run area validators, report per-area reproduction and historical comparison.
   No passed=true with an incomplete mandatory/manual gate.
 
-## v027 current continuation — current pair remains v026/v025
+## v028 current continuation — ONE isolated VPM pilot; picture gate pending
+
+[CONTINUATION-v028.md](CONTINUATION-v028.md): source permission6952852628
+applied ONLY to one33F02A9pilot. New picture6954553715 awaits a separate «ок»;
+see picture-receipt-v028.json. No six-tree placement or final acceptance inferred.
+Actual r2:750tri/361vertices/raw-native regulatory0/public0/0/0/0;
+32/32normal-line sheet samples7.687–9.378mm, not continuous thickness proof.
+Original trunk/branches constructively retained;50/1554surface samples>2mm are
+all internal interfaces, not missing exterior (sampled, not Hausdorff). Height
+unchanged; XY spans5.303/6.439mm smaller. Both comparison sides use the same
+existing Royal Red INTERIM source pixels; not final botanical/material approval.
+NPMv026/VPMv025 hashes/37physicalMAF38census4582plants/22originals unchanged.
+Other metadata/Ground/UV/maps/non-mapleVPM/finalgates remain worker-owned;
+D339gapbandsOBSERVE.447affectedpassed; repo_guards: GREEN(486passed).
+Full suite: deferred to merge batch(rule68).
+
+## v027 historical continuation — current pair remains v026/v025
 
 [CONTINUATION-v027.md](CONTINUATION-v027.md): NO model adoption this run.
 Resume ONLY NPMv026/site-flora-r3 + VPMv025/site-ucx-wide-r1; hashes unchanged.

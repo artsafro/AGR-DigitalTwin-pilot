@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-VPM-maple-construction-choice-v027
+run_id: cold-1315-VPM-maple-picture-pilot-v028
 synthetic: false
 path: deviation
 inputs: &id001
@@ -198,6 +198,11 @@ deviations:
   what_was_tried: Source-fan shell union2faces5832vertices; bounded-erroroptimizer222faces30vertices; cumulative1.995mm link574faces111vertices. ALL NOTadopted. Metadata-copy full decoded tree exact except6absoluteimagepaths/nativearrays176094exact; older-v025diffPASS but immediate-v026diffFAIL; missing external locators disclosed.
   new_tool_written: Only job-local experimental drivers sealed in evidence-v027.json; no sharedmodule/checker/library edit or geometry adoption.
   result: CurrentpairNPMv026/VPMv025byteunchanged. NEW model/source question6951392543 about less-detailed VPM-only crown pilot or alternate detailed library maple; no site replacement before newchoice and separatepilotpicture. AlloldgatesCLOSED, othertechnicalFAILsOPEN, no QAwaiver.227affectedpassed;repo_guardsGREEN486;fullsuite deferredrule68.
+- gate: operations
+  what_failed: Five-card shell union and cleanup still failed public contacts; actual r1 sheet samples exposed overlapping near-parallel NPM source cards producing 12.89-13.16mm thickness. No trial was adopted on the site.
+  what_was_tried: Authorized ONE isolated VPM maple pilot under source answer6952852628; retain real trunk/large branches constructively, canonicalize only duplicate parallel crown direction, coplanar retessellation then original-assignment link cleanup. Fresh actual FBX/raw/native QA, six renders, verifier OBSERVE, packed texture-review.
+  new_tool_written: No shared module, library edit, D-id or checker change. Job-local drivers/tests and failed trials sealed in evidence-v028.json.
+  result: Isolated r2 361vertices750triangles; raw/native regulatory0/public0faces0vertices0pairs0bowties,32of32spacing samples7.687-9.378mm. Height unchanged; bbox edges<=3.220mm.50of1554trunk samples>2mm all internal,0exterior, sampled not Hausdorff. Current site176094NPM300120VPM/37physicalMAF38census4582plants/22original hashes unchanged. NEW picture6954553715 pending; no replication or delivery acceptance.447affectedpassed/486guardsGREEN; fullsuite deferredrule68.
 gates:
   inputs:
     status: review
@@ -214,6 +219,12 @@ gates:
     status: fail
     note: v026NPMFlora515to0regulatory;actualraw/nativeFlora+wholejoinedpublic0/0/0/0.37physicalMAF38census4582plants;4535hedgesupport>=78.225percent. VPMactualFlora29615regulatory/9wholepublicfaces49pairsFAIL; VPMknifeNOTadopted. D339all148240UCXpairsmeasured/report-only; archive-metadata/Ground/maps/UVFAILsremainworker-owned, no newquestion.
     evidence: &id002
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v028.json
+      sha256: 1f505c7369efe1632bc10507bb033a374ea66875e42c485fcd705057d4d99136
+    - path: jobs/SIL13-COLD-1315/evidence-v028.json
+      sha256: e418255acd86991ec323cf2d13c3a5daa9aba16d6b28050236297bceb2f6540c
+    - path: jobs/SIL13-COLD-1315/picture-receipt-v028.json
+      sha256: 500d973723b312ad5c3b0d533eae557d7576abeccf4ba5ae92da5771136a947d
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v027.json
       sha256: 347fc032a6159c7847a9a2625be0c2be53ee6017091b90b1ff66fb6e8df251c1
     - path: jobs/SIL13-COLD-1315/evidence-v027.json
@@ -240,8 +251,10 @@ gates:
     evidence: *id002
   report:
     status: review
-    note: v026828affectedpassed5historicaldeselected293.79s;repo_guardsGREENafterownedregistrymerge/URLnormalization. Source515REDtoactualNPMregulatory0;4raw/nativeFlora/wholepubliccommandsGREEN.174Drivefiles234846315bytessealed/22originalhashesequal. VPMknife/timeout/metadataFAILexplicit, no newhumanquestion. Full suite deferred(rule68).
+    note: v028447affectedpassed0failed89.71s;repo_guardsGREEN486passed1warning110s. Actual isolated mapleRED4869to0raw/native, publicall0;32of32shell samples7.687-9.378mm.192Drivefiles58493246bytessealed,22originalshashesequal, sitepairunchanged. NEW picture6954553715pending, no replication or QAwaiver. Full suite deferred(rule68).
     evidence:
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v028.md
+      sha256: 8012d9e277b195804f164e59741fd58232a34ba5c69fb5f5a0660c26d4a2996a
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v026.md
       sha256: 4c2fc0a8a795398b80e2bdde24fc978d162f7b7bb28a9d5015c347755643f9d9
     - *id003
@@ -251,7 +264,7 @@ gates:
   visual:
     status: review
     waits: user
-    note: NEW v027 model/source question6951392543 pending for six detailed VPM maple crowns only; less-detailed paired-NPM-derived VPM pilot versus another detailed library source. No pilot built/accepted or site substitution claimed. All OLD D340/shrub/hedge/MAF gates stay CLOSED; no technical waiver, other FAILs remain worker-owned.
+    note: Source answer6952852628 CLOSED the v027 construction choice and allowed ONE VPM-only pilot, not site adoption. Isolated r2 actual750tri/regulatory0/raw-native public0/0/0/0; NEW hash-bound picture6954553715 needs separate user approval before any replication. Full1600x1850comparison onDrive; same INTERIM source pixels on both sides, no final botanical/material acceptance. AllOLDgates CLOSED, unrelatedFAILs worker-owned; no waiver.
     evidence: *id002
   checker:
     status: missing

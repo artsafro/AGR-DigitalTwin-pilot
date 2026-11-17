@@ -1,0 +1,960 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-VPM-maple-picture-pilot-v028",
+  "base_checkpoint": "a76876846da47fa9d4ae0415d444f98988a275b5",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10",
+      "raw_triangles": 176094,
+      "native_triangles": 176094,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\site-NPM.blend"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "43470a4cbf01dd3f7691183a0c28bea20913a84af9dd67988668b51905fbd23a",
+      "raw_triangles": 300120,
+      "native_triangles": 300120,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-r1\\site-VPM.blend"
+    }
+  },
+  "current_pair_byte_unchanged": true,
+  "physical_MAF": 37,
+  "retained_MAF_census": 38,
+  "retained_plant_census": 4582,
+  "permission_answer_comment": 6952852628,
+  "permission_answer_readback_sha256": "fe1943096f3effff28dfb15a491d6405e126b5f52ad45021b116f9d872230a53",
+  "new_picture_question": {
+    "answered": false,
+    "url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6954553715",
+    "comment_id": "6954553715",
+    "question_file": "picture-question.md",
+    "picture_sha256": "e22ec304c057b81eb5f86a19b0625e8e2f3824c97233d35d94dce09bbd83a70c",
+    "pilot_only_permission_answer": 6952852628,
+    "normalized_readback_equal": true,
+    "body_sha256": "94aac7a1681725e509c57b9a967ca5b827a1c36d1fe1ba53f7d5c5fd93abfbb6",
+    "readback_sha256": "0fb121eb62fb8973f86f5181a497e9b5bde7d2269068e3d5efa3fbf093bf1b2d"
+  },
+  "pilot_measurements": {
+    "passed": false,
+    "adopted": false,
+    "site_replaced": false,
+    "pilot_version": "r2 ONLY; r1 rejected",
+    "control_triangles": 1070,
+    "candidate_triangles": 750,
+    "candidate_vertices": 361,
+    "raw_native_face_arrays_exact": true,
+    "raw_native_coordinate_max_m": 8.946357743511157e-08,
+    "dimensions_m": [
+      3.9411200284957886,
+      4.6218109130859375,
+      5.577407456934452
+    ],
+    "source_dimensions_m": [
+      3.946422576904297,
+      4.6282501220703125,
+      5.577407456934452
+    ],
+    "dimension_delta_m": [
+      -0.005302548408508301,
+      -0.006439208984375,
+      0.0
+    ],
+    "bbox_endpoint_error_m": 0.0032196044921875,
+    "master_triangles": 750,
+    "master_quads": 0,
+    "master_ngons": 0,
+    "master_note": "inherited library triangles and unavoidable Boolean cuts; not a final quad Max acceptance scene",
+    "source_trunk_samples": 1554,
+    "source_trunk_samples_over2mm": 50,
+    "over2mm_inside_candidate": 50,
+    "over2mm_outside_candidate": 0,
+    "max_sample_m": 0.0326849719062962,
+    "outside_or_within2mm_samples": 1554,
+    "fidelity_note": "50 lost exterior-surface samples are actually INTERNAL interfaces; 1554 samples are not a continuous/Hausdorff proof. No hull reconstruction.",
+    "shell_samples": 32,
+    "shell_samples_in_3_to_10mm": 32,
+    "sample_spacing_min_m": 0.007686747786599951,
+    "sample_spacing_max_m": 0.009378048817435456,
+    "shell_note": "8mm source offset; finite normal-line samples, not global thickness proof. Original5cards canonicalized to4angular directions; overlapping parallel pair normalized, not deleted plants.",
+    "current_site_hash_checks": [
+      {
+        "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbx",
+        "sha256": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10"
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v025\\site-ucx-wide-r1\\VPM\\SM_SIL13_Ground.fbx",
+        "sha256": "43470a4cbf01dd3f7691183a0c28bea20913a84af9dd67988668b51905fbd23a"
+      }
+    ],
+    "original_hash_checks": [
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+        "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+        "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+        "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+        "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+        "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+        "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+        "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+        "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+        "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+        "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+        "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+        "unchanged": true
+      },
+      {
+        "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+        "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+        "unchanged": true
+      },
+      {
+        "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+        "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+        "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+        "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+        "unchanged": true
+      },
+      {
+        "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+        "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+        "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+        "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+        "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+        "role": "v014 resume input",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+        "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+        "role": "v014 resume input",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+        "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+        "unchanged": true
+      },
+      {
+        "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+        "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+        "unchanged": true
+      }
+    ],
+    "map_sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+    "picture_sha256": "e22ec304c057b81eb5f86a19b0625e8e2f3824c97233d35d94dce09bbd83a70c",
+    "packed_scene_sha256": "61332202696ba068ebd57d12957eaa287e22abaa385c01c0041baf4ae20e5466",
+    "whole_validator_remains_FAIL": true,
+    "isolated_validator_counts": {
+      "pass": 4,
+      "fail": 4,
+      "review": 0,
+      "not_run": 4
+    },
+    "verifier": {
+      "id": "M:missing",
+      "source": "material",
+      "key": "material:missing",
+      "text": "missing scored 3/5: The VPM view is fully textured, but the NPM view has floating bark planes and sparse foliage.",
+      "locate_with": "material slots and UV of the model (the VLM only confirms)"
+    },
+    "first_isolated_pilot_has_no_previous_accepted_version": true,
+    "r1_control_comparison_metadata_FAIL_NOT_waived": true
+  },
+  "actual_regulatory": {
+    "raw": {
+      "duplicate_vertices": 0,
+      "duplicate_edges": 0,
+      "duplicate_polygons": 0,
+      "self_intersections": 0,
+      "isolated_vertices": 0,
+      "isolated_edges": 0,
+      "isolated_polygons": 0,
+      "zero_length_edges": 0,
+      "duplicates_and_self_intersections": 0,
+      "tol_m": 0.002
+    },
+    "native": {
+      "duplicate_vertices": 0,
+      "duplicate_edges": 0,
+      "duplicate_polygons": 0,
+      "self_intersections": 0,
+      "isolated_vertices": 0,
+      "isolated_edges": 0,
+      "isolated_polygons": 0,
+      "zero_length_edges": 0,
+      "duplicates_and_self_intersections": 0,
+      "tol_m": 0.002
+    }
+  },
+  "native": {
+    "passed": false,
+    "scope": "native isolated import only; NOT technical/delivery pass",
+    "fbx_sha256": "7b7cc5f6fd2bfd4464d0a51432a12f6232397cae4725a0a96df23ec0cb704b3c",
+    "vertices": 361,
+    "triangles": 750,
+    "bbox": [
+      [
+        -1.9705599546432495,
+        -2.3109054565429688,
+        -0.06257019191980362
+      ],
+      [
+        1.970560073852539,
+        2.3109054565429688,
+        5.514837265014648
+      ]
+    ],
+    "source_vertex_max_error_m": 2.384185791015625e-07,
+    "faces_exact": true,
+    "uv_max_error": 3.4847928276349194e-07,
+    "source_map_embedded_exact": true
+  },
+  "raw": {
+    "passed": false,
+    "mode": "raw FBX geometry/UV/material alternative readback, NOT native importer success",
+    "source": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v028\\pilot-r2\\candidate\\SM_SIL13_Ground.fbx",
+    "sha256": "7b7cc5f6fd2bfd4464d0a51432a12f6232397cae4725a0a96df23ec0cb704b3c",
+    "UnitScaleFactor": 100,
+    "unsupported_transforms": 0,
+    "meshes": [
+      {
+        "name": "SM_SIL13_Ground",
+        "vertices": 361,
+        "triangles": 750,
+        "uv_channels": 1,
+        "material_slots": 1,
+        "bbox_m": [
+          [
+            -1.9705599828380598,
+            -2.3109054223495926,
+            -0.06257019191980362
+          ],
+          [
+            1.9705600420954845,
+            2.3109054107777736,
+            5.514837265014648
+          ]
+        ]
+      }
+    ]
+  },
+  "public_xview": {
+    "raw": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "native": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "public_scope": "ONE isolated tree only, not site/Flora/whole Ground",
+  "review_textures": {
+    "status": "pass",
+    "ids": [
+      {
+        "object": "SM_SIL13_Ground",
+        "id": 1,
+        "status": "pass",
+        "material": "M_SIL13_Ground_1",
+        "image": "T_SIL13_Ground_D_1.1001.png",
+        "packed": true,
+        "files": []
+      }
+    ],
+    "application": "Blender",
+    "version": "5.1.2",
+    "scene": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v028\\pilot-r2\\candidate\\pilot-review-packed-NOT-ACCEPTED.blend",
+    "units": "METRIC",
+    "scene_sha256": "61332202696ba068ebd57d12957eaa287e22abaa385c01c0041baf4ae20e5466",
+    "scope_sha256": "7cdd6a2410cfd643ba6ad41eb3e914616b820ca0ba69c5c5d870971a775e3f63"
+  },
+  "verifier_observe": {
+    "schema": "agr.verifier/1",
+    "job": "jobs/SIL13-COLD-1315",
+    "mode": "observe",
+    "round": 1,
+    "edits_model": false,
+    "role": "confirm-only: the VLM confirms; positions and counts come from geometry and drawing vectors (CrossProjection)",
+    "inputs": {
+      "renders": "tmp/cold-v028/pilot-r2/candidate/renders",
+      "slide": "tmp/cold-v028/pilot-r2/control/renders/vpm_iso.png",
+      "views": [
+        "vpm_south",
+        "vpm_north",
+        "vpm_east",
+        "vpm_west",
+        "vpm_iso",
+        "npm_iso"
+      ],
+      "facades": {
+        "south": "isolated_maple",
+        "north": "isolated_maple",
+        "east": "isolated_maple",
+        "west": "isolated_maple"
+      }
+    },
+    "vlm": {
+      "model": "sonnet",
+      "cost_usd": 0.1517,
+      "duration_s": 36.4,
+      "models": [
+        "claude-sonnet-5-5"
+      ]
+    },
+    "checklist": {
+      "variant": "A",
+      "items": [
+        {
+          "id": "A01",
+          "category": "panel_color",
+          "facade": "all",
+          "question": "The ribbed panel field has the colour shown on the slide on every facade."
+        },
+        {
+          "id": "A02",
+          "category": "frame_color",
+          "facade": "all",
+          "question": "The band/frame around the panel field (corners, top and bottom edging) has the colour shown on the slide."
+        },
+        {
+          "id": "A03",
+          "category": "plinth_color",
+          "facade": "all",
+          "question": "The plinth/base at and below the ground line (red line in the renders) has the colour shown on the slide."
+        },
+        {
+          "id": "A04",
+          "category": "rib_count",
+          "facade": "isolated_maple",
+          "question": "Facade isolated_maple: the number of vertical ribs/seams equals the slide (within 10 %)."
+        },
+        {
+          "id": "A05",
+          "category": "rib_count",
+          "facade": "isolated_maple",
+          "question": "Facade isolated_maple: the number of vertical ribs/seams equals the slide (within 10 %)."
+        },
+        {
+          "id": "A06",
+          "category": "rib_count",
+          "facade": "isolated_maple",
+          "question": "Facade isolated_maple: the number of vertical ribs/seams equals the slide (within 10 %)."
+        },
+        {
+          "id": "A07",
+          "category": "rib_count",
+          "facade": "isolated_maple",
+          "question": "Facade isolated_maple: the number of vertical ribs/seams equals the slide (within 10 %)."
+        },
+        {
+          "id": "A08",
+          "category": "field_outline",
+          "facade": "all",
+          "question": "A thin dark outline runs along the edge of the panel field, as on the slide."
+        },
+        {
+          "id": "A09",
+          "category": "door",
+          "facade": "all",
+          "question": "Doors: same facade, position, size and colour as on the slide (none if the slide has none)."
+        },
+        {
+          "id": "A10",
+          "category": "windows",
+          "facade": "all",
+          "question": "Windows: same facade, position, size, frame colour as on the slide (none if none)."
+        },
+        {
+          "id": "A11",
+          "category": "no_extra",
+          "facade": "all",
+          "question": "No element, seam, hole, missing face or stretched texture that the slide does not show."
+        },
+        {
+          "id": "A12",
+          "category": "npm_vpm_consistency",
+          "facade": "all",
+          "question": "The NPM iso view shows the same colours and pattern as the VPM iso view."
+        }
+      ],
+      "forward": {
+        "A01": false,
+        "A02": false,
+        "A03": false,
+        "A04": false,
+        "A05": false,
+        "A06": false,
+        "A07": false,
+        "A08": false,
+        "A09": false,
+        "A10": false,
+        "A11": true,
+        "A12": true
+      },
+      "reverse": {
+        "A01": false,
+        "A02": false,
+        "A03": false,
+        "A04": false,
+        "A05": false,
+        "A06": false,
+        "A07": false,
+        "A08": false,
+        "A09": false,
+        "A10": false,
+        "A11": true,
+        "A12": true
+      },
+      "kept": {
+        "A01": false,
+        "A02": false,
+        "A03": false,
+        "A04": false,
+        "A05": false,
+        "A06": false,
+        "A07": false,
+        "A08": false,
+        "A09": false,
+        "A10": false,
+        "A11": true,
+        "A12": true
+      },
+      "dropped": []
+    },
+    "materials": {
+      "axes": {
+        "missing": {
+          "score": 3,
+          "reason": "The VPM view is fully textured, but the NPM view has floating bark planes and sparse foliage.",
+          "forward": 3,
+          "reverse": 3
+        },
+        "base_color": {
+          "score": 3,
+          "reason": "The slide foliage is dull brownish-pink; the model leaves are more saturated pink and green.",
+          "forward": 3,
+          "reverse": 3
+        },
+        "borders": {
+          "score": 4,
+          "reason": "No bleeding between bark and leaves in VPM; there are no panel borders to check.",
+          "forward": 4,
+          "reverse": 4
+        },
+        "scale": {
+          "score": 3,
+          "reason": "VPM leaves are larger and sparser than the slide's fine foliage, and the NPM bark slabs are oversized.",
+          "forward": 3,
+          "reverse": 3
+        },
+        "finish": {
+          "score": 4,
+          "reason": "Matte leaf and bark textures resemble the slide.",
+          "forward": 4,
+          "reverse": 4
+        },
+        "consistency": {
+          "score": 2,
+          "reason": "The NPM view differs strongly from VPM in geometry and appearance.",
+          "forward": 2,
+          "reverse": 2
+        }
+      },
+      "fix_order": [
+        "missing",
+        "base_color",
+        "borders",
+        "scale"
+      ],
+      "discrepancy_max": 3
+    },
+    "findings": [
+      {
+        "id": "M:missing",
+        "source": "material",
+        "key": "material:missing",
+        "text": "missing scored 3/5: The VPM view is fully textured, but the NPM view has floating bark planes and sparse foliage.",
+        "locate_with": "material slots and UV of the model (the VLM only confirms)"
+      },
+      {
+        "id": "M:base_color",
+        "source": "material",
+        "key": "material:base_color",
+        "text": "base_color scored 3/5: The slide foliage is dull brownish-pink; the model leaves are more saturated pink and green.",
+        "locate_with": "material slots and UV of the model (the VLM only confirms)"
+      },
+      {
+        "id": "M:scale",
+        "source": "material",
+        "key": "material:scale",
+        "text": "scale scored 3/5: VPM leaves are larger and sparser than the slide's fine foliage, and the NPM bark slabs are oversized.",
+        "locate_with": "material slots and UV of the model (the VLM only confirms)"
+      },
+      {
+        "id": "M:consistency",
+        "source": "material",
+        "key": "material:consistency",
+        "text": "consistency scored 2/5: The NPM view differs strongly from VPM in geometry and appearance.",
+        "locate_with": "material slots and UV of the model (the VLM only confirms)"
+      },
+      {
+        "id": "A11",
+        "source": "checklist",
+        "key": "checklist:no_extra",
+        "text": "No element, seam, hole, missing face or stretched texture that the slide does not show.",
+        "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+      },
+      {
+        "id": "A12",
+        "source": "checklist",
+        "key": "checklist:npm_vpm_consistency",
+        "text": "The NPM iso view shows the same colours and pattern as the VPM iso view.",
+        "locate_with": "material slots of the model (VLM confirms)"
+      }
+    ],
+    "main_discrepancy": {
+      "id": "M:missing",
+      "source": "material",
+      "key": "material:missing",
+      "text": "missing scored 3/5: The VPM view is fully textured, but the NPM view has floating bark planes and sparse foliage.",
+      "locate_with": "material slots and UV of the model (the VLM only confirms)"
+    },
+    "scores": {
+      "checklist_items": 12,
+      "checklist_kept": 12,
+      "checklist_flagged": 2,
+      "material_min": 2,
+      "material_mean": 3.167
+    }
+  },
+  "isolated_validator_counts": {
+    "pass": 4,
+    "fail": 4,
+    "review": 0,
+    "not_run": 4
+  },
+  "isolated_validator_exit": 1,
+  "first_isolated_pilot_no_accepted_predecessor": true,
+  "diagnostic_old_control_to_r1_diff_FAIL": [
+    "scene metadata changed (settings/auxiliary objects/connections)"
+  ],
+  "all_other_site_metadata_and_QA_gates_OPEN": true,
+  "rejected_trials": {
+    "shell-r1": {
+      "overlapping_vertices": 90,
+      "overlapping_faces": 17,
+      "vertex_pairs": 69,
+      "face_pairs": 13,
+      "face_pairs_by_kind": {
+        "contact": 12,
+        "area": 0,
+        "area+contact": 1
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "shell-link-r2": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 7,
+      "vertex_pairs": 0,
+      "face_pairs": 5,
+      "face_pairs_by_kind": {
+        "contact": 5,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "shell-clearance-link-r3": {
+      "overlapping_vertices": 12,
+      "overlapping_faces": 10,
+      "vertex_pairs": 9,
+      "face_pairs": 8,
+      "face_pairs_by_kind": {
+        "contact": 8,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 6,
+      "parts_without_faces": 0
+    },
+    "canonical-shell-r1": {
+      "overlapping_vertices": 71,
+      "overlapping_faces": 17,
+      "vertex_pairs": 56,
+      "face_pairs": 18,
+      "face_pairs_by_kind": {
+        "contact": 9,
+        "area": 5,
+        "area+contact": 4
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "canonical-link-r1": {
+      "overlapping_vertices": 4,
+      "overlapping_faces": 0,
+      "vertex_pairs": 2,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    }
+  },
+  "rejected_r1_thickness": {
+    "within_band": 24,
+    "total": 40,
+    "bad_thickness_m": [
+      0.012893497998161299,
+      0.013163437094063566
+    ]
+  },
+  "affected_tests": {
+    "command": "MAPLE_NPZ=tmp/cold-v028/pilot-r2/candidate/native.npz PYTEST_ADDOPTS='' uv run pytest -q tests/qa/test_topology.py tests/ops/test_xview_gate.py tests/qa/test_archive_diff.py tests/test_model_flora_skill.py tests/test_scenario_router.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tests/test_maf_requirement_sheet.py tmp/cold-v028/test_pilot.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0/v028-affected",
+    "passed": 447,
+    "failed": 0,
+    "seconds": 89.71,
+    "log_sha256": "45733dac089fb428f8104dd136151e2dd9c9864b471cdd879c7cf8b94a3a3de9",
+    "RED": "red.log:1failed/1passed;4869 source crossings",
+    "GREEN": "native-r2-regulatory.log:2passed; full affected includes7actualpilot tests"
+  },
+  "repo_guards": {
+    "command": "bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh",
+    "result": "repo_guards: GREEN",
+    "passed": 486,
+    "warning": 1,
+    "seconds": 110.0,
+    "log_sha256": "ef62e52492df1565b5e64231d1242b15463c533c43bc6e960887bf22b80d31ae"
+  },
+  "full_suite": "deferred to merge batch (rule68)",
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "job_local_code": [
+    {
+      "path": "build_shell.py",
+      "sha256": "cfc40bd9c47776208729f953f6fc2bdbed43d9fb28fb8537d03dbba99e2b0107",
+      "literal_lines": 41
+    },
+    {
+      "path": "canonical_shell.py",
+      "sha256": "3439b4d06e74ff09e045d037e1ef89a02686e7c64bbd00ff812ed32286184008",
+      "literal_lines": 21
+    },
+    {
+      "path": "clearance_shell.py",
+      "sha256": "74034beeb5a3ec4d811feffd50ded91ea1436864e655f0462c3ad6ac9ee196fd",
+      "literal_lines": 10
+    },
+    {
+      "path": "export_render.py",
+      "sha256": "0724103cf55db83f3f05d9e3fca4c59d0ae62f32d157c3abe6fe63514461a10a",
+      "literal_lines": 32
+    },
+    {
+      "path": "export_render_r2.py",
+      "sha256": "ea18ead4e4dc52a51112743c2eecb52cfc1df23f66f54415d8cdde4db1075e6c",
+      "literal_lines": 5
+    },
+    {
+      "path": "final_measurements.py",
+      "sha256": "1f650197e972d4ff339d50b5c7b42663875c22d60f5fb68db093c0c0b8d7e003",
+      "literal_lines": 12
+    },
+    {
+      "path": "link_shell.py",
+      "sha256": "a242cdad70f49f0f468ae0e9bf868b15168c6ae9077bd8f24ca39bbe92762800",
+      "literal_lines": 6
+    },
+    {
+      "path": "make_sheet.py",
+      "sha256": "a5ee16e978b50e328de9a191f9ba958d1b10f9df2cf0969ffbe4b2c451587e2e",
+      "literal_lines": 12
+    },
+    {
+      "path": "measure_pilot.py",
+      "sha256": "5871bd0912992b0053ac403ba46214f08df9e4f9ab7791757339b3c9fc9c4882",
+      "literal_lines": 18
+    },
+    {
+      "path": "pack_review.py",
+      "sha256": "844862d7f6a8fd3c18ffdf9d8fc72e26ae8d43d29450001d47450dd51740f9fa",
+      "literal_lines": 8
+    },
+    {
+      "path": "planar_shell.py",
+      "sha256": "0f2b84c6d32552d7bdd581f8f77ec229d1d3545515094682969d3ec71300114e",
+      "literal_lines": 10
+    },
+    {
+      "path": "prepare_pilot.py",
+      "sha256": "75567028ff83bc5cc538d3e2c39ee8049b5518d720a9dfd315f9db96a004b6fd",
+      "literal_lines": 28
+    },
+    {
+      "path": "prepare_pilot_r2.py",
+      "sha256": "5b215708e958adef1fa9a48ff5ab166a7103aa19c4f4ff4095c17b483be23d21",
+      "literal_lines": 5
+    },
+    {
+      "path": "probe_sources.py",
+      "sha256": "249970b0ab1fda693f227d2f09e4f793120e52a40e556689b3fcf5d20fc61510",
+      "literal_lines": 24
+    },
+    {
+      "path": "probe_uv.py",
+      "sha256": "b44f2936c8669072a6b0db1d725baff930fb9f5cad783e5656cd305e94788bd6",
+      "literal_lines": 13
+    },
+    {
+      "path": "publish_picture.py",
+      "sha256": "3f446204cd114fd895e4804d972a77453b5c32591b38ec06a9b2fbea4fdf6335",
+      "literal_lines": 9
+    },
+    {
+      "path": "r2_util.py",
+      "sha256": "4bd98beed71103c4ad0c11d34f56ee67cadd4be23cdce72b8bb44e9f2be27855",
+      "literal_lines": 9
+    },
+    {
+      "path": "raw_pilot.py",
+      "sha256": "9f801f23803778cdb632fc22b2bd96aedb15d5ca75feea1b9148bfb98f06e966",
+      "literal_lines": 6
+    },
+    {
+      "path": "seal_checkpoint.py",
+      "sha256": "b1ef98c2c724abfcdf500c21a22f0bd4d1ed8b996a3d55cd65cb91e544be2d31",
+      "literal_lines": 28
+    },
+    {
+      "path": "stage_picture.py",
+      "sha256": "2c9328691706ee4298cb468333906ca7fac9ded80dc516d328fefaa10d72d73e",
+      "literal_lines": 11
+    },
+    {
+      "path": "test_pilot.py",
+      "sha256": "81167ca4a1f72a1ba631fe3943ec8b24d08e57999c7bf8107254575c6665f61d",
+      "literal_lines": 47
+    }
+  ],
+  "literal_code_lines": 355,
+  "new_repository_python_modules": [],
+  "picture_open": "OS open requested for exact staged PNG; no human visibility/approval claimed",
+  "attachment43": "earlier80pxr1 thumbnail only; NOT r2 picture",
+  "open_items": [
+    "NEW r2 picture approval6954553715 before any replication",
+    "dimensions XY span reduced5.303/6.439mm; sampled fidelity/thickness only, no exact/Hausdorff claim",
+    "current wholeVPM29615regulatory/mixed/non-maple contacts unchanged",
+    "Ground/skirt/master/maps/UV/archive-metadata and finalvisual/material/SINTEZ",
+    "D339 UCX wideband OBSERVE only; independent checkertriage t_66104c70"
+  ],
+  "next_steps": [
+    "Wait for hash-bound r2 picture answer; do not replace six trees before it",
+    "If accepted, preserve source points/rotations/heights and exercise all actual placed VPM copies and whole joined QA; NPM stays byte-unchanged",
+    "If rejected, keep current site pair and obtain the indicated picture correction; do not infer another model choice",
+    "Do not promote r1/thickness/clearance trials or skip archive predecessor gates"
+  ]
+}

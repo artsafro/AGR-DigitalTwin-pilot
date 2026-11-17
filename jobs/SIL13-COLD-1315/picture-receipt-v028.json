@@ -1,0 +1,11 @@
+{
+  "answered": false,
+  "url": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6954553715",
+  "comment_id": "6954553715",
+  "question_file": "picture-question.md",
+  "picture_sha256": "e22ec304c057b81eb5f86a19b0625e8e2f3824c97233d35d94dce09bbd83a70c",
+  "pilot_only_permission_answer": 6952852628,
+  "normalized_readback_equal": true,
+  "body_sha256": "94aac7a1681725e509c57b9a967ca5b827a1c36d1fe1ba53f7d5c5fd93abfbb6",
+  "readback_sha256": "0fb121eb62fb8973f86f5181a497e9b5bde7d2269068e3d5efa3fbf093bf1b2d"
+}

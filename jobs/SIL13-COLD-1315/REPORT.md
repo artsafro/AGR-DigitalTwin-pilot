@@ -1,6 +1,25 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v027 VPM maple model choice pending; current pair UNCHANGED,
+Current status: **v028 ONE isolated VPM maple pilot built; picture approval pending;
+current pair UNCHANGED, NOT delivered**. See [CONTINUATION-v028.md](CONTINUATION-v028.md),
+[source-wide-summary-v028.json](source-wide-summary-v028.json) and
+[picture-receipt-v028.json](picture-receipt-v028.json).
+Permission6952852628 permits ONE pilot only; NEW hash-bound picture question6954553715
+must be answered before any site replacement. Actual isolated r2:361vertices/750tri,
+raw/native regulatory0 and public0/0/0/0;32/32sheet samples7.687–9.378mm.
+Real source trunk/branches retained constructively, not exact arrays;1554samples,
+50changed>2mm all internal/0exterior, not Hausdorff. Height unchanged, bbox edges
+<=3.220mm; crown visibly less detailed. BOTH comparison sides use the SAME
+existing Royal Red interim pixels, not current site material binding or final
+botanical/UV approval. Full1600×1850native-FBX comparison staged/hashed onDrive;
+OS image-open requested, no claim human saw it. VerifierOBSERVE and texture-review
+1/1PASS measured; isolated validator4pass4fail4not_run/exit1, not a site pass.
+Earlier r1/thickness/clearance trials rejected. Current NPM176094/VPM300120 and
+37physicalMAF38census4582plants unchanged;22originals rehashed.447affectedpassed;
+repo_guards: GREEN (486passed). Metadata/Ground/maps/UV/non-mapleVPM/finalgates
+remain OPEN; D339UCX bands OBSERVEonly. Full suite: deferred to merge batch(rule68).
+
+Historical status: **v027 VPM maple model choice pending; current pair UNCHANGED,
 NOT delivered**. See [CONTINUATION-v027.md](CONTINUATION-v027.md),
 [source-wide-summary-v027.json](source-wide-summary-v027.json) and
 [question-receipt-v027.json](question-receipt-v027.json).
