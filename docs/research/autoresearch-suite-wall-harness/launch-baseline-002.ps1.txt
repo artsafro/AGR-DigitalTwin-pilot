@@ -1,0 +1,12 @@
+$ErrorActionPreference = 'Stop'
+$root = 'C:/Users/artsafro/agr-pilot/AGR-DigitalTwin/.worktrees/t_82b1bc95'
+$bashDir = 'C:/Users/artsafro/.hermes/tools/git-2.53.0+3-win32-x64/usr/bin'
+$env:PATH = $bashDir + ';' + $env:PATH
+$bash = (Get-Command bash.exe -CommandType Application).Source
+if ($bash.Replace('\','/') -ne ($bashDir + '/bash.exe')) { throw "Unexpected bash: $bash" }
+$version = & $bash --version
+if ($LASTEXITCODE -ne 0 -or $version[0] -notmatch 'GNU bash') { throw 'Git Bash preflight failed' }
+@{ bash = $bash; version = $version[0]; pid = $PID; path = $env:PATH } | ConvertTo-Json | Out-File -Encoding utf8 -NoClobber "$root/tmp/baseline-002-launch-preflight.json"
+Set-Location $root
+& "$root/.venv/Scripts/python.exe" "$root/tmp/wall_harness/measure.py" baseline-002
+exit $LASTEXITCODE

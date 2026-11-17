@@ -1,6 +1,7 @@
 # Autoresearch: merge-gate wall time (#1615)
 
-Status: contract frozen; baseline pending. No speed-up or acceptance claimed.
+Status: contract frozen; first baseline rejected (environment failure); repaired baseline pending.
+No speed-up or acceptance claimed.
 
 ## Frozen contract (before optimization)
 
@@ -84,10 +85,43 @@ contract measures the entire command including uv/startup/collection/teardown.
 
 | Round | Hypothesis / source | Metric | Parity | Decision |
 | --- | --- | --- | --- | --- |
-| B0 | Unmodified `c62ceddd`; canonical n=4, idle slot | pending | pending | baseline pending |
+| B0 (`baseline-001`) | Unmodified test corpus from `c62ceddd`; harness HEAD `1c713b04` | 1667.3542925 s; exit 1; 27212 passed / 193 skipped / 6 failed | rejected | invalid: detached PATH selected Windows WSL bash, not Git Bash |
+| B1 (`baseline-002`) | Same test corpus, command and observer; repair subprocess PATH only | pending | pending | replacement baseline pending |
 
-No optimization has been implemented, retained or dropped yet. Baseline and final
-comparison table and empty parity diff will be added only after real execution.
+B0 is below 1800 seconds as an **invalid observation only**, not a target success,
+retained optimization, or parity reference. No optimization has been implemented,
+retained or dropped yet. Baseline/final table and parity diff require valid execution.
+
+### B0 diagnosis and environment-only repair (2026-11-17)
+
+- Receipt: `C:/x/autoresearch-suite-wall/baseline-001.json`, `valid=false`,
+  exit 1; source SHA and source signature unchanged. Raw evidence is preserved;
+  its artifact hashes are in the receipt (a small copy is committed alongside this note).
+- All six failures are `tests/test_session_context.py::test_rotation_command_from_subdirectory`
+  bash variants: `C:/Windows/system32/bash.EXE` emits
+  `Bash/Service/CreateInstance/CreateVm/HCS/HCS_E_HYPERV_NOT_INSTALLED`
+  (confirmed by fresh `--version`, UTF-16LE decoded stdout).
+  PowerShell variants pass. Prior launcher/interpreter/inside PIDs
+  `1114028`, `1114164`, `1124180` are absent in a fresh Win32 process query.
+- `git diff origin/main HEAD -- tests/test_session_context.py .claude/commands/handover.md
+  .claude/commands/takeover.md tools/hooks/session_context.py` is empty.
+- Own detached probe checkout `tmp/main-probe` at `origin/main=f4ac0fb1`:
+  same 12-node command with System32 first on PATH reproduces **6 failed / 6 passed**
+  in 60.13 s; normal Git Bash PATH yields **12 passed** in 66.36 s.
+  Logs: `tmp/main-badpath.log`; successful command output on card.
+- Affected command: `.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider
+  --basetemp=C:/x/t_82b1bc95-main-goodpath
+  tmp/main-probe/tests/test_session_context.py::test_rotation_command_from_subdirectory`.
+  Bad-PATH reproduction runs the same selector in `tmp/main-probe`, unique
+  `--basetemp=C:/x/t_82b1bc95-main-badpath`, subprocess PATH prefixed with System32.
+- SELF-FIX: B1 launch uses a process-local PATH prefix
+  `C:/Users/artsafro/.hermes/tools/git-2.53.0+3-win32-x64/usr/bin` before invoking
+  the unchanged runner. No global setting, project test, assertion, marker, merge
+  command or policy is modified. This is an environment repair, not a measured
+  speed-up. B0 remains invalid; B1 becomes the baseline only if all frozen checks pass.
+- The exact launch request, executable version/path preflight and WMI result are
+  preserved in this worktree's ignored `tmp/baseline-002-launch*` files. B1 uses
+  exclusive `baseline-002.*` evidence names and the same drained-slot guard.
 
 ## Frozen observer and resume instructions
 
