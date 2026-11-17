@@ -88,6 +88,71 @@ def test_welded_post_scores_worse_than_inset_post():
     assert welded['status'] == inset['status'] == 'measured'
 
 
+def unwelded_master():
+    """The post split off the wall along the same edges: the wall has a hole, nothing is inset."""
+    b = Builder('SM_Fixture_Main')
+    wall(b, skip_col=1)
+    post(b, ns='post')
+    return [b.obj()]
+
+
+def test_unwelded_seam_scores_no_better_than_welded_and_below_inset():
+    """Review r1 P1-2: un-welding alone must not raise the score ([D336]: the body keeps its opening)."""
+    welded, unwelded, inset = (mq.score(m()) for m in (welded_master, unwelded_master, inset_master))
+    assert unwelded['totals']['open_seam_edges'] == 8
+    assert welded['totals']['open_seam_edges'] == inset['totals']['open_seam_edges'] == 0
+    assert unwelded['totals']['elements'] == 1                     # seam-joined = one element
+    assert unwelded['totals']['welded_edges'] == welded['totals']['welded_edges'] == 8
+    assert unwelded['components']['open_seam_share'] > 0
+    assert unwelded['score'] <= welded['score'] < inset['score']
+    assert unwelded['score'] < welded['score']                     # strictly: the seam itself costs
+
+
+def test_unwelded_into_another_object_is_still_a_seam():
+    wall_obj, post_obj = Builder('SM_Fixture_Main'), Builder('SM_Fixture_Post')
+    wall(wall_obj, skip_col=1)
+    post(post_obj, ns='post')
+    r = mq.score([wall_obj.obj(), post_obj.obj()])
+    assert r['totals']['open_seam_edges'] == 8
+    assert r['score'] < mq.score(inset_master())['score']
+
+
+@pytest.mark.parametrize('gap,seam', [(0.0, 8), (0.00004, 8), (0.001, 0), (0.05, 0)])
+def test_seam_tolerance(gap, seam):
+    """Coincident within seam_tol_m (1e-4 m grid) is a seam; a real gap is an inset contact."""
+    b = Builder('SM_Fixture_Main')
+    wall(b, skip_col=1)
+    for k in range(4):
+        b.face([(1 + gap, -0.5, k), (2 - gap, -0.5, k), (2 - gap, -0.5, k + 1), (1 + gap, -0.5, k + 1)],
+               (0, -1, 0), 'post')
+        b.face([(1 + gap, -gap, k), (1 + gap, -0.5, k), (1 + gap, -0.5, k + 1), (1 + gap, -gap, k + 1)],
+               (-1, 0, 0), 'post')
+        b.face([(2 - gap, -gap, k), (2 - gap, -0.5, k), (2 - gap, -0.5, k + 1), (2 - gap, -gap, k + 1)],
+               (1, 0, 0), 'post')
+    assert mq.score([b.obj()])['totals']['open_seam_edges'] == seam
+
+
+def test_irregular_area_share_by_area_not_count():
+    """Non-rectangular quads (a corner more than 15 deg off 90) weighted by area (review r1 P1-1)."""
+    b = Builder('SM_Irr')
+    b.face([(0, 0, 0), (3, 0, 0), (3, 0, 3), (0, 0, 3)], (0, -1, 0))             # 9 m2 rectangle
+    b.face([(5, 0, 0), (6, 0, 0), (6.5, 0, 1), (5.5, 0, 1)], (0, -1, 0))         # 1 m2, 63.4 deg corner
+    t = math.tan(math.radians(15.0))
+    b.face([(10, 0, 0), (11, 0, 0), (11 + t, 0, 1), (10 + t, 0, 1)], (0, -1, 0))  # exactly 15 deg: regular
+    r = mq.score([b.obj()])
+    assert r['totals']['irregular_faces'] == 1
+    assert r['components']['irregular_area_share'] == pytest.approx(1 / 11)
+
+
+def test_exclude_zone_complements_zone():
+    full = mq.score(inset_master())
+    z = [[0.5, -1, 2.5, 1]]
+    inside, outside = mq.score(inset_master(), zones=z), mq.score(inset_master(), exclude_zones=z)
+    assert inside['totals']['faces'] + outside['totals']['faces'] == full['totals']['faces']
+    with pytest.raises(ValueError):
+        mq.score(inset_master(), exclude_zones=[[1, 1, 0, 0]])
+
+
 def test_sliver_triangle_and_threshold_is_strict():
     b = Builder('SM_Tri')
     b.face([(0, 0, 0), (1, 0, 0), (0, 0, 1)], (0, -1, 0))                     # 45/45/90: clean
@@ -232,8 +297,14 @@ def test_committed_calibration_ranks_rejected_corners_below_accepted():
     rows = {r['id']: r for r in cal['rows']}
     rejected = rows['kpp1-quad-v003-corners']
     accepted = [r for r in rows.values() if r['acceptance'] == 'accepted']
-    assert accepted and all(rejected['score'] < r['score'] for r in accepted)
+    assert {'kpp1-quad-v003-rest', 'psu275-main'} <= {r['id'] for r in accepted}
+    margin = cal['margin_points']
+    assert margin > 0
+    # review r1 P1-1: the corners Artem rejected rank below the v003 rest he accepted, by the stated margin
+    assert all(rejected['score'] <= r['score'] - margin for r in accepted)
     assert all(r['status'] == 'measured' for r in rows.values())
+    assert rows['kpp1-quad-v003-rest']['exclude_zones'] == rejected['zones'] != []
+    assert cal['weights'] == mq.WEIGHTS and cal['params'] == mq.DEFAULTS
 
 
 def test_observe_loop_refuses_existing_or_source_run_dir(tmp_path):
