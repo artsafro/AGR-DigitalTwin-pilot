@@ -7,6 +7,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 from types import SimpleNamespace
@@ -125,7 +126,7 @@ def test_python_steps_keep_plain_subprocess(monkeypatch, kind, step):
     assert os.environ["PYTHONPATH"] == "inherited"
 
 
-@pytest.mark.parametrize("mode", ["--help", "--dry-check", "failure"])
+@pytest.mark.parametrize("mode", ["--help", "--dry-check", "failure", "argument-error", "no-receipt", "receipt-alias"])
 def test_blender_child_receives_src_and_isolated_config(monkeypatch, tmp_path, capsys, mode):
     # Run a real Python child through the canonical runner, replacing only the
     # Blender executable/flags at its argv seam. No DCC or delivered assets.
@@ -135,6 +136,7 @@ def test_blender_child_receives_src_and_isolated_config(monkeypatch, tmp_path, c
         "import json, os, sys\n"
         "from pathlib import Path\n"
         "if sys.argv[-1] == 'failure': raise SystemExit('synthetic failure')\n"
+        "if sys.argv[-1] == 'argument-error': raise SystemExit(2)\n"
         "keys = ('BLENDER_USER_CONFIG', 'BLENDER_USER_SCRIPTS', 'BLENDER_USER_DATAFILES')\n"
         "assert all(Path(os.environ[key]).is_dir() for key in keys)\n"
         "print(json.dumps({'args': sys.argv[sys.argv.index('--') + 1:], "
@@ -143,23 +145,44 @@ def test_blender_child_receives_src_and_isolated_config(monkeypatch, tmp_path, c
         encoding="utf-8",
     )
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
     monkeypatch.setenv("PYTHONPATH", "inherited")
     monkeypatch.setenv("BLENDER_USER_CONFIG", "do not use")
-    monkeypatch.setattr(blender_runner, "blender_command",
-                        lambda script, args, **kw: [sys.executable, str(script), "--", *map(str, args)])
+
+    def command(script, args, **kw):
+        if mode == "no-receipt":
+            return [sys.executable, "-c", "pass"]
+        if mode == "receipt-alias":
+            os.link(tool, args[0])
+        return [sys.executable, str(script), "--", *map(str, args)]
+
+    monkeypatch.setattr(blender_runner, "blender_command", command)
     ns = parser().parse_args(["derive", "--blender", sys.executable, "npm", "--", mode])
+    before = tool.read_bytes()
     status = shared_tools.run(tmp_path, ns)
     stdout, stderr = capsys.readouterr()
+    assert tool.read_bytes() == before
     assert os.environ["PYTHONPATH"] == "inherited"
     assert os.environ["BLENDER_USER_CONFIG"] == "do not use"
-    if mode == "failure":
-        assert status == 1 and not stdout and "nonzero_exit" in stderr
+    if mode not in {"--help", "--dry-check"}:
+        assert status == (2 if mode == "argument-error" else 1) and not stdout
+        assert ("missing_json" if mode == "no-receipt" else "nonzero_exit") in stderr
     else:
         assert status == 0 and not stderr
         payload = json.loads(stdout)
         assert payload["args"] == [mode]
         assert payload["path"].split(os.pathsep) == [str(tmp_path / "src"), "inherited"]
         assert len(set(payload["dirs"])) == 3 and all(not Path(d).exists() for d in payload["dirs"])
+
+
+def test_fresh_process_reports_blender_launch_failure(tmp_path, fake_blender):
+    r = subprocess.run([sys.executable, "-m", "dt_ai.cli.main", "derive", "--blender", fake_blender, "npm"],
+                       capture_output=True, text=True, cwd=tmp_path)
+    assert r.returncode == 1
+    [error] = r.stderr.splitlines()
+    assert error.startswith("ERROR: exception:") and "(log: " in error
+    log = Path(error.split("(log: ", 1)[1][:-1])
+    assert log.is_file()
 
 
 @pytest.mark.parametrize("kind,step", [("derive", "uv"), ("ground", "v014"), ("other", "atlas")])
