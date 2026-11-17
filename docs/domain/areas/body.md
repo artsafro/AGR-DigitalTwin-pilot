@@ -68,6 +68,14 @@ plinth choice and the `Modelling split [D336]:` job-report line are listed in
 per object: inset elements pass or fail on their own; no check may require
 welding them into the body.
 
+## Clean body grid research [D337] [D338]
+
+Follow [BM-01..BM-14](../../research/body-modelling.md#5-правила) for the OKS body stage.
+Rounded corners use a 2 cm chord sagitta, then snap to the texture step [D337]. Typical-facade
+thresholds are quads >= 95 %, slivers <= 0.5 % [D338]: WARN-only (OBSERVE) for the first week,
+not a blocking gate or a waiver of [D312]. Posts remain inset geometry by default [D336];
+panels are texture with a seam. Training-polygon validation is still open, not certified here.
+
 ## Image verification and review evidence
 
 The supplied PDF has 56 physical pages. Rendered with PyMuPDF 1.28.2 at scale 1.5 and
