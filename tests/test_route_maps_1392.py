@@ -46,6 +46,71 @@ def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
 
 
+# ---------------------------------------------------------------- #1593 source-backed writer inventory (not a generic scanner)
+WRITERS_1593 = [
+    ("body", "jobs/KPP1/scripts/build_kpp1.py:198", "live-bypass"),
+    ("body", "jobs/PSU275/scripts/assemble_body_roof.py:62", "historical"),
+    ("body", "jobs/OBR22-K02/scripts/build_exterior_surface.py:43", "historical"),
+    ("roof", "jobs/PSU275/scripts/roof_wells.py:70", "historical"),
+    ("roof", "jobs/KPP1/scripts/build_kpp1.py:432", "wrapper"),
+    ("openings", "jobs/KPP1/scripts/build_kpp1.py:327", "live-bypass"),
+    ("openings", "jobs/PSU275/scripts/opening_fills.py:183", "historical"),
+    ("openings", "jobs/OBR22-K02/scripts/build_shell_windows.py:76", "historical"),
+    ("openings", "jobs/KPP1/scripts/kpp1_windowgen.py:75", "wrapper"),
+    ("vpm-uv", "jobs/KPP1/scripts/vpm_uv.py:6", "wrapper"),
+    ("vpm-uv", "jobs/TEC26-OKS/scripts/vpm_uv.py:6", "wrapper"),
+]
+
+
+@pytest.mark.parametrize("cid,at,status", WRITERS_1593)
+def test_1593_writer_row(cid, at, status):
+    contexts = {c["id"]: c for c in _maps()["vpm-contexts"]["contexts"]}
+    rows = [d for d in contexts.get(cid, {}).get("duplicates", []) if d["at"] == at]
+    assert len(rows) == 1, f"{cid}: missing/duplicated writer {at}"
+    row = rows[0]
+    assert row["status"] == status
+    path, line = at.rsplit(":", 1)
+    assert row["match"] in (ROOT / path).read_text(encoding="utf-8").splitlines()[int(line) - 1]
+    ignored = f"/{path}" in (ROOT / ".ignore").read_text(encoding="utf-8").splitlines()
+    assert ignored == (status == "historical"), "D327 freezes exact paths, not whole jobs"
+
+
+def test_1593_vpm_uv_owner_and_wrappers():
+    events, maps = _routes()["vpm-route"], _maps()
+    assert _stage(events, "uv")["context"] == "vpm-uv"
+    own = next(c for c in maps["vpm-contexts"]["contexts"] if c["id"] == "vpm-uv")
+    shared = next(c for c in maps["contexts"]["contexts"] if c["id"] == "vpm-uv")
+    rule = next(c for c in maps["contexts"]["rules"] if c["id"] == "vpm-uv")
+    assert own["owner"] == shared["owner"] == rule["owner"] == "tools/blender/vpm_uv.py"
+    assert next(c for c in events["local_contexts"] if c["id"] == "vpm-uv")["ref"] == "vpm-oks-contexts.yaml#vpm-uv"
+    route_map.check_schema(events, maps["contexts"])
+    assert route_map.route_coverage(events, maps["contexts"], maps["vpm-contexts"]) == []
+    hotspot = next(h for h in events["hotspots"] if h["id"] == "udim-copies")
+    assert "обёртк" in hotspot["ru"] and "разницей в строку" not in hotspot["ru"]
+
+
+def test_1593_owner_counts():
+    maps = _maps()
+    text = route_map.owners_markdown(_routes()["vpm-route"], maps["vpm-contexts"], maps)
+    for owner in ("src/dt_ai/ops/operations.py", "adapters/max/agr_tools/windowgen_core.py"):
+        row = next(s for s in text.splitlines() if f"[`{owner}`]" in s)
+        assert "[1 — записи]" in row
+    roof = next(s for s in text.splitlines() if "[`adapters/max/agr_tools/roof_core.py`]" in s)
+    assert "[0 — записи]" in roof  # history and a real wrapper are not live bypasses
+
+
+def test_1593_current_window_owner_and_historical_link():
+    pipeline = (ROOT / "docs/pipeline.md").read_text(encoding="utf-8")
+    row = next(s for s in pipeline.splitlines() if s.startswith("| 5 |"))
+    where = row.split("|")[4]
+    assert where.index("adapters/max/agr_tools/windowgen_core.py") < where.index("jobs/OBR22-K02")
+    assert "agr window-generate" in where and "historical [D327]" in where
+    doc = ROOT / "docs/agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md"
+    link = re.search(r"\[build_shell_windows.py\]\(([^)]+)\)", doc.read_text(encoding="utf-8"))[1]
+    assert (doc.parent / link).resolve() == ROOT / "jobs/OBR22-K02/scripts/build_shell_windows.py"
+    assert (doc.parent / link).is_file()
+
+
 # ---------------------------------------------------------------- #1581 contract and npm ownership
 @pytest.mark.parametrize("name", sorted(route_map.context_maps()))
 def test_1581_blender_contracts(name):
