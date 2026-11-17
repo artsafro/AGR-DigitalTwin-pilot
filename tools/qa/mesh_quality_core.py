@@ -61,8 +61,9 @@ Components (each a share 0..1; penalty = min(1, share)):
 Interior body holes (#1631): a planar, face-directed boundary circuit winding opposite to all
 adjacent coplanar body faces is an interior loop, not an exterior contour. A reveal's perpendicular
 faces are not a missing coplanar surface. Complete projected glass coverage exempts the loop (including
-tiled/recessed panes); glass elsewhere or partial coverage does not. Ambiguous boundary graphs and
-nonplanar circuits are not classified by this diagnostic. Disconnected outer-contour slots are not
+tiled/recessed panes); glass elsewhere or partial coverage does not. Ambiguous boundary graphs are
+not classified by this diagnostic. Warped inner circuits retain the penalty rather than claiming
+planar glass coverage. Disconnected outer-contour slots are not
 holes; no distance/silhouette policy is inferred. Per the #1631 scope decision, a horizontal
 loop in one plane (1e-9 m numerical slack) within 0.002 m of that body's minimum Z is an allowed
 open shell bottom, independent of the near-seam parameter. Detached parts do not set its base.
@@ -413,10 +414,9 @@ def _body_holes(verts, faces, edges, elem_of, body, normals, p, in_zone, glass_f
         normal = tuple(c/length for c in nv)
         if not all(_dot(normal, normals[fi]) <= -flat_cos for fi in owners):
             continue
-        if any(abs(_dot(normal, _sub(v, loop[0]))) > p['seam_tol_m'] for v in loop):
-            continue
+        planar = all(abs(_dot(normal, _sub(v, loop[0]))) <= p['seam_tol_m'] for v in loop)
         axis = max(range(3), key=lambda i: abs(normal[i]))
-        if not _glass_covers(loop, glass_faces, axis):
+        if not planar or not _glass_covers(loop, glass_faces, axis):
             holes.append(circuit)
     return holes
 
