@@ -48,11 +48,14 @@ rest.
 
 For the OKS `body` stage follow [body-modelling.md](../../../docs/research/body-modelling.md#5-правила) (rules
 BM-01..BM-14, measured on Artem's G22 etalon): 1) body from the floor-plan outline, vertices only at breaks and
-opening/zone lines; 2) loops only where a line has a reason (opening sill/head, finish zone, band), vertical rings
+opening/zone lines; the outline is the OUTER envelope only (openings sealed by their filling, no face inside or
+facing inward, relief < 0.4 m is texture, a deeper niche stays only where the etalon has it) [D341]; 2) loops only where a line has a reason (opening sill/head, finish zone, band), vertical rings
 through the whole floor module, rounded corners by radius (chord sagitta <= 2 cm, then snap to the texture
 step [D337]), never Revit tessellation;
 3) inset, never weld, windows/roof/flashings/posts/decor with projection [D336]; posts are geometry by default,
-panels are texture with a seam, no diagonal across a typical facade;
+panels are texture with a seam, no diagonal across a typical facade; edges only on finish-zone borders and window
+lines: the ~0.6 m panel step and an extra loop above windows are texture; dark/light cladding (from the source
+materials) get separate material IDs with a vertical at their joint [D340];
 4) build and check ONE floor module with IDs and UV, then replicate it; 5) measure the master (typical-facade quad
 share, slivers, n-gons, module repeat; `tools/qa/body_layout.py`, `tools/qa/master_topology.py`) and show a
 wire + texture sheet of the module and one corner before replicating; 6) unique ground floor, top and roof last,
