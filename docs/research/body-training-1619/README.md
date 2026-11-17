@@ -170,6 +170,24 @@ Blender 5.1 (Max не нужен: сетка строится скриптом, 
 Лист: `round4-k2-stage1/round4_k2_v002_sheet.png`; копия для Blender: `C:/x/review-k2/k2_v002_body.blend`,
 `k2_v002_body_quad.fbx` (+ `open_review_v002.py`, `SHA256SUMS_v002.txt`).
 
+### Круг 4, ревью r1 (PR #1660): UV косяков
+
+Ревьюер нашёл сжатие UV на косяках: `u = (x + y) / 3 м` даёт ширину r·|nx + ny| / 3 м — зависит от
+направления фасада (на корпусе 2 UV/geo 0,12…0,16, на фасаде под 45° ширина 0). Исправление:
+`module_build.jamb_uv` — u = расстояние вдоль горизонтального направления косяка (край проёма → рама) / 3 м.
+Чтение обратно теперь меряет UV/geo каждой грани по классам (стена / косяк / подоконник-верх), брак — вне
+[0,99; 1,01], код выхода 1. Геометрия v002r1 совпадает с v002 (вершины, грани, материалы равны; изменены
+UV 3 240 углов = 810 косяков × 4), score 83,693 без изменений.
+
+| Сборка | стена min…max | косяк min…max | подоконник/верх min…max | брак UV |
+|---|---|---|---|---|
+| v002 (старый u) | 0,9997…1,0002 | 0,1239…1,0000 | 0,9994…1,0004 | 810 |
+| v002r1 | 0,9997…1,0002 | 0,999999…1,000001 | 0,9994…1,0004 | 0 |
+
+Отчёты: `round4-k2-stage1-r1/` (`rb_k2_v002r1.json`, `rb_k2_v002_old_uvcheck.json`, `k2_v002r1.score.json`
++ `SHA256SUMS.txt`); копия для Blender: `C:/x/review-k2/k2_v002r1_body.blend`, `k2_v002r1_body_quad.fbx`
+(+ `open_review_v002r1.py`, `SHA256SUMS_v002r1.txt`).
+
 ## Журнал изменений правил по кругам
 
 | Круг | Этаж | Замечания Артёма | Что изменено (doc / skill) |
@@ -224,4 +242,13 @@ blender51 -b --factory-startup --python H/module_build.py -- floor_k2_v002.json 
 blender51 -b --factory-startup --python ../body-modelling-1618/dump_mesh.py -- k2_v002/body.fbx dump_k2_v002
 uv run python readback_openings.py dump_k2_v002/SM_Body_Main.npz floor_k2_v002.json rb_k2_v002.json
 uv run python band_compare.py dump_k2_v002/SM_Body_Main.npz 5.3 32.3 k2_v002 && uv run python tools/qa/mesh_quality_score.py k2_v002.mq.json --out k2_v002.score.json
+```
+
+Круг 4, ревью r1 (R5 = `C:/x/ev_1619/r5`, в `C:/x/ev_1619/r7`):
+
+```
+blender51 -b --factory-startup --python H/module_build.py -- R5/floor_k2_v002.json k2_v002r1 --tex C:/x/ev_1619/tex --max-side 3.6
+blender51 -b --factory-startup --python ../body-modelling-1618/dump_mesh.py -- k2_v002r1/body.fbx dump_k2_v002r1
+uv run python readback_openings.py dump_k2_v002r1/SM_Body_Main.npz R5/floor_k2_v002.json rb_k2_v002r1.json          # exit 0, uv_geo_defects 0
+uv run python readback_openings.py R5/dump_k2_v002/SM_Body_Main.npz R5/floor_k2_v002.json rb_k2_v002_old_uvcheck.json # exit 1, 810 jamb defects
 ```
