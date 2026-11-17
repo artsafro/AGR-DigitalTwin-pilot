@@ -203,6 +203,231 @@ def offset_post_master(dy):
     return [b.obj()]
 
 
+def interior_hole_master(dy=0.0, mode='offset'):
+    """Synthetic connected wall with a true interior cell opening and a five-sided post."""
+    b = Builder('SM_Interior_Main')
+    for i in range(4):
+        for k in range(4):
+            if (i, k) != (1, 1) or mode == 'inset':
+                b.face([(i, 0, k), (i + 1, 0, k), (i + 1, 0, k + 1), (i, 0, k + 1)], (0, -1, 0))
+    if mode == 'empty':
+        return [b.obj()]
+    ns = 'body' if mode == 'welded' else 'post'
+    y = -dy
+    b.face([(1, y-.5, 1), (2, y-.5, 1), (2, y-.5, 2), (1, y-.5, 2)], (0, -1, 0), ns)
+    for x, want in [(1, (-1, 0, 0)), (2, (1, 0, 0))]:
+        b.face([(x, y, 1), (x, y-.5, 1), (x, y-.5, 2), (x, y, 2)], want, ns)
+    for z, want in [(1, (0, 0, -1)), (2, (0, 0, 1))]:
+        b.face([(1, y, z), (2, y, z), (2, y-.5, z), (1, y-.5, z)], want, ns)
+    return [b.obj()]
+
+
+@pytest.mark.parametrize('dy', [0.0, 0.002, math.nextafter(0.002, math.inf), 0.0025, 0.005, 0.01, 1.0, 100.0])
+def test_body_hole_beyond_seam_gap_cannot_beat_welded(dy):
+    """#1631: only a true inner loop, not a slot reaching the outer contour, is a hole."""
+    result = mq.score(interior_hole_master(dy))
+    welded = mq.score(interior_hole_master(mode='welded'))
+    inset = mq.score(interior_hole_master(mode='inset'))
+    assert result['score'] <= welded['score'] < inset['score']
+
+
+def test_body_hole_without_post_is_penalized():
+    r = mq.score(interior_hole_master(mode='empty'))
+    assert r['score'] <= mq.score(interior_hole_master(mode='welded'))['score']
+
+
+def test_open_slot_is_separate_surfaces_not_an_interior_hole():
+    """REPAIR scope: no new silhouette or distance policy for separate surfaces."""
+    for dy in (.0025, .005, .01, .1, 1.0):
+        assert mq.score(offset_post_master(dy))['score'] == 100.0
+
+
+@pytest.mark.parametrize('seed', range(30))
+def test_probe_interior_hole_gap_and_frame_invariance(seed):
+    """Generated independent distance/rotation/winding/object-partition probes, seed 163100..29."""
+    import copy
+    import random
+    rnd = random.Random(163100 + seed)
+    dy = 10 ** rnd.uniform(-2.6, 3)
+    models = [interior_hole_master(dy), interior_hole_master(mode='welded'), interior_hole_master(mode='inset')]
+    angle = rnd.uniform(-math.pi, math.pi)
+    for model in models:
+        obj = model[0]
+        for v in obj['verts']:
+            x, y, z = v
+            v[:] = [x*math.cos(angle)-y*math.sin(angle), x*math.sin(angle)+y*math.cos(angle), z]
+        if seed % 2:
+            obj['faces'] = [list(reversed(f)) for f in obj['faces']]
+    if seed % 3 == 0:
+        obj = models[0][0]
+        models[0] = [dict(obj, faces=obj['faces'][:15], materials=['M']*15),
+                     dict(obj, name='SM_Post', faces=obj['faces'][15:], materials=['M']*5)]
+    snapshot = copy.deepcopy(models)
+    hole, welded, inset = [mq.score(m) for m in models]
+    assert hole['totals']['body_holes'] == 1
+    assert hole['score'] <= welded['score'] < inset['score']
+    assert models == snapshot
+
+
+@pytest.mark.parametrize('glass_kind', ['full', 'tiled', 'recessed', 'partial', 'remote', 'duplicate_half'])
+def test_interior_hole_requires_complete_glass_coverage(glass_kind):
+    models = interior_hole_master(mode='empty')
+    g = Builder('SM_Interior_MainGlass')
+    if glass_kind == 'tiled':
+        ranges = [(1, 1.5), (1.5, 2)]
+    elif glass_kind in ('partial', 'duplicate_half'):
+        ranges = [(1, 1.5)] * (2 if glass_kind == 'duplicate_half' else 1)
+    elif glass_kind == 'remote':
+        ranges = [(10, 11)]
+    else:
+        ranges = [(1, 2)]
+    y = .2 if glass_kind == 'recessed' else 0
+    for i, (a, b) in enumerate(ranges):
+        g.face([(a, y, 1), (b, y, 1), (b, y, 2), (a, y, 2)], (0, -1, 0), str(i))
+    r = mq.score(models + [g.obj()])
+    assert r['totals']['body_holes'] == int(glass_kind in ('partial', 'remote', 'duplicate_half'))
+    assert r['totals']['open_seam_edges'] == 0
+
+
+@pytest.mark.parametrize('depth,mode', [(10.0, 'empty'), (100.0, 'empty'), (50.0, 'offset')])
+def test_remote_depth_glass_cannot_hide_body_hole(depth, mode):
+    """Review r1: projected coverage metres away cannot exempt a true body hole."""
+    models = interior_hole_master(1.0, mode=mode)
+    g = Builder('SM_Interior_MainGlass')
+    g.face([(1, depth, 1), (2, depth, 1), (2, depth, 2), (1, depth, 2)], (0, -1, 0))
+    result = mq.score(models + [g.obj()])
+    assert result['totals']['body_holes'] == 1
+    welded = mq.score(interior_hole_master(mode='welded'))
+    inset = mq.score(interior_hole_master(mode='inset'))
+    assert result['score'] <= welded['score'] < inset['score']
+
+
+@pytest.mark.parametrize('depth,holes', [
+    (-.2, 0), (.2, 0), (math.nextafter(.25, 0), 0),
+    (.25, 1), (-.25, 1), (math.nextafter(.25, math.inf), 1),
+])
+def test_glass_depth_bound_is_strict_and_two_sided(depth, holes):
+    g = Builder('SM_Interior_MainGlass')
+    g.face([(1, depth, 1), (2, depth, 1), (2, depth, 2), (1, depth, 2)], (0, -1, 0))
+    assert mq.score(interior_hole_master(mode='empty') + [g.obj()])['totals']['body_holes'] == holes
+
+
+@pytest.mark.parametrize('value', [0, -1, math.nan, math.inf, -math.inf, True, '0.25'])
+def test_glass_depth_parameter_rejects_invalid_values(value):
+    with pytest.raises(ValueError, match='glass_depth_m'):
+        mq.score(interior_hole_master(mode='empty'), params={'glass_depth_m': value})
+
+
+@pytest.mark.parametrize('axis,angle', [('z', 10), ('z', 30), ('z', 45), ('x', 30)])
+@pytest.mark.parametrize('depth', [.05, .2, .3, 50.0])
+@pytest.mark.parametrize('shrink', [0.0, 1e-10])
+def test_recessed_exact_fit_glass_on_rotated_wall(axis, angle, depth, shrink):
+    """Review r2: normal recess must not shift the pane's footprint on the wall."""
+    models = interior_hole_master(mode='empty')
+    g = Builder('SM_Interior_MainGlass')
+    g.face([(1+shrink, depth, 1), (2, depth, 1), (2, depth, 2), (1+shrink, depth, 2)], (0, -1, 0))
+    models.append(g.obj())
+    c, s = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    for obj in models:
+        for v in obj['verts']:
+            x, y, z = v
+            v[:] = [c*x-s*y, s*x+c*y, z] if axis == 'z' else [x, c*y-s*z, s*y+c*z]
+    result = mq.score(models)
+    holes = int(depth >= .25 or shrink > 0)
+    assert result['totals']['body_holes'] == holes
+    assert result['score'] == pytest.approx(78.571 if holes else 85.714, abs=.001)
+
+
+@pytest.mark.parametrize('seed', range(24))
+def test_probe_glass_plane_depth_and_partition(seed):
+    """Synthetic rotated/tiled probes; near panes fit the opening exactly."""
+    import copy
+    import random
+    rnd = random.Random(163150 + seed)
+    models = interior_hole_master(1.0)
+    g = Builder('SM_Interior_MainGlass')
+    close = seed % 3 == 0
+    depth = rnd.choice([-1, 1]) * (rnd.uniform(.05, .2) if close else rnd.uniform(.3, 100))
+    for a, b in [(1, 1.5), (1.5, 2)]:
+        g.face([(a, depth, 1), (b, depth, 1), (b, depth, 2), (a, depth, 2)], (0, -1, 0))
+    models.append(g.obj())
+    angle = rnd.uniform(-math.pi, math.pi)
+    for obj in models:
+        for v in obj['verts']:
+            x, y, z = v
+            v[:] = [x*math.cos(angle)-y*math.sin(angle), x*math.sin(angle)+y*math.cos(angle), z]
+        if seed % 2:
+            obj['faces'] = [list(reversed(f)) for f in obj['faces']]
+    snapshot = copy.deepcopy(models)
+    result = mq.score(models)
+    assert result['totals']['body_holes'] == int(not close)
+    if not close:
+        assert result['score'] <= mq.score(interior_hole_master(mode='welded'))['score']
+    assert models == snapshot
+
+
+def test_glass_depth_filters_each_pane_not_just_its_center():
+    g = Builder('SM_Interior_MainGlass')
+    # Its centre is on the hole plane, but every vertex is outside the permitted slab.
+    g.face([(1, -.5, 1), (2, .5, 1), (2, .5, 2), (1, -.5, 2)], (0, -1, 0))
+    model = interior_hole_master(mode='empty') + [g.obj()]
+    assert mq.score(model)['totals']['body_holes'] == 1
+    assert mq.score(model, params={'glass_depth_m': .6})['totals']['body_holes'] == 0
+
+
+def test_remote_pane_cannot_complete_partial_nearby_glass():
+    g = Builder('SM_Interior_MainGlass')
+    g.face([(1, .2, 1), (1.5, .2, 1), (1.5, .2, 2), (1, .2, 2)], (0, -1, 0))
+    g.face([(1.5, 50, 1), (2, 50, 1), (2, 50, 2), (1.5, 50, 2)], (0, -1, 0))
+    assert mq.score(interior_hole_master(mode='empty') + [g.obj()])['totals']['body_holes'] == 1
+
+
+def test_window_reveal_is_not_missing_coplanar_body():
+    obj = interior_hole_master(mode='empty')[0]
+    b = Builder('SM_Reveal_Main')
+    b.verts, b.faces = obj['verts'], obj['faces']
+    # Preserve indexed body vertices when adding the four reveal surfaces.
+    b.index = {('body',) + tuple(v): i for i, v in enumerate(b.verts)}
+    loop = [(1, 0, 1), (2, 0, 1), (2, 0, 2), (1, 0, 2)]
+    for a, c in zip(loop, loop[1:] + loop[:1]):
+        d, e = (c[0], .2, c[2]), (a[0], .2, a[2])
+        want = (1.5-(a[0]+c[0])/2, 0, 1.5-(a[2]+c[2])/2)
+        b.face([a, c, d, e], want)
+    r = mq.score([b.obj()])
+    assert r['totals']['body_holes'] == 0
+    assert r['totals']['open_seam_edges'] == 0
+
+
+@pytest.mark.parametrize('height, slope, expected', [
+    (0.0, 0.0, 0), (.001, 0.0, 0), (.002, 0.0, 0),
+    (math.nextafter(.002, math.inf), 0.0, 1), (.003, 0.0, 1),
+    (1.0, 0.0, 1), (0.0, .001, 1), (0.0, -.001, 1), (0.0, 'warped', 1),
+])
+def test_open_shell_base_is_an_exterior_boundary_not_a_body_hole(height, slope, expected):
+    """PSU275 readback reduction: bottom rim's inner circuit is the shell's exterior opening.
+
+    It has no enclosing coplanar FREE boundary loop; the other free contour is at the top.
+    """
+    b = Builder('SM_OpenShell_Main')
+    outer = [(0, 0), (4, 0), (4, 4), (0, 4)]
+    inner = [(.4, .4), (3.6, .4), (3.6, 3.6), (.4, 3.6)]
+    for i in range(4):
+        j = (i+1) % 4
+        a, c = outer[i], outer[j]
+        b.face([(*a, height), (*c, height), (*c, 4), (*a, 4)], (a[0]+c[0]-4, a[1]+c[1]-4, 0))
+        if height:
+            b.face([(*a, 0), (*c, 0), (*c, height), (*a, height)],
+                   (a[0]+c[0]-4, a[1]+c[1]-4, 0))
+        b.face([(*a, height), (*c, height), (*inner[j], height), (*inner[i], height)], (0, 0, -1))
+    for v in b.verts:
+        if .3 < v[0] < 3.7 and .3 < v[1] < 3.7:
+            v[2] = height + (.001 if v[0] < 1 and v[1] < 1 else 0) if slope == 'warped' else height + slope*v[0]
+    result = mq.score([b.obj()])
+    assert result['totals']['body_holes'] == expected
+    if expected:
+        assert result['penalties']['weld_share'] == 1.0
+
+
 def tjunction_post_master():
     """Review r2 P1-1 witness: post rows cut at z+0.5, so no post edge coincides with a wall hole edge."""
     b = Builder('SM_Fixture_Main')
@@ -604,7 +829,10 @@ def test_committed_calibration_ranks_rejected_corners_below_accepted():
     assert all(rejected['score'] <= r['score'] - margin for r in accepted)
     assert all(r['status'] == 'measured' for r in rows.values())
     assert rows['kpp1-quad-v003-rest']['exclude_zones'] == rejected['zones'] != []
-    assert cal['weights'] == mq.WEIGHTS and cal['params'] == mq.DEFAULTS
+    assert cal['weights'] == mq.WEIGHTS
+    # Historical calibration predates the bounded glass exemption (#1631 r1).
+    # Preserve every recorded parameter and the frozen receipt itself.
+    assert dict(cal['params'], glass_depth_m=.25) == mq.DEFAULTS
     # review r2: PSU275 (accepted) stays on top after the near-seam pass
     assert rows['psu275-main']['score'] == max(r['score'] for r in rows.values())
     assert rows['psu275-main']['totals']['open_seam_edges'] == 0

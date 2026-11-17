@@ -530,10 +530,19 @@ def check_delivery_receipt(target, receipt):
     return actual
 
 
-def _write_zip(folder, archive, target):
+def _write_zip(folder, archive, target, expected_sha256=None):
     """New ZIP via an exclusive `.partial` beside the target, then a no-clobber link; no temp file is left.
-    Member names are checked first: an unsafe one is refused before the `.partial` exists."""
+    Member names are checked first: an unsafe one is refused before the `.partial` exists.
+    Optional expected_sha256 binds exact member names to export-check snapshots; all
+    supplied hashes must match before staging, and staged bytes are rechecked before publication."""
     check_members(archive)
+    expected_sha256 = {} if expected_sha256 is None else dict(expected_sha256)
+    names = {m['name'] for m in archive['members']}
+    for name, sha in expected_sha256.items():
+        if name not in names:
+            raise ValueError('unmapped expected SHA-256 member: ' + str(name))
+        if not isinstance(sha, str) or re.fullmatch(r'[0-9a-f]{64}', sha) is None:
+            raise ValueError('invalid expected SHA-256 for member: ' + name)
     if os.path.exists(target):
         raise FileExistsError('refusing to overwrite: ' + target)
     partial = target + '.partial'
@@ -560,6 +569,8 @@ def _write_zip(folder, archive, target):
             raise ValueError('empty or unsupported input file: ' + name)
         with open(source, 'rb') as stream:
             fingerprints[name.casefold()] = digest(stream)
+        if name in expected_sha256 and fingerprints[name.casefold()] != expected_sha256[name]:
+            raise ValueError(name + ': FBX bytes changed between the export_meta check and the ZIP; nothing written')
     owned_partial = False
     try:
         with open(partial, 'xb') as fh:
@@ -609,7 +620,39 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                 objects.append(edit.entry(i, a['name'], [edit.finding('archive', (), p) for p in a['problems']]))
                 failed.append('{}: {}'.format(a['name'], '; '.join(a['problems'])))
                 continue
-            target, size = _write_zip(current['folder'], a, os.path.join(run, a['name']))
+            expected = None
+            if a['role'] == 'npm':
+                folder = current['folder']
+                try:
+                    # runtime._load_core loads this file by path, without a package
+                    # or a sibling sys.path entry. Resolve the shipped owner likewise.
+                    import importlib.util
+                    spec = importlib.util.spec_from_file_location(
+                        'agr_tools_export_meta', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'export_meta.py'))
+                    if spec is None or spec.loader is None:
+                        raise ImportError('cannot load sibling export_meta.py')
+                    meta = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(meta)
+                    excluded = {m['name'] for other in current['archives'] if other['role'] != 'npm'
+                                for m in other['members']}
+                    records = meta.export_records(folder, excluded_files=excluded, profile='npm')
+                    def in_archive(name):
+                        match = NPM_FBX.fullmatch(name)
+                        return match is not None and '{}_{}.zip'.format(
+                            match.group('code'), match.group('address')) == a['name']
+                    binding, problems = meta.export_binding(
+                        folder, a['members'], records, excluded_files=excluded, include_file=in_archive)
+                except Exception as exc:
+                    binding = {'members': []}
+                    problems = ['{}: export metadata unavailable or invalid: {}'.format(
+                        ', '.join(m['name'] for m in a['members']), exc)]
+                if problems:
+                    skipped.append(edit.skipped(a['name'], '; '.join(problems)))
+                    objects.append(edit.entry(i, a['name'], [edit.finding('export_binding', (), p) for p in problems]))
+                    failed.append('{}: {}'.format(a['name'], '; '.join(problems)))
+                    continue
+                expected = {r['name']: r['recorded_sha256'] for r in binding['members']}
+            target, size = _write_zip(current['folder'], a, os.path.join(run, a['name']), expected_sha256=expected)
             findings = []
             if target is None:
                 findings.append(edit.finding('size', (), '{} B > {} B (binary limit, D015); not written'.format(
