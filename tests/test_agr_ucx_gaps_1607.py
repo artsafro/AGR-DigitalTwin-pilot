@@ -14,7 +14,6 @@ import pytest
 
 from dt_ai.geometry import ucx_command as uc
 
-BANDS = ("overlap", "lt_2mm", "2_10mm", "10_100mm", "100mm_1m", "gt_1m")
 
 
 def box(x0, x1, y0=0.0, y1=1.0, z0=0.0, z1=1.0):
@@ -29,7 +28,7 @@ def mesh(name, hull):
 
 
 def two(gap, fam_b="SM_T_Main"):
-    return [mesh("UCX_SM_T_Main_001", box(0, 1)), mesh(f"UCX_{fam_b}_002", box(1 + gap, 2))]
+    return [mesh("UCX_SM_T_Main_001", box(0, 1)), mesh(f"UCX_{fam_b}_002", box(1 + gap, 2 + gap))]
 
 
 def band_of(g):
@@ -101,8 +100,9 @@ def test_cross_family_far_pair_is_counted_without_warning():
 
 
 def test_generated_boxes_band_matches_brute_force():
-    # generated probe: 40 seeds x 8 axis-aligned boxes in 3 families; the SAT gap of two AABBs is
-    # max over axes of the axis separation, so every pair's band is checked against that brute force
+    # generated probe: 40 seeds x 8 axis-aligned boxes in 3 families. For two AABBs the SAT gap lies between the
+    # largest axis separation and the Euclidean distance (face diagonals give extra axes); every pair is counted
+    # exactly once in its scope, a listed pair carries the band of its gap, an unlisted pair is truly > 1 m away
     rng = random.Random(1607)
     for seed in range(40):
         boxes = []
@@ -112,13 +112,22 @@ def test_generated_boxes_band_matches_brute_force():
             boxes.append((f"UCX_SM_F{i % 3}_Main_{i + 1:03d}", lo, hi))
         meshes = [mesh(n, box(lo[0], hi[0], lo[1], hi[1], lo[2], hi[2])) for n, lo, hi in boxes]
         res = uc.gap_check(meshes, 0.004)
-        total = {s: dict.fromkeys(BANDS, 0) for s in ("same_family", "cross_family")}
+        listed = {(p["a"], p["b"]): p for p in res["gap_pairs"]}
+        scopes = {"same_family": 0, "cross_family": 0}
         for (na, la, ha), (nb, lb, hb) in itertools.combinations(boxes, 2):
-            g = max(max(lb[k] - ha[k], la[k] - hb[k]) for k in range(3))
+            seps = [max(lb[k] - ha[k], la[k] - hb[k]) for k in range(3)]
+            lower = max(seps)
+            euclid = math.sqrt(sum(s * s for s in seps if s > 0)) if lower > 0 else 0.0
             scope = "same_family" if na.split("_")[2] == nb.split("_")[2] else "cross_family"
-            total[scope][band_of(g)] += 1
-        assert res["gap_bands"] == total, seed
-        assert sum(map(sum, (d.values() for d in total.values()))) == 28
+            scopes[scope] += 1
+            p = listed.get((na, nb)) or listed.get((nb, na))
+            if p is None:
+                assert euclid > 1.0, (seed, na, nb, euclid)
+                continue
+            assert p["scope"] == scope and p["band"] == band_of(p["gap_m"]), p
+            assert lower - 1e-6 <= p["gap_m"] <= euclid + 1e-6, (p, lower, euclid)
+        assert {s: sum(d.values()) for s, d in res["gap_bands"].items()} == scopes, seed
+        assert sum(scopes.values()) == 28
 
 
 # --- fail closed --------------------------------------------------------------------------------------------------
@@ -189,7 +198,7 @@ def test_kpp1_passes():
     res = uc.gap_check(etalon("SM_Kpp_1"), 0.002)
     assert res["ok"] is True
     sf = res["gap_bands"]["same_family"]
-    assert (sf["overlap"], sf["lt_2mm"], sf["2_10mm"], sf["10_100mm"], sf["100mm_1m"]) == (0, 0, 12, 1, 6)
+    assert (sf["overlap"], sf["lt_2mm"], sf["2_10mm"], sf["10_100mm"], sf["100mm_1m"]) == (0, 0, 48, 1, 6)
 
 
 def test_skolkovo_far_gaps_refuse_nothing():
