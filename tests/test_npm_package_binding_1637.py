@@ -67,7 +67,7 @@ def test_clean_package_binds_every_member_and_reports_hashes(tmp_path):
     assert report['passed'] is False and report['status'] == 'packaged_not_validated' and report['problems'] == []
     binding = report['export_binding']
     assert binding['source'] == 'fbx_records'
-    assert binding['members'] == [
+    assert sorted(binding['members'], key=lambda m: m['name']) == [
         {'name': OKS, 'recorded_sha256': _sha(b'synthetic OKS'), 'zip_sha256': _sha(b'synthetic OKS'), 'status': 'match'},
         {'name': GROUND, 'recorded_sha256': _sha(b'synthetic Ground'), 'zip_sha256': _sha(b'synthetic Ground'),
          'status': 'match'}]
@@ -129,6 +129,14 @@ def test_exported_files_binds_names_both_ways(tmp_path):
     pkg2 = make_pkg(tmp_path / 'b', key='exported_files', recorded={OKS: b''})
     r2 = run(pkg2)  # Ground is on disk but not in exported_files
     assert r2.returncode == 1 and GROUND in r2.stderr and 'not recorded' in r2.stderr
+
+
+def test_case_variant_record_is_not_a_match(tmp_path):
+    """Path alias: a record spelled with another case does not bind the member; both names are refused."""
+    pkg = make_pkg(tmp_path, recorded={OKS.lower(): b'synthetic OKS', GROUND: b'synthetic Ground'})
+    r = run(pkg)
+    assert r.returncode == 1 and OKS in r.stderr and OKS.lower() in r.stderr
+    assert outputs(tmp_path) == []
 
 
 def test_file_changed_between_check_and_zip_is_refused(tmp_path, monkeypatch):
