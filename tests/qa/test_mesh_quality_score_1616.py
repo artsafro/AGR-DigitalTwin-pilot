@@ -318,9 +318,27 @@ def test_glass_depth_parameter_rejects_invalid_values(value):
         mq.score(interior_hole_master(mode='empty'), params={'glass_depth_m': value})
 
 
+@pytest.mark.parametrize('axis,angle', [('z', 10), ('z', 30), ('z', 45), ('x', 30)])
+@pytest.mark.parametrize('depth', [.05, .2])
+def test_recessed_exact_fit_glass_on_rotated_wall(axis, angle, depth):
+    """Review r2: normal recess must not shift the pane's footprint on the wall."""
+    models = interior_hole_master(mode='empty')
+    g = Builder('SM_Interior_MainGlass')
+    g.face([(1, depth, 1), (2, depth, 1), (2, depth, 2), (1, depth, 2)], (0, -1, 0))
+    models.append(g.obj())
+    c, s = math.cos(math.radians(angle)), math.sin(math.radians(angle))
+    for obj in models:
+        for v in obj['verts']:
+            x, y, z = v
+            v[:] = [c*x-s*y, s*x+c*y, z] if axis == 'z' else [x, c*y-s*z, s*y+c*z]
+    result = mq.score(models)
+    assert result['totals']['body_holes'] == 0
+    assert result['score'] == pytest.approx(85.714, abs=.001)
+
+
 @pytest.mark.parametrize('seed', range(24))
 def test_probe_glass_plane_depth_and_partition(seed):
-    """Synthetic rotated/tiled probes; padded near panes retain full projected coverage."""
+    """Synthetic rotated/tiled probes; near panes fit the opening exactly."""
     import copy
     import random
     rnd = random.Random(163150 + seed)
@@ -328,8 +346,8 @@ def test_probe_glass_plane_depth_and_partition(seed):
     g = Builder('SM_Interior_MainGlass')
     close = seed % 3 == 0
     depth = rnd.choice([-1, 1]) * (rnd.uniform(.05, .2) if close else rnd.uniform(.3, 100))
-    for a, b in [(.7, 1.5), (1.5, 2.3)]:
-        g.face([(a, depth, .7), (b, depth, .7), (b, depth, 2.3), (a, depth, 2.3)], (0, -1, 0))
+    for a, b in [(1, 1.5), (1.5, 2)]:
+        g.face([(a, depth, 1), (b, depth, 1), (b, depth, 2), (a, depth, 2)], (0, -1, 0))
     models.append(g.obj())
     angle = rnd.uniform(-math.pi, math.pi)
     for obj in models:
