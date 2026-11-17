@@ -114,12 +114,35 @@ v003: 30 зон (тёмн 43 м, сер 116 м, свет 152 м, кирп 134 м
 Лист «до / после / эталон»: `round2b-k1/round2b_k1_v003_sheet.png`. Ждал «ок» Артёма; принят 2026-11-17 («Да, ок, все принимаю»), правило внесено в BM-01 [D341]. Лоджию 6,6 м оставили
 по парапету (вопрос 3 принят вместе с остальным).
 
+## Круг 3 (2026-11-17): G22 корпус 2
+
+Правило D341 внесено до модели (BM-01, §8 п. 7–8, summary-ru, skill `scenario`, `areas/body.md`). DCC: Blender 5.1
+без окна (как в кругах 1–2; QUAD-FBX для Max в evidence).
+
+1. `revit_floor_dump.py` по `g22_src_full.blend`, рамка 468–558 × 986–1068 (13 982 объекта); `--clip clip_k2.json`
+   отрезает обрывки корпусов 1 и 3 (1 073 объекта). 9 типовых этажей (подоконники 5,3…29,3, шаг 3,00), 45 окон,
+   12 корзин. Низ и верх (выше 32,3 м) — уникальные, в круг не входят (BM-12).
+2. `--seal windows` → гейт `envelope_check`: `fail`, 0 м внутри оболочки, но 3 впадины 1,5 × 0,10 м (мельче 0,4 м —
+   текстура, D341). Новое: `floor_from_dump --fill FILL.json` берёт список ремонта гейта и закрывает эти впадины
+   (замыкание 0,1 м только около них). Контур 57 → 43 вершины, гейт `pass`; уступы 0,68–0,70 м — как у эталона.
+3. Зоны по текстуре эталона (`et_k23_0.png`, регистрация 0,06 м): 23 зоны, кирпич 157 м, светлая 54, тёмная 19.
+4. Модуль 543 вершины, 370 граней; корпус 9 эт., 3 330 граней. Чтение обратно: 2 682 грани стен — внутрь/внутри 0;
+   648 граней корзин — все снаружи; верх 32,3 м.
+
+| Версия | Что поменялось | #1616 score | Квады фасада | Щепки | Грани > 3,8 м | Граней в полосе | Контур внутри оболочки |
+|---|---|---|---|---|---|---|---|
+| эталон к.2 | — | 86,883 | 0,9996 | 2 | 0 | 17 606 | — |
+| v001 | D341: `--seal windows` + `--fill` | 90,830 | 1,0 | 0 | 0 | 3 330 | 0 |
+
+Лист: `round3-k2/round3_k2_v001_sheet.png`. Ждёт замечаний Артёма.
+
 ## Журнал изменений правил по кругам
 
 | Круг | Этаж | Замечания Артёма | Что изменено (doc / skill) |
 |---|---|---|---|
 | 1 | G22 к.3 | шаг панелей ~0,6 м и петля над окнами — текстура; тёмная/светлая облицовка — свои ID с вертикалью на стыке; сетка v006 чистая (принято) | BM-02, BM-03, BM-11, §8 п. 4–6 `body-modelling.md`; summary-ru; skill `scenario`; `areas/body.md`; [D340] |
 | 2 | G22 к.1 | v002: «полигоны уходят внутрь здания» — не принят; 4 ID как в атласе (принято); зоны башен 63 — из .rvt read-only ; v003 принят («Да, ок, все принимаю») | BM-01 «контур = наружная оболочка, проёмы закрыты заполнением, рельеф < 0,4 м = текстура, ниша — геометрией только если она есть в эталоне», гейт `envelope_check.py`; §8 п. 7–8; summary-ru; skill `scenario`; `areas/body.md`; [D341] |
+| 3 | G22 к.2 | ждёт замечаний | `floor_from_dump --fill` (ремонт по гейту оболочки: впадины < 0,4 м закрываются) — инструмент, правило не менялось |
 
 ## Воспроизведение
 
@@ -141,4 +164,17 @@ blender51 -b --factory-startup --python ../body-modelling-1618/dump_mesh.py -- k
 uv run python band_compare.py dump_k1_v003/SM_Body_Main.npz 5.3 50.3 k1_v003
 uv run python tools/qa/mesh_quality_score.py k1_v003.mq.json --out k1_v003.score.json
 uv run python ../body-modelling-1618/wire_sheet.py dump_k1_v003/SM_Body_Main.npz --view iso --rot 39 --ppm 8 --mat-rgb k1_matrgb.json --backfaces --out k1_v003_iso_bf.png
+```
+
+Круг 3 (H, E2 = `SM_Garibaldi_22_002_Main.npz`):
+
+```
+blender51 -b --factory-startup --python H/revit_floor_dump.py -- g22_src_full.blend g22_k2_src.npz 468,986,558,1068
+uv run python H/floor_from_dump.py g22_k2_src.npz floor_k2_a.json --clip clip_k2.json --seal windows
+uv run python H/envelope_check.py floor_k2_a.json E2 env_k2_a.json --dz 212.34 --fill fill_k2_a.json   # fail: 3 pockets
+uv run python H/floor_from_dump.py g22_k2_src.npz floor_k2_b.json --clip clip_k2.json --seal windows --fill fill_k2_a.json
+uv run python H/envelope_check.py floor_k2_b.json E2 env_k2_b.json --dz 212.34                          # pass
+uv run python H/zones_from_etalon.py floor_k2_b.json E2 et_k23_0.png floor_k2_v001.json --dz 212.34 --palette palette_g22.json
+blender51 -b --factory-startup --python H/module_build.py -- floor_k2_v001.json k2_v001 --tex tex --max-side 3.6
+uv run python band_compare.py dump_k2_v001/SM_Body_Main.npz 5.3 32.3 k2_v001   # etalon: E2 217.64 244.64
 ```

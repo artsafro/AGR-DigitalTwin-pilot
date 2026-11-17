@@ -3,6 +3,10 @@
 Pattern: n/a | new-case: typical-floor contour, jamb rings, sill/head loops and inset boxes read from a Revit crop.
 
 uv run python floor_from_dump.py CROP.npz FLOOR.json [--keys keys.json] [--ref K] [--snap 0.03]
+    [--clip CLIP.json] [--seal windows] [--fill FILL.json]
+
+--fill takes envelope_check.py's repair list (recesses at or below the texture depth, D341) and closes those pockets
+into the ring; a pocket that does not touch the contour or lies inside it is an error naming its index.
 
 CROP.npz is revit_floor_dump.py output. Object classes by name keys (defaults below, override with --keys):
 walls -> outer contour (section at mid-spandrel, union, exterior ring, simplified 2 cm: BM-01); windows -> jamb
@@ -61,6 +65,28 @@ def levels(vals, tol=0.05):
     return [(float(np.median(g)), len(g)) for g in out]
 
 
+def load_fill(path):
+    """envelope_check.py --fill repair list -> source-frame polygons; anything malformed is an error naming it."""
+    d = json.load(open(path, encoding="utf-8"))
+    if not isinstance(d, dict) or d.get("frame") != "source":
+        sys.exit("refused: --fill frame must be 'source' (got %r)" % (d.get("frame") if isinstance(d, dict) else d))
+    polys = d.get("polygons") or []
+    if not polys:
+        sys.exit("refused: --fill has no polygons")
+    out = []
+    for i, p in enumerate(polys):
+        try:
+            arr = np.array(p, float)
+            ok = arr.ndim == 2 and arr.shape[0] >= 3 and arr.shape[1] == 2 and np.isfinite(arr).all()
+            poly = Polygon(arr) if ok else None
+        except (ValueError, TypeError):
+            poly = None
+        if poly is None or not poly.is_valid or poly.area <= 0:
+            sys.exit("refused: fill polygon %d is not a valid finite polygon" % i)
+        out.append(poly)
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("crop")
@@ -74,9 +100,12 @@ def main(argv=None):
     ap.add_argument("--clip", help="JSON [[x,y],...]: keep only objects whose plan centroid is inside")
     ap.add_argument("--seal", nargs="*", default=[],
                     help="object classes whose cut joins the wall cut (round 3: windows - openings closed by their filling)")
+    ap.add_argument("--fill", help="JSON from envelope_check.py --fill: texture pockets closed into the ring (D341)")
     a = ap.parse_args(argv)
-    if os.path.realpath(a.out) == os.path.realpath(a.crop) or not a.out.endswith(".json"):
-        sys.exit("refused: output must be a new .json, not the input")
+    ins = [os.path.realpath(p) for p in (a.crop, a.fill, a.clip, a.keys) if p]
+    if os.path.realpath(a.out) in ins or not a.out.endswith(".json"):
+        sys.exit("refused: output must be a new .json, not an input")
+    fills = load_fill(a.fill) if a.fill else []
     keys = json.load(open(a.keys, encoding="utf-8")) if a.keys else KEYS
     d = np.load(a.crop)
     tri, obj, names = d["tri"], d["obj"], [str(n) for n in d["names"]]
@@ -142,6 +171,24 @@ def main(argv=None):
     if ring_poly.geom_type != "Polygon":
         ring_poly = max(ring_poly.geoms, key=lambda p: p.area)
     ring_poly = Polygon([c for c in ring_poly.exterior.coords])
+    filled = []
+    if fills:  # D341: recesses shallower than the texture depth are closed (the gate's repair list)
+        ext0 = ring_poly.exterior
+        for i, fp in enumerate(fills):
+            if fp.distance(ext0) > 0.05:
+                sys.exit("refused: fill polygon %d does not touch the contour (%.2f m away)" % (i, fp.distance(ext0)))
+            if fp.difference(ring_poly).area < 0.5 * fp.area:
+                sys.exit("refused: fill polygon %d lies inside the contour, not in a recess" % i)
+            filled.append({"index": i, "area_m2": round(fp.difference(ring_poly).area, 3)})
+        # union, then a 0.1 m closing only around the pockets: the ring's 5 cm mouth chamfers leave slivers that a
+        # pocket polygon from another cut does not cover exactly; elsewhere the ring is untouched
+        joined = unary_union([ring_poly] + fills)
+        near = unary_union(fills).buffer(0.3)
+        closed = unary_union([joined, joined.buffer(0.1, join_style="mitre").buffer(-0.1, join_style="mitre")
+                              .intersection(near)]).buffer(0.005, join_style="mitre").buffer(-0.005, join_style="mitre")
+        if closed.geom_type != "Polygon":
+            sys.exit("refused: the filled contour is not one polygon")
+        ring_poly = Polygon(closed.exterior.coords).simplify(a.jog)
     if not ring_poly.exterior.is_ccw:
         ring_poly = Polygon(list(ring_poly.exterior.coords)[::-1])
     xy = [list(map(float, c)) for c in ring_poly.exterior.coords[:-1]]
@@ -207,6 +254,7 @@ def main(argv=None):
         "windows": windows, "insets": [{"box": i["box"]} for i in insets],
         "materials": {"WALL_A": [0.75, 0.73, 0.70], "WINDOW": [0.15, 0.2, 0.3], "INSET": [0.3, 0.3, 0.3]},
         "dropped": dropped,
+        "filled": filled,
         "counts": {"contour_vertices": len(xy), "cuts": len(merged), "windows_ref": len(ref_wins),
                    "windows_used": len(windows), "insets": len(insets), "perimeter_m": round(perim, 3),
                    "objects_clipped": clipped},
