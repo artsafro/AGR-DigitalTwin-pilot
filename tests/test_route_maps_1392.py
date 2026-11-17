@@ -82,7 +82,7 @@ def test_1593_vpm_uv_owner_and_wrappers():
     shared = next(c for c in maps["contexts"]["contexts"] if c["id"] == "vpm-uv")
     rule = next(c for c in maps["contexts"]["rules"] if c["id"] == "vpm-uv")
     assert own["owner"] == shared["owner"] == rule["owner"] == "tools/blender/vpm_uv.py"
-    assert next(c for c in events["local_contexts"] if c["id"] == "vpm-uv")["ref"] == "vpm-oks-contexts.yaml#vpm-uv"
+    assert not any(c["id"] == "vpm-uv" for c in events["local_contexts"])  # shared id, no shadow
     route_map.check_schema(events, maps["contexts"])
     assert route_map.route_coverage(events, maps["contexts"], maps["vpm-contexts"]) == []
     hotspot = next(h for h in events["hotspots"] if h["id"] == "udim-copies")
@@ -106,7 +106,9 @@ def test_1593_current_window_owner_and_historical_link():
     assert where.index("adapters/max/agr_tools/windowgen_core.py") < where.index("jobs/OBR22-K02")
     assert "agr window-generate" in where and "historical [D327]" in where
     doc = ROOT / "docs/agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md"
-    link = re.search(r"\[build_shell_windows.py\]\(([^)]+)\)", doc.read_text(encoding="utf-8"))[1]
+    found = re.search(r"\[build_shell_windows.py\]\(([^)]+)\)", doc.read_text(encoding="utf-8"))
+    assert found
+    link = found[1]
     assert (doc.parent / link).resolve() == ROOT / "jobs/OBR22-K02/scripts/build_shell_windows.py"
     assert (doc.parent / link).is_file()
 

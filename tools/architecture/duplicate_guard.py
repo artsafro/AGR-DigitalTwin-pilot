@@ -470,6 +470,9 @@ COMPACTION_STEPS = ("#1379", "#1380", "#1381", "#1397", "#1404", "#1405", "#1406
 # Ratchet (#1424): the live bypasses known on 2026-11-15, keyed (context map, at, hash or ""). A live-bypass row not
 # listed here is NEW and fails; a listed key without its live-bypass row is fixed - remove it here (tighten).
 LIVE_BYPASS_BASELINE = frozenset({
+    # #1593: inventory of existing run_stage.sh writers, not new build behaviour or guard rules.
+    ("vpm-contexts", "jobs/KPP1/scripts/build_kpp1.py:198", ""),
+    ("vpm-contexts", "jobs/KPP1/scripts/build_kpp1.py:327", ""),
 
     # #1441: previously missed current shell/candidate roots, not newly introduced code copies.
     ("contexts", "jobs/TEC26-OKS/scripts/package_vpm.py::<module>", "61d21d75df"),
