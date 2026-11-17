@@ -5,6 +5,9 @@ description: 'Inspect and edit Revit BIM documents through the project MCP route
 
 # Revit MCP for project agents
 
+Revit model as a source for VPM/NPM (copy, inventory, export, modelling): follow
+[`routes/revit-intake.md`](../../../routes/revit-intake.md).
+
 ## Risk gate before mutation
 
 Before any write, name the exact tool/operation and its risk class from

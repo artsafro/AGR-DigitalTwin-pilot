@@ -1,0 +1,359 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1078" width="2990" height="1078" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect x="10" y="-30" width="2990" height="1078" fill="#ffffff"/>
+<rect x="50" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="40" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="40" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="40" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="40" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="350" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="310" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="270" y1="243.75" x2="310" y2="243.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="310" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="310" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="310" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="310" y="617.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="620" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="580" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="540" y1="243.75" x2="580" y2="233.13" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="580" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="580" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="580" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="890" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="850" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="810" y1="233.12" x2="850" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="850" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="850" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="850" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="850" y="617.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1160" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1120" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1080" y1="233.12" x2="1120" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1120" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="1120" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1120" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1120" y="617.5" width="230" height="133.75" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1120" y="767.25" width="230" height="133.75" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1120" y="917.0" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1430" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1390" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1350" y1="225.0" x2="1390" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1390" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="1390" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1390" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1390" y="617.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1700" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1660" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1620" y1="225.0" x2="1660" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1660" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="1660" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1660" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1970" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1930" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1890" y1="225.0" x2="1930" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1930" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1930" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1930" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2200" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2160" y1="233.12" x2="2200" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2200" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2200" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2200" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2510" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2470" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2430" y1="233.12" x2="2470" y2="243.74" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2470" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2470" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2470" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2780" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2740" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2700" y1="243.75" x2="2740" y2="243.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2740" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2740" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2740" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="28">Маршрут «Пакет и сдача» (НПМ + ВПМ): событийный штурм (#1361, Ватутино 2026-11-09, КПП1) (#1393)</tspan>
+</text>
+<text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="16">Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время); бирюзовый — ветка (выбор по задаче)</tspan>
+</text>
+<text x="155.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="15">Агент: Blender / Max /</tspan>
+<tspan x="155.0" dy="18.75">AGR Tools</tspan>
+</text>
+<text x="155.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="17">1. FBX НПМ / ВПМ</tspan>
+<tspan x="155.0" dy="21.25">выгружены:</tspan>
+<tspan x="155.0" dy="21.25">триангуляция только на</tspan>
+<tspan x="155.0" dy="21.25">экспорте; рабочий FBX</tspan>
+<tspan x="155.0" dy="21.25">без триангуляции —</tspan>
+<tspan x="155.0" dy="21.25">рядом, не в пакете</tspan>
+</text>
+<text x="155.0" y="355.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Команда:</tspan>
+<tspan x="155.0" dy="17.5">dt derive npm</tspan>
+</text>
+<text x="155.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Правила: D152, D198, D212</tspan>
+</text>
+<text x="155.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Контекст: Экспорт FBX с</tspan>
+<tspan x="155.0" dy="17.5">чтением назад</tspan>
+</text>
+<text x="425.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="15">Агент</tspan>
+</text>
+<text x="425.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="17">2. export_meta.json у</tspan>
+<tspan x="425.0" dy="21.25">каждого FBX:</tspan>
+<tspan x="425.0" dy="21.25">адрес-токен, верх</tspan>
+<tspan x="425.0" dy="21.25">модели, превью;</tspan>
+<tspan x="425.0" dy="21.25">неизвестное — unknown,</tspan>
+<tspan x="425.0" dy="21.25">не 0</tspan>
+</text>
+<text x="425.0" y="355.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Команда:</tspan>
+<tspan x="425.0" dy="17.5">agr export-meta</tspan>
+</text>
+<text x="425.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Правила: D279, D285</tspan>
+</text>
+<text x="425.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Контекст: Контракт</tspan>
+<tspan x="425.0" dy="17.5">export_meta</tspan>
+</text>
+<text x="425.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="13">⚠ agr export-meta пишет и</tspan>
+<tspan x="425.0" dy="16.25">проверяет export_meta, но это</tspan>
+<tspan x="425.0" dy="16.25">не квитанция проверок; поля</tspan>
+<tspan x="425.0" dy="16.25">bounds_m + fbx_sha256 для</tspan>
+<tspan x="425.0" dy="16.25">V013 у производителей нет</tspan>
+<tspan x="425.0" dy="16.25">(#1342)</tspan>
+</text>
+<text x="695.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="15">Агент</tspan>
+</text>
+<text x="695.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="17">3. Свежее чтение</tspan>
+<tspan x="695.0" dy="21.25">экспорта: топология,</tspan>
+<tspan x="695.0" dy="21.25">UV, материалы,</tspan>
+<tspan x="695.0" dy="21.25">трансформы, счётчики</tspan>
+<tspan x="695.0" dy="21.25">пропусков = 0</tspan>
+</text>
+<text x="695.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="695.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Правила: D152, D104</tspan>
+</text>
+<text x="695.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Контекст: Проверка и</tspan>
+<tspan x="695.0" dy="17.5">приёмка</tspan>
+</text>
+<text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="15">Агент</tspan>
+</text>
+<text x="965.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="17">4. GeoJSON ВПМ: точка</tspan>
+<tspan x="965.0" dy="21.25">MSK-77 по DWG</tspan>
+<tspan x="965.0" dy="21.25">заказчика (наша</tspan>
+<tspan x="965.0" dy="21.25">работа), FNO — от</tspan>
+<tspan x="965.0" dy="21.25">СИНТЕЗ, ZU_area в га</tspan>
+</text>
+<text x="965.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="965.0" y="460.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Правила: D220, D223, D011,</tspan>
+<tspan x="965.0" dy="17.5">D016</tspan>
+</text>
+<text x="965.0" y="548.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Контекст: GeoJSON ВПМ</tspan>
+</text>
+<text x="965.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="13">⚠ Своего инструмента GeoJSON</tspan>
+<tspan x="965.0" dy="16.25">нет: эталон — GeoJSON</tspan>
+<tspan x="965.0" dy="16.25">заказчика;</tspan>
+<tspan x="965.0" dy="16.25">export.geojson_write AGR</tspan>
+<tspan x="965.0" dy="16.25">Tools не готов к сдаче (D220)</tspan>
+<tspan x="965.0" dy="16.25">[D220]</tspan>
+</text>
+<text x="1235.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="15">Агент</tspan>
+</text>
+<text x="1235.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="17">5. Пакеты собраны</tspan>
+<tspan x="1235.0" dy="21.25">общими упаковщиками;</tspan>
+<tspan x="1235.0" dy="21.25">упаковка — не проверка</tspan>
+<tspan x="1235.0" dy="21.25">(passed=false)</tspan>
+</text>
+<text x="1235.0" y="346.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Команда:</tspan>
+<tspan x="1235.0" dy="17.5">agr package-npm</tspan>
+<tspan x="1235.0" dy="17.5">agr package-vpm</tspan>
+</text>
+<text x="1235.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Правила: D015, D235, D224</tspan>
+</text>
+<text x="1235.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Контекст: Экспорт и пакет</tspan>
+<tspan x="1235.0" dy="17.5">сдачи</tspan>
+</text>
+<text x="1235.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="13">Ветка: НПМ</tspan>
+<tspan x="1235.0" dy="16.25">→ {код4}_{Адрес}.zip: Ground</tspan>
+<tspan x="1235.0" dy="16.25">обязателен + ОКС 01..20,</tspan>
+<tspan x="1235.0" dy="16.25">текстуры внутри FBX; неполный</tspan>
+<tspan x="1235.0" dy="16.25">— выход 1</tspan>
+<tspan x="1235.0" dy="16.25">Команда: agr package-npm</tspan>
+<tspan x="1235.0" dy="16.25">[D015, D235]</tspan>
+</text>
+<text x="1235.0" y="777.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="13">Ветка: ВПМ</tspan>
+<tspan x="1235.0" dy="16.25">→ SM_&lt;Адрес&gt;.zip: FBX,</tspan>
+<tspan x="1235.0" dy="16.25">_Light.fbx, GeoJSON, 3–2100</tspan>
+<tspan x="1235.0" dy="16.25">PNG; --no-geojson — отсрочка,</tspan>
+<tspan x="1235.0" dy="16.25">не сдача</tspan>
+<tspan x="1235.0" dy="16.25">Команда: agr package-vpm</tspan>
+<tspan x="1235.0" dy="16.25">[D015, D224]</tspan>
+</text>
+<text x="1235.0" y="927.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="13">⚠ 9 старых упаковщиков в</tspan>
+<tspan x="1235.0" dy="16.25">jobs/ (КПП1, ПСУ275, ТЭЦ26,</tspan>
+<tspan x="1235.0" dy="16.25">ELV v001–v006) заморожены;</tspan>
+<tspan x="1235.0" dy="16.25">новая сдача — только agr</tspan>
+<tspan x="1235.0" dy="16.25">package-npm / package-vpm</tspan>
+</text>
+<text x="1505.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="15">Агент</tspan>
+</text>
+<text x="1505.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="17">6. Валидатор V001–V017</tspan>
+<tspan x="1505.0" dy="21.25">и xView по файлам</tspan>
+<tspan x="1505.0" dy="21.25">пакета; not_run — не</tspan>
+<tspan x="1505.0" dy="21.25">pass</tspan>
+</text>
+<text x="1505.0" y="346.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Команда:</tspan>
+<tspan x="1505.0" dy="17.5">agr validate</tspan>
+<tspan x="1505.0" dy="17.5">dt qa xview</tspan>
+</text>
+<text x="1505.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Правила: D152, D173</tspan>
+</text>
+<text x="1505.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Контекст: Проверка и</tspan>
+<tspan x="1505.0" dy="17.5">приёмка</tspan>
+</text>
+<text x="1505.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="13">⚠ Ни один пакет ещё не прошёл</tspan>
+<tspan x="1505.0" dy="16.25">(passed=false везде); 9 строк</tspan>
+<tspan x="1505.0" dy="16.25">PKG без проверки: набор</tspan>
+<tspan x="1505.0" dy="16.25">архивов (PKG-05), счёт</tspan>
+<tspan x="1505.0" dy="16.25">объектов, светильники</tspan>
+<tspan x="1505.0" dy="16.25">PKG-14..18</tspan>
+</text>
+<text x="1775.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="15">Чекер СИНТЕЗ</tspan>
+</text>
+<text x="1775.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="17">7. Чекер СИНТЕЗ на тех</tspan>
+<tspan x="1775.0" dy="21.25">же ZIP: каждая находка</tspan>
+<tspan x="1775.0" dy="21.25">→ проверка и страница</tspan>
+<tspan x="1775.0" dy="21.25">регламента</tspan>
+</text>
+<text x="1775.0" y="355.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Команда:</tspan>
+<tspan x="1775.0" dy="17.5">agr checker</tspan>
+</text>
+<text x="1775.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Правила: D104, D220</tspan>
+</text>
+<text x="1775.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Контекст: Чекер СИНТЕЗ и</tspan>
+<tspan x="1775.0" dy="17.5">загрузка</tspan>
+</text>
+<text x="2045.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="15">Агент</tspan>
+</text>
+<text x="2045.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="17">8. Отчёт сдачи</tspan>
+<tspan x="2045.0" dy="21.25">docs/deliveries/&lt;сдача</tspan>
+<tspan x="2045.0" dy="21.25">&gt;-&lt;дата&gt;.md: пути +</tspan>
+<tspan x="2045.0" dy="21.25">SHA-256, каждая</tspan>
+<tspan x="2045.0" dy="21.25">проверка, вердикт</tspan>
+</text>
+<text x="2045.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2045.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Правила: D104, D152</tspan>
+</text>
+<text x="2045.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Контекст: Проверка и</tspan>
+<tspan x="2045.0" dy="17.5">приёмка</tspan>
+</text>
+<text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="15">Артём</tspan>
+</text>
+<text x="2315.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="17">9. Артём принимает:</tspan>
+<tspan x="2315.0" dy="21.25">сцена в 3ds Max (QUAD)</tspan>
+<tspan x="2315.0" dy="21.25">и путь; проверка,</tspan>
+<tspan x="2315.0" dy="21.25">приёмка и публикация —</tspan>
+<tspan x="2315.0" dy="21.25">разные статусы</tspan>
+</text>
+<text x="2315.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2315.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Правила: D270, D104</tspan>
+</text>
+<text x="2315.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Контекст: Связь с DCC</tspan>
+<tspan x="2315.0" dy="17.5">(Blender / 3ds Max)</tspan>
+</text>
+<text x="2585.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="15">Артём</tspan>
+</text>
+<text x="2585.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="17">10. Артём загружает</tspan>
+<tspan x="2585.0" dy="21.25">архив в СИНТЕЗ: код</tspan>
+<tspan x="2585.0" dy="21.25">территории и FNO</tspan>
+<tspan x="2585.0" dy="21.25">выдаёт СИНТЕЗ;</tspan>
+<tspan x="2585.0" dy="21.25">переименование — одной</tspan>
+<tspan x="2585.0" dy="21.25">командой</tspan>
+</text>
+<text x="2585.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2585.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Правила: D235, D220</tspan>
+</text>
+<text x="2585.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Контекст: Чекер СИНТЕЗ и</tspan>
+<tspan x="2585.0" dy="17.5">загрузка</tspan>
+</text>
+<text x="2855.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="15">Артём</tspan>
+</text>
+<text x="2855.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="17">11. Пакет — Артёму:</tspan>
+<tspan x="2855.0" dy="21.25">архив или сцена 3ds</tspan>
+<tspan x="2855.0" dy="21.25">Max с квадами; приёмку</tspan>
+<tspan x="2855.0" dy="21.25">и передачу заказчику</tspan>
+<tspan x="2855.0" dy="21.25">делает Артём; подпись</tspan>
+<tspan x="2855.0" dy="21.25">УКЭП — заказчика</tspan>
+</text>
+<text x="2855.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2855.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Правила: D163, D220, D300</tspan>
+</text>
+<text x="2855.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Контекст: Экспорт и пакет</tspan>
+<tspan x="2855.0" dy="17.5">сдачи</tspan>
+</text>
+</svg>

@@ -1,6 +1,6 @@
 ---
 name: analyze-architectural-source
-description: 'Inspect an incoming architectural source (FBX, Revit, SketchUp, Blender, 3ds Max, Unreal input) and record what it contains before any processing. Use when a new or updated source file arrives, or before building production assets from one. Use when: «пришёл новый FBX», «разбери исходник из Revit», «что внутри этого файла перед сборкой?».'
+description: 'Inspect an incoming architectural source (DWG/DXF drawings, FBX, Revit, SketchUp, Blender, 3ds Max, Unreal input) and record what it contains before any processing. Use when a new or updated source file arrives, or before building production assets from one. Use when: «пришёл новый FBX», «разбери исходник из Revit», «что внутри этого файла перед сборкой?».'
 ---
 
 # Analyze architectural source
@@ -15,6 +15,35 @@ Ask or record which deliverable this source feeds: **NPM**, **VPM**, **both**, o
 **Unreal-only**. The profile decides which budgets, coordinate rules and naming apply
 (`docs/domain/npm-vpm.md`). If unknown, record it as a user question and analyse
 against both NPM and VPM.
+
+## 2D drawings — DWG / DXF branch (F14)
+
+After steps 1–3, take this branch for drawing-only sources. Steps 4–6 are mesh-only:
+record `not applicable: 2D drawing` for mesh classification, topology, material slots and UVs;
+do not invent a welded mesh or run `dt spec extract`. Continue to step 7.
+
+1. Resolve the source path and SHA-256 from `jobs/<JOB>/sources.json`; keep originals unchanged.
+   Record sheet/revision and the authority for units, scale, levels and coordinates. For KPP1 АС.03 R1:
+   L03 = plan, L01 = facade heights/openings, L02 = finishes (registry roles are proposals, not approval).
+2. DWG: `uv run python tools/methods/body/dwg_to_dxf.py <source.dwg> <new.dxf> <receipt.json>
+   --workdir C:/x/<card>/readback` runs AutoCAD DXFOUT on a hashed copy. DXF: start at census directly.
+   A failed conversion is not usable geometry. Keep its receipt; never pass the original to AutoCAD.
+3. `uv run python tools/methods/body/plan_from_dxf.py census <sheet.dxf> <census.json>`.
+   Review layers/handles and establish a sheet-specific role map and frame; never copy a different sheet's map.
+4. Plans: `uv run python tools/methods/body/plan_from_dxf.py extract <plan.dxf> <contours.json>
+   <report.json> --map-file <roles.json> --contour-source hatch --z0 <confirmed-bottom>
+   --z1 <confirmed-top> --origin-mm <x,y> --frame-shift-m <x,y>`.
+   Choose `lines` instead of `hatch` only when the mapped source warrants it. Missing levels yield
+   provisional output (exit 2), not buildable contours. Record invocation, coverage and drops.
+5. Facades: `uv run python tools/methods/body/facade_openings_from_dxf.py <facade.dxf>
+   <mapping.json> <new-schedule.json>`. See the tool docstring for the explicit handle/frame map.
+   It measures rectangular LINE/LWPOLYLINE outlines only, in millimetre DXFs; every other entity needs
+   a named drop reason. INSERT/curved/nonrectangular outlines need another measured route, not bbox guesses.
+   Review window/door kinds and sheet datum against the drawing. The schedule supplies width, height,
+   sill/head and sheet position for parts, NOT wall depth, world orientation or cutter boxes.
+6. Record finishes/annotations as drawing evidence, not mesh materials/UVs. Link each measured fact to
+   sheet + handle and source hash. Unresolved authority, missing outlines, depth or facade-to-plan mapping
+   remains a question before modelling/Gate 1; no schedule is architectural approval.
 
 ## Steps
 
@@ -66,6 +95,7 @@ against both NPM and VPM.
    emissive, vegetation/opacity, unknown); texture references found/missing; UV
    channels per object (`docs/domain/materials.md`, `docs/domain/uv-textures.md`).
    Done when no slot is unclassified without being listed as a question.
+   For sheets showing multiple buildings or parts, register `finish_sheets: [{image, multi_building: true}]` in the parts manifest; per part record `finish_refs: [{image, bbox, crop}]` with an original-image pixel bbox `[left, top, right, bottom]` (top-left origin, right/bottom exclusive), save the crop beside the analysis (external evidence directory, not binary git data), and read the finish into `legend_item` from that crop; subagent briefs cite the crop path, not just the sheet name. The model validates metadata, not crop existence/content or image bounds; inspect these explicitly before Gate 1.
 
 7. **Report.** Write `docs/sources/<source-name>.md`: findings above, including the
    source class and its route, production

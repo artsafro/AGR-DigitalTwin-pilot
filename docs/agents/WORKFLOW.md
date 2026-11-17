@@ -37,6 +37,17 @@ lists; they do not define a production step.
 5. **Execute** in narrow stages. Pure computation in `src/`, DCC calls in adapters/tools,
    object parameters in the job, manual decisions in a record with their source. Every
    rerun writes a new versioned output; keep manifests and hashes.
+   **Accepted geometry is frozen:** immediately record each user-accepted part's version,
+   path and SHA-256 in `jobs/<ID>/accepted.json`; preserve the user's answer reference.
+   UV, textures, UCX and export briefs cite that accepted set, never "latest", and run
+   [`accepted_set.py`](../../tools/state/accepted_set.py) before reading geometry.
+   Post-acceptance technical findings go to the user **once as a consolidated list**, with
+   named helpers/points in a separate review scene; retain the sent-list reference in the job.
+   Do not launch geometry fix rounds or a new geometry version without his explicit decision.
+   Diagnostics, user acceptance and publication remain separate: a QA failure does not unfreeze
+   geometry or waive a mandatory delivery gate. Evidence: 4bk-k3 floor 1 A accepted
+   2026-11-14 17:31, then five QA rounds v005–v009 and texture work on v008e instead of
+   body A v004 / windows A v003 / roof A v003. See the [fixed format and incident evidence](../procedure/ACCEPTED_GEOMETRY.md).
 6. **Verify independently.** The executor's report, exit 0 or a child agent's summary is
    not evidence. Read the actual files back. Classify a failure (source / tool / code /
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
@@ -110,15 +121,19 @@ Require `## Author receipts` in the PR body with the following lines:
 
 ### Handoff evidence check (#584)
 
-The author owns the full suite: a PR body never hands it to the reviewer, and evidence that is
-missing, "not run" or "not measured" is not a pass. Before `review_requested` the PR body has each
+The author runs the tests: a PR body never hands them to the reviewer, and evidence that is
+missing, "not run" or "not measured" is not a pass. Each card runs the AFFECTED tests (the changed
+modules' tests, the tests that import them, the new regressions) before every review request; the full
+suite runs ONCE in the merge batch (`merge_batch.py` / `merge_after_review.py`) before main, and a red
+batch suite sends the PR back to rework [D297]. Before `review_requested` the PR body has each
 line below exactly once (`.github/pull_request_template.md`, "Evidence"), and this read-only check exits 0:
 ```bash
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
-- `Full suite:` run through `suite_slot.py` (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head sha, `N passed`, `0 failed` (a failure only
-  with its `known #<issue>` owner). After a rework (rule 49) it may name an ancestor of the head, and then an
-  `Affected tests:` line on the head with `0 failed` is required.
+- `Affected tests:` names the head sha, the command, `N passed`, `0 failed`; `not run`, `pending`, `n/a` are not a run.
+- `Full suite: deferred to merge batch (D297)` (optional; any other deferral wording is an error). A real
+  `suite_slot.py` run (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head or an ancestor is still accepted,
+  `N passed`, `0 failed` (a failure only with its `known #<issue>` owner).
 - `Regression evals:` as above. It is verified with `check_receipt`, and the all-not-measured `no Claude transcript` receipt is valid.
 - `Before (RED):` names a commit before the head and has ≥ 1 failed or error, or `n/a: <reason>`.
   `After (GREEN):` names the head and has ≥ 1 passed and 0 failed; it has no `n/a`. A GREEN or
@@ -126,6 +141,31 @@ uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <wor
   Every count is a plain integer: `nan failed`, `-1 failed`, `1.5 passed` are errors, never zero.
 - `Sample output:` gives the output the acceptance asks for (path or inline), or `n/a: <reason>`.
 Exit 1 prints one `ERROR:` line per problem. Fix the evidence or run the missing step. Never edit a line to pass the check.
+
+### Visual evidence (Before/After) [D286]
+
+Canonical rule (#1360); the PR template and `REVIEW_CHECKLIST.md` link here. A PR that changes what the
+user sees - geometry, UV, materials, textures, renders, Max UI - carries BOTH a Before and an After image:
+- clearly labelled `BEFORE` / `AFTER`, each naming its version (commit, PR or file + sha256) so the baseline
+  and the changed version are identified;
+- the same camera / viewpoint, render settings and scene state on both sides;
+- a real baseline: the approved or `origin/main` output, never a mockup or a redrawn picture.
+
+After-only evidence is incomplete. If no real baseline can be produced, say so in the PR and keep it
+not-ready (draft) until one exists; the reviewer requests changes otherwise. A PR without a visible change
+writes `Visual Before/After: n/a: <why nothing visible changes>`.
+
+Helper for two FBX/.blend versions (headless Blender, one camera fitted to the union of both scenes or one
+named camera that must be identical in both; it refuses mismatched cameras, identical inputs and an output
+inside git):
+```bash
+uv run python tools/review/before_after.py --before <baseline.fbx> --after <changed.fbx> \
+  --label-before "<baseline version>" --label-after "<changed version>" \
+  --output "G:/Мой диск/AGR-evidence/<issue>-<topic>/<view>-v001" [--elevation 55] [--camera-mode named --camera-name <cam>]
+```
+It writes `before.png`, `after.png`, the labelled `before-after.png`, `before-after.json` and
+`SHA256SUMS.txt` to Drive, not git; the PR quotes the path and the hashes. Max UI changes use two
+screenshots of the same panel and state. These images are evidence, not the user's visual acceptance.
 
 ## Questions-only
 
@@ -257,6 +297,22 @@ Rules:
   question and every stop is shown isolated on the body (renders, three views, sizes) before a rule or a question.
 - Every subagent prompt and every `.claude/agents/*.md` body follows the [Prompt guide](#prompt-guide).
 
+### Sourced briefs and background time boxes (#1539)
+
+- List each binding constraint with its source: the user's message, regulation page/section,
+  or a `D<n>` decision. Label any extra constraint **Main-agent assumption**, not a user requirement;
+  revisit it first if it slows the work. For UCX, cite [D098] and [D134] rather than inventing
+  a fixed gap or a reverse-distance coverage gate.
+- Give every background production subagent a **Time box: 30 min** by default; state any
+  different duration explicitly in the brief. This adds no write permission to the read-only roles above.
+- Before the time box expires, the main agent reads the subagent's actual progress/output,
+  chooses **continue / simplify / stop**, and tells the user the measured progress and decision.
+  Continuing starts a new time box; another unattended interval is not allowed. A status request
+  without reading a reply is not a progress check. Stop/simplify when assumptions, not sourced
+  requirements, are consuming the budget.
+- Evidence: [`subagent-timebox`](../../evals/subagent-timebox/task.md) checks timestamped
+  background launches and correlated successful output reads (default 30 min).
+
 ### Prompt guide
 
 The single shared brief for any subagent prompt (named agents, general-purpose, Explore, fork). Do the one
@@ -290,6 +346,32 @@ polling. A poll that adds no output leaves the run open.
 Hooks (Claude Code): `tools/hooks/skill_gate.py` denies a DCC MCP call in the main session until its skill is
 loaded; `tools/hooks/usage_log.py` logs every subagent call, skill load and /command (details:
 `docs/agents/harness-inventory.md`, "Context rotation hooks").
+
+## Swarm coordination
+
+One coordinator owns `<absolute-build-root>/_swarm/writers.json` ([synthetic sample](examples/swarm/writers.json)).
+At each launch, register the returned agent id **before messaging or permitting writes**:
+`uv run python tools/hooks/swarm.py register --root "C:/job/build/v001" --part L2 --agent-id l2 --kind background`.
+Use `--kind workflow` for Workflow agents; never SendMessage them (it can spawn duplicate writers).
+If an id is unavailable until launch, launch paused/read-only, then register and release it. Do not launch a
+replacement while the previous owner is active. Mark stopped owners with `--status completed` or `failed`
+before replacement; this registry does not stop processes. One agent id owns one part.
+
+The helper emits a brief with `Part: L2`, one absolute `Output root: ...`, and the environment to bind in
+both the coordinator and worker runtimes: `AGR_SWARM_BUILD_ROOT` and `AGR_SWARM_AGENT_ID`.
+Claude Code subagents inherit the coordinator process environment: launch that session with these bindings
+(or configure settings `env`); exporting them in a shell subprocess cannot change an already-running session.
+SendMessage uses the real `{to, summary, message}` schema with an exact `Part: L2` line in `message`;
+legacy `recipient`/`content` and structured `part` remain supported, but conflicting headers are refused.
+The [PreToolUse guard](../../.claude/hooks/guard.py) reloads the registry for every swarm SendMessage and denies
+workflow, inactive, unknown, wrong-part or malformed routing. Neither environment binding set means ordinary
+non-swarm behavior; an agent binding without a valid absolute root still denies.
+File writes outside the resolved build root get a **swarm warning**, including drive-root scratch such as
+`C:/png_v003`; inside-root writes do not. Existing production-asset prompts still apply. Shell warnings are
+conservative lexical advisories, not a sandbox: use absolute literal destinations, never drive-root scratch,
+and review dynamically constructed paths. Missing root binding on a swarm writer also warns.
+A busy coordinator lock refuses updates; recover an orphan lock only after verifying its owner stopped.
+Memory `workflow-agent-sendmessage-duplicates` should point to this section, not duplicate the procedure.
 
 ## Rule of three (user 2026-10-14 [D075])
 
@@ -368,6 +450,19 @@ open-PR comparison but still runs `--fetch`, so with no network the check exits 
 `pre-commit:42-43` does). Two branches that allocate before either PR is open are caught by the later one's next
 commit or check: the later branch renumbers (`next`, then every `[D<n>]` reference), never the merged one. Run
 `check` once more after merging `origin/main` and before asking for review.
+
+### Merging PRs: generated maps and decision rows (#1558)
+
+The route/context maps in `docs/architecture/` (`*.excalidraw`, `*.svg`, `*-owners.md`) are generated and carry
+a hash of all YAML inputs, so every pair of PRs that regenerates them conflicts. `.gitattributes` marks them
+`merge=ours` (keep HEAD); the merged YAML is the only source and `route_map.py --check` is the guard. A rework
+(GitHub shows the PR CONFLICTING; GitHub ignores merge drivers) or an integration branch runs
+`python tools/architecture/regen_after_merge.py --merge origin/main` (or `--merge <pr branch>`): it installs the
+driver (`--install`, once per clone), merges, takes the HEAD maps, resolves `docs/decisions.md` with
+`python tools/decisions_merge.py` (union of D-rows, HEAD wins on the same id, id order), regenerates, runs
+`--check` and commits; after merges done by hand run it without `--merge`. Exit 1 leaves the merge for you:
+another file conflicts, or `decisions_merge.py` reported a same-id collision - the incoming row gets a new id
+(`decision_ids.py next --fetch`, then its `[D<n>]` references). Never resolve a map by hand.
 
 ## Harness inventory (#129)
 

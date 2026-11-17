@@ -69,9 +69,18 @@ def run(tmp_path, files, name=f"{STEM}.zip", profile=None):
     return report, {s.id: s for s in report.stages}
 
 
+def v001_without_manifest_ok(stage):
+    """#1423: a package without `<stem>.build.json` is not_run in V001 (never pass); everything else in V001 passes."""
+    other = [f for f in stage.findings if f.name != "build manifest"]
+    manifest = [f for f in stage.findings if f.name == "build manifest"]
+    return (stage.status == "not_run" and all(f.status == "pass" for f in other)
+            and [(f.status, f.data.get("code")) for f in manifest] == [("not_run", "manifest_missing")])
+
+
 def test_good_vpm_package_has_no_fail_but_is_not_passed(tmp_path):
     report, st = run(tmp_path, good_files())
-    assert {k: st[k].status for k in ("V001", "V007", "V011")} == {"V001": "pass", "V007": "pass", "V011": "pass"}
+    assert {k: st[k].status for k in ("V007", "V011")} == {"V007": "pass", "V011": "pass"}
+    assert v001_without_manifest_ok(st["V001"])
     assert st["V002"].status == "not_run"  # header passes, units need the scene
     assert st["V012"].status == "review"  # _001 index for free-standing buildings: conflict #20
     assert st["V010"].status == "not_run"  # UCX not checked here: never a silent pass
@@ -142,7 +151,7 @@ def test_unsafe_zip_path_fails(tmp_path):
 def test_npm_names_and_ground(tmp_path):
     files = {"0313_Test_K_1_01.fbx": fbx(), "0313_Test_K_1_Ground.fbx": fbx()}
     _, st = run(tmp_path, files, name="0313_Test_K_1.zip", profile="npm")
-    assert st["V012"].status == "pass" and st["V001"].status == "pass"
+    assert st["V012"].status == "pass" and v001_without_manifest_ok(st["V001"])
     assert st["V006"].status == "not_run"
     del files["0313_Test_K_1_Ground.fbx"]
     files["0313_Test_K_1_02.fbx"] = fbx()

@@ -36,8 +36,8 @@
     {
       "id": "oks-npm",
       "title": "OKS building, NPM",
-      "status": "todo",
-      "card": null,
+      "status": "ready",
+      "card": "routes/npm-oks.md",
       "reads": ["docs/domain/requirements-2026.md", "docs/domain/npm-vpm.md", "docs/domain/areas/body.md", "docs/domain/areas/windows.md", "docs/domain/areas/derivation.md", "docs/domain/areas/uv-atlas.md", "docs/procedure/TASK_TO_MODEL.md"]
     },
     {
@@ -50,8 +50,8 @@
     {
       "id": "ground-vpm",
       "title": "Ground + MAF + Flora + UCX, VPM",
-      "status": "todo",
-      "card": null,
+      "status": "ready",
+      "card": "docs/scenarios/ground-vpm.md",
       "reads": ["docs/domain/requirements-2026.md", "docs/domain/areas/ground-surface.md", "docs/domain/areas/groundel-maf.md", "docs/domain/areas/flora.md", "docs/domain/areas/ucx.md", ".agents/skills/model-ground/SKILL.md"]
     }
   ]

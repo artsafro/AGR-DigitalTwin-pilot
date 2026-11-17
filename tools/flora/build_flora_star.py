@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -27,6 +28,10 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
+_spec = importlib.util.spec_from_file_location("udimtile_core_flora", ROOT / "adapters/max/agr_tools/udimtile_core.py")
+assert _spec is not None and _spec.loader is not None
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 BLENDER = os.environ.get("BLENDER_EXE", "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe")
 PLANES = {"tree": 4, "bush": 3}
 SINK = 0.10
@@ -109,7 +114,7 @@ def star_mesh(kind, height_m, bbox, margin=MARGIN):
 def udim_offset(tile):
     if not isinstance(tile, int) or isinstance(tile, bool) or not 1001 <= tile <= 1100:
         raise StarError(f"UDIM tile must be an int in 1001..1100, got {tile!r}")
-    return (tile - 1001) % 10, (tile - 1001) // 10
+    return _udimtile.tile_origin(tile)
 
 
 def vpm_shell(npm, tile, thickness=THICKNESS):
@@ -251,8 +256,9 @@ def sha(path):
 
 
 def _blender(script_args):
-    cmd = [BLENDER, "--background", "--factory-startup", "--python-exit-code", "1",
-           "--python", str(Path(__file__).resolve()), "--"] + script_args
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
+
+    cmd = blender_command(Path(__file__).resolve(), script_args, executable=BLENDER)
     run = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=900)
     if run.returncode != 0:
         raise StarError(f"Blender failed ({run.returncode}): {run.stderr[-2000:] or run.stdout[-2000:]}")
@@ -407,7 +413,7 @@ def _bpy_build(meshes_json, out_dir):
             objs = [o for o in bpy.context.scene.objects if o.type == "MESH"]
             tris = sum(len(p.vertices) - 2 for o in objs for p in o.data.polygons)
             tile = m["vpm"].get("tile", 1001) if prof == "vpm" else 1001
-            du, dv = (tile - 1001) % 10, (tile - 1001) // 10
+            du, dv = udim_offset(tile)
             outside = 0
             for o in objs:
                 uvl = o.data.uv_layers.active

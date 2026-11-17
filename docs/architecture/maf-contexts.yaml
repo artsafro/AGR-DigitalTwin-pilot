@@ -1,0 +1,146 @@
+# Context map of the MAF (GroundEl) route, NPM + VPM, #1393 (follow-up of #1392, D293). Source of truth for
+# docs/architecture/maf-contexts.excalidraw / .svg. Same schema and generator as contexts.yaml (#1359).
+# Every stage context of maf-route.events.yaml is listed here with the same owner (route_map.route_coverage).
+# duplicates: described rows only (`at` = path:line, `match` = text on that line); the duplicate_guard allowlist
+# stays in contexts.yaml. A context without a `duplicates` key draws no duplicates box.
+# grid: "col/row" cell of the drawing (all contexts or none; columns >= 1 apart in a row).
+# Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
+title_ru: "Карта контекстов маршрута МАФ (GroundEl, НПМ + ВПМ) — D293"
+issue: "#1393"
+rules:
+  - id: described
+    owner: docs/architecture/contexts.yaml
+    ru: "дубли здесь описательные; охранный список duplicate_guard — в contexts.yaml"
+shared_kernel:
+  id: placement
+  ru: "Общее ядро: расстановка МАФ и Флоры (общая с Ground и Флорой)"
+  owner: src/dt_ai/placement/engine.py
+  owner_ru: "один экземпляр на точку СПОЗУ по высоте Ground, утопление 10 см (D095); low-poly и high-poly — в одни точки (D293)"
+  functions:
+    - name: place
+      contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом"
+    - name: bottom_face_verdict
+      contract: "нижняя грань в мире -> удалить / на проверку (D095, D096)"
+    - name: report_json
+      contract: "отчёт -> строгий JSON: тот же seed и вход -> те же байты"
+contexts:
+  - id: dcc
+    grid: "0/1"
+    ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"
+    area: docs/agents/CAPABILITIES.md
+    owner: src/dt_ai/core/blender_runner.py
+    owner_ru: "спецификация, DWG СПОЗУ, сцена библиотеки — только копии; агент работает там, где удобно (D293)"
+    functions:
+      - name: blender_executable
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
+      - name: run_blender
+        contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
+  - id: maf-library
+    grid: "1/1"
+    ru: "Библиотека МАФ: каталог 931, манифесты, A101"
+    area: docs/domain/areas/groundel-maf.md
+    owner: tools/library/maf_catalogue.py
+    owner_ru: "аудит сцены библиотеки (G:/Мой диск/AGR-assets/maf) -> каталог; не идентификация (T-MAF-1)"
+    functions:
+      - name: match_spec
+        contract: "строки спецификации, записи -> кандидаты только по габаритам"
+      - name: match_npm
+        contract: "записи, НПМ-набор .blend -> кандидаты НПМ"
+      - name: build_catalogue
+        contract: "план, элементы, сборка -> catalogue.json (каждая запись с путями файлов)"
+  - id: maf-checks
+    grid: "2.5/1"
+    ru: "Проверки МАФ: габариты, сглаживание, нижние грани"
+    area: docs/domain/areas/groundel-maf.md
+    owner: src/twinqa/maf_checks.py
+    owner_ru: "MAF-04 и MAF-20 на чтении FBX; неизмеренное — not_run, не pass"
+    functions:
+      - name: is_groundel
+        contract: "имя меша -> это GroundEl или нет"
+      - name: maf_findings
+        contract: "меши, роль, источник, порог сглаживания -> находки МАФ"
+  - id: maf-atlas
+    grid: "3.5/1"
+    ru: "ID материалов и атлас МАФ 512"
+    area: docs/domain/areas/uv-atlas.md
+    owner: tools/materials/atlas_maf.py
+    owner_ru: "общий список ID (v007, D240) -> атлас 512 RGB и UV JSON; ВПМ — UDIM после Ground (D210)"
+    functions:
+      - name: plan_atlas
+        contract: "список материалов -> ячейки атласа (сплошной цвет 64 / 128, узор крупнее)"
+      - name: build_atlas
+        contract: "список материалов, выход -> PNG атласа + UV JSON"
+  - id: npm-atlas
+    grid: "1.5/2"
+    ru: "НПМ МАФ на атласе"
+    area: docs/domain/areas/groundel-maf.md
+    owner: adapters/max/agr_tools/flora_atlas_max.py
+    owner_ru: "атлас МАФ (GroundEl) в AGR Tools; конвертация ВПМ → НПМ или параллельно (D293)"
+    functions:
+      - name: atlas_groundel
+        contract: "контекст Max, режим, узлы МАФ, превью -> атлас МАФ НПМ"
+  - id: ucx
+    grid: "3.5/2"
+    ru: "UCX: у МАФ нет, у Ground есть (только ВПМ)"
+    area: docs/domain/areas/ucx.md
+    owner: adapters/max/agr_tools/ucx10_core.py
+    owner_ru: "канон UCX (D225) — для поверхности Ground; МАФ не учитываются (MAF-22)"
+    functions:
+      - name: piece
+        contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
+      - name: plan
+        contract: "куски, опции -> зазор каждой соседней пары каждого семейства UCX"
+  - id: package
+    grid: "1.5/3"
+    ru: "Экспорт и пакеты (МАФ в Ground FBX)"
+    area: docs/domain/areas/package.md
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    functions:
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
+  - id: validation
+    grid: "0.5/3"
+    ru: "Проверки пакета и витрина для Артёма"
+    area: docs/domain/areas/package.md
+    owner: tools/qa/validate_package.py
+    owner_ru: "проверка пакета по регламенту (agr validate)"
+    functions:
+      - name: validate_vpm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ"
+      - name: validate_npm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+relations:
+  - from: dcc
+    to: maf-library
+    ru: "спецификация и точки"
+  - from: maf-library
+    to: maf-checks
+    ru: "кандидат МАФ"
+  - from: maf-checks
+    to: maf-atlas
+    ru: "модель в допуске"
+  - from: maf-library
+    to: placement
+    ru: "модель МАФ"
+  - from: placement
+    to: npm-atlas
+    ru: "точки МАФ"
+  - from: maf-atlas
+    to: npm-atlas
+    ru: "ID / атлас 512"
+  - from: npm-atlas
+    to: package
+    ru: "НПМ на атласе"
+  - from: ucx
+    to: package
+    ru: "коллизии Ground"
+  - from: package
+    to: validation
+    ru: "ZIP / FBX сдачи"

@@ -1,0 +1,1094 @@
+{
+ "schema": "agr.assets.intake/1",
+ "project": "PPT4",
+ "tolerance": 0.1,
+ "counts": {
+  "variant": 2,
+  "not_identified": 31
+ },
+ "rows": [
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/01/1",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "01",
+   "name": "СКАМЕЙКА ГЛОРИЯ",
+   "article": "10020",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    1800,
+    755,
+    850
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SkameykaGloriya_10020",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "ITOG:ITOG_e01_g016",
+     "ITOG:ITOG_e01_g019"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "collapsed NPM GroundEl: bench with back, 128 + 1 elements; low-poly only (124 tris), no High source",
+   "scene": [
+    {
+     "id": "ITOG:ITOG_e01_g016",
+     "name": null,
+     "count": 128,
+     "size_mm": {
+      "x": 1507,
+      "y": 675,
+      "z": 834
+     },
+     "tris": 124,
+     "scene": "ITOG",
+     "dims": {
+      "ok": false,
+      "worst": 0.163,
+      "pairs": [
+       [
+        1800,
+        1507
+       ],
+       [
+        755,
+        675
+       ],
+       [
+        850,
+        834
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ITOG:ITOG_e01_g019",
+     "name": null,
+     "count": 1,
+     "size_mm": {
+      "x": 1500,
+      "y": 660,
+      "z": 827
+     },
+     "tris": 100,
+     "scene": "ITOG",
+     "dims": {
+      "ok": false,
+      "worst": 0.167,
+      "pairs": [
+       [
+        1800,
+        1500
+       ],
+       [
+        755,
+        660
+       ],
+       [
+        850,
+        827
+       ]
+      ]
+     }
+    }
+   ],
+   "scene_count": 129,
+   "status": "variant",
+   "why": "scene model off the schedule size by 16 % (not rescaled): ITOG:ITOG_e01_g016, ITOG:ITOG_e01_g019"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/02/2",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "02",
+   "name": "СИДЕНЬЕ ГЛОРИЯ",
+   "article": "10022",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    700,
+    755,
+    850
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SideneGloriya_10022",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/03/3",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "03",
+   "name": "УРНА БОКС",
+   "article": "9007",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    300,
+    300,
+    800
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_UrnaBoks_9007",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/05/4",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "05",
+   "name": "ВЕЛОПАРКОВКА ВОЗДУХ",
+   "article": "8010",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    410,
+    130,
+    780
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_VeloparkovkaVozdukh_8010",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/05/5",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "05",
+   "name": "ПРИСТВОЛЬНАЯ РЕШЕТКА АЛЕГРА",
+   "article": "6001-1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    1500,
+    1500,
+    null
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_PristvolnayaReshetkaAlegra_6001-1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [
+    {
+     "id": "ITOG:ITOG_e01_g035",
+     "count": 6,
+     "size_mm": {
+      "x": 1657,
+      "y": 1615,
+      "z": 30
+     },
+     "worst": 0.105
+    },
+    {
+     "id": "ITOG:ITOG_e01_g003",
+     "count": 1,
+     "size_mm": {
+      "x": 1806,
+      "y": 1788,
+      "z": 2750
+     },
+     "worst": 0.204
+    },
+    {
+     "id": "ITOG:ITOG_e01_g036",
+     "count": 3,
+     "size_mm": {
+      "x": 1809,
+      "y": 1480,
+      "z": 30
+     },
+     "worst": 0.206
+    }
+   ],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/None/6",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": null,
+   "name": "ПЕРГОЛА «ОРИОН» С ПОДИУМОМ L6200",
+   "article": "40171.1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    6200,
+    3000,
+    2800
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_PergolaOrionSPodiumomL6200_40171.1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/25/7",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "25",
+   "name": "ДВОЙНЫЕ КАЧЕЛИ",
+   "article": "18244",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    5095,
+    1000,
+    1900
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_DvoynyeKacheli_18244",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/21/8",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "21",
+   "name": "ИГРОВАЯ БАШНЯ «ПИРАМИДА» S, 5+ ЛЕТ",
+   "article": "18621",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    8000,
+    2560,
+    7200
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_IgrovayaBashnyaPiramidaS5Let_18621",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/22/9",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "22",
+   "name": "ДЕТСКАЯ ЛАЗАЛКА ТИП 20, 5+ ЛЕТ",
+   "article": "18434",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    7190,
+    5330,
+    2620
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_DetskayaLazalkaTip205Let_18434",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/23/10",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "23",
+   "name": "КАЧЕЛИ ЖУРАВЛЬ, 3+ ЛЕТ",
+   "article": "18203",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    4555,
+    1520,
+    3145
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_KacheliZhuravl3Let_18203",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/09/11",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "09",
+   "name": "СТОЛ ЛАНДАУ",
+   "article": "13010",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    2280,
+    2280,
+    750
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_StolLandau_13010",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/10/12",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "10",
+   "name": "ПЕРГОЛА КРУГ",
+   "article": "40080",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    3570,
+    3570,
+    3400
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_PergolaKrug_40080",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/14/13",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "14",
+   "name": "СКАМЬЯ ПЕНЕК",
+   "article": "10045-5",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    600,
+    600,
+    420
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SkamyaPenek_10045-5",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [
+    {
+     "id": "ITOG:ITOG_e01_g042",
+     "count": 14,
+     "size_mm": {
+      "x": 511,
+      "y": 509,
+      "z": 499
+     },
+     "worst": 0.188
+    }
+   ],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/14/14",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "14",
+   "name": "СКАМЬЯ ПЕНЕК",
+   "article": "10045-6",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    900,
+    900,
+    420
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SkamyaPenek_10045-6",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/13/15",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "13",
+   "name": "СКАМЬЯ ДУГА РАДИУСНАЯ",
+   "article": "40002",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    4500,
+    4500,
+    717
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SkamyaDugaRadiusnaya_40002",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/22/16",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "22",
+   "name": "ДЕТСКАЯ ЛАЗАЛКА ТИП 20, 5+ ЛЕТ",
+   "article": "18434",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    7190,
+    5330,
+    2620
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_DetskayaLazalkaTip205Let_18434",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/26/17",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "26",
+   "name": "ПЛАТФОРМА «ОСТРОВКИ» С ГОРКОЙ, 1+ ЛЕТ",
+   "article": "18046",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    3485,
+    2165,
+    785
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_PlatformaOstrovkiSGorkoy1Let_18046",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/25/18",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "25",
+   "name": "ДВОЙНЫЕ КАЧЕЛИ",
+   "article": "18244",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    5095,
+    1000,
+    1900
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_DvoynyeKacheli_18244",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/28/19",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "28",
+   "name": "КАЧАЛКА-БАЛАНСИР ТИП 2, 3+ ЛЕТ",
+   "article": "18953",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    3090,
+    390,
+    1035
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_KachalkaBalansirTip23Let_18953",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/19/20",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "19",
+   "name": "ПЕСОЧНИЦА С СИДЕНЬЯМИ, ВОЗРАСТ 1+",
+   "article": "18000",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    2000,
+    2000,
+    700
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_PesochnitsaSSidenyamiVozrast1_18000",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/31/21",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "31",
+   "name": "СПОРТИВНЫЙ КОМПЛЕКС «АНТЕЙ»",
+   "article": "23019.1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    7495,
+    4480,
+    2460
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SportivnyyKompleksAntey_23019.1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/27/22",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "27",
+   "name": "БРУСЬЯ ДВОЙНЫЕ РАЗНОУРОВНЕВЫЕ",
+   "article": "23048.1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    3220,
+    710,
+    1550
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_BrusyaDvoynyeRaznourovnevye_23048.1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/28/23",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "28",
+   "name": "СПОРТИВНЫЙ КОМПЛЕКС «АТЛАНТ»",
+   "article": "23015.1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    4185,
+    4010,
+    2460
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SportivnyyKompleksAtlant_23015.1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/30/24",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "30",
+   "name": "РУКОХОД ДВОЙНОЙ МВРК-23050",
+   "article": "23050.1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    3840,
+    1200,
+    2660
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_RukokhodDvoynoyMvrk23050_23050.1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/31/25",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "31",
+   "name": "АДАНАТ, СПОРТИВНЫЙ КОМПЛЕКС «АПОЛЛОН ЭКСТРА»",
+   "article": "23080",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    7040,
+    4820,
+    2700
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_AdanatSportivnyyKompleksApollonEkstra_23080",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/31/26",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "31",
+   "name": "ПОЛОСА ПРЕПЯТСТВИЙ РАЗНОУРОВНЕВАЯ",
+   "article": "23043.1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    5740,
+    1590,
+    1160
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_PolosaPrepyatstviyRaznourovnevaya_23043.1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/30/27",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": "30",
+   "name": "CПОРТИВНЫЙ КОМПЛЕКС C РУКОХОДОМ И БРУСЬЯМИ",
+   "article": "23040.1",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    5000,
+    3060,
+    2460
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_CportivnyyKompleksCRukokhodomIBrusyami_23040.1",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "size_candidates": [
+    {
+     "id": "ITOG:ITOG_e01_g009",
+     "count": 9,
+     "size_mm": {
+      "x": 4115,
+      "y": 2499,
+      "z": 2143
+     },
+     "worst": 0.183
+    },
+    {
+     "id": "ITOG:ITOG_e01_g011",
+     "count": 1,
+     "size_mm": {
+      "x": 4097,
+      "y": 2501,
+      "z": 2143
+     },
+     "worst": 0.183
+    }
+   ],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТ/None/28",
+   "kind": "maf",
+   "table": "ВЕДОМОСТЬ МАЛЫХ АРХИТЕКТУРНЫХ ФОРМ ВНЕШНИХ ПРОСТРАНСТВ",
+   "row": null,
+   "name": "ТЕННИСНЫЙ СТОЛ «ПАРТИЯ» АНТИВАНДАЛЬНЫЙ",
+   "article": "3003-3",
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    2740,
+    1520,
+    760
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_TennisnyyStolPartiyaAntivandalnyy_3003-3",
+   "library_dims": [],
+   "scene_versions": {
+    "high": [
+     "ITOG:ITOG_e01_g020"
+    ]
+   },
+   "scene_join": "map",
+   "review_note": "collapsed NPM GroundEl: table-tennis table x9; low-poly only (86 tris)",
+   "scene": [
+    {
+     "id": "ITOG:ITOG_e01_g020",
+     "name": null,
+     "count": 9,
+     "size_mm": {
+      "x": 2693,
+      "y": 1456,
+      "z": 903
+     },
+     "tris": 86,
+     "scene": "ITOG",
+     "dims": {
+      "ok": false,
+      "worst": 0.188,
+      "pairs": [
+       [
+        2740,
+        2693
+       ],
+       [
+        1520,
+        1456
+       ],
+       [
+        760,
+        903
+       ]
+      ]
+     }
+    }
+   ],
+   "scene_count": 9,
+   "status": "variant",
+   "why": "scene model off the schedule size by 19 % (not rescaled): ITOG:ITOG_e01_g020"
+  },
+  {
+   "key": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ/None/29",
+   "kind": "maf",
+   "table": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ",
+   "row": null,
+   "name": "СВЕТИЛЬНИК СВЕТОДИОДНЫЙ SAROS TV 40/1 27K ТВЕРЬ/ СВЕТИЛЬНИК LL121, Н = 4 М",
+   "article": null,
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    null,
+    null,
+    4000
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SvetilnikSvetodiodnyySarosTv40_0000",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ/None/30",
+   "kind": "maf",
+   "table": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ",
+   "row": null,
+   "name": "СВЕТИЛЬНИК СВЕТОДИОДНЫЙ SAROS TV 40/1 27K ТВЕРЬ/ СВЕТИЛЬНИК LL121, Н = 4 М",
+   "article": null,
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    null,
+    null,
+    4000
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SvetilnikSvetodiodnyySarosTv40_0000",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ/None/31",
+   "kind": "maf",
+   "table": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ",
+   "row": null,
+   "name": "ОСВЕТИТЕЛЬНАЯ СИСТЕМА ТВЕРЬ TV60/2 МЕТАЛЛИЧЕСКАЯ ОПОРА УЛИЧНОГО ОСВЕЩЕНИЯ Н = 4 М И Н=6М",
+   "article": null,
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    null,
+    null,
+    4000
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_OsvetitelnayaSistemaTverTv60_0000",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ/None/32",
+   "kind": "maf",
+   "table": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ",
+   "row": null,
+   "name": "SAROS УЛИЧНЫЙ СВЕТИЛЬНИК ЭЛЬФ IG S30 МЕТАЛЛИЧЕСКАЯ ОПОРА УЛИЧНОГО ОСВЕЩЕНИЯ, Н = 4 М",
+   "article": null,
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    null,
+    null,
+    4000
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SarosUlichnyySvetilnikElfIgS30MetallicheskayaOporaUlichnogoO_0000",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  },
+  {
+   "key": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ/None/33",
+   "kind": "maf",
+   "table": "ЭЛЕМЕНТЫ ОСВЕЩЕНИЯ",
+   "row": null,
+   "name": "SAROS TOT 3 27K ТОТЕМ/ МЕТАЛЛИЧЕСКАЯ ОПОРА УЛИЧНОГО ОСВЕЩЕНИЯ, Н = 0,71 М",
+   "article": null,
+   "maker": null,
+   "qty": null,
+   "dims_mm": [
+    null,
+    null,
+    710
+   ],
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "proposed_name": "NoName_SarosTot327kTotem_0000",
+   "library_dims": [],
+   "scene_join": "none",
+   "scene_candidates": [],
+   "scene": [],
+   "scene_count": null,
+   "status": "not_identified",
+   "why": "no library model, no scene kind"
+  }
+ ]
+}

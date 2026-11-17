@@ -10,6 +10,7 @@ import importlib.util
 import json
 import os
 import struct
+import subprocess
 import sys
 import zipfile
 from io import BytesIO
@@ -183,9 +184,10 @@ def test_export_zip_acceptance(tmp_path):
     assert r['status'] == 'pass', r['objects']
     assert r['plan']['done'] == ['0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip']
     run = Path(r['plan']['run_folder'])
-    assert run.parent == d and run.name == 'Сборка_20261105_120000' and r['plan']['marker'] == 'ГОТОВО.txt'
+    assert run.parent == d and run.name == 'Сборка_20261105_120000' and r['plan']['marker'] == pc.MARK_FAIL
     assert sorted(set(os.listdir(d)) - set(before)) == [run.name]  # the delivery folder gets only the run folder
-    assert sorted(os.listdir(run)) == ['0123_X.zip', 'SM_X.zip', 'SM_X_Ground.zip', 'report.json', 'ГОТОВО.txt']
+    assert sorted(os.listdir(run)) == sorted(
+        r['plan']['done'] + [n + '.validation.json' for n in r['plan']['done']] + ['report.json', pc.MARK_FAIL])
     assert json.loads((run / 'report.json').read_text(encoding='utf-8')) == r
     with zipfile.ZipFile(run / 'SM_X.zip') as z:
         names = z.namelist()
@@ -197,7 +199,9 @@ def test_export_zip_acceptance(tmp_path):
         assert sorted(z.namelist()) == ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx']
     assert {n: _sha(d / n) for n in before} == before  # decoys and sources untouched
     for table in r['plan']['reports']:
-        assert _stage(table, 'V001')['status'] == 'pass', table
+        v001 = _stage(table, 'V001')  # #1423: no build manifest beside these ZIPs -> not_run, nothing else open
+        assert v001['status'] == 'not_run' and v001['non_pass'] and all(
+            f.startswith('not_run: build manifest:') for f in v001['non_pass']), table
         assert _stage(table, 'V012')['status'] != 'fail', table  # VPM OKS name is review (conflict #20)
 
     # a second run never touches the first: a new run folder, the earlier one is reported as a folder, not packed
@@ -208,6 +212,241 @@ def test_export_zip_acceptance(tmp_path):
     r2 = pc.zip_apply(ec, p2, _validate, stamp='20261105_120000')
     assert Path(r2['plan']['run_folder']).name == 'Сборка_20261105_120000_2'
     assert {p_.name: _sha(p_) for p_ in run.iterdir()} == stamp
+
+
+def _complete_validator_table(table, target):
+    """Synthetic complete report; literal profile inventory independent of package_core."""
+    import copy
+    profile = 'npm' if Path(target).name.startswith('0123_') else 'vpm'
+    numbers = ([1, 2, 3, 4, 5, 6, 12, 14, 15, 17] if profile == 'npm'
+               else [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17])
+    overrides = {s['id']: s for s in table['stages']}
+    stages = []
+    for number in numbers:
+        sid = 'V{:03d}'.format(number)
+        stage = copy.deepcopy(overrides.get(sid, {
+            'id': sid, 'check': sid, 'gate': 'blocking', 'status': 'pass'}))
+        stage['findings'] = [
+            {'status': stage['status'], 'name': 'synthetic', 'observed': code, 'data': {'code': code}}
+            for code in stage.get('codes', []) + stage.get('open_codes', [])]
+        stages.append(stage)
+    full = {'profile': profile, 'target': str(target), 'exit_code': table['exit_code'],
+            'stages': stages, 'notes': ['Synthetic marker-policy fixture, not measured validation.']}
+    result = pc.stage_table(full)
+    result['validation_report'] = full
+    return result
+
+
+@pytest.mark.parametrize('defect', ['missing_report', 'partial_stages'])
+def test_ready_requires_full_report_and_stage_inventory(tmp_path, defect):
+    d = acceptance_folder(tmp_path)
+
+    def validator(target):
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        if defect == 'missing_report':
+            del table['validation_report']
+        else:
+            table['exit_code'] = 2
+            table['stages'] = [{'id': 'V015', 'check': 'review', 'gate': 'manual_review',
+                                'status': 'review', 'non_pass': [], 'codes': [], 'open_codes': []}]
+        return table
+
+    try:
+        pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
+    except ValueError:
+        pass
+    (run,) = d.glob(pc.RUN_PREFIX + '*')
+    assert not (run / pc.MARK_OK).exists()
+    text = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert '0123_X.zip' in text
+    assert ('validation_report' if defect == 'missing_report' else 'V001') in text
+
+
+@pytest.mark.parametrize('profile', ['npm', 'vpm'])
+@pytest.mark.parametrize('number', range(1, 18))
+def test_every_missing_or_wrong_profile_stage_refuses_ready(tmp_path, profile, number):
+    d = acceptance_folder(tmp_path)
+    # Select one profile so both independent profile inventories are attacked.
+    for path in list(d.iterdir()):
+        if path.name.startswith('0123_') != (profile == 'npm'):
+            path.unlink()
+    before = {path.name: path.read_bytes() for path in d.iterdir()}
+    sid = 'V{:03d}'.format(number)
+
+    def validator(target):
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        ids = [stage['id'] for stage in table['stages']]
+        if sid in ids:
+            table['stages'] = [stage for stage in table['stages'] if stage['id'] != sid]
+        else:
+            table['stages'].append({'id': sid, 'check': sid, 'gate': 'blocking', 'status': 'pass'})
+        return table
+
+    with pytest.raises(ValueError, match='stage inventory'):
+        pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
+    (run,) = d.glob(pc.RUN_PREFIX + '*')
+    assert not (run / pc.MARK_OK).exists()
+    text = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert 'stage inventory' in text
+    assert ('0123_X.zip' if profile == 'npm' else 'SM_X.zip') in text
+    assert {path.name: path.read_bytes() for path in d.iterdir() if path.is_file()} == before
+
+
+@pytest.mark.parametrize('defect', ['duplicate', 'unknown', 'wrong_report_profile', 'report_stages',
+                                   'report_status', 'empty_report', 'unwritable_report'])
+def test_validator_evidence_counterexamples_fail_closed(tmp_path, monkeypatch, defect):
+    import builtins
+    import copy
+    d = acceptance_folder(tmp_path)
+    original_open = builtins.open
+
+    def guarded_open(path, *args, **kwargs):
+        if str(path).endswith('.validation.json'):
+            raise OSError('synthetic sidecar write failure')
+        return original_open(path, *args, **kwargs)
+
+    if defect == 'unwritable_report':
+        monkeypatch.setattr(builtins, 'open', guarded_open)
+
+    def validator(target):
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        if defect == 'duplicate':
+            table['stages'].append(copy.deepcopy(table['stages'][0]))
+        elif defect == 'unknown':
+            table['stages'][0]['id'] = 'V999'
+        elif defect == 'wrong_report_profile':
+            table['validation_report']['profile'] = 'vpm'
+        elif defect == 'report_stages':
+            table['validation_report']['stages'].pop()
+        elif defect == 'report_status':
+            table['validation_report']['stages'][0]['status'] = 'fail'
+        elif defect == 'empty_report':
+            table['validation_report'] = {}
+        return table
+
+    with pytest.raises((ValueError, OSError)):
+        pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
+    (run,) = d.glob(pc.RUN_PREFIX + '*')
+    assert not (run / pc.MARK_OK).exists()
+    assert (run / pc.MARK_FAIL).exists()
+
+
+def test_synthetic_profile_inventories_match_locked_validator():
+    from twinqa.profiles import expected_stages, read_snapshot, snapshot_validator
+    spec = snapshot_validator(read_snapshot())
+    for profile, target in [('npm', '0123_X.zip'), ('vpm', 'SM_X.zip')]:
+        table = _complete_validator_table({'exit_code': 0, 'stages': []}, target)
+        assert [stage['id'] for stage in table['stages']] == [sid for sid, _, _ in expected_stages(spec, profile)]
+
+
+def test_exit_two_never_writes_ready_and_names_open_codes(tmp_path):
+    d = acceptance_folder(tmp_path)
+    table = {'exit_code': 2, 'stages': [
+        {'id': 'V001', 'check': 'manifest', 'gate': 'blocking', 'status': 'not_run',
+         'non_pass': ['not_run: build manifest: missing'], 'codes': [], 'open_codes': ['manifest_missing']} ]}
+    r = pc.zip_apply(ec, pc.zip_preview(ec, d), lambda target: _complete_validator_table(table, target))
+    run = Path(r['plan']['run_folder'])
+    assert not (run / pc.MARK_OK).exists()
+    assert 'manifest_missing' in (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+
+
+@pytest.mark.parametrize('exit_code', [0, 2])
+def test_manual_reviews_only_ready_with_explicit_pending_line(tmp_path, exit_code):
+    table = {'exit_code': exit_code, 'stages': [
+        {'id': sid, 'check': 'review', 'gate': 'manual_review', 'status': 'review',
+         'non_pass': ['review: acceptance: pending'], 'codes': [], 'open_codes': []}
+        for sid in ('V015', 'V016', 'V017')]}
+    r = pc.zip_apply(ec, pc.zip_preview(ec, acceptance_folder(tmp_path)), lambda target: _complete_validator_table(table, target))
+    text = (Path(r['plan']['run_folder']) / pc.MARK_OK).read_text(encoding='utf-8')
+    assert 'ждут ручной приёмки Артёма: V015, V016, V017' in text
+
+
+def test_full_validator_report_next_to_every_zip(tmp_path):
+    from twinqa.report import read_stored_report
+    r = pc.zip_apply(ec, pc.zip_preview(ec, acceptance_folder(tmp_path)), _validate)
+    run = Path(r['plan']['run_folder'])
+    for name in r['plan']['done']:
+        stored = read_stored_report((run / (name + '.validation.json')).read_bytes())
+        assert stored['target_sha256'] == _sha(run / name)
+        assert stored['target'] == str(run / name)
+        assert 'manifest_missing' in _stage(pc.stage_table(stored), 'V001')['open_codes']
+    source = run / r['plan']['done'][0]
+    copy = tmp_path / 'modified-copy.zip'
+    copy.write_bytes(source.read_bytes() + b'modified copy')
+    output = tmp_path / 'rechecked.json'
+    proc = subprocess.run([PY, str(ROOT / 'tools/qa/validate_package.py'), '--recheck',
+                           str(source) + '.validation.json', '--recheck-target', str(copy),
+                           '--output', str(output), '--json'], capture_output=True)
+    assert proc.returncode == 4, proc.stderr.decode('utf-8', errors='replace')
+    checked = json.loads(output.read_bytes())
+    assert checked['target'] == str(copy) and checked['status'] == 'evidence_missing'
+    assert checked['target_sha256_now'] == _sha(copy) != checked['target_sha256_then']
+
+
+def test_no_validator_writes_error(tmp_path):
+    r = pc.zip_apply(ec, pc.zip_preview(ec, acceptance_folder(tmp_path)))
+    run = Path(r['plan']['run_folder'])
+    assert not (run / pc.MARK_OK).exists()
+    assert 'validate_fn=None' in (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+
+
+def test_second_zip_exit_two_named_in_error(tmp_path):
+    d = acceptance_folder(tmp_path)
+    for f in d.glob('SM_X_Ground*'):
+        f.unlink()
+    for f in d.glob('T_X_Ground*'):
+        f.unlink()
+    calls = []
+
+    def validator(target):
+        calls.append(Path(target).name)
+        status = 'pass' if len(calls) == 1 else 'not_run'
+        return _complete_validator_table({'exit_code': 0 if status == 'pass' else 2, 'stages': [
+            {'id': 'V001', 'check': 'manifest', 'gate': 'blocking', 'status': status,
+             'non_pass': [], 'codes': [], 'open_codes': ['manifest_missing'] if status == 'not_run' else []}]}, target)
+
+    r = pc.zip_apply(ec, pc.zip_preview(ec, d), validator)
+    assert calls == ['0123_X.zip', 'SM_X.zip']
+    run = Path(r['plan']['run_folder'])
+    assert not (run / pc.MARK_OK).exists()
+    text = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert 'SM_X.zip: validator exit 2 (V001 [manifest_missing])' in text
+
+
+@pytest.mark.parametrize('exit_code', [0, 1, 2])
+@pytest.mark.parametrize('auto_status', ['pass', 'not_run', 'review', 'fail', 'unsupported'])
+@pytest.mark.parametrize('manual_status', ['pass', 'not_run', 'review', 'fail'])
+def test_marker_generated_status_matrix(tmp_path, exit_code, auto_status, manual_status):
+    # Independent 60-case oracle: fail/unknown/automatic-open never becomes ready.
+    table = {'exit_code': exit_code, 'stages': [
+        {'id': sid, 'check': sid, 'gate': gate, 'status': status,
+         'non_pass': [], 'codes': ['bad'] if status == 'fail' else [],
+         'open_codes': ['pending'] if status in ('review', 'not_run') else []}
+        for sid, gate, status in [('V001', 'blocking', auto_status), ('V015', 'manual_review', manual_status)]]}
+    d = acceptance_folder(tmp_path)
+    before = {f.name: f.read_bytes() for f in d.iterdir()}
+    r = pc.zip_apply(ec, pc.zip_preview(ec, d), lambda target: _complete_validator_table(table, target))
+    run = Path(r['plan']['run_folder'])
+    expected = (auto_status == 'pass' and manual_status != 'fail' and
+                (exit_code == 0 or (exit_code == 2 and manual_status in ('review', 'not_run'))))
+    assert (run / pc.MARK_OK).exists() is expected
+    assert (run / pc.MARK_FAIL).exists() is not expected
+    assert {f.name: f.read_bytes() for f in d.iterdir() if f.is_file()} == before
+
+
+@pytest.mark.parametrize('table', [None, {}, {'exit_code': 0, 'stages': []},
+    {'exit_code': False, 'stages': [{'id': 'V001', 'status': 'pass'}]},
+    {'exit_code': float('nan'), 'stages': []}, {'exit_code': float('inf'), 'stages': []},
+    {'exit_code': 0, 'stages': [{'id': 'V001', 'status': 'pass'}]}])
+def test_invalid_validator_result_cannot_write_ready(tmp_path, table):
+    d = acceptance_folder(tmp_path)
+    try:
+        pc.zip_apply(ec, pc.zip_preview(ec, d), lambda _: table)
+    except (ValueError, KeyError, TypeError, AttributeError):
+        pass
+    (run,) = d.glob(pc.RUN_PREFIX + '*')
+    assert not (run / pc.MARK_OK).exists()
+    assert (run / pc.MARK_FAIL).exists()
 
 
 def test_stale_preview_writes_nothing(tmp_path):
@@ -321,7 +560,7 @@ def test_run_folder_goes_to_options_out(tmp_path):
     out.mkdir()
     p = pc.zip_preview(ec, d, options={'out': str(out)})
     r = pc.zip_apply(ec, p, _validate)
-    assert Path(r['plan']['run_folder']).parent == out and (Path(r['plan']['run_folder']) / 'ГОТОВО.txt').is_file()
+    assert Path(r['plan']['run_folder']).parent == out and (Path(r['plan']['run_folder']) / pc.MARK_FAIL).is_file()
     with pytest.raises(ValueError, match='no such output folder'):
         pc.zip_apply(ec, pc.zip_preview(ec, d, options={'out': str(tmp_path / 'nope')}), _validate)
 

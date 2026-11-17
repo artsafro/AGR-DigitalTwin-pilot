@@ -1,0 +1,1696 @@
+{
+ "type": "excalidraw",
+ "version": 2,
+ "source": "tools/architecture/route_map.py",
+ "elements": [
+  {
+   "id": "e599db18b60debb6",
+   "type": "text",
+   "x": 40,
+   "y": 0,
+   "width": 1600,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 604753526,
+   "version": 1,
+   "versionNonce": 16931522,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Карта контекстов маршрута «Пакет и сдача» (НПМ + ВПМ) — #1361, D293 (#1393)",
+   "fontSize": 28,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "top",
+   "containerId": null,
+   "originalText": "Карта контекстов маршрута «Пакет и сдача» (НПМ + ВПМ) — #1361, D293 (#1393)",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e59dec71b541eaf6",
+   "type": "text",
+   "x": 40,
+   "y": 44,
+   "width": 2000,
+   "height": 20.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1952547507,
+   "version": 1,
+   "versionNonce": 1443549082,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
+   "fontSize": 16,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "top",
+   "containerId": null,
+   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ec4722dfacc2a9f1",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 110,
+   "width": 470,
+   "height": 195.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffec99",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1602778836,
+   "version": 1,
+   "versionNonce": 517655977,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ebb459f0ead69cd4"
+    },
+    {
+     "type": "arrow",
+     "id": "e73914b9517f6776"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ebb459f0ead69cd4",
+   "type": "text",
+   "x": 963.0,
+   "y": 120.0,
+   "width": 454,
+   "height": 175.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 680017796,
+   "version": 1,
+   "versionNonce": 1801689533,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Общее ядро: один писатель ZIP для AGR Tools и обоих\nупаковщиков\nВладелец: adapters/max/agr_tools/package_core.py\nплан архивов, отказ при дублях / пустых членах /\nнесовпадении снимка; чужие файлы не удаляет (#1361)\n\nzip_plan: папка, адрес, пределы -> архивы для записи +\nпропуски с причинами; файлы не трогает\nqa_package: пакет, профиль, сцена -> отчёт только для\nчтения: проваленные стадии по файлам",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ec4722dfacc2a9f1",
+   "originalText": "Общее ядро: один писатель ZIP для AGR Tools и обоих\nупаковщиков\nВладелец: adapters/max/agr_tools/package_core.py\nплан архивов, отказ при дублях / пустых членах /\nнесовпадении снимка; чужие файлы не удаляет (#1361)\n\nzip_plan: папка, адрес, пределы -> архивы для записи +\nпропуски с причинами; файлы не трогает\nqa_package: пакет, профиль, сцена -> отчёт только для\nчтения: проваленные стадии по файлам",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e8b8779b8f489e86",
+   "type": "rectangle",
+   "x": 40.0,
+   "y": 365.0,
+   "width": 470,
+   "height": 195.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1913252014,
+   "version": 1,
+   "versionNonce": 704684898,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ed4e9eac2280ec03"
+    },
+    {
+     "type": "arrow",
+     "id": "ed727262099e1de3"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ed4e9eac2280ec03",
+   "type": "text",
+   "x": 48.0,
+   "y": 375.0,
+   "width": 454,
+   "height": 175.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1575431063,
+   "version": 1,
+   "versionNonce": 898394151,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Связь с DCC и приёмка (сцена в 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nэкспорт из Max или Blender (D212); приёмка — сцена Max\nQUAD + путь (D270)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e8b8779b8f489e86",
+   "originalText": "Связь с DCC и приёмка (сцена в 3ds Max)\nВладелец: src/dt_ai/core/blender_runner.py\nэкспорт из Max или Blender (D212); приёмка — сцена Max\nQUAD + путь (D270)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e53a9f03f3c1313e",
+   "type": "rectangle",
+   "x": 650.0,
+   "y": 365.0,
+   "width": 470,
+   "height": 177.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1806332662,
+   "version": 1,
+   "versionNonce": 1062606757,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "eafe18962710b500"
+    },
+    {
+     "type": "arrow",
+     "id": "ed727262099e1de3"
+    },
+    {
+     "type": "arrow",
+     "id": "efea2e595053190e"
+    },
+    {
+     "type": "arrow",
+     "id": "e106f1df8b9be446"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "eafe18962710b500",
+   "type": "text",
+   "x": 658.0,
+   "y": 375.0,
+   "width": 454,
+   "height": 157.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1398277905,
+   "version": 1,
+   "versionNonce": 587993392,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Экспорт FBX с чтением назад\nВладелец: adapters/max/agr_tools/export_core.py\nпроверенный экспорт Max: FBX и отчёт пишутся вместе или\nне пишутся; рядом — export_meta\n\ncommit: сцена, цель, источник, превью, чтение -> FBX +\nотчёт JSON или отказ до записи\nreadback: данные FBX -> объекты, треугольники, материалы,\nмасштаб единиц",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e53a9f03f3c1313e",
+   "originalText": "Экспорт FBX с чтением назад\nВладелец: adapters/max/agr_tools/export_core.py\nпроверенный экспорт Max: FBX и отчёт пишутся вместе или\nне пишутся; рядом — export_meta\n\ncommit: сцена, цель, источник, превью, чтение -> FBX +\nотчёт JSON или отказ до записи\nreadback: данные FBX -> объекты, треугольники, материалы,\nмасштаб единиц",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ec04ec9b6d6e8bf0",
+   "type": "rectangle",
+   "x": 1565.0,
+   "y": 365.0,
+   "width": 470,
+   "height": 212.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 245997102,
+   "version": 1,
+   "versionNonce": 1197219213,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e407a7c693817eec"
+    },
+    {
+     "type": "arrow",
+     "id": "efea2e595053190e"
+    },
+    {
+     "type": "arrow",
+     "id": "ea0aa8fed9e83d14"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e407a7c693817eec",
+   "type": "text",
+   "x": 1573.0,
+   "y": 375.0,
+   "width": 454,
+   "height": 192.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 243766735,
+   "version": 1,
+   "versionNonce": 106550882,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Контракт export_meta\nВладелец: adapters/max/agr_tools/export_meta.py\nschemas/ExportMeta.schema.json; неизвестное — unknown,\nноль не подставляется; в ZIP не идёт\n\nvalidate_meta: запись -> отказ с именем поля (лишние\nключи, дубли, provenance)\nrecord_export: экспорт, факты, provenance -> запись\nexport_meta\nload_package_meta: папка пакета, [--meta] -> ближайшая\nзапись; несколько — отказ, без первого попавшегося",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ec04ec9b6d6e8bf0",
+   "originalText": "Контракт export_meta\nВладелец: adapters/max/agr_tools/export_meta.py\nschemas/ExportMeta.schema.json; неизвестное — unknown,\nноль не подставляется; в ZIP не идёт\n\nvalidate_meta: запись -> отказ с именем поля (лишние\nключи, дубли, provenance)\nrecord_export: экспорт, факты, provenance -> запись\nexport_meta\nload_package_meta: папка пакета, [--meta] -> ближайшая\nзапись; несколько — отказ, без первого попавшегося",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e7b912642e1534e2",
+   "type": "rectangle",
+   "x": 1565.0,
+   "y": 637.5,
+   "width": 470,
+   "height": 177.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 136600914,
+   "version": 1,
+   "versionNonce": 849046897,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e3212abb34fd11e1"
+    },
+    {
+     "type": "arrow",
+     "id": "e106f1df8b9be446"
+    },
+    {
+     "type": "arrow",
+     "id": "ef06b28c2269b1c7"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e3212abb34fd11e1",
+   "type": "text",
+   "x": 1573.0,
+   "y": 647.5,
+   "width": 454,
+   "height": 157.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1596232406,
+   "version": 1,
+   "versionNonce": 1294524491,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Чтение экспорта, валидатор V001–V017, xView, отчёт сдачи\nВладелец: tools/qa/validate_package.py\nпроверка пакета по регламенту (agr validate); not_run —\nне pass\n\nvalidate_vpm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки ВПМ\nvalidate_npm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки НПМ",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e7b912642e1534e2",
+   "originalText": "Чтение экспорта, валидатор V001–V017, xView, отчёт сдачи\nВладелец: tools/qa/validate_package.py\nпроверка пакета по регламенту (agr validate); not_run —\nне pass\n\nvalidate_vpm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки ВПМ\nvalidate_npm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки НПМ",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e4d753e75b072caf",
+   "type": "rectangle",
+   "x": 345.0,
+   "y": 637.5,
+   "width": 470,
+   "height": 142.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 119684437,
+   "version": 1,
+   "versionNonce": 1415159727,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ed0e68cf081657f3"
+    },
+    {
+     "type": "arrow",
+     "id": "e535dc9bb1c62828"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ed0e68cf081657f3",
+   "type": "text",
+   "x": 353.0,
+   "y": 647.5,
+   "width": 454,
+   "height": 122.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 58590337,
+   "version": 1,
+   "versionNonce": 48283794,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "GeoJSON ВПМ\nВладелец: src/twinqa/geojson.py\nV011: схема, обязательные значения, Glasses; эталон —\nGeoJSON заказчика (D220)\n\ngeojson_findings: данные, профиль, Ground, имена стёкол\n-> находки V011",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e4d753e75b072caf",
+   "originalText": "GeoJSON ВПМ\nВладелец: src/twinqa/geojson.py\nV011: схема, обязательные значения, Glasses; эталон —\nGeoJSON заказчика (D220)\n\ngeojson_findings: данные, профиль, Ground, имена стёкол\n-> находки V011",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e1648b9a5855f96c",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 637.5,
+   "width": 470,
+   "height": 282.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 115521580,
+   "version": 1,
+   "versionNonce": 71783215,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e55a50708fc05498"
+    },
+    {
+     "type": "arrow",
+     "id": "ea0aa8fed9e83d14"
+    },
+    {
+     "type": "arrow",
+     "id": "e535dc9bb1c62828"
+    },
+    {
+     "type": "arrow",
+     "id": "e73914b9517f6776"
+    },
+    {
+     "type": "arrow",
+     "id": "ef06b28c2269b1c7"
+    },
+    {
+     "type": "arrow",
+     "id": "e5996c5d29bf5355"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e55a50708fc05498",
+   "type": "text",
+   "x": 963.0,
+   "y": 647.5,
+   "width": 454,
+   "height": 262.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1644596539,
+   "version": 1,
+   "versionNonce": 1895590038,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Пакеты НПМ / ВПМ и передача\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e1648b9a5855f96c",
+   "originalText": "Пакеты НПМ / ВПМ и передача\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed012c0e59699081",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 934.0,
+   "width": 470,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 867820329,
+   "version": 1,
+   "versionNonce": 293788862,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ef7cc50781ab05b4"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ef7cc50781ab05b4",
+   "type": "text",
+   "x": 963.0,
+   "y": 944.0,
+   "width": 454,
+   "height": 15.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 897870980,
+   "version": 1,
+   "versionNonce": 1055962571,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ed012c0e59699081",
+   "originalText": "Дубли вне владельца: 1",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e89f7e0e63e2fdf9",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 1029.0,
+   "width": 470,
+   "height": 125.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 4394257,
+   "version": 1,
+   "versionNonce": 296052018,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ef7093cdc86ed328"
+    },
+    {
+     "type": "arrow",
+     "id": "e5996c5d29bf5355"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "ef7093cdc86ed328",
+   "type": "text",
+   "x": 963.0,
+   "y": 1039.0,
+   "width": 454,
+   "height": 105.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1300858526,
+   "version": 1,
+   "versionNonce": 248082420,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e89f7e0e63e2fdf9",
+   "originalText": "Чекер СИНТЕЗ и загрузка архива\nВладелец: tools/blender/sintez_checker.py\nзапуск чекера AGR 1.6.1 в Blender на ZIP; находки —\nдоказательство, не вердикт\n\ndump: список проверок чекера -> JSON находок",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed319371ca8c4f40",
+   "type": "rectangle",
+   "x": 955.0,
+   "y": 1168.0,
+   "width": 470,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 495611946,
+   "version": 1,
+   "versionNonce": 422484910,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e7ce9eed157c440c"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e7ce9eed157c440c",
+   "type": "text",
+   "x": 963.0,
+   "y": 1178.0,
+   "width": 454,
+   "height": 15.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1711433107,
+   "version": 1,
+   "versionNonce": 79258189,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "ed319371ca8c4f40",
+   "originalText": "Дубли вне владельца: 1",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ed727262099e1de3",
+   "type": "arrow",
+   "x": 510.0,
+   "y": 462.5,
+   "width": 630.0,
+   "height": 108.75,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1829479181,
+   "version": 1,
+   "versionNonce": 1236315112,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e8a1704ab017cb05"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     100.0
+    ],
+    [
+     630.0,
+     100.0
+    ],
+    [
+     630.0,
+     -8.75
+    ],
+    [
+     610.0,
+     -8.75
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e8b8779b8f489e86",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e53a9f03f3c1313e",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e8a1704ab017cb05",
+   "type": "text",
+   "x": 775.0,
+   "y": 553.75,
+   "width": 120,
+   "height": 17.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1617983834,
+   "version": 1,
+   "versionNonce": 884411802,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "сцена НПМ / ВПМ",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "ed727262099e1de3",
+   "originalText": "сцена НПМ / ВПМ",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "efea2e595053190e",
+   "type": "arrow",
+   "x": 1120.0,
+   "y": 453.75,
+   "width": 935.0,
+   "height": 126.25,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 903139393,
+   "version": 1,
+   "versionNonce": 264512577,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e1b2995fa59daf9a"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     126.25
+    ],
+    [
+     935.0,
+     126.25
+    ],
+    [
+     935.0,
+     17.5
+    ],
+    [
+     915.0,
+     17.5
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e53a9f03f3c1313e",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "ec04ec9b6d6e8bf0",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e1b2995fa59daf9a",
+   "type": "text",
+   "x": 1537.5,
+   "y": 571.25,
+   "width": 120,
+   "height": 17.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1139716680,
+   "version": 1,
+   "versionNonce": 23211943,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "FBX + факты",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "efea2e595053190e",
+   "originalText": "FBX + факты",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e106f1df8b9be446",
+   "type": "arrow",
+   "x": 1120.0,
+   "y": 453.75,
+   "width": 935.0,
+   "height": 272.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1622642057,
+   "version": 1,
+   "versionNonce": 1646672180,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e9d5384ec38c2b8e"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     163.75
+    ],
+    [
+     935.0,
+     163.75
+    ],
+    [
+     935.0,
+     272.5
+    ],
+    [
+     915.0,
+     272.5
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e53a9f03f3c1313e",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e7b912642e1534e2",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e9d5384ec38c2b8e",
+   "type": "text",
+   "x": 1537.5,
+   "y": 608.75,
+   "width": 120,
+   "height": 17.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1425803831,
+   "version": 1,
+   "versionNonce": 977503034,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "свежее чтение",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e106f1df8b9be446",
+   "originalText": "свежее чтение",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ea0aa8fed9e83d14",
+   "type": "arrow",
+   "x": 2035.0,
+   "y": 471.25,
+   "width": 630.0,
+   "height": 307.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1200785764,
+   "version": 1,
+   "versionNonce": 1604161629,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e0244ea1f3880350"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     146.25
+    ],
+    [
+     -590.0,
+     146.25
+    ],
+    [
+     -590.0,
+     307.5
+    ],
+    [
+     -610.0,
+     307.5
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "ec04ec9b6d6e8bf0",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e0244ea1f3880350",
+   "type": "text",
+   "x": 1690.0,
+   "y": 600.0,
+   "width": 120,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 315561590,
+   "version": 1,
+   "versionNonce": 1239838773,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "адрес, верх,\nпревью",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "ea0aa8fed9e83d14",
+   "originalText": "адрес, верх,\nпревью",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e535dc9bb1c62828",
+   "type": "arrow",
+   "x": 815.0,
+   "y": 708.75,
+   "width": 630.0,
+   "height": 161.25,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 287153761,
+   "version": 1,
+   "versionNonce": 1311733758,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e1041476d2438cb4"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     -91.25
+    ],
+    [
+     630.0,
+     -91.25
+    ],
+    [
+     630.0,
+     70.0
+    ],
+    [
+     610.0,
+     70.0
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e4d753e75b072caf",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e1041476d2438cb4",
+   "type": "text",
+   "x": 1080.0,
+   "y": 608.75,
+   "width": 120,
+   "height": 17.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 89007377,
+   "version": 1,
+   "versionNonce": 1058621020,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "GeoJSON ВПМ",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e535dc9bb1c62828",
+   "originalText": "GeoJSON ВПМ",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e73914b9517f6776",
+   "type": "arrow",
+   "x": 1425.0,
+   "y": 207.5,
+   "width": 20.0,
+   "height": 571.25,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1979773515,
+   "version": 1,
+   "versionNonce": 95949439,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "ef5ea12d3a15c9d9"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     571.25
+    ],
+    [
+     0.0,
+     571.25
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "ec4722dfacc2a9f1",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "ef5ea12d3a15c9d9",
+   "type": "text",
+   "x": 1385.0,
+   "y": 484.38,
+   "width": 120,
+   "height": 17.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1148019983,
+   "version": 1,
+   "versionNonce": 1419388321,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "запись ZIP",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e73914b9517f6776",
+   "originalText": "запись ZIP",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "ef06b28c2269b1c7",
+   "type": "arrow",
+   "x": 1425.0,
+   "y": 778.75,
+   "width": 630.0,
+   "height": 108.75,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 183840072,
+   "version": 1,
+   "versionNonce": 1335169232,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e327664fba660664"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     56.25
+    ],
+    [
+     630.0,
+     56.25
+    ],
+    [
+     630.0,
+     -52.5
+    ],
+    [
+     610.0,
+     -52.5
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e7b912642e1534e2",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e327664fba660664",
+   "type": "text",
+   "x": 1690.0,
+   "y": 826.25,
+   "width": 120,
+   "height": 17.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 933886980,
+   "version": 1,
+   "versionNonce": 709759526,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "ZIP сдачи",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "ef06b28c2269b1c7",
+   "originalText": "ZIP сдачи",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e5996c5d29bf5355",
+   "type": "arrow",
+   "x": 1425.0,
+   "y": 778.75,
+   "width": 20.0,
+   "height": 312.75,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1607208847,
+   "version": 1,
+   "versionNonce": 1099848506,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e4774ed93774aa02"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     312.75
+    ],
+    [
+     0.0,
+     312.75
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e89f7e0e63e2fdf9",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e4774ed93774aa02",
+   "type": "text",
+   "x": 1385.0,
+   "y": 914.5,
+   "width": 120,
+   "height": 17.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1402380691,
+   "version": 1,
+   "versionNonce": 1601216718,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "те же ZIP",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e5996c5d29bf5355",
+   "originalText": "те же ZIP",
+   "autoResize": true,
+   "lineHeight": 1.25
+  }
+ ],
+ "appState": {
+  "viewBackgroundColor": "#ffffff",
+  "gridSize": null
+ },
+ "files": {}
+}

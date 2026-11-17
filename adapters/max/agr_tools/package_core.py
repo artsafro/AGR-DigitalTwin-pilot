@@ -35,9 +35,11 @@ VPM_FILE = re.compile(r'^SM_(?P<stem>' + ADDRESS + r')(?P<ext>\.fbx|\.geojson)$'
 VPM_TEX = re.compile(r'^T_(?P<stem>' + ADDRESS + r')_(?:Diffuse|ERM|Normal)_[0-9]+\.[0-9]{4}\.png$')
 OKS_INDEX = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<index>[0-9]{3})$')
 TRAILING_NUMBER = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<number>[0-9]+)$')
-GROUND_SUFFIXES = ('GroundElGlass', 'GroundGlass', 'GroundEl', 'Ground', 'Flora')  # longest first
+GROUND_ROLES = {'GroundElGlass': 'groundel', 'GroundGlass': 'ground', 'GroundEl': 'groundel',
+                'Ground': 'ground', 'Flora': 'flora'}  # longest first; provenance roles [D333]
+GROUND_SUFFIXES = tuple(GROUND_ROLES)
 OKS_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<index>00[1-9]|01[0-9]|020)_(?P<suffix>Main|MainGlass)$')
-GROUND_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>GroundElGlass|GroundGlass|GroundEl|Ground|Flora)$')
+GROUND_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>' + '|'.join(GROUND_SUFFIXES) + r')$')
 NEAR_ORIGIN_M = 100.0  # NPM sits in MSK coordinates: a pivot this close to 0,0,0 is a placement error (lab L04)
 # FBX settings of the NPM export (lab L04: GeoAGR's are right except Triangulate, GeoAGR.ms:66578-66605)
 GROUND_FBX_PARAMS = (('Animation', False), ('Cameras', False), ('Lights', False), ('ASCII', False),
@@ -80,17 +82,22 @@ def stage_table(validator_json):
                if f.get('status') != 'pass']
         codes = sorted({(f.get('data') or {}).get('code') for f in s.get('findings', [])
                         if f.get('status') == 'fail'} - {None})
+        open_codes = sorted({(f.get('data') or {}).get('code') for f in s.get('findings', [])
+                             if f.get('status') in ('not_run', 'review')} - {None})
         stages.append({'id': s['id'], 'check': s['check'], 'gate': s['gate'], 'status': s['status'],
-                       'non_pass': bad[:8], 'codes': codes})
+                       'non_pass': bad[:8], 'codes': codes, 'open_codes': open_codes})
     return {'target': rep.get('target'), 'profile': rep.get('profile'), 'exit_code': int(rep['exit_code']),
             'stages': stages, 'notes': list(rep.get('notes', []))[:20]}
 
 
 def validate(target, runner, python, root, profile=None, scene=True):
     code, out = runner(validator_argv(python, root, target, profile, scene))
-    table = stage_table(out)
+    full_report = json.loads(out)
+    table = stage_table(full_report)
     if table['exit_code'] != code:
         raise RuntimeError('validator exit {} != report exit_code {}'.format(code, table['exit_code']))
+    # Retain the complete ValidationReport, not the lossy UI table, for archive rechecks.
+    table['validation_report'] = full_report
     return table
 
 
@@ -192,16 +199,52 @@ def _counterpart(path):
     return other if os.path.isfile(other) else None
 
 
+def _build_manifest():
+    """build_manifest.py next to this file (#1423), loaded by path like the other sibling cores."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        'agr_tools_build_manifest', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build_manifest.py'))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def cross_masters(paths):
+    """{zip basename: [(code, detail)]}: the build manifests of the checked packages must name ONE master revision
+    per role (#1423: a VPM rebuilt from an edited master next to a stale NPM is refused; [D328]: the OKS master and
+    the Ground source are different roles, never a conflict). Packages without a readable manifest are judged by the
+    validator (V001 build manifest), not here."""
+    bm = _build_manifest()
+    by_role = {}
+    for p in paths:
+        mp = bm.manifest_path(p)
+        shas = bm.manifest_masters(mp) if os.path.isfile(mp) else None
+        for role, sha in (shas or {}).items():
+            by_role.setdefault(role, {})[os.path.basename(p)] = sha
+    out = {}
+    for role, masters in sorted(by_role.items()):
+        if len(set(masters.values())) < 2:
+            continue
+        detail = 'packages name different role {} master revisions: '.format(role) + ', '.join(
+            '{} -> {}'.format(n, s[:12]) for n, s in sorted(masters.items()))
+        for n in masters:
+            out.setdefault(n, []).append(('manifest_cross_master', detail[:900]))
+    return out
+
+
 def qa_package(edit, path, runner, python, root, profile=None, scene=True, options=None):
     """Read-only report: one object per checked file (handle = 1-based ordinal), findings = failed stages plus the
-    OKS <-> Ground passport cross check (`geojson_cross`)."""
+    OKS <-> Ground passport cross check (`geojson_cross`) and the one-master check of the build manifests
+    (`manifest_cross_master`, #1423)."""
     targets = qa_targets(path)
     pair = [p for p in (_counterpart(targets[0]),) if p] if len(targets) == 1 else []
     cross = cross_passports(targets + pair)
+    for n, rows in cross_masters(targets + pair).items():
+        cross.setdefault(n, []).extend(rows)
     tables, objects = [], []
     for i, t in enumerate(targets, 1):
         table = validate(t, runner, python, root, profile, scene)
-        tables.append(table)
+        tables.append({k: v for k, v in table.items() if k != 'validation_report'})
         more = [edit.finding(c, (), d) for c, d in cross.get(os.path.basename(t), [])]
         objects.append(edit.entry(i, os.path.basename(t), stage_findings(edit, table) + more))
     state = {'path': os.path.abspath(os.fspath(path)), 'files': _file_state(targets + pair)}
@@ -452,30 +495,62 @@ def _write_zip(folder, archive, target):
     if os.path.exists(target):
         raise FileExistsError('refusing to overwrite: ' + target)
     partial = target + '.partial'
+    import hashlib
+    def digest(stream):
+        value = hashlib.sha256()
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            value.update(chunk)
+        return value.hexdigest()
+    if not archive['members']:
+        raise ValueError('empty archive members')
+    fingerprints, identities = {}, set()
+    for member in archive['members']:
+        name = member['name']
+        source = os.path.join(folder, name)
+        if name.casefold() in fingerprints:
+            raise ValueError('duplicated archive member: ' + name)
+        stat = os.stat(source)
+        identity = (stat.st_dev, stat.st_ino) if stat.st_ino else os.path.normcase(os.path.realpath(source))
+        if identity in identities:
+            raise ValueError('duplicated input file: ' + name)
+        identities.add(identity)
+        if not os.path.isfile(source) or not stat.st_size:
+            raise ValueError('empty or unsupported input file: ' + name)
+        with open(source, 'rb') as stream:
+            fingerprints[name.casefold()] = digest(stream)
+    owned_partial = False
     try:
         with open(partial, 'xb') as fh:
+            owned_partial = True
             with zipfile.ZipFile(fh, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as z:
                 for m in archive['members']:
                     z.write(os.path.join(folder, m['name']), arcname=m['name'])
         size = os.path.getsize(partial)
         if size_status(size, archive['limit']) != 'pass':
             return None, size
+        with zipfile.ZipFile(partial) as packed:
+            for member in archive['members']:
+                name = member['name']
+                with open(os.path.join(folder, name), 'rb') as stream, packed.open(name) as archived:
+                    if digest(stream) != fingerprints[name.casefold()] or digest(archived) != fingerprints[name.casefold()]:
+                        raise ValueError('input changed during packaging: ' + name)
         try:
             os.link(partial, target)  # fails if the target appeared meanwhile: no clobber
         except OSError:
-            if os.path.exists(target):
+            if os.path.lexists(target) or os.name != 'nt':
                 raise
-            os.rename(partial, target)
+            os.rename(partial, target)  # Windows rename is atomic no-replace (POSIX rename is forbidden here)
         return target, size
     finally:
-        if os.path.exists(partial):
+        if owned_partial and os.path.exists(partial):
             os.unlink(partial)
 
 
 def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
     """Write the archives of the unaltered, still current preview into a NEW run folder `Сборка_<time>` (never into
     the delivery folder, never over an existing ZIP) and run the validator on each one written. ГОТОВО.txt only when
-    every planned archive was written and no validator stage failed, else ОШИБКА.txt (AGR_Arxiv 1.5 contract)."""
+    every automatic check passed; only V015-V017 may await Artem's manual acceptance [D323].
+    Missing validation or any other open/failed check writes ОШИБКА.txt (binary AGR_Arxiv contract)."""
     plan = preview['plan']
     current = zip_plan(plan['folder'], plan['options'].get('address'), limits)
     edit.require_current(preview, {'plan': current})
@@ -483,6 +558,7 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
         check_members(a)  # refusal before anything is written
     run = run_folder(plan['run_parent'], stamp)
     objects, done, skipped, reports, failed = [], [], [], [], []
+    pending = set()
     try:
         for i, a in enumerate(current['archives'], 1):
             if a['problems']:
@@ -501,11 +577,55 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
                 done.append(a['name'])
                 if validate_fn is not None:
                     table = validate_fn(target)
-                    reports.append(table)
+                    if (not isinstance(table, dict) or type(table.get('exit_code')) is not int
+                            or table['exit_code'] not in (0, 1, 2)):
+                        raise ValueError('invalid validator result for ' + a['name'])
+                    if not isinstance(table.get('stages'), list) or any(
+                            not isinstance(s, dict) or not {'id', 'status', 'check', 'gate'} <= set(s)
+                            for s in table['stages']):
+                        raise ValueError('partial validator stages for ' + a['name'])
+                    # Embedded Max stays stdlib-only; pin these profile inventories to
+                    # DELIVERY_VALIDATOR.yaml in the contract regression.
+                    profile = 'npm' if re.match(r'^[0-9]{4}_', a['name']) else 'vpm'
+                    numbers = ((1, 2, 3, 4, 5, 6, 12, 14, 15, 17) if profile == 'npm'
+                               else (1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17))
+                    expected = {'V{:03d}'.format(n) for n in numbers}
+                    ids = [s['id'] for s in table['stages']]
+                    if (any(not isinstance(sid, str) for sid in ids)
+                            or len(ids) != len(expected) or set(ids) != expected):
+                        missing = sorted(expected - {sid for sid in ids if isinstance(sid, str)})
+                        raise ValueError('invalid validator stage inventory for {}: missing {}; '
+                                         'expected exactly {}'.format(a['name'], ', '.join(missing),
+                                                                      ', '.join(sorted(expected))))
+                    full_report = table.get('validation_report')
+                    if not isinstance(full_report, dict) or not full_report:
+                        raise ValueError('missing validation_report for ' + a['name'])
+                    try:
+                        stored_table = stage_table(full_report)
+                    except (KeyError, TypeError, ValueError) as exc:
+                        raise ValueError('invalid validation_report for ' + a['name']) from exc
+                    if (stored_table['profile'] != profile or table.get('profile') != profile
+                            or stored_table['exit_code'] != table['exit_code']
+                            or stored_table['stages'] != table['stages']):
+                        raise ValueError('validation_report disagrees with validator table for ' + a['name'])
+                    with open(target + '.validation.json', 'x', encoding='utf-8') as fh:
+                        json.dump(full_report, fh, ensure_ascii=False, indent=2, allow_nan=False)
+                    reports.append({k: v for k, v in table.items() if k != 'validation_report'})
                     findings += stage_findings(edit, table)
-                    if table['exit_code'] == 1:
-                        failed.append('{}: validator exit 1 ({})'.format(
-                            a['name'], ', '.join(s['id'] for s in table['stages'] if s['status'] == 'fail')))
+                    open_stages = [s for s in table['stages'] if s['status'] != 'pass']
+                    manual_only = bool(open_stages) and all(
+                        s['id'] in ('V015', 'V016', 'V017') and s['gate'] == 'manual_review'
+                        and s['status'] in ('review', 'not_run') for s in open_stages)
+                    # [D323]: technical readiness is not Artem's manual acceptance.
+                    if manual_only and table['exit_code'] in (0, 2):
+                        pending.update(s['id'] for s in open_stages)
+                    elif table['exit_code'] != 0 or open_stages or not table['stages']:
+                        reasons = ['{} [{}]'.format(s['id'], ', '.join(s.get('codes', []) + s.get('open_codes', [])))
+                                   for s in table['stages'] if s['status'] != 'pass']
+                        failed.append('{}: validator exit {} ({})'.format(
+                            a['name'], table['exit_code'], '; '.join(reasons)))
+                else:
+                    failed.append('{}: validator not run (validate_fn=None)'.format(a['name']))
             objects.append(edit.entry(i, a['name'], findings))
         if not current['archives']:
             failed.append('no archive in the plan')
@@ -521,11 +641,31 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
         _marker(run, False, ['export.zip: ОШИБКА', 'run stopped: {}'.format(exc)] + failed)
         raise
     _marker(run, ok, ['export.zip: ' + ('ГОТОВО' if ok else 'ОШИБКА'), 'address: ' + current['address']]
-            + ['written: ' + n for n in done] + failed)
+            + ['written: ' + n for n in done] + failed
+            + (['ждут ручной приёмки Артёма: ' + ', '.join(sorted(pending))] if ok and pending else []))
     return rep
 
 
 # ---- export.ground_fbx: NPM FBX split by the suffix grammar --------------------------------------------------
+def role_of(name):
+    """Provenance role shared by package manifests [D333]. File grouping remains Ground [D097].
+
+    The existing suffix vocabulary also covers texture, collision and Light names; exact tokens only.
+    GroundEl/Flora keep independent sources even inside the combined Ground FBX.
+    """
+    stem = os.path.splitext(os.path.basename(os.fspath(name)))[0]
+    tokens = stem.split('_')
+    if tokens[0] == 'T' and len(tokens) >= 4:
+        suffix = tokens[-3]
+    else:
+        if len(tokens) > 1 and tokens[-1] == 'Light':
+            tokens.pop()
+        if len(tokens) > 1 and tokens[0] == 'UCX' and tokens[-1].isdigit():
+            tokens.pop()
+        suffix = tokens[-1]
+    return GROUND_ROLES.get(suffix, 'oks')
+
+
 def classify_mesh(name):
     """('ground', address, suffix) | ('oks', address, NNN) | None. Suffix grammar of docs/domain/geometry.md:39-44;
     Flora belongs to the Ground file (D097), unlike GeoAGR's lowercase 'ground' substring test (GeoAGR.ms:66611)."""

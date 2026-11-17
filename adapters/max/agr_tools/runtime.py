@@ -360,12 +360,13 @@ def _suite_core():
     return _load_core('suite_core.py', 'agr_tools_suite_core')
 
 
-def checks_070(tool, nodes=None, select=True):
+def checks_070(tool, nodes=None, select=True, ucx_export=None):
     """0.7.0 read-only pre-delivery checks (suite_max.py reads the scene, suite_core.py judges)."""
     import types
     glue = _load_core('checks_max.py', 'agr_tools_checks_max')
     suite_max = _load_core('suite_max.py', 'agr_tools_suite_max')
-    return suite_max.run(types.SimpleNamespace(**globals()), glue, _suite_core(), tool, nodes, select)
+    kw = {'ucx_export': ucx_export} if ucx_export is not None else {}
+    return suite_max.run(types.SimpleNamespace(**globals()), glue, _suite_core(), tool, nodes, select, **kw)
 
 
 _edit = None
@@ -635,6 +636,35 @@ def _reject_vertex_boundary(points, tolerance):
                 if math.isclose(math.dist(p, q), tolerance, rel_tol=2e-7, abs_tol=0):
                     raise ValueError('vertex exactly at threshold (float32 ambiguity); no clean verdict')
         cells.setdefault(key, []).append(p)
+
+
+def master_topology(nodes=None):
+    """Read polygon degrees on evaluated Poly copies BEFORE any export triangulation.
+
+    Callable from the AGR Tools Python listener; never changes source geometry or
+    selection. Full per-object triangle counts/shares remain visible in the result.
+    """
+    rt = _rt()
+    inventory, source_ids, dropped = [], [], []
+    for n in _targets(nodes):
+        copy = _poly_copy(n)
+        try:
+            # pymxs BitArray iterates boolean flags, NOT selected face IDs.
+            dead = {i for i, flag in enumerate(rt.polyop.getDeadFaces(copy), 1) if flag}
+            live = [i for i in range(1, int(rt.polyop.getNumFaces(copy)) + 1) if i not in dead]
+            inventory.append({'name': str(n.name), 'face_degrees': [
+                len(rt.polyop.getFaceVerts(copy, i)) for i in live]})
+            source_ids.append(live)
+            if dead:
+                dropped.append({'name': str(n.name), 'face_ids': sorted(dead),
+                                'reason': 'native dead polygon slots'})
+        finally:
+            rt.delete(copy)
+    report = _load_core('master_topology_core.py', 'agr_tools_master_topology').check(inventory)
+    for row, ids in zip(report['objects'], source_ids):
+        row['ngon_face_ids'] = [ids[i - 1] for i in row['ngon_face_ids']]
+    report['dropped'] = dropped
+    return report
 
 
 def xview(nodes=None, on_item=None):
@@ -2038,23 +2068,48 @@ def _repair_blocks(dumps):
     return any(item['actions'] or item['unrepairable'] for item in plan['objects'])
 
 
-def _export_scene(nodes):
+def _export_names(nodes, names):
+    """Export name of every node: `names` maps a node handle to the name it is exported under (#1582: a ucx.gap
+    copy on AGR_export goes out under its original's name). A name for a node outside `nodes` is an error."""
+    rt = _rt()
+    handles = [int(rt.getHandleByAnim(n)) for n in nodes]
+    names = dict(names or {})
+    extra = sorted(set(names) - set(handles))
+    if extra:
+        raise ValueError('export names for nodes not exported: ' + ', '.join(str(h) for h in extra))
+    out = [names.get(h, str(n.name)) for h, n in zip(handles, nodes)]
+    if len(set(out)) != len(out):
+        raise ValueError('duplicate export name: ' + ', '.join(sorted({x for x in out if out.count(x) > 1})))
+    return handles, out
+
+
+def _export_scene(nodes, names=None):
     """Read-only scene description. UCX_* nodes are collision pieces, not render meshes.
 
     Cleanup evidence is collected for every emitted node. Material name and slot
     gaps are read only when hygiene does not already refuse. Texel stays a
     placeholder; the export caller fills it after MatID, xView and UCX pass.
+    names: {handle: export name} (#1582); the description carries the export name.
     """
     rt = _rt()
-    render = [n for n in nodes if not str(n.name).startswith('UCX_')]
-    pieces = [n for n in nodes if str(n.name).startswith('UCX_')]
+    if names:
+        handles, out = _export_names(nodes, names)
+        label = dict(zip(handles, out))
+        name_of = lambda n: label[int(rt.getHandleByAnim(n))]  # noqa: E731
+    else:
+        name_of = lambda n: str(n.name)  # noqa: E731
+    render = [n for n in nodes if not name_of(n).startswith('UCX_')]
+    pieces = [n for n in nodes if name_of(n).startswith('UCX_')]
     if not render:
         raise ValueError('empty render set')
+    topology = master_topology(render)
+    if topology['status'] != 'pass':
+        raise ValueError('master topology failed before export triangulation: ' + json.dumps(topology))
     objects = []
     for n in render:
         verts, faces, ids = _tri_mesh(n)
         objects.append({
-            'name': str(n.name),
+            'name': name_of(n),
             'handle': int(rt.getHandleByAnim(n)),
             'material': None,
             'material_ids': ids,
@@ -2068,7 +2123,7 @@ def _export_scene(nodes):
     for n in pieces:
         verts, faces, _ids = _tri_mesh(n)
         ucx.append({
-            'name': str(n.name),
+            'name': name_of(n),
             'handle': int(rt.getHandleByAnim(n)),
             'verts': verts,
             'tris': faces,
@@ -2111,7 +2166,11 @@ def _repo_root():
 
 
 def _subprocess_export(payload):
-    """Run the gate or the readback in the project interpreter when Max lacks numpy."""
+    """Run export helpers in the project interpreter when Max lacks numpy.
+
+    Readback is structural (counts and header only), not a geometry readback.
+    Each call is bounded by AGR_EXPORT_TIMEOUT_S (default 600 seconds).
+    """
     import os
     import subprocess
     root = _repo_root()
@@ -2139,8 +2198,20 @@ def _subprocess_export(payload):
         '    raise SystemExit("unmapped method " + str(method))\n'
         'sys.stdout.write(json.dumps(out, allow_nan=False))\n'
     )
-    proc = subprocess.run([python, '-c', code, str(root)], input=json.dumps(payload, allow_nan=False).encode('utf-8'),
-                          capture_output=True)
+    import math
+    raw_timeout = os.environ.get('AGR_EXPORT_TIMEOUT_S', '600')
+    try:
+        timeout = float(raw_timeout)
+    except ValueError as exc:
+        raise ValueError('invalid AGR_EXPORT_TIMEOUT_S: ' + repr(raw_timeout)) from exc
+    if not math.isfinite(timeout) or timeout <= 0:
+        raise ValueError('invalid AGR_EXPORT_TIMEOUT_S: ' + repr(raw_timeout))
+    try:
+        proc = subprocess.run([python, '-c', code, str(root)],
+                              input=json.dumps(payload, allow_nan=False).encode('utf-8'),
+                              capture_output=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(f'export {payload["method"]} timed out after {timeout:g} s') from exc
     if proc.returncode != 0:
         detail = proc.stderr.decode('utf-8', errors='replace')[-2000:]
         raise RuntimeError(detail or 'export subprocess failed')
@@ -2179,22 +2250,31 @@ def _dry_run_scene(scene, target, source, texel_fn=None):
         return _subprocess_export(payload)
 
 
-def export_preview(nodes=None, target=None):
-    """Dry-run the checked export. The scene and the filesystem are unchanged."""
+def export_preview(nodes=None, target=None, names=None):
+    """Dry-run the checked export. The scene and the filesystem are unchanged. names: {handle: export name}
+    (#1582, pack.deliver: the ucx.gap copies on AGR_export under their originals' names)."""
     nodes = _targets(nodes)
     target = _export_target(nodes, target)
-    report = _dry_run_scene(_export_scene(nodes), target, _max_source(), texel_fn=_export_texel_fn(nodes))
+    report = _dry_run_scene(_export_scene(nodes, names), target, _max_source(), texel_fn=_export_texel_fn(nodes))
     parse_report(json.dumps(report, allow_nan=False))
     return report
 
 
-def _write_max_fbx(nodes, path):
-    """Export detached copies. Original nodes are read back and must be unchanged."""
+def _write_max_fbx(nodes, path, names=None):
+    """Export detached copies. Original nodes are read back and must be unchanged.
+    names (#1582): {handle: export name}; a scene node outside `nodes` that already carries such a name (the
+    original of a ucx.gap copy) is parked under a token name for the export and restored, then read back."""
     from pathlib import Path
     rt = _rt()
     path = Path(path)
     if path.exists():
         raise FileExistsError(str(path))
+    handles, planned_names = _export_names(nodes, names)
+    planned_of = dict(zip(handles, planned_names))
+    shadow = []
+    if names:
+        taken = set(planned_names)
+        shadow = [o for o in rt.objects if str(o.name) in taken and int(rt.getHandleByAnim(o)) not in planned_of]
     rt.pluginManager.loadClass(rt.FbxExporter)
     params = {'Animation': False, 'EmbedTextures': False, 'ASCII': False,
               'FileVersion': 'FBX201400', 'UpAxis': 'Z', 'Cameras': False,
@@ -2205,10 +2285,18 @@ def _write_max_fbx(nodes, path):
         expected = 'false' if value is False else 'true' if value is True else str(value)
         if str(got).lower() != expected.lower():
             raise ValueError(f'unmapped export setting {key}={got!r}')
-    before = snapshot(nodes)
+    watched = list(nodes) + shadow
+    before = snapshot(watched)
     copies = []
     parked = []
     try:
+        for o in shadow:
+            planned = str(o.name)
+            token = '__agr_shadow_' + str(int(rt.getHandleByAnim(o)))
+            o.name = token
+            if str(o.name) != token:
+                raise ValueError(f'parked name {o.name!r} != planned {token!r}')
+            parked.append((o, planned))
         for n in nodes:
             planned = str(n.name)
             token = '__agr_src_' + str(int(rt.getHandleByAnim(n)))
@@ -2217,9 +2305,10 @@ def _write_max_fbx(nodes, path):
                 raise ValueError(f'export copy name {n.name!r} != planned {token!r}')
             parked.append((n, planned))
             copy = rt.copy(n)
-            copy.name = planned
-            if str(copy.name) != planned:
-                raise ValueError(f'export copy name {copy.name!r} != planned {planned!r}')
+            out = planned_of[int(rt.getHandleByAnim(n))]
+            copy.name = out
+            if str(copy.name) != out:
+                raise ValueError(f'export copy name {copy.name!r} != planned {out!r}')
             rt.setUserPropBuffer(copy, _delivery_props(rt.getUserPropBuffer(n)))
             copies.append(copy)
         rt.select(copies)
@@ -2234,21 +2323,21 @@ def _write_max_fbx(nodes, path):
             n.name = planned
             if str(n.name) != planned:
                 raise RuntimeError(f'original name not restored: {n.name!r} != {planned!r}')
-    if snapshot(nodes) != before:
+    if snapshot(watched) != before:
         raise RuntimeError('originals changed during export')
 
 
-def export_commit(nodes, preview, target=None):
-    """Write one FBX and the JSON report beside it. A stale preview writes nothing."""
+def export_commit(nodes, preview, target=None, names=None):
+    """Write one FBX and the JSON report beside it. A stale preview writes nothing. names: as export_preview."""
     nodes = _targets(nodes)
     target = _export_target(nodes, target)
-    scene = _export_scene(nodes)
+    scene = _export_scene(nodes, names)
     source = _max_source()
     texel_fn = _export_texel_fn(nodes)
     core = _load_core('export_core.py', 'agr_tools_export')
 
     def writer(path, _plan):
-        _write_max_fbx(nodes, path)
+        _write_max_fbx(nodes, path, names)
 
     try:
         report = core.commit(scene, target, source, preview, writer=writer, texel_fn=texel_fn)
@@ -2259,6 +2348,7 @@ def export_commit(nodes, preview, target=None):
         if current['status'] != 'pass':
             raise ValueError('gate failed: ' + str(current['plan']['stopped']))
         writer(target, current)
+        _load_core('export_meta.py', 'agr_tools_export_meta').record_export(target, source=str(source))
         report = _subprocess_export({'method': 'finish', 'preview': current, 'target': str(target),
                                     'report': current['plan']['report']})
     parse_report(json.dumps(report, allow_nan=False))

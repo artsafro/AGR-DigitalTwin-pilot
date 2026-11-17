@@ -76,6 +76,81 @@ partial rows above keep their unchecked part manual.
 - **No stage**: lighting FBX content PKG-14 to PKG-18 has no validator stage; the lighting FBX is only
   admitted by name (V001) and header (V002) and allowed to hold lights and empties (V003).
 
+## Run markers and recheck [D323]
+
+`zip_apply` retains the binary `ГОТОВО.txt` / `ОШИБКА.txt` markers. Missing validation,
+failed checks or open automatic checks (including validator exit 2) write `ОШИБКА.txt`
+with archive names and fail/open finding codes. Only pending manual reviews V015-V017
+are allowed alongside `ГОТОВО.txt`, with the line «ждут ручной приёмки Артёма: V015, V016, V017»
+(pending IDs only). This is technical readiness, not manual approval or publication.
+
+The complete validator report is saved as `<archive>.zip.validation.json` beside each
+checked ZIP, separately from the compact `report.json` stage table. Recheck a moved copy:
+`uv run python tools/qa/validate_package.py --recheck <archive>.zip.validation.json --recheck-target <copy.zip> --output <new.json> --json`.
+The output `target` names the checked copy. Missing and changed bytes both produce
+`evidence_missing`; `target_sha256_now` is null only for a missing target, otherwise its
+actual SHA-256. No package is repacked by recheck. Diagnostic `--allow-incomplete` remains
+ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
+
+## Build provenance [D333, D332]
+
+`package_core.role_of` is the shared suffix-grammar owner used by `build_manifest.role_of`:
+`Ground` / `GroundGlass` -> `ground`, `GroundEl` / `GroundElGlass` -> `groundel`,
+`Flora` -> `flora`; the remaining artifacts belong to `oks`. Family words inside the address do
+not select a role. `classify_mesh` still groups the entire family into the **Ground delivery file**
+([D097], PKG-07); that file-group label is not a provenance role.
+
+Independent dependencies within one role are legal, e.g. a Ground mesh JSON and a Ground PNG recipe:
+`agr build-manifest build PACKAGE.zip --master oks=MASTER.blend --master ground=mesh.json --master ground=recipe.json --derivation RECORD_STORE --transform-name identity`.
+Use the same repeated `--master role=path` operands with `agr validate`. Repeated identical paths,
+resolved aliases, hardlinks and ambiguous same-basename sources within a role are refused; never
+select the first dependency. A multi-source OKS role does not select a quad master: V003's master
+check remains `not_run` with a note rather than reading an arbitrary source.
+
+One-source-per-role builds retain schema v2. Schema v3 adds `sources` to the role entry, keeps its
+first descriptor as a compatibility summary, and binds artifacts to source name **and** hash.
+V3 requires a stable, nonempty producer `source_id` on every source descriptor, artifact binding and
+component dependency (#1589, refinement of [D332]). Record with
+`agr build-manifest record ARTIFACT --master SOURCE --source-id PROJECT.ground.mesh --out NEW.derivation.json`.
+Keep that id unchanged across revisions, renamed files and moved copies; use different ids only for
+independent sources (several independent meshes in one role remain legal). Two hashes under one id,
+even across component roles, are refused before writing build outputs and by the manifest reader.
+Every declared source must be used by a packaged artifact or its component dependency; an unrelated
+record outside the ZIP does not count. An unused declaration is refused naming the source.
+Legacy v1/v2 single-source records/manifests remain readable; no id is inferred from their basename,
+path or hash. Old records without ids cannot authorize a v3 build: regenerate them at export time.
+A one-source-per-role package with mixed legacy/id-bearing records remains v2; a recipe id alone
+never forces a legacy OKS record into v3. All identified records opt the package into v3; any actual
+multi-source role or component dependency requires v3. Explicit conflicting identities are refused
+even during partial migration. Missing required ids name the artifact.
+Identity is producer evidence, not semantic
+proof that two producers have truthfully named the same real source.
+
+Each optional component dependency names `role`, `source_id`, `master_name`, `master_sha256`, and explicit
+read-back `parts`. Different-role parts inside a combined FBX require their own dependencies;
+missing, duplicated, unknown-role and mismatched part records fail. The manifest part inventory
+must equal the hash-bound readback inventory. V1/v2 remain readable without manufacturing evidence.
+A changed or unchecked dependency prevents `manifest_ok`; cross-package comparison fingerprints all
+sources, not just the compatibility summary. Records prove consistency, not regulatory or visual acceptance.
+
+`ground_recipes.write_delivery` records all generated PNGs with `role="ground"` against the recipe
+hash captured before loading/rendering. Its stable id defaults to the recipe's original address (before `--address` overrides output names) plus
+`.ground.recipe`; `--source-id` selects another independent recipe identity, never a revision label.
+`ground_json_to_fbx.build` defaults to `<Address>.ground.mesh`; optional positional arguments after
+Address are CRS then source_id for independent meshes. NPM `export_npm` defaults to
+`<address>.oks.<three-digit-index>.master` and accepts `--source-id`; KPP1 `export_vpm` and
+`quad_provenance` use the fixed job identity `KPP1.oks.master`. These producer defaults do not depend
+on master filenames, version folders or hashes. Retain ids if output address/index changes; override
+the generic defaults only for genuinely independent sources. These are record-call seam tests,
+not new DCC execution receipts.
+Its store is `<version parent>/derivation/<version>/` so
+new versions cannot reuse stale records or collide with old texture names. Record basenames that
+would exceed the filesystem component limit are keyed by SHA-256 of the artifact name; the record
+retains the complete artifact name. KPP1 `derive_ground_v003.py` records the derived FBX before
+publishing its new folder, with the actual source FBX, customer embedded-map FBX and bridge JSON
+hashes for each Ground/GroundEl/Flora component; the store is `<new output>/derivation/`.
+No historical assets or approved output bytes are regenerated by this code-only change.
+
 ## Source-image evidence
 
 **25 requirement rows.** PyMuPDF 1.28.2 renders (matrix 2x) of physical pages **4, 6, 7, 11, 24,
@@ -114,6 +189,14 @@ Short verbatim quotes transcribed from the images (the quotations intentionally 
 Conflicts are referenced only through [the conflict register](../conflicts.md): C2/[D011], C12/[D015],
 C13/[D016], C14/[D017], C20/[D019]. No conflict is decided, no new conflict was found, and no rule
 file is changed here.
+
+Job-local incomplete-package authorization: KPP1 [D285] permits copy-only assembly without
+Ground or a KPP1-specific area schedule, with every non-pass stage/value/limit/missing input/owner
+reported in [STATE](../../../jobs/KPP1/STATE.md). It does not waive PKG-03/PKG-21 or delivery gates.
+[D288] replaces the KPP1-specific area part: per reg p.54 rows 14-17 the KPP1 VPM GeoJSON carries
+the project sums (s_obsh/s_naz 27124.36, spp_gns 28480.58); s_podz stays empty until project data.
+[D306] KPP1 `s_podz`: Artem asks the customer; the agent first searches the project sections (TEP tables)
+and reports findings with page/slide refs; absent a number the field waits - never invented, never 0.
 
 ## L2 gaps
 

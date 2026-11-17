@@ -1,0 +1,193 @@
+{
+ "inputs": {
+  "G:\\Мой диск\\AGR-evidence\\1372-kpp1-quad-master\\v002\\SM_Kpp_1.quad-v002.fbx": "7a95e9cab7d46a642e45abb0db670566804f73fdaa054faca39740a30a8343c6",
+  "G:\\Мой диск\\AGR-evidence\\1372-kpp1-quad-master\\v002\\run-quad-v002-r6b\\0000_Kpp_1_01.fbx": "903f9fb51badffd59d9a293a3a5ff11a9fd4e68e71b9e63bbda3d76798d0b86c",
+  "G:\\Мой диск\\AGR-evidence\\1416-kpp1-ground-budget\\package-v002\\npm\\0000_Kpp_1_Ground.fbx": "8006f0a3904d91f4793c7eb0dcbac6e934c16c470b29c994b7ff7c7a66c9c6d4",
+  "G:\\Мой диск\\AGR-evidence\\1371-kpp1-delivered\\package-v008\\SM_Kpp_1.zip": "db4bef4635d86aeac73f4f39806ea20c5615ed63f0e717c13224d6861be5d710",
+  "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_63caf81f\\jobs\\KPP1\\delivered-1371\\mapping.json": "dfc911353e843275fbfb769120238eac4a6e42a43fd246421061b7b794fa603a"
+ },
+ "vpm_A_export": {
+  "mode": "vpm",
+  "source": "SM_Kpp_1.quad-v002.fbx",
+  "meshes_in": [
+   "SM_Kpp_1_Main",
+   "SM_Kpp_1_MainGlass",
+   "UCX_SM_Kpp_1_Main_001",
+   "UCX_SM_Kpp_1_Main_002",
+   "UCX_SM_Kpp_1_Main_003",
+   "UCX_SM_Kpp_1_Main_004"
+  ],
+  "triangles": {
+   "SM_Kpp_1_Main": 123678,
+   "SM_Kpp_1_MainGlass": 504
+  },
+  "ucx": [
+   "UCX_SM_Kpp_1_Main_001",
+   "UCX_SM_Kpp_1_Main_002",
+   "UCX_SM_Kpp_1_Main_003",
+   "UCX_SM_Kpp_1_Main_004"
+  ]
+ },
+ "build_A": [
+  {
+   "manifest": "C:\\x\\ev_t_63caf81f\\kpp1-r3\\pkg-A\\0000_Kpp_1.build.json",
+   "readback": "C:\\x\\ev_t_63caf81f\\kpp1-r3\\pkg-A\\0000_Kpp_1.readback.json",
+   "build_id": "0000_Kpp_1-20261115T135216Z-7a95e9ca",
+   "master_sha256": "7a95e9cab7d46a642e45abb0db670566804f73fdaa054faca39740a30a8343c6",
+   "readback_status": "pass",
+   "artifacts_from_other_masters": []
+  },
+  {
+   "manifest": "C:\\x\\ev_t_63caf81f\\kpp1-r3\\pkg-A\\SM_Kpp_1.build.json",
+   "readback": "C:\\x\\ev_t_63caf81f\\kpp1-r3\\pkg-A\\SM_Kpp_1.readback.json",
+   "build_id": "SM_Kpp_1-20261115T135226Z-7a95e9ca",
+   "master_sha256": "7a95e9cab7d46a642e45abb0db670566804f73fdaa054faca39740a30a8343c6",
+   "readback_status": "pass",
+   "artifacts_from_other_masters": []
+  }
+ ],
+ "validate_A": [
+  {
+   "package": "0000_Kpp_1.zip",
+   "master_given": "SM_Kpp_1.quad-v002.fbx",
+   "exit": 2,
+   "rows": [
+    {
+     "status": "pass",
+     "code": null,
+     "observed": "build 0000_Kpp_1-20261115T135216Z-7a95e9ca: 2 artifacts from master 7a95e9cab7d4 (builder 8bcf28ee1dda39ff4a73cf3763f655f3a6b44b92), transform 1371-bridge"
+    }
+   ]
+  },
+  {
+   "package": "SM_Kpp_1.zip",
+   "master_given": "SM_Kpp_1.quad-v002.fbx",
+   "exit": 1,
+   "rows": [
+    {
+     "status": "pass",
+     "code": null,
+     "observed": "build SM_Kpp_1-20261115T135226Z-7a95e9ca: 23 artifacts from master 7a95e9cab7d4 (builder 8bcf28ee1dda39ff4a73cf3763f655f3a6b44b92), transform 1371-bridge"
+    }
+   ]
+  }
+ ],
+ "cross_A": {},
+ "roof_edit": {
+  "mode": "roof",
+  "source": "SM_Kpp_1.quad-v002.fbx",
+  "meshes_in": [
+   "SM_Kpp_1_Main",
+   "SM_Kpp_1_MainGlass",
+   "UCX_SM_Kpp_1_Main_001",
+   "UCX_SM_Kpp_1_Main_002",
+   "UCX_SM_Kpp_1_Main_003",
+   "UCX_SM_Kpp_1_Main_004"
+  ],
+  "object": "SM_Kpp_1_Main",
+  "roof_faces": 912,
+  "roof_vertices": 1094,
+  "roof_top_z_before": 8.65,
+  "lift_m": 0.3
+ },
+ "master_sha": {
+  "A": "7a95e9cab7d46a642e45abb0db670566804f73fdaa054faca39740a30a8343c6",
+  "B": "f16716e7ed14a358d89ffb5e9716ccddcf3bcb8544d1d9b8b549a75b15b5f668"
+ },
+ "validate_A_against_B": [
+  {
+   "package": "0000_Kpp_1.zip",
+   "master_given": "SM_Kpp_1.quad-v002.roof-edit.fbx",
+   "exit": 1,
+   "rows": [
+    {
+     "status": "fail",
+     "code": "manifest_master_stale",
+     "observed": "master now f16716e7ed14 != build master 7a95e9cab7d4: rebuild every artifact"
+    }
+   ]
+  },
+  {
+   "package": "SM_Kpp_1.zip",
+   "master_given": "SM_Kpp_1.quad-v002.roof-edit.fbx",
+   "exit": 1,
+   "rows": [
+    {
+     "status": "fail",
+     "code": "manifest_master_stale",
+     "observed": "master now f16716e7ed14 != build master 7a95e9cab7d4: rebuild every artifact"
+    }
+   ]
+  }
+ ],
+ "vpm_B_export": {
+  "mode": "vpm",
+  "source": "SM_Kpp_1.quad-v002.roof-edit.fbx",
+  "meshes_in": [
+   "SM_Kpp_1_Main",
+   "SM_Kpp_1_MainGlass",
+   "UCX_SM_Kpp_1_Main_001",
+   "UCX_SM_Kpp_1_Main_002",
+   "UCX_SM_Kpp_1_Main_003",
+   "UCX_SM_Kpp_1_Main_004"
+  ],
+  "triangles": {
+   "SM_Kpp_1_Main": 123678,
+   "SM_Kpp_1_MainGlass": 504
+  },
+  "ucx": [
+   "UCX_SM_Kpp_1_Main_001",
+   "UCX_SM_Kpp_1_Main_002",
+   "UCX_SM_Kpp_1_Main_003",
+   "UCX_SM_Kpp_1_Main_004"
+  ]
+ },
+ "build_B": {
+  "manifest": "C:\\x\\ev_t_63caf81f\\kpp1-r3\\pkg-B\\SM_Kpp_1.build.json",
+  "readback": "C:\\x\\ev_t_63caf81f\\kpp1-r3\\pkg-B\\SM_Kpp_1.readback.json",
+  "build_id": "SM_Kpp_1-20261115T135243Z-f16716e7",
+  "master_sha256": "f16716e7ed14a358d89ffb5e9716ccddcf3bcb8544d1d9b8b549a75b15b5f668",
+  "readback_status": "pass",
+  "artifacts_from_other_masters": [
+   "7a95e9cab7d46a642e45abb0db670566804f73fdaa054faca39740a30a8343c6"
+  ]
+ },
+ "validate_B": {
+  "package": "SM_Kpp_1.zip",
+  "master_given": "SM_Kpp_1.quad-v002.roof-edit.fbx",
+  "exit": 1,
+  "rows": [
+   {
+    "status": "fail",
+    "code": "manifest_master_mismatch",
+    "observed": "artifacts name different master revisions: ['SM_Kpp_1.geojson', 'T_Kpp_1_Diffuse_1.1001.png', 'T_Kpp_1_Diffuse_1.1002.png', 'T_Kpp_1_Diffuse_1.1003.png', 'T_Kpp_1_Diffuse_1.1004.png', 'T_Kpp_1_Diffuse_1.1005.png', 'T_Kpp_1_Diffuse_1.1006.png', 'T_Kpp_1_Diffuse_1.1007.png', 'T_Kpp_1_ERM_1.1001.png', 'T_Kpp_1_ERM_1.1002.png', 'T_Kpp_1_ERM_1.1003.png', 'T_Kpp_1_ERM_1.1004.png', 'T_Kpp_1_ERM_1.1005.pn"
+   }
+  ]
+ },
+ "cross_B": {
+  "0000_Kpp_1.zip": [
+   [
+    "manifest_cross_master",
+    "packages name different master revisions: 0000_Kpp_1.zip -> 7a95e9cab7d4, SM_Kpp_1.zip -> f16716e7ed14"
+   ]
+  ],
+  "SM_Kpp_1.zip": [
+   [
+    "manifest_cross_master",
+    "packages name different master revisions: 0000_Kpp_1.zip -> 7a95e9cab7d4, SM_Kpp_1.zip -> f16716e7ed14"
+   ]
+  ]
+ },
+ "validate_npm_in_B": {
+  "package": "0000_Kpp_1.zip",
+  "master_given": "SM_Kpp_1.quad-v002.roof-edit.fbx",
+  "exit": 1,
+  "rows": [
+   {
+    "status": "fail",
+    "code": "manifest_master_stale",
+    "observed": "master now f16716e7ed14 != build master 7a95e9cab7d4: rebuild every artifact"
+   }
+  ]
+ }
+}

@@ -18,7 +18,7 @@ cases = {
     "waits on a pass gate": src.replace("    status: pass\n    note: \"Cold run", "    status: pass\n    waits: user\n    note: \"Cold run"),
     "unknown waits value": src.replace("    waits: user", "    waits: someone"),
 }
-# F20 (RUN-LOG): a duplicated `inputs` row is accepted today; this probe is expected to print FAIL until fixed.
+# F20 (RUN-LOG): a duplicated `inputs` row was accepted at #1279; fixed in #1310 (5/5 expected).
 cases = {k: v for k, v in cases.items() if v is not None and v != src}
 out = Path(sys.argv[2]); out.mkdir(parents=True, exist_ok=True)
 ok = 0

@@ -86,14 +86,18 @@ def parser():
     evals.add_argument("--main", type=_native_path, help="main checkout holding logs/ (default: from git)")
     evals.add_argument("--evals-dir", type=_native_path, help="default: <repo>/evals")
     evals.add_argument("--output", type=_native_path, help="new run folder (default: <main>/logs/evals/runs/<time>-<selector>)")
-    qa = sub.add_parser("qa", help="Mesh QA gates; xview = inv_xview overlap gate (#527), postcondition of a build step")
-    qa.add_argument("check", choices=["xview"])
+    qa = sub.add_parser("qa", help="Mesh QA gates; xview = inv_xview overlap gate (#527), postcondition of a build "
+                                   "step; visibility = VPM hidden / back-visible faces and open edges (#1447)")
+    qa.add_argument("check", choices=["xview", "visibility"])
     qa.add_argument("input", type=Path, help="FBX, .blend (headless Blender) or parts .npz")
     qa.add_argument("--out", type=Path, required=True, help="new report.json (never the input, never overwritten)")
     qa.add_argument("--parts", nargs="+", help="check only these objects / named parts (default: every mesh)")
-    qa.add_argument("--profile", default="NPM", help="NPM or VPM (-OKS / -GROUND): xView 2 mm / 5 mm thresholds")
-    qa.add_argument("--coords", default="local", choices=["local", "inplace", "as-stored"],
-                    help="local = object location subtracted, float64 (default)")
+    qa.add_argument("--profile", default=None, help="xview: NPM or VPM (-OKS / -GROUND): xView 2 mm / 5 mm thresholds")
+    qa.add_argument("--coords", default=None, choices=["local", "inplace", "as-stored"],
+                    help="xview: local = object location subtracted, float64 (default)")
+    qa.add_argument("--context", nargs="+", default=[],
+                    help="visibility: real context meshes (opaque occluders, not checked), e.g. the tower")
+    qa.add_argument("--config", type=Path, help="visibility: JSON/YAML config (materials, eyes, n-of-16, edge classes)")
     qa.add_argument("--blender", default=os.environ.get("DT_BLENDER"), help="Blender executable for FBX / .blend")
     qa.add_argument("--timeout", type=float, default=3600, help="Blender dump timeout, seconds")
     from dt_ai.cli import shared_tools
@@ -281,15 +285,30 @@ def main(argv=None):
         elif args.command == "qa":
             from dt_ai.ops import xview_gate
             try:
-                rep = xview_gate.run(args.input, args.out, args.profile, args.coords, args.parts, args.blender,
-                                     args.timeout)
+                if args.check == "visibility":
+                    from dt_ai.ops import visibility_gate
+                    if args.profile is not None or args.coords is not None:
+                        raise ValueError("--profile / --coords belong to xview, not to visibility")
+                    conf = None
+                    if args.config is not None:
+                        import yaml
+                        conf = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+                    rep = visibility_gate.run(args.input, args.out, args.context, args.parts, conf, args.blender,
+                                              args.timeout)
+                    print("\n".join(visibility_gate.summary_lines(rep)))
+                    print(f"Report: {args.out}")
+                    return 0 if rep["passed"] else 1
+                if args.context or args.config is not None:
+                    raise ValueError("--context / --config belong to visibility, not to xview")
+                rep = xview_gate.run(args.input, args.out, args.profile or "NPM", args.coords or "local", args.parts,
+                                     args.blender, args.timeout)
             except (ValueError, OSError, RuntimeError) as exc:     # input / setup error: 2, never a verdict
                 print("ERROR: " + " ".join(str(exc).splitlines()), file=sys.stderr)
                 return 2
             print("\n".join(xview_gate.summary_lines(rep)))
             print(f"Report: {args.out}")
             return 0 if rep["passed"] else 1
-        elif args.command in ("derive", "ground"):
+        elif args.command in ("derive", "ground", "place"):
             from dt_ai.cli import shared_tools
             return shared_tools.run(root, args)
         elif args.command == "registry":

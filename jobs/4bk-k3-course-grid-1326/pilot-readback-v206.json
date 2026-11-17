@@ -1,0 +1,324 @@
+{
+  "passed": false,
+  "status": "scoped_two_tile_pilot_readback_ready_for_code_review_not_final_delivery",
+  "implementation_commit": "462ba11ff4a33f5402ca98a968bf795dd6365718",
+  "branch": "improve/issue-1326-pilot-4bk-stylobate-brick-in-1-udim-keep",
+  "base": "main",
+  "decisions": [
+    "D295",
+    "D296",
+    "D303",
+    "D304",
+    "D309",
+    "D310",
+    "D317"
+  ],
+  "source_hashes_verified": 10,
+  "artifacts": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v192\\course_grid_finalized_QA_OPEN.blend",
+      "sha256": "d9d8ea03ecaa7e3980a8bccbedab7c6ae1ec6a5c119fcd73e6f8c294ab6ba482",
+      "bytes": 979792
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v192\\course_grid_finalized_QA_OPEN.fbx",
+      "sha256": "dbf5c969f14365b8f1fd2f0d1cff6f9d60de99a912dc1df37b1073a1ef31c743",
+      "bytes": 300188
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v192\\fbx-readback.json",
+      "sha256": "b579c1c9a1d20764d15a162a9f589b6ecda8b0b75b520623f841499cf80af05a",
+      "bytes": 1160
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v192\\xview.json",
+      "sha256": "d9aeded5bd6db8d6f5b0a106da11612c8f102cf13d32fff53ae50db3a57e521e",
+      "bytes": 4314
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v193\\metrics.json",
+      "sha256": "0c714cf6a398695e768b8bdb124b2d00b55f03d5a59fac86d8674a27aee6cf9b",
+      "bytes": 1444
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v194\\continuous-surface-bound.json",
+      "sha256": "c68ede2ea72019e82173eaf067642970b777da113cd3662a6787a0b8a3102281",
+      "bytes": 1125188
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v195\\phase.json",
+      "sha256": "60f4fcb5025b0b13ce1a173f044d70666786e6ab12d066d0bc7a0aad21f88ecc",
+      "bytes": 318793
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v196\\independent-all-faces-png-check.json",
+      "sha256": "b2359713d911d22f9f6f1ae7934ae2cbdaf0295cad07a361f67cf2ebf6ad063d",
+      "bytes": 245445
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v188\\local-carriers.json",
+      "sha256": "0ff1e3d6b91371e86ca97e97e7fe2d337170dbb141698979843d023e880a06f4",
+      "bytes": 19195633
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v198\\source-endpoint-and-relief-readback.json",
+      "sha256": "e33d203b1113bdf7cd5f13d9c1159bd7b5501f5121652d85d8fc4104a83f3d96",
+      "bytes": 30650
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v189\\all-map-mip-readback.json",
+      "sha256": "3f9bdcb8c89e39aee10ae7191ec918387587d307fe83355dcc992d76136d7563",
+      "bytes": 13515
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v191\\native-plan.json",
+      "sha256": "fbf732985ee5fbf4d7e722304011fd3b6d6aa2325bf77a3b736ef5fb6a55e4a7",
+      "bytes": 22498
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v179\\bake-config.json",
+      "sha256": "17a94692a322560f1859c631ce054d03597e451418123ad6ce54dfb2b3aeb11d",
+      "bytes": 4267
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v180\\bake-report.json",
+      "sha256": "5141e14b0e3eece36b11bf80b8bce56fb77f94980ede4b2e4eb126beb91ecd51",
+      "bytes": 154388
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v197\\stylobate_final_review_v197.blend",
+      "sha256": "5984403c9fa90ff76778fe1df8b776f2ac24ee7cf6e573b94ac7d09704676ec3",
+      "bytes": 981091
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v207\\BEFORE-AFTER-final-pilot-four-views.png",
+      "sha256": "a3e2864b2632e8a5509c92a607c4aa48a77754b9d00221f107f4624b934ce49d",
+      "bytes": 5405864
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v207\\before-after-provenance.json",
+      "sha256": "dfba910e1fe975cf05e675f0093b8d8c1c381b22674e0976a6ae6ea3b4252605",
+      "bytes": 4578
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v200\\hostile-race-result.json",
+      "sha256": "bb59503609fecd3faf9a4f7cde9b98b19ab800dc0c188029db28a70384bfba8e",
+      "bytes": 724
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v202\\synthetic-cyclic-probe.json",
+      "sha256": "033dd0149eeb072297c2fac7ce487d343eb13b9f5defbd96599481d6eef63cd0",
+      "bytes": 235
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v203\\native-metadata-readback.json",
+      "sha256": "a001d8339c843b827bd68f57647d5421564e621ab6f11c71133d4599a693eeaa",
+      "bytes": 8311
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v204\\fbx-readback.json",
+      "sha256": "b579c1c9a1d20764d15a162a9f589b6ecda8b0b75b520623f841499cf80af05a",
+      "bytes": 1160
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v205\\unsupported-native-refusal.json",
+      "sha256": "a42bb45ed0e2ae87730ba112abf5c26c649eec9f636b1aabf560fa34b407340f",
+      "bytes": 219
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Diffuse.1001.png",
+      "sha256": "bfefff4f005ab96b0be8fa4759519d09b92c13b0dde82ab0870cac8003b55dab",
+      "bytes": 393771
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Diffuse.1002.png",
+      "sha256": "44697d354edbb179059bbfec771778a62e4d37dc40d2c1424241771def26f73a",
+      "bytes": 459152
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_ERM.1001.png",
+      "sha256": "45b867972effa4eeac97331945268b1af5c54d85587086600b508eab2112cf79",
+      "bytes": 219469
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_ERM.1002.png",
+      "sha256": "d2f2a2b86faf8b6919ebaa626873f22fc2a680a97eb7d1f18d31f3c214f1d932",
+      "bytes": 253434
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Normal.1001.png",
+      "sha256": "a3841f3bf0a76d0e41f17a88b20e7b5bb55626ded3ef72a42ccdb8874aa3e183",
+      "bytes": 671334
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v157\\T_1326_Stylo_Normal.1002.png",
+      "sha256": "adfa0f6a859c14a843f004d2ef4b9d9241999929f1f4b6420866988dab832b80",
+      "bytes": 728289
+    }
+  ],
+  "metrics": {
+    "passed": false,
+    "status": "actual_export_QA_red",
+    "source_identities": 2015,
+    "target_sources": 771,
+    "target_triangles": 5149,
+    "measured_nonzero_triangles": 5149,
+    "degenerate_triangles": 0,
+    "density_failed": 0,
+    "density_min": 512.0029375822871,
+    "density_max": 516.4020804347442,
+    "max_anisotropy": 1.0085757365731305,
+    "spread_p95_p5_over_p50": 4.031178408982256e-05,
+    "mirrored_triangles": 0,
+    "invalid_uv_polygons": 0,
+    "pages": [
+      {
+        "tile": 1001,
+        "classes": 236,
+        "raw_union_percent": 58.49705767049021,
+        "padded_union_percent": 87.18889494996745,
+        "min_border_px": 32.81327438354492,
+        "true_min_gap_px": 33.87293065646798
+      },
+      {
+        "tile": 1002,
+        "classes": 516,
+        "raw_union_percent": 11.569223768761406,
+        "padded_union_percent": 50.779406648652746,
+        "min_border_px": 49.984375,
+        "true_min_gap_px": 34.88076500493531
+      }
+    ],
+    "uv_class_errors": [],
+    "source_topological_uv_components": 500,
+    "native_topological_uv_components": 2819,
+    "component_edge_uv_tolerance": 1e-07,
+    "notes": [
+      "FBX density uses actual imported loop triangles, not inherited native triangles",
+      "topological component counts use source/native vertex-edge identities and UV endpoints, not geometric union or logical appearance classes",
+      "no course/joint-centre/anisotropy acceptance from this red report"
+    ]
+  },
+  "source_endpoints": {
+    "passed": false,
+    "required_source_positive_probes": 31837,
+    "required_source_positive_failed": 0,
+    "source_empty_endpoints": 62,
+    "both_empty_negative": 36,
+    "bounded_tapers": 26,
+    "max_taper_displacement_mm": 1.9406085668709159,
+    "taper_distance_failed": 0,
+    "source_normal_active_pixels": 92228,
+    "source_normal_active_max_unit_error": 7.868151653688788e-08,
+    "source_normal_baseline_equal_known_pixels": 71408,
+    "baseline_equal_policy": "source RGB equals rounded normalized baseline; do not invent signed grooves from those quantization residuals",
+    "decisions": [
+      "D295",
+      "D304",
+      "D310",
+      "D317"
+    ],
+    "notes": [
+      "62 source-empty clipped endpoints are reported explicitly, not dropped or given fake centre values",
+      "the26 conservative source-cell colour tapers are the already acceptedv160 colour stage[D317]",
+      "all771 full-face positive/negative PNG probes independently retained"
+    ]
+  },
+  "surface_certificate": {
+    "passed": false,
+    "certificate_faces": 2015,
+    "certified": 2015,
+    "refused": 0,
+    "horizontal_bound_m": 1e-05,
+    "distance_limit_m": 2e-05,
+    "max_distance_bound_m": 1.9197866562763298e-05,
+    "method": "complete projected-triangle overlay + affine height extrema + reference slope bound",
+    "numeric_overlay_buffer_m": 1e-09,
+    "numeric_uncovered_policy": "nonempty difference is refusal, including lines/points"
+  },
+  "reusable_map_replay": [
+    {
+      "role": "Diffuse",
+      "tile": 1001,
+      "byte_identical": true
+    },
+    {
+      "role": "Diffuse",
+      "tile": 1002,
+      "byte_identical": true
+    },
+    {
+      "role": "ERM",
+      "tile": 1001,
+      "byte_identical": true
+    },
+    {
+      "role": "ERM",
+      "tile": 1002,
+      "byte_identical": true
+    },
+    {
+      "role": "Normal",
+      "tile": 1001,
+      "byte_identical": true
+    },
+    {
+      "role": "Normal",
+      "tile": 1002,
+      "byte_identical": true
+    }
+  ],
+  "hardened_native_replay_exact_records": 6393,
+  "original_finish_manifest_sha256": "f6bad16b50b6dda50dd3aecf69c755bb2c6a516925e71bf81645440492296106",
+  "synthetic_race": {
+    "synthetic": true,
+    "passed": true,
+    "command": [
+      "uv",
+      "run",
+      "--with",
+      "scipy",
+      "python",
+      "-m",
+      "tools.materials.course_grid_bake",
+      "--config",
+      "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v200\\SYNTHETIC-race-config.json",
+      "--output",
+      "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v201"
+    ],
+    "changed_only_own_copy": true,
+    "exit_code": 2,
+    "successful_report_exists": false,
+    "original_reference_unchanged": true,
+    "partial_png_files": 6,
+    "output": "baked tile 1001\nbaked tile 1002\nERROR: input changed during bake: references\n"
+  },
+  "synthetic_cyclic_probe": {
+    "synthetic": true,
+    "seed": 1326,
+    "positive_cases": 500,
+    "positive_passed": 500,
+    "invalid_cases": 12,
+    "invalid_refused": 12,
+    "guarantee": "exact cyclic boundary identity; no point mutation; NaN/inf/bool refuse"
+  },
+  "metadata_refusal": {
+    "synthetic": true,
+    "probe_passed": true,
+    "message": "unsupported native attribute: SYNTHETIC_unsupported",
+    "output_exists": false,
+    "original_source_unchanged": true,
+    "copied_input_unchanged": true
+  },
+  "verification_boundary": [
+    "no global xView pass: accepted original stair baselineD296",
+    "62source-empty rays retain null centres;31837source-positive rays pass and26tapers<=1.940609mm",
+    "mip4/arbitrary engine filtering not certified; declared mip0-3guard only",
+    "no final4BK package/SINTEZ checker pass or replication"
+  ],
+  "created_followup": {
+    "issue": 1435,
+    "card": "t_84e8a81d",
+    "reason": "independently reproduced pre-existing main decision registry failures; not repaired in1326"
+  }
+}

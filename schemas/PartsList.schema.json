@@ -18,6 +18,24 @@
           "title": "Note",
           "type": "string"
         },
+        "parts_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gate 1: PartsList.approval_sha256(), excluding gate1/status; not file bytes",
+          "not": {
+            "pattern": "\\s",
+            "type": "string"
+          },
+          "title": "Parts Sha256"
+        },
         "ref": {
           "anyOf": [
             {
@@ -57,6 +75,77 @@
         "note"
       ],
       "title": "Approval",
+      "type": "object"
+    },
+    "FinishRef": {
+      "additionalProperties": false,
+      "description": "Pixel bbox [left, top, right, bottom], origin top-left, right/bottom exclusive.\n\nFinish meaning stays in PartEntry.legend_item; this is evidence, not image inspection.",
+      "properties": {
+        "bbox": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": 0,
+                "type": "number"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bbox"
+        },
+        "crop": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Crop"
+        },
+        "image": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Image",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image"
+      ],
+      "title": "FinishRef",
+      "type": "object"
+    },
+    "FinishSheet": {
+      "additionalProperties": false,
+      "description": "Explicit human classification, not automatic building detection.",
+      "properties": {
+        "image": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Image",
+          "type": "string"
+        },
+        "multi_building": {
+          "title": "Multi Building",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "image",
+        "multi_building"
+      ],
+      "title": "FinishSheet",
       "type": "object"
     },
     "Joint": {
@@ -141,6 +230,23 @@
           "default": null,
           "description": "primitive only",
           "title": "Build As"
+        },
+        "finish_refs": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/FinishRef"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Per-part finish evidence; image must be registered in finish_sheets. For multi_building sheets bbox and crop are mandatory; legend_item records the finish.",
+          "title": "Finish Refs"
         },
         "id": {
           "maxLength": 120,
@@ -432,6 +538,23 @@
   },
   "additionalProperties": false,
   "properties": {
+    "finish_sheets": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/FinishSheet"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Finish image registry; explicitly mark sheets showing multiple buildings or parts. Absent metadata preserves legacy serialization and approval hashes.",
+      "title": "Finish Sheets"
+    },
     "gate1": {
       "anyOf": [
         {
@@ -481,7 +604,8 @@
       "enum": [
         "A",
         "B",
-        "C"
+        "C",
+        "D"
       ],
       "title": "Source Tier",
       "type": "string"
@@ -509,7 +633,7 @@
     },
     "triangle_budget": {
       "$ref": "#/$defs/TriangleBudget",
-      "description": "whole delivery; the parts' budgets must fit"
+      "description": "whole-delivery allocated project budget for NPM/VPM, not the regulatory ceiling [D276]; the parts' budgets must fit (OKS <=150000 per profile [D010/D161])"
     }
   },
   "required": [

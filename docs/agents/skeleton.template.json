@@ -1,0 +1,5 @@
+{
+  "scenario": "oks-vpm",
+  "config": {"sources": "jobs/<ID>/sources.json", "profile": "VPM"},
+  "hooks": []
+}

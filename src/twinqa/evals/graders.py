@@ -759,8 +759,11 @@ def routine_question(evidence):
     return row
 
 
+from twinqa.evals.subagent_timebox import subagent_timebox
+
 # grader name -> (function, the evidence names it reads); task.json is checked against the names.
-GRADERS = {"no_hook_denial": (no_hook_denial, ("transcript",)),
+GRADERS = {"subagent_timebox": (subagent_timebox, ("transcript",)),
+           "no_hook_denial": (no_hook_denial, ("transcript",)),
            "dcc_skill_loaded": (dcc_skill_loaded, ("transcript",)),
            "engine_checked": (engine_checked, ("transcript",)),
            "source_inspected": (source_inspected, ("transcript",)),

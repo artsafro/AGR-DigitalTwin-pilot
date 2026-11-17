@@ -1,0 +1,292 @@
+# Context map of the VPM / OKS route (UCX), #1392 (Artem 2026-11-14, D293). Source of truth for
+# docs/architecture/vpm-oks-contexts.excalidraw / .svg. Same schema and generator as contexts.yaml (#1359).
+# Every stage context of vpm-oks-route.events.yaml is listed here with the same owner (route_map.route_coverage).
+# duplicates: described rows only (`at` = path:line, `match` = text on that line); the duplicate_guard allowlist
+# stays in contexts.yaml. A context without a `duplicates` key draws no duplicates box.
+# Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
+title_ru: "Карта контекстов маршрута ВПМ / ОКС (UCX) — D293"
+issue: "#1392"
+rules:
+  - id: udim-tile
+    owner: adapters/max/agr_tools/udimtile_core.py
+    ru: "своя формула UDIM 1001 + u + 10·v вместо общей функции (охрана — contexts.yaml, #1376)"
+shared_kernel:
+  serves_stage: uv
+  id: udim
+  ru: "Общее ядро: номер тайла UDIM"
+  owner: adapters/max/agr_tools/udimtile_core.py
+  owner_ru: "одна функция UDIM (#1337); её дубли охраняет карта НПМ (contexts.yaml)"
+  functions:
+    - name: udim_tile
+      contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
+    - name: face_tile
+      contract: "углы UV грани -> тайл грани; угол в чужом тайле — UdimCrossTileError"
+contexts:
+  - id: dcc
+    ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"
+    area: docs/agents/CAPABILITIES.md
+    owner: src/dt_ai/core/blender_runner.py
+    owner_ru: "агент работает там, где удобно (D293); запуск Blender без окна со свежим JSON-ответом"
+    functions:
+      - name: blender_executable
+        contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
+      - name: run_blender
+        contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
+  - id: body
+    ru: "Корпус по частям"
+    area: docs/domain/areas/body.md
+    owner: src/dt_ai/ops/operations.py
+    owner_ru: "операции над частями с проверкой инвариантов и откатом (Blender / Max / AGR Tools)"
+    functions:
+      - name: run_operation
+        contract: "сцена, операция, часть, функция правки -> OperationResult; нарушен инвариант — откат"
+      - name: embed_into_neighbour
+        contract: "сцена, часть, сосед, направление, глубина -> врезка декора и навесных элементов (D199)"
+    duplicates:
+      - at: "jobs/KPP1/scripts/build_kpp1.py:198"
+        match: "def body("
+        issue: "#1593"
+        ru: "свой корпус КПП1; run_stage.sh:13 вызывает build_kpp1.main, без run_operation; путь не заморожен .ignore [D327]"
+        status: live-bypass
+        step: "-"
+      - at: "jobs/PSU275/scripts/assemble_body_roof.py:62"
+        match: "def main("
+        issue: "#1593"
+        ru: "историческая сборка корпуса и кровли ПСУ275; .ignore:97 [D327], не живой обход"
+        status: historical
+      - at: "jobs/OBR22-K02/scripts/build_exterior_surface.py:43"
+        match: "def build("
+        issue: "#1593"
+        ru: "исторический построитель фасада Обр22; .ignore:67 [D327], сданные скрипты не меняются"
+        status: historical
+  - id: uv-atlas
+    no_stage: "NPM atlas responsibility used by the derived NPM branch, not VPM UV preparation"
+    ru: "Атлас производной НПМ, не UV ВПМ"
+    area: docs/domain/areas/uv-atlas.md
+    owner: adapters/max/agr_tools/atlas_core.py
+    owner_ru: "упаковка атласа НПМ (D225, D292 пути A / B); периодические UV ВПМ принадлежат vpm_uv.py"
+    functions:
+      - name: pack
+        contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
+      - name: atlas_png
+        contract: "раскладка -> PNG атласа"
+  - id: vpm-uv
+    ru: "Периодическая UV-развёртка ВПМ"
+    area: docs/domain/areas/uv-atlas.md
+    owner: tools/blender/vpm_uv.py
+    owner_ru: "общее Blender bmesh-ядро ВПМ (#1380, D320); не упаковщик атласа НПМ"
+    functions:
+      - name: texel_cut
+        contract: "bmesh, имена отделок, spec -> разрезы по периодам текстуры"
+      - name: pack_uv
+        contract: "bmesh, имена отделок, spec -> UVMap и QA; периодические острова можно stack (D320)"
+    duplicates:
+      - at: "jobs/KPP1/scripts/vpm_uv.py:6"
+        match: "runpy.run_path(str(_owner))"
+        issue: "#1593"
+        ru: "обёртка runpy; _owner на строке 5 указывает tools/blender/vpm_uv.py"
+        status: wrapper
+      - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:6"
+        match: "runpy.run_path(str(_owner))"
+        issue: "#1593"
+        ru: "обёртка runpy; _owner на строке 5 указывает tools/blender/vpm_uv.py"
+        status: wrapper
+  - id: npm-atlas
+    ru: "НПМ в тех же координатах (ВПМ → НПМ)"
+    area: docs/domain/areas/derivation.md
+    owner: tools/derive/npm_atlas.py
+    owner_ru: "атлас НПМ из UDIM для agr vpm-to-npm; путь B — параллельная НПМ по ID (D293)"
+    functions:
+      - name: validate_export
+        contract: "раскладка, диффуз, прозрачность -> замер отступов по прочитанным UV и PNG"
+      - name: main
+        contract: "аргументы dt derive atlas -> атлас НПМ и отчёт; ошибка — ненулевой код"
+  - id: openings
+    serves_stage: openings
+    ru: "Проёмы и окна"
+    area: docs/domain/areas/windows.md
+    owner: adapters/max/agr_tools/windowgen_core.py
+    owner_ru: "agr window-generate / Max win.generate: библиотека с утоплением или генератор D322; один 3D owner стекла (#1405)"
+    functions:
+      - name: load_library
+        contract: "папка библиотеки -> типы окон, стандарт, sha256 файлов"
+      - name: library_report
+        contract: "типы, стандарт -> строка на тип: pass / quarantine / duplicate с причиной"
+      - name: offerable
+        contract: "отчёт библиотеки -> id, которые можно предлагать (только pass)"
+      - name: build_type
+        contract: "тип окна, стандарт, опции -> меш окна по стандарту библиотеки"
+    duplicates:
+      - at: "jobs/KPP1/scripts/build_kpp1.py:327"
+        match: "def openings("
+        issue: "#1593"
+        ru: "свои рамы и стекло КПП1 через relief, без windowgen_core; run_stage.sh:13; путь не заморожен .ignore [D327]"
+        status: live-bypass
+        step: "-"
+      - at: "jobs/PSU275/scripts/opening_fills.py:183"
+        match: "frame = box(*outline).difference("
+        issue: "#1593"
+        ru: "исторические рамы ПСУ275; .ignore:119 [D327], не живой обход"
+        status: historical
+      - at: "jobs/OBR22-K02/scripts/build_shell_windows.py:76"
+        match: "frame=outer.difference("
+        issue: "#1593"
+        ru: "исторические рамы Обр22; .ignore:71 [D327], не текущий генератор"
+        status: historical
+      - at: "jobs/KPP1/scripts/kpp1_windowgen.py:75"
+        match: "return wg.build_type("
+        issue: "#1593"
+        ru: "обёртка build_type; import windowgen_core as wg на строке 26"
+        status: wrapper
+  - id: roof
+    serves_stage: roof
+    ru: "Кровля, парапет, плита, ограждение"
+    area: docs/procedure/node-r6-oks-body-facade.md
+    owner: adapters/max/agr_tools/roof_core.py
+    owner_ru: "плита кровли врезана в парапет и поднята на несколько мм (R6, D292)"
+    functions:
+      - name: boundary_loops
+        contract: "грани -> замкнутые петли открытых рёбер в обходе их граней"
+      - name: slab
+        contract: "меш, петля, грани-владельцы, опции -> одна плита кровли или Ambiguous"
+      - name: plan
+        contract: "корпуса (меш в метрах, мир) -> опции, строки плит, находки"
+      - name: hole_plate
+        contract: "план отверстия парапета, уровень, верх, внешний контур -> плита кровли (сборщик задания, #1381) или ошибка"
+    duplicates:
+      - at: "jobs/PSU275/scripts/roof_wells.py:70"
+        match: "def add_face("
+        issue: "#1593"
+        ru: "исторический построитель кровли ПСУ275; .ignore:127 [D327], не живой обход"
+        status: historical
+      - at: "jobs/KPP1/scripts/build_kpp1.py:432"
+        match: "def roof("
+        issue: "#1593"
+        ru: "обёртка плиты: строка 441 вызывает roof_core.hole_plate (#1381); стены отверстия и шахта локальны"
+        status: wrapper
+  - id: package
+    ru: "Экспорт и пакеты ВПМ / НПМ"
+    area: docs/domain/areas/package.md
+    owner: adapters/max/agr_tools/package_core.py
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    functions:
+      - name: zip_plan
+        contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
+      - name: check_members
+        contract: "члены архива -> плоские безопасные имена; плохое имя — ошибка до записи"
+      - name: _write_zip
+        contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
+      - name: zip_apply
+        contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + полный отчёт проверки; ГОТОВО.txt только после автопроверок, V015–V017 ждут Артёма [D323]; иначе ОШИБКА.txt"
+  - id: validation
+    ru: "Проверки, xView, СИНТЕЗ"
+    area: docs/domain/areas/package.md
+    owner: tools/qa/validate_package.py
+    owner_ru: "проверка пакета по регламенту (agr validate)"
+    functions:
+      - name: validate_vpm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ и плотность V009"
+      - name: validate_npm_zip
+        contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+    duplicates:
+      - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47"
+        match: "def dump("
+        issue: "#1379"
+        ru: "остаётся: замороженная версия v003 запуска чекера; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
+        status: own-duty
+        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
+  - id: ucx
+    ru: "Коллизии UCX (только ВПМ)"
+    area: docs/domain/areas/ucx.md
+    owner: adapters/max/agr_tools/ucx10_core.py
+    owner_ru: "зазоры UCX (D330: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
+    functions:
+      - name: piece
+        contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
+      - name: separation
+        contract: "два выпуклых куска -> нижняя оценка зазора, м, и ось"
+      - name: plan
+        contract: "куски, опции -> зазор каждой соседней пары каждого семейства UCX"
+    duplicates:
+      - at: "jobs/KPP1/scripts/vpm_ucx.py:50"
+        match: "def pieces("
+        issue: "#1383"
+        ru: "свои куски UCX КПП1"
+        status: own-duty
+        why: "ручные куски сданного КПП1; новый объект строит agr ucx (D330), сданный пакет не меняется"
+      - at: "jobs/PSU275/scripts/vpm_ucx.py:45"
+        match: "UCX_SM_"
+        issue: "#1383"
+        ru: "свои UCX ПСУ275"
+        status: own-duty
+        why: "ручные коробки законченного ПСУ275; новый объект строит agr ucx (D330), пакет не меняется"
+  - id: ucx-triangulation
+    ru: "Триангуляция готовых UCX"
+    serves_stage: ucx
+    area: docs/domain/areas/ucx.md
+    owner: adapters/max/agr_tools/geom_core.py
+    owner_ru: "ucx_plan; обёртки TEC26 не строят зазоры ucx10_core"
+    functions:
+      - name: ucx_plan
+        contract: "готовые выпуклые куски -> план триангуляции"
+    duplicates:
+      - at: "jobs/TEC26-OKS/scripts/ucx_tri_core.py:44"
+        match: "def triangulate_piece("
+        issue: "#1383"
+        ru: "обёртка geom_core() -> ucx_plan"
+        status: wrapper
+  - id: ucx-triangulation-cli
+    serves_stage: ucx
+    ru: "Запуск триангуляции UCX"
+    area: docs/domain/areas/ucx.md
+    owner: jobs/TEC26-OKS/scripts/ucx_tri_core.py
+    owner_ru: "обёртка geom_core.ucx_plan"
+    functions:
+      - name: triangulate_piece
+        contract: "вершины и грани UCX -> треугольники через geom_core.ucx_plan"
+    duplicates:
+      - at: "jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29"
+        match: "UCX_"
+        issue: "#1383"
+        ru: "обёртка core.triangulate_piece -> geom_core.ucx_plan"
+        status: wrapper
+      - at: "jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24"
+        match: "UCX_"
+        issue: "#1383"
+        ru: "диагностика отклонения Main от UCX по частям (не построитель)"
+        status: own-duty
+        why: "только читает меши UCX и измеряет расстояния, не строит 960 UCX"
+relations:
+  - from: dcc
+    to: body
+    ru: "строит"
+  - from: body
+    to: openings
+    ru: "корпус по частям"
+  - from: openings
+    to: roof
+    ru: "проёмы врезаны"
+  - from: roof
+    to: ucx
+    ru: "оболочка с кровлей"
+  - from: body
+    to: vpm-uv
+    ru: "мастер ВПМ"
+  - from: udim
+    to: vpm-uv
+    ru: "номер тайла"
+  - from: vpm-uv
+    to: uv-atlas
+    ru: "UDIM для производной НПМ"
+  - from: uv-atlas
+    to: npm-atlas
+    ru: "UDIM → атлас"
+  - from: npm-atlas
+    to: package
+    ru: "НПМ в координатах"
+  - from: ucx
+    to: package
+    ru: "коллизии UCX_"
+  - from: package
+    to: validation
+    ru: "ZIP / FBX сдачи"

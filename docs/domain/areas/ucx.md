@@ -18,7 +18,7 @@ shared delivery validation. [Image verification and PR acceptance evidence](ucx-
 | R01 OKS target | reg p.36 §13.2 | n/a | Main: every OKS; existing OKS inside site if present; preserve arches, courtyards and major projections | V016 manual overlay and walkthrough; check target inventory | none | [Collision targets](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
 | R02 Ground target | reg p.36 §13.2 | n/a | Ground surface, especially perimeter | Compare collision to approved site surface; one real case: Vatutino Ground v015 (coverage not measured) | none | [Collision targets](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
 | R03 Excluded targets | reg p.36 §13.2-13.3 | n/a | MAF, lighting, vegetation: none; lighting FBX exempt | Inspect target inventory and lighting FBX separately | none | [Targets](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec), [lighting](../npm-vpm.md#vpm-lighting-fbx-architectural-light-design) |
-| R04 Thin-element exception | reg p.36 §13.2 | n/a | Canopies, fences, railings <= 5 cm thick: no UCX | Measure source thickness before applying exception | none | [Collision exceptions](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
+| R04 Thin-element exception | reg p.36 §13.2 | n/a | Canopies, fences, railings <= 5 cm thick: no UCX; MAF fences and canopies: no UCX at any thickness [D298] | Measure source thickness before applying exception | none | [Collision exceptions](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec) |
 | R05 Per-file collision | reg p.36 §13.3 | n/a | Own UCX in each non-lighting geometry FBX | V010 `UCX present` on the scene readback of each VPM FBX except `_Light`; target completeness stays R01-R03 | V010; tests/qa/test_scene.py::test_vpm_geometry_fbx_without_ucx_fails_r05 | [V010 implementation limits](../validation.md#implementation-status-inventory-static-audit), [implementation](../../../src/twinqa/scene.py) |
 | R06 Hull geometry | reg p.36 §13.1 | n/a | Convex closed Mesh pieces without holes | KPP1 convex_closed checks convexity and edge closure locally; general V010 shape remains not_run | KPP1 vpm_ucx.py:convex_closed (job-local only) | [Rule](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec), [local check](../../../jobs/KPP1/scripts/vpm_ucx.py) |
 | R07 Material slots | reg p.36 §13.1 | n/a | No material slots on UCX | V010 `UCX material slots` reads the exported mesh slots back; an empty slot counts; slots missing from the readback are not_run | V010; tests/qa/test_scene.py::test_ucx_with_material_slot_fails_r07 | [Collision hull contract](../geometry.md#collision--ucx-vpm-only-npm-has-none-unless-customer-spec), [implementation](../../../src/twinqa/scene.py) |
@@ -39,6 +39,32 @@ exposed UCX farther from the model is not a tolerance failure. Reverse distance 
 overhang remain diagnostics, not pass/fail gates. This does not waive R01/R02 target coverage
 or preservation of arches, courtyards and functional voids.
 
+## Command
+
+`agr ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M]` (#1404, [D330]): one command for a
+VPM body and for Ground. It builds with `ucx_build` (Blender driver `tools/blender/ucx_build.py`, options unchanged),
+reads the written FBX back in a fresh Blender process, measures every pair with `ucx10_core.plan` (the AGR Tools
+`ucx.gap` core: a pair under the gap fails; the fix is `ucx.gap` in Max on an export copy) and runs V010. It never
+overwrites OUT or its reports and never writes the model. Gap bands [D339] (#1607, observe week): `ucx10_core.pair_census`
+measures EVERY pair of UCX pieces, same-family and cross-family (AABB pre-filter at `REACH_M` = 1 m), and the report
+`steps.gap_check` carries `gap_bands` (counts per scope: overlap / lt_2mm / 2_10mm / 10_100mm / 100mm_1m / gt_1m),
+`gap_pairs` (every pair within 1 m with its SAT gap), `warnings` (cross-family pairs under the gap,
+`ucx_cross_family_gap`) and `gap_not_measured`. A band never fails the command; only the same-family rule above does.
+A plane cut that yields an open hull is the finding `ucx_cut_failed`, never a crash. Etalon readbacks (KPP1, Skolkovo,
+Mashi; `G:/Мой диск/AGR-evidence/1607-ucx-gap-bands/`, SHA256SUMS.txt): same-family 2-10 mm / 10-100 mm / 100 mm-1 m =
+KPP1 48/1/6, Skolkovo 496/52/501; Mashi keeps exactly 8 overlaps. Parity: Vatutino Ground v014 rebuilt by the command has
+the delivered UCX geometry (715/715 pieces, 8 788 triangles, max vertex deviation 0 m).
+
+`agr ucx MODEL OUT Main --resolve [--gap-m M]` (#1540): MODEL already holds its UCX (a delivered archive). The
+Blender driver `tools/blender/ucx_resolve.py` runs `ucx10_core.resolve`: every pair of UCX pieces under the gap
+(any family; default 3 mm, [D098] band) gets its SMALLER convex piece cut by the plane of one face of the larger
+piece moved out by the gap (the plane that removes the least volume and leaves >= 2 cm); a convex piece cut by a
+plane stays closed and convex, pieces only shrink, so a resolved pair stays resolved. A pair no face plane can
+resolve (nested) is ambiguous and not cut; a non-convex input piece is reported, not touched. The report
+`OUT.ucx_resolve.json` lists per pair the plane, gap before/after and volume removed, the [D012] file budget and
+the model -> UCX distance [D134] before/after; steps readback / gap check / V010 then run on OUT. Method source:
+retro of elv-tc-vpm v008 (`docs/cases.md`).
+
 ## Current limitations
 
 [Pipeline stage #10](../../pipeline.md) is "partial" (UCX shipped inside accepted KPP1, PSU275, ELV TC and Vatutino Ground v015 models; no package passed): the shared builder
@@ -47,7 +73,7 @@ or preservation of arches, courtyards and functional voids.
 (PR evidence), Ground only on synthetic surfaces. The builder's own deviation figures are construction
 self-measurements, not an L2 check of an arbitrary delivery, so R11-R13 coverage above stays `none`.
 [KPP1](../../../jobs/KPP1/scripts/vpm_ucx.py) and [PSU275](../../../jobs/PSU275/scripts/vpm_ucx.py)
-keep their job-local scripts (not re-delivered). PSU275 explicitly omits
+keep their job-local scripts (not re-delivered; [D330] lists them as superseded). PSU275 explicitly omits
 stair collision and fills parapet wells: script existence is not blanket compliance.
 V010 checks UCX presence per non-lighting VPM FBX, material slots, triangle budget and mutual intersections; convexity and coverage stay not_run. No UCX benchmark exists.
 

@@ -12,8 +12,12 @@ UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readba
 Manual stages (V015-V017) always need a signed review.
 --master reads the quad work FBX back (DER-03, [D021], [D198]): V003 "master quads" / "master quad size";
 with --scene and no --master that part of V003 stays not_run.
+Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
+"build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
+check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
+not_run (never pass); no --master -> not_run manifest_master_unchecked (stale check did not run; an NPM ZIP: fail manifest_master_missing, #1637); a package with OKS and Ground members takes `--master oks=PATH --master ground=PATH` ([D328]). Format and writer: adapters/max/agr_tools/build_manifest.py, `agr build-manifest`.
 
-    py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--standards DIR] [--json]
+    py -3 tools/qa/validate_package.py --recheck old_report.json --output new_report.json [--recheck-target copy.zip] [--standards DIR] [--json]
 
 Recheck (issue #511): is a stored report's verdict still true now? current (target sha256 and
 standards digest unchanged; exit = the stored exit code), stale_standards (exit 3),
@@ -30,6 +34,9 @@ from pathlib import Path, PurePosixPath
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from adapters.max.agr_tools import build_manifest  # noqa: E402  (#1423 delivery set consistency)
 
 from twinqa.bundle import BundleError, read_bundle, size_status  # noqa: E402
 from twinqa.fbx_header import check_fbx_header  # noqa: E402
@@ -41,7 +48,24 @@ from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, 
                              snapshot_digest, snapshot_validator)
 from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
 from twinqa.scene import check_ground_area, check_ground_materials, readback, scene_findings  # noqa: E402
+from twinqa.npm_uv import NAME as NPM_UV_NAME, load_layout, npm_uv_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
+
+
+def load_z_meta(path: Path):
+    """--export-meta through the shared ExportMeta owner (adapters/max/agr_tools/export_meta.py, #1342)."""
+    import importlib.util
+    owner = Path(__file__).resolve().parents[2] / "adapters" / "max" / "agr_tools" / "export_meta.py"
+    spec = importlib.util.spec_from_file_location("agr_export_meta_owner", owner)
+    if spec is None or spec.loader is None:
+        raise ValueError(f"export_meta owner missing: {owner}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    payload = module.load_z_meta(path)
+    if not isinstance(payload, dict):
+        raise ValueError(f"export_meta {path}: expected a JSON object at top level")
+    return payload
+
 
 STEM = re.compile(r"^[A-Za-z0-9_]+$")
 NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>[A-Za-z0-9_]+)$")
@@ -365,16 +389,42 @@ def fbx_role(name: str) -> str:
 
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
               ground_area_m2: float | None = None, footprint_holes=None, diffuse_px: dict | None = None,
-              ground_materials: list[str] | None = None):
+              ground_materials: list[str] | None = None, export_meta=None, npm_atlas: dict | None = None):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
+    npm_atlas {FBX name: npm_atlas.json dict} feeds the NPM V006 "UV atlas padding" readback (#1580); an NPM
+    OKS/Ground FBX without one keeps that finding not_run.
     ground_area_m2 (site minus OKS footprint) selects the VPM Ground triangle band (reg p.29)
     and is the expected top-down area for the Ground footprint-coverage finding.
     footprint_holes is an optional list of XY rings for the footprint-hole coverage finding.
     ground_materials is an optional allow-list (names or globs): only those faces feed both footprint findings.
     diffuse_px {(slot, udim): side px} from the archive Diffuse PNGs feeds the VPM V009 texel density."""
     import tempfile
+    # Archive-wide placeholders become independent per-file coverage, never a
+    # claim that one readable FBX represents all siblings. Empty inventories keep
+    # the original placeholders.
+    covered = {"V002": "units and scale", "V008": "UV channel and islands",
+               "V006": "embedded atlases", "V009": "texel density"}
+    if fbx:
+        for stage_id, placeholder in covered.items():
+            if stage_id in st:
+                st[stage_id].findings = [f for f in st[stage_id].findings
+                                         if not (f.name == placeholder and f.evidence == SCENE_NOTE)]
     with tempfile.TemporaryDirectory() as tmp:
         for name, data in sorted(fbx.items()):
+            role = fbx_role(name)
+            required = {"V002", "V003", "V004", "V005"}
+            if kind == "npm":
+                required.add("V006")
+            if role != "light":
+                required.add("V013")
+                if kind == "vpm":
+                    required.update(("V008", "V009", "V010"))
+            pending = {}
+            for stage_id in sorted(required & st.keys()):
+                pending[stage_id] = finding("not_run", covered.get(stage_id, "scene checks"),
+                                            f"{name}: no scene result", st[stage_id].check,
+                                            st[stage_id].source_pdf_pages, name)
+                st[stage_id].findings.append(pending[stage_id])
             path = Path(tmp) / Path(name).name
             path.write_bytes(data)
             try:
@@ -383,23 +433,64 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                 # one unreadable FBX must not hide the others (team audit T04: a _Light import error ended the loop)
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 continue
+            height_meta = None
+            if export_meta is not None:
+                unknown = set(export_meta) - set(fbx)
+                height_meta = export_meta.get(name)
+                if unknown:
+                    height_meta = {'error': f'unmapped export_meta filenames: {sorted(unknown)}'}
+                elif not isinstance(height_meta, dict) or height_meta.get('fbx_sha256') != digest(data):
+                    height_meta = {'error': f'{name}: missing/stale export_meta fbx_sha256 or record'}
             found = scene_findings(rb, kind, fbx_role(name), profile, ground_area_m2=ground_area_m2,
                                    footprint_holes=footprint_holes, diffuse_px=diffuse_px,
-                                   ground_materials=ground_materials)
+                                   ground_materials=ground_materials,
+                                   export_meta=height_meta)
             if kind == "npm":
                 _no_texture_findings(found, fbx_role(name), name, rb)
+                if role != "light":
+                    # #1580: the 8 px padding of the V006 stub is read from the exported UVs, never dropped
+                    atlas = (npm_atlas or {}).get(name)
+                    found.setdefault("V006", []).extend(npm_uv_findings(rb, atlas, name) if atlas is not None else [
+                        finding("not_run", NPM_UV_NAME, f"{name}: npm_atlas.json not given "
+                                f"(--npm-atlas {name}=PATH)", "every face inside its atlas region, "
+                                "8 px padding (reg p.9 §5.4)", [9], name)])
             for stage_id, findings in found.items():
                 if stage_id in st:
+                    if findings and stage_id in pending:
+                        st[stage_id].findings.remove(pending[stage_id])
                     st[stage_id].findings.extend(findings)
             notes.append(f"scene readback: {name} in Blender {rb.get('blender')}")
-    covered = {"V008": "UV channel and islands", "V006": "embedded atlases", "V009": "texel density"}
-    for stage_id, placeholder in covered.items():
-        if stage_id in st and len(st[stage_id].findings) > 1:
-            st[stage_id].findings = [f for f in st[stage_id].findings
-                                     if not (f.name == placeholder and f.evidence == SCENE_NOTE)]
-    v002 = st.get("V002")
-    if v002 is not None and any(f.name == "system units" for f in v002.findings):
-        v002.findings = [f for f in v002.findings if f.name != "units and scale"]
+
+
+def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
+                       master: Path | dict | None, manifest: Path | None, notes: list[str], kind: str | None = None):
+    """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written.
+
+    master: one path, or {role: path} ([D328]: OKS master, Ground source)."""
+    path = manifest if manifest is not None else Path(build_manifest.manifest_path(target))
+    if os.path.normcase(str(path.resolve())) == os.path.normcase(str(target.resolve())):
+        raise ValueError(f"build manifest {path} is the package itself")
+    raw = path.read_bytes() if path.is_file() else None
+    if manifest is not None and raw is None:
+        raise ValueError(f"build manifest {manifest} does not exist")
+    members = {n: digest(d) for n, d in files.items()}
+    master_sha = build_manifest.master_hashes(master)
+    v1 = st["V001"]
+    rows = build_manifest.manifest_findings(raw, members, target.name, digest(data), master_sha,
+                                            str(path.resolve().parent))
+    if kind == "npm" and raw is not None and master is None:
+        # #1637: an NPM ZIP with a build manifest and no --master is a fail, not a not_run wait like V015-V017
+        rows = [("fail", "manifest_master_missing",
+                 f"manifest_master_missing: NPM package {target.name} has build manifest {path.name} but no --master "
+                 "was given, so the build master was not compared with the current master; rerun with --master PATH "
+                 "(--master oks=PATH --master ground=PATH for OKS + Ground)")] + [
+            r for r in rows if r[1] != "manifest_master_unchecked"]
+    for status, code, detail in rows:
+        v1.findings.append(finding(status, "build manifest", detail, "one master revision; hashes of every zipped "
+                                   "artifact and check report match; required checks passed (#1423)",
+                                   v1.source_pdf_pages, path.name, data={"code": code} if status != "pass" else None))
+    if raw is not None:
+        notes.append(f"build manifest: {path.name}")
 
 
 def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list[str]):
@@ -421,9 +512,44 @@ def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list
     notes.append(f"master readback: {master.name} in Blender {rb.get('blender')}")
 
 
+def _resolve_npm_atlas(npm_atlas, target: Path, files: dict, kind, scene: bool, notes: list[str]) -> dict:
+    """{FBX name: loaded npm_atlas.json} for add_scene (#1580); every key must name an FBX of the target."""
+    if not npm_atlas:
+        return {}
+    if not scene or kind != "npm" or target.suffix.lower() not in (".zip", ".fbx"):
+        notes.append("npm_atlas unused: the UV atlas padding check runs on an NPM --scene readback of a ZIP or FBX")
+        return {}
+    names = [n for n in files if n.lower().endswith(".fbx")] if target.suffix.lower() == ".zip" else [target.name]
+    out = {}
+    for key, path in (npm_atlas.items() if isinstance(npm_atlas, dict) else npm_atlas):
+        if key is None:
+            oks = [n for n in names if fbx_role(n) == "oks"]
+            if len(oks) != 1:
+                raise ValueError(f"--npm-atlas without FBX=: needs exactly one OKS FBX, found {sorted(oks)}")
+            key = oks[0]
+        if key not in names:
+            raise ValueError(f"--npm-atlas {key}: no such FBX in {target.name} ({sorted(names)})")
+        if key in out:
+            raise ValueError(f"--npm-atlas {key} given twice")
+        path = Path(path)
+        try:
+            atlas = json.loads(path.read_text(encoding="utf-8"))
+            load_layout(atlas)
+        except (OSError, ValueError) as exc:
+            raise ValueError(f"--npm-atlas {key}={path}: {exc}") from None
+        out[key] = atlas
+    return out
+
+
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
              ground_area_m2: float | None = None, footprint_holes=None,
-             master: Path | None = None, ground_materials: list[str] | None = None) -> ValidationReport:
+             master: Path | dict | None = None, ground_materials: list[str] | None = None, export_meta=None,
+             manifest: Path | None = None, npm_atlas: dict | list | None = None) -> ValidationReport:
+    """npm_atlas {FBX name | None: npm_atlas.json path} or [(name | None, path)] (#1580): None = the single FBX
+    target / the only OKS FBX of the ZIP; a name that is not an FBX of the target, a name given twice, or an unusable
+    layout raises ValueError."""
+    if export_meta is not None and not isinstance(export_meta, dict):
+        raise ValueError("export_meta must map exact FBX filenames to bounds_m records")
     if ground_area_m2 is not None:
         check_ground_area(ground_area_m2)
     if ground_materials is not None:
@@ -474,6 +600,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
                          "(the name matches neither {code4}_{Address} nor SM_{Address})")
     profile = profiles.profile(kind)
     st = build_stages(profiles, kind)
+    atlases = _resolve_npm_atlas(npm_atlas, target, files, kind, scene, notes)
 
     if suffix == ".zip":
         archive = profile["archive"]
@@ -482,14 +609,15 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
+        add_build_manifest(st, target, data, files, master, manifest, notes, kind)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
-                      ground_area_m2, footprint_holes, diffuse_px, ground_materials)
+                      ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta, atlases)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
             add_scene(st, kind, profile, {target.name: data}, notes, ground_area_m2, footprint_holes,
-                      ground_materials=ground_materials)
+                      ground_materials=ground_materials, export_meta=export_meta, npm_atlas=atlases)
         else:
             notes.append("single FBX: header only; add --scene for the Blender readback")
     elif suffix == ".geojson":
@@ -503,10 +631,16 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     # A scene readback of an FBX/ZIP consumes the area: VPM selects the triangle band, and both
     # profiles check Ground footprint coverage. Anywhere else the value is unused.
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
+    quad = master.get('oks') if isinstance(master, dict) else master
+    if isinstance(quad, list):
+        notes.append('multiple OKS sources: quad master not selected; V003 master check remains not_run')
+        quad = None  # [D332]: independent dependencies are not permission to choose the first source.
+    elif quad is not None:
+        quad = Path(quad)
     if scene_readback:
-        add_master(st, kind, master, notes)
-    elif master is not None:
-        notes.append(f"master {master.name} unused: the master check runs with --scene on a ZIP or FBX")
+        add_master(st, kind, quad, notes)
+    elif quad is not None:
+        notes.append(f"master {quad.name} unused: the master check runs with --scene on a ZIP or FBX")
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:
@@ -574,14 +708,15 @@ def write_new(out: Path, data: bytes, inputs: list[Path]):
         partial.unlink()
 
 
-def run_recheck(old: Path, out: Path, standards: Path, as_json: bool) -> int:
+def run_recheck(old: Path, out: Path, standards: Path, as_json: bool, target: Path | None = None) -> int:
     try:
         old_bytes = old.read_bytes()
         snap = read_snapshot(standards)  # digest and stage schema from the same bytes
         validator = snapshot_validator(snap)
         result = recheck(old_bytes, str(old), snapshot_digest(snap), code_commit(),
-                         expected_stages=lambda kind: expected_stages(validator, kind))
-        write_new(out, json_bytes(result), [old, Path(result["target"])])
+                         expected_stages=lambda kind: expected_stages(validator, kind), recheck_target=target)
+        stored_target = Path(json.loads(old_bytes)["target"])
+        write_new(out, json_bytes(result), [old, stored_target, Path(result["target"])])
     except (OSError, ValueError, KeyError, TypeError, yaml.YAMLError) as exc:
         print(f"Error: recheck: {exc}", file=sys.stderr)
         return 2
@@ -597,27 +732,42 @@ def main(argv=None) -> int:
     ap.add_argument("--json", action="store_true", help="machine-readable report")
     ap.add_argument("--standards", type=Path, help="standards folder (default: <repo>/standards)")
     ap.add_argument("--scene", action="store_true", help="read every FBX back in background Blender")
+    ap.add_argument("--export-meta", type=Path,
+                    help="exporter export_meta.json with fbx_records (#1342), or a JSON mapping exact FBX "
+                         "filenames to {bounds_m, fbx_sha256}; feeds V013 Z bounds")
     ap.add_argument("--recheck", type=Path, metavar="OLD_REPORT", help="re-read a stored report.json (needs --output)")
+    ap.add_argument("--recheck-target", type=Path, metavar="ZIP", help="check this copy instead of the stored target")
     ap.add_argument("--output", type=Path, help="new file for the recheck result (never an existing file)")
     ap.add_argument("--ground-area-m2", type=_area_arg, metavar="M2",
                     help="VPM Ground area = site minus OKS footprint, m2 (reg p.29 triangle band; without it: review)")
-    ap.add_argument("--master", type=Path, metavar="WORK_FBX",
-                    help="quad work FBX of this delivery (DER-03, [D198]); read back with --scene")
+    ap.add_argument("--master", action="append", metavar="WORK_FBX | ROLE=PATH",
+                    help="quad work FBX of this delivery (DER-03, [D198]); read back with --scene. Build manifest "
+                         "stale check per role: --master oks=PATH --master ground=PATH ([D328], #1525)")
+    ap.add_argument("--build-manifest", type=Path, metavar="FILE",
+                    help="build manifest of a ZIP (default: <stem>.build.json beside it; #1423)")
     ap.add_argument("--footprint-holes", type=_holes_arg, default=None, metavar="JSON",
                     help="JSON list of OKS footprint-hole rings [[[x,y],...], ...]; hole coverage is not_run without it")
     ap.add_argument("--ground-materials", type=_ground_materials_arg, action="append", default=None,
                     metavar="NAMES",
                     help="Ground material names or fnmatch globs (comma-separated, repeatable); only those faces "
                          "feed the footprint area and hole checks (default: every non-UCX render face)")
+    ap.add_argument("--npm-atlas", action="append", default=None, metavar="[FBX=]NPM_ATLAS_JSON",
+                    help="npm_atlas.json of an NPM OKS FBX (repeatable; FBX= may be omitted for a single FBX or a ZIP "
+                         "with one OKS FBX): with --scene, V006 reads the exported UVs against its regions and the "
+                         "8 px padding (#1580); without it that finding stays not_run")
     args = ap.parse_args(argv)
     if args.ground_materials is not None:
         args.ground_materials = [item for group in args.ground_materials for item in group]
     if args.recheck is not None:
         if (args.target is not None or args.output is None or args.profile or args.scene
                 or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None
-                or args.ground_materials is not None):
-            ap.error("--recheck takes only --output, --standards and --json")
-        return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json)
+                or args.ground_materials is not None or args.export_meta is not None
+                or args.build_manifest is not None or args.npm_atlas is not None):
+            ap.error("--recheck takes only --recheck-target, --output, --standards and --json")
+        return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json,
+                           args.recheck_target)
+    if args.recheck_target is not None:
+        ap.error("--recheck-target is only for --recheck")
     if args.output is not None:
         ap.error("--output is only for --recheck")
     if args.target is None:
@@ -626,11 +776,38 @@ def main(argv=None) -> int:
         print(f"Error: {args.target} does not exist", file=sys.stderr)
         return 1
     profiles = load_profiles(args.standards) if args.standards else load_profiles()
-    if args.master is not None and not args.master.is_file():
-        print(f"Error: {args.master} does not exist", file=sys.stderr)
+    if args.master is not None:
+        try:
+            parsed = build_manifest.master_args(args.master)
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
+        args.master = ({r: [Path(p) for p in paths] if isinstance(paths, list) else Path(paths)
+                        for r, paths in parsed.items()} if isinstance(parsed, dict) else Path(parsed))
+        paths = [p for ps in args.master.values() for p in (ps if isinstance(ps, list) else [ps])] if isinstance(args.master, dict) else [args.master]
+        for p in paths:
+            if not p.is_file():
+                print(f"Error: {p} does not exist", file=sys.stderr)
+                return 1
+    if args.build_manifest is not None and args.target.suffix.lower() != ".zip":
+        print("Error: --build-manifest applies to a ZIP package", file=sys.stderr)
+        return 2
+    try:
+        export_meta = load_z_meta(args.export_meta) if args.export_meta is not None else None
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
         return 1
-    result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
-                      args.footprint_holes, args.master, ground_materials=args.ground_materials)
+    npm_atlas = None
+    if args.npm_atlas is not None:  # FBX=PATH when the part before the first '=' names an FBX, else a bare PATH
+        npm_atlas = [tuple(item.split("=", 1)) if item.split("=", 1)[0].lower().endswith(".fbx") and "=" in item
+                     else (None, item) for item in args.npm_atlas]
+    try:
+        result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
+                          args.footprint_holes, args.master, ground_materials=args.ground_materials,
+                          export_meta=export_meta, manifest=args.build_manifest, npm_atlas=npm_atlas)
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 2
     sys.stdout.reconfigure(encoding="utf-8")
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2) if args.json else result.summary())
     return result.exit_code

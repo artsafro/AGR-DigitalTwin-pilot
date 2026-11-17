@@ -1,0 +1,36 @@
+{
+ "schema": "library-visual-verdict-v1",
+ "request_id": "1316-acer-royal-red-a101-low-v002",
+ "asset": "Acer platanoides Royal Red / A101 klen_t7_h550_low",
+ "version_sha256": "77ff8536585ee0a1ebf06d739d164881b7e9741b81bc309ef30f4585c74dfea3",
+ "identity": {
+  "scene_sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+  "object": "klen_t7_h550_low",
+  "diffuse_sha256": "c8ce6b6c1ce9e10d43fb143dc98693e1d642120252bda8d156ab5492218a8e77",
+  "rgba_sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+  "opacity_sha256": "75d589654ad0cb63d45a1737aa6617ebd21d9b4744012cfe798a5bb1fdb376ce"
+ },
+ "asset_manifest": "library/flora/a101-native-v002.json",
+ "preview": {
+  "path": "G:/Мой диск/AGR-evidence/1316-outside-retrieval/acer-v002/acer-royal-red-low-v002.png",
+  "sha256": "d374a1bd385d4691e3c665096222784b90eae59cc7932594098010eb6e3bb864",
+  "bytes": 300830
+ },
+ "native_preview": {
+  "application": "3ds Max 2026.3",
+  "system_units": "centimeters",
+  "document": "FLORIO_221.max (private copy)",
+  "triangles": 826,
+  "scope": "Original A101 low geometry/UV and RGBA; Royal Red is not an approved substitution for generic Acer platanoides or #1315 planting schedule"
+ },
+ "question": "принимаешь эту версию? Ответ: принять / отклонить + причина.",
+ "status": "pending",
+ "answer": null,
+ "answer_source": null,
+ "transport": {
+  "platform": "telegram",
+  "message_id": "4701",
+  "success": true,
+  "mirrored": true
+ }
+}

@@ -58,10 +58,29 @@ uvl = bm.loops.layers.uv["UV"]
 bm.faces.ensure_lookup_table()
 
 
+def _load_udimtile():
+    """The one shared UDIM function (#1337): adapters/max/agr_tools/udimtile_core.py of this checkout."""
+    import importlib.util
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    path = os.path.join(root, "adapters", "max", "agr_tools", "udimtile_core.py")
+    spec = importlib.util.spec_from_file_location("agr_tools_udimtile_core_joint", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+UDIMTILE = _load_udimtile()
+
+
 def udim_of(f):
-    u = sum(l[uvl].uv.x for l in f.loops) / len(f.loops)
-    v = sum(l[uvl].uv.y for l in f.loops) / len(f.loops)
-    return 1001 + int(math.floor(u)) + 10 * int(math.floor(v)), (math.floor(u), math.floor(v))
+    """(UDIM, (u_tile, v_tile)) of the face centroid. A centroid off the UDIM grid (u outside [0, 10), v < 0, NaN)
+    stops the checker naming the face (#1337; before it gave a wrong number and the face was skipped)."""
+    uvs = [(l[uvl].uv.x, l[uvl].uv.y) for l in f.loops]
+    try:
+        tile = UDIMTILE.face_tile(uvs, strict=False)
+    except UDIMTILE.UdimDomainError as exc:
+        raise SystemExit("face %d: %s" % (f.index, exc))
+    return tile, UDIMTILE.tile_origin(tile)
 
 
 FT = {}

@@ -1,0 +1,41 @@
+{
+ "schema": "library-visual-verdict-v1",
+ "request_id": "1316-tilia-a101-low-v002",
+ "asset": "Tilia cordata / A101 lipa_t1_h550_low",
+ "version_sha256": "a95cdd49b7a4e0dd8b495e8947165a2f62cf21301440d17e4e6927dde57c4480",
+ "asset_manifest": "library/flora/a101-native-v002.json",
+ "identity": {
+  "scene_sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+  "object": "lipa_t1_h550_low",
+  "diffuse_sha256": "ca3122dbfd910a70cbbccb9cca42779efecdc4b1a2bdc4f166172dbf1dcb01fe",
+  "rgba_sha256": "21fff75057b85b94cb847b8508f30ae9a555af1038f9414b5ea220d26f991525",
+  "opacity_sha256": "1489d9c48a0c89fe0f30b294ad05501d63992b959277f4d1ca5a2892a33b967b"
+ },
+ "preview": {
+  "path": "G:/Мой диск/AGR-evidence/1316-outside-retrieval/v002/tilia-source-low-v002.png",
+  "sha256": "8ceed9e2cca249b8565cff32f7ca3d7c89e5d855eb11e86d7d69f9bfbb295b64",
+  "bytes": 382520
+ },
+ "native_preview": {
+  "application": "3ds Max 2026.3",
+  "system_units": "centimeters",
+  "document": "FLORIO_221.max (private copy)",
+  "triangles": 866,
+  "scope": "Original A101 low geometry/UV and RGBA; split RGB/alpha checked byte-for-byte, no v003 catalogue rebind"
+ },
+ "question": "принимаешь эту версию? Ответ: принять / отклонить + причина.",
+ "status": "approved",
+ "answer": "Да, липа норм",
+ "answer_source": {
+  "platform": "telegram",
+  "message_id": "4697",
+  "in_reply_to": "4696",
+  "confirmation": "Operator USER APPROVAL on task t_9199048b; mirrored user reply read back from gateway state"
+ },
+ "transport": {
+  "platform": "telegram",
+  "message_id": "4696",
+  "success": true,
+  "mirrored": true
+ }
+}

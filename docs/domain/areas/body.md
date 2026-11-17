@@ -50,6 +50,32 @@ manual gates remain required. Partial coverage is explicitly qualified.
 | BODY-Y — Scene collection ceiling | reg p.28 §3.2 | No transferred VPM layer mandate; cleanup under BODY-B | At most 1 default layer/collection | Inspect source scene collections; FBX mesh-only checks do not establish the source layer count | none | [Scene organization](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | BODY-Z — Roof screen enclosure | [D067]; [D086] | Silhouette enclosure via the linked pattern; source-module top follows source | Closed shell of the screen's thickness inward (spec v0.7 `thickness_m`, #91); bounded draft-pattern support, not official VPM certification | Check marked screen outline, roof boundary classification and the shell's thickness/closed-solid guards; a profile other than `npm_min`/`mid` still stops | `tests/test_spec_extract.py` (screen extraction); `tests/qa/test_from_spec.py` (mid/VPM shell build, thickness fallback, grid/closed-solid guards, touch/overlap stop); `src/twinqa/geometry/checks.py:check_mesh` (partial: enclosure boundary classification) | [Roof screen enclosure](../patterns/roof-screen-enclosure.md) |
 
+## Master topology before export [D312]
+
+The editable master prefers quads; unavoidable triangles are allowed and reported
+(count and face share per object). Any polygon with >4 sides fails. Run
+`uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json` (or a
+non-triangulated work FBX), or `agr_tools_runtime.master_topology(nodes)` in Max,
+next to xView **before** export triangulation. Checked Max export invokes the same
+core before taking a triangle snapshot. This is separate from BODY-N's exported
+triangle rule and does not certify that each triangle was unavoidable. Read-only
+ELV/KPP1/PSU275 evidence: [report](../../../jobs/master-topology-1420/REPORT.md).
+
+OKS modelling split [D336]: which parts are inset elements (windows, stained glass,
+roof, flashings, posts), which are texture (panels, with a seam), the per-project
+plinth choice and the `Modelling split [D336]:` job-report line are listed in
+[SKELETONS.md](../../agents/SKELETONS.md#oks-modelling-split-d336). The check above is
+per object: inset elements pass or fail on their own; no check may require
+welding them into the body.
+
+## Clean body grid research [D337] [D338]
+
+Follow [BM-01..BM-14](../../research/body-modelling.md#5-правила) for the OKS body stage.
+Rounded corners use a 2 cm chord sagitta, then snap to the texture step [D337]. Typical-facade
+thresholds are quads >= 95 %, slivers <= 0.5 % [D338]: WARN-only (OBSERVE) for the first week,
+not a blocking gate or a waiver of [D312]. Posts remain inset geometry by default [D336];
+panels are texture with a seam. Training-polygon validation is still open, not certified here.
+
 ## Image verification and review evidence
 
 The supplied PDF has 56 physical pages. Rendered with PyMuPDF 1.28.2 at scale 1.5 and
@@ -74,6 +100,15 @@ C10 evidence: page 32's rendered formula visibly uses division, while the OCR di
 recorded in C10. This observation does not fill the still-empty user decision in the choices
 file. Likewise C7/C8 remain profile-interface references, not newly approved shared-tool policies.
 No new conflict entry was needed; C1 and C23 also remain linked with their existing statuses.
+
+## Drawing-only source intake
+
+Use the `analyze-architectural-source` skill's 2D branch: [`dwg_to_dxf.py`](../../../tools/methods/body/dwg_to_dxf.py)
+converts a hashed DWG copy; [`plan_from_dxf.py`](../../../tools/methods/body/plan_from_dxf.py) census/extract
+requires a sheet-specific role map and confirmed frame/levels. Facade parts use
+[`facade_openings_from_dxf.py`](../../../tools/methods/body/facade_openings_from_dxf.py): explicitly mapped
+rectangular outlines, dimensions and sill/head heights; depth and facade-to-plan placement remain manual.
+These measurements do not close BODY-A or approve architectural interpretation.
 
 ## L2 gaps
 

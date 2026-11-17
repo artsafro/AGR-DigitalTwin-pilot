@@ -1,0 +1,184 @@
+{
+  "passed": false,
+  "status": "partial_repair_material_target_and_source_mask_gates_open",
+  "source_preserved": 10,
+  "source_total": 10,
+  "branch": "improve/issue-1326-pilot-4bk-stylobate-brick-in-1-udim-keep",
+  "base": "main",
+  "pr": null,
+  "decision_ids": [
+    "D309",
+    "D296"
+  ],
+  "artifacts": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\stylobate_cut_candidate_v045.blend",
+      "sha256": "38979c31de1d23086d7b67078ca5b14343cd3db51c70cf4a89b3b0dd61a7bad6"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\stylobate_pilot_v045.fbx",
+      "sha256": "8f11f46e8ef304ed78af217df8541819fe35e98ea3a313717e8eeb0768ab9d85"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\fbx-readback.json",
+      "sha256": "9caba08c942d5cda514dc0ed840a6e4b44e5307aad9f1beb8e87c6f14bba6ae9"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\fbx-xview.json",
+      "sha256": "a416e7b809e7e28b470e58353fe3961f28c4fdd83e512c7cd25a11f0b48b2b7f"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\independent-all-faces-png-check.json",
+      "sha256": "036183e53d0b9f34a862b3f35698c742eaa1e4d685f15f714e249f65aa979e44"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\joint-normal-comparison-NOT-ACCEPTED.png",
+      "sha256": "2d303f190319a7fc346b593d616d0def7bcc088d6f0cdf85e69967c3d14faf99"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v043\\metrics.json",
+      "sha256": "8d7d2569b6146e264a1069bf3edb103cf3abf803af3f005785ae2f2f2d6cd7fc"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v043\\fresh-phase-usage.json",
+      "sha256": "4dada372c545a0a27415e0051ffba4428c59f1269762c163459ac8d5c16cd94c"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v043\\independent-interior-png-check.json",
+      "sha256": "85997b6dc93b507d13a0e4dd7bd018ac9afc39b169eae74f6d323ebcee15dfd6"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v042\\native-surface-comparison.json",
+      "sha256": "30b67e4c22994d7a5e8d118859ee12cccecf850de06bb896abb0dfd5ecb2da54"
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v047\\errors.json",
+      "sha256": "bef844069922ac06df573d703abd6e6b58189c6552b41baa85ad062115836993"
+    }
+  ],
+  "seals": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v027\\SHA256SUMS.txt",
+      "sha256": "f7c4bea8b9f326291bce084e5eeee9cab42f5f3477c10b0fb60d16f4a2d9ce23",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v028\\SHA256SUMS.txt",
+      "sha256": "deb4d9e3d8f62b7e8ef4f451282def140fc3895c6e183eaf5a015bd32b9de442",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v029\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v030\\SHA256SUMS.txt",
+      "sha256": "811a77d5d1a4adade25a8baf4e17180bcbd7a277a580811179b41fa3a71c71be",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v031\\SHA256SUMS.txt",
+      "sha256": "cc758ac6e3720baba502dca31fe822f856201ddbfdd4240d07fa1dbc68f4900f",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v032\\SHA256SUMS.txt",
+      "sha256": "b5f211026ee07af704c049e4d63af5dde14bb4252420f3c49fb6a7eb424f899e",
+      "files": 6
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v033\\SHA256SUMS.txt",
+      "sha256": "087c4fbb3ff0dace701e3823ef9dd9240e9f23a7d494d380a80b9cf4c0d93632",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v034\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v035\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v037\\SHA256SUMS.txt",
+      "sha256": "46310dd7b79871ccab080188c2bc2db58d3362cc7faa9528b244f10c49d21fc2",
+      "files": 1
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v038\\SHA256SUMS.txt",
+      "sha256": "d43e6d34f17449831642f32998b0a563a470fcc1c4a5f52bee596dc612db91be",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v039\\SHA256SUMS.txt",
+      "sha256": "d43e6d34f17449831642f32998b0a563a470fcc1c4a5f52bee596dc612db91be",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v040\\SHA256SUMS.txt",
+      "sha256": "1c8b17f05d39ea2e2883a19dd79e323ea8ee331c4df96017e704fa237a7cb75b",
+      "files": 8
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v041\\SHA256SUMS.txt",
+      "sha256": "4514a4e3eb9bf9e480d034fb148e934ad029570c760f8dd68c28d7287748be01",
+      "files": 6
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v042\\SHA256SUMS.txt",
+      "sha256": "fb1eb8dc6edff1f7af1e1e599ce7bed603a6df1f3b1891d02626fa1ba19cf9c3",
+      "files": 10
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v043\\SHA256SUMS.txt",
+      "sha256": "850a5a5e5f20cb29e0344991665117e4d98d2d6dd721e8b5c2de14d839fa1579",
+      "files": 14
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v044\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\SHA256SUMS.txt",
+      "sha256": "0792e01d2084ceecfe3b4458620772a22b9ab09cf2c7e377a6f604620685c2cc",
+      "files": 13
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v047\\SHA256SUMS.txt",
+      "sha256": "8c9f33f8f695aff22398953212478673fb26e39a2bb37fb6e8ab49185e10e3f4",
+      "files": 3
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\repair-v048\\SHA256SUMS.txt",
+      "sha256": "4484b5b0bf35c5cb02dff7d4234c3444123d2252c81d2af7e4233cb8476e9321",
+      "files": 84
+    }
+  ],
+  "verification": {
+    "affected_passed": 221,
+    "deselected": 1,
+    "failed": 0,
+    "generated_probe_seed": 1326,
+    "generated_probes_passed": 100,
+    "fbx_faces_matched": 4972,
+    "fbx_faces_expected": 4972,
+    "independent_interior_png_passed": 62,
+    "independent_interior_png_total": 62,
+    "expanded_png_passed": 669,
+    "expanded_png_total": 771,
+    "unapplied_expanded_plan": 98,
+    "expanded_plan_refused": 4
+  },
+  "open_items": [
+    "source groove Normal versus neutral target needs an explicit material decision; v014 verdict was unlit Diffuse only",
+    "102 expanded source-PNG disagreements require semantic classification/repair; four thin-stair raster traces refused, no waiver",
+    "complete current carrier/junction and all-map measurements",
+    "saved Blender preview needs DirectX-green conversion used in the lit comparison",
+    "reusable executable adapter finalization, final picture, main merge, full suite/evals/hostile receipts/PR/review"
+  ],
+  "continuation": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\repair-v048"
+}

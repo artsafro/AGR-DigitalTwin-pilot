@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -30 1460 995" width="1460" height="995" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect x="0" y="-30" width="1460" height="995" fill="#ffffff"/>
+<rect x="30" y="140" width="1050" height="57.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="30" y="355" width="460" height="60.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="355" width="470" height="40.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="30" y="310" width="460" height="36.25" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<line x1="260.0" y1="346.25" x2="260.0" y2="355.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="385.0" x2="610" y2="375.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="30" y="480.0" width="460" height="60.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="480.0" width="470" height="40.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<line x1="845.0" y1="395.0" x2="260.0" y2="480.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="510.0" x2="610" y2="500.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="30" y="605.0" width="460" height="60.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="605.0" width="470" height="60.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<line x1="845.0" y1="520.0" x2="260.0" y2="605.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="635.0" x2="610" y2="635.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="30" y="730.0" width="460" height="60.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="730.0" width="470" height="60.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<line x1="845.0" y1="665.0" x2="260.0" y2="730.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="760.0" x2="610" y2="760.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="30" y="855.0" width="460" height="80.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="855.0" width="470" height="40.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<line x1="845.0" y1="790.0" x2="260.0" y2="855.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="895.0" x2="610" y2="875.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<text x="30" y="0" font-size="24" text-anchor="start" fill="#1e1e1e">
+<tspan x="30" dy="24">Маршрут НПМ / ОКС v2 на КПП1 — короткая схема</tspan>
+</text>
+<text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
+<tspan x="30" dy="13">Редакция YAML SHA-256: ff8d53f2400a8b6c6535301111f3c0631b7ca8f6de0cdc91c54372be8e0bb2b7</tspan>
+</text>
+<text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="555.0" dy="15">Ревизия исходников: КПП1: sources.json — состав исходников фиксируется путями и SHA-256 (кроме RVT); build manifest</tspan>
+<tspan x="555.0" dy="18.75">отказывает при смешении ревизий одного источника (#1592), ревизию альбома сверяем вручную (D274)</tspan>
+</text>
+<text x="30" y="245" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="30" dy="14">Владелец экспорта (Max): adapters/max/agr_tools/export_core.py</tspan>
+<tspan x="30" dy="17.5">Живых обходов владельцев: 7; адреса и миграция — в таблице владельцев. Это маршрут работы, не квитанция успешной сдачи. Blender НПМ:</tspan>
+<tspan x="30" dy="17.5">tools/derive/export_npm.py; ВПМ: экспортёр job.</tspan>
+</text>
+<text x="260.0" y="365.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="16">1. Описать исходники и согласовать состав</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Артём подтвердил части (Gate 1)</tspan>
+</text>
+<text x="845.0" y="365.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="845.0" dy="16">Артефакт: Реестр исходников + PartsList</tspan>
+</text>
+<text x="260.0" y="320.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="13">Вход: описанная ревизия исходников</tspan>
+</text>
+<text x="260.0" y="490.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="16">2. Построить модель и собрать UV / атлас</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Состав и отделки сверены с проектом</tspan>
+</text>
+<text x="845.0" y="490.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="845.0" dy="16">Артефакт: Сцена НПМ; либо мастер → НПМ</tspan>
+</text>
+<text x="260.0" y="615.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="16">3. Выгрузить FBX и собрать пакет</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Упаковка не означает приёмку</tspan>
+</text>
+<text x="845.0" y="615.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="845.0" dy="16">Артефакт: FBX + export_meta + ZIP; детали — схема</tspan>
+<tspan x="845.0" dy="20.0">«Пакет и сдача»</tspan>
+</text>
+<text x="260.0" y="740.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="16">4. Прочитать экспорт и выполнить проверки</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Отказ / not_run не равны pass</tspan>
+</text>
+<text x="845.0" y="740.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="845.0" dy="16">Артефакт: Свежий отчёт, xView и находки СИНТЕЗ на</tspan>
+<tspan x="845.0" dy="20.0">тех же файлах</tspan>
+</text>
+<text x="260.0" y="865.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="16">5. Передать результат Артёму</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Визуальная приёмка Артёма отдельно от</tspan>
+<tspan x="260.0" dy="20.0">публикации</tspan>
+</text>
+<text x="845.0" y="865.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="845.0" dy="16">Артефакт: Пакет или сцена Max QUAD для приёмки</tspan>
+</text>
+</svg>

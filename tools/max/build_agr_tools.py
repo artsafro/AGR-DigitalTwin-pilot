@@ -20,12 +20,14 @@ HYGIENE_NAMES = {'ORIGIN', 'UV_NAME', 'CA_OWNERS', 'OBJECT_KEYS', 'MAX_MAP_CHANN
                  '_MAP_LINE', 'InputError', 'parse_udp', '_validate',
                  '_channel1_problem', '_extra_channels', 'repair_plan'}
 FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'runtime.py', 'bootstrap.py',
-         'README.md', 'CHANGELOG.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py', 'export_core.py',
+         'README.md', 'CHANGELOG.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py', 'export_core.py', 'export_meta.py',
+         'master_topology_core.py',
          'checks_core.py', 'checks_max.py', 'ui_model.py', 'ui_qt.py', 'ui_panel.py', 'ui_max.py',
          'suite_core.py', 'suite_max.py', 'roadmap.py',
          # 0.8 (#908): edit contract + stub modules of branches A-D (this list does not change in A-D)
          'edit_core.py', 'edit_max.py', 'geom_core.py', 'geom_max.py', 'tex_core.py', 'tex_max.py',
          'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py',
+         'build_manifest.py',  # #1423 delivery set consistency (loaded by package_core)
          # 0.9 (#979): stub modules of branches A-D (this list does not change in A-E3; data/ is collected below)
          'place_core.py', 'place_max.py', 'texqa_core.py', 'texqa_max.py', 'finish_core.py', 'finish_max.py',
          'uvtile_core.py', 'uvtile_max.py', 'flora_atlas_max.py', 'qa9_core.py', 'qa9_max.py', 'facade_core.py',
@@ -47,7 +49,12 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
          'ucxstairs_core.py', 'ucxstairs_max.py', 'omk_core.py', 'omk_max.py', 'placegeo_core.py', 'placegeo_max.py',
          'agentbridge_core.py', 'agentbridge_max.py',
          # 1.1: Max <-> Blender handoff (branch BH) and the parameter form of the stage buttons
-         'handoff_core.py', 'handoff_max.py', 'params_core.py')
+         'handoff_core.py', 'handoff_max.py', 'params_core.py',
+         # #1337: the one shared UDIM tile function (loaded by uvlayout_core, twinqa, Blender job scripts)
+         'udimtile_core.py',
+         # #1044: standalone assets browser and all its dynamic sibling dependencies.
+         'assets_core.py', 'assets_max.py', 'assets_ui.py', 'assets_library.py',
+         'assets_textures.py', 'assets_launch.ms')
 # 0.9 (#979): every file below adapters/max/agr_tools/data/ ships as agr_tools/data/<rel> (owner files of branch C:
 # procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
 DATA_DIR = 'data'
@@ -124,14 +131,55 @@ def _function(source, name):
     raise ValueError('missing function ' + name)
 
 
-def nudge_slice(nudge_source=None, tile_source=None):
-    """Stdlib slice of our uv_nudge.py plus tile_origin. Team-script names are not shipped."""
+OWNER_NAMES = ('FIRST_UDIM', 'U_TILES', 'UdimDomainError', 'tile_origin')
+
+
+class _OwnerCalls(ast.NodeTransformer):
+    """`_udimtile.tile_origin` -> `_udimtile_tile_origin` (the inlined owner function)."""
+
+    def visit_Attribute(self, node):
+        self.generic_visit(node)
+        if isinstance(node.value, ast.Name) and node.value.id == '_udimtile':
+            return ast.copy_location(ast.Name(id='_udimtile_' + node.attr, ctx=node.ctx), node)
+        return node
+
+
+def _tile_nodes(tile_source, owner_source):
+    """dt_ai tile_origin for the stdlib slice: the owner's tile_origin (#1337) inlined as `_udimtile_tile_origin`
+    plus dt_ai's regulated 1001..1100 wrapper, bound to `tile_origin` (#1376: uv.py delegates to the owner)."""
+    found = {}
+    for node in ast.parse(owner_source).body:
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef)) and node.name in OWNER_NAMES:
+            found[node.name] = node
+        elif isinstance(node, ast.Assign) and len(node.targets) == 1 \
+                and getattr(node.targets[0], 'id', None) in OWNER_NAMES:
+            found[getattr(node.targets[0], 'id')] = node
+    if set(found) != set(OWNER_NAMES):
+        raise ValueError(f'udimtile_core source changed: missing {sorted(set(OWNER_NAMES) - set(found))}')
+    found['tile_origin'].name = '_udimtile_tile_origin'
+    wrapper = _OwnerCalls().visit(_function(tile_source, '_regulated_tile_origin'))
+    if any(isinstance(n, ast.Name) and n.id == '_udimtile' for n in ast.walk(wrapper)):
+        raise ValueError('uv.py _regulated_tile_origin uses _udimtile beyond attribute calls')
+    alias = [n for n in ast.parse(tile_source).body if isinstance(n, ast.Assign) and len(n.targets) == 1
+             and getattr(n.targets[0], 'id', None) == 'tile_origin'
+             and getattr(n.value, 'id', None) == '_regulated_tile_origin']
+    if len(alias) != 1:
+        raise ValueError('missing function tile_origin (uv.py: tile_origin = _regulated_tile_origin)')
+    return [found[name] for name in OWNER_NAMES] + [wrapper, alias[0]]
+
+
+def nudge_slice(nudge_source=None, tile_source=None, owner_source=None):
+    """Stdlib slice of our uv_nudge.py plus tile_origin (via the inlined udimtile_core owner, #1376).
+    Team-script names are not shipped."""
     if nudge_source is None:
         nudge_source = NUDGE.read_text(encoding='utf-8')
     if tile_source is None:
         tile_source = TILES.read_text(encoding='utf-8')
+    if owner_source is None:
+        owner_source = (PACKAGE / 'udimtile_core.py').read_text(encoding='utf-8')
     nudge_source = nudge_source.replace('\r\n', '\n')
     tile_source = tile_source.replace('\r\n', '\n')
+    owner_source = owner_source.replace('\r\n', '\n')
     body = []
     for node in ast.parse(nudge_source).body:
         if isinstance(node, (ast.Import, ast.ImportFrom)):
@@ -141,11 +189,12 @@ def nudge_slice(nudge_source=None, tile_source=None):
         body.append(node)
     if not any(isinstance(node, ast.FunctionDef) and node.name == 'nudge_repeating_islands' for node in body):
         raise ValueError('uv_nudge source changed: nudge_repeating_islands missing')
-    module = ast.Module(body=[_function(tile_source, 'tile_origin'), *body], type_ignores=[])
+    module = ast.Module(body=[*_tile_nodes(tile_source, owner_source), *body], type_ignores=[])
     ast.fix_missing_locations(module)
     header = ('"""Generated from our uv_nudge.py; new-case: stdlib integer-tile UV nudge slice.\n'
               f'Source sha256: {hashlib.sha256(nudge_source.encode()).hexdigest()}\n"""\n'
-              'from __future__ import annotations\nimport math\nfrom dataclasses import dataclass, field\n')
+              'from __future__ import annotations\nimport math\nimport numbers\n'
+              'from dataclasses import dataclass, field\n')
     return (header + ast.unparse(module) + '\n').encode('utf-8')
 
 
@@ -189,7 +238,8 @@ def _collect():
     entries['hygiene_core.py'] = hygiene_slice(inputs[HYGIENE].decode('utf-8').replace('\r\n', '\n'))
     entries['uv_nudge_core.py'] = nudge_slice(
         inputs[NUDGE].decode('utf-8').replace('\r\n', '\n'),
-        inputs[TILES].decode('utf-8').replace('\r\n', '\n'))
+        inputs[TILES].decode('utf-8').replace('\r\n', '\n'),
+        inputs[PACKAGE / 'udimtile_core.py'].decode('utf-8').replace('\r\n', '\n'))
     entries['ucx_audit_core.py'] = audit_slice(inputs[UCX_AUDIT].decode('utf-8').replace('\r\n', '\n'))
     expected = icon_files()
     for rel, data in icon_entries().items():

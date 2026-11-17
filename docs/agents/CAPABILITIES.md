@@ -17,6 +17,14 @@ Status:
 4. Ask for review and merge (`ROLES.md`: Codex integrates `main`; DCC tools are confirmed by Claude on real data).
 5. Other worktrees pick it up with `git merge main` at the start of their next task.
 
+## DCC acceptance defaults
+
+Choose DCC per step from known tools/context and state a one-line reason [D270]: headless Blender for measuring, geometry analysis, construction/algorithms; Max for Corona/viz, AGR Tools, Max-only checks and acceptance. This extends the Max-busy fallback [D255], not a Blender-by-default rule.
+Ask once per task: «по завершении этапов открывать тебе сцену для приёмки?»; retain yes/no for that task (a new task resets consent). On yes, automatically open a new version after each stage in the app holding it (Max 2026 or Blender) AND report the absolute path; on no or missing answer, path only [D270].
+Acceptance view defaults to 3ds Max 2026 with QUAD topology in the review copy; triangulate only delivery exports that require it. This is Artem's preference, not regulation [D270].
+
+Helper (IN BRANCH, #1297): `uv run python tools/open_review_scene.py --app blender --source "C:/job/stage_v001.blend" --output "C:/job/stage_review_v002.blend" --open-approved` (use `--app max` and `.max` for Max 2026). Requires a saved native scene and a new versioned output; refuses aliases/occupied destinations. Always starts a **new process**, including when Max's live lock is held: no bridge call, live injection, reset, close, lock reaping or user-document replacement. Keep existing PID pins on all later bridge calls; a new instance can become the bridge default. If another instance is unsuitable, ask instead. The helper reports `launched`, not `loaded` or accepted: inspect the new process's document/version/units and record its log or screenshot. Do not pass `--open-approved` without the task's yes. Save the stage before invoking; it is not a converter or topology checker. Sources/approved versions stay unchanged; readback/visual acceptance remain separate gates.
+
 ## Machine and repository
 
 - Local: `C:\Users\artsafro\.AGR-DigitalTwin_pilot` (branch `main`); GitHub `artsafro/AGR-DigitalTwin-pilot`
@@ -54,6 +62,7 @@ User decisions of roadmap round 4 (COORDINATION_RULES 27, issue #139):
 - trimesh: not used.
 - CADCraft: not used.
 - ODA File Converter: not installed for now; DWG is read through the AutoCAD 2025 core console (DXFOUT) + ezdxf; the committed readback script is `tools/methods/body/dwg_to_dxf.py` (works on a hashed copy, `--dry-run` without AutoCAD; issue 1203).
+- Facade DXF opening dimensions: `tools/methods/body/facade_openings_from_dxf.py` (explicit handle/frame map, rectangular LINE/LWPOLYLINE outlines, source hashes; no inferred depth/placement; synthetic CLI/probe coverage in `tests/methods/test_facade_openings_from_dxf.py`, #1312).
 - MTree/Sapling: not used until a Flora benchmark on the user's trees.
 - IfcOpenShell: transient `uv --with` only, no project dependency, until the Revit adapter.
 
@@ -80,11 +89,34 @@ substitute ad-hoc scripting.
 - Known issues (same run): `create_object` with `pos` fails («Invalid position parameter», nothing
   created) — create without `pos`, then `transform`; `manage_scene(save)` saves only to the current
   path — Save As to a new versioned path via MAXScript; a newly started Max registers itself and
-  becomes the default target — pin the exact PID; the agent viewport does not redraw while Max is
+  becomes the default target — a new or unpinned MCP process follows it (a `select_max_instance` pin
+  survives only inside its own MCP process, live #1481); guard every mutation inside the executing
+  process (see the `3dsmax-mcp-dev` skill and PID gate below); the agent viewport does not redraw while Max is
   hidden; the Max 2026 startup shows the `polyunwrapper_autoload.mse` .NET error dialog (see
   Toolchain smoke above). Source review (PR #793): `query_scene(action="class", scope="refs")`
   passes `class_name`/`superclass` to MAXScript `execute`, and the TCP fallback of `property`
   inserts `property_name` as code — safe_mode does not block that; hence the narrow read-only row.
+- PID gate (#1364): `tools/hooks/skill_gate.py` runs on Max MCP PreToolUse independently of
+  skill loading, subagents and transcript availability. Every mutation must use an unconditional
+  leading in-process PID check in `execute_maxscript.code` or `execute_python.code`; canonical
+  prefixes and the narrow read-only expression list are in `3dsmax-mcp-dev`. Native mutation
+  tools (`scene_patch`, `manage_scene`, etc.) are denied: use a guarded script equivalent.
+  Selection/readback alone is not atomic with execution. The lexical gate does not prove PID
+  ownership or user authorization and is not a sandbox for hostile code.
+- Pin-survival evidence: the #1364 incident / `docs/retros/2026-11-14-4bk-k3-modeling.md`
+  item 9 reports PID 563748 selected with `pinned: true`, then PID 570920 becoming selected/default.
+  Deterministic two-registration simulation: `tests/test_max_pid_guard.py::test_two_registrations`
+  (synthetic registry, mocked PID source; not a real server/Max measurement).
+  Live two-Max re-registration test (#1481, 2026-11-17, v1.7.5 `bcd4e4c6`, real stdio server,
+  two fresh 3ds Max 2026 instances with empty synthetic scenes): the pin SURVIVES. After pinning
+  A (PID 1124612, `select_max_instance` -> `pinned: true`) and starting B (PID 1142464, registered
+  in 33 s), `list_max_instances` shows B `default: true` and A `selected: true`;
+  `get_selected_max_instance` still returns A `explicit`/`pinned: true`; a PID-guarded
+  `execute_maxscript` returned 1124612 for A's guard and `wrong Max` for B's guard (routed to A).
+  A fresh unpinned MCP process has no selection and defaults to the newest registration (B), which
+  matches the #1364 incident: survival holds only inside the pinned MCP process, so the
+  per-call PID guard stays mandatory. Log: `G:/Мой диск/AGR-evidence/1481-two-max-pin/`
+  (`live_two_max_pin.log` sha256 `087c28ac…748d`, driver `live_two_max_pin.py`, `SHA256SUMS.txt`).
 - Owner: Claude (main) · scope: user (all projects)
 - Server: cl0nazepamm/3dsmax-mcp v1.7.5 (commit `bcd4e4c6`, licence MIT), `C:\Users\artsafro\tools\3dsmax-mcp`; plugin in
   `C:\ProgramData\Autodesk\ApplicationPlugins\3dsmax-mcp`; `safe_mode = true`
@@ -290,12 +322,17 @@ Pipeline core:
   `dt spec extract|merge-questions|compare`, `dt intake check` — WORKING on synthetic data; first real run KPP1.
 - Engine `src/dt_ai/geometry/from_spec.py` — WORKING on synthetic specs only.
 - Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
+- Window generator `agr window-generate` (`tools/windows/generate.py`, #1405) — shared stdlib `windowgen_core` with Max `win.generate`; new type OBJ bundles + explicit inset plans, not building assembly. KPP1 diagnostics fail on unexplained drops; [usage and measurements](../../jobs/KPP1/window-command-1405/MEASUREMENTS.md).
 - Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
 - Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
   type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
   for a visual check; not a production asset.
 - Operation library `technical_library/` — WORKING per package README.
 - Album page reader `src/dt_ai/album/` (#317) — on `main`, synthetic PDFs only.
+- Accepted geometry input gate `tools/state/accepted_set.py` — IN BRANCH (#1445): read-only,
+  part-bound file SHA-256 and structured stage-brief preflight; synthetic regressions plus real
+  4bk-k3 historical v004/v008e dry run. [Contract and limits](../procedure/ACCEPTED_GEOMETRY.md).
+  Not geometry QA, a filesystem lock or approval authentication; shared after merge only.
 - Project state `tools/state/project_state.py` — WORKING; rule `docs/agents/WORKFLOW.md`, "Project state";
   `tools/state/project_state_freshness.py` is an advisory read-only freshness check; `tools/state/after_merge.py`
   (2026-11-07, offline tests only) regenerates and commits it on local `main` after a merge (PostToolUse hook on
@@ -304,6 +341,13 @@ Pipeline core:
   and checked-export tool, not a delivery validator; version, install, native evidence: its `README.md`,
   `CHANGELOG.md`; native runners in `tests/max_tools/`. Entry page for agents (1.0 conveyor, MCP v2, passport,
   libraries, owner decisions): `docs/agr-tools/OVERVIEW.md`.
+  Pre-export master polygon QA [D312]: `runtime.master_topology(nodes)` and agent CLI
+  `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json`, one shared stdlib core;
+  real read-only ELV/KPP1/PSU275 reports in `jobs/master-topology-1420/REPORT.md` (not delivery acceptance).
+  Master mesh quality score by the OKS split rule [D336] (#1616): `uv run python tools/qa/mesh_quality_score.py
+  MASTER --out NEW.json [--zone ...] [--exclude-zone ...]` (score 0..100 + quads per element/slivers/poles/body
+  share/welds/long sides/irregular area/open seams; ranks, never
+  accepts); OBSERVE loop `tools/qa/mesh_quality_observe.py`; calibration `docs/research/mesh-quality-1616/REPORT.md`.
 
 Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job reports and PRs):
 - Ground layered cake `src/dt_ai/geometry/ground_cake.py` (#295, PR #308) — WORKING: library driven by
@@ -335,14 +379,29 @@ Territory (Ground, MAF, Flora, placement; verified 2026-11-07 against job report
 - Site placement `tools/placement_site.py` + `tools/blender/placement_instance.py` (PR #344) — TOOL ONLY: SPOZU points
   -> engine -> Blender instancing -> scene readback gate (0 mismatches on Vatutino v006); acceptance open; tests
   `tests/placement/test_site_*.py`.
+- Site placement command `dt place site SPEC.json --out NEW --seed N` / `agr place` (`src/dt_ai/placement/site.py`,
+  #1407, [D329]): MAF + Flora NPM and VPM at the same points in one run (D293); spec `dt-placement-site/1`, strict
+  NPM/VPM point-ID parity (exit 4), fail-closed spec (exit 2). Scene helpers moved to `dt_ai.placement.scene`
+  (`tools/placement_site.py` is an import alias). Vatutino `jobs/VATUTINO-SITE/place_site.py` = resolver over it;
+  guard rule `site-placement`. Silikatny run waits for #1315.
+- MAF NPM-light `dt derive maf-npm-light SPEC.json --out NEW` / `agr npm-light` (`tools/library/maf_npm_light.py`,
+  #1410, plan #425 steps 5-6) — TOOL ONLY: D293 conversion branch when the set does not fit the budget (D164/D167):
+  Decimate never at or under 400 tris, atlas UV through the shared owner `tools/materials/maf_uv_remap.py` (also
+  used by `maf_site_set_build.py` and `flora_atlas_from_scene.remap_uv`), gates on readback (dims [D094], silhouette
+  IoU >= 0.95, 0 UV outside slot); spec `dt-maf-npm-light/1`, exit 2 input / 3 gate / 1 DCC. Proof on #1315 MAF
+  copies: 4/4 pass, 9 990 -> 4 544 tris (`jobs/SIL13-COLD-1315/maf-npm-light-1410/result.md`); tests
+  `tests/test_maf_npm_light_1410.py`.
 - Ground producer `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106; moved from the job, whose path is now a
   shim) — WORKING: replay on the accepted v015 inputs gives masters byte-identical to the accepted build
   (NPM `c26b7feb…ca1a`, VPM `59310ac9…2eb4`); site data from `--job-dir` (default `jobs/VATUTINO-SITE`); tests
   `tests/test_ground_v015_producer.py`, `tests/test_shared_tools_1106.py`.
 
+Shared packaging `agr package-npm` / `agr package-vpm` and export metadata: [contract](../research/shared-packaging-1361.md) (#1361); ZIP owner `adapters/max/agr_tools/package_core.py`.
+
 Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step instead of the job copies
 `jobs/{KPP1,PSU275,TEC26-OKS}/scripts/{make_npm_atlas,export_npm,package_vpm}.py`, which stay as frozen records):
-- `dt derive atlas <spec> <new out> [--address A --index N]` (`tools/derive/npm_atlas.py`), `dt derive npm --blender B
+- `dt derive atlas <spec> <new out> --master <master> [--address A --index N]` (`tools/derive/npm_atlas.py`;
+  `npm_atlas.json` carries the master SHA-256 + UDIM tiles, #1505), `dt derive npm --blender B
   <master.blend> <spec> <atlas dir> <new out> [prefix] [--address --index --pivot x,y --keep-quads]`
   (`tools/derive/export_npm.py`), `dt derive package <pkg dir> <textures> [--object object.json] [--no-geojson]`
   (`tools/derive/package_vpm.py`; per-job name / H_RELIEF / glass in `object.json`, not in code); FBX readback parity
@@ -354,14 +413,20 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
   replayed. Tests `tests/test_shared_tools_1106.py`.
 
 Duplicate implementations (#1106 inventory; the canonical side for UCX / atlas / placement is the AGR Tools Max
-cores, keeping the Max side per the AC08 route [D228]; routing the Blender/Python versions to them is deferred to
-#1141, starts after #1105 [D225]):
+cores, keeping the Max side per the AC08 route [D228] [D225]; #1141 (the routing) was closed as split on 2026-11-15:
+UCX -> #1404, atlas -> #1380, placement -> #1407, one core behind the CLI and the Max button -> epic #1374, live-Max
+proof of the cores -> #1105. [D330] (2026-11-16, closes conflicts C49) narrows [D225] to one core per function:
+UCX build `ucx_build`, UCX gap `ucx10_core`, placement `dt_ai.placement`; command `agr ucx` (#1404)):
 
 | Function | Blender / Python | 3ds Max (AGR Tools) | Job copies |
 |---|---|---|---|
 | UCX | `src/dt_ai/geometry/ucx_build.py` + `tools/blender/ucx_build.py` (#166, TOOL ONLY), methods `tools/methods/ucx/` | `adapters/max/agr_tools/ucx_core.py`, `ucx10_core.py` (1.0 `ucx.gap`), `ucxstairs_core.py` | `jobs/KPP1/scripts/vpm_ucx.py`, `jobs/PSU275/scripts/vpm_ucx.py`, `jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py` |
 | NPM atlas | `tools/derive/npm_atlas.py` (finish regions), `tools/materials/npm_atlas_udim.py` (#546, UDIM crop) | `adapters/max/agr_tools/atlas_core.py` (mirrors `npm_atlas_udim.pack()`), `facadeatlas_core.py` | `jobs/*/scripts/make_npm_atlas.py`, `jobs/vyatskaya-tow02/scripts/texture_atlas_blender.py` |
-| Placement | `src/dt_ai/placement/engine.py` + `tools/placement_site.py` (#316, #344) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
+| Placement | `src/dt_ai/placement/engine.py` + `scene.py` + `site.py` (`dt place site`, #316, #344, #1407, [D329]) | `adapters/max/agr_tools/place_core.py`, `placegeo_core.py`, `winplace_core.py` | pivot logic inside `export_npm` / `export_vpm` copies |
+
+- Tiling-trim box UV `tools/blender/box_uv.py` (`box_project_uv`, #1538) — TOOL ONLY: world box projection at panel
+  scale on the listed faces of one object, data API only; `uv_fingerprint`/`uv_violations` prove other objects kept
+  their UVs; synthetic fixture `tests/test_box_uv_1538.py` (real Blender 5.1).
 
 Export:
 - `tools/export/export_mesh_blender.py`, `tools/export/export_modules_blender.py` — Blender scene + FBX writers of
@@ -381,14 +446,25 @@ Delivery QA:
   Max; exit 0 pass / 1 findings / 2 unreadable.
 - UCX builder `src/dt_ai/geometry/ucx_build.py`, `tools/blender/ucx_build.py`; audit `tools/blender/ucx_audit.py` —
   TOOL ONLY (#166).
+- `agr ucx MODEL OUT Main|Ground [key=value ...]` (`src/dt_ai/geometry/ucx_command.py`, #1404, [D330]) — WORKING:
+  build via `tools/blender/ucx_build.py`, fresh readback, `ucx10_core.plan` gap check (measure only; the fix is
+  AGR Tools `ucx.gap` in Max), V010; exit 0 pass / 1 check failed / 2 build or readback failed / 4 refused. Proven on
+  Vatutino Ground v014 (geometry identical to the delivered UCX) and ELV Main.
 - Overlap gate `dt qa xview` (`src/dt_ai/ops/inv_xview.py`, `xview_gate.py`, #527) — WORKING; 3ds Max xView runner
   `tools/qa/xview_dump.ms` (#528), parity `tools/qa/xview_parity.py`, frozen benchmark `tools/qa/xview_bench.py`.
+- VPM visibility gate `dt qa visibility` (`src/dt_ai/ops/visibility_gate.py`, Blender dump
+  `tools/blender/visibility_dump.py`, #1447) — WORKING: hidden / back-visible faces (first-hit rays, fixed
+  `target-fixed-16` jitter, dome + rings + close eyes, `--context` real occluders) and open edges by class (embed at
+  midpoint and both ends). Replaces job-local visibility scripts; xView stays the overlap gate.
 - Face overlap check `tools/qa/check_clearance.py` — WORKING.
 - Benchmark run `tools/qa/run_benchmark.py`, geometry checks `tools/qa/check_geometry.py` — WORKING on synthetic
   etalons only.
 - Methods catalog runner `tools/methods/run_variant.py`, `tools/methods/ucx/run_benchmarks.py` (#706) — WORKING.
 - Preview QA `tools/qa/render_qa.py` (numerical, not acceptance; limits in `tools/qa/render_qa.md`) and the advisory
   VLM checklist `tools/qa/vlm_checklist.py` (#768, research) — advisory only.
+- Before/After visual evidence `tools/review/before_after.py` (#1360, [D286]) — WORKING: two FBX/.blend versions,
+  one camera (fitted to both or one identical named camera), headless Blender Workbench, labelled pair + manifest +
+  `SHA256SUMS.txt` to Drive; refuses mismatched cameras. Rule: `docs/agents/WORKFLOW.md#visual-evidence-beforeafter-d286`.
 - Capability session launcher `tools/qa/capability_b01.py` — harness eval support (`tests/test_capability_b01.py`).
 - 3ds Max production scripts (external) — CONFIGURED, inventory only: `docs/tools/max-scripts.md`.
 

@@ -109,7 +109,11 @@ def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
     tex = make_tex(tmp_path / "tex")
     pkg = make_pkg(tmp_path / "p")
     obj = tmp_path / "object.json"
-    obj.write_text(json.dumps({"name": "Test OKS", "h_relief": 170.5}), encoding="utf-8")
+    obj.write_text(json.dumps({"name": "Test OKS", "placement": {
+        "coordinate_system": "SYNTHETIC_LOCAL", "project_zero_m": 170.5,
+        "height_system": "unknown", "height_source": {"file": "synthetic", "locator": "test datum"},
+        "project_zero_fbx_z_m": 0, "project_zero_fbx_source": {"file": "synthetic", "locator": "FBX origin"},
+        "source": {"kind": "synthetic", "reference": "test"}, "status": "proposed"}}), encoding="utf-8")
     r = run([sys.executable, PKG_TOOL, pkg, tex, "--object", obj])
     assert r.returncode == 0, r.stderr
     geo = json.loads((pkg / "SM_Nku_1.geojson").read_text(encoding="utf-8"))
@@ -250,12 +254,38 @@ def test_atlas_parity_asset_availability_matrix(tmp_path, local_state, drive_sta
     assert all((tmp_path / name).read_bytes() == value for name, value in before.items())
 
 
-def test_atlas_is_byte_identical_to_the_tec26_job_script_on_ac08(tmp_path):
+def test_atlas_preserves_tec26_ac08_recipe_with_d278_padding(tmp_path):
+    from PIL import Image
+    import numpy as np
+
     spec = atlas_parity_spec(ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json", tmp_path / "inputs")
     rj = run([sys.executable, ROOT / "jobs/TEC26-OKS/scripts/make_npm_atlas.py", spec, tmp_path / "job"])
-    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt"])
+    master = tmp_path / "inputs/master.blend"  # synthetic master bytes: the atlas is bound to its hash (#1505)
+    master.write_bytes(b"synthetic master revision A")
+    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt", "--master", master])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
-    assert snapshot(tmp_path / "job") == snapshot(tmp_path / "dt")
+    old = json.loads((tmp_path / 'job/npm_atlas.json').read_text())
+    new = json.loads((tmp_path / 'dt/npm_atlas.json').read_text())
+    import hashlib
+    assert new['master'] == {'name': 'master.blend', 'sha256': hashlib.sha256(master.read_bytes()).hexdigest(),
+                             'udims': sorted(r['udim'] for r in new['finishes'].values())}
+    assert (old['pad'], new['pad']) == (6, 16)  # old delivery recipe intentionally untouched
+    assert (old['region'], new['region']) == (397, 377)
+    assert old['finishes'].keys() == new['finishes'].keys()
+    source = json.loads(spec.read_text())
+    for name, region in new['finishes'].items():
+        assert region['udim'] == old['finishes'][name]['udim']
+        finish = source['finishes'][name]
+        assert region['px_per_m'] == (round(377/finish['S'], 1) if finish['kind'] == 'full' else None)
+        if finish['kind'] == 'placeholder':
+            with Image.open(tmp_path / 'dt/T_Nku_1_001_Main_d_1.png') as image:
+                x = round(region['u0']*2048)
+                y = round((1-region['v0']-region['size'])*2048)
+                assert np.all(np.asarray(image)[y:y+377, x:x+377] == finish['rgb'])
+    check = run([sys.executable, ATLAS_TOOL, '--check', tmp_path / 'dt/npm_atlas.json',
+                 tmp_path / 'dt/T_Nku_1_001_Main_d_1.png', tmp_path / 'dt/T_Nku_1_001_Main_o_1.png'])
+    assert check.returncode == 0, check.stderr
+    assert json.loads(check.stdout)['per_side_padding_px'] == 16
     assert sorted(snapshot(tmp_path / "dt")) == ["T_Nku_1_001_Main_d_1.png", "T_Nku_1_001_Main_o_1.png", "npm_atlas.json"]
 
 
@@ -275,7 +305,8 @@ def test_atlas_fails_closed_and_writes_nothing(tmp_path, case):
     else:
         extra = ["--index", "1000"]
     before = snapshot(tmp_path)
-    r = run([sys.executable, ATLAS_TOOL, spec, out, *extra])
+    master = ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json"  # any existing file: each case must refuse on its own
+    r = run([sys.executable, ATLAS_TOOL, spec, out, "--master", master, *extra])
     assert r.returncode != 0 and "refused" in r.stderr, (r.stdout, r.stderr)
     assert snapshot(tmp_path) == before
     assert not (ROOT / "jobs/TEC26-OKS/scripts/__atlas_probe_1106").exists()

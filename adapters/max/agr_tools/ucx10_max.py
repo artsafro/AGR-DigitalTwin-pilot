@@ -11,6 +11,8 @@ neighbours - else every `UCX_*` of the scene. Meshes come in METRES from host.me
 geometry goes back through 1 / metres-per-unit and the inverse object transform. Plan mode `copy`: one undo
 record, selection restored, the pieces of every family with a change are copied to layer AGR_export
 (edit_max.export_copies) and only the copies are rewritten; the originals are checked byte-equal afterwards.
+pack.deliver's preview-only `delivery_names` option maps every explicit handle (string) to its export name:
+no family expansion, no scene rename, and no apply of this inspection preview (#1584).
 """
 SUFFIX = '_AGR_gap_'
 EXPORT_LAYER = 'AGR_export'
@@ -73,13 +75,30 @@ def ucx_gap(ctx, mode, nodes, preview):
     rt = _rt()
     unit_m = ctx.host.m_per_unit()
     if mode == 'preview':
-        opts = core.gap_options(ctx.options)
-        scope = _scope(core, nodes)
+        raw = dict(ctx.options or {})
+        delivery = 'delivery_names' in raw
+        delivery_names = raw.pop('delivery_names', None)
+        opts = core.gap_options(raw)
+        scope = list(nodes or []) if delivery else _scope(core, nodes)
         rows = _rows(ctx, scope)
+        if delivery:
+            import re
+            if not isinstance(delivery_names, dict) or not rows or set(delivery_names) != {str(r['handle']) for r in rows}:
+                raise ValueError('delivery_names must cover the exact nonempty UCX export selection: {!r}, handles={!r}'
+                                 .format(delivery_names, [r['handle'] for r in rows]))
+            for row in rows:
+                name = delivery_names[str(row['handle'])]
+                if not isinstance(name, str) or core.family(name) is None or not (
+                        row['name'] == name or re.fullmatch(re.escape(name) + r'_AGR_gap_[0-9]+', row['name'])):
+                    raise ValueError('invalid delivery name for ' + str(row['name']))
+                row['name'] = name
         result = core.plan(rows, opts)
         notes = ['units: {} x {} -> {} m per unit'.format(rt.units.SystemType, rt.units.SystemScale, unit_m)]
         return core.gap_report(edit, 'preview', rows, result, opts, edit.fingerprint(_state(ctx, scope, unit_m, opts)),
-                               notes=notes, extra={'handles': [r['handle'] for r in rows], 'unit_m': unit_m})
+                               notes=notes, extra={'handles': [r['handle'] for r in rows], 'unit_m': unit_m,
+                                                   'delivery_preview': delivery})
+    if preview['plan'].get('delivery_preview'):
+        raise ValueError('delivery UCX preview is read-only: apply ucx.gap to the source selection instead')
     opts = core.gap_options(preview['plan']['options'])
     scope = []
     for h in preview['plan']['handles']:

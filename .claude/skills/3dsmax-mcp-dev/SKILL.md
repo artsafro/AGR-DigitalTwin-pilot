@@ -13,12 +13,19 @@ description: 'Inspect the configured 3ds Max MCP route and safely authorize vers
 2. Confirm the intended application/version, active document, units, saved/dirty
    state and scene/port/export ownership. Start read-only. Inspect the actual
    advertised tool schemas; do not invent tool names or substitute another route.
-   Pin the exact Max process (PID) before any scene call: a newly started Max
-   registers itself and becomes the default target, so never rely on the default.
+   Pinning does not hold: a newly registered Max can replace the default/selected
+   target even after `select_max_instance` returned `pinned: true` (#1364).
+   Identify the authorized PID, but guard every mutation inside the executing process;
+   never rely on selection or a prior identity readback.
    Pinning (`select_max_instance`) rebinds the session and is in the destructive
    class: name the PID and get it authorized like any other mutation.
 3. If the route cannot inspect without mutation, stop with the exact missing
    capability. Do not test a connection by changing the user's production scene.
+
+## Per-call PID guard (#1364)
+Guard every mutation with this leading check (replace `563748` with the authorized PID):
+`local pc = dotNetClass "System.Diagnostics.Process"; if (pc.GetCurrentProcess()).Id != 563748 do throw "wrong Max";`
+Before any script/mutation, read [PID guard formats, admission limits and live pin-survival result](references/pid-guard.md).
 
 ## Risk gate before mutation
 
@@ -32,8 +39,8 @@ user authorization for the exact mutation; safe_mode is not an authorization led
 For a registered `versioned-write`, require task authorization and a new versioned
 destination, including sidecars. Apply the
 [Permission matrix and DCC gate](../../../docs/agents/WORKFLOW.md#gate-dcc-authorization).
-Never overwrite/delete sources or accepted versions. Use a managed export copy for
-export preparation, not the working source (`docs/domain/export-import.md`).
+Never overwrite/delete sources or accepted versions. Use a managed export copy for export preparation, not the working source (`docs/domain/export-import.md`).
+Changing global DCC settings (Nitrous limits/display performance) is **ask-first**; before user review run the read-only [texture handoff check](../../../docs/procedure/REVIEW_TEXTURES.md).
 
 ## Verify and recover
 

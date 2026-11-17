@@ -1,0 +1,1264 @@
+{
+ "issue": 1513,
+ "run": "run-v004",
+ "runtime_version": "1.1.0",
+ "max_product": "3ds Max 2026.3 (28.3.0.30732)",
+ "max_version_tuple": [
+  28000,
+  68,
+  0
+ ],
+ "package_sha256": "c2d985b215443896175fee0021f63d1cf6dec20c5beb51a7a698bfd06d7e990c",
+ "model": "REAL AC08 (TEC26-OKS) AC08_source_geomfinal.fbx",
+ "source_fbx_sha256": "9cae468e714118c501dfffa77531aabecd88662c4e34d0be57274d446bb3e5fd",
+ "scene_input_sha256": "834c6f8a47e6792c8baef9f97fdcbe425a72860ff7b68f535e931cae2cf7404f",
+ "final_scene_sha256": "e2d8200e9ace38d361fe83f9229e725b2174010915a4e24cbfe1f0174a2aab82",
+ "id_map": {
+  "map": {
+   "1": 999,
+   "2": 11,
+   "3": 2
+  },
+  "faces_by_source_id": {
+   "1": 127,
+   "2": 15,
+   "3": 38
+  },
+  "unresolved_sentinel": 999,
+  "note": "id 1 = roof+frame+skirt, unresolved_mixed_id (materials.json): sentinel 999, not a guess"
+ },
+ "source": {
+  "body": "АС.08",
+  "collision_hidden": [
+   "Colizii_044"
+  ],
+  "levels": [
+   {
+    "name": "L1",
+    "z_m": 0.0
+   },
+   {
+    "name": "roof",
+    "z_m": 2.5502
+   }
+  ],
+  "tris": 348,
+  "scene_units": "m",
+  "levels_after_intake": [
+   {
+    "name": "L1",
+    "z_m": 3.0
+   },
+   {
+    "name": "roof",
+    "z_m": 5.5502
+   }
+  ],
+  "zero_m_after_intake": 3.0
+ },
+ "source_import": [
+  {
+   "name": "АС.08",
+   "faces_tri": 348,
+   "verts": 193,
+   "mat_ids": {
+    "1": 254,
+    "2": 30,
+    "3": 64
+   },
+   "bbox_m": [
+    [
+     30.924,
+     -1.1056,
+     -2.0465
+    ],
+    [
+     36.9828,
+     1.3324,
+     2.5502
+    ]
+   ]
+  },
+  {
+   "name": "Colizii_044",
+   "faces_tri": 12,
+   "verts": 8,
+   "mat_ids": {
+    "1": 12
+   },
+   "bbox_m": [
+    [
+     30.924,
+     -1.1056,
+     -0.0408
+    ],
+    [
+     36.9828,
+     1.3324,
+     2.5502
+    ]
+   ]
+  }
+ ],
+ "stages": [
+  {
+   "id": 0,
+   "title": "Паспорт",
+   "big": "project.passport",
+   "status": "findings",
+   "tris_visible": 348,
+   "tris_total": 708,
+   "tris_new": 348,
+   "buttons": [
+    {
+     "tool": "project.passport",
+     "status": "findings",
+     "preview_codes": {
+      "role_missing": 2
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "001_project_passport_preview.json",
+      "002_project_passport_apply.json"
+     ]
+    },
+    {
+     "tool": "source.intake",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "003_source_intake_preview.json",
+      "004_source_intake_apply.json"
+     ]
+    },
+    {
+     "tool": "scene.source_class",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "005_scene_source_class_preview.json"
+     ]
+    }
+   ],
+   "notes": [
+    "паспорт: C:\\x\\1513-ac08-agr-stages\\run-v004\\proj\\jobs\\TEC26-OKS\\passport.json",
+    "readback копий: [6.058754, 2.438, 4.596754]"
+   ]
+  },
+  {
+   "id": 1,
+   "title": "Бадик",
+   "big": "body.prepare",
+   "status": "done",
+   "tris_visible": 664,
+   "tris_total": 1024,
+   "tris_new": 664,
+   "buttons": [
+    {
+     "tool": "body.prepare",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "006_body_prepare_preview.json",
+      "007_body_prepare_apply.json"
+     ]
+    },
+    {
+     "tool": "model.attach_by_material",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "008_model_attach_by_material_preview.json",
+      "009_model_attach_by_material_apply.json"
+     ]
+    },
+    {
+     "tool": "model.move_apart",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "010_model_move_apart_preview.json",
+      "011_model_move_apart_apply.json"
+     ]
+    },
+    {
+     "tool": "model.grid_cleanup",
+     "status": "done",
+     "preview_codes": {
+      "triangles": 1
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "012_model_grid_cleanup_preview.json",
+      "013_model_grid_cleanup_apply.json"
+     ]
+    },
+    {
+     "tool": "scene.small_parts",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "014_scene_small_parts_preview.json",
+      "015_scene_small_parts_apply.json"
+     ]
+    }
+   ],
+   "notes": [
+    "attach: фасад и парапет стали одним телом BODY_MultiMat0_001"
+   ]
+  },
+  {
+   "id": 2,
+   "title": "Окна",
+   "big": "win.place",
+   "status": "ambiguous",
+   "tris_visible": 664,
+   "tris_total": 1024,
+   "tris_new": 0,
+   "buttons": [
+    {
+     "tool": "win.place",
+     "status": "ambiguous",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [
+      "нет проёмов и меток: запрос агенту «разметь проёмы → тип по размерам и альбому»"
+     ],
+     "reports": [
+      "016_win_place_preview.json",
+      "017_win_place_apply.json"
+     ]
+    },
+    {
+     "tool": "win.generate",
+     "status": "skipped",
+     "preview_codes": null,
+     "error": null,
+     "ambiguous": [],
+     "reports": []
+    },
+    {
+     "tool": "model.glass_planes",
+     "status": "skipped",
+     "preview_codes": null,
+     "error": null,
+     "ambiguous": [],
+     "reports": []
+    }
+   ],
+   "notes": []
+  },
+  {
+   "id": 3,
+   "title": "Капсулы",
+   "big": "body.capsules",
+   "status": "done",
+   "tris_visible": 664,
+   "tris_total": 1024,
+   "tris_new": 0,
+   "buttons": [
+    {
+     "tool": "body.capsules",
+     "status": "done",
+     "preview_codes": {
+      "no_openings": 1
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "018_body_capsules_preview.json",
+      "019_body_capsules_apply.json"
+     ]
+    }
+   ],
+   "notes": []
+  },
+  {
+   "id": 4,
+   "title": "Крыша",
+   "big": "body.roof",
+   "status": "done",
+   "tris_visible": 664,
+   "tris_total": 1024,
+   "tris_new": 0,
+   "buttons": [
+    {
+     "tool": "body.roof",
+     "status": "done",
+     "preview_codes": {
+      "no_roof_loop": 1
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "020_body_roof_preview.json",
+      "021_body_roof_apply.json"
+     ]
+    }
+   ],
+   "notes": [
+    "плита: []"
+   ]
+  },
+  {
+   "id": 5,
+   "title": "Материалы",
+   "big": "mat.table",
+   "status": "findings",
+   "tris_visible": 664,
+   "tris_total": 1024,
+   "tris_new": 0,
+   "buttons": [
+    {
+     "tool": "mat.table",
+     "status": "findings",
+     "preview_codes": {
+      "id_not_in_library": 1
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "022_mat_table_preview.json",
+      "023_mat_table_apply.json"
+     ]
+    },
+    {
+     "tool": "mat.tiles",
+     "status": "refused",
+     "preview_codes": null,
+     "error": "ValueError: mat.tiles: empty input (select objects with tile library ids or give options.maps)",
+     "ambiguous": [],
+     "reports": []
+    },
+    {
+     "tool": "tex.plug_colour",
+     "status": "skipped",
+     "preview_codes": null,
+     "error": null,
+     "ambiguous": [],
+     "reports": []
+    }
+   ],
+   "notes": []
+  },
+  {
+   "id": 6,
+   "title": "ВПМ",
+   "big": "vpm.build",
+   "status": "refused",
+   "tris_visible": 664,
+   "tris_total": 1024,
+   "tris_new": 0,
+   "buttons": [
+    {
+     "tool": "vpm.build",
+     "status": "refused",
+     "preview_codes": {
+      "seam": 1,
+      "texel": 1
+     },
+     "error": "ValueError: nothing to build: every object has findings (see the preview)",
+     "ambiguous": [],
+     "reports": [
+      "024_vpm_build_preview.json"
+     ]
+    },
+    {
+     "tool": "vpm.build (повтор без library_path: шаг 6 карт выключен)",
+     "status": "refused",
+     "preview_codes": {
+      "seam": 1,
+      "texel": 1
+     },
+     "error": "ValueError: nothing to build: every object has findings (see the preview)",
+     "ambiguous": [],
+     "reports": [
+      "025_vpm_build_preview.json"
+     ]
+    },
+    {
+     "tool": "udim.rescale",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "026_udim_rescale_preview.json"
+     ]
+    },
+    {
+     "tool": "udim.distortion",
+     "status": "findings",
+     "preview_codes": {
+      "anisotropy": 1,
+      "degenerate_uv": 1,
+      "texel_scale": 1
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "027_udim_distortion_preview.json"
+     ]
+    },
+    {
+     "tool": "tex.dilate",
+     "status": "skipped",
+     "preview_codes": null,
+     "error": null,
+     "ambiguous": [],
+     "reports": []
+    },
+    {
+     "tool": "udim.plugs",
+     "status": "skipped",
+     "preview_codes": null,
+     "error": null,
+     "ambiguous": [],
+     "reports": []
+    }
+   ],
+   "notes": [
+    "нет копии ВПМ: малые кнопки этапа 6 нажаты на рабочем теле"
+   ]
+  },
+  {
+   "id": 7,
+   "title": "НПМ",
+   "big": "npm.build",
+   "status": "refused",
+   "tris_visible": 1012,
+   "tris_total": 1372,
+   "tris_new": 348,
+   "buttons": [
+    {
+     "tool": "npm.build",
+     "status": "refused",
+     "preview_codes": {
+      "uv_off_grid": 1
+     },
+     "error": "ValueError: nothing to build: the preview has findings (fail-closed, nothing written)",
+     "ambiguous": [],
+     "reports": [
+      "028_npm_build_preview.json"
+     ]
+    },
+    {
+     "tool": "atlas.facade_strip",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "029_atlas_facade_strip_preview.json",
+      "030_atlas_facade_strip_apply.json"
+     ]
+    }
+   ],
+   "notes": [
+    "нет копий ВПМ: npm.build нажат на рабочем теле"
+   ]
+  },
+  {
+   "id": 8,
+   "title": "НПМ→ВПМ",
+   "big": "npm.to_vpm",
+   "status": "refused",
+   "tris_visible": 1012,
+   "tris_total": 1372,
+   "tris_new": 0,
+   "buttons": [
+    {
+     "tool": "npm.to_vpm",
+     "status": "refused",
+     "preview_codes": null,
+     "error": "ValueError: nothing selected: select the objects",
+     "ambiguous": [],
+     "reports": []
+    },
+    {
+     "tool": "udim.udims_to_ids",
+     "status": "findings",
+     "preview_codes": {
+      "udim_ambiguous": 1
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "031_udim_udims_to_ids_preview.json"
+     ]
+    }
+   ],
+   "notes": [
+    "нет npm_table.json от npm.build: npm.to_vpm без таблицы (регионы атласа)"
+   ]
+  },
+  {
+   "id": 9,
+   "title": "Сдача",
+   "big": "pack.deliver",
+   "status": "ambiguous",
+   "tris_visible": 1444,
+   "tris_total": 2152,
+   "tris_new": 780,
+   "buttons": [
+    {
+     "tool": "qa.names_fix",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "032_qa_names_fix_preview.json",
+      "033_qa_names_fix_apply.json"
+     ]
+    },
+    {
+     "tool": "ucx (0.8 runtime.ucx_preview/ucx_apply)",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": []
+    },
+    {
+     "tool": "ucx.rename",
+     "status": "done",
+     "preview_codes": {
+      "ucx_name": 7
+     },
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "034_ucx_rename_preview.json",
+      "035_ucx_rename_apply.json"
+     ]
+    },
+    {
+     "tool": "ucx.gap",
+     "status": "done",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [],
+     "reports": [
+      "036_ucx_gap_preview.json",
+      "037_ucx_gap_apply.json"
+     ]
+    },
+    {
+     "tool": "ucx.stairs",
+     "status": "refused",
+     "preview_codes": null,
+     "error": "ValueError: no stairs to check: nothing matches (?i)(stair|лестн)",
+     "ambiguous": [],
+     "reports": []
+    },
+    {
+     "tool": "light.export",
+     "status": "refused",
+     "preview_codes": null,
+     "error": "ValueError: no lights in the scene: an empty light set is an error, not a pass",
+     "ambiguous": [],
+     "reports": []
+    },
+    {
+     "tool": "qa.omk_te",
+     "status": "ambiguous",
+     "preview_codes": {},
+     "error": null,
+     "ambiguous": [
+      "{'code': 'table_path', 'path': '', 'message': 'Не задан путь к таблице ОМК ТЭ (параметр table): своей таблицы в пакете нет.'}"
+     ],
+     "reports": [
+      "038_qa_omk_te_preview.json"
+     ]
+    },
+    {
+     "tool": "pack.deliver",
+     "status": "ambiguous",
+     "preview_codes": {
+      "qa.names/name_symbols": 9,
+      "qa.names/name_separator": 9,
+      "qa.preflight/fbx_ground_missing": 8,
+      "export.checked/cleanup": 1
+     },
+     "error": null,
+     "ambiguous": [
+      "{'item': 'pack.deliver', 'reason': 'qa.preflight: SM_Nku_1_Main: fbx_ground_missing qa.fbx_split: VPM: нет Ground FBX; UCX_SM_Nku_1_Main_001: fbx_ground_missing qa.fbx_split: VPM: нет Ground FBX; UCX_SM_Nku_1_Main_002: fbx_ground_missing qa"
+     ],
+     "reports": [
+      "039_pack_deliver_preview.json",
+      "040_pack_deliver_apply.json"
+     ]
+    },
+    {
+     "tool": "pack.deliver (B: skip light.check, light.export, qa.omk_te, qa.preflight, qa.sintez)",
+     "status": "ambiguous",
+     "preview_codes": {
+      "qa.names/name_symbols": 9,
+      "qa.names/name_separator": 9,
+      "export.checked/cleanup": 1
+     },
+     "error": null,
+     "ambiguous": [
+      "{'item': 'pack.deliver', 'reason': 'qa.names: SM_Nku_1_Main: name_symbols material Material #3 Slot #10: space is not allowed; SM_Nku_1_Main: name_separator material Material #3 Slot #10: no \"_\" separator; SM_Nku_1_Main: name_symbols materi"
+     ],
+     "reports": [
+      "041_pack_deliver_preview.json",
+      "042_pack_deliver_apply.json"
+     ]
+    },
+    {
+     "tool": "export.place_by_passport",
+     "status": "refused",
+     "preview_codes": null,
+     "error": "ValueError: Не задан путь к FBX (параметр fbx).",
+     "ambiguous": [],
+     "reports": []
+    }
+   ],
+   "notes": [
+    "A: этап 9 blocked; шаги qa.preflight=fail, qa.names=fail, qa.tris=pass, ucx.audit=pass, light.check=error, qa.sintez=error, ucx.gap=error, qa.omk_te=fail, light.export=error, export.checked=fail, export.zip=planned",
+    "B: этап 9 blocked; шаги qa.preflight=skipped, qa.names=fail, qa.tris=pass, ucx.audit=pass, light.check=skipped, qa.sintez=skipped, ucx.gap=error, qa.omk_te=skipped, light.export=skipped, export.checked=fail, export.zip=planned"
+   ]
+  }
+ ],
+ "harness_steps": [
+  "этап 0: исходник скрыт после source.intake; дальше работает копия АС.08_AGR_intake_001",
+  "этап 0: source.intake сдвинул копию на -origin_m [30.0, -2.0, -3.0]: +-0.000 = 3.0 м, уровни [{'name': 'L1', 'z_m': 3.0}, {'name': 'roof', 'z_m': 5.5502}]",
+  "этап 9: рабочее имя копии ВПМ BODY_MultiMat0_001 -> Nku_1_VPM_Main (токен роли Main для qa.names_fix: vpm.build называет копию <источник>_VPM_NNN)",
+  "этап 9: рабочая копия ВПМ Nku_1_VPM_Main скрыта: сдаётся копия qa.names_fix SM_Nku_1_Main",
+  "этап 9: вход художника: AGR_EXPORT_PATH=C:/x/1513-ac08-agr-stages/run-v004/deliver_B/SM_Nku_1.fbx на 8 узлах, AGR_ZERO_M=3.0000 на SM_Nku_1_Main (+-0.000 исходника после сдвига source.intake; ни одна кнопка 1.0 их не задаёт)",
+  "этап 9: вход художника: 1 узлов перенесены на слой «0» (qa.scene_hygiene hyg_layer)"
+ ],
+ "harness_errors": [],
+ "deliver": {
+  "A": {
+   "status": "fail",
+   "stage_entry_status": "blocked",
+   "steps": {
+    "qa.preflight": "fail",
+    "qa.names": "fail",
+    "qa.tris": "pass",
+    "ucx.audit": "pass",
+    "light.check": "error",
+    "qa.sintez": "error",
+    "ucx.gap": "error",
+    "qa.omk_te": "fail",
+    "light.export": "error",
+    "export.checked": "fail",
+    "export.zip": "planned"
+   }
+  },
+  "B": {
+   "status": "fail",
+   "stage_entry_status": "blocked",
+   "steps": {
+    "qa.preflight": "skipped",
+    "qa.names": "fail",
+    "qa.tris": "pass",
+    "ucx.audit": "pass",
+    "light.check": "skipped",
+    "qa.sintez": "skipped",
+    "ucx.gap": "error",
+    "qa.omk_te": "skipped",
+    "light.export": "skipped",
+    "export.checked": "fail",
+    "export.zip": "planned"
+   }
+  }
+ },
+ "final": {
+  "qa_package": {
+   "status": "skipped",
+   "reason": "pack.deliver не записал архив (этап 9 blocked)"
+  },
+  "qa_sintez": {
+   "status": "refused",
+   "error": "ValueError: qa.sintez needs options.sintez: the SINTEZ AGR Checker report (JSON of run_agr_checker.py)"
+  },
+  "qa_sintez_real": {
+   "status": "not_run",
+   "reason": "SINTEZ AGR Checker is a Blender extension; not run in this Max job"
+  }
+ },
+ "passed": false,
+ "readback": {
+  "HARNESS:SM_Nku_1_HARNESS_NOT_DELIVERY.fbx": {
+   "note": "harness export, NOT a delivery (stage 9 blocked)",
+   "sha256": "80ecc8e91918a7915d92418864a2866259293cc4ea28a5555354f8414b60780b",
+   "import_ok": true,
+   "nodes": [
+    {
+     "name": "SM_Nku_1_Main",
+     "faces_tri": 348,
+     "verts": 193,
+     "mat_ids": {
+      "9": 254,
+      "1": 30,
+      "2": 64
+     },
+     "bbox_m": [
+      [
+       0.924,
+       0.8944,
+       0.9535
+      ],
+      [
+       6.9828,
+       3.3324,
+       5.5502
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      -0.08333331346511841,
+      1.0
+     ],
+     "uv_v": [
+      0.0,
+      1.0
+     ]
+    },
+    {
+     "name": "UCX_SM_Nku_1_Main_001",
+     "faces_tri": 12,
+     "verts": 8,
+     "mat_ids": {
+      "1": 12
+     },
+     "bbox_m": [
+      [
+       0.926,
+       0.8964,
+       0.9555
+      ],
+      [
+       1.172,
+       3.3924,
+       5.7015
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      0.9260145425796509,
+      1.1720147132873535
+     ],
+     "uv_v": [
+      0.896386981010437,
+      3.3923869132995605
+     ]
+    },
+    {
+     "name": "UCX_SM_Nku_1_Main_002",
+     "faces_tri": 12,
+     "verts": 8,
+     "mat_ids": {
+      "1": 12
+     },
+     "bbox_m": [
+      [
+       1.176,
+       0.8964,
+       0.9555
+      ],
+      [
+       7.172,
+       1.1424,
+       5.7015
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      1.1760145425796509,
+      7.1720147132873535
+     ],
+     "uv_v": [
+      0.8963866829872131,
+      1.14238703250885
+     ]
+    },
+    {
+     "name": "UCX_SM_Nku_1_Main_003",
+     "faces_tri": 12,
+     "verts": 8,
+     "mat_ids": {
+      "1": 12
+     },
+     "bbox_m": [
+      [
+       1.176,
+       3.1464,
+       0.9555
+      ],
+      [
+       7.172,
+       3.3924,
+       5.7015
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      1.1760146617889404,
+      7.1720147132873535
+     ],
+     "uv_v": [
+      3.1463866233825684,
+      3.3923869132995605
+     ]
+    },
+    {
+     "name": "UCX_SM_Nku_1_Main_004",
+     "faces_tri": 12,
+     "verts": 8,
+     "mat_ids": {
+      "1": 12
+     },
+     "bbox_m": [
+      [
+       6.926,
+       1.1464,
+       0.9555
+      ],
+      [
+       7.172,
+       3.1424,
+       3.2015
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      6.926014423370361,
+      7.1720147132873535
+     ],
+     "uv_v": [
+      1.146386742591858,
+      3.1423866748809814
+     ]
+    },
+    {
+     "name": "UCX_SM_Nku_1_Main_005",
+     "faces_tri": 12,
+     "verts": 8,
+     "mat_ids": {
+      "1": 12
+     },
+     "bbox_m": [
+      [
+       6.676,
+       1.1464,
+       2.9555
+      ],
+      [
+       6.922,
+       3.1424,
+       5.7015
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      6.676014423370361,
+      6.9220147132873535
+     ],
+     "uv_v": [
+      1.146386742591858,
+      3.1423866748809814
+     ]
+    },
+    {
+     "name": "UCX_SM_Nku_1_Main_006",
+     "faces_tri": 12,
+     "verts": 8,
+     "mat_ids": {
+      "1": 12
+     },
+     "bbox_m": [
+      [
+       6.926,
+       1.1464,
+       5.2055
+      ],
+      [
+       7.172,
+       3.1424,
+       5.7015
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      6.926014423370361,
+      7.1720147132873535
+     ],
+     "uv_v": [
+      1.146386742591858,
+      3.1423866748809814
+     ]
+    },
+    {
+     "name": "UCX_SM_Nku_1_Main_007",
+     "faces_tri": 12,
+     "verts": 8,
+     "mat_ids": {
+      "1": 12
+     },
+     "bbox_m": [
+      [
+       1.176,
+       1.1464,
+       5.4555
+      ],
+      [
+       6.672,
+       3.1424,
+       5.7015
+      ]
+     ],
+     "pos": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "scale": [
+      1.0,
+      1.0,
+      1.0
+     ],
+     "rotation_quat": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "uv_u": [
+      1.1760145425796509,
+      6.6720147132873535
+     ],
+     "uv_v": [
+      1.146386742591858,
+      3.1423869132995605
+     ]
+    }
+   ]
+  }
+ },
+ "d221": {
+  "fixture": "SYNTHETIC (not AC08): Box 6 x 3 x 4 m, 4 segments, face ids cycle 11/2/39/48",
+  "glass_ids": [
+   39,
+   48
+  ],
+  "body_ids": [
+   11,
+   2
+  ],
+  "vpm_build": [
+   {
+    "tool": "vpm.build (SYNTHETIC D221, library_path)",
+    "status": "done",
+    "preview_codes": {},
+    "error": null,
+    "ambiguous": [],
+    "reports": [
+     "043_vpm_build_preview.json",
+     "044_vpm_build_apply.json"
+    ]
+   }
+  ],
+  "glass_copy": {
+   "name": "SYNTH_D221_Body_glass_VPM_001",
+   "faces_tri": 128,
+   "mat_ids": {
+    "39": 64,
+    "48": 64
+   },
+   "agr_udim_table": {
+    "39": 1001,
+    "48": 1001
+   },
+   "matid_tile_faces": {
+    "39:1001": 64,
+    "48:1001": 64
+   },
+   "uv_u": [
+    0.0,
+    0.8333333134651184
+   ],
+   "uv_v": [
+    0.0,
+    1.0
+   ]
+  },
+  "body_copy": {
+   "name": "SYNTH_D221_Body_VPM_001",
+   "faces_tri": 128,
+   "mat_ids": {
+    "11": 64,
+    "2": 64
+   },
+   "agr_udim_table": {
+    "11": 1002,
+    "2": 1001
+   },
+   "matid_tile_faces": {
+    "11:1002": 64,
+    "2:1001": 64
+   }
+  },
+  "out_files": [
+   "maps/T_Synth_1_Diffuse_1.1001.png",
+   "maps/T_Synth_1_Diffuse_1.1002.png",
+   "maps/T_Synth_1_ERM_1.1001.png",
+   "maps/T_Synth_1_ERM_1.1002.png",
+   "maps/T_Synth_1_Normal_1.1001.png",
+   "maps/T_Synth_1_Normal_1.1002.png",
+   "vpm_table.json"
+  ],
+  "glass_maps": [],
+  "export": {
+   "path": "C:\\x\\1513-ac08-agr-stages\\run-v004\\d221_export\\SYNTH_D221_vpm.fbx",
+   "sha256": "38084fe428fd533abdb7121156b483d330319ee1930f09432b9d15b91264b56e"
+  },
+  "readback": [
+   {
+    "name": "SYNTH_D221_Body_VPM_001",
+    "faces_tri": 128,
+    "verts": 96,
+    "mat_ids": {
+     "11": 64,
+     "2": 64
+    },
+    "id_sub_names": {
+     "11": "ID_011",
+     "2": "ID_002"
+    },
+    "pos": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "matid_tile_faces": {
+     "11:1002": 64,
+     "2:1001": 64
+    }
+   },
+   {
+    "name": "SYNTH_D221_Body_glass_VPM_001",
+    "faces_tri": 128,
+    "verts": 96,
+    "mat_ids": {
+     "39": 64,
+     "48": 64
+    },
+    "id_sub_names": {
+     "39": "ID_039",
+     "48": "ID_048"
+    },
+    "pos": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "rotation_quat": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "matid_tile_faces": {
+     "39:1001": 64,
+     "48:1001": 64
+    }
+   }
+  ]
+ },
+ "diagnostic_run": {
+  "run": "run-v003",
+  "label": "DIAGNOSTIC: source id 1 -> library 1 (not a decision, not acceptance)",
+  "stages": [
+   [
+    0,
+    "findings"
+   ],
+   [
+    1,
+    "done"
+   ],
+   [
+    2,
+    "ambiguous"
+   ],
+   [
+    3,
+    "done"
+   ],
+   [
+    4,
+    "done"
+   ],
+   [
+    5,
+    "done"
+   ],
+   [
+    6,
+    "refused"
+   ],
+   [
+    7,
+    "refused"
+   ],
+   [
+    8,
+    "refused"
+   ],
+   [
+    9,
+    "ambiguous"
+   ]
+  ],
+  "vpm_build_codes": [
+   {
+    "seam": 1,
+    "texel": 1
+   },
+   {
+    "seam": 1,
+    "texel": 1
+   }
+  ]
+ }
+}

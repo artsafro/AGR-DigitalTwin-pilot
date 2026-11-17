@@ -1,0 +1,30 @@
+# Minimal job checklist (#1310, F17). Copy to jobs/<ID>/job.yaml; see README.md next to it.
+# Walks with exit 1 and no errors: every gate is `missing` until its evidence exists.
+schema_version: 1.0.0
+job_id: TEMPLATE
+run_id: TEMPLATE-r1
+synthetic: true
+path: standard
+# Replace with the real source inventory: each path once, SHA-256 of its bytes.
+inputs:
+- path: jobs/_template/README.md
+  sha256: 7e3c059eaafdffcfb5f254310d29f60ae5f8e295e19e27647a31c3b53f317c77
+artifacts: []
+deviations: []
+gates:
+  inputs:
+    status: missing
+  parts:
+    status: missing
+  operations:
+    status: missing
+  budgets:
+    status: missing
+  export_readback:
+    status: missing
+  report:
+    status: missing
+  visual:
+    status: missing
+  checker:
+    status: missing
