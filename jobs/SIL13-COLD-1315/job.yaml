@@ -215,11 +215,11 @@ gates:
     note: v026NPMFlora515to0regulatory;actualraw/nativeFlora+wholejoinedpublic0/0/0/0.37physicalMAF38census4582plants;4535hedgesupport>=78.225percent. VPMactualFlora29615regulatory/9wholepublicfaces49pairsFAIL; VPMknifeNOTadopted. D339all148240UCXpairsmeasured/report-only; archive-metadata/Ground/maps/UVFAILsremainworker-owned, no newquestion.
     evidence: &id002
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v027.json
-      sha256: 08bc1a65ba3cb41f7bdc660a7f0ad46c58ced02bcd24fe5c7411ca33c88a56d5
+      sha256: 347fc032a6159c7847a9a2625be0c2be53ee6017091b90b1ff66fb6e8df251c1
     - path: jobs/SIL13-COLD-1315/evidence-v027.json
-      sha256: ca0d723590924276f65ef5333de652aa515125a6e9cd5475070506d4618d128a
+      sha256: b20810060e0ba7638074f0157a1d451a4839aebecb344cdb0287cfe677ccbd86
     - path: jobs/SIL13-COLD-1315/question-receipt-v027.json
-      sha256: 5542c8bf6ea32f57030a276a5fbb59c0684946913ea4653fdb8110584646ab17
+      sha256: 85b004a2deaa22ac42934f8f6a893cdbe67c1d5727097d9fa54ba8cc640de716
     - &id003
       path: jobs/SIL13-COLD-1315/source-wide-summary-v026.json
       sha256: 846f83dc3272a205e19721abb983a6a3dab99ee8fe0dd45bb17a28ef1f2ef735
