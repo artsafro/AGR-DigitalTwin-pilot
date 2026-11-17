@@ -118,5 +118,5 @@ The staged `installed/` runtime (1262 files per run) is omitted: reproducible fr
 
 Reproduce: `env -u VIRTUAL_ENV AGR_TEST_OUTPUT=<new dir> AGR_TEST_PACKAGE=<mzp> AGR_TOOLS_REPO=<worktree>
 AC08_FBX=<scratch copy> AGR_PYTHON=<worktree>/.venv/Scripts/python.exe python
-C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file jobs/TEC26-OKS/AC08/agr-stages-v001/run_ac08_stages_native.py
+C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py max --file tests/max_tools/run_ac08_stages_native.py
 --version 2026 --card <card>`.

@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DIR = ROOT / 'jobs' / 'TEC26-OKS' / 'AC08' / 'agr-stages-v001'
 RECEIPT = DIR / 'receipt.json'
 MANIFEST = DIR / 'DRIVE-SHA256SUMS.txt'
-DRIVER = DIR / 'run_ac08_stages_native.py'
+DRIVER = ROOT / 'tests' / 'max_tools' / 'run_ac08_stages_native.py'
 SOURCE_SHA = '9cae468e714118c501dfffa77531aabecd88662c4e34d0be57274d446bb3e5fd'
 OK_STATUS = {'done', 'findings', 'ambiguous', 'refused', 'error', 'skipped', 'not_implemented', 'harness_error', 'n/a'}
 
@@ -124,6 +124,15 @@ def test_manifest_seals_the_retained_runs():
                  './run-v004/table.md', './run-v003/summary.json', './AGR-Tools.mzp', './run_ac08_stages_native.py'):
         assert need in names, need
     assert all(re.fullmatch(r'[0-9a-f]{64}', ln.split(' ', 1)[0]) for ln in lines)
+
+
+def test_driver_lives_outside_jobs_and_matches_sealed_copy():
+    # D324 skeleton gate: no driver script under jobs/; the moved bytes stay the Drive-sealed ones.
+    assert not list(DIR.glob('*.py'))
+    sealed = {ln.split(' *', 1)[1]: ln.split(' ', 1)[0]
+              for ln in MANIFEST.read_text(encoding='utf-8').splitlines() if ' *' in ln}
+    import hashlib
+    assert hashlib.sha256(DRIVER.read_bytes()).hexdigest() == sealed['./run_ac08_stages_native.py']
 
 
 def test_driver_maps_ids_without_default():
