@@ -1,9 +1,10 @@
 # Master mesh quality score by the OKS split rule [D336] (#1616)
 
-Status: metric (r3, after review r2) + calibration + three OBSERVE loop runs. Nothing retained; no
+Status: metric (r4, after review r3) + calibration + four OBSERVE loop runs. Nothing retained; no
 delivered package or master touched. Evidence (rule 57): `G:/Мой диск/AGR-evidence/1616-mesh-quality/`
 + `SHA256SUMS.txt` (r1: `calibration/`, `loop-r1/`, `sheets/`, `psu275-conversion/`; r2: `calibration-r2/`,
-`loop-r2/`, `sheets-r2/`; r3: `calibration-r3/`, `loop-r3/`, `sheets-r3/`).
+`loop-r2/`, `sheets-r2/`; r3: `calibration-r3/`, `loop-r3/`, `sheets-r3/`; r4: `calibration-r4/`, `loop-r4/`,
+`sheets-r4/`).
 
 ## Tool
 
@@ -26,6 +27,12 @@ element), `long_share` (side > 3.9 m), and since r2:
   cut at other heights (T-junctions). In-object near pairs join the elements and count as the welded
   edge they replace. Un-welding alone can only lower the score. Glass objects take no part (a pane fills
   its frame opening by regulation).
+  Cross-object (r4, review r3 P1-1): objects joined by any seam pair (exact or near) are measured as ONE
+  object (row `A+B`), so their elements join and the pairs count as creases like in-object pairs. A part
+  split into another object scores the same as an in-object un-weld (fixture: 82.479 at dy 0/1/2 mm,
+  80.342 T-junction; welded 84.211, inset 97.959). Objects with no seam pair are measured alone.
+  Known trait (unchanged by r4): `one_mesh_share` takes the body per object, so an inset post kept as its
+  own object on an intact wall scores 85.714, not the 97.959 of the same inset inside the body object.
 - Window reveals vs seams: the reveal is body surface, so a frame inset into it has no body boundary
   edge within the gap. Measured on PSU275: 0 near pairs at 2 mm and at 5 mm
   (`calibration-r3/psu275-main-gap0.005.json`); the first 561 pairs appear at 10 mm, all between two
@@ -33,10 +40,11 @@ element), `long_share` (side > 3.9 m), and since r2:
 
 score = 100 * (1 - weighted mean penalty); it ranks, never accepts.
 
-## Calibration r3 (corners = plan boxes around the SW/NW posts of the #1563 sheet)
+## Calibration r4 (corners = plan boxes around the SW/NW posts of the #1563 sheet)
 
-Rerun of every row through the CLI on the real inputs with the r3 core (`calibration-r3/`). The near-seam
-pass finds no pair on any row, so every score equals r2:
+Rerun of every row through the CLI on the real inputs with the r4 core (`calibration-r4/`). No row has a
+seam pair between two non-glass objects (KPP1 and PSU275 each have one body object plus glass), so every
+score and component equals r3 and r2 (8/8 reports compared, components identical):
 Corner zones `-17.5,-8.2,-12.5,-3.2` and `-17.5,3.5,-12.5,8.5`; `kpp1-quad-v003-rest` = the same master
 with those boxes excluded (`--exclude-zone`).
 
@@ -81,6 +89,14 @@ so the loop post-processes a copy of the finished master with the hook script in
 through the skeleton; the "would change: body-stage after hook" line is what it would propose, not a
 measured skeleton rebuild. The logs `observe-log-r1.jsonl` / `observe-log-r2.jsonl` are copies
 (kept under docs/research, not jobs/: job folders hold deliveries only); the hashed originals are on G:.
+
+### loop-r4 (metric r4, 2026-11-17) - log `observe-log-r4.jsonl`
+
+Same rounds, same results as loop-r3: baseline 76.684 kept; split 80/60/45/30 deg 75.499 / 75.485 /
+75.453 / 75.401, all discarded. The hook splits inside one object, so the cross-object join changes
+nothing here. Wire sheet `sheets-r4/kpp1-v003-corners-observe-r4-wire.png` (sha256 `dc391b14ea20497b...`,
+before = r2 baseline views, after = round 4); the r4 after renders are pixel-identical to the r2 ones
+(PIL difference bbox None for all 4 views). Would change: nothing.
 
 ### loop-r3 (metric r3, 2026-11-17) - log `observe-log-r3.jsonl`
 

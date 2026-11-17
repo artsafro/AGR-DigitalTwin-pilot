@@ -53,7 +53,10 @@ Components (each a share 0..1; penalty = min(1, share)):
   within the gap (measured on PSU275: none within 10 mm).
   Glass objects (``glass_pattern``) take no part in seams: a pane fills its frame opening by regulation
   (Main/MainGlass); accepted PSU275 glass shares 10 320 boundary edges with its Main frames.
-  Per-object rows count their own seams; pairs between two objects are added to the totals only.
+  Objects joined by a seam pair (exact or near, review r3 P1-1) are measured as ONE object (row name
+  ``A+B``): their elements join and the pairs count as creases exactly like in-object pairs, so splitting
+  a part into a separate object never raises the score by itself. Objects with no seam pair (real inset
+  objects on an intact body, glass) are measured alone.
 
 score = 100 * (1 - sum(weight * penalty) / sum(weights)) (weights in ``WEIGHTS``), so every
 component costs at most its weight share of the 100 points.
@@ -426,6 +429,53 @@ def _check_boxes(boxes):
             raise ValueError(f'malformed zone {z!r}')
 
 
+def _join_cross_seams(kept, merged, near_local, near_cross):
+    """Objects joined by cross-object seams (``near_cross``, exact or near) become ONE measured object
+    (review r3 P1-1): a part split into a separate object along a body seam is measured as the welded
+    element it was - joined, creases counted, the seam on top - exactly like an in-object seam. Objects
+    without such seams (real D336 inset objects, glass) are measured alone and unchanged.
+
+    Yields (object, merged, near) in the order of each group's first object."""
+    parent = list(range(len(kept)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    for oi, _, oj, _ in near_cross:
+        ri, rj = find(oi), find(oj)
+        if ri != rj:
+            parent[max(ri, rj)] = min(ri, rj)
+    groups = {}
+    for oi in range(len(kept)):
+        groups.setdefault(find(oi), []).append(oi)
+    cross_of = {}
+    for oi, fi, oj, fj in near_cross:
+        cross_of.setdefault(find(oi), []).append((oi, fi, oj, fj))
+    for root in sorted(groups):
+        members = groups[root]
+        if len(members) == 1:
+            yield kept[root], merged[root], near_local[root]
+            continue
+        voff, foff = {}, {}
+        verts, faces, mfaces, mats, seams, near = [], [], [], [], {}, []
+        for oi in members:
+            obj = kept[oi]
+            voff[oi], foff[oi] = len(verts), len(faces)
+            verts.extend(obj['verts'])
+            faces.extend([i + voff[oi] for i in f] for f in obj['faces'])
+            mfaces.extend([i + voff[oi] for i in f] for f in merged[oi][0])
+            mats.extend(obj.get('materials') or [None] * len(obj['faces']))
+            for key, fl in merged[oi][1].items():
+                seams.setdefault((oi, key), []).extend(fi + foff[oi] for fi in fl)
+            near.extend((fi + foff[oi], fj + foff[oi]) for fi, fj in near_local[oi])
+        near.extend((fi + foff[oi], fj + foff[oj]) for oi, fi, oj, fj in cross_of[root])
+        obj = {'name': '+'.join(str(kept[oi]['name']) for oi in members), 'verts': verts, 'faces': faces,
+               'materials': mats}
+        yield obj, (mfaces, seams), near
+
+
 def score(objects, params=None, zones=None, exclude_zones=None):
     """Score a master. ``objects`` as in the module docstring; ``zones`` / ``exclude_zones`` =
     [[x0, y0, x1, y1], ...] plan boxes: measure faces inside a zone and outside every exclude box."""
@@ -464,17 +514,16 @@ def score(objects, params=None, zones=None, exclude_zones=None):
             near_local[oi].append((fi, fj))
         else:
             near_cross.append((oi, fi, oj, fj))
-    rows, in_zone = [], []
-    for oi, obj in enumerate(kept):
-        row = measure_object(obj, p, zones, exclude_zones, merged[oi], near_local[oi])
-        in_zone.append(row.pop('_in_zone'))
+    rows = []
+    for obj, m, near in _join_cross_seams(kept, merged, near_local, near_cross):
+        row = measure_object(obj, p, zones, exclude_zones, m, near)
+        row.pop('_in_zone')
         rows.append(row)
     tot = {k: sum(r[k] for r in rows) for k in ('faces', 'tris', 'quads', 'ngons', 'slivers', 'long_faces',
                                                  'flat_vertices', 'poles', 'manifold_edges', 'welded_edges',
                                                  'elements', 'inset_elements', 'body_elements', 'body_faces',
                                                  'inset_faces', 'irregular_faces', 'area', 'irregular_area',
                                                  'edges', 'elements_not_all_quads', 'open_seam_edges')}
-    tot['open_seam_edges'] += sum(1 for oi, fi, oj, fj in near_cross if in_zone[oi][fi] or in_zone[oj][fj])
     solid = sum(r['faces'] for r in rows if not r['glass_object'])
     problems = []
     if not tot['faces']:

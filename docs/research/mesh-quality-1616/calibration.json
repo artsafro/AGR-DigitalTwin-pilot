@@ -1,7 +1,7 @@
 {
  "issue": 1616,
  "tool": "tools/qa/mesh_quality_score.py",
- "round": "r3 (review r2: near / T-junction seams by proximity and collinear overlap)",
+ "round": "r4 (review r3: cross-object seams join objects like in-object seams)",
  "margin_points": 0.5,
  "margin_note": "rejected v003 corners must score at least 0.5 below every accepted row; observed 0.718 below v003-rest",
  "weights": {
@@ -72,7 +72,7 @@
    "exclude_zones": [],
    "input_sha256": "fb566ff5e10ed92f5e75afe4a355ca212df569c456f58e18819d1edbb85553bb",
    "input": "C:/x/ev_1616/inputs/master-quad-v002.blend",
-   "report": "calibration-r3/kpp1-quad-v002.json"
+   "report": "calibration-r4/kpp1-quad-v002.json"
   },
   {
    "id": "kpp1-quad-v002-corners",
@@ -128,7 +128,7 @@
    "exclude_zones": [],
    "input_sha256": "fb566ff5e10ed92f5e75afe4a355ca212df569c456f58e18819d1edbb85553bb",
    "input": "C:/x/ev_1616/inputs/master-quad-v002.blend",
-   "report": "calibration-r3/kpp1-quad-v002-corners.json"
+   "report": "calibration-r4/kpp1-quad-v002-corners.json"
   },
   {
    "id": "kpp1-quad-v003",
@@ -171,7 +171,7 @@
    "exclude_zones": [],
    "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
    "input": "C:/x/ev_1616/inputs/master-quad-v003.blend",
-   "report": "calibration-r3/kpp1-quad-v003.json"
+   "report": "calibration-r4/kpp1-quad-v003.json"
   },
   {
    "id": "kpp1-quad-v003-corners",
@@ -227,7 +227,7 @@
    "exclude_zones": [],
    "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
    "input": "C:/x/ev_1616/inputs/master-quad-v003.blend",
-   "report": "calibration-r3/kpp1-quad-v003-corners.json"
+   "report": "calibration-r4/kpp1-quad-v003-corners.json"
   },
   {
    "id": "kpp1-quad-v003-rest",
@@ -283,7 +283,7 @@
    ],
    "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
    "input": "C:/x/ev_1616/inputs/master-quad-v003.blend",
-   "report": "calibration-r3/kpp1-quad-v003-rest.json"
+   "report": "calibration-r4/kpp1-quad-v003-rest.json"
   },
   {
    "id": "psu275-main",
@@ -326,9 +326,9 @@
    "exclude_zones": [],
    "input_sha256": "41200c110342c507b674fbe94955502939d15268f12c3dd5e88284fdd0159524",
    "input": "C:/x/ev_1616/inputs/PSU275_Main_quads_v001.fbx",
-   "report": "calibration-r3/psu275-main.json"
+   "report": "calibration-r4/psu275-main.json"
   }
  ],
  "evidence": "G:/Мой диск/AGR-evidence/1616-mesh-quality/ + SHA256SUMS.txt",
- "seam_gap_note": "seam_gap_m 0.002: accepted PSU275 has 0 near seams up to 0.005 m (calibration-r3/psu275-main-gap0.005.json); the first contacts appear at 0.01 m: 561 pairs, all between two inset elements, none on a body (window reveal) edge"
+ "seam_gap_note": "seam_gap_m 0.002: accepted PSU275 has 0 near seams up to 0.005 m (calibration-r4/psu275-main-gap0.005.json); the first contacts appear at 0.01 m: 561 pairs, all between two inset elements, none on a body (window reveal) edge"
 }
