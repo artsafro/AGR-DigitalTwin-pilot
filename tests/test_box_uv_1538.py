@@ -342,6 +342,19 @@ def test_float32_cut_just_off_line_stays_connected(box, px, offset):
         box.plan_box_uv(faces, px, 1001, margin_px=0)
 
 
+@pytest.mark.parametrize('offset', [0, 3])
+def test_float32_translation_plus_local_period_cut(box, offset):
+    px = 1706
+    period = 4096 / px
+    location = (offset + 0.37) * period
+    cuts = [float32(float32(location) + float32((offset + f) * period - location))
+            for f in (0.1, 1, 1.5)]
+    faces = strip_wall(cuts, cuts_z=[0.1 * period, 0.6 * period])
+    uvs, rep = box.plan_box_uv(faces, px, 1001, margin_px=0)
+    assert len(rep['islands']) == 2 and rep['period_cut_edges'] == 1
+    assert in_tile(uvs) and seams(box, faces, uvs) == (1, 0)
+
+
 def test_period_snap_half_texel_cap_boundary(box):
     px, line = 1024, 1048576.0  # float32 uncertainty here exceeds half a texel
     at = line + 0.5 / px
