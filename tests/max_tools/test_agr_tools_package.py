@@ -589,6 +589,79 @@ def test_npm_binding_failure_does_not_change_vpm_outputs(tmp_path, missing_recor
     assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
 
 
+@pytest.mark.parametrize('records', ['sidecars', 'aggregate'])
+@pytest.mark.parametrize('mode', ['clean', 'foreign', 'edited', 'drift'])
+def test_mixed_profile_records_bind_only_npm(tmp_path, monkeypatch, records, mode):
+    """Synthetic review regression: VPM records never enter the NPM binding."""
+    from adapters.max.agr_tools.export_meta import record_export
+    d = acceptance_folder(tmp_path)
+    npm = ['0123_X_01.fbx', '0123_X_02.fbx', '0123_X_Ground.fbx']
+    vpm = ['SM_X.fbx', 'SM_X_Ground.fbx']
+    for name in npm + vpm:
+        record_export(d / name, source='synthetic mixed-profile fixture')
+    address = tmp_path / 'export_meta.json'
+    if records == 'sidecars':
+        address.unlink()  # exercise address discovery, not just record filtering
+    else:
+        meta = json.loads(address.read_text(encoding='utf-8'))
+        meta['exported_files'] += vpm
+        meta['exported_sha256'].update({n: _sha(d / n) for n in vpm})
+        (d / 'export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    if mode == 'foreign':
+        (d / '0123_X_03.fbx').write_bytes(b'synthetic foreign')
+    elif mode == 'edited':
+        (d / npm[0]).write_bytes(b'synthetic edited')
+    preview = pc.zip_preview(ec, d)
+    expected = {a['name']: {m['name']: (d / m['name']).read_bytes() for m in a['members']}
+                for a in preview['plan']['archives']}
+    write = pc._write_zip
+    def drift(folder, archive, target, **kwargs):
+        if archive['role'] == 'npm':
+            (d / npm[0]).write_bytes(b'synthetic changed after binding')
+        return write(folder, archive, target, **kwargs)
+    if mode == 'drift':
+        monkeypatch.setattr(pc, '_write_zip', drift)
+        with pytest.raises(ValueError, match=npm[0]):
+            pc.zip_apply(ec, preview)
+        run = next(d.glob('Сборка_*'))
+    else:
+        rep = pc.zip_apply(ec, preview)
+        run = Path(rep['plan']['run_folder'])
+        assert sorted(p.name for p in run.glob('*.zip')) == sorted(
+            ['SM_X.zip', 'SM_X_Ground.zip'] + (['0123_X.zip'] if mode == 'clean' else []))
+    for target in run.glob('*.zip'):
+        with zipfile.ZipFile(target) as z:
+            assert {n: z.read(n) for n in z.namelist()} == expected[target.name]
+    error = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    if mode != 'clean':
+        assert ('0123_X_03.fbx' if mode == 'foreign' else npm[0]) in error
+        assert not (run / '0123_X.zip').exists()
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
+
+
+@pytest.mark.parametrize('failure', ['loader', 'malformed'])
+def test_npm_metadata_errors_are_archive_problems(tmp_path, monkeypatch, failure):
+    d = acceptance_folder(tmp_path)
+    if failure == 'loader':
+        import importlib.util
+        original = importlib.util.spec_from_file_location
+        def broken(name, *args, **kwargs):
+            if name == 'agr_tools_export_meta':
+                raise ImportError('synthetic unavailable export_meta.py')
+            return original(name, *args, **kwargs)
+        monkeypatch.setattr(importlib.util, 'spec_from_file_location', broken)
+    else:
+        meta = json.loads((tmp_path / 'export_meta.json').read_text(encoding='utf-8'))
+        meta['profile'] = []  # unsupported value must be reported, not escape to caller
+        (tmp_path / 'export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    rep = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    run = Path(rep['plan']['run_folder'])
+    assert sorted(p.name for p in run.glob('*.zip')) == ['SM_X.zip', 'SM_X_Ground.zip']
+    text = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    assert '0123_X_01.fbx' in text and 'metadata unavailable or invalid' in text
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
+
+
 def test_npm_archive_holds_only_fbx_and_one_address(tmp_path):
     """Zipper 25.06 rules: «в НПМ только FBX» and one Address across the files of an archive."""
     d = acceptance_folder(tmp_path)
