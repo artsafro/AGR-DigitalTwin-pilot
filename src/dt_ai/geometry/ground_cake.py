@@ -425,7 +425,7 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
 
 
 def _insert_points(V: list, T: list, evaluate, what: str, max_rounds: int = 60,
-                   eps: float = 1e-6) -> tuple[list, list, dict]:
+                   eps: float = 1e-6, precision: int = 6) -> tuple[list, list, dict]:
     """Insert points into a CCW triangle list until ``evaluate`` reports no bad triangle (fail closed).
 
     ``evaluate(V, T, ids) -> (score, where)``: score > 0 = bad (larger first), where = (x, y) to insert. A point
@@ -435,7 +435,7 @@ def _insert_points(V: list, T: list, evaluate, what: str, max_rounds: int = 60,
     """
     V = [tuple(v) for v in V]
     T = [list(t) for t in T]
-    key = {(round(x, 6), round(y, 6)): i for i, (x, y) in enumerate(V)}
+    key = {(round(x, precision), round(y, precision)): i for i, (x, y) in enumerate(V)}
     created = [False] * len(T)
     sc, w = evaluate(V, T, list(range(len(T))))
     score, where = list(map(float, sc)), [tuple(p) for p in w]
@@ -471,7 +471,7 @@ def _insert_points(V: list, T: list, evaluate, what: str, max_rounds: int = 60,
                 if dist < eps and (best is None or dist < best[0]):
                     best = (dist, u, v, A + t * d)
             q = best[3] if best else p
-            kq = (round(float(q[0]), 6), round(float(q[1]), 6))
+            kq = (round(float(q[0]), precision), round(float(q[1]), precision))
             if kq in key:
                 continue  # rounds onto an existing vertex: no progress from this point
             if best is not None:
@@ -519,7 +519,9 @@ def _refine_relief(V: list, T: list, sampler: "ReliefSampler", tol: float) -> tu
             return np.zeros(0), np.zeros((0, 2))
         e, w = sampler.max_error(np.array(V, float)[np.array([T[i] for i in ids], int)], return_where=True)
         return np.where(e > tol, e, 0.0), w
-    V, T, rep = _insert_points(V, T, ev, "relief refinement")
+    # Micrometre rounding can push a shared-edge split outside a skinny face and stall on steep source TINs.
+    # Keep a picometre identity grid here; outline recovery retains its historical micrometre contract.
+    V, T, rep = _insert_points(V, T, ev, "relief refinement", eps=1e-10, precision=12)
     xy = np.array(V, float)[np.array(T, int)]
     rep["max_error_mm"] = float(sampler.max_error(xy).max() * 1000) if len(T) else 0.0
     return V, T, rep
@@ -626,17 +628,18 @@ class ReliefSampler:
             if not hit.all():
                 raise ValueError("face corner outside the TIN: relief error undefined")
             z = zz.reshape(-1, 3)
-        A = np.concatenate([xy, np.ones((m, 3, 1))], axis=2)
-        ok = np.abs(np.linalg.det(A)) > 1e-14
-        fp = np.zeros((m, 3))
-        fp[ok] = np.linalg.solve(A[ok], np.asarray(z, float)[ok][:, :, None])[:, :, 0]
+        delta = xy[:, 1:] - xy[:, :1]
+        ok = np.abs(np.linalg.det(delta)) > 1e-14
+        gradient = np.zeros((m, 2))
+        zz = np.asarray(z, float)
+        gradient[ok] = np.linalg.solve(delta[ok], (zz[:, 1:] - zz[:, :1])[ok, :, None])[:, :, 0]
         polys = shapely.polygons(xy)
         qi, ti = self.tree.query(polys, predicate="intersects")
         inter = shapely.intersection(polys[qi], np.array(self.polys, dtype=object)[ti])
         coords, idx = shapely.get_coordinates(inter, return_index=True)
         f, t = qi[idx], ti[idx]
         x, y = coords[:, 0], coords[:, 1]
-        d = np.abs(fp[f, 0] * x + fp[f, 1] * y + fp[f, 2]
+        d = np.abs(zz[f, 0] + np.einsum('ij,ij->i', gradient[f], coords - xy[f, 0])
                    - (self.planes[t, 0] * x + self.planes[t, 1] * y + self.planes[t, 2]))
         err = np.zeros(m)
         np.maximum.at(err, f, d)
