@@ -289,6 +289,19 @@ def test_interior_hole_requires_complete_glass_coverage(glass_kind):
     assert r['totals']['open_seam_edges'] == 0
 
 
+@pytest.mark.parametrize('depth,mode', [(10.0, 'empty'), (100.0, 'empty'), (50.0, 'offset')])
+def test_remote_depth_glass_cannot_hide_body_hole(depth, mode):
+    """Review r1: projected coverage metres away cannot exempt a true body hole."""
+    models = interior_hole_master(1.0, mode=mode)
+    g = Builder('SM_Interior_MainGlass')
+    g.face([(1, depth, 1), (2, depth, 1), (2, depth, 2), (1, depth, 2)], (0, -1, 0))
+    result = mq.score(models + [g.obj()])
+    assert result['totals']['body_holes'] == 1
+    welded = mq.score(interior_hole_master(mode='welded'))
+    inset = mq.score(interior_hole_master(mode='inset'))
+    assert result['score'] <= welded['score'] < inset['score']
+
+
 def test_window_reveal_is_not_missing_coplanar_body():
     obj = interior_hole_master(mode='empty')[0]
     b = Builder('SM_Reveal_Main')
