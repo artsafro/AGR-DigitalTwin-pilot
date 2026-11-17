@@ -487,6 +487,47 @@ def test_blender_reads_obj_fixture_like_the_core(tmp_path):
     assert rw['score'] < ri['score']
 
 
+@pytest.mark.skipif(not BLENDER.exists(), reason='Blender 5.1 not installed')
+def test_explicit_rectangle_rejoin_restores_triangulated_grid(tmp_path):
+    b = Builder('SM_Grid')
+    wall(b)
+    grid = b.obj()
+    triangles = dict(grid, faces=[t for a, b, c, d in grid['faces'] for t in ([a, b, c], [a, c, d])])
+    src = tmp_path / 'triangles.obj'
+    _write_obj(src, [triangles])
+    before = src.read_bytes()
+    raw = cli.run(src, tmp_path / 'raw.json')
+    joined = cli.run(src, tmp_path / 'joined.json', rejoin_rectangles=True)
+    assert raw['components']['tri_share'] == 1
+    assert joined['totals']['quads'] == 16 and joined['totals']['tris'] == 0
+    assert joined['score'] == mq.score([grid])['score']
+    assert joined['input']['normalization']['mode'] == 'rejoin_rectangles_1deg'
+    assert src.read_bytes() == before
+
+
+def test_rectangle_rejoin_refuses_recorded_json(tmp_path):
+    src = tmp_path / 'dump.json'
+    _write_dump(src, inset_master())
+    with pytest.raises(ValueError, match='native'):
+        cli.run(src, tmp_path / 'out.json', rejoin_rectangles=True)
+    assert not (tmp_path / 'out.json').exists()
+
+
+def test_committed_g22_calibration():
+    cal = json.loads((ROOT / 'docs/research/mesh-quality-1616/calibration.json').read_text(encoding='utf-8'))
+    rows = {r['id']: r for r in cal['rows']}
+    for suffix in ('01', '02'):
+        row = rows['g22-' + suffix]
+        assert row['acceptance'] == 'accepted'
+        assert row['score'] >= rows['kpp1-quad-v003']['score'] + 10
+        assert row['raw']['components']['tri_share'] == 1
+        assert row['normalization']['mode'] == 'rejoin_rectangles_1deg'
+        assert set(row['components']) == set(mq.WEIGHTS)
+        assert row['typical_facade']['mode'] == 'WARN-only'
+        assert row['typical_facade']['quad_share'] >= 0.95
+    assert rows['g22-02']['typical_facade']['sliver_warning'] is True
+
+
 def test_committed_calibration_ranks_rejected_corners_below_accepted():
     cal = json.loads((ROOT / 'docs/research/mesh-quality-1616/calibration.json').read_text(encoding='utf-8'))
     rows = {r['id']: r for r in cal['rows']}
