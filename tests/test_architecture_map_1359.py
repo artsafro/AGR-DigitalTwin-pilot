@@ -128,7 +128,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 12  # #1405 window generator + existing shared owners
+    assert len(contexts["contexts"]) == 13  # #1636: NPM export is distinct from atlas preparation
 
 
 @pytest.mark.parametrize("command,ok", [
