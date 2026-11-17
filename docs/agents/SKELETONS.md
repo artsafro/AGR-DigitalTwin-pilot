@@ -56,6 +56,30 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 10 | `review-scene` сцена для приёмки | пробел |
 | 11 | `checker` | `agr checker` |
 
+### `npm-to-vpm` — existing NPM -> VPM (OKS cells `oks-npm` -> `oks-vpm`)
+
+| # | Stage | Shared owner / command |
+|---|---|---|
+| 1 | `npm-ids` | `agr npm-ids SOURCE NEW_OUT --profile facade`; `tools/library/npm_ids.recover` reuses `maf_atlas_cells.segment`; skip only with an existing valid `npm_table.json` |
+| 2 | `npm-udim-fit` | `npm2vpm_core.udim_fit_gate`: world metres, 4096 tile, 512-1706 px/m, region extent / texel / straddle per ID; STOP before conversion writes on non-fit, ask one grouped question with seam cuts / extra tiles / allowed density / other |
+| 3 | `npm-to-vpm` | AGR Tools `npm.to_vpm`, `npm2vpm_core.plan`: `regions` without table, `table` with `npm_table.json`; core plan mode is read-only, not a native VPM certificate |
+| 4 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview EXPORTED --out NEW.json`; topology, UV, materials, transforms |
+| 5 | `checker` | `agr checker`; no checker/package on a blocked conversion plan |
+| 6 | `package-vpm` | `agr package-vpm` -> `package_core._write_zip` after required approvals |
+| 7 | `validate` | `agr validate` on the actual package |
+
+Each stage retains the standard `before` / `after` hook points (one named stage,
+no parallel conversion chain); no `gap` hook replaces a shared owner. One config:
+`jobs/G22/npm2vpm-1630/skeleton.json`. IDs from atlas cells are provisional layout
+labels, **not** library-material approval. Unresolved/mixed/straddling faces are
+listed with source indices and remain ID0; they block conversion. JSON mode writes
+`mesh_ids.json` + `id_table.json`; FBX mode adds a native `.blend` copy only when
+the assignment and preflight are complete. Exit 1 = diagnostic/blocked, 2 = invalid
+input or execution failure; neither is a pass. Prior delivered packages stay intact.
+An explicit cleanup approval records exact source polygon drops on a new copy,
+never a general geometry repair. A selected seam policy does not waive mixed
+material boundaries, singular UV metrics, texel bounds or native readback.
+
 ### `oks-npm-lite` — ОКС, упрощённая НПМ
 
 Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
