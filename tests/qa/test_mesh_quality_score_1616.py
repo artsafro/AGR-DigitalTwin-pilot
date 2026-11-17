@@ -1,4 +1,4 @@
-"""Mesh quality score by the OKS [D336] split rule (#1616): fixtures for slivers, n-gons, poles,
+"""new-case: tests of the mesh quality score by the OKS [D336] split rule (#1616): fixtures for slivers, n-gons, poles,
 long faces and a welded vs inset element; fail-closed inputs; CLI publication; Blender read-back."""
 import json
 import math
