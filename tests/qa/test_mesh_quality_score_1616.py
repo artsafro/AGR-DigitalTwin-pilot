@@ -319,12 +319,13 @@ def test_glass_depth_parameter_rejects_invalid_values(value):
 
 
 @pytest.mark.parametrize('axis,angle', [('z', 10), ('z', 30), ('z', 45), ('x', 30)])
-@pytest.mark.parametrize('depth', [.05, .2])
-def test_recessed_exact_fit_glass_on_rotated_wall(axis, angle, depth):
+@pytest.mark.parametrize('depth', [.05, .2, .3, 50.0])
+@pytest.mark.parametrize('shrink', [0.0, 1e-10])
+def test_recessed_exact_fit_glass_on_rotated_wall(axis, angle, depth, shrink):
     """Review r2: normal recess must not shift the pane's footprint on the wall."""
     models = interior_hole_master(mode='empty')
     g = Builder('SM_Interior_MainGlass')
-    g.face([(1, depth, 1), (2, depth, 1), (2, depth, 2), (1, depth, 2)], (0, -1, 0))
+    g.face([(1+shrink, depth, 1), (2, depth, 1), (2, depth, 2), (1+shrink, depth, 2)], (0, -1, 0))
     models.append(g.obj())
     c, s = math.cos(math.radians(angle)), math.sin(math.radians(angle))
     for obj in models:
@@ -332,8 +333,9 @@ def test_recessed_exact_fit_glass_on_rotated_wall(axis, angle, depth):
             x, y, z = v
             v[:] = [c*x-s*y, s*x+c*y, z] if axis == 'z' else [x, c*y-s*z, s*y+c*z]
     result = mq.score(models)
-    assert result['totals']['body_holes'] == 0
-    assert result['score'] == pytest.approx(85.714, abs=.001)
+    holes = int(depth >= .25 or shrink > 0)
+    assert result['totals']['body_holes'] == holes
+    assert result['score'] == pytest.approx(78.571 if holes else 85.714, abs=.001)
 
 
 @pytest.mark.parametrize('seed', range(24))

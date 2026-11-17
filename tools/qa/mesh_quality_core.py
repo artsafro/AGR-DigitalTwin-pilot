@@ -317,15 +317,22 @@ def _near_pairs(segs, p):
     return sorted(pairs)
 
 
-def _glass_covers(loop, glass_faces, axis, normal, depth_m):
+def _glass_covers(loop, glass_faces, normal, depth_m):
     """Prove projected polygon coverage by interval unions in every arrangement slab.
 
     Vertex and edge-intersection ordinates partition the plane into slabs in which
     interval endpoints are linear. Checking both slab limits proves full coverage,
     unlike a finite set of point samples. Degenerate projections supply no evidence.
     """
-    axes = [i for i in range(3) if i != axis]
-    project = lambda poly: [(v[axes[0]], v[axes[1]]) for v in poly]
+    # Orthographic projection along the loop normal, not a world-axis shadow.
+    # Choose a well-conditioned tangent, then its orthogonal in-plane partner.
+    axis = min(range(3), key=lambda i: abs(normal[i]))
+    tangent = tuple(float(i == axis) - normal[axis]*normal[i] for i in range(3))
+    length = _norm(tangent)
+    u = tuple(c/length for c in tangent)
+    v = (normal[1]*u[2]-normal[2]*u[1], normal[2]*u[0]-normal[0]*u[2],
+         normal[0]*u[1]-normal[1]*u[0])
+    project = lambda poly: [(_dot(_sub(q, loop[0]), u), _dot(_sub(q, loop[0]), v)) for q in poly]
     target = project(loop)
     xmin, xmax = min(v[0] for v in target), max(v[0] for v in target)
     ymin, ymax = min(v[1] for v in target), max(v[1] for v in target)
@@ -342,6 +349,20 @@ def _glass_covers(loop, glass_faces, axis, normal, depth_m):
             polygons.append(poly)
     if len(polygons) == 1:
         return False
+    # A normal offset cancels analytically in this basis, but dot products can
+    # leave a few ULPs of footprint drift. Coalesce only roundoff-sized local
+    # coordinates, not a physical gap/pane padding; keep the depth gate strict.
+    eps = 32 * math.ulp(max(1.0, xmax-xmin, ymax-ymin))
+    for dim in range(2):
+        canonical, previous = {}, None
+        for value in sorted({q[dim] for poly in polygons for q in poly}):
+            if previous is None or value-previous > eps:
+                previous = value
+            canonical[value] = previous
+        polygons = [[tuple(canonical[q[k]] if k == dim else q[k] for k in range(2))
+                     for q in poly] for poly in polygons]
+    target = polygons[0]
+    ymin, ymax = min(q[1] for q in target), max(q[1] for q in target)
     segments = [(a, b) for poly in polygons for a, b in zip(poly, poly[1:] + poly[:1])]
     cuts = {ymin, ymax} | {v[1] for poly in polygons for v in poly if ymin < v[1] < ymax}
     for i, (a, b) in enumerate(segments):
@@ -425,8 +446,7 @@ def _body_holes(verts, faces, edges, elem_of, body, normals, p, in_zone, glass_f
         if not all(_dot(normal, normals[fi]) <= -flat_cos for fi in owners):
             continue
         planar = all(abs(_dot(normal, _sub(v, loop[0]))) <= p['seam_tol_m'] for v in loop)
-        axis = max(range(3), key=lambda i: abs(normal[i]))
-        if not planar or not _glass_covers(loop, glass_faces, axis, normal, p['glass_depth_m']):
+        if not planar or not _glass_covers(loop, glass_faces, normal, p['glass_depth_m']):
             holes.append(circuit)
     return holes
 
