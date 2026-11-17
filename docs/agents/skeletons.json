@@ -12,6 +12,9 @@
     {"id": "blender-run", "ru": "Запуск Blender без окна", "calls": "src/dt_ai/core/blender_runner.py (run_blender)", "owners": ["src/dt_ai/core/blender_runner.py"], "entry_defs": ["blender_command", "run_blender"], "dup_rules": ["blender-launch"], "gap": null}
   ],
   "stages": {
+    "npm-ids": {"ru": "ID из ячеек атласа при отсутствии npm_table.json", "calls": "agr npm-ids SOURCE NEW_OUT --profile facade (skip only when npm_table.json exists)", "owners": ["tools/derive/npm_ids.py", "tools/library/npm_ids.py", "tools/library/maf_atlas_cells.py", "tools/blender/npm_ids.py"], "entry_defs": ["recover", "process_document", "drop_zero_area"], "dup_rules": [], "gap": null},
+    "npm-udim-fit": {"ru": "Stop gate: один UDIM на ID при 512-1706 px/m", "calls": "npm2vpm_core.udim_fit_gate(mesh, atlas_wh) before any conversion write; non-fit stops for explicit policy", "owners": ["adapters/max/agr_tools/npm2vpm_core.py"], "entry_defs": ["udim_fit_gate"], "dup_rules": [], "gap": null},
+    "npm-to-vpm": {"ru": "НПМ -> ВПМ, regions или correspondence table", "calls": "AGR Tools npm.to_vpm / npm2vpm_core.plan(mode=regions; mode=table when npm_table.json exists)", "owners": ["adapters/max/agr_tools/npm2vpm_core.py"], "entry_defs": ["plan_regions", "plan_table"], "dup_rules": [], "gap": null},
     "sources-dwg": {"ru": "Приём чертежей ОКС (DWG/DXF)", "calls": "uv run python tools/methods/body/plan_from_dxf.py (after dwg_to_dxf.py)", "owners": ["tools/methods/body/dwg_to_dxf.py", "tools/methods/body/plan_from_dxf.py", "tools/methods/body/facade_openings_from_dxf.py"], "entry_defs": ["extract_plan", "sheet_census"], "dup_rules": [], "gap": null},
     "inspect": {"ru": "Паспорт задания и PartsList (Gate 1)", "calls": "agr inspect --manifest JOB.json (dt inspect)", "owners": ["src/dt_ai/cli/main.py", "src/dt_ai/cli/agr.py"], "entry_defs": [], "dup_rules": [], "gap": null},
     "body": {"ru": "Бадик, окна, капсулы, крыша", "calls": "AGR Tools stages 1-4 in Max [D250]", "owners": ["adapters/max/agr_tools/body_core.py", "adapters/max/agr_tools/windowgen_core.py", "adapters/max/agr_tools/capsule_core.py", "adapters/max/agr_tools/roof_core.py"], "entry_defs": ["prepare_plan", "boundary_loops"], "dup_rules": [], "gap": null,
@@ -48,6 +51,7 @@
     "optimise": {"ru": "Оптимизация под бюджет НПМ", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "ProOptimizer in Max by hand; no shared command, options go to Artem [D167]"}
   },
   "cells": {
+    "npm-to-vpm": {"config_keys": ["sources", "profile", "atlas", "table", "overflow_policy", "approved_drops", "evidence"], "stages": ["npm-ids", "npm-udim-fit", "npm-to-vpm", "readback", "checker", "package-vpm", "validate"]},
     "oks-vpm": {"config_keys": ["passport", "sources", "profile", "verifier_mode"], "stages": ["sources-dwg", "inspect", "body", "udim", "vpm-uv", "ucx-oks", "master-qa", "readback", "verifier", "package-vpm", "validate", "checker", "geojson", "light-fbx"]},
     "oks-npm": {"config_keys": ["sources", "profile", "atlas"], "stages": ["inspect", "body", "brick-seams", "derive-npm", "master-qa", "readback", "build-manifest", "package-npm", "validate", "review-scene", "checker"]},
     "oks-npm-lite": {"config_keys": ["sources", "profile"], "stages": ["lite-route"]},

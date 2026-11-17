@@ -72,7 +72,8 @@
    "exclude_zones": [],
    "input_sha256": "fb566ff5e10ed92f5e75afe4a355ca212df569c456f58e18819d1edbb85553bb",
    "input": "C:/x/ev_1616/inputs/master-quad-v002.blend",
-   "report": "calibration-r4/kpp1-quad-v002.json"
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v002-rejoined.json",
+   "raw_report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v002-raw.json"
   },
   {
    "id": "kpp1-quad-v002-corners",
@@ -128,7 +129,8 @@
    "exclude_zones": [],
    "input_sha256": "fb566ff5e10ed92f5e75afe4a355ca212df569c456f58e18819d1edbb85553bb",
    "input": "C:/x/ev_1616/inputs/master-quad-v002.blend",
-   "report": "calibration-r4/kpp1-quad-v002-corners.json"
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v002-corners-rejoined.json",
+   "raw_report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v002-corners-raw.json"
   },
   {
    "id": "kpp1-quad-v003",
@@ -171,7 +173,8 @@
    "exclude_zones": [],
    "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
    "input": "C:/x/ev_1616/inputs/master-quad-v003.blend",
-   "report": "calibration-r4/kpp1-quad-v003.json"
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v003-rejoined.json",
+   "raw_report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v003-raw.json"
   },
   {
    "id": "kpp1-quad-v003-corners",
@@ -227,7 +230,8 @@
    "exclude_zones": [],
    "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
    "input": "C:/x/ev_1616/inputs/master-quad-v003.blend",
-   "report": "calibration-r4/kpp1-quad-v003-corners.json"
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v003-corners-rejoined.json",
+   "raw_report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v003-corners-raw.json"
   },
   {
    "id": "kpp1-quad-v003-rest",
@@ -283,7 +287,8 @@
    ],
    "input_sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
    "input": "C:/x/ev_1616/inputs/master-quad-v003.blend",
-   "report": "calibration-r4/kpp1-quad-v003-rest.json"
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v003-rest-rejoined.json",
+   "raw_report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\kpp1-quad-v003-rest-raw.json"
   },
   {
    "id": "psu275-main",
@@ -326,9 +331,225 @@
    "exclude_zones": [],
    "input_sha256": "41200c110342c507b674fbe94955502939d15268f12c3dd5e88284fdd0159524",
    "input": "C:/x/ev_1616/inputs/PSU275_Main_quads_v001.fbx",
-   "report": "calibration-r4/psu275-main.json"
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\psu275-main-rejoined.json",
+   "raw_report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\psu275-main-raw.json"
+  },
+  {
+   "id": "g22-01",
+   "label": "G22 NPM 01",
+   "acceptance": "accepted",
+   "acceptance_note": "Artem delivered grid etalon #1618; reconstructed diagnostics only",
+   "score": 92.315,
+   "status": "measured",
+   "components": {
+    "tri_share": 0.183661,
+    "ngon_share": 0.0,
+    "sliver_share": 0.113869,
+    "pole_share": 0.014274,
+    "one_mesh_share": 0.509015,
+    "weld_share": 0.229069,
+    "long_share": 0.020494,
+    "irregular_area_share": 0.182298,
+    "open_seam_share": 1.2e-05
+   },
+   "totals": {
+    "faces": 81585,
+    "tris": 14984,
+    "quads": 66601,
+    "ngons": 0,
+    "slivers": 9290,
+    "long_faces": 1672,
+    "flat_vertices": 17374,
+    "poles": 248,
+    "manifold_edges": 82163,
+    "welded_edges": 18821,
+    "elements": 2202,
+    "inset_elements": 2201,
+    "body_elements": 1,
+    "body_faces": 41528,
+    "inset_faces": 40057,
+    "irregular_faces": 14984,
+    "area": 43734.920938,
+    "irregular_area": 7972.797275,
+    "edges": 163523,
+    "elements_not_all_quads": 808,
+    "open_seam_edges": 2
+   },
+   "zones": [],
+   "exclude_zones": [],
+   "input_sha256": "d60d92677671bba0b5fca40e7344f6d581e23706c0880ca2484126132adee7b6",
+   "input": "C:\\x\\body-training\\garibaldi\\npm_etalon\\0707_Garibaldi_22_01.fbx",
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\g22-01-rejoined.json",
+   "normalization": {
+    "mode": "rejoin_rectangles_1deg",
+    "objects": [
+     {
+      "name": "SM_Garibaldi_22_001_Main",
+      "faces_before": 148186,
+      "faces_after": 81585
+     }
+    ],
+    "material_boundaries": "preserved",
+    "uv_boundaries": "ignored for geometry diagnostics only"
+   },
+   "raw": {
+    "score": 63.234,
+    "components": {
+     "tri_share": 1.0,
+     "ngon_share": 0.0,
+     "sliver_share": 0.386103,
+     "pole_share": 0.99482,
+     "one_mesh_share": 0.552596,
+     "weld_share": 0.153613,
+     "long_share": 0.016209,
+     "irregular_area_share": 1.0,
+     "open_seam_share": 9e-06
+    },
+    "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r1\\g22-01.json"
+   },
+   "typical_facade": {
+    "mode": "WARN-only",
+    "faces": 40192,
+    "tris": 983,
+    "slivers": 103,
+    "quad_share": 0.9755423964968153,
+    "sliver_share": 0.002562699044585987,
+    "quad_warning": false,
+    "sliver_warning": false,
+    "sliver_definition": "triangle min angle <5 degrees, #1618 census (not core 10/30 degrees)",
+    "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\bands-01.json",
+    "parts": [
+     {
+      "name": "SM_Garibaldi_22_001_Main",
+      "faces": 40192,
+      "tris": 983,
+      "slivers": 103,
+      "quad_share": 0.9755423964968153,
+      "sliver_share": 0.002562699044585987,
+      "quad_warning": false,
+      "sliver_warning": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "g22-02",
+   "label": "G22 NPM 02",
+   "acceptance": "accepted",
+   "acceptance_note": "Artem delivered grid etalon #1618; reconstructed diagnostics only",
+   "score": 92.06,
+   "status": "measured",
+   "components": {
+    "tri_share": 0.233947,
+    "ngon_share": 0.0,
+    "sliver_share": 0.100243,
+    "pole_share": 0.05261,
+    "one_mesh_share": 0.558189,
+    "weld_share": 0.171862,
+    "long_share": 0.009848,
+    "irregular_area_share": 0.104797,
+    "open_seam_share": 0.000217
+   },
+   "totals": {
+    "faces": 70469,
+    "tris": 16486,
+    "quads": 53983,
+    "ngons": 0,
+    "slivers": 7064,
+    "long_faces": 694,
+    "flat_vertices": 19350,
+    "poles": 1018,
+    "manifold_edges": 76259,
+    "welded_edges": 13106,
+    "elements": 1196,
+    "inset_elements": 1194,
+    "body_elements": 2,
+    "body_faces": 39335,
+    "inset_faces": 31134,
+    "irregular_faces": 16486,
+    "area": 25621.435455,
+    "irregular_area": 2685.044709,
+    "edges": 138222,
+    "elements_not_all_quads": 807,
+    "open_seam_edges": 30
+   },
+   "zones": [],
+   "exclude_zones": [],
+   "input_sha256": "f4023d6611e8f775f5971593f7f39641f3a36e493732093018b98ed563999c67",
+   "input": "C:\\x\\body-training\\garibaldi\\npm_etalon\\0707_Garibaldi_22_02.fbx",
+   "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\g22-02-rejoined.json",
+   "normalization": {
+    "mode": "rejoin_rectangles_1deg",
+    "objects": [
+     {
+      "name": "SM_Garibaldi_22_002_Main",
+      "faces_before": 73306,
+      "faces_after": 42363
+     },
+     {
+      "name": "SM_Garibaldi_22_003_Main",
+      "faces_before": 51146,
+      "faces_after": 28106
+     }
+    ],
+    "material_boundaries": "preserved",
+    "uv_boundaries": "ignored for geometry diagnostics only"
+   },
+   "raw": {
+    "score": 64.558,
+    "components": {
+     "tri_share": 1.0,
+     "ngon_share": 0.0,
+     "sliver_share": 0.220583,
+     "pole_share": 0.977106,
+     "one_mesh_share": 0.60453,
+     "weld_share": 0.116852,
+     "long_share": 0.008373,
+     "irregular_area_share": 1.0,
+     "open_seam_share": 0.000156
+    },
+    "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r1\\g22-02.json"
+   },
+   "typical_facade": {
+    "mode": "WARN-only",
+    "faces": 34748,
+    "tris": 1032,
+    "slivers": 224,
+    "quad_share": 0.970300448946702,
+    "sliver_share": 0.0064464141821112,
+    "quad_warning": false,
+    "sliver_warning": true,
+    "sliver_definition": "triangle min angle <5 degrees, #1618 census (not core 10/30 degrees)",
+    "report": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration\\r2\\bands-02.json",
+    "parts": [
+     {
+      "name": "SM_Garibaldi_22_002_Main",
+      "faces": 19210,
+      "tris": 756,
+      "slivers": 125,
+      "quad_share": 0.9606454971369078,
+      "sliver_share": 0.006507027589796981,
+      "quad_warning": false,
+      "sliver_warning": true
+     },
+     {
+      "name": "SM_Garibaldi_22_003_Main",
+      "faces": 15538,
+      "tris": 276,
+      "slivers": 99,
+      "quad_share": 0.9822370961513708,
+      "sliver_share": 0.0063714763804865494,
+      "quad_warning": false,
+      "sliver_warning": true
+     }
+    ]
+   }
   }
  ],
  "evidence": "G:/Мой диск/AGR-evidence/1616-mesh-quality/ + SHA256SUMS.txt",
- "seam_gap_note": "seam_gap_m 0.002: accepted PSU275 has 0 near seams up to 0.005 m (calibration-r4/psu275-main-gap0.005.json); the first contacts appear at 0.01 m: 561 pairs, all between two inset elements, none on a body (window reveal) edge"
+ "seam_gap_note": "seam_gap_m 0.002: accepted PSU275 has 0 near seams up to 0.005 m (calibration-r4/psu275-main-gap0.005.json); the first contacts appear at 0.01 m: 561 pairs, all between two inset elements, none on a body (window reveal) edge",
+ "g22_issue": 1634,
+ "g22_margin_points": 10,
+ "g22_note": "Explicit --rejoin-rectangles diagnostics for delivered triangulated FBX; no core/weight change. All six previous rows rerun raw and normalized, unchanged.",
+ "g22_evidence": "G:\\Мой диск\\AGR-evidence\\1634-g22-calibration"
 }

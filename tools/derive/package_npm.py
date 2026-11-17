@@ -165,6 +165,7 @@ def main(argv=None):
     report = {'zip': str(target), 'zip_bytes': size, 'files': [r['name'] for r in archive['members']],
               'problems': problems, 'export_binding': binding, 'skipped': plan['skipped'], 'passed': False,
               'status': 'incomplete' if problems else 'packaged_not_validated'}
+    report.update(package_core.delivery_receipt(target))
     with open(report_path, 'x', encoding='utf-8') as fh:
         json.dump(report, fh, ensure_ascii=False, indent=2)
     print(json.dumps(report, ensure_ascii=False))

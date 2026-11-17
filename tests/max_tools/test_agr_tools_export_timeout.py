@@ -27,7 +27,8 @@ def export_stub(tmp_path, monkeypatch):
     return runtime, core
 
 
-@pytest.mark.parametrize('timeout', [None, '1', '2.5'])
+# integer and fractional values; >= 60 s so a loaded full suite never trips a real timeout
+@pytest.mark.parametrize('timeout', [None, '60', '90.5'])
 def test_subprocess_export_normal_stub_returns_json(export_stub, monkeypatch, timeout):
     runtime, core = export_stub
     if timeout is None:

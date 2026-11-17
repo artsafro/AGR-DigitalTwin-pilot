@@ -58,6 +58,24 @@ Components (each a share 0..1; penalty = min(1, share)):
   a part into a separate object never raises the score by itself. Objects with no seam pair (real inset
   objects on an intact body, glass) are measured alone.
 
+Interior body holes (#1631): a planar, face-directed boundary circuit winding opposite to all
+adjacent coplanar body faces is an interior loop, not an exterior contour. A reveal's perpendicular
+faces are not a missing coplanar surface. Complete projected glass coverage exempts the loop (including
+tiled/recessed panes); glass elsewhere or partial coverage does not. Every pane vertex must be
+strictly within glass_depth_m (default 0.25 m) of the loop plane. This is a configurable diagnostic
+coverage bound, not a regulatory reveal-depth limit; a pane exactly at the bound supplies no evidence.
+Ambiguous boundary graphs are
+not classified by this diagnostic. Warped inner circuits retain the penalty rather than claiming
+planar glass coverage. Disconnected outer-contour slots are not
+holes; no distance/silhouette policy is inferred. Per the #1631 scope decision, a horizontal
+loop in one plane (1e-9 m numerical slack) within 0.002 m of that body's minimum Z is an allowed
+open shell bottom, independent of the near-seam parameter. Detached parts do not set its base.
+``body_holes`` / ``body_hole_edges`` report unfilled
+loops. Any measured unfilled loop floors ``one_mesh_share`` and ``weld_share`` PENALTIES to 1 (full
+welded-body plus crease cost), preserving raw components and all weights/thresholds. Thus moving a
+post arbitrarily far from a true hole cannot turn that hole into a clean inset score. This is a
+conservative ranking floor, not a per-hole acceptance gate or a modified OBSERVE hook.
+
 score = 100 * (1 - sum(weight * penalty) / sum(weights)) (weights in ``WEIGHTS``), so every
 component costs at most its weight share of the 100 points.
 Pass/fail is NOT the score: ``status`` is ``fail`` on any n-gon or an empty measured set,
@@ -74,7 +92,8 @@ ANGLE_EPS_DEG = 1e-6  # float noise of acos: an angle exactly at the threshold i
 DEFAULTS = {'tri_min_angle_deg': 10.0, 'quad_min_angle_deg': 30.0, 'flat_deg': 1.0,
             'weld_deg': 30.0, 'side_limit_m': 3.9, 'body_share_ok': 0.5, 'collision_prefix': 'UCX_',
             'glass_pattern': r'(?i)glass', 'irregular_deg': 15.0, 'seam_tol_m': 0.0001,
-            'seam_gap_m': 0.002, 'seam_angle_deg': 5.0, 'seam_min_overlap_m': 0.01}
+            'seam_gap_m': 0.002, 'seam_angle_deg': 5.0, 'seam_min_overlap_m': 0.01,
+            'glass_depth_m': 0.25}
 
 
 def _sub(a, b):
@@ -125,7 +144,8 @@ def _params(params):
             raise ValueError('unknown parameter: ' + key)
         p[key] = value
     for key in ('tri_min_angle_deg', 'quad_min_angle_deg', 'flat_deg', 'weld_deg', 'side_limit_m',
-                'irregular_deg', 'seam_tol_m', 'seam_gap_m', 'seam_angle_deg', 'seam_min_overlap_m'):
+                'irregular_deg', 'seam_tol_m', 'seam_gap_m', 'seam_angle_deg', 'seam_min_overlap_m',
+                'glass_depth_m'):
         v = p[key]
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or v <= 0:
             raise ValueError(f'parameter {key} must be a finite positive number, got {v!r}')
@@ -297,7 +317,141 @@ def _near_pairs(segs, p):
     return sorted(pairs)
 
 
-def measure_object(obj, p, zones=None, exclude=None, merged=None, near=()):
+def _glass_covers(loop, glass_faces, normal, depth_m):
+    """Prove projected polygon coverage by interval unions in every arrangement slab.
+
+    Vertex and edge-intersection ordinates partition the plane into slabs in which
+    interval endpoints are linear. Checking both slab limits proves full coverage,
+    unlike a finite set of point samples. Degenerate projections supply no evidence.
+    """
+    # Orthographic projection along the loop normal, not a world-axis shadow.
+    # Choose a well-conditioned tangent, then its orthogonal in-plane partner.
+    axis = min(range(3), key=lambda i: abs(normal[i]))
+    tangent = tuple(float(i == axis) - normal[axis]*normal[i] for i in range(3))
+    length = _norm(tangent)
+    u = tuple(c/length for c in tangent)
+    v = (normal[1]*u[2]-normal[2]*u[1], normal[2]*u[0]-normal[0]*u[2],
+         normal[0]*u[1]-normal[1]*u[0])
+    project = lambda poly: [(_dot(_sub(q, loop[0]), u), _dot(_sub(q, loop[0]), v)) for q in poly]
+    target = project(loop)
+    xmin, xmax = min(v[0] for v in target), max(v[0] for v in target)
+    ymin, ymax = min(v[1] for v in target), max(v[1] for v in target)
+    polygons = [target]
+    for face in glass_faces:
+        # Signed plane distance, not the dropped projection coordinate: the
+        # latter admits remote panes on oblique walls. Require the entire face
+        # inside the open slab so tilted/straddling panes cannot lend coverage.
+        if not all(abs(_dot(normal, _sub(v, loop[0]))) < depth_m for v in face):
+            continue
+        poly = project(face)
+        if (max(v[0] for v in poly) > xmin and min(v[0] for v in poly) < xmax
+                and max(v[1] for v in poly) > ymin and min(v[1] for v in poly) < ymax):
+            polygons.append(poly)
+    if len(polygons) == 1:
+        return False
+    # A normal offset cancels analytically in this basis, but dot products can
+    # leave a few ULPs of footprint drift. Coalesce only roundoff-sized local
+    # coordinates, not a physical gap/pane padding; keep the depth gate strict.
+    eps = 32 * math.ulp(max(1.0, xmax-xmin, ymax-ymin))
+    for dim in range(2):
+        canonical, previous = {}, None
+        for value in sorted({q[dim] for poly in polygons for q in poly}):
+            if previous is None or value-previous > eps:
+                previous = value
+            canonical[value] = previous
+        polygons = [[tuple(canonical[q[k]] if k == dim else q[k] for k in range(2))
+                     for q in poly] for poly in polygons]
+    target = polygons[0]
+    ymin, ymax = min(q[1] for q in target), max(q[1] for q in target)
+    segments = [(a, b) for poly in polygons for a, b in zip(poly, poly[1:] + poly[:1])]
+    cuts = {ymin, ymax} | {v[1] for poly in polygons for v in poly if ymin < v[1] < ymax}
+    for i, (a, b) in enumerate(segments):
+        dx, dy = b[0]-a[0], b[1]-a[1]
+        for c, d in segments[i+1:]:
+            ex, ey = d[0]-c[0], d[1]-c[1]
+            det = dx*ey-dy*ex
+            if det == 0:
+                continue
+            t = ((c[0]-a[0])*ey-(c[1]-a[1])*ex)/det
+            u = ((c[0]-a[0])*dy-(c[1]-a[1])*dx)/det
+            y = a[1]+t*dy
+            if 0 < t < 1 and 0 < u < 1 and ymin < y < ymax:
+                cuts.add(y)
+
+    def intervals(poly, middle, y):
+        xs = sorted(a[0]+(y-a[1])*(b[0]-a[0])/(b[1]-a[1])
+                    for a, b in zip(poly, poly[1:]+poly[:1])
+                    if min(a[1], b[1]) < middle < max(a[1], b[1]))
+        return list(zip(xs[::2], xs[1::2]))
+
+    cuts = sorted(cuts)
+    for lo, hi in zip(cuts, cuts[1:]):
+        mid = (lo+hi)/2
+        for y in (lo, hi):
+            cover = sorted(pair for poly in polygons[1:] for pair in intervals(poly, mid, y))
+            for start, stop in intervals(target, mid, y):
+                reach = start
+                for a, b in cover:
+                    if a > reach:
+                        break
+                    reach = max(reach, b)
+                if reach < stop:
+                    return False
+    return True
+
+
+def _body_holes(verts, faces, edges, elem_of, body, normals, p, in_zone, glass_faces):
+    """Return unfilled planar inner circuits of the body, never exterior slots.
+
+    Follow face-directed boundary edges. An inner circuit winds opposite to its
+    adjacent coplanar faces; an outer contour winds with them. A reveal has faces
+    perpendicular to the circuit and is not a missing coplanar body surface.
+    Ambiguous/non-cycle boundary graphs are not classified as interior loops.
+    """
+    outgoing, incoming = {}, {}
+    for fi, face in enumerate(faces):
+        if elem_of[fi] != body:
+            continue
+        for a, b in zip(face, face[1:]+face[:1]):
+            if len(edges[tuple(sorted((a, b)))]) == 1:
+                outgoing.setdefault(a, []).append((b, fi))
+                incoming.setdefault(b, []).append(a)
+    body_min_z = min(verts[v][2] for fi, face in enumerate(faces) if elem_of[fi] == body for v in face)
+    seen, holes = set(), []
+    flat_cos = math.cos(math.radians(p['flat_deg']))
+    for start in outgoing:
+        if start in seen:
+            continue
+        circuit, owners, v = [], [], start
+        while v not in seen and len(outgoing.get(v, [])) == len(incoming.get(v, [])) == 1:
+            seen.add(v)
+            circuit.append(v)
+            v, fi = outgoing[v][0]
+            owners.append(fi)
+        if v != start or len(circuit) < 3 or not any(in_zone[fi] for fi in owners):
+            continue
+        loop = [verts[i] for i in circuit]
+        # Approved #1631 scope: NPM/OKS shells may have an open bottom. Use
+        # this BODY's base, not detached parts, and a horizontal plane (not a
+        # sloped circuit merely contained in the 2 mm base band). Keep this
+        # physical exception independent of the configurable near-seam gap.
+        if (max(v[2] for v in loop) - min(v[2] for v in loop) <= 1e-9
+                and all(abs(v[2] - body_min_z) <= 0.002 for v in loop)):
+            continue
+        nv = _newell(loop)
+        length = _norm(nv)
+        if length == 0:
+            continue
+        normal = tuple(c/length for c in nv)
+        if not all(_dot(normal, normals[fi]) <= -flat_cos for fi in owners):
+            continue
+        planar = all(abs(_dot(normal, _sub(v, loop[0]))) <= p['seam_tol_m'] for v in loop)
+        if not planar or not _glass_covers(loop, glass_faces, normal, p['glass_depth_m']):
+            holes.append(circuit)
+    return holes
+
+
+def measure_object(obj, p, zones=None, exclude=None, merged=None, near=(), glass_faces=()):
     """Stats of one object: faces whose centroid is inside ``zones`` and outside ``exclude``
     (topology from the whole object). ``merged``: (faces with the exact in-object seams welded,
     {seam key: [face ids]}); ``near``: in-object near-seam face pairs (fi, fj), joined and creased."""
@@ -398,6 +552,7 @@ def measure_object(obj, p, zones=None, exclude=None, merged=None, near=()):
         side = max(_norm(_sub(fp[i], fp[(i + 1) % k])) for i in range(k))
         if side > p['side_limit_m']:
             longs += 1
+    holes = _body_holes(verts, faces, edges, elem_of, body, normals, p, in_zone, glass_faces) if body is not None else []
     zone_elems = {elem_of[fi] for fi in range(nf) if in_zone[fi]}
     elem_q = {}
     for fi in range(nf):
@@ -413,6 +568,7 @@ def measure_object(obj, p, zones=None, exclude=None, merged=None, near=()):
             'body_elements': int(body in zone_elems), 'inset_faces': inset_faces, 'body_faces': body_faces,
             'irregular_faces': irregular, 'area': area, 'irregular_area': irregular_area,
             'edges': zone_edges, 'open_seam_edges': len(zone_seams) + near_in_zone, '_in_zone': in_zone,
+            'body_holes': len(holes), 'body_hole_edges': sum(map(len, holes)),
             'quad_share': quads / measured if measured else None, 'glass_object': glass,
             'min_element_quad_share': min(elem_shares) if elem_shares else None,
             'elements_not_all_quads': sum(1 for s in elem_shares if s < 1.0)}
@@ -514,16 +670,18 @@ def score(objects, params=None, zones=None, exclude_zones=None):
             near_local[oi].append((fi, fj))
         else:
             near_cross.append((oi, fi, oj, fj))
+    glass_faces = [[obj['verts'][i] for i in face] for obj in kept if _is_glass(obj, p) for face in obj['faces']]
     rows = []
     for obj, m, near in _join_cross_seams(kept, merged, near_local, near_cross):
-        row = measure_object(obj, p, zones, exclude_zones, m, near)
+        row = measure_object(obj, p, zones, exclude_zones, m, near, glass_faces)
         row.pop('_in_zone')
         rows.append(row)
     tot = {k: sum(r[k] for r in rows) for k in ('faces', 'tris', 'quads', 'ngons', 'slivers', 'long_faces',
                                                  'flat_vertices', 'poles', 'manifold_edges', 'welded_edges',
                                                  'elements', 'inset_elements', 'body_elements', 'body_faces',
                                                  'inset_faces', 'irregular_faces', 'area', 'irregular_area',
-                                                 'edges', 'elements_not_all_quads', 'open_seam_edges')}
+                                                 'edges', 'elements_not_all_quads', 'open_seam_edges',
+                                                 'body_holes', 'body_hole_edges')}
     solid = sum(r['faces'] for r in rows if not r['glass_object'])
     problems = []
     if not tot['faces']:
@@ -541,6 +699,11 @@ def score(objects, params=None, zones=None, exclude_zones=None):
     ok = p['body_share_ok']
     pen = {k: min(1.0, v) for k, v in comps.items()}
     pen['one_mesh_share'] = max(0.0, comps['one_mesh_share'] - ok) / (1.0 - ok)
+    if tot['body_holes']:
+        # An unfilled body loop is not an inset. Conservatively charge the full
+        # welded-body/crease cost, independent of a detached part's distance or count.
+        # Raw topology components remain visible; only these ranking penalties floor.
+        pen['one_mesh_share'] = pen['weld_share'] = 1.0
     value = 100.0 * (1.0 - sum(WEIGHTS[k] * pen[k] for k in pen) / sum(WEIGHTS.values()))
     if not tot['faces']:
         value = 0.0

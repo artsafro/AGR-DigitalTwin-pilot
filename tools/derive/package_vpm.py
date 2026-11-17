@@ -146,6 +146,7 @@ def main(argv=None):
         report['placement'] = obj['placement'].model_dump(mode='json')
         if obj['placement'].height_system == 'unknown':
             blockers.append('placement.height_system unknown; absolute datum unconfirmed')
+    report.update(package_core.delivery_receipt(zpath))
     with open(rpath, "x", encoding="utf-8") as fh:
         json.dump(report, fh, ensure_ascii=False, indent=1)
     print(json.dumps({k: v for k, v in report.items() if k != "files"}, ensure_ascii=False, indent=1),
