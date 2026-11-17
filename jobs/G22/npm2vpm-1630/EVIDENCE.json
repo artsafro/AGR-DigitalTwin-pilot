@@ -1,11 +1,17 @@
 {
   "evidence_root": "G:/Мой диск/AGR-evidence/1630-npm2vpm-g22/",
   "status": "diagnostic_only_conversion_blocked",
+  "current_evidence": ["t_9d398e0d-v011-r2-final-replay", "t_9d398e0d-v012-r2-01", "t_9d398e0d-v013-r2-02", "t_9d398e0d-v014-r2-before-after"],
+  "superseded_pre_review": ["t_9d398e0d-v005-01", "t_9d398e0d-v006-02"],
   "source_manifest": "C:/x/npm2vpm-g22/SHA256SUMS.txt",
   "source_hashes_verified": 32,
   "native_exact_readback_meshes": 3,
   "approved_source_drops": {"SM_Garibaldi_22_002_Main": [68903, 69759]},
   "manifests_sha256": {
+    "t_9d398e0d-v011-r2-final-replay/SHA256SUMS.txt": "d1aec07dbba1d84c7840fba56a51aa8dc3caeef76288e5f2c84c2571cbfa15bc",
+    "t_9d398e0d-v012-r2-01/SHA256SUMS.txt": "40ac7303c6e550a170d1c5df294c3f44d3376387ba19e859375546ba0776ab90",
+    "t_9d398e0d-v013-r2-02/SHA256SUMS.txt": "1e581084817011c75b0b97129c73a50cf06bb593ff16b40fc39812d1b5434f52",
+    "t_9d398e0d-v014-r2-before-after/SHA256SUMS.txt": "5d40934afb7f64a7853ce0aee5c203b6b69341bb6a385a202b7c48a303f2ebb2",
     "t_9d398e0d-v005-01/SHA256SUMS.txt": "79467a41144c96db834aa3bae5779c1f91deab32762ad4c13ffac792f807d27f",
     "t_9d398e0d-v006-02/SHA256SUMS.txt": "a9050a5738729e9bdb84237caeec95a7c1756892734f17b61e692dec180cad27",
     "t_9d398e0d-v007-final-audit/SHA256SUMS.txt": "6af075c8688c5d53ca4c6ce41d247900789c1d62a9c95742ee0ca7739c3ff9b3",

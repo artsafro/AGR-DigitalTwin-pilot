@@ -247,6 +247,50 @@ def test_synthetic_cells_straddle_empty(tmp_path):
     assert sum(r['face_count'] for r in result['table']) + len(result['straddling']) == len(faces)
 
 
+@pytest.mark.parametrize('axis', ['x', 'y'])
+@pytest.mark.parametrize('straddler', [False, True])
+@pytest.mark.parametrize('seed', [0, 7, 1630])
+def test_facade_straddler_cannot_move_noisy_material_boundary(tmp_path, straddler, seed, axis):
+    import numpy as np
+    from tools.library.npm_ids import recover
+    rng = np.random.default_rng(seed)
+    a = np.concatenate([rng.normal(mean, 25, (256, 128, 3)) for mean in (60, 180)], axis=1)
+    atlas = tmp_path/'noisy.png'
+    if axis == 'y':
+        a = a.transpose(1,0,2)
+    Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)).save(atlas)
+    faces = [[[.05,.9],[.4,.9],[.05,.1]], [[.6,.9],[.95,.9],[.6,.1]]]
+    if straddler:
+        faces.append([[.45,.5],[.55,.5],[.45,.45]])
+    if axis == 'y':
+        faces = [[[1-v,1-u] for u,v in face] for face in faces]
+    result = recover(atlas, faces, segmentation=dict(profile='facade', work=256,
+                     min_cell=16, edge_t=3, mat_diff=10, line_share=.8))
+    expected = ([[0,0,128,256],[128,0,256,256]] if axis == 'x'
+                else [[0,0,256,128],[0,128,256,256]])
+    assert [r['cell_box_px'] for r in result['table']] == expected
+    assert result['mat_ids'] == ([1,2,0] if straddler else [1,2])
+    assert result['straddling'] == ([2] if straddler else [])
+    assert result['status'] == ('manual_required' if straddler else 'ok')
+
+
+def test_facade_unsupported_strongest_cut_is_manual_not_glued(tmp_path):
+    import numpy as np
+    from tools.library.npm_ids import recover
+    rng = np.random.default_rng(1630)
+    a = np.concatenate([rng.normal(mean,25,(256,128,3)) for mean in (60,180)],axis=1)
+    atlas=tmp_path/'noisy.png'
+    Image.fromarray(np.clip(a,0,255).astype(np.uint8)).save(atlas)
+    # No independent faces on either side: vetoing the strongest cut must
+    # explicitly mark the whole leaf manual, not glue two finishes into ID1.
+    result=recover(atlas,[[[.45,.5],[.55,.5],[.45,.45]]],segmentation=dict(
+        profile='facade',work=256,min_cell=16,edge_t=3,mat_diff=10,line_share=.8))
+    assert result['status']=='manual_required'
+    assert result['mat_ids']==[0]
+    assert result['non_rectangular_regions']==[1]
+    assert result['unassigned']==[0]
+
+
 def test_facade_cells_keep_pattern_seams_inside_material(tmp_path):
     import numpy as np
     from tools.library.maf_atlas_cells import segment
@@ -284,6 +328,45 @@ def test_facade_nonrectangular_interior_is_manual_not_glued(tmp_path):
     result = segment(str(p), profile='facade', work=128, min_cell=16,
                      uv_bounds_px=[[4, 4, 124, 124]])
     assert result['cells'][0]['kind'] == 'mixed'
+
+
+@pytest.mark.parametrize('mid,code', [(1, 'udim_fit'), (0, 'id_range'), (999, 'id_range')])
+def test_blocked_regions_plan_has_consumable_summary(mid, code, monkeypatch):
+    from types import SimpleNamespace
+    from adapters.max.agr_tools import edit_core, npm2vpm_core as core, npm2vpm_max as glue
+    mesh = {'verts': [[0,0,0],[16,0,0],[0,8,0]], 'local': [[0,0,0],[16,0,0],[0,8,0]],
+            'tris': [[0,1,2]], 'mat_ids': [mid], 'uvs': [[0,0],[1,0],[0,.5]], 'uv_tris': [[0,1,2]]}
+    p = core.plan(mesh, {'mode': 'regions'}, atlas_wh={'w':4096, 'h':4096})
+    summary = dict(p['summary'], object='synthetic', blocking=[f[0] for f in core.blocking(p['findings'])])
+    monkeypatch.setattr(glue, '_reader', lambda ctx: SimpleNamespace(handle=lambda node: 42))
+    ctx = SimpleNamespace(core=core, edit=edit_core)
+    items = [(SimpleNamespace(name='synthetic'), mesh, 'atlas.png', {'w':4096,'h':4096}, (None,None,None))]
+    plans, entries, done = glue.plan_all(ctx, items, {'mode':'regions'}, None)
+    assert done[0]['blocking'] == summary['blocking']
+    assert done[0]['udim_fit']['question'] == summary['udim_fit']['question']
+    assert code in summary['blocking']
+    assert p['parts'] == {}
+    assert summary['udim_fit']['status'] == 'blocked'
+    assert summary['udim_fit']['question']
+    assert p['udim_fit']['question'] == summary['udim_fit']['question']
+    if mid != 1:
+        assert any(f[0] == 'id_range' and f[1] == [0] and str(mid) in f[2] for f in p['findings'])
+
+
+@pytest.mark.parametrize('case', ['degenerate_uv', 'nan', 'partial'])
+def test_regions_plan_gate_error_is_blocking_finding(case):
+    from adapters.max.agr_tools import npm2vpm_core as core
+    mesh = {'verts': [[0,0,0],[16,0,0],[0,8,0]], 'local': [[0,0,0],[16,0,0],[0,8,0]],
+            'tris': [[0,1,2]], 'mat_ids': [1], 'uvs': [[0,0],[1,0],[0,.5]], 'uv_tris': [[0,1,2]]}
+    if case == 'degenerate_uv': mesh['uvs'] = [[0,0]]*3
+    elif case == 'nan': mesh['verts'][0][0] = float('nan')
+    else: mesh['mat_ids'] = []
+    before = copy.deepcopy(mesh)
+    p = core.plan(mesh, {'mode':'regions'}, atlas_wh={'w':4096,'h':4096})
+    assert dict(p['summary'])['udim_fit']['status'] == 'blocked'
+    assert any(f[0] == 'udim_fit' and f[1] == [0] for f in core.blocking(p['findings']))
+    assert p['parts'] == {}
+    assert repr(mesh) == repr(before)
 
 
 def test_udim_two_tiles_stops_with_question():

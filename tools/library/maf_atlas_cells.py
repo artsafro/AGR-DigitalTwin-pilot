@@ -78,14 +78,6 @@ def _best_cut(a, x0, y0, x1, y1, min_px, edge_t, line_share, mat_diff, profile='
                 break
             if cut < min_px or n - cut < min_px:
                 continue
-            if uv_bounds is not None:
-                b = uv_bounds
-                local = b[(b[:, 2] > x0) & (b[:, 0] < x1) & (b[:, 3] > y0) & (b[:, 1] < y1)]
-                j = 0 if axis == 'x' else 1
-                position = (x0 if axis == 'x' else y0) + cut
-                if len(local) and np.any((local[:, j] < position - .5) &
-                                         (local[:, j+2] > position + .5)):
-                    continue  # a facade candidate must not cut source UV coverage
             k = max(2, min(32, cut // 2, (n - cut) // 2))
             if axis == 'x':
                 sa, sb = region[:, cut - k:cut], region[:, cut:cut + k]
@@ -103,6 +95,21 @@ def _best_cut(a, x0, y0, x1, y1, min_px, edge_t, line_share, mat_diff, profile='
                 best = (score, axis, cut)
             if profile == 'maf':
                 break
+    if best is not None and uv_bounds is not None:
+        # Rank image evidence FIRST. A UV veto must never slide a material
+        # boundary to a weaker candidate at the edge of a straddling face.
+        b = uv_bounds
+        local = b[(b[:, 2] > x0) & (b[:, 0] < x1) & (b[:, 3] > y0) & (b[:, 1] < y1)]
+        _, axis, cut = best
+        j = 0 if axis == 'x' else 1
+        position = (x0 if axis == 'x' else y0) + cut
+        crossing = (local[:, j] < position - .5) & (local[:, j+2] > position + .5)
+        separated = (np.any(local[:, j+2] <= position + .5) and
+                     np.any(local[:, j] >= position - .5))
+        if np.any(crossing) and not separated:
+            return (best[0], 'manual', cut)  # unsupported strongest cut; no runner-up
+        # Independent faces on both sides support this boundary. Keep it and
+        # let recover() explicitly report any source polygons crossing it.
     return best
 
 
@@ -217,6 +224,7 @@ def segment(path: str, *, work: int = 512, min_cell: int = 8, edge_t: float = 10
     if min(h, w) < 2 * min_cell:
         raise ValueError(f'{path}: image {src} too small to segment (min_cell={min_cell} work px)')
     leaves = []
+    manual_regions = set()
     stack = [(0, 0, w, h)]
     while stack:
         x0, y0, x1, y1 = stack.pop()
@@ -225,6 +233,11 @@ def segment(path: str, *, work: int = 512, min_cell: int = 8, edge_t: float = 10
             leaves.append((x0, y0, x1, y1))
             continue
         _, axis, c = cut
+        if axis == 'manual':
+            rect = (x0, y0, x1, y1)
+            leaves.append(rect)
+            manual_regions.add(rect)
+            continue
         if axis == 'x':
             stack += [(x0, y0, x0 + c, y1), (x0 + c, y0, x1, y1)]
         else:
@@ -241,7 +254,7 @@ def segment(path: str, *, work: int = 512, min_cell: int = 8, edge_t: float = 10
             # facade material. Keep it explicitly manual, not a glued default ID.
             x0, y0, x1, y1 = r
             median = np.median(a[y0:y1, x0:x1].reshape(-1, 3), axis=0)
-            mixed = any(b != r and np.abs(np.median(
+            mixed = r in manual_regions or any(b != r and np.abs(np.median(
                 a[b[1]:b[3], b[0]:b[2]].reshape(-1, 3), axis=0)-median).mean() >= mat_diff
                 for b, remainder in blocks if not remainder)
             rects.append((r, mixed))

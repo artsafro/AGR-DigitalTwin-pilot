@@ -603,18 +603,37 @@ def plan(mesh, opts, table=None, atlas_wh=None, types=None):
             raise ValueError('options.window_ids given but no window library types (options.library)')
         windows, wf = window_plan(mesh, win_faces, types, o['window_tol_m'])
         findings.extend(wf)
+    gate = None
     if mode == 'table':
         res = plan_table(mesh, table, skip=win_faces)
         regions = {}
     else:
-        gate = udim_fit_gate(mesh, atlas_wh) if atlas_wh and not atlas_wh.get('error') and mesh.get('uv_tris') else None
+        if atlas_wh and not atlas_wh.get('error') and mesh.get('uv_tris'):
+            # Preserve the public regions planner's id_range diagnostics. The
+            # strict standalone gate still rejects unmapped IDs as invalid input.
+            try:
+                invalid = [('id_range', [f for f, m in enumerate(mesh['mat_ids']) if m == mid],
+                            'library id {} has no UDIM 1000 + ID (1..100)'.format(mid))
+                           for mid in sorted(set(mesh['mat_ids'])) if type(mid) is not int or not 1 <= mid <= 100]
+                if invalid:
+                    # Retain simultaneous legacy findings (e.g. a different ID
+                    # straddling atlas tiles), not only the first gate failure.
+                    diagnostics = plan_regions(mesh, atlas_wh, o, skip=win_faces)['findings']
+                    gate = {'status': 'blocked', 'ids': [], 'findings': diagnostics or invalid,
+                            'question': 'Resolve unmapped/out-of-range material IDs before conversion. Nothing written.'}
+                else:
+                    gate = udim_fit_gate(mesh, atlas_wh)
+            except (ValueError, TypeError, KeyError, IndexError, ArithmeticError) as exc:
+                detail = 'UDIM preflight cannot measure this mesh: {}'.format(exc)
+                gate = {'status': 'blocked', 'ids': [], 'question': detail,
+                        'findings': [('udim_fit', list(range(len(mesh['tris']))), detail)]}
         if gate and gate['status'] != 'ok':
             findings.extend(gate['findings'])
             if not gate['findings']:
                 findings.append(('udim_fit', [], gate['question']))
-            return {'options': o, 'mode': mode, 'findings': findings, 'parts': {}, 'windows': [],
-                    'regions': {}, 'summary': None, 'udim_fit': gate}
-        res = plan_regions(mesh, atlas_wh, o, skip=win_faces)
+            res = {'parts': {}, 'regions': {}, 'findings': []}
+        else:
+            res = plan_regions(mesh, atlas_wh, o, skip=win_faces)
         regions = res['regions']
     findings.extend(res['findings'])
     counts = {}
@@ -632,8 +651,12 @@ def plan(mesh, opts, table=None, atlas_wh=None, types=None):
     else:
         summary['udim'] = {str(k): v['udim'] for k, v in sorted(regions.items())}
         summary['crop_error_px'] = round(res.get('crop_error_px', 0.0), 6)
-    return {'options': o, 'mode': mode, 'findings': findings, 'parts': res['parts'], 'windows': windows,
-            'regions': regions, 'summary': summary}
+    result = {'options': o, 'mode': mode, 'findings': findings, 'parts': res['parts'], 'windows': windows,
+              'regions': regions, 'summary': summary}
+    if gate is not None:
+        summary['udim_fit'] = gate
+        result['udim_fit'] = gate
+    return result
 
 
 def udim_fit_gate(mesh, atlas_wh, target_px_m=512):

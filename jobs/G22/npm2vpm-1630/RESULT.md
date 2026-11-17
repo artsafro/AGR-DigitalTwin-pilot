@@ -8,6 +8,61 @@ exact native readback. This is **not a VPM delivery**. The acceptance's alternat
 outcome (exact regions-mode blocking finding with a follow-up issue) is used;
 no Multi/Sub, VPM UV, checker, xView or package success is claimed.
 
+## Review r2 — current result (supersedes the pre-review cells below)
+
+The facade segmenter now ranks image boundaries before UV checks. It never
+slides to a weaker cut at a crossing face's bounds. Independent faces on both
+sides retain the strongest boundary and crossing polygons remain ID0. A veto
+without side witnesses marks the entire leaf mixed/manual, never one guessed
+patterned finish. Default MAF behavior is unchanged.
+
+Replay of the SAME saved, hash-bound G22 intake on the corrected code changes
+cell boxes on **all three meshes**. The full old/new boxes, changed-ID counts and
+exact source face lists are in `t_9d398e0d-v011-r2-final-replay/replay.json` and
+its `id_table-01.json` / `id_table-02.json` / `mesh_ids-*.json`.
+
+| Mesh suffix | Copy polygons | Cells | Assigned | Unassigned | Straddling | Ambiguous | Mixed cell IDs |
+|---|---:|---:|---:|---:|---:|---:|---|
+| 001_Main | 148186 | 26 | 134105 | 13135 | 942 | 4 | 18 |
+| 002_Main | 73304 | 12 | 39071 | 34233 | 0 | 0 | 2, 11 |
+| 003_Main | 51146 | 22 | 25683 | 25463 | 0 | 0 | 8, 10, 13, 21, 22 |
+
+Changed polygon IDs versus pre-review: 14081 / 24105 / 19881 respectively (the
+latter two include renumbering, not just newly unresolved faces). These are
+provisional geometric/texture diagnostics, not library-material decisions.
+More manual faces is the correct fail-closed result, not a regression to hide.
+
+Current numbered atlas + wire/colour sheets and diagnostic `.blend` copies:
+`t_9d398e0d-v012-r2-01/` and `t_9d398e0d-v013-r2-02/`. Their fresh
+`native-exact-readback.json` checks exact surviving local/world vertices,
+triangle topology, polygon UVs, per-polygon IDs and one UV channel. The two
+previously approved zero-area drops alone remain applied. Original 32 source
+hashes remain unchanged. Pre-review v005/v006/v007 and intermediate r2
+v008/v009/v010 remain immutable historical evidence, not current ID results.
+
+`npm2vpm_core.plan` now reports **blocking `id_range` findings on all three G22
+meshes** because each has ID0. It returns a consumable summary with the gate
+question (also through the real `npm2vpm_max.plan_all` report assembly), not
+`summary=None` / an escaping gate exception. Full current plans and their exact
+triangle lists are in the new native-copy directories. Gate measurement errors
+become blocking `udim_fit` findings; simultaneous legacy `region_straddle` and
+`id_range` diagnostics remain visible. No VPM was written.
+
+Continuation: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1649.
+It now also needs the explicitly listed _01 crossing/mixed faces resolved before
+per-island seam/metric work. Accepted seam/cleanup policies are unchanged; no new
+policy is inferred or requested here. Earlier _01 fit estimates below are
+historical, not the current whole-mesh conversion verdict.
+
+r2 RED evidence: 3 noisy-boundary failures with 3 passing controls;
+6 summary/gate failures; combined legacy-diagnostics regression 1 failed / 569
+passed on the first affected run; one additional crossing-only false-clean
+failure. Repaired matrix includes x/y, seeds 0/7/1630, with/without straddler,
+crossing-only manual, Max report assembly and the combined legacy diagnostic.
+Final affected selection: **577 passed, 0 failed** (122.06 s, same nine files as
+the pre-review run). `repo_guards: GREEN` (486 passed). Full suite: deferred to
+merge batch (rule 68). Current manifest hashes are appended in `EVIDENCE.json`.
+
 ## Immutable source and answered permissions
 
 Inputs: `C:/x/npm2vpm-g22/src/0707_Garibaldi_22_01.fbx`, `_02.fbx`, delivered
@@ -24,7 +79,7 @@ applied ONLY to zero-world-area source polygons **68903, 69759** (0-based) of
 original polygon/triangle indices and reasons; `source_polygons` / `source_triangles`
 preserve the surviving lineage. This is not blanket source-geometry cleanup.
 
-## Final evidence
+## Historical pre-review evidence (v005/v006; superseded by r2)
 
 Root: `G:/Мой диск/AGR-evidence/1630-npm2vpm-g22/`.
 
@@ -62,7 +117,7 @@ mesh002/003; none reaches the 0.5 px cap. Final array identities/counts therefor
 remain valid after that stricter guard. It rechecks all source hashes and prior
 sealed manifest entries without rewriting them.
 
-## Exact regions-mode finding
+## Historical pre-review regions-mode finding (superseded by r2)
 
 `_02`: mixed/nonrectangular cell **2** on mesh002 and **11, 14, 22** on mesh003
 remain manual. They visibly contain several distinct palette/window regions.
