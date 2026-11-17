@@ -39,7 +39,7 @@ def _maps():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return _maps()["contexts"]
 
 
 def _stage(events, sid):
@@ -68,6 +68,27 @@ def test_1644_class_reference(name, kind, valid):
     else:
         category = "class" if kind else "function"
         assert problems == [f"context parts: src/dt_ai/parts/model.py has no top-level {category} {name}"]
+
+
+@pytest.mark.parametrize("name,kind,valid", [
+    ("Top", "class", True), ("Nested", "class", False),
+    ("Top", None, False), ("sync", None, True), ("async_fn", None, True),
+    ("sync", "class", False), ("<module>", "class", False), ("<module>", None, True),
+])
+def test_1644_top_level_namespace_probe(tmp_path, name, kind, valid):
+    """Synthetic exhaustive namespace/kind controls, with no runtime import of the owner."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs/decisions.md").write_text("", encoding="utf-8")
+    (tmp_path / "owner.py").write_text(
+        "class Top:\n    class Nested: pass\ndef sync(): pass\nasync def async_fn(): pass\n",
+        encoding="utf-8")
+    entry = {"name": name, "contract": "Синтетический контракт"}
+    if kind is not None:
+        entry["kind"] = kind
+    context = {"id": "synthetic", "owner": "owner.py", "functions": [entry]}
+    cmap = {"shared_kernel": context, "contexts": [], "rules": []}
+    for _ in range(2):
+        assert (route_map.verify_references(tmp_path, {"stages": []}, cmap) == []) is valid
 
 
 def test_1644_reference_layout_is_local():
