@@ -117,6 +117,16 @@ def test_unwelded_into_another_object_is_still_a_seam():
     assert r['score'] < mq.score(inset_master())['score']
 
 
+def test_glass_pane_in_an_opening_is_not_a_seam():
+    """A MainGlass pane on the edges of a body opening fills it by regulation; the wall-post case is not."""
+    wall_obj, glass = Builder('SM_Fixture_Main'), Builder('SM_Fixture_MainGlass')
+    wall(wall_obj, skip_col=1)
+    for k in range(4):
+        glass.face([(1, 0, k), (2, 0, k), (2, 0, k + 1), (1, 0, k + 1)], (0, -1, 0), 'glass')
+    r = mq.score([wall_obj.obj(), glass.obj()])
+    assert r['totals']['open_seam_edges'] == 0
+
+
 @pytest.mark.parametrize('gap,seam', [(0.0, 8), (0.00004, 8), (0.001, 0), (0.05, 0)])
 def test_seam_tolerance(gap, seam):
     """Coincident within seam_tol_m (1e-4 m grid) is a seam; a real gap is an inset contact."""
@@ -153,6 +163,60 @@ def test_exclude_zone_complements_zone():
         mq.score(inset_master(), exclude_zones=[[1, 1, 0, 0]])
 
 
+def _split_faces(obj, chosen):
+    """Un-weld: faces in ``chosen`` get their own copies of their vertices (positions unchanged)."""
+    verts = [list(v) for v in obj['verts']]
+    copy, faces = {}, []
+    for fi, f in enumerate(obj['faces']):
+        if fi in chosen:
+            g = []
+            for i in f:
+                if i not in copy:
+                    verts.append(list(verts[i]))
+                    copy[i] = len(verts) - 1
+                g.append(copy[i])
+            faces.append(g)
+        else:
+            faces.append(list(f))
+    return {'name': obj['name'], 'verts': verts, 'faces': faces, 'materials': ['M'] * len(faces)}
+
+
+@pytest.mark.parametrize('seed', range(40))
+def test_probe_unwelding_any_face_subset_never_raises_the_score(seed):
+    """Generated probe (review r1 P1-2): split a random face subset off a welded master -> score drops."""
+    import random
+    rnd = random.Random(seed)
+    b = Builder('SM_Probe_Main')
+    cols, rows = rnd.randint(3, 6), rnd.randint(2, 5)
+    pc = rnd.randrange(cols)
+    for i in range(cols):
+        for k in range(rows):
+            if i != pc:
+                b.face([(i, 0, k), (i + 1, 0, k), (i + 1, 0, k + 1), (i, 0, k + 1)], (0, -1, 0))
+    for k in range(rows):
+        b.face([(pc, -0.5, k), (pc + 1, -0.5, k), (pc + 1, -0.5, k + 1), (pc, -0.5, k + 1)], (0, -1, 0))
+        b.face([(pc, 0, k), (pc, -0.5, k), (pc, -0.5, k + 1), (pc, 0, k + 1)], (-1, 0, 0))
+        b.face([(pc + 1, 0, k), (pc + 1, -0.5, k), (pc + 1, -0.5, k + 1), (pc + 1, 0, k + 1)], (1, 0, 0))
+    welded = b.obj()
+    n = len(welded['faces'])
+    chosen = set(rnd.sample(range(n), rnd.randint(1, n - 1)))
+    base, split = mq.score([welded]), mq.score([_split_faces(welded, chosen)])
+    assert split['totals']['open_seam_edges'] > 0
+    for key in ('one_mesh_share', 'weld_share', 'pole_share', 'sliver_share', 'irregular_area_share'):
+        assert split['components'][key] == base['components'][key], key
+    assert split['score'] < base['score']
+
+
+def test_cli_exclude_zone_fail_closed(tmp_path):
+    src = tmp_path / 'dump.json'
+    _write_dump(src, inset_master())
+    assert cli.main([str(src), '--out', str(tmp_path / 'a.json'), '--exclude-zone', '1,2,3']) == 2
+    assert cli.main([str(src), '--out', str(tmp_path / 'b.json'), '--exclude-zone', '2,0,1,1']) == 2
+    assert cli.main([str(src), '--out', str(tmp_path / 'c.json'), '--exclude-zone=-100,-100,100,100']) == 1
+    assert not (tmp_path / 'a.json').exists() and not (tmp_path / 'b.json').exists()
+    assert json.loads((tmp_path / 'c.json').read_text(encoding='utf-8'))['status'] == 'fail'
+
+
 def test_sliver_triangle_and_threshold_is_strict():
     b = Builder('SM_Tri')
     b.face([(0, 0, 0), (1, 0, 0), (0, 0, 1)], (0, -1, 0))                     # 45/45/90: clean
@@ -161,6 +225,8 @@ def test_sliver_triangle_and_threshold_is_strict():
     b.face([(10, 0, 0), (11, 0, 0), (11, 0, t)], (0, -1, 0))                  # exactly 10 deg: not a sliver
     r = mq.score([b.obj()])
     assert r['totals']['tris'] == 3 and r['totals']['slivers'] == 1
+    assert r['totals']['elements_not_all_quads'] == 3 and r['objects'][0]['min_element_quad_share'] == 0.0
+    assert mq.score(inset_master())['objects'][0]['min_element_quad_share'] == 1.0
     assert r['components']['tri_share'] == 1.0
 
 
@@ -231,7 +297,8 @@ def test_fail_closed_inputs(objects):
 
 
 @pytest.mark.parametrize('params', [{'nope': 1}, {'weld_deg': float('nan')}, {'side_limit_m': 0},
-                                    {'tri_min_angle_deg': True}, {'body_share_ok': 1.0}])
+                                    {'tri_min_angle_deg': True}, {'body_share_ok': 1.0},
+                                    {'irregular_deg': float('inf')}, {'seam_tol_m': 0}, {'seam_tol_m': -1e-4}])
 def test_bad_params_and_zones_raise(params):
     with pytest.raises(ValueError):
         mq.score(inset_master(), params=params)

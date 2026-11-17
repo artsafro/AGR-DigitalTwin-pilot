@@ -2,7 +2,7 @@
 
 Usage:
   uv run python tools/qa/mesh_quality_score.py MASTER.(blend|fbx|obj|json) --out NEW.json
-         [--zone X0,Y0,X1,Y1 ...] [--param key=value ...]
+         [--zone X0,Y0,X1,Y1 ...] [--exclude-zone X0,Y0,X1,Y1 ...] [--param key=value ...]
 
 The master is read in a fresh headless Blender (tools/blender/mesh_quality_dump.py) or from a
 recorded dump JSON; the score and its components come from tools/qa/mesh_quality_core.py.
@@ -61,7 +61,7 @@ def parse_param(text):
         return key, value
 
 
-def run(source, out, zones=None, params=None, blender=None):
+def run(source, out, zones=None, params=None, blender=None, exclude_zones=None):
     """Read once, verify source freshness, publish exclusively; never reuse a report."""
     from dt_ai.ops.xview_gate import publish
     src, out = Path(source).resolve(), Path(out).resolve()
@@ -89,7 +89,7 @@ def run(source, out, zones=None, params=None, blender=None):
         provenance['coverage'] = 'evaluated scene meshes before export triangulation'
     if not isinstance(dump, dict) or not isinstance(dump.get('objects'), list):
         raise ValueError('dump has no objects list')
-    report = load_core().score(dump['objects'], params=params, zones=zones)
+    report = load_core().score(dump['objects'], params=params, zones=zones, exclude_zones=exclude_zones)
     if sha(src) != before:
         raise ValueError('master input changed during measure')
     report['input'] = provenance
@@ -103,13 +103,16 @@ def main(argv=None):
     parser.add_argument('master')
     parser.add_argument('--out', required=True)
     parser.add_argument('--zone', action='append', default=[], help='X0,Y0,X1,Y1 plan box (repeatable)')
+    parser.add_argument('--exclude-zone', action='append', default=[],
+                        help='X0,Y0,X1,Y1 plan box left out of the measure (repeatable)')
     parser.add_argument('--param', action='append', default=[], help='key=value core parameter')
     parser.add_argument('--blender', default=None)
     args = parser.parse_args(argv)
     try:
         zones = [parse_zone(z) for z in args.zone] or None
+        exclude = [parse_zone(z) for z in args.exclude_zone] or None
         params = dict(parse_param(p) for p in args.param)
-        report = run(args.master, args.out, zones, params, args.blender)
+        report = run(args.master, args.out, zones, params, args.blender, exclude)
     except (ValueError, OSError, RuntimeError) as exc:
         print(str(exc), file=sys.stderr)
         return 2
