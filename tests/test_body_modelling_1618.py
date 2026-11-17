@@ -117,7 +117,7 @@ def test_main_split_and_new_decision_rows_survive():
     rows = [r for r in decisions.splitlines() if re.match(r"^\| D33[678] \|", r)]
     assert [r.split("|")[1].strip() for r in rows] == ["D336", "D337", "D338"]
     for row in rows[1:]:
-        assert "2026-11-17" in row and "issuecomment-6938656989" in row
+        assert "2026-11-17" in row and "comment 6938656989" in row
     assert "2 cm" in rows[1] and "texture step" in rows[1]
     assert "quads >= 95 %" in rows[2] and "slivers <= 0.5 %" in rows[2]
     assert "WARN-only (OBSERVE)" in rows[2] and "first week" in rows[2]
