@@ -1,4 +1,4 @@
-"""Hook `after` stage `body` (#1619 training polygon): crop a dump to the typical band and count its grid.
+"""Research tool (#1619 training polygon, measuring step - not a stage hook): crop a dump to the typical band, count its grid.
 
 Pattern: n/a | new-case: typical-band crop + grid census for body vs etalon comparison (feeds #1616 metric).
 

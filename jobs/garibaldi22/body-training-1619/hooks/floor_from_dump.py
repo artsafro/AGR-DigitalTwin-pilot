@@ -72,6 +72,8 @@ def main(argv=None):
     ap.add_argument("--close", type=float, default=0.5, help="closing radius bridging wall-object joints, m")
     ap.add_argument("--jog", type=float, default=0.06, help="contour simplify tolerance: jogs below it are relief, texture (BM-08/BM-09)")
     ap.add_argument("--clip", help="JSON [[x,y],...]: keep only objects whose plan centroid is inside")
+    ap.add_argument("--seal", nargs="*", default=[],
+                    help="object classes whose cut joins the wall cut (round 3: windows - openings closed by their filling)")
     a = ap.parse_args(argv)
     if os.path.realpath(a.out) == os.path.realpath(a.crop) or not a.out.endswith(".json"):
         sys.exit("refused: output must be a new .json, not the input")
@@ -121,7 +123,14 @@ def main(argv=None):
     head = float(np.median([wz[o][1] - wz[o][0] for o in ref_wins]))
     # contour (BM-01): wall section at mid-spandrel of the reference floor
     zc = ref - 0.45
-    wall_tris = np.array([t for o in by_obj if cls[o] == "walls" for t in tri[by_obj[o]]])
+    # BM-01 outer envelope: an opening is closed by its own filling. Off-typical openings (stair windows at the
+    # landing levels, doors) gap the wall at the cut height and the ring would dive through them into the shaft
+    # (round 2: six stair cores, up to 8 m inside). The cut therefore unions the walls with the `--seal` classes.
+    seal = set(a.seal)
+    unknown = seal - set(keys)
+    if unknown:
+        sys.exit("refused: --seal names unknown classes %s (known: %s)" % (sorted(unknown), sorted(keys)))
+    wall_tris = np.array([t for o in by_obj if cls[o] == "walls" or cls[o] in seal for t in tri[by_obj[o]]])
     segs = section(wall_tris, zc)
     # morphological closing (+r, -r, mitre) bridges the joints between separate wall objects without moving
     # straight faces or convex corners; the outer ring of the largest piece is the facade line.

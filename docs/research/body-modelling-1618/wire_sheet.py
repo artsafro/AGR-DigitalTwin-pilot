@@ -2,7 +2,8 @@
 
 Usage: uv run python wire_sheet.py DUMP.npz --view px|nx|py|ny|iso|top --rot DEG --ppm PX_PER_M
          [--window U0 U1 V0 V1] --out PNG
-Painter's algorithm on the rejoined faces (dump_mesh.py): back faces culled, far faces first.
+Painter's algorithm on the rejoined faces (dump_mesh.py): back faces culled (--backfaces: drawn pale, no edges),
+far faces first.
 Colours: grey quad (shade by normal), orange = triangle kept after the 1 deg coplanar rejoin
 (a real diagonal), red = sliver triangle (min angle < 5 deg). Edges black. Window is in metres
 from the view's lower-left corner. Refuses to write over the input.
@@ -87,6 +88,55 @@ def textured(a, d, R, base, right, up, cam, U0, W0, u0, v0, w, h, jfaces, JV, JU
     return Image.fromarray(canvas)
 
 
+def zbuffer_flat(drawn, w, h):
+    """Z-buffer raster of flat-coloured polygons (fan triangles; larger depth = nearer), back faces ("b") pale
+    without edges, then front-face edges in black where they pass the depth test (painter's order can put a
+    small shell in front of the large far wall that hides it)."""
+    canvas = np.full((h, w, 3), 255, np.uint8)
+    zb = np.full((h, w), -np.inf)
+    for xs, ys, zs, fill, kind in drawn:
+        if kind != "b":  # coplanar tie (an inset's back face on the wall): the wall wins, no z-fighting
+            zs = zs - 0.02
+        for k in range(1, len(xs) - 1):
+            ix = [0, k, k + 1]
+            tx, ty, tz = xs[ix], ys[ix], zs[ix]
+            den = (ty[1] - ty[2]) * (tx[0] - tx[2]) + (tx[2] - tx[1]) * (ty[0] - ty[2])
+            if abs(den) < 1e-9:
+                continue
+            x0, x1 = max(int(tx.min()), 0), min(int(tx.max()) + 1, w - 1)
+            y0, y1 = max(int(ty.min()), 0), min(int(ty.max()) + 1, h - 1)
+            if x0 > x1 or y0 > y1:
+                continue
+            gx, gy = np.meshgrid(np.arange(x0, x1 + 1) + 0.5, np.arange(y0, y1 + 1) + 0.5)
+            l0 = ((ty[1] - ty[2]) * (gx - tx[2]) + (tx[2] - tx[1]) * (gy - ty[2])) / den
+            l1 = ((ty[2] - ty[0]) * (gx - tx[2]) + (tx[0] - tx[2]) * (gy - ty[2])) / den
+            l2 = 1 - l0 - l1
+            m = (l0 >= -1e-6) & (l1 >= -1e-6) & (l2 >= -1e-6)
+            z = l0 * tz[0] + l1 * tz[1] + l2 * tz[2]
+            sub = zb[y0:y1 + 1, x0:x1 + 1]
+            m &= z > sub
+            sub[m] = z[m]
+            canvas[y0:y1 + 1, x0:x1 + 1][m] = fill
+    for xs, ys, zs, _, kind in drawn:
+        if kind == "b":
+            continue
+        col = (0, 0, 0) if kind == "q" else (230, 120, 0)
+        for k in range(len(xs)):
+            q = (k + 1) % len(xs)
+            n = int(max(abs(xs[q] - xs[k]), abs(ys[q] - ys[k]))) + 1
+            if n > 20000:
+                continue
+            s = np.linspace(0, 1, n)
+            px = (xs[k] + s * (xs[q] - xs[k])).astype(int)
+            py = (ys[k] + s * (ys[q] - ys[k])).astype(int)
+            pz = zs[k] + s * (zs[q] - zs[k])
+            ok = (px >= 0) & (px < w) & (py >= 0) & (py < h)
+            px, py, pz = px[ok], py[ok], pz[ok]
+            vis = pz - 0.02 >= zb[py, px] - 0.01  # same bias as the fill: edges on a coplanar wall stay hidden
+            canvas[py[vis], px[vis]] = col
+    return Image.fromarray(canvas)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("npz")
@@ -97,6 +147,8 @@ def main(argv=None):
     ap.add_argument("--title", default="")
     ap.add_argument("--texture", help="diffuse PNG: z-buffered textured view + visible rejoined edges")
     ap.add_argument("--mat-rgb", help="JSON list [[r,g,b], ...] by material index: colour quads by material ID")
+    ap.add_argument("--backfaces", action="store_true",
+                    help="draw back faces flat pale without edges (an open body: far walls hide what is behind them)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     if os.path.abspath(a.out) == os.path.abspath(a.npz) or not a.out.lower().endswith(".png"):
@@ -144,6 +196,8 @@ def main(argv=None):
             continue
         n /= ln
         if n @ cam <= 1e-3:
+            if a.backfaces and n @ cam < -1e-3:  # inner side of a far wall: occludes what lies behind it
+                polys.append((float(D[f].mean()), f, "b", 0.0))
             continue
         kind = "q"
         if len(f) == 3:
@@ -167,18 +221,25 @@ def main(argv=None):
         img = textured(a, d, R, base, right, up, cam, U0, W0, u0, v0, w, h, faces, V, U, W, D)
         dr = ImageDraw.Draw(img)
         polys = []
+    drawn = []
     for _, f, kind, sh in polys:
         xs = (U[f] - u0) * a.ppm + 10
         ys = h - 10 - (W[f] - v0) * a.ppm
         if xs.max() < 0 or xs.min() > w or ys.max() < 0 or ys.min() > h:
             continue
         g = int(170 + 70 * sh)
-        fill = {"q": (g, g, g), "t": (255, 190, 110), "s": (240, 70, 60)}[kind]
+        fill = {"q": (g, g, g), "t": (255, 190, 110), "s": (240, 70, 60), "b": (236, 236, 236)}[kind]
         if mat_rgb is not None and kind == "q":
             c = mat_rgb[int(jm[fi_of[id(f)]])]
             k = 0.7 + 0.3 * sh
             fill = tuple(int(x * k) for x in c)
-        dr.polygon(list(zip(xs.tolist(), ys.tolist())), fill=fill, outline=(0, 0, 0), width=lw)
+        drawn.append((xs, ys, D[f], fill, kind))
+    if a.backfaces:
+        img = zbuffer_flat(drawn, w, h)
+        dr = ImageDraw.Draw(img)
+    else:
+        for xs, ys, _, fill, kind in drawn:
+            dr.polygon(list(zip(xs.tolist(), ys.tolist())), fill=fill, outline=(0, 0, 0), width=lw)
     dr.rectangle([0, 0, w, 26], fill="white")
     dr.text((8, 6), f"{a.title} view={a.view} rot={a.rot} ppm={a.ppm} window={a.window}  grey=quad orange=triangle red=sliver",
             fill="black")
