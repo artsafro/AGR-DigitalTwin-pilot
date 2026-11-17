@@ -8,7 +8,7 @@ uv run python contour_d337.py FLOOR.json OUT.json [--sagitta 0.02] [--tex-step 0
 1. D341 relief: a short edge (<= --max-step + 5 cm) between two parallel neighbours offset by <= --max-step is a
    relief step (the +100 mm vent-facade panels of site 63) - texture, not geometry. The run lying INSIDE moves out
    onto the line of the outer run (outer envelope), the step disappears (no vertical without a window or zone
-   reason, D340).
+   reason, D344).
 2. D337 / BM-07: an arc = a run of vertices turning the same way by <= --max-turn deg each, chords <= --max-seg, total
    turn >= --min-arc. Its radius is the least-squares circle of the run (>= 3 points); the corner is rebuilt as a
    fillet of that radius tangent to the two straight walls; segments per 90 deg = smallest n with

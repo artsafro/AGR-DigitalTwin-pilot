@@ -1,4 +1,4 @@
-"""Hook `before` stage `body` (#1619 polygon, site 63 tower A): finish zones from the Revit wall TYPES (D340/D341).
+"""Hook `before` stage `body` (#1619 polygon, site 63 tower A): finish zones from the Revit wall TYPES (D344/D341).
 
 Pattern: n/a | new-case: finish-zone IDs from the wall-type names of a Revit FBX crop (no materials, no etalon).
 
@@ -12,7 +12,7 @@ carries the cladding). ZONEMAP = {"zones": {"<type substring>": ["WALL_<ID>", [r
 The contour is sampled every 0.1 m; each sample takes the type of the nearest facade-wall cut segment within
 --max-dist (at the contour section height). Runs shorter than --min-run merge into the neighbour (a panel
 joint, not a zone); a border within --snap of a jamb/corner takes that vertical, otherwise it adds a full-height cut
-(BM-11 / D340). A facade wall type that is not in the map is an error naming it. Refuses OUT equal to an input.
+(BM-11 / D344). A facade wall type that is not in the map is an error naming it. Refuses OUT equal to an input.
 """
 import argparse
 import json
