@@ -21,9 +21,38 @@ def export_stub(tmp_path, monkeypatch):
     monkeypatch.setenv('AGR_TOOLS_REPO', str(tmp_path))
     monkeypatch.setenv('AGR_EXPORT_TIMEOUT_S', '1')
     spec = importlib.util.spec_from_file_location('agr_export_timeout_runtime', RUNTIME)
+    assert spec is not None and spec.loader is not None
     runtime = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(runtime)
     return runtime, core
+
+
+@pytest.mark.parametrize('timeout', [None, '1', '2.5'])
+def test_subprocess_export_normal_stub_returns_json(export_stub, monkeypatch, timeout):
+    runtime, core = export_stub
+    if timeout is None:
+        monkeypatch.delenv('AGR_EXPORT_TIMEOUT_S')
+    else:
+        monkeypatch.setenv('AGR_EXPORT_TIMEOUT_S', timeout)
+    core.write_text('def dry_run(*args, **kwargs):\n    return {"synthetic": [1, "ok"]}\n',
+                    encoding='utf-8')
+    assert runtime._subprocess_export({'method': 'dry_run', 'scene': {}, 'target': 'unused'}) == {
+        'synthetic': [1, 'ok']}
+
+
+@pytest.mark.parametrize('timeout', ['', 'bad', 'nan', 'inf', '-inf', '0', '-1'])
+def test_subprocess_export_invalid_timeout_fails_before_spawn(export_stub, monkeypatch, timeout):
+    import subprocess
+
+    runtime, _ = export_stub
+    monkeypatch.setenv('AGR_EXPORT_TIMEOUT_S', timeout)
+
+    def forbidden_spawn(*args, **kwargs):
+        pytest.fail('invalid timeout must fail before starting the interpreter')
+
+    monkeypatch.setattr(subprocess, 'run', forbidden_spawn)
+    with pytest.raises(ValueError, match='AGR_EXPORT_TIMEOUT_S'):
+        runtime._subprocess_export({'method': 'dry_run'})
 
 
 @pytest.mark.parametrize('method', ['dry_run', 'readback', 'finish'])

@@ -708,7 +708,11 @@ def _triangles_of(values):
 
 
 def readback(data):
-    """Object, triangle and material counts plus the unit scale from fbx_header."""
+    """Structural readback (counts and header only), not a geometry readback.
+
+    Reports object names/counts, triangle/material counts, unit scale and axis;
+    does not reconstruct or validate geometry, topology, UVs or transforms.
+    """
     from twinqa.fbx_header import check_fbx_header, fbx_header, fbx_units
     if not isinstance(data, (bytes, bytearray)):
         raise ValueError('partial FBX')

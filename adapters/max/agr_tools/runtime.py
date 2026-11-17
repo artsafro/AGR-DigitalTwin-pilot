@@ -2166,7 +2166,11 @@ def _repo_root():
 
 
 def _subprocess_export(payload):
-    """Run the gate or the readback in the project interpreter when Max lacks numpy."""
+    """Run export helpers in the project interpreter when Max lacks numpy.
+
+    Readback is structural (counts and header only), not a geometry readback.
+    Each call is bounded by AGR_EXPORT_TIMEOUT_S (default 600 seconds).
+    """
     import os
     import subprocess
     root = _repo_root()
@@ -2194,8 +2198,20 @@ def _subprocess_export(payload):
         '    raise SystemExit("unmapped method " + str(method))\n'
         'sys.stdout.write(json.dumps(out, allow_nan=False))\n'
     )
-    proc = subprocess.run([python, '-c', code, str(root)], input=json.dumps(payload, allow_nan=False).encode('utf-8'),
-                          capture_output=True)
+    import math
+    raw_timeout = os.environ.get('AGR_EXPORT_TIMEOUT_S', '600')
+    try:
+        timeout = float(raw_timeout)
+    except ValueError as exc:
+        raise ValueError('invalid AGR_EXPORT_TIMEOUT_S: ' + repr(raw_timeout)) from exc
+    if not math.isfinite(timeout) or timeout <= 0:
+        raise ValueError('invalid AGR_EXPORT_TIMEOUT_S: ' + repr(raw_timeout))
+    try:
+        proc = subprocess.run([python, '-c', code, str(root)],
+                              input=json.dumps(payload, allow_nan=False).encode('utf-8'),
+                              capture_output=True, timeout=timeout)
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(f'export {payload["method"]} timed out after {timeout:g} s') from exc
     if proc.returncode != 0:
         detail = proc.stderr.decode('utf-8', errors='replace')[-2000:]
         raise RuntimeError(detail or 'export subprocess failed')

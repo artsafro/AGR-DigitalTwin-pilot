@@ -1,5 +1,7 @@
 ## 1.1.x — в работе (#1024)
 
+- Export subprocesses time out after 600 s (`AGR_EXPORT_TIMEOUT_S` override), report the method on timeout, and document structural-only readback (#1604).
+
 ### Стекло ВПМ — только UDIM 1001, без карт [D221]
 
 - `vpm.build` (`vpm_core.py`, шаги 4–5): все стеклянные ID отдельного меша стекла лежат в UDIM 1001
