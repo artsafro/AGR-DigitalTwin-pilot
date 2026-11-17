@@ -45,6 +45,9 @@ def make_pkg(tmp, files=None, recorded=None, key='fbx_records'):
                                for n, d in recorded.items()}
     elif key == 'exported_files':
         meta['exported_files'] = sorted(recorded)
+    elif key == 'exported_sha256':
+        meta['exported_files'] = sorted(recorded)
+        meta['exported_sha256'] = {n: _sha(d) for n, d in recorded.items()}
     (pkg / 'export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
     return pkg
 
@@ -117,18 +120,108 @@ def test_meta_without_any_export_record_is_refused(tmp_path):
     assert outputs(tmp_path) == []
 
 
-def test_exported_files_binds_names_both_ways(tmp_path):
+def test_exported_files_without_hash_is_refused(tmp_path):
+    """r1 P1-2: a recorded FBX without any recorded SHA-256 is never packed with exit 0."""
     pkg = make_pkg(tmp_path, key='exported_files')
+    r = run(pkg)
+    assert r.returncode == 1 and OKS in r.stderr and 'no recorded SHA-256' in r.stderr
+    assert outputs(tmp_path) == []
+    r = run(pkg, '--allow-incomplete')
+    assert r.returncode == 1
+    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    assert report['passed'] is False and report['status'] == 'incomplete'
+    assert {m['status'] for m in report['export_binding']['members']} == {'hash_not_recorded'}
+
+
+def test_exported_sha256_binds_names_and_hashes(tmp_path):
+    pkg = make_pkg(tmp_path, key='exported_sha256')
     r = run(pkg)
     assert r.returncode == 0, r.stderr
     report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
-    assert report['export_binding']['source'] == 'exported_files'
-    assert {m['status'] for m in report['export_binding']['members']} == {'hash_not_recorded'}
-    assert all(m['recorded_sha256'] is None and len(m['zip_sha256']) == 64 for m in report['export_binding']['members'])
+    assert {m['status'] for m in report['export_binding']['members']} == {'match'}
     (tmp_path / 'b').mkdir()
-    pkg2 = make_pkg(tmp_path / 'b', key='exported_files', recorded={OKS: b''})
-    r2 = run(pkg2)  # Ground is on disk but not in exported_files
+    pkg2 = make_pkg(tmp_path / 'b', key='exported_sha256', recorded={OKS: b'synthetic OKS'})
+    r2 = run(pkg2)  # Ground is on disk but recorded nowhere
     assert r2.returncode == 1 and GROUND in r2.stderr and 'not recorded' in r2.stderr
+
+
+# ---- real producer shapes: record_export as export_npm.py / ground_json_to_fbx.py / export_core.py call it ----
+def _producer_pkg(tmp, shape):
+    """shape 'A': export_npm.py canonical export_meta.json for _01 + Ground from its own route (sidecar);
+    shape 'B': per-FBX sidecars for _01 and Ground (Max export_core / package_max)."""
+    from adapters.max.agr_tools.export_meta import record_export
+    pkg = tmp / 'fbx'
+    pkg.mkdir()
+    (pkg / OKS).write_bytes(b'synthetic OKS')
+    (pkg / GROUND).write_bytes(b'synthetic Ground')
+    master = tmp / 'master.blend'
+    master.write_bytes(b'synthetic master')
+    if shape == 'A':
+        record_export(pkg / OKS, source=str(master), top=3.5, metadata_path=pkg / 'export_meta.json', master=master)
+    else:
+        record_export(pkg / OKS, source='synthetic max scene', top=3.5)
+    record_export(pkg / GROUND, source='synthetic ground.json', top=0.2, address='Synthetic_Ground', profile='vpm')
+    return pkg
+
+
+@pytest.mark.parametrize('shape', ['A', 'B'])
+def test_real_producer_package_passes(tmp_path, shape):
+    """r1 P1-1: OKS and Ground recorded by their own exporters bind both members; exit 0 as on main."""
+    pkg = _producer_pkg(tmp_path, shape)
+    r = run(pkg)
+    assert r.returncode == 0, r.stderr
+    with zipfile.ZipFile(tmp_path / '0000_Synthetic.zip') as z:
+        assert sorted(z.namelist()) == [OKS, GROUND]
+    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    assert report['problems'] == [] and {m['status'] for m in report['export_binding']['members']} == {'match'}
+    assert sorted(report['export_binding']['records']) == sorted(
+        ['export_meta.json', GROUND + '.export_meta.json'] if shape == 'A'
+        else [OKS + '.export_meta.json', GROUND + '.export_meta.json'])
+
+
+@pytest.mark.parametrize('shape', ['A', 'B'])
+def test_real_producer_package_with_foreign_02_is_refused(tmp_path, shape):
+    pkg = _producer_pkg(tmp_path, shape)
+    (pkg / '0000_Synthetic_02.fbx').write_bytes(b'foreign FBX dropped in after export')
+    r = run(pkg)
+    assert r.returncode == 1 and '0000_Synthetic_02.fbx' in r.stderr and 'not recorded' in r.stderr
+    assert outputs(tmp_path) == ['master.blend']
+
+
+@pytest.mark.parametrize('shape', ['A', 'B'])
+@pytest.mark.parametrize('victim', [OKS, GROUND])
+def test_real_producer_fbx_edited_after_export_is_refused(tmp_path, shape, victim):
+    """r1 P1-2: exported_files records from record_export carry the hash; an edited FBX is refused by name."""
+    pkg = _producer_pkg(tmp_path, shape)
+    (pkg / victim).write_bytes(b'edited after export')
+    r = run(pkg)
+    assert r.returncode == 1 and victim in r.stderr and 'SHA-256' in r.stderr, r.stderr
+    assert outputs(tmp_path) == ['master.blend']
+
+
+def test_one_fbx_recorded_twice_with_different_hashes_is_refused(tmp_path):
+    pkg = _producer_pkg(tmp_path, 'A')
+    meta = json.loads((pkg / 'export_meta.json').read_text(encoding='utf-8'))
+    meta['exported_sha256'][OKS] = '0' * 64
+    (pkg / (OKS + '.export_meta.json')).write_text(json.dumps(meta), encoding='utf-8')
+    r = run(pkg)
+    assert r.returncode == 1 and OKS in r.stderr and 'recorded twice' in r.stderr
+    assert outputs(tmp_path) == ['master.blend']
+
+
+def test_record_export_writes_the_fbx_hash(tmp_path):
+    from adapters.max.agr_tools.export_meta import load_meta, record_export, validate_meta
+    fbx = tmp_path / OKS
+    fbx.write_bytes(b'bytes')
+    meta = load_meta(record_export(fbx, source='synthetic'))
+    assert meta['exported_sha256'] == {OKS: _sha(b'bytes')} and meta['exported_files'] == [OKS]
+    for bad in ({OKS: 'X' * 64}, {GROUND: _sha(b'bytes')}, {}, [OKS]):
+        with pytest.raises(ValueError, match='exported_sha256'):
+            validate_meta({**meta, 'exported_sha256': bad})
+    lone = {k: v for k, v in meta.items() if k != 'exported_files'}
+    lone['provenance'] = {k: v for k, v in meta['provenance'].items() if k != 'exported_files'}
+    with pytest.raises(ValueError, match='exported_sha256'):
+        validate_meta(lone)
 
 
 def test_case_variant_record_is_not_a_match(tmp_path):
@@ -170,7 +263,7 @@ def test_generated_mismatches_are_always_refused(tmp_path):
             files.pop(victim)
         base = tmp_path / str(case)
         base.mkdir()
-        pkg = make_pkg(base, files=files, recorded=recorded)
+        pkg = make_pkg(base, files=files, recorded=recorded, key=rng.choice(['fbx_records', 'exported_sha256']))
         if kind == 'edited':
             (pkg / victim).write_bytes(b'edited')
         r = run(pkg)

@@ -81,10 +81,8 @@ def test_npm_uses_exporter_sidecar_and_never_packs_it(tmp_path):
     fbx.write_bytes(b'synthetic OKS')
     (pkg / '0000_Synthetic_Ground.fbx').write_bytes(b'synthetic Ground')
     record_export(fbx, source='synthetic fixture', top=3.5)
-    sidecar = pkg / '0000_Synthetic_01.fbx.export_meta.json'
-    meta = json.loads(sidecar.read_text(encoding='utf-8'))
-    meta['exported_files'].append('0000_Synthetic_Ground.fbx')  # #1637: every packed FBX is recorded
-    sidecar.write_text(json.dumps(meta), encoding='utf-8')
+    record_export(pkg / '0000_Synthetic_Ground.fbx', source='synthetic ground route', top=0.2,
+                  address='Synthetic_Ground', profile='vpm')  # #1637: Ground recorded by its own route
     result = subprocess.run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-npm', str(pkg)],
                             capture_output=True, text=True, cwd=ROOT)
     assert result.returncode == 0, result.stderr
