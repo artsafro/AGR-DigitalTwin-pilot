@@ -242,6 +242,32 @@ for name, px in (('px_512', 512), ('px_1706', 1706)):   # inclusive regulation b
     except box_uv.BoxUVError as exc:
         fail[name] = f'error: {exc}'
 
+# ------------------------------------------------------------------ #1600: native float32 storage + world matrix
+period_cases = []
+for px in (1000, 1706):
+    period = T / px
+    for offset in (0, 3, 2000, -2000):
+        for delta_px in (0, 1):
+            xs = [(offset + f) * period + (delta_px / px if f == 1 else 0)
+                  for f in (0.1, 1, 1.5)]
+            verts = [(x, 0, z) for x in xs for z in (0.1 * period, 0.6 * period)]
+            obj = mesh_object('ELV_Period1600', verts, [[0, 2, 3, 1], [2, 4, 5, 3]],
+                              uv=lambda i: (7.25, 3.5))
+            before_uv = loop_uvs(obj, [0, 1])
+            if delta_px:
+                try:
+                    box_uv.box_project_uv(obj, [0, 1], px, 1012, margin_px=0)
+                    raise AssertionError('off-line cut accepted')
+                except box_uv.BoxUVOverflow:
+                    assert loop_uvs(obj, [0, 1]) == before_uv
+            else:
+                result = box_uv.box_project_uv(obj, [0, 1], px, 1012, margin_px=0)
+                assert len(result['islands']) == 2 and result['period_cut_edges'] == 1
+                assert measure(obj, [0, 1])['broken_edges'] == 0
+                assert all(1 <= c <= 2 for uv in loop_uvs(obj, [0, 1]) for c in uv)
+            period_cases.append({'px': px, 'offset': offset, 'delta_px': delta_px, 'ok': True})
+report['period_float32'] = period_cases
+
 # ------------------------------------------------------------------ generated probes
 rng = random.Random(1538)
 gen = {'n': 0, 'pass': 0, 'overflow_nothing_written': 0, 'fail': []}

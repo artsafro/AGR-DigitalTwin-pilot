@@ -22,6 +22,9 @@ panel joints; Artem's "UVW-map box 5-5-5 m" was accepted). docs/domain/uv-textur
   is written. Remedy: cut the faces on world period lines (k * period_m; a cut elsewhere keeps the island
   connected) or lower px_per_m within 512..1706. An island touching a period line has phase 0 there, so it
   fits only with margin_px=0; tile margin vs world phase is an open conflict (docs/domain/conflicts.md);
+- period borders and tile fit share float32 world-phase normalization (#1600): half a float32 ULP
+  at the original coordinate magnitude, capped at half a texture pixel. UVs use that same normalized
+  phase (including before whole-period subtraction); cuts outside that budget stay connected;
 - UVs are written through the mesh data API (no bpy.ops, no selection, no edit mode), only to the loops of
   the listed faces of the one target object; uv_fingerprint / uv_violations prove other objects (glass,
   UCX, ...) and unlisted faces kept their UV state.
@@ -41,7 +44,8 @@ import udimtile_core  # noqa: E402
 TEXEL_MIN, TEXEL_MAX = 512.0, 1706.0   # reg p.32 §6.2, inclusive
 LAST_UDIM = 1100                        # reg p.23, p.31 §2.1.3: 10x10 grid 1001-1100
 AXES = ('+x', '-x', '+y', '-y', '+z', '-z')
-EPS = 1e-9                              # periods (5 nm at a 5 m period): period-line and tile-fit tolerance
+EPS = 1e-9                              # periods: residual float64 arithmetic tolerance
+PERIOD_SNAP_PX = 0.5                    # never correct a world phase by more than half a texel
 TEXEL_RTOL = 1e-9                       # relative float tolerance of the inclusive texel bounds
 
 
@@ -116,12 +120,28 @@ def _snap(p):
     return float(r) if abs(p - r) <= EPS else p
 
 
-def on_period_line(a, b, scale):
-    """True when edge a-b (planar metres) lies on one world period line u = k or v = k (UV units)."""
+def _period_coord(metres, scale, texture_px):
+    """Canonical world phase for both island borders and tile fit (#1600).
+
+    Blender world coordinates are float32: allow half an ULP at the ORIGINAL metre
+    magnitude, plus float64 arithmetic slack. Cap correction at half a texel; at
+    larger coordinates unresolved cuts deliberately remain fail-closed. Normalize
+    before subtracting the island shift, otherwise that magnitude would be lost.
+    This is rounding correction, not permission to pack or rescale an island.
+    """
+    p = metres * scale
+    half_ulp = math.ldexp(1.0, math.frexp(abs(metres))[1] - 25) * scale
+    tolerance = min(PERIOD_SNAP_PX / texture_px, max(EPS, half_ulp + EPS))
+    k = round(p)
+    return float(k) if abs(p - k) <= tolerance else p
+
+
+def on_period_line(a, b, scale, texture_px=4096):
+    """True when both endpoints normalize to the SAME world period line."""
     for i in (0, 1):
-        pa, pb = a[i] * scale, b[i] * scale
-        k = round(pa)
-        if abs(pa - k) <= EPS and abs(pb - k) <= EPS:
+        pa = _period_coord(a[i], scale, texture_px)
+        pb = _period_coord(b[i], scale, texture_px)
+        if pa == round(pa) and pb == pa:
             return True
     return False
 
@@ -215,7 +235,7 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
             e = (keys[fid], frozenset((a, b)))
             if e not in edge_owner:
                 edge_owner[e] = fid
-            elif on_period_line(corner[a], corner[b], scale):
+            elif on_period_line(corner[a], corner[b], scale, texture_px):
                 period_cuts += 1      # world period line: island border, the jump there is a whole period
             else:
                 parent[find(fid)] = find(edge_owner[e])
@@ -223,8 +243,10 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
     for fid, _, _ in faces:
         islands.setdefault(find(fid), []).append(fid)
     uvs, overflow, report_islands = {}, [], []
+    phases = {f: [tuple(_period_coord(c, scale, texture_px) for c in p) for p in coords]
+              for f, coords in metres.items()}
     for members in islands.values():
-        pts = [(u * scale, v * scale) for f in members for u, v in metres[f]]
+        pts = [p for f in members for p in phases[f]]
         umin, vmin = min(p[0] for p in pts), min(p[1] for p in pts)
         umax, vmax = max(p[0] for p in pts), max(p[1] for p in pts)
         ku, kv = math.floor(umin - margin + EPS), math.floor(vmin - margin + EPS)   # whole periods
@@ -236,7 +258,7 @@ def plan_box_uv(faces, px_per_m, tile, *, texture_px=4096, margin_px=8):
             overflow.append(entry)
             continue
         for f in members:
-            uvs[f] = [(_snap(u * scale - ku) + tu, _snap(v * scale - kv) + tv) for u, v in metres[f]]
+            uvs[f] = [(_snap(u - ku) + tu, _snap(v - kv) + tv) for u, v in phases[f]]
     if overflow:
         worst = overflow[0]
         period = texture_px / px

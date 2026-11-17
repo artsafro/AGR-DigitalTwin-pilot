@@ -328,6 +328,63 @@ def test_float32_period_cut_fits(box, px, offset, horizontal):
                        for i in (0, 1))
 
 
+@pytest.mark.parametrize('px', [1000, 1706])
+@pytest.mark.parametrize('offset', [0, 3, 2000, -2000])
+def test_float32_cut_just_off_line_stays_connected(box, px, offset):
+    period = 4096 / px
+    # At small origins even 0.01 pixel is distinguishable; at 2000 periods use
+    # one pixel (larger than float32 uncertainty, still a sub-mm cut offset).
+    delta_px = 0.01 if abs(offset) < 10 else 1.0
+    cuts = [float32((offset + f) * period + (delta_px / px if f == 1 else 0))
+            for f in (0.1, 1, 1.5)]
+    faces = strip_wall(cuts, cuts_z=[0.1 * period, 0.6 * period])
+    with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+        box.plan_box_uv(faces, px, 1001, margin_px=0)
+
+
+def test_period_snap_half_texel_cap_boundary(box):
+    px, line = 1024, 1048576.0  # float32 uncertainty here exceeds half a texel
+    at = line + 0.5 / px
+    for cut, fits in [(at, True), (math.nextafter(at, math.inf), False)]:
+        faces = strip_wall([line - 2, cut, line + 2], cuts_z=[0.1, 1.0])
+        if fits:
+            uvs, rep = box.plan_box_uv(faces, px, 1001, margin_px=0)
+            assert len(rep['islands']) == 2 and in_tile(uvs)
+        else:
+            with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+                box.plan_box_uv(faces, px, 1001, margin_px=0)
+
+
+def test_generated_float32_period_cuts_and_off_line_controls(box):
+    """Synthetic seed 1600: both signs, all projection axes, varying density and resolution."""
+    rng = random.Random(1600)
+    for n in range(240):
+        px = rng.uniform(512, 1706)
+        texture = rng.choice([1024, 2048, 4096])
+        period = texture / px
+        offset = rng.randint(-2000, 2000)
+        for delta in (0, 1.0 / px):
+            cuts = [float32((offset + f) * period + (delta if f == 1 else 0))
+                    for f in (0.1, 1, 1.5)]
+            faces = strip_wall(cuts, cuts_z=[float32(0.1 * period), float32(0.6 * period)])
+            # Cycle coordinate axes and reverse winding: six dominant signed axes.
+            mapped = []
+            for fid, _, co in faces:
+                co = [tuple(p[(i + n % 3) % 3] for i in range(3)) for p in co]
+                if n % 2:
+                    co.reverse()
+                mapped.append((fid, list(co), co))
+            if delta:
+                with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+                    box.plan_box_uv(mapped, px, 1001, texture_px=texture, margin_px=0)
+            else:
+                uvs, rep = box.plan_box_uv(mapped, px, 1001, texture_px=texture, margin_px=0)
+                assert len(rep['islands']) == 2 and set(uvs) == {0, 1}
+                assert in_tile(uvs) and seams(box, mapped, uvs) == (1, 0)
+                with pytest.raises(box.BoxUVOverflow):
+                    box.plan_box_uv(mapped, px, 1001, texture_px=texture, margin_px=0.25)
+
+
 # ------------------------------------------------------------------ real Blender
 def _blender():
     from dt_ai.core.blender_runner import blender_executable
@@ -346,6 +403,7 @@ def test_real_blender_target_object_only(tmp_path, monkeypatch):
     assert main['measure']['texel_min'] == main['measure']['texel_max'] == 819.2
     assert main['violations'] == [] and main['selection_unchanged'] and main['tiles'] == [[0, 0]]
     assert main['ucx_layers'] == 0 and main['other_layers'] == 0
+    assert len(rep['period_float32']) == 16 and all(c['ok'] for c in rep['period_float32'])
     assert rep['per_tile_snap']['broken_edges'] > 0
     bare = rep['bare']
     assert bare['created'] and bare['violations'] == [] and bare['ucx_layers'] == bare['other_layers'] == 0
