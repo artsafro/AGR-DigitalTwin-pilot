@@ -1,6 +1,78 @@
 """new-case: synthetic atlas-ID recovery and fail-closed UDIM preflight (#1630)."""
 import importlib
 import math
+import copy
+import json
+from pathlib import Path
+import pytest
+from PIL import Image
+
+
+def synthetic_document(atlas):
+    return {'objects': [{'name': 'synthetic', 'verts': [[0, 0, 0], [1, 0, 0], [0, 1, 0]],
+        'local': [[0, 0, 0], [1, 0, 0], [0, 1, 0]], 'tris': [[0, 1, 2]],
+        'uvs': [[.1, .1], [.4, .1], [.1, .4]], 'uv_tris': [[0, 1, 2]], 'tri_polygons': [0],
+        'polygons': [{'slot': 0, 'uv': [[.1, .1], [.4, .1], [.1, .4]]}],
+        'atlases': {'0': str(atlas)}}]}
+
+
+@pytest.mark.parametrize('field,value', [('tri_polygons', [-1]), ('tri_polygons', [True]),
+    ('tri_polygons', []), ('tris', [[-1, 1, 2]]), ('tris', [[0, 0, 2]]),
+    ('uv_tris', [[0, 1, 99]]), ('uv_tris', []), ('verts', [[float('nan'), 0, 0]]),
+    ('local', [[0, 0, 0]]), ('tris', []), ('uvs', [[float('inf'), 0]])])
+def test_invalid_mesh_protocol_rejected_before_segmentation(tmp_path, field, value, monkeypatch):
+    from tools.derive import npm_ids as cmd
+    doc = synthetic_document(tmp_path/'absent.png')
+    doc['objects'][0][field] = value
+    def forbidden(*args, **kwargs):
+        pytest.fail('segmentation started on invalid mesh')
+    monkeypatch.setattr(cmd, 'recover', forbidden)
+    with pytest.raises(ValueError):
+        cmd.process_document(doc)
+
+
+def test_approved_drop_requires_exact_zero_and_accounts_every_face(tmp_path):
+    from tools.derive import npm_ids as cmd
+    doc = synthetic_document(tmp_path/'synthetic.png')
+    obj = doc['objects'][0]
+    obj['verts'].append([0, 0, 2]); obj['local'].append([0, 0, 2])
+    obj['tris'].append([0, 3, 0]); obj['uv_tris'].append([0, 1, 2])
+    obj['tri_polygons'].append(1); obj['polygons'].append(copy.deepcopy(obj['polygons'][0]))
+    before = copy.deepcopy(doc)
+    cleaned, drops = cmd.drop_zero_area(doc, {'synthetic': [1]})
+    assert doc == before
+    assert cleaned['objects'][0]['tri_polygons'] == [0]
+    assert cleaned['objects'][0]['source_polygons'] == [0]
+    assert drops == [{'object': 'synthetic', 'source_polygon': 1, 'reason': 'approved_zero_world_area',
+                      'source_triangles': [1]}]
+    with pytest.raises(ValueError, match='nonzero'):
+        cmd.drop_zero_area(doc, {'synthetic': [0]})
+    with pytest.raises(ValueError, match='unknown'):
+        cmd.drop_zero_area(doc, {'absent': [1]})
+
+
+def test_cli_transitive_output_alias_writes_nothing(tmp_path):
+    from tools.derive import npm_ids as cmd
+    source = tmp_path/'input.json'
+    output = tmp_path/'new'
+    # Absent transitive input must not be created by mkdir/extraction/reporting.
+    source.write_text(json.dumps(synthetic_document(output/'id_table.json')))
+    assert cmd.main([str(source), str(output)]) == 2
+    assert not output.exists()
+
+
+def test_cli_late_input_change_never_publishes_success(tmp_path, monkeypatch):
+    from tools.derive import npm_ids as cmd
+    atlas = tmp_path/'synthetic.png'; Image.new('RGB', (64, 64), 'red').save(atlas)
+    source = tmp_path/'input.json'; source.write_text(json.dumps(synthetic_document(atlas)))
+    real = cmd.process_document
+    def mutate(*args, **kwargs):
+        result = real(*args, **kwargs)
+        source.write_text('{}')
+        return result
+    monkeypatch.setattr(cmd, 'process_document', mutate)
+    assert cmd.main([str(source), str(tmp_path/'new')]) == 2
+    assert not (tmp_path/'new'/'id_table.json').exists()
 
 import pytest
 from PIL import Image
