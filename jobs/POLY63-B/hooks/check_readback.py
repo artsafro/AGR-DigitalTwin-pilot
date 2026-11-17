@@ -1,5 +1,5 @@
 """new-case: check shared FBX readback against body intent; extract the #1616 band."""
-from collections import Counter
+from collections import Counter, defaultdict
 import hashlib
 import json
 from pathlib import Path
@@ -9,16 +9,56 @@ import numpy as np
 from shapely import Point, Polygon
 
 
-def check(master, readback, design):
+METRIC_TOL = .0002  # m; FBX float storage and export welding, not a construction tolerance
+PHASE_TOL = 1e-5    # texture repeats
+
+
+def phase_delta(a,b):
+    delta = np.asarray(a)-np.asarray(b)
+    return float(np.abs(delta-np.rint(delta)).max())
+
+
+def measure_arc(points, stations, center, radius, samples, step):
+    """Measure native chord lengths and UV phase, not agreement with authored UV."""
+    points = np.asarray(points)
+    lengths = np.linalg.norm(np.diff(points,axis=0),axis=1)
+    chain = np.r_[0., lengths.cumsum()]
+    repeats = np.diff(chain[stations]); residual = chain[-1]-chain[stations[-1]]
+    uv_error = anchor_error = 0.
+    for i, (xy,u) in enumerate(samples):
+        if not len(xy): raise ValueError(f'No native face on arc chord {i}')
+        xy=np.asarray(xy); u=np.asarray(u)
+        distance = (xy-points[i]) @ ((points[i+1]-points[i])/lengths[i])
+        # Each row contains both horizontal loops of a native face, in arc order.
+        uv_error=max(uv_error,float(np.abs(np.diff(u,axis=-1)*step-np.diff(distance,axis=-1)).max()))
+        anchor_error=max(anchor_error,phase_delta(u,(distance+chain[i])/step)*step)
+    return dict(full_repeats_m=repeats.tolist(), terminal_remainder_m=float(residual),
+                max_step_error_m=float(np.abs(repeats-step).max(initial=0.)),
+                max_uv_metric_error_m=uv_error, max_anchor_error_m=anchor_error,
+                max_sagitta_m=float(np.abs(radius-np.linalg.norm((points[1:]+points[:-1])/2-center,axis=1)).max()),
+                max_radius_error_m=float(np.abs(np.linalg.norm(points-center,axis=1)-radius).max()))
+
+
+def registration_failures(arcs, phase, step):
+    return ([name for name, a in arcs.items() if (
+        max(a['max_step_error_m'],a['max_uv_metric_error_m'],a['max_anchor_error_m']) > METRIC_TOL
+        or a['max_sagitta_m'] > .020 or a['max_radius_error_m'] > METRIC_TOL
+        or a['terminal_remainder_m'] >= step+METRIC_TOL)]
+        + (['same-ID facade edge phase'] if phase > PHASE_TOL else []))
+
+
+def check(master, readback, design, step):
     (obj,) = readback['meshes']
     assert readback['readback_ok'] and not readback['other_objects']
+    assert obj['uv_channels']==1 and master['arcs']
     g=obj['face_geometry']; got=np.asarray(g['vertices']); want=np.asarray(master['vertices']); roles=master['roles']
     assert len(g['polygons']) == len(master['faces'])
     rings={key:Polygon(ring) for key,ring in master.get('effective_rings',{
         key:v['ring'] for key,v in design['modules'].items()}).items()}
     ends=[design['floors'][0]['bottom'],design['floors'][-1]['top']]
     transitions=[f['top'] for f,g in zip(design['floors'],design['floors'][1:]) if f['type']!=g['type']]
-    free_facade=[]; shoulders=Counter(); sagitta=Counter(); arc_samples=Counter(); uv_error=0.
+    free_facade=[]; shoulders=Counter(); arc_samples=Counter(); uv_error=0.
+    native_arcs=defaultdict(list); facade_edges=defaultdict(list)
     reversed_faces=[]; inward=[]; positions=0.; facet=[]; mats=[]; nonmanifold=Counter(); directions=Counter()
     palette=['01_Ventfacade_regular','02_Render_return','03_Ventfacade_band']
     owner={}
@@ -28,16 +68,22 @@ def check(master, readback, design):
         if flip<parity: reversed_faces.append(i)
         positions=max(positions,min(parity,flip))
         if 'polygon_uv' in master:
-            assert obj['uv_channels']==1
-            rotation=min(range(len(a)),key=lambda t:np.abs(np.roll(a,t,axis=0)-b).max())
-            uv=np.roll(np.asarray(g['polygon_uv'][i]),rotation,axis=0)
+            order=np.arange(len(a))[::-1] if flip<parity else np.arange(len(a))
+            order=min((np.roll(order,t) for t in range(len(a))),key=lambda ix:np.abs(a[ix]-b).max())
+            uv=np.asarray(g['polygon_uv'][i])[order]
             uv_error=max(uv_error,float(np.abs(uv-np.asarray(master['polygon_uv'][i])).max()))
             arc=master['arc_faces'].get(str(i))
             if arc:
-                edge=np.roll(a,rotation,axis=0)[:2,:2]
-                arc_id=f"{arc['module']}:{arc['center']}"
-                sagitta[arc_id]=max(sagitta[arc_id],float(arc['radius']-np.linalg.norm(edge.mean(axis=0)-arc['center'])))
+                arc_id, segment = arc
+                for corners in ([0,1],[3,2]):
+                    native_arcs[arc_id,segment].append((a[order[corners],:2],uv[corners,0]))
                 arc_samples[arc_id]+=1
+            if role=='facade':
+                loops=np.asarray(g['polygon_uv'][i]); material=g['polygon_material'][i]
+                for j,(u,v) in enumerate(zip(f,f[1:]+f[:1])):
+                    if np.linalg.norm(got[u,:2]-got[v,:2]) < 1e-6:
+                        pair=loops[[j,(j+1)%len(f)]]
+                        facade_edges[min(u,v),max(u,v),material].append(pair if u<v else pair[::-1])
         assert g['polygon_material'][i]==palette[master['face_zones'][i]]
         n=np.cross(a-a[0], np.roll(a,-1,axis=0)-a[0]).sum(axis=0)
         for u,v in zip(f,f[1:]+f[:1]):
@@ -60,7 +106,23 @@ def check(master, readback, design):
             free_facade.append({'face':i,'edge':p.tolist()})
         if role.startswith('shoulder'):
             shoulders[str(next((z for z in transitions if at(z)), 'unexpected elevation'))]+=1
-    report=dict(face_count=len(roles),roles=Counter(roles),maximum_vertex_drift_m=positions,
+    phase_checks=[phase_delta(*pairs) for pairs in facade_edges.values() if len(pairs)==2]
+    registration={}
+    # A tangent in an opening may be represented by the sill/head mouth only.
+    # Planned positions identify stations; distances come from the native mesh.
+    for name, arc in master['arcs'].items():
+        samples=[native_arcs[name,i] for i in range(arc['count'])]
+        points=[]
+        for i, match in enumerate(arc['points']):
+            distance=np.linalg.norm(got[:,:2]-match,axis=1)
+            nearest=int(distance.argmin())
+            if distance[nearest]>METRIC_TOL:
+                raise ValueError(f'Missing native station {name}:{i}')
+            points.append(got[nearest,:2])
+        registration[name]=measure_arc(points,arc['stations'],arc['center'],arc['radius'],
+            [(np.asarray([p for p,_ in s]),np.asarray([u for _,u in s])) for s in samples],step)
+    phase=max(phase_checks,default=0.)
+    report: dict = dict(face_count=len(roles),roles=Counter(roles),maximum_vertex_drift_m=positions,
                 inverted_readback=reversed_faces,inward_exterior=inward,
                 boundary_edges=sum(v==1 for v in nonmanifold.values()),
                 edges_over_two_faces=sum(v>2 for v in nonmanifold.values()),
@@ -68,14 +130,18 @@ def check(master, readback, design):
                 topology=obj['topology'],bounds_m=obj['bounds_m'],polygon_degrees=obj['polygon_degrees'],
                 unexpected_facade_free_edges=free_facade, shoulder_mouth_edges=shoulders,
                 uv_channels=obj['uv_channels'], maximum_uv_delta=uv_error,
-                arc_chord_sagitta_m=sagitta, arc_face_samples=arc_samples)
+                arc_chord_sagitta_m={k:v['max_sagitta_m'] for k,v in registration.items()},
+                arc_face_samples=arc_samples, training_step_m=step, arc_registration=registration,
+                same_id_vertical_edges=len(phase_checks), max_same_id_phase_delta=phase,
+                registration_failures=registration_failures(registration,phase,step))
     band={'objects':[{'name':obj['name'],'verts':g['vertices'],'faces':facet,'materials':mats}], 'dropped':[]}
     return report,band
 
 if __name__=='__main__':
     inp,fbx,design,report,band=map(Path,sys.argv[1:])
     master,readback,ledger=(json.loads(p.read_bytes()) for p in (inp,fbx,design))
-    result,extract=check(master,readback,ledger)
+    config=json.loads((Path(__file__).resolve().parents[1]/'sources.json').read_bytes())['training']
+    result,extract=check(master,readback,ledger,config['texture_step_m'])
     result['stage1_receipt']={
         'scenario':'oks-vpm','body':'adapters/max/agr_tools/body_core.py:prepare_plan',
         'body_prepare':master.get('body_prepare'), 'input_sha256':master.get('input_sha256'),
@@ -88,4 +154,4 @@ if __name__=='__main__':
     print(json.dumps(result)); sys.exit(bool(result['inverted_readback'] or result['inward_exterior']
         or result['unexpected_facade_free_edges'] or result['edges_over_two_faces']
         or result['seating_winding_conflicts'] or result['maximum_uv_delta']>1e-5
-        or max(result['arc_chord_sagitta_m'].values(),default=0)>.020))
+        or result['registration_failures']))

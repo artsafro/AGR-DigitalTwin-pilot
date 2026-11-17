@@ -1,6 +1,13 @@
 # Tower 63B — polygon #1619, stage 1
 
-## v003 review candidate
+## v004 review candidate
+
+- D337/BM-07: **0.60 m is an assumed training step, not measured from a facade sheet**. The fitted circle and tangent locations are retained. Each complete repeat starts at an integer U and occupies exactly 0.60 m along the developed chords; subchords limit sagitta. The terminal remainder closes to the original tangent without rescaling the rounded UVs. The same-ID facade chart continues through both tangencies; only straight stretches between two anchors absorb a phase adjustment. Reveal and shoulder charts are separate; this is a repeating training UV, not the production UDIM atlas.
+- Fresh Blender 4.4 work FBX: eight arcs, 23 full repeats, maximum step error **0.009 mm**, largest terminal remainder **593.70 mm**, smallest **20.48 mm**; maximum sagitta **18.75 mm**. Maximum phase jump across 4,701 same-ID vertical facade edges **0.000001 repeat**. The retained v003 FBX fails the physical-step check on all eight arcs and the same-ID phase check even when compared with its own authored UVs. `orientation.json` gives per-arc measurements; `audit.json` records the negative control.
+- The updated plan differs from the v003 fitted contour by at most 17.90 mm (A) and 8.98 mm (B), measured as bidirectional boundary Hausdorff distance. At +26.70/+42.45 m, 251/253 shared facade-to-shoulder edges and zero unexpected free facade edges. Readback: zero inverted/inward facade faces and zero intersection candidates (2 mm). **#1616 = 89.242**, 8,491 typical-band quads (100%), zero n-gons/slivers; 972 shoulder triangles are outside that score.
+- Sheet and `SHA256SUMS.txt`: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v004/`. QUAD work copy: `C:/x/review-63B/63B_Stage1_v004.fbx`. Finish IDs still use FBX type/geometry fallback because Revit 2025 read-only is unavailable; no RVT was opened or edited. This is a Stage 1 review candidate, not accepted VPM.
+
+## v003 historical witness (superseded)
 
 - At +26.70/+42.45 m the formerly free facade-to-shoulder edges are sewn. The four transition heights (+23.55/+26.70/+39.30/+42.45 m) are supported by source wall endpoint clusters; this is not a survey of every shoulder edge. Curtain and band-end mouths remain open. The synthetic skewed belt fails on the old generator and passes with shared stations.
 - On native v002 the four candidate pairs were jamb/shoulder termination contacts: 3358/8479, 5484/8732, 6156/8963 and 7897/9216 respectively in ascending Z. Fresh shared v003 FBX readback has zero self-intersection candidates (2 mm), inward or reversed exterior faces, unexpected free facade edges, and winding conflicts. 8,565 quads, 976 horizontal shoulder triangles; #1616 typical band **89.457**, 100% quads, zero n-gons/slivers.
@@ -13,7 +20,7 @@ Run from the repository root with `DESIGN` set to the v002 evidence `source_sect
 
 ```bash
 uv run python -m jobs.POLY63-B.hooks.body_grid "$DESIGN" "$OUT/model.json"
-uv run python -c "from pathlib import Path; from dt_ai.core.blender_runner import run_blender; import sys; p=Path(sys.argv[1]); b='C:/Program Files/Blender Foundation/Blender 4.4/blender.exe'; s='63B_Stage1_v003'; f=p/(s+'.fbx'); run_blender('jobs/POLY63-B/hooks/export_review.py',(p/'model.json',p,s),executable=b,outputs=(f,p/(s+'.blend'),p/'round.png'),log_path=p/'export.log'); run_blender('tools/blender/fbx_readback.py',(f,p/'readback.json'),executable=b,output_json=p/'readback.json',log_path=p/'readback.log')" "$OUT"
+uv run python -c "from pathlib import Path; from dt_ai.core.blender_runner import run_blender; import sys; p=Path(sys.argv[1]); b='C:/Program Files/Blender Foundation/Blender 4.4/blender.exe'; s='63B_Stage1_v004'; f=p/(s+'.fbx'); run_blender('jobs/POLY63-B/hooks/export_review.py',(p/'model.json',p,s),executable=b,outputs=(f,p/(s+'.blend'),p/'round.png'),log_path=p/'export.log'); run_blender('tools/blender/fbx_readback.py',(f,p/'readback.json'),executable=b,output_json=p/'readback.json',log_path=p/'readback.log')" "$OUT"
 uv run python -m jobs.POLY63-B.hooks.check_readback "$OUT/model.json" "$OUT/readback.json" "$DESIGN" "$OUT/orientation.json" "$OUT/band.json"
 uv run python tools/qa/mesh_quality_score.py "$OUT/band.json" --out "$OUT/score.json"
 ```

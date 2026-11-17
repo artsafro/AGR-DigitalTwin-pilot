@@ -13,7 +13,7 @@ from shapely import Polygon, constrained_delaunay_triangles, get_parts
 
 
 def resample_arc(points, step):
-    """Fit a circle through both retained tangencies; snap developed UV, not the envelope."""
+    """Develop whole repeats on circular chords, then close at the fixed end tangent."""
     start, end = points[[0,-1]]
     mid = (start+end)/2
     tangent = (end-start)/np.linalg.norm(end-start)
@@ -26,14 +26,48 @@ def resample_arc(points, step):
     assert np.max(np.abs(np.linalg.norm(points-center, axis=1)-radius)) < .002
     angle = np.unwrap(np.arctan2(*(points-center).T[::-1]))
     sweep = float(angle[-1]-angle[0])
-    steps = max(1, round(radius*abs(sweep)/step))
-    # Include every texture division plus any subdivisions required for sagitta.
-    count = max(steps, math.ceil(abs(sweep)/(2*math.acos(1-.020/radius))))
-    breaks = np.linspace(0,1,steps*math.ceil(count/steps)+1)
-    phi = angle[0]+sweep*np.asarray(breaks)
+    limit = 2*math.acos(max(-1., 1-.0199/radius))
+    # Use n chords of length step/n. Their angular span is slightly longer
+    # than step/R; dividing the smooth arc by step would not register on FBX.
+    n = max(1, math.ceil(step/(2*radius*math.sin(limit/2))))
+    delta = 2*math.asin(step/(2*radius*n))
+    steps = int(abs(sweep)//(n*delta))
+    breaks = list(np.arange(steps*n+1)*delta)
+    stations = list(range(0, steps*n+1, n))
+    remainder = abs(sweep)-breaks[-1]
+    if remainder > 1e-10:
+        parts = math.ceil(remainder/limit)
+        breaks.extend(np.linspace(breaks[-1], abs(sweep), parts+1)[1:])
+    phi = angle[0]+math.copysign(1, sweep)*np.asarray(breaks)
     xy = center+radius*np.c_[np.cos(phi), np.sin(phi)]
     xy[[0,-1]] = points[[0,-1]]
-    return dict(center=center.tolist(), radius=radius, steps=steps, sweep=sweep), xy
+    return dict(center=center.tolist(), radius=radius, stations=stations), xy
+
+
+def facade_uv(stations, zones, arcs, step):
+    """Pin arc starts to integer U. Only intervening same-ID straight runs ease phase."""
+    limits = [0]+[i for i in range(1,len(zones)) if zones[i]!=zones[i-1]]+[len(zones)]
+    result = np.zeros((len(zones),2))
+    for lo,hi in zip(limits,limits[1:]):
+        knots = {}
+        for start,end in arcs:
+            if not lo <= start < hi: continue
+            assert end <= hi
+            if not knots:
+                knots[lo] = (stations[lo]-stations[start])/step
+            prev = max(knots)
+            start_u = round(knots[prev]+(stations[start]-stations[prev])/step)
+            if prev==start and start!=lo:
+                raise ValueError('Adjacent arcs need a finish boundary or phase transition')
+            knots[start] = start_u
+            knots[end] = start_u+(stations[end]-stations[start])/step
+        if not knots: knots[lo] = 0.
+        prev = max(knots)
+        knots[hi] = knots[prev]+(stations[hi]-stations[prev])/step
+        ix = sorted(knots)
+        uv = np.interp(stations[lo:hi+1], stations[ix], [knots[i] for i in ix])
+        result[lo:hi] = np.c_[uv[:-1],uv[1:]]
+    return result
 
 
 def build(design, config=None):
@@ -73,14 +107,14 @@ def build(design, config=None):
 
     modules = design['modules']
     original = {key: layout(m)[-1] for key,m in modules.items()}
-    arc_segments = {}
+    arc_segments = {}; arc_runs = defaultdict(list); arcs = {}
     step = config['texture_step_m'] if config else None
     if step is not None:
         for key, spans in config['arc_spans'].items():
             module = modules[key]
             ring = np.asarray(module['ring']); n = len(ring)
             starts = {start: end for start,end in spans}
-            i = min(starts); stop = i+n
+            i = next(j for j in range(n) if module['zone'][j-1]!=module['zone'][j]); stop = i+n
             points, zones = [], []
             while i < stop:
                 j = i%n
@@ -94,12 +128,15 @@ def build(design, config=None):
                 assert len(ids_zone)==1
                 arc, xy = resample_arc(ring[ids], step)
                 offset = len(points)
+                arc_id = f'{key}:{j}'
+                arc_runs[key].append((offset,offset+len(xy)-1))
+                arcs[arc_id] = dict(arc, module=key, offset=offset, count=len(xy)-1)
                 for k,pt in enumerate(xy[:-1]):
                     points.append(pt.tolist()); zones.append(module['zone'][j])
-                    arc_segments[key,offset+k] = (arc,k,len(xy)-1)
+                    arc_segments[key,offset+k] = (arc_id,k)
                 i = end
-            # The old origin lies within a wraparound arc; rebase through the
-            # first retained tangency and project the old opening endpoints.
+            # Rebase at a finish boundary so the wrap cannot split a same-ID chart.
+            # Reproject opening endpoints from the old contour to the new one.
             old_ring = ring.copy()
             module.update(ring=points, zone=zones)
             new = layout(module)
@@ -128,6 +165,12 @@ def build(design, config=None):
             b[i] = nearest
     modules['B']['ring'] = b.tolist()
     layouts = {key: layout(m) for key,m in modules.items()}
+    uv_edges = {}
+    if step is not None:
+        uv_edges = {k:facade_uv(l[-1],modules[k]['zone'],arc_runs[k],step) for k,l in layouts.items()}
+        for arc in arcs.values():
+            ring = modules[arc['module']]['ring']; start=arc['offset']
+            arc['points'] = [ring[i%len(ring)] for i in range(start,start+arc['count']+1)]
     updated = layouts['B'][-1]
     for floor in design['floors']:
         if floor['type'] == 'B':
@@ -218,13 +261,10 @@ def build(design, config=None):
                         idx = len(faces)-1
                         j = np.searchsorted(layouts[key][-1],s)-1
                         base = next(f['bottom'] for f in block if f['bottom'] <= z < f['top'])
-                        u0,u1 = s0/step,s1/step
+                        S=layouts[key][-1]
+                        u0,u1 = np.interp([s0,s1],S[j:j+2],uv_edges[key][j])
                         if (key,j) in arc_segments:
-                            arc,k,count = arc_segments[key,j]
-                            S=layouts[key][-1]
-                            u0,u1 = [(k+(p-S[j])/(S[j+1]-S[j]))*arc['steps']/count for p in (s0,s1)]
-                            arc_faces[idx] = {**arc, 'module': key, 'segment': k,
-                                              'segment_count': count, 'u': [u0,u1]}
+                            arc_faces[idx] = arc_segments[key,j]
                         # Local repeating UV chart; zone IDs are separate slots.
                         u0,u1 = u0-math.floor(u0+1e-8),u1-math.floor(u0+1e-8)
                         v0,v1 = (z0-base)/step,(z1-base)/step
@@ -257,14 +297,14 @@ def build(design, config=None):
                         continue  # coincident precision nodes from overlapping contour boundaries
                     face([(*xy,z) for xy in (q if normal*direction>0 else q[::-1])],2,'shoulder_up' if direction>0 else 'shoulder_down')
     used=sorted({i for f in faces for i in f}); reindex={i:j for j,i in enumerate(used)}
-    model = dict(vertices=[verts[i] for i in used], faces=[[reindex[i] for i in f] for f in faces], face_zones=groups, roles=roles)
+    model: dict = dict(vertices=[verts[i] for i in used], faces=[[reindex[i] for i in f] for f in faces], face_zones=groups, roles=roles)
     if step is not None:
         for i,f in enumerate(faces):
             if i in uvs: continue
             p = np.asarray([verts[j] for j in f]); d = p-p[0]; u = d[1]/np.linalg.norm(d[1])
             normal = np.cross(d[1],d[-1]); normal /= np.linalg.norm(normal)
             uvs[i] = (np.c_[d@u,d@np.cross(normal,u)]/step).tolist()
-        model.update(polygon_uv=[uvs[i] for i in range(len(faces))], arc_faces=arc_faces,
+        model.update(polygon_uv=[uvs[i] for i in range(len(faces))], arc_faces=arc_faces, arcs=arcs,
                      effective_rings={k:m['ring'] for k,m in modules.items()})
     return model
 
