@@ -46,6 +46,30 @@ def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
 
 
+# ---------------------------------------------------------------- #1644: explicit top-level class references
+@pytest.mark.parametrize("name,kind,valid", [
+    ("PartsList", "class", True),
+    ("MissingPartsList", "class", False),
+    ("PartsList", None, False),
+])
+def test_1644_class_reference(name, kind, valid):
+    cmap = _maps()["contexts"]
+    entry = {"name": name, "contract": "Состав частей модели"}
+    if kind is not None:
+        entry["kind"] = kind
+    cmap["contexts"] = [{"id": "parts", "ru": "Состав частей",
+        "owner": "src/dt_ai/parts/model.py", "owner_ru": "Модель состава частей",
+        "functions": [entry]}]
+    cmap["relations"] = []
+    route_map.check_contexts(cmap)
+    problems = route_map.verify_references(ROOT, {"stages": []}, cmap)
+    if valid:
+        assert problems == []
+    else:
+        category = "class" if kind else "function"
+        assert problems == [f"context parts: src/dt_ai/parts/model.py has no top-level {category} {name}"]
+
+
 # ---------------------------------------------------------------- #1593 source-backed writer inventory (not a generic scanner)
 WRITERS_1593 = [
     ("body", "jobs/KPP1/scripts/build_kpp1.py:198", "live-bypass"),
