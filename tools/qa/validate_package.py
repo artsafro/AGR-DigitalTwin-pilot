@@ -709,6 +709,11 @@ def add_delivery_receipt(target, data, stages, notes):
         line = ''
         for path in paths:
             body = json.loads(path.read_text(encoding='utf-8'), object_pairs_hook=unique)
+            if (target.suffix.lower() == '.zip' and path.name == 'package_report.json'
+                    and isinstance(body, dict) and 'delivered' not in body):
+                notes.append('Historical package_report.json has no delivered field; '
+                             'it provides no delivery attestation.')
+                continue
             if not isinstance(body, dict) or 'delivered' not in body:
                 raise ValueError('missing delivered field in ' + str(path))
             actual = check_delivery_receipt(target, body['delivered'])
@@ -716,6 +721,11 @@ def add_delivery_receipt(target, data, stages, notes):
                 raise ValueError('delivered file changed during validation: ' + target.name)
             # Only the verified canonical line is shown, never stale report display text.
             line = actual['summary_ru'].splitlines()[-1]
+        if not line:
+            stages['V001'].findings.append(finding('not_run', 'delivered file',
+                'Historical package report without delivered; no delivery attestation',
+                'no delivery receipt supplied', [], data={'code': 'delivered_not_attested'}))
+            return
         notes.append(line)
         stages['V001'].findings.append(finding('pass', 'delivered file', line,
             'delivered SHA-256 and size match the report', [], data={'code': 'delivered_match'}))

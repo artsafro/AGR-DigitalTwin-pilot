@@ -178,9 +178,12 @@ def test_historical_package_report_is_not_delivery_attestation(tmp_path, has_del
               for f in s['findings'] if f['name'] == 'delivered file']
     assert len(checks) == 1
     if not has_delivery:
-        assert checks[0]['status'] == 'info'
+        assert checks[0]['status'] == 'not_run'
+        assert any('no delivery attestation' in note for note in body['notes'])
         assert checks[0]['data']['code'] == 'delivered_not_attested'
-        assert not any(f['status'] == 'fail' and f['data'].get('code') == 'delivered_mismatch'
+        assert all(f['status'] != 'fail' for s in body['stages'] if s['id'] == 'V001'
+                   for f in s['findings'])
+        assert not any(f['status'] == 'fail' and f.get('data', {}).get('code') == 'delivered_mismatch'
                        for s in body['stages'] for f in s['findings'])
         assert not any(note.startswith('delivered:') for note in body['notes'])
     else:
@@ -188,6 +191,45 @@ def test_historical_package_report_is_not_delivery_attestation(tmp_path, has_del
         assert checks[0]['data']['code'] == ('delivered_mismatch' if swapped else 'delivered_match')
         if swapped:
             assert result.returncode == 1
+
+
+@pytest.mark.parametrize('swapped', [False, True])
+def test_historical_report_does_not_override_explicit_sidecar(tmp_path, swapped):
+    import zipfile
+    target = tmp_path / '0000_Synthetic.zip'
+    with zipfile.ZipFile(target, 'w') as archive:
+        archive.writestr('0000_Synthetic_Ground.fbx', b'synthetic')
+        archive.comment = b'synthetic comment'
+    Path(str(target) + '.delivery.json').write_text(
+        json.dumps(pc.delivery_receipt(target)), encoding='utf-8')
+    (tmp_path / 'package_report.json').write_text('{"zip": "historical"}', encoding='utf-8')
+    if swapped:
+        data = target.read_bytes()
+        target.write_bytes(data[:-1] + bytes([data[-1] ^ 1]))
+    result = cli('validate', target, '--profile', 'npm', '--json')
+    body = json.loads(result.stdout)
+    checks = [f for s in body['stages'] for f in s['findings'] if f['name'] == 'delivered file']
+    assert len(checks) == 1
+    assert checks[0]['data']['code'] == ('delivered_mismatch' if swapped else 'delivered_match')
+    assert checks[0]['status'] == ('fail' if swapped else 'pass')
+
+
+@pytest.mark.parametrize('filename,payload', [
+    ('package_report.json', 'null'), ('package_report.json', '[]'),
+    ('package_report.json', '{'), ('package_report.json', '{"zip":1,"zip":2}'),
+    ('package_report.json', '{"delivered":null}'),
+    ('0000_Synthetic.zip.delivery.json', '{}')])
+def test_only_legacy_report_mapping_can_omit_delivered(tmp_path, filename, payload):
+    import zipfile
+    target = tmp_path / '0000_Synthetic.zip'
+    with zipfile.ZipFile(target, 'w') as archive:
+        archive.writestr('0000_Synthetic_Ground.fbx', b'synthetic')
+    (tmp_path / filename).write_text(payload, encoding='utf-8')
+    result = cli('validate', target, '--profile', 'npm', '--json')
+    assert result.returncode == 1, result.stderr
+    body = json.loads(result.stdout)
+    assert any(f['status'] == 'fail' and f.get('data', {}).get('code') == 'delivered_mismatch'
+               for s in body['stages'] for f in s['findings'])
 
 
 def test_pack_deliver_summary_keeps_archive_receipt(tmp_path):
