@@ -308,7 +308,7 @@ def test_window_reveal_is_not_missing_coplanar_body():
 @pytest.mark.parametrize('height, slope, expected', [
     (0.0, 0.0, 0), (.001, 0.0, 0), (.002, 0.0, 0),
     (math.nextafter(.002, math.inf), 0.0, 1), (.003, 0.0, 1),
-    (1.0, 0.0, 1), (0.0, .001, 1),
+    (1.0, 0.0, 1), (0.0, .001, 1), (0.0, -.001, 1), (0.0, 'warped', 1),
 ])
 def test_open_shell_base_is_an_exterior_boundary_not_a_body_hole(height, slope, expected):
     """PSU275 readback reduction: bottom rim's inner circuit is the shell's exterior opening.
@@ -328,7 +328,7 @@ def test_open_shell_base_is_an_exterior_boundary_not_a_body_hole(height, slope, 
         b.face([(*a, height), (*c, height), (*inner[j], height), (*inner[i], height)], (0, 0, -1))
     for v in b.verts:
         if .3 < v[0] < 3.7 and .3 < v[1] < 3.7:
-            v[2] = height + slope*v[0]
+            v[2] = height + (.001 if v[0] < 1 and v[1] < 1 else 0) if slope == 'warped' else height + slope*v[0]
     result = mq.score([b.obj()])
     assert result['totals']['body_holes'] == expected
     if expected:

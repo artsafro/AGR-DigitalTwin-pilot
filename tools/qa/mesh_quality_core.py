@@ -63,7 +63,10 @@ adjacent coplanar body faces is an interior loop, not an exterior contour. A rev
 faces are not a missing coplanar surface. Complete projected glass coverage exempts the loop (including
 tiled/recessed panes); glass elsewhere or partial coverage does not. Ambiguous boundary graphs and
 nonplanar circuits are not classified by this diagnostic. Disconnected outer-contour slots are not
-holes; no distance/silhouette policy is inferred. ``body_holes`` / ``body_hole_edges`` report unfilled
+holes; no distance/silhouette policy is inferred. Per the #1631 scope decision, a horizontal
+loop in one plane (1e-9 m numerical slack) within 0.002 m of that body's minimum Z is an allowed
+open shell bottom, independent of the near-seam parameter. Detached parts do not set its base.
+``body_holes`` / ``body_hole_edges`` report unfilled
 loops. Any measured unfilled loop floors ``one_mesh_share`` and ``weld_share`` PENALTIES to 1 (full
 welded-body plus crease cost), preserving raw components and all weights/thresholds. Thus moving a
 post arbitrarily far from a true hole cannot turn that hole into a clean inset score. This is a
@@ -381,6 +384,7 @@ def _body_holes(verts, faces, edges, elem_of, body, normals, p, in_zone, glass_f
             if len(edges[tuple(sorted((a, b)))]) == 1:
                 outgoing.setdefault(a, []).append((b, fi))
                 incoming.setdefault(b, []).append(a)
+    body_min_z = min(verts[v][2] for fi, face in enumerate(faces) if elem_of[fi] == body for v in face)
     seen, holes = set(), []
     flat_cos = math.cos(math.radians(p['flat_deg']))
     for start in outgoing:
@@ -395,6 +399,13 @@ def _body_holes(verts, faces, edges, elem_of, body, normals, p, in_zone, glass_f
         if v != start or len(circuit) < 3 or not any(in_zone[fi] for fi in owners):
             continue
         loop = [verts[i] for i in circuit]
+        # Approved #1631 scope: NPM/OKS shells may have an open bottom. Use
+        # this BODY's base, not detached parts, and a horizontal plane (not a
+        # sloped circuit merely contained in the 2 mm base band). Keep this
+        # physical exception independent of the configurable near-seam gap.
+        if (max(v[2] for v in loop) - min(v[2] for v in loop) <= 1e-9
+                and all(abs(v[2] - body_min_z) <= 0.002 for v in loop)):
+            continue
         nv = _newell(loop)
         length = _norm(nv)
         if length == 0:
