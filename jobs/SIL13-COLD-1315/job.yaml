@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-explicit-missing-canopy-UCX-progress-v025
+run_id: cold-1315-NPM-Flora-regulatory-repair-v026
 synthetic: false
 path: deviation
 inputs: &id001
@@ -188,6 +188,11 @@ deviations:
   what_was_tried: Measured actual base-onlyskirt1.0009999275m and6304.132731m2 hidden artificialunderlay; then independent closed/xViewclean SYNTHETIC connected-step oracle returns6mm instead of1.001m outerperimeter. Main skirtfunctions ASTequal onorigin/main a98bc891.
   new_tool_written: Separate late diagnostic drivers/test sealed under v025/late-diagnostics; main163file seal unchanged. No sharedchecker edit or modelpermission assumed.
   result: Both actualroutesREJECTED/currentmodelsbyteunchanged. Synthetic1RED archived; independent read-onlytriage t_66104c70 created/readback, no GitHubissue/PR or dependencyedge. See GROUND-CONNECTIVITY-PROBE-v025.md; current technicalFAILs notwaived and no newhumanquestion.
+- gate: operations
+  what_failed: OriginalNPMFlora515regulatorycrossings; selectiveknife41xViewfaces25vertices rejected. Doublesclean signed/buried candidate exports3float32AREA-onlypairs; burial and single-edge bounds correctly refuse them. VPMfresh29615regulatorycrossings, exactknife72faces2830vertices/timeout420s NOTadopted.
+  what_was_tried: Complete Ground partitions remove42fullyburiedfaces and retain23others;3numericalslivers certified by complete retained-edge interval<=3.998um. ActualNPM176094raw=native/Flora71246; raw/nativeFlora AND diagnosticwholejoin public0/0/0/0 and regulatory0. All4582census/4535support>=78.225percent; Ground/MAF arrays/UV/materials exact,2original2048FloraPNGembeddedbyteidentical. D339sharedowner148240actualUCXpairs OBSERVE, no geometrychange.
+  new_tool_written: 26job-local diagnostic drivers/tests527literal lines sealed in evidence-v026.json; no sharedmodel/checker/library edits. main merged b7161fd2; existing own decision rows reordered and URLs named-linked, no new D-id or rule change.
+  result: Adopt NPM technical checkpoint ONLY; VPMv025/545UCX unchanged. Both post-main publicvalidators exit1; archive_diff scene-metadataFAIL remains OPEN, no showing/packing or finaldelivery claim. VPM/Ground/maps/UV/manualgatesworker-owned; wideUCXgaps report-only underD339, no newhumanquestion.
 gates:
   inputs:
     status: review
@@ -202,32 +207,32 @@ gates:
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    note: D340applied ONLYwrongcandidate removal;37physicalMAF38census4582plants. WholeMAFregulatory0; diagnosticjoinedNPMclean/VPM9faces49pairsFAIL; Flora515. Actual545UCX6376tris/139widegapsOPEN. AllFlora/edge-expansiontrialsNOTadopted; remainingtechnicalFAILsworker-owned, no newquestion.
+    note: v026NPMFlora515to0regulatory;actualraw/nativeFlora+wholejoinedpublic0/0/0/0.37physicalMAF38census4582plants;4535hedgesupport>=78.225percent. VPMactualFlora29615regulatory/9wholepublicfaces49pairsFAIL; VPMknifeNOTadopted. D339all148240UCXpairsmeasured/report-only; archive-metadata/Ground/maps/UVFAILsremainworker-owned, no newquestion.
     evidence: &id002
     - &id003
-      path: jobs/SIL13-COLD-1315/source-wide-summary-v025.json
-      sha256: b30d75f46f85b5321253613e05ce15eb6b250516ce1ddcd3e110466426935a61
+      path: jobs/SIL13-COLD-1315/source-wide-summary-v026.json
+      sha256: 846f83dc3272a205e19721abb983a6a3dab99ee8fe0dd45bb17a28ef1f2ef735
     - &id004
-      path: jobs/SIL13-COLD-1315/evidence-v025.json
-      sha256: 97831618291ca88ee21a3a7861802f971e8e033038f63d2fd9e680bcf764bfab
+      path: jobs/SIL13-COLD-1315/evidence-v026.json
+      sha256: b4c867258361f9eef93ff3d2fbe8b25add5d771a830de4fabee3795d93977654
     - path: jobs/SIL13-COLD-1315/decision-receipt-v025.json
       sha256: de68b637e54430b067ab1c170051316cf33e265a51b1e62c16ce732a23e91d19
     - path: jobs/SIL13-COLD-1315/missing-types-v025.json
       sha256: 2fecdacca40ee64c3f29a48461304e7d4de285479ab066c914a4779631b427b8
   budgets:
     status: review
-    note: Actual173990NPM300120VPMraw=native;37physicalMAF38census4582plants. Ground26378/58896EXACT, D335full4.975942mmproofapplicable. NEWactual545UCX6376tris/complete57226triangle89.936mmproof;139widegaps/skirt/maps/UVremainOPEN. ActualDXFarea9568.799640m2 selectsVPMtriangleband; no waiver.
+    note: Actual176094NPM300120VPMraw=native;37physicalMAF38census4582plants. Ground26378/58896EXACT; D335full4.975942mmproofapplicable. Unchanged545UCX6376tris/complete57226triangle89.936mmproof; D339widegapsOBSERVEreport-only. Skirt/master/maps/UVremainOPEN; actualDXFarea9568.799640m2 selectsVPMband.
     evidence: *id002
   export_readback:
     status: review
-    note: Resume ONLY v025/site-missing-r1/NPM andv025/site-ucx-wide-r1/VPM. Actual173990/300120raw=native; retainedrenderarrays/UV/materials/smoothingEXACT. WholeMAFregulatory0; diagnosticwholejoinNPM0/0/0/0,VPM9faces49pairsFAIL; Flora515. Actual545UCXraw/nativepublicclean;536unchangedoriginalobjectsEXACT. Both source-boundnativevalidators exit1, area/holePASS does not hide skirt/maps/UV/manualFAILs.
+    note: Resume ONLY v026/site-flora-r3/NPM andv025/site-ucx-wide-r1/VPM. Actual176094/300120raw=native; NPMFlora71246/regulatory0 and raw/nativewholejoin0/0/0/0. Ground/MAFgeometry+UV/materialsexact;VPMbyteunchanged. Sourcebbox<=7.630um/4535support>=78.225percent/2originalembeddedmapsbyteidentical. Actualarchive_diffdeclaredFlorageometryUVonlybutscene-metadataFAIL; no showing/packingwaiver. Bothpost-mainvalidators exit1.
     evidence: *id002
   report:
     status: review
-    note: v025564affectedpassed5historicaldeselected120.91s. Omission4REDto5GREEN; predecessorUCXprogress1RED175wide to2GREEN139wide/fullcoverage; fullbandREDretained. ThreeFloraroutesNOTadopted.163Drivefiles250748533bytessealed,22originalhashesequal. D340applied, no newhumanquestion. Full suite deferred(rule68).
+    note: v026828affectedpassed5historicaldeselected293.79s;repo_guardsGREENafterownedregistrymerge/URLnormalization. Source515REDtoactualNPMregulatory0;4raw/nativeFlora/wholepubliccommandsGREEN.174Drivefiles234846315bytessealed/22originalhashesequal. VPMknife/timeout/metadataFAILexplicit, no newhumanquestion. Full suite deferred(rule68).
     evidence:
-    - path: jobs/SIL13-COLD-1315/CONTINUATION-v025.md
-      sha256: e79da6198a27a93cff47c6ef4cf76e86b6e33ef1b614cee0bb4c1cb92e2d0668
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v026.md
+      sha256: 4c2fc0a8a795398b80e2bdde24fc978d162f7b7bb28a9d5015c347755643f9d9
     - *id003
     - *id004
     - path: jobs/SIL13-COLD-1315/decision-aliases-v014-r2.json
@@ -238,5 +243,5 @@ gates:
     evidence: *id002
   checker:
     status: missing
-    note: CompletefinalSINTEZnotrun. Source-boundNPM2pass3fail1review4not_run,VPM3pass4fail1review7not_run,bothexit1. ActualDXFarea9568.799640m2/Groundfilter/holeoperands nowexercised; areaerror-0.020391m2/holecoverage0.097313m2PASS. Skirt/Flora/maps/UV/manualchecksremainFAIL/review/not_run; no deliveryPASS or newuserquestion.
+    note: CompletefinalSINTEZnotrun. Freshpost-main source-boundNPMmachine1pass3fail1review3not_run,VPM3pass4fail1review4not_run,bothexit1. NPMFlora/wholepubliccleanisnotVPM/master/skirt/maps/UV/manualPASS. D339UCXgapbandsOBSERVEreportedwithoutrefusalbywidesize;rawvalidatorfindingsretained. No deliveryPASS or newuserquestion.
     evidence: []

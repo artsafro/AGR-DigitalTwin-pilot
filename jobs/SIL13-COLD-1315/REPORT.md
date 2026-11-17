@@ -1,6 +1,23 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v025 D340 applied; NPM173990/VPM300120 raw=native;37physical
+Current status: **v026 NPM Flora repaired;176094NPM/300120VPM raw=native;
+37physical MAF+38census/4582plants; overall NOT delivered**. See
+[CONTINUATION-v026.md](CONTINUATION-v026.md) and
+[source-wide-summary-v026.json](source-wide-summary-v026.json).
+NPM actual raw/native Flora regulatory515→0; whole-render diagnostic xView0/0/0/0.
+Ground/MAF arrays and their UV/material/smoothing EXACT; VPM byte-unchanged.
+All4535hedge constituents retain>=78.224994% connected support;49group bbox delta<=7.630µm.
+Two original2048Flora PNGs remain embedded byte-identically. This is a technical
+checkpoint, not appearance/material acceptance. Actual VPM Flora freshly measures29615
+regulatory crossings; its new knife trial REJECTED/72faces2830vertices/timeout no verdict.
+D339 shared-owner all-pair UCX OBSERVE:148240/148240 accounted,0not_measured;
+wide gaps report-only, no further gap-closing geometry. Both fresh post-main-merge
+validators exit1; declared mesh changes onlyFlora geometry/UV, but archive_diff
+scene-metadataFAIL remains OPEN (no showing/packing waiver).828affectedpass5historical
+deselected; repo_guards: GREEN.174Drivefiles234846315bytes+22originalhashes sealed.
+No new human question; D340/old gates CLOSED. Full suite: deferred to merge batch (rule68).
+
+Historical status: **v025 D340 applied; NPM173990/VPM300120 raw=native;37physical
 MAF+38census,4582plants; wholeQA STILL FAIL, NOT delivered**. See
 [CONTINUATION-v025.md](CONTINUATION-v025.md) and
 [source-wide-summary-v025.json](source-wide-summary-v025.json).

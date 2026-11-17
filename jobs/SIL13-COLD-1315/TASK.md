@@ -8,8 +8,10 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 
 - Whole projected Silikatny site, not KPP1; one new Ground master for NPM and VPM.
 - Ground coverings/materials from the current PZU, relief from authoritative design marks.
-- VPM Ground UCX only: closed convex pieces, gap 2–10 mm, model-to-UCX deviation <=100 mm,
-  triangle budget D012. No MAF/Flora/lighting collision and no NPM UCX.
+- VPM Ground UCX only: closed convex pieces, model-to-UCX deviation <=100 mm,
+  triangle budget D012. Gap2–10mm remains a reported band; during [D339]'s OBSERVE
+  week report every pair by band, do not refuse by wide gap size. Same-family
+  overlaps/touching remain unwaived. No MAF/Flora/lighting collision and no NPM UCX.
 - Place matching MAF from `G:/Мой диск/AGR-assets/maf`, by article/dimensions and source plan.
   [D284] permits type/size CANDIDATES where article identity is unconfirmed; never label
   them matched, list every choice for the full-site picture and preserve the libraries.
@@ -19,6 +21,21 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
   delete nothing. Do not smooth disputed small relief steps (C37).
 - Read back exports, run area validators, report per-area reproduction and historical comparison.
   No passed=true with an incomplete mandatory/manual gate.
+
+## v026 current continuation — supersedes all resume paths below
+
+[CONTINUATION-v026.md](CONTINUATION-v026.md): use ONLY NPMv026/site-flora-r3 and
+VPMv025/site-ucx-wide-r1. Actual176094/300120raw=native; NPMFlora515→0regulatory
+and raw/nativeFlora+whole-render public0/0/0/0.37physicalMAF38census4582plants,
+Ground/MAFgeometry+UV/materials exact;4535actualcrown supports>=78.225percent.
+VPMbyteunchanged; freshVPMFlora29615regulatorycrossings, trialknifeFAIL/NOTadopted.
+D339sharedowner148240/148240actualUCXpairbands OBSERVE; wide gaps not hardfail.
+Archive-diff scene-metadataFAIL and both post-main publicvalidators exit1 remain
+OPEN; no showing/packing, material/finalvisual/SINTEZ or delivery approval.
+Main merged b7161fd2; keep rule contents/IDs and normalize owned row/source links.
+828affectedpass5historicaldeselected; repo_guards: GREEN. No new human question,
+D340/old gates CLOSED; next work follows current skeleton owners, no pipeline copy.
+Full suite: deferred to merge batch (rule68).
 
 ## Gate 1 / scope authority
 
