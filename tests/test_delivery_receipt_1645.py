@@ -80,6 +80,32 @@ def test_max_publish_records_final_scene(review, tmp_path):
     assert 'delivered_match' in plain.stdout
 
 
+def test_max_publish_fresh_isolated_process(tmp_path):
+    """No pytest/root pythonpath may be needed to find the shared packaging owner."""
+    script = '''
+import json, runpy, sys
+from datetime import date
+from pathlib import Path
+root, repo = map(Path, sys.argv[1:])
+source = root / 'synthetic.max'
+source.write_bytes(b'synthetic source')
+common = runpy.run_path(str(repo / 'tools/review/common.py'))
+class Adapter:
+    def build(self, source, output, preview):
+        output.write_bytes(b'synthetic published Max')
+        preview.write_bytes(b'synthetic preview')
+        return {'version': 'synthetic', 'cameras': 1, 'materials': 1}
+common['publish'](task='1645', slug='synthetic', source=source, what='synthetic fixture', pngs=[],
+                  review_root=root / 'review', adapter=Adapter(), today=date(2026, 11, 17))
+'''
+    result = subprocess.run([sys.executable, '-I', '-c', script, str(tmp_path), str(ROOT)],
+                            cwd=tmp_path, capture_output=True, encoding='utf-8')
+    assert result.returncode == 0, result.stderr
+    scene = next((tmp_path / 'review').rglob('*.max'))
+    report = json.loads(Path(str(scene) + '.delivery.json').read_text(encoding='utf-8'))
+    assert_receipt(report, scene)
+
+
 def test_stale_validator_receipt_cannot_publish_ready(tmp_path):
     from adapters.max.agr_tools import edit_core
     from tools.qa import validate_package as vp

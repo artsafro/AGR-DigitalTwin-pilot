@@ -107,8 +107,15 @@ def publish(*, task, slug, source, what, pngs, review_root, adapter, today, item
                 os.replace(preview_tmp, preview)
             for src, dest in zip(png_paths, copied):
                 shutil.copyfile(src, dest)
-            from adapters.max.agr_tools.package_core import delivery_receipt
-            receipt = delivery_receipt(scene)
+            # The CLI can run outside the checkout / without pytest's root pythonpath.
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                'review_package_core', REPO / 'adapters/max/agr_tools/package_core.py')
+            if spec is None or spec.loader is None:
+                raise ReviewError('shared package_core owner unavailable')
+            owner = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(owner)
+            receipt = owner.delivery_receipt(scene)
             with receipt_path.open('x', encoding='utf-8') as fh:
                 json.dump(receipt, fh, ensure_ascii=False, indent=2)
             readme.write_text(
