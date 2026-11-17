@@ -78,6 +78,90 @@ import pytest
 from PIL import Image
 
 
+import subprocess
+import sys
+import os
+
+
+@pytest.mark.parametrize('case', ['empty', 'partial', 'nan', 'inf', 'unmapped', 'duplicate', 'unsupported'])
+def test_fresh_cli_invalid_inputs_preserve_bytes(tmp_path, case):
+    from tools.derive import npm_ids as cmd
+    atlas = tmp_path/'atlas.png'; Image.new('RGB', (64,64),'red').save(atlas)
+    doc = synthetic_document(atlas)
+    if case == 'empty': doc = {}
+    elif case == 'partial': doc['objects'][0]['tri_polygons'] = []
+    elif case in ('nan','inf'): doc['objects'][0]['uvs'][0][0] = float(case)
+    elif case == 'unmapped': doc['objects'][0]['polygons'][0]['slot'] = 9
+    elif case == 'duplicate': doc['objects'].append(copy.deepcopy(doc['objects'][0]))
+    source = tmp_path/('input.txt' if case == 'unsupported' else 'input.json')
+    source.write_text(json.dumps(doc))
+    before = (source.read_bytes(), atlas.read_bytes())
+    run = subprocess.run([sys.executable, '-m', 'dt_ai.cli.agr', 'npm-ids', str(source), str(tmp_path/'new')],
+                         cwd=tmp_path, capture_output=True, text=True)
+    assert run.returncode != 0, (run.stdout,run.stderr)
+    assert not (tmp_path/'new').exists()
+    assert (source.read_bytes(),atlas.read_bytes()) == before
+
+
+def test_polygon_triangle_uv_disagreement_rejected_before_segmentation(tmp_path, monkeypatch):
+    from tools.derive import npm_ids as cmd
+    doc=synthetic_document(tmp_path/'absent.png')
+    doc['objects'][0]['uvs'][0]=[.15,.15]
+    monkeypatch.setattr(cmd,'recover',lambda *a,**k: pytest.fail('inconsistent UV protocol reached segmentation'))
+    with pytest.raises(ValueError,match='UV'):
+        cmd.process_document(doc)
+
+
+def test_fresh_cli_positive_stale_output_and_path_aliases(tmp_path):
+    atlas=tmp_path/'atlas.png'; Image.new('RGB',(64,64),'red').save(atlas)
+    source=tmp_path/'input.json'; source.write_text(json.dumps(synthetic_document(atlas)))
+    command=[sys.executable,'-m','dt_ai.cli.agr','npm-ids',str(source)]
+    output=tmp_path/'new'
+    run=subprocess.run([*command,str(output)],cwd=tmp_path,capture_output=True,text=True)
+    assert run.returncode == 0,(run.stdout,run.stderr)
+    receipt=(output/'id_table.json').read_bytes()
+    assert json.loads(receipt)['status']=='ok'
+    assert json.loads((output/'mesh_ids.json').read_text())['objects'][0]['mat_ids']==[1]
+    for dest in [output,source,tmp_path/'./input.json']:
+        run=subprocess.run([*command,str(dest)],cwd=tmp_path,capture_output=True,text=True)
+        assert run.returncode == 2
+        assert (output/'id_table.json').read_bytes()==receipt
+    alias=tmp_path/'alias.json'; os.link(source,alias)
+    assert subprocess.run([*command,str(alias)],cwd=tmp_path,capture_output=True).returncode == 2
+
+
+def test_generated_face_accounting_and_repeat_reset(tmp_path):
+    from tools.library.npm_ids import recover
+    atlas=tmp_path/'atlas.png'; Image.new('RGB',(64,64),'red').save(atlas)
+    faces=[]
+    for i in range(1,31):
+        x=i/64
+        faces.append([[x,.2],[x+.01,.2],[x,.21]])
+    faces.extend([[[1.1,.2],[1.2,.2],[1.1,.3]],[[.9,.2],[1.1,.2],[.9,.3]]])
+    first=recover(atlas,faces)
+    buckets=[{i for i,mid in enumerate(first['mat_ids']) if mid}, *[set(first[k]) for k in ('straddling','unassigned','ambiguous')]]
+    assert sum(map(len,buckets)) == len(set.union(*buckets)) == len(faces)
+    assert first == recover(atlas,faces)
+    assert recover(atlas,faces[:30])['status'] == 'ok'
+
+
+def test_competing_publisher_cannot_clobber_inputs(tmp_path,monkeypatch):
+    from tools.derive import npm_ids as cmd
+    atlas=tmp_path/'atlas.png'; Image.new('RGB',(64,64),'red').save(atlas)
+    source=tmp_path/'input.json'; source.write_text(json.dumps(synthetic_document(atlas)))
+    original=source.read_bytes(); output=tmp_path/'new'
+    real=Path.mkdir
+    def racing_mkdir(self,*args,**kwargs):
+        result=real(self,*args,**kwargs)
+        if self == output:
+            os.link(source,output/'mesh_ids.json')
+        return result
+    monkeypatch.setattr(Path,'mkdir',racing_mkdir)
+    assert cmd.main([str(source),str(output)]) == 2
+    assert source.read_bytes()==original
+    assert not (output/'id_table.json').exists()
+
+
 def test_scenario_has_shared_stage_chain():
     root = Path(__file__).resolve().parents[1]
     skeletons = json.loads((root/'docs/agents/skeletons.json').read_text(encoding='utf-8'))
