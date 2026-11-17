@@ -645,6 +645,50 @@ def test_mixed_profile_records_bind_only_npm(tmp_path, monkeypatch, records, mod
     assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
 
 
+@pytest.mark.parametrize('records', ['sidecars', 'aggregate'])
+@pytest.mark.parametrize('mode', ['clean', 'foreign', 'missing'])
+def test_npm_binding_scopes_other_address_records(tmp_path, records, mode):
+    """Synthetic r2 regression: all exporters may record decoys, not just this archive."""
+    from adapters.max.agr_tools.export_meta import record_export
+    d = acceptance_folder(tmp_path)
+    clean = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    baseline = Path(clean['plan']['run_folder'])
+    expected = {p.name: p.read_bytes() for p in baseline.glob('*.zip')}
+    # Include an overlapping address and another territory code; prefix matching
+    # alone or selecting the existing plan members would hide a missing claim.
+    for name in ['0123_X_Annex_01.fbx', '9999_Other_01.fbx']:
+        (d / name).write_bytes(FBX)
+    all_records = []
+    for fbx in d.glob('*.fbx'):
+        sidecar = record_export(fbx, source='synthetic all-sidecars fixture')
+        all_records.append(json.loads(Path(sidecar).read_text(encoding='utf-8')))
+    if records == 'aggregate':
+        meta = json.loads((tmp_path / 'export_meta.json').read_text(encoding='utf-8'))
+        meta['exported_files'] = [n for rec in all_records for n in rec['exported_files']]
+        meta['exported_sha256'] = {n: sha for rec in all_records for n, sha in rec['exported_sha256'].items()}
+        (d / 'export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    else:
+        (tmp_path / 'export_meta.json').unlink()
+    if mode == 'foreign':
+        (d / '0123_X_03.fbx').write_bytes(b'synthetic foreign')
+    elif mode == 'missing':
+        (d / '0123_X_02.fbx').unlink()
+    rep = pc.zip_apply(ec, pc.zip_preview(ec, d))
+    run = Path(rep['plan']['run_folder'])
+    assert sorted(p.name for p in run.glob('*.zip')) == sorted(
+        ['SM_X.zip', 'SM_X_Ground.zip'] + (['0123_X.zip'] if mode == 'clean' else []))
+    for target in run.glob('*.zip'):
+        assert target.read_bytes() == expected[target.name]
+    error = (run / pc.MARK_FAIL).read_text(encoding='utf-8')
+    if mode != 'clean':
+        name = '0123_X_03.fbx' if mode == 'foreign' else '0123_X_02.fbx'
+        assert name in error and ('not recorded' if mode == 'foreign' else 'missing from the package') in error
+    assert '0123_Other_01.fbx: recorded' not in error
+    assert '0123_X_Annex_01.fbx: recorded' not in error
+    assert '9999_Other_01.fbx: recorded' not in error
+    assert not list(run.glob('*.partial')) and not (run / pc.MARK_OK).exists()
+
+
 @pytest.mark.parametrize('failure', ['loader', 'malformed'])
 def test_npm_metadata_errors_are_archive_problems(tmp_path, monkeypatch, failure):
     d = acceptance_folder(tmp_path)
