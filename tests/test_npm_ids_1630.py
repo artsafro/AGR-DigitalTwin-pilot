@@ -38,3 +38,25 @@ def test_udim_two_tiles_stops_with_question():
     assert '1' in gate['question'] and 'ID' in gate['question']
     assert all(x in gate['question'] for x in ['(a)', '(b)', '(c)', '(d)'])
     assert gate['ids'][0]['fits'] is False
+
+
+def test_blocked_gate_never_launches_native_apply(tmp_path, monkeypatch):
+    from tools.derive import npm_ids as command
+    atlas = tmp_path / 'synthetic.png'
+    Image.new('RGB', (64, 64), 'red').save(atlas)
+    source = tmp_path / 'synthetic.fbx'
+    source.write_bytes(b'synthetic; native reader replaced only at subprocess seam')
+    doc = {'objects': [{'name': 'synthetic', 'verts': [[0, 0, 0], [16, 0, 0], [0, 8, 0]],
+                       'local': [[0, 0, 0], [16, 0, 0], [0, 8, 0]],
+                       'uvs': [[0, 0], [1, 0], [0, 1]], 'tris': [[0, 1, 2]],
+                       'uv_tris': [[0, 1, 2]], 'tri_polygons': [0],
+                       'polygons': [{'uv': [[0, 0], [1, 0], [0, 1]], 'slot': 0}],
+                       'atlases': {'0': str(atlas)}}]}
+    calls = []
+    def native(script, args, **kwargs):
+        calls.append(args[0])
+        return doc
+    monkeypatch.setattr(command, 'run_blender', native)
+    assert command.main([str(source), str(tmp_path / 'new')]) == 1
+    assert calls == ['extract']
+    assert not (tmp_path / 'new' / 'npm_ids.blend').exists()
