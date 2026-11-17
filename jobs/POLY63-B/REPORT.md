@@ -1,5 +1,12 @@
 # Tower 63B — polygon #1619, stage 1
 
+## v005 delta after Artem's rejection of v004
+
+- Fixed 470 unplanned free radial edges: 408 at mixed-depth reveal junctions and 62 where the belt shoulders passed the jamb ends without sharing an edge. Curtain slots now share the shallowest source depth over each uninterrupted run; window heads, sills and jambs share the shallower incident depth at a common corner, tapering only the rear of the reveal. The front contours and opening cells are unchanged. At +23.55/+26.70/+39.30/+42.45 m the shoulder mesh is notched to the existing recess and sewn to the reveal sides; the back lip remains open, with no fill.
+- Fresh Blender 4.4 FBX, metre coordinates: **1 edge-connected shell** (`BODY_Stage1_001`, 9,525 faces), **0 disconnected fragments**, **0 unexpected boundary edges**, **0 missing planned boundary edges**, **0 split vertex fans**, **0 winding conflicts**, **0 self-intersection candidates at 2 mm**. All 14 floor join heights have shared indexed edges. The only one-use edges are 2,517 rear reveal edges, 62 belt aperture lip edges, and 321 edges along the two deliberate stage extents at +4.65 and +51.90 m. Neither a closed solid nor a final VPM; roof, base, windows and baskets remain outside Stage 1.
+- #1616 typical-band score **89.050**: 8,491 quads, zero n-gons or slivers. The 1,034 shoulder triangles are audited separately. The 0.60 m training repeat is unchanged; five tangencies concealed by openings are reconstructed from the planned station projected onto the measured native chord line, not reported as native vertices. Finish slots and bounds are unchanged; the shoulder retessellation changes geometry, UVs and the per-face material-index inventory.
+- Same-camera before/after sheet (four close-ups), readback, version diff and seal: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v005/`. Blender review copies: `C:/x/review-63B/63B_Stage1_v005.fbx` and `.blend`. No auto-open. Awaiting Artem's Blender review.
+
 ## v004 review candidate
 
 - D337/BM-07: **0.60 m is an assumed training step, not measured from a facade sheet**. The fitted circle and tangent locations are retained. Each complete repeat starts at an integer U and occupies exactly 0.60 m along the developed chords; subchords limit sagitta. The terminal remainder closes to the original tangent without rescaling the rounded UVs. The same-ID facade chart continues through both tangencies; only straight stretches between two anchors absorb a phase adjustment. Reveal and shoulder charts are separate; this is a repeating training UV, not the production UDIM atlas.
@@ -20,7 +27,7 @@ Run from the repository root with `DESIGN` set to the v002 evidence `source_sect
 
 ```bash
 uv run python -m jobs.POLY63-B.hooks.body_grid "$DESIGN" "$OUT/model.json"
-uv run python -c "from pathlib import Path; from dt_ai.core.blender_runner import run_blender; import sys; p=Path(sys.argv[1]); b='C:/Program Files/Blender Foundation/Blender 4.4/blender.exe'; s='63B_Stage1_v004'; f=p/(s+'.fbx'); run_blender('jobs/POLY63-B/hooks/export_review.py',(p/'model.json',p,s),executable=b,outputs=(f,p/(s+'.blend'),p/'round.png'),log_path=p/'export.log'); run_blender('tools/blender/fbx_readback.py',(f,p/'readback.json'),executable=b,output_json=p/'readback.json',log_path=p/'readback.log')" "$OUT"
+uv run python -c "from pathlib import Path; from dt_ai.core.blender_runner import run_blender; import sys; p=Path(sys.argv[1]); b='C:/Program Files/Blender Foundation/Blender 4.4/blender.exe'; s='63B_Stage1_v005'; f=p/(s+'.fbx'); run_blender('jobs/POLY63-B/hooks/export_review.py',(p/'model.json',p,s),executable=b,outputs=(f,p/(s+'.blend'),p/'round.png'),log_path=p/'export.log'); run_blender('tools/blender/fbx_readback.py',(f,p/'readback.json'),executable=b,output_json=p/'readback.json',log_path=p/'readback.log')" "$OUT"
 uv run python -m jobs.POLY63-B.hooks.check_readback "$OUT/model.json" "$OUT/readback.json" "$DESIGN" "$OUT/orientation.json" "$OUT/band.json"
 uv run python tools/qa/mesh_quality_score.py "$OUT/band.json" --out "$OUT/score.json"
 ```

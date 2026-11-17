@@ -47,6 +47,63 @@ def registration_failures(arcs, phase, step):
         + (['same-ID facade edge phase'] if phase > PHASE_TOL else []))
 
 
+def project_arc_station(point, samples):
+    # A curtain can remove the tangency vertex. Use the planned station only
+    # along a native chord line; disclose this reconstruction in the receipt.
+    a,b = max((xy for xy,_ in samples), key=lambda xy: np.linalg.norm(xy[1]-xy[0]))
+    u = (b-a)/np.linalg.norm(b-a)
+    projected = a+((point-a)@u)*u
+    if np.linalg.norm(point-projected)>METRIC_TOL:
+        raise ValueError(f'Tangency off native chord: {point}')
+    return projected
+
+
+def shell_audit(vertices, faces, labels, allowed):
+    """Count shells and free edges on native indices, never welded positions."""
+    edges=defaultdict(list); incident=defaultdict(set); fan_links=defaultdict(list)
+    adjacency=[set() for _ in faces]
+    for i,f in enumerate(faces):
+        for a,b in zip(f,f[1:]+f[:1]):
+            edges[tuple(sorted((a,b)))].append(i)
+            incident[a].add(i)
+    unexpected=[]; observed=Counter(); reasons=Counter(); rim_degree=Counter()
+    for (a,b),owners in edges.items():
+        for i in owners: adjacency[i].update(owners)
+        if len(owners)==2:
+            fan_links[a].append(owners); fan_links[b].append(owners)
+        if len(owners)!=1: continue
+        rim_degree.update((a,b))
+        key=tuple(sorted((labels[a],labels[b])))
+        if key not in allowed or observed[key]:
+            unexpected.append(dict(face=owners[0], vertices=[a,b], edge=vertices[[a,b]].tolist()))
+        else:
+            observed[key]+=1; reasons[allowed[key]]+=1
+
+    def walk(todo, neighbors):
+        while todo:
+            stack=[min(todo)]; todo.remove(stack[0]); component=[]
+            while stack:
+                i=stack.pop(); component.append(i)
+                near=neighbors[i]&todo; todo.difference_update(near); stack.extend(near)
+            yield component
+
+    bad_fans=[]
+    for v,attached in incident.items():
+        linked={i:set() for i in attached}
+        for a,b in fan_links[v]: linked[a].add(b); linked[b].add(a)
+        if rim_degree[v] not in (0,2) or len(list(walk(attached.copy(),linked)))!=1:
+            bad_fans.append(v)
+    shells=[]
+    for ids in walk(set(range(len(faces))),adjacency):
+        points=vertices[sorted({v for i in ids for v in faces[i]})]
+        shells.append(dict(first_face=min(ids), faces=len(ids), bounds_m=[points.min(0).tolist(),points.max(0).tolist()],
+                           reason='single typical body' if len(ids)==len(faces) else 'unjustified fragment'))
+    return dict(shell_count=len(shells), shells=shells, bad_vertex_fans=sorted(bad_fans),
+                unexpected_boundary_edges=unexpected, open_boundary_edges_outside_openings=len(unexpected),
+                missing_boundary_edges=[[*key,allowed[key]] for key in sorted(allowed.keys()-observed.keys())],
+                planned_boundary_counts=reasons)
+
+
 def check(master, readback, design, step):
     (obj,) = readback['meshes']
     assert readback['readback_ok'] and not readback['other_objects']
@@ -62,6 +119,7 @@ def check(master, readback, design, step):
     reversed_faces=[]; inward=[]; positions=0.; facet=[]; mats=[]; nonmanifold=Counter(); directions=Counter()
     palette=['01_Ventfacade_regular','02_Render_return','03_Ventfacade_band']
     owner={}
+    labels={}
     for i,(f,k,role) in enumerate(zip(g['polygons'],master['faces'],roles,strict=True)):
         a,b=got[f],want[k]; parity=min(np.abs(np.roll(a,t,axis=0)-b).max() for t in range(len(a)))
         flip=min(np.abs(np.roll(a[::-1],t,axis=0)-b).max() for t in range(len(a)))
@@ -70,6 +128,9 @@ def check(master, readback, design, step):
         if 'polygon_uv' in master:
             order=np.arange(len(a))[::-1] if flip<parity else np.arange(len(a))
             order=min((np.roll(order,t) for t in range(len(a))),key=lambda ix:np.abs(a[ix]-b).max())
+            for corner,label in zip(order,k,strict=True):
+                if labels.setdefault(f[corner],label)!=label:
+                    raise ValueError('Native vertex maps to conflicting planned vertices')
             uv=np.asarray(g['polygon_uv'][i])[order]
             uv_error=max(uv_error,float(np.abs(uv-np.asarray(master['polygon_uv'][i])).max()))
             arc=master['arc_faces'].get(str(i))
@@ -108,8 +169,7 @@ def check(master, readback, design, step):
             shoulders[str(next((z for z in transitions if at(z)), 'unexpected elevation'))]+=1
     phase_checks=[phase_delta(*pairs) for pairs in facade_edges.values() if len(pairs)==2]
     registration={}
-    # A tangent in an opening may be represented by the sill/head mouth only.
-    # Planned positions identify stations; distances come from the native mesh.
+    reconstructed={}
     for name, arc in master['arcs'].items():
         samples=[native_arcs[name,i] for i in range(arc['count'])]
         points=[]
@@ -117,11 +177,21 @@ def check(master, readback, design, step):
             distance=np.linalg.norm(got[:,:2]-match,axis=1)
             nearest=int(distance.argmin())
             if distance[nearest]>METRIC_TOL:
-                raise ValueError(f'Missing native station {name}:{i}')
-            points.append(got[nearest,:2])
+                if i not in (0,arc['count']): raise ValueError(f'Missing native interior station {name}:{i}')
+                points.append(project_arc_station(match,samples[0 if i==0 else -1]))
+                reconstructed.setdefault(name,[]).append(i)
+            else:
+                points.append(got[nearest,:2])
         registration[name]=measure_arc(points,arc['stations'],arc['center'],arc['radius'],
             [(np.asarray([p for p,_ in s]),np.asarray([u for _,u in s])) for s in samples],step)
     phase=max(phase_checks,default=0.)
+    expected={(a,b):reason for a,b,reason in master['planned_boundary']}
+    shell=shell_audit(got,g['polygons'],labels,expected)
+    native_joins = {}
+    for f in design['floors'][:-1]:
+        z=f['top']
+        native_joins[str(z)] = sum(1 for edge,n in nonmanifold.items()
+                                   if n==2 and np.all(np.abs(got[list(edge),2]-z)<.0001))
     report: dict = dict(face_count=len(roles),roles=Counter(roles),maximum_vertex_drift_m=positions,
                 inverted_readback=reversed_faces,inward_exterior=inward,
                 boundary_edges=sum(v==1 for v in nonmanifold.values()),
@@ -133,7 +203,9 @@ def check(master, readback, design, step):
                 arc_chord_sagitta_m={k:v['max_sagitta_m'] for k,v in registration.items()},
                 arc_face_samples=arc_samples, training_step_m=step, arc_registration=registration,
                 same_id_vertical_edges=len(phase_checks), max_same_id_phase_delta=phase,
-                registration_failures=registration_failures(registration,phase,step))
+                registration_failures=registration_failures(registration,phase,step),
+                reconstructed_arc_tangencies=reconstructed, paired_horizontal_edges_at_floor_joins=native_joins,
+                **shell)
     band={'objects':[{'name':obj['name'],'verts':g['vertices'],'faces':facet,'materials':mats}], 'dropped':[]}
     return report,band
 
@@ -154,4 +226,7 @@ if __name__=='__main__':
     print(json.dumps(result)); sys.exit(bool(result['inverted_readback'] or result['inward_exterior']
         or result['unexpected_facade_free_edges'] or result['edges_over_two_faces']
         or result['seating_winding_conflicts'] or result['maximum_uv_delta']>1e-5
-        or result['registration_failures']))
+        or result['registration_failures'] or result['shell_count']!=1
+        or result['unexpected_boundary_edges'] or result['missing_boundary_edges'] or result['bad_vertex_fans']
+        or not all(result['paired_horizontal_edges_at_floor_joins'].values())
+        or any(v for k,v in result['topology'].items() if k!='tol_m')))

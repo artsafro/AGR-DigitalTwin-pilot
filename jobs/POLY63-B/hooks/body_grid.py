@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 
 import numpy as np
-from shapely import Polygon, constrained_delaunay_triangles, get_parts
+from shapely import Polygon, constrained_delaunay_triangles, get_parts, union_all
 
 
 def resample_arc(points, step):
@@ -70,11 +70,30 @@ def facade_uv(stations, zones, arcs, step):
     return result
 
 
+def align_curtain_depths(cells, curtains):
+    """Use the shallowest measured depth in each uninterrupted curtain slot."""
+    count = len(cells[0])
+    unseen = set(curtains)
+    while unseen:
+        stack = [unseen.pop()]
+        region = []
+        while stack:
+            j, i = stack.pop()
+            region.append((j, i))
+            neighbors = {(j-1, i), (j+1, i), (j, (i-1)%count), (j, (i+1)%count)} & unseen
+            unseen.difference_update(neighbors)
+            stack.extend(neighbors)
+        depth = min(cells[j][i] for j, i in region)
+        for j, i in region:
+            cells[j][i] = depth
+
+
 def build(design, config=None):
     design = deepcopy(design)
     verts, faces, roles, groups, indices = [], [], [], [], {}
     buckets = defaultdict(list)
     seen = set()
+    planned_boundary = {}
 
     def bucket(p):
         return tuple(int(np.floor(x/.00201)) for x in p)
@@ -97,6 +116,10 @@ def build(design, config=None):
             if role.startswith('shoulder'): return
             raise ValueError(f'Repeated or collapsed {role}: {keys}')
         seen.add(ident); faces.append(ids); groups.append(zone); roles.append(role)
+        return ids
+
+    def boundary(ids, a, b, reason):
+        planned_boundary[tuple(sorted((ids[a], ids[b])))] = reason
 
     def layout(m):
         a = np.array(m['ring']); b = np.roll(a, -1, axis=0)
@@ -243,20 +266,25 @@ def build(design, config=None):
     for f in floors:
         if not blocks or f['type']!=blocks[-1][-1]['type']: blocks.append([])
         blocks[-1].append(f)
+    cuts = {}
+    terminals = {floors[0]['bottom'], floors[-1]['top']}
     for block in blocks:
         key=block[0]['type']; ss=grids[key]; period=ss[-1]; count=len(ss)-1
         ops=[o for f in block for o in f['openings']]
         low=block[0]['bottom']; high=block[-1]['top']
         zz=sorted({low,high}|{z for o in ops for z in [o['z0'],o['z1']] if low<z<high})
-        cells=[]
-        for z0,z1 in zip(zz,zz[1:]):
+        cells=[]; curtains=set()
+        for row_index, (z0,z1) in enumerate(zip(zz,zz[1:])):
             z=(z0+z1)/2; active=[o for o in ops if o['z0']<z<o['z1']]; row=[]
-            for s0,s1 in zip(ss,ss[1:]):
+            for i, (s0,s1) in enumerate(zip(ss,ss[1:])):
                 s=(s0+s1)/2
                 opening=[o for o in active if o['s0']<s<o['s1'] or o['s0']<s+period<o['s1']]
                 row.append(max((o['depth'] for o in opening),default=0.))
+                if any(o.get('curtain') for o in opening): curtains.add((row_index,i))
                 if not opening:
-                    face([point(key,s0,z0),point(key,s1,z0),point(key,s1,z1),point(key,s0,z1)],material(key,s),'facade')
+                    ids = face([point(key,s0,z0),point(key,s1,z0),point(key,s1,z1),point(key,s0,z1)],material(key,s),'facade')
+                    if z0 in terminals: boundary(ids,0,1,'stage_extent')
+                    if z1 in terminals: boundary(ids,2,3,'stage_extent')
                     if step is not None:
                         idx = len(faces)-1
                         j = np.searchsorted(layouts[key][-1],s)-1
@@ -270,24 +298,50 @@ def build(design, config=None):
                         v0,v1 = (z0-base)/step,(z1-base)/step
                         uvs[idx]=[(u0,v0),(u1,v0),(u1,v1),(u0,v1)]
             cells.append(row)
+        align_curtain_depths(cells, curtains)
+
+        def lip(j,i):
+            # All reveals incident to the node use one conservative depth.
+            # This tapers the rear of the recess at curtain/window junctions
+            # without moving the front opening or inserting infill faces.
+            depth = min(cells[r][c] for r in (j-1,j) if 0<=r<len(cells)
+                        for c in ((i-1)%count,i%count) if cells[r][c])
+            return point(key,ss[i],zz[j],depth)
+
+        for j,z in ((0,low),(len(cells)-1,high)):
+            # The shoulder must meet the jambs, not pass underneath them as
+            # a separate surface. Cut exactly the recess reaching this end.
+            k = 0 if z==low else len(cells)
+            cuts[key,z] = [[point(key,ss[i],z),point(key,ss[i+1],z),lip(k,i+1),lip(k,i)]
+                           for i,d in enumerate(cells[j]) if d]
         for j,(z0,z1) in enumerate(zip(zz,zz[1:])):
             for i,(s0,s1) in enumerate(zip(ss,ss[1:])):
                 d=cells[j][i]; prev=cells[j][i-1]; zone=material(key,(s0+s1)/2)
                 # Between adjacent windows leave a continuous void; no artificial inward partition.
                 if bool(d)!=bool(prev):
-                    depth=max(d,prev); q=[point(key,s0,z0),point(key,s0,z0,depth),point(key,s0,z1,depth),point(key,s0,z1)]
-                    face(q if d else q[::-1],zone,'jamb')
+                    q=[point(key,s0,z0),lip(j,i),lip(j+1,i),point(key,s0,z1)]
+                    ids = face(q if d else q[::-1],zone,'jamb')
+                    boundary(ids,1,2,'reveal_lip')
+                    if z0 in terminals: boundary(ids,0 if d else 2,1 if d else 3,'stage_extent')
+                    if z1 in terminals: boundary(ids,2 if d else 0,3 if d else 1,'stage_extent')
                 if d:
                     if j>0 and not cells[j-1][i]:
-                        face([point(key,s0,z0),point(key,s1,z0),point(key,s1,z0,d),point(key,s0,z0,d)],zone,'sill')
+                        ids = face([point(key,s0,z0),point(key,s1,z0),lip(j,i+1),lip(j,i)],zone,'sill')
+                        boundary(ids,2,3,'reveal_lip')
                     if j+1<len(cells) and not cells[j+1][i]:
-                        face([point(key,s1,z1),point(key,s0,z1),point(key,s0,z1,d),point(key,s1,z1,d)],zone,'head')
+                        ids = face([point(key,s1,z1),point(key,s0,z1),lip(j+1,i),lip(j+1,i+1)],zone,'head')
+                        boundary(ids,2,3,'reveal_lip')
 
     expanded={key:Polygon([point(key,s,0)[:2] for s in ss[:-1]]) for key,ss in grids.items()}
     for below,above in zip(blocks,blocks[1:]):
         lo,hi=below[-1]['type'],above[0]['type']; z=below[-1]['top']
         for a,b,direction in ((lo,hi,1),(hi,lo,-1)):
             difference=expanded[a].difference(expanded[b]);
+            if cuts[a,z]:
+                notch = union_all([Polygon([p[:2] for p in q]) for q in cuts[a,z]])
+                if notch.difference(difference).area > 1e-5:
+                    raise ValueError(f'Opening recess extends across opposing contour: {a} at {z}')
+                difference = difference.difference(notch)
             for part in get_parts(difference):
                 if part.area<1e-5: continue
                 for tri in get_parts(constrained_delaunay_triangles(part)):
@@ -296,8 +350,13 @@ def build(design, config=None):
                     if len({tuple(np.round(xy,5)) for xy in q}) < 3:
                         continue  # coincident precision nodes from overlapping contour boundaries
                     face([(*xy,z) for xy in (q if normal*direction>0 else q[::-1])],2,'shoulder_up' if direction>0 else 'shoulder_down')
+            for q in cuts[a,z]:
+                ids = [indices.get(tuple(round(float(x),5) for x in p)) for p in q[2:]]
+                if None in ids: raise ValueError(f'Missing shoulder lip station: {a} at {z}: {q[2:]}')
+                boundary(ids,0,1,'belt_opening_lip')
     used=sorted({i for f in faces for i in f}); reindex={i:j for j,i in enumerate(used)}
     model: dict = dict(vertices=[verts[i] for i in used], faces=[[reindex[i] for i in f] for f in faces], face_zones=groups, roles=roles)
+    model['planned_boundary'] = [[reindex[a], reindex[b], reason] for (a,b),reason in sorted(planned_boundary.items())]
     if step is not None:
         for i,f in enumerate(faces):
             if i in uvs: continue

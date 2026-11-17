@@ -25,6 +25,76 @@ def test_near_crossing_belt_is_sewn():
                 if mesh['vertices'][a][2] == mesh['vertices'][b][2] == 1 and n != 2]
 
 
+def boundary_points(mesh):
+    counts = Counter(tuple(sorted((a, b))) for f in mesh['faces']
+                     for a, b in zip(f, f[1:] + f[:1]))
+    return {frozenset(tuple(mesh['vertices'][i]) for i in edge)
+            for edge, count in counts.items() if count == 1}
+
+
+def test_curtain_reveal_is_continuous_across_floor_join():
+    ring = [(0, 0), (8, 0), (8, 8), (0, 8)]
+    modules = {key: {'ring': ring, 'zone': [0]*4} for key in 'AB'}
+    floors = [dict(type='A', bottom=i, top=i+3, openings=[
+        dict(s0=2, s1=3, z0=i, z1=i+3, depth=depth, curtain=True)])
+        for i, depth in [(0, .24), (3, .25)]]
+    # At +3 m both jambs must share the same radial edges, not end in cracks.
+    assert not [edge for edge in boundary_points(build(dict(modules=modules, floors=floors)))
+                if all(p[2] == 3 for p in edge)]
+
+
+def test_shoulder_is_notched_and_welded_to_curtain_jambs():
+    a = [(0, 0), (8, 0), (8, 8), (0, 8)]
+    b = [(1, 1), (7, 1), (7, 7), (1, 7)]
+    modules = {key: {'ring': ring, 'zone': [0]*4} for key, ring in [('A', a), ('B', b)]}
+    floors = [dict(type='A', bottom=0, top=3, openings=[
+        dict(s0=2, s1=3, z0=0, z1=3, depth=.25, curtain=True)]),
+        dict(type='B', bottom=3, top=6, openings=[])]
+    at_joint = {edge for edge in boundary_points(build(dict(modules=modules, floors=floors)))
+                if all(p[2] == 3 for p in edge)}
+    assert at_joint == {frozenset({(2, .25, 3), (3, .25, 3)})}
+
+
+def test_reveal_ends_share_depth_where_window_overlaps_curtain():
+    ring = [(0, 0), (8, 0), (8, 8), (0, 8)]
+    modules = {key: {'ring': ring, 'zone': [0]*4} for key in 'AB'}
+    floors = [dict(type='A', bottom=0, top=3, openings=[
+        dict(s0=2, s1=3, z0=0, z1=3, depth=.25, curtain=True),
+        dict(s0=2.8, s1=4, z0=1, z1=2, depth=.7)])]
+    mesh = build(dict(modules=modules, floors=floors))
+    assert boundary_points(mesh) == {
+        frozenset(tuple(mesh['vertices'][i]) for i in (a,b))
+        for a,b,_ in mesh['planned_boundary']}
+    assert [4, .7, 1] in [list(p) for p in mesh['vertices']]
+
+
+@pytest.mark.parametrize('change', ['none', 'missing-face', 'split', 'touch-only', 'sealed-mouth'])
+def test_native_join_audit_rejects_unplanned_boundaries_and_counts_edge_shells(change):
+    checker = runpy.run_path(str(Path(__file__).parents[2] / 'jobs/POLY63-B/hooks/check_readback.py'))
+    v = np.array([(0,0,0), (1,0,0), (2,0,0), (0,0,1), (1,0,1), (2,0,1), (1,0,0), (1,0,1)])
+    faces = [[0,1,4,3], [1,2,5,4]]
+    allowed = {(0,1): 'stage_extent', (1,2): 'stage_extent', (2,5): 'reveal_lip',
+               (4,5): 'stage_extent', (3,4): 'stage_extent', (0,3): 'reveal_lip'}
+    labels = list(range(len(v))); labels[6:] = [1,4]
+    if change == 'missing-face': faces.pop()
+    if change == 'split': faces[1] = [6,2,5,7]
+    if change == 'touch-only': faces[1] = [1,2,5]
+    if change == 'sealed-mouth': allowed[1,4] = 'reveal_lip'
+    result = checker['shell_audit'](v, faces, labels, allowed)
+    assert result['shell_count'] == (2 if change in ('split','touch-only') else 1)
+    assert bool(result['bad_vertex_fans']) == (change == 'touch-only')
+    assert bool(result['unexpected_boundary_edges']) == (change in ('missing-face','split','touch-only'))
+    assert bool(result['missing_boundary_edges']) == (change in ('missing-face','touch-only','sealed-mouth'))
+
+
+def test_occluded_tangent_is_projected_only_onto_supported_chord():
+    checker = runpy.run_path(str(Path(__file__).parents[2] / 'jobs/POLY63-B/hooks/check_readback.py'))
+    samples = [(np.array([[.08,1.00001],[.6,1.00001]]), [0.,1.])]
+    assert checker['project_arc_station']([0,1], samples) == pytest.approx([0,1.00001])
+    with pytest.raises(ValueError, match='off native chord'):
+        checker['project_arc_station']([0,1.01], samples)
+
+
 def test_corner_uses_tangent_anchored_full_steps_and_sagitta():
     points = np.array([(2*math.cos(a), 2*math.sin(a)) for a in np.linspace(0, math.pi/2, 23)])
     arc, xy = hook['resample_arc'](points, .6)
