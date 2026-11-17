@@ -40,6 +40,37 @@ def box_corners(cx, cy, z0, w, d, h, rot):
     return out
 
 
+def inner_offset(xy, r):
+    """Points of an open run of a CCW ring moved INTO the body by r (left normal; mitre at inner corners).
+
+    Stage 1 opening reveal (Artem 2026-11-17 «бадик с проемами»): the run a..b of a window, the back edge of its
+    откос. Ends use their own segment's normal; inner points the mitre of both, so every reveal face stays planar
+    and r deep. Refuses r outside (0, 1) m, a non-finite point, a run shorter than 2 points or a zero segment."""
+    if not (isinstance(r, (int, float)) and math.isfinite(r) and 0 < r < 1.0):
+        raise ValueError("reveal depth must be finite in (0, 1) m, got %r" % (r,))
+    pts = [(float(x), float(y)) for x, y in xy]
+    if len(pts) < 2 or not all(math.isfinite(v) for p in pts for v in p):
+        raise ValueError("opening run needs >= 2 finite points, got %r" % (xy,))
+    nrm = []
+    for p, q in zip(pts, pts[1:]):
+        L = math.dist(p, q)
+        if L < 1e-6:
+            raise ValueError("zero-length segment in the opening run at %r" % (p,))
+        nrm.append((-(q[1] - p[1]) / L, (q[0] - p[0]) / L))  # left normal of a CCW ring = into the body
+    out = []
+    for i, (x, y) in enumerate(pts):
+        n1 = nrm[max(0, i - 1)]
+        n2 = nrm[min(len(nrm) - 1, i)]
+        mx, my = n1[0] + n2[0], n1[1] + n2[1]
+        m = math.hypot(mx, my)
+        if m < 1e-6:
+            raise ValueError("opening run folds back on itself at %r" % ((x, y),))
+        mx, my = mx / m, my / m
+        k = r / (mx * n1[0] + my * n1[1])
+        out.append((x + mx * k, y + my * k))
+    return out
+
+
 def _run():  # Blender only; the tests import the pure helpers above
     import bmesh
     import bpy
@@ -114,7 +145,11 @@ def _run():  # Blender only; the tests import the pure helpers above
     report = {"rings": [], "insets": 0}
     for ri, ring in enumerate(cfg["rings"]):
         pts, perim = ring_points(ring["xy"], ring.get("cuts", []))
-        wins = [(w[1], w[2], w[3] if len(w) > 3 else 0, w[4] if len(w) > 4 else 1) for w in cfg.get("windows", []) if w[0] == ri]
+        wins = [(w[1], w[2], w[3] if len(w) > 3 else 0, w[4] if len(w) > 4 else 1, w[5] if len(w) > 5 else 0.0)
+                for w in cfg.get("windows", []) if w[0] == ri]
+        for w in wins:
+            if not (math.isfinite(w[4]) and 0.0 <= w[4] < 1.0) or not (0 <= w[2] < w[3] < len(levels)):
+                sys.exit("window %r: reveal must be finite in [0, 1) m and loops inside the module" % (w,))
         zones = ring.get("zones", [[0.0, perim, "WALL_A"]])
         for z in zones:
             if z[2] not in MID:
@@ -126,15 +161,17 @@ def _run():  # Blender only; the tests import the pure helpers above
                 s0 = pts[k][0]
                 s1 = pts[(k + 1) % n][0] if k + 1 < n else perim
                 sm = (s0 + s1) / 2
-                f = bm.faces.new((grid[li][k], grid[li][(k + 1) % n], grid[li + 1][(k + 1) % n], grid[li + 1][k]))
-                is_win = any(a - 1e-4 <= sm <= b + 1e-4 and wl <= li < wh for a, b, wl, wh in wins)
+                is_win = any(a - 1e-4 <= sm <= b + 1e-4 and wl <= li < wh for a, b, wl, wh, _ in wins)
                 zone = next((z[2] for z in zones if z[0] - 1e-4 <= sm <= z[1] + 1e-4), None)
                 if zone is None:
                     sys.exit("ring %d face at s=%.3f is in no finish zone" % (ri, sm))
+                if is_win and next(r for a, b, wl, wh, r in wins if a - 1e-4 <= sm <= b + 1e-4 and wl <= li < wh) > 0:
+                    continue  # stage 1 opening: the wall has a hole here, the reveal is built below
+                f = bm.faces.new((grid[li][k], grid[li][(k + 1) % n], grid[li + 1][(k + 1) % n], grid[li + 1][k]))
                 f.material_index = MID["WINDOW"] if is_win else MID[zone]
                 z0, z1 = levels[li], levels[li + 1]
                 if is_win:
-                    a, b = next((a, b) for a, b, wl, wh in wins if a - 1e-4 <= sm <= b + 1e-4)
+                    a, b = next((a, b) for a, b, wl, wh, _ in wins if a - 1e-4 <= sm <= b + 1e-4)
                     us = ((s0 - a) / (b - a), (s1 - a) / (b - a))
                     vs = ((z0 - levels[0]) / (levels[1] - levels[0]), (z1 - levels[0]) / (levels[1] - levels[0]))
                 else:
@@ -142,6 +179,49 @@ def _run():  # Blender only; the tests import the pure helpers above
                     vs = (z0 / TEX_M, z1 / TEX_M)
                 for lp, (u, v) in zip(f.loops, ((us[0], vs[0]), (us[1], vs[0]), (us[1], vs[1]), (us[0], vs[1]))):
                     lp[uv].uv = (u, v)
+        # Stage 1 openings: a reveal tube (jambs, sill, head) from the wall hole back to the frame depth r; the
+        # back stays open for the stage-2 window (inset element, D336). Reveal verts are welded to the wall.
+        for a, b, wl, wh, r in wins:
+            if r <= 0:
+                continue
+            ks = [k for k in range(n) if a - 1e-4 <= pts[k][0] <= b + 1e-4]
+            if len(ks) < 2 or ks != list(range(ks[0], ks[-1] + 1)):
+                sys.exit("window [%.3f, %.3f] is not a run of ring points" % (a, b))
+            inner = inner_offset([(pts[k][1], pts[k][2]) for k in ks], r)
+            zone = next(z[2] for z in zones if z[0] - 1e-4 <= (a + b) / 2 <= z[1] + 1e-4)
+            iv = {}
+
+            def ivert(j, li):
+                if (j, li) not in iv:
+                    iv[(j, li)] = bm.verts.new((inner[j][0], inner[j][1], levels[li]))
+                return iv[(j, li)]
+
+            def reveal(quad, want, uvs):
+                f = bm.faces.new(quad)
+                f.normal_update()
+                if f.normal.dot(want) < 0:
+                    f.normal_flip()
+                f.material_index = MID[zone]
+                for lp in f.loops:
+                    lp[uv].uv = uvs(lp.vert.co)
+                report["reveal_faces"] = report.get("reveal_faces", 0) + 1
+
+            from mathutils import Vector
+            t0 = Vector((pts[ks[1]][1] - pts[ks[0]][1], pts[ks[1]][2] - pts[ks[0]][2], 0)).normalized()
+            t1 = Vector((pts[ks[-1]][1] - pts[ks[-2]][1], pts[ks[-1]][2] - pts[ks[-2]][2], 0)).normalized()
+            for li in range(wl, wh):  # jambs, one quad per band level
+                reveal((grid[li][ks[0]], ivert(0, li), ivert(0, li + 1), grid[li + 1][ks[0]]), t0,
+                       lambda co: ((co.x + co.y) / TEX_M, co.z / TEX_M))
+                j = len(ks) - 1
+                reveal((grid[li][ks[-1]], grid[li + 1][ks[-1]], ivert(j, li + 1), ivert(j, li)), -t1,
+                       lambda co: ((co.x + co.y) / TEX_M, co.z / TEX_M))
+            for j in range(len(ks) - 1):  # sill (faces up) and head (faces down)
+                k0, k1 = ks[j], ks[j + 1]
+                reveal((grid[wl][k0], grid[wl][k1], ivert(j + 1, wl), ivert(j, wl)), Vector((0, 0, 1)),
+                       lambda co: (co.x / TEX_M, co.y / TEX_M))
+                reveal((grid[wh][k0], ivert(j, wh), ivert(j + 1, wh), grid[wh][k1]), Vector((0, 0, -1)),
+                       lambda co: (co.x / TEX_M, co.y / TEX_M))
+            report["openings"] = report.get("openings", 0) + 1
         report["rings"].append({"points": n, "perimeter_m": round(perim, 3)})
 
 
@@ -165,8 +245,13 @@ def _run():  # Blender only; the tests import the pure helpers above
     me = bpy.data.meshes.new("SM_Body_Module")
     bm.to_mesh(me)
     bm.free()
-    for m in mats:
-        me.materials.append(m)
+    used = sorted({p.material_index for p in me.polygons})  # no empty slot travels (stage 1: no WINDOW/INSET)
+    remap = {old: new for new, old in enumerate(used)}
+    for p in me.polygons:
+        p.material_index = remap[p.material_index]
+    for old in used:
+        me.materials.append(mats[old])
+    report["materials"] = [mat_names[i] for i in used]
     mod_ob = bpy.data.objects.new("SM_Body_Module", me)
     bpy.context.scene.collection.objects.link(mod_ob)
     mod_ob.location.z = float(cfg["z0"])

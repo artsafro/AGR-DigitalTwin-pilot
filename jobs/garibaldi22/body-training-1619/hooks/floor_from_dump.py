@@ -3,7 +3,13 @@
 Pattern: n/a | new-case: typical-floor contour, jamb rings, sill/head loops and inset boxes read from a Revit crop.
 
 uv run python floor_from_dump.py CROP.npz FLOOR.json [--keys keys.json] [--ref K] [--snap 0.03]
-    [--clip CLIP.json] [--seal windows] [--fill FILL.json]
+    [--clip CLIP.json] [--seal windows] [--fill FILL.json] [--openings]
+
+--openings (stage 1 «бадик с проемами», Artem 2026-11-17): every window becomes an OPENING cut through the body
+with its reveal (откос) depth read from Revit: the depth from the facade line to the outer face of the window
+frame (`reveal_depth`); the window entry is [ring, s0, s1, 0, 1, depth]. Window fills and baskets are stage 2;
+with --openings the baskets go to `deferred` (reason "stage 2"), not to `insets`. A window whose frame is not
+behind the facade line (depth < 0.02 m) or whose depth is not finite is an error naming the object.
 
 --fill takes envelope_check.py's repair list (recesses at or below the texture depth, D341) and closes those pockets
 into the ring; a pocket that does not touch the contour or lies inside it is an error naming its index.
@@ -34,6 +40,42 @@ def classify(names, keys):
         c = next((k for k, ws in keys.items() if any(w in n for w in ws)), None)
         cls.append(c)
     return cls
+
+
+def reveal_depth(xy, ring_poly, share=0.15):
+    """Reveal depth of one window: the shallowest 1 cm depth layer holding >= `share` of its vertices.
+
+    The window family holds the frame (a dense layer behind the facade line: its outer face is the back of the
+    откос) and the flashing (a few vertices out to the facade line, stage 2 inset). Depth = -(signed outward
+    distance) rounded to 1 cm; a sparse layer (the flashing) is skipped. NaN when no point is given, a point is
+    not finite or no layer is dense enough. Round 5 probe on G22 body 2: 1-sash 0.10, 2-sash 0.15, 3-sash 0.10 m
+    (a P90 rule read 0.01 on a 1-sash window: the flashing share varies by family)."""
+    pts = [(float(x), float(y)) for x, y in xy]
+    if not pts or not all(math.isfinite(v) for p in pts for v in p):
+        return float("nan")
+    ext = ring_poly.exterior
+    # depth is measured along the WINDOW's own plan normal (principal axis of its vertices) from the facade line at
+    # its centre: a window set a few degrees off the simplified contour (G22 k2 [3529335], 3 deg) keeps its frame
+    # in one layer instead of smearing it over 0.04..-0.19 m.
+    arr = np.array(pts)
+    c = arr.mean(0)
+    s = ext.project(Point(*c))
+    foot = ext.interpolate(s)
+    p0, p1 = ext.interpolate(max(0.0, s - 0.05)), ext.interpolate(min(ext.length, s + 0.05))
+    out_n = np.array([p1.y - p0.y, -(p1.x - p0.x)])  # outward normal of the CCW ring at the foot
+    if len(arr) > 1 and np.ptp(arr, 0).max() > 1e-6:
+        w, v = np.linalg.eigh(np.cov((arr - c).T))
+        n = v[:, 0]  # minor axis = the window's plan normal
+    else:
+        n = out_n
+    nn = np.linalg.norm(n)
+    if not nn or not np.linalg.norm(out_n):
+        return float("nan")
+    n = n / nn * (1.0 if n @ out_n >= 0 else -1.0)
+    sd = (arr - np.array([foot.x, foot.y])) @ n
+    layers = collections.Counter(round(-float(v), 2) + 0.0 for v in sd)
+    dense = [dep for dep, k in layers.items() if k >= share * len(sd)]
+    return min(dense) if dense else float("nan")
 
 
 def section(tris, z):
@@ -101,6 +143,8 @@ def main(argv=None):
     ap.add_argument("--seal", nargs="*", default=[],
                     help="object classes whose cut joins the wall cut (round 3: windows - openings closed by their filling)")
     ap.add_argument("--fill", help="JSON from envelope_check.py --fill: texture pockets closed into the ring (D341)")
+    ap.add_argument("--openings", action="store_true",
+                    help="stage 1: windows are openings with the Revit reveal depth; baskets deferred to stage 2")
     a = ap.parse_args(argv)
     ins = [os.path.realpath(p) for p in (a.crop, a.fill, a.clip, a.keys) if p]
     if os.path.realpath(a.out) in ins or not a.out.endswith(".json"):
@@ -208,7 +252,13 @@ def main(argv=None):
         if s1 - s0 > perim / 2:
             dropped.append({"object": names[o], "reason": "window spans the ring start; unsupported in round 1"})
             continue
-        windows.append([0, round(s0, 3), round(s1, 3)])
+        if a.openings:
+            depth = reveal_depth([tuple(p) for p in pts[:, :2]], ring_poly)
+            if not math.isfinite(depth) or depth < 0.02:
+                sys.exit("refused: window %s has no reveal (frame %.3f m behind the facade line)" % (names[o], depth))
+            windows.append([0, round(s0, 3), round(s1, 3), 0, 1, depth])
+        else:
+            windows.append([0, round(s0, 3), round(s1, 3)])
         cuts += [s0, s1]
     cuts.sort()
     merged = []
@@ -219,15 +269,18 @@ def main(argv=None):
     # snap window ends to the merged cuts
     def snap(v):
         return min(merged, key=lambda m: abs(m - v))
-    windows = [[w[0], round(snap(w[1]), 4), round(snap(w[2]), 4)] for w in windows]
+    windows = [[w[0], round(snap(w[1]), 4), round(snap(w[2]), 4)] + w[3:] for w in windows]
     # baskets -> inset boxes in the frame of the nearest contour edge
-    insets = []
+    insets, deferred = [], []
     for o in by_obj:
         if cls[o] != "baskets":
             continue
         pts = tri[by_obj[o]].reshape(-1, 3)
         z0, z1 = float(pts[:, 2].min()), float(pts[:, 2].max())
         if not (ref - 1.0 < z0 < ref + step - 1.0):
+            continue
+        if a.openings:
+            deferred.append({"object": names[o], "reason": "stage 2: AC box inset without back face (Artem 2026-11-17)"})
             continue
         c = Point(pts[:, 0].mean(), pts[:, 1].mean())
         sc = ext.project(c)
@@ -254,10 +307,13 @@ def main(argv=None):
         "windows": windows, "insets": [{"box": i["box"]} for i in insets],
         "materials": {"WALL_A": [0.75, 0.73, 0.70], "WINDOW": [0.15, 0.2, 0.3], "INSET": [0.3, 0.3, 0.3]},
         "dropped": dropped,
+        "deferred": deferred,
+        "stage": "body+openings" if a.openings else "body",
         "filled": filled,
         "counts": {"contour_vertices": len(xy), "cuts": len(merged), "windows_ref": len(ref_wins),
                    "windows_used": len(windows), "insets": len(insets), "perimeter_m": round(perim, 3),
-                   "objects_clipped": clipped},
+                   "objects_clipped": clipped, "deferred": len(deferred),
+                   "reveal_m": sorted({w[5] for w in windows if len(w) > 5})},
     }
     with open(a.out, "x", encoding="utf-8") as f:
         json.dump(spec, f, ensure_ascii=False, indent=1)
