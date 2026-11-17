@@ -321,8 +321,11 @@ def test_open_shell_base_is_an_exterior_boundary_not_a_body_hole(height, slope, 
     for i in range(4):
         j = (i+1) % 4
         a, c = outer[i], outer[j]
-        b.face([(*a, 0), (*c, 0), (*c, 4), (*a, 4)], (a[0]+c[0]-4, a[1]+c[1]-4, 0))
-        b.face([(*a, 0), (*c, 0), (*inner[j], 0), (*inner[i], 0)], (0, 0, -1))
+        b.face([(*a, height), (*c, height), (*c, 4), (*a, 4)], (a[0]+c[0]-4, a[1]+c[1]-4, 0))
+        if height:
+            b.face([(*a, 0), (*c, 0), (*c, height), (*a, height)],
+                   (a[0]+c[0]-4, a[1]+c[1]-4, 0))
+        b.face([(*a, height), (*c, height), (*inner[j], height), (*inner[i], height)], (0, 0, -1))
     for v in b.verts:
         if .3 < v[0] < 3.7 and .3 < v[1] < 3.7:
             v[2] = height + slope*v[0]
