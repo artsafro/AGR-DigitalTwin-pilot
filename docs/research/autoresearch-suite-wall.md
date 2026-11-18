@@ -1,7 +1,8 @@
 # Autoresearch: merge-gate wall time (#1615)
 
-Status: valid idle baseline is already under 30 minutes; two unchanged-corpus
-confirmations pending. No optimization or causal speed-up claimed.
+Status: one valid idle baseline is under 30 minutes; the first confirmation
+overlapped a merge batch and is invalid. Two valid unchanged-corpus confirmations
+are still needed. No optimization or causal speed-up claimed.
 
 ## Frozen contract (before optimization)
 
@@ -87,8 +88,8 @@ contract measures the entire command including uv/startup/collection/teardown.
 | --- | --- | --- | --- | --- |
 | B0 (`baseline-001`) | Unmodified test corpus from `c62ceddd`; harness HEAD `1c713b04` | 1667.3542925 s; exit 1; 27212 passed / 193 skipped / 6 failed | rejected | invalid: detached PATH selected Windows WSL bash, not Git Bash |
 | B1 (`baseline-002`) | Same test corpus, command and observer; repair subprocess PATH only | **1487.8959172 s (24.7983 min)**; exit 0 | 27454 nodes; 27218 passed / 187 skipped / 49 xfailed | valid baseline; target already reached, no optimization needed |
-| C1 (`confirmation-001`) | Identical corpus, command, observer and repaired PATH | pending | pending | final confirmation pending |
-| C2 (`confirmation-002`) | Identical corpus, command, observer and repaired PATH; sequential after valid C1 | pending | pending | final confirmation pending |
+| C1 (`confirmation-001`) | Identical corpus, command, observer and repaired PATH | 968.4603811 s before abort; exit 1 | incomplete, rejected | invalid: `merge20261117red3` acquired a slot during the measurement |
+| C2 (`confirmation-002`) | Sequential after valid C1 | not run | not measured | launcher stopped after invalid C1 |
 
 B0 is below 1800 seconds as an **invalid observation only**, not a target success,
 retained optimization, or parity reference. No optimization has been implemented,
@@ -113,10 +114,21 @@ retained or dropped yet. Baseline/final table and parity diff require confirmati
   process-local Git Bash repair. Each measurement independently waits for a drained
   idle slot and exits; C2 starts only after C1 exits successfully and its full
   node/outcome bytes equal B1. No parallel measurements, no new optimization loop.
-- Resume when `C:/x/autoresearch-suite-wall/confirmation-002.json` exists, or launcher
-  exits on error (inspect `tmp/confirmations-launch-console.log`, C1/C2 runner logs).
-  Do not mutate the worktree until both children exit; inspect validity, all hashes,
-  parity and source signatures before publishing a final median.
+- C1 ended at 11:56 local time on 2026-11-17, before the separately approved
+  01:50–04:30 local window on 2026-11-18. The 8.6075% idle preflight and
+  3983.9732 s wait did not prevent a later merge batch from starting. The slot
+  guard recorded the foreign holder (`merge20261117red3`, PID 1153184) and
+  rejected the run; no complete node/outcome TSV was produced. C2 did not launch.
+- C1 receipt: `C:/x/autoresearch-suite-wall/confirmation-001.json`, SHA-256
+  `7ef2a606e0e4cee0d417b959eb760dd503ac32864084f0d8cc14106fff241e0e`.
+  All five referenced hashes matched on resume. HEAD and source signature
+  stayed unchanged. Launcher and claimed interpreters have exited. Do not
+  include the partial wall time in the median or treat it as a speed-up.
+- The approved quiet window has expired. Obtain a new reserved, drained window
+  before launch; use fresh run names (`confirmation-003` and `confirmation-004`)
+  and preserve existing evidence. Verify both receipts and exact B1 parity
+  before publishing a final median. The frozen `c62ceddd` corpus is not the
+  fetched `3092f6ca` main corpus; no current-main timing or parity is inferred.
 - Affected tests rerun before launch:
   `uv run python -m unittest discover -s tmp/wall_harness -p 'probe_*.py' -v`:
   **6 passed** in 7.434 s. No project module changed.
@@ -194,5 +206,5 @@ No autonomous controller, automatic commit/revert, or merge loop is initialized.
   claimed process has exited. Read `valid` before any metric claim. A failed or
   contaminated run remains evidence, not an accepted baseline; use a new run name
   after diagnosing it. A launch error remains in the runner log/claim; never reuse
-  or overwrite the name. Baseline-001 is a **pending** run, not a passing result.
+  or overwrite the name. Baseline-001 was rejected as recorded above.
 
