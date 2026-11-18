@@ -28,16 +28,16 @@ def _sha256(path):
     return value.hexdigest()
 
 
-def _sidecars(pkg, excluded_files=(), profile=None):
+def _sidecars(pkg, excluded_files=(), profile=None, *, include_lights=False):
     excluded = {n.casefold() for n in excluded_files}
     return sorted(p for p in Path(pkg).glob('*.fbx.export_meta.json')
-                  if not p.name.endswith('_Light.fbx.export_meta.json')
+                  if (include_lights or not p.name.endswith('_Light.fbx.export_meta.json'))
                   and p.name[:-len('.export_meta.json')].casefold() not in excluded
                   and (profile is None or load_meta(p).get('profile') in (None, 'unknown', profile)))
 
 
-def address_meta_path(pkg, explicit=None):
-    """Select the address record, never the first of ambiguous OKS sidecars (#1637)."""
+def address_meta_path(pkg, explicit=None, *, prefer_oks=True):
+    """Select the address record; only NPM prefers a lone OKS sidecar over Ground (#1637)."""
     pkg = Path(pkg)
     if explicit is not None:
         return Path(explicit)
@@ -47,18 +47,19 @@ def address_meta_path(pkg, explicit=None):
     oks = [p for p in side if not p.name.endswith('_Ground.fbx.export_meta.json')]
     if len(side) == 1:
         return side[0]
-    if len(oks) == 1:
+    if prefer_oks and len(oks) == 1:
         return oks[0]
     if side:
         raise ValueError(f'ambiguous export metadata {side}; choose --meta explicitly')
     return pkg.parent / 'export_meta.json'
 
 
-def export_records(pkg, address_path=None, *, excluded_files=(), profile=None):
+def export_records(pkg, address_path=None, *, excluded_files=(), profile=None, include_lights=False):
     """Validated records, deduplicated by path; Max needs no address-sidecar choice.
 
     Without address_path, include an optional canonical record plus all scoped sidecars.
     CLI callers retain their explicit address record selection and ambiguity policy.
+    VPM can bind lighting sidecars without using them to choose the address.
     """
     out, seen = [], set()
     if address_path is None:
@@ -66,7 +67,7 @@ def export_records(pkg, address_path=None, *, excluded_files=(), profile=None):
         paths = next(([p] for p in canonical if os.path.lexists(p)), [])
     else:
         paths = [Path(address_path)]
-    for path in paths + _sidecars(pkg, excluded_files, profile):
+    for path in paths + _sidecars(pkg, excluded_files, profile, include_lights=include_lights):
         key = os.path.normcase(os.path.realpath(path))
         if key in seen:
             continue
@@ -258,19 +259,7 @@ def load_package_meta(package_dir, explicit=None):
     Multiple independent sidecars require explicit selection; never choose the first entry.
     Metadata identifies an exporter/naming token, not whole-package QA or a survey datum.
     """
-    import os
-    pkg = Path(package_dir)
-    if explicit is not None:
-        return load_meta(explicit)
-    adjacent = pkg / 'export_meta.json'
-    if os.path.lexists(adjacent):
-        return load_meta(adjacent)
-    candidates = sorted(p for p in pkg.glob('*.fbx.export_meta.json') if not p.name.endswith('_Light.fbx.export_meta.json'))
-    if len(candidates) == 1:
-        return load_meta(candidates[0])
-    if len(candidates) > 1:
-        raise ValueError(f'ambiguous export metadata {candidates}; choose --meta explicitly')
-    return load_meta(pkg.parent / 'export_meta.json')
+    return load_meta(address_meta_path(package_dir, explicit, prefer_oks=False))
 
 
 def fbx_record(fbx, bounds_m):

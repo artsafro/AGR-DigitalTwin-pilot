@@ -278,6 +278,7 @@ def test_package_export_binding_refuses_without_writes(tmp_path, case, diagnosti
         elif case == 'partial_hashes':
             meta['exported_sha256'] = {}
     elif case == 'conflict':
+        meta_path = meta_path.rename(pkg / meta_path.name)  # canonical record wins address selection
         other = meta | {'exported_sha256': {fbx.name: '0' * 64}}
         fbx.with_suffix('.fbx.export_meta.json').write_text(json.dumps(other))
     if case == 'no_metadata':
@@ -290,8 +291,8 @@ def test_package_export_binding_refuses_without_writes(tmp_path, case, diagnosti
     assert snapshot(tmp_path) == before
 
 
-@pytest.mark.parametrize('change', [False, True], ids=['match', 'stale'])
-def test_package_binds_light_sidecar_without_using_its_address(tmp_path, change):
+@pytest.mark.parametrize('case', ['match', 'stale', 'duplicate'])
+def test_package_binds_light_sidecar_without_using_its_address(tmp_path, case):
     from adapters.max.agr_tools.export_meta import record_export
 
     pkg = make_pkg(tmp_path / 'p')
@@ -300,15 +301,23 @@ def test_package_binds_light_sidecar_without_using_its_address(tmp_path, change)
     main.with_suffix('.fbx.export_meta.json').write_bytes((pkg.parent / 'export_meta.json').read_bytes())
     (pkg.parent / 'export_meta.json').unlink()
     light = pkg / 'SM_Nku_1_Light.fbx'
-    light.write_bytes(b'synthetic light')
+    if case == 'duplicate':
+        os.link(main, light)
+    else:
+        light.write_bytes(b'synthetic light')
     record_export(light, source='synthetic fixture')
-    if change:
+    if case == 'stale':
         light.write_bytes(b'modified light')
     before = snapshot(tmp_path)
     r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
-    if change:
+    if case == 'stale':
         assert r.returncode == 1 and f'{light.name}: SHA-256' in r.stderr, (r.stdout, r.stderr)
         assert snapshot(tmp_path) == before
+    elif case == 'duplicate':
+        assert r.returncode == 1 and f'duplicated input file: {light.name}' in r.stderr, (r.stdout, r.stderr)
+        after = snapshot(tmp_path)
+        assert all(after[name] == data for name, data in before.items())
+        assert not any(name.endswith(('.zip', '.partial', 'package_report.json')) for name in after)
     else:
         assert r.returncode == 0, r.stderr
         report = json.loads((pkg.parent / 'package_report.json').read_text(encoding='utf-8'))

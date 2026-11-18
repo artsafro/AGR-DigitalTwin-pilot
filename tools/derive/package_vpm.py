@@ -6,8 +6,9 @@ Generalised from jobs/KPP1/scripts/package_vpm.py (KPP1 v005) and its PSU275 / T
 constants (building name, placement datum, glass proposal, deferral note) come from --object <json> instead of code.
 Usage: python tools/derive/package_vpm.py <package_dir> <textures_dir> [--object object.json] [--no-geojson]
     [--deferred-note TEXT]
-<package_dir> holds SM_<Address>.fbx (export_vpm); its parent holds export_meta.json (address,
-h_otn_model_max_z_m, thumbnail). GeoJSON follows reg App.3 (p.51-55): literal ObjectFeature, exact key order;
+<package_dir> holds SM_<Address>.fbx (export_vpm). Export metadata supplies the address, Z top and thumbnail,
+and must bind each packed FBX by SHA-256; re-export if no recorded hash is available.
+GeoJSON follows reg App.3 (p.51-55): literal ObjectFeature, exact key order;
 unknown OKS values stay "" / null and are listed as blockers in package_report.json, never invented
 (conflicts #2). --no-geojson (user decision 2026-10-07 [D224]): ZIP holds FBX + PNG only; --object is then optional.
 object.json: {"name": str, "placement": Placement, "glasses": {material: {...}} (optional, default: the KPP1
@@ -25,7 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from adapters.max.agr_tools import package_core
-from export_meta import load_package_meta
+from adapters.max.agr_tools.export_meta import address_meta_path, export_binding, export_records, load_meta
 
 DEFAULT_NOTE = "GeoJSON deferred by the user (2026-10-07) [D224]"
 
@@ -79,7 +80,8 @@ def main(argv=None):
     pkg, tex = a.package_dir, a.textures_dir
     if not a.no_geojson and not a.object:
         raise ValueError("GeoJSON needs --object (name, placement); pass --no-geojson to defer it")
-    meta = load_package_meta(pkg, a.meta)
+    meta_path = address_meta_path(pkg, a.meta, prefer_oks=False)
+    meta = load_meta(meta_path)
     A = meta["address"]
     stem = f"SM_{A}"
     if not os.path.isfile(os.path.join(pkg, f"{stem}.fbx")):
@@ -103,6 +105,17 @@ def main(argv=None):
     for target in [gpath, *(os.path.join(pkg, f) for f in pngs)]:
         if os.path.lexists(target):
             raise FileExistsError(f"output {target} already exists; choose a new version")
+
+    existing = [f for f in os.listdir(pkg) if f != 'export_meta.json' and not f.endswith('.fbx.export_meta.json')]
+    generated = pngs if a.no_geojson else [*pngs, os.path.basename(gpath)]
+    members = sorted(existing + generated)
+    archive = {'name': os.path.basename(zpath), 'members': [{'name': f} for f in members],
+               'limit': package_core.LIMITS['vpm_ground' if A.endswith('_Ground') else 'vpm_oks']}
+    binding, problems = export_binding(pkg, archive['members'], export_records(pkg, meta_path, include_lights=True))
+    if problems:
+        raise ValueError('; '.join(problems))
+    expected = {row['name']: row['zip_sha256'] for row in binding['members']}
+
     for f in pngs:
         source, target = os.path.join(tex, f), os.path.join(pkg, f)
         with open(source, 'rb') as inp, open(target, 'xb') as out:
@@ -129,10 +142,7 @@ def main(argv=None):
         with open(gpath, "x", encoding="utf-8") as fh:
             json.dump(geo, fh, ensure_ascii=False, indent=2)
 
-    members = [f for f in sorted(os.listdir(pkg)) if f != 'export_meta.json' and not f.endswith('.fbx.export_meta.json')]
-    archive = {'name': os.path.basename(zpath), 'members': [{'name': f} for f in members],
-               'limit': package_core.LIMITS['vpm_ground' if A.endswith('_Ground') else 'vpm_oks']}
-    written, size = package_core._write_zip(pkg, archive, zpath)
+    written, size = package_core._write_zip(pkg, archive, zpath, expected_sha256=expected)
     if written is None:
         raise ValueError(f'archive exceeds {archive["limit"]} bytes')
 
@@ -140,6 +150,7 @@ def main(argv=None):
                 if props is not None else [a.deferred_note])
     report = {"zip": os.path.abspath(zpath), "zip_bytes": os.path.getsize(zpath),
               "files": members, "geojson_blockers_unknown_in_source": blockers,
+              "export_binding": binding, "passed": False, "status": "packaged_not_validated",
               "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallicity)"],
               "address_placeholder": A}
     if props is not None:
