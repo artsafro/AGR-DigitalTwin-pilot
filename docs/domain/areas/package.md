@@ -107,8 +107,12 @@ No archive members, scene topology, user approval or D300 delivery choices chang
 V001 `delivered file` fails with `delivered_mismatch` for malformed or changed evidence;
 SHA-256 and byte length must both match. No new flag or signing/upload step is required.
 Max byte identity does not validate its geometry: other stages remain open, never a model pass.
-Historical ZIPs without a receipt remain readable without a new delivery attestation; missing
-Max receipts fail. Move the report together with its identically named artifact.
+Historical ZIPs without a receipt remain readable with a report note, without a new delivery attestation;
+missing Max receipts fail. Move the report together with its identically named artifact.
+The [SINTEZ territorial-code rename script](../../../jobs/VATUTINO-SITE/npm_code.py) uses the same
+receipt format [D347], with a `source: {path, sha256}` link to the preserved pre-rename ZIP. Use a new
+output folder; the original `package_report.json` belongs to the source ZIP. Validation rehashes the
+renamed ZIP, not the source path, which may be unavailable on the recipient's machine.
 Hash snapshots detect persistent changes, not edits restored between reads or future writes.
 
 ## Build provenance [D333, D332]
