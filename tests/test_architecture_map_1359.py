@@ -538,6 +538,36 @@ def test_guard_1370_udim_copy(tmp_path, code, capsys):
     assert "NEW COPY [udim-tile]" in capsys.readouterr().out
 
 
+@pytest.mark.parametrize("code", [
+    pytest.param("uv - (tile - 1001, 0.0)", id="float-origin"),
+    pytest.param("int(u) + 1001", id="int-tile"),
+    pytest.param("u // 1 + 1001", id="floor-div-tile"),
+    pytest.param("A = 1000\nA + 1 + u + 10*v", id="named-split"),
+])
+def test_guard_1482_udim_copy(tmp_path, code, capsys):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/x.py": code})) == 1
+    assert "NEW COPY [udim-tile] jobs/NEWJOB/x.py:" in capsys.readouterr().out
+
+
+def test_guard_1482_generated_named_splits():
+    from itertools import permutations
+    for terms in permutations(("A", "B", "u", "10*v")):
+        code = "A: int = 997\nB = 4\n" + " + ".join(terms)
+        assert {f.rule for f in guard.scan_text(code, "jobs/NEWJOB/x.py")} == {"udim-tile"}, terms
+
+
+@pytest.mark.parametrize("code", [
+    "uv - (tile - 1001, 0.5)", "uv - (tile - 1001, False)", "uv - (tile - 1001, 1e999)",
+    "uv - (tile - 1001, float('nan'))", "uv - (tile - 1001,)",
+    "u // 2 + 1001", "u // True + 1001", "u / 1 + 1001",
+    "int(u, 16) + 1001", "obj.int(u) + 1001", "int(*u) + 1001",
+    "A = 1000\nA + 2 + u + 10*v", "A = 1000\nA = 1002\nA + 1 + u + 10*v",
+    "A = 1000.0\nA + 1 + u + 10*v", "A = 1000\nA + 1 + u",
+])
+def test_guard_1482_non_copies(tmp_path, code):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/ok.py": code})) == 0
+
+
 ARCHIVE_1370 = [
     "from zipfile import ZipFile as Z; Z('a.zip', 'w')",
     "from zipfile import ZipFile as Z; Z('a.zip', mode='x')",
@@ -627,7 +657,7 @@ def test_guard_1370_real_instances():
 
 def test_guard_1370_reset_and_read_only(tmp_path):
     import subprocess
-    code = UDIM_1370[0] + "\n" + ARCHIVE_1370[0]
+    code = "\n".join((UDIM_1370[0], "uv - (tile - 1001, 0.0)", "int(u) + 1001", ARCHIVE_1370[0]))
     args = _guard_root(tmp_path, {"jobs/NEWJOB/copy.py": code})
     source = tmp_path / "jobs/NEWJOB/copy.py"
     alias = tmp_path / "jobs/NEWJOB/alias.py"
@@ -641,7 +671,9 @@ def test_guard_1370_reset_and_read_only(tmp_path):
                                 capture_output=True, text=True, timeout=60)
         assert result.returncode == status, result.stdout + result.stderr
         if status == 1:
-            assert "NEW COPY [udim-tile]" in result.stdout and "NEW COPY [delivery-zip]" in result.stdout
+            for rel in ("alias.py", "copy.py"):
+                assert result.stdout.count(f"NEW COPY [udim-tile] jobs/NEWJOB/{rel}:") == 3
+                assert result.stdout.count(f"NEW COPY [delivery-zip] jobs/NEWJOB/{rel}:") == 1
         assert {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
