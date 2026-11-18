@@ -21,7 +21,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from adapters.max.agr_tools.package_core import ADDRESS, check_delivery_receipt, delivery_receipt
+from adapters.max.agr_tools.package_core import (
+    ADDRESS, LIMITS, _write_zip, check_delivery_receipt, check_members, delivery_receipt, validator_argv,
+)
 
 PLACEHOLDER = '0000'
 
@@ -48,6 +50,8 @@ def rename_npm_zip(src, code, out_dir, address='Vatutino'):
     with tempfile.TemporaryDirectory(prefix='.rename-', dir=out_dir) as staging:
         staged_zip = Path(staging) / dest.name
         staged_receipt = Path(staging) / sidecar.name
+        member_dir = Path(staging) / 'members'
+        member_dir.mkdir()
         with zipfile.ZipFile(src) as zin:
             for name in zin.namelist():
                 if ('/' in name or '\\' in name or not name.lower().endswith('.fbx')
@@ -58,9 +62,14 @@ def rename_npm_zip(src, code, out_dir, address='Vatutino'):
                 names[name] = new + name[len(old):]
             if not names:
                 raise ValueError(f'empty NPM ZIP: {src}')
-            with zipfile.ZipFile(staged_zip, 'x', zipfile.ZIP_DEFLATED) as zout:
-                for name, renamed in names.items():
-                    zout.writestr(renamed, zin.read(name))
+            plan = {'name': dest.name, 'limit': LIMITS['npm'], 'members': [{'name': n} for n in names.values()]}
+            check_members(plan)
+            for name, renamed in names.items():
+                with (member_dir / renamed).open('xb') as stream:
+                    stream.write(zin.read(name))
+        packed, size = _write_zip(member_dir, plan, str(staged_zip))
+        if packed is None:
+            raise ValueError(f'{dest.name}: {size} bytes exceeds the NPM ZIP limit')
         check_delivery_receipt(src, source)
         if src.resolve(strict=True) != source_path:
             raise ValueError(f'source ZIP path changed: {src}')
@@ -93,10 +102,8 @@ def main():
         ap.error(f'refusing existing output {report}')
     dest, names, sha = rename_npm_zip(a.src, a.code, a.out_dir, a.address)
     print(f'{dest} sha256 {sha} {names}', flush=True)
-    cmd = [sys.executable, str(ROOT / 'tools/qa/validate_package.py'), str(dest), '--profile', 'npm', '--json']
-    if a.scene:
-        cmd.append('--scene')
-    r = subprocess.run(cmd, capture_output=True, encoding='utf-8', env={**os.environ, 'PYTHONUTF8': '1'})
+    cmd = validator_argv(sys.executable, ROOT, dest, profile='npm', scene=a.scene)
+    r = subprocess.run(cmd, capture_output=True, encoding='utf-8', env={**os.environ, 'PYTHONIOENCODING': 'utf-8'})
     if r.stdout:
         with report.open('x', encoding='utf-8') as stream:
             stream.write(r.stdout)
