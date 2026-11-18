@@ -188,6 +188,9 @@ def test_loader_owner_provenance(tmp_path, location, module_source, executing_sp
     _LOAD_OWNER.replace('"g", GC', 'GC, "other.py"'),
     _LOAD_OWNER.replace('"g", GC', 'GC, 1e999'),
     _LOAD_OWNER.replace('"g", GC', '"g", "not_geom_core.py"'),
+    _LOAD_OWNER.replace('"g", GC', '"g", "geom_core.py"'),
+    'ROOT = "/elsewhere"\npath = os.path.join(ROOT, ' + repr(_LOADER_OWNER) + ')\n'
+    + _LOAD_OWNER.replace('"g", GC', '"g", path'),
 ])
 def test_incomplete_owner_loader(tmp_path, body):
     assert not _loader_is_owner_wrapper(tmp_path, body)
