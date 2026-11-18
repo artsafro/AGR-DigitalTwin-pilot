@@ -617,10 +617,12 @@ def _owner_path_binding(value, paths, owner):
         return value.id in paths
     if isinstance(value, ast.Call) and ast.unparse(value.func) == "os.path.join" and value.args:
         # The TEC26 loader anchors the path with a computed repository root.
-        parts = value.args[1:]
-        return (bool(parts) and not value.keywords
-                and all(isinstance(p, ast.Constant) and isinstance(p.value, str) for p in parts)
-                and "/".join(p.value.replace("\\", "/") for p in parts) == owner)
+        parts = []
+        for arg in value.args[1:]:
+            if not isinstance(arg, ast.Constant) or not isinstance(arg.value, str):
+                return False
+            parts.append(arg.value.replace("\\", "/"))
+        return not value.keywords and "/".join(parts) == owner
     return _owner_path_literal(value, owner)
 
 
