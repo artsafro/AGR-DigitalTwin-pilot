@@ -3,6 +3,7 @@
 Pattern: n/a | new-case: parity and fail-closed tests of the #1106 shared tools.
 """
 import base64
+import hashlib
 import json
 import os
 import subprocess
@@ -204,11 +205,14 @@ def test_fresh_process_cli_help_and_job_shim():
 def make_pkg(base, address="Nku_1"):
     pkg = base / f"SM_{address}"
     pkg.mkdir(parents=True)
-    (pkg / f"SM_{address}.fbx").write_bytes(b"FBX synthetic")
+    fbx = pkg / f"SM_{address}.fbx"
+    fbx.write_bytes(b"FBX synthetic")
     thumb = base / "thumbnail_256.jpg"
     thumb.write_bytes(b"\xff\xd8synthetic")
-    (base / "export_meta.json").write_text(json.dumps({"address": address, "h_otn_model_max_z_m": 3.5,
-                                                       "thumbnail": str(thumb)}))
+    (base / "export_meta.json").write_text(json.dumps({
+        "address": address, "h_otn_model_max_z_m": 3.5, "thumbnail": str(thumb),
+        "exported_files": [fbx.name], "exported_sha256": {fbx.name: hashlib.sha256(fbx.read_bytes()).hexdigest()},
+    }))
     return pkg
 
 
@@ -231,14 +235,125 @@ def test_package_zip_is_byte_identical_to_the_tec26_job_script(tmp_path):
     assert (tmp_path / "job/SM_Nku_1.zip").read_bytes() == (tmp_path / "dt/SM_Nku_1.zip").read_bytes()
     ra, rb = (json.loads((tmp_path / d / "package_report.json").read_text(encoding="utf-8")) for d in ("job", "dt"))
     ra.pop("zip"), rb.pop("zip")
-    import hashlib
     payload = (tmp_path / 'dt/SM_Nku_1.zip').read_bytes()
     assert rb.pop('delivered') == {'file': 'SM_Nku_1.zip', 'sha256': hashlib.sha256(payload).hexdigest(),
                                   'size': len(payload)}
     assert rb.pop('summary_ru').count('delivered: SM_Nku_1.zip sha256=') == 1
+    assert rb.pop('passed') is False
+    assert rb.pop('status') == 'packaged_not_validated'
+    binding = rb.pop('export_binding')
+    assert binding['records'] == [str(b.parent / 'export_meta.json')]
+    with zipfile.ZipFile(tmp_path / 'dt/SM_Nku_1.zip') as packed:
+        sha = hashlib.sha256(packed.read('SM_Nku_1.fbx')).hexdigest()
+    assert binding['members'] == [{'name': 'SM_Nku_1.fbx', 'recorded_sha256': sha, 'zip_sha256': sha,
+                                   'status': 'match', 'recorded_in': binding['records']}]
     assert ra == rb
     names = zipfile.ZipFile(tmp_path / "dt/SM_Nku_1.zip").namelist()
     assert "T_Other_Diffuse_1.1001.png" not in names and len(names) == 4
+
+
+@pytest.mark.parametrize('case,diagnostic', [
+    ('changed', 'file changed after export'), ('legacy', 'records no exported FBX'),
+    ('no_metadata', 'export_meta.json'), ('extra', 'SM_Extra.fbx: FBX in the package is not recorded'),
+    ('missing_member', 'SM_Missing.fbx: recorded in'), ('no_hash', 'no recorded SHA-256'),
+    ('partial_hashes', 'must map exactly'), ('conflict', 'different SHA-256'),
+])
+def test_package_export_binding_refuses_without_writes(tmp_path, case, diagnostic):
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    fbx = pkg / 'SM_Nku_1.fbx'
+    meta_path = pkg.parent / 'export_meta.json'
+    meta = json.loads(meta_path.read_text())
+    if case == 'changed':
+        fbx.write_bytes(b'FBX modified!')  # same length as the recorded bytes
+    elif case == 'extra':
+        (pkg / 'SM_Extra.fbx').write_bytes(fbx.read_bytes())
+    elif case == 'missing_member':
+        meta['exported_files'].append('SM_Missing.fbx')
+        meta['exported_sha256']['SM_Missing.fbx'] = meta['exported_sha256'][fbx.name]
+    elif case in ('legacy', 'no_hash', 'partial_hashes'):
+        del meta['exported_sha256']
+        if case == 'legacy':
+            del meta['exported_files']
+        elif case == 'partial_hashes':
+            meta['exported_sha256'] = {}
+    elif case == 'conflict':
+        other = meta | {'exported_sha256': {fbx.name: '0' * 64}}
+        fbx.with_suffix('.fbx.export_meta.json').write_text(json.dumps(other))
+    if case == 'no_metadata':
+        meta_path.unlink()
+    else:
+        meta_path.write_text(json.dumps(meta))
+    before = snapshot(tmp_path)
+    r = run([sys.executable, PKG_TOOL, pkg, tex, '--no-geojson'])
+    assert (r.returncode, r.stdout) == (1, '') and diagnostic in r.stderr, (r.stdout, r.stderr)
+    assert snapshot(tmp_path) == before
+
+
+@pytest.mark.parametrize('change', [False, True], ids=['match', 'stale'])
+def test_package_binds_light_sidecar_without_using_its_address(tmp_path, change):
+    from adapters.max.agr_tools.export_meta import record_export
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    main = pkg / 'SM_Nku_1.fbx'
+    main.with_suffix('.fbx.export_meta.json').write_bytes((pkg.parent / 'export_meta.json').read_bytes())
+    (pkg.parent / 'export_meta.json').unlink()
+    light = pkg / 'SM_Nku_1_Light.fbx'
+    light.write_bytes(b'synthetic light')
+    record_export(light, source='synthetic fixture')
+    if change:
+        light.write_bytes(b'modified light')
+    before = snapshot(tmp_path)
+    r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
+    if change:
+        assert r.returncode == 1 and f'{light.name}: SHA-256' in r.stderr, (r.stdout, r.stderr)
+        assert snapshot(tmp_path) == before
+    else:
+        assert r.returncode == 0, r.stderr
+        report = json.loads((pkg.parent / 'package_report.json').read_text(encoding='utf-8'))
+        with zipfile.ZipFile(pkg.parent / 'SM_Nku_1.zip') as packed:
+            assert packed.read(light.name) == light.read_bytes()
+            assert not any(name.endswith('.export_meta.json') for name in packed.namelist())
+        assert [(row['name'], row['status']) for row in report['export_binding']['members']] == [
+            (main.name, 'match'), (light.name, 'match'),
+        ]
+
+
+def test_package_rejects_fbx_changed_at_writer_handoff(tmp_path, monkeypatch):
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    fbx = pkg / 'SM_Nku_1.fbx'
+    write_zip = package_vpm.package_core._write_zip
+
+    def change_then_write(*args, **kwargs):
+        fbx.write_bytes(b'FBX modified!')
+        return write_zip(*args, **kwargs)
+
+    monkeypatch.setattr(package_vpm.package_core, '_write_zip', change_then_write)
+    with pytest.raises(ValueError, match='changed between the export_meta check and the ZIP'):
+        package_vpm.main([str(pkg), str(tex), '--no-geojson'])
+    assert not any((pkg.parent / name).exists() for name in ('SM_Nku_1.zip', 'SM_Nku_1.zip.partial', 'package_report.json'))
+
+
+def test_package_binding_rejects_each_single_byte_mutation(tmp_path):
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    fbx = pkg / 'SM_Nku_1.fbx'
+    original = fbx.read_bytes()
+    args = [str(pkg), str(tex), '--no-geojson']
+    for offset, value in enumerate(original):
+        fbx.write_bytes(original[:offset] + bytes([value ^ 1]) + original[offset + 1:])
+        before = snapshot(tmp_path)
+        with pytest.raises(ValueError, match='file changed after export'):
+            package_vpm.main(args)
+        assert snapshot(tmp_path) == before, offset
+    fbx.write_bytes(original)
+    assert package_vpm.main(args) == 0
 
 
 def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
@@ -261,7 +376,7 @@ def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
 
 @pytest.mark.parametrize("case", ["no_object", "nan", "inf", "bool", "unknown_key", "missing_name", "empty_name",
                                   "stale_geojson", "existing_zip", "existing_report", "tex_alias", "no_textures",
-                                  "no_fbx"])
+                                  "no_fbx", "zip_input_alias", "report_input_alias", "foreign_partial"])
 def test_package_fails_closed_and_writes_nothing(tmp_path, case):
     tex = make_tex(tmp_path / "tex")
     pkg = make_pkg(tmp_path / "p")
@@ -287,6 +402,11 @@ def test_package_fails_closed_and_writes_nothing(tmp_path, case):
         (tmp_path / "p/SM_Nku_1.zip").write_bytes(b"old")
     elif case == "existing_report":
         (tmp_path / "p/package_report.json").write_text("{}")
+    elif case in ("zip_input_alias", "report_input_alias", "foreign_partial"):
+        target = {"zip_input_alias": "SM_Nku_1.zip", "report_input_alias": "package_report.json",
+                  "foreign_partial": "SM_Nku_1.zip.partial"}[case]
+        os.link(pkg / "SM_Nku_1.fbx", pkg.parent / target)
+        args = ["--no-geojson"]
     elif case == "tex_alias":
         tex = pkg
         args = ["--no-geojson"]
