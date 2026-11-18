@@ -529,7 +529,7 @@ contexts:
         hash: "c099bec414"
         ru: "переименование НПМ-ZIP с кодом района: живой этап «загрузка» маршрута пакета, пишет ZIP сам, а не через владельца (#1424)"
         status: live-bypass
-        step: "-"
+        step: "#1675"
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
         rule: delivery-zip
         issue: "#1377"
@@ -649,9 +649,9 @@ contexts:
         rule: sintez-checker
         issue: "#1379"
         hash: "24c2c8e59a"
-        ru: "остаётся: замороженная версия v003 запуска чекера сдачи elv-tc-vpm (версионированный скрипт не переписывается); новый запуск — agr checker"
-        status: own-duty
-        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
+        ru: "замороженная версия v003 запуска чекера сдачи elv-tc-vpm (версионированный скрипт не переписывается); новый запуск — agr checker"
+        status: superseded
+        why: "заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет"
       - at: "jobs/PSU275/scripts/qa_master_psu275.py::world_bm"
         rule: master-qa
         issue: "#1379"

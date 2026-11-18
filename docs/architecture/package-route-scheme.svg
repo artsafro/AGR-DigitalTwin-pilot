@@ -27,7 +27,7 @@
 <tspan x="30" dy="24">Маршрут «Пакет и сдача» (НПМ + ВПМ) — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: 30a5cdfe3dcbd10bb394c912859a3ea6a60f7a79f043469e97f9b72bd0e1d21b</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 88a638ebf72669740446778aa1fadb59866f47051b2debb9716fee7fca579508</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: Сцена НПМ / ВПМ, ревизия и SHA-256 исходников; связь с FBX через существующий export_meta</tspan>
@@ -76,13 +76,13 @@
 <tspan x="845.0" dy="20.0">СИНТЕЗ; отчёт с путями и SHA-256</tspan>
 </text>
 <text x="260.0" y="945.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="260.0" dy="16">5. Приёмка Артёма → финальный СИНТЕЗ → загрузка и</tspan>
-<tspan x="260.0" dy="20.0">передача</tspan>
+<tspan x="260.0" dy="16">5. Приёмка Артёма → код СИНТЕЗ и переименование →</tspan>
+<tspan x="260.0" dy="20.0">финальный СИНТЕЗ → передача</tspan>
 <tspan x="260.0" dy="20.0">Приёмка: Предварительная проверка не заменяет</tspan>
 <tspan x="260.0" dy="20.0">финальную; УКЭП — заказчик</tspan>
 </text>
 <text x="845.0" y="945.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="845.0" dy="16">Артефакт: Результат финального СИНТЕЗ; отметка о</tspan>
-<tspan x="845.0" dy="20.0">передаче — по слову Артёма</tspan>
+<tspan x="845.0" dy="16">Артефакт: Финальный СИНТЕЗ по переименованному</tspan>
+<tspan x="845.0" dy="20.0">ZIP; отметка о передаче — по слову Артёма</tspan>
 </text>
 </svg>

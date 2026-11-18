@@ -23,15 +23,13 @@ shared_kernel:
   functions:
     - name: zip_plan
       contract: "папка, адрес, пределы -> архивы для записи + пропуски с причинами; файлы не трогает"
-    - name: qa_package
-      contract: "пакет, профиль, сцена -> отчёт только для чтения: проваленные стадии по файлам"
 contexts:
   - id: dcc
     grid: "0/1"
     ru: "Связь с DCC и приёмка (сцена в 3ds Max)"
     area: docs/agents/CAPABILITIES.md
     owner: src/dt_ai/core/blender_runner.py
-    owner_ru: "экспорт из Max или Blender (D212); приёмка — сцена Max QUAD + путь (D270)"
+    owner_ru: "запуск Blender (D212); приёмку делает Артём вручную по сцене Max QUAD + пути (D270), владельца в коде у неё нет"
     functions:
       - name: blender_executable
         contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
@@ -59,8 +57,10 @@ contexts:
         contract: "запись -> отказ с именем поля (лишние ключи, дубли, provenance)"
       - name: record_export
         contract: "экспорт, факты, provenance -> запись export_meta"
-      - name: load_package_meta
-        contract: "папка пакета, [--meta] -> ближайшая запись; несколько — отказ, без первого попавшегося"
+      - name: address_meta_path
+        contract: "папка пакета, [--meta], prefer_oks -> запись адреса: --meta; иначе общий export_meta.json папки (важнее sidecar); иначе единственный sidecar, для НПМ — единственный sidecar ОКС; несколько — отказ; pkg.parent/export_meta.json — только если в папке записей нет"
+      - name: export_binding
+        contract: "члены архива, записи export_meta -> привязка каждого FBX к записанному SHA-256 экспорта (exported_sha256 / fbx_records); нет записи, конфликт или несовпадение — проблема, оба упаковщика отказывают"
   - id: validation
     grid: "2.5/2"
     ru: "Чтение экспорта, валидатор V001–V017, xView, отчёт сдачи"
@@ -96,6 +96,16 @@ contexts:
         contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
       - name: zip_apply
         contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
+      - name: delivery_receipt
+        contract: "сданный ZIP / .max -> квитанция {file, sha256, size}: контроль байтов, не приёмка модели (#1647)"
+      - name: check_delivery_receipt
+        contract: "файл, квитанция -> пересчёт хеша; неполная, чужая или устаревшая квитанция — отказ, не обновление; agr validate читает её из <ZIP>.delivery.json / package_report.json"
+      - name: qa_package
+        contract: "набор пакетов -> отчёт только для чтения; сверка пары ОКС <-> Ground (geojson_cross) и одного мастера (manifest_cross_master): сосед найден; результат сверки может быть неполным (#1681)"
+      - name: cross_passports
+        contract: "пути пакетов -> находки geojson_cross по найденным парам; обязанность ядра, agr validate её не выполняет"
+      - name: cross_masters
+        contract: "пути пакетов -> находки manifest_cross_master; обязанность ядра, agr validate её не выполняет"
     duplicates:
       - at: "jobs/TEC26-OKS/scripts/package_vpm.py:50"
         match: "zipfile.ZipFile(zpath"
@@ -109,23 +119,31 @@ contexts:
         hash: "c099bec414"
         ru: "rename_npm_zip: пересобирает НПМ-ZIP с кодом района через zipfile в обход _write_zip, без квитанции сдачи (#1424)"
         status: live-bypass
-        step: "-"
+        step: "#1675"
+      - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "bc783edf3f"
+        ru: "исторический драйвер сдачи Ватутино v009 в обход package_core: след Ватутино подтверждает validate -> sintez -> report, но не этап package"
+        status: historical
   - id: sintez
     grid: "1.5/3"
     ru: "Чекер СИНТЕЗ и загрузка архива"
     area: docs/domain/validation.md
-    owner: tools/blender/sintez_checker.py
-    owner_ru: "запуск чекера AGR 1.6.1 в Blender на ZIP; находки — доказательство, не вердикт"
+    owner: tools/qa/sintez_checker.py
+    owner_ru: "agr checker: ZIP папки -> чекер AGR 1.6.1 в Blender (tools/blender/sintez_checker.py через blender_runner); находки — доказательство, не вердикт"
     functions:
-      - name: dump
-        contract: "список проверок чекера -> JSON находок"
+      - name: classify
+        contract: "папка -> не больше одного ZIP ВПМ (hp) и одного НПМ (lp); иначе отказ"
+      - name: run
+        contract: "папка, выход -> копия ZIP, запуск чекера, сводка NEW.json; изменение ZIP во время прогона — отказ"
     duplicates:
       - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:18"
         match: "check_highpoly_lowpoly"
         issue: "#1379"
-        ru: "остаётся: замороженная версия v003 запуска чекера elv-tc-vpm; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
-        status: own-duty
-        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
+        ru: "замороженная версия v003 запуска чекера elv-tc-vpm; новый запуск — agr checker; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
+        status: superseded
+        why: "заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет"
 relations:
   - from: dcc
     to: export
@@ -147,7 +165,7 @@ relations:
     ru: "запись ZIP"
   - from: package
     to: validation
-    ru: "ZIP сдачи"
+    ru: "ZIP + квитанция; passed/status упаковщика валидатор не читает"
   - from: package
     to: sintez
     ru: "те же ZIP"

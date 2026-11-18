@@ -27,7 +27,7 @@ MAF_STAGES = ["sources", "library", "pick", "dims", "ids", "vpm", "placement", "
 FLORA_STAGES = ["sources", "beds", "species", "size", "maps", "star", "lod", "placement", "npm", "atlas", "checks",
                 "gate", "package"]
 PACKAGE_STAGES = ["export", "meta", "readback", "geojson", "package", "validate", "sintez", "report", "accept",
-                  "sintez-final", "upload", "customer"]
+                  "upload", "sintez-final", "customer"]
 QUESTIONS = {"maf-route": "ucx-fences", "flora-route": "stand-in-replace", "package-route": "customer-channel"}
 # #1412: red blocks closed by Artem's 2026-11-15 decisions -> block id: (stage that cites it, D-row)
 RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
@@ -229,9 +229,52 @@ def test_package_route_readback_is_before_packaging_and_counters_are_manual():
 
 def test_package_route_keeps_final_sintez_after_human_acceptance():
     events = _routes()["package-route"]
-    expected = ("sintez", "accept", "sintez-final", "upload", "customer")
+    # Council 2026-11-18 14:00 (3): the final checker runs on the ZIP renamed at upload, so upload comes first.
+    expected = ("sintez", "accept", "upload", "sintez-final", "customer")
     assert tuple(s["id"] for s in events["stages"] if s["id"] in expected) == expected
     assert "D104" in _stage(events, "sintez-final")["rules"]
+    assert "переименования" in _stage(events, "sintez-final")["event_ru"]
+    assert "одной командой" not in _stage(events, "upload")["event_ru"]
+
+
+def test_package_map_council_station3_edits_1673():
+    """AI Council 2026-11-18 11:00/14:00/17:00/20:00 notes on PR #1680, each backed by a code line."""
+    events, maps = _routes()["package-route"], _maps()
+    cmap = maps["package-contexts"]
+    ctx = {c["id"]: c for c in cmap["contexts"]}
+    names = lambda c: {f["name"] for f in c["functions"]}
+    # qa_package checks a SET of packages: not part of the zip kernel; cross checks are core duties
+    assert "qa_package" not in {f["name"] for f in cmap["shared_kernel"]["functions"]}
+    assert {"qa_package", "cross_passports", "cross_masters", "delivery_receipt",
+            "check_delivery_receipt"} <= names(ctx["package"])
+    assert "сосед найден; результат сверки может быть неполным" in next(
+        f["contract"] for f in ctx["package"]["functions"] if f["name"] == "qa_package")
+    # packers call address_meta_path directly (package_npm.py:28, package_vpm.py:83)
+    assert "address_meta_path" in names(ctx["export-meta"]) and "load_package_meta" not in names(ctx["export-meta"])
+    # sintez owner = agr checker route command
+    assert ctx["sintez"]["owner"] == "tools/qa/sintez_checker.py"
+    # ZIP writers: rename bypass carries #1675 in both maps; Vatutino driver is historical
+    dups = {r["at"]: r for r in ctx["package"]["duplicates"]}
+    shared = {r["at"]: r for c in _contexts()["contexts"] for r in c.get("duplicates", [])}
+    rename = "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
+    assert dups[rename]["step"] == shared[rename]["step"] == "#1675"
+    drv = dups["jobs/VATUTINO-SITE/run_delivery.py::main"]
+    assert (drv["status"], drv["hash"]) == ("historical", "bc783edf3f") and "не этап package" in drv["ru"]
+    v003 = [r for r in [*ctx["sintez"]["duplicates"], *shared.values()] if "run_agr_checker_v003" in r["at"]]
+    assert len(v003) == 2 and {r["status"] for r in v003} == {"superseded"}
+    # hotspots
+    hot = {h["id"]: h for h in events["hotspots"]}
+    assert hot["shell-zip-writers"]["stage"] == "package" and "run_building.sh:31" in hot["shell-zip-writers"]["ru"]
+    assert hot["upload-rename-bypass"]["stage"] == "upload"
+    assert (hot["customer-line-missing"]["stage"], hot["customer-line-missing"]["status"]) == ("customer", "open")
+    assert "в проверенных отчётах сдачи" in hot["customer-line-missing"]["ru"].lower()
+    assert "заморож" not in hot["legacy-packagers"]["ru"] and "2 live-bypass" in hot["legacy-packagers"]["ru"]
+    assert "диагностический прогон KPP1" in hot["never-passed"]["ru"]
+    assert "z_meta_mapping" in hot["meta-v013"]["ru"] and "выход 1" in hot["meta-v013"]["ru"]
+    assert "только" not in hot["meta-v013"]["ru"]
+    # package-vpm binds the FBX since #1679 (tools/derive/package_vpm.py export_binding)
+    vpm = next(b for b in _stage(events, "package")["branches"] if b["id"] == "vpm")
+    assert "пока не сверяет" not in vpm["ru"] and "packaged_not_validated" in vpm["ru"]
 
 
 def test_package_context_registers_vatutino_rename_as_live_bypass():

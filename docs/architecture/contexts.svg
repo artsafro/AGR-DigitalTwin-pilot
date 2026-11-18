@@ -23,8 +23,8 @@
 <rect x="1870.0" y="1282.0" width="470" height="110.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="345.0" y="1582.0" width="470" height="230.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="345.0" y="1826.0" width="470" height="80.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1582.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1721.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1582.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1791.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1565.0" y="1582.0" width="470" height="125.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <polyline points="1730.0,831.5 1750.0,831.5 1750.0,1053.0 530.0,1053.0 530.0,1179.25 510.0,1179.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="510.0,1179.25 530.0,1179.25 530.0,1033.0 1750.0,1033.0 1750.0,844.0 2360.0,844.0 2360.0,770.25 2340.0,770.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -246,13 +246,17 @@
 </text>
 <text x="963.0" y="1592.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
-<tspan x="963.0" dy="17.5">Владелец: tools/blender/sintez_checker.py</tspan>
-<tspan x="963.0" dy="17.5">запуск чекера AGR 1.6.1 в Blender на ZIP; находки —</tspan>
-<tspan x="963.0" dy="17.5">доказательство, не вердикт</tspan>
+<tspan x="963.0" dy="17.5">Владелец: tools/qa/sintez_checker.py</tspan>
+<tspan x="963.0" dy="17.5">agr checker: ZIP папки -&gt; чекер AGR 1.6.1 в Blender</tspan>
+<tspan x="963.0" dy="17.5">(tools/blender/sintez_checker.py через blender_runner);</tspan>
+<tspan x="963.0" dy="17.5">находки — доказательство, не вердикт</tspan>
 <tspan x="963.0" dy="17.5"></tspan>
-<tspan x="963.0" dy="17.5">dump: список проверок чекера -&gt; JSON находок</tspan>
+<tspan x="963.0" dy="17.5">classify: папка -&gt; не больше одного ZIP ВПМ (hp) и одного</tspan>
+<tspan x="963.0" dy="17.5">НПМ (lp); иначе отказ</tspan>
+<tspan x="963.0" dy="17.5">run: папка, выход -&gt; копия ZIP, запуск чекера, сводка</tspan>
+<tspan x="963.0" dy="17.5">NEW.json; изменение ZIP во время прогона — отказ</tspan>
 </text>
-<text x="963.0" y="1731.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1801.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <text x="1573.0" y="1592.0" font-size="14" text-anchor="start" fill="#1e1e1e">
