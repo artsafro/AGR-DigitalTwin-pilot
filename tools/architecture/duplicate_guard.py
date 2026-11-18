@@ -8,9 +8,10 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `(tile - 1001) % 10` / `// 10` / `divmod(tile - 1001, 10)` / `i = tile - 1001` then `i % 10` or `i // 10`.
   1001 and 10 also match a name bound to that int anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`), and any
   job-local `def` named udim_tile / udim_of_cell / tile_origin / face_tile is a copy (PR #1368 r1).
-  #1370 also flags single-row `floor(...) + 1001`, `[tile - 1001, 0]` origins and
-  `x - (tile - 1001)` local coordinates. Literal additive leaves summing to 1001 match split bases
-  (`1000 + 1 + u + 10*v`). Bare `1001 + u` and `tile - 1001` remain non-copy controls.
+  #1370/#1482 also flag single-row `floor(u) + 1001`, `int(u) + 1001`, `u // 1 + 1001`,
+  `[tile - 1001, 0]` or `(tile - 1001, 0.0)` origins, and `x - (tile - 1001)` local coordinates.
+  Literal integer leaves and names with a single recorded integer value can sum to a split base
+  (`A = 1000; A + 1 + u + 10*v`). Bare `1001 + u` and `tile - 1001` remain non-copy controls.
 - `delivery-zip`  owner adapters/max/agr_tools/package_core.py (`_write_zip`, #1361/#1377): the one ZIP writer
   behind `agr package-npm` / `agr package-vpm` (tools/derive facades) and AGR Tools. Flags any other writer:
   `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed), including
@@ -162,12 +163,25 @@ def _udim_hits(tree):
             isinstance(n.func, ast.Name) and n.func.id == "floor" or
             isinstance(n.func, ast.Attribute) and n.func.attr == "floor") for n in ast.walk(node))
 
+    def _is_tile_index(node):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "int"
+                and len(node.args) == 1 and not node.keywords and not isinstance(node.args[0], ast.Starred)):
+            return True
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.FloorDiv) and _const(node.right, 1):
+            return True
+        return _is_floor(node)
+
     def _has_base(terms):
         # Sum only unambiguous integer leaves; do not evaluate scanned code or infer arbitrary variables.
         if any(_const(t, 1001) for t in terms):
             return True
-        integers = [t.value for t in terms if isinstance(t, ast.Constant) and type(t.value) is int]
-        return sum(integers) == 1001
+        total = 0
+        for term in terms:
+            if isinstance(term, ast.Constant) and type(term.value) is int:
+                total += term.value
+            elif isinstance(term, ast.Name) and len(values := consts.get(term.id, ())) == 1:
+                total += next(iter(values))
+        return total == 1001
 
     def _is_minus_1001(node):
         return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
@@ -180,11 +194,11 @@ def _udim_hits(tree):
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             terms = _add_terms(node)
-            if _has_base(terms) and any(_is_times_ten(t) or _is_floor(t) for t in terms):
+            if _has_base(terms) and any(_is_times_ten(t) or _is_tile_index(t) for t in terms):
                 hits[id(node)] = node
         # Single-row UV translation: a 2D origin vector or the scalar inverse x - (tile - 1001).
         if isinstance(node, (ast.List, ast.Tuple)) and len(node.elts) == 2 \
-                and _is_minus_1001(node.elts[0]) and _const(node.elts[1], 0):
+                and _is_minus_1001(node.elts[0]) and (_const(node.elts[1], 0) or _const(node.elts[1], 0.0)):
             hits[id(node)] = node
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _is_minus_1001(node.right):
             hits[id(node)] = node
