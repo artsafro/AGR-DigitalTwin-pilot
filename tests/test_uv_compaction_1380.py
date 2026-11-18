@@ -151,9 +151,9 @@ def test_no_delivery_changes():
     # nor is the job's skeleton config (`skeleton.json`, D324).
     # The #1406 Ground site command pilot keeps its input and its JSON report in the job (not a delivery).
     # The #1410 MAF NPM-light proof keeps its spec and proof atlas list in the job (inputs, not deliveries).
-    # The #1619 body training polygon keeps its etalon colour palette in the job (an input, not a delivery).
+    # The #1619 body-training hooks read their zone maps from the job (G22 palette, site-63 wall-type map; inputs).
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json',
-          '/body-training-1619/palette_g22.json')
+          '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json')
     allowed = lambda p: p.endswith(ok) or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith('.txt')
     assert all(allowed(p) for p in paths), [p for p in paths if not allowed(p)]
