@@ -565,6 +565,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
             notes.append(f"profile {kind.upper()} from the name grammar of {target.name}")
     if kind is None and suffix in (".fbx", ".png", ".max"):
         kind = "npm"
+        notes.append("profile NPM by default (name gives no profile); pass --profile npm|vpm")
     if suffix == ".zip":
         early = zip_precheck(target)
         if early is not None:

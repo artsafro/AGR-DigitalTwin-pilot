@@ -58,7 +58,7 @@ def test_single_fbx_profile(tmp_path, name, override, kind, note):
 
 
 @pytest.mark.parametrize("suffix", [".fbx", ".FbX"])
-@pytest.mark.parametrize("data", [b"", fbx()[:24], fbx(7500)])
+@pytest.mark.parametrize("data", [b"", fbx()[:24], fbx(7500)], ids=["empty", "partial", "version-7500"])
 def test_default_profile_note_does_not_change_failures(tmp_path, suffix, data):
     path = tmp_path / f"scratch export{suffix}"
     path.write_bytes(data)
