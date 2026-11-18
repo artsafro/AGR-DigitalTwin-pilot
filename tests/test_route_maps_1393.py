@@ -27,7 +27,7 @@ MAF_STAGES = ["sources", "library", "pick", "dims", "ids", "vpm", "placement", "
 FLORA_STAGES = ["sources", "beds", "species", "size", "maps", "star", "lod", "placement", "npm", "atlas", "checks",
                 "gate", "package"]
 PACKAGE_STAGES = ["export", "meta", "readback", "geojson", "package", "validate", "sintez", "report", "accept",
-                  "upload", "customer"]
+                  "sintez-final", "upload", "customer"]
 QUESTIONS = {"maf-route": "ucx-fences", "flora-route": "stand-in-replace", "package-route": "customer-channel"}
 # #1412: red blocks closed by Artem's 2026-11-15 decisions -> block id: (stage that cites it, D-row)
 RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
