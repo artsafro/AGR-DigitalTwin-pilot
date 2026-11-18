@@ -99,3 +99,17 @@ loaded PC) and three in-process guard tests (~155 -> ~55 s) - roughly 2 of the ~
 R1 (мемоизация `ast.walk`) сокращает полный скан `duplicate_guard` в 2,2 раза (медиана 44,3 -> 19,9 с,
 C/B 0,449) при полном совпадении вывода; мутационная проверка паритета ловит поломку. Файл не правился
 (им занята карточка #1486) - изменение оформлено как предложение для отдельной карточки после #1486.
+
+## Standing #2 (`t_05244ff2`): frozen contract
+
+Same full-scan metric and unchanged `bench.py` on `origin/main` `c781068a`. R2 tests only
+memoizing identical dotted-module lookups within one `call_chains.load_live` (including misses).
+`edges` already walks each parsed file once; R1 is not enabled in either variant. No production
+files change. #1486 owns guard correctness, #1615 owns full-suite wall time; #1677 is merged.
+Readiness `2026-11-18_1001.json`: cold-site readiness blockers belong to #1315/#1608;
+polygon floors to #1619, G22 atlas to #1649. This targets per-card verification overhead instead.
+
+- Command: `uv run python docs/research/autoresearch-repo-guards-harness/bench.py --rounds 3 --candidate r2_module_memo --out C:/x/ar_t_05244ff2/r2.json`. Compare median of three full scans for each variant, alternating B/C; not an idle-machine claim.
+- Keep as proposal only if C/B <= 0.80 and parity passes: all six clean CLI exits and byte-identical output, all `scan_text` corpus findings, plus complete roots and shortest chains equality on the repo. The existing `tests/test_duplicate_status_1424.py` must pass with the candidate injected, including syntax-error reporting; fresh subprocesses still use unmodified production code.
+- Candidate must not share state across graph loads or roots. No deselects, skipped files or rules, weaker checks/tolerances, edited delivered packages, or other cards' files. Timing is not a quality score; no model calibration applies.
+- Stop after one candidate round, at C/B <= 0.80 with parity, or 10 minutes from launch, whichever comes first. No full suite or DCC. In OBSERVE only record what would change; any adoption goes through a reviewed PR, not an automatic change to production or deliveries.
