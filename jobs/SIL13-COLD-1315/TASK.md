@@ -22,7 +22,11 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Read back exports, run area validators, report per-area reproduction and historical comparison.
   No passed=true with an incomplete mandatory/manual gate.
 
-## v030 current continuation — exact hidden cut built; visible microcorner choice
+## v031 current continuation — bounded corner pilot rejected
+
+[CONTINUATION-v031.md](CONTINUATION-v031.md) supersedes the permission wait below. D345 / answer 6971046788 was exercised on one VPM Bench013 copy: exactly two original corners lowered, 183→0 Ground crossings, but 67 near vertices / 52 pairs remain. No replication. Current site pair, Ground, NPM, master, census and libraries remain unchanged. [Question 6971407657](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6971407657) asks about a separate pilot limited to three named corners below the original 2 mm eligibility threshold; no change before its answer.
+
+## v030 historical continuation — exact hidden cut built; visible microcorner choice
 
 [CONTINUATION-v030.md](CONTINUATION-v030.md) supersedes pending-question claims
 below, NOT the full-site pair. [D342]/answer6959387195 authorizes hidden-only VPM

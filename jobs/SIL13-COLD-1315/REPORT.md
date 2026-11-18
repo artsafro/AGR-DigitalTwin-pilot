@@ -1,6 +1,10 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v030 isolated hidden-only VPM interface pilot built; NOT adopted,
+Current status: **v031 isolated VPM Bench013 corner pilot rejected; NOT adopted or delivered.** [Movement ledger and readback findings](CONTINUATION-v031.md): two eligible corners moved down 1.990 mm, raw/native 4,373 triangles, regulatory 183→0 Ground crossings, public xView FAIL 67 near vertices / 52 pairs. The unchanged site pair and per-area findings below still apply. Next model decision: [three sub-2 mm corners](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6971407657).
+
+Procedure walker: historical human Gate 1 is recorded, but the retained v007 PartsList confirmation fails the current project-scope/answer-ref/content-hash verification. Reproduced with the untouched v030 job descriptor as well; no approval hash or scope was invented to turn it green.
+
+Historical status: **v030 isolated hidden-only VPM interface pilot built; NOT adopted,
 NOT delivered**. See [CONTINUATION-v030.md](CONTINUATION-v030.md),
 [source-wide-summary-v030.json](source-wide-summary-v030.json),
 [question-receipt-v030.json](question-receipt-v030.json).

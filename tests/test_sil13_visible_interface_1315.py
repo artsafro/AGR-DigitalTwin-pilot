@@ -14,6 +14,42 @@ def load():
     return module
 
 
+@pytest.mark.parametrize('height,shift,allowed', [
+    (.002, .002, True), (.005, .001, True), (.003, .00199, True),
+    (.0019999, .001, False), (.0050001, .001, False),
+    (.003, .002000001, False), (.003, 0., False), (.003, -.001, False),
+    (.003, float('nan'), False), (.003, float('inf'), False),
+])
+def test_visible_corner_uses_actual_height_and_only_lowers_listed_vertex(height, shift, allowed):
+    v = np.array([[0., 0., height], [1., 0., .3], [0., 1., .3]])
+    g = np.array([[[-2., -2., -.2], [4., -2., -.2], [-2., 4., -.2]]])
+    g = np.concatenate([g, g + [0, 0, .2]])
+    g[:, 1, 2] += .02
+    v[0, 2] += .02/3
+    original = v.copy()
+    move = load().lower_visible_corners
+    if allowed:
+        out, rows = move(v, np.array([[0, 1, 2]]), g, [(0, shift)], 'bench')
+        np.testing.assert_array_equal(out[:, :2], v[:, :2])
+        np.testing.assert_array_equal(out[1:], v[1:])
+        assert len(rows) == 1 and rows[0]['object'] == 'bench' and rows[0]['vertex'] == 0
+        assert rows[0]['before_height_m'] == pytest.approx(height)
+        assert rows[0]['after_height_m'] == pytest.approx(height-shift)
+        assert rows[0]['downshift_m'] == pytest.approx(shift)
+    else:
+        with pytest.raises(ValueError):
+            move(v, np.array([[0, 1, 2]]), g, [(0, shift)], 'bench')
+    np.testing.assert_array_equal(v, original)
+
+
+@pytest.mark.parametrize('moves', [[], [(0, .001), (0, .001)], [(4, .001)], [(True, .001)], [(2, .001)]])
+def test_visible_corner_rejects_empty_duplicate_unknown_or_unsupported_vertex(moves):
+    v = np.array([[0., 0., .003], [1., 0., .03], [0., 1., .003]])
+    g = np.array([[[-1., -1., 0.], [2., -1., 0.], [0., .3, 0.]]])
+    with pytest.raises(ValueError):
+        load().lower_visible_corners(v, np.array([[0, 1, 2]]), g, moves, 'bench')
+
+
 def test_vertical_source_wall_is_cut_without_moving_visible_surface():
     # Synthetic control: wall crosses a flat actual-surface analogue at Z=0.
     wall = np.array([[0., 0., -.1], [1., 0., -.1], [0., 0., 1.]])

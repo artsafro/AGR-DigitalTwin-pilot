@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-visible-interface-pilot-v030
+run_id: cold-1315-vpm-corner-pilot-v031
 synthetic: false
 path: deviation
 inputs: &id001
@@ -215,16 +215,20 @@ gates:
       Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
     evidence: *id001
   parts:
-    status: pass
-    note: Original site/scope Gate1 and pilot accepted. D340answer6944390189 removes onlywrongrow19Cannopy006; retain38entrycensus/37physicalMAF/4582plants, sourcepoints/rotations. D335/D321/Table/Bench/hedge/sourcegates CLOSED; no technical or finaldelivery acceptance.
+    status: fail
+    note: Original human site/scope Gate 1 approved; historical v007 receipt lacks the content binding now required by the procedure walker (same failure on v030). Do not synthesize an approval hash. D340 removes only the wrong row19 candidate, retaining 38-entry census and 37 physical MAF.
     evidence:
     - path: jobs/SIL13-COLD-1315/parts-full-site-picture-confirmed-v007.json
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
     waits: user
-    note: D342answer6959387195 closes hidden-only interface permission. v030standaloneBench5064to4373raw/native/183to0Ground crossings, but65nearvertices49pairsFAIL. Three surface-preserving trials REJECTED. NEW question6960708487 asks ONE visible-corner repair<=2mm in<=5mmGround-contactband; actualsourcecorner51.58deg and0.708/0.522mmcontacts measured. No visible repair or site replication before answer and separatepilotpicture. CurrentNPMv026/VPMv029 unchanged, othertechnicalFAILsOPEN, D339OBSERVE.
+    note: D345 answer6971046788 applied to ONE isolated VPM Bench013. Two eligible corners lowered 1.990mm before exact Ground cut; raw/native 4373tri, regulatory183to0, xView67vertices/52pairs FAIL. No adoption. Question6971407657 asks whether to test three named sub-2mm source corners separately. Current NPMv026/VPMv029 and master/census unchanged.
     evidence: &id002
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v031.json
+      sha256: 0db19a2300a4f82dafdfd67f47c3cd1fa4cb7f7d13b9ad75a8ceb5b5c3d4e22e
+    - path: jobs/SIL13-COLD-1315/evidence-v031.json
+      sha256: 8ee242d06ebddf89a0db1243e07c045e8e3a3db0cf97347d4cc9ed2ae69dff49
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v030.json
       sha256: 643385ac7e84cf190dc1f55da56dd9237113d42059c3b23aed935f91706e91e8
     - path: jobs/SIL13-COLD-1315/evidence-v030.json
@@ -269,8 +273,10 @@ gates:
     evidence: *id002
   report:
     status: review
-    note: Current pair NPMv026/VPMv029 unchanged; isolatedv030Bench4373raw/native has183to0Groundcrossings but65nearvertices/49pairsFAIL. Archive_diff standalonebefore/afterPASS with explicitobjectchange, NOT whole-site legacybaselinePASS. D342hidden-onlycut permission closed; NEW visiblecornerquestion6960708487 pending.448affectedpassed0failed66.62s; finalguards and seals in v030summary. Full suite deferred(rule68).
+    note: v031 result and all moved vertices reported. Current pair NPMv026/VPMv029 unchanged, isolated VPM Bench candidate rejected. 469 affected tests passed; full suite deferred to merge batch (rule 68). Whole-site technical failures remain open.
     evidence:
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v031.md
+      sha256: e4912041af8822d9b455b04065303e985e92677b9ca02b04efcb69b1db77fab0
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v030.md
       sha256: 9e594bba054853f406b7924b4979e3e6f07107d2cb6033ed0d8144addedf1bee
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v029.md
@@ -285,7 +291,7 @@ gates:
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: Answer6956847079 ACCEPTS maple r2picture6954553715; sixVPMmaples applied and picturegateCLOSED. D342answer6959387195 closes hidden-onlyinterfacepermission. v030clay renders are failure evidence only, not a review/acceptance scene or an approved Bench form. NEW visiblecornerquestion6960708487 is model permission, not a repeat of either closed gate. Finalsite/material/manualacceptance and allotherFAILs remain open.
+    note: Maple picture gate remains closed; D342/D345 permit two historical isolated trials only, neither accepted for site adoption. v031 has no approval request by picture because technical QA failed. Final site, materials and manual acceptance remain open.
     evidence: *id002
   checker:
     status: missing

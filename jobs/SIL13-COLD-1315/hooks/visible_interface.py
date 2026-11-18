@@ -1,13 +1,13 @@
 """new-case: #1315 authorized VPM hidden-interface cut on one copied pilot.
 
-Placement after-hook, D342: keep the buried master/census; this derived mesh
-retains exactly the visible subset of each source triangle. No offsets, caps,
-Ground edits, species/instance substitutions or implicit missing-coverage drops.
+Placement after-hook, D342: keep the buried master/census and cut the copied
+triangles at Ground. The separate, explicitly invoked D345 pilot can lower listed
+source corners before that cut. No automatic offsets, caps or Ground edits.
 Barycentric partitioning also handles vertical walls (singular XY projection).
 """
 import numpy as np
 from shapely import constrained_delaunay_triangles
-from shapely.geometry import Polygon
+from shapely.geometry import Point, Polygon
 from shapely.ops import unary_union
 from shapely.strtree import STRtree
 
@@ -44,6 +44,15 @@ class GroundPartition:
         self.polys = [Polygon(t[:, :2]) for t in g]
         self.tree = STRtree(self.polys)
         self.coeff = np.array([np.linalg.solve(np.column_stack([t[:, :2], np.ones(3)]), t[:, 2]) for t in g])
+
+    def height_at(self, x, y):
+        indices = self.tree.query(Point(x, y), predicate='intersects')
+        if not len(indices):
+            raise ValueError(f'Ground coverage missing at {(x, y)}')
+        height = float(np.max(self.coeff[indices] @ [x, y, 1.]))
+        if not np.isfinite(height):
+            raise ValueError(f'invalid Ground height at {(x, y)}')
+        return height
 
     def pieces(self, triangle):
         t = np.asarray(triangle, dtype=float)
@@ -97,6 +106,44 @@ class GroundPartition:
                         'removed_fraction': float(1-visible.area/DOMAIN.area),
                         'uncovered_fraction': float(uncovered.area/DOMAIN.area),
                         'ground_indices': ground_ids, 'output_triangles': len(result)}
+
+
+def lower_visible_corners(vertices, triangles, ground, moves, object_id):
+    """One VPM copied pilot; explicit source indices and vertical shifts in metres."""
+    v = np.asarray(vertices, dtype=float)
+    f = np.asarray(triangles)
+    if (v.ndim != 2 or v.shape[1:] != (3,) or not len(v) or not np.isfinite(v).all()
+            or f.ndim != 2 or f.shape[1:] != (3,) or not len(f)
+            or f.dtype.kind not in 'iu' or f.min() < 0 or f.max() >= len(v)):
+        raise ValueError('invalid pilot mesh')
+    if not isinstance(object_id, str) or not object_id.strip() or not moves:
+        raise ValueError('explicit pilot object and nonempty move list required')
+    partition = GroundPartition(ground)
+    result = v.copy()
+    ledger, seen = [], set()
+    for i, shift in moves:
+        if type(i) is not int or not 0 <= i < len(v) or i in seen or not (f == i).any():
+            raise ValueError(f'invalid or duplicate source vertex {i}')
+        if type(shift) not in (int, float) or not 0 < shift <= .002:
+            raise ValueError(f'invalid downward shift at source vertex {i}: {shift}')
+        x, y, z = v[i]
+        ground_z = partition.height_at(x, y)
+        if not ground_z + .002 <= z <= ground_z + .005:
+            raise ValueError(f'source vertex {i} outside the authorized 2–5 mm band: {z-ground_z} m')
+        result[i, 2] = max(z - shift, ground_z)
+        ledger.append({'object': object_id, 'vertex': i, 'xy_m': [float(x), float(y)],
+                       'ground_z_m': ground_z, 'before_z_m': float(z), 'after_z_m': float(result[i, 2]),
+                       'before_height_m': float(z-ground_z), 'after_height_m': float(result[i, 2]-ground_z),
+                       'downshift_m': float(z-result[i, 2]), 'requested_downshift_m': shift})
+        seen.add(i)
+    incident = np.isin(f, tuple(seen)).any(axis=1)
+    before, after = v[f[incident]], result[f[incident]]
+    n0 = np.cross(before[:, 1] - before[:, 0], before[:, 2] - before[:, 0])
+    n1 = np.cross(after[:, 1] - after[:, 0], after[:, 2] - after[:, 0])
+    dots = (n0 * n1).sum(axis=1)
+    if not np.isfinite(dots).all() or (dots <= 0).any():
+        raise ValueError('corner movement inverts or collapses an incident triangle')
+    return result, ledger
 
 
 def visible_pieces(triangle, ground):
