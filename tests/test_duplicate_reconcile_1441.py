@@ -128,7 +128,8 @@ def test_wrapper_chain_has_real_owner_and_loader_not_just_a_path_mention(tmp_pat
     real_rows = rows()
     for at, owner in [
         ('jobs/TEC26-OKS/scripts/ucx_tri_core.py:44', 'adapters/max/agr_tools/geom_core.py'),
-        ('jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29', 'jobs/TEC26-OKS/scripts/ucx_tri_core.py')]:
+        ('jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29', 'jobs/TEC26-OKS/scripts/ucx_tri_core.py'),
+        ('jobs/KPP1/scripts/build_kpp1.py:432', 'adapters/max/agr_tools/roof_core.py')]:
         found = [r for r in real_rows if r.at == at]
         assert found and all(r.owner == owner for r in found)
         if found[0].status == 'wrapper':

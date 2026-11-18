@@ -80,6 +80,7 @@ import argparse
 import ast
 import hashlib
 import json
+import posixpath
 import re
 import sys
 from collections import namedtuple
@@ -612,21 +613,28 @@ def _owner_path_literal(node, owner):
     return path == Path(owner).name or path.removeprefix("./") == owner
 
 
-def _owner_path_binding(value, paths, owner):
+def _owner_path_binding(value, paths, owner, rel):
     if isinstance(value, ast.Name):
         return value.id in paths
     if isinstance(value, ast.Call) and ast.unparse(value.func) == "os.path.join" and value.args:
-        # The TEC26 loader anchors the path with a computed repository root.
+        # TEC26 uses ROOT; the KPP1 roof wrapper uses its own source directory.
+        anchor = ast.unparse(value.args[0])
+        if anchor == "ROOT":
+            base = ""
+        elif anchor == "os.path.dirname(os.path.abspath(__file__))" and rel is not None:
+            base = posixpath.dirname(rel)
+        else:
+            return False
         parts = []
         for arg in value.args[1:]:
             if not isinstance(arg, ast.Constant) or not isinstance(arg.value, str):
                 return False
             parts.append(arg.value.replace("\\", "/"))
-        return not value.keywords and "/".join(parts) == owner
+        return bool(parts) and not value.keywords and posixpath.normpath(posixpath.join(base, *parts)) == owner
     return _owner_path_literal(value, owner)
 
 
-def _is_owner_loader(node, owner, paths):
+def _is_owner_loader(node, owner, paths, rel):
     """Recognize the straight-line importlib chain, without executing the helper.
 
     Assignment nodes serve as identities: reusing a variable spelling doesn't
@@ -645,7 +653,7 @@ def _is_owner_loader(node, owner, paths):
                    and isinstance(n.ctx, (ast.Store, ast.Del))}
         if isinstance(stmt, ast.Assign) and all(isinstance(t, ast.Name) for t in stmt.targets):
             value = stmt.value
-            path = _owner_path_binding(value, paths, owner)
+            path = _owner_path_binding(value, paths, owner, rel)
             spec = module = None
             if isinstance(value, ast.Call):
                 func = ast.unparse(value.func)
@@ -684,7 +692,7 @@ def _is_owner_loader(node, owner, paths):
     return False
 
 
-def _owner_names(tree, owner):
+def _owner_names(tree, owner, rel=None):
     """Names in the file bound to the owner module: imports of it or from it, and assignments whose value names the
     owner file (`_sibling('udimtile_core.py', ...)`, importlib spec of its path)."""
     stem = Path(owner).stem
@@ -708,14 +716,14 @@ def _owner_names(tree, owner):
     paths = set()
     for node in tree.body:
         if isinstance(node, ast.Assign):
-            bound = _owner_path_binding(node.value, paths, owner)
+            bound = _owner_path_binding(node.value, paths, owner, rel)
             for target in node.targets:
                 if isinstance(target, ast.Name):
                     paths.discard(target.id)
                     if bound:
                         paths.add(target.id)
     for node in tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_owner_loader(node, owner, paths):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_owner_loader(node, owner, paths, rel):
             names.add(node.name)
     return names
 
@@ -742,7 +750,7 @@ def calls_owner(root, row):
     """True when the row's function (or line's enclosing def) uses a name bound to its context owner; for a rule in
     POLICY_NAMES only a use of one of its policy functions counts (`from owner import f [as g]` or `owner_mod.f`)."""
     tree = ast.parse((Path(root) / row.rel).read_bytes(), filename=row.rel)
-    names = _owner_names(tree, row.owner)
+    names = _owner_names(tree, row.owner, row.rel)
     if not names:
         return False
     scope = _scope_node(tree, row.qual, row.line)
