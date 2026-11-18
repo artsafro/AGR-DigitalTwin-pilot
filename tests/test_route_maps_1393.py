@@ -218,7 +218,8 @@ def test_package_route_readback_is_before_packaging_and_counters_are_manual():
     stages = [s["id"] for s in events["stages"]]
     readback = _stage(events, "readback")
     assert stages.index("readback") < stages.index("package")
-    assert "agr validate <model.fbx> --scene" in readback["commands"]
+    assert "agr validate" in readback.get("commands", [])
+    assert "agr validate <model.fbx> --scene" in readback["event_ru"]
     assert "счётчики пропусков = 0" not in readback["event_ru"]
     assert "src/dt_ai/validate/build_counters.py" in readback["evidence"]
     hot = {h["id"]: h for h in events["hotspots"]}
@@ -235,8 +236,12 @@ def test_package_route_keeps_final_sintez_after_human_acceptance():
 
 def test_package_context_registers_vatutino_rename_as_live_bypass():
     package = next(c for c in _maps()["package-contexts"]["contexts"] if c["id"] == "package")
-    rows = {r["at"]: r["status"] for r in package["duplicates"]}
-    assert rows.get("jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip") == "live-bypass"
+    at = "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
+    rows = [r for r in package["duplicates"] if r["at"] == at]
+    shared = next(r for c in _contexts()["contexts"] for r in c.get("duplicates", []) if r["at"] == at)
+    assert len(rows) == 1
+    assert {k: rows[0][k] for k in ("status", "rule", "hash")} == {k: shared[k] for k in ("status", "rule", "hash")}
+    assert rows[0]["status"] == "live-bypass"
 
 
 def test_package_route_covers_export_meta_packagers_checker_and_delivery():

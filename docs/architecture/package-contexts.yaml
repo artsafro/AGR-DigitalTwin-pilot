@@ -1,8 +1,8 @@
 # Context map of the package / delivery route, NPM + VPM, #1393 (follow-up of #1392, D293). Source of truth for
 # docs/architecture/package-contexts.excalidraw / .svg. Same schema and generator as contexts.yaml (#1359).
 # Every stage context of package-route.events.yaml is listed here with the same owner (route_map.route_coverage).
-# duplicates: described rows only (`at` = path:line, `match` = text on that line); the duplicate_guard allowlist
-# (incl. the nine frozen job packagers, #1106) stays in contexts.yaml. No `duplicates` key = no duplicates box.
+# duplicates: described rows use path:line; the shared rename bypass repeats its function/hash identity from
+# contexts.yaml so it is counted once. No `duplicates` key = no duplicates box.
 # grid: "col/row" cell of the drawing (all contexts or none; columns >= 1 apart in a row).
 # Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
 title_ru: "Карта контекстов маршрута «Пакет и сдача» (НПМ + ВПМ) — #1361, D293"
@@ -10,7 +10,10 @@ issue: "#1393"
 rules:
   - id: described
     owner: docs/architecture/contexts.yaml
-    ru: "дубли здесь описательные; охранный список duplicate_guard — в contexts.yaml"
+    ru: "описательные строки с указанием места в коде"
+  - id: delivery-zip
+    owner: adapters/max/agr_tools/package_core.py
+    ru: "свой писатель ZIP вместо общего _write_zip; охрана jobs/, tools/, src/ (#1377)"
 shared_kernel:
   serves_stage: package
   id: zip
@@ -83,7 +86,7 @@ contexts:
     ru: "Пакеты НПМ / ВПМ и передача"
     area: docs/domain/areas/package.md
     owner: adapters/max/agr_tools/package_core.py
-    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    owner_ru: "общий писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
     functions:
       - name: zip_plan
         contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
@@ -100,6 +103,13 @@ contexts:
         ru: "живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core)"
         status: live-bypass
         step: "#1377"
+      - at: "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
+        rule: delivery-zip
+        issue: "#1377"
+        hash: "c099bec414"
+        ru: "rename_npm_zip: пересобирает НПМ-ZIP с кодом района через zipfile в обход _write_zip, без квитанции сдачи (#1424)"
+        status: live-bypass
+        step: "-"
   - id: sintez
     grid: "1.5/3"
     ru: "Чекер СИНТЕЗ и загрузка архива"

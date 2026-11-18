@@ -32,7 +32,7 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 ### Живые обходы по областям
 
-Строк дублей во всех картах: 103; живой обход 7, обёртка 13, исторические 48, своя обязанность 23; разных живых копий 7.
+Строк дублей во всех картах: 104; живой обход 8, обёртка 13, исторические 48, своя обязанность 23; разных живых копий 7.
 Заменённые черновики (не сдача): 12.
 
 | Область | Живых обходов | Файлы | Шаг сжатия |
@@ -62,6 +62,8 @@ AGR Tools из списка `FILES` в `tools/max/build_agr_tools.py`; кажд�
 
 
 ### Рекомендуемый порядок сжатия
+
+`npm_code.py::rename_npm_zip` отмечен в общей карте и карте пакета (#1673): две строки, одна живая копия.
 
 1. **#1530 completed:** 14 of the 16 own Blender launches of `tools/` and `dt derive`
    (`src/dt_ai/cli/shared_tools.py`) build their command line with `blender_command`. Two stay byte-identical as

@@ -190,8 +190,9 @@ def test_cli_exit_1_on_a_new_live_bypass(monkeypatch, capsys):
     monkeypatch.setattr(guard.status_problems, "__defaults__", (frozenset(),))
     assert guard.main([]) == 1
     out = capsys.readouterr().out
-    live = sum(1 for r in guard.rows_of(guard.load_maps(ROOT)) if r.status == "live-bypass")
-    assert out.count("STATUS NEW LIVE BYPASS") == live == 7   # #1593 inventories two existing KPP1 writers; no new build behaviour
+    live = [r for r in guard.rows_of(guard.load_maps(ROOT)) if r.status == "live-bypass"]
+    assert out.count("STATUS NEW LIVE BYPASS") == len(live) == 8
+    assert len({(r.at, r.hash) for r in live}) == 7  # #1673 mirrors the already guarded rename, not a new writer
 
 
 def test_finished_jobs_evidence_must_exist_and_match(tmp_path):

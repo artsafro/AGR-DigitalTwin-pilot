@@ -22,19 +22,19 @@ scheme:
     - stages: "readback,geojson"
       ru: "Прочитать FBX; для ВПМ подготовить GeoJSON"
       artifact_ru: "Свежий readback; GeoJSON по эталону заказчика"
-      gate_ru: "MSK-77 — наша работа, FNO — СИНТЕЗ; нет данных — отказ"
+      gate_ru: "Точка MSK-77 — из утверждённой расстановки с известным DWG; иначе пусто и блокер в отчёте"
     - stages: "package"
       ru: "Собрать ZIP общим package_core"
-      artifact_ru: "ZIP НПМ либо ВПМ и результат package check"
+      artifact_ru: "ZIP НПМ либо ВПМ и отчёт упаковщика"
       gate_ru: "Неполный пакет не становится готовым"
     - stages: "validate,sintez,report"
       ru: "Проверить те же файлы и составить отчёт"
-      artifact_ru: "V001–V017, xView, СИНТЕЗ; отчёт с путями и SHA-256"
+      artifact_ru: "V001–V017, xView, предварительный СИНТЕЗ; отчёт с путями и SHA-256"
       gate_ru: "Отказ / not_run не равны pass; ручные шлюзы отдельно"
-    - stages: "accept,upload,customer"
-      ru: "Передать Артёму на приёмку и публикацию"
-      artifact_ru: "Архив или сцена Max QUAD; передача заказчику — Артём"
-      gate_ru: "Визуальная приёмка отдельно; УКЭП — заказчик"
+    - stages: "accept,sintez-final,upload,customer"
+      ru: "Приёмка Артёма → финальный СИНТЕЗ → загрузка и передача"
+      artifact_ru: "Результат финального СИНТЕЗ; отметка о передаче — по слову Артёма"
+      gate_ru: "Предварительная проверка не заменяет финальную; УКЭП — заказчик"
 object: "VATUTINO-SITE (0000_Vatutino.zip, SM_Vatutino_Ground.zip), KPP1 (package-1361)"
 issue: "#1393"
 actors:
@@ -84,29 +84,33 @@ stages:
       - tools/derive/export_meta.py
       - docs/research/shared-packaging-1361.md
   - id: readback
-    event_ru: "Свежее чтение экспорта: топология, UV, материалы, трансформы, счётчики пропусков = 0"
+    event_ru: "Свежее чтение выгруженного FBX в Blender до сборки ZIP: agr validate <model.fbx> --scene; топология, UV, материалы, трансформы"
     actor: agent
     context: validation
+    commands:
+      - "agr validate"
     rules:
       - D152
       - D104
     evidence:
       - .agents/skills/validate-delivery/SKILL.md
       - src/dt_ai/validate/build_counters.py
+      - tools/qa/validate_package.py
   - id: geojson
-    event_ru: "GeoJSON ВПМ: точка MSK-77 по DWG заказчика (наша работа), FNO — от СИНТЕЗ, ZU_area в га"
+    event_ru: "GeoJSON ВПМ: точка MSK-77 только из утверждённой расстановки с известным DWG; иначе точка пуста, блокер в отчёте сдачи. FNO — от СИНТЕЗ, ZU_area в га"
     actor: agent
     context: geojson
     rules:
       - D220
       - D223
+      - D345
       - D011
       - D016
     evidence:
       - docs/domain/areas/package.md
       - docs/pipeline.md
   - id: package
-    event_ru: "Пакеты собраны общими упаковщиками; упаковка — не проверка (passed=false)"
+    event_ru: "Пакеты собраны общими упаковщиками; создание ZIP не означает, что пакет прошёл проверку"
     actor: agent
     context: package
     commands:
@@ -133,7 +137,7 @@ stages:
           - tools/derive/package_npm.py
       - id: vpm
         when_ru: "ВПМ"
-        ru: "SM_<Адрес>.zip: FBX, _Light.fbx, GeoJSON, 3–2100 PNG; --no-geojson — отсрочка, не сдача"
+        ru: "SM_<Адрес>.zip: FBX, опциональный _Light.fbx, GeoJSON, 3–2100 PNG; --no-geojson — отсрочка, не сдача. В отличие от package-npm, package-vpm пока не сверяет FBX с exported_sha256 (#1672); в отчёте нет passed/status"
         commands:
           - "agr package-vpm"
         rules:
@@ -155,7 +159,7 @@ stages:
       - tools/qa/validate_package.py
       - docs/domain/areas/package.md
   - id: sintez
-    event_ru: "Чекер СИНТЕЗ на тех же ZIP: каждая находка → проверка и страница регламента"
+    event_ru: "Предварительный СИНТЕЗ: находки чекера по ZIP для разбора до приёмки Артёма; не финальный вердикт"
     actor: checker
     context: sintez
     commands:
@@ -163,16 +167,19 @@ stages:
     rules:
       - D104
       - D220
+      - D347
     evidence:
       - tools/qa/sintez_checker.py
       - docs/research/sintez-agr-checker-dissection.md
   - id: report
-    event_ru: "Отчёт сдачи docs/deliveries/<сдача>-<дата>.md: пути + SHA-256, каждая проверка, вердикт"
+    event_ru: "Отчёт сдачи docs/deliveries/<сдача>-<дата>.md: пути + SHA-256, проверки и блокеры; итог дополняется после финального СИНТЕЗ"
     actor: agent
     context: validation
     rules:
       - D104
       - D152
+      - D345
+      - D347
     evidence:
       - .agents/skills/validate-delivery/SKILL.md
       - docs/deliveries/vatutino-site-2026-11-09.md
@@ -186,6 +193,18 @@ stages:
     evidence:
       - AGENTS.md
       - docs/procedure/TASK_TO_MODEL.md
+  - id: sintez-final
+    event_ru: "Финальный СИНТЕЗ после приёмки Артёма: проверка сдаваемого ZIP; предварительный прогон не заменяет финальный"
+    actor: checker
+    context: sintez
+    commands:
+      - agr checker
+    rules:
+      - D104
+      - D347
+    evidence:
+      - tools/qa/sintez_checker.py
+      - docs/research/sintez-agr-checker-dissection.md
   - id: upload
     event_ru: "Артём загружает архив в СИНТЕЗ: код территории и FNO выдаёт СИНТЕЗ; переименование — одной командой"
     actor: artem
@@ -197,21 +216,29 @@ stages:
       - jobs/VATUTINO-SITE/npm_code.py
       - docs/deliveries/vatutino-site-2026-11-09.md
   - id: customer
-    event_ru: "Пакет — Артёму: архив или сцена 3ds Max с квадами; приёмку и передачу заказчику делает Артём; подпись УКЭП — заказчика"
+    event_ru: "Заказчику передаёт Артём; подпись УКЭП — заказчика. Только по слову Артёма агент добавляет в отчёт сдачи одну строку «передано заказчику, <дата>»"
     actor: artem
     context: package
     rules:
       - D163
       - D220
       - D300
+      - D346
     evidence:
       - docs/domain/areas/package.md
 hotspots:
   - id: meta-v013
-    stage: meta
-    ru: "agr export-meta пишет и проверяет export_meta, но это не квитанция проверок; поля bounds_m + fbx_sha256 для V013 у производителей нет (#1342)"
+    stage: export
+    ru: "На стыке экспорт → метаданные: record_export пишет exported_sha256 (#1637), но не принимает и не формирует fbx_records с bounds_m. У agr export-meta record нет аргумента для границ. Допустима ручная карта по каждому FBX (bounds_m, fbx_sha256); успешный check не гарантирует пригодность записи для V013. Без --export-meta V013 — not_run"
     evidence:
-      - docs/research/shared-packaging-1361.md
+      - adapters/max/agr_tools/export_meta.py
+      - tools/derive/export_meta.py
+      - tools/qa/validate_package.py
+  - id: build-counters-gate
+    stage: readback
+    ru: "Счётчики пропусков — правило из #1031, ни одна команда agr/dt его не вызывает; проверка ручная"
+    evidence:
+      - src/dt_ai/validate/build_counters.py
   - id: legacy-packagers
     stage: package
     ru: "9 старых упаковщиков в jobs/ (КПП1, ПСУ275, ТЭЦ26, ELV v001–v006) заморожены; новая сдача — только agr package-npm / package-vpm"
@@ -220,12 +247,29 @@ hotspots:
       - jobs/TEC26-OKS/scripts/package_vpm.py
   - id: geojson-tool
     stage: geojson
-    ru: "Своего инструмента GeoJSON нет: эталон — GeoJSON заказчика; export.geojson_write AGR Tools не готов к сдаче (D220)"
+    ru: "Эталон — GeoJSON заказчика; export.geojson_write не готов к сдаче. package-vpm пишет [null, null], не используя placement.insertion_xy; прогон КПП1 — с --no-geojson. В проверенных JSON маршрута точка не передана"
     rules:
       - D220
+      - D345
     evidence:
-      - docs/pipeline.md
-      - docs/domain/areas/package.md
+      - tools/derive/package_vpm.py
+      - jobs/KPP1/package-1361/REPORT.md
+  - id: sintez-vatutino-evidence
+    stage: sintez
+    ru: "Прогон Ватутино: jobs/KPP1/scripts/run_agr_checker.py вызвал Blender-владельца с dump, а не agr checker; inputs[].sha256 не записан. В находках только req_num как идентификатор требования, без привязки к V0xx и странице регламента"
+    evidence:
+      - jobs/KPP1/scripts/run_agr_checker.py
+      - tools/blender/sintez_checker.py
+      - docs/deliveries/vatutino-site-2026-11-09.md
+  - id: customer-handoff-record
+    stage: customer
+    ru: "В проверенных записях (STATE/job/deliveries) факт передачи заказчику не найден. D220 и D300 не задавали место записи; по новому правилу D346 отметка в отчёте сдачи, но это не доказательство состоявшейся передачи"
+    rules:
+      - D346
+    evidence:
+      - jobs/KPP1/STATE.md
+      - jobs/VATUTINO-SITE/site-route-20261109.md
+      - docs/deliveries/vatutino-site-2026-11-09.md
   - id: never-passed
     stage: validate
     ru: "Ни один пакет ещё не прошёл (passed=false везде); 9 строк PKG без проверки: набор архивов (PKG-05), счёт объектов, светильники PKG-14..18"
