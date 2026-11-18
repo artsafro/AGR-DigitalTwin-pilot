@@ -2,7 +2,11 @@
 
 ## Кратко для Артёма
 
-(заполняется после раундов, см. «Итог» ниже)
+Цель: время полного скана `duplicate_guard` - он идёт ~6 раз в каждом `repo_guards.sh` (≈3 мин на карточку,
+дважды: исполнитель и ревьюер). Режим OBSERVE: файл `duplicate_guard.py` не правился (им занята #1486).
+R1 (мемоизация обхода AST) - медиана 44,3 -> 19,9 с (−55 %), вывод совпадает байт-в-байт, 287 тестов guard
+зелёные с подменой, мутационная проверка паритета срабатывает. Предложение - отдельной карточкой после #1486.
+R2/R3 отложены на ночь (ПК перегружен).
 
 ## Why this target
 
@@ -45,4 +49,53 @@ in `tools/architecture/`); #1608 owns cold entry tokens; #1486 / t_ecc3dde7 is R
 
 ## Rounds
 
-(appended by the rounds below)
+Receipts (outside git, rule 57): `C:/x/ar_t_e730ebd2/r1.json`, `C:/x/ar_t_e730ebd2/m0.json`.
+PC was loaded by other workers during all rounds (orchestrator note 2026-11-18: overloaded, no heavy runs
+before 00:30); alternation B/C in one process keeps the comparison fair, absolute seconds are not idle numbers.
+
+| Round | Candidate | median B, s | median C, s | C/B | parity | verdict |
+|---|---|---|---|---|---|---|
+| guard check | `m0_drop_calls` (mutation: walk skips `ast.Call`) | 44.81 (1 run) | 41.15 | 0.92 | **False** (rc 0 -> 1) | parity guard catches it |
+| R1 | `r1_walk_memo` | 44.26 (39.77 / 44.26 / 45.84) | 19.86 (16.11 / 21.06 / 19.86) | **0.449** | True (6/6 runs + 757 `tests/*.py` scan_text) | **KEEP (observe)** |
+
+R1 extra parity: `tests/test_architecture_map_1359.py` + `tests/test_duplicate_status_1424.py` with the
+candidate injected (`-p ar_dg_inject`, serial): **287 passed**. In-process scans got faster inside the tests
+(`test_guard_red_on_synthetic_copy_inside_the_real_repo_tree` 73 -> 24 s, `test_guard_green_on_repo_with_allowlist`
+41 -> 16 s, `test_cli_exit_1_on_a_new_live_bypass` 41 -> 15 s); fresh-process CLI tests run the unpatched file.
+
+R2 / R3 not run: the orchestrator forbade heavy runs on the overloaded PC; stop reason = operator load
+restriction after R1 (R1 alone is a 55 % reduction, the 60 % target is not reached). Queued for the night
+window as next targets (backlog): R2 `call_chains.edges` uses the same per-node `ast.walk` (16 s); R3 one parse
+per file shared by `scan` and `call_chains` (1 603 opens / 25 s, many files read twice).
+
+## What R1 would change (proposal, not applied - #1486 / t_ecc3dde7 owns the file now)
+
+In `tools/architecture/duplicate_guard.py`: a module-level memoised walk with the exact `ast.walk` BFS order,
+cleared after every file's `_findings`, used by all rule checks (`candidates.py::WalkCache`, `r1_walk_memo`):
+
+```python
+_WALK = {}
+
+def _walk(node):   # == list(ast.walk(node)), memoised per tree; the memo holds the node so a reused id never hits
+    hit = _WALK.get(id(node))
+    if hit is not None and hit[0] is node:
+        return hit[1]
+    order, i = [node], 0
+    while i < len(order):
+        order.extend(ast.iter_child_nodes(order[i]))
+        i += 1
+    order = tuple(order)
+    _WALK[id(node)] = (node, order)
+    return order
+# every `ast.walk(` in the rule checks -> `_walk(`; `_findings` clears `_WALK` in a `finally`.
+```
+
+Rules, scopes, allowlist and outputs are unchanged; follow-up card after #1486 merges, normal PR + review,
+with the same bench as its parity proof. Expected effect on `repo_guards.sh`: the CLI scan (~44 -> ~20 s on a
+loaded PC) and three in-process guard tests (~155 -> ~55 s) - roughly 2 of the ~3 min per card run.
+
+## Итог
+
+R1 (мемоизация `ast.walk`) сокращает полный скан `duplicate_guard` в 2,2 раза (медиана 44,3 -> 19,9 с,
+C/B 0,449) при полном совпадении вывода; мутационная проверка паритета ловит поломку. Файл не правился
+(им занята карточка #1486) - изменение оформлено как предложение для отдельной карточки после #1486.
