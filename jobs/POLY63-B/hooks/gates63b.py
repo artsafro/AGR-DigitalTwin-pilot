@@ -2,15 +2,19 @@
 
 Pattern: n/a | new-case: whole-model readback gates for the two-ring tower 63B.
 
-blender -b --factory-startup --python gates63b.py -- MODEL.fbx OUT.json [--band-z Z0 Z1]
+blender -b --factory-startup --python gates63b.py -- MODEL.fbx OUT.json [--band-z Z0 Z1] [--drop-face-at X Y Z]
+
+--drop-face-at: mutation probe, deletes the face nearest to the point before the gates (acceptance: a deleted wall
+quad must give open_boundary_edges >= 4 and passed_zero_gates false).
 
 Read back the FBX (fresh scene, Blender importer) and count, over the WHOLE mesh:
-- open_boundary_edges: boundary edges that are not an opening rim (the open back of a reveal tube) and not on the
-  band cut (z0 / z1, the stage band is a storey slice). Rim = boundary edge whose two faces-neighbour ring is a
-  reveal (both vertices off the facade loop stations are allowed only behind the facade: classified by the edge
-  lying on a closed boundary loop whose every vertex is a reveal-back vertex, i.e. not used by any wall face of
-  normal |n.z| < 0.5 that also touches a ring vertex). Implementation: a boundary loop is an opening rim when it is
-  vertical-planar, closed, and all its vertices are shared by reveal faces only.
+- open_boundary_edges: boundary edges that are not an opening rim and not on the band cut (z0 / z1, the stage band
+  is a storey slice). Opening rim (the open back of a reveal tube, body with openings only) is classified by
+  STRUCTURE, not size (review P1, PR #1661): the boundary loop is one simple closed cycle and every face on it is a
+  reveal face, i.e. perpendicular to the local hole plane at its edge (plane of the edge and the direction to the
+  loop centre, |cos| < 0.3; local, so a window wrapping a facade kink keeps its bent rim). A hole left by a missing
+  wall or reveal face is bounded by faces lying in the hole surface and stays open at any size
+  (classify_boundary_loop, tests/test_poly63b_gates.py).
 - nonmanifold_edges: edges with more than 2 faces.
 - gap_vertices: vertices within 5 cm of a face that does not contain them (and is not adjacent to them) but not on
   it (> 0.1 mm).
@@ -21,7 +25,60 @@ Read back the FBX (fresh scene, Blender importer) and count, over the WHOLE mesh
 Writes OUT.json with counts and the first 200 locations of each class.
 """
 import json
+import math
 import sys
+
+RIM_PERP_TOL = 0.3  # max |cos| between a rim face normal and the local hole-plane normal (reveal face: ~0)
+
+
+def classify_boundary_loop(edges, face_normals):
+    """'rim' when the boundary loop is the open back of a reveal tube, else 'open'.
+
+    edges: [((x, y, z), (x, y, z)), ...] = one boundary component; face_normals: the normal of each edge's only face.
+    """
+    if len(edges) < 4 or len(face_normals) != len(edges):
+        return "open"
+    key = lambda p: tuple(round(c, 6) for c in p)  # noqa: E731
+    nxt = {}
+    for a, b in edges:
+        nxt.setdefault(key(a), []).append(key(b))
+        nxt.setdefault(key(b), []).append(key(a))
+    if any(len(q) != 2 for q in nxt.values()):
+        return "open"  # not a simple closed loop
+    start = key(edges[0][0])
+    order, prev, cur = [start], None, start
+    while True:
+        a, b = nxt[cur]
+        step = b if a == prev else a
+        if step == start:
+            break
+        order.append(step)
+        prev, cur = cur, step
+        if len(order) > len(edges):
+            return "open"
+    if len(order) != len(edges):
+        return "open"  # more than one cycle in the component
+    c0 = [sum(p[k] for p in order) / len(order) for k in range(3)]
+    for (a, b), fn in zip(edges, face_normals):
+        # local hole plane at this edge: spanned by the edge and the in-plane direction towards the loop centre
+        d = _unit([b[k] - a[k] for k in range(3)])
+        if d is None:
+            return "open"
+        w = [c0[k] - (a[k] + b[k]) / 2 for k in range(3)]
+        t = sum(w[k] * d[k] for k in range(3))
+        w = [w[k] - t * d[k] for k in range(3)]
+        n_loc = _unit([d[1] * w[2] - d[2] * w[1], d[2] * w[0] - d[0] * w[2], d[0] * w[1] - d[1] * w[0]])
+        f = _unit(fn)
+        if n_loc is None or f is None:
+            return "open"
+        if abs(sum(f[k] * n_loc[k] for k in range(3))) > RIM_PERP_TOL:
+            return "open"  # the face lies in the hole surface: a missing wall / reveal face, not a reveal back
+    return "rim"
+
+
+def _unit(v):
+    ln = math.sqrt(sum(c * c for c in v))
+    return None if ln < 1e-9 else [c / ln for c in v]
 
 
 def _run():
@@ -46,9 +103,20 @@ def _run():
         bm.from_mesh(tmp)
     bm.verts.ensure_lookup_table()
     bm.faces.ensure_lookup_table()
+    dropped = None
+    if "--drop-face-at" in args:  # mutation probe
+        k = args.index("--drop-face-at")
+        pt = Vector([float(a) for a in args[k + 1:k + 4]])
+        f = min(bm.faces, key=lambda g: (g.calc_center_median() - pt).length)
+        dropped = {"at": [round(c, 3) for c in f.calc_center_median()], "verts": len(f.verts),
+                   "height": round(max(v.co.z for v in f.verts) - min(v.co.z for v in f.verts), 3)}
+        bmesh.ops.delete(bm, geom=[f], context="FACES_ONLY")
+        bm.verts.ensure_lookup_table()
+        bm.faces.ensure_lookup_table()
     bm.edges.ensure_lookup_table()
     R = lambda v: [round(c, 3) for c in v]  # noqa: E731
-    rep = {"model": fbx, "verts": len(bm.verts), "faces": len(bm.faces), "objects": len(meshes)}
+    rep = {"model": fbx, "verts": len(bm.verts), "faces": len(bm.faces), "objects": len(meshes),
+           "dropped_face": dropped}
 
     # boundary edges and their loops
     bnd = [e for e in bm.edges if len(e.link_faces) == 1]
@@ -73,17 +141,9 @@ def _run():
         if z0 is not None and (max(abs(z - z0) for z in zs) < 1e-3 or max(abs(z - z1) for z in zs) < 1e-3):
             band_cut += loop
             continue
-        # opening rim: every face on the loop is a reveal face (its normal is not the facade normal: a reveal face
-        # touches the loop with its inner edge; walls never do) -> classify by: each loop edge's face has another
-        # edge on the facade-side and the loop is closed (every vertex has exactly 2 loop edges)
-        deg = {}
-        for x in loop:
-            for v in x.verts:
-                deg[v.index] = deg.get(v.index, 0) + 1
-        closed = all(d == 2 for d in deg.values())
-        vz = sorted(zs)
-        tall = vz[-1] - vz[0] > 1.5
-        if closed and len(loop) >= 4 and tall:
+        kind = classify_boundary_loop([(tuple(x.verts[0].co), tuple(x.verts[1].co)) for x in loop],
+                                      [tuple(x.link_faces[0].normal) for x in loop])
+        if kind == "rim":
             rim += loop
             rep["opening_rim_loops"] = rep.get("opening_rim_loops", 0) + 1
         else:

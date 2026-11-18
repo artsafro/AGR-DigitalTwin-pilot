@@ -16,6 +16,12 @@
   open boundary outside opening rims **0**, non-manifold **0**, gap vertices (<5 cm, off-face) **0**, non-planar
   >1 mm **0**, triangles **0**, T-junctions **0**, inverted winding **0**. 14,758 verts / 13,644 faces, all quads,
   491 opening rims (body with openings only). Edges <5 cm: 466 (listed in `gates_15.json`, not a gate).
+- Rim acceptance (review P1, PR #1661): a rim is classified by structure (closed loop, every face perpendicular to
+  the local hole plane = reveal back), not by height. Build 15 rerun: delivered body **491 rims / open 0 / passed
+  true** (control; the 13 bent rims at (94.11, 32.01) are windows wrapping ring-A vertex 58, source arc 100.40–101.87);
+  `--drop-face-at 64.822 11.058 37.825` (wall quad, h 1.95) **491 / open 4 / false**; `--drop-face-at 94.11 32.01
+  6.32` (jamb face) **490 / open 14 / false**. JSON: `gates_15.json`, `gates_15_mut_wall.json`,
+  `gates_15_mut_reveal.json`; test `tests/test_poly63b_gates.py`.
 - Self-review: 13 wire-over-solid close-ups (round belt caps top/under, pilaster↔belt top/under, steps, reveal
   corners A and B two-sill, frame crossings, overhang soffits N/E, overview, iso) on `sheet15.png`.
 - Evidence + `SHA256SUMS.txt` (build/render scripts in `scripts/`, gate JSON `gates_15.json`):
