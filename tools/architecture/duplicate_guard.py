@@ -605,6 +605,83 @@ def rows_of(maps):
     return out
 
 
+def _owner_path_literal(node, owner):
+    if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
+        return False
+    path = node.value.replace("\\", "/")
+    return path == Path(owner).name or path.removeprefix("./") == owner
+
+
+def _owner_path_binding(value, paths, owner):
+    if isinstance(value, ast.Name):
+        return value.id in paths
+    if isinstance(value, ast.Call) and ast.unparse(value.func) == "os.path.join" and value.args:
+        # The TEC26 loader anchors the path with a computed repository root.
+        parts = value.args[1:]
+        return (bool(parts) and not value.keywords
+                and all(isinstance(p, ast.Constant) and isinstance(p.value, str) for p in parts)
+                and "/".join(p.value.replace("\\", "/") for p in parts) == owner)
+    return _owner_path_literal(value, owner)
+
+
+def _is_owner_loader(node, owner, paths):
+    """Recognize the straight-line importlib chain, without executing the helper.
+
+    Assignment nodes serve as identities: reusing a variable spelling doesn't
+    make a new spec or module the same object. Nested uses aren't witnesses.
+    """
+    paths = paths.copy()
+    paths.difference_update(arg.arg for arg in ast.walk(node.args) if isinstance(arg, ast.arg))
+    specs, modules, executed = {}, {}, set()
+    for stmt in node.body:
+        if isinstance(stmt, ast.Return):
+            return isinstance(stmt.value, ast.Name) and modules.get(stmt.value.id, (None, None))[1] in executed
+
+        # Invalidate names written by unsupported statements too. The cache
+        # branch in the TEC26 loader doesn't rebind any of these local names.
+        written = {n.id for n in ast.walk(stmt) if isinstance(n, ast.Name)
+                   and isinstance(n.ctx, (ast.Store, ast.Del))}
+        if isinstance(stmt, ast.Assign) and all(isinstance(t, ast.Name) for t in stmt.targets):
+            value = stmt.value
+            path = _owner_path_binding(value, paths, owner)
+            spec = module = None
+            if isinstance(value, ast.Call):
+                func = ast.unparse(value.func)
+                if func in ("importlib.util.spec_from_file_location", "spec_from_file_location"):
+                    location = value.args[1] if len(value.args) >= 2 else next(
+                        (kw.value for kw in value.keywords if kw.arg == "location"), None)
+                    if ((isinstance(location, ast.Name) and location.id in paths)
+                            or _owner_path_literal(location, owner)):
+                        spec = stmt
+                elif (func in ("importlib.util.module_from_spec", "module_from_spec")
+                      and len(value.args) == 1 and isinstance(value.args[0], ast.Name)):
+                    source = specs.get(value.args[0].id)
+                    if source is not None:
+                        module = source, stmt
+        else:
+            path = spec = module = None
+        for name in written:
+            paths.discard(name)
+            specs.pop(name, None)
+            modules.pop(name, None)
+            if path:
+                paths.add(name)
+            if spec is not None:
+                specs[name] = spec
+            if module is not None:
+                modules[name] = module
+
+        if isinstance(stmt, ast.Expr):
+            match stmt.value:
+                case ast.Call(func=ast.Attribute(attr="exec_module", value=ast.Attribute(
+                              attr="loader", value=ast.Name(id=spec_name))),
+                              args=[ast.Name(id=module_name)], keywords=[]):
+                    source, identity = modules.get(module_name, (None, None))
+                    if source is not None and source is specs.get(spec_name):
+                        executed.add(identity)
+    return False
+
+
 def _owner_names(tree, owner):
     """Names in the file bound to the owner module: imports of it or from it, and assignments whose value names the
     owner file (`_sibling('udimtile_core.py', ...)`, importlib spec of its path)."""
@@ -624,16 +701,20 @@ def _owner_names(tree, owner):
             if any(isinstance(s, ast.Constant) and isinstance(s.value, str) and s.value.replace("\\", "/")
                    .endswith(f"{stem}.py") for s in ast.walk(node.value)):
                 names.update(t.id for t in node.targets if isinstance(t, ast.Name))
-    # Importlib loaders may return the owner module (#1441, geom_core()). Merely
-    # mentioning its path in a diagnostic helper must not turn that helper into a wrapper.
+    # Use path bindings, not the broad set of owner references above, for the
+    # importlib location. A diagnostic mention is not a path binding (#1486).
+    paths = set()
     for node in tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            nodes = list(ast.walk(node))
-            if (any(isinstance(n, ast.Name) and n.id in names for n in nodes)
-                    and any(isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
-                            and n.func.attr == "exec_module" for n in nodes)
-                    and any(isinstance(n, ast.Return) and isinstance(n.value, ast.Name) for n in nodes)):
-                names.add(node.name)
+        if isinstance(node, ast.Assign):
+            bound = _owner_path_binding(node.value, paths, owner)
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    paths.discard(target.id)
+                    if bound:
+                        paths.add(target.id)
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_owner_loader(node, owner, paths):
+            names.add(node.name)
     return names
 
 
