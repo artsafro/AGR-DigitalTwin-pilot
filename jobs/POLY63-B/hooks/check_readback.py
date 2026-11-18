@@ -1,5 +1,6 @@
 """new-case: check shared FBX readback against body intent; extract the #1616 band."""
 from collections import Counter, defaultdict
+from itertools import product
 import hashlib
 import json
 from pathlib import Path
@@ -104,6 +105,101 @@ def shell_audit(vertices, faces, labels, allowed):
                 planned_boundary_counts=reasons)
 
 
+REVEAL_ROLES = ('jamb', 'sill', 'head')
+
+
+def _segment_distance(p, a, b):
+    ab = b-a; t = np.clip(np.dot(p-a, ab)/np.dot(ab, ab), 0, 1)
+    return float(np.linalg.norm(p-a-t*ab)), float(t)
+
+
+def stage1_checks(vertices, faces, roles, levels=None, tol=.001, ring_at=None):
+    """Artem's 2026-11-18 v005 rejection as readback numbers; every count must be 0.
+
+    cap_triangles: belt-cap faces that are not quads (fan triangles). t_junctions: a vertex inside another
+    face's edge (a crack; v005 gaps at belt/reveal joints). boundary_gaps: two one-use edges closer than
+    10 mm that share no vertex (a slit between parts). overlapping_faces: coplanar faces with overlapping
+    area (stacked boxes). reveal_non_quads / reveal_wedges: reveal faces not 4 corners, or with an edge
+    that is neither vertical nor horizontal (tapered wedge). off_loop_vertices: vertices whose height is
+    not one of the floor loop heights (`levels`)."""
+    v = np.asarray(vertices, dtype=float)
+    edges = Counter(tuple(sorted((a, b))) for f in faces for a, b in zip(f, f[1:]+f[:1]))
+    cell = .05
+    grid = defaultdict(list)
+    used = {i for f in faces for i in f}
+    for i, p in enumerate(v):
+        if i in used: grid[tuple(np.floor(p/cell).astype(int))].append(i)
+
+    def near(a, b, pad):
+        lo = np.floor((np.minimum(v[a], v[b])-pad)/cell).astype(int)
+        hi = np.floor((np.maximum(v[a], v[b])+pad)/cell).astype(int)
+        span = hi-lo+1
+        if span.prod() > 4000:  # long edge: scan all vertices
+            return sorted(used)
+        return [i for x in range(lo[0], hi[0]+1) for y in range(lo[1], hi[1]+1) for z in range(lo[2], hi[2]+1)
+                for i in grid.get((x, y, z), ())]
+
+    t_junctions = []
+    for a, b in edges:
+        for i in near(a, b, tol):
+            if i in (a, b): continue
+            d, t = _segment_distance(v[i], v[a], v[b])
+            if d < tol and 1e-6 < t < 1-1e-6:
+                t_junctions.append([int(a), int(b), int(i)])
+    free = [e for e, n in edges.items() if n == 1]
+    mids = defaultdict(list)
+    for e in free:
+        mids[tuple(np.floor((v[e[0]]+v[e[1]])/2/.2).astype(int))].append(e)
+    gaps = []
+    for e in free:
+        m = (v[e[0]]+v[e[1]])/2; key = np.floor(m/.2).astype(int)
+        for dx, dy, dz in product((-1, 0, 1), repeat=3):
+            for f in mids.get((key[0]+dx, key[1]+dy, key[2]+dz), ()):
+                if f <= e or set(e) & set(f): continue
+                d = min(_segment_distance(m, v[f[0]], v[f[1]])[0],
+                        _segment_distance((v[f[0]]+v[f[1]])/2, v[e[0]], v[e[1]])[0])
+                if d < .01: gaps.append([list(map(int, e)), list(map(int, f)), d])
+    planes = defaultdict(list)
+    for i, f in enumerate(faces):
+        p = v[f]; n = np.cross(p[1]-p[0], p[-1]-p[0])
+        if np.linalg.norm(n) < 1e-12: continue
+        n /= np.linalg.norm(n)
+        if n[np.argmax(np.abs(n))] < 0: n = -n
+        planes[tuple(np.round(n, 3))+(round(float(n@p[0]), 3),)].append(i)
+    overlaps = []
+    for ids in planes.values():
+        if len(ids) < 2: continue
+        n = np.asarray(faces and v[faces[ids[0]]]); n = np.cross(n[1]-n[0], n[-1]-n[0]); n /= np.linalg.norm(n)
+        u = np.cross(n, [0, 0, 1] if abs(n[2]) < .9 else [1, 0, 0]); u /= np.linalg.norm(u); w = np.cross(n, u)
+        polys = [Polygon(np.c_[v[faces[i]]@u, v[faces[i]]@w]).buffer(0) for i in ids]
+        from shapely import STRtree
+        tree = STRtree(polys)
+        for k, q in enumerate(polys):
+            for j in tree.query(q):
+                if j > k and q.intersection(polys[j]).area > 1e-6:
+                    overlaps.append([ids[k], ids[int(j)]])
+    reveal_non_quads, wedges = [], []
+    for i, (f, role) in enumerate(zip(faces, roles)):
+        if role not in REVEAL_ROLES: continue
+        if len(f) != 4: reveal_non_quads.append(i)
+        p = v[f]
+        if any(abs(d[2]) > 1e-4 and np.linalg.norm(d[:2]) > 1e-4 for d in np.roll(p, -1, axis=0)-p):
+            wedges.append(i); continue
+        if ring_at is not None:
+            # A straight reveal strip has two depths (front/back of the strip); a taper has three or more.
+            ring = ring_at(float(p[:, 2].mean()))
+            depth = sorted(ring.distance(Point(*q[:2])) for q in p)
+            if sum(b-a > .003 for a, b in zip(depth, depth[1:])) > 1: wedges.append(i)
+    cap_triangles = [i for i, (f, r) in enumerate(zip(faces, roles)) if r.startswith('shoulder') and len(f) != 4]
+    off_loop = []
+    if levels is not None:
+        lv = np.asarray(sorted(levels))
+        off_loop = [int(i) for i in np.flatnonzero(np.min(np.abs(v[:, 2, None]-lv[None]), axis=1) > 1e-4)]
+    return dict(cap_triangles=cap_triangles, t_junctions=t_junctions, boundary_gaps=gaps,
+                overlapping_faces=overlaps, reveal_non_quads=reveal_non_quads, reveal_wedges=wedges,
+                off_loop_vertices=off_loop)
+
+
 def check(master, readback, design, step):
     (obj,) = readback['meshes']
     assert readback['readback_ok'] and not readback['other_objects']
@@ -187,6 +283,10 @@ def check(master, readback, design, step):
     phase=max(phase_checks,default=0.)
     expected={(a,b):reason for a,b,reason in master['planned_boundary']}
     shell=shell_audit(got,g['polygons'],labels,expected)
+    levels={z for f in design['floors'] for z in [f['bottom'],f['top']]+[o[k] for o in f['openings'] for k in ('z0','z1')]}
+    def ring_at(z):
+        return rings[next(f for f in design['floors'] if f['bottom']<=z<=f['top'])['type']].exterior
+    verdict=stage1_checks(got,g['polygons'],roles,levels,ring_at=ring_at)
     native_joins = {}
     for f in design['floors'][:-1]:
         z=f['top']
@@ -205,6 +305,7 @@ def check(master, readback, design, step):
                 same_id_vertical_edges=len(phase_checks), max_same_id_phase_delta=phase,
                 registration_failures=registration_failures(registration,phase,step),
                 reconstructed_arc_tangencies=reconstructed, paired_horizontal_edges_at_floor_joins=native_joins,
+                artem_2026_11_18={k:len(v) for k,v in verdict.items()}, artem_2026_11_18_items=verdict,
                 **shell)
     band={'objects':[{'name':obj['name'],'verts':g['vertices'],'faces':facet,'materials':mats}], 'dropped':[]}
     return report,band
@@ -229,4 +330,5 @@ if __name__=='__main__':
         or result['registration_failures'] or result['shell_count']!=1
         or result['unexpected_boundary_edges'] or result['missing_boundary_edges'] or result['bad_vertex_fans']
         or not all(result['paired_horizontal_edges_at_floor_joins'].values())
+        or any(result['artem_2026_11_18'].values())
         or any(v for k,v in result['topology'].items() if k!='tol_m')))

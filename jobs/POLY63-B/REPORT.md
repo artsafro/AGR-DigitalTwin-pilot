@@ -1,5 +1,14 @@
 # Tower 63B — polygon #1619, stage 1
 
+## v006 delta after Artem's second rejection of v005 (2026-11-18)
+
+- Five rejected defects, now readback numbers (`check_readback.stage1_checks`, `orientation.json` → `artem_2026_11_18`), v005 → v006: belt-cap triangles **1034 → 0**, T-junctions (cracks at belt/reveal joints) **52 → 0**, overlapping coplanar faces (stacked boxes, folded sills) **156 → 0**, tapered reveal wedges **308 → 0**, non-quad reveal faces 0 → 0, vertices off the floor-loop heights 0 → 0, boundary slits ≤10 mm 0 → 0.
+- Belt caps: constrained Delaunay fans replaced by a least-cost quad strip between the A contour (with curtain-mouth jamb tops and lips) and the B contour. Stations cast straight across the cap (radial on rounded corners; A only on its arcs) become full-height grid lines; an odd strip gets one mid-edge station; a rung through another corner is barred. Result: every cap cell a quad, every cap edge a facade edge.
+- Reveals: one depth per floor type and class (source median: A window 0.710 m from 0.695–0.713, A curtain 0.248 from 0.243–0.249, B window 0.463 from 0.455–0.465). A window beside a curtain gets a straight step face 0.248→0.710 instead of a tapered rear; reveal strips split only at the depth levels of their own opening (8-connected), so no T-junction and no wedge. One finish ID per opening (no sliver ID strips).
+- Two A windows (vertices 61/63, all A floors) whose projected span ran 0.351 m along the outward step return now start at the step corner; the return stays wall, coplanar with the jamb. The STN-015 curtain opening at +23.55/+26.70 stays open (orchestrator decision 2026-11-18); only its edges are welded (62 planned lip edges).
+- Fresh Blender 4.4 FBX: **10,747 faces, all quads**, 1 edge-connected shell, 0 unexpected / missing planned boundary edges, 0 split vertex fans, 0 winding conflicts, 0 topology findings at 2 mm, UV round-trip 6e-7, arc registration failures 0. #1616 typical band **90.35** (v005 89.05).
+- Evidence, sheet (7 same-camera pairs, shadows off) and `SHA256SUMS.txt`: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v006/`. Blender copies: `C:/x/review-63B/63B_Stage1_v006.fbx` / `.blend`. Not accepted VPM; awaiting Artem's Blender review.
+
 ## v005 delta after Artem's rejection of v004
 
 - Fixed 470 unplanned free radial edges: 408 at mixed-depth reveal junctions and 62 where the belt shoulders passed the jamb ends without sharing an edge. Curtain slots now share the shallowest source depth over each uninterrupted run; window heads, sills and jambs share the shallower incident depth at a common corner, tapering only the rear of the reveal. The front contours and opening cells are unchanged. At +23.55/+26.70/+39.30/+42.45 m the shoulder mesh is notched to the existing recess and sewn to the reveal sides; the back lip remains open, with no fill.
@@ -27,7 +36,7 @@ Run from the repository root with `DESIGN` set to the v002 evidence `source_sect
 
 ```bash
 uv run python -m jobs.POLY63-B.hooks.body_grid "$DESIGN" "$OUT/model.json"
-uv run python -c "from pathlib import Path; from dt_ai.core.blender_runner import run_blender; import sys; p=Path(sys.argv[1]); b='C:/Program Files/Blender Foundation/Blender 4.4/blender.exe'; s='63B_Stage1_v005'; f=p/(s+'.fbx'); run_blender('jobs/POLY63-B/hooks/export_review.py',(p/'model.json',p,s),executable=b,outputs=(f,p/(s+'.blend'),p/'round.png'),log_path=p/'export.log'); run_blender('tools/blender/fbx_readback.py',(f,p/'readback.json'),executable=b,output_json=p/'readback.json',log_path=p/'readback.log')" "$OUT"
+uv run python -c "from pathlib import Path; from dt_ai.core.blender_runner import run_blender; import sys; p=Path(sys.argv[1]); b='C:/Program Files/Blender Foundation/Blender 4.4/blender.exe'; s='63B_Stage1_v006'; f=p/(s+'.fbx'); run_blender('jobs/POLY63-B/hooks/export_review.py',(p/'model.json',p,s),executable=b,outputs=(f,p/(s+'.blend'),p/'round.png'),log_path=p/'export.log'); run_blender('tools/blender/fbx_readback.py',(f,p/'readback.json'),executable=b,output_json=p/'readback.json',log_path=p/'readback.log')" "$OUT"
 uv run python -m jobs.POLY63-B.hooks.check_readback "$OUT/model.json" "$OUT/readback.json" "$DESIGN" "$OUT/orientation.json" "$OUT/band.json"
 uv run python tools/qa/mesh_quality_score.py "$OUT/band.json" --out "$OUT/score.json"
 ```
