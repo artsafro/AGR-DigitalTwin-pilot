@@ -606,32 +606,27 @@ def rows_of(maps):
     return out
 
 
-def _owner_path_literal(node, owner):
-    if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
-        return False
-    path = node.value.replace("\\", "/")
-    return path == Path(owner).name or path.removeprefix("./") == owner
-
-
-def _owner_path_binding(value, paths, owner, rel):
+def _loader_path(value, paths, rel):
+    """Resolve the literal and __file__-anchored paths used by registered loaders."""
     if isinstance(value, ast.Name):
-        return value.id in paths
-    if isinstance(value, ast.Call) and ast.unparse(value.func) == "os.path.join" and value.args:
-        # TEC26 uses ROOT; the KPP1 roof wrapper uses its own source directory.
-        anchor = ast.unparse(value.args[0])
-        if anchor == "ROOT":
-            base = ""
-        elif anchor == "os.path.dirname(os.path.abspath(__file__))" and rel is not None:
-            base = posixpath.dirname(rel)
-        else:
-            return False
-        parts = []
-        for arg in value.args[1:]:
-            if not isinstance(arg, ast.Constant) or not isinstance(arg.value, str):
-                return False
-            parts.append(arg.value.replace("\\", "/"))
-        return bool(parts) and not value.keywords and posixpath.normpath(posixpath.join(base, *parts)) == owner
-    return _owner_path_literal(value, owner)
+        return paths.get(value.id)
+    if isinstance(value, ast.Constant) and isinstance(value.value, str) and value.value:
+        return value.value.replace("\\", "/")
+    if not isinstance(value, ast.Call) or value.keywords:
+        return None
+    func = ast.unparse(value.func)
+    if func == "os.path.abspath" and len(value.args) == 1 and ast.unparse(value.args[0]) == "__file__":
+        return rel
+    if func == "os.path.dirname" and len(value.args) == 1:
+        source = _loader_path(value.args[0], paths, rel)
+        return posixpath.dirname(source) if source is not None else None
+    if func == "os.path.join" and value.args:
+        base = _loader_path(value.args[0], paths, rel)
+        parts = [arg.value.replace("\\", "/") for arg in value.args[1:]
+                 if isinstance(arg, ast.Constant) and isinstance(arg.value, str)]
+        if base is not None and len(parts) == len(value.args) - 1:
+            return posixpath.join(base, *parts)
+    return None
 
 
 def _is_owner_loader(node, owner, paths, rel):
@@ -641,7 +636,9 @@ def _is_owner_loader(node, owner, paths, rel):
     make a new spec or module the same object. Nested uses aren't witnesses.
     """
     paths = paths.copy()
-    paths.difference_update(arg.arg for arg in ast.walk(node.args) if isinstance(arg, ast.arg))
+    for arg in ast.walk(node.args):
+        if isinstance(arg, ast.arg):
+            paths.pop(arg.arg, None)
     specs, modules, executed = {}, {}, set()
     for stmt in node.body:
         if isinstance(stmt, ast.Return):
@@ -653,15 +650,15 @@ def _is_owner_loader(node, owner, paths, rel):
                    and isinstance(n.ctx, (ast.Store, ast.Del))}
         if isinstance(stmt, ast.Assign) and all(isinstance(t, ast.Name) for t in stmt.targets):
             value = stmt.value
-            path = _owner_path_binding(value, paths, owner, rel)
+            path = _loader_path(value, paths, rel)
             spec = module = None
             if isinstance(value, ast.Call):
                 func = ast.unparse(value.func)
                 if func in ("importlib.util.spec_from_file_location", "spec_from_file_location"):
                     location = value.args[1] if len(value.args) >= 2 else next(
                         (kw.value for kw in value.keywords if kw.arg == "location"), None)
-                    if ((isinstance(location, ast.Name) and location.id in paths)
-                            or _owner_path_literal(location, owner)):
+                    resolved = _loader_path(location, paths, rel)
+                    if resolved is not None and posixpath.normpath(resolved) == owner:
                         spec = stmt
                 elif (func in ("importlib.util.module_from_spec", "module_from_spec")
                       and len(value.args) == 1 and isinstance(value.args[0], ast.Name)):
@@ -671,11 +668,11 @@ def _is_owner_loader(node, owner, paths, rel):
         else:
             path = spec = module = None
         for name in written:
-            paths.discard(name)
+            paths.pop(name, None)
             specs.pop(name, None)
             modules.pop(name, None)
-            if path:
-                paths.add(name)
+            if path is not None:
+                paths[name] = path
             if spec is not None:
                 specs[name] = spec
             if module is not None:
@@ -713,15 +710,15 @@ def _owner_names(tree, owner, rel=None):
                 names.update(t.id for t in node.targets if isinstance(t, ast.Name))
     # Use path bindings, not the broad set of owner references above, for the
     # importlib location. A diagnostic mention is not a path binding (#1486).
-    paths = set()
+    paths = {}
     for node in tree.body:
         if isinstance(node, ast.Assign):
-            bound = _owner_path_binding(node.value, paths, owner, rel)
+            bound = _loader_path(node.value, paths, rel)
             for target in node.targets:
                 if isinstance(target, ast.Name):
-                    paths.discard(target.id)
-                    if bound:
-                        paths.add(target.id)
+                    paths.pop(target.id, None)
+                    if bound is not None:
+                        paths[target.id] = bound
     for node in tree.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_owner_loader(node, owner, paths, rel):
             names.add(node.name)
