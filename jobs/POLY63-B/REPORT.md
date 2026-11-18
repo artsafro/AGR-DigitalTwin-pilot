@@ -1,5 +1,27 @@
 # Tower 63B — polygon #1619, stage 1
 
+## v007 rebuild on the 63A builder after Artem's verdict on v006 (2026-11-18)
+
+- v002–v006 geometry and its hooks (`body_grid`, `export_review`, `check_readback`) are removed; nothing from them is reused.
+- Chain (63A builder, merged PR #1667): `floor_from_dump` (+ new `--deslit 0.03`, `--section-z`, `--sill-band` for the
+  belt ring) → `POLY63-A/pockets_self` → `contour_d337` → `zones_from_types` (`zonemap63b.json`) for ring A (typical,
+  section +14.33) and ring B (belt, section +26.17, sills +24.25/+24.45); `hooks/stack63b.py` syncs the stations of
+  both rings (every station of one ring is a station of the other) and writes 5 floor-to-floor runs
+  (A1 6 storeys, B1, A2 4, B2, A3 3; +4.65..+51.90) and the cap cells; `garibaldi22/.../module_build.py` builds each
+  run; `hooks/assemble63b.py` joins them and closes the 4 belt caps with quad cells on the shared wall vertices.
+- Cap orientation: where ring B pokes out past A (N pilaster step, E step) the +23.55/+39.30 cell is the soffit of
+  the belt storey (−Z), not a roof; build 14 forced +Z there → 56 inverted-winding edges, fixed in build 15
+  (`cap_faces_up`, regression test `test_overhang_cells_face_the_other_way`, new gate `inverted_winding_edges`).
+- Whole-model gates (`hooks/gates63b.py` on the FBX readback, no location filter, band cut +4.65/+51.90 excluded):
+  open boundary outside opening rims **0**, non-manifold **0**, gap vertices (<5 cm, off-face) **0**, non-planar
+  >1 mm **0**, triangles **0**, T-junctions **0**, inverted winding **0**. 14,758 verts / 13,644 faces, all quads,
+  491 opening rims (body with openings only). Edges <5 cm: 466 (listed in `gates_15.json`, not a gate).
+- Self-review: 13 wire-over-solid close-ups (round belt caps top/under, pilaster↔belt top/under, steps, reveal
+  corners A and B two-sill, frame crossings, overhang soffits N/E, overview, iso) on `sheet15.png`.
+- Evidence + `SHA256SUMS.txt` (build/render scripts in `scripts/`, gate JSON `gates_15.json`):
+  `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v007/`. Blender copy: `C:/x/review-63B/63B_Stage1_v007.blend`.
+  Not accepted VPM; awaiting Artem.
+
 ## v006 delta after Artem's second rejection of v005 (2026-11-18)
 
 - Five rejected defects, now readback numbers (`check_readback.stage1_checks`, `orientation.json` → `artem_2026_11_18`), v005 → v006: belt-cap triangles **1034 → 0**, T-junctions (cracks at belt/reveal joints) **52 → 0**, overlapping coplanar faces (stacked boxes, folded sills) **156 → 0**, tapered reveal wedges **308 → 0**, non-quad reveal faces 0 → 0, vertices off the floor-loop heights 0 → 0, boundary slits ≤10 mm 0 → 0.
