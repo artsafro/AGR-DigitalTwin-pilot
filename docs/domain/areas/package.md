@@ -110,9 +110,14 @@ Max byte identity does not validate its geometry: other stages remain open, neve
 Historical ZIPs without a receipt remain readable with a report note, without a new delivery attestation;
 missing Max receipts fail. Move the report together with its identically named artifact.
 The [SINTEZ territorial-code rename script](../../../jobs/VATUTINO-SITE/npm_code.py) uses the same
-receipt format [D347], with a `source: {path, sha256}` link to the preserved pre-rename ZIP. Use a new
-output folder; the original `package_report.json` belongs to the source ZIP. Validation rehashes the
-renamed ZIP, not the source path, which may be unavailable on the recipient's machine.
+receipt format [D348], with a `source: {path, sha256}` link to the preserved pre-rename ZIP. Use a new
+output folder; the original `package_report.json` belongs to the source ZIP. Pass the explicit
+`agr checker --output` JSON to `npm_code.py --checker-summary SUMMARY.json`: the unique `lp` entry
+must match the pre-rename ZIP's SHA-256 or the script exits 2 with one diagnostic and publishes nothing.
+Omitting the flag records `sintez-source: not_run` without blocking. `checker_source.hash_match` is
+byte identity, separate from `checker_source.checker_verdict` (which can be `fail`). The validator
+rehashes the renamed ZIP, not the source path or checker summary. The separate `sintez-final: not_run`
+line means a fresh checker run on the renamed ZIP is still required [D104]; the rename does not run it.
 Hash snapshots detect persistent changes, not edits restored between reads or future writes.
 
 ## Build provenance [D333, D332]
