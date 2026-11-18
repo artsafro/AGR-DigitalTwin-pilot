@@ -88,9 +88,9 @@ def test_superseded_is_not_a_live_or_delivered_claim(tmp_path):
     (tmp_path / 'owner.py').write_text('def f():\n    return 2\n', encoding='utf-8')
     row = guard.Row('m', 'c', 'owner.py', 'draft.py::f', 'draft.py', 'f', None,
                     'superseded', None, 'Заменён новым кандидатом', '#1441', '', '', 'test')
-    assert guard.status_problems(tmp_path, [row], {}, {}, {}, frozenset()) == []
+    assert guard.status_problems(tmp_path, [row], {}, {}, {}, frozenset(), own_duty_baseline=frozenset()) == []
     problems = guard.status_problems(tmp_path, [row], {'draft.py': ['draft.py']},
-                                     {'draft.py': 'current command'}, {}, frozenset())
+                                     {'draft.py': 'current command'}, {}, frozenset(), own_duty_baseline=frozenset())
     assert any('superseded' in p and 'live command' in p for p in problems)
 
 
