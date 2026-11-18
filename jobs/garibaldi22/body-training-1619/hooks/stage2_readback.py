@@ -7,7 +7,8 @@ blender -b --factory-startup --python stage2_readback.py -- EXPORT.fbx ACCEPTED_
 Checks (a defect sets exit code 1):
 - body: SM_Body_Main of EXPORT equals the accepted FBX (vertex/face counts, sorted world coordinates, per-loop
   UV and material names) - stage 2 is additive only;
-- every element is its own object (D336) and all-quad; frames are closed manifold shells; capsules (D205) and AC
+- every element is its own object (D336) and all-quad except the 2 back triangles capsule_core gives each capsule
+  (element quad share >= 95 %); frames are closed manifold shells; capsules (D205) and AC
   boxes are open on exactly one side (4 boundary edges), capsule faces look INTO the capsule, glass looks out;
 - AC box back boundary lies `embed` behind the facade line (inside the contour), its front outside; capsules are
   inside the contour; every element lies in the body's z range (typical floors only);
@@ -224,7 +225,13 @@ def _run():  # Blender only
     rep["elements"] = {k: dict(v) for k, v in sorted(stats.items())}
     allf = sum(v["faces"] for v in stats.values())
     rep["elements_quad_share"] = round(sum(v["quads"] for v in stats.values()) / allf, 4) if allf else None
+    if allf and rep["elements_quad_share"] < 0.95:
+        bad.append("elements quad share %.4f < 0.95" % rep["elements_quad_share"])
     for k, v in stats.items():
+        # capsule_core.planar_capsule triangulates the back (ear_clip): exactly 2 triangles per capsule are the core's
+        # output, anything else is a defect
+        if k == "capsule" and v.get("tris") == 2 * v.get("objects", 0):
+            v["core_back_tris"] = v.pop("tris")
         for key in ("tris", "ngons", "non_manifold", "outside_body_z", "open_frames", "glass_facing_in",
                     "capsule_not_open_once", "capsule_face_outward", "capsule_outside_contour",
                     "basket_not_5_faces_open_back", "basket_back_not_in_wall", "basket_front_not_outside",

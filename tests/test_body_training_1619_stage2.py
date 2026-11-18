@@ -1,9 +1,8 @@
-"""#1619 polygon stage 2 (G22 body 2): window frame/glass/flashing, D205 capsule and AC box geometry helpers.
+"""#1619 polygon stage 2 (G22 body 2): window frame/glass (windowgen_core), D205 capsule (capsule_core), flashing and AC box.
 
 Pattern: n/a | new-case: tests of the stage-2 inset-element hooks (stage2_from_dump / stage2_build / stage2_readback).
 Pure helpers only - Blender is not needed.
 """
-import collections
 import importlib.util
 import json
 import sys
@@ -28,7 +27,23 @@ fd_mod = _load(HOOKS / "stage2_from_dump.py", "stage2_from_dump_1619")
 bd = _load(HOOKS / "stage2_build.py", "stage2_build_1619")
 rb = _load(HOOKS / "stage2_readback.py", "stage2_readback_1619")
 
-PANES_2SASH = [[0.1, 0.825, 0.085, 0.34], [0.975, 1.7, 0.085, 0.34], [0.1, 0.825, 0.49, 1.635], [0.975, 1.7, 0.49, 1.635]]
+# k2 typical floor, Revit «102_Окно_2Створки1 1800(900)х1750h» as read by stage2_from_dump (C:/x/ev_1619/s2/v001)
+PANES_2SASH = [[0.1, 0.825, 0.085, 0.34, 0.185], [0.975, 1.7001, 0.085, 0.34, 0.185],
+               [0.1, 0.825, 0.49, 1.635, 0.205], [0.975, 1.7001, 0.49, 1.635, 0.205]]
+TYPE_2SASH = "102_Окно_2Створки1 1800(900)х1750h"
+CAP = {"depth": 1.0, "outline": 0.1}
+
+
+@pytest.fixture(scope="module")
+def cores():
+    return bd.load_core("windowgen_core"), bd.load_core("capsule_core"), bd.load_standard()
+
+
+@pytest.fixture(scope="module")
+def win():
+    return {"type": TYPE_2SASH, "w": 1.8001, "h": 1.75, "r": 0.15, "fd": 0.07, "panes": PANES_2SASH,
+            "flashing": {"top": 0.03, "front": -0.01},
+            "entry": bd.window_entry(TYPE_2SASH, 1.8001, 1.75, 0.07, PANES_2SASH)}
 
 
 def _edges(m):
@@ -46,59 +61,65 @@ def _normal(m, f):
     return np.array(n), np.mean(P, 0)
 
 
-def test_frame_shell_is_closed_all_quad_with_holes_for_every_pane():
-    m = bd.frame_shell(1.8, 1.75, PANES_2SASH, 0.15, 0.22)
-    assert all(len(f) == 4 for f in m.faces)
-    ec = _edges(m)
-    assert set(ec.values()) == {2}  # closed manifold shell
-    # Euler characteristic of a closed surface with g holes: V - E + F = 2 - 2g; 4 panes -> genus 4
-    assert len(m.verts) - len(ec) + len(m.faces) == 2 - 2 * 4
-    # front faces look out (-d), back faces in (+d)
-    fronts = [f for f in m.faces if all(abs(m.verts[i][1] - 0.15) < 1e-9 for i in f)]
-    assert fronts and all(_normal(m, f)[0][1] < 0 for f in fronts)
-    backs = [f for f in m.faces if all(abs(m.verts[i][1] - 0.22) < 1e-9 for i in f)]
-    assert backs and all(_normal(m, f)[0][1] > 0 for f in backs)
-    # area of the front = opening minus panes (bars are geometry)
-    area = sum(np.linalg.norm(_normal(m, f)[0]) / 2 for f in fronts)
-    assert area == pytest.approx(1.8 * 1.75 - sum((p[1] - p[0]) * (p[3] - p[2]) for p in PANES_2SASH), abs=1e-6)
+def test_hooks_no_longer_reimplement_the_cores():
+    # review r1 P1 (#1670): frame/glass/capsule geometry belongs to windowgen_core / capsule_core (SKELETONS oks-vpm)
+    for fn in ("frame_shell", "glass_quads", "capsule_box"):
+        assert not hasattr(bd, fn)
 
 
-def test_frame_shell_side_faces_point_away_from_the_solid():
-    m = bd.frame_shell(1.0, 1.0, [[0.2, 0.8, 0.2, 0.8]], 0.1, 0.2)
-    c = np.mean(m.verts, 0)
-    for f in m.faces:
-        n, fc = _normal(m, f)
-        if abs(n[1]) > 1e-9:
-            continue
-        inner = 0.2 - 1e-9 <= fc[0] <= 0.8 + 1e-9 and 0.2 - 1e-9 <= fc[2] <= 0.8 + 1e-9
-        # outer sides look away from the centre, hole sides look into the hole (towards the centre)
-        assert (n @ (fc - c) > 0) != inner
+def test_window_entry_carries_the_revit_profile_of_the_k2_2sash(win):
+    e = win["entry"]
+    assert e["role"] == "window" and e["width_m"] == 1.8001 and e["height_m"] == 1.75
+    assert e["panes_m"][0] == [0.1, 0.085, 0.825, 0.34]  # [x0, z0, x1, z1]
+    assert e["frame_profile_m"] == {"face_m": 0.1, "face_bottom_m": 0.085, "face_top_m": 0.115, "impost_m": 0.15,
+                                    "depth_m": 0.07}
+    one = bd.window_entry("1sash", 1.1505, 1.75, 0.07, [[0.085, 1.0655, 0.085, 0.34], [0.085, 1.0655, 0.46, 1.665]])
+    assert one["frame_profile_m"]["impost_m"] == pytest.approx(0.12)  # the transom of the 1-sash type
+    with pytest.raises(ValueError, match="no pane edge"):
+        bd.window_entry("x", 2.0, 2.0, 0.07, [[0.5, 1.5, 0.5, 1.5]])
 
 
-@pytest.mark.parametrize("panes, msg", [
-    ([[0.0, 0.5, 0.1, 0.5]], "not inside"),
-    ([[0.1, 0.5, 0.1, 0.5], [0.4, 0.8, 0.2, 0.6]], "overlap"),
-])
-def test_frame_shell_refuses_bad_panes(panes, msg):
-    with pytest.raises(ValueError, match=msg):
-        bd.frame_shell(1.0, 1.0, panes, 0.1, 0.2)
+def test_k2_2sash_window_mesh_comes_from_windowgen_build_type(cores, win):
+    wg, _, std = cores
+    fr, gl, info = bd.window_module(win, std, wg)
+    core = wg.build_type(win["entry"], std)
+    for got, part in ((fr, "frame"), (gl, "glass")):
+        want = wg.part_mesh(core, part)
+        assert [list(f) for f in got.faces] == want["faces"]
+        assert np.allclose(got.verts, np.array(want["verts"]) + [0.0, 0.15, 0.0])  # frame face on the reveal back r
+    assert all(len(f) == 4 for f in fr.faces + gl.faces)
+    ec = _edges(fr)
+    assert set(ec.values()) == {2}  # closed frame shell
+    assert len(fr.verts) - len(ec) + len(fr.faces) == 2 - 2 * 4  # 4 panes -> genus 4: mullion and transom are bars
+    assert len(gl.faces) == 4 and all(_normal(gl, f)[0][1] < 0 for f in gl.faces)  # glass looks out
+    assert info["family"] == "F100" and info["status"] == "ok"
+    assert info["field_deviation_m"] == pytest.approx(0.0, abs=1e-6)  # core standardize keeps the Revit panes
+    assert info["glass_d_m"] == pytest.approx(0.185)  # D322 frame middle r + fd / 2
+    assert info["glass_depth_shift_m"] == pytest.approx(0.02)  # Revit sash glass 0.205 -> named deviation
 
 
-def test_capsule_d205_open_front_faces_inward_and_dimensions():
-    m = bd.capsule_box(1.8, 1.75, 0.185, 1.0, 0.1)
-    assert len(m.faces) == 5 and all(len(f) == 4 for f in m.faces)
-    ec = _edges(m)
-    boundary = [e for e, c in ec.items() if c == 1]
+def test_capsule_module_is_capsule_core_planar_capsule(cores, win):
+    m, row = bd.capsule_module(win, CAP, cores[1])
+    assert row["kind"] == "planar" and [list(f) for f in m.faces] == row["faces"]
+    assert sorted(len(f) for f in m.faces) == [3, 3, 4, 4, 4, 4]  # core back = ear_clip, 2 triangles
+    boundary = [e for e, c in _edges(m).items() if c == 1]
     assert len(boundary) == 4
-    assert all(abs(m.verts[v][1] - 0.185) < 1e-9 for e in boundary for v in e)  # open at the frame middle
+    assert all(m.verts[v][1] == pytest.approx(0.185) for e in boundary for v in e)  # rim at the frame middle
     V = np.array(m.verts)
-    assert V[:, 0].min() == pytest.approx(-0.1) and V[:, 0].max() == pytest.approx(1.9)
+    assert V[:, 0].min() == pytest.approx(-0.1) and V[:, 0].max() == pytest.approx(1.9001)
     assert V[:, 2].min() == pytest.approx(-0.1) and V[:, 2].max() == pytest.approx(1.85)
-    assert V[:, 1].max() - V[:, 1].min() == pytest.approx(1.0)
+    assert V[:, 1].max() == pytest.approx(0.22 + 1.0)  # 1.0 m behind the border plane (frame back)
     c = V.mean(0)
     for f in m.faces:
         n, fc = _normal(m, f)
-        assert n @ (c - fc) > 0  # interior is seen from the window side
+        assert n @ (c - fc) > 0  # every face looks into the capsule
+
+
+def test_build_modules_reports_core_deviations_per_type(cores, win):
+    mods, types = bd.build_modules({"windows": [win, win], "capsule": CAP}, cores[2])
+    assert len(mods) == 2 and mods[0][4] is not None
+    t = types[TYPE_2SASH]
+    assert t["count"] == 2 and t["capsule_faces"] == 6 and t["glass_faces"] == 4
 
 
 def test_basket_box_has_no_back_face_and_sinks_into_the_wall():
@@ -118,9 +139,7 @@ def test_basket_box_has_no_back_face_and_sinks_into_the_wall():
         bd.basket_box(1.82, 0.61, 0.0, 1.9, 2.9)  # flush box = stuck on the facade, not inset
 
 
-def test_glass_and_flashing_orientation():
-    g = bd.glass_quads([[0.1, 0.8, 0.1, 0.9, 0.2]])
-    assert _normal(g, g.faces[0])[0][1] < 0
+def test_flashing_orientation():
     fl = bd.flashing_sheet(1.8, 0.03, -0.01, 0.15)
     top, lip = fl.faces
     assert _normal(fl, top)[0][2] > 0 and _normal(fl, lip)[0][1] < 0
@@ -144,17 +163,15 @@ def _box(u0, u1, d0, d1, z0, z1):
     c = [(u, d, z) for u in (u0, u1) for d in (d0, d1) for z in (z0, z1)]
     q = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
     out = []
-    for a, b, cc, d in q:
-        out += [[c[a], c[b], c[cc]], [c[a], c[cc], c[d]]]
+    for a, b, k, d in q:
+        out += [[c[a], c[b], c[k]], [c[a], c[k], c[d]]]
     return out
 
 
 def test_window_parts_reads_panes_frame_depth_and_flashing():
     tris = []
-    # frame part: one big connected shell (outer box with a front lip) - 3 boxes sharing vertices are enough here:
     tris += _box(0.0, 1.0, 0.15, 0.22, 0.0, 1.0)  # frame volume
     tris += _box(0.0, 1.0, -0.01, 0.15, 0.0, 0.03)  # flashing touching the frame front (shares the d=0.15 plane)
-    # make them one component: reuse corner vertices (box 2 back face corners == box 1 front bottom corners at z=0)
     tris += _box(0.2, 0.8, 0.19, 0.22, 0.2, 0.8)  # glass pane, its own 12-triangle component
     L = np.array(tris, dtype=float)
     out = fd_mod.window_parts(L, 0.15)
@@ -184,10 +201,10 @@ def test_ring_depth_sign():
     assert rb.ring_depth((5, -0.61), sq) == pytest.approx(-0.61)
 
 
-def test_capsule_plan_is_behind_the_frame_middle():
-    pts = fd_mod.capsule_plan((0.0, 0.0), (1.0, 0.0), 1.8, 0.15, 0.07)
+def test_capsule_plan_is_the_capsule_core_footprint():
+    pts = fd_mod.capsule_plan((0.0, 0.0), (1.0, 0.0), 1.8, 1.75, 0.15, 0.07)
     ys = sorted({round(p[1], 6) for p in pts})
-    assert ys == [pytest.approx(0.185), pytest.approx(1.185)]
+    assert ys == [pytest.approx(0.185), pytest.approx(1.22)]  # rim at the frame middle .. 1.0 m behind the frame back
     assert min(p[0] for p in pts) == pytest.approx(-0.1) and max(p[0] for p in pts) == pytest.approx(1.9)
 
 

@@ -13,11 +13,14 @@ facade line, z from its sill):
   their mean (one bar line instead of a 3 cm sliver row, BM-09) and the largest shift is reported;
 - frame depth = the back of the frame part (largest component) minus the opening's reveal r; bars (frame, mullions,
   transoms) = the opening minus the panes (mullions/transoms are geometry because they are geometry in Revit);
-- flashing (отлив) = the frame part's horizontal top face in front of the frame (height, front depth).
+- flashing (отлив) = the frame part's horizontal top face in front of the frame (height, front depth);
+- `entry` = the windowgen_core record (stage2_build.window_entry: Revit panes_m + frame_profile_m) that
+  stage2_build passes to windowgen_core.build_type.
 AC baskets (Artem 2026-11-17: «бокс врезается в стену без заднего полигона»): Revit box size and outward depth; the
 back side goes --embed m behind the facade line (no back face, no niche: the wall stays whole). A basket whose top
 reaches the sill of an opening above is lowered 1 cm so its in-wall strip never lies in the sill reveal plane.
-Capsules (D205): front open at the frame middle, 100 mm outline, 1.0 m deep; each is checked against the contour.
+Capsules (D205, capsule_core.planar_capsule via stage2_build.capsule_module): each footprint is checked against the
+contour and the other capsules.
 Refuses an output equal to an input, an opening without exactly one window, a window without panes.
 """
 import argparse
@@ -34,6 +37,7 @@ from shapely.ops import substring
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from floor_from_dump import KEYS, classify  # noqa: E402
+from stage2_build import capsule_module, load_core, window_entry  # noqa: E402
 
 CAPSULE = {"depth": 1.0, "outline": 0.1}  # D205
 
@@ -143,15 +147,15 @@ def straight(pts, tol_deg=1.0):
     return True
 
 
-def capsule_plan(a, t, w, r, fd, cap=CAPSULE):
-    """Plan polygon of a D205 capsule: u -outline..w+outline, d from the frame middle r + fd/2 to +depth."""
+def capsule_plan(a, t, w, h, r, fd, cap=CAPSULE, cc=None):
+    """Plan footprint of the D205 capsule that stage2_build makes: capsule_core.planar_capsule (via
+    stage2_build.capsule_module) in local (u, d, z), its u/d extent mapped to world plan coordinates."""
+    cc = cc or load_core("capsule_core")
+    m, _ = capsule_module({"w": w, "h": h, "r": r, "fd": fd}, cap, cc)
+    us, ds = [p[0] for p in m.verts], [p[1] for p in m.verts]
     n = (-t[1], t[0])  # left normal of a CCW ring = into the body
-    dm = r + fd / 2
-    o = cap["outline"]
-    pts = []
-    for u, d in ((-o, dm), (w + o, dm), (w + o, dm + cap["depth"]), (-o, dm + cap["depth"])):
-        pts.append((a[0] + t[0] * u + n[0] * d, a[1] + t[1] * u + n[1] * d))
-    return pts
+    return [(a[0] + t[0] * u + n[0] * d, a[1] + t[1] * u + n[1] * d)
+            for u, d in ((min(us), min(ds)), (max(us), min(ds)), (max(us), max(ds)), (min(us), max(ds)))]
 
 
 def main(argv=None):
@@ -199,6 +203,7 @@ def main(argv=None):
         if len(hit) == 1:
             wins.setdefault(hit[0], []).append(o)
     out_w, problems, caps = [], [], []
+    cc = load_core("capsule_core")
     for k, w in enumerate(openings):
         if len(wins.get(k, [])) != 1:
             sys.exit("refused: opening %d (s %.2f..%.2f) matches %d Revit windows" % (k, w[1], w[2], len(wins.get(k, []))))
@@ -231,13 +236,15 @@ def main(argv=None):
             problems.append("window %s: Revit %.3f x %.3f vs opening %.3f x %.3f" % (names[o], part["width"], part["height"], W, head))
         panes = [[p[0] * su, p[1] * su, p[2] * sz, p[3] * sz, p[4]] for p in part["panes"]]
         typ = re.sub(r"\s*\[\d+\].*$|_[0-9a-f]{6,7}$", "", names[o])
-        cp = capsule_plan(A, t, W, r, part["fd"])
+        cp = capsule_plan(A, t, W, head, r, part["fd"], cc=cc)
         cap_poly = Polygon(cp)
         inside = ring.buffer(1e-6).contains(cap_poly)
         caps.append(cap_poly)
+        panes = [[round(v, 4) for v in p] for p in panes]
         out_w.append({"opening": k, "object": names[o], "type": typ, "a": [round(float(v), 4) for v in A],
                       "t": [round(float(v), 6) for v in t], "w": round(W, 4), "h": head, "r": r, "fd": part["fd"],
-                      "panes": [[round(v, 4) for v in p] for p in panes], "flashing": part["flashing"],
+                      "panes": panes, "flashing": part["flashing"],
+                      "entry": window_entry(typ, W, head, part["fd"], panes),
                       "snap_shift": part["snap_shift"], "capsule_inside_contour": bool(inside)})
     overlaps = sum(1 for i in range(len(caps)) for j in range(i + 1, len(caps)) if caps[i].intersection(caps[j]).area > 1e-6)
     baskets = []

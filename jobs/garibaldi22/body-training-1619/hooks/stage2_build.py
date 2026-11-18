@@ -7,22 +7,27 @@ blender -b --factory-startup --python stage2_build.py -- STAGE2.json BODY.blend 
 STAGE2.json from stage2_from_dump.py; BODY.blend = the accepted stage-1 build (its object SM_Body_Main is appended
 as is - no vertex, face, UV or material of the body is touched). Per opening and floor (one module, replicated by the
 floor step, BM-10) the script adds SEPARATE objects (D336: never welded into the body or into each other):
-- SM_Win_Fnn_kk_Frame: closed quad shell of the frame bars (opening minus panes) from the reveal back r to r + fd;
+- SM_Win_Fnn_kk_Frame / _Glass: windowgen_core.build_type (AGR Tools stage `body`, D322) of the window's `entry`
+  (Revit panes_m + frame_profile_m from stage2_from_dump), parts `frame` / `glass`, frame face at the reveal back r;
   mullions and transoms are bars because they are geometry in Revit; sash detail inside a bar is texture;
-- SM_Win_Fnn_kk_Glass: one outward quad per pane at the Revit glass depth;
-- SM_Win_Fnn_kk_Flash: flashing (отлив) top + front lip, open sheet sitting on the sill reveal;
-- SM_Cap_Fnn_kk: D205 capsule - open at the frame middle, 100 mm outline, 1.0 m deep, faces point INTO it;
+- SM_Win_Fnn_kk_Flash: flashing (отлив) top + front lip, open sheet sitting on the sill reveal (hook-only, no core);
+- SM_Cap_Fnn_kk: capsule_core.planar_capsule (D205) of the opening border at the frame back r + fd: open rim at the
+  frame middle, 100 mm outline, 1.0 m deep, faces point INTO it (the core triangulates the back: 2 triangles);
 - SM_AC_Fnn_kk: AC box, 5 quads, NO back face, back side `embed` m behind the facade line, no niche (Artem
   2026-11-17 «бокс врезается в стену без заднего полигона»).
-Collections: Body, Win_Frame, Win_Glass, Win_Flash, Capsules, AC_Baskets. Writes OUT_DIR/<name>.blend, <name>.fbx
-(all objects), <name>_joined.fbx and <name>_joined_noglass.fbx (one mesh, shells NOT merged: metric and wire
-sheets only) and build.json. OUT_DIR must be new.
+The cores are loaded by path from adapters/max/agr_tools (stdlib only); the hook keeps only placement, flashing and
+the AC box. Collections: Body, Win_Frame, Win_Glass, Win_Flash, Capsules, AC_Baskets. Writes OUT_DIR/<name>.blend,
+<name>.fbx (all objects), <name>_joined.fbx and <name>_joined_noglass.fbx (one mesh, shells NOT merged: metric and
+wire sheets only) and build.json (with the per-type core deviations). OUT_DIR must be new.
 """
+import importlib.util
 import json
-import math
 import os
 import sys
+from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[4]
+STANDARD = ROOT / "library" / "windows" / "standard.json"
 TEX_M = 1.0  # UV metres per tile for frames, flashings and baskets (colour materials; panels = texture, D336)
 
 
@@ -65,55 +70,98 @@ class Mesh:
             raise ValueError("degenerate quad %r" % (pts,))
         self.faces.append(_quad(self.verts, idx, want))
 
+    @classmethod
+    def from_core(cls, verts, faces, shift_d=0.0):
+        """Wrap a core mesh (verts in local u, d, z) unchanged except a depth shift; faces keep their winding."""
+        m = cls()
+        m.verts = [(float(p[0]), float(p[1]) + shift_d, float(p[2])) for p in verts]
+        m.faces = [tuple(f) for f in faces]
+        return m
 
-def frame_shell(w, h, panes, d0, d1):
-    """Closed quad shell of the window frame: rectangle 0..w x 0..h minus the panes, from depth d0 to d1.
 
-    Grid lines = the opening and pane edges; a cell inside a pane is a hole. Front faces (d0) look out (-d), back
-    faces (d1) look in (+d); side faces close every solid/hole and solid/outside border. Refuses panes outside the
-    opening, overlapping panes and d1 <= d0."""
-    if not (d1 > d0):
-        raise ValueError("frame depth must be > 0")
-    for p in panes:
-        if not (0 < p[0] < p[1] < w and 0 < p[2] < p[3] < h):
-            raise ValueError("pane %r is not inside the opening %.3f x %.3f" % (p, w, h))
+def load_core(name):
+    """AGR Tools core module adapters/max/agr_tools/<name>.py loaded by path (stdlib only, no pymxs)."""
+    path = ROOT / "adapters" / "max" / "agr_tools" / (name + ".py")
+    spec = importlib.util.spec_from_file_location("agr_core_" + name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def load_standard(path=STANDARD):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _median(vals):
+    s = sorted(vals)
+    n = len(s)
+    return (s[n // 2] + s[(n - 1) // 2]) / 2.0
+
+
+def window_entry(name, w, h, fd, panes, outer=0.15, gap=0.4):
+    """windowgen record of one Revit window: panes_m [[x0, z0, x1, z1]] and the Revit frame_profile_m (D322).
+
+    panes [[u0, u1, z0, z1, (d_glass)]] in the window frame (u from its left edge, z from its sill). Profile from the
+    Revit panes: face_m = median distance of the side pane edges within `outer` of the outline, face_bottom_m /
+    face_top_m likewise, impost_m = median gap between neighbour panes (<= `gap`, mullions and transoms), depth_m =
+    Revit frame depth fd; a window without bars keeps impost_m = face_m (the core then has no impost to place)."""
+    side = [p[0] for p in panes if p[0] <= outer] + [w - p[1] for p in panes if w - p[1] <= outer]
+    bot = [p[2] for p in panes if p[2] <= outer]
+    top = [h - p[3] for p in panes if h - p[3] <= outer]
+    if not side:
+        raise ValueError("window %s: no pane edge near the frame sides" % name)
+    face = _median(side)
+    gaps = []
     for i, p in enumerate(panes):
         for q in panes[i + 1:]:
-            if p[0] < q[1] and q[0] < p[1] and p[2] < q[3] and q[2] < p[3]:
-                raise ValueError("panes %r and %r overlap" % (p, q))
-    us = sorted({0.0, w} | {p[0] for p in panes} | {p[1] for p in panes})
-    zs = sorted({0.0, h} | {p[2] for p in panes} | {p[3] for p in panes})
-
-    def solid(i, j):
-        if not (0 <= i < len(us) - 1 and 0 <= j < len(zs) - 1):
-            return False
-        cu, cz = (us[i] + us[i + 1]) / 2, (zs[j] + zs[j + 1]) / 2
-        return not any(p[0] < cu < p[1] and p[2] < cz < p[3] for p in panes)
-    m = Mesh()
-    for i in range(len(us) - 1):
-        for j in range(len(zs) - 1):
-            if not solid(i, j):
-                continue
-            u0, u1, z0, z1 = us[i], us[i + 1], zs[j], zs[j + 1]
-            m.quad([(u0, d0, z0), (u1, d0, z0), (u1, d0, z1), (u0, d0, z1)], (0, -1, 0))
-            m.quad([(u0, d1, z0), (u1, d1, z0), (u1, d1, z1), (u0, d1, z1)], (0, 1, 0))
-            if not solid(i - 1, j):
-                m.quad([(u0, d0, z0), (u0, d1, z0), (u0, d1, z1), (u0, d0, z1)], (-1, 0, 0))
-            if not solid(i + 1, j):
-                m.quad([(u1, d0, z0), (u1, d1, z0), (u1, d1, z1), (u1, d0, z1)], (1, 0, 0))
-            if not solid(i, j - 1):
-                m.quad([(u0, d0, z0), (u1, d0, z0), (u1, d1, z0), (u0, d1, z0)], (0, 0, -1))
-            if not solid(i, j + 1):
-                m.quad([(u0, d0, z1), (u1, d0, z1), (u1, d1, z1), (u0, d1, z1)], (0, 0, 1))
-    return m
+            for a, b in ((p, q), (q, p)):
+                if min(a[3], b[3]) - max(a[2], b[2]) > 0.01 and 0 < b[0] - a[1] <= gap:
+                    gaps.append(b[0] - a[1])
+                if min(a[1], b[1]) - max(a[0], b[0]) > 0.01 and 0 < b[2] - a[3] <= gap:
+                    gaps.append(b[2] - a[3])
+    prof = {"face_m": round(face, 4), "face_bottom_m": round(_median(bot) if bot else face, 4),
+            "face_top_m": round(_median(top) if top else face, 4),
+            "impost_m": round(_median(gaps) if gaps else face, 4), "depth_m": round(fd, 4)}
+    return {"id": name, "role": "window", "width_m": round(w, 4), "height_m": round(h, 4),
+            "panes_m": [[round(p[0], 4), round(p[2], 4), round(p[1], 4), round(p[3], 4)] for p in panes],
+            "frame_profile_m": prof, "source": {"revit_type": name, "occurrences": 1}}
 
 
-def glass_quads(panes):
-    """One outward (-d) quad per pane [u0, u1, z0, z1, d]."""
-    m = Mesh()
-    for u0, u1, z0, z1, d in panes:
-        m.quad([(u0, d, z0), (u1, d, z0), (u1, d, z1), (u0, d, z1)], (0, -1, 0))
-    return m
+def window_module(win, standard, wg):
+    """Frame and glass Mesh of one spec window from windowgen_core.build_type(win['entry']), frame face at d = r.
+
+    Returns (frame, glass, info); info: family, status/why, field deviation (core standardize vs the Revit panes, m),
+    glass depth shift (core frame middle vs the Revit glass depth, m), number of clamped infill edges."""
+    mesh = wg.build_type(win["entry"], standard)
+    if mesh["parts"]["grille"] or mesh["parts"]["capsule"]:
+        raise ValueError("unexpected grille/capsule part for %s" % win["entry"]["id"])
+    r = float(win["r"])
+    fr, gl = wg.part_mesh(mesh, "frame"), wg.part_mesh(mesh, "glass")
+    src = [rect for _, rect in wg.fields(win["entry"])]
+    dev = max((abs(a - b) for (_, n), s in zip(mesh["fields"], src) for a, b in zip(n, s)), default=0.0)
+    shift = max((abs(r + mesh["glass_y_m"] - p[4]) for p in win["panes"] if len(p) > 4), default=0.0)
+    info = {"family": mesh["family"], "status": mesh["status"], "why": mesh["why"], "field_deviation_m": round(dev, 4),
+            "glass_depth_shift_m": round(shift, 4), "glass_d_m": round(r + mesh["glass_y_m"], 4),
+            "clamped_infill_edges": len(mesh["clamped_infill_edges"])}
+    return Mesh.from_core(fr["verts"], fr["faces"], r), Mesh.from_core(gl["verts"], gl["faces"], r), info
+
+
+def capsule_module(win, cap, cc):
+    """capsule_core.planar_capsule of the opening in local (u, d, z): border = the opening rectangle on the frame back
+    plane d = r + fd (the plane win.place puts the rear contour on), wall normal -d (outwards), rim at the frame
+    middle (rim = frame_middle, frame_depth_m = fd). Returns (Mesh, core row); refuses a core self-check failure."""
+    w, h, r, fd = float(win["w"]), float(win["h"]), float(win["r"]), float(win["fd"])
+    db = r + fd
+    opening = {"id": 1, "border": [[0.0, db, 0.0], [w, db, 0.0], [w, db, h], [0.0, db, h]],
+               "frame": {"z": [0.0, -1.0, 0.0], "x": [1.0, 0.0, 0.0]}, "depth": db}
+    opts = cc.options({"outline_m": float(cap["outline"]), "interior_depth_m": float(cap["depth"]),
+                       "frame_depth_m": fd})
+    row = cc.planar_capsule(opening, opts)
+    chk = cc.check_capsule(row)
+    if chk["open_off_rim"] or chk["closed_open_edges"] or chk["bad_edges"] or not chk["inward"]:
+        raise ValueError("capsule_core self-check failed: %r" % chk)
+    return Mesh.from_core(row["verts"], row["faces"]), row
 
 
 def flashing_sheet(w, top, front, r):
@@ -123,19 +171,6 @@ def flashing_sheet(w, top, front, r):
     m = Mesh()
     m.quad([(0, front, top), (w, front, top), (w, r, top), (0, r, top)], (0, 0, 1))
     m.quad([(0, front, 0), (w, front, 0), (w, front, top), (0, front, top)], (0, -1, 0))
-    return m
-
-
-def capsule_box(w, h, dm, depth, outline):
-    """D205 capsule: open at d=dm, u -outline..w+outline, z -outline..h+outline, back at dm+depth; normals INWARD."""
-    o = outline
-    u0, u1, z0, z1, d0, d1 = -o, w + o, -o, h + o, dm, dm + depth
-    m = Mesh()
-    m.quad([(u0, d1, z0), (u1, d1, z0), (u1, d1, z1), (u0, d1, z1)], (0, -1, 0))  # back looks to the window
-    m.quad([(u0, d0, z0), (u0, d1, z0), (u0, d1, z1), (u0, d0, z1)], (1, 0, 0))
-    m.quad([(u1, d0, z0), (u1, d1, z0), (u1, d1, z1), (u1, d0, z1)], (-1, 0, 0))
-    m.quad([(u0, d0, z0), (u1, d0, z0), (u1, d1, z0), (u0, d1, z0)], (0, 0, 1))
-    m.quad([(u0, d0, z1), (u1, d0, z1), (u1, d1, z1), (u0, d1, z1)], (0, 0, -1))
     return m
 
 
@@ -171,6 +206,26 @@ def planar_uv(p, n, scale=TEX_M):
     return (u / scale, d / scale)
 
 
+def build_modules(spec, standard=None):
+    """Per-opening module meshes (BM-10: built once, placed per floor) from the cores + the hook-only flashing.
+
+    Returns ([(k, win, frame, glass, flash|None, capsule)], per-type report of the core deviations)."""
+    wg, cc = load_core("windowgen_core"), load_core("capsule_core")
+    standard = standard if standard is not None else load_standard()
+    mods, types = [], {}
+    for k, w in enumerate(spec["windows"]):
+        fr, gl, info = window_module(w, standard, wg)
+        fl = flashing_sheet(w["w"], w["flashing"]["top"], w["flashing"]["front"], w["r"]) if w["flashing"] else None
+        cp, _ = capsule_module(w, spec["capsule"], cc)
+        mods.append((k, w, fr, gl, fl, cp))
+        t = types.setdefault(w["type"], dict(info, count=0, frame_faces=len(fr.faces), glass_faces=len(gl.faces),
+                                             capsule_faces=len(cp.faces)))
+        t["count"] += 1
+        for key in ("field_deviation_m", "glass_depth_shift_m"):
+            t[key] = max(t[key], info[key])
+    return mods, types
+
+
 def _run():  # Blender only; the tests import the pure helpers above
     import bpy
 
@@ -180,6 +235,7 @@ def _run():  # Blender only; the tests import the pure helpers above
     if os.path.exists(out):
         sys.exit("refused: OUT_DIR exists, outputs are versioned (new folder per run)")
     spec = json.load(open(spec_path, encoding="utf-8"))
+    mods, types = build_modules(spec)  # refuses before anything is written
     os.makedirs(out)
     bpy.ops.wm.read_factory_settings(use_empty=True)
     with bpy.data.libraries.load(body_blend, link=False) as (src, dst):
@@ -233,20 +289,13 @@ def _run():  # Blender only; the tests import the pure helpers above
         return ((p[ia] - lo_a) / (hi_a - lo_a), (p[ib] - lo_b) / (hi_b - lo_b))
 
     z0, step, floors = float(spec["z0"]), float(spec["step"]), int(spec["floors"])
-    cap = spec["capsule"]
-    rep = {"objects": {}, "faces": {}, "body_signature": body_sig}
+    rep = {"objects": {}, "faces": {}, "body_signature": body_sig, "types": types,
+           "cores": {"window": "adapters/max/agr_tools/windowgen_core.py build_type",
+                     "capsule": "adapters/max/agr_tools/capsule_core.py planar_capsule"}}
 
     def add(kind, ob):
         rep["objects"][kind] = rep["objects"].get(kind, 0) + 1
         rep["faces"][kind] = rep["faces"].get(kind, 0) + len(ob.data.polygons)
-    mods = []
-    for k, w in enumerate(spec["windows"]):  # module meshes built once (BM-10), placed per floor
-        panes = [p[:4] for p in w["panes"]]
-        fr = frame_shell(w["w"], w["h"], panes, w["r"], w["r"] + w["fd"])
-        gl = glass_quads(w["panes"])
-        fl = flashing_sheet(w["w"], w["flashing"]["top"], w["flashing"]["front"], w["r"]) if w["flashing"] else None
-        cp = capsule_box(w["w"], w["h"], w["r"] + w["fd"] / 2, cap["depth"], cap["outline"])
-        mods.append((k, w, fr, gl, fl, cp))
     for f in range(floors):
         zb = z0 + f * step
         for k, w, fr, gl, fl, cp in mods:
@@ -286,8 +335,9 @@ def _run():  # Blender only; the tests import the pure helpers above
     joined(name + "_joined_noglass.fbx", ["SM_Win_F"])  # frames/glass/flash hidden: capsule close-ups
     after = (len(body.data.vertices), len(body.data.polygons), round(sum(v.co.x + v.co.y + v.co.z for v in body.data.vertices), 4))
     rep["body_untouched"] = after == body_sig
-    json.dump(rep, open(os.path.join(out, "build.json"), "w"), indent=1)
-    print("BUILT", json.dumps(rep))
+    with open(os.path.join(out, "build.json"), "w", encoding="utf-8") as fh:
+        json.dump(rep, fh, indent=1, ensure_ascii=False)
+    print("BUILT", json.dumps({k: rep[k] for k in ("objects", "faces", "body_untouched")}))
 
 
 if __name__ == "__main__":
