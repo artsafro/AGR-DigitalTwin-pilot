@@ -530,6 +530,41 @@ def check_delivery_receipt(target, receipt):
     return actual
 
 
+def _publish(partial, target):
+    """Publish a finished `.partial` under its final name without ever replacing an existing file."""
+    try:
+        os.link(partial, target)  # fails if the target appeared meanwhile: no clobber
+    except OSError:
+        if os.path.lexists(target) or os.name != 'nt':
+            raise
+        os.rename(partial, target)  # Windows rename is atomic no-replace (POSIX rename is forbidden here)
+
+
+def write_delivery_report(target, body):
+    """`<target>.delivery.json` beside the delivered file (#1645, #1682): the one receipt writer.
+
+    `body` must carry the `delivered` receipt of `delivery_receipt(target)`; packers add their report
+    fields (status, files, ...). Written to an exclusive `.partial`, then published no-clobber, so a
+    reader never sees a half-written report and an existing report is never replaced.
+    """
+    if not isinstance(body, dict) or not isinstance(body.get('delivered'), dict):
+        raise ValueError('delivery report needs the delivered receipt')
+    path = os.fspath(target) + '.delivery.json'
+    partial = path + '.partial'
+    if os.path.lexists(path):
+        raise FileExistsError('delivery report {} already exists; choose a new version'.format(path))
+    owned = False
+    try:
+        with open(partial, 'x', encoding='utf-8') as fh:
+            owned = True
+            json.dump(body, fh, ensure_ascii=False, indent=2)
+        _publish(partial, path)
+        return path
+    finally:
+        if owned and os.path.exists(partial):
+            os.unlink(partial)
+
+
 def _write_zip(folder, archive, target, expected_sha256=None):
     """New ZIP via an exclusive `.partial` beside the target, then a no-clobber link; no temp file is left.
     Member names are checked first: an unsafe one is refused before the `.partial` exists.
@@ -587,12 +622,7 @@ def _write_zip(folder, archive, target, expected_sha256=None):
                 with open(os.path.join(folder, name), 'rb') as stream, packed.open(name) as archived:
                     if digest(stream) != fingerprints[name.casefold()] or digest(archived) != fingerprints[name.casefold()]:
                         raise ValueError('input changed during packaging: ' + name)
-        try:
-            os.link(partial, target)  # fails if the target appeared meanwhile: no clobber
-        except OSError:
-            if os.path.lexists(target) or os.name != 'nt':
-                raise
-            os.rename(partial, target)  # Windows rename is atomic no-replace (POSIX rename is forbidden here)
+        _publish(partial, target)
         return target, size
     finally:
         if owned_partial and os.path.exists(partial):
@@ -662,8 +692,7 @@ def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):
             else:
                 done.append(a['name'])
                 receipt = delivery_receipt(target)
-                with open(target + '.delivery.json', 'x', encoding='utf-8') as fh:
-                    json.dump(receipt, fh, ensure_ascii=False, indent=2)
+                write_delivery_report(target, receipt)
                 receipts.append(receipt)
                 if validate_fn is not None:
                     table = validate_fn(target)

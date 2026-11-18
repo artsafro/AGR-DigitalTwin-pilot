@@ -233,7 +233,8 @@ def test_package_zip_is_byte_identical_to_the_tec26_job_script(tmp_path):
     rd = run([sys.executable, PKG_TOOL, b, tex, "--no-geojson", "--deferred-note", TEC26_NOTE])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
     assert (tmp_path / "job/SM_Nku_1.zip").read_bytes() == (tmp_path / "dt/SM_Nku_1.zip").read_bytes()
-    ra, rb = (json.loads((tmp_path / d / "package_report.json").read_text(encoding="utf-8")) for d in ("job", "dt"))
+    ra = json.loads((tmp_path / "job/package_report.json").read_text(encoding="utf-8"))
+    rb = json.loads((tmp_path / "dt/SM_Nku_1.zip.delivery.json").read_text(encoding="utf-8"))  # #1682 sidecar
     ra.pop("zip"), rb.pop("zip")
     payload = (tmp_path / 'dt/SM_Nku_1.zip').read_bytes()
     assert rb.pop('delivered') == {'file': 'SM_Nku_1.zip', 'sha256': hashlib.sha256(payload).hexdigest(),
@@ -317,10 +318,10 @@ def test_package_binds_light_sidecar_without_using_its_address(tmp_path, case):
         assert r.returncode == 1 and f'duplicated input file: {light.name}' in r.stderr, (r.stdout, r.stderr)
         after = snapshot(tmp_path)
         assert all(after[name] == data for name, data in before.items())
-        assert not any(name.endswith(('.zip', '.partial', 'package_report.json')) for name in after)
+        assert not any(name.endswith(('.zip', '.partial', '.delivery.json')) for name in after)
     else:
         assert r.returncode == 0, r.stderr
-        report = json.loads((pkg.parent / 'package_report.json').read_text(encoding='utf-8'))
+        report = json.loads((pkg.parent / 'SM_Nku_1.zip.delivery.json').read_text(encoding='utf-8'))
         with zipfile.ZipFile(pkg.parent / 'SM_Nku_1.zip') as packed:
             assert packed.read(light.name) == light.read_bytes()
             assert not any(name.endswith('.export_meta.json') for name in packed.namelist())
@@ -345,7 +346,7 @@ def test_package_rejects_fbx_changed_at_writer_handoff(tmp_path, monkeypatch):
     monkeypatch.setattr(package_vpm.package_core, '_write_zip', change_then_write)
     with pytest.raises(ValueError, match='changed between the export_meta check and the ZIP'):
         package_vpm.main([str(pkg), str(tex), '--no-geojson'])
-    assert not any((pkg.parent / name).exists() for name in ('SM_Nku_1.zip', 'SM_Nku_1.zip.partial', 'package_report.json'))
+    assert not any((pkg.parent / name).exists() for name in ('SM_Nku_1.zip', 'SM_Nku_1.zip.partial', 'SM_Nku_1.zip.delivery.json'))
 
 
 def test_package_binding_rejects_each_single_byte_mutation(tmp_path, monkeypatch):
@@ -412,9 +413,9 @@ def test_package_fails_closed_and_writes_nothing(tmp_path, case):
     elif case == "existing_zip":
         (tmp_path / "p/SM_Nku_1.zip").write_bytes(b"old")
     elif case == "existing_report":
-        (tmp_path / "p/package_report.json").write_text("{}")
+        (tmp_path / "p/SM_Nku_1.zip.delivery.json").write_text("{}")
     elif case in ("zip_input_alias", "report_input_alias", "foreign_partial"):
-        target = {"zip_input_alias": "SM_Nku_1.zip", "report_input_alias": "package_report.json",
+        target = {"zip_input_alias": "SM_Nku_1.zip", "report_input_alias": "SM_Nku_1.zip.delivery.json",
                   "foreign_partial": "SM_Nku_1.zip.partial"}[case]
         os.link(pkg / "SM_Nku_1.fbx", pkg.parent / target)
         args = ["--no-geojson"]

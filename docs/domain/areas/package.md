@@ -94,18 +94,26 @@ ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
 
 ## Delivered-file identity (#1645)
 
-The existing NPM/VPM `package_report.json` writers add `delivered: {file, sha256, size}`
-and `summary_ru`, containing exactly one `delivered: <file> sha256=<hex> size=<bytes>`
-line per final artifact. `export.zip` saves the same receipt in `<archive>.zip.delivery.json`,
+The NPM/VPM packers (`agr package-npm` / `package-vpm`) write their report next to the archive as
+`<archive>.zip.delivery.json` (#1682; through `package_core.write_delivery_report`, exclusive
+`.partial` then no-clobber publish), carrying `delivered: {file, sha256, size}`, `summary_ru`
+(exactly one `delivered: <file> sha256=<hex> size=<bytes>` line) and `status`. Before #1682 they wrote
+one parent-wide `package_report.json`; it is still read for historical deliveries.
+`export.zip` saves the same receipt in `<archive>.zip.delivery.json`,
 its run report and Russian marker; `pack.deliver` carries it into `deliver.json`.
 The existing Max review publisher hashes the **published** `.max` (not its temporary scene),
 writes `<scene>.max.delivery.json` and appends the Russian summary to `README.txt`.
 No archive members, scene topology, user approval or D300 delivery choices change.
 
 `agr validate FILE --json` automatically checks adjacent delivery receipts (ZIP:
-`package_report.json` and/or `<archive>.zip.delivery.json`; Max: `<scene>.max.delivery.json`).
+`<archive>.zip.delivery.json`, or the historical `package_report.json` only when no sidecar exists;
+Max: `<scene>.max.delivery.json`).
 V001 `delivered file` fails with `delivered_mismatch` for malformed or changed evidence;
-SHA-256 and byte length must both match. No new flag or signing/upload step is required.
+SHA-256 and byte length must both match. The report `status` decides attestation (#1682):
+`incomplete` (the `--allow-incomplete` diagnostic archive) fails with `delivered_incomplete`;
+`packaged_not_validated` or no `status` passes on matching bytes; any other value is `not_run`
+`delivery_status_unknown`. A pass adds the note `Delivered file: byte control, not model acceptance.`
+right before the `delivered:` line. No new flag or signing/upload step is required.
 Max byte identity does not validate its geometry: other stages remain open, never a model pass.
 Historical ZIPs without a receipt remain readable without a new delivery attestation; missing
 Max receipts fail. Move the report together with its identically named artifact.
