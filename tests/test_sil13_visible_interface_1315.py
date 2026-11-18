@@ -161,3 +161,41 @@ def test_partial_projected_coverage_is_never_accepted(missing_width):
     g = np.array([[[-2., -2., 0.], [x, -2., 0.], [x, 2., 0.]],
                   [[-2., -2., 0.], [x, 2., 0.], [-2., 2., 0.]]])
     with pytest.raises(ValueError, match='coverage'): load().visible_pieces(t, g)
+
+
+@pytest.mark.parametrize('height', [-.001, 0., .000001, .00199999, .002, .002001, .005])
+@pytest.mark.parametrize('reverse', [False, True])
+def test_snap_uses_strict_open_band_and_preserves_d345(height, reverse):
+    upper = np.array([[[-2., -2., 0.], [2., -2., 0.], [0., 2., 0.]]])
+    g = np.concatenate([upper - [0, 0, .1], upper])
+    if reverse: g = g[::-1]
+    v = np.array([[0., 0., height], [1., 0., .1], [0., 1., .001]])
+    f = np.array([[0, 1, 2]])
+    expected = v.copy()
+    v.flags.writeable = f.flags.writeable = g.flags.writeable = False
+    m = load()
+    out, rows = m.snap_visible_corners(v, f, g, 'bench')
+    selected = [0, 2] if 0 < height < .002 else [2]
+    expected[selected, 2] = 0.
+    np.testing.assert_array_equal(out, expected)
+    assert [r['vertex'] for r in rows] == selected
+    for r in rows:
+        assert r['object'] == 'bench' and r['after_height_m'] == 0.
+        assert r['downshift_m'] == r['before_height_m'] == v[r['vertex'], 2]
+    if .002 <= height <= .005:
+        old, old_rows = m.lower_visible_corners(v, f, g, [(0, .001)], 'bench')
+        assert old[0, 2] == height - .001 and len(old_rows) == 1
+
+
+@pytest.mark.parametrize('kind', ['empty', 'partial', 'NaN', 'inf', 'uncovered', 'duplicate', 'collapse'])
+def test_snap_fails_closed(kind):
+    g = np.array([[[-2., -2., 0.], [2., -2., 0.], [0., 2., 0.]]])
+    v = np.array([[0., 0., .001], [.5, 0., 0.], [0., .5, .01]])
+    f = np.array([[0, 1, 2]])
+    if kind == 'empty': f = f[:0]
+    elif kind == 'partial': f = f[:, :2]
+    elif kind == 'uncovered': v[2, 0] = 20.
+    elif kind == 'duplicate': f[0, 1] = 0
+    elif kind == 'collapse': v[1] = [0., 0., 0.]
+    else: v[0, 2] = float(kind)
+    with pytest.raises(ValueError): load().snap_visible_corners(v, f, g, 'bench')
