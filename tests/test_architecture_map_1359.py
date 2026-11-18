@@ -1,6 +1,8 @@
 """#1359: event storm + context map generator (drift / existence) and the jobs/ duplicate guard."""
 import json
+import os
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -128,7 +130,157 @@ def test_npm_v2_tool_choice_atlas_and_current_owners():
     hotspots = {h["id"]: h for h in events["hotspots"]}
     for name, issue in (("udim", "#1376"), ("package", "#1377"), ("dcc-runner", "#1378")):
         assert issue in hotspots[name]["ru"]
-        assert "Закрыто" in hotspots[name]["ru"]
+        assert "Закрыто" not in hotspots[name]["ru"]
+    assert hotspots["udim"]["status"] == "closed"
+    assert hotspots["package"]["status"] == "open"
+
+
+def _hotspot(**fields):
+    events, contexts = _loaded()
+    hotspot = dict(id="status-probe", stage="uv", ru="Состояние", evidence=["docs/decisions.md"])
+    hotspot.update(fields)
+    events["hotspots"] = [hotspot]
+    return events, contexts
+
+
+@pytest.mark.parametrize(("fields", "diagnostic"), [
+    ({"typo": True}, "typo"), ({"status": "Artem"}, "status"),
+    ({"status": ""}, "status"), ({"status": None}, "status"),
+    ({"status": []}, "status"), ({"status": float("nan")}, "status"),
+    ({"status": float("inf")}, "status"), ({"owner": " "}, "owner"),
+    ({"guard_rule": 0}, "guard_rule"), ({"status": "closed"}, "guard_rule"),
+    ({"status": "decided"}, "decision"), ({"status": "decided", "decision": "D292"}, "decision"),
+    ({"decision": "D292(5)"}, "decision"), ({"evidence": []}, "evidence"),
+    ({"rules": [None]}, "rules"), ({"ru": "Закрыто вручную"}, "status"),
+])
+def test_1664_hotspot_schema(fields, diagnostic):
+    events, contexts = _hotspot(**fields)
+    with pytest.raises(route_map.SchemaError, match=diagnostic):
+        route_map.check_schema(events, contexts)
+
+
+def test_1664_duplicate_hotspot():
+    events, contexts = _hotspot()
+    events["hotspots"] *= 2
+    with pytest.raises(route_map.SchemaError, match="duplicate.*status-probe"):
+        route_map.check_schema(events, contexts)
+
+
+@pytest.mark.parametrize(("fields", "diagnostic"), [
+    ({"status": "closed", "guard_rule": "typo"}, "typo"),
+    ({"status": "open", "guard_rule": "typo"}, "typo"),
+    ({"status": "decided", "decision": "D999(5)"}, "D999"),
+])
+def test_1664_hotspot_references(fields, diagnostic):
+    events, contexts = _hotspot(**fields)
+    route_map.check_schema(events, contexts)
+    assert any("status-probe" in p and diagnostic in p
+               for p in route_map.verify_references(ROOT, events, contexts))
+
+
+def test_1664_closed_hotspot_registry():
+    events, contexts = _hotspot(status="closed", guard_rule="udim-tile", owner="UDIM team")
+    route_map.check_schema(events, contexts)
+    row_list = next(c["duplicates"] for c in [contexts["shared_kernel"], *contexts["contexts"]]
+                    if any(d.get("rule") == "udim-tile" for d in c.get("duplicates", [])))
+    rows = [d for d in row_list if d.get("rule") == "udim-tile"
+            and d["status"] == "historical"][:2]
+    assert len(rows) == 2
+    # Other rules' live rows exist; only this rule and this registry snapshot count.
+    for count in (0, 1, 2, 1, 0):
+        for i, row in enumerate(rows):
+            row["status"] = "live-bypass" if i < count else "historical"
+            if i < count:
+                row["step"] = "-"
+            else:
+                row.pop("step", None)
+        problems = route_map.verify_references(ROOT, events, contexts)
+        if count:
+            assert any(f"{count} live-bypass" in p and "status-probe" in p for p in problems)
+            with pytest.raises(route_map.SchemaError, match="live-bypass"):
+                route_map.route_board(events, contexts)
+        else:
+            assert problems == []
+            maps = {**route_map.load_context_maps(ROOT), "contexts": contexts}
+            for view in (route_map.route_board(events, contexts).excalidraw(),
+                         route_map.owners_markdown(events, contexts, maps)):
+                view = view.replace(r"\n", " ")  # canvas wraps long captions
+                assert "учтённых обходов нет" in view and "сверено" not in view
+                assert "проверка предусмотрена тестом test_duplicate_status_1424" in view
+                assert all(f"{top}/" in view for top in guard.GUARDED["udim-tile"])
+                assert "*.py" in view
+
+
+def test_1664_decided_caption():
+    events, contexts = _hotspot(status="decided", decision="D292(5)")
+    assert route_map.verify_references(ROOT, events, contexts) == []
+    for view in (route_map.route_board(events, contexts).excalidraw(),
+                 route_map.owners_markdown(events, contexts, route_map.load_context_maps(ROOT))):
+        assert "D292(5)" in view
+        assert "решено человеком, машиной не проверено" in view.replace(r"\n", " ")
+
+
+def test_1664_route_facts():
+    events, _ = _loaded()
+    hs = {h["id"]: h for h in events["hotspots"]}
+    assert {sid: hs[sid]["decision"] for sid in ("windows", "parapet-roof-seam", "tool-choice")} == {
+        "windows": "D292(5)", "parapet-roof-seam": "D292(4)", "tool-choice": "D293(1)",
+    }
+    assert all(s in hs["two-atlases"]["ru"] for s in ("порт npm_atlas_udim", "D330 сузило D225", "#1141 отложен"))
+    assert "единственный" not in hs["package"]["ru"] and "live-bypass" in hs["package"]["ru"]
+    assert "docs/architecture/contexts.yaml" in hs["package"]["evidence"]
+    assert "канон — run_blender; известный обход на стадии npm" in hs["dcc-runner"]["ru"]
+    bypass = hs["npm-blender-bypass"]
+    assert bypass["stage"] == "npm" and bypass["status"] == "open" and "#1663" in bypass["ru"]
+    assert "src/dt_ai/cli/shared_tools.py" in bypass["evidence"]
+    xview = hs["xview-overlaps"]
+    assert "status" not in xview and "jobs/KPP1/STATE.md" in xview["evidence"]
+    assert all(s in xview["ru"] for s in ("НПМ 0/0", "R1-v003", "Max ждёт проверки", "112/116", "v002"))
+    assert "85/0" not in xview["ru"]
+    vpm = mini_yaml.load(ROOT / "docs/architecture/vpm-oks-route.events.yaml")
+    measurement = next(h for h in vpm["hotspots"] if "85/0" in h["ru"])
+    assert "R1-v003" in measurement["ru"] and "jobs/KPP1/STATE.md" in measurement["evidence"]
+    stages = {s["id"]: s for s in events["stages"]}
+    bench = "docs/research/bench-npm-derivation.md"
+    assert bench in stages["uv"]["evidence"]
+    assert stages["readback"]["evidence"] == ["tools/derive/build_manifest.py", bench]
+    assert "jobs/KPP1/STATE.md" in stages["validate"]["evidence"] and bench not in stages["validate"]["evidence"]
+
+
+@pytest.mark.parametrize("case", ["live-bypass", "hardlink alias", "foreign partial", "source changed"])
+def test_1664_cli_refuses_without_writes(tmp_path, case, monkeypatch, capsys):
+    for rel in [*route_map.route_events().values(), *route_map.context_maps().values()]:
+        dest = tmp_path / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / rel, dest)
+    src = tmp_path / route_map.EVENTS
+    out = tmp_path / route_map.OUTPUTS["route"].with_suffix(".svg")
+    if case == "live-bypass":
+        text = src.read_text(encoding="utf-8").split("\nhotspots:\n")[0]
+        src.write_text(text + '\nhotspots:\n  - id: false-closure\n    stage: uv\n    ru: "Архив"\n'
+                       '    status: closed\n    guard_rule: delivery-zip\n    evidence:\n'
+                       '      - docs/decisions.md\n', encoding="utf-8")
+    elif case == "hardlink alias":
+        os.link(src, out)
+    elif case == "foreign partial":
+        out.with_name(out.name + ".partial").write_bytes(b"foreign")
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    if case == "source changed":
+        render_all = route_map.render_all
+        before[src] += b"\n# concurrent source edit\n"
+
+        def render_then_edit(root):
+            rendered = render_all(root)
+            src.write_bytes(before[src])
+            return rendered
+
+        monkeypatch.setattr(route_map, "render_all", render_then_edit)
+        assert route_map.main(["--root", str(tmp_path)]) != 0 and case in capsys.readouterr().err
+    else:
+        proc = subprocess.run([sys.executable, str(ROOT / "tools/architecture/route_map.py"), "--root", str(tmp_path)],
+                              capture_output=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"})
+        assert proc.returncode != 0 and case in proc.stderr
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
 @pytest.mark.parametrize("needle", [

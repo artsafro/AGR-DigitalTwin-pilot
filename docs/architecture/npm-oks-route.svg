@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1790" width="2990" height="1790" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2990 1871" width="2990" height="1871" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2990" height="1790" fill="#ffffff"/>
+<rect x="10" y="-30" width="2990" height="1871" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
@@ -28,9 +28,9 @@
 <rect x="850" y="782.25" width="230" height="68.75" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="850" y="867.0" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="850" y="984.25" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="850" y="1085.25" width="230" height="198.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="850" y="1300.0" width="230" height="231.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="850" y="1547.25" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="850" y="1085.25" width="230" height="247.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="850" y="1348.75" width="230" height="231.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="850" y="1596.0" width="230" height="215.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1130" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1120" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1080" y1="225.0" x2="1120" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -40,8 +40,8 @@
 <rect x="1120" y="681.25" width="230" height="117.5" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="1120" y="814.75" width="230" height="198.75" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="1120" y="1029.5" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1120" y="1179.25" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1120" y="1345.25" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1120" y="1179.25" width="230" height="231.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1120" y="1426.5" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1400" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1390" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1350" y1="225.0" x2="1390" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -52,6 +52,7 @@
 <rect x="1390" y="847.25" width="230" height="117.5" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="1390" y="980.75" width="230" height="150.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="1390" y="1146.75" width="230" height="198.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1390" y="1361.5" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1670" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1660" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1620" y1="225.0" x2="1660" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -60,21 +61,21 @@
 <rect x="1660" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="1660" y="681.25" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="1660" y="782.25" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="1660" y="883.25" width="230" height="198.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1660" y="883.25" width="230" height="215.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1940" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1930" y="170" width="230" height="211.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1890" y1="225.0" x2="1930" y2="275.62" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1930" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1930" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1930" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1930" y="681.25" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1930" y="681.25" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2160" y1="275.62" x2="2200" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="2200" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2200" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2200" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="2200" y="681.25" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2200" y="681.25" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2510" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2470" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2430" y1="225.0" x2="2470" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -194,44 +195,49 @@
 <tspan x="965.0" dy="16.25">(#1338 / #1345) [D292]</tspan>
 </text>
 <text x="965.0" y="1095.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="965.0" dy="13">⚠ Решено D293: агент выбирает</tspan>
-<tspan x="965.0" dy="16.25">Blender / Max / AGR Tools на</tspan>
-<tspan x="965.0" dy="16.25">каждом шаге и пишет почему</tspan>
-<tspan x="965.0" dy="16.25">одной строкой; инструмент не</tspan>
+<tspan x="965.0" dy="13">⚠ Агент выбирает Blender /</tspan>
+<tspan x="965.0" dy="16.25">Max / AGR Tools на каждом</tspan>
+<tspan x="965.0" dy="16.25">шаге и пишет почему одной</tspan>
+<tspan x="965.0" dy="16.25">строкой; инструмент не</tspan>
 <tspan x="965.0" dy="16.25">назначен всему маршруту.</tspan>
 <tspan x="965.0" dy="16.25">D312: мастер — квады где</tspan>
 <tspan x="965.0" dy="16.25">возможно; неизбежные</tspan>
 <tspan x="965.0" dy="16.25">треугольники считаем по</tspan>
 <tspan x="965.0" dy="16.25">объекту и доле граней, n-gon</tspan>
 <tspan x="965.0" dy="16.25">&gt;4 запрещён до триангуляции</tspan>
-<tspan x="965.0" dy="16.25">экспорта [D293, D312]</tspan>
+<tspan x="965.0" dy="16.25">экспорта</tspan>
+<tspan x="965.0" dy="16.25">D293(1): решено человеком,</tspan>
+<tspan x="965.0" dy="16.25">машиной не проверено [D293,</tspan>
+<tspan x="965.0" dy="16.25">D312]</tspan>
 </text>
-<text x="965.0" y="1310.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="965.0" y="1358.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">⚠ Шов парапет / кровля:</tspan>
 <tspan x="965.0" dy="16.25">толщина парапета и плита</tspan>
-<tspan x="965.0" dy="16.25">кровли были под вопросом</tspan>
-<tspan x="965.0" dy="16.25">архитектору (D249), закрыты</tspan>
-<tspan x="965.0" dy="16.25">только D254; вставная кровля</tspan>
+<tspan x="965.0" dy="16.25">кровли уточнены в D254 после</tspan>
+<tspan x="965.0" dy="16.25">вопроса D249; вставная кровля</tspan>
 <tspan x="965.0" dy="16.25">переделана в v007; замер шва</tspan>
-<tspan x="965.0" dy="16.25">— #1339. Решено (D292, R6</tspan>
-<tspan x="965.0" dy="16.25">#1352): кровля врезана</tspan>
-<tspan x="965.0" dy="16.25">контуром в стены парапета и</tspan>
-<tspan x="965.0" dy="16.25">поднята на несколько мм над</tspan>
-<tspan x="965.0" dy="16.25">низом парапета, не вровень</tspan>
-<tspan x="965.0" dy="16.25">[D292, D249, D254, D038,</tspan>
-<tspan x="965.0" dy="16.25">D039]</tspan>
+<tspan x="965.0" dy="16.25">— #1339. По R6 (#1352) кровля</tspan>
+<tspan x="965.0" dy="16.25">врезана контуром в стены</tspan>
+<tspan x="965.0" dy="16.25">парапета и поднята на</tspan>
+<tspan x="965.0" dy="16.25">несколько мм над низом</tspan>
+<tspan x="965.0" dy="16.25">парапета, не вровень</tspan>
+<tspan x="965.0" dy="16.25">D292(4): решено человеком,</tspan>
+<tspan x="965.0" dy="16.25">машиной не проверено [D292,</tspan>
+<tspan x="965.0" dy="16.25">D249, D254, D038, D039]</tspan>
 </text>
-<text x="965.0" y="1557.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="965.0" y="1606.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="13">⚠ Окна: проёмы Revit и меша</tspan>
 <tspan x="965.0" dy="16.25">не совпали (spec-compare</tspan>
 <tspan x="965.0" dy="16.25">v002: «no match» только по</tspan>
 <tspan x="965.0" dy="16.25">проёмам); витраж C35 дал пары</tspan>
 <tspan x="965.0" dy="16.25">V004 (D256); генератор окон</tspan>
 <tspan x="965.0" dy="16.25">#1338 — пока только замер.</tspan>
-<tspan x="965.0" dy="16.25">Решено (D292): библиотечное</tspan>
-<tspan x="965.0" dy="16.25">окно с небольшим врезом, если</tspan>
-<tspan x="965.0" dy="16.25">подходит, иначе генератор</tspan>
-<tspan x="965.0" dy="16.25">[D292, D204, D256, D258]</tspan>
+<tspan x="965.0" dy="16.25">Библиотечное окно с небольшим</tspan>
+<tspan x="965.0" dy="16.25">врезом, если подходит, иначе</tspan>
+<tspan x="965.0" dy="16.25">генератор</tspan>
+<tspan x="965.0" dy="16.25">D292(5): решено человеком,</tspan>
+<tspan x="965.0" dy="16.25">машиной не проверено [D292,</tspan>
+<tspan x="965.0" dy="16.25">D204, D256, D258]</tspan>
 </text>
 <text x="1235.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="15">Агент: Blender / Max /</tspan>
@@ -284,23 +290,31 @@
 <tspan x="1235.0" dy="16.25">[D021]</tspan>
 </text>
 <text x="1235.0" y="1189.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1235.0" dy="13">⚠ Закрыто #1376: живой</tspan>
+<tspan x="1235.0" dy="13">⚠ Номер тайла (#1376): живой</tspan>
 <tspan x="1235.0" dy="16.25">маршрут НПМ использует</tspan>
-<tspan x="1235.0" dy="16.25">udimtile_core; охрана jobs/ +</tspan>
-<tspan x="1235.0" dy="16.25">tools/ + src/. Исторические</tspan>
-<tspan x="1235.0" dy="16.25">копии не переписываем;</tspan>
-<tspan x="1235.0" dy="16.25">остальные адреса/причины —</tspan>
-<tspan x="1235.0" dy="16.25">contexts.yaml (#1424) [D209,</tspan>
-<tspan x="1235.0" dy="16.25">D221]</tspan>
+<tspan x="1235.0" dy="16.25">udimtile_core. Исторические</tspan>
+<tspan x="1235.0" dy="16.25">копии не переписываем; адреса</tspan>
+<tspan x="1235.0" dy="16.25">и причины — contexts.yaml</tspan>
+<tspan x="1235.0" dy="16.25">(#1424)</tspan>
+<tspan x="1235.0" dy="16.25">Закрыто по реестру</tspan>
+<tspan x="1235.0" dy="16.25">(udim-tile): учтённых обходов</tspan>
+<tspan x="1235.0" dy="16.25">нет; область поиска: jobs/,</tspan>
+<tspan x="1235.0" dy="16.25">tools/, src/, *.py; проверка</tspan>
+<tspan x="1235.0" dy="16.25">предусмотрена тестом</tspan>
+<tspan x="1235.0" dy="16.25">test_duplicate_status_1424</tspan>
+<tspan x="1235.0" dy="16.25">[D209, D221]</tspan>
 </text>
-<text x="1235.0" y="1355.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1235.0" dy="13">⚠ Два атласа: канон Max</tspan>
-<tspan x="1235.0" dy="16.25">atlas_core (D225) и Python</tspan>
-<tspan x="1235.0" dy="16.25">npm_atlas_udim (путь А,</tspan>
+<text x="1235.0" y="1436.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="13">⚠ Два пути атласа: Max</tspan>
+<tspan x="1235.0" dy="16.25">atlas_core — порт</tspan>
+<tspan x="1235.0" dy="16.25">npm_atlas_udim (путь А по</tspan>
 <tspan x="1235.0" dy="16.25">D292); agr vpm-to-npm идёт</tspan>
 <tspan x="1235.0" dy="16.25">через dt derive atlas (путь</tspan>
-<tspan x="1235.0" dy="16.25">Б); перевод в #1141 открыт</tspan>
-<tspan x="1235.0" dy="16.25">[D292, D225, D278]</tspan>
+<tspan x="1235.0" dy="16.25">Б). D330 сузило D225 до</tspan>
+<tspan x="1235.0" dy="16.25">одного ядра на функцию; пути</tspan>
+<tspan x="1235.0" dy="16.25">атласа пока сохранены, #1141</tspan>
+<tspan x="1235.0" dy="16.25">отложен [D292, D225, D278,</tspan>
+<tspan x="1235.0" dy="16.25">D320, D330]</tspan>
 </text>
 <text x="1505.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1505.0" dy="15">Агент: Blender / Max /</tspan>
@@ -364,6 +378,13 @@
 <tspan x="1505.0" dy="16.25">объекты удаляем с записью</tspan>
 <tspan x="1505.0" dy="16.25">причины [D293, D298, D302]</tspan>
 </text>
+<text x="1505.0" y="1371.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="13">⚠ dt derive npm запускает</tspan>
+<tspan x="1505.0" dy="16.25">Blender без run_blender;</tspan>
+<tspan x="1505.0" dy="16.25">переход на общий запуск —</tspan>
+<tspan x="1505.0" dy="16.25">открытая задача #1663</tspan>
+<tspan x="1505.0" dy="16.25">Открыто</tspan>
+</text>
 <text x="1775.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="15">Агент: Blender / Max /</tspan>
 <tspan x="1775.0" dy="18.75">AGR Tools</tspan>
@@ -397,17 +418,18 @@
 <tspan x="1775.0" dy="16.25">[D292]</tspan>
 </text>
 <text x="1775.0" y="893.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1775.0" dy="13">⚠ Закрыто #1377 / #1361:</tspan>
-<tspan x="1775.0" dy="16.25">единственный писатель ZIP</tspan>
-<tspan x="1775.0" dy="16.25">сдачи —</tspan>
+<tspan x="1775.0" dy="13">⚠ Писатель ZIP сдачи (#1377 /</tspan>
+<tspan x="1775.0" dy="16.25">#1361) —</tspan>
 <tspan x="1775.0" dy="16.25">package_core._write_zip; agr</tspan>
 <tspan x="1775.0" dy="16.25">package-npm / package-vpm и</tspan>
 <tspan x="1775.0" dy="16.25">AGR Tools используют его.</tspan>
+<tspan x="1775.0" dy="16.25">Живые обходы — строки</tspan>
+<tspan x="1775.0" dy="16.25">live-bypass в contexts.yaml.</tspan>
 <tspan x="1775.0" dy="16.25">Исторические упаковщики</tspan>
 <tspan x="1775.0" dy="16.25">сохранены. Один FBX не</tspan>
 <tspan x="1775.0" dy="16.25">заменяет ZIP + GeoJSON и</tspan>
 <tspan x="1775.0" dy="16.25">проверки V001/V011/V013</tspan>
-<tspan x="1775.0" dy="16.25">[D224, D198]</tspan>
+<tspan x="1775.0" dy="16.25">Открыто [D224, D198]</tspan>
 </text>
 <text x="2045.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="15">Агент: Blender / Max /</tspan>
@@ -437,13 +459,10 @@
 <tspan x="2045.0" dy="17.5">(Blender / 3ds Max)</tspan>
 </text>
 <text x="2045.0" y="691.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="13">⚠ Закрыто #1378: владелец</tspan>
-<tspan x="2045.0" dy="16.25">команд Blender —</tspan>
-<tspan x="2045.0" dy="16.25">blender_runner.blender_comman</tspan>
-<tspan x="2045.0" dy="16.25">d / run_blender; старые</tspan>
-<tspan x="2045.0" dy="16.25">драйверы перечислены с</tspan>
-<tspan x="2045.0" dy="16.25">причинами, не новые точки</tspan>
-<tspan x="2045.0" dy="16.25">входа [D273]</tspan>
+<tspan x="2045.0" dy="13">⚠ Запуск Blender (#1378):</tspan>
+<tspan x="2045.0" dy="16.25">канон — run_blender;</tspan>
+<tspan x="2045.0" dy="16.25">известный обход на стадии npm</tspan>
+<tspan x="2045.0" dy="16.25">[D273]</tspan>
 </text>
 <text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2315.0" dy="15">Агент</tspan>
@@ -466,11 +485,14 @@
 <tspan x="2315.0" dy="17.5">приёмка</tspan>
 </text>
 <text x="2315.0" y="691.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2315.0" dy="13">⚠ xView: 112 / 116 перекрытых</tspan>
-<tspan x="2315.0" dy="16.25">граней на мастере и экспорте</tspan>
-<tspan x="2315.0" dy="16.25">(#1343) — не пройдено; V015 /</tspan>
-<tspan x="2315.0" dy="16.25">V017 ждут ручной проверки</tspan>
-<tspan x="2315.0" dy="16.25">[D280]</tspan>
+<tspan x="2315.0" dy="13">⚠ Headless xView на R1-v003:</tspan>
+<tspan x="2315.0" dy="16.25">НПМ 0/0 (грани / вершины);</tspan>
+<tspan x="2315.0" dy="16.25">нативный xView в Max ждёт</tspan>
+<tspan x="2315.0" dy="16.25">проверки. 112/116 граней на</tspan>
+<tspan x="2315.0" dy="16.25">мастере и экспорте (#1343)</tspan>
+<tspan x="2315.0" dy="16.25">относятся к v002 и устарели.</tspan>
+<tspan x="2315.0" dy="16.25">V015 / V017 ждут ручной</tspan>
+<tspan x="2315.0" dy="16.25">проверки [D280]</tspan>
 </text>
 <text x="2585.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="15">Чекер СИНТЕЗ</tspan>
