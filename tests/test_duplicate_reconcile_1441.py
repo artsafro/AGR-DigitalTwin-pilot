@@ -141,6 +141,62 @@ def test_wrapper_chain_has_real_owner_and_loader_not_just_a_path_mention(tmp_pat
     assert not guard.calls_owner(tmp_path, row)
 
 
+_LOADER_OWNER = 'adapters/max/agr_tools/geom_core.py'
+
+
+def _loader_is_owner_wrapper(tmp_path, body):
+    (tmp_path / 'probe.py').write_text(
+        f'import importlib.util\nGC = {_LOADER_OWNER!r}\ndef other():\n'
+        + ''.join(f'    {line}\n' for line in body.splitlines())
+        + 'def copy():\n    return other().degrees([])\n', encoding='utf-8')
+    row = guard.Row('m', 'c', _LOADER_OWNER, 'probe.py::copy', 'probe.py', 'copy', None,
+                    'wrapper', None, '', '#1486', '', '', 'test')
+    return guard.calls_owner(tmp_path, row)
+
+
+_LOAD_OWNER = ('spec = importlib.util.spec_from_file_location("g", GC)\n'
+               'm = importlib.util.module_from_spec(spec)\n'
+               'spec.loader.exec_module(m)\nreturn m')
+
+
+def test_unrelated_loader_is_not_an_owner_wrapper(tmp_path):
+    assert not _loader_is_owner_wrapper(tmp_path, 'print("owner at", GC)\n'
+                                        + _LOAD_OWNER.replace('GC', '"other.py"'))
+
+
+@pytest.mark.parametrize('location', ['GC', repr(_LOADER_OWNER), '"other.py"'])
+@pytest.mark.parametrize('module_source', ['spec', 'unrelated'])
+@pytest.mark.parametrize('executing_spec', ['spec', 'unrelated'])
+@pytest.mark.parametrize('returned', ['m', 'decoy'])
+def test_loader_owner_provenance(tmp_path, location, module_source, executing_spec, returned):
+    body = (f'spec = importlib.util.spec_from_file_location("g", {location})\n'
+            'unrelated = importlib.util.spec_from_file_location("x", "other.py")\n'
+            f'm = importlib.util.module_from_spec({module_source})\n'
+            'decoy = importlib.util.module_from_spec(unrelated)\n'
+            f'{executing_spec}.loader.exec_module(m)\nreturn {returned}')
+    expected = location != '"other.py"' and module_source == executing_spec == 'spec' and returned == 'm'
+    assert _loader_is_owner_wrapper(tmp_path, body) is expected
+
+
+@pytest.mark.parametrize('body', [
+    'pass',
+    _LOAD_OWNER.splitlines()[0] + '\nreturn spec',
+    _LOAD_OWNER.replace('spec.loader.exec_module(m)\nreturn m', 'return m\nspec.loader.exec_module(m)'),
+    _LOAD_OWNER.replace('return m', 'm = object()\nreturn m'),
+    _LOAD_OWNER.replace('spec.loader.exec_module(m)', 'def nested():\n    spec.loader.exec_module(m)'),
+    _LOAD_OWNER.replace('"g", GC', 'GC, "other.py"'),
+    _LOAD_OWNER.replace('"g", GC', 'GC, 1e999'),
+    _LOAD_OWNER.replace('"g", GC', '"g", "not_geom_core.py"'),
+])
+def test_incomplete_owner_loader(tmp_path, body):
+    assert not _loader_is_owner_wrapper(tmp_path, body)
+
+
+def test_loader_classification_resets(tmp_path):
+    for location, expected in [('GC', True), ('"other.py"', False), ('"other.py"', False), ('GC', True)]:
+        assert _loader_is_owner_wrapper(tmp_path, _LOAD_OWNER.replace('GC', location)) is expected
+
+
 def test_module_level_builder_is_an_explicit_owner_not_an_invented_function():
     import route_map
     events, contexts, _ = route_map.render(ROOT)
