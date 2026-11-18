@@ -3,6 +3,8 @@
 The belt caps are quad ladders between the shared stations of the typical ring A and the belt ring B
 (stack63b.sync). Fixtures: tests/fixtures/poly63b/floor_{A,B}.json = the 63A chain output for tower B
 (floor_from_dump -> pockets_self -> contour_d337 -> zones_from_types, FBX world metres).
+
+Pattern: n/a | new-case: two-ring tower on the 63A module builder (tests).
 """
 import importlib.util
 import json

@@ -1,5 +1,7 @@
 """Whole-model gates for #1619 stage 1 (Artem verdict 63B v006): no location filter, every hit listed.
 
+Pattern: n/a | new-case: whole-model readback gates for the two-ring tower 63B.
+
 blender -b --factory-startup --python gates63b.py -- MODEL.fbx OUT.json [--band-z Z0 Z1]
 
 Read back the FBX (fresh scene, Blender importer) and count, over the WHOLE mesh:
