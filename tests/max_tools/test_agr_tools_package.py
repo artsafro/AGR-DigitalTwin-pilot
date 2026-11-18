@@ -839,13 +839,55 @@ def test_cross_check_in_the_button_report(tmp_path):
     _vpm_zip(agree, 'SM_X')
     _vpm_zip(agree, 'SM_X_Ground')
     assert pc.cross_passports(sorted(agree.glob('*.zip'))) == {}
+    clean = pc.qa_package(ec, agree / 'SM_X.zip', RUN, PY, ROOT, scene=False)
+    assert clean['plan']['cross_checked'] == ['SM_X_Ground.zip']
+    assert clean['plan']['cross_unpaired'] == [] and clean['objects'][0]['findings'] == []
 
 
 def test_cross_check_never_crashes_on_a_broken_passport(tmp_path):
     oks = _vpm_zip(tmp_path, 'SM_X')
     bad = _npm_zip(tmp_path, 'SM_X_Ground.zip', [('SM_X_Ground.geojson', b'\xff not json')])
     got = pc.cross_passports([oks, bad])
-    assert got['SM_X_Ground.zip'][0][0] == 'geojson_cross_unread'
+    for archive in (oks, bad):
+        ((code, detail),) = got[archive.name]
+        assert code == 'geojson_cross_unread'
+        assert bad.name in detail and 'unreadable GeoJSON:' in detail
+
+
+@pytest.mark.parametrize('broken', ['SM_X', 'SM_X_Ground'])
+@pytest.mark.parametrize('target', ['SM_X', 'SM_X_Ground'])
+def test_qa_package_single_unread_passport(tmp_path, broken, target):
+    other = 'SM_X_Ground' if broken == 'SM_X' else 'SM_X'
+    _vpm_zip(tmp_path, other)
+    _npm_zip(tmp_path, broken + '.zip', [(broken + '.geojson', b'{')])
+
+    report = pc.qa_package(ec, tmp_path / (target + '.zip'), RUN, PY, ROOT, scene=False)
+    (obj,) = report['objects']
+    (table,) = report['plan']['reports']
+    assert obj['name'] == target + '.zip'
+    assert table['exit_code'] == (1 if broken == target else 2)
+    assert 'geojson_cross_unread' in [f['code'] for f in obj['findings']]
+    assert report['plan']['exit_code'] == 1
+    assert report['plan']['cross_checked'] == [('SM_X_Ground' if target == 'SM_X' else 'SM_X') + '.zip']
+
+
+@pytest.mark.parametrize('check_set', [False, True], ids=['single', 'set'])
+def test_qa_package_reports_unpaired_archives_without_a_finding(tmp_path, check_set):
+    oks = _vpm_zip(tmp_path, 'SM_X')
+    ground = _vpm_zip(tmp_path, 'SM_Y_Ground')
+    npm = _npm_zip(tmp_path, '0123_X.zip', [('0123_X_01.fbx', FBX), ('0123_X_Ground.fbx', FBX)])
+    _vpm_zip(tmp_path, 'SM_Z')
+    _vpm_zip(tmp_path, 'SM_Z_Ground')
+
+    for target, expected in ((tmp_path, [oks.name, ground.name]),) if check_set else (
+        (oks, [oks.name]), (ground, [ground.name]), (npm, [])
+    ):
+        report = pc.qa_package(ec, target, RUN, PY, ROOT, scene=False)
+        assert report['plan']['cross_unpaired'] == expected
+        assert report['plan']['cross_checked'] == []
+        assert report['plan']['exit_code'] == 2  # validator has open checks, not a cross-check failure
+        assert all(table['exit_code'] == 2 for table in report['plan']['reports'])
+        assert all(not obj['findings'] for obj in report['objects'])
 
 
 def test_corpus_codes_reach_the_button_report(tmp_path):
