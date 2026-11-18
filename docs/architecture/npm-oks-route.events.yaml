@@ -70,7 +70,7 @@ stages:
   - id: gate1
     event_ru: "Gate 1: Артём подтвердил части"
     actor: artem
-    context: body
+    context: parts
     rules:
       - D238
       - D186
@@ -245,6 +245,7 @@ stages:
       - D273
       - D293
     evidence:
+      - tools/derive/build_manifest.py
       - docs/research/bench-npm-derivation.md
   - id: validate
     event_ru: "Проверки и xView выполнены, отказы записаны"
@@ -257,7 +258,7 @@ stages:
       - D256
       - D273
     evidence:
-      - docs/research/bench-npm-derivation.md
+      - jobs/KPP1/STATE.md
       - jobs/KPP1/LESSONS.md
   - id: sintez
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
@@ -282,9 +283,16 @@ stages:
     evidence:
       - jobs/KPP1/REPORT.md
 hotspots:
+  - id: delivery-record-missing
+    stage: delivered
+    ru: "jobs/KPP1/REPORT.md — отчёт сборки, не акт сдачи: строки 5–6 сами отделяют приёмку производственного цикла от сдачи пакета; записи передачи в репозитории пока нет"
+    evidence:
+      - jobs/KPP1/REPORT.md
   - id: tool-choice
     stage: model
-    ru: "Решено D293: агент выбирает Blender / Max / AGR Tools на каждом шаге и пишет почему одной строкой; инструмент не назначен всему маршруту. D312: мастер — квады где возможно; неизбежные треугольники считаем по объекту и доле граней, n-gon >4 запрещён до триангуляции экспорта"
+    status: decided
+    decision: D293(1)
+    ru: "Агент выбирает Blender / Max / AGR Tools на каждом шаге и пишет почему одной строкой; инструмент не назначен всему маршруту. D312: мастер — квады где возможно; неизбежные треугольники считаем по объекту и доле граней, n-gon >4 запрещён до триангуляции экспорта"
     rules:
       - D293
       - D312
@@ -309,15 +317,24 @@ hotspots:
       - docs/architecture/maf-route.events.yaml
   - id: dcc-runner
     stage: readback
-    ru: "Закрыто #1378: владелец команд Blender — blender_runner.blender_command / run_blender; старые драйверы перечислены с причинами, не новые точки входа"
+    ru: "Запуск Blender (#1378): канон — run_blender; известный обход на стадии npm"
     rules:
       - D273
     evidence:
       - src/dt_ai/core/blender_runner.py
       - docs/architecture/contexts.yaml
+  - id: npm-blender-bypass
+    stage: npm
+    status: open
+    guard_rule: blender-launch
+    ru: "dt derive npm запускает Blender без run_blender; переход на общий запуск — открытая задача #1663"
+    evidence:
+      - src/dt_ai/cli/shared_tools.py
   - id: parapet-roof-seam
     stage: model
-    ru: "Шов парапет / кровля: толщина парапета и плита кровли были под вопросом архитектору (D249), закрыты только D254; вставная кровля переделана в v007; замер шва — #1339. Решено (D292, R6 #1352): кровля врезана контуром в стены парапета и поднята на несколько мм над низом парапета, не вровень"
+    status: decided
+    decision: D292(4)
+    ru: "Шов парапет / кровля: толщина парапета и плита кровли уточнены в D254 после вопроса D249; вставная кровля переделана в v007; замер шва — #1339. По R6 (#1352) кровля врезана контуром в стены парапета и поднята на несколько мм над низом парапета, не вровень"
     rules:
       - D292
       - D249
@@ -329,7 +346,9 @@ hotspots:
       - jobs/KPP1/STATE.md
   - id: windows
     stage: model
-    ru: "Окна: проёмы Revit и меша не совпали (spec-compare v002: «no match» только по проёмам); витраж C35 дал пары V004 (D256); генератор окон #1338 — пока только замер. Решено (D292): библиотечное окно с небольшим врезом, если подходит, иначе генератор"
+    status: decided
+    decision: D292(5)
+    ru: "Окна: проёмы Revit и меша не совпали (spec-compare v002: «no match» только по проёмам); витраж C35 дал пары V004 (D256); генератор окон #1338 — пока только замер. Библиотечное окно с небольшим врезом, если подходит, иначе генератор"
     rules:
       - D292
       - D204
@@ -340,7 +359,9 @@ hotspots:
       - jobs/KPP1/windowgen-1338/README.md
   - id: udim
     stage: uv
-    ru: "Закрыто #1376: живой маршрут НПМ использует udimtile_core; охрана jobs/ + tools/ + src/. Исторические копии не переписываем; остальные адреса/причины — contexts.yaml (#1424)"
+    status: closed
+    guard_rule: udim-tile
+    ru: "Номер тайла (#1376): живой маршрут НПМ использует udimtile_core. Исторические копии не переписываем; адреса и причины — contexts.yaml (#1424)"
     rules:
       - D209
       - D221
@@ -349,17 +370,21 @@ hotspots:
       - jobs/TEC26-OKS/scripts/vpm_uv.py
   - id: two-atlases
     stage: uv
-    ru: "Два атласа: канон Max atlas_core (D225) и Python npm_atlas_udim (путь А, D292); agr vpm-to-npm идёт через dt derive atlas (путь Б); перевод в #1141 открыт"
+    ru: "Два пути атласа: Max atlas_core — порт npm_atlas_udim (путь А по D292); agr vpm-to-npm идёт через dt derive atlas (путь Б). D330 сузило D225 до одного ядра на функцию; пути атласа пока сохранены, #1141 отложен"
     rules:
       - D292
       - D225
       - D278
+      - D320
+      - D330
     evidence:
       - tools/materials/npm_atlas_udim.py
       - adapters/max/agr_tools/atlas_core.py
   - id: package
     stage: export
-    ru: "Закрыто #1377 / #1361: единственный писатель ZIP сдачи — package_core._write_zip; agr package-npm / package-vpm и AGR Tools используют его. Исторические упаковщики сохранены. Один FBX не заменяет ZIP + GeoJSON и проверки V001/V011/V013"
+    status: open
+    guard_rule: delivery-zip
+    ru: "Писатель ZIP сдачи (#1377 / #1361) — package_core._write_zip; agr package-npm / package-vpm и AGR Tools используют его. Живые обходы — строки live-bypass в contexts.yaml. Исторические упаковщики сохранены. Один FBX не заменяет ZIP + GeoJSON и проверки V001/V011/V013"
     rules:
       - D224
       - D198
@@ -367,10 +392,11 @@ hotspots:
       - tools/derive/package_vpm.py
       - jobs/KPP1/LESSONS.md
       - adapters/max/agr_tools/package_core.py
+      - docs/architecture/contexts.yaml
   - id: xview-overlaps
     stage: validate
-    ru: "xView: 112 / 116 перекрытых граней на мастере и экспорте (#1343) — не пройдено; V015 / V017 ждут ручной проверки"
+    ru: "Headless xView на R1-v003: НПМ 0/0 (грани / вершины); нативный xView в Max ждёт проверки. 112/116 граней на мастере и экспорте (#1343) относятся к v002 и устарели. V015 / V017 ждут ручной проверки"
     rules:
       - D280
     evidence:
-      - docs/research/bench-npm-derivation.md
+      - jobs/KPP1/STATE.md

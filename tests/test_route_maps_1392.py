@@ -46,6 +46,43 @@ def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
 
 
+# ---------------------------------------------------------------- #1658: Gate 1 ownership and honest delivery evidence
+@pytest.mark.parametrize("route", ["route", "vpm-route", "ground-route"])
+def test_1658_gate1_owner(route):
+    events = _routes()[route]
+    gates = [s for s in events["stages"] if s["id"] == "gate1"]
+    if route == "ground-route":
+        assert gates == []
+    else:
+        assert len(gates) == 1
+        assert gates[0]["context"] == "parts"
+
+
+def test_1658_delivery_evidence_is_not_a_transfer_record():
+    events = _routes()["route"]
+    delivered = _stage(events, "delivered")
+    assert delivered["event_ru"] == "Архив или Max-сцена с квадами переданы Артёму; он принимает и передаёт заказчику"
+    assert delivered["evidence"] == ["jobs/KPP1/REPORT.md"]
+    notes = [h for h in events["hotspots"] if h["stage"] == "delivered"]
+    assert len(notes) == 1
+    note = notes[0]
+    assert "отчёт сборки" in note["ru"]
+    assert "не акт сдачи" in note["ru"]
+    assert "записи передачи в репозитории пока нет" in note["ru"]
+    assert note["evidence"] == ["jobs/KPP1/REPORT.md"]
+    assert all((ROOT / p).is_file() for p in note["evidence"])
+    assert "delivered-1371" not in str(delivered) + str(note)
+
+
+def test_1658_package_receipt_inventory():
+    package = next(c for c in _contexts()["contexts"] if c["id"] == "package")
+    assert package["owner"] == "adapters/max/agr_tools/package_core.py"
+    assert "строка квитанции" in package["owner_ru"]
+    functions = {f["name"]: f["contract"] for f in package["functions"]}
+    assert "{file, sha256, size}" in functions["delivery_receipt"]
+    assert "ошибка" in functions["check_delivery_receipt"]
+
+
 # ---------------------------------------------------------------- #1644: explicit top-level class references
 @pytest.mark.parametrize("name,kind,valid", [
     ("PartsList", "class", True),

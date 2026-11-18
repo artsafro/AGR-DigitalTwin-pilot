@@ -137,6 +137,7 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      count: 2
       status: historical
     - at: "jobs/KPP1/scripts/readback_vpm.py::<module>"
       rule: udim-tile
@@ -147,6 +148,7 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      count: 2
       status: historical
     - at: "jobs/TEC26-OKS/scripts/compare_facades.py::main"
       rule: udim-tile
@@ -157,6 +159,7 @@ shared_kernel:
       rule: udim-tile
       issue: "#1337"
       hash: "abdf135e7a"
+      count: 2
       status: historical
     - at: "jobs/TEC26-OKS/scripts/qa_packages.py::facade_joint_checks.vpm_tile_of"
       rule: udim-tile
@@ -456,7 +459,7 @@ contexts:
     ru: "Экспорт и пакет сдачи"
     area: docs/domain/areas/package.md
     owner: adapters/max/agr_tools/package_core.py
-    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377); строка квитанции итогового ZIP/Max: delivery_receipt / check_delivery_receipt (#1647)"
     functions:
       - name: zip_plan
         contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
@@ -466,6 +469,10 @@ contexts:
         contract: "папка, архив, цель -> новый ZIP через .partial без перезаписи; дубль, пустой вход, изменение во время упаковки — ошибка"
       - name: zip_apply
         contract: "предпросмотр -> новая папка Сборка_<время>, ZIP + проверка; ГОТОВО.txt только без провалов"
+      - name: delivery_receipt
+        contract: "итоговый ZIP/Max-файл -> {file, sha256, size}"
+      - name: check_delivery_receipt
+        contract: "квитанция и файл -> ошибка при несовпадении"
     duplicates:
       - at: "jobs/KPP1/rerun-1230/build_blender.py::main"
         rule: delivery-zip

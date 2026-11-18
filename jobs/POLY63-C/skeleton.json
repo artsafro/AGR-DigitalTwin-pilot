@@ -1,0 +1,11 @@
+{
+  "scenario": "oks-vpm",
+  "config": {
+    "profile": "VPM",
+    "sources": "G:/Мой диск/AGR-evidence/1619-body-training/tower-C/v002/floor.json"
+  },
+  "hooks": [
+    {"stage": "body", "point": "after", "script": "hooks/build_body.py"},
+    {"stage": "readback", "point": "after", "script": "hooks/check_corners.py"}
+  ]
+}

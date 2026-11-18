@@ -8,9 +8,10 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `(tile - 1001) % 10` / `// 10` / `divmod(tile - 1001, 10)` / `i = tile - 1001` then `i % 10` or `i // 10`.
   1001 and 10 also match a name bound to that int anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`), and any
   job-local `def` named udim_tile / udim_of_cell / tile_origin / face_tile is a copy (PR #1368 r1).
-  #1370 also flags single-row `floor(...) + 1001`, `[tile - 1001, 0]` origins and
-  `x - (tile - 1001)` local coordinates. Literal additive leaves summing to 1001 match split bases
-  (`1000 + 1 + u + 10*v`). Bare `1001 + u` and `tile - 1001` remain non-copy controls.
+  #1370/#1482 also flag single-row `floor(u) + 1001`, `int(u) + 1001`, `u // 1 + 1001`,
+  `[tile - 1001, 0]` or `(tile - 1001, 0.0)` origins, and `x - (tile - 1001)` local coordinates.
+  Literal integer leaves and names with a single recorded integer value can sum to a split base
+  (`A = 1000; A + 1 + u + 10*v`). Bare `1001 + u` and `tile - 1001` remain non-copy controls.
 - `delivery-zip`  owner adapters/max/agr_tools/package_core.py (`_write_zip`, #1361/#1377): the one ZIP writer
   behind `agr package-npm` / `agr package-vpm` (tools/derive facades) and AGR Tools. Flags any other writer:
   `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed), including
@@ -50,8 +51,11 @@ The allowlist is the rule-tagged `duplicates` of docs/architecture/contexts.yaml
 must be listed there with an issue reference, and every listed row (also the documented copies outside the guarded
 scope, e.g. the Max cores under adapters/) must still be found (no stale rows). A row is keyed by `at: "path.py::qualname"` - the file and the enclosing function/class
 (`<module>` at top level), never by a bare line number (#1387): lines inserted above or inside the function do not
-make it NEW or STALE. Optional `hash:` (10 hex, `sha1(ast.unparse(node))`, printed with every NEW COPY) pins one
-copy inside the function; a row without it covers every copy of that rule in that function.
+make it NEW or STALE. Optional `hash:` (10 hex, `sha1(ast.unparse(node))`, printed with every NEW COPY) pins the
+copies with that text inside the function; a row without it matches every copy of that rule in that function.
+Optional `count:` (integer >= 1, default 1, #1396) is how many matching copies the row covers: more matching copies
+than `count` -> the extra ones (last by position) are NEW COPY (an identical paste into the same function is red);
+fewer -> the row is STALE. Two copies on one line are two findings (`col`).
 Usage: python tools/architecture/duplicate_guard.py [--root REPO] [--json] [--table] [--copies-only]; exit 0 clean,
 1 violations, 2 unreadable input (a file that does not parse is an error naming it, never skipped).
 
@@ -60,7 +64,8 @@ live-bypass | wrapper | historical | own-duty, checked against the real call cha
 must be reached by a live command/route, must not call its owner and must be in LIVE_BYPASS_BASELINE (a NEW one
 fails, a fixed one must leave the baseline); a wrapper must call its owner (for a rule in POLICY_NAMES: one of
 its policy functions); a historical row must have no live chain
-and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`. `--table` prints the Russian
+and sit in a `finished_jobs` folder of contexts.yaml; own-duty needs a Russian `why`, and an own-duty row a live
+command/route reaches must be in OWN_DUTY_BASELINE (#1429: same NEW/FIXED ratchet). `--table` prints the Russian
 «живые обходы по областям» table and the compaction order (docs/architecture/report-1424.md). `--copies-only`
 runs only the copy scan (synthetic test roots without the maps).
 
@@ -98,6 +103,7 @@ RULES = {
     "window-generator": "adapters/max/agr_tools/windowgen_core.py",
 }
 WRITE_MODES = {"w", "x", "a"}
+SCAN_PATTERN = "*.py"
 # top-level folders where a new copy fails, per rule (#1376 widened udim-tile, #1377 delivery-zip to tools/ + src/)
 GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tools", "src"),
            "blender-launch": ("jobs", "tools", "src"),   # #1378: owner exists, guarded from the start
@@ -157,12 +163,25 @@ def _udim_hits(tree):
             isinstance(n.func, ast.Name) and n.func.id == "floor" or
             isinstance(n.func, ast.Attribute) and n.func.attr == "floor") for n in ast.walk(node))
 
+    def _is_tile_index(node):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "int"
+                and len(node.args) == 1 and not node.keywords and not isinstance(node.args[0], ast.Starred)):
+            return True
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.FloorDiv) and _const(node.right, 1):
+            return True
+        return _is_floor(node)
+
     def _has_base(terms):
         # Sum only unambiguous integer leaves; do not evaluate scanned code or infer arbitrary variables.
         if any(_const(t, 1001) for t in terms):
             return True
-        integers = [t.value for t in terms if isinstance(t, ast.Constant) and type(t.value) is int]
-        return sum(integers) == 1001
+        total = 0
+        for term in terms:
+            if isinstance(term, ast.Constant) and type(term.value) is int:
+                total += term.value
+            elif isinstance(term, ast.Name) and len(values := consts.get(term.id, ())) == 1:
+                total += next(iter(values))
+        return total == 1001
 
     def _is_minus_1001(node):
         return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
@@ -175,11 +194,11 @@ def _udim_hits(tree):
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             terms = _add_terms(node)
-            if _has_base(terms) and any(_is_times_ten(t) or _is_floor(t) for t in terms):
+            if _has_base(terms) and any(_is_times_ten(t) or _is_tile_index(t) for t in terms):
                 hits[id(node)] = node
         # Single-row UV translation: a 2D origin vector or the scalar inverse x - (tile - 1001).
         if isinstance(node, (ast.List, ast.Tuple)) and len(node.elts) == 2 \
-                and _is_minus_1001(node.elts[0]) and _const(node.elts[1], 0):
+                and _is_minus_1001(node.elts[0]) and (_const(node.elts[1], 0) or _const(node.elts[1], 0.0)):
             hits[id(node)] = node
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _is_minus_1001(node.right):
             hits[id(node)] = node
@@ -325,8 +344,21 @@ HASH = re.compile(r"^[0-9a-f]{10}$")
 AT = re.compile(rf"^(?P<path>[^:]+\.py)::(?P<qual>{QUALNAME})$")
 SCOPES = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
 
-# rule, file (posix, repo-relative), enclosing def/class qualname, sha1[:10] of ast.unparse(node), first line
-Finding = namedtuple("Finding", "rule path qualname digest line")
+# rule, file (posix, repo-relative), enclosing def/class qualname, sha1[:10] of ast.unparse(node), first line, column
+Finding = namedtuple("Finding", "rule path qualname digest line col")
+# value of an allowlist key (#1396): the issue reference itself (a str, so `== "#1337"` keeps working) carrying
+# `copies`, how many copies the row covers
+class Allow(str):
+    copies: int
+
+    def __new__(cls, issue, copies=1):
+        value = super().__new__(cls, issue)
+        value.copies = copies
+        return value
+
+    @property
+    def issue(self):
+        return str(self)
 
 
 def _scopes(tree):
@@ -366,7 +398,7 @@ def _findings(tree, rel):
                   for sub in ast.walk(h) if sub is not h and id(sub) in ids}
         for node in hits:
             if id(node) not in nested:   # an expression inside another reported expression is the same copy
-                out.append(Finding(rule, rel, scopes[id(node)], _digest(node), node.lineno))
+                out.append(Finding(rule, rel, scopes[id(node)], _digest(node), node.lineno, node.col_offset))
     return out
 
 
@@ -382,7 +414,7 @@ def scan(root, scope="jobs"):
     if not base.is_dir():
         raise FileNotFoundError(f"scan scope missing: {base}")
     findings = set()
-    for path in sorted(base.rglob("*.py")):
+    for path in sorted(base.rglob(SCAN_PATTERN)):
         rel = path.relative_to(root).as_posix()
         source = path.read_bytes()
         try:
@@ -394,10 +426,11 @@ def scan(root, scope="jobs"):
 
 
 def allowlist(contexts):
-    """Rule-tagged duplicates of contexts.yaml -> {(rule, path, qualname, hash | None): issue}.
+    """Rule-tagged duplicates of contexts.yaml -> {(rule, path, qualname, hash | None): Allow(issue, copies)}.
 
-    Unknown rules, a missing issue, an `at` that is not `path.py::qualname`, a malformed hash, a repeated row and a
-    function row overlapping a hash row of the same function raise ValueError naming the row."""
+    Unknown rules, a missing issue, an `at` that is not `path.py::qualname`, a malformed hash, a `count` that is not
+    an integer >= 1, a repeated row and a function row overlapping a hash row of the same function raise ValueError
+    naming the row."""
     allowed = {}
     for ctx in contexts.get("contexts", []) + [contexts.get("shared_kernel", {})]:
         for dup in ctx.get("duplicates", []):
@@ -422,10 +455,13 @@ def allowlist(contexts):
                 digest = str(digest)   # an unquoted all-digit hash parses as int; compare as text
                 if not HASH.match(digest):
                     raise ValueError(f"guard allowlist entry {at}: hash {digest!r} is not 10 lowercase hex digits")
+            count = dup.get("count", 1)
+            if type(count) is not int or count < 1:   # bool, quoted text, 0 and negatives are errors, never 1
+                raise ValueError(f"guard allowlist entry {at}: count {count!r} is not an integer >= 1 (#1396)")
             key = (rule, m["path"], m["qual"], digest)
             if key in allowed:
                 raise ValueError(f"duplicate allowlist entry {rule} {at}")
-            allowed[key] = issue
+            allowed[key] = Allow(issue, count)
     for rule, path, qual, digest in allowed:
         if digest is None and any(k[:3] == (rule, path, qual) and k[3] for k in allowed):
             raise ValueError(f"allowlist entry {rule} {path}::{qual} without hash overlaps its hash rows")
@@ -442,14 +478,35 @@ def _guarded(finding, scope=None):
     return any(finding.path.startswith(top.rstrip("/") + "/") for top in tops)
 
 
-def compare(findings, allowed, scope=None):
-    """-> (new, stale): guarded findings no row covers, allowlist rows that cover no finding.
+def _count(value):
+    """Copies a row covers: Allow.copies; a plain issue string (pre-#1396 callers) covers one."""
+    return value.copies if isinstance(value, Allow) else 1
 
-    Guarded = under GUARDED[rule] (or under `scope` for every rule when given). Rows outside it are documentation
-    of copies elsewhere: they must still be found (else stale), but new copies there are not guarded yet."""
-    new = sorted(f for f in set(findings) if _guarded(f, scope) and not any(_covers(k, f) for k in allowed))
-    stale = sorted(k for k in allowed if not any(_covers(k, f) for f in findings))
-    return new, stale
+
+def _key_order(key):
+    return tuple("" if part is None else part for part in key)
+
+
+def _found(findings, key):
+    """How many distinct findings a row matches (before its `count` applies)."""
+    return sum(_covers(key, f) for f in set(findings))
+
+
+def compare(findings, allowed, scope=None):
+    """-> (new, stale): guarded findings beyond what the rows cover, rows that cover fewer findings than `count`.
+
+    A row matches the findings of its (rule, path, qualname[, hash]) and covers the first `count` of them by position
+    (#1396); the rest are new. Guarded = under GUARDED[rule] (or under `scope` for every rule when given). Rows
+    outside it are documentation of copies elsewhere: they must still be found `count` times (else stale), but new
+    copies there are not guarded yet."""
+    findings = sorted(set(findings))
+    covered, stale = set(), []
+    for key in sorted(allowed, key=_key_order):
+        matched = sorted((f for f in findings if _covers(key, f)), key=lambda f: (f.line, f.col))
+        covered.update(matched[:_count(allowed[key])])
+        if len(matched) < _count(allowed[key]):
+            stale.append(key)
+    return [f for f in findings if _guarded(f, scope) and f not in covered], stale
 
 
 def scan_for(root, allowed, scope=None):
@@ -484,6 +541,24 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 
     # blender-launch: the 16 live tools/ + src/ launches of #1378/#1424 call blender_command since #1530
+})
+# Ratchet (#1429): own-duty rows a live command/route reaches, keyed like LIVE_BYPASS_BASELINE. Relabelling a live copy
+# own-duty is no way around the live-bypass ratchet: a live own-duty row not listed here is NEW and fails; a listed key
+# without its live own-duty row (row gone, relabelled, or no live chain any more) is fixed - remove it here (tighten).
+OWN_DUTY_BASELINE = frozenset({
+    ("contexts", "jobs/KPP1/scripts/build_kpp1.py:194", ""),
+    ("contexts", "src/dt_ai/publish/bundle.py::package", "99f325f2cd"),
+    ("contexts", "tools/assets/build_maf_template.py::repack", "060ddc5ec1"),
+    ("contexts", "tools/library/maf_material_ids.py::main", "7a61653774"),
+    ("contexts", "tools/library/migrate_windows.py::main", "9d1268b5a7"),
+    ("contexts", "tools/max/build_agr_tools.py::_zip", "7e7c2ad684"),
+    ("contexts", "tools/methods/ucx/run_benchmarks.py::package", "3235a265a9"),
+    ("contexts", "tools/methods/windows/run_benchmarks.py::package", "0083df7615"),
+    ("contexts", "tools/research/checker_mutation.py::freeze", "3457dc7d0e"),
+    ("contexts", "tools/research/checker_mutation.py::freeze", "a1ec950117"),
+    ("contexts", "tools/sintez_parity.py::run_live", "28bb7ef3ef"),
+    ("contexts", "tools/source/measure_spec_blender.py::udim", "ded8ff2561"),
+    ("vpm-contexts", "jobs/KPP1/scripts/vpm_ucx.py:50", ""),
 })
 Row = namedtuple("Row", "map context owner at rel qual line status step why issue hash ru area rule",
                  defaults=(None,))
@@ -730,10 +805,12 @@ def write_ignore(root, scripts):
     tmp.replace(path)
 
 
-def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE):
-    """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees."""
+def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BASELINE, *,
+                    own_duty_baseline=OWN_DUTY_BASELINE):
+    """Problems of the declared statuses against the real call chains (#1424); [] when every row agrees.
+    Live-bypass rows and own-duty rows reached by a live chain (#1429) each pass only through their own ratchet."""
     problems = []
-    live_keys = set()
+    live_keys, own_keys = set(), set()
     for r in rows:
         where = f"{r.map}: {r.at}" + (f" hash {r.hash}" if r.hash else "")
         if not (Path(root) / r.rel).is_file():
@@ -766,9 +843,17 @@ def status_problems(root, rows, chains, roots, finished, baseline=LIVE_BYPASS_BA
             if (r.map, r.at, r.hash) not in baseline:
                 problems.append(f"NEW LIVE BYPASS {where}: use {r.owner} instead (a live command/route must not get "
                                 f"a new copy; {via})")
+        if r.status == "own-duty" and chain:
+            own_keys.add((r.map, r.at, r.hash))
+            if (r.map, r.at, r.hash) not in own_duty_baseline:
+                problems.append(f"NEW OWN-DUTY {where}: {via}: a live command/route reaches it; use {r.owner} or add "
+                                "the key to OWN_DUTY_BASELINE in a reviewed change (#1429)")
     for key in sorted(baseline - live_keys):
         problems.append(f"FIXED LIVE BYPASS {key[0]}: {key[1]} {key[2]}: no live-bypass row any more; remove it from "
                         "LIVE_BYPASS_BASELINE (tighten the ratchet)")
+    for key in sorted(own_duty_baseline - own_keys):
+        problems.append(f"FIXED OWN-DUTY {key[0]}: {key[1]} {key[2]}: no own-duty row reached by a live command/route "
+                        "any more; remove it from OWN_DUTY_BASELINE (tighten the ratchet)")
     return problems
 
 
@@ -835,7 +920,8 @@ def main(argv=None):
     try:
         contexts = mini_yaml.load(args.contexts or args.root / "docs/architecture/contexts.yaml")
         allowed = allowlist(contexts)
-        new, stale = compare(scan_for(args.root, allowed), allowed)
+        findings = scan_for(args.root, allowed)
+        new, stale = compare(findings, allowed)
         problems, rows = [], []
         if not args.copies_only:
             maps = load_maps(args.root)
@@ -859,15 +945,20 @@ def main(argv=None):
         print(f"STATUS {p}")
     if args.json:
         print(json.dumps({"new": [f._asdict() for f in new],
-                          "stale": [dict(zip(("rule", "path", "qualname", "hash"), k)) for k in stale],
+                          "stale": [dict(zip(("rule", "path", "qualname", "hash"), k),
+                                         count=_count(allowed[k]), found=_found(findings, k)) for k in stale],
                           "status": problems}, indent=1))
     for f in new:
+        row = next((k for k in allowed if _covers(k, f)), None)
+        hint = (f"; the row `{f.path}::{f.qualname}` covers only count {_count(allowed[row])} of "
+                f"{_found(findings, row)} copies - remove the copy or raise `count`") if row else ""
         print(f"NEW COPY [{f.rule}] {f.path}:{f.line} in {f.qualname} (hash {f.digest}): use {RULES[f.rule]} "
-              f"instead (or list `{f.path}::{f.qualname}` in contexts.yaml with an issue)")
-    for rule, path, qual, digest in stale:
+              f"instead (or list `{f.path}::{f.qualname}` in contexts.yaml with an issue){hint}")
+    for key in stale:
+        rule, path, qual, digest = key
         pin = f" hash {digest}" if digest else ""
-        print(f"STALE ALLOWLIST [{rule}] {path}::{qual}{pin}: not found any more; remove or fix the row in "
-              "contexts.yaml")
+        print(f"STALE ALLOWLIST [{rule}] {path}::{qual}{pin}: found {_found(findings, key)} of count "
+              f"{_count(allowed[key])}; remove or fix the row in contexts.yaml")
     return 1 if new or stale or problems else 0
 
 

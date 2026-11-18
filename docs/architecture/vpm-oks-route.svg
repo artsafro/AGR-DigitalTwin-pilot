@@ -90,7 +90,8 @@
 <rect x="3550" y="306.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="3550" y="426.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="3550" y="506.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="3550" y="596.25" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="3550" y="596.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="3550" y="729.75" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="3860" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="3820" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="3780" y1="225.0" x2="3820" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -164,8 +165,8 @@
 <tspan x="695.0" dy="14">Правила: D125, D238</tspan>
 </text>
 <text x="695.0" y="518.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="695.0" dy="14">Контекст: Корпус и</tspan>
-<tspan x="695.0" dy="17.5">геометрия</tspan>
+<tspan x="695.0" dy="14">Контекст: Состав частей</tspan>
+<tspan x="695.0" dy="17.5">(PartsList)</tspan>
 </text>
 <text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="965.0" dy="15">Агент: Blender / Max /</tspan>
@@ -450,13 +451,18 @@
 <tspan x="3665.0" dy="17.5">приёмка</tspan>
 </text>
 <text x="3665.0" y="606.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="3665.0" dy="13">⚠ xView: КПП1 ВПМ — 85</tspan>
-<tspan x="3665.0" dy="16.25">перекрытых граней (128 пар),</tspan>
-<tspan x="3665.0" dy="16.25">цель 0 / 0 открыта; СРЕDА —</tspan>
-<tspan x="3665.0" dy="16.25">~23 мин на прогон в Max (1395</tspan>
-<tspan x="3665.0" dy="16.25">с) ×3, агент ждал в</tspan>
-<tspan x="3665.0" dy="16.25">sleep-циклах ~17 мин [D152,</tspan>
-<tspan x="3665.0" dy="16.25">D173]</tspan>
+<tspan x="3665.0" dy="13">⚠ Headless xView КПП1 на</tspan>
+<tspan x="3665.0" dy="16.25">R1-v003: ВПМ 85/0 (грани /</tspan>
+<tspan x="3665.0" dy="16.25">вершины, 128 пар) — не</tspan>
+<tspan x="3665.0" dy="16.25">пройдено, цель 0/0; нативная</tspan>
+<tspan x="3665.0" dy="16.25">проверка в Max ещё нужна</tspan>
+<tspan x="3665.0" dy="16.25">[D152]</tspan>
+</text>
+<text x="3665.0" y="739.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="13">⚠ xView: СРЕDА — ~23 мин на</tspan>
+<tspan x="3665.0" dy="16.25">прогон в Max (1395 с) ×3,</tspan>
+<tspan x="3665.0" dy="16.25">агент ждал в sleep-циклах ~17</tspan>
+<tspan x="3665.0" dy="16.25">мин [D152, D173]</tspan>
 </text>
 <text x="3935.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3935.0" dy="15">Чекер СИНТЕЗ</tspan>

@@ -88,7 +88,7 @@ stages:
   - id: gate1
     event_ru: "Gate 1: Артём подтвердил части"
     actor: artem
-    context: body
+    context: parts
     rules:
       - D125
       - D238
@@ -342,14 +342,20 @@ hotspots:
       - D224
     evidence:
       - jobs/KPP1/package-1278/latest/REPORT.md
+  - id: xview-overlaps
+    stage: validate
+    ru: "Headless xView КПП1 на R1-v003: ВПМ 85/0 (грани / вершины, 128 пар) — не пройдено, цель 0/0; нативная проверка в Max ещё нужна"
+    rules:
+      - D152
+    evidence:
+      - jobs/KPP1/STATE.md
   - id: xview-time
     stage: validate
-    ru: "xView: КПП1 ВПМ — 85 перекрытых граней (128 пар), цель 0 / 0 открыта; СРЕDА — ~23 мин на прогон в Max (1395 с) ×3, агент ждал в sleep-циклах ~17 мин"
+    ru: "xView: СРЕDА — ~23 мин на прогон в Max (1395 с) ×3, агент ждал в sleep-циклах ~17 мин"
     rules:
       - D152
       - D173
     evidence:
-      - jobs/KPP1/package-1278/latest/REPORT.md
       - docs/retros/2026-11-05-elv-tc-vpm-claude.md
   - id: album-review
     stage: delivered

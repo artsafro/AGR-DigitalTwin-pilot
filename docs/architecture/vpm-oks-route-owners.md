@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `5d83ef0d129ddcee60f658e722b9006a2d903bf60c1edcf3d8a403306927345d`.
+Редакция YAML SHA-256: `dbb0c4fa553a0c5a6e8a36b1db8556e014de08e387ec472aed3d31f63e83929e`.
 
 Ревизия исходников: КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка.
 
@@ -149,5 +149,6 @@
 - 4БК кирпич: 37 → 38 рядов, перевязка на стыке этажей, швы панелей 10 мм по красным линиям архитектора; пилот в 1 UDIM (#1326) открыт: [`docs/research/vpm-course-grid-1314.md`](../../docs/research/vpm-course-grid-1314.md)
 - UV ВПМ: vpm_uv.py КПП1 и ТЭЦ26 — обёртки runpy над tools/blender/vpm_uv.py (#1380), не дубли раскладки; номер тайла — udim_tile (#1337 / #1376); исторический v007 ТЭЦ26 отклонён: [`jobs/KPP1/scripts/vpm_uv.py`](../../jobs/KPP1/scripts/vpm_uv.py); [`jobs/TEC26-OKS/scripts/vpm_uv.py`](../../jobs/TEC26-OKS/scripts/vpm_uv.py); [`jobs/TEC26-OKS/STATE.md`](../../jobs/TEC26-OKS/STATE.md)
 - Пакет: agr package-npm и export_meta на main (#1361); КПП1 собран без утверждённого Ground (D285); сданный Ground не готов (D288): [`jobs/KPP1/package-1278/latest/REPORT.md`](../../jobs/KPP1/package-1278/latest/REPORT.md)
-- xView: КПП1 ВПМ — 85 перекрытых граней (128 пар), цель 0 / 0 открыта; СРЕDА — ~23 мин на прогон в Max (1395 с) ×3, агент ждал в sleep-циклах ~17 мин: [`jobs/KPP1/package-1278/latest/REPORT.md`](../../jobs/KPP1/package-1278/latest/REPORT.md); [`docs/retros/2026-11-05-elv-tc-vpm-claude.md`](../../docs/retros/2026-11-05-elv-tc-vpm-claude.md)
+- Headless xView КПП1 на R1-v003: ВПМ 85/0 (грани / вершины, 128 пар) — не пройдено, цель 0/0; нативная проверка в Max ещё нужна: [`jobs/KPP1/STATE.md`](../../jobs/KPP1/STATE.md)
+- xView: СРЕDА — ~23 мин на прогон в Max (1395 с) ×3, агент ждал в sleep-циклах ~17 мин: [`docs/retros/2026-11-05-elv-tc-vpm-claude.md`](../../docs/retros/2026-11-05-elv-tc-vpm-claude.md)
 - СРЕDА после приёмки: разбор альбома — 25 замечаний, 7 наших (гранёные кривые, отлив, лишние детали без источника): [`jobs/elv-tc-vpm/LESSONS.md`](../../jobs/elv-tc-vpm/LESSONS.md); [`jobs/elv-tc-vpm/REVIEW-album-2026-11-10.md`](../../jobs/elv-tc-vpm/REVIEW-album-2026-11-10.md)
