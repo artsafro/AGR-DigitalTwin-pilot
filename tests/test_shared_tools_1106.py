@@ -321,6 +321,7 @@ def test_package_binds_light_sidecar_without_using_its_address(tmp_path, change)
 
 
 def test_package_rejects_fbx_changed_at_writer_handoff(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(PKG_TOOL.parent))  # also supports the pre-fix script import
     from tools.derive import package_vpm
 
     pkg = make_pkg(tmp_path / 'p')
@@ -338,7 +339,8 @@ def test_package_rejects_fbx_changed_at_writer_handoff(tmp_path, monkeypatch):
     assert not any((pkg.parent / name).exists() for name in ('SM_Nku_1.zip', 'SM_Nku_1.zip.partial', 'package_report.json'))
 
 
-def test_package_binding_rejects_each_single_byte_mutation(tmp_path):
+def test_package_binding_rejects_each_single_byte_mutation(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(PKG_TOOL.parent))
     from tools.derive import package_vpm
 
     pkg = make_pkg(tmp_path / 'p')
