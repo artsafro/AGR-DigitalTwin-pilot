@@ -188,6 +188,42 @@ UV 3 240 углов = 810 косяков × 4), score 83,693 без измене
 + `SHA256SUMS.txt`); копия для Blender: `C:/x/review-k2/k2_v002r1_body.blend`, `k2_v002r1_body_quad.fbx`
 (+ `open_review_v002r1.py`, `SHA256SUMS_v002r1.txt`).
 
+## Этап 2 (2026-11-18): G22 корпус 2 — окна с капсулами и корзины, k2 stage2 v001
+
+Основа — принятый Артёмом бадик v002r1 («все норм кроме b корпуса», 2026-11-18): `SM_Body_Main` берётся из
+`k2_v002r1_body.blend` как есть, этап 2 только добавляет элементы. DCC: Blender 5.1 без окна (сетка строится
+скриптом, чтение обратно по FBX; копия для приёмки — .blend с коллекциями).
+
+1. `stage2_from_dump.py`: для каждого из 45 проёмов типового этажа — окно Revit того же этажа (центр в проёме),
+   прочитано в своей плоскости (PCA, как `reveal_depth`). Стёкла = тонкие (≤ 4 см) коробки по 12 треугольников;
+   края стёкол ближе 4 см сведены к среднему (смещение ≤ 15 мм: нижнее глухое стекло и створка); глубина рамы =
+   тыл рамы − откос r = 0,07 м у всех трёх типов; отлив = верхняя горизонталь рамной части перед рамой (3 см).
+   Типы: 2-ств. 1800 × 30, 1-ств. 1150 × 3, 3-ств. 3000 × 12; 198 стёкол. Корзины: 12 на этаж, Revit 1,82 × 0,61 ×
+   1,055 м, тыл Revit ровно на фасаде; бокс уходит в стену на `--embed 0,05` м. Верх корзины совпадает с подоконником
+   окна над ней (z = 3,0), поэтому верх опущен на 1 см (12 из 12), чтобы полоса крышки в стене не легла в плоскость
+   подоконного откоса. Капсулы D205: 0 вне контура, 0 пересечений.
+2. `stage2_build.py`: модуль по каждому проёму один раз, ×9 этажей. Отдельные объекты (D336): рама — замкнутая
+   оболочка из квадов (проём минус стёкла: импост и горбылёк геометрией, как в Revit; створки — текстура), стекло —
+   квад на глубине стекла Revit, отлив — полка + капельник, капсула — 5 квадов внутрь, корзина — 5 квадов без
+   заднего. Коллекции Body / Win_Frame / Win_Glass / Win_Flash / Capsules / AC_Baskets.
+3. `stage2_readback.py` по выгруженному FBX: 0 дефектов. Бадик = принятый FBX (4 523 в., 3 933 гр., разница
+   координат 0, UV и материалы по углам равны). Элементы: 405 рам (33 858 гр.), 405 стёкол (1 782), 405 отливов
+   (810), 405 капсул (2 025), 108 корзин (540) — 100 % квадов, рамы замкнуты, капсулы и корзины открыты ровно с
+   одной стороны, тыл корзин 50 мм за фасадом, наложений граней (≤ 2 мм, параллельно, внутри) — 0.
+
+| Версия | Что | #1616 score | Квады | Щепки | weld | one_mesh | Граней в полосе |
+|---|---|---|---|---|---|---|---|
+| эталон к.2 | — | 86,883 | 0,9996 | 2 | 0,209 | 0,835 | 17 606 |
+| v002r1 | этап 1 | 83,693 | 1,0 | 0 | 0,283 | 1,0 | 3 933 |
+| stage2 v001 | + окна, капсулы, корзины | 97,968 | 1,0 | 0 | 0,284 | 0,093 | 42 768 |
+
+Modelling split [D336]: plinth=one_with_body; inset=windows,flashings,capsules,ac_baskets; texture=panels,sashes,ac_grille; reason=G22 typical floors: frames with mullions/transoms are geometry in Revit, sash and grille detail is texture.
+
+Граней в 2,4 раза больше эталона: у эталона окна — текстура, здесь рама — замкнутая оболочка (≈ 84 квада на окно).
+Двери лоджий (`dc_балконная дверь`, 1,44 м за фасадом) и 3 окна лестниц на полуэтаже в проёмы этапа 1 не вошли —
+этап 2 их не добавляет. Лист: `stage2-k2/k2_stage2_v001_sheet.png` (+ `SHA256SUMS.txt`); копия для Blender:
+`C:/x/review-k2/k2_stage2_v001.blend` (+ `.fbx`, `open_review_stage2_v001.py`, `SHA256SUMS_stage2_v001.txt`).
+
 ## Журнал изменений правил по кругам
 
 | Круг | Этаж | Замечания Артёма | Что изменено (doc / skill) |
@@ -196,6 +232,7 @@ UV 3 240 углов = 810 косяков × 4), score 83,693 без измене
 | 2 | G22 к.1 | v002: «полигоны уходят внутрь здания» — не принят; 4 ID как в атласе (принято); зоны башен 63 — из .rvt read-only ; v003 принят («Да, ок, все принимаю») | BM-01 «контур = наружная оболочка, проёмы закрыты заполнением, рельеф < 0,4 м = текстура, ниша — геометрией только если она есть в эталоне», гейт `envelope_check.py`; §8 п. 7–8; summary-ru; skill `scenario`; `areas/body.md`; [D341] |
 | 3 | G22 к.2 | сетка неплохая; нет проёмов; корзины — бокс врезан в стену без заднего полигона (не ниша); порядок: этап 1 бадик с проёмами на всех корпусах, потом окна с капсулами | `floor_from_dump --fill` (ремонт по гейту оболочки: впадины < 0,4 м закрываются) — инструмент; правила (проёмы, корзины) вносятся в BM после приёмки бадиков Артёмом |
 | 4 | G22 к.2 v002 (этап 1) | ждёт общей приёмки бадиков | `floor_from_dump --openings`, `module_build` проёмы с откосом из Revit — инструмент; правило в BM — после приёмки |
+| этап 2 | G22 к.2 stage2 v001 | ждёт приёмки (бадик v002r1 принят 2026-11-18) | хуки `stage2_from_dump` / `stage2_build` / `stage2_readback`; правила не менялись (D205, D336, корзина без заднего полигона) |
 
 ## Воспроизведение
 
@@ -251,4 +288,16 @@ blender51 -b --factory-startup --python H/module_build.py -- R5/floor_k2_v002.js
 blender51 -b --factory-startup --python ../body-modelling-1618/dump_mesh.py -- k2_v002r1/body.fbx dump_k2_v002r1
 uv run python readback_openings.py dump_k2_v002r1/SM_Body_Main.npz R5/floor_k2_v002.json rb_k2_v002r1.json          # exit 0, uv_geo_defects 0
 uv run python readback_openings.py R5/dump_k2_v002/SM_Body_Main.npz R5/floor_k2_v002.json rb_k2_v002_old_uvcheck.json # exit 1, 810 jamb defects
+```
+
+Этап 2, G22 к.2 (H, R4, R5, S = `C:/x/ev_1619/s2/v001`, M = `docs/research/body-modelling-1618`):
+
+```
+uv run python H/stage2_from_dump.py g22_k2_src.npz R5/floor_k2_v002.json S/stage2_k2.json --clip R4/clip_k2.json
+blender51 -b --factory-startup --python H/stage2_build.py -- S/stage2_k2.json C:/x/review-k2/k2_v002r1_body.blend S/k2_s2_v001 --name k2_stage2_v001
+blender51 -b --factory-startup --python H/stage2_readback.py -- S/k2_s2_v001/k2_stage2_v001.fbx C:/x/review-k2/k2_v002r1_body_quad.fbx S/stage2_k2.json S/rb_k2_stage2_v001.json   # exit 0
+blender51 -b --factory-startup --python M/dump_mesh.py -- S/k2_s2_v001/k2_stage2_v001_joined.fbx S/dump_joined
+uv run python band_compare.py S/dump_joined/SM_Stage2_Joined.npz 5.3 32.3 S/k2_stage2_v001 && uv run python tools/qa/mesh_quality_score.py S/k2_stage2_v001.mq.json --out S/k2_stage2_v001.score.json
+uv run python crop_dump.py S/dump_joined/SM_Stage2_Joined.npz S/crop_w2.npz 531.4 1031.6 17.295 536.6 1036.8 19.2
+uv run python M/wire_sheet.py S/crop_w2.npz --view iso --rot -25 --ppm 160 --mat-rgb S/matrgb.json --out S/k2_s2_close_window2.png
 ```

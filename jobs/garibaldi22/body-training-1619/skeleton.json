@@ -6,6 +6,9 @@
     {"script": "hooks/floor_from_dump.py", "stage": "body", "point": "before"},
     {"script": "hooks/envelope_check.py", "stage": "body", "point": "before"},
     {"script": "hooks/zones_from_etalon.py", "stage": "body", "point": "before"},
-    {"script": "hooks/module_build.py", "stage": "body", "point": "after"}
+    {"script": "hooks/module_build.py", "stage": "body", "point": "after"},
+    {"script": "hooks/stage2_from_dump.py", "stage": "body", "point": "after"},
+    {"script": "hooks/stage2_build.py", "stage": "body", "point": "after"},
+    {"script": "hooks/stage2_readback.py", "stage": "body", "point": "after"}
   ]
 }
