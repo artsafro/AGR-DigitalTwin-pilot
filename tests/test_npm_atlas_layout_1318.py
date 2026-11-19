@@ -33,8 +33,12 @@ def fresh_out_dir(out, inputs):
 
 def run(packet, *args):
     spec, recipe, out = packet
+    master = spec.parent / "master.blend"  # synthetic master: the atlas is bound to its hash (#1505)
+    if not master.exists():
+        master.write_bytes(b"synthetic master revision A")
     return subprocess.run([sys.executable, str(ROOT / "tools/derive/npm_atlas.py"),
-        str(spec), str(out), "--recipe-dir", str(recipe), *args], capture_output=True, text=True)
+        str(spec), str(out), "--recipe-dir", str(recipe), "--master", str(master), *args],
+        capture_output=True, text=True)
 
 
 @pytest.mark.parametrize('args,cell,pad,cols', [([],409,16,5),(['--cell','512','--pad','8'],512,8,4),

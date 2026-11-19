@@ -30,6 +30,13 @@ from twinqa.report import Finding
 DECOR_FLOAT_TOL_M = 1e-3  # a stand-off gap larger than 1 mm is floating, not embedded [D199]
 TJUNCTION_TOL_M = 2e-5    # geometry.md: T-junctions (20 um) are a loop that ends mid-run [D200]
 
+# BODY layout thresholds: orchestrator default, user may change; not regulatory limits.
+WALL_NORMAL_Z_MAX = 0.1
+WALL_AXIS_TOL_DEG = 1.0
+WALL_SLIVER_SHORT_M = 0.05
+WALL_SLIVER_LONG_M = 0.5
+WALL_FAN_MIN_TRIANGLES = 3
+
 _FACADE_SUFFIX = "_Main"
 _GLASS_SUFFIX = "_MainGlass"
 
@@ -223,3 +230,114 @@ def edge_loop_findings(meshes: list[dict], src: str) -> list[Finding]:
         return [_f("review", "edge loop continuity",
                    f"{src}: {total} T-junction(s): {', '.join(per_mesh[:5])}", expected, src)]
     return [_f("pass", "edge loop continuity", f"{src}: no T-junctions", expected, src)]
+
+
+def wall_layout_report(mesh, *, normal_z_max=WALL_NORMAL_Z_MAX,
+                       axis_tol_deg=WALL_AXIS_TOL_DEG,
+                       sliver_short_m=WALL_SLIVER_SHORT_M,
+                       sliver_long_m=WALL_SLIVER_LONG_M,
+                       fan_min_triangles=WALL_FAN_MIN_TRIANGLES):
+    """Report-only D200/D129 wall layout on an untriangulated, Z-up, metre PolyMesh.
+
+    Near-vertical = abs(unit polygon normal.z) <= normal_z_max. Horizontal /
+    vertical edge classification uses its angle to the XY plane / Z axis, not
+    world X/Y: genuinely rotated facades remain valid. Count each indexed edge
+    once, each sliver face once, each shared triangle vertex once (open fans too).
+    Strict side limits: shortest < short AND longest > long. All source face ids
+    survive, including non-wall faces in skipped_face_ids. No automatic repair,
+    no approval inference for a diagonal: even one is counted, never failed [D227].
+    """
+    import numpy as np
+
+    values = (normal_z_max, axis_tol_deg, sliver_short_m, sliver_long_m)
+    if any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) for x in values):
+        raise ValueError('wall thresholds must be finite numbers')
+    if not (0 <= normal_z_max < 1 and 0 <= axis_tol_deg < 45 and
+            0 < sliver_short_m < sliver_long_m):
+        raise ValueError('invalid wall thresholds')
+    if type(fan_min_triangles) is not int or fan_min_triangles < 3:
+        raise ValueError('fan_min_triangles must be an integer >= 3')
+    if not mesh.faces:
+        raise ValueError('wall layout: no faces')
+    wall_ids, skipped, slivers, edges, triangles = [], [], [], {}, {}
+    vertices = mesh.vertices
+    for fi, face in enumerate(mesh.faces):
+        points = vertices[list(face)]
+        with np.errstate(over='ignore', invalid='ignore'):
+            local = points - points[0]
+            normal = np.cross(local[1:-1], local[2:]).sum(axis=0)
+            area2 = float(np.linalg.norm(normal))
+            sides = np.linalg.norm(points - np.roll(points, 1, axis=0), axis=1)
+            center = points[0] + local.mean(axis=0)
+        if not (math.isfinite(area2) and np.isfinite(sides).all() and np.isfinite(center).all()):
+            raise ValueError(f'face {fi}: nonfinite derived geometry')
+        if area2 <= 1e-12 or min(sides) <= 0:
+            raise ValueError(f'face {fi}: degenerate geometry')
+        if abs(float(normal[2])) / area2 > normal_z_max:
+            skipped.append(fi)
+            continue
+        wall_ids.append(fi)
+        if min(sides) < sliver_short_m and max(sides) > sliver_long_m:
+            slivers.append(dict(face_id=fi, position_m=center.tolist(),
+                                shortest_m=float(min(sides)), longest_m=float(max(sides))))
+        for i, a in enumerate(face):
+            b = face[(i + 1) % len(face)]
+            edges.setdefault(tuple(sorted((a, b))), []).append(fi)
+        if len(face) == 3:
+            for vi in face:
+                triangles.setdefault(vi, []).append(fi)
+    diagonals = []
+    for (a, b), face_ids in sorted(edges.items()):
+        delta = vertices[b] - vertices[a]
+        # atan2 avoids division near vertical/horizontal directions.
+        angle = math.degrees(math.atan2(abs(float(delta[2])), math.hypot(*delta[:2])))
+        if axis_tol_deg < angle < 90 - axis_tol_deg:
+            diagonals.append(dict(vertex_ids=[a, b], face_ids=face_ids,
+                                  position_m=(vertices[a] + delta / 2).tolist(),
+                                  endpoints_m=[vertices[a].tolist(), vertices[b].tolist()]))
+    fans = [dict(vertex_id=vi, face_ids=ids, position_m=vertices[vi].tolist())
+            for vi, ids in sorted(triangles.items()) if len(ids) >= fan_min_triangles]
+    counts = dict(diagonals=len(diagonals), slivers=len(slivers), fans=len(fans))
+    return dict(status='review' if any(counts.values()) else ('clean' if wall_ids else 'not_measured'),
+                report_only=True, blocking=False, level='standard', counts=counts,
+                thresholds=dict(normal_z_max=normal_z_max, axis_tol_deg=axis_tol_deg,
+                                sliver_short_m=sliver_short_m, sliver_long_m=sliver_long_m,
+                                fan_min_triangles=fan_min_triangles),
+                threshold_policy='orchestrator default, user may change',
+                wall_face_ids=wall_ids, skipped_face_ids=skipped,
+                skipped_reason='not near-vertical', diagonals=diagonals, slivers=slivers, fans=fans)
+
+
+def part_layout_report(meshes: list[dict], profile: str, **thresholds) -> dict:
+    """Per-part pre-show receipt: original polygon wall layout AND quad_dominance.
+
+    mesh rows use work-FBX face_geometry (vertices in metres, Z up). Names must be
+    unique; callers explicitly supply BODY parts rather than infer them by size.
+    Invalid / partial evidence raises, never silently drops a part or yields clean.
+    quad_dominance's verdict is retained independently, not weakened by D227.
+    """
+    from dataclasses import asdict
+    from dt_ai.ops.inv_quads import PolyMesh, quad_report
+
+    if not isinstance(meshes, list) or not meshes:
+        raise ValueError('no BODY parts to check')
+    scene = {}
+    for row in meshes:
+        if not isinstance(row, dict) or not isinstance(row.get('name'), str) or not row['name'].strip():
+            raise ValueError('every part needs a name')
+        name = row['name']
+        if name in scene:
+            raise ValueError(f'duplicate part: {name}')
+        shape = row.get('face_geometry')
+        if not isinstance(shape, dict) or 'vertices' not in shape or 'polygons' not in shape:
+            raise ValueError(f'{name}: missing face_geometry vertices/polygons')
+        scene[name] = PolyMesh(shape['vertices'], shape['polygons'])
+    quads = quad_report(scene, profile)
+    parts = []
+    for name, mesh in scene.items():
+        q = quads[name]
+        quad = asdict(q)
+        quad['offenders'] = list(q.offenders)
+        parts.append(dict(part=name, wall_layout=wall_layout_report(mesh, **thresholds),
+                          quad_dominance=dict(quad, passed=q.passed)))
+    return dict(schema='body-part-layout/1', profile=profile, parts=parts)

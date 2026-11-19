@@ -132,7 +132,7 @@ def test_check_level_table():
         "fast": ("colouring", "re-export", "no pytest", "no code review"),
         "standard": ("new node", "jobs/", "exported file", "dt-reviewer"),
         "full": ("validators", "standards/", "schemas", "shared src/", "passed=true",
-                 "affected tests", "one full suite per PR", "probes", "receipts"),
+                 "affected tests", "full suite once in the merge batch [D297]", "probes", "receipts"),
     }
     for level, clauses in expected.items():
         row = next(line for line in rows if line.startswith(f"| `{level}` |"))

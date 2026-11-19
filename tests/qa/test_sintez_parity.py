@@ -174,7 +174,7 @@ def test_archive_mutation_is_not_accepted(tmp_path, monkeypatch):
 
     def fake_blender(cmd, **kwargs):
         # Substitute only the external process seam, including a hostile vendor write.
-        if "sintez_parity_fixture.py" in cmd[6]:
+        if "sintez_parity_fixture.py" in cmd[cmd.index("--python") + 1]:   # #1530: argv from blender_command
             data = payload(case)
             (out / data["readback"]["source"]).write_bytes(data["header"])
             (out / "readback.json").write_text(json.dumps(dict(

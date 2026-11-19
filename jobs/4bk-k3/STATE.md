@@ -1,3 +1,7 @@
+Current run: `vpm-v001` — A and B at about 80%; no delivery sign-off.
+Source: `sources.json`; Revit view `K3_stylobate_v001` (see `TASK.md`).
+Next gate: Await address, rotation and typical canopy model before final VPM readback and packaging (`job.yaml`).
+
 # 4bk-k3 — state (2026-11-15)
 
 Status: **two buildings are at about 80 %.**
@@ -41,4 +45,4 @@ Root: `C:\Users\artsafro\Desktop\!3D viz\!А101\63_4BK_vlad\`.
 
 - Known window defects go to a separate kanban card (TASK.md "Known window defects").
 - Facade grid rule (report-only check): to write after acceptance (Artem 2026-11-15, «Сначала только отчёт»).
-- Backlog Q10: shared visibility checker (Codex).
+- Backlog Q10: shared visibility checker implemented in #1447; not rerun on the accepted K3 models.

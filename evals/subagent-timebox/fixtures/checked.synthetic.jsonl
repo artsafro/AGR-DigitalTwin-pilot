@@ -1,0 +1,8 @@
+{"type": "summary", "summary": "SYNTHETIC: corrected background-agent schedule (#1539) - progress read at 20 min, completed output at 40 min; metadata record only."}
+{"type": "assistant", "timestamp": "2026-01-01T00:00:00+00:00", "message": {"content": [{"type": "tool_use", "id": "launch", "name": "Agent", "input": {"run_in_background": true, "prompt": "Synthetic task. Time box: 30 min."}}]}}
+{"type": "user", "timestamp": "2026-01-01T00:00:00+00:00", "message": {"content": [{"type": "tool_result", "tool_use_id": "launch", "content": "agentId: agent1\noutput_file: output.synthetic.txt"}]}}
+{"type": "assistant", "timestamp": "2026-01-01T00:20:00+00:00", "message": {"content": [{"type": "tool_use", "id": "read20", "name": "TaskOutput", "input": {"task_id": "agent1"}}]}}
+{"type": "user", "timestamp": "2026-01-01T00:20:00+00:00", "message": {"content": [{"type": "tool_result", "tool_use_id": "read20", "content": "progress"}]}, "toolUseResult": {"status": "running"}}
+{"type": "assistant", "timestamp": "2026-01-01T00:20:00+00:00", "message": {"content": "Synthetic: 28/56 pairs fixed; continue for another 30 min; user informed."}}
+{"type": "assistant", "timestamp": "2026-01-01T00:40:00+00:00", "message": {"content": [{"type": "tool_use", "id": "read40", "name": "TaskOutput", "input": {"task_id": "agent1"}}]}}
+{"type": "user", "timestamp": "2026-01-01T00:40:00+00:00", "message": {"content": [{"type": "tool_result", "tool_use_id": "read40", "content": "progress"}]}, "toolUseResult": {"status": "completed"}}

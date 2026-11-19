@@ -34,7 +34,7 @@ source/permission rules; a small edit/re-export of an accepted model is not a ne
 |---|---|---|---|
 | `fast` | colouring, finish/diffuse swap, small geometry edit described by Artem, re-export of an accepted model | one machine readback (IDs/UV/count, 1-2 calls), plus changed dimensions/map paths as applicable; no pytest | no code review; Artem accepts the picture or opened scene; result path, no commit/PR needed; add a LESSONS.md line for a new preference [D273] |
 | `standard` | new node or object for a job: MAF, fence, windows, Ground patch, OKS body; scripts under jobs/ | readback + cell validators on the exported file | one dt-reviewer round on committed job scripts (not on the picture); one PR per job at the end (scripts + manifest), not per node; Artem accepts the picture or opened scene [D273] |
-| `full` | regulation code/data, validators, standards/, export tooling, schemas, shared src/ modules; a delivery claiming passed=true | readback + validators + affected tests while working, one full suite per PR (rule 49), probes and receipts | dt-reviewer review + Artem acceptance, separate statuses; one PR per issue; full author receipts for code [D273] |
+| `full` | regulation code/data, validators, standards/, export tooling, schemas, shared src/ modules; a delivery claiming passed=true | readback + validators + affected tests before every review request (full suite once in the merge batch [D297]), probes and receipts | dt-reviewer review + Artem acceptance, separate statuses; one PR per issue; full author receipts for code [D273] |
 
 **Visual evidence [D273].** When Artem is online, open the scene in his DCC version and give the absolute path instead of renders.
 Render only for board cards without him. Image limits: `fast`: 1 image (result next to reference);
@@ -44,6 +44,26 @@ album/sheets. These are limits, not a render quota when the scene is opened [D27
 
 **Fast stop [D273].** Stop after Artem's «да»; on a second correction on the same point, ask rather than iterate alone.
 For full delivery certification continue through the gates below; technical QA, user acceptance and publication stay separate.
+
+## Accepted geometry freeze (#1445)
+
+Once the user accepts a part, its geometry is **frozen**. Before the next stage, record
+`part`, `version`, `path`, `sha256` in `jobs/<ID>/accepted.json`, with the user's answer
+reference in the job. Follow the [fixed accepted-set and brief format](ACCEPTED_GEOMETRY.md).
+UV, textures, UCX and export read only that accepted set: cite its file hash and part versions,
+not "latest", and run `tools/state/accepted_set.py --job <ID> --inputs PART=FILE ...` before reading.
+A new geometry version/fix round needs the user's explicit scoped decision, even when QA finds
+something real. Report later findings once as a consolidated helper list (named helpers/points
+in a separate review scene, sent-list reference in TASK.md), not autonomous repair rounds.
+Do not edit the accepted source or carry its approval onto a derived file; an authorized UV
+cut/rebuild gets a new version and explicit acceptance before it becomes the next frozen input.
+Technical QA, human acceptance and publication remain separate; unresolved mandatory checks
+still prevent delivery certification, not permission to repair accepted geometry.
+
+Evidence: 4bk-k3 floor 1 A accepted 2026-11-14 17:31 (body v004, windows/roof v003).
+Five QA rounds v005–v009 and textures on body v008e followed; on 2026-11-15 Artem asked
+for helpers and required the geometry he had accepted yesterday. The [incident record](ACCEPTED_GEOMETRY.md#4bk-k3-evidence)
+links the immutable source; this rule does not roll back his later hand-finished finals.
 
 ## GATES (same for every path)
 
@@ -69,6 +89,12 @@ Only all eight completed gates allow `passed=true` for this checklist. This is a
 evidence contract, **not** a new geometry checker, user-authentication service or
 publication authorization. Producers and the reviewer must verify receipt truth.
 Never synthesize a receipt to fill a missing check or a human decision.
+
+**Delivery to Artem [D300].** The finished package goes to Artem, never straight to the customer: either an
+archive (the `agr package-npm` / `agr package-vpm` output with its report) or a 3ds Max scene with quads (the
+QUAD review copy [D270]); give him the absolute path. Artem does the acceptance and the hand-off to the customer;
+the agent has no customer channel and records Artem's answer (date, scope, ref) in the job report. Interim
+(stand-in) Flora maps may ship in this delivery; Artem checks the look at its end [D299].
 
 **Look-finished step (D227, report-only).** After the overlap postcondition, run the look-finished checks (seams, broken edge loops, decor gaps; ELV/skug26 retros) on the export and put every finding into the job report. Per [D227] the step is REPORT-ONLY for now: findings do not block delivery and do not flip `passed`. It becomes blocking only after it has run without false failures on 2-3 already accepted jobs (a later user decision).
 

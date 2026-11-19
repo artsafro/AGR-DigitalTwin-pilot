@@ -1,0 +1,11 @@
+{
+  "status": "authorized_experiment_only",
+  "actor": "Artem",
+  "date": "2026-11-14",
+  "reference": "card t_d517d7c6, USER DECISION at 10:17, word: разрешить",
+  "scope": "On a separate versioned copy, minimal new planar cuts at the inner boundaries of 10 mm panel joints; preserve main-wall courses, density and surface. No tile-budget increase. Accepted copy untouched.",
+  "required_evidence": ["every new cut count and location", "before/after metrics", "actual result picture"],
+  "opening": "Only after Artem says открой; do not switch daytime Max.",
+  "technical_acceptance": false,
+  "visual_acceptance": "pending"
+}

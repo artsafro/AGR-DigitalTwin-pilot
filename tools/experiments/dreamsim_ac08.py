@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import importlib.util
 import json
 import os
 import tempfile
@@ -21,6 +22,10 @@ import numpy as np
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
+_spec = importlib.util.spec_from_file_location("udimtile_core_dreamsim", ROOT / "adapters/max/agr_tools/udimtile_core.py")
+assert _spec is not None and _spec.loader is not None
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 SCRIPTS = ROOT / "jobs" / "TEC26-OKS" / "scripts"
 METHODS = ROOT / "tools" / "methods"
 SPEC = ROOT / "jobs" / "TEC26-OKS" / "AC08" / "vpm_textures.json"
@@ -265,7 +270,7 @@ def _scripts():
 
 def _tile(uv) -> int:
     c = np.mean(np.asarray(uv, float), axis=0)
-    return int(1001 + np.floor(c[0]) + 10 * np.floor(c[1]))
+    return _udimtile.udim_tile(c[0], c[1])
 
 
 def _ssim(mm, a: np.ndarray, b: np.ndarray) -> float:

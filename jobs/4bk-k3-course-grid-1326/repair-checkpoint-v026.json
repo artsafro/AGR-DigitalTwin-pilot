@@ -1,0 +1,507 @@
+{
+  "status": "wall_repair_and_carrier_probes_green_independent_interior_source_mask_OPEN",
+  "passed": false,
+  "scene": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v020\\stylobate_cut_candidate_v020.blend",
+    "sha256": "386ca727d602b50eba7798d5d7795247497ab27a8d2945f9a6a7a01d9f51170c"
+  },
+  "picture": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v020\\textured-repair-sheet-QA-INCOMPLETE.png",
+    "sha256": "0c3825c556cc9184ba932ab1cfc38ef52c847c2851105c25e343d1605819ddf0"
+  },
+  "preview": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\cut-v020\\textured-repair-preview-QA-INCOMPLETE.webp",
+    "sha256": "e4b25ec26036775c0136dad53026d1170f638773924528f354ced28f62fd4964"
+  },
+  "native": {
+    "passed": false,
+    "source_identities": 2015,
+    "protected_exact": 1174,
+    "protected_total": 1244,
+    "protected_changed": [
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 119,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 148,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 447,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 460,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 473,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 486,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 499,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 512,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 513,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 526,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 539,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 552,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 565,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 578,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 591,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 604,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 632,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 660,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 673,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 686,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 699,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 705,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 710,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 715,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 720,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 725,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 729,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 733,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 738,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 743,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 751,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 759,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 767,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 773,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 779,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 787,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 793,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 799,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 805,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 811,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 817,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 823,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 829,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 837,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 845,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 855,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 863,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 871,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 879,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 931,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 939,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 947,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1025,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1035,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1043,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1051,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1059,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1067,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1070,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1080,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1090,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1098,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1123,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1201,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1493,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1494,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1495,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1496,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1503,
+        "exact": false
+      },
+      {
+        "object": "K3_StylobateWalls.001",
+        "source": 1504,
+        "exact": false
+      }
+    ],
+    "density": {
+      "triangles": 3922,
+      "min": 512.0004975082061,
+      "max": 519.3161943180323,
+      "max_anisotropy": 1.0142272887778938,
+      "spread": 2.8123676573921703e-05,
+      "failed": []
+    },
+    "degenerates": [],
+    "mirrors": [],
+    "invalid": [],
+    "surface": {
+      "max_symmetric_difference_m2": 1.913877502180083e-05,
+      "sum_symmetric_difference_m2": 0.0010055529057041116,
+      "max_plane_m": 0.0016270235948297879
+    }
+  },
+  "phase_usage": {
+    "passed": false,
+    "main_triangles": 606,
+    "main_vertex_max_px": 0.00020081097253024096,
+    "main_edges": 365,
+    "main_edge_samples": 7665,
+    "main_edge_max_px": 0.005430549985248945,
+    "all_brick_vertex_max_px": 0.0011368528771505515,
+    "source_uv_components": 500,
+    "result_uv_components": 1546,
+    "tile": {
+      "min": [
+        0.009624456986784935,
+        0.007962302304804325
+      ],
+      "max": [
+        0.98769611120224,
+        0.8151996731758118
+      ],
+      "unique_union_percent": 50.177391229454905,
+      "padded_union_percent": 52.618481700354835,
+      "brick_joint_gap_px": 41.312647983189315,
+      "min_border_px": 32.613590240478516
+    },
+    "source_hashes_preserved": 10,
+    "source_hashes_total": 10
+  },
+  "joints": {
+    "passed": false,
+    "paths": 651,
+    "samples": 31899,
+    "failed_samples": 0,
+    "classifications": {
+      "single": 31627,
+      "junction": 173,
+      "clipped": 99
+    },
+    "nominal_centre_outside_face": 44,
+    "missing_intervals": 0,
+    "false_intervals": 0,
+    "max_centre_error_mm": 0.4458659277872812,
+    "max_endpoint_error_mm": 0.8913530418510618,
+    "mask_faces": 771,
+    "missing_mask_area_beyond_5mm_m2": 0.0,
+    "false_mask_area_beyond_5mm_m2": 0.0,
+    "map_checks": [
+      {
+        "role": "Diffuse",
+        "joint_polygons": 1703,
+        "field_failures": []
+      },
+      {
+        "role": "ERM",
+        "joint_polygons": 1703,
+        "field_failures": []
+      },
+      {
+        "role": "Normal",
+        "joint_polygons": 1703,
+        "field_failures": []
+      }
+    ]
+  },
+  "xview": {
+    "overlapping_vertices": 0,
+    "overlapping_faces": 4,
+    "vertex_pairs": 0,
+    "face_pairs": 2,
+    "face_pairs_by_kind": {
+      "contact": 0,
+      "area": 0,
+      "area+contact": 2
+    },
+    "bowtie_vertices": 0,
+    "bowtie_pairs": 0,
+    "parts_without_faces": 0
+  },
+  "source_baseline_pairs_zero_based": [
+    [
+      73,
+      467
+    ],
+    [
+      297,
+      466
+    ]
+  ],
+  "protected_working_id": 7,
+  "tests": {
+    "passed": 211,
+    "deselected": 1,
+    "failed": 0,
+    "full_suite": "not run: incomplete pilot, no first review request"
+  },
+  "open_items": [
+    "protected ID7/source staircase baseline disposition",
+    "independent interior PNG correspondence",
+    "full D/ERM/N appearance including non-neutral source grooves",
+    "final export readback",
+    "full suite, eval receipts, invariants/hostile self-review, PR"
+  ],
+  "rejected_versions": [
+    "cut-v022",
+    "cut-v024"
+  ],
+  "refused_vector_plan": "cut-v025; no scene saved",
+  "current_continuation_drivers": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\repair-v026",
+  "visual_direction": "v014 accepted by Artem; no technical waiver",
+  "replication": false,
+  "max_opened": false,
+  "independent_interior": {
+    "source_faces": 62,
+    "strict_passed": 15,
+    "missing_area_beyond_5mm_m2": 0.002403326812980263,
+    "false_area_beyond_5mm_m2": 0.0005445180576636495,
+    "explicit_empty_reference_and_output": 4
+  }
+}

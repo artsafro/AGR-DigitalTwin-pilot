@@ -14,12 +14,16 @@ Dual-protocol support:
 import json
 import math
 import os
+import posixpath
 import re
 import shlex
 import subprocess
 import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "hooks"))
+from hook_input import read_stdin
 
 PRODUCTION_EXT = r"\.(fbx|blend|max|uasset|umap|obj|abc|usd[az]?|glb|gltf|rvt|skp|dwg|psd|exr|tiff?|png|tga)\b"
 
@@ -271,6 +275,32 @@ def _long(flags, word, keep):
     return False
 
 
+def _many_paths_pathspec(spec):
+    """True when a checkout/restore pathspec can name more than one file (#1226): the whole tree in any
+    spelling (`.`, `./`, `..`, `:/`, `:(top)`), a glob (`*`, `?`, `[`), or an exclude-only pathspec
+    (`:!x`, `:^x`, `:(exclude)x`, which means everything else). Malformed magic fails closed."""
+    s = spec.strip("'\"").replace("\\", "/")
+    magic = set()
+    if s.startswith(":("):
+        end = s.find(")")
+        if end < 0:
+            return True
+        magic = {m.split("=", 1)[0].strip().lower() for m in s[2:end].split(",")}
+        s = s[end + 1:]
+    elif s.startswith(":"):
+        short = re.match(r":([/!^]*):?", s)
+        if short:
+            magic, s = set(short.group(1)), s[short.end():]
+    if magic & {"exclude", "!", "^"}:
+        return True
+    if "literal" not in magic and re.search(r"[*?\[]", s):
+        return True
+    # Normalise `..` segments (PR #1455 r1): `docs/..`, `docs/./..`, `a/b/../..` are the top again. The spec
+    # names a whole tree when nothing but `..` steps remain; `docs/../a.txt` stays a single file.
+    norm = posixpath.normpath(s) if s else "."
+    return all(p == ".." for p in norm.split("/") if p not in ("", "."))
+
+
 def _git_subcommand_reason(sub, args):
     """Reason a git subcommand with its arguments is hazardous, else None. Flags stop at `--`."""
     flags, positional = [], []
@@ -288,13 +318,24 @@ def _git_subcommand_reason(sub, args):
             return "git reset --hard discards work"
         if _long(flags, "merge", 2):
             return "git reset --merge can discard work"
+        if _long(flags, "keep", 1):
+            return "git reset --keep moves HEAD and the branch"
+    # These creation forms can reset an existing branch. Do not inspect branch existence:
+    # global -C/--git-dir options and concurrent ref changes make that check unreliable.
+    if sub == "switch" and (any(re.match(r"-[qmt]*C", f) for f in flags)
+                            or _long(flags, "force-create", 7)):
+        return "git switch -C can reset an existing branch"
+    if sub == "checkout" and (any(re.match(r"-[qlmt]*B", f) for f in flags)
+                              or _long(flags, "reset", 3)):
+        return "git checkout -B can reset an existing branch"
     if sub == "clean":
         return "git clean deletes untracked files"
     if sub == "branch":
         delete = _short(flags, "d") or _long(flags, "delete", 1)
         if _short(flags, "D") or (delete and (_short(flags, "f") or _long(flags, "force", 4))):
             return "force branch delete"
-    if sub in ("checkout", "restore") and "." in positional:
+    if sub in ("checkout", "restore") and (any(_many_paths_pathspec(p) for p in positional)
+                                           or _long(flags, "pathspec-from-file", 10)):
         return _DISCARDS
     if sub in ("checkout", "switch") and (force or _long(flags, "discard-changes", 2)):
         return _DISCARDS
@@ -670,7 +711,7 @@ def inside(path: Path, root: Path) -> bool:
 
 def main() -> None:
     try:
-        raw = sys.stdin.read()
+        raw = read_stdin()
         if not raw.strip():
             allow(False)
         data = json.loads(raw)
@@ -683,13 +724,37 @@ def main() -> None:
         tool_call = data.get("toolCall", {}) or {}
         tool = tool_call.get("name", "")
         targs = tool_call.get("args", {}) or {}
-        cmd = targs.get("CommandLine", "")
-        target = targs.get("TargetFile", "")
+        cmd = targs.get("CommandLine", "") if isinstance(targs, dict) else ""
+        target = targs.get("TargetFile", "") if isinstance(targs, dict) else ""
     else:
         tool = data.get("tool_name", "")
         tin = data.get("tool_input", {}) or {}
-        cmd = tin.get("command", "")
-        target = tin.get("file_path") or tin.get("notebook_path", "")
+        cmd = tin.get("command", "") if isinstance(tin, dict) else ""
+        target = (tin.get("file_path") or tin.get("notebook_path", "")) if isinstance(tin, dict) else ""
+
+    # Swarm routing is fail-closed; output boundaries are advisory, not a sandbox.
+    # Import lazily: non-swarm calls must not depend on tools/hooks/swarm.py
+    # (sandboxed guard copies); a missing module on a swarm call still fails closed.
+    args = targs if is_antigravity else tin
+    swarm_active = bool(os.environ.get("AGR_SWARM_BUILD_ROOT") or os.environ.get("AGR_SWARM_AGENT_ID"))
+    if swarm_active:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+        from tools.hooks.swarm import check_message, write_warning
+    if tool == "SendMessage" and swarm_active:
+        reason = check_message(args, os.environ.get("AGR_SWARM_BUILD_ROOT"))
+        if reason:
+            if is_antigravity:
+                print(json.dumps({"decision": "deny", "reason": reason}))
+            else:
+                print(json.dumps({"hookSpecificOutput": {
+                    "hookEventName": "PreToolUse", "permissionDecision": "deny",
+                    "permissionDecisionReason": reason}}))
+            return
+    swarm_note = write_warning(tool, args, os.environ.get("AGR_SWARM_BUILD_ROOT"), data.get("cwd")) \
+        if swarm_active else None
+
+    def guarded_ask(reason):
+        ask("\n".join(x for x in (reason, swarm_note) if x), is_antigravity)
 
     # 1. Shell commands
     if tool in ("Bash", "PowerShell", "run_command", "shell", "exec_command", "local_shell"):
@@ -701,7 +766,7 @@ def main() -> None:
             if granted:
                 allow_explicit(granted, is_antigravity)
         if reason:
-            ask(reason, is_antigravity)
+            guarded_ask(reason)
 
     # 2. File write/edit commands
     elif tool in ("Write", "Edit", "NotebookEdit", "write_to_file", "replace_file_content"):
@@ -709,7 +774,7 @@ def main() -> None:
             p = Path(target)
             # Protect binary/production extensions from accidental text overwrites
             if re.search(PRODUCTION_EXT, p.name, re.IGNORECASE):
-                ask(f"writing to production asset: {p.name}", is_antigravity)
+                guarded_ask(f"writing to production asset: {p.name}")
 
             # Check boundary
             workspaces = data.get("workspacePaths", [])
@@ -722,8 +787,12 @@ def main() -> None:
 
             all_allowed = project_roots + ALLOWED_WRITE_ROOTS
             if not any(inside(p, r) for r in all_allowed):
-                ask(f"write outside project/allowed folders: {target}", is_antigravity)
+                guarded_ask(f"write outside project/allowed folders: {target}")
 
+    if swarm_note:
+        print(json.dumps({"systemMessage": swarm_note, "hookSpecificOutput": {
+            "hookEventName": "PreToolUse", "additionalContext": swarm_note}}))
+        return
     allow(is_antigravity)
 
 

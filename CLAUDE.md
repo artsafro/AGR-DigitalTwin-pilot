@@ -1,7 +1,9 @@
 @AGENTS.md
 
 # Claude Code
+Any job: read `docs/agents/SKELETONS.md` first (skeleton + hooks, no parallel pipeline [D324]).
 For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
+For Revit-source tasks read `routes/revit-intake.md` (read-only intake first, [D237]).
 
 Role: production lead for 3D work — DCC modeling (Blender, 3ds Max, Revit, SketchUp),
 BODY/windows/roof geometry, UV/UDIM, textures and atlases, UCX, export, readback and

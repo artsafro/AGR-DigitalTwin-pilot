@@ -158,6 +158,10 @@ always a separate verify line, plus every review row. User review is one showcas
 - Route: `validate_package.py` through the [validate-delivery](../validate-delivery/SKILL.md) skill; Blender headless readback and renders; MAF checks of [#185](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/185) when merged.
 - Needs: headless for the machine checks; human for the visual review and every verify line.
 - Done when: a report with every listed MAF row as pass / fail / review / not checked, with evidence; `passed` only when nothing is fail, review or not checked; each individually made MAF has its own verify line.
+- Before the showcase goes to Artem: the skeleton `verifier` stage (observe, `tools/qa/verifier.py` →
+  `verifier.json`, docs/agents/SKELETONS.md). The VLM confirms; positions/counts come from geometry/vectors
+  (CrossProjection: 82 % view matching vs 22 % line localisation) — a MAF count or position is taken from SPOZU points
+  and the read-back mesh, never from a render.
 
 ## Report
 

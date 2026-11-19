@@ -253,7 +253,7 @@ def test_species_sheet_route_a_d237_sources():
     assert by["a101"] == {9, 16}
     assert by["stand-in"] == {2, 4, 5, 6, 7, 8, 10, 13, "Ива"}
     assert by["approved"] == {1, 3, 11, 12, 14, 15, 17}
-    maps = json.loads((ROOT / "library/flora/maps.json").read_text(encoding="utf-8"))
+    maps = json.loads((ROOT / "library/flora/maps-v003-snapshot.json").read_text(encoding="utf-8"))
     for pos in by["stand-in"] | by["approved"]:
         key = recs[pos]["route_a"]["map_key"]
         assert maps[key]["review_status"] == "approved", pos

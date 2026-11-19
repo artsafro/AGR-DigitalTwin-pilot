@@ -89,7 +89,7 @@ When Artem sends the canopy model or the address and rotation: place the canopie
 - Subagents: general-purpose 13, independent-checker 5, source-inspector 1
 - Skills: 3dsmax-mcp-dev 3, blender-mcp 1, revit-mcp 1, workflow-authoring 1
 - Commands: none
-- Hook denials: 4: mcp__revit-http-2025__revit_get_document_info - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_list_levels - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_list_categories - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_get_linked_files - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call 
+- Hook denials: 4: mcp__revit-http-2025__revit_get_document_info - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_list_levels - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_list_categories - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_get_linked_files - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call
 - Retries: none
 - Context at handover: 32 % (325k of 1000k tokens)
 - Duration: 26 h 44 min (2026-11-14T12:00:18Z - 2026-11-15T14:45:05Z, UTC)

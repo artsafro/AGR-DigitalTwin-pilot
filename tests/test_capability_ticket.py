@@ -28,7 +28,7 @@ def test_ticket_lifecycle(repository, tmp_path):
     result = launch(repository, out, ticket=ticket(), command=[sys.executable, '-c', code, '{body}'])
     assert result['session_exit'] == 0
     assert result['local_pr'] == {'passed': 1, 'failed': 0, 'not_measured': 0}
-    assert result['procedural']['not_measured'] == 10
+    assert result['procedural']['not_measured'] == 11  # includes subagent-timebox (#1539)
     assert result['passed'] is False
     assert result['cleanup'] is True
     assert (out / 'pr-body.md').read_text() == body()

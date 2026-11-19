@@ -121,6 +121,56 @@ def test_plan_on_vpm_of_branch_m_passes_and_table_is_complete():
         assert r['scale'][0] == pytest.approx(r['scale'][1])
 
 
+@pytest.mark.parametrize('u0,table', [
+    (-0.5, {'5': 1007}), (10.5, {'5': 1007}),
+    (-0.5, {}), (3.0, {'5': 1007}),
+])
+def test_plan_off_grid_centroid_respects_udim_table(u0, table):
+    """#1548 reviewer rows: table authority, otherwise a typed fail-closed finding."""
+    mesh = {'verts': [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]],
+            'tris': [[0, 1, 2], [0, 2, 3]], 'mat_ids': [5, 5],
+            'uvs': [[u0, 0], [u0 + 0.8, 0], [u0 + 0.8, 0.8], [u0, 0.8]],
+            'uv_tris': [[0, 1, 2], [0, 2, 3]], 'materials': {5: {'map': 'a.png'}}}
+    p = npm.plan([mesh], {'udim_table': table}, {'a.png': {'w': 32, 'h': 32}})
+    if table:
+        assert p['findings'] == []
+        assert {(r['udim'], r['udim_source']) for r in p['table']} == {(1007, 'vpm_table')}
+    else:
+        assert [(code, faces) for code, faces, _ in p['findings']] == [('uv_off_grid', [1])]
+        assert 'ID 5' in p['findings'][0][2]
+        assert all(p[k] is None for k in ('atlas', 'table', 'summary', 'uvs', 'uv_tris'))
+        assert not p['groups']
+
+
+@pytest.mark.parametrize('u,v,valid', [
+    (-1e-9, 0.5, False), (10.0, 0.5, False), (10.000001, 0.5, False),
+    (0.5, -1e-9, False), (float('nan'), 0.5, False),
+    (float('inf'), 0.5, False), (0.5, -float('inf'), False),
+    (0.0, 0.5, True), (9.999, 0.5, True), (0.5, 0.0, True),
+])
+def test_plan_centroid_domain_probe_with_partial_table(u, v, valid):
+    """Boundary/nonfinite probes: a table-covered ID must not hide another ID's bad faces."""
+    mesh = {'verts': [[0, 0, 0], [1, 0, 0], [0, 1, 0]],
+            'tris': [[0, 1, 2]], 'mat_ids': [5],
+            'uvs': [[u - 0.125, v - 0.125], [u + 0.125, v - 0.125], [u, v + 0.25]],
+            'uv_tris': [[0, 1, 2]], 'materials': {5: {'map': 'a.png'}}}
+    # Combined face 0 belongs to table-covered ID 7, face 1 to inferred ID 5.
+    covered = dict(mesh, mat_ids=[7], materials={7: {'map': 'a.png'}},
+                   uvs=[[-2, 0], [-1, 0], [-2, 1]])
+    p = npm.plan([covered, mesh, mesh], {'udim_table': {'7': 1007}},
+                 {'a.png': {'w': 32, 'h': 32}})
+    if valid:
+        assert p['findings'] == []
+        assert {r['library_id'] for r in p['table']} == {5, 7}
+        assert all(r['udim'] >= 1001 for r in p['table'])
+        assert len(p['uv_tris']) == 3
+    else:
+        assert [(code, faces) for code, faces, _ in p['findings']] == [('uv_off_grid', [1, 2])]
+        assert 'ID 5' in p['findings'][0][2]
+        assert p['table'] is p['atlas'] is p['summary'] is None
+        assert {g['library_id'] for g in p['groups']} == {7}
+
+
 def test_npm_islands_pass_the_npm_padding_rule_stack_does_not():
     """tex.check of an NPM (checks_core.padding_findings, 8 px, overlap is tex_padding outside the VPM): the
     default layout 'islands' gives no finding; the L11 prototype layout 'stack' keeps the K6 pieces stacked in

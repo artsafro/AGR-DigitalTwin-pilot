@@ -98,7 +98,11 @@ waiver. Manual gates and the NPM Ground gap remain; no full L2/L3 or delivery pa
 
 ## Notes
 
-No tests were added. This sheet is an L1 index and is not delivery acceptance.
+The 4BK stylobate-only pilot initially targeted one tile [D309]; Artem subsequently allowed two sequential UDIM tiles [D304], preserving the original Normal, 10 mm seam, courses, density and surface. It follows the #1314 course-grid procedure; [its intake checkpoint](../../../jobs/4bk-k3-course-grid-1326/INTAKE.md) records source-face mapping and pending gates, not a delivery pass. Its four original staircase xView faces at the protected metal/brick junction remain an explicit source baseline, with no extra brick trim or ID7 change [D296]; this is not a global xView pass.
+
+The pilot must restore the original panel-joint relief/bevel in Normal, not a flat neutral band [D295]. Minimal planar cuts on a new copy at the measured outer bevel support are authorized [D303]; the later two-tile budget [D304] supersedes only the original one-tile budget. The [two-tile source-relief checkpoint](../../../jobs/4bk-k3-course-grid-1326/TWO_TILE_NORMAL_RESULT.md) records actual linked maps and readback. Artem confirmed v096's visual direction [D310] and v160's restored thin Diffuse cores on ends/caps [D317]; numerical repairs remain mandatory, without replication or technical acceptance. The [numerical repair checkpoint](../../../jobs/4bk-k3-course-grid-1326/NUMERICAL_REPAIR_RESULT.md) separates those two answered visual stages and preserves the historical area-only findings until fresh repair/readback evidence supersedes them.
+
+No tests were added for this requirement sheet. This sheet is an L1 index and is not delivery acceptance.
 
 Working-mesh material IDs are not UDIM tiles [D030]. `UDIM-MultiSub_Universal(max22-26).ms` (not in this repo) writes the tile into the face material ID:
 

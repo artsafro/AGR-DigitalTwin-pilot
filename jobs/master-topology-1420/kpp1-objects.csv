@@ -1,0 +1,7 @@
+name,status,faces,triangles,triangle_share,quads,ngons
+SM_Kpp_1_Main,pass,61839,0,0.0,61839,0
+SM_Kpp_1_MainGlass,pass,252,0,0.0,252,0
+UCX_SM_Kpp_1_Main_001,pass,12,12,1.0,0,0
+UCX_SM_Kpp_1_Main_002,pass,12,12,1.0,0,0
+UCX_SM_Kpp_1_Main_003,pass,12,12,1.0,0,0
+UCX_SM_Kpp_1_Main_004,pass,12,12,1.0,0,0

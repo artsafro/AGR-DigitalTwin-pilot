@@ -1,0 +1,46 @@
+{
+  "valid": false,
+  "versions": {
+    "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+    "packages": {
+      "pytest": "9.1.1",
+      "pytest-xdist": "3.8.0",
+      "numpy": "2.5.3",
+      "shapely": "2.1.2",
+      "Pillow": "12.3.0"
+    }
+  },
+  "lock_sha256": "9f50e64bdbf94924902125fee627eae43a33e0393052c88181e812b0ce92be05",
+  "head": "1c713b04f9f51208cb78e62a148054221e20a803",
+  "head_after": "1c713b04f9f51208cb78e62a148054221e20a803",
+  "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "diff_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "argv": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=C:/x/t_82b1bc95-wall-baseline-001",
+    "-m",
+    "not blender and not dcc and not acad and not perf and not job and not max and not panel_texture and not native_max",
+    "-rf",
+    "-n",
+    "4"
+  ],
+  "wall_s": 1667.3542924999492,
+  "exit_code": 1,
+  "pid": 1124180,
+  "error": "command failed/contaminated/source changed",
+  "instrumentation": "PYTEST_PLUGINS=ar_wall",
+  "events": "C:\\x\\autoresearch-suite-wall\\baseline-001.events.jsonl",
+  "log": "C:\\x\\autoresearch-suite-wall\\baseline-001.pytest.log",
+  "sha256": {
+    "C:\\x\\autoresearch-suite-wall\\baseline-001.events.jsonl": "190353cc81aba13b9a4ae5b1b9fcf3865b9ad62609e45baca6758c8d85c6c747",
+    "C:\\x\\autoresearch-suite-wall\\baseline-001.pytest.log": "9668745165f3434ff1a4d4e9cf0063613bd61bfbe94b833162fb176d41417cd6",
+    "C:\\x\\autoresearch-suite-wall\\baseline-001.samples.jsonl": "c60ad8757f88ad34a44f5759701dcdbb766571003a14b61760d4c3a4e0d47543",
+    "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_82b1bc95\\tmp\\wall_harness\\measure.py": "017be8923a50817ecfc1e083036b1bd82ccc7b4fbd804287d11fdfe98581af2b",
+    "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_82b1bc95\\tmp\\wall_harness\\ar_wall.py": "558105950841291eb9d395746da144b0c6ea08b0a8f7845fa86fd3c2eab0a126"
+  }
+}

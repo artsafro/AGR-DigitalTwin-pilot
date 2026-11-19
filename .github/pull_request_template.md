@@ -5,13 +5,15 @@
 ## Evidence
 
 <!-- `uv run dt evals --check-handoff <this body file> --sha <full HEAD sha> --output <worktree>/tmp/evals`
-must exit 0 before review_requested (#584). The author owns the full suite: never hand it to the reviewer. -->
+must exit 0 before review_requested (#584). The author runs the affected tests on the head;
+the author never hands tests to the reviewer; the full suite runs once in the merge batch before main [D297]. -->
 
 - Before (RED): <pre-fix commit sha, command, N failed/errors; or n/a: <reason>>
 - After (GREEN): <head sha, command, N passed, 0 failed, evidence path; never n/a>
-- Full suite: <suite_slot.py command on the head sha, N passed, 0 failed, environment and per-card temp path>
-- Affected tests: <only after a rework (rule 49): head sha, command, N passed, 0 failed; else delete this line>
+- Affected tests: <head sha, command over the changed modules' tests + tests that import them + new regressions, N passed, 0 failed>
+- Full suite: deferred to merge batch (D297)
 - Sample output: <the output the acceptance asks for (path or inline); or n/a: <reason>>
+- Visual Before/After: <Drive path of the labelled Before/After pair, same camera, baseline and changed versions named; or n/a: <no visible change>; rule: docs/agents/WORKFLOW.md#visual-evidence-beforeafter-d286>
 - Counterexamples: <invariant -> generated/brute-force probe -> N/N; seed/bounds and evidence path, or not applicable with reason; label synthetic inputs>
 - Review fixes: <combined probe with previous fixes, or not applicable>
 - Harness before/after metric: <for harness/hygiene/tooling tasks: the metric agreed at intake, the before value on origin/main, the after value on the branch, how and when measured; or "not measured": <reason>>

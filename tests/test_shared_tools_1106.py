@@ -3,12 +3,16 @@
 Pattern: n/a | new-case: parity and fail-closed tests of the #1106 shared tools.
 """
 import base64
+import hashlib
 import json
 import os
+import stat
 import subprocess
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -16,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from dt_ai.cli import shared_tools  # noqa: E402
 from dt_ai.cli.main import parser  # noqa: E402
+from dt_ai.core import blender_runner  # noqa: E402
 
 PKG_TOOL = ROOT / "tools/derive/package_vpm.py"
 ATLAS_TOOL = ROOT / "tools/derive/npm_atlas.py"
@@ -54,6 +59,134 @@ def test_npm_step_runs_blender_and_fails_closed_without_it(tmp_path):
     assert argv[-3:] == ["--", "m", "s"]
 
 
+@pytest.fixture
+def fake_blender(tmp_path):
+    exe = tmp_path / "fake blender.exe"
+    exe.write_bytes(b"not a real executable")
+    return str(exe)
+
+
+@pytest.mark.parametrize("value", [None, "0.25", "900", "1500"])
+def test_npm_dispatches_through_runner(monkeypatch, fake_blender, value):
+    calls = []
+
+    def runner(script, args, **kw):
+        calls.append((script, args, kw))
+        return {"stdout": "EXPORT-NPM synthetic\n"}
+
+    monkeypatch.setattr(shared_tools, "run_blender", runner, raising=False)
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: pytest.fail("bypassed run_blender"))
+    options = ["--timeout", value] if value is not None else []
+    ns = parser().parse_args(["derive", "--blender", fake_blender, *options, "npm", "--", "master", "master"])
+    assert shared_tools.run(ROOT, ns) == 0
+    (_, args, kw), = calls
+    assert args[-2:] == ["master", "master"]
+    assert kw["executable"] == fake_blender
+    assert kw["timeout"] == (float(value) if value is not None else 900)
+    assert Path(kw["cwd"]) == ROOT
+
+
+@pytest.mark.parametrize("kind", ["exception", "timeout", "nonzero_exit", "stale_json"])
+def test_npm_runner_failure_is_one_error_line(monkeypatch, fake_blender, capsys, kind):
+    def runner(*args, **kw):
+        raise blender_runner.BlenderRunError({"code": kind, "log": "test.log", "message": "first\nsecond"})
+
+    monkeypatch.setattr(shared_tools, "run_blender", runner, raising=False)
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: pytest.fail("bypassed run_blender"))
+    monkeypatch.delenv("PYTHONPATH", raising=False)
+    ns = parser().parse_args(["derive", "--blender", fake_blender, "npm"])
+    assert shared_tools.run(ROOT, ns) == 1
+    assert "PYTHONPATH" not in os.environ
+    [error] = capsys.readouterr().err.splitlines()
+    assert error.startswith("ERROR: ") and kind in error and "test.log" in error
+
+
+@pytest.mark.parametrize("value", ["", "-1", "0", "nan", "inf", "1e999", "unknown"])
+def test_invalid_blender_timeout_is_an_argument_error(value):
+    with pytest.raises(SystemExit) as exc:
+        parser().parse_args(["derive", f"--timeout={value}", "npm"])
+    assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("kind,step", [("derive", "atlas"), ("ground", "site"), ("place", "site")])
+def test_python_steps_keep_plain_subprocess(monkeypatch, kind, step):
+    script_args = ["--timeout", "inner"]
+    ns = parser().parse_args([kind, step, "--", *script_args])
+    expected = shared_tools.command(ROOT, kind, step, script_args)
+    monkeypatch.setenv("PYTHONPATH", "inherited")
+    monkeypatch.setattr(shared_tools, "run_blender", lambda *a, **kw: pytest.fail("Python used Blender"), raising=False)
+
+    def invoke(argv, **kw):
+        assert argv == expected
+        assert set(kw) == {"cwd", "env"}
+        assert kw["cwd"] == str(ROOT)
+        assert kw["env"]["PYTHONPATH"].split(os.pathsep) == [str(ROOT / "src"), "inherited"]
+        return SimpleNamespace(returncode=17)
+
+    monkeypatch.setattr(subprocess, "run", invoke)
+    assert shared_tools.run(ROOT, ns) == 17
+    assert os.environ["PYTHONPATH"] == "inherited"
+
+
+@pytest.mark.parametrize("mode", ["--help", "--dry-check", "failure", "argument-error", "no-receipt", "receipt-alias"])
+def test_blender_child_receives_src_and_isolated_config(monkeypatch, tmp_path, capsys, mode):
+    # Run a real Python child through the canonical runner, replacing only the
+    # Blender executable/flags at its argv seam. No DCC or delivered assets.
+    tool = tmp_path / "tools/derive/export_npm.py"
+    tool.parent.mkdir(parents=True)
+    tool.write_text(
+        "import json, os, sys\n"
+        "from pathlib import Path\n"
+        "if sys.argv[-1] == 'failure': raise SystemExit('synthetic failure')\n"
+        "if sys.argv[-1] == 'argument-error': raise SystemExit(2)\n"
+        "keys = ('BLENDER_USER_CONFIG', 'BLENDER_USER_SCRIPTS', 'BLENDER_USER_DATAFILES')\n"
+        "assert all(Path(os.environ[key]).is_dir() for key in keys)\n"
+        "print(json.dumps({'args': sys.argv[sys.argv.index('--') + 1:], "
+        "'path': os.environ['PYTHONPATH'], 'dirs': [os.environ[key] for key in keys]}))\n"
+        "if sys.argv[-1] == '--help': raise SystemExit(0)\n",
+        encoding="utf-8",
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
+    monkeypatch.setenv("PYTHONPATH", "inherited")
+    monkeypatch.setenv("BLENDER_USER_CONFIG", "do not use")
+
+    def command(script, args, **kw):
+        if mode == "no-receipt":
+            return [sys.executable, "-c", "pass"]
+        if mode == "receipt-alias":
+            os.link(tool, args[0])
+        return [sys.executable, str(script), "--", *map(str, args)]
+
+    monkeypatch.setattr(blender_runner, "blender_command", command)
+    ns = parser().parse_args(["derive", "--blender", sys.executable, "npm", "--", mode])
+    before = tool.read_bytes()
+    status = shared_tools.run(tmp_path, ns)
+    stdout, stderr = capsys.readouterr()
+    assert tool.read_bytes() == before
+    assert os.environ["PYTHONPATH"] == "inherited"
+    assert os.environ["BLENDER_USER_CONFIG"] == "do not use"
+    if mode not in {"--help", "--dry-check"}:
+        assert status == (2 if mode == "argument-error" else 1) and not stdout
+        assert ("missing_json" if mode == "no-receipt" else "nonzero_exit") in stderr
+    else:
+        assert status == 0 and not stderr
+        payload = json.loads(stdout)
+        assert payload["args"] == [mode]
+        assert payload["path"].split(os.pathsep) == [str(tmp_path / "src"), "inherited"]
+        assert len(set(payload["dirs"])) == 3 and all(not Path(d).exists() for d in payload["dirs"])
+
+
+def test_fresh_process_reports_blender_launch_failure(tmp_path, fake_blender):
+    r = subprocess.run([sys.executable, "-m", "dt_ai.cli.main", "derive", "--blender", fake_blender, "npm"],
+                       capture_output=True, text=True, cwd=tmp_path)
+    assert r.returncode == 1
+    [error] = r.stderr.splitlines()
+    assert error.startswith("ERROR: exception:") and "(log: " in error
+    log = Path(error.split("(log: ", 1)[1][:-1])
+    assert log.is_file()
+
+
 @pytest.mark.parametrize("kind,step", [("derive", "uv"), ("ground", "v014"), ("other", "atlas")])
 def test_unknown_step_is_an_error_naming_it(kind, step):
     with pytest.raises(ValueError, match=step):
@@ -73,11 +206,14 @@ def test_fresh_process_cli_help_and_job_shim():
 def make_pkg(base, address="Nku_1"):
     pkg = base / f"SM_{address}"
     pkg.mkdir(parents=True)
-    (pkg / f"SM_{address}.fbx").write_bytes(b"FBX synthetic")
+    fbx = pkg / f"SM_{address}.fbx"
+    fbx.write_bytes(b"FBX synthetic")
     thumb = base / "thumbnail_256.jpg"
     thumb.write_bytes(b"\xff\xd8synthetic")
-    (base / "export_meta.json").write_text(json.dumps({"address": address, "h_otn_model_max_z_m": 3.5,
-                                                       "thumbnail": str(thumb)}))
+    (base / "export_meta.json").write_text(json.dumps({
+        "address": address, "h_otn_model_max_z_m": 3.5, "thumbnail": str(thumb),
+        "exported_files": [fbx.name], "exported_sha256": {fbx.name: hashlib.sha256(fbx.read_bytes()).hexdigest()},
+    }))
     return pkg
 
 
@@ -98,22 +234,243 @@ def test_package_zip_is_byte_identical_to_the_tec26_job_script(tmp_path):
     rd = run([sys.executable, PKG_TOOL, b, tex, "--no-geojson", "--deferred-note", TEC26_NOTE])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
     assert (tmp_path / "job/SM_Nku_1.zip").read_bytes() == (tmp_path / "dt/SM_Nku_1.zip").read_bytes()
-    ra, rb = (json.loads((tmp_path / d / "package_report.json").read_text(encoding="utf-8")) for d in ("job", "dt"))
+    ra = json.loads((tmp_path / "job/package_report.json").read_text(encoding="utf-8"))
+    rb = json.loads((tmp_path / "dt/SM_Nku_1.zip.delivery.json").read_text(encoding="utf-8"))  # #1682 sidecar
     ra.pop("zip"), rb.pop("zip")
+    payload = (tmp_path / 'dt/SM_Nku_1.zip').read_bytes()
+    assert rb.pop('delivered') == {'file': 'SM_Nku_1.zip', 'sha256': hashlib.sha256(payload).hexdigest(),
+                                  'size': len(payload)}
+    assert rb.pop('summary_ru').count('delivered: SM_Nku_1.zip sha256=') == 1
+    assert rb.pop('passed') is False
+    assert rb.pop('status') == 'packaged_not_validated'
+    binding = rb.pop('export_binding')
+    assert binding['records'] == [str(b.parent / 'export_meta.json')]
+    with zipfile.ZipFile(tmp_path / 'dt/SM_Nku_1.zip') as packed:
+        sha = hashlib.sha256(packed.read('SM_Nku_1.fbx')).hexdigest()
+    assert binding['members'] == [{'name': 'SM_Nku_1.fbx', 'recorded_sha256': sha, 'zip_sha256': sha,
+                                   'status': 'match', 'recorded_in': binding['records']}]
     assert ra == rb
     names = zipfile.ZipFile(tmp_path / "dt/SM_Nku_1.zip").namelist()
     assert "T_Other_Diffuse_1.1001.png" not in names and len(names) == 4
 
 
-def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
-    tex = make_tex(tmp_path / "tex")
-    pkg = make_pkg(tmp_path / "p")
-    obj = tmp_path / "object.json"
+@pytest.mark.parametrize('case,diagnostic', [
+    ('changed', 'file changed after export'), ('legacy', 'records no exported FBX'),
+    ('no_metadata', 'export_meta.json'), ('extra', 'SM_Extra.fbx: FBX in the package is not recorded'),
+    ('missing_member', 'SM_Missing.fbx: recorded in'), ('no_hash', 'no recorded SHA-256'),
+    ('partial_hashes', 'must map exactly'), ('conflict', 'different SHA-256'),
+])
+def test_package_export_binding_refuses_without_writes(tmp_path, case, diagnostic):
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    fbx = pkg / 'SM_Nku_1.fbx'
+    meta_path = pkg.parent / 'export_meta.json'
+    meta = json.loads(meta_path.read_text())
+    if case == 'changed':
+        fbx.write_bytes(b'FBX modified!')  # same length as the recorded bytes
+    elif case == 'extra':
+        (pkg / 'SM_Extra.fbx').write_bytes(fbx.read_bytes())
+    elif case == 'missing_member':
+        meta['exported_files'].append('SM_Missing.fbx')
+        meta['exported_sha256']['SM_Missing.fbx'] = meta['exported_sha256'][fbx.name]
+    elif case in ('legacy', 'no_hash', 'partial_hashes'):
+        del meta['exported_sha256']
+        if case == 'legacy':
+            del meta['exported_files']
+        elif case == 'partial_hashes':
+            meta['exported_sha256'] = {}
+    elif case == 'conflict':
+        meta_path = meta_path.rename(pkg / meta_path.name)  # canonical record wins address selection
+        other = meta | {'exported_sha256': {fbx.name: '0' * 64}}
+        fbx.with_suffix('.fbx.export_meta.json').write_text(json.dumps(other))
+    if case == 'no_metadata':
+        meta_path.unlink()
+    else:
+        meta_path.write_text(json.dumps(meta))
+    before = snapshot(tmp_path)
+    r = run([sys.executable, PKG_TOOL, pkg, tex, '--no-geojson'])
+    assert (r.returncode, r.stdout) == (1, '') and diagnostic in r.stderr, (r.stdout, r.stderr)
+    assert snapshot(tmp_path) == before
+
+
+@pytest.mark.parametrize('case', ['match', 'stale', 'duplicate'])
+def test_package_binds_light_sidecar_without_using_its_address(tmp_path, case):
+    from adapters.max.agr_tools.export_meta import record_export
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    main = pkg / 'SM_Nku_1.fbx'
+    main.with_suffix('.fbx.export_meta.json').write_bytes((pkg.parent / 'export_meta.json').read_bytes())
+    (pkg.parent / 'export_meta.json').unlink()
+    light = pkg / 'SM_Nku_1_Light.fbx'
+    if case == 'duplicate':
+        os.link(main, light)
+    else:
+        light.write_bytes(b'synthetic light')
+    record_export(light, source='synthetic fixture')
+    if case == 'stale':
+        light.write_bytes(b'modified light')
+    before = snapshot(tmp_path)
+    r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
+    if case == 'stale':
+        assert r.returncode == 1 and f'{light.name}: SHA-256' in r.stderr, (r.stdout, r.stderr)
+        assert snapshot(tmp_path) == before
+    elif case == 'duplicate':
+        assert r.returncode == 1 and f'duplicated input file: {light.name}' in r.stderr, (r.stdout, r.stderr)
+        after = snapshot(tmp_path)
+        assert all(after[name] == data for name, data in before.items())
+        assert not any(name.endswith(('.zip', '.partial', '.delivery.json')) for name in after)
+    else:
+        assert r.returncode == 0, r.stderr
+        report = json.loads((pkg.parent / 'SM_Nku_1.zip.delivery.json').read_text(encoding='utf-8'))
+        with zipfile.ZipFile(pkg.parent / 'SM_Nku_1.zip') as packed:
+            assert packed.read(light.name) == light.read_bytes()
+            assert not any(name.endswith('.export_meta.json') for name in packed.namelist())
+        assert [(row['name'], row['status']) for row in report['export_binding']['members']] == [
+            (main.name, 'match'), (light.name, 'match'),
+        ]
+
+
+def test_package_rejects_fbx_changed_at_writer_handoff(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(PKG_TOOL.parent))  # also supports the pre-fix script import
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    fbx = pkg / 'SM_Nku_1.fbx'
+    write_zip = package_vpm.package_core._write_zip
+
+    def change_then_write(*args, **kwargs):
+        fbx.write_bytes(b'FBX modified!')
+        return write_zip(*args, **kwargs)
+
+    monkeypatch.setattr(package_vpm.package_core, '_write_zip', change_then_write)
+    with pytest.raises(ValueError, match='changed between the export_meta check and the ZIP'):
+        package_vpm.main([str(pkg), str(tex), '--no-geojson'])
+    assert not any((pkg.parent / name).exists() for name in ('SM_Nku_1.zip', 'SM_Nku_1.zip.partial', 'SM_Nku_1.zip.delivery.json'))
+
+
+def test_package_binding_rejects_each_single_byte_mutation(tmp_path, monkeypatch):
+    monkeypatch.syspath_prepend(str(PKG_TOOL.parent))
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    fbx = pkg / 'SM_Nku_1.fbx'
+    original = fbx.read_bytes()
+    args = [str(pkg), str(tex), '--no-geojson']
+    for offset, value in enumerate(original):
+        fbx.write_bytes(original[:offset] + bytes([value ^ 1]) + original[offset + 1:])
+        before = snapshot(tmp_path)
+        with pytest.raises(ValueError, match='file changed after export'):
+            package_vpm.main(args)
+        assert snapshot(tmp_path) == before, offset
+    fbx.write_bytes(original)
+    assert package_vpm.main(args) == 0
+
+
+def make_package_object(obj):
     obj.write_text(json.dumps({"name": "Test OKS", "placement": {
         "coordinate_system": "SYNTHETIC_LOCAL", "project_zero_m": 170.5,
         "height_system": "unknown", "height_source": {"file": "synthetic", "locator": "test datum"},
         "project_zero_fbx_z_m": 0, "project_zero_fbx_source": {"file": "synthetic", "locator": "FBX origin"},
         "source": {"kind": "synthetic", "reference": "test"}, "status": "proposed"}}), encoding="utf-8")
+    return obj
+
+
+@pytest.mark.parametrize('failure, error, diagnostic', [
+    pytest.param('size', ValueError, 'archive exceeds 1 bytes', id='zip-size-limit'),
+    pytest.param('hash', ValueError, 'input changed during packaging: SM_Nku_1.fbx', id='zip-member-hash'),
+    pytest.param('copy', OSError, 'injected short copy', id='partial-png'),
+    pytest.param('geojson', OSError, 'injected short GeoJSON write', id='partial-geojson'),
+    pytest.param('receipt', OSError, 'injected receipt failure', id='after-zip-publication'),
+])
+def test_package_failure_restores_working_copy_and_allows_retry(tmp_path, monkeypatch, failure, error, diagnostic):
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    obj = make_package_object(tmp_path / 'object.json')
+    if failure == 'size':
+        # copystat propagates the read-only attribute, which prevents unlink on Windows.
+        (tex / 'T_Nku_1_Diffuse_1.1001.png').chmod(stat.S_IREAD)
+    unrelated = pkg / 'notes.txt'
+    unrelated.write_bytes(b'pre-existing notes\r\n')
+    before = snapshot(tmp_path)
+    listing = sorted(p.name for p in pkg.iterdir())
+    args = [str(pkg), str(tex), '--object', str(obj)]
+    zip_path = pkg.parent / 'SM_Nku_1.zip'
+    report_path = zip_path.with_suffix('.zip.delivery.json')
+
+    def corrupt_archived_fbx(archive, filename, arcname):
+        if arcname == 'SM_Nku_1.fbx':
+            archive.writestr(arcname, b'different staged bytes')
+        else:
+            write(archive, filename, arcname)
+
+    def fail_copy(src, dst):
+        if dst.name.endswith('ERM_1.1001.png'):
+            dst.write(src.read(1))
+            raise OSError('injected short copy')
+        copy(src, dst)
+
+    def fail_geojson(_body, stream, **_kwargs):
+        stream.write('{')
+        raise OSError('injected short GeoJSON write')
+
+    def fail_receipt(target, _body):
+        assert Path(target).is_file()
+        raise OSError('injected receipt failure')
+
+    write = zipfile.ZipFile.write
+    copy = package_vpm.shutil.copyfileobj
+    with monkeypatch.context() as m:
+        if failure == 'size':
+            m.setitem(package_vpm.package_core.LIMITS, 'vpm_oks', 1)
+        elif failure == 'hash':
+            m.setattr(zipfile.ZipFile, 'write', corrupt_archived_fbx)
+        elif failure == 'copy':
+            m.setattr(package_vpm.shutil, 'copyfileobj', fail_copy)
+        elif failure == 'geojson':
+            m.setattr(package_vpm.json, 'dump', fail_geojson)
+        else:
+            m.setattr(package_vpm.package_core, 'write_delivery_report', fail_receipt)
+        with pytest.raises(error, match=diagnostic):
+            package_vpm.main(args)
+
+    assert sorted(p.name for p in pkg.iterdir()) == listing
+    assert snapshot(tmp_path) == before  # includes all inputs; no ZIP, report or .partial anywhere
+    assert package_vpm.main(args) == 0  # same version, no manual cleanup
+    with zipfile.ZipFile(zip_path) as packed:
+        assert packed.read(unrelated.name) == b'pre-existing notes\r\n'
+        assert packed.read('SM_Nku_1.geojson') == (pkg / 'SM_Nku_1.geojson').read_bytes()
+    assert report_path.is_file()
+
+
+def test_package_rollback_preserves_target_it_could_not_create(tmp_path, monkeypatch):
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    foreign = pkg / 'T_Nku_1_ERM_1.1001.png'
+    before = snapshot(tmp_path)
+    copy = package_vpm.shutil.copyfileobj
+
+    def create_competing_file(src, dst):
+        copy(src, dst)
+        if dst.name.endswith('Diffuse_1.1001.png'):
+            foreign.write_bytes(b'competing writer')
+
+    monkeypatch.setattr(package_vpm.shutil, 'copyfileobj', create_competing_file)
+    with pytest.raises(FileExistsError, match=foreign.name):
+        package_vpm.main([str(pkg), str(tex), '--no-geojson'])
+    assert snapshot(tmp_path) == before | {str(foreign.relative_to(tmp_path)): b'competing writer'}
+
+
+def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
+    tex = make_tex(tmp_path / "tex")
+    pkg = make_pkg(tmp_path / "p")
+    obj = make_package_object(tmp_path / "object.json")
     r = run([sys.executable, PKG_TOOL, pkg, tex, "--object", obj])
     assert r.returncode == 0, r.stderr
     geo = json.loads((pkg / "SM_Nku_1.geojson").read_text(encoding="utf-8"))
@@ -125,7 +482,7 @@ def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
 
 @pytest.mark.parametrize("case", ["no_object", "nan", "inf", "bool", "unknown_key", "missing_name", "empty_name",
                                   "stale_geojson", "existing_zip", "existing_report", "tex_alias", "no_textures",
-                                  "no_fbx"])
+                                  "no_fbx", "zip_input_alias", "report_input_alias", "foreign_partial"])
 def test_package_fails_closed_and_writes_nothing(tmp_path, case):
     tex = make_tex(tmp_path / "tex")
     pkg = make_pkg(tmp_path / "p")
@@ -150,7 +507,12 @@ def test_package_fails_closed_and_writes_nothing(tmp_path, case):
     elif case == "existing_zip":
         (tmp_path / "p/SM_Nku_1.zip").write_bytes(b"old")
     elif case == "existing_report":
-        (tmp_path / "p/package_report.json").write_text("{}")
+        (tmp_path / "p/SM_Nku_1.zip.delivery.json").write_text("{}")
+    elif case in ("zip_input_alias", "report_input_alias", "foreign_partial"):
+        target = {"zip_input_alias": "SM_Nku_1.zip", "report_input_alias": "SM_Nku_1.zip.delivery.json",
+                  "foreign_partial": "SM_Nku_1.zip.partial"}[case]
+        os.link(pkg / "SM_Nku_1.fbx", pkg.parent / target)
+        args = ["--no-geojson"]
     elif case == "tex_alias":
         tex = pkg
         args = ["--no-geojson"]
@@ -260,10 +622,15 @@ def test_atlas_preserves_tec26_ac08_recipe_with_d278_padding(tmp_path):
 
     spec = atlas_parity_spec(ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json", tmp_path / "inputs")
     rj = run([sys.executable, ROOT / "jobs/TEC26-OKS/scripts/make_npm_atlas.py", spec, tmp_path / "job"])
-    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt"])
+    master = tmp_path / "inputs/master.blend"  # synthetic master bytes: the atlas is bound to its hash (#1505)
+    master.write_bytes(b"synthetic master revision A")
+    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt", "--master", master])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
     old = json.loads((tmp_path / 'job/npm_atlas.json').read_text())
     new = json.loads((tmp_path / 'dt/npm_atlas.json').read_text())
+    import hashlib
+    assert new['master'] == {'name': 'master.blend', 'sha256': hashlib.sha256(master.read_bytes()).hexdigest(),
+                             'udims': sorted(r['udim'] for r in new['finishes'].values())}
     assert (old['pad'], new['pad']) == (6, 16)  # old delivery recipe intentionally untouched
     assert (old['region'], new['region']) == (397, 377)
     assert old['finishes'].keys() == new['finishes'].keys()
@@ -300,7 +667,8 @@ def test_atlas_fails_closed_and_writes_nothing(tmp_path, case):
     else:
         extra = ["--index", "1000"]
     before = snapshot(tmp_path)
-    r = run([sys.executable, ATLAS_TOOL, spec, out, *extra])
+    master = ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json"  # any existing file: each case must refuse on its own
+    r = run([sys.executable, ATLAS_TOOL, spec, out, "--master", master, *extra])
     assert r.returncode != 0 and "refused" in r.stderr, (r.stdout, r.stderr)
     assert snapshot(tmp_path) == before
     assert not (ROOT / "jobs/TEC26-OKS/scripts/__atlas_probe_1106").exists()

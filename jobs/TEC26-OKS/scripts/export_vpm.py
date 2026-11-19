@@ -13,10 +13,21 @@ master stays quad and untouched (docs/domain/export-import.md).
 - Main/MainGlass triangulated (reg p.29 §3.17); UCX hulls are triangulated already;
 - materials keep their names but carry no texture nodes, so the FBX has no texture paths (reg p.30 §4.2);
 - FBX 7.4 binary, Z up / Y forward (identity axes, no baked rotation), metres, per-face smoothing.
-Also renders the 256x256 JPG used for GeoJSON imageBase64 and writes export_meta.json.
+Also renders the 256x256 JPG used for GeoJSON imageBase64 and writes export_meta.json with
+fbx_records {SM_<A>.fbx: {bounds_m, fbx_sha256}} (#1342) for validate_package --export-meta (V013).
 """
 import bpy, bmesh, sys, os, json, math
 from mathutils import Vector, Matrix
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..")))
+from adapters.max.agr_tools.export_meta import fbx_record  # noqa: E402  dependency-free owner (#1342)
+
+
+def fbx_records(path, objects):
+    """#1342: world AABB of the exported render (non-UCX) geometry + SHA-256 of the written FBX, for V013."""
+    pts = [o.matrix_world @ v.co for o in objects if not o.name.upper().startswith("UCX_") for v in o.data.vertices]
+    bounds = [[min(p[i] for p in pts) for i in range(3)], [max(p[i] for p in pts) for i in range(3)]]
+    return {os.path.basename(path): fbx_record(path, bounds)}
+
 
 master, pkg = sys.argv[sys.argv.index("--") + 1:][:2]
 os.makedirs(pkg, exist_ok=True)
@@ -127,6 +138,7 @@ meta = {"address": address, "fbx": fbx, "pivot_revit_internal_m": [round(centre.
                              [round(hi.x - centre.x, 3), round(hi.y - centre.y, 3), round(hi.z, 3)]],
         "h_otn_model_max_z_m": round(hi.z, 2), "main_tris": tri(main), "glass_tris": tri(glass) if glass else 0,
         "ucx": len(ucx), "ucx_tris": sum(tri(o) for o in ucx), "thumbnail": os.path.abspath(thumb)}
+meta["fbx_records"] = fbx_records(fbx, deliver)
 json.dump(meta, open(os.path.join(pkg, "..", "export_meta.json"), "w"), indent=1)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(pkg, "..", "VPM_export_tri.blend"))
 print("EXPORT", json.dumps(meta))

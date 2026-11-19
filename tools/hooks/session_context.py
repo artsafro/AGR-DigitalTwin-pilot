@@ -22,6 +22,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from hook_input import read_stdin
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "git-hooks"))
 from branch_names import RENAME_HINT, is_auto  # noqa: E402
 
@@ -311,7 +314,7 @@ def main(mode):
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     try:
-        payload = json.loads(sys.stdin.read() or "{}") if mode != "report" else {}
+        payload = json.loads(read_stdin() or "{}") if mode != "report" else {}
     except ValueError:
         payload = {}
     if not isinstance(payload, dict):

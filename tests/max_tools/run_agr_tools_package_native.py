@@ -172,7 +172,8 @@ def export_zip():
     assert {n: sha(d / n) for n in before} == before
     v = {t['target'].replace('\\', '/').rsplit('/', 1)[-1]: {s: stage(t, s)['status'] for s in ('V001', 'V012')}
          for t in r['plan']['reports']}
-    assert all(x['V001'] == 'pass' and x['V012'] != 'fail' for x in v.values()), v
+    # #1423: no build manifest beside these ZIPs -> V001 not_run (never pass), never fail
+    assert all(x['V001'] == 'not_run' and x['V012'] != 'fail' for x in v.values()), v
     stamp = {n: sha(run / n) for n in os.listdir(run)}
     p2 = agr.edits_080('export.zip', 'preview', options={'folder': str(d)})
     r2 = agr.edits_080('export.zip', 'apply', p2)

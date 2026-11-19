@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3905 1255" width="3905" height="1255" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect x="10" y="-30" width="3905" height="1255" fill="#ffffff"/>
+<rect x="955.0" y="110" width="470" height="230.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
+<rect x="40.0" y="400.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="400.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="400.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="2175.0" y="400.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="655.0" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="2175.0" y="655.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="892.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="345.0" y="892.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<polyline points="510.0,497.5 530.0,497.5 530.0,597.5 1140.0,597.5 1140.0,497.5 1120.0,497.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,497.5 1140.0,497.5 1140.0,580.0 2055.0,580.0 2055.0,480.0 2035.0,480.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,480.0 2055.0,480.0 2055.0,580.0 2665.0,580.0 2665.0,488.75 2645.0,488.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,497.5 1140.0,497.5 1140.0,360.0 1445.0,360.0 1445.0,225.0 1425.0,225.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,225.0 1445.0,225.0 1445.0,726.25 1425.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2645.0,488.75 2665.0,488.75 2665.0,635.0 2155.0,635.0 2155.0,726.25 1425.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,726.25 1445.0,726.25 1445.0,1033.75 1425.0,1033.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2645.0,743.75 2665.0,743.75 2665.0,872.5 1445.0,872.5 1445.0,1033.75 1425.0,1033.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,1033.75 1445.0,1033.75 1445.0,872.5 835.0,872.5 835.0,972.5 815.0,972.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="28">Карта контекстов маршрута МАФ (GroundEl, НПМ + ВПМ) — D293 (#1393)</tspan>
+</text>
+<text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="16">Легенда: зелёный — модуль-владелец и его функции (контракт: вход -&gt; выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами</tspan>
+</text>
+<text x="963.0" y="120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="14">Общее ядро: расстановка МАФ и Флоры (общая с Ground и</tspan>
+<tspan x="963.0" dy="17.5">Флорой)</tspan>
+<tspan x="963.0" dy="17.5">Владелец: src/dt_ai/placement/engine.py</tspan>
+<tspan x="963.0" dy="17.5">один экземпляр на точку СПОЗУ по высоте Ground, утопление</tspan>
+<tspan x="963.0" dy="17.5">10 см (D095); low-poly и high-poly — в одни точки (D293)</tspan>
+<tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">place: точки, вершины и треугольники Ground, библиотека,</tspan>
+<tspan x="963.0" dy="17.5">seed -&gt; экземпляр или отказ с кодом</tspan>
+<tspan x="963.0" dy="17.5">bottom_face_verdict: нижняя грань в мире -&gt; удалить / на</tspan>
+<tspan x="963.0" dy="17.5">проверку (D095, D096)</tspan>
+<tspan x="963.0" dy="17.5">report_json: отчёт -&gt; строгий JSON: тот же seed и вход -&gt;</tspan>
+<tspan x="963.0" dy="17.5">те же байты</tspan>
+</text>
+<text x="48.0" y="410.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="48.0" dy="14">Связь с DCC (Blender / 3ds Max / AGR Tools)</tspan>
+<tspan x="48.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
+<tspan x="48.0" dy="17.5">спецификация, DWG СПОЗУ, сцена библиотеки — только копии;</tspan>
+<tspan x="48.0" dy="17.5">агент работает там, где удобно (D293)</tspan>
+<tspan x="48.0" dy="17.5"></tspan>
+<tspan x="48.0" dy="17.5">blender_executable: --blender &gt; DT_BLENDER (CLI dt qa /</tspan>
+<tspan x="48.0" dy="17.5">agr) &gt; TWINQA_BLENDER (blender_runner) &gt; установка 5.1.2;</tspan>
+<tspan x="48.0" dy="17.5">путь к Blender</tspan>
+<tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
+<tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
+</text>
+<text x="658.0" y="410.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="658.0" dy="14">Библиотека МАФ: каталог 931, манифесты, A101</tspan>
+<tspan x="658.0" dy="17.5">Владелец: tools/library/maf_catalogue.py</tspan>
+<tspan x="658.0" dy="17.5">аудит сцены библиотеки (G:/Мой диск/AGR-assets/maf) -&gt;</tspan>
+<tspan x="658.0" dy="17.5">каталог; не идентификация (T-MAF-1)</tspan>
+<tspan x="658.0" dy="17.5"></tspan>
+<tspan x="658.0" dy="17.5">match_spec: строки спецификации, записи -&gt; кандидаты</tspan>
+<tspan x="658.0" dy="17.5">только по габаритам</tspan>
+<tspan x="658.0" dy="17.5">match_npm: записи, НПМ-набор .blend -&gt; кандидаты НПМ</tspan>
+<tspan x="658.0" dy="17.5">build_catalogue: план, элементы, сборка -&gt; catalogue.json</tspan>
+<tspan x="658.0" dy="17.5">(каждая запись с путями файлов)</tspan>
+</text>
+<text x="1573.0" y="410.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1573.0" dy="14">Проверки МАФ: габариты, сглаживание, нижние грани</tspan>
+<tspan x="1573.0" dy="17.5">Владелец: src/twinqa/maf_checks.py</tspan>
+<tspan x="1573.0" dy="17.5">MAF-04 и MAF-20 на чтении FBX; неизмеренное — not_run, не</tspan>
+<tspan x="1573.0" dy="17.5">pass</tspan>
+<tspan x="1573.0" dy="17.5"></tspan>
+<tspan x="1573.0" dy="17.5">is_groundel: имя меша -&gt; это GroundEl или нет</tspan>
+<tspan x="1573.0" dy="17.5">maf_findings: меши, роль, источник, порог сглаживания -&gt;</tspan>
+<tspan x="1573.0" dy="17.5">находки МАФ</tspan>
+</text>
+<text x="2183.0" y="410.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="2183.0" dy="14">ID материалов и атлас МАФ 512</tspan>
+<tspan x="2183.0" dy="17.5">Владелец: tools/materials/atlas_maf.py</tspan>
+<tspan x="2183.0" dy="17.5">общий список ID (v007, D240) -&gt; атлас 512 RGB и UV JSON;</tspan>
+<tspan x="2183.0" dy="17.5">ВПМ — UDIM после Ground (D210)</tspan>
+<tspan x="2183.0" dy="17.5"></tspan>
+<tspan x="2183.0" dy="17.5">plan_atlas: список материалов -&gt; ячейки атласа (сплошной</tspan>
+<tspan x="2183.0" dy="17.5">цвет 64 / 128, узор крупнее)</tspan>
+<tspan x="2183.0" dy="17.5">build_atlas: список материалов, выход -&gt; PNG атласа + UV</tspan>
+<tspan x="2183.0" dy="17.5">JSON</tspan>
+</text>
+<text x="963.0" y="665.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="14">НПМ МАФ на атласе</tspan>
+<tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/flora_atlas_max.py</tspan>
+<tspan x="963.0" dy="17.5">атлас МАФ (GroundEl) в AGR Tools; конвертация ВПМ → НПМ</tspan>
+<tspan x="963.0" dy="17.5">или параллельно (D293)</tspan>
+<tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">atlas_groundel: контекст Max, режим, узлы МАФ, превью -&gt;</tspan>
+<tspan x="963.0" dy="17.5">атлас МАФ НПМ</tspan>
+</text>
+<text x="2183.0" y="665.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="2183.0" dy="14">UCX: у МАФ нет, у Ground есть (только ВПМ)</tspan>
+<tspan x="2183.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
+<tspan x="2183.0" dy="17.5">канон UCX (D225) — для поверхности Ground; МАФ не</tspan>
+<tspan x="2183.0" dy="17.5">учитываются (MAF-22)</tspan>
+<tspan x="2183.0" dy="17.5"></tspan>
+<tspan x="2183.0" dy="17.5">piece: вершины, треугольники -&gt; выпуклый кусок с</tspan>
+<tspan x="2183.0" dy="17.5">нормалями и рёбрами</tspan>
+<tspan x="2183.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
+<tspan x="2183.0" dy="17.5">семейства UCX</tspan>
+</text>
+<text x="963.0" y="902.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="14">Экспорт и пакеты (МАФ в Ground FBX)</tspan>
+<tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
+<tspan x="963.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
+<tspan x="963.0" dy="17.5">package-npm / package-vpm (tools/derive) и AGR Tools</tspan>
+<tspan x="963.0" dy="17.5">(#1361, #1377)</tspan>
+<tspan x="963.0" dy="17.5"></tspan>
+<tspan x="963.0" dy="17.5">zip_plan: папка, [адрес], [лимиты] -&gt; архивы НПМ/ВПМ и</tspan>
+<tspan x="963.0" dy="17.5">пропуски с причиной; файлы не трогает</tspan>
+<tspan x="963.0" dy="17.5">check_members: члены архива -&gt; плоские безопасные имена;</tspan>
+<tspan x="963.0" dy="17.5">плохое имя — ошибка до записи</tspan>
+<tspan x="963.0" dy="17.5">_write_zip: папка, архив, цель -&gt; новый ZIP через</tspan>
+<tspan x="963.0" dy="17.5">.partial без перезаписи; дубль, пустой вход, изменение во</tspan>
+<tspan x="963.0" dy="17.5">время упаковки — ошибка</tspan>
+<tspan x="963.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
+<tspan x="963.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
+</text>
+<text x="353.0" y="902.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="353.0" dy="14">Проверки пакета и витрина для Артёма</tspan>
+<tspan x="353.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
+<tspan x="353.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
+<tspan x="353.0" dy="17.5"></tspan>
+<tspan x="353.0" dy="17.5">validate_vpm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="353.0" dy="17.5">находки ВПМ</tspan>
+<tspan x="353.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
+<tspan x="353.0" dy="17.5">находки НПМ</tspan>
+</text>
+<rect x="805.0" y="580.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="835.0" y="580.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="835.0" dy="14">спецификация и</tspan>
+<tspan x="835.0" dy="17.5">точки</tspan>
+</text>
+<rect x="1567.5" y="571.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="571.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1597.5" dy="14">кандидат МАФ</tspan>
+</text>
+<rect x="2330.0" y="562.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="2360.0" y="562.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2360.0" dy="14">модель в</tspan>
+<tspan x="2360.0" dy="17.5">допуске</tspan>
+</text>
+<rect x="1262.5" y="351.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="351.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1292.5" dy="14">модель МАФ</tspan>
+</text>
+<rect x="1415.0" y="466.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="466.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">точки МАФ</tspan>
+</text>
+<rect x="1760.0" y="717.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1790.0" y="717.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1790.0" dy="14">ID / атлас 512</tspan>
+</text>
+<rect x="1415.0" y="871.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="871.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">НПМ на атласе</tspan>
+</text>
+<rect x="2025.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2055.0" dy="14">коллизии Ground</tspan>
+</text>
+<rect x="1110.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
+</text>
+</svg>

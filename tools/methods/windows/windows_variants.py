@@ -17,10 +17,17 @@ in the drop list with its reason. The variant builders return plain arrays the B
 from __future__ import annotations
 
 import math
+import importlib.util
+from pathlib import Path
 
 import numpy as np
 
 VARIANTS = ("modelled-frames", "atlas-planes", "inset-glass-trim")
+_spec = importlib.util.spec_from_file_location(
+    "udimtile_core_windows", Path(__file__).resolve().parents[3] / "adapters/max/agr_tools/udimtile_core.py")
+assert _spec is not None and _spec.loader is not None
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 WELD_M = 0.001  # vertex weld for polygon adjacency
 PLANE_TOL_M = 0.005  # two polygons are coplanar when offsets differ <= 5 mm ...
 PLANE_COS = math.cos(math.radians(5.0))  # ... and normals within 5 deg
@@ -125,7 +132,7 @@ def panes(o: dict) -> int:
 def tile_offset(tile: int) -> tuple[int, int]:
     if not 1001 <= tile <= 1100:
         raise ValueError(f"UDIM tile {tile} outside 1001..1100")
-    return (tile - 1001) % 10, (tile - 1001) // 10
+    return _udimtile.tile_origin(tile)
 
 
 def metric_uv(points: np.ndarray, o: dict, scale: float, tile: int) -> np.ndarray:

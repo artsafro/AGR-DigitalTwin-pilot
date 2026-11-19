@@ -93,6 +93,13 @@ uv run python tools/qa/validate_package.py SM_Address.fbx --scene --export-meta 
 `export_bounds.json` is a mapping by exact FBX filename, each record containing
 `bounds_m: [[min_x,min_y,min_z],[max_x,max_y,max_z]]` and `fbx_sha256` of the exported bytes.
 Bounds must come from the export, not be copied from readback to manufacture agreement.
+
+Since #1342 the VPM exporters (`jobs/KPP1/scripts/export_vpm.py`, `jobs/TEC26-OKS/scripts/export_vpm.py`,
+`jobs/PSU275/scripts/export_vpm_psu275.py`) write that mapping themselves as `fbx_records` inside
+`export_meta.json` (schema `schemas/ExportMeta.schema.json`): world bounds of the delivered non-UCX
+objects measured in Blender right after the FBX export, plus SHA-256 of the written FBX. Pass the
+exporter file directly: `--export-meta <package>/../export_meta.json`. An `export_meta.json` without
+`fbx_records` (pre-#1342 export) is refused with exit 1 (re-export); it never becomes `not_run` silently.
 Hash mismatch, null/partial records, unmapped filenames, malformed/nonfinite/reversed bounds,
 missing render-mesh bounds, empty geometry or duplicated mesh names fail.
 Missing metadata entirely is **not_run**, never pass. The CLI binds records to the byte snapshot

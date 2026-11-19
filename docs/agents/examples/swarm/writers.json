@@ -1,0 +1,7 @@
+{
+  "output_root": "C:/job/build/v001",
+  "writers": [
+    {"part": "L2", "agent_id": "l2", "kind": "background", "status": "active"},
+    {"part": "windows-B", "agent_id": "windows-workflow", "kind": "workflow", "status": "active"}
+  ]
+}

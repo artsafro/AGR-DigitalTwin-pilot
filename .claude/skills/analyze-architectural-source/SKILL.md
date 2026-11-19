@@ -95,6 +95,7 @@ do not invent a welded mesh or run `dt spec extract`. Continue to step 7.
    emissive, vegetation/opacity, unknown); texture references found/missing; UV
    channels per object (`docs/domain/materials.md`, `docs/domain/uv-textures.md`).
    Done when no slot is unclassified without being listed as a question.
+   For sheets showing multiple buildings or parts, register `finish_sheets: [{image, multi_building: true}]` in the parts manifest; per part record `finish_refs: [{image, bbox, crop}]` with an original-image pixel bbox `[left, top, right, bottom]` (top-left origin, right/bottom exclusive), save the crop beside the analysis (external evidence directory, not binary git data), and read the finish into `legend_item` from that crop; subagent briefs cite the crop path, not just the sheet name. The model validates metadata, not crop existence/content or image bounds; inspect these explicitly before Gate 1.
 
 7. **Report.** Write `docs/sources/<source-name>.md`: findings above, including the
    source class and its route, production

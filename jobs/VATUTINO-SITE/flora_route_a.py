@@ -30,6 +30,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from dt_ai.core.blender_runner import BlenderRunError, run_blender
+
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 EVIDENCE = Path("G:/Мой диск/AGR-evidence/1146-flora-star")
@@ -391,14 +393,40 @@ def stage_place(run: Path):
 
 
 # ------------------------------------------------------------------------------------------------ blender
+FLORA_SCRIPT = HERE / "flora_v007_blender.py"
+SITE_VIEWS = ("oblique_SW", "oblique_SE", "oblique_NE", "oblique_NW", "top", "eye_level")   # cmd_site renders
+
+
+def _flora_outputs(args):
+    """(output_json, native outputs) each flora_v007_blender.py command must leave fresh; unknown -> ValueError."""
+    arity = {"export": 2, "readback": 3, "site": 4, "species": 6}
+    if not args or args[0] not in arity or len(args) - 1 != arity[args[0]]:
+        raise ValueError(f"flora_v007_blender.py: unknown command or wrong argument count {list(map(str, args))}; "
+                         f"expected one of {arity}")
+    cmd, rest = args[0], args[1:]
+    if cmd == "export":
+        return None, [Path(rest[1])]
+    if cmd == "readback":
+        return Path(rest[1]), []
+    if cmd == "site":
+        return None, [Path(rest[3]) / f"site_{v}.png" for v in SITE_VIEWS]
+    keys = list(json.loads(Path(rest[0]).read_text(encoding="utf-8")))
+    if not keys:
+        raise ValueError(f"flora_v007_blender.py species: no species in {rest[0]}")
+    return None, [Path(rest[5]) / f"sp_{k}_{p}.png" for k in keys for p in ("npm", "vpm")]
+
+
 def _blender(*args, timeout=7200):
-    from twinqa.scene import find_blender
-    cmd = [find_blender(), "--background", "--factory-startup", "--python-exit-code", "1", "--python",
-           str(HERE / "flora_v007_blender.py"), "--", *map(str, args)]
-    r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
-    print(r.stdout[-2000:])
-    if r.returncode:
-        raise SystemExit(f"blender failed {r.returncode}: {r.stderr[-3000:]}")
+    """One flora_v007_blender.py step through the shared headless runner (#1378): pinned Blender, isolated user
+    config, every promised file must be fresh; the log path is printed, a failure stops the route."""
+    output_json, outputs = _flora_outputs(args)
+    first = output_json or outputs[0]
+    log = first.with_name(first.name + ".blender.log")
+    try:
+        run_blender(FLORA_SCRIPT, list(args), output_json=output_json, outputs=outputs, timeout=timeout, log_path=log)
+    except BlenderRunError as exc:
+        raise SystemExit(f"blender failed: {exc}") from exc
+    print(f"blender {args[0]}: ok, log {log}")
 
 
 def stage_readback(run: Path):
