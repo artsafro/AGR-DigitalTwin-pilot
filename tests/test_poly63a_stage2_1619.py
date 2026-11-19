@@ -6,7 +6,10 @@ Pattern: n/a | new-case: tests/test_poly63a_stage2_1619.py - stage-2 inset plan 
 
 import importlib.util
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -147,3 +150,184 @@ def test_plan_refuses_output_equal_to_input(tmp_path):
     _write_inputs(tmp_path)
     with pytest.raises(SystemExit):
         s2.main([str(tmp_path / "body.npz"), str(tmp_path / "crop.npz"), str(tmp_path / "body.npz")])
+
+
+def _argv(path, out=None):
+    return [str(path / "body.npz"), str(path / "crop.npz"), str(out or path / "stage2.json"), "--band", "0", "3.15"]
+
+
+def _stop(path, *messages):
+    with pytest.raises(SystemExit) as exc:
+        s2.main(_argv(path))
+    diagnostic = str(exc.value)
+    assert "STOP" in diagnostic
+    for message in messages:
+        assert message in diagnostic
+    assert not (path / "stage2.json").exists()
+
+
+def _opening(dx=0, **extra):
+    verts, fn, fi = _body()
+    verts[:, 0] += dx
+    faces = np.split(fi, np.cumsum(fn)[:-1])
+    row, = s2.openings_core.find_openings_report({"verts": verts.tolist(),
+                                               "faces": [f.tolist() for f in faces]})["openings"]
+    return dict(row, **extra)
+
+
+def _inject_openings(monkeypatch, rows):
+    monkeypatch.setattr(s2.openings_core, "find_openings_report", lambda mesh: {"openings": rows, "rejected": []})
+
+
+def test_cli_stops_for_opening_moved_one_metre(tmp_path):
+    _write_inputs(tmp_path)
+    verts, fn, fi = _body()
+    verts[:, 0] += 1.0
+    np.savez(tmp_path / "body.npz", verts=verts, fn=fn, fi=fi)
+    result = subprocess.run([sys.executable, str(HOOKS / "stage2_plan.py"), *_argv(tmp_path)],
+                            cwd=tmp_path, capture_output=True, text=True, encoding="utf-8",
+                            env=dict(os.environ, PYTHONIOENCODING="utf-8"), timeout=60)
+    assert result.returncode == 1
+    assert "STOP" in result.stderr and "opening 1" in result.stderr and "0.6 m" in result.stderr
+    assert not (tmp_path / "stage2.json").exists()
+
+
+@pytest.mark.parametrize("count", [2, 3, 5])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_repeated_match_lists_every_claimant(tmp_path, monkeypatch, count, reverse):
+    _write_inputs(tmp_path)
+    rows = [_opening(dx, id=i) for i, dx in enumerate(np.linspace(-0.1, 0.1, count), 1)]
+    if count > 2:
+        rows.append(_opening(1.0, id=99))
+    _inject_openings(monkeypatch, rows[::-1] if reverse else rows)
+    monkeypatch.setattr(s2.windowgen_core, "build_type", lambda *a: pytest.fail("geometry built before preflight"))
+    messages = ["matched more than once", *(f"opening {i} " for i in range(1, count + 1))]
+    _stop(tmp_path, *messages, *(["opening 99 ", "0.6 m"] if count > 2 else []))
+
+
+@pytest.mark.parametrize("status", ["ambiguous", "unsupported", "empty", "capsule ambiguous"])
+def test_owner_failure_blocks_output(tmp_path, monkeypatch, status):
+    _write_inputs(tmp_path)
+    if status == "capsule ambiguous":
+        monkeypatch.setattr(s2.capsule_core, "plan", lambda *a: {"rows": [], "ambiguous": ["63A opening 1: synthetic"]})
+        _stop(tmp_path, "capsule", "opening 1", "synthetic")
+    else:
+        _inject_openings(monkeypatch, [] if status == "empty" else [_opening(status=status, why=["nonrect"])])
+        _stop(tmp_path, *(["no openings"] if status == "empty" else ["opening 1", status, "nonrect"]))
+
+
+@pytest.mark.parametrize("check", [{"bad_edges": 1}, {"open_off_rim": 1}, {"inward": False}, {"closed_open_edges": 1}])
+def test_bad_capsule_blocks_output(tmp_path, monkeypatch, check):
+    _write_inputs(tmp_path)
+    original = s2.capsule_core.check_capsule
+    monkeypatch.setattr(s2.capsule_core, "check_capsule", lambda row: dict(original(row), **check))
+    _stop(tmp_path, "capsule", "opening 1", next(iter(check)))
+
+
+def test_refusal_preserves_previous_plan_then_clean_retry(tmp_path):
+    _write_inputs(tmp_path)
+    out, body = tmp_path / "stage2.json", tmp_path / "body.npz"
+    out.write_bytes(b"previous plan")
+    clean = body.read_bytes()
+    verts, fn, fi = _body()
+    verts[:, 0] += 1.0
+    np.savez(body, verts=verts, fn=fn, fi=fi)
+    errors = []
+    for _ in range(2):
+        with pytest.raises(SystemExit, match="opening 1") as exc:
+            s2.main(_argv(tmp_path))
+        errors.append(str(exc.value))
+        assert out.read_bytes() == b"previous plan"
+    assert errors[0] == errors[1]
+    body.write_bytes(clean)
+    assert s2.main(_argv(tmp_path)) == 0
+    assert json.loads(out.read_bytes())["report"]["openings"]["ok"] == 1
+
+
+@pytest.mark.parametrize("d", [0.59, np.nextafter(0.6, 0), 0.6, np.nextafter(0.6, 1), 0.61])
+def test_match_distance_boundary(tmp_path, monkeypatch, d):
+    _write_inputs(tmp_path)
+    op = _opening()
+    centre = np.mean(op["border"], axis=0)
+    # Put the opening at the exact origin so subtraction introduces no boundary roundoff.
+    _inject_openings(monkeypatch, [dict(op, border=(np.array(op["border"]) - centre).tolist())])
+    original = s2.revit_window
+    monkeypatch.setattr(s2, "revit_window", lambda tri: dict(original(tri), centre=np.array([d, 0, 0])))
+    if d < 0.6:
+        monkeypatch.setattr(s2.windowgen_core, "build_type", lambda *a: pytest.fail("accepted match reached build"))
+        with pytest.raises(pytest.fail.Exception, match="accepted match reached build"):
+            s2.main(_argv(tmp_path))
+    else:
+        _stop(tmp_path, "opening 1", "0.6 m")
+
+
+@pytest.mark.parametrize("case", ["no windows", "unused", "tie", "no glass"])
+def test_incomplete_source_stops(tmp_path, monkeypatch, case):
+    _write_inputs(tmp_path)
+    orig = s2.crop_objects
+
+    def objects(path, prefixes, band):
+        rows = orig(path, prefixes, band)
+        if not rows:
+            return rows
+        if case == "no windows":
+            return []
+        if case == "no glass":
+            return [dict(rows[0], tri=rows[0]["tri"][:4])]
+        offset = [1, 0, 0] if case == "unused" else [0, 0, 0]
+        return rows + [dict(rows[0], name="second window", tri=rows[0]["tri"] + offset)]
+
+    monkeypatch.setattr(s2, "crop_objects", objects)
+    expected = {"no windows": ("opening 1", "no Revit window"), "unused": ("unused", "second window"),
+                "tie": ("opening 1", "tied", "second window"), "no glass": ("opening 1", "glass")}
+    _stop(tmp_path, *expected[case])
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf")])
+@pytest.mark.parametrize("target", ["opening", "Revit", "band"])
+def test_invalid_geometry_stops(tmp_path, monkeypatch, value, target):
+    _write_inputs(tmp_path)
+    if target == "opening":
+        op = _opening()
+        op["border"][0][0] = value
+        _inject_openings(monkeypatch, [op])
+        _stop(tmp_path, "opening 1", "non-finite")
+    elif target == "Revit":
+        tri = _window_tris()
+        tri[0, 0, 2] = value
+        np.savez(tmp_path / "crop.npz", tri=tri, obj=np.zeros(len(tri), int), names=["Окн_Окн_invalid"])
+        _stop(tmp_path, "Окн_Окн_invalid", "non-finite")
+    else:
+        with pytest.raises(SystemExit, match="band"):
+            s2.main([*_argv(tmp_path)[:-2], str(value), "3.15"])
+        assert not (tmp_path / "stage2.json").exists()
+
+
+@pytest.mark.parametrize("name", ["body.npz", "crop.npz", "keys.json", "standard.json"])
+def test_output_alias_refused(tmp_path, name):
+    _write_inputs(tmp_path)
+    (tmp_path / "keys.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "standard.json").write_bytes((ROOT / "library/windows/standard.json").read_bytes())
+    source, alias = tmp_path / name, tmp_path / "alias.json"
+    before = source.read_bytes()
+    os.link(source, alias)
+    with pytest.raises(SystemExit, match="must not be an input"):
+        s2.main([*_argv(tmp_path, alias), "--keys", str(tmp_path / "keys.json"),
+                 "--standard", str(tmp_path / "standard.json")])
+    assert source.read_bytes() == alias.read_bytes() == before
+
+
+def test_output_rebound_before_write(tmp_path, monkeypatch):
+    _write_inputs(tmp_path)
+    source, out = tmp_path / "body.npz", tmp_path / "stage2.json"
+    before = source.read_bytes()
+    original = s2.capsule_core.plan
+
+    def rebind(*args):
+        os.link(source, out)
+        return original(*args)
+
+    monkeypatch.setattr(s2.capsule_core, "plan", rebind)
+    with pytest.raises(SystemExit, match="must not be an input"):
+        s2.main(_argv(tmp_path))
+    assert source.read_bytes() == out.read_bytes() == before
