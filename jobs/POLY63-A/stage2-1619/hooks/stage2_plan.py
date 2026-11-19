@@ -8,7 +8,8 @@ The body is never rebuilt or edited: BODY_DUMP.npz is dump_mesh.py of the accept
 only read. Per opening (Artem 2026-11-18, #1619 stage rules; D336 split):
 * the opening = `openings_core.find_openings_report` on the body (the ONE recognition): the border is the back end
   of the stage-1 reveal = the outer face of the Revit window frame (stage 1 cut the reveal to that depth);
-* the window type = the Revit window object nearest to the opening (crop of the .rvt export, read-only). Its
+* the window type = the uniquely nearest Revit window object, strictly under 0.6 m from the opening centre
+  (crop of the .rvt export, read-only). Every in-band window must be used once. Its
   frame grid is measured from the Revit glass: glass = flat rectangles present twice at a depth step of 20-35 mm
   (the two glass faces); bays = the lower glass row; mullions/transoms = the gaps between bays/rows (geometry,
   as in Revit); sashes = texture (inside the bay, not modelled);
@@ -17,7 +18,7 @@ only read. Per opening (Artem 2026-11-18, #1619 stage rules; D336 split):
 * the capsule = `capsule_core.plan` on the opening moved to the frame back (rim on the frame middle, 100 mm
   outline, 1.0 m deep, no niche in the wall); its rectangular back (two triangles) becomes one quad.
 AC baskets: the crop's baskets inside the band are listed; none -> `baskets.status = "none_in_band"`, nothing is
-invented. Refuses STAGE2.json equal to an input.
+invented. Lists blockers on stderr and exits nonzero without writing a plan. Refuses STAGE2.json equal to an input.
 """
 import argparse
 import collections
@@ -34,6 +35,7 @@ from adapters.max.agr_tools import capsule_core, openings_core, windowgen_core, 
 
 KEYS = {'windows': ['Окн_Окн_', 'Окн_ББлок'], 'baskets': ['Корзина для кондиционер']}
 GLASS_STEP = (0.020, 0.035)  # depth step between the two faces of one Revit glass pane, metres
+MATCH_LIMIT_M = 0.6  # strict upper bound, before rounding
 MAT_NAMES = {windowgen_core.MAT_FACE: 'WIN_Frame', windowgen_core.MAT_BACK: 'WIN_Frame_Back',
              windowgen_core.MAT_OPAQUE: 'WIN_Infill', windowgen_core.MAT_GLASS: 'WIN_Glass'}
 
@@ -58,6 +60,8 @@ def crop_objects(path, prefixes, band):
     for i in want:
         a, b = np.searchsorted(so, i), np.searchsorted(so, i, side='right')
         t = tri[order[a:b]]
+        if not len(t) or not np.isfinite(t).all():
+            stop(['Revit object #{} {!r}: empty or non-finite triangles'.format(i, str(names[i]))])
         zc = float(t[:, :, 2].mean())
         out.append({'name': str(names[i]), 'tri': t, 'in_band': band[0] < zc < band[1]})
     return out
@@ -154,6 +158,75 @@ def quad_back(row):
     return out
 
 
+def stop(problems):
+    sys.exit('Stage 2 STOP: confirm the listed opening types or correct the source/check failures before retrying.\n'
+             + '\n'.join(problems))
+
+
+def match_openings(openings, wins):
+    """Check all nearest claims before building; do not reassign a collision to a second choice."""
+    problems, matches = [], []
+    claims = collections.defaultdict(list)
+    wc = np.array([w['centre'] for w in wins])
+    if not openings:
+        problems.append('no openings recognized in the body')
+    for o in openings:
+        border = np.asarray(o['border'], dtype=float)
+        label = 'opening {} (body detection ID)'.format(o['id'])
+        if not border.size or not np.isfinite(border).all():
+            problems.append(label + ': empty or non-finite border')
+            continue
+        centre = border.mean(0)
+        label += ' centre_m={}'.format(centre.tolist())
+        if o['status'] != 'ok':
+            problems.append('{}: {}: {}'.format(label, o['status'], '; '.join(o['why'])))
+            continue
+        if not wins:
+            problems.append(label + ': no Revit window in band')
+            continue
+        distances = np.linalg.norm(wc - centre, axis=1)
+        if not np.isfinite(distances).all():
+            problems.append(label + ': non-finite Revit match distances')
+            continue
+        distance = float(distances.min())
+        if distance >= MATCH_LIMIT_M:
+            problems.append('{}: nearest Revit window at {:.6g} m; requires < {} m'.format(
+                label, distance, MATCH_LIMIT_M))
+            continue
+        candidates = np.flatnonzero(distances == distance)
+        if len(candidates) != 1:
+            problems.append('{}: tied nearest windows: {}'.format(label, ', '.join(
+                '#{} {!r}'.format(j + 1, wins[j]['name']) for j in candidates)))
+            continue
+        j = int(candidates[0])
+        claims[j].append(label)
+        matches.append((dict(o, centre=centre), wins[j], distance))
+
+    for j, w in enumerate(wins):
+        label = 'Revit window #{} {!r} centre_m={}'.format(j + 1, w['name'], w['centre'].tolist())
+        owners = claims.get(j, [])
+        if not owners:
+            problems.append(label + ': unused')
+        elif len(owners) > 1:
+            problems.append(label + ': matched more than once: ' + '; '.join(owners))
+        if owners and not w['glass']:
+            problems.append(label + ': no measured glass panes for ' + '; '.join(owners))
+    if problems:
+        stop(problems)
+    cx, cy = wc[:, 0].mean(), wc[:, 1].mean()
+    matches.sort(key=lambda m: (round(m[0]['centre'][2], 1),
+                                math.atan2(m[0]['centre'][1] - cy, m[0]['centre'][0] - cx)))
+    return matches
+
+
+def refuse_input_output(out, inputs):
+    resolved = os.path.normcase(os.path.realpath(out))
+    for path in inputs:
+        if resolved == os.path.normcase(os.path.realpath(path)) or (
+                os.path.exists(out) and os.path.samefile(out, path)):
+            sys.exit('STAGE2.json must not be an input: ' + path)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('dump')
@@ -164,40 +237,37 @@ def main(argv=None):
     ap.add_argument('--standard', default=os.path.join(ROOT, 'library', 'windows', 'standard.json'))
     ap.add_argument('--name', default='63A')
     a = ap.parse_args(argv)
-    if os.path.abspath(a.out) in {os.path.abspath(a.dump), os.path.abspath(a.crop)}:
-        sys.exit('STAGE2.json must not be an input')
+    inputs = [a.dump, a.crop, a.standard] + ([a.keys] if a.keys else [])
+    refuse_input_output(a.out, inputs)
+    if not all(math.isfinite(z) for z in a.band) or a.band[0] >= a.band[1]:
+        stop(['band must have two finite, increasing limits'])
     keys = dict(KEYS)
     if a.keys:
         keys.update({k: v for k, v in json.load(open(a.keys, encoding='utf-8')).items() if k in KEYS})
     standard = windowgen_core.load_standard(json.load(open(a.standard, encoding='utf-8')))
 
     verts, faces = body_mesh(a.dump)
+    if not np.isfinite(verts).all():
+        stop(['body vertices contain non-finite coordinates'])
     rep = openings_core.find_openings_report({'verts': verts, 'faces': faces, 'ref': {'name': 'SM_Body_Main'}})
-    ops = [o for o in rep['openings'] if o['status'] == 'ok']
-    amb = [o for o in rep['openings'] if o['status'] != 'ok']
 
     objs = crop_objects(a.crop, keys['windows'], a.band)
     wins = [dict(revit_window(o['tri']), name=o['name']) for o in objs if o['in_band']]
+    matches = match_openings(rep['openings'], wins)
     prof = measure_profile(wins)
+    missing = [k for k, v in prof.items() if v is None]
+    if missing:
+        stop(['opening {}: cannot measure {} from Revit window {!r}'.format(
+            o['id'], ', '.join(missing), w['name']) for o, w, _ in matches])
     depth = collections.Counter(w['D'] for w in wins).most_common(1)[0][0]
     baskets = crop_objects(a.crop, keys['baskets'], a.band)
     in_band_b = [b['name'] for b in baskets if b['in_band']]
     out_band_b = sorted(collections.Counter(round(float(b['tri'][:, :, 2].min()), 2) for b in baskets
                                             if not b['in_band']).items())
 
-    wc = np.array([w['centre'] for w in wins])
-    for o in ops:
-        c = np.mean(np.array(o['border']), 0)
-        o['centre'] = c
-        o['_ang'] = math.atan2(c[1] - wc[:, 1].mean(), c[0] - wc[:, 0].mean())
-    ops.sort(key=lambda o: (round(o['centre'][2], 1), o['_ang']))
-
     elements, rows, misfit, types = [], [], [], collections.Counter()
     cap_ops = []
-    for i, o in enumerate(ops, 1):
-        dist = np.linalg.norm(wc - o['centre'], axis=1)
-        j = int(dist.argmin())
-        w = wins[j]
+    for i, (o, w, distance) in enumerate(matches, 1):
         tkey = '{} W{:.2f}'.format(str(w['name']).split(' Ств')[0] + ' Ств', w['W'])
         types[tkey] += 1
         fields, _ = frame_grid(w, prof['transom_m'], prof['face_top_m'])
@@ -222,39 +292,57 @@ def main(argv=None):
         fit = max(float(np.min(np.linalg.norm(bd - np.array(p), axis=1))) for p in front)
         dw, dh = round(Wo - w['W'], 4), round(Ho - w['H'], 4)
         row = {'opening': i, 'type': tkey, 'w': Wo, 'h': Ho, 'reveal_m': o['depth'], 'revit_dist_m': round(
-            float(dist[j]), 3), 'dw_m': dw, 'dh_m': dh, 'fit_corner_mm': round(fit * 1000, 2),
+            distance, 3), 'dw_m': dw, 'dh_m': dh, 'fit_corner_mm': round(fit * 1000, 2),
             'type_status': mesh['status'], 'fields': fields}
         rows.append(row)
-        if abs(dw) > 0.002 or abs(dh) > 0.002 or fit > 0.002 or dist[j] > 0.6:
+        if abs(dw) > 0.002 or abs(dh) > 0.002 or fit > 0.002:
             misfit.append({k: row[k] for k in ('opening', 'type', 'w', 'dw_m', 'dh_m', 'fit_corner_mm',
                                                'revit_dist_m')})
         zin = np.array(o['frame']['z'])
         cap_ops.append(dict(o, id=i, border=[(np.array(p) - zin * depth).tolist() for p in o['border']],
                             depth=o['depth'] + depth, centre=None))
     cp = capsule_core.plan([{'handle': 1, 'name': a.name, 'openings': cap_ops}], {'frame_depth_m': depth})
-    caps = []
+    capsule_problems = ['capsule: ' + text for text in cp['ambiguous']]
+    if not capsule_problems:
+        made = collections.Counter(r['opening'] for r in cp['rows'])
+        expected = collections.Counter(range(1, len(matches) + 1))
+        capsule_problems.extend('capsule opening {}: expected one row, got {}'.format(i, made[i])
+                                for i in sorted(expected) if made[i] != 1)
+        capsule_problems.extend('capsule opening {}: unexpected row'.format(i) for i in sorted(made - expected)
+                                if i not in expected)
     for r in cp['rows']:
         r = quad_back(r)
         chk = capsule_core.check_capsule(dict(r, faces=r['faces']))
-        caps.append(chk)
+        if chk['open_off_rim'] or chk['closed_open_edges'] or chk['bad_edges'] or not chk['inward']:
+            capsule_problems.append('capsule opening {} ({}): {}'.format(r['opening'], r['name'], chk))
         elements.append({'name': r['name'], 'collection': 'Stage2_Capsules', 'opening': r['opening'],
                          'verts': [[round(c, 6) for c in v] for v in r['verts']], 'faces': r['faces'],
                          'mats': [capsule_core.MATERIAL] * len(r['faces'])})
+    if capsule_problems:
+        stop(capsule_problems)
     nf = collections.Counter(len(f) for e in elements for f in e['faces'])
     report = {
         'stage': 'stage2: windows + capsules (body untouched)', 'body_dump': os.path.basename(a.dump),
-        'openings': {'ok': len(ops), 'ambiguous': len(amb), 'rejected': len(rep['rejected'])},
+        'openings': {'ok': len(matches), 'ambiguous': 0, 'rejected': len(rep['rejected'])},
         'revit_windows_in_band': len(wins), 'types': dict(types), 'frame_profile_m': dict(prof, depth_m=depth),
-        'misfit': misfit, 'capsules': {'made': len(cp['rows']), 'ambiguous': cp['ambiguous'][:20],
-                                       'n_ambiguous': len(cp['ambiguous']),
-                                       'check_bad': sum(1 for c in caps if c['open_off_rim'] or c['bad_edges']
-                                                        or not c['inward'])},
+        'misfit': misfit, 'capsules': {'made': len(cp['rows']), 'ambiguous': [], 'n_ambiguous': 0, 'check_bad': 0},
         'baskets': {'status': 'none_in_band' if not in_band_b else 'in_band', 'in_band': len(in_band_b),
                     'outside_band_by_zmin': out_band_b},
         'faces': {'total': sum(nf.values()), 'quads': nf.get(4, 0), 'tris': nf.get(3, 0),
                   'ngons': sum(v for k, v in nf.items() if k > 4)},
         'elements': len(elements), 'rows': rows}
-    json.dump({'report': report, 'elements': elements}, open(a.out, 'w', encoding='utf-8'), ensure_ascii=False)
+    payload = json.dumps({'report': report, 'elements': elements}, ensure_ascii=False, allow_nan=False)
+    refuse_input_output(a.out, inputs)
+    try:
+        out = open(a.out, 'r+', encoding='utf-8')  # do not truncate until the opened file is checked
+    except FileNotFoundError:
+        out = open(a.out, 'x', encoding='utf-8')
+    with out:
+        for path in inputs:
+            if os.path.samestat(os.fstat(out.fileno()), os.stat(path)):
+                sys.exit('STAGE2.json must not be an input: ' + path)
+        out.write(payload)
+        out.truncate()
     print(json.dumps({k: v for k, v in report.items() if k != 'rows'}, ensure_ascii=False)[:3000])
     return 0
 
