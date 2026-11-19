@@ -1,24 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2685 1730" width="2685" height="1730" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2685 1766" width="2685" height="1766" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2685" height="1730" fill="#ffffff"/>
+<rect x="10" y="-30" width="2685" height="1766" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="160.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40.0" y="330.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="330.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="330.0" width="470" height="352.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="742.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="345.0" y="742.5" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="742.5" width="470" height="545.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1301.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="955.0" y="1426.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="1635.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="742.5" width="470" height="580.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1336.5" width="470" height="65.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="955.0" y="1461.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="1670.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <polyline points="510.0,427.5 530.0,427.5 530.0,527.5 1140.0,527.5 1140.0,418.75 1120.0,418.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,418.75 1545.0,418.75 1545.0,310.0 2055.0,310.0 2055.0,506.25 2035.0,506.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,418.75 1140.0,418.75 1140.0,722.5 2055.0,722.5 2055.0,831.25 2035.0,831.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2035.0,506.25 2055.0,506.25 2055.0,1015.0 1425.0,1015.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="815.0,813.75 835.0,813.75 835.0,722.5 1445.0,722.5 1445.0,1015.0 1425.0,1015.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,190.0 1445.0,190.0 1445.0,1015.0 1425.0,1015.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,1015.0 1445.0,1015.0 1445.0,940.0 2055.0,940.0 2055.0,831.25 2035.0,831.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,1015.0 1445.0,1015.0 1445.0,1524.0 1425.0,1524.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,506.25 2055.0,506.25 2055.0,1032.5 1425.0,1032.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="815.0,813.75 835.0,813.75 835.0,722.5 1445.0,722.5 1445.0,1032.5 1425.0,1032.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,190.0 1445.0,190.0 1445.0,1032.5 1425.0,1032.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,1032.5 1445.0,1032.5 1445.0,940.0 2055.0,940.0 2055.0,831.25 2035.0,831.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,1032.5 1445.0,1032.5 1445.0,1559.0 1425.0,1559.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута «Пакет и сдача» (НПМ + ВПМ) — #1361, D293 (#1393)</tspan>
 </text>
@@ -122,21 +122,23 @@
 <tspan x="963.0" dy="17.5">/ package_report.json</tspan>
 <tspan x="963.0" dy="17.5">qa_package: набор пакетов -&gt; отчёт только для чтения;</tspan>
 <tspan x="963.0" dy="17.5">сверка пары ОКС &lt;-&gt; Ground (geojson_cross) и одного</tspan>
-<tspan x="963.0" dy="17.5">мастера (manifest_cross_master): сосед найден; результат</tspan>
-<tspan x="963.0" dy="17.5">сверки может быть неполным (#1681)</tspan>
-<tspan x="963.0" dy="17.5">cross_passports: пути пакетов -&gt; находки geojson_cross по</tspan>
-<tspan x="963.0" dy="17.5">найденным парам; обязанность ядра, agr validate её не</tspan>
-<tspan x="963.0" dy="17.5">выполняет</tspan>
+<tspan x="963.0" dy="17.5">мастера (manifest_cross_master): расхождение</tspan>
+<tspan x="963.0" dy="17.5">geojson_cross; нечитаемый паспорт geojson_cross_unread в</tspan>
+<tspan x="963.0" dy="17.5">обоих архивах; без пары cross_unpaired (не сверено)</tspan>
+<tspan x="963.0" dy="17.5">(#1681)</tspan>
+<tspan x="963.0" dy="17.5">cross_passports: пути пакетов -&gt; находки по найденным</tspan>
+<tspan x="963.0" dy="17.5">парам ОКС/Ground и список архивов без пары; обязанность</tspan>
+<tspan x="963.0" dy="17.5">ядра, agr validate по одному ZIP её не выполняет</tspan>
 <tspan x="963.0" dy="17.5">cross_masters: пути пакетов -&gt; находки</tspan>
 <tspan x="963.0" dy="17.5">manifest_cross_master; обязанность ядра, agr validate её</tspan>
 <tspan x="963.0" dy="17.5">не выполняет</tspan>
 </text>
-<text x="963.0" y="1311.5" font-size="12" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="12">Дубли вне владельца: 3</tspan>
+<text x="963.0" y="1346.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="963.0" dy="12">Дубли вне владельца: 2</tspan>
 <tspan x="963.0" dy="15.0">Правило проверки: свой писатель ZIP вместо общего _write_zip;</tspan>
 <tspan x="963.0" dy="15.0">охрана jobs/, tools/, src/ (#1377)</tspan>
 </text>
-<text x="963.0" y="1436.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1471.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
 <tspan x="963.0" dy="17.5">Владелец: tools/qa/sintez_checker.py</tspan>
 <tspan x="963.0" dy="17.5">agr checker: ZIP папки -&gt; чекер AGR 1.6.1 в Blender</tspan>
@@ -148,7 +150,7 @@
 <tspan x="963.0" dy="17.5">run: папка, выход -&gt; копия ZIP, запуск чекера, сводка</tspan>
 <tspan x="963.0" dy="17.5">NEW.json; изменение ZIP во время прогона — отказ</tspan>
 </text>
-<text x="963.0" y="1645.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="1680.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
 <rect x="805.0" y="518.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
@@ -163,8 +165,8 @@
 <text x="1597.5" y="713.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1597.5" dy="14">свежее чтение</tspan>
 </text>
-<rect x="1710.0" y="997.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1740.0" y="997.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1710.0" y="1015.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1740.0" y="1015.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1740.0" dy="14">адрес, верх,</tspan>
 <tspan x="1740.0" dy="17.5">превью</tspan>
 </text>
@@ -172,21 +174,24 @@
 <text x="1140.0" y="713.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1140.0" dy="14">GeoJSON ВПМ</tspan>
 </text>
-<rect x="1415.0" y="593.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="593.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="602.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="602.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">запись ZIP</tspan>
 </text>
-<rect x="1720.0" y="887.5" width="60" height="105.0" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="887.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1750.0" dy="14">ZIP +</tspan>
-<tspan x="1750.0" dy="17.5">квитанция;</tspan>
-<tspan x="1750.0" dy="17.5">passed/status</tspan>
-<tspan x="1750.0" dy="17.5">упаковщика</tspan>
-<tspan x="1750.0" dy="17.5">валидатор не</tspan>
-<tspan x="1750.0" dy="17.5">читает</tspan>
+<rect x="1720.0" y="861.25" width="60" height="157.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="861.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">ZIP + отдельный</tspan>
+<tspan x="1750.0" dy="17.5">&lt;ZIP&gt;.delivery.</tspan>
+<tspan x="1750.0" dy="17.5">json (#1682);</tspan>
+<tspan x="1750.0" dy="17.5">V001 проверяет</tspan>
+<tspan x="1750.0" dy="17.5">статус</tspan>
+<tspan x="1750.0" dy="17.5">упаковщика, но</tspan>
+<tspan x="1750.0" dy="17.5">не заменяет</tspan>
+<tspan x="1750.0" dy="17.5">валидацию</tspan>
+<tspan x="1750.0" dy="17.5">архива</tspan>
 </text>
-<rect x="1415.0" y="1260.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="1260.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="1287.0" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="1287.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">те же ZIP</tspan>
 </text>
 </svg>

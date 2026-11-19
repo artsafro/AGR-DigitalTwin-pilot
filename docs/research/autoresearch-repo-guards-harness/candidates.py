@@ -82,7 +82,65 @@ def m0_drop_calls(dg):
     return undo
 
 
-CANDIDATES = {"r1_walk_memo": r1_walk_memo, "m0_drop_calls": m0_drop_calls}
+class LazyScopes:
+    """Mapping view of dg._scopes(tree) computed on the first lookup (t_b1bb763f, R4).
+
+    _findings reads scopes only for a hit; a file without hits never pays the full recursive visit."""
+
+    def __init__(self, tree, build):
+        self.tree, self.build, self.data = tree, build, None
+
+    def __getitem__(self, key):
+        if self.data is None:
+            self.data = self.build(self.tree)
+        return self.data[key]
+
+
+def r4_lazy_scopes(dg):
+    """R4: _scopes(tree) becomes lazy - the visit runs only when _findings looks up a hit's scope."""
+    orig = dg._scopes
+    dg._scopes = lambda tree: LazyScopes(tree, orig)
+
+    def undo():
+        dg._scopes = orig
+    return undo
+
+
+def m1_scope_module(dg):
+    """Mutation check of the parity guard (must FAIL parity): every scope lookup answers <module>."""
+    orig = dg._scopes
+    dg._scopes = lambda tree: {id(n): dg.MODULE for n in ast.walk(tree)}
+
+    def undo():
+        dg._scopes = orig
+    return undo
+
+
+class LazyIntNames:
+    """dg._int_names(tree) computed on the first .get (t_b1bb763f, R5); _udim_hits only calls consts.get."""
+
+    def __init__(self, tree, build):
+        self.tree, self.build, self.data = tree, build, None
+
+    def get(self, key, default=None):
+        if self.data is None:
+            self.data = self.build(self.tree)
+        return self.data.get(key, default)
+
+
+def r5_lazy_int_names(dg):
+    """R5: _int_names(tree) becomes lazy - the full walk runs only when a Name term is looked up."""
+    orig = dg._int_names
+    dg._int_names = lambda tree: LazyIntNames(tree, orig)
+
+    def undo():
+        dg._int_names = orig
+    return undo
+
+
+CANDIDATES = {"r1_walk_memo": r1_walk_memo, "m0_drop_calls": m0_drop_calls,
+              "r4_lazy_scopes": r4_lazy_scopes, "m1_scope_module": m1_scope_module,
+              "r5_lazy_int_names": r5_lazy_int_names}
 
 
 def apply(dg, names):

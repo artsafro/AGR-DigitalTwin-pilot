@@ -88,7 +88,7 @@ def test_npm_uses_exporter_sidecar_and_never_packs_it(tmp_path):
     assert result.returncode == 0, result.stderr
     with zipfile.ZipFile(tmp_path / '0000_Synthetic.zip') as archive:
         assert sorted(archive.namelist()) == ['0000_Synthetic_01.fbx', '0000_Synthetic_Ground.fbx']
-    report = json.loads((tmp_path / 'package_report.json').read_text())
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text())
     assert report['passed'] is False and report['status'] == 'packaged_not_validated'
     assert any('export_meta.json' in row['item'] for row in report['skipped'])
 
@@ -109,7 +109,7 @@ def test_npm_packages_missing_ground_only_in_explicit_diagnostic_mode(tmp_path):
     assert result.returncode == 1, result.stderr
     with zipfile.ZipFile(tmp_path / '0000_Synthetic.zip') as archive:
         assert archive.namelist() == ['0000_Synthetic_01.fbx']
-    report = json.loads((tmp_path / 'package_report.json').read_text())
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text())
     assert report['passed'] is False
     assert any('Ground' in p for p in report['problems'])
 
@@ -199,7 +199,8 @@ def test_binding_before_publication_on_both_paths(tmp_path, monkeypatch, mode, p
     published = []
     link, write = os.link, package_core._write_zip
     def observe(src, dst):
-        published.append(dst)
+        if str(dst).endswith('.zip'):  # #1682: the <zip>.delivery.json receipt is linked too
+            published.append(dst)
         return link(src, dst)
     def swap(folder, archive, target, **kwargs):
         if mode == 'stale_during_write':

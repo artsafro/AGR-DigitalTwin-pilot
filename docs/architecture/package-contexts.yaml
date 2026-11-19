@@ -1,8 +1,8 @@
 # Context map of the package / delivery route, NPM + VPM, #1393 (follow-up of #1392, D293). Source of truth for
 # docs/architecture/package-contexts.excalidraw / .svg. Same schema and generator as contexts.yaml (#1359).
 # Every stage context of package-route.events.yaml is listed here with the same owner (route_map.route_coverage).
-# duplicates: described rows use path:line; the shared rename bypass repeats its function/hash identity from
-# contexts.yaml so it is counted once. No `duplicates` key = no duplicates box.
+# duplicates: described rows use path:line; guarded rows use their function/hash identity.
+# No `duplicates` key = no duplicates box.
 # grid: "col/row" cell of the drawing (all contexts or none; columns >= 1 apart in a row).
 # Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
 title_ru: "Карта контекстов маршрута «Пакет и сдача» (НПМ + ВПМ) — #1361, D293"
@@ -101,9 +101,9 @@ contexts:
       - name: check_delivery_receipt
         contract: "файл, квитанция -> пересчёт хеша; неполная, чужая или устаревшая квитанция — отказ, не обновление; agr validate читает её из <ZIP>.delivery.json / package_report.json"
       - name: qa_package
-        contract: "набор пакетов -> отчёт только для чтения; сверка пары ОКС <-> Ground (geojson_cross) и одного мастера (manifest_cross_master): сосед найден; результат сверки может быть неполным (#1681)"
+        contract: "набор пакетов -> отчёт только для чтения; сверка пары ОКС <-> Ground (geojson_cross) и одного мастера (manifest_cross_master): расхождение geojson_cross; нечитаемый паспорт geojson_cross_unread в обоих архивах; без пары cross_unpaired (не сверено) (#1681)"
       - name: cross_passports
-        contract: "пути пакетов -> находки geojson_cross по найденным парам; обязанность ядра, agr validate её не выполняет"
+        contract: "пути пакетов -> находки по найденным парам ОКС/Ground и список архивов без пары; обязанность ядра, agr validate по одному ZIP её не выполняет"
       - name: cross_masters
         contract: "пути пакетов -> находки manifest_cross_master; обязанность ядра, agr validate её не выполняет"
     duplicates:
@@ -113,13 +113,6 @@ contexts:
         ru: "живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core)"
         status: live-bypass
         step: "#1377"
-      - at: "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
-        rule: delivery-zip
-        issue: "#1377"
-        hash: "c099bec414"
-        ru: "rename_npm_zip: пересобирает НПМ-ZIP с кодом района через zipfile в обход _write_zip, без квитанции сдачи (#1424)"
-        status: live-bypass
-        step: "#1675"
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
         rule: delivery-zip
         issue: "#1377"
@@ -165,7 +158,7 @@ relations:
     ru: "запись ZIP"
   - from: package
     to: validation
-    ru: "ZIP + квитанция; passed/status упаковщика валидатор не читает"
+    ru: "ZIP + отдельный <ZIP>.delivery.json (#1682); V001 проверяет статус упаковщика, но не заменяет валидацию архива"
   - from: package
     to: sintez
     ru: "те же ZIP"

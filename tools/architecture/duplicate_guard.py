@@ -536,8 +536,6 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
 
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
-    ("package-contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
-    ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 

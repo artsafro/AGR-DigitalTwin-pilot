@@ -495,7 +495,7 @@ def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     assert not any(k[0] == 'window-generator' for k in allowed)  # #1405: no grandfathered copies
     assert all(allow.issue.startswith("#") and allow.copies >= 1 for allow in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
-    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
+    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 15   # #1675 migrates the SYNTEZ rename
     assert len([k for k in jobs if k[0] == "udim-tile"]) == 34   # #1531 removes two live copies; #1370 retains six historical OBR22 copies
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)

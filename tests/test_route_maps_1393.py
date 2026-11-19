@@ -247,17 +247,17 @@ def test_package_map_council_station3_edits_1673():
     assert "qa_package" not in {f["name"] for f in cmap["shared_kernel"]["functions"]}
     assert {"qa_package", "cross_passports", "cross_masters", "delivery_receipt",
             "check_delivery_receipt"} <= names(ctx["package"])
-    assert "сосед найден; результат сверки может быть неполным" in next(
-        f["contract"] for f in ctx["package"]["functions"] if f["name"] == "qa_package")
+    qa = next(f["contract"] for f in ctx["package"]["functions"] if f["name"] == "qa_package")
+    assert all(key in qa for key in ("geojson_cross_unread", "cross_unpaired", "manifest_cross_master"))
     # packers call address_meta_path directly (package_npm.py:28, package_vpm.py:83)
     assert "address_meta_path" in names(ctx["export-meta"]) and "load_package_meta" not in names(ctx["export-meta"])
     # sintez owner = agr checker route command
     assert ctx["sintez"]["owner"] == "tools/qa/sintez_checker.py"
-    # ZIP writers: rename bypass carries #1675 in both maps; Vatutino driver is historical
+    # The migrated rename is no longer a bypass; the old Vatutino driver is historical.
     dups = {r["at"]: r for r in ctx["package"]["duplicates"]}
     shared = {r["at"]: r for c in _contexts()["contexts"] for r in c.get("duplicates", [])}
     rename = "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
-    assert dups[rename]["step"] == shared[rename]["step"] == "#1675"
+    assert rename not in dups and rename not in shared
     drv = dups["jobs/VATUTINO-SITE/run_delivery.py::main"]
     assert (drv["status"], drv["hash"]) == ("historical", "bc783edf3f") and "не этап package" in drv["ru"]
     v003 = [r for r in [*ctx["sintez"]["duplicates"], *shared.values()] if "run_agr_checker_v003" in r["at"]]
@@ -265,7 +265,9 @@ def test_package_map_council_station3_edits_1673():
     # hotspots
     hot = {h["id"]: h for h in events["hotspots"]}
     assert hot["shell-zip-writers"]["stage"] == "package" and "run_building.sh:31" in hot["shell-zip-writers"]["ru"]
-    assert hot["upload-rename-bypass"]["stage"] == "upload"
+    assert "upload-rename-bypass" not in hot
+    upload = _stage(events, "upload")
+    assert "D348" in upload["rules"] and ".delivery.json" in upload["event_ru"]
     assert (hot["customer-line-missing"]["stage"], hot["customer-line-missing"]["status"]) == ("customer", "open")
     assert "в проверенных отчётах сдачи" in hot["customer-line-missing"]["ru"].lower()
     assert "заморож" not in hot["legacy-packagers"]["ru"] and "2 live-bypass" in hot["legacy-packagers"]["ru"]
@@ -275,16 +277,6 @@ def test_package_map_council_station3_edits_1673():
     # package-vpm binds the FBX since #1679 (tools/derive/package_vpm.py export_binding)
     vpm = next(b for b in _stage(events, "package")["branches"] if b["id"] == "vpm")
     assert "пока не сверяет" not in vpm["ru"] and "packaged_not_validated" in vpm["ru"]
-
-
-def test_package_context_registers_vatutino_rename_as_live_bypass():
-    package = next(c for c in _maps()["package-contexts"]["contexts"] if c["id"] == "package")
-    at = "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
-    rows = [r for r in package["duplicates"] if r["at"] == at]
-    shared = next(r for c in _contexts()["contexts"] for r in c.get("duplicates", []) if r["at"] == at)
-    assert len(rows) == 1
-    assert {k: rows[0][k] for k in ("status", "rule", "hash")} == {k: shared[k] for k in ("status", "rule", "hash")}
-    assert rows[0]["status"] == "live-bypass"
 
 
 def test_package_route_covers_export_meta_packagers_checker_and_delivery():

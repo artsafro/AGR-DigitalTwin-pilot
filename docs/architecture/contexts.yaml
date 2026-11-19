@@ -523,13 +523,6 @@ contexts:
         ru: "живой локальный писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py; паритет байтов не означает вызов владельца"
         status: live-bypass
         step: "#1377"
-      - at: "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip"
-        rule: delivery-zip
-        issue: "#1377"
-        hash: "c099bec414"
-        ru: "переименование НПМ-ZIP с кодом района: живой этап «загрузка» маршрута пакета, пишет ZIP сам, а не через владельца (#1424)"
-        status: live-bypass
-        step: "#1675"
       - at: "jobs/VATUTINO-SITE/run_delivery.py::main"
         rule: delivery-zip
         issue: "#1377"

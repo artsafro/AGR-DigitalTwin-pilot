@@ -1231,6 +1231,81 @@ def _boundary_rings(verts: list, boundary: list[tuple[int, int]]) -> list[list[t
     return rings
 
 
+def _closed_skirt_landings(polys, top, edge_count, directed, perimeter):
+    """Map directed top-boundary edges to their closed non-top chain (#1693).
+
+    A landing and its candidate rim are in the same face-edge component by
+    construction: each joins the same chain across a two-face edge.
+    """
+    walls_by_edge = {}
+    for face, poly in enumerate(polys):
+        if face not in top:
+            for a, b in zip(poly, (*poly[1:], poly[0])):
+                key = (a, b) if a < b else (b, a)
+                walls_by_edge.setdefault(key, []).append(face)
+
+    visited = set()
+    closed_landings = {}
+    for a, b in perimeter:
+        key = (a, b) if a < b else (b, a)
+        walls = walls_by_edge.get(key, ())
+        if len(walls) != 1 or walls[0] in visited:
+            continue  # boundary edge already has exactly one top-face incidence
+        seed = walls[0]
+        visited.add(seed)
+        stack = [seed]
+        landings = []
+        closed = True
+        while stack:
+            face = stack.pop()
+            poly = polys[face]
+            for i, j in zip(poly, (*poly[1:], poly[0])):
+                edge = (i, j) if i < j else (j, i)
+                walls = walls_by_edge[edge]
+                if len(walls) + edge_count.get(edge, 0) != 2:
+                    closed = False
+                elif len(walls) == 1:
+                    landings.append(directed[edge])
+                elif walls[0] == walls[1]:
+                    closed = False  # two occurrences in one polygon are not two faces
+                else:
+                    other = walls[1] if walls[0] == face else walls[0]
+                    if other not in visited:
+                        visited.add(other)
+                        stack.append(other)
+        if closed:
+            closed_landings.update((edge, seed) for edge in landings)
+    return closed_landings
+
+
+def _skirt_landing_covers(verts, rim, landings) -> bool:
+    """Do opposite, collinear landings on this same chain cover the entire rim in XY?"""
+    i, j = rim
+    x0, y0 = verts[i][:2]
+    dx, dy = verts[j][0] - x0, verts[j][1] - y0
+    length = math.hypot(dx, dy)
+    tol = _SKIRT_XY_TOL
+    if length <= tol or not math.isfinite(length):
+        return False
+    ux, uy = dx / length, dy / length
+    spans = []
+    for a, b in landings:
+        ax, ay = verts[a][0] - x0, verts[a][1] - y0
+        bx, by = verts[b][0] - x0, verts[b][1] - y0
+        if abs(ax * uy - ay * ux) > tol or abs(bx * uy - by * ux) > tol:
+            continue
+        hi, lo = ax * ux + ay * uy, bx * ux + by * uy
+        lo, hi = max(lo, 0.0), min(hi, length)
+        if lo < hi:  # opposite direction with nonzero overlap
+            spans.append((lo, hi))
+    reach = 0.0
+    for lo, hi in sorted(spans):
+        if lo > reach + tol:
+            return False
+        reach = max(reach, hi)
+    return reach >= length - tol
+
+
 def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     """``(status, depth)`` of the Ground perimeter skirt (GND-03), or ``None`` when unmeasurable.
 
@@ -1239,7 +1314,8 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
     straight down. Only outer boundary rings of every component count as perimeter; inner holes
     (including building cut-outs) are excluded [D251]; rings sharing a welded vertex are split there
-    by ``_boundary_rings`` (#1224). Under every outer edge the mesh must carry
+    by ``_boundary_rings`` (#1224). Interior step rims paired through a closed wall chain are
+    not perimeter (#1693). Under every outer edge the mesh must carry
     edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
     perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
     The drop is measured per perimeter edge
@@ -1278,14 +1354,14 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     materials = shape.get("polygon_material")
     if materials is not None and (not isinstance(materials, list) or len(materials) != len(polys)):
         return "fail", 0.0
-    top = []
+    top = set()
     for idx, p in enumerate(polys):
         nx, ny, nz = _polygon_normal(verts, p)
         if nz <= _SKIRT_UP_EPS * math.hypot(nx, ny, nz):
             continue
         if materials is not None and str(materials[idx]).endswith("_Skirt"):
             continue
-        top.append(p)
+        top.add(idx)
     if not top:
         return "unmeasurable", None
 
@@ -1295,7 +1371,9 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     # different component's hole is still an outer boundary of its own component).
     edge_count: dict[tuple[int, int], int] = {}
     directed: dict[tuple[int, int], tuple[int, int]] = {}
-    for p in top:
+    for face, p in enumerate(polys):
+        if face not in top:
+            continue
         n = len(p)
         for k in range(n):
             a, b = p[k], p[(k + 1) % n]
@@ -1321,6 +1399,7 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
             perimeter.extend(ring)
     if not perimeter:
         return "fail", 0.0
+    landings = _closed_skirt_landings(polys, top, edge_count, directed, perimeter)
 
     # every mesh edge with an XY extent (vertical edges have none), on a uniform XY grid; the skirt
     # bottom lies under the perimeter XY but may span several collinear perimeter edges (#1133)
@@ -1347,6 +1426,14 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
         for c in _skirt_cells(seg[0], seg[1], seg[3], seg[4], cell):
             grid.setdefault(c, []).append(s)
 
+    # Local XY candidates only: do not scan an entire closed skirt chain for each rim edge.
+    landing_grid: dict[tuple[int, int], list[tuple[int, int]]] = {}
+    for a, b in landings:
+        ax, ay = verts[a][:2]
+        bx, by = verts[b][:2]
+        for c in _skirt_cells(ax, ay, bx, by, cell):
+            landing_grid.setdefault(c, []).append((a, b))
+
     best = math.inf
     for i, j in perimeter:
         vi, vj = verts[i], verts[j]
@@ -1354,10 +1441,19 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
             drop = 0.0  # degenerate perimeter edge: no downward skirt
         else:
             near: set[int] = set()
+            near_landings: set[tuple[int, int]] = set()
+            chain = landings.get((i, j))
             for cx, cy in _skirt_cells(float(vi[0]), float(vi[1]), float(vj[0]), float(vj[1]), cell):
                 for ox in range(-2, 3):
                     for oy in range(-2, 3):
-                        near.update(grid.get((cx + ox, cy + oy), ()))
+                        c = cx + ox, cy + oy
+                        near.update(grid.get(c, ()))
+                        if chain is not None:
+                            near_landings.update(landing_grid.get(c, ()))
+            if chain is not None and _skirt_landing_covers(
+                verts, (i, j), (edge for edge in near_landings if landings[edge] == chain)
+            ):
+                continue
             drop = _skirt_edge_drop(vi, vj, [segs[s] for s in near])
         if drop < 0.0:
             drop = 0.0

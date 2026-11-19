@@ -103,7 +103,7 @@ stages:
     rules:
       - D220
       - D223
-      - D345
+      - D350
       - D011
       - D016
     evidence:
@@ -167,7 +167,7 @@ stages:
     rules:
       - D104
       - D220
-      - D347
+      - D352
     evidence:
       - tools/qa/sintez_checker.py
       - docs/research/sintez-agr-checker-dissection.md
@@ -178,8 +178,8 @@ stages:
     rules:
       - D104
       - D152
-      - D345
-      - D347
+      - D350
+      - D352
     evidence:
       - .agents/skills/validate-delivery/SKILL.md
       - docs/deliveries/vatutino-site-2026-11-09.md
@@ -194,12 +194,13 @@ stages:
       - AGENTS.md
       - docs/procedure/TASK_TO_MODEL.md
   - id: upload
-    event_ru: "Артём загружает архив в СИНТЕЗ: код территории и FNO выдаёт СИНТЕЗ; переименование под код пересобирает ZIP, его SHA-256 меняется"
+    event_ru: "Артём загружает архив в СИНТЕЗ: код территории и FNO выдаёт СИНТЕЗ; переименование НПМ-архива использует общий писатель ZIP; <ZIP>.delivery.json хранит путь и SHA-256 исходника и SHA-256 итогового ZIP"
     actor: artem
     context: sintez
     rules:
       - D235
       - D220
+      - D348
     evidence:
       - jobs/VATUTINO-SITE/npm_code.py
       - docs/deliveries/vatutino-site-2026-11-09.md
@@ -211,7 +212,7 @@ stages:
       - agr checker
     rules:
       - D104
-      - D347
+      - D352
     evidence:
       - tools/qa/sintez_checker.py
       - docs/research/sintez-agr-checker-dissection.md
@@ -223,7 +224,7 @@ stages:
       - D163
       - D220
       - D300
-      - D346
+      - D351
     evidence:
       - docs/domain/areas/package.md
 hotspots:
@@ -257,7 +258,7 @@ hotspots:
     ru: "Эталон — GeoJSON заказчика; export.geojson_write не готов к сдаче. package-vpm пишет [null, null], не используя placement.insertion_xy; прогон КПП1 — с --no-geojson. В проверенных JSON маршрута точка не передана"
     rules:
       - D220
-      - D345
+      - D350
     evidence:
       - tools/derive/package_vpm.py
       - jobs/KPP1/package-1361/REPORT.md
@@ -268,25 +269,19 @@ hotspots:
       - jobs/KPP1/scripts/run_agr_checker.py
       - tools/blender/sintez_checker.py
       - docs/deliveries/vatutino-site-2026-11-09.md
-  - id: upload-rename-bypass
-    stage: upload
-    ru: "Переименование под код СИНТЕЗ пересобирает ZIP мимо package_core (live-bypass, npm_code.py) до #1675; квитанция сдачи не пишется"
-    evidence:
-      - jobs/VATUTINO-SITE/npm_code.py
-      - docs/architecture/contexts.yaml
   - id: customer-line-missing
     stage: customer
-    ru: "В проверенных отчётах сдачи строки «передано заказчику, <дата>» пока нет; по D346 агент пишет её только по слову Артёма"
+    ru: "В проверенных отчётах сдачи строки «передано заказчику, <дата>» пока нет; по D351 агент пишет её только по слову Артёма"
     status: open
     rules:
-      - D346
+      - D351
     evidence:
       - docs/deliveries/vatutino-site-2026-11-09.md
   - id: customer-handoff-record
     stage: customer
-    ru: "В проверенных записях (STATE/job/deliveries) факт передачи заказчику не найден. D220 и D300 не задавали место записи; по новому правилу D346 отметка в отчёте сдачи, но это не доказательство состоявшейся передачи"
+    ru: "В проверенных записях (STATE/job/deliveries) факт передачи заказчику не найден. D220 и D300 не задавали место записи; по новому правилу D351 отметка в отчёте сдачи, но это не доказательство состоявшейся передачи"
     rules:
-      - D346
+      - D351
     evidence:
       - jobs/KPP1/STATE.md
       - jobs/VATUTINO-SITE/site-route-20261109.md

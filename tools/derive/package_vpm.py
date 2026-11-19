@@ -9,10 +9,10 @@ Usage: python tools/derive/package_vpm.py <package_dir> <textures_dir> [--object
 <package_dir> holds SM_<Address>.fbx (export_vpm). Export metadata supplies the address, Z top and thumbnail,
 and must bind each packed FBX by SHA-256; re-export if no recorded hash is available.
 GeoJSON follows reg App.3 (p.51-55): literal ObjectFeature, exact key order;
-unknown OKS values stay "" / null and are listed as blockers in package_report.json, never invented
+unknown OKS values stay "" / null and are listed as blockers in <zip>.delivery.json, never invented
 (conflicts #2). --no-geojson (user decision 2026-10-07 [D224]): ZIP holds FBX + PNG only; --object is then optional.
 object.json: {"name": str, "placement": Placement, "glasses": {material: {...}} (optional, default: the KPP1
-clear-glass proposal)}. The ZIP and package_report.json must not exist yet (new version, no overwrite).
+clear-glass proposal)}. The ZIP and <zip>.delivery.json must not exist yet (new version, no overwrite).
 """
 import argparse
 import base64
@@ -75,7 +75,7 @@ def main(argv=None):
     ap.add_argument('--meta', help='explicit export metadata (required when several exporter sidecars exist)')
     ap.add_argument("--object", help="object.json with name, placement, glasses (required unless --no-geojson)")
     ap.add_argument("--no-geojson", action="store_true")
-    ap.add_argument("--deferred-note", default=DEFAULT_NOTE, help="package_report blocker text with --no-geojson")
+    ap.add_argument("--deferred-note", default=DEFAULT_NOTE, help="delivery report blocker text with --no-geojson")
     a = ap.parse_args(argv)
     pkg, tex = a.package_dir, a.textures_dir
     if not a.no_geojson and not a.object:
@@ -87,9 +87,9 @@ def main(argv=None):
     if not os.path.isfile(os.path.join(pkg, f"{stem}.fbx")):
         raise ValueError(f"{stem}.fbx missing in {pkg}")
     zpath = os.path.join(pkg, "..", f"{stem}.zip")
-    rpath = os.path.join(pkg, "..", "package_report.json")
+    rpath = zpath + ".delivery.json"  # per archive, never a parent-wide report (#1682)
     gpath = os.path.join(pkg, f"{stem}.geojson")
-    for p in (zpath, rpath, zpath + '.partial'):
+    for p in (zpath, rpath, rpath + '.partial', zpath + '.partial'):
         if os.path.lexists(p):
             raise FileExistsError(f"output {p} already exists; choose a new version")
     if a.no_geojson and os.path.lexists(gpath):
@@ -158,8 +158,7 @@ def main(argv=None):
         if obj['placement'].height_system == 'unknown':
             blockers.append('placement.height_system unknown; absolute datum unconfirmed')
     report.update(package_core.delivery_receipt(zpath))
-    with open(rpath, "x", encoding="utf-8") as fh:
-        json.dump(report, fh, ensure_ascii=False, indent=1)
+    package_core.write_delivery_report(zpath, report)
     print(json.dumps({k: v for k, v in report.items() if k != "files"}, ensure_ascii=False, indent=1),
           len(report["files"]), "files")
     return 0
