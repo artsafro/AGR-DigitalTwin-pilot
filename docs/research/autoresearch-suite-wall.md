@@ -1,8 +1,8 @@
 # Autoresearch: merge-gate wall time (#1615)
 
-Status: one valid idle baseline is under 30 minutes; the first confirmation
-overlapped a merge batch and is invalid. Two valid unchanged-corpus confirmations
-are still needed. No optimization or causal speed-up claimed.
+Status: the unchanged `c62ceddd` merge-gate corpus met the idle-slot target in
+three valid runs (median **22:58**). Both confirmations matched the baseline's
+27,454 node outcomes exactly. No optimization or causal speed-up claimed.
 
 ## Frozen contract (before optimization)
 
@@ -90,10 +90,12 @@ contract measures the entire command including uv/startup/collection/teardown.
 | B1 (`baseline-002`) | Same test corpus, command and observer; repair subprocess PATH only | **1487.8959172 s (24.7983 min)**; exit 0 | 27454 nodes; 27218 passed / 187 skipped / 49 xfailed | valid baseline; target already reached, no optimization needed |
 | C1 (`confirmation-001`) | Identical corpus, command, observer and repaired PATH | 968.4603811 s before abort; exit 1 | incomplete, rejected | invalid: `merge20261117red3` acquired a slot during the measurement |
 | C2 (`confirmation-002`) | Sequential after valid C1 | not run | not measured | launcher stopped after invalid C1 |
+| C3 (`confirmation-003`) | Unchanged corpus in reserved drained window | **1327.0908305 s**; exit 0 | empty diff vs B1 | valid; included |
+| C4 (`confirmation-004`) | Sequential after valid C3 and exact B1 parity | **1377.5969055 s**; exit 0 | empty diff vs B1 | valid; included |
 
 B0 is below 1800 seconds as an **invalid observation only**, not a target success,
-retained optimization, or parity reference. No optimization has been implemented,
-retained or dropped yet. Baseline/final table and parity diff require confirmations.
+retained optimization, or parity reference. No optimization was proposed or
+retained: B1 already met the target on the unchanged corpus.
 
 ### B1 validated and unchanged-corpus confirmations
 
@@ -105,8 +107,8 @@ retained or dropped yet. Baseline/final table and parity diff require confirmati
 - `git diff c62ceddd HEAD -- tests src pyproject.toml uv.lock conftest.py` is empty:
   no project optimization, test selection or assertion change. The existing main
   corpus already achieves the target in the valid idle baseline; stop proposing
-  optimizations and confirm the same corpus twice. The three-run final median will
-  use B1 + C1 + C2, not the rejected B0. This is confirmation, not an alleged 5% gain.
+  optimizations and confirm the same corpus twice. The three-run final median uses
+  B1 + C3 + C4; C1 was rejected and C2 never ran. This is confirmation, not a gain.
 - Current fetched main `db55afb4` has no wall-contract file; therefore documentation
   acceptance is not already met by main. Do not call this performance improvement
   caused by this branch, nor compare different main revisions as parity proof.
@@ -124,14 +126,47 @@ retained or dropped yet. Baseline/final table and parity diff require confirmati
   All five referenced hashes matched on resume. HEAD and source signature
   stayed unchanged. Launcher and claimed interpreters have exited. Do not
   include the partial wall time in the median or treat it as a speed-up.
-- The approved quiet window has expired. Obtain a new reserved, drained window
-  before launch; use fresh run names (`confirmation-003` and `confirmation-004`)
-  and preserve existing evidence. Verify both receipts and exact B1 parity
-  before publishing a final median. The frozen `c62ceddd` corpus is not the
-  fetched `3092f6ca` main corpus; no current-main timing or parity is inferred.
+- The next reserved window ran from 23:55 CET on November 18 to about 03:30 CET
+  on November 19. C3 waited for the idle CPU check; C4 acquired a fresh slot
+  after C3 exited and matched B1. Slot samples for the commands span 00:51:33–01:13:40
+  and 01:14:10–01:37:07 CET, respectively, both inside that window.
 - Affected tests rerun before launch:
   `uv run python -m unittest discover -s tmp/wall_harness -p 'probe_*.py' -v`:
   **6 passed** in 7.434 s. No project module changed.
+
+## Final measurements and parity
+
+| Evidence | Whole-command wall | Wait before slot (excluded) | Idle CPU | Passed / skipped / xfailed |
+| --- | ---: | ---: | ---: | ---: |
+| Historical issue reference (not a matched baseline) | 58:37 pytest summary only | — | — | — |
+| B1 idle baseline (`bb42920d`) | 1487.896 s (24:48) | 2180.113 s | 8.23% | 27218 / 187 / 49 |
+| C3 idle confirmation (`399ff916`) | 1327.091 s (22:07) | 3384.466 s | 9.47% | 27218 / 187 / 49 |
+| C4 idle confirmation (`399ff916`) | 1377.597 s (22:58) | 24.904 s | 8.49% | 27218 / 187 / 49 |
+| **Final median (B1 + C3 + C4)** | **1377.597 s (22:58)** | — | — | **27218 / 187 / 49** |
+
+All three measurements are below 1800 s. This demonstrates idle-slot runtime
+on the frozen `c62ceddd` corpus, not speed-up relative to 58:37, and not total
+merge latency under contention. The fetched main `cc99bfdb` has a different
+test corpus; this research does not certify its timing or outcomes. Branch
+changes from `c62ceddd` touch only this report and its evidence directory;
+`merge_chain`, `merge_batch`, tests, assertions and markers were not changed.
+
+The final audit rehashed all 18 referenced artifacts, verified four equal worker
+collections per run and replayed the frozen phase validator to reproduce each sorted
+TSV. All 255 / 232 / 239 slot samples showed one holder owned by this card. Each
+TSV has 27,454 rows with the same SHA-256:
+`51e8655c16f0eaee17cc4fe891852fd3a4cc5fef4a26213426f043ec24f28d48`.
+
+```bash
+cd C:/x/autoresearch-suite-wall
+diff -u baseline-002.nodes.tsv confirmation-003.nodes.tsv
+diff -u baseline-002.nodes.tsv confirmation-004.nodes.tsv
+```
+
+Both commands exited 0 and wrote zero diff lines. Each comparison includes
+passed, skipped and xfailed outcomes, not just collection IDs or totals.
+Raw ledgers and samples remain in that directory. The small result receipts
+are mirrored in [the harness directory](autoresearch-suite-wall-harness/).
 
 
 ### B0 diagnosis and environment-only repair (2026-11-17)
