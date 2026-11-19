@@ -20,3 +20,17 @@ def test_unresolved_types_list_every_matched_opening():
 def test_complete_source_label_is_preserved():
     label = FAMILY + ' ' + TYPE
     assert runpy.run_path(str(HOOK))['registry_types']({19: label + ' [22038485]'}) == {19: label}
+
+
+def test_plan_requires_a_new_output_path(tmp_path):
+    write_plan = runpy.run_path(str(HOOK))['write_plan']
+    floor = tmp_path / 'floor.json'
+    original = b'{"opening_sources": []}\r\n'
+    floor.write_bytes(original)
+    with pytest.raises(FileExistsError):
+        write_plan(floor, {}, [])
+    assert floor.read_bytes() == original
+
+    output = tmp_path / 'plan.json'
+    write_plan(output, {'type': TYPE}, [])
+    assert output.read_bytes() == ('{"report": {"type": "' + TYPE + '"}, "elements": []}').encode('utf8')

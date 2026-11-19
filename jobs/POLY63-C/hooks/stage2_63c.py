@@ -105,8 +105,14 @@ def build(helper, dump, crop, registry, floor, standard, output):
         caps.append((cap,sill,key)); els.append(dict(name=f'CAPSULE_63C_{i:03}',opening=i,collection='Stage2_Capsules',verts=cap['verts'],faces=cap['faces'],mats=[a.capsule_core.MATERIAL]*len(cap['faces'])))
         rows.append(dict(opening=i,type=typ,source=key,w=W,h=H,reveal_m=o['depth'],frame_depth_m=fd))
     report=dict(rows=rows,openings={'ok':len(rows)},capsules={'made':len(caps)},baskets={'count':0,'decision':'[D353]'}, types=dict(Counter(r['type'] for r in rows)))
-    Path(output).write_text(json.dumps(dict(report=report,elements=els),ensure_ascii=False),encoding='utf8')
+    write_plan(output, report, els)
     print(len(els),report['types'],Counter(r['frame_depth_m'] for r in rows))
+
+
+def write_plan(output, report, elements):
+    payload = json.dumps(dict(report=report, elements=elements), ensure_ascii=False)
+    with Path(output).open('x', encoding='utf8') as stream:
+        stream.write(payload)
 
 
 if __name__ == '__main__':
