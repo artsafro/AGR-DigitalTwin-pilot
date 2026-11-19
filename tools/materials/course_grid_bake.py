@@ -9,6 +9,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from adapters.max.agr_tools.udimtile_core import tile_origin
 
 ROLES = frozenset(('layout','references','chart','placements_1001','placements_1002',
     'base_fields','historical_fields','actual_fields','boundary_report',
@@ -92,7 +93,7 @@ def bake(config, output):
     for face in plan['faces']:
         if not face['joint']:continue
         group,tile=member[tuple(face['patch'])];key=(group,tile)
-        groups.setdefault(key,dict(faces=[],reference=face))['faces'].append(Polygon((np.asarray(face['uv'])-[tile-1001,0])*T))
+        groups.setdefault(key,dict(faces=[],reference=face))['faces'].append(Polygon((np.asarray(face['uv'])-tile_origin(tile))*T))
     if set(pg for _,pg in groups)!=set(config['tiles']):raise ValueError('missing planned tile')
     for g in groups.values():g['shape']=unary_union(g['faces'])
     def sample(image,uv,wrap=False):

@@ -1,0 +1,95 @@
+{
+ "schema": "window-standard/1",
+ "note": "Window standard of the library (#1024 K2, branch J). Values measured in Win_Typical.max v001 (lab L10, job 20261106-020727-ce514480, docs/experiments/win.generate.md) and the owner answers 06.11.2026 (ANSWERS-2026-11-06): families F100 windows (57 x 100, mullion/transom 50 x 100), F73 doors, F58 separately (windows with a sill flashing, balcony doors); glass 80 mm from the frame face as in the source; WT-07 and WT-10 are NOT merged (different subdivision); the face axis is kept per type. Read by adapters/max/agr_tools/windowgen_core.py (win.generate) and winplace_core.py (win.place). Lengths in metres. Confirmation of the look only by the preview sheet (confirmations.json).",
+ "source": {
+  "file": "Win_Typical.max v001 (Google Drive AGR-assets/windows/v001, read-only copy in the job folder)",
+  "sha256": "59a44f670b392caffd4a09a7082376afe94322da3c2939de77eabda27987a777",
+  "job": "20261106-020727-ce514480",
+  "evidence": "GeoAGR-private lab-exp/10-L10 work/lab-experiments/win.generate/standard.json"
+ },
+ "families": {
+  "F100": {
+   "description": "окна: коробка 100 мм, лицо 57 мм, импост и ригель 50 x 100 мм (Окно_Большое, Балкон_Окно)",
+   "face_m": 0.057,
+   "face_top_m": 0.057,
+   "face_bottom_m": 0.057,
+   "impost_m": 0.05,
+   "depth_m": 0.1,
+   "glass_from_face_m": 0.08,
+   "measured": {"types": ["WT-06", "WT-07", "WT-10", "WT-11", "WT-12", "WT-17", "WT-18", "WT-19", "WT-21"], "glass_mid_mm": [70.4, 80.4]}
+  },
+  "F73": {
+   "description": "входные двери: коробка 73 мм, лицо 54 мм, импост 54 мм; верх и низ коробки методом L10 не разрешены — низ двери берётся из источника (порог)",
+   "face_m": 0.054,
+   "face_top_m": 0.054,
+   "face_bottom_m": null,
+   "impost_m": 0.054,
+   "depth_m": 0.073,
+   "glass_from_face_m": 0.0334,
+   "measured": {"types": ["WT-13", "WT-14", "WT-15", "WT-16", "WT-22", "WT-23", "WT-24"], "glass_mid_mm": [33.4, 43.4]}
+  },
+  "F58": {
+   "description": "окна с отливом, балконные двери V3, дверь V2: рама 58 мм, лицо 65 мм, низ 125 мм, импосты-пары 145 мм, створка утоплена на 10 мм",
+   "face_m": 0.065,
+   "face_top_m": 0.065,
+   "face_bottom_m": 0.125,
+   "impost_m": 0.145,
+   "depth_m": 0.058,
+   "glass_from_face_m": 0.0384,
+   "measured": {"types": ["WT-01", "WT-03", "WT-04", "WT-05", "WT-08", "WT-09", "WT-20"], "glass_mid_mm": [38.4]}
+  }
+ },
+ "role_family": {
+  "window": "F100",
+  "curtain": "F100",
+  "balcony_block": "F58",
+  "door": "F73",
+  "door_system": "F73",
+  "gate": "F73",
+  "revolving_door": "F73"
+ },
+ "limits_m": {
+  "window": {"w": [0.3, 6.0], "h": [0.3, 6.0]},
+  "curtain": {"w": [0.5, 12.0], "h": [0.5, 12.0]},
+  "balcony_block": {"w": [0.8, 4.0], "h": [1.8, 3.5]},
+  "door": {"w": [0.6, 3.0], "h": [1.8, 3.5]},
+  "door_system": {"w": [1.0, 6.0], "h": [1.8, 4.0]},
+  "gate": {"w": [2.0, 8.0], "h": [2.0, 6.0]},
+  "revolving_door": {"w": [1.5, 5.0], "h": [2.0, 4.0]}
+ },
+ "criteria": {
+  "min_glass_side_m": 0.1,
+  "apply_tol_m": 0.03,
+  "same_tol_m": 0.02,
+  "neighbour_gap_m": 0.4,
+  "outer_snap_m": 0.15,
+  "occurrences_min": 1
+ },
+ "face_axis_default": "-y",
+ "types": {
+  "WT-01": {"family": "F58", "face_axis": "-y"},
+  "WT-02": {"family": "F100", "face_axis": "-y", "applicable": false, "why": "стандартный профиль неприменим: нет задней плоскости рамы и стекла, геометрия до 957 мм в глубину, лицо 57/143 мм (L10)"},
+  "WT-03": {"family": "F58", "face_axis": "-y"},
+  "WT-04": {"family": "F58", "face_axis": "-y"},
+  "WT-05": {"family": "F58", "face_axis": "-y"},
+  "WT-06": {"family": "F100", "face_axis": "-y"},
+  "WT-07": {"family": "F100", "face_axis": "-y"},
+  "WT-08": {"family": "F58", "face_axis": "-y"},
+  "WT-09": {"family": "F58", "face_axis": "-y"},
+  "WT-10": {"family": "F100", "face_axis": "-y"},
+  "WT-11": {"family": "F100", "face_axis": "-y"},
+  "WT-12": {"family": "F100", "face_axis": "-y"},
+  "WT-13": {"family": "F73", "face_axis": "-y"},
+  "WT-14": {"family": "F73", "face_axis": "-y"},
+  "WT-15": {"family": "F73", "face_axis": "-y"},
+  "WT-16": {"family": "F73", "face_axis": "-y"},
+  "WT-17": {"family": "F100", "face_axis": "-y"},
+  "WT-18": {"family": "F100", "face_axis": "-y"},
+  "WT-19": {"family": "F100", "face_axis": "-y"},
+  "WT-20": {"family": "F58", "face_axis": "-y"},
+  "WT-21": {"family": "F100", "face_axis": "-y"},
+  "WT-22": {"family": "F73", "face_axis": "-y"},
+  "WT-23": {"family": "F73", "face_axis": "-y"},
+  "WT-24": {"family": "F73", "face_axis": "-y"}
+ }
+}

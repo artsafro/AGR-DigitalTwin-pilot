@@ -81,7 +81,7 @@ for this stage on a new site; record the current manual/job route and evidence r
 | 1 — `sources` | `agr inspect`, `dt index-pdf`; copied SPOZU DWG → DXF intake with `tools/source/inspect_ground_dxf.py`, nested blocks/hatches/legends, coverings and planting sheets/specs inventoried. | Existing intake routes; source authority must be explicit. |
 | 2 — `zero` | Read boundary and project ±0.000 from PZU/vertical planning or supplied relief; record area/height provenance with `src/dt_ai/core/heights.py` as arithmetic support. | **RED**: no boundary/zero command; inspect drawings and ask if missing or conflicting. |
 | 3 — `surfaces` | Build flat Ground by coverings/hatches → material IDs; method C layered cake, nominal 6 mm offsets; preserve plot holes/contours, curbs, ramps, steps and walls. Use node R5 and model-ground in the chosen DCC. | **RED**: no generic coverings builder; job DCC construction. Hatch background colour is not line colour. |
-| 4 — `quads` | Resolve triangles/seams/insets on flat Ground, retain quads where possible; record topology and contour checks. `agr ground` is the `dt ground v015` alias, not a new-site builder. | Vatutino-only replay; new-site cuts/pairing remain job DCC work, not automatic adoption of D157/D193 exceptions. |
+| 4 — `quads` | Resolve triangles/seams/insets on flat Ground, retain quads where possible; record topology and contour checks. `agr ground site SPEC NEW_OUT` builds any site in the D293 order (flat Ground → UDIM = ID → projection → skirt, #1406); `agr ground` without a step stays the frozen `dt ground v015` replay. | Vatutino-only replay; new-site cuts/pairing remain job DCC work, not automatic adoption of D157/D193 exceptions. |
 | 5 — `textures` | Assign textures by approved ID; seamless tiling UV islands/UDIM, same finish aligned across boundaries; measure density/padding, inspect seams. | **RED**: no generic flat Ground ID/UV/texturing command; unwrap in DCC, existing job texture scripts are precedents. |
 | 6 — `relief` | Project the already textured flat Ground onto source relief (Z-only, preserve XY/IDs/UV and layer offsets), then handle local level changes. Conform/BVH ray projection in chosen DCC with model-ground invariants; record projection misses and face-centre checks. | **RED**: no generic projection command. `agr ground` / `dt ground v015` are Vatutino-only and build relief before coverings; not the D293 new-site route. Flat only if confirmed by source/user, not by absence of marks. |
 | 7 — `skirt` | Fix textures after projection; extrude every outer component perimeter ≥1 m down, inner holes excluded [D251]; VPM skirt placeholders averaged colour, 256×256, opaque. Read back every outer edge's drop. | `agr ground` covers its frozen Vatutino producer only; on a new site DCC work, inspect steep strips rather than assume skirt presence proves depth. |
@@ -145,8 +145,8 @@ for this stage on a new site; record the current manual/job route and evidence r
 
 ## Known gaps (do not assume a tool exists)
 
-No generic flat Ground → relief projection, site-wide placement or Ground UCX CLI; `agr ground` is a frozen
-Vatutino replay and `agr ucx` is unavailable. MAF/Flora source matching, full row coverage and visual judgement
+Flat Ground → relief projection is `agr ground site` (#1406; project zero / export Z: `agr zero`); no site-wide
+placement or Ground UCX CLI; `agr ground` without a step is the frozen Vatutino replay and `agr ucx` is unavailable. MAF/Flora source matching, full row coverage and visual judgement
 remain partly manual; `agr vpm-to-npm` does not automatically replace and seat every site asset. C18/opacity
 implementation alignment and the #1380 shared UV-owner migration are not performed by this documentation card.
 Accepted Ground geometry, technical QA, Artem acceptance and final delivery/checker status stay distinct.

@@ -178,9 +178,84 @@ def test_master_all_quads_under_4m_pass():
     assert got["master quads"] == "pass" and got["master quad size"] == "pass"
 
 
-def test_master_triangle_fails_quads():
+def test_master_triangle_passes_and_reports_d312():
     verts = [[0, 0, 0], [1, 0, 0], [0, 1, 0]]
-    assert master_status("npm", poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts))["master quads"] == "fail"
+    got = master_findings(master_rb(poly_mesh("SM_Test_K_1_Main", [[0, 1, 2]], verts)), "npm")[0]
+    assert got.status == "pass"
+    assert got.data["objects"] == [{
+        "name": "SM_Test_K_1_Main", "status": "pass", "faces": 1,
+        "triangles": 1, "triangle_share": 1.0, "quads": 0,
+        "ngons": 0, "ngon_face_ids": [],
+    }]
+    assert "SM_Test_K_1_Main" in got.observed and "triangle_share" in got.observed
+
+
+def test_master_ngon_fails_with_object_local_face_id():
+    verts, polys = quads(1.0)
+    verts.append([0, 0.5, 0])
+    polys += [[0, 1, 2], [0, 1, 2, 3, 4]]
+    got = master_findings(master_rb(poly_mesh("A", polys, verts)), "npm")[0]
+    assert got.status == "fail"
+    assert got.data["objects"][0]["triangles"] == 1
+    assert got.data["objects"][0]["triangle_share"] == 1 / 3
+    assert got.data["objects"][0]["ngon_face_ids"] == [3]
+
+
+def test_master_generated_histograms_match_shared_core():
+    from adapters.max.agr_tools.master_topology_core import check
+    from itertools import product
+
+    for triangles, quads_count, ngons in product(range(4), repeat=3):
+        if triangles + quads_count + ngons == 0:
+            continue
+        degrees = [3] * triangles + [4] * quads_count + [5] * ngons
+        meshes = [{"name": "Original.Name", "polygon_degrees": {
+            str(d): degrees.count(d) for d in set(degrees)}}]
+        finding = master_findings(master_rb(*meshes), "npm")[0]
+        expected = check([{"name": "Original.Name", "face_degrees": degrees}])
+        expected["objects"][0].pop("ngon_face_ids")  # histograms have no face order
+        assert finding.status == expected["status"]
+        assert finding.data["objects"] == expected["objects"]
+        if triangles == ngons == 0:
+            assert "all quads" in finding.observed
+
+
+def test_master_empty_and_malformed_inventories_fail_closed():
+    for histogram in ({}, {"4": 0}, {"3": -1}, {"3": float("nan")},
+                      {"4": float("inf")}, {"2": 1}, {"unsupported": 1}, {"4": True},
+                      {3.5: 1}, {True: 1}):
+        got = master_findings(master_rb({"name": "A", "polygon_degrees": histogram}), "npm")[0]
+        assert got.status == "fail", histogram
+    assert master_findings(master_rb(), "npm")[0].status == "fail"
+    assert master_findings(master_rb({"name": "A"}), "npm")[0].status == "fail"
+    mesh = {"name": "A", "polygon_degrees": {"4": 1}}
+    assert master_findings(master_rb(mesh, mesh), "npm")[0].status == "fail"
+    mesh["face_geometry"] = {"polygons": [[0, 1, 2]]}
+    assert master_findings(master_rb(mesh), "npm")[0].status == "fail"
+
+
+def test_master_fresh_process_outside_repository(tmp_path):
+    import subprocess
+    import sys
+
+    code = ('from twinqa.master import master_findings; '
+            'r = master_findings({"readback_ok": True, "meshes": '
+            '[{"name": "A", "polygon_degrees": {"3": 1}}]}, "npm")[0]; '
+            'assert r.status == "pass"; assert r.data["objects"][0]["triangles"] == 1')
+    result = subprocess.run([sys.executable, "-c", code], cwd=tmp_path,
+                            capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+
+
+def test_master_triangle_size_uses_unchanged_side_boundaries():
+    from dt_ai.ops.inv_texel import VPM
+
+    for side, status in ((1.0, "pass"), (VPM.review_side_m, "pass"),
+                         (3.95, "review"), (VPM.hard_side_m, "review"), (4.01, "fail")):
+        verts = [[0, 0, 0], [side, 0, 0], [side / 2, side / 2, 0]]
+        got = master_status("vpm", poly_mesh("A", [[0, 1, 2]], verts))
+        assert got["master quads"] == "pass"
+        assert got["master quad size"] == status
 
 
 def test_master_quad_over_4m_fails_and_padded_band_is_review():
@@ -845,6 +920,91 @@ def test_ground_skirt_every_disconnected_component_checked_1133(inside_hole, dep
     finding = _skirt_finding(verts, polys)
     assert finding.status == expected
     assert finding.measured == pytest.approx(depth)
+
+
+def _skirt_step_island_1693(step=0.006, depth=1.001, defect=None, side=1):
+    plot = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
+    hole = [(-0.5, -0.5), (0.5, -0.5), (0.5, 0.5), (-0.5, 0.5)]
+    verts = [[x, y, z] for ring, z in ((plot, 0), (hole, 0), (hole, step), (plot, -depth))
+             for x, y in ring]
+    polys = [[8, 9, 10, 11], [15, 14, 13, 12]]
+    if defect == "detached":
+        verts.extend(verts[4:8])  # coincident XY and Z, but distinct vertex indices
+    for a in range(4):
+        b = (a + 1) % 4
+        apron = [a, b, b + 4, a + 4]
+        wall = [a + 4, b + 4, b + 8, a + 8]
+        polys.extend([apron, [a + 12, b + 12, b, a]])
+        if defect == "detached":
+            wall[:2] = [a + 16, b + 16]
+            if a == 0:
+                polys.append([19, 18, 17, 16])  # close the detached island independently
+        if a == side:
+            if defect == "missing":
+                continue
+            if defect == "hanging":
+                wall[:2] = [len(verts), len(verts) + 1]
+                verts.extend([[*hole[k], step / 2] for k in (a, b)])
+            if defect == "nonmanifold":
+                polys.append(wall[:])
+            if defect in ("split", "offset_split"):
+                # Two landing edges must jointly cover one rim edge. An offset midpoint
+                # preserves edge welding but invalidates collinearity of the landing.
+                x, y = ((hole[a][k] + hole[b][k]) / 2 for k in range(2))
+                if defect == "offset_split":
+                    x += 0.01 * (hole[a][1] - hole[b][1])
+                    y += 0.01 * (hole[b][0] - hole[a][0])
+                apron.insert(3, len(verts))
+                wall.insert(1, len(verts))
+                verts.append([x, y, 0])
+        polys.append(wall if step > 0 else wall[::-1])
+    return verts, polys
+
+
+@pytest.mark.parametrize("step,depth,defect,status,measured", [
+    pytest.param(0.006, 1.001, None, "pass", 1.001, id="raised"),
+    pytest.param(-0.006, 1.001, None, "pass", 1.001, id="sunken"),
+    pytest.param(0.006, 0.999, None, "fail", 0.999, id="short-outer"),
+    pytest.param(0.006, 1.0, None, "pass", 1.0, id="at-minimum"),
+    pytest.param(0.006, 1.001, "missing", "fail", 0.006, id="missing-wall"),
+    pytest.param(0.006, 1.001, "detached", "fail", 0.006, id="detached"),
+    pytest.param(0.006, 1.001, "hanging", "fail", 0.006, id="hanging-wall"),
+    pytest.param(0.006, 1.001, "nonmanifold", "fail", 0.006, id="duplicate-wall"),
+    pytest.param(0.006, 1.001, "split", "pass", 1.001, id="split-landing"),
+    pytest.param(0.006, 1.001, "offset_split", "fail", 0.0, id="offset-landing"),
+])
+def test_ground_skirt_step_island_1693(step, depth, defect, status, measured):
+    f = _skirt_finding(*_skirt_step_island_1693(step, depth, defect))
+    assert f.status == status and f.measured == pytest.approx(measured)
+
+
+@pytest.mark.parametrize("low,high,status,measured", [
+    (1.001, 1.001, "pass", 1.001), (0.999, 1.001, "fail", 0.999), (1.001, 0.999, "fail", 0.999),
+])
+def test_ground_skirt_half_plane_step_1693(low, high, status, measured):
+    # Closed shell: the step and the outer skirts share the vertical end edges.
+    step = 0.006
+    verts = [[-1, -1, 0], [0, -1, 0], [0, 1, 0], [-1, 1, 0],
+             [0, -1, step], [1, -1, step], [1, 1, step], [0, 1, step],
+             [-1, -1, -low], [0, -1, -1.001], [1, -1, step - high],
+             [1, 1, step - high], [0, 1, -1.001], [-1, 1, -low]]
+    polys = [[0, 1, 2, 3], [4, 5, 6, 7], [1, 4, 7, 2],
+             [8, 9, 1, 0], [9, 10, 5, 4, 1], [10, 11, 6, 5],
+             [11, 12, 2, 7, 6], [12, 13, 3, 2], [13, 8, 0, 3],
+             [8, 13, 12, 11, 10, 9]]
+    f = _skirt_finding(verts, polys)
+    assert f.status == status and f.measured == pytest.approx(measured)
+
+
+@pytest.mark.parametrize("side", range(4))
+@pytest.mark.parametrize("defect", ["split", "missing", "hanging", "nonmanifold", "offset_split"])
+def test_ground_skirt_step_transformed_and_reordered_1693(side, defect):
+    verts, polys = _skirt_step_island_1693(defect=defect, side=side)
+    verts = [[1_000_000 - y, -1_000_000 + x, z] for x, y, z in verts]
+    polys = [p[1:] + p[:1] for p in reversed(polys)]
+    f = _skirt_finding(verts, polys)
+    status, depth = {"split": ("pass", 1.001), "offset_split": ("fail", 0.0)}.get(defect, ("fail", 0.006))
+    assert f.status == status and f.measured == pytest.approx(depth)
 
 
 def test_ground_skirt_multiple_holes_excluded_1133():

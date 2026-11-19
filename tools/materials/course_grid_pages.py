@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 import re
 import sys
-from tools.materials.course_grid_cut import assemble_support_pages
+from adapters.max.agr_tools.seams_core import assemble_support_pages
 
 
 def _json(raw):

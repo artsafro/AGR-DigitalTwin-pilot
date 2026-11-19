@@ -63,7 +63,7 @@ def _side_stats(a: np.ndarray) -> tuple[np.ndarray, float]:
     return flat.mean(0), float(flat.std(0).mean())
 
 
-def _best_cut(a, x0, y0, x1, y1, min_px, edge_t, line_share, mat_diff):
+def _best_cut(a, x0, y0, x1, y1, min_px, edge_t, line_share, mat_diff, profile='maf', uv_bounds=None):
     best = None
     region = a[y0:y1, x0:x1]
     # vertical lines: jump between column c-1 and c
@@ -87,10 +87,29 @@ def _best_cut(a, x0, y0, x1, y1, min_px, edge_t, line_share, mat_diff):
             diff = float(np.abs(ma - mb).mean())
             if diff < mat_diff and abs(va - vb) < mat_diff:
                 continue  # same material on both sides (plank seam, grain line)
-            score = float(share[c]) + diff / 255.0
+            if profile == 'facade' and diff < mat_diff:
+                continue  # repeated panel/window seams are not material boundaries
+            score = (diff + float(share[c]) if profile == 'facade'
+                     else float(share[c]) + diff / 255.0)
             if best is None or score > best[0]:
                 best = (score, axis, cut)
-            break
+            if profile == 'maf':
+                break
+    if best is not None and uv_bounds is not None:
+        # Rank image evidence FIRST. A UV veto must never slide a material
+        # boundary to a weaker candidate at the edge of a straddling face.
+        b = uv_bounds
+        local = b[(b[:, 2] > x0) & (b[:, 0] < x1) & (b[:, 3] > y0) & (b[:, 1] < y1)]
+        _, axis, cut = best
+        j = 0 if axis == 'x' else 1
+        position = (x0 if axis == 'x' else y0) + cut
+        crossing = (local[:, j] < position - .5) & (local[:, j+2] > position + .5)
+        separated = (np.any(local[:, j+2] <= position + .5) and
+                     np.any(local[:, j] >= position - .5))
+        if np.any(crossing) and not separated:
+            return (best[0], 'manual', cut)  # unsupported strongest cut; no runner-up
+        # Independent faces on both sides support this boundary. Keep it and
+        # let recover() explicitly report any source polygons crossing it.
     return best
 
 
@@ -182,7 +201,7 @@ def _flat_blocks(a, rect, min_cell, solid_tol):
 
 def segment(path: str, *, work: int = 512, min_cell: int = 8, edge_t: float = 10.0,
             line_share: float = 0.9, mat_diff: float = 8.0, solid_tol: float = 6.0,
-            solid_share: float = 0.85) -> dict:
+            solid_share: float = 0.85, profile: str = 'maf', uv_bounds_px=None) -> dict:
     """Segment ``path``; returns {"path", "size", "work_scale", "cells": [Cell dict...]}."""
     for name, v in (('work', work), ('min_cell', min_cell)):
         if not isinstance(v, int) or v <= 0:
@@ -191,27 +210,54 @@ def segment(path: str, *, work: int = 512, min_cell: int = 8, edge_t: float = 10
                     ('solid_tol', solid_tol), ('solid_share', solid_share)):
         if not np.isfinite(v) or v <= 0:
             raise ValueError(f'{name} must be a finite positive number, got {v!r}')
+    if profile not in ('maf', 'facade'):
+        raise ValueError(f'unsupported profile {profile!r}')
     a, scale, src = load_rgb(path, work)
+    uv_bounds = None
+    if uv_bounds_px is not None:
+        uv_bounds = np.asarray(uv_bounds_px, dtype=float) / scale
+        if (profile != 'facade' or uv_bounds.ndim != 2 or uv_bounds.shape[1] != 4
+                or not len(uv_bounds) or not np.isfinite(uv_bounds).all()
+                or np.any(uv_bounds[:, 2:] < uv_bounds[:, :2])):
+            raise ValueError('uv_bounds_px requires finite ordered facade face bounds')
     h, w = a.shape[:2]
     if min(h, w) < 2 * min_cell:
         raise ValueError(f'{path}: image {src} too small to segment (min_cell={min_cell} work px)')
     leaves = []
+    manual_regions = set()
     stack = [(0, 0, w, h)]
     while stack:
         x0, y0, x1, y1 = stack.pop()
-        cut = _best_cut(a, x0, y0, x1, y1, min_cell, edge_t, line_share, mat_diff)
+        cut = _best_cut(a, x0, y0, x1, y1, min_cell, edge_t, line_share, mat_diff, profile, uv_bounds)
         if cut is None:
             leaves.append((x0, y0, x1, y1))
             continue
         _, axis, c = cut
+        if axis == 'manual':
+            rect = (x0, y0, x1, y1)
+            leaves.append(rect)
+            manual_regions.add(rect)
+            continue
         if axis == 'x':
             stack += [(x0, y0, x0 + c, y1), (x0 + c, y0, x1, y1)]
         else:
             stack += [(x0, y0, x1, y0 + c), (x0, y0 + c, x1, y1)]
-    leaves = _merge_same(a, leaves, mat_diff)
+    if profile == 'maf':
+        leaves = _merge_same(a, leaves, mat_diff)
     rects = []
     for r in leaves:
-        rects += _flat_blocks(a, r, min_cell, solid_tol)
+        blocks = _flat_blocks(a, r, min_cell, solid_tol)
+        if profile == 'maf':
+            rects += blocks
+        else:
+            # A non-guillotine patch of a different colour is not one rectangular
+            # facade material. Keep it explicitly manual, not a glued default ID.
+            x0, y0, x1, y1 = r
+            median = np.median(a[y0:y1, x0:x1].reshape(-1, 3), axis=0)
+            mixed = r in manual_regions or any(b != r and np.abs(np.median(
+                a[b[1]:b[3], b[0]:b[2]].reshape(-1, 3), axis=0)-median).mean() >= mat_diff
+                for b, remainder in blocks if not remainder)
+            rects.append((r, mixed))
     cells = []
     for (x0, y0, x1, y1), mixed in sorted(rects, key=lambda r: (r[0][1], r[0][0])):
         px = a[y0:y1, x0:x1].reshape(-1, 3)

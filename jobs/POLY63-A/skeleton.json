@@ -1,0 +1,9 @@
+{
+  "scenario": "oks-vpm",
+  "config": {"profile": "VPM"},
+  "hooks": [
+    {"script": "hooks/pockets_self.py", "stage": "body", "point": "before"},
+    {"script": "hooks/contour_d337.py", "stage": "body", "point": "before"},
+    {"script": "hooks/zones_from_types.py", "stage": "body", "point": "before"}
+  ]
+}

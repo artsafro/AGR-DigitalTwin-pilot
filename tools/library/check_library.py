@@ -175,9 +175,9 @@ def check(catalogue, root, repo, inspect):
 
 def native_inspect(paths, blender):
     import subprocess
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
     script = Path(__file__).with_name('inspect_library_blender.py')
-    command = [str(blender), '-b', '--factory-startup', '--disable-autoexec', '--python-exit-code', '3',
-               '--python', str(script), '--', *map(str, paths)]
+    command = blender_command(script, paths, executable=str(blender))
     result = subprocess.run(command, capture_output=True, encoding='utf-8', errors='replace', timeout=1200)
     if result.returncode:
         raise ValueError('Blender readback exit ' + str(result.returncode) + ': ' + result.stdout[-1500:] + result.stderr[-1000:])

@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "synthetic": true,
+  "status": "offline_uv_readback_measured",
+  "faces": 4,
+  "tiles": [
+    1001
+  ],
+  "density_px_m": 512,
+  "shared_vertices": 8,
+  "vertical_edges": 4,
+  "max_course_residual": 0.0,
+  "native_readback": "not_run: Max excluded by scope",
+  "visual_acceptance": "not_requested"
+}

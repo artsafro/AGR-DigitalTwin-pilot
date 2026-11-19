@@ -16,7 +16,19 @@ tests/max_tools/test_agr_tools_npm_to_vpm.py):
 * U4 it WRITES the material IDs (setFaceMatID :41500, setSelectMatID :41454) and switches the Modify panel / adds an
   Unwrap_UVW (:41372-41377) -> here a read-only report, the stack and the IDs never change.
 """
+import importlib.util
 import math
+from pathlib import Path
+
+
+def _sibling(name, alias):
+    spec = importlib.util.spec_from_file_location(alias, Path(__file__).with_name(name))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_view')
 
 TOOL = 'udim.udims_to_ids'
 OPTION_KEYS = {'faces'}
@@ -46,7 +58,7 @@ def face_tile(pts):
         return None, 'negative UV (centre {:.3f}, {:.3f})'.format(cu, cv)
     if fu > 9:
         return None, 'U >= 10 (centre {:.3f}, {:.3f}): outside the 10 UDIM columns'.format(cu, cv)
-    tile = FIRST + int(fu) + 10 * int(fv)
+    tile = _udimtile.udim_tile(cu, cv)
     if tile > LAST:
         return None, 'tile {} > {}: ID > 100'.format(tile, LAST)
     return tile, None

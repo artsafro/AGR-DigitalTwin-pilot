@@ -11,6 +11,31 @@
 # Checked by tests/test_route_maps_1393.py. Regenerate: uv run python tools/architecture/route_map.py
 title_ru: "Маршрут МАФ (GroundEl, НПМ + ВПМ): событийный штурм (библиотека 931, Ватутино v005 / v006, «Верона»)"
 route: maf
+scheme:
+  export_context:
+    ref: package-contexts.yaml#export
+  source_ru: "Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников"
+  steps:
+    - stages: "sources,library,pick"
+      ru: "Прочитать спецификацию и выбрать кандидатов"
+      artifact_ru: "Соответствие позиций библиотеки спецификации"
+      gate_ru: "Нет кандидата — объект называет Артём"
+    - stages: "dims,ids,vpm"
+      ru: "Сверить габариты, отделки и подготовить ВПМ"
+      artifact_ru: "МАФ ВПМ с общими ID материалов"
+      gate_ru: "Габариты и цвет соответствуют проекту"
+    - stages: "placement,npm,ucx"
+      ru: "Расставить и подготовить НПМ"
+      artifact_ru: "НПМ / ВПМ в общих точках; UCX только Ground"
+      gate_ru: "Поворот и утопление по СПОЗУ"
+    - stages: "checks,showcase"
+      ru: "Проверить экспорт и показать витрину"
+      artifact_ru: "Отчёт MAF и подписанные пары НПМ / ВПМ"
+      gate_ru: "Артём принимает витрину; отказы не скрыты"
+    - stages: "package"
+      ru: "Передать в Ground и на упаковку"
+      artifact_ru: "Ground FBX → схема «Пакет и сдача»"
+      gate_ru: "Приёмка пакета отдельно от витрины"
 object: "VATUTINO-SITE (MAF v005 / v006, «Верона»), silikatny-maf-viz"
 issue: "#1393"
 actors:
@@ -33,7 +58,7 @@ local_contexts:
   - id: placement
     ru: "Расстановка МАФ и Флоры"
     owner: src/dt_ai/placement/engine.py
-  - id: npm
+  - id: npm-atlas
     ru: "НПМ МАФ на атласе"
     owner: adapters/max/agr_tools/flora_atlas_max.py
   - id: ucx
@@ -144,18 +169,26 @@ stages:
     event_ru: "МАФ расставлены в координатах: поворот СПОЗУ, утопление 10 см, низ удалён только под Ground"
     actor: agent
     context: placement
+    commands:
+      - "dt place site"
+      - "agr place"
     rules:
+      - D329
       - D095
       - D096
       - D018
     evidence:
       - src/dt_ai/placement/engine.py
+      - src/dt_ai/placement/site.py
       - jobs/VATUTINO-SITE/place_site.py
       - jobs/VATUTINO-SITE/placement-report.md
   - id: npm
     event_ru: "НПМ-версия (low-poly) в тех же точках на одном атласе 512 GroundEl"
     actor: agent-dcc
-    context: npm
+    context: npm-atlas
+    commands:
+      - "dt derive maf-npm-light"
+      - "agr npm-light"
     rules:
       - D293
       - D164
@@ -164,15 +197,21 @@ stages:
     evidence:
       - docs/domain/areas/groundel-maf.md
       - jobs/VATUTINO-SITE/maf/site-maf-set.md
+      - tools/library/maf_npm_light.py
+      - jobs/SIL13-COLD-1315/maf-npm-light-1410/result.md
     branches:
       - id: convert
         when_ru: "ВПМ уже расставлена"
-        ru: "конвертация ВПМ → НПМ: та же модель; облегчённая — только если не влезает бюджет"
+        ru: "конвертация ВПМ → НПМ: та же модель; облегчённая — только если не влезает бюджет (≤ 400 треугольников не трогает, силуэт ≥ 0,95)"
+        commands:
+          - "dt derive maf-npm-light"
+          - "agr npm-light"
         rules:
           - D293
           - D164
         evidence:
           - docs/plans/425-maf-route-2026-11.md
+          - tools/library/maf_npm_light.py
       - id: parallel
         when_ru: "расстановка с нуля"
         ru: "low-poly (кандидат НПМ библиотеки) и high-poly ставятся вместе в одни точки"
@@ -190,6 +229,7 @@ stages:
         evidence:
           - tools/materials/atlas_maf.py
           - tools/library/maf_atlas_ids.py
+          - tools/materials/maf_uv_remap.py
   - id: ucx
     event_ru: "UCX: для МАФ не строятся (ограждения и навесы — при любой толщине), UCX поверхности Ground остаётся (только ВПМ)"
     actor: agent
@@ -242,22 +282,6 @@ hotspots:
     evidence:
       - library/maf/README.md
       - docs/plans/425-maf-route-2026-11.md
-  - id: npm-light-tool
-    stage: npm
-    ru: "Облегчённой НПМ-версии МАФ как инструмента нет (tools/library/maf_npm_light.py не создан; был разовый Decimate 0,35–0,6 для 4 строк)"
-    rules:
-      - D164
-      - D236
-    evidence:
-      - docs/plans/425-maf-route-2026-11.md
-  - id: uv-remap
-    stage: npm
-    ru: "Перенос UV на атлас — только внутри tools/blender/maf_site_set_build.py, общего инструмента нет"
-    rules:
-      - D236
-    evidence:
-      - tools/blender/maf_site_set_build.py
-      - docs/plans/425-maf-route-2026-11.md
   - id: budget
     stage: npm
     ru: "Бюджет НПМ: МАФ 60 000 из 180 000 (D097); набор Ватутино 57 628 + «Верона» 1 520 = 59 148; делит Артём (D167)"
@@ -268,7 +292,7 @@ hotspots:
       - docs/plans/425-maf-route-2026-11.md
   - id: placement-tool
     stage: placement
-    ru: "Расстановка: движок dt_ai.placement вызывается из jobs/VATUTINO-SITE/place_site.py; команды agr / dt нет; на Ground v015 не перезапущена"
+    ru: "Расстановка на Ground v015 не перезапущена (команда dt place site есть, #1407)"
     rules:
       - D236
     evidence:

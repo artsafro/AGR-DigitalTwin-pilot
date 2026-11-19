@@ -41,7 +41,16 @@ def _load_maf():
     return module
 
 
+def _load_uv_remap():
+    path = Path(__file__).resolve().parents[1] / "materials" / "maf_uv_remap.py"
+    spec = importlib.util.spec_from_file_location("maf_uv_remap", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 _MAF = _load_maf()
+_UV_REMAP = _load_uv_remap()   # #1410: UV transfer into the atlas tile has one owner, tools/materials/maf_uv_remap.py
 pack_uniform_tiles = _MAF.pack_uniform_tiles
 FloraAtlasError = _MAF.AtlasError
 
@@ -59,7 +68,12 @@ def remap_uv(uv, tile) -> tuple[float, float]:
 
     u, v = _uv_pair(uv)
     u0, v0, u1, v1 = _tile_rect(tile)
-    return (u0 + u * (u1 - u0), v0 + v * (v1 - v0))
+    if not (u0 < u1 and v0 < v1):     # degenerate tile: keep the pre-#1410 affine result, checked by the callers
+        return (u0 + u * (u1 - u0), v0 + v * (v1 - v0))
+    try:
+        return _UV_REMAP.remap_into_rect((u, v), (u0, v0, u1, v1))   # shared owner (#1410)
+    except _UV_REMAP.UvRemapError as exc:
+        raise FloraAtlasError(str(exc)) from exc
 
 
 def uv_roundtrip_delta(src, mapped, tile) -> float:

@@ -137,7 +137,7 @@ meta = {"address": address, "fbx": fbx, "pivot_revit_internal_m": [round(centre.
 meta["fbx_records"] = fbx_records(fbx, deliver)
 meta["master_sha256"] = MASTER_SHA
 _bm.write_export_derivation([fbx], master, STORE, _bm.git_commit(os.path.join(os.path.dirname(__file__), "..", "..", "..")),
-                           master_sha256=MASTER_SHA)
+                           master_sha256=MASTER_SHA, source_id='KPP1.oks.master')
 json.dump(meta, open(os.path.join(pkg, "..", "export_meta.json"), "w"), indent=1)
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(pkg, "..", "KPP1_VPM_export_tri.blend"))
 print("EXPORT", json.dumps(meta))

@@ -1,0 +1,18 @@
+{
+  "passed": false,
+  "status": "offline_layout_replay_measured",
+  "reference": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v150\\layout.json",
+  "reference_sha256": "39f274c963c65ff88c379548818d6360208d9999c3a63fa5438e3b76c0d53d7c",
+  "source_faces": 771,
+  "pieces": 1671,
+  "support_members": 803,
+  "max_uv_delta": 0.0,
+  "max_xyz_delta_m": 0.0,
+  "tiles": [
+    1001,
+    1002
+  ],
+  "tolerance_uv": 1e-12,
+  "native_readback": "not_run: Max excluded by scope",
+  "note": "Approved source supports/placements replayed, not automatic bevel inference; panel_step=full repeat diagnostic grid"
+}

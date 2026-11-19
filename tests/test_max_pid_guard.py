@@ -136,8 +136,12 @@ def test_pid_docs_and_mirror():
     assert (ROOT / ".claude/skills/3dsmax-mcp-dev/SKILL.md").read_bytes() == (
         ROOT / ".agents/skills/3dsmax-mcp-dev/SKILL.md").read_bytes()
     capabilities = (ROOT / "docs/agents/CAPABILITIES.md").read_text(encoding="utf-8")
-    assert "pinning does not hold; guard every mutation" in capabilities
-    assert "Live two-Max re-registration test: NOT DONE" in capabilities
+    assert "survives only inside its own MCP process, live #1481); guard every mutation" in capabilities
+    assert "NOT DONE" not in capabilities
+    assert "pin SURVIVES" in capabilities and "live_two_max_pin.log" in capabilities
+    guard_ref = (ROOT / ".agents/skills/3dsmax-mcp-dev/references/pid-guard.md").read_text(encoding="utf-8")
+    assert "NOT DONE" not in guard_ref and "#1481" in guard_ref
+    assert "deferred live test" not in skill
 
 
 @pytest.mark.parametrize("capture", [True, "false", 1, [], {}])

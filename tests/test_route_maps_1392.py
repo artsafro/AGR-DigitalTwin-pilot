@@ -23,8 +23,11 @@ VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv"
           "readback", "validate", "sintez", "delivered"]
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
              "package", "validate", "sintez"]
-RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner"},  # sintez-runner: #1379 (PR #1431)
-            "ground-route": {"urns-outside"}}  # #1412: D302
+RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner",  # sintez-runner: #1379 (PR #1431)
+                           "parapet-seam",  # #1381: one roof/parapet seam check
+                           "ucx-copies"},  # ucx: #1404 D330
+            "ground-route": {"urns-outside", "tool-bound-to-vatutino", "projection",  # #1412: D302; #1406
+                             "ucx-ground"}}  # ucx-ground: #1404 D330
 
 
 def _routes():
@@ -36,11 +39,401 @@ def _maps():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return _maps()["contexts"]
 
 
 def _stage(events, sid):
     return next(s for s in events["stages"] if s["id"] == sid)
+
+
+# ---------------------------------------------------------------- #1658: Gate 1 ownership and honest delivery evidence
+@pytest.mark.parametrize("route", ["route", "vpm-route", "ground-route"])
+def test_1658_gate1_owner(route):
+    events = _routes()[route]
+    gates = [s for s in events["stages"] if s["id"] == "gate1"]
+    if route == "ground-route":
+        assert gates == []
+    else:
+        assert len(gates) == 1
+        assert gates[0]["context"] == "parts"
+
+
+def test_1658_delivery_evidence_is_not_a_transfer_record():
+    events = _routes()["route"]
+    delivered = _stage(events, "delivered")
+    assert delivered["event_ru"] == "Архив или Max-сцена с квадами переданы Артёму; он принимает и передаёт заказчику"
+    assert delivered["evidence"] == ["jobs/KPP1/REPORT.md"]
+    notes = [h for h in events["hotspots"] if h["stage"] == "delivered"]
+    assert len(notes) == 1
+    note = notes[0]
+    assert "отчёт сборки" in note["ru"]
+    assert "не акт сдачи" in note["ru"]
+    assert "записи передачи в репозитории пока нет" in note["ru"]
+    assert note["evidence"] == ["jobs/KPP1/REPORT.md"]
+    assert all((ROOT / p).is_file() for p in note["evidence"])
+    assert "delivered-1371" not in str(delivered) + str(note)
+
+
+def test_1658_package_receipt_inventory():
+    package = next(c for c in _contexts()["contexts"] if c["id"] == "package")
+    assert package["owner"] == "adapters/max/agr_tools/package_core.py"
+    assert "строка квитанции" in package["owner_ru"]
+    functions = {f["name"]: f["contract"] for f in package["functions"]}
+    assert "{file, sha256, size}" in functions["delivery_receipt"]
+    assert "ошибка" in functions["check_delivery_receipt"]
+
+
+# ---------------------------------------------------------------- #1644: explicit top-level class references
+@pytest.mark.parametrize("name,kind,valid", [
+    ("PartsList", "class", True),
+    ("MissingPartsList", "class", False),
+    ("PartsList", None, False),
+])
+def test_1644_class_reference(name, kind, valid):
+    cmap = _maps()["contexts"]
+    entry = {"name": name, "contract": "Состав частей модели"}
+    if kind is not None:
+        entry["kind"] = kind
+    cmap["contexts"] = [{"id": "parts", "ru": "Состав частей",
+        "owner": "src/dt_ai/parts/model.py", "owner_ru": "Модель состава частей",
+        "functions": [entry]}]
+    cmap["relations"] = []
+    route_map.check_contexts(cmap)
+    problems = route_map.verify_references(ROOT, {"stages": []}, cmap)
+    if valid:
+        assert problems == []
+    else:
+        category = "class" if kind else "function"
+        assert problems == [f"context parts: src/dt_ai/parts/model.py has no top-level {category} {name}"]
+
+
+@pytest.mark.parametrize("name,kind,valid", [
+    ("Top", "class", True), ("Nested", "class", False),
+    ("Top", None, False), ("sync", None, True), ("async_fn", None, True),
+    ("sync", "class", False), ("<module>", "class", False), ("<module>", None, True),
+])
+def test_1644_top_level_namespace_probe(tmp_path, name, kind, valid):
+    """Synthetic exhaustive namespace/kind controls, with no runtime import of the owner."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs/decisions.md").write_text("", encoding="utf-8")
+    (tmp_path / "owner.py").write_text(
+        "class Top:\n    class Nested: pass\ndef sync(): pass\nasync def async_fn(): pass\n",
+        encoding="utf-8")
+    entry = {"name": name, "contract": "Синтетический контракт"}
+    if kind is not None:
+        entry["kind"] = kind
+    context = {"id": "synthetic", "owner": "owner.py", "functions": [entry]}
+    cmap = {"shared_kernel": context, "contexts": [], "rules": []}
+    for _ in range(2):
+        assert (route_map.verify_references(tmp_path, {"stages": []}, cmap) == []) is valid
+
+
+def test_1644_reference_layout_is_local():
+    maps = _maps()
+    source = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "sintez")
+    assert "grid" in source
+    assert "grid" not in route_map.resolve_context({"ref": "package-contexts.yaml#sintez"}, maps)
+    assert route_map.resolve_context({"ref": "package-contexts.yaml#sintez", "grid": "3/4"}, maps)["grid"] == "3/4"
+
+
+@pytest.mark.parametrize("kind", ["", "function", "method", None, [], 1, float("nan"), float("inf")])
+def test_1644_invalid_kind(kind):
+    cmap = _maps()["contexts"]
+    cmap["shared_kernel"]["functions"][0]["kind"] = kind
+    with pytest.raises(route_map.SchemaError, match="kind"):
+        route_map.check_contexts(cmap)
+
+
+@pytest.mark.parametrize("route,map_name", [("route", "contexts"),
+    ("vpm-route", "vpm-contexts"), ("ground-route", "ground-contexts")])
+def test_1644_stage_owners(route, map_name):
+    maps, events = _maps(), _routes()[route]
+    cmap = maps[map_name]
+    sintez = next(c for c in cmap["contexts"] if c["id"] == "sintez")
+    assert sintez["ref"] == "package-contexts.yaml#sintez"
+    assert sintez["owner"] == "tools/qa/sintez_checker.py"  # #1673: `agr checker`, launching tools/blender/
+    assert {f["name"] for f in sintez["functions"]} == {"classify", "run"}
+    assert _stage(events, "sintez")["context"] == "sintez"
+    rule_owner = next(r for r in maps["contexts"]["rules"] if r["id"] == "sintez-checker")["owner"]
+    assert rule_owner == "tools/blender/sintez_checker.py" and rule_owner in sintez["owner_ru"]  # launched by the owner
+    if route != "ground-route":
+        parts = next(c for c in cmap["contexts"] if c["id"] == "parts")
+        assert _stage(events, "parts")["context"] == "parts"
+        assert parts["owner"] == "src/dt_ai/parts/model.py"
+        assert parts["functions"] == [{"name": "PartsList", "kind": "class", "contract": "Состав частей модели и подтверждение пользователя"}]
+    route_map.check_schema(events, maps["contexts"])
+    assert not [p for p in route_map.route_coverage(events, maps["contexts"], cmap) if not p.startswith("WARNING:")]
+
+
+def test_1644_atlas_duplicate_reason():
+    row = next(d for c in _maps()["contexts"]["contexts"] for d in c.get("duplicates", [])
+               if d["at"] == "tools/materials/npm_atlas_udim.py:785")
+    assert "agr vpm-to-npm" not in row["ru"]
+    assert "agr unwrap-atlas" in row["ru"] and "job-specific" in row["ru"]
+    assert row["status"] == "live-bypass"
+
+
+# ---------------------------------------------------------------- #1593 source-backed writer inventory (not a generic scanner)
+WRITERS_1593 = [
+    ("body", "jobs/KPP1/scripts/build_kpp1.py:198", "live-bypass"),
+    ("body", "jobs/PSU275/scripts/assemble_body_roof.py:62", "historical"),
+    ("body", "jobs/OBR22-K02/scripts/build_exterior_surface.py:43", "historical"),
+    ("roof", "jobs/PSU275/scripts/roof_wells.py:70", "historical"),
+    ("roof", "jobs/KPP1/scripts/build_kpp1.py:432", "wrapper"),
+    ("openings", "jobs/KPP1/scripts/build_kpp1.py:327", "live-bypass"),
+    ("openings", "jobs/PSU275/scripts/opening_fills.py:183", "historical"),
+    ("openings", "jobs/OBR22-K02/scripts/build_shell_windows.py:76", "historical"),
+    ("openings", "jobs/KPP1/scripts/kpp1_windowgen.py:75", "wrapper"),
+    ("vpm-uv", "jobs/KPP1/scripts/vpm_uv.py:6", "wrapper"),
+    ("vpm-uv", "jobs/TEC26-OKS/scripts/vpm_uv.py:6", "wrapper"),
+]
+
+
+@pytest.mark.parametrize("cid,at,status", WRITERS_1593)
+def test_1593_writer_row(cid, at, status):
+    contexts = {c["id"]: c for c in _maps()["vpm-contexts"]["contexts"]}
+    rows = [d for d in contexts.get(cid, {}).get("duplicates", []) if d["at"] == at]
+    assert len(rows) == 1, f"{cid}: missing/duplicated writer {at}"
+    row = rows[0]
+    assert row["status"] == status
+    path, line = at.rsplit(":", 1)
+    assert row["match"] in (ROOT / path).read_text(encoding="utf-8").splitlines()[int(line) - 1]
+    ignored = f"/{path}" in (ROOT / ".ignore").read_text(encoding="utf-8").splitlines()
+    assert ignored == (status == "historical"), "D327 freezes exact paths, not whole jobs"
+
+
+def test_1593_vpm_uv_owner_and_wrappers():
+    events, maps = _routes()["vpm-route"], _maps()
+    assert _stage(events, "uv")["context"] == "vpm-uv"
+    own = next(c for c in maps["vpm-contexts"]["contexts"] if c["id"] == "vpm-uv")
+    shared = next(c for c in maps["contexts"]["contexts"] if c["id"] == "vpm-uv")
+    rule = next(c for c in maps["contexts"]["rules"] if c["id"] == "vpm-uv")
+    assert own["owner"] == shared["owner"] == rule["owner"] == "tools/blender/vpm_uv.py"
+    assert not any(c["id"] == "vpm-uv" for c in events["local_contexts"])  # shared id, no shadow
+    route_map.check_schema(events, maps["contexts"])
+    assert route_map.route_coverage(events, maps["contexts"], maps["vpm-contexts"]) == []
+    hotspot = next(h for h in events["hotspots"] if h["id"] == "udim-copies")
+    assert "обёртк" in hotspot["ru"] and "разницей в строку" not in hotspot["ru"]
+
+
+def test_1593_owner_counts():
+    maps = _maps()
+    text = route_map.owners_markdown(_routes()["vpm-route"], maps["vpm-contexts"], maps)
+    for owner in ("src/dt_ai/ops/operations.py", "adapters/max/agr_tools/windowgen_core.py"):
+        row = next(s for s in text.splitlines() if f"[`{owner}`]" in s)
+        assert "[1 — записи]" in row
+    roof = next(s for s in text.splitlines() if "[`adapters/max/agr_tools/roof_core.py`]" in s)
+    assert "[0 — записи]" in roof  # history and a real wrapper are not live bypasses
+
+
+def test_1593_current_window_owner_and_historical_link():
+    pipeline = (ROOT / "docs/pipeline.md").read_text(encoding="utf-8")
+    row = next(s for s in pipeline.splitlines() if s.startswith("| 5 |"))
+    where = row.split("|")[4]
+    assert where.index("adapters/max/agr_tools/windowgen_core.py") < where.index("jobs/OBR22-K02")
+    assert "agr window-generate" in where and "historical [D327]" in where
+    doc = ROOT / "docs/agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md"
+    found = re.search(r"\[build_shell_windows.py\]\(([^)]+)\)", doc.read_text(encoding="utf-8"))
+    assert found
+    link = found[1]
+    assert (doc.parent / link).resolve() == ROOT / "jobs/OBR22-K02/scripts/build_shell_windows.py"
+    assert (doc.parent / link).is_file()
+
+
+# ---------------------------------------------------------------- #1581 contract and npm ownership
+@pytest.mark.parametrize("name", sorted(route_map.context_maps()))
+def test_1581_blender_contracts(name):
+    cmap = _maps()[name]
+    contracts = [f["contract"] for c in [cmap["shared_kernel"], *cmap["contexts"]]
+                 for f in c["functions"] if f["name"] == "blender_executable"]
+    assert len(contracts) == 1
+    text = contracts[0]
+    terms = ["--blender", "DT_BLENDER", "TWINQA_BLENDER", "5.1.2"]
+    assert all(term in text for term in terms)
+    assert [text.index(term) for term in terms] == sorted(text.index(term) for term in terms)
+    assert "CLI" in text and "blender_runner" in text
+
+
+def test_1581_npm_context():
+    assert _stage(_routes()["vpm-route"], "npm")["context"] == "npm-atlas"
+    npm = next(c for c in _maps()["vpm-contexts"]["contexts"] if c["id"] == "npm-atlas")
+    assert npm["owner"] == "tools/derive/npm_atlas.py"
+    shared = next(c for c in _contexts()["contexts"] if c["id"] == "npm")
+    assert shared["owner"] == "tools/derive/export_npm.py"  # #1636: no shared-id shadow
+    local = next(c for c in _routes()["vpm-route"]["local_contexts"] if c["id"] == "npm-atlas")
+    assert local["ref"] == "vpm-oks-contexts.yaml#npm-atlas"
+    assert local["owner"] == npm["owner"]
+    route_map.check_schema(_routes()["vpm-route"], _contexts())
+
+
+# ---------------------------------------------------------------- #1581 reverse coverage
+
+def test_1581_reverse_coverage():
+    events = _routes()["vpm-route"]
+    cmap = _maps()["vpm-contexts"]
+    orphan = copy.deepcopy(cmap["contexts"][0])
+    orphan.update(id="synthetic-orphan")
+    for c in cmap["contexts"] + [orphan]:
+        c.pop("grid", None)
+    orphan.pop("serves_stage", None)
+    orphan.pop("no_stage", None)
+    cmap["contexts"].append(orphan)
+    for _ in range(2):
+        problems = route_map.route_coverage(events, _contexts(), cmap)
+        assert [p for p in problems if "synthetic-orphan" in p] == [
+            "WARNING: context map: context 'synthetic-orphan' has no stage"]
+    orphan["no_stage"] = "Synthetic diagnostic only"
+    assert not any("synthetic-orphan" in p for p in route_map.route_coverage(events, _contexts(), cmap))
+    orphan.pop("no_stage")
+    orphan["serves_stage"] = "body"
+    assert not any("synthetic-orphan" in p for p in route_map.route_coverage(events, _contexts(), cmap))
+
+
+@pytest.mark.parametrize("field,value", [("no_stage", ""), ("no_stage", []),
+    ("no_stage", float("nan")), ("serves_stage", ""), ("serves_stage", float("inf")),
+    ("serves_stage", "missing-stage")])
+def test_1581_coverage_annotations(field, value):
+    cmap = _maps()["vpm-contexts"]
+    context = cmap["contexts"][0]
+    context.pop("no_stage", None)
+    context.pop("serves_stage", None)
+    context[field] = value
+    with pytest.raises(route_map.SchemaError, match=field):
+        route_map.route_coverage(_routes()["vpm-route"], _contexts(), cmap)
+
+
+def test_1581_warning_only_check_exits_zero(capsys, monkeypatch):
+    events = _routes()["route"]
+    maps = _maps()
+    for c in [maps["contexts"]["shared_kernel"], *maps["contexts"]["contexts"]]:
+        c.pop("no_stage", None)
+        c.pop("serves_stage", None)
+    monkeypatch.setattr(route_map, "load_context_maps", lambda root: copy.deepcopy(maps))
+    # Render from the mutated snapshot, isolating warnings from legitimate revision drift.
+    monkeypatch.setattr(route_map, "render_all", lambda root: (_routes(), maps["contexts"], {}))
+    assert route_map.main(["--check"]) == 0
+    assert "WARNING:" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------- #1581 explicit cross-map references
+
+def test_1581_ref_owner():
+    maps = _maps()
+    target = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    ref = {"ref": "package-contexts.yaml#export", "owner": "stale.py", "id": "alias"}
+    for owner in ("synthetic-first.py", "synthetic-second.py"):
+        target["owner"] = owner
+        assert route_map.resolve_context(ref, maps)["owner"] == owner
+        assert route_map.resolve_context(ref, maps)["id"] == "alias"
+    # npm-atlas is deliberately not a globally unique context id.
+    for name in ("maf-contexts", "flora-contexts", "vpm-contexts"):
+        filename = route_map.context_maps()[name].name
+        resolved = route_map.resolve_context({"ref": filename + "#npm-atlas"}, maps)
+        assert resolved["owner"] == next(c["owner"] for c in maps[name]["contexts"] if c["id"] == "npm-atlas")
+
+
+@pytest.mark.parametrize("ref", ["", "export", "#export", "package-contexts.yaml#",
+    "unknown.yaml#export", "../package-contexts.yaml#export", "package-contexts.yaml#absent",
+    "package-contexts.yaml#export#extra", None, [], float("nan"), float("inf")])
+def test_1581_bad_refs(ref):
+    with pytest.raises(route_map.SchemaError, match="ref"):
+        route_map.resolve_context({"ref": ref}, _maps())
+
+
+def test_1581_ref_cycle():
+    maps = _maps()
+    target = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")
+    target["ref"] = "package-contexts.yaml#export"
+    with pytest.raises(route_map.SchemaError, match="cycle"):
+        route_map.resolve_context({"ref": target["ref"]}, maps)
+
+
+@pytest.mark.parametrize("name", sorted(route_map.route_events()))
+@pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
+def test_1581_missing_export(name, renderer):
+    events, maps = _routes()[name], _maps()
+    assert events["scheme"]["export_context"] == {"ref": "package-contexts.yaml#export"}
+    maps["package-contexts"]["contexts"] = [c for c in maps["package-contexts"]["contexts"] if c["id"] != "export"]
+    with pytest.raises(route_map.SchemaError, match="export"):
+        getattr(route_map, renderer)(events, maps[route_map.ROUTE_MAP_OF.get(name, "contexts")], maps)
+
+
+def test_1581_context_ref_loads_from_source(tmp_path):
+    shutil.copytree(ARCH, tmp_path / "docs/architecture")
+    path = tmp_path / route_map.context_maps()["ground-contexts"]
+    text = path.read_text(encoding="utf-8")
+    text = text.replace('  - id: npm\n', '  - id: npm\n    ref: flora-contexts.yaml#npm-atlas\n')
+    path.write_text(text, encoding="utf-8")
+    maps = route_map.load_context_maps(tmp_path)
+    target = next(c for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm-atlas")
+    actual = next(c for c in maps["ground-contexts"]["contexts"] if c["id"] == "npm")
+    assert actual["owner"] == target["owner"]
+    assert actual["functions"] == target["functions"]
+    # Source target missing: generator refuses before publishing any output.
+    source = tmp_path / route_map.context_maps()["flora-contexts"]
+    source.write_text(source.read_text(encoding="utf-8").replace('  - id: npm-atlas\n', '  - id: renamed\n'), encoding="utf-8")
+    before = {p.name: p.read_bytes() for p in path.parent.iterdir()}
+    assert route_map.main(["--root", str(tmp_path)]) == 2
+    assert before == {p.name: p.read_bytes() for p in path.parent.iterdir()}
+
+
+def test_1581_generated_missing_targets():
+    """Synthetic exhaustive deletion probe: every registered context and kernel."""
+    maps = _maps()
+    measured = 0
+    for name, cmap in maps.items():
+        filename = route_map.context_maps()[name].name
+        for c in [cmap["shared_kernel"], *cmap["contexts"]]:
+            ref = {"ref": filename + "#" + c["id"]}
+            assert route_map.resolve_context(ref, maps)["owner"] == c["owner"]
+            bad = copy.deepcopy(maps)
+            if c is cmap["shared_kernel"]:
+                bad[name]["shared_kernel"]["id"] = "synthetic-removed"
+            else:
+                bad[name]["contexts"] = [x for x in bad[name]["contexts"] if x["id"] != c["id"]]
+            for _ in range(2):
+                with pytest.raises(route_map.SchemaError, match=re.escape(ref["ref"])):
+                    route_map.resolve_context(ref, bad)
+            measured += 1
+    assert measured > 40
+    print(f"missing-target probe: {measured}/{measured}")
+
+
+@pytest.mark.parametrize("value", [{}, {"owner": "stale.py"},
+    {"ref": "package-contexts.yaml#export", "unexpected": True}])
+def test_1581_export_descriptor_rejects_unmapped_fields(value):
+    events = _routes()["route"]
+    events["scheme"]["export_context"] = value
+    with pytest.raises(route_map.SchemaError, match="export_context"):
+        route_map._scheme(events)
+
+
+def test_1581_duplicate_ref_target_is_not_first_entry():
+    maps = _maps()
+    maps["package-contexts"]["contexts"].append(copy.deepcopy(
+        next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "export")))
+    with pytest.raises(route_map.SchemaError, match="found 2"):
+        route_map.resolve_context({"ref": "package-contexts.yaml#export"}, maps)
+
+
+@pytest.mark.parametrize("renderer", ["short_route_board", "owners_markdown"])
+def test_1581_renderer_uses_declared_ref_not_export_id(renderer):
+    events, maps = _routes()["route"], _maps()
+    events["scheme"]["export_context"] = {"ref": "flora-contexts.yaml#npm-atlas"}
+    expected = next(c["owner"] for c in maps["flora-contexts"]["contexts"] if c["id"] == "npm-atlas")
+    result = getattr(route_map, renderer)(events, maps["contexts"], maps)
+    if renderer == "short_route_board":
+        assert expected in " ".join(e.get("text", "") for e in result.elements).replace("\n", "")
+    else:
+        assert expected in result
+
+
+@pytest.mark.parametrize("entry", [None, [], "export", 0, float("nan")])
+def test_1581_malformed_ref_target_is_schema_error(entry):
+    maps = _maps()
+    maps["package-contexts"]["contexts"] = [entry]
+    with pytest.raises(route_map.SchemaError):
+        route_map.resolve_context({"ref": "package-contexts.yaml#export"}, maps)
 
 
 # ---------------------------------------------------------------- D293 recorded and cited
@@ -186,7 +579,7 @@ def test_generator_writes_the_two_new_context_maps():
     names = {p.name for p in files}
     for stem in MAP_FILES.values():
         assert {f"{stem}.excalidraw", f"{stem}.svg"} <= names
-    assert len(files) == 24   # #1393: + MAF, Flora, package routes and their context maps
+    assert len(files) == 42   # #1425: + six short schemes (x2) and owners tables
     for name, stem in MAP_FILES.items():
         assert route_map.OUTPUTS[name] == Path("docs/architecture") / stem
         for suffix in (".excalidraw", ".svg"):

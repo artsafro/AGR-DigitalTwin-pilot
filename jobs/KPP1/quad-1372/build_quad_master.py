@@ -23,6 +23,11 @@ pairs) are snapped onto one exact axis plane (<= 5 mm), the touching solids are 
 self intersection), the coincident opposite double layer is deleted, boolean vertices are welded within 2 mm and
 dangling flaps in a zone are deleted; every move, weld and deletion is listed in `quad-build-v002.json`. Fan
 centres keep > 2.1 mm from every vertex (xView Overlapping Vertices) where the face allows it. R1 is never written.
+
+v003 (#1563): the same steps on R1 v003 of rerun-1230 (#1246); `quad_provenance.VERSION_SOURCE` pins one R1 sha256
+per version (v001/v002 r1-v002, v003 r1-v003), the plan must be of that source, and the build ends with the
+derivation record + `quad-provenance-<version>.json` (no admission is written).
+    blender -b --factory-startup --python build_quad_master.py -- <packet_root> v003 <union-zones-v003.json>
 """
 import collections
 import hashlib
@@ -40,7 +45,10 @@ from mathutils.kdtree import KDTree
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'adapters' / 'max' / 'agr_tools'))
 from udimtile_core import face_tile  # noqa: E402  shared UDIM kernel (#1359 guard)
 
-SOURCE_SHA = '1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676'  # r1-v002 SM_Kpp_1.fbx
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'provenance-1563' / 'hooks'))  # skeleton hook [D324]
+import quad_provenance as qp  # noqa: E402  per-version source pin + provenance record (#1563)
+
+SOURCE_SHA = qp.R1_V002  # r1-v002 SM_Kpp_1.fbx (v001/v002); `qp.VERSION_SOURCE` pins every version's R1
 TJ_TOL = 2e-5            # = twinqa.look.TJUNCTION_TOL_M [D200]
 PLANAR_TOL_M = 1e-5      # 4th corner within 10 um of the partner plane: either diagonal keeps the R1 surface
 UV_TOL = 1e-6            # UV continuity across the shared edge (no seam inside a quad)
@@ -690,16 +698,16 @@ def distance(bvh_to, tris_to, pts64, zones=()):
 def main(root, version='v001', zones_path=None):
     """v001: R1 -> quads. v002: R1 -> union of the R1 overlap zones (plan json, user decision) -> quads."""
     src = root / 'source/SM_Kpp_1.fbx'
-    if sha(src) != SOURCE_SHA:
-        raise ValueError('source is not the approved r1-v002 SM_Kpp_1.fbx')
+    src_sha = sha(src)
+    r1_name = qp.check_source(version, src_sha)  # each version has its own pinned R1 (#1563)
     if (version == 'v001') != (zones_path is None):
         raise ValueError('v001 is the plain quadification; every later version needs the union zone plan')
     plan = None
     if zones_path is not None:
         zones_path = Path(zones_path).resolve()
         plan = json.loads(zones_path.read_text())
-        if plan.get('source_sha256') != SOURCE_SHA or plan.get('part') != 'SM_Kpp_1_Main' or not plan.get('zones'):
-            raise ValueError(f'{zones_path}: not a union plan of the approved R1 SM_Kpp_1_Main')
+        if plan.get('source_sha256') != src_sha or plan.get('part') != 'SM_Kpp_1_Main' or not plan.get('zones'):
+            raise ValueError(f'{zones_path}: not a union plan of the approved {r1_name} SM_Kpp_1_Main')
         _check_plan(plan)
     suffix = '' if version == 'v001' else f'-{version}'
     out_blend, out_fbx, report = (root / f'master-quad-{version}.blend', root / f'SM_Kpp_1.quad-{version}.fbx',
@@ -719,8 +727,8 @@ def main(root, version='v001', zones_path=None):
         raise ValueError(f'render meshes missing: {missing}')
     r1 = {n: tri_bvh(objs[n]) for n in RENDER}
     ucx_before = {n: fingerprint(o) for n, o in objs.items() if n.startswith('UCX_')}
-    rep = {'source_sha256': SOURCE_SHA, 'blender': bpy.app.version_string, 'planar_tol_m': PLANAR_TOL_M,
-           'tj_tol_m': TJ_TOL, 'version': version, 'meshes': {}}
+    rep = {'source_sha256': src_sha, 'source_r1': r1_name, 'blender': bpy.app.version_string,
+           'planar_tol_m': PLANAR_TOL_M, 'tj_tol_m': TJ_TOL, 'version': version, 'meshes': {}}
     if plan is not None:
         rep['union_plan'] = {'path': str(zones_path), 'sha256': sha(zones_path), 'xview_r1': plan['xview_r1']}
         rep['union'] = union_zones(objs['SM_Kpp_1_Main'], plan)
@@ -768,8 +776,14 @@ def main(root, version='v001', zones_path=None):
                 'master_type': 'all-quad editable master (#1372); delivery copies stay triangulated (reg p.8 3.11)',
                 'approval': 'Artem 2026-11-14 "Да, давай сделаем квад мастер" (#1372)'
                 + ('; v002 union of R1 overlaps <= 5 mm and 100 % quads: Artem 2026-11-14 "Принимаю рекомендации"'
-                   if plan else ''), 'synthetic': False})
+                   if plan else '')
+                + ('; v003 = the same D289 rules on r1-v003 (#1563, AI Council 2026-11-16); admission of the output '
+                   'is pending, recorded by Artem against its sha256' if version == 'v003' else ''),
+                'synthetic': False})
     report.write_text(json.dumps(rep, indent=2))
+    commit, clean = qp.script_state()
+    prov = qp.write_provenance(root, version, src, src_sha, zones_path, [out_blend, out_fbx, report], commit, clean)
+    print('PROVENANCE', prov, commit, 'clean' if clean else 'DIRTY')
     print('QUAD', json.dumps({n: {k: v for k, v in i.items() if k != 'tjunction_fixes'} for n, i in rep['meshes'].items()}))
     if plan:
         print('UNION', json.dumps({k: v for k, v in rep['union'].items() if k not in ('welds', 'snap_log', 'deleted_faces')}))

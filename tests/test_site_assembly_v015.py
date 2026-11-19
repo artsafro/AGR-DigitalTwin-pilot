@@ -122,3 +122,183 @@ def test_npm_code_rename_refuses_bad_code_or_foreign_entries(tmp_path, code, ent
     with pytest.raises(ValueError):
         npm_code.rename_npm_zip(src, code, tmp_path / 'out')
     assert not (tmp_path / 'out' / f'{code}_Vatutino.zip').exists()
+
+
+@pytest.mark.parametrize('count', [1, 2, 20])
+def test_npm_code_receipt_binds_both_zip_files(tmp_path, count):
+    import hashlib
+    import json
+    import zipfile
+
+    src = tmp_path / '0000_Vatutino.zip'
+    entries = {f'0000_Vatutino_{i:02}.fbx': bytes(range(i)) for i in range(1, count + 1)}
+    entries['0000_Vatutino_Ground.fbx'] = b'ground'
+    _zip(src, entries)
+    original = src.read_bytes()
+    dest, _, sha = npm_code.rename_npm_zip(src, '1234', tmp_path / 'out')
+    receipt = json.loads(dest.with_suffix('.zip.delivery.json').read_text(encoding='utf-8'))
+    assert receipt['source'] == {'path': str(src.resolve()), 'sha256': hashlib.sha256(original).hexdigest()}
+    assert receipt['delivered'] == {'file': dest.name, 'size': dest.stat().st_size,
+                                   'sha256': hashlib.sha256(dest.read_bytes()).hexdigest()}
+    assert sha == receipt['delivered']['sha256'] != receipt['source']['sha256']
+    assert receipt['checker_source'] == {'hash_match': None, 'checker_verdict': None}
+    assert receipt['summary_ru'].splitlines().count('sintez-source: not_run (no --checker-summary)') == 1
+    assert 'sintez-final: not_run (run checker on the renamed ZIP)' in receipt['summary_ru'].splitlines()
+    assert src.read_bytes() == original
+    with zipfile.ZipFile(dest) as archive:
+        assert {n: archive.read(n) for n in archive.namelist()} == {
+            '1234' + key[4:]: value for key, value in entries.items()}
+
+
+@pytest.mark.parametrize('kind', ['empty_file', 'empty_zip', 'truncated', 'duplicate', 'not_zip', 'address', 'unicode_code'])
+def test_npm_code_rejects_invalid_inputs_before_publication(tmp_path, kind):
+    import zipfile
+
+    src = tmp_path / ('0000_Vatutino.bin' if kind == 'not_zip' else '0000_Vatutino.zip')
+    name = '0000_Vatutino_Ground.fbx'
+    if kind == 'empty_file':
+        src.touch()
+    else:
+        _zip(src, {} if kind == 'empty_zip' else {name: b'ground'})
+        if kind == 'truncated':
+            src.write_bytes(src.read_bytes()[:-10])
+        if kind == 'duplicate':
+            with zipfile.ZipFile(src, 'a') as archive, pytest.warns(UserWarning, match='Duplicate name'):
+                archive.writestr(name, b'duplicate')
+    out = tmp_path / 'out'
+    before = src.read_bytes()
+    with pytest.raises((ValueError, zipfile.BadZipFile)):
+        npm_code.rename_npm_zip(src, '１２３４' if kind == 'unicode_code' else '1234', out,
+                                '../elsewhere' if kind == 'address' else 'Vatutino')
+    assert src.read_bytes() == before
+    assert set(tmp_path.iterdir()) <= {src, out}
+    assert not out.exists() or not list(out.iterdir())
+
+
+@pytest.mark.parametrize('which', ['archive', 'sidecar', 'report'])
+def test_npm_code_cli_does_not_clobber_input_hardlinks(tmp_path, which):
+    import os
+    import subprocess
+    import sys
+
+    src = tmp_path / '0000_Vatutino.zip'
+    _zip(src, {'0000_Vatutino_Ground.fbx': b'ground'})
+    before = src.read_bytes()
+    out = tmp_path / 'out'
+    out.mkdir()
+    alias = out / {'archive': '1234_Vatutino.zip', 'sidecar': '1234_Vatutino.zip.delivery.json',
+                   'report': 'validate-1234_Vatutino.json'}[which]
+    os.link(src, alias)
+    run = subprocess.run([sys.executable, '-I', str(npm_code.__file__), src, '1234', out], cwd=tmp_path,
+                         capture_output=True, encoding='utf-8')
+    assert run.returncode != 0
+    assert list(out.iterdir()) == [alias]
+    assert src.read_bytes() == alias.read_bytes() == before
+
+
+def test_npm_code_cli_reports_failing_validator_and_attests_final_zip(tmp_path):
+    import hashlib
+    import json
+    import subprocess
+    import sys
+
+    src = tmp_path / '0000_Vatutino.zip'
+    _zip(src, {'0000_Vatutino_Ground.fbx': b'not an FBX'})
+    summary = tmp_path / 'elsewhere.json'
+    summary.write_text(json.dumps({'command': 'agr checker', 'inputs': [
+        {'side': 'hp', 'path': 'SM_Vatutino.zip', 'sha256': 'a' * 64},
+        {'side': 'lp', 'path': src.name, 'sha256': hashlib.sha256(src.read_bytes()).hexdigest()},
+    ], 'checker_verdict': 'fail'}), encoding='utf-8')
+    out = tmp_path / 'out'
+    run = subprocess.run([sys.executable, '-I', str(npm_code.__file__), src, '1234', out,
+                          '--checker-summary', summary], cwd=tmp_path,
+                         capture_output=True, encoding='utf-8')
+    assert run.returncode == 1, (run.stdout, run.stderr)
+    report = json.loads((out / 'validate-1234_Vatutino.json').read_text(encoding='utf-8'))
+    assert any('delivered: 1234_Vatutino.zip sha256=' in note for note in report['notes'])
+    receipt = json.loads((out / '1234_Vatutino.zip.delivery.json').read_text(encoding='utf-8'))
+    assert receipt['checker_source'] == {'hash_match': True, 'checker_verdict': 'fail'}
+    assert receipt['source']['sha256'] != receipt['delivered']['sha256']
+    assert 'sintez-final: not_run (run checker on the renamed ZIP)' in receipt['summary_ru'].splitlines()
+
+
+@pytest.mark.parametrize('case', ['stale', 'wrong_side', 'duplicate_lp', 'empty', 'partial', 'unsupported',
+                                  'nan', 'inf', 'short_hash', 'long_hash', 'duplicate_key'])
+def test_npm_code_checker_refuses_unbound_summary(tmp_path, monkeypatch, capsys, case):
+    import hashlib
+    import json
+    import sys
+
+    src = tmp_path / '0000_Vatutino.zip'
+    _zip(src, {'0000_Vatutino_Ground.fbx': b'ground'})
+    before = src.read_bytes()
+    sha = hashlib.sha256(before).hexdigest()
+    lp = {'side': 'lp', 'path': src.name, 'sha256': sha}
+    inputs = {
+        'stale': [{**lp, 'sha256': 'b' * 64}, {**lp, 'side': 'hp'}],
+        'wrong_side': [{**lp, 'side': 'hp'}], 'duplicate_lp': [lp, lp], 'partial': [{}],
+        'unsupported': [{**lp, 'side': 'npm'}], 'nan': [{**lp, 'sha256': float('nan')}],
+        'inf': [{**lp, 'sha256': float('inf')}], 'short_hash': [{**lp, 'sha256': sha[:-1]}],
+        'long_hash': [{**lp, 'sha256': sha + 'a'}],
+    }
+    text = json.dumps({'command': 'agr checker', 'inputs': inputs.get(case, [lp]),
+                       'checker_verdict': 'no_failed_automatic_rule'})
+    if case == 'empty':
+        text = ''
+    if case == 'duplicate_key':
+        text = text.replace('"sha256":', '"sha256": "stale", "sha256":')
+    summary = tmp_path / 'check.json'
+    summary.write_text(text, encoding='utf-8')
+    out = tmp_path / 'out'
+    monkeypatch.setattr(sys, 'argv', [str(npm_code.__file__), str(src), '1234', str(out),
+                                      '--checker-summary', str(summary)])
+    with pytest.raises(SystemExit) as exc:
+        npm_code.main()
+    assert exc.value.code == 2
+    lines = capsys.readouterr().err.splitlines()
+    assert len(lines) == 1 and 'sintez-source:' in lines[0]
+    if case == 'stale':
+        assert 'hash mismatch' in lines[0]
+    assert set(tmp_path.iterdir()) == {src, summary}
+    assert src.read_bytes() == before and summary.read_text(encoding='utf-8') == text
+
+
+def test_npm_code_refuses_source_drift_during_copy(tmp_path, monkeypatch):
+    import zipfile
+
+    src = tmp_path / '0000_Vatutino.zip'
+    _zip(src, {'0000_Vatutino_Ground.fbx': b'ground'})
+    read = zipfile.ZipFile.read
+
+    def read_and_append(archive, *args, **kwargs):
+        result = read(archive, *args, **kwargs)
+        with src.open('ab') as stream:
+            stream.write(b'concurrent edit')
+        return result
+
+    monkeypatch.setattr(zipfile.ZipFile, 'read', read_and_append)
+    out = tmp_path / 'out'
+    with pytest.raises(ValueError, match='differs|changed'):
+        npm_code.rename_npm_zip(src, '1234', out)
+    assert src.read_bytes().endswith(b'concurrent edit')
+    assert not out.exists() or not list(out.iterdir())
+
+
+def test_npm_code_competing_archive_leaves_no_stale_receipt(tmp_path, monkeypatch):
+    import os
+
+    src = tmp_path / '0000_Vatutino.zip'
+    _zip(src, {'0000_Vatutino_Ground.fbx': b'ground'})
+    out = tmp_path / 'out'
+    dest = out / '1234_Vatutino.zip'
+    link = os.link
+
+    def competing_link(source, target):
+        if target == dest:
+            dest.write_bytes(b'foreign publisher')
+        link(source, target)
+
+    monkeypatch.setattr(os, 'link', competing_link)
+    with pytest.raises(FileExistsError):
+        npm_code.rename_npm_zip(src, '1234', out)
+    assert {p.name: p.read_bytes() for p in out.iterdir()} == {dest.name: b'foreign publisher'}

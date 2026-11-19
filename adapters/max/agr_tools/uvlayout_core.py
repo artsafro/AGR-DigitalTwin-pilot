@@ -57,8 +57,7 @@ def tile_origin(udim):
     """UDIM 1001.. -> integer (u0, v0) of the tile: 10 tiles per row."""
     if isinstance(udim, bool) or not isinstance(udim, int) or udim < FIRST_UDIM:
         raise ValueError('UDIM tile must be an integer >= 1001: {!r}'.format(udim))
-    k = udim - FIRST_UDIM
-    return k % 10, k // 10
+    return udimtile.tile_origin(udim)
 
 
 def udim_of_cell(cu, cv):

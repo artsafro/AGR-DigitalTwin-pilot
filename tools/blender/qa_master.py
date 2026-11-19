@@ -4,7 +4,7 @@ Pattern: n/a | new-case: the one Blender-side master QA (#1379, moved unchanged 
 the KPP1 and TEC26 job files are shims that run this file). The guard rule `master-qa`
 (tools/architecture/duplicate_guard.py) flags another `def world_bm` (job copies such as PSU275's stay listed).
 
-Usage: blender --background --factory-startup <file.blend|-> --python qa_master.py -- <out.json> [fbx]
+Usage: blender --background --factory-startup <file.blend|-> --python qa_master.py -- <out.json> [fbx [tile_px]]
 (jobs/KPP1/scripts/qa_master.py and jobs/TEC26-OKS/scripts/qa_master.py keep that command working.)
 With an FBX path the scene is reset and the FBX is imported first (readback of an export).
 
@@ -25,11 +25,15 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
-MAX_EDGE = 4.0 + 1e-4
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from vpm_uv_policy import max_quad_side
+
+# Optional third argument is the full-texture tile resolution (old commands default to 4096).
 TOL = 0.001
 
 argv = sys.argv[sys.argv.index("--") + 1:]
 out = argv[0]
+MAX_EDGE = max_quad_side(int(argv[2]) if len(argv) > 2 else 4096)
 if len(argv) > 1:
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.fbx(filepath=argv[1])

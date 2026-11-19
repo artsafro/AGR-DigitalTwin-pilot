@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "Verifier.schema.json",
+  "title": "verifier.json - observe-mode VLM verifier report (#1577, tools/qa/verifier.py)",
+  "description": "Cross-field rules (main_discrepancy == findings[0], observe => round 1) live in verifier.validate_report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "job", "mode", "round", "edits_model", "role", "inputs", "vlm", "checklist", "materials",
+               "findings", "main_discrepancy", "scores"],
+  "properties": {
+    "schema": {"const": "agr.verifier/1"},
+    "job": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["observe", "fix"]},
+    "round": {"type": "integer", "minimum": 1, "maximum": 3},
+    "edits_model": {"const": false},
+    "role": {"type": "string", "minLength": 1},
+    "inputs": {
+      "type": "object",
+      "required": ["renders", "slide", "views", "facades"],
+      "properties": {
+        "renders": {"type": "string"},
+        "slide": {"type": "string"},
+        "views": {"type": "array", "items": {"type": "string"}, "minItems": 6, "maxItems": 6},
+        "facades": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
+    "vlm": {"type": "object", "required": ["model"]},
+    "checklist": {
+      "type": "object",
+      "required": ["variant", "items", "forward", "reverse", "kept", "dropped"],
+      "properties": {
+        "variant": {"const": "A"},
+        "items": {"type": "array", "minItems": 1},
+        "forward": {"type": "object", "additionalProperties": {"type": "boolean"}},
+        "reverse": {"type": "object", "additionalProperties": {"type": "boolean"}},
+        "kept": {"type": "object", "additionalProperties": {"type": "boolean"}},
+        "dropped": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "materials": {
+      "type": "object",
+      "required": ["axes", "fix_order", "discrepancy_max"],
+      "properties": {
+        "axes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["missing", "base_color", "borders", "scale", "finish", "consistency"],
+          "patternProperties": {
+            "^(missing|base_color|borders|scale|finish|consistency)$": {
+              "type": "object",
+              "required": ["score", "reason"],
+              "properties": {
+                "score": {"type": "integer", "minimum": 1, "maximum": 5},
+                "reason": {"type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$"},
+                "forward": {"type": "integer", "minimum": 1, "maximum": 5},
+                "reverse": {"type": "integer", "minimum": 1, "maximum": 5}
+              }
+            }
+          }
+        },
+        "fix_order": {"const": ["missing", "base_color", "borders", "scale"]},
+        "discrepancy_max": {"const": 3}
+      }
+    },
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "main_discrepancy": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/finding"}]},
+    "scores": {
+      "type": "object",
+      "required": ["checklist_items", "checklist_kept", "checklist_flagged", "material_min", "material_mean"]
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "key", "text", "locate_with"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "source": {"enum": ["material", "checklist"]},
+        "key": {"type": "string", "pattern": "^(material|checklist):"},
+        "text": {"type": "string", "minLength": 1},
+        "locate_with": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -269,8 +269,8 @@ def run_live(case, output, blender):
         with (output / name).open("x", encoding="utf-8") as f:
             json.dump(value, f, ensure_ascii=False, indent=2, allow_nan=False)
     def run(script, args, log):
-        cmd = [str(blender), "--background", "--factory-startup", "--python-exit-code", "1",
-               "--python", str(script), "--", *map(str,args)]
+        from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
+        cmd = blender_command(script, args, executable=str(blender))
         with (output/log).open("x",encoding="utf-8") as f:
             completed = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, timeout=900)
         if completed.returncode:

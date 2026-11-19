@@ -297,6 +297,22 @@ Rules:
   question and every stop is shown isolated on the body (renders, three views, sizes) before a rule or a question.
 - Every subagent prompt and every `.claude/agents/*.md` body follows the [Prompt guide](#prompt-guide).
 
+### Sourced briefs and background time boxes (#1539)
+
+- List each binding constraint with its source: the user's message, regulation page/section,
+  or a `D<n>` decision. Label any extra constraint **Main-agent assumption**, not a user requirement;
+  revisit it first if it slows the work. For UCX, cite [D098] and [D134] rather than inventing
+  a fixed gap or a reverse-distance coverage gate.
+- Give every background production subagent a **Time box: 30 min** by default; state any
+  different duration explicitly in the brief. This adds no write permission to the read-only roles above.
+- Before the time box expires, the main agent reads the subagent's actual progress/output,
+  chooses **continue / simplify / stop**, and tells the user the measured progress and decision.
+  Continuing starts a new time box; another unattended interval is not allowed. A status request
+  without reading a reply is not a progress check. Stop/simplify when assumptions, not sourced
+  requirements, are consuming the budget.
+- Evidence: [`subagent-timebox`](../../evals/subagent-timebox/task.md) checks timestamped
+  background launches and correlated successful output reads (default 30 min).
+
 ### Prompt guide
 
 The single shared brief for any subagent prompt (named agents, general-purpose, Explore, fork). Do the one
@@ -434,6 +450,19 @@ open-PR comparison but still runs `--fetch`, so with no network the check exits 
 `pre-commit:42-43` does). Two branches that allocate before either PR is open are caught by the later one's next
 commit or check: the later branch renumbers (`next`, then every `[D<n>]` reference), never the merged one. Run
 `check` once more after merging `origin/main` and before asking for review.
+
+### Merging PRs: generated maps and decision rows (#1558)
+
+The route/context maps in `docs/architecture/` (`*.excalidraw`, `*.svg`, `*-owners.md`) are generated and carry
+a hash of all YAML inputs, so every pair of PRs that regenerates them conflicts. `.gitattributes` marks them
+`merge=ours` (keep HEAD); the merged YAML is the only source and `route_map.py --check` is the guard. A rework
+(GitHub shows the PR CONFLICTING; GitHub ignores merge drivers) or an integration branch runs
+`python tools/architecture/regen_after_merge.py --merge origin/main` (or `--merge <pr branch>`): it installs the
+driver (`--install`, once per clone), merges, takes the HEAD maps, resolves `docs/decisions.md` with
+`python tools/decisions_merge.py` (union of D-rows, HEAD wins on the same id, id order), regenerates, runs
+`--check` and commits; after merges done by hand run it without `--merge`. Exit 1 leaves the merge for you:
+another file conflicts, or `decisions_merge.py` reported a same-id collision - the incoming row gets a new id
+(`decision_ids.py next --fetch`, then its `[D<n>]` references). Never resolve a map by hand.
 
 ## Harness inventory (#129)
 

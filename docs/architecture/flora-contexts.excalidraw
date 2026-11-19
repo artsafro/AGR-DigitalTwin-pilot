@@ -65,13 +65,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "text": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "fontSize": 16,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "top",
    "containerId": null,
-   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше",
+   "originalText": "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -103,6 +103,10 @@
     {
      "type": "text",
      "id": "edec5de9abb756a8"
+    },
+    {
+     "type": "arrow",
+     "id": "e3e27a88e9873390"
     }
    ],
    "updated": 1,
@@ -146,86 +150,12 @@
    "lineHeight": 1.25
   },
   {
-   "id": "ede9c53268854939",
-   "type": "rectangle",
-   "x": 955.0,
-   "y": 319.0,
-   "width": 470,
-   "height": 65.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "#ffc9c9",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": {
-    "type": 3
-   },
-   "seed": 1284284821,
-   "version": 1,
-   "versionNonce": 147757024,
-   "isDeleted": false,
-   "boundElements": [
-    {
-     "type": "text",
-     "id": "e135b12210d81506"
-    },
-    {
-     "type": "arrow",
-     "id": "e9fcb6d874f2a894"
-    }
-   ],
-   "updated": 1,
-   "link": null,
-   "locked": false
-  },
-  {
-   "id": "e135b12210d81506",
-   "type": "text",
-   "x": 963.0,
-   "y": 329.0,
-   "width": 454,
-   "height": 45.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "transparent",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": null,
-   "seed": 129104109,
-   "version": 1,
-   "versionNonce": 1576400441,
-   "isDeleted": false,
-   "boundElements": null,
-   "updated": 1,
-   "link": null,
-   "locked": false,
-   "text": "Дубли вне владельца: 1\n• jobs/VATUTINO-SITE/place_site.py:87 — своя расстановка участка в\nзадании поверх движка (#1393)",
-   "fontSize": 12,
-   "fontFamily": 2,
-   "textAlign": "left",
-   "verticalAlign": "middle",
-   "containerId": "ede9c53268854939",
-   "originalText": "Дубли вне владельца: 1\n• jobs/VATUTINO-SITE/place_site.py:87 — своя расстановка участка в\nзадании поверх движка (#1393)",
-   "autoResize": true,
-   "lineHeight": 1.25
-  },
-  {
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
    "x": 40.0,
-   "y": 444.0,
+   "y": 365.0,
    "width": 470,
-   "height": 177.5,
+   "height": 195.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -261,9 +191,9 @@
    "id": "ed4e9eac2280ec03",
    "type": "text",
    "x": 48.0,
-   "y": 454.0,
+   "y": 375.0,
    "width": 454,
-   "height": 157.5,
+   "height": 175.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -283,13 +213,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "text": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e8b8779b8f489e86",
-   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: путь или DT_BLENDER -> исполняемый\nфайл Blender; нет — ошибка\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
+   "originalText": "Связь с DCC (Blender / 3ds Max / AGR Tools)\nВладелец: src/dt_ai/core/blender_runner.py\nведомость, DWG СПОЗУ, сцена библиотеки — только копии;\nагент работает там, где удобно (D293)\n\nblender_executable: --blender > DT_BLENDER (CLI dt qa /\nagr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2;\nпуть к Blender\nrun_blender: скрипт, аргументы, ожидаемые выходы, таймаут\n-> свежий JSON; старый ответ — ошибка",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -297,7 +227,7 @@
    "id": "ec64300e2c586133",
    "type": "rectangle",
    "x": 650.0,
-   "y": 444.0,
+   "y": 365.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -339,7 +269,7 @@
    "id": "edc9417f49164a65",
    "type": "text",
    "x": 658.0,
-   "y": 454.0,
+   "y": 375.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -375,7 +305,7 @@
    "id": "e4e08605fe13983d",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 444.0,
+   "y": 365.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -417,7 +347,7 @@
    "id": "e9db42eb04a461fc",
    "type": "text",
    "x": 1573.0,
-   "y": 454.0,
+   "y": 375.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -453,7 +383,7 @@
    "id": "ea87d811c0bc3761",
    "type": "rectangle",
    "x": 2175.0,
-   "y": 444.0,
+   "y": 365.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -484,7 +414,7 @@
     },
     {
      "type": "arrow",
-     "id": "eb4f93c2b1c798d6"
+     "id": "ed6932978980bf9d"
     }
    ],
    "updated": 1,
@@ -495,7 +425,7 @@
    "id": "efec4c7cab82aa80",
    "type": "text",
    "x": 2183.0,
-   "y": 454.0,
+   "y": 375.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -531,7 +461,7 @@
    "id": "ee632406eec8a414",
    "type": "rectangle",
    "x": 345.0,
-   "y": 716.5,
+   "y": 637.5,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -558,7 +488,7 @@
     },
     {
      "type": "arrow",
-     "id": "ec87553ab808f754"
+     "id": "eef246bdb7d092a0"
     }
    ],
    "updated": 1,
@@ -569,7 +499,7 @@
    "id": "e7bc7c585645a517",
    "type": "text",
    "x": 353.0,
-   "y": 726.5,
+   "y": 647.5,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -602,10 +532,10 @@
    "lineHeight": 1.25
   },
   {
-   "id": "ebefb8015300e481",
+   "id": "e1c3fdcfd48b67d4",
    "type": "rectangle",
    "x": 955.0,
-   "y": 716.5,
+   "y": 637.5,
    "width": 470,
    "height": 142.5,
    "angle": 0,
@@ -621,30 +551,30 @@
    "roundness": {
     "type": 3
    },
-   "seed": 233386411,
+   "seed": 1512866872,
    "version": 1,
-   "versionNonce": 961134570,
+   "versionNonce": 1887080474,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "ee52b2029f7668ad"
+     "id": "efbb2352165bfc95"
     },
     {
      "type": "arrow",
-     "id": "eb4f93c2b1c798d6"
+     "id": "ed6932978980bf9d"
     },
     {
      "type": "arrow",
-     "id": "e9fcb6d874f2a894"
+     "id": "e3e27a88e9873390"
     },
     {
      "type": "arrow",
-     "id": "ec87553ab808f754"
+     "id": "eef246bdb7d092a0"
     },
     {
      "type": "arrow",
-     "id": "e57593ab63964101"
+     "id": "ebb57b97e36a94d9"
     }
    ],
    "updated": 1,
@@ -652,10 +582,10 @@
    "locked": false
   },
   {
-   "id": "ee52b2029f7668ad",
+   "id": "efbb2352165bfc95",
    "type": "text",
    "x": 963.0,
-   "y": 726.5,
+   "y": 647.5,
    "width": 454,
    "height": 122.5,
    "angle": 0,
@@ -669,9 +599,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1534628035,
+   "seed": 1210349072,
    "version": 1,
-   "versionNonce": 1959272557,
+   "versionNonce": 1484336801,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -682,7 +612,7 @@
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
-   "containerId": "ebefb8015300e481",
+   "containerId": "e1c3fdcfd48b67d4",
    "originalText": "НПМ Флоры на атласе\nВладелец: adapters/max/agr_tools/flora_atlas_max.py\nатлас Флоры в AGR Tools; конвертация ВПМ → НПМ или\nпараллельно (D293)\n\natlas_flora: контекст Max, режим, узлы Флоры, превью ->\nатлас Флоры НПМ",
    "autoResize": true,
    "lineHeight": 1.25
@@ -691,7 +621,7 @@
    "id": "e99225f63e15102b",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 971.5,
+   "y": 892.5,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -718,7 +648,7 @@
     },
     {
      "type": "arrow",
-     "id": "e57593ab63964101"
+     "id": "ebb57b97e36a94d9"
     },
     {
      "type": "arrow",
@@ -737,7 +667,7 @@
    "id": "e0a5e7feece0676b",
    "type": "text",
    "x": 1573.0,
-   "y": 981.5,
+   "y": 902.5,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -773,7 +703,7 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 955.0,
-   "y": 971.5,
+   "y": 892.5,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -815,7 +745,7 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 963.0,
-   "y": 981.5,
+   "y": 902.5,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -851,7 +781,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 345.0,
-   "y": 971.5,
+   "y": 892.5,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -889,7 +819,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 353.0,
-   "y": 981.5,
+   "y": 902.5,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -925,7 +855,7 @@
    "id": "e3b1e74958f468e1",
    "type": "rectangle",
    "x": 1565.0,
-   "y": 1314.0,
+   "y": 1235.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -963,7 +893,7 @@
    "id": "e9c69cbeaa3ccc77",
    "type": "text",
    "x": 1573.0,
-   "y": 1324.0,
+   "y": 1245.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -999,9 +929,9 @@
    "id": "eae7405c99988339",
    "type": "arrow",
    "x": 510.0,
-   "y": 532.75,
-   "width": 140.0,
-   "height": 0.0,
+   "y": 462.5,
+   "width": 630.0,
+   "height": 108.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1012,9 +942,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 169997421,
    "version": 1,
    "versionNonce": 203889862,
@@ -1030,12 +958,28 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     140.0,
+     20.0,
      0.0
+    ],
+    [
+     20.0,
+     100.0
+    ],
+    [
+     630.0,
+     100.0
+    ],
+    [
+     630.0,
+     -8.75
+    ],
+    [
+     610.0,
+     -8.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1056,8 +1000,8 @@
   {
    "id": "e6fb9676d8f2e381",
    "type": "text",
-   "x": 520.0,
-   "y": 514.75,
+   "x": 775.0,
+   "y": 545.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1093,9 +1037,9 @@
    "id": "e77f3b2afbd877e7",
    "type": "arrow",
    "x": 1120.0,
-   "y": 532.75,
-   "width": 445.0,
-   "height": 8.75,
+   "y": 453.75,
+   "width": 935.0,
+   "height": 108.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1106,9 +1050,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1254259014,
    "version": 1,
    "versionNonce": 1951573158,
@@ -1124,11 +1066,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     445.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     108.75
+    ],
+    [
+     935.0,
+     108.75
+    ],
+    [
+     935.0,
+     8.75
+    ],
+    [
+     915.0,
      8.75
     ]
    ],
@@ -1150,8 +1108,8 @@
   {
    "id": "e3a2d1aad8b26a14",
    "type": "text",
-   "x": 1282.5,
-   "y": 528.12,
+   "x": 1537.5,
+   "y": 553.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1187,9 +1145,9 @@
    "id": "ec61ae47892f88a6",
    "type": "arrow",
    "x": 2035.0,
-   "y": 541.5,
-   "width": 140.0,
-   "height": 8.75,
+   "y": 462.5,
+   "width": 630.0,
+   "height": 117.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1200,9 +1158,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 166870674,
    "version": 1,
    "versionNonce": 1849251347,
@@ -1218,11 +1174,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     117.5
+    ],
+    [
+     630.0,
+     117.5
+    ],
+    [
+     630.0,
+     8.75
+    ],
+    [
+     610.0,
      8.75
     ]
    ],
@@ -1244,8 +1216,8 @@
   {
    "id": "eb0b3872be60bb71",
    "type": "text",
-   "x": 2045.0,
-   "y": 536.88,
+   "x": 2300.0,
+   "y": 571.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1278,11 +1250,11 @@
    "lineHeight": 1.25
   },
   {
-   "id": "eb4f93c2b1c798d6",
+   "id": "ed6932978980bf9d",
    "type": "arrow",
-   "x": 2175.0,
-   "y": 550.25,
-   "width": 750.0,
+   "x": 2645.0,
+   "y": 471.25,
+   "width": 1240.0,
    "height": 237.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
@@ -1294,17 +1266,15 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
-   "seed": 1618670754,
+   "roundness": null,
+   "seed": 1555157942,
    "version": 1,
-   "versionNonce": 489605074,
+   "versionNonce": 407162272,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "ecefdc129f9845a9"
+     "id": "eb509168877aa5e5"
     }
    ],
    "updated": 1,
@@ -1312,11 +1282,19 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     -750.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     237.5
+    ],
+    [
+     -1220.0,
      237.5
     ]
    ],
@@ -1330,16 +1308,16 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    }
   },
   {
-   "id": "ecefdc129f9845a9",
+   "id": "eb509168877aa5e5",
    "type": "text",
-   "x": 1740.0,
-   "y": 651.0,
+   "x": 1985.0,
+   "y": 691.25,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1353,9 +1331,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 11673867,
+   "seed": 1802562957,
    "version": 1,
-   "versionNonce": 956497314,
+   "versionNonce": 1956141099,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1366,18 +1344,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "eb4f93c2b1c798d6",
+   "containerId": "ed6932978980bf9d",
    "originalText": "звезда /\nоболочка",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e9fcb6d874f2a894",
+   "id": "e3e27a88e9873390",
    "type": "arrow",
-   "x": 1190.0,
-   "y": 384.0,
-   "width": 0.0,
-   "height": 332.5,
+   "x": 1425.0,
+   "y": 207.5,
+   "width": 20.0,
+   "height": 501.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1388,17 +1366,15 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
-   "seed": 827851703,
+   "roundness": null,
+   "seed": 550101832,
    "version": 1,
-   "versionNonce": 281777646,
+   "versionNonce": 16963667,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e606743a0a5c527f"
+     "id": "e44452c846c375e5"
     }
    ],
    "updated": 1,
@@ -1406,12 +1382,20 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     501.25
     ],
     [
      0.0,
-     332.5
+     501.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1419,21 +1403,21 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "ede9c53268854939",
+    "elementId": "e1aaee826150be1a",
     "focus": 0,
     "gap": 4
    },
    "endBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    }
   },
   {
-   "id": "e606743a0a5c527f",
+   "id": "e44452c846c375e5",
    "type": "text",
-   "x": 1130.0,
-   "y": 541.25,
+   "x": 1385.0,
+   "y": 449.38,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1447,9 +1431,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1004748457,
+   "seed": 1934607585,
    "version": 1,
-   "versionNonce": 1261872362,
+   "versionNonce": 901953076,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1460,18 +1444,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e9fcb6d874f2a894",
+   "containerId": "e3e27a88e9873390",
    "originalText": "точки Флоры",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "ec87553ab808f754",
+   "id": "eef246bdb7d092a0",
    "type": "arrow",
    "x": 815.0,
-   "y": 814.0,
-   "width": 140.0,
-   "height": 26.25,
+   "y": 735.0,
+   "width": 630.0,
+   "height": 91.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1482,17 +1466,15 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
-   "seed": 18425638,
+   "roundness": null,
+   "seed": 16040530,
    "version": 1,
-   "versionNonce": 1584098381,
+   "versionNonce": 1911334936,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e748da56e5d5bf8d"
+     "id": "ecad151c80df578f"
     }
    ],
    "updated": 1,
@@ -1500,11 +1482,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     65.0
+    ],
+    [
+     630.0,
+     65.0
+    ],
+    [
+     630.0,
+     -26.25
+    ],
+    [
+     610.0,
      -26.25
     ]
    ],
@@ -1518,16 +1516,16 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    }
   },
   {
-   "id": "e748da56e5d5bf8d",
+   "id": "ecad151c80df578f",
    "type": "text",
-   "x": 825.0,
-   "y": 791.88,
+   "x": 1080.0,
+   "y": 791.25,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1541,9 +1539,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1213712919,
+   "seed": 401016782,
    "version": 1,
-   "versionNonce": 476971912,
+   "versionNonce": 727405322,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1554,18 +1552,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "ec87553ab808f754",
+   "containerId": "eef246bdb7d092a0",
    "originalText": "облегчённые НПМ",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e57593ab63964101",
+   "id": "ebb57b97e36a94d9",
    "type": "arrow",
-   "x": 1190.0,
-   "y": 859.0,
-   "width": 610.0,
-   "height": 112.5,
+   "x": 1425.0,
+   "y": 708.75,
+   "width": 630.0,
+   "height": 272.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1576,17 +1574,15 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
-   "seed": 1283668084,
+   "roundness": null,
+   "seed": 397234918,
    "version": 1,
-   "versionNonce": 1282490978,
+   "versionNonce": 900642368,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e24181c04d95562b"
+     "id": "e3490fa115b5bfca"
     }
    ],
    "updated": 1,
@@ -1594,12 +1590,28 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     163.75
+    ],
+    [
+     630.0,
+     163.75
+    ],
+    [
+     630.0,
+     272.5
     ],
     [
      610.0,
-     112.5
+     272.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1607,7 +1619,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    },
@@ -1618,10 +1630,10 @@
    }
   },
   {
-   "id": "e24181c04d95562b",
+   "id": "e3490fa115b5bfca",
    "type": "text",
-   "x": 1435.0,
-   "y": 906.25,
+   "x": 1690.0,
+   "y": 863.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1635,9 +1647,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 480506123,
+   "seed": 247885294,
    "version": 1,
-   "versionNonce": 1283794702,
+   "versionNonce": 899433682,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1648,7 +1660,7 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e57593ab63964101",
+   "containerId": "ebb57b97e36a94d9",
    "originalText": "виды сцены",
    "autoResize": true,
    "lineHeight": 1.25
@@ -1656,10 +1668,10 @@
   {
    "id": "eb0c289f177180a1",
    "type": "arrow",
-   "x": 1800.0,
-   "y": 1149.0,
-   "width": 0.0,
-   "height": 165.0,
+   "x": 2035.0,
+   "y": 981.25,
+   "width": 20.0,
+   "height": 351.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1670,9 +1682,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1978275682,
    "version": 1,
    "versionNonce": 1939123774,
@@ -1688,12 +1698,20 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     351.25
     ],
     [
      0.0,
-     165.0
+     351.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1714,8 +1732,8 @@
   {
    "id": "e2cd0763e471d256",
    "type": "text",
-   "x": 1740.0,
-   "y": 1222.5,
+   "x": 1995.0,
+   "y": 1148.12,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1750,10 +1768,10 @@
   {
    "id": "ec7e189965a97a82",
    "type": "arrow",
-   "x": 1565.0,
-   "y": 1060.25,
-   "width": 140.0,
-   "height": 52.5,
+   "x": 2035.0,
+   "y": 981.25,
+   "width": 630.0,
+   "height": 91.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1764,9 +1782,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 767809568,
    "version": 1,
    "versionNonce": 1885770576,
@@ -1782,11 +1798,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     -140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     91.25
+    ],
+    [
+     -490.0,
+     91.25
+    ],
+    [
+     -490.0,
+     52.5
+    ],
+    [
+     -610.0,
      52.5
     ]
    ],
@@ -1808,8 +1840,8 @@
   {
    "id": "e4ab9c0e6b1a460f",
    "type": "text",
-   "x": 1435.0,
-   "y": 1068.5,
+   "x": 1740.0,
+   "y": 1055.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1844,10 +1876,10 @@
   {
    "id": "e4f552790d995798",
    "type": "arrow",
-   "x": 955.0,
-   "y": 1112.75,
-   "width": 140.0,
-   "height": 61.25,
+   "x": 1425.0,
+   "y": 1033.75,
+   "width": 630.0,
+   "height": 161.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1858,9 +1890,7 @@
    "opacity": 100,
    "groupIds": [],
    "frameId": null,
-   "roundness": {
-    "type": 2
-   },
+   "roundness": null,
    "seed": 1075795888,
    "version": 1,
    "versionNonce": 801242419,
@@ -1876,11 +1906,27 @@
    "locked": false,
    "points": [
     [
-     0,
-     0
+     0.0,
+     0.0
     ],
     [
-     -140.0,
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     -161.25
+    ],
+    [
+     -590.0,
+     -161.25
+    ],
+    [
+     -590.0,
+     -61.25
+    ],
+    [
+     -610.0,
      -61.25
     ]
    ],
@@ -1902,8 +1948,8 @@
   {
    "id": "e321747c08b4204e",
    "type": "text",
-   "x": 825.0,
-   "y": 1073.12,
+   "x": 1080.0,
+   "y": 863.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
