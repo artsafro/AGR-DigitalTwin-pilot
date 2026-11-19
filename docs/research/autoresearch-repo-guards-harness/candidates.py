@@ -116,8 +116,31 @@ def m1_scope_module(dg):
     return undo
 
 
+class LazyIntNames:
+    """dg._int_names(tree) computed on the first .get (t_b1bb763f, R5); _udim_hits only calls consts.get."""
+
+    def __init__(self, tree, build):
+        self.tree, self.build, self.data = tree, build, None
+
+    def get(self, key, default=None):
+        if self.data is None:
+            self.data = self.build(self.tree)
+        return self.data.get(key, default)
+
+
+def r5_lazy_int_names(dg):
+    """R5: _int_names(tree) becomes lazy - the full walk runs only when a Name term is looked up."""
+    orig = dg._int_names
+    dg._int_names = lambda tree: LazyIntNames(tree, orig)
+
+    def undo():
+        dg._int_names = orig
+    return undo
+
+
 CANDIDATES = {"r1_walk_memo": r1_walk_memo, "m0_drop_calls": m0_drop_calls,
-              "r4_lazy_scopes": r4_lazy_scopes, "m1_scope_module": m1_scope_module}
+              "r4_lazy_scopes": r4_lazy_scopes, "m1_scope_module": m1_scope_module,
+              "r5_lazy_int_names": r5_lazy_int_names}
 
 
 def apply(dg, names):

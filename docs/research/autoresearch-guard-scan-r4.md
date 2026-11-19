@@ -2,7 +2,10 @@
 
 ## Кратко для Артёма
 
-(заполняется после замеров, см. «Итог»)
+Продолжение standing #1: время полного скана `duplicate_guard` поверх R1. Режим OBSERVE, `duplicate_guard.py`
+не правился (им заняты #1486/PR #1684 и #1688). R3 отброшен по замеру (разбор файлов — всего 6,9 из 53 с).
+R4 и R4+R5 ускоряют скан на 11-13 % при полном паритете, порог 20 % не взят — ничего не принято.
+Оба приёма можно бесплатно добавить в будущую карточку внедрения R1.
 
 ## Why this target
 
@@ -55,7 +58,27 @@ harness and recorded as a proposal.
 
 (round log below; receipts outside git: `C:/x/ar_t_b1bb763f/`)
 
-| Round | Candidate (on top of R1) | median B, s | median C, s | C/B | parity | verdict |
-|---|---|---|---|---|---|---|
+| Round | Candidate (on top of R1) | median B, s | median C, s | C/B (wall) | C/B (CPU) | parity | verdict |
+|---|---|---|---|---|---|---|---|
+| guard check | `m1_scope_module` (mutation: every scope = `<module>`) | 23.23 (1 run) | 22.54 | 0.97 | - | **False** (rc 0 -> 1) | parity guard catches it |
+| 1 | `r4_lazy_scopes` | 27.94 (24.77 / 27.94 / 28.72) | 22.30 (21.94 / 24.92 / 22.30) | 0.798 | 0.806 | True (6/6 + 757 `tests/*.py`) | formally <= 0.80, but borderline -> confirm |
+| 2 | `r4_lazy_scopes` (confirmation, same command) | 29.11 (29.71 / 27.42 / 29.11) | 25.77 (25.77 / 30.33 / 19.99) | 0.885 | 0.882 | True | **not kept** (round 1 was load noise) |
+| 3 | `r4_lazy_scopes,r5_lazy_int_names` | 23.32 (24.48 / 23.32 / 22.78) | 20.34 (20.81 / 19.74 / 20.34) | 0.873 | 0.870 | True | **not kept** (< 20 %) |
+
+Injected guard tests (B+C = `r1_walk_memo,r4_lazy_scopes`, `-p ar_dg_inject -n 4`):
+`tests/test_architecture_map_1359.py tests/test_duplicate_status_1424.py` **287 passed** (145.6 s).
+PC load: other workers ran during all rounds (B ranged 22.8-29.7 s); B/C alternate in one process, so the
+ratio is fair, absolute seconds are not idle numbers. Stop reason: 3 candidate rounds.
+
+Not kept, recorded for the follow-up R1 card (they are free and exact, but each alone is ~11-13 %):
+- R4: `_findings` builds `_scopes(tree)` lazily, on the first hit's lookup (most files have no hit).
+- R5: `_udim_hits` builds `_int_names(tree)` lazily, on the first `consts.get` (a Name term in an addition).
 
 ## Итог
+
+Цель — время полного скана `duplicate_guard` поверх R1 (мемоизация `ast.walk`, standing #1). R3 (общий
+разбор файлов) отброшен по замеру: весь `ast.parse` = 6,9 из 53 с. R4 (ленивые области видимости) и R4+R5
+(+ ленивые целочисленные имена) дают устойчиво 11-13 % (C/B 0,885 и 0,873 по стене, 0,88/0,87 по CPU),
+вывод совпадает байт-в-байт, мутация паритета ловится, 287 guard-тестов зелёные с подменой. Порог 20 % не
+достигнут: код не принят. Первый замер R4 (0,798) — шум нагрузки, повтор его не подтвердил.
+Остаток скана после R1: `_udim_hits` и `call_chains.edges`; это следующие цели (бэклог).
