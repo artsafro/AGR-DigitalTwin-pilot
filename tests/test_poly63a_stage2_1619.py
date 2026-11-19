@@ -166,7 +166,7 @@ def _stop(path, *messages):
     assert not (path / "stage2.json").exists()
 
 
-def _opening(dx=0, **extra):
+def _opening(dx=0.0, **extra):
     verts, fn, fi = _body()
     verts[:, 0] += dx
     faces = np.split(fi, np.cumsum(fn)[:-1])
@@ -196,7 +196,7 @@ def test_cli_stops_for_opening_moved_one_metre(tmp_path):
 @pytest.mark.parametrize("reverse", [False, True])
 def test_repeated_match_lists_every_claimant(tmp_path, monkeypatch, count, reverse):
     _write_inputs(tmp_path)
-    rows = [_opening(dx, id=i) for i, dx in enumerate(np.linspace(-0.1, 0.1, count), 1)]
+    rows = [_opening(float(dx), id=i) for i, dx in enumerate(np.linspace(-0.1, 0.1, count), 1)]
     if count > 2:
         rows.append(_opening(1.0, id=99))
     _inject_openings(monkeypatch, rows[::-1] if reverse else rows)
@@ -205,12 +205,15 @@ def test_repeated_match_lists_every_claimant(tmp_path, monkeypatch, count, rever
     _stop(tmp_path, *messages, *(["opening 99 ", "0.6 m"] if count > 2 else []))
 
 
-@pytest.mark.parametrize("status", ["ambiguous", "unsupported", "empty", "capsule ambiguous"])
+@pytest.mark.parametrize("status", ["ambiguous", "unsupported", "empty", "capsule ambiguous", "capsule missing"])
 def test_owner_failure_blocks_output(tmp_path, monkeypatch, status):
     _write_inputs(tmp_path)
     if status == "capsule ambiguous":
         monkeypatch.setattr(s2.capsule_core, "plan", lambda *a: {"rows": [], "ambiguous": ["63A opening 1: synthetic"]})
         _stop(tmp_path, "capsule", "opening 1", "synthetic")
+    elif status == "capsule missing":
+        monkeypatch.setattr(s2.capsule_core, "plan", lambda *a: {"rows": [], "ambiguous": []})
+        _stop(tmp_path, "capsule opening 1", "expected one row")
     else:
         _inject_openings(monkeypatch, [] if status == "empty" else [_opening(status=status, why=["nonrect"])])
         _stop(tmp_path, *(["no openings"] if status == "empty" else ["opening 1", status, "nonrect"]))
@@ -228,6 +231,8 @@ def test_refusal_preserves_previous_plan_then_clean_retry(tmp_path):
     _write_inputs(tmp_path)
     out, body = tmp_path / "stage2.json", tmp_path / "body.npz"
     out.write_bytes(b"previous plan")
+    partial = tmp_path / "stage2.json.partial"
+    os.link(body, partial)
     clean = body.read_bytes()
     verts, fn, fi = _body()
     verts[:, 0] += 1.0
@@ -242,6 +247,7 @@ def test_refusal_preserves_previous_plan_then_clean_retry(tmp_path):
     body.write_bytes(clean)
     assert s2.main(_argv(tmp_path)) == 0
     assert json.loads(out.read_bytes())["report"]["openings"]["ok"] == 1
+    assert partial.read_bytes() == body.read_bytes() == clean
 
 
 @pytest.mark.parametrize("d", [0.59, np.nextafter(0.6, 0), 0.6, np.nextafter(0.6, 1), 0.61])
