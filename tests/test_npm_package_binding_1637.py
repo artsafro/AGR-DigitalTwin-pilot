@@ -66,7 +66,7 @@ def test_clean_package_binds_every_member_and_reports_hashes(tmp_path):
     assert r.returncode == 0, r.stderr
     with zipfile.ZipFile(tmp_path / '0000_Synthetic.zip') as z:
         assert sorted(z.namelist()) == [OKS, GROUND]
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert report['passed'] is False and report['status'] == 'packaged_not_validated' and report['problems'] == []
     binding = report['export_binding']
     assert binding['records'] == ['export_meta.json']
@@ -107,7 +107,7 @@ def test_allow_incomplete_is_diagnostic_and_reports_the_mismatch(tmp_path):
     (pkg / OKS).write_bytes(b'edited')
     r = run(pkg, '--allow-incomplete')
     assert r.returncode == 1, r.stderr
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert report['passed'] is False and report['status'] == 'incomplete'
     assert any(OKS in p and 'SHA-256' in p for p in report['problems'])
     row = next(m for m in report['export_binding']['members'] if m['name'] == OKS)
@@ -129,7 +129,7 @@ def test_exported_files_without_hash_is_refused(tmp_path):
     assert outputs(tmp_path) == []
     r = run(pkg, '--allow-incomplete')
     assert r.returncode == 1
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert report['passed'] is False and report['status'] == 'incomplete'
     assert {m['status'] for m in report['export_binding']['members']} == {'hash_not_recorded'}
 
@@ -138,7 +138,7 @@ def test_exported_sha256_binds_names_and_hashes(tmp_path):
     pkg = make_pkg(tmp_path, key='exported_sha256')
     r = run(pkg)
     assert r.returncode == 0, r.stderr
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert {m['status'] for m in report['export_binding']['members']} == {'match'}
     (tmp_path / 'b').mkdir()
     pkg2 = make_pkg(tmp_path / 'b', key='exported_sha256', recorded={OKS: b'synthetic OKS'})
@@ -173,7 +173,7 @@ def test_real_producer_package_passes(tmp_path, shape):
     assert r.returncode == 0, r.stderr
     with zipfile.ZipFile(tmp_path / '0000_Synthetic.zip') as z:
         assert sorted(z.namelist()) == [OKS, GROUND]
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert report['problems'] == [] and {m['status'] for m in report['export_binding']['members']} == {'match'}
     assert sorted(report['export_binding']['records']) == sorted(
         ['export_meta.json', GROUND + '.export_meta.json'] if shape == 'A'

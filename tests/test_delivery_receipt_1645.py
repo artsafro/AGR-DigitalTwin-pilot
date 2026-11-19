@@ -48,7 +48,7 @@ def test_npm_cli_records_final_zip(tmp_path):
         record_export(fbx, source='synthetic fixture', top=3.5)
     run = cli('package-npm', pkg)
     assert run.returncode == 0, run.stderr
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert_receipt(report, tmp_path / '0000_Synthetic.zip')
     assert_package_recheck(tmp_path / '0000_Synthetic.zip')
 
@@ -64,7 +64,7 @@ def test_vpm_cli_records_final_zip(tmp_path):
         (tex / f'T_Synthetic_{role}_1.1001.png').write_bytes(role.encode())
     run = cli('package-vpm', pkg, tex, '--no-geojson')
     assert run.returncode == 0, run.stderr
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / 'SM_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert_receipt(report, tmp_path / 'SM_Synthetic.zip')
     assert_package_recheck(tmp_path / 'SM_Synthetic.zip')
 

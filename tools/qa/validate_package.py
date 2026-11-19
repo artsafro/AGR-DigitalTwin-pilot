@@ -683,6 +683,10 @@ FINDING_CODES = {"PNG readable": "png_not_png", "no alpha in ERM/Normal": "png_a
                  "foreign files": "foreign_files", "flat archive": "zip_nested"}
 
 
+DELIVERY_STATUS_ABSENT = object()  # no `status` key: pre-#1682 reports and export.zip receipts
+DELIVERY_NOTE = 'Delivered file: byte control, not model acceptance.'
+
+
 def add_delivery_receipt(target, data, stages, notes):
     """Bind validation to adjacent delivery reports, including the final Max review copy (#1645)."""
     if target.suffix.lower() not in ('.zip', '.max'):
@@ -697,16 +701,18 @@ def add_delivery_receipt(target, data, stages, notes):
             out[key] = value
         return out
 
+    # The per-archive `<zip>.delivery.json` (#1682) is authoritative: a parent-wide historical
+    # `package_report.json` may describe another package, so it is read only when no sidecar exists.
     paths = [Path(str(target) + '.delivery.json')]
-    if target.suffix.lower() == '.zip':
-        paths.append(target.parent / 'package_report.json')
+    if target.suffix.lower() == '.zip' and not os.path.lexists(paths[0]):
+        paths = [target.parent / 'package_report.json']
     paths = [p for p in paths if os.path.lexists(p)]
     if not paths and target.suffix.lower() != '.max':
         return  # Historical ZIPs without a delivery report remain readable, not newly attested.
     try:
         if not paths:
             raise ValueError('missing delivery report for ' + target.name)
-        line = ''
+        line, status = '', DELIVERY_STATUS_ABSENT
         for path in paths:
             body = json.loads(path.read_text(encoding='utf-8'), object_pairs_hook=unique)
             if (target.suffix.lower() == '.zip' and path.name == 'package_report.json'
@@ -721,11 +727,24 @@ def add_delivery_receipt(target, data, stages, notes):
                 raise ValueError('delivered file changed during validation: ' + target.name)
             # Only the verified canonical line is shown, never stale report display text.
             line = actual['summary_ru'].splitlines()[-1]
+            status = body.get('status', DELIVERY_STATUS_ABSENT)
         if not line:
             stages['V001'].findings.append(finding('not_run', 'delivered file',
                 'Historical package report without delivered; no delivery attestation',
                 'no delivery receipt supplied', [], data={'code': 'delivered_not_attested'}))
             return
+        # Packers always write passed=false; the report status says what the archive is (#1682).
+        if status == 'incomplete':
+            stages['V001'].findings.append(finding('fail', 'delivered file',
+                f'{target.name}: packer report status incomplete; a diagnostic archive is never delivered',
+                'packer status packaged_not_validated', [], data={'code': 'delivered_incomplete'}))
+            return
+        if status is not DELIVERY_STATUS_ABSENT and status != 'packaged_not_validated':
+            stages['V001'].findings.append(finding('not_run', 'delivered file',
+                f'{target.name}: unknown packer report status {status!r}; no delivery attestation',
+                'packer status packaged_not_validated', [], data={'code': 'delivery_status_unknown'}))
+            return
+        notes.append(DELIVERY_NOTE)
         notes.append(line)
         stages['V001'].findings.append(finding('pass', 'delivered file', line,
             'delivered SHA-256 and size match the report', [], data={'code': 'delivered_match'}))
