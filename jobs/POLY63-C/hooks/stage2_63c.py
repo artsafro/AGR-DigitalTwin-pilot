@@ -5,11 +5,27 @@ opening-types.csv, floor.json, standard.json, output.json (in that order).
 """
 import csv
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
 
 import numpy as np
+
+
+def registry_types(names):
+    """Validate the matched openings against the 63C AR export's name format."""
+    types, unresolved = {}, []
+    for opening, name in names.items():
+        label, _, suffix = (name or '').rpartition(' [')
+        instance = re.fullmatch(r'([0-9]+)\]', suffix)
+        if not instance or not re.fullmatch(r'Окн_\S+ .+ Комфорт ОК-[0-9]+-[0-9]+', label):
+            unresolved.append(f'opening {opening}, instance {instance[1] if instance else "unknown"}')
+        else:
+            types[opening] = label
+    if unresolved:
+        raise ValueError('Unresolved Revit family/type: ' + '; '.join(unresolved))
+    return types
 
 
 def build(helper, dump, crop, registry, floor, standard, output):
@@ -48,22 +64,30 @@ def build(helper, dump, crop, registry, floor, standard, output):
         w['depth'] = round(float(np.ptp(jamb[:, :2] @ n)), 3)
         if not 0.02 < w['depth'] < 0.4: raise ValueError(('frame depth', name, w['depth']))
         modules.append(w)
-    prof = a.measure_profile(modules); els = []; rows = []; caps = []; used = set()
+    prof = a.measure_profile(modules); els = []; rows = []; caps = []
+    matched = []
     for i, o in enumerate(sorted(ops, key=lambda o: (round(o['frame']['origin'][2], 2), o['id'])), 1):
         bd = np.asarray(o['border']); sill = bd[:, 2].min(); c = bd.mean(0)
         # Match only on this sill; prove along-wall fit separately from reveal displacement.
         candidates = []
         for row in reg:
             if abs(float(row['sill_m']) - sill) > .002: continue
-            w = modules[int(row['module_opening_1based'])-1]; u = np.array(o['frame']['x'])[:2]
+            w = modules[int(row['module_opening_1based'])-1]
             delta = w['centre'][:2] - c[:2]
             if np.linalg.norm(delta) < .8 and abs(w['W']-o['w']) < .002 and abs(w['H']-o['h']) < .002:
                 candidates.append((row, w))
         if len(candidates) != 1: raise ValueError(('unresolved opening', i, candidates))
-        row, w = candidates[0]; key = row['fbx_model']
-        if key in used or np.linalg.norm(w['centre'][:2]-[float(row['ref_centroid_x']),float(row['ref_centroid_y'])]) > .002:
+        row, w = candidates[0]; key = row.get('fbx_model')
+        if np.linalg.norm(w['centre'][:2]-[float(row['ref_centroid_x']),float(row['ref_centroid_y'])]) > .002:
             raise ValueError(('registry mismatch', key))
-        used.add(key); typ = key.rsplit(' [',1)[0]; fd = w['depth']; W,H = o['w'],o['h']
+        matched.append((i, o, bd, sill, w, key))
+    names = {i: key for i, _, _, _, _, key in matched}
+    types = registry_types(names)
+    if len(set(names.values())) != len(names):
+        raise ValueError('duplicate registry name')
+    for i, o, bd, sill, w, key in matched:
+        u = np.array(o['frame']['x'])[:2]
+        typ = types[i]; fd = w['depth']; W,H = o['w'],o['h']
         fields,_ = a.frame_grid(w,prof['transom_m'],prof['face_top_m']); fields = a.scale_fields(fields,w['W'],W,prof['face_m'])
         if np.dot(w['u'],u)<0: fields = [[W-r,z,W-l,h] for l,z,r,h in fields]
         entry = dict(id=typ,role='window',width_m=W,height_m=H,panes_m=fields,source={'occurrences':1},frame_profile_m={k:prof[k] for k in ('face_m','face_top_m','face_bottom_m','impost_m')} | {'depth_m':fd})
