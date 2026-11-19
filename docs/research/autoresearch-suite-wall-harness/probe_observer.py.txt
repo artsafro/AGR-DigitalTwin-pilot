@@ -1,0 +1,67 @@
+"""Synthetic regression probes for the frozen wall observer (not project tests)."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+
+class ObserverProbe(unittest.TestCase):
+    def test_validator_rejects_malformed(self):
+        from ar_wall import validate
+        good = [{'kind':'collection','worker':'gw0','ids':['a']},
+                {'kind':'report','id':'a','when':'setup','outcome':'passed','duration':0.0},
+                {'kind':'report','id':'a','when':'call','outcome':'passed','duration':0.0},
+                {'kind':'report','id':'a','when':'teardown','outcome':'passed','duration':0.0},
+                {'kind':'finish','exitstatus':0}]
+        self.assertEqual(validate(good), [('a','passed')])
+        bads = [[], good[:-1], good[:2]+good[1:], good[:3]+good[4:],
+                [dict(good[0],ids=[])]+good[1:],
+                [dict(good[0],ids=['a','a'])]+good[1:],
+                [dict(good[0],ids=['b'])]+good[1:],
+                [dict(good[0],worker='gw1',ids=['b'])]+good,
+                good[:-1]+[{'kind':'finish','exitstatus':1}],
+                good+[{'kind':'unknown'}]]
+        for value in (float('nan'),float('inf'),-1.0):
+            bads.append(good[:2]+[dict(good[2],duration=value)]+good[3:])
+        for outcome in ('bogus','failed','xpassed'):
+            bads.append(good[:2]+[dict(good[2],outcome=outcome)]+good[3:])
+        for index, bad in enumerate(bads):
+            with self.subTest(case=index), self.assertRaises(ValueError): validate(bad)
+
+    def test_real_xdist_and_nested_and_clobber(self):
+        from ar_wall import validate
+        with tempfile.TemporaryDirectory(dir=ROOT) as temp:
+            d=Path(temp)
+            child=d/'child_case.py'
+            child.write_text('def test_child(): assert True\n',encoding='utf-8')
+            test=d/'test_sample.py'
+            test.write_text('import pytest, subprocess, sys\n'
+                            'def test_ok(): assert 2 + 2 == 4\n'
+                            '@pytest.mark.skip(reason="synthetic")\ndef test_skip(): pass\n'
+                            '@pytest.mark.xfail(reason="synthetic")\ndef test_xfail(): assert False\n'
+                            'def test_nested():\n'
+                            f'    assert subprocess.run([sys.executable,"-m","pytest","-q",{str(child)!r},"-o","addopts="]).returncode == 0\n',encoding='utf-8')
+            out=d/'events.jsonl'
+            env=dict(os.environ,PYTHONPATH=str(ROOT),PYTEST_PLUGINS='ar_wall',AR_WALL_EVENTS=str(out))
+            env.pop('PYTEST_ADDOPTS',None)
+            argv=[sys.executable,'-m','pytest','-q','-n','2','-o','addopts=',str(test),f'--basetemp={d / "pytest-temp"}']
+            result=subprocess.run(argv,cwd=d,env=env,capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            rows=[json.loads(line) for line in out.read_text(encoding='utf-8').splitlines()]
+            pairs=validate(rows)
+            self.assertEqual(sorted(x[1] for x in pairs),['passed','passed','skipped','xfailed'])
+            self.assertEqual(len([r for r in rows if r['kind']=='collection']),2)
+            self.assertTrue(all('child' not in node for node,_ in pairs))
+            before=out.read_bytes()
+            again=subprocess.run(argv,cwd=d,env=env,capture_output=True,text=True)
+            self.assertNotEqual(again.returncode,0)
+            self.assertEqual(out.read_bytes(),before)
+            changed=[(node,'skipped' if outcome=='passed' else outcome) for node,outcome in pairs]
+            self.assertNotEqual(pairs,changed)
+
+if __name__ == '__main__': unittest.main()

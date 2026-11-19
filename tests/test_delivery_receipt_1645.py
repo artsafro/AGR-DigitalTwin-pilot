@@ -39,6 +39,23 @@ def assert_package_recheck(target):
     assert 'delivered_mismatch' in changed.stdout
 
 
+@pytest.mark.parametrize('code', ['1234', '9876'])
+def test_legacy_zip_without_receipt_has_note_only(tmp_path, code):
+    import struct
+    import zipfile
+
+    target = tmp_path / f'{code}_Synthetic.zip'
+    with zipfile.ZipFile(target, 'w') as archive:
+        for part in ('01', 'Ground'):
+            archive.writestr(f'{target.stem}_{part}.fbx', b'Kaydara FBX Binary  \x00\x1a\x00' + struct.pack('<I', 7400))
+    legacy = cli('validate', target, '--json')
+    assert legacy.returncode == 2, (legacy.stdout, legacy.stderr)  # independent manual/readback checks stay open
+    report = json.loads(legacy.stdout)
+    assert any('no delivery receipt' in note for note in report['notes'])
+    assert 'delivered_mismatch' not in legacy.stdout and 'delivered_not_attested' not in legacy.stdout
+    assert not target.with_suffix('.zip.delivery.json').exists()
+
+
 def test_npm_cli_records_final_zip(tmp_path):
     pkg = tmp_path / 'fbx'
     pkg.mkdir()
@@ -48,7 +65,7 @@ def test_npm_cli_records_final_zip(tmp_path):
         record_export(fbx, source='synthetic fixture', top=3.5)
     run = cli('package-npm', pkg)
     assert run.returncode == 0, run.stderr
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / '0000_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert_receipt(report, tmp_path / '0000_Synthetic.zip')
     assert_package_recheck(tmp_path / '0000_Synthetic.zip')
 
@@ -64,7 +81,7 @@ def test_vpm_cli_records_final_zip(tmp_path):
         (tex / f'T_Synthetic_{role}_1.1001.png').write_bytes(role.encode())
     run = cli('package-vpm', pkg, tex, '--no-geojson')
     assert run.returncode == 0, run.stderr
-    report = json.loads((tmp_path / 'package_report.json').read_text(encoding='utf-8'))
+    report = json.loads((tmp_path / 'SM_Synthetic.zip.delivery.json').read_text(encoding='utf-8'))
     assert_receipt(report, tmp_path / 'SM_Synthetic.zip')
     assert_package_recheck(tmp_path / 'SM_Synthetic.zip')
 

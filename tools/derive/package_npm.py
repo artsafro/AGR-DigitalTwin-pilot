@@ -39,8 +39,8 @@ def main(argv=None):
     if problems and not a.allow_incomplete:
         raise ValueError('; '.join(problems) + '; --allow-incomplete is diagnostic only')
     target = pkg.parent / archive['name']
-    report_path = pkg.parent / 'package_report.json'
-    for path in (target, report_path, Path(str(target) + '.partial')):
+    report_path = Path(str(target) + '.delivery.json')  # per archive, never a parent-wide report (#1682)
+    for path in (target, report_path, Path(str(report_path) + '.partial'), Path(str(target) + '.partial')):
         if os.path.lexists(path):
             raise FileExistsError(f'output {path} already exists; choose a new version')
     # Diagnostic mode preserves its measured mismatches, but still binds the snapshot
@@ -53,8 +53,7 @@ def main(argv=None):
               'problems': problems, 'export_binding': binding, 'skipped': plan['skipped'], 'passed': False,
               'status': 'incomplete' if problems else 'packaged_not_validated'}
     report.update(package_core.delivery_receipt(target))
-    with open(report_path, 'x', encoding='utf-8') as fh:
-        json.dump(report, fh, ensure_ascii=False, indent=2)
+    package_core.write_delivery_report(target, report)
     print(json.dumps(report, ensure_ascii=False))
     return 1 if problems else 0
 

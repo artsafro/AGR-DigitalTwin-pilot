@@ -92,7 +92,7 @@ def build(helper, dump, crop, registry, floor, standard, output):
         if np.dot(w['u'],u)<0: fields = [[W-r,z,W-l,h] for l,z,r,h in fields]
         entry = dict(id=typ,role='window',width_m=W,height_m=H,panes_m=fields,source={'occurrences':1},frame_profile_m={k:prof[k] for k in ('face_m','face_top_m','face_bottom_m','impost_m')} | {'depth_m':fd})
         mesh = a.windowgen_core.build_type(entry,std)
-        tr = a.winplace_core.placement_rows(o['frame'],mesh['size_m'],mesh['face_axis'],recess_m=fd/2)  # [D354]
+        tr = a.winplace_core.placement_rows(o['frame'],mesh['size_m'],mesh['face_axis'],recess_m=fd/2)  # [D356]
         for part,col in [('frame','Windows'),('glass','Glass')]:
             m = a.windowgen_core.part_mesh(mesh,part); verts = [a.winplace_core.apply_rows(tr,p) for p in m['verts']]
             els.append(dict(name=f'SM_Win_{i:03}_{part.capitalize()}',opening=i,collection='Stage2_'+col,verts=verts,faces=m['faces'],mats=[a.MAT_NAMES[j] for j in m['mat_ids']]))
@@ -104,6 +104,7 @@ def build(helper, dump, crop, registry, floor, standard, output):
                 raise ValueError(('capsules overlap',key,other))
         caps.append((cap,sill,key)); els.append(dict(name=f'CAPSULE_63C_{i:03}',opening=i,collection='Stage2_Capsules',verts=cap['verts'],faces=cap['faces'],mats=[a.capsule_core.MATERIAL]*len(cap['faces'])))
         rows.append(dict(opening=i,type=typ,source=key,w=W,h=H,reveal_m=o['depth'],frame_depth_m=fd))
+    # [D355]: keep the historical v001 report label below for byte-exact replay.
     report=dict(rows=rows,openings={'ok':len(rows)},capsules={'made':len(caps)},baskets={'count':0,'decision':'[D353]'}, types=dict(Counter(r['type'] for r in rows)))
     write_plan(output, report, els)
     print(len(els),report['types'],Counter(r['frame_depth_m'] for r in rows))

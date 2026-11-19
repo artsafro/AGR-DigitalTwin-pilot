@@ -1,0 +1,9 @@
+{
+  "scenario": "oks-vpm",
+  "config": {"profile": "VPM"},
+  "hooks": [
+    {"script": "hooks/stage2_plan.py", "stage": "body", "point": "after"},
+    {"script": "hooks/stage2_blend.py", "stage": "body", "point": "after"},
+    {"script": "hooks/stage2_sheet.py", "stage": "body", "point": "after"}
+  ]
+}

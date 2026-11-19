@@ -8,9 +8,10 @@ Rules (stdlib `ast`, no imports of the scanned code):
   `(tile - 1001) % 10` / `// 10` / `divmod(tile - 1001, 10)` / `i = tile - 1001` then `i % 10` or `i // 10`.
   1001 and 10 also match a name bound to that int anywhere in the file (`FIRST_UDIM = 1001`, `U = 10`), and any
   job-local `def` named udim_tile / udim_of_cell / tile_origin / face_tile is a copy (PR #1368 r1).
-  #1370 also flags single-row `floor(...) + 1001`, `[tile - 1001, 0]` origins and
-  `x - (tile - 1001)` local coordinates. Literal additive leaves summing to 1001 match split bases
-  (`1000 + 1 + u + 10*v`). Bare `1001 + u` and `tile - 1001` remain non-copy controls.
+  #1370/#1482 also flag single-row `floor(u) + 1001`, `int(u) + 1001`, `u // 1 + 1001`,
+  `[tile - 1001, 0]` or `(tile - 1001, 0.0)` origins, and `x - (tile - 1001)` local coordinates.
+  Literal integer leaves and names with a single recorded integer value can sum to a split base
+  (`A = 1000; A + 1 + u + 10*v`). Bare `1001 + u` and `tile - 1001` remain non-copy controls.
 - `delivery-zip`  owner adapters/max/agr_tools/package_core.py (`_write_zip`, #1361/#1377): the one ZIP writer
   behind `agr package-npm` / `agr package-vpm` (tools/derive facades) and AGR Tools. Flags any other writer:
   `zipfile.ZipFile(..., "w" | "x" | "a")` (mode positional or keyword; a computed mode fails closed), including
@@ -79,6 +80,7 @@ import argparse
 import ast
 import hashlib
 import json
+import posixpath
 import re
 import sys
 from collections import namedtuple
@@ -162,12 +164,25 @@ def _udim_hits(tree):
             isinstance(n.func, ast.Name) and n.func.id == "floor" or
             isinstance(n.func, ast.Attribute) and n.func.attr == "floor") for n in ast.walk(node))
 
+    def _is_tile_index(node):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "int"
+                and len(node.args) == 1 and not node.keywords and not isinstance(node.args[0], ast.Starred)):
+            return True
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.FloorDiv) and _const(node.right, 1):
+            return True
+        return _is_floor(node)
+
     def _has_base(terms):
         # Sum only unambiguous integer leaves; do not evaluate scanned code or infer arbitrary variables.
         if any(_const(t, 1001) for t in terms):
             return True
-        integers = [t.value for t in terms if isinstance(t, ast.Constant) and type(t.value) is int]
-        return sum(integers) == 1001
+        total = 0
+        for term in terms:
+            if isinstance(term, ast.Constant) and type(term.value) is int:
+                total += term.value
+            elif isinstance(term, ast.Name) and len(values := consts.get(term.id, ())) == 1:
+                total += next(iter(values))
+        return total == 1001
 
     def _is_minus_1001(node):
         return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
@@ -180,11 +195,11 @@ def _udim_hits(tree):
     for node in ast.walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             terms = _add_terms(node)
-            if _has_base(terms) and any(_is_times_ten(t) or _is_floor(t) for t in terms):
+            if _has_base(terms) and any(_is_times_ten(t) or _is_tile_index(t) for t in terms):
                 hits[id(node)] = node
         # Single-row UV translation: a 2D origin vector or the scalar inverse x - (tile - 1001).
         if isinstance(node, (ast.List, ast.Tuple)) and len(node.elts) == 2 \
-                and _is_minus_1001(node.elts[0]) and _const(node.elts[1], 0):
+                and _is_minus_1001(node.elts[0]) and (_const(node.elts[1], 0) or _const(node.elts[1], 0.0)):
             hits[id(node)] = node
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _is_minus_1001(node.right):
             hits[id(node)] = node
@@ -522,7 +537,6 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("contexts", "jobs/elv-tc-vpm/scripts/package_vpm_v006.py::<module>", "99b52810a1"),
 
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
-    ("contexts", "jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip", "c099bec414"),
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 
@@ -591,7 +605,90 @@ def rows_of(maps):
     return out
 
 
-def _owner_names(tree, owner):
+def _loader_path(value, paths, rel):
+    """Resolve the literal and __file__-anchored paths used by registered loaders."""
+    if isinstance(value, ast.Name):
+        return paths.get(value.id)
+    if isinstance(value, ast.Constant) and isinstance(value.value, str) and value.value:
+        return value.value.replace("\\", "/")
+    if not isinstance(value, ast.Call) or value.keywords:
+        return None
+    func = ast.unparse(value.func)
+    if func == "os.path.abspath" and len(value.args) == 1 and ast.unparse(value.args[0]) == "__file__":
+        return rel
+    if func == "os.path.dirname" and len(value.args) == 1:
+        source = _loader_path(value.args[0], paths, rel)
+        return posixpath.dirname(source) if source is not None else None
+    if func == "os.path.join" and value.args:
+        base = _loader_path(value.args[0], paths, rel)
+        parts = [arg.value.replace("\\", "/") for arg in value.args[1:]
+                 if isinstance(arg, ast.Constant) and isinstance(arg.value, str)]
+        if base is not None and len(parts) == len(value.args) - 1:
+            return posixpath.join(base, *parts)
+    return None
+
+
+def _is_owner_loader(node, owner, paths, rel):
+    """Recognize the straight-line importlib chain, without executing the helper.
+
+    Assignment nodes serve as identities: reusing a variable spelling doesn't
+    make a new spec or module the same object. Nested uses aren't witnesses.
+    """
+    paths = paths.copy()
+    for arg in ast.walk(node.args):
+        if isinstance(arg, ast.arg):
+            paths.pop(arg.arg, None)
+    specs, modules, executed = {}, {}, set()
+    for stmt in node.body:
+        if isinstance(stmt, ast.Return):
+            return isinstance(stmt.value, ast.Name) and modules.get(stmt.value.id, (None, None))[1] in executed
+
+        # Invalidate names written by unsupported statements too. The cache
+        # branch in the TEC26 loader doesn't rebind any of these local names.
+        written = {n.id for n in ast.walk(stmt) if isinstance(n, ast.Name)
+                   and isinstance(n.ctx, (ast.Store, ast.Del))}
+        if isinstance(stmt, ast.Assign) and all(isinstance(t, ast.Name) for t in stmt.targets):
+            value = stmt.value
+            path = _loader_path(value, paths, rel)
+            spec = module = None
+            if isinstance(value, ast.Call):
+                func = ast.unparse(value.func)
+                if func in ("importlib.util.spec_from_file_location", "spec_from_file_location"):
+                    location = value.args[1] if len(value.args) >= 2 else next(
+                        (kw.value for kw in value.keywords if kw.arg == "location"), None)
+                    resolved = _loader_path(location, paths, rel)
+                    if resolved is not None and posixpath.normpath(resolved) == owner:
+                        spec = stmt
+                elif (func in ("importlib.util.module_from_spec", "module_from_spec")
+                      and len(value.args) == 1 and isinstance(value.args[0], ast.Name)):
+                    source = specs.get(value.args[0].id)
+                    if source is not None:
+                        module = source, stmt
+        else:
+            path = spec = module = None
+        for name in written:
+            paths.pop(name, None)
+            specs.pop(name, None)
+            modules.pop(name, None)
+            if path is not None:
+                paths[name] = path
+            if spec is not None:
+                specs[name] = spec
+            if module is not None:
+                modules[name] = module
+
+        if isinstance(stmt, ast.Expr):
+            match stmt.value:
+                case ast.Call(func=ast.Attribute(attr="exec_module", value=ast.Attribute(
+                              attr="loader", value=ast.Name(id=spec_name))),
+                              args=[ast.Name(id=module_name)], keywords=[]):
+                    source, identity = modules.get(module_name, (None, None))
+                    if source is not None and source is specs.get(spec_name):
+                        executed.add(identity)
+    return False
+
+
+def _owner_names(tree, owner, rel=None):
     """Names in the file bound to the owner module: imports of it or from it, and assignments whose value names the
     owner file (`_sibling('udimtile_core.py', ...)`, importlib spec of its path)."""
     stem = Path(owner).stem
@@ -610,16 +707,36 @@ def _owner_names(tree, owner):
             if any(isinstance(s, ast.Constant) and isinstance(s.value, str) and s.value.replace("\\", "/")
                    .endswith(f"{stem}.py") for s in ast.walk(node.value)):
                 names.update(t.id for t in node.targets if isinstance(t, ast.Name))
-    # Importlib loaders may return the owner module (#1441, geom_core()). Merely
-    # mentioning its path in a diagnostic helper must not turn that helper into a wrapper.
+    # Use path bindings, not the broad set of owner references above, for the
+    # importlib location. A diagnostic mention is not a path binding (#1486).
+    # Helpers can change their globals at any time, not just in source order.
+    mutable_globals = {name for node in ast.walk(tree) if isinstance(node, ast.Global) for name in node.names}
+    paths = {}
+    for stmt in tree.body:
+        plain = isinstance(stmt, ast.Assign) and all(isinstance(t, ast.Name) for t in stmt.targets)
+        bound = _loader_path(stmt.value, paths, rel) if plain else None
+        # Unknown writes invalidate evidence. Walk conservatively, including
+        # nested statements; only a supported unconditional assignment can
+        # establish a path again.
+        for node in ast.walk(stmt):
+            match node:
+                case ast.Name(id=name, ctx=ast.Store() | ast.Del()):
+                    paths.pop(name, None)
+                case ast.alias(name="*"):
+                    paths.clear()
+                case ast.alias(name=name, asname=alias):
+                    paths.pop(alias or name.split(".")[0], None)
+                case (ast.FunctionDef(name=name) | ast.AsyncFunctionDef(name=name) | ast.ClassDef(name=name)
+                      | ast.ExceptHandler(name=name) | ast.MatchAs(name=name) | ast.MatchStar(name=name)
+                      | ast.MatchMapping(rest=name)):
+                    paths.pop(name, None)
+        if bound is not None and isinstance(stmt, ast.Assign):
+            for target in stmt.targets:
+                if isinstance(target, ast.Name) and target.id not in mutable_globals:
+                    paths[target.id] = bound
     for node in tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            nodes = list(ast.walk(node))
-            if (any(isinstance(n, ast.Name) and n.id in names for n in nodes)
-                    and any(isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
-                            and n.func.attr == "exec_module" for n in nodes)
-                    and any(isinstance(n, ast.Return) and isinstance(n.value, ast.Name) for n in nodes)):
-                names.add(node.name)
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_owner_loader(node, owner, paths, rel):
+            names.add(node.name)
     return names
 
 
@@ -645,7 +762,7 @@ def calls_owner(root, row):
     """True when the row's function (or line's enclosing def) uses a name bound to its context owner; for a rule in
     POLICY_NAMES only a use of one of its policy functions counts (`from owner import f [as g]` or `owner_mod.f`)."""
     tree = ast.parse((Path(root) / row.rel).read_bytes(), filename=row.rel)
-    names = _owner_names(tree, row.owner)
+    names = _owner_names(tree, row.owner, row.rel)
     if not names:
         return False
     scope = _scope_node(tree, row.qual, row.line)

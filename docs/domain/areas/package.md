@@ -67,6 +67,8 @@ partial rows above keep their unchecked part manual.
   ours (PKG-24); `FNO_code` / `FNO_name` (PKG-21) come from SINTEZ after that placement, never invented or asked of
   the customer; the УКЭП signature is the customer's [D163]. The customer's GeoJSON is the reference until our own
   tool or skill is built from it; AGR Tools `export.geojson_write` output is not delivery-ready until then.
+  [D350] Fill the insertion point only from an approved placement with a known DWG source. Otherwise leave
+  it empty and record a blocker in the delivery report; this is a delivery rule, not a claim of CLI support.
 - **V012** (both, names): PKG-08, PKG-13; light names PKG-14 not checked; mesh and material names in the geometry sheets.
 - **V013** (VPM, pivot and MSK-77): PKG-24 position `not_run`; pivot in [UCX R17](ucx.md) and the geometry sheets; lighting root pivot PKG-18 not checked.
 - **V014** (NPM, Moscow coordinates, reg p.10): placement area, no sheet yet; unimplemented.
@@ -84,6 +86,10 @@ with archive names and fail/open finding codes. Only pending manual reviews V015
 are allowed alongside `ГОТОВО.txt`, with the line «ждут ручной приёмки Артёма: V015, V016, V017»
 (pending IDs only). This is technical readiness, not manual approval or publication.
 
+The package route distinguishes preliminary SINTEZ from the final check after Artem's acceptance [D104, D352].
+Record the separate customer hand-off with one line «передано заказчику, <дата>» in the delivery report only
+on Artem's word [D351]. Neither technical readiness nor upload establishes that the hand-off happened.
+
 The complete validator report is saved as `<archive>.zip.validation.json` beside each
 checked ZIP, separately from the compact `report.json` stage table. Recheck a moved copy:
 `uv run python tools/qa/validate_package.py --recheck <archive>.zip.validation.json --recheck-target <copy.zip> --output <new.json> --json`.
@@ -92,23 +98,46 @@ The output `target` names the checked copy. Missing and changed bytes both produ
 actual SHA-256. No package is repacked by recheck. Diagnostic `--allow-incomplete` remains
 ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
 
+## VPM working copy [D349]
+
+On failure, `agr package-vpm` removes only outputs created by that invocation, leaving the FBX,
+metadata and other existing files in the working copy untouched. Retry in the same folder after
+addressing the error; no temporary assembly folder is used.
+
 ## Delivered-file identity (#1645)
 
-The existing NPM/VPM `package_report.json` writers add `delivered: {file, sha256, size}`
-and `summary_ru`, containing exactly one `delivered: <file> sha256=<hex> size=<bytes>`
-line per final artifact. `export.zip` saves the same receipt in `<archive>.zip.delivery.json`,
+The NPM/VPM packers (`agr package-npm` / `package-vpm`) write their report next to the archive as
+`<archive>.zip.delivery.json` (#1682; through `package_core.write_delivery_report`, exclusive
+`.partial` then no-clobber publish), carrying `delivered: {file, sha256, size}`, `summary_ru`
+(exactly one `delivered: <file> sha256=<hex> size=<bytes>` line) and `status`. Before #1682 they wrote
+one parent-wide `package_report.json`; it is still read for historical deliveries.
+`export.zip` saves the same receipt in `<archive>.zip.delivery.json`,
 its run report and Russian marker; `pack.deliver` carries it into `deliver.json`.
 The existing Max review publisher hashes the **published** `.max` (not its temporary scene),
 writes `<scene>.max.delivery.json` and appends the Russian summary to `README.txt`.
 No archive members, scene topology, user approval or D300 delivery choices change.
 
 `agr validate FILE --json` automatically checks adjacent delivery receipts (ZIP:
-`package_report.json` and/or `<archive>.zip.delivery.json`; Max: `<scene>.max.delivery.json`).
+`<archive>.zip.delivery.json`, or the historical `package_report.json` only when no sidecar exists;
+Max: `<scene>.max.delivery.json`).
 V001 `delivered file` fails with `delivered_mismatch` for malformed or changed evidence;
-SHA-256 and byte length must both match. No new flag or signing/upload step is required.
+SHA-256 and byte length must both match. The report `status` decides attestation (#1682):
+`incomplete` (the `--allow-incomplete` diagnostic archive) fails with `delivered_incomplete`;
+`packaged_not_validated` or no `status` passes on matching bytes; any other value is `not_run`
+`delivery_status_unknown`. A pass adds the note `Delivered file: byte control, not model acceptance.`
+right before the `delivered:` line. No new flag or signing/upload step is required.
 Max byte identity does not validate its geometry: other stages remain open, never a model pass.
-Historical ZIPs without a receipt remain readable without a new delivery attestation; missing
-Max receipts fail. Move the report together with its identically named artifact.
+Historical ZIPs without a receipt remain readable with a report note, without a new delivery attestation;
+missing Max receipts fail. Move the report together with its identically named artifact.
+The [SINTEZ territorial-code rename script](../../../jobs/VATUTINO-SITE/npm_code.py) uses the same
+receipt format [D348], with a `source: {path, sha256}` link to the preserved pre-rename ZIP. Use a new
+output folder; the original `package_report.json` belongs to the source ZIP. Pass the explicit
+`agr checker --output` JSON to `npm_code.py --checker-summary SUMMARY.json`: the unique `lp` entry
+must match the pre-rename ZIP's SHA-256 or the script exits 2 with one diagnostic and publishes nothing.
+Omitting the flag records `sintez-source: not_run` without blocking. `checker_source.hash_match` is
+byte identity, separate from `checker_source.checker_verdict` (which can be `fail`). The validator
+rehashes the renamed ZIP, not the source path or checker summary. The separate `sintez-final: not_run`
+line means a fresh checker run on the renamed ZIP is still required [D104]; the rename does not run it.
 Hash snapshots detect persistent changes, not edits restored between reads or future writes.
 
 ## Build provenance [D333, D332]

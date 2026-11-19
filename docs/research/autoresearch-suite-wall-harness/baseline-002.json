@@ -1,0 +1,54 @@
+{
+  "valid": true,
+  "versions": {
+    "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+    "packages": {
+      "pytest": "9.1.1",
+      "pytest-xdist": "3.8.0",
+      "numpy": "2.5.3",
+      "shapely": "2.1.2",
+      "Pillow": "12.3.0"
+    }
+  },
+  "lock_sha256": "9f50e64bdbf94924902125fee627eae43a33e0393052c88181e812b0ce92be05",
+  "head": "bb42920d68ada3d769b33f0479e9fcdca832714e",
+  "head_after": "bb42920d68ada3d769b33f0479e9fcdca832714e",
+  "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "diff_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "argv": [
+    "uv",
+    "run",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=C:/x/t_82b1bc95-wall-baseline-002",
+    "-m",
+    "not blender and not dcc and not acad and not perf and not job and not max and not panel_texture and not native_max",
+    "-rf",
+    "-n",
+    "4"
+  ],
+  "wall_s": 1487.8959172000177,
+  "exit_code": 0,
+  "pid": 1141132,
+  "error": null,
+  "instrumentation": "PYTEST_PLUGINS=ar_wall",
+  "events": "C:\\x\\autoresearch-suite-wall\\baseline-002.events.jsonl",
+  "log": "C:\\x\\autoresearch-suite-wall\\baseline-002.pytest.log",
+  "counts": {
+    "passed": 27218,
+    "skipped": 187,
+    "xfailed": 49
+  },
+  "selected": 27454,
+  "node_list": "C:\\x\\autoresearch-suite-wall\\baseline-002.nodes.tsv",
+  "sha256": {
+    "C:\\x\\autoresearch-suite-wall\\baseline-002.events.jsonl": "73c5b60eb792e66416b1ba58739353df50177ccfa2fe42e643fd6a3d0205e805",
+    "C:\\x\\autoresearch-suite-wall\\baseline-002.pytest.log": "3807ab0319c44e7f43ac89ff754e3411b6d03462e08b2282fe2e7006161cdc42",
+    "C:\\x\\autoresearch-suite-wall\\baseline-002.samples.jsonl": "76954c0d986b20ed647ef7cebfdd150c47d670cfeadf538511679805b87f5dca",
+    "C:\\x\\autoresearch-suite-wall\\baseline-002.nodes.tsv": "51e8655c16f0eaee17cc4fe891852fd3a4cc5fef4a26213426f043ec24f28d48",
+    "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_82b1bc95\\tmp\\wall_harness\\measure.py": "017be8923a50817ecfc1e083036b1bd82ccc7b4fbd804287d11fdfe98581af2b",
+    "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_82b1bc95\\tmp\\wall_harness\\ar_wall.py": "558105950841291eb9d395746da144b0c6ea08b0a8f7845fa86fd3c2eab0a126"
+  }
+}

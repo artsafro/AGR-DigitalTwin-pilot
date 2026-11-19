@@ -1,0 +1,92 @@
+"""new-case: research-only xdist controller observation; no collection or verdict changes."""
+import json
+import math
+import os
+from pathlib import Path
+
+_stream = None
+
+def _write(row):
+    if _stream:
+        _stream.write(json.dumps(row, ensure_ascii=True) + '\n')
+        _stream.flush()
+
+def pytest_configure(config):
+    global _stream
+    if not hasattr(config, 'workerinput'):
+        path = os.environ.get('AR_WALL_EVENTS')
+        if path:
+            _stream = Path(path).open('x', encoding='utf-8')
+    # Each xdist worker loads this plugin from its inherited argv/environment.
+    # Clear before any test can spawn a nested pytest subprocess.
+    os.environ.pop('PYTEST_PLUGINS', None)
+    os.environ.pop('PYTEST_ADDOPTS', None)
+    os.environ.pop('AR_WALL_EVENTS', None)
+
+def pytest_xdist_node_collection_finished(node, ids):
+    _write({'kind':'collection', 'worker':node.gateway.id, 'ids':list(ids)})
+
+def pytest_runtest_logreport(report):
+    _write({'kind':'report', 'id':report.nodeid, 'when':report.when,
+            'outcome':report.outcome, 'xfail':getattr(report,'wasxfail',None),
+            'duration':report.duration})
+
+def pytest_sessionfinish(session, exitstatus):
+    global _stream
+    _write({'kind':'finish','exitstatus':int(exitstatus)})
+    if _stream:
+        _stream.close()
+        _stream = None
+
+def validate(rows):
+    """Reject incomplete/failed ledgers; return canonical sorted node/outcome pairs."""
+    if not rows or rows[-1] != {'kind':'finish','exitstatus':0}:
+        raise ValueError('missing successful final session')
+    collections = {}
+    reports = {}
+    started = False
+    for row in rows[:-1]:
+        if row.get('kind') == 'collection':
+            if started or not row['ids'] or row['worker'] in collections:
+                raise ValueError('late/empty/duplicate collection')
+            ids = row['ids']
+            if any(not isinstance(i,str) or not i for i in ids) or len(set(ids)) != len(ids):
+                raise ValueError('invalid/duplicate selected IDs')
+            collections[row['worker']] = sorted(ids)
+        elif row.get('kind') == 'report':
+            started = True
+            if not collections:
+                raise ValueError('report before collection')
+            key = row['id']
+            phases = reports.setdefault(key,{})
+            when = row['when']
+            if when not in ('setup','call','teardown') or when in phases:
+                raise ValueError('unknown/duplicate phase')
+            if when == 'setup' and phases or when == 'call' and list(phases) != ['setup'] or when == 'teardown' and list(phases) not in (['setup'],['setup','call']):
+                raise ValueError('reordered phases')
+            duration = row['duration']
+            if isinstance(duration,bool) or not isinstance(duration,(int,float)) or not math.isfinite(duration) or duration < 0:
+                raise ValueError('invalid timing')
+            if row['outcome'] not in ('passed','skipped') or row['outcome']=='passed' and row.get('xfail'):
+                raise ValueError('failed/error/xpassed/unknown outcome')
+            phases[when] = row
+        else:
+            raise ValueError('unknown event')
+    if not collections or any(ids != next(iter(collections.values())) for ids in collections.values()):
+        raise ValueError('worker selection mismatch')
+    selected = next(iter(collections.values()))
+    if sorted(reports) != selected:
+        raise ValueError('selected/report ID mismatch')
+    pairs = []
+    for node in selected:
+        phases = reports[node]
+        if list(phases) not in (['setup','call','teardown'],['setup','teardown']):
+            raise ValueError('incomplete phases')
+        skipped = [r for r in phases.values() if r['outcome']=='skipped']
+        if 'call' not in phases and phases['setup']['outcome'] != 'skipped':
+            raise ValueError('missing call without setup skip')
+        if phases['teardown']['outcome'] != 'passed':
+            raise ValueError('skipped teardown unsupported')
+        outcome = ('xfailed' if any(r.get('xfail') for r in skipped) else 'skipped') if skipped else 'passed'
+        pairs.append((node,outcome))
+    return pairs
