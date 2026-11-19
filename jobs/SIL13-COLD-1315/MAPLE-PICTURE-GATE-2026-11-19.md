@@ -1,6 +1,14 @@
 # Silikatny #1315 — VPM maple picture gate, 2026-11-19
 
-**r2 rejected; isolated v029 appearance accepted. Technical gate remains open; no new site replacement, rollback, or delivery.**
+**Isolated relayout passes the measured topology checks; visual approval is pending. No new site replacement, rollback, or delivery.**
+
+## One isolated relayout [D357]
+
+Artem authorized relayout and hidden-joint repair in [issue #1315 comment 7024039890](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7024039890). The pilot retains 202 of 210 paired cards with original UVs and maps; the ledger records each card shift, scale and every omitted card. The repaired wood uses the three library tube components, caps their measured openings, unions the joints and welds near vertices at 2.05 mm. The initial exact union alone left 13 duplicate vertices and six duplicate polygons; the welded final wood has 290 triangles and all indexed edges have incidence two. No Max call.
+
+- Actual Blender 5.1.2 FBX and fresh native readback: 1,098 triangles, zero regulatory duplicates/self-intersections at 2 mm (baseline 4,462 crossings), public `dt qa xview --profile VPM-GROUND` 0 faces / 0 vertices in both. Raw/native triangle indices, UVs and material assignments are exact, max coordinate delta 0.239 µm; both map hashes match. Paired offsets remain approximately 8 mm on all 202 cards (required 3–10 mm). Minimum triangle area is positive (8.22e-10 m²); xView's thin-triangle numerical warnings are retained, not interpreted as package-readiness evidence.
+- Bounding dimensions differ by at most 12 mm. The matched front and ¾ views show a noticeably more transparent crown: crown-colour pixel area is 89.1% / 90.3% of v029, and sampled crown convex-hull IoU is 97.6% / 95.9%. These are two-view image diagnostics, not proof of unchanged appearance. [Picture question, issue #1315 comment 7024433837](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7024433837): accept the right-hand look for the six VPM instances, or retain v029 density as mandatory and do not place this pilot.
+- Evidence: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/v029/maple-relayout-D357/`. `maple-D357-before-after-NOT-ADOPTED.png`: `5917ff3e2c889223c6c1fe112a1fc9bcd6acee5b17fcb350380605bb146b55d7`; `render/pilot/new.fbx`: `8253f2d1985a941c5f2ddb2ee0efec640fc8670b8099d44cd8fe6b150bfa168c`; `SHA256SUMS.txt` (37 files): `5c1490b4dfee52c30783be2ca73c128092c90cf1db184438c559ae6be6842eb2`. Both retained site FBXs and all 22 original input hashes match. No six-tree application, no new site validator verdict; the independent Bench013 contact question remains open.
 
 ## v029 picture acceptance [D356]
 
