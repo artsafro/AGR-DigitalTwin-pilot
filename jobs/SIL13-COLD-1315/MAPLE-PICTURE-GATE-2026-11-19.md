@@ -1,6 +1,25 @@
 # Silikatny #1315 — VPM maple picture gate, 2026-11-19
 
-**r2 rejected; new v029 appearance sheet awaiting a separate answer. No new site replacement, rollback, or delivery.**
+**r2 rejected; isolated v029 appearance accepted. Technical gate remains open; no new site replacement, rollback, or delivery.**
+
+## v029 picture acceptance [D356]
+
+Artem accepted the exact appearance shown on the v029 sheet below («клен принимаю», [issue #1315 comment 7019776198](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7019776198)). The historical filename is unchanged to preserve the evidence hash. Fix crossings without changing the look, compare front and ¾ actual-export readbacks, then apply only to the six VPM maples and repeat the site audit and validator. No new visual question unless the appearance changes; no Max. The approval is not a waiver of the zero-crossing limit.
+
+### Technical gate — three isolated trials, none adopted
+
+Blender 5.1.2 fresh imports, metres, `twinqa.geometry.topology.count_defects` at 2 mm with zero-epsilon native BVH candidates, and `dt qa xview --profile VPM-GROUND` on the native arrays:
+
+| Actual export | Triangles | Regulatory self-intersections (limit 0) | xView faces / vertices (limit 0 / 0) | Disposition |
+|---|---:|---:|---:|---|
+| Accepted appearance, unchanged | 1,062 | 4,462 | 0 / 0 | Baseline, FAIL |
+| Exact cut, separate contours | 28,654 | 3 | 26,077 / 32,249 | FAIL; duplicate topology and well over pilot target |
+| Exact cut, joined contours | 28,654 | 3 | 89 / 320 | FAIL; duplicate topology and well over pilot target |
+| Keep 67 of 210 paired cards, wood retained | 490 | 35 | 0 / 0 | FAIL; visible holes and missing density, below pilot target |
+
+The separated/joined exact routes agree on the remaining count before export and after native reimport. The joined route stays visually close in matched views (mean absolute RGB difference 1.32 front / 1.49 oblique on the 8-bit full frames), but is not identical or technically acceptable. Unchanged v029 native BVH candidates: 4,221 foliage–foliage, 238 foliage–wood, 37 wood–wood (candidate counts, not a breakdown of the 4,462 verdict). The sparse copy's 37 candidates are all wood–wood; the 35 failures persist with the AABB fallback too. Dropping cards alone does not fix the wood and visibly changes the look. A clean public xView is therefore not a regulatory pass. The initial sparse native probe failed on an array-shape assertion; the same FBX bytes passed the corrected flat-index/UV/material readback on a fresh import. The prior failed invocation is retained.
+
+Matched front / ¾ sheet, FBXs, source/input integrity receipts, replay scripts and detailed QA: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/v029/maple-technical-D356/` (`SHA256SUMS.txt`: `e18ccd463efdf2061d160aeb282060cef542a2409df91d75f0d6e1a1baa7e053`; `maple-technical-comparison-NOT-DELIVERED.png`: `e15c7688fa58667ca7ea99e66e65e2b6bddc6a633f8ad90b68cdf41da5a1acab`). Both site FBXs and the 22 source/library receipts match; neither site profile changed. No six-tree replacements or new full-site validator verdict. Limits remain unchanged. [Open model choice on issue #1315, comment 7023384208](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7023384208): allow one new isolated crown/hidden-wood reconstruction with a separately reviewed visual delta, or keep v029 as the appearance reference and leave the technical gate open.
 
 ## New isolated pilot [D353]
 
