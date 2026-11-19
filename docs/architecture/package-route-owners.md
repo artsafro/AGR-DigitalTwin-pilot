@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `88a638ebf72669740446778aa1fadb59866f47051b2debb9716fee7fca579508`.
+Редакция YAML SHA-256: `fd8bcbf076a779e41c8e1e59097dfab1ca777532a08ed75f5d95dcf3cb98d833`.
 
 Ревизия исходников: Сцена НПМ / ВПМ, ревизия и SHA-256 исходников; связь с FBX через существующий export_meta.
 
@@ -57,7 +57,7 @@
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/library/maf_material_ids.py::main`](../../tools/library/maf_material_ids.py) | own-duty | текст команды Blender в отчёте для ручного запуска человеком, сам ничего не запускает | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/research/checker_mutation.py::freeze`](../../tools/research/checker_mutation.py) | own-duty | замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера | Не требуется |
 | Чекер СИНТЕЗ и загрузка архива | [`tools/qa/sintez_checker.py`](../../tools/qa/sintez_checker.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:18`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L18) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет | Не требуется |
-| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
+| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет (#1673) | Не требуется |
 | Пакеты НПМ / ВПМ и передача | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`jobs/TEC26-OKS/scripts/package_vpm.py:50`](../../jobs/TEC26-OKS/scripts/package_vpm.py#L50) | live-bypass | живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core) | [#1377](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1377) |
 
 ## Шаги и доказательства

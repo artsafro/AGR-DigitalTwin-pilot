@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `5368d375ef173e34a244de40ad2b7415fb0d6d70d848cbe6094391e191264092`.
+Редакция YAML SHA-256: `7d6968ed2dd4a5b2a1435c6a6d4e0c3a74903c3d8ede2817664511e5a2b18a8e`.
 
 Ревизия исходников: КПП1: sources.json — состав исходников фиксируется путями и SHA-256 (кроме RVT); build manifest отказывает при смешении ревизий одного источника (#1592), ревизию альбома сверяем вручную (D274).
 
@@ -114,7 +114,7 @@
 | Проёмы и окна | [`adapters/max/agr_tools/windowgen_core.py`](../../adapters/max/agr_tools/windowgen_core.py) | [`jobs/OBR22-K02/scripts/build_shell_windows.py:76`](../../jobs/OBR22-K02/scripts/build_shell_windows.py#L76) | historical | исторические рамы Обр22; .ignore:71 [D327], не текущий генератор | Не требуется |
 | Проёмы и окна | [`adapters/max/agr_tools/windowgen_core.py`](../../adapters/max/agr_tools/windowgen_core.py) | [`jobs/KPP1/scripts/kpp1_windowgen.py:75`](../../jobs/KPP1/scripts/kpp1_windowgen.py#L75) | wrapper | обёртка build_type; import windowgen_core as wg на строке 26 | Не требуется |
 | Кровля, парапет, плита, ограждение | [`adapters/max/agr_tools/roof_core.py`](../../adapters/max/agr_tools/roof_core.py) | [`jobs/PSU275/scripts/roof_wells.py:70`](../../jobs/PSU275/scripts/roof_wells.py#L70) | historical | исторический построитель кровли ПСУ275; .ignore:127 [D327], не живой обход | Не требуется |
-| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
+| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет (#1673) | Не требуется |
 | Пакеты НПМ / ВПМ и передача | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`jobs/TEC26-OKS/scripts/package_vpm.py:50`](../../jobs/TEC26-OKS/scripts/package_vpm.py#L50) | live-bypass | живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core) | [#1377](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1377) |
 
 ## Шаги и доказательства

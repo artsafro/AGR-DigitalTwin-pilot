@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `cc6b0145dd4f4080ff16258518a6841e49f5da9c3aee10dd44ee4424e4998c80`.
+Редакция YAML SHA-256: `9758a37480f79ffb4d214b7d40a203b6c4d39abcc1ffb8acca63c85605cee79a`.
 
 Ревизия исходников: КПП1: Revit / DWG / PDF, ревизия и SHA-256 в реестре исходников; неизвестное — остановка.
 
@@ -113,7 +113,7 @@
 | Проёмы и окна | [`adapters/max/agr_tools/windowgen_core.py`](../../adapters/max/agr_tools/windowgen_core.py) | [`jobs/OBR22-K02/scripts/build_shell_windows.py:76`](../../jobs/OBR22-K02/scripts/build_shell_windows.py#L76) | historical | исторические рамы Обр22; .ignore:71 [D327], не текущий генератор | Не требуется |
 | Проёмы и окна | [`adapters/max/agr_tools/windowgen_core.py`](../../adapters/max/agr_tools/windowgen_core.py) | [`jobs/KPP1/scripts/kpp1_windowgen.py:75`](../../jobs/KPP1/scripts/kpp1_windowgen.py#L75) | wrapper | обёртка build_type; import windowgen_core as wg на строке 26 | Не требуется |
 | Кровля, парапет, плита, ограждение | [`adapters/max/agr_tools/roof_core.py`](../../adapters/max/agr_tools/roof_core.py) | [`jobs/PSU275/scripts/roof_wells.py:70`](../../jobs/PSU275/scripts/roof_wells.py#L70) | historical | исторический построитель кровли ПСУ275; .ignore:127 [D327], не живой обход | Не требуется |
-| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
+| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет (#1673) | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | own-duty | ручные куски сданного КПП1; новый объект строит agr ucx (D330), сданный пакет не меняется | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | own-duty | ручные коробки законченного ПСУ275; новый объект строит agr ucx (D330), пакет не меняется | Не требуется |
 | Триангуляция готовых UCX | [`adapters/max/agr_tools/geom_core.py`](../../adapters/max/agr_tools/geom_core.py) | [`jobs/TEC26-OKS/scripts/ucx_tri_core.py:44`](../../jobs/TEC26-OKS/scripts/ucx_tri_core.py#L44) | wrapper | обёртка geom_core() -> ucx_plan | Не требуется |

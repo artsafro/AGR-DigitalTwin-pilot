@@ -261,7 +261,7 @@ def test_package_map_council_station3_edits_1673():
     drv = dups["jobs/VATUTINO-SITE/run_delivery.py::main"]
     assert (drv["status"], drv["hash"]) == ("historical", "bc783edf3f") and "не этап package" in drv["ru"]
     v003 = [r for r in [*ctx["sintez"]["duplicates"], *shared.values()] if "run_agr_checker_v003" in r["at"]]
-    assert len(v003) == 2 and {r["status"] for r in v003} == {"superseded"}
+    assert len(v003) == 3 and {r["status"] for r in v003} == {"superseded"}
     # hotspots
     hot = {h["id"]: h for h in events["hotspots"]}
     assert hot["shell-zip-writers"]["stage"] == "package" and "run_building.sh:31" in hot["shell-zip-writers"]["ru"]

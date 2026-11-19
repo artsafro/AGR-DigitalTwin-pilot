@@ -148,8 +148,11 @@ GeoJSON ВПМ → сборка ZIP → валидатор и xView → пред
 - `meta-v013` — хеш `exported_sha256` не заменяет `fbx_records` с `bounds_m`; ручная карта по FBX допустима.
 - `build-counters-gate` — проверка счётчиков из #1031 ручная, не часть команды `agr` / `dt`.
 - `legacy-packagers` — 9 старых упаковщиков в jobs/ заморожены.
+- `shell-zip-writers` — `AC09/run_building.sh:31` пишет НПМ-ZIP однострочником `python -c zipfile` мимо `package_core`; `duplicate_guard` shell не видит.
 - `geojson-tool` — в проверенных JSON маршрута точка не передана; `package-vpm` пишет `[null, null]`, прогон КПП1 использовал `--no-geojson`.
 - `sintez-vatutino-evidence` — Blender-обёртка КПП1 не сохраняет `inputs[].sha256`; у требований есть `req_num`, нет привязки к V0xx и странице регламента.
+- `upload-rename-bypass` — `npm_code.py` пересобирает ZIP под код СИНТЕЗ мимо `package_core` и не пишет квитанцию (до #1675).
+- `customer-line-missing` — строки «передано заказчику, <дата>» в проверенных отчётах сдачи нет; по D346 — только по слову Артёма.
 - `customer-handoff-record` — в проверенных STATE/job/deliveries факт передачи не найден; D346 задаёт место записи на будущее.
 - `never-passed` — ни один пакет не прошёл; 9 строк PKG без проверки.
 
@@ -160,6 +163,9 @@ GeoJSON ВПМ → сборка ZIP → валидатор и xView → пред
 | `meta-v013` | обновлена | #1673: стык экспорт → метаданные; `record` не принимает границы, `check` не гарантирует пригодность для V013; без `--export-meta` — `not_run` |
 | `build-counters-gate` | открыта | `build_counters.py` существует, но команды `agr` / `dt` его не вызывают |
 | `legacy-packagers` | открыта | старые упаковщики под охраной `duplicate_guard` (contexts.yaml); новые сдачи — только общими командами |
+| `shell-zip-writers` | открыта | писатель ZIP в shell вне разбора `duplicate_guard` (только Python); правка guard — вне #1673 |
+| `upload-rename-bypass` | открыта | live-bypass `npm_code.py::rename_npm_zip`; перевод на общий упаковщик — #1675 |
+| `customer-line-missing` | открыта | D346 задаёт строку на будущее; в существующих отчётах её нет |
 | `geojson-tool` | открыта | `export.geojson_write` не готов; `package-vpm` не использует `placement.insertion_xy`. D345 — правило сдачи, не новая реализация |
 | `sintez-vatutino-evidence` | открыта | Ватутино использовал Blender `dump`, а не `agr checker` (#1379) |
 | `customer-handoff-record` | открыта | D220 и D300 не задавали место записи; D346 задаёт строку в отчёте по слову Артёма, не подтверждает старую передачу |

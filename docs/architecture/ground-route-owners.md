@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `b2b75c41e56da3f7c8cba4ee7a7fefbbd8f50d9e0391be75aa624211ceddc1e2`.
+Редакция YAML SHA-256: `dafceb199ff56c734ca4fcea309ad668f47e59ca684439d08241250b81d89cae`.
 
 Ревизия исходников: DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников.
 
@@ -96,7 +96,7 @@
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/library/maf_material_ids.py::main`](../../tools/library/maf_material_ids.py) | own-duty | текст команды Blender в отчёте для ручного запуска человеком, сам ничего не запускает | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/research/checker_mutation.py::freeze`](../../tools/research/checker_mutation.py) | own-duty | замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера | Не требуется |
 | Чекер СИНТЕЗ и загрузка архива | [`tools/qa/sintez_checker.py`](../../tools/qa/sintez_checker.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:18`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L18) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет | Не требуется |
-| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
+| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет (#1673) | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | own-duty | ручные куски сданного КПП1; новый объект строит agr ucx (D330), сданный пакет не меняется | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | own-duty | ручные коробки законченного ПСУ275; новый объект строит agr ucx (D330), пакет не меняется | Не требуется |
 | Коллизии UCX рельефа (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/VATUTINO-SITE/assemble_delivery.py:25`](../../jobs/VATUTINO-SITE/assemble_delivery.py#L25) | historical | UCX Ground v014 / v015 — выходы ucx_build для сданного Ватутино; agr ucx повторяет v014 (#1404) | Не требуется |

@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `24d55debc68c86f5efc51a131aa1008b6ede91b80dcb4771e2ed4de076c6841b`.
+Редакция YAML SHA-256: `3bc24593e00a09da1e54d70e55ae6277bebfe3694ea55039cf5cf7f3edf718e0`.
 
 Ревизия исходников: Спецификация МАФ и СПОЗУ: ревизия, SHA-256, позиции и точки в реестре исходников.
 
@@ -58,7 +58,7 @@
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/library/migrate_windows.py::main`](../../tools/library/migrate_windows.py) | own-duty | опубликованный library/windows/catalogue.json v001 хранит sha256 этого файла во входах; правка запуска - только с новой версией библиотеки (v002), не переупаковываем | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/library/maf_material_ids.py::main`](../../tools/library/maf_material_ids.py) | own-duty | текст команды Blender в отчёте для ручного запуска человеком, сам ничего не запускает | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/research/checker_mutation.py::freeze`](../../tools/research/checker_mutation.py) | own-duty | замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера | Не требуется |
-| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
+| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет (#1673) | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/KPP1/scripts/vpm_ucx.py:50`](../../jobs/KPP1/scripts/vpm_ucx.py#L50) | own-duty | ручные куски сданного КПП1; новый объект строит agr ucx (D330), сданный пакет не меняется | Не требуется |
 | Коллизии UCX (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/PSU275/scripts/vpm_ucx.py:45`](../../jobs/PSU275/scripts/vpm_ucx.py#L45) | own-duty | ручные коробки законченного ПСУ275; новый объект строит agr ucx (D330), пакет не меняется | Не требуется |
 | Коллизии UCX рельефа (только ВПМ) | [`adapters/max/agr_tools/ucx10_core.py`](../../adapters/max/agr_tools/ucx10_core.py) | [`jobs/VATUTINO-SITE/assemble_delivery.py:25`](../../jobs/VATUTINO-SITE/assemble_delivery.py#L25) | historical | UCX Ground v014 / v015 — выходы ucx_build для сданного Ватутино; agr ucx повторяет v014 (#1404) | Не требуется |
