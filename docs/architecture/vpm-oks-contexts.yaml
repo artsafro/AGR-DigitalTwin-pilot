@@ -192,9 +192,9 @@ contexts:
       - at: "jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47"
         match: "def dump("
         issue: "#1379"
-        ru: "остаётся: замороженная версия v003 запуска чекера; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
-        status: own-duty
-        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
+        ru: "замороженная версия v003 запуска чекера; новый запуск — agr checker; копии КПП1 и ТЭЦ26 стали обёртками (#1379)"
+        status: superseded
+        why: "заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет (#1673)"
   - id: ucx
     ru: "Коллизии UCX (только ВПМ)"
     area: docs/domain/areas/ucx.md

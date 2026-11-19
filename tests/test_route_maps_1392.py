@@ -151,10 +151,11 @@ def test_1644_stage_owners(route, map_name):
     cmap = maps[map_name]
     sintez = next(c for c in cmap["contexts"] if c["id"] == "sintez")
     assert sintez["ref"] == "package-contexts.yaml#sintez"
-    assert sintez["owner"] == "tools/blender/sintez_checker.py"
-    assert {f["name"] for f in sintez["functions"]} == {"dump"}
+    assert sintez["owner"] == "tools/qa/sintez_checker.py"  # #1673: `agr checker`, launching tools/blender/
+    assert {f["name"] for f in sintez["functions"]} == {"classify", "run"}
     assert _stage(events, "sintez")["context"] == "sintez"
-    assert next(r for r in maps["contexts"]["rules"] if r["id"] == "sintez-checker")["owner"] == sintez["owner"]
+    rule_owner = next(r for r in maps["contexts"]["rules"] if r["id"] == "sintez-checker")["owner"]
+    assert rule_owner == "tools/blender/sintez_checker.py" and rule_owner in sintez["owner_ru"]  # launched by the owner
     if route != "ground-route":
         parts = next(c for c in cmap["contexts"] if c["id"] == "parts")
         assert _stage(events, "parts")["context"] == "parts"
