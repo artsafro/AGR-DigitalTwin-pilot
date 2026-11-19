@@ -1,6 +1,6 @@
 """#1619 polygon stage 2 (G22 body 2): window frame/glass (windowgen_core), D205 capsule (capsule_core), flashing and AC box.
 
-Pattern: n/a | new-case: tests of the stage-2 inset-element hooks (stage2_from_dump / stage2_build / stage2_readback).
+Pattern: n/a | new-case: tests of the stage-2 inset elements (floor_from_dump `stage2`, module_build `stage2` / `stage2-readback`).
 Pure helpers only - Blender is not needed.
 """
 import importlib.util
@@ -23,11 +23,11 @@ def _load(path, name):
     return mod
 
 
-fd_mod = _load(HOOKS / "stage2_from_dump.py", "stage2_from_dump_1619")
-bd = _load(HOOKS / "stage2_build.py", "stage2_build_1619")
-rb = _load(HOOKS / "stage2_readback.py", "stage2_readback_1619")
+fd_mod = _load(HOOKS / "floor_from_dump.py", "floor_from_dump_1619s2")  # subcommand `stage2`
+bd = _load(HOOKS / "module_build.py", "module_build_1619s2")  # mode `stage2`; bpy only inside _run_*
+rb = bd  # mode `stage2-readback` lives in module_build too (#1546: <= 5 hooks)
 
-# k2 typical floor, Revit «102_Окно_2Створки1 1800(900)х1750h» as read by stage2_from_dump (C:/x/ev_1619/s2/v001)
+# k2 typical floor, Revit «102_Окно_2Створки1 1800(900)х1750h» as read by floor_from_dump stage2 (C:/x/ev_1619/s2/v001)
 PANES_2SASH = [[0.1, 0.825, 0.085, 0.34, 0.185], [0.975, 1.7001, 0.085, 0.34, 0.185],
                [0.1, 0.825, 0.49, 1.635, 0.205], [0.975, 1.7001, 0.49, 1.635, 0.205]]
 TYPE_2SASH = "102_Окно_2Створки1 1800(900)х1750h"
@@ -208,11 +208,14 @@ def test_capsule_plan_is_the_capsule_core_footprint():
     assert min(p[0] for p in pts) == pytest.approx(-0.1) and max(p[0] for p in pts) == pytest.approx(1.9)
 
 
-def test_skeleton_lists_the_stage2_hooks():
+def test_skeleton_wires_stage2_through_existing_hooks():
+    """#1546 D324: stage 2 is a subcommand/mode of listed hooks, not three extra hooks (<= 5 per job)."""
     sk = json.loads((HOOKS.parent / "skeleton.json").read_text(encoding="utf-8"))
     scripts = [h["script"] for h in sk["hooks"]]
-    for s in ("hooks/stage2_from_dump.py", "hooks/stage2_build.py", "hooks/stage2_readback.py"):
-        assert s in scripts
+    assert len(scripts) <= 5 and "hooks/floor_from_dump.py" in scripts and "hooks/module_build.py" in scripts
+    assert sorted(p.name for p in HOOKS.glob("*.py")) == sorted(s.split("/")[-1] for s in scripts)
+    assert callable(fd_mod.stage2_main)
+    assert set(bd.MODES) == {"stage2", "stage2-readback"}
 
 
 def test_crop_dump_keeps_faces_inside_and_reindexes(tmp_path):
