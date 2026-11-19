@@ -106,3 +106,42 @@ def test_exact_padded_tile_extent_cannot_fit_uncut():
     assert blocked['reason'] == 'tile_budget'
     assert blocked['source_triangles'] == [0]
     assert blocked['pieces'] == blocked['cuts'] == []
+
+
+@pytest.mark.parametrize('case', ['fit', 'hole', 'overlap', 'duplicate', 'unknown', 'outside', 'nan'])
+def test_explicit_cells_use_geometry_not_internal_pixel_pattern(tmp_path, case):
+    from shapely.geometry import box, mapping
+    from tools.library.npm_ids import recover_regions
+
+    path = tmp_path / 'striped.png'
+    image = Image.new('RGB', (64, 64), '#eeeeee')
+    for y in range(0, 64, 4):
+        ImageDraw.Draw(image).line((0, y, 31, y), fill='#111111', width=2)
+    image.save(path)
+    left, right = box(0, 0, 32, 64), box(32, 0, 64, 64)
+    if case == 'hole':
+        right = box(33, 0, 64, 64)
+    elif case == 'overlap':
+        right = box(31, 0, 64, 64)
+    elif case == 'outside':
+        right = box(32, 0, 65, 64)
+    elif case == 'nan':
+        right = Polygon([(32, 0), (64, 0), (64, float('nan'))])
+    cells = [{'id': 'brick', 'kind': 'patterned', 'geometry': mapping(left)},
+             {'id': 'brick' if case == 'duplicate' else 'plain',
+              'kind': 'mixed' if case == 'unknown' else 'solid', 'geometry': mapping(right)}]
+    uv = [(0., 1.), (1., 1.), (0., 0.)]
+    if case not in ('fit', 'hole'):
+        with pytest.raises(ValueError, match='cell'):
+            recover_regions(path, [uv], cell_regions=cells)
+        return
+    result = recover_regions(path, [uv], cell_regions=cells)
+    if case == 'hole':
+        assert result['status'] == 'manual_required'
+        assert result['residual'] == [0]
+        assert result['pieces'] == [[]]
+    else:
+        assert result['status'] == 'ok'
+        assert [(r['cell_key'], r['kind']) for r in result['table']] == [('brick', 'patterned'), ('plain', 'solid')]
+        assert {p['id'] for p in result['pieces'][0]} == {1, 2}
+        assert unary_union([Polygon(p['uv']) for p in result['pieces'][0]]).equals(Polygon(uv))

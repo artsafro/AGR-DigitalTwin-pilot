@@ -1,10 +1,35 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
-**STOP — no production VPM written.** This is a continuation of the `npm-to-vpm`
-skeleton, `oks-npm` → `oks-vpm`, on the immutable #1630 r2 inputs. The current
-route still refuses unresolved colour region boundaries. The colour clipping
-and metric seam functions are planning primitives, not a native adapter or a
-delivery certificate.
+**STOP — source surfaces overlap before any VPM operation.** This is a continuation
+of the `npm-to-vpm` skeleton, `oks-npm` → `oks-vpm`, on the immutable #1630 r2 inputs.
+The geometry-first cell map is complete for UV assignment, but the source fails
+the VPM-OKS xView gate. No VPM was written.
+
+## Latest preflight (v006)
+
+The v005 atlas layout was replayed through the shared `recover_regions` clipper
+without regenerating or adjusting its borders. It assigned 147893 / 73137 / 51146
+source faces, respectively, with zero gaps and zero splits; the other 293 / 167 / 0
+are [D355]. The two previously approved zero-area drops are outside those counts.
+Cell coverage is not a material approval; no palette tolerance was used for this map.
+
+Fresh script-disabled Blender import and `dt qa xview --profile VPM-OKS --coords local`
+on the two source FBXs report FAIL for both files. The Overlapping Faces selections
+are 370 / 0 / 7 by mesh, separate from 557 / 6 / 51 candidate face pairs. Mesh 001
+also has four bow-tie vertices. Mesh 002 in the original FBX still contains the two
+zero-area polygons omitted in the UV replay; no additional drop was made.
+
+Independent intersection using the r2 metre-local triangle coordinates confirmed
+35 mesh001 pairs with projected overlap >0.001 m² and plane separation <1 µm. A
+concrete witness is source polygons 108154 and 108462 (zero based): same plane,
+0.028799661 m² in common, and neither face is in [D355]. Subdivision with unchanged
+world surfaces cannot remove this positive-area overlap. Ask whether to correct the
+confirmed overlaps on a separate copy, or receive corrected source FBXs. Do not
+interpret the full candidate count as a deletion list.
+
+Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v006-source-overlap-STOP/`
+(source hashes, exact indices, report, and overlap sheet). Native VPM, metric seam
+list, per-tile readback and SINTEZ checker remain outstanding.
 
 [D355]: the exact 460 source triangles use one solid placeholder with their
 mean source Diffuse colour. Do not rebuild their UV, rebake, or apply the texel
@@ -18,6 +43,8 @@ polygons previously approved for removal remain accounted for by #1630.
   and exact pixel-space intersections. A mixed leaf is subdivided by connected
   palette masks. A source triangle not fully covered remains a reported
   residual, rather than publishing part of the triangle or guessing a finish.
+  Its explicit cell-layout lane also clips an externally measured partition;
+  it rejects duplicate keys, unsupported kinds, invalid polygons and overlaps.
 - `npm2vpm_core.fit_metric_region` uses a *new* metric chart in metres from the
   caller, prefers named panel/zone seam coordinates, clips geometry and UV
   together, and returns separate tile-local pieces. It does not derive such a
@@ -25,6 +52,8 @@ polygons previously approved for removal remain accounted for by #1630.
 - Next when the atlas partition is resolved: transfer pieces to a conforming
   native copy, lay out textured charts through `vpm_uv`, allocate per-piece
   IDs/tiles, and run Blender readback, checker and xView. No PASS is claimed.
+
+## Historical RGB-tolerance control (superseded by v005)
 
 Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v002-colour-STOP/`.
 The folder contains three atlas sheets, a tolerance matrix and exact original
@@ -44,5 +73,6 @@ while broader tolerances still leave atlas footprints that cross blended,
 patterned or unresolved swatches. Neither a majority vote nor converting all
 unclassified pixels to one finish is a source-bound material decision. Request
 a marked material boundary mask (with patterned/solid labels) for the marked
-areas or an equivalent source material-ID map. Do not promote these provisional
-counts to final material IDs, tile allocations or a geometry cut list.
+areas or an equivalent source material-ID map only if the geometric atlas replay
+cannot resolve them. These historical counts are not final material IDs, tile
+allocations or a geometry cut list.

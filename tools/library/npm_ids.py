@@ -11,8 +11,8 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
-from shapely import STRtree, constrained_delaunay_triangles
-from shapely.geometry import Polygon, box
+from shapely import STRtree, constrained_delaunay_triangles, get_coordinates
+from shapely.geometry import Polygon, box, shape as geometry_shape
 from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
 
@@ -119,13 +119,15 @@ def _polygons(shape):
             yield from _polygons(child)
 
 
-def recover_regions(atlas_file, face_uvs, *, colour_tolerance=6, segmentation=None):
+def recover_regions(atlas_file, face_uvs, *, colour_tolerance=6, segmentation=None, cell_regions=None):
     """Return source-indexed UV triangle pieces or exact unresolved face indices.
 
     The facade segmenter retains its source UV evidence: supported cell-border
     crossers now get clipped, never centroid-assigned. Palette regions inside a
     mixed leaf may be nonrectangular or have holes. A partial intersection is
     not published when the unclassified remainder covers positive source area.
+    An explicit layout uses native top-left pixel coordinates, classifies cells
+    as solid or patterned, and preserves internal texture motifs.
     """
     if type(colour_tolerance) is not int or not 0 < colour_tolerance < 128:
         raise ValueError('invalid RGB8 colour tolerance')
@@ -146,10 +148,48 @@ def recover_regions(atlas_file, face_uvs, *, colour_tolerance=6, segmentation=No
             raise ValueError(f'face {i}: invalid UV triangle')
         faces.append(poly)
     opts = dict(segmentation or {})
+    if cell_regions is not None:
+        if opts:
+            raise ValueError('cell layout and automatic segmentation are mutually exclusive')
+        return _clip_cell_layout(faces, cell_regions, w, h)
     if {'profile', 'uv_bounds_px'} & opts.keys():
         raise ValueError('regions require internally measured facade UV bounds')
     atlas = segment(str(atlas_file), profile='facade', uv_bounds_px=[p.bounds for p in faces], **opts)
     return _clip_regions(rgb, faces, atlas, colour_tolerance)
+
+
+def _clip_cell_layout(faces, regions, w, h):
+    if not isinstance(regions, list) or not regions:
+        raise ValueError('empty or invalid cell layout')
+    shapes, table, keys = [], [], set()
+    domain = box(0, 0, w, h)
+    for i, row in enumerate(regions, 1):
+        key = row.get('id') if isinstance(row, dict) else None
+        if not isinstance(key, str) or not key.strip() or key in keys:
+            raise ValueError(f'cell {i}: required unique cell key {key!r}')
+        kind = row.get('kind')
+        if kind not in ('solid', 'patterned'):
+            raise ValueError(f'cell {key}: unmapped kind {kind!r}')
+        try:
+            geom = geometry_shape(row['geometry'])
+        except (ValueError, TypeError, KeyError, AttributeError) as exc:
+            raise ValueError(f'cell {key}: invalid geometry') from exc
+        if (geom.geom_type not in ('Polygon', 'MultiPolygon') or geom.is_empty or geom.has_z
+                or not np.isfinite(get_coordinates(geom)).all() or not geom.is_valid
+                or geom.area <= 0 or not domain.covers(geom)):
+            raise ValueError(f'cell {key}: invalid or out-of-atlas polygon')
+        keys.add(key)
+        shapes.append(geom)
+        table.append({'id': i, 'cell_key': key, 'kind': kind,
+                      'bounds_px': list(geom.bounds), 'face_count': 0})
+    tree = STRtree(shapes)
+    for i, geom in enumerate(shapes):
+        for j in tree.query(geom, predicate='intersects'):
+            if j < i and geom.intersection(shapes[j]).area > 0:
+                raise ValueError(f"cell {table[i]['cell_key']}: overlaps cell {table[j]['cell_key']}")
+    pieces, residual = _clip_faces(faces, shapes, table, w, h, tree)
+    return {'status': 'manual_required' if residual else 'ok', 'pieces': pieces,
+            'residual': residual, 'table': table, 'atlas_size_px': [w, h], 'colour_tolerance': None}
 
 
 def _clip_regions(rgb, faces, atlas, colour_tolerance):
@@ -170,7 +210,13 @@ def _clip_regions(rgb, faces, atlas, colour_tolerance):
             covered += shape.area
         cells.append({'cell': cell_id, 'bounds_px': bounds, 'kind': cell['kind'],
                       'unclassified_px2': cw * ch - covered})
-    tree = STRtree(shapes)
+    pieces, residual = _clip_faces(faces, shapes, table, w, h, STRtree(shapes))
+    return {'status': 'manual_required' if residual else 'ok', 'pieces': pieces,
+            'residual': residual, 'table': table, 'cells': cells, 'atlas_size_px': [w, h],
+            'colour_tolerance': colour_tolerance}
+
+
+def _clip_faces(faces, shapes, table, w, h, tree):
     pieces, residual = [], []
     for i, face in enumerate(faces):
         overlaps = []
@@ -196,5 +242,4 @@ def _clip_regions(rgb, faces, atlas, colour_tolerance):
                 ring = orient(tri, sign=1 if face.exterior.is_ccw else -1).exterior.coords
                 result.append({'id': int(j + 1), 'uv': [[x / w, 1 - y / h] for x, y in list(ring)[:-1]]})
         pieces.append(result)
-    return {'status': 'manual_required' if residual else 'ok', 'pieces': pieces, 'residual': residual,
-            'table': table, 'cells': cells, 'atlas_size_px': [w, h], 'colour_tolerance': colour_tolerance}
+    return pieces, residual
