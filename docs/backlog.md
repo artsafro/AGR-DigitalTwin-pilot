@@ -265,6 +265,8 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
   per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
   effort M
+- **R21** proposal 2026-11-19, job/colleague-maf-models - skill: MAF from a manufacturer page (download renders+DWG, DWG->DXF dims, part breakdown, `maf_parts.py` quad builders in headless Blender, preview, open versioned .blend for review); builders live outside git in `C:/x/two-mafs/work/scripts/`; seen 2 times (MG4013, 171620); effort M
+- **R22** proposal 2026-11-19, job/colleague-maf-models - CLI command: accepted Blender MAF -> one quad mesh, pivot D095, quad FBX -> 3dsmaxbatch Editable Poly + Multi/Sub with library IDs from the `<id>_<name>` material prefix + readback log (`export_maf_fbx.py` + `fbx_to_max.ms`); seen 2 times; effort S
 
 ## Harness and organization (default owner Codex)
 
