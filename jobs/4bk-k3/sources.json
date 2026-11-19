@@ -1,0 +1,122 @@
+{
+ "manifest": "external-inputs/1",
+ "registry": "job-sources/1",
+ "job": "4bk-k3",
+ "asset_store": "G:/Мой диск/AGR-assets/",
+ "why": "Inbox of job 4БК K3 (customer A101 / Astro1), hashed 2026-11-12 at intake; files stay in the owner's folder.",
+ "files": [
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/3k.max",
+   "sha256": "38f24c28579112b05b5dd25a6d45d9d19fb46b635f85be32f81d2fd312d3cf54",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "work-scene",
+   "role": "Vlad's 3ds Max 2026 working scene of K3 (typical floor, capsules, slats, metal belt, small stylobate, windows; layers Revit / HP / K3), saved 2026-11-11 — read only, work continues in a versioned copy"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/STLB-04_RR_K3_FSD.fbx",
+   "sha256": "5da402b812c233781ef9e09378fe83a7312797d98cb92c835466ef4be29879a9",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "Revit 2024 FBX of the K3 facade (FSD), feet, no materials: geometry authority"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/STLB-04_RR_AR.fbx",
+   "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "Revit 2024 FBX, full architectural model (all towers), feet, no materials: context"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/Текстуры/Bricks1/Bricks1_Diffuse.png",
+   "sha256": "ffda2011395604a1fcae8831da3ba9d82b6c658fb8890e59698178e05f6b864f",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "brick-look tile texture 4096², running half bond 14x48"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/Текстуры/Bricks1/Bricks1_ERM.png",
+   "sha256": "d6b019a9818ba1145489f8e5b25611a9fc06f6ac2b2421902a3ce6fb01c65d86",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "brick ERM map"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/Текстуры/Bricks1/Bricks1_Normal.png",
+   "sha256": "4621620af5568adf4e88934591fba0d7b32a80857b293dc6bfe380e0619fdbf0",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "brick normal map"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/1.jpg",
+   "sha256": "b910f011600aed8130f73f3d41ac104fc5a3b70ffb3b525756b8e66d5117348f",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "elevation fragment, top part, АКП joints in red"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/1 эт_2.jpg",
+   "sha256": "6d46eb572f10bfa044bd8869e7485ed025c4da4d39cf2a7384edc17d189814c3",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "stylobate / floor 1 elevation"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/2.jpg",
+   "sha256": "fdc37a672ca960282e2d3543d36d3d38591d8f929b1ce940eae3b841121da960",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "elevation fragment, top part, АКП joints in red"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/3.jpg",
+   "sha256": "db020b34f8f39c6f25d3889c6182b430602fc613c41ce64ef699519f2945da61",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "elevation fragment, middle bands, АКП joints in red"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/file.ObyMIe.png",
+   "sha256": "01a50b195dff0941a0b7749fbe85136b8d00985ae2c6fcb40c4e8a9a9dadec04",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "colour scheme of the street elevation: K3 tile 280x85 RAL 020 30 20, АКП RAL 4009, frames/sills RAL 7024"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/file.VqRdor.png",
+   "sha256": "8157e9568ef87f2cce7d6b14b4107220da302e1bbdc8cd1449904ef2709cc0ad",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "isometric of the complex (4 towers on a stylobate ring)"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/photo_2026-11-11_14-49-53.jpg",
+   "sha256": "610efa821c289c70fee9ee622e5347571c4a48dadb3a3533b75996a169085637",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "messenger note: K3 window surround colour on the brick facade (~RGB 122 92 96)"
+  },
+  {
+   "path": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ТЗ_Архитекторы/Screenshot_1.png",
+   "sha256": "3632bbd533023429372670d738ec6d5c235ce062959b1655c1ba5a1d5db424f5",
+   "location": "named-folder",
+   "folder": "C:/Users/artsafro/Desktop/!3D viz/!А101/63_4BK_vlad/inbox/ (owner's PC, not the asset store)",
+   "kind": "customer-source",
+   "role": "3D close-up: rounded corner, metal band, radial panel joints"
+  }
+ ],
+ "synthetic": false
+}
