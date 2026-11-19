@@ -19,7 +19,7 @@ NEW = {"vpm-route": "vpm-oks-route", "ground-route": "ground-route"}
 REPORT = ARCH / "report-routes-vpm-ground.md"
 
 # v2 (#1392, D293): an NPM stage before the export; Ground relief after the flat ground (tests/test_route_maps_1392.py)
-VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "npm", "package",
+VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "master-topology", "npm", "package",
               "readback", "validate", "sintez", "delivered"]
 GROUND_STAGES = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
                  "package", "validate", "sintez"]
@@ -30,7 +30,7 @@ def _routes():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return route_map.load_context_maps(ROOT)["contexts"]
 
 
 # ---------------------------------------------------------------- the two new routes
@@ -40,11 +40,15 @@ def test_generator_knows_three_routes_and_writes_eight_files():
                                              "package-route"}
     files = route_map.render_all(ROOT)[2]
     names = sorted(p.name for p in files)
-    assert names == sorted(f"{n}.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "contexts",
-                                                "vpm-oks-contexts", "ground-contexts",   # + two maps (#1392)
-                                                "maf-route", "flora-route", "package-route", "maf-contexts",
-                                                "flora-contexts", "package-contexts")    # #1393
-                           for s in ("excalidraw", "svg"))
+    detailed = [f"{n}.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "contexts",
+                                    "vpm-oks-contexts", "ground-contexts", "maf-route", "flora-route",
+                                    "package-route", "maf-contexts", "flora-contexts", "package-contexts")
+                for s in ("excalidraw", "svg")]
+    short = [f"{n}-scheme.{s}" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "maf-route",
+                                      "flora-route", "package-route") for s in ("excalidraw", "svg")]
+    tables = [f"{n}-owners.md" for n in ("npm-oks-route", "vpm-oks-route", "ground-route", "maf-route",
+                                      "flora-route", "package-route")]
+    assert names == sorted(detailed + short + tables)
 
 
 @pytest.mark.parametrize("name", sorted(NEW))
@@ -69,11 +73,69 @@ def test_every_reference_of_the_new_routes_exists(name):
     assert route_map.verify_references(ROOT, routes[name], contexts) == []
 
 
+def test_vpm_master_topology_before_export():
+    events = _routes()["vpm-route"]
+    ids = [s["id"] for s in events["stages"]]
+    master = [s for s in events["stages"] if "D312" in s["rules"]]
+    assert len(master) == 1
+    stage = master[0]
+    assert stage["id"] == "master-topology"
+    assert ids.index("ucx") < ids.index(stage["id"]) < ids.index("npm") < ids.index("package")
+    assert stage["commands"] == [
+        "uv run python tools/qa/master_topology.py <master> --out <new.json>",
+        "dt qa xview",
+    ]
+    assert "tools/qa/master_topology.py" in stage["evidence"]
+    assert "триангуляц" in stage["event_ru"].lower()
+    for sid in ("readback", "validate"):
+        assert "dt qa xview" in next(s for s in events["stages"] if s["id"] == sid)["commands"]
+
+
+@pytest.mark.parametrize("command,expected", [
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json>", True),
+    ("", False),
+    ("uv run python tools/qa/master_topology.py", False),
+    ("uv run python tools/qa/master_topology.py <master>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <master>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out NaN", False),
+    ("uv run python tools/qa/master_topology.py <master> --out inf", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json> --out <new.json>", False),
+    ("uv run python tools/qa/master_topology.py <master> --out <new.json> ; dt qa xview", False),
+    ("uv run python tools/qa/unknown.py <master> --out <new.json>", False),
+    ("python tools/qa/master_topology.py <master> --out <new.json>", False),
+])
+def test_master_topology_command_template(command, expected):
+    assert route_map.command_exists(command) is expected
+
+
+def test_master_topology_command_generated_mutations():
+    words = "uv run python tools/qa/master_topology.py <master> --out <new.json>".split()
+    mutations = []
+    for i in range(len(words)):
+        mutations.extend([
+            words[:i] + words[i + 1:],
+            words[:i] + ["unsupported"] + words[i + 1:],
+            words[:i] + [words[i]] + words[i:],
+        ])
+    assert len(mutations) == 21
+    for tokens in mutations:
+        assert not route_map.command_exists(" ".join(tokens)), tokens
+
+
+def test_vpm_master_topology_rendered():
+    for suffix in (".excalidraw", ".svg"):
+        text = (ROOT / route_map.OUTPUTS["vpm-route"].with_suffix(suffix)).read_text(encoding="utf-8")
+        assert "tools/qa/master_topology.py" in text
+        assert "D312" in text
+
+
 def test_vpm_hotspots_cover_the_named_objects():
-    """KPP1, PSU275, TEC26, ELV and 4BK evidence each back at least one VPM hot spot."""
+    """KPP1, TEC26, ELV and 4BK evidence each back at least one VPM hot spot (PSU275's only one, ucx-copies,
+    was resolved by #1404 [D330]; its copy stays listed in vpm-oks-contexts.yaml with a reason)."""
     hot = _routes()["vpm-route"]["hotspots"]
     text = " ".join(" ".join(h["evidence"]) + " " + h["ru"] for h in hot)
-    for needle in ("jobs/KPP1/", "jobs/PSU275/", "jobs/TEC26-OKS/", "jobs/elv-tc-vpm/", "vpm-course-grid-1314"):
+    for needle in ("jobs/KPP1/", "jobs/TEC26-OKS/", "jobs/elv-tc-vpm/", "vpm-course-grid-1314"):
         assert needle in text, needle
     assert all(h["evidence"] for h in hot)
 
@@ -98,12 +160,13 @@ def test_every_drawn_label_is_russian(name):
 def test_stage_without_command_is_drawn_dashed(name):
     events = _routes()[name]
     bare = [s["id"] for s in events["stages"] if not s.get("commands")]
-    assert bare, "each new route has stages without an agr/dt command"
+    # integration #1406 + #1404 + #1407: the Ground route got commands on every stage (zero..skirt, ucx,
+    # placement), so a route may have no bare stage left; then nothing is dashed.
     board = route_map.route_board(events, _contexts())
     dashed = [e for e in board.elements if e["type"] == "rectangle" and e["strokeStyle"] == "dashed"]
     assert len(dashed) == len(bare)
     texts = {e["text"] for e in board.elements if e["type"] == "text"}
-    assert "Нет команды agr/dt" in texts
+    assert ("Нет команды agr/dt" in texts) == bool(bare)
 
 
 # ---------------------------------------------------------------- report <-> YAML (drift probe)
@@ -172,7 +235,10 @@ def test_check_detects_missing_or_edited_new_output(tmp_path, capsys, name):
     rel = route_map.OUTPUTS[name]
     (root / rel.with_suffix(".svg")).unlink()
     ex = root / rel.with_suffix(".excalidraw")
-    ex.write_bytes(ex.read_bytes().replace("Нет команды".encode(), "Нет кoманды".encode(), 1))
+    data = ex.read_bytes()   # a route with no bare stage (Ground after #1406 + #1404 + #1407) has no «Нет команды»
+    needle, edited = ("Нет команды", "Нет кoманды") if "Нет команды".encode() in data else ("Агент", "Aгент")
+    assert needle.encode() in data
+    ex.write_bytes(data.replace(needle.encode(), edited.encode(), 1))
     assert route_map.main(["--root", str(root), "--check"]) == 1
     out = capsys.readouterr().out
     assert f"drift: {rel.with_suffix('.svg').as_posix()}" in out
@@ -182,13 +248,13 @@ def test_check_detects_missing_or_edited_new_output(tmp_path, capsys, name):
 def test_check_reports_unknown_reference_in_a_new_route(tmp_path, capsys):
     root = _tmp_arch(tmp_path)
     path = root / route_map.route_events()["vpm-route"]
-    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', '"agr ucx"', 1)
-    assert '"agr ucx"' in text
+    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', '"agr brick-seams"', 1)
+    assert '"agr brick-seams"' in text
     path.write_text(text, encoding="utf-8")
     route_map.main(["--root", str(root)])          # regenerate so only the reference problem remains
     capsys.readouterr()
     assert route_map.main(["--root", str(root), "--check"]) == 1
-    assert "command 'agr ucx' is not an existing agr/dt command" in capsys.readouterr().out
+    assert "command 'agr brick-seams' is not an existing agr/dt command" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("name", sorted(NEW))

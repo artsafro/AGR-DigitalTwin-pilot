@@ -45,6 +45,26 @@ album/sheets. These are limits, not a render quota when the scene is opened [D27
 **Fast stop [D273].** Stop after Artem's «да»; on a second correction on the same point, ask rather than iterate alone.
 For full delivery certification continue through the gates below; technical QA, user acceptance and publication stay separate.
 
+## Accepted geometry freeze (#1445)
+
+Once the user accepts a part, its geometry is **frozen**. Before the next stage, record
+`part`, `version`, `path`, `sha256` in `jobs/<ID>/accepted.json`, with the user's answer
+reference in the job. Follow the [fixed accepted-set and brief format](ACCEPTED_GEOMETRY.md).
+UV, textures, UCX and export read only that accepted set: cite its file hash and part versions,
+not "latest", and run `tools/state/accepted_set.py --job <ID> --inputs PART=FILE ...` before reading.
+A new geometry version/fix round needs the user's explicit scoped decision, even when QA finds
+something real. Report later findings once as a consolidated helper list (named helpers/points
+in a separate review scene, sent-list reference in TASK.md), not autonomous repair rounds.
+Do not edit the accepted source or carry its approval onto a derived file; an authorized UV
+cut/rebuild gets a new version and explicit acceptance before it becomes the next frozen input.
+Technical QA, human acceptance and publication remain separate; unresolved mandatory checks
+still prevent delivery certification, not permission to repair accepted geometry.
+
+Evidence: 4bk-k3 floor 1 A accepted 2026-11-14 17:31 (body v004, windows/roof v003).
+Five QA rounds v005–v009 and textures on body v008e followed; on 2026-11-15 Artem asked
+for helpers and required the geometry he had accepted yesterday. The [incident record](ACCEPTED_GEOMETRY.md#4bk-k3-evidence)
+links the immutable source; this rule does not roll back his later hand-finished finals.
+
 ## GATES (same for every path)
 
 Record every gate in `jobs/<JOB>/job.yaml`; schema:

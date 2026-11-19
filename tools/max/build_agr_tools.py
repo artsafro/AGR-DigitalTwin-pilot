@@ -21,11 +21,13 @@ HYGIENE_NAMES = {'ORIGIN', 'UV_NAME', 'CA_OWNERS', 'OBJECT_KEYS', 'MAX_MAP_CHANN
                  '_channel1_problem', '_extra_channels', 'repair_plan'}
 FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'runtime.py', 'bootstrap.py',
          'README.md', 'CHANGELOG.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py', 'export_core.py', 'export_meta.py',
+         'master_topology_core.py',
          'checks_core.py', 'checks_max.py', 'ui_model.py', 'ui_qt.py', 'ui_panel.py', 'ui_max.py',
          'suite_core.py', 'suite_max.py', 'roadmap.py',
          # 0.8 (#908): edit contract + stub modules of branches A-D (this list does not change in A-D)
          'edit_core.py', 'edit_max.py', 'geom_core.py', 'geom_max.py', 'tex_core.py', 'tex_max.py',
          'names_core.py', 'names_max.py', 'udim_core.py', 'udim_max.py', 'package_core.py', 'package_max.py',
+         'build_manifest.py',  # #1423 delivery set consistency (loaded by package_core)
          # 0.9 (#979): stub modules of branches A-D (this list does not change in A-E3; data/ is collected below)
          'place_core.py', 'place_max.py', 'texqa_core.py', 'texqa_max.py', 'finish_core.py', 'finish_max.py',
          'uvtile_core.py', 'uvtile_max.py', 'flora_atlas_max.py', 'qa9_core.py', 'qa9_max.py', 'facade_core.py',

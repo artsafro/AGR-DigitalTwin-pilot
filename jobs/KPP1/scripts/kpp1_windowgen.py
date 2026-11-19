@@ -257,14 +257,17 @@ def compare_readback(want, got, tol=1e-5):
     for k in ('verts', 'faces'):
         if want[k] != got.get(k):
             diff.append('{}: built {} readback {}'.format(k, want[k], got.get(k)))
+    if set(got.get('parts', {})) != set(want['parts']):
+        diff.append('parts: built {} readback {}'.format(sorted(want['parts']), sorted(got.get('parts', {}))))
     for k, n in want['parts'].items():
         if got.get('parts', {}).get(k) != n:
             diff.append('part {}: built {} readback {}'.format(k, n, got.get('parts', {}).get(k)))
     gb = got.get('bbox') or [[math.nan] * 3, [math.nan] * 3]
-    if any(not abs(a - b) <= tol for p, q in zip(want['bbox'], gb) for a, b in zip(p, q)):
+    if (len(gb) != 2 or any(len(q) != 3 for q in gb)
+            or any(not abs(a - b) <= tol for p, q in zip(want['bbox'], gb) for a, b in zip(p, q))):
         diff.append('bbox: built {} readback {}'.format(want['bbox'], got.get('bbox')))
     gg = got.get('glass') or []
-    if len(gg) != len(want['glass']) or any(not abs(a - b) <= tol for p, q in zip(want['glass'], sorted(gg))
-                                            for a, b in zip(p, q)):
+    if len(gg) != len(want['glass']) or any(len(p) != len(q) or any(not abs(a - b) <= tol for a, b in zip(p, q))
+                                            for p, q in zip(want['glass'], sorted(gg))):
         diff.append('glass: built {} readback {}'.format(want['glass'], gg))
     return diff

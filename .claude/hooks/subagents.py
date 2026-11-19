@@ -22,6 +22,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "hooks"))
+from hook_input import read_stdin
+
 REMINDER = ("Read-only subagent: report facts only - numbers, lists, tables, paths. No fixes, no proposals, no "
             "edits, no saves of any scene or file outside your report. The main agent decides.")
 VERDICT_CELL = re.compile(r"^(pass|fail)$|^not measured\b", re.I)
@@ -156,7 +159,7 @@ def deny_geometry(payload):
 
 def main(mode):
     try:
-        payload = json.loads(sys.stdin.read() or "{}")
+        payload = json.loads(read_stdin() or "{}")
     except ValueError:
         payload = None
     if not isinstance(payload, dict):                # fail closed on anything but an object

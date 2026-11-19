@@ -32,3 +32,10 @@
 *.dwg    filter=lfs diff=lfs merge=lfs -text
 *.zip    filter=lfs diff=lfs merge=lfs -text
 *.7z     filter=lfs diff=lfs merge=lfs -text
+
+# Generated route/context maps (#1558): keep HEAD on merge, then regenerate from the merged YAML.
+# Driver: python tools/architecture/regen_after_merge.py --install (git config merge.ours.driver true);
+# guard: route_map.py --check. Inputs (*.yaml), README and reports merge as text.
+docs/architecture/*.excalidraw merge=ours
+docs/architecture/*.svg        merge=ours
+docs/architecture/*-owners.md  merge=ours

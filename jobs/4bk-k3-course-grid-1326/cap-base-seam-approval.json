@@ -1,0 +1,18 @@
+{
+  "schema": "job-seam-approval/1",
+  "approved": true,
+  "date": "2026-11-14",
+  "authority": "Artem's standing rule as relayed on card t_d517d7c6 by orchestrator at 09:03",
+  "source_proposal": "cap-audit-v004.json",
+  "scope": {
+    "top_cap_faces": 65,
+    "cap_existing_edges": 195,
+    "low_plinth_horizontal_phase_edges": 13,
+    "existing_outer_panel_line_continuation_segments": 7
+  },
+  "standing_rule": "Existing-edge pattern breaks/phase resets on caps, plinths, thin ends, reveals and stair parts are allowed without asking; enumerate all in the report. Ask only for a change to main-wall course continuity or the one-tile budget.",
+  "preserve": ["all 771 ID1 faces", "courses on other main-wall joins", "source topology", "protected finishes", "Bricks1 sources"],
+  "new_geometry_cuts": false,
+  "production_uvs_written_at_approval": false,
+  "pilot_passed": false
+}

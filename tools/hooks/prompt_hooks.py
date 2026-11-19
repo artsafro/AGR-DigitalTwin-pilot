@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from hook_input import read_stdin
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "retro"))
 
 ACCEPT_NUDGE = ("The user's message reads as accepting a result. Before this stage ends: run the "
@@ -30,7 +31,7 @@ def accept_nudge(payload):
 
 def main():
     try:
-        payload = json.loads(sys.stdin.read() or "{}")
+        payload = json.loads(read_stdin() or "{}")
     except Exception:
         return 0
     if not isinstance(payload, dict):

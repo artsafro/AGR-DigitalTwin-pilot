@@ -17,6 +17,9 @@ import os
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "hooks"))
+from hook_input import read_stdin
+
 
 def _gate():
     path = Path(__file__).resolve().parents[2] / "tools" / "git-hooks" / "pipeline_gate.py"
@@ -83,7 +86,7 @@ def _run_errors(command, data):
 
 def main():
     try:
-        data = json.loads(sys.stdin.read() or "{}")
+        data = json.loads(read_stdin() or "{}")
     except ValueError:
         sys.exit(0)
     if not isinstance(data, dict) or not isinstance(data.get("tool_input"), dict):

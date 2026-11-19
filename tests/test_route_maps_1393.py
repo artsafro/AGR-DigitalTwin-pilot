@@ -35,7 +35,9 @@ RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
                             "vpm-identity": ("star", "D311")},  # #1421
             "package-route": {"customer-channel": ("customer", "D300")}}
 # #1409: red blocks fixed without a D-row (box removed from the map, report row «снята»)
-FIXED = {"maf-route": {"library-version"}, "flora-route": set(), "package-route": set()}
+FIXED = {"maf-route": {"library-version", "npm-light-tool", "uv-remap"},   # + #1410 (dt derive maf-npm-light)
+         "flora-route": {"placement-tool"},   # + #1407 (dt place site)
+         "package-route": {"sintez-runner"}}   # + #1379
 
 
 def _routes():
@@ -47,7 +49,7 @@ def _maps():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return route_map.load_context_maps(ROOT)["contexts"]
 
 
 def _stage(events, sid):
@@ -62,7 +64,7 @@ def _texts(name):
 # ---------------------------------------------------------------- acceptance 1: 3 routes + 3 maps from YAML
 def test_generator_writes_three_routes_and_three_context_maps():
     files = route_map.render_all(ROOT)[2]
-    assert len(files) == 24
+    assert len(files) == 42  # #1425: six short schemes (x2) + owners tables
     for name, stem in STEMS.items():
         assert route_map.OUTPUTS[name] == Path("docs/architecture") / stem
         for suffix in (".excalidraw", ".svg"):
@@ -136,7 +138,7 @@ def test_red_boxes_are_drawn_one_per_hotspot(name):
     events = _routes()[name]
     board = route_map.route_board(events, _contexts())
     pink = [e for e in board.elements if e["type"] == "rectangle" and e["backgroundColor"] == route_map.COLORS["hotspot"]]
-    assert len(pink) == len(events["hotspots"]) >= 4  # #1421 closed flora vpm-identity
+    assert len(pink) == len(events["hotspots"]) >= 3  # #1421 closed flora vpm-identity, #1407 placement-tool
 
 
 @pytest.mark.parametrize("name", sorted(ROUTES))

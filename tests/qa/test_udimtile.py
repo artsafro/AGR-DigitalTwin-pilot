@@ -111,6 +111,34 @@ def test_face_outside_domain_or_malformed_is_an_error(ut, uvs):
         ut.face_tile(uvs, strict=False)
 
 
+def test_point_centroid_and_whole_face_have_distinct_border_semantics(ut):
+    """#1380: independent literal expectations; callers must not substitute corner votes for faces."""
+    touching = [(0.2, 0.2), (1.0, 0.2), (1.0, 1.0), (0.2, 1.0)]
+    assert ut.udim_tile(1.0, 1.0) == 1012
+    assert ut.udim_tile(0.6, 0.6) == 1001
+    assert ut.face_tile(touching) == 1001
+    crossing = [(0.8, 0.2), (1.2, 0.2), (1.2, 0.8), (0.8, 0.8)]
+    assert ut.udim_tile(0.8, 0.2) == 1001
+    assert ut.face_tile(crossing, strict=False) == 1002
+    with pytest.raises(ut.UdimCrossTileError):
+        ut.face_tile(crossing)
+
+
+@pytest.mark.parametrize('u,v,expected', [
+    (math.nextafter(1.0, 0.0), 0.5, 1001),
+    (math.nextafter(1.0, 2.0), 0.5, 1002),
+    (0.5, math.nextafter(1.0, 0.0), 1001),
+    (0.5, math.nextafter(1.0, 2.0), 1011)])
+def test_float_epsilon_border_has_literal_point_tile(ut, u, v, expected):
+    assert ut.udim_tile(u, v) == expected
+
+
+def test_whole_face_tolerance_boundary(ut):
+    assert ut.face_tile([(0.2, 0.2), (1.0 + 1e-6, 0.2), (0.2, 0.8)]) == 1001
+    with pytest.raises(ut.UdimCrossTileError):
+        ut.face_tile([(0.2, 0.2), (1.0 + 2e-6, 0.2), (0.2, 0.8)])
+
+
 def test_probe_random_points_match_formula(ut):
     """Probe: for 20 000 random finite points the tile is the formula, or an error outside the domain."""
     rng = random.Random(1337)

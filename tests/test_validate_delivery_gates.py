@@ -68,6 +68,17 @@ def test_real_files_pass():
     assert gate_findings(read(SKILL), read(CHECKLIST), read(PRINCIPLES)) == []
 
 
+@pytest.mark.parametrize("skills", [".agents", ".claude"])
+def test_single_fbx_examples_require_profile(skills):
+    text = read(ROOT / skills / "skills/validate-delivery/SKILL.md")
+    examples = re.findall(r"(?:agr validate|tools/qa/validate_package\.py)\s+[^`\n]+", text)
+    fbx_commands = [example for example in examples if "fbx" in example.lower()]
+    assert fbx_commands
+    for command in fbx_commands:
+        assert re.search(r"\s--profile\s+(?:<npm\|vpm>|npm|vpm)(?:\s|$)", command), command
+        assert "--scene" in command.split(), command
+
+
 def _drop_gate(text: str, gate: str) -> str:
     return text.replace(gate_paragraph(text, gate), "")
 

@@ -26,7 +26,7 @@ ZIP_W = "import zipfile\nzipfile.ZipFile(p, 'w')\n"
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return route_map.load_context_maps(ROOT)["contexts"]
 
 
 def _zip_rows():
@@ -44,7 +44,7 @@ def _root(tmp_path, files, contexts="contexts:\n  - id: x\n"):
         p.write_text(text, encoding="utf-8")
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text(contexts, encoding="utf-8")
-    return ["--root", str(tmp_path), "--contexts", str(ctx)]
+    return ["--root", str(tmp_path), "--contexts", str(ctx), "--copies-only"]
 
 
 def _row(at, ru=None, rule="delivery-zip"):
@@ -79,13 +79,17 @@ def test_delivery_zip_guards_jobs_tools_src():
 # ---------------------------------------------------------------- listed copies carry a reason
 def test_every_delivery_zip_row_names_its_reason_and_this_issue():
     rows = _zip_rows()
-    assert len(rows) == 23   # 16 job writers (incl. KPP1 delivered-1371 v008, #1371) + 6 tools/ + 1 src/ non-delivery archives
+    assert len(rows) == 22   # #1675 removes one job writer: 15 jobs/ + 6 tools/ + 1 src/
+    assert not any(d['at'] == 'jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip' for d in rows)
     assert all(str(d.get("ru", "")).strip() and d["issue"] == "#1377" for d in rows), rows
 
 
-def test_nine_vpm_packagers_are_marked_historical():
+def test_nine_vpm_packagers_distinguish_candidates_from_finished_jobs():
     rows = {d["at"].split("::")[0]: d for d in _zip_rows()}
-    assert all(p in rows and "историч" in rows[p]["ru"] for p in VPM_PACKAGERS)
+    for path in VPM_PACKAGERS:
+        expected = ('superseded' if 'elv-tc-vpm' in path and 'v006' not in path else
+                    'live-bypass' if 'elv-tc-vpm' in path or 'TEC26-OKS' in path else 'historical')
+        assert rows[path]['status'] == expected, path
 
 
 def test_repo_guard_green_and_route_map_check_green(capsys):

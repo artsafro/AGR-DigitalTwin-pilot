@@ -1,0 +1,343 @@
+{
+  "passed": false,
+  "status": "actual_two_tile_source_relief_copy_visual_direction_gate_and_technical_repairs_open",
+  "branch": "improve/issue-1326-pilot-4bk-stylobate-brick-in-1-udim-keep",
+  "base": "main",
+  "pr": null,
+  "implementation_commit": "bb0313de36a16fb8e403428426391949ad2895ce",
+  "decision_ids": [
+    "D309",
+    "D295",
+    "D296",
+    "D303",
+    "D304"
+  ],
+  "summary": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v101\\summary.json",
+    "sha256": "9d1c090602dd86aa0e0e6338884f8ac4d285fe95aad0351d5009d27fa97edac9"
+  },
+  "artifacts": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\stylobate_two_tiles_textured_v096.blend",
+      "sha256": "070f292765d09756b2d82acffe7e5a5047e16ad9847e081c74bc1d66f02fea58",
+      "bytes": 932111
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v097\\stylobate_two_tiles_textured_v097.blend",
+      "sha256": "af9c93cc7d0c1c6016bcc1126f114ecc7ad4aabcf91043f777b725bbc0a264c1",
+      "bytes": 932009
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v097\\stylobate_pilot_v097_QA_OPEN.fbx",
+      "sha256": "9c9d84824861055937eb0f57aaa35c21f080d5e967c0ad32fdc217f733958bf1",
+      "bytes": 252460
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\source-vs-two-UDIM-lit-QA-OPEN.png",
+      "sha256": "d7377c245eb838c8d1a28773b463914bb3b78d1862beba235190bcc5da3bb822",
+      "bytes": 3473995
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\source-vs-two-UDIM-lit-QA-OPEN.webp",
+      "sha256": "7cb0c28741d54e3f962963a0df96c8926c438e5776cc2a859c0895a4baf2beab",
+      "bytes": 98196
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\original-vs-restored-relief-QA-OPEN.png",
+      "sha256": "74a279692a47184266fa9dca85db1f00a2caad053b39cde6f0cac214d37f1c92",
+      "bytes": 930209
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\actual-restored-relief-preview.webp",
+      "sha256": "e856bc011aea0e75b9b91bfacad6e7d008596089097be563b0f4a2862e55a4b1",
+      "bytes": 6892
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v099\\fbx-readback.json",
+      "sha256": "56b5e62e35015fd807f91ccd636ee7e2c6fcc9e4777c2a77b31ed8fc60a4c38c",
+      "bytes": 1160
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v100\\metrics.json",
+      "sha256": "f703a03902f35cda7fcb6b8e36e986da9fb565c6ece94411b8f3240817e21241",
+      "bytes": 1449
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v094\\independent-all-faces-png-check.json",
+      "sha256": "bab418131129f72c1b6ed9e80f4b634d55dd7e3e7dff96eb7120c0666947f6ba",
+      "bytes": 246315
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v097\\xview.json",
+      "sha256": "039646f4d74808c6533e1312ee0150b0a937b681e59c6afa27bcfdfec730cf91",
+      "bytes": 65428
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v098\\recipe.json",
+      "sha256": "23b46b9cb03457da1d416e83e5f38e4ddc6daf406812af6e4788e9a73c09b189",
+      "bytes": 3255
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v098\\cli-report.json",
+      "sha256": "06379229162968bd9d06edb7f7f0318413a11173eb2615303304e6ae2b7f6ff0",
+      "bytes": 502
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Diffuse.1001.png",
+      "sha256": "4f5b1cd7abd46bad3465bc127a56b62dcdd640dcdf16f61f7d9731c95e93af4e",
+      "bytes": 426080
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Diffuse.1002.png",
+      "sha256": "78d5a0e6809d49c4a22fff82d9c1132745ecfa27af5e4f96cc01fde503ca83fe",
+      "bytes": 498324
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_ERM.1001.png",
+      "sha256": "18e7e5347890161816900ecf3cbe6e57d68b03737f32d5243a0922cc3497f7bd",
+      "bytes": 230679
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_ERM.1002.png",
+      "sha256": "138016a687d4111c47c34ea4d744b55384db781a2d6ce1d24d942ad26b370905",
+      "bytes": 265824
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Normal.1001.png",
+      "sha256": "a594651923ea7e9f2f82cc6d726f1afb2639a50598ba87055cec55e2cccba38a",
+      "bytes": 670363
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Normal.1002.png",
+      "sha256": "e191115f2062ef9340354a9b4093b50f3706fb87b9c9f0fa8af044f73202d138",
+      "bytes": 726987
+    }
+  ],
+  "seals": [
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v071\\SHA256SUMS.txt",
+      "sha256": "048b182cbb72a92e8a8ae271a3050df034e53c2f7ad7def714d9ef36772d6af4",
+      "files": 8,
+      "bytes": 16958351
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v072\\SHA256SUMS.txt",
+      "sha256": "5950a9c6eff764d9b6a323cc4d583627ea852733ab7461c46aef090dfd4365b5",
+      "files": 7,
+      "bytes": 12031691
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v073\\SHA256SUMS.txt",
+      "sha256": "74ff1b6716d67559d56b0cbec7d103ddea041f007097fde51824fd9e95a5b8e0",
+      "files": 1,
+      "bytes": 2773320
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v074\\SHA256SUMS.txt",
+      "sha256": "186023c2b2f9658ed42e52e9a68354059baff93c21631a674906921f370c2a13",
+      "files": 7,
+      "bytes": 10117605
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v075\\SHA256SUMS.txt",
+      "sha256": "d172dde13744491db35a8bca1eb85ebbd8fdd9baea9e46e0631b3f1d2b3ccbdb",
+      "files": 2,
+      "bytes": 1279493
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v076\\SHA256SUMS.txt",
+      "sha256": "ae4b567bbc9e04f8dab2264c4500d861edb0fe12e64ddb3a93bcad2b803851cf",
+      "files": 2,
+      "bytes": 1805376
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v077\\SHA256SUMS.txt",
+      "sha256": "6a35b7df8cc4569c79c0dbd20fa3a9884f3637ea9c5f2b612c2d0dfc0491db6a",
+      "files": 1,
+      "bytes": 932938
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v078\\SHA256SUMS.txt",
+      "sha256": "e5b01db5e0e8f9317387f9530e66f12f7e26ba8e6214021b8d017674baf72120",
+      "files": 2,
+      "bytes": 1575574
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v079\\SHA256SUMS.txt",
+      "sha256": "d119602e7222522533da36e4179507923b4d14ddd061c7d8da175e792eda6ea8",
+      "files": 7,
+      "bytes": 11468223
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v080\\SHA256SUMS.txt",
+      "sha256": "c8100d02af4afba854ebde3474250f5bd5c05b6acd418633f30d0b9147ae9bc8",
+      "files": 6,
+      "bytes": 10034978
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v081\\SHA256SUMS.txt",
+      "sha256": "727c4a4e3a45061d3a16bf993354dfb19ccb03fba1c90fa2001cb2fa3bb24c57",
+      "files": 1,
+      "bytes": 1488007
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v082\\SHA256SUMS.txt",
+      "sha256": "d5457f3864c6013572135eb4ccde3636bdb242b606dd2796dc71ccb1f914d0c9",
+      "files": 7,
+      "bytes": 7392282
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v083\\SHA256SUMS.txt",
+      "sha256": "cfaa9a0783817c04399b401a5177481d4d3b5a61e55e163a9dbdf017aeb27ab0",
+      "files": 1,
+      "bytes": 1485303
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v085\\SHA256SUMS.txt",
+      "sha256": "da73b9b402aa56922078665f0588ca434351f925799c9cbcd139d442920db26b",
+      "files": 3,
+      "bytes": 10380349
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v086\\SHA256SUMS.txt",
+      "sha256": "0ee14b454fbaa029d4acb521fb0073cb0c311b716988304984a8c720f68e44fc",
+      "files": 1,
+      "bytes": 1482471
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v087\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v088\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v089\\SHA256SUMS.txt",
+      "sha256": "9fc65d3eda10b1b89d983c6099110f448eb08070bc578f916eb48892e91e4658",
+      "files": 3,
+      "bytes": 9292343
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v090\\SHA256SUMS.txt",
+      "sha256": "d697947a000df92e316dbaa34d5905cf7d5d6799681e4a7cccd338bc1969b2bb",
+      "files": 1,
+      "bytes": 1394572
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v091\\SHA256SUMS.txt",
+      "sha256": "32baaf50c6479b030ea2e729f7a78c13203f669301b89c8b153f7a8871246e5f",
+      "files": 1,
+      "bytes": 781058
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\SHA256SUMS.txt",
+      "sha256": "40a22e630420a92de6355bfc73be3572c6610b2742eac3548f5651e667237a08",
+      "files": 8,
+      "bytes": 3934991
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v093\\SHA256SUMS.txt",
+      "sha256": "6fd568068ff4a939157eab04754845f5360a24278f9404c80d66855396c15d89",
+      "files": 6,
+      "bytes": 12171702
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v094\\SHA256SUMS.txt",
+      "sha256": "47eecbc92c18fac96d65623635383c7e66646f12f5869b83423945b5cf4f530c",
+      "files": 1,
+      "bytes": 246315
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v095\\SHA256SUMS.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "files": 0,
+      "bytes": 0
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\SHA256SUMS.txt",
+      "sha256": "d6c34fb30e858060cfbe36af7af000cabcf890dcdd9bdb02da35522c5686ca2e",
+      "files": 14,
+      "bytes": 13497622
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v097\\SHA256SUMS.txt",
+      "sha256": "5d78e93292243e2aa700a57ba209fbce3a5331715ebdb391dcb02de0215fad8a",
+      "files": 7,
+      "bytes": 20194804
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v098\\SHA256SUMS.txt",
+      "sha256": "8576d2f53dcb4fad20d8102258c4aaff33fe0ad390a4132be4069426dc0e5c03",
+      "files": 7,
+      "bytes": 5181915
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v099\\SHA256SUMS.txt",
+      "sha256": "2fcf29f33afe34a5f5b4b0e86400b575705e2962ac09da006b4075d137d35e12",
+      "files": 2,
+      "bytes": 7785476
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v100\\SHA256SUMS.txt",
+      "sha256": "3fbc8c37642a780faa3f4bc62b14ee6810ff65c3a8f172591efc2fe040fae68e",
+      "files": 2,
+      "bytes": 801238
+    },
+    {
+      "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v101\\SHA256SUMS.txt",
+      "sha256": "004155faf6abc5990dd4ed1b14e46e39f06236ecec4cc1c991cd05d845726e7e",
+      "files": 374,
+      "bytes": 2139604
+    }
+  ],
+  "verification": {
+    "affected_command": "uv run pytest -q tests/test_course_grid*.py tests/test_decisions.py tests/max_tools/test_agr_tools_vpm_layout.py --basetemp=C:/x/t_d517d7c6-affected-two-tiles-v100 -p no:cacheprovider",
+    "passed": 309,
+    "deselected": 1,
+    "failed": 0,
+    "seconds": 9.22,
+    "red_commits": [
+      "d6ce190a",
+      "8937b559",
+      "7740fb28",
+      "e4839283"
+    ],
+    "new_targeted_passed": 35,
+    "real_cli_sources": 771,
+    "real_cli_members": 803,
+    "real_cli_pieces": 1644,
+    "real_cli_exact_candidate_plan": true,
+    "fbx_faces_matched": 4299,
+    "fbx_faces_expected": 4299,
+    "fbx_uv_delta": 0,
+    "fbx_max_xyz_m": 9.004956840023086e-06,
+    "png_sources_passed": 696,
+    "png_sources_failed": 75,
+    "png_sources_total": 771,
+    "png_false": 0,
+    "png_piece_errors": 0,
+    "full_suite": "deferred to merge batch (rule 68)"
+  },
+  "open_items": [
+    "Artem visual direction verdict on actual source-Normal two-tile v096 copy; this is NOT technical QA approval",
+    "75 independent frozen-PNG missing cases and source-alpha reconstruction residuals; no waiver",
+    "319 directional failures,16 degenerate and16 mirrored actual imported triangles; pre-tessellation source noding/repartition repair",
+    "Current FBX xView walls3faces/407vertices/223pairs;stairs12faces/0vertices/1bow-tie: accepted original source pairs only, no expanded baseline",
+    "Complete carrier/junction centre-width, source Normal frame/support, mip and surface/protected preservation certificates",
+    "Reusable full bake/native finalization, fresh final export and exact final visual/technical receipts",
+    "Before one PR: current-main merge without rebase, affected tests/probes/evals, canonical decision check, pushed head and dt-reviewer"
+  ],
+  "next_steps": [
+    "Start at TWO_TILE_NORMAL_RESULT.md and this snapshot; preserve every sealed version; use v102+",
+    "Do not ask the already answered budget/Normal/bevel/cap/ring/source-baseline/opening questions",
+    "Do not promote v074 welding or partial v086 explicit triangle plans; current pictured copy is v096, exported native/FBX is v097",
+    "Saved source-relative link repairs and DirectX preview conversion are already present in v096/v097; never overwrite originals",
+    "Visual direction acceptance does not close the technical gates or authorize replication"
+  ],
+  "continuation": "TWO_TILE_NORMAL_RESULT.md"
+}

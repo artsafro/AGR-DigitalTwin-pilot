@@ -24,7 +24,8 @@ import route_map  # noqa: E402
 from dt_ai.core import blender_runner  # noqa: E402
 
 OWNER = "src/dt_ai/core/blender_runner.py"
-ROUTED = ["jobs/VATUTINO-SITE/flora_route_a.py", "jobs/VATUTINO-SITE/place_site.py"]
+# #1407: the placement launch moved from jobs/VATUTINO-SITE/place_site.py into the placement command
+ROUTED = ["jobs/VATUTINO-SITE/flora_route_a.py", "src/dt_ai/placement/site.py"]
 DELEGATES = ["src/dt_ai/core/build.py", "src/twinqa/scene.py", "tools/qa/run_benchmark.py",
              "jobs/OBR22-K02/scripts/run_profile_checks.py"]
 LAUNCH = "import subprocess\nsubprocess.run([exe, '--background', '--python', s])\n"
@@ -60,7 +61,7 @@ def _root(tmp_path, files, contexts="contexts:\n  - id: x\n"):
         p.write_text(text, encoding="utf-8")
     ctx = tmp_path / "contexts.yaml"
     ctx.write_text(contexts, encoding="utf-8")
-    return ["--root", str(tmp_path), "--contexts", str(ctx)]
+    return ["--root", str(tmp_path), "--contexts", str(ctx), "--copies-only"]   # #1424: synthetic root, no maps
 
 
 def _row(at, ru=None, rule="blender-launch"):
@@ -106,7 +107,7 @@ def test_owner_file_is_not_its_own_copy():
 
 def test_every_blender_launch_row_names_its_reason_and_this_issue():
     rows = _launch_rows()
-    assert len(rows) == 25, [d["at"] for d in rows]   # 8 jobs/ + 16 tools/ + 1 src/ command lines, hash-pinned
+    assert len(rows) == 10, [d["at"] for d in rows]   # 7 jobs/ + 3 tools/ own-duty; 14 tools/ + src/ call the owner (#1530)
     assert all(str(d.get("ru", "")).strip() and d["issue"] == "#1378" for d in rows), rows
 
 
@@ -123,7 +124,7 @@ def test_fresh_process_cli_is_green_twice():
 
 # ---------------------------------------------------------------- guard behaviour (acceptance rows)
 @pytest.mark.parametrize("rel", ["tools/x/launch.py", "src/x/launch.py", "jobs/J/launch.py"])
-@pytest.mark.parametrize("cmd", ["[exe, '--background', '--python', s]", "(exe, '-b', '-P', s)",
+@pytest.mark.parametrize("cmd", ["[exe, '--background', '--python', s, '--python-exit-code', '1']", "(exe, '-b', '-P', s)",
                                  "[exe, '-b', blend, '--python-expr', code]", "[exe, '--background', '--python-text', t]",
                                  "f'{exe} --background --python {s}'", "'blender -b -P x.py'"])
 def test_new_blender_launch_in_tools_src_jobs_is_a_new_copy(tmp_path, rel, cmd, capsys):
@@ -133,7 +134,7 @@ def test_new_blender_launch_in_tools_src_jobs_is_a_new_copy(tmp_path, rel, cmd, 
 
 
 @pytest.mark.parametrize("text", [
-    "subprocess.run([exe, '--background', blend])\n",            # headless without a script: not a launch copy
+    "subprocess.run([exe, '--background', blend, '--python-exit-code', '1'])\n",  # headless without a script: not a launch copy
     "subprocess.run([exe, '--python', s])\n",                     # script without headless
     "def f():\n    '''Run blender --background --python x.py.'''\n",  # docstring
     "'blender -b -P x.py is the old way'\n",                      # bare string statement

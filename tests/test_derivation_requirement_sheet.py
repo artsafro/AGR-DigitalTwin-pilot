@@ -14,7 +14,8 @@ VALIDATION = ROOT / "docs/domain/validation.md"
 REQUIRED = {
     "DER-01": ("[D010]", "reg p.7 §3.6", "reg p.28 §3.9", "<= 150 000", "<= 1 000 000", "excluding UCX", "review"),
     "DER-02": ("reg p.4 §1.3", "reg p.24 §1.3", "All OKS and Ground", "identically"),
-    "DER-03": ("reg p.8 §3.11", "reg p.29 §3.17", "quad", "triangulated"),
+    "DER-03": ("reg p.8 §3.11", "reg p.29 §3.17", "quad", "triangulated",
+               "[D312]", "wherever possible", "triangles", "per object", "face share", "n-gons fail"),
     "DER-04": ("[D030]", "1001"),
     "DER-05": ("LEVEL_", "[D045]", "reg p.28 §3.1"),
     "DER-06": ("reg p.4 §4", "[D017]", "_Light.fbx", "001-250"),

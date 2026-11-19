@@ -9,10 +9,20 @@ for stages whose context has no owner in contexts.yaml; they are visible only in
 Context maps (CONTEXT_MAPS): contexts.yaml (NPM/OKS, drawn with the NPM route, guard allowlist) plus one map per
 route (#1392: vpm-oks-contexts.yaml, ground-contexts.yaml, same schema); `--check` also proves that each route's
 map lists every stage context of that route with the same owner (route_coverage). A context without a
-`duplicates` key draws no duplicates box; optional `grid: "col/row"` on every context of a map places it
+`duplicates` key draws no duplicates box. `serves_stage: <stage id>` associates a helper with its route stage;
+`no_stage: <reason>` explicitly documents an intentional stage-less context. Unannotated stage-less contexts
+(including kernels) are WARNINGs, not check failures. A context may use `ref: <registered map filename>#<id>`;
+owner, owner_ru and functions come from that exact map, never another map with the same context id.
+Each route's `scheme.export_context.ref` explicitly selects the short view's export owner. Missing/ambiguous
+targets and reference cycles raise SchemaError before publication. Optional `grid: "col/row"` on every context of a map places it
 explicitly (all or none, columns >= 1 apart). Route boards widen a 2-line actor and push the rows below a tall
 event; one-line titles/actors and <= 110 px events draw exactly as before.
 Outputs (generated, never hand-edited): <route>.excalidraw/.svg per route, <map>.excalidraw/.svg per context map.
+Default reading view (#1425): <route>-scheme.excalidraw/.svg + <route>-owners.md, from those same YAML inputs.
+`scheme.steps` groups existing ordered stages (comma-separated ids) into <= 7 working handoffs; every stage
+must occur exactly once, in order. Artifacts and acceptance conditions are documentation, not runtime receipts.
+The SHA-256 revision binds the parsed YAML snapshot, not an unknown customer source revision or a passed delivery.
+Live counts reuse duplicate_guard.rows_of statuses; detailed addresses occur only in the owners Markdown.
 Deterministic: element ids, seeds and nonces are hashes of the YAML keys, `updated` is a constant, so the same
 YAML gives the same bytes. Offline, stdlib only (no network, no PyYAML; tools/architecture/mini_yaml.py).
 
@@ -27,6 +37,7 @@ import argparse
 import ast
 import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -36,9 +47,9 @@ from xml.sax.saxutils import escape
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    import mini_yaml  # noqa: E402
+    import duplicate_guard, mini_yaml  # noqa: E402
 else:
-    from . import mini_yaml
+    from . import duplicate_guard, mini_yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCH = Path("docs/architecture")
@@ -90,6 +101,10 @@ class SchemaError(ValueError):
     pass
 
 
+HOTSPOT_KEYS = {"id", "stage", "ru", "rules", "evidence", "status", "guard_rule", "owner", "decision"}
+HOTSPOT_DECISION = re.compile(r"(D[0-9]{3})\([1-9][0-9]*\)")
+
+
 # ---------------------------------------------------------------- schema
 def _need(obj, key, where, kind: type = str) -> Any:
     if not isinstance(obj, dict) or key not in obj:
@@ -134,6 +149,8 @@ def check_contexts(contexts):
         _ru(_need(c, "owner_ru", where), where + ".owner_ru")
         for j, f in enumerate(_need(c, "functions", where, list)):
             _need(f, "name", f"{where}.functions[{j}]")
+            if "kind" in f and f["kind"] != "class":
+                raise SchemaError(f"{where}.functions[{j}]: 'kind' must be class when present")
             _ru(_need(f, "contract", f"{where}.functions[{j}]"), f"{where}.functions[{j}].contract")
         for j, d in enumerate(c.get("duplicates", [])):
             dwhere = f"{where}.duplicates[{j}]"
@@ -226,13 +243,38 @@ def _check_stages(events, ctx_ids):
                     if key in br and not (isinstance(br[key], list) and br[key]
                                           and all(isinstance(v, str) for v in br[key])):
                         raise SchemaError(f"{bwhere}: '{key}' must be a non-empty list of strings")
+    hotspot_ids = set()
     for i, h in enumerate(events.get("hotspots", [])):
         where = f"hotspots[{i}]"
-        _need(h, "id", where)
+        hid = _need(h, "id", where)
+        if hid in hotspot_ids:
+            raise SchemaError(f"{where}: duplicate id {hid!r}")
+        hotspot_ids.add(hid)
+        for key in h:
+            if key not in HOTSPOT_KEYS:
+                raise SchemaError(f"{where}: unknown key {key!r}")
         if _need(h, "stage", where) not in stage_ids:
             raise SchemaError(f"{where}: unknown stage {h['stage']!r}")
         _ru(_need(h, "ru", where), where + ".ru")
         _need(h, "evidence", where, list)
+        for key in ("rules", "evidence"):
+            if key in h and not all(isinstance(v, str) and v.strip() for v in _need(h, key, where, list)):
+                raise SchemaError(f"{where}: '{key}' must contain non-blank strings")
+        for key in ("owner", "guard_rule", "decision"):
+            if key in h and not _need(h, key, where).strip():
+                raise SchemaError(f"{where}: '{key}' must not be blank")
+        status = h.get("status")
+        if "status" in h and status not in ("open", "closed", "decided"):
+            raise SchemaError(f"{where}: 'status' must be open, closed or decided")
+        if re.search(r"\bзакрыто\b", h["ru"], re.I):
+            raise SchemaError(f"{where}: use checked 'status' rather than 'Закрыто' in 'ru'")
+        if status == "closed":
+            _need(h, "guard_rule", where)
+        if status == "decided":
+            if not HOTSPOT_DECISION.fullmatch(_need(h, "decision", where)):
+                raise SchemaError(f"{where}: 'decision' must be a D-row and item, e.g. D292(5)")
+        elif "decision" in h:
+            raise SchemaError(f"{where}: 'decision' requires status: decided")
     return ctx_ids
 
 
@@ -252,6 +294,20 @@ def route_coverage(events, contexts, cmap):
             problems.append(f"context map: stage context {cid!r} is missing")
         elif cid in owners and in_map[cid] != owners[cid]:
             problems.append(f"context map: {cid!r} owner {in_map[cid]} differs from the route's {owners[cid]}")
+    stage_ids = {s["id"] for s in events["stages"]}
+    used = {s["context"] for s in events["stages"]}
+    for c in [cmap["shared_kernel"], *cmap["contexts"]]:
+        for field in ("serves_stage", "no_stage"):
+            if field in c:
+                _need(c, field, f"context {c['id']}")
+                if not c[field].strip():
+                    raise SchemaError(f"context {c['id']}: {field} must not be blank")
+        if "serves_stage" in c and c["serves_stage"] not in stage_ids:
+            raise SchemaError(f"context {c['id']}: serves_stage names unknown stage {c['serves_stage']!r}")
+        if "serves_stage" in c and "no_stage" in c:
+            raise SchemaError(f"context {c['id']}: serves_stage and no_stage are mutually exclusive")
+        if c["id"] not in used and "serves_stage" not in c and "no_stage" not in c:
+            problems.append(f"WARNING: context map: context {c['id']!r} has no stage")
     return problems
 
 
@@ -264,13 +320,17 @@ def _dt_commands():
 
 
 def command_exists(command):
-    """'agr <alias>' or 'dt <sub> [<choice>]' exists in today's CLI (pointer stubs do not count)."""
+    """Existing agr/dt command or the exact documented D312 script template (not executed here)."""
+    if command == "uv run python tools/qa/master_topology.py <master> --out <new.json>":
+        return True
     words = command.split()
     if len(words) < 2:
         return False
     if words[0] == "agr":
         from dt_ai.cli import agr
-        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm"}
+        if len(words) == 3 and words[1] == "ground":  # agr ground site|zero|v015 (#1406)
+            return words[2] in agr.GROUND_STEPS
+        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm", "ucx"}
     if words[0] != "dt":
         return False
     sub = _dt_commands().get(words[1])
@@ -287,10 +347,29 @@ def _top_functions(path):
     return {n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
 
 
+def _hotspot_guard_problems(events, contexts):
+    guarded = [h for h in events.get("hotspots", []) if "guard_rule" in h]
+    if not guarded:
+        return []
+    rule_ids = {r["id"] for r in contexts["rules"]}
+    rows = _view_rows({"contexts": contexts})
+    problems = []
+    for h in guarded:
+        rule = h["guard_rule"]
+        where = f"hotspot {h['id']}"
+        if rule not in rule_ids or rule not in duplicate_guard.GUARDED:
+            problems.append(f"{where}: unknown guard_rule {rule!r} (requires a guarded rule in contexts.yaml)")
+        elif h.get("status") == "closed":
+            count = sum(r.rule == rule and r.status == "live-bypass" for r in rows)
+            if count:
+                problems.append(f"{where}: status closed conflicts with {count} live-bypass rows for {rule}")
+    return problems
+
+
 def verify_references(root, events, contexts):
     """Return a list of problems: unknown command, D-row, path, owner function, or a path:line without its match."""
     root = Path(root)
-    problems = []
+    problems = _hotspot_guard_problems(events, contexts)
     decisions = (root / "docs/decisions.md").read_text(encoding="utf-8")
     known_d = set(re.findall(r"^\| (D[0-9]{3}) \|", decisions, re.M))
 
@@ -320,6 +399,12 @@ def verify_references(root, events, contexts):
             for p in br["evidence"]:
                 path(p, where)
     for h in events.get("hotspots", []):
+        if h.get("status") == "decided":
+            decision = HOTSPOT_DECISION.fullmatch(h.get("decision", ""))
+            if decision is None:
+                problems.append(f"hotspot {h['id']}: expected a D-row and item in decision")
+            else:
+                d_row(decision[1], f"hotspot {h['id']}")
         for d in h.get("rules", []):
             d_row(d, f"hotspot {h['id']}")
         for p in h["evidence"]:
@@ -337,9 +422,13 @@ def verify_references(root, events, contexts):
         if "area" in c:
             path(c["area"], f"context {c['id']}")
         defined = _top_functions(owner)
+        classes = {n.name for n in ast.parse(owner.read_bytes(), filename=str(owner)).body
+                   if isinstance(n, ast.ClassDef)} if any(f.get("kind") == "class" for f in c["functions"]) else set()
         for f in c["functions"]:
-            if f["name"] not in defined:
-                problems.append(f"context {c['id']}: {c['owner']} has no top-level function {f['name']}")
+            kind = "class" if f.get("kind") == "class" else "function"
+            names = classes if kind == "class" else defined
+            if f["name"] not in names and not (kind == "function" and f["name"] == "<module>"):
+                problems.append(f"context {c['id']}: {c['owner']} has no top-level {kind} {f['name']}")
         for d in c.get("duplicates", []):
             if "rule" in d:   # path.py::function; the function itself is checked by duplicate_guard (stale row)
                 rel, line = d["at"].split("::", 1)[0], None
@@ -431,7 +520,93 @@ class Board:
     def label(self, key, x, y, w, text, size=20):
         return self._text(key, x, y, w, wrap(text, w, size), size, False, "left")
 
-    def arrow(self, key, a, b, text=None, label_w=200):
+    def _side_route(self, a, b):
+        """Shortest orthogonal side-port path through free space, clear of all boxes."""
+        import heapq
+
+        rects = [e for e in self.elements if e["type"] == "rectangle"]
+        start = (a["x"] + a["width"] + 20, a["y"] + a["height"] / 2)
+        end = (b["x"] + b["width"] + 20, b["y"] + b["height"] / 2)
+        xs = sorted({start[0], end[0]} | {v for r in rects for v in
+                    (r["x"] - 20, r["x"] + r["width"] + 20)})
+        ys = sorted({start[1], end[1]} | {v for r in rects for v in
+                    (r["y"] - 20, r["y"] + r["height"] + 20)})
+
+        def clear(p, q):
+            # Grid edges are axis-aligned; closed bounds also forbid touching a list.
+            return not any(
+                min(p[0], q[0]) <= r["x"] + r["width"] and max(p[0], q[0]) >= r["x"]
+                and min(p[1], q[1]) <= r["y"] + r["height"] and max(p[1], q[1]) >= r["y"]
+                for r in rects)
+
+        source, target = (xs.index(start[0]), ys.index(start[1])), (xs.index(end[0]), ys.index(end[1]))
+        queue, distance, previous = [(0, source)], {source: 0}, {}
+        while queue:
+            cost, node = heapq.heappop(queue)
+            if cost != distance[node]:
+                continue
+            if node == target:
+                break
+            i, j = node
+            for nxt in ((i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)):
+                u, v = nxt
+                if not (0 <= u < len(xs) and 0 <= v < len(ys)):
+                    continue
+                p, q = (xs[i], ys[j]), (xs[u], ys[v])
+                candidate = cost + abs(p[0] - q[0]) + abs(p[1] - q[1])
+                if candidate < distance.get(nxt, float("inf")) and clear(p, q):
+                    distance[nxt], previous[nxt] = candidate, node
+                    heapq.heappush(queue, (candidate, nxt))
+        if target not in distance:
+            raise SchemaError(f"no clear arrow route between {a['id']} and {b['id']}")
+        path, node = [], target
+        while True:
+            path.append((xs[node[0]], ys[node[1]]))
+            if node == source:
+                break
+            node = previous[node]
+        points = [(start[0] - 20, start[1])] + list(reversed(path)) + [(end[0] - 20, end[1])]
+        compact = []
+        for point in points:
+            while len(compact) >= 2 and (
+                compact[-2][0] == compact[-1][0] == point[0]
+                or compact[-2][1] == compact[-1][1] == point[1]
+            ):
+                compact.pop()
+            compact.append(point)
+        return compact
+
+    def _arrow_label_position(self, points, width, height, endpoints):
+        """Try longest segments first; slide the label to free interval boundaries.
+
+        Rectangle edges expanded by the label half-size delimit every feasible
+        centre interval on an orthogonal segment. Check rounded output bounds,
+        with 2 px clearance, rather than just the centre or the route itself.
+        """
+        rects = [e for e in self.elements if e["type"] == "rectangle" and e["id"] not in endpoints]
+        segments = sorted(zip(points, points[1:]),
+                          key=lambda pair: -(abs(pair[0][0] - pair[1][0]) + abs(pair[0][1] - pair[1][1])))
+        for p, q in segments:
+            axis = 0 if p[1] == q[1] else 1
+            lo, hi = sorted((p[axis], q[axis]))
+            middle = (lo + hi) / 2
+            candidates = {lo, middle, hi}
+            coord, size, half = ("x", "width", width / 2) if axis == 0 else ("y", "height", height / 2)
+            for rect in rects:
+                candidates.update((rect[coord] - half - 2, rect[coord] + rect[size] + half + 2))
+            for value in sorted((v for v in candidates if lo <= v <= hi), key=lambda v: (abs(v - middle), v)):
+                cx, cy = (value, p[1]) if axis == 0 else (p[0], value)
+                x, y = round(cx - width / 2, 2), round(cy - height / 2, 2)
+                if not any(x < r["x"] + r["width"] + 1 and x + width > r["x"] - 1
+                           and y < r["y"] + r["height"] + 1 and y + height > r["y"] - 1 for r in rects):
+                    return x, y
+        raise SchemaError("no clear arrow label position")
+
+    def arrow(self, key, a, b, text=None, label_w=200, side_route=False):
+        if text and side_route and (not isinstance(label_w, (int, float))
+                                    or not math.isfinite(label_w) or label_w <= 0):
+            raise SchemaError("arrow label width must be finite and positive")
+        lines, label_x, label_y = [], 0.0, 0.0
         ax, ay = a["x"] + a["width"] / 2, a["y"] + a["height"] / 2
         bx, by = b["x"] + b["width"] / 2, b["y"] + b["height"] / 2
         # leave from the box edge facing the target
@@ -443,16 +618,31 @@ class Board:
             sy = a["y"] + (a["height"] if by > ay else 0)
             ey = b["y"] + (0 if by > ay else b["height"])
             sx, ex = ax, bx
-        el = self._base(key, "arrow", sx, sy, abs(ex - sx), abs(ey - sy))
-        el.update({"roundness": {"type": 2}, "points": [[0, 0], [round(ex - sx, 2), round(ey - sy, 2)]],
+        points = self._side_route(a, b) if side_route else [(sx, sy), (ex, ey)]
+        # Place labels before mutating elements or endpoint bindings: refusal is atomic.
+        if text:
+            lines = wrap(text, label_w, 14)
+            if side_route:
+                label_x, label_y = self._arrow_label_position(points, label_w, len(lines) * 14 * 1.25,
+                                                             {a["id"], b["id"]})
+            else:
+                label_x = (points[0][0] + points[-1][0]) / 2 - label_w / 2
+                label_y = (points[0][1] + points[-1][1]) / 2 - len(lines) * 9
+        sx, sy = points[0]
+        ex, ey = points[-1]
+        el = self._base(key, "arrow", sx, sy,
+                        max(x for x, _ in points) - min(x for x, _ in points),
+                        max(y for _, y in points) - min(y for _, y in points))
+        el.update({"roundness": None if side_route else {"type": 2},
+                   "points": ([[round(x - sx, 2), round(y - sy, 2)] for x, y in points] if side_route
+                              else [[0, 0], [round(ex - sx, 2), round(ey - sy, 2)]]),
                    "lastCommittedPoint": None, "startArrowhead": None, "endArrowhead": "arrow", "elbowed": False,
                    "startBinding": {"elementId": a["id"], "focus": 0, "gap": 4},
                    "endBinding": {"elementId": b["id"], "focus": 0, "gap": 4}})
         for box in (a, b):
             box["boundElements"] = (box["boundElements"] or []) + [{"type": "arrow", "id": el["id"]}]
         if text:
-            lines = wrap(text, label_w, 14)
-            t = self._text(key, sx + (ex - sx) / 2 - label_w / 2, sy + (ey - sy) / 2 - len(lines) * 9, label_w, lines, 14,
+            t = self._text(key, label_x, label_y, label_w, lines, 14,
                            False, "center", container=el["id"])
             el["boundElements"] = [{"type": "text", "id": t["id"]}]
         return el
@@ -481,9 +671,13 @@ class Board:
                 out.append(f'<rect x="{e["x"]}" y="{e["y"]}" width="{e["width"]}" height="{e["height"]}" rx="8" '
                            f'fill="{fill}" stroke="{e["strokeColor"]}"{dash}/>')
             elif e["type"] == "arrow":
-                (px, py) = e["points"][1]
-                out.append(f'<line x1="{e["x"]}" y1="{e["y"]}" x2="{round(e["x"] + px, 2)}" '
-                           f'y2="{round(e["y"] + py, 2)}" stroke="#1e1e1e" marker-end="url(#arrow)"/>')
+                if len(e["points"]) == 2:
+                    px, py = e["points"][-1]
+                    out.append(f'<line x1="{e["x"]}" y1="{e["y"]}" x2="{round(e["x"] + px, 2)}" '
+                               f'y2="{round(e["y"] + py, 2)}" stroke="#1e1e1e" marker-end="url(#arrow)"/>')
+                else:
+                    points = " ".join(f'{round(e["x"] + x, 2)},{round(e["y"] + y, 2)}' for x, y in e["points"])
+                    out.append(f'<polyline points="{points}" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>')
             elif e["type"] == "text":
                 texts.append(e)
         for e in texts:  # text above shapes and arrows
@@ -505,8 +699,32 @@ class Board:
 
 
 # ---------------------------------------------------------------- the two pictures
+def _check_hotspot_guards(events, contexts):
+    problems = _hotspot_guard_problems(events, contexts)
+    if problems:
+        raise SchemaError("; ".join(problems))
+
+
+def _hotspot_text(h):
+    text = h["ru"]
+    status = h.get("status")
+    if status == "closed":
+        rule = h["guard_rule"]
+        scope = ", ".join(f"{top}/" for top in duplicate_guard.GUARDED[rule])
+        text += (f"\nЗакрыто по реестру ({rule}): учтённых обходов нет; область поиска: {scope}, "
+                 f"{duplicate_guard.SCAN_PATTERN}; проверка предусмотрена тестом test_duplicate_status_1424")
+    elif status == "decided":
+        text += f"\n{h['decision']}: решено человеком, машиной не проверено"
+    elif status == "open":
+        text += "\nОткрыто"
+    if "owner" in h:
+        text += f"\nВладелец: {h['owner']}"
+    return text
+
+
 def route_board(events, contexts):
     actors, ctx_ru = check_schema(events, contexts)
+    _check_hotspot_guards(events, contexts)
     b = Board()
     col_w, gap = 230, 40
     title = events["title_ru"] + f" ({events['issue']})"
@@ -556,7 +774,8 @@ def route_board(events, contexts):
             y += el["height"] + 16
         for hs in hot_by_stage.get(s["id"], []):
             rules = f" [{', '.join(hs['rules'])}]" if hs.get("rules") else ""
-            el = b.box(f"route/hot/{hs['id']}", x, y, col_w, "⚠ " + hs["ru"] + rules, COLORS["hotspot"], size=13)
+            el = b.box(f"route/hot/{hs['id']}", x, y, col_w, "⚠ " + _hotspot_text(hs) + rules,
+                       COLORS["hotspot"], size=13)
             y += el["height"] + 16
     return b
 
@@ -590,7 +809,7 @@ def contexts_board(events, contexts):
     b.label("ctx/title", 40, 0, 1600, contexts["title_ru"] + f" ({contexts['issue']})", size=28)
     b.label("ctx/legend", 40, 44, 2000,
             "Легенда: зелёный — модуль-владелец и его функции (контракт: вход -> выход); жёлтый — общее ядро; "
-            "розовый — дубли вне владельца (путь:строка); стрелки — что контекст передаёт дальше", size=16)
+            "розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами", size=16)
     w, gap = 470, 140
     nodes, tails = {}, {}
 
@@ -603,11 +822,11 @@ def contexts_board(events, contexts):
             tails[c["id"]] = node
             return node["height"]
         dups = c["duplicates"]
-        dl, rules = _dup_lines(dups, rules_ru)
+        rules = sorted({d["rule"] for d in dups if "rule" in d})
         head = f"Дубли вне владельца: {len(dups)}"
         if rules:
             head += "\nПравило проверки: " + "; ".join(rules_ru[r] for r in rules)
-        dup = b.box(f"ctx/{c['id']}/dups", x, y + node["height"] + 14, w, head + "\n" + "\n".join(dl),
+        dup = b.box(f"ctx/{c['id']}/dups", x, y + node["height"] + 14, w, head,
                     COLORS["hotspot"], size=12, align="left")
         tails[c["id"]] = dup
         return node["height"] + 14 + dup["height"]
@@ -637,22 +856,206 @@ def contexts_board(events, contexts):
 def _relations(b, contexts, nodes, tails):
     for i, rel in enumerate(contexts.get("relations", [])):
         a, z = nodes[rel["from"]], nodes[rel["to"]]
-        if a["y"] < z["y"]:      # downwards: leave from the bottom of the duplicates box, not through it
-            a = tails[rel["from"]]
-        elif a["y"] > z["y"]:    # upwards: arrive at the bottom of the target's duplicates box
-            z = tails[rel["to"]]
-        b.arrow(f"ctx/rel/{i}/{rel['from']}->{rel['to']}", a, z, rel["ru"], label_w=120)
+        b.arrow(f"ctx/rel/{i}/{rel['from']}->{rel['to']}", a, z, rel["ru"], label_w=120, side_route=True)
     return b
 
 
 def load_routes(root=ROOT):
     """Route name -> parsed events YAML, for every route of route_events()."""
-    return {name: mini_yaml.load(Path(root) / rel) for name, rel in route_events().items()}
+    routes: dict[str, Any] = {name: mini_yaml.load(Path(root) / rel) for name, rel in route_events().items()}
+    maps = load_context_maps(root)
+    for events in routes.values():
+        if "local_contexts" in events:
+            events["local_contexts"] = [resolve_context(c, maps) for c in events["local_contexts"]]
+    return routes
+
+
+def resolve_context(context, maps, seen=()):
+    """Resolve ref: <registered map filename>#<id>, never an id in an unrelated map.
+
+    Local presentation/coverage fields may differ; owner, owner_ru and functions
+    always come from the source. Resolve against the current parsed snapshot only.
+    """
+    if not isinstance(context, dict):
+        raise SchemaError("context ref: expected a mapping")
+    if "ref" not in context:
+        return context
+    ref = _need(context, "ref", "context ref")
+    if not re.fullmatch(r"[^/#\\\\]+\.yaml#[A-Za-z0-9_-]+", ref):
+        raise SchemaError(f"context ref: invalid reference {ref!r}")
+    if ref in seen:
+        raise SchemaError(f"context ref cycle: {' -> '.join((*seen, ref))}")
+    filename, cid = ref.split("#")
+    names = [name for name, rel in context_maps().items() if rel.name == filename]
+    if len(names) != 1 or names[0] not in maps:
+        raise SchemaError(f"context ref {ref!r}: unknown map {filename!r}")
+    source = maps[names[0]]
+    candidates = [c for c in [_need(source, "shared_kernel", ref, dict),
+                              *_need(source, "contexts", ref, list)] if _need(c, "id", ref) == cid]
+    if len(candidates) != 1:
+        raise SchemaError(f"context ref {ref!r}: expected one target {cid!r}, found {len(candidates)}")
+    target = resolve_context(candidates[0], maps, (*seen, ref))
+    result = {**target, **context}
+    if "grid" not in context:  # placement belongs to this map, not the referenced owner's map
+        result.pop("grid", None)
+    for key in ("owner", "owner_ru", "functions"):
+        result[key] = _need(target, key, f"context ref {ref!r}", list if key == "functions" else str)
+    return result
 
 
 def load_context_maps(root=ROOT):
-    """Context map name -> parsed YAML, for every map of context_maps()."""
-    return {name: mini_yaml.load(Path(root) / rel) for name, rel in context_maps().items()}
+    """Context maps from one snapshot, resolving explicit refs before schema/rendering."""
+    maps: dict[str, Any] = {name: mini_yaml.load(Path(root) / rel) for name, rel in context_maps().items()}
+    return {name: {**cmap,
+                   "shared_kernel": resolve_context(_need(cmap, "shared_kernel", name, dict), maps),
+                   "contexts": [resolve_context(c, maps) for c in _need(cmap, "contexts", name, list)]}
+            for name, cmap in maps.items()}
+
+
+def _scheme(events):
+    """Validate the short view against the existing ordered stages; no dropped or invented step."""
+    spec = _need(events, "scheme", "events", dict)
+    unknown = set(spec) - {"source_ru", "steps", "export_context"}
+    if unknown:
+        raise SchemaError(f"scheme: unmapped keys {sorted(unknown)!r}")
+    export = _need(spec, "export_context", "scheme", dict)
+    _need(export, "ref", "scheme.export_context")
+    if set(export) != {"ref"}:
+        raise SchemaError(f"scheme.export_context: unmapped keys {sorted(set(export) - {'ref'})!r}")
+    _ru(_need(spec, "source_ru", "scheme"), "scheme.source_ru")
+    steps = _need(spec, "steps", "scheme", list)
+    if not 1 <= len(steps) <= 7:
+        raise SchemaError("scheme.steps: expected 1..7 working groups")
+    covered = []
+    for i, step in enumerate(steps):
+        where = f"scheme.steps[{i}]"
+        if isinstance(step, dict) and set(step) - {"stages", "ru", "artifact_ru", "gate_ru"}:
+            raise SchemaError(f"{where}: unmapped keys {sorted(set(step) - {'stages', 'ru', 'artifact_ru', 'gate_ru'})!r}")
+        covered.extend(_need(step, "stages", where).split(","))
+        for key in ("ru", "artifact_ru", "gate_ru"):
+            text = _ru(_need(step, key, where), where + "." + key)
+            if re.search(r"\.py(?::|::)", text):
+                raise SchemaError(f"{where}.{key}: path:line belongs in the owners table")
+    expected = [s["id"] for s in events["stages"]]
+    if covered != expected:
+        raise SchemaError(f"scheme.stages: expected {expected!r}, got {covered!r}")
+    return spec
+
+
+def _view_rows(maps):
+    # Reuse #1424's status contract, not a second call-chain classifier.
+    try:
+        return duplicate_guard.rows_of(maps)
+    except ValueError as exc:
+        raise SchemaError(str(exc)) from exc
+
+
+def _owner_rows(cmap, rows):
+    owners = {c["owner"] for c in [cmap["shared_kernel"]] + cmap["contexts"]}
+    # Counts are distinct registry locations per owner (not occurrences across route maps).
+    result = {}
+    for row in rows:
+        if row.owner in owners:
+            key = (row.owner, row.at)
+            if key in result and result[key].status != row.status:
+                raise SchemaError(f"{row.at}: conflicting statuses for owner {row.owner}")
+            result.setdefault(key, row)
+    return list(result.values())
+
+
+def view_revision(events, maps):
+    """Content revision, not a delivery receipt or a guessed customer source revision."""
+    return hashlib.sha256(json.dumps([events, maps], sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def short_route_board(events, cmap, maps):
+    spec = _scheme(events)
+    rows = _owner_rows(cmap, _view_rows(maps))
+    export = resolve_context(_scheme(events)["export_context"], maps)
+    b = Board()
+    title = events["title_ru"].split(": событийный штурм")[0]
+    b.label("short/title", 30, 0, 1050, title + " — короткая схема", size=24)
+    b.label("short/revision", 30, 80, 1050, "Редакция YAML SHA-256: " + view_revision(events, maps), size=13)
+    source = b.box("short/source", 30, 140, 1050, "Ревизия исходников: " + spec["source_ru"],
+                   COLORS["context"], size=15)
+    live = sum(r.status == "live-bypass" for r in rows)
+    b.label("short/owner", 30, 245, 1050, "Владелец экспорта (Max): " + export["owner"] +
+            "\nЖивых обходов владельцев: " + str(live) + "; адреса и миграция — в таблице владельцев. "
+            "Это маршрут работы, не квитанция успешной сдачи. Blender НПМ: tools/derive/export_npm.py; "
+            "ВПМ: экспортёр job.", size=14)
+    y, previous = 355, source
+    for i, step in enumerate(spec["steps"]):
+        key = f"short/{i}"
+        node = b.box(key + "/step", 30, y, 460, f"{i + 1}. {step['ru']}\nПриёмка: {step['gate_ru']}",
+                     COLORS["event"], size=16)
+        artifact = b.box(key + "/artifact", 610, y, 470, "Артефакт: " + step["artifact_ru"],
+                         COLORS["branch"], size=16)
+        # Route the next handoff along the outside; never through a registry/list.
+        if i == 0:
+            # Source -> first working step (leave below the source, not through the owner label).
+            previous = b.box("short/input", 30, y - 45, 460, "Вход: описанная ревизия исходников",
+                             COLORS["context"], size=13)
+        b.arrow(key + "/in", previous, node)
+        b.arrow(key + "/out", node, artifact)
+        previous = artifact
+        y += max(node["height"], artifact["height"]) + 65
+    return b
+
+
+def owners_markdown(events, cmap, maps):
+    """Same YAML snapshot as the scheme. Detailed registry locations live here only."""
+    _check_hotspot_guards(events, maps["contexts"])
+    rows = _owner_rows(cmap, _view_rows(maps))
+    def cell(text):
+        return str(text).replace("|", "&#124;").replace("\n", "<br>")
+    def link(path):
+        return f"[`{path}`](../../{path})"
+    out = ["# Владельцы и миграция — " + events["route"], "",
+           "Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.", "",
+           "Редакция YAML SHA-256: `" + view_revision(events, maps) + "`.", "",
+           "Ревизия исходников: " + _scheme(events)["source_ru"] + ".", "",
+           "Считаются уникальные записи `(owner, at)` реестра #1424, не файлы и не все розовые пометки. "
+           "Статусы проверяет существующий duplicate_guard; схема не доказывает успешную сдачу.", "",
+           "| Правило / ответственность | Владелец | Живые обходы (число + ссылка) | Причина различий | Критерий завершения миграции |",
+           "|---|---|---|---|---|"]
+    owners = [cmap["shared_kernel"]] + cmap["contexts"]
+    export = resolve_context(_scheme(events)["export_context"], maps)
+    if export["owner"] not in {c["owner"] for c in owners}:
+        owners.append(export)
+    for c in owners:
+        owned = [r for r in rows if r.owner == c["owner"]]
+        live = sum(r.status == "live-bypass" for r in owned)
+        rule_ids = sorted({r.rule for r in owned if r.rule})
+        rule = c["ru"] + ("; " + ", ".join(rule_ids) if rule_ids else "")
+        out.append("| " + " | ".join(map(cell, [rule, link(c["owner"]),
+            f"[{live} — записи](#реестр-мест)", c["owner_ru"],
+            "Живых обходов = 0; вызовы идут владельцу, проверки контракта и duplicate_guard зелёные. "
+            "История остаётся историей, отдельная обязанность не считается обходом."])) + " |")
+    out += ["", "## Реестр мест", "",
+            "| Правило | Владелец | Место | Статус | Причина различий | Шаг миграции |",
+            "|---|---|---|---|---|---|"]
+    reasons = {"historical": "История завершённого job; не вызывается живым маршрутом",
+               "wrapper": "Обёртка вызывает владельца", "live-bypass": "Живой маршрут ещё обходит владельца"}
+    for r in rows:
+        line = f"#L{r.line}" if r.line else ""
+        place = f"[`{r.at}`](../../{r.rel}{line})"
+        step = (f"[#{r.step[1:]}](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/{r.step[1:]})"
+                if r.step and r.step.startswith("#") else "Нет карточки" if r.status == "live-bypass" else "Не требуется")
+        out.append("| " + " | ".join(map(cell, [r.rule or r.area, link(r.owner), place, r.status,
+                  r.why or r.ru or reasons.get(r.status, ""), step])) + " |")
+    if not rows:
+        out.append("| — | — | Нет записей | — | Дубли не зарегистрированы | — |")
+    out += ["", "## Шаги и доказательства", "",
+            "| Шаг | Правила | Источники и ветки / различия |",
+            "|---|---|---|"]
+    for s in events["stages"]:
+        evidence = "; ".join(link(p) for p in s["evidence"])
+        branches = "; ".join(br["when_ru"] + ": " + br["ru"] for br in s.get("branches", []))
+        out.append("| " + " | ".join(map(cell, [s["event_ru"], ", ".join(s["rules"]), evidence + "; " + branches])) + " |")
+    out += ["", "## Ограничения сегодня", ""]
+    for h in events.get("hotspots", []):
+        out.append("- " + _hotspot_text(h).replace("\n", "<br>") + ": " + "; ".join(link(p) for p in h["evidence"]))
+    return "\n".join(out) + "\n"
 
 
 def render_all(root=ROOT):
@@ -670,6 +1073,14 @@ def render_all(root=ROOT):
     for name, board in boards:
         files[OUTPUTS[name].with_suffix(".excalidraw")] = board.excalidraw()
         files[OUTPUTS[name].with_suffix(".svg")] = board.svg()
+    for name, events in routes.items():
+        cmap = maps[ROUTE_MAP_OF.get(name, "contexts")]
+        stem = OUTPUTS[name]
+        scheme = stem.with_name(stem.name + "-scheme")
+        board = short_route_board(events, cmap, maps)
+        files[scheme.with_suffix(".excalidraw")] = board.excalidraw()
+        files[scheme.with_suffix(".svg")] = board.svg()
+        files[stem.with_name(stem.name + "-owners.md")] = owners_markdown(events, cmap, maps)
     return routes, contexts, files
 
 
@@ -685,7 +1096,33 @@ def main(argv=None):
     ap.add_argument("--check", action="store_true", help="compare with the committed files, write nothing")
     args = ap.parse_args(argv)
     try:
+        sources = [args.root / rel for rel in list(route_events().values()) + list(context_maps().values())]
+        snapshot = {p: p.read_bytes() for p in sources}
+        stems = [(args.root / rel).resolve() for rel in OUTPUTS.values()]
+        if len(set(stems)) != len(stems):
+            raise SchemaError("output stems alias one another")
         routes, contexts, files = render_all(args.root)
+        # Check all input/output/temp aliases before the first write, including hardlinks.
+        paths = sources + [args.root / rel for rel in files]
+        if not args.check:
+            paths += [(args.root / rel).with_name(rel.name + ".partial") for rel in files]
+        identities = set()
+        resolved = set()
+        for path in paths:
+            key = path.resolve()
+            if key in resolved:
+                raise SchemaError(f"input/output/temp paths alias: {path}")
+            resolved.add(key)
+            if path.exists():
+                stat = path.stat()
+                identity = (stat.st_dev, stat.st_ino)
+                if identity in identities:
+                    raise SchemaError(f"input/output/temp hardlink alias: {path}")
+                identities.add(identity)
+                if path.name.endswith(".partial"):
+                    raise SchemaError(f"foreign partial exists: {path}")
+        if any(p.read_bytes() != data for p, data in snapshot.items()):
+            raise SchemaError("source changed during rendering; no outputs published")
     except (OSError, mini_yaml.MiniYamlError, SchemaError, KeyError, TypeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
@@ -701,12 +1138,18 @@ def main(argv=None):
                 problems += [f"{route_events()[name].name}: {p}"
                              for p in verify_references(args.root, events, contexts) if p not in problems]
             maps = load_context_maps(args.root)
-            for route, name in ROUTE_MAP_OF.items():   # #1392: each route's own context map
+            for route, events in routes.items():   # both coverage directions, including the NPM map
+                name = ROUTE_MAP_OF.get(route, "contexts")
                 label = context_maps()[name].name
-                problems += [f"{label}: {p}"
-                             for p in verify_references(args.root, {"stages": [], "hotspots": []}, maps[name])]
-                problems += [f"{label}: {p}" for p in route_coverage(routes[route], contexts, maps[name])]
-        except (OSError, SyntaxError, ImportError) as exc:
+                if name != "contexts":
+                    problems += [f"{label}: {p}"
+                                 for p in verify_references(args.root, {"stages": [], "hotspots": []}, maps[name])]
+                for p in route_coverage(events, contexts, maps[name]):
+                    if p.startswith("WARNING:"):
+                        print(f"WARNING: {label}: {p.removeprefix('WARNING: ')}")
+                    else:
+                        problems.append(f"{label}: {p}")
+        except (OSError, SyntaxError, ImportError, SchemaError) as exc:
             print(f"ERROR: cannot verify references: {exc}", file=sys.stderr)
             return 2
         for rel, text in files.items():
@@ -719,9 +1162,18 @@ def main(argv=None):
     for rel, text in files.items():
         path = args.root / rel
         tmp = path.with_name(path.name + ".partial")
-        with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
-            fh.write(text)
-        os.replace(tmp, path)
+        created = False
+        try:
+            with open(tmp, "x", encoding="utf-8", newline="\n") as fh:
+                created = True
+                fh.write(text)
+            os.replace(tmp, path)
+        except OSError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 2
+        finally:
+            if created and tmp.exists():
+                tmp.unlink()
         print(f"wrote {rel.as_posix()}")
     return 0
 

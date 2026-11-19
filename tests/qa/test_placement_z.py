@@ -1,7 +1,52 @@
 """new-case: Z bounds comparison through scene QA, independent of XY pivot checks."""
+import json
+import subprocess
+import sys
+from pathlib import Path
+
 import pytest
 from test_scene import mesh, rb, PROFILES
 from twinqa.scene import scene_findings
+
+
+@pytest.mark.parametrize('text', ['null', '[]', '"x"', '1', 'true', 'false', '1.5',
+    '[{}]', '[null, 1]', '""', 'NaN', 'Infinity', '-Infinity', '', '{'])
+def test_export_meta_cli_rejects_non_object(tmp_path, text):
+    target = tmp_path / 'SM_Synthetic.fbx'
+    target.write_bytes(b'synthetic FBX')
+    meta = tmp_path / 'supplied-export-meta.json'
+    meta.write_text(text, encoding='utf-8')
+    # Include pre-existing report/temp names: rejection must not publish or clobber.
+    (tmp_path / 'report.json').write_bytes(b'stale report')
+    (tmp_path / 'report.json.partial').write_bytes(b'foreign temp')
+    before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    cli = Path(__file__).resolve().parents[2] / 'tools/qa/validate_package.py'
+    result = subprocess.run([sys.executable, str(cli), str(target), '--profile', 'vpm',
+                             '--export-meta', str(meta), '--json'],
+                            capture_output=True, text=True, check=False)
+    assert result.returncode == 1, (result.stdout, result.stderr)
+    assert str(meta) in result.stderr
+    assert 'Traceback' not in result.stderr
+    assert result.stdout == ''
+    assert {p.name: p.read_bytes() for p in tmp_path.iterdir()} == before
+
+
+@pytest.mark.parametrize('payload', [{}, {'SM_Synthetic.fbx': {'bounds_m': [[0, 0, 0], [1, 1, 1]]}}])
+def test_export_meta_loader_preserves_object(tmp_path, payload):
+    import validate_package as vp
+    meta = tmp_path / 'object.json'
+    meta.write_text(json.dumps(payload), encoding='utf-8')
+    assert vp.load_z_meta(meta) == payload
+
+
+@pytest.mark.parametrize('value', [value for n in range(-5, 6) for value in (n, str(n), [n])])
+def test_export_meta_generated_non_objects(tmp_path, value):
+    import validate_package as vp
+    meta = tmp_path / 'generated.json'
+    meta.write_text(json.dumps(value), encoding='utf-8')
+    with pytest.raises(ValueError, match='expected a JSON object') as exc:
+        vp.load_z_meta(meta)
+    assert str(meta) in str(exc.value)
 
 
 def check(meta, bounds=((-1, -1, -0.3), (1, 1, 8.35))):

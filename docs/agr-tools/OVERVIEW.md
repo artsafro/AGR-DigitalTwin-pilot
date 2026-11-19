@@ -10,6 +10,8 @@
 
 Каждая кнопка — функция одного ядра с двумя «мордами»: Qt-панель и MCP-сервер `agr-mcp`. Таблица кнопок, версий и режимов — `docs/plans/agr-tools-suite.json` (по ней собраны справка `docs/agr-tools/GUIDE.md` и вкладка «Путь» панели). Что сделано в 1.0 / 1.1 и что осталось — `docs/plans/agr-tools-1.x.md`. Предыдущий релиз — **0.9.0** (тег `agr-tools-v0.9.0`, проверки, правки на копиях, замены, МАФ, UDIM, атласы). Журнал версий — `adapters/max/agr_tools/CHANGELOG.md`.
 
+Historical 0.9.0 acceptance: [receipts and owner disposition](release-0.9.0-acceptance.md) [D331] (deferred UI smoke, waived unavailable install evidence, accepted existing Russian notes; not a new technical pass).
+
 ## Где код
 
 - `adapters/max/agr_tools/` — всё: `*_core.py` (stdlib, тестируются без Max), `*_max.py` (тонкий адаптер pymxs), `runtime.py` (диспетчер), `ui_*.py` (Qt-панель). Обзор, сборка и установка — `adapters/max/agr_tools/README.md`; сборка MZP — `tools/max/build_agr_tools.py`.

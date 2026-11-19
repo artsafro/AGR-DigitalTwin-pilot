@@ -26,6 +26,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Texel | VPM diffuse 512–1706 px/m [D160]; AGR Tools grid 3.6 m per tile at 1000 px/m [D207] |
 | UDIM | body numbered per mesh from 1001 [D209]; all glass UVs in 1001, no maps on glass [D221] |
 | Windows | library first, types by form + size [D140]; families F100 / F73 / F58 [D204] |
+| Modelling split | inset elements vs texture parts, plinth per project, reason line in the job report [D336]; list: [SKELETONS.md](../agents/SKELETONS.md#oks-modelling-split-d336) |
 | Topology | xView clean: vertices 2 mm = 0, faces 5 mm = 0 [D152]; continue loops and rings [D200] |
 | Decor | embed 10–20 mm into the facade [D199] |
 | Hand-off | a non-triangulated work FBX next to the ZIP [D198]; final export from Max or Blender, Max preferred [D212] |
@@ -40,6 +41,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Body, windows, capsules, roof | **standard**: AGR Tools stages 1–4 (Max) [D250]; job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
 | Materials, UDIM, textures | AGR Tools stages 5–6; `tools/materials/` | partial; texel checked by V009 |
 | UCX | AGR Tools `ucx_core`; etalon `jobs/KPP1/scripts/` | job scripts, no Main UCX case accepted |
+| Master QA before export | `runtime.master_topology(nodes)` in AGR Tools; `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json` for agents (also work FBX / JSON inventory); run beside xView **before** delivery triangulation [D312] | n-gons fail; per-object triangle count/share reported; quads pass; checked Max export refuses a failed master before its triangle snapshot |
 | Export, readback | Max export [D212]; `tools/blender/fbx_readback.py`; `dt qa xview` | proven |
 | Package and checks | AGR Tools stage 9; `tools/qa/validate_package.py`; SINTEZ AGR Checker | validator V001–V013 partial; no package has reached passed=true yet |
 
@@ -73,6 +75,11 @@ for the UV, texel and UCX stages; `dt qa xview` [D152]; SINTEZ AGR Checker befor
 
 ## Known gaps (do not assume a tool exists)
 
-No shared NPM↔VPM derive command (T-DER-2); `_Light.fbx` content has no validator stage; decor embed [D199] and
-loop continuity [D200] are not checked automatically; the GeoJSON generator `export.geojson_write` is not
-delivery-ready until the customer examples are studied [D220].
+Before showing a BODY part (`standard`), run
+`uv run python tools/qa/body_layout.py MASTER.blend --profile VPM-OKS --part BODY_OBJECT --out NEW.json`.
+This invokes `twinqa.look.part_layout_report`: per-part wall diagonals, sliver strips,
+triangle fans (face ids/positions; report-only [D227]) **and** independent `quad_dominance` [D129].
+Thresholds are named orchestrator defaults, user may change; [definitions/evidence](../research/body-wall-layout-1446.md).
+Decor embed [D199] and T-junction continuity [D200] also exist in `src/twinqa/look.py`.
+No shared NPM↔VPM derive command (T-DER-2); `_Light.fbx` content has no validator stage;
+the GeoJSON generator `export.geojson_write` is not delivery-ready until the customer examples are studied [D220].

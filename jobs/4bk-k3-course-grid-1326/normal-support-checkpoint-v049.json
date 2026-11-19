@@ -1,0 +1,22 @@
+{
+  "passed": false,
+  "status": "source_normal_target_confirmed_wider_support_permission_pending",
+  "decision": "D295",
+  "evidence": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v049",
+  "sealed_files": 13,
+  "seal_sha256": "c485c1eb47177649edbdaec4263e6589264cc6586f758bf8c820b9c81286153a",
+  "source_hashes_verified": 10,
+  "samples": 1333,
+  "output_pixel_centres": 18,
+  "sample_refusals": 0,
+  "witness": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v049\\brick-bevel-witness.json",
+    "sha256": "22e57b480fbd0b659107296bf27c960d8bd9ca694a597f9cbeb34808c443f219"
+  },
+  "picture": {
+    "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\1326-stylobate-course-grid\\normal-v049\\normal-support-diagnostic.png",
+    "sha256": "5f6ab8e44d3ad30dda19f57f509bba1376826f50bf072eef4afd9ff0e96afe0d"
+  },
+  "sources_and_native_scenes_changed": false,
+  "prior_open_png_findings": 102
+}

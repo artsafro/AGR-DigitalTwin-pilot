@@ -93,24 +93,35 @@ From that clone run the following stdlib snippet with an unused destination:
 import hashlib, json, re, urllib.request
 from pathlib import Path, PureWindowsPath
 manifest = json.loads(Path('library/outside-retrieval-v001.json').read_text(encoding='utf-8'))
-assert manifest['schema'] == 'outside-retrieval-selection-v1'
-assert set(manifest) == {'schema', 'shared_root', 'scope', 'assets'}
-assert isinstance(manifest['assets'], list) and len(manifest['assets']) == 3
-assert [len(a['files']) for a in manifest['assets']] == [1, 4, 1]
+if manifest['schema'] != 'outside-retrieval-selection-v1':
+    raise SystemExit('Unsupported manifest schema')
+if set(manifest) != {'schema', 'shared_root', 'scope', 'assets'}:
+    raise SystemExit('Unexpected manifest fields')
+if not isinstance(manifest['assets'], list) or len(manifest['assets']) != 3:
+    raise SystemExit('Expected three asset selections')
+if [len(a['files']) for a in manifest['assets']] != [1, 4, 1]:
+    raise SystemExit('Expected file counts [1, 4, 1]')
 seen = set()
 for asset in manifest['assets']:
-    assert set(asset) == {'asset', 'version_sha256', 'authority', 'boundary', 'files'}
-    assert re.fullmatch('[0-9a-f]{64}', asset['version_sha256'])
+    if set(asset) != {'asset', 'version_sha256', 'authority', 'boundary', 'files'}:
+        raise SystemExit('Unexpected asset fields')
+    if not re.fullmatch('[0-9a-f]{64}', asset['version_sha256']):
+        raise SystemExit('Invalid asset version SHA-256')
     for record in asset['files']:
-        assert set(record) <= {'name', 'path', 'download_url', 'sha256', 'bytes'}, set(record)
-        assert type(record['bytes']) is int and record['bytes'] > 0
-        assert re.fullmatch('[0-9a-f]{64}', record['sha256'])
-        assert record['download_url'].startswith('https://drive.usercontent.google.com/download?id=')
+        if not {'path', 'download_url', 'sha256', 'bytes'} <= set(record) <= {'name', 'path', 'download_url', 'sha256', 'bytes'}:
+            raise SystemExit(f'Invalid file fields: {set(record)}')
+        if type(record['bytes']) is not int or record['bytes'] <= 0:
+            raise SystemExit(f"Invalid byte count: {record['path']}")
+        if not re.fullmatch('[0-9a-f]{64}', record['sha256']):
+            raise SystemExit(f"Invalid SHA-256: {record['path']}")
+        if not record['download_url'].startswith('https://drive.usercontent.google.com/download?id='):
+            raise SystemExit(f"Unsupported download URL: {record['path']}")
         relative = Path(record['path'])
-        assert relative.parts and not relative.is_absolute() and not PureWindowsPath(record['path']).drive
-        assert '..' not in relative.parts
+        if not relative.parts or relative.is_absolute() or PureWindowsPath(record['path']).drive or '..' in relative.parts:
+            raise SystemExit(f"Unsafe path: {record['path']}")
         key = relative.as_posix().casefold()
-        assert key not in seen, record['path']
+        if key in seen:
+            raise SystemExit(f"Duplicate path: {record['path']}")
         seen.add(key)
 # Validate the complete fixed selection before creating any output.
 root = Path('cold-download-v001')
@@ -122,16 +133,23 @@ for asset in manifest['assets']:
         target.parent.mkdir(parents=True, exist_ok=True)
         with urllib.request.urlopen(record['download_url'], timeout=120) as response:
             data = response.read()
-        assert len(data) == record['bytes'], record['path']
-        assert hashlib.sha256(data).hexdigest() == record['sha256'], record['path']
+        size = len(data)
+        digest = hashlib.sha256(data).hexdigest()
+        if size != record['bytes']:
+            raise SystemExit(f"Size mismatch: {record['path']} ({size} != {record['bytes']})")
+        if digest != record['sha256']:
+            raise SystemExit(f"SHA-256 mismatch: {record['path']} ({digest} != {record['sha256']})")
         with target.open('xb') as handle:
             handle.write(data)
-        print(record['sha256'], len(data), record['path'])
+        print(digest, size, record['path'])
 ```
 
 This is a receipt/reproduction snippet for a reviewed fixed manifest, not a general
 untrusted-manifest downloader or a certified material/geometry pipeline. Hash/size
-checks fail on permission HTML, truncated or changed bytes. Existing destinations
+checks fail on permission HTML, truncated or changed bytes, including under `python -O`
+or `PYTHONOPTIMIZE=1`. Successful receipt lines report the computed SHA-256 and byte
+count. A failed record is not written or printed; earlier verified records and newly
+created directories may remain (this is not a transactional batch download). Existing destinations
 refuse rather than clobber; do not re-use source/export/report directories as output.
 
 ### Measured fresh-clone execution

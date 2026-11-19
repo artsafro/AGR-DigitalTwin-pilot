@@ -90,18 +90,130 @@ D313_WAIVED = {("V003", "ground skirt depth", GROUND, "fail"), ("V004", "topolog
                ("V004", "co-directional clearance", GROUND, "fail")}
 
 
+def _audit_fixture(monkeypatch, tmp_path, findings, report):
+    """Exercise the real package audit with synthetic files, never customer assets."""
+    (tmp_path / "package-npm-findings.json").write_text(
+        json.dumps({"findings": findings}), encoding="utf-8")
+    (tmp_path / "REPORT.md").write_text(report, encoding="utf-8")
+    monkeypatch.setitem(globals(), "JOB", tmp_path)
+    test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open()
+
+
+def test_r1_topology_fail_is_not_covered_by_ground_prose(monkeypatch, tmp_path):
+    data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
+    report = (JOB / "REPORT.md").read_text(encoding="utf-8")
+    next(f for f in data["findings"] if f["name"] == "topology defects"
+         and f["evidence"] == "0000_Kpp_1_01.fbx")["status"] = "fail"
+    with pytest.raises(AssertionError, match="topology defects"):
+        _audit_fixture(monkeypatch, tmp_path, data["findings"], report)
+
+
+@pytest.mark.parametrize("name,evidence", [
+    ("co-directional clearance", "0000_Kpp_1_01.fbx"),
+    ("ground footprint coverage", GROUND),
+])
+def test_changed_status_is_not_covered_by_stale_bullet(monkeypatch, tmp_path, name, evidence):
+    data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
+    report = (JOB / "REPORT.md").read_text(encoding="utf-8")
+    next(f for f in data["findings"] if f["name"] == name
+         and f["evidence"] == evidence)["status"] = "fail"
+    with pytest.raises(AssertionError, match=name):
+        _audit_fixture(monkeypatch, tmp_path, data["findings"], report)
+
+
+def _synthetic_rows(*rows):
+    return [*rows, {"stage": "V004", "name": "MAF flipped normals", "evidence": GROUND, "status": "pass"}]
+
+
+def test_ground_waivers_do_not_need_open_item_prose(monkeypatch, tmp_path):
+    rows = [{"stage": stage, "name": name, "evidence": evidence, "status": status}
+            for stage, name, evidence, status in sorted(D313_WAIVED)]
+    _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(*rows), "## Open items\n")
+
+
+@pytest.mark.parametrize("text", [
+    "V004 topology defects", "intro V004 topology defects", "* V004 topology defects",
+    "\n## History\n- V004 topology defects", "- V004 topology defects extra",
+])
+def test_non_bullet_or_later_section_is_not_an_open_item(monkeypatch, tmp_path, text):
+    row = {"stage": "V004", "name": "topology defects", "evidence": "0000_Kpp_1_01.fbx", "status": "fail"}
+    with pytest.raises(AssertionError, match="topology defects"):
+        _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row), "## Open items\n" + text)
+
+
+def test_explicit_open_item_bullet_covers_non_pass(monkeypatch, tmp_path):
+    row = {"stage": "V004", "name": "topology defects", "evidence": "0000_Kpp_1_01.fbx", "status": "fail"}
+    _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row),
+                   "## Open items\n- V004 topology defects — fail — 0000_Kpp_1_01.fbx\n")
+
+
+@pytest.mark.parametrize("rows", [[], [{"stage": "V004", "name": "topology defects", "status": "fail"}]])
+def test_empty_or_missing_evidence_fails_closed(monkeypatch, tmp_path, rows):
+    with pytest.raises((AssertionError, KeyError)):
+        _audit_fixture(monkeypatch, tmp_path, rows, "## Open items\n- V004 topology defects\n")
+
+
+def test_waiver_key_matrix(monkeypatch, tmp_path):
+    # Independent literal oracle: only these three Ground fail identities are waived.
+    cases = [("V003", "ground skirt depth"), ("V004", "topology defects"),
+             ("V004", "co-directional clearance")]
+    for stage, name in cases:
+        for target in (GROUND, "0000_Kpp_1_01.fbx", "other.fbx", ""):
+            for status in ("fail", "review", "not_run", "unsupported", "", math.nan, math.inf):
+                row = {"stage": stage, "name": name, "evidence": target, "status": status}
+                for rows in (_synthetic_rows(row, row), list(reversed(_synthetic_rows(row)))):
+                    if target == GROUND and status == "fail":
+                        _audit_fixture(monkeypatch, tmp_path, rows, "## Open items\n")
+                    else:
+                        with pytest.raises(AssertionError, match=name):
+                            _audit_fixture(monkeypatch, tmp_path, rows, "## Open items\n")
+
+
+def test_open_bullet_identity_matrix(monkeypatch, tmp_path):
+    for status in ("fail", "review", "not_run"):
+        for evidence in (GROUND, "0000_Kpp_1_01.fbx", "other.fbx"):
+            row = {"stage": "V003", "name": "ground footprint coverage",
+                   "evidence": evidence, "status": status}
+            exact = f"- V003 ground footprint coverage — {status} — {evidence}"
+            cases = [
+                (exact, True), (exact + ": details", True),
+                (exact.replace(f"— {status} —", "— unsupported —"), False),
+                (exact.replace(evidence, "wrong.fbx"), False),
+                (exact + ".stale", False),
+                (exact.replace(f"— {status} —", f"— {status}_stale —"), False),
+                (exact.replace(f" — {evidence}", f"\n- {evidence}"), False),
+                ("\n## History\n" + exact, False),
+                ("prose " + exact, False),
+                (exact.replace(f" — {evidence}", f" — wrong.fbx: see {evidence}"), False),
+            ]
+            for text, accepted in cases:
+                # Repeat both success and rejection; each call rereads private fixture files.
+                for _ in range(2):
+                    if accepted:
+                        _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row), "## Open items\n" + text)
+                    else:
+                        with pytest.raises(AssertionError, match="ground footprint coverage"):
+                            _audit_fixture(monkeypatch, tmp_path, _synthetic_rows(row), "## Open items\n" + text)
+
+
 def test_every_non_pass_finding_of_the_current_npm_package_is_waived_or_open():
     data = json.loads((JOB / "package-npm-findings.json").read_text(encoding="utf-8"))
     report = (JOB / "REPORT.md").read_text(encoding="utf-8")
-    open_block = report.split("## Open items", 1)[1]
+    open_block = report.split("## Open items", 1)[1].split("\n## ", 1)[0]
+    open_bullets = "\n".join(line for line in open_block.splitlines() if line.startswith("- "))
     assert data["findings"], "empty findings list is not a pass"
     seen = set()
     for f in data["findings"]:
-        key = (f["stage"], f["name"])
-        seen.add(key)
+        key = (f["stage"], f["name"], f["evidence"], f["status"])
+        seen.add(key[:2])
         if f["status"] == "pass":
             continue
-        assert key in D313_WAIVED or re.search(rf"{f['stage']}\b[^\n]*{re.escape(f['name'])}", open_block), key
+        bullet = rf"^- {re.escape(f['stage'])} {re.escape(f['name'])} — {re.escape(str(f['status']))}"
+        if f["evidence"].lower().endswith(".fbx"):
+            bullet += rf" — {re.escape(f['evidence'])}(?=:|$)"
+        else:  # DER-03/master quads has explanatory prose, not an FBX target.
+            bullet += r"(?= —|\.|$)"
+        assert key in D313_WAIVED or re.search(bullet, open_bullets, re.MULTILINE), key
     assert ("V004", "MAF flipped normals") in seen
     maf_row = next(f for f in data["findings"] if f["name"] == "MAF flipped normals")
     assert maf_row["status"] != "fail", maf_row

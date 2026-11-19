@@ -188,6 +188,74 @@ def test_isolated_plan_places_each_type_and_unknown_is_error():
         kw.isolated_plan(["KPP1-W99"], TYPES, STANDARD)
 
 
+@pytest.mark.parametrize("key,value,diagnostic", [
+    ("bbox", [[0, 0, 0]], "bbox"),
+    ("bbox", [[0, 0], [1, 1]], "bbox"),
+    ("glass", [[0, 0, 1, 1]], "glass"),
+    ("parts", {"glass": 1, "extra": 5}, "extra"),
+])
+def test_compare_readback_rejects_issue_1348_mutations(key, value, diagnostic):
+    # Synthetic summary: independent of library dimensions and generator output.
+    want = {"verts": 4, "faces": 1, "bbox": [[0, 0, 0], [1, 1, 1]],
+            "glass": [[0, 0, 1, 1, 0]], "parts": {"glass": 1}}
+    got = copy.deepcopy(want)
+    got[key] = value
+    assert any(diagnostic in d for d in kw.compare_readback(want, got))
+
+
+@pytest.mark.parametrize("key,index,size", [
+    ("bbox", None, n) for n in range(7) if n != 2
+] + [
+    ("bbox", corner, n) for corner in range(2) for n in range(7) if n != 3
+] + [
+    ("glass", row, n) for row in range(2) for n in range(8) if n != 5
+])
+def test_compare_readback_generated_shapes(key, index, size):
+    want = kw.mesh_summary(kw.isolated_plan(["KPP1-W03"], TYPES, STANDARD)["KPP1-W03"]["mesh"])
+    got = copy.deepcopy(want)
+    target = got[key] if index is None else got[key][index]
+    target[:] = (target * (size + 1))[:size]
+    snapshot = copy.deepcopy(got)
+    for _ in range(2):
+        assert any(key in d for d in kw.compare_readback(want, got))
+        assert kw.compare_readback(want, copy.deepcopy(want)) == []
+    assert got == snapshot  # Comparison neither repairs nor mutates its inputs.
+
+
+@pytest.mark.parametrize("key,value", [
+    ("bbox", []), ("bbox", None), ("bbox", "unsupported"),
+    ("glass", []), ("glass", [None]), ("parts", {}),
+    ("bbox", [[float("nan"), 0, 0], [1, 1, 1]]),
+    ("bbox", [[float("inf"), 0, 0], [1, 1, 1]]),
+    ("glass", [[0, 0, 1, 1, float("nan")]]),
+    ("glass", [[0, 0, 1, 1, -float("inf")]]),
+])
+def test_compare_readback_fail_closed_controls(key, value):
+    want = {"verts": 4, "faces": 1, "bbox": [[0, 0, 0], [1, 1, 1]],
+            "glass": [[0, 0, 1, 1, 0]], "parts": {"glass": 1}}
+    got = copy.deepcopy(want)
+    got[key] = value
+    try:
+        diff = kw.compare_readback(want, got)
+    except (TypeError, ValueError):
+        return  # Unsupported structures may error, but must never compare equal.
+    assert diff
+    assert kw.compare_readback(want, {})
+
+
+def test_compare_readback_tolerance_boundary():
+    import math
+
+    want = {"verts": 4, "faces": 1, "bbox": [[0, 0, 0], [1, 1, 1]],
+            "glass": [[0, 0, 1, 1, 0]], "parts": {"glass": 1}}
+    for key, row, col in (("bbox", 0, 0), ("glass", 0, 4)):
+        got = copy.deepcopy(want)
+        got[key][row][col] = 1e-5
+        assert kw.compare_readback(want, got) == []  # Existing inclusive tolerance.
+        got[key][row][col] = math.nextafter(1e-5, math.inf)
+        assert any(key in d for d in kw.compare_readback(want, got))
+
+
 def test_compare_readback_detects_each_difference():
     s = kw.mesh_summary(kw.isolated_plan(["KPP1-W03"], TYPES, STANDARD)["KPP1-W03"]["mesh"])
     assert kw.compare_readback(s, copy.deepcopy(s)) == []

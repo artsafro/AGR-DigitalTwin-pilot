@@ -102,9 +102,11 @@ def plan(a, benches: list[dict]) -> list[tuple]:
 
 
 def _blender(blender: str, mode: str, src: Path, out: Path) -> tuple[int, str, float]:
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
+
     t0 = time.perf_counter()
-    proc = subprocess.run([blender, "--background", "--factory-startup", "--python-exit-code", "1", "--python",
-                           str(HERE / "body_blender.py"), "--", mode, str(src), str(out), main_name(out)],
+    proc = subprocess.run(blender_command(HERE / "body_blender.py", (mode, src, out, main_name(out)),
+                                          executable=blender),
                           capture_output=True, text=True, timeout=3600)
     tail = "\n".join(ln for ln in (proc.stdout + proc.stderr).splitlines()
                      if ln.startswith(("BODY_BLENDER", "Blender ", "Traceback", "  File", "Error", "RuntimeError")))

@@ -22,6 +22,7 @@ def test_shared_npm_export_emits_contract_on_real_master_copy(tmp_path):
     import os
     import shutil
     import subprocess
+    import sys
     import json
     blender = Path('C:/Program Files/Blender Foundation/Blender 5.1/blender.exe')
     cold = Path('G:/Мой диск/AGR-evidence/1313-kpp1-cold-run-3')
@@ -35,6 +36,13 @@ def test_shared_npm_export_emits_contract_on_real_master_copy(tmp_path):
     before = hashlib.sha256(master.read_bytes()).hexdigest()
     shutil.copyfile(cold / 'packet-copy-v001/spec.json', inputs / 'spec.json')
     shutil.copytree(cold / 'derive-v001/atlas', inputs / 'atlas')
+    # #1505: the evidence atlas predates the master binding; bind the private copy to the copied master
+    sys.path.insert(0, str(ROOT))
+    from adapters.max.agr_tools import build_manifest as bm
+    atlas_json = inputs / 'atlas' / 'npm_atlas.json'
+    layout = json.loads(atlas_json.read_text(encoding='utf-8'))
+    layout['master'] = bm.atlas_master_binding(master, layout['finishes'])
+    atlas_json.write_text(json.dumps(layout), encoding='utf-8')
     output = tmp_path / 'new-export/fbx'
     cmd = [str(blender), '--background', '--factory-startup', '--disable-autoexec', '--python-exit-code', '1',
            '--python', str(ROOT / 'tools/derive/export_npm.py'), '--', str(master), str(inputs / 'spec.json'),
@@ -49,6 +57,10 @@ def test_shared_npm_export_emits_contract_on_real_master_copy(tmp_path):
     assert meta['thumbnail'] == 'unknown'
     assert hashlib.sha256(master.read_bytes()).hexdigest() == before
     assert all((output / name).is_file() for name in meta['exported_files'])
+    assert meta['master_sha256'] == before
+    rec = bm.check_derivation(bm.strict_json(
+        (tmp_path / 'new-export/derivation' / (meta['exported_files'][0] + '.derivation.json')).read_bytes()))
+    assert rec['master_sha256'] == before
 
 
 def test_record_export_infers_only_filename_facts_and_preserves_unknowns(tmp_path):

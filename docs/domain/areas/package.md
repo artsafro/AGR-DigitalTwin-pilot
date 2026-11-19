@@ -76,6 +76,117 @@ partial rows above keep their unchecked part manual.
 - **No stage**: lighting FBX content PKG-14 to PKG-18 has no validator stage; the lighting FBX is only
   admitted by name (V001) and header (V002) and allowed to hold lights and empties (V003).
 
+## Run markers and recheck [D323]
+
+`zip_apply` retains the binary `ГОТОВО.txt` / `ОШИБКА.txt` markers. Missing validation,
+failed checks or open automatic checks (including validator exit 2) write `ОШИБКА.txt`
+with archive names and fail/open finding codes. Only pending manual reviews V015-V017
+are allowed alongside `ГОТОВО.txt`, with the line «ждут ручной приёмки Артёма: V015, V016, V017»
+(pending IDs only). This is technical readiness, not manual approval or publication.
+
+The complete validator report is saved as `<archive>.zip.validation.json` beside each
+checked ZIP, separately from the compact `report.json` stage table. Recheck a moved copy:
+`uv run python tools/qa/validate_package.py --recheck <archive>.zip.validation.json --recheck-target <copy.zip> --output <new.json> --json`.
+The output `target` names the checked copy. Missing and changed bytes both produce
+`evidence_missing`; `target_sha256_now` is null only for a missing target, otherwise its
+actual SHA-256. No package is repacked by recheck. Diagnostic `--allow-incomplete` remains
+ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
+
+## Delivered-file identity (#1645)
+
+The NPM/VPM packers (`agr package-npm` / `package-vpm`) write their report next to the archive as
+`<archive>.zip.delivery.json` (#1682; through `package_core.write_delivery_report`, exclusive
+`.partial` then no-clobber publish), carrying `delivered: {file, sha256, size}`, `summary_ru`
+(exactly one `delivered: <file> sha256=<hex> size=<bytes>` line) and `status`. Before #1682 they wrote
+one parent-wide `package_report.json`; it is still read for historical deliveries.
+`export.zip` saves the same receipt in `<archive>.zip.delivery.json`,
+its run report and Russian marker; `pack.deliver` carries it into `deliver.json`.
+The existing Max review publisher hashes the **published** `.max` (not its temporary scene),
+writes `<scene>.max.delivery.json` and appends the Russian summary to `README.txt`.
+No archive members, scene topology, user approval or D300 delivery choices change.
+
+`agr validate FILE --json` automatically checks adjacent delivery receipts (ZIP:
+`<archive>.zip.delivery.json`, or the historical `package_report.json` only when no sidecar exists;
+Max: `<scene>.max.delivery.json`).
+V001 `delivered file` fails with `delivered_mismatch` for malformed or changed evidence;
+SHA-256 and byte length must both match. The report `status` decides attestation (#1682):
+`incomplete` (the `--allow-incomplete` diagnostic archive) fails with `delivered_incomplete`;
+`packaged_not_validated` or no `status` passes on matching bytes; any other value is `not_run`
+`delivery_status_unknown`. A pass adds the note `Delivered file: byte control, not model acceptance.`
+right before the `delivered:` line. No new flag or signing/upload step is required.
+Max byte identity does not validate its geometry: other stages remain open, never a model pass.
+Historical ZIPs without a receipt remain readable with a report note, without a new delivery attestation;
+missing Max receipts fail. Move the report together with its identically named artifact.
+The [SINTEZ territorial-code rename script](../../../jobs/VATUTINO-SITE/npm_code.py) uses the same
+receipt format [D348], with a `source: {path, sha256}` link to the preserved pre-rename ZIP. Use a new
+output folder; the original `package_report.json` belongs to the source ZIP. Pass the explicit
+`agr checker --output` JSON to `npm_code.py --checker-summary SUMMARY.json`: the unique `lp` entry
+must match the pre-rename ZIP's SHA-256 or the script exits 2 with one diagnostic and publishes nothing.
+Omitting the flag records `sintez-source: not_run` without blocking. `checker_source.hash_match` is
+byte identity, separate from `checker_source.checker_verdict` (which can be `fail`). The validator
+rehashes the renamed ZIP, not the source path or checker summary. The separate `sintez-final: not_run`
+line means a fresh checker run on the renamed ZIP is still required [D104]; the rename does not run it.
+Hash snapshots detect persistent changes, not edits restored between reads or future writes.
+
+## Build provenance [D333, D332]
+
+`package_core.role_of` is the shared suffix-grammar owner used by `build_manifest.role_of`:
+`Ground` / `GroundGlass` -> `ground`, `GroundEl` / `GroundElGlass` -> `groundel`,
+`Flora` -> `flora`; the remaining artifacts belong to `oks`. Family words inside the address do
+not select a role. `classify_mesh` still groups the entire family into the **Ground delivery file**
+([D097], PKG-07); that file-group label is not a provenance role.
+
+Independent dependencies within one role are legal, e.g. a Ground mesh JSON and a Ground PNG recipe:
+`agr build-manifest build PACKAGE.zip --master oks=MASTER.blend --master ground=mesh.json --master ground=recipe.json --derivation RECORD_STORE --transform-name identity`.
+Use the same repeated `--master role=path` operands with `agr validate`. Repeated identical paths,
+resolved aliases, hardlinks and ambiguous same-basename sources within a role are refused; never
+select the first dependency. A multi-source OKS role does not select a quad master: V003's master
+check remains `not_run` with a note rather than reading an arbitrary source.
+
+One-source-per-role builds retain schema v2. Schema v3 adds `sources` to the role entry, keeps its
+first descriptor as a compatibility summary, and binds artifacts to source name **and** hash.
+V3 requires a stable, nonempty producer `source_id` on every source descriptor, artifact binding and
+component dependency (#1589, refinement of [D332]). Record with
+`agr build-manifest record ARTIFACT --master SOURCE --source-id PROJECT.ground.mesh --out NEW.derivation.json`.
+Keep that id unchanged across revisions, renamed files and moved copies; use different ids only for
+independent sources (several independent meshes in one role remain legal). Two hashes under one id,
+even across component roles, are refused before writing build outputs and by the manifest reader.
+Every declared source must be used by a packaged artifact or its component dependency; an unrelated
+record outside the ZIP does not count. An unused declaration is refused naming the source.
+Legacy v1/v2 single-source records/manifests remain readable; no id is inferred from their basename,
+path or hash. Old records without ids cannot authorize a v3 build: regenerate them at export time.
+A one-source-per-role package with mixed legacy/id-bearing records remains v2; a recipe id alone
+never forces a legacy OKS record into v3. All identified records opt the package into v3; any actual
+multi-source role or component dependency requires v3. Explicit conflicting identities are refused
+even during partial migration. Missing required ids name the artifact.
+Identity is producer evidence, not semantic
+proof that two producers have truthfully named the same real source.
+
+Each optional component dependency names `role`, `source_id`, `master_name`, `master_sha256`, and explicit
+read-back `parts`. Different-role parts inside a combined FBX require their own dependencies;
+missing, duplicated, unknown-role and mismatched part records fail. The manifest part inventory
+must equal the hash-bound readback inventory. V1/v2 remain readable without manufacturing evidence.
+A changed or unchecked dependency prevents `manifest_ok`; cross-package comparison fingerprints all
+sources, not just the compatibility summary. Records prove consistency, not regulatory or visual acceptance.
+
+`ground_recipes.write_delivery` records all generated PNGs with `role="ground"` against the recipe
+hash captured before loading/rendering. Its stable id defaults to the recipe's original address (before `--address` overrides output names) plus
+`.ground.recipe`; `--source-id` selects another independent recipe identity, never a revision label.
+`ground_json_to_fbx.build` defaults to `<Address>.ground.mesh`; optional positional arguments after
+Address are CRS then source_id for independent meshes. NPM `export_npm` defaults to
+`<address>.oks.<three-digit-index>.master` and accepts `--source-id`; KPP1 `export_vpm` and
+`quad_provenance` use the fixed job identity `KPP1.oks.master`. These producer defaults do not depend
+on master filenames, version folders or hashes. Retain ids if output address/index changes; override
+the generic defaults only for genuinely independent sources. These are record-call seam tests,
+not new DCC execution receipts.
+Its store is `<version parent>/derivation/<version>/` so
+new versions cannot reuse stale records or collide with old texture names. Record basenames that
+would exceed the filesystem component limit are keyed by SHA-256 of the artifact name; the record
+retains the complete artifact name. KPP1 `derive_ground_v003.py` records the derived FBX before
+publishing its new folder, with the actual source FBX, customer embedded-map FBX and bridge JSON
+hashes for each Ground/GroundEl/Flora component; the store is `<new output>/derivation/`.
+No historical assets or approved output bytes are regenerated by this code-only change.
+
 ## Source-image evidence
 
 **25 requirement rows.** PyMuPDF 1.28.2 renders (matrix 2x) of physical pages **4, 6, 7, 11, 24,
@@ -120,6 +231,8 @@ Ground or a KPP1-specific area schedule, with every non-pass stage/value/limit/m
 reported in [STATE](../../../jobs/KPP1/STATE.md). It does not waive PKG-03/PKG-21 or delivery gates.
 [D288] replaces the KPP1-specific area part: per reg p.54 rows 14-17 the KPP1 VPM GeoJSON carries
 the project sums (s_obsh/s_naz 27124.36, spp_gns 28480.58); s_podz stays empty until project data.
+[D306] KPP1 `s_podz`: Artem asks the customer; the agent first searches the project sections (TEP tables)
+and reports findings with page/slide refs; absent a number the field waits - never invented, never 0.
 
 ## L2 gaps
 

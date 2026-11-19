@@ -51,6 +51,9 @@ def _sibling(filename, alias):
     return mod
 
 
+_udimtile = _sibling('udimtile_core.py', 'agr_tools_udimtile_core_uvtile')
+
+
 def names():
     """names_core of E1 (read only)."""
     return _sibling('names_core.py', 'agr_tools_names_core')
@@ -60,13 +63,11 @@ def tile_of_id(mid):
     """UDIM of material ID 1..100 (1001 + (n-1) mod 10 + 10*floor((n-1)/10) = 1000 + n), else ValueError."""
     if type(mid) is not int or not ID_MIN <= mid <= ID_MAX:
         raise ValueError('material ID outside 1..100 has no UDIM tile: ' + repr(mid))
-    k = mid - 1
-    return 1001 + k % 10 + 10 * (k // 10)
+    return _udimtile.udim_of_cell((mid - 1) % 10, (mid - 1) // 10)
 
 
 def tile_origin(tile):
-    k = tile - 1001
-    return k % 10, k // 10
+    return _udimtile.tile_origin(tile)
 
 
 # ---- udim.slots --------------------------------------------------------------------------------------------

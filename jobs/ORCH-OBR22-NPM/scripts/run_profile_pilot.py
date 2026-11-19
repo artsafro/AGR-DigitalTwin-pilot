@@ -13,6 +13,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'src'))
+from dt_ai.core.blender_runner import blender_command
 from dt_ai.core.run_record import RunRecord, atomic_json, file_evidence, EvidenceMismatch
 from dt_ai.publish.bundle import package, read_bundle
 from dt_ai.core.adapter_report import AdapterReport, Check
@@ -27,8 +28,8 @@ def sha(path):
 
 
 def command(blender, script, config):
-    return [str(blender), '--background', '--factory-startup', '--disable-autoexec',
-            '--python-exit-code', '1', '--python', str(ROOT/'tools'/script), '--', str(config)]
+    # The shared headless command line (#1378 / #1424): same argv as before, built by the owner.
+    return blender_command(ROOT/'tools'/script, [config], executable=blender)
 
 
 def execute(run, name, argv, outputs, directory, verifier):

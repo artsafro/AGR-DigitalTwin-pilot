@@ -125,6 +125,7 @@ def run(command, work, label, env=None):
 
 def execute(work, sources):
     import numpy as np
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
     from PIL import Image
     from dt_ai.materials.flora_light import POINTS, METHOD, guard_output, select_faces, measure, validate_records, validate_binding
     cat = load(ROOT/'library/flora/catalogue.json')
@@ -163,12 +164,12 @@ def execute(work, sources):
         if not Path(job['result']).is_file():
             raise RuntimeError('Max did not write completion receipt: '+action)
     job.update(action='blender',result=str(work/'alpha-readback.json')); save(work/'job.json',job)
-    run([BLENDER,'--background','--factory-startup','--python-exit-code','1','--python',str(Path(__file__).resolve())],work,'alpha-readback',env)
+    run(blender_command(Path(__file__).resolve(),executable=BLENDER),work,'alpha-readback',env)
     readback = load(work/'alpha-readback.json'); variants=[]
     for row in rows:
         name=row['objects']['NPM']+'_light'; fbx=stage/'fbx'/(name+'.fbx')
         structural=stage/'fbx'/(name+'-readback.json')
-        run([BLENDER,'--background','--factory-startup','--python-exit-code','1','--python',str(ROOT/'tools/blender/fbx_readback.py'),'--',str(fbx),str(structural)],work,name+'-readback')
+        run(blender_command(ROOT/'tools/blender/fbx_readback.py',(fbx,structural),executable=BLENDER),work,name+'-readback')
         report=load(structural)
         require(report['readback_ok'] and len(report['meshes'])==1, 'structural FBX readback failed')
         facts=report['meshes'][0]; mesh=readback[name]

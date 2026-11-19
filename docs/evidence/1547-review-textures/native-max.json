@@ -1,0 +1,420 @@
+{
+  "application": "3ds Max",
+  "version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+  "units": "meters",
+  "synthetic": true,
+  "multitile": {
+    "status": "fail",
+    "ids": [
+      {
+        "object": "SyntheticBrick",
+        "id": 1,
+        "joint_m": 0.01,
+        "tile_m": 0.02,
+        "status": "fail",
+        "reason": "diffuse requires plain Bitmaptexture, found MultiTile (MultiTile-only is not viewport reviewable)"
+      }
+    ],
+    "viewport_limit": 1024
+  },
+  "bitmap": {
+    "status": "pass",
+    "ids": [
+      {
+        "object": "SyntheticBrick",
+        "id": 1,
+        "joint_m": 0.01,
+        "tile_m": 0.02,
+        "status": "pass",
+        "material": "SyntheticBrick",
+        "file": "C:\\x\\t_3ea0b854\\evidence\\native-v001\\synthetic.png",
+        "width": 256,
+        "height": 256,
+        "joint": {
+          "texels": 128.0,
+          "status": "pass",
+          "reason": ""
+        }
+      }
+    ],
+    "viewport_limit": 1024
+  },
+  "probes": {
+    "Standardmaterial_enabled": {
+      "status": "pass",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "pass",
+          "material": "SyntheticVisibility",
+          "file": "C:\\x\\t_3ea0b854\\evidence\\native-v001\\synthetic.png",
+          "width": 256,
+          "height": 256,
+          "joint": {
+            "texels": 128.0,
+            "status": "pass",
+            "reason": ""
+          }
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "Standardmaterial_diffuseMapEnable_0": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "diffuseMapEnable must be true on Standardmaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "Standardmaterial_diffuseMapEnable_1": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "diffuseMapEnable must be true on Standardmaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "Standardmaterial_diffuseMapAmount_0": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "diffuseMapAmount must be finite and positive"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "Standardmaterial_diffuseMapAmount_1": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "diffuseMapAmount must be finite and positive"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "Standardmaterial_showInViewport_0": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "showInViewport must be true on Standardmaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "Standardmaterial_showInViewport_1": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "showInViewport must be true on Standardmaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "PhysicalMaterial_enabled": {
+      "status": "pass",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "pass",
+          "material": "SyntheticVisibility",
+          "file": "C:\\x\\t_3ea0b854\\evidence\\native-v001\\synthetic.png",
+          "width": 256,
+          "height": 256,
+          "joint": {
+            "texels": 128.0,
+            "status": "pass",
+            "reason": ""
+          }
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "PhysicalMaterial_base_color_map_on_0": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "base_color_map_on must be true on PhysicalMaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "PhysicalMaterial_base_color_map_on_1": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "base_color_map_on must be true on PhysicalMaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "PhysicalMaterial_base_weight_0": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "base_weight must be finite and positive"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "PhysicalMaterial_base_weight_1": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "base_weight must be finite and positive"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "PhysicalMaterial_showInViewport_0": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "showInViewport must be true on PhysicalMaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "PhysicalMaterial_showInViewport_1": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "showInViewport must be true on PhysicalMaterial"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "unknown_object": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "Absent",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "unknown object: Absent"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "unused_id": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 2,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "ID 2 has no faces"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "unmeasured_joint": {
+      "status": "review",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "status": "review",
+          "material": "SyntheticBrick",
+          "file": "C:\\x\\t_3ea0b854\\evidence\\native-v001\\synthetic.png",
+          "width": 256,
+          "height": 256,
+          "reason": "joint sampling not measured; declare joint_m/tile_m if applicable"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "threshold": {
+      "status": "review",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.0078125,
+          "tile_m": 1,
+          "status": "review",
+          "material": "SyntheticBrick",
+          "file": "C:\\x\\t_3ea0b854\\evidence\\native-v001\\synthetic.png",
+          "width": 256,
+          "height": 256,
+          "joint": {
+            "texels": 2.0,
+            "status": "review",
+            "reason": "joint at/below 2 viewport texels"
+          }
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "missing_bitmap": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "missing Bitmap: C:\\x\\t_3ea0b854\\evidence\\native-v001\\missing.png"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "unsupported_map": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 1,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "diffuse requires plain Bitmaptexture, found Checker (MultiTile-only is not viewport reviewable)"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "sparse_id": {
+      "status": "pass",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 7,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "pass",
+          "material": "SyntheticBrick",
+          "file": "C:\\x\\t_3ea0b854\\evidence\\native-v001\\synthetic.png",
+          "width": 256,
+          "height": 256,
+          "joint": {
+            "texels": 128.0,
+            "status": "pass",
+            "reason": ""
+          }
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "unmapped_id": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 8,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "unmapped/duplicate material ID 8"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "duplicate_mapping": {
+      "status": "fail",
+      "ids": [
+        {
+          "object": "SyntheticBrick",
+          "id": 7,
+          "joint_m": 0.01,
+          "tile_m": 0.02,
+          "status": "fail",
+          "reason": "unmapped/duplicate material ID 7"
+        }
+      ],
+      "viewport_limit": 1024
+    },
+    "empty": {
+      "status": "error",
+      "reason": "scope must contain a nonempty ids list only"
+    },
+    "partial": {
+      "status": "error",
+      "reason": "unsupported or partial reviewed ID: {'id': 1}"
+    },
+    "duplicate": {
+      "status": "error",
+      "reason": "duplicate reviewed ID: ('SyntheticBrick', 1)"
+    },
+    "nan": {
+      "status": "error",
+      "reason": "joint_m must be finite and positive"
+    },
+    "inf": {
+      "status": "error",
+      "reason": "tile_m must be finite and positive"
+    }
+  }
+}

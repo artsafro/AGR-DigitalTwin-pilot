@@ -3,6 +3,7 @@
 Pattern: n/a | new-case: version-bound A101 retrieval, approval and immutable v003 inputs.
 """
 import hashlib
+import os
 import subprocess
 import sys
 from copy import deepcopy
@@ -133,8 +134,19 @@ def _cold_snippet():
     return text.split('```python', 1)[1].split('```', 1)[0]
 
 
+def _run_cold_snippet(tmp_path, mode, prefix=''):
+    env = os.environ.copy()
+    env.pop('PYTHONOPTIMIZE', None)
+    flags = ['-O'] if mode == 'flag' else []
+    if mode == 'environment':
+        env['PYTHONOPTIMIZE'] = '1'
+    return subprocess.run([sys.executable, *flags, '-c', prefix + _cold_snippet()],
+                          cwd=tmp_path, env=env, capture_output=True, text=True)
+
+
+@pytest.mark.parametrize('mode', ['normal', 'flag', 'environment'])
 @pytest.mark.parametrize('bad', ['empty', 'partial', 'unsupported', 'nan', 'infinity', 'zero', 'duplicate', 'traversal', 'absolute'])
-def test_documented_download_refuses_invalid_manifest_before_writes(tmp_path, bad):
+def test_documented_download_refuses_invalid_manifest_before_writes(tmp_path, bad, mode):
     # Synthetic refusal probes: network is forbidden, never pretend these are real assets.
     manifest = deepcopy(load('library/outside-retrieval-v001.json'))
     first = manifest['assets'][0]['files'][0]
@@ -158,15 +170,15 @@ def test_documented_download_refuses_invalid_manifest_before_writes(tmp_path, ba
     input_path.write_text(json.dumps(manifest), encoding='utf-8')
     before = input_path.read_bytes()
     prefix = "import urllib.request\ndef denied(*a, **kw): raise RuntimeError('NETWORK_MUST_NOT_RUN')\nurllib.request.urlopen = denied\n"
-    result = subprocess.run([sys.executable, '-c', prefix + _cold_snippet()], cwd=tmp_path,
-                            capture_output=True, text=True)
+    result = _run_cold_snippet(tmp_path, mode, prefix)
     assert result.returncode != 0
     assert not (tmp_path / 'cold-download-v001').exists(), result.stderr
     assert 'NETWORK_MUST_NOT_RUN' not in result.stderr
     assert input_path.read_bytes() == before
 
 
-def test_documented_download_refuses_input_output_alias_without_changes(tmp_path):
+@pytest.mark.parametrize('mode', ['normal', 'flag', 'environment'])
+def test_documented_download_refuses_input_output_alias_without_changes(tmp_path, mode):
     library = tmp_path / 'library'
     library.mkdir()
     source = library / 'outside-retrieval-v001.json'
@@ -175,9 +187,73 @@ def test_documented_download_refuses_input_output_alias_without_changes(tmp_path
     # A directory destination already naming an input file is rejected by mkdir,
     # before network or file writes. No destructive symlink/real library fixture.
     (tmp_path / 'cold-download-v001').hardlink_to(source)
-    result = subprocess.run([sys.executable, '-c', _cold_snippet()], cwd=tmp_path,
-                            capture_output=True, text=True)
+    result = _run_cold_snippet(tmp_path, mode)
     assert result.returncode != 0
     assert source.read_bytes() == before
     assert (tmp_path / 'cold-download-v001').read_bytes() == before
+
+
+def _synthetic_download(tmp_path, mismatch=None, position=0):
+    """Exercise the published fence with synthetic bytes, never network assets."""
+    manifest = load('library/outside-retrieval-v001.json')
+    records = [r for a in manifest['assets'] for r in a['files']]
+    payloads = {}
+    for index, record in enumerate(records):
+        data = bytes(range(index + 1))
+        record['bytes'] = len(data)
+        record['sha256'] = hashlib.sha256(data).hexdigest()
+        payloads[record['download_url']] = data
+    if mismatch:
+        record = records[position]
+        data = payloads[record['download_url']]
+        payloads[record['download_url']] = (data + b'!') if mismatch == 'size' else bytes(b ^ 255 for b in data)
+    library = tmp_path / 'library'
+    library.mkdir()
+    source = library / 'outside-retrieval-v001.json'
+    source.write_text(json.dumps(manifest), encoding='utf-8')
+    prefix = (
+        'import io, urllib.request\n'
+        f'payloads = {payloads!r}\n'
+        'urllib.request.urlopen = lambda url, **kw: io.BytesIO(payloads[url])\n'
+    )
+    return records, source, prefix
+
+
+@pytest.mark.parametrize('mode', ['normal', 'flag', 'environment'])
+@pytest.mark.parametrize('mismatch', ['size', 'hash'])
+@pytest.mark.parametrize('position', range(6))
+def test_documented_download_refuses_corrupt_payload_before_file_write(tmp_path, mode, mismatch, position):
+    records, source, prefix = _synthetic_download(tmp_path, mismatch, position)
+    before = source.read_bytes()
+    result = _run_cold_snippet(tmp_path, mode, prefix)
+    assert result.returncode != 0
+    assert records[position]['path'] in result.stderr
+    root = tmp_path / 'cold-download-v001'
+    # Earlier verified records may remain; the bad record and all later ones must not exist.
+    written = {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}
+    assert written == {r['path'] for r in records[:position]}
+    assert len(result.stdout.splitlines()) == position
+    assert source.read_bytes() == before
+
+
+@pytest.mark.parametrize('mode', ['normal', 'flag', 'environment'])
+def test_documented_download_receipt_matches_written_bytes_and_refuses_reuse(tmp_path, mode):
+    records, source, prefix = _synthetic_download(tmp_path)
+    before = source.read_bytes()
+    result = _run_cold_snippet(tmp_path, mode, prefix)
+    assert result.returncode == 0, result.stderr
+    root = tmp_path / 'cold-download-v001'
+    expected = []
+    for record in records:
+        data = (root / record['path']).read_bytes()
+        expected.append(f"{hashlib.sha256(data).hexdigest()} {len(data)} {record['path']}")
+    assert result.stdout.splitlines() == expected
+    snapshot = {p: p.read_bytes() for p in root.rglob('*') if p.is_file()}
+    # Repeat twice: stale receipts and pre-existing payloads cannot become a new success.
+    for _ in range(2):
+        refused = _run_cold_snippet(tmp_path, mode, prefix)
+        assert refused.returncode != 0
+        assert not refused.stdout
+        assert {p: p.read_bytes() for p in root.rglob('*') if p.is_file()} == snapshot
+    assert source.read_bytes() == before
 

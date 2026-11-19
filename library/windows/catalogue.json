@@ -9,7 +9,7 @@
       "sha256": "923b647385e90336678b98c6d15fb21a8ed7855950a1cd758212d506e4895d30"
     },
     {
-      "path": "library/windows/standard.json",
+      "path": "library/windows/sources/standard-d204-v003.json",
       "sha256": "36b8825c902d37a9214d3d4e660ca54743abdf9572febe6ade62cf57e0ee3427"
     },
     {
@@ -25,7 +25,7 @@
       "sha256": "8fb47b74219421f1acbc3140200389b7ccee09affb06f785fc467df5da1892dc"
     },
     {
-      "path": "adapters/max/agr_tools/windowgen_core.py",
+      "path": "library/windows/sources/windowgen-core-d204-v003.txt",
       "sha256": "0cfa7fb9ec6c2349eef0a85cf3723ce75f38f83544d5bc0bfc46130557fc8bf0"
     },
     {

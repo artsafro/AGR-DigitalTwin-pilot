@@ -4,7 +4,10 @@ Pattern: n/a | new-case: one shared NPM atlas tool replacing the per-job make_np
 
 Generalised from jobs/TEC26-OKS/scripts/make_npm_atlas.py (KPP1 recipe, accepted AC08 pilot-v010), which is
 itself the KPP1 v005 script with an explicit spec; PSU275's extra-OKS options are --address / --index.
-Usage: python tools/derive/npm_atlas.py <spec.json> <new_out_dir> [--address A] [--index N] [--recipe-dir D]
+Usage: python tools/derive/npm_atlas.py <spec.json> <new_out_dir> --master <master> [--address A] [--index N]
+    [--recipe-dir D]
+npm_atlas.json also carries `master` {name, sha256, udims} (#1505): export_npm refuses the atlas for any other
+master revision (atlas_master_mismatch) or without the binding (atlas_unbound).
 Writes T_<A>_<NNN>_Main_d_1.png (Diffuse RGB), T_<A>_<NNN>_Main_o_1.png (Opacity RGB, white = solid,
 reg p.9 §5.8; no alpha anywhere, conflict #21) and npm_atlas.json (finish -> region). One square region per
 finish on a 5 x 4 grid of 409 px cells, 16 px per-side edge extrusion [D278], hence 32 px between
@@ -26,6 +29,16 @@ from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RECIPE = os.path.normpath(os.path.join(HERE, "..", "..", "jobs", "TEC26-OKS", "scripts"))
+
+
+def _bm():
+    """Stdlib build-manifest owner (atlas <-> master binding, #1505), loaded by path like the exporters do."""
+    import importlib.util
+    path = os.path.normpath(os.path.join(HERE, "..", "..", "adapters", "max", "agr_tools", "build_manifest.py"))
+    spec = importlib.util.spec_from_file_location("build_manifest_npm_atlas", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 ATLAS, CELL, PAD, COLS = 2048, 409, 16, 5  # [D278]: per-side padding; adjacent regions have a 32 px gap.
 REGION = CELL - 2 * PAD
@@ -127,6 +140,8 @@ def main(argv=None):
     ap.add_argument("--address", help="NPM address (default: spec address); extra OKS share the main address")
     ap.add_argument("--index", type=int, default=1, help="OKS index inside the NPM package (NNN), default 1")
     ap.add_argument("--recipe-dir", default=RECIPE, help="directory with make_textures.py / finish_map.py")
+    ap.add_argument("--master", help="the master file this atlas belongs to (required for generation, #1505): "
+                                     "npm_atlas.json records its SHA-256 + the UDIM tiles; export_npm refuses another master")
     ap.add_argument("--cell", type=int, default=CELL, help="atlas cell pixels (default: 409)")
     ap.add_argument("--pad", type=int, default=PAD, help="padding inside each cell (default: 16)")
     a = ap.parse_args(argv)
@@ -145,6 +160,12 @@ def main(argv=None):
     cols, region = ATLAS // cell, cell - 2 * pad
     if not 1 <= a.index <= 999:
         raise ValueError(f"OKS index {a.index} outside 1..999")
+    if not a.master:
+        raise ValueError('generation requires --master MASTER: npm_atlas.json is bound to the master hash (#1505)')
+    if not os.path.isfile(a.master) or not os.path.getsize(a.master):
+        raise ValueError(f'--master {a.master} is missing or empty')
+    if os.path.normcase(os.path.realpath(a.master)) == os.path.normcase(os.path.realpath(a.spec)):
+        raise ValueError('--master is the texture spec itself')
     sys.path.insert(0, a.recipe_dir)
     import finish_map
     import make_textures as mt
@@ -157,7 +178,8 @@ def main(argv=None):
         raise ValueError("empty NPM address")
     nnn = f"{a.index:03d}"
     out = a.out
-    finish_map.fresh_out_dir(out, [a.spec, HERE, a.recipe_dir])
+    binding = _bm().atlas_master_binding(a.master, spec["finishes"])  # hashed before any write
+    finish_map.fresh_out_dir(out, [a.spec, HERE, a.recipe_dir, a.master])
     dif = np.zeros((ATLAS, ATLAS, 3), np.uint8)
     opa = np.full((ATLAS, ATLAS, 3), 255, np.uint8)
     layout = {}
@@ -191,8 +213,8 @@ def main(argv=None):
         with open(path, 'xb') as stream:
             Image.fromarray(pixels, "RGB").save(stream, format='PNG', optimize=True)
     with open(os.path.join(out, "npm_atlas.json"), "x", encoding="utf-8") as stream:
-        json.dump({"atlas": ATLAS, "cell": cell, "pad": pad, "region": region, "finishes": layout},
-                  stream, indent=1)
+        json.dump({"atlas": ATLAS, "cell": cell, "pad": pad, "region": region, "finishes": layout,
+                   "master": binding}, stream, indent=1)
     for p in (dn, on):
         print(os.path.basename(p), os.path.getsize(p), "bytes")
     print(json.dumps(validate_export(os.path.join(out, 'npm_atlas.json'), dn, on), sort_keys=True))

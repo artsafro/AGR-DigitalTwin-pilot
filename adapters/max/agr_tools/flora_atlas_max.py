@@ -521,8 +521,11 @@ def atlas_flora(ctx, mode, nodes, preview):
                         if op is None or (op.w, op.h) != (pic.w, pic.h):
                             o['findings'].append(('opacity_mismatch', 'opacity {} must be a PNG of the diffuse size'
                                                   .format(opacity)))
-                        elif alpha is not None and _same_file(oinfo['path'], info['path']):
-                            pass  # #1024: A101 Flora points the opacity slot at the diffuse PNG itself: its own alpha
+                        elif _same_file(oinfo['path'], info['path']):
+                            # #1024: A101 Flora points the opacity slot at the diffuse PNG itself: its own alpha.
+                            # #1382: decided before the alpha test; an opaque or RGB diffuse keeps alpha None, so
+                            # it never falls through to channel(0) (its red channel as a cutout).
+                            pass
                         elif alpha is not None:
                             o['findings'].append(('opacity_mismatch', 'both diffuse alpha and an opacity map'))
                         else:
