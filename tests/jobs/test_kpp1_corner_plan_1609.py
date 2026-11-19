@@ -1,4 +1,4 @@
-"""#1609 KPP1 quad master corners: pure planning kernel (posts as separate clean elements, wall strip grid)."""
+"""#1609 KPP1 quad master corners: pure planning kernel (posts as separate clean elements, conforming wall rectangle)."""
 import importlib.util
 import itertools
 import math
@@ -84,71 +84,6 @@ def test_post_cells_open_box_parity_disagreement_is_error():
         cp.post_cells(tris, [0, 1], [0, 1], [0, 1])
 
 
-def wall(rects, tile=(2, 0)):
-    return [([(s0, z0), (s1, z0), (s1, z1), (s0, z1)], tile) for s0, s1, z0, z1 in rects]
-
-
-def test_wall_strip_picks_clean_rectangle_and_avoids_crossing_and_openings():
-    faces = wall([(0, 0.3, 3.9, 5), (0.3, 0.6, 3.9, 5), (0, 0.6, 5, 7.1), (0.6, 2.0, 3.9, 7.1),   # crosses s = 0.6? no
-                  (0, 0.45, 7.1, 8.65), (0.45, 1.5, 7.1, 8.65)])
-    r = cp.wall_strip(faces, 0.3, 0.8)
-    assert (r['S'], r['z0'], r['z1']) == (0.6, 3.9, 7.1)
-    assert sorted(r['faces']) == [0, 1, 2]
-
-
-def test_wall_strip_opening_inside_is_rejected():
-    faces = wall([(0, 0.6, 3.9, 5), (0, 0.6, 6, 7)])           # hole 5..6
-    r = cp.wall_strip(faces, 0.3, 0.8)
-    assert r['z1'] - r['z0'] == pytest.approx(1.1)
-
-
-@pytest.mark.parametrize('faces', [[], [([(0, 0), (1, 0), (math.nan, 1)], (0, 0))], [([(-0.01, 0), (1, 0), (1, 1)], (0, 0))]])
-def test_wall_strip_fail_closed(faces):
-    with pytest.raises(ValueError):
-        cp.wall_strip(faces, 0.3, 0.8)
-
-
-def test_wall_strip_brute_force_never_returns_crossed_rectangle():
-    rng = random.Random(1609)
-    for _ in range(60):
-        # random guillotine partition of [0, 2] x [0, 4]
-        rects = [(0, 2, 0, 4)]
-        for _ in range(rng.randint(2, 9)):
-            i = rng.randrange(len(rects))
-            s0, s1, z0, z1 = rects.pop(i)
-            if rng.random() < 0.5 and s1 - s0 > 0.2:
-                c = round(rng.uniform(s0 + 0.1, s1 - 0.1), 3)
-                rects += [(s0, c, z0, z1), (c, s1, z0, z1)]
-            elif z1 - z0 > 0.2:
-                c = round(rng.uniform(z0 + 0.1, z1 - 0.1), 3)
-                rects += [(s0, s1, z0, c), (s0, s1, c, z1)]
-            else:
-                rects.append((s0, s1, z0, z1))
-        drop = rng.randrange(len(rects)) if rng.random() < 0.3 else None
-        faces = wall([r for k, r in enumerate(rects) if k != drop])
-        try:
-            r = cp.wall_strip(faces, 0.3, 1.5)
-        except ValueError:
-            continue
-        for poly, _ in faces:
-            ss, zs = [p[0] for p in poly], [p[1] for p in poly]
-            inter = min(max(ss), r['S']) - max(min(ss), 0) > 1e-9 and min(max(zs), r['z1']) - max(min(zs), r['z0']) > 1e-9
-            if inter:
-                assert max(ss) <= r['S'] + 1e-9 and min(zs) >= r['z0'] - 1e-9 and max(zs) <= r['z1'] + 1e-9
-
-
-def test_grid_lines_even_and_required():
-    g = cp.grid_lines(3.9, 8.65, required=[7.1], step=0.6)
-    assert g[0] == 3.9 and g[-1] == 8.65 and 7.1 in g
-    assert max(b - a for a, b in zip(g, g[1:])) <= 0.6 + 1e-9
-
-
-@pytest.mark.parametrize('args', [(1, 1), (0, math.nan), (0, 1, [0.5, 0.52])])
-def test_grid_lines_fail_closed(args):
-    with pytest.raises(ValueError):
-        cp.grid_lines(*args)
-
-
 def test_affine_uv_exact_and_seam_rejected():
     pts = [(0, 0), (1, 0), (1, 2), (0, 2)]
     f = cp.affine_uv(pts, [(0.1, 0.2), (0.6, 0.2), (0.6, 1.2), (0.1, 1.2)])
@@ -180,54 +115,160 @@ def test_clip_area():
     assert cp.clip_area([(5, 5), (6, 5), (6, 6)], 0, 1, 0, 1) == 0.0
 
 
-@pytest.mark.parametrize('poly,S,kind', [
-    ([(0, 0), (1, 0), (1, 1), (0, 1)], 0.5, 'clean'),
-    ([(0, 0), (1, 0), (1, 1), (0, 1)], 1.0, 'left'),
-    ([(0, 0), (1, 0), (1, 1), (0.6, 1)], 0.5, 'bad'),        # adjacent edges -> triangle + pentagon
-    ([(0, 0), (1, 0), (1, 1), (0.5, 1)], 0.5, 'bad'),        # through a corner
-    ([(0, 0), (1, 0), (0.5, 1)], 0.3, 'bad'),
-])
-def test_cut_kind(poly, S, kind):
-    assert cp.cut_kind(poly, S) == kind
+# ---- conform_rect: the corner wall rectangle re-mesh plan (#1609 v004 rework, BM-04/BM-05/BM-09) ----
+
+def mesh(polys, extra_items=(), extra_edges=()):
+    """faces/items/edges of a wall mesh from {fid: poly}; extra = another element's vertices/edges in the plane."""
+    faces = {f: [tuple(p) for p in poly] for f, poly in polys.items()}
+    vf, ef = {}, {}
+    for f, poly in faces.items():
+        for i, p in enumerate(poly):
+            vf.setdefault(p, set()).add(f)
+            q = poly[(i + 1) % len(poly)]
+            ef.setdefault(frozenset((p, q)), set()).add(f)
+    items = [(p[0], p[1], frozenset(fs)) for p, fs in vf.items()] + list(extra_items)
+    edges = [(*sorted(k), frozenset(fs)) for k, fs in ef.items()] + list(extra_edges)
+    return faces, items, edges
 
 
-def test_strip_cut_prefers_existing_line_then_clean_cut_and_rejects_openings():
-    faces = [[(0, 0), (0.62, 0), (0.62, 1), (0, 1)], [(0.62, 0), (2, 0), (2, 1), (0.62, 1)],
-             [(0, 1), (0.9, 1), (0.9, 2), (0, 2)], [(0.9, 1), (2, 1), (2, 2), (0.9, 2)],
-             [(0, 2), (0.62, 2), (0.62, 3), (0, 3)], [(0.62, 2), (2, 2), (2, 3), (0.62, 3)]]
-    r = cp.strip_cut(faces, 0, 3, 0.3, 0.8, 0.6)
-    assert r['cut'] == [2] and r['inside'] == [0, 4] and r['S'] == pytest.approx(0.62)
-    faces2 = faces + [[(0, 3), (0.6, 3), (0.6, 4), (0, 4)]]          # z1 = 4 but the right faces stop at 3: an opening above
-    with pytest.raises(ValueError, match='covered'):
-        cp.strip_cut(faces2, 0, 4, 0.7, 0.8, 0.75)      # S >= 0.7 reaches past the 0.6 m top face
-    with pytest.raises(ValueError, match='straddles'):
-        cp.strip_cut(faces, 0.5, 3, 0.3, 0.8, 0.6)
+def grid_polys(cols, rows, skip=lambda i, j: False, start=0):
+    out, k = {}, start
+    for i in range(len(cols) - 1):
+        for j in range(len(rows) - 1):
+            if not skip(i, j):
+                out[k] = [(cols[i], rows[j]), (cols[i + 1], rows[j]), (cols[i + 1], rows[j + 1]), (cols[i], rows[j + 1])]
+                k += 1
+    return out
+
+
+def fan(s0, s1, z0, z1, start):
+    c = ((s0 + s1) / 2 + 0.07, (z0 + z1) / 2 - 0.05)
+    ring = [(s0, z0), (s1, z0), (s1, z1), (s0, z1)]
+    return {start + k: [ring[k], ring[(k + 1) % 4], c] for k in range(4)}
+
+
+def test_conform_rect_replaces_fan_with_the_outer_grid_lines():
+    polys = grid_polys([0, 0.5, 1, 1.5, 2], [0, 1, 2, 3], skip=lambda i, j: i < 2 and j == 1)
+    polys.update(fan(0, 1, 1, 2, 100))
+    r = cp.conform_rect(*mesh(polys), 0.4, 1.0, 0, 3)
+    assert (r['S'], r['z0'], r['z1']) == (1.0, 0, 3)
+    assert r['rows'] == [0, 1, 2, 3]            # every kept vertex on s = 1
+    assert r['cols'] == [0.0, 1.0]              # bottom / top borders are free
+    assert set(r['faces']) == {k for k, p in polys.items() if max(q[0] for q in p) <= 1}
+
+
+def test_conform_rect_line_inside_a_kept_edge_is_rejected():
+    polys = grid_polys([0, 1], [0, 1, 2, 3])
+    polys[50] = [(1, 0), (2, 0), (2, 3), (1, 3)]               # one tall kept face beyond s = 1
+    seams = [((0, 1.5), (1, 1.5))]                              # horizontal UV seam needs a row at 1.5
+    with pytest.raises(ValueError, match='lines'):
+        cp.conform_rect(*mesh(polys), 1.0, 1.0, 0, 3, seams=seams)
+
+
+def test_conform_rect_min_gap_rejects_sliver_rows():
+    polys = grid_polys([0, 1], [0, 1, 2, 3])
+    polys.update(grid_polys([1, 2], [0, 1, 1.02, 3], start=50))   # kept neighbour with a 2 cm row
+    r = cp.conform_rect(*mesh(polys), 1.0, 1.0, 0, 3)          # falls back to a smaller band, never the sliver
+    assert r['area'] < 3 and all(b - a >= 0.03 for a, b in zip(r['rows'], r['rows'][1:]))
+    r = cp.conform_rect(*mesh(polys), 1.0, 1.0, 0, 3, min_gap=0.01)
+    assert r['area'] == 3 and r['rows'] == [0, 1, 1.02, 3]
+
+
+def test_conform_rect_attached_element_inside_is_rejected():
+    polys = grid_polys([0, 1, 2], [0, 1, 2])
+    attached = [(0.5, 1.0, frozenset({'cornice'}))]            # another element welded to the wall inside
+    with pytest.raises(ValueError, match='attached'):           # inside, or on a border inside a kept edge
+        cp.conform_rect(*mesh(polys, extra_items=attached), 0.5, 2, 0, 2)
+    r = cp.conform_rect(*mesh(polys), 0.5, 2, 0, 2)                 # the same wall without it: whole wall
+    assert (r['S'], r['z0'], r['z1']) == (2, 0, 2)
+
+
+def test_conform_rect_opening_rejected_dontcare_fills_post_strip():
+    polys = grid_polys([0.01, 1, 2], [0, 1, 2])                 # post contact strip 0..0.01 has no wall face
+    with pytest.raises(ValueError, match='coverage'):
+        cp.conform_rect(*mesh(polys), 1, 1, 0, 2)
+    r = cp.conform_rect(*mesh(polys), 1, 1, 0, 2, dontcare=[(0, 0.01, 0, 2)])
+    assert (r['S'], r['z0'], r['z1'], r['cols']) == (1, 0, 2, [0.0, 1])
+
+
+def test_conform_rect_slanted_seam_rejected():
+    polys = grid_polys([0, 1], [0, 2])
+    with pytest.raises(ValueError, match='slanted'):
+        cp.conform_rect(*mesh(polys), 1, 1, 0, 2, seams=[((0, 0), (1, 2))])
+
+
+@pytest.mark.parametrize('kw', [dict(s_lo=math.nan), dict(s_lo=0), dict(z_hi=-1), dict(min_gap=0), dict(z_lo=math.inf)])
+def test_conform_rect_fail_closed_args(kw):
+    args = dict(s_lo=0.5, s_hi=1, z_lo=0, z_hi=2)
+    args.update(kw)
     with pytest.raises(ValueError):
-        cp.strip_cut(faces, 0, math.nan, 0.3, 0.8, 0.6)
-    with pytest.raises(ValueError):
-        cp.strip_cut([], 0, 3, 0.3, 0.8, 0.6)
+        cp.conform_rect(*mesh(grid_polys([0, 1], [0, 2])), **args)
 
 
-def test_strip_cut_never_cuts_a_border_edge():
-    # one tall face 0..1 x 0..2 whose top/bottom edges are the strip borders: cutting it splits its neighbours
-    faces = [[(0, 0), (1, 0), (1, 2), (0, 2)]]
-    with pytest.raises(ValueError, match='badly'):
-        cp.strip_cut(faces, 0, 2, 0.3, 0.8, 0.6)
+def test_conform_rect_fail_closed_inputs():
+    with pytest.raises(ValueError, match='no wall faces'):
+        cp.conform_rect({}, [], [], 0.5, 1, 0, 1)
+    with pytest.raises(ValueError, match='bad wall face'):
+        cp.conform_rect({1: [(0, 0), (1, math.nan), (1, 1)]}, [], [], 0.5, 1, 0, 1)
+    with pytest.raises(ValueError, match='beyond the corner'):
+        cp.conform_rect({1: [(-0.1, 0), (1, 0), (1, 1)]}, [], [], 0.5, 1, 0, 1)
 
 
-def test_lone_corner_is_the_vertex_to_snap():
-    assert cp.lone_corner([(0, 0), (1, 0), (1, 1), (0.6, 1)], 0.5) == 0     # (0, 0) alone left of the line
-    assert cp.lone_corner([(0, 0), (1, 0), (1, 1), (0, 1)], 0.5) is None     # clean 2 + 2
+def _verify_plan(r, faces, items, edges, min_gap, tol=cp.TOL):
+    """Independent check of a plan: whole faces, every kept border vertex a line, no line inside a kept edge."""
+    S, z0, z1, cols, rows = r['S'], r['z0'], r['z1'], r['cols'], r['rows']
+    inside = set(r['faces'])
+    for f, poly in faces.items():
+        inn = [(-tol <= s <= S + tol and z0 - tol <= z <= z1 + tol) for s, z in poly]
+        cen = (sum(p[0] for p in poly) / len(poly), sum(p[1] for p in poly) / len(poly))
+        if 0 < cen[0] < S and z0 < cen[1] < z1:
+            assert f in inside and all(inn)
+        else:
+            assert f not in inside
+    assert all(b - a >= min_gap - tol for a, b in zip(cols, cols[1:]))
+    assert all(b - a >= min_gap - tol for a, b in zip(rows, rows[1:]))
+    nodes = {(c, z) for c in cols for z in (z0, z1)} | {(s, z) for s in (0, S) for z in rows}
+    for s, z, fids in items:
+        if set(fids) - inside and -tol <= s <= S + tol and z0 - tol <= z <= z1 + tol:
+            assert any(abs(s - a) <= tol and abs(z - b) <= tol for a, b in nodes), (s, z)
+    for p, q, fids in edges:
+        if not set(fids) - inside:
+            continue
+        for a, b in nodes:
+            on_seg = (abs((q[0] - p[0]) * (b - p[1]) - (q[1] - p[1]) * (a - p[0])) <= 1e-9
+                      and min(p[0], q[0]) - tol <= a <= max(p[0], q[0]) + tol
+                      and min(p[1], q[1]) - tol <= b <= max(p[1], q[1]) + tol)
+            at_end = any(abs(a - v[0]) <= tol and abs(b - v[1]) <= tol for v in (p, q))
+            assert not (on_seg and not at_end), ('T-junction', (a, b), p, q)
 
 
-def test_strip_cut_allow_bad_reports_count():
-    faces = [[(0, 0), (1, 0), (1, 1), (0.55, 1)], [(0, 0), (0.55, 1), (0, 1)][:3] + [(0, 0.5)]]
-    r = cp.strip_cut(faces, 0, 1, 0.5, 0.52, 0.5, allow_bad=True)
-    assert r['bad'] >= 1
-    with pytest.raises(ValueError, match='badly'):
-        cp.strip_cut(faces, 0, 1, 0.5, 0.52, 0.5)
-
-
-def test_grid_lines_merges_rounded_copies_of_one_line():
-    g = cp.grid_lines(0.0, 0.699999, [0.7, 0.35, 0.35004], step=0.6)
-    assert g == [0.0, 0.35, 0.699999]
+def test_conform_rect_random_walls_never_plan_a_t_junction():
+    rng = random.Random(1609)
+    planned = 0
+    for _ in range(120):
+        cols = sorted({0.0} | {round(rng.uniform(0.05, 3.0), 3) for _ in range(rng.randint(2, 6))})
+        rows = sorted({round(rng.uniform(0, 4), 3) for _ in range(rng.randint(3, 7))})
+        if len(rows) < 2 or len(cols) < 2:
+            continue
+        merged = set()
+        polys, k = {}, 0
+        for i in range(len(cols) - 1):
+            for j in range(len(rows) - 1):
+                if (i, j) in merged:
+                    continue
+                if j + 2 < len(rows) and rng.random() < 0.25:      # a tall kept face (long edge on a border)
+                    merged.add((i, j + 1))
+                    polys[k] = [(cols[i], rows[j]), (cols[i + 1], rows[j]), (cols[i + 1], rows[j + 2]), (cols[i], rows[j + 2])]
+                elif rng.random() < 0.2:
+                    polys.update(fan(cols[i], cols[i + 1], rows[j], rows[j + 1], 1000 + 10 * k))
+                else:
+                    polys[k] = [(cols[i], rows[j]), (cols[i + 1], rows[j]), (cols[i + 1], rows[j + 1]), (cols[i], rows[j + 1])]
+                k += 1
+        faces, items, edges = mesh(polys)
+        try:
+            r = cp.conform_rect(faces, items, edges, 0.05, 3.0, rows[0], rows[-1], min_gap=0.03)
+        except ValueError:
+            continue
+        _verify_plan(r, faces, items, edges, 0.03)
+        planned += 1
+    assert planned >= 60

@@ -12,11 +12,12 @@ Per corner (`CORNERS`):
    x/y/z planes (`corner_plan.post_cells`) and their boundary quads are added unwelded (`post_faces`); faces lying
    on the body wall and facing into it are hidden contact and are not built (they would overlap the wall). Every
    post quad takes its UV from the coplanar r1 triangle under its centre (exact affine), none -> error.
-3. Body wall strips: on both walls of the corner the largest rectangle [0, S] x [z0, z1] of whole wall faces
-   (`wall_strip`, S in `STRIP_S`) is deleted and refilled with a clean grid (border, every UV seam / finish line,
-   even splits <= `STEP_M`); every new corner gets the UV of the deleted face under the cell (exact affine), the
-   finish attribute comes from its UDIM tile. Grid border vertices within `WELD_M` of a kept body vertex are
-   welded to it; the corner edge is shared by the two strips.
+3. Body walls: on each wall of the corner, repeatedly, the conforming rectangle with the most irregular wall
+   area (`corner_plan.conform_rect`: whole faces, posts' hidden contact = don't care, every line ends on a kept
+   border vertex, every UV seam a line, no line closer than `MIN_GAP`) is deleted and refilled with its grid;
+   every new corner gets the UV of the deleted face under the cell (exact affine, checked at every corner), the
+   finish attribute comes from its UDIM tile; border nodes weld to the kept vertex within `WELD_M`. What no
+   conforming rectangle can reach stays v003 and is listed in the report (`left_as_v003`, with the reason).
 Outputs (new files only): `master-quad-v004.blend`, `SM_Kpp_1.quad-v004.fbx`, `corners-build-v004.json`.
 """
 import hashlib
@@ -47,11 +48,10 @@ CORNERS = {  # body = x >= xc and (y >= yc if out_y < 0 else y <= yc); r1-v003 c
 BOX_M = 0.35        # corner box half size (posts reach 0.2 m out, #1246 read-back)
 OUT_M = 1e-3        # a face centre this far outside the body quadrant belongs to a post
 PLANE_M = 6e-4      # wall faces within 0.6 mm of the wall plane (the r1 0.4 mm double layer is the same wall)
-STRIP_S = (0.15, 2.0)   # the corner zone: up to 2 m from the corner along each wall
-STRIP_Z = (3.9, 8.65)   # the upper storey of both walls at both corners: the r1-v003 floor band line to the wall top
-MIN_BAND_M = 0.1        # a leftover z band thinner than this is not searched again
-MIN_GAP_M = 0.05        # no grid line closer than 5 cm to another (no sliver rows / columns)
-STEP_M = 0.6
+S_RANGE = (0.15, 3.5)   # the corner zone: up to 3.5 m from the corner along each wall
+Z_RANGE = (0.0, 9.5)    # the whole wall height; conform_rect keeps only whole, conforming rectangles
+MAX_RECTS = 60          # per wall and corner; each rectangle replaces irregular faces by a regular grid
+MIN_GAP = 0.03          # no grid line closer than 3 cm to another (BM-09: no sliver rows / columns)
 WELD_M = 2.1e-3     # = build_quad_master centre clearance: closer vertices are xView Overlapping Vertices
 SEAM_UV = 1e-5
 UV_AFFINE_TOL = 1e-4   # float32 UVs + the 0.4 mm corner clamp; 1e-4 UV = 0.2 px on a 2048 tile
@@ -238,35 +238,143 @@ def build_posts(bm, plan, finish_of_tile, uvl, fl):
                   'r1_slanted_uv_seams': slanted_seams, 'uv_per_corner_faces': per_corner}
 
 
-def seam_lines(faces_sel, s_of, uvl):
-    """(s-lines, z-lines, slanted) of every UV-discontinuous edge between two selected faces. An axis seam becomes a
-    grid line; a slanted seam cannot be one and is returned (position + UV jump) for the report: the cell under it
-    takes the UV of the face under its centre."""
-    sel = set(faces_sel)
-    s_lines, z_lines, slanted = set(), set(), []
-    for f in faces_sel:
-        for e in f.edges:
-            other = [g for g in e.link_faces if g is not f and g in sel]
-            if not other:
-                continue
-            g = other[0]
-            if g.index < f.index:
-                continue
-            jump = 0.0
-            for v in e.verts:
-                uf = [l[uvl].uv for l in f.loops if l.vert is v][0]
-                ug = [l[uvl].uv for l in g.loops if l.vert is v][0]
-                jump = max(jump, (uf - ug).length)
-            seam = jump > SEAM_UV
-            if seam:
-                (s0, z0), (s1, z1) = s_of(e.verts[0]), s_of(e.verts[1])
-                if abs(s0 - s1) < 2e-5:
-                    s_lines.add(round(s0, 6))
-                elif abs(z0 - z1) < 2e-5:
-                    z_lines.add(round(z0, 6))
-                else:
-                    slanted.append([[round(c, 4) for c in e.verts[0].co], [round(c, 4) for c in e.verts[1].co], round(jump, 6)])
-    return s_lines, z_lines, slanted
+def s_z(wall, co):
+    """(s, z) of a point in the wall plane; |s| <= PLANE_M is the corner (the r1 0.4 mm corner offset)."""
+    s_ = (co[wall['s_ax']] - wall['s0']) * wall['s_sign']
+    return (0.0 if abs(s_) <= PLANE_M else s_, co[2])
+
+
+def collect(bm, wall, uvl):
+    """The wall plane near the corner: wall faces {index: (s, z) poly}, every vertex / edge lying in the plane with
+    ALL its faces (any element), and the UV seams between two wall faces."""
+    bm.faces.index_update()
+    ax, plane, normal = wall['ax'], wall['plane'], wall['normal']
+    s_max = S_RANGE[1] + 0.5
+
+    def in_plane(v):
+        if abs(v.co[ax] - plane) > PLANE_M:
+            return None
+        p = s_z(wall, v.co)
+        return p if -PLANE_M <= p[0] <= s_max else None
+    faces, fobj = {}, {}
+    for f in bm.faces:
+        if sum(f.normal[k] * normal[k] for k in range(3)) <= 0:   # coplanar by its vertices; slivers have noisy normals
+            continue
+        pts = [in_plane(v) for v in f.verts]
+        if any(p is None for p in pts):
+            continue
+        faces[f.index] = pts
+        fobj[f.index] = f
+    items, edges, seams = [], [], []
+    for v in bm.verts:
+        p = in_plane(v) if v.link_faces else None
+        if p is not None:
+            items.append((p[0], p[1], frozenset(f.index for f in v.link_faces)))
+    for e in bm.edges:
+        p, q = in_plane(e.verts[0]), in_plane(e.verts[1])
+        if p is None or q is None or not e.link_faces:
+            continue
+        edges.append((p, q, frozenset(f.index for f in e.link_faces)))
+        two = [f for f in e.link_faces if f.index in faces]
+        if len(two) == 2:
+            jump = max((([lp[uvl].uv for lp in two[0].loops if lp.vert is v][0]
+                         - [lp[uvl].uv for lp in two[1].loops if lp.vert is v][0]).length) for v in e.verts)
+            if jump > SEAM_UV:
+                seams.append((p, q))
+    weight = {}       # irregular = not an axis rectangle in (s, z): a triangle, an n-gon or a slanted edge
+    for k, pts in faces.items():
+        axis = len(pts) == 4 and all(abs(p[0] - q[0]) <= cp.TOL or abs(p[1] - q[1]) <= cp.TOL
+                                     for p, q in zip(pts, pts[1:] + pts[:1]))
+        weight[k] = 0.0 if axis else cp._area(pts)
+    return {'faces': faces, 'fobj': fobj, 'items': items, 'edges': edges, 'seams': seams, 'weight': weight}
+
+
+def build_rect(bm, wall, r, data, uvl, fl, finish_of_tile, where):
+    """Replace the planned rectangle's faces by the grid cols x rows; every new corner takes the UV of the deleted
+    face under it (exact affine), checked against the face under every corner; border nodes weld to kept vertices."""
+    cols, rows = r['cols'], r['rows']
+    srcs = [(data['faces'][k], [tuple(lp[uvl].uv) for lp in data['fobj'][k].loops]) for k in r['faces']]
+    maps = {}
+
+    def face_at(q):
+        for k, (pts, _) in enumerate(srcs):
+            if point_in_poly(q, pts, 1e-7):
+                return k
+        return None
+
+    def uv_map(k):
+        if k not in maps:
+            maps[k] = cp.affine_uv(srcs[k][0], srcs[k][1], UV_AFFINE_TOL)
+        return maps[k]
+    cells, dev = [], 0.0
+    for i in range(len(cols) - 1):
+        for j in range(len(rows) - 1):
+            ring = [(cols[i], rows[j]), (cols[i + 1], rows[j]), (cols[i + 1], rows[j + 1]), (cols[i], rows[j + 1])]
+            cen = ((cols[i] + cols[i + 1]) / 2, (rows[j] + rows[j + 1]) / 2)
+            samples = [cen] + [(cols[i] + (cols[i + 1] - cols[i]) * a, rows[j] + (rows[j + 1] - rows[j]) * b)
+                               for a in (0.25, 0.75, 0.95) for b in (0.25, 0.75)]
+            src = next((k for k in map(face_at, samples) if k is not None), None)
+            if src is None:
+                raise ValueError(f'{where}: cell {ring} lies on no deleted wall face')
+            uvs = [uv_map(src)(*c) for c in ring]
+            for c, u in zip(ring, uvs):          # the face under each corner (nudged into the cell) agrees
+                k = face_at((c[0] + (cen[0] - c[0]) * 0.01, c[1] + (cen[1] - c[1]) * 0.01))
+                if k is not None:
+                    w = uv_map(k)(*c)
+                    dev = max(dev, abs(w[0] - u[0]), abs(w[1] - u[1]))
+            cells.append((ring, uvs))
+    if dev > UV_AFFINE_TOL:
+        raise ValueError(f'{where}: the source UV is not one affine map across a cell (max {dev:.2e})')
+    already = len(srcs) == len(cells) and all(len(p) == 4 for p, _ in srcs)
+    rep = {'wall': wall['name'], 'S': r['S'], 'z0': r['z0'], 'z1': r['z1'], 'faces_deleted': len(srcs),
+           'cols': [round(c, 4) for c in cols], 'rows': [round(z, 4) for z in rows], 'faces_new': len(cells),
+           'uv_dev_max': dev, 'unchanged_clean_grid': already}
+    if already:
+        return rep
+    bmesh.ops.delete(bm, geom=[data['fobj'][k] for k in r['faces']], context='FACES')
+    vlist = [v for v in bm.verts if v.link_faces]
+    kd = KDTree(len(vlist))
+    for k, v in enumerate(vlist):
+        kd.insert(v.co, k)
+    kd.balance()
+    nodes, welds = {}, []
+
+    def node(c):
+        key = (round(c[0], 6), round(c[1], 6))
+        if key in nodes:
+            return nodes[key]
+        p = [0.0, 0.0, c[1]]
+        p[wall['ax']] = wall['plane']
+        p[wall['s_ax']] = wall['s0'] + c[0] * wall['s_sign']
+        hits = sorted((d, k) for _, k, d in kd.find_range(p, WELD_M))
+        if hits:
+            v = vlist[hits[0][1]]
+            welds.append(hits[0][0])
+        else:
+            on_border = c[0] in (cols[0], cols[-1]) or c[1] in (rows[0], rows[-1])
+            if on_border and kd.find_range(p, 5e-3):
+                raise ValueError(f'{where}: border node {c} has a kept vertex 2-5 mm away (would be xView overlap)')
+            v = bm.verts.new(p)
+        nodes[key] = v
+        return v
+    for ring, uvs in cells:
+        vs = [node(c) for c in ring]
+        f = bm.faces.new(vs)
+        f.normal_update()
+        if sum(f.normal[k] * wall['normal'][k] for k in range(3)) < 0:
+            f.normal_flip()
+        for loop in f.loops:
+            loop[uvl].uv = uvs[vs.index(loop.vert)]
+        tile = face_tile([tuple(lp[uvl].uv) for lp in f.loops])
+        if tile not in finish_of_tile:
+            raise ValueError(f'{where}: UDIM {tile} has no finish in the master')
+        f[fl] = finish_of_tile[tile]
+        f.material_index = 0
+        f.smooth = False
+    loose = [v for v in bm.verts if not v.link_faces]
+    bmesh.ops.delete(bm, geom=loose, context='VERTS')
+    rep.update(welded_border_vertices=len(welds), weld_max_m=max(welds, default=0.0))
+    return rep
 
 
 def main(master, r1, out_dir):
@@ -285,7 +393,6 @@ def main(master, r1, out_dir):
     o = bpy.data.objects['SM_Kpp_1_Main']
     if not all(abs(o.matrix_world[i][j] - (i == j)) < 1e-6 for i in range(4) for j in range(4)):
         raise ValueError('SM_Kpp_1_Main has a non-identity transform (> 1e-6; v003 carries 1.6e-7 FBX round-off, about 2 um at 15 m)')
-    names = o.get('finish_names', '').split(',')
     posts_r1 = r1_post_tris(r1, CORNERS)
     bm = bmesh.new()
     bm.from_mesh(o.data)
@@ -293,7 +400,7 @@ def main(master, r1, out_dir):
     fl = bm.faces.layers.int['finish']
     finish_of_tile = {}
     for f in bm.faces:
-        t = face_tile([tuple(l[uvl].uv) for l in f.loops])
+        t = face_tile([tuple(lp[uvl].uv) for lp in f.loops])
         if finish_of_tile.setdefault(t, f[fl]) != f[fl]:
             raise ValueError(f'UDIM {t} carries two finishes')
     rep = {'version': VERSION, 'issue': 1609, 'blender': bpy.app.version_string,
@@ -312,149 +419,29 @@ def main(master, r1, out_dir):
                                     [round(max(v.co[k] for f in dead for v in f.verts), 4) for k in range(3)] if dead else None
         bmesh.ops.delete(bm, geom=dead, context='FACES')
         pplan = plan_posts(corner, posts_r1[name])
-        # 3. wall strips (planned on the body first, so the posts added later are not wall faces)
-        strips = []
+        # 3. body walls: conforming rectangles (corner_plan.conform_rect), one wall after the other, band by band
         for wname, ax, plane, normal, s_ax, s_sign in walls(corner):
             s0 = corner['yc'] if s_ax == 1 else corner['xc']
-
-            def s_of(v, s_ax=s_ax, s_sign=s_sign, s0=s0):
-                s_ = (v.co[s_ax] - s0) * s_sign
-                return (0.0 if abs(s_) <= PLANE_M else s_, v.co.z)   # the r1 0.4 mm corner offset is the corner
-            cand = []
-            for f in bm.faces:
-                if sum(f.normal[k] * normal[k] for k in range(3)) < 0.9999:
-                    continue
-                if any(abs(v.co[ax] - plane) > PLANE_M for v in f.verts):
-                    continue
-                pts = [s_of(v) for v in f.verts]
-                if min(p[0] for p in pts) < -2e-5 or min(p[0] for p in pts) > STRIP_S[1] + 0.5:
-                    continue
-                cand.append((f, pts))
-            # the posts' hidden contact quads on this wall: the union of v003 deleted the wall under them
-            virtual, skipped_contact = [], []
-            for corners_, n in pplan['contact']:
+            wall = {'name': wname, 'ax': ax, 'plane': plane, 'normal': normal, 's_ax': s_ax, 's_sign': s_sign, 's0': s0}
+            dontcare = []
+            for corners_, n in pplan['contact']:      # the posts' hidden contact: the wall there needs no face
                 if abs(n[ax]) == 1 and all(abs(c[ax] - plane) <= PLANE_M for c in corners_):
-                    pts = []
-                    for c in corners_:
-                        s_ = (c[s_ax] - s0) * s_sign
-                        pts.append((0.0 if abs(s_) <= PLANE_M else s_, c[2]))
-                    s_lo, s_hi = min(p[0] for p in pts), max(p[0] for p in pts)
-                    z_lo, z_hi = min(p[1] for p in pts), max(p[1] for p in pts)
-                    near = [q for _, q in cand if cp.clip_area(q, s_lo, s_hi, z_lo, z_hi) > 0]
-                    cuts = sorted({z_lo, z_hi} | {p[1] for q in near for p in q if z_lo < p[1] < z_hi})
-                    for za, zb in zip(cuts, cuts[1:]):       # only where the v003 union left no wall face
-                        covered = sum(cp.clip_area(q, s_lo, s_hi, za, zb) for q in near)
-                        if covered <= 1e-10:
-                            virtual.append([(s_lo, za), (s_hi, za), (s_hi, zb), (s_lo, zb)])
-                        elif abs(covered - (s_hi - s_lo) * (zb - za)) > 1e-8:
-                            skipped_contact.append([round(v, 4) for v in (s_lo, s_hi, za, zb)])
-            polys = [pts for _, pts in cand] + virtual
-            crep.setdefault('contact_fill', {})[wname] = {
-                'virtual': [[round(v, 4) for v in (q[0][0], q[1][0], q[0][1], q[2][1])] for q in virtual],
-                'partly_covered': skipped_contact}
-            rects = []
-            free = [STRIP_Z]
-            while free:
-                lo, hi = free.pop()
+                    pts = [s_z(wall, c) for c in corners_]
+                    dontcare.append((min(p[0] for p in pts), max(p[0] for p in pts),
+                                     min(p[1] for p in pts), max(p[1] for p in pts)))
+            for _ in range(MAX_RECTS):
+                data = collect(bm, wall, uvl)
                 try:
-                    r = cp.wall_strip([(pts, None) for pts in polys], *STRIP_S, z_min=lo, z_max=hi)
-                except ValueError:
-                    continue                     # no clean rectangle of whole faces in this band: left as v003
-                rects.append(r)
-                for a, b in ((lo, r['z0']), (r['z1'], hi)):
-                    if b - a >= MIN_BAND_M:
-                        free.append((a, b))
-            if not rects:
-                raise ValueError(f'{name}/{wname}: no clean wall rectangle at the corner')
-            for r in sorted(rects, key=lambda r: r['z0']):
-                inside = [cand[k] for k in r['faces'] if k < len(cand)]   # virtual contact quads have no face
-                s_lines, z_lines, slanted = seam_lines([f for f, _ in inside], s_of, uvl)
-                strips.append({'wall': wname, 'ax': ax, 'plane': plane, 'normal': normal, 's_ax': s_ax, 's_sign': s_sign,
-                               's0': s0, 'plan': {'S': r['S'], 'z0': r['z0'], 'z1': r['z1']}, 'inside': inside,
-                               's_lines': s_lines, 'z_lines': z_lines, 'slanted': slanted})
-        borders = {z for st in strips for z in (st['plan']['z0'], st['plan']['z1'])}
-        shared = {}
-        for st in strips:
-            plan = st['plan']
-            cols = cp.grid_lines(0.0, plan['S'], st['s_lines'], STEP_M, MIN_GAP_M)
-            # the seams of this rectangle, then the other rectangles' borders (corner edge shared) where no sliver
-            req = set(st['z_lines'])
-            for z in sorted(borders):
-                if all(abs(z - q) >= MIN_GAP_M for q in req | {plan['z0'], plan['z1']}):
-                    req.add(z)
-            rows = cp.grid_lines(plan['z0'], plan['z1'], req, STEP_M, MIN_GAP_M)
-            srcs = [(f, pts, [tuple(l[uvl].uv) for l in f.loops]) for f, pts in st['inside']]
-            maps = {}
-            cells = []
-            for i in range(len(cols) - 1):
-                for j in range(len(rows) - 1):
-                    c = ((cols[i] + cols[i + 1]) / 2, (rows[j] + rows[j + 1]) / 2)
-                    src = next((k for k, (_, pts, _) in enumerate(srcs) if point_in_poly(c, pts, 1e-7)), None)
-                    if src is None:
-                        raise ValueError(f'{name}/{st["wall"]}: cell {c} lies on no deleted wall face')
-                    if src not in maps:
-                        maps[src] = cp.affine_uv(srcs[src][1], srcs[src][2], UV_AFFINE_TOL)
-                    cells.append((i, j, src))
-            bmesh.ops.delete(bm, geom=[f for f, _ in st['inside']], context='FACES')
-            bm.verts.ensure_lookup_table()
-            vlist = [v for v in bm.verts if v.link_faces]
-            kd = KDTree(len(vlist))
-            for k, v in enumerate(vlist):
-                kd.insert(v.co, k)
-            kd.balance()
-            welds = []
-            grid = {}
-
-            def vert(i, j, st=st, cols=cols, rows=rows, kd=kd, grid=grid, welds=welds, vlist=vlist):
-                if (i, j) in grid:
-                    return grid[(i, j)]
-                p = [0.0, 0.0, rows[j]]
-                p[st['ax']] = st['plane']
-                p[st['s_ax']] = st['s0'] + cols[i] * st['s_sign']
-                key = tuple(round(v, 6) for v in p)
-                if key in shared:
-                    grid[(i, j)] = shared[key]
-                    return shared[key]
-                border = i in (0, len(cols) - 1) or j in (0, len(rows) - 1)
-                v = None
-                if border:
-                    hits = sorted((d, k) for _, k, d in kd.find_range(p, WELD_M))
-                    if hits:
-                        v = vlist[hits[0][1]]
-                        welds.append(round(hits[0][0], 6))
-                if v is None:
-                    v = bm.verts.new(p)
-                grid[(i, j)] = v
-                if i == 0:
-                    shared[key] = v
-                return v
-            new = []
-            for i, j, src in cells:
-                ring = [(i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1)]
-                vs = [vert(*r) for r in ring]
-                st_pts = [(cols[a], rows[b]) for a, b in ring]
-                # orient to the wall normal
-                f = bm.faces.new(vs)
-                f.normal_update()
-                if sum(f.normal[k] * st['normal'][k] for k in range(3)) < 0:
-                    f.normal_flip()
-                for loop in f.loops:
-                    k = vs.index(loop.vert)
-                    loop[uvl].uv = maps[src](*st_pts[k])
-                uvs = [tuple(l[uvl].uv) for l in f.loops]
-                tile = face_tile(uvs)
-                if tile not in finish_of_tile:
-                    raise ValueError(f'{name}/{st["wall"]}: UDIM {tile} has no finish')
-                f[fl] = finish_of_tile[tile]
-                f.material_index = 0
-                f.smooth = False
-                new.append(f)
-            crep.setdefault('wall_rectangles', []).append({
-                                'wall': st['wall'], 'S': plan['S'], 'z0': plan['z0'], 'z1': plan['z1'],
-                                'faces_deleted': len(st['inside']),
-                                'cols': [round(c, 4) for c in cols], 'rows': [round(r, 4) for r in rows],
-                                'faces_new': len(new), 'welded_border_vertices': len(welds), 'slanted_uv_seams': st['slanted'],
-                                'weld_max_m': max(welds, default=0.0)})
+                    r = cp.conform_rect(data['faces'], data['items'], data['edges'], *S_RANGE, *Z_RANGE,
+                                        dontcare=dontcare, seams=data['seams'], min_gap=MIN_GAP, weight=data['weight'])
+                except ValueError as exc:
+                    crep.setdefault('left_as_v003', {})[wname] = {
+                        'irregular_faces': sum(1 for w in data['weight'].values() if w > 0), 'why': str(exc)}
+                    break
+                crep.setdefault('wall_rectangles', []).append(build_rect(bm, wall, r, data, uvl, fl, finish_of_tile,
+                                                                         f'{name}/{wname}'))
+            else:
+                raise ValueError(f'{name}/{wname}: more than {MAX_RECTS} rectangles')
         # 2. posts back, a separate unwelded element
         made, info = build_posts(bm, pplan, finish_of_tile, uvl, fl)
         crep['posts'] = info
@@ -462,7 +449,6 @@ def main(master, r1, out_dir):
     bmesh.ops.delete(bm, geom=loose, context='VERTS')
     bm.normal_update()
     degrees = {}
-    worst = 0.0
     for f in bm.faces:
         degrees[len(f.verts)] = degrees.get(len(f.verts), 0) + 1
     rep['faces_after'] = len(bm.faces)
