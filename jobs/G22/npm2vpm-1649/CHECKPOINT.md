@@ -6,7 +6,7 @@ route still refuses unresolved colour region boundaries. The colour clipping
 and metric seam functions are planning primitives, not a native adapter or a
 delivery certificate.
 
-[D354]: the exact 460 source triangles use one solid placeholder with their
+[D355]: the exact 460 source triangles use one solid placeholder with their
 mean source Diffuse colour. Do not rebuild their UV, rebake, or apply the texel
 band to these triangles. This does not exempt any neighbouring triangle. Use
 Blender only for any production continuation. The two zero-world-area source
@@ -30,8 +30,10 @@ Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v002-colo
 The folder contains three atlas sheets, a tolerance matrix and exact original
 polygon IDs with input SHA-256 bindings. The sheets use RGB8 max-channel
 comparison (`distance < 18`); lower runs at `<6` and `<12` are retained.
+The sealed diagnostic sheets retain the pre-publication decision label;
+[D355] is the final registry ID for that same approval.
 
-| Mesh | Source after approved zero-area drops | D354 | Residual at <18 | Faces cut in UV at <18 |
+| Mesh | Source after approved zero-area drops | Placeholder | Residual at <18 | Faces cut in UV at <18 |
 |---|---:|---:|---:|---:|
 | 001 | 148186 | 293 | 13135 | 5322 |
 | 002 | 73304 | 167 | 10610 | 550 |
