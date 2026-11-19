@@ -6,6 +6,8 @@
   },
   "hooks": [
     {"stage": "body", "point": "after", "script": "hooks/build_body.py"},
-    {"stage": "readback", "point": "after", "script": "hooks/check_corners.py"}
+    {"stage": "body", "point": "after", "script": "hooks/stage2_63c.py"},
+    {"stage": "readback", "point": "after", "script": "hooks/check_corners.py"},
+    {"stage": "readback", "point": "after", "script": "hooks/stage2_views.py"}
   ]
 }
