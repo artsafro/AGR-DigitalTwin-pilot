@@ -145,11 +145,11 @@ def test_wrapper_chain_has_real_owner_and_loader_not_just_a_path_mention(tmp_pat
 _LOADER_OWNER = 'adapters/max/agr_tools/geom_core.py'
 
 
-def _loader_is_owner_wrapper(tmp_path, body):
+def _loader_is_owner_wrapper(tmp_path, body, *, before='', after=''):
     (tmp_path / 'probe.py').write_text(
-        f'import importlib.util\nGC = {_LOADER_OWNER!r}\ndef other():\n'
+        f'import importlib.util\nGC = {_LOADER_OWNER!r}\n{before}\ndef other():\n'
         + ''.join(f'    {line}\n' for line in body.splitlines())
-        + 'def copy():\n    return other().degrees([])\n', encoding='utf-8')
+        + f'{after}\ndef copy():\n    return other().degrees([])\n', encoding='utf-8')
     row = guard.Row('m', 'c', _LOADER_OWNER, 'probe.py::copy', 'probe.py', 'copy', None,
                     'wrapper', None, '', '#1486', '', '', 'test')
     return guard.calls_owner(tmp_path, row)
@@ -194,6 +194,38 @@ def test_loader_owner_provenance(tmp_path, location, module_source, executing_sp
 ])
 def test_incomplete_owner_loader(tmp_path, body):
     assert not _loader_is_owner_wrapper(tmp_path, body)
+
+
+@pytest.mark.parametrize('binding', [
+    pytest.param("if True: GC = 'other.py'", id='if'),
+    pytest.param("GC: str = 'other.py'", id='annotated'),
+    pytest.param("GC += '.bak'", id='augmented'),
+    pytest.param('from cfg import GC', id='import'),
+    pytest.param("for GC in ['other.py']: pass", id='loop'),
+    pytest.param("GC, X = 'other.py', 1", id='unpack'),
+    pytest.param("def setp():\n    global GC\n    GC = 'other.py'", id='global'),
+    pytest.param('def GC(): pass', id='function'),
+    pytest.param('class GC: pass', id='class'),
+    pytest.param('del GC', id='delete'),
+    pytest.param('import cfg as GC', id='import-alias'),
+    pytest.param('from cfg import *', id='star-import'),
+    pytest.param('try: raise ValueError\nexcept ValueError as GC: pass', id='except'),
+    pytest.param("match 'other.py':\n    case GC: pass", id='match'),
+    pytest.param("X = (GC := 'other.py')", id='named-expr'),
+])
+@pytest.mark.parametrize('position', ['before', 'after'])
+def test_module_path_rebinding(tmp_path, binding, position):
+    assert not _loader_is_owner_wrapper(tmp_path, _LOAD_OWNER, **{position: binding})
+
+
+def test_module_path_stale_alias(tmp_path):
+    assert not _loader_is_owner_wrapper(
+        tmp_path, _LOAD_OWNER.replace('GC', 'ALIAS'), before="GC += '.bak'\nALIAS = GC")
+
+
+@pytest.mark.parametrize('binding', ['', "if True: OTHER = 'other.py'", f'del GC\nGC = {_LOADER_OWNER!r}'])
+def test_module_path_binding_controls(tmp_path, binding):
+    assert _loader_is_owner_wrapper(tmp_path, _LOAD_OWNER, before=binding)
 
 
 def test_loader_classification_resets(tmp_path):
