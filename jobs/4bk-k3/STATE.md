@@ -1,6 +1,6 @@
 Current run: `vpm-v001` — A and B at about 80%; no delivery sign-off.
 Source: `sources.json`; Revit view `K3_stylobate_v001` (see `TASK.md`).
-Next gate: Await address, rotation and typical canopy model before final VPM readback and packaging (`job.yaml`).
+Next gate: Resolve the `inbox/3k.max` source mismatch and recover Gate 1 approval evidence in `job.yaml`; final VPM still awaits address, rotation and the typical canopy model.
 
 # 4bk-k3 — state (2026-11-15)
 

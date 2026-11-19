@@ -5,7 +5,7 @@ synthetic: false
 path: standard
 inputs: &inputs
 - path: jobs/4bk-k3/sources.json
-  sha256: 161c18f566dd4ebc2b6e938bf5afd84c2c647068f1663e91219dcce357a708f7
+  sha256: 7ee113b4fb116ce84837b3cbb852ac75227e15c91417ae255a213cbe34a2f2f3
   manifest: external-inputs/1
 - path: jobs/4bk-k3/passport.json
   sha256: cbf28002d91ecd0109507a8d9386eb6b7e6dd8d52a550b0e70da5a77f34fe5d9
@@ -14,12 +14,13 @@ deviations: []
 gates:
   inputs:
     status: review
-    note: "14 inbox files hashed (sources.json); Revit FBX feet -> 3k.max metres, level 0 = floor-1 slab top, Artem's level helpers read (TASK.md). Open: address, stem, GeoJSON point (Artem later)."
+    note: "14 inbox files recorded in sources.json; Revit FBX feet -> 3k.max metres, level 0 = floor-1 slab top, Artem's level helpers read (TASK.md). The current inbox/3k.max does not match the recorded digest; recover the pinned revision or confirm the replacement source before resuming production. Address, stem and GeoJSON point remain open."
     waits: user
     evidence: *inputs
   parts:
-    status: pass
-    note: "PartsList v001 confirmed: gate1 Artem 2026-11-12 in the session (materials by the architect's TZ images; AC one-sided at the end), 19 parts, VPM sum 144 660 of 150 000 [D161]."
+    status: review
+    waits: user
+    note: "TASK.md records Artem's 2026-11-12 confirmation of PartsList v001 (19 parts, VPM sum 144 660 of 150 000 [D161]). The legacy record lacks a validator-supported answer reference and approval digest (#1309); do not treat it as a machine-verifiable Gate 1 pass."
     evidence:
     - path: jobs/4bk-k3/parts/k3_parts_v001.json
       sha256: d681151ccbe77cc76095a00a802535188f064ba0bc43f893871bc2805fd58b20
