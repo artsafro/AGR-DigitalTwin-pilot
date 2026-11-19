@@ -7,8 +7,10 @@ description: 'Final check of a deliverable (NPM/VPM package, exported model, Unr
 
 Validate the **delivered files**, not the working scene: re-read the exported result
 (from the ZIP when there is one) in a clean scene/process and check that.
-Run the machine checks: `py -3 tools/qa/validate_package.py <zip|fbx|geojson> --json`
-(stages V001-V017; exit 0 passed, 1 fail, 2 review/not_run left). Stages it reports
+Run the machine checks: `py -3 tools/qa/validate_package.py <zip|geojson> --json`.
+For single-FBX readback, select the delivery profile explicitly:
+`agr validate <model.fbx> --scene --profile <npm|vpm> --json` (choose `npm` or `vpm`).
+Stages V001-V017: exit 0 passed, 1 fail, 2 review/not_run left. Stages it reports
 `not_run` need the FBX scene (tools/blender readback) or manual review — never count them as pass.
 
 ## Version diff before showing or packing (#1536)
