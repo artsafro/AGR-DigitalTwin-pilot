@@ -9,10 +9,14 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
+import numpy as np
+from PIL import Image
+from shapely import STRtree, constrained_delaunay_triangles
 from shapely.geometry import Polygon, box
+from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
 
-from tools.library.maf_atlas_cells import segment
+from tools.library.maf_atlas_cells import colour_regions, segment
 
 
 def recover(atlas_file, face_uvs, *, tolerance_px=.5, segmentation=None):
@@ -90,3 +94,107 @@ def recover(atlas_file, face_uvs, *, tolerance_px=.5, segmentation=None):
             'mat_ids': assigned, 'straddling': straddling, 'unassigned': unassigned,
             'ambiguous': ambiguous, 'non_rectangular_regions': manual,
             'empty_cells': [r['id'] for r in table if not r['face_count']], 'tolerance_px': tolerance_px}
+
+
+def _palette_shapes(rgb, bounds, tolerance):
+    labels, swatches = colour_regions(rgb, bounds, tolerance=tolerance)
+    x0, y0, _, _ = bounds
+    for index, colour in enumerate(swatches, 1):
+        mask = labels == index
+        runs = []
+        for y, row in enumerate(mask, y0):
+            spans = np.flatnonzero(np.diff(np.r_[False, row, False]))
+            runs.extend(box(x0 + lo, y, x0 + hi, y + 1) for lo, hi in spans.reshape(-1, 2))
+        for shape in _polygons(unary_union(runs)):
+            yield shape, colour
+
+
+def _polygons(shape):
+    if shape.is_empty:
+        return
+    if shape.geom_type == 'Polygon':
+        yield shape
+    elif hasattr(shape, 'geoms'):
+        for child in shape.geoms:
+            yield from _polygons(child)
+
+
+def recover_regions(atlas_file, face_uvs, *, colour_tolerance=6, segmentation=None):
+    """Return source-indexed UV triangle pieces or exact unresolved face indices.
+
+    The facade segmenter retains its source UV evidence: supported cell-border
+    crossers now get clipped, never centroid-assigned. Palette regions inside a
+    mixed leaf may be nonrectangular or have holes. A partial intersection is
+    not published when the unclassified remainder covers positive source area.
+    """
+    if type(colour_tolerance) is not int or not 0 < colour_tolerance < 128:
+        raise ValueError('invalid RGB8 colour tolerance')
+    if not isinstance(face_uvs, list) or not face_uvs:
+        raise ValueError('no UV faces')
+    with Image.open(atlas_file) as image:
+        w, h = image.size
+        rgb = np.asarray(image.convert('RGB'))
+    faces = []
+    for i, uv in enumerate(face_uvs):
+        if not isinstance(uv, (list, tuple)) or len(uv) != 3 or any(
+            not isinstance(p, (list, tuple)) or len(p) != 2 or any(
+                type(v) not in (int, float) or not math.isfinite(v) for v in p) for p in uv
+        ):
+            raise ValueError(f'face {i}: expected three finite UV pairs')
+        poly = Polygon([(u * w, (1 - v) * h) for u, v in uv])
+        if not poly.is_valid or poly.area <= 0:
+            raise ValueError(f'face {i}: invalid UV triangle')
+        faces.append(poly)
+    opts = dict(segmentation or {})
+    if {'profile', 'uv_bounds_px'} & opts.keys():
+        raise ValueError('regions require internally measured facade UV bounds')
+    atlas = segment(str(atlas_file), profile='facade', uv_bounds_px=[p.bounds for p in faces], **opts)
+    return _clip_regions(rgb, faces, atlas, colour_tolerance)
+
+
+def _clip_regions(rgb, faces, atlas, colour_tolerance):
+    """Internal seam also used to replay hash-bound segmenter evidence offline."""
+    w, h = atlas['size']
+    shapes, table, cells = [], [], []
+    for cell_id, cell in enumerate(atlas['cells'], 1):
+        x, y, cw, ch = (cell[k] for k in ('x', 'y', 'w', 'h'))
+        bounds = [x, y, x + cw, y + ch]
+        mixed = cell['kind'] == 'mixed'
+        regions = (_palette_shapes(rgb, bounds, colour_tolerance) if mixed
+                   else [(box(*bounds), cell['color'])])
+        covered = 0.
+        for shape, colour in regions:
+            shapes.append(shape)
+            table.append({'id': len(shapes), 'cell': cell_id, 'kind': 'solid' if mixed else cell['kind'],
+                          'color': colour, 'bounds_px': list(shape.bounds), 'face_count': 0})
+            covered += shape.area
+        cells.append({'cell': cell_id, 'bounds_px': bounds, 'kind': cell['kind'],
+                      'unclassified_px2': cw * ch - covered})
+    tree = STRtree(shapes)
+    pieces, residual = [], []
+    for i, face in enumerate(faces):
+        overlaps = []
+        for j in sorted(tree.query(face, predicate='intersects')):
+            shape = shapes[j]
+            if shape.covers(face):
+                overlaps = [(j, face)]
+                break
+            overlaps.extend((j, p) for p in _polygons(shape.intersection(face)) if p.area > 0)
+        # GEOS overlay roundoff only, relative to the individual source face.
+        if not overlaps or abs(math.fsum(p.area for _, p in overlaps) - face.area) > face.area * 1e-8:
+            pieces.append([])
+            residual.append(i)
+            continue
+        result = []
+        for j, part in overlaps:
+            triangles = ([part] if len(part.exterior.coords) == 4 and not part.interiors
+                         else constrained_delaunay_triangles(part).geoms)
+            if not triangles or abs(math.fsum(t.area for t in triangles) - part.area) > part.area * 1e-8:
+                raise ValueError(f'face {i}: triangulation did not cover colour region {j + 1}')
+            table[j]['face_count'] += 1
+            for tri in triangles:
+                ring = orient(tri, sign=1 if face.exterior.is_ccw else -1).exterior.coords
+                result.append({'id': int(j + 1), 'uv': [[x / w, 1 - y / h] for x, y in list(ring)[:-1]]})
+        pieces.append(result)
+    return {'status': 'manual_required' if residual else 'ok', 'pieces': pieces, 'residual': residual,
+            'table': table, 'cells': cells, 'atlas_size_px': [w, h], 'colour_tolerance': colour_tolerance}

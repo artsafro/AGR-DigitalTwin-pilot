@@ -751,6 +751,109 @@ def udim_fit_gate(mesh, atlas_wh, target_px_m=512):
             'findings': planned['findings'], 'tile_px': 4096}
 
 
+def _metric_clip(poly, axis, at, keep_lower):
+    """Clip (XYZ, chart UV) pairs with one affine interpolation per edge."""
+    out = []
+    for a, b in zip(poly[-1:] + poly[:-1], poly):
+        av, bv = a[1][axis], b[1][axis]
+        if min(av, bv) < at < max(av, bv):
+            t = (at - av) / (bv - av)
+            xyz = tuple(x + t * (y - x) for x, y in zip(a[0], b[0]))
+            uv = tuple(at if i == axis else x + t * (y - x)
+                       for i, (x, y) in enumerate(zip(a[1], b[1])))
+            out.append((xyz, uv))
+        if (bv <= at) if keep_lower else (bv >= at):
+            out.append(b)
+    return out
+
+
+def fit_metric_region(region_id, xyz, charts, *, preferred_seams=(), density=512, piece_budget=100):
+    """Partition one material region in metric chart coordinates, without moving its surface.
+
+    `charts` are new, planar isometric UVs in metres, not inherited NPM UVs.
+    Output UVs are tile-local; the caller allocates one distinct dense tile/ID
+    per piece. A preferred seam is a source-identified constant chart U or V
+    line in metres. A budget or unmeasurable chart fails without partial output.
+    """
+    def finite(x):
+        return type(x) in (int, float) and math.isfinite(x)
+
+    if type(region_id) is not int or region_id <= 0:
+        raise ValueError('unmapped region ID: {}'.format(region_id))
+    if not finite(density) or not 512 <= density <= 1706:
+        raise ValueError('invalid px/m density')
+    if type(piece_budget) is not int or not 1 <= piece_budget <= 100:
+        raise ValueError('invalid tile budget')
+    if not xyz or len(xyz) != len(charts):
+        raise ValueError('empty/partial chart arrays')
+    preferred_seams = tuple(preferred_seams)
+    for axis, at in preferred_seams:
+        if type(axis) is not int or axis not in (0, 1) or not finite(at):
+            raise ValueError('invalid panel/zone seam')
+    records = []
+    for i, (coords, chart) in enumerate(zip(xyz, charts)):
+        if any(len(arr) != 3 or any(len(p) != dim or not all(map(finite, p)) for p in arr)
+               for arr, dim in ((coords, 3), (chart, 2))):
+            raise ValueError('ID {} triangle {}: invalid chart arrays'.format(region_id, i))
+        xy = [[x - y for x, y in zip(chart[b], chart[a])] for a, b in ((0, 1), (0, 2), (1, 2))]
+        twice_uv = xy[0][0] * xy[1][1] - xy[0][1] * xy[1][0]
+        cross = _cross(_sub(coords[1], coords[0]), _sub(coords[2], coords[0]))
+        twice_world = math.hypot(*cross)
+        if not math.isfinite(twice_uv) or not math.isfinite(twice_world) or min(twice_uv, twice_world) <= 0:
+            raise ValueError('ID {} triangle {}: degenerate or mirrored chart'.format(region_id, i))
+        if not math.isclose(twice_uv, twice_world, rel_tol=1e-8):
+            raise ValueError('ID {} triangle {}: chart area metric differs from world'.format(region_id, i))
+        for (a, b), d in zip(((0, 1), (0, 2), (1, 2)), xy):
+            l3 = math.dist(coords[a], coords[b])
+            if not math.isfinite(l3) or not l3 or not math.isclose(math.hypot(*d), l3, rel_tol=1e-8):
+                raise ValueError('ID {} triangle {}: chart metric differs from world'.format(region_id, i))
+        records.append((i, list(zip(coords, chart))))
+    span = (4096 - 2 * 32) / density
+    cuts, pieces = [], []
+    stack = [records]
+    piece_count = 0
+    while stack:
+        group = stack.pop()
+        uv = [uv for _, ring in group for _, uv in ring]
+        lo = [min(p[k] for p in uv) for k in (0, 1)]
+        hi = [max(p[k] for p in uv) for k in (0, 1)]
+        lengths = [b - a for a, b in zip(lo, hi)]
+        axis = max(range(2), key=lengths.__getitem__)
+        if not all(math.isfinite(v) for v in lengths):
+            raise ValueError('chart extent overflow')
+        if lengths[axis] < span:
+            piece_count += 1
+            for src, ring in group:
+                for j in range(1, len(ring) - 1):
+                    triangle = [ring[0], ring[j], ring[j + 1]]
+                    pieces.append({'piece': piece_count, 'source_triangle': src,
+                                   'xyz': [list(p) for p, _ in triangle],
+                                   'uv': [[((p[k] - lo[k]) * density + 32) / 4096 for k in (0, 1)]
+                                          for _, p in triangle]})
+            continue
+        if piece_count + len(stack) + 2 > piece_budget:
+            return {'status': 'blocked', 'id': region_id, 'reason': 'tile_budget',
+                    'source_triangles': list(range(len(xyz))), 'cuts': [], 'pieces': []}
+        mid = lo[axis] + lengths[axis] / 2
+        preferred = [at for ax, at in preferred_seams if ax == axis and lo[axis] < at < hi[axis]]
+        at = min(preferred, key=lambda pos: (abs(pos - mid), pos)) if preferred else mid
+        if not lo[axis] < at < hi[axis]:
+            raise ValueError('unrepresentable seam in metric chart')
+        sides = [[], []]
+        for i, ring in group:
+            for side in range(2):
+                poly = _metric_clip(ring, axis, at, side == 0)
+                if len(poly) >= 3:
+                    sides[side].append((i, poly))
+        if not all(sides):
+            raise ValueError('seam did not partition metric chart')
+        cuts.append({'id': region_id, 'axis': axis, 'at_m': at,
+                     'kind': 'panel_or_zone' if preferred else 'straight_midpoint',
+                     'source_triangles': sorted({i for i, _ in sides[0]} & {i for i, _ in sides[1]})})
+        stack.extend(reversed(sides))
+    return {'status': 'ok', 'id': region_id, 'piece_count': piece_count, 'pieces': pieces, 'cuts': cuts}
+
+
 def blocking(findings):
     return [f for f in findings if f[0] in BLOCKING]
 
