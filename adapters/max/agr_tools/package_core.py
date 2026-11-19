@@ -163,39 +163,50 @@ def zip_passport(path):
         return None, 'unreadable GeoJSON: {}'.format(exc)
 
 
-def cross_passports(paths):
+def cross_passports(paths, *, unpaired=None):
     """{zip basename: [(code, detail)]}: OKS `SM_<a>.zip` vs Ground `SM_<a>_Ground.zip` on CROSS_KEYS.
 
-    Only pairs present in `paths` are compared; an unreadable passport is a `geojson_cross_unread` finding."""
+    A compared clean pair has no findings; a mismatch (`geojson_cross`) or unreadable passport
+    (`geojson_cross_unread`) is a finding on both archives. Eligible names without a partner are not
+    compared and are appended to `unpaired` when supplied (reported as `cross_unpaired` by qa_package)."""
     by_name = {os.path.basename(p): p for p in paths}
     out = {}
+    paired = set()
     for name, p in sorted(by_name.items()):
         m = re.match(r'^(SM_' + ADDRESS + r')_Ground\.zip$', name)
         if not m or m.group(1) + '.zip' not in by_name:
             continue
         oks_name = m.group(1) + '.zip'
+        paired.update((oks_name, name))
         oks, why_o = zip_passport(by_name[oks_name])
         ground, why_g = zip_passport(p)
         if oks is None or ground is None:
-            for n, why in ((oks_name, why_o), (name, why_g)):
+            for failed, why in ((oks_name, why_o), (name, why_g)):
                 if why:
-                    out.setdefault(n, []).append(('geojson_cross_unread', 'OKS/Ground passports not compared: ' + why))
+                    detail = 'OKS/Ground passports not compared: {}: {}'.format(failed, why)
+                    for n in (oks_name, name):
+                        out.setdefault(n, []).append(('geojson_cross_unread', detail))
             continue
         diff = [k for k in CROSS_KEYS if oks.get(k) != ground.get(k)]
         if diff:
             detail = '; '.join('{}: {!r} (OKS) != {!r} (Ground)'.format(k, oks.get(k), ground.get(k)) for k in diff)
             for n in (oks_name, name):
                 out.setdefault(n, []).append(('geojson_cross', detail[:900]))
+    if unpaired is not None:
+        unpaired.extend(n for n in sorted(by_name.keys() - paired) if re.fullmatch(r'SM_' + ADDRESS + r'\.zip', n))
     return out
 
 
 def _counterpart(path):
     """The other archive of an OKS/Ground pair beside a single checked ZIP (read for the cross check only)."""
     folder, name = os.path.split(os.path.abspath(path))
-    m = re.match(r'^(SM_' + ADDRESS + r')(_Ground)?\.zip$', name)
-    if not m:
+    ground = re.fullmatch(r'(SM_' + ADDRESS + r')_Ground\.zip', name)
+    if ground:
+        other = os.path.join(folder, ground.group(1) + '.zip')
+    elif re.fullmatch(r'SM_' + ADDRESS + r'\.zip', name):
+        other = os.path.join(folder, name[:-4] + '_Ground.zip')
+    else:
         return None
-    other = os.path.join(folder, m.group(1) + ('.zip' if m.group(2) else '_Ground.zip'))
     return other if os.path.isfile(other) else None
 
 
@@ -233,12 +244,16 @@ def cross_masters(paths):
 
 
 def qa_package(edit, path, runner, python, root, profile=None, scene=True, options=None):
-    """Read-only report: one object per checked file (handle = 1-based ordinal), findings = failed stages plus the
-    OKS <-> Ground passport cross check (`geojson_cross`) and the one-master check of the build manifests
-    (`manifest_cross_master`, #1423)."""
+    """Read-only report: one object per checked file (handle = 1-based ordinal).
+
+    For OKS/Ground passports, a compared clean pair has no cross finding; a mismatch or unreadable
+    passport adds a finding and makes the plan fail. No partner means not compared (`cross_unpaired`,
+    informational only). `cross_checked` lists the neighbour included for a single target, not proof
+    of a successful comparison. Failed validator stages and master mismatches (#1423) also add findings."""
     targets = qa_targets(path)
     pair = [p for p in (_counterpart(targets[0]),) if p] if len(targets) == 1 else []
-    cross = cross_passports(targets + pair)
+    unpaired = []
+    cross = cross_passports(targets + pair, unpaired=unpaired)
     for n, rows in cross_masters(targets + pair).items():
         cross.setdefault(n, []).extend(rows)
     tables, objects = [], []
@@ -248,10 +263,12 @@ def qa_package(edit, path, runner, python, root, profile=None, scene=True, optio
         more = [edit.finding(c, (), d) for c, d in cross.get(os.path.basename(t), [])]
         objects.append(edit.entry(i, os.path.basename(t), stage_findings(edit, table) + more))
     state = {'path': os.path.abspath(os.fspath(path)), 'files': _file_state(targets + pair)}
-    exit_code = 1 if any(cross.get(os.path.basename(t)) for t in targets) else worst_exit(tables)
+    target_names = [os.path.basename(t) for t in targets]
+    exit_code = 1 if any(cross.get(n) for n in target_names) else worst_exit(tables)
     extra = {'options': dict(options or {}), 'scene': bool(scene), 'exit_code': exit_code,
-             'reports': tables, 'cross_checked': sorted(os.path.basename(p) for p in pair)}
-    return edit.report('qa.package', 'preview', objects=objects, done=[os.path.basename(t) for t in targets],
+             'reports': tables, 'cross_checked': sorted(os.path.basename(p) for p in pair),
+             'cross_unpaired': sorted(set(unpaired).intersection(target_names))}
+    return edit.report('qa.package', 'preview', objects=objects, done=target_names,
                        state_hash=edit.fingerprint(state), extra=extra)
 
 
