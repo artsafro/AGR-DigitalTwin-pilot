@@ -20,8 +20,10 @@ import json
 import math
 import os
 import shutil
+import stat
 import sys
 import zipfile
+from contextlib import ExitStack
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -65,6 +67,18 @@ def load_object(path):
     if not isinstance(obj["name"], str) or not obj["name"].strip():
         raise ValueError(f"object {path}: empty name")
     return obj
+
+
+def _remove_owned_file(path):
+    path = Path(path)
+    try:
+        path.unlink(missing_ok=True)
+    except PermissionError:
+        # On Windows copystat can make a newly copied PNG read-only.
+        if os.name != 'nt' or path.stat().st_mode & stat.S_IWRITE:
+            raise
+        path.chmod(stat.S_IWRITE)
+        path.unlink(missing_ok=True)
 
 
 def main(argv=None):
@@ -116,51 +130,58 @@ def main(argv=None):
         raise ValueError('; '.join(problems))
     expected = {row['name']: row['zip_sha256'] for row in binding['members']}
 
-    for f in pngs:
-        source, target = os.path.join(tex, f), os.path.join(pkg, f)
-        with open(source, 'rb') as inp, open(target, 'xb') as out:
-            shutil.copyfileobj(inp, out)
-        shutil.copystat(source, target)
+    # Roll back only paths we own [D349]: register after exclusive creation, before writing bytes.
+    # package_core owns cleanup of its own ZIP and receipt .partial files.
+    with ExitStack() as rollback:
+        for f in pngs:
+            source, target = os.path.join(tex, f), os.path.join(pkg, f)
+            with open(source, 'rb') as inp, open(target, 'xb') as out:
+                rollback.callback(_remove_owned_file, target)
+                shutil.copyfileobj(inp, out)
+            shutil.copystat(source, target)
 
-    props = None
-    if not a.no_geojson:
+        props = None
+        if not a.no_geojson:
+            img = base64.b64encode(open(meta["thumbnail"], "rb").read()).decode("ascii")
+            props = {
+                "address": "", "okrug": "", "rajon": "",
+                "name": obj["name"],
+                "developer": "", "designer": "", "cadNum": "", "FNO_code": "", "FNO_name": "", "ZU_area": "",
+                **heights,
+                "s_obsh": "", "s_naz": "", "s_podz": "", "spp_gns": "", "act_AGR": "",
+                "imageBase64": img, "other": "",
+            }
+            glasses = obj.get("glasses") or default_glasses(A)
+            geo = {"type": "FeatureCollection", "features": [{
+                "type": "ObjectFeature", "properties": props,
+                "geometry": {"type": "Point", "coordinates": [None, None]},
+                "Glasses": [glasses]}]}  # list with one object keyed by glass material (reg p.51-52 example)
+            with open(gpath, "x", encoding="utf-8") as fh:
+                rollback.callback(_remove_owned_file, gpath)
+                json.dump(geo, fh, ensure_ascii=False, indent=2)
 
-        img = base64.b64encode(open(meta["thumbnail"], "rb").read()).decode("ascii")
-        props = {
-            "address": "", "okrug": "", "rajon": "",
-            "name": obj["name"],
-            "developer": "", "designer": "", "cadNum": "", "FNO_code": "", "FNO_name": "", "ZU_area": "",
-            **heights,
-            "s_obsh": "", "s_naz": "", "s_podz": "", "spp_gns": "", "act_AGR": "",
-            "imageBase64": img, "other": "",
-        }
-        glasses = obj.get("glasses") or default_glasses(A)
-        geo = {"type": "FeatureCollection", "features": [{
-            "type": "ObjectFeature", "properties": props,
-            "geometry": {"type": "Point", "coordinates": [None, None]},
-            "Glasses": [glasses]}]}  # list with one object keyed by glass material (reg p.51-52 example)
-        with open(gpath, "x", encoding="utf-8") as fh:
-            json.dump(geo, fh, ensure_ascii=False, indent=2)
+        written, _ = package_core._write_zip(pkg, archive, zpath, expected_sha256=expected)
+        if written is None:
+            raise ValueError(f'archive exceeds {archive["limit"]} bytes')
+        rollback.callback(_remove_owned_file, written)
 
-    written, size = package_core._write_zip(pkg, archive, zpath, expected_sha256=expected)
-    if written is None:
-        raise ValueError(f'archive exceeds {archive["limit"]} bytes')
-
-    blockers = ([k for k, v in props.items() if v == "" and k != "other"] + ["geometry.coordinates (MSK-77)"]
-                if props is not None else [a.deferred_note])
-    report = {"zip": os.path.abspath(zpath), "zip_bytes": os.path.getsize(zpath),
-              "files": members, "geojson_blockers_unknown_in_source": blockers,
-              "export_binding": binding, "passed": False, "status": "packaged_not_validated",
-              "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallicity)"],
-              "address_placeholder": A}
-    if props is not None:
-        report['placement'] = obj['placement'].model_dump(mode='json')
-        if obj['placement'].height_system == 'unknown':
-            blockers.append('placement.height_system unknown; absolute datum unconfirmed')
-    report.update(package_core.delivery_receipt(zpath))
-    package_core.write_delivery_report(zpath, report)
-    print(json.dumps({k: v for k, v in report.items() if k != "files"}, ensure_ascii=False, indent=1),
-          len(report["files"]), "files")
+        blockers = ([k for k, v in props.items() if v == "" and k != "other"] + ["geometry.coordinates (MSK-77)"]
+                    if props is not None else [a.deferred_note])
+        report = {"zip": os.path.abspath(zpath), "zip_bytes": os.path.getsize(zpath),
+                  "files": members, "geojson_blockers_unknown_in_source": blockers,
+                  "export_binding": binding, "passed": False, "status": "packaged_not_validated",
+                  "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallic)"],
+                  "address_placeholder": A}
+        if props is not None:
+            report['placement'] = obj['placement'].model_dump(mode='json')
+            if obj['placement'].height_system == 'unknown':
+                blockers.append('placement.height_system unknown; absolute datum unconfirmed')
+        report.update(package_core.delivery_receipt(zpath))
+        receipt = package_core.write_delivery_report(zpath, report)
+        rollback.callback(_remove_owned_file, receipt)
+        print(json.dumps({k: v for k, v in report.items() if k != "files"}, ensure_ascii=False, indent=1),
+              len(report["files"]), "files")
+        rollback.pop_all()
     return 0
 
 

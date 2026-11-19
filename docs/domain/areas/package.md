@@ -92,6 +92,12 @@ The output `target` names the checked copy. Missing and changed bytes both produ
 actual SHA-256. No package is repacked by recheck. Diagnostic `--allow-incomplete` remains
 ZIP + `ОШИБКА.txt`, exit 1; it is not delivery acceptance.
 
+## VPM working copy [D349]
+
+On failure, `agr package-vpm` removes only outputs created by that invocation, leaving the FBX,
+metadata and other existing files in the working copy untouched. Retry in the same folder after
+addressing the error; no temporary assembly folder is used.
+
 ## Delivered-file identity (#1645)
 
 The NPM/VPM packers (`agr package-npm` / `package-vpm`) write their report next to the archive as

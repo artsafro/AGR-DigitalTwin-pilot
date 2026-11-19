@@ -6,6 +6,7 @@ import base64
 import hashlib
 import json
 import os
+import stat
 import subprocess
 import sys
 import tempfile
@@ -390,6 +391,9 @@ def test_package_failure_restores_working_copy_and_allows_retry(tmp_path, monkey
     pkg = make_pkg(tmp_path / 'p')
     tex = make_tex(tmp_path / 'tex')
     obj = make_package_object(tmp_path / 'object.json')
+    if failure == 'size':
+        # copystat propagates the read-only attribute, which prevents unlink on Windows.
+        (tex / 'T_Nku_1_Diffuse_1.1001.png').chmod(stat.S_IREAD)
     unrelated = pkg / 'notes.txt'
     unrelated.write_bytes(b'pre-existing notes\r\n')
     before = snapshot(tmp_path)
