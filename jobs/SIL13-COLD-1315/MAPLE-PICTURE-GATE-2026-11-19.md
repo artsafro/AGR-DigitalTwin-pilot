@@ -1,6 +1,17 @@
 # Silikatny #1315 — VPM maple picture gate, 2026-11-19
 
-**Awaiting a separate picture answer. No new site replacement, rollback, or delivery.**
+**r2 rejected; new v029 appearance sheet awaiting a separate answer. No new site replacement, rollback, or delivery.**
+
+## New isolated pilot [D353]
+
+Artem rejected the r2 picture in [issue #1315 comment 7016928041](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7016928041). The one new 33F02A9 appearance option uses the original 222 trunk and major-branch triangles and small resampled leaf clusters from a locally colour-graded copy of the existing Royal Red map. The full-size comparison, from three fresh Blender 5.1.2 FBX imports, is `G:/Мой диск/AGR-evidence/1315-cold-silikatny/v029/maple-picture-2026-11-19/maple-v029-comparison-NOT-APPROVED.png` (1980×2360, SHA-256 `0e1a5bb7cb4d4fe313615d486d8b076477cecc9d5bb2d9f8a6ed721373bcdd3e`). [Exact new picture question](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7017451085) was posted and its body read back. Neither the reference nor the rejected r2 was redesigned. The new pilot remains visibly card-based in the oblique view; the close-up discloses the dark gaps.
+
+- New FBX: `pilot/new.fbx`, SHA-256 `92b58c262a700fd7151828a15b9d2ec88dc65498ae72ebbfae04505914bdeefe`. Fresh Blender import and packed native review scene are in `pilot/new/`. Exact triangle indices and material IDs against the precursor; XYZ differences below 2 µm and UV differences below 0.000002 UV units. Embedded originals and graded copy verified by hash. Rendering reconnected opacity from the linked colour image, not an arbitrary imported texture node.
+- 1,062 triangles and 210 paired facesets. Native bbox 3.946423 × 4.628250 × 5.577407 m; all 210 measured corresponding-corner displacements 7.999662–8.000258 mm. Crown starts at ≥1.70 m. The r2 scope probe refused its 0.293082 m minimum against the same lower-crown bound. This is a measured offset, not clearance between unrelated foliage cards.
+- Public isolated VPM-GROUND xView passed 0 faces / 0 vertices. **Separate regulatory topology fails: 4,462 transverse self-intersections at 2 mm** (limit 0). Two unshown tiled-envelope experiments reduced the count to 125 but either exposed regular holes or produced a conspicuous grid of polygon edges; neither was chosen for review. No technical or material approval implied.
+- Both current site FBXs and all 22 original/source/library receipts rehashed unchanged. No Max call. Sealed 52 evidence files; `SHA256SUMS.txt` SHA-256 `3aa9a9bc0c3dc170d1660f554c762f40dc505ea3f52925781c4ce27626372361`. The pilot has no shared implementation or repository Python changes; Blender/Pillow replay inputs, readback, logs and scripts are private evidence. No full suite at this gate (rule 68).
+
+## Historical r2 gate
 
 [Issue #1315 comment 7001022939](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7001022939), recorded as [D349], permits one VPM-only r2-style pilot for the six site maples (`33F02A9`, `33F02AB`, `33F02AC`, `33F02AD`, `33F02AE`, `33F02AF`). Keep the real library VPM trunk/major branches and accepted VPM dimensions, use a two-sided 3–10 mm shell of the paired NPM maple crown, and require separate picture approval before a site replacement. NPM and both libraries stay unchanged.
 

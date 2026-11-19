@@ -298,7 +298,7 @@ gates:
   visual:
     status: review
     waits: user
-    note: '[D349] authorizes the single VPM maple r2 pilot, not its picture. The verified original sheet was shown again in issue #1315 comment 7001179739; separate approval pending for this gate. Historical approval 6956847079 and v029 are retained; no new replacement. The D342/D345/D346 trials were not adopted. Final site and materials remain open.'
+    note: '[D353] rejects the renewed r2 picture. One new isolated v029 visual prototype (1062 triangles, fresh Blender FBX readback) is shown in issue #1315 comment 7017451085. Separate picture answer pending; 4462 regulatory intersections remain a technical failure despite public xView 0/0. Historical v029 site pair unchanged. No D342/D345/D346 adoption, final site or material acceptance.'
     evidence: *id002
   checker:
     status: missing

@@ -24,7 +24,7 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 
 ## VPM maple picture gate — 2026-11-19
 
-[D349] permits the single r2 pilot; the [actual pilot sheet has been shown again](MAPLE-PICTURE-GATE-2026-11-19.md). A separate picture answer is pending. No new site replacement or rollback; the historical v029 result below is unchanged.
+[D349] permitted the single r2 pilot; [D353] rejected its picture and directed the [isolated new v029 appearance pilot](MAPLE-PICTURE-GATE-2026-11-19.md). Separate picture approval is required. No new site replacement or rollback; the historical v029 site result below is unchanged.
 
 ## v032 current continuation — contact snap tested; exact cut still fails xView
 
