@@ -731,9 +731,9 @@ def _owner_names(tree, owner, rel=None):
                       | ast.ExceptHandler(name=name) | ast.MatchAs(name=name) | ast.MatchStar(name=name)
                       | ast.MatchMapping(rest=name)):
                     paths.pop(name, None)
-        if bound is not None:
+        if bound is not None and isinstance(stmt, ast.Assign):
             for target in stmt.targets:
-                if target.id not in mutable_globals:
+                if isinstance(target, ast.Name) and target.id not in mutable_globals:
                     paths[target.id] = bound
     for node in tree.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_owner_loader(node, owner, paths, rel):
