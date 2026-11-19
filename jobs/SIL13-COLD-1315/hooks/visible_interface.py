@@ -146,5 +146,35 @@ def lower_visible_corners(vertices, triangles, ground, moves, object_id):
     return result, ledger
 
 
+def snap_visible_corners(vertices, triangles, ground, object_id):
+    """Separate VPM pilot: snap every used original corner with 0 < h < 2 mm."""
+    v = np.asarray(vertices, dtype=float)
+    f = np.asarray(triangles)
+    if (v.ndim != 2 or v.shape[1:] != (3,) or not len(v) or not np.isfinite(v).all()
+            or f.ndim != 2 or f.shape[1:] != (3,) or not len(f)
+            or f.dtype.kind not in 'iu' or f.min() < 0 or f.max() >= len(v)
+            or not isinstance(object_id, str) or not object_id.strip()):
+        raise ValueError('invalid pilot mesh or object identity')
+    partition = GroundPartition(ground)
+    result = v.copy()
+    ledger = []
+    for i in np.unique(f):
+        x, y, z = v[i]
+        surface = partition.height_at(x, y)
+        height = float(z - surface)
+        if 0. < height < .002 and z < surface + .002:
+            result[i, 2] = surface
+            ledger.append({'object': object_id, 'vertex': int(i), 'xy_m': [float(x), float(y)],
+                           'ground_z_m': surface, 'before_z_m': float(z), 'after_z_m': surface,
+                           'before_height_m': height, 'after_height_m': 0., 'downshift_m': height})
+    before, after = v[f], result[f]
+    n0 = np.cross(before[:, 1] - before[:, 0], before[:, 2] - before[:, 0])
+    n1 = np.cross(after[:, 1] - after[:, 0], after[:, 2] - after[:, 0])
+    dots = (n0 * n1).sum(axis=1)
+    if not np.isfinite(dots).all() or (dots <= 0).any():
+        raise ValueError('snap inverts or collapses a source triangle')
+    return result, ledger
+
+
 def visible_pieces(triangle, ground):
     return GroundPartition(ground).pieces(triangle)

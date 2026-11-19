@@ -1,6 +1,8 @@
 # Cold reproduction #1315 — intake checkpoints v001 / v002
 
-Current status: **v031 isolated VPM Bench013 corner pilot rejected; NOT adopted or delivered.** [Movement ledger and readback findings](CONTINUATION-v031.md): two eligible corners moved down 1.990 mm, raw/native 4,373 triangles, regulatory 183→0 Ground crossings, public xView FAIL 67 near vertices / 52 pairs. The unchanged site pair and per-area findings below still apply. Next model decision: [three sub-2 mm corners](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6971407657).
+**Renewed picture gate [D349]:** [one actual VPM maple r2 sheet shown; awaiting separate approval](MAPLE-PICTURE-GATE-2026-11-19.md). No new geometry, no replacement, and no change to the v026/v029 site pair or its QA.
+
+Current status: **v032 isolated VPM Bench013 contact snap tested; NOT adopted or delivered.** [Movement ledger and readback findings](CONTINUATION-v032.md): exactly three original sub-2 mm corners snapped vertically to actual Ground, raw/native 4,364 triangles, regulatory 183→0 Ground crossings, public xView FAIL 59 near vertices / 42 pairs. The unchanged site pair and per-area findings below still apply. Next model decision: [bounded contact-line reconstruction](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6974008831).
 
 Procedure walker: historical human Gate 1 is recorded, but the retained v007 PartsList confirmation fails the current project-scope/answer-ref/content-hash verification. Reproduced with the untouched v030 job descriptor as well; no approval hash or scope was invented to turn it green.
 

@@ -1,0 +1,9 @@
+# Silikatny #1315 — VPM maple picture gate, 2026-11-19
+
+**Awaiting a separate picture answer. No new site replacement, rollback, or delivery.**
+
+[Issue #1315 comment 7001022939](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7001022939), recorded as [D349], permits one VPM-only r2-style pilot for the six site maples (`33F02A9`, `33F02AB`, `33F02AC`, `33F02AD`, `33F02AE`, `33F02AF`). Keep the real library VPM trunk/major branches and accepted VPM dimensions, use a two-sided 3–10 mm shell of the paired NPM maple crown, and require separate picture approval before a site replacement. NPM and both libraries stay unchanged.
+
+The actual isolated r2 pilot of `33F02A9` did not need rebuilding. Its original, unchanged 1600 × 1850 comparison (left: library VPM 1,070 triangles; right: actual exported r2 750 triangles) was shown again in [picture question 7001179739](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7001179739), whose published body was read back verbatim. Drive path: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/v028/pilot-r2/maple-comparison-NOT-ACCEPTED.png`; verified SHA-256 `e22ec304c057b81eb5f86a19b0625e8e2f3824c97233d35d94dce09bbd83a70c`. This is the rendered r2 comparison, not the reference-only VPM-versus-NPM PNG. See [v028 actual pilot measurements](CONTINUATION-v028.md).
+
+The earlier [picture approval 6956847079](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6956847079) and [v029 application to the six VPM copies](CONTINUATION-v029.md) are historical facts, not an answer to the renewed picture question. The retained site pair is still NPM v026 / VPM v029. No new geometry or library bytes were written. Whole-site QA remains failed; the [independent Bench013 contact-line question](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6974008831) remains open.

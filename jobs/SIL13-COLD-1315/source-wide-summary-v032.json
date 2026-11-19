@@ -1,0 +1,1771 @@
+{
+  "passed": false,
+  "run_id": "cold-1315-vpm-corner-pilot-v032",
+  "base_checkpoint": "8537bae8c8f5dde5cf043807dfc0b82b67aae655",
+  "answer": 6973526978,
+  "decision": "D346 (branch only)",
+  "pending_model_question": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6974008831",
+  "pilot": {
+    "object": "Bench013/33FB3BD",
+    "profile": "VPM only",
+    "adopted": false,
+    "rows": [
+      {
+        "object": "Bench013/33FB3BD",
+        "vertex": 661,
+        "xy_m": [
+          -35.15494918823242,
+          -11.12917423248291
+        ],
+        "ground_z_m": -0.03378332174800641,
+        "before_z_m": -0.03328155726194382,
+        "after_z_m": -0.03378332174800641,
+        "before_height_m": 0.0005017644860625947,
+        "after_height_m": 0.0,
+        "downshift_m": 0.0005017644860625947,
+        "site_vertex": 124982,
+        "raw": {
+          "vertex": 530,
+          "height_at_original_xy_m": 1.4104724610497499e-09,
+          "xy_roundtrip_m": 3.2236714372661447e-06
+        },
+        "native": {
+          "vertex": 530,
+          "height_at_original_xy_m": 1.4104724610497499e-09,
+          "xy_roundtrip_m": 2.86102294921875e-06
+        }
+      },
+      {
+        "object": "Bench013/33FB3BD",
+        "vertex": 679,
+        "xy_m": [
+          -35.224063873291016,
+          -11.134112358093262
+        ],
+        "ground_z_m": -0.03316638422042206,
+        "before_z_m": -0.03128155320882797,
+        "after_z_m": -0.03316638422042206,
+        "before_height_m": 0.0018848310115940903,
+        "after_height_m": 0.0,
+        "downshift_m": 0.0018848310115940903,
+        "site_vertex": 125000,
+        "raw": {
+          "vertex": 568,
+          "height_at_original_xy_m": 1.7586357925480911e-09,
+          "xy_roundtrip_m": 3.2295624740953365e-06
+        },
+        "native": {
+          "vertex": 568,
+          "height_at_original_xy_m": 1.7586357925480911e-09,
+          "xy_roundtrip_m": 2.86102294921875e-06
+        }
+      },
+      {
+        "object": "Bench013/33FB3BD",
+        "vertex": 1919,
+        "xy_m": [
+          -34.127010345458984,
+          -9.691519737243652
+        ],
+        "ground_z_m": -0.05112532717269225,
+        "before_z_m": -0.04928155988454819,
+        "after_z_m": -0.05112532717269225,
+        "before_height_m": 0.0018437672881440603,
+        "after_height_m": 0.0,
+        "downshift_m": 0.0018437672881440603,
+        "site_vertex": 126240,
+        "raw": {
+          "vertex": 1626,
+          "height_at_original_xy_m": -1.815144590189277e-09,
+          "xy_roundtrip_m": 3.101449619708301e-06
+        },
+        "native": {
+          "vertex": 1626,
+          "height_at_original_xy_m": -1.815144590189277e-09,
+          "xy_roundtrip_m": 2.86102294921875e-06
+        }
+      }
+    ],
+    "triangles": 4364,
+    "vertices": 2194,
+    "ineligible_original_witnesses": [
+      {
+        "vertex": 661,
+        "site_vertex": 124982,
+        "height_m": 0.0005017644860625947
+      },
+      {
+        "vertex": 679,
+        "site_vertex": 125000,
+        "height_m": 0.0018848310115940903
+      },
+      {
+        "vertex": 1919,
+        "site_vertex": 126240,
+        "height_m": 0.0018437672881440603
+      }
+    ],
+    "ground_triangles": 57226,
+    "modified_incident_faces": [
+      1320,
+      1321,
+      1323,
+      1324,
+      1332,
+      1348,
+      1371,
+      1372,
+      1374,
+      3749,
+      3762,
+      3763,
+      3811,
+      3821,
+      3859,
+      3864,
+      3866,
+      3867
+    ],
+    "xview_by_scope": {
+      "source": {
+        "passed": true,
+        "totals": {
+          "overlapping_vertices": 0,
+          "overlapping_faces": 0,
+          "vertex_pairs": 0,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        }
+      },
+      "r1b": {
+        "passed": false,
+        "totals": {
+          "overlapping_vertices": 59,
+          "overlapping_faces": 0,
+          "vertex_pairs": 42,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        }
+      },
+      "raw": {
+        "passed": false,
+        "totals": {
+          "overlapping_vertices": 59,
+          "overlapping_faces": 0,
+          "vertex_pairs": 42,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        }
+      },
+      "native": {
+        "passed": false,
+        "totals": {
+          "overlapping_vertices": 59,
+          "overlapping_faces": 0,
+          "vertex_pairs": 42,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        }
+      },
+      "direct-fbx": {
+        "passed": false,
+        "totals": {
+          "overlapping_vertices": 59,
+          "overlapping_faces": 0,
+          "vertex_pairs": 42,
+          "face_pairs": 0,
+          "face_pairs_by_kind": {
+            "contact": 0,
+            "area": 0,
+            "area+contact": 0
+          },
+          "bowtie_vertices": 0,
+          "bowtie_pairs": 0,
+          "parts_without_faces": 0
+        }
+      }
+    },
+    "regulatory_pairs": {
+      "source": 183,
+      "r1b": 0,
+      "raw": 0,
+      "native": 0
+    },
+    "near_pairs": [
+      {
+        "distance_m": 0.0016557798604792586,
+        "endpoints": [
+          {
+            "vertex": 2,
+            "xyz_m": [
+              -34.78252029418945,
+              -11.466087341308594,
+              -0.03630392253398895
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              149,
+              193
+            ]
+          },
+          {
+            "vertex": 29,
+            "xyz_m": [
+              -34.783355712890625,
+              -11.467516899108887,
+              -0.036297064274549484
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              193,
+              194
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0018480589732128097,
+        "endpoints": [
+          {
+            "vertex": 4,
+            "xyz_m": [
+              -34.785179138183594,
+              -11.467817306518555,
+              -0.03628300875425339
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              151,
+              194
+            ]
+          },
+          {
+            "vertex": 29,
+            "xyz_m": [
+              -34.783355712890625,
+              -11.467516899108887,
+              -0.036297064274549484
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              193,
+              194
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.001674499533599989,
+        "endpoints": [
+          {
+            "vertex": 6,
+            "xyz_m": [
+              -34.79425811767578,
+              -11.46852970123291,
+              -0.03621325269341469
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              151,
+              152
+            ]
+          },
+          {
+            "vertex": 7,
+            "xyz_m": [
+              -34.79560089111328,
+              -11.467529296875,
+              -0.0362032875418663
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              152,
+              195
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0010610812434370346,
+        "endpoints": [
+          {
+            "vertex": 7,
+            "xyz_m": [
+              -34.79560089111328,
+              -11.467529296875,
+              -0.0362032875418663
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              152,
+              195
+            ]
+          },
+          {
+            "vertex": 8,
+            "xyz_m": [
+              -34.796451568603516,
+              -11.46689510345459,
+              -0.03619696944952011
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              153,
+              196
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.000637830548734712,
+        "endpoints": [
+          {
+            "vertex": 7,
+            "xyz_m": [
+              -34.79560089111328,
+              -11.467529296875,
+              -0.0362032875418663
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              152,
+              195
+            ]
+          },
+          {
+            "vertex": 31,
+            "xyz_m": [
+              -34.796112060546875,
+              -11.467147827148438,
+              -0.03619948402047157
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              195,
+              196
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.00042325088189272287,
+        "endpoints": [
+          {
+            "vertex": 8,
+            "xyz_m": [
+              -34.796451568603516,
+              -11.46689510345459,
+              -0.03619696944952011
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              153,
+              196
+            ]
+          },
+          {
+            "vertex": 31,
+            "xyz_m": [
+              -34.796112060546875,
+              -11.467147827148438,
+              -0.03619948402047157
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              195,
+              196
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0019713371375664076,
+        "endpoints": [
+          {
+            "vertex": 11,
+            "xyz_m": [
+              -34.802452087402344,
+              -11.444337844848633,
+              -0.036157991737127304
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              154,
+              197
+            ]
+          },
+          {
+            "vertex": 26,
+            "xyz_m": [
+              -34.80247116088867,
+              -11.442366600036621,
+              -0.03615844249725342
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              191,
+              197
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0005144554624281252,
+        "endpoints": [
+          {
+            "vertex": 19,
+            "xyz_m": [
+              -34.79136657714844,
+              -11.400398254394531,
+              -0.03625648096203804
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              158,
+              198
+            ]
+          },
+          {
+            "vertex": 32,
+            "xyz_m": [
+              -34.79148483276367,
+              -11.399897575378418,
+              -0.03625573590397835
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              198,
+              201
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0007089482126582192,
+        "endpoints": [
+          {
+            "vertex": 19,
+            "xyz_m": [
+              -34.79136657714844,
+              -11.400398254394531,
+              -0.03625648096203804
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              158,
+              198
+            ]
+          },
+          {
+            "vertex": 36,
+            "xyz_m": [
+              -34.79169464111328,
+              -11.39976978302002,
+              -0.036254171282052994
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              201,
+              202
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.000377115281482983,
+        "endpoints": [
+          {
+            "vertex": 20,
+            "xyz_m": [
+              -34.77842330932617,
+              -11.455284118652344,
+              -0.03633863106369972
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              189,
+              190
+            ]
+          },
+          {
+            "vertex": 22,
+            "xyz_m": [
+              -34.778472900390625,
+              -11.454910278320312,
+              -0.03633837029337883
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              190,
+              192
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0017396585282761872,
+        "endpoints": [
+          {
+            "vertex": 32,
+            "xyz_m": [
+              -34.79148483276367,
+              -11.399897575378418,
+              -0.03625573590397835
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              198,
+              201
+            ]
+          },
+          {
+            "vertex": 35,
+            "xyz_m": [
+              -34.79296875,
+              -11.3989896774292,
+              -0.03624465689063072
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              200,
+              202
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.00024566822845580526,
+        "endpoints": [
+          {
+            "vertex": 32,
+            "xyz_m": [
+              -34.79148483276367,
+              -11.399897575378418,
+              -0.03625573590397835
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              198,
+              201
+            ]
+          },
+          {
+            "vertex": 36,
+            "xyz_m": [
+              -34.79169464111328,
+              -11.39976978302002,
+              -0.036254171282052994
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              201,
+              202
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.001493990867337862,
+        "endpoints": [
+          {
+            "vertex": 35,
+            "xyz_m": [
+              -34.79296875,
+              -11.3989896774292,
+              -0.03624465689063072
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              200,
+              202
+            ]
+          },
+          {
+            "vertex": 36,
+            "xyz_m": [
+              -34.79169464111328,
+              -11.39976978302002,
+              -0.036254171282052994
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              201,
+              202
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0019084905879007104,
+        "endpoints": [
+          {
+            "vertex": 524,
+            "xyz_m": [
+              -35.160125732421875,
+              -11.124502182006836,
+              -0.03377179428935051
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1248,
+              1331
+            ]
+          },
+          {
+            "vertex": 526,
+            "xyz_m": [
+              -35.158443450927734,
+              -11.12540340423584,
+              -0.03377978131175041
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1248,
+              1330
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0017116622011834192,
+        "endpoints": [
+          {
+            "vertex": 524,
+            "xyz_m": [
+              -35.160125732421875,
+              -11.124502182006836,
+              -0.03377179428935051
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1248,
+              1331
+            ]
+          },
+          {
+            "vertex": 539,
+            "xyz_m": [
+              -35.16178512573242,
+              -11.124082565307617,
+              -0.03376069664955139
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1327,
+              1331
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0009230564797697065,
+        "endpoints": [
+          {
+            "vertex": 529,
+            "xyz_m": [
+              -35.22395324707031,
+              -11.144561767578125,
+              -0.03309549018740654
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1294,
+              1367
+            ]
+          },
+          {
+            "vertex": 563,
+            "xyz_m": [
+              -35.22361373901367,
+              -11.14370346069336,
+              -0.03310425579547882
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1367,
+              1370
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0015376500383902645,
+        "endpoints": [
+          {
+            "vertex": 542,
+            "xyz_m": [
+              -35.216854095458984,
+              -11.153536796569824,
+              -0.0330936424434185
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1328,
+              1352
+            ]
+          },
+          {
+            "vertex": 552,
+            "xyz_m": [
+              -35.218055725097656,
+              -11.15257740020752,
+              -0.03309011086821556
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1349,
+              1352
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0002889129640492603,
+        "endpoints": [
+          {
+            "vertex": 545,
+            "xyz_m": [
+              -35.1567497253418,
+              -11.12775707244873,
+              -0.03377789631485939
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1330,
+              1346
+            ]
+          },
+          {
+            "vertex": 547,
+            "xyz_m": [
+              -35.15656280517578,
+              -11.12797737121582,
+              -0.03377797082066536
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1332,
+              1346
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.001224007380141277,
+        "endpoints": [
+          {
+            "vertex": 555,
+            "xyz_m": [
+              -35.22087860107422,
+              -11.132479667663574,
+              -0.03320448845624924
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1351,
+              1375
+            ]
+          },
+          {
+            "vertex": 565,
+            "xyz_m": [
+              -35.22148132324219,
+              -11.133544921875,
+              -0.03319209814071655
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1369,
+              1375
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0010706628851392095,
+        "endpoints": [
+          {
+            "vertex": 565,
+            "xyz_m": [
+              -35.22148132324219,
+              -11.133544921875,
+              -0.03319209814071655
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1369,
+              1375
+            ]
+          },
+          {
+            "vertex": 566,
+            "xyz_m": [
+              -35.222496032714844,
+              -11.133886337280273,
+              -0.03318117931485176
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1369,
+              1372
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0015845282938381756,
+        "endpoints": [
+          {
+            "vertex": 566,
+            "xyz_m": [
+              -35.222496032714844,
+              -11.133886337280273,
+              -0.03318117931485176
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1369,
+              1372
+            ]
+          },
+          {
+            "vertex": 568,
+            "xyz_m": [
+              -35.224063873291016,
+              -11.134115219116211,
+              -0.03316638246178627
+            ],
+            "source_vertices": [
+              679
+            ],
+            "site_vertices": [
+              125000
+            ],
+            "source_faces": [
+              1371,
+              1372,
+              1374
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0015920337923042295,
+        "endpoints": [
+          {
+            "vertex": 568,
+            "xyz_m": [
+              -35.224063873291016,
+              -11.134115219116211,
+              -0.03316638246178627
+            ],
+            "source_vertices": [
+              679
+            ],
+            "site_vertices": [
+              125000
+            ],
+            "source_faces": [
+              1371,
+              1372,
+              1374
+            ]
+          },
+          {
+            "vertex": 569,
+            "xyz_m": [
+              -35.22383499145508,
+              -11.135690689086914,
+              -0.03315749019384384
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              1371,
+              1373
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.00034384687279846493,
+        "endpoints": [
+          {
+            "vertex": 1173,
+            "xyz_m": [
+              -33.712432861328125,
+              -10.023213386535645,
+              -0.052846647799015045
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2714,
+              2762
+            ]
+          },
+          {
+            "vertex": 1177,
+            "xyz_m": [
+              -33.712093353271484,
+              -10.02315902709961,
+              -0.05284981057047844
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2715,
+              2762
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0006119112528523049,
+        "endpoints": [
+          {
+            "vertex": 1178,
+            "xyz_m": [
+              -33.701045989990234,
+              -10.015260696411133,
+              -0.052986424416303635
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2716,
+              2768
+            ]
+          },
+          {
+            "vertex": 1183,
+            "xyz_m": [
+              -33.701133728027344,
+              -10.014655113220215,
+              -0.05298895761370659
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2717,
+              2769
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.00036914411352378284,
+        "endpoints": [
+          {
+            "vertex": 1178,
+            "xyz_m": [
+              -33.701045989990234,
+              -10.015260696411133,
+              -0.052986424416303635
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2716,
+              2768
+            ]
+          },
+          {
+            "vertex": 1209,
+            "xyz_m": [
+              -33.70109939575195,
+              -10.01489543914795,
+              -0.052987951785326004
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2768,
+              2769
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0008621941916220681,
+        "endpoints": [
+          {
+            "vertex": 1180,
+            "xyz_m": [
+              -33.70552062988281,
+              -10.021262168884277,
+              -0.052915897220373154
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2716,
+              2766
+            ]
+          },
+          {
+            "vertex": 1201,
+            "xyz_m": [
+              -33.70586013793945,
+              -10.022054672241211,
+              -0.05290871858596802
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2763,
+              2766
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0002427679310897898,
+        "endpoints": [
+          {
+            "vertex": 1183,
+            "xyz_m": [
+              -33.701133728027344,
+              -10.014655113220215,
+              -0.05298895761370659
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2717,
+              2769
+            ]
+          },
+          {
+            "vertex": 1209,
+            "xyz_m": [
+              -33.70109939575195,
+              -10.01489543914795,
+              -0.052987951785326004
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2768,
+              2769
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.001036657587550367,
+        "endpoints": [
+          {
+            "vertex": 1184,
+            "xyz_m": [
+              -33.70967483520508,
+              -10.002593040466309,
+              -0.05298183485865593
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2718,
+              2770
+            ]
+          },
+          {
+            "vertex": 1207,
+            "xyz_m": [
+              -33.710506439208984,
+              -10.001974105834961,
+              -0.052978139370679855
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2767,
+              2770
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0016915764881611697,
+        "endpoints": [
+          {
+            "vertex": 1188,
+            "xyz_m": [
+              -33.7121467590332,
+              -10.002387046813965,
+              -0.052961964160203934
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2720,
+              2767
+            ]
+          },
+          {
+            "vertex": 1207,
+            "xyz_m": [
+              -33.710506439208984,
+              -10.001974105834961,
+              -0.052978139370679855
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2767,
+              2770
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0019154920521308862,
+        "endpoints": [
+          {
+            "vertex": 1189,
+            "xyz_m": [
+              -33.76621627807617,
+              -10.029850959777832,
+              -0.05235409364104271
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2721,
+              2724
+            ]
+          },
+          {
+            "vertex": 1194,
+            "xyz_m": [
+              -33.76435470581055,
+              -10.030302047729492,
+              -0.0523674413561821
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2723,
+              2724
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0009256861300373603,
+        "endpoints": [
+          {
+            "vertex": 1192,
+            "xyz_m": [
+              -33.769474029541016,
+              -10.02740478515625,
+              -0.05233968794345856
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2722,
+              2772
+            ]
+          },
+          {
+            "vertex": 1195,
+            "xyz_m": [
+              -33.77014923095703,
+              -10.026771545410156,
+              -0.052337389439344406
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2725,
+              2772
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.00011444655821273521,
+        "endpoints": [
+          {
+            "vertex": 1193,
+            "xyz_m": [
+              -33.762351989746094,
+              -10.030523300170898,
+              -0.052383244037628174
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2723,
+              2771
+            ]
+          },
+          {
+            "vertex": 1202,
+            "xyz_m": [
+              -33.76226043701172,
+              -10.030454635620117,
+              -0.052384380251169205
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2764,
+              2771
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0010130650093130786,
+        "endpoints": [
+          {
+            "vertex": 1197,
+            "xyz_m": [
+              -33.771846771240234,
+              -10.015144348144531,
+              -0.05238601192831993
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2725,
+              2776
+            ]
+          },
+          {
+            "vertex": 1198,
+            "xyz_m": [
+              -33.77198028564453,
+              -10.014140129089355,
+              -0.052390336990356445
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2726,
+              2776
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0003554581547009586,
+        "endpoints": [
+          {
+            "vertex": 1204,
+            "xyz_m": [
+              -33.755638122558594,
+              -10.008289337158203,
+              -0.05256076902151108
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2765,
+              2773
+            ]
+          },
+          {
+            "vertex": 1211,
+            "xyz_m": [
+              -33.7559928894043,
+              -10.00831127166748,
+              -0.052557628601789474
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2773,
+              2774
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0005787648448942838,
+        "endpoints": [
+          {
+            "vertex": 1204,
+            "xyz_m": [
+              -33.755638122558594,
+              -10.008289337158203,
+              -0.05256076902151108
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2765,
+              2773
+            ]
+          },
+          {
+            "vertex": 1213,
+            "xyz_m": [
+              -33.75621032714844,
+              -10.00820255279541,
+              -0.052556395530700684
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2774,
+              2775
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0002431059155707958,
+        "endpoints": [
+          {
+            "vertex": 1211,
+            "xyz_m": [
+              -33.7559928894043,
+              -10.00831127166748,
+              -0.052557628601789474
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2773,
+              2774
+            ]
+          },
+          {
+            "vertex": 1213,
+            "xyz_m": [
+              -33.75621032714844,
+              -10.00820255279541,
+              -0.052556395530700684
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              2774,
+              2775
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0012127286704976105,
+        "endpoints": [
+          {
+            "vertex": 1625,
+            "xyz_m": [
+              -34.135765075683594,
+              -9.753314018249512,
+              -0.05071605369448662
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3748,
+              3817
+            ]
+          },
+          {
+            "vertex": 1651,
+            "xyz_m": [
+              -34.1367301940918,
+              -9.752579689025879,
+              -0.050711825489997864
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3817,
+              3819
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0012416204088913957,
+        "endpoints": [
+          {
+            "vertex": 1631,
+            "xyz_m": [
+              -34.13906478881836,
+              -9.751178741455078,
+              -0.05069959908723831
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3761,
+              3810
+            ]
+          },
+          {
+            "vertex": 1646,
+            "xyz_m": [
+              -34.13798141479492,
+              -9.751785278320312,
+              -0.05070551484823227
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3810,
+              3819
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.001773154973131068,
+        "endpoints": [
+          {
+            "vertex": 1635,
+            "xyz_m": [
+              -34.14594650268555,
+              -9.687710762023926,
+              -0.050985243171453476
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3801,
+              3872
+            ]
+          },
+          {
+            "vertex": 1669,
+            "xyz_m": [
+              -34.14700698852539,
+              -9.689131736755371,
+              -0.050968535244464874
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3858,
+              3872
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0009644017899019414,
+        "endpoints": [
+          {
+            "vertex": 1637,
+            "xyz_m": [
+              -34.143829345703125,
+              -9.687484741210938,
+              -0.05100445821881294
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3801,
+              3802
+            ]
+          },
+          {
+            "vertex": 1639,
+            "xyz_m": [
+              -34.142921447753906,
+              -9.687809944152832,
+              -0.051010388880968094
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3802,
+              3804
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.001859789574892875,
+        "endpoints": [
+          {
+            "vertex": 1639,
+            "xyz_m": [
+              -34.142921447753906,
+              -9.687809944152832,
+              -0.051010388880968094
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3802,
+              3804
+            ]
+          },
+          {
+            "vertex": 1641,
+            "xyz_m": [
+              -34.141090393066406,
+              -9.687484741210938,
+              -0.051027681678533554
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3804,
+              3863
+            ]
+          }
+        ]
+      },
+      {
+        "distance_m": 0.0014821205893066286,
+        "endpoints": [
+          {
+            "vertex": 1646,
+            "xyz_m": [
+              -34.13798141479492,
+              -9.751785278320312,
+              -0.05070551484823227
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3810,
+              3819
+            ]
+          },
+          {
+            "vertex": 1651,
+            "xyz_m": [
+              -34.1367301940918,
+              -9.752579689025879,
+              -0.050711825489997864
+            ],
+            "source_vertices": [],
+            "site_vertices": [],
+            "source_faces": [
+              3817,
+              3819
+            ]
+          }
+        ]
+      }
+    ],
+    "roundtrip_raw_native_max_m": 1.0026104604321517e-06,
+    "source_face_inventory": {
+      "kept": 4225,
+      "cut": 92,
+      "hidden": 747
+    }
+  },
+  "pilot_export_sha256": "f3906545fa8d53a69330fd93543b776447c04ccb56539bb21e7db8c845721f7f",
+  "pilot_export": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v032\\export-r1\\after\\SM_SIL13_Ground.fbx",
+  "current_site": {
+    "NPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10",
+      "raw_triangles": 176094,
+      "native_triangles": 176094,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v026\\site-flora-r3\\site-NPM.blend"
+    },
+    "VPM": {
+      "path": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v029\\site-maples-r3\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "59102f8b1b04f813d14fbd63a57e53d796672d2a690c2f66dfb037900bbd9646",
+      "raw_triangles": 298218,
+      "native_triangles": 298218,
+      "source_scene": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v029\\site-maples-r3\\site-VPM.blend",
+      "source_scene_sha256": "15548a7abc5011819efad978bb7527da880365ddf5cf95d40cd88c6eba6d56cf"
+    }
+  },
+  "physical_MAF": 37,
+  "MAF_census": 38,
+  "plant_census": 4582,
+  "UCX": 545,
+  "original_hash_checks": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\pzu-20261104.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\СИЛ13-УВК-ПД-ПЗУ_.dwg",
+      "sha256": "f8cca7d93898a37eac633c99f0ceed21d3d6206737e5a6436096b281274b79c2",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\silikatny\\source\\cold-1315-v001\\maf-and-light-spec.docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\Downloads\\Telegram Desktop\\МАФ_и_свет_модели_фото (4).docx",
+      "sha256": "577c5af4e36527b2eef3e19a447f8eaea251014b5733bfb44803459f3afd40d7",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0676_M_Table_016.fbx",
+      "sha256": "2c2fdf8853768c6a7be0807bdd357aea5d19169f18541c82679b4f0f4da7f704",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0625_M_Sand_002.fbx",
+      "sha256": "8b70a619483eb4009c9e3ac332de3df5fa8ba8898f2d99f128c0faf187eb4747",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0423_M_Bench_013.fbx",
+      "sha256": "6122a77f87243decff2bf4eb1f37cd6a92b2c79375406f8c119ed0937cbb3471",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0435_M_Bench_025.fbx",
+      "sha256": "e6b6a2ba2ce042d957c80649dbf6285ecfa3d35e041f95142fe888691b2e723a",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0466_M_Bysicle_007.fbx",
+      "sha256": "d9ee1383602a501f16457ca7130c045f326719b8307111247b4b41761e0d2473",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0472_M_Cannopy_006.fbx",
+      "sha256": "cb10e03cb0298b3a247df165171da8dc7805f843342f8507886c99f16e38a096",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\maf\\union_v001\\fbx\\MAF_0698_M_Urn_010.fbx",
+      "sha256": "70a6ef60d95db7cb02f54df48b9c93ccbb08a7b72a535e9b15766034767a8586",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "unchanged": true
+    },
+    {
+      "path": "G:/Мой диск/AGR-assets/maf/maf-npm.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\gortenzia_drevovidnaya_t2_h100_low.png",
+      "sha256": "34a61062405237ffb8bd5a1422371cd401355f2573b01b869c92020b8bb15c93",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\puzyreplodnik_kalinolistnyj_t1_h150_low.png",
+      "sha256": "a671588be5fd368b77420bae521ab93234568e65d0b9aae206182b095a64a8e1",
+      "unchanged": true
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\TextureFlora\\klen_t7_h550_low.png",
+      "sha256": "96f1de1d059b6a8a3d66562479fc62d36126a7f31cbbe8d08f7423f8656a64a2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "08e43ee6b66dcbe70d54496a4e16e9e3661be0eeedc0a67901b0d28113143530",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v012\\r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "46fca53fb5ac02eef15ce09225474667cbfb12f2c8fe97cfa167ba4c4f7aac19",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "3d217e611451a81de9a04bcbc8ce6d6ad5571fb6273634d69a4c6dbd015e2ac0",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v014\\site-bench-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "cdc88da7fdcfdf8d16d4652b7cd89a8483f7eff7e459d8c290bb9037f4a1a014",
+      "role": "v014 resume input",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\NPM\\SM_SIL13_Ground.fbx",
+      "sha256": "21e82b75c42fcb928005bc096585d8436ff07da22615ee40872d57eb720facc2",
+      "unchanged": true
+    },
+    {
+      "path": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_d9ae7dc0\\tmp\\cold-v015\\site-table-r1\\VPM\\SM_SIL13_Ground.fbx",
+      "sha256": "c871949ba727a49d24d8ba4449f86c53dbbcf3d5e49074240df4f6e536474c76",
+      "unchanged": true
+    }
+  ],
+  "site_pair_byte_unchanged": true,
+  "affected_tests": {
+    "result": "490 passed in 63.25s (0:01:03)",
+    "command": "PYTEST_ADDOPTS='' uv run pytest -q tests/test_sil13_visible_interface_1315.py tests/qa/test_topology.py tests/ops/test_xview_gate.py tests/qa/test_archive_diff.py tests/test_scenario_router.py tests/test_area_requirement_sheet.py tests/test_ground_surface_requirement_sheet.py tests/test_maf_requirement_sheet.py -p no:cacheprovider --basetemp=C:/x/t_d9ae7dc0/v032-affected"
+  },
+  "red_tests": "21 failed (missing hook function), 40 deselected",
+  "full_suite": "deferred to merge batch (rule 68)"
+}

@@ -68,6 +68,7 @@ working method from the same grilling, not a fixed rule.
   duplicated around the centre. VPM bush = by default a shell of that star; a more detailed,
   higher-polygon VPM bush only on explicit request; the agent studies the library VPM bushes and
   follows their logic, the default stands until then [D102].
+- **Silikatny VPM maple pilot [D349] (#1315 only).** Keep the real VPM library trunk and major branches and the accepted VPM sizes; use a 3–10 mm two-sided shell from the paired NPM crown. Show one pilot on a sheet and obtain a separate picture approval before replacement on the site copy. See the [job gate](../../../jobs/SIL13-COLD-1315/MAPLE-PICTURE-GATE-2026-11-19.md); NPM and the libraries stay unchanged.
 - **Atlas route (2048).** By script or by hand: a reference image of the plant → a generated 2K
   front view on white without shadows → cut-out → black-and-white opacity → placed on the atlas,
   built up step by step. Agents may repeat this route with the image-generation tool; every new

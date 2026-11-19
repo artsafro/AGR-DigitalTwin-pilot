@@ -1,6 +1,6 @@
 schema_version: 1.0.0
 job_id: SIL13-COLD-1315
-run_id: cold-1315-vpm-corner-pilot-v031
+run_id: cold-1315-vpm-corner-pilot-v032
 synthetic: false
 path: deviation
 inputs: &id001
@@ -223,8 +223,12 @@ gates:
   operations:
     status: fail
     waits: user
-    note: D345 answer6971046788 applied to ONE isolated VPM Bench013. Two eligible corners lowered 1.990mm before exact Ground cut; raw/native 4373tri, regulatory183to0, xView67vertices/52pairs FAIL. No adoption. Question6971407657 asks whether to test three named sub-2mm source corners separately. Current NPMv026/VPMv029 and master/census unchanged.
+    note: D346 answer 6973526978 applied to ONE isolated VPM Bench013. All three eligible sub-2 mm corners snapped vertically onto actual Ground; raw/native 4364 triangles and regulatory 183 to 0, but xView 59 vertices/42 pairs FAIL. No replication. Question 6974008831 asks about one bounded contact-line reconstruction, not another vertical snap. Current NPMv026/VPMv029 and master/census unchanged.
     evidence: &id002
+    - path: jobs/SIL13-COLD-1315/source-wide-summary-v032.json
+      sha256: 0d2ba55a74819faaeb94424da6f148116722c03bf644c2cb3e884d129fc5b191
+    - path: jobs/SIL13-COLD-1315/evidence-v032.json
+      sha256: 959dc3ba0578dcb98d79ae301b1273d7d366b15beb168a497d89a619dff419dc
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v031.json
       sha256: 0db19a2300a4f82dafdfd67f47c3cd1fa4cb7f7d13b9ad75a8ceb5b5c3d4e22e
     - path: jobs/SIL13-COLD-1315/evidence-v031.json
@@ -273,8 +277,10 @@ gates:
     evidence: *id002
   report:
     status: review
-    note: v031 result and all moved vertices reported. Current pair NPMv026/VPMv029 unchanged, isolated VPM Bench candidate rejected. 469 affected tests passed; full suite deferred to merge batch (rule 68). Whole-site technical failures remain open.
+    note: v032 result and all moved vertices reported. Current pair NPMv026/VPMv029 unchanged, isolated VPM Bench candidate rejected. 490 affected tests passed; full suite deferred to merge batch (rule 68). Whole-site technical failures remain open.
     evidence:
+    - path: jobs/SIL13-COLD-1315/CONTINUATION-v032.md
+      sha256: 7122bed2597cb5a016a6e4cba03984d2e2d9296e52b41c8569584e2e369b5929
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v031.md
       sha256: e4912041af8822d9b455b04065303e985e92677b9ca02b04efcb69b1db77fab0
     - path: jobs/SIL13-COLD-1315/CONTINUATION-v030.md
@@ -291,7 +297,8 @@ gates:
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    note: Maple picture gate remains closed; D342/D345 permit two historical isolated trials only, neither accepted for site adoption. v031 has no approval request by picture because technical QA failed. Final site, materials and manual acceptance remain open.
+    waits: user
+    note: '[D349] authorizes the single VPM maple r2 pilot, not its picture. The verified original sheet was shown again in issue #1315 comment 7001179739; separate approval pending for this gate. Historical approval 6956847079 and v029 are retained; no new replacement. The D342/D345/D346 trials were not adopted. Final site and materials remain open.'
     evidence: *id002
   checker:
     status: missing

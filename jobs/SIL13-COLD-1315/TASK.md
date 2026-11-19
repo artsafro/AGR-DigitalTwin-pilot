@@ -22,7 +22,15 @@ Scope decision: [D272] in `docs/decisions.md`; cells `ground-npm` and `ground-vp
 - Read back exports, run area validators, report per-area reproduction and historical comparison.
   No passed=true with an incomplete mandatory/manual gate.
 
-## v031 current continuation — bounded corner pilot rejected
+## VPM maple picture gate — 2026-11-19
+
+[D349] permits the single r2 pilot; the [actual pilot sheet has been shown again](MAPLE-PICTURE-GATE-2026-11-19.md). A separate picture answer is pending. No new site replacement or rollback; the historical v029 result below is unchanged.
+
+## v032 current continuation — contact snap tested; exact cut still fails xView
+
+[CONTINUATION-v032.md](CONTINUATION-v032.md) applies answer 6973526978 to all three original sub-2 mm corners on one isolated VPM Bench013 copy. Regulatory 183→0 but xView remains FAIL (59 vertices / 42 pairs). No site adoption or replication. [Question 6974008831](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6974008831) asks whether the actual contact line may be reshaped on one copy with bounded 3D movement, not whether to repeat the vertical snap.
+
+## v031 historical continuation — bounded corner pilot rejected
 
 [CONTINUATION-v031.md](CONTINUATION-v031.md) supersedes the permission wait below. D345 / answer 6971046788 was exercised on one VPM Bench013 copy: exactly two original corners lowered, 183→0 Ground crossings, but 67 near vertices / 52 pairs remain. No replication. Current site pair, Ground, NPM, master, census and libraries remain unchanged. [Question 6971407657](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6971407657) asks about a separate pilot limited to three named corners below the original 2 mm eligibility threshold; no change before its answer.
 
