@@ -28,3 +28,30 @@ All six samples matched the untimed reference byte-for-byte after canonical JSON
 Timing run HEAD: `d6947ba470e53e1b205ea8687ca5ce7e48cb0ef6`; CPython 3.14.7. The receipt `C:/x/ar_t_c528b5b4/r1.json` (SHA-256 `6e84015fc2a8d760085e812a7d49dae99c9c65e1bc586c475c075c3bee7a1986`) carries source, document and score hashes. Reproduction: copy the archived `ar_pdf_binding.py` and `ar_candidate_binding.py` from that directory to the ignored `tmp/` in the worktree at the frozen HEAD. Run the contract command with an unused output path; run `--probe` separately for the mutation witness. No production files or tests were edited.
 
 Next target in the external backlog: independently range-index candidates reaching `_span_gap` while preserving complete output and deterministic strict/padded tie-breaks; exclude R1 from both variants.
+
+## Standing #5 (t_e21acbc0) — frozen contract, R2 / R3
+
+Frozen before any candidate code exists. Base `f6a8793b` (origin/main; `src/dt_ai/album/` and
+`tools/research/pdf_album/` are byte-identical to `cc99bfdb`, so the #4 harness and corpus apply unchanged).
+
+- Metric, command, order, exclusions, parity and prohibitions: exactly the #4 contract above. Command:
+  `uv run --extra pdf-review python -m tmp.ar_pdf_binding --round R2 --out C:/x/ar_t_e21acbc0/r2.json`
+  (then `--round R3 --out .../r3.json`). The driver and candidate builder are committed this time in
+  [`autoresearch-pdf-binding-harness/`](autoresearch-pdf-binding-harness/) (review P3 of #4); they are copied
+  to the ignored `tmp/` to run. Median of 3 per variant, pairs B,C / C,B / B,C in one interpreter.
+- R2 (the backlog target): inside `_bind_page`, the strict/padded text search for each span
+  (`strict_hits`, `candidates`) reads only runs whose along-axis centre lies in an index window
+  `[a - pad, b + pad]` (bisect over runs sorted per text direction; `pad` = largest possible R1 padding,
+  0 for spans not shorter than it). `_span_gap` still decides every hit; sorting by `(gap, run)` and the
+  strict-over-padded and ownership rules are unchanged, so the window must be a superset of all hits.
+  The candidate is built from the current `binding.py` text by exact, count-checked replacement of the two
+  loops and patched in memory as `binding._bind_page`; R1 `_chains` is NOT included.
+- R3 (declared now, run only after R2 is recorded regardless of its result): R2 + #4's R1 `_chains`
+  (archived `C:/x/ar_t_c528b5b4/ar_candidate_binding.py`, SHA-256 recorded in the receipt) against the
+  same unmodified baseline — the question "would adopting both clear the bar".
+- Keep threshold per round: median C <= 0.80 × median B, every pair faster, exact parity in all six samples.
+- Stop: these two rounds only; per round 8 minutes or first parity failure. No retuning between rounds.
+- Extra parity proof: affected album tests run with the candidate patched in (same file set as #4);
+  `--probe` mutation witness re-run.
+- OBSERVE: a passing round is a proposal for a separate production PR + review, never applied to
+  `src/` on this branch.
