@@ -70,7 +70,7 @@ contexts:
         contract: "список материалов -> ячейки атласа (сплошной цвет 64 / 128, узор крупнее)"
       - name: build_atlas
         contract: "список материалов, выход -> PNG атласа + UV JSON"
-  - id: npm
+  - id: npm-atlas
     grid: "1.5/2"
     ru: "НПМ МАФ на атласе"
     area: docs/domain/areas/groundel-maf.md
@@ -130,12 +130,12 @@ relations:
     to: placement
     ru: "модель МАФ"
   - from: placement
-    to: npm
+    to: npm-atlas
     ru: "точки МАФ"
   - from: maf-atlas
-    to: npm
+    to: npm-atlas
     ru: "ID / атлас 512"
-  - from: npm
+  - from: npm-atlas
     to: package
     ru: "НПМ на атласе"
   - from: ucx

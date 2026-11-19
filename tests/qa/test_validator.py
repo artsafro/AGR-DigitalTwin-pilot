@@ -7,6 +7,8 @@ Glasses=42 and string coordinates fail. Mutations ported from AGR tests/integrat
 import base64
 import json
 import struct
+import subprocess
+import sys
 import zipfile
 from io import BytesIO
 
@@ -23,6 +25,51 @@ KEYS = PROFILES.vpm["geojson"]["properties_keys"]
 
 def fbx(version=7400):
     return b"Kaydara FBX Binary  \x00\x1a\x00" + struct.pack("<I", version) + b"\x00" * 64
+
+
+DEFAULT_PROFILE_NOTE = "profile NPM by default (name gives no profile); pass --profile npm|vpm"
+
+
+@pytest.mark.parametrize("name, override, kind, note", [
+    pytest.param("model.fbx", None, "npm", DEFAULT_PROFILE_NOTE, id="default"),
+    pytest.param("model.fbx", "vpm", "vpm", None, id="explicit"),
+    pytest.param("SM_Test_K_1.fbx", None, "vpm",
+                 "profile VPM from the name grammar of SM_Test_K_1.fbx", id="grammar"),
+])
+def test_single_fbx_profile(tmp_path, name, override, kind, note):
+    path = tmp_path / name
+    path.write_bytes(fbx())
+    args = [sys.executable, "-m", "dt_ai.cli.agr", "validate", str(path)]
+    if override:
+        args += ["--profile", override]
+    result = subprocess.run([*args, "--json"], capture_output=True, encoding="utf-8")
+    assert result.returncode == 2, result.stderr
+    report = json.loads(result.stdout)
+    assert report["profile"] == kind
+    ids = {stage["id"] for stage in report["stages"]}
+    assert ("V006" in ids, "V010" in ids) == (kind == "npm", kind == "vpm")
+    expected = [note] if note else []
+    assert [n for n in report["notes"] if n.startswith("profile ")] == expected
+    text = subprocess.run(args, capture_output=True, encoding="utf-8")
+    assert text.returncode == result.returncode, text.stderr
+    assert [line for line in text.stdout.splitlines() if line.startswith("Note: profile ")] == [
+        f"Note: {n}" for n in expected
+    ]
+
+
+@pytest.mark.parametrize("suffix", [".fbx", ".FbX"])
+@pytest.mark.parametrize("data", [b"", fbx()[:24], fbx(7500)], ids=["empty", "partial", "version-7500"])
+def test_default_profile_note_does_not_change_failures(tmp_path, suffix, data):
+    path = tmp_path / f"scratch export{suffix}"
+    path.write_bytes(data)
+    alias = tmp_path / "alias"
+    alias.mkdir()
+    for target, override in ((path, None), (alias / ".." / path.name, "npm"), (path, None)):
+        report = vp.validate(target, override, PROFILES)
+        assert report.profile == "npm"
+        assert report.exit_code == 1
+        assert report.notes.count(DEFAULT_PROFILE_NOTE) == (0 if override else 1)
+        assert path.read_bytes() == data
 
 
 def png(color=(128, 128, 128)):

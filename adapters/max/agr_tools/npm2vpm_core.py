@@ -53,7 +53,7 @@ HORIZONTAL_COS = 0.95   # |normal . Z| above this: the plane has no up direction
 # Findings that stop the apply (fail-closed: nothing is written). Window findings (`window_no_type`,
 # `window_ambiguous`, `window_frame`) are reported; the plane still goes to `_npm_src`, no instance is made.
 BLOCKING = ('no_uv', 'table_no_row', 'table_region', 'udim_mismatch', 'id_range', 'region_straddle', 'atlas_missing',
-            'table_invalid')
+            'table_invalid', 'udim_fit')
 WINDOW_CODES = ('window_no_type', 'window_ambiguous', 'window_frame')
 
 
@@ -603,11 +603,37 @@ def plan(mesh, opts, table=None, atlas_wh=None, types=None):
             raise ValueError('options.window_ids given but no window library types (options.library)')
         windows, wf = window_plan(mesh, win_faces, types, o['window_tol_m'])
         findings.extend(wf)
+    gate = None
     if mode == 'table':
         res = plan_table(mesh, table, skip=win_faces)
         regions = {}
     else:
-        res = plan_regions(mesh, atlas_wh, o, skip=win_faces)
+        if atlas_wh and not atlas_wh.get('error') and mesh.get('uv_tris'):
+            # Preserve the public regions planner's id_range diagnostics. The
+            # strict standalone gate still rejects unmapped IDs as invalid input.
+            try:
+                invalid = [('id_range', [f for f, m in enumerate(mesh['mat_ids']) if m == mid],
+                            'library id {} has no UDIM 1000 + ID (1..100)'.format(mid))
+                           for mid in sorted(set(mesh['mat_ids'])) if type(mid) is not int or not 1 <= mid <= 100]
+                if invalid:
+                    # Retain simultaneous legacy findings (e.g. a different ID
+                    # straddling atlas tiles), not only the first gate failure.
+                    diagnostics = plan_regions(mesh, atlas_wh, o, skip=win_faces)['findings']
+                    gate = {'status': 'blocked', 'ids': [], 'findings': diagnostics or invalid,
+                            'question': 'Resolve unmapped/out-of-range material IDs before conversion. Nothing written.'}
+                else:
+                    gate = udim_fit_gate(mesh, atlas_wh)
+            except (ValueError, TypeError, KeyError, IndexError, ArithmeticError) as exc:
+                detail = 'UDIM preflight cannot measure this mesh: {}'.format(exc)
+                gate = {'status': 'blocked', 'ids': [], 'question': detail,
+                        'findings': [('udim_fit', list(range(len(mesh['tris']))), detail)]}
+        if gate and gate['status'] != 'ok':
+            findings.extend(gate['findings'])
+            if not gate['findings']:
+                findings.append(('udim_fit', [], gate['question']))
+            res = {'parts': {}, 'regions': {}, 'findings': []}
+        else:
+            res = plan_regions(mesh, atlas_wh, o, skip=win_faces)
         regions = res['regions']
     findings.extend(res['findings'])
     counts = {}
@@ -625,8 +651,104 @@ def plan(mesh, opts, table=None, atlas_wh=None, types=None):
     else:
         summary['udim'] = {str(k): v['udim'] for k, v in sorted(regions.items())}
         summary['crop_error_px'] = round(res.get('crop_error_px', 0.0), 6)
-    return {'options': o, 'mode': mode, 'findings': findings, 'parts': res['parts'], 'windows': windows,
-            'regions': regions, 'summary': summary}
+    result = {'options': o, 'mode': mode, 'findings': findings, 'parts': res['parts'], 'windows': windows,
+              'regions': regions, 'summary': summary}
+    if gate is not None:
+        summary['udim_fit'] = gate
+        result['udim_fit'] = gate
+    return result
+
+
+def udim_fit_gate(mesh, atlas_wh, target_px_m=512):
+    """Read-only reusable npm-to-vpm stage: no geometry/UV policy is selected.
+
+    Region UV is measured against world METRES. Required axis extents use the
+    largest world derivative over every triangle (overlapping islands are not
+    charged twice as unique area). Shear/distortion is conservatively certified
+    using singular values. A non-fit returns ONE grouped user question, not a
+    proposal applied to the mesh. 4096 tiles, inclusive 512..1706 px/m [D160].
+    """
+    if isinstance(target_px_m, bool) or not isinstance(target_px_m, (int, float)) or not math.isfinite(
+            target_px_m) or not 512 <= target_px_m <= 1706:
+        raise ValueError('target_px_m must be finite in 512..1706')
+    for key, size in (('verts', 3), ('uvs', 2)):
+        vals = mesh.get(key)
+        if not vals or any(len(p) != size or any(isinstance(x, bool) or not isinstance(x, (int, float))
+                or not math.isfinite(x) for x in p) for p in vals):
+            raise ValueError('missing/invalid/nonfinite ' + key)
+    tris, uts, mids = mesh.get('tris'), mesh.get('uv_tris'), mesh.get('mat_ids')
+    if not tris or not uts or not mids or len(tris) != len(uts) or len(tris) != len(mids):
+        raise ValueError('empty/partial mesh face arrays')
+    for f, (tri, ut, mid) in enumerate(zip(tris, uts, mids)):
+        if type(mid) is not int or mid <= 0:
+            raise ValueError('face {}: unmapped material ID {}'.format(f, mid))
+        if len(tri) != 3 or len(ut) != 3 or any(type(i) is not int or not 0 <= i < len(mesh[k])
+                for ids, k in ((tri, 'verts'), (ut, 'uvs')) for i in ids):
+            raise ValueError('face {}: unsupported/invalid triangle indices'.format(f))
+    if not atlas_wh or any(type(atlas_wh.get(k)) is not int or atlas_wh[k] <= 0 for k in ('w', 'h')):
+        raise ValueError('atlas dimensions must be positive integers')
+    planned = plan_regions(mesh, atlas_wh, options({'mode': 'regions'}))
+    rows = []
+    for mid in sorted(set(mids)):
+        faces = [f for f, m in enumerate(mids) if m == mid]
+        reg = planned['regions'].get(mid)
+        row = {'id': mid, 'area_m2': 0., 'region_straddle': reg is None, 'fits': False,
+               'needed_tiles_at_512': None, 'current_extent': None, 'required_extent': None,
+               'target_px_m': target_px_m, 'texel_px_m': None}
+        if reg is None:
+            rows.append(row)
+            continue
+        jacobians, points = [], []
+        for f in faces:
+            xyz = [mesh['verts'][i] for i in tris[f]]
+            uv = [region_uv((mesh['uvs'][i][0]-reg['shift_tiles'][0],
+                             mesh['uvs'][i][1]-reg['shift_tiles'][1]), reg['box_px'],
+                            atlas_wh['w'], atlas_wh['h'], reg['udim']) for i in uts[f]]
+            points.extend(uv)
+            e, g = [[xyz[j][k]-xyz[0][k] for k in range(3)] for j in (1, 2)]
+            cross = [e[1]*g[2]-e[2]*g[1], e[2]*g[0]-e[0]*g[2], e[0]*g[1]-e[1]*g[0]]
+            area = math.sqrt(sum(x*x for x in cross))/2
+            a, b = uv[1][0]-uv[0][0], uv[1][1]-uv[0][1]
+            c, d = uv[2][0]-uv[0][0], uv[2][1]-uv[0][1]
+            det = a*d-b*c
+            if not math.isfinite(area) or area <= 0 or not math.isfinite(det) or abs(det) <= 1e-15:
+                raise ValueError('ID {} face {}: degenerate/unmeasurable geometry or UV'.format(mid, f))
+            row['area_m2'] += area
+            jacobians.append(([ (e[k]*d-g[k]*b)/det for k in range(3)],
+                              [ (g[k]*a-e[k]*c)/det for k in range(3)]))
+        extent = [max(p[k] for p in points)-min(p[k] for p in points) for k in (0, 1)]
+        axes = [max(math.sqrt(sum(j[k][v]**2 for v in range(3))) for j in jacobians) for k in (0, 1)]
+        scale = [x*target_px_m/4096 for x in axes]
+        densities = []
+        for j in jacobians:
+            x, y = [[v/scale[k] for v in j[k]] for k in (0, 1)]
+            aa, bb, ab = sum(v*v for v in x), sum(v*v for v in y), sum(a*b for a, b in zip(x, y))
+            disc = math.hypot(aa-bb, 2*ab)
+            lo, hi = (aa+bb-disc)/2, (aa+bb+disc)/2
+            if lo <= 0 or not math.isfinite(hi):
+                raise ValueError('ID {}: singular/overflow UV metric'.format(mid))
+            densities.extend((4096/math.sqrt(hi), 4096/math.sqrt(lo)))
+        # Anisotropy/shear can require more than the axis-length estimate.
+        correction = target_px_m/min(densities)
+        required = [extent[k]*scale[k]*correction for k in (0, 1)]
+        at512 = [v*512/target_px_m for v in required]
+        row.update(current_extent=extent, required_extent=required,
+                   needed_tiles_at_512=math.prod(max(1, math.ceil(v-1e-10)) for v in at512),
+                   texel_px_m=[min(densities)*correction, max(densities)*correction],
+                   fits=all(math.isfinite(v) and v <= 1+1e-10 for v in required)
+                        and max(densities)*correction <= 1706+1e-8)
+        rows.append(row)
+    bad = [r for r in rows if not r['fits']]
+    question = None
+    if bad:
+        question = ('ID | area m² | needed tiles at 512 px/m | current extent | required extent\n' + '\n'.join(
+            '{} | {:.6g} | {} | {} | {}'.format(r['id'], r['area_m2'], r['needed_tiles_at_512'],
+                                             r['current_extent'], r['required_extent']) for r in bad) +
+            '\nРекомендация (a): нарезать геометрию по шву на несколько ID/тайлов; '
+            '(b) дополнительные UDIM для этого ID; (c) снизить texel внутри 512–1706 px/m; '
+            '(d) другое. Как поступить с этой группой ID? Ничего не записано.')
+    return {'status': 'blocked' if bad else 'ok', 'ids': rows, 'question': question,
+            'findings': planned['findings'], 'tile_px': 4096}
 
 
 def blocking(findings):

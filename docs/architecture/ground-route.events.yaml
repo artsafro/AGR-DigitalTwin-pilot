@@ -274,7 +274,7 @@ stages:
   - id: sintez
     event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
     actor: checker
-    context: validation
+    context: sintez
     commands:
       - agr checker
     rules:

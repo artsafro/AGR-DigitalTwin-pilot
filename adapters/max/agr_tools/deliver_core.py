@@ -215,10 +215,12 @@ def passport_with_stage(passport, entry):
     return out
 
 
-def summary(results, block, files, stage, opts, run=None, passport=None, notes=(), ucx_export=None):
+def summary(results, block, files, stage, opts, run=None, passport=None, notes=(), ucx_export=None, delivery=None):
     """The `deliver.json` body (also the plan of the report). ucx_export: ucx_export_report (#1582) or {'error'}."""
     return {'tool': TOOL, 'stage': stage, 'blockers': list(block), 'steps': list(results), 'files': list(files),
-            'run_folder': run, 'passport': passport, 'options': opts, 'notes': list(notes), 'ucx_export': ucx_export}
+            'run_folder': run, 'passport': passport, 'options': opts, 'notes': list(notes), 'ucx_export': ucx_export,
+            'delivered': (delivery or {}).get('delivered', []),
+            'summary_ru': (delivery or {}).get('summary_ru', '')}
 
 
 def deliver_report(edit, mode, results, objects, block, opts, state_hash=None, files=(), done=(), extra=None):

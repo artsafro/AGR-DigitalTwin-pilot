@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3260 1381" width="3260" height="1381" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3260 1196" width="3260" height="1196" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3260" height="1381" fill="#ffffff"/>
+<rect x="10" y="-30" width="3260" height="1196" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
@@ -51,15 +51,13 @@
 <rect x="1940" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1930" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1890" y1="233.12" x2="1930" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="1930" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1930" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1930" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1930" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1930" y="617.5" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="1930" y="734.75" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="1930" y="852.0" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="1930" y="969.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1930" y="1102.75" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1930" y="1220.0" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1930" y="617.5" width="230" height="166.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="799.75" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="917.0" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="1034.25" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2160" y1="225.0" x2="2200" y2="243.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -285,8 +283,10 @@
 <tspan x="2045.0" dy="21.25">точках на одном атласе</tspan>
 <tspan x="2045.0" dy="21.25">512 GroundEl</tspan>
 </text>
-<text x="2045.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Нет команды agr/dt</tspan>
+<text x="2045.0" y="346.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Команда:</tspan>
+<tspan x="2045.0" dy="17.5">dt derive maf-npm-light</tspan>
+<tspan x="2045.0" dy="17.5">agr npm-light</tspan>
 </text>
 <text x="2045.0" y="460.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="14">Правила: D293, D164, D167,</tspan>
@@ -300,38 +300,27 @@
 <tspan x="2045.0" dy="16.25">→ конвертация ВПМ → НПМ: та</tspan>
 <tspan x="2045.0" dy="16.25">же модель; облегчённая —</tspan>
 <tspan x="2045.0" dy="16.25">только если не влезает бюджет</tspan>
+<tspan x="2045.0" dy="16.25">(≤ 400 треугольников не</tspan>
+<tspan x="2045.0" dy="16.25">трогает, силуэт ≥ 0,95)</tspan>
+<tspan x="2045.0" dy="16.25">Команда: dt derive</tspan>
+<tspan x="2045.0" dy="16.25">maf-npm-light, agr npm-light</tspan>
 <tspan x="2045.0" dy="16.25">[D293, D164]</tspan>
 </text>
-<text x="2045.0" y="744.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2045.0" y="809.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="13">Ветка: расстановка с нуля</tspan>
 <tspan x="2045.0" dy="16.25">→ low-poly (кандидат НПМ</tspan>
 <tspan x="2045.0" dy="16.25">библиотеки) и high-poly</tspan>
 <tspan x="2045.0" dy="16.25">ставятся вместе в одни точки</tspan>
 <tspan x="2045.0" dy="16.25">[D293]</tspan>
 </text>
-<text x="2045.0" y="862.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2045.0" y="927.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="13">Ветка: НПМ (всегда)</tspan>
 <tspan x="2045.0" dy="16.25">→ один атлас 512 RGB на все</tspan>
 <tspan x="2045.0" dy="16.25">GroundEl; номер ID в правом</tspan>
 <tspan x="2045.0" dy="16.25">нижнем углу ячейки [D168,</tspan>
 <tspan x="2045.0" dy="16.25">D020]</tspan>
 </text>
-<text x="2045.0" y="979.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="13">⚠ Облегчённой НПМ-версии МАФ</tspan>
-<tspan x="2045.0" dy="16.25">как инструмента нет</tspan>
-<tspan x="2045.0" dy="16.25">(tools/library/maf_npm_light.</tspan>
-<tspan x="2045.0" dy="16.25">py не создан; был разовый</tspan>
-<tspan x="2045.0" dy="16.25">Decimate 0,35–0,6 для 4</tspan>
-<tspan x="2045.0" dy="16.25">строк) [D164, D236]</tspan>
-</text>
-<text x="2045.0" y="1112.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="13">⚠ Перенос UV на атлас —</tspan>
-<tspan x="2045.0" dy="16.25">только внутри</tspan>
-<tspan x="2045.0" dy="16.25">tools/blender/maf_site_set_bu</tspan>
-<tspan x="2045.0" dy="16.25">ild.py, общего инструмента</tspan>
-<tspan x="2045.0" dy="16.25">нет [D236]</tspan>
-</text>
-<text x="2045.0" y="1230.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2045.0" y="1044.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="13">⚠ Бюджет НПМ: МАФ 60 000 из</tspan>
 <tspan x="2045.0" dy="16.25">180 000 (D097); набор</tspan>
 <tspan x="2045.0" dy="16.25">Ватутино 57 628 + «Верона» 1</tspan>

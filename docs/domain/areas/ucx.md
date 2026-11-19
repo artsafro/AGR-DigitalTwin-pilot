@@ -45,7 +45,14 @@ or preservation of arches, courtyards and functional voids.
 VPM body and for Ground. It builds with `ucx_build` (Blender driver `tools/blender/ucx_build.py`, options unchanged),
 reads the written FBX back in a fresh Blender process, measures every pair with `ucx10_core.plan` (the AGR Tools
 `ucx.gap` core: a pair under the gap fails; the fix is `ucx.gap` in Max on an export copy) and runs V010. It never
-overwrites OUT or its reports and never writes the model. Parity: Vatutino Ground v014 rebuilt by the command has
+overwrites OUT or its reports and never writes the model. Gap bands [D339] (#1607, observe week): `ucx10_core.pair_census`
+measures EVERY pair of UCX pieces, same-family and cross-family (AABB pre-filter at `REACH_M` = 1 m), and the report
+`steps.gap_check` carries `gap_bands` (counts per scope: overlap / lt_2mm / 2_10mm / 10_100mm / 100mm_1m / gt_1m),
+`gap_pairs` (every pair within 1 m with its SAT gap), `warnings` (cross-family pairs under the gap,
+`ucx_cross_family_gap`) and `gap_not_measured`. A band never fails the command; only the same-family rule above does.
+A plane cut that yields an open hull is the finding `ucx_cut_failed`, never a crash. Etalon readbacks (KPP1, Skolkovo,
+Mashi; `G:/Мой диск/AGR-evidence/1607-ucx-gap-bands/`, SHA256SUMS.txt): same-family 2-10 mm / 10-100 mm / 100 mm-1 m =
+KPP1 48/1/6, Skolkovo 496/52/501; Mashi keeps exactly 8 overlaps. Parity: Vatutino Ground v014 rebuilt by the command has
 the delivered UCX geometry (715/715 pieces, 8 788 triangles, max vertex deviation 0 m).
 
 `agr ucx MODEL OUT Main --resolve [--gap-m M]` (#1540): MODEL already holds its UCX (a delivered archive). The

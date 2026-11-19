@@ -23,6 +23,9 @@ shared_kernel:
     - name: face_tile
       contract: "углы UV грани -> тайл грани; угол в чужом тайле — UdimCrossTileError"
 contexts:
+  - id: sintez
+    ref: package-contexts.yaml#sintez
+    grid: "3/4"
   - id: dcc
     grid: "0/1"
     ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"

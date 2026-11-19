@@ -1,0 +1,9 @@
+{
+  "scenario": "oks-vpm",
+  "config": {
+    "passport": "jobs/4bk-k3/passport.json",
+    "sources": "jobs/4bk-k3/sources.json",
+    "profile": "VPM"
+  },
+  "hooks": []
+}

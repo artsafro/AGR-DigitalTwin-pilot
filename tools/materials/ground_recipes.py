@@ -256,7 +256,8 @@ def delivery_directory(version: str) -> Path:
     return DELIVERY_DIR.parent / version
 
 
-def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
+def write_delivery(recipe_path, out_dir, *, version=None, address=None, source_id=None) -> dict:
+    """Write maps/records; default id uses the recipe's address before the output-address override."""
     # Shared exporter provenance, not a second record format [D332]. Script mode also resolves the repo.
     if str(_REPO) not in sys.path:
         sys.path.insert(0, str(_REPO))
@@ -276,6 +277,10 @@ def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
         raise GroundRecipeError("version folder already contains files")
     recipe_hash = bm.sha256_file(recipe_path)
     recipe = load_recipe(recipe_path)
+    try:
+        source_id = bm._source_id(recipe['address'] + '.ground.recipe' if source_id is None else source_id)
+    except ValueError as exc:
+        raise GroundRecipeError(str(exc)) from exc
     if address is not None:
         recipe["address"] = address
     for slot in CANONICAL_SLOTS:
@@ -328,7 +333,8 @@ def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
     (out_dir / "manifest.json").write_bytes(manifest_bytes)
     try:
         bm.write_export_derivation([out_dir / name for name, _ in files], recipe_path, store,
-            bm.git_commit(_REPO), master_sha256=recipe_hash, role='ground')
+            bm.git_commit(_REPO), master_sha256=recipe_hash, role='ground',
+            source_id=source_id)
     except (ValueError, OSError) as exc:
         raise GroundRecipeError(str(exc)) from exc
     return manifest
@@ -341,13 +347,15 @@ def main(argv=None) -> int:
     deliver.add_argument("--recipe", default=str(_DEFAULT_RECIPE))
     deliver.add_argument("--out", required=True)
     deliver.add_argument("--version", default="v001")
-    deliver.add_argument("--address")
+    deliver.add_argument('--address')
+    deliver.add_argument('--source-id', help='stable recipe identity (default: recipe address + .ground.recipe)')
     try:
         args = parser.parse_args(list(argv) if argv is not None else None)
     except SystemExit as exc:
         return int(exc.code) if exc.code else 0
     try:
-        manifest = write_delivery(args.recipe, args.out, version=args.version, address=args.address)
+        manifest = write_delivery(args.recipe, args.out, version=args.version, address=args.address,
+                                  source_id=args.source_id)
     except GroundRecipeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

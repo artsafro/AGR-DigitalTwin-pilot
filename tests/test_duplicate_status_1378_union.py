@@ -95,7 +95,7 @@ def _row(at, status, rule: "str | None" = "blender-launch", step=None):
 
 def _check(root, rows, baseline=frozenset()):
     roots, chains = call_chains.load_live(root, routes={}, context_maps={})
-    return guard.status_problems(root, rows, chains, roots, {}, baseline)
+    return guard.status_problems(root, rows, chains, roots, {}, baseline, own_duty_baseline=frozenset())
 
 
 def test_executable_only_is_not_a_blender_launch_wrapper(tmp_path):

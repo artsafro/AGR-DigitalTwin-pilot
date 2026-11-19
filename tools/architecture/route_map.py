@@ -47,9 +47,9 @@ from xml.sax.saxutils import escape
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    import mini_yaml  # noqa: E402
+    import duplicate_guard, mini_yaml  # noqa: E402
 else:
-    from . import mini_yaml
+    from . import duplicate_guard, mini_yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 ARCH = Path("docs/architecture")
@@ -101,6 +101,10 @@ class SchemaError(ValueError):
     pass
 
 
+HOTSPOT_KEYS = {"id", "stage", "ru", "rules", "evidence", "status", "guard_rule", "owner", "decision"}
+HOTSPOT_DECISION = re.compile(r"(D[0-9]{3})\([1-9][0-9]*\)")
+
+
 # ---------------------------------------------------------------- schema
 def _need(obj, key, where, kind: type = str) -> Any:
     if not isinstance(obj, dict) or key not in obj:
@@ -145,6 +149,8 @@ def check_contexts(contexts):
         _ru(_need(c, "owner_ru", where), where + ".owner_ru")
         for j, f in enumerate(_need(c, "functions", where, list)):
             _need(f, "name", f"{where}.functions[{j}]")
+            if "kind" in f and f["kind"] != "class":
+                raise SchemaError(f"{where}.functions[{j}]: 'kind' must be class when present")
             _ru(_need(f, "contract", f"{where}.functions[{j}]"), f"{where}.functions[{j}].contract")
         for j, d in enumerate(c.get("duplicates", [])):
             dwhere = f"{where}.duplicates[{j}]"
@@ -237,13 +243,38 @@ def _check_stages(events, ctx_ids):
                     if key in br and not (isinstance(br[key], list) and br[key]
                                           and all(isinstance(v, str) for v in br[key])):
                         raise SchemaError(f"{bwhere}: '{key}' must be a non-empty list of strings")
+    hotspot_ids = set()
     for i, h in enumerate(events.get("hotspots", [])):
         where = f"hotspots[{i}]"
-        _need(h, "id", where)
+        hid = _need(h, "id", where)
+        if hid in hotspot_ids:
+            raise SchemaError(f"{where}: duplicate id {hid!r}")
+        hotspot_ids.add(hid)
+        for key in h:
+            if key not in HOTSPOT_KEYS:
+                raise SchemaError(f"{where}: unknown key {key!r}")
         if _need(h, "stage", where) not in stage_ids:
             raise SchemaError(f"{where}: unknown stage {h['stage']!r}")
         _ru(_need(h, "ru", where), where + ".ru")
         _need(h, "evidence", where, list)
+        for key in ("rules", "evidence"):
+            if key in h and not all(isinstance(v, str) and v.strip() for v in _need(h, key, where, list)):
+                raise SchemaError(f"{where}: '{key}' must contain non-blank strings")
+        for key in ("owner", "guard_rule", "decision"):
+            if key in h and not _need(h, key, where).strip():
+                raise SchemaError(f"{where}: '{key}' must not be blank")
+        status = h.get("status")
+        if "status" in h and status not in ("open", "closed", "decided"):
+            raise SchemaError(f"{where}: 'status' must be open, closed or decided")
+        if re.search(r"\bзакрыто\b", h["ru"], re.I):
+            raise SchemaError(f"{where}: use checked 'status' rather than 'Закрыто' in 'ru'")
+        if status == "closed":
+            _need(h, "guard_rule", where)
+        if status == "decided":
+            if not HOTSPOT_DECISION.fullmatch(_need(h, "decision", where)):
+                raise SchemaError(f"{where}: 'decision' must be a D-row and item, e.g. D292(5)")
+        elif "decision" in h:
+            raise SchemaError(f"{where}: 'decision' requires status: decided")
     return ctx_ids
 
 
@@ -316,10 +347,29 @@ def _top_functions(path):
     return {n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
 
 
+def _hotspot_guard_problems(events, contexts):
+    guarded = [h for h in events.get("hotspots", []) if "guard_rule" in h]
+    if not guarded:
+        return []
+    rule_ids = {r["id"] for r in contexts["rules"]}
+    rows = _view_rows({"contexts": contexts})
+    problems = []
+    for h in guarded:
+        rule = h["guard_rule"]
+        where = f"hotspot {h['id']}"
+        if rule not in rule_ids or rule not in duplicate_guard.GUARDED:
+            problems.append(f"{where}: unknown guard_rule {rule!r} (requires a guarded rule in contexts.yaml)")
+        elif h.get("status") == "closed":
+            count = sum(r.rule == rule and r.status == "live-bypass" for r in rows)
+            if count:
+                problems.append(f"{where}: status closed conflicts with {count} live-bypass rows for {rule}")
+    return problems
+
+
 def verify_references(root, events, contexts):
     """Return a list of problems: unknown command, D-row, path, owner function, or a path:line without its match."""
     root = Path(root)
-    problems = []
+    problems = _hotspot_guard_problems(events, contexts)
     decisions = (root / "docs/decisions.md").read_text(encoding="utf-8")
     known_d = set(re.findall(r"^\| (D[0-9]{3}) \|", decisions, re.M))
 
@@ -349,6 +399,12 @@ def verify_references(root, events, contexts):
             for p in br["evidence"]:
                 path(p, where)
     for h in events.get("hotspots", []):
+        if h.get("status") == "decided":
+            decision = HOTSPOT_DECISION.fullmatch(h.get("decision", ""))
+            if decision is None:
+                problems.append(f"hotspot {h['id']}: expected a D-row and item in decision")
+            else:
+                d_row(decision[1], f"hotspot {h['id']}")
         for d in h.get("rules", []):
             d_row(d, f"hotspot {h['id']}")
         for p in h["evidence"]:
@@ -366,9 +422,13 @@ def verify_references(root, events, contexts):
         if "area" in c:
             path(c["area"], f"context {c['id']}")
         defined = _top_functions(owner)
+        classes = {n.name for n in ast.parse(owner.read_bytes(), filename=str(owner)).body
+                   if isinstance(n, ast.ClassDef)} if any(f.get("kind") == "class" for f in c["functions"]) else set()
         for f in c["functions"]:
-            if f["name"] != "<module>" and f["name"] not in defined:
-                problems.append(f"context {c['id']}: {c['owner']} has no top-level function {f['name']}")
+            kind = "class" if f.get("kind") == "class" else "function"
+            names = classes if kind == "class" else defined
+            if f["name"] not in names and not (kind == "function" and f["name"] == "<module>"):
+                problems.append(f"context {c['id']}: {c['owner']} has no top-level {kind} {f['name']}")
         for d in c.get("duplicates", []):
             if "rule" in d:   # path.py::function; the function itself is checked by duplicate_guard (stale row)
                 rel, line = d["at"].split("::", 1)[0], None
@@ -639,8 +699,32 @@ class Board:
 
 
 # ---------------------------------------------------------------- the two pictures
+def _check_hotspot_guards(events, contexts):
+    problems = _hotspot_guard_problems(events, contexts)
+    if problems:
+        raise SchemaError("; ".join(problems))
+
+
+def _hotspot_text(h):
+    text = h["ru"]
+    status = h.get("status")
+    if status == "closed":
+        rule = h["guard_rule"]
+        scope = ", ".join(f"{top}/" for top in duplicate_guard.GUARDED[rule])
+        text += (f"\nЗакрыто по реестру ({rule}): учтённых обходов нет; область поиска: {scope}, "
+                 f"{duplicate_guard.SCAN_PATTERN}; проверка предусмотрена тестом test_duplicate_status_1424")
+    elif status == "decided":
+        text += f"\n{h['decision']}: решено человеком, машиной не проверено"
+    elif status == "open":
+        text += "\nОткрыто"
+    if "owner" in h:
+        text += f"\nВладелец: {h['owner']}"
+    return text
+
+
 def route_board(events, contexts):
     actors, ctx_ru = check_schema(events, contexts)
+    _check_hotspot_guards(events, contexts)
     b = Board()
     col_w, gap = 230, 40
     title = events["title_ru"] + f" ({events['issue']})"
@@ -690,7 +774,8 @@ def route_board(events, contexts):
             y += el["height"] + 16
         for hs in hot_by_stage.get(s["id"], []):
             rules = f" [{', '.join(hs['rules'])}]" if hs.get("rules") else ""
-            el = b.box(f"route/hot/{hs['id']}", x, y, col_w, "⚠ " + hs["ru"] + rules, COLORS["hotspot"], size=13)
+            el = b.box(f"route/hot/{hs['id']}", x, y, col_w, "⚠ " + _hotspot_text(hs) + rules,
+                       COLORS["hotspot"], size=13)
             y += el["height"] + 16
     return b
 
@@ -811,6 +896,8 @@ def resolve_context(context, maps, seen=()):
         raise SchemaError(f"context ref {ref!r}: expected one target {cid!r}, found {len(candidates)}")
     target = resolve_context(candidates[0], maps, (*seen, ref))
     result = {**target, **context}
+    if "grid" not in context:  # placement belongs to this map, not the referenced owner's map
+        result.pop("grid", None)
     for key in ("owner", "owner_ru", "functions"):
         result[key] = _need(target, key, f"context ref {ref!r}", list if key == "functions" else str)
     return result
@@ -857,12 +944,8 @@ def _scheme(events):
 
 def _view_rows(maps):
     # Reuse #1424's status contract, not a second call-chain classifier.
-    if __package__ in (None, ""):
-        from duplicate_guard import rows_of
-    else:
-        from .duplicate_guard import rows_of
     try:
-        return rows_of(maps)
+        return duplicate_guard.rows_of(maps)
     except ValueError as exc:
         raise SchemaError(str(exc)) from exc
 
@@ -921,6 +1004,7 @@ def short_route_board(events, cmap, maps):
 
 def owners_markdown(events, cmap, maps):
     """Same YAML snapshot as the scheme. Detailed registry locations live here only."""
+    _check_hotspot_guards(events, maps["contexts"])
     rows = _owner_rows(cmap, _view_rows(maps))
     def cell(text):
         return str(text).replace("|", "&#124;").replace("\n", "<br>")
@@ -970,7 +1054,7 @@ def owners_markdown(events, cmap, maps):
         out.append("| " + " | ".join(map(cell, [s["event_ru"], ", ".join(s["rules"]), evidence + "; " + branches])) + " |")
     out += ["", "## Ограничения сегодня", ""]
     for h in events.get("hotspots", []):
-        out.append("- " + h["ru"] + ": " + "; ".join(link(p) for p in h["evidence"]))
+        out.append("- " + _hotspot_text(h).replace("\n", "<br>") + ": " + "; ".join(link(p) for p in h["evidence"]))
     return "\n".join(out) + "\n"
 
 

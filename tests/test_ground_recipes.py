@@ -143,7 +143,8 @@ def test_delivery_writes_ground_producer_record(recipes, tmp_path, monkeypatch):
         artifact = tmp_path / name
         artifact.write_bytes(b'synthetic FBX')
         artifacts.append(artifact)
-        records.append(bm.write_export_derivation([artifact], source, tmp_path / 'fbx-records', role=role))
+        records.append(bm.write_export_derivation([artifact], source, tmp_path / 'fbx-records', role=role,
+                                                 source_id='site.' + source.stem))
     pkg = tmp_path / '0000_Syn.zip'
     with zipfile.ZipFile(pkg, 'w') as archive:
         for path in artifacts + list(out.glob('*.png')):

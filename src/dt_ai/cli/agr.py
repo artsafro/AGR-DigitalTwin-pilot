@@ -12,7 +12,8 @@ from pathlib import Path
 
 ALIASES = {"inspect": ["inspect"], "package-vpm": ["derive", "package"], "package-npm": ["derive", "package-npm"], "ground": ["ground", "v015"],
            "zero": ["ground", "zero"],
-           "place": ["place", "site"]}   # #1407: MAF + Flora NPM + VPM at the same points
+           "place": ["place", "site"],   # #1407: MAF + Flora NPM + VPM at the same points
+           "npm-light": ["derive", "maf-npm-light"]}   # #1410: MAF NPM-light + atlas UV (D293 conversion branch)
 # agr ground (#1406): `agr ground site|zero|v015 ARGS` picks the step; any other first argument keeps the
 # frozen Vatutino record `dt ground v015 ARGS` (unchanged for existing callers).
 GROUND_STEPS = ("site", "zero", "v015")
@@ -21,7 +22,8 @@ GROUND_STEPS = ("site", "zero", "v015")
 # checker (#1379): the SINTEZ stage command; Blender side tools/blender/sintez_checker.py via blender_runner.
 # build-manifest (#1423): core adapters/max/agr_tools/build_manifest.py (delivery set consistency, FBX export owner).
 SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
-           "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py"}
+           "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py",
+           "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py"}
 
 
 STUBS = {

@@ -110,7 +110,7 @@
     },
     {
      "type": "arrow",
-     "id": "e9fcb6d874f2a894"
+     "id": "e3e27a88e9873390"
     }
    ],
    "updated": 1,
@@ -422,7 +422,7 @@
     },
     {
      "type": "arrow",
-     "id": "ef1248c6cf912ad7"
+     "id": "ea2a7d9872e8049c"
     }
    ],
    "updated": 1,
@@ -466,7 +466,7 @@
    "lineHeight": 1.25
   },
   {
-   "id": "ebefb8015300e481",
+   "id": "e1c3fdcfd48b67d4",
    "type": "rectangle",
    "x": 955.0,
    "y": 655.0,
@@ -485,26 +485,26 @@
    "roundness": {
     "type": 3
    },
-   "seed": 233386411,
+   "seed": 1512866872,
    "version": 1,
-   "versionNonce": 961134570,
+   "versionNonce": 1887080474,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "ee52b2029f7668ad"
+     "id": "efbb2352165bfc95"
     },
     {
      "type": "arrow",
-     "id": "e9fcb6d874f2a894"
+     "id": "e3e27a88e9873390"
     },
     {
      "type": "arrow",
-     "id": "ef1248c6cf912ad7"
+     "id": "ea2a7d9872e8049c"
     },
     {
      "type": "arrow",
-     "id": "e20316a99a769691"
+     "id": "e76626064b04f8e7"
     }
    ],
    "updated": 1,
@@ -512,7 +512,7 @@
    "locked": false
   },
   {
-   "id": "ee52b2029f7668ad",
+   "id": "efbb2352165bfc95",
    "type": "text",
    "x": 963.0,
    "y": 665.0,
@@ -529,9 +529,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1534628035,
+   "seed": 1210349072,
    "version": 1,
-   "versionNonce": 1959272557,
+   "versionNonce": 1484336801,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -542,7 +542,7 @@
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
-   "containerId": "ebefb8015300e481",
+   "containerId": "e1c3fdcfd48b67d4",
    "originalText": "НПМ МАФ на атласе\nВладелец: adapters/max/agr_tools/flora_atlas_max.py\nатлас МАФ (GroundEl) в AGR Tools; конвертация ВПМ → НПМ\nили параллельно (D293)\n\natlas_groundel: контекст Max, режим, узлы МАФ, превью ->\nатлас МАФ НПМ",
    "autoResize": true,
    "lineHeight": 1.25
@@ -652,7 +652,7 @@
     },
     {
      "type": "arrow",
-     "id": "e20316a99a769691"
+     "id": "e76626064b04f8e7"
     },
     {
      "type": "arrow",
@@ -1210,7 +1210,7 @@
    "lineHeight": 1.25
   },
   {
-   "id": "e9fcb6d874f2a894",
+   "id": "e3e27a88e9873390",
    "type": "arrow",
    "x": 1425.0,
    "y": 225.0,
@@ -1227,14 +1227,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 827851703,
+   "seed": 550101832,
    "version": 1,
-   "versionNonce": 281777646,
+   "versionNonce": 16963667,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e606743a0a5c527f"
+     "id": "e44452c846c375e5"
     }
    ],
    "updated": 1,
@@ -1268,13 +1268,13 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    }
   },
   {
-   "id": "e606743a0a5c527f",
+   "id": "e44452c846c375e5",
    "type": "text",
    "x": 1385.0,
    "y": 466.88,
@@ -1291,9 +1291,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1004748457,
+   "seed": 1934607585,
    "version": 1,
-   "versionNonce": 1261872362,
+   "versionNonce": 901953076,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1304,13 +1304,13 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e9fcb6d874f2a894",
+   "containerId": "e3e27a88e9873390",
    "originalText": "точки МАФ",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "ef1248c6cf912ad7",
+   "id": "ea2a7d9872e8049c",
    "type": "arrow",
    "x": 2645.0,
    "y": 488.75,
@@ -1327,14 +1327,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1753213580,
+   "seed": 1652991536,
    "version": 1,
-   "versionNonce": 352743040,
+   "versionNonce": 1494027143,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e009832cdc64c809"
+     "id": "e8773be0d510211e"
     }
    ],
    "updated": 1,
@@ -1376,13 +1376,13 @@
     "gap": 4
    },
    "endBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    }
   },
   {
-   "id": "e009832cdc64c809",
+   "id": "e8773be0d510211e",
    "type": "text",
    "x": 1730.0,
    "y": 717.5,
@@ -1399,9 +1399,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1393450316,
+   "seed": 223375361,
    "version": 1,
-   "versionNonce": 383584692,
+   "versionNonce": 420086715,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1412,13 +1412,13 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "ef1248c6cf912ad7",
+   "containerId": "ea2a7d9872e8049c",
    "originalText": "ID / атлас 512",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e20316a99a769691",
+   "id": "e76626064b04f8e7",
    "type": "arrow",
    "x": 1425.0,
    "y": 726.25,
@@ -1435,14 +1435,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 726851644,
+   "seed": 1443532873,
    "version": 1,
-   "versionNonce": 119342830,
+   "versionNonce": 786635076,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e4e9c5ee4c54f506"
+     "id": "e018b872d45bd4a1"
     }
    ],
    "updated": 1,
@@ -1471,7 +1471,7 @@
    "endArrowhead": "arrow",
    "elbowed": false,
    "startBinding": {
-    "elementId": "ebefb8015300e481",
+    "elementId": "e1c3fdcfd48b67d4",
     "focus": 0,
     "gap": 4
    },
@@ -1482,7 +1482,7 @@
    }
   },
   {
-   "id": "e4e9c5ee4c54f506",
+   "id": "e018b872d45bd4a1",
    "type": "text",
    "x": 1385.0,
    "y": 871.25,
@@ -1499,9 +1499,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1881641535,
+   "seed": 1104592782,
    "version": 1,
-   "versionNonce": 290040497,
+   "versionNonce": 1279295151,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1512,7 +1512,7 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e20316a99a769691",
+   "containerId": "e76626064b04f8e7",
    "originalText": "НПМ на атласе",
    "autoResize": true,
    "lineHeight": 1.25

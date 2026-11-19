@@ -78,7 +78,7 @@ def write_provenance(packet, version, source, source_digest, plan_path, outputs,
         raise ValueError(f'exactly one work FBX expected among the outputs, got {len(fbx)}')
     rec = bm.write_export_derivation(fbx, source, packet / bm.DERIVATION_STORE, commit, source_digest,
                                      inputs=[p for p in outputs if p not in fbx] + ([plan_path] if plan_path else []),
-                                     role='oks')
+                                     role='oks', source_id='KPP1.oks.master')
     data = {'schema': SCHEMA, 'version': version,
             'source': {'path': str(source), 'sha256': source_digest, 'r1': SOURCE_NAME[source_digest]},
             'union_plan': None if plan_path is None else {'path': str(plan_path), 'sha256': sha(plan_path)},

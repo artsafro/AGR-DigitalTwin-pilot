@@ -1,0 +1,13 @@
+{
+  "scenario": "npm-to-vpm",
+  "config": {
+    "sources": ["C:/x/npm2vpm-g22/src/0707_Garibaldi_22_01.fbx", "C:/x/npm2vpm-g22/src/0707_Garibaldi_22_02.fbx"],
+    "profile": "VPM",
+    "atlas": "source-linked diffuse atlases; facade segmentation profile",
+    "table": null,
+    "overflow_policy": "Artem 2026-11-17 option a: recheck cells first; seam cuts into several IDs/tiles; never waive material ambiguity or metric failure",
+    "approved_drops": {"SM_Garibaldi_22_002_Main": [68903, 69759]},
+    "evidence": "G:/Мой диск/AGR-evidence/1630-npm2vpm-g22/"
+  },
+  "hooks": []
+}

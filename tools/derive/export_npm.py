@@ -187,6 +187,7 @@ def parse(argv):
     ap.add_argument("--address", help="NPM address (default: from SM_<A>_Main); extra OKS share the main address")
     ap.add_argument("--index", type=int, default=1, help="OKS index inside the NPM package (NNN / NN), default 1")
     ap.add_argument("--pivot", help="x,y of one shared origin for every FBX of a multi-OKS NPM package")
+    ap.add_argument("--source-id", help="stable source identity across revisions (default: <address>.oks.<index>.master)")
     ap.add_argument("--keep-quads", action="store_true", help="untriangulated review copy (not a delivery)")
     ap.add_argument("--recipe-dir", default=RECIPE, help="directory with export_safety.py")
     ap.add_argument("--allow-cross-tile", action="store_true",
@@ -260,6 +261,7 @@ def main(argv):
     vis = [o for o in (main, glass) if o is not None]
     A = a.address or main.name[3:-5]
     NNN, NN = f"{a.index:03d}", f"{a.index:02d}"
+    _bm._source_id(a.source_id if a.source_id is not None else f'{A}.oks.{a.index:03d}.master')
     names = main["finish_names"].split(",")
     alpha_ids = {i for i, n in enumerate(names) if "Alpha" in n}
 
@@ -393,7 +395,8 @@ def main(argv):
     record_export(fbx, source=a.master, top=float(exported_top), metadata_path=shared_meta_path,
                   master=a.master, master_sha256=master_sha)
     record = _bm.write_export_derivation([fbx], a.master, store, _bm.git_commit(os.path.join(HERE, "..", "..")),
-                                         master_sha256=master_sha, inputs=[a.spec, a.atlas_dir])
+                                         master_sha256=master_sha, inputs=[a.spec, a.atlas_dir],
+                                         source_id=a.source_id if a.source_id is not None else f'{A}.oks.{a.index:03d}.master')
     report.update({"fbx": fbx, "main_tris": tri(main), "glass_tris": tri(glass) if glass else 0,
                    "master_sha256": master_sha, "derivation": record})
     with open(meta_path, "x") as fh:

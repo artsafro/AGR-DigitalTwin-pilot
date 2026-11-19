@@ -1,6 +1,8 @@
 """#1359: event storm + context map generator (drift / existence) and the jobs/ duplicate guard."""
 import json
+import os
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -14,6 +16,64 @@ import mini_yaml  # noqa: E402
 import route_map  # noqa: E402
 
 YAMLS = [ROOT / route_map.EVENTS, ROOT / route_map.CONTEXTS]
+
+
+# ---------------------------------------------------------------- #1636: source-backed route wording, not delivery certification
+@pytest.mark.parametrize("item", ["context", "npm", "sources", "readback", "sintez", "delivered"])
+def test_1636_npm_route_matches_current_tools(item):
+    events = mini_yaml.load(ROOT / route_map.EVENTS)
+    contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
+    stages = {s["id"]: s for s in events["stages"]}
+    if item == "context":
+        assert stages["npm"]["context"] == "npm"
+        npm = next(c for c in contexts["contexts"] if c["id"] == "npm")
+        assert npm["owner"] == "tools/derive/export_npm.py"
+        assert {f["name"] for f in npm["functions"]} == {"main"}
+    elif item == "npm":
+        assert "Экспортированный НПМ-FBX с привязкой к мастеру" in stages["npm"]["event_ru"]
+        assert "перед экспортом" not in stages["npm"]["event_ru"]
+    elif item == "sources":
+        source = events["scheme"]["source_ru"]
+        assert "состав исходников фиксируется путями и SHA-256 (кроме RVT)" in source
+        assert "неизвестная ревизия останавливает выпуск" not in source
+        assert "#1592" in source
+    elif item == "readback":
+        stage = stages[item]
+        assert {"agr build-manifest", "dt qa xview"} <= set(stage["commands"])
+        assert "fbx_readback" in stage["event_ru"] and "manifest_findings" in stage["event_ru"]
+        assert "ZIP" in stage["event_ru"] and "одного FBX" in stage["event_ru"]
+    elif item == "sintez":
+        assert stages[item]["evidence"] == ["tools/qa/sintez_checker.py"]
+    else:
+        step = next(s for s in events["scheme"]["steps"] if s["stages"] == "delivered")
+        assert step["artifact_ru"] == "Пакет или сцена Max QUAD для приёмки"
+        assert "D262" in stages[item]["rules"]  # unresolved relocation stays out of scope
+
+
+@pytest.mark.parametrize("rule,qualname", [
+    ("delivery-zip", "main"), ("blender-launch", "main"), ("blender-launch", "main.dcc"),
+])
+def test_1652_vatutino_history_does_not_claim_delivery_acceptance(rule, qualname):
+    contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
+    at = f"jobs/VATUTINO-SITE/run_delivery.py::{qualname}"
+    rows = [row for context in contexts["contexts"] for row in context.get("duplicates", [])
+            if row["at"] == at and row["rule"] == rule]
+    assert len(rows) == 1
+    row = rows[0]
+    assert row["status"] == "historical"
+    sheet = ROOT / "docs/deliveries/vatutino-site-2026-11-09.md"
+    assert "Verdict: **not passed**" in sheet.read_text(encoding="utf-8")
+    assert "verdict not passed" in row["ru"]
+    assert "v009" in row["ru"] and "2026-11-09" in row["ru"]
+    assert "запуск не меняем" in row["ru"]
+    owners = {rel: text for rel, text in route_map.render(ROOT)[2].items()
+              if rel.name.endswith("-owners.md")}
+    assert len(owners) == 6
+    for rel, text in owners.items():
+        matching = [line for line in text.splitlines()
+                    if line.startswith(f"| {rule} |") and f"run_delivery.py::{qualname}`" in line]
+        assert len(matching) == 1, rel
+        assert f"| historical | {row['ru']} |" in matching[0], rel
 
 
 # ---------------------------------------------------------------- generator: drift, references, labels
@@ -70,7 +130,157 @@ def test_npm_v2_tool_choice_atlas_and_current_owners():
     hotspots = {h["id"]: h for h in events["hotspots"]}
     for name, issue in (("udim", "#1376"), ("package", "#1377"), ("dcc-runner", "#1378")):
         assert issue in hotspots[name]["ru"]
-        assert "Закрыто" in hotspots[name]["ru"]
+        assert "Закрыто" not in hotspots[name]["ru"]
+    assert hotspots["udim"]["status"] == "closed"
+    assert hotspots["package"]["status"] == "open"
+
+
+def _hotspot(**fields):
+    events, contexts = _loaded()
+    hotspot = dict(id="status-probe", stage="uv", ru="Состояние", evidence=["docs/decisions.md"])
+    hotspot.update(fields)
+    events["hotspots"] = [hotspot]
+    return events, contexts
+
+
+@pytest.mark.parametrize(("fields", "diagnostic"), [
+    ({"typo": True}, "typo"), ({"status": "Artem"}, "status"),
+    ({"status": ""}, "status"), ({"status": None}, "status"),
+    ({"status": []}, "status"), ({"status": float("nan")}, "status"),
+    ({"status": float("inf")}, "status"), ({"owner": " "}, "owner"),
+    ({"guard_rule": 0}, "guard_rule"), ({"status": "closed"}, "guard_rule"),
+    ({"status": "decided"}, "decision"), ({"status": "decided", "decision": "D292"}, "decision"),
+    ({"decision": "D292(5)"}, "decision"), ({"evidence": []}, "evidence"),
+    ({"rules": [None]}, "rules"), ({"ru": "Закрыто вручную"}, "status"),
+])
+def test_1664_hotspot_schema(fields, diagnostic):
+    events, contexts = _hotspot(**fields)
+    with pytest.raises(route_map.SchemaError, match=diagnostic):
+        route_map.check_schema(events, contexts)
+
+
+def test_1664_duplicate_hotspot():
+    events, contexts = _hotspot()
+    events["hotspots"] *= 2
+    with pytest.raises(route_map.SchemaError, match="duplicate.*status-probe"):
+        route_map.check_schema(events, contexts)
+
+
+@pytest.mark.parametrize(("fields", "diagnostic"), [
+    ({"status": "closed", "guard_rule": "typo"}, "typo"),
+    ({"status": "open", "guard_rule": "typo"}, "typo"),
+    ({"status": "decided", "decision": "D999(5)"}, "D999"),
+])
+def test_1664_hotspot_references(fields, diagnostic):
+    events, contexts = _hotspot(**fields)
+    route_map.check_schema(events, contexts)
+    assert any("status-probe" in p and diagnostic in p
+               for p in route_map.verify_references(ROOT, events, contexts))
+
+
+def test_1664_closed_hotspot_registry():
+    events, contexts = _hotspot(status="closed", guard_rule="udim-tile", owner="UDIM team")
+    route_map.check_schema(events, contexts)
+    row_list = next(c["duplicates"] for c in [contexts["shared_kernel"], *contexts["contexts"]]
+                    if any(d.get("rule") == "udim-tile" for d in c.get("duplicates", [])))
+    rows = [d for d in row_list if d.get("rule") == "udim-tile"
+            and d["status"] == "historical"][:2]
+    assert len(rows) == 2
+    # Other rules' live rows exist; only this rule and this registry snapshot count.
+    for count in (0, 1, 2, 1, 0):
+        for i, row in enumerate(rows):
+            row["status"] = "live-bypass" if i < count else "historical"
+            if i < count:
+                row["step"] = "-"
+            else:
+                row.pop("step", None)
+        problems = route_map.verify_references(ROOT, events, contexts)
+        if count:
+            assert any(f"{count} live-bypass" in p and "status-probe" in p for p in problems)
+            with pytest.raises(route_map.SchemaError, match="live-bypass"):
+                route_map.route_board(events, contexts)
+        else:
+            assert problems == []
+            maps = {**route_map.load_context_maps(ROOT), "contexts": contexts}
+            for view in (route_map.route_board(events, contexts).excalidraw(),
+                         route_map.owners_markdown(events, contexts, maps)):
+                view = view.replace(r"\n", " ")  # canvas wraps long captions
+                assert "учтённых обходов нет" in view and "сверено" not in view
+                assert "проверка предусмотрена тестом test_duplicate_status_1424" in view
+                assert all(f"{top}/" in view for top in guard.GUARDED["udim-tile"])
+                assert "*.py" in view
+
+
+def test_1664_decided_caption():
+    events, contexts = _hotspot(status="decided", decision="D292(5)")
+    assert route_map.verify_references(ROOT, events, contexts) == []
+    for view in (route_map.route_board(events, contexts).excalidraw(),
+                 route_map.owners_markdown(events, contexts, route_map.load_context_maps(ROOT))):
+        assert "D292(5)" in view
+        assert "решено человеком, машиной не проверено" in view.replace(r"\n", " ")
+
+
+def test_1664_route_facts():
+    events, _ = _loaded()
+    hs = {h["id"]: h for h in events["hotspots"]}
+    assert {sid: hs[sid]["decision"] for sid in ("windows", "parapet-roof-seam", "tool-choice")} == {
+        "windows": "D292(5)", "parapet-roof-seam": "D292(4)", "tool-choice": "D293(1)",
+    }
+    assert all(s in hs["two-atlases"]["ru"] for s in ("порт npm_atlas_udim", "D330 сузило D225", "#1141 отложен"))
+    assert "единственный" not in hs["package"]["ru"] and "live-bypass" in hs["package"]["ru"]
+    assert "docs/architecture/contexts.yaml" in hs["package"]["evidence"]
+    assert "канон — run_blender; известный обход на стадии npm" in hs["dcc-runner"]["ru"]
+    bypass = hs["npm-blender-bypass"]
+    assert bypass["stage"] == "npm" and bypass["status"] == "open" and "#1663" in bypass["ru"]
+    assert "src/dt_ai/cli/shared_tools.py" in bypass["evidence"]
+    xview = hs["xview-overlaps"]
+    assert "status" not in xview and "jobs/KPP1/STATE.md" in xview["evidence"]
+    assert all(s in xview["ru"] for s in ("НПМ 0/0", "R1-v003", "Max ждёт проверки", "112/116", "v002"))
+    assert "85/0" not in xview["ru"]
+    vpm = mini_yaml.load(ROOT / "docs/architecture/vpm-oks-route.events.yaml")
+    measurement = next(h for h in vpm["hotspots"] if "85/0" in h["ru"])
+    assert "R1-v003" in measurement["ru"] and "jobs/KPP1/STATE.md" in measurement["evidence"]
+    stages = {s["id"]: s for s in events["stages"]}
+    bench = "docs/research/bench-npm-derivation.md"
+    assert bench in stages["uv"]["evidence"]
+    assert stages["readback"]["evidence"] == ["tools/derive/build_manifest.py", bench]
+    assert "jobs/KPP1/STATE.md" in stages["validate"]["evidence"] and bench not in stages["validate"]["evidence"]
+
+
+@pytest.mark.parametrize("case", ["live-bypass", "hardlink alias", "foreign partial", "source changed"])
+def test_1664_cli_refuses_without_writes(tmp_path, case, monkeypatch, capsys):
+    for rel in [*route_map.route_events().values(), *route_map.context_maps().values()]:
+        dest = tmp_path / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / rel, dest)
+    src = tmp_path / route_map.EVENTS
+    out = tmp_path / route_map.OUTPUTS["route"].with_suffix(".svg")
+    if case == "live-bypass":
+        text = src.read_text(encoding="utf-8").split("\nhotspots:\n")[0]
+        src.write_text(text + '\nhotspots:\n  - id: false-closure\n    stage: uv\n    ru: "Архив"\n'
+                       '    status: closed\n    guard_rule: delivery-zip\n    evidence:\n'
+                       '      - docs/decisions.md\n', encoding="utf-8")
+    elif case == "hardlink alias":
+        os.link(src, out)
+    elif case == "foreign partial":
+        out.with_name(out.name + ".partial").write_bytes(b"foreign")
+    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    if case == "source changed":
+        render_all = route_map.render_all
+        before[src] += b"\n# concurrent source edit\n"
+
+        def render_then_edit(root):
+            rendered = render_all(root)
+            src.write_bytes(before[src])
+            return rendered
+
+        monkeypatch.setattr(route_map, "render_all", render_then_edit)
+        assert route_map.main(["--root", str(tmp_path)]) != 0 and case in capsys.readouterr().err
+    else:
+        proc = subprocess.run([sys.executable, str(ROOT / "tools/architecture/route_map.py"), "--root", str(tmp_path)],
+                              capture_output=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"})
+        assert proc.returncode != 0 and case in proc.stderr
+    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
 @pytest.mark.parametrize("needle", [
@@ -96,7 +306,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 11  # #1441 owners + #1380 shared VPM UV replaces vpm-uv-copy
+    assert len(contexts["contexts"]) == 15  # #1644: distinct SINTEZ and PartsList owners
 
 
 @pytest.mark.parametrize("command,ok", [
@@ -110,7 +320,7 @@ def test_command_exists(command, ok):
 
 
 def _loaded():
-    events, contexts = mini_yaml.load(YAMLS[0]), mini_yaml.load(YAMLS[1])
+    events, contexts = route_map.load_routes(ROOT)["route"], route_map.load_context_maps(ROOT)["contexts"]
     # Mutation probes target the body contract, independent of added owner inventory rows (#1441).
     contexts["contexts"].sort(key=lambda c: c["id"] != "body")
     return events, contexts
@@ -282,9 +492,10 @@ def test_guard_green_on_repo_with_allowlist(capsys):
 def test_allowlist_rows_carry_an_issue_and_name_only_known_rules():
     allowed = guard.allowlist(mini_yaml.load(ROOT / route_map.CONTEXTS))
     assert {k[0] for k in allowed} <= set(guard.RULES)   # #1381: seam-seal has no listed copy left; #1407: site-placement neither
-    assert all(issue.startswith("#") for issue in allowed.values())
+    assert not any(k[0] == 'window-generator' for k in allowed)  # #1405: no grandfathered copies
+    assert all(allow.issue.startswith("#") and allow.copies >= 1 for allow in allowed.values())
     jobs = [k for k in allowed if k[1].startswith("jobs/")]
-    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 16   # + build_v008::build (#1371)
+    assert len([k for k in jobs if k[0] == "delivery-zip"]) == 15   # #1675 migrates the SYNTEZ rename
     assert len([k for k in jobs if k[0] == "udim-tile"]) == 34   # #1531 removes two live copies; #1370 retains six historical OBR22 copies
     # #1387: rows are keyed by file + function (+ hash), never by a bare line number
     assert all(qual and ":" not in path for _, path, qual, _ in allowed)
@@ -325,6 +536,36 @@ UDIM_1370 = [
 def test_guard_1370_udim_copy(tmp_path, code, capsys):
     assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/copy.py": code})) == 1
     assert "NEW COPY [udim-tile]" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("code", [
+    pytest.param("uv - (tile - 1001, 0.0)", id="float-origin"),
+    pytest.param("int(u) + 1001", id="int-tile"),
+    pytest.param("u // 1 + 1001", id="floor-div-tile"),
+    pytest.param("A = 1000\nA + 1 + u + 10*v", id="named-split"),
+])
+def test_guard_1482_udim_copy(tmp_path, code, capsys):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/x.py": code})) == 1
+    assert "NEW COPY [udim-tile] jobs/NEWJOB/x.py:" in capsys.readouterr().out
+
+
+def test_guard_1482_generated_named_splits():
+    from itertools import permutations
+    for terms in permutations(("A", "B", "u", "10*v")):
+        code = "A: int = 997\nB = 4\n" + " + ".join(terms)
+        assert {f.rule for f in guard.scan_text(code, "jobs/NEWJOB/x.py")} == {"udim-tile"}, terms
+
+
+@pytest.mark.parametrize("code", [
+    "uv - (tile - 1001, 0.5)", "uv - (tile - 1001, False)", "uv - (tile - 1001, 1e999)",
+    "uv - (tile - 1001, float('nan'))", "uv - (tile - 1001,)",
+    "u // 2 + 1001", "u // True + 1001", "u / 1 + 1001",
+    "int(u, 16) + 1001", "obj.int(u) + 1001", "int(*u) + 1001",
+    "A = 1000\nA + 2 + u + 10*v", "A = 1000\nA = 1002\nA + 1 + u + 10*v",
+    "A = 1000.0\nA + 1 + u + 10*v", "A = 1000\nA + 1 + u",
+])
+def test_guard_1482_non_copies(tmp_path, code):
+    assert guard.main(_guard_root(tmp_path, {"jobs/NEWJOB/ok.py": code})) == 0
 
 
 ARCHIVE_1370 = [
@@ -416,7 +657,7 @@ def test_guard_1370_real_instances():
 
 def test_guard_1370_reset_and_read_only(tmp_path):
     import subprocess
-    code = UDIM_1370[0] + "\n" + ARCHIVE_1370[0]
+    code = "\n".join((UDIM_1370[0], "uv - (tile - 1001, 0.0)", "int(u) + 1001", ARCHIVE_1370[0]))
     args = _guard_root(tmp_path, {"jobs/NEWJOB/copy.py": code})
     source = tmp_path / "jobs/NEWJOB/copy.py"
     alias = tmp_path / "jobs/NEWJOB/alias.py"
@@ -430,7 +671,9 @@ def test_guard_1370_reset_and_read_only(tmp_path):
                                 capture_output=True, text=True, timeout=60)
         assert result.returncode == status, result.stdout + result.stderr
         if status == 1:
-            assert "NEW COPY [udim-tile]" in result.stdout and "NEW COPY [delivery-zip]" in result.stdout
+            for rel in ("alias.py", "copy.py"):
+                assert result.stdout.count(f"NEW COPY [udim-tile] jobs/NEWJOB/{rel}:") == 3
+                assert result.stdout.count(f"NEW COPY [delivery-zip] jobs/NEWJOB/{rel}:") == 1
         assert {p.relative_to(tmp_path): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
 
 
@@ -581,7 +824,10 @@ def test_guard_hash_row_pins_one_copy_inside_the_function(tmp_path, capsys):
     second = FN + "    du = (t - 1001) % 10\n"
     assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f", digest=digest))) == 1
     assert "NEW COPY [udim-tile] jobs/J/a.py:3 in f" in capsys.readouterr().out      # 2nd copy, other hash
-    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f"))) == 0  # no hash
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second}, _row("jobs/J/a.py::f"))) == 1  # no hash, count 1
+    assert "covers only count 1 of 2" in capsys.readouterr().out                                    # #1396
+    assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": second},
+                                  _row("jobs/J/a.py::f") + "        count: 2\n")) == 0             # no hash, count 2
     assert guard.main(_guard_root(tmp_path, {"jobs/J/a.py": FN}, _row("jobs/J/a.py::f", digest="0" * 10))) == 1
     out = capsys.readouterr().out
     assert "NEW COPY [udim-tile] jobs/J/a.py:2 in f" in out and "STALE ALLOWLIST [udim-tile] jobs/J/a.py::f" in out

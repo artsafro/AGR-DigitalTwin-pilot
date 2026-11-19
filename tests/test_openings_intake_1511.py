@@ -35,6 +35,46 @@ def test_revit_reader_keeps_latin_c_glass_without_mutating_input(tmp_path):
     assert (side, groups) == original
 
 
+@pytest.mark.parametrize('embedded', [False, True])
+@pytest.mark.parametrize('case', ['unique', 'ambiguous', 'wrong_depth'])
+def test_merged_reader_keeps_3d_owner_and_legacy_api(tmp_path, monkeypatch, embedded, case):
+    """Synthetic #1405/#1511 integration: both import routes, repeat/reset, no input mutation."""
+    fixture = runpy.run_path(str(ROOT / 'tests/jobs/test_kpp1_extract_openings.py'))
+    obj = fixture['_glass']('Cтеклопакет', 0)
+    if case == 'wrong_depth':
+        obj['max'][1] = .5
+    src, cen = fixture['_write'](tmp_path, [obj])
+    side = json.loads((src / 'curtain.export.json').read_text(encoding='utf-8'))
+    groups = {g: json.loads((cen / (g + '.objects.json')).read_text(encoding='utf-8'))
+              for g in ('curtain', 'openings')}
+    if case == 'ambiguous':
+        side['types'][0]['instances'].append(dict(side['types'][0]['instances'][1], elementId=12))
+    reader = core.read_revit_openings
+    if embedded:
+        monkeypatch.syspath_prepend(str(ROOT / 'adapters/max/agr_tools'))
+        reader = __import__('openings_core').read_revit_openings
+    original = copy.deepcopy((side, groups))
+    spec, drops, ownership = reader(side, groups, profile='KPP1', include_ownership=True)
+    expected = 1 if case == 'unique' else 0
+    assert sum(len(b['glass']) for s in spec['S']['surrounds'] for b in s['bays']) == expected
+    assert ownership['total_objects'] == 1
+    assert len(ownership['represented_objects']) == expected
+    assert len(drops) == 1 - expected
+    if drops:
+        assert drops[0]['id'] == '0'
+        assert ('multiple bays in 3D' if case == 'ambiguous' else 'no bay in 3D') in drops[0]['reason']
+    legacy_spec, legacy_drops = reader(side, groups, profile='KPP1')
+    assert legacy_spec == spec
+    assert legacy_drops == [{k: v for k, v in d.items() if k != 'id'} for d in drops]
+    assert reader(side, groups, profile='KPP1', include_ownership=True) == (spec, drops, ownership)
+    assert (side, groups) == original
+    # A rejected/ambiguous source must not contaminate the next independent successful read.
+    side['types'][0]['instances'] = side['types'][0]['instances'][:2]
+    groups['curtain'][0]['max'][1] = -.29
+    _, clean_drops, clean = reader(side, groups, profile='KPP1', include_ownership=True)
+    assert clean_drops == [] and clean['status'] == 'pass'
+
+
 @pytest.mark.parametrize('bad', [None, {}, {'types': []}, {'types': [{'instances': []}]}])
 def test_revit_empty_or_partial_is_an_error(bad):
     with pytest.raises(ValueError):

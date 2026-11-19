@@ -1,0 +1,6 @@
+{"note": "#1410 proof atlas for the Silikatny (#1315) MAF copies. The copies are geometry-only (one material each); the slot per row is a proof choice, not a decided finish. Not a delivery.",
+ "materials": [
+  {"name": "steel_ral7047", "kind": "solid", "color": "#D0D0D0", "size": 64, "reason": "proof: metal racks / urn"},
+  {"name": "larch_light_oak", "kind": "solid", "color": "#C49A6C", "size": 64, "reason": "proof: bench slats"},
+  {"name": "concrete_grey", "kind": "solid", "color": "#9A9A96", "size": 64, "reason": "proof: sand pit frame"}
+ ]}

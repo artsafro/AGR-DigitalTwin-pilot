@@ -605,13 +605,15 @@ def _validate_revit_source(side, groups):
         raise ValueError('partial Revit source: ' + str(error)) from error
 
 
-def read_revit_openings(side, groups, *, profile):
+def read_revit_openings(side, groups, *, profile, include_ownership=False):
     """Read saved export/census JSON, returning legacy (facade spec, reasoned drops).
 
     Only the explicitly selected KPP1 profile is supported: feet sidecar bboxes, metre
     object bboxes, the original facade thresholds and 2.1 m door convention. No claim
     of new Revit inventory, generic BIM support or architectural approval is made.
-    Inputs are copied; the legacy field order, rounding and classification are retained.
+    Inputs are copied; the legacy field order and rounding are retained. Windows/glass
+    require one 3D bay owner (#1405). include_ownership adds the diagnostic as a third
+    return value; default callers retain the legacy two-value result and drop layout.
     """
     if profile != 'KPP1':
         raise ValueError('unsupported Revit openings profile: ' + repr(profile))
@@ -632,6 +634,24 @@ def read_revit_openings(side, groups, *, profile):
     spec = {f: {'surrounds': [], 'doors': [], 'portals': [], 'features': [], 'grilles': []} for f in 'SNWE'}
     used, why = set(), {}
     hosts = [i for i in inst if i['type'].startswith('ADSK_Витраж')]
+    # Same geometry owner as Max/agent generation; never duplicate assignment here.
+    if __package__:
+        from .windowgen_core import assign_glass
+    else:  # embedded AGR Tools imports siblings as top-level modules
+        from windowgen_core import assign_glass
+    bounds = []
+    for host in hosts:
+        lo, hi = bb(host)
+        if facade_of(lo, hi) is not None:
+            bounds.append({'id': str(host['elementId']), 'min': lo, 'max': hi})
+    candidates = [{'id': str(k), 'min': o['min'], 'max': o['max']} for k, o in enumerate(objs)
+                  if facade_of(o['min'], o['max']) is not None
+                  and (o['key'].startswith(window) or glass in o['key'])]
+    ownership = assign_glass(bounds, candidates) if candidates else {
+        'status': 'fail', 'assigned': {}, 'drops': [], 'drop_counts': {}, 'input_count': 0,
+        'why': 'no exterior window/glass candidates'}
+    for drop in ownership['drops']:
+        why[int(drop['id'])] = drop['reason'] + ': ' + ', '.join(drop['candidates'])
     for s in inst:
         lo, hi = bb(s)
         f = facade_of(lo, hi)
@@ -654,6 +674,9 @@ def read_revit_openings(side, groups, *, profile):
                     o = objs[k]
                     if not inside(rect(o['min'], o['max'], f), bay_rect):
                         continue
+                    if o['key'].startswith(window) or glass in o['key']:
+                        if k in used or ownership['assigned'].get(str(k)) != str(h['elementId']):
+                            continue
                     if o['key'].startswith(window):
                         bay['windows'].append(rect(o['min'], o['max'], f)); used.add(k)
                     elif glass in o['key']:
@@ -683,6 +706,13 @@ def read_revit_openings(side, groups, *, profile):
             why.setdefault(k, f'facade {f}: in no curtain surround, not a door or grille')
     dropped = [{'name': objs[k]['name'], 'group': objs[k]['group'], 'reason': why[k]}
                for k in range(len(objs)) if k not in used]
+    if include_ownership:
+        dropped = [dict(id=str(k), **row) for k, row in zip(
+            (k for k in range(len(objs)) if k not in used), dropped)]
+        ownership['represented_objects'] = [{'id': str(k), 'name': objs[k]['name'], 'group': objs[k]['group']}
+                                            for k in sorted(used)]
+        ownership['total_objects'] = len(objs)
+        return spec, dropped, ownership
     return spec, dropped
 
 

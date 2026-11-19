@@ -1,5 +1,7 @@
 # Windows / doors — L1 requirement sheet
 
+For the 63C stage-2 training model only: see [D355] for basket scope and [D356] for the frame seat.
+
 **Area and profiles:** windows, doors, curtain walls and balcony doors of an OKS, NPM and VPM:
 the opening in the body, the opening plane, frames, glazing objects and materials, glass UV
 and the GeoJSON glass description. `npm_min` / `mid` are engine profiles, not interchangeable
@@ -40,6 +42,8 @@ to, not decided here.
 | WIN-15 — Glasses in GeoJSON | reg p.55 §22; [D016] | n/a: NPM has no GeoJSON | `[]` without glass; else entries keyed by `M_{Address}_MainGlass_1`..`7` with color_RGB 0-255, transparency 0-1 (0 = fully transparent), refraction 1-3, roughness 0-1, metallicity 0-1 | V011 on the package GeoJSON | V011 (`src/twinqa/geojson.py:_glasses`); `tests/qa/test_validator.py::test_glasses_follow_checker_conflict_13` | [GeoJSON](../npm-vpm.md#geojson-vpm-only-app3), [C13 / D016](../conflicts.md#a-inside-the-regulation) |
 | WIN-16 — Interior behind glazing / C23 | reg p.8 §3.12; reg p.29 §3.12 | Simplified interior walls, ceiling and floor only where seen through translucent parts | Interiors replaced by solid walls and slabs; wall thickness >= 10 cm | Sightline inspection through glazing; the shell policy C23 stays with the user | none | [BODY-L](body.md), [C23](../conflicts.md#c-between-local-sources-project-decisionslessons) |
 | WIN-17 — Window types match the design / C25 | reg p.4 §1.3; reg p.24 §1.3 | Window type per opening from the source; one atlas region per type | Same types; `mid` library type with an infill recess behind the frame, C25 open | V015 manual (window types); the type library #4 waits for the user | none | [Window types](../../../library/windows/window_types.json), [C25](../conflicts.md#c-between-local-sources-project-decisionslessons), [V015](../validation.md#implementation-status-inventory-static-audit) |
+
+Windows, stained glass and their flashings are inset elements cut into the body, not welded into it; the per-project split and its job-report line: [D336], [SKELETONS.md](../../agents/SKELETONS.md#oks-modelling-split-d336).
 
 Glass quad layout [D172]: a flat window with no bend is one quad (4 points); a bend keeps its segments; a 90 deg corner is one element of two quads sharing an edge (6 points). This note is not an extra requirement row. Detail in [geometry](../geometry.md) and [the decision log](../../decisions.md).
 

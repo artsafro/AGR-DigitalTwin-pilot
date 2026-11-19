@@ -1,5 +1,5 @@
 {
   "scenario": "oks-vpm",
   "config": {"profile": "VPM"},
-  "hooks": [{"script": "hooks/quad_provenance.py", "stage": "master-qa", "point": "after"}]
+  "hooks": []
 }

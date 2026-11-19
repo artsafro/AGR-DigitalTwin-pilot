@@ -12,6 +12,8 @@ origin (Z unchanged: absolute heights, project zero = 0); the MSK-77 offset of t
 <out.fbx>.placement.json ([D126]) and added back by readback. It also writes the export-time derivation record
 <out.fbx>.derivation.json (#1525, [D328]): role `ground`, master = the mesh JSON (its own source, hashed before it is
 read; a change during the build is refused); `agr build-manifest build --master ground=<mesh.json>` reads it.
+The stable source_id defaults to <Address>.ground.mesh, independent of source filename/revision.
+For independent meshes use build <json> <fbx> <Address> <crs> <source_id>; preserve the id on revisions.
 readback: in a clean process, imports the FBX and compares triangles, per-face material index (raw
 material_index layer mapped through slot names), world vertex positions (sorted), unit scale, open edges
 and normals facing down on the surface; with <tex_px lo hi> also the texel density (px per linear metre) of every
@@ -45,7 +47,7 @@ def clean():
     s.unit_settings.scale_length = 1.0
 
 
-def build(src, out, address, crs="MSK-77"):
+def build(src, out, address, crs="MSK-77", source_id=None):
     if crs not in ("SYNTHETIC_LOCAL", "MSK-77"):
         raise ValueError(f"unsupported crs {crs!r}; expected SYNTHETIC_LOCAL or MSK-77")
     import os
@@ -54,6 +56,7 @@ def build(src, out, address, crs="MSK-77"):
     from adapters.max.agr_tools import build_manifest as bm
     # [D328] / #1525: the Ground FBX keeps its own master = this mesh JSON. Hash it before reading; the derivation
     # record <out>.derivation.json (beside the FBX, like .placement.json) is refused before any write if it exists.
+    bm._source_id(address + '.ground.mesh' if source_id is None else source_id)
     src_sha = bm.sha256_file(src)
     if os.path.normcase(os.path.realpath(out)) == os.path.normcase(os.path.realpath(src)):
         raise SystemExit(f"output {out} is the input mesh JSON")
@@ -87,7 +90,8 @@ def build(src, out, address, crs="MSK-77"):
     from adapters.max.agr_tools.export_meta import record_export
     record_export(out, source=str(src), top=float(max(v[2] for v in vs)), address=address + '_Ground', profile='vpm')
     record = bm.write_export_derivation([out], src, os.path.dirname(os.path.abspath(out)), bm.git_commit(root),
-                                        master_sha256=src_sha, inputs=[src], role="ground")
+                                        master_sha256=src_sha, inputs=[src], role="ground",
+                                        source_id=address + '.ground.mesh' if source_id is None else source_id)
     print(json.dumps({"built": out, "pivot": piv, "verts": len(vs), "faces": len(d["faces"]),
                       "derivation": record, "master_sha256": src_sha}))
 

@@ -30,7 +30,7 @@ def _routes():
 
 
 def _contexts():
-    return mini_yaml.load(ROOT / route_map.CONTEXTS)
+    return route_map.load_context_maps(ROOT)["contexts"]
 
 
 # ---------------------------------------------------------------- the two new routes

@@ -10,8 +10,11 @@ One core per function [D330]:
    key=value options are the driver's (cell, gap, min_cell, tol, depth, object, with) and pass unchanged.
 2. READBACK - a fresh Blender process imports OUT (`twinqa.scene.readback`, tools/blender/fbx_readback.py).
 3. GAP CHECK - `adapters/max/agr_tools/ucx10_core.py::plan` (the AGR Tools `ucx.gap` core, stdlib; the same code
-   runs inside 3ds Max) on the read-back UCX pieces. The command only MEASURES: a pair under the gap or a
-   non-convex piece is a failure; the fix is AGR Tools `ucx.gap` in Max on an export copy, never here.
+   runs inside 3ds Max) on the read-back UCX pieces. The command only MEASURES: a same-family pair under the gap
+   or a non-convex piece is a failure; the fix is AGR Tools `ucx.gap` in Max on an export copy, never here.
+   [D339] (#1607, observe week): `ucx10_core.pair_census` measures EVERY pair (also across families) into gap bands
+   (overlap, <2 mm, 2-10 mm, 10-100 mm, 100 mm-1 m, >1 m); a band never fails, a cross-family pair under the gap
+   is a warning; a failed plane cut is a finding, never a crash.
 4. V010 - `twinqa.scene.scene_findings(...)["V010"]` on the same readback (role oks for Main, ground for Ground).
 
     agr ucx MODEL OUT Main --resolve [--blender EXE] [--gap-m M]
@@ -122,11 +125,21 @@ def parse(argv: list[str]) -> dict:
             **paths}
 
 
+def _finite_hull(hull: dict) -> bool:
+    try:
+        return all(math.isfinite(float(c)) for v in hull["verts"] for c in v)
+    except (TypeError, ValueError):
+        return False
+
+
 def gap_check(meshes: list[dict], gap_m: float) -> dict:
     """ucx10_core.plan on read-back UCX meshes ({name, hull: {verts, tris}}); measure only, nothing is written.
 
-    ok is False for an empty set, a mesh without hull data, a non-convex piece, any pair under gap_m (touching and
-    overlapping included) or a pair still under it; every UCX mesh ends in `pieces` or in `dropped` with a reason."""
+    ok is False for an empty set, a mesh without hull data or with a non-finite vertex, a non-convex piece, any
+    same-family pair under gap_m (touching and overlapping included), a pair still under it, a cut that fails
+    (finding, never a crash) or a piece/pair the census could not measure; every UCX mesh ends in `pieces` or in
+    `dropped` with a reason. [D339] (#1607, observe week): EVERY pair (same and cross family) is measured into
+    `gap_bands`; a band never fails the check, and a cross-family pair under gap_m is a `warnings` entry only."""
     core = _ucx10()
     opts = core.gap_options({"gap_m": gap_m})
     rows, dropped = [], []
@@ -135,20 +148,31 @@ def gap_check(meshes: list[dict], gap_m: float) -> dict:
         if not hull.get("verts") or not hull.get("tris"):
             dropped.append({"name": m.get("name"), "reason": "no hull data in the readback"})
             continue
+        if not _finite_hull(hull):
+            dropped.append({"name": m.get("name"), "reason": "non-finite or malformed vertex in the readback"})
+            continue
         rows.append({"handle": i, "name": m["name"], "verts": hull["verts"], "tris": hull["tris"]})
     if not rows:
         return {"ok": False, "error": "no UCX pieces with hull data: an empty set is not a pass",
                 "dropped": dropped, "gap_m": opts["gap_m"]}
-    res = core.plan(rows, opts)
+    try:
+        res = core.plan(rows, opts)
+        census = core.pair_census(rows, opts["gap_m"])
+    except ValueError as exc:  # the check reports, it never crashes the command
+        return {"ok": False, "error": f"gap measurement failed: {exc}", "dropped": dropped, "gap_m": opts["gap_m"]}
     names = {r["handle"]: r["name"] for r in rows}
     findings = {names[h]: v for h, v in res["findings"].items()}
     s = res["summary"]
     bad_pairs = list(res["pairs"])
-    ok = not (dropped or res["skipped"] or findings or bad_pairs or s["left"] or res["ambiguous"])
+    pair_unmeasured = [n for n in census["not_measured"] if " / " in n["item"]]
+    ok = not (dropped or res["skipped"] or findings or bad_pairs or s["left"] or res["ambiguous"] or pair_unmeasured)
     return {"ok": ok, "gap_m": opts["gap_m"], "pieces": len(rows), "families": s["families"],
             "pairs_under_gap": [{k: p[k] for k in ("family", "a", "b", "gap_before_m", "code")} for p in bad_pairs],
             "left": s["left"], "ambiguous": res["ambiguous"], "skipped": res["skipped"], "dropped": dropped,
-            "findings": findings, "fix": "AGR Tools ucx.gap (ucx10_core) in 3ds Max on an export copy"}
+            "findings": findings, "fix": "AGR Tools ucx.gap (ucx10_core) in 3ds Max on an export copy",
+            "gap_rule": "D339 observe: bands are reported, no refusal by gap size",
+            "gap_reach_m": census["reach_m"], "gap_bands": census["bands"], "gap_pairs": census["pairs"],
+            "warnings": census["warnings"], "gap_not_measured": census["not_measured"]}
 
 
 def _v010(rb: dict, target: str) -> list[dict]:

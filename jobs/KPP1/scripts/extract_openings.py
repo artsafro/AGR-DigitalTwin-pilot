@@ -13,6 +13,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from adapters.max.agr_tools.openings_core import norm, read_revit_openings  # noqa: E402,F401
 
 
+def extract(src, cen):
+    """Read-only window-command adapter; recognition stays in the shared source owner."""
+    side = json.loads((Path(src) / 'curtain.export.json').read_text(encoding='utf-8-sig'))
+    groups = {g: json.loads((Path(cen) / (g + '.objects.json')).read_text(encoding='utf-8'))
+              for g in ('curtain', 'openings')}
+    return read_revit_openings(side, groups, profile='KPP1', include_ownership=True)
+
+
 def main(src, cen):
     inputs = [Path(src) / 'curtain.export.json', *(Path(cen) / (g + '.objects.json') for g in ('curtain', 'openings'))]
     outputs = [Path(cen) / name for name in ('openings_spec.json', 'openings_dropped.json')]

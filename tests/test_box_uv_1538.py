@@ -4,6 +4,7 @@ import importlib.util
 import json
 import math
 import random
+import struct
 from pathlib import Path
 
 import pytest
@@ -300,6 +301,149 @@ def test_generated_seams_and_texel(box):
     assert done >= 50
 
 
+# ------------------------------------------------------------------ #1600: Blender float32 world coordinates
+
+def float32(value):
+    return struct.unpack('f', struct.pack('f', value))[0]
+
+
+@pytest.mark.parametrize('px', [1000, 1706])
+@pytest.mark.parametrize('offset', [0, 3, 2000, -2000])
+@pytest.mark.parametrize('horizontal', [False, True])
+def test_float32_period_cut_fits(box, px, offset, horizontal):
+    period = 4096 / px
+    cuts = [float32((offset + f) * period) for f in (0.1, 1, 1.5)]
+    small = [float32(0.1 * period), float32(0.6 * period)]
+    faces = strip_wall(small, cuts_z=cuts) if horizontal else strip_wall(cuts, cuts_z=small)
+    uvs, rep = box.plan_box_uv(faces, px, 1012, margin_px=0)
+    assert len(rep['islands']) == 2 and rep['period_cut_edges'] == 1
+    assert set(uvs) == {0, 1} and in_tile(uvs, (1, 1))
+    assert seams(box, faces, uvs) == (1, 0)
+    # Float32 source quantization is corrected by less than half a texel.
+    for fid, _, coords in faces:
+        shift = next(i['shift'] for i in rep['islands'] if fid in i['faces'])
+        for co, uv in zip(coords, uvs[fid]):
+            expected = box.axis_uv(co, '-y')
+            assert all(abs((uv[i] - 1 + shift[i]) * 4096 - expected[i] * px) <= 0.5 + 1e-6
+                       for i in (0, 1))
+
+
+@pytest.mark.parametrize('px', [1000, 1706])
+@pytest.mark.parametrize('offset', [0, 3, 2000, -2000])
+def test_float32_cut_just_off_line_stays_connected(box, px, offset):
+    period = 4096 / px
+    # At small origins even 0.01 pixel is distinguishable; at 2000 periods use
+    # one pixel (larger than float32 uncertainty, still a sub-mm cut offset).
+    delta_px = 0.01 if abs(offset) < 10 else 1.0
+    cuts = [float32((offset + f) * period + (delta_px / px if f == 1 else 0))
+            for f in (0.1, 1, 1.5)]
+    faces = strip_wall(cuts, cuts_z=[0.1 * period, 0.6 * period])
+    with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+        box.plan_box_uv(faces, px, 1001, margin_px=0)
+
+
+@pytest.mark.parametrize('offset', [0, 3])
+@pytest.mark.parametrize('pivot_periods', [0, 64, -64])
+def test_float32_translation_plus_local_period_cut(box, offset, pivot_periods):
+    px = 1706
+    period = 4096 / px
+    location = (offset + 0.37 + pivot_periods) * period
+    cuts = [float32(float32(location) + float32((offset + f) * period - location))
+            for f in (0.1, 1, 1.5)]
+    faces = strip_wall(cuts, cuts_z=[0.1 * period, 0.6 * period])
+    magnitudes = {v: (abs(location) + abs(co[0] - location), 0, abs(co[2]))
+                  for _, verts, coords in faces for v, co in zip(verts, coords)}
+    kwargs = {'world_magnitudes': magnitudes} if pivot_periods else {}
+    uvs, rep = box.plan_box_uv(faces, px, 1001, margin_px=0, **kwargs)
+    assert len(rep['islands']) == 2 and rep['period_cut_edges'] == 1
+    assert in_tile(uvs) and seams(box, faces, uvs) == (1, 0)
+
+
+def test_float32_resolution_limit_message(box):
+    px = 1706
+    line = 2000 * 4096 / px
+    faces = strip_wall([line - 1, line + 0.52 / px, line + 1], cuts_z=[0.1, 1.0])
+    with pytest.raises(box.BoxUVOverflow, match=r'Float32 resolution limit.*0.5 texel.*nearer the origin'):
+        box.plan_box_uv(faces, px, 1001, margin_px=0)
+
+
+@pytest.mark.parametrize('bad', [None, (-1, 0, 0), (math.nan, 0, 0), (math.inf, 0, 0), (0, 0)])
+def test_invalid_transform_magnitudes_fail_closed(box, bad):
+    faces = strip_wall([0.1, 0.5], cuts_z=[0.1, 0.5])
+    magnitudes = {} if bad is None else {v: bad for _, verts, _ in faces for v in verts}
+    with pytest.raises(box.BoxUVError, match='magnitude'):
+        box.plan_box_uv(faces, 1000, 1001, world_magnitudes=magnitudes)
+
+
+def test_period_snap_half_texel_cap_boundary(box):
+    px, line = 1024, 1048576.0  # float32 uncertainty here exceeds half a texel
+    at = line + 0.5 / px
+    for cut, fits in [(at, True), (math.nextafter(at, math.inf), False)]:
+        faces = strip_wall([line - 2, cut, line + 2], cuts_z=[0.1, 1.0])
+        if fits:
+            uvs, rep = box.plan_box_uv(faces, px, 1001, margin_px=0)
+            assert len(rep['islands']) == 2 and in_tile(uvs)
+        else:
+            with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+                box.plan_box_uv(faces, px, 1001, margin_px=0)
+
+
+def test_generated_float32_period_cuts_and_off_line_controls(box):
+    """Synthetic seed 1600: both signs, all projection axes, varying density and resolution."""
+    rng = random.Random(1600)
+    for n in range(240):
+        px = rng.uniform(512, 1706)
+        texture = rng.choice([1024, 2048, 4096])
+        period = texture / px
+        offset = rng.randint(-2000, 2000)
+        for delta in (0, 1.0 / px):
+            cuts = [float32((offset + f) * period + (delta if f == 1 else 0))
+                    for f in (0.1, 1, 1.5)]
+            faces = strip_wall(cuts, cuts_z=[float32(0.1 * period), float32(0.6 * period)])
+            # Cycle coordinate axes and reverse winding: six dominant signed axes.
+            mapped = []
+            for fid, _, co in faces:
+                co = [tuple(p[(i + n % 3) % 3] for i in range(3)) for p in co]
+                if n % 2:
+                    co.reverse()
+                mapped.append((fid, list(co), co))
+            if delta:
+                with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+                    box.plan_box_uv(mapped, px, 1001, texture_px=texture, margin_px=0)
+            else:
+                uvs, rep = box.plan_box_uv(mapped, px, 1001, texture_px=texture, margin_px=0)
+                assert len(rep['islands']) == 2 and set(uvs) == {0, 1}
+                assert in_tile(uvs) and seams(box, mapped, uvs) == (1, 0)
+                with pytest.raises(box.BoxUVOverflow):
+                    box.plan_box_uv(mapped, px, 1001, texture_px=texture, margin_px=0.25)
+
+
+def test_generated_float32_translation_cancellation(box):
+    """Synthetic seed 16002: input terms, not cancelled world magnitude, bound rounding."""
+    rng = random.Random(16002)
+    for _ in range(120):
+        px = rng.uniform(700, 1706)
+        period = 4096 / px
+        offset = rng.randint(-3, 3)
+        location = rng.choice([-1, 1]) * rng.uniform(32, 96) * period
+        for delta_px in (0, 1):
+            local = [(offset + f) * period - location + (delta_px / px if f == 1 else 0)
+                     for f in (0.1, 1, 1.5)]
+            cuts = [float32(float32(location) + float32(x)) for x in local]
+            faces = strip_wall(cuts, cuts_z=[0.1 * period, 0.6 * period])
+            magnitudes = {v: (abs(location) + abs(float32(co[0] - location)), 0, abs(co[2]))
+                          for _, verts, coords in faces for v, co in zip(verts, coords)}
+            if delta_px:
+                with pytest.raises(box.BoxUVOverflow, match=r'faces \[0, 1\]'):
+                    box.plan_box_uv(faces, px, 1001, margin_px=0, world_magnitudes=magnitudes)
+            else:
+                uvs, rep = box.plan_box_uv(faces, px, 1001, margin_px=0, world_magnitudes=magnitudes)
+                assert len(rep['islands']) == 2 and rep['period_cut_edges'] == 1
+                assert in_tile(uvs) and seams(box, faces, uvs) == (1, 0)
+                with pytest.raises(box.BoxUVOverflow):
+                    box.plan_box_uv(faces, px, 1001, margin_px=0.25, world_magnitudes=magnitudes)
+
+
 # ------------------------------------------------------------------ real Blender
 def _blender():
     from dt_ai.core.blender_runner import blender_executable
@@ -318,12 +462,15 @@ def test_real_blender_target_object_only(tmp_path, monkeypatch):
     assert main['measure']['texel_min'] == main['measure']['texel_max'] == 819.2
     assert main['violations'] == [] and main['selection_unchanged'] and main['tiles'] == [[0, 0]]
     assert main['ucx_layers'] == 0 and main['other_layers'] == 0
+    assert len(rep['period_float32']) == 16 and all(c['ok'] for c in rep['period_float32'])
+    assert len(rep['translated_float32']) == 24 and all(c['ok'] for c in rep['translated_float32'])
     assert rep['per_tile_snap']['broken_edges'] > 0
     bare = rep['bare']
     assert bare['created'] and bare['violations'] == [] and bare['ucx_layers'] == bare['other_layers'] == 0
     assert bare['measure']['broken_edges'] == 0
     fail = rep['fail_closed']
     assert fail.pop('px_512') == 'ok' and fail.pop('px_1706') == 'ok'
+    assert fail['texel_rot40_px600'] == fail['texel_slope50_px512'] == 'error'   # #1574
     assert set(fail.values()) == {'error'}, fail
     gen = rep['generated']
     assert gen['fail'] == [] and gen['pass'] + gen['overflow_nothing_written'] == gen['n'] == 100
