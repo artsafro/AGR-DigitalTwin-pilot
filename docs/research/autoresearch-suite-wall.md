@@ -242,4 +242,3 @@ No autonomous controller, automatic commit/revert, or merge loop is initialized.
   contaminated run remains evidence, not an accepted baseline; use a new run name
   after diagnosing it. A launch error remains in the runner log/claim; never reuse
   or overwrite the name. Baseline-001 was rejected as recorded above.
-
