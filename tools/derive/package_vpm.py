@@ -170,7 +170,7 @@ def main(argv=None):
         report = {"zip": os.path.abspath(zpath), "zip_bytes": os.path.getsize(zpath),
                   "files": members, "geojson_blockers_unknown_in_source": blockers,
                   "export_binding": binding, "passed": False, "status": "packaged_not_validated",
-                  "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallic)"],
+                  "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallicity)"],
                   "address_placeholder": A}
         if props is not None:
             report['placement'] = obj['placement'].model_dump(mode='json')
