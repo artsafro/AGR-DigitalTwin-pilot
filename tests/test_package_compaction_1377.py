@@ -79,7 +79,8 @@ def test_delivery_zip_guards_jobs_tools_src():
 # ---------------------------------------------------------------- listed copies carry a reason
 def test_every_delivery_zip_row_names_its_reason_and_this_issue():
     rows = _zip_rows()
-    assert len(rows) == 23   # 16 job writers (incl. KPP1 delivered-1371 v008, #1371) + 6 tools/ + 1 src/ non-delivery archives
+    assert len(rows) == 22   # #1675 removes one job writer: 15 jobs/ + 6 tools/ + 1 src/
+    assert not any(d['at'] == 'jobs/VATUTINO-SITE/npm_code.py::rename_npm_zip' for d in rows)
     assert all(str(d.get("ru", "")).strip() and d["issue"] == "#1377" for d in rows), rows
 
 

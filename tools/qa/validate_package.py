@@ -708,7 +708,8 @@ def add_delivery_receipt(target, data, stages, notes):
         paths = [target.parent / 'package_report.json']
     paths = [p for p in paths if os.path.lexists(p)]
     if not paths and target.suffix.lower() != '.max':
-        return  # Historical ZIPs without a delivery report remain readable, not newly attested.
+        notes.append('Historical ZIP: no delivery receipt; delivered bytes are not attested.')
+        return
     try:
         if not paths:
             raise ValueError('missing delivery report for ' + target.name)
