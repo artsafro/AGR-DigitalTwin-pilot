@@ -710,15 +710,31 @@ def _owner_names(tree, owner, rel=None):
                 names.update(t.id for t in node.targets if isinstance(t, ast.Name))
     # Use path bindings, not the broad set of owner references above, for the
     # importlib location. A diagnostic mention is not a path binding (#1486).
+    # Helpers can change their globals at any time, not just in source order.
+    mutable_globals = {name for node in ast.walk(tree) if isinstance(node, ast.Global) for name in node.names}
     paths = {}
-    for node in tree.body:
-        if isinstance(node, ast.Assign):
-            bound = _loader_path(node.value, paths, rel)
-            for target in node.targets:
-                if isinstance(target, ast.Name):
-                    paths.pop(target.id, None)
-                    if bound is not None:
-                        paths[target.id] = bound
+    for stmt in tree.body:
+        plain = isinstance(stmt, ast.Assign) and all(isinstance(t, ast.Name) for t in stmt.targets)
+        bound = _loader_path(stmt.value, paths, rel) if plain else None
+        # Unknown writes invalidate evidence. Walk conservatively, including
+        # nested statements; only a supported unconditional assignment can
+        # establish a path again.
+        for node in ast.walk(stmt):
+            match node:
+                case ast.Name(id=name, ctx=ast.Store() | ast.Del()):
+                    paths.pop(name, None)
+                case ast.alias(name="*"):
+                    paths.clear()
+                case ast.alias(name=name, asname=alias):
+                    paths.pop(alias or name.split(".")[0], None)
+                case (ast.FunctionDef(name=name) | ast.AsyncFunctionDef(name=name) | ast.ClassDef(name=name)
+                      | ast.ExceptHandler(name=name) | ast.MatchAs(name=name) | ast.MatchStar(name=name)
+                      | ast.MatchMapping(rest=name)):
+                    paths.pop(name, None)
+        if bound is not None:
+            for target in stmt.targets:
+                if target.id not in mutable_globals:
+                    paths[target.id] = bound
     for node in tree.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_owner_loader(node, owner, paths, rel):
             names.add(node.name)
