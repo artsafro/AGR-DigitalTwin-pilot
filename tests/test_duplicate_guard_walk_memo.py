@@ -58,3 +58,17 @@ def test_memo_is_cleared_when_the_scan_raises(monkeypatch):
     except RuntimeError:
         pass
     assert dg._WALKS == {}
+
+
+def test_no_hit_file_never_builds_scopes_or_int_names(monkeypatch):
+    """Edge (review r1): a file with no rule hit returns [] without building the lazy tables."""
+    calls = []
+    monkeypatch.setattr(dg, "_scopes", lambda tree: calls.append("scopes") or {})
+    monkeypatch.setattr(dg, "_int_names", lambda tree: calls.append("int_names") or {})
+    dg._WALKS.clear()
+    assert dg.scan_text("def g(a, b):\n    return a + b\n", "jobs/X/b.py") == []
+    assert "scopes" not in calls          # _scopes is built only on the first hit
+    calls.clear()
+    assert dg.scan_text("def h():\n    return [1, 2]\n", "jobs/X/c.py") == []
+    assert calls == []                    # no Name lookup -> _int_names is never built either
+    assert dg._WALKS == {}
