@@ -6,7 +6,8 @@ injected into tools/architecture/duplicate_guard.py on the blank line above the 
   python e2e_bench.py setup --base <sha> --candidate r1_walk_memo,r4_lazy_scopes,r5_lazy_int_names
   python e2e_bench.py parity [--mutant m0_drop_calls]
   python e2e_bench.py run --out C:/x/ar_t_559cc438/r1.json
-Contract: docs/research/autoresearch-repo-guards-e2e.md
+Standing #9 (real code, no injection): --work C:/x/ar_t_a334c185 setup --base <main sha> --c-ref <branch sha>
+Contract: docs/research/autoresearch-repo-guards-e2e.md, docs/research/autoresearch-repo-guards-adopt.md
 """
 import argparse
 import hashlib
@@ -62,14 +63,15 @@ def inject(wt, names):
 def setup(a):
     (WORK / "harness").mkdir(parents=True, exist_ok=True)
     shutil.copy2(HARNESS_SRC, WORK / "harness" / "candidates.py")
-    for name in ("wtB", "wtC"):
+    for name, ref in (("wtB", a.base), ("wtC", a.c_ref or a.base)):
         wt = WORK / name
         if not wt.exists():
-            r = sh(["git", "worktree", "add", "--detach", str(wt), a.base], Path.cwd())
+            r = sh(["git", "worktree", "add", "--detach", str(wt), ref], Path.cwd())
             if r.returncode:
                 raise SystemExit(r.stderr)
-    inject(WORK / "wtC", a.candidate.split(","))
-    print(json.dumps({"base": a.base, "candidate": a.candidate}))
+    if a.candidate:   # standing #7: monkeypatch injection; standing #9: --c-ref, the real code, no injection
+        inject(WORK / "wtC", a.candidate.split(","))
+    print(json.dumps({"base": a.base, "candidate": a.candidate, "c_ref": a.c_ref}))
 
 
 def scan(wt):
@@ -135,16 +137,22 @@ def run(a):
 
 
 def main():
+    global WORK
     p = argparse.ArgumentParser()
+    p.add_argument("--work", type=Path, default=WORK, help="scratch dir holding wtB / wtC (standing #9)")
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("setup")
     s.add_argument("--base", required=True)
-    s.add_argument("--candidate", required=True)
+    s.add_argument("--candidate", default="")
+    s.add_argument("--c-ref", help="commit for wtC instead of --base (real code change, no injection)")
     q = sub.add_parser("parity")
     q.add_argument("--mutant")
     r = sub.add_parser("run")
     r.add_argument("--out", type=Path, required=True)
     a = p.parse_args()
+    WORK = a.work
+    if a.cmd == "setup" and not (a.candidate or a.c_ref):
+        raise SystemExit("setup needs --candidate or --c-ref")
     return {"setup": setup, "parity": parity, "run": run}[a.cmd](a)
 
 
