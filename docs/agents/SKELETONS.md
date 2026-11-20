@@ -232,6 +232,20 @@ and agent search skip them; the files are unchanged and duplicate_guard still sc
 delivered or a script becomes live: `uv run python tools/architecture/duplicate_guard.py --write-ignore`. To read one on
 purpose: `rg --no-ignore-dot PATTERN jobs/<ID>`.
 
+#1614 extends this to data and docs with a second generated block (`# BEGIN historical-data`) owned by
+`tools/architecture/search_noise.py`: every non-script file of a delivered job (except the job-root `STATE.md`,
+`LESSONS.md`, `README.md`, `REPORT.md`, `TASK.md`, `PASSPORT.md`, `job.yaml`, `passport.json`, `sources.json`, `object.json`,
+`materials.json`, `EVIDENCE-MOVED.json`, `skeleton.json` folders and `live_paths`) and every docs/ file that no entry doc,
+route, scenario, skill or live code reaches (markdown links followed transitively; inventories and job files do
+not propagate). A script that a route, scenario or skill names stays visible. Every `jobs/<ID>` folder is either
+in `finished_jobs` or in `kept_jobs` of `docs/architecture/search-noise.yaml` with a Russian reason; an open issue
+that uses a hidden path adds it to `live_paths` there. Large JSON/TXT data of delivered jobs lives in the evidence
+store (rule 57): `jobs/<ID>/EVIDENCE-MOVED.json` lists path + sha256 + copy; tests read it via
+`search_noise.evidence_path` and skip when the copy is absent. Commands: check `uv run python
+tools/architecture/search_noise.py`, regenerate `--write-ignore`, Russian job table `--table`, what agent search
+sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job data stays visible until the next
+`--write-ignore` (reported as pending); the check fails only when the block hides a live or gone path.
+
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
 - `geojson` — нет готового к сдаче генератора GeoJSON, пока не изучены примеры заказчика [D220].
