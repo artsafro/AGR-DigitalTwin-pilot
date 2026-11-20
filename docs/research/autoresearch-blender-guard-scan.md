@@ -95,7 +95,9 @@ workstation, ratio within one process. Stop rule reached (R1 recorded, no R2 dec
 
 Receipts: `receipts/r1.json` SHA-256 `c07a28ce73f70d886acfacd5fe010266e722262584c64a83734c8b46d0b2c323`,
 `receipts/parity_r1.json`, `receipts/parity_m0.json`; base `b96f0223`, guard file SHA-256 `a5f05c9f…0d50360`,
-`candidates.py` SHA-256 `9448681205c3cb210b582f602b67efe07c7e3dd70a3d0f49c49169d6b3272067`.
+`candidates.py` SHA-256 `9448681205c3cb210b582f602b67efe07c7e3dd70a3d0f49c49169d6b3272067` (working-copy CRLF bytes at
+run time, as recorded in `r1.json`; the committed LF blob is `d0ff46aa891a004caf314cb07551a69962f3e638b5cedf781312226a072205df`, same code).
+The guard file is identical on `origin/main` `29a12bba` and on the base (blob `88ac97a4`).
 Reproduce (in a detached worktree of the base):
 `uv run python <harness>/bench.py parity --root . --candidate r1_one_walk` (and `--mutant m0_direct_children_only`,
 expected exit 1), `BLENDER_GUARD_CANDIDATE=r1_one_walk PYTHONPATH=<harness> uv run pytest -q -p pytest_candidate
