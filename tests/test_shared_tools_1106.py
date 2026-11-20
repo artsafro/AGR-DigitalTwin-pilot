@@ -6,6 +6,7 @@ import base64
 import hashlib
 import json
 import os
+import stat
 import subprocess
 import sys
 import tempfile
@@ -368,15 +369,108 @@ def test_package_binding_rejects_each_single_byte_mutation(tmp_path, monkeypatch
     assert package_vpm.main(args) == 0
 
 
-def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
-    tex = make_tex(tmp_path / "tex")
-    pkg = make_pkg(tmp_path / "p")
-    obj = tmp_path / "object.json"
+def make_package_object(obj):
     obj.write_text(json.dumps({"name": "Test OKS", "placement": {
         "coordinate_system": "SYNTHETIC_LOCAL", "project_zero_m": 170.5,
         "height_system": "unknown", "height_source": {"file": "synthetic", "locator": "test datum"},
         "project_zero_fbx_z_m": 0, "project_zero_fbx_source": {"file": "synthetic", "locator": "FBX origin"},
         "source": {"kind": "synthetic", "reference": "test"}, "status": "proposed"}}), encoding="utf-8")
+    return obj
+
+
+@pytest.mark.parametrize('failure, error, diagnostic', [
+    pytest.param('size', ValueError, 'archive exceeds 1 bytes', id='zip-size-limit'),
+    pytest.param('hash', ValueError, 'input changed during packaging: SM_Nku_1.fbx', id='zip-member-hash'),
+    pytest.param('copy', OSError, 'injected short copy', id='partial-png'),
+    pytest.param('geojson', OSError, 'injected short GeoJSON write', id='partial-geojson'),
+    pytest.param('receipt', OSError, 'injected receipt failure', id='after-zip-publication'),
+])
+def test_package_failure_restores_working_copy_and_allows_retry(tmp_path, monkeypatch, failure, error, diagnostic):
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    obj = make_package_object(tmp_path / 'object.json')
+    if failure == 'size':
+        # copystat propagates the read-only attribute, which prevents unlink on Windows.
+        (tex / 'T_Nku_1_Diffuse_1.1001.png').chmod(stat.S_IREAD)
+    unrelated = pkg / 'notes.txt'
+    unrelated.write_bytes(b'pre-existing notes\r\n')
+    before = snapshot(tmp_path)
+    listing = sorted(p.name for p in pkg.iterdir())
+    args = [str(pkg), str(tex), '--object', str(obj)]
+    zip_path = pkg.parent / 'SM_Nku_1.zip'
+    report_path = zip_path.with_suffix('.zip.delivery.json')
+
+    def corrupt_archived_fbx(archive, filename, arcname):
+        if arcname == 'SM_Nku_1.fbx':
+            archive.writestr(arcname, b'different staged bytes')
+        else:
+            write(archive, filename, arcname)
+
+    def fail_copy(src, dst):
+        if dst.name.endswith('ERM_1.1001.png'):
+            dst.write(src.read(1))
+            raise OSError('injected short copy')
+        copy(src, dst)
+
+    def fail_geojson(_body, stream, **_kwargs):
+        stream.write('{')
+        raise OSError('injected short GeoJSON write')
+
+    def fail_receipt(target, _body):
+        assert Path(target).is_file()
+        raise OSError('injected receipt failure')
+
+    write = zipfile.ZipFile.write
+    copy = package_vpm.shutil.copyfileobj
+    with monkeypatch.context() as m:
+        if failure == 'size':
+            m.setitem(package_vpm.package_core.LIMITS, 'vpm_oks', 1)
+        elif failure == 'hash':
+            m.setattr(zipfile.ZipFile, 'write', corrupt_archived_fbx)
+        elif failure == 'copy':
+            m.setattr(package_vpm.shutil, 'copyfileobj', fail_copy)
+        elif failure == 'geojson':
+            m.setattr(package_vpm.json, 'dump', fail_geojson)
+        else:
+            m.setattr(package_vpm.package_core, 'write_delivery_report', fail_receipt)
+        with pytest.raises(error, match=diagnostic):
+            package_vpm.main(args)
+
+    assert sorted(p.name for p in pkg.iterdir()) == listing
+    assert snapshot(tmp_path) == before  # includes all inputs; no ZIP, report or .partial anywhere
+    assert package_vpm.main(args) == 0  # same version, no manual cleanup
+    with zipfile.ZipFile(zip_path) as packed:
+        assert packed.read(unrelated.name) == b'pre-existing notes\r\n'
+        assert packed.read('SM_Nku_1.geojson') == (pkg / 'SM_Nku_1.geojson').read_bytes()
+    assert report_path.is_file()
+
+
+def test_package_rollback_preserves_target_it_could_not_create(tmp_path, monkeypatch):
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    foreign = pkg / 'T_Nku_1_ERM_1.1001.png'
+    before = snapshot(tmp_path)
+    copy = package_vpm.shutil.copyfileobj
+
+    def create_competing_file(src, dst):
+        copy(src, dst)
+        if dst.name.endswith('Diffuse_1.1001.png'):
+            foreign.write_bytes(b'competing writer')
+
+    monkeypatch.setattr(package_vpm.shutil, 'copyfileobj', create_competing_file)
+    with pytest.raises(FileExistsError, match=foreign.name):
+        package_vpm.main([str(pkg), str(tex), '--no-geojson'])
+    assert snapshot(tmp_path) == before | {str(foreign.relative_to(tmp_path)): b'competing writer'}
+
+
+def test_package_geojson_takes_object_values_not_job_constants(tmp_path):
+    tex = make_tex(tmp_path / "tex")
+    pkg = make_pkg(tmp_path / "p")
+    obj = make_package_object(tmp_path / "object.json")
     r = run([sys.executable, PKG_TOOL, pkg, tex, "--object", obj])
     assert r.returncode == 0, r.stderr
     geo = json.loads((pkg / "SM_Nku_1.geojson").read_text(encoding="utf-8"))

@@ -1,0 +1,154 @@
+"""new-case: resumable observer-only #1615 measurement, no autonomous code edits."""
+import collections
+import ctypes
+import hashlib
+import json
+import os
+from pathlib import Path
+import runpy
+import subprocess
+import sys
+import time
+
+ROOT = Path(__file__).resolve().parents[2]
+EVIDENCE = Path('C:/x/autoresearch-suite-wall')
+SLOT = Path('C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py')
+CARD = 't_82b1bc95'
+NAME = sys.argv[1]
+if not NAME or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789-' for c in NAME):
+    raise SystemExit('invalid run name')
+slot = runpy.run_path(str(SLOT), run_name='slot_probe')
+
+def holders():
+    result = []
+    for path in Path(slot['TMP']).glob('agr-suite-slot-*.lock'):
+        try:
+            row = json.loads(path.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            raise RuntimeError('unreadable holder: ' + str(path))
+        if slot['pid_alive'](int(row.get('pid',0))):
+            result.append(row)
+    return result
+
+def merges():
+    script = "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'python' -and $_.CommandLine -match 'merge_(batch|chain)\\.py' } | Select-Object ProcessId | ConvertTo-Json -Compress"
+    p = subprocess.run(['powershell.exe','-NoProfile','-Command',script],capture_output=True,text=True,timeout=45)
+    if p.returncode:
+        raise RuntimeError('merge-process query failed: '+p.stderr)
+    return json.loads(p.stdout) if p.stdout.strip() else []
+
+def cpu_times():
+    idle,kernel,user = (ctypes.c_ulonglong() for _ in range(3))
+    if not ctypes.windll.kernel32.GetSystemTimes(ctypes.byref(idle),ctypes.byref(kernel),ctypes.byref(user)):
+        raise RuntimeError('GetSystemTimes failed')
+    return idle.value,kernel.value+user.value
+
+def head():
+    return subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+
+def tracked():
+    data = subprocess.check_output(['git','diff','HEAD','--binary'],cwd=ROOT)
+    others = subprocess.check_output(['git','ls-files','--others','--exclude-standard','-z'],cwd=ROOT)
+    data += others
+    for raw in others.split(b'\0'):
+        if raw:
+            path = ROOT / os.fsdecode(raw)
+            if path.is_file():
+                data += hashlib.sha256(path.read_bytes()).digest()
+    return hashlib.sha256(data).hexdigest()
+
+def emit(path, row):
+    with path.open('x',encoding='utf-8') as f:
+        json.dump(row,f,indent=2,allow_nan=False)
+
+EVIDENCE.mkdir(parents=True,exist_ok=True)
+base = EVIDENCE / NAME
+if '--inside' not in sys.argv:
+    sys.stdout = base.with_suffix('.runner.log').open('x', encoding='utf-8', buffering=1)
+    sys.stderr = sys.stdout
+    # Fail closed on resume/stale output, including a second waiter with the same name.
+    claim = base.with_suffix('.claim.json')
+    emit(claim,{'pid':os.getpid(),'root':str(ROOT),'head':head(),'created':time.time()})
+    print('WAITING',os.getpid(),str(base.with_suffix('.json')),flush=True)
+    wait_start=time.monotonic()
+    while True:
+        live=holders()
+        merge=merges()
+        if not live and not merge:
+            a=cpu_times(); time.sleep(20); b=cpu_times()
+            total=b[1]-a[1]
+            load=100*(1-(b[0]-a[0])/total) if total>0 else 100
+            if load<=10 and not holders() and not merges():
+                break
+            print('WAIT idle CPU',load,flush=True)
+        else:
+            print('WAIT drain',live,merge,flush=True)
+            time.sleep(30)
+    emit(base.with_suffix('.launch.json'),{'pid':os.getpid(),'head':head(),'wait_s':time.monotonic()-wait_start,'idle_cpu_percent':load})
+    argv=[sys.executable,str(SLOT),'--card',CARD,'--',sys.executable,str(Path(__file__).resolve()),NAME,'--inside']
+    raise SystemExit(subprocess.call(argv,cwd=ROOT,stdout=sys.stdout,stderr=subprocess.STDOUT))
+
+from ar_wall import validate
+receipt = base.with_suffix('.json')
+events = base.with_suffix('.events.jsonl')
+log = base.with_suffix('.pytest.log')
+samples = base.with_suffix('.samples.jsonl')
+node_list=base.with_suffix('.nodes.tsv')
+for path in (receipt,events,log,samples,node_list):
+    if path.exists(): raise SystemExit('refusing existing output: '+str(path))
+# Freeze the receipt name before expensive work; no second inside invocation can clobber it.
+with base.with_suffix('.inside.claim').open('x') as f: f.write(str(os.getpid()))
+owned=[r for r in holders() if r.get('card')==CARD]
+if len(owned)!=1 or any(r.get('card')!=CARD for r in holders()) or merges():
+    emit(receipt,{'valid':False,'error':'idle slot unavailable before launch','head':head()})
+    raise SystemExit(1)
+marks='not blender and not dcc and not acad and not perf and not job and not max and not panel_texture and not native_max'
+argv=['uv','run','pytest','-q','-p','no:cacheprovider',f'--basetemp=C:/x/{CARD}-wall-{NAME}','-m',marks,'-rf','-n','4']
+env={k:v for k,v in os.environ.items() if k.upper() not in ('PYTHONPATH','PYTHONHOME','VIRTUAL_ENV','PYTEST_ADDOPTS','PYTEST_PLUGINS','MSYS_NO_PATHCONV','MSYS2_ARG_CONV_EXCL')}
+env.update(PYTHONPATH=str(Path(__file__).resolve().parent),PYTEST_PLUGINS='ar_wall',AR_WALL_EVENTS=str(events),PYTHONIOENCODING='utf-8')
+before=head(); diff=tracked(); error=None
+start=time.perf_counter()
+with log.open('x',encoding='utf-8') as stream, samples.open('x',encoding='utf-8') as sample_stream:
+    sample_stream.write(json.dumps({'at':time.time(),'holders':owned})+'\n'); sample_stream.flush()
+    proc=subprocess.Popen(argv,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
+    while proc.poll() is None:
+        try:
+            proc.wait(timeout=5)
+            break
+        except subprocess.TimeoutExpired:
+            pass
+        try:
+            live=holders()
+            sample_stream.write(json.dumps({'at':time.time(),'holders':live})+'\n'); sample_stream.flush()
+            if len(live)!=1 or live[0]['pid']!=owned[0]['pid']:
+                raise RuntimeError('foreign/missing slot holder: '+repr(live))
+            if head()!=before or tracked()!=diff:
+                raise RuntimeError('source changed during measurement')
+        except Exception as exc:
+            error=str(exc)
+            subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],capture_output=True)
+            break
+    code=proc.wait()
+    wall=time.perf_counter()-start
+    final_holders=holders()
+    sample_stream.write(json.dumps({'at':time.time(),'holders':final_holders,'final':True})+'\n')
+    if len(final_holders)!=1 or final_holders[0]['pid']!=owned[0]['pid']:
+        error='foreign/missing final slot holder: '+repr(final_holders)
+versions=subprocess.check_output([sys.executable,'-c',"import sys,importlib.metadata as m,json; print(json.dumps({'python':sys.version,'packages':{p:m.version(p) for p in ['pytest','pytest-xdist','numpy','shapely','Pillow']}}))"],text=True)
+row={'valid':False,'versions':json.loads(versions),'lock_sha256':hashlib.sha256((ROOT/'uv.lock').read_bytes()).hexdigest(),'head':before,'head_after':head(),'diff_sha256':diff,'diff_after':tracked(),'argv':argv,'wall_s':wall,'exit_code':code,'pid':os.getpid(),'error':error,'instrumentation':'PYTEST_PLUGINS=ar_wall','events':str(events),'log':str(log)}
+try:
+    if error or code or row['head_after']!=before or row['diff_after']!=diff:
+        raise ValueError('command failed/contaminated/source changed')
+    records=[json.loads(s) for s in events.read_text(encoding='utf-8').splitlines()]
+    pairs=validate(records)
+    worker_count=sum(r.get('kind')=='collection' for r in records)
+    if worker_count!=4: raise ValueError('expected exactly four worker collections')
+    with node_list.open('x',encoding='utf-8',newline='\n') as f:
+        for node,outcome in pairs: f.write(node+'\t'+outcome+'\n')
+    row.update(valid=True,counts=dict(collections.Counter(o for _,o in pairs)),selected=len(pairs),node_list=str(node_list))
+except Exception as exc:
+    row['error']=str(exc) + ('; '+error if error else '')
+row['sha256']={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in (events,log,samples,node_list,Path(__file__),Path(__file__).with_name('ar_wall.py')) if p.exists()}
+emit(receipt,row)
+print(json.dumps(row),flush=True)
+raise SystemExit(0 if row['valid'] else 1)

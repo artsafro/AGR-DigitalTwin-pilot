@@ -22,7 +22,7 @@ def test_council_responsibilities():
         'jobs/TEC26-OKS/scripts/ucx_tri_core.py:44': 'wrapper',
         'jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29': 'wrapper',
         'jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24': 'own-duty',
-        'jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>': 'own-duty',
+        'jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>': 'superseded',  # #1673
     }
     for at, status in expected.items():
         found = [r for r in rows() if r.at == at]
@@ -128,7 +128,8 @@ def test_wrapper_chain_has_real_owner_and_loader_not_just_a_path_mention(tmp_pat
     real_rows = rows()
     for at, owner in [
         ('jobs/TEC26-OKS/scripts/ucx_tri_core.py:44', 'adapters/max/agr_tools/geom_core.py'),
-        ('jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29', 'jobs/TEC26-OKS/scripts/ucx_tri_core.py')]:
+        ('jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29', 'jobs/TEC26-OKS/scripts/ucx_tri_core.py'),
+        ('jobs/KPP1/scripts/build_kpp1.py:432', 'adapters/max/agr_tools/roof_core.py')]:
         found = [r for r in real_rows if r.at == at]
         assert found and all(r.owner == owner for r in found)
         if found[0].status == 'wrapper':
@@ -139,6 +140,97 @@ def test_wrapper_chain_has_real_owner_and_loader_not_just_a_path_mention(tmp_pat
     row = guard.Row('m', 'c', 'owner.py', 'probe.py::copy', 'probe.py', 'copy', None,
                     'wrapper', None, '', '#1441', '', '', 'test')
     assert not guard.calls_owner(tmp_path, row)
+
+
+_LOADER_OWNER = 'adapters/max/agr_tools/geom_core.py'
+
+
+def _loader_is_owner_wrapper(tmp_path, body, *, before='', after=''):
+    (tmp_path / 'probe.py').write_text(
+        f'import importlib.util\nGC = {_LOADER_OWNER!r}\n{before}\ndef other():\n'
+        + ''.join(f'    {line}\n' for line in body.splitlines())
+        + f'{after}\ndef copy():\n    return other().degrees([])\n', encoding='utf-8')
+    row = guard.Row('m', 'c', _LOADER_OWNER, 'probe.py::copy', 'probe.py', 'copy', None,
+                    'wrapper', None, '', '#1486', '', '', 'test')
+    return guard.calls_owner(tmp_path, row)
+
+
+_LOAD_OWNER = ('spec = importlib.util.spec_from_file_location("g", GC)\n'
+               'm = importlib.util.module_from_spec(spec)\n'
+               'spec.loader.exec_module(m)\nreturn m')
+
+
+def test_unrelated_loader_is_not_an_owner_wrapper(tmp_path):
+    assert not _loader_is_owner_wrapper(tmp_path, 'print("owner at", GC)\n'
+                                        + _LOAD_OWNER.replace('GC', '"other.py"'))
+
+
+@pytest.mark.parametrize('location', ['GC', repr(_LOADER_OWNER), '"other.py"'])
+@pytest.mark.parametrize('module_source', ['spec', 'unrelated'])
+@pytest.mark.parametrize('executing_spec', ['spec', 'unrelated'])
+@pytest.mark.parametrize('returned', ['m', 'decoy'])
+def test_loader_owner_provenance(tmp_path, location, module_source, executing_spec, returned):
+    body = (f'spec = importlib.util.spec_from_file_location("g", {location})\n'
+            'unrelated = importlib.util.spec_from_file_location("x", "other.py")\n'
+            f'm = importlib.util.module_from_spec({module_source})\n'
+            'decoy = importlib.util.module_from_spec(unrelated)\n'
+            f'{executing_spec}.loader.exec_module(m)\nreturn {returned}')
+    expected = location != '"other.py"' and module_source == executing_spec == 'spec' and returned == 'm'
+    assert _loader_is_owner_wrapper(tmp_path, body) is expected
+
+
+@pytest.mark.parametrize('body', [
+    'pass',
+    _LOAD_OWNER.splitlines()[0] + '\nreturn spec',
+    _LOAD_OWNER.replace('spec.loader.exec_module(m)\nreturn m', 'return m\nspec.loader.exec_module(m)'),
+    _LOAD_OWNER.replace('return m', 'm = object()\nreturn m'),
+    _LOAD_OWNER.replace('spec.loader.exec_module(m)', 'def nested():\n    spec.loader.exec_module(m)'),
+    _LOAD_OWNER.replace('"g", GC', 'GC, "other.py"'),
+    _LOAD_OWNER.replace('"g", GC', 'GC, 1e999'),
+    _LOAD_OWNER.replace('"g", GC', '"g", "not_geom_core.py"'),
+    _LOAD_OWNER.replace('"g", GC', '"g", "geom_core.py"'),
+    'ROOT = "/elsewhere"\npath = os.path.join(ROOT, ' + repr(_LOADER_OWNER) + ')\n'
+    + _LOAD_OWNER.replace('"g", GC', '"g", path'),
+])
+def test_incomplete_owner_loader(tmp_path, body):
+    assert not _loader_is_owner_wrapper(tmp_path, body)
+
+
+@pytest.mark.parametrize('binding', [
+    pytest.param("if True: GC = 'other.py'", id='if'),
+    pytest.param("GC: str = 'other.py'", id='annotated'),
+    pytest.param("GC += '.bak'", id='augmented'),
+    pytest.param('from cfg import GC', id='import'),
+    pytest.param("for GC in ['other.py']: pass", id='loop'),
+    pytest.param("GC, X = 'other.py', 1", id='unpack'),
+    pytest.param("def setp():\n    global GC\n    GC = 'other.py'", id='global'),
+    pytest.param('def GC(): pass', id='function'),
+    pytest.param('class GC: pass', id='class'),
+    pytest.param('del GC', id='delete'),
+    pytest.param('import cfg as GC', id='import-alias'),
+    pytest.param('from cfg import *', id='star-import'),
+    pytest.param('try: raise ValueError\nexcept ValueError as GC: pass', id='except'),
+    pytest.param("match 'other.py':\n    case GC: pass", id='match'),
+    pytest.param("X = (GC := 'other.py')", id='named-expr'),
+])
+@pytest.mark.parametrize('position', ['before', 'after'])
+def test_module_path_rebinding(tmp_path, binding, position):
+    assert not _loader_is_owner_wrapper(tmp_path, _LOAD_OWNER, **{position: binding})
+
+
+def test_module_path_stale_alias(tmp_path):
+    assert not _loader_is_owner_wrapper(
+        tmp_path, _LOAD_OWNER.replace('GC', 'ALIAS'), before="GC += '.bak'\nALIAS = GC")
+
+
+@pytest.mark.parametrize('binding', ['', "if True: OTHER = 'other.py'", f'del GC\nGC = {_LOADER_OWNER!r}'])
+def test_module_path_binding_controls(tmp_path, binding):
+    assert _loader_is_owner_wrapper(tmp_path, _LOAD_OWNER, before=binding)
+
+
+def test_loader_classification_resets(tmp_path):
+    for location, expected in [('GC', True), ('"other.py"', False), ('"other.py"', False), ('GC', True)]:
+        assert _loader_is_owner_wrapper(tmp_path, _LOAD_OWNER.replace('GC', location)) is expected
 
 
 def test_module_level_builder_is_an_explicit_owner_not_an_invented_function():

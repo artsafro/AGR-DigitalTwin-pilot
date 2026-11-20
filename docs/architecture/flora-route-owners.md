@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `e2edb417e153e1a20fb178b3d7cd5e59dabca6616da8985455ed604d1d90d13c`.
+Редакция YAML SHA-256: `4f8ad299c50f43bcc053d67fd06ac5b4a2d31b8bd661d54f7344a810b7540a6c`.
 
 Ревизия исходников: Ведомость озеленения и СПОЗУ: ревизия, SHA-256, виды, размеры и точки в реестре исходников.
 
@@ -49,7 +49,7 @@
 | delivery-zip | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`tools/sintez_parity.py::run_live`](../../tools/sintez_parity.py) | own-duty | синтетический пакет для паритета SINTEZ (данные синтетические), не сдача | Не требуется |
 | delivery-zip | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`src/dt_ai/publish/bundle.py::package`](../../src/dt_ai/publish/bundle.py) | own-duty | архив разработки dt build (байты из памяти, фиксированная дата), не пакет сдачи по регламенту | Не требуется |
 | Проверка и приёмка | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/TEC26-OKS/scripts/qa_packages.py:35`](../../jobs/TEC26-OKS/scripts/qa_packages.py#L35) | historical | остаётся: проверки пакетов именно ТЭЦ26 (стыки фасадов по листу цветового решения, нарезка по дампу Max), которых нет в validate_package; общие стадии — agr validate | Не требуется |
-| sintez-checker | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
+| sintez-checker | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет | Не требуется |
 | master-qa | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/PSU275/scripts/qa_master_psu275.py::world_bm`](../../jobs/PSU275/scripts/qa_master_psu275.py) | historical | остаётся: вариант ПСУ275 (лучи не стартуют внутри масс открытой оболочки), сдача delivery-v003 принята 2026-10-07 | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`jobs/KPP1/benchmark-1318/run_benchmark.py::main`](../../jobs/KPP1/benchmark-1318/run_benchmark.py) | historical | исторический бенчмарк КПП1 (#1318): прогон закреплён хешами, не переписываем | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`jobs/KPP1/quad-1372/run_checks.py::main`](../../jobs/KPP1/quad-1372/run_checks.py) | historical | исторический прогон КПП1 QUAD (#1372): доказательства закреплены хешами, не переписываем | Не требуется |
@@ -59,7 +59,7 @@
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/library/migrate_windows.py::main`](../../tools/library/migrate_windows.py) | own-duty | опубликованный library/windows/catalogue.json v001 хранит sha256 этого файла во входах; правка запуска - только с новой версией библиотеки (v002), не переупаковываем | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/library/maf_material_ids.py::main`](../../tools/library/maf_material_ids.py) | own-duty | текст команды Blender в отчёте для ручного запуска человеком, сам ничего не запускает | Не требуется |
 | blender-launch | [`src/dt_ai/core/blender_runner.py`](../../src/dt_ai/core/blender_runner.py) | [`tools/research/checker_mutation.py::freeze`](../../tools/research/checker_mutation.py) | own-duty | замороженный измерительный прогон: manifest запечатанного корпуса (runner_sha256, docs/research/checker-mutation-freeze.json) хранит sha256 этого файла; правка запуска ломает воспроизведение замера | Не требуется |
-| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | own-duty | замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA | Не требуется |
+| Проверки, xView, СИНТЕЗ | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py) | [`jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py:47`](../../jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py#L47) | superseded | заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет (#1673) | Не требуется |
 | Пакеты НПМ / ВПМ и передача | [`adapters/max/agr_tools/package_core.py`](../../adapters/max/agr_tools/package_core.py) | [`jobs/TEC26-OKS/scripts/package_vpm.py:50`](../../jobs/TEC26-OKS/scripts/package_vpm.py#L50) | live-bypass | живой писатель ZIP: AC09/run_building.sh:28 -> scripts/package_vpm.py (не вызов package_core) | [#1377](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1377) |
 
 ## Шаги и доказательства

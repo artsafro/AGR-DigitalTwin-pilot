@@ -267,8 +267,23 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
   per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
   effort M
-- **R21** proposal 2026-11-19, job/colleague-maf-models - skill: MAF from a manufacturer page (download renders+DWG, DWG->DXF dims, part breakdown, `maf_parts.py` quad builders in headless Blender, preview, open versioned .blend for review); builders live outside git in `C:/x/two-mafs/work/scripts/`; seen 2 times (MG4013, 171620); effort M
-- **R22** proposal 2026-11-19, job/colleague-maf-models - CLI command: accepted Blender MAF -> one quad mesh, pivot D095, quad FBX -> 3dsmaxbatch Editable Poly + Multi/Sub with library IDs from the `<id>_<name>` material prefix + readback log (`export_maf_fbx.py` + `fbx_to_max.ms`); seen 2 times; effort S
+- **R21** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Blender part assembly — append part .blend files, place
+  module instances at level offsets (k·3.15), export a non-triangulated FBX + a slot→image manifest JSON; seen 6 times
+  (assembly v001–v006 via sed-edited copies of one script); effort S
+- **R22** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Max scene refresh from such an FBX — delete the layer's
+  generated objects except a keep-list, import #add, rebuild one Multi/Sub (Physical) per part group from the manifest
+  (Bitmap / MultiTile), assign, save a new version; seen 3 times (3k_v002→v004); effort M
+- **R23** proposal 2026-11-14, job/4bk-k3-vpm - pattern: АКП joint UV by left-edge stacking (Artem's method — every
+  joint is an edge, panels share one texel and stack by their joint edge on one painted line; long faces with mid
+  joints go to a second tile); seen 1 user explanation + 3 agent runs re-deriving joint layouts; effort M
+- **R24** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: assemble a review .blend from named part files
+  (`assemble_files.py out typ name=path ...`, append objects read-only, one collection per part); seen 4 times
+  (K3_GF_full_review_v006–v009); effort S
+- **R25** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: build a 3ds Max QUAD review scene from a part FBX with
+  one Multi/Sub of viewport-visible UDIM bitmaps per ID, then readback (material per face, bitmap on disk, UV inside
+  its tile) and 2-3 captures; seen 9 times (STY_B_uv_review v002–v007, K3_A_tex_review v001–v003); effort M
+- **R26** proposal 2026-11-19, job/colleague-maf-models - skill: MAF from a manufacturer page (download renders+DWG, DWG->DXF dims, part breakdown, `maf_parts.py` quad builders in headless Blender, preview, open versioned .blend for review); builders live outside git in `C:/x/two-mafs/work/scripts/`; seen 2 times (MG4013, 171620); effort M
+- **R27** proposal 2026-11-19, job/colleague-maf-models - CLI command: accepted Blender MAF -> one quad mesh, pivot D095, quad FBX -> 3dsmaxbatch Editable Poly + Multi/Sub with library IDs from the `<id>_<name>` material prefix + readback log (`export_maf_fbx.py` + `fbx_to_max.ms`); seen 2 times; effort S
 
 ## Harness and organization (default owner Codex)
 

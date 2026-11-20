@@ -1,0 +1,244 @@
+# Autoresearch: merge-gate wall time (#1615)
+
+Status: the unchanged `c62ceddd` merge-gate corpus met the idle-slot target in
+three valid runs (median **22:58**). Both confirmations matched the baseline's
+27,454 node outcomes exactly. No optimization or causal speed-up claimed.
+
+## Frozen contract (before optimization)
+
+- Baseline source: `origin/main` at start of this resumed run,
+  `c62cedddde111b8732c6ea48dafc34946d9dc992`. One writing worktree:
+  `t_82b1bc95`, branch `improve/issue-1615-autoresearch-round-2-full-test-suite-wal`.
+- Scope: test setup/fixtures, redundant subprocess work and measured slow paths;
+  observational harness snapshots in this directory. Delivered packages untouched.
+- Metric: elapsed `perf_counter` seconds around the **whole exact merge-gate
+  subprocess**, excluding slot/idle wait. Queue time is reported separately.
+- Canonical command, read from the live `merge_batch.py` on 2026-11-17:
+
+  ```text
+  uv run pytest -q -p no:cacheprovider --basetemp=C:/x/t_82b1bc95-wall-baseline-001 -m "not blender and not dcc and not acad and not perf and not job and not max and not panel_texture and not native_max" -rf -n 4
+  ```
+
+  Only basetemp changes per invocation. The existing merge command already uses
+  four workers; this is NOT a new xdist policy or selection change. Research-only
+  observation is loaded via `PYTEST_PLUGINS`, with the same observer for every run;
+  it records controller phase reports and all workers' selected IDs without changing
+  collection, scheduling, outcomes or assertions. Child-process inheritance is
+  cleared after startup so nested pytest cannot overwrite the evidence.
+- Every measurement goes through
+  `python C:/Users/artsafro/hermes_kanban/scripts/suite_slot.py --card t_82b1bc95 -- ...`.
+  No runner/CI/coordination policy edits. Never run concurrently with a merge batch.
+- Scheduling: wait for all live merge-chain/batch processes and foreign suite holders
+  to drain before requesting a slot. Inside the slot, require no foreign live holder;
+  monitor while running. Contamination is an invalid measurement, not a slow/fast
+  success. Preserve its log; stop only the owned command tree.
+- Orchestrator clarification on this card, 2026-11-17 06:00: measurement-only
+  exception to rule 68; one own idle baseline, one run per candidate, then two
+  additional final confirmations. This supersedes three baseline runs in the original
+  issue. Final evidence remains three final runs and their median. Historical batch
+  receipts describe variability only; they are not interchangeable baseline samples.
+- Keep only >=5% wall reduction versus the previous retained result with exact
+  selected-node/outcome parity. No deselection, skips, weaker checks/tolerances,
+  hidden markers, test deletion or modified production inputs. Observe/propose/log;
+  retained changes require a normal PR/review, never automatic merge.
+- Stop at <=1800 seconds, 8 cumulative measurement/experiment hours, or three
+  consecutive rounds below 2% gain (both raw and retained gain). Confirm target on
+  all three final measurements; report their median, no discarded outliers.
+- Parity: every worker's sorted selected-ID list must agree; each selected ID must
+  have a complete terminal outcome. No duplicate phases, missing teardown, failed,
+  error, xpassed or unknown outcome may pass. Compare sorted `(nodeid, outcome)`
+  lists against baseline; empty diff required. Also retain phase records, counts,
+  source SHA before/after, argv, package versions and SHA-256 manifests.
+- Resume protocol: one detached observer-only run writes immutable evidence under
+  `C:/x/autoresearch-suite-wall/`. Record PID and output path here/on the card, then
+  block while measuring; orchestrator resumes the card when the JSON exists.
+  Never launch another measurement before verifying the recorded process exited.
+
+## Historical context (not baseline/parity proof)
+
+Actual `hermes_kanban/kpi/manual_merge_2026111*.json` receipts read on 2026-11-17:
+
+| Receipt | Tested SHA (prefix) | Passed | Pytest wall seconds | Workers |
+| --- | --- | ---: | ---: | ---: |
+| `manual_merge_20261116p1595.json` | `02bf03a4` | 27125 | 1557.23 | 4 |
+| `manual_merge_20261116q.json` | `ddb23e8c` | 26594 | 3517.21 | 4 |
+| `manual_merge_20261116x1476.json` | `84fb0f25` | 26728 | 5015.81 | 4 |
+| `manual_merge_20261116s.json` | `c62ceddd` | 27218 | 1961.42 | 4 |
+
+These are **different node counts and different revisions**, not the same frozen
+corpus. They suggest contention but do not establish its causal effect or prove
+speed-up. The original request's 58:37 is pytest's summary duration, whereas this
+contract measures the entire command including uv/startup/collection/teardown.
+
+## Acceptance/probe plan (before harness implementation)
+
+| Requirement | Concrete input | Expected | Probe |
+| --- | --- | --- | --- |
+| Real xdist IDs/outcomes | Generated pass/skip/xfail module, n=2 | Complete per-worker equal selection; exact outcomes | `probe_observer.py` |
+| No evidence clobber | Existing events/output file | Nonzero; original bytes unchanged | `probe_observer.py` |
+| Nested subprocess isolation | Test launches a fresh pytest | Outer ledger contains only outer nodes | `probe_observer.py` |
+| Fail closed | Empty/partial/duplicate/unknown/nonfinite report | Reject, never pass | `probe_observer.py` |
+| Frozen parity | Baseline vs changed outcome/selection | Nonempty diff/rejection | `probe_observer.py` |
+| No merge overlap | Live merge chain or foreign slot holder | Wait before launch; invalidate/abort if contaminated | runner preflight + live sampling |
+| No stale source | HEAD or tracked content changes during run | Invalid; keep raw evidence | runner source snapshots |
+
+## Round log
+
+| Round | Hypothesis / source | Metric | Parity | Decision |
+| --- | --- | --- | --- | --- |
+| B0 (`baseline-001`) | Unmodified test corpus from `c62ceddd`; harness HEAD `1c713b04` | 1667.3542925 s; exit 1; 27212 passed / 193 skipped / 6 failed | rejected | invalid: detached PATH selected Windows WSL bash, not Git Bash |
+| B1 (`baseline-002`) | Same test corpus, command and observer; repair subprocess PATH only | **1487.8959172 s (24.7983 min)**; exit 0 | 27454 nodes; 27218 passed / 187 skipped / 49 xfailed | valid baseline; target already reached, no optimization needed |
+| C1 (`confirmation-001`) | Identical corpus, command, observer and repaired PATH | 968.4603811 s before abort; exit 1 | incomplete, rejected | invalid: `merge20261117red3` acquired a slot during the measurement |
+| C2 (`confirmation-002`) | Sequential after valid C1 | not run | not measured | launcher stopped after invalid C1 |
+| C3 (`confirmation-003`) | Unchanged corpus in reserved drained window | **1327.0908305 s**; exit 0 | empty diff vs B1 | valid; included |
+| C4 (`confirmation-004`) | Sequential after valid C3 and exact B1 parity | **1377.5969055 s**; exit 0 | empty diff vs B1 | valid; included |
+
+B0 is below 1800 seconds as an **invalid observation only**, not a target success,
+retained optimization, or parity reference. No optimization was proposed or
+retained: B1 already met the target on the unchanged corpus.
+
+### B1 validated and unchanged-corpus confirmations
+
+- `baseline-002.json`: `valid=true`, exit 0, source `bb42920d` unchanged before/after;
+  source signature empty. Six artifact hashes reverified on resume. Replayed frozen
+  validator produces the exact committed-receipt-referenced sorted node/outcome TSV.
+  All 255 slot samples contain exactly the owned holder. Idle CPU preflight 8.23196%;
+  queue wait 2180.1133 s, excluded from the 1487.8959 s command wall time.
+- `git diff c62ceddd HEAD -- tests src pyproject.toml uv.lock conftest.py` is empty:
+  no project optimization, test selection or assertion change. The existing main
+  corpus already achieves the target in the valid idle baseline; stop proposing
+  optimizations and confirm the same corpus twice. The three-run final median uses
+  B1 + C3 + C4; C1 was rejected and C2 never ran. This is confirmation, not a gain.
+- Current fetched main `db55afb4` has no wall-contract file; therefore documentation
+  acceptance is not already met by main. Do not call this performance improvement
+  caused by this branch, nor compare different main revisions as parity proof.
+- Sequential launcher snapshot `launch-confirmations.ps1.txt` preserves the same
+  process-local Git Bash repair. Each measurement independently waits for a drained
+  idle slot and exits; C2 starts only after C1 exits successfully and its full
+  node/outcome bytes equal B1. No parallel measurements, no new optimization loop.
+- C1 ended at 11:56 local time on 2026-11-17, before the separately approved
+  01:50–04:30 local window on 2026-11-18. The 8.6075% idle preflight and
+  3983.9732 s wait did not prevent a later merge batch from starting. The slot
+  guard recorded the foreign holder (`merge20261117red3`, PID 1153184) and
+  rejected the run; no complete node/outcome TSV was produced. C2 did not launch.
+- C1 receipt: `C:/x/autoresearch-suite-wall/confirmation-001.json`, SHA-256
+  `7ef2a606e0e4cee0d417b959eb760dd503ac32864084f0d8cc14106fff241e0e`.
+  All five referenced hashes matched on resume. HEAD and source signature
+  stayed unchanged. Launcher and claimed interpreters have exited. Do not
+  include the partial wall time in the median or treat it as a speed-up.
+- The next reserved window ran from 23:55 CET on November 18 to about 03:30 CET
+  on November 19. C3 waited for the idle CPU check; C4 acquired a fresh slot
+  after C3 exited and matched B1. Slot samples for the commands span 00:51:33–01:13:40
+  and 01:14:10–01:37:07 CET, respectively, both inside that window.
+- Affected tests rerun before launch:
+  `uv run python -m unittest discover -s tmp/wall_harness -p 'probe_*.py' -v`:
+  **6 passed** in 7.434 s. No project module changed.
+
+## Final measurements and parity
+
+| Evidence | Whole-command wall | Wait before slot (excluded) | Idle CPU | Passed / skipped / xfailed |
+| --- | ---: | ---: | ---: | ---: |
+| Historical issue reference (not a matched baseline) | 58:37 pytest summary only | — | — | — |
+| B1 idle baseline (`bb42920d`) | 1487.896 s (24:48) | 2180.113 s | 8.23% | 27218 / 187 / 49 |
+| C3 idle confirmation (`399ff916`) | 1327.091 s (22:07) | 3384.466 s | 9.47% | 27218 / 187 / 49 |
+| C4 idle confirmation (`399ff916`) | 1377.597 s (22:58) | 24.904 s | 8.49% | 27218 / 187 / 49 |
+| **Final median (B1 + C3 + C4)** | **1377.597 s (22:58)** | — | — | **27218 / 187 / 49** |
+
+All three measurements are below 1800 s. This demonstrates idle-slot runtime
+on the frozen `c62ceddd` corpus, not speed-up relative to 58:37, and not total
+merge latency under contention. The fetched main `cc99bfdb` has a different
+test corpus; this research does not certify its timing or outcomes. Branch
+changes from `c62ceddd` touch only this report and its evidence directory;
+`merge_chain`, `merge_batch`, tests, assertions and markers were not changed.
+
+The final audit rehashed all 18 referenced artifacts, verified four equal worker
+collections per run and replayed the frozen phase validator to reproduce each sorted
+TSV. All 255 / 232 / 239 slot samples showed one holder owned by this card. Each
+TSV has 27,454 rows with the same SHA-256:
+`51e8655c16f0eaee17cc4fe891852fd3a4cc5fef4a26213426f043ec24f28d48`.
+
+```bash
+cd C:/x/autoresearch-suite-wall
+diff -u baseline-002.nodes.tsv confirmation-003.nodes.tsv
+diff -u baseline-002.nodes.tsv confirmation-004.nodes.tsv
+```
+
+Both commands exited 0 and wrote zero diff lines. Each comparison includes
+passed, skipped and xfailed outcomes, not just collection IDs or totals.
+Raw ledgers and samples remain in that directory. The small result receipts
+are mirrored in [the harness directory](autoresearch-suite-wall-harness/).
+
+
+### B0 diagnosis and environment-only repair (2026-11-17)
+
+- Receipt: `C:/x/autoresearch-suite-wall/baseline-001.json`, `valid=false`,
+  exit 1; source SHA and source signature unchanged. Raw evidence is preserved;
+  its artifact hashes are in the receipt (a small copy is committed alongside this note).
+- All six failures are `tests/test_session_context.py::test_rotation_command_from_subdirectory`
+  bash variants: `C:/Windows/system32/bash.EXE` emits
+  `Bash/Service/CreateInstance/CreateVm/HCS/HCS_E_HYPERV_NOT_INSTALLED`
+  (confirmed by fresh `--version`, UTF-16LE decoded stdout).
+  PowerShell variants pass. Prior launcher/interpreter/inside PIDs
+  `1114028`, `1114164`, `1124180` are absent in a fresh Win32 process query.
+- `git diff origin/main HEAD -- tests/test_session_context.py .claude/commands/handover.md
+  .claude/commands/takeover.md tools/hooks/session_context.py` is empty.
+- Own detached probe checkout `tmp/main-probe` at `origin/main=f4ac0fb1`:
+  same 12-node command with System32 first on PATH reproduces **6 failed / 6 passed**
+  in 60.13 s; normal Git Bash PATH yields **12 passed** in 66.36 s.
+  Logs: `tmp/main-badpath.log`; successful command output on card.
+- Affected command: `.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider
+  --basetemp=C:/x/t_82b1bc95-main-goodpath
+  tmp/main-probe/tests/test_session_context.py::test_rotation_command_from_subdirectory`.
+  Bad-PATH reproduction runs the same selector in `tmp/main-probe`, unique
+  `--basetemp=C:/x/t_82b1bc95-main-badpath`, subprocess PATH prefixed with System32.
+- SELF-FIX: B1 launch uses a process-local PATH prefix
+  `C:/Users/artsafro/.hermes/tools/git-2.53.0+3-win32-x64/usr/bin` before invoking
+  the unchanged runner. No global setting, project test, assertion, marker, merge
+  command or policy is modified. This is an environment repair, not a measured
+  speed-up. B0 remains invalid; B1 becomes the baseline only if all frozen checks pass.
+- The exact launch request, executable version/path preflight and WMI result are
+  preserved in this worktree's ignored `tmp/baseline-002-launch*` files. B1 uses
+  exclusive `baseline-002.*` evidence names and the same drained-slot guard.
+- First B1 launcher PID `1127800` exited before creating a runner claim or starting
+  pytest: PowerShell `Get-Command` returned multiple PATH matches, and the preflight
+  correctly refused the array. Repaired discovery with `Select-Object -First 1`;
+  retain the first WMI result, relaunch with console output redirected for diagnosis.
+  This is a launcher repair, not a second measured run or discarded timing.
+
+## Frozen observer and resume instructions
+
+Audit snapshots: `autoresearch-suite-wall-harness/*.py.txt` (raw bytes preserved by
+local `.gitattributes`). Executable copies live only in this worktree's ignored
+`tmp/wall_harness/`; copy each snapshot there, dropping `.txt`, to reproduce.
+This extends #1227's controller-only recording approach for the **existing xdist
+merge gate**; its serial CPU observer cannot itself record the four-worker run.
+No autonomous controller, automatic commit/revert, or merge loop is initialized.
+
+- RED before implementation: `uv run python tmp/wall_harness/probe_observer.py`,
+  exit 1, two `ModuleNotFoundError` errors. The regression snapshot and contract
+  were committed first as `48b4fb55`.
+- Harness check: `uv run python -m unittest discover -s tmp/wall_harness -p 'probe_*.py' -v`:
+  6 tests passed; includes real generated n=2 pytest, nested fresh-process pytest,
+  stale-output/alias refusal, malformed records, dead/live/partial slot files,
+  process-query failure, and untracked source mutation.
+- First implementation check exposed an invalid synthetic witness: two workers
+  with identical selection are required, not an error. Corrected the witness to
+  unequal selections; no observer rule or project assertion was relaxed.
+- The runner waits for no live suite holders or merge chain/batch, plus <=10%
+  whole-host CPU over a 20-second preflight sample. It records this sample and wait
+  separately from command wall time. During the command it samples live holders
+  every five seconds and checks source stability; sampled contamination fails closed.
+  This is an observer, not a machine-wide scheduler lock: the orchestrator must
+  reserve the drained window so another caller cannot start a merge concurrently.
+- Launch **one** `measure.py baseline-001` detached from the worktree's own venv,
+  via Win32_Process.Create. It exclusively creates `baseline-001.claim.json` and
+  `baseline-001.runner.log`, waits for idle, enters suite_slot, then writes
+  `baseline-001.json` (including `valid`, versions, SHA, wall, hashes and counts).
+  The command never modifies project files. Process IDs are recorded in the claim,
+  launch receipt, inside claim and card comment; do not edit this tracked log while
+  measurement is running (source-drift checks intentionally reject that).
+- Resume only when `C:/x/autoresearch-suite-wall/baseline-001.json` exists and the
+  claimed process has exited. Read `valid` before any metric claim. A failed or
+  contaminated run remains evidence, not an accepted baseline; use a new run name
+  after diagnosing it. A launch error remains in the runner log/claim; never reuse
+  or overwrite the name. Baseline-001 was rejected as recorded above.
