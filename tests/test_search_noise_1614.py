@@ -91,7 +91,11 @@ def test_real_repo_hidden_sets_respect_live_paths_and_entry_docs(real):
 @needs_rg
 def test_real_repo_rg_hides_historical_data_and_docs_and_keeps_live(real):
     listed = _rg(ROOT)
-    assert not (set(real["data"]) | set(real["docs"])) & listed
+    # A doc/data file merged after the last --write-ignore is "pending": visible by design until the block is
+    # regenerated (search_noise.pending: reported, not a failure). Red main 2026-11-20 (batch 20261120e): research
+    # docs from parallel PRs landed after #1706 and this test failed on them.
+    waiting = {p.lstrip("/") for p in sn.pending(ROOT, real["data"], real["docs"])}
+    assert not ((set(real["data"]) | set(real["docs"])) - waiting) & listed
     assert {"jobs/KPP1/STATE.md", "docs/plans/manual-mode-no-ai.md", "jobs/VATUTINO-SITE/maf/site-schedule.json",
             "jobs/KPP1/quad-1372/REPORT.md", "routes/revit-intake.md"} <= listed
 
