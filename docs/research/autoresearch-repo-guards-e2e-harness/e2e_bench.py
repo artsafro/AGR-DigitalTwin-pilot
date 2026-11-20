@@ -26,6 +26,8 @@ GUARDS = "C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh"
 DG = "tools/architecture/duplicate_guard.py"
 MAIN = 'if __name__ == "__main__":\n'
 LIMIT = 75 * 60
+# Python's "bash" on Windows resolves to WSL (System32) first; repo_guards.sh needs git-bash.
+BASH = os.environ.get("AR_BASH") or str(Path(shutil.which("git") or "git").resolve().parents[1] / "usr/bin/bash.exe")
 
 
 def sh(args, cwd, **kw):
@@ -78,7 +80,7 @@ def parity(a):
 
 def guards(wt):
     start = time.perf_counter()
-    r = sh(["bash", GUARDS], wt)
+    r = sh([BASH, GUARDS], wt)
     sec = time.perf_counter() - start
     out = r.stdout + r.stderr
     passed = re.search(r"(\d+) passed", out)
@@ -95,6 +97,8 @@ def run(a):
     start = time.perf_counter()
     warm = {n: guards(WORK / n) for n in ("wtB", "wtC")}
     print("warm-up", warm, flush=True)
+    if not all(w["green"] for w in warm.values()):
+        raise SystemExit("warm-up not GREEN: fix the harness before timing")
     runs, err = [], None
     for pair, order in enumerate(("BC", "CB", "BC"), 1):
         for v in order:
