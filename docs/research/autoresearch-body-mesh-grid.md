@@ -55,5 +55,14 @@ these in-sample labels.
 **Not measured (declared up front).** Grid rotation; cell sizes other than 4 m; held-out accept/reject
 pairs; 63A, G22 k2/k3; any geometry rebuild or package check; full suite.
 
-**Replay.** `PYTHONUTF8=1 ../../.venv/Scripts/python.exe docs/research/autoresearch-body-mesh-grid-harness/grid.py <new dir>`
-(from the worktree root of this branch; needs `C:/x/...` and `G:/Мой диск/AGR-evidence/...` inputs of #13).
+**Replay.** From the worktree root (needs the `C:/x/...` and `G:/Мой диск/AGR-evidence/...` inputs of #13):
+`PYTHONUTF8=1 ../../.venv/Scripts/python.exe docs/research/autoresearch-body-mesh-grid-harness/grid.py <dir1> R1`,
+the same with `<dir2> R2` (may run in parallel), then `grid.py --combine <dir1> <dir2> <grid.json>` applies the
+frozen decision rule.
+
+**Harness amendment (before any result was used).** The first single-process run (`C:/x/ar15/g1`) showed
+~28 s per origin (3 repeats × 13 inputs), i.e. ≈ 64 min for R1 + R2 in series, beyond the 40 min stop rule.
+It was stopped after 3 origins; its partial log already showed R1 below 0.5 at `o = (0,0,1)`, which triggers
+R2 under the frozen rule. The harness was split into one process per variant (each re-dumps and re-confirms
+R0 and the witness independently) plus a `--combine` step; metric, origins, repeats, R2 definition and
+decision rule are unchanged.
