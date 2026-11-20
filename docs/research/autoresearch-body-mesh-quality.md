@@ -57,3 +57,50 @@ silently dropped).
 retuning weights/params to make calibration pass inside R0; deselecting tests; promoting any build.
 OBSERVE: any proposed score or body-core change is written here as "would change" and goes through a
 separate PR + review.
+
+## Standing #13 — R0 result (OBSERVE, nothing kept)
+
+**Кратко.** Все 9 пар одного здания ранжируются верно: принятая версия всегда выше отклонённой. Но по
+замороженному порогу 0,5 калибровка **не пройдена**: у 63C v002/v001 отрыв **0,427**. Дефект 63C v001 метрика
+видит полностью (176 искажённых граней против 0, при пороге угла 5–30° одинаково), но балл считает долю
+площади по всему корпусу, и локальный дефект углов разбавляется. По правилу контракта кандидатов не запускал,
+ядро и модели не менял.
+
+Base `1ffdcb76` + contract commit `204ba805`. 13 inputs × 3 runs, every input's payload byte-identical across its
+3 runs (paired spread 0.000), hashes unchanged before/after (`harness/r0.json`).
+
+| Pair (accepted − rejected) | Accepted | Rejected | Margin | ≥ 0.5 |
+|---|---:|---:|---:|---|
+| 63B v007 − v001 | 84.332 | 82.368 | 1.964 | yes |
+| 63B v007 − v002 | 84.332 | 82.354 | 1.978 | yes |
+| 63B v007 − v003 | 84.332 | 82.363 | 1.969 | yes |
+| 63B v007 − v004 | 84.332 | 82.370 | 1.962 | yes |
+| 63B v007 − v005 | 84.332 | 82.244 | 2.088 | yes |
+| 63B v007 − v006 | 84.332 | 83.385 | 0.947 | yes |
+| 63C v002 − v001 | 83.906 | 83.479 | **0.427** | **no** |
+| KPP1 v003 rest − corners | 77.402 | 76.684 | 0.718 | yes |
+| G22 k1 v003 − v002 | 92.044 | 91.016 | 1.028 | yes |
+
+`min_margin` = **0.427** → `calibrated: false`.
+
+Diagnosis (clean measurements, not candidates):
+- 63C pair differs only in `irregular_area_share` 0.0306 vs 0.0000 (176 of 4 125 faces; weight 2 of 15 →
+  0.41 points) and `weld_share` 0.2516 vs 0.2532 (slightly favours the rejected one). `--param irregular_deg`
+  = 5/10/20/30 gives the same 176 vs 0 faces and the same 0.427 (`sens/`): the corner faces are skewed > 30°,
+  so the threshold is not the lever; the whole-body area average is.
+- 63B v006 → v007 gains come from `irregular_area_share` 0.055 → 0.020, `sliver_share` 0.017 → 0.006,
+  `weld_share` 0.183 → 0.142. Scope differs: v007 13 644 faces / 6 554 m² vs v006 10 747 / 7 253 m²
+  (area −9.6 %, under the 25 % flag).
+- Historic `score.json` receipts of 63B v002–v006 (88.9–90.4) are not comparable: the core changed since
+  (#1631 fixes); fresh scores are 82.2–83.4. KPP1 and G22 k1 reproduce #1616/#12 exactly.
+- Not measured: 63A (no labelled rejected version of the same stage); G22 k2/k3 (no rejected version).
+  Injected checks: none this round (hash and payload-identity guards only).
+
+Would change (separate PR + review, not applied): report a localized-defect signal next to the area share —
+e.g. irregular faces per element or per facade cell — so a corner defect is not averaged away; or calibrate
+63C-type pairs by defect count (176 vs 0) rather than points. Changing the 0.5 margin is Artem's/#1616's call,
+not this loop's.
+
+Replay: `../../.venv/Scripts/python.exe docs/research/autoresearch-body-mesh-quality-harness/calibrate.py <new dir>`.
+Evidence: `G:/Мой диск/AGR-evidence/ar13-body-mesh-quality/` (`r0/`, `sens/`, `SHA256SUMS.txt` sha256
+`612e9cdab5aa4683…`; `r0/r0.json` sha256 `4baab476898fa159…`).
