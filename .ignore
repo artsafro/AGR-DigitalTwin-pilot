@@ -204,14 +204,10 @@
 # BEGIN historical-data (#1614, [D327]) - generated: search_noise.py --write-ignore
 # HISTORICAL [D327] jobs/KPP1: data of a delivered job (#1614); files unchanged, hidden from agent search
 /jobs/KPP1/audit-1304/README.md
-/jobs/KPP1/audit-1304/evidence-final.json
-/jobs/KPP1/audit-1304/report-final/report.json
-/jobs/KPP1/audit-1304/report-final/report.md
 /jobs/KPP1/benchmark-1318/summary.json
 /jobs/KPP1/benchmark-1318/telemetry.json
 /jobs/KPP1/build-manifest-1423/evidence-SHA256SUMS.txt
 /jobs/KPP1/build-manifest-1423/proof-r3.json
-/jobs/KPP1/cold-run-1172/RUN-LOG.md
 /jobs/KPP1/cold-run-1172/inputs-manifest.json
 /jobs/KPP1/cold-run-1172/layer-map-L03.txt
 /jobs/KPP1/cold-run-1172/plan-repro-v001.json
@@ -307,7 +303,6 @@
 /jobs/KPP1/rerun-1244/band-pairs-vpm-1209.json
 /jobs/KPP1/rerun-1244/band-pairs-vpm-r1-v002.json
 /jobs/KPP1/rerun-1244/xview-npm-r1-v002.json
-/jobs/KPP1/scripts/vpm_textures.json
 /jobs/KPP1/site-1255/RUN-LOG.md
 /jobs/KPP1/site-1255/SM_Kpp_1.geojson
 /jobs/KPP1/site-1255/evidence-SHA256SUMS.txt
@@ -376,14 +371,12 @@
 /docs/architecture/report-1380.md
 /docs/architecture/report-1425.md
 /docs/architecture/route-map-1581-evidence.md
-/docs/domain/conflict-choices-2026-10-09.md
 /docs/evals/geometry_mutation_2026-10-21.md
 /docs/evidence/1365-review-textures/4bk-original.json
 /docs/evidence/1365-review-textures/4bk-preview.json
 /docs/evidence/1365-review-textures/4bk-scope.json
 /docs/evidence/1365-review-textures/CHECKPOINT.md
 /docs/evidence/1365-review-textures/max-SHA256SUMS.txt
-/docs/evidence/1365-review-textures/native-max.json
 /docs/evidence/1504-polygon-max2026/REPORT.md
 /docs/evidence/1504-polygon-max2026/SHA256SUMS.txt
 /docs/evidence/1504-polygon-max2026/receipt.json
@@ -488,20 +481,13 @@
 /docs/experiments/autoresearch-xview-speed/pairs_parity.json
 /docs/experiments/autoresearch-xview-speed/results.tsv
 /docs/experiments/bim-autocad-agr.md
-/docs/experiments/blender-mesh-audit-live.md
 /docs/experiments/body-gn-full-snap-edge-locator-rerun.md
 /docs/experiments/export.geojson_write.md
 /docs/experiments/export.ground_fbx.md
 /docs/experiments/export.pivot_place.md
 /docs/experiments/export.zip.md
-/docs/experiments/flora-bark-containment.md
-/docs/experiments/flora-geometry-decomposition.md
 /docs/experiments/flora-texture-diagnosis.md
 /docs/experiments/hyp-83.md
-/docs/experiments/issue-105-evidence/adoption-available-report.json
-/docs/experiments/issue-105-evidence/adoption-regression-report.json
-/docs/experiments/issue-105-evidence/generated.json
-/docs/experiments/issue-105-evidence/regression-report.json
 /docs/experiments/issue-769-slide-overlay.md
 /docs/experiments/live-max-mcp.md
 /docs/experiments/model.triangulate.md
@@ -519,10 +505,8 @@
 /docs/experiments/vlm-6view-checklist/input-SHA256SUMS.txt
 /docs/experiments/vlm-6view-checklist/run-v001.results.json
 /docs/experiments/vlm-6view-checklist/run-v002.results.json
-/docs/ground-site-1535.md
 /docs/library/flora-review-1411.json
 /docs/library/flora-review-1411.md
-/docs/library/window-seating-1449.md
 /docs/methods/building-body/RESULTS.md
 /docs/methods/building-body/SHA256SUMS
 /docs/methods/building-body/WHEN.md
@@ -557,7 +541,6 @@
 /docs/methods/windows-glazing/SHA256SUMS
 /docs/methods/windows-glazing/WHEN.md
 /docs/plans/system-audit-1298.md
-/docs/procedure/REVIEW_TEXTURES.md
 /docs/procedure/evidence/1445/verification.md
 /docs/qa/archive-diff-1536.md
 /docs/reference/geometry-weld-contracts.md
@@ -643,9 +626,6 @@
 /docs/research/merge-gate-deselect-190-vs-card-417.md
 /docs/research/merge-gate-path-and-4200s-timeout.md
 /docs/research/mesh-audit-scaling-real-sizes.md
-/docs/research/mesh-quality-1634.md
-/docs/research/model-flora-dry-walk-2026-10-16.md
-/docs/research/model-maf-dry-walk-2026-10-16.md
 /docs/research/parts-schema-checker-parity.md
 /docs/research/pdf-corpus-inventory.md
 /docs/research/pdf-dimension-geometry-kpp1-l03.md
@@ -658,7 +638,6 @@
 /docs/research/source-finish-area-numeric-domain.md
 /docs/research/strict-reader-semantic-boundaries.md
 /docs/research/suite-slot-starvation-mechanism.md
-/docs/research/toolchain-smoke-2026-10-15.md
 /docs/research/tow02-weld-rerun.log
 /docs/research/ucx-distance-endpoint-cancellation.md
 /docs/research/vatutino-ground-footprint-overshoot-6m2.md

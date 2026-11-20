@@ -80,7 +80,7 @@ def refs(root, rel, fileset, dirs):
         return set()
     here, out = rel.rsplit("/", 1)[0] if "/" in rel else "", set()
     for m in _REF.finditer(text):
-        raw = next(g for g in m.groups() if g).split("#")[0].split("?")[0].strip(".,;:'\"")
+        raw = next(g for g in m.groups() if g).split("#")[0].split("?")[0].strip("'\"").rstrip(".,;:'\"")
         if not raw or "://" in raw:
             continue
         for cand in (os.path.normpath(os.path.join(here, raw)), os.path.normpath(raw.lstrip("/"))):

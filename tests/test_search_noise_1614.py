@@ -195,6 +195,18 @@ def test_historical_docs_follow_markdown_from_entries_but_not_inventories_jobs_o
     assert {"docs/plans/a.md", "docs/plans/b.md", "docs/inv.json"} <= st["live"]
 
 
+def test_dot_relative_links_keep_their_targets_live(tmp_path):
+    """r1 P1: a leading `../` or `./` must survive the punctuation strip (only trailing dots are dropped)."""
+    root = _repo(tmp_path, {
+        "AGENTS.md": "see [a](docs/a/b.md)\n",
+        "docs/a/b.md": "[x](../c.md) and [y](./d.md), also `../e.md`. Then ./f.md.\n",
+        "docs/c.md": "x\n", "docs/a/d.md": "x\n", "docs/e.md": "x\n", "docs/a/f.md": "x\n",
+        "docs/orphan.md": "x\n",
+    })
+    st = sn.state(root)
+    assert st["docs"] == ["docs/orphan.md"]
+
+
 def test_directory_reference_keeps_its_index(tmp_path):
     root = _repo(tmp_path, {"AGENTS.md": "read `docs/area/`\n", "docs/area/INDEX.md": "i", "docs/area/x.md": "x"})
     st = sn.state(root)
