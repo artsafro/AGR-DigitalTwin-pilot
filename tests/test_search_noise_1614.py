@@ -115,7 +115,7 @@ def test_real_repo_measure_dropped_against_the_cut():
 def test_skeletons_doc_names_every_kept_name_and_the_commands():
     text = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
     assert not [n for n in sn.KEEP_NAMES if f"`{n}`" not in text]
-    assert "skeleton folders" in text and "historical-data" in text and "--verify-evidence" in text
+    assert "`skeleton.json` folders" in text and "historical-data" in text and "--verify-evidence" in text
 
 
 def test_real_repo_moved_data_manifest_is_consistent(real):

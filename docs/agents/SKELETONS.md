@@ -234,8 +234,8 @@ purpose: `rg --no-ignore-dot PATTERN jobs/<ID>`.
 
 #1614 extends this to data and docs with a second generated block (`# BEGIN historical-data`) owned by
 `tools/architecture/search_noise.py`: every non-script file of a delivered job (except the job-root `STATE.md`,
-`LESSONS.md`, `README.md`, `REPORT.md`, `TASK.md`, `job.yaml`, `passport.json`, `sources.json`, `object.json`,
-`materials.json`, `EVIDENCE-MOVED.json`, skeleton folders and `live_paths`) and every docs/ file that no entry doc,
+`LESSONS.md`, `README.md`, `REPORT.md`, `TASK.md`, `PASSPORT.md`, `job.yaml`, `passport.json`, `sources.json`, `object.json`,
+`materials.json`, `EVIDENCE-MOVED.json`, `skeleton.json` folders and `live_paths`) and every docs/ file that no entry doc,
 route, scenario, skill or live code reaches (markdown links followed transitively; inventories and job files do
 not propagate). A script that a route, scenario or skill names stays visible. Every `jobs/<ID>` folder is either
 in `finished_jobs` or in `kept_jobs` of `docs/architecture/search-noise.yaml` with a Russian reason; an open issue
