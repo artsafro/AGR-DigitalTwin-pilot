@@ -556,6 +556,8 @@
 /docs/research/autoresearch-pdf-binding-harness/ar_candidate_r2.py
 /docs/research/autoresearch-pdf-binding-harness/ar_pdf_binding.py
 /docs/research/autoresearch-pdf-binding-wall.md
+/docs/research/autoresearch-repo-guards-e2e-harness/e2e_bench.py
+/docs/research/autoresearch-repo-guards-e2e.md
 /docs/research/autoresearch-repo-guards-harness/ar_dg_inject.py
 /docs/research/autoresearch-repo-guards-harness/bench.py
 /docs/research/autoresearch-repo-guards-harness/candidates.py
