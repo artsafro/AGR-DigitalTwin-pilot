@@ -215,10 +215,11 @@ gates:
       Historical decision IDs resolve through decision-aliases-v014-r2.json; no authority change.
     evidence: *id001
   parts:
-    status: fail
-    waits: user
-    note: Original human site/scope approval is recorded, but the historical v007 receipt does not meet the current walker binding. New paired inventory drafts and one sheet are awaiting a scope-specific answer in issue #1315 comment 7031301917. No new approval or substitution for the historical receipt. D340 retains 38 census entries and 37 physical MAF.
+    status: review
+    note: D360 confirms the paired parts-r1 inventory sheet, not the FBX reader's bbox weld/embed candidates. The scoped approval receipt binds the two approval_sha256 values to issue #1315 comment 7031939559; neither raw draft is a walker-ready confirmed PartsList. D340 retains 38 census entries and 37 physical MAF.
     evidence:
+    - path: jobs/SIL13-COLD-1315/parts-inventory-approval-r1.json
+      sha256: 968526aea8687d602a70622da51694e36348fe89d2ede63d84f5f09674b59154
     - path: jobs/SIL13-COLD-1315/parts-full-site-picture-confirmed-v007.json
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
@@ -301,5 +302,5 @@ gates:
     evidence: *id002
   checker:
     status: missing
-    note: CompletefinalSINTEZnotrun. CurrentVPMmachine3pass3fail1review5not_run/exit1; NPMpreviousmachine1pass3fail1review3not_run/exit1 onunchangedbytes. Isolatedmaplesclean is notwholeVPM/skirt/master/maps/UV/manualPASS. D339UCXgapbandsOBSERVEreport-only. NEW interface modelpermission pending; no deliveryPASS.
+    note: Final SINTEZ not run. Scene validators returned exit 1 for both profiles. Isolated maple results are not whole-scene, skirt, master, maps, UV or manual approval. The bounded Bench013 trial was rejected, not adopted; no further Bench decision is pending. No delivery pass.
     evidence: []

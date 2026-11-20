@@ -1,0 +1,37 @@
+{
+  "decision": "D360",
+  "question_ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7031301917",
+  "evidence_root": "G:/Мой диск/AGR-evidence/1315-cold-silikatny/question-gate1/parts-r1/",
+  "sheet": "SIL13-Gate1-PartsList.png",
+  "sheet_sha256": "ab6b798ee6d154f71c0f89e520175c4bf63756b9611f25cf725668a112ceccc1",
+  "proposal_sha256": "b40b3a395f43fd6f5b080e82eef9f81b5fbdd34d3702f03b422a864d780e42fe",
+  "maf": {"placed": 37, "source_slots": 38, "missing_row": 19, "missing_handle": "33FB581", "missing_article": "PM-158"},
+  "profiles": {
+    "NPM": {
+      "draft": "NPM.parts.json",
+      "draft_sha256": "b3e825bbf394fc9e7193dd4e4acb33af2c40bfeed5c1c3ea126aab377c3bdc2a",
+      "fbx_sha256": "12dee50cb8f96484784df09c6944c9ebd75ed75243caf70102032b2ea81f2d10",
+      "approval": {
+        "actor": "Artem",
+        "date": "2026-11-20",
+        "scope": "project",
+        "ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7031939559",
+        "parts_sha256": "a4f261da3a5200276cd0ce699c03424e3f44fb455829f13256afd9bbd30e5328",
+        "note": "Inventory only: three NPM objects (Ground, MAF, Flora); not a joint, validation, or delivery approval."
+      }
+    },
+    "VPM": {
+      "draft": "VPM.parts.json",
+      "draft_sha256": "8187dc3c8c5b8267abcbbf31cbc2be63c5593670eb0b68a23fa42e4ced863b20",
+      "fbx_sha256": "6a4041ebc5342994c977ff1a6b61174d73d07a548e9da14772c2b594acbb4a01",
+      "approval": {
+        "actor": "Artem",
+        "date": "2026-11-20",
+        "scope": "project",
+        "ref": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7031939559",
+        "parts_sha256": "c6bfa6c0b752eeea6b364b51818b964f69983c34702488bad9f045d864f78dc0",
+        "note": "Inventory only: one combined Ground render object (relief, MAF, planting), plus relief-only UCX; not a joint, validation, or delivery approval."
+      }
+    }
+  }
+}

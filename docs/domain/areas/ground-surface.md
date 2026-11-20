@@ -7,6 +7,8 @@ Ground collision surface, placement. Out of scope: GroundEl/MAF (see `groundel-m
 OKS and usable-roof landscaping, Ground textures production (roadmap §7.10), package production;
 UCX construction details are in `ucx.md`.
 
+SIL13's approved parts-r1 inventory [D360] distinguishes the NPM Ground/MAF/Flora objects from the combined VPM Ground object with relief-only UCX. This site-specific approval does not settle weld/embed candidates or validate the export.
+
 **Readiness:** [roadmap §7.9](../../research/capability-roadmap.md#79-ground-surface--l1-partial)
 records L1-partial. This sheet is T-GND-1's rule index. The procedure is the
 [`model-ground` skill](../../../.agents/skills/model-ground/SKILL.md); there is no `dt ground` tool
