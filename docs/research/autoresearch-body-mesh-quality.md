@@ -27,3 +27,33 @@ Base `833346dc1c57519e4ce63a1d6e6b86127af3e349`. Existing inputs under `C:/x/ev_
 Mean absolute gap **2.632 points**. Raw score ranks k1 correctly by **1.028 points**, but the absolute gap ranks the rejection closer (**1.772 vs 2.800**). An optimization using the gap alone would reward that direction. KPP1 historic receipt only: corners 76.684 vs accepted remainder 77.402 (0.718); no new native rerun. The fresh #1619 comment confirms 63B stage-1 v007 acceptance; no matched-scope three-run series for 63B v001–v003/v007 or 63A/C was completed. Stop at R0; no rule, threshold or candidate adopted.
 
 Verification: `tests/qa/test_mesh_quality_score_1616.py` — 291 passed; `repo_guards.sh` — 542 passed, 1 warning; `repo_guards: GREEN`. No full-suite run. Next: freeze same-stage 63B inputs by hash and rerun the #1616 KPP1 controls, then test an independent inward-envelope guard against the k1 pair before treating reference distance as an optimization objective.
+
+## Standing #13 (t_5e774d68) — frozen contract, written before any measurement
+
+**Target (one number).** `min_margin` = the smallest (accepted − rejected) median score over the frozen
+same-building pairs below, unchanged `tools/qa/mesh_quality_score.py` defaults. Continues #12 R0 (which stopped
+because 63B was not run and KPP1 was historic only). Calibration passes only if **every** pair has margin
+≥ **0.5** points (the #1616 `margin_points`). Pairs (labels from #1619 verdicts / the card):
+63B v007 (accepted 2026-11-20 «принимаю», sheets) vs v001–v006 (v001–v003 rejected per card; v004 verdict
+2026-11-17; v005 2026-11-18 ×2; v006 2026-11-18 4th reject); 63C v002 (accepted 2026-11-18) vs v001
+(rejected 2026-11-17, corner triangles); KPP1 quad-v003 rest vs SW/NW corners (#1616 r4 zones); G22 k1 v003
+vs v002 (#12). Cross-building raw scores are not compared (63A v005 accepted at 83.9 is below rejected 63B).
+
+**Command / replay.** `python docs/research/autoresearch-body-mesh-quality-harness/calibrate.py C:/x/ev_ar13/r0`
+(venv `../../.venv/Scripts/python.exe`, Blender from `dt_ai.core.blender_runner`). Per-input SHA-256 is frozen in
+`INPUTS` and checked before and after every input; repeats = 3, median; payloads (minus the provenance block)
+must be byte-identical, else the row is `noisy` and the pair is not measured. Paired spread = max−min of the 3.
+
+**Budget.** Confirm: 3 runs × 13 inputs (R0). New candidate: at most ONE, only if R0 calibrates, 3 runs on the
+63B/63C/G22 inputs it touches, total ≤ 45 min wall. Stop after R0 if any pair fails (no candidate on an
+uncalibrated metric) — then the round is a diagnosis: which component inverts the failing pair.
+
+**Scope / fixture.** Stage-1 typical bodies as published (no zones except the frozen KPP1 boxes). Scope
+mismatch between versions (different storey count, podium) is recorded from `totals` (faces, area, elements)
+and the version REPORTs; a pair whose area differs by > 25 % is flagged `scope-mismatch` (measured, not
+silently dropped).
+
+**Forbidden.** Editing inputs/delivered packages or other cards' files (t_1e388df4 63B stage 2, #1649, #1609);
+retuning weights/params to make calibration pass inside R0; deselecting tests; promoting any build.
+OBSERVE: any proposed score or body-core change is written here as "would change" and goes through a
+separate PR + review.
