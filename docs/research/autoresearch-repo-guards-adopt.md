@@ -2,7 +2,12 @@
 
 ## Кратко для Артёма
 
-(заполняется после замера)
+Приёмы R1+R4+R5 из стенда #7 теперь внедрены в `tools/architecture/duplicate_guard.py` как обычный код, без подмены.
+Проверка `repo_guards.sh` (каждая карточка запускает её дважды) ускорилась: медиана **199,8 → 103,8 с (C/B 0,519, −48 %)**.
+Быстрее оказались все три пары. Все 8 прогонов GREEN, в каждом 542 passed. Вывод сканера совпадает со старым модулем
+байт-в-байт: полный вывод CLI и `scan_text` для всех 1812 `*.py` репозитория, 339 находок в 153 файлах. Две
+намеренные поломки проверка паритета ловит: 125 и 64 файла с расхождением. Затронутые тесты: 1021 passed, плюс 3 новых
+регрессионных. Правила guard'а не менялись, ни одного allowlist-исключения не добавлено. Слияние — после ревью и вашего решения.
 
 ## Why this target
 
@@ -50,4 +55,32 @@ Considered and not taken (backlog): `_span_gap` share on full NTR albums (standi
 
 ## Round log
 
-(filled after measurement)
+Parity (untimed, before timing; candidate `13e737a7`):
+- `adopt_parity.py --base 69cf3a7c`: 1812 tracked `*.py`, 153 with findings, 339 findings, 0 raising; `main` rc 0/0,
+  stdout SHA-256 `f256cf73…effe94` old == new (= standing #7's value); `scan_text` diff files 0 -> identical.
+- Mutants on the new module: `scope_module` main rc 1, SHA `dec135dd…`, 125 files differ; `walk_drop_calls` main
+  rc 1, SHA `ba2d6324…` (= #7's `m0_drop_calls` witness), 64 files differ -> both caught, `_walk` is on the path.
+- e2e `parity`: `duplicate_guard.py --json --table` wtB == wtC, rc 0/0, SHA `f256cf73…effe94` both.
+
+### R1 = R1+R4+R5 as real code — KEEP
+
+| Run (execution order) | B, s | C, s | GREEN / passed |
+|---|---:|---:|---|
+| warm-up (untimed for the metric) | 179.753 | 114.325 | yes / 542 both |
+| pair 1 B,C | 199.778 | 97.335 | yes / 542 |
+| pair 2 C,B | 215.918 | 105.400 | yes / 542 |
+| pair 3 B,C | 199.756 | 103.767 | yes / 542 |
+| **median** | **199.778** | **103.767** | ratio **0.519** -> keep |
+
+Every pair faster, every run GREEN with 542 passed, no problem lines. Loaded workstation, not an idle slot; the
+ratio is within-run and matches #7's monkeypatch measurement (0.529), so scoping the memo to the scan (plain
+`ast.walk` elsewhere) lost nothing. Stop rule reached (R1 recorded).
+
+Receipts (outside git, `C:/x/ar_t_a334c185/`): `r1.json` SHA-256 `ff85e77ad0de0293…`, `parity.json` `285f915a09dd4267…`,
+`parity_m_scope.json` `23917d1ef46a5154…`, `parity_m_walk.json` `b160696dde92c3a1…`; wtB at `69cf3a7c`, wtC at
+`13e737a7`. Reproduce: `python docs/research/autoresearch-repo-guards-e2e-harness/e2e_bench.py --work <dir> setup
+--base <main> --c-ref <branch>`, then `parity`, `run --out <new path>` (~27 min on this PC).
+
+Regression test `tests/test_duplicate_guard_walk_memo.py` (3 tests): `_walk` == `ast.walk` order on real files,
+memo empty after a scan and after a raising check, lazy scopes / int names still give `Packer.tile` on a
+named-constant `BASE + int(u) + 10 * int(v)`; 3 failed on `69cf3a7c`'s module, 3 passed after.
