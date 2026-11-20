@@ -541,3 +541,85 @@ def test_blender_groundel_roundtrip(tmp_path, variant):
     else:
         assert statuses["MAF smoothing"] == "fail", item["maf_surface"]
         assert statuses["MAF flipped normals"] == "fail", item["maf_surface"]
+
+
+# ---- #1716: the shared package path discloses an unmeasured MAF dimension check --------------------------------
+DIM = "MAF dimensions vs specification"
+DIM_EXPECTED = "|bbox - spec| <= 0.1 m per axis on overall dimensions; the 10 cm sink is a translation [D094, D095]"
+GROUND_FBX = "SM_Test_K_1_Ground.fbx"
+
+
+def _package_v004(monkeypatch, tmp_path, meshes_by_fbx, wrap=None):
+    """Synthetic ZIP through validate_package.validate(scene=True); readback is synthetic, never Blender."""
+    import zipfile
+    from pathlib import Path
+
+    import validate_package as vp
+    from test_validator import fbx, good_files
+
+    files = good_files()
+    for name in meshes_by_fbx:
+        files.setdefault(name, fbx())
+    package = tmp_path / "SM_Test_K_1.zip"
+    with zipfile.ZipFile(package, "w") as archive:
+        for name, data in files.items():
+            archive.writestr(name, data)
+
+    def readback(path):
+        result = rb(*meshes_by_fbx.get(Path(path).name, [mesh()]))
+        result["source"] = str(path)
+        return result
+
+    monkeypatch.setattr(vp, "readback", readback)
+    if wrap is not None:
+        monkeypatch.setattr(vp, "scene_findings", wrap(vp.scene_findings))
+    report = vp.validate(package, "npm", PROFILES, scene=True)
+    v004 = next(stage for stage in report.stages if stage.id == "V004")
+    return report, v004
+
+
+def _sized(item, size):
+    item["bounds_m"] = [[0.0, 0.0, 0.0], list(size)]
+    return item
+
+
+def test_1716_package_without_schedule_discloses_not_run(monkeypatch, tmp_path):
+    item = _sized(groundel(surface_facts(*box_mesh())), [1.5, 0.6, 0.8])
+    report, v004 = _package_v004(monkeypatch, tmp_path, {GROUND_FBX: [item]})
+    rows = [f for f in v004.findings if f.name == DIM]
+    assert len(rows) == 1, [f.name for f in v004.findings]
+    row = rows[0]
+    assert row.status == "not_run"
+    assert row.observed == (f"{GROUND_FBX}: MAF schedule (maf_sizes) not given to package validation; "
+                            "unmeasured: SM_Test_GroundEl")
+    assert row.expected == DIM_EXPECTED
+    assert row.source_pdf_pages == [4, 24]
+    assert row.evidence == GROUND_FBX
+    assert v004.status in ("not_run", "review", "fail")  # never promoted to pass by the disclosure
+    assert report.passed is False
+
+
+def test_1716_no_maf_mesh_gets_no_dimension_row(monkeypatch, tmp_path):
+    for meshes in ([mesh(name="SM_Test_Ground")], [mesh(name="UCX_SM_Test_GroundEl")],
+                   [mesh(name="SM_Test_GroundElGlass")], [mesh()]):
+        _report, v004 = _package_v004(monkeypatch, tmp_path, {GROUND_FBX: meshes})
+        assert all(f.name != DIM for f in v004.findings), meshes[0]["name"]
+
+
+@pytest.mark.parametrize("size, status", [([1.5, 0.6, 0.8], "pass"), ([1.5, 0.6, 0.9], "pass"),
+                                          ([1.5, 0.6, 0.901], "fail"), ([1.601, 0.6, 0.8], "fail")])
+def test_1716_explicit_sizes_keep_measured_outcome(monkeypatch, tmp_path, size, status):
+    def wrap(core):
+        return lambda *args, **kwargs: core(*args, maf_sizes=SPEC, **kwargs)
+
+    item = _sized(groundel(surface_facts(*box_mesh())), size)
+    _report, v004 = _package_v004(monkeypatch, tmp_path, {GROUND_FBX: [item]}, wrap=wrap)
+    rows = [f for f in v004.findings if f.name == DIM and f.evidence == GROUND_FBX]
+    assert [r.status for r in rows] == [status]
+
+
+def test_1716_direct_core_contract_unchanged():
+    item = _sized(groundel(surface_facts(*box_mesh())), [1.5, 0.6, 0.8])
+    assert all(f.name != DIM for f in maf_findings([item], "ground", "a.fbx"))
+    found = scene_findings(rb(item), "npm", "ground", PROFILES.npm)
+    assert all(f.name != DIM for f in found["V004"])
