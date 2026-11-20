@@ -199,8 +199,8 @@ def test_dot_relative_links_keep_their_targets_live(tmp_path):
     """r1 P1: a leading `../` or `./` must survive the punctuation strip (only trailing dots are dropped)."""
     root = _repo(tmp_path, {
         "AGENTS.md": "see [a](docs/a/b.md)\n",
-        "docs/a/b.md": "[x](../c.md) and [y](./d.md), also `../e.md`. Then ./f.md.\n",
-        "docs/c.md": "x\n", "docs/a/d.md": "x\n", "docs/e.md": "x\n", "docs/a/f.md": "x\n",
+        "docs/a/b.md": "[x](../c.md) and [y](./d.md), also `../e.md`, `./g.md`. Then docs/a/f.md.\n",
+        "docs/c.md": "x\n", "docs/a/d.md": "x\n", "docs/e.md": "x\n", "docs/a/f.md": "x\n", "docs/a/g.md": "x\n",
         "docs/orphan.md": "x\n",
     })
     st = sn.state(root)
