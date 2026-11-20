@@ -17,7 +17,13 @@ uv run python stage2_63b.py BODY_DUMP.npz CROP.npz STAGE2.json [--band 4.65 51.9
   and the plan stops (rule 1a, #1676);
 * single-row series (`Стандарт`): Revit has one glass pane per bay from sill frame to head frame, no transom and no
   upper pane; its fields are the measured bays and the head face is H - pane top (`single_row`), never invented;
-* AC baskets: every Revit basket entirely inside the band is listed (`baskets.fit`); none are built here.
+* capsule depth [D205] 1.0 m, except the 8 capsules of the inner-corner pairs (`SHALLOW`, Стандарт 1.00 on the two
+  angled walls at +24.45/+40.20) that cross at 1.0 m: 0.9 m (Artem 2026-11-20, card t_1e388df4); the crossing check
+  still runs on every pair;
+* windows narrower/wider than the accepted opening are fitted into it (Artem 2026-11-20: expected, the window is cut
+  into the opening; listed as `fitted`, not a defect);
+* AC baskets: every Revit basket entirely inside the band becomes one low-poly closed box (6 quads) on its Revit
+  bounding box, min-area rectangle in plan (Artem 2026-11-20); baskets crossing the band edge are not built.
 Writes STAGE2.json only when it does not exist yet.
 """
 import argparse
@@ -39,6 +45,10 @@ PLANE_TOL_M = 0.002       # openings_core default: a planar rim
 BENT_TOL_M = 0.015        # recognition tolerance for the known bent rims; each one is checked below
 TYPE_RE = re.compile(r'(Окн_Окн_[0-9]+ Ств (?:Комфорт|Стандарт)) ')
 NAME = '63B'
+SHALLOW = {210, 211, 226, 227, 373, 374, 389, 390}   # stage-2 opening numbers of the crossing inner-corner pairs
+SHALLOW_BODY_IDS = {27, 28, 57, 58, 209, 210, 226, 227}
+SHALLOW_DEPTH_M = 0.9
+BASKET_MAT = 'AC_Basket'
 
 
 def glass_axis(tri):
@@ -125,6 +135,72 @@ def chord_opening(o):
         'rim_off_street_mm': round(float(sag.max()) * 1000, 1), 'rim_off_inside_mm': round(float(-sag.min()) * 1000, 1)}
 
 
+def plan_rect(xy):
+    """Minimum-area rectangle of plan points: (corners 4x2 counter-clockwise, unit axis u)."""
+    pts = sorted(set(map(tuple, np.round(np.asarray(xy, dtype=float), 6))))
+    if len(pts) < 3:
+        raise ValueError('basket without plan extent')
+
+    def turn(o, p, q):
+        return (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0])
+
+    def half(seq):
+        h = []
+        for p in seq:
+            while len(h) >= 2 and turn(h[-2], h[-1], p) <= 0:
+                h.pop()
+            h.append(p)
+        return h[:-1]
+    hull = np.array(half(pts) + half(pts[::-1]), dtype=float)
+    best = None
+    for k in range(len(hull)):
+        e = hull[(k + 1) % len(hull)] - hull[k]
+        if np.linalg.norm(e) < 1e-9:
+            continue
+        u = e / np.linalg.norm(e)
+        n = np.array([-u[1], u[0]])
+        su, sn = hull @ u, hull @ n
+        area = float(np.ptp(su) * np.ptp(sn))
+        if best is None or area < best[0] - 1e-12:
+            best = (area, u, n, su.min(), su.max(), sn.min(), sn.max())
+    if best is None:
+        raise ValueError('basket without plan extent')
+    _, u, n, u0, u1, n0, n1 = best
+    corners = np.array([u * p + n * q for p, q in ((u0, n0), (u1, n0), (u1, n1), (u0, n1))])
+    return corners, u
+
+
+def basket_box(tri, name):
+    """Closed low-poly box (8 verts, 6 outward quads) on the Revit bounding box of one AC basket."""
+    t = np.asarray(tri, dtype=float).reshape(-1, 3)
+    corners, _ = plan_rect(t[:, :2])
+    z0, z1 = float(t[:, 2].min()), float(t[:, 2].max())
+    verts = [[round(float(x), 6), round(float(y), 6), round(z, 6)] for z in (z0, z1) for x, y in corners]
+    faces = [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]]
+    size = [round(float(np.linalg.norm(corners[1] - corners[0])), 3),
+            round(float(np.linalg.norm(corners[3] - corners[0])), 3), round(z1 - z0, 3)]
+    return {'name': name, 'collection': 'Stage2_Baskets', 'verts': verts, 'faces': faces,
+            'mats': [BASKET_MAT] * 6}, size
+
+
+def simplify_rim(bd, tol=1e-4):
+    """Rim corners only: drop rim vertices that lie on the straight segment of their neighbours (body T-junctions
+    on the opening contour). The capsule then gets a 4-corner rim and a quad back instead of an ear-clipped fan."""
+    pts = [np.asarray(p, dtype=float) for p in bd]
+    changed = True
+    while changed and len(pts) > 3:
+        changed = False
+        for k in range(len(pts)):
+            p, q, r = pts[k - 1], pts[k], pts[(k + 1) % len(pts)]
+            e = r - p
+            if np.linalg.norm(e) > 1e-9 and np.linalg.norm(np.cross(e, q - p)) / np.linalg.norm(e) <= tol \
+                    and 0.0 < float(np.dot(q - p, e)) < float(np.dot(e, e)):
+                del pts[k]
+                changed = True
+                break
+    return np.array(pts)
+
+
 def recognise(verts, faces):
     rep = a.openings_core.find_openings_report({'verts': verts, 'faces': faces, 'ref': {'name': 'SM_Body_Main'}},
                                                {'plane_tol_m': BENT_TOL_M})
@@ -193,7 +269,7 @@ def build(dump, crop, band, standard_path):
         if any(v is None for k, v in p.items() if k != 'samples'):
             a.stop(['{}: cannot measure the frame profile: {}'.format(series, p)])
     bent_ids = {b['opening_id'] for b in bent}
-    elements, rows, caps, types, misfit = [], [], [], collections.Counter(), []
+    elements, rows, caps, types, fitted, shallow = [], [], [], collections.Counter(), [], []
     for i, (o, w, dist) in enumerate(matches, 1):
         series = w['family'].split()[-1]
         p = prof[series]
@@ -221,10 +297,15 @@ def build(dump, crop, band, standard_path):
         fit = max(float(np.min(np.linalg.norm(bd - np.asarray(q), axis=1))) for q in front)
         dw, dh = round(Wo - w['W'], 4), round(Ho - w['H'], 4)
         if abs(dw) > 0.002 or abs(dh) > 0.002 or fit > 0.002:
-            misfit.append({'opening': i, 'type': tkey, 'dw_m': dw, 'dh_m': dh, 'fit_corner_mm': round(fit * 1000, 2)})
+            fitted.append({'opening': i, 'type': tkey, 'dw_m': dw, 'dh_m': dh, 'fit_corner_mm': round(fit * 1000, 2)})
         zin = np.asarray(o['frame']['z'], dtype=float)
-        cap_op = dict(o, id=i, border=(bd - zin * fd).tolist(), depth=o['depth'] + fd)
-        cap = a.quad_back(a.capsule_core.planar_capsule(cap_op, a.capsule_core.options({'frame_depth_m': fd})))
+        cap_op = dict(o, id=i, border=(simplify_rim(bd) - zin * fd).tolist(), depth=o['depth'] + fd)
+        copts = {'frame_depth_m': fd}
+        if i in SHALLOW:
+            copts['interior_depth_m'] = SHALLOW_DEPTH_M
+            shallow.append({'opening': i, 'body_opening_id': o['id'], 'sill_z': round(float(bd[:, 2].min()), 3),
+                            'type': tkey})
+        cap = a.quad_back(a.capsule_core.planar_capsule(cap_op, a.capsule_core.options(copts)))
         cap = dict(cap, name=a.capsule_core.capsule_name(NAME, i))
         chk = a.capsule_core.check_capsule(cap)
         if chk['bad_edges'] or chk['open_off_rim'] or chk['closed_open_edges'] or not chk['inward']:
@@ -236,6 +317,7 @@ def build(dump, crop, band, standard_path):
         rows.append({'opening': i, 'body_opening_id': o['id'], 'type': tkey, 'revit': w['name'], 'w': Wo, 'h': Ho,
                      'reveal_m': o['depth'], 'frame_depth_m': fd, 'revit_dist_m': round(dist, 3),
                      'fit_corner_mm': round(fit * 1000, 2), 'bent': o['id'] in bent_ids,
+                     'capsule_depth_m': SHALLOW_DEPTH_M if i in SHALLOW else 1.0,
                      'sill_z': round(float(bd[:, 2].min()), 3)})
     overlaps = []
     for k, (ca, za, ia) in enumerate(caps):
@@ -243,20 +325,30 @@ def build(dump, crop, band, standard_path):
             if abs(za - zb) < 0.01 and (a.capsule_core.mesh_hits(ca, cb, 1e-4) or
                                        a.capsule_core.same_wall_overlap(ca, cb, 1e-4)):
                 overlaps.append('capsules {} x {} cross'.format(ia, ib))
+    if {s['body_opening_id'] for s in shallow} != SHALLOW_BODY_IDS:
+        overlaps.append('0.9 m capsules are not the approved inner-corner openings: {}'.format(shallow))
     if overlaps:
         a.stop(overlaps)
     baskets = a.crop_objects(crop, a.KEYS['baskets'], band)
     fit_b = [{'name': b['name'], 'z_min': round(float(b['tri'][:, :, 2].min()), 3),
               'z_max': round(float(b['tri'][:, :, 2].max()), 3)} for b in baskets
              if band[0] <= b['tri'][:, :, 2].min() and b['tri'][:, :, 2].max() <= band[1]]
+    inside = [b for b in baskets if band[0] <= b['tri'][:, :, 2].min() and b['tri'][:, :, 2].max() <= band[1]]
+    for k, (b, row) in enumerate(zip(inside, fit_b), 1):
+        el, row['size_m'] = basket_box(b['tri'], 'SM_ACBasket_{:02d}'.format(k))
+        row['object'] = el['name']
+        elements.append(el)
     nf = collections.Counter(len(f) for e in elements for f in e['faces'])
     report = {'stage': 'stage2: windows + capsules on 63B v007 (body untouched)', 'body_dump': os.path.basename(dump),
               'band_m': list(band), 'openings': {'ok': len(matches), 'rejected': len(rep['rejected']),
                                                  'bent': len(bent)},
               'bent': bent, 'revit_windows_in_band': len(wins), 'types': dict(sorted(types.items())),
               'frame_profile_m': prof, 'frame_depth_m': dict(collections.Counter(r['frame_depth_m'] for r in rows)),
-              'misfit': misfit, 'capsules': {'made': len(caps), 'overlaps': 0, 'check_bad': 0},
-              'baskets': {'fit_in_band': len(fit_b), 'fit': fit_b, 'total': len(baskets), 'built': 0},
+              'fitted': fitted, 'fitted_note': 'expected: window fitted into the accepted opening (Artem 2026-11-20)',
+              'capsules': {'made': len(caps), 'overlaps': 0, 'check_bad': 0, 'depth_m': 1.0,
+                           'shallow_0_9_m': shallow},
+              'baskets': {'fit_in_band': len(fit_b), 'fit': fit_b, 'total': len(baskets), 'built': len(inside),
+                          'form': 'low-poly box on the Revit bbox (Artem 2026-11-20)'},
               'faces': {'total': sum(nf.values()), 'quads': nf.get(4, 0), 'tris': nf.get(3, 0),
                         'ngons': sum(v for k, v in nf.items() if k > 4)},
               'elements': len(elements), 'rows': rows}
@@ -281,7 +373,8 @@ def main(argv=None):
         sys.exit('STAGE2.json exists; write a new version: ' + args.out)
     report, elements = build(args.dump, args.crop, args.band, args.standard)
     write_plan(args.out, report, elements)
-    print(json.dumps({k: v for k, v in report.items() if k not in ('rows', 'misfit')}, ensure_ascii=False)[:4000])
+    print(json.dumps({k: v for k, v in report.items() if k not in ('rows', 'fitted', 'bent')},
+                     ensure_ascii=False)[:4000])
     return 0
 
 
