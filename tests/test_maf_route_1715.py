@@ -52,7 +52,7 @@ def _text(obj) -> str:
 
 def _drawn(stem):
     doc = json.loads((ARCH / f"{stem}.excalidraw").read_text(encoding="utf-8"))
-    return "\n".join(e["text"] for e in doc["elements"] if e["type"] == "text")
+    return "\n".join(" ".join(e["text"].split()) for e in doc["elements"] if e["type"] == "text")
 
 
 # ---------------------------------------------------------------- acceptance 1: actual atlas link
