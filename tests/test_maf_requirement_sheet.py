@@ -47,6 +47,26 @@ def test_maf_decision_rows():
     decision_rows_contract(SHEET.read_text(encoding="utf-8"))
 
 
+def test_maf22_vpm_collision_coverage():
+    text = SHEET.read_text(encoding="utf-8")
+    row = sheet_contract(text)[21]
+    assert "MAF-11" in row[5]
+    assert re.findall(r"`(_\w+)`", row[5]) == ["_GroundEl", "_GroundElGlass", "_Flora", "_Ground"]
+    assert "cannot separate" in row[5]
+    assert "no row, not a pass" in row[5]
+    assert "not evidence that embedded MAF were checked" in row[5]
+    assert "Manual collision-target overlay" in row[4]
+    assert "do not omit the Ground-surface collision" in row[3]
+    assert "Fences and canopies of MAF get no UCX at any thickness" in text
+
+
+def test_maf_partial_gaps_distinguish_manual_and_optional_coverage():
+    text = SHEET.read_text(encoding="utf-8")
+    partial_gaps = text.split("Partial rows also leave work:", 1)[1].split("No complete MAF L2", 1)[0]
+    assert "MAF-22" in partial_gaps and "inside `_Ground`" in partial_gaps
+    assert "MAF-04" in partial_gaps and "`agr validate` does not supply `maf_sizes`" in partial_gaps
+
+
 def test_maf_decision_log_and_conflict():
     log = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
     for decision, quote in (("D094", "5-10 cm off the specification is fine"),
