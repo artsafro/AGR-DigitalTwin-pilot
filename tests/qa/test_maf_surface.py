@@ -623,3 +623,34 @@ def test_1716_direct_core_contract_unchanged():
     assert all(f.name != DIM for f in maf_findings([item], "ground", "a.fbx"))
     found = scene_findings(rb(item), "npm", "ground", PROFILES.npm)
     assert all(f.name != DIM for f in found["V004"])
+
+
+def test_1716_probe_row_iff_recognized_groundel():
+    """Generated probe: the disclosure appears exactly when is_groundel matches, once, never pass/fail."""
+    from twinqa.maf_checks import dimensions_not_run, is_groundel
+
+    pool = ["SM_A_GroundEl", "SM_B_GroundEl", "UCX_SM_A_GroundEl", "SM_A_GroundElGlass", "SM_A_Ground",
+            "SM_A_K_1_Main", "", None, 7]
+    rng = random.Random(1716)
+    for _ in range(500):
+        picked = [rng.choice(pool) for _ in range(rng.randint(0, 5))]
+        meshes = [{"name": n} if n != 7 else "not-a-dict" for n in picked]
+        rows = dimensions_not_run(meshes, "x.fbx", [])
+        want = sorted({n for n in picked if isinstance(n, str) and is_groundel(n)})
+        assert len(rows) == (1 if want else 0), picked
+        if want:
+            assert rows[0].status == "not_run" and rows[0].observed.endswith(", ".join(want))
+        measured = maf_findings([], "ground", "x.fbx", maf_sizes={"SM_A_GroundEl": [1, 1, 1]})
+        assert dimensions_not_run(meshes, "x.fbx", measured) == []  # a measured row is never shadowed
+
+
+def test_1716_unreadable_or_mixed_readback(monkeypatch, tmp_path):
+    item = _sized(groundel(surface_facts(*box_mesh())), [1.5, 0.6, 0.8])
+    _report, v004 = _package_v004(monkeypatch, tmp_path, {GROUND_FBX: [mesh(), item, mesh(name="UCX_X_GroundEl")]})
+    assert [(f.status, f.evidence) for f in v004.findings if f.name == DIM] == [("not_run", GROUND_FBX)]
+    import validate_package as vp
+    monkeypatch.setattr(vp, "readback", lambda path: {"source": str(path), "readback_ok": False, "error": "boom"})
+    st = vp.build_stages(PROFILES, "npm")
+    vp.add_scene(st, "npm", PROFILES.npm, {GROUND_FBX: b"synthetic"}, [])
+    assert all(f.name != DIM for f in st["V004"].findings)
+    assert any(f.status == "fail" and f.name == "FBX readback" for f in st["V003"].findings)
