@@ -1,5 +1,6 @@
 """new-case: #1380 VPM UV extraction and tile-size limit; synthetic inputs, no delivery writes."""
 import importlib.util
+import json
 import math
 import subprocess
 import sys
@@ -155,5 +156,10 @@ def test_no_delivery_changes():
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json',
           '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json')
-    allowed = lambda p: p.endswith(ok) or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith('.txt')
+    # #1614 moves large data of delivered jobs to the evidence store: a path listed in its job's EVIDENCE-MOVED.json
+    # (sha256 + evidence copy) and the manifest itself are not delivery changes.
+    moved = {r['path'] for m in (ROOT / 'jobs').glob('*/EVIDENCE-MOVED.json')
+             for r in json.loads(m.read_text(encoding='utf-8'))['files']}
+    allowed = lambda p: p.endswith(ok + ('/EVIDENCE-MOVED.json',)) or p in moved \
+        or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith('.txt')
     assert all(allowed(p) for p in paths), [p for p in paths if not allowed(p)]
