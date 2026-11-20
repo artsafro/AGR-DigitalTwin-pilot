@@ -80,8 +80,9 @@ An explicit cleanup approval records exact source polygon drops on a new copy,
 never a general geometry repair. A selected seam policy does not waive mixed
 material boundaries, singular UV metrics, texel bounds or native readback.
 G22 #1649 alone has a source-bound solid placeholder exception for 460 faces
-[D355]; see [the checkpoint](../../jobs/G22/npm2vpm-1649/CHECKPOINT.md). It is not
-an exemption for other faces or a production acceptance.
+[D362]; see [the checkpoint](../../jobs/G22/npm2vpm-1649/CHECKPOINT.md). It is not
+an exemption for other faces or a production acceptance. G22's flat Normal maps
+and manual V007 review are separately scoped in [D363].
 
 ### `oks-npm-lite` — ОКС, упрощённая НПМ
 

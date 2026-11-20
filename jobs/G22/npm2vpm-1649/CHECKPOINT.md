@@ -1,7 +1,28 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
-**STOP v010 — missing Normal authority and xView topology not accepted.** The
-`npm-to-vpm` skeleton uses the immutable #1630 r2 inputs. All 12 outstanding
+**v011 — aggregate xView counts improved on the copy; seam gate is still open.**
+Subdividing the neighbouring edges at measured T-junctions gave 366 face
+selections, 0 close vertices, and 2 bow-ties versus the source 370 / 0 / 4.
+Eight of the 33 tracked source pairs still have candidate hits; the raw xView
+verdict is FAIL. Do not promote this copy to a VPM master.
+
+Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v011-conforming-seams/`
+(18 verified files; manifest SHA-256
+`2d35d6bb697b212fe07c1eee41d6aa0ace508a6ab605dd67fff093db614fc567`).
+It includes the 33-spot sheet, the 22 edge splits, the fresh xView report, and
+source-indexed residual measurements. The largest remaining near-parallel
+projected overlap in one triangle pair is 0.00215121 m² (100923/136740).
+No strict transverse intersection was measured in the 33 spots.
+
+Normal authority is resolved: [D363] permits flat tangent-space Normal PNGs
+RGB (128,128,255) for G22 only. Retain V007/C46 and its manual delivery review;
+no other check is waived. [D362] records the earlier 460-face approval (called
+D355 in the older evidence). The sealed v011 sheet and report use provisional
+label D361 for the same Normal decision; the registry entry is D363.
+
+## Historical checkpoint v010
+
+The `npm-to-vpm` skeleton uses the immutable #1630 r2 inputs. All 12 outstanding
 ownership dispositions were applied on a diagnostic Blender copy. Native readback
 plus a strict intersection test found zero of the eight targeted transverse
 intersections, but xView remains above the inherited counts. A local weld removed
@@ -12,7 +33,7 @@ Cycles rebaked the G22 mesh001 #39124 witness onto a 4096 tile at 520 px/m; all 
 sampled points matched the bound Diffuse. This is a one-triangle proof, not a
 Multi/Sub, a final tile allocation or a checker result. The two native source FBXs
 contain three Diffuse/metallic/opacity/roughness sets and no Normal. VPM requires
-Normal; C46/[D197] is not a G22 approval for flat maps. Do not reuse its waiver.
+Normal; C46/[D197] was not itself authority for G22. See [D363] above.
 
 Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v010-metric-rebake-normal-STOP/`
 (28 verified files, manifest SHA-256
@@ -24,7 +45,7 @@ The v006 and historical colour runs below are retained for provenance.
 The v005 atlas layout was replayed through the shared `recover_regions` clipper
 without regenerating or adjusting its borders. It assigned 147893 / 73137 / 51146
 source faces, respectively, with zero gaps and zero splits; the other 293 / 167 / 0
-are [D355]. The two previously approved zero-area drops are outside those counts.
+are [D362]. The two previously approved zero-area drops are outside those counts.
 Cell coverage is not a material approval; no palette tolerance was used for this map.
 
 Fresh script-disabled Blender import and `dt qa xview --profile VPM-OKS --coords local`
@@ -36,7 +57,7 @@ zero-area polygons omitted in the UV replay; no additional drop was made.
 Independent intersection using the r2 metre-local triangle coordinates confirmed
 35 mesh001 pairs with projected overlap >0.001 m² and plane separation <1 µm. A
 concrete witness is source polygons 108154 and 108462 (zero based): same plane,
-0.028799661 m² in common, and neither face is in [D355]. Subdivision with unchanged
+0.028799661 m² in common, and neither face is in [D362]. Subdivision with unchanged
 world surfaces cannot remove this positive-area overlap. Ask whether to correct the
 confirmed overlaps on a separate copy, or receive corrected source FBXs. Do not
 interpret the full candidate count as a deletion list.
@@ -45,7 +66,7 @@ Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v006-sour
 (source hashes, exact indices, report, and overlap sheet). Native VPM, metric seam
 list, per-tile readback and SINTEZ checker remain outstanding.
 
-[D355]: the exact 460 source triangles use one solid placeholder with their
+[D362]: the exact 460 source triangles use one solid placeholder with their
 mean source Diffuse colour. Do not rebuild their UV, rebake, or apply the texel
 band to these triangles. This does not exempt any neighbouring triangle. Use
 Blender only for any production continuation. The two zero-world-area source
@@ -74,7 +95,7 @@ The folder contains three atlas sheets, a tolerance matrix and exact original
 polygon IDs with input SHA-256 bindings. The sheets use RGB8 max-channel
 comparison (`distance < 18`); lower runs at `<6` and `<12` are retained.
 The sealed diagnostic sheets retain the pre-publication decision label;
-[D355] is the final registry ID for that same approval.
+[D362] is the registry ID for that same approval.
 
 | Mesh | Source after approved zero-area drops | Placeholder | Residual at <18 | Faces cut in UV at <18 |
 |---|---:|---:|---:|---:|
