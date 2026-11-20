@@ -1,5 +1,7 @@
 # Windows / doors — L1 requirement sheet
 
+For the 63C stage-2 training model only: see [D355] for basket scope and [D356] for the frame seat.
+
 **Area and profiles:** windows, doors, curtain walls and balcony doors of an OKS, NPM and VPM:
 the opening in the body, the opening plane, frames, glazing objects and materials, glass UV
 and the GeoJSON glass description. `npm_min` / `mid` are engine profiles, not interchangeable

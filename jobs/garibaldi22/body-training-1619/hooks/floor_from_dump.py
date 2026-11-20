@@ -177,6 +177,12 @@ def main(argv=None):
     ap.add_argument("--jog", type=float, default=0.06, help="contour simplify tolerance: jogs below it are relief, texture (BM-08/BM-09)")
     ap.add_argument("--pre-simplify", type=float, default=0.0,
                     help="simplify the dilated ring before erosion, m (rounded corners: 0.03; 0 = off, G22 rounds)")
+    ap.add_argument("--section-z", type=float, default=None,
+                    help="cut the contour at this z instead of mid-spandrel of the reference floor (a belt layer)")
+    ap.add_argument("--sill-band", type=float, nargs=2, default=None, metavar=("LO", "HI"),
+                    help="use the windows whose sill lies in [LO, HI] instead of the reference floor (a belt storey)")
+    ap.add_argument("--deslit", type=float, default=0.0,
+                    help="closing radius (m) that removes zero-width slits from the dilated ring; 0 = off")
     ap.add_argument("--start-corner", action="store_true",
                     help="start the ring at its sharpest corner, so no window spans the ring start (site 63)")
     ap.add_argument("--clip", help="JSON [[x,y],...]: keep only objects whose plan centroid is inside")
@@ -233,9 +239,13 @@ def main(argv=None):
     step = round((best[-1][0] - best[0][0]) / (len(best) - 1), 3)
     ref = best[a.ref if a.ref is not None else len(best) // 2][0]
     ref_wins = [o for o in win_objs if abs(wz[o][0] - ref) < 0.05]
+    if a.sill_band:  # site 63 tower B belt storey: two sill levels outside the typical run
+        ref_wins = [o for o in win_objs if a.sill_band[0] <= wz[o][0] <= a.sill_band[1]]
+        if not ref_wins:
+            sys.exit("refused: no window sill in --sill-band %s" % a.sill_band)
     head = float(np.median([wz[o][1] - wz[o][0] for o in ref_wins]))
     # contour (BM-01): wall section at mid-spandrel of the reference floor
-    zc = ref - 0.45
+    zc = ref - 0.45 if a.section_z is None else a.section_z
     # BM-01 outer envelope: an opening is closed by its own filling. Off-typical openings (stair windows at the
     # landing levels, doors) gap the wall at the cut height and the ring would dive through them into the shaft
     # (round 2: six stair cores, up to 8 m inside). The cut therefore unions the walls with the `--seal` classes.
@@ -252,6 +262,14 @@ def main(argv=None):
     polys = list(getattr(blob, "geoms", [blob]))
     outer = max(polys, key=lambda p: Polygon(p.exterior).area)
     outer_ring = Polygon(outer.exterior)
+    if a.deslit > 0:
+        # site 63 tower B: a vent-facade cassette gap leaves a zero-width slit in the dilated ring; simplify turns
+        # it into a self-touching spike and the mitre erosion cuts a 2.3 m notch behind a window. A tiny closing
+        # removes the slit and leaves faces and corners in place.
+        outer_ring = outer_ring.buffer(a.deslit, join_style="round").buffer(-a.deslit, join_style="round")
+        if outer_ring.geom_type != "Polygon":
+            outer_ring = max(outer_ring.geoms, key=lambda p: p.area)
+        outer_ring = Polygon(outer_ring.exterior)
     if a.pre_simplify > 0:
         # site 63 tower A: a rounded corner cut from short flat-capped strips leaves a 1-5 cm staircase on the
         # dilated ring; the mitre erosion turns it into a wedge 1.5 m into the building. Smoothing the staircase
