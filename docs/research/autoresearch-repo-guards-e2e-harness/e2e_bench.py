@@ -26,8 +26,18 @@ GUARDS = "C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh"
 DG = "tools/architecture/duplicate_guard.py"
 MAIN = 'if __name__ == "__main__":\n'
 LIMIT = 75 * 60
+
+
+def _git_bash():
+    git = Path(shutil.which("git") or "git").resolve()
+    for root in git.parents:
+        if (root / "usr/bin/bash.exe").is_file():
+            return str(root / "usr/bin/bash.exe")
+    raise SystemExit("git-bash not found; set AR_BASH")
+
+
 # Python's "bash" on Windows resolves to WSL (System32) first; repo_guards.sh needs git-bash.
-BASH = os.environ.get("AR_BASH") or str(Path(shutil.which("git") or "git").resolve().parents[1] / "usr/bin/bash.exe")
+BASH = os.environ.get("AR_BASH") or _git_bash()
 
 
 def sh(args, cwd, **kw):
