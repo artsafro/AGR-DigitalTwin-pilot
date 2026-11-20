@@ -7,15 +7,22 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
 RUN = Path(__file__).resolve().parents[1] / "jobs" / "KPP1" / "rerun-1230"
+ROOT = RUN.parents[2]
+sys.path.insert(0, str(ROOT / "tools" / "architecture"))
+import search_noise  # noqa: E402  (#1614: large data moved to the evidence store)
 
 
 def _load(name):
-    return json.loads((RUN / name).read_text(encoding="utf-8"))
+    path = search_noise.evidence_path(ROOT, f"jobs/KPP1/rerun-1230/{name}")
+    if path is None:
+        pytest.skip(f"{name}: moved to the evidence store (#1614, jobs/KPP1/EVIDENCE-MOVED.json), copy absent")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _findings(rep, stage):

@@ -1,0 +1,13 @@
+{
+ "issue": "#1614",
+ "rule": "COORDINATION_RULES 57: job data lives in the evidence store",
+ "evidence_root": "G:/Мой диск/AGR-evidence/1614-job-data/vyatskaya-tow02",
+ "files": [
+  {
+   "path": "jobs/vyatskaya-tow02/pipeline/spec-v002.report.json",
+   "sha256": "5ba4591a3478ad4d3a0f495b6630fe5a78440a7f5d6a9f9449bda6d970c9e675",
+   "bytes": 359301,
+   "evidence": "G:/Мой диск/AGR-evidence/1614-job-data/vyatskaya-tow02/pipeline/spec-v002.report.json"
+  }
+ ]
+}

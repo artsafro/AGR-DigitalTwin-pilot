@@ -881,16 +881,27 @@ def in_skeleton_job(root, rel):
     return any((Path(root).joinpath(*parts[:i]) / SKELETON_CONFIG).is_file() for i in range(2, len(parts)))
 
 
-def historical_scripts(root, finished, chains, live_evidence=(), baseline=None):
+def entry_named_paths(root):
+    """Repo paths an entry doc, route, scenario or skill names (#1614: a script a live route names stays visible);
+    empty outside a git work tree (synthetic test roots have no entry docs)."""
+    if not (Path(root) / ".git").exists():
+        return frozenset()
+    import search_noise  # local: search_noise imports this module
+    return frozenset(search_noise.entry_named(root, search_noise.tracked(root)))
+
+
+def historical_scripts(root, finished, chains, live_evidence=(), baseline=None, named=None):
     """Sorted repo paths of the historical scripts: in the frozen baseline, inside a finished job, outside any
-    skeleton.json folder and not reached by a live chain (a new script in a finished job is never historical)."""
+    skeleton.json folder, not reached by a live chain and not named by an entry doc/route/scenario/skill (#1614)
+    (a new script in a finished job is never historical)."""
     baseline = load_job_baseline(root) if baseline is None else baseline
+    named = entry_named_paths(root) if named is None else named
     out = []
     for job in sorted(finished):
         for p in sorted((Path(root) / job).rglob("*")):
             rel = p.relative_to(root).as_posix()
             if p.is_file() and p.suffix.lower() in SCRIPT_SUFFIXES and rel in baseline and rel not in chains \
-                    and rel not in live_evidence and not in_skeleton_job(root, rel):
+                    and rel not in live_evidence and rel not in named and not in_skeleton_job(root, rel):
                 out.append(rel)
     return out
 
