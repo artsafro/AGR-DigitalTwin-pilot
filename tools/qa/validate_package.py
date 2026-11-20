@@ -48,6 +48,7 @@ from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, 
                              snapshot_digest, snapshot_validator)
 from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
 from twinqa.scene import check_ground_area, check_ground_materials, readback, scene_findings  # noqa: E402
+from twinqa.maf_checks import dimensions_not_run as maf_dimensions_not_run  # noqa: E402
 from twinqa.npm_uv import NAME as NPM_UV_NAME, load_layout, npm_uv_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
 
@@ -445,6 +446,10 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                                    footprint_holes=footprint_holes, diffuse_px=diffuse_px,
                                    ground_materials=ground_materials,
                                    export_meta=height_meta)
+            if rb.get("readback_ok") and isinstance(rb.get("meshes"), list):
+                # #1716: no MAF schedule reaches this path, so a recognized GroundEl mesh gets an explicit not_run
+                v004 = found.setdefault("V004", [])
+                v004.extend(maf_dimensions_not_run(rb["meshes"], name, v004))
             if kind == "npm":
                 _no_texture_findings(found, fbx_role(name), name, rb)
                 if role != "light":
