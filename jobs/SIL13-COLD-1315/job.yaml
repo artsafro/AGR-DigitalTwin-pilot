@@ -216,14 +216,14 @@ gates:
     evidence: *id001
   parts:
     status: fail
-    note: Original human site/scope Gate 1 approved; historical v007 receipt lacks the content binding now required by the procedure walker (same failure on v030). Do not synthesize an approval hash. D340 removes only the wrong row19 candidate, retaining 38-entry census and 37 physical MAF.
+    waits: user
+    note: Original human site/scope approval is recorded, but the historical v007 receipt does not meet the current walker binding. New paired inventory drafts and one sheet are awaiting a scope-specific answer in issue #1315 comment 7031301917. No new approval or substitution for the historical receipt. D340 retains 38 census entries and 37 physical MAF.
     evidence:
     - path: jobs/SIL13-COLD-1315/parts-full-site-picture-confirmed-v007.json
       sha256: 67a837376d28670f01f822f46dfd08c3bde3565aad26ff27627a0cb584d353ee
   operations:
     status: fail
-    waits: user
-    note: D346 answer 6973526978 applied to ONE isolated VPM Bench013. All three eligible sub-2 mm corners snapped vertically onto actual Ground; raw/native 4364 triangles and regulatory 183 to 0, but xView 59 vertices/42 pairs FAIL. No replication. Question 6974008831 asks about one bounded contact-line reconstruction, not another vertical snap. Current NPMv026/VPMv029 and master/census unchanged.
+    note: After the D346 snap failed, the authorized bounded Bench013 reconstruction also failed (61 near vertices / 45 pairs). Keep the exact contact-line control; neither diagnostic replaces the installed Bench. See COLD-REPRODUCTION-RESULT.md. No further Bench decision requested.
     evidence: &id002
     - path: jobs/SIL13-COLD-1315/source-wide-summary-v032.json
       sha256: 0d2ba55a74819faaeb94424da6f148116722c03bf644c2cb3e884d129fc5b191
@@ -297,8 +297,7 @@ gates:
       sha256: a84c87bda80278067b3bec262a8ee7c21ddc7c7f1a53ede4200562940540831d
   visual:
     status: review
-    waits: user
-    note: '[D353] rejects the renewed r2 picture. One new isolated v029 visual prototype (1062 triangles, fresh Blender FBX readback) is shown in issue #1315 comment 7017451085. Separate picture answer pending; 4462 regulatory intersections remain a technical failure despite public xView 0/0. Historical v029 site pair unchanged. No D342/D345/D346 adoption, final site or material acceptance.'
+    note: D359 accepts the v029 maple appearance; D357 authorizes the isolated technical revision. The six maples on the newer VPM working copy meet the board crown-density criterion; see CONTINUATION-maple-density-r2.md. This is not final site or material acceptance.
     evidence: *id002
   checker:
     status: missing

@@ -8,6 +8,12 @@ The four requested areas were built on the new Silikatny site and exercised on r
 - Artem accepted the first fragment, the v006/r5 composition direction and subsequent scoped Flora/MAF pictures, not the whole technical package. The six latest VPM maples are only in the [new working copy](CONTINUATION-maple-density-r2.md); their precise visual and technical authority is recorded there. No final visual/material acceptance or SINTEZ verdict.
 - NPM remains v026/site-flora-r3 (176,094/180,000 triangles); prior VPM remains v029/site-maples-r3. Latest VPM working copy (301,428 render triangles; area-band ceiling 2,625,000) has SHA-256 `6a4041ebc5342994c977ff1a6b61174d73d07a548e9da14772c2b594acbb4a01`. No substituted model, library edit, or Max operation in this checkpoint.
 
+## Current PartsList question — no approval yet
+
+One Russian sheet and two shared-reader drafts are in `G:/Мой диск/AGR-evidence/1315-cold-silikatny/question-gate1/parts-r1/`. [Question on #1315](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7031301917) binds the sheet and both draft hashes. Blender 5.1.2 `tools/blender/fbx_structure.py` imported hash-verified copies only; `python -m dt_ai.parts.readers.fbx … --fbx … --object-id SIL13` produced schema-validated drafts with no `gate1`. NPM: three meshes (Ground 26,378, MAF 78,470, Flora 71,246 triangles). VPM: one combined render mesh (301,428 triangles) and 545 Ground-only UCX meshes (6,376 triangles). Counts of source placements are not counts of FBX meshes. The reader's 3/1,379 NPM/VPM bounding-box contact candidates are not weld instructions or part of the inventory question. Both original FBX hashes remained unchanged after extraction.
+
+Sheet `SIL13-Gate1-PartsList.png` SHA-256 `ab6b798ee6d154f71c0f89e520175c4bf63756b9611f25cf725668a112ceccc1`; `proposal.json` SHA-256 `b40b3a395f43fd6f5b080e82eef9f81b5fbdd34d3702f03b422a864d780e42fe`; `SHA256SUMS.txt` SHA-256 `b19c20f5f5aede012af81dd88c55c3e452142eb88c5afcba6527b54c6f268293` (9/9 files verified). Historic SIL13 maple decisions previously cited as D349 and D356 now resolve to [D358] (r2 pilot scope) and [D359] (v029 appearance); historical evidence paths and the content of the decisions are unchanged. [D357] is unchanged.
+
 ## Reproduced areas and blockers
 
 | Area | Actual source-to-export work and tool calls | Open check: value / limit / owner |

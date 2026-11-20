@@ -2,7 +2,7 @@
 
 **Latest:** [cold reproduction result by area](COLD-REPRODUCTION-RESULT.md). Site deliveries remain blocked; the older checkpoint statements below are historical.
 
-**VPM maple gate [D353, D356]:** r2 rejected; Artem accepted the appearance of the [isolated v029 33F02A9 pilot](MAPLE-PICTURE-GATE-2026-11-19.md). All three technical trials failed; the closest-looking retained export still has 3 crossings (limit 0), fails xView and is 28,654 triangles (pilot target 750–1,100). No replacement or rollback; no change to the v026/v029 site pair or its QA.
+**VPM maple gate [D353, D359] (historical checkpoint):** r2 rejected; Artem accepted the appearance of the [isolated v029 33F02A9 pilot](MAPLE-PICTURE-GATE-2026-11-19.md). All three technical trials failed; the closest-looking retained export still has 3 crossings (limit 0), fails xView and is 28,654 triangles (pilot target 750–1,100). This checkpoint did not change the v026/v029 site pair. See the [later six-tree working copy](CONTINUATION-maple-density-r2.md).
 
 Current status: **v032 isolated VPM Bench013 contact snap tested; NOT adopted or delivered.** [Movement ledger and readback findings](CONTINUATION-v032.md): exactly three original sub-2 mm corners snapped vertically to actual Ground, raw/native 4,364 triangles, regulatory 183→0 Ground crossings, public xView FAIL 59 near vertices / 42 pairs. The unchanged site pair and per-area findings below still apply. Next model decision: [bounded contact-line reconstruction](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-6974008831).
 
