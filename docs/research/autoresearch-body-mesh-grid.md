@@ -66,3 +66,49 @@ It was stopped after 3 origins; its partial log already showed R1 below 0.5 at `
 R2 under the frozen rule. The harness was split into one process per variant (each re-dumps and re-confirms
 R0 and the witness independently) plus a `--combine` step; metric, origins, repeats, R2 definition and
 decision rule are unchanged.
+
+## Result — OBSERVE, nothing kept
+
+**Кратко.** Отрыв 0,611 из #14 — удачное положение сетки, а не свойство штрафа. Если сдвинуть сетку на 1–3 м,
+минимальный отрыв падает до **−2,292**: тогда отклонённые углы КПП1 получают балл выше принятой части.
+Отрыв не ниже 0,5 держится только при 15 из 64 сдвигов, медиана по сдвигам −0,175. Для сравнения, у
+штатной оценки R0 отрыв 0,427, и он не зависит от сетки. Вариант R2 (максимум по восьми сеткам со сдвигом
+на полклетки) уменьшил разброс с 3,32 до 1,20, но всё равно опускается до −0,506 (8 из 64). Оба варианта
+отклонены. Ядро, построители и модели не менялись. Причина в том, что у **принятых** корпусов тоже есть
+ячейки 4 м почти целиком из косых граней: у 63B v007 максимум по ячейкам 0,17–0,84, у остальной части
+КПП1 0,47–0,98. Максимум по одной ячейке измеряет, где прошла сетка, а не дефект.
+
+| Variant | worst min_margin (origin) | best | spread over 64 | origins ≥ 0.5 | robust |
+|---|---:|---:|---:|---:|---|
+| R0 (unchanged, origin-free) | 0.427 | 0.427 | 0.000 | — | below 0.5 (as #13) |
+| R1 (#14, 4 m grid) | **−2.292** (2,1,0) | 1.028 | 3.320 | 15/64 | **no** |
+| R2 (8 half-cell staggered grids) | **−0.506** (1,0,0) | 0.696 | 1.202 | 8/64 | **no** |
+
+Per-pair minimum over the 64 origins (R1 / R2): 63B v007−v001 0.403 / 1.265; −v002 0.417 / 1.280;
+−v003 0.408 / 1.303; −v004 0.401 / 1.295; −v005 1.223 / 1.579; **−v006 −1.102 / −0.506**; 63C v002−v001
+2.171 / 3.194; **KPP1 rest−corners −2.292 / −0.264**; G22 k1 v003−v002 1.028 / 1.028 (no irregular faces;
+origin-independent). The failing pairs are 63B v006 and KPP1, where the accepted side has irregular cells of its own.
+
+- **Measured clean.** 11 sources dumped 3× each by the unchanged Blender dump (Blender via
+  `dt_ai.core.blender_runner`), all three dumps identical; input SHA-256 equal to #13 `INPUTS` before and after.
+  R0 reproduced #13's nine margins exactly and R1 at `o = 0` reproduced #14's nine margins exactly (min 0.611),
+  in both processes. Every score was repeated 3× per input per origin. Every paired spread was 0.000 for
+  R0, R1 and R2. Canonical report parity held for each R1/R2 report against R0: 13 inputs × 64 origins × 2
+  variants, with score and the irregular-area penalty removed.
+- **Injected (synthetic).** #14 witness clean/injected/reset passed at all 64 origins (each process). Synthetic
+  geometry, not native acceptance.
+- **Not measured.** Grid rotation, other cell sizes, held-out pairs, 63A, G22 k2/k3, rebuilds, packages, full suite.
+
+Receipts (committed, measured on Windows, LF): `autoresearch-body-mesh-grid-harness/R1.json`
+`3d14e3c32951fd12…`, `R2.json` `756b38c25bc3d4b0…`, combined `grid.json` `1eb4ad7cdb1eac39…`. Logs and
+copies: `G:/Мой диск/AGR-evidence/ar15-body-mesh-grid/` (`SHA256SUMS.txt` sha256 `ec3c77adc651ad48…`).
+Measured at harness commit `6e9d0bbd` on base `82875426`. Wall time: R1 35.3 min, R2 41.8 min, run in parallel.
+The R2 process ran ~2 min past the 40 min stop rule because parallel runs slowed it; its result was complete
+and was used.
+
+**Would change (separate PR + review, not applied).** Do not adopt #14 R1 or any single-cell maximum.
+A local defect signal has to be independent of where the grid falls and must not fire on the accepted bodies'
+own oblique cells. Candidates for a future contract: (a) per-element or per-facade-panel ratio (object/element
+ids from the dump, not world cells); (b) count of irregular faces whose neighbours are rectangular (isolated
+defects), not irregular area per cell. Each one is first checked on this 64-origin bench (worst ≥ 0.5), or is
+origin-free by construction.
