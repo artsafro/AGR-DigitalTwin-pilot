@@ -39,7 +39,7 @@ kept_jobs:
   - job: jobs/maf-atlas-512
     ru: "2 файла, записи о сдаче нет"
   - job: jobs/master-topology-1420
-    ru: "диагностика только для чтения (2026-11-15), 2 файла, записи о сдаче нет"
+    ru: "диагностика только для чтения (2026-11-15), записи о сдаче нет"
   - job: jobs/ogorodnyj-proezd-zu4-3
     ru: "только LESSONS.md — уроки для следующих участков"
   - job: jobs/silikatniy-uvk-pzu-viz
