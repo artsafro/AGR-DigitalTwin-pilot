@@ -39,7 +39,14 @@ MAX_CELL = S         # a cell never spans more than one UV segment
 PLANE_M = rc.PLANE_M
 SNAP_M = 3e-3        # vertex coordinates within 3 mm share one grid line: no wall cell/slot under the 2 mm xView
                      # vertex limit (w7 with 2.1 mm chained clusters into 1.6-2.0 mm gaps, #1609 w8)
-EMB_M = 3e-3         # outline nodes reach 3 mm past the old outline (hides the joint), never welded
+EMB_M = 3e-3         # w9 (default): outline nodes reach 3 mm past the old outline, walls are separate elements.
+                     # V004 per mesh counts the lip through the body's reveals: 9 653 (7 549 pierce pairs, all
+                     # between elements). BODY_WELD=True (w10/w11 probes) sets EMB_M = 0 and welds walls to the body.
+BODY_WELD = False    # w10: weld only (dup 199 + self-int 40, but ~2 900 T-junction fans at the reveals);
+                     # w11: + collapse the T vertices onto wall nodes (V004 129, but 6 333 triangles): both rejected
+if BODY_WELD:
+    EMB_M = 0.0
+WELD_BODY_M = 2.1e-3  # wall/body vertices closer than the 2 mm V004/xView tolerance (+0.1 mm) are welded (body only)
 AREA_MIN = 0.5       # m2; smaller planes stay as in v003
 XVIEW_M = 2e-3       # xView vertex limit, judged per element [D336]: `wall_plan.relax_shifts` keeps wall nodes apart
 FLAT_M = 2e-3        # a facade face within 2 mm of flat (r1 float noise, 0.1-1.2 mm tilts) joins its plane
@@ -92,8 +99,11 @@ def build_wall(bm, name, w, plane, old, contact, uvl, fl, tile_of_finish):
             faces2d.append(([(c[hax], c[2]) for c in corners_], None))
     p = wp.plan(faces2d, MAX_CELL, SNAP_M)
     H, Z, cells = p['H'], p['Z'], p['cells']
-    shifts0, stuck, clamped = wp.embed_shifts(cells, H, Z, EMB_M)
-    shifts = wp.relax_shifts(cells, H, Z, shifts0, XVIEW_M)
+    if EMB_M > 0:
+        shifts0, stuck, clamped = wp.embed_shifts(cells, H, Z, EMB_M)
+        shifts = wp.relax_shifts(cells, H, Z, shifts0, XVIEW_M)
+    else:   # w10: the wall is body, welded to the body at its outline (weld_body); nothing overhangs
+        shifts0, shifts, stuck, clamped = {}, {}, [], []
     relaxed = sum(1 for k, v in shifts0.items() if shifts.get(k) != v)
     old_verts = {v for f in old for v in f.verts}
     bmesh.ops.delete(bm, geom=old, context='FACES_ONLY')
@@ -174,6 +184,63 @@ def near_pairs(bm, limit):
                 near.append([round(c, 4) for c in v.co])
                 break
     return near
+
+
+def collapse_t_vertices(bm, wall_faces, post_faces, tol=5e-4):
+    """A body vertex lying inside a boundary edge of a rebuilt wall (a T-junction against the wall's long edge) is
+    welded to the nearer end of that edge: it slides ALONG the shared outline line, so the outline is unchanged and
+    only the body's own tessellation edge to it moves (w11). Post vertices never move ([D336]). Returns the count."""
+    wall = {f for f in wall_faces if f.is_valid}
+    post_v = {v for f in post_faces if f.is_valid for v in f.verts}
+    wall_v = {v for f in wall for v in f.verts}
+    cand = [v for v in bm.verts if v not in wall_v and v not in post_v]
+    kd = KDTree(len(cand))
+    for i, v in enumerate(cand):
+        kd.insert(v.co, i)
+    kd.balance()
+    target = {}
+    for e in {e for f in wall for e in f.edges}:
+        if sum(1 for f in e.link_faces if f in wall) != 1:
+            continue
+        a, b = e.verts[0].co, e.verts[1].co
+        ab = b - a
+        ln = ab.length
+        if ln < 1e-9:
+            continue
+        for _co, i, _d in kd.find_range((a + b) / 2, ln / 2 + tol):
+            v = cand[i]
+            t = (v.co - a).dot(ab) / (ln * ln)
+            if not 0 < t < 1 or (a + ab * t - v.co).length > tol or v in target:
+                continue
+            target[v] = e.verts[0] if t < 0.5 else e.verts[1]
+    bmesh.ops.weld_verts(bm, targetmap=target)
+    return len(target)
+
+
+def weld_body(bm, post_faces, dist):
+    """Weld the rebuilt walls to the body: every non-post vertex within `dist` of a wall node (or another non-post
+    vertex) joins one cluster; the wall node, if any, is the target (it keeps the grid position). Post vertices are
+    never touched ([D336]: posts stay separate, unwelded). Returns the number of vertices welded away."""
+    post_v = {v for f in post_faces if f.is_valid for v in f.verts}
+    verts = [v for v in bm.verts if v not in post_v]
+    kd = KDTree(len(verts))
+    for i, v in enumerate(verts):
+        kd.insert(v.co, i)
+    kd.balance()
+    target, done = {}, set()
+    for i, v in enumerate(verts):
+        if i in done:
+            continue
+        group = [j for _co, j, _d in kd.find_range(v.co, dist) if j not in done]
+        if len(group) < 2:
+            continue
+        keep = min(group, key=lambda j: (verts[j].co - v.co).length)
+        for j in group:
+            done.add(j)
+            if j != keep:
+                target[verts[j]] = verts[keep]
+    bmesh.ops.weld_verts(bm, targetmap=target)
+    return len(target)
 
 
 def split_bowties(bm, uvl, sep):
@@ -270,7 +337,7 @@ def main(master, r1, out_dir):
         made, info = rc.build_posts(bm, plans[name], {t: f for f, t in tile_of_finish.items()}, uvl, fl)
         rep['posts'][name].update({k: v for k, v in info.items() if k not in ('xs', 'ys', 'zs')})
         post_faces += made
-    new_faces, rebuilt = [], []
+    new_faces, rebuilt, wall_faces = [], [], []
     for name, w in WALLS.items():
         rep['walls'][name] = []
         for plane, old, area in facade_planes(bm, w):
@@ -278,6 +345,7 @@ def main(master, r1, out_dir):
             info['area_m2'] = round(area, 3)
             rep['walls'][name].append(info)
             new_faces += made
+            wall_faces += made
             rebuilt.append((w['ax'], w['sg'], plane))
     # the posts' remaining (side) faces end on the rebuilt plane: separate elements, nothing welded or moved (w8)
     post_left = [f for f in post_faces if f.is_valid]
@@ -286,6 +354,9 @@ def main(master, r1, out_dir):
     new_faces += post_left
     loose = [v for v in bm.verts if not v.link_faces]
     bmesh.ops.delete(bm, geom=loose, context='VERTS')
+    if BODY_WELD:
+        rep['body_vertices_welded'] = weld_body(bm, post_left, WELD_BODY_M)
+        rep['t_vertices_collapsed'] = collapse_t_vertices(bm, wall_faces, post_left)
     rep['bowties_split'] = split_bowties(bm, uvl, BOWTIE_M)
     near = near_pairs(bm, XVIEW_M)
     rep['nodes_near_other_vertex'] = {'count': len(near), 'limit_m': XVIEW_M, 'scope': 'same element [D336]',
