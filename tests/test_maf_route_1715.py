@@ -1,5 +1,7 @@
 """#1715: the MAF route / context maps describe the checked code, not a proposed pipeline (D293 kept).
 
+Pattern: n/a | new-case: tests/test_maf_route_1715.py - MAF route/context map edges pinned to atlas/placement code facts.
+
 Each test pins one acceptance point of the issue to the YAML sources AND to the code fact it describes, so a
 map edge that drifts from the code (or code that drifts from the map) fails here.
 """
