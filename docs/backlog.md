@@ -282,6 +282,8 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
 - **R25** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: build a 3ds Max QUAD review scene from a part FBX with
   one Multi/Sub of viewport-visible UDIM bitmaps per ID, then readback (material per face, bitmap on disk, UV inside
   its tile) and 2-3 captures; seen 9 times (STY_B_uv_review v002–v007, K3_A_tex_review v001–v003); effort M
+- **R26** proposal 2026-11-19, job/colleague-maf-models - skill: MAF from a manufacturer page (download renders+DWG, DWG->DXF dims, part breakdown, `maf_parts.py` quad builders in headless Blender, preview, open versioned .blend for review); builders live outside git in `C:/x/two-mafs/work/scripts/`; seen 2 times (MG4013, 171620); effort M
+- **R27** proposal 2026-11-19, job/colleague-maf-models - CLI command: accepted Blender MAF -> one quad mesh, pivot D095, quad FBX -> 3dsmaxbatch Editable Poly + Multi/Sub with library IDs from the `<id>_<name>` material prefix + readback log (`export_maf_fbx.py` + `fbx_to_max.ms`); seen 2 times; effort S
 
 ## Harness and organization (default owner Codex)
 

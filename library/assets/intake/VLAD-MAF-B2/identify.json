@@ -1,0 +1,555 @@
+{
+ "schema": "agr.assets.intake/1",
+ "project": "VLAD-MAF-B2",
+ "project_name": "МАФ для Влада, партия 2 — построены нами (не из сданного проекта)",
+ "date": "2026-11-19",
+ "tolerance": 0.1,
+ "counts": {
+  "new_model": 5
+ },
+ "provenance": {
+  "request": "Artem 2026-11-19: «добавь по шаблону в библиотеку цифровых двойников как не законченные»",
+  "job_dir": "C:/x/vlad-mafs-b2",
+  "staged_job": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19",
+  "note": "no schedule / DWG points / delivered scene: the MAFs were modelled from manufacturer pages, DWG and 3D"
+ },
+ "rows": [
+  {
+   "key": "VLAD-MAF-B2/LB19121",
+   "kind": "maf",
+   "table": "MODELLER_BRIEF / README (VLAD-MAF-B2)",
+   "row": "LB19121",
+   "name": "Качалка на пружине «Божья коровка»",
+   "article": "19121",
+   "maker": "Adanat (Аданат)",
+   "qty": null,
+   "dims_mm": [
+    640,
+    600,
+    750
+   ],
+   "dims_text": "640x600x750",
+   "dims_source": "DWG",
+   "link": "https://adanatgroup.ru/katalog/detskoe-igrovoe-oborudovanie/eko-stil/pruzhinnye-kachalki/kachalka-na-pruzhine-bozhya-korovka/",
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "library_check": {
+    "result": "none found",
+    "date": "2026-11-19",
+    "searched": [
+     "library/assets/maf_unified.json (article key + name)",
+     "library/assets/maf_template.json",
+     "library/maf/catalogue.json",
+     "G:/Мой диск/AGR-assets/maf/a101",
+     "G:/Мой диск/AGR-assets/_inbox"
+    ]
+   },
+   "proposed_name": "Adanat_KachalkaNaPruzhineBozhyaKorovka_19121",
+   "archive_name": "Adanat_KachalkaNaPruzhineBozhyaKorovka_19121",
+   "name_choice": "propose_maf_name; maker spelling as in A101 (Adanat)",
+   "scene_versions": {
+    "high": [
+     "Adanat_KachalkaNaPruzhineBozhyaKorovka_19121_high"
+    ]
+   },
+   "scene": [
+    {
+     "id": "vlad-mafs-b2:LB19121",
+     "name": "LB19121_GroundEl",
+     "count": 1,
+     "size_mm": {
+      "x": 640.0,
+      "y": 601.8,
+      "z": 752.7
+     },
+     "tris": 5932,
+     "quads": 2966,
+     "scene": "C:/x/vlad-mafs-b2/outputs/ladybug-max-v001/LB19121_GroundEl_v001.max"
+    }
+   ],
+   "scene_count": 1,
+   "provenance": {
+    "project": "VLAD-MAF-B2",
+    "built_by": "agent (Claude Code): Blender 5.1 build, 3ds Max 2026 batch",
+    "accepted": "Artem 2026-11-19 geometry",
+    "sources": {
+     "work_max": {
+      "path": "C:/x/vlad-mafs-b2/outputs/ladybug-max-v001/LB19121_GroundEl_v001.max",
+      "sha256": "5d9a0dda5ba58a6aaebc1a84342338815a48c82f3d3763ad904024783789ae81"
+     },
+     "work_fbx_quad": {
+      "path": "C:/x/vlad-mafs-b2/outputs/ladybug-max-v001/LB19121_GroundEl_v001.fbx",
+      "sha256": "9a1d453e350d4f6955ffa2571bef2ddcd1b32e2460342fab1776c0f14a6fb97d"
+     },
+     "blend": "C:/x/vlad-mafs-b2/outputs/ladybug-v001/ladybug_v001.blend",
+     "manufacturer_refs": "C:/x/vlad-mafs-b2/source/adanat-ladybug/",
+     "staged_work_copy": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/LB19121/",
+     "breakdown": "C:/x/vlad-mafs-b2/BREAKDOWN*.md"
+    }
+   },
+   "status": "new_model",
+   "why": "built by us for VLAD-MAF-B2 (geometry accepted 2026-11-19); no library model by article or name",
+   "candidate": {
+    "archive": "Adanat_KachalkaNaPruzhineBozhyaKorovka_19121.zip",
+    "staged": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/maf/Adanat_KachalkaNaPruzhineBozhyaKorovka_19121.zip",
+    "zip_sha256": "5eedba14897eceef15c3d4efbb74d6d7c7be917b4f9bf2ba9635d89eeb78dd17",
+    "agr_status": "candidate",
+    "audit_maf": {
+     "findings": [
+      "texture_missing: high base_color",
+      "texture_missing: high bump",
+      "texture_missing: high metalness",
+      "missing_version: low"
+     ],
+     "warnings": []
+    },
+    "height_check": {
+     "catalogue_h_mm": 750,
+     "model_z_mm": 753,
+     "pivot_above_base_mm": 100.0,
+     "visible_matches": false,
+     "no_footing_suspected": false
+    },
+    "missing_for_template": [
+     "UV",
+     "High 4K textures (D/ERM/N)",
+     "Low version (_low.fbx) + 512 texture (T_<name>_low_d)",
+     "xView",
+     "library acceptance by Artem"
+    ]
+   }
+  },
+  {
+   "key": "VLAD-MAF-B2/LGK1121",
+   "kind": "maf",
+   "table": "MODELLER_BRIEF / README (VLAD-MAF-B2)",
+   "row": "LGK1121",
+   "name": "Карусель «Гнездо»",
+   "article": "ЛГК-11.21",
+   "maker": "Leber (ООО «Миллениум Групп»)",
+   "qty": null,
+   "dims_mm": [
+    1042,
+    1042,
+    809
+   ],
+   "dims_text": "1042x1042x809",
+   "dims_source": "DWG (geometry 772 high, dimension text 809)",
+   "link": "https://leber.ru/ru/catalog/igrovoe-oborudovanie/karuseli/karusel-gnezdo-2",
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "library_check": {
+    "result": "none found",
+    "date": "2026-11-19",
+    "searched": [
+     "library/assets/maf_unified.json (article key + name)",
+     "library/assets/maf_template.json",
+     "library/maf/catalogue.json",
+     "G:/Мой диск/AGR-assets/maf/a101",
+     "G:/Мой диск/AGR-assets/_inbox"
+    ]
+   },
+   "proposed_name": "Millenium_KaruselGnezdo_LGK-11.21",
+   "archive_name": "Millenium_KaruselGnezdo_LGK-11.21",
+   "name_choice": "Leber products are filed under maker Millenium in A101 (Millenium_KacheliGamak_MG0510 = Leber MG0510, ООО «Миллениум Групп»); propose_maf_name with maker Millenium",
+   "scene_versions": {
+    "high": [
+     "Millenium_KaruselGnezdo_LGK-11.21_high"
+    ]
+   },
+   "scene": [
+    {
+     "id": "vlad-mafs-b2:LGK1121",
+     "name": "LGK1121_GroundEl",
+     "count": 1,
+     "size_mm": {
+      "x": 988.7,
+      "y": 1020.5,
+      "z": 791.6
+     },
+     "tris": 6682,
+     "quads": 3341,
+     "scene": "C:/x/vlad-mafs-b2/outputs/leber-gnezdo-max-v001/LGK1121_GroundEl_v001.max"
+    }
+   ],
+   "scene_count": 1,
+   "provenance": {
+    "project": "VLAD-MAF-B2",
+    "built_by": "agent (Claude Code): Blender 5.1 build, 3ds Max 2026 batch",
+    "accepted": "Artem 2026-11-19 geometry",
+    "sources": {
+     "work_max": {
+      "path": "C:/x/vlad-mafs-b2/outputs/leber-gnezdo-max-v001/LGK1121_GroundEl_v001.max",
+      "sha256": "1e0abcd65b86c07786715123e812aeaf79be79d89e66bc37dfd83b8be25418b0"
+     },
+     "work_fbx_quad": {
+      "path": "C:/x/vlad-mafs-b2/outputs/leber-gnezdo-max-v001/LGK1121_GroundEl_v001.fbx",
+      "sha256": "af5c3a763161037b54f0b14dc96b91af638b14e9982b740eb09d78e3d9b362c6"
+     },
+     "blend": "C:/x/vlad-mafs-b2/outputs/leber-gnezdo-v001/leber-gnezdo_v001.blend",
+     "manufacturer_refs": "C:/x/vlad-mafs-b2/source/leber-gnezdo/",
+     "staged_work_copy": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/LGK1121/",
+     "breakdown": "C:/x/vlad-mafs-b2/BREAKDOWN*.md"
+    }
+   },
+   "status": "new_model",
+   "why": "built by us for VLAD-MAF-B2 (geometry accepted 2026-11-19); no library model by article or name",
+   "candidate": {
+    "archive": "Millenium_KaruselGnezdo_LGK-11.21.zip",
+    "staged": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/maf/Millenium_KaruselGnezdo_LGK-11.21.zip",
+    "zip_sha256": "136ae955885edb2e812e1c3edc9e92e71cabf47dbcff9bbfae5f399068837f7b",
+    "agr_status": "candidate",
+    "audit_maf": {
+     "findings": [
+      "texture_missing: high base_color",
+      "texture_missing: high bump",
+      "texture_missing: high metalness",
+      "missing_version: low"
+     ],
+     "warnings": []
+    },
+    "height_check": {
+     "catalogue_h_mm": 809,
+     "model_z_mm": 792,
+     "pivot_above_base_mm": 100.0,
+     "visible_matches": false,
+     "no_footing_suspected": false
+    },
+    "missing_for_template": [
+     "UV",
+     "High 4K textures (D/ERM/N)",
+     "Low version (_low.fbx) + 512 texture (T_<name>_low_d)",
+     "xView",
+     "library acceptance by Artem"
+    ]
+   }
+  },
+  {
+   "key": "VLAD-MAF-B2/PR014",
+   "kind": "maf",
+   "table": "MODELLER_BRIEF / README (VLAD-MAF-B2)",
+   "row": "PR014",
+   "name": "Навес парковый CONFIG",
+   "article": "ПР 014",
+   "maker": "Aira (Айра)",
+   "qty": null,
+   "dims_mm": [
+    3600,
+    3000,
+    2700
+   ],
+   "dims_text": "3600x3000x2700",
+   "dims_source": "manufacturer 3D (.max): 3552x2984x2572",
+   "link": "https://aira.ru/produktsiya/malye-arkhitekturnye-formy/parkleti/parklet-pr-014/",
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "library_check": {
+    "result": "none found",
+    "date": "2026-11-19",
+    "searched": [
+     "library/assets/maf_unified.json (article key + name)",
+     "library/assets/maf_template.json",
+     "library/maf/catalogue.json",
+     "G:/Мой диск/AGR-assets/maf/a101",
+     "G:/Мой диск/AGR-assets/_inbox"
+    ]
+   },
+   "proposed_name": "Aira_NavesParkovyyConfig_PR014",
+   "archive_name": "Aira_NavesParkovyyConfig_PR014",
+   "name_choice": "propose_maf_name; maker spelling as in A101 (Aira)",
+   "scene_versions": {
+    "high": [
+     "Aira_NavesParkovyyConfig_PR014_high"
+    ]
+   },
+   "scene": [
+    {
+     "id": "vlad-mafs-b2:PR014",
+     "name": "PR014_GroundEl",
+     "count": 1,
+     "size_mm": {
+      "x": 3552.0,
+      "y": 2984.0,
+      "z": 2591.5
+     },
+     "tris": 2816,
+     "quads": 1408,
+     "scene": "C:/x/vlad-mafs-b2/outputs/aira-pr014-max-v001/PR014_GroundEl_v001.max"
+    }
+   ],
+   "scene_count": 1,
+   "provenance": {
+    "project": "VLAD-MAF-B2",
+    "built_by": "agent (Claude Code): Blender 5.1 build, 3ds Max 2026 batch",
+    "accepted": "Artem 2026-11-19 geometry",
+    "sources": {
+     "work_max": {
+      "path": "C:/x/vlad-mafs-b2/outputs/aira-pr014-max-v001/PR014_GroundEl_v001.max",
+      "sha256": "bd4fc1e1c1a8793eeeb52749be46cace7761b7bdf31ac086933fd066f214f136"
+     },
+     "work_fbx_quad": {
+      "path": "C:/x/vlad-mafs-b2/outputs/aira-pr014-max-v001/PR014_GroundEl_v001.fbx",
+      "sha256": "c839b87b2c4dac100d0fd5fdba68a57f2a76cdab2f2ab80dc97674a38a550f04"
+     },
+     "blend": "C:/x/vlad-mafs-b2/outputs/aira-pr014-v001/aira-pr014_v001.blend",
+     "manufacturer_refs": "C:/x/vlad-mafs-b2/source/aira-pr014/",
+     "staged_work_copy": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/PR014/",
+     "breakdown": "C:/x/vlad-mafs-b2/BREAKDOWN*.md"
+    }
+   },
+   "status": "new_model",
+   "why": "built by us for VLAD-MAF-B2 (geometry accepted 2026-11-19); no library model by article or name",
+   "candidate": {
+    "archive": "Aira_NavesParkovyyConfig_PR014.zip",
+    "staged": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/maf/Aira_NavesParkovyyConfig_PR014.zip",
+    "zip_sha256": "c80fcb877807fd6a37b266b5befa5e904567221bd3be13af3354f1f2d313c49d",
+    "agr_status": "candidate",
+    "audit_maf": {
+     "findings": [
+      "texture_missing: high base_color",
+      "texture_missing: high bump",
+      "texture_missing: high metalness",
+      "missing_version: low"
+     ],
+     "warnings": []
+    },
+    "height_check": {
+     "catalogue_h_mm": 2700,
+     "model_z_mm": 2592,
+     "pivot_above_base_mm": 100.0,
+     "visible_matches": false,
+     "no_footing_suspected": false
+    },
+    "missing_for_template": [
+     "UV",
+     "High 4K textures (D/ERM/N)",
+     "Low version (_low.fbx) + 512 texture (T_<name>_low_d)",
+     "xView",
+     "library acceptance by Artem"
+    ]
+   }
+  },
+  {
+   "key": "VLAD-MAF-B2/LGDP782",
+   "kind": "maf",
+   "table": "MODELLER_BRIEF / README (VLAD-MAF-B2)",
+   "row": "LGDP782",
+   "name": "Качели «Контур» радиусные, подвес диван",
+   "article": "ЛГДП-782",
+   "maker": "Leber (ООО «Миллениум Групп»)",
+   "qty": null,
+   "dims_mm": [
+    null,
+    null,
+    2730
+   ],
+   "dims_text": "H 2730, глубина 2200; длина — на погонный метр, конфигурация по DWG",
+   "dims_source": "DWG",
+   "link": "https://leber.ru/ru/catalog/ulica-i-park/kaceli-parkovye/kaceli-kontur-radiusnye-podves-divan-pm",
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "library_check": {
+    "result": "none found",
+    "date": "2026-11-19",
+    "searched": [
+     "library/assets/maf_unified.json (article key + name)",
+     "library/assets/maf_template.json",
+     "library/maf/catalogue.json",
+     "G:/Мой диск/AGR-assets/maf/a101",
+     "G:/Мой диск/AGR-assets/_inbox"
+    ]
+   },
+   "proposed_name": "Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782",
+   "archive_name": "Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782",
+   "name_choice": "Leber products are filed under maker Millenium in A101 (Millenium_KacheliGamak_MG0510 = Leber MG0510, ООО «Миллениум Групп»); propose_maf_name with maker Millenium",
+   "scene_versions": {
+    "high": [
+     "Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782_high"
+    ]
+   },
+   "scene": [
+    {
+     "id": "vlad-mafs-b2:LGDP782",
+     "name": "LGDP782_GroundEl",
+     "count": 1,
+     "size_mm": {
+      "x": 7973.6,
+      "y": 3338.6,
+      "z": 2750.0
+     },
+     "tris": 5156,
+     "quads": 2578,
+     "scene": "C:/x/vlad-mafs-b2/outputs/leber-kontur-max-v001/LGDP782_GroundEl_v001.max"
+    }
+   ],
+   "scene_count": 1,
+   "provenance": {
+    "project": "VLAD-MAF-B2",
+    "built_by": "agent (Claude Code): Blender 5.1 build, 3ds Max 2026 batch",
+    "accepted": "Artem 2026-11-19 geometry",
+    "sources": {
+     "work_max": {
+      "path": "C:/x/vlad-mafs-b2/outputs/leber-kontur-max-v001/LGDP782_GroundEl_v001.max",
+      "sha256": "494ac1aae91d775e31eb549a21967f173187046dfb983924b8d22357d9af51a5"
+     },
+     "work_fbx_quad": {
+      "path": "C:/x/vlad-mafs-b2/outputs/leber-kontur-max-v001/LGDP782_GroundEl_v001.fbx",
+      "sha256": "7b72bbec964b9e9bbbfe4661c68074dacac2ada1b71ba8026a6f014a6f9ae3cb"
+     },
+     "blend": "C:/x/vlad-mafs-b2/outputs/leber-kontur-v001/leber-kontur_v001.blend",
+     "manufacturer_refs": "C:/x/vlad-mafs-b2/source/leber-kontur/",
+     "staged_work_copy": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/LGDP782/",
+     "breakdown": "C:/x/vlad-mafs-b2/BREAKDOWN*.md"
+    }
+   },
+   "status": "new_model",
+   "why": "built by us for VLAD-MAF-B2 (geometry accepted 2026-11-19); no library model by article or name",
+   "candidate": {
+    "archive": "Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782.zip",
+    "staged": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/maf/Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782.zip",
+    "zip_sha256": "eea54d40be9f8b7dff0dc487718ba7bda19a3aaea4ff4f21830a0367fa210555",
+    "agr_status": "candidate",
+    "audit_maf": {
+     "findings": [
+      "texture_missing: high base_color",
+      "texture_missing: high bump",
+      "texture_missing: high metalness",
+      "missing_version: low"
+     ],
+     "warnings": []
+    },
+    "height_check": {
+     "catalogue_h_mm": 2730,
+     "model_z_mm": 2750,
+     "pivot_above_base_mm": 100.0,
+     "visible_matches": true,
+     "no_footing_suspected": false
+    },
+    "missing_for_template": [
+     "UV",
+     "High 4K textures (D/ERM/N)",
+     "Low version (_low.fbx) + 512 texture (T_<name>_low_d)",
+     "xView",
+     "library acceptance by Artem"
+    ]
+   }
+  },
+  {
+   "key": "VLAD-MAF-B2/AD22009",
+   "kind": "maf",
+   "table": "MODELLER_BRIEF / README (VLAD-MAF-B2)",
+   "row": "AD22009",
+   "name": "Парклет Тип 6.2 с подсветкой",
+   "article": "22009",
+   "maker": "Adanat (Аданат)",
+   "qty": null,
+   "dims_mm": [
+    11300,
+    3000,
+    2720
+   ],
+   "dims_text": "11300x3000x2720",
+   "dims_source": "manufacturer 3D (OBJ); posts 11300x3000",
+   "link": "https://adanatgroup.ru/katalog/ulichnaya-mebel/parklety/parklet-tip-6-2-s-podsvetkoy/",
+   "dwg_count": null,
+   "library": [],
+   "library_by_name": [],
+   "project_sets": [],
+   "library_check": {
+    "result": "none found",
+    "date": "2026-11-19",
+    "searched": [
+     "library/assets/maf_unified.json (article key + name)",
+     "library/assets/maf_template.json",
+     "library/maf/catalogue.json",
+     "G:/Мой диск/AGR-assets/maf/a101",
+     "G:/Мой диск/AGR-assets/_inbox"
+    ]
+   },
+   "proposed_name": "Adanat_ParkletTip62SPodsvetkoy_22009",
+   "archive_name": "Adanat_ParkletTip62SPodsvetkoy_22009",
+   "name_choice": "propose_maf_name; maker spelling as in A101 (Adanat)",
+   "scene_versions": {
+    "high": [
+     "Adanat_ParkletTip62SPodsvetkoy_22009_high"
+    ]
+   },
+   "scene": [
+    {
+     "id": "vlad-mafs-b2:AD22009",
+     "name": "AD22009_GroundEl",
+     "count": 1,
+     "size_mm": {
+      "x": 11430.0,
+      "y": 3130.0,
+      "z": 2884.5
+     },
+     "tris": 13606,
+     "quads": 6803,
+     "scene": "C:/x/vlad-mafs-b2/outputs/adanat-parklet62-max-v001/AD22009_GroundEl_v001.max"
+    }
+   ],
+   "scene_count": 1,
+   "provenance": {
+    "project": "VLAD-MAF-B2",
+    "built_by": "agent (Claude Code): Blender 5.1 build, 3ds Max 2026 batch",
+    "accepted": "Artem 2026-11-19 geometry",
+    "sources": {
+     "work_max": {
+      "path": "C:/x/vlad-mafs-b2/outputs/adanat-parklet62-max-v001/AD22009_GroundEl_v001.max",
+      "sha256": "42f9cd9be74163b116dacd526fd7cb9f6775b2710cf7eee4cf88bebba6558d9d"
+     },
+     "work_fbx_quad": {
+      "path": "C:/x/vlad-mafs-b2/outputs/adanat-parklet62-max-v001/AD22009_GroundEl_v001.fbx",
+      "sha256": "6185252b32be8cc92c588bef8b79062f0020558984dc53e693d03cde419feca1"
+     },
+     "blend": "C:/x/vlad-mafs-b2/outputs/adanat-parklet62-v001/adanat-parklet62_v001.blend",
+     "manufacturer_refs": "C:/x/vlad-mafs-b2/source/adanat-parklet62/",
+     "staged_work_copy": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/AD22009/",
+     "breakdown": "C:/x/vlad-mafs-b2/BREAKDOWN*.md"
+    }
+   },
+   "status": "new_model",
+   "why": "built by us for VLAD-MAF-B2 (geometry accepted 2026-11-19); no library model by article or name",
+   "candidate": {
+    "archive": "Adanat_ParkletTip62SPodsvetkoy_22009.zip",
+    "staged": "G:/Мой диск/AGR-assets/_inbox/vlad-mafs-b2-2026-11-19/maf/Adanat_ParkletTip62SPodsvetkoy_22009.zip",
+    "zip_sha256": "187a31f8c5b3fda13120d3c46ec7d27923cf6f417aa80e2c67b7e06874e35b38",
+    "agr_status": "candidate",
+    "audit_maf": {
+     "findings": [
+      "texture_missing: high base_color",
+      "texture_missing: high bump",
+      "texture_missing: high metalness",
+      "missing_version: low"
+     ],
+     "warnings": [
+      "tris_review: high: 13606"
+     ]
+    },
+    "height_check": {
+     "catalogue_h_mm": 2720,
+     "model_z_mm": 2884,
+     "pivot_above_base_mm": 100.0,
+     "visible_matches": true,
+     "no_footing_suspected": false
+    },
+    "missing_for_template": [
+     "UV",
+     "High 4K textures (D/ERM/N)",
+     "Low version (_low.fbx) + 512 texture (T_<name>_low_d)",
+     "xView",
+     "library acceptance by Artem"
+    ]
+   }
+  }
+ ]
+}
