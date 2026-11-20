@@ -1,6 +1,27 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
-**v011 — aggregate xView counts improved on the copy; seam gate is still open.**
+**v013 — all 33 tracked seam pairs are clear on the repaired copy.**
+The original VPM-OKS xView thresholds report 356 face selections, 0 close
+vertices and 2 bow-ties versus 370 / 0 / 4 on the source. The two bow-ties are
+inherited; raw xView is still FAIL. This is a comparative seam result, not an
+absolute QA pass or a VPM export.
+
+[D364]: the E face (100923) is unchanged. Finish 22 (136739/136740) was trimmed
+in projection, including the axis-dropped footprint used by xView; maximum
+reach from the original seam was 47.714 mm with the numerical allowance.
+Local stitching/coalescing is recorded separately. A fresh native readback
+found nine changed source lineages and 148212 unchanged input face rows, with
+unchanged indexed adjacency among unaffected faces. Original hashes: 32/32.
+
+Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v013-local-seams/`
+(21 verified files; manifest SHA-256
+`683864ae723b97d434d2acbe7da6e7f3805090c2ee6d4b31a20292ea225df935`).
+Continue from `stitched-r3.blend` for mesh001. `native-audit.json` is the
+before/after area and face-index ledger; `g22-33-pair-v013.png` is the seam
+sheet. The atlas-to-VPM material/UDIM allocation and checker are still open.
+
+## Historical checkpoint v011
+
 Subdividing the neighbouring edges at measured T-junctions gave 366 face
 selections, 0 close vertices, and 2 bow-ties versus the source 370 / 0 / 4.
 Eight of the 33 tracked source pairs still have candidate hits; the raw xView
