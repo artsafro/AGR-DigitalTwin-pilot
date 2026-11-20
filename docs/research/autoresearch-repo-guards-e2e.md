@@ -2,7 +2,11 @@
 
 ## Кратко для Артёма
 
-(заполняется после замера — см. «Round log» ниже)
+Проверка `repo_guards.sh`, которую каждая карточка запускает дважды, ускорилась бы почти вдвое:
+медиана **186,1 → 98,4 с (C/B 0,529, −47 %)**. Для этого нужно внедрить уже доказанные приёмы R1+R4+R5
+в `duplicate_guard.py`. Все 8 прогонов GREEN, во всех 542 passed, вывод сканера совпадает байт-в-байт.
+Мутация проверку паритета ломает, то есть проверка работает. Режим OBSERVE: в `tools/` ничего не изменено.
+Внедрение — отдельный PR с ревью; это моё предложение, решение за вами.
 
 ## Why this target
 
@@ -51,4 +55,44 @@ verifier #768 (no independent accept/reject calibration set): owned or not measu
 
 ## Round log
 
-(filled after measurement)
+Attempt 0 (invalid, not a measurement): Python's `bash` resolved to WSL (`System32\bash.exe`), every run
+exited 1 in ~0.1 s. The driver now resolves git-bash from the git install and refuses to time a non-GREEN
+warm-up (commits after the contract; metric, threshold and samples unchanged). Receipt kept as
+`C:/x/ar_t_559cc438/r1_invalid_wsl_bash.json`.
+
+Parity (untimed, before timing): `duplicate_guard.py --json --table` stdout wtB == wtC (rc 0/0, SHA-256
+`f256cf73…effe94` both). Mutation witness `m0_drop_calls` in wtC: rc 1, SHA `ba2d6324…`, differs -> the
+comparison catches a broken walk. wtC re-injected with R1 afterwards (`git diff --stat`: 1 line in 1 file).
+
+### R1 = r1_walk_memo + r4_lazy_scopes + r5_lazy_int_names — KEEP (OBSERVE proposal)
+
+| Run (execution order) | B, s | C, s | GREEN / passed |
+|---|---:|---:|---|
+| warm-up (untimed for the metric) | 174.304 | 83.358 | yes / 542 both |
+| pair 1 B,C | 174.841 | 92.834 | yes / 542 |
+| pair 2 C,B | 186.090 | 98.443 | yes / 542 |
+| pair 3 B,C | 196.344 | 103.635 | yes / 542 |
+| **median** | **186.090** | **98.443** | ratio **0.529** -> keep |
+
+Every pair faster, every run `repo_guards: GREEN` with 542 passed, no problem lines. In wtC the five
+full-scan tests (in-process AND fresh-process CLI) ran with the candidate, so the 542 green are also a parity
+run of the candidate through the real guard tests. Loaded workstation (B drifted 175 -> 196 s across the run),
+not an idle slot; the ratio is within-run. Stop rule reached (R1 recorded; no R2 declared).
+
+Receipt: `C:/x/ar_t_559cc438/r1.json` SHA-256 `17125639630e1ce1f2ba2427bd2fe2d8c8d5521e0d5da4b91f9282eb46523702`;
+both worktrees at `b9a3cbbff0c855e70cd1ddc13109a191ee2c2513`; `candidates.py` SHA-256 `1324b794…8473`
+(= `autoresearch-repo-guards-harness/candidates.py`). Reproduce: `python
+docs/research/autoresearch-repo-guards-e2e-harness/e2e_bench.py setup --base <sha> --candidate
+r1_walk_memo,r4_lazy_scopes,r5_lazy_int_names`, then `parity`, `parity --mutant m0_drop_calls`, `setup` again,
+`run --out <new path>` (~25 min on this PC).
+
+## What adoption would change (proposal, not applied)
+
+One production PR on `tools/architecture/duplicate_guard.py`, written as real code, not the monkeypatch:
+- R1: a per-file memo of `ast.walk` (BFS order identical to `ast.walk`, keyed by node identity, cleared after
+  each file's `_findings`);
+- R4: `_scopes(tree)` built on the first scope lookup of a hit;
+- R5: `_int_names(tree)` built on the first `consts.get`.
+Parity proof for that PR: `autoresearch-repo-guards-harness/bench.py --baseline` (in-process JSON) + this
+bench with an empty candidate list against the patched tree (expected C/B ~0.53) + the 7 guard test files.
+Expected effect: every card's `repo_guards.sh` ~3 min -> ~1.6 min, twice per card.
