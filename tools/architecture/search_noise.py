@@ -241,8 +241,19 @@ def block_problems(root, data, docs):
         return []
     have = {ln for ln in parts[1].splitlines() if ln.startswith("/")}
     need = {ln for ln in want.splitlines() if ln.startswith("/")}
-    return [f".ignore: historical-data block is stale: missing {sorted(need - have)[:5]} ({len(need - have)}), "
-            f"extra {sorted(have - need)[:5]} ({len(have - need)}); run search_noise.py --write-ignore"]
+    if have - need:
+        return [f".ignore: historical-data block hides live or gone paths {sorted(have - need)[:5]} "
+                f"({len(have - need)}); run search_noise.py --write-ignore"]
+    return []
+
+
+def pending(root, data, docs):
+    """Historical paths not yet in the block: a new unreached doc or new job data stays visible (never hidden by
+    surprise) until the next --write-ignore; reported, not a failure."""
+    path = Path(root) / ".ignore"
+    parts = _parts(path.read_text(encoding="utf-8")) if path.is_file() else None
+    have = {ln for ln in parts[1].splitlines() if ln.startswith("/")} if parts else set()
+    return sorted(ln for ln in render_block(data, docs).splitlines() if ln.startswith("/") and ln not in have)
 
 
 def write_block(root, data, docs):
@@ -497,6 +508,7 @@ def main(argv=None):
     for p in problems:
         print(f"PROBLEM {p}")
     print(f"search_noise: {len(st['data'])} historical data files, {len(st['docs'])} historical docs, "
+          f"{len(pending(args.root, st['data'], st['docs']))} pending (visible until --write-ignore), "
           f"{len(problems)} problems")
     return 1 if problems else 0
 

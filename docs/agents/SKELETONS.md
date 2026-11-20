@@ -243,7 +243,8 @@ that uses a hidden path adds it to `live_paths` there. Large JSON/TXT data of de
 store (rule 57): `jobs/<ID>/EVIDENCE-MOVED.json` lists path + sha256 + copy; tests read it via
 `search_noise.evidence_path` and skip when the copy is absent. Commands: check `uv run python
 tools/architecture/search_noise.py`, regenerate `--write-ignore`, Russian job table `--table`, what agent search
-sees `--measure`, copies `--verify-evidence`.
+sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job data stays visible until the next
+`--write-ignore` (reported as pending); the check fails only when the block hides a live or gone path.
 
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 

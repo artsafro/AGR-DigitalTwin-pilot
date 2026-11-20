@@ -218,9 +218,18 @@ def test_block_round_trip_with_rg_and_the_duplicate_guard_block(tmp_path):
     assert sn.main(["--root", str(root)]) == 0
     sn.write_block(root, st["data"], st["docs"])  # repeat: identical
     assert (root / ".ignore").read_text(encoding="utf-8") == text
-    assert "stale" in sn.block_problems(root, st["data"][1:], st["docs"])[0]
-    (root / "docs/plans/a.md").unlink()  # state changes: the linking doc is gone -> b.md unreached, block stale
+    assert "['/jobs/DONE/notes.md']" in sn.block_problems(root, st["data"][1:], st["docs"])[0]  # hidden, not historical
+    assert sn.pending(root, st["data"], st["docs"]) == []
+    (root / "docs/plans/a.md").unlink()  # state changes: the linking doc is gone -> b.md newly unreached
     _git_add(root)
+    st2 = sn.state(root)
+    assert sn.pending(root, st2["data"], st2["docs"]) == ["/docs/plans/b.md"]
+    assert sn.main(["--root", str(root)]) == 0 and "docs/plans/b.md" in _rg(root)
+    (root / "AGENTS.md").write_text("now [old](docs/old.md)\n", encoding="utf-8")  # a hidden doc becomes live
+    _git_add(root)
+    st3 = sn.state(root)
+    assert "paths ['/docs/old.md', '/docs/plans/only-from-hidden.md'] (2)" in \
+        sn.block_problems(root, st3["data"], st3["docs"])[0]  # and what it links, transitively
     assert sn.main(["--root", str(root)]) == 1
 
 

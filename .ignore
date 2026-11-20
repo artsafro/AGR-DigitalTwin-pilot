@@ -570,6 +570,9 @@
 /docs/research/agr-tools-atlas-npm-fixed-point-probe.py
 /docs/research/autoresearch-checker-mutation.md
 /docs/research/autoresearch-guard-scan-r4.md
+/docs/research/autoresearch-pdf-binding-harness/ar_candidate_r2.py
+/docs/research/autoresearch-pdf-binding-harness/ar_pdf_binding.py
+/docs/research/autoresearch-pdf-binding-wall.md
 /docs/research/autoresearch-repo-guards-harness/ar_dg_inject.py
 /docs/research/autoresearch-repo-guards-harness/bench.py
 /docs/research/autoresearch-repo-guards-harness/candidates.py
