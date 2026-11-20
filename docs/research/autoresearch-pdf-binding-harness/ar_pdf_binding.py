@@ -1,4 +1,6 @@
-"""OBSERVE only: time the public binder in the unchanged #1321 evaluator.
+"""Pattern: n/a | new-case: docs/research/autoresearch-pdf-binding-harness/ar_pdf_binding.py - standing #4/#5 bind_album timing driver (OBSERVE)
+
+OBSERVE only: time the public binder in the unchanged #1321 evaluator.
 
 Standing #4 driver (R1 = `_chains`), extended in standing #5 with `--round R2|R3`
 (R2 = indexed `_span_gap` search in `_bind_page`; R3 = R2 + R1). Run from the ignored `tmp/`.

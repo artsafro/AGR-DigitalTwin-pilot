@@ -1,4 +1,6 @@
-"""OBSERVE candidate R2 (standing #5): range-index text runs before ``_span_gap``.
+"""Pattern: n/a | new-case: docs/research/autoresearch-pdf-binding-harness/ar_candidate_r2.py - R2 indexed _span_gap candidate builder (OBSERVE)
+
+OBSERVE candidate R2 (standing #5): range-index text runs before ``_span_gap``.
 
 Built from the live ``dt_ai/album/binding.py`` text by exact, count-checked replacement and executed as a
 separate in-memory module. Nothing on disk under ``src/`` is touched.
