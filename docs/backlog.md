@@ -256,6 +256,9 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
   per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
   effort M
+- **R28** proposal 2026-11-21, job/staropetrovskiy-maf-npm-claude - CLI command: headless SINTEZ AGR Checker run on a package zip (copy to a scratch folder, LP+HP checklist JSON, failures summary in UTF-8); seen 9 times; effort S
+- **R29** proposal 2026-11-21, job/staropetrovskiy-maf-npm-claude - CLI command: per-triangle UV verifier that mirrors SINTEZ (tile bounds + 1/256 margin, mirrored, zero/thin UV, TD 512-1706 per tile resolution) before packing; seen 5 times; effort S
+- **R30** proposal 2026-11-21, job/staropetrovskiy-maf-npm-claude - pattern: place NPM additions into a customer VPM Ground (local = MSK - pivot, append with matrix_basis, join, UDIM tiles after the customer's last tile, strip texture links before export); seen 3 times; effort M
 
 ## Harness and organization (default owner Codex)
 
