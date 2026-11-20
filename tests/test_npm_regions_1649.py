@@ -145,3 +145,33 @@ def test_explicit_cells_use_geometry_not_internal_pixel_pattern(tmp_path, case):
         assert [(r['cell_key'], r['kind']) for r in result['table']] == [('brick', 'patterned'), ('plain', 'solid')]
         assert {p['id'] for p in result['pieces'][0]} == {1, 2}
         assert unary_union([Polygon(p['uv']) for p in result['pieces'][0]]).equals(Polygon(uv))
+
+
+@pytest.mark.parametrize('order', list(permutations(range(3))))
+def test_new_metric_chart_for_oblique_textured_triangle(order):
+    from math import dist
+    from tools.blender.vpm_uv_policy import metric_triangle
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    vertices = [(1., 1., 1.), (13., 10., 1.), (0., 6., 4.)]
+    xyz = [vertices[i] for i in order]
+    uv = metric_triangle(xyz)
+    assert Polygon(uv).exterior.is_ccw
+    for i in range(3):
+        assert dist(uv[i], uv[i-1]) == pytest.approx(dist(xyz[i], xyz[i-1]))
+    planned = fit_metric_region(1, [xyz], [uv], density=513)
+    assert planned['status'] == 'ok'
+    assert planned['piece_count'] > 1
+    for tri in planned['pieces']:
+        for i in range(3):
+            assert 4096 * dist(tri['uv'][i], tri['uv'][i-1]) == pytest.approx(
+                513 * dist(tri['xyz'][i], tri['xyz'][i-1]))
+
+
+@pytest.mark.parametrize('bad', [[], [(0, 0, 0)]*3, [(0, 0, 0), (1, 1, 1), (2, 2, 2)],
+                                  [(0, 0, 0), (1, 1, 1), (2, 2, float('inf'))],
+                                  [(0, 0, 0), (1, 1, 1), (2, 2, float('nan'))]])
+def test_new_metric_chart_refuses_unmeasurable_triangles(bad):
+    from tools.blender.vpm_uv_policy import metric_triangle
+    with pytest.raises(ValueError, match='metric triangle'):
+        metric_triangle(bad)

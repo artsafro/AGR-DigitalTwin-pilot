@@ -1,11 +1,25 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
-**STOP — source surfaces overlap before any VPM operation.** This is a continuation
-of the `npm-to-vpm` skeleton, `oks-npm` → `oks-vpm`, on the immutable #1630 r2 inputs.
-The geometry-first cell map is complete for UV assignment, but the source fails
-the VPM-OKS xView gate. No VPM was written.
+**STOP v010 — missing Normal authority and xView topology not accepted.** The
+`npm-to-vpm` skeleton uses the immutable #1630 r2 inputs. All 12 outstanding
+ownership dispositions were applied on a diagnostic Blender copy. Native readback
+plus a strict intersection test found zero of the eight targeted transverse
+intersections, but xView remains above the inherited counts. A local weld removed
+the near-vertex pairs but increased bow-tie counts. It is not a master.
 
-## Latest preflight (v006)
+The shared VPM UV policy computes an isometric chart from world geometry. Blender
+Cycles rebaked the G22 mesh001 #39124 witness onto a 4096 tile at 520 px/m; all 36
+sampled points matched the bound Diffuse. This is a one-triangle proof, not a
+Multi/Sub, a final tile allocation or a checker result. The two native source FBXs
+contain three Diffuse/metallic/opacity/roughness sets and no Normal. VPM requires
+Normal; C46/[D197] is not a G22 approval for flat maps. Do not reuse its waiver.
+
+Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v010-metric-rebake-normal-STOP/`
+(28 verified files, manifest SHA-256
+`7ec083f3e1391fa8cb530c1debb00afe216f62c6860a3a17ed187b39a0867bdc`).
+The v006 and historical colour runs below are retained for provenance.
+
+## Historical source preflight (v006)
 
 The v005 atlas layout was replayed through the shared `recover_regions` clipper
 without regenerating or adjusting its borders. It assigned 147893 / 73137 / 51146
