@@ -40,3 +40,22 @@ Evidence: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/bench-contact-bou
 - **#906**: Vatutino Ground v015 reached accepted materials, skirt and final Ground QA; Silikatny reproduced the source-bound Ground/UCX route and measured continuous UCX coverage but has open whole-site QA. No Vatutino texel exception transfers.
 - **#969**: Elevatornaya is an accepted VPM OKS chain, useful for source → Gate 1 → pilot → export/readback → acceptance discipline, not a Ground or library-asset etalon.
 - **#1178**: the accepted Flora route supplies the single-atlas/placement/readback precedent. Silikatny placed a different source census including dense joined hedges; an atlas and six clean standalone maples do not certify the mixed scene. No historic runtime or topology was remeasured.
+
+## Post-resume check: merged skirt fix does not clear SIL13
+
+The public `validate_package.py --scene --profile npm|vpm --json` was run in fresh Blender 5.1.2 processes on private copies of the D360 FBXs. Validator, reader, and standards were extracted from `origin/main` `1ffdcb760a0c1099c8da627d3650ea8fc207788e`, which contains [#1694](https://github.com/artsafro/AGR-DigitalTwin-pilot/pull/1694), the closed interior-step fix. The JSON `code_commit` field reports the enclosing job worktree HEAD (`4d46e03b`), not the extracted validator revision. Both originals and both copies matched the D360 FBX digests before and after. No exports or library changes.
+
+| Profile | Scene exit; pass/fail/review/not_run | Current explicit failures |
+|---|---|---|
+| NPM | 1; 1/3/1/3 | Public skirt 0.000 m versus ≥1 m; 80 flipped MAF faces versus 0; 22 close co-directional pairs below 5 mm; unmapped diffuse/opacity. |
+| VPM | 1; 3/3/1/5 | Public skirt cannot measure the combined mesh (`broken face geometry`); 79,590 duplicates/self-intersections versus ≤100; 44 close co-directional pairs below 5 mm; 87,604 mirrored UV findings versus 0. |
+
+VPM was an FBX-only probe with `--ground-area-m2 9568.799640`; the unfiltered combined projection was 9,571.613131 m², including MAF/Flora. Do not use that figure as a Ground footprint regression: the separate material-filtered source comparison above is the relevant footprint measurement. This replay does not certify external textures or hole coverage; no hole reference was supplied. The older base-only skirt depth of 1.001 m is a subset measurement, not a whole-Ground pass. The #1694 fix concerns joined, closed steps, not the disconnected overlay rings documented in [the real v025 probe](GROUND-CONNECTIVITY-PROBE-v025.md).
+
+**Placement parity:** `not measured` on the current D360 exports. SIL13 has a common source plan and a placement census, but no verified shared placement-run receipt comparing actual NPM and VPM `(point, ID)` pairs. Matching totals do not prove parity, and no result from Vatutino is used for SIL13.
+
+**Model decision needed for the skirt:** the earlier hidden-underlay crop/step-band candidates were rejected (degenerate cut or 33,276 Ground triangles, projected combined NPM 180,888 > 180,000, xView and skirt still red). D335 covers the bounded NPM height derivation, not removing the hidden underlay. A new Ground-only pilot on a copy would need explicit authority to remove only the covered underlay and join the top materials while holding visible levels, the plot boundary, material boundaries, and the 1 m outer skirt. Keep the source master, UCX and all placement points unchanged; no adoption unless the exported pilot passes its own QA and fits the complete NPM budget. This does not reopen Bench013 or D360, and would not clear the other failures in the table.
+
+Replay evidence: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/post-resume-main-1693/`; `SHA256SUMS.txt` SHA-256 `6f615f259e512398a06d9ac7662e5adb2b38849538ed789b18235d0fa0dcb39f`, 5/5 files verified. `NPM.main.json` SHA-256 `ea6752e1306365aa7252a107837178d92e2ca4520791a476cd11b12e408e9c91`, `VPM.main.json` SHA-256 `aef6df4265daf0412aecd49495650e08e6492f126c04fb9070daeac00700acd1`.
+
+Affected tests: `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run --no-sync pytest -q -p no:cacheprovider tests/test_decisions.py tests/test_sil13_visible_interface_1315.py tests/test_ground_surface_requirement_sheet.py --basetemp=C:/x/t_d9ae7dc0-post-resume` → 96 passed; `repo_guards: GREEN` (489 passed, 1 warning). Full suite: deferred to merge batch (rule 68).
