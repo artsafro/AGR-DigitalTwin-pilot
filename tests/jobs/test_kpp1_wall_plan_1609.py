@@ -98,3 +98,86 @@ def test_uv_segments_bound_and_fail_on_long_interval():
     assert wp.uv_segments([0, 1, 2, 3, 4.5], 2.048) == [0, 0, 2, 3]   # 2..4.5 > S: new segment at 3
     with pytest.raises(ValueError):
         wp.uv_segments([0, 3], 2.048)
+
+
+def _nodes(cells, H, Z, sh):
+    keys = {(a + i, b + j) for (a, b) in cells for i in (0, 1) for j in (0, 1)}
+    return {k: (H[k[0]] + sh.get(k, (0, 0))[0], Z[k[1]] + sh.get(k, (0, 0))[1]) for k in keys}
+
+
+def test_relax_keeps_nodes_apart_brute_force():
+    """xView element-wise (#1609 w8): after embed + relax no two nodes of one wall are closer than `min_d`, no quad
+    flips and every shift keeps its direction and never grows. Grids with 2.5-8 mm cells/slots (the w7 1.4 mm pairs)."""
+    worst = 1.0
+    for seed in range(300):
+        rng = random.Random(seed)
+        H, Z = [0.0], [0.0]
+        for vals in (H, Z):
+            for _ in range(6):
+                vals.append(round(vals[-1] + rng.choice([0.0025, 0.004, 0.0074, 0.012, 0.3]), 5))
+        cells = {(a, b): 0 for a in range(len(H) - 1) for b in range(len(Z) - 1) if rng.random() < 0.6}
+        if not cells:
+            continue
+        sh0, _, _ = wp.embed_shifts(cells, H, Z, 0.003)
+        sh = wp.relax_shifts(cells, H, Z, sh0, 0.002)
+        pts = _nodes(cells, H, Z, sh)
+        ks = sorted(pts)
+        for i, k in enumerate(ks):
+            for m in ks[i + 1:]:
+                d = math.dist(pts[k], pts[m])
+                worst = min(worst, d)
+                assert d >= 0.002, (seed, k, m, d)
+        for k, (dh, dz) in sh.items():
+            oh, oz = sh0[k]
+            assert abs(dh) <= abs(oh) + 1e-12 and abs(dz) <= abs(oz) + 1e-12 and dh * oh >= 0 and dz * oz >= 0
+        for (a, b) in cells:
+            p00, p10, p11, p01 = pts[(a, b)], pts[(a + 1, b)], pts[(a + 1, b + 1)], pts[(a, b + 1)]
+            assert p10[0] > p00[0] and p11[0] > p01[0] and p01[1] > p00[1] and p11[1] > p10[1], (seed, a, b)
+    assert worst >= 0.002
+
+
+def test_relax_exactly_at_threshold_and_fail_closed():
+    cells = {(0, 0): 0}
+    # an unshifted 2 mm cell is exactly at the limit: allowed; 1.9 mm cannot be resolved -> error naming the nodes
+    assert wp.relax_shifts(cells, [0.0, 0.002], [0.0, 1.0], {}, 0.002) == {}
+    with pytest.raises(ValueError, match='closer than'):
+        wp.relax_shifts(cells, [0.0, 0.0019], [0.0, 1.0], {}, 0.002)
+    for bad in (0, -1e-3, math.nan, math.inf):
+        with pytest.raises(ValueError):
+            wp.relax_shifts(cells, [0.0, 1.0], [0.0, 1.0], {}, bad)
+    with pytest.raises(ValueError):
+        wp.relax_shifts({}, [0.0, 1.0], [0.0, 1.0], {}, 0.002)
+
+
+def _sat_overlap(p, q, eps=1e-12):
+    """Interiors of two quads overlap (shapely; each quad must be a valid simple polygon)."""
+    from shapely.geometry import Polygon
+    a, b = Polygon(p), Polygon(q)
+    assert a.is_valid and b.is_valid, (p, q)
+    return a.intersection(b).area > eps
+
+
+def test_embed_never_crosses_a_narrow_slot():
+    """w8 regression (#1609, -3.655 W plane): two wall parts 3.6 mm apart both embed 3 mm into the slot between them;
+    the cells must not overlap (xView area pair inside one element). Brute force over random slots."""
+    H, Z = [0.0, 0.5, 0.50364, 1.0], [0.0, 1.0]
+    cells = {(0, 0): 0, (2, 0): 0}
+    sh = wp.relax_shifts(cells, H, Z, wp.embed_shifts(cells, H, Z, 0.003)[0], 0.002)
+    pts = _nodes(cells, H, Z, sh)
+    quad = lambda a, b: [pts[(a, b)], pts[(a + 1, b)], pts[(a + 1, b + 1)], pts[(a, b + 1)]]  # noqa: E731
+    assert not _sat_overlap(quad(0, 0), quad(2, 0))
+    for seed in range(300):
+        rng = random.Random(seed)
+        H, Z = [0.0], [0.0]
+        for vals in (H, Z):
+            for _ in range(6):
+                vals.append(round(vals[-1] + rng.choice([0.0025, 0.0036, 0.0074, 0.012, 0.3]), 5))
+        cells = {(a, b): 0 for a in range(len(H) - 1) for b in range(len(Z) - 1) if rng.random() < 0.5}
+        if not cells:
+            continue
+        sh = wp.relax_shifts(cells, H, Z, wp.embed_shifts(cells, H, Z, 0.003)[0], 0.002)
+        pts = _nodes(cells, H, Z, sh)
+        ks = sorted(cells)
+        for i, c in enumerate(ks):
+            for d in ks[i + 1:]:
+                assert not _sat_overlap(quad(*c), quad(*d)), (seed, c, d)

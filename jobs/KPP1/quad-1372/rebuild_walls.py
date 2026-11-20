@@ -37,12 +37,16 @@ VERSION = 'v004'
 S = 2.048            # metres per UDIM tile, spec.json `S` of every KPP1 finish (v003 UV scale 0.488 = 1/2.048)
 MAX_CELL = S         # a cell never spans more than one UV segment
 PLANE_M = rc.PLANE_M
-SNAP_M = rc.WELD_M   # vertex coordinates closer than 2.1 mm share one grid line (xView vertex limit 2 mm)
-EMB_M = 3e-3         # outline nodes reach 3 mm past the old outline: > the 2 mm xView vertex limit, never welded
+SNAP_M = 3e-3        # vertex coordinates within 3 mm share one grid line: no wall cell/slot under the 2 mm xView
+                     # vertex limit (w7 with 2.1 mm chained clusters into 1.6-2.0 mm gaps, #1609 w8)
+EMB_M = 3e-3         # outline nodes reach 3 mm past the old outline (hides the joint), never welded
 AREA_MIN = 0.5       # m2; smaller planes stay as in v003
-XVIEW_M = 2e-3
+XVIEW_M = 2e-3       # xView vertex limit, judged per element [D336]: `wall_plan.relax_shifts` keeps wall nodes apart
 FLAT_M = 2e-3        # a facade face within 2 mm of flat (r1 float noise, 0.1-1.2 mm tilts) joins its plane
-POST_EMB_M = 6e-3    # post ends behind a rebuilt plane: > the 5 mm xView face limit (back-to-back post side vs wall)
+BOWTIE_M = 2.5e-3    # a body vertex left with two face fans (its plane faces went to a wall) splits; each extra copy
+                     # moves 2.5 mm into its fan (> the 2 mm xView vertex limit), hidden under the 3 mm wall embed
+# w8: the post side faces now END ON the rebuilt plane (w7 moved them 6 mm behind it, which folded the 10 mm post
+# steps into 4 mm stubs and 2 mm vertex pairs inside the post element); posts and walls are separate elements [D336].
 WALLS = {  # ax: plane normal axis; hax: in-plane horizontal axis; tsign: facade direction of u (v003 UV sign)
     'W': {'ax': 0, 'sg': -1, 'hax': 1, 'tsign': -1},
     'S': {'ax': 1, 'sg': -1, 'hax': 0, 'tsign': 1},
@@ -88,7 +92,9 @@ def build_wall(bm, name, w, plane, old, contact, uvl, fl, tile_of_finish):
             faces2d.append(([(c[hax], c[2]) for c in corners_], None))
     p = wp.plan(faces2d, MAX_CELL, SNAP_M)
     H, Z, cells = p['H'], p['Z'], p['cells']
-    shifts, stuck, clamped = wp.embed_shifts(cells, H, Z, EMB_M)
+    shifts0, stuck, clamped = wp.embed_shifts(cells, H, Z, EMB_M)
+    shifts = wp.relax_shifts(cells, H, Z, shifts0, XVIEW_M)
+    relaxed = sum(1 for k, v in shifts0.items() if shifts.get(k) != v)
     old_verts = {v for f in old for v in f.verts}
     bmesh.ops.delete(bm, geom=old, context='FACES_ONLY')
     loose = [v for v in old_verts if v.is_valid and not v.link_faces]
@@ -131,24 +137,89 @@ def build_wall(bm, name, w, plane, old, contact, uvl, fl, tile_of_finish):
                   'lines_z': len(Z), 'fine_lines': p['fine'], 'snap_max_m': round(p['snap_max_m'], 6),
                   'min_gap_m': round(gaps[0], 5), 'gaps_below_3cm': sum(1 for g in gaps if g < 0.03),
                   'area_error_m2': {str(k): round(v, 6) for k, v in p['area_error_m2'].items()},
-                  'nodes': len(nodes), 'nodes_embedded': len(shifts), 'nodes_stuck': len(stuck), 'nodes_clamped': len(clamped),
+                  'nodes': len(nodes), 'nodes_embedded': len(shifts), 'nodes_stuck': len(stuck), 'nodes_clamped': len(clamped), 'nodes_relaxed': relaxed,
                   'uv_segments_t': len(set(t_start)), 'uv_segments_z': len(set(z_start))}
 
 
-def near_pairs(bm, new_faces, limit):
-    """Vertices of the new elements within `limit` of another vertex they share no edge with (xView pairs)."""
+def _elements(bm):
+    """{vertex index: element id} - loose parts (vertices linked by edges)."""
+    bm.verts.index_update()
+    parent = list(range(len(bm.verts)))
+
+    def root(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    for e in bm.edges:
+        a, b = root(e.verts[0].index), root(e.verts[1].index)
+        if a != b:
+            parent[a] = b
+    return [root(i) for i in range(len(parent))]
+
+
+def near_pairs(bm, limit):
+    """Vertices within `limit` of another vertex OF THE SAME ELEMENT (the element-wise xView vertex rule, [D336]:
+    unwelded inset elements may touch inside one delivery object)."""
+    elem = _elements(bm)
     verts = list(bm.verts)
     kd = KDTree(len(verts))
-    for i, v in enumerate(verts):
-        kd.insert(v.co, i)
+    for v in verts:
+        kd.insert(v.co, v.index)
     kd.balance()
     near = []
-    for v in {v for f in new_faces for v in f.verts}:
+    for v in verts:
         for _co, i, _d in kd.find_range(v.co, limit):
-            if verts[i] is not v:
+            if i > v.index and elem[i] == elem[v.index]:
                 near.append([round(c, 4) for c in v.co])
                 break
     return near
+
+
+def split_bowties(bm, uvl, sep):
+    """A body vertex left with two or more face fans (its connecting plane faces went to a wall element) is an xView
+    bow-tie. Keep the largest fan on it; every other fan gets its own copy moved `sep` towards that fan's centre (in
+    the fan, hidden under the wall embed). Face and loop data are kept. Returns [[x, y, z, fans], ...]."""
+    out = []
+    for v in list(bm.verts):
+        faces = list(v.link_faces)
+        if len(faces) < 2:
+            continue
+        parent = {f: f for f in faces}
+
+        def root(f):
+            while parent[f] is not f:
+                f = parent[f]
+            return f
+        for e in v.link_edges:
+            lf = list(e.link_faces)
+            for f in lf[1:]:
+                a, b = root(lf[0]), root(f)
+                if a is not b:
+                    parent[a] = b
+        fans = {}
+        for f in faces:
+            fans.setdefault(root(f), []).append(f)
+        if len(fans) < 2:
+            continue
+        groups = sorted(fans.values(), key=lambda g: -len(g))
+        out.append([round(c, 4) for c in v.co] + [len(groups)])
+        for g in groups[1:]:
+            centre = sum((f.calc_center_median() for f in g), Vector()) / len(g)
+            d = centre - v.co
+            if d.length < 1e-9:
+                raise ValueError(f'bow-tie fan at {tuple(v.co)} has no direction')
+            nv = bm.verts.new(v.co + d.normalized() * sep)
+            for f in g:
+                uvs = [tuple(lp[uvl].uv) for lp in f.loops]
+                nf = bm.faces.new([nv if x is v else x for x in f.verts], f)
+                for lay in bm.faces.layers.int.values():
+                    nf[lay] = f[lay]
+                nf.material_index, nf.smooth = f.material_index, f.smooth
+                for lp, uv in zip(nf.loops, uvs):
+                    lp[uvl].uv = uv
+                bmesh.ops.delete(bm, geom=[f], context='FACES_ONLY')
+    return out
 
 
 def main(master, r1, out_dir):
@@ -208,22 +279,17 @@ def main(master, r1, out_dir):
             rep['walls'][name].append(info)
             new_faces += made
             rebuilt.append((w['ax'], w['sg'], plane))
-    # the posts' remaining (side) faces end on a rebuilt plane: embed those ends EMB_M behind it (never weld)
+    # the posts' remaining (side) faces end on the rebuilt plane: separate elements, nothing welded or moved (w8)
     post_left = [f for f in post_faces if f.is_valid]
-    moved = set()
-    for v in {v for f in post_left for v in f.verts}:
-        for ax, sg, plane in rebuilt:
-            if abs(v.co[ax] - plane) <= PLANE_M:
-                v.co[ax] = plane - sg * POST_EMB_M
-                moved.add(v)
     rep['post_faces_built'] = len(post_faces)
     rep['post_faces_merged_into_walls'] = len(post_faces) - len(post_left)
-    rep['post_vertices_embedded'] = len(moved)
     new_faces += post_left
     loose = [v for v in bm.verts if not v.link_faces]
     bmesh.ops.delete(bm, geom=loose, context='VERTS')
-    near = near_pairs(bm, [f for f in new_faces if f.is_valid], XVIEW_M)
-    rep['nodes_near_other_vertex'] = {'count': len(near), 'limit_m': XVIEW_M, 'first': near[:20]}
+    rep['bowties_split'] = split_bowties(bm, uvl, BOWTIE_M)
+    near = near_pairs(bm, XVIEW_M)
+    rep['nodes_near_other_vertex'] = {'count': len(near), 'limit_m': XVIEW_M, 'scope': 'same element [D336]',
+                                      'first': near[:20]}
     bm.normal_update()
     degrees = {}
     for f in bm.faces:

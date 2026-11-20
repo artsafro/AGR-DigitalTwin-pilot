@@ -200,7 +200,7 @@ def embed_shifts(cells, H, Z, emb, keep=0.45):
     quadrant moves `emb` (metres) towards the empty side on each axis where the empty quadrants agree, so the wall
     reaches `emb` past its old outline (into the opening, past the corner, under the cap) and the body's border
     vertices stay >= emb away. Quadrant direction (dh, dz) in {-1, 1}^2; shift = emb * sign(sum of empty quadrants).
-    A shift into a full cell (along one axis) is clamped to `keep` x that cell's size, so the two nodes of a cell
+    A shift (along one axis) is clamped to `keep` x the size of the column/row it moves into (full or empty), so the two nodes of a cell
     never cross and no quad flips (a 2.5 mm cell next to a hole corner).
     Returns ({(a, b): (dh, dz)} for moved nodes, [(a, b), ...] nodes with empty quadrants but no direction
     (checkerboard, the wall touches itself at one node) - the caller reports them, they are not moved -,
@@ -230,21 +230,63 @@ def embed_shifts(cells, H, Z, emb, keep=0.45):
                 continue
             sgh, sgz = (sh > 0) - (sh < 0), (sz > 0) - (sz < 0)
             mh = mz = emb
-            # full cells on the side the node moves to: the move runs along their edge, clamp to their size
+            # the column/row the node moves into, full or empty, caps the move at `keep` x its size: along a full
+            # cell no quad flips; across an empty slot the parts on both sides never cross (w8, a 3.6 mm slot at
+            # W -3.655 made two cells of one element overlap). Off the grid there is nothing to cross.
             if sgh:
                 ka = a if sgh > 0 else a - 1
-                for kb in (b - 1, b):
-                    if (ka, kb) in cells:
-                        mh = min(mh, keep * (H[ka + 1] - H[ka]))
+                if 0 <= ka < nh - 1:
+                    mh = min(mh, keep * (H[ka + 1] - H[ka]))
             if sgz:
                 kb = b if sgz > 0 else b - 1
-                for ka in (a - 1, a):
-                    if (ka, kb) in cells:
-                        mz = min(mz, keep * (Z[kb + 1] - Z[kb]))
+                if 0 <= kb < nz - 1:
+                    mz = min(mz, keep * (Z[kb + 1] - Z[kb]))
             if mh < emb and sgh or mz < emb and sgz:
                 clamped.append((a, b))
             shifts[(a, b)] = (mh * sgh, mz * sgz)
     return shifts, stuck, clamped
+
+
+def relax_shifts(cells, H, Z, shifts, min_d, rounds=60):
+    """Shrink embed shifts until no two nodes of the wall are closer than `min_d` (the xView vertex limit, judged per
+    element [D336]). A node pair closer than `min_d` halves both shifts (direction kept, never grows; below 1 um the
+    shift is dropped); the embed clamp of `embed_shifts` (<= 0.45 of the cell) keeps every partial shift flip-free.
+    A pair that is still too close with both shifts dropped means two grid lines closer than `min_d`: ValueError
+    naming the nodes (the caller snaps lines with a larger tolerance). Returns a new {(a, b): (dh, dz)}."""
+    if not (isinstance(min_d, (int, float)) and math.isfinite(min_d) and min_d > 0):
+        raise ValueError(f'min_d must be a finite value > 0, got {min_d!r}')
+    if not cells:
+        raise ValueError('relax_shifts: no cells')
+    keys = sorted({(a + i, b + j) for (a, b) in cells for i in (0, 1) for j in (0, 1)})
+    sh = {k: tuple(v) for k, v in shifts.items() if k in keys}
+    for _ in range(rounds + 1):
+        pos = {k: (H[k[0]] + sh.get(k, (0.0, 0.0))[0], Z[k[1]] + sh.get(k, (0.0, 0.0))[1]) for k in keys}
+        grid = {}
+        for k, (x, y) in pos.items():
+            grid.setdefault((math.floor(x / min_d), math.floor(y / min_d)), []).append(k)
+        bad = set()
+        for k, (x, y) in pos.items():
+            gx, gy = math.floor(x / min_d), math.floor(y / min_d)
+            for i in (-1, 0, 1):
+                for j in (-1, 0, 1):
+                    for m in grid.get((gx + i, gy + j), ()):
+                        if m > k and math.dist(pos[k], pos[m]) < min_d:
+                            bad.add((k, m))
+        if not bad:
+            return sh
+        stuck = [(k, m) for k, m in bad if k not in sh and m not in sh]
+        if stuck:
+            k, m = stuck[0]
+            raise ValueError(f'nodes {k} and {m} are closer than {min_d} m without any shift ({len(stuck)} pairs): '
+                             f'grid lines closer than the xView limit')
+        for k in {n for pair in bad for n in pair}:
+            if k in sh:
+                dh, dz = sh[k][0] / 2, sh[k][1] / 2
+                if abs(dh) < 1e-6 and abs(dz) < 1e-6:
+                    del sh[k]
+                else:
+                    sh[k] = (dh if abs(dh) >= 1e-6 else 0.0, dz if abs(dz) >= 1e-6 else 0.0)
+    raise ValueError(f'relax_shifts did not converge in {rounds} rounds')
 
 
 def plan(faces, max_cell, tol=TOL):
