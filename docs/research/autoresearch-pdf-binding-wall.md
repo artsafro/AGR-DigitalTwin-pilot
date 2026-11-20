@@ -55,3 +55,39 @@ Frozen before any candidate code exists. Base `f6a8793b` (origin/main; `src/dt_a
   `--probe` mutation witness re-run.
 - OBSERVE: a passing round is a proposal for a separate production PR + review, never applied to
   `src/` on this branch.
+
+### R2 — keep (OBSERVE proposal)
+
+Indexed `_span_gap` search ([`ar_candidate_r2.py`](autoresearch-pdf-binding-harness/ar_candidate_r2.py)), R1 not included.
+
+| Pair (execution order) | Baseline, s | Candidate, s | Complete parity |
+|---|---:|---:|---|
+| 1 B,C | 7.152 | 4.105 | yes |
+| 2 C,B | 6.460 | 4.330 | yes |
+| 3 B,C | 6.776 | 4.554 | yes |
+| Median | 6.776 | 4.330 | ratio **0.639** → keep |
+
+### R3 — R2 + R1, keep (OBSERVE proposal)
+
+| Pair (execution order) | Baseline, s | Candidate, s | Complete parity |
+|---|---:|---:|---|
+| 1 B,C | 6.119 | 3.396 | yes |
+| 2 C,B | 5.494 | 4.638 | yes |
+| 3 B,C | 5.577 | 3.243 | yes |
+| Median | 5.577 | 3.396 | ratio **0.609** → keep |
+
+Both rounds: all six samples byte-identical to the untimed reference (three complete documents), the
+historical evaluator result identical (`result_sha256 5c93ea5f…`, same as #4) and its guard green; `--probe`
+again showed the `note` mutation passes the historical score but fails complete-document parity.
+Affected album tests with the candidate patched in (#4 file set): R2 **192 passed**, R3 **192 passed**.
+Loaded-host, warm-process numbers; baseline itself drifted 5.5–7.2 s between rounds, ratios are within-round.
+
+Receipts: `C:/x/ar_t_e21acbc0/r2.json` (SHA-256 `8777f50bf4c9e78081b7c679ce1a57d29b10e25d436aec51090ff5f78d4262e8`),
+`r3.json` (`00847247bfce5f1d72753c34b8d26c520cc934685bb7c760ba961a22f64b3313`); timing HEAD `7c264d80`
+(contract commit), binding.py SHA-256 `b8af892b…`, R1 archive `039db4b0…`. Stop rule reached (two rounds).
+Reproduce: copy `autoresearch-pdf-binding-harness/*.py` to `tmp/`, run the contract command with a new `--out`.
+
+Verdict: R2 alone clears the bar (−36 %); R1 adds ~3 points on top. Per OBSERVE neither is applied to
+`src/` here: adoption is a separate production PR (R2 first, R1 as its own reviewed change), with this
+bench as the parity proof plus a boundary unit test that the window is a superset (short span with
+padding, NaN centre, labels exactly at `a - pad` / `b + pad`).
