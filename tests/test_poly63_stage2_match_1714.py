@@ -149,6 +149,31 @@ def test_check_claimed_problem_stops():
         s2.claim_openings([op], 1, lambda o, c: (0, None), str, check_claimed=lambda j, owners: "bad type")
 
 
+def test_claim_openings_brute_force_one_claim_per_source():
+    """Probe (#1714): 2000 seeded random pick tables; claim_openings returns iff every opening resolves, every
+    source is claimed exactly once and no claimed source fails its check, else it stops (never a partial result)."""
+    rng = np.random.default_rng(1714)
+    returned = stopped = 0
+    for _ in range(2000):
+        n_ops, n_src = int(rng.integers(0, 5)), int(rng.integers(0, 5))
+        picks = [int(x) for x in rng.integers(-1, n_src, n_ops)] if n_src else [-1] * n_ops
+        bad = set(int(x) for x in rng.integers(0, max(n_src, 1), int(rng.integers(0, 2))))
+        ops = [{"id": k, "status": "ok", "why": [], "border": [[k, 0, 0], [k + 1, 0, 1]]} for k in range(n_ops)]
+        ok = (n_ops > 0 and all(p >= 0 for p in picks) and sorted(picks) == list(range(n_src))
+              and not bad & set(picks))
+        call = lambda: s2.claim_openings(  # noqa: E731
+            ops, n_src, lambda o, c: (picks[o["id"]], None) if picks[o["id"]] >= 0 else (None, "none"),
+            str, lambda j, owners: "bad" if j in bad else None)
+        if ok:
+            assert [j for _, j, _ in call()] == picks
+            returned += 1
+        else:
+            with pytest.raises(SystemExit, match="STOP"):
+                call()
+            stopped += 1
+    assert returned >= 30 and stopped >= 1000   # seed 1714: both branches exercised
+
+
 def test_63c_hook_has_no_own_matcher():
     """63C calls the 63A owner: no own candidate loop, no own claim/stop definitions."""
     tree = ast.parse(HOOK_C.read_text(encoding="utf-8"))
