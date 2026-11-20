@@ -3,6 +3,7 @@
 Dumps each frozen #13 input 3x with the unchanged Blender dump script, requires identical geometry, then
 scores in-process: R0 (unchanged core), R1 (#14 splice, 4 m grid shifted by origin o) over 64 origins, and
 R2 (8 half-cell staggered grids) only if R1 is not robust. Production files are never modified.
+new-case: docs/research/autoresearch-body-mesh-grid-harness/grid.py - research-only grid-origin replay harness
 """
 import json
 import runpy
