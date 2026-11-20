@@ -1,9 +1,10 @@
-"""Handoff evidence check (#584); every body, report and repository here is synthetic."""
+"""Handoff evidence check (#584): synthetic evidence plus published #1689 body snapshots."""
 import json
 import os
 import shutil
 import subprocess
 import sys
+from itertools import product
 from pathlib import Path
 
 import pytest
@@ -90,11 +91,134 @@ def body(parts, extra=""):
             + "\n\nThe review's input is the diff, not the full suite.\n" + extra)
 
 
-def run(tmp_path, text, sha, evals, capsys, encoding="utf-8"):
+def run(tmp_path, text, sha, evals, capsys, encoding="utf-8", *, require_table=False):
     path = tmp_path / "pr-body.md"
     path.write_bytes(text.encode(encoding) if isinstance(text, str) else text)
-    code = main(["evals", "--check-handoff", str(path), "--sha", sha, "--output", str(evals)])
+    args = ["evals", "--check-handoff", str(path), "--sha", sha, "--output", str(evals)]
+    if require_table:
+        args.append("--require-acceptance-table")
+    code = main(args)
     return code, capsys.readouterr()
+
+
+ACCEPTANCE_HEADING = "### Acceptance table\n\n"
+ACCEPTANCE_TABLE = "| Input (exact) | Expected output | Test |\n| --- | :---: | --- |\n| a | b | `test_a` |\n"
+
+
+def test_require_acceptance_table_pr_1689(tmp_path, monkeypatch):
+    from twinqa.evals.handoff import check_handoff_file
+
+    # Keep both body snapshots exact. Provide synthetic matching receipts and
+    # model historical Git resolution so shallow checkouts need no history.
+    head = "82a50a71a743e696237c936fe300d8b48b0b93db"
+    red = "48b4fb5500d11234a4d983edc572823d411047a7"
+    monkeypatch.setattr("twinqa.evals.handoff._resolve", lambda cwd, ref: {
+        head: head, head[:8]: head, red[:8]: red,
+    }.get(ref))
+    monkeypatch.setattr("twinqa.evals.handoff._ancestor", lambda cwd, a, b: (a, b) == (red, head))
+    monkeypatch.chdir(tmp_path)
+    output = Path("tmp/evals")
+    output.mkdir(parents=True)
+    (output / "report.json").write_text(json.dumps({
+        "selector": {"suite": "regression"}, "passed": 0, "failed": 0, "not_measured": 11,
+        "checks": [{"passed": None}] * 11,
+    }), encoding="utf-8")
+    fixtures = ROOT / "tests/fixtures/evals-handoff"
+    for version in ("before", "after"):
+        path = fixtures / f"pr-1689-{version}.md"
+        assert check_handoff_file(path, head, output) == []
+        problems = check_handoff_file(path, head, output, require_acceptance_table=True)
+        assert problems == (["missing Acceptance table heading"] if version == "before" else [])
+
+
+def test_docs_only_handoff_unchanged(tmp_path, repo, evals, capsys):
+    _, shas = repo
+    text = body(lines(shas, evals)).replace("Synthetic body; reviewer: pending.", "Fix a typo in the docs.")
+    code, out = run(tmp_path, text, shas["head"], evals, capsys)
+    assert (code, out.out, out.err) == (0, f"OK: handoff evidence complete for {shas['head']}\n", "")
+
+
+@pytest.mark.parametrize("extra", [
+    "", ACCEPTANCE_HEADING, ACCEPTANCE_HEADING + ACCEPTANCE_TABLE.rsplit("| a", 1)[0],
+    ACCEPTANCE_TABLE + "\n" + ACCEPTANCE_HEADING,
+    ACCEPTANCE_HEADING + "## Benchmarks\n\n" + ACCEPTANCE_TABLE,
+    "```markdown\n" + ACCEPTANCE_HEADING + ACCEPTANCE_TABLE + "```\n",
+    "<!--\n" + ACCEPTANCE_HEADING + ACCEPTANCE_TABLE + "-->\n",
+    "<pre>\n\n" + ACCEPTANCE_HEADING + ACCEPTANCE_TABLE + "\n</pre>\n",
+    "\n".join("> " + line for line in (ACCEPTANCE_HEADING + ACCEPTANCE_TABLE).splitlines()),
+    ACCEPTANCE_HEADING + "| Metric | Wall time | Verdict |\n| --- | --- | --- |\n| 1 | 2 | 3 |\n",
+    ACCEPTANCE_HEADING + "| Input | Expected | Test | Test |\n| --- | --- | --- | --- |\n| a | b | c | d |\n",
+    ACCEPTANCE_HEADING + ACCEPTANCE_TABLE.replace("| a | b | `test_a` |", "| a | b |"),
+    ACCEPTANCE_HEADING + ACCEPTANCE_TABLE.replace(":---:", ":NaN:"),
+    ACCEPTANCE_HEADING + ACCEPTANCE_TABLE.replace("| a | b | `test_a` |", "\n| a | b | `test_a` |"),
+])
+def test_require_acceptance_table_invalid(tmp_path, repo, evals, capsys, extra):
+    _, shas = repo
+    text = body(lines(shas, evals), "\n" + extra) if extra else ""
+    code, out = run(tmp_path, text, shas["head"], evals, capsys, require_table=True)
+    assert code == 1 and "Acceptance table" in out.err and not out.out
+
+
+def test_require_acceptance_table_column_subsets(tmp_path, repo, evals, capsys):
+    _, shas = repo
+
+    def row(mask):
+        return "| control | " + " | ".join("value" if item else "" for item in mask) + " |\n"
+
+    for present in product((False, True), repeat=3):
+        for filled in product((False, True), repeat=3):
+            labels = [name if keep else "Other" for name, keep in zip(("Input", "Expected", "Test"), present)]
+            # Add a second incomplete row whose cells cannot be pooled with the first.
+
+            table = ("| Point | " + " | ".join(labels) + " |\n| --- | --- | --- | --- |\n"
+                     + row(filled) + row(tuple(not item for item in filled) if any(filled) else filled))
+            text = body(lines(shas, evals), "\n" + ACCEPTANCE_HEADING + table)
+            code, out = run(tmp_path, text, shas["head"], evals, capsys, require_table=True)
+            assert (code, bool(out.err)) == ((0, False) if all(present) and all(filled) else (1, True)), (
+                present, filled, out)
+
+
+def test_require_acceptance_table_cli_readback(tmp_path, repo, evals):
+    _, shas = repo
+    path = tmp_path / "published.md"
+    alias = tmp_path / "alias.md"
+    foreign_temp = path.with_suffix(".partial")
+    foreign_temp.write_bytes(b"not owned")
+    path.touch()
+    os.link(path, alias)
+    report = (evals / "report.json").read_bytes()
+    args = [sys.executable, "-m", "dt_ai.cli.main", "evals", "--check-handoff", str(alias),
+            "--require-acceptance-table", "--sha", shas["head"], "--output", str(evals)]
+    for table, expected in ((ACCEPTANCE_TABLE, 0), ("", 1), ("", 1), (ACCEPTANCE_TABLE, 0)):
+        data = body(lines(shas, evals), "\n" + ACCEPTANCE_HEADING + table).replace("\n", "\r\n").encode()
+        path.write_bytes(data)
+        proc = subprocess.run(args, capture_output=True, text=True)
+        assert proc.returncode == expected, (proc.stdout, proc.stderr)
+        assert bool(proc.stdout) == (expected == 0)
+        assert ("Acceptance table" in proc.stderr) == (expected != 0)
+        assert alias.read_bytes() == data == path.read_bytes()
+        assert foreign_temp.read_bytes() == b"not owned"
+        assert (evals / "report.json").read_bytes() == report
+
+
+@pytest.mark.parametrize("failure", ["affected", "report"])
+def test_require_acceptance_table_preserves_receipts(tmp_path, repo, evals, capsys, failure):
+    _, shas = repo
+    evidence = lines(shas, evals)
+    if failure == "affected":
+        evidence["affected"] = evidence["affected"].replace("0 failed", "1 failed")
+    else:
+        evidence["evals"] = evidence["evals"].replace("10 not measured", "11 not measured")
+    text = body(evidence, "\n" + ACCEPTANCE_HEADING + ACCEPTANCE_TABLE)
+    legacy = run(tmp_path, text, shas["head"], evals, capsys)
+    assert legacy[0] == 1 and not legacy[1].out
+    assert run(tmp_path, text, shas["head"], evals, capsys, require_table=True) == legacy
+
+
+def test_require_acceptance_table_needs_handoff(tmp_path, capsys):
+    assert main(["evals", "--suite", "regression", "--require-acceptance-table", "--output", str(tmp_path)]) == 1
+    assert "--require-acceptance-table needs --check-handoff" in capsys.readouterr().err
+    assert not list(tmp_path.iterdir())
 
 
 def rejected(tmp_path, text, sha, evals, capsys, *reasons):
