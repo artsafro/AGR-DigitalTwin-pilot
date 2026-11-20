@@ -99,7 +99,7 @@ origin-independent). The failing pairs are 63B v006 and KPP1, where the accepted
   geometry, not native acceptance.
 - **Not measured.** Grid rotation, other cell sizes, held-out pairs, 63A, G22 k2/k3, rebuilds, packages, full suite.
 
-Receipts (committed, measured on Windows, LF): `autoresearch-body-mesh-grid-harness/R1.json`
+Receipts (committed; SHA-256 of the measured Windows CRLF files, git stores LF): `autoresearch-body-mesh-grid-harness/R1.json`
 `3d14e3c32951fd12…`, `R2.json` `756b38c25bc3d4b0…`, combined `grid.json` `1eb4ad7cdb1eac39…`. Logs and
 copies: `G:/Мой диск/AGR-evidence/ar15-body-mesh-grid/` (`SHA256SUMS.txt` sha256 `ec3c77adc651ad48…`).
 Measured at harness commit `6e9d0bbd` on base `82875426`. Wall time: R1 35.3 min, R2 41.8 min, run in parallel.
