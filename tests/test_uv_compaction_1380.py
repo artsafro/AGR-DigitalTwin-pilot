@@ -153,9 +153,11 @@ def test_no_delivery_changes():
     # The #1406 Ground site command pilot keeps its input and its JSON report in the job (not a delivery).
     # The #1410 MAF NPM-light proof keeps its spec and proof atlas list in the job (inputs, not deliveries).
     # The #1619 body-training hooks read their zone maps from the job (G22 palette, site-63 wall-type map; inputs).
+    # The #1619 tower 63B job keeps its source receipt and its wall-type map (inputs, not deliveries).
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json',
-          '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json')
+          '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json',
+          '/POLY63-B/sources.json', '/POLY63-B/zonemap63b.json')
     # #1614 moves large data of delivered jobs to the evidence store: a path listed in its job's EVIDENCE-MOVED.json
     # (sha256 + evidence copy) and the manifest itself are not delivery changes.
     moved = {r['path'] for m in (ROOT / 'jobs').glob('*/EVIDENCE-MOVED.json')

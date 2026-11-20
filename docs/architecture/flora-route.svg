@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3530 1044" width="3530" height="1044" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3530 1077" width="3530" height="1077" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3530" height="1044" fill="#ffffff"/>
+<rect x="10" y="-30" width="3530" height="1077" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
@@ -47,14 +47,14 @@
 <rect x="1660" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1660" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="1970" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="1930" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="1890" y1="275.62" x2="1930" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1930" y="170" width="230" height="211.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1890" y1="275.62" x2="1930" y2="275.62" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1930" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1930" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1930" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="2210" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="2160" y1="233.12" x2="2200" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="2160" y1="275.62" x2="2200" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="2200" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="2200" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2200" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
@@ -67,22 +67,25 @@
 <rect x="2470" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="2470" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2470" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2470" y="681.25" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2780" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="2740" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="2700" y1="254.38" x2="2740" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2740" y="170" width="230" height="211.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2700" y1="254.38" x2="2740" y2="275.63" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="2740" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="2740" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2740" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="2740" y="681.25" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2740" y="782.25" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2740" y="948.25" width="230" height="68.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="3050" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="3010" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="2970" y1="225.0" x2="3010" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3010" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2970" y1="275.62" x2="3010" y2="243.74" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="3010" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="3010" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="3010" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="3320" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="3280" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="3240" y1="225.0" x2="3280" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="3240" y1="243.75" x2="3280" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="3280" y="391.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="3280" y="511.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="3280" y="591.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
@@ -280,10 +283,14 @@
 </text>
 <text x="2045.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="17">8. Расстановка по</tspan>
-<tspan x="2045.0" dy="21.25">точкам СПОЗУ:</tspan>
-<tspan x="2045.0" dy="21.25">утопление 10 см,</tspan>
-<tspan x="2045.0" dy="21.25">поворот Z и масштаб</tspan>
-<tspan x="2045.0" dy="21.25">±10 %, сид записан</tspan>
+<tspan x="2045.0" dy="21.25">СПОЗУ: утопление 10</tspan>
+<tspan x="2045.0" dy="21.25">см, поворот Z и</tspan>
+<tspan x="2045.0" dy="21.25">масштаб ±10 %, сид</tspan>
+<tspan x="2045.0" dy="21.25">записан. Ватутино</tspan>
+<tspan x="2045.0" dy="21.25">v007: 4 915 растений</tspan>
+<tspan x="2045.0" dy="21.25">(flora-route-a-v004.md</tspan>
+<tspan x="2045.0" dy="21.25">); placement-report.md</tspan>
+<tspan x="2045.0" dy="21.25">— история v006</tspan>
 </text>
 <text x="2045.0" y="410.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="14">Команда:</tspan>
@@ -350,21 +357,36 @@
 <tspan x="2585.0" dy="14">Нет команды agr/dt</tspan>
 </text>
 <text x="2585.0" y="523.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2585.0" dy="14">Правила: D246, D210, D155,</tspan>
-<tspan x="2585.0" dy="17.5">D020</tspan>
+<tspan x="2585.0" dy="14">Правила: D246, D160, D210,</tspan>
+<tspan x="2585.0" dy="17.5">D155, D020</tspan>
 </text>
 <text x="2585.0" y="603.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="14">Контекст: Атлас Флоры из</tspan>
 <tspan x="2585.0" dy="17.5">расставленной сцены</tspan>
 </text>
+<text x="2585.0" y="691.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="13">⚠ ВПМ 4096: для pos15 отчёт</tspan>
+<tspan x="2585.0" dy="16.25">даёт 2 098 px/m, выше</tspan>
+<tspan x="2585.0" dy="16.25">диапазона V009 512–1 706</tspan>
+<tspan x="2585.0" dy="16.25">(D160); по UV FBX не</tspan>
+<tspan x="2585.0" dy="16.25">подтверждено. D246 разрешает</tspan>
+<tspan x="2585.0" dy="16.25">исключение только по нижней</tspan>
+<tspan x="2585.0" dy="16.25">границе для указанных мелких</tspan>
+<tspan x="2585.0" dy="16.25">кустов [D160, D246]</tspan>
+</text>
 <text x="2855.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="15">Агент</tspan>
 </text>
-<text x="2855.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2855.0" dy="17">11. Проверки на чтении</tspan>
-<tspan x="2855.0" dy="21.25">экспорта: размер, доля</tspan>
-<tspan x="2855.0" dy="21.25">70 000, список карт,</tspan>
-<tspan x="2855.0" dy="21.25">валидатор (FLO-01..17)</tspan>
+<text x="2855.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="17">11. agr validate</tspan>
+<tspan x="2855.0" dy="21.25">--scene не передаёт</tspan>
+<tspan x="2855.0" dy="21.25">ведомость: высота и</tspan>
+<tspan x="2855.0" dy="21.25">крона FLO-04 (V015)</tspan>
+<tspan x="2855.0" dy="21.25">для распознанной Флоры</tspan>
+<tspan x="2855.0" dy="21.25">в Ground FBX —</tspan>
+<tspan x="2855.0" dy="21.25">not_run. Доля Флоры 70</tspan>
+<tspan x="2855.0" dy="21.25">000 и список карт НПМ</tspan>
+<tspan x="2855.0" dy="21.25">— отдельные проверки</tspan>
 </text>
 <text x="2855.0" y="418.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="14">Команда:</tspan>
@@ -378,19 +400,36 @@
 <tspan x="2855.0" dy="17.5">приёмка</tspan>
 </text>
 <text x="2855.0" y="691.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2855.0" dy="13">⚠ Нет карты прозрачности —</tspan>
-<tspan x="2855.0" dy="16.25">review, конфликт C18 открыт;</tspan>
-<tspan x="2855.0" dy="16.25">7 из 17 строк FLO без</tspan>
-<tspan x="2855.0" dy="16.25">автопроверки</tspan>
+<tspan x="2855.0" dy="13">⚠ FLO-08: нет отдельной карты</tspan>
+<tspan x="2855.0" dy="16.25">прозрачности НПМ — review;</tspan>
+<tspan x="2855.0" dy="16.25">FLO-11: ручная проверка</tspan>
+<tspan x="2855.0" dy="16.25">прозрачности. C18 открыт</tspan>
+</text>
+<text x="2855.0" y="792.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="13">⚠ Ватутино: отдельная</tspan>
+<tspan x="2855.0" dy="16.25">диагностика по мешам до</tspan>
+<tspan x="2855.0" dy="16.25">слияния. Ведомость для V015</tspan>
+<tspan x="2855.0" dy="16.25">не заменяет ручные FLO-01,</tspan>
+<tspan x="2855.0" dy="16.25">FLO-02 (нет парсера</tspan>
+<tspan x="2855.0" dy="16.25">формулировок), FLO-03 и</tspan>
+<tspan x="2855.0" dy="16.25">сверку вида и цвета FLO-04</tspan>
+<tspan x="2855.0" dy="16.25">[D099]</tspan>
+</text>
+<text x="2855.0" y="958.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="13">⚠ Покрытие листа Флоры: 7 из</tspan>
+<tspan x="2855.0" dy="16.25">17 строк без автопроверки;</tspan>
+<tspan x="2855.0" dy="16.25">остальные покрыты частично</tspan>
 </text>
 <text x="3125.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3125.0" dy="15">Артём</tspan>
 </text>
-<text x="3125.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<text x="3125.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3125.0" dy="17">12. Артём: визуальный</tspan>
 <tspan x="3125.0" dy="21.25">шлюз — лист видов</tspan>
 <tspan x="3125.0" dy="21.25">(замены красным) и</tspan>
-<tspan x="3125.0" dy="21.25">расстановка</tspan>
+<tspan x="3125.0" dy="21.25">расстановка; для</tspan>
+<tspan x="3125.0" dy="21.25">Ватутино v007 приёмка</tspan>
+<tspan x="3125.0" dy="21.25">ожидается</tspan>
 </text>
 <text x="3125.0" y="427.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3125.0" dy="14">Нет команды agr/dt</tspan>
