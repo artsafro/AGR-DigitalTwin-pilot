@@ -1,5 +1,6 @@
 """Standing #35: short-edge density Qe on the frozen #31 Ground fixture (OBSERVE, read-only).
 
+new-case: docs/research/autoresearch-ground-short-edges-r35.py - research harness, OBSERVE only
 Contract: docs/research/autoresearch-ground-short-edges.md (frozen before this script ran).
 Replay: ../../.venv/Scripts/python.exe docs/research/autoresearch-ground-short-edges-r35.py C:/x/ev_t_f4f34f04/NEW.json
 """
