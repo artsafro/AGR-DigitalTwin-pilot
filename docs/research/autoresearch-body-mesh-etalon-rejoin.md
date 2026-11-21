@@ -19,3 +19,20 @@ Hash-check all six inputs before and after (JSON hashes from #25). Clean: post-r
 Replay: `../../.venv/Scripts/python.exe docs/research/autoresearch-body-mesh-etalon-rejoin-harness/replay.py C:/x/ev_1618 C:/x/ev_1619 NEW.json`.
 
 Budget: one confirmation of stored rejoin (#25) paired with its raw control, zero new candidates, three reads per pair; stop on one complete receipt, provenance/parity failure, or 3 minutes. No retuning, test deselection, weakened QA checks, changes to geometry, delivered packages, production code, or other cards’ files.
+
+## Round log
+
+**Итог OBSERVE: после диагностической сшивки в полосах эталона G22 осталось 4,73–8,10% от исходного числа треугольников.** Сравнение сырого NPM-экспорта с quad-мастером смешивает качество сетки с триангуляцией экспорта. Сшивка не доказывает, что оставшиеся треугольники были в редактируемом оригинале или являются дефектами. R3 не возвращаем; оценку и построители не меняли.
+
+| G22 | Raw triangles | Rejoined triangles | Median ratio | Paired spread |
+|---|---:|---:|---:|---:|
+| k1 | 95,473 | 7,733 | 8.10% | 0 |
+| k2 | 33,623 | 1,589 | 4.73% | 0 |
+| k3 | 33,929 | 1,873 | 5.52% | 0 |
+
+Worst median 0.08099672158620762 ≤ 0.10. Frozen before measurement in `ba769594`. Receipt [r26.json](autoresearch-body-mesh-etalon-rejoin-harness/r26.json) SHA-256 `c97ab1ff15280a9d0b2d30a56e1cc271deaff6e8ed10edddd3e211d3e0882649`; replay.py SHA-256 `aa6306f5717b46e851247dca9d5d596740bd98cc5b9f3a32398c71d2ad6200a3` (Git LF).
+
+- **Clean:** pre/post input hashes, exact vertex and indexed-face parity with #25, three identical paired reads in every band. Scorer tests: `../../.venv/Scripts/python.exe -m pytest -q --basetemp=C:/x/t_48e6edb8-pytest tests/qa/test_mesh_quality_score_1616.py` → 291 passed. First invocation without a private basetemp collided with concurrent guard pytest (290 passed, 1 setup error); full affected selection passed with isolated basetemp.
+- **Injected:** replace k1's expected NPZ hash with 64 zeros; `measure()` raises `ValueError: input hash mismatch` before reading geometry.
+- **Not measured:** fresh native readback, editable-source topology, role of residual triangles, new metric calibration on 63B/KPP1, builder changes or delivery checks.
+- **Would change:** require a representation check for the next local-penalty experiment. Do not exempt or penalize residual triangles as a class until their placement separates accepted G22 from rejected models.

@@ -1,0 +1,96 @@
+{
+  "variant": "#1618 cached rejoin ON vs OFF, cropped separately with #1619 band",
+  "worst_median_ratio": 0.08099672158620762,
+  "diagnostic_target": 0.1,
+  "meets_target": true,
+  "keep": false,
+  "rows": {
+    "k1": {
+      "npz": "g22_01/SM_Garibaldi_22_001_Main.npz",
+      "npz_sha256": "e7bb542f36ba390dc409145c04539b63785d0c0d26bc7ee67d20d79ba4ab5fbb",
+      "band": "r2/etalon_k1.mq.json",
+      "band_sha256": "413515339be03d1aa8eb88d23c487ce81f1605eced51d3b822d2919141acefb1",
+      "z_m": [
+        217.64,
+        262.64
+      ],
+      "pairs": [
+        {
+          "raw_triangles": 95473,
+          "rejoined_triangles": 7733,
+          "ratio": 0.08099672158620762
+        },
+        {
+          "raw_triangles": 95473,
+          "rejoined_triangles": 7733,
+          "ratio": 0.08099672158620762
+        },
+        {
+          "raw_triangles": 95473,
+          "rejoined_triangles": 7733,
+          "ratio": 0.08099672158620762
+        }
+      ],
+      "median_ratio": 0.08099672158620762,
+      "paired_spread": 0.0
+    },
+    "k2": {
+      "npz": "g22_02/SM_Garibaldi_22_002_Main.npz",
+      "npz_sha256": "79838f9ebf6783af3d22e3fb68a0b3f28a383ccc300d3e148493646ace28b802",
+      "band": "r4/etalon_k2.mq.json",
+      "band_sha256": "50df5fb7252078a3fc1edc9076b9e0043051f897bb3aa363b2014b404e6f8d0d",
+      "z_m": [
+        217.64,
+        244.64
+      ],
+      "pairs": [
+        {
+          "raw_triangles": 33623,
+          "rejoined_triangles": 1589,
+          "ratio": 0.04725931653927371
+        },
+        {
+          "raw_triangles": 33623,
+          "rejoined_triangles": 1589,
+          "ratio": 0.04725931653927371
+        },
+        {
+          "raw_triangles": 33623,
+          "rejoined_triangles": 1589,
+          "ratio": 0.04725931653927371
+        }
+      ],
+      "median_ratio": 0.04725931653927371,
+      "paired_spread": 0.0
+    },
+    "k3": {
+      "npz": "g22_02/SM_Garibaldi_22_003_Main.npz",
+      "npz_sha256": "2a42c8a80967df071bb8e237b5d729b7051b87a0a7c4abe888c8d6d6bad04a9c",
+      "band": "r1/etalon_k3.mq.json",
+      "band_sha256": "dc389b008673016871591e1cb42f151379b63aa2ffe271590c52b3009a7d4a13",
+      "z_m": [
+        217.64,
+        262.64
+      ],
+      "pairs": [
+        {
+          "raw_triangles": 33929,
+          "rejoined_triangles": 1873,
+          "ratio": 0.05520351321878039
+        },
+        {
+          "raw_triangles": 33929,
+          "rejoined_triangles": 1873,
+          "ratio": 0.05520351321878039
+        },
+        {
+          "raw_triangles": 33929,
+          "rejoined_triangles": 1873,
+          "ratio": 0.05520351321878039
+        }
+      ],
+      "median_ratio": 0.05520351321878039,
+      "paired_spread": 0.0
+    }
+  }
+}
