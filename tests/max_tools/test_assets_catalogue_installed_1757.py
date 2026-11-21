@@ -96,6 +96,8 @@ def test_configured_catalogue_overrides_the_shipped_snapshot(tmp_path, monkeypat
     assert _shown(core, lib, tmp_path / 'c1', published=acc) == [ACC, OLD]
     assert core.merge_settings({'published_catalogue': str(live)})['published_catalogue'] == str(live)
     assert core.merge_settings({})['published_catalogue'] == ''
+    for blank in ('', '   ', None):                                   # unset -> the shipped copy, never the repo
+        assert core.published_catalogue_path(blank) == core.PACKAGED_CATALOGUE
 
 
 @pytest.mark.parametrize('bad', ['missing', 'dir', 'garbage', 'empty'])
