@@ -20,9 +20,48 @@ from pathlib import Path
 from dt_ai.core.heights import export_z_check
 from dt_ai.geometry import ground_site as gs
 
-TOP_KEYS = {"site", "dxf", "boundary", "crop_box", "zero", "covers", "base_id", "relief", "params", "note", "unhatched"}
+TOP_KEYS = {"site", "dxf", "adapter", "adapter_empty", "boundary", "crop_box", "zero", "covers", "base_id", "relief", "params", "note",
+            "unhatched"}
 PARAMS = {"cell", "chord", "step", "snap", "relief_tol", "skirt_m", "tex_px", "footprint_min_area", "origin_xy",
-          "relief_extension"}
+          "relief_extension", "surfaces"}
+
+
+def adapter_sources(path: Path, spec: dict):
+    """Typed SPOZU adapter JSON (``adapters.cad.spozu`` output, e.g. Vatutino #295) -> boundary, covers, relief.
+
+    Cover rows: ``{"id", "name", "adapter_keys": [...], "colour": [r, g, b], "colour_reason"}``; the adapter has no
+    hatch colours, so the colour is always stated. An adapter covering not named by any row, or a key named twice
+    or missing, is an error naming it (no default cover)."""
+    from shapely.geometry import shape
+    d = json.loads(path.read_text(encoding="utf-8"))
+    cov = d.get("coverings") or {}
+    named: dict = {}
+    covers = []
+    for row in spec["covers"]:
+        keys = row.get("adapter_keys") or []
+        if not keys:
+            raise ValueError(f"cover {row.get('id')} {row.get('name')}: adapter_keys missing")
+        polys = []
+        for k in keys:
+            if k in named:
+                raise ValueError(f"adapter covering {k!r} named by covers {named[k]} and {row['id']}")
+            if k not in cov:
+                raise ValueError(f"adapter covering {k!r} not in {path.name}")
+            named[k] = row["id"]
+            g = shape(cov[k]["geometry"])
+            polys += list(getattr(g, "geoms", [g]))
+        if "colour" not in row or not str(row.get("colour_reason", "")).strip():
+            raise ValueError(f"cover {row['id']} {row['name']}: adapter covers need a stated colour + colour_reason")
+        covers.append(gs.Cover(int(row["id"]), row["name"], polys, tuple(row["colour"]), "spec",
+                               [{"adapter_key": k} for k in keys]))
+    left = sorted(set(cov) - set(named) - set(spec.get("adapter_empty") or []))
+    if left:
+        raise ValueError(f"adapter coverings {left} are not mapped to a cover ID")
+    for k in spec.get("adapter_empty") or []:
+        if k in named or k not in cov or not shape(cov[k]["geometry"]).is_empty:
+            raise ValueError(f"adapter_empty {k!r} must be an unmapped adapter covering with empty geometry")
+    relief = [(e["x"], e["y"], e["z"]) for e in d["elevations"]]
+    return shape(d["boundary"]), covers, relief
 
 
 def run(spec_path: Path, out: Path) -> int:
@@ -31,10 +70,16 @@ def run(spec_path: Path, out: Path) -> int:
     unknown = set(spec) - TOP_KEYS
     if unknown:
         raise ValueError(f"unknown spec keys {sorted(unknown)}")
-    for key in ("site", "dxf", "boundary", "zero", "covers", "base_id", "relief"):
+    for key in ("site", "zero", "covers", "base_id"):
         if key not in spec:
             raise ValueError(f"spec misses {key!r}" + (" (take it from the project or ask, D293)"
                                                         if key == "zero" else ""))
+    if ("dxf" in spec) == ("adapter" in spec):
+        raise ValueError("spec needs exactly one source: 'dxf' (hatches) or 'adapter' (typed SPOZU JSON)")
+    if "dxf" in spec:
+        for key in ("boundary", "relief"):
+            if key not in spec:
+                raise ValueError(f"spec misses {key!r}")
     params = spec.get("params") or {}
     if set(params) - PARAMS:
         raise ValueError(f"unknown params {sorted(set(params) - PARAMS)}")
@@ -44,7 +89,7 @@ def run(spec_path: Path, out: Path) -> int:
     zero = spec["zero"]
     if not isinstance(zero, dict) or not str(zero.get("source", "")).strip():
         raise ValueError("zero needs project_zero_m and source (from the project or the agent asks, D293)")
-    dxf = Path(spec["dxf"]["path"])
+    dxf = Path((spec.get("dxf") or spec.get("adapter"))["path"])
     if not spec_path.is_absolute():
         spec_path = spec_path.resolve()
     inputs = {spec_path.resolve(), dxf.resolve()}
@@ -54,15 +99,19 @@ def run(spec_path: Path, out: Path) -> int:
     if out_r.exists() or partial.exists():
         raise ValueError(f"output {out} (or its .partial) exists: give a new versioned path")
     digest = gs.sha256(dxf)
-    if digest != spec["dxf"].get("sha256"):
-        raise ValueError(f"DXF sha256 {digest} != spec {spec['dxf'].get('sha256')}")
+    want = (spec.get("dxf") or spec.get("adapter")).get("sha256")
+    if digest != want:
+        raise ValueError(f"source sha256 {digest} != spec {want}")
 
-    import ezdxf
-    doc = ezdxf.readfile(str(dxf))
     chord = float(params.get("chord", 0.02))
-    boundary = gs.boundary_from_dxf(doc, spec["boundary"]["handle"])
-    covers = gs.covers_from_dxf(doc, spec["covers"], max(chord, 0.002))
-    relief = gs.relief_from_dxf(doc, spec["relief"])
+    if "adapter" in spec:
+        boundary, covers, relief = adapter_sources(dxf, spec)
+    else:
+        import ezdxf
+        doc = ezdxf.readfile(str(dxf))
+        boundary = gs.boundary_from_dxf(doc, spec["boundary"]["handle"])
+        covers = gs.covers_from_dxf(doc, spec["covers"], max(chord, 0.002))
+        relief = gs.relief_from_dxf(doc, spec["relief"])
     kw = {k: params[k] for k in params if k in PARAMS and k != "origin_xy"}
     result = gs.build_site(boundary, covers, spec["base_id"], relief, zero["project_zero_m"],
                            origin_xy=params.get("origin_xy"), crop_box=spec.get("crop_box"),
@@ -81,6 +130,16 @@ def run(spec_path: Path, out: Path) -> int:
                  f"local XY = source - {rep['stages']['sources']['origin_xy_m']}; Z = mark - {zero['project_zero_m']}")
     back = gs.read_obj(partial / f"{prefix}.obj")
     rep["readback"] = {k: v for k, v in back.items() if k not in ("z_values", "points")}
+    skirt_m = float(params.get("skirt_m", 1.0))
+    rep["skirt_export_check"] = gs.skirt_check_export(partial / f"{prefix}.obj", skirt_m)
+    if rep["skirt_export_check"]["status"] != "pass":
+        rep["findings"].append(f"export skirt: {rep['skirt_export_check']['gap_count']} outer edges without a "
+                               f">= {skirt_m} m skirt (GND-03)")
+    from dt_ai.ops.inv_xview import mesh_report
+    xv = mesh_report(result.mesh.verts, result.mesh.faces, profile="NPM-GROUND", part=prefix)
+    rep["xview"] = {k: xv[k] for k in ("passed", "vertex_pairs", "face_pairs", "thresholds")}
+    if not xv["passed"]:
+        rep["findings"].append(f"xView: {xv['vertex_pairs']} near vertex pairs / {xv['face_pairs']} face pairs")
     origin_xy = rep["stages"]["sources"]["origin_xy_m"]
     rep["project_zero_check"] = export_z_check(zero["project_zero_m"], 0.0, gs.ground_points(back, origin_xy),
                                                gs.relief_z_at(relief, gs.relief_margin(

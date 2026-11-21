@@ -1,0 +1,5 @@
+{
+  "scenario": "ground-npm",
+  "config": {"sources": "tests/fixtures/ground_1738/sil13-shared.json"},
+  "hooks": []
+}
