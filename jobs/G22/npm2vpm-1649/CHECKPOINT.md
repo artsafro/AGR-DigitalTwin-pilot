@@ -1,5 +1,42 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
+## v015 — scoped opacity and geometry readback
+
+The §12.3 decision (orchestrator on t_2692a5c8, 2026-11-21 01:32)
+was applied only to the three evidenced source triangles: mesh001/106249,
+mesh002/32708, and mesh003/1132. The headless Blender 5.1.2 copy retains each
+front triangle and adds one flipped back triangle, 8 mm behind it. Fresh
+native readback verified lineage, offset and source UV correspondence. The
+six 4096² Diffuse RGBA witness maps preserve source opacity on new isometric
+520 px/m UVs, including texels on both sides of alpha 128. These are raster
+witnesses, not final tiles or an exemption for other opacity-bearing faces.
+
+A drop-only control on mesh002 reproduced the two bow-ties after removing
+68903 and 69759. They were not introduced by alpha backs. Noding the adjacent
+edges of source faces 68904 and 69760 closes the fans; no original vertex
+moves. The existing middle vertices are 0.021 and 0.026 mm from the respective
+long edges in the metre-local frame. The same frame measures small nonzero
+areas on the dropped slivers, in contrast to the translated float32 world
+coordinates used by the original exact-zero test. The drop authorization is
+for those specific source indices only. The copied scenes now read back at
+356/0/2, 0/0/0 and 7/0/0 (xView face selections / near vertices / bow-ties).
+The 33 targeted pairs remain clear; the raw FAIL is retained.
+
+The shared cell replay returned 0 residuals for the 147893 / 73137 / 51146
+non-placeholder input faces using the v005 measured layout. This is source
+coverage, not a final UV/ID assignment on the complete output mesh. Final
+seams, tile allocation, Multi/Sub, exported FBX readback and Checker are open.
+The authorized source manifest contains 32 verified FBX/PNG files and no
+GeoJSON. The VPM ZIP and package Checker require project-authorized GeoJSON
+for the _01/_02 deliverables; don't invent placement or required attributes.
+
+Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v015-opacity-readback/`
+(32 files; manifest SHA-256
+`332bf5d18a77fe6992d7c9e9ecc48fdc0f825fd7c50b0fc7a6fb1dccbeb93a9d`). The
+resume inputs are `opacity-01.blend` and `stitched-02.blend`. The Russian sheet
+`g22-v015-sheet.png`, provisional ID table, native xView and removal/cut controls
+are in the same directory. No client asset is tracked in Git.
+
 **v013 — all 33 tracked seam pairs are clear on the repaired copy.**
 The original VPM-OKS xView thresholds report 356 face selections, 0 close
 vertices and 2 bow-ties versus 370 / 0 / 4 on the source. The two bow-ties are
