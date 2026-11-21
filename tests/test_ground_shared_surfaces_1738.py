@@ -180,6 +180,45 @@ def test_export_skirt_check_ngon_fan_wall_counts_and_outer_rings(tmp_path):
         gs.skirt_check_export(q, 1.0, rings="inner")
 
 
+def _segmented_wall_obj(path, drop_quads=(), size=10.0, segs=4, depth=1.5):
+    """10x10 top (2 tris) + walls of ``segs`` quads per edge; ``drop_quads`` = {(edge, seg)} left out (#1738 r1 P1-1)."""
+    corners = [(0.0, 0.0), (size, 0.0), (size, size), (0.0, size)]  # CCW, top normal +z
+    lines = [f"v {x} {y} 0" for x, y in corners] + ["f 1 2 3", "f 1 3 4"]
+    nv = 4
+    for e in range(4):
+        (x0, y0), (x1, y1) = corners[e], corners[(e + 1) % 4]
+        for k in range(segs):
+            if (e, k) in drop_quads:
+                continue
+            a = (x0 + (x1 - x0) * k / segs, y0 + (y1 - y0) * k / segs)
+            b = (x0 + (x1 - x0) * (k + 1) / segs, y0 + (y1 - y0) * (k + 1) / segs)
+            lines += [f"v {a[0]} {a[1]} 0", f"v {b[0]} {b[1]} 0", f"v {b[0]} {b[1]} {-depth}", f"v {a[0]} {a[1]} {-depth}"]
+            lines += [f"f {nv + 1} {nv + 4} {nv + 3}", f"f {nv + 1} {nv + 3} {nv + 2}"]
+            nv += 4
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def test_export_skirt_check_segmented_full_wall_passes(tmp_path):
+    r = gs.skirt_check_export(_segmented_wall_obj(tmp_path / "full.obj"), 1.0)
+    assert r["status"] == "pass" and r["gap_count"] == 0 and r["min_drop_m"] == pytest.approx(1.5)
+
+
+@pytest.mark.parametrize("edge,seg", [(e, k) for e in range(4) for k in range(4)])
+def test_export_skirt_check_any_removed_quad_fails(tmp_path, edge, seg):
+    """r1 P1-1: a missing wall quad between the sampled points must not pass."""
+    r = gs.skirt_check_export(_segmented_wall_obj(tmp_path / "gap.obj", {(edge, seg)}), 1.0)
+    assert r["status"] == "fail" and r["gap_count"] >= 1
+
+
+def test_export_skirt_check_shallow_station_inside_edge_fails(tmp_path):
+    """Wall vertices raised to 0.5 m depth at s = 7.5 m (off the old 3 sample points) must fail at that station."""
+    p = _segmented_wall_obj(tmp_path / "s.obj")
+    txt = p.read_text(encoding="utf-8").replace("v 7.5 0.0 -1.5", "v 7.5 0.0 -0.5")
+    p.write_text(txt, encoding="utf-8")
+    assert gs.skirt_check_export(p, 1.0)["status"] == "fail"
+
+
 def _relief(w, h, n=6, margin=1.0):
     pts = []
     for i in range(n):
