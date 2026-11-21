@@ -1,0 +1,529 @@
+{
+  "ar19_revision": "987f418a237e5931d695c278bcca177c789de3da",
+  "ar21_revision": "d802aa8c0e72b7c73e560a049c0f3cd0f8c545b6",
+  "inputs": {
+    "63C-v002": {
+      "source_sha256": "462ba61b2c379de53a72667635fd0714703764b2409407cc67ff28d8684de1da",
+      "dump_sha256": [
+        "19ee7c2046e37a5eeff76522a4b62a3f468f4fb02f1fd210cf912a8b2274ae7e",
+        "19ee7c2046e37a5eeff76522a4b62a3f468f4fb02f1fd210cf912a8b2274ae7e",
+        "19ee7c2046e37a5eeff76522a4b62a3f468f4fb02f1fd210cf912a8b2274ae7e"
+      ],
+      "label": "accepted",
+      "args": {
+        "zones": [],
+        "exclude_zones": []
+      }
+    },
+    "63C-v001": {
+      "source_sha256": "dcbfc39d5ceed7146c2cb280c727a5755cfec8704a602d34d0f6efce481d2526",
+      "dump_sha256": [
+        "d8e64e2a54a66b2b1b377ae4e9c1b2f21ac3e53deadd26e25f361631e88197a7",
+        "d8e64e2a54a66b2b1b377ae4e9c1b2f21ac3e53deadd26e25f361631e88197a7",
+        "d8e64e2a54a66b2b1b377ae4e9c1b2f21ac3e53deadd26e25f361631e88197a7"
+      ],
+      "label": "rejected",
+      "args": {
+        "zones": [],
+        "exclude_zones": []
+      }
+    }
+  },
+  "scores": {
+    "63C-v002": {
+      "R0": [
+        83.906,
+        83.906,
+        83.906
+      ],
+      "R3": [
+        83.906,
+        83.906,
+        83.906
+      ],
+      "local": 0.0
+    },
+    "63C-v001": {
+      "R0": [
+        83.479,
+        83.479,
+        83.479
+      ],
+      "R3": [
+        80.549,
+        80.549,
+        80.549
+      ],
+      "local": 0.440921
+    }
+  },
+  "replay_sha256": "bbf598a2627fd4908e7cb5bba14871967cc30008bd012a3fcf3e8758987f49d7",
+  "r3_sink_sha256": "8c4fe03a7ddd57ad9c6e3c47a8788d953cbfd95fe3284b20c3fb0b66261eb8e7",
+  "spliced_harness_sha256": "ef864ce6f7a502fb0f99a23b5f2ed94a6fdc213b3d242dbbd5d15fbb96541dc1",
+  "accepted": {
+    "seed_count": 0,
+    "seed_area_m2": 0.0,
+    "excluded_count": 0,
+    "excluded_area_m2": 0.0,
+    "excluded_pct": null,
+    "survivors": [],
+    "top_patches": []
+  },
+  "rejected": {
+    "seed_count": 176,
+    "seed_area_m2": 154.46819036972144,
+    "excluded_count": 176,
+    "excluded_area_m2": 154.46819036972144,
+    "excluded_pct": 100.0,
+    "survivors": [],
+    "top_patches": [
+      {
+        "seed": 270,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          12.1
+        ],
+        "normal": [
+          0.0,
+          -0.0,
+          -1.0
+        ],
+        "corners_deg": [
+          48.147,
+          131.869,
+          89.984,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            12.099983,
+            12.099984
+          ]
+        ]
+      },
+      {
+        "seed": 645,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          15.25
+        ],
+        "normal": [
+          -0.0,
+          0.0,
+          -1.0
+        ],
+        "corners_deg": [
+          48.147,
+          131.869,
+          89.984,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            15.249984,
+            15.249984
+          ]
+        ]
+      },
+      {
+        "seed": 267,
+        "local": 0.440921,
+        "patch_faces": 3,
+        "patch_area": 3.1427,
+        "seed_area": 1.5269,
+        "centroid": [
+          7.714,
+          102.279,
+          10.13
+        ],
+        "normal": [
+          -0.0,
+          0.0,
+          1.0
+        ],
+        "corners_deg": [
+          90.0,
+          48.147,
+          131.853,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.208794,
+            8.172899
+          ],
+          [
+            100.838898,
+            103.408936
+          ],
+          [
+            10.129983,
+            10.129984
+          ]
+        ]
+      },
+      {
+        "seed": 269,
+        "local": 0.440921,
+        "patch_faces": 3,
+        "patch_area": 3.1427,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          10.13
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "corners_deg": [
+          48.147,
+          90.0,
+          89.984,
+          131.869
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            10.129984,
+            10.129984
+          ]
+        ]
+      },
+      {
+        "seed": 1020,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          18.4
+        ],
+        "normal": [
+          -0.0,
+          0.0,
+          -1.0
+        ],
+        "corners_deg": [
+          48.147,
+          131.869,
+          89.984,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            18.399984,
+            18.399984
+          ]
+        ]
+      },
+      {
+        "seed": 1395,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          21.55
+        ],
+        "normal": [
+          -0.0,
+          0.0,
+          -1.0
+        ],
+        "corners_deg": [
+          48.147,
+          131.869,
+          89.984,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            21.549984,
+            21.549984
+          ]
+        ]
+      },
+      {
+        "seed": 1770,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          24.7
+        ],
+        "normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "corners_deg": [
+          48.147,
+          131.869,
+          89.984,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            24.699984,
+            24.699984
+          ]
+        ]
+      },
+      {
+        "seed": 2145,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          27.85
+        ],
+        "normal": [
+          -0.0,
+          0.0,
+          -1.0
+        ],
+        "corners_deg": [
+          48.147,
+          131.869,
+          89.984,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            27.849983,
+            27.849983
+          ]
+        ]
+      },
+      {
+        "seed": 2520,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          31.0
+        ],
+        "normal": [
+          -0.0,
+          0.0,
+          -1.0
+        ],
+        "corners_deg": [
+          48.147,
+          131.869,
+          89.984,
+          90.0
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            30.999983,
+            30.999983
+          ]
+        ]
+      },
+      {
+        "seed": 644,
+        "local": 0.440921,
+        "patch_faces": 4,
+        "patch_area": 3.9118,
+        "seed_area": 0.2368,
+        "centroid": [
+          8.041,
+          101.206,
+          13.28
+        ],
+        "normal": [
+          -0.0,
+          0.0,
+          1.0
+        ],
+        "corners_deg": [
+          48.147,
+          90.0,
+          89.984,
+          131.869
+        ],
+        "triangle": false,
+        "element": "SM_Body_Main",
+        "vertex_count": 4,
+        "bounds_m": [
+          [
+            7.5715,
+            8.222894
+          ],
+          [
+            100.838898,
+            101.561943
+          ],
+          [
+            13.279984,
+            13.279984
+          ]
+        ]
+      }
+    ]
+  },
+  "excluded_pct_runs": [
+    100.0,
+    100.0,
+    100.0
+  ],
+  "median_pct": 100.0,
+  "spread_pp": 0.0,
+  "accepted_near_top_rejected_seed": [
+    {
+      "element": "SM_Body_Main",
+      "face": 270,
+      "bounds_m": [
+        [
+          7.208795,
+          7.731637
+        ],
+        [
+          101.417374,
+          103.343185
+        ],
+        [
+          12.099983,
+          12.099983
+        ]
+      ],
+      "vertex_count": 4
+    }
+  ],
+  "keep": false,
+  "clean": [
+    "hashes",
+    "R0/R3 #17 parity",
+    "neutral sink and repeatability",
+    "clean/reset",
+    "R6 predicate witness"
+  ],
+  "injected": [
+    "skew #19 witness"
+  ],
+  "not_measured": [
+    "native readback",
+    "design attribution",
+    "full calibration",
+    "independent holdouts",
+    "body builders",
+    "delivery QA"
+  ]
+}
