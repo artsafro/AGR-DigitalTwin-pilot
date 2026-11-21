@@ -22,3 +22,17 @@ returns one instance per SPOZU point or a `failed` record with its code, plus fi
   degrees counter-clockwise; scale 1.
 - Status `fail` on any failed point or broken input (seed, Ground, library) [D108]; `review` on bottom faces
   to review or warnings; otherwise `pass`. `report_json` gives byte-identical output for the same inputs.
+
+## `vpm_readback.py` — NPM -> VPM placement readback (#1731)
+
+Pure gate of the VPM assembly step, run before the VPM export: every placed MAF / Flora instance's VPM world
+position must equal its accepted NPM position minus the package pivot [D018], deviation strictly below
+`TOL_M` = 1 cm (exactly 1 cm fails). `check` takes a labelled scene (`{handle: position}`); `check_points`
+an unlabelled one (loose-part centres of the joined VPM Ground; each scene point matches one handle at most,
+unmatched Ground parts are counted). Offenders carry a diagnosis: `pivot subtracted twice`,
+`pivot not subtracted`, `off`, `missing in scene`. Empty input, non-finite values, a bad pivot / tolerance,
+duplicate or extra handles fail. Rotation and SPOZU placement are out of scope.
+
+Blender reader / pre-export hook: `tools/blender/vpm_placement_readback.py` (`check_before_export`, CLI modes
+`objects` and `parts`). It calls `view_layer.update()` before every read: `matrix_world` is the identity right
+after a library append, which made Staropetrovskiy VPM v001 subtract the pivot twice.

@@ -9,8 +9,8 @@
     blender --background --factory-startup --python-exit-code 1 \
         --python tools/blender/fbx_readback.py -- <model.fbx> <report.json>
 
-Readback facts only; it does not judge the delivery (twinqa.scene does) and never writes
-the source. Exit 2 when the file imports but holds no non-empty mesh.
+Readback facts only; it does not judge the delivery (twinqa.scene does). The report path
+must be new and cannot alias the input. Exit 2 when the file imports but holds no non-empty mesh.
 """
 import hashlib
 import importlib.util
@@ -43,7 +43,9 @@ surface_facts = _maf.surface_facts
 args = sys.argv[sys.argv.index("--") + 1:]
 if len(args) != 2:
     raise SystemExit("usage: ... -- <model.fbx> <report.json>")
-source, out = Path(args[0]).resolve(), Path(args[1]).resolve()
+source, out = Path(args[0]).resolve(), Path(args[1])
+if out.resolve() == source or out.exists() or out.is_symlink():
+    raise FileExistsError(f"readback report path must be new and distinct from the input: {out}")
 
 
 def _loop_normals(mesh):
@@ -103,7 +105,8 @@ def mesh_facts(obj):
         "materials": [s.material.name if s.material else None for s in obj.material_slots],
         "udim_tiles": [],
         "mirrored_uv_triangles": 0,
-        "face_geometry": {"vertices": [[round(float(point[i]), 6) for i in range(3)] for point in world],
+        # Keep native coordinate precision: SINTEZ compares UV and 3D thinness on each face.
+        "face_geometry": {"vertices": [list(point) for point in world],
                           "polygons": [list(poly.vertices) for poly in mesh.polygons],
                           # material name of each polygon's slot (same order as polygons); None = no material
                           "polygon_material": [obj.material_slots[poly.material_index].material.name
@@ -116,7 +119,7 @@ def mesh_facts(obj):
         # Per-vertex UV stays one pair per vertex (first loop) for mirrored-island / UDIM
         # consumers. polygon_uv is one [u, v] per corner, same order as polygons, so a seam
         # that reuses a vertex keeps every loop. A non-finite loop UV aborts readback.
-        per_vertex = [None] * len(mesh.vertices)
+        per_vertex: list[list[float] | None] = [None] * len(mesh.vertices)
         polygon_uv = []
         for poly in mesh.polygons:
             corners = []
@@ -126,10 +129,12 @@ def mesh_facts(obj):
                 u, v = float(pair.x), float(pair.y)
                 if not math.isfinite(u) or not math.isfinite(v):
                     raise ValueError(f"non-finite UV coordinates: {obj.name} vertex {vert_index}")
-                rounded = [round(u, 6), round(v, 6)]
-                corners.append(rounded)
+                # Python floats round-trip Blender's float32 values through JSON without
+                # the decimal rounding that can turn collapsed UVs into non-zero areas.
+                corner = [u, v]
+                corners.append(corner)
                 if per_vertex[vert_index] is None:
-                    per_vertex[vert_index] = rounded
+                    per_vertex[vert_index] = corner
             polygon_uv.append(corners)
         facts["face_geometry"]["uv"] = per_vertex
         facts["face_geometry"]["polygon_uv"] = polygon_uv
@@ -275,7 +280,10 @@ try:
 except Exception as exc:  # report, never hide
     report["error"] = f"{type(exc).__name__}: {exc}"
 out.parent.mkdir(parents=True, exist_ok=True)
-out.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+payload = json.dumps(report, ensure_ascii=False)
+# Refuse a report or input hardlink created after the preflight as well.
+with out.open("x", encoding="utf-8") as report_file:
+    report_file.write(payload)
 print("TWINQA_READBACK", report["readback_ok"])
 if not report["readback_ok"]:
     sys.exit(2)

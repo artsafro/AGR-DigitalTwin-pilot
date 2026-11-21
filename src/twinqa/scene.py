@@ -29,6 +29,7 @@ from twinqa.geometry.ucx_audit import (
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
+from twinqa.sintez_uv import duplicate_vertex_finding, uv_findings as sintez_uv_findings
 from twinqa.uv import (DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, UdimDomainError, _density_finding, edge_densities,
                        udim_of)
 
@@ -1960,6 +1961,11 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V008"].append(_f("fail" if mirrored else "pass", "mirrored islands", f"{src}: {mirrored or 'none'}", "no mirrored UV", [31], src))
         if glass:
             out["V008"].append(_f("fail", "glass tile", f"{src}: {glass}", "glass only in UDIM 1001", [31, 32], src))
+        # V008/V009 per polygon with SINTEZ 1.6.1 rules (#1732): mirrored, out of tile, unwrapped, density
+        side_of = (lambda tile, material: _tile_side(diffuse_px, tile, material)) if diffuse_px else None
+        for stage_id, found in sintez_uv_findings([m for m in meshes if m not in ucx], "vpm", src, side_of,
+                                                  GLASS_SUFFIXES).items():
+            out[stage_id].extend(found)
         # V009: texel density 512..1706 px/m (reg p.31-32 §6, [D160]); diffuse side per tile from the archive
         placeholder = profile.get("textures", {}).get("flat_placeholder", {}).get("size_px")
         out["V009"].extend(_texel_density_findings(rb, meshes, ucx, src, diffuse_px, placeholder))
@@ -1971,6 +1977,11 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                               "reg p.32-33, p.55", [32, 33, 55], src))
 
     if kind == "npm":
+        if role != "light":
+            # SINTEZ 1.6.1 recommendations (#1732): unwrapped UV polygons (4.1.3), 1..100 doubles (2.3.7)
+            geometry = [m for m in meshes if m not in ucx]
+            out["V004"].extend(sintez_uv_findings(geometry, "npm", src)["V004"])
+            out["V004"].append(duplicate_vertex_finding(geometry, src))
         # V006: textures embedded in the FBX (reg p.9 §5.1); pixel rules need the PNG bytes
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",

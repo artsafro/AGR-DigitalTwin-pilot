@@ -212,14 +212,18 @@ def test_missing_or_failed_surface_is_not_run():
     assert {f.name: f.status for f in found} == {"MAF smoothing": "not_run", "MAF flipped normals": "not_run"}
 
 
+NPM_V004 = ["applied transforms", "topology defects", "co-directional clearance",
+            "unwrapped UV polygons", "duplicate vertices"]  # last two: SINTEZ 1.6.1 parity (#1732)
+
+
 def test_oks_glass_and_ucx_skip_maf_surface_findings():
     item = groundel(surface_facts(*box_mesh(shading="soft")))
     oks = scene_findings(rb(item), "npm", "oks", PROFILES.npm)
-    assert [f.name for f in oks["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
+    assert [f.name for f in oks["V004"]] == NPM_V004
     glass = scene_findings(rb(mesh(name="SM_Test_GroundElGlass")), "npm", "ground", PROFILES.npm)
-    assert [f.name for f in glass["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
+    assert [f.name for f in glass["V004"]] == NPM_V004
     ucx = scene_findings(rb(mesh(name="UCX_SM_Test_GroundEl")), "npm", "ground", PROFILES.npm)
-    assert [f.name for f in ucx["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
+    assert [f.name for f in ucx["V004"]] == NPM_V004
 
 
 def _dimension(bounds, sizes=SPEC, present=True):
@@ -654,3 +658,48 @@ def test_1716_unreadable_or_mixed_readback(monkeypatch, tmp_path):
     vp.add_scene(st, "npm", PROFILES.npm, {GROUND_FBX: b"synthetic"}, [])
     assert all(f.name != DIM for f in st["V004"].findings)
     assert any(f.status == "fail" and f.name == "FBX readback" for f in st["V003"].findings)
+
+
+@pytest.mark.parametrize("name, kwargs, size, expected", [
+    ("SM_Test_GroundEl", {"maf_sizes": {}}, [1.5, 0.6, 0.8], "not_run"),
+    ("SM_Test_GroundEl", {}, [1.5, 0.6, 0.8], None),
+    ("SM_Test_GroundEl", {"maf_sizes": None}, [1.5, 0.6, 0.8], None),
+    ("SM_Test_GroundEl", {"maf_sizes": SPEC}, [1.5, 0.6, 0.8], "pass"),
+    ("SM_Test_GroundEl", {"maf_sizes": SPEC}, [1.5, 0.6, 0.901], "fail"),
+    ("SM_Test_Ground", {"maf_sizes": {}}, [1.5, 0.6, 0.8], None),
+], ids=["empty-maf", "omitted", "none", "fits", "oversize", "empty-no-maf"])
+def test_dimensions_schedule_coverage(name, kwargs, size, expected):
+    item = _sized(mesh(name=name), size)
+    rows = [f for f in maf_findings([item], "ground", "a.fbx", **kwargs) if f.name == DIM]
+    assert [(f.status, f.observed) for f in rows] == {
+        None: [],
+        "not_run": [("not_run", "a.fbx: dimension check did not run: supplied MAF schedule has no rows")],
+        "pass": [("pass", "a.fbx: all 1 within 0.1 m")],
+        "fail": [("fail", f"a.fbx: {name}: plan 0.000 0.000 Z 0.101")],
+    }[expected]
+
+
+def test_empty_maf_schedule_probe():
+    # Exhaust all ordered inventories up to length 3, including repeat names,
+    # excluded lookalikes and mixed inventories, without using the core's classifier.
+    names = ("SM_A_GroundEl", "SM_B_GroundEl", "UCX_SM_A_GroundEl", "SM_A_GroundElGlass", "SM_A_Flora")
+    for count in range(4):
+        for picked in itertools.product(names, repeat=count):
+            meshes = [mesh(name=name) for name in picked]
+            expected = ["not_run"] if any(name in names[:2] for name in picked) else []
+            for role in ("ground", "oks"):
+                assert [f.status for f in maf_findings(meshes, role, "a.fbx", maf_sizes={})
+                        if f.name == DIM] == expected, (picked, role)
+
+
+def test_package_empty_maf_schedule_disclosed_once(monkeypatch, tmp_path):
+    def wrap(core):
+        return lambda *args, **kwargs: core(*args, maf_sizes={}, **kwargs)
+
+    item = _sized(groundel(surface_facts(*box_mesh())), [1.5, 0.6, 0.8])
+    report, v004 = _package_v004(monkeypatch, tmp_path, {GROUND_FBX: [item]}, wrap=wrap)
+    rows = [f for f in v004.findings if f.name == DIM]
+    assert [(f.status, f.observed) for f in rows] == [
+        ("not_run", f"{GROUND_FBX}: dimension check did not run: supplied MAF schedule has no rows"),
+    ]
+    assert report.passed is False

@@ -1,0 +1,336 @@
+{
+ "schema": "agr.verifier/1",
+ "job": "jobs/KPP1/verifier-1739",
+ "mode": "observe",
+ "round": 1,
+ "edits_model": false,
+ "role": "confirm-only: the VLM confirms; positions and counts come from geometry and drawing vectors (CrossProjection)",
+ "inputs": {
+  "renders": "C:/x/ev_t_317d654d/kpp1/views",
+  "slide": "C:/x/ev_1609/s4/kpp1-v003-vs-v004w9-corners-tex-npm.png",
+  "views": [
+   "vpm_south",
+   "vpm_north",
+   "vpm_east",
+   "vpm_west",
+   "vpm_iso",
+   "npm_iso"
+  ],
+  "facades": {
+   "south": "S",
+   "north": "N",
+   "east": "E",
+   "west": "W"
+  }
+ },
+ "vlm": {
+  "model": "sonnet",
+  "cost_usd": 0.2235,
+  "duration_s": 37.1,
+  "models": [
+   "claude-sonnet-5-5"
+  ]
+ },
+ "checklist": {
+  "variant": "A",
+  "items": [
+   {
+    "id": "A01",
+    "category": "panel_color",
+    "facade": "all",
+    "question": "The ribbed panel field has the colour shown on the slide on every facade."
+   },
+   {
+    "id": "A02",
+    "category": "frame_color",
+    "facade": "all",
+    "question": "The band/frame around the panel field (corners, top and bottom edging) has the colour shown on the slide."
+   },
+   {
+    "id": "A03",
+    "category": "plinth_color",
+    "facade": "all",
+    "question": "The plinth/base at and below the ground line (red line in the renders) has the colour shown on the slide."
+   },
+   {
+    "id": "A04",
+    "category": "rib_count",
+    "facade": "N",
+    "question": "Facade N: the number of vertical ribs/seams equals the slide (within 10 %)."
+   },
+   {
+    "id": "A05",
+    "category": "rib_count",
+    "facade": "S",
+    "question": "Facade S: the number of vertical ribs/seams equals the slide (within 10 %)."
+   },
+   {
+    "id": "A06",
+    "category": "rib_count",
+    "facade": "W",
+    "question": "Facade W: the number of vertical ribs/seams equals the slide (within 10 %)."
+   },
+   {
+    "id": "A07",
+    "category": "rib_count",
+    "facade": "E",
+    "question": "Facade E: the number of vertical ribs/seams equals the slide (within 10 %)."
+   },
+   {
+    "id": "A08",
+    "category": "field_outline",
+    "facade": "all",
+    "question": "A thin dark outline runs along the edge of the panel field, as on the slide."
+   },
+   {
+    "id": "A09",
+    "category": "door",
+    "facade": "all",
+    "question": "Doors: same facade, position, size and colour as on the slide (none if the slide has none)."
+   },
+   {
+    "id": "A10",
+    "category": "windows",
+    "facade": "all",
+    "question": "Windows: same facade, position, size, frame colour as on the slide (none if none)."
+   },
+   {
+    "id": "A11",
+    "category": "no_extra",
+    "facade": "all",
+    "question": "No element, seam, hole, missing face or stretched texture that the slide does not show."
+   },
+   {
+    "id": "A12",
+    "category": "npm_vpm_consistency",
+    "facade": "all",
+    "question": "The NPM iso view shows the same colours and pattern as the VPM iso view."
+   }
+  ],
+  "forward": {
+   "A01": true,
+   "A02": true,
+   "A03": true,
+   "A04": true,
+   "A05": true,
+   "A06": true,
+   "A07": true,
+   "A08": true,
+   "A09": true,
+   "A10": true,
+   "A11": true,
+   "A12": false
+  },
+  "reverse": {
+   "A01": true,
+   "A02": true,
+   "A03": true,
+   "A04": true,
+   "A05": true,
+   "A06": true,
+   "A07": true,
+   "A08": true,
+   "A09": true,
+   "A10": true,
+   "A11": true,
+   "A12": false
+  },
+  "kept": {
+   "A01": true,
+   "A02": true,
+   "A03": true,
+   "A04": true,
+   "A05": true,
+   "A06": true,
+   "A07": true,
+   "A08": true,
+   "A09": true,
+   "A10": true,
+   "A11": true,
+   "A12": false
+  },
+  "dropped": []
+ },
+ "materials": {
+  "axes": {
+   "missing": {
+    "score": 1,
+    "reason": "All surfaces are default grey; no material or texture applied.",
+    "forward": 1,
+    "reverse": 1
+   },
+   "base_color": {
+    "score": 1,
+    "reason": "Slide's blue panel colour is absent; the model is uniformly grey.",
+    "forward": 1,
+    "reverse": 1
+   },
+   "borders": {
+    "score": 1,
+    "reason": "No finish borders; one grey tone everywhere.",
+    "forward": 1,
+    "reverse": 1
+   },
+   "scale": {
+    "score": 1,
+    "reason": "No ribs or panel texture visible to judge; the slide's seam grid is missing.",
+    "forward": 1,
+    "reverse": 1
+   },
+   "finish": {
+    "score": 1,
+    "reason": "Flat untextured grey; does not match the slide's panel finish.",
+    "forward": 1,
+    "reverse": 1
+   },
+   "consistency": {
+    "score": 3,
+    "reason": "VPM and NPM match, but only because both are equally untextured.",
+    "forward": 3,
+    "reverse": 3
+   }
+  },
+  "fix_order": [
+   "missing",
+   "base_color",
+   "borders",
+   "scale"
+  ],
+  "discrepancy_max": 3
+ },
+ "findings": [
+  {
+   "id": "M:missing",
+   "source": "material",
+   "key": "material:missing",
+   "text": "missing scored 1/5: All surfaces are default grey; no material or texture applied.",
+   "locate_with": "material slots and UV of the model (the VLM only confirms)"
+  },
+  {
+   "id": "M:base_color",
+   "source": "material",
+   "key": "material:base_color",
+   "text": "base_color scored 1/5: Slide's blue panel colour is absent; the model is uniformly grey.",
+   "locate_with": "material slots and UV of the model (the VLM only confirms)"
+  },
+  {
+   "id": "M:borders",
+   "source": "material",
+   "key": "material:borders",
+   "text": "borders scored 1/5: No finish borders; one grey tone everywhere.",
+   "locate_with": "material slots and UV of the model (the VLM only confirms)"
+  },
+  {
+   "id": "M:scale",
+   "source": "material",
+   "key": "material:scale",
+   "text": "scale scored 1/5: No ribs or panel texture visible to judge; the slide's seam grid is missing.",
+   "locate_with": "material slots and UV of the model (the VLM only confirms)"
+  },
+  {
+   "id": "M:finish",
+   "source": "material",
+   "key": "material:finish",
+   "text": "finish scored 1/5: Flat untextured grey; does not match the slide's panel finish.",
+   "locate_with": "material slots and UV of the model (the VLM only confirms)"
+  },
+  {
+   "id": "M:consistency",
+   "source": "material",
+   "key": "material:consistency",
+   "text": "consistency scored 3/5: VPM and NPM match, but only because both are equally untextured.",
+   "locate_with": "material slots and UV of the model (the VLM only confirms)"
+  },
+  {
+   "id": "A01",
+   "source": "checklist",
+   "key": "checklist:panel_color",
+   "text": "The ribbed panel field has the colour shown on the slide on every facade.",
+   "locate_with": "material slots of the model (VLM confirms)"
+  },
+  {
+   "id": "A02",
+   "source": "checklist",
+   "key": "checklist:frame_color",
+   "text": "The band/frame around the panel field (corners, top and bottom edging) has the colour shown on the slide.",
+   "locate_with": "material slots of the model (VLM confirms)"
+  },
+  {
+   "id": "A03",
+   "source": "checklist",
+   "key": "checklist:plinth_color",
+   "text": "The plinth/base at and below the ground line (red line in the renders) has the colour shown on the slide.",
+   "locate_with": "material slots of the model (VLM confirms)"
+  },
+  {
+   "id": "A04",
+   "source": "checklist",
+   "key": "checklist:rib_count:N",
+   "text": "Facade N: the number of vertical ribs/seams equals the slide (within 10 %).",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  },
+  {
+   "id": "A05",
+   "source": "checklist",
+   "key": "checklist:rib_count:S",
+   "text": "Facade S: the number of vertical ribs/seams equals the slide (within 10 %).",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  },
+  {
+   "id": "A06",
+   "source": "checklist",
+   "key": "checklist:rib_count:W",
+   "text": "Facade W: the number of vertical ribs/seams equals the slide (within 10 %).",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  },
+  {
+   "id": "A07",
+   "source": "checklist",
+   "key": "checklist:rib_count:E",
+   "text": "Facade E: the number of vertical ribs/seams equals the slide (within 10 %).",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  },
+  {
+   "id": "A08",
+   "source": "checklist",
+   "key": "checklist:field_outline",
+   "text": "A thin dark outline runs along the edge of the panel field, as on the slide.",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  },
+  {
+   "id": "A09",
+   "source": "checklist",
+   "key": "checklist:door",
+   "text": "Doors: same facade, position, size and colour as on the slide (none if the slide has none).",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  },
+  {
+   "id": "A10",
+   "source": "checklist",
+   "key": "checklist:windows",
+   "text": "Windows: same facade, position, size, frame colour as on the slide (none if none).",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  },
+  {
+   "id": "A11",
+   "source": "checklist",
+   "key": "checklist:no_extra",
+   "text": "No element, seam, hole, missing face or stretched texture that the slide does not show.",
+   "locate_with": "geometry and drawing vectors (CrossProjection): count/position from the model and the DXF"
+  }
+ ],
+ "main_discrepancy": {
+  "id": "M:missing",
+  "source": "material",
+  "key": "material:missing",
+  "text": "missing scored 1/5: All surfaces are default grey; no material or texture applied.",
+  "locate_with": "material slots and UV of the model (the VLM only confirms)"
+ },
+ "scores": {
+  "checklist_items": 12,
+  "checklist_kept": 12,
+  "checklist_flagged": 11,
+  "material_min": 1,
+  "material_mean": 1.333
+ }
+}

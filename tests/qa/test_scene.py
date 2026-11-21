@@ -80,8 +80,10 @@ def test_clean_vpm_mesh_passes_scene_stages():
     found = scene_findings(rb(mesh()), "vpm", "oks", PROFILES.vpm)
     assert set(statuses(found, "V003").values()) == {"pass"}
     assert statuses(found, "V004") == {"applied transforms": "pass", "topology defects": "pass", "co-directional clearance": "not_run"}
-    assert statuses(found, "V008") == {"one UV channel": "pass", "mirrored islands": "pass"}
-    assert statuses(found, "V009") == {"texel density": "not_run", "texel density upper": "not_run"}
+    assert statuses(found, "V008") == {"one UV channel": "pass", "mirrored islands": "pass", "mirrored UV polygons": "not_run",
+                                       "UV outside UDIM tile": "not_run", "unwrapped UV polygons": "not_run"}
+    assert statuses(found, "V009") == {"texel density": "not_run", "texel density upper": "not_run",
+                                       "texel density per polygon": "not_run"}  # no face_geometry: never pass
 
 
 @pytest.mark.parametrize("tris, status", [(150_000, "pass"), (150_001, "review"), (1_000_000, "review"),

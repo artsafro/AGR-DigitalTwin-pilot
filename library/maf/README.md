@@ -194,3 +194,11 @@ uv run python tools/library/maf_gen_catalogue.py --build-dir C:/x/vatutino-maf/g
 ```
 
 and copy both outputs back (outputs may not alias an input). Current: «Верона» rows 2-10 [D202], row 1 not approved.
+
+## Accepted job models: Staropetrovskiy ZU_7_A (staging)
+
+The 51 MAF masters of the delivered Staropetrovskiy job are staged outside git in `C:/x/maf-library/staropetrovskiy/`
+(manifest `readback/summary_v002.json`) and enter the library only through `agr library publish` (#1743), not as
+`generated` rows here [D357]. Pivot = the master's: Z = 0 is ground level, embedment below zero stays [D357].
+VPM is registered for 12 codes; 34 placed codes wait for a VPM rebuild from the masters, xView flags on I07, I08,
+I19, T20 stay as accepted [D359]. Task card: `jobs/staropetrovskiy-maf-lib/TASK.md`.

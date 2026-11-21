@@ -59,6 +59,7 @@ UCX gap checks; [D163] leaves UKEP verification to the applicant (missing file: 
 - No collision required in lighting FBX. reg p.36 §13.3.
 
 ## GeoJSON (VPM only; App.3)
+- Normally fill GeoJSON completely so SINTEZ does not complain, following the field rules below. The Staropetrovskiy customer file was kept as delivered (`ZU_area=0`) as an exception; hectares remain the rule [D367].
 - Exact structure/syntax/names/values per App.3; UTF-8; only values may change - no renamed/duplicated/miswritten keys. reg p.26 §2.1, p.27 §2.5, p.28 §2.7.
 - `{"type":"FeatureCollection","features":[{"type":"ObjectFeature","properties":{...},"geometry":{"type":"Point","coordinates":[x,y]},"Glasses":...}]}` - note literal `ObjectFeature`, not standard `Feature`. reg p.51-53.
 - Properties: address, okrug (<=50 ch), rajon (<=50), name, developer (<=255), designer (<=255), cadNum, FNO_code, FNO_name (<=255), ZU_area (ha, <=4 decimals; [D223]), h_relief (zero elevation m, <=2 dec), h_otn (max relative height, <=2 dec), h_abs (max absolute height, <=2 dec), s_obsh, s_naz, s_podz, spp_gns (m2, <=2 dec), act_AGR, imageBase64, other. reg p.53-55.

@@ -260,7 +260,53 @@ def _full_suite(cwd, sha, value, problems):
         problems.append(f"full suite has {bad} failed/errors without a known #<issue> owner")
 
 
-def check_handoff(text, sha, output, cwd="."):
+def _table_column(label):
+    label = " ".join(label.casefold().split())
+    return {"input": "input", "input (exact)": "input", "expected": "expected",
+            "expected output": "expected", "test": "test"}.get(label)
+
+
+def _inline_text(token):
+    return "".join(child.content for child in token.children or ()
+                   if child.type in {"text", "code_inline", "image"}).strip()
+
+
+def _acceptance_table_problem(text):
+    """Look for a real top-level Markdown section and at least one complete table row."""
+    from markdown_it import MarkdownIt
+
+    tokens = MarkdownIt("commonmark").enable("table").parse(text)
+    seen_heading = in_section = in_table = False
+    required = ("input", "expected", "test")
+    columns = []
+    cells = []
+    for i, token in enumerate(tokens):
+        if token.type == "heading_open" and token.level == 0:
+            in_section = _inline_text(tokens[i + 1]).casefold() == "acceptance table"
+            seen_heading |= in_section
+        elif in_section and token.type == "table_open" and token.level == 0:
+            in_table = True
+            columns = []
+        elif token.type == "table_close" and token.level == 0:
+            in_table = False
+        elif in_table:
+            if token.type == "tr_open":
+                cells = []
+            elif token.type == "inline":
+                cells.append(_inline_text(token))
+            elif token.type == "thead_close":
+                columns = [_table_column(cell) for cell in cells]
+            elif token.type == "tr_close" and all(columns.count(name) == 1 for name in required):
+                values = (cells[columns.index(name)] for name in required)
+                if all(value not in {"", "-", "...", "tests/<file>.py::<name>"}
+                       and not _PLACEHOLDER.fullmatch(value) for value in values):
+                    return None
+    if not seen_heading:
+        return "missing Acceptance table heading"
+    return "Acceptance table needs Input, Expected, and Test columns with at least one complete row"
+
+
+def check_handoff(text, sha, output, cwd=".", *, require_acceptance_table=False):
     """Return the list of handoff evidence problems (empty = complete). Never writes."""
     problems = []
     if not isinstance(sha, str) or not _SHA.fullmatch(sha):
@@ -312,14 +358,16 @@ def check_handoff(text, sha, output, cwd="."):
         line = "" if fenced else re.sub(r"`[^`\n]*`", "``", raw)
         if (match := delegation(line)) is not None:
             problems.append(_delegation_problem(match, raw))
+    if require_acceptance_table and (problem := _acceptance_table_problem(text)) is not None:
+        problems.append(problem)
     return list(dict.fromkeys(problems))
 
 
-def check_handoff_file(path, sha, output, cwd="."):
+def check_handoff_file(path, sha, output, cwd=".", *, require_acceptance_table=False):
     try:
         text = Path(path).read_bytes().decode("utf-8")
     except FileNotFoundError:
         return [f"body file missing: {path}"]
     except (OSError, UnicodeDecodeError) as exc:
         return [f"body file unreadable (UTF-8 required): {exc}"]
-    return check_handoff(text, sha, output, cwd)
+    return check_handoff(text, sha, output, cwd, require_acceptance_table=require_acceptance_table)

@@ -1,0 +1,1 @@
+Verifier (observe): main=material:base_color; checklist flagged 0/12; material min 3 | Mesh quality (observe): score 63.24 (measured); worst cell +Y u1032 z71: 274 defect faces of 342 (3.02 m2); 2434 cells with defects, 57243/148230 defect faces

@@ -29,8 +29,9 @@ names_fix   N1 export copies only (glue); N2 objects, materials and map files ar
 V1  a destination file that exists with OTHER content is never overwritten AND never linked (renamer V13
     `File.Copy overwrite`, Asset Material Renamer "skip existing" relinked a foreign file): the map stays on its
     source, the conflict is a failure; identical content is reused.
-V2  slot table (V13): one role per slot; reflectionMap has no NPM/VPM role (V13 gave `_m` to specular AND
-    reflection, one copy overwrote the other) and is reported, never renamed to `_m`.
+V2  slot table (V13): one role per slot; V13 gave `_m` to specular AND reflection (one copy overwrote the other).
+    #1729: the one Standard `_m` slot is reflectionMap (FBX ReflectionColor, read by SINTEZ 2.5.6 as Metallic);
+    specularLevelMap (FBX SpecularFactor) has no role and is reported with that reason, never renamed to `_m`.
 V3  names come from the grammar, never by cutting characters (V13 "Bench" -> "Mnch"; prefix collision
     SM_Chair/XX_Chair -> one M_Chair_1); two targets with one name are ambiguous.
 V4  `folder`: map copies into a separate folder (Asset Material Renamer), mask in the FILE name only.
@@ -79,15 +80,22 @@ TRANSLIT = dict(_TRANSLIT)  # public read-only view (qa.address, udim.slots)
 _TRANSLIT_ALT = {'й': ('y', 'j')}  # GeoAGR.ms:194 writes j
 
 # Material slot -> map role (V13 slot table). None: the slot has no NPM/VPM texture role; a bitmap there is
-# reported and left as is (reflection is NOT metalness: V13 named both `_m`).
+# reported and left as is. #1729 (2026-11-21) resolves the V13 note "reflection is NOT metalness" explicitly: V2 still
+# holds (ONE slot per role, never both `_m`), but the metalness slot of a Standard material moves from
+# specularLevelMap to reflectionMap. Measured: 3ds Max 2026 FBX export writes specularLevelMap to `SpecularFactor`,
+# which SINTEZ 1.6.1 reads as «Specular IOR Level» (2.5.6 fails), and reflectionMap to `ReflectionColor`, which it
+# reads as Metallic; a customer FBX carries `_m` on `ReflectionFactor` (docs/domain/fbx-metallic-channel.md).
 SLOT_TABLE = {
     'PhysicalMaterial': (('base_color_map', 'diffuse'), ('bump_map', 'normal'), ('roughness_map', 'roughness'),
                          ('metalness_map', 'metalness'), ('cutout_map', 'opacity'), ('transparency_map', 'opacity'),
                          ('emission_map', 'emission'), ('reflectivity_map', None)),
     'Standardmaterial': (('diffuseMap', 'diffuse'), ('bumpMap', 'normal'), ('opacityMap', 'opacity'),
-                         ('glossinessMap', 'roughness'), ('specularLevelMap', 'metalness'), ('reflectionMap', None),
+                         ('glossinessMap', 'roughness'), ('specularLevelMap', None), ('reflectionMap', 'metalness'),
                          ('specularMap', None)),
 }
+# Reason added to the "no texture role" failure of a slot (#1729).
+SLOT_NOTES = {'specularLevelMap': 'FBX SpecularFactor is not Metallic for SINTEZ 2.5.6 (read as Specular IOR Level); '
+                                  'put the `_m` map on reflectionMap'}
 PROFILES = ('project', 'library')
 LIBRARY_LODS = ('high', 'low')
 _LIB_DUP = re.compile(r'\.\d{3}$')
@@ -607,10 +615,11 @@ def _plan_material(plan, key, obj, model, material, files, folder=None):
         for mp in sub.get('maps') or ():
             role, src = mp['role'], mp['path']
             item = '{} {}'.format(sub['name'], role if role is not None else mp['key'])
-            if role is None:  # V2: slot without a texture role (reflection is not `_m`)
+            if role is None:  # V2: slot without a texture role (#1729: specularLevelMap is not `_m`)
+                note = SLOT_NOTES.get(mp['key'])
                 plan['failures'].append({'key': key, 'item': item,
-                                         'reason': '{}: slot has no NPM/VPM texture role; map left as is'.format(
-                                             mp['key'])})
+                                         'reason': '{}: slot has no NPM/VPM texture role; map left as is{}'.format(
+                                             mp['key'], ' ({})'.format(note) if note else '')})
                 continue
             if role not in ROLES:
                 plan['failures'].append({'key': key, 'item': item, 'reason': 'map slot role unknown: ' + str(role)})

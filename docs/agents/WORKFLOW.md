@@ -130,6 +130,9 @@ line below exactly once (`.github/pull_request_template.md`, "Evidence"), and th
 ```bash
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
+For rule-21 cards, use the exact published body (`gh pr view <PR> --json body --jq .body`) and add
+`--require-acceptance-table`: a top-level `Acceptance table` heading must have a Markdown table with
+`Input` (or `Input (exact)`), `Expected` (or `Expected output`), and `Test` columns populated in at least one row.
 - `Affected tests:` names the head sha, the command, `N passed`, `0 failed`; `not run`, `pending`, `n/a` are not a run.
 - `Full suite: deferred to merge batch (D297)` (optional; any other deferral wording is an error). A real
   `suite_slot.py` run (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head or an ancestor is still accepted,
