@@ -1,0 +1,657 @@
+{
+  "hypothesis": "confirmed",
+  "input_git": "8ee341f74ef5dd453c4fbcc8d07a13713fd1cf38",
+  "rows": {
+    "A1": {
+      "dump": "A1_Vatutino_v015_NPM.npz",
+      "sha256": "58dacd6edf346d2e90f37b76a3e696cc69924d167f601383ac089adf0dc76523",
+      "part": "SM_Vatutino_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 46479,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 46479,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 46479,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 71.86041007766948,
+      "delta_from_old_Q": -71.86041007766948,
+      "rigid": {
+        "V": 0,
+        "T": 46479,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 46479,
+        "Qv": 21.515092837625595
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 46479,
+        "Qv": 21.515092837625595
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        27481
+      ]
+    },
+    "F4": {
+      "dump": "F4_r4.npz",
+      "sha256": "9b7d26af84d142448fe1363a816eef1e1e4fc5c8b6ff191995dcf958ca1ac922",
+      "part": "SM_SIL13_Ground",
+      "clean_runs": [
+        {
+          "V": 1576,
+          "T": 37370,
+          "Qv": 421.72865935242174
+        },
+        {
+          "V": 1576,
+          "T": 37370,
+          "Qv": 421.72865935242174
+        },
+        {
+          "V": 1576,
+          "T": 37370,
+          "Qv": 421.72865935242174
+        }
+      ],
+      "median": 421.72865935242174,
+      "spread": 0.0,
+      "old_Q": 428.95370618142897,
+      "delta_from_old_Q": -7.225046829007226,
+      "rigid": {
+        "V": 1576,
+        "T": 37370,
+        "Qv": 421.72865935242174
+      }
+    },
+    "A2": {
+      "dump": "A2_Skolkovo_NPM.npz",
+      "sha256": "3cc015f237244077084274e7afc2a53a019f04ec72a4b9c72cb014d815f3a715",
+      "part": "SM_BolshoyBulvar_64_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 5733,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 5733,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 5733,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 27.908599337170767,
+      "delta_from_old_Q": -27.908599337170767,
+      "rigid": {
+        "V": 0,
+        "T": 5733,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 5733,
+        "Qv": 174.4287458573173
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 5733,
+        "Qv": 174.4287458573173
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        3076
+      ]
+    },
+    "A3": {
+      "dump": "A3_COD_NPM.npz",
+      "sha256": "4424863c981f2779b5dc23a778e1ccdd9812759003a5ca1c37e1ebeef427c4c6",
+      "part": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 2801,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 2801,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 2801,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 596.2156372724027,
+      "delta_from_old_Q": -596.2156372724027,
+      "rigid": {
+        "V": 0,
+        "T": 2801,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 2801,
+        "Qv": 357.0153516601214
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 2801,
+        "Qv": 357.0153516601214
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        1554
+      ]
+    },
+    "A4": {
+      "dump": "A4_Donskoy_NPM.npz",
+      "sha256": "98a8592309bc55e3ba3dafaa4f5e9a9c6667938a563aeffa13053d155f30c3b5",
+      "part": "SM_5jDonskoyProezd_Vl_15_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 11528,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 11528,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 11528,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 286.25954198473283,
+      "delta_from_old_Q": -286.25954198473283,
+      "rigid": {
+        "V": 0,
+        "T": 11528,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 11528,
+        "Qv": 86.74531575294934
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 11528,
+        "Qv": 86.74531575294934
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        6816
+      ]
+    },
+    "A5": {
+      "dump": "A5_Ostrov_NPM.npz",
+      "sha256": "5c3fd2f73d10fa366eb7423e411a616e671b341caedfdbbb16c86ef18624be9a",
+      "part": "SM_NizhnieMnevniki_ZU_66_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 29760,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 29760,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 29760,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 27.217741935483872,
+      "delta_from_old_Q": -27.217741935483872,
+      "rigid": {
+        "V": 0,
+        "T": 29760,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 29760,
+        "Qv": 33.60215053763441
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 29760,
+        "Qv": 33.60215053763441
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        15158
+      ]
+    },
+    "A6": {
+      "dump": "A6_Kasatkino_NPM.npz",
+      "sha256": "3020f77108bb208b03a39b7a1df36765e6288fd78666dc28cdc2f7a265b9cbf9",
+      "part": "SM_Kasatkina_Vl_11_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 59290,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 59290,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 59290,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 78.5967279473773,
+      "delta_from_old_Q": -78.5967279473773,
+      "rigid": {
+        "V": 0,
+        "T": 59290,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 59290,
+        "Qv": 16.866250632484398
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 59290,
+        "Qv": 16.866250632484398
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        30810
+      ]
+    },
+    "A7": {
+      "dump": "A7_Volokolamskoe_NPM.npz",
+      "sha256": "c3fef038731551fab80f64018ccf14dd1b864d62718657214dcc7309aeecbfad",
+      "part": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 20614,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 20614,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 20614,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 105.2682642864073,
+      "delta_from_old_Q": -105.2682642864073,
+      "rigid": {
+        "V": 0,
+        "T": 20614,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 20614,
+        "Qv": 48.51072086931212
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 20614,
+        "Qv": 48.51072086931212
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        10598
+      ]
+    },
+    "A8": {
+      "dump": "A8_Stolbovo_NPM.npz",
+      "sha256": "94b8482a2e167d9cf4d31e9f33e19e0048bacd43639930afa5dcc8065f4c17bd",
+      "part": "SM_DerevnyaStolbovo_Uch_23_Ground",
+      "clean_runs": [
+        {
+          "V": 0,
+          "T": 10930,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 10930,
+          "Qv": 0.0
+        },
+        {
+          "V": 0,
+          "T": 10930,
+          "Qv": 0.0
+        }
+      ],
+      "median": 0.0,
+      "spread": 0.0,
+      "old_Q": 0.0,
+      "delta_from_old_Q": 0.0,
+      "rigid": {
+        "V": 0,
+        "T": 10930,
+        "Qv": 0.0
+      },
+      "injected": {
+        "V": 100,
+        "T": 10930,
+        "Qv": 91.49130832570906
+      },
+      "injected_rigid": {
+        "V": 100,
+        "T": 10930,
+        "Qv": 91.49130832570906
+      },
+      "unwelds": 50,
+      "injected_delta_V": 100,
+      "injection_bounds_V": [
+        100,
+        5554
+      ]
+    },
+    "F1": {
+      "dump": "F1_r1_geometry.npz",
+      "sha256": "41816fc73523e630b52658941f094bdb7d29d56440f63f7b3bff74420fd1f9b3",
+      "part": "SM_SIL13_Ground",
+      "clean_runs": [
+        {
+          "V": 1769,
+          "T": 36549,
+          "Qv": 484.00777039043476
+        },
+        {
+          "V": 1769,
+          "T": 36549,
+          "Qv": 484.00777039043476
+        },
+        {
+          "V": 1769,
+          "T": 36549,
+          "Qv": 484.00777039043476
+        }
+      ],
+      "median": 484.00777039043476,
+      "spread": 0.0,
+      "old_Q": 489.7534816274043,
+      "delta_from_old_Q": -5.745711236969555,
+      "rigid": {
+        "V": 1769,
+        "T": 36549,
+        "Qv": 484.00777039043476
+      }
+    },
+    "F2": {
+      "dump": "F2_r2.npz",
+      "sha256": "b9f521c4b37acb8bf7d5a5708d776e5ebd8edb81385f5d4081ba39a96a583f4e",
+      "part": "SM_SIL13_Ground",
+      "clean_runs": [
+        {
+          "V": 1767,
+          "T": 37386,
+          "Qv": 472.636815920398
+        },
+        {
+          "V": 1767,
+          "T": 37386,
+          "Qv": 472.636815920398
+        },
+        {
+          "V": 1767,
+          "T": 37386,
+          "Qv": 472.636815920398
+        }
+      ],
+      "median": 472.636815920398,
+      "spread": 0.0,
+      "old_Q": 476.9164928047932,
+      "delta_from_old_Q": -4.279676884395201,
+      "rigid": {
+        "V": 1767,
+        "T": 37386,
+        "Qv": 472.636815920398
+      }
+    },
+    "F3": {
+      "dump": "F3_r3.npz",
+      "sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+      "part": "SM_SIL13_Ground",
+      "clean_runs": [
+        {
+          "V": 1751,
+          "T": 37370,
+          "Qv": 468.5576665774686
+        },
+        {
+          "V": 1751,
+          "T": 37370,
+          "Qv": 468.5576665774686
+        },
+        {
+          "V": 1751,
+          "T": 37370,
+          "Qv": 468.5576665774686
+        }
+      ],
+      "median": 468.5576665774686,
+      "spread": 0.0,
+      "old_Q": 472.83917580947286,
+      "delta_from_old_Q": -4.281509232004282,
+      "rigid": {
+        "V": 1751,
+        "T": 37370,
+        "Qv": 468.5576665774686
+      }
+    },
+    "F5": {
+      "dump": "F5_r5.npz",
+      "sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+      "part": "SM_SIL13_Ground",
+      "clean_runs": [
+        {
+          "V": 1751,
+          "T": 37370,
+          "Qv": 468.5576665774686
+        },
+        {
+          "V": 1751,
+          "T": 37370,
+          "Qv": 468.5576665774686
+        },
+        {
+          "V": 1751,
+          "T": 37370,
+          "Qv": 468.5576665774686
+        }
+      ],
+      "median": 468.5576665774686,
+      "spread": 0.0,
+      "old_Q": 472.83917580947286,
+      "delta_from_old_Q": -4.281509232004282,
+      "rigid": {
+        "V": 1751,
+        "T": 37370,
+        "Qv": 468.5576665774686
+      }
+    }
+  },
+  "checks": {
+    "A1": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "F4": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true
+    },
+    "A2": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "A3": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "A4": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "A5": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "A6": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "A7": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "A8": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true,
+      "injection": true,
+      "injected_rigid": true,
+      "injected_parity": true
+    },
+    "F1": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true
+    },
+    "F2": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true
+    },
+    "F3": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true
+    },
+    "F5": {
+      "repeats": true,
+      "rigid": true,
+      "parity": true
+    }
+  },
+  "first_pair_seconds": 0.339,
+  "series_seconds": 2.592,
+  "max_A": 0.0,
+  "min_F": 421.72865935242174,
+  "margin": 421.72865935242174,
+  "numpy": "2.5.3",
+  "core": {
+    "path": "C:/x/ev_t193/sil13_shared_v003/SM_SIL13_Ground.obj",
+    "sha256": "8f51940939e921dc206280c385c6f045da13fc2c1b78d685bf63d0c7d0f1a450",
+    "clean_runs": [
+      {
+        "V": 290,
+        "T": 26491,
+        "Qv": 109.47114114227473
+      },
+      {
+        "V": 290,
+        "T": 26491,
+        "Qv": 109.47114114227473
+      },
+      {
+        "V": 290,
+        "T": 26491,
+        "Qv": 109.47114114227473
+      }
+    ],
+    "median": 109.47114114227473,
+    "spread": 0.0
+  }
+}
