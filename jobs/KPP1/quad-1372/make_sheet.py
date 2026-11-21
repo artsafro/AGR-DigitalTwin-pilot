@@ -20,13 +20,18 @@ SETS = {  # camera rows and column labels per camera set of render_before_after.
     'corners-v004': (['sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n'],  # #1609 option A (D357)
                      'BEFORE: quad master v003 (rejected corners)',
                      'AFTER: v004 draft: W/S/N planes rebuilt whole, posts separate'),
+    'ground-v004': ([f'{c}_ground' for c in ('sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n')],  # #1609 w13
+                    'BEFORE: quad master v003', 'AFTER: v004 w13: walls + reveals one conforming body, posts separate'),
+    'elevations-v004': (['elev_W', 'elev_S', 'elev_N'],  # #1609: straight-on orthographic elevation per facade
+                        'BEFORE: quad master v003', 'AFTER: v004 w13', 'stacked'),
 }
 
 
 def main(src, out, mode, cams='default'):
     if cams not in SETS:
         raise SystemExit(f'unknown camera set {cams!r}')
-    CAMS, left, right = SETS[cams]
+    CAMS, left, right, *layout = SETS[cams]
+    stacked = layout == ['stacked']   # elevations: before above after, full width
     src, out = Path(src), Path(out)
     if out.exists():
         raise SystemExit(f'{out} exists; use a new name')
@@ -38,6 +43,18 @@ def main(src, out, mode, cams='default'):
         raise SystemExit(f'missing renders: {missing}')
     w, h = 640, 430
     head = 28
+    if stacked:
+        w, h = Image.open(paths[(rows[0][0], rows[0][1], 'before')]).size
+        sheet = Image.new('RGB', (w, len(rows) * 2 * (h + head)), 'white')
+        d = ImageDraw.Draw(sheet)
+        for i, (c, m) in enumerate(rows):
+            for j, (t, lab) in enumerate((('before', left), ('after', right))):
+                y = (2 * i + j) * (h + head)
+                d.text((10, y + 8), f'{c} / {m} - {lab}', fill='black')
+                sheet.paste(Image.open(paths[(c, m, t)]).convert('RGB').resize((w, h)), (0, y + head))
+        sheet.save(out)
+        print('SHEET', out, sheet.size)
+        return
     sheet = Image.new('RGB', (2 * w, head + len(rows) * (h + head)), 'white')
     d = ImageDraw.Draw(sheet)
     d.text((10, 8), left, fill='black')

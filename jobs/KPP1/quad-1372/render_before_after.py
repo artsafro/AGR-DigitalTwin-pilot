@@ -27,7 +27,16 @@ CORNER_CAMERAS = {  # #1563: SW / NW corner posts (#1246 readback-v003b centres)
     'nw_from_nw': ((-17.2, 8.3, 7.6), (-15.03, 6.02, 5.8), 35),
     'nw_from_n': ((-14.2, 9.1, 6.2), (-15.0, 6.0, 5.9), 35),
 }
-CAMERA_SETS = {'default': CAMERAS, 'corners': CORNER_CAMERAS}
+# #1609 (Artem 2026-11-20, w7 rejected «на 1 этаже вся сетка сломана»): the same four corner cameras lowered onto the
+# ground floor, and a straight-on orthographic elevation per rebuilt facade (lens ('ortho', scale m)).
+GROUND_CAMERAS = {f'{k}_ground': ((loc[0], loc[1], 2.2), (tgt[0], tgt[1], 1.7), lens)
+                  for k, (loc, tgt, lens) in CORNER_CAMERAS.items()}
+ELEVATIONS = {
+    'elev_W': ((-60.0, 0.1, 4.6), (-15.0, 0.1, 4.6), ('ortho', 22.0)),
+    'elev_S': ((-1.3, -60.0, 4.6), (-1.3, -5.7, 4.6), ('ortho', 29.5)),
+    'elev_N': ((-1.3, 60.0, 4.6), (-1.3, 6.0, 4.6), ('ortho', 29.5)),
+}
+CAMERA_SETS = {'default': CAMERAS, 'corners': CORNER_CAMERAS, 'ground': GROUND_CAMERAS, 'elevations': ELEVATIONS}
 
 
 def look_at(cam, loc, target):
@@ -93,7 +102,12 @@ def main(fbx, png, out_dir, tag, cams='default'):
                 o.color = (0.78, 0.78, 0.76, 1.0)
         for c, (loc, tgt, lens) in cameras.items():
             look_at(cam, loc, tgt)
-            cam.data.lens = lens
+            if isinstance(lens, tuple):
+                cam.data.type, cam.data.ortho_scale = 'ORTHO', lens[1]
+                sc.render.resolution_x, sc.render.resolution_y = 2560, 1100   # elevation: grid readable
+            else:
+                cam.data.type, cam.data.lens = 'PERSP', lens
+                sc.render.resolution_x, sc.render.resolution_y = 1280, 860
             sc.render.filepath = outs[(c, mode)]
             bpy.ops.render.render(write_still=True)
     print('RENDERED', len(outs))

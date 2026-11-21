@@ -522,6 +522,32 @@ def weld_body(bm, post_faces, dist):
     return len(target)
 
 
+def untwist_quads(bm, limit=0.005):
+    """w13: the body weld twisted a v003 sliver quad into a bow-tie (`wall_plan.quad_twisted` on its best plane);
+    `dt qa xview` refuses such a polygon. Its shortest edge (<= `limit`, else ValueError: not a sliver) collapses, the
+    face becomes a plain triangle and its neighbours move <= limit / 2. Returns [centre xyz] of the collapsed quads."""
+    out = []
+    for _ in range(100):
+        bm.normal_update()
+        bad = None
+        for f in bm.faces:
+            if len(f.verts) != 4:
+                continue
+            k = max(range(3), key=lambda i: abs(f.normal[i]))
+            ax = [i for i in range(3) if i != k]
+            if wp.quad_twisted([(v.co[ax[0]], v.co[ax[1]]) for v in f.verts]):
+                bad = f
+                break
+        if bad is None:
+            return out
+        e = min(bad.edges, key=lambda x: x.calc_length())
+        if e.calc_length() > limit:
+            raise ValueError(f'twisted quad at {tuple(bad.calc_center_median())} has no edge <= {limit} m')
+        out.append([round(c, 4) for c in bad.calc_center_median()])
+        bmesh.ops.collapse(bm, edges=[e], uvs=True)
+    raise ValueError('more than 100 twisted quads')
+
+
 def split_bowties(bm, uvl, sep):
     """A body vertex left with two or more face fans (its connecting plane faces went to a wall element) is an xView
     bow-tie. Keep the largest fan on it; every other fan gets its own copy moved `sep` towards that fan's centre (in
@@ -643,6 +669,7 @@ def main(master, r1, out_dir):
     if BODY_WELD and not CONFORM:
         rep['t_vertices_collapsed'] = collapse_t_vertices(bm, wall_faces, post_left)
     rep['bowties_split'] = split_bowties(bm, uvl, BOWTIE_M)
+    rep['twisted_quads_collapsed'] = untwist_quads(bm)
     near = near_pairs(bm, XVIEW_M)
     rep['nodes_near_other_vertex'] = {'count': len(near), 'limit_m': XVIEW_M, 'scope': 'same element [D336]',
                                       'first': near[:20]}

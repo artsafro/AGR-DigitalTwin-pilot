@@ -63,6 +63,25 @@ def slanted_outline(faces, tol=1e-3, key=1e-7):
                if c == 1 and abs(pa[0] - pb[0]) > tol and abs(pa[1] - pb[1]) > tol)
 
 
+def quad_twisted(pts):
+    """True when the 2D quad `pts` (a, b, c, d) is a bow-tie: edge ab crosses cd or bc crosses da (proper crossing).
+    w13: the 2.1 mm body weld twisted one 4 mm v003 sliver; `dt qa xview` refuses a self-intersecting polygon.
+    Fail-closed: not 4 corners, a non-finite coordinate."""
+    if len(pts) != 4:
+        raise ValueError(f'a quad needs 4 corners, got {len(pts)}')
+    for p in pts:
+        if len(p) != 2 or not all(math.isfinite(c) for c in p):
+            raise ValueError(f'bad corner {p!r}')
+
+    def o(a, b, c):
+        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+    def cross(p, q, r, s):
+        return o(p, q, r) * o(p, q, s) < 0 and o(r, s, p) * o(r, s, q) < 0
+    a, b, c, d = pts
+    return cross(a, b, c, d) or cross(b, c, d, a)
+
+
 def unique(values, tol=TOL):
     """Sorted cluster centres: a value within `tol` of the cluster's first value joins the cluster."""
     if not tol > 0:
