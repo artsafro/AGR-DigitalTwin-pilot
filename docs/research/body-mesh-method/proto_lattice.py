@@ -102,6 +102,10 @@ def main():
 
     def at(sv):  # ring point and inward normal at perimeter s (segment normal; corner = bisector)
         sv = sv % perim
+        for g in seg:  # r2: stations are rounded to 1e-5; snap to the exact ring corner so it gets the mitre
+            if abs(sv - g[0]) < 1e-4 or abs(sv - g[0] - perim) < 1e-4:
+                sv = g[0]
+                break
         k = max(0, bisect.bisect_right([g[0] for g in seg], sv + 1e-9) - 1)
         s0, L, p, t, nin = seg[k]
         u = sv - s0
@@ -169,8 +173,8 @@ def main():
 
     def reason_z(j):
         return sum(perim_s[i + 1] - perim_s[i] for i in range(len(S)) if cls.get((i, j - 1)) != cls.get((i, j)))
-    keep_s = [i for i in range(len(S)) if any(abs(S[i] - g[0]) < 1e-6 for g in seg) or (
-        reason_s(i) > 0 and reason_s(i) >= mr)]
+    keep_s = [i for i in range(len(S)) if any(abs(S[i] - g[0]) < 1e-4 for g in seg) or (  # r2: S is rounded to
+        reason_s(i) > 0 and reason_s(i) >= mr)]  # 1e-5, so a 1e-6 test dropped ring corners (63A notch, V004)
     keep_z = [j for j in range(len(Z)) if j in (0, len(Z) - 1) or (reason_z(j) > 0 and reason_z(j) >= mr)]
     # rebuild cells on the kept lattice: class of a merged cell = class of its first candidate cell
     S2, Z2 = [S[i] for i in keep_s], [Z[j] for j in keep_z]
@@ -197,19 +201,42 @@ def main():
         for di, dj in ((0, 0), (1, 0), (0, 1), (1, 1)):
             nodes[((i + di) % NS, j + dj)].add(d)
     sides_q = []
+    rev_void = "--void-reveal" in a  # r2 experiment (opt-in): void cell gets a reveal tube; gives degenerate faces
     for (i, j), d in c2.items():  # depth steps to the right and up
-        if d in (None, "skip"):
+        if d == "skip":
             continue
         r = c2.get(((i + 1) % NS, j))
+        u = c2.get((i, j + 1))
+        if d is None:  # void cell: reveal quads toward its right / upper non-void neighbour, normal into the void
+            if rev_void and r not in (None, "skip"):
+                sides_q.append((((i + 1) % NS, j), ((i + 1) % NS, j + 1), round(r + reveal, 3), r))
+            if rev_void and u not in (None, "skip"):
+                sides_q.append((((i + 1) % NS, j + 1), (i, j + 1), round(u + reveal, 3), u))
+            continue
+        if r is None and rev_void:
+            r = round(d + reveal, 3)
         if r not in (None, "skip") and r != d:
             sides_q.append((((i + 1) % NS, j), ((i + 1) % NS, j + 1), d, r))
-            for nd in (((i + 1) % NS, j), ((i + 1) % NS, j + 1)):
-                nodes[nd] |= {d, r}
-        u = c2.get((i, j + 1))
+        if u is None and rev_void:
+            u = round(d + reveal, 3)
         if u not in (None, "skip") and u != d:
             sides_q.append((((i + 1) % NS, j + 1), (i, j + 1), d, u))
-            for nd in (((i + 1) % NS, j + 1), (i, j + 1)):
-                nodes[nd] |= {d, u}
+    for pa, pb, d1, d2 in sides_q:
+        for nd in (pa, pb):
+            nodes[nd] |= {d1, d2}
+    # r2 (#1742 review P1-1): every step face lying on a node's depth line must carry the SAME depth splits there,
+    # otherwise a split taken from the other node is a T-vertex on the neighbour step face (xView 'contact', 179
+    # faces on KPP1). Propagate the splits inside [lo, hi] across both nodes of every step face to a fixpoint.
+    changed = True
+    while changed:
+        changed = False
+        for pa, pb, d1, d2 in sides_q:
+            lo, hi = min(d1, d2), max(d1, d2)
+            inner = {x for x in nodes[pa] | nodes[pb] if lo <= x <= hi}
+            for nd in (pa, pb):
+                if not inner <= nodes[nd]:
+                    nodes[nd] |= inner
+                    changed = True
     faces = 0
 
     def face(vs, want):
@@ -239,9 +266,9 @@ def main():
             vs = [vert(pa[0], pa[1], x0), vert(pb[0], pb[1], x0), vert(pb[0], pb[1], x1), vert(pa[0], pa[1], x1)]
             if want is None:  # vertical step face: normal along the ring tangent toward the shallower cell
                 t = seg[k][3]
-                want_v = t if (d1 > d2) else -t
+                want_v = -t if (d1 > d2) else t  # r2: the step faces the recessed (deeper) cell
             else:
-                want_v = want if (d1 > d2) else -want
+                want_v = -want if (d1 > d2) else want  # r2 (gates63b inverted_winding_edges)
             face(vs, want_v)
     os.makedirs(out)
     me = bpy.data.meshes.new("SM_Proto_Body")
