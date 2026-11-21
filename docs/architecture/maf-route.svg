@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3260 1196" width="3260" height="1196" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3260 1407" width="3260" height="1407" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3260" height="1196" fill="#ffffff"/>
+<rect x="10" y="-30" width="3260" height="1407" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
@@ -29,6 +29,7 @@
 <rect x="850" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="850" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="850" y="527.5" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="850" y="617.5" width="230" height="133.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1130" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1120" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1080" y1="243.75" x2="1120" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -47,17 +48,19 @@
 <rect x="1660" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1660" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1660" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1660" y="617.5" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1660" y="617.5" width="230" height="166.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1660" y="799.75" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1660" y="900.75" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1940" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1930" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="1890" y1="233.12" x2="1930" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1930" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1930" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
-<rect x="1930" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="1930" y="617.5" width="230" height="166.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="1930" y="799.75" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="1930" y="917.0" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="1930" y="1034.25" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1930" y="527.5" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1930" y="617.5" width="230" height="215.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="848.5" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="965.75" width="230" height="263.75" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="1245.5" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2200" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2160" y1="225.0" x2="2200" y2="243.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -204,6 +207,15 @@
 <tspan x="965.0" dy="17.5">(габариты, сглаживание,</tspan>
 <tspan x="965.0" dy="17.5">нижние грани)</tspan>
 </text>
+<text x="965.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="13">⚠ Сохранённый вердикт</tspan>
+<tspan x="965.0" dy="16.25">габаритов набора Ватутино</tspan>
+<tspan x="965.0" dy="16.25">v005</tspan>
+<tspan x="965.0" dy="16.25">(checks.dimension_counts):</tspan>
+<tspan x="965.0" dy="16.25">писатель не воспроизведён в</tspan>
+<tspan x="965.0" dy="16.25">записанных командах (атлас,</tspan>
+<tspan x="965.0" dy="16.25">сборка, чтение FBX)</tspan>
+</text>
 <text x="1235.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="15">Агент: Blender / Max /</tspan>
 <tspan x="1235.0" dy="18.75">AGR Tools</tspan>
@@ -268,10 +280,33 @@
 <tspan x="1775.0" dy="17.5">Флоры</tspan>
 </text>
 <text x="1775.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="13">Ветка: проверка зазора в</tspan>
+<tspan x="1775.0" dy="16.25">сцене Max</tspan>
+<tspan x="1775.0" dy="16.25">→ place.maf_checks /</tspan>
+<tspan x="1775.0" dy="16.25">place_core.maf_verdict: зазор</tspan>
+<tspan x="1775.0" dy="16.25">МАФ до Ground, только чтение;</tspan>
+<tspan x="1775.0" dy="16.25">gap_m по умолчанию 0 — не</tspan>
+<tspan x="1775.0" dy="16.25">заменяет утопление 10 см</tspan>
+<tspan x="1775.0" dy="16.25">(D095); не дубль maf_findings</tspan>
+<tspan x="1775.0" dy="16.25">[D095]</tspan>
+</text>
+<text x="1775.0" y="809.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1775.0" dy="13">⚠ Расстановка на Ground v015</tspan>
 <tspan x="1775.0" dy="16.25">не перезапущена (команда dt</tspan>
 <tspan x="1775.0" dy="16.25">place site есть, #1407)</tspan>
 <tspan x="1775.0" dy="16.25">[D236]</tspan>
+</text>
+<text x="1775.0" y="910.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="13">⚠ Ватутино: place_site.py</tspan>
+<tspan x="1775.0" dy="16.25">запускает legacy-режим — НПМ</tspan>
+<tspan x="1775.0" dy="16.25">/ ВПМ сравниваются, но status</tspan>
+<tspan x="1775.0" dy="16.25">pass возможен при</tspan>
+<tspan x="1775.0" dy="16.25">расхождении; сводка</tspan>
+<tspan x="1775.0" dy="16.25">placement-report.json без</tspan>
+<tspan x="1775.0" dy="16.25">parity; строгая общая команда</tspan>
+<tspan x="1775.0" dy="16.25">dt place site / agr place</tspan>
+<tspan x="1775.0" dy="16.25">останавливается (код 4);</tspan>
+<tspan x="1775.0" dy="16.25">архив не меняется</tspan>
 </text>
 <text x="2045.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="15">Агент: Blender / Max /</tspan>
@@ -292,35 +327,50 @@
 <tspan x="2045.0" dy="14">Правила: D293, D164, D167,</tspan>
 <tspan x="2045.0" dy="17.5">D097</tspan>
 </text>
-<text x="2045.0" y="548.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="14">Контекст: НПМ МАФ на атласе</tspan>
+<text x="2045.0" y="537.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Контекст: НПМ МАФ на</tspan>
+<tspan x="2045.0" dy="17.5">атласе: maf_npm_light</tspan>
+<tspan x="2045.0" dy="17.5">(Blender)</tspan>
 </text>
 <text x="2045.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2045.0" dy="13">Ветка: ВПМ уже расставлена</tspan>
-<tspan x="2045.0" dy="16.25">→ конвертация ВПМ → НПМ: та</tspan>
-<tspan x="2045.0" dy="16.25">же модель; облегчённая —</tspan>
-<tspan x="2045.0" dy="16.25">только если не влезает бюджет</tspan>
-<tspan x="2045.0" dy="16.25">(≤ 400 треугольников не</tspan>
-<tspan x="2045.0" dy="16.25">трогает, силуэт ≥ 0,95)</tspan>
+<tspan x="2045.0" dy="13">Ветка: есть FBX позиций</tspan>
+<tspan x="2045.0" dy="16.25">→ конвертация ВПМ → НПМ: вход</tspan>
+<tspan x="2045.0" dy="16.25">— source_fbx позиций, не</tspan>
+<tspan x="2045.0" dy="16.25">точки расстановки (сквозная</tspan>
+<tspan x="2045.0" dy="16.25">передача не проверена);</tspan>
+<tspan x="2045.0" dy="16.25">облегчённая — только если не</tspan>
+<tspan x="2045.0" dy="16.25">влезает бюджет (≤ 400</tspan>
+<tspan x="2045.0" dy="16.25">треугольников не трогает,</tspan>
+<tspan x="2045.0" dy="16.25">силуэт ≥ 0,95)</tspan>
 <tspan x="2045.0" dy="16.25">Команда: dt derive</tspan>
 <tspan x="2045.0" dy="16.25">maf-npm-light, agr npm-light</tspan>
 <tspan x="2045.0" dy="16.25">[D293, D164]</tspan>
 </text>
-<text x="2045.0" y="809.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2045.0" y="858.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="13">Ветка: расстановка с нуля</tspan>
 <tspan x="2045.0" dy="16.25">→ low-poly (кандидат НПМ</tspan>
 <tspan x="2045.0" dy="16.25">библиотеки) и high-poly</tspan>
 <tspan x="2045.0" dy="16.25">ставятся вместе в одни точки</tspan>
 <tspan x="2045.0" dy="16.25">[D293]</tspan>
 </text>
-<text x="2045.0" y="927.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2045.0" y="975.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="13">Ветка: НПМ (всегда)</tspan>
 <tspan x="2045.0" dy="16.25">→ один атлас 512 RGB на все</tspan>
-<tspan x="2045.0" dy="16.25">GroundEl; номер ID в правом</tspan>
-<tspan x="2045.0" dy="16.25">нижнем углу ячейки [D168,</tspan>
-<tspan x="2045.0" dy="16.25">D020]</tspan>
+<tspan x="2045.0" dy="16.25">GroundEl, номер ID в правом</tspan>
+<tspan x="2045.0" dy="16.25">нижнем углу ячейки:</tspan>
+<tspan x="2045.0" dy="16.25">atlas_maf.build_atlas → PNG +</tspan>
+<tspan x="2045.0" dy="16.25">UV JSON (ключ — имя</tspan>
+<tspan x="2045.0" dy="16.25">материала) → maf_npm_light</tspan>
+<tspan x="2045.0" dy="16.25">(Blender); atlas_groundel</tspan>
+<tspan x="2045.0" dy="16.25">(Max) строит свой атлас из</tspan>
+<tspan x="2045.0" dy="16.25">сцены; инструмент выбирает</tspan>
+<tspan x="2045.0" dy="16.25">агент (D293); #1410 —</tspan>
+<tspan x="2045.0" dy="16.25">технический прогон на копиях,</tspan>
+<tspan x="2045.0" dy="16.25">не сдача и не доказательство</tspan>
+<tspan x="2045.0" dy="16.25">переноса ID v007 [D168, D020,</tspan>
+<tspan x="2045.0" dy="16.25">D293]</tspan>
 </text>
-<text x="2045.0" y="1044.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2045.0" y="1255.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2045.0" dy="13">⚠ Бюджет НПМ: МАФ 60 000 из</tspan>
 <tspan x="2045.0" dy="16.25">180 000 (D097); набор</tspan>
 <tspan x="2045.0" dy="16.25">Ватутино 57 628 + «Верона» 1</tspan>
