@@ -1,5 +1,12 @@
 ## 1.1.x — в работе (#1024)
 
+- Metallic map FBX round trip (#1729): `names_core.SLOT_TABLE` / `names_max.STANDARD` — the Standard `_m` slot is now
+  `reflectionMap` (FBX `ReflectionColor`, SINTEZ 1.6.1 2.5.6 reads it as Metallic); `specularLevelMap` (FBX
+  `SpecularFactor` = «Specular IOR Level» in SINTEZ, 2.5.6 fail) has no role and is reported with that reason. V2 (one
+  slot per role) is kept; the V13 note «reflection is NOT metalness» is replaced explicitly. `tex_core.role_of_slot`
+  follows. New `fbxmaps_core.py` / `fbxmaps_max.py`: FBX material channels, readback of embedded maps a Max FBX import
+  left unconnected (Max 2026.3 drops `ReflectionFactor` maps) and their reconnect. Evidence:
+  docs/domain/fbx-metallic-channel.md.
 - Export subprocesses time out after 600 s (`AGR_EXPORT_TIMEOUT_S` override), report the method on timeout, and document structural-only readback (#1604).
 
 ### Стекло ВПМ — только UDIM 1001, без карт [D221]

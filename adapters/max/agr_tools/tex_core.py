@@ -1168,18 +1168,25 @@ _SLOT_ROLES = (  # map slot name (property or sub-texmap slot name, any case) ->
     (('normal', 'bump'), 'normal'),
     (('opacity', 'cutout', 'transparency'), 'opacity'),
     (('rough', 'gloss'), 'roughness'),
-    (('metal', 'specular level', 'specularlevel', 'specular_level'), 'metalness'),
+    (('metal',), 'metalness'),
     (('emission', 'emissive', 'self-illum', 'selfillum', 'self_illum'), 'emission'),
     (('diffuse', 'base color', 'base_color', 'basecolor', 'albedo'), 'diffuse'),
 )
+# #1729: the Standard reflection slot (sub-texmap "Reflection", property reflectionMap) is the `_m` slot (FBX
+# ReflectionColor = SINTEZ 2.5.6 Metallic); every other reflection-like slot (Physical reflectivity / reflection
+# colour, coat) and Specular Level (FBX SpecularFactor) stay without a role.
+_METAL_SLOTS = ('reflection', 'reflectionmap')
 
 
 def role_of_slot(slot):
-    """names_core map role of a material slot name, else None. Reflection is NOT metalness (T06: renamer V13 gave
-    `_m` to specular AND reflection, TexFinder then moved it): an unknown slot has no mask candidate."""
+    """names_core map role of a material slot name, else None. One `_m` slot per class (T06: renamer V13 gave `_m`
+    to specular AND reflection, TexFinder then moved it); #1729 moved the Standard one from Specular Level to
+    Reflection. An unknown slot has no mask candidate."""
     s = str(slot or '').lower()
+    if s.strip() in _METAL_SLOTS:
+        return 'metalness'
     if not s or any(k in s for k in ('reflect', 'coat', 'sheen', 'sss', 'scatter', 'thin', 'aniso', 'weight',
-                                     'diff_rough', 'diffuse_rough', 'diffuse rough', 'displace')):
+                                     'diff_rough', 'diffuse_rough', 'diffuse rough', 'displace', 'specular')):
         return None
     for keys, role in _SLOT_ROLES:
         if any(k in s for k in keys):
