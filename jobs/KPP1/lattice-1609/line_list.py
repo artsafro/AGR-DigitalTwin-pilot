@@ -1,4 +1,4 @@
-"""KPP1 W/S/N body lattice lines from the Revit openings/zones list (#1609 restart, BM-00).
+"""KPP1 W/S/N/E body lattice lines from the Revit openings/zones list (#1609 restart, BM-00).
 
 Pattern: new-case | new-case: lattice line list of a facade from the Revit openings/zones census, not mesh vertices.
 
@@ -12,7 +12,9 @@ Inputs (read-only, Revit census of 26_KPP1_AR_MEP, Revit project metres, Z up, 0
   walls_ext.objects.json  exterior wall instances with bboxes (stacked finish slices, plinth, vent cladding, canopies)
 
 Rules (all in `plan`):
-- levels z are global for W/S/N (swept around the envelope); stations u are per facade (S/N: u = x, W: u = y).
+- levels z are global for W/S/N/E: every level is a closed ring around the whole envelope (Artem 2026-11-21,
+  «луп и ринг должен быть логичный, без прерваний на другой стороне фасада»); stations u are per facade
+  (S/N: u = x, W/E: u = y). Facade E is in the lattice for that reason (its openings make lines as well).
 - body zones = wall instances whose outer face lies on the facade plane (5 mm); a zone that stops <= POST_GAP short
   of a facade end is extended to it (that gap is the corner post, a separate element [D336]); every other wall is
   `not_body` (cladding, canopy, parapet: inset/separate elements) with its distance from the plane.
@@ -35,7 +37,7 @@ import re
 import sys
 from pathlib import Path
 
-FACADES = ('W', 'S', 'N')
+FACADES = ('W', 'S', 'N', 'E')
 SPEC_KEYS = {'surrounds', 'doors', 'portals', 'features', 'grilles'}
 PLANE_TOL = 0.005
 POST_GAP = 0.15
@@ -86,6 +88,8 @@ def _plane(f, lo, hi):
         return lo[1], (lo[0], hi[0])
     if f == 'N':
         return hi[1], (lo[0], hi[0])
+    if f == 'E':
+        return hi[0], (lo[1], hi[1])
     return lo[0], (lo[1], hi[1])  # W
 
 
@@ -101,7 +105,7 @@ def collect(spec, walls):
         raise ValueError('walls: empty or not a list')
     out, ignored = {}, []
     for f in spec:
-        if f not in FACADES + ('E',):
+        if f not in FACADES:
             raise ValueError('openings spec: unknown facade key ' + repr(f))
         extra = set(spec[f]) - SPEC_KEYS
         if extra:
@@ -109,8 +113,6 @@ def collect(spec, walls):
     for f in FACADES:
         if f not in spec:
             raise ValueError('openings spec: facade ' + f + ' missing')
-    if 'E' in spec:
-        ignored.append({'what': 'openings of facade E', 'reason': 'facade E is outside the W/S/N scope of #1609'})
     by_f = {f: [] for f in FACADES}
     seen = set()
     for o in walls:
@@ -123,7 +125,7 @@ def collect(spec, walls):
         if f in FACADES:
             by_f[f].append((name, lo, hi))
         else:
-            ignored.append({'what': name, 'reason': 'wall not on W/S/N (facade %s)' % f})
+            ignored.append({'what': name, 'reason': 'wall on no facade plane zone (facade %s)' % f})
     for f in FACADES:
         rows = by_f[f]
         if not rows:

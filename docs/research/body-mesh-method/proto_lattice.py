@@ -5,7 +5,16 @@ cells, welded reveals) for the #1742 method comparison; research folder only, no
 
 blender -b --factory-startup --python proto_lattice.py -- SRC.(fbx|blend) OUT_DIR --objects SUBSTR
         (--ring-bbox | --ring-json FLOOR.json) --zmin Z --zmax Z [--sides 0,1,2,3] [--reveal 0.25]
-        [--plane-share 0.08] [--snap 0.02]
+        [--plane-share 0.08] [--snap 0.02] [--lines LATTICE.json]
+
+--lines (#1609, BM-00 input): the lattice JSON of jobs/KPP1/lattice-1609/lattice_input.py (ring = rings[0].xy,
+stations_s, levels, openings in s/z). Then steps 2 and 4 are replaced by that list (no source-vertex candidates, no
+reason filter - every listed level is a ring around all sides). Step 3: an opening cell of the list = ring plane +
+--reveal; any other cell keeps the source depth of its ray (approved geometry: <= 2 cm or in front = ring plane,
+deeper = that depth, clustered per building at 3 cm (no chaining; a 1 cm ray jitter on one plane must not make
+1 cm steps), cluster means rounded to 1 cm; no hit within 3.5 m = a hole of the source that the list lacks (KPP1: glazed
+side lights of the entrances, glass objects are not cast) -> opening cell, listed in ray_check.void_as_opening). `ray_check` in proto.json lists the cells where the source
+disagrees with the list (opening vs wall) and the depth classes. --ring-json is implied.
 
 1. Ring: the outer envelope polygon (CCW). --ring-bbox = plan bbox of the source objects; --ring-json = rings[0].xy
    of a floor JSON (63A floor_v005.json). --sides keeps only those ring edges (KPP1: W/S/N walls).
@@ -79,7 +88,10 @@ def main():
         bm.from_mesh(me)
     bvh = BVHTree.FromBMesh(bm)
     pts = [v.co.copy() for v in bm.verts]
-    if "--ring-json" in a:
+    lines = json.load(open(arg("--lines"), encoding="utf-8")) if "--lines" in a else None
+    if lines is not None:
+        ring = [tuple(p) for p in lines["rings"][0]["xy"]]
+    elif "--ring-json" in a:
         ring = [tuple(p) for p in json.load(open(arg("--ring-json"), encoding="utf-8"))["rings"][0]["xy"]]
     else:
         xs, ys = [p.x for p in pts], [p.y for p in pts]
@@ -115,26 +127,34 @@ def main():
         return p + t * u, nin, k
 
     # 2. candidate lines
-    cand_s = set(round(g[0], 4) for g in seg)
-    cand_z = {z0, z1}
-    for v in pts:
-        if not (z0 - 1e-3 <= v.z <= z1 + 1e-3):
-            continue
-        best = None
-        for s0, L, p, t, nin in seg:
-            u = max(0.0, min(L, (v - p).dot(t)))
-            d = (Vector((v.x, v.y, 0)) - (p + t * u)).dot(nin)
-            if -0.05 <= d <= 3.0 and (best is None or d < best[0]):
-                best = (d, s0 + u)
-        if best:
-            cand_s.add(best[1])
-            cand_z.add(v.z)
-    S = cluster(cand_s, snap)
-    for g in seg:  # ring corners exactly
-        S = [x for x in S if abs(x - g[0]) > snap] + [g[0]]
-    S = sorted(set(round(x, 5) for x in S))
-    Z = cluster([z for z in cand_z if z0 - 1e-3 <= z <= z1 + 1e-3], snap)
-    Z[0], Z[-1] = z0, z1
+    if lines is not None:  # #1609: the lattice is the given list (BM-00), never source vertices
+        if abs(float(lines["perimeter"]) - perim) > 1e-3:
+            sys.exit("--lines perimeter %.4f != ring %.4f" % (lines["perimeter"], perim))
+        S = sorted(set(round(float(x), 5) for x in lines["stations_s"]))
+        Z = [float(z) for z in lines["levels"]]
+        if abs(Z[0] - z0) > 1e-6 or abs(Z[-1] - z1) > 1e-6:
+            sys.exit("--lines levels %.3f..%.3f != --zmin/--zmax" % (Z[0], Z[-1]))
+    else:
+        cand_s = set(round(g[0], 4) for g in seg)
+        cand_z = {z0, z1}
+        for v in pts:
+            if not (z0 - 1e-3 <= v.z <= z1 + 1e-3):
+                continue
+            best = None
+            for s0, L, p, t, nin in seg:
+                u = max(0.0, min(L, (v - p).dot(t)))
+                d = (Vector((v.x, v.y, 0)) - (p + t * u)).dot(nin)
+                if -0.05 <= d <= 3.0 and (best is None or d < best[0]):
+                    best = (d, s0 + u)
+            if best:
+                cand_s.add(best[1])
+                cand_z.add(v.z)
+        S = cluster(cand_s, snap)
+        for g in seg:  # ring corners exactly
+            S = [x for x in S if abs(x - g[0]) > snap] + [g[0]]
+        S = sorted(set(round(x, 5) for x in S))
+        Z = cluster([z for z in cand_z if z0 - 1e-3 <= z <= z1 + 1e-3], snap)
+        Z[0], Z[-1] = z0, z1
     # 3. depth field on the candidate lattice
     raw = {}
     for i in range(len(S)):
@@ -164,6 +184,33 @@ def main():
         pl = [p for p in planes[k] if p <= d + 0.02]
         base = pl[-1] if pl else planes[k][0]
         cls[key] = round(base + reveal, 3) if d - base > 0.08 else base
+    ray_check = None
+    if lines is not None:  # class from the list; the rays only cross-check it (opening vs wall)
+        ray_check = {"cells": 0, "agree": 0, "disagree": []}
+        ops = lines["openings"]
+        reps = sorted(set(round(x, 2) for x in cluster([d for d, ar, k in raw.values() if d is not None and d > 0.02],
+                                                         0.03)))  # 1 cm grid: no 1 mm pair with --reveal or a ray
+        ray_check["depth_planes"] = [round(x, 3) for x in reps]
+        for i in range(len(S)):
+            sa, sb = S[i], S[i + 1] if i + 1 < len(S) else perim
+            sm = (sa + sb) / 2
+            for j in range(len(Z) - 1):
+                zm = (Z[j] + Z[j + 1]) / 2
+                o = next((o for o in ops if o["s0"] < sm < o["s1"] and o["z0"] < zm < o["z1"]), None)
+                d = raw.get((i, j), (None,))[0]
+                want = (round(reveal, 3) if o or d is None else 0.0 if d <= 0.02
+                        else round(min(reps, key=lambda x: abs(x - d)), 3))
+                if d is None and not o:
+                    ray_check.setdefault("void_as_opening", []).append({"s": round(sm, 3), "z": round(zm, 3)})
+                ray_open = d is None or d > 0.08
+                ray_check["cells"] += 1
+                if ray_open == bool(o):
+                    ray_check["agree"] += 1
+                else:
+                    ray_check["disagree"].append({"s": round(sm, 3), "z": round(zm, 3), "ray_depth": d,
+                                                  "list": "opening %s %s" % (o["facade"], o["id"]) if o else "wall"})
+                cls[(i, j)] = want
+        planes = {k: [0.0] for k in sides}
     # 4. reason filter (+ --min-reason: a line whose class change runs shorter than that is texture, BM-08/D344)
     mr = arg("--min-reason", 0.0, float)
     perim_s = S + [perim]
@@ -173,9 +220,9 @@ def main():
 
     def reason_z(j):
         return sum(perim_s[i + 1] - perim_s[i] for i in range(len(S)) if cls.get((i, j - 1)) != cls.get((i, j)))
-    keep_s = [i for i in range(len(S)) if any(abs(S[i] - g[0]) < 1e-4 for g in seg) or (  # r2: S is rounded to
+    keep_s = list(range(len(S))) if lines is not None else [i for i in range(len(S)) if any(abs(S[i] - g[0]) < 1e-4 for g in seg) or (  # r2: S is rounded to
         reason_s(i) > 0 and reason_s(i) >= mr)]  # 1e-5, so a 1e-6 test dropped ring corners (63A notch, V004)
-    keep_z = [j for j in range(len(Z)) if j in (0, len(Z) - 1) or (reason_z(j) > 0 and reason_z(j) >= mr)]
+    keep_z = list(range(len(Z))) if lines is not None else [j for j in range(len(Z)) if j in (0, len(Z) - 1) or (reason_z(j) > 0 and reason_z(j) >= mr)]
     # rebuild cells on the kept lattice: class of a merged cell = class of its first candidate cell
     S2, Z2 = [S[i] for i in keep_s], [Z[j] for j in keep_z]
     c2 = {}
@@ -284,7 +331,8 @@ def main():
     rep = {"source": os.path.abspath(src), "objects": names, "ring_points": n, "sides": sides,
            "planes": {str(k): v for k, v in planes.items()}, "candidate_stations": len(S), "candidate_levels": len(Z),
            "kept_stations": len(S2), "kept_levels": len(Z2), "levels_z": [round(z, 3) for z in Z2],
-           "faces": faces, "verts": len(V), "reveal_m": reveal}
+           "faces": faces, "verts": len(V), "reveal_m": reveal,
+           "lines": None if lines is None else os.path.abspath(arg("--lines")), "ray_check": ray_check}
     json.dump(rep, open(os.path.join(out, "proto.json"), "x"), indent=1)
     print("PROTO", json.dumps({k: rep[k] for k in ("candidate_stations", "candidate_levels", "kept_stations",
                                                     "kept_levels", "faces", "verts", "planes")}))

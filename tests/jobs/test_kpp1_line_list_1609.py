@@ -26,19 +26,21 @@ def wall(name, f, u0, u1, z0, z1, off=0.0):
         return {'name': name, 'min': [u0, -0.33 - off, z0], 'max': [u1, -0.22 - off, z1]}
     if f == 'N':
         return {'name': name, 'min': [u0, 11.22 + off, z0], 'max': [u1, 11.33 + off, z1]}
+    if f == 'E':
+        return {'name': name, 'min': [27.22 + off, u0, z0], 'max': [27.33 + off, u1, z1]}
     return {'name': name, 'min': [-0.33 - off, u0, z0], 'max': [-0.22 - off, u1, z1]}
 
 
 def base(extra_walls=(), spec=None):
     walls = []
-    for f, L in (('S', 27.33), ('N', 27.33), ('W', 11.33)):
+    for f, L in (('S', 27.33), ('N', 27.33), ('W', 11.33), ('E', 11.33)):
         walls += [wall('plinth %s_%s' % (f, 'a' * 7), f, -0.33, L, -0.72, 0.9),
                   wall('slice1 %s_%s' % (f, 'b' * 7), f, -0.33, L, 0.9, 2.7),
                   wall('slice2 %s_%s' % (f, 'c' * 7), f, -0.33, L, 2.7, 7.1),
                   wall('slice3 %s_%s' % (f, 'd' * 7), f, -0.33, L, 7.1, 8.1),
                   wall('slice4 %s_%s' % (f, 'e' * 7), f, -0.33, L, 8.1, 8.65)]
     walls += list(extra_walls)
-    sp = spec or {f: {'surrounds': [], 'doors': [], 'portals': [], 'features': [], 'grilles': []} for f in 'WSN'}
+    sp = spec or {f: {'surrounds': [], 'doors': [], 'portals': [], 'features': [], 'grilles': []} for f in 'WSNE'}
     return sp, walls
 
 
@@ -59,6 +61,18 @@ def test_openings_and_finish_lines():
     assert [d['value'] for d in res['dropped']] == [8.1]  # stacked-wall split inside one finish = texture
     assert kept_u(res, 'S') == [-0.33, 2.0, 5.0, 8.0, 9.0, 27.33]
     assert kept_u(res, 'W') == [-0.33, 11.33]
+
+
+def test_facade_e_in_scope_its_door_levels_are_global_rings():
+    """Artem 2026-11-21: every level is a closed ring around W, S, N AND E; E openings make lines too."""
+    sp, w = base()
+    sp['E']['doors'].append({'name': 'door E', 'rect': [5.68, 6.98, 3.9, 6.0]})
+    res = ll.plan(sp, w, bands=BANDS)
+    assert 3.9 in kept_z(res) and 6.0 in kept_z(res)
+    assert kept_u(res, 'E') == [-0.33, 5.68, 6.98, 11.33]
+    assert res['facades']['E']['u_axis'] == 'y' and res['facades']['E']['plane'] == 27.33
+    assert not any('facade E' in i['reason'] for i in res['ignored'])
+    assert set(res['summary']['stations_kept']) == {'W', 'S', 'N', 'E'}
 
 
 def test_without_bands_wall_instances_are_zones():
@@ -152,6 +166,7 @@ def test_every_wall_is_accounted():
     (lambda sp, w: sp.clear(), 'empty'),
     (lambda sp, w: w.clear(), 'empty'),
     (lambda sp, w: sp.pop('N'), 'missing'),
+    (lambda sp, w: sp.pop('E'), 'facade E missing'),
     (lambda sp, w: sp['S'].update(bays=[]), 'unknown keys'),
     (lambda sp, w: sp.update(X={}), 'unknown facade'),
     (lambda sp, w: sp['S']['surrounds'].append({'id': 1, 'rect': [1.0, float('nan'), 1.0, 2.0]}), 'finite'),
@@ -190,7 +205,7 @@ def test_probe_random_facades_invariants():
     n_ok = 0
     for seed in range(300):
         sp, w = base()
-        for f, L in (('S', 27.33), ('N', 27.33), ('W', 11.33)):
+        for f, L in (('S', 27.33), ('N', 27.33), ('W', 11.33), ('E', 11.33)):
             u = -0.33 + rnd.uniform(0.2, 1.0)
             while u < L - 2.5:
                 wd = rnd.uniform(0.6, 2.0)
@@ -207,7 +222,7 @@ def test_probe_random_facades_invariants():
         assert (sp, w) == before
         zs = kept_z(res)
         assert all(b - a > 0.1 for a, b in zip(zs, zs[1:]))
-        for f in 'WSN':
+        for f in 'WSNE':
             us = kept_u(res, f)
             assert all(b - a > 0.1 for a, b in zip(us, us[1:]))
             for o in res['facades'][f]['openings']:

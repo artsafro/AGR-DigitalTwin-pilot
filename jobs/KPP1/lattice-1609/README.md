@@ -39,3 +39,27 @@ uv run python jobs/KPP1/lattice-1609/line_list.py $C/openings_spec.json $C/walls
 uv run python jobs/KPP1/lattice-1609/render_lines.py OUT/line_list.json OUT/dumpnpm/SM_Kpp_1_001_Main.npz OUT/dump/SM_Kpp_1_Main.npz run-r1-v003/atlas/T_Kpp_1_001_Main_d_1.png OUT/kpp1-lattice-lines-ground.png --check OUT/hole_check.json
 ```
 Tests: `tests/jobs/test_kpp1_line_list_1609.py`.
+
+## Step 2: lattice body with closed rings (Artem 2026-11-21: lines accepted; every level a closed ring)
+
+The rule is «луп и ринг должен быть логичный, без прерваний на другой стороне фасада». So facade E is in the line
+list now (`FACADES = W, S, N, E`). Its 3 Revit doors add stations, and the E door at z 3.9–6.0 adds 2 global rings.
+#1736 core is not on main, so the body is built with the #1742 prototype `proto_lattice.py`. Its new `--lines` input
+takes the stations, levels and openings from the list. Every opening cell sits at plane + 0.25 reveal. Every other
+cell keeps the R1 v003 depth (clustered at 3 cm, rounded to 1 cm). A cell where R1 has no surface within 3.5 m is
+a hole the list lacks (glazed side lights at the entrances), so it is treated as an opening.
+
+- `lattice_input.py`: line list → one ring lattice (perimeter s, S→E→N→W, `--shift` into the R1 frame).
+- `lattice_check.py`: per level closed yes/no, per station through yes/no, defects per lattice cell (local signal).
+- `render_lattice.py`: unrolled S | E | N | W straight elevations, before/after, rings and cells marked.
+
+Reproduce (outputs `C:/x/ev_1609/s7`, evidence `G:/Мой диск/AGR-evidence/1609-kpp1-lattice-body/step2/`):
+```
+uv run python jobs/KPP1/lattice-1609/line_list.py $C/openings_spec.json $C/walls_ext.objects.json O/line_list.json --bands jobs/KPP1/lattice-1609/finish_bands.json
+uv run python jobs/KPP1/lattice-1609/lattice_input.py O/line_list.json O/lattice_r1.json --shift -14.655 -5.355
+"$B" -b --factory-startup --python docs/research/body-mesh-method/proto_lattice.py -- kpp1_r1_v003.fbx O/p6 --objects SM_Kpp_1_Main --lines O/lattice_r1.json --zmin 0 --zmax 8.65
+"$B" -b --factory-startup --python docs/research/body-modelling-1618/dump_mesh.py -- O/p6/proto.fbx O/d6
+uv run python jobs/KPP1/lattice-1609/lattice_check.py O/d6/SM_Proto_Body.npz O/lattice_r1.json O/qa/check_p6.json
+uv run python jobs/KPP1/lattice-1609/render_lattice.py O/lattice_r1.json OUT.png --model LABEL NPZ CHECK.json ...
+```
+Tests: `tests/jobs/test_kpp1_lattice_body_1609.py`, `tests/jobs/test_kpp1_line_list_1609.py`.
