@@ -369,7 +369,8 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
     Top faces = triangles whose normal z > ``up_cos``. An outer edge is a top edge used by one top face with no top
     face on its outer side in plan (a layered inset rim over the base is not the perimeter). At every station of an
     outer edge (both ends, every wall vertex on the edge's vertical plane, midpoints between them) the vertical line must
-    be covered by wall triangles without a gap
+    be covered by wall triangles parallel to the edge (its own vertical plane; the neighbour's perpendicular wall at
+    a corner does not count) without a gap
     from the surface down to ``drop_m``; any wall topology counts (per-edge quads, n-gon fans), only the covered
     depth is measured. ``rings="outer"`` checks only the exterior ring of each component (D251: inner rings are
     exempt); ``"all"`` checks holes too. Empty, non-finite or non-triangle input is an error; a file without
@@ -428,20 +429,30 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
     walls = np.nonzero(is_wall)[0]
     wtree = STRtree([LineString(v[f[i], :2]).envelope.buffer(xy_tol) for i in walls]) if len(walls) else None
 
-    def depth_at(p_xy, z_top):
+    def depth_at(p_xy, z_top, u, side):
+        """Covered depth below ``z_top`` at ``p_xy`` by walls in the vertical plane of the edge with unit plan
+        direction ``u``, as the one-sided limit from ``side`` (+1 towards b, -1 towards a). A perpendicular wall of
+        the neighbour edge also contains the corner line, and the next quad's full-depth side hides a shallow vertex
+        of this quad; neither may count (#1738 r2 P1-1)."""
         if wtree is None:
             return 0.0
         spans = []
         for wi in wtree.query(_pts(p_xy)).tolist():
             P = v[f[walls[wi]]]
-            h = P[1, :2] - P[0, :2] if np.linalg.norm(P[1, :2] - P[0, :2]) > 1e-9 else P[2, :2] - P[0, :2]
+            pairs = [P[j, :2] - P[i, :2] for i, j in ((0, 1), (1, 2), (0, 2))]
+            h = max(pairs, key=lambda w: float(np.linalg.norm(w)))  # longest plan span: stable wall direction
             hl = float(np.linalg.norm(h))
             if hl < 1e-9:
                 continue
             h = h / hl
+            if abs(float(h[0] * u[1] - h[1] * u[0])) > 1e-3:
+                continue  # not parallel to the edge: another edge's wall
             q = p_xy - P[0, :2]
             if abs(float(h[0] * q[1] - h[1] * q[0])) > xy_tol:
                 continue  # not in this wall's vertical plane
+            su = (P[:, :2] - p_xy) @ u  # one-sided limit: the wall must extend from the station towards ``side``
+            if (side > 0 and su.max() <= xy_tol) or (side < 0 and su.min() >= -xy_tol):
+                continue
             s = (P[:, :2] - P[0, :2]) @ h
             sp = float((p_xy - P[0, :2]) @ h)
             zs = []
@@ -483,9 +494,12 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
     gaps, drops = [], []
     for a, b in outer_set:
         d = []
+        e = v[b, :2] - v[a, :2]
+        u = e / (float(np.linalg.norm(e)) or 1.0)
         for t in stations(a, b):
             p = v[a] + t * (v[b] - v[a])
-            d.append(depth_at(p[:2], float(p[2])))
+            sides = (1,) if t <= 0.0 else (-1,) if t >= 1.0 else (-1, 1)
+            d.append(min(depth_at(p[:2], float(p[2]), u, s) for s in sides))
         drop = min(d)
         drops.append(drop)
         if drop < drop_m - 1e-6:
