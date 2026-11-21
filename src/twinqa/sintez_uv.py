@@ -68,6 +68,15 @@ def _finite_pairs(points, dim: int, label: str) -> list[tuple[float, ...]]:
     return out
 
 
+def _indexed_pairs(points, dim: int, label: str) -> list[tuple[float, ...]]:
+    # The readback uses JSON arrays of floats. Do not interpret mapping keys as
+    # coordinates or round large integer input to an apparently unchanged float.
+    if any(not isinstance(p, list) or any(type(c) is int and abs(c) > 2**53 for c in p)
+           for p in points):
+        raise ValueError(f"{label}: unsupported coordinate encoding")
+    return _finite_pairs(points, dim, label)
+
+
 def _indexed_surfaces(meshes):
     if not isinstance(meshes, list) or not meshes:
         raise ValueError("expected nonempty surface mesh inventory")
@@ -85,7 +94,7 @@ def _indexed_surfaces(meshes):
                 and isinstance(uv, list) and isinstance(materials, list)
                 and len(faces) == len(uv) == len(materials)):
             raise ValueError(f"{name}: incomplete surface arrays")
-        xyz = _finite_pairs(vertices, 3, f"{name} XYZ")
+        xyz = _indexed_pairs(vertices, 3, f"{name} XYZ")
         loops = []
         for i, (face, chart, material) in enumerate(zip(faces, uv, materials, strict=True)):
             if not isinstance(face, list) or len(face) != 3 or any(
@@ -94,9 +103,9 @@ def _indexed_surfaces(meshes):
                 raise ValueError(f"{name}: invalid triangle {i}")
             if not isinstance(material, str) or not material.strip():
                 raise ValueError(f"{name}: unmapped material on triangle {i}: {material!r}")
-            if not isinstance(chart, list) or len(chart) != 3 or not all(isinstance(p, list) for p in chart):
+            if not isinstance(chart, list) or len(chart) != 3:
                 raise ValueError(f"{name}: incomplete loop UV on triangle {i}")
-            loops.append(_finite_pairs(chart, 2, f"{name} triangle {i} UV"))
+            loops.append(_indexed_pairs(chart, 2, f"{name} triangle {i} UV"))
         result[name] = xyz, faces, loops, materials
     return result
 

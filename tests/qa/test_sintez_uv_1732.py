@@ -90,6 +90,17 @@ def test_indexed_drift_refuses_unproved_correspondence(case):
         indexed_uv_drift(before, after)
 
 
+@pytest.mark.parametrize("bad_xyz", [{0: None, 1: None, 2: None}, (0, 1, 2), [0, 1, 2**53 + 1]])
+def test_indexed_drift_refuses_noncanonical_xyz_with_valid_sibling(bad_xyz):
+    from twinqa.sintez_uv import indexed_uv_drift
+
+    before = [_strip(1), _strip(1, name="second")]
+    after = deepcopy(before)
+    after[1]["face_geometry"]["vertices"][0] = bad_xyz
+    with pytest.raises(ValueError, match="second.*XYZ"):
+        indexed_uv_drift(before, after)
+
+
 def _strip(n=4, name="SM_Test_K_1_Main", material="M_Test_K_1_Main_1"):
     """SYNTHETIC 1 x n m strip of 2n triangles, one island in tile 1001 at 819.2 px/m."""
     vertices = [[float(x), float(y), 0.0] for y in (0, 1) for x in range(n + 1)]
