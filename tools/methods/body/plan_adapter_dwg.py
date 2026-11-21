@@ -13,8 +13,8 @@ output (left_m/right_m/sill_m/head_m per opening, facade name). CONFIG::
 
 Nothing is inferred: an opening's facade must be in `facades` (placement along the CCW outer ring: s = ring_s0_m +
 direction * left_m), else it is an error naming it; an opening outside or across its band is reported in `dropped`.
-Lines come only from the openings list and `lines` (decision 2, Artem 2026-11-21: never from mesh vertices), snapped
-to snap_m; a line is kept only by keep_lines (decision 3). Each band -> NEW_OUT_DIR/plan_band<k>.json (one module,
+Lines come only from the openings list and `lines` ([D368]: never from mesh vertices), snapped
+to snap_m; a line is kept only by keep_lines [D368]. Each band -> NEW_OUT_DIR/plan_band<k>.json (one module,
 floors 1, step = band height) + NEW_OUT_DIR/adapter_report.json (kept / dropped with reasons). Holes of the plan
 polygons are dropped with a reason (outer envelope, D341); collinear ring points (< collinear_deg) are dropped.
 NEW_OUT_DIR must not exist and must not contain an input.
@@ -147,7 +147,7 @@ FACADE_CLASSES = {"surrounds": "opening", "doors": "opening", "portals": "zone",
 
 
 def lines_from_facades(spec, z0, z1, grid=0.10, min_reason=1.5):
-    """Lines of one band from a per-facade openings list (decision 2: openings/zones, never mesh vertices).
+    """Lines of one band from a per-facade openings list ([D368]: openings/zones, never mesh vertices).
 
     spec = {facade: {"surrounds"|"doors"|"portals"|"features": [{"rect": [u0, u1, zb, zt]} | [u0, u1, zb, zt]],
     "grilles": [...]}} (tools/source/openings census form). Levels are global for the band (one loop through every

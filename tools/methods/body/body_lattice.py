@@ -10,7 +10,7 @@ writer `body_lattice_blender.py` and the `agr body` command only turn that into 
 
 Input = the plan format «contour + levels + openings» (`schemas/BodyPlan.schema.json`; Revit route:
 `jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py`, DWG route: `plan_adapter_dwg.py`). The core reads
-nothing else. Rules applied by construction (BM-00, Artem 2026-11-21): the body is built ONLY from the lattice, never by
+nothing else. Rules applied by construction (BM-00 [D368]): the body is built ONLY from the lattice, never by
 repairing a mesh; vertical stations = ring corners + `cuts` (jambs, zone joints) + optional max-side splits (BM-11);
 horizontal lines = `loops` (BM-02); a window with reveal r > 0 removes its cells and adds jambs / sill / head quads on
 the same vertices (back open for the stage-2 window, D336); r = 0 keeps the cell with the WINDOW material; insets are
@@ -383,7 +383,7 @@ def replicate(module, plan):
     return {"verts": verts, "faces": faces, "materials": module["materials"], "report": rep}
 
 
-# ---- lines from the openings / zones list (decisions 2-3, Artem 2026-11-21) -------------------------------
+# ---- lines from the openings / zones list [D368] ---------------------------------------------------
 def snap(v, grid=0.10):
     """Snap a level or station to the grid (10 cm by default); refuses non-finite input."""
     if not (_finite(v) and _finite(grid) and grid > 0):
@@ -392,7 +392,7 @@ def snap(v, grid=0.10):
 
 
 def keep_lines(candidates, min_reason=1.5):
-    """Filter candidate lines [{"at": z_or_s, "reason": kind, "length": m, "width": m|None}] (decision 3).
+    """Filter candidate lines [{"at": z_or_s, "reason": kind, "length": m, "width": m|None}] [D368].
 
     A line is kept when the cell class changes along it over >= min_reason in ONE element (lengths of separate
     elements on the same line are not added: four 0.4 m grilles are texture), or over the full width of the opening

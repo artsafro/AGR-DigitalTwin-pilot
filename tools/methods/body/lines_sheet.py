@@ -1,4 +1,4 @@
-"""Sheet of the lattice lines of one band (#1736, decision 2): what the core will cut, before any mesh is built.
+"""Sheet of the lattice lines of one band (#1736, [D368]): what the core will cut, before any mesh is built.
 
 Pattern: n/a | new-case: per-facade elevation of the lines list (kept / dropped as texture) from plan_adapter_dwg lines.
 
