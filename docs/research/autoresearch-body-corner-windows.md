@@ -60,8 +60,8 @@ Not measured: native readback, Blender rebuild with the rule, design-drawing att
 | 63B v007 floor_A | train | accepted | 33 | 1 (7.1° kink) | 0 |
 | 63B v007 floor_B | train | accepted | 31 | 0 | 0 |
 | G22 k1 z / z2 / v003 | holdout | v003 accepted | 104 | 6 / 6 / 6 | 6 / 6 / 6 |
-| G22 k2 v002 | holdout | accepted | — | 0 | 0 |
-| G22 k3 j6 | holdout | accepted | — | 0 | 0 |
+| G22 k2 v002 | holdout | accepted | 45 | 0 | 0 |
+| G22 k3 j6 | holdout | accepted | 25 | 0 | 0 |
 
 `margin_primary` = **3** (pass ≥ 1), `margin_secondary` = 4; held-out check **failed** (G22 k1 v003 = 6, all at
 ~83.9° corners, three symmetric pairs). Attribution: 63C v001 176 irregular faces, 176 near flagged corners
