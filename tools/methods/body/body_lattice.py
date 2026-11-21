@@ -245,6 +245,52 @@ def _newell(co):
     return nx, ny, nz
 
 
+# ---- hard check: closed rings and continuous verticals (Artem, KPP1 step 1 [D372]) ---------------------------
+def ring_closure(faces, grid, pts, perim, wins):
+    """Every level is a closed ring around the whole envelope and every station a continuous vertical.
+
+    «везде луп и ринг должен быть логичный, без прерваний на другой стороне фасада»: for each level li and each ring
+    segment k the edge grid[li][k] - grid[li][k+1] must be an edge of a built face, and for each station k and band
+    li the vertical grid[li][k] - grid[li+1][k] too. The only allowed gap is the hole of an opening: a horizontal
+    segment strictly inside it (wl < li < wh) and a vertical strictly inside it (the station between both jambs).
+    Anything else - a loop that ends at a corner or on the next facade - raises ValueError naming level/station.
+    Returns {"levels", "closed_levels", "stations", "continuous_stations", "gaps_in_openings"}."""
+    edges = set()
+    for f in faces:
+        v = f["v"]
+        for a, b in zip(v, v[1:] + v[:1]):
+            edges.add(frozenset((a, b)))
+    n, nl = len(pts), len(grid)
+
+    def seg_mid(k):
+        return (pts[k][0] + (pts[k + 1][0] if k + 1 < n else perim)) / 2
+
+    def in_hole_h(k, li):
+        sm = seg_mid(k)
+        return any(w[0] - EPS_S <= sm <= w[1] + EPS_S and w[2] < li < w[3] and w[4] > 0 for w in wins)
+
+    def in_hole_v(k, li):
+        s = pts[k][0]
+        return any(w[0] + EPS_S < s < w[1] - EPS_S and w[2] <= li < w[3] and w[4] > 0 for w in wins)
+
+    gaps = 0
+    for li in range(nl):
+        for k in range(n):
+            if frozenset((grid[li][k], grid[li][(k + 1) % n])) not in edges:
+                if not in_hole_h(k, li):
+                    raise ValueError("ring not closed: level %d breaks at s=%.3f (loop ends, not an opening)"
+                                     % (li, seg_mid(k)))
+                gaps += 1
+    for li in range(nl - 1):
+        for k in range(n):
+            if frozenset((grid[li][k], grid[li + 1][k])) not in edges:
+                if not in_hole_v(k, li):
+                    raise ValueError("vertical loop broken: station s=%.3f between levels %d and %d"
+                                     % (pts[k][0], li, li + 1))
+                gaps += 1
+    return {"levels": nl, "closed_levels": nl, "stations": n, "continuous_stations": n, "gaps_in_openings": gaps}
+
+
 # ---- module -------------------------------------------------------------------------------------------------
 def build_module(plan, max_side=None):
     """Typical-floor module: {"verts": [(x,y,z)], "faces": [{"v": (i..), "mat": name, "uv": [(u,v)..]}],
@@ -336,7 +382,8 @@ def build_module(plan, max_side=None):
                 face((grid[wh][k0], ivert(jj, wh), ivert(jj + 1, wh), grid[wh][k1]), zone, flat, (0, 0, -1))
             report["reveal_faces"] = report.get("reveal_faces", 0) + 2 * (wh - wl) + 2 * (len(ks) - 1)
             report["openings"] = report.get("openings", 0) + 1
-        report["rings"].append({"points": n, "perimeter_m": round(perim, 3)})
+        closure = ring_closure(faces, grid, pts, perim, wins)
+        report["rings"].append({"points": n, "perimeter_m": round(perim, 3), "closure": closure})
 
     for ins in plan.get("insets", []):
         c = box_corners(*ins["box"])

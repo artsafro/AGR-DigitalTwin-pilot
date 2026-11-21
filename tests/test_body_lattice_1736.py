@@ -387,3 +387,39 @@ def test_lines_cli_and_sheet_refuse_existing_output(tmp_path):
     png = tmp_path / "s.png"
     assert sheet.main([str(out), str(png)]) == 0 and png.stat().st_size > 0
     assert sheet.main([str(out), str(png)]) == 2
+
+
+# ---- hard check: every level a closed ring, every station a continuous vertical (KPP1 step 1) [D372] -----
+def _ring_ctx(p):
+    m = core.build_module(p)
+    pts, perim = core.ring_points(p["rings"][0]["xy"], p["rings"][0].get("cuts", []))
+    n, levels = len(pts), p["loops"] + [p["step"]]
+    grid = [[li * n + k for k in range(n)] for li in range(len(levels))]
+    wins = [(w[1], w[2], int(w[3]), int(w[4]), float(w[5])) for w in p["windows"]]
+    return m, grid, pts, perim, wins
+
+
+def test_ring_closure_reported_and_gaps_only_inside_openings():
+    p = _plan(insets=[], windows=[[0, 3.0, 7.0, 0, 3, 0.2]], loops=[0.0, 0.9, 2.4])  # tall opening, 2 inner levels
+    p["rings"][0]["cuts"] = [3.0, 5.0, 7.0]
+    m = core.build_module(p)
+    c = m["report"]["rings"][0]["closure"]
+    assert c["closed_levels"] == c["levels"] == 4 and c["continuous_stations"] == c["stations"]
+    assert c["gaps_in_openings"] == 2 * 2 + 3  # levels 1, 2 x 2 segments; station s=5 x 3 bands
+
+
+def test_ring_closure_probe_every_removed_lattice_edge_is_caught():
+    p = _plan(insets=[])
+    m, grid, pts, perim, wins = _ring_ctx(p)
+    n = len(pts)
+    lattice = [frozenset((grid[li][k], grid[li][(k + 1) % n])) for li in range(len(grid)) for k in range(n)]
+    lattice += [frozenset((grid[li][k], grid[li + 1][k])) for li in range(len(grid) - 1) for k in range(n)]
+    present = [e for e in lattice if any(e <= set(f["v"]) and len(e & set(f["v"])) == 2 for f in m["faces"])]
+    caught = 0
+    for e in present:  # brute force: cut each lattice edge (drop the faces on it): a loop now ends there
+        faces = [f for f in m["faces"] if not e <= set(f["v"])]
+        try:
+            core.ring_closure(faces, grid, pts, perim, wins)
+        except ValueError as err:
+            caught += ("ring not closed" in str(err) or "vertical loop broken" in str(err))
+    assert caught == len(present) == len(lattice)  # this plan has no inner-opening gaps
