@@ -7,7 +7,9 @@ confidence. Current checklist: this file. Historical source: `archive/2026-11:do
 1. **Pattern / scope.** Does each NEW module refer to a pattern in `docs/domain/patterns/INDEX.md`,
    or is it honestly marked `new-case` in the module docstring and PR body (author receipt verified per
    [WORKFLOW.md#before-requesting-review-author](WORKFLOW.md#before-requesting-review-author))?
-   Does the change stay inside its issue and list what is not done?
+   Does the change stay inside its issue and list what is not done? Check the acceptance-to-evidence
+   map in the author workflow above. If an authorized partial PR would close its still-open issue,
+   require the closing line to be corrected before CLEAN; link the existing issue, not a duplicate.
 2. **Invention.** Is there anything in the code or its output that the spec and the inputs do
    not support — guessed levels, made-up geometry, a silent fallback that hides a failure?
 3. **Evidence.** Did the checker or the tests pass **with numbers**, run by the reviewer?
@@ -27,7 +29,8 @@ confidence. Current checklist: this file. Historical source: `archive/2026-11:do
    [WORKFLOW.md#visual-evidence-beforeafter-d286](WORKFLOW.md#visual-evidence-beforeafter-d286).
 5. **Skeleton, not a parallel pipeline [D325].** A job PR that adds its own chain of scripts instead of configuring
    its scenario skeleton (`jobs/<ID>/skeleton.json` + at most 5 `hooks/`, [docs/agents/SKELETONS.md](SKELETONS.md))
-   = changes requested, the PR is not merged. Evidence: `uv run python tools/architecture/skeleton_guard.py` exit 0.
+   = changes requested, the PR is not merged. Require `uv run python tools/architecture/skeleton_guard.py`
+   exit 0 and check the author workflow's existing-entrypoint/next-consumer receipt for changed cells.
 
 ## Counterexamples
 

@@ -107,8 +107,14 @@ following three items:
    - If a probe is not applicable, record `n/a: <reason>` instead of inventing a count or omitting the line.
    - After review fixes, test the combination of the new case with previous fixes, not just each
      finding in isolation.
-   - A required acceptance item belongs in the result or an explicit blocked/open item, never in
-     "Out of scope" as a way to declare completion.
+   - Match every issue acceptance item to evidence on the reviewed head, or name it as open with its
+     owner and unblock condition. Compare against the named reference through the production entrypoint
+     when parity is required; explain any remaining delta. A proxy or in-process check is not a receipt
+     for a different checker or a fresh CLI process. A separately authorized partial PR references the
+     issue without closing it; otherwise stop on unmet required acceptance.
+   - For a new or changed scenario cell, name the canonical owner of each changed stage in the plan.
+     Replay one representative fixture through the existing entrypoint and its next consumer; verify
+     the expected artifacts are accepted there. A standalone exporter or hook test is not that receipt.
    - The reviewer independently attacks the guarantee; the author's probe is input, not a clean verdict.
 
 ### Author receipts in PR
@@ -131,8 +137,10 @@ line below exactly once (`.github/pull_request_template.md`, "Evidence"), and th
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
 For rule-21 cards, use the exact published body (`gh pr view <PR> --json body --jq .body`) and add
-`--require-acceptance-table`: a top-level `Acceptance table` heading must have a Markdown table with
-`Input` (or `Input (exact)`), `Expected` (or `Expected output`), and `Test` columns populated in at least one row.
+`--require-acceptance-table`: use a standalone Markdown heading with the exact text `Acceptance table`
+(no suffix), followed by a table with `Input` (or `Input (exact)`), `Expected` (or `Expected output`),
+and `Test` columns populated with actual values, not example placeholders. The CLI checks the structure;
+review every applicable row for actual evidence.
 - `Affected tests:` names the head sha, the command, `N passed`, `0 failed`; `not run`, `pending`, `n/a` are not a run.
 - `Full suite: deferred to merge batch (D297)` (optional; any other deferral wording is an error). A real
   `suite_slot.py` run (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head or an ancestor is still accepted,
