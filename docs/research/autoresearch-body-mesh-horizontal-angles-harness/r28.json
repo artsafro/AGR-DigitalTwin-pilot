@@ -1,0 +1,306 @@
+{
+  "variant": "horizontal Newell area share, any corner <5 or >175 degrees",
+  "reference": "bd0194a8e876a2602eafc4c98e686811f04c4a0d",
+  "angle_core_revision": "afa6fb2017eab81ec8207efb208df7e7ea8e8ed4",
+  "M": -0.05320448329109892,
+  "baseline_M": -0.26535641100393725,
+  "nominates_feature": false,
+  "worst_rejected": [
+    0.0,
+    "63C-v001"
+  ],
+  "worst_accepted": [
+    0.05320448329109892,
+    "G22-etalon-k2"
+  ],
+  "clean_checks": {
+    "baseline_exact": true,
+    "candidate_area_and_counts_parity": true,
+    "square_D": 0.0
+  },
+  "injected_checks": {
+    "wrong_hash_refused": true,
+    "collinear_vertex_D": 1.0,
+    "area_unchanged": true
+  },
+  "not_measured": [
+    "native readback",
+    "face ownership/design intent",
+    "fully collapsed faces",
+    "score recalibration",
+    "body core changes",
+    "package QA"
+  ],
+  "rows": {
+    "63B-v001": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v001.1/dump.json",
+      "sha256": "d98a129ee2035c1436763a5c47c0705edd39a5c4ccf7675584d87b4f0a3a6f57",
+      "area": 1474.807196848628,
+      "flagged_area": 2.5707283129579483,
+      "flagged_faces": 88,
+      "triangles": 976,
+      "faces": 9526,
+      "D": 0.0017430944997089024,
+      "baseline_H": 0.2955176257518731,
+      "reads_D": [
+        0.0017430944997089024,
+        0.0017430944997089024,
+        0.0017430944997089024
+      ],
+      "paired_spread": 0.0
+    },
+    "63B-v002": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v002.1/dump.json",
+      "sha256": "b1d2098f34e97a07578adf06b4c83f96279f70564c4383f66f9221ee09979981",
+      "area": 1474.808845077209,
+      "flagged_area": 2.5705437935689477,
+      "flagged_faces": 80,
+      "triangles": 968,
+      "faces": 9377,
+      "D": 0.0017429674375423038,
+      "baseline_H": 0.29551841307288007,
+      "reads_D": [
+        0.0017429674375423038,
+        0.0017429674375423038,
+        0.0017429674375423038
+      ],
+      "paired_spread": 0.0
+    },
+    "63B-v003": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v003.1/dump.json",
+      "sha256": "1263be647aa9fd3b09714c6763d46676c735a13939dff587ccd342cb498b2a3d",
+      "area": 1474.8808977170327,
+      "flagged_area": 2.5678700339180525,
+      "flagged_faces": 68,
+      "triangles": 976,
+      "faces": 9541,
+      "D": 0.0017410694232279074,
+      "baseline_H": 0.29555327260977987,
+      "reads_D": [
+        0.0017410694232279074,
+        0.0017410694232279074,
+        0.0017410694232279074
+      ],
+      "paired_spread": 0.0
+    },
+    "63B-v004": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v004.1/dump.json",
+      "sha256": "bf115523c6dde6387a8c929342cf501fd179c8b22df1810ba6784280497ff30b",
+      "area": 1474.8539342593815,
+      "flagged_area": 2.6113823069979554,
+      "flagged_faces": 76,
+      "triangles": 972,
+      "faces": 9463,
+      "D": 0.0017706040214140238,
+      "baseline_H": 0.2955408429057906,
+      "reads_D": [
+        0.0017706040214140238,
+        0.0017706040214140238,
+        0.0017706040214140238
+      ],
+      "paired_spread": 0.0
+    },
+    "63B-v005": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v005.1/dump.json",
+      "sha256": "03db41df0ce700bad640633246590cf08a33d85a551e9a8391d45bbc785d9554",
+      "area": 1398.8368917749563,
+      "flagged_area": 1.9145809574954655,
+      "flagged_faces": 72,
+      "triangles": 1034,
+      "faces": 9525,
+      "D": 0.0013686949270161812,
+      "baseline_H": 0.307418155661189,
+      "reads_D": [
+        0.0013686949270161812,
+        0.0013686949270161812,
+        0.0013686949270161812
+      ],
+      "paired_spread": 0.0
+    },
+    "63B-v006": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v006.1/dump.json",
+      "sha256": "fc41ff9ef238e5adceb114b7198f75bec2d08ebca12564bba925f02aca91fa04",
+      "area": 1450.3976940568584,
+      "flagged_area": 54.722266684497,
+      "flagged_faces": 134,
+      "triangles": 0,
+      "faces": 10747,
+      "D": 0.03772914622570531,
+      "baseline_H": 0.0,
+      "reads_D": [
+        0.03772914622570531,
+        0.03772914622570531,
+        0.03772914622570531
+      ],
+      "paired_spread": 0.0
+    },
+    "63C-v001": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63C-v001.1/dump.json",
+      "sha256": "d8e64e2a54a66b2b1b377ae4e9c1b2f21ac3e53deadd26e25f361631e88197a7",
+      "area": 739.8079652993965,
+      "flagged_area": 0.0,
+      "flagged_faces": 0,
+      "triangles": 0,
+      "faces": 4125,
+      "D": 0.0,
+      "baseline_H": 0.0,
+      "reads_D": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "paired_spread": 0.0
+    },
+    "KPP1-v003-corners": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/KPP1-v003-corners.1/dump.json",
+      "sha256": "4565eabf45a333868ea410358aa240a8c89dcac56175d67a697a098c36867596",
+      "area": 1922.7054644968052,
+      "flagged_area": 1.9786137492349658,
+      "flagged_faces": 701,
+      "triangles": 48,
+      "faces": 61765,
+      "D": 0.001029077924711049,
+      "baseline_H": 0.6205041739340207,
+      "reads_D": [
+        0.001029077924711049,
+        0.001029077924711049,
+        0.001029077924711049
+      ],
+      "paired_spread": 0.0
+    },
+    "63B-v007": {
+      "label": "accepted",
+      "path": "ar15/r1/tmp/63B-v007.1/dump.json",
+      "sha256": "c8d65372d76148d38ffeb6a14e0dbc0c3449536f2ddb627bbd7a3c24ff6ca416",
+      "area": 1163.7077050415392,
+      "flagged_area": 5.113624996086683,
+      "flagged_faces": 60,
+      "triangles": 0,
+      "faces": 13644,
+      "D": 0.004394252073723401,
+      "baseline_H": 0.0,
+      "reads_D": [
+        0.004394252073723401,
+        0.004394252073723401,
+        0.004394252073723401
+      ],
+      "paired_spread": 0.0
+    },
+    "63C-v002": {
+      "label": "accepted",
+      "path": "ar15/r1/tmp/63C-v002.1/dump.json",
+      "sha256": "19ee7c2046e37a5eeff76522a4b62a3f468f4fb02f1fd210cf912a8b2274ae7e",
+      "area": 624.9078430541085,
+      "flagged_area": 0.0,
+      "flagged_faces": 0,
+      "triangles": 0,
+      "faces": 4081,
+      "D": 0.0,
+      "baseline_H": 0.0,
+      "reads_D": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "paired_spread": 0.0
+    },
+    "63A-v005": {
+      "label": "accepted",
+      "path": "ev_t_f55bc192/63A.dump.json",
+      "sha256": "3960fbdbc38f86d3f167128c1e7761928802d10a1f0d5726514a9afc2aa02b32",
+      "area": 458.9534274030701,
+      "flagged_area": 0.0,
+      "flagged_faces": 0,
+      "triangles": 0,
+      "faces": 4560,
+      "D": 0.0,
+      "baseline_H": 0.0,
+      "reads_D": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "paired_spread": 0.0
+    },
+    "G22-k2-v002r1": {
+      "label": "accepted",
+      "path": "ev_1619/r7/k2_v002r1.mq.json",
+      "sha256": "2e922754e8b77f854627267fc75b1ba9c22c41a7c4713333fc34ba0ffaff431b",
+      "area": 215.30667384954972,
+      "flagged_area": 0.0,
+      "flagged_faces": 0,
+      "triangles": 0,
+      "faces": 3933,
+      "D": 0.0,
+      "baseline_H": 0.0,
+      "reads_D": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "paired_spread": 0.0
+    },
+    "G22-etalon-k1": {
+      "label": "accepted",
+      "path": "ev_1619/r2/etalon_k1.mq.json",
+      "sha256": "413515339be03d1aa8eb88d23c487ce81f1605eced51d3b822d2919141acefb1",
+      "area": 2468.908701623751,
+      "flagged_area": 127.48699796990002,
+      "flagged_faces": 5777,
+      "triangles": 7733,
+      "faces": 51603,
+      "D": 0.05163698353286795,
+      "baseline_H": 0.1526586382543206,
+      "reads_D": [
+        0.05163698353286795,
+        0.05163698353286795,
+        0.05163698353286795
+      ],
+      "paired_spread": 0.0
+    },
+    "G22-etalon-k2": {
+      "label": "accepted",
+      "path": "ev_1619/r4/etalon_k2.mq.json",
+      "sha256": "50df5fb7252078a3fc1edc9076b9e0043051f897bb3aa363b2014b404e6f8d0d",
+      "area": 507.67108973986444,
+      "flagged_area": 27.010378011438597,
+      "flagged_faces": 1392,
+      "triangles": 1589,
+      "faces": 17606,
+      "D": 0.05320448329109892,
+      "baseline_H": 0.26535641100393725,
+      "reads_D": [
+        0.05320448329109892,
+        0.05320448329109892,
+        0.05320448329109892
+      ],
+      "paired_spread": 0.0
+    },
+    "G22-etalon-k3": {
+      "label": "accepted",
+      "path": "ev_1619/r1/etalon_k3.mq.json",
+      "sha256": "dc389b008673016871591e1cb42f151379b63aa2ffe271590c52b3009a7d4a13",
+      "area": 759.8821496834596,
+      "flagged_area": 26.188112010194843,
+      "flagged_faces": 1287,
+      "triangles": 1873,
+      "faces": 17901,
+      "D": 0.03446338622522439,
+      "baseline_H": 0.2504995963714886,
+      "reads_D": [
+        0.03446338622522439,
+        0.03446338622522439,
+        0.03446338622522439
+      ],
+      "paired_spread": 0.0
+    }
+  }
+}

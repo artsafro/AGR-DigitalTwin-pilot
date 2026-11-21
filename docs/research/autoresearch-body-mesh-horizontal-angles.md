@@ -17,3 +17,31 @@ uv run python docs/research/autoresearch-body-mesh-horizontal-angles-harness/rep
 ```
 
 **Clean:** verify baseline receipt equals the pinned #27 receipt, candidate reads all hash-bound inputs (before and after), agrees on triangle counts and horizontal area, and a unit square produces no signal. **Injected:** wrong input SHA-256 must fail the candidate read; split one side of a unit square by adding a collinear vertex, leaving its area unchanged: `D` must go from 0 to 1. **Not measured:** new native readback, face ownership or design intent, fully collapsed faces, recalibrated score, changes to body cores, package QA.
+
+## Round log
+
+**Итог OBSERVE:** крайние углы не отделяют отклонённые бадики от принятых. `M = −0,05320448` (−5,32 п. п.; порог > 0). В отклонённом 63C v001 таких углов нет; эталон G22 к.2 даёт 5,32 %, а принятый 63B v007 (0,439 %) выше отклонённых v001–v003 (0,174 %). Признак видит дефект v006 (3,773 %), но не годится как общий штраф: оценка, построитель и поставки не менялись. PR нет.
+
+| Corpus | Horizontal faces flagged | D (%) |
+|---|---:|---:|
+| 63B v001 | 88 | 0.17431 |
+| 63B v002 | 80 | 0.17430 |
+| 63B v003 | 68 | 0.17411 |
+| 63B v004 | 76 | 0.17706 |
+| 63B v005 | 72 | 0.13687 |
+| 63B v006 | 134 | 3.77291 |
+| 63C v001 | 0 | 0 |
+| KPP1 v003 corners | 701 | 0.10291 |
+| 63B v007 | 60 | 0.43943 |
+| 63C v002 | 0 | 0 |
+| 63A v005 | 0 | 0 |
+| G22 k2 v002r1 | 0 | 0 |
+| G22 etalon k1 | 5777 | 5.16370 |
+| G22 etalon k2 | 1392 | 5.32045 |
+| G22 etalon k3 | 1287 | 3.44634 |
+
+- **Sealed:** contract `628fa6ef`; replay `e759703b`, SHA-256 `07d87e763b98d12714ce1946483e1796a4d2cb5a218c6d17f4588fd1a2299622`. [Receipt](autoresearch-body-mesh-horizontal-angles-harness/r28.json) SHA-256 `98f1273f51bffa34cba2f52184e29cb48dbd4dd3bba63896de1816203d899a3f`.
+- **Clean:** exact #27 decoded receipt parity (`M_H = −0.26535641100393725`); 15 input hashes and baseline parity of counts and horizontal areas (areas to #27's four-decimal receipt precision). Three independent reads, paired spread 0 for every sample. Unit square: `D=0`.
+- **Injected:** wrong input digest refused; adding a collinear vertex to the square gives `D=1` at unchanged 1 m².
+- **Not measured:** new DCC readback, ownership or design intent, zero-area-only defects, calibrated score, builder changes or delivery checks. No full suite; affected `tests/qa/test_mesh_quality_score_1616.py`: 291 passed. `repo_guards: RED` (541 passed, only the inherited decision-log sorting failure #1772).
+- **Would change (OBSERVE):** do not add a generic extreme-angle penalty. Preserve the v006 result as a diagnostic lead, not as acceptance evidence. Test off-45° horizontal quads separately on the same corpus before proposing any change to the scorer.
