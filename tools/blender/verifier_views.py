@@ -1,6 +1,6 @@
 """new-case: the 6 verifier views (#1739) rendered headless from a read-back export, for tools/qa/verifier.py.
 
-  blender --background --factory-startup --python tools/blender/verifier_views.py -- \
+  blender --background --factory-startup --python-exit-code 1 --python tools/blender/verifier_views.py -- \
       --vpm VPM.(blend|fbx) --npm NPM.(blend|fbx) --out NEW_DIR
 
 Writes NEW_DIR/{vpm_south,vpm_north,vpm_east,vpm_west,vpm_iso,npm_iso}.png (tools/qa/vlm_checklist.py VIEWS) and

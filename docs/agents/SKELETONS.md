@@ -155,7 +155,7 @@ Master/QA checks on these parts are element-wise; no check may require welding i
 `verifier` right after `readback` and before the model is shown to Artem. The 6 views come from the read-back export:
 
 ```
-blender --background --factory-startup --python tools/blender/verifier_views.py -- --vpm VPM --npm NPM --out NEW_DIR
+blender --background --factory-startup --python-exit-code 1 --python tools/blender/verifier_views.py -- --vpm VPM --npm NPM --out NEW_DIR
 uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 views> --slide <slide.png> \
   --facades south=<label>,north=..,east=..,west=.. [--legend jobs/<ID>/vpm_textures.json]
 ```
