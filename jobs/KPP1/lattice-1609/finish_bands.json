@@ -4,6 +4,6 @@
   {"z0": -1.0, "z1": 0.9, "finish": "Plinth_RAL7004"},
   {"z0": 0.9, "z1": 2.7, "finish": "Cassette_RAL7047"},
   {"z0": 2.7, "z1": 7.1, "finish": "Cassette_RAL5015"},
-  {"z0": 7.1, "z1": 9.0, "finish": "Cassette_RAL5015_Top"}
+  {"z0": 7.1, "z1": 9.0, "finish": "Cassette_RAL5015_Top", "v003_finish": "Cassette_RAL7047", "v003_note": "#1609 step 3: R1 v003 / quad-v003 carry the light 7047 tile on this band; the VPM spec (vpm_textures.json) names it RAL5015_Top (blue) - open question to Artem"}
  ]
 }

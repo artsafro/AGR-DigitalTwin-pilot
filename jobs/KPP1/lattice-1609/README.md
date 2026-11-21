@@ -63,3 +63,33 @@ uv run python jobs/KPP1/lattice-1609/lattice_check.py O/d6/SM_Proto_Body.npz O/l
 uv run python jobs/KPP1/lattice-1609/render_lattice.py O/lattice_r1.json OUT.png --model LABEL NPZ CHECK.json ...
 ```
 Tests: `tests/jobs/test_kpp1_lattice_body_1609.py`, `tests/jobs/test_kpp1_line_list_1609.py`.
+
+## Step 3: corner posts as separate elements + UV/materials (Artem 2026-11-21: body accepted)
+
+`assemble_v004.py` (Blender) takes the accepted body p6 and the quad-v003 master:
+- body faces get the finish of their z band (`posts_plan.finish_of_face`: sill up = band below, head down = band
+  above), then the shared VPM owner `tools/blender/vpm_uv.py` cuts edge rings for the tile span (no T-junction) and
+  packs world-metre UVs into the finish's UDIM tile with a whole-period shift (vpm_textures.json, S 4.096 m);
+- the four corner posts are the quad-v003 faces outside the ring, grouped per corner (`posts_plan.outside_components`),
+  voxelised on their own planes (`quad-1372/corner_plan.post_cells`, rays cast outward), voxels inside the ring are body,
+  the contact face on the ring plane is not built; each post is its own object `SM_Kpp_1_Main_Post_<corner>` [D336].
+  Post finish = v003 UDIM tile in the R1 tile scheme (`r1230/tex/textures.json`: 1005 = Frame_RAL9016).
+- the other 25 outside components of v003 (window surrounds, portals, E annex, grilles) are listed in `assemble.json`
+  for the package step; nothing is dropped silently.
+
+Modelling split [D336]: plinth=body (finish band); inset=corner posts (this step), windows/surrounds/portals/roof/annex
+(package step); texture=cassette panels (UDIM, whole-period shift); reason=Artem 2026-11-16/21.
+
+Draft a2 (`C:/x/ev_1609/s8/a2`, evidence `G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/` + SHA256SUMS):
+body 1134 -> 1244 quads after texel cuts, posts NE 27 / NW 70 / SE 27 / SW 51 quads, 0 tris, 0 n-gons, UV overflow 0,
+density 841-1000 px/m; xView NPM-OKS PASS 0/0/0 (all objects); gates63b per element: body 0 open / 0 T / 0 non-manifold,
+posts 0 T / 0 non-manifold (their open rim is the contact with the wall); mesh_quality_score 84.6 (p6 83.6, v003 77.3).
+
+```
+uv run python jobs/KPP1/scripts/make_textures.py T
+"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/assemble_v004.py -- O/p6/proto.fbx SM_Kpp_1.quad-v003.fbx O/a2 T C:/x/kpp1/r1230/tex/textures.json
+"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/render_v004.py -- O/a2/master-v004-lattice.blend T O/r2 after
+"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/render_v004.py -- SM_Kpp_1.quad-v003.fbx C:/x/kpp1/r1230/tex O/r2 before
+uv run python jobs/KPP1/lattice-1609/sheet_v004.py O/r2 OUT.png corners|ground TITLE
+```
+Tests: `tests/jobs/test_kpp1_posts_plan_1609.py`.
