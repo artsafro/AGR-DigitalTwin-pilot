@@ -69,3 +69,21 @@ Artem's [scoped authorization](https://github.com/artsafro/AGR-DigitalTwin-pilot
 - The pilot exited 1 before FBX export. There is no exported candidate, UV/material or whole-perimeter certification, or new validator pass. This rejects that particular construction, not all possible stitching methods. Both current D360 FBXs still match the signed digests on Drive and in the private worktree. Master, UCX, MAF, Flora, placements and libraries were not edited. Existing area reports and current validator failures above remain in force; no second pilot or release.
 
 Evidence: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/npm-ground-stitch-r1-NOT-ADOPTED/`. `SHA256SUMS.txt` SHA-256 `c6e7f417755887fba858ef9dbf57f1224c388f86a72c4c813c639d594d1930a0`; 8 data files verified after copying, including inputs' hashes, the candidate arrays, source-face ledger, numeric drops, independent incidence census, and the three scratch drivers. The first seal attempt refused an older VPM summary digest before writing; the final seal uses the exact D360 revision and separately verifies the historical file. No shared production code changed.
+
+## NPM Ground stitch r2 — boundary repair measured; D167 choice pending
+
+[Artem's continuation decision](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1315#issuecomment-7054352670) supersedes the stop after r1. It authorizes fixing the 843 single-face edges on the copy and requires a budget choice before changing MAF or Flora.
+
+- Of the 843 edges, 835 belong to two existing skirt-bottom rings (outer 393, inner 442); eight belong to two local seams. A downward annular cap uses 835 faces, leaves the 3,389.933 m² building hole open in plan, and preserves all 1,670 original skirt faces exactly. Across 58,766 top/cap partitions, minimum vertical separation is 0.614 m; there are no uncovered cap patches over 1e-9 m². This is not a fresh skirt-depth validator verdict.
+- The five-edge seam is a collinear T-junction: split one base face into four. The three-edge seam closes by coalescing two vertices 51.4 nm apart and dropping one resulting collapsed sliver. Independent indexed census: 843 → **0** one-use edges; 56,079 two-use edges, no higher incidence, reversed-edge orientation conflicts or bowties. Removing one cap face restores three one-use edges (negative control).
+- Working-array Ground count **37,386**; unchanged MAF **78,470**, Flora **71,246**. Projected full NPM **187,102 / 180,000**, now **7,102** over after repair. Public `dt qa xview --profile NPM` on Ground working arrays is still **FAIL**: 16 overlapping faces, 1,767 near vertices, 955 vertex pairs, 14 face pairs, 0 bowties; none of the face pairs references a new bottom cap face. No FBX was exported from r2; material/UV, float32 readback, skirt and whole-scene QA remain open. Both current D360 FBX hashes were rechecked; nothing adopted.
+
+| D167 option | Target on copies only | Projected savings | Projected NPM |
+|---|---|---:|---:|
+| A (recommended) | Seven Bench013 copies: 5,064 → at most 4,000 tris each; preserve all slots and keep Flora unchanged | 7,448 | 179,654 (346 spare) |
+| B | Simplify the existing continuous hedge meshes to bring Flora 71,246 → at most 63,746; preserve all plants, their points and crown-support requirement | 7,500 | 179,602 (398 spare) |
+| C | Seven Bench013 copies at most 4,500 each + Flora at most 67,500 via hedge simplification | 7,694 | 179,408 (592 spare) |
+
+These are count allocations, not achieved savings or geometry approvals. A limits the change to one repeated furniture type and does not reopen the accepted vegetation. Check its openings, dimensions, silhouette, seating/placement and topology before replication. Hedge alternatives require all accepted crown supports and planting census; no removal is proposed. All routes still need Ground xView cleanup, UV/material checks and actual FBX export/readback before any adoption.
+
+Evidence: `G:/Мой диск/AGR-evidence/1315-cold-silikatny/npm-ground-stitch-r2-BUDGET-CHOICE-NOT-ADOPTED/`, 8/8 files verified; `SHA256SUMS.txt` SHA-256 `84c1383dc0cc9732cd78c221c2cde6483ed7513e00f6147c1f2484287446adb2`. Job-local evidence drivers only; no production code change. Affected: 170 passed. Full suite: deferred to merge batch (rule 68).
