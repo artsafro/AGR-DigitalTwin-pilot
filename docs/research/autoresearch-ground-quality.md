@@ -5,7 +5,18 @@ Mode: OBSERVE only. No Ground is built or repaired here (that is #1738); no deli
 
 ## Краткий итог (по-русски)
 
-Заполняется после замера (раздел «Round log»). Контракт ниже заморожен до первого замера.
+**Гипотеза H31 опровергнута.** Замороженная метрика Q (xView-вершины + xView-грани + трещины на 10 000
+треугольников) не отделяет сданные Артёмом Ground от отклонённых SIL13: принятый COD (A3) получает 596,2, а
+худший по порогу отклонённый r4 (F4) — 429,0. Отрыв −167,3 (нужно > 0 и двукратный запас). Внедрения нет.
+
+Что держится: совпадение с квитанциями r2–r5 точное (16/1 767, 16/1 751, 27/1 576, 16/1 751; r1 — 843
+открытых ребра), три повтора дают одно число, поворот и сдвиг не меняют Q, внесённые 50 разрывов всегда
+поднимают Q выше границы.
+
+Почему не вышло: у 6 из 7 сданных Ground NTR ядро xView находит перекрытые грани (16–465 на объект), а у
+Vatutino — 334 «трещины» (совпадающие открытые рёбра слоёного пирога). Наблюдение для следующей карточки
+(не проверялось как кандидат): близкие вершины xView равны 0 на всех 8 принятых и 1 576–1 769 на всех
+отклонённых.
 
 ## 1. Contract (frozen before any measurement)
 
@@ -121,4 +132,54 @@ are customer packages and are not committed).
 
 ## 2. Round log
 
-(filled after measurement)
+Contract commit c21df288; harness + amendment 1 ccedad3b; injection fix 85b28693 (the first series injected into
+`parts[0]`, which is Flora on A3-A8; it was stopped after A1-A6, whose clean and rigid rows are byte-identical to
+the second series; only the injection rows changed). Receipt: `docs/research/autoresearch-ground-quality-harness/r31.json`
+(= `C:/x/ev_t_193a0887/r31b.json`, SHA-256 `4d0fe3d6570f81c1ef05edc8fdbc131409b5796253f992a62fb506c383ca3870`).
+Dumps: `dumps.sha256` (metres, Blender 5.1.2, all METRIC scale 1.0, 0 dropped objects).
+
+Budget: first pair (A1 + F5) scored in about 8 s; the full series (13 inputs x 3 repeats + rigid + inject) took
+about 11 min, inside the 90 min budget. No series was shortened.
+
+| id | input | V | F | C | T | Q (median of 3) | spread | rigid dQ | inject dQ (bound) | Q_all |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| A1 | Vatutino v015 NPM | 0 | 0 | 334 | 46 479 | 71.860 | 0 | 0 | +44.8 (10.8) | 71.9 |
+| A2 | Skolkovo | 0 | 16 | 0 | 5 733 | 27.909 | 0 | 0 | +355.8 (87.2) | 10.4 |
+| A3 | COD | 0 | 86 | 81 | 2 801 | **596.216** | 0 | 0 | +803.3 (178.5) | 66.4 |
+| A4 | Donskoy | 0 | 328 | 2 | 11 528 | 286.260 | 0 | 0 | +111.9 (43.4) | 4 397.1 |
+| A5 | Ostrov | 0 | 81 | 0 | 29 760 | 27.218 | 0 | 0 | +81.0 (16.8) | 675.7 |
+| A6 | Kasatkino | 0 | 465 | 1 | 59 290 | 78.597 | 0 | 0 | +28.8 (8.4) | 330.9 |
+| A7 | Volokolamskoe | 0 | 217 | 0 | 20 614 | 105.268 | 0 | 0 | +97.0 (24.3) | 1 195.8 |
+| A8 | Stolbovo | 0 | 0 | 0 | 10 930 | 0.000 | 0 | 0 | +249.8 (45.7) | 0.0 |
+| F1 | SIL13 r1 | 1 769 | 16 | 5 | 36 549 | 489.753 | 0 | 0 | - | 489.8 |
+| F2 | SIL13 r2 | 1 767 | 16 | 0 | 37 386 | 476.916 | 0 | 0 | - | 476.9 |
+| F3 | SIL13 r3 | 1 751 | 16 | 0 | 37 370 | 472.839 | 0 | 0 | - | 472.8 |
+| F4 | SIL13 r4 | 1 576 | 27 | 0 | 37 370 | **428.954** | 0 | 0 | - | 429.0 |
+| F5 | SIL13 r5 | 1 751 | 16 | 0 | 37 370 | 472.839 | 0 | 0 | - | 472.8 |
+
+Checks against the calibration rule:
+
+| # | check | result |
+|---|---|---|
+| 1 | separation `min Q(F) > max Q(A)`, x2 margin | **fail**: 428.954 (F4) < 596.216 (A3); x2 margin also fails on A4 (286.260 > 214.477) |
+| 2 | parity with sealed receipts | pass: F2 16/1 767, F3 16/1 751, F4 27/1 576, F5 16/1 751; F1 843 open edges |
+| 3 | repeat (3 runs) | pass: spread 0 on all 13 |
+| 4 | rigid motion | pass: dQ = 0 on all 13 |
+| 5 | injected positive witness | pass: every accepted input rises above its bound |
+| 6 | accepted control on which the rule fires | measured: the rule fires on 7 of 8 accepted (F on A2-A7, C on A1, A3, A4, A6) |
+
+**H31: refuted** (check 1). Inputs that break the order: A3 (Q above every failed variant) and A4 (inside the x2
+margin). Clean = rows above; injected = inject column; not measured = VPM, budget, visible deviation, skirt height,
+#1738 core Ground (no build exists yet: no PR or output for #1738 on 2026-11-21 11:15).
+
+Observation only (not a candidate of this card, not tested for stability on its own): the near-vertex count V is 0
+on all 8 accepted and 1 576-1 769 on all failed meshes; the face-overlap count F of the repo kernel is non-zero on 6
+of 7 delivered NTR Ground objects although Artem delivered them; the crack count C fires on the accepted Vatutino
+layered cake (334 coincident open edges). A next card can freeze `V / T` as its single candidate, with a positive
+witness that is not SIL13 and an independent rejected set (all four distinct failed meshes come from one SIL13
+source mesh, so they are not independent evidence).
+
+Side finding (not fixed here): `tools/blender/xview_dump.py` imports FBX with the default `use_image_search=True`;
+on A3 (COD) Blender 5.1.2 ran > 17 min without finishing (flat memory), while the same import with image search
+off takes 1.3 s. `dt qa xview <fbx>` inherits this. The harness goes FBX -> .blend (`fbx_to_blend.py`, image search
+off) -> unchanged repo dump.
