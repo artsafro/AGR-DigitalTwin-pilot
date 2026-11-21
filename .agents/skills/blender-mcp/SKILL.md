@@ -115,6 +115,14 @@ coverage. Inspect fresh tool schemas before using other tools.
   sleeping/polling does not help. Run them in a separate background Blender
   (`blender -b`) on a versioned copy and read the result back (2026-11-05,
   «Garibaldi NPM to VPM conversion», G5; retro problem 3).
+- `matrix_world` is STALE right after `bpy.data.libraries.load` + collection link
+  (and after setting `location`/`matrix_basis`): it reads the identity until
+  `bpy.context.view_layer.update()`; `matrix_basis` is already right (Blender
+  4.4 and 5.1). Call `view_layer.update()` before any `matrix_world` read.
+  Staropetrovskiy VPM v001 (#1731) read the identity and subtracted the
+  package pivot twice; gate the VPM assembly with
+  `tools/blender/vpm_placement_readback.py` (`check_before_export`) before
+  `export_scene.fbx`.
 
 Connection evidence and pending Codex reload are recorded in
 `tools/mcp/README.md` and `tools/mcp/verification.txt`.
