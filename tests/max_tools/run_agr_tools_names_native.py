@@ -369,7 +369,7 @@ def names_fix_e1():
     prev = agr.edits_080('qa.names_fix', 'preview')
     plan = prev['plan']
     fails = ' | '.join(f['reason'] for f in plan['failures'])
-    assert 'other content' in fails and 'reflectionMap' in fails, fails
+    assert 'other content' in fails and 'specularLevelMap' in fails, fails  # #1729: spec level has no role
     assert {s['item'] for s in plan['skipped']} == {'Bench'}, plan['skipped']
     held_amb = [x for x in plan['ambiguous'] if x['item'] == 'SM_Held_001_Main']
     assert held_amb and 'another scene object' in held_amb[0]['reason'], plan['ambiguous']
@@ -383,7 +383,7 @@ def names_fix_e1():
     m_files = sorted(k for k in files_after if k.endswith('_m_1.png'))
     assert m_files == ['T_Chair_001_Main_m_1.png', 'T_XX_Chair_001_Main_m_1.png'], m_files
     for k in m_files:
-        assert files_after[k] == files_before['spec.png'], (k, 'not from specularLevelMap')
+        assert files_after[k] == files_before['refl.png'], (k, 'not from reflectionMap (#1729)')
     by = {str(x.name): x for x in copies}
     assert str(by['SM_Bench_002_Main'].material.diffuseMap.filename) == bench  # stays on its source
     mats = sorted(str(x.material.name) for x in copies)

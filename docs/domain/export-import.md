@@ -9,6 +9,7 @@ Note: the reference project has NO Unreal Engine import rules; delivery target i
 - NPM: PNG atlases embedded in FBX. VPM: PNG external, texture paths removed from FBX materials. reg p.9 §5.1; p.30 §4.2, §5.1.1.
 - No empty/helper objects, cameras, animation keys, modifiers, extra layers (VPM single default layer); exception: lighting FBX has root helper empty. reg p.6 §1.3, p.28 §3.1-3.2, p.29 §3.11, p.38 §15.8.
 - Texture names inside the editor identical to PNG files (NPM). reg p.12 §3.4.
+- Metallic map channel (SINTEZ 2.5.6 reads `ReflectionFactor`/`ReflectionColor`/`metalness_map`, not `SpecularFactor`) and the Max import readback of dropped customer maps: [fbx-metallic-channel.md](fbx-metallic-channel.md) (#1729, measured).
 
 ## Project export practice
 - Triangulate only a derived export copy; editable master stays quad; check both files. Optional separate triangulated FBX, quad FBX is the editable main hand-off. local: docs/agr/GEOMETRY_RULES.md; local: archive/2026-11:jobs/GROUND-PROJECTION/NPM_RESULT.md (project decision).
