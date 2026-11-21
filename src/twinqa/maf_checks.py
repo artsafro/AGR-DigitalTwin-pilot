@@ -155,6 +155,13 @@ def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg
             flip_status, flip_observed = "pass", f"{src}: outward"
         out.append(_finding("MAF flipped normals", flip_status, flip_observed, flip_expected, [8, 29], src))
 
+    if maf_sizes is not None and not maf_sizes:
+        if groundel:
+            out.append(_finding(DIMENSION_NAME, "not_run",
+                                f"{src}: dimension check did not run: supplied MAF schedule has no rows",
+                                DIMENSION_EXPECTED, [4, 24], src))
+        return out
+
     if maf_sizes is not None:
         by_name = {m.get("name"): m for m in meshes}
         failed = []
