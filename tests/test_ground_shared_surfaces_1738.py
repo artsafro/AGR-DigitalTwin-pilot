@@ -225,6 +225,30 @@ def test_cli_accepts_surfaces_param():
     assert "surfaces" in mod.PARAMS and "adapter" in mod.TOP_KEYS
 
 
+@pytest.mark.parametrize("name", ["sil13-shared.json", "vatutino-shared.json"])
+def test_real_site_specs_are_shared_mode_and_pinned(name):
+    """The two real-site specs of the #1738 evidence table: shared mode, a sha-pinned source, only known keys."""
+    import json
+    mod = _cli()
+    spec = json.loads((Path(__file__).parent / "fixtures/ground_1738" / name).read_text(encoding="utf-8"))
+    assert set(spec) <= mod.TOP_KEYS and set(spec["params"]) <= mod.PARAMS
+    assert spec["params"]["surfaces"] == "shared" and spec["params"]["skirt_m"] >= 1.0
+    src = spec.get("dxf") or spec.get("adapter")
+    assert len(src["sha256"]) == 64 and ("dxf" in spec) != ("adapter" in spec)
+    assert sorted(c["id"] for c in spec["covers"]) == list(range(1, len(spec["covers"]) + 1))
+
+
+def test_sil13_job_skeleton_calls_the_core():
+    import json
+    root = Path(__file__).resolve().parents[1]
+    sk = json.loads((root / "jobs/SIL13-COLD-1315/ground-1738/skeleton.json").read_text(encoding="utf-8"))
+    assert sk["scenario"] == "ground-npm" and sk["hooks"] == []
+    assert (root / sk["config"]["sources"]).is_file()
+    cells = json.loads((root / "docs/agents/skeletons.json").read_text(encoding="utf-8"))
+    for st in ("surfaces", "skirt"):
+        assert cells["stages"][st]["gap"] is None and "ground_site.py" in " ".join(cells["stages"][st]["owners"])
+
+
 def _cli():
     import importlib.util
     spec = importlib.util.spec_from_file_location("bgs2", Path(__file__).resolve().parents[1]

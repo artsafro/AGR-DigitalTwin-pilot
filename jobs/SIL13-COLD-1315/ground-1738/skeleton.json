@@ -1,5 +1,5 @@
 {
   "scenario": "ground-npm",
-  "config": {"sources": "jobs/SIL13-COLD-1315/ground-1738/ground-site-shared.json"},
+  "config": {"sources": "tests/fixtures/ground_1738/sil13-shared.json"},
   "hooks": []
 }
