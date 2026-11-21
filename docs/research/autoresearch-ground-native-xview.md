@@ -62,7 +62,8 @@ Fixing the runner for 2026 is outside this card (side finding).
 **Amendment 2 (after the 2024 first pair succeeded and run1 crashed at start-up, minidump 12:13, no listener output):**
 receipt `C:/x/ev_t_304e8c0c/r33b.json` (`inconclusive`). Each Max call now waits until no `3dsmax.exe` is running,
 plus 20 s; the whole series (first pair included) is re-run under the prefix `m2024b-`. Counts from `r33b` are
-reported only as a cross-check, not as series runs.
+reported only as a cross-check, not as series runs. The first `m2024b-` attempt died in the harness itself
+(`tasklist` text decoding returned `None` under the Russian code page) after its pair; the series runs as `m2024c-`.
 
 ## Round log
 
