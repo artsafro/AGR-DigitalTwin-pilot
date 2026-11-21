@@ -212,7 +212,7 @@ def test_load_plan_rejects_duplicate_keys(tmp_path):
         core.load_plan(f)
 
 
-# ---- lines from the openings list [D372] --------------------------------------------------------------
+# ---- lines from the openings list [D373] --------------------------------------------------------------
 def test_keep_lines_threshold_and_openings():
     kept, dropped = core.keep_lines([
         {"at": 0.9, "reason": "opening", "length": 0.8, "width": 0.8},   # an opening line is always a reason
@@ -350,7 +350,7 @@ def test_blender_writer_matches_the_pure_core_and_refuses_existing_out(tmp_path)
     assert r2.returncode != 0 and "refused" in (r2.stdout + r2.stderr)
 
 
-# ---- lines of a new building from the openings list (KPP1 route) [D372] --------------------------
+# ---- lines of a new building from the openings list (KPP1 route) [D373] --------------------------
 SPEC = {"S": {"surrounds": [{"rect": [0.3, 5.3, 1.125, 6.7]}], "doors": [{"rect": [6.0, 7.2, 0.0, 2.1]}],
               "grilles": [[8.0, 8.4, 3.05, 3.45], [9.0, 9.4, 3.05, 3.45], [10.0, 10.4, 3.05, 3.45],
                           [11.0, 11.4, 3.05, 3.45]]},
@@ -389,7 +389,7 @@ def test_lines_cli_and_sheet_refuse_existing_output(tmp_path):
     assert sheet.main([str(out), str(png)]) == 2
 
 
-# ---- hard check: every level a closed ring, every station a continuous vertical (KPP1 step 1) [D372] -----
+# ---- hard check: every level a closed ring, every station a continuous vertical (KPP1 step 1) [D373] -----
 def _ring_ctx(p):
     m = core.build_module(p)
     pts, perim = core.ring_points(p["rings"][0]["xy"], p["rings"][0].get("cuts", []))

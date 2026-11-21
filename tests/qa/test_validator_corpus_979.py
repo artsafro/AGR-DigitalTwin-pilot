@@ -226,7 +226,7 @@ def _p(name, kind, *values):
 
 
 def light_fbx(root="SM_X_Root", lights=(("SM_X_Spot_001", 2), ("SM_X_Omni_001", 0)), root_t=(0.0, 0.0, 0.0),
-              parented=True):
+              parented=True, extra_models=(), extra_links=()):
     objects, links = [], []
     objects.append(("Model", (5000, root + "\x00\x01Model", "Null"),
                     [("Properties70", (), [_p("Lcl Translation", "Lcl Translation", *root_t)])]))
@@ -238,7 +238,7 @@ def light_fbx(root="SM_X_Root", lights=(("SM_X_Spot_001", 2), ("SM_X_Omni_001", 
                         [("Properties70", (), [("P", ("LightType", "enum", "", "", ltype))])]))
         links.append(("C", ("OO", aid, mid)))
         links.append(("C", ("OO", mid, 5000 if parented else 0)))
-    return fbx_binary([("Objects", (), objects), ("Connections", (), links)])
+    return fbx_binary([("Objects", (), objects + list(extra_models)), ("Connections", (), links + list(extra_links))])
 
 
 def _light(data, cipher="SM_X"):
@@ -282,3 +282,39 @@ def test_light_rules_run_inside_the_vpm_archive(tmp_path):
     good.mkdir()
     rep = vp.validate(write_zip(good / "SM_X.zip", vpm_files(**{"SM_X_Light.fbx": light_fbx()})), None, PROFILES)
     assert not {c for _s, c in _codes(rep)} & {"light_root", "light_parent", "light_name", "light_type"}
+
+
+def test_delivered_elv_light_names_run_inside_vpm_archive(tmp_path):
+    # Synthetic binary, reproducing the delivered 29 unprefixed Spot names.
+    light = light_fbx(root="Elevatornaya_1_Root", lights=[
+        (f"Elevatornaya_1_Spot_{i:03d}", 2) for i in range(1, 30)
+    ])
+    path = write_zip(tmp_path / "SM_Elevatornaya_1.zip", {
+        "SM_Elevatornaya_1.fbx": FBX, "SM_Elevatornaya_1_Light.fbx": light,
+    })
+    stage = next(s for s in vp.validate(path, None, PROFILES).stages if s.id == "V012")
+    assert [f.status for f in stage.findings if f.name == "light FBX"] == ["pass"]
+
+
+@pytest.mark.parametrize("lights,code", [
+    ([], "light_count"),
+    ([("X_Spot_001", 2), ("SM_X_Spot_002", 2)], "light_name"),
+    ([("X_Spot_001", 2), ("X_Spot_001", 2)], "light_name"),
+    ([("X_Spot_001", 2), ("X_Spot_002", 3)], "light_type"),
+])
+def test_elv_light_rejects_extra_or_invalid_nodes(lights, code):
+    assert code in _light(light_fbx(root="X_Root", lights=lights))
+
+
+@pytest.mark.parametrize("t", [(), (0, 0), (0, 0, float("nan")), (0, 0, float("inf")), (1e-6, 0, 0)])
+def test_elv_light_rejects_bad_root_vectors(t):
+    assert "light_root_transform" in _light(light_fbx(root_t=t))
+
+
+@pytest.mark.parametrize("models,links,code", [
+    ([("Model", (9000, "UnplannedMesh", "Mesh"), [])], [("C", ("OO", 9000, 5000))], "light_type"),
+    ([("Model", (5000, "SM_X_Root", "Null"), [])], [], "light_unreadable"),
+    ([], [("C", ("OO", 6000, 5000))], "light_unreadable"),
+])
+def test_light_does_not_silently_discard_binary_records(models, links, code):
+    assert code in _light(light_fbx(extra_models=models, extra_links=links))
