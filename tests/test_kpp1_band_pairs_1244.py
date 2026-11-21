@@ -7,6 +7,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import math
+import sys
 import random
 from pathlib import Path
 
@@ -15,6 +16,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 RUN = ROOT / "jobs" / "KPP1" / "rerun-1244"
 R1230 = ROOT / "jobs" / "KPP1" / "rerun-1230"
+sys.path.insert(0, str(ROOT / "tools" / "architecture"))
+import search_noise  # noqa: E402  (#1614: large data moved to the evidence store)
 
 
 def _mod():
@@ -25,7 +28,10 @@ def _mod():
 
 
 def _load(path):
-    return json.loads(path.read_text(encoding="utf-8"))
+    found = search_noise.evidence_path(ROOT, path.relative_to(ROOT).as_posix())
+    if found is None:
+        pytest.skip(f"{path.name}: moved to the evidence store (#1614, jobs/KPP1/EVIDENCE-MOVED.json), copy absent")
+    return json.loads(found.read_text(encoding="utf-8"))
 
 
 def _plate(y, x0=0.0, w=1.0, h=1.0):

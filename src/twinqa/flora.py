@@ -52,33 +52,46 @@ def plant_size(bounds) -> tuple[float, float]:
 
 
 def dimension_findings(meshes: list[dict], schedule: dict | None, src: str) -> list[Finding]:
-    """schedule: {mesh name: {"height_m": h, "crown_m": d}} for each placed plant."""
+    """Check {mesh name: {"height_m": h, "crown_m": d}}; disclose uncovered Flora when supplied."""
     if schedule is None:
         if any(is_flora(m["name"]) for m in meshes):
             return [_f("not_run", "Flora dimensions", f"{src}: no planting schedule supplied",
                        "height and crown within 20 % of the schedule [D099]", [4, 24], src)]
         return []
+    if not schedule:
+        flora_names = sorted(m["name"] for m in meshes if is_flora(m["name"]))
+        if not flora_names:
+            return []
+        return [_f("not_run", "Flora dimensions",
+                   f"{src}: dimension check did not run: supplied Flora schedule has no rows for "
+                   f"{', '.join(flora_names)}",
+                   "height and crown within 20 % of the schedule [D099]", [4, 24], src)]
     exact, aliases = {}, {}
-    for m in meshes:
-        exact.setdefault(m["name"], m)
-        if _base(m["name"]) != m["name"]:
-            aliases.setdefault(_base(m["name"]), []).append(m)
+    for i, m in enumerate(meshes):
+        mesh_name = m["name"]
+        exact.setdefault(mesh_name, i)
+        base = _base(mesh_name)
+        if base != mesh_name:
+            aliases.setdefault(base, []).append(i)
+    matched = set()
     out = []
     for plant, want in sorted(schedule.items()):
         name = f"Flora dimensions: {plant}"
+        # A uniquely matched mesh is covered even if its schedule or bounds yield review.
+        candidates = [exact[plant]] if plant in exact else aliases.get(plant, [])
+        if len(candidates) == 1:
+            matched.add(candidates[0])
         expected_h, expected_d = want.get("height_m"), want.get("crown_m")
         if not all(isinstance(v, (int, float)) and v > 0 for v in (expected_h, expected_d)):
             out.append(_f("review", name, f"{src}: schedule entry {want}", "height_m > 0 and crown_m > 0",
                           [4, 24], src))
             continue
-        # exact name first; a Blender `.001` alias only when it is the sole candidate
-        candidates = [exact[plant]] if plant in exact else aliases.get(plant, [])
         if len(candidates) > 1:
             out.append(_f("review", name, f"{src}: no mesh named {plant}; ambiguous aliases "
-                          f"{sorted(c['name'] for c in candidates)}", "one mesh per placed plant in the checked FBX",
+                          f"{sorted(meshes[i]['name'] for i in candidates)}", "one mesh per placed plant in the checked FBX",
                           [4, 24], src))
             continue
-        mesh = candidates[0] if candidates else None
+        mesh = meshes[candidates[0]] if candidates else None
         if mesh is None or not mesh.get("bounds_m"):
             out.append(_f("review", name, f"{src}: no mesh named {plant} with bounds",
                           "one mesh per placed plant in the checked FBX", [4, 24], src))
@@ -91,6 +104,11 @@ def dimension_findings(meshes: list[dict], schedule: dict | None, src: str) -> l
                       f"crown {d:.3f} m ({(d / expected_d - 1) * 100:+.1f} %); "
                       f"bbox height minus {SINK_M} m sinking",
                       f"height {expected_h} m, crown {expected_d} m, each within 20 % [D099, D100]", [4, 24], src))
+    uncovered = sorted(m["name"] for i, m in enumerate(meshes) if i not in matched and is_flora(m["name"]))
+    for name in uncovered:
+        out.append(_f("not_run", f"Flora dimensions: {name}",
+                      f"{src}: no planting schedule entry matched {name}",
+                      "a schedule entry with height and crown for each placed Flora mesh [D099]", [4, 24], src))
     return out
 
 

@@ -2,10 +2,13 @@
 background-Blender roundtrip for the material map facts (skipped without Blender)."""
 import random
 import subprocess
+from itertools import product
 
 import pytest
 
 from test_validator import PROFILES
+from twinqa.flora import dimension_findings
+from twinqa.report import Stage
 from twinqa.scene import find_blender, readback, scene_findings
 
 SRC = "C:/x/SM_Test_Ground.fbx"
@@ -45,6 +48,60 @@ SCHEDULE = {"SM_Test_Flora_Acer_01": {"height_m": 5.0, "crown_m": 3.0}}
 
 # --- Dimensions vs schedule (V015) ---
 
+@pytest.mark.parametrize("has_flora", [True, False])
+def test_1702_empty_flora_schedule(has_flora):
+    meshes = [mesh("SM_Synth1702_Ground")]
+    if has_flora:
+        meshes.append(plant("SM_Synth1702_Flora", 5, 3))
+    rows = dimension_findings(meshes, {}, "s")
+    assert [(f.name, f.status, f.observed) for f in rows] == ([
+        ("Flora dimensions", "not_run",
+         "s: dimension check did not run: supplied Flora schedule has no rows for SM_Synth1702_Flora"),
+    ] if has_flora else [])
+
+
+def test_1702_partial_flora_schedule():
+    scheduled = plant("SM_Test_Flora_Acer_01", 5, 3)
+    uncovered = plant("SM_X_Flora", 5, 3)
+    clean = scene_findings(rb(scheduled), "vpm", "ground", PROFILES.vpm, flora_schedule=SCHEDULE)["V015"]
+    rows = scene_findings(rb(scheduled, uncovered), "vpm", "ground", PROFILES.vpm,
+                          flora_schedule=SCHEDULE)["V015"]
+    assert rows[:1] == clean and clean[0].status == "pass"
+    assert [(f.name, f.status) for f in rows[1:]] == [("Flora dimensions: SM_X_Flora", "not_run")]
+    assert "no planting schedule entry" in rows[1].observed
+    assert Stage("V015", "dimensions", "manual_review", [4, 24], rows).status == "not_run"
+
+
+def test_1702_schedule_coverage_probe():
+    a, b, c, other = names = ("SM_A_Flora", "SM_B_Flora", "SM_C_Flora.001", "SM_FloraLike_Ground")
+    checked = 0
+    for count in range(4):
+        for picked in product(names, repeat=count):
+            meshes = [plant(name, 5, 3) for name in picked]
+            flora = sorted(name for name in picked if name != other)
+            for mask in range(8):
+                schedule = {name: {"height_m": 5, "crown_m": 3} for bit, name in enumerate((a, b, c))
+                            if mask & (1 << bit)}
+                rows = dimension_findings(meshes, schedule, "s")
+                if not schedule:
+                    assert [f.status for f in rows] == (["not_run"] if flora else [])
+                    if flora:
+                        assert rows[0].observed.endswith(", ".join(flora))
+                else:
+                    unmatched = flora.copy()
+                    expected = []
+                    for name in schedule:
+                        expected.append((f"Flora dimensions: {name}", "pass" if name in picked else "review"))
+                        if name in unmatched:
+                            unmatched.remove(name)
+                    expected.extend((f"Flora dimensions: {name}", "not_run") for name in unmatched)
+                    assert [(f.name, f.status) for f in rows] == expected, (picked, mask)
+                assert dimension_findings(meshes, schedule, "s") == rows
+                assert [f.status for f in dimension_findings(meshes, None, "s")] == (["not_run"] if flora else [])
+                checked += 1
+    assert checked == 680
+
+
 def test_dimensions_green_inside_20_percent_after_sinking():
     found = scene_findings(rb(plant("SM_Test_Flora_Acer_01", 5.9, 2.5)), "vpm", "ground", PROFILES.vpm,
                            flora_schedule=SCHEDULE)
@@ -82,7 +139,8 @@ def test_dimensions_exact_name_wins_over_suffix_alias(alias_first):
     alias, exact = plant("SM_Test_Flora_Acer_01.001", 5, 3), plant("SM_Test_Flora_Acer_01", 9, 3)
     meshes = (alias, exact) if alias_first else (exact, alias)
     found = scene_findings(rb(*meshes), "vpm", "ground", PROFILES.vpm, flora_schedule=SCHEDULE)
-    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "fail"}
+    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "fail",
+                                             "Flora dimensions: SM_Test_Flora_Acer_01.001": "not_run"}
     f = next(x for x in found["V015"] if x.name == "Flora dimensions: SM_Test_Flora_Acer_01")
     assert "+80.0 %" in f.observed
 
@@ -90,7 +148,9 @@ def test_dimensions_exact_name_wins_over_suffix_alias(alias_first):
 def test_dimensions_ambiguous_suffix_aliases_are_review():
     found = scene_findings(rb(plant("SM_Test_Flora_Acer_01.001", 5, 3), plant("SM_Test_Flora_Acer_01.002", 9, 3)),
                            "vpm", "ground", PROFILES.vpm, flora_schedule=SCHEDULE)
-    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "review"}
+    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "review",
+                                             "Flora dimensions: SM_Test_Flora_Acer_01.001": "not_run",
+                                             "Flora dimensions: SM_Test_Flora_Acer_01.002": "not_run"}
     f = next(x for x in found["V015"] if x.name == "Flora dimensions: SM_Test_Flora_Acer_01")
     assert ".001" in f.observed and ".002" in f.observed
 
@@ -209,7 +269,9 @@ def test_mixed_scene_bare_mesh_alias_and_exact_any_order(order):
              plant("SM_Test_Flora_Bare", 5, 3, materials=[])]
     items = items[order:] + items[:order]
     found = scene_findings(rb(*items), "npm", "ground", PROFILES.npm, flora_schedule=SCHEDULE)
-    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "fail"}
+    assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": "fail",
+                                             "Flora dimensions: SM_Test_Flora_Acer_01.001": "not_run",
+                                             "Flora dimensions: SM_Test_Flora_Bare": "not_run"}
     assert named(found, "V005", "Flora maps") == {"Flora maps: M_Test_Flora_1": "pass",
                                                   "Flora maps: SM_Test_Flora_Bare": "fail"}
 
@@ -220,7 +282,8 @@ def test_probe_coverage_and_exact_name_any_order_brute_force():
     rng, cases = random.Random(191), 0
     for _ in range(400):
         meshes, bare = [], set()
-        for i in range(rng.randint(1, 5)):
+        plant_count = rng.randint(1, 5)
+        for i in range(plant_count):
             nm = f"SM_Test_Flora_P{i}"
             slots = rng.choice([["M_Test_Flora_1"], [], [None], ["M_Test_Flora_1", None]])
             if not all(slots) or not slots:
@@ -237,7 +300,11 @@ def test_probe_coverage_and_exact_name_any_order_brute_force():
         assert {k for k, v in maps.items() if v == "fail"} == {f"Flora maps: {b}" for b in bare}
         measured = exact_h or alias_h
         want = "review" if measured is None else "pass" if measured == 5.0 else "fail"
-        assert named(found, "V015", "Flora") == {"Flora dimensions: SM_Test_Flora_Acer_01": want}
+        expected = {"Flora dimensions: SM_Test_Flora_Acer_01": want}
+        expected.update({f"Flora dimensions: SM_Test_Flora_P{i}": "not_run" for i in range(plant_count)})
+        if exact_h and alias_h:
+            expected["Flora dimensions: SM_Test_Flora_Acer_01.001"] = "not_run"
+        assert named(found, "V015", "Flora") == expected
         cases += 1
     assert cases == 400
 

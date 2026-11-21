@@ -64,21 +64,45 @@ contexts:
     ru: "ID материалов и атлас МАФ 512"
     area: docs/domain/areas/uv-atlas.md
     owner: tools/materials/atlas_maf.py
-    owner_ru: "общий список ID (v007, D240) -> атлас 512 RGB и UV JSON; ВПМ — UDIM после Ground (D210)"
+    owner_ru: "список материалов JSON -> атлас 512 RGB (PNG) и UV JSON с ключом = имя материала; ВПМ — UDIM после Ground (D210)"
     functions:
       - name: plan_atlas
         contract: "список материалов -> ячейки атласа (сплошной цвет 64 / 128, узор крупнее)"
       - name: build_atlas
-        contract: "список материалов, выход -> PNG атласа + UV JSON"
+        contract: "список материалов, путь PNG, путь JSON -> PNG атласа + UV JSON (ключ — имя материала)"
   - id: npm-atlas
     grid: "1.5/2"
-    ru: "НПМ МАФ на атласе"
+    ru: "НПМ МАФ на атласе: maf_npm_light (Blender)"
+    area: docs/domain/areas/groundel-maf.md
+    owner: tools/library/maf_npm_light.py
+    owner_ru: "dt derive maf-npm-light / agr npm-light: FBX позиций + PNG и UV JSON атласа -> НПМ FBX и отчёт; #1410 — технический прогон на копиях, не сдача"
+    functions:
+      - name: load_spec
+        contract: "спецификация (atlas_json, atlas_png, позиции с source_fbx и material_map) -> проверенный вход или ошибка с ключом"
+      - name: run
+        contract: "спецификация, новая папка, [DCC] -> НПМ и эталон FBX; ворота на чтении: габариты, силуэт, слоты UV"
+  - id: maf-atlas-max
+    grid: "2.5/2"
+    ru: "Атлас МАФ в Max: atlas_groundel (AGR Tools)"
     area: docs/domain/areas/groundel-maf.md
     owner: adapters/max/agr_tools/flora_atlas_max.py
-    owner_ru: "атлас МАФ (GroundEl) в AGR Tools; конвертация ВПМ → НПМ или параллельно (D293)"
+    owner_ru: "отдельный производитель: свой атлас PNG и UV из узлов сцены Max; пару PNG + UV JSON atlas_maf не читает (D293: инструмент выбирает агент)"
+    serves_stage: npm
     functions:
       - name: atlas_groundel
-        contract: "контекст Max, режим, узлы МАФ, превью -> атлас МАФ НПМ"
+        contract: "контекст Max, режим, узлы МАФ, превью -> свой атлас МАФ НПМ из сцены"
+  - id: place-gap
+    grid: "0.5/2"
+    ru: "Зазор МАФ до Ground на стороне расстановки (Max)"
+    area: docs/domain/areas/groundel-maf.md
+    owner: adapters/max/agr_tools/place_core.py
+    owner_ru: "place.maf_checks: только чтение сцены, зазор каждого МАФ до Ground; gap_m по умолчанию 0,0 — настройка инструмента, не заменяет утопление 10 см (D095); не дубль twinqa.maf_checks.maf_findings (находки FBX)"
+    serves_stage: placement
+    functions:
+      - name: maf_verdict
+        contract: "наименьший зазор, gap_m, допуски -> ok / maf_flying / maf_sunk"
+      - name: maf_checks
+        contract: "объекты сцены, поверхность Ground, опции -> строки зазоров, без Ground, пересечения"
   - id: ucx
     grid: "3.5/2"
     ru: "UCX: у МАФ нет, у Ground есть (только ВПМ)"
@@ -123,21 +147,24 @@ relations:
   - from: maf-library
     to: maf-checks
     ru: "кандидат МАФ"
-  - from: maf-checks
-    to: maf-atlas
-    ru: "модель в допуске"
   - from: maf-library
     to: placement
-    ru: "модель МАФ"
+    ru: "модель МАФ уже есть (вход расстановки)"
+  - from: placement
+    to: place-gap
+    ru: "МАФ и Ground в сцене Max (только чтение)"
   - from: placement
     to: npm-atlas
-    ru: "точки МАФ"
+    ru: "конвертация ВПМ → НПМ: сквозная передача не проверена"
   - from: maf-atlas
     to: npm-atlas
-    ru: "ID / атлас 512"
+    ru: "PNG + UV JSON (ключ — имя материала)"
   - from: npm-atlas
     to: package
-    ru: "НПМ на атласе"
+    ru: "НПМ FBX на атласе"
+  - from: maf-atlas-max
+    to: package
+    ru: "НПМ на своём атласе (Max)"
   - from: ucx
     to: package
     ru: "коллизии Ground"

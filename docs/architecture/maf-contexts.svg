@@ -1,24 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3905 1255" width="3905" height="1255" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3905 1290" width="3905" height="1290" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3905" height="1255" fill="#ffffff"/>
+<rect x="10" y="-30" width="3905" height="1290" fill="#ffffff"/>
 <rect x="955.0" y="110" width="470" height="230.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
 <rect x="40.0" y="400.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="650.0" y="400.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="1565.0" y="400.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="2175.0" y="400.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="655.0" width="470" height="142.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="655.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1565.0" y="655.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="345.0" y="655.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <rect x="2175.0" y="655.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="955.0" y="892.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="345.0" y="892.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="955.0" y="927.5" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="345.0" y="927.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
 <polyline points="510.0,497.5 530.0,497.5 530.0,597.5 1140.0,597.5 1140.0,497.5 1120.0,497.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,497.5 1140.0,497.5 1140.0,580.0 2055.0,580.0 2055.0,480.0 2035.0,480.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2035.0,480.0 2055.0,480.0 2055.0,580.0 2665.0,580.0 2665.0,488.75 2645.0,488.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <polyline points="1120.0,497.5 1140.0,497.5 1140.0,360.0 1445.0,360.0 1445.0,225.0 1425.0,225.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,225.0 1445.0,225.0 1445.0,726.25 1425.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2645.0,488.75 2665.0,488.75 2665.0,635.0 2155.0,635.0 2155.0,726.25 1425.0,726.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,726.25 1445.0,726.25 1445.0,1033.75 1425.0,1033.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="2645.0,743.75 2665.0,743.75 2665.0,872.5 1445.0,872.5 1445.0,1033.75 1425.0,1033.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,1033.75 1445.0,1033.75 1445.0,872.5 835.0,872.5 835.0,972.5 815.0,972.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,225.0 1445.0,225.0 1445.0,635.0 835.0,635.0 835.0,761.25 815.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,225.0 1445.0,225.0 1445.0,761.25 1425.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2645.0,488.75 2665.0,488.75 2665.0,635.0 1445.0,635.0 1445.0,761.25 1425.0,761.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,761.25 1445.0,761.25 1445.0,1068.75 1425.0,1068.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2035.0,735.0 2055.0,735.0 2055.0,907.5 1445.0,907.5 1445.0,1068.75 1425.0,1068.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="2645.0,743.75 2665.0,743.75 2665.0,907.5 1445.0,907.5 1445.0,1068.75 1425.0,1068.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,1068.75 1445.0,1068.75 1445.0,907.5 835.0,907.5 835.0,1007.5 815.0,1007.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута МАФ (GroundEl, НПМ + ВПМ) — D293 (#1393)</tspan>
 </text>
@@ -76,22 +79,49 @@
 <text x="2183.0" y="410.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="2183.0" dy="14">ID материалов и атлас МАФ 512</tspan>
 <tspan x="2183.0" dy="17.5">Владелец: tools/materials/atlas_maf.py</tspan>
-<tspan x="2183.0" dy="17.5">общий список ID (v007, D240) -&gt; атлас 512 RGB и UV JSON;</tspan>
-<tspan x="2183.0" dy="17.5">ВПМ — UDIM после Ground (D210)</tspan>
+<tspan x="2183.0" dy="17.5">список материалов JSON -&gt; атлас 512 RGB (PNG) и UV JSON с</tspan>
+<tspan x="2183.0" dy="17.5">ключом = имя материала; ВПМ — UDIM после Ground (D210)</tspan>
 <tspan x="2183.0" dy="17.5"></tspan>
 <tspan x="2183.0" dy="17.5">plan_atlas: список материалов -&gt; ячейки атласа (сплошной</tspan>
 <tspan x="2183.0" dy="17.5">цвет 64 / 128, узор крупнее)</tspan>
-<tspan x="2183.0" dy="17.5">build_atlas: список материалов, выход -&gt; PNG атласа + UV</tspan>
-<tspan x="2183.0" dy="17.5">JSON</tspan>
+<tspan x="2183.0" dy="17.5">build_atlas: список материалов, путь PNG, путь JSON -&gt;</tspan>
+<tspan x="2183.0" dy="17.5">PNG атласа + UV JSON (ключ — имя материала)</tspan>
 </text>
 <text x="963.0" y="665.0" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="14">НПМ МАФ на атласе</tspan>
-<tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/flora_atlas_max.py</tspan>
-<tspan x="963.0" dy="17.5">атлас МАФ (GroundEl) в AGR Tools; конвертация ВПМ → НПМ</tspan>
-<tspan x="963.0" dy="17.5">или параллельно (D293)</tspan>
+<tspan x="963.0" dy="14">НПМ МАФ на атласе: maf_npm_light (Blender)</tspan>
+<tspan x="963.0" dy="17.5">Владелец: tools/library/maf_npm_light.py</tspan>
+<tspan x="963.0" dy="17.5">dt derive maf-npm-light / agr npm-light: FBX позиций +</tspan>
+<tspan x="963.0" dy="17.5">PNG и UV JSON атласа -&gt; НПМ FBX и отчёт; #1410 —</tspan>
+<tspan x="963.0" dy="17.5">технический прогон на копиях, не сдача</tspan>
 <tspan x="963.0" dy="17.5"></tspan>
-<tspan x="963.0" dy="17.5">atlas_groundel: контекст Max, режим, узлы МАФ, превью -&gt;</tspan>
-<tspan x="963.0" dy="17.5">атлас МАФ НПМ</tspan>
+<tspan x="963.0" dy="17.5">load_spec: спецификация (atlas_json, atlas_png, позиции с</tspan>
+<tspan x="963.0" dy="17.5">source_fbx и material_map) -&gt; проверенный вход или ошибка</tspan>
+<tspan x="963.0" dy="17.5">с ключом</tspan>
+<tspan x="963.0" dy="17.5">run: спецификация, новая папка, [DCC] -&gt; НПМ и эталон</tspan>
+<tspan x="963.0" dy="17.5">FBX; ворота на чтении: габариты, силуэт, слоты UV</tspan>
+</text>
+<text x="1573.0" y="665.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="1573.0" dy="14">Атлас МАФ в Max: atlas_groundel (AGR Tools)</tspan>
+<tspan x="1573.0" dy="17.5">Владелец: adapters/max/agr_tools/flora_atlas_max.py</tspan>
+<tspan x="1573.0" dy="17.5">отдельный производитель: свой атлас PNG и UV из узлов</tspan>
+<tspan x="1573.0" dy="17.5">сцены Max; пару PNG + UV JSON atlas_maf не читает (D293:</tspan>
+<tspan x="1573.0" dy="17.5">инструмент выбирает агент)</tspan>
+<tspan x="1573.0" dy="17.5"></tspan>
+<tspan x="1573.0" dy="17.5">atlas_groundel: контекст Max, режим, узлы МАФ, превью -&gt;</tspan>
+<tspan x="1573.0" dy="17.5">свой атлас МАФ НПМ из сцены</tspan>
+</text>
+<text x="353.0" y="665.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<tspan x="353.0" dy="14">Зазор МАФ до Ground на стороне расстановки (Max)</tspan>
+<tspan x="353.0" dy="17.5">Владелец: adapters/max/agr_tools/place_core.py</tspan>
+<tspan x="353.0" dy="17.5">place.maf_checks: только чтение сцены, зазор каждого МАФ</tspan>
+<tspan x="353.0" dy="17.5">до Ground; gap_m по умолчанию 0,0 — настройка</tspan>
+<tspan x="353.0" dy="17.5">инструмента, не заменяет утопление 10 см (D095); не дубль</tspan>
+<tspan x="353.0" dy="17.5">twinqa.maf_checks.maf_findings (находки FBX)</tspan>
+<tspan x="353.0" dy="17.5"></tspan>
+<tspan x="353.0" dy="17.5">maf_verdict: наименьший зазор, gap_m, допуски -&gt; ok /</tspan>
+<tspan x="353.0" dy="17.5">maf_flying / maf_sunk</tspan>
+<tspan x="353.0" dy="17.5">maf_checks: объекты сцены, поверхность Ground, опции -&gt;</tspan>
+<tspan x="353.0" dy="17.5">строки зазоров, без Ground, пересечения</tspan>
 </text>
 <text x="2183.0" y="665.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="2183.0" dy="14">UCX: у МАФ нет, у Ground есть (только ВПМ)</tspan>
@@ -104,7 +134,7 @@
 <tspan x="2183.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="2183.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="963.0" y="902.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="963.0" y="937.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Экспорт и пакеты (МАФ в Ground FBX)</tspan>
 <tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
 <tspan x="963.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
@@ -121,7 +151,7 @@
 <tspan x="963.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
 <tspan x="963.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="353.0" y="902.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="353.0" y="937.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="353.0" dy="14">Проверки пакета и витрина для Артёма</tspan>
 <tspan x="353.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
 <tspan x="353.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
@@ -140,33 +170,47 @@
 <text x="1597.5" y="571.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1597.5" dy="14">кандидат МАФ</tspan>
 </text>
-<rect x="2330.0" y="562.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="2360.0" y="562.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2360.0" dy="14">модель в</tspan>
-<tspan x="2360.0" dy="17.5">допуске</tspan>
+<rect x="1262.5" y="333.75" width="60" height="52.5" fill="#ffffff" opacity="0.9"/>
+<text x="1292.5" y="333.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1292.5" dy="14">модель МАФ уже</tspan>
+<tspan x="1292.5" dy="17.5">есть (вход</tspan>
+<tspan x="1292.5" dy="17.5">расстановки)</tspan>
 </text>
-<rect x="1262.5" y="351.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1292.5" y="351.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1292.5" dy="14">модель МАФ</tspan>
+<rect x="863.0" y="608.75" width="60" height="52.5" fill="#ffffff" opacity="0.9"/>
+<text x="893.0" y="608.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="893.0" dy="14">МАФ и Ground в</tspan>
+<tspan x="893.0" dy="17.5">сцене Max</tspan>
+<tspan x="893.0" dy="17.5">(только чтение)</tspan>
 </text>
-<rect x="1415.0" y="466.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="466.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1445.0" dy="14">точки МАФ</tspan>
+<rect x="1415.0" y="458.12" width="60" height="70.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="458.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">конвертация ВПМ</tspan>
+<tspan x="1445.0" dy="17.5">→ НПМ: сквозная</tspan>
+<tspan x="1445.0" dy="17.5">передача не</tspan>
+<tspan x="1445.0" dy="17.5">проверена</tspan>
 </text>
-<rect x="1760.0" y="717.5" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1790.0" y="717.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1790.0" dy="14">ID / атлас 512</tspan>
+<rect x="2067.0" y="608.75" width="60" height="52.5" fill="#ffffff" opacity="0.9"/>
+<text x="2097.0" y="608.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2097.0" dy="14">PNG + UV JSON</tspan>
+<tspan x="2097.0" dy="17.5">(ключ — имя</tspan>
+<tspan x="2097.0" dy="17.5">материала)</tspan>
 </text>
-<rect x="1415.0" y="871.25" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="871.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1445.0" dy="14">НПМ на атласе</tspan>
+<rect x="1415.0" y="897.5" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="897.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1445.0" dy="14">НПМ FBX на</tspan>
+<tspan x="1445.0" dy="17.5">атласе</tspan>
 </text>
-<rect x="2025.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="2055.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="890.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="890.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">НПМ на своём</tspan>
+<tspan x="1750.0" dy="17.5">атласе (Max)</tspan>
+</text>
+<rect x="2025.0" y="898.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="2055.0" y="898.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2055.0" dy="14">коллизии Ground</tspan>
 </text>
-<rect x="1110.0" y="863.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1140.0" y="863.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1110.0" y="898.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1140.0" y="898.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1140.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

@@ -63,8 +63,12 @@ def parse_param(text):
         return key, value
 
 
-def run(source, out, zones=None, params=None, blender=None, exclude_zones=None, *, rejoin_rectangles=False):
-    """Read once, verify source freshness, publish exclusively; never reuse a report."""
+def run(source, out, zones=None, params=None, blender=None, exclude_zones=None, *, rejoin_rectangles=False,
+        on_dump=None):
+    """Read once, verify source freshness, publish exclusively; never reuse a report.
+
+    ``on_dump(objects)`` (#1739) sees the same geometry the score is computed from, before publication;
+    an exception there publishes nothing."""
     from dt_ai.ops.xview_gate import publish
     src, out = Path(source).resolve(), Path(out).resolve()
     if src == out or (out.exists() and src.exists() and src.samefile(out)):
@@ -98,6 +102,8 @@ def run(source, out, zones=None, params=None, blender=None, exclude_zones=None, 
     if not isinstance(dump, dict) or not isinstance(dump.get('objects'), list):
         raise ValueError('dump has no objects list')
     report = load_core().score(dump['objects'], params=params, zones=zones, exclude_zones=exclude_zones)
+    if on_dump is not None:
+        on_dump(dump['objects'])
     if sha(src) != before:
         raise ValueError('master input changed during measure')
     report['input'] = provenance

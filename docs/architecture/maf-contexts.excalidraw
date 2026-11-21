@@ -106,7 +106,11 @@
     },
     {
      "type": "arrow",
-     "id": "e73c3d1c127d99a0"
+     "id": "eef0fae2ea5c3bcf"
+    },
+    {
+     "type": "arrow",
+     "id": "e224cfe01b19fcee"
     },
     {
      "type": "arrow",
@@ -266,7 +270,7 @@
     },
     {
      "type": "arrow",
-     "id": "e73c3d1c127d99a0"
+     "id": "eef0fae2ea5c3bcf"
     }
    ],
    "updated": 1,
@@ -341,10 +345,6 @@
     {
      "type": "arrow",
      "id": "e88696de6034564c"
-    },
-    {
-     "type": "arrow",
-     "id": "e99938086334b123"
     }
    ],
    "updated": 1,
@@ -418,10 +418,6 @@
     },
     {
      "type": "arrow",
-     "id": "e99938086334b123"
-    },
-    {
-     "type": "arrow",
      "id": "ea2a7d9872e8049c"
     }
    ],
@@ -455,13 +451,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "ID материалов и атлас МАФ 512\nВладелец: tools/materials/atlas_maf.py\nобщий список ID (v007, D240) -> атлас 512 RGB и UV JSON;\nВПМ — UDIM после Ground (D210)\n\nplan_atlas: список материалов -> ячейки атласа (сплошной\nцвет 64 / 128, узор крупнее)\nbuild_atlas: список материалов, выход -> PNG атласа + UV\nJSON",
+   "text": "ID материалов и атлас МАФ 512\nВладелец: tools/materials/atlas_maf.py\nсписок материалов JSON -> атлас 512 RGB (PNG) и UV JSON с\nключом = имя материала; ВПМ — UDIM после Ground (D210)\n\nplan_atlas: список материалов -> ячейки атласа (сплошной\nцвет 64 / 128, узор крупнее)\nbuild_atlas: список материалов, путь PNG, путь JSON ->\nPNG атласа + UV JSON (ключ — имя материала)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1d42b08d8fb06e8",
-   "originalText": "ID материалов и атлас МАФ 512\nВладелец: tools/materials/atlas_maf.py\nобщий список ID (v007, D240) -> атлас 512 RGB и UV JSON;\nВПМ — UDIM после Ground (D210)\n\nplan_atlas: список материалов -> ячейки атласа (сплошной\nцвет 64 / 128, узор крупнее)\nbuild_atlas: список материалов, выход -> PNG атласа + UV\nJSON",
+   "originalText": "ID материалов и атлас МАФ 512\nВладелец: tools/materials/atlas_maf.py\nсписок материалов JSON -> атлас 512 RGB (PNG) и UV JSON с\nключом = имя материала; ВПМ — UDIM после Ground (D210)\n\nplan_atlas: список материалов -> ячейки атласа (сплошной\nцвет 64 / 128, узор крупнее)\nbuild_atlas: список материалов, путь PNG, путь JSON ->\nPNG атласа + UV JSON (ключ — имя материала)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -471,7 +467,7 @@
    "x": 955.0,
    "y": 655.0,
    "width": 470,
-   "height": 142.5,
+   "height": 212.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -517,7 +513,7 @@
    "x": 963.0,
    "y": 665.0,
    "width": 454,
-   "height": 122.5,
+   "height": 192.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -537,13 +533,161 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "НПМ МАФ на атласе\nВладелец: adapters/max/agr_tools/flora_atlas_max.py\nатлас МАФ (GroundEl) в AGR Tools; конвертация ВПМ → НПМ\nили параллельно (D293)\n\natlas_groundel: контекст Max, режим, узлы МАФ, превью ->\nатлас МАФ НПМ",
+   "text": "НПМ МАФ на атласе: maf_npm_light (Blender)\nВладелец: tools/library/maf_npm_light.py\ndt derive maf-npm-light / agr npm-light: FBX позиций +\nPNG и UV JSON атласа -> НПМ FBX и отчёт; #1410 —\nтехнический прогон на копиях, не сдача\n\nload_spec: спецификация (atlas_json, atlas_png, позиции с\nsource_fbx и material_map) -> проверенный вход или ошибка\nс ключом\nrun: спецификация, новая папка, [DCC] -> НПМ и эталон\nFBX; ворота на чтении: габариты, силуэт, слоты UV",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1c3fdcfd48b67d4",
-   "originalText": "НПМ МАФ на атласе\nВладелец: adapters/max/agr_tools/flora_atlas_max.py\nатлас МАФ (GroundEl) в AGR Tools; конвертация ВПМ → НПМ\nили параллельно (D293)\n\natlas_groundel: контекст Max, режим, узлы МАФ, превью ->\nатлас МАФ НПМ",
+   "originalText": "НПМ МАФ на атласе: maf_npm_light (Blender)\nВладелец: tools/library/maf_npm_light.py\ndt derive maf-npm-light / agr npm-light: FBX позиций +\nPNG и UV JSON атласа -> НПМ FBX и отчёт; #1410 —\nтехнический прогон на копиях, не сдача\n\nload_spec: спецификация (atlas_json, atlas_png, позиции с\nsource_fbx и material_map) -> проверенный вход или ошибка\nс ключом\nrun: спецификация, новая папка, [DCC] -> НПМ и эталон\nFBX; ворота на чтении: габариты, силуэт, слоты UV",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e9be805b68f5bf14",
+   "type": "rectangle",
+   "x": 1565.0,
+   "y": 655.0,
+   "width": 470,
+   "height": 160.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1115709345,
+   "version": 1,
+   "versionNonce": 95523802,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e2a679b9f8534958"
+    },
+    {
+     "type": "arrow",
+     "id": "e038c5fe19a5469e"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e2a679b9f8534958",
+   "type": "text",
+   "x": 1573.0,
+   "y": 665.0,
+   "width": 454,
+   "height": 140.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1049667473,
+   "version": 1,
+   "versionNonce": 1975731286,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Атлас МАФ в Max: atlas_groundel (AGR Tools)\nВладелец: adapters/max/agr_tools/flora_atlas_max.py\nотдельный производитель: свой атлас PNG и UV из узлов\nсцены Max; пару PNG + UV JSON atlas_maf не читает (D293:\nинструмент выбирает агент)\n\natlas_groundel: контекст Max, режим, узлы МАФ, превью ->\nсвой атлас МАФ НПМ из сцены",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e9be805b68f5bf14",
+   "originalText": "Атлас МАФ в Max: atlas_groundel (AGR Tools)\nВладелец: adapters/max/agr_tools/flora_atlas_max.py\nотдельный производитель: свой атлас PNG и UV из узлов\nсцены Max; пару PNG + UV JSON atlas_maf не читает (D293:\nинструмент выбирает агент)\n\natlas_groundel: контекст Max, режим, узлы МАФ, превью ->\nсвой атлас МАФ НПМ из сцены",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e87234abf88bd1d3",
+   "type": "rectangle",
+   "x": 345.0,
+   "y": 655.0,
+   "width": 470,
+   "height": 212.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#b2f2bb",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 560410541,
+   "version": 1,
+   "versionNonce": 301970430,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e7f84efa2e99a9ad"
+    },
+    {
+     "type": "arrow",
+     "id": "e224cfe01b19fcee"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e7f84efa2e99a9ad",
+   "type": "text",
+   "x": 353.0,
+   "y": 665.0,
+   "width": 454,
+   "height": 192.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 355357474,
+   "version": 1,
+   "versionNonce": 374418438,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Зазор МАФ до Ground на стороне расстановки (Max)\nВладелец: adapters/max/agr_tools/place_core.py\nplace.maf_checks: только чтение сцены, зазор каждого МАФ\nдо Ground; gap_m по умолчанию 0,0 — настройка\nинструмента, не заменяет утопление 10 см (D095); не дубль\ntwinqa.maf_checks.maf_findings (находки FBX)\n\nmaf_verdict: наименьший зазор, gap_m, допуски -> ok /\nmaf_flying / maf_sunk\nmaf_checks: объекты сцены, поверхность Ground, опции ->\nстроки зазоров, без Ground, пересечения",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e87234abf88bd1d3",
+   "originalText": "Зазор МАФ до Ground на стороне расстановки (Max)\nВладелец: adapters/max/agr_tools/place_core.py\nplace.maf_checks: только чтение сцены, зазор каждого МАФ\nдо Ground; gap_m по умолчанию 0,0 — настройка\nинструмента, не заменяет утопление 10 см (D095); не дубль\ntwinqa.maf_checks.maf_findings (находки FBX)\n\nmaf_verdict: наименьший зазор, gap_m, допуски -> ok /\nmaf_flying / maf_sunk\nmaf_checks: объекты сцены, поверхность Ground, опции ->\nстроки зазоров, без Ground, пересечения",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -578,7 +722,7 @@
     },
     {
      "type": "arrow",
-     "id": "e1be0fc12766e768"
+     "id": "e9907a5818ce54f9"
     }
    ],
    "updated": 1,
@@ -625,7 +769,7 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 955.0,
-   "y": 892.5,
+   "y": 927.5,
    "width": 470,
    "height": 282.5,
    "angle": 0,
@@ -656,11 +800,15 @@
     },
     {
      "type": "arrow",
-     "id": "e1be0fc12766e768"
+     "id": "e038c5fe19a5469e"
     },
     {
      "type": "arrow",
-     "id": "e6ad14001c02e179"
+     "id": "e9907a5818ce54f9"
+    },
+    {
+     "type": "arrow",
+     "id": "e4f552790d995798"
     }
    ],
    "updated": 1,
@@ -671,7 +819,7 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 963.0,
-   "y": 902.5,
+   "y": 937.5,
    "width": 454,
    "height": 262.5,
    "angle": 0,
@@ -707,7 +855,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 345.0,
-   "y": 892.5,
+   "y": 927.5,
    "width": 470,
    "height": 160.0,
    "angle": 0,
@@ -734,7 +882,7 @@
     },
     {
      "type": "arrow",
-     "id": "e6ad14001c02e179"
+     "id": "e4f552790d995798"
     }
    ],
    "updated": 1,
@@ -745,7 +893,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 353.0,
-   "y": 902.5,
+   "y": 937.5,
    "width": 454,
    "height": 140.0,
    "angle": 0,
@@ -994,115 +1142,7 @@
    "lineHeight": 1.25
   },
   {
-   "id": "e99938086334b123",
-   "type": "arrow",
-   "x": 2035.0,
-   "y": 480.0,
-   "width": 630.0,
-   "height": 100.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "transparent",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": null,
-   "seed": 930961303,
-   "version": 1,
-   "versionNonce": 1690866654,
-   "isDeleted": false,
-   "boundElements": [
-    {
-     "type": "text",
-     "id": "ecd07d50724812f9"
-    }
-   ],
-   "updated": 1,
-   "link": null,
-   "locked": false,
-   "points": [
-    [
-     0.0,
-     0.0
-    ],
-    [
-     20.0,
-     0.0
-    ],
-    [
-     20.0,
-     100.0
-    ],
-    [
-     630.0,
-     100.0
-    ],
-    [
-     630.0,
-     8.75
-    ],
-    [
-     610.0,
-     8.75
-    ]
-   ],
-   "lastCommittedPoint": null,
-   "startArrowhead": null,
-   "endArrowhead": "arrow",
-   "elbowed": false,
-   "startBinding": {
-    "elementId": "e918e39c973c2167",
-    "focus": 0,
-    "gap": 4
-   },
-   "endBinding": {
-    "elementId": "e1d42b08d8fb06e8",
-    "focus": 0,
-    "gap": 4
-   }
-  },
-  {
-   "id": "ecd07d50724812f9",
-   "type": "text",
-   "x": 2300.0,
-   "y": 562.5,
-   "width": 120,
-   "height": 35.0,
-   "angle": 0,
-   "strokeColor": "#1e1e1e",
-   "backgroundColor": "transparent",
-   "fillStyle": "solid",
-   "strokeWidth": 1,
-   "strokeStyle": "solid",
-   "roughness": 0,
-   "opacity": 100,
-   "groupIds": [],
-   "frameId": null,
-   "roundness": null,
-   "seed": 1704780361,
-   "version": 1,
-   "versionNonce": 1781130956,
-   "isDeleted": false,
-   "boundElements": null,
-   "updated": 1,
-   "link": null,
-   "locked": false,
-   "text": "модель в\nдопуске",
-   "fontSize": 14,
-   "fontFamily": 2,
-   "textAlign": "center",
-   "verticalAlign": "middle",
-   "containerId": "e99938086334b123",
-   "originalText": "модель в\nдопуске",
-   "autoResize": true,
-   "lineHeight": 1.25
-  },
-  {
-   "id": "e73c3d1c127d99a0",
+   "id": "eef0fae2ea5c3bcf",
    "type": "arrow",
    "x": 1120.0,
    "y": 497.5,
@@ -1119,14 +1159,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 757558990,
+   "seed": 1250020335,
    "version": 1,
-   "versionNonce": 631901650,
+   "versionNonce": 1591687912,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e90d023a970bd297"
+     "id": "e8652b96e874bcb9"
     }
    ],
    "updated": 1,
@@ -1174,12 +1214,12 @@
    }
   },
   {
-   "id": "e90d023a970bd297",
+   "id": "e8652b96e874bcb9",
    "type": "text",
    "x": 1232.5,
-   "y": 351.25,
+   "y": 333.75,
    "width": 120,
-   "height": 17.5,
+   "height": 52.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1191,21 +1231,129 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 602910182,
+   "seed": 137992661,
    "version": 1,
-   "versionNonce": 298788698,
+   "versionNonce": 14633744,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "модель МАФ",
+   "text": "модель МАФ уже\nесть (вход\nрасстановки)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e73c3d1c127d99a0",
-   "originalText": "модель МАФ",
+   "containerId": "eef0fae2ea5c3bcf",
+   "originalText": "модель МАФ уже\nесть (вход\nрасстановки)",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e224cfe01b19fcee",
+   "type": "arrow",
+   "x": 1425.0,
+   "y": 225.0,
+   "width": 630.0,
+   "height": 536.25,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1854071177,
+   "version": 1,
+   "versionNonce": 61503232,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e09fec84cbbe3380"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     410.0
+    ],
+    [
+     -590.0,
+     410.0
+    ],
+    [
+     -590.0,
+     536.25
+    ],
+    [
+     -610.0,
+     536.25
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e1aaee826150be1a",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e87234abf88bd1d3",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e09fec84cbbe3380",
+   "type": "text",
+   "x": 833.0,
+   "y": 608.75,
+   "width": 120,
+   "height": 52.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 417243666,
+   "version": 1,
+   "versionNonce": 1019110846,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "МАФ и Ground в\nсцене Max\n(только чтение)",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e224cfe01b19fcee",
+   "originalText": "МАФ и Ground в\nсцене Max\n(только чтение)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1215,7 +1363,7 @@
    "x": 1425.0,
    "y": 225.0,
    "width": 20.0,
-   "height": 501.25,
+   "height": 536.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1251,11 +1399,11 @@
     ],
     [
      20.0,
-     501.25
+     536.25
     ],
     [
      0.0,
-     501.25
+     536.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1277,9 +1425,9 @@
    "id": "e44452c846c375e5",
    "type": "text",
    "x": 1385.0,
-   "y": 466.88,
+   "y": 458.12,
    "width": 120,
-   "height": 17.5,
+   "height": 70.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1299,13 +1447,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "точки МАФ",
+   "text": "конвертация ВПМ\n→ НПМ: сквозная\nпередача не\nпроверена",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
    "containerId": "e3e27a88e9873390",
-   "originalText": "точки МАФ",
+   "originalText": "конвертация ВПМ\n→ НПМ: сквозная\nпередача не\nпроверена",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1315,7 +1463,7 @@
    "x": 2645.0,
    "y": 488.75,
    "width": 1240.0,
-   "height": 237.5,
+   "height": 272.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1354,16 +1502,16 @@
      146.25
     ],
     [
-     -490.0,
+     -1200.0,
      146.25
     ],
     [
-     -490.0,
-     237.5
+     -1200.0,
+     272.5
     ],
     [
      -1220.0,
-     237.5
+     272.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1384,10 +1532,10 @@
   {
    "id": "e8773be0d510211e",
    "type": "text",
-   "x": 1730.0,
-   "y": 717.5,
+   "x": 2037.0,
+   "y": 608.75,
    "width": 120,
-   "height": 17.5,
+   "height": 52.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1407,13 +1555,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "ID / атлас 512",
+   "text": "PNG + UV JSON\n(ключ — имя\nматериала)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
    "containerId": "ea2a7d9872e8049c",
-   "originalText": "ID / атлас 512",
+   "originalText": "PNG + UV JSON\n(ключ — имя\nматериала)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1421,7 +1569,7 @@
    "id": "e76626064b04f8e7",
    "type": "arrow",
    "x": 1425.0,
-   "y": 726.25,
+   "y": 761.25,
    "width": 20.0,
    "height": 307.5,
    "angle": 0,
@@ -1485,9 +1633,9 @@
    "id": "e018b872d45bd4a1",
    "type": "text",
    "x": 1385.0,
-   "y": 871.25,
+   "y": 897.5,
    "width": 120,
-   "height": 17.5,
+   "height": 35.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1507,23 +1655,23 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "НПМ на атласе",
+   "text": "НПМ FBX на\nатласе",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
    "containerId": "e76626064b04f8e7",
-   "originalText": "НПМ на атласе",
+   "originalText": "НПМ FBX на\nатласе",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e1be0fc12766e768",
+   "id": "e038c5fe19a5469e",
    "type": "arrow",
-   "x": 2645.0,
-   "y": 743.75,
-   "width": 1240.0,
-   "height": 290.0,
+   "x": 2035.0,
+   "y": 735.0,
+   "width": 630.0,
+   "height": 333.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1535,14 +1683,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 864800651,
+   "seed": 1056214710,
    "version": 1,
-   "versionNonce": 631728722,
+   "versionNonce": 1514686354,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "efe73db45daa3db5"
+     "id": "e70526f2d0e6f2b7"
     }
    ],
    "updated": 1,
@@ -1559,19 +1707,127 @@
     ],
     [
      20.0,
-     128.75
+     172.5
+    ],
+    [
+     -590.0,
+     172.5
+    ],
+    [
+     -590.0,
+     333.75
+    ],
+    [
+     -610.0,
+     333.75
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e9be805b68f5bf14",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e70526f2d0e6f2b7",
+   "type": "text",
+   "x": 1690.0,
+   "y": 890.0,
+   "width": 120,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 277868331,
+   "version": 1,
+   "versionNonce": 978811406,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "НПМ на своём\nатласе (Max)",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e038c5fe19a5469e",
+   "originalText": "НПМ на своём\nатласе (Max)",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e9907a5818ce54f9",
+   "type": "arrow",
+   "x": 2645.0,
+   "y": 743.75,
+   "width": 1240.0,
+   "height": 325.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 301380005,
+   "version": 1,
+   "versionNonce": 275710690,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e370a648cb3200ee"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     163.75
     ],
     [
      -1200.0,
-     128.75
+     163.75
     ],
     [
      -1200.0,
-     290.0
+     325.0
     ],
     [
      -1220.0,
-     290.0
+     325.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1590,10 +1846,10 @@
    }
   },
   {
-   "id": "efe73db45daa3db5",
+   "id": "e370a648cb3200ee",
    "type": "text",
    "x": 1995.0,
-   "y": 863.75,
+   "y": 898.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1607,9 +1863,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 768864474,
+   "seed": 1458688881,
    "version": 1,
-   "versionNonce": 844034741,
+   "versionNonce": 1891566162,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1620,16 +1876,16 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e1be0fc12766e768",
+   "containerId": "e9907a5818ce54f9",
    "originalText": "коллизии Ground",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e6ad14001c02e179",
+   "id": "e4f552790d995798",
    "type": "arrow",
    "x": 1425.0,
-   "y": 1033.75,
+   "y": 1068.75,
    "width": 630.0,
    "height": 161.25,
    "angle": 0,
@@ -1643,14 +1899,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 324096529,
+   "seed": 1075795888,
    "version": 1,
-   "versionNonce": 684020774,
+   "versionNonce": 801242419,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e03a3e17d08b77a6"
+     "id": "e321747c08b4204e"
     }
    ],
    "updated": 1,
@@ -1698,10 +1954,10 @@
    }
   },
   {
-   "id": "e03a3e17d08b77a6",
+   "id": "e321747c08b4204e",
    "type": "text",
    "x": 1080.0,
-   "y": 863.75,
+   "y": 898.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1715,9 +1971,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1791299826,
+   "seed": 1936288652,
    "version": 1,
-   "versionNonce": 1311245825,
+   "versionNonce": 1471919823,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1728,7 +1984,7 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e6ad14001c02e179",
+   "containerId": "e4f552790d995798",
    "originalText": "ZIP / FBX сдачи",
    "autoResize": true,
    "lineHeight": 1.25

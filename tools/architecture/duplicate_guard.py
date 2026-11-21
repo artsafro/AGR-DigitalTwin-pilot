@@ -41,6 +41,9 @@ Rules (stdlib `ast`, no imports of the scanned code):
   imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
 - `window-generator` owner adapters/max/agr_tools/windowgen_core.py (#1405): definitions named build_type or
   assign_glass under jobs/ + tools/ + src/ are refused; imports/calls remain valid. No legacy copies are allowlisted.
+- `poly63-window-match` owner jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py (#1714): the one POLY63 stage-2 opening ->
+  window-type matcher (`claim_openings`, 63A pick `match_openings`; 63C/63B pass their own pick). Definitions named
+  claim_openings or match_openings under jobs/ + tools/ + src/ are refused; calls remain valid. No copies are allowlisted.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -102,6 +105,7 @@ RULES = {
     "seam-seal": "tools/blender/seam_seal.py",
     "site-placement": "src/dt_ai/placement/site.py",
     "window-generator": "adapters/max/agr_tools/windowgen_core.py",
+    "poly63-window-match": "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 SCAN_PATTERN = "*.py"
@@ -112,23 +116,53 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
            "seam-seal": ("jobs", "tools", "src"),   # #1381
            "site-placement": ("jobs", "tools", "src"),   # #1407: one site placement run, guarded from the start
-           "window-generator": ("jobs", "tools", "src")}
+           "window-generator": ("jobs", "tools", "src"),
+           "poly63-window-match": ("jobs", "tools", "src")}   # #1714: one stage-2 matcher for 63A/63C/63B
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
 REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
-                   "site-placement", "window-generator"}
+                   "site-placement", "window-generator", "poly63-window-match"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
                "master-qa": {"world_bm"},
-               "seam-seal": {"seal", "ring_split", "t_junctions"}}
+               "seam-seal": {"seal", "ring_split", "t_junctions"},
+               "poly63-window-match": {"claim_openings", "match_openings"}}
 SINTEZ_ENTRY = "calculate_all_checks"   # the checker's own "Check AGR zip-files" entry point
+
+_AST = ast.AST
+_WALKS = {}   # id(node) -> (node, BFS tuple); filled during one file's _findings, cleared in its finally
+
+
+def _walk(node):
+    """`ast.walk(node)` (same nodes, same BFS order) memoised per node for the scan of one file: the checks walk
+    the same tree ~15 times. The entry keeps the node itself, so a reused id of a freed node never hits."""
+    hit = _WALKS.get(id(node))
+    if hit is not None and hit[0] is node:
+        return hit[1]
+    order = [node]
+    i = 0
+    while i < len(order):
+        parent = order[i]
+        for name in parent._fields:   # = ast.iter_child_nodes, inlined
+            try:
+                value = getattr(parent, name)
+            except AttributeError:
+                continue
+            if isinstance(value, _AST):
+                order.append(value)
+            elif isinstance(value, list):
+                order.extend(v for v in value if isinstance(v, _AST))
+        i += 1
+    order = tuple(order)
+    _WALKS[id(node)] = (node, order)
+    return order
 
 
 def _int_names(tree):
     """{name: {int values}} for every `Name = <int>` / `Name: T = <int>` anywhere in the file (module, class
     and function level). A name bound to 1001 anywhere counts as 1001 (fail closed)."""
     names = {}
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         if isinstance(node, ast.Assign):
             targets, value = node.targets, node.value
         elif isinstance(node, ast.AnnAssign) and node.value is not None:
@@ -143,12 +177,18 @@ def _int_names(tree):
 
 
 def _udim_hits(tree):
-    consts = _int_names(tree)
+    consts = None   # _int_names(tree), built on the first Name lookup (most files never need it)
+
+    def _values(name):
+        nonlocal consts
+        if consts is None:
+            consts = _int_names(tree)
+        return consts.get(name, ())
 
     def _const(node, value):
         if isinstance(node, ast.Constant):
             return type(node.value) is type(value) and node.value == value
-        return isinstance(node, ast.Name) and value in consts.get(node.id, ())
+        return isinstance(node, ast.Name) and value in _values(node.id)
 
     def _add_terms(node):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
@@ -162,7 +202,7 @@ def _udim_hits(tree):
     def _is_floor(node):
         return any(isinstance(n, ast.Call) and (
             isinstance(n.func, ast.Name) and n.func.id == "floor" or
-            isinstance(n.func, ast.Attribute) and n.func.attr == "floor") for n in ast.walk(node))
+            isinstance(n.func, ast.Attribute) and n.func.attr == "floor") for n in _walk(node))
 
     def _is_tile_index(node):
         if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "int"
@@ -180,7 +220,7 @@ def _udim_hits(tree):
         for term in terms:
             if isinstance(term, ast.Constant) and type(term.value) is int:
                 total += term.value
-            elif isinstance(term, ast.Name) and len(values := consts.get(term.id, ())) == 1:
+            elif isinstance(term, ast.Name) and len(values := _values(term.id)) == 1:
                 total += next(iter(values))
         return total == 1001
 
@@ -188,11 +228,11 @@ def _udim_hits(tree):
         return isinstance(node, ast.BinOp) and isinstance(node.op, ast.Sub) and _const(node.right, 1001)
 
     hits = {}
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         # a job-local definition carrying an owned function name is a copy whatever its body
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name in OWNED_NAMES["udim-tile"]:
             hits[id(node)] = node
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
             terms = _add_terms(node)
             if _has_base(terms) and any(_is_times_ten(t) or _is_tile_index(t) for t in terms):
@@ -211,12 +251,12 @@ def _udim_hits(tree):
             hits[id(node)] = node
     # two-step inverse: `i = tile - 1001` then `i % 10` / `i // 10` (reported on the assignment line)
     offsets = {}
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         if isinstance(node, ast.Assign) and _is_minus_1001(node.value):
             for target in node.targets:
                 if isinstance(target, ast.Name):
                     offsets.setdefault(target.id, node)
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Mod, ast.FloorDiv)) \
                 and _const(node.right, 10) and isinstance(node.left, ast.Name) and node.left.id in offsets:
             assign = offsets[node.left.id]
@@ -234,7 +274,7 @@ def _zip_hits(tree):
     # Like integer bindings, imports count anywhere in the file (fail closed on rebinding/shadowing).
     zip_names = {"ZipFile"}
     archive_names = {"make_archive"}
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         if isinstance(node, ast.ImportFrom):
             for alias in node.names:
                 if node.module == "zipfile" and alias.name == "ZipFile":
@@ -243,7 +283,7 @@ def _zip_hits(tree):
                     archive_names.add(alias.asname or alias.name)
 
     hits = {}
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         if not isinstance(node, ast.Call):
             continue
         archive = (isinstance(node.func, ast.Attribute) and node.func.attr == "make_archive" or
@@ -277,9 +317,9 @@ def _is_launch(words):
 def _blender_hits(tree):
     """Blender command lines: a list/tuple display with a headless and a script flag (string constants), or one
     string constant holding both as words. Docstrings / bare string statements (`ast.Expr`) are prose."""
-    prose = {id(node.value) for node in ast.walk(tree) if isinstance(node, ast.Expr)}
+    prose = {id(node.value) for node in _walk(tree) if isinstance(node, ast.Expr)}
     hits = {}
-    for node in ast.walk(tree):
+    for node in _walk(tree):
         if isinstance(node, (ast.List, ast.Tuple)):
             words = {e.value for e in node.elts if isinstance(e, ast.Constant) and isinstance(e.value, str)}
             if _is_launch(words):
@@ -296,26 +336,26 @@ def _blender_hits(tree):
 
 def _sintez_hits(tree):
     """Calls of the SINTEZ checker entry point: `<anything>.calculate_all_checks(...)` or a bare name call."""
-    return [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (
+    return [node for node in _walk(tree) if isinstance(node, ast.Call) and (
         isinstance(node.func, ast.Attribute) and node.func.attr == SINTEZ_ENTRY
         or isinstance(node.func, ast.Name) and node.func.id == SINTEZ_ENTRY)]
 
 
 def _master_hits(tree):
     """Definitions carrying the master-QA owner's helper name (`def world_bm`), whatever their body."""
-    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    return [node for node in _walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
             and node.name in OWNED_NAMES["master-qa"]]
 
 
 def _vpm_uv_hits(tree):
     """Definitions of the shared periodic VPM UV/slicer entry points, not mere imports or calls."""
-    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    return [node for node in _walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
             and node.name in {'pack_uv', 'texel_cut'}]
 
 
 def _seal_hits(tree):
     """Definitions carrying the seam-seal owner's function names (`def seal` / `ring_split` / `t_junctions`)."""
-    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    return [node for node in _walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
             and node.name in OWNED_NAMES["seam-seal"]]
 
 
@@ -323,8 +363,8 @@ def _place_hits(tree):
     """Calls of the placement engine run `engine.place(...)`, or a bare `place(...)` imported from
     dt_ai.placement.engine: a site run outside the one placement command is a job-local copy (#1407)."""
     bare = any(isinstance(n, ast.ImportFrom) and n.module == "dt_ai.placement.engine"
-               and any(a.name == "place" and a.asname in (None, "place") for a in n.names) for n in ast.walk(tree))
-    return [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (
+               and any(a.name == "place" and a.asname in (None, "place") for a in n.names) for n in _walk(tree))
+    return [node for node in _walk(tree) if isinstance(node, ast.Call) and (
         isinstance(node.func, ast.Attribute) and node.func.attr == "place"
         and isinstance(node.func.value, ast.Name) and node.func.value.id == "engine"
         or bare and isinstance(node.func, ast.Name) and node.func.id == "place")]
@@ -332,13 +372,19 @@ def _place_hits(tree):
 
 def _window_hits(tree):
     """Protect the window builder and 3D ownership entry points; mere calls are not copies."""
-    return [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    return [node for node in _walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
             and node.name in {'build_type', 'assign_glass'}]
+
+
+def _poly63_match_hits(tree):
+    """Definitions of the POLY63 stage-2 matcher names (#1714); the towers call the owner with their own pick."""
+    return [node for node in _walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in OWNED_NAMES["poly63-window-match"]]
 
 
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
           "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
-          "site-placement": _place_hits, "window-generator": _window_hits}
+          "site-placement": _place_hits, "window-generator": _window_hits, "poly63-window-match": _poly63_match_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")
@@ -388,18 +434,23 @@ def _digest(node):
 
 
 def _findings(tree, rel):
-    scopes = _scopes(tree)
+    scopes = None   # _scopes(tree), built on the first hit (most files have none)
     out = []
-    for rule, check in CHECKS.items():
-        if rel == RULES[rule]:   # the owner is not a copy of itself
-            continue
-        hits = check(tree)
-        ids = {id(h) for h in hits}
-        nested = {id(sub) for h in hits if not isinstance(h, SCOPES)
-                  for sub in ast.walk(h) if sub is not h and id(sub) in ids}
-        for node in hits:
-            if id(node) not in nested:   # an expression inside another reported expression is the same copy
-                out.append(Finding(rule, rel, scopes[id(node)], _digest(node), node.lineno, node.col_offset))
+    try:
+        for rule, check in CHECKS.items():
+            if rel == RULES[rule]:   # the owner is not a copy of itself
+                continue
+            hits = check(tree)
+            ids = {id(h) for h in hits}
+            nested = {id(sub) for h in hits if not isinstance(h, SCOPES)
+                      for sub in _walk(h) if sub is not h and id(sub) in ids}
+            for node in hits:
+                if id(node) not in nested:   # an expression inside another reported expression is the same copy
+                    if scopes is None:
+                        scopes = _scopes(tree)
+                    out.append(Finding(rule, rel, scopes[id(node)], _digest(node), node.lineno, node.col_offset))
+    finally:
+        _WALKS.clear()
     return out
 
 
@@ -842,16 +893,27 @@ def in_skeleton_job(root, rel):
     return any((Path(root).joinpath(*parts[:i]) / SKELETON_CONFIG).is_file() for i in range(2, len(parts)))
 
 
-def historical_scripts(root, finished, chains, live_evidence=(), baseline=None):
+def entry_named_paths(root):
+    """Repo paths an entry doc, route, scenario or skill names (#1614: a script a live route names stays visible);
+    empty outside a git work tree (synthetic test roots have no entry docs)."""
+    if not (Path(root) / ".git").exists():
+        return frozenset()
+    import search_noise  # local: search_noise imports this module
+    return frozenset(search_noise.entry_named(root, search_noise.tracked(root)))
+
+
+def historical_scripts(root, finished, chains, live_evidence=(), baseline=None, named=None):
     """Sorted repo paths of the historical scripts: in the frozen baseline, inside a finished job, outside any
-    skeleton.json folder and not reached by a live chain (a new script in a finished job is never historical)."""
+    skeleton.json folder, not reached by a live chain and not named by an entry doc/route/scenario/skill (#1614)
+    (a new script in a finished job is never historical)."""
     baseline = load_job_baseline(root) if baseline is None else baseline
+    named = entry_named_paths(root) if named is None else named
     out = []
     for job in sorted(finished):
         for p in sorted((Path(root) / job).rglob("*")):
             rel = p.relative_to(root).as_posix()
             if p.is_file() and p.suffix.lower() in SCRIPT_SUFFIXES and rel in baseline and rel not in chains \
-                    and rel not in live_evidence and not in_skeleton_job(root, rel):
+                    and rel not in live_evidence and rel not in named and not in_skeleton_job(root, rel):
                 out.append(rel)
     return out
 
