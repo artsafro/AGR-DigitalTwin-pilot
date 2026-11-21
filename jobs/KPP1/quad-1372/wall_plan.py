@@ -39,6 +39,30 @@ def _check(faces):
             raise ValueError(f'face {i}: finish must be an int >= 0 or None, got {fin!r}')
 
 
+def slanted_outline(faces, tol=1e-3, key=1e-7):
+    """Number of outline edges (used by one finish face) that run slanted: both in-plane deltas > `tol`.
+
+    w12g: a sill/head whose outline follows a sloped flashing was rasterised to whole axis cells that poke past the
+    slanted edge (1201 pierce pairs with the v003 flashings); such a plane is not rebuilt. Wildcard (None) faces are
+    ignored. Vertices are matched by coordinates rounded to `key`. Fail-closed: no faces, bad corners (`_check`)."""
+    _check(faces)
+    cnt = {}
+    for poly, fin in faces:
+        if fin is None:
+            continue
+        ks = [(round(p[0] / key), round(p[1] / key)) for p in poly]
+        for a, b, pa, pb in zip(ks, ks[1:] + ks[:1], poly, poly[1:] + poly[:1]):
+            if a == b:
+                continue
+            e = (min(a, b), max(a, b))
+            if e in cnt:
+                cnt[e][0] += 1
+            else:
+                cnt[e] = [1, pa, pb]
+    return sum(1 for c, pa, pb in cnt.values()
+               if c == 1 and abs(pa[0] - pb[0]) > tol and abs(pa[1] - pb[1]) > tol)
+
+
 def unique(values, tol=TOL):
     """Sorted cluster centres: a value within `tol` of the cluster's first value joins the cluster."""
     if not tol > 0:

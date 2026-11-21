@@ -50,6 +50,7 @@ CONFORM = True       # w12 (variant A, Artem 2026-11-20 «принимаю ре�
 if BODY_WELD or CONFORM:
     EMB_M = 0.0
 MAX_FACES = 120000   # fail-closed: a conforming line spread that would more than double the 61 465-face v003 body
+SLANT_M = 2e-3      # an outline edge with both in-plane deltas > this is slanted (`wall_plan.slanted_outline`)
 REVEAL_M = 0.8       # m; a +x / +-z plane with a side <= this is a reveal, sill, head or parapet top of W/S/N
 WELD_BODY_M = 2.1e-3  # wall/body vertices closer than the 2 mm V004/xView tolerance (+0.1 mm) are welded (body only)
 AREA_MIN = 0.5       # m2; smaller planes stay as in v003
@@ -347,7 +348,19 @@ def conform_rebuild(bm, posts, contact, uvl, fl, tile_of_finish, rep):
     planes = [pl for pl in planes if (pl['ax'], pl['sg']) in wall_dirs
               or min(pl['box'][1] - pl['box'][0], pl['box'][3] - pl['box'][2]) <= REVEAL_M]
     rep['conform_planes_skipped'] = n_all - len(planes)
-    print('CONFORM planes', len(planes), round(time.perf_counter() - t0, 1), flush=True)
+    # w12g: planes with a slanted outline edge (sills/heads along sloped flashings) stay v003 - their raster cells
+    # poked past the slant (1201 pierce pairs) and, as bridges, spread every line over whole facades (76.7k cells)
+    keep = []
+    slanted = 0
+    for pl in planes:
+        a1, a2 = pl['axes']
+        if wp.slanted_outline([([(v.co[a1], v.co[a2]) for v in f.verts], f[fl]) for f in pl['faces']], SLANT_M):
+            slanted += 1
+        else:
+            keep.append(pl)
+    planes = keep
+    rep['conform_planes_slanted_outline_kept_v003'] = slanted
+    print('CONFORM planes', len(planes), 'slanted kept v003', slanted, round(time.perf_counter() - t0, 1), flush=True)
     face_pid = {f: i for i, pl in enumerate(planes) for f in pl['faces']}
     adj, skipped = adjacency(bm, face_pid, planes)
     print('CONFORM adj', len(adj), round(time.perf_counter() - t0, 1), flush=True)
