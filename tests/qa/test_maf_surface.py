@@ -212,14 +212,18 @@ def test_missing_or_failed_surface_is_not_run():
     assert {f.name: f.status for f in found} == {"MAF smoothing": "not_run", "MAF flipped normals": "not_run"}
 
 
+NPM_V004 = ["applied transforms", "topology defects", "co-directional clearance",
+            "unwrapped UV polygons", "duplicate vertices"]  # last two: SINTEZ 1.6.1 parity (#1732)
+
+
 def test_oks_glass_and_ucx_skip_maf_surface_findings():
     item = groundel(surface_facts(*box_mesh(shading="soft")))
     oks = scene_findings(rb(item), "npm", "oks", PROFILES.npm)
-    assert [f.name for f in oks["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
+    assert [f.name for f in oks["V004"]] == NPM_V004
     glass = scene_findings(rb(mesh(name="SM_Test_GroundElGlass")), "npm", "ground", PROFILES.npm)
-    assert [f.name for f in glass["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
+    assert [f.name for f in glass["V004"]] == NPM_V004
     ucx = scene_findings(rb(mesh(name="UCX_SM_Test_GroundEl")), "npm", "ground", PROFILES.npm)
-    assert [f.name for f in ucx["V004"]] == ["applied transforms", "topology defects", "co-directional clearance"]
+    assert [f.name for f in ucx["V004"]] == NPM_V004
 
 
 def _dimension(bounds, sizes=SPEC, present=True):

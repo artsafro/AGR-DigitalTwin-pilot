@@ -192,5 +192,6 @@ def test_one_merged_flora_mesh_cannot_tie_per_plant_names():
     merged = plant(PLANT, 6.0, 30.0)  # bbox of many plants together
     sched = {"Flora_Tree_A__C1": {"height_m": 5.0, "crown_m": 4.0}}
     assert statuses(dimension_findings([merged], sched, "s.fbx")) == {
-        "Flora dimensions: Flora_Tree_A__C1": "review"}
+        "Flora dimensions: Flora_Tree_A__C1": "review",
+        f"Flora dimensions: {PLANT}": "not_run"}
     assert all(math.isfinite(v) for v in merged["bounds_m"][1])

@@ -325,8 +325,52 @@ def inspect_maf_zip(path, base):
     return found, members, meta
 
 
+# ---- published library versions (#1743 [D371]) ----------------------------------------------------------------
+PUBLISHED_VERSION = re.compile(r'^v\d{3}(\.partial)?$', re.IGNORECASE)
+_HERE = os.path.dirname(os.path.abspath(__file__))
+# #1757: the installed copy (<userScripts>/AGRTools-1.1.0/) has no repo around it; the build ships the catalogue
+# next to this file. The repo path is the source checkout (development, tests).
+PACKAGED_CATALOGUE = os.path.join(_HERE, 'published-catalogue.json')
+REPO_CATALOGUE = os.path.join(_HERE, '..', '..', '..', 'library', 'published', 'catalogue.json')
+
+
+def published_catalogue_path(configured=''):
+    """Catalogue the browser reads: the configured path (settings `published_catalogue`) when set - used even if
+    it is missing or broken (fail-closed, never a silent fallback to the shipped snapshot); else the copy shipped
+    in the package; else the repository file."""
+    if configured and str(configured).strip():
+        return str(configured).strip()
+    return PACKAGED_CATALOGUE if os.path.isfile(PACKAGED_CATALOGUE) else REPO_CATALOGUE
+
+
+def published_accepted(path=None):
+    """{(name, vNNN)} of `accepted` records in library/published/catalogue.json (tools/library/publish.py).
+    Missing or unreadable catalogue -> empty set: every published version stays hidden (fail-closed)."""
+    try:
+        with open(path or published_catalogue_path(), encoding='utf-8') as f:
+            data = json.load(f)
+        return {(str(r['name']).lower(), str(r['version']).lower()) for r in data.get('records', [])
+                if r.get('status') == 'accepted'}
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return set()
+
+
+def published_gate(rel, accepted):
+    """None when a zip may be offered; else the reason it is hidden. Only the publish layout
+    `<name>/vNNN/<file>` is gated: a draft, rejected, unknown or unfinished (`vNNN.partial`) version is hidden."""
+    parts = str(rel).replace('\\', '/').split('/')[:-1]
+    for i, p in enumerate(parts):
+        if PUBLISHED_VERSION.match(p):
+            if p.lower().endswith('.partial'):
+                return 'unfinished publish (.partial)'
+            if i == 0 or (parts[i - 1].lower(), p.lower()) not in accepted:
+                return 'published version not accepted (draft/rejected/unknown) [D371]'
+            return None
+    return None
+
+
 def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, progress=None, override_dir=None,
-             meta_dir=None):
+             meta_dir=None, published=None):
     """Index a MAF folder (recursive). Unchanged zips (size+mtime) reuse their record; previews are extracted once
     into <cache>/previews/. Unreadable / partially synced zips go to `problems`, never stop the scan.
     override_dir: corrected archives (same file name) used INSTEAD of the originals (originals stay untouched);
@@ -338,6 +382,9 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
         for f in files:
             if f.lower().endswith('.zip'):
                 zips.append(os.path.relpath(os.path.join(dirpath, f), root).replace('\\', '/'))
+    accepted = published_accepted() if published is None else published
+    hidden = [{'path': z, 'reason': published_gate(z, accepted)} for z in zips if published_gate(z, accepted)]
+    zips = [z for z in zips if not published_gate(z, accepted)]
     base_root = os.path.normpath(root)
     if override_dir is None and os.path.isdir(base_root + '_fixed'):  # convention: <library>_fixed next to it
         override_dir = base_root + '_fixed'
@@ -415,7 +462,7 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
                 templated += 1
     report = {'archives': len(zips), 'indexed': len(records), 'problems': problems,
               'with_sidecar': sum(1 for r in records if r.get('meta')), 'templated': templated,
-              'overridden': sum(1 for z in zips if z.startswith('..'))}
+              'overridden': sum(1 for z in zips if z.startswith('..')), 'hidden_unaccepted': hidden}
     return new_index(lib, 'maf_zip', root, records, sources, report)
 
 
@@ -573,7 +620,7 @@ class Selection(object):
 DEFAULT_SETTINGS = {'libraries': {}, 'cache_dir': '', 'project_dir': '', 'versions': ['high', 'low'],
                     'materials': 'reuse', 'textures': 'project', 'fbx_scale': 1.0, 'source': 'max',
                     'gap_m': 1.0, 'row_limit_m': 40.0, 'selection': [], 'preview_dirs': [],
-                    'allow_flagged': False, 'maf_measured': ''}
+                    'allow_flagged': False, 'maf_measured': '', 'published_catalogue': ''}
 
 
 def merge_settings(saved):

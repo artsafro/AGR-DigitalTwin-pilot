@@ -129,6 +129,20 @@ cover archive/file-count subsets that the SINTEZ research labelled missing in `s
 Policy resolved by #431: [D160] VPM 512-1706 px/m, NPM Ground 10-40 unchanged; [D161] OKS
 150,000 project target vs 1,000,000 regulation ceiling; [D162] BOTH UCX too-close <0.2 mm
 and D098 2 mm-1 cm inclusive band, separately reported. UCX parity code is not implemented here.
+
+Per-polygon parity (#1732, recurrence of #432): with `--scene`,
+[`src/twinqa/sintez_uv.py`](../../src/twinqa/sintez_uv.py) judges every polygon of the readback as SINTEZ 1.6.1 does,
+thresholds unchanged [D160]. FBX readback preserves Blender's native UV and world-coordinate precision in
+`face_geometry`; rounding to six decimal places can hide line-collapsed UV triangles.
+VPM V008: `mirrored UV polygons` (2.5.2.1.4, fail), `UV outside UDIM tile`
+(2.5.2.1.2, fail: corners in different tiles by the vendor formula, or a tile without a Diffuse PNG),
+`unwrapped UV polygons` (4.1.3: UV collapsed to a point/line or zero 3D area, `review`). VPM V009:
+`texel density per polygon` (2.6.2, `side * sqrt(uv_area / area_3d)` against 512..1706 px/m, <= 256 px tiles
+exempt, fail). NPM V004: `unwrapped UV polygons` and `duplicate vertices` (2.3.7: 1..100 doubles at 0.002 m
+`review`, > 100 fail). A SINTEZ recommendation is `review`, never `pass`; every finding carries
+`data.sintez_req`. Not modelled: the opacity-tile split of mirrored polygons (2.5.2.1.4b; all mirrored polygons
+fail here) and NPM Ground density 10-40 px/m (2.6.1).
+
 [D163] UKEP verification is the applicant's responsibility; missing signature file is info only,
 never a claim of cryptographic validity. No signature checker is added by this documentation task.
 

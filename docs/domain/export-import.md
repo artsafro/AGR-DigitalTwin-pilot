@@ -9,10 +9,11 @@ Note: the reference project has NO Unreal Engine import rules; delivery target i
 - NPM: PNG atlases embedded in FBX. VPM: PNG external, texture paths removed from FBX materials. reg p.9 §5.1; p.30 §4.2, §5.1.1.
 - No empty/helper objects, cameras, animation keys, modifiers, extra layers (VPM single default layer); exception: lighting FBX has root helper empty. reg p.6 §1.3, p.28 §3.1-3.2, p.29 §3.11, p.38 §15.8.
 - Texture names inside the editor identical to PNG files (NPM). reg p.12 §3.4.
+- Metallic map channel (SINTEZ 2.5.6 reads `ReflectionFactor`/`ReflectionColor`/`metalness_map`, not `SpecularFactor`) and the Max import readback of dropped customer maps: [fbx-metallic-channel.md](fbx-metallic-channel.md) (#1729, measured).
 
 ## Project export practice
 - Triangulate only a derived export copy; editable master stays quad; check both files. Optional separate triangulated FBX, quad FBX is the editable main hand-off. local: docs/agr/GEOMETRY_RULES.md; local: archive/2026-11:jobs/GROUND-PROJECTION/NPM_RESULT.md (project decision).
-- Every delivery also gets a non-triangulated work FBX (quads / n-gons as built, same pivot, names, material slots and UVs, no UCX) next to the package, not inside it; the delivered FBX stays triangulated [D198].
+- Every package type (OKS, Ground, MAF, Flora) also gets a non-triangulated work FBX (quads / n-gons as built, same pivot, names, material slots and UVs, no UCX) next to the package, not inside it; the delivered FBX stays triangulated [D198, D366]. Staropetrovskiy was a time-pressure exception.
 - Export-prep actions (new Standard material, rename, pivot, layer, Reset XForm, Triangulate, metadata cleanup) only on a managed export copy, never on the working object. local: docs/agr/research/max-workbench/REVIEW.md#Что требует (project decision).
 - In 3ds Max, before export, convert to Mesh and then Weld at 0.002 m. Do not round-trip through Poly after that weld: Poly shows an overlap, Weld clears it, and a later Poly conversion drifts the points [D177]. That weld fixes vertices, not faces [D178].
 - Export preset must be explicit per profile; installed presets are not delivery presets (BMAX Max-side preset = FBX2012; stock Max FBX = 2014, triangulate=true, embed=false; RizomUV bridge transport = ASCII, Y-up, no embed, units commented out). local: docs/agr/inventory/README.md; local: docs/agr/decisions/ADR-0004-reuse-installed-toolchains.md; local: docs/agr/inventory/MSE_REVIEW.md (lesson).

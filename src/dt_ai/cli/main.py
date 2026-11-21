@@ -75,6 +75,8 @@ def parser():
     evals.add_argument("--check-receipt", help="verify a regression receipt against --output/report.json (read-only)")
     evals.add_argument("--check-handoff", type=_native_path, metavar="BODY",
                        help="verify the PR body's handoff evidence before review_requested (read-only, #584)")
+    evals.add_argument("--require-acceptance-table", action="store_true",
+                       help="with --check-handoff: require a populated Acceptance table for rule-21 cards")
     evals.add_argument("--sha", help="with --check-handoff: full head sha (default: git rev-parse HEAD)")
     evals.add_argument("--suite", choices=["regression", "capability"])
     evals.add_argument("--task", help="one task id (its folder under evals/)")
@@ -179,7 +181,8 @@ def main(argv=None):
                     print("ERROR: --check-handoff accepts only --sha and --output, not run options", file=sys.stderr)
                     return 1
                 sha = head_sha(Path.cwd()) if args.sha is None else args.sha
-                problems = check_handoff_file(args.check_handoff, sha, args.output, Path.cwd())
+                problems = check_handoff_file(args.check_handoff, sha, args.output, Path.cwd(),
+                                              require_acceptance_table=args.require_acceptance_table)
                 for problem in problems:
                     print("ERROR: " + " ".join(str(problem).splitlines()), file=sys.stderr)
                 if problems:
@@ -188,6 +191,9 @@ def main(argv=None):
                 return 0
             if args.sha is not None:
                 print("ERROR: --sha needs --check-handoff", file=sys.stderr)
+                return 1
+            if args.require_acceptance_table:
+                print("ERROR: --require-acceptance-table needs --check-handoff", file=sys.stderr)
                 return 1
             if args.check_receipt is not None:
                 from twinqa.evals.receipt import check_receipt

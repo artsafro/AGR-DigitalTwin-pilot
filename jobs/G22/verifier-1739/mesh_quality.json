@@ -1,0 +1,131 @@
+{
+ "schema": "agr.mesh_quality_stage/1",
+ "stage": "mesh-quality",
+ "mode": "observe",
+ "returns_work": false,
+ "input": {
+  "path": "C:\\x\\ev_t_317d654d\\g22\\conform.blend",
+  "sha256": "4b3ec8ef337da061d5bfe435dde449f3f6ca5b181783e783763c49ae99884ea5",
+  "kind": "blend",
+  "blender": "5.1.2",
+  "coverage": "evaluated scene meshes before export triangulation"
+ },
+ "score": 63.238,
+ "status": "measured",
+ "components": {
+  "tri_share": 1.0,
+  "ngon_share": 0.0,
+  "sliver_share": 0.386177,
+  "pole_share": 0.99482,
+  "one_mesh_share": 0.552405,
+  "weld_share": 0.153625,
+  "long_share": 0.016205,
+  "irregular_area_share": 1.0,
+  "open_seam_share": 9e-06
+ },
+ "dropped": [],
+ "cells": {
+  "cell_m": 3.0,
+  "triangulated_input": true,
+  "measured_faces": 148230,
+  "facade_faces": 112541,
+  "non_facade_faces": 35689,
+  "degenerate_faces": 0,
+  "defect_faces": 57243,
+  "facade_defect_faces": 30933,
+  "non_facade_defect_faces": 26310,
+  "max_cell_defect_faces": 274,
+  "max_cell_defect_area_m2": 23.511676,
+  "cells_with_defects": 2434,
+  "worst": [
+   {
+    "side": "+Y",
+    "u": 1032,
+    "z": 71,
+    "faces": 342,
+    "defect_faces": 274,
+    "defect_area_m2": 3.019382
+   },
+   {
+    "side": "-X",
+    "u": 191,
+    "z": 71,
+    "faces": 269,
+    "defect_faces": 246,
+    "defect_area_m2": 2.832788
+   },
+   {
+    "side": "-Y",
+    "u": 1007,
+    "z": 85,
+    "faces": 211,
+    "defect_faces": 132,
+    "defect_area_m2": 13.145972
+   },
+   {
+    "side": "+Y",
+    "u": 1007,
+    "z": 85,
+    "faces": 221,
+    "defect_faces": 121,
+    "defect_area_m2": 1.116492
+   },
+   {
+    "side": "-X",
+    "u": 185,
+    "z": 89,
+    "faces": 197,
+    "defect_faces": 100,
+    "defect_area_m2": 6.523041
+   },
+   {
+    "side": "+X",
+    "u": 185,
+    "z": 89,
+    "faces": 200,
+    "defect_faces": 98,
+    "defect_area_m2": 1.770543
+   },
+   {
+    "side": "-X",
+    "u": 178,
+    "z": 71,
+    "faces": 184,
+    "defect_faces": 97,
+    "defect_area_m2": 11.821661
+   },
+   {
+    "side": "+X",
+    "u": 168,
+    "z": 71,
+    "faces": 179,
+    "defect_faces": 88,
+    "defect_area_m2": 9.262252
+   },
+   {
+    "side": "+Y",
+    "u": 1007,
+    "z": 71,
+    "faces": 181,
+    "defect_faces": 82,
+    "defect_area_m2": 6.629626
+   },
+   {
+    "side": "+X",
+    "u": 173,
+    "z": 89,
+    "faces": 158,
+    "defect_faces": 82,
+    "defect_area_m2": 1.10123
+   }
+  ],
+  "dropped": [],
+  "thresholds": {
+   "irregular_deg": 15.0,
+   "tri_min_angle_deg": 10.0,
+   "quad_min_angle_deg": 30.0,
+   "facade_max_nz": 0.5
+  }
+ },
+ "signal": "score 63.24 (measured); worst cell +Y u1032 z71: 274 defect faces of 342 (3.02 m2); 2434 cells with defects, 57243/148230 defect faces"
+}

@@ -28,17 +28,18 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
 | 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
-| 4 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
-| 5 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
-| 6 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
-| 7 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
-| 8 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
-| 9 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/qa/verifier.py` → `verifier.json` [#1577] |
-| 10 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
-| 11 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 12 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
-| 13 | `geojson` GeoJSON | пробел |
-| 14 | `light-fbx` `_Light.fbx` | пробел |
+| 4 | `mesh-quality` качество сетки в конце `body` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
+| 5 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
+| 6 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
+| 7 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
+| 8 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
+| 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
+| 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
+| 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
+| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 13 | `light-fbx` `_Light.fbx` | `agr validate ZIP --profile vpm`: V012, строки Light FBX ([контракт](../research/elv-agent-vs-delivered.md#контракт-light-fbx)) |
+| 14 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
+| 15 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
 
 ### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
 
@@ -46,15 +47,17 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 |---|---|---|
 | 1 | `inspect` | `agr inspect --manifest JOB.json` |
 | 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
-| 3 | `brick-seams` кирпичные швы | пробел |
-| 4 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
-| 5 | `master-qa` | `tools/qa/master_topology.py` |
-| 6 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 7 | `build-manifest` манифест выпуска | `agr build-manifest record` |
-| 8 | `package-npm` пакет | `agr package-npm` → `package_core._write_zip` |
-| 9 | `validate` | `agr validate` |
-| 10 | `review-scene` сцена для приёмки | пробел |
-| 11 | `checker` | `agr checker` |
+| 3 | `mesh-quality` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
+| 4 | `brick-seams` кирпичные швы | пробел |
+| 5 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
+| 6 | `master-qa` | `tools/qa/master_topology.py` |
+| 7 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
+| 8 | `verifier` (observe) | `tools/blender/verifier_views.py` → `tools/qa/verifier.py` → `verifier.json` [#1739] |
+| 9 | `build-manifest` манифест выпуска | `agr build-manifest record` |
+| 10 | `package-npm` пакет | `agr package-npm` → `package_core._write_zip` |
+| 11 | `validate` | `agr validate` |
+| 12 | `review-scene` сцена для приёмки | пробел |
+| 13 | `checker` | `agr checker` |
 
 ### `npm-to-vpm` — existing NPM -> VPM (OKS cells `oks-npm` -> `oks-vpm`)
 
@@ -79,6 +82,29 @@ input or execution failure; neither is a pass. Prior delivered packages stay int
 An explicit cleanup approval records exact source polygon drops on a new copy,
 never a general geometry repair. A selected seam policy does not waive mixed
 material boundaries, singular UV metrics, texel bounds or native readback.
+
+### `vpm-to-npm` — принятая ВПМ → НПМ по практике Артёма (#1737)
+
+ВПМ первична, НПМ выводится из неё; бадик не перестраивается и не правится, ProOptimizer не используется
+(Артём 2026-11-21). Карточка: [vpm-to-npm](../scenarios/vpm-to-npm.md).
+
+| # | Этап | Что вызывает |
+|---|---|---|
+| 1 | `tris-count` треугольники ВПМ до всего | `uv run python tools/derive/vpm_to_npm.py --job jobs/<ID> --out NEW_DIR` (`vpm_npm_core.count_tris`) |
+| 2 | `remove-interiors` интерьеры — всегда | `vpm_npm_core.remove_interiors`: внутренние стенки капсул / интерьерные UDIM из `config.interiors` (явно, пустые списки = нет) |
+| 3 | `atlas` атлас НПМ, вся геометрия на атлас | `agr vpm-to-npm` → `npm_atlas.py --copied-udims --glass-white` + `export_npm.py` |
+| 4 | `glass-merge` стекло одним объектом на белом | Хук мастер-копии объединяет стекло; `export_npm.map_white_glass` проверяет белую область и переносит UV |
+| 5 | `budget-ladder` лестница бюджета | `vpm_npm_core.budget_ladder`: только пока выше бюджета, по порядку цилиндры → плоскости opacity (ограждения, кондиционеры) → плоскости окон/витражей; отчёт ran / skipped / missing |
+| 6 | `master-qa` | `tools/qa/master_topology.py` |
+| 7 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
+| 8 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
+| 9 | `package-npm` | `agr package-npm` → `package_core._write_zip` |
+| 10 | `validate` | `agr validate` |
+| 11 | `checker` | `agr checker` |
+| 12 | `review-scene` | пробел |
+
+Бюджет по умолчанию — `standards/NPM_STANDARD.yaml` `oks_triangles_per_fbx_max` (150000); шаг лестницы, нужный
+при превышении, но не поданный хуком, — `missing`, а не «сделано».
 
 ### `maf-npm-to-vpm` — МАФ, НПМ → ВПМ
 
@@ -112,7 +138,7 @@ Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
 | 5 | `maf-light` лёгкий МАФ | пробел |
 | 6 | `flora-star` звёзды Флоры | пробел |
 | 7 | `placement` расстановка | `uv run python -m dt_ai.placement.engine` |
-| 8 | `optimise` бюджет НПМ | пробел |
+| 8 | `optimise` бюджет НПМ (без ProOptimizer) | пробел |
 | 9 | `master-qa` | `tools/qa/master_topology.py` |
 | 10 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
 | 11 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
@@ -142,6 +168,21 @@ Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
 | 16 | `validate` | `agr validate --ground-area-m2` |
 | 17 | `checker` | `agr checker` после визуальной приёмки |
 
+### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D372], [D368]-[D371]
+
+Одна команда `agr library publish BATCH --kind maf --evidence DIR` проходит этапы 1–6; затем на «ок» Артёма
+`agr library accept NAMES --words "..."`, на отказ `agr library reject NAME --words "..."`. Подробно:
+[`docs/library/PUBLISH.md`](../library/PUBLISH.md), карточка [library-publish](../scenarios/library-publish.md).
+
+| # | Этап | Что вызывает |
+|---|---|---|
+| 1 | `intake` приём копии партии | `tools/library/publish.py` `intake_batch` (каждый файл — объект или отброс с причиной) |
+| 2 | `identify` дубль / вариант / новый | `identify_object` по `library/assets/maf_unified.json`; `assets_library`, `intake_identify.dims_check` |
+| 3 | `name` библиотечное имя [D369] | `library_name` (`assets_library.propose_maf_name`, translit, ё=е) |
+| 4 | `qa` ВПМ и НПМ | `qa_object` на `tools/blender/fbx_readback.py` + `twinqa.maf_checks.maf_findings` |
+| 5 | `register` версия vNNN + черновик [D370] | `register_version` → `AGR-assets/<kind>/<name>/vNNN/`, `library/published/catalogue.json` |
+| 6 | `sheet` лист Артёму, accept/reject [D371] | `write_sheet`, `accept_records`, `reject_record` |
+
 ## OKS modelling split [D336]
 
 Stage `body` of `oks-vpm` and `oks-npm`, all OKS buildings; the rule itself is the row [D336] in
@@ -165,10 +206,11 @@ Master/QA checks on these parts are element-wise; no check may require welding i
 
 ## Verifier step before showing Artem (#1577, observe mode)
 
-`oks-vpm`, `ground-npm` and `ground-vpm` (MAF and Flora are built inside the ground cells) run `verifier` right after
-`readback` and before the model is shown to Artem:
+`oks-vpm`, `oks-npm` (#1739), `ground-npm` and `ground-vpm` (MAF and Flora are built inside the ground cells) run
+`verifier` right after `readback` and before the model is shown to Artem. The 6 views come from the read-back export:
 
 ```
+blender --background --factory-startup --python-exit-code 1 --python tools/blender/verifier_views.py -- --vpm VPM --npm NPM --out NEW_DIR
 uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 views> --slide <slide.png> \
   --facades south=<label>,north=..,east=..,west=.. [--legend jobs/<ID>/vpm_textures.json]
 ```
@@ -188,6 +230,23 @@ uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 vie
 - After Artem's review the job records `verifier_review.json` (`{"reviews": [{"verifier": "verifier.json",
   "artem_corrected": ["material:base_color"]}]}`); `uv run python tools/qa/verifier_summary.py --jobs jobs` shows per
   job how often the main discrepancy matched his correction.
+
+## Observe week: mesh-quality + verifier on every sheet (#1739)
+
+Artem 2026-11-21, decision 7: the mesh-quality score and the verifier only **record** for one week; he sees their
+output next to each sheet, then sets a threshold from the numbers. Until then nothing returns work to the agent.
+
+- Stage `mesh-quality` at the end of `body` in `oks-vpm` and `oks-npm`:
+  `uv run python tools/qa/mesh_quality_observe.py stage MASTER --out NEW/mesh_quality.json [--cell-m 3.0]`.
+  It writes the unchanged #1616 score plus the per-facade-cell defect signal (#1724: irregular / sliver / n-gon
+  faces, and triangles in a quad master, per facade cell `side u z` of `cell_m`), so a local corner defect is not
+  averaged away. `returns_work` is always `false`, a `fail` status still exits 0; there is no threshold, return or
+  refusal option. Errors (unreadable / non-finite geometry, output aliasing the input or existing) exit 2.
+- Every sheet sent to Artem carries ONE line, printed by
+  `uv run python tools/qa/verifier_summary.py --sheet-line --verifier V.json --mesh-quality MQ.json`.
+- The status push carries the weekly line `uv run python tools/qa/verifier_summary.py --jobs jobs --digest`.
+- Return/fix mode stays off: the verifier needs `config.verifier_mode = "fix"`; mesh-quality has no return mode.
+  Both change only after Artem's word on the week's numbers.
 
 ## How a job configures the skeleton (one config file)
 
@@ -265,13 +324,12 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
+
 - `maf-segments` — ручная правка кругового профиля с замером отклонения и бюджета.
 - `maf-texture-class` — ручное подтверждение происхождения отделки и альфы.
 - `maf-atlas-strategy` — выбор по замерам плотности, отступов и швов.
 - `maf-stubs` — подготовка согласованной тройки карт и контроль применимости заглушек.
 - `maf-sheet` — парные виды и замеры для Артёма.
-- `geojson` — нет готового к сдаче генератора GeoJSON, пока не изучены примеры заказчика [D220].
-- `light-fbx` — нет стадии валидатора для содержимого `_Light.fbx`.
 - `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
 - `review-scene` — `agr open-in-max` / `agr contact-renders` недоступны: мост Max или рендеры работы.
 - `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.
@@ -284,4 +342,5 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 - `ucx-ground` — `agr ucx` недоступен; `ucx_build.py` — прецедент, не команда для реального участка.
 - `maf-light` — нет инструмента лёгкой НПМ-версии / перекладки UV для МАФ.
 - `flora-star` — нет построителя НПМ-звёзд Флоры [D102].
-- `optimise` — ProOptimizer в Max вручную; варианты — Артёму [D167].
+- `optimise` — шага ProOptimizer нет (Артём 2026-11-21, #1737); распределение бюджета Флора/МАФ решает Артём
+  [D167]; бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`.

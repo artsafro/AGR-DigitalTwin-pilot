@@ -1101,9 +1101,11 @@ def test_T06_search_defaults_to_the_map_path_not_123(tmp_path):
         tc.search_folders([], (), '', ['123'])
 
 
-def test_T06_slot_roles_reflection_is_not_metalness():
-    assert tc.role_of_slot('Reflection') is None and tc.role_of_slot('reflectionMap') is None
-    assert tc.role_of_slot('Specular Level') == 'metalness' and tc.role_of_slot('metalness_map') == 'metalness'
+def test_T06_slot_roles_one_metal_slot_1729():
+    # #1729: Standard `_m` = Reflection (FBX ReflectionColor, SINTEZ 2.5.6 Metallic); Specular Level has no role
+    assert tc.role_of_slot('Reflection') == 'metalness' and tc.role_of_slot('reflectionMap') == 'metalness'
+    assert tc.role_of_slot('Specular Level') is None and tc.role_of_slot('metalness_map') == 'metalness'
+    assert tc.role_of_slot('Reflectivity Map') is None and tc.role_of_slot('reflectivity_map') is None
     assert tc.role_of_slot('Diffuse Color') == 'diffuse' and tc.role_of_slot('base_color_map') == 'diffuse'
     assert tc.role_of_slot('Bump') == 'normal' and tc.role_of_slot('coat_roughness_map') is None
     assert tc.mask_stems('SM_Addr_Main', 'diffuse', 1002) == ['t_addr_diffuse_1.1002']

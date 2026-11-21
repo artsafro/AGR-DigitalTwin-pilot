@@ -1,0 +1,1 @@
+Verifier (observe): main=material:missing; checklist flagged 11/12; material min 1 | Mesh quality (observe): score 71.71 (measured); worst cell +X u-2 z0: 692 defect faces of 1496 (11.81 m2); 81 cells with defects, 20882/45018 defect faces
