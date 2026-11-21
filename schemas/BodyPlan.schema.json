@@ -30,6 +30,7 @@
     "materials": {"type": "object", "minProperties": 1,
                   "additionalProperties": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}},
     "wall_tile_m": {"type": "number", "exclusiveMinimum": 0},
-    "max_side_m": {"type": "number", "minimum": 0, "description": "BM-11 split of long sides (0 = off)"}
+    "max_side_m": {"type": "number", "minimum": 0, "description": "BM-11 split of long sides (0 = off)"},
+    "zone_overlap": {"enum": ["error", "first_listed"], "description": "overlapping zones: error (default) or the first listed wins"}
   }
 }

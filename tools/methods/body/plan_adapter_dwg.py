@@ -142,8 +142,89 @@ def adapt(contours, cfg, openings=None):
     return plans, report
 
 
+FACADE_CLASSES = {"surrounds": "opening", "doors": "opening", "portals": "zone", "features": "zone",
+                  "grilles": "niche"}
+
+
+def lines_from_facades(spec, z0, z1, grid=0.10, min_reason=1.5):
+    """Lines of one band from a per-facade openings list (decision 2: openings/zones, never mesh vertices).
+
+    spec = {facade: {"surrounds"|"doors"|"portals"|"features": [{"rect": [u0, u1, zb, zt]} | [u0, u1, zb, zt]],
+    "grilles": [...]}} (tools/source/openings census form). Levels are global for the band (one loop through every
+    facade, BM-02): candidate = element bottom/top inside (z0, z1), snapped, length = element width, summed over
+    facades. Stations per facade: element sides, length = element height inside the band. keep_lines decides
+    (opening lines always, others >= min_reason). An unknown element key is an error naming it; elements outside the
+    band are reported in `outside`. Returns {"levels", "levels_dropped", "stations", "stations_dropped", "outside",
+    "elements"}."""
+    if not (core._finite(z0) and core._finite(z1) and z0 < z1):
+        raise ValueError("band needs finite z0 < z1, got %r, %r" % (z0, z1))
+    lv, st, outside, elements = [], {}, [], []
+    for fac, groups in spec.items():
+        for key, items in groups.items():
+            if key not in FACADE_CLASSES:
+                raise ValueError("facade %r: element key %r is not one of %s" % (fac, key, sorted(FACADE_CLASSES)))
+            for it in items:
+                r = it["rect"] if isinstance(it, dict) else it
+                if not (isinstance(r, list) and len(r) == 4 and all(core._finite(v) for v in r)
+                        and r[0] < r[1] and r[2] < r[3]):
+                    raise ValueError("facade %r %s: rect %r must be 4 finite [u0 < u1, zb < zt]" % (fac, key, r))
+                reason = FACADE_CLASSES[key]
+                lo, hi = max(r[2], z0), min(r[3], z1)
+                if hi <= lo + 1e-9:
+                    outside.append({"facade": fac, "kind": key, "rect": r, "why": "outside the band"})
+                    continue
+                w = r[1] - r[0]
+                elements.append({"facade": fac, "kind": key, "reason": reason, "rect": r})
+                for z in (r[2], r[3]):
+                    if z0 + 1e-6 < z < z1 - 1e-6:
+                        lv.append({"at": core.snap(z - z0, grid), "reason": reason, "length": w, "width": w})
+                s = st.setdefault(fac, [])
+                for u in (r[0], r[1]):
+                    s.append({"at": core.snap(u, grid), "reason": reason, "length": hi - lo,
+                              "width": hi - lo if reason == "opening" else None})
+    levels, ldrop = core.keep_lines(lv, min_reason)
+    stations, sdrop = {}, {}
+    for fac, c in st.items():
+        stations[fac], sdrop[fac] = core.keep_lines(c, min_reason)
+    return {"levels": levels, "levels_dropped": ldrop, "stations": stations, "stations_dropped": sdrop,
+            "outside": outside, "elements": elements}
+
+
+def _lines_main(args):
+    """lines OPENINGS_SPEC.json Z0 Z1 NEW.json [--snap 0.10] [--min-reason 1.5]"""
+    opt = {"--snap": 0.10, "--min-reason": 1.5}
+    for k in list(opt):
+        if k in args:
+            i = args.index(k)
+            opt[k] = float(args[i + 1])
+            del args[i:i + 2]
+    if len(args) != 4:
+        print("usage: plan_adapter_dwg.py lines OPENINGS_SPEC.json Z0 Z1 NEW.json [--snap M] [--min-reason M]",
+              file=sys.stderr)
+        return 2
+    src, z0, z1, out = args
+    if os.path.exists(out) or os.path.realpath(out) == os.path.realpath(src):
+        print("refused: NEW.json exists or is the input", file=sys.stderr)
+        return 2
+    try:
+        rep = lines_from_facades(json.load(open(src, encoding="utf-8")), float(z0), float(z1),
+                                 opt["--snap"], opt["--min-reason"])
+    except (ValueError, KeyError, OSError) as e:
+        print("refused: %s" % e, file=sys.stderr)
+        return 2
+    rep.update({"source": os.path.realpath(src), "band": [float(z0), float(z1)], "snap_m": opt["--snap"],
+                "min_reason_m": opt["--min-reason"]})
+    with open(out, "x", encoding="utf-8") as fh:
+        json.dump(rep, fh, indent=1)
+    print("LINES", json.dumps({"levels": rep["levels"], "stations": {k: len(v) for k, v in rep["stations"].items()},
+                               "levels_dropped": len(rep["levels_dropped"]), "outside": len(rep["outside"])}))
+    return 0
+
+
 def main(argv=None):
     args = list(sys.argv[1:] if argv is None else argv)
+    if args[:1] == ["lines"]:
+        return _lines_main(args[1:])
     op = None
     if "--openings" in args:
         i = args.index("--openings")

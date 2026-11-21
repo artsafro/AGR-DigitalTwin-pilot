@@ -439,6 +439,7 @@ def main(argv=None):
         return {"units": "m", "step": STEP, "z0": z0, "floors": floors, "loops": LOOPS[side],
                 "rings": [{"xy": [[round(x, 6), round(y, 6)] for x, y in xy], "cuts": [], "zones": zones}],
                 "windows": wins, "insets": [], "materials": f["materials"], "wall_tile_m": 3.0,
+                "zone_overlap": "first_listed",  # remapped wrap zone overlaps its neighbour; v007 built so (#1736)
                 "source": {"floor": os.path.basename(a.floor_a if side == "A" else a.floor_b), "ring": side}}
 
     os.makedirs(a.out)

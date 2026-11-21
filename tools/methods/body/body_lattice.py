@@ -16,7 +16,8 @@ horizontal lines = `loops` (BM-02); a window with reveal r > 0 removes its cells
 the same vertices (back open for the stage-2 window, D336); r = 0 keeps the cell with the WINDOW material; insets are
 separate closed boxes, the wall under them is not cut (BM-04). Corner vertices of an offset run are the intersection
 of both sides' offset lines at their own depths (lesson r2 of #1742 §5.7b), never a bisector at one depth.
-Every refusal is a ValueError naming the offending key; nothing defaults silently.
+Every refusal is a ValueError naming the offending key; nothing defaults silently. Overlapping finish zones are an
+error unless the plan declares `"zone_overlap": "first_listed"` (the first listed zone wins; 63B v007 was built so).
 """
 from __future__ import annotations
 
@@ -86,11 +87,17 @@ def validate_plan(plan):
         cuts = ring.get("cuts", [])
         if not all(_finite(s) and -EPS_S <= s <= perim + EPS_S for s in cuts):
             raise ValueError("ring %d: cuts must be finite perimeter positions in [0, %.3f]" % (ri, perim))
-        for z in ring.get("zones", [[0.0, perim, "WALL_A"]]):
+        zl = ring.get("zones", [[0.0, perim, "WALL_A"]])
+        for z in zl:
             if not (isinstance(z, list) and len(z) == 3 and _finite(z[0]) and _finite(z[1]) and z[0] < z[1]):
                 raise ValueError("ring %d: zone %r must be [s0, s1, material] with s0 < s1" % (ri, z))
             if z[2] not in mats:
                 raise ValueError("zone material %r is not in materials" % (z[2],))
+        zs = sorted(zl)
+        for a, b in zip(zs, zs[1:]):
+            if b[0] < a[1] - EPS_S and plan.get("zone_overlap") != "first_listed":
+                raise ValueError("ring %d: zones %r and %r overlap (a face would get two materials)" % (ri, a, b))
+    seen = []
     for w in plan.get("windows", []):
         if not (isinstance(w, list) and 3 <= len(w) <= 6 and all(_finite(v) for v in w)):
             raise ValueError("window %r must be [ring, s0, s1, wl, wh, r] of finite numbers" % (w,))
@@ -101,10 +108,16 @@ def validate_plan(plan):
             raise ValueError("window %r: reveal must be finite in [0, 1) m and loops inside the module" % (w,))
         if "WINDOW" not in mats and r == 0:
             raise ValueError("window %r keeps its cell but materials has no WINDOW" % (w,))
+        for o in seen:  # duplicated / overlapping openings would cut one cell twice and build two reveals
+            if o[0] == w[0] and w[1] < o[2] - EPS_S and o[1] < w[2] - EPS_S and wl < o[4] and o[3] < wh:
+                raise ValueError("windows %r and %r overlap" % (o[:6], w))
+        seen.append((w[0], w[1], w[2], wl, wh, r))
     for ins in plan.get("insets", []):
         box_corners(*ins["box"])
         if "INSET" not in mats:
             raise ValueError("insets need an INSET material")
+    if plan.get("zone_overlap", "error") not in ("error", "first_listed"):
+        raise ValueError("zone_overlap must be 'error' or 'first_listed', got %r" % (plan["zone_overlap"],))
     if "wall_tile_m" in plan and not (_finite(plan["wall_tile_m"]) and plan["wall_tile_m"] > 0):
         raise ValueError("wall_tile_m must be finite > 0")
     return plan
@@ -381,7 +394,8 @@ def snap(v, grid=0.10):
 def keep_lines(candidates, min_reason=1.5):
     """Filter candidate lines [{"at": z_or_s, "reason": kind, "length": m, "width": m|None}] (decision 3).
 
-    A line is kept when the cell class changes along it over >= min_reason, or over the full width of the opening
+    A line is kept when the cell class changes along it over >= min_reason in ONE element (lengths of separate
+    elements on the same line are not added: four 0.4 m grilles are texture), or over the full width of the opening
     that causes it (an opening bottom/top is always a reason). Shorter changes are texture. Returns (kept sorted
     unique positions, dropped [{"at", "reason", "why"}]). Unknown reasons and non-finite numbers are errors."""
     kinds = {"opening", "zone", "niche", "plinth", "belt", "floor", "break"}
@@ -392,7 +406,7 @@ def keep_lines(candidates, min_reason=1.5):
         if not (_finite(c.get("at")) and _finite(c.get("length")) and c["length"] >= 0):
             raise ValueError("line %r needs finite at and length >= 0" % (c,))
         at = round(c["at"], 6)
-        total[at] = total.get(at, 0.0) + c["length"]
+        total[at] = max(total.get(at, 0.0), c["length"])  # one run must reach the threshold; pieces do not add
         w = c.get("width")
         if c["reason"] == "opening" and _finite(w) and c["length"] >= w - EPS_S:
             width_ok.add(at)
@@ -402,6 +416,6 @@ def keep_lines(candidates, min_reason=1.5):
         if total[at] >= min_reason - 1e-9 or at in width_ok:
             kept.append(at)
         else:
-            dropped.append({"at": at, "reason": why[at], "why": "class change %.3f m < %.2f m: texture"
+            dropped.append({"at": at, "reason": why[at], "why": "longest class change %.3f m < %.2f m: texture"
                             % (total[at], min_reason)})
     return kept, dropped

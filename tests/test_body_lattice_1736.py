@@ -218,9 +218,10 @@ def test_keep_lines_threshold_and_openings():
         {"at": 0.9, "reason": "opening", "length": 0.8, "width": 0.8},   # an opening line is always a reason
         {"at": 0.4, "reason": "zone", "length": 1.4},                    # < 1.5 m -> texture
         {"at": 3.3, "reason": "belt", "length": 1.5},                    # exactly at threshold -> kept
-        {"at": 2.0, "reason": "niche", "length": 0.7}, {"at": 2.0, "reason": "niche", "length": 0.8}])  # sums
-    assert kept == [0.9, 2.0, 3.3]
-    assert [d["at"] for d in dropped] == [0.4] and "texture" in dropped[0]["why"]
+        {"at": 2.0, "reason": "niche", "length": 0.7}, {"at": 2.0, "reason": "niche", "length": 0.8},  # no sum
+        {"at": 2.6, "reason": "zone", "length": 0.4}, {"at": 2.6, "reason": "zone", "length": 1.6}])
+    assert kept == [0.9, 2.6, 3.3]
+    assert [d["at"] for d in dropped] == [0.4, 2.0] and all("texture" in d["why"] for d in dropped)
 
 
 @pytest.mark.parametrize("bad", [{"at": float("nan"), "reason": "zone", "length": 2},
@@ -347,3 +348,42 @@ def test_blender_writer_matches_the_pure_core_and_refuses_existing_out(tmp_path)
     assert {p.name for p in out.iterdir()} >= {"module.blend", "body.blend", "body.fbx", "build.json"}
     r2 = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
     assert r2.returncode != 0 and "refused" in (r2.stdout + r2.stderr)
+
+
+# ---- lines of a new building from the openings list (KPP1 route, decisions 2-3) --------------------------
+SPEC = {"S": {"surrounds": [{"rect": [0.3, 5.3, 1.125, 6.7]}], "doors": [{"rect": [6.0, 7.2, 0.0, 2.1]}],
+              "grilles": [[8.0, 8.4, 3.05, 3.45], [9.0, 9.4, 3.05, 3.45], [10.0, 10.4, 3.05, 3.45],
+                          [11.0, 11.4, 3.05, 3.45]]},
+        "N": {"portals": [{"rect": [1.0, 4.0, 0.9, 2.7]}], "surrounds": [[0.5, 1.5, 4.8, 6.7]]}}
+
+
+def test_lines_from_facades_snaps_and_drops_small_pieces():
+    r = dwg.lines_from_facades(SPEC, 0.0, 3.9)
+    assert r["levels"] == [0.9, 1.1, 2.1, 2.7]  # four 0.4 m grilles on one line stay texture (no summing)
+    assert sorted(d["at"] for d in r["levels_dropped"]) == [3.0, 3.4]
+    assert r["stations"]["S"] == [0.3, 5.3, 6.0, 7.2] and r["stations"]["N"] == [1.0, 4.0]
+    assert [o["rect"] for o in r["outside"]] == [[0.5, 1.5, 4.8, 6.7]]  # every element: kept or reported
+    assert len(r["elements"]) + len(r["outside"]) == 8
+
+
+@pytest.mark.parametrize("spec,word", [({"S": {"balcony": [[0, 1, 0, 1]]}}, "balcony"),
+                                       ({"S": {"doors": [[0, 1, 0, float("nan")]]}}, "finite"),
+                                       ({"S": {"doors": [[1, 0, 0, 1]]}}, "u0 < u1"),
+                                       ({"S": {"doors": [[0, 1, 0]]}}, "4 finite")])
+def test_lines_from_facades_fails_closed(spec, word):
+    with pytest.raises(ValueError, match=word):
+        dwg.lines_from_facades(spec, 0.0, 3.9)
+
+
+def test_lines_cli_and_sheet_refuse_existing_output(tmp_path):
+    sheet = _load(BODY / "lines_sheet.py", "lines_sheet_1736")
+    src = tmp_path / "spec.json"
+    src.write_text(json.dumps(SPEC), encoding="utf-8")
+    out = tmp_path / "lines.json"
+    assert dwg.main(["lines", str(src), "0", "3.9", str(src)]) == 2  # output = input
+    assert dwg.main(["lines", str(src), "0", "nan", str(out)]) == 2 and not out.exists()
+    assert dwg.main(["lines", str(src), "0", "3.9", str(out)]) == 0
+    assert dwg.main(["lines", str(src), "0", "3.9", str(out)]) == 2
+    png = tmp_path / "s.png"
+    assert sheet.main([str(out), str(png)]) == 0 and png.stat().st_size > 0
+    assert sheet.main([str(out), str(png)]) == 2
