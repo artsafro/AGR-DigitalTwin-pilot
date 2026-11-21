@@ -133,19 +133,23 @@ def test_intake_ambiguous_folder_is_an_error_naming_it(tmp_path):
 
 
 @pytest.mark.parametrize(
-    ("key", "profiles", "expected_tris", "findings"),
+    ("key", "exports", "expected_tris", "findings"),
     [
-        ("M3", ("high", "low"), {"vpm": 32, "npm": 12}, []),
-        ("M4", ("low",), {"vpm": None, "npm": 12}, ["vpm: no VPM version in the object"]),
+        pytest.param("M3", {"M3_GroundEl_high.fbx": "high", "M3_GroundEl_low.fbx": "low"},
+                     {"vpm": 32, "npm": 12}, [], id="matching-pair"),
+        pytest.param("M3", {"M3_GroundEl_HIGH.FBX": "high", "m3_GroundEl_low.fbx": "low"},
+                     {"vpm": 32, "npm": 12}, [], id="mixed-case-pair"),
+        pytest.param("M4", {"M4_GroundEl_low.fbx": "low"}, {"vpm": None, "npm": 12},
+                     ["vpm: no VPM version in the object"], id="lone-npm"),
     ],
 )
-def test_publish_own_folder_fbx_roles(tmp_path, key, profiles, expected_tris, findings):
+def test_publish_own_folder_fbx_roles(tmp_path, key, exports, expected_tris, findings):
     batch = make_batch(tmp_path, folder=False)
     folder = batch / key
     folder.mkdir()
     tri_counts = {"high": 32, "low": 12}
-    for profile in profiles:
-        (folder / f"{key}_GroundEl_{profile}.fbx").write_bytes(profile.encode())
+    for name, profile in exports.items():
+        (folder / name).write_bytes(profile.encode())
     before = {p: p.read_bytes() for p in batch.rglob("*") if p.is_file()}
 
     def readback(fbx, out):
@@ -160,7 +164,7 @@ def test_publish_own_folder_fbx_roles(tmp_path, key, profiles, expected_tris, fi
     assert rec["qa"] == {"verdict": "fail" if findings else "pass", "findings": findings}
     roles = {"high": "vpm", "low": "npm"}
     assert {Path(f["path"]).name: f["role"] for f in rec["files"]} == {
-        f"{key}_GroundEl_{p}.fbx": roles[p] for p in profiles
+        name: roles[profile] for name, profile in exports.items()
     }
     assert {p: p.read_bytes() for p in batch.rglob("*") if p.is_file()} == before
 
@@ -190,17 +194,27 @@ def test_loose_fbx_from_different_objects_are_still_ambiguous(tmp_path):
         pub.intake_batch(tmp_path)
 
 
-def test_paired_folder_plus_ambiguous_folder_writes_no_version(tmp_path):
+@pytest.mark.parametrize(
+    ("key", "ambiguous_names"),
+    [
+        pytest.param("M4", ("M4_GroundEl_v001_low.fbx", "M4_GroundEl_v002_low.fbx"), id="duplicate-role"),
+        pytest.param("M5", ("A_GroundEl_high.fbx", "B_GroundEl_low.fbx"), id="different-stems"),
+    ],
+)
+def test_paired_folder_plus_ambiguous_folder_writes_no_version(tmp_path, key, ambiguous_names):
     batch = tmp_path / "synthetic"
-    for key, names in [("M3", ("high", "low")), ("M4", ("v001_low", "v002_low"))]:
-        folder = batch / key
+    for folder_name, names in [("M3", ("M3_GroundEl_high.fbx", "M3_GroundEl_low.fbx")), (key, ambiguous_names)]:
+        folder = batch / folder_name
         folder.mkdir(parents=True)
         for name in names:
-            (folder / f"{key}_GroundEl_{name}.fbx").write_bytes(b"synthetic")
+            (folder / name).write_bytes(b"synthetic")
+    before = {p: p.read_bytes() for p in batch.rglob("*") if p.is_file()}
     cat = pub.empty_catalogue()
-    with pytest.raises(pub.PublishError, match="M4.*ambiguous object, 2 FBX"):
-        publish(tmp_path, batch, cat)
+    with pytest.raises(pub.PublishError, match=rf"{key}: ambiguous object, 2 FBX files") as exc:
+        publish(tmp_path, batch, cat, readback=lambda fbx, out: _report())
+    assert all(name in str(exc.value) for name in ambiguous_names)
     assert not (tmp_path / "assets").exists() and cat == pub.empty_catalogue()
+    assert {p: p.read_bytes() for p in batch.rglob("*") if p.is_file()} == before
 
 
 # ---- name -----------------------------------------------------------------------------------------------------
