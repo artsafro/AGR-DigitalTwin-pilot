@@ -1,0 +1,2 @@
+replay.py text eol=lf
+r20.json -text
