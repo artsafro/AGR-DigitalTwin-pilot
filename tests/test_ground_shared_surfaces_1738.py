@@ -1,5 +1,6 @@
 """#1738: shared-surface Ground (one vertex set per covering boundary, no stacked layers) + skirt check on export.
 
+Pattern: n/a | new-case: tests/test_ground_shared_surfaces_1738.py - tests of the #1738 shared-surface core.
 All site data here is SYNTHETIC (generated squares and planes), never a real object.
 """
 import math
