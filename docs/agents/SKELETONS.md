@@ -152,6 +152,21 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | 16 | `validate` | `agr validate --ground-area-m2` |
 | 17 | `checker` | `agr checker` после визуальной приёмки |
 
+### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D361], [D368]-[D371]
+
+Одна команда `agr library publish BATCH --kind maf --evidence DIR` проходит этапы 1–6; затем на «ок» Артёма
+`agr library accept NAMES --words "..."`, на отказ `agr library reject NAME --words "..."`. Подробно:
+[`docs/library/PUBLISH.md`](../library/PUBLISH.md), карточка [library-publish](../scenarios/library-publish.md).
+
+| # | Этап | Что вызывает |
+|---|---|---|
+| 1 | `intake` приём копии партии | `tools/library/publish.py` `intake_batch` (каждый файл — объект или отброс с причиной) |
+| 2 | `identify` дубль / вариант / новый | `identify_object` по `library/assets/maf_unified.json`; `assets_library`, `intake_identify.dims_check` |
+| 3 | `name` библиотечное имя [D369] | `library_name` (`assets_library.propose_maf_name`, translit, ё=е) |
+| 4 | `qa` ВПМ и НПМ | `qa_object` на `tools/blender/fbx_readback.py` + `twinqa.maf_checks.maf_findings` |
+| 5 | `register` версия vNNN + черновик [D370] | `register_version` → `AGR-assets/<kind>/<name>/vNNN/`, `library/published/catalogue.json` |
+| 6 | `sheet` лист Артёму, accept/reject [D371] | `write_sheet`, `accept_records`, `reject_record` |
+
 ## OKS modelling split [D336]
 
 Stage `body` of `oks-vpm` and `oks-npm`, all OKS buildings; the rule itself is the row [D336] in
