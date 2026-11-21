@@ -43,3 +43,38 @@ for a separate PR: run the existing stage-2 corner refusal in stage 1 as well (r
 tests; promoting any build. Clean checks: hashes, repeat identity, builder blob parity. Injected: none.
 Not measured: native readback, Blender rebuild with the rule, design-drawing attribution, 63B v001–v006
 (mesh-only artefacts, no floor.json), KPP1 (different builder).
+
+## Round log — nothing kept
+
+**Итог.** Причина дефекта 63C v001 найдена в исходных данных: четыре окна stage 1 лежат поверх угла контура
+(поворот 84–94°). Все 176 косых граней v001 (100 % площади) стоят в пределах 2 м от этих углов, у принятого v002
+окна сдвинуты с углов, косых граней нет. На обучающих этажах правило отделяет брак: 4 против максимум 1 (отрыв 3).
+Но на отложенных этажах G22 к.1 правило срабатывает 6 раз, в том числе на **принятом** v003: там 6 угловых окон
+(поворот 84°), и корпус принят. Запрет «окно поверх угла» в stage 1 отказал бы принятому корпусу — не внедряем.
+
+| Floor | Set | Verdict | Windows | Corner-spanning (1°) | (15°) |
+|---|---|---|---:|---:|---:|
+| 63C v001 | train | rejected | 33 | 4 | 4 |
+| 63C v002 | train | accepted | 33 | 0 | 0 |
+| 63A v005 | train | accepted | 36 | 0 | 0 |
+| 63B v007 floor_A | train | accepted | 33 | 1 (7.1° kink) | 0 |
+| 63B v007 floor_B | train | accepted | 31 | 0 | 0 |
+| G22 k1 z / z2 / v003 | holdout | v003 accepted | 104 | 6 / 6 / 6 | 6 / 6 / 6 |
+| G22 k2 v002 | holdout | accepted | — | 0 | 0 |
+| G22 k3 j6 | holdout | accepted | — | 0 | 0 |
+
+`margin_primary` = **3** (pass ≥ 1), `margin_secondary` = 4; held-out check **failed** (G22 k1 v003 = 6, all at
+~83.9° corners, three symmetric pairs). Attribution: 63C v001 176 irregular faces, 176 near flagged corners
+(100.000 % of area); v002 0. Three repeats byte-identical (paired spread 0), all 12 input hashes unchanged.
+Receipt `harness/r23.json` sha256 `ddcf27b6af9d57a43e3be81b298d8cfa4e13e60491cf43ba54908386bb1c9391`
+(payload sha `347574f9…`), `replay.py` sha256 `adb3c33b…`, `inputs.json` `1776573d…`; wall 0.85 s.
+
+Conclusion: a window over a corner is necessary for the 63C defect but not sufficient — G22 k1 has the same
+plan situation and was accepted. The difference is in how the body core meshes the corner window (63C v001
+produced 48°/132° cap quads), not in the floor placement. Would change: nothing yet. Next: score the G22 k1 v003
+body faces around the six flagged corners with the same attribution (does the accepted body carry irregular
+faces there?) and diff the module/reveal construction of the two corner cases.
+
+Side finding (not in scope, not changed): 63B v007 floor_A window 24 (s 100.399–101.865) runs over a 7.1° kink,
+so the stage-2 refusal `straight(tol_deg=1.0)` in `floor_from_dump.py` would refuse it if stage 2 reads that
+floor; worth a check by the #1722 owner.

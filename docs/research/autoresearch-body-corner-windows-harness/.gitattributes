@@ -1,0 +1,3 @@
+replay.py text eol=lf
+inputs.json text eol=lf
+r23.json -text
