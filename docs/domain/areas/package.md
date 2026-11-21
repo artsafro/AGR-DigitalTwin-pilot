@@ -87,6 +87,7 @@ are allowed alongside `ГОТОВО.txt`, with the line «ждут ручной 
 (pending IDs only). This is technical readiness, not manual approval or publication.
 
 The package route distinguishes preliminary SINTEZ from the final check after Artem's acceptance [D104, D352].
+Fix SINTEZ findings only when Artem asks, never automatically [D365].
 Record the separate customer hand-off with one line «передано заказчику, <дата>» in the delivery report only
 on Artem's word [D351]. Neither technical readiness nor upload establishes that the hand-off happened.
 
