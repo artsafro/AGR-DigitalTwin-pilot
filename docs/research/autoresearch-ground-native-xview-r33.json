@@ -1,0 +1,982 @@
+{
+ "max_version": "2024",
+ "contract": "docs/research/autoresearch-ground-native-xview.md",
+ "rev31": "8ee341f74ef5dd453c4fbcc8d07a13713fd1cf38",
+ "rev32": "ebb32458a5673e2b142d7fc5b273733621201d71",
+ "inputs": {
+  "A1": {
+   "path": "C:/x/ev_t_193a0887/inputs/A1_Vatutino_v015_NPM.fbx",
+   "sha256": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b"
+  },
+  "A2": {
+   "path": "C:/x/ev_t_193a0887/inputs/A2_Skolkovo_NPM.fbx",
+   "sha256": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55"
+  },
+  "A3": {
+   "path": "C:/x/ev_t_193a0887/inputs/A3_COD_NPM.fbx",
+   "sha256": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df"
+  },
+  "A4": {
+   "path": "C:/x/ev_t_193a0887/inputs/A4_Donskoy_NPM.fbx",
+   "sha256": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306"
+  },
+  "A5": {
+   "path": "C:/x/ev_t_193a0887/inputs/A5_Ostrov_NPM.fbx",
+   "sha256": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc"
+  },
+  "A6": {
+   "path": "C:/x/ev_t_193a0887/inputs/A6_Kasatkino_NPM.fbx",
+   "sha256": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e"
+  },
+  "A7": {
+   "path": "C:/x/ev_t_193a0887/inputs/A7_Volokolamskoe_NPM.fbx",
+   "sha256": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848"
+  },
+  "A8": {
+   "path": "C:/x/ev_t_193a0887/inputs/A8_Stolbovo_NPM.fbx",
+   "sha256": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50"
+  },
+  "W1": {
+   "path": "C:/x/t_d94665f2/ground_v014/npm/SM_Vatutino_Ground.fbx",
+   "sha256": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef"
+  }
+ },
+ "repo": {
+  "A1": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 46479,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 46479,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 46479,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 46479,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "A2": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 5733,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 5733,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 5733,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 5733,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "A3": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 2801,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 2801,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 2801,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 2801,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "A4": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 11528,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 11528,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 11528,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 11528,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "A5": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 29760,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 29760,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 29760,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 29760,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "A6": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 59290,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 59290,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 59290,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 59290,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "A7": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 20614,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 20614,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 20614,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 20614,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "A8": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 10930,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 10930,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 10930,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 10930,
+   "Qv": 0.0,
+   "spread": 0.0
+  },
+  "W1": {
+   "runs": [
+    {
+     "V": 0,
+     "T": 46343,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 46343,
+     "Qv": 0.0
+    },
+    {
+     "V": 0,
+     "T": 46343,
+     "Qv": 0.0
+    }
+   ],
+   "V": 0,
+   "T": 46343,
+   "Qv": 0.0,
+   "spread": 0.0,
+   "dump": "C:/x/ev_t_304e8c0c/dumps/W1_Vatutino_v014_NPM.npz",
+   "info": {
+    "units": {
+     "unit_system": "METRIC",
+     "unit_scale": 1.0,
+     "coordinates": "m"
+    },
+    "dropped": [],
+    "blender": "5.1.2",
+    "sha256": "29393a0b5ed7ce39a2e5a8d8c7b0014885ecf4bfcde5a9ae07088bfc76aa6683"
+   }
+  }
+ },
+ "parity32": {
+  "A1": true,
+  "A2": true,
+  "A3": true,
+  "A4": true,
+  "A5": true,
+  "A6": true,
+  "A7": true,
+  "A8": true
+ },
+ "budget": {
+  "first_pair_s": 214.2445960000041,
+  "projected_full_s": 538.8959490733765,
+  "projected_series_s": 2155.583796293506,
+  "cap_s": 2700
+ },
+ "runs": {
+  "pair": {
+   "meta": {
+    "ok": true,
+    "wall_s": 214.2445960000041,
+    "dcc": "{\"status\": \"ok\", \"exit_code\": 0, \"seconds\": 214.1, \"cmd\": [\"C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\3dsmaxbatch.exe\", \"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\", \"-listenerLog\", \"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\", \"-v\", \"3\"], \"warnings\": [], \"log\": \"State Sets Error: Anchor couldn't be created!\\r\\nState Sets Error: Anchor couldn't be created!\\r\\n\\r\\n\\r\\nRappaTools3.Stuff()\\r\\nRappaTools3.562 - https://r\u0435musjuncu.\u0441\u043em/\\r\\nMCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)\\r\\nBoolean modifier menu already installed\\r\\nArray modifier menu already installed\\r\\nAGR_TOOLS_REGISTERED version=1.1.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A1_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK W1_plain\\r\\n\\n--- process output ---\\n21.11.2026 12:25:25;  3ds Max Install Location: C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\\\r\\n21.11.2026 12:25:25;  3ds Max Executable: 3dsmax.exe\\r\\n21.11.2026 12:25:25;  Secure Mode: 'OFF'\\r\\n21.11.2026 12:25:25;  Listener Log File: \\\"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\\\"\\r\\n21.11.2026 12:25:25;  Script command: \\\" -mxs \\\"(filein @\\\\\\\"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\\\\\\\")\\\"\\\"\\r\\n21.11.2026 12:25:26;  Product version: 3ds Max 2024.2.5 Security Fix (26.2.5.192)\\r\\n21.11.2026 12:25:26;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.\\r\\n21.11.2026 12:25:40;  Initializing Python version: 3.10.14\\r\\n21.11.2026 12:28:54;  Task Completed Successfully\\r\\n21.11.2026 12:28:54;  3ds Max Shutting Down\\r\\n\"}"
+   },
+   "rows": {
+    "A1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_Poly",
+     "verts": 27431,
+     "faces": 27496,
+     "tris": 8513,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 0,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "sha256_after": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "V_seconds": 2.832,
+     "F_seconds": 65.315
+    },
+    "W1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 27340,
+     "faces": 46343,
+     "tris": 46343,
+     "ngons": 0,
+     "V_max": 118,
+     "F_max": 351,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "sha256_after": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "V_seconds": 1.966,
+     "F_seconds": 71.786
+    }
+   }
+  },
+  "run1": {
+   "meta": {
+    "ok": true,
+    "wall_s": 463.5647714999941,
+    "dcc": "{\"status\": \"ok\", \"exit_code\": 0, \"seconds\": 463.4, \"cmd\": [\"C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\3dsmaxbatch.exe\", \"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\", \"-listenerLog\", \"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\", \"-v\", \"3\"], \"warnings\": [], \"log\": \"State Sets Error: Anchor couldn't be created!\\r\\nState Sets Error: Anchor couldn't be created!\\r\\n\\r\\n\\r\\nRappaTools3.Stuff()\\r\\nRappaTools3.562 - https://r\u0435musjuncu.\u0441\u043em/\\r\\nMCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)\\r\\nBoolean modifier menu already installed\\r\\nArray modifier menu already installed\\r\\nAGR_TOOLS_REGISTERED version=1.1.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A1_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A2_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A3_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A4_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A5_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A6_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A7_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A8_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK W1_plain\\r\\n\\n--- process output ---\\n21.11.2026 12:29:20;  3ds Max Install Location: C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\\\r\\n21.11.2026 12:29:20;  3ds Max Executable: 3dsmax.exe\\r\\n21.11.2026 12:29:20;  Secure Mode: 'OFF'\\r\\n21.11.2026 12:29:20;  Listener Log File: \\\"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\\\"\\r\\n21.11.2026 12:29:20;  Script command: \\\" -mxs \\\"(filein @\\\\\\\"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\\\\\\\")\\\"\\\"\\r\\n21.11.2026 12:29:22;  Product version: 3ds Max 2024.2.5 Security Fix (26.2.5.192)\\r\\n21.11.2026 12:29:22;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.\\r\\n21.11.2026 12:29:37;  Initializing Python version: 3.10.14\\r\\n21.11.2026 12:36:58;  Task Completed Successfully\\r\\n21.11.2026 12:36:58;  3ds Max Shutting Down\\r\\n\"}"
+   },
+   "rows": {
+    "A1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_Poly",
+     "verts": 27431,
+     "faces": 27496,
+     "tris": 8513,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 0,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "sha256_after": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "V_seconds": 3.195,
+     "F_seconds": 51.207
+    },
+    "A2": {
+     "node": "SM_BolshoyBulvar_64_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 3026,
+     "faces": 5733,
+     "tris": 5733,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 16,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "sha256_after": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "V_seconds": 0.15,
+     "F_seconds": 1.196
+    },
+    "A3": {
+     "node": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 1755,
+     "faces": 2409,
+     "tris": 2073,
+     "ngons": 1,
+     "V_max": 310,
+     "F_max": 147,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "sha256_after": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "V_seconds": 0.079,
+     "F_seconds": 0.664
+    },
+    "A4": {
+     "node": "SM_5jDonskoyProezd_Vl_15_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 6971,
+     "faces": 11528,
+     "tris": 11528,
+     "ngons": 0,
+     "V_max": 307,
+     "F_max": 497,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "sha256_after": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "V_seconds": 0.338,
+     "F_seconds": 1.43
+    },
+    "A5": {
+     "node": "SM_NizhnieMnevniki_ZU_66_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 15303,
+     "faces": 29760,
+     "tris": 29760,
+     "ngons": 0,
+     "V_max": 278,
+     "F_max": 263,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "sha256_after": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "V_seconds": 0.868,
+     "F_seconds": 80.83
+    },
+    "A6": {
+     "node": "SM_Kasatkina_Vl_11_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 31175,
+     "faces": 59290,
+     "tris": 59290,
+     "ngons": 0,
+     "V_max": 580,
+     "F_max": 852,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "sha256_after": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "V_seconds": 2.548,
+     "F_seconds": 74.947
+    },
+    "A7": {
+     "node": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 10548,
+     "faces": 20614,
+     "tris": 20614,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 217,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "sha256_after": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "V_seconds": 0.527,
+     "F_seconds": 6.441
+    },
+    "A8": {
+     "node": "SM_DerevnyaStolbovo_Uch_23_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 5504,
+     "faces": 10930,
+     "tris": 10930,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 2,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "sha256_after": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "V_seconds": 0.258,
+     "F_seconds": 17.79
+    },
+    "W1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 27340,
+     "faces": 46343,
+     "tris": 46343,
+     "ngons": 0,
+     "V_max": 118,
+     "F_max": 351,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "sha256_after": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "V_seconds": 2.287,
+     "F_seconds": 56.07
+    }
+   }
+  },
+  "run1wp": {
+   "meta": {
+    "ok": true,
+    "wall_s": 616.8258427999972,
+    "dcc": "{\"status\": \"ok\", \"exit_code\": 0, \"seconds\": 454.6, \"cmd\": [\"C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\3dsmaxbatch.exe\", \"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\", \"-listenerLog\", \"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\", \"-v\", \"3\"], \"warnings\": [], \"log\": \"State Sets Error: Anchor couldn't be created!\\r\\nState Sets Error: Anchor couldn't be created!\\r\\n\\r\\n\\r\\nRappaTools3.Stuff()\\r\\nRappaTools3.562 - https://r\u0435musjuncu.\u0441\u043em/\\r\\nMCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)\\r\\nBoolean modifier menu already installed\\r\\nArray modifier menu already installed\\r\\nAGR_TOOLS_REGISTERED version=1.1.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A1_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A2_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A3_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A4_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A5_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A6_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A7_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A8_weldpoly\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK W1_weldpoly\\r\\n\\n--- process output ---\\n21.11.2026 12:40:07;  3ds Max Install Location: C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\\\r\\n21.11.2026 12:40:07;  3ds Max Executable: 3dsmax.exe\\r\\n21.11.2026 12:40:07;  Secure Mode: 'OFF'\\r\\n21.11.2026 12:40:07;  Listener Log File: \\\"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\\\"\\r\\n21.11.2026 12:40:07;  Script command: \\\" -mxs \\\"(filein @\\\\\\\"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\\\\\\\")\\\"\\\"\\r\\n21.11.2026 12:40:08;  Product version: 3ds Max 2024.2.5 Security Fix (26.2.5.192)\\r\\n21.11.2026 12:40:08;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.\\r\\n21.11.2026 12:40:21;  Initializing Python version: 3.10.14\\r\\n21.11.2026 12:47:37;  Task Completed Successfully\\r\\n21.11.2026 12:47:37;  3ds Max Shutting Down\\r\\n\"}"
+   },
+   "rows": {
+    "A1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_Poly",
+     "verts": 27490,
+     "faces": 27496,
+     "tris": 8513,
+     "ngons": 0,
+     "V_max": 118,
+     "F_max": 160,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "sha256_after": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "V_seconds": 2.909,
+     "F_seconds": 49.657
+    },
+    "A2": {
+     "node": "SM_BolshoyBulvar_64_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 3026,
+     "faces": 5733,
+     "tris": 5733,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 16,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "sha256_after": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "V_seconds": 0.16,
+     "F_seconds": 1.145
+    },
+    "A3": {
+     "node": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 1755,
+     "faces": 2409,
+     "tris": 2073,
+     "ngons": 1,
+     "V_max": 310,
+     "F_max": 147,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "sha256_after": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "V_seconds": 0.091,
+     "F_seconds": 0.649
+    },
+    "A4": {
+     "node": "SM_5jDonskoyProezd_Vl_15_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 6971,
+     "faces": 11528,
+     "tris": 11528,
+     "ngons": 0,
+     "V_max": 307,
+     "F_max": 497,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "sha256_after": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "V_seconds": 0.339,
+     "F_seconds": 1.593
+    },
+    "A5": {
+     "node": "SM_NizhnieMnevniki_ZU_66_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 15303,
+     "faces": 29760,
+     "tris": 29760,
+     "ngons": 0,
+     "V_max": 278,
+     "F_max": 259,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "sha256_after": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "V_seconds": 0.836,
+     "F_seconds": 79.758
+    },
+    "A6": {
+     "node": "SM_Kasatkina_Vl_11_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 31175,
+     "faces": 59290,
+     "tris": 59290,
+     "ngons": 0,
+     "V_max": 580,
+     "F_max": 852,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "sha256_after": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "V_seconds": 2.4,
+     "F_seconds": 73.238
+    },
+    "A7": {
+     "node": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 10548,
+     "faces": 20614,
+     "tris": 20614,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 217,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "sha256_after": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "V_seconds": 0.517,
+     "F_seconds": 6.347
+    },
+    "A8": {
+     "node": "SM_DerevnyaStolbovo_Uch_23_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 5504,
+     "faces": 10930,
+     "tris": 10930,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 10,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "sha256_after": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "V_seconds": 0.273,
+     "F_seconds": 17.672
+    },
+    "W1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 27340,
+     "faces": 46343,
+     "tris": 46343,
+     "ngons": 0,
+     "V_max": 118,
+     "F_max": 351,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "sha256_after": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "V_seconds": 2.143,
+     "F_seconds": 53.865
+    }
+   }
+  },
+  "run2": {
+   "meta": {
+    "ok": true,
+    "wall_s": 443.87658660000307,
+    "dcc": "{\"status\": \"ok\", \"exit_code\": 0, \"seconds\": 443.7, \"cmd\": [\"C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\3dsmaxbatch.exe\", \"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\", \"-listenerLog\", \"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\", \"-v\", \"3\"], \"warnings\": [], \"log\": \"State Sets Error: Anchor couldn't be created!\\r\\nState Sets Error: Anchor couldn't be created!\\r\\n\\r\\n\\r\\nRappaTools3.Stuff()\\r\\nRappaTools3.562 - https://r\u0435musjuncu.\u0441\u043em/\\r\\nMCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)\\r\\nBoolean modifier menu already installed\\r\\nArray modifier menu already installed\\r\\nAGR_TOOLS_REGISTERED version=1.1.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A1_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A2_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A3_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A4_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A5_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A6_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A7_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A8_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK W1_plain\\r\\n\\n--- process output ---\\n21.11.2026 12:48:02;  3ds Max Install Location: C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\\\r\\n21.11.2026 12:48:02;  3ds Max Executable: 3dsmax.exe\\r\\n21.11.2026 12:48:02;  Secure Mode: 'OFF'\\r\\n21.11.2026 12:48:02;  Listener Log File: \\\"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\\\"\\r\\n21.11.2026 12:48:02;  Script command: \\\" -mxs \\\"(filein @\\\\\\\"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\\\\\\\")\\\"\\\"\\r\\n21.11.2026 12:48:03;  Product version: 3ds Max 2024.2.5 Security Fix (26.2.5.192)\\r\\n21.11.2026 12:48:03;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.\\r\\n21.11.2026 12:48:16;  Initializing Python version: 3.10.14\\r\\n21.11.2026 12:55:22;  Task Completed Successfully\\r\\n21.11.2026 12:55:22;  3ds Max Shutting Down\\r\\n\"}"
+   },
+   "rows": {
+    "A1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_Poly",
+     "verts": 27431,
+     "faces": 27496,
+     "tris": 8513,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 0,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "sha256_after": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "V_seconds": 2.73,
+     "F_seconds": 48.602
+    },
+    "A2": {
+     "node": "SM_BolshoyBulvar_64_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 3026,
+     "faces": 5733,
+     "tris": 5733,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 16,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "sha256_after": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "V_seconds": 0.137,
+     "F_seconds": 1.246
+    },
+    "A3": {
+     "node": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 1755,
+     "faces": 2409,
+     "tris": 2073,
+     "ngons": 1,
+     "V_max": 310,
+     "F_max": 147,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "sha256_after": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "V_seconds": 0.085,
+     "F_seconds": 0.653
+    },
+    "A4": {
+     "node": "SM_5jDonskoyProezd_Vl_15_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 6971,
+     "faces": 11528,
+     "tris": 11528,
+     "ngons": 0,
+     "V_max": 307,
+     "F_max": 497,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "sha256_after": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "V_seconds": 0.305,
+     "F_seconds": 1.512
+    },
+    "A5": {
+     "node": "SM_NizhnieMnevniki_ZU_66_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 15303,
+     "faces": 29760,
+     "tris": 29760,
+     "ngons": 0,
+     "V_max": 278,
+     "F_max": 261,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "sha256_after": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "V_seconds": 0.891,
+     "F_seconds": 77.218
+    },
+    "A6": {
+     "node": "SM_Kasatkina_Vl_11_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 31175,
+     "faces": 59290,
+     "tris": 59290,
+     "ngons": 0,
+     "V_max": 580,
+     "F_max": 852,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "sha256_after": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "V_seconds": 2.481,
+     "F_seconds": 71.984
+    },
+    "A7": {
+     "node": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 10548,
+     "faces": 20614,
+     "tris": 20614,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 217,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "sha256_after": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "V_seconds": 0.599,
+     "F_seconds": 6.533
+    },
+    "A8": {
+     "node": "SM_DerevnyaStolbovo_Uch_23_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 5504,
+     "faces": 10930,
+     "tris": 10930,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 4,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "sha256_after": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "V_seconds": 0.273,
+     "F_seconds": 17.892
+    },
+    "W1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 27340,
+     "faces": 46343,
+     "tris": 46343,
+     "ngons": 0,
+     "V_max": 118,
+     "F_max": 351,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "sha256_after": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "V_seconds": 1.866,
+     "F_seconds": 52.633
+    }
+   }
+  },
+  "run3": {
+   "meta": {
+    "ok": true,
+    "wall_s": 563.2439139999915,
+    "dcc": "{\"status\": \"ok\", \"exit_code\": 0, \"seconds\": 563.1, \"cmd\": [\"C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\3dsmaxbatch.exe\", \"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\", \"-listenerLog\", \"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\", \"-v\", \"3\"], \"warnings\": [], \"log\": \"State Sets Error: Anchor couldn't be created!\\r\\nState Sets Error: Anchor couldn't be created!\\r\\n\\r\\n\\r\\nRappaTools3.Stuff()\\r\\nRappaTools3.562 - https://r\u0435musjuncu.\u0441\u043em/\\r\\nMCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)\\r\\nBoolean modifier menu already installed\\r\\nArray modifier menu already installed\\r\\nAGR_TOOLS_REGISTERED version=1.1.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A1_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A2_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A3_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A4_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A5_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A6_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A7_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK A8_plain\\r\\n\\\"unisolated\\\"\\r\\nXVIEW_OK W1_plain\\r\\n\\n--- process output ---\\n21.11.2026 12:55:47;  3ds Max Install Location: C:\\\\Program Files\\\\Autodesk\\\\3ds Max 2024\\\\\\r\\n21.11.2026 12:55:47;  3ds Max Executable: 3dsmax.exe\\r\\n21.11.2026 12:55:47;  Secure Mode: 'OFF'\\r\\n21.11.2026 12:55:47;  Listener Log File: \\\"C:\\\\Users\\\\artsafro\\\\AppData\\\\Local\\\\Temp\\\\agr-3dsmax-t_304e8c0c\\\\listener.log\\\"\\r\\n21.11.2026 12:55:47;  Script command: \\\" -mxs \\\"(filein @\\\\\\\"C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_304e8c0c\\\\tools\\\\qa\\\\xview_dump.ms\\\\\\\")\\\"\\\"\\r\\n21.11.2026 12:55:48;  Product version: 3ds Max 2024.2.5 Security Fix (26.2.5.192)\\r\\n21.11.2026 12:55:48;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.\\r\\n21.11.2026 12:56:00;  Initializing Python version: 3.10.14\\r\\n21.11.2026 13:05:05;  Task Completed Successfully\\r\\n21.11.2026 13:05:05;  3ds Max Shutting Down\\r\\n\"}"
+   },
+   "rows": {
+    "A1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_Poly",
+     "verts": 27431,
+     "faces": 27496,
+     "tris": 8513,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 0,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "sha256_after": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+     "V_seconds": 2.939,
+     "F_seconds": 63.681
+    },
+    "A2": {
+     "node": "SM_BolshoyBulvar_64_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 3026,
+     "faces": 5733,
+     "tris": 5733,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 16,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "sha256_after": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+     "V_seconds": 0.135,
+     "F_seconds": 1.647
+    },
+    "A3": {
+     "node": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 1755,
+     "faces": 2409,
+     "tris": 2073,
+     "ngons": 1,
+     "V_max": 310,
+     "F_max": 147,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "sha256_after": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+     "V_seconds": 0.088,
+     "F_seconds": 0.94
+    },
+    "A4": {
+     "node": "SM_5jDonskoyProezd_Vl_15_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 6971,
+     "faces": 11528,
+     "tris": 11528,
+     "ngons": 0,
+     "V_max": 307,
+     "F_max": 497,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "sha256_after": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+     "V_seconds": 0.366,
+     "F_seconds": 1.641
+    },
+    "A5": {
+     "node": "SM_NizhnieMnevniki_ZU_66_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 15303,
+     "faces": 29760,
+     "tris": 29760,
+     "ngons": 0,
+     "V_max": 278,
+     "F_max": 263,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "sha256_after": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+     "V_seconds": 0.814,
+     "F_seconds": 127.3
+    },
+    "A6": {
+     "node": "SM_Kasatkina_Vl_11_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 31175,
+     "faces": 59290,
+     "tris": 59290,
+     "ngons": 0,
+     "V_max": 580,
+     "F_max": 851,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "sha256_after": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+     "V_seconds": 2.294,
+     "F_seconds": 98.396
+    },
+    "A7": {
+     "node": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 10548,
+     "faces": 20614,
+     "tris": 20614,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 217,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "sha256_after": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+     "V_seconds": 0.504,
+     "F_seconds": 7.182
+    },
+    "A8": {
+     "node": "SM_DerevnyaStolbovo_Uch_23_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 5504,
+     "faces": 10930,
+     "tris": 10930,
+     "ngons": 0,
+     "V_max": 0,
+     "F_max": 4,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "sha256_after": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+     "V_seconds": 0.245,
+     "F_seconds": 27.202
+    },
+    "W1": {
+     "node": "SM_Vatutino_Ground",
+     "sourceClass": "Editable_mesh",
+     "verts": 27340,
+     "faces": 46343,
+     "tris": 46343,
+     "ngons": 0,
+     "V_max": 118,
+     "F_max": 351,
+     "tolVerts": 0.002,
+     "units": "meters",
+     "sha256_before": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "sha256_after": "94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef",
+     "V_seconds": 2,
+     "F_seconds": 68.779
+    }
+   }
+  }
+ },
+ "stable": {
+  "A1": true,
+  "A2": true,
+  "A3": true,
+  "A4": true,
+  "A5": false,
+  "A6": false,
+  "A7": true,
+  "A8": false,
+  "W1": true
+ },
+ "V_max_median": {
+  "A1": 0,
+  "A2": 0,
+  "A3": 310,
+  "A4": 307,
+  "A5": 278,
+  "A6": 580,
+  "A7": 0,
+  "A8": 0,
+  "W1": 118
+ },
+ "presence_rule": {
+  "A1": true,
+  "A2": true,
+  "A3": false,
+  "A4": false,
+  "A5": false,
+  "A6": false,
+  "A7": true,
+  "A8": true,
+  "W1": false
+ },
+ "inputs_unchanged": true,
+ "Qv_max": {
+  "A1": 0.0,
+  "A2": 0.0,
+  "A3": 1495.4172696575013,
+  "A4": 266.3081193615545,
+  "A5": 93.41397849462365,
+  "A6": 97.82425366840951,
+  "A7": 0.0,
+  "A8": 0.0,
+  "W1": 25.46231361802214
+ },
+ "hypothesis": "inconclusive",
+ "numpy": "2.5.3"
+}

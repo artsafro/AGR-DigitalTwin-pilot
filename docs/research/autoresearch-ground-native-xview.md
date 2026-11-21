@@ -2,7 +2,31 @@
 
 ## Итог (OBSERVE)
 
-_Filled in after the series; the contract below was committed before any measurement._
+**H33 опровергнута** (по тексту контракта: серия завершена, правило нарушено на 5 из 9 входов; ярлык квитанции —
+`inconclusive`, см. ниже). Нативный 3ds Max 2024 xView «Overlapping Vertices» 2 мм в состоянии Editable_Poly
+(импорт FBX → `convertToPoly`, как в работе Артёма) находит близкие вершины там, где счётчик #32 на чтении Blender
+даёт 0:
+
+| вход | V репо (#32, Blender) | V Max (3 прогона, разброс 0) | вершин Blender → Max poly | Qv Max на T #32 |
+|---|---|---|---|---|
+| A1 Vatutino v015 (принят) | 0 | 0 | 27 431 → 27 431 | 0 |
+| A2 Skolkovo (сдан) | 0 | 0 | 3 026 → 3 026 | 0 |
+| A3 COD (сдан) | 0 | **310** | 1 504 → 1 755 | 1 106,7 |
+| A4 Donskoy (сдан) | 0 | **307** | 6 766 → 6 971 | 266,3 |
+| A5 Ostrov (сдан) | 0 | **278** | 15 108 → 15 303 | 93,4 |
+| A6 Kasatkino (сдан) | 0 | **580** | 30 760 → 31 175 | 97,8 |
+| A7 Volokolamskoe (сдан) | 0 | 0 | 10 548 → 10 548 | 0 |
+| A8 Stolbovo (сдан) | 0 | 0 | 5 504 → 5 504 | 0 |
+| W1 Vatutino v014 (не прошёл D152) | **0** | **118** (= #370) | — → 27 340 | 25,5 |
+
+Что это значит: (1) счётчик #32 на чтении Blender слеп к классу дефекта, который видит Max после перевода в poly —
+расщеплённые немногообразные вершины (в poly-состоянии у A3–A6 вершин больше, чем в FBX). (2) В нативном состоянии
+четыре из семи **сданных** Артёмом NTR Ground несут 278–580 перекрытых вершин, а «плохой» v014 — 118; плотность
+близких вершин в Max не отделяет принятые от непринятых (W1 25,5 ниже A3–A6). Значит, «0 близких вершин» — не
+свойство принятого Ground в Max; Qv из #32 остаётся сигналом только на чтении Blender и на массивах SIL13.
+(3) D152 требует xView 0/0 у каждой сдачи, но собственные сданные NTR Ground после FBX → poly дают OV до 580 и
+OF до 852 — вопрос к Артёму, в каком состоянии он мерит xView (его .max, а не FBX → poly?). Внедрения нет, Ground не
+строили и не правили, порог не предлагается.
 
 ## Frozen contract (before any measurement)
 
@@ -68,4 +92,29 @@ The settle now counts only Max 2024 processes; the series runs as `m2024d-`.
 
 ## Round log
 
-_Filled in after the series._
+Receipt [`autoresearch-ground-native-xview-r33.json`](autoresearch-ground-native-xview-r33.json) = `C:/x/ev_t_304e8c0c/r33e.json`,
+SHA-256 `56b5bbc147d60160df7d307bfe2f02658c4f9d38e34024f4edc92069e60d8a74`, harness at `3501d651`. Evidence (all Max
+dumps, W1 Blender dump, failed attempts r33/r33b/r33d): `C:/x/ev_t_304e8c0c/` and the Drive copy
+`G:/Мой диск/AGR-evidence/t_304e8c0c-ground-native-xview/`, manifest `SHA256SUMS.txt` (91 files) SHA-256
+`99f635124b9db3f7328df4d676675391b2f834b0f3615b1f384bca2cad938ae6`, Drive copy verified with `sha256sum -c`.
+Replay limited to this PC (3ds Max 2024 + Blender 5.1).
+
+- **Budget:** first pair 214 s → projected series 2 156 s ≤ 2 700 s cap; actual Max calls pair 214 s, run1 464 s,
+  run1wp 617 s, run2 444 s, run3 563 s, all `check_run` OK, every input hash unchanged before/after.
+- **Clean (plain, run1–run3 + pair):** V_max zero spread on all 9 inputs; vertex/face/tri counts identical.
+  F_max (Overlapping Faces, not part of H33) jitters by 1–2 faces on A5 (261/263), A6 (851/852), A8 (2/4); the
+  harness stability gate included F_max, so the receipt's label is `inconclusive`. The refute clause of the contract
+  (completed series, rule broken) is met on the hypothesis' own quantity: presence mismatch on A3, A4, A5, A6, W1,
+  stable in all four plain calls. Verdict published: **refuted**; this does not depend on F_max.
+- **Repo side:** A rows recomputed from the frozen #31 dumps, exact V/T parity with the #32 receipt on all eight
+  (all V = 0). W1 dumped once through the #31 pipeline: V = 0, T = 46 343 (the same triangle count as Max), Qv 0,
+  spread 0. Blender reads the same coordinates without the poly re-split, so the counter cannot see it.
+- **Perturbed (weldpoly, run1wp):** weld 2 mm then poly. A1 v015 rises 0 → 118 OV (welding creates non-manifold
+  vertices that poly re-splits), A2/A7/A8 stay 0, A3–A6 unchanged (310/307/278/580), W1 stays 118.
+  Expected direction held for W1; for A1 it did not (the prior said accepted stay 0).
+- **Positive witness:** W1 fires natively (118/351, identical to #370 on Max 2026). Accepted controls on which the
+  native rule fires: A3, A4, A5, A6 (collateral impact = 4 of 7 delivered NTR Ground).
+- **Not measured:** SIL13 r1–r5 natively (no FBX), #1738 OBJ natively (runner reads `.fbx`/`.max` only), Artem's
+  own `.max` scenes of the NTR deliveries, VPM, faces/skirt/budget/visual quality.
+- **Side findings (not fixed here):** `tools/qa/xview_dump.ms` fails on 3ds Max 2026.3 (`CSharpCodeProvider`,
+  .NET 8) — the 2026 route is broken; a back-to-back Max 2024 batch start crashed once (minidump, 12:13).
