@@ -149,3 +149,28 @@ def test_slanted_outline_random_rectilinear_unions_are_zero():
         cells = {(rnd.randint(0, 4), rnd.randint(0, 4)) for _ in range(n)}
         faces = [rect(i * 0.5, i * 0.5 + 0.5, j * 0.3, j * 0.3 + 0.3) for i, j in cells]
         assert wp.slanted_outline(faces) == 0
+
+
+# w13: weld_body (2.1 mm) twisted one 4 mm v003 sliver quad into a bow-tie; `dt qa xview` refuses such a polygon.
+def test_quad_twisted_detects_bowtie_order_only():
+    assert not wp.quad_twisted([(0, 0), (1, 0), (1, 1), (0, 1)])
+    assert wp.quad_twisted([(0, 0), (1, 1), (1, 0), (0, 1)])
+    assert wp.quad_twisted([(0, 0), (1, 0), (0, 1), (1, 1)])
+
+
+def test_quad_twisted_random_convex_never_and_swapped_always():
+    rnd = random.Random(16092)
+    for _ in range(300):
+        cx, cy, r = rnd.uniform(-5, 5), rnd.uniform(-5, 5), rnd.uniform(0.01, 3)
+        angs = sorted(rnd.uniform(0, 2 * math.pi) for _ in range(4))
+        if min(b - a for a, b in zip(angs, angs[1:] + [angs[0] + 2 * math.pi])) < 0.05:
+            continue
+        pts = [(cx + r * math.cos(a), cy + r * math.sin(a)) for a in angs]
+        assert not wp.quad_twisted(pts)
+        assert wp.quad_twisted([pts[0], pts[2], pts[1], pts[3]])
+
+
+@pytest.mark.parametrize('pts', [[(0, 0), (1, 0), (1, 1)], [(0, 0), (1, float('nan')), (1, 1), (0, 1)]])
+def test_quad_twisted_fails_closed(pts):
+    with pytest.raises(ValueError):
+        wp.quad_twisted(pts)
