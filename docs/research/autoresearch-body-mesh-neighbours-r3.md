@@ -36,4 +36,33 @@ the metric #16 froze; nothing in the formula, fixture or harness changes.
 
 ## Round log
 
-(filled after the run)
+Run 1 (only run, no repair needed): 02:44:38 → 03:01, 16 min 44 s wall (the R3 patch search dominates;
+`repo_guards.sh` ran in parallel for 3 min). Receipt: `docs/research/autoresearch-body-mesh-neighbours-harness/r3.json`,
+SHA-256 `4603f45e6ab62df6d1621f62ff6ec5b3b6c6c3a141efb118334d027e01ae2130` (LF, `-text`); it carries the
+per-input source and dump SHA-256.
+
+- R0 reproduced all nine #13 margins at every translation (the harness raises otherwise); minimum 0.427 (63C v002/v001).
+- R3 worst margin **0.718** at each of the four translations (pair KPP1 v003 rest/corners, unchanged by R3:
+  its local share 0.171/0.136 is below the global share); paired spread 0.000 on all pairs; three repeats
+  identical; translation-invariant; parity outside the target fields passed for 13 × 4 inputs.
+
+| pair (accepted / rejected) | R0 margin | R3 margin |
+|---|---|---|
+| 63B v007 / v001 | 1.964 | 3.396 |
+| 63B v007 / v002 | 1.978 | 3.410 |
+| 63B v007 / v003 | 1.969 | 3.401 |
+| 63B v007 / v004 | 1.962 | 3.394 |
+| 63B v007 / v005 | 2.088 | 3.423 |
+| 63B v007 / v006 | 0.947 | 2.717 |
+| 63C v002 / v001 | 0.427 | 3.357 |
+| KPP1 v003 rest / corners | 0.718 | 0.718 |
+| G22 k1 v003 / v002 | 1.028 | 1.028 |
+
+Verdict: in-sample threshold met (0.718 ≥ 0.500). OBSERVE only — no scorer or builder change is kept.
+What the loop would change: replace the #14 4 m cell fraction with the R3 edge-neighbour patch in
+`mesh_quality_core` — but only after the held-out check, because R3 also lowers the ACCEPTED 63B v007 by
+4.29 points (local share 0.621; 84.332 → 80.039), i.e. it penalises an accepted body heavily, and the 63B
+gain comes from rejected versions being penalised more. That false-penalty risk is untested on a clean body.
+
+Clean: #14 synthetic rectangle control and reset passed. Injected: #14 synthetic skew witness passed.
+Not measured: fresh native readback, independent clean oblique/curved body, labelled held-out pair, body builders.
