@@ -25,6 +25,13 @@ Mode: OBSERVE only. No Ground is built or repaired here (that is #1738); no deli
 
 One number per input. Components V, F, C, T and the per-part table are published next to Q.
 
+**Amendment 1 (before the series, after the dump):** the delivered NTR `*_Ground.fbx` files carry the whole site
+package (objects `*_Ground`, `*_GroundEl`, `*_GroundElGlass`, `*_Flora`). The fixture is the Ground surface, so
+the scored parts are the objects whose name ends with `_Ground` (one per input; SIL13 `SM_SIL13_Ground`, Vatutino
+`SM_Vatutino_Ground`). The all-parts score is published next to it as `Q_all` (secondary, not used for the
+verdict). Seen before this amendment: probe scores of A1, A2 (all parts) and F5 only (first-pair timing).
+F3 and F5 dumps are byte-identical (r5 changed no geometry), so the fixture has 4 distinct failed meshes.
+
 ### Fixture (frozen; SHA-256 in `docs/research/autoresearch-ground-quality-harness/inputs.sha256`)
 
 Accepted (A), Artem's own delivered NPM Ground (latest revision folder, read-only originals in
