@@ -48,7 +48,8 @@ def test_cell_vpm_to_npm_has_the_ordered_stages():
 
 def test_optimise_gap_text_has_no_prooptimizer():
     gap = SK["stages"]["optimise"]["gap"]
-    assert "ProOptimizer" not in gap and "D167" in gap and "budget-ladder" in gap
+    assert "ProOptimizer in Max by hand" not in gap and "no ProOptimizer step" in gap
+    assert "D167" in gap and "budget-ladder" in gap
     doc = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
     assert "ProOptimizer в Max вручную" not in doc
     assert "`vpm-to-npm`" in doc

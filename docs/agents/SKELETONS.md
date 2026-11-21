@@ -80,6 +80,29 @@ An explicit cleanup approval records exact source polygon drops on a new copy,
 never a general geometry repair. A selected seam policy does not waive mixed
 material boundaries, singular UV metrics, texel bounds or native readback.
 
+### `vpm-to-npm` — принятая ВПМ → НПМ по практике Артёма (#1737)
+
+ВПМ первична, НПМ выводится из неё; бадик не перестраивается и не правится, ProOptimizer не используется
+(Артём 2026-11-21). Карточка: [vpm-to-npm](../scenarios/vpm-to-npm.md).
+
+| # | Этап | Что вызывает |
+|---|---|---|
+| 1 | `tris-count` треугольники ВПМ до всего | `uv run python tools/derive/vpm_to_npm.py --job jobs/<ID> --out NEW_DIR` (`vpm_npm_core.count_tris`) |
+| 2 | `remove-interiors` интерьеры — всегда | `vpm_npm_core.remove_interiors`: внутренние стенки капсул / интерьерные UDIM из `config.interiors` (явно, пустые списки = нет) |
+| 3 | `atlas` атлас НПМ, вся геометрия на атлас | `tools/materials/npm_atlas_udim.py --mode oks` (логика VPM_to_NPM.ms / GeoAGR «Unwrap to Atlas», AGR Tools `atlas.npm`) |
+| 4 | `glass-merge` стекло одним объектом на белом | `vpm_npm_core.find_white` / `reserve_white` / `glass_merge`: каждый UV стекла читается обратно на чисто белом пикселе |
+| 5 | `budget-ladder` лестница бюджета | `vpm_npm_core.budget_ladder`: только пока выше бюджета, по порядку цилиндры → плоскости opacity (ограждения, кондиционеры) → плоскости окон/витражей; отчёт ran / skipped / missing |
+| 6 | `master-qa` | `tools/qa/master_topology.py` |
+| 7 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
+| 8 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
+| 9 | `package-npm` | `agr package-npm` → `package_core._write_zip` |
+| 10 | `validate` | `agr validate` |
+| 11 | `checker` | `agr checker` |
+| 12 | `review-scene` | пробел |
+
+Бюджет по умолчанию — `standards/NPM_STANDARD.yaml` `oks_triangles_per_fbx_max` (150000); шаг лестницы, нужный
+при превышении, но не поданный хуком, — `missing`, а не «сделано».
+
 ### `oks-npm-lite` — ОКС, упрощённая НПМ
 
 Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
@@ -95,7 +118,7 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | 5 | `maf-light` лёгкий МАФ | пробел |
 | 6 | `flora-star` звёзды Флоры | пробел |
 | 7 | `placement` расстановка | `uv run python -m dt_ai.placement.engine` |
-| 8 | `optimise` бюджет НПМ | пробел |
+| 8 | `optimise` бюджет НПМ (без ProOptimizer) | пробел |
 | 9 | `master-qa` | `tools/qa/master_topology.py` |
 | 10 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
 | 11 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
@@ -262,4 +285,5 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 - `ucx-ground` — `agr ucx` недоступен; `ucx_build.py` — прецедент, не команда для реального участка.
 - `maf-light` — нет инструмента лёгкой НПМ-версии / перекладки UV для МАФ.
 - `flora-star` — нет построителя НПМ-звёзд Флоры [D102].
-- `optimise` — ProOptimizer в Max вручную; варианты — Артёму [D167].
+- `optimise` — шага ProOptimizer нет (Артём 2026-11-21, #1737); распределение бюджета Флора/МАФ решает Артём
+  [D167]; бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`.
