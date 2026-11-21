@@ -1,4 +1,4 @@
-"""new-case: skeleton cell `library-publish` (#1743, [D361], [D368]-[D371]): put agent-made MAF / Flora / windows / roof
+"""new-case: skeleton cell `library-publish` (#1743, [D372], [D368]-[D371]): put agent-made MAF / Flora / windows / roof
 equipment into the AGR library as immutable `draft` versions; Artem's word flips them to `accepted`.
 
     agr library publish BATCH [--kind maf] [--identity IDS.json] [--assets-root ROOT] [--catalogue CAT.json]
@@ -43,7 +43,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = "agr-library-publish/1"
 CATALOGUE = ROOT / "library/published/catalogue.json"
-KINDS = ("maf", "flora", "windows", "roof_equipment")  # [D361]; materials later
+KINDS = ("maf", "flora", "windows", "roof_equipment")  # [D372]; materials later
 STATUSES = ("draft", "accepted", "rejected")
 VERSION_RE = re.compile(r"^v(\d{3})$")
 SKIP_FILES = {"desktop.ini", "sha256sums.txt", "thumbs.db"}
@@ -180,7 +180,7 @@ def _akey(text):
 def intake_batch(batch, kind="maf"):
     """Objects of a batch copy + every other file in `drops` with a reason. Read-only."""
     if kind not in KINDS:
-        raise PublishError(f"kind {kind!r} is not a library kind {KINDS} (materials later [D361])")
+        raise PublishError(f"kind {kind!r} is not a library kind {KINDS} (materials later [D372])")
     root = Path(batch)
     if not root.is_dir():
         raise PublishError(f"batch {root} is not a folder")
@@ -226,7 +226,7 @@ def intake_batch(batch, kind="maf"):
     for p in files:
         if p not in used:
             ext = p.suffix.lower()
-            reason = ("texture/image: materials library is later [D361]" if ext in (".png", ".jpg", ".jpeg", ".tga")
+            reason = ("texture/image: materials library is later [D372]" if ext in (".png", ".jpg", ".jpeg", ".tga")
                       else "build script, not a library file" if ext in (".py", ".ms", ".mjs")
                       else "not a library object file (no A101 zip / object FBX)")
             drops.append({"path": p.relative_to(root).as_posix(), "reason": reason})
