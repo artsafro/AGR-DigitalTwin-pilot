@@ -36,11 +36,11 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 8 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
 | 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
-| 11 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
-| 12 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 13 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
-| 14 | `geojson` GeoJSON | пробел |
-| 15 | `light-fbx` `_Light.fbx` | пробел |
+| 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
+| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 13 | `light-fbx` `_Light.fbx` | `agr validate ZIP --profile vpm`: V012, строки Light FBX ([контракт](../research/elv-agent-vs-delivered.md#контракт-light-fbx)) |
+| 14 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
+| 15 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
 
 ### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
 
@@ -152,7 +152,7 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | 16 | `validate` | `agr validate --ground-area-m2` |
 | 17 | `checker` | `agr checker` после визуальной приёмки |
 
-### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D361], [D368]-[D371]
+### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D372], [D368]-[D371]
 
 Одна команда `agr library publish BATCH --kind maf --evidence DIR` проходит этапы 1–6; затем на «ок» Артёма
 `agr library accept NAMES --words "..."`, на отказ `agr library reject NAME --words "..."`. Подробно:
@@ -308,8 +308,7 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
-- `geojson` — нет готового к сдаче генератора GeoJSON, пока не изучены примеры заказчика [D220].
-- `light-fbx` — нет стадии валидатора для содержимого `_Light.fbx`.
+
 - `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
 - `review-scene` — `agr open-in-max` / `agr contact-renders` недоступны: мост Max или рендеры работы.
 - `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.

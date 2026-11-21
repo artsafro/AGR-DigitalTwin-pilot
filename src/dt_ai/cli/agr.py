@@ -25,7 +25,7 @@ SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validat
            "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py",
            "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py",
            "railing": "tools/blender/railing.py",
-           "library": "tools/library/publish.py"}  # #1743: publish|accept|reject [D361, D368-D371]
+           "library": "tools/library/publish.py"}  # #1743: publish|accept|reject [D372, D368-D371]
 
 
 STUBS = {

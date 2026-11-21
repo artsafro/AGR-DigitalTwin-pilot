@@ -914,6 +914,7 @@ PROPERTY_KEYS = ('address', 'okrug', 'rajon', 'name', 'developer', 'designer', '
                  'imageBase64', 'other')  # standards/VPM_STANDARD.yaml geojson.properties_keys
 OKS_MAY_BE_EMPTY = ('other', 'act_AGR')
 GROUND_NULLABLE = ('FNO_name', 'FNO_code', 'h_otn', 'h_abs', 's_obsh', 's_naz', 's_podz', 'spp_gns', 'other')
+METRIC_PROPERTIES = ('ZU_area', 'h_relief', 'h_otn', 'h_abs', 's_obsh', 's_naz', 's_podz', 'spp_gns')
 VPM_MESH = re.compile(r'^SM_(?P<address>' + ADDRESS + r')_(?P<suffix>Main|MainGlass|GroundElGlass|GroundGlass|'
                       r'GroundEl|Ground|Flora)$')
 GLASS_SUFFIXES = ('MainGlass', 'GroundGlass', 'GroundElGlass')
@@ -1010,6 +1011,7 @@ def glasses_entry(materials):
 
 def property_findings(properties, ground):
     """Missing/empty mandatory values are findings (never invented); unknown keys are an error."""
+    import math
     if not isinstance(properties, dict):
         raise ValueError('options.properties must be an object of the App.3 keys')
     unknown = sorted(set(properties) - set(PROPERTY_KEYS))
@@ -1023,8 +1025,10 @@ def property_findings(properties, ground):
         value = properties.get(key)
         if value in (None, '') and key not in may_be_empty:
             out.append(('property', '{} is empty: a mandatory value (ask the customer, never invent it)'.format(key)))
-        elif isinstance(value, float) and value != value:
-            out.append(('property', key + ' is NaN'))
+        elif value not in (None, '') and key in METRIC_PROPERTIES and type(value) not in (float, int):
+            out.append(('property', key + ' must be a JSON number in App.3 units'))
+        elif isinstance(value, float) and not math.isfinite(value):
+            raise ValueError(key + ' must be finite')
     return out
 
 
