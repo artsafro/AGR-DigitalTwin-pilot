@@ -1,5 +1,7 @@
 """#1737 skeleton cell `vpm-to-npm`: interiors, glass on white, budget ladder, skeleton entries.
 
+new-case: exercise the shared export, ZIP and validator chain on a synthetic VPM.
+
 Fixture = a synthetic VPM-shaped mesh (synthetic, not a real object): an outer box on UDIM 1001, an inner capsule wall on
 UDIM 1011 (interior) and two glass panes in two objects.
 """
@@ -201,7 +203,7 @@ def test_budget_ladder_fail_closed():
     rep = core.budget_ladder(300, 150, {"cylinder-segments": lambda t: t - 10})
     assert not rep["within"] and rep["missing"] == ["opacity-planes", "window-planes"]
     with pytest.raises(core.VpmNpmError, match="did not reduce"):
-        core.budget_ladder(300, 150, {"opacity-planes": lambda t: t})
+        core.budget_ladder(300, 150, {"cylinder-segments": lambda t: t})
 
 
 @pytest.mark.blender
@@ -248,8 +250,12 @@ bpy.ops.export_scene.fbx(filepath={str(fbx)!r})
     report = json.loads((out / "vpm_to_npm_report.json").read_text())
     assert report["npm_tris"] == 11 and report["budget_ladder"]["ran"] == []
     assert report["remove_interiors"]["dropped_by_reason"] == {"interior_udim 1011": 2}
-    assert report["glass_merge"]["white_samples"] == 7
+    assert report["glass_merge"]["white_samples"] == 9  # three triangulated faces
     assert list((out / "derivation").glob("*.json"))
+    args = [sys.executable, "-m", "dt_ai.cli.agr", "package-npm", str(out / "npm")]
+    strict = subprocess.run(args, capture_output=True, text=True)
+    assert strict.returncode == 1 and "Ground" in strict.stderr
+    assert not list(out.glob("*.zip"))
     pkg = subprocess.run([sys.executable, "-m", "dt_ai.cli.agr", "package-npm", str(out / "npm"),
                           "--allow-incomplete"], capture_output=True, text=True, encoding="utf-8", errors="replace")
     assert pkg.returncode == 1, pkg.stdout + pkg.stderr  # OKS-only is diagnostic, never a pass
@@ -259,4 +265,9 @@ bpy.ops.export_scene.fbx(filepath={str(fbx)!r})
         assert z.read(z.namelist()[0]) == (out / "npm/0607_X_01.fbx").read_bytes()
     delivery = json.loads(Path(str(archive) + ".delivery.json").read_text(encoding="utf-8"))
     assert delivery["status"] == "incomplete" and delivery["passed"] is False
-    assert all(p.read_bytes() == data for name, data in before.items() if (p := src / name))
+    validated = subprocess.run([sys.executable, "-m", "dt_ai.cli.agr", "validate", str(archive),
+                                "--profile", "npm", "--json"], capture_output=True, text=True, encoding="utf-8")
+    verdict = json.loads(validated.stdout)
+    assert validated.returncode != 0 and verdict["passed"] is False
+    assert next(s for s in verdict["stages"] if s["id"] == "V001")["status"] == "fail"
+    assert {p.name: p.read_bytes() for p in src.iterdir()} == before

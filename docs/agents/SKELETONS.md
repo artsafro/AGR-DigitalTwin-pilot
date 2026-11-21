@@ -89,8 +89,8 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 |---|---|---|
 | 1 | `tris-count` треугольники ВПМ до всего | `uv run python tools/derive/vpm_to_npm.py --job jobs/<ID> --out NEW_DIR` (`vpm_npm_core.count_tris`) |
 | 2 | `remove-interiors` интерьеры — всегда | `vpm_npm_core.remove_interiors`: внутренние стенки капсул / интерьерные UDIM из `config.interiors` (явно, пустые списки = нет) |
-| 3 | `atlas` атлас НПМ, вся геометрия на атлас | `tools/materials/npm_atlas_udim.py --mode oks` (логика VPM_to_NPM.ms / GeoAGR «Unwrap to Atlas», AGR Tools `atlas.npm`) |
-| 4 | `glass-merge` стекло одним объектом на белом | `vpm_npm_core.find_white` / `reserve_white` / `glass_merge`: каждый UV стекла читается обратно на чисто белом пикселе |
+| 3 | `atlas` атлас НПМ, вся геометрия на атлас | `agr vpm-to-npm` → `npm_atlas.py --copied-udims --glass-white` + `export_npm.py` |
+| 4 | `glass-merge` стекло одним объектом на белом | Хук мастер-копии объединяет стекло; `export_npm.map_white_glass` проверяет белую область и переносит UV |
 | 5 | `budget-ladder` лестница бюджета | `vpm_npm_core.budget_ladder`: только пока выше бюджета, по порядку цилиндры → плоскости opacity (ограждения, кондиционеры) → плоскости окон/витражей; отчёт ran / skipped / missing |
 | 6 | `master-qa` | `tools/qa/master_topology.py` |
 | 7 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |

@@ -131,6 +131,33 @@ def validate_export(layout_path, diffuse_path, opacity_path):
             'bleed_checked_maps': 2}
 
 
+def copied_sources(finishes, spec):
+    if not isinstance(finishes, dict) or not finishes:
+        raise ValueError("copied UDIM finishes must be nonempty")
+    sources, tiles = {}, set()
+    for name, row in finishes.items():
+        tile = row.get("udim")
+        if type(tile) is not int or not 1001 <= tile <= 1100 or tile in tiles:
+            raise ValueError(f"{name}: invalid or duplicate UDIM {tile}")
+        tiles.add(tile)
+        if set(row) - {"udim", "diffuse", "opacity"} or "diffuse" not in row:
+            raise ValueError(f"{name}: expected udim, diffuse and optional opacity")
+        for role in ("diffuse", "opacity"):
+            if role in row:
+                path = os.path.realpath(os.path.join(os.path.dirname(spec), row[role]))
+                if not os.path.isfile(path):
+                    raise ValueError(f"{name}: missing {role} {path}")
+                sources[name, role] = path
+    return sources
+
+
+def copied_region(path, size, mode, resample):
+    with Image.open(path) as image:
+        if image.format != "PNG" or image.width != image.height or image.mode not in ({"RGB", "L"} if mode == "L" else {"RGB"}):
+            raise ValueError(f"expected square PNG in {mode} without alpha: {path}")
+        return np.asarray(image.convert(mode).resize((size, size), resample))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("spec", nargs='?', help="VPM texture spec JSON (address, size_full, finishes)")
@@ -144,6 +171,8 @@ def main(argv=None):
                                      "npm_atlas.json records its SHA-256 + the UDIM tiles; export_npm refuses another master")
     ap.add_argument("--cell", type=int, default=CELL, help="atlas cell pixels (default: 409)")
     ap.add_argument("--pad", type=int, default=PAD, help="padding inside each cell (default: 16)")
+    ap.add_argument("--copied-udims", action="store_true", help="sample supplied diffuse/opacity PNGs, not procedural finishes")
+    ap.add_argument("--glass-white", action="store_true", help="reserve a separate pure-white region for MainGlass")
     a = ap.parse_args(argv)
     if a.check:
         if a.spec or a.out:
@@ -168,10 +197,14 @@ def main(argv=None):
         raise ValueError('--master is the texture spec itself')
     sys.path.insert(0, a.recipe_dir)
     import finish_map
-    import make_textures as mt
     spec = json.load(open(a.spec, encoding="utf-8"))
-    finish_map.validate_spec(spec, finish_map.load_kpp())
-    if len(spec["finishes"]) > cols * (ATLAS // cell):
+    if a.copied_udims:
+        sources = copied_sources(spec["finishes"], a.spec)
+    else:
+        import make_textures as mt
+        finish_map.validate_spec(spec, finish_map.load_kpp())
+        sources = {}
+    if len(spec["finishes"]) + a.glass_white > cols * (ATLAS // cell):
         raise ValueError(f"{len(spec['finishes'])} finishes do not fit the {cols} x {ATLAS // cell} atlas grid")
     addr = a.address or spec["address"]
     if not addr:
@@ -179,13 +212,19 @@ def main(argv=None):
     nnn = f"{a.index:03d}"
     out = a.out
     binding = _bm().atlas_master_binding(a.master, spec["finishes"])  # hashed before any write
-    finish_map.fresh_out_dir(out, [a.spec, HERE, a.recipe_dir, a.master])
+    finish_map.fresh_out_dir(out, [a.spec, HERE, a.recipe_dir, a.master, *sources.values()])
     dif = np.zeros((ATLAS, ATLAS, 3), np.uint8)
     opa = np.full((ATLAS, ATLAS, 3), 255, np.uint8)
     layout = {}
     for k, (f, t) in enumerate(sorted(spec["finishes"].items(), key=lambda kv: kv[1]["udim"])):
         cx, cy = (k % cols) * cell, (k // cols) * cell      # cell origin, image rows from the top
-        if t["kind"] == "full":
+        if a.copied_udims:
+            reg = copied_region(sources[(f, "diffuse")], region, "RGB", Image.LANCZOS)
+            if (f, "opacity") in sources:
+                mask = copied_region(sources[(f, "opacity")], region, "L", Image.BOX)
+                mask = np.pad(np.where(mask >= 128, 255, 0).astype(np.uint8), pad, mode="edge")
+                opa[cy:cy + cell, cx:cx + cell] = mask[..., None]
+        elif t["kind"] == "full":
             # >= 1.5 px joints whatever metres the region spans (S = 4.096 gives the KPP value 8 mm)
             tt = dict(t, joint_half_mm=max(NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / region)))
             d, alpha, _, _ = mt.make_full(tt, spec["size_full"])
@@ -204,8 +243,15 @@ def main(argv=None):
         # region in UV space (v up): x0, y0 of the region's lower-left corner and its size
         layout[f] = {"udim": t["udim"], "u0": (cx + pad) / ATLAS, "v0": 1 - (cy + pad + region) / ATLAS,
                      "size": region / ATLAS, "px_per_m": round(region / t.get("S", 4.096), 1)
-                     if t["kind"] == "full" else None}
-        print(f, t["udim"], t["kind"], (cx, cy))
+                     if t.get("kind") == "full" else None}
+    glass = {}
+    if a.glass_white:
+        k = len(layout)
+        x, y = (k % cols) * cell, (k // cols) * cell
+        dif[y:y + cell, x:x + cell] = 255
+        if region < 16:
+            raise ValueError("glass white region must be at least 16 pixels")
+        glass["glass_white_px"] = [x + cell // 2 - 8, y + cell // 2 - 8, 16, 16]
     dn = os.path.join(out, f"T_{addr}_{nnn}_Main_d_1.png")
     on = os.path.join(out, f"T_{addr}_{nnn}_Main_o_1.png")
     # Exclusive creation closes the post-directory-check hardlink/clobber race.
@@ -214,7 +260,7 @@ def main(argv=None):
             Image.fromarray(pixels, "RGB").save(stream, format='PNG', optimize=True)
     with open(os.path.join(out, "npm_atlas.json"), "x", encoding="utf-8") as stream:
         json.dump({"atlas": ATLAS, "cell": cell, "pad": pad, "region": region, "finishes": layout,
-                   "master": binding}, stream, indent=1)
+                   "master": binding, **glass}, stream, indent=1)
     for p in (dn, on):
         print(os.path.basename(p), os.path.getsize(p), "bytes")
     print(json.dumps(validate_export(os.path.join(out, 'npm_atlas.json'), dn, on), sort_keys=True))

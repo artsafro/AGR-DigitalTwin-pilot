@@ -4,8 +4,8 @@ Pattern: n/a | new-case: tris count, interior removal, glass-on-white merge and 
 `vpm-to-npm` cell (stages tris-count / remove-interiors / glass-merge / budget-ladder in docs/agents/skeletons.json).
 
 Artem 2026-11-21 (#1737): count tris first; ALWAYS delete interiors (inner capsule walls, interior UDIMs); build the
-NPM atlas and lay all geometry on it (stage `atlas`, owner tools/materials/npm_atlas_udim.py, the VPM_to_NPM.ms /
-GeoAGR «Unwrap to Atlas» logic); glass merged into ONE object on pure-white atlas pixels. Only while still over the
+NPM atlas and lay all geometry on it (stage `atlas`, shared `agr vpm-to-npm`); glass merged into ONE object on
+pure-white atlas pixels. Only while still over the
 tris budget, in this order: fewer segments on cylinders, railings / AC units as one-sided opacity planes, last
 windows and stained glass as planes with the window image. No ProOptimizer; the body mesh is not edited.
 
@@ -227,7 +227,8 @@ def budget_ladder(tris, budget, steps):
     """Run the fixed ladder steps (LADDER order) only while tris > budget; steps = {step: callable(tris) -> tris}.
 
     Returns {'start', 'budget', 'ran', 'skipped', 'missing', 'final', 'within'}; a needed step that is not supplied
-    goes to `missing` and leaves `within` false. Exactly at the budget is within."""
+    goes to `missing`; later configured steps may still run. `within` reports the final count against the budget.
+    Exactly at the budget is within."""
     if isinstance(budget, bool) or not isinstance(budget, numbers.Real) or not math.isfinite(budget) or budget <= 0:
         raise VpmNpmError(f"budget-ladder: budget must be a finite number > 0, got {budget!r}")
     if isinstance(tris, bool) or not isinstance(tris, numbers.Integral) or tris < 0:
