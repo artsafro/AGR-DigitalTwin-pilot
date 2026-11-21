@@ -49,6 +49,8 @@ CONFORM = True       # w12 (variant A, Artem 2026-11-20 «принимаю ре�
                      # as one body; posts separate elements. Replaces the per-plane walls + embed of w9.
 if BODY_WELD or CONFORM:
     EMB_M = 0.0
+MAX_FACES = 120000   # fail-closed: a conforming line spread that would more than double the 61 465-face v003 body
+REVEAL_M = 0.8       # m; a +x / +-z plane with a side <= this is a reveal, sill, head or parapet top of W/S/N
 WELD_BODY_M = 2.1e-3  # wall/body vertices closer than the 2 mm V004/xView tolerance (+0.1 mm) are welded (body only)
 AREA_MIN = 0.5       # m2; smaller planes stay as in v003
 XVIEW_M = 2e-3       # xView vertex limit, judged per element [D336]: `wall_plan.relax_shifts` keeps wall nodes apart
@@ -339,6 +341,12 @@ def conform_rebuild(bm, posts, contact, uvl, fl, tile_of_finish, rep):
     t0 = time.perf_counter()
     wall_dirs = {(w['ax'], w['sg']) for w in WALLS.values()}
     planes = all_planes(bm, set(posts), wall_dirs)
+    # W/S/N directions whole (as w9) + the perpendicular reveals, sills, heads and parapet tops (a narrow side
+    # <= REVEAL_M); roofs, the floor and the E facade stay v003 (a tensor grid over them spread 2.8 M cells, w12e)
+    n_all = len(planes)
+    planes = [pl for pl in planes if (pl['ax'], pl['sg']) in wall_dirs
+              or min(pl['box'][1] - pl['box'][0], pl['box'][3] - pl['box'][2]) <= REVEAL_M]
+    rep['conform_planes_skipped'] = n_all - len(planes)
     print('CONFORM planes', len(planes), round(time.perf_counter() - t0, 1), flush=True)
     face_pid = {f: i for i, pl in enumerate(planes) for f in pl['faces']}
     adj, skipped = adjacency(bm, face_pid, planes)
@@ -372,6 +380,13 @@ def conform_rebuild(bm, posts, contact, uvl, fl, tile_of_finish, rep):
     plans, rounds = wp.conform(kplanes, adj, MAX_CELL, SNAP_M,
                                log=lambda n, d: print('CONFORM round', n, 'dirty', d, round(time.perf_counter() - t0, 1), flush=True))
     print('CONFORM fixpoint', rounds, round(time.perf_counter() - t0, 1), flush=True)
+    total = sum(len(p['cells']) for p in plans.values())
+    top = sorted(((len(p['cells']), len(p['H']), len(p['Z']), i) for i, p in plans.items()), reverse=True)[:8]
+    print('CONFORM cells', total, 'old', sum(len(pl['faces']) for pl in planes),
+          [(c, h, z, planes[i]['ax'], planes[i]['sg'], round(planes[i]['pos'], 3), len(planes[i]['faces'])) for c, h, z, i in top],
+          flush=True)
+    if total > MAX_FACES:
+        raise ValueError(f'conforming grid has {total} cells > {MAX_FACES}: line spread too wide')
     old = [f for pl in planes for f in pl['faces']]
     old_verts = {v for f in old for v in f.verts}
     made = []
