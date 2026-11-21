@@ -1,6 +1,6 @@
 # Body mesh quality — standing #18, R3 held-out accepted controls (OBSERVE)
 
-**Кратко.** Проверяем, не занижает ли R3 балл двух принятых Артёмом корпусов, не входивших в калибровку #17. Модели и рабочие проверки не меняем.
+**Кратко.** R3 не снизил балл ни одному из двух принятых корпусов вне калибровки #17: максимальное падение **0,000** при пороге **0,500**. Оба корпуса не содержат граней, которые R3 считает косыми. Поэтому результат не объясняет штраф **4,29** на принятом 63B v007 и не даёт основания внедрять R3. Модели и рабочие проверки не изменены.
 
 ## Frozen contract (before measurements)
 
@@ -12,3 +12,14 @@ Frozen held-out scope (both [accepted at stage 1](https://github.com/artsafro/AG
 - G22 k2 v002r1 accepted stage-1 typical band retained in #12: `C:/x/ev_1619/r7/k2_v002r1.mq.json`, SHA-256 `2e922754e8b77f854627267fc75b1ba9c22c41a7c4713333fc34ba0ffaff431b`. No fresh native readback here. Do not compare the absolute scores across buildings.
 
 Replay: `../../.venv/Scripts/python.exe docs/research/autoresearch-body-mesh-holdout-harness/holdout.py NEW_DIR`. Python/Blender read-only, metres from the existing dump owner, unchanged defaults, no zone filters. A real rejected holdout with a comparable mesh scope and a verified clean rounded/oblique envelope remain unmeasured; the synthetic skew witness is not either of these. Calibration is not approval: G22 k1 distance-to-etalon still rewards the rejection (#12), and changing body construction is owned by #1736/#1742. No overlap with #1759 (its in-sample run), #1739/#1751 (skeleton integration), #1722 (63B stage 2), #1649 (atlas), #1609 (KPP1), or #1315/#1622 (cold runs). No switch to speed work while this quality check is available.
+
+## Result — OBSERVE, no adoption
+
+| Accepted control | Scope | R0 median | R3 median | Median drop | Paired spread |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 63A v005 | Fresh Blender 5.1.2 readback, 4,560 quads | 83.941 | 83.941 | 0.000 | 0.000 |
+| G22 k2 v002r1 | Retained dump, 3,933 quads | 83.693 | 83.693 | 0.000 | 0.000 |
+
+Receipt: [`holdout.json`](autoresearch-body-mesh-holdout-harness/holdout.json), SHA-256 `4cd18c20f819cd22caf68c9dc905de474515dd791b86cb073594bcdf58235ae3`. Clean: both input hashes unchanged, score reports equal modulo the named fields, clean/reset witness passed. Injected: pinned synthetic skew witness passed. Not measured: a separate labelled rejection pair, verified clean rounded/oblique envelope, fresh G22 k2 import, geometry candidate and delivery QA. Prior same-building calibration (minimum 0.718) is pinned evidence, not a new measurement.
+
+Would change (not applied): identify the specific R3 seed faces responsible for the penalty on accepted 63B v007 and check whether they are legitimate reveals, curved transitions or defects. Only then test an explicitly scoped rule on an independent labelled pair and a clean curved/oblique control; neither production scoring nor the shared body core should change on this result.
