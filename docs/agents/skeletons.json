@@ -30,6 +30,11 @@
     "package-npm": {"ru": "Пакет НПМ (ZIP)", "calls": "agr package-npm (dt derive package-npm -> package_core._write_zip)", "owners": ["adapters/max/agr_tools/package_core.py"], "entry_defs": ["_write_zip", "zip_passport"], "dup_rules": ["delivery-zip"], "gap": null},
     "validate": {"ru": "Проверка пакета", "calls": "agr validate (tools/qa/validate_package.py)", "owners": ["tools/qa/validate_package.py"], "entry_defs": ["zip_precheck", "build_stages"], "dup_rules": [], "gap": null},
     "checker": {"ru": "SINTEZ AGR Checker", "calls": "agr checker (tools/qa/sintez_checker.py)", "owners": ["tools/qa/sintez_checker.py", "tools/blender/sintez_checker.py"], "entry_defs": [], "dup_rules": ["sintez-checker"], "gap": null},
+    "sintez-classify": {"ru": "Разбор кодов и причин SINTEZ", "calls": "agr checker summary rules; manual routing by profile, code and actual message", "owners": ["tools/qa/sintez_checker.py", "adapters/max/agr_tools/qa9_core.py"], "entry_defs": [], "dup_rules": [], "gap": null},
+    "sintez-recipe": {"ru": "Точечная правка копии", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "one job hook or a manual operation via the current owner; no generic auto-fix"},
+    "sintez-uv-drift": {"ru": "Проверка UV и регистрации в мире", "calls": "twinqa.scene.readback -> twinqa.sintez_uv.indexed_uv_drift", "owners": ["src/twinqa/scene.py", "src/twinqa/sintez_uv.py"], "entry_defs": ["indexed_uv_drift"], "dup_rules": [], "gap": null},
+    "sintez-recheck": {"ru": "Повторный SINTEZ на новой копии", "calls": "agr checker", "owners": ["tools/qa/sintez_checker.py"], "entry_defs": [], "dup_rules": [], "gap": null},
+    "sintez-sheet": {"ru": "Лист до/после для Артёма", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "assemble the operator sheet from the two checker reports and the drift receipt"},
     "geojson": {"ru": "GeoJSON сдачи", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no delivery-ready GeoJSON writer until the customer examples are studied [D220]"},
     "light-fbx": {"ru": "_Light.fbx", "calls": null, "owners": [], "entry_defs": [], "dup_rules": [], "gap": "no validator stage for _Light.fbx content"},
     "derive-npm": {"ru": "ВПМ -> НПМ (атлас и выпуск НПМ)", "calls": "agr vpm-to-npm (dt derive atlas, then dt derive npm)", "owners": ["tools/derive/npm_atlas.py", "tools/derive/export_npm.py"], "entry_defs": ["validate_export", "face_udim"], "dup_rules": [], "gap": null},
@@ -57,6 +62,7 @@
     "budget-ladder": {"ru": "Лестница бюджета: цилиндры -> плоскости opacity -> плоскости окон, только если всё ещё выше бюджета", "calls": "tools/derive/vpm_to_npm.py (vpm_npm_core.budget_ladder; reports ran / skipped / missing steps)", "owners": ["tools/derive/vpm_npm_core.py"], "entry_defs": ["budget_ladder"], "dup_rules": [], "gap": null}
   },
   "cells": {
+    "sintez-fix": {"activation": "artem-request-only", "config_keys": ["request_ref", "sources", "profile", "evidence"], "stages": ["checker", "sintez-classify", "sintez-recipe", "sintez-uv-drift", "sintez-recheck", "sintez-sheet"]},
     "vpm-to-npm": {"config_keys": ["sources", "vpm", "interiors", "glass", "budget", "atlas", "npm", "etalon", "verifier_mode"], "stages": ["tris-count", "remove-interiors", "atlas", "glass-merge", "budget-ladder", "master-qa", "readback", "verifier", "package-npm", "validate", "checker", "review-scene"]},
     "npm-to-vpm": {"config_keys": ["sources", "profile", "atlas", "table", "overflow_policy", "approved_drops", "evidence"], "stages": ["npm-ids", "npm-udim-fit", "npm-to-vpm", "readback", "checker", "package-vpm", "validate"]},
     "oks-vpm": {"config_keys": ["passport", "sources", "profile", "verifier_mode"], "stages": ["sources-dwg", "inspect", "body", "mesh-quality", "udim", "vpm-uv", "ucx-oks", "master-qa", "readback", "verifier", "package-vpm", "validate", "checker", "geojson", "light-fbx"]},

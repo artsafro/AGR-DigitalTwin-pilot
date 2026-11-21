@@ -68,6 +68,64 @@ def _finite_pairs(points, dim: int, label: str) -> list[tuple[float, ...]]:
     return out
 
 
+def _indexed_surfaces(meshes):
+    if not isinstance(meshes, list) or not meshes:
+        raise ValueError("expected nonempty surface mesh inventory")
+    result = {}
+    for mesh in meshes:
+        name = mesh.get("name") if isinstance(mesh, dict) else None
+        if not isinstance(name, str) or not name.strip() or name in result:
+            raise ValueError(f"missing or duplicated mesh identity: {name!r}")
+        g = mesh.get("face_geometry")
+        if not isinstance(g, dict):
+            raise ValueError(f"{name}: missing face_geometry")
+        vertices, faces, uv, materials = (g.get(k) for k in
+                                          ("vertices", "polygons", "polygon_uv", "polygon_material"))
+        if not (isinstance(vertices, list) and vertices and isinstance(faces, list) and faces
+                and isinstance(uv, list) and isinstance(materials, list)
+                and len(faces) == len(uv) == len(materials)):
+            raise ValueError(f"{name}: incomplete surface arrays")
+        xyz = _finite_pairs(vertices, 3, f"{name} XYZ")
+        loops = []
+        for i, (face, chart, material) in enumerate(zip(faces, uv, materials, strict=True)):
+            if not isinstance(face, list) or len(face) != 3 or any(
+                type(j) is not int or not 0 <= j < len(xyz) for j in face
+            ) or len(set(face)) != 3:
+                raise ValueError(f"{name}: invalid triangle {i}")
+            if not isinstance(material, str) or not material.strip():
+                raise ValueError(f"{name}: unmapped material on triangle {i}: {material!r}")
+            if not isinstance(chart, list) or len(chart) != 3 or not all(isinstance(p, list) for p in chart):
+                raise ValueError(f"{name}: incomplete loop UV on triangle {i}")
+            loops.append(_finite_pairs(chart, 2, f"{name} triangle {i} UV"))
+        result[name] = xyz, faces, loops, materials
+    return result
+
+
+def indexed_uv_drift(before: list[dict], after: list[dict]) -> dict:
+    """Compare exported surface triangles in a proven, unchanged index frame (#1744).
+
+    Exact-zero is intentional. No fuzzy matching, wrapping, dropped faces, or remeshing.
+    Caller must bind complete fresh readbacks to the archives and verify the texture bytes
+    and bindings separately. With unchanged maps, zero in both measures preserves the
+    affine UV-to-world registration on every triangle, including baked joint patterns.
+    """
+    left, right = _indexed_surfaces(before), _indexed_surfaces(after)
+    if left.keys() != right.keys():
+        raise ValueError(f"unmatched surface meshes: {sorted(left.keys() ^ right.keys())}")
+    corners, max_uv, max_world = 0, 0.0, 0.0
+    for name, (xyz, faces, uv, materials) in left.items():
+        other_xyz, other_faces, other_uv, other_mat = right[name]
+        if len(xyz) != len(other_xyz) or faces != other_faces or materials != other_mat:
+            raise ValueError(f"{name}: changed index topology or material assignment")
+        max_world = max(max_world, max(math.dist(a, b) for a, b in zip(xyz, other_xyz, strict=True)))
+        for face, other_face in zip(uv, other_uv, strict=True):
+            max_uv = max(max_uv, max(math.dist(a, b) for a, b in zip(face, other_face, strict=True)))
+            corners += len(face)
+    if not math.isfinite(max_uv) or not math.isfinite(max_world):
+        raise ValueError("non-finite displacement")
+    return {"meshes": len(left), "corners": corners, "max_uv": max_uv, "max_world_m": max_world}
+
+
 def _newell(xyz) -> tuple[float, float, float]:
     gx = gy = gz = 0.0
     px, py, pz = xyz[-1]

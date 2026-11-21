@@ -244,8 +244,33 @@ output next to each sheet, then sets a threshold from the numbers. Until then no
    (`docs/agents/job_scripts_baseline.txt`, never extended) may live outside a `skeleton.json` folder; any other
    script under `jobs/` fails, in a new or an old job folder alike. An old job opts in by adding `skeleton.json`.
 
-Example (Artem's SINTEZ error-fix case): unfold polygons / seams = `checker` → fix with the stage owners
-(`vpm-uv`, `master-qa`) through one `after` hook → `checker` again; no new analysis scripts.
+For an explicit SINTEZ repair request, use the separate [`sintez-fix`](#sintez-fix) cell, not a delivery hook.
+
+## `sintez-fix`
+
+**Только по просьбе Артёма.** Это отдельная ячейка диагностики и правки копии,
+не этап сдачи. Без ссылки `request_ref` на явное поручение и согласованного
+перечня правок не запускать ячейку. Наличие конфигурации, замечания чекера
+или очередной выпуск сами по себе не разрешают запуск. Обычный `checker`
+в маршруте сдачи ничего не исправляет.
+
+| # | Stage | Existing owner / operator action |
+|---|---|---|
+| 1 | `checker` | `agr checker COPY_DIR --output NEW_BASELINE.json`; pin source ZIP, copy hashes and checker version. |
+| 2 | `sintez-classify` | Read `rules` in the summary; route by profile + requirement + underlying message, not by exit code. Unknown/partial/ambiguous rows stop the targeted repair. |
+| 3 | `sintez-recipe` | One job hook or manual owner action on a new candidate: `vpm-uv` for local chart changes, `master-qa` for topology diagnosis, package/metadata owners for non-mesh defects. No unattended generic fix. |
+| 4 | `sintez-uv-drift` | Fresh `twinqa.scene.readback` bound to each exact FBX ZIP member; compare indexed surfaces with `twinqa.sintez_uv.indexed_uv_drift` (#1732/#1744). Independently verify all map bytes and their bindings. |
+| 5 | `sintez-recheck` | `agr checker CANDIDATE_DIR --output NEW_CANDIDATE.json`; compare targeted findings, coverage and new regressions. |
+| 6 | `sintez-sheet` | Sheet for Artem: source/candidate hashes, code and counts, operation, maximum UV/world movement, changed maps, unmatched faces, new/unmeasured findings and next decision. No delivery or publication. |
+
+For unchanged FBX and texture member bytes, byte identity proves no movement on the
+retained surfaces. For changed FBX, exact zero in both indexed metrics plus known
+unchanged bindings and maps preserves the triangle's texture registration. Do not
+round away movement: even a UV change on one loop must be reported. Changed topology,
+unresolved slots, absent/partial data or altered texture pixels are not a zero-drift
+result. List exceptions and stop for explicit review; don't repack or re-unwrap whole
+islands to clear a warning. `not_measured`, a missing finding and process exit 0 are
+not substitutes for a measured before/after pair. See [research and recipes](../research/sintez-fix-1744.md).
 
 ## Imported-library exemptions
 
@@ -291,6 +316,9 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 `--write-ignore` (reported as pending); the check fails only when the block hides a live or gone path.
 
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
+
+- `sintez-recipe` — один согласованный хук задания или работа у владельца; автоматической правки нет.
+- `sintez-sheet` — ручной лист по отчётам и замерам, общего генератора нет.
 
 - `geojson` — нет готового к сдаче генератора GeoJSON, пока не изучены примеры заказчика [D220].
 - `light-fbx` — нет стадии валидатора для содержимого `_Light.fbx`.
