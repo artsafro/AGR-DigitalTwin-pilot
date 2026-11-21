@@ -297,7 +297,9 @@ def _acceptance_table_problem(text):
             elif token.type == "thead_close":
                 columns = [_table_column(cell) for cell in cells]
             elif token.type == "tr_close" and all(columns.count(name) == 1 for name in required):
-                if all(cells[columns.index(name)] for name in required):
+                values = (cells[columns.index(name)] for name in required)
+                if all(value not in {"", "-", "...", "tests/<file>.py::<name>"}
+                       and not _PLACEHOLDER.fullmatch(value) for value in values):
                     return None
     if not seen_heading:
         return "missing Acceptance table heading"
