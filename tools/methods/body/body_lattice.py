@@ -323,6 +323,15 @@ def build_module(plan, max_side=None):
         pts, perim = ring_points(ring["xy"], ring.get("cuts", []), max_side)
         wins = [(w[1], w[2], int(w[3]) if len(w) > 3 else 0, int(w[4]) if len(w) > 4 else 1,
                  float(w[5]) if len(w) > 5 else 0.0) for w in plan.get("windows", []) if w[0] == ri]
+        stations = [p[0] for p in pts] + [perim]
+        for w in plan.get("windows", []):  # review r1 P1-1: an off-station edge was resized/dropped silently
+            if w[0] != ri:
+                continue
+            for s in (w[1], w[2]):
+                if not -EPS_S <= s <= perim + EPS_S:
+                    raise ValueError("window %r: s=%r outside ring %d perimeter [0, %.3f]" % (w, s, ri, perim))
+                if min(abs(s - t) for t in stations) > EPS_S:
+                    raise ValueError("window %r: s=%r is not a station of ring %d (add it to cuts)" % (w, s, ri))
         zones = ring.get("zones", [[0.0, perim, "WALL_A"]])
         n = len(pts)
         grid = [[vnew((x, y, z)) for (_, x, y, _) in pts] for z in levels]

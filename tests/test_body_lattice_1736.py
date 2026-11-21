@@ -423,3 +423,31 @@ def test_ring_closure_probe_every_removed_lattice_edge_is_caught():
         except ValueError as err:
             caught += ("ring not closed" in str(err) or "vertical loop broken" in str(err))
     assert caught == len(present) == len(lattice)  # this plan has no inner-opening gaps
+
+
+# Review r1 P1-1 (PR #1770): a window edge off its ring's stations or outside [0, perimeter]
+# used to be silently resized, dropped or left as a hole without reveal.
+@pytest.mark.parametrize("win", [
+    [0, 1.0, 5.5, 1, 2, 0.2],    # off-station both ends, r>0: hole at 0..3, no reveal
+    [0, 2.5, 5.5, 1, 2, 0.2],    # off-station both ends, r>0: opening built at 3..5
+    [0, 3.5, 4.5, 1, 2, 0.0],    # off-station, r=0: whole cell 3..5 painted WINDOW
+    [0, 100.0, 102.0, 1, 2, 0.0],  # beyond the perimeter (40 m): dropped with no report
+    [0, 3.0, 5.5, 1, 2, 0.2],    # one end on a station, the other off
+    [0, -1.0, 3.0, 1, 2, 0.0],   # negative start
+])
+def test_window_edges_must_be_stations_of_its_ring(win):
+    p = _plan(windows=[win])
+    with pytest.raises(ValueError, match="window") as e:
+        core.build_module(p)
+    assert repr(win[1]) in str(e.value) or str(win[1]) in str(e.value)
+
+
+def test_window_on_station_control_and_max_side_stations_are_accepted():
+    m = core.build_module(_plan(windows=[[0, 3.0, 5.0, 1, 2, 0.2], [0, 7.0, 9.0, 1, 2, 0.0]]))
+    assert m["report"]["rings"][0]["closure"]
+    # a station produced by the max_side split (12 m side / 3.6 -> 4 pieces of 3.0 m at s=3,6,9) is valid
+    p = _plan(rings=[{"xy": [[0, 0], [12, 0], [12, 8], [0, 8]], "cuts": [],
+                      "zones": [[0.0, 40.0, "WALL_A"]]}], windows=[[0, 6.0, 9.0, 1, 2, 0.2]])
+    core.build_module(p, max_side=3.6)
+    with pytest.raises(ValueError, match="not a station of ring 0"):
+        core.build_module(p)  # without the split 6..9 are not stations (new check names it)
