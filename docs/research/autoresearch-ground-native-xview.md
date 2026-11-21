@@ -52,6 +52,13 @@ count at 2 mm on the selected Ground node in the runner's `plain` mode (Editable
   package or input, builds/repairs of Ground (#1738 owns them), saving any Max scene, touching other cards' files,
   using any result as a release gate. Owners: #1315/#1622 cold run, #1738 Ground core, #1742/#1770 body (closed).
 
+**Amendment 1 (after the first-pair call failed, before any native count was obtained):** on 3ds Max 2026.3 the
+runner stops with `XVIEW_ERROR -- .NET runtime exception: Operation is not supported on this platform.`
+(`tools/qa/xview_dump.ms:83` compiles a helper with `Microsoft.CSharp.CSharpCodeProvider`, unsupported on .NET 8);
+receipt `C:/x/ev_t_304e8c0c/r33.json` (`inconclusive`, first pair failed). The series runs on **3ds Max 2024**, the
+route with retained native evidence (`docs/pipeline-tools.md`, #528). Everything else in the contract is unchanged.
+Fixing the runner for 2026 is outside this card (side finding).
+
 ## Round log
 
 _Filled in after the series._

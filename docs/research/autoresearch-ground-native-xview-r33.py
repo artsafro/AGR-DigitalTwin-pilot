@@ -32,6 +32,8 @@ W1_SHA = '94357c5f048ba3343035dfa44c9d0d89d83b3d6697dcfd9cc81c54739a6dc2ef'
 EV = Path('C:/x/ev_t_304e8c0c')
 DCC = Path('C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py')
 CAP_S = 45 * 60
+MAX_VERSION = '2024'   # amendment 1: the runner's CSharpCodeProvider fails on Max 2026 (.NET 8)
+PREFIX = 'm2024-'
 NODES = {'A1': 'SM_Vatutino_Ground', 'A2': 'SM_BolshoyBulvar_64_Ground', 'A3': 'SM_Tup_Skladochnyj_ZU_5_1_Ground',
          'A4': 'SM_5jDonskoyProezd_Vl_15_Ground', 'A5': 'SM_NizhnieMnevniki_ZU_66_Ground',
          'A6': 'SM_Kasatkina_Vl_11_Ground', 'A7': 'SM_VolokolamskoeShosse_Vl_71_22_Ground',
@@ -98,6 +100,7 @@ def dump_w1():
 
 
 def max_run(name, ids, mode, ins):
+    name = PREFIX + name
     out = EV / 'max' / name
     if out.exists():
         raise SystemExit(f'run dir exists: {out}')
@@ -107,7 +110,7 @@ def max_run(name, ids, mode, ins):
     xview_parity.prepare_run(jobs, out, EV / 'max' / f'{name}-stage')
     env = dict(os.environ, XVIEW_OUT=str(out), XVIEW_TEMP=str(EV / 'max' / f'{name}-stage'))
     t0 = time.monotonic()
-    proc = subprocess.run([sys.executable, str(DCC), 'max', '--version', '2026', '--file',
+    proc = subprocess.run([sys.executable, str(DCC), 'max', '--version', MAX_VERSION, '--file',
                            str(ROOT / 'tools/qa/xview_dump.ms'), '--timeout', '2400', '--wait', '1800',
                            '--card', 't_304e8c0c', '--out', str(EV / 'max' / f'{name}.dcc.json')],
                           env=env, capture_output=True, text=True)
@@ -133,7 +136,7 @@ def main(out):
         raise SystemExit(f'{out} exists')
     t_start = time.monotonic()
     ins = inputs()
-    report = dict(contract='docs/research/autoresearch-ground-native-xview.md', rev31=REV31, rev32=REV32,
+    report = dict(max_version=MAX_VERSION, contract='docs/research/autoresearch-ground-native-xview.md', rev31=REV31, rev32=REV32,
                   inputs={i: dict(path=p.as_posix(), sha256=h) for i, (p, h) in ins.items()})
     # Repo side: A from the frozen #31 dumps (parity with the #32 receipt), W1 freshly dumped.
     r32 = json.loads(blob(REV32, 'docs/research/autoresearch-ground-near-vertices-r32.json'))['rows']
