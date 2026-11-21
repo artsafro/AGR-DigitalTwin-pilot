@@ -26,6 +26,7 @@ evidence_missing (target gone or changed; exit 4). The result is written to a NE
 """
 import argparse
 import json
+import math
 import os
 import re
 import sys
@@ -193,33 +194,47 @@ def light_scene(data: bytes) -> dict:
         models, attrs, links = {}, {}, []
         for node in _fbx_children(data, top["Objects"], version) if "Objects" in top else []:
             vals = _fbx_props(data, node)
-            if node["name"] == "Model" and len(vals) >= 3:
+            if node["name"] == "Model":
+                if len(vals) < 3 or type(vals[0]) is not int or vals[0] == 0 or vals[0] in models or vals[0] in attrs:
+                    raise ValueError(f"invalid or duplicate Model record: {vals[:3]}")
                 p = _p70(data, node, version)
                 models[vals[0]] = {"name": str(vals[1]).split("\x00", 1)[0], "kind": vals[2], "parent": 0,
                                    "light": None, "t": tuple(p.get("Lcl Translation", (0.0, 0.0, 0.0))),
                                    "r": tuple(p.get("Lcl Rotation", (0.0, 0.0, 0.0))),
                                    "s": tuple(p.get("Lcl Scaling", (1.0, 1.0, 1.0)))}
             elif node["name"] == "NodeAttribute" and len(vals) >= 3 and vals[2] == "Light":
+                if type(vals[0]) is not int or vals[0] == 0 or vals[0] in models or vals[0] in attrs:
+                    raise ValueError(f"invalid or duplicate Light attribute: {vals[:3]}")
                 lt = _p70(data, node, version).get("LightType", [0])
-                attrs[vals[0]] = LIGHT_TYPES.get(int(lt[0]) if lt else 0, "Other")
+                attrs[vals[0]] = LIGHT_TYPES.get(lt[0], "Other") if len(lt) == 1 and type(lt[0]) is int else "Other"
         for node in _fbx_children(data, top["Connections"], version) if "Connections" in top else []:
             vals = _fbx_props(data, node)
             if len(vals) >= 3 and vals[0] == "OO":
                 links.append((vals[1], vals[2]))
     except (_FbxError, KeyError, IndexError, TypeError, ValueError) as exc:
         raise ValueError(f"unreadable FBX scene: {exc}") from exc
+    linked_models, linked_attrs = set(), set()
     for child, parent in links:
-        if child in attrs and parent in models:
+        if child in attrs:
+            if child in linked_attrs or parent not in models or models[parent]["light"] is not None:
+                raise ValueError(f"ambiguous or unbound Light attribute link {child} -> {parent}")
+            linked_attrs.add(child)
             models[parent]["light"] = attrs[child]
         elif child in models:
+            if child in linked_models or (parent != 0 and parent not in models):
+                raise ValueError(f"ambiguous or unbound Model link {child} -> {parent}")
+            linked_models.add(child)
             models[child]["parent"] = parent
+    if linked_attrs != attrs.keys():
+        raise ValueError(f"unbound Light attributes: {sorted(attrs.keys() - linked_attrs)}")
     return models
 
 
 def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
-    """Light FBX of a VPM set (`SM_<a>[_Ground]_Light.fbx`): exactly one `<cipher>_Root` (`_Ground_Root` for Ground)
-    with reset transforms, every light parented to it, names `<cipher>_[Spot|Omni]_NNN` 001..050, <= 250 lights,
-    the name type equal to the light type. Idea of AGR Checker (T04, measured); no checker code is reproduced."""
+    """Validate a VPM Light FBX against its model stem, including the delivered Address-only naming.
+
+    Retain the AGR Tools exported SM_ convention for uniform legacy files, not mixed names.
+    """
     try:
         models = light_scene(data)
     except ValueError as exc:
@@ -228,7 +243,12 @@ def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
     out = []
     lights = [m for m in models.values() if m["light"] is not None]
     roots = [(k, m) for k, m in models.items() if m["light"] is None and m["parent"] == 0]
-    want_root = f"{cipher}_Root"
+    address = cipher.removeprefix("SM_")
+    prefix = address
+    want_root = f"{address}_Root"
+
+    def vector(v):
+        return len(v) == 3 and all(type(x) in (float, int) and math.isfinite(x) for x in v)
 
     def bad(code, observed, expected):
         out.append(finding("fail", "light FBX", f"{name}: {observed}", expected, pages, CHECKER, data={"code": code}))
@@ -236,23 +256,36 @@ def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
         bad("light_root", f"{len(roots)} root objects {[m['name'] for _k, m in roots][:5]}", f"exactly one {want_root}")
     else:
         rid, root = roots[0]
-        if root["name"] != want_root:
+        if root["name"] == f"{cipher}_Root":
+            prefix = cipher
+            want_root = root["name"]
+        if root["name"] != want_root or root["kind"] != "Null":
             bad("light_root", f"root {root['name']!r}", want_root)
-        reset = (all(abs(float(v)) < 1e-6 for v in root["t"] + root["r"])
+        reset = (all(vector(root[k]) for k in ("t", "r", "s"))
+                 and all(abs(float(v)) < 1e-6 for v in root["t"] + root["r"])
                  and all(abs(float(v) - 1.0) < 1e-6 for v in root["s"]))
         if not reset:
             bad("light_root_transform", f"root t={root['t']} r={root['r']} s={root['s']}", "reset transforms")
         orphans = sorted(m["name"] for m in lights if m["parent"] != rid)
         if orphans:
             bad("light_parent", f"not under the root: {orphans[:5]}", f"every light parented to {want_root}")
-    if len(lights) > LIGHT_MAX:
-        bad("light_count", f"{len(lights)} lights", f"<= {LIGHT_MAX}")
-    pat = re.compile(rf"^{re.escape(cipher)}_(Spot|Omni)_(\d{{3}})$")
+        for key, model in models.items():
+            if key != rid and (model["kind"] != "Light" or model["light"] is None):
+                bad("light_type", f"unexpected model {model['name']!r}", "one Null root and only Spot/Omni children")
+    if not 1 <= len(lights) <= LIGHT_MAX:
+        bad("light_count", f"{len(lights)} lights", f"1..{LIGHT_MAX}")
+    pat = re.compile(rf"{re.escape(prefix)}_(Spot|Omni)_([0-9]{{3}})")
+    seen = set()
     for m in sorted(lights, key=lambda x: x["name"]):
-        hit = pat.match(m["name"])
+        if not all(vector(m[k]) for k in ("t", "r", "s")):
+            bad("light_transform", m["name"], "finite XYZ translation, rotation and scale")
+        hit = pat.fullmatch(m["name"])
         if not hit:
-            bad("light_name", f"{m['name']!r}", f"{cipher}_[Spot|Omni]_NNN")
+            bad("light_name", f"{m['name']!r}", f"{prefix}_[Spot|Omni]_NNN")
             continue
+        if m["name"] in seen:
+            bad("light_name", f"duplicate {m['name']!r}", "unique light names")
+        seen.add(m["name"])
         if not 1 <= int(hit.group(2)) <= LIGHT_NUMBER_MAX:
             bad("light_number", f"{m['name']}", f"number 001..{LIGHT_NUMBER_MAX:03d}")
         actual = "Spot" if m["light"] == "Spot" else "Omni" if m["light"] == "Omni" else m["light"]
