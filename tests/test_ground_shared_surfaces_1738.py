@@ -1,0 +1,187 @@
+"""#1738: shared-surface Ground (one vertex set per covering boundary, no stacked layers) + skirt check on export.
+
+All site data here is SYNTHETIC (generated squares and planes), never a real object.
+"""
+import math
+import random
+from pathlib import Path
+
+import numpy as np
+import pytest
+from shapely.geometry import Polygon, box
+from shapely.ops import unary_union
+
+from dt_ai.geometry import ground_cake as gc
+from dt_ai.geometry import ground_site as gs
+from dt_ai.ops.inv_xview import mesh_report
+
+
+def _plan(extra=()):
+    covers = {"base": [box(0, 0, 20, 20)], "b": [box(5, 5, 12, 12)], "c": [box(9, 9, 15, 14)], **dict(extra)}
+    slots = {k: k.upper() for k in covers}
+    return gc.plan_layers(box(0, 0, 20, 20), covers, "base", slots, footprint_min_area=1000.0)
+
+
+def _area(mesh, mask=None):
+    v = mesh.verts
+    f = mesh.faces if mask is None else mesh.faces[mask]
+    a = v[f[:, 1], :2] - v[f[:, 0], :2]
+    b = v[f[:, 2], :2] - v[f[:, 0], :2]
+    return 0.5 * np.abs(a[:, 0] * b[:, 1] - a[:, 1] * b[:, 0])
+
+
+def test_shared_mode_one_face_per_xy_and_topmost_slot():
+    plan = _plan()
+    m = gc.build_flat(plan, cell=3.0, surfaces="shared")
+    assert set(m.level.tolist()) == {0}
+    assert np.allclose(m.verts[:, 2], 0.0)
+    # every XY point is covered once: triangle area sum == surface area (layered would add the insets again)
+    assert math.isclose(_area(m).sum(), plan.surface.area, rel_tol=1e-9)
+    # one vertex set: no two vertices share an XY
+    xy = {(round(x, 6), round(y, 6)) for x, y, _ in m.verts}
+    assert len(xy) == len(m.verts)
+    # topmost covering wins: c over b over base
+    cen = m.verts[m.faces][:, :, :2].mean(axis=1)
+    for (x, y), s in zip(cen, m.slot):
+        want = "C" if (9 < x < 15 and 9 < y < 14) else "B" if (5 < x < 12 and 5 < y < 12) else "BASE"
+        assert s == want, (x, y, s)
+    assert m.report["surfaces"] == "shared"
+
+
+def test_layered_default_still_stacks():
+    plan = _plan()
+    m = gc.build_flat(plan, cell=3.0)
+    assert m.report["surfaces"] == "layered"
+    assert _area(m).sum() > plan.surface.area + 1.0
+
+
+def test_shared_mode_xview_zero_and_skirt_closed():
+    m = gc.add_skirt(gc.build_flat(_plan(), cell=3.0, surfaces="shared"), 1.0)
+    r = mesh_report(m.verts, m.faces, profile="NPM-GROUND", part="ground")
+    assert (r["vertex_pairs"], r["face_pairs"]) == (0, 0), r
+    assert gs.skirt_gaps(m, 1.0) == []
+
+
+def test_unknown_surfaces_mode_is_an_error_naming_it():
+    with pytest.raises(ValueError, match="stacked"):
+        gc.build_flat(_plan(), cell=3.0, surfaces="stacked")
+
+
+@pytest.mark.parametrize("seed", range(12))
+def test_probe_random_covers_shared_partition(seed):
+    """Probe: random overlapping covers -> one face per XY, area == surface, xView 0/0, no skirt gap."""
+    rnd = random.Random(seed)
+    covers = {"base": [box(0, 0, 30, 25)]}
+    for k in range(rnd.randint(1, 5)):
+        x, y = rnd.uniform(0, 25), rnd.uniform(0, 20)
+        covers[f"k{k}"] = [box(x, y, min(30, x + rnd.uniform(1, 12)), min(25, y + rnd.uniform(1, 10)))]
+    slots = {k: k.upper() for k in covers}
+    plan = gc.plan_layers(box(0, 0, 30, 25), covers, "base", slots)
+    m = gc.build_flat(plan, cell=3.0, surfaces="shared", snap=0.001)
+    assert math.isclose(_area(m).sum(), plan.surface.area, rel_tol=1e-6)
+    m = gc.add_skirt(m, 1.0)
+    r = mesh_report(m.verts, m.faces, profile="NPM-GROUND", part="ground")
+    assert (r["vertex_pairs"], r["face_pairs"]) == (0, 0)
+    assert gs.skirt_gaps(m, 1.0) == []
+
+
+# ---------------------------------------------------------------- skirt check on the export (group-agnostic)
+
+
+def _write(tmp_path, mesh, name="g.obj"):
+    p = tmp_path / name
+    slots = sorted(set(mesh.slot) - {"Skirt"})
+    gs.write_obj(p, mesh, slots + ["Skirt"], "SM_T_Ground", "synthetic")
+    return p
+
+
+def _flat_one():
+    plan = gc.plan_layers(box(0, 0, 6, 6), {"base": [box(0, 0, 6, 6)]}, "base", {"base": "ID01_Base"})
+    return gc.build_flat(plan, cell=3.0, surfaces="shared")
+
+
+def test_export_skirt_check_pass_and_short_and_missing(tmp_path):
+    good = gs.skirt_check_export(_write(tmp_path, gc.add_skirt(_flat_one(), 1.0), "a.obj"), 1.0)
+    assert good["status"] == "pass" and good["outer_edges"] > 0 and good["min_drop_m"] >= 1.0
+    deep = gc.add_skirt(_flat_one(), 1.0)
+    deep.verts[deep.verts[:, 2] < -0.5, 2] = -0.5  # skirt shortened to 0.5 m after the build
+    short = gs.skirt_check_export(_write(tmp_path, deep, "b.obj"), 1.0)
+    assert short["status"] == "fail" and short["gaps"] and short["min_drop_m"] == pytest.approx(0.5)
+    none = gs.skirt_check_export(_write(tmp_path, _flat_one(), "c.obj"), 1.0)
+    assert none["status"] == "fail" and none["gaps"][0]["reason"] == "no skirt quad"
+
+
+def test_export_skirt_check_exactly_at_threshold_passes_and_just_below_fails(tmp_path):
+    at = gs.skirt_check_export(_write(tmp_path, gc.add_skirt(_flat_one(), 1.0), "a.obj"), 1.0)
+    assert at["status"] == "pass"
+    m = gc.add_skirt(_flat_one(), 1.0)
+    m.verts[m.verts[:, 2] < -0.5, 2] = -0.999
+    assert gs.skirt_check_export(_write(tmp_path, m, "b.obj"), 1.0)["status"] == "fail"
+
+
+def test_export_skirt_check_fail_closed(tmp_path):
+    empty = tmp_path / "e.obj"
+    empty.write_text("# nothing\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="no faces"):
+        gs.skirt_check_export(empty, 1.0)
+    nan = tmp_path / "n.obj"
+    nan.write_text("v 0 0 nan\nv 1 0 0\nv 0 1 0\nf 1 2 3\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="finite"):
+        gs.skirt_check_export(nan, 1.0)
+    for bad in (0.0, -1.0, float("nan"), float("inf")):
+        with pytest.raises(ValueError):
+            gs.skirt_check_export(_write(tmp_path, gc.add_skirt(_flat_one(), 1.0), "x.obj"), bad)
+
+
+def test_export_skirt_check_rejects_downward_top(tmp_path):
+    """A flipped top (normal down) is not a Ground top: every edge is then unclassified -> fail, not pass."""
+    p = tmp_path / "flip.obj"
+    p.write_text("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 3 2\n", encoding="utf-8")
+    r = gs.skirt_check_export(p, 1.0)
+    assert r["status"] == "fail" and r["top_faces"] == 0
+
+
+def _relief(w, h, n=6, margin=1.0):
+    pts = []
+    for i in range(n):
+        for j in range(n):
+            x = -margin + (w + 2 * margin) * i / (n - 1)
+            y = -margin + (h + 2 * margin) * j / (n - 1)
+            pts.append((x, y, 100.0 + 0.05 * x - 0.03 * y))
+    return pts
+
+
+def _covers():
+    return [gs.Cover(1, "Base", [box(0, 0, 20, 20)], (10, 10, 10), "spec"),
+            gs.Cover(2, "Tile", [box(5, 5, 12, 12)], (200, 0, 0), "spec"),
+            gs.Cover(3, "Lawn", [Polygon([(9, 9), (15, 9), (15, 14), (9, 14)])], (0, 200, 0), "spec")]
+
+
+def test_build_site_shared_end_to_end(tmp_path):
+    res = gs.build_site(box(0, 0, 20, 20), _covers(), 1, _relief(20, 20), 100.0, origin_xy=(0, 0), cell=3.0,
+                        surfaces="shared")
+    m = res.mesh
+    assert res.report["stages"]["surfaces"]["mode"] == "shared"
+    assert set(m.level.tolist()) <= {0, -1}
+    r = mesh_report(m.verts, m.faces, profile="NPM-GROUND", part="ground")
+    assert (r["vertex_pairs"], r["face_pairs"]) == (0, 0)
+    assert res.report["stages"]["skirt"]["skirt_gap_edges"] == []
+    assert res.report["findings"] == [f for f in res.report["findings"] if f.startswith("UCX")]
+    check = gs.skirt_check_export(_write(tmp_path, m), 1.0)
+    assert check["status"] == "pass"
+    top = m.level >= 0
+    assert math.isclose(_area(m, top).sum(), 400.0, rel_tol=1e-9)
+
+
+def test_build_site_rejects_unknown_surfaces():
+    with pytest.raises(ValueError, match="surfaces"):
+        gs.build_site(box(0, 0, 20, 20), _covers(), 1, _relief(20, 20), 100.0, surfaces="cake")
+
+
+def test_cli_accepts_surfaces_param():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("bgs", Path(__file__).resolve().parents[1]
+                                                  / "tools/ground/build_ground_site.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert "surfaces" in mod.PARAMS and "adapter" in mod.TOP_KEYS
