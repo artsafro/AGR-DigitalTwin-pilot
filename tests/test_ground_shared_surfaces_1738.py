@@ -240,6 +240,18 @@ def test_export_skirt_check_notch_hidden_by_next_quad_fails(tmp_path):
     assert r["status"] == "fail" and r["gap_count"] == 1 and r["min_drop_m"] == pytest.approx(0.6)
 
 
+def test_export_skirt_check_station_near_edge_end_keeps_full_wall(tmp_path):
+    """r2 site regression (SIL13): a wall vertex 3e-5 m before the edge end (a relief sliver) adds a station whose
+    right side is shorter than xy_tol; the edge's own wall still covers it -> pass, min 1.5 (not a false 'no wall')."""
+    p = _segmented_wall_obj(tmp_path / "e.obj")
+    txt = p.read_text(encoding="utf-8")
+    nv = sum(1 for ln in txt.splitlines() if ln.startswith("v "))
+    txt += f"v 9.99997 0.0 0\nv 10.0 0.0 0\nv 9.99997 0.0 -1.5\nf {nv + 1} {nv + 3} {nv + 2}\n"
+    p.write_text(txt, encoding="utf-8")
+    r = gs.skirt_check_export(p, 1.0)
+    assert r["status"] == "pass" and r["min_drop_m"] == pytest.approx(1.5)
+
+
 def test_export_skirt_check_corner_and_removed_quad_combined(tmp_path):
     """r2 regression combined with r1: shallow corner on edge 0 + removed inner quad on edge 2 -> two failing edges."""
     p = _segmented_wall_obj(tmp_path / "cq.obj", {(2, 1)})

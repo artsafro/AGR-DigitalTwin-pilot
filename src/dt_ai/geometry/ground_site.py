@@ -429,11 +429,12 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
     walls = np.nonzero(is_wall)[0]
     wtree = STRtree([LineString(v[f[i], :2]).envelope.buffer(xy_tol) for i in walls]) if len(walls) else None
 
-    def depth_at(p_xy, z_top, u, side):
+    def depth_at(p_xy, z_top, u, side, reach):
         """Covered depth below ``z_top`` at ``p_xy`` by walls in the vertical plane of the edge with unit plan
-        direction ``u``, as the one-sided limit from ``side`` (+1 towards b, -1 towards a). A perpendicular wall of
-        the neighbour edge also contains the corner line, and the next quad's full-depth side hides a shallow vertex
-        of this quad; neither may count (#1738 r2 P1-1)."""
+        direction ``u``, as the one-sided limit from ``side`` (+1 towards b, -1 towards a): a wall counts only when
+        it extends more than ``reach`` from the station to that side. A perpendicular wall of the neighbour edge
+        also contains the corner line, and the next quad's full-depth side hides a shallow vertex of this quad;
+        neither may count (#1738 r2 P1-1)."""
         if wtree is None:
             return 0.0
         spans = []
@@ -451,7 +452,7 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
             if abs(float(h[0] * q[1] - h[1] * q[0])) > xy_tol:
                 continue  # not in this wall's vertical plane
             su = (P[:, :2] - p_xy) @ u  # one-sided limit: the wall must extend from the station towards ``side``
-            if (side > 0 and su.max() <= xy_tol) or (side < 0 and su.min() >= -xy_tol):
+            if (side > 0 and su.max() <= reach) or (side < 0 and su.min() >= -reach):
                 continue
             s = (P[:, :2] - P[0, :2]) @ h
             sp = float((p_xy - P[0, :2]) @ h)
@@ -495,11 +496,13 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
     for a, b in outer_set:
         d = []
         e = v[b, :2] - v[a, :2]
-        u = e / (float(np.linalg.norm(e)) or 1.0)
+        el = float(np.linalg.norm(e))
+        u = e / (el or 1.0)
         for t in stations(a, b):
             p = v[a] + t * (v[b] - v[a])
-            sides = (1,) if t <= 0.0 else (-1,) if t >= 1.0 else (-1, 1)
-            d.append(min(depth_at(p[:2], float(p[2]), u, s) for s in sides))
+            # a side exists while the edge continues that way; the wall must reach min(xy_tol, half the rest)
+            sides = [(s, min(xy_tol, r / 2)) for s, r in ((-1, t * el), (1, (1 - t) * el)) if r > 1e-12]
+            d.append(min(depth_at(p[:2], float(p[2]), u, s, r) for s, r in sides) if sides else 0.0)
         drop = min(d)
         drops.append(drop)
         if drop < drop_m - 1e-6:
