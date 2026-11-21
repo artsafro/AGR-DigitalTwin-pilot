@@ -123,6 +123,9 @@ slots; then map the UVs of each MAF into its slot. Embedding in the Ground FBX c
 - Needs: headless for packing; no tool yet for the UV remap; human for the visual check.
 - Done when: one 512 RGB atlas, the UV JSON, and every face of every MAF inside its material's slot.
 
+For an existing NPM MAF atlas, use [Planting into MAF planters](../model-flora/SKILL.md#planting-into-maf-planters-npm)
+to locate planting surfaces without changing the MAF materials.
+
 ### Step 8 — Placement from SPOZU with sinking
 
 Move the pivot to the horizontal centre of the MAF, down to its lowest point, then up by 10 cm [D095] (MAF-23).
