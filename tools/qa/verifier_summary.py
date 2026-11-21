@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import statistics
 import sys
 from pathlib import Path
 
@@ -141,7 +142,7 @@ def digest_line(jobs_root: Path) -> str:
         scores.append(_check_mq(_read(p), str(p))["score"])
     rate = f" ({t['match_rate']:.0%})" if t["match_rate"] is not None else ""
     mq = (f"mesh-quality {len(scores)} reports, score min {min(scores):.1f} / median "
-          f"{sorted(scores)[len(scores) // 2]:.1f} / max {max(scores):.1f}") if scores else "mesh-quality 0 reports"
+          f"{statistics.median(scores):.1f} / max {max(scores):.1f}") if scores else "mesh-quality 0 reports"
     return (f"Verifier observe week: {t['runs']} runs in {len(s['jobs'])} jobs, reviewed {t['reviewed']}, "
             f"main finding matched {t['matched']}/{t['reviewed']}{rate}; {mq}")
 
