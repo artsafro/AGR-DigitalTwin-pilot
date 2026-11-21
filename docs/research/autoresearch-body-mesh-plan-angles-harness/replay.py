@@ -68,7 +68,8 @@ def extreme_margin(rows, key):
 
 def measure(root, budget, start, prior, ref, r28, angles):
     base = prior["measure"](root, ref, r28, angles)
-    if base != json.loads(blob(REF29, f"{H29}/r29.json")):
+    # Compare the JSON values; the in-process #29 extremes are tuples.
+    if json.loads(json.dumps(base, allow_nan=False)) != json.loads(blob(REF29, f"{H29}/r29.json")):
         raise ValueError("#29 full receipt mismatch")
     plans = {p: blob(PLAN_REV, p) for p in PLANS}
     fixed, tol = prior["GRID"], prior["TOL"]
