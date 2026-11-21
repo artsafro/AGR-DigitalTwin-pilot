@@ -24,7 +24,7 @@ pytestmark = pytest.mark.blender
 ROOT = Path(__file__).resolve().parents[2]
 READBACK = ROOT / "tools" / "blender" / "fbx_readback.py"
 
-EXPORT = r'''
+EXPORT_HEADER = r'''
 import bpy
 import sys
 from pathlib import Path
@@ -34,6 +34,8 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = "METRIC"
 bpy.context.scene.unit_settings.scale_length = 1.0
 mesh = bpy.data.meshes.new("ReviewGeometry")
+'''
+EXPORT = EXPORT_HEADER + r'''
 mesh.from_pydata([(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)], [], [(0, 1, 2), (0, 2, 3)])
 obj = bpy.data.objects.new("SM_Test_K_1_Main", mesh)
 bpy.context.collection.objects.link(obj)
@@ -127,7 +129,7 @@ def test_blender_readback_preserves_slanted_uv_collapse(blender, tmp_path, profi
         for t in (0.0, 0.025, 0.05)
     ]
     # Build a synthetic FBX from the mixed incident; the actual readback script writes the JSON.
-    export = EXPORT[:EXPORT.index("mesh.from_pydata")] + f'''
+    export = EXPORT_HEADER + f'''
 mesh.from_pydata({vertices!r}, [], {geometry["polygons"]!r})
 obj = bpy.data.objects.new({incident["name"]!r}, mesh)
 bpy.context.collection.objects.link(obj)
@@ -155,7 +157,9 @@ bpy.ops.export_scene.fbx(filepath=str(out), object_types={{"MESH"}})
     assert unwrapped.data["faces"] == {incident["name"]: [6]}
     facts = report["meshes"][0]["face_geometry"]
     assert facts["polygon_uv"][6] == geometry["polygon_uv"][6]
-    assert [point[2] for point in facts["vertices"]] == pytest.approx([height] * len(vertices), abs=5e-8)
+    # The FBX axis conversion perturbs Z by up to 1.61e-7 on this strip;
+    # this tolerance still rejects six-decimal rounding (|0.123457 - height| = 2.2e-7).
+    assert [point[2] for point in facts["vertices"]] == pytest.approx([height] * len(vertices), abs=1.8e-7)
     if profile == "vpm":
         assert findings["mirrored UV polygons"].data["faces"] == {incident["name"]: [3]}
         assert findings["UV outside UDIM tile"].data["faces"] == {incident["name"]: [1]}
@@ -163,3 +167,23 @@ bpy.ops.export_scene.fbx(filepath=str(out), object_types={{"MESH"}})
         assert density.data["faces"]["less"] == {incident["name"]: [6]}
     else:
         assert findings["duplicate vertices"].status == "review"
+
+
+@pytest.mark.parametrize("alias", ["resolved", "hardlink", "stale-report"])
+def test_blender_readback_refuses_existing_output(blender, tmp_path, alias):
+    script = tmp_path / "export_seam.py"
+    script.write_text(EXPORT, encoding="utf-8")
+    fbx = tmp_path / "seam.fbx"
+    result = _run(blender, str(script), [str(fbx)])
+    assert result.returncode == 0 and fbx.is_file(), result.stdout + result.stderr
+    output = tmp_path / "report.json"
+    if alias == "resolved":
+        output = fbx.parent / ".." / fbx.parent.name / fbx.name
+    elif alias == "hardlink":
+        output.hardlink_to(fbx)
+    else:
+        output.write_text('{"readback_ok": true}', encoding="utf-8")
+    original, existing = fbx.read_bytes(), output.read_bytes()
+    result = _run(blender, str(READBACK), [str(fbx), str(output)])
+    assert result.returncode != 0
+    assert fbx.read_bytes() == original and output.read_bytes() == existing
