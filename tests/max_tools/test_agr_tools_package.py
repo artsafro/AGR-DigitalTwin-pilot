@@ -41,7 +41,7 @@ pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_t')
 FBX = b'Kaydara FBX Binary  \x00\x1a\x00' + struct.pack('<I', 7400) + b'\x00' * 64
 PY, RUN = sys.executable, pc.subprocess_runner
 LIGHT = light_fbx()
-GROUND_LIGHT = light_fbx(root='SM_X_Ground_Root', lights=[('SM_X_Ground_Omni_001', 0)])
+GROUND_LIGHT = light_fbx(root='X_Ground_Root', lights=[('X_Ground_Omni_001', 0)])
 
 
 def _png(colour):

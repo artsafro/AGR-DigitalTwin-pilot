@@ -231,10 +231,7 @@ def light_scene(data: bytes) -> dict:
 
 
 def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
-    """Validate a VPM Light FBX against its model stem, including the delivered Address-only naming.
-
-    Retain the AGR Tools exported SM_ convention for uniform legacy files, not mixed names.
-    """
+    """Validate VPM light nodes against the address, without the file stem's SM_ prefix."""
     try:
         models = light_scene(data)
     except ValueError as exc:
@@ -243,9 +240,8 @@ def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
     out = []
     lights = [m for m in models.values() if m["light"] is not None]
     roots = [(k, m) for k, m in models.items() if m["light"] is None and m["parent"] == 0]
-    address = cipher.removeprefix("SM_")
-    prefix = address
-    want_root = f"{address}_Root"
+    prefix = cipher.removeprefix("SM_")
+    want_root = f"{prefix}_Root"
 
     def vector(v):
         return len(v) == 3 and all(type(x) in (float, int) and math.isfinite(x) for x in v)
@@ -256,9 +252,6 @@ def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
         bad("light_root", f"{len(roots)} root objects {[m['name'] for _k, m in roots][:5]}", f"exactly one {want_root}")
     else:
         rid, root = roots[0]
-        if root["name"] == f"{cipher}_Root":
-            prefix = cipher
-            want_root = root["name"]
         if root["name"] != want_root or root["kind"] != "Null":
             bad("light_root", f"root {root['name']!r}", want_root)
         reset = (all(vector(root[k]) for k in ("t", "r", "s"))

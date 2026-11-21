@@ -14,6 +14,7 @@ import math
 import struct
 import sys
 import types
+from contextlib import nullcontext
 from pathlib import Path
 
 import pytest
@@ -324,7 +325,7 @@ def test_measured_max_target_spot_rotation_matches_its_aim():
 def test_red_lost_omni_is_found_by_the_readback(tmp_path):
     lights, helpers, opts = light_scene(tmp_path)
     plan = lc.export_plan(lights, helpers, opts)
-    found, _ = lc.readback_findings(plan, _scene_fbx(plan, drop=('SM_TestAddr_Omni_001', 'SM_TestAddr_Photo_001')))
+    found, _ = lc.readback_findings(plan, _scene_fbx(plan, drop=('TestAddr_Omni_001', 'TestAddr_Photo_001')))
     assert {c for c, _ in found[23]} == {'light_readback_missing'}
     assert 'light_readback_count' in {c for c, _ in found[10]}
 
@@ -398,12 +399,91 @@ def test_written_scene_passes_the_qa_package_light_rules(tmp_path):
     lights, helpers, opts = light_scene(tmp_path)
     lights = [r for r in lights if r['cls'] != 'Free_Light']                  # Photometric is not a VPM type
     plan = lc.export_plan(lights, helpers, opts)
-    data = fbx_scene([(1, 'SM_TestAddr_Root', 'Null', 0, None, (0, 0, 0))] +
+    data = fbx_scene([(1, plan['root']['name'], 'Null', 0, None, (0, 0, 0))] +
                      [(100 + i, r['name'], 'Light', 1, 2 if r['kind'] == 'spot' else 0, (0, 0, 0))
                       for i, r in enumerate(plan['lights'])])
     out = vp.light_findings('SM_TestAddr_Light.fbx', data, 'SM_TestAddr', [])
     assert [f.status for f in out] == ['pass']
     assert lc.fbx_lights(data)['version'] == 7400
+
+
+def _export_fixture(monkeypatch, tmp_path, address, legacy, write):
+    lm = _load(PKG / 'light_max.py', 'agr_tools_light_max_1768')
+    prefix = ('SM_' if legacy else '') + address
+    root = types.SimpleNamespace(handle=1, name=prefix + '_Root')
+    nodes = [root, types.SimpleNamespace(handle=2, name=prefix + '_Spot_001'),
+             types.SimpleNamespace(handle=3, name=prefix + '_Omni_050')]
+    helpers = [dict(handle=1, name=root.name, cls='Dummy', parent=None)]
+    lights = [dict(handle=n.handle, name=n.name, cls=cls, parent=1, rot=IDENT)
+              for n, cls in zip(nodes[1:], ['freeSpot', 'Omnilight'])]
+    monkeypatch.setattr(lm, '_rt', lambda: None)
+    monkeypatch.setattr(lm, '_handle', lambda node: node.handle)
+    monkeypatch.setattr(lm, '_export_rows', lambda: (nodes, lights, helpers))
+    ctx = types.SimpleNamespace(core=lc, edit=ec, options={'folder': str(tmp_path)},
+                                emax=types.SimpleNamespace(snapshot=lambda ns: [n.name for n in ns],
+                                                           session=lambda _tool: nullcontext()),
+                                agr=types.SimpleNamespace(_load_core=lambda *_: types.SimpleNamespace(write_new_fbx=write)))
+    return lm, ctx, nodes, lights
+
+
+@pytest.mark.parametrize('address', ['TestAddr', 'TestAddr_Ground'])
+@pytest.mark.parametrize('legacy', [False, True])
+@pytest.mark.parametrize('write_fails', [False, True])
+def test_light_export_writes_address_names(monkeypatch, tmp_path, address, legacy, write_fails):
+    expected = [address + suffix for suffix in ('_Root', '_Spot_001', '_Omni_050')]
+    target = tmp_path / ('SM_' + address + '_Light.fbx')
+
+    def writer(nodes, path, _params):
+        names = [n.name for n in nodes]
+        assert names == expected and Path(path) == target
+        if write_fails:
+            raise OSError('synthetic writer failure')
+        Path(path).write_bytes(fbx_scene([(1, names[0], 'Null', 0, None, (0, 0, 0)),
+                                         (2, names[1], 'Light', 1, 2, (0, 0, 0)),
+                                         (3, names[2], 'Light', 1, 0, (0, 0, 0))]))
+
+    lm, ctx, nodes, _ = _export_fixture(monkeypatch, tmp_path, address, legacy, writer)
+    original = [n.name for n in nodes]
+    preview = lm.light_export(ctx, 'preview', None, None)
+    assert preview['status'] == 'pass'
+    dm = _load(PKG / 'deliver_max.py', 'agr_tools_deliver_max_t')
+    assert dm._stem({}, [('light.export', preview)]) == 'SM_' + address
+    assert [n.name for n in nodes] == original and not target.exists()
+    if write_fails:
+        with pytest.raises(OSError, match='synthetic writer failure'):
+            lm.light_export(ctx, 'apply', None, preview)
+        assert not target.exists()
+    else:
+        result = lm.light_export(ctx, 'apply', None, preview)
+        assert result['status'] == 'pass'
+        assert sorted(result['plan']['readback']['raw']) == sorted(expected)
+    assert [n.name for n in nodes] == original
+
+
+def test_light_export_refuses_normalized_duplicate(monkeypatch, tmp_path):
+    def writer(*_args):
+        pytest.fail('duplicate must not reach the writer')
+
+    lm, ctx, nodes, lights = _export_fixture(monkeypatch, tmp_path, 'TestAddr', True, writer)
+    nodes[2].name = lights[1]['name'] = 'TestAddr_Spot_001'
+    original = [n.name for n in nodes]
+    preview = lm.light_export(ctx, 'preview', None, None)
+    assert preview['status'] == 'fail'
+    with pytest.raises(ValueError, match='TestAddr_Spot_001'):
+        lm.light_export(ctx, 'apply', None, preview)
+    assert list(tmp_path.iterdir()) == [] and [n.name for n in nodes] == original
+
+
+def test_light_export_rejects_stale_preview(monkeypatch, tmp_path):
+    def writer(*_args):
+        pytest.fail('stale preview must not reach the writer')
+
+    lm, ctx, nodes, lights = _export_fixture(monkeypatch, tmp_path, 'TestAddr', True, writer)
+    preview = lm.light_export(ctx, 'preview', None, None)
+    nodes[1].name = lights[0]['name'] = 'TestAddr_Spot_002'
+    with pytest.raises(ValueError, match='scene changed since the preview'):
+        lm.light_export(ctx, 'apply', None, preview)
+    assert list(tmp_path.iterdir()) == [] and nodes[1].name == 'TestAddr_Spot_002'
 
 
 def test_unreadable_fbx_is_an_error():
