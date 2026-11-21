@@ -362,13 +362,23 @@ def skirt_gaps(mesh: gc.Mesh, drop_m: float, xy_tol: float = 1e-6) -> list:
     return gaps
 
 
-def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy_tol: float = 1e-6) -> dict:
+def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy_tol: float = 1e-4,
+                       rings: str = "all") -> dict:
     """GND-03 on the EXPORTED file (#1738): groups, levels and slot names are ignored, only geometry counts.
 
-    Top faces = triangles whose normal z > ``up_cos``; every top edge used by exactly one top face is an outer
-    edge and needs a skirt quad (``skirt_gaps``) at least ``drop_m`` deep. Empty, non-finite or non-triangle
-    input is an error; a file without upward faces fails (never a pass on nothing measured)."""
+    Top faces = triangles whose normal z > ``up_cos``. An outer edge is a top edge used by one top face with no top
+    face on its outer side in plan (a layered inset rim over the base is not the perimeter). Below three points of
+    every outer edge (ends inset 0.1 %, middle) the vertical line must be covered by wall triangles without a gap
+    from the surface down to ``drop_m``; any wall topology counts (per-edge quads, n-gon fans), only the covered
+    depth is measured. ``rings="outer"`` checks only the exterior ring of each component (D251: inner rings are
+    exempt); ``"all"`` checks holes too. Empty, non-finite or non-triangle input is an error; a file without
+    upward faces or without outer edges fails (never a pass on nothing measured)."""
+    from shapely import STRtree, points as _pts
+    from shapely.geometry import LineString
+    from shapely.ops import unary_union
     drop_m = _finite("drop_m", drop_m, positive=True)
+    if rings not in ("all", "outer"):
+        raise ValueError(f"rings {rings!r}: expected 'all' or 'outer'")
     verts, faces = [], []
     for line in Path(path).read_text(encoding="utf-8").splitlines():
         head, _, rest = line.partition(" ")
@@ -388,49 +398,85 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
     n = np.cross(v[f[:, 1]] - v[f[:, 0]], v[f[:, 2]] - v[f[:, 0]])
     ln = np.linalg.norm(n, axis=1)
     nz = np.where(ln > 0, n[:, 2] / np.where(ln > 0, ln, 1.0), 0.0)
-    level = np.where(nz > up_cos, 0, -1)
-    mesh = gc.Mesh(v, f, ["x"] * len(f), level, np.zeros((len(f), 3, 2)), 1.0)
+    is_top = nz > up_cos
+    is_wall = (ln > 0) & (np.abs(nz) <= 1e-3)
     count: dict = {}
     directed: dict = {}
-    for tri in f[level == 0]:
+    for tri in f[is_top]:
         for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])):
             k = (min(a, b), max(a, b))
             count[k] = count.get(k, 0) + 1
             directed[k] = (int(a), int(b))
-    # an open top edge with top surface on its outer side in plan (a layered inset rim over the base) is not the
-    # perimeter: probe 0.1 mm to the right of the CCW-directed edge
-    from shapely import STRtree, points as _pts
-    top_polys = [Polygon(v[t, :2]) for t in f[level == 0]]
+    top_polys = [Polygon(v[t, :2]) for t in f[is_top]]
     tree = STRtree(top_polys) if top_polys else None
     open_edges = [k for k, c in count.items() if c == 1]
     probes = []
     for k in open_edges:
         a, b = directed[k]
         d = v[b, :2] - v[a, :2]
-        ln_ = float(np.hypot(*d)) or 1.0
-        probes.append((v[a, :2] + v[b, :2]) / 2 + np.array([d[1], -d[0]]) / ln_ * 1e-4)
+        probes.append((v[a, :2] + v[b, :2]) / 2 + np.array([d[1], -d[0]]) / (float(np.hypot(*d)) or 1.0) * 1e-4)
     covered = set()
     if probes and tree is not None:
         hit = tree.query(_pts(np.array(probes)), predicate="intersects")
         covered = {open_edges[i] for i in hit[0].tolist()}
-    outer_set = {k for k in open_edges if k not in covered}
-    gaps = [g for g in skirt_gaps(mesh, drop_m, xy_tol) if tuple(sorted(g["edge"])) in outer_set]
-    outer = len(outer_set)
-    top = int((level == 0).sum())
-    drops = [g["drop_m"] for g in gaps]
-    # min drop over every outer edge: a passing edge is >= drop_m; measure its real depth from the skirt bottom
-    zmin_skirt = float(v[f[level < 0]].reshape(-1, 3)[:, 2].min()) if (level < 0).any() else None
-    status = "pass" if top and outer and not gaps else "fail"
-    min_drop = min(drops) if drops else (None if not outer else drop_m)
-    if status == "pass":
-        tops = {int(i) for k in outer_set for i in k}
-        xy = {}
-        for i in range(len(v)):
-            xy.setdefault((round(v[i, 0], 6), round(v[i, 1], 6)), []).append(float(v[i, 2]))
-        min_drop = min(float(v[i, 2]) - min(xy[(round(v[i, 0], 6), round(v[i, 1], 6))]) for i in tops)
-    return {"file": str(path), "drop_required_m": drop_m, "status": status, "top_faces": top,
-            "outer_edges": outer, "gaps": gaps[:20], "gap_count": len(gaps),
-            "min_drop_m": None if min_drop is None else round(min_drop, 6), "skirt_bottom_z": zmin_skirt}
+    outer_set = [k for k in open_edges if k not in covered]
+    if rings == "outer" and outer_set:
+        shell = unary_union([p.buffer(0) for p in top_polys])
+        ext = unary_union([LineString(p.exterior.coords) for p in gc._polys(shell)])
+        outer_set = [k for k in outer_set if ext.distance(_pts((v[k[0], :2] + v[k[1], :2]) / 2)) <= xy_tol]
+    walls = np.nonzero(is_wall)[0]
+    wtree = STRtree([LineString(v[f[i], :2]).envelope.buffer(xy_tol) for i in walls]) if len(walls) else None
+
+    def depth_at(p_xy, z_top):
+        if wtree is None:
+            return 0.0
+        spans = []
+        for wi in wtree.query(_pts(p_xy)).tolist():
+            P = v[f[walls[wi]]]
+            h = P[1, :2] - P[0, :2] if np.linalg.norm(P[1, :2] - P[0, :2]) > 1e-9 else P[2, :2] - P[0, :2]
+            hl = float(np.linalg.norm(h))
+            if hl < 1e-9:
+                continue
+            h = h / hl
+            q = p_xy - P[0, :2]
+            if abs(float(h[0] * q[1] - h[1] * q[0])) > xy_tol:
+                continue  # not in this wall's vertical plane
+            s = (P[:, :2] - P[0, :2]) @ h
+            sp = float((p_xy - P[0, :2]) @ h)
+            zs = []
+            for i, j in ((0, 1), (1, 2), (2, 0)):
+                s0, s1 = s[i], s[j]
+                if min(s0, s1) - xy_tol <= sp <= max(s0, s1) + xy_tol:
+                    if abs(s1 - s0) < 1e-9:
+                        zs += [P[i, 2], P[j, 2]]
+                    else:
+                        t = min(1.0, max(0.0, (sp - s0) / (s1 - s0)))
+                        zs.append(P[i, 2] + t * (P[j, 2] - P[i, 2]))
+            if zs:
+                spans.append((min(zs), max(zs)))
+        low = z_top
+        for lo, hi in sorted(spans, key=lambda s: -s[1]):  # walk down while the spans touch
+            if hi >= low - 1e-6:
+                low = min(low, lo)
+        return float(z_top - low)
+
+    gaps, drops = [], []
+    for a, b in outer_set:
+        d = []
+        for t in (0.001, 0.5, 0.999):
+            p = v[a] + t * (v[b] - v[a])
+            d.append(depth_at(p[:2], float(p[2])))
+        drop = min(d)
+        drops.append(drop)
+        if drop < drop_m - 1e-6:
+            gaps.append({"edge": [int(a), int(b)], "reason": "no skirt wall" if drop <= 1e-9 else f"drop < {drop_m} m",
+                         "drop_m": round(drop, 6), "xy": v[a, :2].round(3).tolist()})
+    top = int(is_top.sum())
+    status = "pass" if top and outer_set and not gaps else "fail"
+    return {"file": str(path), "drop_required_m": drop_m, "rings": rings, "status": status, "top_faces": top,
+            "outer_edges": len(outer_set), "gaps": gaps[:20], "gap_count": len(gaps),
+            "min_drop_m": round(min(drops), 6) if drops else None,
+            "median_drop_m": round(float(np.median(drops)), 6) if drops else None}
 
 
 def _retained(flat_xy: np.ndarray, xy: np.ndarray, tol: float) -> dict:

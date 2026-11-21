@@ -108,7 +108,7 @@ def test_export_skirt_check_pass_and_short_and_missing(tmp_path):
     short = gs.skirt_check_export(_write(tmp_path, deep, "b.obj"), 1.0)
     assert short["status"] == "fail" and short["gaps"] and short["min_drop_m"] == pytest.approx(0.5)
     none = gs.skirt_check_export(_write(tmp_path, _flat_one(), "c.obj"), 1.0)
-    assert none["status"] == "fail" and none["gaps"][0]["reason"] == "no skirt quad"
+    assert none["status"] == "fail" and none["gaps"][0]["reason"] == "no skirt wall"
 
 
 def test_export_skirt_check_exactly_at_threshold_passes_and_just_below_fails(tmp_path):
@@ -149,6 +149,34 @@ def test_export_skirt_check_layered_inset_rim_is_not_perimeter(tmp_path):
     assert r["outer_edges"] == gs.skirt_check_export(
         _write(tmp_path, gc.add_skirt(gc.build_flat(_plan(), cell=3.0, surfaces="shared"), 1.0), "s.obj"),
         1.0)["outer_edges"]
+
+
+def test_export_skirt_check_ngon_fan_wall_counts_and_outer_rings(tmp_path):
+    """A skirt wall triangulated as a fan across two top edges (Max n-gon) is measured by covered depth."""
+    p = tmp_path / "fan.obj"
+    v = [(0, 0, 0), (2, 0, 0), (4, 0, 0), (4, 4, 0), (0, 4, 0), (0, 0, -1.2), (4, 0, -1.2)]
+    f = [(1, 2, 5), (2, 4, 5), (2, 3, 4),  # top (CCW)
+         (1, 6, 2), (2, 6, 7), (2, 7, 3)]  # fan wall under the y=0 side, 1.2 m
+    p.write_text("".join(f"v {x} {y} {z}\n" for x, y, z in v) + "".join(f"f {a} {b} {c}\n" for a, b, c in f),
+                 encoding="utf-8")
+    r = gs.skirt_check_export(p, 1.0)
+    walled = {(0, 1), (1, 2)}
+    assert r["status"] == "fail" and r["outer_edges"] == 5
+    assert not walled & {tuple(sorted(g["edge"])) for g in r["gaps"]}
+    assert r["gap_count"] == 3
+    hole = gc.plan_layers(box(0, 0, 60, 60), {"base": [box(0, 0, 60, 60).difference(box(20, 20, 50, 50))]}, "base",
+                          {"base": "ID01_Base"}, footprint_min_area=100.0)
+    m = gc.build_flat(hole, cell=6.0, surfaces="shared")
+    m = gc.add_skirt(m, 1.0)
+    keep = np.ones(len(m.faces), bool)  # drop the hole skirt (D251 exempts inner rings)
+    cen = m.verts[m.faces].mean(axis=1)
+    keep &= ~((m.level < 0) & (cen[:, 0] > 19) & (cen[:, 0] < 51) & (cen[:, 1] > 19) & (cen[:, 1] < 51))
+    m2 = gc.Mesh(m.verts, m.faces[keep], [s for s, k in zip(m.slot, keep) if k], m.level[keep], m.uv[keep], m.cell)
+    q = _write(tmp_path, m2, "hole.obj")
+    assert gs.skirt_check_export(q, 1.0)["status"] == "fail"
+    assert gs.skirt_check_export(q, 1.0, rings="outer")["status"] == "pass"
+    with pytest.raises(ValueError, match="rings"):
+        gs.skirt_check_export(q, 1.0, rings="inner")
 
 
 def _relief(w, h, n=6, margin=1.0):

@@ -1,5 +1,0 @@
-{
-  "scenario": "ground-vpm",
-  "config": {"sources": "jobs/VATUTINO-SITE/ground-1738/ground-site-shared.json"},
-  "hooks": []
-}
