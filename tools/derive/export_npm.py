@@ -208,6 +208,44 @@ def parse(argv):
     return a
 
 
+def map_white_glass(glass, atlas, img):
+    """Verify the declared swatch in the actual export image and preserve glass UV shape within it."""
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(HERE).parents[1]))
+    from tools.derive.vpm_npm_core import glass_merge
+
+    cell = atlas["glass_white_px"]
+    if not isinstance(cell, list) or len(cell) != 4 or any(type(v) is not int for v in cell):
+        raise ValueError("invalid glass_white_px")
+    x, y, w, h = cell
+    width, height = img.size
+    if (w, h) != (16, 16) or width != height or width != atlas["atlas"] or not (
+        4 <= x <= width - w - 4 and 4 <= y <= height - h - 4
+    ):
+        raise ValueError("glass swatch outside the padded atlas")
+    for name, r in atlas["finishes"].items():
+        left = r["u0"] * width
+        top = (1 - r["v0"] - r["size"]) * height
+        size = r["size"] * width
+        if not (x >= left + size + 8 or x + w + 8 <= left or y >= top + size + 8 or y + h + 8 <= top):
+            raise ValueError(f"glass swatch too close to finish {name}")
+    for iy in range(height - y - h, height - y):
+        pixels = img.pixels[4 * (iy * width + x):4 * (iy * width + x + w)]
+        if any(c != 1.0 for i, c in enumerate(pixels) if i % 4 != 3):
+            raise ValueError("glass swatch is not pure white")
+    layer = glass.data.uv_layers.get("UVMap")
+    if layer is None:
+        raise ValueError(f"{glass.name}: no UVMap")
+    polys = list(glass.data.polygons)
+    rows = [{"object": glass.name, "uv": [tuple(layer.data[i].uv) for i in p.loop_indices]} for p in polys]
+    mapped = glass_merge(rows, [[(255, 255, 255)] * w] * h, glass.name, (0, 0, w, h))
+    for poly, row in zip(polys, mapped["faces"], strict=True):
+        for i, (u, v) in zip(poly.loop_indices, row["uv"], strict=True):
+            layer.data[i].uv = ((x + u * w) / width, 1 - (y + (1 - v) * h) / height)
+    return {"cell": cell, "white_samples": mapped["white_samples"], "uv_samples": mapped["uv_samples"]}
+
+
 def main(argv):
     if argv[:1] == ["--dry-check"]:
         return dry_check(argv[1:])
@@ -348,6 +386,10 @@ def main(argv):
     bsdf = next(n for n in nt.nodes if n.type == "BSDF_PRINCIPLED")
     td = nt.nodes.new("ShaderNodeTexImage")
     td.image = image(os.path.join(a.atlas_dir, f"T_{A}_{NNN}_Main_d_1.png"))
+    if "glass_white_px" in atlas:
+        if glass is None:
+            raise ValueError("atlas requires MainGlass, but the master has none")
+        report["glass_white"] = map_white_glass(glass, atlas, td.image)
     to = nt.nodes.new("ShaderNodeTexImage")
     to.image = image(os.path.join(a.atlas_dir, f"T_{A}_{NNN}_Main_o_1.png"))
     to.image.colorspace_settings.name = "Non-Color"
