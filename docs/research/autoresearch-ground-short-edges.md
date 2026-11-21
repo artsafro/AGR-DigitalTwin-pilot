@@ -6,7 +6,26 @@ file is edited.
 
 ## Итог (по-русски)
 
-_Заполняется после серии; контракт ниже заморожен до первого замера._
+**H35 подтверждена на замороженном НПМ-наборе (только OBSERVE, порог в код не вносится).** Qe — число рёбер
+короче 2 мм на 10 000 треугольников объекта `*_Ground`. У Ватутино v015 и всех семи сданных Артёмом NTR Ground
+Qe = **0**. У SIL13 r1–r5 Qe = **215,95–250,35** (807–915 коротких рёбер). Отрыв +215,95 при требуемом
+двукратном запасе от 1.
+
+Чем Qe лучше Qv из #32: это тот же дефект SIL13 (на r4 1 574 из 1 576 близких вершин — концы коротких рёбер),
+но Qe **не меняется** при расщеплении немногообразных вершин, как в Max `convertToPoly`. Разрезание вееров
+поднимает Qv принятого Ватутино v015 с 0 до 118, COD — до 14. Qe не меняется ни на одном из 14 входов.
+
+Все проверки прошли: T и V совпадают с #32, три повтора и повторный запуск дают те же числа, поворот и сдвиг
+не меняют E и T, 50 внесённых коротких рёбер видны на каждом принятом входе (+50).
+
+Ядро #1738, SIL13 shared v003 (опубликованный OBJ): Qe = **69,84** (185 коротких рёбер, из них 17 нулевой
+длины). Это лучше всех пяти отклонённых, но не 0, как у принятых. Порогом сдачи это не является.
+
+Ограничения: (1) ни один принятый вход не даёт E > 0, поэтому влияние правила на принятые работы не измерено;
+(2) все пять отклонённых получены из одного меша SIL13, независимого отклонённого участка нет; (3) отклонённый
+Ватутино v014 даёт 0, как и ожидалось до замера: его дефект — немногообразные вершины, они есть и у сданных NTR;
+(4) нативный Max не измерялся. Модель расщепления воспроизводит 118 вершин #370 на v014, но не 278–580 у Max
+на A3–A6. Max делает больше, чем разрезает веера.
 
 ## Why this candidate (continuing #31–#34, no new harness)
 
@@ -82,4 +101,46 @@ Inputs are customer packages outside Git, so replay is limited to this PC.
 
 ## Round log
 
-_Filled after the series._
+Contract `97298a70` (before any score), harness `af0f782f` (before the series; synthetic sanity only: a bowtie
+gains 1 vertex on split, E unchanged). One series, no reruns before the receipt. Receipt
+[`autoresearch-ground-short-edges-r35.json`](autoresearch-ground-short-edges-r35.json) SHA-256
+`49b4c69fd78874c3bfa4430dc705b06a235e068322af695e64bf75778d57ae86` (byte-identical to scratch
+`C:/x/ev_t_f4f34f04/r35.json`). A second process (`r35-replay.json`) gives an equal receipt apart from the two
+timing fields. Budget: first pair 1.7 s, the full series took 11.6 s against a 300 s cap. NumPy 2.5.3. No DCC was run.
+
+| id | input | E (≤2 mm edges) | T | Qe (median of 3, spread 0) | split: +vertices / V after | V (= #32) |
+|---|---|---:|---:|---:|---:|---:|
+| A1 | Vatutino v015 | 0 | 46 479 | 0.000 | +59 / 118 | 0 |
+| A2 | Skolkovo | 0 | 5 733 | 0.000 | +0 / 0 | 0 |
+| A3 | COD | 0 | 2 801 | 0.000 | +7 / 14 | 0 |
+| A4 | Donskoy | 0 | 11 528 | 0.000 | +2 / 4 | 0 |
+| A5 | Ostrov | 0 | 29 760 | 0.000 | +1 / 2 | 0 |
+| A6 | Kasatkino | 0 | 59 290 | 0.000 | +1 / 2 | 0 |
+| A7 | Volokolamskoe | 0 | 20 614 | 0.000 | +0 / 0 | 0 |
+| A8 | Stolbovo | 0 | 10 930 | 0.000 | +0 / 0 | 0 |
+| F1 | SIL13 r1 | 915 | 36 549 | 250.349 | +0 / 1 769 | 1 769 |
+| F2 | SIL13 r2 | 914 | 37 386 | 244.477 | +0 / 1 767 | 1 767 |
+| F3 | SIL13 r3 | 906 | 37 370 | 242.440 | +0 / 1 751 | 1 751 |
+| F4 | SIL13 r4 | 807 | 37 370 | **215.949** | +0 / 1 576 | 1 576 |
+| F5 | SIL13 r5 (= F3 bytes) | 906 | 37 370 | 242.440 | +0 / 1 751 | 1 751 |
+| W1 | Vatutino v014 (holdout, not in verdict) | 0 | 46 343 | 0.000 | +59 / 118 (= #370 Max) | 0 |
+| core | #1738 SIL13 shared v003 OBJ | 185 | 26 491 | 69.835 | not run | 290 |
+
+| # | check | clean / injected / not measured | result |
+|---|---|---|---|
+| 1 | separation, ×2 margin | clean | pass: min F 215.949 > max A 0.000, ≥ 2 |
+| 2 | T and V parity with #32 | clean | pass on all 13 |
+| 3 | three repeats | clean | pass, spread 0; second process equal |
+| 4 | rigid motion | clean | pass, E/T unchanged on 14 |
+| 5 | Max-like non-manifold split | perturbation | pass, E/T unchanged on 14; V rises on A1, A3–A6, W1 |
+| 6 | positive witness (50 short edges) | injected | pass: E +50 on all 8 accepted (A1 Vatutino = non-SIL13 witness) |
+| 7 | accepted control on which the rule fires | - | **not measured**: E = 0 on all 8 accepted |
+
+**H35: confirmed** on this corpus. Descriptive only (scratch probe, not in the receipt): on F1 all 1 769 near
+vertices and on F4 1 574 of 1 576 are endpoints of ≤ 2 mm edges. On the core OBJ 279 of 290 are, and 17 of its
+185 short edges have zero length. So on SIL13, Qe and Qv see the same slivers, and Qe drops the dependence on the
+node state.
+
+Not measured: native Max (no Max geometry dumps; the split model does not reproduce Max's 278–580 on A3–A6), VPM,
+skirt, visible deviation, budget, overlapping faces, #1738 r2/r3 builds (reports only, no meshes), an independent
+rejected site.
