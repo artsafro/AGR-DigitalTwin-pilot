@@ -1,0 +1,5 @@
+{
+  "scenario": "oks-npm",
+  "config": {"sources": "jobs/KPP1/sources.json", "profile": "NPM", "verifier_mode": "observe"},
+  "hooks": []
+}

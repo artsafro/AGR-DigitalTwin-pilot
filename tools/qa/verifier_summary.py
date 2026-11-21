@@ -10,6 +10,10 @@ accepted as is). A run matches when its main discrepancy key equals a corrected 
 (`checklist:rib_count:2-1` under `checklist:rib_count`), or when the verifier found nothing and Artem corrected
 nothing. Fails closed: a review naming a missing or duplicated report, an unknown key, an invalid report or an
 empty root is an error (exit 2). For Artem's review after a week of observe mode.
+
+Observe week (#1739): `--sheet-line --verifier V.json --mesh-quality MQ.json` prints the ONE line every sheet sent to
+Artem carries (verifier main finding + mesh-quality score and worst facade cell); `--digest` prints one weekly line
+for the status push (runs, matches, mesh-quality score band). Both fail closed (exit 2) on a missing/invalid report.
 """
 from __future__ import annotations
 
@@ -97,11 +101,69 @@ def summarize(jobs_root: Path) -> dict:
     return {"jobs": out, "total": tot}
 
 
+def _mqo():
+    import mesh_quality_observe as mqo   # noqa: PLC0415  (tools/qa on sys.path above)
+    return mqo
+
+
+def _check_mq(doc, where):
+    try:
+        return _mqo().validate_stage_report(doc)
+    except ValueError as e:
+        raise VerifierError(f"{where}: {e}") from None
+
+
+def sheet_line(verifier_doc, mq_doc) -> str:
+    """The ONE line every sheet sent to Artem carries during the observe week (#1739): verifier + mesh-quality."""
+    try:
+        v = validate_report(verifier_doc)
+    except VerifierError as e:
+        raise VerifierError(f"verifier report: {e}") from None
+    m = _check_mq(mq_doc, "mesh_quality report")
+    main = v["main_discrepancy"]
+    sc = v["scores"]
+    left = (f"Verifier ({v['mode']}): main={main['key'] if main else 'none'}; "
+            f"checklist flagged {sc.get('checklist_flagged')}/{sc.get('checklist_items')}; "
+            f"material min {sc.get('material_min')}")
+    line = f"{left} | Mesh quality (observe): {m['signal']}"
+    if "\n" in line or "\r" in line:
+        raise VerifierError("sheet line must be one line")
+    return line
+
+
+def digest_line(jobs_root: Path) -> str:
+    """Weekly digest line for the status push: verifier runs / matches + mesh-quality score bands."""
+    s = summarize(jobs_root)
+    t = s["total"]
+    jobs_root = Path(jobs_root)
+    scores = []
+    for p in sorted(jobs_root.rglob("mesh_quality*.json")):
+        scores.append(_check_mq(_read(p), str(p))["score"])
+    rate = f" ({t['match_rate']:.0%})" if t["match_rate"] is not None else ""
+    mq = (f"mesh-quality {len(scores)} reports, score min {min(scores):.1f} / median "
+          f"{sorted(scores)[len(scores) // 2]:.1f} / max {max(scores):.1f}") if scores else "mesh-quality 0 reports"
+    return (f"Verifier observe week: {t['runs']} runs in {len(s['jobs'])} jobs, reviewed {t['reviewed']}, "
+            f"main finding matched {t['matched']}/{t['reviewed']}{rate}; {mq}")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--jobs", type=Path, default=Path("jobs"))
+    ap.add_argument("--digest", action="store_true", help="one weekly digest line for the status push (#1739)")
+    ap.add_argument("--sheet-line", action="store_true", help="one line for a sheet: needs --verifier and "
+                                                               "--mesh-quality (#1739)")
+    ap.add_argument("--verifier", type=Path)
+    ap.add_argument("--mesh-quality", type=Path)
     a = ap.parse_args(argv)
     try:
+        if a.sheet_line:
+            if not a.verifier or not a.mesh_quality:
+                raise VerifierError("--sheet-line needs --verifier and --mesh-quality")
+            print(sheet_line(_read(a.verifier), _read(a.mesh_quality)))
+            return 0
+        if a.digest:
+            print(digest_line(a.jobs))
+            return 0
         s = summarize(a.jobs)
     except VerifierError as e:
         print(f"error: {e}")
