@@ -37,7 +37,7 @@ vf = _load("verifier", "tools/qa/verifier.py")
 vs = _load("verifier_summary", "tools/qa/verifier_summary.py")
 SK = json.loads((ROOT / "docs/agents/skeletons.json").read_text(encoding="utf-8"))
 FAC = {"south": "2-1", "north": "1-2", "east": "Б-А", "west": "А-Б"}
-CELLS = ("oks-vpm", "oks-npm", "ground-npm", "ground-vpm")     # oks-npm added by #1739
+CELLS = ("oks-vpm", "oks-npm", "ground-npm", "ground-vpm", "vpm-to-npm")  # oks-npm #1739; vpm-to-npm #1737 (Artem 2026-11-21: verifier step in the VPM->NPM skeleton)
 
 
 def _scores(**over):
