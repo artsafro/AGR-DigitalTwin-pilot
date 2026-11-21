@@ -1,5 +1,7 @@
 """NPM -> VPM placement readback in a real background Blender (#1731, opt-in ``-m blender``).
 
+Pattern: n/a | new-case: real-Blender test of tools/blender/vpm_placement_readback.py.
+
 Reproduces the Staropetrovskiy VPM v001 incident on SYNTHETIC meshes: a MAF library whose object sits at the
 package pivot is appended, the v001 assembly reads the stale ``matrix_world`` (identity right after the append)
 and subtracts the pivot a second time. The reader (``tools/blender/vpm_placement_readback.py``) must

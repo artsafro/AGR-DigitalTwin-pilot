@@ -1,5 +1,7 @@
 """NPM -> VPM placement readback (#1731): VPM position == accepted NPM position - package pivot.
 
+Pattern: n/a | new-case: tests of dt_ai.placement.vpm_readback (pure position gate).
+
 Regression of Staropetrovskiy VPM v001 (2026-11-20): the pivot was subtracted twice after a Blender library append
 (stale ``matrix_world``); the check must fail with every offender named, the correct placement must pass.
 Fixture placement is SYNTHETIC (Staropetrovskiy pivot value, invented MAF / Flora handles).
