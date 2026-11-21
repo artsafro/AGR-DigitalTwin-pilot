@@ -1,5 +1,31 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
+## v018 — exterior-finish decision and native trim trial (STOP)
+
+[D374] applies to every deep overlap: retain the confirmed exterior finish,
+trim the neighbour by up to 275 mm on a copy, and require zero xView defects.
+Keep the earlier explicit E finish selection as the E/19 trial control.
+
+Script-disabled Blender 5.1.2 tested near-normal and raised exterior ray fans
+on 41 pairs from the v017 ledger. Of the 29 deep pairs, neither fan confirmed
+the exterior for 16: fourteen opposing-normal ID 11/11 pairs and two ID 3/3
+pairs. This is not evidence that either hidden layer may be deleted. Request
+one corrected mesh001 or a single exterior-finish reference for the group,
+not separate finish decisions at each location.
+
+The bounded trial replaced five parents with 19 children. Fresh native readback
+confirmed both E/19 source pairs absent (100443/108605 and 100443/108606, up to
+274.827 mm), with 148233 untouched world-local geometry/UV signatures and
+unchanged transform. Six source pairs disappeared, three new pairs appeared;
+xView changed from 356/0/2 to 354/15/6 (faces/near vertices/bow-ties), FAIL.
+Unrepresentable cuts were not applied. Resume from the sealed v015 baseline,
+not the v018 trial. No delivery FBX, package, final tile layout or SINTEZ receipt.
+
+Private evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v018-outer-finish-STOP/`
+(24 files, manifest SHA-256 `20a7ba95341e945cbd7d3c93888aa044527e6de479a56b05613c5e4d6f13351e`).
+See `g22-v018-sheet-r2.png`, `pair-ledger-r2.csv`, `trim.json`, and
+`verify.json`. The source manifest still verifies 32/32.
+
 ## v016 — native atlas replay, cut budget and remaining source overlaps
 
 GeoJSON: customer-supplied, not in our package (Artem, 2026-11-21 08:28).

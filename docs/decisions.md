@@ -350,6 +350,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 | D363 | 2026-11-20 | G22 #1649 only: use flat tangent-space Normal maps RGB (128,128,255) where the source has no Normal maps. Keep V007 (C46) as a validator warning; Artem accepts it manually at delivery. This does not waive geometry, material binding, UDIM or checker gates. | `jobs/G22/npm2vpm-1649/CHECKPOINT.md` | Artem «принимаю», Kanban t_2692a5c8 USER DECISION 2026-11-20 07:05 |
 | D364 | 2026-11-21 | G22 #1649, on the copy only: retain E face 100923 and remove the shared projection from finish 22 faces 136739/136740 (zero-based source indices), approximately 47.7 mm beyond the seam and within the standing 50 mm limit. Do not shift the facade. Record local seam changes and retain the original xView tolerance and inherited defects separately. | `jobs/G22/npm2vpm-1649/CHECKPOINT.md` | Kanban t_2692a5c8, orchestrator decision 00:30 under Artem's standing G22 local-repair rule |
 
+| D374 | 2026-11-21 | G22 #1649 only: for deep overlaps on a separate copy, preserve the confirmed exterior facade finish and trim the neighbouring face up to 275 mm; record the cuts. This extends the previous local limit for these overlaps and does not authorize guessing the exterior or moving it. Require zero xView defects for the clean release; GeoJSON remains customer-supplied. | `jobs/G22/npm2vpm-1649/CHECKPOINT.md` | Artem «принимаю рекомендацию», Kanban t_2692a5c8 comment 2026-11-21 14:52 |
+
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
 [ground-refinement-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6265799957

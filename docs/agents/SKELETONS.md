@@ -68,6 +68,9 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 6 | `package-vpm` | `agr package-vpm` -> `package_core._write_zip` after required approvals |
 | 7 | `validate` | `agr validate` on the actual package |
 
+For G22 only, apply the exterior-finish repair bound and clean xView gate in
+[D374]; see the [source-bound checkpoint](../../jobs/G22/npm2vpm-1649/CHECKPOINT.md).
+
 Each stage retains the standard `before` / `after` hook points (one named stage,
 no parallel conversion chain); no `gap` hook replaces a shared owner. One config:
 `jobs/G22/npm2vpm-1630/skeleton.json`. IDs from atlas cells are provisional layout
