@@ -103,6 +103,40 @@ def run(tmp_path, text, sha, evals, capsys, encoding="utf-8", *, require_table=F
 
 ACCEPTANCE_HEADING = "### Acceptance table\n\n"
 ACCEPTANCE_TABLE = "| Input (exact) | Expected output | Test |\n| --- | :---: | --- |\n| a | b | `test_a` |\n"
+RULE_21_HEADER = ("| # | Acceptance point | Input (exact) | Expected output | Test | Result |\n"
+                  "|---|---|---|---|---|---|\n")
+TEMPLATE_A1 = ('| A1 | "<quote>" | <events / file / command, literal> | '
+               '<value / verdict / exit code> | `tests/<file>.py::<name>` | pass/fail |\n')
+FILLED_CELLS = ("`dt evals`", "exit 0", "`tests/test_evals.py::test_evals`")
+FILLED_ROW = "| A1 | q | " + " | ".join(FILLED_CELLS) + " | pass |\n"
+
+
+@pytest.mark.parametrize("row", [
+    TEMPLATE_A1,
+    "| E1 | edge | ... | ... | ... | |\n",
+    "| A1 | q | - | - | - | |\n",
+], ids=["template-a1", "template-e1", "dashes"])
+def test_acceptance_table_placeholder_rows(row):
+    from twinqa.evals.handoff import _acceptance_table_problem
+
+    problem = _acceptance_table_problem(ACCEPTANCE_HEADING + RULE_21_HEADER + row)
+    assert problem == "Acceptance table needs Input, Expected, and Test columns with at least one complete row"
+
+
+def test_acceptance_table_placeholder_cell_matrix():
+    from twinqa.evals.handoff import _acceptance_table_problem
+
+    section = ACCEPTANCE_HEADING + RULE_21_HEADER
+    assert _acceptance_table_problem(section + FILLED_ROW) is None
+    for column, placeholder, wrapper in product(
+        range(3), ("...", "-", "<fill / here>"), ("{}", "`{}`"),
+    ):
+        cells = list(FILLED_CELLS)
+        cells[column] = wrapper.format(placeholder)
+        row = "| E1 | edge | " + " | ".join(cells) + " | |\n"
+        assert _acceptance_table_problem(section + row * 2), (column, placeholder, wrapper)
+    assert _acceptance_table_problem(section + FILLED_ROW.replace(FILLED_CELLS[2],
+                                     "`tests/<file>.py::<name>`"))
 
 
 def test_require_acceptance_table_pr_1689(tmp_path, monkeypatch):
@@ -189,7 +223,12 @@ def test_require_acceptance_table_cli_readback(tmp_path, repo, evals):
     report = (evals / "report.json").read_bytes()
     args = [sys.executable, "-m", "dt_ai.cli.main", "evals", "--check-handoff", str(alias),
             "--require-acceptance-table", "--sha", shas["head"], "--output", str(evals)]
-    for table, expected in ((ACCEPTANCE_TABLE, 0), ("", 1), ("", 1), (ACCEPTANCE_TABLE, 0)):
+    for table, expected in (
+        (ACCEPTANCE_TABLE, 0), ("", 1), ("", 1),
+        (RULE_21_HEADER + TEMPLATE_A1, 1), (RULE_21_HEADER + TEMPLATE_A1, 1),
+        (RULE_21_HEADER + TEMPLATE_A1 + FILLED_ROW, 0),
+        (RULE_21_HEADER + FILLED_ROW + TEMPLATE_A1, 0),
+    ):
         data = body(lines(shas, evals), "\n" + ACCEPTANCE_HEADING + table).replace("\n", "\r\n").encode()
         path.write_bytes(data)
         proc = subprocess.run(args, capture_output=True, text=True)
