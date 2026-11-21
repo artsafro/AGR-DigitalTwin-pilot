@@ -223,6 +223,11 @@ substitute ad-hoc scripting.
   preceded an NVIDIA driver crash — use Computer Use for visuals. Runs arbitrary Python in the
   open scene: never on an unrelated production scene. Skill: `blender-mcp`.
 - bpy wheel pin rule: a bpy wheel lane, if used, must equal the baseline Blender version 5.1.2 (`BLENDER_VERSION` in `src/dt_ai/core/blender_runner.py`) and is re-verified on each Blender upgrade.
+- Pitfall (#1731, verified on Blender 4.4 and 5.1): `matrix_world` is STALE right after `bpy.data.libraries.load` +
+  collection link and after setting `location` / `matrix_basis` - it reads the identity until
+  `bpy.context.view_layer.update()`; `matrix_basis` is already right. Call `view_layer.update()` before any
+  `matrix_world` read. Staropetrovskiy VPM v001 read the identity and subtracted the package pivot twice; gate a
+  VPM assembly with `check_before_export` of `tools/blender/vpm_placement_readback.py` before `export_scene.fbx`.
 
 ### SpeedTree Modeler — `speedtree`
 - Status: WORKING for file inspection and CLI FBX batch export (Codex, 2026-10-06, Modeler v10.0.1).
