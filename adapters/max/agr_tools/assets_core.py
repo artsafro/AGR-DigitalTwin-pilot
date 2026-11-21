@@ -327,15 +327,27 @@ def inspect_maf_zip(path, base):
 
 # ---- published library versions (#1743 [D371]) ----------------------------------------------------------------
 PUBLISHED_VERSION = re.compile(r'^v\d{3}(\.partial)?$', re.IGNORECASE)
-PUBLISHED_CATALOGUE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'library',
-                                   'published', 'catalogue.json')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+# #1757: the installed copy (<userScripts>/AGRTools-1.1.0/) has no repo around it; the build ships the catalogue
+# next to this file. The repo path is the source checkout (development, tests).
+PACKAGED_CATALOGUE = os.path.join(_HERE, 'published-catalogue.json')
+REPO_CATALOGUE = os.path.join(_HERE, '..', '..', '..', 'library', 'published', 'catalogue.json')
+
+
+def published_catalogue_path(configured=''):
+    """Catalogue the browser reads: the configured path (settings `published_catalogue`) when set - used even if
+    it is missing or broken (fail-closed, never a silent fallback to the shipped snapshot); else the copy shipped
+    in the package; else the repository file."""
+    if configured and str(configured).strip():
+        return str(configured).strip()
+    return PACKAGED_CATALOGUE if os.path.isfile(PACKAGED_CATALOGUE) else REPO_CATALOGUE
 
 
 def published_accepted(path=None):
     """{(name, vNNN)} of `accepted` records in library/published/catalogue.json (tools/library/publish.py).
     Missing or unreadable catalogue -> empty set: every published version stays hidden (fail-closed)."""
     try:
-        with open(path or PUBLISHED_CATALOGUE, encoding='utf-8') as f:
+        with open(path or published_catalogue_path(), encoding='utf-8') as f:
             data = json.load(f)
         return {(str(r['name']).lower(), str(r['version']).lower()) for r in data.get('records', [])
                 if r.get('status') == 'accepted'}
@@ -608,7 +620,7 @@ class Selection(object):
 DEFAULT_SETTINGS = {'libraries': {}, 'cache_dir': '', 'project_dir': '', 'versions': ['high', 'low'],
                     'materials': 'reuse', 'textures': 'project', 'fbx_scale': 1.0, 'source': 'max',
                     'gap_m': 1.0, 'row_limit_m': 40.0, 'selection': [], 'preview_dirs': [],
-                    'allow_flagged': False, 'maf_measured': ''}
+                    'allow_flagged': False, 'maf_measured': '', 'published_catalogue': ''}
 
 
 def merge_settings(saved):
