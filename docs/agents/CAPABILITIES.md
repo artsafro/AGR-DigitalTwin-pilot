@@ -23,6 +23,30 @@ Choose DCC per step from known tools/context and state a one-line reason [D270]:
 Ask once per task: «по завершении этапов открывать тебе сцену для приёмки?»; retain yes/no for that task (a new task resets consent). On yes, automatically open a new version after each stage in the app holding it (Max 2026 or Blender) AND report the absolute path; on no or missing answer, path only [D270].
 Acceptance view defaults to 3ds Max 2026 with QUAD topology in the review copy; triangulate only delivery exports that require it. This is Artem's preference, not regulation [D270].
 
+**Quad (non-triangulated) work FBX from 3ds Max 2026 — verified (#1730, 2026-11-21).** Max 2026.3 (28.3.0.30732),
+`fbxmax.dlu` 28.3.0.30732, FBX SDK 2020.3.9; one 1 m box per case, `exportFile <f> #noPrompt selectedOnly:true
+using:FBXEXP`, face degrees read back from the written FBX:
+
+| Route | Editable_Poly | Box primitive | Edit_Poly mod | Editable_Mesh | Edit_Mesh mod on top | Triangulate true |
+|---|---|---|---|---|---|---|
+| 3dsmaxbatch, `FBXExporterSetParam "Triangulate" false` | `{4: 6}` | `{4: 6}` | `{4: 6}` | `{3: 12}` | `{3: 12}` | `{3: 12}` |
+| GUI Max, same script, `#noPrompt` | `{4: 6}` | `{4: 6}` | `{4: 6}` | `{3: 12}` | `{3: 12}` | `{3: 12}` |
+| GUI Max, FBX dialog (no `#noPrompt`, OK pressed) | `{3: 12}` | `{3: 12}` | `{3: 12}` | `{3: 12}` | `{3: 12}` | `{3: 12}` |
+
+- The batch/script flag WORKS for poly objects (also instanced Editable_Poly with `Preserveinstances` true:
+  `{4: 6}` x 2). It does not help when the object evaluates to a mesh: an Editable_Mesh, or an Edit_Mesh (or any
+  mesh-output modifier) on top of the stack, is written as triangles whatever the flag says.
+- The interactive dialog ignores the script parameters: it applies its saved preset
+  (`Documents/3dsmax/FBX/3dsMax2026_X64/Presets/export/User defined.fbxexportpreset`, `Triangulate v="1"` on this
+  PC) and `FBXExporterGetParam "Triangulate"` returns `true` after it. Never export a work FBX through the dialog.
+- Working route: script export with `#noPrompt` of temporary Editable_Poly copies (`convertToPoly`), `Triangulate`
+  false, `ASCII` false, then READ THE DEGREES BACK. The AGR Tools handoff export does exactly that
+  (`adapters/max/agr_tools/handoff_max.py:_export_copies` + `handoff_core.check_work_fbx`: fails naming the object when
+  a scene object with quads/n-gons comes back triangles-only or with other degrees). Blender (`tools/blender`
+  exporters, quads kept) is the fallback route. Delivery FBX stay triangulated (DER-03).
+- Evidence: `G:/Мой диск/AGR-evidence/1730-max-fbx-triangulate/` (`probe_1730.py`, `gui_driver.ms`, the 21 FBX,
+  `degrees.json`, logs, `SHA256SUMS.txt`).
+
 Helper (IN BRANCH, #1297): `uv run python tools/open_review_scene.py --app blender --source "C:/job/stage_v001.blend" --output "C:/job/stage_review_v002.blend" --open-approved` (use `--app max` and `.max` for Max 2026). Requires a saved native scene and a new versioned output; refuses aliases/occupied destinations. Always starts a **new process**, including when Max's live lock is held: no bridge call, live injection, reset, close, lock reaping or user-document replacement. Keep existing PID pins on all later bridge calls; a new instance can become the bridge default. If another instance is unsuitable, ask instead. The helper reports `launched`, not `loaded` or accepted: inspect the new process's document/version/units and record its log or screenshot. Do not pass `--open-approved` without the task's yes. Save the stage before invoking; it is not a converter or topology checker. Sources/approved versions stay unchanged; readback/visual acceptance remain separate gates.
 
 ## Machine and repository

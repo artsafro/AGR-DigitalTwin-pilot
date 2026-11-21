@@ -583,6 +583,182 @@ def validate_sidecar(doc):
     return doc
 
 
+# ---- work FBX face-degree readback (#1730) -------------------------------------------------------------------------
+# Measured on 3ds Max 2026.3 (fbxmax.dlu 28.3.0.30732, FBX SDK 2020.3.9), 2026-11-21: `exportFile #noPrompt` honours
+# FBXExporterSetParam "Triangulate" false for Editable_Poly / Box / Edit_Poly, but writes TRIANGLES for an
+# Editable_Mesh or an Edit_Mesh on top of the stack, and the interactive FBX dialog applies its saved preset over the
+# script parameters. So the parameter alone proves nothing: the written file is read back and compared with the scene.
+_FBX_MAGIC = b'Kaydara FBX Binary  \x00\x1a\x00'
+_FBX_FIXED = {'Y': 2, 'C': 1, 'I': 4, 'F': 4, 'D': 8, 'L': 8}
+_FBX_ARRAY = {'f': '<f', 'd': '<d', 'l': '<q', 'i': '<i', 'b': '<B'}
+
+
+def _fbx_nodes(data, start, end, version):
+    import struct
+    hlen = 25 if version >= 7500 else 13
+    off = start
+    while off < end:
+        if off + hlen > end:
+            raise ValueError('truncated FBX node at {}'.format(off))
+        if data[off:off + hlen] == bytes(hlen):
+            return
+        stop, count, plen = struct.unpack_from('<QQQ' if version >= 7500 else '<III', data, off)
+        nlen = data[off + hlen - 1]
+        at = off + hlen + nlen
+        if stop <= off or stop > end or at + plen > stop:
+            raise ValueError('truncated FBX node at {}'.format(off))
+        yield data[off + hlen:at].decode('latin-1'), count, at, at + plen, stop
+        off = stop
+    if off != end:
+        raise ValueError('truncated FBX node list at {}'.format(off))
+
+
+def _fbx_props(data, start, end, count):
+    import struct
+    import zlib
+    off, out = start, []
+    for _ in range(count):
+        if off >= end:
+            raise ValueError('truncated FBX property at {}'.format(off))
+        code = chr(data[off])
+        off += 1
+        if code in _FBX_FIXED:
+            fmt = {'Y': '<h', 'C': '<B', 'I': '<i', 'F': '<f', 'D': '<d', 'L': '<q'}[code]
+            out.append(struct.unpack_from(fmt, data, off)[0])
+            off += _FBX_FIXED[code]
+        elif code in ('S', 'R'):
+            n = struct.unpack_from('<I', data, off)[0]
+            out.append(bytes(data[off + 4:off + 4 + n]))
+            off += 4 + n
+        elif code in _FBX_ARRAY:
+            n, enc, size = struct.unpack_from('<III', data, off)
+            blob = bytes(data[off + 12:off + 12 + size])
+            if len(blob) != size:
+                raise ValueError('truncated FBX array at {}'.format(off))
+            raw = zlib.decompress(blob) if enc == 1 else blob
+            fmt = _FBX_ARRAY[code]
+            if enc not in (0, 1) or len(raw) != n * struct.calcsize(fmt):
+                raise ValueError('bad FBX array at {}'.format(off))
+            out.append(list(struct.unpack('<' + fmt[1] * n, raw)))
+            off += 12 + size
+        else:
+            raise ValueError('unreadable FBX property {!r} at {}'.format(code, off - 1))
+    if off != end:
+        raise ValueError('unreadable FBX node properties at {}'.format(start))
+    return out
+
+
+def _degree_hist(index, name):
+    hist, cur = {}, 0
+    for raw in index:
+        cur += 1
+        if raw < 0:
+            hist[str(cur)] = hist.get(str(cur), 0) + 1
+            cur = 0
+    if cur:
+        raise ValueError('partial polygon in the work FBX: ' + name)
+    return dict(sorted(hist.items(), key=lambda kv: int(kv[0])))
+
+
+def fbx_polygon_degrees(data):
+    """{mesh name: {degree: count}} of a BINARY FBX 7.x (the handoff writes ASCII=False), stdlib only (no twinqa, so
+    it runs inside Max). Geometry -> Model through the OO connections. ValueError: not a binary FBX, truncated or
+    unreadable, a partial polygon, no mesh at all, two meshes of one name."""
+    import struct
+    import zlib
+    if not isinstance(data, (bytes, bytearray)) or len(data) < 27 or bytes(data[:23]) != _FBX_MAGIC:
+        raise ValueError('work FBX: binary FBX expected')
+    data = bytes(data)
+    version = struct.unpack_from('<I', data, 23)[0]
+    if not 7000 <= version < 8000:
+        raise ValueError('work FBX: unsupported FBX version {}'.format(version))
+    geoms, models, links = {}, {}, []
+    try:
+        top = {n[0]: n for n in _fbx_nodes(data, 27, len(data), version)}
+        if 'Objects' in top:
+            _n, _c, _a, pend, stop = top['Objects']
+            for name, count, at, pe, st in _fbx_nodes(data, pend, stop, version):
+                props = _fbx_props(data, at, pe, count)
+                if name not in ('Geometry', 'Model') or b'Mesh' not in props[1:]:
+                    continue
+                if name == 'Model':
+                    models[props[0]] = props[1].split(b'\x00', 1)[0].decode('utf-8', errors='replace')
+                    continue
+                index = None
+                for cn, cc, ca, cpe, _cs in _fbx_nodes(data, pe, st, version):
+                    if cn == 'PolygonVertexIndex':
+                        index = _fbx_props(data, ca, cpe, cc)[0]
+                if not isinstance(index, list):
+                    raise ValueError('geometry {} without PolygonVertexIndex'.format(props[0]))
+                geoms[props[0]] = index
+        if 'Connections' in top:
+            _n, _c, _a, pend, stop = top['Connections']
+            for name, count, at, pe, _st in _fbx_nodes(data, pend, stop, version):
+                props = _fbx_props(data, at, pe, count)
+                if name == 'C' and len(props) >= 3 and props[0] == b'OO':
+                    links.append((props[1], props[2]))
+    except (struct.error, zlib.error, IndexError, KeyError, TypeError, AttributeError) as exc:
+        raise ValueError('work FBX unreadable: {}'.format(exc)) from exc
+    out = {}
+    for child, parent in links:
+        if child in geoms and parent in models:
+            name = models[parent]
+            if name in out:
+                raise ValueError('work FBX: duplicate mesh name ' + repr(name))
+            out[name] = _degree_hist(geoms[child], name)
+    if not out:
+        raise ValueError('work FBX: no mesh with geometry')
+    return out
+
+
+def _check_hist(hist, what):
+    if not isinstance(hist, dict):
+        raise ValueError(what + ': degree histogram must be an object')
+    for k, v in hist.items():
+        if not (isinstance(k, str) and k.isdigit() and int(k) >= 3):
+            raise ValueError('{}: invalid polygon degree {!r}'.format(what, k))
+        if isinstance(v, bool) or not isinstance(v, int) or v <= 0:
+            raise ValueError('{}: invalid face count {!r} for degree {}'.format(what, v, k))
+
+
+def work_fbx_degree_findings(source, readback):
+    """[(name, detail)] where the work FBX does not keep the scene's faces. `source` {name: {degree: n}} is the
+    object_facts 'degrees' of every exported object, `readback` the fbx_polygon_degrees of the written file. A source
+    with any face of degree >= 4 that reads back as triangles only is 'triangulated'; any other histogram change,
+    a missing or an extra mesh is a finding too. ValueError: empty source, an object without faces, a bad histogram."""
+    if not isinstance(source, dict) or not source:
+        raise ValueError('work FBX check: no exported objects given')
+    if not isinstance(readback, dict):
+        raise ValueError('work FBX check: readback must be {name: {degree: n}}')
+    for name, hist in source.items():
+        _check_hist(hist, 'scene object ' + repr(name))
+        if not hist:
+            raise ValueError('work FBX check: scene object {!r} has no faces'.format(name))
+    for name, hist in readback.items():
+        _check_hist(hist, 'FBX mesh ' + repr(name))
+    out = []
+    for name in sorted(source):
+        want, got = source[name], readback.get(name)
+        if got is None:
+            out.append((name, 'missing from the work FBX'))
+        elif got == want:
+            continue
+        elif set(got) == {'3'} and any(int(k) >= 4 for k in want):
+            out.append((name, 'triangulated: scene {} -> FBX {} (Triangulate=False was not honoured: Editable_Mesh / '
+                              'Edit_Mesh on the stack or the FBX dialog preset; docs/agents/CAPABILITIES.md)'
+                        .format(want, got)))
+        else:
+            out.append((name, 'face degrees differ: scene {} -> FBX {}'.format(want, got)))
+    for name in sorted(set(readback) - set(source)):
+        out.append((name, 'FBX mesh not in the exported set'))
+    return out
+
+
+def check_work_fbx(source, data):
+    """work_fbx_degree_findings of the written FBX bytes (the handoff export gate)."""
+    return work_fbx_degree_findings(source, fbx_polygon_degrees(data))
+
+
 def build_readback(host, app, facts):
     return {'schema': SCHEMA, 'kind': 'agr.handoff.readback', 'host': host, 'app': app, 'objects': list(facts)}
 

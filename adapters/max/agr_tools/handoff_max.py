@@ -510,6 +510,12 @@ def handoff_export(ctx, mode, nodes, preview):
                 rt.select(live)
     if not ok or not os.path.isfile(fbx):
         raise RuntimeError('handoff.export: FBX was not written: ' + fbx)
+    # #1730: Triangulate=False is a request, not a proof; read the face degrees of the written file back
+    with open(fbx, 'rb') as fh:
+        lost = core.check_work_fbx({fa['name']: fa['degrees'] for fa, _ex in facts}, fh.read())
+    if lost:
+        raise RuntimeError('handoff.export: the work FBX does not keep the scene faces ({}): {}'.format(
+            fbx, '; '.join('{}: {}'.format(n, d) for n, d in lost)))
     mat_bytes = _json_bytes(mats)
     edit.write_new(os.path.join(bundle, 'materials.json'), mat_bytes)
     src = {'host': 'max', 'doc': scene, 'app': '3ds Max ' + str(list(rt.maxVersion())[0])}

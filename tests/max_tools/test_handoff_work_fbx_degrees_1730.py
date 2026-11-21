@@ -214,7 +214,7 @@ def test_fbx_without_meshes_is_an_error():
 
 
 def test_partial_polygon_is_an_error():
-    data = binary_fbx([('A', BOX_V, [[0, 1, 2, 3]])])
+    data = binary_fbx([('A', BOX_V, [[0, 1, 2, 3]])], compress=False)
     # rewrite the index so the last polygon has no closing ~index
     good = struct.pack('<iiii', 0, 1, 2, ~3)
     assert good in data
