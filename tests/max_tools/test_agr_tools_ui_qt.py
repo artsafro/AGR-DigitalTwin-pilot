@@ -74,12 +74,13 @@ def test_fbx_maps_row_lists_missing_before_optional_reconnect(qtbot, monkeypatch
     def confirm(dialog):
         assert 'Ground_m_1.png' in dialog.detailedText()
         assert 'Ground.reflectionMap' in dialog.detailedText()
-        return box.Yes if approve else box.No
+        return box.StandardButton.Yes if approve else box.StandardButton.No
 
     monkeypatch.setattr(box, 'exec', confirm)
     button.click()
+    assert panel.report is not None, panel.summary.text()
     assert panel.report['status'] == ('pass' if approve else 'fail')
-    assert ('reconnect', 'customer.fbx') in backend.events if approve else ('reconnect', 'customer.fbx') not in backend.events
+    assert (('reconnect', 'customer.fbx') in backend.events) == approve
 
 
 class FakeBackend:
