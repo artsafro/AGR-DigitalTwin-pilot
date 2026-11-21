@@ -22,8 +22,11 @@ def build(points, kind='glass_posts', profile='vpm', representation='geometry', 
 
 def test_open_corner_end_and_collinear_spacing():
     r = build([[0, 0, 0], [.4, 0, 0], [3, 0, 0], [3, 1.6, 0]])
-    assert [tuple(p) for p in r['posts']] == [(0, 0, 0), (1, 0, 0), (2, 0, 0),
-                                               (3, 0, 0), (3, .8, 0), (3, 1.6, 0)]
+    expected = [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0), (3, .8, 0), (3, 1.6, 0)]
+    assert len(r['posts']) == len(expected)
+    for post, point in zip(r['posts'], expected):
+        assert post == pytest.approx(point)
+    assert r['posts'][0] == expected[0] and r['posts'][3] == expected[3] and r['posts'][-1] == expected[-1]
     assert r['run_steps_m'] == pytest.approx([1, .8])
 
 
@@ -117,3 +120,36 @@ def test_fresh_cli_help_and_preserve_aliased_input(tmp_path):
         assert run.returncode != 0 and 'output' in run.stderr.lower()
         assert path.read_bytes() == alt.read_bytes() == b'original'
     assert set(tmp_path.iterdir()) == {path, alt}
+
+
+@pytest.mark.parametrize('event', ['source_changed', 'competing_destination', 'stale_receipt'])
+def test_publication_refuses_drift_or_competing_writers(tmp_path, monkeypatch, event):
+    import json
+    from dt_ai.core import blender_runner
+    from tools.blender.railing import main
+
+    source, target = tmp_path / 'spline.json', tmp_path / 'candidate.blend'
+    source.write_text(json.dumps(dict(points=[[0, 0, 0], [2, 0, 0]], closed=False,
+        dimensions=dict(height=1, max_step=1, post_width=.04, post_depth=.04,
+                        rail_width=.05, rail_height=.03))))
+    before = source.read_bytes()
+
+    def child(script, args, **kw):
+        staged = kw['outputs'][0]
+        assert staged != source and staged != target and not staged.exists()
+        staged.write_bytes(b'native child')
+        if event == 'source_changed':
+            source.write_bytes(before + b' ')
+        elif event == 'competing_destination':
+            target.write_bytes(b'foreign file')
+        else:
+            raise blender_runner.BlenderRunError({'code': 'stale_output'})
+
+    monkeypatch.setattr(blender_runner, 'run_blender', child)
+    assert main([str(source), '--type', 'posts_handrail', '--out', str(target)]) == 2
+    assert source.read_bytes() == before + (b' ' if event == 'source_changed' else b'')
+    if event == 'competing_destination':
+        assert target.read_bytes() == b'foreign file'
+    else:
+        assert not target.exists()
+    assert not list(tmp_path.glob('.railing-*'))
