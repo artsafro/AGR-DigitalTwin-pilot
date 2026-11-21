@@ -47,4 +47,40 @@ non-quad off-grid faces, collapsed faces, recalibrated score, body-core changes,
 
 ## Round log
 
-(filled after the single measurement)
+**Итог OBSERVE:** признак не прошёл порог. `M = −0,10622445` (−10,62 п. п.; порог > 0). Все шесть принятых
+корпусов вне 63B (63C v002, 63A v005, G22 k2 v002r1, эталон G22 к.1–к.3) дают 0 %, все восемь отклонённых —
+от 4,94 % до 28,71 %. Срывает только принятый 63B v007 (15,561 %): у 63B косые грани заложены в проекте (скосы
+45° и излом 7,1°, #19/#23), и отклонённый v005 (15,558 %) от него этим признаком не отличается. Упорядочено 50 из
+56 пар (только для описания). Оценка, ядра, построитель и поставки не менялись. PR нет.
+
+| Corpus | Label | Horizontal quads | Off-grid quads | Q (%) |
+|---|---|---:|---:|---:|
+| 63B v001 | rejected | 1090 | 160 | 4.94875 |
+| 63B v002 | rejected | 1090 | 160 | 4.94875 |
+| 63B v003 | rejected | 1090 | 160 | 4.94846 |
+| 63B v004 | rejected | 1091 | 160 | 4.93872 |
+| 63B v005 | rejected | 1091 | 364 | 15.55766 |
+| 63B v006 | rejected | 1910 | 647 | 28.71033 |
+| 63C v001 | rejected | 814 | 176 | 20.87950 |
+| KPP1 v003 corners | rejected | 18795 | 12501 | 15.28339 |
+| 63B v007 | accepted | 2620 | 664 | 15.56116 |
+| 63C v002 | accepted | 726 | 0 | 0 |
+| 63A v005 | accepted | 864 | 0 | 0 |
+| G22 k2 v002r1 | accepted | 882 | 0 | 0 |
+| G22 etalon k1 | accepted | 8996 | 0 | 0 |
+| G22 etalon k2 | accepted | 3066 | 0 | 0 |
+| G22 etalon k3 | accepted | 3337 | 0 | 0 |
+
+- **Sealed:** contract `1c36e6df`; replay `4d53b9f6`, SHA-256
+  `5cb25d5ba307762ce62e7b37f7b4c967c7d5e58170cca0b6ac30184254a30827`.
+  [Receipt](autoresearch-body-mesh-offgrid-quads-harness/r29.json) SHA-256
+  `ccb2fb6159d12efc98691d17f9a8fff0b0345d6e268cdfdef4b29cce979c11f5`. Measurement wall time 9.7 s (one run).
+- **Clean:** #27 receipt parity exact (`baseline_M` unchanged); #28 `D` recomputed bit-exact for all 15; input
+  hashes before/after; horizontal area and face counts equal #27; three reads, paired spread 0 for every sample;
+  unit square `Q=0`, 45°/135° parallelogram `Q=0`.
+- **Injected:** wrong input digest refused; 48°/132° rhombus `Q=1`; off-grid pentagon `Q=0` (degree filter).
+- **Not measured:** native readback, ownership / design intent, non-quad off-grid faces, collapsed faces,
+  recalibrated score, body-core changes, package QA.
+- **Would change (OBSERVE):** no generic off-45° penalty — on 63B it measures the design plan, not the defect.
+  The grid must come from the object: corner angles of the horizontal quads compared with the angles of the
+  project plan contour of the same object (63B: 45° chamfers + 7.1° kink), then re-measure the same 15 bodies.
