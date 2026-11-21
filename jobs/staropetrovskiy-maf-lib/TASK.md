@@ -48,11 +48,11 @@ parallel. Accepted by: per-code preview sheet NPM vs VPM and the catalogue rows.
 ## Batch result (2026-11-21) [D359]
 
 - NPM: 51/51 match the masters (independent check). VPM registered for 12 codes: A01, A02, I07, I08, I17, I18, T01,
-  T15, T16, T17, T22, X02. The other 39 are NPM-only until the VPM rebuild from masters (separate task).
+  T15, T16, T17, T22, X02. The other 39 are NPM-only: 34 until the VPM rebuild from masters (separate task), 5 by spec. Manifest for #1743: `C:/x/maf-library/staropetrovskiy/readback/summary_v002.json`.
 - xView flags (accepted masters, not edited): I07, I08, I19, T20 → overlap spots list for Artem.
 - Loose vertices removed in library copies: I01, I03, I04b.
 - Registration waits for #1743.
-- Follow-up (own task, not started): VPM rebuild of the 39 codes from the NPM masters — segment doubling only on
+- Follow-up (own task, not started): VPM rebuild of the 34 placed codes without VPM from the NPM masters — segment doubling only on
   round parts, flat parts untouched, ≤ 1 cm both ways, UV anew on tiles 1001-1017, pilot T02 first. Old
   `site5/work/maf_vpm_segments.py` deformed flat parts (T02 +14 cm, I10/I10a +19 cm): reference only.
 
