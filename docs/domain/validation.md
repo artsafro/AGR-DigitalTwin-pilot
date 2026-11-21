@@ -132,7 +132,9 @@ and D098 2 mm-1 cm inclusive band, separately reported. UCX parity code is not i
 
 Per-polygon parity (#1732, recurrence of #432): with `--scene`,
 [`src/twinqa/sintez_uv.py`](../../src/twinqa/sintez_uv.py) judges every polygon of the readback as SINTEZ 1.6.1 does,
-thresholds unchanged [D160]. VPM V008: `mirrored UV polygons` (2.5.2.1.4, fail), `UV outside UDIM tile`
+thresholds unchanged [D160]. FBX readback preserves Blender's native UV and world-coordinate precision in
+`face_geometry`; rounding to six decimal places can hide line-collapsed UV triangles.
+VPM V008: `mirrored UV polygons` (2.5.2.1.4, fail), `UV outside UDIM tile`
 (2.5.2.1.2, fail: corners in different tiles by the vendor formula, or a tile without a Diffuse PNG),
 `unwrapped UV polygons` (4.1.3: UV collapsed to a point/line or zero 3D area, `review`). VPM V009:
 `texel density per polygon` (2.6.2, `side * sqrt(uv_area / area_3d)` against 512..1706 px/m, <= 256 px tiles
