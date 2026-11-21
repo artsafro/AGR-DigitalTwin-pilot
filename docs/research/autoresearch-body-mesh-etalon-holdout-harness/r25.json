@@ -1,0 +1,63 @@
+{
+ "card": "t_99842019",
+ "pinned_holdout": [
+  "789b2c895ae181ad098dbbd912c183a4393d6990",
+  "bec61ed41989d5b7b6a6513266c65caa4f692e18a023f9d00c98a4f9d58a0075"
+ ],
+ "pinned_r18_receipt_sha256": "4cd18c20f819cd22caf68c9dc905de474515dd791b86cb073594bcdf58235ae3",
+ "R0_sha256": "6458a5a1282d31d9212ef195ffcd0f21f27165984b54677c93e1f0b1df7333dd",
+ "R3_sha256": "ec35063d3617c9cd000079ce184e75bc799645daf1040bcb13b84561aaa557df",
+ "parity_row": "G22-k2-v002r1",
+ "parity": true,
+ "fixture": {
+  "G22-etalon-k1": {
+   "irregular_faces": 7733,
+   "irregular_area": 670.756156,
+   "area": 24410.193793,
+   "local_R3": 1.0,
+   "R0": 89.244,
+   "R3": 82.298,
+   "median_drop": 6.946,
+   "paired_spread": 0.0
+  },
+  "G22-etalon-k2": {
+   "irregular_faces": 1589,
+   "irregular_area": 135.61109,
+   "area": 7167.377295,
+   "local_R3": 0.283619,
+   "R0": 86.883,
+   "R3": 84.992,
+   "median_drop": 1.891,
+   "paired_spread": 0.0
+  },
+  "G22-etalon-k3": {
+   "irregular_faces": 1873,
+   "irregular_area": 203.909781,
+   "area": 7309.916853,
+   "local_R3": 0.309257,
+   "R0": 92.182,
+   "R3": 90.172,
+   "median_drop": 2.01,
+   "paired_spread": 0.0
+  },
+  "G22-k3-v006": {
+   "irregular_faces": 0,
+   "irregular_area": 0.0,
+   "area": 7998.031458,
+   "local_R3": 0.0,
+   "R0": 90.275,
+   "R3": 90.275,
+   "median_drop": 0.0,
+   "paired_spread": 0.0
+  }
+ },
+ "max_median_drop": 6.946,
+ "threshold": 0.5,
+ "passed": false,
+ "activating_controls": [
+  "G22-etalon-k1",
+  "G22-etalon-k2",
+  "G22-etalon-k3"
+ ],
+ "holdout_json_sha256": "fef11a46545232498446617136e897b8f7d08a4d0c72b07d9271f7afed6cd700"
+}

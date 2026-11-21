@@ -42,3 +42,34 @@ complete receipt or any hash/parity failure. Forbidden: editing inputs/packages/
 tests, cropping or re-banding after seeing results, touching other cards' files.
 
 ## Round log
+
+**Итог (OBSERVE, ничего не внедрено).** Неизменённый R3 (#17) штрафует собственный эталон Артёма G22: падение балла
+к.1 **6,946**, к.2 1,891, к.3 2,010 при пороге 0,500 → `max_median_drop = 6.946`, **R3 окончательно не годится**.
+Эталон — первый принятый контроль, на котором детектор реально срабатывает (#24 просил именно такой): косых граней
+к.1 7 733 (670,8 м², 2,7 % площади), к.2 1 589, к.3 1 873. **Все** косые грани эталона — треугольники
+(`irregular_faces == tris` на всех трёх полосах), все четырёхугольники эталона прямоугольны. Принятый агентский
+k3_v006 (вне всех прежних калибровок) — 0 косых граней, падение 0,000. Значит, признак «треугольник / косой угол»
+сам по себе не отделяет брак от принятого: у эталона треугольников 9–15 % граней. Любое правило-штраф за треугольники
+(R3/R4/R5/R6-подобное) должно сначала пройти этот эталонный контроль.
+
+| input | stock irregular faces (= tris) | R0 | R3 | median drop | spread |
+|---|---:|---:|---:|---:|---:|
+| G22-etalon-k1 | 7733 | 89.244 | 82.298 | 6.946 | 0 |
+| G22-etalon-k2 | 1589 | 86.883 | 84.992 | 1.891 | 0 |
+| G22-etalon-k3 | 1873 | 92.182 | 90.172 | 2.010 | 0 |
+| G22-k3-v006 (accepted agent) | 0 | 90.275 | 90.275 | 0.000 | 0 |
+
+- **Clean:** pinned #18 `holdout.py`/receipt hashes, #17 R3/R0 core hashes, #18 synthetic witness, input hashes before/after,
+  3 identical repeats per input (spread 0), parity row `G22-k2-v002r1` identical to #18 (R0 = R3 = 83.693, local 0.0).
+  A second full replay after a typing-only edit of `replay.py` was byte-identical (`r25.json`, `holdout.json`).
+- **Injected:** wrong pinned `holdout.py` hash → `ValueError` before any scoring, no output directory created.
+- **Not measured:** whether the etalon triangles are native modelling or residue of the `--rejoin-rectangles` diagnostic
+  copy (#1634) of the triangulated NPM delivery; native readback, full buildings, KPP1, a rejected held-out pair, any
+  body-core change. `holdout.json` keeps #18's inherited `clean_checks`/`not_measured` text verbatim (it is #18's code).
+- **Receipt:** `autoresearch-body-mesh-etalon-holdout-harness/r25.json` SHA-256
+  `606423c349a9b3a232016654f6df7177fd8ddb6b6b2084f11ca1529b40e4ca18`; `holdout.json`
+  `fef11a46545232498446617136e897b8f7d08a4d0c72b07d9271f7afed6cd700`; `replay.py`
+  `0920059fa1bc6a6bef92dfc7deb42a58e878d4d51997bb58cc3bbcdcee746963`.
+- **Would change:** nothing in code. Add the three etalon bands as a mandatory accepted control (drop ≤ 0.5) to every future
+  local-irregular rule; stop the triangle/oblique-face line of R3–R6 unless a rule separates the etalon's triangles from the
+  rejected bodies' (e.g. by triangle placement/role, measured first on this fixture).

@@ -1,0 +1,247 @@
+{
+  "prior_revision": "6ae13568ca85bb3880e84f4f1a30f22f6c23a96d",
+  "prior_receipt_sha256": "4603f45e6ab62df6d1621f62ff6ec5b3b6c6c3a141efb118334d027e01ae2130",
+  "prior_worst_margin": 0.718,
+  "R0_sha256": "6458a5a1282d31d9212ef195ffcd0f21f27165984b54677c93e1f0b1df7333dd",
+  "R3_sha256": "ec35063d3617c9cd000079ce184e75bc799645daf1040bcb13b84561aaa557df",
+  "rows": {
+    "G22-etalon-k1": {
+      "source_sha256": "413515339be03d1aa8eb88d23c487ce81f1605eced51d3b822d2919141acefb1",
+      "dump_sha256": "413515339be03d1aa8eb88d23c487ce81f1605eced51d3b822d2919141acefb1",
+      "blender": null,
+      "dump_dropped": [],
+      "totals": {
+        "faces": 51603,
+        "tris": 7733,
+        "quads": 43870,
+        "ngons": 0,
+        "slivers": 6280,
+        "long_faces": 240,
+        "flat_vertices": 11028,
+        "poles": 82,
+        "manifold_edges": 71201,
+        "welded_edges": 18451,
+        "elements": 1469,
+        "inset_elements": 1468,
+        "body_elements": 1,
+        "body_faces": 35946,
+        "inset_faces": 15657,
+        "irregular_faces": 7733,
+        "area": 24410.193793,
+        "irregular_area": 670.756156,
+        "edges": 104839,
+        "elements_not_all_quads": 548,
+        "open_seam_edges": 1,
+        "body_holes": 0,
+        "body_hole_edges": 0
+      },
+      "R0": [
+        89.244,
+        89.244,
+        89.244
+      ],
+      "R3": [
+        82.298,
+        82.298,
+        82.298
+      ],
+      "local": 1.0,
+      "median_drop": 6.946,
+      "paired_spread": 0.0
+    },
+    "G22-etalon-k2": {
+      "source_sha256": "50df5fb7252078a3fc1edc9076b9e0043051f897bb3aa363b2014b404e6f8d0d",
+      "dump_sha256": "50df5fb7252078a3fc1edc9076b9e0043051f897bb3aa363b2014b404e6f8d0d",
+      "blender": null,
+      "dump_dropped": [],
+      "totals": {
+        "faces": 17606,
+        "tris": 1589,
+        "quads": 16017,
+        "ngons": 0,
+        "slivers": 1395,
+        "long_faces": 0,
+        "flat_vertices": 5732,
+        "poles": 2,
+        "manifold_edges": 28979,
+        "welded_edges": 6063,
+        "elements": 301,
+        "inset_elements": 300,
+        "body_elements": 1,
+        "body_faces": 14702,
+        "inset_faces": 2904,
+        "irregular_faces": 1589,
+        "area": 7167.377295,
+        "irregular_area": 135.61109,
+        "edges": 35896,
+        "elements_not_all_quads": 205,
+        "open_seam_edges": 0,
+        "body_holes": 0,
+        "body_hole_edges": 0
+      },
+      "R0": [
+        86.883,
+        86.883,
+        86.883
+      ],
+      "R3": [
+        84.992,
+        84.992,
+        84.992
+      ],
+      "local": 0.283619,
+      "median_drop": 1.891,
+      "paired_spread": 0.0
+    },
+    "G22-etalon-k3": {
+      "source_sha256": "dc389b008673016871591e1cb42f151379b63aa2ffe271590c52b3009a7d4a13",
+      "dump_sha256": "dc389b008673016871591e1cb42f151379b63aa2ffe271590c52b3009a7d4a13",
+      "blender": null,
+      "dump_dropped": [],
+      "totals": {
+        "faces": 17901,
+        "tris": 1873,
+        "quads": 16028,
+        "ngons": 0,
+        "slivers": 1302,
+        "long_faces": 0,
+        "flat_vertices": 6134,
+        "poles": 60,
+        "manifold_edges": 22890,
+        "welded_edges": 4288,
+        "elements": 305,
+        "inset_elements": 304,
+        "body_elements": 1,
+        "body_faces": 11598,
+        "inset_faces": 6303,
+        "irregular_faces": 1873,
+        "area": 7309.916853,
+        "irregular_area": 203.909781,
+        "edges": 36658,
+        "elements_not_all_quads": 201,
+        "open_seam_edges": 0,
+        "body_holes": 0,
+        "body_hole_edges": 0
+      },
+      "R0": [
+        92.182,
+        92.182,
+        92.182
+      ],
+      "R3": [
+        90.172,
+        90.172,
+        90.172
+      ],
+      "local": 0.309257,
+      "median_drop": 2.01,
+      "paired_spread": 0.0
+    },
+    "G22-k3-v006": {
+      "source_sha256": "39d22ea93efd8ff93c9c8542a314b8b2533fc8f5784d2807a7d5d1581a30dab0",
+      "dump_sha256": "39d22ea93efd8ff93c9c8542a314b8b2533fc8f5784d2807a7d5d1581a30dab0",
+      "blender": null,
+      "dump_dropped": [],
+      "totals": {
+        "faces": 3510,
+        "tris": 0,
+        "quads": 3510,
+        "ngons": 0,
+        "slivers": 0,
+        "long_faces": 0,
+        "flat_vertices": 1798,
+        "poles": 0,
+        "manifold_edges": 5664,
+        "welded_edges": 450,
+        "elements": 106,
+        "inset_elements": 105,
+        "body_elements": 1,
+        "body_faces": 2880,
+        "inset_faces": 630,
+        "irregular_faces": 0,
+        "area": 7998.031458,
+        "irregular_area": 0.0,
+        "edges": 7116,
+        "elements_not_all_quads": 0,
+        "open_seam_edges": 0,
+        "body_holes": 0,
+        "body_hole_edges": 0
+      },
+      "R0": [
+        90.275,
+        90.275,
+        90.275
+      ],
+      "R3": [
+        90.275,
+        90.275,
+        90.275
+      ],
+      "local": 0.0,
+      "median_drop": 0.0,
+      "paired_spread": 0.0
+    },
+    "G22-k2-v002r1": {
+      "source_sha256": "2e922754e8b77f854627267fc75b1ba9c22c41a7c4713333fc34ba0ffaff431b",
+      "dump_sha256": "2e922754e8b77f854627267fc75b1ba9c22c41a7c4713333fc34ba0ffaff431b",
+      "blender": null,
+      "dump_dropped": [],
+      "totals": {
+        "faces": 3933,
+        "tris": 0,
+        "quads": 3933,
+        "ngons": 0,
+        "slivers": 0,
+        "long_faces": 0,
+        "flat_vertices": 238,
+        "poles": 0,
+        "manifold_edges": 6871,
+        "welded_edges": 1944,
+        "elements": 1,
+        "inset_elements": 0,
+        "body_elements": 1,
+        "body_faces": 3933,
+        "inset_faces": 0,
+        "irregular_faces": 0,
+        "area": 5157.80091,
+        "irregular_area": 0.0,
+        "edges": 8861,
+        "elements_not_all_quads": 0,
+        "open_seam_edges": 0,
+        "body_holes": 0,
+        "body_hole_edges": 0
+      },
+      "R0": [
+        83.693,
+        83.693,
+        83.693
+      ],
+      "R3": [
+        83.693,
+        83.693,
+        83.693
+      ],
+      "local": 0.0,
+      "median_drop": 0.0,
+      "paired_spread": 0.0
+    }
+  },
+  "max_median_drop": 6.946,
+  "threshold": 0.5,
+  "passed": false,
+  "clean_checks": [
+    "synthetic clean and reset",
+    "canonical report parity",
+    "input checksums"
+  ],
+  "injected_checks": [
+    "pinned synthetic skew witness"
+  ],
+  "not_measured": [
+    "held-out rejected pair",
+    "verified clean rounded/oblique envelope",
+    "fresh G22 k2 native readback",
+    "body-core candidate",
+    "delivery QA"
+  ]
+}
