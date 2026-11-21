@@ -219,6 +219,27 @@ def test_export_skirt_check_shallow_station_inside_edge_fails(tmp_path):
     assert gs.skirt_check_export(p, 1.0)["status"] == "fail"
 
 
+@pytest.mark.parametrize("z", [-0.6, -0.9, -0.1])
+def test_export_skirt_check_corner_ignores_perpendicular_wall(tmp_path, z):
+    """r2 P1-1: the corner station must not borrow depth from the adjacent edge's perpendicular wall."""
+    p = _segmented_wall_obj(tmp_path / "c.obj")
+    txt = p.read_text(encoding="utf-8").replace("v 0.0 0.0 -1.5", f"v 0.0 0.0 {z}", 1)  # edge 0 seg 0 only
+    p.write_text(txt, encoding="utf-8")
+    r = gs.skirt_check_export(p, 1.0)
+    assert r["status"] == "fail" and r["gap_count"] >= 1
+    assert r["min_drop_m"] == pytest.approx(-z)
+
+
+def test_export_skirt_check_corner_and_removed_quad_combined(tmp_path):
+    """r2 regression combined with r1: shallow corner on edge 0 + removed inner quad on edge 2 -> two failing edges."""
+    p = _segmented_wall_obj(tmp_path / "cq.obj", {(2, 1)})
+    txt = p.read_text(encoding="utf-8").replace("v 0.0 0.0 -1.5", "v 0.0 0.0 -0.6", 1)
+    p.write_text(txt, encoding="utf-8")
+    r = gs.skirt_check_export(p, 1.0)
+    assert r["status"] == "fail" and r["gap_count"] == 2 and r["min_drop_m"] == pytest.approx(0.0)
+    assert sorted(g["drop_m"] for g in r["gaps"]) == pytest.approx([0.0, 0.6])
+
+
 def _relief(w, h, n=6, margin=1.0):
     pts = []
     for i in range(n):
