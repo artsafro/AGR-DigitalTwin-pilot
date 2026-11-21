@@ -115,3 +115,37 @@ def test_conform_fails_closed():
         planes['Q']['axes'], planes['Q']['ax'] = (0, 2), 1
         wp.conform(planes, {('P', 'Q'): [(0, 0, 1)]}, 1.0, 1e-3)
     assert math.isfinite(1.0)
+
+
+# w12g: 1201 pierce pairs - rebuilt sills/heads whose outline runs along a sloped flashing (slanted outline edge) were
+# rasterised to whole axis cells that poke past the slanted edge into the v003 flashing. Such a plane stays v003.
+def test_slanted_outline_counts_only_non_axis_boundary_edges():
+    sq = [rect(0, 1, 0, 1), rect(1, 2, 0, 1)]
+    assert wp.slanted_outline(sq) == 0
+    tri = [([(0, 0), (1, 0), (0, 1)], 0)]          # hypotenuse is a slanted outline edge
+    assert wp.slanted_outline(tri) == 1
+    # an internal diagonal (two triangles of one square) is shared, not outline
+    two = [([(0, 0), (1, 0), (1, 1)], 0), ([(0, 0), (1, 1), (0, 1)], 0)]
+    assert wp.slanted_outline(two) == 0
+
+
+def test_slanted_outline_ignores_wildcard_contact_faces_and_tiny_tilts():
+    assert wp.slanted_outline([([(0, 0), (1, 0), (0, 1)], None)]) == 0
+    # a 0.5 mm wobble over 1 m (r1 float noise) is not a slant at tol 1 mm
+    assert wp.slanted_outline([([(0, 0), (1, 0.0005), (1, 1), (0, 1)], 0)], tol=1e-3) == 0
+    assert wp.slanted_outline([([(0, 0), (1, 0.0015), (1, 1), (0, 1)], 0)], tol=1e-3) == 1
+
+
+@pytest.mark.parametrize('faces', [[], [([(0, 0), (1, float('nan')), (0, 1)], 0)]])
+def test_slanted_outline_fails_closed(faces):
+    with pytest.raises(ValueError):
+        wp.slanted_outline(faces)
+
+
+def test_slanted_outline_random_rectilinear_unions_are_zero():
+    rnd = random.Random(1609)
+    for _ in range(200):
+        n = rnd.randint(1, 6)
+        cells = {(rnd.randint(0, 4), rnd.randint(0, 4)) for _ in range(n)}
+        faces = [rect(i * 0.5, i * 0.5 + 0.5, j * 0.3, j * 0.3 + 0.3) for i, j in cells]
+        assert wp.slanted_outline(faces) == 0
