@@ -35,11 +35,11 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 8 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
 | 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
-| 11 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
-| 12 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 13 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
-| 14 | `geojson` GeoJSON | пробел |
-| 15 | `light-fbx` `_Light.fbx` | пробел |
+| 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
+| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 13 | `light-fbx` `_Light.fbx` | `agr validate ZIP --profile vpm`: V012, строки Light FBX ([контракт](../research/elv-agent-vs-delivered.md#контракт-light-fbx)) |
+| 14 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
+| 15 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
 
 ### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
 
@@ -150,6 +150,21 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | 15 | `package-vpm` | `agr package-vpm` |
 | 16 | `validate` | `agr validate --ground-area-m2` |
 | 17 | `checker` | `agr checker` после визуальной приёмки |
+
+### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D372], [D368]-[D371]
+
+Одна команда `agr library publish BATCH --kind maf --evidence DIR` проходит этапы 1–6; затем на «ок» Артёма
+`agr library accept NAMES --words "..."`, на отказ `agr library reject NAME --words "..."`. Подробно:
+[`docs/library/PUBLISH.md`](../library/PUBLISH.md), карточка [library-publish](../scenarios/library-publish.md).
+
+| # | Этап | Что вызывает |
+|---|---|---|
+| 1 | `intake` приём копии партии | `tools/library/publish.py` `intake_batch` (каждый файл — объект или отброс с причиной) |
+| 2 | `identify` дубль / вариант / новый | `identify_object` по `library/assets/maf_unified.json`; `assets_library`, `intake_identify.dims_check` |
+| 3 | `name` библиотечное имя [D369] | `library_name` (`assets_library.propose_maf_name`, translit, ё=е) |
+| 4 | `qa` ВПМ и НПМ | `qa_object` на `tools/blender/fbx_readback.py` + `twinqa.maf_checks.maf_findings` |
+| 5 | `register` версия vNNN + черновик [D370] | `register_version` → `AGR-assets/<kind>/<name>/vNNN/`, `library/published/catalogue.json` |
+| 6 | `sheet` лист Артёму, accept/reject [D371] | `write_sheet`, `accept_records`, `reject_record` |
 
 ## OKS modelling split [D336]
 
@@ -317,11 +332,9 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
+
 - `sintez-recipe` — один согласованный хук задания или работа у владельца; автоматической правки нет.
 - `sintez-sheet` — ручной лист по отчётам и замерам, общего генератора нет.
-
-- `geojson` — нет готового к сдаче генератора GeoJSON, пока не изучены примеры заказчика [D220].
-- `light-fbx` — нет стадии валидатора для содержимого `_Light.fbx`.
 - `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
 - `review-scene` — `agr open-in-max` / `agr contact-renders` недоступны: мост Max или рендеры работы.
 - `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.

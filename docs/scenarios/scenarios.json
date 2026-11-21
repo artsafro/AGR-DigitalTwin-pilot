@@ -56,6 +56,13 @@
       "status": "ready",
       "card": "docs/scenarios/ground-vpm.md",
       "reads": ["docs/domain/requirements-2026.md", "docs/domain/areas/ground-surface.md", "docs/domain/areas/groundel-maf.md", "docs/domain/areas/flora.md", "docs/domain/areas/ucx.md", ".agents/skills/model-ground/SKILL.md"]
+    },
+    {
+      "id": "library-publish",
+      "title": "Agent-made MAF / Flora / windows / roof equipment into the AGR library (draft -> accepted)",
+      "status": "ready",
+      "card": "docs/scenarios/library-publish.md",
+      "reads": ["docs/library/PUBLISH.md", "docs/library/TEMPLATE.md", "library/assets/INTAKE.md"]
     }
   ]
 }
