@@ -778,6 +778,9 @@ def fit_metric_region(region_id, xyz, charts, *, preferred_seams=(), density=512
     def finite(x):
         return type(x) in (int, float) and math.isfinite(x)
 
+    def near(a, b):
+        return abs(a - b) <= 4 * math.ulp(max(abs(a), abs(b)))
+
     if type(region_id) is not int or region_id <= 0:
         raise ValueError('unmapped region ID: {}'.format(region_id))
     if not finite(density) or not 512 <= density <= 1706:
@@ -826,17 +829,36 @@ def fit_metric_region(region_id, xyz, charts, *, preferred_seams=(), density=512
             for src, ring in group:
                 for j in range(1, len(ring) - 1):
                     triangle = [ring[0], ring[j], ring[j + 1]]
+                    vertices = [p for p, _ in triangle]
+                    tile_uv = [tuple(((p[k] - lo[k]) * density + 32) / 4096 for k in (0, 1))
+                               for _, p in triangle]
+                    u, v = [tuple(a - b for a, b in zip(tile_uv[i], tile_uv[0])) for i in (1, 2)]
+                    if (u[0] * v[1] <= u[1] * v[0]
+                            or not math.hypot(*_cross(_sub(vertices[1], vertices[0]),
+                                                     _sub(vertices[2], vertices[0])))
+                            or any(not (math.dist(vertices[i], vertices[i-1]) > 0 and
+                                        math.isclose(4096 * math.dist(tile_uv[i], tile_uv[i-1]),
+                                                     density * math.dist(vertices[i], vertices[i-1]),
+                                                     rel_tol=1e-7)) for i in range(3))):
+                        raise ValueError('ID {} triangle {}: unrepresentable metric cut output'.format(region_id, src))
                     pieces.append({'piece': piece_count, 'source_triangle': src,
-                                   'xyz': [list(p) for p, _ in triangle],
-                                   'uv': [[((p[k] - lo[k]) * density + 32) / 4096 for k in (0, 1)]
-                                          for _, p in triangle]})
+                                   'xyz': [list(p) for p in vertices],
+                                   'uv': [list(p) for p in tile_uv]})
             continue
         if piece_count + len(stack) + 2 > piece_budget:
             return {'status': 'blocked', 'id': region_id, 'reason': 'tile_budget',
                     'source_triangles': list(range(len(xyz))), 'cuts': [], 'pieces': []}
         mid = lo[axis] + lengths[axis] / 2
-        preferred = [at for ax, at in preferred_seams if ax == axis and lo[axis] < at < hi[axis]]
+        preferred = [at for ax, at in preferred_seams if ax == axis and lo[axis] < at < hi[axis]
+                     and not near(at, lo[axis]) and not near(at, hi[axis])]
         at = min(preferred, key=lambda pos: (abs(pos - mid), pos)) if preferred else mid
+        # An arithmetic near-hit at a clip corner must not create a wedge with
+        # distinct chart corners but identical XYZ. Canonicalize the line, not
+        # the vertices. Keep it strictly interior; never snap to an extent.
+        close = [p[axis] for p in uv if lo[axis] < p[axis] < hi[axis]
+                 and near(p[axis], at)]
+        if close:
+            at = min(close, key=lambda pos: (abs(pos - at), pos))
         if not lo[axis] < at < hi[axis]:
             raise ValueError('unrepresentable seam in metric chart')
         sides = [[], []]

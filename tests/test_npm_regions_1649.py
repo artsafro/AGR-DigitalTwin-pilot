@@ -175,3 +175,25 @@ def test_new_metric_chart_refuses_unmeasurable_triangles(bad):
     from tools.blender.vpm_uv_policy import metric_triangle
     with pytest.raises(ValueError, match='metric triangle'):
         metric_triangle(bad)
+
+
+@pytest.mark.parametrize('toward', [0., 16.])
+def test_near_vertex_seam_keeps_surface_without_collapsed_children(toward):
+    from math import dist, nextafter
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    uv = [(0., 0.), (16., 0.), (8., 4.)]
+    xyz = [(1000. + u, 1000. + v, 0.) for u, v in uv]
+    result = fit_metric_region(2, [xyz], [uv], preferred_seams=[(0, nextafter(8., toward))], density=520)
+    assert result['status'] == 'ok'
+    assert result['cuts'][0]['at_m'] == 8.
+    assert result['cuts'][0]['kind'] == 'panel_or_zone'
+    children = [Polygon([p[:2] for p in piece['xyz']]) for piece in result['pieces']]
+    original = Polygon([p[:2] for p in xyz])
+    assert all(child.is_valid and child.area > 0 for child in children)
+    assert unary_union(children).equals(original)
+    assert sum(child.area for child in children) == pytest.approx(original.area)
+    for piece in result['pieces']:
+        for j in range(3):
+            assert 4096 * dist(piece['uv'][j], piece['uv'][j-1]) == pytest.approx(
+                520 * dist(piece['xyz'][j], piece['xyz'][j-1]))

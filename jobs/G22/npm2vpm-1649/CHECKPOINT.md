@@ -1,5 +1,46 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
+## v016 — native atlas replay, cut budget and remaining source overlaps
+
+GeoJSON: customer-supplied, not in our package (Artem, 2026-11-21 08:28).
+Carry this exact note into the delivery passport. The existing `agr package-vpm
+--no-geojson` route supports the handoff; keep the validator and SINTEZ checks
+unchanged and identify customer-side findings separately. The quad work FBX
+(decision D366 on `origin/main`) is a sidecar, not a ZIP member. No release FBX/ZIP, validator receipt, or
+SINTEZ receipt has been produced at this checkpoint.
+
+Native replay on the sealed v015 copies gave zero unassigned faces: 148238 /
+73307 / 51147 accounted for (including 293 / 167 / 0 D362 placeholders). No face
+crossed a v005 colour-region boundary in these copies. These are **source-region
+IDs**, not final Multi/Sub or exported tile assignments.
+
+The in-memory 520 px/m triangle-by-triangle cut probe preserved area, winding,
+edge metric, and tile containment. It found and then resolved one arithmetic
+near-vertex cut collapse (mesh001 source polygon 38477); the shared kernel now
+canonicalizes the cut line within four chart-coordinate ULPs and rejects any
+remaining unrepresentable child. Applying these straight cuts independently
+would raise mesh001 from 148238 to 150743 triangles before stitching, above the
+150000 project target [D010]. A relaxed lower bound is 149363 (512 px/m, no
+padding, existing source triangles retained, no conforming neighbour costs).
+That gap does not prove that an optimized region-first layout cannot fit.
+
+Raw xView remains FAIL outside the 33 repaired targets. On mesh001, 29 candidate
+pairs have positive overlap even after eroding both projected boundaries by
+50 mm; that is not a bulk deletion list. The strongest witness is source
+100443 vs 108605 (E vs 19): 0.551948 m² projected overlap, 3.308 mm plane gap,
+0.370415 m² remaining beyond both 50 mm boundaries. A UV cut or a <=50 mm trim
+from the existing edges does not remove that core. The comparative result is
+not the [D173] zero-count delivery rule. Resolve whether this handoff is a
+comparative review candidate only or needs a scoped, finish-owned repair of
+the larger inherited overlaps before release.
+
+Evidence: `G:/Мой диск/AGR-evidence/1649-npm2vpm-g22/t_2692a5c8-v016-native-coverage-and-budget/`
+(17 files; manifest SHA-256
+`2c1b4c3cf4f7cefad8586144d81df22c689b09002a82cbe004342d07cd8c4ae0`). See
+`g22-v016-sheet.png`, `ids-and-cuts.csv`, `seam-probe-r2.json`, and
+`residual-xview.json`. Resume with the sealed v015 Blender copies and the
+source-bound v016 ledgers; no customer geometry, textures, or PNGs are in Git.
+
 ## v015 — scoped opacity and geometry readback
 
 The §12.3 decision (orchestrator on t_2692a5c8, 2026-11-21 01:32)
