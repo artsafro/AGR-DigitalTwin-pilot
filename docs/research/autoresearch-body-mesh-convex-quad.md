@@ -57,6 +57,52 @@ other cards. Ownership exclusions (readiness `2026-11-21_0249.json`): #1315/#162
 Replay: `../../.venv/Scripts/python.exe docs/research/autoresearch-body-mesh-convex-quad-harness/replay.py C:/x/ar15/r1/tmp <new-receipt.json>`
 (`--witness` runs the predicate checks only).
 
-## Round log
+## Round log — R6 rejected
 
-(filled after the run)
+**Итог.** R6 снял ложный штраф с принятого 63B v007: падение к R0 **0,273** (допуск 0,500; у R5 было 4,158), а
+отрыв v007 от отклонённых v001–v006 вырос до 2,505–7,443. Но у 63C v001 локальная доля стала 0: его дефект тоже
+лежит на горизонтальных выпуклых четырёхугольниках, а не на треугольниках, как сказано в метке «угловые
+треугольники». Худший отрыв вернулся к R0 — **0,427** (63C v002/v001) при пороге 0,500. Не внедрять.
+
+Contract `9218b57e` (before any measurement), harness `540375a3` + eol pin; one run 05:19:12 → 05:22:03
+(2 min 51 s), exit 0, no repairs, no retunes. Step A: R0/R3 reproduced the #17 receipt on all 13 inputs (built-in
+check). R0 rows at both shifts equal the #20 receipt. Both shifts identical (translation invariant), three repeats
+identical, every paired spread 0.000, canonical parity held.
+
+| Accepted minus rejected | R0 | R6 (both shifts) | Paired spread |
+|---|---:|---:|---:|
+| 63B v007 / v001 | 1.964 | 7.416 | 0.000 |
+| 63B v007 / v002 | 1.978 | 7.430 | 0.000 |
+| 63B v007 / v003 | 1.969 | 7.421 | 0.000 |
+| 63B v007 / v004 | 1.962 | 7.414 | 0.000 |
+| 63B v007 / v005 | 2.088 | 7.443 | 0.000 |
+| 63B v007 / v006 | 0.947 | 2.505 | 0.000 |
+| 63C v002 / v001 | 0.427 | **0.427** | 0.000 |
+| KPP1 v003 rest / corners | 0.718 | 0.718 | 0.000 |
+| G22 k1 v003 / v002 | 1.028 | 1.028 | 0.000 |
+
+R6 local share: 63B v001–v005 0.872521, v006 0.311333, v007 0.057932 (R3 0.620771); 63C v001/v002 0.0;
+KPP1 corners 0.135859, rest 0.167857 (rest above corners, so the local term never helps the KPP1 pair).
+Gates: v007 drop 0.273 ✓, holdouts 63A v005 0.000 / G22 k2 v002r1 0.000 ✓, invariance ✓, worst margin 0.427 ✗
+→ `keep = false`.
+
+Receipt `r21.json` (this directory's harness), SHA-256 `dc3db2d8b9834abea573412c9fb4048534e67e857f26be9dce8e6d776ca47743`;
+replay SHA-256 `eb3ef3f6d2f104a8e9f32266816f57196ecf91d63134df3ebe215e12f0eeb12d`; spliced harness
+`a238c4a0c99f8a809c9f2cc16e787ba6e29c19f248a92043d76a898dec6c8b2e`; R6 scorer
+`7b59894480cfaf7ec06705251087b6b12533f69eff42c446fea7eb0dd43ee1ac`. Dumps are the #17-hashed native dumps in
+`C:/x/ar15/r1/tmp` (not published; hashes in the receipt).
+
+- Clean: #14 rectangle/reset, predicate witness 9/9 (RED `chamfer_quad` with no exception → GREEN), canonical
+  parity, frozen hashes, R0 = #20 receipt.
+- Injected: #14 skew witness passed for R3 and R6.
+- Not measured: geometry of the 63C v001 defect faces (R3 localisation exists only for 63B), fresh native
+  readback, independent labelled pair, triggered clean curved/oblique control, body builders, delivery QA.
+
+**Finding.** On the current fixture, the face-level topology does not separate 63C v001 from v002: R4 (all
+horizontal exempt) and R6 (horizontal convex quads exempt) both zero its local share. Whatever Artem rejected in
+63C v001 must be identified from the faces themselves (corner angles, adjacency, plan position) before another
+exception is proposed. 63B is now well separated by R6; the open question is 63C only.
+
+Would change (separate PR + review, not applied): nothing yet. Next: localise the R3 bad faces of 63C v001 with the
+#19 sink (corners, vertex count, plan position vs the v002 faces at the same place), then decide whether the 63C
+signal is geometric at all.
