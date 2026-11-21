@@ -59,8 +59,18 @@ def _loop_normals(mesh):
         return [mesh.loops[i].normal.copy() for i in range(count)]
 
 
+_ownspec = importlib.util.spec_from_file_location("udimtile_core_readback",
+                                                  ROOT / "adapters/max/agr_tools/udimtile_core.py")
+_udimtile = importlib.util.module_from_spec(_ownspec)
+_ownspec.loader.exec_module(_udimtile)
+
+
 def udim(u, v):
-    return 1001 + int(math.floor(u)) + 10 * int(math.floor(v)) if 0 <= u < 10 and v >= 0 else None
+    """UDIM tile of a UV point via udimtile_core (#1337, #1376); None outside u in [0, 10), v >= 0 or not finite."""
+    try:
+        return _udimtile.udim_tile(u, v)
+    except _udimtile.UdimDomainError:
+        return None
 
 
 def mesh_facts(obj):

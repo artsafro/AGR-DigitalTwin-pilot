@@ -1,0 +1,183 @@
+{
+ "schema_version": "1.0.0",
+ "synthetic": false,
+ "object_id": "KPP1",
+ "source_tier": "D",
+ "status": "draft",
+ "sources": [
+  {
+   "kind": "drawing",
+   "reference": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg",
+   "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+   "sheet": "L01 facades"
+  },
+  {
+   "kind": "drawing",
+   "reference": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg",
+   "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+   "sheet": "L02 colour facades"
+  },
+  {
+   "kind": "drawing",
+   "reference": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg",
+   "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469",
+   "sheet": "L03 plan at 0.000"
+  },
+  {
+   "kind": "model",
+   "reference": "jobs/KPP1/object.json",
+   "sha256": "a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c"
+  }
+ ],
+ "triangle_budget": {
+  "npm": 50000,
+  "vpm": 50000
+ },
+ "parts": [
+  {
+   "id": "Body_Walls",
+   "part_class": "wall",
+   "operation": "contour_rebuild",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L03 exterior hatch (L0 0.000-3.900, 0.70 m frame bumps) [D238]"
+    },
+    {
+     "kind": "object",
+     "reference": "Revit plain rectangle 27.66 x 11.66 m (L1 3.900-7.909) [D238/D254]"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 3713,
+    "vpm": 3713
+   }
+  },
+  {
+   "id": "Parapet",
+   "part_class": "parapet",
+   "operation": "primitive",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "parapet 0.35 m thick on the L1 rectangle [D254]"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 40,
+    "vpm": 40
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "Roof_Plate",
+   "part_class": "slab",
+   "operation": "primitive",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "roof slab 7.700-7.909 [D254], object.json levels"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 15,
+    "vpm": 15
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "Windows",
+   "part_class": "window",
+   "operation": "detail_per_profile",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01 facade frame tops / opening dimensions [D238]"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 2520,
+    "vpm": 2520
+   }
+  },
+  {
+   "id": "Doors",
+   "part_class": "door",
+   "operation": "detail_per_profile",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01 facade door openings [D238]"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 825,
+    "vpm": 825
+   }
+  },
+  {
+   "id": "CurtainWall_Mullions",
+   "part_class": "frame",
+   "operation": "detail_per_profile",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01 curtain-wall mullions [D238]"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 3660,
+    "vpm": 3660
+   }
+  },
+  {
+   "id": "Stair",
+   "part_class": "railing",
+   "operation": "detail_per_profile",
+   "sources": [
+    {
+     "kind": "object",
+     "reference": "east steel stair, RAL 5015 (ИД album slides 25-30)"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 255,
+    "vpm": 255
+   }
+  },
+  {
+   "id": "Glass",
+   "part_class": "glazing",
+   "operation": "primitive",
+   "sources": [
+    {
+     "kind": "material_id",
+     "reference": "M_Glass_01 (separate glass object, NPM alpha 0.5)"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 630,
+    "vpm": 630
+   },
+   "build_as": "plane"
+  }
+ ],
+ "joints": [],
+ "questions": [
+  {
+   "audience": "user",
+   "text": "Gate 1: confirm this PartsList (approval_sha256 in RUN-LOG) as the contract of the existing R1 geometry (D238/D254); per-part budgets = ceil(1.25 x measured R1 v002 triangles before union), whole budget 50 000 per profile (<= 150 000 OKS ceiling).",
+   "answer": null
+  },
+  {
+   "audience": "user",
+   "text": "Source tier D (DWG + cached Revit observation, no fresh RVT mesh) or A (Revit + album)?",
+   "answer": null
+  },
+  {
+   "audience": "user",
+   "text": "The ИД album G:/Мой диск/AGR-assets/tec26/album/TEC26_na_RR_1.pptx (sha256 74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac, slides 25-30: finish bands, cassette module, RAL) cannot be listed in sources: SourceRef has no pptx/image kind (pdf needs page, drawing needs .dwg/.dxf). Accept it as an off-list source for this Gate 1?",
+   "answer": null
+  }
+ ]
+}

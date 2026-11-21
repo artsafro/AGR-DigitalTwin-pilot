@@ -3,6 +3,7 @@ import ast
 import copy
 import json
 import runpy
+import sys
 import pytest
 from pathlib import Path
 from types import SimpleNamespace
@@ -26,10 +27,21 @@ def test_bitmap_is_not_queried_as_material():
 PUBLISH = SCRIPT.with_name('publish_census.py')
 API = runpy.run_path(str(PUBLISH))
 CENSUS = SCRIPT.parents[1] / 'census'
+ROOT = SCRIPT.parents[3]
+sys.path.insert(0, str(ROOT / 'tools' / 'architecture'))
+import search_noise  # noqa: E402  (#1614: census/kpp.json moved to the evidence store)
+
+
+def _census(name):
+    path = search_noise.evidence_path(ROOT, f'jobs/TEC26-OKS/census/{name}.json')
+    if path is None:
+        pytest.skip(f'{name}.json: moved to the evidence store (#1614, jobs/TEC26-OKS/EVIDENCE-MOVED.json), copy absent')
+    return json.loads(path.read_text(encoding='utf-8'))
+
 
 @pytest.mark.parametrize('name', ['oks', 'truba', 'kpp'])
 def test_real_census_complete_finite_and_all_nodes_classified(name):
-    data = json.loads((CENSUS/(name+'.json')).read_text(encoding='utf-8'))
+    data = _census(name)
     assert API['validate_scene'](data)
     for node in data['objects']:
         assert node['kind'] == API['classify'](node['name'])
@@ -39,7 +51,7 @@ def test_real_census_complete_finite_and_all_nodes_classified(name):
 
 @pytest.mark.parametrize('name,expected', [('oks',(9,63)), ('truba',(1,60)), ('kpp',(4,33))])
 def test_no_collision_candidate_added_to_surface_budget(name,expected):
-    nodes=json.loads((CENSUS/(name+'.json')).read_text(encoding='utf-8'))['objects']
+    nodes=_census(name)['objects']
     assert (sum(n['kind']=='surface' for n in nodes),sum(n['kind']!='surface' for n in nodes)) == expected
 
 @pytest.mark.parametrize('damage', ['empty','duplicate_handle','missing_triangles','duplicate_id','nan','inf','negative','bbox'])

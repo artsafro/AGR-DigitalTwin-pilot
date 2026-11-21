@@ -26,6 +26,9 @@ import sys
 import traceback
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools" / "hooks"))
+from hook_input import read_stdin
+
 HERE = Path(__file__).resolve().parent
 # (module file, tool names it runs for; None = every tool the settings matcher sends)
 PARTS = [
@@ -194,17 +197,20 @@ def dispatch(raw):
     """(stdout, stderr, exit code) of the combined hook."""
     data = _input(raw)
     tool = data.get("tool_name")
-    best, errors = ("", 0), []
+    best, errors, notes = ("", 0), [], []
     for name, tools in PARTS:
         if tools is not None and tool not in tools:
             continue
         out, error = run_part(name, raw)
+        part = _input(out).get("hookSpecificOutput", {})
+        if isinstance(part, dict) and part.get("additionalContext"):
+            notes.append(part["additionalContext"])
         if error:
             errors.append(error)
         rank = _rank(out)
         if rank > best[1]:
             best = (out, rank)
-    note = _advisory(data)
+    note = "\n".join(dict.fromkeys(notes + ([_advisory(data)] if _advisory(data) else [])))
     # deny/ask win over a failed part; an explicit allow does not (a part that crashed may have denied).
     if best[1] > RANK["allow"] or (best[1] and not errors):
         return _with_advisory(best[0], note), "", 0
@@ -214,7 +220,7 @@ def dispatch(raw):
 
 
 def main():
-    out, err, code = dispatch(sys.stdin.read())
+    out, err, code = dispatch(read_stdin())
     if out:
         sys.stdout.write(out)
     if err:

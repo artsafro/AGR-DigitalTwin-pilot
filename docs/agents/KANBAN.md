@@ -27,6 +27,17 @@ Triage labels (`docs/agents/triage-labels.md`) and area labels stay as they are.
 - The agent that takes an issue: Ready → In progress at the start; → Needs you when it stops on the user's
   decision. Commands: `docs/agents/issue-tracker.md`.
 
+## Gate 1 handoff
+
+The #1205 channel uses an issue comment containing the versioned PartsList path, file SHA-256,
+approval content hash, questions and choices. See [the procedure](../procedure/TASK_TO_MODEL.md#gate-1-handoff)
+for `gate1.ref` / `gate1.parts_sha256` and the exact identity algorithm.
+Build scope waits in Needs you / Hermes `needs_input`; no build before the user's hash-bound answer.
+For a measurement, dry-run or parts-only card whose scope ends at Gate 1, post the request, leave
+`waits: user` in the job checklist, and finish the scoped evidence/report plus normal code review:
+**no needs_input block** just to await out-of-scope production approval. Hand off the request URL/hash;
+job gates remain incomplete and downstream build remains forbidden until approval.
+
 ## Parallel work
 
 One card = one session = one worktree (a new Code session in the desktop app, or a Codex task), as

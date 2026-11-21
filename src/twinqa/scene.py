@@ -29,7 +29,8 @@ from twinqa.geometry.ucx_audit import (
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
-from twinqa.uv import DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, _density_finding, edge_densities, udim_of
+from twinqa.uv import (DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, UdimDomainError, _density_finding, edge_densities,
+                       udim_of)
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -149,6 +150,38 @@ def ground_triangle_limit(profile: dict, ground_area_m2) -> tuple[int, dict]:
         if area <= Fraction(str(band["area_max"])) * 10_000:
             return band["triangles_max"], band
     return bands[-1]["triangles_max"], bands[-1]
+
+
+def z_bounds_finding(meshes, export_meta, src):
+    """Compare render-mesh world Z bounds in metres; 1 mm is an exclusive numerical budget.
+
+    None means absent evidence (not_run); supplied but malformed evidence fails closed.
+    export_meta is one FBX record with bounds_m in the same exported world frame.
+    """
+    expected = "render Z min/max differ from export_meta by < 0.001 m"
+    def result(status, observed):
+        return _f(status, "Z bounds vs export_meta", observed, expected, [10, 32, 33], src)
+    if export_meta is None:
+        return result("not_run", "export_meta not supplied; height unverified")
+    def valid_bounds(b):
+        return (isinstance(b, (list, tuple)) and len(b) == 2
+                and all(isinstance(v, (list, tuple)) and len(v) == 3 for v in b)
+                and all(_finite_number(c) for v in b for c in v)
+                and all(b[0][i] <= b[1][i] for i in range(3)))
+    if not isinstance(export_meta, dict) or not valid_bounds(export_meta.get('bounds_m')):
+        return result("fail", str(export_meta.get('error', 'invalid export_meta.bounds_m'))
+                      if isinstance(export_meta, dict) else 'invalid export_meta record')
+    geometry = [m for m in meshes if not m['name'].upper().startswith('UCX_')]
+    if not geometry or any(not valid_bounds(m.get('bounds_m')) for m in geometry):
+        return result("fail", "empty/partial/invalid render bounds_m readback")
+    if len({m['name'] for m in geometry}) != len(geometry):
+        return result("fail", "duplicate render mesh names")
+    observed = [min(m['bounds_m'][0][2] for m in geometry), max(m['bounds_m'][1][2] for m in geometry)]
+    target = [export_meta['bounds_m'][i][2] for i in (0, 1)]
+    # Rational operands avoid a rounded subtraction admitting exactly-at-budget discrepancies.
+    bad = any(abs(Fraction(str(a)) - Fraction(str(b))) >= Fraction(1, 1000)
+              for a, b in zip(observed, target))
+    return result("fail" if bad else "pass", f"{src}: readback Z {observed}, export_meta Z {target}")
 
 
 def _pivot_findings(meshes: list[dict], ucx: list[dict], src: str) -> list[Finding]:
@@ -697,7 +730,10 @@ def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
                     raise ValueError(f"partial UV geometry on {mesh['name']}: polygon index") from exc
                 if len(poly_xyz) < 2:
                     continue
-                tile = udim_of(poly_uv)
+                try:
+                    tile = udim_of(poly_uv)
+                except UdimDomainError:  # centroid off the UDIM grid or < 3 corners (#1337): unknown tile
+                    tile = None
                 material = materials[index] if index < len(materials) else None
                 side = _tile_side(diffuse_px, tile, material)
                 if side is None:
@@ -1195,6 +1231,81 @@ def _boundary_rings(verts: list, boundary: list[tuple[int, int]]) -> list[list[t
     return rings
 
 
+def _closed_skirt_landings(polys, top, edge_count, directed, perimeter):
+    """Map directed top-boundary edges to their closed non-top chain (#1693).
+
+    A landing and its candidate rim are in the same face-edge component by
+    construction: each joins the same chain across a two-face edge.
+    """
+    walls_by_edge = {}
+    for face, poly in enumerate(polys):
+        if face not in top:
+            for a, b in zip(poly, (*poly[1:], poly[0])):
+                key = (a, b) if a < b else (b, a)
+                walls_by_edge.setdefault(key, []).append(face)
+
+    visited = set()
+    closed_landings = {}
+    for a, b in perimeter:
+        key = (a, b) if a < b else (b, a)
+        walls = walls_by_edge.get(key, ())
+        if len(walls) != 1 or walls[0] in visited:
+            continue  # boundary edge already has exactly one top-face incidence
+        seed = walls[0]
+        visited.add(seed)
+        stack = [seed]
+        landings = []
+        closed = True
+        while stack:
+            face = stack.pop()
+            poly = polys[face]
+            for i, j in zip(poly, (*poly[1:], poly[0])):
+                edge = (i, j) if i < j else (j, i)
+                walls = walls_by_edge[edge]
+                if len(walls) + edge_count.get(edge, 0) != 2:
+                    closed = False
+                elif len(walls) == 1:
+                    landings.append(directed[edge])
+                elif walls[0] == walls[1]:
+                    closed = False  # two occurrences in one polygon are not two faces
+                else:
+                    other = walls[1] if walls[0] == face else walls[0]
+                    if other not in visited:
+                        visited.add(other)
+                        stack.append(other)
+        if closed:
+            closed_landings.update((edge, seed) for edge in landings)
+    return closed_landings
+
+
+def _skirt_landing_covers(verts, rim, landings) -> bool:
+    """Do opposite, collinear landings on this same chain cover the entire rim in XY?"""
+    i, j = rim
+    x0, y0 = verts[i][:2]
+    dx, dy = verts[j][0] - x0, verts[j][1] - y0
+    length = math.hypot(dx, dy)
+    tol = _SKIRT_XY_TOL
+    if length <= tol or not math.isfinite(length):
+        return False
+    ux, uy = dx / length, dy / length
+    spans = []
+    for a, b in landings:
+        ax, ay = verts[a][0] - x0, verts[a][1] - y0
+        bx, by = verts[b][0] - x0, verts[b][1] - y0
+        if abs(ax * uy - ay * ux) > tol or abs(bx * uy - by * ux) > tol:
+            continue
+        hi, lo = ax * ux + ay * uy, bx * ux + by * uy
+        lo, hi = max(lo, 0.0), min(hi, length)
+        if lo < hi:  # opposite direction with nonzero overlap
+            spans.append((lo, hi))
+    reach = 0.0
+    for lo, hi in sorted(spans):
+        if lo > reach + tol:
+            return False
+        reach = max(reach, hi)
+    return reach >= length - tol
+
+
 def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     """``(status, depth)`` of the Ground perimeter skirt (GND-03), or ``None`` when unmeasurable.
 
@@ -1203,7 +1314,8 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     when the perimeter drop was measured. The skirt extrudes the Ground surface's perimeter
     straight down. Only outer boundary rings of every component count as perimeter; inner holes
     (including building cut-outs) are excluded [D251]; rings sharing a welded vertex are split there
-    by ``_boundary_rings`` (#1224). Under every outer edge the mesh must carry
+    by ``_boundary_rings`` (#1224). Interior step rims paired through a closed wall chain are
+    not perimeter (#1693). Under every outer edge the mesh must carry
     edges at least ``SKIRT_MIN_M`` lower that lie on the same XY segment, either one copy per
     perimeter edge or one bottom edge spanning several collinear perimeter edges (#1133 case 1).
     The drop is measured per perimeter edge
@@ -1242,14 +1354,14 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     materials = shape.get("polygon_material")
     if materials is not None and (not isinstance(materials, list) or len(materials) != len(polys)):
         return "fail", 0.0
-    top = []
+    top = set()
     for idx, p in enumerate(polys):
         nx, ny, nz = _polygon_normal(verts, p)
         if nz <= _SKIRT_UP_EPS * math.hypot(nx, ny, nz):
             continue
         if materials is not None and str(materials[idx]).endswith("_Skirt"):
             continue
-        top.append(p)
+        top.add(idx)
     if not top:
         return "unmeasurable", None
 
@@ -1259,7 +1371,9 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
     # different component's hole is still an outer boundary of its own component).
     edge_count: dict[tuple[int, int], int] = {}
     directed: dict[tuple[int, int], tuple[int, int]] = {}
-    for p in top:
+    for face, p in enumerate(polys):
+        if face not in top:
+            continue
         n = len(p)
         for k in range(n):
             a, b = p[k], p[(k + 1) % n]
@@ -1285,6 +1399,7 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
             perimeter.extend(ring)
     if not perimeter:
         return "fail", 0.0
+    landings = _closed_skirt_landings(polys, top, edge_count, directed, perimeter)
 
     # every mesh edge with an XY extent (vertical edges have none), on a uniform XY grid; the skirt
     # bottom lies under the perimeter XY but may span several collinear perimeter edges (#1133)
@@ -1311,6 +1426,14 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
         for c in _skirt_cells(seg[0], seg[1], seg[3], seg[4], cell):
             grid.setdefault(c, []).append(s)
 
+    # Local XY candidates only: do not scan an entire closed skirt chain for each rim edge.
+    landing_grid: dict[tuple[int, int], list[tuple[int, int]]] = {}
+    for a, b in landings:
+        ax, ay = verts[a][:2]
+        bx, by = verts[b][:2]
+        for c in _skirt_cells(ax, ay, bx, by, cell):
+            landing_grid.setdefault(c, []).append((a, b))
+
     best = math.inf
     for i, j in perimeter:
         vi, vj = verts[i], verts[j]
@@ -1318,10 +1441,19 @@ def _skirt_perimeter_drop(mesh: dict) -> tuple[str, float | None] | None:
             drop = 0.0  # degenerate perimeter edge: no downward skirt
         else:
             near: set[int] = set()
+            near_landings: set[tuple[int, int]] = set()
+            chain = landings.get((i, j))
             for cx, cy in _skirt_cells(float(vi[0]), float(vi[1]), float(vj[0]), float(vj[1]), cell):
                 for ox in range(-2, 3):
                     for oy in range(-2, 3):
-                        near.update(grid.get((cx + ox, cy + oy), ()))
+                        c = cx + ox, cy + oy
+                        near.update(grid.get(c, ()))
+                        if chain is not None:
+                            near_landings.update(landing_grid.get(c, ()))
+            if chain is not None and _skirt_landing_covers(
+                verts, (i, j), (edge for edge in near_landings if landings[edge] == chain)
+            ):
+                continue
             drop = _skirt_edge_drop(vi, vj, [segs[s] for s in near])
         if drop < 0.0:
             drop = 0.0
@@ -1665,7 +1797,7 @@ def color_attribute_finding(meshes: list[dict], src: str) -> Finding:
 def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule: dict | None = None,
                    flora_share: int = FLORA_SHARE, *, maf_sizes=None, smoothing_angle_deg=None,
                    ground_area_m2=None, footprint_holes=None, diffuse_px=None,
-                   ground_materials=None) -> dict[str, list[Finding]]:
+                   ground_materials=None, export_meta=None) -> dict[str, list[Finding]]:
     """role: 'oks' | 'ground' | 'light'. Returns {stage_id: findings}. Ground FBX: Flora checks
     (twinqa.flora; flora_schedule = {mesh name: {"height_m", "crown_m"}}, flora_share default 70 000).
     ground_area_m2: VPM Ground area basis = site minus OKS footprint, m2; selects the reg p.29 band for the
@@ -1686,10 +1818,48 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V003"].append(_f("fail", "FBX readback", rb.get("error", "no meshes"), "importable FBX with meshes", [4, 24], src))
         return out
     meshes = rb["meshes"]
+    if role != "light":
+        out["V013"].append(z_bounds_finding(meshes, export_meta, src))
     ucx = [m for m in meshes if m["name"].upper().startswith("UCX_")]
     out["V002"].extend(_v002_findings(rb, meshes, src))
     # V005: color attributes (reg 4.1.1, SINTEZ lp_color_attributes); review only, the regulation recommends removal
     out.setdefault("V005", []).append(color_attribute_finding(meshes, src))
+    if kind == 'npm' and role != 'light':
+        # NPM opaque materials carry their texture set: reg p.8 §4.4, p.9 §4.5.
+        # Never apply this to VPM: its FBX paths MUST be cleared (reg p.30 §4.2).
+        opaque = [m for m in meshes if m not in ucx and not m['name'].endswith(GLASS_SUFFIXES)]
+        if opaque:
+            image_names = {i.get('name') for i in rb.get('images', [])}
+            facts, bad_materials = {}, []
+            for material in rb.get('materials') or []:
+                name = material.get('name')
+                if name in facts:
+                    bad_materials.append(f'duplicate material facts: {name}')
+                facts[name] = material.get('maps') or []
+            for m in opaque:
+                slots = m.get('materials') or []
+                if not slots:
+                    bad_materials.append(f"{m['name']}: no material assignment")
+                geometry = m.get('face_geometry', {})
+                if 'polygon_material' in geometry:
+                    assigned = geometry['polygon_material']
+                    polygons = geometry.get('polygons', [])
+                    if not isinstance(assigned, list):
+                        bad_materials.append(f"{m['name']}: unsupported polygon material table")
+                    else:
+                        wrong = [(i, name) for i, name in enumerate(assigned) if not name or name not in slots]
+                        if len(assigned) != len(polygons) or wrong:
+                            bad_materials.append(f"{m['name']}: unmapped polygon materials {wrong[:5]}; "
+                                                 f"{len(wrong)} invalid, {len(assigned)} assignments for {len(polygons)} polygons")
+                for name in slots:
+                    maps = facts.get(name, [])
+                    diffuse = [item.get('image') for item in maps if item.get('socket') in _DIFFUSE_SOCKETS]
+                    if not name or not diffuse or any(not image or image not in image_names for image in diffuse):
+                        bad_materials.append(f"{m['name']}: unmapped diffuse for material {name!r}")
+            out['V005'].append(_f('fail' if bad_materials else 'pass', 'material assignments',
+                                  f"{src}: {bad_materials or 'every opaque material has a bound diffuse image'}",
+                                  'each NPM opaque material resolves to its diffuse texture; glass excluded',
+                                  [8, 9], src))
     tris = sum(m["triangles"] for m in meshes if m not in ucx)  # collision is excluded (reg p.28 §3.9)
 
     # V003: triangulated on export, triangle limits, no foreign objects (reg p.6-8, 28-29)
@@ -1805,6 +1975,20 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         loose = [i["name"] for i in rb.get("images", []) if not i["packed"]]
         out["V006"].append(_f("fail" if loose else "pass", "embedded textures", f"{src}: {loose or 'all embedded'}",
                               "PNG embedded in FBX", [9], src))
+        # Reg p.9 §5.2: no NPM atlas side exceeds 2048 px. Readback dimensions
+        # complement (never replace) PNG-byte checks and area-specific smaller limits.
+        images = rb.get('images', [])
+        if images:
+            bad_sizes = []
+            for image in images:
+                size = image.get('size')
+                if (not isinstance(size, (list, tuple)) or len(size) != 2
+                        or any(type(s) is not int or not 0 < s <= 2048 for s in size)):
+                    bad_sizes.append((image.get('name', '<unnamed image>'), size))
+            out["V006"].append(_f('fail' if bad_sizes else 'pass', 'texture dimensions',
+                                  f"{src}: {bad_sizes or 'all measured sides <= 2048 px'}",
+                                  'positive measured NPM image dimensions, each side <= 2048 px; PNG-byte checks separate',
+                                  [9], src))
     if role == "ground":  # Flora checks (#191): dimensions V015, maps V005, Flora share V003
         geometry = [m for m in meshes if m not in ucx]
         for stage_id, findings in flora_findings(rb, kind, geometry, tris, profile, flora_schedule, flora_share).items():

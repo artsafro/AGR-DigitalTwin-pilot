@@ -1,0 +1,37 @@
+{
+ "issue": "#1614",
+ "rule": "COORDINATION_RULES 57: job data lives in the evidence store",
+ "evidence_root": "G:/Мой диск/AGR-evidence/1614-job-data/KPP1",
+ "files": [
+  {
+   "path": "jobs/KPP1/rerun-1230/parts-schedule-r1-v002.json",
+   "sha256": "51a9c948cd817c7c69d865138d16c6549edf71b62be63786c2ebdda8b3e92939",
+   "bytes": 89206,
+   "evidence": "G:/Мой диск/AGR-evidence/1614-job-data/KPP1/rerun-1230/parts-schedule-r1-v002.json"
+  },
+  {
+   "path": "jobs/KPP1/rerun-1230/parts-schedule-r1-v003.json",
+   "sha256": "73d59804693eacdb79c6b47489dcb2fc815b3f6a9e7c74809479523fd9e73444",
+   "bytes": 72444,
+   "evidence": "G:/Мой диск/AGR-evidence/1614-job-data/KPP1/rerun-1230/parts-schedule-r1-v003.json"
+  },
+  {
+   "path": "jobs/KPP1/rerun-1230/parts-schedule-v001.json",
+   "sha256": "95e2043a52279109763894b4205c3c054fb8ff3cdbc277d1bb9e378899d29bcd",
+   "bytes": 71578,
+   "evidence": "G:/Мой диск/AGR-evidence/1614-job-data/KPP1/rerun-1230/parts-schedule-v001.json"
+  },
+  {
+   "path": "jobs/KPP1/rerun-1230/xview-vpm-r1-v002.json",
+   "sha256": "743e3db84c08057cca3ad03c0642628d584d13124fea97e4f5a0a1d419d9febd",
+   "bytes": 74180,
+   "evidence": "G:/Мой диск/AGR-evidence/1614-job-data/KPP1/rerun-1230/xview-vpm-r1-v002.json"
+  },
+  {
+   "path": "jobs/KPP1/rerun-1244/xview-vpm-r1-v002.json",
+   "sha256": "6cab4c44399a6e43bf635215ecab04f6525af612e1c5624917ee5d12195c350e",
+   "bytes": 74203,
+   "evidence": "G:/Мой диск/AGR-evidence/1614-job-data/KPP1/rerun-1244/xview-vpm-r1-v002.json"
+  }
+ ]
+}

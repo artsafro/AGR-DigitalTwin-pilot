@@ -82,6 +82,15 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   fences: deterministic result, collapse to mesh, FBX readback; same research note.
 - **P17** (later) Own asset catalog (models, materials, textures, previews, relink without Max); Project Manager
   covers it today. Same research note.
+- **P18** (Codex) Flora catalogue path for built stars (#1191, [D253]). The three accepted Telegram stars
+  (`library/flora/stars-telegram-v001.json`, `C:/x/flora-telegram-stars/v002`, ids 410-412 proposed) are not in
+  `library/flora/catalogue.json`. To get them in: (1) a generator route for built stars without an audit-scene entry,
+  or the audit run by `experiments/flora-library-audit/inspect_scene.py` on a labelled v004 scene; (2) flora-library
+  v004 = a copy of v003 plus the 6 objects (`<Latin>_NPM` / `_VPM`, maps on the approved G: paths), headless via
+  `dcc_batch.py max`, with the library version taken out of code (`LIBRARY_FILE` in `flora_catalogue.py`,
+  `rebind_flora_library_maps.py`, `build_flora_npm_light.py`, `tests/test_flora_library_rebind.py`) into one config;
+  (3) restore `C:/x/flora-library` on this machine or point the tools at the G: copy
+  `G:\Мой диск\AGR-assets\flora\v003\flora-library-v003.max`. Then regenerate the catalogue.
 
 ## Engine gaps — mixed mode (user decision 2026-10-11 [D050]; historical `archive/2026-11:docs/HARNESS_PLAN.md` §16)
 
@@ -170,6 +179,8 @@ Plan: historical `archive/2026-11:docs/HARNESS_PLAN.md` §15 (user decision 2026
 - **Q9** Live smoke tests of AGR Tools / `agr-mcp` in a pinned 3ds Max after each change (the agent starts Max,
   runs the tools, reads results back, closes Max). Idea from `docs/research/telegram-3dsmax-chat-2026-11.md`
   (accepted 2026-11-10).
+- **Q10** Shared VPM visibility checker `dt qa visibility`: moved to issue #1447 (implemented there:
+  `src/dt_ai/ops/visibility_gate.py`). The method and its knobs live in the module docstring, not here.
 
 ## Unreal and IFC
 
@@ -256,9 +267,29 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
   per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
   effort M
+<<<<<<< HEAD
 - **R28** proposal 2026-11-21, job/staropetrovskiy-maf-npm-claude - CLI command: headless SINTEZ AGR Checker run on a package zip (copy to a scratch folder, LP+HP checklist JSON, failures summary in UTF-8); seen 9 times; effort S
 - **R29** proposal 2026-11-21, job/staropetrovskiy-maf-npm-claude - CLI command: per-triangle UV verifier that mirrors SINTEZ (tile bounds + 1/256 margin, mirrored, zero/thin UV, TD 512-1706 per tile resolution) before packing; seen 5 times; effort S
 - **R30** proposal 2026-11-21, job/staropetrovskiy-maf-npm-claude - pattern: place NPM additions into a customer VPM Ground (local = MSK - pivot, append with matrix_basis, join, UDIM tiles after the customer's last tile, strip texture links before export); seen 3 times; effort M
+=======
+- **R21** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Blender part assembly — append part .blend files, place
+  module instances at level offsets (k·3.15), export a non-triangulated FBX + a slot→image manifest JSON; seen 6 times
+  (assembly v001–v006 via sed-edited copies of one script); effort S
+- **R22** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Max scene refresh from such an FBX — delete the layer's
+  generated objects except a keep-list, import #add, rebuild one Multi/Sub (Physical) per part group from the manifest
+  (Bitmap / MultiTile), assign, save a new version; seen 3 times (3k_v002→v004); effort M
+- **R23** proposal 2026-11-14, job/4bk-k3-vpm - pattern: АКП joint UV by left-edge stacking (Artem's method — every
+  joint is an edge, panels share one texel and stack by their joint edge on one painted line; long faces with mid
+  joints go to a second tile); seen 1 user explanation + 3 agent runs re-deriving joint layouts; effort M
+- **R24** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: assemble a review .blend from named part files
+  (`assemble_files.py out typ name=path ...`, append objects read-only, one collection per part); seen 4 times
+  (K3_GF_full_review_v006–v009); effort S
+- **R25** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: build a 3ds Max QUAD review scene from a part FBX with
+  one Multi/Sub of viewport-visible UDIM bitmaps per ID, then readback (material per face, bitmap on disk, UV inside
+  its tile) and 2-3 captures; seen 9 times (STY_B_uv_review v002–v007, K3_A_tex_review v001–v003); effort M
+- **R26** proposal 2026-11-19, job/colleague-maf-models - skill: MAF from a manufacturer page (download renders+DWG, DWG->DXF dims, part breakdown, `maf_parts.py` quad builders in headless Blender, preview, open versioned .blend for review); builders live outside git in `C:/x/two-mafs/work/scripts/`; seen 2 times (MG4013, 171620); effort M
+- **R27** proposal 2026-11-19, job/colleague-maf-models - CLI command: accepted Blender MAF -> one quad mesh, pivot D095, quad FBX -> 3dsmaxbatch Editable Poly + Multi/Sub with library IDs from the `<id>_<name>` material prefix + readback log (`export_maf_fbx.py` + `fbx_to_max.ms`); seen 2 times; effort S
+>>>>>>> origin/main
 
 ## Harness and organization (default owner Codex)
 

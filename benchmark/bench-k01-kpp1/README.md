@@ -33,6 +33,9 @@ silhouettes, triangle budget **pass**; the inset roof joint is recognised (slabs
   (C24 seat); with door (11) and glass (12) in the opening group the extractor also takes them as planes and
   asks 25 `wall-break-off-contour` questions;
 - `material_ids`: 200 unassigned triangles (asphalt, by the table).
-The engine stops on the KPP1 parapet (a face at 8.65 m between x 0.225 and 0.38 is no trapezoid).
+The engine stopped on the KPP1 parapet (a face at 8.65 m between x 0.225 and 0.38 is no trapezoid; runs of
+2026-10-12). On `origin/main` 8eb39d48 it builds the KPP1 spec and the roof/parapet step passes `mesh`.
+The model then fails bbox and silhouettes. See the seam evidence in
+[`jobs/KPP1/seam-1339/README.md`](../../jobs/KPP1/seam-1339/README.md) (#1339).
 Open: each of these needs a decision (K01 profile: npm_min or VPM rules for openings; decor IDs; the
-asphalt; the engine's parapet strip) before K01 can be green.
+asphalt) before K01 can be green.

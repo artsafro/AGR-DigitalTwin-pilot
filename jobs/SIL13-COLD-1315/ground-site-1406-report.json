@@ -1,0 +1,241 @@
+{
+ "order": [
+  "sources",
+  "zero",
+  "surfaces",
+  "quads",
+  "textures",
+  "relief",
+  "skirt",
+  "ucx"
+ ],
+ "passed": false,
+ "stages": {
+  "sources": {
+   "origin_xy_m": [
+    835.0,
+    11035.0
+   ],
+   "boundary_m2": 474.385736,
+   "fragment": true,
+   "crop_box": [
+    820,
+    11024,
+    850,
+    11046
+   ],
+   "covers": 3,
+   "relief_points": 1685,
+   "dxf": "G:\\Мой диск\\AGR-evidence\\1315-cold-silikatny\\v001\\pzu.dxf",
+   "dxf_sha256": "35b537cfe7f05236bf13c2159ef4ae689118162c0f4418a2a93983437c4e3cf4",
+   "spec": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_2a26393b\\jobs\\SIL13-COLD-1315\\ground-site-1406-pilot.json",
+   "spec_sha256": "9808ac46b932db5a45264a00625df2137fcff8f0dbd7a89762eddd46308588f2",
+   "zero_source": "D282: VP_5 floor-mark MTEXT 33F8EC4=142.10 beside 33F8EC5=0.000 (#1315 v003)"
+  },
+  "zero": {
+   "project_zero_m": 142.1,
+   "h_relief": 142.1,
+   "fbx_z_of_zero_m": 0.0,
+   "relief_abs_range_m": [
+    140.7,
+    142.4671639528711
+   ],
+   "tin_points": 1646,
+   "tin_triangles": 3269,
+   "merged_duplicates": 39
+  },
+  "surfaces": {
+   "plan": {
+    "surface_m2": 474.386,
+    "holes_m2": [],
+    "slivers_on_base": 1,
+    "slivers_m2": 17.009,
+    "level2_m2": {}
+   },
+   "unhatched_m2": 17.009,
+   "unhatched_policy": {
+    "cover_id": 1,
+    "reason": "D283: the 17.009 m2 pink wedge has no hatch in the PZU; adjacent lawn, disclosed orchestrator assumption"
+   },
+   "ids": [
+    {
+     "id": 1,
+     "name": "SeededLawn",
+     "slot": "ID01_SeededLawn",
+     "udim": 1001,
+     "colour_rgb": [
+      96,
+      150,
+      64
+     ],
+     "colour_source": "spec",
+     "sources": [
+      "33FBCB2"
+     ],
+     "area_m2": 3155.918523
+    },
+    {
+     "id": 2,
+     "name": "Rubber253",
+     "slot": "ID02_Rubber253",
+     "udim": 1002,
+     "colour_rgb": [
+      246,
+      115,
+      44
+     ],
+     "colour_source": "hatch-bgcolor",
+     "sources": [
+      "33FBCCD"
+     ],
+     "area_m2": 145.909587
+    },
+    {
+     "id": 3,
+     "name": "Rubber18",
+     "slot": "ID03_Rubber18",
+     "udim": 1003,
+     "colour_rgb": [
+      233,
+      224,
+      210
+     ],
+     "colour_source": "hatch-bgcolor",
+     "sources": [
+      "33FC17A"
+     ],
+     "area_m2": 56.300132
+    }
+   ]
+  },
+  "quads": {
+   "flat_triangles": 220,
+   "flat_vertices": 146,
+   "coverage": {
+    "surface_m2": 474.38573602447707,
+    "base_m2": 474.38487200000003,
+    "uncovered_m2": 0.002623549053907994,
+    "coverage_pct": 99.99944695869739,
+    "tol_m": 0.001,
+    "uncovered_beyond_tol_m2": 0.0,
+    "outside_surface_beyond_tol_m2": 0.0
+   },
+   "flat_z": [
+    0.0,
+    0.006
+   ]
+  },
+  "relief": {
+   "triangles": 642,
+   "flat_vertices_retained": {
+    "flat": 146,
+    "missing": 0
+   },
+   "relief_error": {
+    "faces": 642,
+    "max_mm": 8.083167909968395,
+    "faces_over_tol": 0,
+    "tol_mm": 10.0
+   },
+   "uv_unchanged_by_projection": true,
+   "snap_margin_vertices": 1,
+   "snap_margin_max_m": 5.03698116270629e-05
+  },
+  "textures": {
+   "tiles": {
+    "triangles": 798,
+    "straddling": 0,
+    "outside_udim_range": 0,
+    "tiles": [
+     1001,
+     1002,
+     1003
+    ],
+    "u_range": [
+     0.0,
+     3.0
+    ],
+    "v_range": [
+     0.0,
+     1.0
+    ]
+   },
+   "expected_tiles": [
+    1001,
+    1002,
+    1003
+   ],
+   "tex_px": 4096,
+   "density_px_per_m_top": [
+    1280.8404976268077,
+    1365.3333333333353
+   ]
+  },
+  "skirt": {
+   "drop_m": 1.0,
+   "skirt_faces": 156,
+   "skirt_gap_edges": []
+  },
+  "ucx": {
+   "status": "not_run",
+   "owner": "#1404 compaction 7 (ucx10_core.py, D225)"
+  }
+ },
+ "findings": [
+  "UCX not built: #1404 compaction 7 (ucx10_core.py, D225)"
+ ],
+ "geometry_status": "built",
+ "site": "SIL13",
+ "readback": {
+  "vertices": 456,
+  "triangles": 798,
+  "z": {
+   "ground": [
+    -0.468742,
+    0.260367
+   ],
+   "ground_inset1": [
+    0.086055,
+    0.266367
+   ],
+   "skirt": [
+    -1.468742,
+    0.260367
+   ]
+  },
+  "tiles": {
+   "M_SIL13_Ground_ID01_SeededLawn": [
+    1001
+   ],
+   "M_SIL13_Ground_ID02_Rubber253": [
+    1002
+   ],
+   "M_SIL13_Ground_ID03_Rubber18": [
+    1003
+   ]
+  }
+ },
+ "project_zero_check": {
+  "project_zero_m": 142.1,
+  "project_zero_fbx_z_m": 0.0,
+  "step_m": 0.006,
+  "tol_m": 0.01,
+  "checked_vertices": 378,
+  "levels": [
+   0,
+   1
+  ],
+  "residual_m": [
+   -0.0,
+   0.0
+  ],
+  "shift_estimate_m": 0.0,
+  "h_relief": 142.1,
+  "notes": [],
+  "findings": [],
+  "h_otn": 0.26,
+  "h_abs": 142.36,
+  "status": "pass",
+  "zero_source": "D282: VP_5 floor-mark MTEXT 33F8EC4=142.10 beside 33F8EC5=0.000 (#1315 v003)"
+ }
+}

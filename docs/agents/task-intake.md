@@ -16,6 +16,15 @@ cards ran in parallel on the wrong assumption.
   orchestrator): run the full intake below BEFORE writing code, issues or cards.
 - **Card worker** (the task came as a card/issue): run the **preflight** below at the start of the card.
 
+## Check level [D273]
+
+Record `level: fast | standard | full` in the task/card and state the selected level in the first message.
+The orchestrator/agent sets it at intake by the [check-level table](../procedure/TASK_TO_MODEL.md#check-levels);
+Artem overrides with one word (`fast`, `standard` or `full`). An agent may go up a level with a one-line
+reason, never down on its own. Check level is separate from the `level:simple|medium|hard` dispatch label.
+A card worker checks the field during preflight; if absent, select it by the table and state why.
+Read the worker policy there before choosing readback, review and image evidence [D273].
+
 ## Full intake (task from Artem)
 
 1. Read the sources yourself first (read only, 5–10 min): folders, the album/presentation slides that show the
@@ -26,7 +35,8 @@ cards ran in parallel on the wrong assumption.
    numbers for every «как у X»; the source of every input; the acceptance picture; the fallback when something does
    not fit.
 4. First piece, then the rest: one object / building / facade end to end (target 20–40 min), a picture to Artem, his
-   «да» — only then the same script for the rest, in parallel.
+   «да» — only then the same script for the rest, in parallel. When Artem is online, use the opened scene
+   and absolute path instead of the picture/render; apply the [check-level image limits](../procedure/TASK_TO_MODEL.md#check-levels) otherwise [D273].
 
 ## Preflight (card worker)
 
@@ -41,6 +51,7 @@ Common:
 - Scope: what changes, what must NOT be touched (geometry, topology, UV, UCX, material IDs, names, other objects).
 - Etalon: «как у X» in numbers — which file, which parameters (texel, tile size, map types, naming, palette).
 - Inputs: which sheet / slide / file is the authority per item; which one wins on conflict (e.g. DWG `_R1` vs PDF).
+- Multi-building/part sheets: mark `finish_sheets[].multi_building: true`; record each part's `finish_refs: [{image, bbox, crop}]` (original-image pixel bbox `[left, top, right, bottom]`, top-left origin, right/bottom exclusive), save a crop beside the analysis in external evidence, record the finish read from it in `legend_item`, and give subagent briefs the crop path rather than the sheet name; verify crop content/existence and image bounds before Gate 1.
 - Output: what is delivered (VPM / NPM / both, package names, where) and the picture it is accepted by.
 - Fallback: what to do when it does not fit or the source is silent.
 - Pilot: which piece goes first.

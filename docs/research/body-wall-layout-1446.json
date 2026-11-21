@@ -1,0 +1,113 @@
+{
+  "schema": "body-wall-layout-calibration/1",
+  "synthetic": false,
+  "level": "standard",
+  "evidence_root": "G:\\Мой диск\\AGR-evidence\\1446-body-wall-layout\\t_688f3a79-v001",
+  "versions": [
+    {
+      "version": "v001",
+      "part": "K3GF_BodyA_Walls",
+      "input": {
+        "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\gf_parts\\gf_body_A\\gf_body_A_v001.blend",
+        "sha256": "7008cd05103287b78d02ce265b923e11f18fda97d9aa3fa600bed8eac9add1ff",
+        "coordinates": "metres, Z up",
+        "blender": "5.1.2",
+        "scene": "Scene",
+        "units": {
+          "unit_system": "METRIC",
+          "unit_scale": 1.0,
+          "coordinates": "m"
+        },
+        "coverage": "evaluated active-scene polygon meshes before export triangulation",
+        "log": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_688f3a79\\tmp\\evidence\\v001.json.blender.log"
+      },
+      "counts": {
+        "diagonals": 170,
+        "slivers": 15,
+        "fans": 0
+      },
+      "reference": {
+        "slivers": 15,
+        "diagonals": 172
+      },
+      "deviation_percent": {
+        "slivers": 0.0,
+        "diagonals": -1.1627906976744207
+      },
+      "within_ten_percent": true,
+      "quad_dominance_passed": false,
+      "report_sha256": "8d48a1a54a47270eb935df4c5bdb0ae56e1ac55bdf379b19d3f0b587df862cad",
+      "report_path": "G:\\Мой диск\\AGR-evidence\\1446-body-wall-layout\\t_688f3a79-v001\\v001.json"
+    },
+    {
+      "version": "v004",
+      "part": "K3GF_BodyA_Walls",
+      "input": {
+        "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\gf_parts\\gf_body_A\\gf_body_A_v004.blend",
+        "sha256": "88e56689be9f78e94e207381eb2b99424897aa509062709e15fc082fc7165c6a",
+        "coordinates": "metres, Z up",
+        "blender": "5.1.2",
+        "scene": "Scene",
+        "units": {
+          "unit_system": "METRIC",
+          "unit_scale": 1.0,
+          "coordinates": "m"
+        },
+        "coverage": "evaluated active-scene polygon meshes before export triangulation",
+        "log": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_688f3a79\\tmp\\evidence\\v004.json.blender.log"
+      },
+      "counts": {
+        "diagonals": 123,
+        "slivers": 4,
+        "fans": 18
+      },
+      "reference": {
+        "slivers": 4,
+        "diagonals": 124
+      },
+      "deviation_percent": {
+        "slivers": 0.0,
+        "diagonals": -0.8064516129032251
+      },
+      "within_ten_percent": true,
+      "quad_dominance_passed": false,
+      "report_sha256": "9b0655687b87e4afabd5cd452570a06c11392ef9599a79d3e0bfe75be7e025ab",
+      "report_path": "G:\\Мой диск\\AGR-evidence\\1446-body-wall-layout\\t_688f3a79-v001\\v004.json"
+    },
+    {
+      "version": "v008e",
+      "part": "K3GF_BodyA_Walls",
+      "input": {
+        "path": "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\gf_parts\\gf_body_A\\gf_body_A_v008e.blend",
+        "sha256": "2a5f44ec6a5e4eb238984c4356bb08b7d15e0b35b87fb8ee6150766cc8094f0e",
+        "coordinates": "metres, Z up",
+        "blender": "5.1.2",
+        "scene": "Scene",
+        "units": {
+          "unit_system": "METRIC",
+          "unit_scale": 1.0,
+          "coordinates": "m"
+        },
+        "coverage": "evaluated active-scene polygon meshes before export triangulation",
+        "log": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_688f3a79\\tmp\\evidence\\v008e.json.blender.log"
+      },
+      "counts": {
+        "diagonals": 122,
+        "slivers": 23,
+        "fans": 3
+      },
+      "reference": {
+        "slivers": 23,
+        "diagonals": 125
+      },
+      "deviation_percent": {
+        "slivers": 0.0,
+        "diagonals": -2.400000000000002
+      },
+      "within_ten_percent": true,
+      "quad_dominance_passed": false,
+      "report_sha256": "a30c0536f091b0cbdef759e31f6e1bbc74dd3d1ffaf2a6331c9713a20a52a789",
+      "report_path": "G:\\Мой диск\\AGR-evidence\\1446-body-wall-layout\\t_688f3a79-v001\\v008e.json"
+    }
+  ]
+}

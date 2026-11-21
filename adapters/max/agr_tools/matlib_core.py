@@ -8,8 +8,8 @@ contract_core.py (the glue reads them through host_max.MaxHost); the core never 
   in `tools/materials/ral_classic.json` (one source of screen colours).
 * Mid-poly carries LIBRARY ids on faces. `table_plan` checks per object: id in the library, no id >= 1001 on working
   geometry, glass ids only on `glass` objects (and nothing else on them).
-* `renumber_dense`: the ids used by ONE mesh -> UDIM 1001.. without gaps, ascending library id. UDIM numbering is per
-  mesh (owner answer V9 06.11.2026): the OKS body starts at 1001 and the windows/glass mesh starts at 1001 too.
+* `renumber_dense`: the ids used by ONE body mesh -> UDIM 1001.. without gaps, ascending library id (D209).
+  `table_plan` keeps every id of a role-glass mesh in UDIM 1001 (D221), with delivery ids unchanged.
 * Ground table (owner answer Q7 06.11): `ground_ref` {file, sha256} of the OKS table names `ground_vNNN.json` beside it
   (GRD + PAV records, same schema, ids shared and unique across both); `load_library` merges both into `by_id`.
 * The project table rows follow `schemas/ProjectPassport.schema.json` `materials[]` (library_id, delivery_id, mesh,
@@ -255,8 +255,8 @@ def _load_ground(folder, ref, ral):
 def renumber_dense(used_ids, start=1001):
     """Library ids used by ONE mesh -> UDIM tiles start.. without gaps, ascending library id (K3).
 
-    UDIM numbering is per mesh (owner answer V9 06.11.2026): the OKS body starts at 1001 and the windows/glass
-    mesh starts at 1001 too. Returns {library_id: udim}; an id <= 0 or >= 1001 is an error."""
+    Body UDIM numbering is per mesh (D209); table_plan applies the glass-only 1001 exception (D221).
+    Returns {library_id: udim}; an id <= 0 or >= 1001 is an error."""
     if isinstance(start, bool) or not isinstance(start, int) or not UDIM_START <= start <= 1999:
         raise ValueError('start must be a UDIM 1001..1999: {!r}'.format(start))
     ids = set()
@@ -308,7 +308,8 @@ def object_findings(edit, item, library):
 def table_plan(edit, items, library):
     """items: [{'handle', 'name', 'role', 'ids': {library_id: faces}}] -> (entries, table, multisub, skipped).
 
-    table: passport `materials[]` rows of the objects without findings, UDIM dense per mesh from 1001 (V9);
+    table: passport `materials[]` rows of the objects without findings, body UDIM dense per mesh from 1001 (D209),
+    all glass ids in 1001 (D221); delivery ids remain dense per mesh;
     multisub: library records of every id used by those objects (one Multi/Sub by the library)."""
     if not items:
         raise ValueError('mat.table: empty input (select the mid-poly objects)')
@@ -323,7 +324,8 @@ def table_plan(edit, items, library):
             continue
         udims = renumber_dense(it['ids'])
         for lid, udim in sorted(udims.items()):
-            table.append({'library_id': lid, 'delivery_id': udim - 1000, 'mesh': it['name'], 'udim': udim,
+            table.append({'library_id': lid, 'delivery_id': udim - 1000, 'mesh': it['name'],
+                          'udim': UDIM_START if it.get('role') == 'glass' else udim,
                           'npm_region': None})
         used |= set(udims)
     multisub = [sub_spec(library['by_id'][i]) for i in sorted(used)]
@@ -346,7 +348,7 @@ def table_doc(library, table, passport):
     """Sidecar of the passport (jobs/<ID>/materials_table*.json): passport `materials[]` rows + library pin."""
     return {'schema': 1, 'kind': 'agr.materials_table', 'library': {'version': library['version'],
                                                                      'sha256': library['sha256']},
-            'passport': passport, 'udim_rule': 'per mesh from 1001, ascending library id (V9 06.11.2026)',
+            'passport': passport, 'udim_rule': 'body per mesh from 1001, ascending library id (D209); glass only 1001 (D221)',
             'materials': table}
 
 

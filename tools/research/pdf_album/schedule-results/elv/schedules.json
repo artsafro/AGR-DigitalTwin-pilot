@@ -1,0 +1,711 @@
+{
+  "engines": {
+    "primary": "pymupdf 1.28.2 find_tables",
+    "secondary": "pdfplumber 0.11.10 find_tables"
+  },
+  "open_gates": [
+    "row_type_review",
+    "unit_review",
+    "region_binding",
+    "ground_truth",
+    "approval"
+  ],
+  "pages": [
+    {
+      "pdf_page": 1,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 2,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "outside_roi": [],
+      "pdf_page": 3,
+      "reason": "index_schedule_context",
+      "roi": [
+        56.64057922363281,
+        28.626522064208984,
+        1165.7564697265625,
+        838.7168579101562
+      ],
+      "route": "table_extraction",
+      "sheet": null,
+      "tables": [
+        "p3-t1"
+      ]
+    },
+    {
+      "outside_roi": [],
+      "pdf_page": 4,
+      "reason": "index_schedule_context",
+      "roi": [
+        44.51874923706055,
+        28.626522064208984,
+        1170.1162109375,
+        838.7168579101562
+      ],
+      "route": "table_extraction",
+      "sheet": null,
+      "tables": [
+        "p4-t1",
+        "p4-t2",
+        "p4-t3"
+      ]
+    },
+    {
+      "outside_roi": [],
+      "pdf_page": 5,
+      "reason": "index_schedule_context",
+      "roi": [
+        56.15729904174805,
+        28.509384155273438,
+        1170.1162109375,
+        838.5984497070312
+      ],
+      "route": "table_extraction",
+      "sheet": null,
+      "tables": [
+        "p5-t1",
+        "p5-t2",
+        "p5-t3",
+        "p5-t4",
+        "p5-t5",
+        "p5-t6",
+        "p5-t7",
+        "p5-t8"
+      ]
+    },
+    {
+      "pdf_page": 6,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 7,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 8,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 9,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 10,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 11,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 12,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 13,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 14,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 15,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 16,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 17,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 18,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 19,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 20,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 21,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 22,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 23,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 24,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 25,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 26,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "outside_roi": [],
+      "pdf_page": 27,
+      "reason": "index_schedule_context",
+      "roi": [
+        56.63945007324219,
+        28.626522064208984,
+        1165.7564697265625,
+        838.7168579101562
+      ],
+      "route": "table_extraction",
+      "sheet": null,
+      "tables": [
+        "p27-t1",
+        "p27-t2",
+        "p27-t3",
+        "p27-t4"
+      ]
+    },
+    {
+      "pdf_page": 28,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "outside_roi": [],
+      "pdf_page": 29,
+      "reason": "index_schedule_context",
+      "roi": [
+        56.63949966430664,
+        28.626522064208984,
+        1165.7564697265625,
+        838.7168579101562
+      ],
+      "route": "table_extraction",
+      "sheet": null,
+      "tables": [
+        "p29-t1",
+        "p29-t2",
+        "p29-t3"
+      ]
+    },
+    {
+      "outside_roi": [],
+      "pdf_page": 30,
+      "reason": "index_schedule_context",
+      "roi": [
+        56.64250183105469,
+        28.616138458251953,
+        1165.7916259765625,
+        838.71435546875
+      ],
+      "route": "table_extraction",
+      "sheet": null,
+      "tables": [
+        "p30-t1",
+        "p30-t2",
+        "p30-t3",
+        "p30-t4",
+        "p30-t5"
+      ]
+    },
+    {
+      "pdf_page": 31,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 32,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 33,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 34,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 35,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 36,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 37,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 38,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 39,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 40,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 41,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 42,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    }
+  ],
+  "passed": false,
+  "schema": "album-schedules/1",
+  "secondary_status": "ok",
+  "source": {
+    "bytes": 47786873,
+    "pages": 42,
+    "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+  },
+  "summary": {
+    "cells": 839,
+    "materials": 30,
+    "suspect_cells": 69,
+    "tables": 24
+  },
+  "tables": [
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 3,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p3-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 8,
+      "page": 4,
+      "sheet": null,
+      "suspect_cells": 10,
+      "table_id": "p4-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 4,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p4-t2"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 3,
+      "n_rows": 1,
+      "page": 4,
+      "sheet": null,
+      "suspect_cells": 3,
+      "table_id": "p4-t3"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 8,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 10,
+      "table_id": "p5-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t2"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t3"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 3,
+      "n_rows": 4,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 12,
+      "table_id": "p5-t4"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t5"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t6"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t7"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t8"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 39,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p27-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 33,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p27-t2"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 4,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p27-t3"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p27-t4"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 30,
+      "page": 29,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p29-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 25,
+      "page": 29,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p29-t2"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 29,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p29-t3"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 5,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p30-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p30-t2"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 1,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p30-t3"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 1,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p30-t4"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 8,
+      "table_id": "p30-t5"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "run": {
+    "start_utc": "2026-11-13T20:59:42.616760+00:00",
+    "manifest_sha256": "d3bbb7716247563c9e382eeda9317e2060944640f7f237ab7e36b5c4f2084cfa",
+    "code_commit": "a5c015b760fa1068032db4d45e47244b45cde9fa",
+    "stages": [
+      {
+        "name": "master-xview",
+        "exit": 1,
+        "wall_seconds": 4.760070699965581
+      },
+      {
+        "name": "derive",
+        "exit": 0,
+        "wall_seconds": 4.781458000012208
+      },
+      {
+        "name": "readback",
+        "exit": 0,
+        "wall_seconds": 3.5720097000012174
+      },
+      {
+        "name": "export-xview",
+        "exit": 1,
+        "wall_seconds": 4.291716200008523
+      },
+      {
+        "name": "accounting",
+        "exit": 0,
+        "wall_seconds": 2.4755090000107884
+      },
+      {
+        "name": "validate",
+        "exit": 1,
+        "wall_seconds": 15.449744499986991
+      }
+    ],
+    "delivery_complete": false,
+    "diagnostics_completed": true,
+    "quality_status": "not_passed",
+    "end_utc": "2026-11-13T21:00:18.318787+00:00",
+    "wall_seconds": 35.70204140001442,
+    "packet_unchanged": true
+  },
+  "export_sha256": "d4df3ce68471443fd80b3df663aa8f11ad4350476cbf01f7d996975bf0d03cf2",
+  "validator_machine_counts": {
+    "pass": 4,
+    "fail": 1,
+    "review": 1,
+    "not_run": 2
+  },
+  "stage_statuses": {
+    "V001": "not_run",
+    "V002": "pass",
+    "V003": "fail",
+    "V004": "review",
+    "V005": "pass",
+    "V006": "pass",
+    "V012": "pass",
+    "V014": "not_run",
+    "V015": "not_run",
+    "V017": "not_run"
+  },
+  "xview_master": {
+    "overlapping_vertices": 0,
+    "overlapping_faces": 112,
+    "vertex_pairs": 0,
+    "face_pairs": 166,
+    "face_pairs_by_kind": {
+      "contact": 67,
+      "area": 23,
+      "area+contact": 76
+    },
+    "bowtie_vertices": 0,
+    "bowtie_pairs": 0,
+    "parts_without_faces": 0
+  },
+  "xview_export": {
+    "overlapping_vertices": 0,
+    "overlapping_faces": 116,
+    "vertex_pairs": 0,
+    "face_pairs": 169,
+    "face_pairs_by_kind": {
+      "contact": 70,
+      "area": 23,
+      "area+contact": 76
+    },
+    "bowtie_vertices": 0,
+    "bowtie_pairs": 0,
+    "parts_without_faces": 0
+  },
+  "accounting": {
+    "source": "C:\\x\\bench-npm-kpp1\\packet-r1-v002",
+    "output": "C:\\x\\bench-npm-kpp1\\run-r1-v003",
+    "triangles": {
+      "SM_Kpp_1_Main": {
+        "input_triangles": 30162,
+        "output_triangles": 30162,
+        "triangle_multiset_equal": true,
+        "max_position_error_m": 2.1324806311895372e-06,
+        "max_uv_error": 0.0
+      },
+      "SM_Kpp_1_MainGlass": {
+        "input_triangles": 504,
+        "output_triangles": 504,
+        "triangle_multiset_equal": true,
+        "max_position_error_m": 2.1324806311895372e-06,
+        "max_uv_error": 0.0
+      }
+    },
+    "removed": {
+      "UCX_SM_Kpp_1_Main_001": "UCX excluded from NPM (DER-15)",
+      "UCX_SM_Kpp_1_Main_002": "UCX excluded from NPM (DER-15)",
+      "UCX_SM_Kpp_1_Main_003": "UCX excluded from NPM (DER-15)",
+      "UCX_SM_Kpp_1_Main_004": "UCX excluded from NPM (DER-15)"
+    },
+    "profile_translation_m": [
+      -0.7452502250671387,
+      -0.14481520652770996,
+      -0.0
+    ],
+    "delivery_complete": false
+  },
+  "storage": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-evidence/1318-npm-benchmark/v001/",
+  "code_dirty_at_canonical_start": false,
+  "cache_state": "warm filesystem/dependencies; engineering calibration, not cold model comparison"
+}

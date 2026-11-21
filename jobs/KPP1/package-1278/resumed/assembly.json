@@ -1,0 +1,20 @@
+{
+  "decision": "D285",
+  "source_decision": "D262",
+  "source_sha256": {
+    "0000_Kpp_1.zip": "cd90142217ae4cf38f0330262c7daf5daae9e5ca19960511d6d98d9aeb0480b0",
+    "SM_Kpp_1.zip": "40d0615b2e4390175efa7903d6793ae0514998bacb506c327a3753d1686f597c",
+    "SM_Kpp_1.geojson": "4dffaca25627b281395d5ffb82c3065dd58356ea052db03b4a2c55600bcea96d"
+  },
+  "placement": "approximate, ±0.1 m, fitted to customer NPM 0607_77_05_0009005_117_02; entrance orientation not independently confirmed",
+  "zero_abs_m": 171.05,
+  "point_msk77": [
+    8056.144,
+    -9581.27
+  ],
+  "ground": "missing; Ground author",
+  "areas": "missing KPP1-specific schedule; Artem",
+  "fno": "empty pending SINTEZ",
+  "passed": false,
+  "note": "assembly only; run validate_package --scene on both ZIPs"
+}

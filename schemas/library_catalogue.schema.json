@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agr.local/schemas/library_catalogue.schema.json",
+  "title": "AGR library cleanliness catalogue (not a delivery certificate)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "library", "version", "pivot", "inputs", "showcase", "assets"],
+  "properties": {
+    "schema": {"const": "agr-library/1"},
+    "library": {"enum": ["windows", "maf", "flora", "roof_equipment"]},
+    "version": {"type": "string", "pattern": "^v[0-9]{3}$"},
+    "pivot": {"enum": ["bottom-left", "bottom-center", "flora-bbox-plus-0.1"]},
+    "inputs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/file"}},
+    "showcase": {"$ref": "#/$defs/file"},
+    "assets": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/asset"}}
+  },
+  "$defs": {
+    "file": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "material": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name"],
+      "properties": {"id": {"type": "integer", "minimum": 1}, "name": {"type": "string", "pattern": "^matid_[1-9][0-9]*$"}}
+    },
+    "variant": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "triangles", "size_m", "objects", "materials"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^assets/[A-Za-z0-9_-]+/(npm|vpm)\\.blend$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "triangles": {"type": "integer", "minimum": 1},
+        "size_m": {"type": "array", "minItems": 3, "maxItems": 3, "prefixItems": [
+          {"type": "number", "exclusiveMinimum": 0}, {"type": "number", "minimum": 0}, {"type": "number", "exclusiveMinimum": 0}
+        ]},
+        "objects": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"}},
+        "materials": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/material"}}
+      }
+    },
+    "asset": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "status", "confirmation", "source", "reason", "preview_cell", "variants"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"},
+        "name": {"type": "string", "minLength": 1},
+        "status": {"enum": ["ready", "quarantine"]},
+        "confirmation": {"enum": ["confirmed", "unconfirmed"]},
+        "source": {"type": "object", "minProperties": 1},
+        "reason": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "preview_cell": {"type": "integer", "minimum": 1},
+        "variants": {"type": "object", "additionalProperties": false, "properties": {
+          "npm": {"$ref": "#/$defs/variant"}, "vpm": {"$ref": "#/$defs/variant"}
+        }}
+      },
+      "allOf": [{"if": {"properties": {"status": {"const": "ready"}}},
+        "then": {"properties": {"reason": {"maxItems": 0}, "variants": {"required": ["npm", "vpm"]}}},
+        "else": {"properties": {"reason": {"minItems": 1}, "variants": {"maxProperties": 0}}}
+      }]
+    }
+  }
+}

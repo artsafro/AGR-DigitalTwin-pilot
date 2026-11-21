@@ -9,7 +9,11 @@ Pattern: n/a | new-case: Ground master JSON to FBX with GND-11 names and GND-12 
 build: object SM_<Address>_Ground, materials M_<Address>_Ground_<Slot> in the JSON slot order, one UV set,
 GND-12 / V013 placement: object origin at FBX zero, the mesh is shifted so that its X/Y bounding-box centre is the
 origin (Z unchanged: absolute heights, project zero = 0); the MSK-77 offset of that origin is written by code to
-<out.fbx>.placement.json ([D126]) and added back by readback.
+<out.fbx>.placement.json ([D126]) and added back by readback. It also writes the export-time derivation record
+<out.fbx>.derivation.json (#1525, [D328]): role `ground`, master = the mesh JSON (its own source, hashed before it is
+read; a change during the build is refused); `agr build-manifest build --master ground=<mesh.json>` reads it.
+The stable source_id defaults to <Address>.ground.mesh, independent of source filename/revision.
+For independent meshes use build <json> <fbx> <Address> <crs> <source_id>; preserve the id on revisions.
 readback: in a clean process, imports the FBX and compares triangles, per-face material index (raw
 material_index layer mapped through slot names), world vertex positions (sorted), unit scale, open edges
 and normals facing down on the surface; with <tex_px lo hi> also the texel density (px per linear metre) of every
@@ -20,6 +24,14 @@ cameras (top orthographic + four 45 degree obliques around the bounding box); co
 import math
 import json
 import sys
+import importlib.util
+from pathlib import Path
+
+_spec = importlib.util.spec_from_file_location(
+    "udimtile_core_ground_readback", Path(__file__).resolve().parents[2] / "adapters/max/agr_tools/udimtile_core.py")
+assert _spec is not None and _spec.loader is not None
+_udimtile = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_udimtile)
 
 import bpy
 import bmesh
@@ -35,7 +47,22 @@ def clean():
     s.unit_settings.scale_length = 1.0
 
 
-def build(src, out, address, crs="MSK-77 (SPOZU drawing coordinates, $INSUNITS=6 metres)"):
+def build(src, out, address, crs="MSK-77", source_id=None):
+    if crs not in ("SYNTHETIC_LOCAL", "MSK-77"):
+        raise ValueError(f"unsupported crs {crs!r}; expected SYNTHETIC_LOCAL or MSK-77")
+    import os
+    root = str(Path(__file__).resolve().parents[2])
+    sys.path.insert(0, root)
+    from adapters.max.agr_tools import build_manifest as bm
+    # [D328] / #1525: the Ground FBX keeps its own master = this mesh JSON. Hash it before reading; the derivation
+    # record <out>.derivation.json (beside the FBX, like .placement.json) is refused before any write if it exists.
+    bm._source_id(address + '.ground.mesh' if source_id is None else source_id)
+    src_sha = bm.sha256_file(src)
+    if os.path.normcase(os.path.realpath(out)) == os.path.normcase(os.path.realpath(src)):
+        raise SystemExit(f"output {out} is the input mesh JSON")
+    record = os.path.abspath(out) + bm.DERIVATION_SUFFIX
+    if os.path.lexists(record) or os.path.lexists(record + ".partial"):
+        raise SystemExit(f"derivation record {record} already exists; build into a new version")
     d = json.load(open(src, encoding="utf-8"))
     clean()
     vs = d["verts"]
@@ -60,7 +87,13 @@ def build(src, out, address, crs="MSK-77 (SPOZU drawing coordinates, $INSUNITS=6
                              apply_scale_options="FBX_SCALE_UNITS", axis_forward="Y", axis_up="Z",
                              mesh_smooth_type="FACE", use_mesh_modifiers=False, bake_space_transform=False,
                              add_leaf_bones=False, path_mode="AUTO")
-    print(json.dumps({"built": out, "pivot": piv, "verts": len(vs), "faces": len(d["faces"])}))
+    from adapters.max.agr_tools.export_meta import record_export
+    record_export(out, source=str(src), top=float(max(v[2] for v in vs)), address=address + '_Ground', profile='vpm')
+    record = bm.write_export_derivation([out], src, os.path.dirname(os.path.abspath(out)), bm.git_commit(root),
+                                        master_sha256=src_sha, inputs=[src], role="ground",
+                                        source_id=address + '.ground.mesh' if source_id is None else source_id)
+    print(json.dumps({"built": out, "pivot": piv, "verts": len(vs), "faces": len(d["faces"]),
+                      "derivation": record, "master_sha256": src_sha}))
 
 
 def readback(fbx, src, rep, *tex):
@@ -139,7 +172,7 @@ def readback(fbx, src, rep, *tex):
             if max(c[0] for c in u) > tu + 1 + 1e-6 or max(c[1] for c in u) > tv + 1 + 1e-6:
                 straddle += 1
             else:
-                tiles.add(1001 + tu + 10 * tv)
+                tiles.add(_udimtile.udim_of_cell(tu, tv))
             sa = sum((u[k][0] - u[0][0]) * (u[k + 1][1] - u[0][1]) - (u[k][1] - u[0][1]) * (u[k + 1][0] - u[0][0])
                      for k in range(1, len(u) - 1))
             fa = sum(((w[k] - w[0]).cross(w[k + 1] - w[0])).dot(p.normal) for k in range(1, len(w) - 1))

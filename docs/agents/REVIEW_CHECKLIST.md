@@ -1,8 +1,8 @@
 # Review checklist
 
-Reviewer: any agent that is not the author (now Codex). The reviewer checks evidence, not
+Reviewer: any agent that is not the author. The reviewer checks evidence, not
 confidence. Current checklist: this file. Historical source: `archive/2026-11:docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
-(clean / changes needed), the three answers with numbers, findings by severity (P1/P2/P3).
+(clean / changes needed), answers to the checklist with numbers, findings by severity (P1/P2/P3).
 
 1. **Pattern / scope.** Does each NEW module refer to a pattern in `docs/domain/patterns/INDEX.md`,
    or is it honestly marked `new-case` in the module docstring and PR body (author receipt verified per
@@ -19,8 +19,15 @@ confidence. Current checklist: this file. Historical source: `archive/2026-11:do
    measured is named with its reason (no transcript, a torn line, an unclassified question),
    never counted as a pass. The tasks and what fails each: `evals/README.md`, "Regression tasks".
    Does the author's handoff evidence check (`--check-handoff` on the PR body and head) exit 0
-   ([WORKFLOW.md#handoff-evidence-check-584](WORKFLOW.md#handoff-evidence-check-584))? A missing full suite,
-   RED/GREEN or sample output is a finding, not a pass. The reviewer does not run the full suite for the author.
+   ([WORKFLOW.md#handoff-evidence-check-584](WORKFLOW.md#handoff-evidence-check-584))? A missing Affected tests
+   line on the head, RED/GREEN or sample output is a finding, not a pass. The reviewer does not run the tests
+   for the author; the full suite runs once in the merge batch before main [D297].
+4. **Visual Before/After.** A visible change (geometry, UV, materials, textures, renders, Max UI) without Before/After = changes requested.
+   Both images are labelled, from a real baseline and the same camera, per
+   [WORKFLOW.md#visual-evidence-beforeafter-d286](WORKFLOW.md#visual-evidence-beforeafter-d286).
+5. **Skeleton, not a parallel pipeline [D325].** A job PR that adds its own chain of scripts instead of configuring
+   its scenario skeleton (`jobs/<ID>/skeleton.json` + at most 5 `hooks/`, [docs/agents/SKELETONS.md](SKELETONS.md))
+   = changes requested, the PR is not merged. Evidence: `uv run python tools/architecture/skeleton_guard.py` exit 0.
 
 ## Counterexamples
 
@@ -43,10 +50,14 @@ The reviewer independently attacks the guarantee; the author's probe is input, n
    If filing is forbidden or unavailable, use that procedure's explicit pending-issue record instead of
    claiming an issue exists. The reviewer's prompt carries this definition.
 3. **The review's input** is the diff, this checklist and the affected tests and benchmarks - not the whole
-   repository and not the full suite. The author runs the full suite and every benchmark once, before the
-   merge.
-4. **Timing.** Round 1 starts right after the first code commit; docs and tests are written meanwhile. The
-   last round reviews the final version.
+   repository and not the full suite. The author runs the affected tests before every review request and
+   every benchmark once; the full suite runs once in the merge batch before main, and a red batch suite sends
+   the PR back to rework [D297].
+4. **Timing.** Start formal round 1 on the author's review-ready revision. Apply each applicable item
+   above in that round, report inapplicable items as `n/a` with a reason, and return all independently
+   checkable P1s together. For a new job hook, check the skeleton entry, failure on incomplete input, and
+   refusal to overwrite an input on a disposable fixture in the same round. Later rounds recheck prior
+   fixes and any guarantees affected by the new diff. The last verdict identifies the exact reviewed head.
 
 ## Verification boundary
 

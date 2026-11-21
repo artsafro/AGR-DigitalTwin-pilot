@@ -1,0 +1,148 @@
+{
+  "schema": "library-evidence/1",
+  "root": "G:\\Мой диск\\AGR-evidence\\1259-windows-library",
+  "blender": "5.1.2 ec6e62d40fa9",
+  "current_attempt": "v003",
+  "catalogue_version": "v001",
+  "checker": {
+    "cleanliness": "pass",
+    "errors": [],
+    "variants_checked": 118,
+    "ready": 59,
+    "quarantine": [
+      {
+        "id": "D03",
+        "reason": [
+          "native float32 vertex spacing <= 2 mm (D152 xView); retain source, no guessed weld/shape change"
+        ]
+      },
+      {
+        "id": "D04",
+        "reason": [
+          "тип не типизирован (typed: false)"
+        ]
+      },
+      {
+        "id": "D03_W",
+        "reason": [
+          "native float32 vertex spacing <= 2 mm (D152 xView); retain source, no guessed weld/shape change"
+        ]
+      },
+      {
+        "id": "CW_021",
+        "reason": [
+          "тип не типизирован (typed: false)",
+          "нет разбивки: panes_m и opaque_m пусты"
+        ]
+      },
+      {
+        "id": "CW_022",
+        "reason": [
+          "тип не типизирован (typed: false)",
+          "нет разбивки: panes_m и opaque_m пусты"
+        ]
+      },
+      {
+        "id": "WT-02",
+        "reason": [
+          "стандартный профиль неприменим: нет задней плоскости рамы и стекла, геометрия до 957 мм в глубину, лицо 57/143 мм (L10)"
+        ]
+      },
+      {
+        "id": "ELV-16",
+        "reason": [
+          "вырожденное стекло по стандарту (сторона < 0.1 м)"
+        ]
+      },
+      {
+        "id": "ELV-17",
+        "reason": [
+          "нет разбивки: panes_m и opaque_m пусты"
+        ]
+      }
+    ],
+    "delivery_certificate": false
+  },
+  "xview": {
+    "reports": 118,
+    "passed": 118,
+    "totals": {
+      "overlapping_faces": 0,
+      "overlapping_vertices": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "bowtie_vertices": 0
+    }
+  },
+  "files": [
+    {
+      "path": "v003/catalogue.json",
+      "sha256": "8094bdc6b96a85a1a6e1a69052d6b7a668939a7986ddd8fa7743c20ea833a1a6"
+    },
+    {
+      "path": "v003/previews/windows-sheet.png",
+      "sha256": "3fcd795a13923324f36d0a54ca98eeaf2144a842df7687b2a8edbc53ccd6004f"
+    },
+    {
+      "path": "v003/previews/windows-showcase.blend",
+      "sha256": "6f8e2c3baaf35fde1c04a6d9e9a0fe70b9e35733d97e1ca7825086027ae9664b"
+    },
+    {
+      "path": "v003/SHA256SUMS.txt",
+      "sha256": "9b1d17a56f49971bbfb3056be96a9fcfb7ba44c40e6ec40869d42546561472a7"
+    },
+    {
+      "path": "audit-v002/audit.json",
+      "sha256": "144d86ffeae19ab34d0d7b795399a1a70a1dc76776a41b85a0f2fdea506fb3c8"
+    },
+    {
+      "path": "audit-v002/SHA256SUMS.txt",
+      "sha256": "575459cd065e662c50fe94db05135e4b9fa5281a0002c1398adae88881b2123d"
+    },
+    {
+      "path": "xview-v001/summary.json",
+      "sha256": "ce199e88215b773d183c5f2928a85139269732a31029cafb97f9433f17083a40"
+    },
+    {
+      "path": "xview-v001/SHA256SUMS.txt",
+      "sha256": "b7bbda83aa1c7a09b909ef1b71eebc21257c19743b68cd7b303ebd134b1aa31c"
+    },
+    {
+      "path": "xview-v002/summary.json",
+      "sha256": "f395bc5ce9933bf83af082f84d584a845961728c8a38cef93dd4854af050daed"
+    },
+    {
+      "path": "xview-v002/SHA256SUMS.txt",
+      "sha256": "c8bea7cc7686d41a1f39b6479a2d591001b45b0165e3f18d0996faf2397ecca2"
+    }
+  ],
+  "checker_code": [
+    {
+      "path": "tools/library/check_library.py",
+      "sha256": "96ac0fbc127db4e97b810ab6ee31fc2f9f11361880c9fe3a6dc13bd5c5021ef0"
+    },
+    {
+      "path": "tools/library/inspect_library_blender.py",
+      "sha256": "f776333d5383223218a85d664baf4c23735735ab96093d4ce733e0b4cddbaf8d"
+    }
+  ],
+  "flora_current_max_unmeasured": [
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\v003\\flora-library-v003.max",
+      "sha256": "9942ae2be37c900c3066d791193eb0470cc08933881d9f72db833d42578dfa74",
+      "native_contents": "not remeasured; not the historical audit source hashes"
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-assets\\flora\\a101\\FLORIO_221.max",
+      "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+      "native_contents": "not remeasured; not the historical audit source hashes"
+    }
+  ],
+  "tests": {
+    "affected": 209,
+    "native_end_to_end": 2,
+    "generated_combination_probe": 1024
+  },
+  "visual_approval": "pending; agent inspected sheet only",
+  "delivery_certificate": false
+}

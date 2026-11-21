@@ -1,0 +1,410 @@
+{
+  "bbox": [
+    99.12000274658203,
+    70.79994201660156,
+    413.760009765625,
+    683.0399169921875
+  ],
+  "columns": [
+    {
+      "col": 1,
+      "label": "Номер",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 2,
+      "label": "Имя",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 3,
+      "label": "Площадь,\nм2",
+      "unit": "m2",
+      "value_kind": "area"
+    },
+    {
+      "col": 4,
+      "label": "Кат.\nвзрыв.-пож.\nи пож. оп.\nпом.",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 5,
+      "label": "Клас.\nвзр.-пож.\nзон",
+      "unit": "",
+      "value_kind": "text"
+    }
+  ],
+  "csv": "p27-t1.csv",
+  "csv_sha256": "be347d1b292ee1efaa5a142de7c6c6e878a8689e10d02adc82c54c57c094bc07",
+  "engines": {
+    "found_by": [
+      "primary",
+      "secondary"
+    ],
+    "primary": "pymupdf 1.28.2 find_tables",
+    "secondary": "pdfplumber 0.11.10 find_tables"
+  },
+  "merged_cells": [
+    {
+      "col": 2,
+      "merged_from": "r1c1",
+      "row": 1
+    },
+    {
+      "col": 3,
+      "merged_from": "r1c1",
+      "row": 1
+    },
+    {
+      "col": 4,
+      "merged_from": "r1c1",
+      "row": 1
+    },
+    {
+      "col": 5,
+      "merged_from": "r1c1",
+      "row": 1
+    },
+    {
+      "col": 2,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 3,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 4,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 5,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 2,
+      "merged_from": "r12c1",
+      "row": 12
+    },
+    {
+      "col": 3,
+      "merged_from": "r12c1",
+      "row": 12
+    },
+    {
+      "col": 4,
+      "merged_from": "r12c1",
+      "row": 12
+    },
+    {
+      "col": 5,
+      "merged_from": "r12c1",
+      "row": 12
+    },
+    {
+      "col": 2,
+      "merged_from": "r14c1",
+      "row": 14
+    },
+    {
+      "col": 3,
+      "merged_from": "r14c1",
+      "row": 14
+    },
+    {
+      "col": 4,
+      "merged_from": "r14c1",
+      "row": 14
+    },
+    {
+      "col": 5,
+      "merged_from": "r14c1",
+      "row": 14
+    },
+    {
+      "col": 2,
+      "merged_from": "r16c1",
+      "row": 16
+    },
+    {
+      "col": 3,
+      "merged_from": "r16c1",
+      "row": 16
+    },
+    {
+      "col": 4,
+      "merged_from": "r16c1",
+      "row": 16
+    },
+    {
+      "col": 5,
+      "merged_from": "r16c1",
+      "row": 16
+    },
+    {
+      "col": 2,
+      "merged_from": "r24c1",
+      "row": 24
+    },
+    {
+      "col": 3,
+      "merged_from": "r24c1",
+      "row": 24
+    },
+    {
+      "col": 4,
+      "merged_from": "r24c1",
+      "row": 24
+    },
+    {
+      "col": 5,
+      "merged_from": "r24c1",
+      "row": 24
+    },
+    {
+      "col": 2,
+      "merged_from": "r26c1",
+      "row": 26
+    },
+    {
+      "col": 3,
+      "merged_from": "r26c1",
+      "row": 26
+    },
+    {
+      "col": 4,
+      "merged_from": "r26c1",
+      "row": 26
+    },
+    {
+      "col": 5,
+      "merged_from": "r26c1",
+      "row": 26
+    }
+  ],
+  "n_cols": 5,
+  "n_rows": 39,
+  "open_gates": [
+    "row_type_review",
+    "unit_review",
+    "region_binding",
+    "ground_truth",
+    "approval"
+  ],
+  "page": 27,
+  "passed": false,
+  "row_type_status": "heuristic_unapproved",
+  "rows": [
+    {
+      "measures": [],
+      "row": 1,
+      "row_type": "header"
+    },
+    {
+      "measures": [],
+      "row": 2,
+      "row_type": "header"
+    },
+    {
+      "measures": [],
+      "row": 3,
+      "row_type": "category"
+    },
+    {
+      "measures": [],
+      "row": 4,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 5,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 6,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 7,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 8,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 9,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 10,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 11,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 12,
+      "row_type": "category"
+    },
+    {
+      "measures": [],
+      "row": 13,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 14,
+      "row_type": "category"
+    },
+    {
+      "measures": [],
+      "row": 15,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 16,
+      "row_type": "category"
+    },
+    {
+      "measures": [],
+      "row": 17,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 18,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 19,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 20,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 21,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 22,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 23,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 24,
+      "row_type": "category"
+    },
+    {
+      "measures": [],
+      "row": 25,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 26,
+      "row_type": "category"
+    },
+    {
+      "measures": [],
+      "row": 27,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 28,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 29,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 30,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 31,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 32,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 33,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 34,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 35,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 36,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 37,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 38,
+      "row_type": "data"
+    },
+    {
+      "measures": [],
+      "row": 39,
+      "row_type": "data"
+    }
+  ],
+  "schema": "album-schedule/1",
+  "sheet": null,
+  "source": {
+    "bytes": 47786873,
+    "pages": 42,
+    "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+  },
+  "suspect_cells": [],
+  "table_id": "p27-t1"
+}

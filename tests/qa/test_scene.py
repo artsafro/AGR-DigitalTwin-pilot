@@ -1931,3 +1931,78 @@ def test_ground_materials_cli_reaches_scene(monkeypatch, tmp_path):
     findings = [f for stage in seen["report"].stages for f in stage.findings]
     area = next(f for f in findings if f.name == "ground footprint coverage")
     assert area.status == "pass"
+
+
+@pytest.mark.parametrize("size,status", [([2048, 2048], "pass"), ([8192, 8192], "fail"),
+                                        ([2049, 2048], "fail"), ([0, 0], "fail"),
+                                        ([float('nan'), 512], "fail"), ([float('inf'), 512], "fail"),
+                                        (None, "fail"), ([True, 512], "fail"), ([], "fail")])
+def test_npm_readback_texture_dimensions(size, status):
+    data = rb(mesh())
+    data['images'] = [{'name': 'atlas.png', 'size': size, 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    finding = next(f for f in found['V006'] if f.name == 'texture dimensions')
+    assert finding.status == status
+    assert finding.source_pdf_pages == [9]
+
+
+def test_npm_texture_dimension_probe_generated():
+    for side in [1, 128, 256, 512, 1024, 2047, 2048, 2049, 4096, 8192]:
+        data = rb(mesh())
+        data['images'] = [{'name': f'atlas_{side}.png', 'size': [side, side], 'packed': True}]
+        found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+        assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == ('fail' if side > 2048 else 'pass')
+
+
+@pytest.mark.parametrize('maps,status', [([], 'fail'), ([{'image': 'atlas.png', 'socket': 'Base Color'}], 'pass'),
+                                       ([{'image': 'unmapped.png', 'socket': 'Base Color'}], 'fail')])
+def test_npm_material_assignment_requires_bound_diffuse(maps, status):
+    data = rb(mesh(materials=['M_Test']))
+    data['materials'] = [{'name': 'M_Test', 'maps': maps}]
+    data['images'] = [{'name': 'atlas.png', 'size': [512, 512], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    finding = next(f for f in found['V005'] if f.name == 'material assignments')
+    assert finding.status == status
+    if status == 'fail':
+        assert 'M_Test' in finding.observed
+
+
+def test_vpm_cleared_paths_are_not_npm_material_errors():
+    data = rb(mesh(materials=['M_Test']))
+    data['materials'] = [{'name': 'M_Test', 'maps': []}]
+    found = scene_findings(data, 'vpm', 'oks', PROFILES.vpm)
+    assert not any(f.name == 'material assignments' for f in found['V005'])
+
+
+@pytest.mark.parametrize('assigned', [['Ghost'], [None], []])
+def test_npm_unmapped_polygon_material_is_named(assigned):
+    data = rb(mesh(materials=['M_Test']))
+    data['meshes'][0]['face_geometry'] = {'vertices': [[0,0,0],[1,0,0],[0,1,0]],
+                                         'polygons': [[0,1,2]], 'polygon_material': assigned}
+    data['materials'] = [{'name': 'M_Test', 'maps': [{'image': 'atlas.png', 'socket': 'Base Color'}]}]
+    data['images'] = [{'name': 'atlas.png', 'size': [512,512], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    f = next(f for f in found['V005'] if f.name == 'material assignments')
+    assert f.status == 'fail'
+    assert 'SM_Test_K_1_Main' in f.observed
+    assert 'polygon' in f.observed
+
+
+def test_npm_glass_does_not_require_an_opaque_diffuse():
+    data = rb(mesh(name='SM_Test_K_1_MainGlass', materials=['M_Glass']))
+    data['materials'] = [{'name': 'M_Glass', 'maps': []}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    assert not any(f.name == 'material assignments' for f in found['V005'])
+
+
+def test_npm_material_and_oversized_image_errors_both_survive():
+    data = rb(mesh(materials=['UnknownMaterial']))
+    data['materials'] = [{'name': 'UnknownMaterial', 'maps': []}]
+    data['images'] = [{'name': 'atlas.png', 'size': [8192,8192], 'packed': True}]
+    found = scene_findings(data, 'npm', 'oks', PROFILES.npm)
+    assert next(f.status for f in found['V005'] if f.name == 'material assignments') == 'fail'
+    assert next(f.status for f in found['V006'] if f.name == 'texture dimensions') == 'fail'
+
+
+
+

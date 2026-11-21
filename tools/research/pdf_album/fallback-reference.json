@@ -1,0 +1,37 @@
+{
+  "schema": "album-fallback-audit/1",
+  "decision": "D263",
+  "labelled_by": "dt-worker-codex / gpt-6.1-sol, visual transcription of frozen customer renders",
+  "labelled_on": "2026-11-12",
+  "independence": "not independent (agent-made reference)",
+  "scope": "ROI text audit only; no exhaustive album precision, row/element binding or geometry accuracy",
+  "albums": [
+    {"id": "elv", "file": "elv.pdf", "pages": 42, "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+     "regions": [
+       {"id": "elv-legend", "page": 18, "bbox": [490, 610, 790, 730], "kind": "material",
+        "reference": "стемалит RAL 5024 стекло закаленное тип триплекс, прозрачное нетонированное обшивка фасада из метал. панелей с фактурой дерева, цвет сосна, RAL 1001 обшивка фасада из метал. панелей цвет RAL 7021"},
+       {"id": "elv-rows", "page": 27, "bbox": [98, 153, 315, 194], "kind": "schedule",
+        "reference": "1.D.17 Гардероб персонала ТЦ 10.77 1.D.18 Гардероб персонала ТЦ 11.54 1.O.01 Диспетчерская 15.65"},
+       {"id": "elv-chain", "page": 18, "bbox": [360, 222, 880, 257], "kind": "dimension",
+        "reference": null, "critical_values": ["5300", "8400", "52600"],
+        "unresolved": "axis/view binding, scale and units unverified"}
+     ]},
+    {"id": "cod20207", "file": "cod20207.pdf", "pages": 5, "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+     "regions": [
+       {"id": "cod-materials", "page": 1, "bbox": [650, 680, 825, 755], "kind": "material",
+        "reference": "Стекло в составе двухкамерного стеклопакета / цвет – синий / RAL 5023 Стемалит глухое заполнение / цвет – синий / RAL 5023 Стекло в составе двухкамерного стеклопакета / цвет – нейтральный / RAL 7024"},
+       {"id": "cod-chain", "page": 1, "bbox": [155, 551, 1055, 598], "kind": "conflict",
+        "reference": null, "critical_values": ["69600", "17800", "87450"],
+        "unresolved": "Printed 69600 + 17800 = 87400, but printed total is 87450 mm; preserve 50 mm discrepancy for architect (D112)."},
+       {"id": "cod-equipment", "page": 5, "bbox": [44, 227, 220, 319], "kind": "schedule",
+        "reference": "Гибкая светодиодная подсветка с установкой в алюминиевый профиль. Общая длина: 5 505 метров Источник: LED 10W/m RGBW IP67 48V Оптика: Diffused Цвет: белый Материал: силикон Сечение: 16x15 мм Блоки питания в комплект не входят (выносные) Тип управления: зависит от блока питания",
+        "unresolved": "Final length/section approval required by source; quantity 1 is not length 1 m."}
+     ]},
+    {"id": "tec26", "file": "tec26.pdf", "pages": 6, "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+     "regions": [
+       {"id": "tec-title", "page": 3, "bbox": [840, 805, 1160, 835], "kind": "source_check",
+        "reference": "Новый парогазовый блок. Визуализация 1",
+        "unresolved": "Visualization-only booklet: no dimensioned drawing, material schedule or calibration. Request architectural source; never measure perspective."}
+     ]}
+  ]
+}

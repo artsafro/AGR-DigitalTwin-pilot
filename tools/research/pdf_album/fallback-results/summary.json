@@ -1,0 +1,740 @@
+{
+  "schema": "album-fallback-benchmark/1",
+  "reference_sha256": "22d854de031a76266b643a1e1eb9cd0f99c22c46b9a274b8bd26a10152eb5df1",
+  "label_provenance": {
+    "labelled_by": "dt-worker-codex / gpt-6.1-sol, visual transcription of frozen customer renders",
+    "labelled_on": "2026-11-12",
+    "independence": "not independent (agent-made reference)",
+    "decision": "D263"
+  },
+  "setup_seconds": 1.867430099984631,
+  "passed": false,
+  "albums": [
+    {
+      "id": "elv",
+      "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+      "seconds": 54.282511900004465,
+      "pages": [
+        {
+          "page": 18,
+          "calls": 2,
+          "input_tokens": 65764,
+          "output_tokens": 237,
+          "vision_seconds": 22.825161900080275,
+          "metering_complete": true,
+          "circuit_open": false
+        },
+        {
+          "page": 27,
+          "calls": 1,
+          "input_tokens": 28482,
+          "output_tokens": 109,
+          "vision_seconds": 10.790165700018406,
+          "metering_complete": true,
+          "circuit_open": false
+        }
+      ],
+      "scores": [
+        {
+          "id": "elv-legend",
+          "page": 18,
+          "bbox": [
+            490,
+            610,
+            790,
+            730
+          ],
+          "baseline_seconds": 10.463817899988499,
+          "cyrillic_seconds": 3.8028441999922507,
+          "baseline": {
+            "correct": 0,
+            "reference": 23,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          },
+          "cyrillic": {
+            "correct": 22,
+            "reference": 23,
+            "predicted": 24,
+            "recall": 0.9565217391304348,
+            "precision": 0.9166666666666666
+          },
+          "vision": {
+            "correct": 22,
+            "reference": 23,
+            "predicted": 23,
+            "recall": 0.9565217391304348,
+            "precision": 0.9565217391304348
+          }
+        },
+        {
+          "id": "elv-rows",
+          "page": 27,
+          "bbox": [
+            98,
+            153,
+            315,
+            194
+          ],
+          "baseline_seconds": 1.7135661000502296,
+          "cyrillic_seconds": 2.004562599991914,
+          "baseline": {
+            "correct": 0,
+            "reference": 7,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          },
+          "cyrillic": {
+            "correct": 7,
+            "reference": 7,
+            "predicted": 7,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "vision": {
+            "correct": 7,
+            "reference": 7,
+            "predicted": 7,
+            "recall": 1.0,
+            "precision": 1.0
+          }
+        },
+        {
+          "id": "elv-chain",
+          "page": 18,
+          "bbox": [
+            360,
+            222,
+            880,
+            257
+          ],
+          "baseline_seconds": 1.2794813999789767,
+          "cyrillic_seconds": 1.3112997999996878,
+          "critical_values": [
+            "5300",
+            "8400",
+            "52600"
+          ],
+          "baseline": {
+            "5300": true,
+            "8400": true,
+            "52600": true
+          },
+          "cyrillic": {
+            "5300": true,
+            "8400": true,
+            "52600": true
+          },
+          "vision": {
+            "5300": true,
+            "8400": true,
+            "52600": true
+          }
+        }
+      ],
+      "page_accounting": [
+        {
+          "page": 1,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 2,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 3,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 4,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 5,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 6,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 7,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 8,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 9,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 10,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 11,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 12,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 13,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 14,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 15,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 16,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 17,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 18,
+          "status": "ROI_observed",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 19,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 20,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 21,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 22,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 23,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 24,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 25,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 26,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 27,
+          "status": "ROI_observed",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 28,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 29,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 30,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 31,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 32,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 33,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 34,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 35,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 36,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 37,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 38,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 39,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 40,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 41,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 42,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        }
+      ],
+      "historical_default": {
+        "path": "C:\\x\\pdf-album-research\\t_5b23c219\\elv-D-all-v001\\result.json",
+        "sha256": "c3981acfcbf067173021514ea86645f38eff7797a2bb2d83385c47e2d541075b",
+        "seconds": 270.5679,
+        "render_dpi": 150,
+        "scores": [
+          {
+            "id": "elv-legend",
+            "correct": 0,
+            "reference": 23,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          },
+          {
+            "id": "elv-rows",
+            "correct": 0,
+            "reference": 7,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          }
+        ]
+      },
+      "aggregate_cyrillic_words": {
+        "baseline": {
+          "correct": 0,
+          "reference": 30,
+          "predicted": 0,
+          "recall": 0.0,
+          "precision": null
+        },
+        "cyrillic": {
+          "correct": 29,
+          "reference": 30,
+          "predicted": 31,
+          "recall": 0.9666666666666667,
+          "precision": 0.9354838709677419
+        },
+        "vision": {
+          "correct": 29,
+          "reference": 30,
+          "predicted": 30,
+          "recall": 0.9666666666666667,
+          "precision": 0.9666666666666667
+        },
+        "historical": {
+          "correct": 0,
+          "reference": 30,
+          "predicted": 0,
+          "recall": 0.0,
+          "precision": null
+        }
+      }
+    },
+    {
+      "id": "cod20207",
+      "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+      "seconds": 44.36354340001708,
+      "pages": [
+        {
+          "page": 1,
+          "calls": 2,
+          "input_tokens": 65194,
+          "output_tokens": 344,
+          "vision_seconds": 27.491704199986998,
+          "metering_complete": true,
+          "circuit_open": false
+        },
+        {
+          "page": 5,
+          "calls": 1,
+          "input_tokens": 32665,
+          "output_tokens": 99,
+          "vision_seconds": 11.010300899972208,
+          "metering_complete": true,
+          "circuit_open": false
+        }
+      ],
+      "scores": [
+        {
+          "id": "cod-materials",
+          "page": 1,
+          "bbox": [
+            650,
+            680,
+            825,
+            755
+          ],
+          "baseline_seconds": 0.9770715999766253,
+          "cyrillic_seconds": 1.1947140999836847,
+          "baseline": {
+            "correct": 0,
+            "reference": 19,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          },
+          "cyrillic": {
+            "correct": 18,
+            "reference": 19,
+            "predicted": 19,
+            "recall": 0.9473684210526315,
+            "precision": 0.9473684210526315
+          },
+          "vision": {
+            "correct": 18,
+            "reference": 19,
+            "predicted": 20,
+            "recall": 0.9473684210526315,
+            "precision": 0.9
+          }
+        },
+        {
+          "id": "cod-chain",
+          "page": 1,
+          "bbox": [
+            155,
+            551,
+            1055,
+            598
+          ],
+          "baseline_seconds": 0.9197241999791004,
+          "cyrillic_seconds": 0.9327095999615267,
+          "critical_values": [
+            "69600",
+            "17800",
+            "87450"
+          ],
+          "baseline": {
+            "69600": true,
+            "17800": true,
+            "87450": true
+          },
+          "cyrillic": {
+            "69600": true,
+            "17800": true,
+            "87450": true
+          },
+          "vision": {
+            "69600": true,
+            "17800": true,
+            "87450": true
+          }
+        },
+        {
+          "id": "cod-equipment",
+          "page": 5,
+          "bbox": [
+            44,
+            227,
+            220,
+            319
+          ],
+          "baseline_seconds": 0.7992007000138983,
+          "cyrillic_seconds": 1.0225943999830633,
+          "baseline": {
+            "correct": 0,
+            "reference": 32,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          },
+          "cyrillic": {
+            "correct": 32,
+            "reference": 32,
+            "predicted": 33,
+            "recall": 1.0,
+            "precision": 0.9696969696969697
+          },
+          "vision": {
+            "correct": 32,
+            "reference": 32,
+            "predicted": 32,
+            "recall": 1.0,
+            "precision": 1.0
+          }
+        }
+      ],
+      "page_accounting": [
+        {
+          "page": 1,
+          "status": "ROI_observed",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 2,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 3,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 4,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 5,
+          "status": "ROI_observed",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        }
+      ],
+      "historical_default": {
+        "path": "C:\\x\\pdf-album-research\\t_5b23c219\\cod20207-D-all-v001\\result.json",
+        "sha256": "23e80b2b5ff7e5ae33e975c5563b97a4d5f75bc0d14aaa192a566ca4a2e408dc",
+        "seconds": 35.2321,
+        "render_dpi": 150,
+        "scores": [
+          {
+            "id": "cod-materials",
+            "correct": 0,
+            "reference": 19,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          },
+          {
+            "id": "cod-equipment",
+            "correct": 0,
+            "reference": 32,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          }
+        ]
+      },
+      "aggregate_cyrillic_words": {
+        "baseline": {
+          "correct": 0,
+          "reference": 51,
+          "predicted": 0,
+          "recall": 0.0,
+          "precision": null
+        },
+        "cyrillic": {
+          "correct": 50,
+          "reference": 51,
+          "predicted": 52,
+          "recall": 0.9803921568627451,
+          "precision": 0.9615384615384616
+        },
+        "vision": {
+          "correct": 50,
+          "reference": 51,
+          "predicted": 52,
+          "recall": 0.9803921568627451,
+          "precision": 0.9615384615384616
+        },
+        "historical": {
+          "correct": 0,
+          "reference": 51,
+          "predicted": 0,
+          "recall": 0.0,
+          "precision": null
+        }
+      }
+    },
+    {
+      "id": "tec26",
+      "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+      "seconds": 10.93362809997052,
+      "pages": [
+        {
+          "page": 3,
+          "calls": 1,
+          "input_tokens": 32507,
+          "output_tokens": 19,
+          "vision_seconds": 9.001058800029568,
+          "metering_complete": true,
+          "circuit_open": false
+        }
+      ],
+      "scores": [
+        {
+          "id": "tec-title",
+          "page": 3,
+          "bbox": [
+            840,
+            805,
+            1160,
+            835
+          ],
+          "baseline_seconds": 0.9534143999917433,
+          "cyrillic_seconds": 0.9656920999987051,
+          "baseline": {
+            "correct": 0,
+            "reference": 4,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          },
+          "cyrillic": {
+            "correct": 4,
+            "reference": 4,
+            "predicted": 4,
+            "recall": 1.0,
+            "precision": 1.0
+          },
+          "vision": {
+            "correct": 4,
+            "reference": 4,
+            "predicted": 4,
+            "recall": 1.0,
+            "precision": 1.0
+          }
+        }
+      ],
+      "page_accounting": [
+        {
+          "page": 1,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 2,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 3,
+          "status": "ROI_observed",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 4,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 5,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        },
+        {
+          "page": 6,
+          "status": "not_requested",
+          "reason": "frozen targeted ROI audit, not full-album OCR"
+        }
+      ],
+      "historical_default": {
+        "path": "C:\\x\\pdf-album-research\\t_5b23c219\\tec26-D-all-v001\\result.json",
+        "sha256": "4376f137032d294effb939bd7d03b77e4874c8035da67db3871eecb5bd7f982e",
+        "seconds": 22.193,
+        "render_dpi": 150,
+        "scores": [
+          {
+            "id": "tec-title",
+            "correct": 0,
+            "reference": 4,
+            "predicted": 0,
+            "recall": 0.0,
+            "precision": null
+          }
+        ]
+      },
+      "aggregate_cyrillic_words": {
+        "baseline": {
+          "correct": 0,
+          "reference": 4,
+          "predicted": 0,
+          "recall": 0.0,
+          "precision": null
+        },
+        "cyrillic": {
+          "correct": 4,
+          "reference": 4,
+          "predicted": 4,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "vision": {
+          "correct": 4,
+          "reference": 4,
+          "predicted": 4,
+          "recall": 1.0,
+          "precision": 1.0
+        },
+        "historical": {
+          "correct": 0,
+          "reference": 4,
+          "predicted": 0,
+          "recall": 0.0,
+          "precision": null
+        }
+      }
+    }
+  ]
+}

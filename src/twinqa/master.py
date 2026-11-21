@@ -1,8 +1,9 @@
 """Quad master (work FBX) checks from a Blender readback: DER-03, [D021], [D198].
 
 Generalises the quad and quad-size part of the job-local `jobs/KPP1/scripts/qa_master.py`:
-- master quads: every polygon of every non-UCX mesh has 4 corners (the master stays quad; only the derived
-  export copy is triangulated; DER-03, reg p.8 §3.11, p.29 §3.17);
+- master quads: quads wherever possible; triangles allowed and reported per object (count and face share);
+  n-gons fail before export triangulation [D312]. Only the derived export copy is triangulated
+  (DER-03, reg p.8 §3.11, p.29 §3.17);
 - master quad size (VPM only): no face side longer than one 4096 px tile at 1024 px/m = 4.0 m, faces between
   the padded side 3.9375 m and 4.0 m are `review` ([D021] "cut VPM quads to about 4 x 4 m"). The limits come from
   `dt_ai.ops.inv_texel.VPM` (the kernel invariant texel_ready), never typed in here; its aspect ratio
@@ -33,15 +34,47 @@ def master_findings(rb: dict, kind: str) -> list[Finding]:
     meshes = [m for m in rb.get("meshes", []) if not m["name"].upper().startswith("UCX_")]
     if not meshes:
         return [_f("fail", "master quads", f"{src}: no render mesh", "quad master meshes", src)]
-    non_quads = {}
-    for m in meshes:
-        degrees = {int(k): v for k, v in (m.get("polygon_degrees") or {}).items()}
-        bad = sum(v for k, v in degrees.items() if k != 4)
-        if bad or not degrees:
-            non_quads[m["name"]] = bad if degrees else "no polygons"
-    out = [_f("fail" if non_quads else "pass", "master quads",
-              f"{src}: {dict(list(non_quads.items())[:5]) or 'all quads'}", "every master polygon is a quad", src,
-              {"non_quads": non_quads})]
+    import importlib.util
+    from pathlib import Path
+
+    # Like dt_ai.geometry.uv, resolve the embedded owner independently of CLI cwd.
+    spec = importlib.util.spec_from_file_location(
+        "agr_master_topology_twinqa",
+        Path(__file__).resolve().parents[2] / "adapters/max/agr_tools/master_topology_core.py")
+    core = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(core)
+
+    objects = []
+    try:
+        for m in meshes:
+            histogram = m.get("polygon_degrees") or {}
+            degrees = []
+            for key, count in histogram.items():
+                if type(key) not in (str, int) or str(int(key)) != str(key):
+                    raise ValueError(f"invalid polygon degree: {m['name']}: {key!r}")
+                if type(count) is not int or count <= 0:
+                    raise ValueError(f"invalid polygon count: {m['name']}: {key!r}={count!r}")
+                degrees.extend([int(key)] * count)
+            polygons = (m.get("face_geometry") or {}).get("polygons")
+            if polygons is not None:
+                measured = [len(p) for p in polygons]
+                if sorted(measured) != sorted(degrees):
+                    raise ValueError(f"inconsistent polygon inventory: {m['name']}")
+                degrees = measured  # preserve object-local face IDs when geometry is available
+            objects.append({"name": m["name"], "face_degrees": degrees})
+        topology = core.check(objects)
+    except (ValueError, TypeError, OverflowError) as exc:
+        return [_f("fail", "master quads", f"{src}: {exc}",
+                   "complete master polygons; quads preferred, triangles reported, no n-gons [D312]", src)]
+    rows = topology["objects"]
+    # A histogram alone has no source face order; never invent n-gon face identities.
+    for m, row in zip(meshes, rows):
+        if (m.get("face_geometry") or {}).get("polygons") is None:
+            row.pop("ngon_face_ids")
+    shown = rows if any(r["triangles"] or r["ngons"] for r in rows) else "all quads"
+    out = [_f(topology["status"], "master quads", f"{src}: {shown}",
+              "quads wherever possible; triangles allowed and reported; no n-gons [D312]", src,
+              {"objects": rows})]
     out.extend(decor_embed_findings(meshes, src))
     out.extend(edge_loop_findings(meshes, src))
     if kind != "vpm":

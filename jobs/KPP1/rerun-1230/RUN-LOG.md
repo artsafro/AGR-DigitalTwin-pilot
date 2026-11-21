@@ -1,4 +1,48 @@
-# KPP1 R1 rerun #1230 — latest run `issue-1230-r1-v002`
+# KPP1 R1 rerun #1230 — latest run `issue-1246-r1-v003`
+
+## #1246 corner pairs — run `r1-v003` (dt-worker, 2026-11-12)
+
+A corner post seen edge-on in two perpendicular views (SW: Южный × Западный, NW: Северный × Западный)
+was built twice in v002, each time with a guessed 210 mm depth, which made a cross with 120 mm fins.
+`corner_members()` now pairs two perpendicular corner projections when their profile-depth boxes overlap
+in plan and their heights overlap by more than 1 mm (`PAIR_MIN_MM`). Each pair becomes one member:
+x and y come from the two measured extents, z is the overlap, and `views` names both inserts.
+Height seen in one view only keeps the profile-depth guess (for example, Южный z 1.2–2.7).
+Remainders of 1 mm or less (drawing round-off, e.g. 6.6501 vs 6.65) are listed as
+`unbuilt_slivers_z_m`.
+
+- `parts-schedule-r1-v003.json`: 244 inserts -> **240** members, 0 dropped. The first 217 members
+  are unchanged. There are **7** reported pairs (SW 3, NW 4). Overlaps between perpendicular corner
+  boxes went from 8 to **0**. Three z overlaps of 0.1 mm remain inside a single view; they come from
+  the source drawing.
+- SW post z 4.85–6.65: x −15.075..−14.985, y −5.7754..−5.6854 (90 × 90 mm). The measured posts
+  touch the body rectangle or stand 0.3–0.4 mm off it. That is what the drawings measure; nothing
+  is embedded. The visual / architect corner-joint gate is **still open**.
+- Agent-owned factory-startup Blender 5.1.2: `build-report-r1-v003.json` (VPM Main 29,981 tris).
+  - `SM_Kpp_1.zip.r1-v003.validate.json`: exit 1, `passed=false`, V004 topology 0, <5 mm 0,
+    5–20 mm 98.
+  - `0000_Kpp_1_01.r1-v003.validate.json`: exit 2, `passed=false`. NPM is unchanged because it has
+    no mullions.
+- `corner-pairs-readback-r1-v003.json`: ray-parity inside test on the exported VPM.
+  - The SW and NW post centres are solid.
+  - The four old fin centres are empty in v003. In the v002 control (the sealed FBX) all four
+    were solid.
+  - This is a scoped presence witness, not delivery acceptance.
+- Evidence: `G:/Мой диск/AGR-evidence/1246-kpp1-corner-pairs/` with `evidence-1246-SHA256SUMS.txt`
+  (11 files verified by `sha256sum -c`). Raw receipts name the staging paths `tmp/out-r1-v003b`.
+
+```bash
+uv run python jobs/KPP1/rerun-1230/build_parts.py C:/x/kpp1/r1209/plan-contours-L03.json \
+  C:/x/kpp1/r1209/dxf/L01.dxf C:/x/kpp1/r1209/dxf/L03.dxf tmp/parts-r1-v003.json
+uv run python jobs/KPP1/rerun-1230/make_textures.py tmp/tex-1246
+blender --background --factory-startup --python-exit-code 1 --python jobs/KPP1/rerun-1230/build_blender.py -- \
+  <abs>/tmp/parts-r1-v003.json <abs>/tmp/tex-1246 <abs>/tmp/out-r1-v003b <abs>/tmp/build-report-r1-v003.json
+blender --background --factory-startup --python-exit-code 1 --python jobs/KPP1/rerun-1230/readback_corner_pairs.py -- \
+  <abs>/tmp/out-r1-v003b/SM_Kpp_1.fbx <abs>/tmp/readback-v003b.json
+```
+
+Use absolute paths for Blender: with relative paths, texture loading fails
+(`Cannot read 'tmp\tex-1246\...png'`).
 
 ## Review R1 correction (dt-worker-codex, 2026-11-11)
 

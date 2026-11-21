@@ -132,6 +132,15 @@ def test_schemas_in_sync_with_models():
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+def test_gate1_scoped_handoff_channel():
+    for relative in ("docs/procedure/TASK_TO_MODEL.md", "docs/agents/KANBAN.md"):
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        section = text.split("## Gate 1 handoff", 1)[-1].split("\n## ", 1)[0]
+        for needle in ("measurement", "dry-run", "parts-only", "issue comment", "waits: user",
+                       "no needs_input block", "scope", "review", "build"):
+            assert needle in section, (relative, needle)
+
+
 def test_task_to_model_parts_row_names_gate1_channel():
     text = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
     row = next(line for line in text.splitlines() if line.startswith("| parts |"))

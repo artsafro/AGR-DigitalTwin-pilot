@@ -141,14 +141,38 @@ def uv_slot_report(faces, rects: dict, eps: float = 1e-6) -> dict:
     return {"faces": sum(m["faces"] for m in mats.values()), "faces_outside": total_out, "materials": mats}
 
 
-def remap_into_rect(t, rect, inset: float = 0.0) -> tuple[float, float]:
-    """Map a normalised (s, t) in [0, 1]^2 into rect [u0, v0, u1, v1] (with an optional inset)."""
-    s, q = t
-    if not (_finite(s) and _finite(q)) or not (0.0 <= s <= 1.0 and 0.0 <= q <= 1.0):
-        raise ValueError("normalised coordinate must be finite and inside [0, 1]")
-    u0, v0, u1, v1 = rect
-    du, dv = (u1 - u0) * inset, (v1 - v0) * inset
-    return (u0 + du + s * (u1 - u0 - 2 * du), v0 + dv + q * (v1 - v0 - 2 * dv))
+def _load_uv_remap():
+    """The shared UV transfer owner tools/materials/maf_uv_remap.py (#1410), loaded by path (no package)."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "materials" / "maf_uv_remap.py"
+    spec = importlib.util.spec_from_file_location("maf_uv_remap", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def light_ratio(tris_source, ratio, floor=None) -> tuple[float, str]:
+    """Decimate ratio actually applied to one NPM row and why (#1410, plan #425 step 5).
+
+    A source at or under ``floor`` triangles is never lightened ("refused_floor", ratio 1.0); a ratio of 1.0 keeps
+    the model ("kept"); otherwise "decimated". Non-finite / out-of-range input raises - no silent default.
+    """
+    if isinstance(ratio, bool) or not _finite(ratio) or not (0.0 < ratio <= 1.0):
+        raise ValueError(f"decimate ratio must be in (0, 1], got {ratio!r}")
+    if isinstance(tris_source, bool) or not isinstance(tris_source, int) or tris_source <= 0:
+        raise ValueError(f"source triangle count must be a positive integer, got {tris_source!r}")
+    if floor is not None:
+        if isinstance(floor, bool) or not isinstance(floor, int) or floor < 0:
+            raise ValueError(f"floor must be a non-negative integer, got {floor!r}")
+        if tris_source <= floor:
+            return 1.0, "refused_floor"
+    return float(ratio), ("kept" if ratio == 1.0 else "decimated")
+
+
+uv_remap = _load_uv_remap()
+remap_into_rect = uv_remap.remap_into_rect   # one owner (#1410): Blender builder and Flora atlas call the same code
 
 
 def dominant_up_plane(faces, bin_m: float = 0.005, min_nz: float = 0.99) -> float:

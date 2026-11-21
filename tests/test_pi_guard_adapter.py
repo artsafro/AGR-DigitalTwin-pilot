@@ -56,7 +56,7 @@ console.log("shim: allow status; block reset");
 @pytest.fixture
 def sandbox(tmp_path):
     """Synthetic project; real hooks stay byte-identical to Claude's hooks."""
-    for rel in ("tools/hooks/pi_guard_adapter.py", ".claude/hooks/guard.py",
+    for rel in ("tools/hooks/pi_guard_adapter.py", "tools/hooks/hook_input.py", ".claude/hooks/guard.py",
                 ".claude/hooks/pipeline_gate.py", "tools/git-hooks/pipeline_gate.py",
                 "tools/git-hooks/branch_names.py"):
         dest = tmp_path / rel

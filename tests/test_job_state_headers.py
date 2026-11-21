@@ -41,14 +41,16 @@ def test_job_contract_documents_header():
     assert "every" in contract.lower()
 
 
-def test_kpp1_header_routes_to_gate1_rerun_without_claiming_acceptance():
+def test_kpp1_header_routes_to_current_r1_placement_without_claiming_acceptance():
+    import yaml
+
     lines = (ROOT / "jobs/KPP1/STATE.md").read_text(encoding="utf-8").splitlines()
-    assert "#1209 rerun after Gate 1 [D238]" in lines[0]
-    assert "both passed=false" in lines[0]
-    assert "АС.03 copied DWGs" in lines[1]
-    assert "cold-run-1172/inputs-manifest.json" in lines[1]
-    assert "architect levels question open" in lines[1]
-    assert "PR #1216" in lines[2]
+    job = yaml.safe_load((ROOT / "jobs/KPP1/job.yaml").read_text(encoding="utf-8"))
+    assert f"`{job['run_id']}`" in lines[0]
+    assert "site-1255/REPORT.md" in lines[0] and "passed=false" in lines[0]
+    assert "sources.json" in lines[1] and "object.json" in lines[1]
+    assert "R1 dimensions final D254" in lines[1]
+    assert "job.yaml" in lines[2]
     assert "visual waits-user, checker waits-visual" in lines[2]
 
 

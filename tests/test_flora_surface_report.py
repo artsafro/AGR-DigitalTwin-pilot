@@ -141,4 +141,5 @@ def test_committed_report_covers_every_catalogue_species():
         assert (row["verdict"] == "no_vpm") == (item["vpm"] is None)
         assert row["verdict"] in report.ROW_VERDICTS
     assert doc["counts"]["species"] == len(cat["species"])
-    assert all(item["vpm_identity"] in (None, "unverified") for item in cat["species"])
+    # the report never changes the catalogue; D311 (#1421) is a user decision recorded beside it
+    assert all(item["vpm_identity"] in (None, "confirmed-interim") for item in cat["species"])

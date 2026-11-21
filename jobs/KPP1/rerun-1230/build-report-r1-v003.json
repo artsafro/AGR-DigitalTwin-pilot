@@ -1,0 +1,108 @@
+{
+ "ok": true,
+ "issue": 1230,
+ "vpm": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed7956b8\\tmp\\out-r1-v003b\\SM_Kpp_1.fbx",
+ "vpm_zip": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed7956b8\\tmp\\out-r1-v003b\\SM_Kpp_1.zip",
+ "npm": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed7956b8\\tmp\\out-r1-v003b\\0000_Kpp_1_01.fbx",
+ "triangles_parts_before_union": {
+  "Body_Walls": 2970,
+  "Parapet": 32,
+  "Roof_Plate": 12,
+  "Windows": 2016,
+  "Doors": 660,
+  "CurtainWall_Mullions": 2880,
+  "Stair": 204
+ },
+ "triangles_vpm_main": 29981,
+ "triangles_glass": 504,
+ "uv_qa_vpm": {
+  "Plinth_RAL7004": {
+   "udim": 1001,
+   "faces": 3839,
+   "overflow": 0,
+   "max_local": 0.5859
+  },
+  "Cassette_RAL7047": {
+   "udim": 1002,
+   "faces": 6126,
+   "overflow": 0,
+   "max_local": 0.9351
+  },
+  "Cassette_RAL5015": {
+   "udim": 1003,
+   "faces": 7951,
+   "overflow": 0,
+   "max_local": 0.7227
+  },
+  "Membrane_Logicroof": {
+   "udim": 1004,
+   "faces": 948,
+   "overflow": 0,
+   "max_local": 0.5029
+  },
+  "Frame_RAL9016": {
+   "udim": 1005,
+   "faces": 8850,
+   "overflow": 0,
+   "max_local": 0.5029
+  },
+  "Door_RAL7004": {
+   "udim": 1006,
+   "faces": 1577,
+   "overflow": 0,
+   "max_local": 0.498
+  },
+  "Grille_RAL7004": {
+   "udim": 1007,
+   "faces": 690,
+   "overflow": 0,
+   "max_local": 0.4956
+  }
+ },
+ "uv_qa_npm": {
+  "Plinth_RAL7004": {
+   "udim": 1001,
+   "faces": 3837,
+   "overflow": 0,
+   "max_local": 0.5981
+  },
+  "Cassette_RAL5015": {
+   "udim": 1003,
+   "faces": 6101,
+   "overflow": 0,
+   "max_local": 0.7446
+  },
+  "Cassette_RAL7047": {
+   "udim": 1002,
+   "faces": 5245,
+   "overflow": 0,
+   "max_local": 0.9351
+  },
+  "Membrane_Logicroof": {
+   "udim": 1004,
+   "faces": 908,
+   "overflow": 0,
+   "max_local": 0.5005
+  },
+  "Door_RAL7004": {
+   "udim": 1006,
+   "faces": 1551,
+   "overflow": 0,
+   "max_local": 0.5005
+  },
+  "Grille_RAL7004": {
+   "udim": 1007,
+   "faces": 690,
+   "overflow": 0,
+   "max_local": 0.4956
+  }
+ },
+ "openings_cut": 53,
+ "mullions_built": 240,
+ "mullions_dropped": 0,
+ "mullion_inserts": 244,
+ "stair_boxes": 17,
+ "ucx_inset_m": 0.003,
+ "blender": "5.1.2",
+ "triangles_npm_main": 18332
+}

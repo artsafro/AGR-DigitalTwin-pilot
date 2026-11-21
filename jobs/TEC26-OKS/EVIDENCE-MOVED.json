@@ -1,0 +1,13 @@
+{
+ "issue": "#1614",
+ "rule": "COORDINATION_RULES 57: job data lives in the evidence store",
+ "evidence_root": "G:/Мой диск/AGR-evidence/1614-job-data/TEC26-OKS",
+ "files": [
+  {
+   "path": "jobs/TEC26-OKS/census/kpp.json",
+   "sha256": "c5fa31f85c496c98ac03346abc599a0b31b2f706d1006422c0aab0ee7d37571d",
+   "bytes": 142382,
+   "evidence": "G:/Мой диск/AGR-evidence/1614-job-data/TEC26-OKS/census/kpp.json"
+  }
+ ]
+}

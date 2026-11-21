@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import vpm_uv  # noqa: E402  (stage 5: texel cuts, UDIM UVs, materials)
 import vpm_ucx  # noqa: E402  (stage 6: UCX collision hulls)
 import seal  # noqa: E402  (stage 5: weld + T-junction ring splits, quads only)
+import kpp1_windowgen  # noqa: E402  (#1338: the one glass_rects(b) source; windowgen types only in copies)
 
 ADDRESS = "Kpp_1"  # placeholder until the real address/cadastral number is known
 MAIN = f"SM_{ADDRESS}_Main"
@@ -41,6 +42,7 @@ D_INFILL = 0.23      # curtain mullions / window frames / door leaves
 D_GLASS = 0.26       # glass plane: 30 mm behind the frame face (project window library rule)
 D_INTERIOR = 1.26    # dark interior placeholder 1 m behind glass (VPM: interiors -> solid walls)
 WINDOW_FRAME = 0.07  # visible AGS68 frame+sash width around glass (assumed; not in Revit export)
+GLASS_PLAN = None    # #1338: kpp1_windowgen.plan_bays result when KPP1_WINDOWGEN=<report.json> (copies only)
 INF = 99.0
 
 FINISHES = {  # working finishes (internal ids); collapsed to M_<Address>_Main_1 at publish
@@ -299,6 +301,11 @@ def relief(mb, gb, f, rect, extra_cuts, cell):
                   lambda owner_below: z - 1e-3 if owner_below else z + 1e-3)
 
 
+def glass_rects(b):
+    """Glass rects of one bay: accepted rule w +- WINDOW_FRAME, or the windowgen plan in a #1338 copy."""
+    return kpp1_windowgen.glass_rects(b, GLASS_PLAN, WINDOW_FRAME)
+
+
 def surround_cell(s):
     mullions = s["mullions"]
     bays = s["bays"]
@@ -308,8 +315,7 @@ def surround_cell(s):
             return [(D_SURROUND, INF, "Frame_RAL9016", "Frame_RAL9016")]
         for b in bays:
             if inside(uc, zc, b["rect"]):
-                glass = [[w[0] + WINDOW_FRAME, w[1] - WINDOW_FRAME, w[2] + WINDOW_FRAME, w[3] - WINDOW_FRAME]
-                         for w in b["windows"]] + b["glass"]
+                glass = glass_rects(b)
                 if any(inside(uc, zc, g) for g in glass):
                     return [(D_INTERIOR, INF, "Glass_Cell", "Interior")]
                 return [(D_INFILL, D_GLASS, "Frame_RAL9016", "Frame_RAL9016"),
@@ -335,8 +341,7 @@ def openings(mb, gb, spec, decor=False):
             # feature mullions stand on the portal canopy (top +3.30): run 10 mm into it (embed)
             rects = sur["mullions"] + [b["rect"] for b in sur["bays"]]
             for b in sur["bays"]:
-                rects += [[w[0] + WINDOW_FRAME, w[1] - WINDOW_FRAME, w[2] + WINDOW_FRAME, w[3] - WINDOW_FRAME]
-                          for w in b["windows"]] + b["glass"]
+                rects += glass_rects(b)
             relief(mb, gb, f, sur["rect"], rects, surround_cell(sur))
         for d in s["doors"]:
             relief(mb, gb, f, d["rect"], [], lambda uc, zc: [(D_INFILL, INF, "Door_RAL7004", "Door_RAL7004")])
@@ -413,11 +418,30 @@ def membrane_z():
     return lambda x, y: bvh.ray_cast(Vector((x, y, 20.0)), Vector((0, 0, -1)))[0].z
 
 
+def _roof_core():
+    """The shared roof slab rule (AGR Tools body.roof, R6 #1352 / D292): adapters/max/agr_tools/roof_core.py (#1381)."""
+    import importlib.util
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "adapters", "max", "agr_tools",
+                        "roof_core.py")
+    spec = importlib.util.spec_from_file_location("agr_tools_roof_core", path)
+    core = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(core)
+    return core
+
+
 def roof(mb):
     d = 0.33 + PARAPET_IN
     xi0, xi1, yi0, yi1 = X0 + d, X1 - d, Y0 + d, Y1 - d
     x0, x1, y0, y1, zt = SHAFT
     xs, ys = [xi0, x0, x1, xi1], [yi0, y0, y1, yi1]
+    # the plate outline and height from the shared roof rule (#1381): the hole loop at LEVEL_roof grown by
+    # PLATE_OVERLAP into the parapets, PLATE_GAP above it (the delivered v006 plate, equal within 1e-9 m)
+    hole = [(x, yi0) for x in xs] + [(xi1, y) for y in ys[1:]] + [(x, yi1) for x in xs[-2::-1]] + \
+           [(xi0, y) for y in ys[-2:0:-1]]
+    plate = _roof_core().hole_plate(hole, Z_ROOF, PARAPET_TOP_IN, [(X0, Y0), (X1, Y0), (X1, Y1), (X0, Y1)],
+                                    {"lift_m": PLATE_GAP, "inset_m": PLATE_OVERLAP})
+    pxs, pys = [round(p[0], 9) for p in plate["verts"]], [round(p[1], 9) for p in plate["verts"]]
+    z_plate = round(plate["verts"][0][2], 9)
     mb.piece()
     # the hole: inner parapet faces and shaft walls from LEVEL_roof, cut where the shaft's lines cross
     for axis, val, n in ((0, xi0, Vector((1, 0, 0))), (0, xi1, Vector((-1, 0, 0))),
@@ -445,14 +469,14 @@ def roof(mb):
                      Vector((sxs[i], sys_[j + 1], zt))], UP, "Interior")
     # the plate: the hole grown by PLATE_OVERLAP (under the parapet), the shaft shrunk by it; a ring of quads
     o = PLATE_OVERLAP
-    px, py = [xi0 - o, x0 + o, x1 - o, xi1 + o], [yi0 - o, y0 + o, y1 - o, yi1 + o]
+    px, py = [min(pxs), x0 + o, x1 - o, max(pxs)], [min(pys), y0 + o, y1 - o, max(pys)]
     mb.piece()
     for i in range(3):
         for j in range(3):
             if i == 1 and j == 1:
                 continue                              # the shaft
-            mb.quad([Vector((px[i], py[j], Z_PLATE)), Vector((px[i + 1], py[j], Z_PLATE)),
-                     Vector((px[i + 1], py[j + 1], Z_PLATE)), Vector((px[i], py[j + 1], Z_PLATE))], UP, "Membrane_Logicroof")
+            mb.quad([Vector((px[i], py[j], z_plate)), Vector((px[i + 1], py[j], z_plate)),
+                     Vector((px[i + 1], py[j + 1], z_plate)), Vector((px[i], py[j + 1], z_plate))], UP, "Membrane_Logicroof")
     zm = membrane_z()
     parapet_cap(mb)
     hood(mb)
@@ -1100,6 +1124,11 @@ def main():
     sc.unit_settings.system, sc.unit_settings.scale_length = "METRIC", 1.0
     import_reference(src)
     spec = load_spec(census) if stage >= 2 else None
+    global GLASS_PLAN
+    wg_report = os.environ.get("KPP1_WINDOWGEN")
+    if wg_report and spec:
+        GLASS_PLAN = kpp1_windowgen.write_plan(spec, wg_report, [census, src, out], frame=WINDOW_FRAME)
+        print("WINDOWGEN", json.dumps(GLASS_PLAN["counts"]))
     mb, gb = MeshBuilder(), MeshBuilder()
     body(mb, spec, closed=stage < 3, decor=stage >= 4)
     if stage >= 2:

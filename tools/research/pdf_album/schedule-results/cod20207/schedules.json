@@ -1,0 +1,91 @@
+{
+  "engines": {
+    "primary": "pymupdf 1.28.2 find_tables",
+    "secondary": "pdfplumber 0.11.10 find_tables"
+  },
+  "open_gates": [
+    "row_type_review",
+    "unit_review",
+    "region_binding",
+    "ground_truth",
+    "approval"
+  ],
+  "pages": [
+    {
+      "pdf_page": 1,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 2,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 3,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "pdf_page": 4,
+      "reason": "no_table_region_in_index",
+      "roi": null,
+      "route": "not_routed",
+      "sheet": null,
+      "tables": []
+    },
+    {
+      "outside_roi": [],
+      "pdf_page": 5,
+      "reason": "index_schedule_context",
+      "roi": [
+        18.959999084472656,
+        21.81581687927246,
+        742.1727294921875,
+        419.80596923828125
+      ],
+      "route": "table_extraction",
+      "sheet": null,
+      "tables": [
+        "p5-t1"
+      ]
+    }
+  ],
+  "passed": false,
+  "schema": "album-schedules/1",
+  "secondary_status": "ok",
+  "source": {
+    "bytes": 2981548,
+    "pages": 5,
+    "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce"
+  },
+  "summary": {
+    "cells": 32,
+    "materials": 0,
+    "suspect_cells": 0,
+    "tables": 1
+  },
+  "tables": [
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 8,
+      "n_rows": 4,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p5-t1"
+    }
+  ]
+}

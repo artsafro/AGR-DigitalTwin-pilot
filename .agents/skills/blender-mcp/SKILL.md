@@ -34,11 +34,13 @@ back before reporting success. Inspection and live-mutation coverage are separat
    configs set `BLENDER_MCP_HOST=127.0.0.1`, `BLENDER_MCP_PORT=9877`.
    Port 9876 belongs to SketchUp. CLI `--host`/`--port` bind the HTTP transport;
    they do not configure the Blender extension bridge.
-2. Confirm Blender 5.1.2 or later and the intended open scene through the
-   native app. Call `get_blendfile_summary_path_info`, then
-   `get_blendfile_summary_datablocks` and `get_objects_summary`.
-   These take no arguments. Confirm source path, saved/dirty state and objects
-   before relying on the connection. A blank path means an unsaved scene.
+2. Before every MCP call, apply the [expected-file gate and review lifecycle](references/instance-pinning.md):
+   inventory all Blender PIDs/open-file hints, record the 9877 owner PID/birth,
+   then bootstrap identity only with `get_blendfile_summary_path_info`.
+   Refuse scene reads unless its full current path matches the expected file;
+   blank/unknown identity is not a match. Confirm Blender 5.1.2+, saved/dirty state.
+   Only then call `get_blendfile_summary_datablocks` and `get_objects_summary`
+   (no arguments); recheck identity after reads and discard changed-instance data.
 3. Require outer MCP success and inner JSON `status="ok"`. Connection failure
    or a protocol response from SketchUp is not usable Blender data.
 4. If the user's own instance is disconnected, inspect Preferences > Add-ons >
@@ -52,9 +54,10 @@ back before reporting success. Inspection and live-mutation coverage are separat
 
 ## Agent-owned Blender on a copy
 
-The agent may start its own Blender 5.1.2+ with Online Access and the bridge
-on 9877 without asking each time [D233]. Never ask the user to toggle the
-bridge in his instance; never touch his instance or its preferences.
+For user review, launch without the MCP bridge and close only own superseded
+review windows; use the [review lifecycle](references/instance-pinning.md), not step 3.
+The agent may start its own Blender 5.1.2+ work instance with Online Access and
+bridge on 9877 [D233]; never ask the user to toggle his bridge or preferences.
 
 1. Port 9877 must be free (step 0). If a Blender the agent did not start holds
    it, that is the user's: inspect it read-only or use `blender -b` on a copy.

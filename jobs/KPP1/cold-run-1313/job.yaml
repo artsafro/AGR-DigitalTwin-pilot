@@ -1,0 +1,63 @@
+schema_version: 1.0.0
+job_id: KPP1
+run_id: issue-1313-cold-run-v001
+synthetic: false
+path: deviation
+inputs: &inputs
+- path: jobs/KPP1/sources.json
+  sha256: 76a70233b220e4198c9af12146a1f5576ddad2018f0ba6c6875fcff070ebeaae
+  manifest: external-inputs/1
+- path: jobs/KPP1/object.json
+  sha256: a34cc18038e9440e164518523c39b25be0e7d82e0582348e4411b0763bcd020c
+artifacts:
+- path: jobs/KPP1/cold-run-1313/evidence-SHA256SUMS.txt
+  sha256: 49daca47c82407d2e56933993814588902615852f1d8d7eba335107915232389
+deviations:
+- gate: operations
+  what_failed: "Standard route is AGR Tools in Max [D250]; this cold run builds nothing new and continues on the approved R1 master (D254) prepared by #1318."
+  what_was_tried: "agr vpm-to-npm on a fresh copy of packet-r1-v001; runner aborted on packet integrity after derive (pyc written into the recipe dir), remaining stages run by hand."
+  new_tool_written: "none"
+  result: "NPM FBX d7c878fd... readback exit 0; xview 116 overlapping faces; validators passed=false; package-vpm refused (no export_meta.json). See stages-v001.json."
+gates:
+  inputs:
+    status: review
+    note: "4/4 external rows equal on this PC; object.json is the cached Revit levels authority. Placement inputs (D262) not repeated in this run."
+    evidence: *inputs
+  parts:
+    status: review
+    waits: user
+    note: "Cold PartsList parts-v001.json, approval_sha256 aef851f2...; Gate 1 requested https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1313#issuecomment-6875224009, unanswered."
+    evidence:
+    - path: jobs/KPP1/cold-run-1313/parts-v001.json
+      sha256: edf88a44213b40b6f9e8741ce2a2d8ba395ed55ad99f3a035bb2fe8755dda6ee
+  operations:
+    status: review
+    waits: max
+    note: "No new build. Approved R1 master is triangulated (validator V003 master quads fail); Max-only final AGR Tools open."
+    evidence: []
+  budgets:
+    status: review
+    note: "NPM export 30162 + 504 tris vs allocated 50000 (proposal, Gate 1 pending) and OKS 150000 [D010/D161]; not a JobChecklist receipt."
+    evidence:
+    - path: jobs/KPP1/cold-run-1313/stages-v001.json
+      sha256: 97b12160638161a794b49df7dea7dbee9508e85c51a918348306ff4d63b096cc
+  export_readback:
+    status: fail
+    note: "Clean-process readback exit 0, triangle multiset equal; xview export 116 overlapping faces (contact pairs must be 0, D256 covers only enumerated band pairs)."
+    evidence:
+    - path: jobs/KPP1/cold-run-1313/stages-v001.json
+      sha256: 97b12160638161a794b49df7dea7dbee9508e85c51a918348306ff4d63b096cc
+  report:
+    status: review
+    note: "RUN-LOG.md of cold run #3; package not built, missing gates named with owners."
+    evidence:
+    - path: jobs/KPP1/cold-run-1313/evidence-SHA256SUMS.txt
+      sha256: 49daca47c82407d2e56933993814588902615852f1d8d7eba335107915232389
+  visual:
+    status: missing
+    waits: user
+    note: "No review sheet for this export; Artem."
+  checker:
+    status: missing
+    waits: visual
+    note: "SINTEZ after visual acceptance; NPM ZIP and Ground FBX (other author) absent."

@@ -1,0 +1,81 @@
+# Tower 63B — polygon #1619, stage 1
+
+## v007 rebuild on the 63A builder after Artem's verdict on v006 (2026-11-18)
+
+- v002–v006 geometry and its hooks (`body_grid`, `export_review`, `check_readback`) are removed; nothing from them is reused.
+- Chain (63A builder, merged PR #1667): `floor_from_dump` (+ new `--deslit 0.03`, `--section-z`, `--sill-band` for the
+  belt ring) → `POLY63-A/pockets_self` → `contour_d337` → `zones_from_types` (`zonemap63b.json`) for ring A (typical,
+  section +14.33) and ring B (belt, section +26.17, sills +24.25/+24.45); `hooks/stack63b.py` syncs the stations of
+  both rings (every station of one ring is a station of the other) and writes 5 floor-to-floor runs
+  (A1 6 storeys, B1, A2 4, B2, A3 3; +4.65..+51.90) and the cap cells; `garibaldi22/.../module_build.py` builds each
+  run; `hooks/assemble63b.py` joins them and closes the 4 belt caps with quad cells on the shared wall vertices.
+- Cap orientation: where ring B pokes out past A (N pilaster step, E step) the +23.55/+39.30 cell is the soffit of
+  the belt storey (−Z), not a roof; build 14 forced +Z there → 56 inverted-winding edges, fixed in build 15
+  (`cap_faces_up`, regression test `test_overhang_cells_face_the_other_way`, new gate `inverted_winding_edges`).
+- Whole-model gates (`hooks/gates63b.py` on the FBX readback, no location filter, band cut +4.65/+51.90 excluded):
+  open boundary outside opening rims **0**, non-manifold **0**, gap vertices (<5 cm, off-face) **0**, non-planar
+  >1 mm **0**, triangles **0**, T-junctions **0**, inverted winding **0**. 14,758 verts / 13,644 faces, all quads,
+  491 opening rims (body with openings only). Edges <5 cm: 466 (listed in `gates_15.json`, not a gate).
+- Rim acceptance (review P1, PR #1661): a rim is classified by structure (closed loop, every face perpendicular to
+  the local hole plane = reveal back), not by height. Build 15 rerun: delivered body **491 rims / open 0 / passed
+  true** (control; the 13 bent rims at (94.11, 32.01) are windows wrapping ring-A vertex 58, source arc 100.40–101.87);
+  `--drop-face-at 64.822 11.058 37.825` (wall quad, h 1.95) **491 / open 4 / false**; `--drop-face-at 94.11 32.01
+  6.32` (jamb face) **490 / open 14 / false**. JSON: `gates_15.json`, `gates_15_mut_wall.json`,
+  `gates_15_mut_reveal.json`; test `tests/test_poly63b_gates.py`.
+- Self-review: 13 wire-over-solid close-ups (round belt caps top/under, pilaster↔belt top/under, steps, reveal
+  corners A and B two-sill, frame crossings, overhang soffits N/E, overview, iso) on `sheet15.png`.
+- Evidence + `SHA256SUMS.txt` (build/render scripts in `scripts/`, gate JSON `gates_15.json`):
+  `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v007/`. Blender copy: `C:/x/review-63B/63B_Stage1_v007.blend`.
+  Not accepted VPM; awaiting Artem.
+
+## v006 delta after Artem's second rejection of v005 (2026-11-18)
+
+- Five rejected defects, now readback numbers (`check_readback.stage1_checks`, `orientation.json` → `artem_2026_11_18`), v005 → v006: belt-cap triangles **1034 → 0**, T-junctions (cracks at belt/reveal joints) **52 → 0**, overlapping coplanar faces (stacked boxes, folded sills) **156 → 0**, tapered reveal wedges **308 → 0**, non-quad reveal faces 0 → 0, vertices off the floor-loop heights 0 → 0, boundary slits ≤10 mm 0 → 0.
+- Belt caps: constrained Delaunay fans replaced by a least-cost quad strip between the A contour (with curtain-mouth jamb tops and lips) and the B contour. Stations cast straight across the cap (radial on rounded corners; A only on its arcs) become full-height grid lines; an odd strip gets one mid-edge station; a rung through another corner is barred. Result: every cap cell a quad, every cap edge a facade edge.
+- Reveals: one depth per floor type and class (source median: A window 0.710 m from 0.695–0.713, A curtain 0.248 from 0.243–0.249, B window 0.463 from 0.455–0.465). A window beside a curtain gets a straight step face 0.248→0.710 instead of a tapered rear; reveal strips split only at the depth levels of their own opening (8-connected), so no T-junction and no wedge. One finish ID per opening (no sliver ID strips).
+- Two A windows (vertices 61/63, all A floors) whose projected span ran 0.351 m along the outward step return now start at the step corner; the return stays wall, coplanar with the jamb. The STN-015 curtain opening at +23.55/+26.70 stays open (orchestrator decision 2026-11-18); only its edges are welded (62 planned lip edges).
+- Fresh Blender 4.4 FBX: **10,747 faces, all quads**, 1 edge-connected shell, 0 unexpected / missing planned boundary edges, 0 split vertex fans, 0 winding conflicts, 0 topology findings at 2 mm, UV round-trip 6e-7, arc registration failures 0. #1616 typical band **90.35** (v005 89.05).
+- Evidence, sheet (7 same-camera pairs, shadows off) and `SHA256SUMS.txt`: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v006/`. Blender copies: `C:/x/review-63B/63B_Stage1_v006.fbx` / `.blend`. Not accepted VPM; awaiting Artem's Blender review.
+
+## v005 delta after Artem's rejection of v004
+
+- Fixed 470 unplanned free radial edges: 408 at mixed-depth reveal junctions and 62 where the belt shoulders passed the jamb ends without sharing an edge. Curtain slots now share the shallowest source depth over each uninterrupted run; window heads, sills and jambs share the shallower incident depth at a common corner, tapering only the rear of the reveal. The front contours and opening cells are unchanged. At +23.55/+26.70/+39.30/+42.45 m the shoulder mesh is notched to the existing recess and sewn to the reveal sides; the back lip remains open, with no fill.
+- Fresh Blender 4.4 FBX, metre coordinates: **1 edge-connected shell** (`BODY_Stage1_001`, 9,525 faces), **0 disconnected fragments**, **0 unexpected boundary edges**, **0 missing planned boundary edges**, **0 split vertex fans**, **0 winding conflicts**, **0 self-intersection candidates at 2 mm**. All 14 floor join heights have shared indexed edges. The only one-use edges are 2,517 rear reveal edges, 62 belt aperture lip edges, and 321 edges along the two deliberate stage extents at +4.65 and +51.90 m. Neither a closed solid nor a final VPM; roof, base, windows and baskets remain outside Stage 1.
+- #1616 typical-band score **89.050**: 8,491 quads, zero n-gons or slivers. The 1,034 shoulder triangles are audited separately. The 0.60 m training repeat is unchanged; five tangencies concealed by openings are reconstructed from the planned station projected onto the measured native chord line, not reported as native vertices. Finish slots and bounds are unchanged; the shoulder retessellation changes geometry, UVs and the per-face material-index inventory.
+- Same-camera before/after sheet (four close-ups), readback, version diff and seal: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v005/`. Blender review copies: `C:/x/review-63B/63B_Stage1_v005.fbx` and `.blend`. No auto-open. Awaiting Artem's Blender review.
+
+## v004 review candidate
+
+- D337/BM-07: **0.60 m is an assumed training step, not measured from a facade sheet**. The fitted circle and tangent locations are retained. Each complete repeat starts at an integer U and occupies exactly 0.60 m along the developed chords; subchords limit sagitta. The terminal remainder closes to the original tangent without rescaling the rounded UVs. The same-ID facade chart continues through both tangencies; only straight stretches between two anchors absorb a phase adjustment. Reveal and shoulder charts are separate; this is a repeating training UV, not the production UDIM atlas.
+- Fresh Blender 4.4 work FBX: eight arcs, 23 full repeats, maximum step error **0.009 mm**, largest terminal remainder **593.70 mm**, smallest **20.48 mm**; maximum sagitta **18.75 mm**. Maximum phase jump across 4,701 same-ID vertical facade edges **0.000001 repeat**. The retained v003 FBX fails the physical-step check on all eight arcs and the same-ID phase check even when compared with its own authored UVs. `orientation.json` gives per-arc measurements; `audit.json` records the negative control.
+- The updated plan differs from the v003 fitted contour by at most 17.90 mm (A) and 8.98 mm (B), measured as bidirectional boundary Hausdorff distance. At +26.70/+42.45 m, 251/253 shared facade-to-shoulder edges and zero unexpected free facade edges. Readback: zero inverted/inward facade faces and zero intersection candidates (2 mm). **#1616 = 89.242**, 8,491 typical-band quads (100%), zero n-gons/slivers; 972 shoulder triangles are outside that score.
+- Sheet and `SHA256SUMS.txt`: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v004/`. QUAD work copy: `C:/x/review-63B/63B_Stage1_v004.fbx`. Finish IDs still use FBX type/geometry fallback because Revit 2025 read-only is unavailable; no RVT was opened or edited. This is a Stage 1 review candidate, not accepted VPM.
+
+## v003 historical witness (superseded)
+
+- At +26.70/+42.45 m the formerly free facade-to-shoulder edges are sewn. The four transition heights (+23.55/+26.70/+39.30/+42.45 m) are supported by source wall endpoint clusters; this is not a survey of every shoulder edge. Curtain and band-end mouths remain open. The synthetic skewed belt fails on the old generator and passes with shared stations.
+- On native v002 the four candidate pairs were jamb/shoulder termination contacts: 3358/8479, 5484/8732, 6156/8963 and 7897/9216 respectively in ascending Z. Fresh shared v003 FBX readback has zero self-intersection candidates (2 mm), inward or reversed exterior faces, unexpected free facade edges, and winding conflicts. 8,565 quads, 976 horizontal shoulder triangles; #1616 typical band **89.457**, 100% quads, zero n-gons/slivers.
+- The D337 **0.60 m assumed step was not measured from a facade sheet**. The fitted tangencies and envelope radius stay fixed, while the developed UV span is snapped to a whole number of repeats from the starting tangency. Additional subdivisions enforce sagitta. On the FBX: 1 channel, 1,462 exterior arc face samples across 8 corners, maximum midpoint sagitta 9.36 mm and max UV round-trip difference 0.00000062 UV units. This is not certified physical panel spacing or the final UDIM atlas. Finish IDs remain provisional from FBX types; Revit 2025 read-only was unavailable.
+- Sheet (including same-camera before/after) and `SHA256SUMS.txt`: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v003/`. QUAD copy: `C:/x/review-63B/63B_Stage1_v003.fbx`.
+
+### Frozen `oks-vpm` Stage 1 replay
+
+Run from the repository root with `DESIGN` set to the v002 evidence `source_sections_and_openings.json`, and `OUT` set to a fresh output directory. The body hook verifies frozen input hashes and consumes the shared `body_core.prepare_plan` levels, role and name. The recorded path stops before windows, capsules, roofs or packaging, and `orientation.json` binds the plan and the native readback.
+
+```bash
+uv run python -m jobs.POLY63-B.hooks.body_grid "$DESIGN" "$OUT/model.json"
+uv run python -c "from pathlib import Path; from dt_ai.core.blender_runner import run_blender; import sys; p=Path(sys.argv[1]); b='C:/Program Files/Blender Foundation/Blender 4.4/blender.exe'; s='63B_Stage1_v006'; f=p/(s+'.fbx'); run_blender('jobs/POLY63-B/hooks/export_review.py',(p/'model.json',p,s),executable=b,outputs=(f,p/(s+'.blend'),p/'round.png'),log_path=p/'export.log'); run_blender('tools/blender/fbx_readback.py',(f,p/'readback.json'),executable=b,output_json=p/'readback.json',log_path=p/'readback.log')" "$OUT"
+uv run python -m jobs.POLY63-B.hooks.check_readback "$OUT/model.json" "$OUT/readback.json" "$DESIGN" "$OUT/orientation.json" "$OUT/band.json"
+uv run python tools/qa/mesh_quality_score.py "$OUT/band.json" --out "$OUT/score.json"
+```
+
+## v002 historical witness (superseded)
+
+Review draft, not accepted VPM. Only the typical shell, FBX world metres: +4.65 to +51.90, pitch 3.15 m, 13 main storeys and 2 repeated recessed belt storeys. Podium, unique upper setbacks and roof excluded. No window/door infill, glass, capsules, baskets, posts or other inserts. Full-height curtain slots remain open. The checked FBX is a non-triangulated review export (8409 quads; 968 triangles only on horizontal shoulders).
+
+Modelling split [D336]: plinth=inset; inset=windows, stained_glass, roof, flashings, posts; texture=panels; reason=training stage intentionally has no plinth or inset parts, only the typical shell and source opening interfaces.
+
+- A/B sections at +17.50/+24.90 m from the source wall and opening fills. Deep marked exterior returns are retained; small facade relief is not inherited. The plan sheet overlays section linework, not an interior-wall slice. Rounded sampled hull chord deviation is 14.51/13.76 mm (A/B); no approved texture pitch in the supplied material-free FBX, so texture-step alignment is **not verified**.
+- Opening spans and reveal depths from projected FBX source element geometry, not an RVT parametric opening or a frame/glazing work order. A fitted projection is used for the cavity back plane, not a copy of the sloped native reveal mesh. Three separate provisional IDs distinguish regular vent cladding, render returns, belt vent cladding. No confirmed finish colours: read-only Revit endpoint refused the connection, and no document was opened/saved/edited.
+- Mesh quality #1616: 88.930; 100% quads, zero slivers/n-gons on vertical facade and reveals, shoulders excluded from this band score. Fresh Blender 4.4 FBX readback: zero inverted faces and zero inward facade faces; maximum correspondence drift 9 µm. Four self-intersection candidates remain; no duplicate/isolated geometry at the reported 2 mm tolerance. Horizontal shoulder and continuous curtain seams remain review items; belt shoulders are a storey-boundary approximation, not certified exact source elevations. The stage has intentionally open top/bottom and window/reveal mouths.
+- Evidence: `G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v002/`, review copy `C:/x/review-63B/63B_Stage1_v002.fbx`. No Max auto-open per Gate 1. The FBX, sheet, input sections, source opening ledger, readback and score are checksum-bound there.

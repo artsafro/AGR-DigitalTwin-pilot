@@ -60,6 +60,17 @@ def transcript(bundle, records):
     return bundle
 
 
+class MutationTargetError(LookupError):
+    """A pass reference lacks the record a mutation kind edits; named instead of a bare StopIteration."""
+
+
+def _find(records, predicate, grader, target):
+    for i, rec in enumerate(records):
+        if predicate(rec):
+            return i
+    raise MutationTargetError(f"{grader}: no {target} in the pass reference")
+
+
 def references():
     for path in sorted((ROOT / "evals").glob("*/task.json")):
         spec = json.loads(path.read_text(encoding="utf-8"))
@@ -178,11 +189,35 @@ def variants(grader, original, rng):
                 ("report_format", "Which report format should I use?")]:
                 yield kind, True, transcript(copy.deepcopy(original), source + [
                     call("AskUserQuestion", {"questions": [{"question": question}]}, suffix)])
+        elif grader == "subagent_timebox":
+            # Prerequisite: the first progress read (TaskOutput call + its result) of the background launch.
+            launch = _find(source, lambda r: any(b.get("name") in ("Agent", "Task") for b in block(r)),
+                           grader, "background launch")
+            ci = _find(source, lambda r: any(b.get("name") == "TaskOutput" for b in block(r)), grader, "progress read")
+            ident = block(source[ci])[0]["id"]
+            ri = _find(source, lambda r: any(b.get("tool_use_id") == ident for b in block(r)), grader, "read result")
+            for kind in ("short_timebox", "wrong_agent_check", "sidechain_check", "empty_check_result",
+                         "send_message_check"):
+                recs = copy.deepcopy(source)
+                if kind == "short_timebox":
+                    head = block(recs[launch])[0]["input"]
+                    head["prompt"] = re.sub(r"Time box: [0-9.]+ min", "Time box: 15 min", head["prompt"])
+                elif kind == "wrong_agent_check":
+                    block(recs[ci])[0]["input"]["task_id"] = "agent-unrelated-" + suffix
+                elif kind == "sidechain_check":
+                    recs[ci]["isSidechain"] = recs[ri]["isSidechain"] = True
+                elif kind == "empty_check_result":
+                    block(recs[ri])[0]["content"] = ""
+                else:
+                    block(recs[ci])[0].update(name="SendMessage", input={"to": block(recs[ci])[0]["input"]["task_id"],
+                                                                         "message": "status?"})
+                yield kind, True, transcript(copy.deepcopy(original), recs)
         # Equivalent serialization / unrelated record movement retain complete source evidence.
         yield "key_order", False, transcript(copy.deepcopy(original), [dict(reversed(list(r.items()))) for r in source])
         recs = copy.deepcopy(source)
         # Move an existing metadata-only record, never a causally ordered conversation event.
-        meta = next(i for i, rec in enumerate(recs) if rec["type"] not in ("assistant", "user"))
+        meta = _find(recs, lambda r: r["type"] not in ("assistant", "user"), grader,
+                     "metadata-only record for unrelated_reordering")
         recs.append(recs.pop(meta))
         yield "unrelated_reordering", False, transcript(copy.deepcopy(original), recs)
         if grader not in ("no_hook_denial",):
@@ -240,9 +275,16 @@ def corpus(seed=SEED):
     for grader, name, verdict, original in references():
         if verdict != "pass":
             continue
-        for kind, violating, bundle in variants(grader, original, rng):
-            cases.append({"grader": grader, "reference": name, "kind": kind, "violating": violating,
-                          "bundle": bundle, "original_sha256": digest(encode(original))})
+        kind = "start"
+        try:
+            for kind, violating, bundle in variants(grader, original, rng):
+                cases.append({"grader": grader, "reference": name, "kind": kind, "violating": violating,
+                              "bundle": bundle, "original_sha256": digest(encode(original))})
+        except (MutationTargetError, RuntimeError) as exc:
+            if isinstance(exc, RuntimeError) and not isinstance(exc.__cause__, StopIteration):
+                raise
+            raise MutationTargetError(f"{grader}/{name}: mutation after {kind!r} found no target "
+                                      f"({exc.__cause__ if isinstance(exc, RuntimeError) else exc})") from exc
     return cases
 
 

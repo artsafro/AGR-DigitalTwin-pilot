@@ -33,6 +33,7 @@ material, remapped UV) and `<base>_report.json`.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import math
 import os
@@ -51,6 +52,11 @@ PLUG_PX_M = 12.5  # script default (VPM_to_NPM.ms:32)
 PLUG_CELL_PX = 16  # OKS plug interior (VPM_to_NPM.ms:38)
 BACKGROUND = (90, 90, 90)  # script atlas clear colour (VPM_to_NPM.ms:382)
 EPS = 1e-6
+
+_ownspec = importlib.util.spec_from_file_location(
+    "udimtile_core_npm_atlas", Path(__file__).resolve().parents[2] / "adapters/max/agr_tools/udimtile_core.py")
+_udimtile = importlib.util.module_from_spec(_ownspec)  # the one UDIM function (#1337, #1376)
+_ownspec.loader.exec_module(_udimtile)
 
 
 class AtlasError(ValueError):
@@ -372,7 +378,7 @@ def analyze(mesh: UdimMesh, materials: dict[str, MaterialSource], unit_m: float 
             raise AtlasError(f"material {name!r}: UV centre outside the UDIM grid 1001..1100")
         if umn < r.tu - EPS or umx > r.tu + 1 + EPS or vmn < r.tv - EPS or vmx > r.tv + 1 + EPS:
             raise AtlasError(f"material {name!r}: UV island crosses a UDIM tile border")
-        r.tile = 1001 + r.tu + 10 * r.tv
+        r.tile = _udimtile.udim_of_cell(r.tu, r.tv)
         dis = src.dissolve
         if not (isinstance(dis, (int, float)) and math.isfinite(dis) and 0.0 <= dis <= 1.0):
             raise AtlasError(f"material {name!r}: dissolve {dis} outside 0..1")

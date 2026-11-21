@@ -1,0 +1,3 @@
+# Preserve diagnostic and GeoJSON receipt bytes across Git newline conversion.
+*.json -text
+*.geojson -text

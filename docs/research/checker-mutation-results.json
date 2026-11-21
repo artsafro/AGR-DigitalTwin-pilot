@@ -1,0 +1,352 @@
+{
+  "baseline": {
+    "score": 0.7307692307692307,
+    "caught": 38,
+    "missed": 14,
+    "total": 52,
+    "incremental_score": 0.5769230769230769,
+    "incremental_caught": 30,
+    "per_class": {
+      "unapplied_scale": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 4,
+        "checks": [
+          "V002/scale 1:1",
+          "V004/applied transforms"
+        ]
+      },
+      "flipped_normals": {
+        "caught": 2,
+        "missed": 2,
+        "not_applicable": 0,
+        "incremental_caught": 1,
+        "checks": [
+          "V004/MAF flipped normals",
+          "V004/topology defects"
+        ]
+      },
+      "self_intersections": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 3,
+        "checks": [
+          "V004/topology defects"
+        ]
+      },
+      "duplicate_faces": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 3,
+        "checks": [
+          "V004/co-directional clearance",
+          "V004/topology defects"
+        ]
+      },
+      "missing_ucx": {
+        "caught": 2,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V010/UCX present"
+        ]
+      },
+      "wrong_ucx_gap": {
+        "caught": 2,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V010/UCX intersections",
+          "V010/UCX piece gap (advisory)"
+        ]
+      },
+      "wrong_material": {
+        "caught": 0,
+        "missed": 4,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": []
+      },
+      "wrong_texel": {
+        "caught": 0,
+        "missed": 2,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": []
+      },
+      "wrong_name": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V012/mesh names"
+        ]
+      },
+      "wrong_pivot": {
+        "caught": 2,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V013/origin at FBX zero",
+          "V013/pivot at geometric centre",
+          "V013/shared pivot"
+        ]
+      },
+      "leftover_object": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 4,
+        "checks": [
+          "V003/object types"
+        ]
+      },
+      "ground_skirt_missing": {
+        "caught": 1,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": [
+          "V003/ground skirt depth"
+        ]
+      },
+      "wrong_units": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V002/system units"
+        ]
+      },
+      "missing_texture": {
+        "caught": 2,
+        "missed": 2,
+        "not_applicable": 1,
+        "incremental_caught": 2,
+        "checks": [
+          "V007/map set/slot 1/0"
+        ]
+      },
+      "oversized_texture": {
+        "caught": 2,
+        "missed": 2,
+        "not_applicable": 1,
+        "incremental_caught": 2,
+        "checks": [
+          "V007/map size/T_Kpp_1_Diffuse_1.1001.png/0",
+          "V007/map size/T_Vatutino_Ground_Diffuse_1.1001.png/0"
+        ]
+      },
+      "baked_size": {
+        "caught": 1,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 1,
+        "checks": [
+          "V004/MAF dimensions vs specification"
+        ]
+      },
+      "maf_zone_merged": {
+        "caught": 0,
+        "missed": 1,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": []
+      },
+      "flora_height": {
+        "caught": 0,
+        "missed": 1,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": []
+      }
+    }
+  },
+  "final": {
+    "score": 0.8076923076923077,
+    "caught": 42,
+    "missed": 10,
+    "total": 52,
+    "incremental_score": 0.6538461538461539,
+    "incremental_caught": 34,
+    "per_class": {
+      "unapplied_scale": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 4,
+        "checks": [
+          "V002/scale 1:1",
+          "V004/applied transforms"
+        ]
+      },
+      "flipped_normals": {
+        "caught": 2,
+        "missed": 2,
+        "not_applicable": 0,
+        "incremental_caught": 1,
+        "checks": [
+          "V004/MAF flipped normals",
+          "V004/topology defects"
+        ]
+      },
+      "self_intersections": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 3,
+        "checks": [
+          "V004/topology defects"
+        ]
+      },
+      "duplicate_faces": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 3,
+        "checks": [
+          "V004/co-directional clearance",
+          "V004/topology defects"
+        ]
+      },
+      "missing_ucx": {
+        "caught": 2,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V010/UCX present"
+        ]
+      },
+      "wrong_ucx_gap": {
+        "caught": 2,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V010/UCX intersections",
+          "V010/UCX piece gap (advisory)"
+        ]
+      },
+      "wrong_material": {
+        "caught": 2,
+        "missed": 2,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V005/material assignments"
+        ]
+      },
+      "wrong_texel": {
+        "caught": 0,
+        "missed": 2,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": []
+      },
+      "wrong_name": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V012/mesh names"
+        ]
+      },
+      "wrong_pivot": {
+        "caught": 2,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V013/origin at FBX zero",
+          "V013/pivot at geometric centre",
+          "V013/shared pivot"
+        ]
+      },
+      "leftover_object": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 4,
+        "checks": [
+          "V003/object types"
+        ]
+      },
+      "ground_skirt_missing": {
+        "caught": 1,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": [
+          "V003/ground skirt depth"
+        ]
+      },
+      "wrong_units": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 2,
+        "checks": [
+          "V002/system units"
+        ]
+      },
+      "missing_texture": {
+        "caught": 2,
+        "missed": 2,
+        "not_applicable": 1,
+        "incremental_caught": 2,
+        "checks": [
+          "V007/map set/slot 1/0"
+        ]
+      },
+      "oversized_texture": {
+        "caught": 4,
+        "missed": 0,
+        "not_applicable": 1,
+        "incremental_caught": 4,
+        "checks": [
+          "V006/texture dimensions",
+          "V007/map size/T_Kpp_1_Diffuse_1.1001.png/0",
+          "V007/map size/T_Vatutino_Ground_Diffuse_1.1001.png/0"
+        ]
+      },
+      "baked_size": {
+        "caught": 1,
+        "missed": 0,
+        "not_applicable": 0,
+        "incremental_caught": 1,
+        "checks": [
+          "V004/MAF dimensions vs specification"
+        ]
+      },
+      "maf_zone_merged": {
+        "caught": 0,
+        "missed": 1,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": []
+      },
+      "flora_height": {
+        "caught": 0,
+        "missed": 1,
+        "not_applicable": 0,
+        "incremental_caught": 0,
+        "checks": []
+      }
+    }
+  },
+  "guard": "PASS",
+  "input_sha256": [
+    "7d747bf91ef312692eb2b04feb2bb6ea74c623fd0c53b8cb52c097a34efd07e2",
+    "82a6cca42f812d19afa075648fc24001a0d7e9389702b8af6eebc4e3dbad4b91"
+  ]
+}

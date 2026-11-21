@@ -1,0 +1,293 @@
+# Event storm of the package / delivery route, NPM + VPM (#1393, follow-up of #1383 / #1392, Artem 2026-11-14).
+# Source of truth for docs/architecture/package-route.excalidraw / .svg. Same method and generator as the NPM/OKS map
+# (#1359) and the VPM OKS / Ground maps (#1383, #1392): Russian labels for Artem; commands, D-rows, paths and ids as
+# in the repo. commands: existing `agr` / `dt` commands only; a stage without one is drawn dashed «Нет команды agr/dt».
+# rules: D-rows of docs/decisions.md. evidence: repo paths that exist (Package sheet, #1361 shared packaging,
+# validate-delivery skill, Vatutino site delivery 2026-11-09, KPP1 packages). Steps are tool-agnostic [D293 (1)].
+# The OKS / Ground / MAF / Flora routes end in the `package` stage; this map expands it.
+# context: id from contexts.yaml or local_contexts; every stage context is in package-contexts.yaml (route_coverage).
+# hotspots = RED boxes: a fact the repo leaves open or a step it does not define (a question, not an invention).
+# Checked by tests/test_route_maps_1393.py. Regenerate: uv run python tools/architecture/route_map.py
+title_ru: "Маршрут «Пакет и сдача» (НПМ + ВПМ): событийный штурм (#1361, Ватутино 2026-11-09, КПП1)"
+route: package
+scheme:
+  export_context:
+    ref: package-contexts.yaml#export
+  source_ru: "Сцена НПМ / ВПМ, ревизия и SHA-256 исходников; связь с FBX через существующий export_meta"
+  steps:
+    - stages: "export,meta"
+      ru: "Выгрузить FBX и записать export_meta"
+      artifact_ru: "FBX + карты; export_meta рядом с FBX, вне ZIP"
+      gate_ru: "Неизвестные факты — unknown, не выдуманный ноль"
+    - stages: "readback,geojson"
+      ru: "Прочитать FBX; для ВПМ подготовить GeoJSON"
+      artifact_ru: "Свежий readback; GeoJSON по эталону заказчика"
+      gate_ru: "Точка MSK-77 — из утверждённой расстановки с известным DWG; иначе пусто и блокер в отчёте"
+    - stages: "package"
+      ru: "Собрать ZIP общим package_core"
+      artifact_ru: "ZIP НПМ либо ВПМ и отчёт упаковщика"
+      gate_ru: "Неполный пакет не становится готовым"
+    - stages: "validate,sintez,report"
+      ru: "Проверить те же файлы и составить отчёт"
+      artifact_ru: "V001–V017, xView, предварительный СИНТЕЗ; отчёт с путями и SHA-256"
+      gate_ru: "Отказ / not_run не равны pass; ручные шлюзы отдельно"
+    - stages: "accept,upload,sintez-final,customer"
+      ru: "Приёмка Артёма → код СИНТЕЗ и переименование → финальный СИНТЕЗ → передача"
+      artifact_ru: "Финальный СИНТЕЗ по переименованному ZIP; отметка о передаче — по слову Артёма"
+      gate_ru: "Предварительная проверка не заменяет финальную; УКЭП — заказчик"
+object: "VATUTINO-SITE (0000_Vatutino.zip, SM_Vatutino_Ground.zip), KPP1 (package-1361)"
+issue: "#1393"
+actors:
+  - id: agent
+    ru: "Агент"
+  - id: agent-dcc
+    ru: "Агент: Blender / Max / AGR Tools"
+  - id: artem
+    ru: "Артём"
+  - id: checker
+    ru: "Чекер СИНТЕЗ"
+local_contexts:
+  - id: export
+    ru: "Экспорт FBX с чтением назад"
+    owner: adapters/max/agr_tools/export_core.py
+  - id: export-meta
+    ru: "Контракт export_meta"
+    owner: adapters/max/agr_tools/export_meta.py
+  - id: geojson
+    ru: "GeoJSON ВПМ"
+    owner: src/twinqa/geojson.py
+stages:
+  - id: export
+    event_ru: "FBX НПМ / ВПМ выгружены: триангуляция только на экспорте; рабочий FBX без триангуляции — рядом, не в пакете"
+    actor: agent-dcc
+    context: export
+    commands:
+      - "dt derive npm"
+    rules:
+      - D152
+      - D198
+      - D212
+    evidence:
+      - adapters/max/agr_tools/export_core.py
+      - tools/derive/export_npm.py
+  - id: meta
+    event_ru: "export_meta.json у каждого FBX: адрес-токен, верх модели, превью; неизвестное — unknown, не 0"
+    actor: agent
+    context: export-meta
+    commands:
+      - "agr export-meta"
+    rules:
+      - D279
+      - D285
+    evidence:
+      - schemas/ExportMeta.schema.json
+      - tools/derive/export_meta.py
+      - docs/research/shared-packaging-1361.md
+  - id: readback
+    event_ru: "Свежее чтение выгруженного FBX в Blender до сборки ZIP: agr validate <model.fbx> --scene; топология, UV, материалы, трансформы"
+    actor: agent
+    context: validation
+    commands:
+      - "agr validate"
+    rules:
+      - D152
+      - D104
+    evidence:
+      - .agents/skills/validate-delivery/SKILL.md
+      - src/dt_ai/validate/build_counters.py
+      - tools/qa/validate_package.py
+  - id: geojson
+    event_ru: "GeoJSON ВПМ: точка MSK-77 только из утверждённой расстановки с известным DWG; иначе точка пуста, блокер в отчёте сдачи. FNO — от СИНТЕЗ, ZU_area в га"
+    actor: agent
+    context: geojson
+    rules:
+      - D220
+      - D223
+      - D350
+      - D011
+      - D016
+    evidence:
+      - docs/domain/areas/package.md
+      - docs/pipeline.md
+  - id: package
+    event_ru: "Пакеты собраны общими упаковщиками; создание ZIP не означает, что пакет прошёл проверку"
+    actor: agent
+    context: package
+    commands:
+      - "agr package-npm"
+      - "agr package-vpm"
+    rules:
+      - D015
+      - D235
+      - D224
+    evidence:
+      - tools/derive/package_npm.py
+      - tools/derive/package_vpm.py
+      - docs/research/shared-packaging-1361.md
+    branches:
+      - id: npm
+        when_ru: "НПМ"
+        ru: "{код4}_{Адрес}.zip: Ground обязателен + ОКС 01..20, текстуры внутри FBX; неполный — выход 1"
+        commands:
+          - "agr package-npm"
+        rules:
+          - D015
+          - D235
+        evidence:
+          - tools/derive/package_npm.py
+      - id: vpm
+        when_ru: "ВПМ"
+        ru: "SM_<Адрес>.zip: FBX, опциональный _Light.fbx, GeoJSON, 3–2100 PNG; --no-geojson — отсрочка, не сдача. Как и package-npm, сверяет каждый FBX с записанным SHA-256 экспорта (export_binding, #1672); отчёт: passed=false, status=packaged_not_validated"
+        commands:
+          - "agr package-vpm"
+        rules:
+          - D015
+          - D224
+        evidence:
+          - tools/derive/package_vpm.py
+  - id: validate
+    event_ru: "Валидатор V001–V017 и xView по файлам пакета; not_run — не pass"
+    actor: agent
+    context: validation
+    commands:
+      - "agr validate"
+      - "dt qa xview"
+    rules:
+      - D152
+      - D173
+    evidence:
+      - tools/qa/validate_package.py
+      - docs/domain/areas/package.md
+  - id: sintez
+    event_ru: "Предварительный СИНТЕЗ: находки чекера по ZIP для разбора до приёмки Артёма; не финальный вердикт"
+    actor: checker
+    context: sintez
+    commands:
+      - agr checker
+    rules:
+      - D104
+      - D220
+      - D352
+    evidence:
+      - tools/qa/sintez_checker.py
+      - docs/research/sintez-agr-checker-dissection.md
+  - id: report
+    event_ru: "Отчёт сдачи docs/deliveries/<сдача>-<дата>.md: пути + SHA-256, проверки и блокеры; итог дополняется после финального СИНТЕЗ"
+    actor: agent
+    context: validation
+    rules:
+      - D104
+      - D152
+      - D350
+      - D352
+    evidence:
+      - .agents/skills/validate-delivery/SKILL.md
+      - docs/deliveries/vatutino-site-2026-11-09.md
+  - id: accept
+    event_ru: "Артём принимает вручную: сцена в 3ds Max (QUAD) и путь; у приёмки нет владельца в коде (blender_runner.py её не делает); проверка, приёмка и публикация — разные статусы"
+    actor: artem
+    context: dcc
+    rules:
+      - D270
+      - D104
+    evidence:
+      - AGENTS.md
+      - docs/procedure/TASK_TO_MODEL.md
+  - id: upload
+    event_ru: "Артём загружает архив в СИНТЕЗ: код территории и FNO выдаёт СИНТЕЗ; переименование НПМ-архива использует общий писатель ZIP; <ZIP>.delivery.json хранит путь и SHA-256 исходника и SHA-256 итогового ZIP"
+    actor: artem
+    context: sintez
+    rules:
+      - D235
+      - D220
+      - D348
+    evidence:
+      - jobs/VATUTINO-SITE/npm_code.py
+      - docs/deliveries/vatutino-site-2026-11-09.md
+  - id: sintez-final
+    event_ru: "Финальный СИНТЕЗ после приёмки Артёма — по ZIP после переименования под код СИНТЕЗ; предварительный прогон не заменяет финальный"
+    actor: checker
+    context: sintez
+    commands:
+      - agr checker
+    rules:
+      - D104
+      - D352
+    evidence:
+      - tools/qa/sintez_checker.py
+      - docs/research/sintez-agr-checker-dissection.md
+  - id: customer
+    event_ru: "Заказчику передаёт Артём; подпись УКЭП — заказчика. Только по слову Артёма агент добавляет в отчёт сдачи одну строку «передано заказчику, <дата>»"
+    actor: artem
+    context: package
+    rules:
+      - D163
+      - D220
+      - D300
+      - D351
+    evidence:
+      - docs/domain/areas/package.md
+hotspots:
+  - id: meta-v013
+    stage: export
+    ru: "На стыке экспорт → метаданные: record_export пишет exported_sha256 (#1637), но не пишет fbx_records / bounds_m; у agr export-meta record нет аргумента для границ. Без --export-meta валидатор не вызывает z_meta_mapping, V013 — not_run; с --export-meta и записью без fbx_records весь прогон agr validate — выход 1. Допустима ручная карта по каждому FBX (bounds_m, fbx_sha256); успешный check не гарантирует пригодность записи для V013"
+    evidence:
+      - adapters/max/agr_tools/export_meta.py
+      - tools/derive/export_meta.py
+      - tools/qa/validate_package.py
+  - id: build-counters-gate
+    stage: readback
+    ru: "Счётчики пропусков — правило из #1031, ни одна команда agr/dt его не вызывает; проверка ручная"
+    evidence:
+      - src/dt_ai/validate/build_counters.py
+  - id: legacy-packagers
+    stage: package
+    ru: "9 старых упаковщиков в jobs/ по contexts.yaml: 2 historical (КПП1, ПСУ275), 5 superseded (ЭЛВ v001–v005), 2 live-bypass (ТЭЦ26 AC09 package_vpm.py, ЭЛВ v006) — эти два ещё пишут ZIP мимо package_core. Правило для новой сдачи: agr package-npm / package-vpm"
+    evidence:
+      - docs/research/shared-packaging-1361.md
+      - docs/architecture/contexts.yaml
+      - jobs/TEC26-OKS/scripts/package_vpm.py
+  - id: shell-zip-writers
+    stage: package
+    ru: "Писатель ZIP в shell: jobs/TEC26-OKS/AC09/run_building.sh:31 собирает НПМ-ZIP однострочником python -c zipfile мимо package_core; duplicate_guard разбирает только Python и его не видит. Однострочников ЭЛВ v006 в git не найдено"
+    evidence:
+      - jobs/TEC26-OKS/AC09/run_building.sh
+      - tools/architecture/duplicate_guard.py
+  - id: geojson-tool
+    stage: geojson
+    ru: "Эталон — GeoJSON заказчика; export.geojson_write не готов к сдаче. package-vpm пишет [null, null], не используя placement.insertion_xy; прогон КПП1 — с --no-geojson. В проверенных JSON маршрута точка не передана"
+    rules:
+      - D220
+      - D350
+    evidence:
+      - tools/derive/package_vpm.py
+      - jobs/KPP1/package-1361/REPORT.md
+  - id: sintez-vatutino-evidence
+    stage: sintez
+    ru: "Прогон Ватутино: jobs/KPP1/scripts/run_agr_checker.py вызвал Blender-владельца с dump, а не agr checker; inputs[].sha256 не записан. В находках только req_num как идентификатор требования, без привязки к V0xx и странице регламента"
+    evidence:
+      - jobs/KPP1/scripts/run_agr_checker.py
+      - tools/blender/sintez_checker.py
+      - docs/deliveries/vatutino-site-2026-11-09.md
+  - id: customer-line-missing
+    stage: customer
+    ru: "В проверенных отчётах сдачи строки «передано заказчику, <дата>» пока нет; по D351 агент пишет её только по слову Артёма"
+    status: open
+    rules:
+      - D351
+    evidence:
+      - docs/deliveries/vatutino-site-2026-11-09.md
+  - id: customer-handoff-record
+    stage: customer
+    ru: "В проверенных записях (STATE/job/deliveries) факт передачи заказчику не найден. D220 и D300 не задавали место записи; по новому правилу D351 отметка в отчёте сдачи, но это не доказательство состоявшейся передачи"
+    rules:
+      - D351
+    evidence:
+      - jobs/KPP1/STATE.md
+      - jobs/VATUTINO-SITE/site-route-20261109.md
+      - docs/deliveries/vatutino-site-2026-11-09.md
+  - id: never-passed
+    stage: validate
+    ru: "Ни один пакет ещё не прошёл (passed=false везде); 9 строк PKG без проверки: набор архивов (PKG-05), счёт объектов, светильники PKG-14..18. В проверенных материалах найден только диагностический прогон KPP1; подтверждённого сквозного прогона общими упаковщиками на реальной сдаче не найдено"
+    evidence:
+      - docs/domain/areas/package.md

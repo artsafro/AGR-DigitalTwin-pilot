@@ -300,7 +300,7 @@ def measure(core, lay, o, back, geo):
         edit_findings.append(('crossing', [f + 1 for f in crossing], 'triangles across a tile line'))
     # tiles of the triangles with area; a sliver lying on a tile line (float32) has its centroid ON the line
     # (job 20261106-045952-58a7ded5: «1003»), it is checked by the crossing test above instead
-    tiles = sorted({lay.udim_of_cell(*[int(c) for c in lay._cell(p['uv'])]) or 0 for p in solid})
+    tiles = sorted({lay.piece_tile_or_zero(p['uv']) for p in solid})
     from_ed = [_finding(c, ids, d) for c, ids, d in edit_findings]
     return from_ed, {'seam_internal_max_px': seam['internal_max'], 'seam_chain_max_px': seam['chain_max'],
                      'seam_fold_max_px': seam['fold_max'], 'tiles': tiles, 'crossing': len(crossing),

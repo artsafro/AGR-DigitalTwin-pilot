@@ -155,11 +155,10 @@ def fbx_from(path: Path, tmp: Path) -> Path:
 
 
 def run_extra(fbx: Path, tmp: Path, timeout: int = 900) -> dict:
-    from dt_ai.core.blender_runner import blender_executable
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
 
     out = tmp / "extra.json"
-    cmd = [blender_executable(), "--background", "--factory-startup", "--python-exit-code", "1",
-           "--python", str(EXTRA), "--", str(fbx), str(out)]
+    cmd = blender_command(EXTRA, (fbx, out))
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
     if not out.is_file():
         raise metrics.MetricError(f"extra readback wrote nothing (exit {proc.returncode}): {proc.stderr[-400:]}")

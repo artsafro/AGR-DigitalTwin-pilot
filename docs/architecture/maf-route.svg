@@ -1,0 +1,418 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3260 1196" width="3260" height="1196" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
+<rect x="10" y="-30" width="3260" height="1196" fill="#ffffff"/>
+<rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="40" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="40" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="40" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="40" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="40" y="617.5" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="40" y="718.5" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="350" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="310" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="270" y1="233.12" x2="310" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="310" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="310" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="310" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="310" y="617.5" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="620" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="580" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="540" y1="233.12" x2="580" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="580" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="580" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="580" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="580" y="617.5" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="580" y="718.5" width="230" height="117.5" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="890" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="850" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="810" y1="233.12" x2="850" y2="243.74" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="850" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="850" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="850" y="527.5" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1130" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1120" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1080" y1="243.75" x2="1120" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1120" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1120" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1120" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1400" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1390" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1350" y1="225.0" x2="1390" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1390" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="1390" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1390" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1700" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1660" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1620" y1="225.0" x2="1660" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1660" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="1660" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1660" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1660" y="617.5" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1940" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="1930" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="1890" y1="233.12" x2="1930" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="1930" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="1930" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="1930" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="1930" y="617.5" width="230" height="166.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="799.75" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="917.0" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="1930" y="1034.25" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2240" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2200" y="170" width="230" height="147.5" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2160" y1="225.0" x2="2200" y2="243.75" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2200" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2200" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2200" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2510" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2470" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2430" y1="243.75" x2="2470" y2="233.13" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2470" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="2470" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2470" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2470" y="617.5" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2780" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="2740" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2700" y1="233.12" x2="2740" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2740" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
+<rect x="2740" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="2740" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="3050" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
+<rect x="3010" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2970" y1="233.12" x2="3010" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3010" y="327.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
+<rect x="3010" y="447.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
+<rect x="3010" y="527.5" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="28">Маршрут МАФ (GroundEl, НПМ + ВПМ): событийный штурм (библиотека 931, Ватутино v005 / v006, «Верона») (#1393)</tspan>
+</text>
+<text x="40" y="44" font-size="16" text-anchor="start" fill="#1e1e1e">
+<tspan x="40" dy="16">Легенда: жёлтый — кто действует; оранжевый — событие; голубой — команда agr/dt; сиреневый — правило (строка D решений); серый — контекст; розовый — горячая точка (здесь теряется время); бирюзовый — ветка (выбор по задаче)</tspan>
+</text>
+<text x="155.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="15">Агент</tspan>
+</text>
+<text x="155.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="17">1. Спецификация МАФ и</tspan>
+<tspan x="155.0" dy="21.25">точки СПОЗУ прочитаны:</tspan>
+<tspan x="155.0" dy="21.25">позиция, габариты,</tspan>
+<tspan x="155.0" dy="21.25">цвет, блок, число, XY</tspan>
+<tspan x="155.0" dy="21.25">и поворот</tspan>
+</text>
+<text x="155.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="155.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Правила: D186, D166</tspan>
+</text>
+<text x="155.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="14">Контекст: Связь с DCC</tspan>
+<tspan x="155.0" dy="17.5">(Blender / 3ds Max)</tspan>
+</text>
+<text x="155.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="13">Ветка: сдача НПМ / ВПМ</tspan>
+<tspan x="155.0" dy="16.25">→ полный маршрут: атлас,</tspan>
+<tspan x="155.0" dy="16.25">триангуляция на экспорте,</tspan>
+<tspan x="155.0" dy="16.25">утопление 10 см [D095, D152]</tspan>
+</text>
+<text x="155.0" y="728.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="155.0" dy="13">Ветка: только визуализация</tspan>
+<tspan x="155.0" dy="16.25">→ mid-poly в Blender, один</tspan>
+<tspan x="155.0" dy="16.25">общий Multi/Sub, box UV 1 м —</tspan>
+<tspan x="155.0" dy="16.25">вне маршрута НПМ / ВПМ [D189,</tspan>
+<tspan x="155.0" dy="16.25">D263]</tspan>
+</text>
+<text x="425.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="15">Агент</tspan>
+</text>
+<text x="425.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="17">2. Кандидаты из</tspan>
+<tspan x="425.0" dy="21.25">библиотеки: G:/Мой</tspan>
+<tspan x="425.0" dy="21.25">диск/AGR-assets/maf,</tspan>
+<tspan x="425.0" dy="21.25">каталог 931 МАФ,</tspan>
+<tspan x="425.0" dy="21.25">манифесты, A101</tspan>
+</text>
+<text x="425.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="425.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Правила: D164, D151, D230</tspan>
+</text>
+<text x="425.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="14">Контекст: Библиотека МАФ</tspan>
+<tspan x="425.0" dy="17.5">(каталог, манифесты, A101)</tspan>
+</text>
+<text x="425.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="425.0" dy="13">⚠ Каталог — технический</tspan>
+<tspan x="425.0" dy="16.25">аудит, не идентификация</tspan>
+<tspan x="425.0" dy="16.25">(T-MAF-1): из 931 МАФ</tspan>
+<tspan x="425.0" dy="16.25">кандидата НПМ нет у 695</tspan>
+</text>
+<text x="695.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="15">Агент</tspan>
+</text>
+<text x="695.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="17">3. Кандидат выбран:</tspan>
+<tspan x="695.0" dy="21.25">превью = картинка</tspan>
+<tspan x="695.0" dy="21.25">спецификации и контур</tspan>
+<tspan x="695.0" dy="21.25">DWG; нет в каталоге —</tspan>
+<tspan x="695.0" dy="21.25">Артём называет объект</tspan>
+</text>
+<text x="695.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="695.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Правила: D164, D190</tspan>
+</text>
+<text x="695.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="14">Контекст: Библиотека МАФ</tspan>
+<tspan x="695.0" dy="17.5">(каталог, манифесты, A101)</tspan>
+</text>
+<text x="695.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="13">Ветка: есть в библиотеке</tspan>
+<tspan x="695.0" dy="16.25">→ id каталога с причиной;</tspan>
+<tspan x="695.0" dy="16.25">модель не подменяется похожей</tspan>
+<tspan x="695.0" dy="16.25">[D164]</tspan>
+</text>
+<text x="695.0" y="728.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="695.0" dy="13">Ветка: нет в библиотеке</tspan>
+<tspan x="695.0" dy="16.25">→ новая модель по картинке /</tspan>
+<tspan x="695.0" dy="16.25">схеме: лего-разбор со</tspan>
+<tspan x="695.0" dy="16.25">врезками, без крепежа;</tspan>
+<tspan x="695.0" dy="16.25">отдельная строка проверки</tspan>
+<tspan x="695.0" dy="16.25">[D165, D226]</tspan>
+</text>
+<text x="965.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="15">Агент</tspan>
+</text>
+<text x="965.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="17">4. Габариты по</tspan>
+<tspan x="965.0" dy="21.25">спецификации: ≤ 10 см</tspan>
+<tspan x="965.0" dy="21.25">по оси; цвет и</tspan>
+<tspan x="965.0" dy="21.25">материалы — по</tspan>
+<tspan x="965.0" dy="21.25">картинке и</tspan>
+<tspan x="965.0" dy="21.25">спецификации проекта</tspan>
+</text>
+<text x="965.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="965.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Правила: D094, D230</tspan>
+</text>
+<text x="965.0" y="537.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="965.0" dy="14">Контекст: Проверки МАФ</tspan>
+<tspan x="965.0" dy="17.5">(габариты, сглаживание,</tspan>
+<tspan x="965.0" dy="17.5">нижние грани)</tspan>
+</text>
+<text x="1235.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="15">Агент: Blender / Max /</tspan>
+<tspan x="1235.0" dy="18.75">AGR Tools</tspan>
+</text>
+<text x="1235.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="17">5. Жёсткие рёбра по</tspan>
+<tspan x="1235.0" dy="21.25">углу; ID материалов из</tspan>
+<tspan x="1235.0" dy="21.25">общего списка (v007)</tspan>
+</text>
+<text x="1235.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="1235.0" y="460.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Правила: D259, D168, D181,</tspan>
+<tspan x="1235.0" dy="17.5">D240</tspan>
+</text>
+<text x="1235.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1235.0" dy="14">Контекст: ID материалов и</tspan>
+<tspan x="1235.0" dy="17.5">атлас МАФ 512</tspan>
+</text>
+<text x="1505.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="15">Агент: Blender / Max /</tspan>
+<tspan x="1505.0" dy="18.75">AGR Tools</tspan>
+</text>
+<text x="1505.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="17">6. ВПМ-версия</tspan>
+<tspan x="1505.0" dy="21.25">(high-poly): текстуры</tspan>
+<tspan x="1505.0" dy="21.25">по ID, UDIM — после</tspan>
+<tspan x="1505.0" dy="21.25">тайлов Ground</tspan>
+</text>
+<text x="1505.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="1505.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Правила: D210, D229</tspan>
+</text>
+<text x="1505.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1505.0" dy="14">Контекст: ID материалов и</tspan>
+<tspan x="1505.0" dy="17.5">атлас МАФ 512</tspan>
+</text>
+<text x="1775.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="15">Агент</tspan>
+</text>
+<text x="1775.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="17">7. МАФ расставлены в</tspan>
+<tspan x="1775.0" dy="21.25">координатах: поворот</tspan>
+<tspan x="1775.0" dy="21.25">СПОЗУ, утопление 10</tspan>
+<tspan x="1775.0" dy="21.25">см, низ удалён только</tspan>
+<tspan x="1775.0" dy="21.25">под Ground</tspan>
+</text>
+<text x="1775.0" y="346.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Команда:</tspan>
+<tspan x="1775.0" dy="17.5">dt place site</tspan>
+<tspan x="1775.0" dy="17.5">agr place</tspan>
+</text>
+<text x="1775.0" y="460.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Правила: D329, D095, D096,</tspan>
+<tspan x="1775.0" dy="17.5">D018</tspan>
+</text>
+<text x="1775.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="14">Контекст: Расстановка МАФ и</tspan>
+<tspan x="1775.0" dy="17.5">Флоры</tspan>
+</text>
+<text x="1775.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1775.0" dy="13">⚠ Расстановка на Ground v015</tspan>
+<tspan x="1775.0" dy="16.25">не перезапущена (команда dt</tspan>
+<tspan x="1775.0" dy="16.25">place site есть, #1407)</tspan>
+<tspan x="1775.0" dy="16.25">[D236]</tspan>
+</text>
+<text x="2045.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="15">Агент: Blender / Max /</tspan>
+<tspan x="2045.0" dy="18.75">AGR Tools</tspan>
+</text>
+<text x="2045.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="17">8. НПМ-версия</tspan>
+<tspan x="2045.0" dy="21.25">(low-poly) в тех же</tspan>
+<tspan x="2045.0" dy="21.25">точках на одном атласе</tspan>
+<tspan x="2045.0" dy="21.25">512 GroundEl</tspan>
+</text>
+<text x="2045.0" y="346.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Команда:</tspan>
+<tspan x="2045.0" dy="17.5">dt derive maf-npm-light</tspan>
+<tspan x="2045.0" dy="17.5">agr npm-light</tspan>
+</text>
+<text x="2045.0" y="460.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Правила: D293, D164, D167,</tspan>
+<tspan x="2045.0" dy="17.5">D097</tspan>
+</text>
+<text x="2045.0" y="548.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="14">Контекст: НПМ МАФ на атласе</tspan>
+</text>
+<text x="2045.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="13">Ветка: ВПМ уже расставлена</tspan>
+<tspan x="2045.0" dy="16.25">→ конвертация ВПМ → НПМ: та</tspan>
+<tspan x="2045.0" dy="16.25">же модель; облегчённая —</tspan>
+<tspan x="2045.0" dy="16.25">только если не влезает бюджет</tspan>
+<tspan x="2045.0" dy="16.25">(≤ 400 треугольников не</tspan>
+<tspan x="2045.0" dy="16.25">трогает, силуэт ≥ 0,95)</tspan>
+<tspan x="2045.0" dy="16.25">Команда: dt derive</tspan>
+<tspan x="2045.0" dy="16.25">maf-npm-light, agr npm-light</tspan>
+<tspan x="2045.0" dy="16.25">[D293, D164]</tspan>
+</text>
+<text x="2045.0" y="809.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="13">Ветка: расстановка с нуля</tspan>
+<tspan x="2045.0" dy="16.25">→ low-poly (кандидат НПМ</tspan>
+<tspan x="2045.0" dy="16.25">библиотеки) и high-poly</tspan>
+<tspan x="2045.0" dy="16.25">ставятся вместе в одни точки</tspan>
+<tspan x="2045.0" dy="16.25">[D293]</tspan>
+</text>
+<text x="2045.0" y="927.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="13">Ветка: НПМ (всегда)</tspan>
+<tspan x="2045.0" dy="16.25">→ один атлас 512 RGB на все</tspan>
+<tspan x="2045.0" dy="16.25">GroundEl; номер ID в правом</tspan>
+<tspan x="2045.0" dy="16.25">нижнем углу ячейки [D168,</tspan>
+<tspan x="2045.0" dy="16.25">D020]</tspan>
+</text>
+<text x="2045.0" y="1044.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2045.0" dy="13">⚠ Бюджет НПМ: МАФ 60 000 из</tspan>
+<tspan x="2045.0" dy="16.25">180 000 (D097); набор</tspan>
+<tspan x="2045.0" dy="16.25">Ватутино 57 628 + «Верона» 1</tspan>
+<tspan x="2045.0" dy="16.25">520 = 59 148; делит Артём</tspan>
+<tspan x="2045.0" dy="16.25">(D167) [D097, D167]</tspan>
+</text>
+<text x="2315.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="15">Агент</tspan>
+</text>
+<text x="2315.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="17">9. UCX: для МАФ не</tspan>
+<tspan x="2315.0" dy="21.25">строятся (ограждения и</tspan>
+<tspan x="2315.0" dy="21.25">навесы — при любой</tspan>
+<tspan x="2315.0" dy="21.25">толщине), UCX</tspan>
+<tspan x="2315.0" dy="21.25">поверхности Ground</tspan>
+<tspan x="2315.0" dy="21.25">остаётся (только ВПМ)</tspan>
+</text>
+<text x="2315.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2315.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Правила: D293, D298</tspan>
+</text>
+<text x="2315.0" y="548.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2315.0" dy="14">Контекст: Коллизии UCX</tspan>
+</text>
+<text x="2585.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="15">Агент</tspan>
+</text>
+<text x="2585.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="17">10. Проверки на чтении</tspan>
+<tspan x="2585.0" dy="21.25">экспорта:</tspan>
+<tspan x="2585.0" dy="21.25">maf_findings,</tspan>
+<tspan x="2585.0" dy="21.25">валидатор, строки</tspan>
+<tspan x="2585.0" dy="21.25">MAF-01..24</tspan>
+</text>
+<text x="2585.0" y="355.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Команда:</tspan>
+<tspan x="2585.0" dy="17.5">agr validate</tspan>
+</text>
+<text x="2585.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Правила: D094, D096, D152</tspan>
+</text>
+<text x="2585.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="14">Контекст: Проверка и</tspan>
+<tspan x="2585.0" dy="17.5">приёмка</tspan>
+</text>
+<text x="2585.0" y="627.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2585.0" dy="13">⚠ Автопроверки МАФ частичные:</tspan>
+<tspan x="2585.0" dy="16.25">8 из 24 строк без проверки</tspan>
+<tspan x="2585.0" dy="16.25">(L2 gaps, причина у каждой);</tspan>
+<tspan x="2585.0" dy="16.25">maf_findings — только НПМ</tspan>
+<tspan x="2585.0" dy="16.25">GroundEl</tspan>
+</text>
+<text x="2855.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="15">Артём</tspan>
+</text>
+<text x="2855.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="17">11. Артём принимает</tspan>
+<tspan x="2855.0" dy="21.25">витрину: пары НПМ /</tspan>
+<tspan x="2855.0" dy="21.25">ВПМ рядом, справа</tspan>
+<tspan x="2855.0" dy="21.25">подпись по</tspan>
+<tspan x="2855.0" dy="21.25">спецификации</tspan>
+</text>
+<text x="2855.0" y="363.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Нет команды agr/dt</tspan>
+</text>
+<text x="2855.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Правила: D104, D270</tspan>
+</text>
+<text x="2855.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Контекст: Проверка и</tspan>
+<tspan x="2855.0" dy="17.5">приёмка</tspan>
+</text>
+<text x="3125.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="15">Агент</tspan>
+</text>
+<text x="3125.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="17">12. МАФ в Ground FBX →</tspan>
+<tspan x="3125.0" dy="21.25">маршрут «Пакет и</tspan>
+<tspan x="3125.0" dy="21.25">сдача»</tspan>
+</text>
+<text x="3125.0" y="346.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="14">Команда:</tspan>
+<tspan x="3125.0" dy="17.5">agr package-npm</tspan>
+<tspan x="3125.0" dy="17.5">agr package-vpm</tspan>
+</text>
+<text x="3125.0" y="468.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="14">Правила: D235, D236</tspan>
+</text>
+<text x="3125.0" y="540.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="14">Контекст: Экспорт и пакет</tspan>
+<tspan x="3125.0" dy="17.5">сдачи</tspan>
+</text>
+</svg>

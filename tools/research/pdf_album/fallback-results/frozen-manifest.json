@@ -1,0 +1,35 @@
+{
+  "reference_sha256": "22d854de031a76266b643a1e1eb9cd0f99c22c46b9a274b8bd26a10152eb5df1",
+  "sources": [
+    {
+      "id": "elv",
+      "file": "elv.pdf",
+      "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+      "pages": 42
+    },
+    {
+      "id": "cod20207",
+      "file": "cod20207.pdf",
+      "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce",
+      "pages": 5
+    },
+    {
+      "id": "tec26",
+      "file": "tec26.pdf",
+      "sha256": "ab4339496166779b2989a42bdbf88072bf8267a6a30ad748da544bf48ed3f997",
+      "pages": 6
+    }
+  ],
+  "models": {
+    "ch_ppocr_mobile_v2.0_cls_mobile.onnx": "e47acedf663230f8863ff1ab0e64dd2d82b838fceb5957146dab185a89d6215c",
+    "cyrillic_PP-OCRv5_rec_mobile.onnx": "90f761b4bfcce0c8c561c0cb5c887b0971d3ec01c32164bdf7374a35b0982711",
+    "PP-OCRv6_det_small.onnx": "090f04abcd9d9a7498bc4ebf677e4cb9bdce1fe4197ddb7e529f1ef44e1ff94f",
+    "PP-OCRv6_rec_small.onnx": "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884"
+  },
+  "versions": {
+    "rapidocr": "3.10.0",
+    "onnxruntime": "1.31.1",
+    "pymupdf": "1.28.2"
+  },
+  "note": "Models public, no customer files added; mounted Drive copy verification is not cloud sync proof."
+}

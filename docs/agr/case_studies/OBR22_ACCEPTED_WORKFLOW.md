@@ -48,7 +48,7 @@
    [exterior_surface_blender.py](../../tools/exterior_surface_blender.py) сохраняет сцену,
    [check_exterior_surface.py](../../tools/check_exterior_surface.py) проверяет её данные.
 
-3. **Shell и окна без лишних лупов.** [build_shell_windows.py](../../tools/build_shell_windows.py)
+3. **Shell и окна без лишних лупов.** [build_shell_windows.py](../../../jobs/OBR22-K02/scripts/build_shell_windows.py) (historical [D327])
    с `--clean` строит откосы и торцы без внутренних стенок. Рама — область внешнего
    прямоугольника минус измеренные панели; вокруг каждой панели четыре выпуклых
    квада, соседние участки имеют общие границы. Так убрали1569 квадов окон

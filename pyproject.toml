@@ -35,6 +35,7 @@ dev = [
 
 [project.scripts]
 dt = "dt_ai.cli.main:main"
+agr = "dt_ai.cli.agr:main"
 agr-mcp = "agr_mcp.server:main"
 
 [tool.setuptools.packages.find]

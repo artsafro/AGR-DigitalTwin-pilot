@@ -1,5 +1,7 @@
 # Windows / doors — L1 requirement sheet
 
+For the 63C stage-2 training model only: see [D355] for basket scope and [D356] for the frame seat.
+
 **Area and profiles:** windows, doors, curtain walls and balcony doors of an OKS, NPM and VPM:
 the opening in the body, the opening plane, frames, glazing objects and materials, glass UV
 and the GeoJSON glass description. `npm_min` / `mid` are engine profiles, not interchangeable
@@ -41,6 +43,8 @@ to, not decided here.
 | WIN-16 — Interior behind glazing / C23 | reg p.8 §3.12; reg p.29 §3.12 | Simplified interior walls, ceiling and floor only where seen through translucent parts | Interiors replaced by solid walls and slabs; wall thickness >= 10 cm | Sightline inspection through glazing; the shell policy C23 stays with the user | none | [BODY-L](body.md), [C23](../conflicts.md#c-between-local-sources-project-decisionslessons) |
 | WIN-17 — Window types match the design / C25 | reg p.4 §1.3; reg p.24 §1.3 | Window type per opening from the source; one atlas region per type | Same types; `mid` library type with an infill recess behind the frame, C25 open | V015 manual (window types); the type library #4 waits for the user | none | [Window types](../../../library/windows/window_types.json), [C25](../conflicts.md#c-between-local-sources-project-decisionslessons), [V015](../validation.md#implementation-status-inventory-static-audit) |
 
+Windows, stained glass and their flashings are inset elements cut into the body, not welded into it; the per-project split and its job-report line: [D336], [SKELETONS.md](../../agents/SKELETONS.md#oks-modelling-split-d336).
+
 Glass quad layout [D172]: a flat window with no bend is one quad (4 points); a bend keeps its segments; a 90 deg corner is one element of two quads sharing an edge (6 points). This note is not an extra requirement row. Detail in [geometry](../geometry.md) and [the decision log](../../decisions.md).
 
 ## Image verification and review evidence
@@ -66,6 +70,8 @@ C35 is new in this change: reg p.32 §7 (bake relief up to 5 cm) against the `mi
 and the C25 infill recess (30 or 35 mm, both under 5 cm). It is recorded in
 [conflicts.md](../conflicts.md#c-between-local-sources-project-decisionslessons), not decided.
 C23 and C25 keep their status; C24 is decided [D037].
+
+NTR corpus research [D267]: [source-referenced draft](../../research/ntr-pdf-corpus-pilot.md) lists facade glazing families only, not dimensioned window blocks or approved library entries; no WIN-17 acceptance is implied.
 
 ## L2 gaps
 

@@ -47,6 +47,7 @@ import json
 import math
 import re
 from dataclasses import asdict, dataclass, field
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -436,6 +437,43 @@ def _center(b: Box) -> Point:
     return ((b[0] + b[2]) / 2.0, (b[1] + b[3]) / 2.0)
 
 
+def _cubic_in_annulus(curve: Any, center: Point, radius: float) -> bool:
+    """Certify the whole cubic via subdivided convex hulls, never point samples.
+
+    A Bezier curve lies in its control hull. The hull's enclosing box supplies
+    a conservative lower radius; its farthest control point supplies the upper.
+    Unresolved cells (including exact tolerance boundaries) fail closed.
+    """
+    if not math.isfinite(radius) or radius <= 0:
+        return False
+    control = tuple(((float(p[0]) - center[0]) / radius,
+                     (float(p[1]) - center[1]) / radius) for p in curve[1:])
+    if any(not math.isfinite(v) for p in control for v in p):
+        return False
+    lower, upper = 0.98 + 1e-10, 1.02 - 1e-10
+    pending = [(control, 0)]
+    while pending:
+        pts, depth = pending.pop()
+        if any(not lower < math.hypot(*p) < upper for p in (pts[0], pts[-1])):
+            return False
+        # Every point in the box is at least this far from the origin.
+        nearest = [max(min(p[j] for p in pts), 0.0, -max(p[j] for p in pts))
+                   for j in (0, 1)]
+        if (math.hypot(*nearest) > lower
+                and max(math.hypot(*p) for p in pts) < upper):
+            continue
+        if depth == 12:
+            return False
+        # de Casteljau at t=.5: both new hulls cover the entire original curve.
+        levels = [pts]
+        while len(levels[-1]) > 1:
+            levels.append(tuple(((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+                                for a, b in pairwise(levels[-1])))
+        pending.append((tuple(row[0] for row in levels), depth + 1))
+        pending.append((tuple(row[-1] for row in reversed(levels)), depth + 1))
+    return True
+
+
 def _circles(raw: list[dict[str, Any]]) -> list[tuple[Point, float, int]]:
     out = []
     for d in raw:
@@ -450,6 +488,60 @@ def _circles(raw: list[dict[str, Any]]) -> list[tuple[Point, float, int]]:
             out.append(
                 (((r.x0 + r.x1) / 2.0, (r.y0 + r.y1) / 2.0), r.width / 2.0, d["index"])
             )
+    # get_drawings() already applies nested Form/XObject matrices. CAD exporters
+    # can put several tessellated circles and their radial lines in ONE PDF path;
+    # its global rectangle is not a bubble. Inspect closed subpaths separately.
+    for d in raw:
+        points: list[Point] = []
+        for item in d["items"]:
+            if item[0] != "l":
+                points = []
+                continue
+            a, b = _pt(item[1]), _pt(item[2])
+            if not points or math.dist(points[-1], a) > 0.02:
+                points = [a]
+            points.append(b)
+            if len(points) < 13 or math.dist(points[0], b) > 0.02:
+                continue
+            ring = points[:-1]
+            cx = (min(p[0] for p in ring) + max(p[0] for p in ring)) / 2
+            cy = (min(p[1] for p in ring) + max(p[1] for p in ring)) / 2
+            radii = [math.dist(p, (cx, cy)) for p in ring]
+            radius = sum(radii) / len(radii)
+            angles = [math.atan2(p[1] - cy, p[0] - cx) for p in points]
+            turns = [(b - a + math.pi) % (2 * math.pi) - math.pi for a, b in pairwise(angles)]
+            if (radius > 0.5 and max(abs(r - radius) for r in radii) <= 0.02 * radius
+                    and all(0 < abs(t) <= math.pi / 4 + 0.001 for t in turns)
+                    and abs(abs(sum(turns)) - 2 * math.pi) < 0.01):
+                out.append(((cx, cy), radius, d["index"]))
+            points = []
+    # Native AutoCAD emits a bubble as two separately stroked semicircles.
+    # Match the complete, connected loop, not two overlapping arc bounding boxes.
+    for left, right in pairwise(raw):
+        a, b = left['items'], right['items']
+        if len(a) != 2 or len(b) != 2 or any(it[0] != 'c' for it in a + b):
+            continue
+        if math.dist(_pt(a[-1][-1]), _pt(b[0][1])) > 0.02:
+            b = [('c', *reversed(it[1:])) for it in reversed(b)]
+        curves = a + b
+        if any(math.dist(_pt(c[-1]), _pt(n[1])) > 0.02 for c, n in zip(curves, curves[1:] + curves[:1])):
+            continue
+        points = []
+        for c in curves:
+            for t in (0.0, 0.5):
+                xy = [sum(w * p[j] for w, p in zip(
+                    ((1-t)**3, 3*(1-t)**2*t, 3*(1-t)*t*t, t**3), c[1:])) for j in (0, 1)]
+                points.append((xy[0], xy[1]))
+        cx = (min(p[0] for p in points) + max(p[0] for p in points)) / 2
+        cy = (min(p[1] for p in points) + max(p[1] for p in points)) / 2
+        radii = [math.dist(p, (cx, cy)) for p in points]
+        radius = sum(radii) / len(radii)
+        angles = [math.atan2(p[1]-cy, p[0]-cx) for p in points + points[:1]]
+        turns = [(b-a+math.pi) % (2*math.pi)-math.pi for a,b in pairwise(angles)]
+        if (radius > 0.5 and max(abs(r-radius) for r in radii) <= .02*radius
+                and abs(abs(sum(turns))-2*math.pi) < .01
+                and all(_cubic_in_annulus(c, (cx, cy), radius) for c in curves)):
+            out.append(((cx, cy), radius, left['index']))
     return out
 
 

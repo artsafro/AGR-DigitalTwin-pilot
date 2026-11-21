@@ -12,8 +12,13 @@ MAX_UNSAFE_ENV = ("QT_QPA_PLATFORM", "QT_PLUGIN_PATH", "QT_QPA_PLATFORM_PLUGIN_P
 
 
 def max_child_env(base=None):
-    """Copy of `base` (default os.environ) without the Qt variables a child Max must not inherit."""
-    env = dict(os.environ if base is None else base)
-    for key in MAX_UNSAFE_ENV:
-        env.pop(key, None)
-    return env
+    """Copy the environment without parent Qt or virtualenv activation.
+
+    Max's Python startup honors VIRTUAL_ENV and prepends its site-packages.
+    A uv/pytest venv can therefore inject incompatible PySide6/Shiboken into
+    Max 2026's Python 3.11 even when all QT_* settings were removed (#1089).
+    Keep PATH and unrelated settings unchanged; never alter the user install.
+    """
+    unsafe = {key.casefold() for key in (*MAX_UNSAFE_ENV, "VIRTUAL_ENV")}
+    return {key: value for key, value in (os.environ if base is None else base).items()
+            if key.casefold() not in unsafe}

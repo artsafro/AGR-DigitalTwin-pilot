@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Synthetic reduced excerpt: first action is the main action, not the first active action. -->
+<OctopusDataWrapper>
+  <PanelsList><Panels PanelHeader="AGR Viz">
+    <ActionButtonDataList IsActive="true" ButtonText="MultiSub Dedupe">
+      <buttonActionData>
+        <actionDataList active="false"><command>fileIn @"SCRIPT_PATH"; macros.run "AGR Viz" "AGRViz_MultiSubDedupe"</command></actionDataList>
+        <actionDataList active="true"><command>print "secondary action"</command></actionDataList>
+      </buttonActionData>
+    </ActionButtonDataList>
+  </Panels></PanelsList>
+</OctopusDataWrapper>

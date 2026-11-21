@@ -1,0 +1,24 @@
+{
+ "schema": "kpp1-cold-run-stages/1",
+ "issue": 1313,
+ "run_id": "issue-1313-cold-run-v001",
+ "synthetic": false,
+ "note": "Measured receipts summary of cold run #3. Not a JobChecklist machine receipt and not a pass claim; raw files are hashed in evidence-SHA256SUMS.txt.",
+ "evidence_dir": "G:/Мой диск/AGR-evidence/1313-kpp1-cold-run-3/",
+ "inputs_walk": {"command": "uv run python -m dt_ai.procedure jobs/KPP1/job.yaml --root . --output tmp/walk-s1-v001.json", "exit": 1, "external_inputs_equal": 4, "external_inputs_mismatch": 0, "external_inputs_unreachable": 0, "errors": 0, "gates_pass": 0},
+ "parts": {"path": "jobs/KPP1/cold-run-1313/parts-v001.json", "file_sha256": "edf88a44213b40b6f9e8741ce2a2d8ba395ed55ad99f3a035bb2fe8755dda6ee", "approval_sha256": "aef851f2c0dbde096624b9dee24648e1cdd455513bc1d1d2692d2f01c7831826", "parts": 8, "questions": 3, "gate1_request": "https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1313#issuecomment-6875224009", "gate1_answer": null},
+ "master": {"path": "G:/Мой диск/AGR-evidence/1313-kpp1-cold-run-3/packet-copy-v001/master-r1-v001.blend", "sha256": "492f20afc7fe53aa11e58c7695352f902ac2c29febc5a4f48c400f0e916a4de3", "vpm_source_fbx_sha256": "1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676", "copied_from": "G:/Мой диск/AGR-evidence/1318-npm-benchmark/v001/packet-r1-v001 (25/25 manifest rows equal; unlisted __pycache__ excluded)"},
+ "stages": [
+  {"name": "master-xview", "exit": 1, "overlapping_faces": 112, "face_pairs": 166, "overlapping_vertices": 0, "bowtie_pairs": 0},
+  {"name": "derive (agr vpm-to-npm --cell 512 --pad 8)", "exit": 0, "main_tris": 30162, "glass_tris": 504, "faces_without_region": 0},
+  {"name": "runner packet verify after derive", "exit": "ValueError", "error": "packet integrity mismatch: derive wrote jobs/TEC26-OKS/scripts/__pycache__/export_safety.cpython-313.pyc into the frozen packet copy"},
+  {"name": "readback (tools/blender/fbx_readback.py, clean Blender process)", "exit": 0},
+  {"name": "export-xview", "exit": 1, "overlapping_faces": 116, "face_pairs": 169, "overlapping_vertices": 0, "bowtie_pairs": 0},
+  {"name": "accounting (input vs export triangles)", "exit": 0, "SM_Kpp_1_Main": {"in": 30162, "out": 30162, "multiset_equal": true}, "SM_Kpp_1_MainGlass": {"in": 504, "out": 504, "multiset_equal": true}, "max_position_error_m": 2.13e-06},
+  {"name": "agr validate NPM FBX --profile npm --scene --master", "exit": 1, "passed": false, "counts": {"pass": 4, "fail": 1, "review": 1, "not_run": 2}, "manual_pending": 2, "non_pass": {"V001": "not_run (bare FBX, no NPM ZIP)", "V003": "fail: master quads 0 (SM_Kpp_1_Main 30162 tris); review: 8 T-junctions", "V004": "review: 98 co-directional pairs 10-20 mm (D256 band)", "V014": "not_run", "V015": "not_run (manual)", "V017": "not_run (manual)"}},
+  {"name": "agr validate VPM ZIP r1-v002 --profile vpm --scene", "exit": 1, "passed": false, "counts": {"pass": 5, "fail": 1, "review": 2, "not_run": 4}, "manual_pending": 3, "non_pass": {"V001": "fail: GeoJSON missing", "V003": "not_run", "V004": "review: 98 pairs 10-20 mm", "V010": "not_run", "V011": "not_run", "V012": "review: archive name SM_Kpp_1", "V013": "not_run", "V015": "not_run (manual)", "V016": "not_run (manual)", "V017": "not_run (manual)"}},
+  {"name": "agr package-vpm pkg textures --object jobs/KPP1/object.json", "exit": 1, "error": "refused: export_meta.json missing next to the package dir"}
+ ],
+ "export_sha256": "d7c878fd066d56afd937ac15061e502baff1aed1826da90d4bc9f4a1092783ad",
+ "package_built": false
+}

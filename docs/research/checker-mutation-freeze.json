@@ -1,0 +1,192 @@
+{
+  "schema": 1,
+  "seed": 1261,
+  "base_commit": "4c30d864d9658d2524dddd70e6457cda512bcfbf",
+  "generator_sha256": "90eba18b1e9e0a5988f56711fd4e0ed1de3f48e327eade26b25e095c88b6a689",
+  "guard_sha256": "34de54dbaea2159bcb97ca09a1f1fbd4214905eead0e10bfc07df5be941b128d",
+  "config_sha256": "8208c51b16f470fd3fe958b10d8435c7a2996c69f7c169a0b5abfa45220a5750",
+  "files": {
+    "flora_run_v004/pos01_101_npm.fbx": "cfa86ad2b0340bb0dd73a6d1ac7d0e8b3c2c429ad3850d193b8dd8ed113a7ba6",
+    "flora_run_v004/wrong_units.fbx": "e1b33edfe9395c10758411cb1820b8073942f0df722b6b57677a06a878512fd2",
+    "kpp1_package/SM_Kpp_1.zip": "7479908fb68dd7fd95dad84c858605cfbf23c6c4fad306384a8082c15dac8fff",
+    "kpp1_r1_v002/SM_Kpp_1.fbx": "1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676",
+    "kpp1_r1_v002/wrong_units.fbx": "2d8c680e71dbbac806e877f3e739cf39c8c37af42b5cb46d1ed7584a2ac36d4b",
+    "maf_v006_row02/VAT_MAF_T3508_02.fbx": "c6c8bf7a7ca3a34a3cfead16beb349037315d5c68756f16efe1840760eba96b0",
+    "maf_v006_row02/wrong_units.fbx": "6590e8eadbe0160c23ddf3308f452934e73c11d54430b2978a8231c3373d2de7",
+    "vatutino_package/SM_Vatutino_Ground.zip": "f1ea6d627b7899924d8845fc81c49f5f4e250acc2be033f420f4b11b0b7ebd66",
+    "vatutino_v015/SM_Vatutino_Ground.fbx": "39a45ab7004be8a1cf47a0c85b2d22f83d0e7b9a639c1c324344f5b914d3b188",
+    "vatutino_v015/wrong_units.fbx": "2d1026e49a7e7c05092ecec485620996e5c1c55ff33400760a13a70db1ba17ce",
+    "vatutino_v015/scenes/clean.json": "2e04b319dca296e8f81be868e189ede3dc54a9e01462db1b27180a79e7d1959d",
+    "vatutino_v015/scenes/duplicate_faces.json": "f055ae86313ec4462d190648ca168378d4c4ba7baa6452d55fb92dc12774703b",
+    "vatutino_v015/scenes/flipped_normals.json": "b6c5da3f3b2bcf2a9f550acd4b75387b6c8800d3532d2aa1e6035ada6262b77f",
+    "vatutino_v015/scenes/ground_skirt_missing.json": "8035899455a3b398972ea51be43680202126bd9b65ee0674d671eb009251200b",
+    "vatutino_v015/scenes/leftover_object.json": "603bee83132eb2b372ed4769c571f1d3cb894ba9b59a612e0953f18ff38a747f",
+    "vatutino_v015/scenes/missing_ucx.json": "a9924dc6bacb0d8dba503bc446ec5f747cc83bfe1258c78fea89dd75da39967f",
+    "vatutino_v015/scenes/operations.json": "6112635df8549a00c7c5f0bff35834d0a1f9efa8cb984f614faef2c38d76a7ee",
+    "vatutino_v015/scenes/self_intersections.json": "7a598e900fda89a5a3ea1fb61180a9fa65f5d81a57a1d97320e7a09ecb7ded52",
+    "vatutino_v015/scenes/unapplied_scale.json": "9c27c0425667ee88b6fe7ad997ed5e4b44ac664ad543deb9ee1837f4c6e06424",
+    "vatutino_v015/scenes/wrong_material.json": "4b5ac3b16b970ca4c35155c59872f61b649319e29491e77f96ded89439b04259",
+    "vatutino_v015/scenes/wrong_name.json": "e4c4a40ee2243bf10ffcfb3c60e3a9f5f13d5487da6866ad7ca27b3e2e2ca17c",
+    "vatutino_v015/scenes/wrong_pivot.json": "6dc0f96ef4adb39c7e84a446bcb54f5ee2d079e0dd4641c8875f66fd60b2b17b",
+    "vatutino_v015/scenes/wrong_texel.json": "c3b2b4a8600410c237aebc6234157fa501d8329ee804df2fee9c43cfcbadbb3b",
+    "vatutino_v015/scenes/wrong_ucx_gap.json": "b4f3b70bb027db3fcc375006a842f41777833bad7c8e1cccfe11d2f46bc0fc66",
+    "vatutino_package/missing_texture/SM_Vatutino_Ground.zip": "0e780980b96d8d0bd1e64fbae7794b5bb39c34d6f5e3bdb417b2af3c4532208f",
+    "vatutino_package/oversized_texture/SM_Vatutino_Ground.zip": "570cc21349b7eec45fd007fbcaa8b41f7cbeb471343804d41dd4aa843928c41c",
+    "maf_v006_row02/scenes/baked_size.json": "175b7c0cc16d5354aa00ad798c6a688af3f2ab2806f903c303a4565887198758",
+    "maf_v006_row02/scenes/clean.json": "31af8d6006c5d34bf9f081f38ef79fa6a0bf201d93090137a855d5958e1ade05",
+    "maf_v006_row02/scenes/duplicate_faces.json": "afcbc9362a1c4c4ec073dfa922f5227d478be0e9404642736c5ca48c69a33294",
+    "maf_v006_row02/scenes/flipped_normals.json": "49ffa2ae01d58361789f06809c36d8fdae7526e701bdd2931c3aaf1d5485ae96",
+    "maf_v006_row02/scenes/leftover_object.json": "00701b8b719411c8cab9f90a0282088856a0c042788c69ded31c379162106d86",
+    "maf_v006_row02/scenes/maf_zone_merged.json": "06941a2ebea922215cce90b9f09b86dc06633a72da1d6f0f86b1a0d6dbf89c2e",
+    "maf_v006_row02/scenes/missing_texture.json": "64d88eb1700b2cbf297f40cd16d3d90b8776a77f62a7de4db6800bb68b076f9e",
+    "maf_v006_row02/scenes/operations.json": "98af823d2ea29b72da89ff63d1f7e6af7f703a8a8015bde84d2087ff1498cbb8",
+    "maf_v006_row02/scenes/oversized_texture.json": "c2b3d256be9afcfe5088b178f6a63a40e3a8205819620c676c3ae6a67b3b4f5a",
+    "maf_v006_row02/scenes/self_intersections.json": "ceaa90af9edff026d68b37542cf3c36faeb25a7103e90e1dee42f0f462fa49d5",
+    "maf_v006_row02/scenes/unapplied_scale.json": "26ac731096d3dc67e754e36699b776ffd0325e612f88d6a19aab21a06a14c875",
+    "maf_v006_row02/scenes/wrong_material.json": "cd762a056360de84078029427307633757f5bd997cd5ce2cc0948b37ea9a0e7b",
+    "maf_v006_row02/scenes/wrong_name.json": "58c8331f6a1d1a083670703567a5294691f144dce0d760aaea33d62464d8834f",
+    "kpp1_r1_v002/scenes/clean.json": "a7b12c252444205af67e9402f735c6d5c8218a417a8fb61eeecf7ae685273a54",
+    "kpp1_r1_v002/scenes/duplicate_faces.json": "0f5755c825ed9b0aa64ca82fa748f6a3f5847bdc49fe70386c8707034211165d",
+    "kpp1_r1_v002/scenes/flipped_normals.json": "c6852f8d1587974d81c910138bf8955da73a008dcba2033104df37335aa69451",
+    "kpp1_r1_v002/scenes/leftover_object.json": "b5c8747f14d96897b69911c21e6aac147b2d274b26529102f4a158fd6d472048",
+    "kpp1_r1_v002/scenes/missing_ucx.json": "0b35de9bb65d8e2b6e3beca2c0838b4d5ff330922ac26d1798b1fd916eac89d6",
+    "kpp1_r1_v002/scenes/operations.json": "e09a28e4a0fe5122bf3e2d6ad2afa1ceb3b1b95a333a1931d447c34ac4ad6917",
+    "kpp1_r1_v002/scenes/self_intersections.json": "a0cbf216b367766171f440539c7c713701db2959b6c643189f2ae79425a6013b",
+    "kpp1_r1_v002/scenes/unapplied_scale.json": "63d3795a8aa4d69a5be6cfcec4baffebc85543e0e433b18c0087b029b993d916",
+    "kpp1_r1_v002/scenes/wrong_material.json": "d724a3470d733b0534d8336b5a24558b165aeabfd04ed31b20d923c88fec3fe9",
+    "kpp1_r1_v002/scenes/wrong_name.json": "68a86bfd39c8087fea738721fde9f4501c1c6314af7a05d8901ab515e47c6a82",
+    "kpp1_r1_v002/scenes/wrong_pivot.json": "0531e3033b3b65c1c775aeeea16406c6012ed96527e50929369226f41ee1aa31",
+    "kpp1_r1_v002/scenes/wrong_texel.json": "ac8e5f7a4993e9608ead16257fe7ad3ddc7033444149018d987174297477f219",
+    "kpp1_r1_v002/scenes/wrong_ucx_gap.json": "efe33ffc18adde4eb49fbd6b6c252a8db643f36d823e43fc63ded976399cf98a",
+    "kpp1_package/missing_texture/SM_Kpp_1.zip": "6c14a691ae7d3704b72a0ece01b920101e3d5e399672867b3813a026b2f5bbbc",
+    "kpp1_package/oversized_texture/SM_Kpp_1.zip": "b903cda046ac744366dbc84e113ba7424a728b8b22d4ab237f00ebbf925bd6da",
+    "flora_run_v004/scenes/clean.json": "2896031e70670f7b5cc829d2b4fbcb2fce93142ab98b387878e8571200eda580",
+    "flora_run_v004/scenes/duplicate_faces.json": "4d19bc6ed0aa7bc591527b0bdb6cecd800db877c32e471a6356437dac01ed238",
+    "flora_run_v004/scenes/flipped_normals.json": "956d5cf2cb232dc96e21d7ee9b963398162886ba105017f6fdf5e45fd4983651",
+    "flora_run_v004/scenes/flora_height.json": "7ef64d92a34737930d16a57a1cb46808af07b9ff6290b8dcaa75ae584a2b71fb",
+    "flora_run_v004/scenes/leftover_object.json": "b20adc4ef9ef033b7152692b03b85008ff51a8b8f5ad0ed7b4481c108569e637",
+    "flora_run_v004/scenes/missing_texture.json": "f2fdbd77f9d52af174cddb3e4b89461cad28ac560936904b5a2583ca886e4335",
+    "flora_run_v004/scenes/operations.json": "d5376ec92801ee3e9a4b1241ea9a53e4753027786dd09b0ebc7fc3f055a267f3",
+    "flora_run_v004/scenes/oversized_texture.json": "c7e04f793dc8d7279b56cf6eea05b244d7720f1c078722730b7967599fd184e3",
+    "flora_run_v004/scenes/self_intersections.json": "4b27b046639934ac3051a6914726c46394690f59b38b37b24c98aa6b5a04a448",
+    "flora_run_v004/scenes/unapplied_scale.json": "44e7b84b171ed91ff2395bbbda70bb558c3e7d03172603d9357d5d1921c8e1cf",
+    "flora_run_v004/scenes/wrong_material.json": "c5c6ed82ee4383e5a37090fa6f9194efaedc9e31e50e9661998a1b12cec8b885",
+    "flora_run_v004/scenes/wrong_name.json": "cb91d0e302e1aa0b25e0cdccf0492acbf7aaf9f1ea75d20939a86b5d8f440f7f"
+  },
+  "excluded": {
+    "ELV_v005": "not available; removed by spec owner on card 2026-11-12"
+  },
+  "packages": [
+    {
+      "id": "vatutino_package",
+      "kind": "vpm",
+      "source": "C:/x/t_5e2eb833/v009/packages/vpm/SM_Vatutino_Ground.zip",
+      "source_name": "SM_Vatutino_Ground.zip"
+    },
+    {
+      "id": "kpp1_package",
+      "kind": "vpm",
+      "source": "G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/SM_Kpp_1.zip",
+      "source_name": "SM_Kpp_1.zip"
+    }
+  ],
+  "etalons": [
+    {
+      "id": "vatutino_v015",
+      "kind": "vpm",
+      "role": "ground",
+      "source": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/inputs/ground-v015/vpm/SM_Vatutino_Ground.fbx",
+      "provenance": "Ground v015 route A D193; representative Ground site slice",
+      "cases": [
+        "unapplied_scale",
+        "flipped_normals",
+        "self_intersections",
+        "duplicate_faces",
+        "missing_ucx",
+        "wrong_ucx_gap",
+        "wrong_material",
+        "wrong_texel",
+        "wrong_name",
+        "wrong_pivot",
+        "leftover_object",
+        "ground_skirt_missing"
+      ],
+      "source_name": "SM_Vatutino_Ground.fbx"
+    },
+    {
+      "id": "kpp1_r1_v002",
+      "kind": "vpm",
+      "role": "oks",
+      "source": "G:/Мой диск/AGR-evidence/1230-kpp1-r1/r1-v002/SM_Kpp_1.fbx",
+      "provenance": "KPP1 R1 v002 #1230, existing verdicts retained, not a delivery certificate",
+      "cases": [
+        "unapplied_scale",
+        "flipped_normals",
+        "self_intersections",
+        "duplicate_faces",
+        "missing_ucx",
+        "wrong_ucx_gap",
+        "wrong_material",
+        "missing_texture",
+        "oversized_texture",
+        "wrong_texel",
+        "wrong_name",
+        "wrong_pivot",
+        "leftover_object"
+      ],
+      "source_name": "SM_Kpp_1.fbx"
+    },
+    {
+      "id": "maf_v006_row02",
+      "kind": "npm",
+      "role": "ground",
+      "source": "G:/Мой диск/AGR-assets/maf/projects/vatutino/gen-v001/rows-v006p-3/npm/VAT_MAF_T3508_02.fbx",
+      "provenance": "MAF_GEN_0001; library/maf/catalogue.json; accepted rows 2-10 D202/D226, v006 IDs",
+      "operands": {
+        "maf_sizes": {
+          "VAT_MAF_T3508_02_GroundEl": [
+            6.6992,
+            2.5001,
+            0.45
+          ]
+        }
+      },
+      "cases": [
+        "baked_size",
+        "unapplied_scale",
+        "flipped_normals",
+        "self_intersections",
+        "duplicate_faces",
+        "wrong_material",
+        "missing_texture",
+        "oversized_texture",
+        "wrong_name",
+        "leftover_object",
+        "maf_zone_merged"
+      ],
+      "source_name": "VAT_MAF_T3508_02.fbx"
+    },
+    {
+      "id": "flora_run_v004",
+      "kind": "npm",
+      "role": "ground",
+      "source": "G:/Мой диск/AGR-evidence/1146-flora-star/run-v004/flora_fbx/pos01_101_npm.fbx",
+      "provenance": "Flora run-v004 representative Tilia cordata Greenspire star; not final site acceptance",
+      "cases": [
+        "unapplied_scale",
+        "flipped_normals",
+        "self_intersections",
+        "duplicate_faces",
+        "wrong_material",
+        "missing_texture",
+        "oversized_texture",
+        "wrong_name",
+        "leftover_object",
+        "flora_height"
+      ],
+      "source_name": "pos01_101_npm.fbx"
+    }
+  ],
+  "sealed": true,
+  "runner_sha256": "d507f23971472a835450e184d9f8996147a4659a6caaabfca2f46f0031b3af3b"
+}

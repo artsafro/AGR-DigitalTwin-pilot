@@ -1,0 +1,98 @@
+{
+  "vpm": {
+    "input": {
+      "path": "tmp\\package-1278\\xview-inputs\\SM_Kpp_1.fbx",
+      "sha256": "b825e5d18b542b4165943ab8b57a0a44230749a08eebdea5578aef4990e504f8",
+      "kind": "fbx",
+      "parts_in_file": [
+        "SM_Kpp_1_Main",
+        "SM_Kpp_1_MainGlass",
+        "UCX_SM_Kpp_1_Main_001",
+        "UCX_SM_Kpp_1_Main_002",
+        "UCX_SM_Kpp_1_Main_003",
+        "UCX_SM_Kpp_1_Main_004"
+      ],
+      "not_selected": [],
+      "units": {
+        "unit_system": "METRIC",
+        "unit_scale": 1.0,
+        "coordinates": "m"
+      },
+      "dropped": [],
+      "blender": {
+        "version": "5.1.2",
+        "log": "tmp\\package-1278\\xview-vpm-after.json.blender.log",
+        "scene": "Scene"
+      }
+    },
+    "profile": "VPM",
+    "kernel": "xview_overlaps",
+    "coords": "local",
+    "thresholds": {
+      "vertex_m": 0.002,
+      "face_m": 0.005,
+      "parallel_cos_min": 0.9999
+    },
+    "totals": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 99,
+      "vertex_pairs": 0,
+      "face_pairs": 154,
+      "face_pairs_by_kind": {
+        "contact": 55,
+        "area": 25,
+        "area+contact": 74
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "passed": false
+  },
+  "npm": {
+    "input": {
+      "path": "tmp\\package-1278\\0000_Kpp_1_01-final.fbx",
+      "sha256": "2f126a00df722108178203a40de3962eee09e1a91c4a0d7c0cf06cdded886e9d",
+      "kind": "fbx",
+      "parts_in_file": [
+        "SM_Kpp_1_001_Main",
+        "SM_Kpp_1_001_MainGlass"
+      ],
+      "not_selected": [],
+      "units": {
+        "unit_system": "METRIC",
+        "unit_scale": 1.0,
+        "coordinates": "m"
+      },
+      "dropped": [],
+      "blender": {
+        "version": "5.1.2",
+        "log": "tmp\\package-1278\\xview-npm-final.json.blender.log",
+        "scene": "Scene"
+      }
+    },
+    "profile": "NPM",
+    "kernel": "xview_overlaps",
+    "coords": "local",
+    "thresholds": {
+      "vertex_m": 0.002,
+      "face_m": 0.005,
+      "parallel_cos_min": 0.9999
+    },
+    "totals": {
+      "overlapping_vertices": 0,
+      "overlapping_faces": 0,
+      "vertex_pairs": 0,
+      "face_pairs": 0,
+      "face_pairs_by_kind": {
+        "contact": 0,
+        "area": 0,
+        "area+contact": 0
+      },
+      "bowtie_vertices": 0,
+      "bowtie_pairs": 0,
+      "parts_without_faces": 0
+    },
+    "passed": true
+  }
+}

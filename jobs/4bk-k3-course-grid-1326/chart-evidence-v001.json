@@ -1,0 +1,43 @@
+{
+  "storage": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002",
+  "files": [
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002\\1326_corner_render.py",
+      "sha256": "45a05167bf8811d61e99945ef55812b84eb1013df3ce0c883819d36daeee58f3",
+      "bytes": 1933
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002\\1326_faces.json",
+      "sha256": "543830e39e9093102b6d375ca960ae5d2e56a7035040c62703810286e3265725",
+      "bytes": 1436579
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002\\1326_faces.py",
+      "sha256": "eeb3e0b8cf3625ef891a38f9ebb4f95c5bc2b75a22deefdb31ac110e92e59b6a",
+      "bytes": 1433
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002\\corner-audit-v001.json",
+      "sha256": "c6a3529980081a540edc1deb7f81e732e70d6574f37ee6abe964ede5920de94b",
+      "bytes": 114880
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002\\course_grid_audit.py",
+      "sha256": "0e98638ff0ba97381423d4bc61633170b6d0f7ea6d794d0cf2e20881b268ebb5",
+      "bytes": 7174
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002\\stair-vertex516-labelled.png",
+      "sha256": "837ee3a9be27d7648c8b1e6cc4616df5e668553a83af5667de323021908e67cf",
+      "bytes": 205068
+    },
+    {
+      "path": "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\chart-policy-v002\\stair-vertex516.png",
+      "sha256": "5c79f60419afd894b4c37058a37c50c401bc6c2f54bd8fd848bd01a7be46b30e",
+      "bytes": 831898
+    }
+  ],
+  "source_hashes_verified": 10,
+  "source_copy_unchanged": true,
+  "pilot_passed": false
+}

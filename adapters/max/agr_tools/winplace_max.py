@@ -157,7 +157,7 @@ def _master(gen, lib, tid, mpu, cache):
         cache[tid] = (found, glass)
         return cache[tid]
     mesh = gen.build_type(lib['by_id'][tid], lib['standard'])
-    frame = _mesh_node(gen.part_mesh(mesh, 'frame'), _free_name(name), mpu)
+    frame = _mesh_node(gen.part_mesh(mesh, 'body'), _free_name(name), mpu)
     glass = _mesh_node(gen.part_mesh(mesh, 'glass'), _free_name(name + '_glass'), mpu) if mesh['parts']['glass'] else None
     for node, role, layer in ((frame, 'window', LAYERS['master']), (glass, 'glass', LAYERS['master_glass'])):
         if node is None:

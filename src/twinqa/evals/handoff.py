@@ -1,11 +1,14 @@
 """Read-only PR handoff evidence check before review_requested. Pattern: new-case (harness tooling, #584).
 
 The author's PR body must carry, exactly once each, the evidence lines that reviewers kept finding
-missing (#124, #247, #311, #583): ``Full suite:`` run through ``suite_slot.py`` on the exact head,
-``Regression evals:`` verified by :func:`twinqa.evals.receipt.check_receipt`, ``Before (RED):`` on
-a commit before the head, ``After (GREEN):`` on the head, and ``Sample output:`` (or ``n/a: <reason>``).
+missing (#124, #247, #311, #583): ``Affected tests:`` on the exact head (the changed modules' tests,
+the tests that import them and the new regressions), ``Regression evals:`` verified by
+:func:`twinqa.evals.receipt.check_receipt`, ``Before (RED):`` on a commit before the head,
+``After (GREEN):`` on the head, and ``Sample output:`` (or ``n/a: <reason>``). The full suite runs once
+in the merge batch before main [D297]: ``Full suite:`` is optional, and when present it is either
+exactly ``deferred to merge batch (D297)`` or a real ``suite_slot.py`` run on the head or an ancestor.
 A missing, duplicated, placeholder or "not run" line is a problem, never a pass; a body that hands
-the full suite to the reviewer is a problem wherever the sentence stands. Nothing is written.
+the tests to the reviewer is a problem wherever the sentence stands. Nothing is written.
 """
 import re
 import subprocess
@@ -15,7 +18,9 @@ from twinqa.evals.receipt import check_receipt
 
 FULL, EVALS, RED, GREEN, SAMPLE, AFFECTED = (
     "Full suite", "Regression evals", "Before (RED)", "After (GREEN)", "Sample output", "Affected tests")
-REQUIRED = (FULL, EVALS, RED, GREEN, SAMPLE)
+REQUIRED = (AFFECTED, EVALS, RED, GREEN, SAMPLE)  # Full suite is optional: merge batch [D297]
+FULL_DEFERRED = "deferred to merge batch (D297)"
+_DEFERRED = re.compile(r"deferred to merge batch \((?:D297|rule 68)\)")  # exact wording (review r1 P3)
 _ALIASES = {"full suite": FULL, "regression evals": EVALS, "before (red)": RED, "red": RED,
             "after (green)": GREEN, "green": GREEN, "sample output": SAMPLE, "affected tests": AFFECTED}
 _LABEL = re.compile(r"(?P<label>" + "|".join(re.escape(k) for k in sorted(_ALIASES, key=len, reverse=True))
@@ -26,16 +31,74 @@ _PLACEHOLDER = re.compile(r"<[^<>\n]+>")
 _NA = re.compile(r"n/a\s*:\s*(?P<reason>.*)", re.IGNORECASE)
 _OMISSION = re.compile(r"\b(?:not (?:re-?)?run|not measured|pending|todo|tbd|none|omitted|delegated)\b"
                        r"|(?<![0-9] )\bskipped\b|^\s*n/a\b", re.IGNORECASE)
+# Any tests, not only the full suite, stay with the author (review r1 P1, PR #1401). ``tests/x.py`` and
+# ``test_x`` are paths/names, not the noun; ``the reviewer's P1`` is a possessive, not a recipient.
+_TESTS = (r"(?:full[- ]suite|(?:test[- ])?suite|test[- ]files?|tests?(?![/\\.]\w)|pytest)\b")
+_REVIEWER = r"\breviewers?\b(?!['’]s)"
 _DELEGATION = (
-    re.compile(r"\breviewers?\b(?P<gap>[^.\n]{0,60}?)\b(?:run|runs|rerun|re-run|execute|executes)\b"
-               r"[^.\n]{0,30}\bfull[- ]suite", re.IGNORECASE),
-    re.compile(r"\bfull[- ]suite\b[^.\n]{0,60}\b(?:delegated|deferred|left|handed|passed on)\b"
-               r"[^.\n]{0,30}\breviewers?\b", re.IGNORECASE),
-    re.compile(r"\bfull[- ]suite\b[^.\n]{0,30}\b(?:to|for|by) (?:the )?reviewers?\b", re.IGNORECASE),
+    re.compile(_REVIEWER + r"(?P<gap>[^.;\n]{0,40}?)\b"
+               r"(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes|(?P<inspection>verify|verifies|check|checks))"
+               r"\s+(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
+               + _TESTS, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"[^.;\n]{0,30}\b(?:delegated|deferred|left|handed|passed on)\b"
+               r"[^.;\n]{0,30}" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"(?:\s+(?:are|is|go|goes|were|remain|remains|stay|stays|run|over))*"
+               r"\s+(?:to|for|by) (?:the )?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b(?:delegat|leav|hand|pass)\w*\b[^.;\n]{0,40}\b" + _TESTS + r"[^.;\n]{0,20}\b(?:to|for)\s+"
+               r"(?:the )?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s+(?:(?:are|is)\s+to|to|will)\s+be\s+"
+               r"(?:run|executed|checked|verified)\s+by\s+(?:the\s+)?" + _REVIEWER, re.IGNORECASE),
+    re.compile(r"\b" + _TESTS + r"\s*:\s*(?:the\s+)?" + _REVIEWER
+               + r"(?=\s*(?:[.;!?\n(]|$|to\s+(?:run|rerun|re-run|execute|verify|check)\b))", re.IGNORECASE),
     re.compile(r"\bdelegat\w*\b[^.\n]{0,40}\bfull[- ]suite\b", re.IGNORECASE),
 )
+_EXECUTION_TESTS = re.compile(
+    r"\b(?:run|runs|rerun|reruns|re-run|re-runs|execute|executes)\s+"
+    r"(?:(?:the|all|any|remaining|affected|rest of the|full|other|new|my|these|those)\s+){0,3}"
+    + _TESTS, re.IGNORECASE)
 _NEGATION = re.compile(r"\b(?:not|never|no)\b|n't\b", re.IGNORECASE)
+# "the reviewer, not the author, runs the tests" negates the author, not the hand-over.
+_NOT_AUTHOR = re.compile(r"\b(?:not|never)\s+(?:by\s+)?(?:the\s+)?authors?\b", re.IGNORECASE)
 
+
+def _negated(line, match):
+    """Negation in the same clause, or an explicit empty reviewer assignment (``: none``)."""
+    if re.match(r"\s*:\s*none\b(?=\s*(?:[.;!?\n]|$))", line[match.end():], re.IGNORECASE):
+        return True
+    before = re.split(r"[.;:!?]", line[max(0, match.start() - 40):match.start()])[-1]
+    return any(_NEGATION.search(_NOT_AUTHOR.sub(" ", text)) for text in (before, match[0]))
+
+
+def delegation(line):
+    """The first non-negated "tests handed to the reviewer" match in ``line``, or None.
+
+    Every match is tried (``finditer``), so a negated phrase earlier on the line cannot hide a real
+    delegation after it; negation does not reach across a clause boundary (review r2 witness).
+    A match is negated by not/never/no before it in its clause or inside it
+    (``tests are not left to the reviewer``).
+    """
+    for pattern in _DELEGATION:
+        for match in pattern.finditer(line):
+            # Checking completed author work is review; requesting another run is delegation.
+            if match.groupdict().get("inspection") and re.match(
+                    r"\s+(?:I|we|the\s+author)\s+(?:ran|executed|checked|verified)\b",
+                    line[match.end():], re.IGNORECASE):
+                # Exempt only the inspection, not a subsequent execution in the same clause.
+                boundary = re.search(r"[.;!?\n]", line[match.end():])
+                end = match.end() + boundary.start() if boundary else len(line)
+                for execution in _EXECUTION_TESTS.finditer(line, match.end(), end):
+                    if not _negated(line, execution):
+                        return execution
+                continue
+            if not _negated(line, match):
+                return match
+    return None
+
+
+def _delegation_problem(match, raw):
+    what = "full suite" if re.search(r"full[- ]suite", match[0], re.IGNORECASE) else "tests"
+    return (f"{what} delegated to the reviewer: {raw.strip()[:80]!r}; the author runs the affected tests "
+            "and the full suite runs in the merge batch (D297)")
 
 _COUNT_TOKEN = re.compile(r"(?:^|(?<=[\s(\[:>,;]))(?P<token>[^\s(\[:>,;]+(?:,\d+)*)\s+"
                           r"(?P<word>passed|failed|errors?)\b", re.IGNORECASE)
@@ -146,6 +209,11 @@ def _passing_run(cwd, sha, label, value, problems):
 
     ``n/a``, ``not run``, ``pending`` ... are not a run, even next to counts copied from elsewhere.
     """
+    if delegation(value) is not None or re.search(_REVIEWER + r"[^.;\n]{0,40}\b(?:run|runs|rerun)\b",
+                                                  value, re.IGNORECASE):
+        problems.append(f"{label}: tests delegated to the reviewer: {value[:80]!r}; the author runs them on "
+                        f"head {sha[:12]} (D297)")
+        return
     if _NA.match(value) or _OMISSION.search(value):
         problems.append(f"{label} is not evidence: {value[:80]!r}; run the tests on head {sha[:12]}")
         return
@@ -160,22 +228,28 @@ def _passing_run(cwd, sha, label, value, problems):
         problems.append(f"{label} has failures")
 
 
-def _full_suite(cwd, sha, value, affected, problems):
-    if _OMISSION.search(value) or any(p.search(value) for p in _DELEGATION):
-        if any(p.search(value) for p in _DELEGATION) or re.search(r"reviewer", value, re.IGNORECASE):
-            problems.append("full suite delegated to the reviewer: the author runs it (rule 49)")
+def _full_suite(cwd, sha, value, problems):
+    """Optional ``Full suite:`` line [D297]: the exact deferral, or a real suite_slot run on head/ancestor."""
+    delegated = any(p.search(value) for p in _DELEGATION) or re.search(r"reviewer", value, re.IGNORECASE)
+    if delegated or _OMISSION.search(value):
+        if delegated:
+            problems.append("full suite delegated to the reviewer: the author runs the affected tests and "
+                            "the full suite runs in the merge batch (D297)")
         else:
             problems.append(f"full suite is not evidence: {value[:80]!r}")
+        return
+    if _DEFERRED.fullmatch(value):
+        return
+    if re.search(r"\bdeferr", value, re.IGNORECASE):
+        problems.append(f"full suite deferral must read exactly '{FULL_DEFERRED}': {value[:80]!r}")
         return
     if "suite_slot" not in value:
         problems.append("full suite not run through suite_slot.py (rule 43)")
     commits = _commits(cwd, value)
     if not commits:
         problems.append("full suite names no commit")
-    elif sha not in commits:
-        older = [c for c in commits if _ancestor(cwd, c, sha)]
-        if not older or not affected:
-            problems.append(f"full suite not on head {sha[:12]} (a rework needs an Affected tests line on head)")
+    elif sha not in commits and not any(_ancestor(cwd, c, sha) for c in commits):
+        problems.append(f"full suite not on head {sha[:12]} or an ancestor of it")
     counts, malformed = _counts(FULL, value, problems)
     if malformed:
         return
@@ -194,7 +268,7 @@ def check_handoff(text, sha, output, cwd="."):
     if _resolve(cwd, sha) != sha:
         return [f"sha is not a commit in {Path(cwd).resolve()}: {sha}"]
     found = _evidence_lines(text)
-    for label in (*REQUIRED, AFFECTED):
+    for label in (*REQUIRED, FULL):
         values = found.get(label, [])
         if label in REQUIRED and not values:
             problems.append(f"missing {label}: line")
@@ -209,7 +283,7 @@ def check_handoff(text, sha, output, cwd="."):
     if affected is not None:
         _passing_run(cwd, sha, AFFECTED, affected, problems)
     if FULL in one:
-        _full_suite(cwd, sha, one[FULL], affected is not None, problems)
+        _full_suite(cwd, sha, one[FULL], problems)
     if EVALS in one:
         try:
             check_receipt(f"{EVALS}: {one[EVALS]}", output)
@@ -236,13 +310,8 @@ def check_handoff(text, sha, output, cwd="."):
             continue
         # Quoted literals (fenced blocks, `inline code`) are examples, not the author's statement.
         line = "" if fenced else re.sub(r"`[^`\n]*`", "``", raw)
-        for pattern in _DELEGATION:
-            match = pattern.search(line)
-            negated = (_NEGATION.search(line[max(0, match.start() - 40):match.start()]) or
-                       (match.groupdict().get("gap") and _NEGATION.search(match["gap"]))) if match else False
-            if match and not negated:
-                problems.append(f"full suite delegated to the reviewer: {raw.strip()[:80]!r}")
-                break
+        if (match := delegation(line)) is not None:
+            problems.append(_delegation_problem(match, raw))
     return list(dict.fromkeys(problems))
 
 

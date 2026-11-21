@@ -43,9 +43,11 @@ schemas = {{k: v.model_json_schema() for k, v in models.SCHEMAS.items()}}
 # Strict snapshot includes #138 decision-ID annotations in three Spec descriptions;
 # provenance extraction and import order must preserve those annotations too; RoofStructure.thickness_m (#91).
 # IntakeSources also includes the source-specific opening-waiver question (#650).
-# Approval.ref, the Gate 1 answer reference (#1205).
+# Approval.ref (#1205), SourceRef.kind drawing/sheet (#1206), PartsList D tier,
+# allocated-budget description and Approval.parts_sha256 (#1309); optional parts-local
+# finish_sheets/finish_refs and their definitions (#1366). Shared SourceRef is unchanged.
 assert hashlib.sha256(json.dumps(schemas, sort_keys=True).encode()).hexdigest() == (
-    'e63a76b19a627a84ac59d505ae3cc61df56b6556c9ccda498fe48fa43ab11712'
+    'ec0d1aae220d69a6cd4b8090c2177c24198ea3234a9e0c209df8d7295ed572f8'
 )
 """)
 

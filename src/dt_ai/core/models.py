@@ -1,6 +1,6 @@
 from typing import Annotated, Literal
 
-from pydantic import Field, model_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from dt_ai.core.provenance import Approval, Contract, Finite, Hash, Name, SourceRef
 
@@ -55,9 +55,31 @@ class WindowType(Contract):
         return self
 
 
+class HeightSource(Contract):
+    """File plus sheet/cell, level or drawing handle; never infer a vertical CRS from MSK-77."""
+    file: str = Field(min_length=1, pattern=r"\S")
+    locator: str = Field(min_length=1, pattern=r"\S")
+
+
 class Placement(Contract):
+    model_config = ConfigDict(json_schema_extra={"allOf": [{
+        "if": {"required": ["project_zero_m"], "properties": {"project_zero_m": {"type": "number"}}},
+        "then": {"required": ["height_system", "height_source"], "properties": {
+            "height_system": {"enum": ["BSV-77", "Baltic 1977", "MSK local", "unknown"]},
+            "height_source": {"type": "object"}}}}]})
     coordinate_system: Literal["SYNTHETIC_LOCAL", "MSK-77"]
-    project_zero_m: Finite | None = None
+    project_zero_m: Annotated[float, Field(strict=True, allow_inf_nan=False)] | None = None
+    height_system: Literal["BSV-77", "Baltic 1977", "MSK local", "unknown"] | None = None
+    height_source: HeightSource | None = None
+    project_zero_fbx_z_m: Annotated[float, Field(strict=True, allow_inf_nan=False)] | None = None
+    project_zero_fbx_source: HeightSource | None = None
+    ground_mark_m: Annotated[float, Field(strict=True, allow_inf_nan=False)] | None = None
+    ground_mark_source: HeightSource | None = None
+
+    def heights(self, model_max_z_m: float) -> dict[str, float]:
+        """D279: GeoJSON h_relief is project zero, not the terrain insertion mark."""
+        from dt_ai.core.heights import height_values
+        return height_values(self.project_zero_m, self.project_zero_fbx_z_m, model_max_z_m)
     insertion_xy: list[Finite] | None = Field(default=None, min_length=2, max_length=2)
     source: SourceRef
     status: Literal["unknown", "proposed", "approved"]
@@ -65,6 +87,12 @@ class Placement(Contract):
 
     @model_validator(mode="after")
     def confirmed_coordinates(self):
+        if self.project_zero_m is not None and (self.height_system is None or self.height_source is None):
+            raise ValueError("project_zero_m requires height_system and height_source; migrate the named placement job")
+        for value, source in ((self.project_zero_fbx_z_m, self.project_zero_fbx_source),
+                              (self.ground_mark_m, self.ground_mark_source)):
+            if (value is None) != (source is None):
+                raise ValueError("height value and its source must be supplied together")
         if self.status == "approved" and (self.project_zero_m is None or self.insertion_xy is None or not self.approval):
             raise ValueError("Approved placement requires coordinates, elevation, and approval")
         return self

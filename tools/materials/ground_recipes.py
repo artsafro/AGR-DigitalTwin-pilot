@@ -1,6 +1,7 @@
 """Procedural Ground diffuse maps for Vatutino (issue 319, [D117], [D097], GND-11).
 
-Pillow and numpy only. Sourced paver faces (`nominal_tile_mm`) and gravel
+Rasterization uses Pillow and numpy only; provenance uses the shared stdlib exporter [D332].
+Sourced paver faces (`nominal_tile_mm`) and gravel
 fractions (`fraction_mm`) set the pattern scale. Pixel periods and joints must
 match those sizes at the profile px/m; a mismatch raises GroundRecipeError
 before any pixel is written. The periodic supertile closes with at most 1% scale error per axis;
@@ -255,7 +256,12 @@ def delivery_directory(version: str) -> Path:
     return DELIVERY_DIR.parent / version
 
 
-def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
+def write_delivery(recipe_path, out_dir, *, version=None, address=None, source_id=None) -> dict:
+    """Write maps/records; default id uses the recipe's address before the output-address override."""
+    # Shared exporter provenance, not a second record format [D332]. Script mode also resolves the repo.
+    if str(_REPO) not in sys.path:
+        sys.path.insert(0, str(_REPO))
+    from adapters.max.agr_tools import build_manifest as bm
     recipe_path = Path(recipe_path)
     out_dir = Path(out_dir)
     if _resolves_to_input(out_dir, recipe_path):
@@ -269,12 +275,23 @@ def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
         )
     if out_dir.exists() and any(out_dir.iterdir()):
         raise GroundRecipeError("version folder already contains files")
+    recipe_hash = bm.sha256_file(recipe_path)
     recipe = load_recipe(recipe_path)
+    try:
+        source_id = bm._source_id(recipe['address'] + '.ground.recipe' if source_id is None else source_id)
+    except ValueError as exc:
+        raise GroundRecipeError(str(exc)) from exc
     if address is not None:
         recipe["address"] = address
     for slot in CANONICAL_SLOTS:
         for profile in _PROFILE_SIZE:
             texture_filename(recipe["address"], slot, profile)
+    store = Path(bm.derivation_store(out_dir)) / out_dir.name
+    first_name = texture_filename(recipe['address'], CANONICAL_SLOTS[0], 'npm')
+    record = store / bm.derivation_filename(first_name)
+    for path in (record, Path(str(record) + '.partial')):
+        if os.path.lexists(path) or _same(path, recipe_path):
+            raise GroundRecipeError('derivation record exists or aliases input: ' + str(path))
     if _resolves_to_input(out_dir, recipe_path):
         raise GroundRecipeError("output path resolves to an input")
     rendered = {}
@@ -302,6 +319,8 @@ def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
         "maps": entries,
     }
     manifest_bytes = json.dumps(manifest, indent=2).encode("utf-8")
+    if bm.sha256_file(recipe_path) != recipe_hash:
+        raise GroundRecipeError('master_changed_during_export: ' + str(recipe_path))
     if out_dir.exists() and any(out_dir.iterdir()):
         raise GroundRecipeError("version folder already contains files")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -312,6 +331,12 @@ def write_delivery(recipe_path, out_dir, *, version=None, address=None) -> dict:
             stream.write(payload)
     (out_dir / "contact_sheet.jpg").write_bytes(sheet_buffer.getvalue())
     (out_dir / "manifest.json").write_bytes(manifest_bytes)
+    try:
+        bm.write_export_derivation([out_dir / name for name, _ in files], recipe_path, store,
+            bm.git_commit(_REPO), master_sha256=recipe_hash, role='ground',
+            source_id=source_id)
+    except (ValueError, OSError) as exc:
+        raise GroundRecipeError(str(exc)) from exc
     return manifest
 
 
@@ -322,13 +347,15 @@ def main(argv=None) -> int:
     deliver.add_argument("--recipe", default=str(_DEFAULT_RECIPE))
     deliver.add_argument("--out", required=True)
     deliver.add_argument("--version", default="v001")
-    deliver.add_argument("--address")
+    deliver.add_argument('--address')
+    deliver.add_argument('--source-id', help='stable recipe identity (default: recipe address + .ground.recipe)')
     try:
         args = parser.parse_args(list(argv) if argv is not None else None)
     except SystemExit as exc:
         return int(exc.code) if exc.code else 0
     try:
-        manifest = write_delivery(args.recipe, args.out, version=args.version, address=args.address)
+        manifest = write_delivery(args.recipe, args.out, version=args.version, address=args.address,
+                                  source_id=args.source_id)
     except GroundRecipeError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

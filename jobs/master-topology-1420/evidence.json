@@ -1,0 +1,23 @@
+{
+  "root": "G:\\Мой диск\\AGR-evidence\\1420-master-topology\\v001",
+  "files": {
+    "1420-native.py": "d726a80638b569b927a834e90aa7c3337fa6bd7b7695466f8dab08cf06471d79",
+    "1420-slots.py": "d9e826dfcde7e1cbb66a199a2202c4513f11a3cfeafdc5efd57cafefdad5313f",
+    "2PSU275_VPM_NPM_quads_v001.max": "376ad615a272f9de02beaf85a62867352645387e41a726836e4aa36cc94e9295",
+    "elv-max.json": "feadb3ba17f066f2b94c8737b47cc60f2f5c9488222679960d223b1479e9b504",
+    "kpp1-blender.json": "c54901a41cb7aa8239cca8dbba1d64ce1603ccd4b0f2d8442cd296b869bbb0e0",
+    "kpp1-final.json": "c54901a41cb7aa8239cca8dbba1d64ce1603ccd4b0f2d8442cd296b869bbb0e0",
+    "master-quad-v002.blend": "fb566ff5e10ed92f5e75afe4a355ca212df569c456f58e18819d1edbb85553bb",
+    "master-topology-native-synthetic.json": "913927274f03a4421f4330cf67001331b72163153f8e1d5e10071fe44da3b6ef",
+    "native-run-v2.json": "ffdaf50fd2320ca5daf827b5150a89a6e7cdc1ab324fa71f21f628c2b1a1e263",
+    "native-run-v3.json": "7f283d90dc302de1ac2484e40836c2d5be6805d8fcefec9e1da7169b9716eec2",
+    "native-run.json": "698436eb1a7ef2b78cafb7ea846cf0e659bf184b24e4713d0acd3c7c2730a41d",
+    "native-slot-diagnostic.json": "2ea674ec352d340c1501d422897ad502233e06c3889967a5d5c6aa22ec7d1326",
+    "native-slots-run-v2.json": "b1a70ae022559c2c3bb1787c858c611b109b6366bf6bc0dd5206a2d361b1129d",
+    "native-slots-run.json": "436a0b6743d4ee81d05d4787a85e754b01f72db71ef964bae1d09c70b52cc568",
+    "native-synthetic-run-v2.json": "cb983bc2545fd7781a3ba5d75bc6135e8ff746a3401743c11567b0a53fa53c10",
+    "native-synthetic-run.json": "15c9839befda7fefacd0dd0594234351da567953b01b141119e74cba792e85f8",
+    "psu275-max.json": "686b03eb5bf236d2b3e0e10aed680bb9e85483b599fe27fe46266b4a9c4441e7",
+    "SM_Elevatornaya_Vl_1_A_001_work_quads.fbx": "a6ad1a733c07c72e7590bef96dfa2132886ad4ffbc1fba02eb2ff8dde0a80ef1"
+  }
+}

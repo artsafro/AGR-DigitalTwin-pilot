@@ -171,6 +171,12 @@ def bind(fbx, spec_path, out_fbx):
         path_mode="COPY" if embed else "ABSOLUTE",
         embed_textures=embed,
     )
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from adapters.max.agr_tools.export_meta import record_export
+    points = [(o.matrix_world @ v.co).z for o in bpy.context.scene.objects
+              if o.type == 'MESH' and not o.name.startswith('UCX_') for v in o.data.vertices]
+    record_export(out_fbx, source=f'{fbx}; binding plan {spec_path}',
+                  top=float(max(points)) if points else 'unknown', profile=spec['profile'])
 
 
 if not args:

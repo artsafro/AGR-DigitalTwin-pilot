@@ -105,6 +105,82 @@ def test_model_entry_links(relative):
             assert anchor in slugs, f"{relative}: missing anchor {target}"
 
 
+GROUND_VPM = ROOT / "docs/scenarios/ground-vpm.md"
+GROUND_STAGES = (
+    "sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx",
+    "placement", "npm", "package", "validate", "sintez",
+)
+
+
+def _ground_stages(text):
+    return re.findall(r"^\| \d+ — `([a-z]+)` \|", text, re.M)
+
+
+def test_ground_vpm_ready():
+    cell = next(c for c in TABLE["cells"] if c["id"] == "ground-vpm")
+    assert cell["status"] == "ready"
+    assert cell["card"] == "docs/scenarios/ground-vpm.md"
+    result = router.check({"prompt": "Ground VPM"})
+    assert cell["card"] in result["hookSpecificOutput"]["additionalContext"]
+
+
+def test_ground_vpm_stage_order():
+    import yaml
+
+    stages = yaml.safe_load((ROOT / "docs/architecture/ground-route.events.yaml").read_text(encoding="utf-8"))
+    assert tuple(s["id"] for s in stages["stages"]) == GROUND_STAGES
+    assert tuple(_ground_stages(GROUND_VPM.read_text(encoding="utf-8"))) == GROUND_STAGES
+
+
+def test_ground_vpm_gates():
+    text = GROUND_VPM.read_text(encoding="utf-8")
+    for gate in ("inputs", "parts", "operations", "budgets", "export_readback", "report", "visual", "checker"):
+        assert f"| `{gate}` |" in text
+    for token in ("Gate 1", "before build", "all eight", "passed=true", "final SINTEZ",
+                  "Evidence checklist", "Stop and ask", "Minimal contract"):
+        assert token in text
+
+
+def test_ground_vpm_rules():
+    text = GROUND_VPM.read_text(encoding="utf-8")
+    for token in (
+        "[D293]", "Blender / Max / AGR Tools", "one-line why", "flat Ground", "relief LAST",
+        "[D298]", "no UCX at any thickness", "[D299]", "stand-in", "[D300]", "Artem",
+        "[D301]", "<original>__<job>", "job manifest", "[D302]", "deleted", "placement report",
+        "[D312]", "n-gon", "per-object triangle count", "face share", "before export triangulation",
+        "6892291256", "opacity", "ALWAYS", "separate opacity", "diffuse with alpha",
+        "50k / MAF 60k / Flora 70k", "[D167]", "2–3 options", "Artem cuts",
+        "6893094521", "4096", "3.8–4.0 m", "overlap/stack", "no UV-overlap check",
+        "same coordinates", "Ground geometry is the same", "512–1706", "S_ter - S_pz",
+    ):
+        assert token in text, token
+
+
+def test_ground_vpm_red_blocks():
+    text = GROUND_VPM.read_text(encoding="utf-8")
+    rows = {match[0]: match[1] for match in re.findall(
+        r"^\| \d+ — `([a-z]+)` \| (.+)$", text, re.M)}
+    for stage in ("zero", "surfaces", "textures", "relief", "ucx", "placement", "sintez"):
+        assert "RED" in rows[stage], stage
+    for token in ("Vatutino-only", "agr ucx", "unavailable", "no generic", "Conform",
+                  "projection misses", "not_run", "not a pass", "C18", "no D-id"):
+        assert token in text, token
+
+
+def test_ground_vpm_stage_mutations():
+    text = GROUND_VPM.read_text(encoding="utf-8")
+    # Independent malformed sequences: empty, every omitted/repeated stage and each adjacent swap.
+    rows = re.findall(r"^\| \d+ — `[a-z]+` \|.+$", text, re.M)
+    assert len(rows) == len(GROUND_STAGES)
+    mutants = [""]
+    for row in rows:
+        mutants.extend((text.replace(row, ""), text.replace(row, row + "\n" + row)))
+    for left, right in zip(rows, rows[1:]):
+        mutants.append(text.replace(left, "SWAP_ROW").replace(right, left).replace("SWAP_ROW", right))
+    for mutant in mutants:
+        assert tuple(_ground_stages(mutant)) != GROUND_STAGES
+
+
 def test_table_points_at_real_files():
     ids = [c["id"] for c in TABLE["cells"]]
     assert len(ids) == len(set(ids))
@@ -122,6 +198,12 @@ def test_table_points_at_real_files():
 def test_card_links_and_decisions_exist(card):
     text = card.read_text(encoding="utf-8")
     for target in re.findall(r"\]\(([^)#]+)(?:#[^)]*)?\)", text):
+        if target.startswith(("https://", "http://")):
+            # External decision sources are not repository-relative files.
+            from urllib.parse import urlsplit
+
+            assert urlsplit(target).netloc, f"{card.name}: malformed external link {target}"
+            continue
         assert (card.parent / target).resolve().exists(), f"{card.name}: {target}"
     for path in re.findall(r"`((?:jobs|tools|src|library|docs|\.agents)/[^`*<> ]+)`", text):
         assert (ROOT / path).exists(), f"{card.name}: {path}"

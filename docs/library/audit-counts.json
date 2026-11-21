@@ -1,0 +1,204 @@
+{
+  "filesystem_counts": {
+    "windows": {
+      ".blend": 1,
+      ".ini": 2,
+      ".max": 1
+    },
+    "maf": {
+      ".max": 932,
+      ".blend": 4,
+      ".xlsx": 1,
+      ".ini": 89,
+      ".zip": 116,
+      ".jsonl": 3,
+      ".png": 1032,
+      ".json": 255,
+      ".txt": 6,
+      ".py": 14,
+      ".log": 50,
+      ".html": 4,
+      ".jpg": 4,
+      ".pdf": 1,
+      ".fbx": 1022,
+      ".tx": 26
+    },
+    "flora": {
+      ".ini": 20,
+      ".max": 2,
+      ".png": 341,
+      ".cgeo": 1
+    },
+    "roof_equipment": {}
+  },
+  "native_summary": [
+    {
+      "source": "G:\\Мой диск\\AGR-assets\\windows\\window_library_preview_v002.blend",
+      "copy": "G:\\Мой диск\\AGR-evidence\\1259-windows-library\\audit-v002\\windows-00-copy.blend",
+      "sha256": "8ffa3080af999f14992dc4dd6dc9e84cf55baf40a2bb4ae8da444c900020db5d",
+      "objects": 403,
+      "types": {
+        "MESH": 335,
+        "FONT": 67,
+        "CAMERA": 1
+      },
+      "units": "METRIC",
+      "scale_length": 1.0,
+      "nonidentity_transform": 68,
+      "hidden": 0,
+      "unused_material_slots": 0,
+      "orphans": [],
+      "unsupported_count": 68,
+      "triangles": 1340
+    },
+    {
+      "source": "G:\\Мой диск\\AGR-assets\\maf\\maf-npm.blend",
+      "copy": "G:\\Мой диск\\AGR-evidence\\1259-windows-library\\audit-v002\\maf-00-copy.blend",
+      "sha256": "52ef2222b13a7cb4f4c3b728ee27e827cfaeb49499f3e7d7d03a5f7364d661dd",
+      "objects": 368,
+      "types": {
+        "MESH": 368
+      },
+      "units": "METRIC",
+      "scale_length": 1.0,
+      "nonidentity_transform": 368,
+      "hidden": 96,
+      "unused_material_slots": 81,
+      "orphans": [],
+      "unsupported_count": 5,
+      "triangles": 734645
+    },
+    {
+      "source": "G:\\Мой диск\\AGR-assets\\maf\\projects\\vatutino\\gen-v001\\showcase\\showcase_rows_v006p.blend",
+      "copy": "G:\\Мой диск\\AGR-evidence\\1259-windows-library\\audit-v002\\maf-01-copy.blend",
+      "sha256": "98b8cd9ab748a17a95f3027841af6e29ec4dcbedac983c31ed78ae069f5fac8f",
+      "objects": 31,
+      "types": {
+        "CAMERA": 1,
+        "FONT": 10,
+        "MESH": 20
+      },
+      "units": "METRIC",
+      "scale_length": 1.0,
+      "nonidentity_transform": 31,
+      "hidden": 0,
+      "unused_material_slots": 80,
+      "orphans": [
+        "images:Render Result"
+      ],
+      "unsupported_count": 13,
+      "triangles": 3040
+    },
+    {
+      "source": "G:\\Мой диск\\AGR-assets\\maf\\projects\\vatutino\\gen-v001\\showcase-2\\showcase_rows_v006p.blend",
+      "copy": "G:\\Мой диск\\AGR-evidence\\1259-windows-library\\audit-v002\\maf-02-copy.blend",
+      "sha256": "90b847aa9e4b1db8c7c3a28b17ecf782a28d8c8e300ea4f6dbca767c620e6f90",
+      "objects": 31,
+      "types": {
+        "CAMERA": 1,
+        "FONT": 10,
+        "MESH": 20
+      },
+      "units": "METRIC",
+      "scale_length": 1.0,
+      "nonidentity_transform": 31,
+      "hidden": 0,
+      "unused_material_slots": 80,
+      "orphans": [
+        "images:Render Result"
+      ],
+      "unsupported_count": 13,
+      "triangles": 3040
+    },
+    {
+      "source": "G:\\Мой диск\\AGR-assets\\maf\\projects\\vatutino\\gen-v001\\showcase-3\\showcase_rows_v006p.blend",
+      "copy": "G:\\Мой диск\\AGR-evidence\\1259-windows-library\\audit-v002\\maf-03-copy.blend",
+      "sha256": "79f19478467319a3741e06c6e747aee2c613dd5a6a470e80ededa6f2c3c2aa38",
+      "objects": 31,
+      "types": {
+        "CAMERA": 1,
+        "FONT": 10,
+        "MESH": 20
+      },
+      "units": "METRIC",
+      "scale_length": 1.0,
+      "nonidentity_transform": 31,
+      "hidden": 0,
+      "unused_material_slots": 80,
+      "orphans": [
+        "images:Render Result"
+      ],
+      "unsupported_count": 13,
+      "triangles": 3040
+    }
+  ],
+  "limitations": [
+    "MAX/CGEO scenes not natively opened; historical committed census used for their contents",
+    "No roof_equipment directory yet; #1257 owns first roof library"
+  ],
+  "flora_historical": [
+    {
+      "source": {
+        "scene": "FLORA_Union_v1.max",
+        "version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+        "units": "meters",
+        "system_scale": 1.0,
+        "unit_in_m": 1.0,
+        "inventory_seconds": 0.529781199991703,
+        "inventory_timings_seconds": [
+          0.529781199991703,
+          0.463096300009056,
+          0.5083665999991354
+        ]
+      },
+      "counts": {
+        "plant": 90,
+        "size_reference": 4,
+        "label": 326,
+        "display_envelope_unverified": 80,
+        "nonmesh": 1,
+        "planter": 5
+      },
+      "hidden_labels": 4
+    },
+    {
+      "source": {
+        "scene": "FLORIO_2BT_2022.max",
+        "version": "#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\")",
+        "units": "meters",
+        "system_scale": 1.0,
+        "unit_in_m": 1.0,
+        "inventory_seconds": 0.18157650000648573,
+        "inventory_timings_seconds": [
+          0.18157650000648573,
+          0.15894359999219887,
+          0.12058049999177456
+        ]
+      },
+      "counts": {
+        "label": 23,
+        "plant": 46
+      },
+      "hidden_labels": 0
+    }
+  ],
+  "flora_current": {
+    "species": 61,
+    "by_type": {
+      "tree": 20,
+      "bush": 31,
+      "hedge": 0,
+      "flower": 9,
+      "climber": 1
+    },
+    "with_vpm": 38,
+    "merged_duplicates": 37,
+    "maps": {
+      "approved": 61,
+      "pending_review": 0,
+      "missing": 0
+    },
+    "shared_stand_in_gaps": 15,
+    "unresolved": 1
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "path": "G:\\Мой диск\\AGR-evidence\\1302-pdf-dimensions-recall\\evidence-v001",
+  "fallback": "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_bcedd740\\tmp\\evidence-v001",
+  "members": 35,
+  "sha256sums_sha256": "e74f1cac1d5fb348c62cc7b1a259590d2bfd16aad7241051f157ba0b5c02c309",
+  "mounted_copy_verified": true,
+  "cloud_sync_completion": "not_measured",
+  "upstream_native_evidence": "G:/Мой диск/AGR-evidence/1254-pdf-binding/evidence-v001/"
+}

@@ -1,0 +1,10 @@
+{
+  "corpus_sha256": "351cbe99af8fb29b838d969baaa0c18bca49eb341e9ddcfe0b08d70690918b70",
+  "signatures": {
+    "L03": "25f035159d7f1f8424a6a83a4a9bd3c91aab122ade52c425797f4226bb8ca425",
+    "KNS": "474f188c8c799bec9aa93225ff23a0c4baa9fb00fce88db3a3856203160a6c36",
+    "KNS-floor": "3b2b44d77a341f8a31b41e6a894811891b340e109a1ba339c1a7d93d3fe6254a"
+  },
+  "guard_version": 2,
+  "corpus_hash_format": "canonical-json-sort-keys-utf8-no-whitespace"
+}

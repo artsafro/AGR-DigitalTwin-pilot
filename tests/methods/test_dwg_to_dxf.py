@@ -7,10 +7,13 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
 import random
 import subprocess
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOL = ROOT / "tools" / "methods" / "body" / "dwg_to_dxf.py"
@@ -205,11 +208,21 @@ def test_original_never_reaches_autocad_brute_force(tmp_path):
     assert checked == 20
 
 
-def test_cli_dry_run_in_a_fresh_process(tmp_path):
+@pytest.mark.parametrize("inherited_encoding", ["utf-8", "cp1251", "ascii", "utf-16"])
+def test_cli_dry_run_in_a_fresh_process(tmp_path, monkeypatch, inherited_encoding):
+    # Detached Windows workers need not inherit the interactive shell's UTF-8 settings.
+    monkeypatch.setenv("PYTHONUTF8", "0")
+    monkeypatch.setenv("PYTHONIOENCODING", inherited_encoding)
     src = _source(tmp_path)
     work = tmp_path / "w"
     argv, out, rec = _args(src, work)
+    # encoding= only configures the parent reader, not the child Python writer.
+    # Match both ends without depending on shell/xdist/detached-process defaults.
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
     proc = subprocess.run([sys.executable, str(TOOL), *argv, "--dry-run"], capture_output=True, text=True,
-                          encoding="utf-8", cwd=ROOT)
+                          encoding="utf-8", cwd=ROOT, env=env)
     assert proc.returncode == 0, proc.stderr
-    assert json.loads(proc.stdout)["source"]["sha256"] == _sha(src) and not work.exists()
+    plan = json.loads(proc.stdout)
+    assert plan["source"] == {"path": str(src), "sha256": _sha(src)}
+    assert plan["dry_run"] is True and not work.exists()
+    assert os.environ["PYTHONIOENCODING"] == inherited_encoding

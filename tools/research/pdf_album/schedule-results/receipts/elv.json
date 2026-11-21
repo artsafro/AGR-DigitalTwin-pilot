@@ -1,0 +1,492 @@
+{
+  "album": "elv",
+  "album_index_sha256": "4e672f71229bf2c8ae026425249579fe3019c38c3e14032f8dfaba72b4229bf5",
+  "engines": {
+    "primary": "pymupdf 1.28.2 find_tables",
+    "secondary": "pdfplumber 0.11.10 find_tables"
+  },
+  "materials": {
+    "entries": 30,
+    "merged_unresolved": 0,
+    "missing": 0,
+    "present": 30,
+    "single_engine": 0,
+    "suspect": 0,
+    "unbound": 30
+  },
+  "output_sha256": {
+    "materials.json": "86309f62d17c7ae5fa7a021ce42b069981e5cde59df9d6079bd7f7918b2cd760",
+    "schedules.json": "5d6448ddb5364658e160ccc90fc7c1628c70b333f7c9f9187c97868e3bcaed0b",
+    "schedules/p27-t1.csv": "be347d1b292ee1efaa5a142de7c6c6e878a8689e10d02adc82c54c57c094bc07",
+    "schedules/p27-t1.json": "20e9a08598577b8d9e7613d17da7d234d8e4c23b088b45368d6635995058cb40",
+    "schedules/p27-t2.csv": "cd137dc64616a2655e9627bc46e7a401686a9a1170720bc94f7f3a3f7a4db76a",
+    "schedules/p27-t2.json": "193c93f2dcf62a3e6b68f7822d3f7d4dc74f0e501663fceffe82625506a51dc2",
+    "schedules/p27-t3.csv": "8f5eed9e2925e3e8e69c22e517417b95b4aac18341db52cbb344d8ed7edf8361",
+    "schedules/p27-t3.json": "388b3221c19522eb0ff36bfe6efa021cbd4e85fd30e201bf4c2f77fcea6fff91",
+    "schedules/p27-t4.csv": "a054cbc8d52ac624486b0982b08812fef8bc3a211dff37b55637774f38838fcf",
+    "schedules/p27-t4.json": "3e446e0e7d7bc9a9c3d46d1d97fa794e9ccd679cce13f66e5f297527b24f5b1c",
+    "schedules/p29-t1.csv": "14dd2715d3fbdcad9fe167f064d207bc16f892917966325ce7c7a5339cb582dd",
+    "schedules/p29-t1.json": "d859319dbc1a2631aa585c66b3f7aab230b96f5d9180492eb00d48537bacb762",
+    "schedules/p29-t2.csv": "969a588e6113cff7188e7e5c9d342ee6b88b50d63084abca3be53dd947585737",
+    "schedules/p29-t2.json": "a4c128931e934d4cecf1fc8a64316b2a8dd5eac327e71ede636809dc4ccd06d5",
+    "schedules/p29-t3.csv": "d8933de966cb22f3465655567c5f55a9110d4f0619979624a760bb9848b4cb1c",
+    "schedules/p29-t3.json": "e32a59c8108bba607a1485161009aeeb6e9f7cd60c04fe06bd80983cd18c6c66",
+    "schedules/p3-t1.csv": "03a351d15c516283a043a719b67ff9148a65b1006671cffd8e8826457e7f2966",
+    "schedules/p3-t1.json": "7c7b178e02f6f3367b95599b837fc82659cfd7074ab078a0e780fad6fcf28c6d",
+    "schedules/p30-t1.csv": "d4530b269c558732520d08a5726da73bb1a0f568cc28df0fefcf67927edc1729",
+    "schedules/p30-t1.json": "44ce245be94bc9f041d9b2a1a6c379b35a20ce50f2d5e052f11d1e634b6356f0",
+    "schedules/p30-t2.csv": "21b7a813f05bdeaabe811f482b4cb07267720487528f552102c2dd1a8595c3f3",
+    "schedules/p30-t2.json": "0803bb6f9a84fc39837189475d055e4bd852a85604b08840fae97336151b01b3",
+    "schedules/p30-t3.csv": "41552a98028a92b77e950e2921199979c780516838d034c5f86f337857c869aa",
+    "schedules/p30-t3.json": "bc5392a2860740ff24ec3c8a9c77bf1c3abecb797fd9dd09a41878d1dd8eb165",
+    "schedules/p30-t4.csv": "582d5a206d08530ebd4a57dc90c5bf9e0555f9635265d5a3dd802a82faf034f5",
+    "schedules/p30-t4.json": "830a880f826af55662afb74f005b11d79c1f51ae37fbace271b09667478c7099",
+    "schedules/p30-t5.csv": "ae1f50616bf4d3ea24e5b247db0c81164ff2c130ad6f5d3a688ef1b4ed5f5e33",
+    "schedules/p30-t5.json": "1930544d211444e69a359853cb62df58dfcdc94b841aaeca4cdcf2502fac559e",
+    "schedules/p4-t1.csv": "535046ab2523e8157b2fd1797c0c1aafc0e24b2d40c541b3c7ab33d5a4797ce8",
+    "schedules/p4-t1.json": "69d9fa4d2ed6de6e7d9d45beb7dca549d2b33a8f4a997b8f4e94b511e972fff4",
+    "schedules/p4-t2.csv": "bc26922b39c2ecd9abf002550c6b3512d5ab5520a812a4bdca802d1aad7b259b",
+    "schedules/p4-t2.json": "89ae25b26c2dfef1ead2ac7e1c7bd2be14785823ffa4fbabe2a5e162f4fd5ded",
+    "schedules/p4-t3.csv": "40c49e33c4f8b158b46812b88d16457eafb1a95c3a6677a4da18a50d7902d3e2",
+    "schedules/p4-t3.json": "f4597a15bf289cc2d8fa8db12dfbe4d6420cbf5bf500da3ae16076d4c9bdb253",
+    "schedules/p5-t1.csv": "5fb744a4e3e4ca7f97e4e66fd891c557c73758f8c65ceb78e1335aa98e662f81",
+    "schedules/p5-t1.json": "8569affb3ff6dbf64fff9bbd86649607d9bafc48aa2b39fbfc8f4ed11c22f788",
+    "schedules/p5-t2.csv": "110974d557654cb1d08bcac6127a89c8c6c4d11e686ec0488c460bae1e2d1514",
+    "schedules/p5-t2.json": "747ebda9f2296daf1dd60dd59a4b76380ff3a95572d0016900ec33b1bab48e2b",
+    "schedules/p5-t3.csv": "c952d0aad461266db736d80177aa2ce6e67d30fa338934a970582a75b8c26dcf",
+    "schedules/p5-t3.json": "7ff35d051a333d1a5d3fd4b83c6d91475059947a9f25cc2a75d8e14f6fd71d4e",
+    "schedules/p5-t4.csv": "00506c05686693e7d9662136d9192bd0f3c255a2e69a46465fc533a34f75a11e",
+    "schedules/p5-t4.json": "43dcb6a394161208d00ad7018e1c26eb388a545842efabc065dfacb2a05444bb",
+    "schedules/p5-t5.csv": "a76f10762a8c75f41913c83bace0cab1b3015cc96e0f810fdc8dd65eb0cf64cc",
+    "schedules/p5-t5.json": "8ad60a522f0f5ffef9f524d7ad9ec0f1f1541f7d75407b4dfec616ab01e959fc",
+    "schedules/p5-t6.csv": "b128709500eefb216597306d1f0838fcc638238a3ec9f473a8d5b3d1849bca23",
+    "schedules/p5-t6.json": "d2338ea2ecb5d22f0825c662dd2df98cfea755628a548392c4dde240ccd7cc8c",
+    "schedules/p5-t7.csv": "80335fa0d5e91c27c474adbc74233c0f17e216aa1148a053b40f9ec7e58bd6c8",
+    "schedules/p5-t7.json": "c4b54e4fcd56074c6a3c02747df31645f3330c36cf5d909b460fb961b0e7e047",
+    "schedules/p5-t8.csv": "8e40b3837ce1001c3eeef9df8d859fea711b20db53bbc94440a599b9fbd77e62",
+    "schedules/p5-t8.json": "3ad65414753b93d47c711a441640f398533d254e06cb92fe2f7a1a8093d2d6ec"
+  },
+  "pages_accounted": 42,
+  "pages_not_routed": 36,
+  "pages_routed": [
+    3,
+    4,
+    5,
+    27,
+    29,
+    30
+  ],
+  "passed": false,
+  "ral": {
+    "codes_correct": 3,
+    "codes_denominator": 3,
+    "extracted_in_reference": 3,
+    "extracted_on_reference_pages": 4,
+    "samples": [
+      {
+        "found": true,
+        "reference": {
+          "application": "wood-textured metal facade panels, pine",
+          "code": "RAL 1001",
+          "ground_truth": "jobs/elv-tc-vpm/TASK.md D01; parts/pilot_IA_parts_v001.json P01",
+          "page": 18,
+          "sheet": "18"
+        }
+      },
+      {
+        "found": true,
+        "reference": {
+          "application": "metal facade panels",
+          "code": "RAL 7021",
+          "ground_truth": "jobs/elv-tc-vpm/TASK.md D03; parts/pilot_IA_parts_v001.json P02",
+          "page": 18,
+          "sheet": "18"
+        }
+      },
+      {
+        "found": true,
+        "reference": {
+          "application": "stemalit",
+          "code": "RAL 5024",
+          "ground_truth": "jobs/elv-tc-vpm/TASK.md D06; parts/pilot_IA_parts_v001.json P05",
+          "page": 18,
+          "sheet": "18"
+        }
+      }
+    ]
+  },
+  "row_types": {
+    "category": 20,
+    "data": 130,
+    "empty": 6,
+    "header": 21,
+    "total": 3
+  },
+  "rows": {
+    "cells_correct": 9,
+    "cells_denominator": 9,
+    "rows_correct": 3,
+    "rows_denominator": 3,
+    "samples": [
+      {
+        "found": true,
+        "match": {
+          "cells_found": 3,
+          "description_exact": true,
+          "row": 4,
+          "row_type": "data",
+          "table_id": "p27-t1",
+          "unit": "m2",
+          "value_found": true,
+          "value_kind": "area",
+          "value_status": "agree"
+        },
+        "reference": {
+          "description": "Гардероб персонала ТЦ",
+          "key": "1.D.17",
+          "page": 27,
+          "sheet": "27",
+          "unit": "m2",
+          "value": "10.77"
+        }
+      },
+      {
+        "found": true,
+        "match": {
+          "cells_found": 3,
+          "description_exact": true,
+          "row": 5,
+          "row_type": "data",
+          "table_id": "p27-t1",
+          "unit": "m2",
+          "value_found": true,
+          "value_kind": "area",
+          "value_status": "agree"
+        },
+        "reference": {
+          "description": "Гардероб персонала ТЦ",
+          "key": "1.D.18",
+          "page": 27,
+          "sheet": "27",
+          "unit": "m2",
+          "value": "11.54"
+        }
+      },
+      {
+        "found": true,
+        "match": {
+          "cells_found": 3,
+          "description_exact": true,
+          "row": 6,
+          "row_type": "data",
+          "table_id": "p27-t1",
+          "unit": "m2",
+          "value_found": true,
+          "value_kind": "area",
+          "value_status": "agree"
+        },
+        "reference": {
+          "description": "Диспетчерская",
+          "key": "1.O.01",
+          "page": 27,
+          "sheet": "27",
+          "unit": "m2",
+          "value": "15.65"
+        }
+      }
+    ]
+  },
+  "secondary_status": "ok",
+  "seconds": 8.347,
+  "source_sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+  "summary": {
+    "cells": 839,
+    "materials": 30,
+    "suspect_cells": 69,
+    "tables": 24
+  },
+  "suspect_reasons": {
+    "engines_disagree": 32,
+    "primary_engine_missed_table": 37
+  },
+  "tables": [
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 3,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p3-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 8,
+      "page": 4,
+      "sheet": null,
+      "suspect_cells": 10,
+      "table_id": "p4-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 4,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p4-t2"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 3,
+      "n_rows": 1,
+      "page": 4,
+      "sheet": null,
+      "suspect_cells": 3,
+      "table_id": "p4-t3"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 8,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 10,
+      "table_id": "p5-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t2"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t3"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 3,
+      "n_rows": 4,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 12,
+      "table_id": "p5-t4"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t5"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t6"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t7"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 2,
+      "n_rows": 1,
+      "page": 5,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p5-t8"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 39,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p27-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 33,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p27-t2"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 4,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p27-t3"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 27,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p27-t4"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 30,
+      "page": 29,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p29-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 25,
+      "page": 29,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p29-t2"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 2,
+      "page": 29,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p29-t3"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 5,
+      "n_rows": 5,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 0,
+      "table_id": "p30-t1"
+    },
+    {
+      "found_by": [
+        "primary",
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p30-t2"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 1,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p30-t3"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 1,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 2,
+      "table_id": "p30-t4"
+    },
+    {
+      "found_by": [
+        "secondary"
+      ],
+      "n_cols": 4,
+      "n_rows": 2,
+      "page": 30,
+      "sheet": null,
+      "suspect_cells": 8,
+      "table_id": "p30-t5"
+    }
+  ]
+}

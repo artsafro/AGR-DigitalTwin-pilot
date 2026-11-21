@@ -7,6 +7,7 @@ source goes to `docs/sources/<source-name>.md` (`analyze-architectural-source` s
 |---|---|---|---|
 | PSU275 AR/MEP | `data/sources/revit/26_ПСУ275_АР_МЭП_RVT22.rvt` | Revit 2022, 282 MB | analyzed with PDF/FBX/PPTX (`psu275.md`) |
 | PSU275 MEP layout | `data/sources/revit/26_ПСУ275_Разбивочный файл_МЭП_RVT22.rvt` | Revit 2022 | not analyzed |
+| KPP1 АС.03 R1 | `G:/Мой диск/AGR-assets/KPP1/source/` — exact filenames and SHA-256 in [`jobs/KPP1/sources.json`](../../jobs/KPP1/sources.json) | DWG, mm; L01 facades, L02 finishes, L03 plan | drawing-only intake; roles/provenance in registry, measurements are not Gate 1 approval |
 | KPP1 AR/MEP | `data/sources/revit/26_КПП1_АР_МЭП_RVT22.rvt` | Revit 2022, 110 MB | used for KPP1 v005 (Revit 2025 copy, `jobs/KPP1/STATE.md`) |
 | Vyatskaya TOW02 `RC_TOW_02` | `jobs/vyatskaya-tow02/` (raw inventory `outputs/measure-v001` absent on this PC) | panelised curtain wall | source class `panelised` → measurement + direct build (`vyatskaya-tow02.md`) |
 

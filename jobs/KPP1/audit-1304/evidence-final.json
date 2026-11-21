@@ -1,0 +1,132 @@
+{
+  "path": "G:\\Мой диск\\AGR-evidence\\1304-kpp1-mode-a\\evidence-v003",
+  "files": [
+    {
+      "name": "album.pdf",
+      "sha256": "ca9bfc120179395d4be1d423468d1970f803fd50ea26fdec97ae9c4cef2afd6e",
+      "bytes": 44968322
+    },
+    {
+      "name": "build_audit_evidence.py",
+      "sha256": "8533ba37f4f060f6eeb0392589ecaee8cbb1602bbe2870f9eebe2d4f480d7ecd",
+      "bytes": 14946
+    },
+    {
+      "name": "finish-blender.log",
+      "sha256": "fcebaa8027a1c7288d2c5598f838d9e8777b097475c5c528e61b446acd485597",
+      "bytes": 115
+    },
+    {
+      "name": "finish-ocr-p26.json",
+      "sha256": "1147befb4da3f87557aa785ce2e137ce51505171475626ad80e5c7e79c14a918",
+      "bytes": 21928
+    },
+    {
+      "name": "finish-ocr.json",
+      "sha256": "1f16286ac9ef018e9af97aa47fbc7c5ebbb74ff8f522620e341378ae564d5e51",
+      "bytes": 21901
+    },
+    {
+      "name": "kpp1-page-25.png",
+      "sha256": "a268513f5fc898838695581a7e5dadae28454cd7238bbc2d141e8f0c35a9ed8c",
+      "bytes": 611624
+    },
+    {
+      "name": "kpp1-page-26.png",
+      "sha256": "5e65625a41adaa07472af5d723d0e38c09b9a577ec357b3f0f6e9d66e93dd407",
+      "bytes": 611154
+    },
+    {
+      "name": "l01-binding.json",
+      "sha256": "f998ad265f7b32064e96dd60e49e8234f14af627f2b0713efabdfb8265b0197c",
+      "bytes": 24518
+    },
+    {
+      "name": "L01.pdf",
+      "sha256": "5232d5fa43e781b6c13445d2743b099d389bf32b4e7f87677d5ef60b6daace37",
+      "bytes": 3658272
+    },
+    {
+      "name": "pdf-sash-annotations.json",
+      "sha256": "60d0fc6a512af77bc7b13fef24b8c28f103974f50965e0c825affb44b787f781",
+      "bytes": 3446
+    },
+    {
+      "name": "r1-blender.log",
+      "sha256": "a397fdf233f09a0c4b56793542da9df284f035bb76dd989869cb63a0981e2b2b",
+      "bytes": 103
+    },
+    {
+      "name": "r1-face-udims.json",
+      "sha256": "76ca9c16a24445036c726f5716243a2ac6b8f75b9715a68c6351e536c757500b",
+      "bytes": 7946971
+    },
+    {
+      "name": "r1-finishes.json",
+      "sha256": "69c445bbd45b6be6992d5e570cc67ebe736029f40fbaa5705341eff3a8b93011",
+      "bytes": 880
+    },
+    {
+      "name": "r1-glass-components.json",
+      "sha256": "baf10b54c407f9ea354f8bfbca4fab8cbef703f90a7aeacd278772d5cb1ccbe6",
+      "bytes": 9723
+    },
+    {
+      "name": "r1-readback.json",
+      "sha256": "68b700fefa26d7e9a646337c8224fb598fc924933962d18ada30e1db872898cd",
+      "bytes": 3979
+    },
+    {
+      "name": "r1-textures.json",
+      "sha256": "a068fb7cbd1f9a694eed37ecf0ea0291ba0dca4dc25beaf529521a07e896785f",
+      "bytes": 1607
+    },
+    {
+      "name": "r1.fbx",
+      "sha256": "1f46b0dd5973b6e3ba40acbe04d65fb3595dcacb0d90a7724e921eda9b56b676",
+      "bytes": 869868
+    },
+    {
+      "name": "r1.npz",
+      "sha256": "241c76b44e8ed757e329a126c8bbe2ccdd514d9f78939fd195f82337982e3a3c",
+      "bytes": 1110142
+    },
+    {
+      "name": "readback_finishes.py",
+      "sha256": "3cd2d9309251b5398db86a3d7237f45f6c70d53eb59c2d6b1ffef1d46cc9f943",
+      "bytes": 952
+    },
+    {
+      "name": "revit-export.json",
+      "sha256": "d1913959b30beaf7366cb3449da2e74d088b4c3ddbd5434bd11b7b1cde70e339",
+      "bytes": 9346217
+    },
+    {
+      "name": "source-blender.log",
+      "sha256": "4f1669a9848ba2086a2ca0464b3dddecd083157a9b0aa6829ff252e322bb0b69",
+      "bytes": 67098
+    },
+    {
+      "name": "source-readback.json",
+      "sha256": "577ec15ef417a3e4ead38f3cc7e251fc2663728b5353446440fe80698f3a2353",
+      "bytes": 1315369
+    },
+    {
+      "name": "source.fbx",
+      "sha256": "12b30696a3a4b997693ddfa98ffec2dcc5704e4af69bd993328c7ef19e0858cb",
+      "bytes": 8860800
+    },
+    {
+      "name": "source.npz",
+      "sha256": "313ec8b790ce419172facc9c3d1fb38adf90360921968381fff00f539b12c901",
+      "bytes": 7427506
+    }
+  ],
+  "limitations": [
+    "Agent-made visual interpretation is not independent expert truth.",
+    "Source FBX import has no material slots; Revit sidecar is separately identified metadata.",
+    "Raster album has zero facade vector paths; L01 supplement is an existing DWG plot, not the original album.",
+    "R1 UDIM observations certify encoded finish labels, not colour fidelity or complete spatial binding.",
+    "Grid geometry and original opening marks unavailable; sizes uncalibrated (#1302)."
+  ]
+}

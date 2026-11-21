@@ -1,0 +1,31 @@
+{
+ "receipt": "dwg-to-dxf/1",
+ "tool": "tools/methods/body/dwg_to_dxf.py",
+ "source": {
+  "path": "C:\\x\\cr1279\\source\\22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg",
+  "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2"
+ },
+ "command": [
+  "C:\\Program Files\\Autodesk\\AutoCAD 2025\\accoreconsole.exe",
+  "/i",
+  "C:\\x\\cr1279\\wd\\L02.dwg",
+  "/s",
+  "C:\\x\\cr1279\\wd\\L02.dxfout.scr"
+ ],
+ "script": "_.DXFOUT\r\nC:/x/cr1279/dxf/L02.dxf\r\n_V\r\n_2018\r\n16\r\n_.QUIT\r\n_Y\r\n",
+ "log": "C:\\x\\cr1279\\wd\\L02.accoreconsole.log",
+ "status": "pass",
+ "reason": null,
+ "copy": {
+  "path": "C:\\x\\cr1279\\wd\\L02.dwg",
+  "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+  "sha256_after": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2"
+ },
+ "returncode": 0,
+ "source_sha256_after": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+ "dxf": {
+  "path": "C:\\x\\cr1279\\dxf\\L02.dxf",
+  "sha256": "e93fc870df26cc3b356d4e32bcffc5366af31a6e0db045035c32c63af1b0998c",
+  "bytes": 9107973
+ }
+}

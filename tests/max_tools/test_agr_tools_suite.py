@@ -89,6 +89,50 @@ def test_every_check_is_a_plan_row_of_version_07():
 
 
 # ---- each check: clean pass + named failure -----------------------------------------------------------
+@pytest.mark.parametrize('tool', ['ucx_audit', 'preflight'])
+@pytest.mark.parametrize('gap', [0.01, -0.01])
+@pytest.mark.parametrize('seed', range(5))
+def test_delivery_ucx_checks_use_copy_geometry_and_export_names(monkeypatch, tool, gap, seed):
+    """#1584: include the UCX subcheck inside preflight, without relaxing source hygiene."""
+    import copy
+    import types
+    glue = _load('suite_max.py', 'agr_suite_max_1584')
+    fbx = 'C:/out/SM_Addr.fbx'
+    main = obj(1, 'SM_Addr_Main', fbx)
+    def hull(key, index, x, layer='0'):
+        return obj(key, 'UCX_SM_Addr_Main_{:03d}'.format(index), fbx, materials=[], layer=layer,
+                   mesh={'verts': [(vx + x, y, z) for vx, y, z in CUBE_V], 'tris': CUBE_T})
+    ground = obj(4, 'SM_Addr_Ground', 'C:/out/SM_Addr_Ground.fbx')
+    originals = [main, ground, hull(2, 1, 0), hull(3, 2, 0.99)]
+    copies = [hull(10, 1, 0, 'AGR_export'), hull(11, 2, 1 + gap, 'AGR_export')]
+    names = {r['key']: r['name'] for r in copies}
+    for r in copies:
+        r['name'] += '_AGR_gap_001'
+    random.Random(seed).shuffle(originals)
+    random.Random(seed + 5).shuffle(copies)
+    frozen = copy.deepcopy(originals + copies)
+    monkeypatch.setattr(glue, '_rt', lambda: object())
+    monkeypatch.setattr(glue, 'targets', lambda agr, nodes: nodes)
+    monkeypatch.setattr(glue, '_row', lambda agr, g, n, *a: copy.deepcopy(n))
+    monkeypatch.setattr(glue, 'scene_units', lambda: dict(METRE_SCENE))
+    monkeypatch.setattr(glue, '_shared_maps', lambda *a: ({}, []))
+    agr = types.SimpleNamespace(_unit_m=lambda: 1., _load_core=lambda *a: audit)
+    export = {'nodes': [main] + copies, 'names': names}
+    rep = glue.run(agr, None, core, tool, originals, False, ucx_export=export)
+    findings = {o['handle']: o['findings'] for o in rep['objects']}
+    assert rep['status'] == ('pass' if gap > 0 else 'fail'), rep
+    assert not any(f['code'] == 'ucx_name' for fs in findings.values() for f in fs)
+    assert bool(findings[10]) == (gap < 0) and bool(findings[11]) == (gap < 0)
+    assert originals + copies == frozen
+    if tool == 'preflight':
+        assert not findings[2] and not findings[3]
+        assert rep['plan']['summary']['checks']['ucx_audit'] == rep['status']
+        originals[0]['animated'] = True
+        bad = glue.run(agr, None, core, tool, originals, False, ucx_export=export)
+        assert bad['status'] == 'fail'
+        assert 'hyg_animation' in {f['code'] for o in bad['objects'] for f in o['findings']}
+
+
 def test_clean_scene_passes_every_object_check():
     rows = [obj(1), obj(2, 'SM_Addr_Ground', NPM_GROUND)]
     for tool in core.PREFLIGHT + ('preflight',):

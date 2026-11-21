@@ -55,7 +55,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -108,6 +112,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 5.016,
@@ -156,7 +161,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -247,7 +256,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -300,7 +313,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -411,7 +428,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -483,7 +504,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -536,7 +561,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -597,7 +626,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -657,6 +690,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 6.093,
@@ -698,6 +732,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 1.736,
@@ -739,6 +774,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 1.736,
@@ -787,7 +823,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -848,7 +888,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -914,7 +958,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -975,7 +1023,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1036,7 +1088,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1095,6 +1151,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 3.807,
@@ -1136,6 +1193,7 @@
    "vpm": null,
    "vpm_status": "none",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 4.565,
@@ -1184,7 +1242,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1230,6 +1292,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.84,
@@ -1271,6 +1334,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.989,
@@ -1319,7 +1383,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1372,6 +1440,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.972,
@@ -1458,7 +1527,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1504,6 +1577,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.644,
@@ -1552,7 +1626,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1606,6 +1684,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.989,
@@ -1654,7 +1733,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1720,6 +1803,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.403,
@@ -1768,7 +1852,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1821,7 +1909,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -1875,6 +1967,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 1.332,
@@ -1916,6 +2009,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 1.706,
@@ -1957,6 +2051,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 1.504,
@@ -1998,6 +2093,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [
     {
@@ -2046,6 +2142,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [
     {
@@ -2101,7 +2198,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2155,6 +2256,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [
     {
@@ -2210,7 +2312,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2271,7 +2377,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2338,7 +2448,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2399,7 +2513,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2460,7 +2578,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2527,7 +2649,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2580,7 +2706,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2652,7 +2782,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2705,7 +2839,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2758,7 +2896,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2811,7 +2953,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2864,7 +3010,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2917,7 +3067,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -2970,7 +3124,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -3016,6 +3174,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.727,
@@ -3057,6 +3216,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.951,
@@ -3098,6 +3258,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 0.639,
@@ -3139,6 +3300,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 1.188,
@@ -3187,7 +3349,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -3240,7 +3406,11 @@
     "basis": "LP -> HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,
@@ -3286,6 +3456,7 @@
    "vpm": null,
    "vpm_status": "unconfirmed",
    "vpm_identity": null,
+   "vpm_identity_decision": null,
    "vpm_evidence": null,
    "merged": [],
    "height_m": 1.188,
@@ -3334,7 +3505,11 @@
     "basis": "HP"
    },
    "vpm_status": "available",
-   "vpm_identity": "unverified",
+   "vpm_identity": "confirmed-interim",
+   "vpm_identity_decision": {
+    "id": "D311",
+    "date": "2026-11-15"
+   },
    "vpm_evidence": {
     "relation": "unverified",
     "translation_dev_m": null,

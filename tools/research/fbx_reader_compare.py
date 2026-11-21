@@ -265,8 +265,9 @@ def _blender(script_args, scratch, timeout):
         directory = config / key.lower()
         directory.mkdir()
         env[key] = str(directory)
-    command = [BLENDER, "--background", "--factory-startup", "--disable-autoexec",
-               "--python-exit-code", "1", "--python", str(Path(__file__).resolve()), "--", *script_args]
+    from dt_ai.core.blender_runner import blender_command   # the one Blender command line (#1378, #1530)
+
+    command = blender_command(Path(__file__).resolve(), script_args, executable=BLENDER)
     started = time.perf_counter()
     result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8",
                             errors="replace", timeout=timeout, env=env)

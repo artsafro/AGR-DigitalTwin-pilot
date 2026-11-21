@@ -1,0 +1,7789 @@
+{
+  "anchors_source": null,
+  "findings": [
+    {
+      "code": "dimension_text_invalid",
+      "id": "p18-d0001",
+      "page": 18,
+      "text": "ур.з."
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p18-d0010",
+      "page": 18,
+      "text": "ур.з"
+    },
+    {
+      "code": "tick_spans_without_text",
+      "count_by_orientation": {
+        "horizontal": 407,
+        "vertical": 561
+      },
+      "message": "tick-to-tick spans with no value text (hatching, extension ticks); not values",
+      "page": 18
+    },
+    {
+      "code": "tick_spans_without_text",
+      "count_by_orientation": {
+        "horizontal": 151,
+        "vertical": 84
+      },
+      "message": "tick-to-tick spans with no value text (hatching, extension ticks); not values",
+      "page": 19
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p23-d0002",
+      "page": 23,
+      "text": "480 1050"
+    },
+    {
+      "code": "tick_spans_without_text",
+      "count_by_orientation": {
+        "horizontal": 298,
+        "vertical": 1294
+      },
+      "message": "tick-to-tick spans with no value text (hatching, extension ticks); not values",
+      "page": 23
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p26-d0004",
+      "page": 26,
+      "text": "40.05"
+    },
+    {
+      "code": "tick_spans_without_text",
+      "count_by_orientation": {
+        "horizontal": 2001,
+        "vertical": 1531
+      },
+      "message": "tick-to-tick spans with no value text (hatching, extension ticks); not values",
+      "page": 26
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0001",
+      "page": 31,
+      "text": "Ограждения лестницы на"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0002",
+      "page": 31,
+      "text": "Наружный водосток"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0003",
+      "page": 31,
+      "text": "2%"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0004",
+      "page": 31,
+      "text": "Водосточная воронка"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0005",
+      "page": 31,
+      "text": "22%"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0006",
+      "page": 31,
+      "text": "22%"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0007",
+      "page": 31,
+      "text": "Водосточная воронка"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0008",
+      "page": 31,
+      "text": "1,5%"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0009",
+      "page": 31,
+      "text": "1,5%"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0010",
+      "page": 31,
+      "text": "Водосточная воронка"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0031",
+      "page": 31,
+      "text": "21.5%"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0032",
+      "page": 31,
+      "text": "21.5%"
+    },
+    {
+      "code": "dimension_text_invalid",
+      "id": "p31-d0033",
+      "page": 31,
+      "text": "1.5%"
+    },
+    {
+      "code": "tick_spans_without_text",
+      "count_by_orientation": {
+        "horizontal": 1272,
+        "vertical": 1226
+      },
+      "message": "tick-to-tick spans with no value text (hatching, extension ticks); not values",
+      "page": 31
+    }
+  ],
+  "nominal_print_scale_text": [
+    {
+      "bbox": [
+        56.6424,
+        28.6265,
+        1081.7117,
+        44.375
+      ],
+      "page": 18,
+      "text": "Схемы фасадов, совмещенные со схемами расположения кондиционеров и вентиляционного оборудования в осях И-А, 1-12 (на основе М 1:200)",
+      "used_for_calibration": false
+    },
+    {
+      "bbox": [
+        56.6424,
+        28.6265,
+        1110.0085,
+        44.375
+      ],
+      "page": 19,
+      "text": "Схемы фасадов, совмещенные со схемами расположения кондиционеров и вентиляционного оборудования в осях 12-1, А-И, 6-1 (на основе М 1:200)",
+      "used_for_calibration": false
+    },
+    {
+      "bbox": [
+        309.3586,
+        675.0843,
+        481.891,
+        690.8185
+      ],
+      "page": 23,
+      "text": "Фрагмент фасада М 1:100",
+      "used_for_calibration": false
+    },
+    {
+      "bbox": [
+        857.0425,
+        248.4807,
+        986.8041,
+        264.2149
+      ],
+      "page": 23,
+      "text": "Фрагмент 1 М 1:100",
+      "used_for_calibration": false
+    },
+    {
+      "bbox": [
+        841.3242,
+        728.2429,
+        1002.5577,
+        743.9771
+      ],
+      "page": 23,
+      "text": "Фрагмент плана М 1:200",
+      "used_for_calibration": false
+    },
+    {
+      "bbox": [
+        56.6385,
+        28.6265,
+        527.7016,
+        44.375
+      ],
+      "page": 26,
+      "text": "Схема плана технического этажа на отм. +2,800 (на основе М 1:200)",
+      "used_for_calibration": false
+    },
+    {
+      "bbox": [
+        56.6434,
+        28.6265,
+        449.0497,
+        44.375
+      ],
+      "page": 31,
+      "text": "Схема плана кровли на отм. +12.300 (на основе М 1:200)",
+      "used_for_calibration": false
+    }
+  ],
+  "note": "technical extraction only; not measured geometry unless a view is calibrated, not acceptance",
+  "open_gates": [
+    "calibration",
+    "binding_review",
+    "ground_truth",
+    "approval"
+  ],
+  "openings": [
+    {
+      "bbox": [
+        910.5599,
+        176.1599,
+        942.96,
+        193.7999
+      ],
+      "id": "p23-v2-o1",
+      "identity": "unverified closed rectangle at both span ends; vision/human check required",
+      "page": 23,
+      "sheet": null,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        797.4,
+        119.0399,
+        943.8,
+        172.0799
+      ],
+      "id": "p23-v2-o2",
+      "identity": "unverified closed rectangle at both span ends; vision/human check required",
+      "page": 23,
+      "sheet": null,
+      "view": "p23-v2"
+    }
+  ],
+  "pages": [
+    {
+      "page": 18,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 19,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 23,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 26,
+      "sheet": null,
+      "status": "ok"
+    },
+    {
+      "page": 31,
+      "sheet": null,
+      "status": "ok"
+    }
+  ],
+  "passed": false,
+  "schema": "album-dimensions/1",
+  "source": {
+    "name": "elv.pdf",
+    "page_count": 42,
+    "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+  },
+  "summary": {
+    "by_binding": {
+      "axis_pair": 75,
+      "level": 27,
+      "level_pair": 1,
+      "opening": 2,
+      "unbound": 91
+    },
+    "calibrated_views": 0,
+    "unresolved": 169,
+    "values": 196,
+    "vertical_dimensions": 22,
+    "views": 14
+  },
+  "values": [
+    {
+      "bbox": [
+        930.4716,
+        231.1928,
+        942.9218,
+        237.9118
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p18-d0001",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "ур.з.",
+      "sheet": null,
+      "span": {
+        "length_pt": 36.72,
+        "p0": [
+          901.92,
+          225.0
+        ],
+        "p1": [
+          938.64,
+          225.0
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        389.636,
+        228.7022,
+        405.6165,
+        242.2444
+      ],
+      "binding": {
+        "axes": [
+          "И",
+          "Ж"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0002",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 50.1589,
+        "p0": [
+          372.4611,
+          242.3
+        ],
+        "p1": [
+          422.62,
+          242.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        454.1003,
+        228.7022,
+        470.6056,
+        242.2444
+      ],
+      "binding": {
+        "axes": [
+          "Ж",
+          "Е"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0003",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          422.62,
+          242.3
+        ],
+        "p1": [
+          501.94,
+          242.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        533.4343,
+        228.7022,
+        549.9396,
+        242.2444
+      ],
+      "binding": {
+        "axes": [
+          "Е",
+          "Д"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0004",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          501.94,
+          242.3
+        ],
+        "p1": [
+          581.38,
+          242.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        612.8557,
+        228.7022,
+        629.361,
+        242.2444
+      ],
+      "binding": {
+        "axes": [
+          "Д",
+          "Г"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0005",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          581.38,
+          242.3
+        ],
+        "p1": [
+          660.7,
+          242.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        692.1896,
+        228.7022,
+        708.695,
+        242.2444
+      ],
+      "binding": {
+        "axes": [
+          "Г",
+          "В"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0006",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3211,
+        "p0": [
+          660.7,
+          242.3
+        ],
+        "p1": [
+          740.021,
+          242.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        771.6111,
+        228.7022,
+        788.1165,
+        242.2444
+      ],
+      "binding": {
+        "axes": [
+          "В",
+          "Б"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0007",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4389,
+        "p0": [
+          740.021,
+          242.3
+        ],
+        "p1": [
+          819.4599,
+          242.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        836.6002,
+        228.7022,
+        852.5808,
+        242.2444
+      ],
+      "binding": {
+        "axes": [
+          "Б",
+          "А"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0008",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 50.0412,
+        "p0": [
+          819.4599,
+          242.3
+        ],
+        "p1": [
+          869.5011,
+          242.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        611.1553,
+        241.3053,
+        631.072,
+        254.8475
+      ],
+      "binding": {
+        "axes": [
+          "И",
+          "А"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0009",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "52600",
+      "sheet": null,
+      "span": {
+        "length_pt": 497.04,
+        "p0": [
+          372.4611,
+          254.9
+        ],
+        "p1": [
+          869.5011,
+          254.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 52600.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        1050.2437,
+        482.0821,
+        1064.7573,
+        491.0605
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p18-d0010",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "ур.з",
+      "sheet": null,
+      "span": {
+        "length_pt": 30.5,
+        "p0": [
+          1030.78,
+          478.7
+        ],
+        "p1": [
+          1061.28,
+          478.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        167.5183,
+        484.3056,
+        184.7233,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "1",
+          "2"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0011",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "4400",
+      "sheet": null,
+      "span": {
+        "length_pt": 41.64,
+        "p0": [
+          155.2588,
+          497.9
+        ],
+        "p1": [
+          196.8988,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        207.5966,
+        484.3056,
+        224.1894,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "2",
+          "3"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0012",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "4000",
+      "sheet": null,
+      "span": {
+        "length_pt": 37.8,
+        "p0": [
+          196.8988,
+          497.9
+        ],
+        "p1": [
+          234.6988,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4000.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        266.1595,
+        484.3056,
+        282.7522,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "3",
+          "4"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0013",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          234.6988,
+          497.9
+        ],
+        "p1": [
+          314.0188,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        345.48,
+        484.3056,
+        362.0728,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "4",
+          "5"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0014",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3212,
+        "p0": [
+          314.0188,
+          497.9
+        ],
+        "p1": [
+          393.3399,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        424.9192,
+        484.3056,
+        441.512,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "5",
+          "6"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0015",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4389,
+        "p0": [
+          393.3399,
+          497.9
+        ],
+        "p1": [
+          472.7788,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        504.2381,
+        484.3056,
+        520.831,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "6",
+          "7"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0016",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3212,
+        "p0": [
+          472.7788,
+          497.9
+        ],
+        "p1": [
+          552.0999,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        583.6772,
+        484.3056,
+        600.2701,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "7",
+          "8"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0017",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4388,
+        "p0": [
+          552.0999,
+          497.9
+        ],
+        "p1": [
+          631.5388,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        662.9962,
+        484.3056,
+        679.5891,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "8",
+          "9"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0018",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3212,
+        "p0": [
+          631.5388,
+          497.9
+        ],
+        "p1": [
+          710.8599,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        742.4354,
+        484.3056,
+        759.0282,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "9",
+          "10"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0019",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4388,
+        "p0": [
+          710.8599,
+          497.9
+        ],
+        "p1": [
+          790.2988,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        821.7543,
+        484.3056,
+        838.3472,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "10",
+          "11"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0020",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          790.2988,
+          497.9
+        ],
+        "p1": [
+          869.6188,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        901.0734,
+        484.3056,
+        917.6661,
+        497.8478
+      ],
+      "binding": {
+        "axes": [
+          "11",
+          "12"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0021",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4399,
+        "p0": [
+          869.6188,
+          497.9
+        ],
+        "p1": [
+          949.0587,
+          497.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        557.5179,
+        494.2641,
+        578.0468,
+        507.8063
+      ],
+      "binding": {
+        "axes": [
+          "1",
+          "12"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0022",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 18,
+      "raw": "84000",
+      "sheet": null,
+      "span": {
+        "length_pt": 793.8,
+        "p0": [
+          155.2376,
+          508.0
+        ],
+        "p1": [
+          949.0376,
+          508.0
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 84000.0,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        925.3082,
+        138.2685,
+        938.8504,
+        156.9605
+      ],
+      "binding": {
+        "levels": [
+          "-0.150",
+          "+16.220"
+        ],
+        "type": "level_pair"
+      },
+      "check": "not_checked",
+      "id": "p18-d0023",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 18,
+      "raw": "16370",
+      "sheet": null,
+      "span": {
+        "length_pt": 154.68,
+        "p0": [
+          938.6,
+          70.2776
+        ],
+        "p1": [
+          938.6,
+          224.9576
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 16370.0,
+      "view": "p18-v1"
+    },
+    {
+      "bbox": [
+        1047.9495,
+        391.9435,
+        1061.4917,
+        410.6355
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p18-d0024",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 18,
+      "raw": "16370",
+      "sheet": null,
+      "span": {
+        "length_pt": 154.68,
+        "p0": [
+          1061.3,
+          323.9999
+        ],
+        "p1": [
+          1061.3,
+          478.6799
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 16370.0,
+      "view": "p18-v2"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        552.235,
+        52.321,
+        575.394,
+        63.8308
+      ],
+      "binding": {
+        "level": "+15.900",
+        "level_y": 73.32,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0025",
+      "kind": "level",
+      "level_y": 73.32,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+15.900",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 15.9,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        695.0369,
+        49.321,
+        718.196,
+        60.8308
+      ],
+      "binding": {
+        "level": "+16.220",
+        "level_y": 70.32,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0026",
+      "kind": "level",
+      "level_y": 70.32,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+16.220",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 16.22,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": "167.65",
+      "bbox": [
+        903.4769,
+        202.5622,
+        923.127,
+        214.0721
+      ],
+      "binding": {
+        "level": "+0.000",
+        "level_y": 223.56,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0027",
+      "kind": "level",
+      "level_y": 223.56,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+0.000",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 0.0,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": "167.5",
+      "bbox": [
+        905.75,
+        226.9018,
+        926.5413,
+        240.444
+      ],
+      "binding": {
+        "level": "-0.150",
+        "level_y": 225.0,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0028",
+      "kind": "level",
+      "level_y": 225.0,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "-0.150",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": -0.15,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": "183.87",
+      "bbox": [
+        905.756,
+        49.321,
+        928.915,
+        60.8308
+      ],
+      "binding": {
+        "level": "+16.220",
+        "level_y": 70.32,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0029",
+      "kind": "level",
+      "level_y": 70.32,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+16.220",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 16.22,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": "172.37",
+      "bbox": [
+        905.0367,
+        158.0418,
+        924.6866,
+        169.5517
+      ],
+      "binding": {
+        "level": "+4.720",
+        "level_y": 178.92,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0030",
+      "kind": "level",
+      "level_y": 178.92,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+4.720",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 4.72,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": "181.57",
+      "bbox": [
+        904.9156,
+        71.0411,
+        928.0746,
+        82.551
+      ],
+      "binding": {
+        "level": "+13.920",
+        "level_y": 92.04,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0031",
+      "kind": "level",
+      "level_y": 92.04,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        317.9992,
+        158.0418,
+        337.6493,
+        169.5517
+      ],
+      "binding": {
+        "level": "+4.720",
+        "level_y": 178.92,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0032",
+      "kind": "level",
+      "level_y": 178.92,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+4.720",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 4.72,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        320.0385,
+        71.0411,
+        343.1975,
+        82.551
+      ],
+      "binding": {
+        "level": "+13.920",
+        "level_y": 92.04,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0033",
+      "kind": "level",
+      "level_y": 92.04,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        319.3168,
+        202.5622,
+        338.9669,
+        214.0721
+      ],
+      "binding": {
+        "level": "+0.000",
+        "level_y": 223.56,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0034",
+      "kind": "level",
+      "level_y": 223.56,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+0.000",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 0.0,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        317.7594,
+        177.002,
+        337.4095,
+        188.5119
+      ],
+      "binding": {
+        "level": "+2.710",
+        "level_y": 198.0,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0035",
+      "kind": "level",
+      "level_y": 198.0,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+2.710",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 2.71,
+      "view": "p18-v1"
+    },
+    {
+      "absolute_text": "181.57",
+      "bbox": [
+        1022.3942,
+        347.6237,
+        1047.1217,
+        361.166
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p18-l0036",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p18-v2"
+    },
+    {
+      "absolute_text": "172.37",
+      "bbox": [
+        1023.7166,
+        411.7251,
+        1043.3666,
+        423.235
+      ],
+      "binding": {
+        "level": "+4.720",
+        "level_y": 432.6,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0037",
+      "kind": "level",
+      "level_y": 432.6,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+4.720",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 4.72,
+      "view": "p18-v2"
+    },
+    {
+      "absolute_text": "167.65",
+      "bbox": [
+        1023.7166,
+        456.2442,
+        1043.3666,
+        467.7541
+      ],
+      "binding": {
+        "level": "+0.000",
+        "level_y": 477.24,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0038",
+      "kind": "level",
+      "level_y": 477.24,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+0.000",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 0.0,
+      "view": "p18-v2"
+    },
+    {
+      "absolute_text": "183.87",
+      "bbox": [
+        1021.4329,
+        303.003,
+        1044.5918,
+        314.5128
+      ],
+      "binding": {
+        "level": "+16.220",
+        "level_y": 324.0,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0039",
+      "kind": "level",
+      "level_y": 324.0,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+16.220",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 16.22,
+      "view": "p18-v2"
+    },
+    {
+      "absolute_text": "183.55",
+      "bbox": [
+        599.9971,
+        306.0024,
+        623.1561,
+        317.5123
+      ],
+      "binding": {
+        "level": "+15.900",
+        "level_y": 327.0,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0040",
+      "kind": "level",
+      "level_y": 327.0,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+15.900",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 15.9,
+      "view": "p18-v2"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        744.7172,
+        303.003,
+        767.8762,
+        314.5128
+      ],
+      "binding": {
+        "level": "+16.220",
+        "level_y": 324.0,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p18-l0041",
+      "kind": "level",
+      "level_y": 324.0,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "+16.220",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 16.22,
+      "view": "p18-v2"
+    },
+    {
+      "absolute_text": "167.5",
+      "bbox": [
+        1025.9897,
+        480.5851,
+        1046.781,
+        494.1273
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p18-l0042",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 18,
+      "raw": "-0.150",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": -0.15,
+      "view": "p18-v2"
+    },
+    {
+      "bbox": [
+        272.2791,
+        228.1021,
+        288.8719,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "12",
+          "11"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0001",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3211,
+        "p0": [
+          240.8199,
+          241.7
+        ],
+        "p1": [
+          320.1411,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        351.7005,
+        228.1021,
+        368.2932,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "11",
+          "10"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0002",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4389,
+        "p0": [
+          320.1411,
+          241.7
+        ],
+        "p1": [
+          399.5799,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        431.0344,
+        228.1021,
+        447.6272,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "10",
+          "9"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0003",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3211,
+        "p0": [
+          399.5799,
+          241.7
+        ],
+        "p1": [
+          478.901,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        510.4557,
+        228.1021,
+        527.0486,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "9",
+          "8"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0004",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4389,
+        "p0": [
+          478.901,
+          241.7
+        ],
+        "p1": [
+          558.3399,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        589.7897,
+        228.1021,
+        606.3826,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "8",
+          "7"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0005",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          558.3399,
+          241.7
+        ],
+        "p1": [
+          637.6599,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        669.1237,
+        228.1021,
+        685.7166,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "7",
+          "6"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0006",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          637.6599,
+          241.7
+        ],
+        "p1": [
+          717.0999,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        748.5452,
+        228.1021,
+        765.1381,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "6",
+          "5"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0007",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3201,
+        "p0": [
+          717.0999,
+          241.7
+        ],
+        "p1": [
+          796.42,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        827.8792,
+        228.1021,
+        844.4721,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "5",
+          "4"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0008",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3211,
+        "p0": [
+          796.42,
+          241.7
+        ],
+        "p1": [
+          875.7411,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        907.3007,
+        228.1021,
+        923.8935,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "4",
+          "3"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0009",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4388,
+        "p0": [
+          875.7411,
+          241.7
+        ],
+        "p1": [
+          955.1799,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        965.9046,
+        228.1021,
+        982.4099,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "3",
+          "2"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0010",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "4000",
+      "sheet": null,
+      "span": {
+        "length_pt": 37.8,
+        "p0": [
+          955.1799,
+          241.7
+        ],
+        "p1": [
+          992.9799,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4000.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        1005.2654,
+        228.1021,
+        1022.3828,
+        241.6443
+      ],
+      "binding": {
+        "axes": [
+          "2",
+          "1"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0011",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "4400",
+      "sheet": null,
+      "span": {
+        "length_pt": 41.5211,
+        "p0": [
+          992.9799,
+          241.7
+        ],
+        "p1": [
+          1034.5011,
+          241.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4400.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        638.5159,
+        240.3429,
+        659.0449,
+        253.8851
+      ],
+      "binding": {
+        "reason": "one_end_on_axis_only",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0012",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "84000",
+      "sheet": null,
+      "span": {
+        "length_pt": 666.6208,
+        "p0": [
+          240.84,
+          253.9
+        ],
+        "p1": [
+          907.4608,
+          253.9
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 84000.0,
+      "view": "p19-v1"
+    },
+    {
+      "bbox": [
+        661.432,
+        467.6259,
+        677.4126,
+        481.1681
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0013",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8265",
+      "sheet": null,
+      "span": {
+        "length_pt": 78.12,
+        "p0": [
+          630.2399,
+          481.2
+        ],
+        "p1": [
+          708.3599,
+          481.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8265.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        740.0356,
+        467.6259,
+        756.6285,
+        481.1681
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0014",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8450",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.8,
+        "p0": [
+          708.3599,
+          481.2
+        ],
+        "p1": [
+          788.16,
+          481.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8450.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        819.8324,
+        467.6259,
+        836.4253,
+        481.1681
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0015",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8450",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.8,
+        "p0": [
+          788.16,
+          481.2
+        ],
+        "p1": [
+          867.9599,
+          481.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8450.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        899.6345,
+        467.6259,
+        916.2273,
+        481.1681
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0016",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8450",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.8,
+        "p0": [
+          867.9599,
+          481.2
+        ],
+        "p1": [
+          947.7599,
+          481.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8450.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        979.434,
+        467.6259,
+        996.0268,
+        481.1681
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0017",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8450",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.7999,
+        "p0": [
+          947.7599,
+          481.2
+        ],
+        "p1": [
+          1027.5599,
+          481.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8450.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        1039.67,
+        467.6259,
+        1055.0381,
+        481.1681
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0018",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "4180",
+      "sheet": null,
+      "span": {
+        "length_pt": 39.4801,
+        "p0": [
+          1027.5599,
+          481.2
+        ],
+        "p1": [
+          1067.04,
+          481.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4180.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        1078.9117,
+        467.6259,
+        1094.2798,
+        481.1681
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0019",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "4120",
+      "sheet": null,
+      "span": {
+        "length_pt": 39.0,
+        "p0": [
+          1067.04,
+          481.2
+        ],
+        "p1": [
+          1106.04,
+          481.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4120.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        121.5589,
+        467.7441,
+        137.5394,
+        481.2864
+      ],
+      "binding": {
+        "axes": [
+          "А",
+          "Б"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0020",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 50.04,
+        "p0": [
+          104.4,
+          481.3
+        ],
+        "p1": [
+          154.44,
+          481.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        186.0231,
+        467.7441,
+        202.5284,
+        481.2864
+      ],
+      "binding": {
+        "axes": [
+          "Б",
+          "В"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0021",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          154.44,
+          481.3
+        ],
+        "p1": [
+          233.88,
+          481.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        265.357,
+        467.7441,
+        281.8623,
+        481.2864
+      ],
+      "binding": {
+        "axes": [
+          "В",
+          "Г"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0022",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          233.88,
+          481.3
+        ],
+        "p1": [
+          313.2,
+          481.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        344.6034,
+        467.7441,
+        361.1961,
+        481.2864
+      ],
+      "binding": {
+        "axes": [
+          "Г",
+          "Д"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0023",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          313.2,
+          481.3
+        ],
+        "p1": [
+          392.64,
+          481.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        424.1122,
+        467.7441,
+        440.6175,
+        481.2864
+      ],
+      "binding": {
+        "axes": [
+          "Д",
+          "Е"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0024",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          392.64,
+          481.3
+        ],
+        "p1": [
+          471.96,
+          481.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        503.3586,
+        467.7441,
+        519.9515,
+        481.2864
+      ],
+      "binding": {
+        "axes": [
+          "Е",
+          "Ж"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0025",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3199,
+        "p0": [
+          471.96,
+          481.3
+        ],
+        "p1": [
+          551.28,
+          481.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        568.4352,
+        467.7441,
+        584.4158,
+        481.2864
+      ],
+      "binding": {
+        "axes": [
+          "Ж",
+          "И"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0026",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 50.16,
+        "p0": [
+          551.28,
+          481.3
+        ],
+        "p1": [
+          601.44,
+          481.3
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        343.0776,
+        480.4668,
+        362.9942,
+        494.0091
+      ],
+      "binding": {
+        "axes": [
+          "А",
+          "И"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p19-d0027",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "52600",
+      "sheet": null,
+      "span": {
+        "length_pt": 497.04,
+        "p0": [
+          104.4,
+          494.0
+        ],
+        "p1": [
+          601.44,
+          494.0
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 52600.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        896.5142,
+        480.8217,
+        916.4308,
+        494.3639
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0028",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "50355",
+      "sheet": null,
+      "span": {
+        "length_pt": 215.64,
+        "p0": [
+          764.7599,
+          494.4
+        ],
+        "p1": [
+          980.4,
+          494.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 50355.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        1104.134,
+        495.9196,
+        1106.9857,
+        509.4955
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0029",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 19,
+      "raw": "1",
+      "sheet": null,
+      "span": {
+        "length_pt": 18.9635,
+        "p0": [
+          1087.0765,
+          494.4
+        ],
+        "p1": [
+          1106.04,
+          494.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        23.1442,
+        377.7854,
+        36.6864,
+        396.4774
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0030",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 19,
+      "raw": "16370",
+      "sheet": null,
+      "span": {
+        "length_pt": 154.68,
+        "p0": [
+          36.5,
+          309.8399
+        ],
+        "p1": [
+          36.5,
+          464.5199
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 16370.0,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        118.7837,
+        135.7487,
+        132.3259,
+        154.4407
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-d0031",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 19,
+      "raw": "16370",
+      "sheet": null,
+      "span": {
+        "length_pt": 154.68,
+        "p0": [
+          132.1,
+          67.7788
+        ],
+        "p1": [
+          132.1,
+          222.4588
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 16370.0,
+      "view": "p19-v1"
+    },
+    {
+      "absolute_text": "181.57",
+      "bbox": [
+        153.1167,
+        91.5445,
+        177.8441,
+        105.0868
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-l0032",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p19-v1"
+    },
+    {
+      "absolute_text": "172.37",
+      "bbox": [
+        158.3995,
+        155.5218,
+        178.0495,
+        167.0317
+      ],
+      "binding": {
+        "level": "+4.720",
+        "level_y": 176.4,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0033",
+      "kind": "level",
+      "level_y": 176.4,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+4.720",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 4.72,
+      "view": "p19-v1"
+    },
+    {
+      "absolute_text": "167.65",
+      "bbox": [
+        159.4796,
+        200.1622,
+        179.1297,
+        211.672
+      ],
+      "binding": {
+        "level": "+0.000",
+        "level_y": 221.04,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0034",
+      "kind": "level",
+      "level_y": 221.04,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+0.000",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 0.0,
+      "view": "p19-v1"
+    },
+    {
+      "absolute_text": "183.87",
+      "bbox": [
+        154.6785,
+        46.801,
+        177.8375,
+        58.3108
+      ],
+      "binding": {
+        "level": "+16.220",
+        "level_y": 67.8,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0035",
+      "kind": "level",
+      "level_y": 67.8,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+16.220",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 16.22,
+      "view": "p19-v1"
+    },
+    {
+      "absolute_text": "167.5",
+      "bbox": [
+        130.199,
+        224.3822,
+        150.9902,
+        237.9245
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-l0036",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "-0.150",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": -0.15,
+      "view": "p19-v1"
+    },
+    {
+      "absolute_text": "181.57",
+      "bbox": [
+        54.8386,
+        333.5865,
+        79.5659,
+        347.1287
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-l0037",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "172.37",
+      "bbox": [
+        60.0009,
+        397.5625,
+        79.651,
+        409.0724
+      ],
+      "binding": {
+        "level": "+4.720",
+        "level_y": 418.56,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0038",
+      "kind": "level",
+      "level_y": 418.56,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+4.720",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 4.72,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "167.65",
+      "bbox": [
+        60.0009,
+        442.2035,
+        79.651,
+        453.7133
+      ],
+      "binding": {
+        "level": "+0.000",
+        "level_y": 463.08,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0039",
+      "kind": "level",
+      "level_y": 463.08,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+0.000",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 0.0,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "183.87",
+      "bbox": [
+        58.5594,
+        288.9629,
+        81.7185,
+        300.4727
+      ],
+      "binding": {
+        "level": "+16.220",
+        "level_y": 309.84,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0040",
+      "kind": "level",
+      "level_y": 309.84,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+16.220",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 16.22,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "167.5",
+      "bbox": [
+        22.7982,
+        466.5445,
+        43.5894,
+        480.0868
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-l0041",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "-0.150",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": -0.15,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "181.57",
+      "bbox": [
+        1148.6292,
+        333.5865,
+        1173.3567,
+        347.1287
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-l0042",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "172.37",
+      "bbox": [
+        1148.2747,
+        397.5625,
+        1167.9246,
+        409.0724
+      ],
+      "binding": {
+        "level": "+4.720",
+        "level_y": 418.56,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0043",
+      "kind": "level",
+      "level_y": 418.56,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+4.720",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 4.72,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "170.36",
+      "bbox": [
+        1148.6355,
+        416.6439,
+        1168.2854,
+        428.1537
+      ],
+      "binding": {
+        "level": "+2.710",
+        "level_y": 437.52,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0044",
+      "kind": "level",
+      "level_y": 437.52,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+2.710",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 2.71,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "167.65",
+      "bbox": [
+        1148.3933,
+        442.2035,
+        1168.0432,
+        453.7133
+      ],
+      "binding": {
+        "level": "+0.000",
+        "level_y": 463.08,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0045",
+      "kind": "level",
+      "level_y": 463.08,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+0.000",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 0.0,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "183.07",
+      "bbox": [
+        1145.9955,
+        296.5229,
+        1169.1544,
+        308.0328
+      ],
+      "binding": {
+        "level": "+15.420",
+        "level_y": 317.4,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p19-l0046",
+      "kind": "level",
+      "level_y": 317.4,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "+15.420",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 15.42,
+      "view": "p19-v2"
+    },
+    {
+      "absolute_text": "167.5",
+      "bbox": [
+        1150.7914,
+        466.5445,
+        1171.5825,
+        480.0868
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p19-l0047",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 19,
+      "raw": "-0.150",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": -0.15,
+      "view": "p19-v2"
+    },
+    {
+      "bbox": [
+        374.7561,
+        71.9702,
+        406.5421,
+        99.0547
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0001",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "9395",
+      "sheet": null,
+      "span": {
+        "length_pt": 266.4,
+        "p0": [
+          257.28,
+          99.1
+        ],
+        "p1": [
+          523.68,
+          99.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 9395.0,
+      "view": "p23-v1"
+    },
+    {
+      "bbox": [
+        857.047,
+        81.5216,
+        897.8987,
+        100.4566
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0002",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "480 1050",
+      "sheet": null,
+      "span": {
+        "length_pt": 29.76,
+        "p0": [
+          872.4988,
+          100.7
+        ],
+        "p1": [
+          902.2588,
+          100.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        908.1699,
+        81.5216,
+        942.1059,
+        100.4566
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0003",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "470720",
+      "sheet": null,
+      "span": {
+        "length_pt": 20.28,
+        "p0": [
+          923.5,
+          100.7
+        ],
+        "p1": [
+          943.78,
+          100.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 470720.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        975.1291,
+        81.5216,
+        995.8401,
+        100.4566
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0004",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "1000",
+      "sheet": null,
+      "span": {
+        "length_pt": 28.2011,
+        "p0": [
+          971.2588,
+          100.7
+        ],
+        "p1": [
+          999.4599,
+          100.7
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1000.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        882.7288,
+        217.121,
+        899.436,
+        236.056
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0005",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "280",
+      "sheet": null,
+      "span": {
+        "length_pt": 30.2399,
+        "p0": [
+          871.8,
+          193.8
+        ],
+        "p1": [
+          902.04,
+          193.8
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 280.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        813.0074,
+        196.6038,
+        833.7184,
+        215.5388
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0006",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "1850",
+      "sheet": null,
+      "span": {
+        "length_pt": 52.44,
+        "p0": [
+          797.04,
+          215.6
+        ],
+        "p1": [
+          849.48,
+          215.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1850.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        870.3655,
+        196.6038,
+        891.0766,
+        215.5388
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0007",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "1530",
+      "sheet": null,
+      "span": {
+        "length_pt": 43.2001,
+        "p0": [
+          859.08,
+          215.6
+        ],
+        "p1": [
+          902.28,
+          215.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1530.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        917.5302,
+        196.6038,
+        936.6639,
+        215.5388
+      ],
+      "binding": {
+        "opening": "p23-v2-o1",
+        "type": "opening"
+      },
+      "check": "not_checked",
+      "id": "p23-d0008",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "1180",
+      "sheet": null,
+      "span": {
+        "length_pt": 33.48,
+        "p0": [
+          910.32,
+          215.6
+        ],
+        "p1": [
+          943.8,
+          215.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1180.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        967.209,
+        196.6038,
+        986.3427,
+        215.5388
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0009",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "1610",
+      "sheet": null,
+      "span": {
+        "length_pt": 45.72,
+        "p0": [
+          953.76,
+          215.6
+        ],
+        "p1": [
+          999.48,
+          215.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1610.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        1020.4727,
+        196.6038,
+        1042.761,
+        215.5388
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-d0010",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "2250",
+      "sheet": null,
+      "span": {
+        "length_pt": 63.9601,
+        "p0": [
+          999.48,
+          215.6
+        ],
+        "p1": [
+          1063.4401,
+          215.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 2250.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        370.5536,
+        599.2444,
+        403.739,
+        626.3289
+      ],
+      "binding": {
+        "axes": [
+          "Д",
+          "Г"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p23-d0011",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 23,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 238.08,
+        "p0": [
+          267.96,
+          626.4
+        ],
+        "p1": [
+          506.0399,
+          626.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p23-v1"
+    },
+    {
+      "bbox": [
+        755.7284,
+        130.6349,
+        782.8129,
+        160.3217
+      ],
+      "binding": {
+        "opening": "p23-v2-o2",
+        "type": "opening"
+      },
+      "check": "not_checked",
+      "id": "p23-d0012",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 23,
+      "raw": "1850",
+      "sheet": null,
+      "span": {
+        "length_pt": 52.4411,
+        "p0": [
+          782.5,
+          119.3799
+        ],
+        "p1": [
+          782.5,
+          171.821
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1850.0,
+      "view": "p23-v2"
+    },
+    {
+      "absolute_text": "183.55",
+      "bbox": [
+        201.3596,
+        93.7385,
+        233.9309,
+        109.8042
+      ],
+      "binding": {
+        "level": "+15.900",
+        "level_y": 119.4,
+        "type": "level"
+      },
+      "check": "not_checked",
+      "id": "p23-l0013",
+      "kind": "level",
+      "level_y": 119.4,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "+15.900",
+      "sheet": null,
+      "span": null,
+      "status": "bound",
+      "unit": "m",
+      "value": 15.9,
+      "view": "p23-v1"
+    },
+    {
+      "bbox": [
+        226.1965,
+        618.3301,
+        250.1103,
+        645.4146
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-t0014",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "375",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 375.0,
+      "view": "p23-v1"
+    },
+    {
+      "bbox": [
+        532.1993,
+        618.3301,
+        556.1132,
+        645.4146
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-t0015",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "620",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 620.0,
+      "view": "p23-v1"
+    },
+    {
+      "bbox": [
+        827.77,
+        217.121,
+        845.3264,
+        236.056
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-t0016",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "340",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 340.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        924.4912,
+        217.121,
+        941.1984,
+        236.056
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-t0017",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "350",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 350.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        933.2444,
+        63.2799,
+        949.9515,
+        82.2149
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-t0018",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "320",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 320.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        977.0443,
+        63.2799,
+        993.7515,
+        82.2149
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-t0019",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "300",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 300.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        1022.2897,
+        61.5969,
+        1043.821,
+        85.0232
+      ],
+      "binding": {
+        "reason": "no_dimension_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p23-t0020",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 23,
+      "raw": "310",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 310.0,
+      "view": "p23-v2"
+    },
+    {
+      "bbox": [
+        243.8396,
+        547.6656,
+        259.8201,
+        561.2078
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0001",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "2900",
+      "sheet": null,
+      "span": {
+        "length_pt": 27.36,
+        "p0": [
+          237.96,
+          561.2
+        ],
+        "p1": [
+          265.32,
+          561.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 2900.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        353.157,
+        559.6651,
+        369.1375,
+        573.2073
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0002",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "2030",
+      "sheet": null,
+      "span": {
+        "length_pt": 19.2399,
+        "p0": [
+          351.4401,
+          573.2
+        ],
+        "p1": [
+          370.68,
+          573.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 2030.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        352.0786,
+        571.0665,
+        366.8345,
+        584.6088
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0003",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "1685",
+      "sheet": null,
+      "span": {
+        "length_pt": 15.96,
+        "p0": [
+          351.48,
+          584.6
+        ],
+        "p1": [
+          367.44,
+          584.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1685.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        482.9936,
+        568.004,
+        495.5525,
+        579.0366
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0004",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "40.05",
+      "sheet": null,
+      "span": {
+        "length_pt": 0.6001,
+        "p0": [
+          489.12,
+          590.4
+        ],
+        "p1": [
+          489.7201,
+          590.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        352.6765,
+        593.6227,
+        367.4325,
+        607.1649
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0005",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "1300",
+      "sheet": null,
+      "span": {
+        "length_pt": 12.24,
+        "p0": [
+          353.8799,
+          607.2
+        ],
+        "p1": [
+          366.1199,
+          607.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 1300.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        242.2765,
+        602.5067,
+        258.8692,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "3",
+          "4"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0006",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          210.8188,
+          616.1
+        ],
+        "p1": [
+          290.1388,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        326.596,
+        602.5067,
+        343.1888,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "4",
+          "5"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0007",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          290.1388,
+          616.1
+        ],
+        "p1": [
+          369.5788,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        401.0316,
+        602.5067,
+        417.6244,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "5",
+          "6"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0008",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          369.5788,
+          616.1
+        ],
+        "p1": [
+          448.8988,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        480.3655,
+        602.5067,
+        496.9584,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "6",
+          "7"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0009",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3212,
+        "p0": [
+          448.8988,
+          616.1
+        ],
+        "p1": [
+          528.2199,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        559.7869,
+        602.5067,
+        576.3798,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "7",
+          "8"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0010",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4388,
+        "p0": [
+          528.2199,
+          616.1
+        ],
+        "p1": [
+          607.6588,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        639.121,
+        602.5067,
+        655.7138,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "8",
+          "9"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0011",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3212,
+        "p0": [
+          607.6588,
+          616.1
+        ],
+        "p1": [
+          686.98,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        718.5424,
+        602.5067,
+        735.1353,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "9",
+          "10"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0012",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4388,
+        "p0": [
+          686.98,
+          616.1
+        ],
+        "p1": [
+          766.4188,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        797.8765,
+        602.5067,
+        814.4693,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "10",
+          "11"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0013",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          766.4188,
+          616.1
+        ],
+        "p1": [
+          845.7388,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        877.2104,
+        602.5067,
+        893.7157,
+        616.0489
+      ],
+      "binding": {
+        "axes": [
+          "11",
+          "12"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0014",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4399,
+        "p0": [
+          845.7388,
+          616.1
+        ],
+        "p1": [
+          925.1787,
+          616.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        558.1158,
+        618.4666,
+        578.0325,
+        632.0088
+      ],
+      "binding": {
+        "axes": [
+          "3",
+          "12"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0015",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 26,
+      "raw": "75600",
+      "sheet": null,
+      "span": {
+        "length_pt": 714.36,
+        "p0": [
+          210.7976,
+          632.2
+        ],
+        "p1": [
+          925.1576,
+          632.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 75600.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        117.5834,
+        343.6801,
+        131.1256,
+        363.5967
+      ],
+      "binding": {
+        "axes": [
+          "В",
+          "И"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0016",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "52600",
+      "sheet": null,
+      "span": {
+        "length_pt": 368.16,
+        "p0": [
+          130.9,
+          219.5799
+        ],
+        "p1": [
+          130.9,
+          587.74
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 52600.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        305.7426,
+        590.6328,
+        319.2849,
+        594.7175
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0017",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "0",
+      "sheet": null,
+      "span": {
+        "length_pt": 0.9601,
+        "p0": [
+          319.1,
+          591.8399
+        ],
+        "p1": [
+          319.1,
+          592.8
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 0.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        419.2662,
+        107.7379,
+        432.8084,
+        123.7184
+      ],
+      "binding": {
+        "reason": "one_end_on_axis_only",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0018",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 35.16,
+        "p0": [
+          432.6,
+          105.72
+        ],
+        "p1": [
+          432.6,
+          140.8799
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        419.2662,
+        210.8632,
+        432.8084,
+        229.5552
+      ],
+      "binding": {
+        "axes": [
+          "Б",
+          "Г"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0019",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "16800",
+      "sheet": null,
+      "span": {
+        "length_pt": 158.76,
+        "p0": [
+          432.6,
+          140.8799
+        ],
+        "p1": [
+          432.6,
+          299.6399
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 16800.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        419.2662,
+        345.9144,
+        432.8084,
+        362.5072
+      ],
+      "binding": {
+        "axes": [
+          "Г",
+          "Д"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0020",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          432.6,
+          299.6399
+        ],
+        "p1": [
+          432.6,
+          378.9599
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        419.2662,
+        410.2912,
+        432.8084,
+        426.7965
+      ],
+      "binding": {
+        "axes": [
+          "Д",
+          "Е"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0021",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          432.6,
+          378.9599
+        ],
+        "p1": [
+          432.6,
+          458.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        419.2662,
+        489.7125,
+        432.8084,
+        506.3054
+      ],
+      "binding": {
+        "reason": "one_end_on_axis_only",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0022",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 76.9199,
+        "p0": [
+          432.6,
+          458.4
+        ],
+        "p1": [
+          432.6,
+          535.3199
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        419.2662,
+        554.6143,
+        432.8084,
+        570.5948
+      ],
+      "binding": {
+        "axes": [
+          "Ж",
+          "И"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p26-d0023",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 50.04,
+        "p0": [
+          432.6,
+          537.72
+        ],
+        "p1": [
+          432.6,
+          587.7599
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        465.4666,
+        516.4536,
+        479.0089,
+        532.4342
+      ],
+      "binding": {
+        "reason": "ends_not_on_axes_openings_or_levels",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-d0024",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 26,
+      "raw": "2350",
+      "sheet": null,
+      "span": {
+        "length_pt": 22.2,
+        "p0": [
+          478.8,
+          513.3599
+        ],
+        "p1": [
+          478.8,
+          535.5599
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 2350.0,
+      "view": "p26-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        476.0307,
+        542.2416,
+        498.7936,
+        555.8176
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p26-l0025",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 26,
+      "raw": "+2.800",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 2.8,
+      "view": "p26-v1"
+    },
+    {
+      "bbox": [
+        841.0697,
+        130.4318,
+        932.8572,
+        143.9647
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0001",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "Ограждения лестницы на",
+      "sheet": null,
+      "span": {
+        "length_pt": 3.96,
+        "p0": [
+          886.8001,
+          124.2
+        ],
+        "p1": [
+          890.76,
+          124.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        654.7137,
+        165.4745,
+        716.8765,
+        174.6189
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0002",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "Наружный водосток",
+      "sheet": null,
+      "span": {
+        "length_pt": 3.0,
+        "p0": [
+          684.96,
+          154.1
+        ],
+        "p1": [
+          687.96,
+          154.1
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        747.7153,
+        179.8633,
+        758.0628,
+        193.4055
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0003",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "2%",
+      "sheet": null,
+      "span": {
+        "length_pt": 1.9201,
+        "p0": [
+          751.6799,
+          207.6
+        ],
+        "p1": [
+          753.6,
+          207.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        769.4339,
+        244.4356,
+        836.5034,
+        253.58
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0004",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "Водосточная воронка",
+      "sheet": null,
+      "span": {
+        "length_pt": 4.0658,
+        "p0": [
+          800.2941,
+          259.2
+        ],
+        "p1": [
+          804.3599,
+          259.2
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        842.6365,
+        305.6236,
+        857.095,
+        319.1659
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0005",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "22%",
+      "sheet": null,
+      "span": {
+        "length_pt": 15.56,
+        "p0": [
+          841.8399,
+          320.6
+        ],
+        "p1": [
+          857.4,
+          320.6
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        637.7925,
+        304.5423,
+        652.251,
+        318.0845
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0006",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "22%",
+      "sheet": null,
+      "span": {
+        "length_pt": 15.5997,
+        "p0": [
+          640.2385,
+          322.4
+        ],
+        "p1": [
+          655.8382,
+          322.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        475.679,
+        341.7582,
+        542.7495,
+        350.9026
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0007",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "Водосточная воронка",
+      "sheet": null,
+      "span": {
+        "length_pt": 3.24,
+        "p0": [
+          507.24,
+          365.4
+        ],
+        "p1": [
+          510.4801,
+          365.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        683.4026,
+        367.5652,
+        701.0439,
+        379.6705
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0008",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "1,5%",
+      "sheet": null,
+      "span": {
+        "length_pt": 12.0,
+        "p0": [
+          683.5201,
+          378.0
+        ],
+        "p1": [
+          695.5201,
+          378.0
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        776.6349,
+        367.5652,
+        794.2586,
+        379.6705
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0009",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "1,5%",
+      "sheet": null,
+      "span": {
+        "length_pt": 12.12,
+        "p0": [
+          779.6401,
+          378.0
+        ],
+        "p1": [
+          791.7601,
+          378.0
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        475.679,
+        526.9187,
+        542.7495,
+        536.0631
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0010",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "Водосточная воронка",
+      "sheet": null,
+      "span": {
+        "length_pt": 3.2412,
+        "p0": [
+          506.7201,
+          518.0
+        ],
+        "p1": [
+          509.9613,
+          518.0
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        204.4788,
+        587.8646,
+        221.6839,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "1",
+          "2"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0011",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "4400",
+      "sheet": null,
+      "span": {
+        "length_pt": 41.52,
+        "p0": [
+          192.24,
+          601.4
+        ],
+        "p1": [
+          233.76,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        244.4519,
+        587.8646,
+        261.0446,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "2",
+          "3"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0012",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "4000",
+      "sheet": null,
+      "span": {
+        "length_pt": 37.8,
+        "p0": [
+          233.76,
+          601.4
+        ],
+        "p1": [
+          271.56,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 4000.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        302.9683,
+        587.8646,
+        319.561,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "3",
+          "4"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0013",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          271.56,
+          601.4
+        ],
+        "p1": [
+          350.88,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        382.4771,
+        587.8646,
+        398.9824,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "4",
+          "5"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0014",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          350.88,
+          601.4
+        ],
+        "p1": [
+          430.32,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        461.7235,
+        587.8646,
+        478.3164,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "5",
+          "6"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0015",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          430.32,
+          601.4
+        ],
+        "p1": [
+          509.64,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        541.2324,
+        587.8646,
+        557.7378,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "6",
+          "7"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0016",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          509.64,
+          601.4
+        ],
+        "p1": [
+          589.08,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        620.4789,
+        587.8646,
+        637.0718,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "7",
+          "8"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0017",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          589.08,
+          601.4
+        ],
+        "p1": [
+          668.4,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        699.8129,
+        587.8646,
+        716.4058,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "8",
+          "9"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0018",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4399,
+        "p0": [
+          668.4,
+          601.4
+        ],
+        "p1": [
+          747.84,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        779.2344,
+        587.8646,
+        795.8273,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "9",
+          "10"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0019",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3201,
+        "p0": [
+          747.84,
+          601.4
+        ],
+        "p1": [
+          827.16,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        858.5684,
+        587.8646,
+        875.1613,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "10",
+          "11"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0020",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          827.16,
+          601.4
+        ],
+        "p1": [
+          906.6,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        937.9899,
+        587.8646,
+        954.5827,
+        601.4068
+      ],
+      "binding": {
+        "axes": [
+          "11",
+          "12"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0021",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          906.6,
+          601.4
+        ],
+        "p1": [
+          985.92,
+          601.4
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        590.2758,
+        594.9473,
+        610.8048,
+        608.4896
+      ],
+      "binding": {
+        "axes": [
+          "1",
+          "12"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0022",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "horizontal",
+      "page": 31,
+      "raw": "84000",
+      "sheet": null,
+      "span": {
+        "length_pt": 793.68,
+        "p0": [
+          192.24,
+          608.5
+        ],
+        "p1": [
+          985.92,
+          608.5
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 84000.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        141.3459,
+        312.6012,
+        154.8881,
+        332.5177
+      ],
+      "binding": {
+        "axes": [
+          "А",
+          "И"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0023",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "52600",
+      "sheet": null,
+      "span": {
+        "length_pt": 497.04,
+        "p0": [
+          154.8,
+          74.1599
+        ],
+        "p1": [
+          154.8,
+          571.1999
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 52600.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        154.3058,
+        91.0926,
+        167.848,
+        107.0731
+      ],
+      "binding": {
+        "axes": [
+          "А",
+          "Б"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0024",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 50.0424,
+        "p0": [
+          167.6,
+          74.1176
+        ],
+        "p1": [
+          167.6,
+          124.1599
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        154.3058,
+        155.5568,
+        167.848,
+        172.0621
+      ],
+      "binding": {
+        "axes": [
+          "Б",
+          "В"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0025",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.4376,
+        "p0": [
+          167.6,
+          124.1599
+        ],
+        "p1": [
+          167.6,
+          203.5976
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        154.3058,
+        234.9781,
+        167.848,
+        251.4834
+      ],
+      "binding": {
+        "axes": [
+          "В",
+          "Г"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0026",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          167.6,
+          203.5976
+        ],
+        "p1": [
+          167.6,
+          282.9176
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        154.3058,
+        314.312,
+        167.848,
+        330.8173
+      ],
+      "binding": {
+        "axes": [
+          "Г",
+          "Д"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0027",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.44,
+        "p0": [
+          167.6,
+          282.9176
+        ],
+        "p1": [
+          167.6,
+          362.3576
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        154.3058,
+        393.7334,
+        167.848,
+        410.2386
+      ],
+      "binding": {
+        "axes": [
+          "Д",
+          "Е"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0028",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.32,
+        "p0": [
+          167.6,
+          362.3576
+        ],
+        "p1": [
+          167.6,
+          441.6776
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        154.3058,
+        473.0673,
+        167.848,
+        489.5726
+      ],
+      "binding": {
+        "axes": [
+          "Е",
+          "Ж"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0029",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "8400",
+      "sheet": null,
+      "span": {
+        "length_pt": 79.3223,
+        "p0": [
+          167.6,
+          441.6776
+        ],
+        "p1": [
+          167.6,
+          520.9999
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 8400.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        154.3058,
+        538.0564,
+        167.848,
+        554.037
+      ],
+      "binding": {
+        "axes": [
+          "Ж",
+          "И"
+        ],
+        "type": "axis_pair"
+      },
+      "check": "not_checked",
+      "id": "p31-d0030",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "5300",
+      "sheet": null,
+      "span": {
+        "length_pt": 50.1576,
+        "p0": [
+          167.6,
+          520.9999
+        ],
+        "p1": [
+          167.6,
+          571.1575
+        ]
+      },
+      "status": "unresolved",
+      "unit": "mm",
+      "value": 5300.0,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        717.8253,
+        293.0792,
+        731.3675,
+        311.9986
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0031",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "21.5%",
+      "sheet": null,
+      "span": {
+        "length_pt": 1.7992,
+        "p0": [
+          734.0,
+          302.3199
+        ],
+        "p1": [
+          734.0,
+          304.1191
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        718.0652,
+        333.637,
+        731.6074,
+        352.5564
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0032",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "21.5%",
+      "sheet": null,
+      "span": {
+        "length_pt": 15.72,
+        "p0": [
+          747.6,
+          342.1199
+        ],
+        "p1": [
+          747.6,
+          357.8399
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "bbox": [
+        953.0311,
+        116.9815,
+        966.5734,
+        131.8774
+      ],
+      "binding": {
+        "reason": "dimension_text_invalid",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-d0033",
+      "kind": "dimension",
+      "measured_mm": null,
+      "method": "pdf-vector-text+ticks",
+      "orientation": "vertical",
+      "page": 31,
+      "raw": "1.5%",
+      "sheet": null,
+      "span": {
+        "length_pt": 4.0,
+        "p0": [
+          967.8,
+          123.8399
+        ],
+        "p1": [
+          967.8,
+          127.8399
+        ]
+      },
+      "status": "unresolved",
+      "unit": null,
+      "value": null,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        606.8336,
+        349.5431,
+        631.561,
+        363.0853
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0034",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.520",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.52,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        237.5998,
+        263.8621,
+        262.3271,
+        277.4044
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0035",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        584.4019,
+        361.2794,
+        610.129,
+        374.8553
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0036",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.070",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.07,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        354.1241,
+        356.7197,
+        379.8512,
+        370.2956
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0037",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.070",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.07,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        238.3173,
+        473.509,
+        263.0447,
+        487.0513
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0038",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        509.3979,
+        580.5452,
+        534.1252,
+        594.0875
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0039",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        189.7185,
+        95.8645,
+        214.4458,
+        109.4067
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0040",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        713.8762,
+        49.3018,
+        739.2158,
+        62.8441
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0041",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+15.420",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 15.42,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        1001.3945,
+        318.4646,
+        1026.1221,
+        332.0068
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0042",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        1026.2325,
+        440.2679,
+        1050.9601,
+        453.8101
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0043",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        1028.1519,
+        169.5419,
+        1052.8794,
+        183.0841
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0044",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        939.4742,
+        37.061,
+        964.2017,
+        50.6033
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0045",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.920",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.92,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        745.3129,
+        302.385,
+        770.0402,
+        315.9272
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0046",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+13.690",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 13.69,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        326.5172,
+        417.5866,
+        350.1949,
+        431.1289
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0047",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.155",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.155,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        393.4745,
+        189.1034,
+        417.1522,
+        202.6456
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0048",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.155",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.155,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        306.1182,
+        483.8224,
+        330.8455,
+        497.3646
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0049",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.075",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.075,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        541.4379,
+        497.8663,
+        566.1652,
+        511.4085
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0050",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.075",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.075,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        544.5556,
+        379.0638,
+        569.283,
+        392.606
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0051",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.075",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.075,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        317.5162,
+        379.6619,
+        342.2435,
+        393.2041
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0052",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.075",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.075,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        346.3156,
+        259.7854,
+        371.0429,
+        273.3277
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0053",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.080",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.08,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        588.9545,
+        259.7854,
+        613.6818,
+        273.3277
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0054",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.080",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.08,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        316.1975,
+        136.4257,
+        340.9249,
+        149.9679
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0055",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.080",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.08,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        594.1143,
+        118.5457,
+        618.8416,
+        132.0879
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0056",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.080",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.08,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        673.6735,
+        87.1056,
+        696.2142,
+        100.6479
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0057",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+11.310",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 11.31,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        778.0708,
+        138.1018,
+        800.6115,
+        151.644
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0058",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+11.310",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 11.31,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        874.914,
+        79.9039,
+        898.5917,
+        93.4461
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0059",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.210",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.21,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        940.3124,
+        69.7014,
+        963.9902,
+        83.2436
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0060",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.210",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.21,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        872.5142,
+        251.7457,
+        896.192,
+        265.2879
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0061",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.210",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.21,
+      "view": "p31-v1"
+    },
+    {
+      "absolute_text": null,
+      "bbox": [
+        915.8347,
+        192.7043,
+        940.0372,
+        206.2465
+      ],
+      "binding": {
+        "reason": "no_level_line",
+        "type": "unbound"
+      },
+      "check": "not_checked",
+      "id": "p31-l0062",
+      "kind": "level",
+      "level_y": null,
+      "level_y_drawn": null,
+      "measured_mm": null,
+      "method": "pdf-vector-text",
+      "orientation": null,
+      "page": 31,
+      "raw": "+12.410",
+      "sheet": null,
+      "span": null,
+      "status": "unresolved",
+      "unit": "m",
+      "value": 12.41,
+      "view": "p31-v1"
+    }
+  ],
+  "views": [
+    {
+      "axes": [
+        {
+          "label": "И",
+          "orientation": "vertical",
+          "position": 372.6
+        },
+        {
+          "label": "Ж",
+          "orientation": "vertical",
+          "position": 422.64
+        },
+        {
+          "label": "Е",
+          "orientation": "vertical",
+          "position": 502.08
+        },
+        {
+          "label": "Д",
+          "orientation": "vertical",
+          "position": 581.4
+        },
+        {
+          "label": "Г",
+          "orientation": "vertical",
+          "position": 660.78
+        },
+        {
+          "label": "В",
+          "orientation": "vertical",
+          "position": 740.16
+        },
+        {
+          "label": "Б",
+          "orientation": "vertical",
+          "position": 819.48
+        },
+        {
+          "label": "А",
+          "orientation": "vertical",
+          "position": 869.64
+        }
+      ],
+      "bbox": [
+        306.0,
+        48.0,
+        954.0,
+        294.0
+      ],
+      "id": "p18-v1",
+      "page": 18,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [
+        {
+          "label": "1",
+          "orientation": "vertical",
+          "position": 155.4
+        },
+        {
+          "label": "2",
+          "orientation": "vertical",
+          "position": 196.92
+        },
+        {
+          "label": "3",
+          "orientation": "vertical",
+          "position": 234.72
+        },
+        {
+          "label": "4",
+          "orientation": "vertical",
+          "position": 314.1
+        },
+        {
+          "label": "5",
+          "orientation": "vertical",
+          "position": 393.48
+        },
+        {
+          "label": "6",
+          "orientation": "vertical",
+          "position": 472.86
+        },
+        {
+          "label": "7",
+          "orientation": "vertical",
+          "position": 552.24
+        },
+        {
+          "label": "8",
+          "orientation": "vertical",
+          "position": 631.56
+        },
+        {
+          "label": "9",
+          "orientation": "vertical",
+          "position": 711.0
+        },
+        {
+          "label": "10",
+          "orientation": "vertical",
+          "position": 790.32
+        },
+        {
+          "label": "11",
+          "orientation": "vertical",
+          "position": 869.7
+        },
+        {
+          "label": "12",
+          "orientation": "vertical",
+          "position": 949.08
+        }
+      ],
+      "bbox": [
+        120.0,
+        294.0,
+        1074.0,
+        546.0
+      ],
+      "id": "p18-v2",
+      "page": 18,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [],
+      "bbox": [
+        438.0,
+        564.0,
+        882.0,
+        834.0
+      ],
+      "id": "p18-v3",
+      "page": 18,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [],
+      "bbox": [
+        48.0,
+        546.0,
+        162.0,
+        762.0
+      ],
+      "id": "p18-v4",
+      "page": 18,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [
+        {
+          "label": "12",
+          "orientation": "vertical",
+          "position": 240.9
+        },
+        {
+          "label": "11",
+          "orientation": "vertical",
+          "position": 320.28
+        },
+        {
+          "label": "10",
+          "orientation": "vertical",
+          "position": 399.6
+        },
+        {
+          "label": "9",
+          "orientation": "vertical",
+          "position": 479.04
+        },
+        {
+          "label": "8",
+          "orientation": "vertical",
+          "position": 558.36
+        },
+        {
+          "label": "7",
+          "orientation": "vertical",
+          "position": 637.74
+        },
+        {
+          "label": "6",
+          "orientation": "vertical",
+          "position": 717.12
+        },
+        {
+          "label": "5",
+          "orientation": "vertical",
+          "position": 796.5
+        },
+        {
+          "label": "4",
+          "orientation": "vertical",
+          "position": 875.88
+        },
+        {
+          "label": "3",
+          "orientation": "vertical",
+          "position": 955.26
+        },
+        {
+          "label": "2",
+          "orientation": "vertical",
+          "position": 993.0
+        },
+        {
+          "label": "1",
+          "orientation": "vertical",
+          "position": 1034.64
+        }
+      ],
+      "bbox": [
+        120.0,
+        48.0,
+        1068.0,
+        288.0
+      ],
+      "id": "p19-v1",
+      "page": 19,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [
+        {
+          "label": "А",
+          "orientation": "vertical",
+          "position": 104.46
+        },
+        {
+          "label": "Б",
+          "orientation": "vertical",
+          "position": 154.56
+        },
+        {
+          "label": "В",
+          "orientation": "vertical",
+          "position": 233.88
+        },
+        {
+          "label": "Г",
+          "orientation": "vertical",
+          "position": 313.26
+        },
+        {
+          "label": "Д",
+          "orientation": "vertical",
+          "position": 392.64
+        },
+        {
+          "label": "Е",
+          "orientation": "vertical",
+          "position": 472.02
+        },
+        {
+          "label": "Ж",
+          "orientation": "vertical",
+          "position": 551.4
+        },
+        {
+          "label": "И",
+          "orientation": "vertical",
+          "position": 601.44
+        }
+      ],
+      "bbox": [
+        18.0,
+        282.0,
+        1176.0,
+        546.0
+      ],
+      "id": "p19-v2",
+      "page": 19,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [],
+      "bbox": [
+        438.0,
+        564.0,
+        882.0,
+        834.0
+      ],
+      "id": "p19-v3",
+      "page": 19,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [],
+      "bbox": [
+        48.0,
+        546.0,
+        162.0,
+        762.0
+      ],
+      "id": "p19-v4",
+      "page": 19,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [
+        {
+          "label": "Д",
+          "orientation": "vertical",
+          "position": 268.02
+        },
+        {
+          "label": "Г",
+          "orientation": "vertical",
+          "position": 506.16
+        }
+      ],
+      "bbox": [
+        72.0,
+        66.0,
+        690.0,
+        672.0
+      ],
+      "id": "p23-v1",
+      "page": 23,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [],
+      "bbox": [
+        750.0,
+        72.0,
+        1110.0,
+        246.0
+      ],
+      "id": "p23-v2",
+      "page": 23,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [
+        {
+          "label": "Г",
+          "orientation": "horizontal",
+          "position": 509.4
+        },
+        {
+          "label": "Д",
+          "orientation": "horizontal",
+          "position": 628.4399
+        },
+        {
+          "label": "12",
+          "orientation": "vertical",
+          "position": 951.84
+        }
+      ],
+      "bbox": [
+        822.0,
+        420.0,
+        1038.0,
+        732.0
+      ],
+      "id": "p23-v3",
+      "page": 23,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [
+        {
+          "label": "А",
+          "orientation": "horizontal",
+          "position": 90.7199
+        },
+        {
+          "label": "Б",
+          "orientation": "horizontal",
+          "position": 140.8199
+        },
+        {
+          "label": "В",
+          "orientation": "horizontal",
+          "position": 220.2
+        },
+        {
+          "label": "Г",
+          "orientation": "horizontal",
+          "position": 299.5199
+        },
+        {
+          "label": "Д",
+          "orientation": "horizontal",
+          "position": 378.9599
+        },
+        {
+          "label": "Е",
+          "orientation": "horizontal",
+          "position": 458.2799
+        },
+        {
+          "label": "Ж",
+          "orientation": "horizontal",
+          "position": 537.72
+        },
+        {
+          "label": "И",
+          "orientation": "horizontal",
+          "position": 587.7599
+        },
+        {
+          "label": "1",
+          "orientation": "vertical",
+          "position": 131.52
+        },
+        {
+          "label": "2",
+          "orientation": "vertical",
+          "position": 173.04
+        },
+        {
+          "label": "3",
+          "orientation": "vertical",
+          "position": 210.84
+        },
+        {
+          "label": "4",
+          "orientation": "vertical",
+          "position": 290.22
+        },
+        {
+          "label": "5",
+          "orientation": "vertical",
+          "position": 369.6
+        },
+        {
+          "label": "6",
+          "orientation": "vertical",
+          "position": 448.98
+        },
+        {
+          "label": "7",
+          "orientation": "vertical",
+          "position": 528.36
+        },
+        {
+          "label": "8",
+          "orientation": "vertical",
+          "position": 607.68
+        },
+        {
+          "label": "9",
+          "orientation": "vertical",
+          "position": 687.12
+        },
+        {
+          "label": "10",
+          "orientation": "vertical",
+          "position": 766.44
+        },
+        {
+          "label": "11",
+          "orientation": "vertical",
+          "position": 845.88
+        },
+        {
+          "label": "12",
+          "orientation": "vertical",
+          "position": 925.2
+        }
+      ],
+      "bbox": [
+        66.0,
+        66.0,
+        1014.0,
+        660.0
+      ],
+      "id": "p26-v1",
+      "page": 26,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [
+        {
+          "label": "А",
+          "orientation": "horizontal",
+          "position": 74.0999
+        },
+        {
+          "label": "Б",
+          "orientation": "horizontal",
+          "position": 124.1999
+        },
+        {
+          "label": "В",
+          "orientation": "horizontal",
+          "position": 203.5199
+        },
+        {
+          "label": "Г",
+          "orientation": "horizontal",
+          "position": 282.9
+        },
+        {
+          "label": "Д",
+          "orientation": "horizontal",
+          "position": 362.2799
+        },
+        {
+          "label": "Е",
+          "orientation": "horizontal",
+          "position": 441.6599
+        },
+        {
+          "label": "Ж",
+          "orientation": "horizontal",
+          "position": 521.0399
+        },
+        {
+          "label": "И",
+          "orientation": "horizontal",
+          "position": 571.08
+        },
+        {
+          "label": "1",
+          "orientation": "vertical",
+          "position": 192.24
+        },
+        {
+          "label": "2",
+          "orientation": "vertical",
+          "position": 233.82
+        },
+        {
+          "label": "3",
+          "orientation": "vertical",
+          "position": 271.62
+        },
+        {
+          "label": "4",
+          "orientation": "vertical",
+          "position": 351.0
+        },
+        {
+          "label": "5",
+          "orientation": "vertical",
+          "position": 430.38
+        },
+        {
+          "label": "6",
+          "orientation": "vertical",
+          "position": 509.76
+        },
+        {
+          "label": "7",
+          "orientation": "vertical",
+          "position": 589.08
+        },
+        {
+          "label": "8",
+          "orientation": "vertical",
+          "position": 668.52
+        },
+        {
+          "label": "9",
+          "orientation": "vertical",
+          "position": 747.84
+        },
+        {
+          "label": "10",
+          "orientation": "vertical",
+          "position": 827.22
+        },
+        {
+          "label": "11",
+          "orientation": "vertical",
+          "position": 906.6
+        },
+        {
+          "label": "12",
+          "orientation": "vertical",
+          "position": 985.9801
+        }
+      ],
+      "bbox": [
+        126.0,
+        24.0,
+        1074.0,
+        636.0
+      ],
+      "id": "p31-v1",
+      "page": 31,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    },
+    {
+      "axes": [],
+      "bbox": [
+        48.0,
+        660.0,
+        954.0,
+        834.0
+      ],
+      "id": "p31-v2",
+      "page": 31,
+      "scale": {
+        "anchors": [],
+        "mm_per_pt": null,
+        "reason": "no independent model anchors supplied; nominal print scale and $INSUNITS are never used",
+        "status": "unknown"
+      },
+      "sheet": null
+    }
+  ]
+}

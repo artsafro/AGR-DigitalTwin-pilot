@@ -1,0 +1,210 @@
+{
+ "schema_version": "1.0.0",
+ "synthetic": false,
+ "object_id": "KPP1",
+ "source_tier": "C",
+ "sources": [
+  {
+   "kind": "drawing",
+   "reference": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg",
+   "sheet": "АС.03 L01 facades 1-4, 4-1, А-В, В-А",
+   "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648"
+  },
+  {
+   "kind": "drawing",
+   "reference": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg",
+   "sheet": "АС.03 L02 colour facades",
+   "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2"
+  },
+  {
+   "kind": "drawing",
+   "reference": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg",
+   "sheet": "АС.03 L03 plan at 0.000",
+   "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469"
+  }
+ ],
+ "triangle_budget": {
+  "npm": 150000,
+  "vpm": 150000
+ },
+ "parts": [
+  {
+   "id": "Body_L0",
+   "part_class": "wall",
+   "operation": "contour_rebuild",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L03:A-WALL-____-MCUT hatch union, plan-contours-v001 band 0.000-3.900"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 4000,
+    "vpm": 4000
+   }
+  },
+  {
+   "id": "Body_L1",
+   "part_class": "wall",
+   "operation": "contour_rebuild",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L03:A-WALL-____-MCUT band 3.900-7.909 (D238: Revit L1 rectangle)"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 3000,
+    "vpm": 3000
+   }
+  },
+  {
+   "id": "Parapet",
+   "part_class": "parapet",
+   "operation": "contour_rebuild",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01:A-WALL-____-OTLN top 7.909, 0.35 m [D254]"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 1500,
+    "vpm": 1500
+   }
+  },
+  {
+   "id": "RoofSlab",
+   "part_class": "slab",
+   "operation": "primitive",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01:roof slab 7.700-7.909 [D254]"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 200,
+    "vpm": 200
+   },
+   "build_as": "box"
+  },
+  {
+   "id": "EntranceFrames",
+   "part_class": "frame",
+   "operation": "contour_rebuild",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L03:A-WALL-____-MCUT 0.70 m bumps"
+    },
+    {
+     "kind": "layer",
+     "reference": "L01:A-DETL-____-OTLN"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 2000,
+    "vpm": 2000
+   }
+  },
+  {
+   "id": "CurtainWall",
+   "part_class": "glazing",
+   "operation": "from_face",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01:A-GLAZ-CURT-OTLN"
+    },
+    {
+     "kind": "layer",
+     "reference": "L01:A-GLAZ-CWMG-OTLN"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 6000,
+    "vpm": 6000
+   }
+  },
+  {
+   "id": "Windows",
+   "part_class": "window",
+   "operation": "library_replace",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01:A-GLAZ-____-OTLN"
+    },
+    {
+     "kind": "layer",
+     "reference": "L01:A-WALL-____-IDEN"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 8000,
+    "vpm": 8000
+   },
+   "library_ref": "library type by form + size [D140]; not yet matched"
+  },
+  {
+   "id": "Doors",
+   "part_class": "door",
+   "operation": "library_replace",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01:A-DOOR-____-OTLN"
+    },
+    {
+     "kind": "layer",
+     "reference": "L01:A-DOOR-____-IDEN"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 3000,
+    "vpm": 3000
+   },
+   "library_ref": "library type by form + size [D140]; not yet matched"
+  },
+  {
+   "id": "Railings",
+   "part_class": "railing",
+   "operation": "detail_per_profile",
+   "sources": [
+    {
+     "kind": "layer",
+     "reference": "L01:Поручни"
+    },
+    {
+     "kind": "layer",
+     "reference": "L01:Верхние поручни"
+    }
+   ],
+   "triangle_budget": {
+    "npm": 1500,
+    "vpm": 1500
+   }
+  }
+ ],
+ "joints": [],
+ "questions": [
+  {
+   "audience": "user",
+   "text": "source_tier: the sources are 2D DWG sheets only (no Revit/FBX/mesh). Tiers are A Revit+album, B structured FBX/SKP+album, C mesh soup+album [Q29a]; none fits. Recorded C as the weakest tier: confirm or name the tier."
+  },
+  {
+   "audience": "user",
+   "text": "Body_L1: D238 says band 3.900-7.909 is the Revit/spec L1 rectangle 27.66 x 11.66 m, but this job's inventory is the three АС.03 DWGs (Revit is not listed). Add the Revit file to inputs, or take the L03 hatch contour for L1 too?"
+  },
+  {
+   "audience": "user",
+   "text": "Does D238 (Gate 1 of cold-run-1172 parts-v001) also confirm this new parts list (different file and hash), or is a fresh Gate 1 answer required?"
+  },
+  {
+   "audience": "user",
+   "text": "Windows/Doors: no shared tool extracts an opening schedule from the L01 facade DXF; take openings from the L01 dimensions by hand (D238 item 2) and match library types [D140] after Gate 1?"
+  }
+ ],
+ "status": "draft"
+}

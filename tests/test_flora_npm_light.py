@@ -143,7 +143,7 @@ def test_catalogue_generator_accepts_only_append_only_light_input(tmp_path):
     def read(path):
         return json.loads(Path(path).read_text(encoding='utf-8'))
     result = build(read('experiments/flora-library-audit/catalogue.json'),
-                   read('library/flora/species-curation.json'), read('library/flora/maps.json'),
+                   read('library/flora/species-curation.json'), read('library/flora/maps-v003-snapshot.json'),
                    cat, npm_light=data)
     assert check(result) == []
     assert len([s for s in result['species'] if 'npm_light' in s]) == 3
@@ -251,7 +251,7 @@ def test_generator_retains_light_records_without_optional_input():
     cat = catalogue(); previous = append_light(cat,document(cat),cat)
     read = lambda p: json.loads(Path(p).read_text(encoding='utf-8'))
     result = build(read('experiments/flora-library-audit/catalogue.json'),read('library/flora/species-curation.json'),
-                   read('library/flora/maps.json'),previous)
+                   read('library/flora/maps-v003-snapshot.json'),previous)
     assert result == previous
     assert not check(result)
     rows = [s for s in result['species'] if 'npm_light' in s]

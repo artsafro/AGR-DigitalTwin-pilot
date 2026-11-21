@@ -3,9 +3,24 @@
 # udim_of()/face_issue() so a failure says why (mirrored / cross-tile / margin),
 # added sequential_tiles(). tile_origin/tile_quad/signed_area/edge_densities unchanged.
 """UDIM tiles, mirrored islands, tile margins and texel density (VPM, reg p.31-32, 39)."""
+import importlib.util
 import math
+from pathlib import Path
 
 from twinqa.report import Finding, signed_margin
+
+
+def _load_udimtile():
+    """The one shared UDIM function (#1337), a stdlib file that also ships in the AGR Tools MZP."""
+    path = Path(__file__).resolve().parents[2] / "adapters" / "max" / "agr_tools" / "udimtile_core.py"
+    spec = importlib.util.spec_from_file_location("agr_tools_udimtile_core_twinqa", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_udimtile = _load_udimtile()
+UdimDomainError = _udimtile.UdimDomainError
 
 # VPM diffuse band (standards/VPM_STANDARD.yaml uv.diffuse_density_px_per_m). Not a new limit.
 DENSITY_MIN_PX_PER_M = 512
@@ -17,10 +32,14 @@ FIRST_TILE, LAST_TILE = 1001, 1100
 EPS = 1e-6
 
 
-def tile_origin(tile: int):
+def _regulated_tile_origin(tile: int):
+    """UDIM tile -> (u_tile, v_tile) via udimtile_core.tile_origin (#1376), limited to FIRST_TILE..LAST_TILE."""
     if type(tile) is not int or not FIRST_TILE <= tile <= LAST_TILE:
         raise ValueError("UDIM must be 1001..1100")
-    return (tile - 1001) % 10, (tile - 1001) // 10
+    return _udimtile.tile_origin(tile)
+
+
+tile_origin = _regulated_tile_origin
 
 
 def tile_quad(tile: int, size: int, padding: int):
@@ -34,12 +53,12 @@ def signed_area(uv):
     return sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(uv, uv[1:] + uv[:1])) / 2
 
 
-def udim_of(uv) -> int | None:
-    """Tile of the face centroid, or None when it lies outside the 10 x 10 grid."""
-    cu = sum(p[0] for p in uv) / len(uv)
-    cv = sum(p[1] for p in uv) / len(uv)
-    u, v = math.floor(cu), math.floor(cv)
-    return 1001 + u + 10 * v if 0 <= u <= 9 and 0 <= v <= 9 else None
+def udim_of(uv) -> int:
+    """Tile of the face centroid (udimtile_core.face_tile, strict=False: crossing is face_issue's 'cross_tile').
+
+    Centroid u outside [0, 10), v < 0 or a non-finite corner raises UdimDomainError (a ValueError). Rows
+    v_tile >= 10 give 1101+ (None before #1337); the 1001..1100 range is the caller's check (LAST_TILE)."""
+    return _udimtile.face_tile(uv, strict=False)
 
 
 def face_issue(uv, tile, size, padding):

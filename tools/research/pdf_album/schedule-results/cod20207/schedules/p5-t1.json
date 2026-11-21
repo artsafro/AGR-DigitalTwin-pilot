@@ -1,0 +1,205 @@
+{
+  "bbox": [
+    17.549999237060547,
+    156.31897735595703,
+    821.6694946289062,
+    325.5189743041992
+  ],
+  "columns": [
+    {
+      "col": 1,
+      "label": "№",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 2,
+      "label": "Характеристики светильника",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 3,
+      "label": "Наименование",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 4,
+      "label": "Производитель",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 5,
+      "label": "Страна\nпроизводителя",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 6,
+      "label": "Модель",
+      "unit": "",
+      "value_kind": "text"
+    },
+    {
+      "col": 7,
+      "label": "Кол-во",
+      "unit": "",
+      "value_kind": "quantity"
+    },
+    {
+      "col": 8,
+      "label": "Изображение",
+      "unit": "",
+      "value_kind": "text"
+    }
+  ],
+  "csv": "p5-t1.csv",
+  "csv_sha256": "bdb4607e846fe0ae516db23add8a5356abb636aebcec2008091ab17ccb4d9655",
+  "engines": {
+    "found_by": [
+      "primary",
+      "secondary"
+    ],
+    "primary": "pymupdf 1.28.2 find_tables",
+    "secondary": "pdfplumber 0.11.10 find_tables"
+  },
+  "merged_cells": [
+    {
+      "col": 2,
+      "merged_from": "r2c1",
+      "row": 2
+    },
+    {
+      "col": 3,
+      "merged_from": "r2c1",
+      "row": 2
+    },
+    {
+      "col": 4,
+      "merged_from": "r2c1",
+      "row": 2
+    },
+    {
+      "col": 5,
+      "merged_from": "r2c1",
+      "row": 2
+    },
+    {
+      "col": 6,
+      "merged_from": "r2c1",
+      "row": 2
+    },
+    {
+      "col": 7,
+      "merged_from": "r2c1",
+      "row": 2
+    },
+    {
+      "col": 8,
+      "merged_from": "r2c1",
+      "row": 2
+    },
+    {
+      "col": 2,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 3,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 4,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 5,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 6,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 7,
+      "merged_from": "r3c1",
+      "row": 3
+    },
+    {
+      "col": 8,
+      "merged_from": "r3c1",
+      "row": 3
+    }
+  ],
+  "n_cols": 8,
+  "n_rows": 4,
+  "open_gates": [
+    "row_type_review",
+    "unit_review",
+    "region_binding",
+    "ground_truth",
+    "approval"
+  ],
+  "page": 5,
+  "passed": false,
+  "row_type_status": "heuristic_unapproved",
+  "rows": [
+    {
+      "measures": [],
+      "row": 1,
+      "row_type": "header"
+    },
+    {
+      "measures": [],
+      "row": 2,
+      "row_type": "empty"
+    },
+    {
+      "measures": [],
+      "row": 3,
+      "row_type": "empty"
+    },
+    {
+      "measures": [
+        {
+          "col": 2,
+          "kind": "length",
+          "raw": "5 505 метров",
+          "unit": "m",
+          "value_text": "5 505"
+        },
+        {
+          "col": 2,
+          "kind": "length",
+          "raw": "16x15 мм",
+          "unit": "mm",
+          "value_text": "16x15"
+        },
+        {
+          "col": 3,
+          "kind": "length",
+          "raw": "5 505 м",
+          "unit": "m",
+          "value_text": "5 505"
+        }
+      ],
+      "row": 4,
+      "row_type": "data"
+    }
+  ],
+  "schema": "album-schedule/1",
+  "sheet": null,
+  "source": {
+    "bytes": 2981548,
+    "pages": 5,
+    "sha256": "3398c18864b0ef46b3cb59d43c34e8e3a7707172ee372545861ff8a672bb87ce"
+  },
+  "suspect_cells": [],
+  "table_id": "p5-t1"
+}
