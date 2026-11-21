@@ -146,7 +146,7 @@ def test_publish_own_folder_fbx_roles(tmp_path, key, profiles, expected_tris, fi
     tri_counts = {"high": 32, "low": 12}
     for profile in profiles:
         (folder / f"{key}_GroundEl_{profile}.fbx").write_bytes(profile.encode())
-    before = _tree(batch)
+    before = {p: p.read_bytes() for p in batch.rglob("*") if p.is_file()}
 
     def readback(fbx, out):
         report = _report()
@@ -162,7 +162,7 @@ def test_publish_own_folder_fbx_roles(tmp_path, key, profiles, expected_tris, fi
     assert {Path(f["path"]).name: f["role"] for f in rec["files"]} == {
         f"{key}_GroundEl_{p}.fbx": roles[p] for p in profiles
     }
-    assert _tree(batch) == before
+    assert {p: p.read_bytes() for p in batch.rglob("*") if p.is_file()} == before
 
 
 @pytest.mark.parametrize("suffix", ["high", "low", "legacy"])
@@ -181,6 +181,26 @@ def test_probe_own_folder_role_is_case_insensitive_and_unique(tmp_path, suffix, 
     else:
         [obj] = pub.intake_batch(tmp_path)["objects"]
         assert obj["members"] == {"npm" if suffix == "low" else "vpm": str(fbx)}
+
+
+def test_loose_fbx_from_different_objects_are_still_ambiguous(tmp_path):
+    for name in ("M3_GroundEl_high.fbx", "M4_GroundEl_low.fbx"):
+        (tmp_path / name).write_bytes(b"synthetic")
+    with pytest.raises(pub.PublishError, match="ambiguous object, 2 FBX"):
+        pub.intake_batch(tmp_path)
+
+
+def test_paired_folder_plus_ambiguous_folder_writes_no_version(tmp_path):
+    batch = tmp_path / "synthetic"
+    for key, names in [("M3", ("high", "low")), ("M4", ("v001_low", "v002_low"))]:
+        folder = batch / key
+        folder.mkdir(parents=True)
+        for name in names:
+            (folder / f"{key}_GroundEl_{name}.fbx").write_bytes(b"synthetic")
+    cat = pub.empty_catalogue()
+    with pytest.raises(pub.PublishError, match="M4.*ambiguous object, 2 FBX"):
+        publish(tmp_path, batch, cat)
+    assert not (tmp_path / "assets").exists() and cat == pub.empty_catalogue()
 
 
 # ---- name -----------------------------------------------------------------------------------------------------

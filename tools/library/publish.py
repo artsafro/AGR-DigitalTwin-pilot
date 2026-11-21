@@ -216,10 +216,18 @@ def intake_batch(batch, kind="maf"):
                               "reason": f"work file, superseded by archive {zip_keys[sup[0]]}"})
                 used.add(p)
             continue
-        if len(fbx) != 1:
+        members = {}
+        for p in fbx:
+            role = next((role for role, suffix in FBX_ROLES.items() if p.stem.lower().endswith(suffix)), None)
+            if role is None and len(fbx) == 1:
+                role = "vpm"  # Legacy single export without a profile suffix.
+            if role is not None:
+                members[role] = str(p)
+        # Only an object subfolder establishes that multiple exports belong together.
+        if len(members) != len(fbx) or (d == root and len(fbx) > 1):
             raise PublishError(f"{d}: ambiguous object, {len(fbx)} FBX files: {[p.name for p in fbx]}")
         pngs = [p for p in own if p.suffix.lower() == ".png" and "source" not in p.parts]
-        objects.append({"key": key, "source": "folder", "folder": str(d), "members": {"vpm": str(fbx[0])},
+        objects.append({"key": key, "source": "folder", "folder": str(d), "members": members,
                         "preview_file": str(pngs[0]) if pngs else None, "meta": None,
                         "identity": {}, "files": own})
         used.update(own)
