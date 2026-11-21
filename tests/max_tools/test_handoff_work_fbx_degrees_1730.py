@@ -124,7 +124,7 @@ def test_versions_and_encodings(version, compress):
 
 def test_real_max_2026_reference_files_when_present():
     """The Max 2026.3 FBX files of the PR evidence (AGR_1730_EVIDENCE=<dir with batch/ and gui_dialog/>)."""
-    ev = os.environ.get('AGR_1730_EVIDENCE')
+    ev = os.environ.get('AGR_1730_EVIDENCE') or ''
     if not ev:
         pytest.skip('AGR_1730_EVIDENCE not set (Max evidence lives outside git)')
     read = lambda rel: core.fbx_polygon_degrees(Path(ev, rel).read_bytes())  # noqa: E731
@@ -133,6 +133,25 @@ def test_real_max_2026_reference_files_when_present():
     assert read('gui_dialog/poly_tri0.fbx') == {'Q_poly': {'3': 12}}
     assert core.check_work_fbx({'Q_poly': QUAD_SRC}, Path(ev, 'batch/poly_tri0.fbx').read_bytes()) == []
     assert core.check_work_fbx({'Q_poly': QUAD_SRC}, Path(ev, 'gui_dialog/poly_tri0.fbx').read_bytes())
+    # one hexagon cap triangulates the whole prism (quads included); a pentagon prism keeps its faces
+    assert core.check_work_fbx({'P5': {'4': 5, '5': 2}}, Path(ev, 'ngon/prism5.fbx').read_bytes()) == []
+    bad = core.check_work_fbx({'P6': {'4': 6, '6': 2}}, Path(ev, 'ngon/prism6.fbx').read_bytes())
+    assert [n for n, _d in bad] == ['P6'] and 'triangulated' in bad[0][1]
+    # the AGR Tools handoff bundle 001 of run_agr_tools_handoff_native (8-gon caps) on Max 2026
+    hand = Path(ev, 'native_export/job/handoff/001/model.fbx').read_bytes()
+    bad = core.check_work_fbx({'BODY_Brick_001': {'4': 8, '8': 2}, 'BODY_Brick_002': {'4': 8, '8': 2},
+                               'GLASS_001': {'4': 6}}, hand)
+    assert [n for n, _d in bad] == ['BODY_Brick_001', 'BODY_Brick_002']
+
+
+def test_hexagon_cap_prism_triangulated_whole_fails():
+    """Max 2026 writes a 6-sided prism as 20 triangles (the quads too): the gate names the object."""
+    hexa = [list(range(6)), list(range(6, 12))] + [[i, (i + 1) % 6, 6 + (i + 1) % 6, 6 + i] for i in range(6)]
+    tris = [t for p in hexa for t in ([p[0], p[k], p[k + 1]] for k in range(1, len(p) - 1))]
+    verts = [0.0] * 36
+    assert core.fbx_polygon_degrees(binary_fbx([('P6', verts, hexa)])) == {'P6': {'4': 6, '6': 2}}
+    bad = core.check_work_fbx({'P6': {'4': 6, '6': 2}}, binary_fbx([('P6', verts, tris)]))
+    assert len(tris) == 20 and bad[0][0] == 'P6' and '6+-sided' in bad[0][1]
 
 
 # ---- invariants and fail-closed probes -----------------------------------------------------------------------

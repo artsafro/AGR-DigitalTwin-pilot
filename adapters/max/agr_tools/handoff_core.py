@@ -5,6 +5,8 @@ Blender side: tools/blender/handoff_blender.py, which loads THIS file by path). 
 facts. Contract of the bundle `handoff/<job>/<seq>/` (mcp-review REPORT.md 3.12, schemas/Handoff.schema.json):
 
 * `model.fbx`        working FBX, NOT triangulated (quads and n-gons as built), metres, Z up, instances preserved;
+                     the face degrees of the written file are read back and must equal the scene's (#1730: the Max
+                     FBX exporter triangulates an object with a 6+-sided polygon -> handoff.export fails);
 * `manifest.json`    schema, source host/document, units, axis, system_scale, objects (name, agr_role, layer, parent,
                      world matrix, instance_of, geometry hash, slot table slot_index <-> matID <-> library_id <-> UDIM,
                      UV channels and their tiles), the sha256 of the FBX and of materials.json;
@@ -586,7 +588,8 @@ def validate_sidecar(doc):
 # ---- work FBX face-degree readback (#1730) -------------------------------------------------------------------------
 # Measured on 3ds Max 2026.3 (fbxmax.dlu 28.3.0.30732, FBX SDK 2020.3.9), 2026-11-21: `exportFile #noPrompt` honours
 # FBXExporterSetParam "Triangulate" false for Editable_Poly / Box / Edit_Poly, but writes TRIANGLES for an
-# Editable_Mesh or an Edit_Mesh on top of the stack, and the interactive FBX dialog applies its saved preset over the
+# Editable_Mesh or an Edit_Mesh on top of the stack and for the WHOLE object once one polygon has 6+ sides, and the
+# interactive FBX dialog applies its saved preset over the
 # script parameters. So the parameter alone proves nothing: the written file is read back and compared with the scene.
 _FBX_MAGIC = b'Kaydara FBX Binary  \x00\x1a\x00'
 _FBX_FIXED = {'Y': 2, 'C': 1, 'I': 4, 'F': 4, 'D': 8, 'L': 8}
@@ -744,9 +747,9 @@ def work_fbx_degree_findings(source, readback):
         elif got == want:
             continue
         elif set(got) == {'3'} and any(int(k) >= 4 for k in want):
-            out.append((name, 'triangulated: scene {} -> FBX {} (Triangulate=False was not honoured: Editable_Mesh / '
-                              'Edit_Mesh on the stack or the FBX dialog preset; docs/agents/CAPABILITIES.md)'
-                        .format(want, got)))
+            out.append((name, 'triangulated: scene {} -> FBX {} (Triangulate=False was not honoured: a 6+-sided '
+                              'polygon, an Editable_Mesh / Edit_Mesh on the stack or the FBX dialog preset; '
+                              'docs/agents/CAPABILITIES.md)'.format(want, got)))
         else:
             out.append((name, 'face degrees differ: scene {} -> FBX {}'.format(want, got)))
     for name in sorted(set(readback) - set(source)):

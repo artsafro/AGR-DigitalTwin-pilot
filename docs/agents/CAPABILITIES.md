@@ -36,6 +36,12 @@ using:FBXEXP`, face degrees read back from the written FBX:
 - The batch/script flag WORKS for poly objects (also instanced Editable_Poly with `Preserveinstances` true:
   `{4: 6}` x 2). It does not help when the object evaluates to a mesh: an Editable_Mesh, or an Edit_Mesh (or any
   mesh-output modifier) on top of the stack, is written as triangles whatever the flag says.
+- **N-gon limit:** with the flag false the exporter keeps triangles, quads and pentagons, but ONE polygon of 6 or
+  more sides triangulates the WHOLE object (quads included): Editable_Poly prisms 3/4/5 sides keep `{3: 2, 4: 3}` /
+  `{4: 6}` / `{4: 5, 5: 2}`; 6 and 8 sides give `{3: 20}` / `{3: 28}`; single faces of 6/7/8/12 sides (convex or
+  star) come back as triangles, a 5-gon stays `{5: 1}`. Same on Max 2024.2.5 (26.2.5.192), informational. A work
+  FBX of an object with 6+-gons cannot come from the Max FBX exporter: export it from Blender, or split those
+  n-gons in the scene first (D312 fails n-gons in the master anyway).
 - The interactive dialog ignores the script parameters: it applies its saved preset
   (`Documents/3dsmax/FBX/3dsMax2026_X64/Presets/export/User defined.fbxexportpreset`, `Triangulate v="1"` on this
   PC) and `FBXExporterGetParam "Triangulate"` returns `true` after it. Never export a work FBX through the dialog.
@@ -44,8 +50,10 @@ using:FBXEXP`, face degrees read back from the written FBX:
   (`adapters/max/agr_tools/handoff_max.py:_export_copies` + `handoff_core.check_work_fbx`: fails naming the object when
   a scene object with quads/n-gons comes back triangles-only or with other degrees). Blender (`tools/blender`
   exporters, quads kept) is the fallback route. Delivery FBX stay triangulated (DER-03).
-- Evidence: `G:/Мой диск/AGR-evidence/1730-max-fbx-triangulate/` (`probe_1730.py`, `gui_driver.ms`, the 21 FBX,
-  `degrees.json`, logs, `SHA256SUMS.txt`).
+- Evidence: `G:/Мой диск/AGR-evidence/1730-max-fbx-triangulate/` (`probe_1730.py`, `probe_ngon.py`, `gui_driver.ms`,
+  58 FBX in `batch/`, `gui_noprompt/`, `gui_dialog/`, `ngon/`, `ngon_2024/`, `native_export/`, `degrees*.txt`, logs,
+  the dialog preset copy, `SHA256SUMS.txt`). Readback regression: `tests/max_tools/test_handoff_work_fbx_degrees_1730.py`
+  (`AGR_1730_EVIDENCE=<that folder>` also reads the real Max files).
 
 Helper (IN BRANCH, #1297): `uv run python tools/open_review_scene.py --app blender --source "C:/job/stage_v001.blend" --output "C:/job/stage_review_v002.blend" --open-approved` (use `--app max` and `.max` for Max 2026). Requires a saved native scene and a new versioned output; refuses aliases/occupied destinations. Always starts a **new process**, including when Max's live lock is held: no bridge call, live injection, reset, close, lock reaping or user-document replacement. Keep existing PID pins on all later bridge calls; a new instance can become the bridge default. If another instance is unsuitable, ask instead. The helper reports `launched`, not `loaded` or accepted: inspect the new process's document/version/units and record its log or screenshot. Do not pass `--open-approved` without the task's yes. Save the stage before invoking; it is not a converter or topology checker. Sources/approved versions stay unchanged; readback/visual acceptance remain separate gates.
 
