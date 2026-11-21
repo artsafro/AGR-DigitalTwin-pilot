@@ -23,7 +23,9 @@ GROUND_STEPS = ("site", "zero", "v015")
 # build-manifest (#1423): core adapters/max/agr_tools/build_manifest.py (delivery set consistency, FBX export owner).
 SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
            "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py",
-           "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py"}
+           "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py",
+           # open-review (#1740): skeleton stage review-scene; copy to C:/x/review-<job>/, new Max 2026 or Blender
+           "open-review": "tools/open_review_scene.py"}
 
 
 STUBS = {

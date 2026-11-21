@@ -7,6 +7,7 @@ Acceptance table (every row is a test):
 - stale lock (dead pid)                  -> Max, the lock is NOT reclaimed by open-review                -> test_stale_lock_is_not_reclaimed
 - Max executable missing                 -> Blender fallback with the reason                             -> test_max_missing_falls_back_to_blender
 - .max scene while Max busy              -> error, nothing written, nothing launched                     -> test_native_max_scene_when_busy_fails_closed
+- occupied Max import-script name        -> error, foreign file unchanged, nothing launched              -> test_occupied_import_script_refused
 - explicit --app max while busy          -> error (no new Max next to a held live session)               -> test_explicit_max_refused_when_busy
 - .blend                                 -> Blender only                                                 -> test_blend_goes_to_blender
 - repeat on same stage                   -> v001, v002; earlier copies unchanged                         -> test_repeat_gets_next_version
@@ -59,8 +60,8 @@ def env(tmp_path, monkeypatch):
         exes[app] = exe
     module = load()
     calls = []
-    monkeypatch.setattr(module.subprocess, 'Popen',
-                        lambda args, **kw: calls.append(args) or SimpleNamespace(pid=4242))
+    monkeypatch.setattr(module, 'subprocess', SimpleNamespace(  # module-local: real subprocess stays usable
+        DEVNULL=subprocess.DEVNULL, Popen=lambda args, **kw: calls.append(args) or SimpleNamespace(pid=4242)))
     return SimpleNamespace(m=module, calls=calls, exes=exes, locks=locks, root=tmp_path / 'x', tmp=tmp_path)
 
 
@@ -83,6 +84,14 @@ def hold_lock(env, body=None):
     return lock
 
 
+def launched_text(args):
+    """The launch command plus the Max startup script it runs (what the new process will open)."""
+    text = ' '.join(args)
+    if '-U' in args:
+        text += '\n' + Path(args[args.index('-U') + 2]).read_text(encoding='utf-8')
+    return text
+
+
 def test_fbx_opens_copy_in_new_max(env):
     source = stage(env)
     before = sha(source)
@@ -91,8 +100,22 @@ def test_fbx_opens_copy_in_new_max(env):
     assert result['status'] == 'launched' and result['app'] == 'max' and result['path'] == str(out.resolve())
     assert out.read_bytes() == source.read_bytes() and sha(source) == before
     assert len(env.calls) == 1 and env.calls[0][0] == str(env.exes['max'].resolve())
-    assert str(source) not in ' '.join(env.calls[0]) and str(out.resolve()) in ' '.join(env.calls[0])
+    assert env.calls[0][1:3] == ['-U', 'MAXScript'] and '-mxs' not in env.calls[0]   # -mxs quits Max after the string
+    text = launched_text(env.calls[0])
+    assert str(source) not in text and f'importFile @"{out.resolve()}" #noPrompt' in text
     assert result['original'] == str(source.resolve()) and result['acceptance'] == 'not_measured'
+
+
+def test_occupied_import_script_refused(env):
+    source = stage(env)
+    folder = env.root / 'review-63A'
+    folder.mkdir(parents=True)
+    script = folder / '63A_Stage2_v001_review_v001.open.ms'
+    script.write_text('-- someone else\n')
+    with pytest.raises(ValueError, match='occupied'):
+        run(env, source)
+    assert script.read_text() == '-- someone else\n' and env.calls == []
+    assert sorted(p.name for p in folder.iterdir()) == [script.name]
 
 
 def test_max_busy_falls_back_to_blender(env):
@@ -177,9 +200,10 @@ def test_never_opens_original_probe(env):
         before = sha(source)
         env.calls.clear()
         result = run(env, source, job=job)
-        args = ' '.join(env.calls[0])
-        assert Path(result['path']) != source.resolve() and str(source.resolve()) not in args
-        assert result['path'] in args and sha(source) == before and sha(result['path']) == before
+        args = launched_text(env.calls[0])
+        src, out = source.resolve(), Path(result['path'])
+        assert out != src and str(src) not in args and src.as_posix() not in args
+        assert (str(out) in args or out.as_posix() in args) and sha(source) == before and sha(out) == before
         checked += 1
     assert checked == 40
 

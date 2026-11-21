@@ -37,9 +37,10 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
 | 11 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
 | 12 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 13 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
-| 14 | `geojson` GeoJSON | пробел |
-| 15 | `light-fbx` `_Light.fbx` | пробел |
+| 13 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved`: копия в `C:/x/review-<job>/`, новый Max 2026, Blender если Max занят [D255, D270] (#1740) |
+| 14 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
+| 15 | `geojson` GeoJSON | пробел |
+| 16 | `light-fbx` `_Light.fbx` | пробел |
 
 ### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
 
@@ -56,7 +57,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 9 | `build-manifest` манифест выпуска | `agr build-manifest record` |
 | 10 | `package-npm` пакет | `agr package-npm` → `package_core._write_zip` |
 | 11 | `validate` | `agr validate` |
-| 12 | `review-scene` сцена для приёмки | пробел |
+| 12 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved` (`tools/open_review_scene.py`, #1740) |
 | 13 | `checker` | `agr checker` |
 
 ### `npm-to-vpm` — existing NPM -> VPM (OKS cells `oks-npm` -> `oks-vpm`)
@@ -101,7 +102,7 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | 9 | `package-npm` | `agr package-npm` → `package_core._write_zip` |
 | 10 | `validate` | `agr validate` |
 | 11 | `checker` | `agr checker` |
-| 12 | `review-scene` | пробел |
+| 12 | `review-scene` | `agr open-review FILE --open-approved` (#1740) |
 
 Бюджет по умолчанию — `standards/NPM_STANDARD.yaml` `oks_triangles_per_fbx_max` (150000); шаг лестницы, нужный
 при превышении, но не поданный хуком, — `missing`, а не «сделано».
@@ -295,7 +296,6 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 - `geojson` — нет готового к сдаче генератора GeoJSON, пока не изучены примеры заказчика [D220].
 - `light-fbx` — нет стадии валидатора для содержимого `_Light.fbx`.
 - `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
-- `review-scene` — `agr open-in-max` / `agr contact-renders` недоступны: мост Max или рендеры работы.
 - `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.
 - `zero` — нет команды границы и нуля проекта; читать ПЗУ / вертикальную планировку, спрашивать [D279].
 - `surfaces` — нет общего построителя покрытий; `ground_cake` — только кирпичики.
