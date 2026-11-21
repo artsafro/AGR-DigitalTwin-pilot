@@ -59,4 +59,44 @@ edits to scorer/builders/geometry/delivered packages or other cards' files.
 
 ## Round log
 
-(filled after measurement)
+**Итог OBSERVE: признак не разделяет — M = −0,265 (порог > 0).** Треугольники эталона Артёма G22 лежат так же на
+горизонталях, как у отклонённых 63B: доля треугольников в горизонтальной площади у эталона к.1–к.3 = 15,3 / 26,5 /
+25,1 %, у отклонённых 63B v001–v005 = 29,6–30,7 %; на вертикалях у эталона их почти нет (V ≤ 1,3 %). Отрыв 63B
+v001–v005 от худшего эталона (к.2) — всего 0,030, при этом отклонённые 63B v006 и 63C v001 имеют 0 треугольников
+(их дефект — вырожденные четырёхугольники / косые грани, #19/#22). Значит, «горизонтальный треугольник» — родное
+свойство поставки эталона, а не дефект; штраф по месту треугольников (как и R3 по их числу) не вводить. Ничего не
+сохраняем, ядра/оценка/модели без изменений.
+
+| Corpus | Label | Triangles | Horizontal area m² | H (tri share of horizontal) | V (tri share of vertical) |
+|---|---|---:|---:|---:|---:|
+| 63B v001 | rejected | 976 | 1474.8 | 0.2955 | 0 |
+| 63B v002 | rejected | 968 | 1474.8 | 0.2955 | 0 |
+| 63B v003 | rejected | 976 | 1474.9 | 0.2956 | 0 |
+| 63B v004 | rejected | 972 | 1474.9 | 0.2955 | 0 |
+| 63B v005 | rejected | 1034 | 1398.8 | 0.3074 | 0 |
+| 63B v006 | rejected | 0 | 1450.4 | 0 | 0 |
+| 63C v001 | rejected | 0 | 739.8 | 0 | 0 |
+| KPP1 v003 corners | rejected | 48 | 1922.7 | 0.6205 | 0.3768 |
+| 63B v007 | accepted | 0 | 1163.7 | 0 | 0 |
+| 63C v002 | accepted | 0 | 624.9 | 0 | 0 |
+| 63A v005 | accepted | 0 | 459.0 | 0 | 0 |
+| G22 k2 v002r1 | accepted | 0 | 215.3 | 0 | 0 |
+| G22 etalon k1 | etalon | 7733 | 2468.9 | 0.1527 | 0.0127 |
+| G22 etalon k2 | etalon | 1589 | 507.7 | 0.2654 | 0.0001 |
+| G22 etalon k3 | etalon | 1873 | 759.9 | 0.2505 | 0.0021 |
+
+M = −0.26535641100393725; M without 63B v006 = same (63C v001 = 0 also sets the minimum). Paired spread 0 in every
+corpus (3 reads). Contract frozen in `ca1c136b` before measurement. Receipt
+[r27.json](autoresearch-body-mesh-horizontal-tris-harness/r27.json) SHA-256
+`f54396b416ced69ecaca179f42eb49c86605e281161ea1af949cd145a0844859`; replay.py SHA-256
+`8f983a4511cd3f3342ff19a7ef2315e04b35b28bdc7777de618037c885289850` (Git LF). Wall 3.3 s.
+
+- **Clean:** 15 input hashes before/after, three identical reads, etalon triangle parity 7733/1589/1873 with #25/#26,
+  non-zero horizontal area everywhere.
+- **Injected:** 63B v001 expected hash → 64 zeros: `ValueError: input hash mismatch` before geometry. Relabel
+  KPP1 corners → accepted on the 3-corpus subset {63B v001, v007, KPP1}: M 0.2955 → −0.3250 (oracle live).
+- **Not measured:** fresh DCC readback, editable quad source, triangle semantics (floor / roof / cap), any penalty.
+- **Would change (OBSERVE, not applied):** stop pursuing triangle-based local penalties (count R3 or placement H).
+  The only signal that still separates the rejected 63B v001–v006/63C v001 from accepted bodies is shape
+  (degenerate/180° corners, off-45° caps, #19–#22). Next experiment should measure a corner-angle degeneracy
+  feature on the same 15-corpus fixture with the etalon as the hold-out control.
