@@ -151,7 +151,7 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | 16 | `validate` | `agr validate --ground-area-m2` |
 | 17 | `checker` | `agr checker` после визуальной приёмки |
 
-### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D361], [D368]-[D371]
+### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D372], [D368]-[D371]
 
 Одна команда `agr library publish BATCH --kind maf --evidence DIR` проходит этапы 1–6; затем на «ок» Артёма
 `agr library accept NAMES --words "..."`, на отказ `agr library reject NAME --words "..."`. Подробно:
