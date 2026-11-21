@@ -1,0 +1,208 @@
+{
+ "schema": "library-maf-material-ids-change",
+ "from": "library/maf/material_ids_v007.json",
+ "version": "v008",
+ "decision": "D358",
+ "md_ref": "D358",
+ "approval": {
+  "date": "2026-11-21",
+  "quote": "Да, все",
+  "by": "Artem",
+  "source": "chat 2026-11-21 intake answers (jobs/staropetrovskiy-maf-lib/TASK.md); ID 36 colour: Artem, chat 2026-11-21 (pilot T01 review)"
+ },
+ "changelog": "v008 (2026-11-21, D358): six IDs of the Staropetrovskiy MAF job added as used there: 34 `paint_ral1015` #E6D2B5, 35 `paint_ral1002` #D2AA6D, 36 `paint_ral8004` #9E5A47 (measured in the delivered maps; brief #8E402A superseded), 37 `concrete_beige` #CDBFA3, 38 `glass_frosted_white` #EEF1F2, 39 `glass_frosted_amber` #E8A878 (other colours from the job BRIEF.md; 38/39 opaque solid colour cells). Nothing else in v007 changes.",
+ "job_sources": {
+  "brief": {
+   "path": "C:/x/staropetrovskiy-maf-claude/BRIEF.md",
+   "sha256": "6239549502d35eb3ed02d1e189970c9d4f659f8b2bdaba16f5eafc3eb70f6a13"
+  },
+  "atlas_layout": {
+   "path": "C:/x/staropetrovskiy-maf-claude/atlas/atlas_layout_v002.json",
+   "sha256": "810b596083d0f477b163b77dc505df37130fb48fd81d78e08546713dae0f2425"
+  },
+  "job_atlas": {
+   "path": "C:/x/staropetrovskiy-maf-claude/atlas/atlas_npm_512_v002.png",
+   "sha256": "15513d9046c68e6fc92654820f9aa09e6ce5b09a48d07b4a5721872d0f900100"
+  },
+  "delivered_atlas": {
+   "path": "C:/x/staropetrovskiy-maf-claude/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png",
+   "sha256": "0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943"
+  },
+  "vpm_tiles": {
+   "path": "C:/x/staropetrovskiy-maf-claude/site5/vpm_maps_v004/tiles_maps.json",
+   "sha256": "67e45753eb15c0cfbcb6854a4e1c37c49291ef8b3bd80e645daacae88eb23eae"
+  },
+  "decisions_night": {
+   "path": "C:/x/staropetrovskiy-maf-claude/decisions_night.md",
+   "sha256": "986b65b9bfa28b80063caa4300364f34bab58f42be899c63998c8fa4dbf19c44"
+  }
+ },
+ "nulls": {
+  "kind": [
+   38,
+   39
+  ],
+  "ral": [
+   37,
+   38,
+   39
+  ],
+  "vpm_solid_tile": [
+   37
+  ]
+ },
+ "adds": [
+  {
+   "id": 34,
+   "key": "paint_ral1015",
+   "name_ru": "краска RAL 1015 светлая слоновая кость",
+   "kind": "paint",
+   "ral": "1015",
+   "target": "#E6D2B5",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_34_paint_ral1015.png",
+    "px": 512,
+    "flat": "#E6D2B5",
+    "source": "Staropetrovskiy BRIEF.md row 34 (flat #E6D2B5); job atlas_layout_v002 cells ID34_rod_mesh_open, ID34_u_tubes_open, ID34_solid"
+   },
+   "job_cells": [
+    "ID34_rod_mesh_open",
+    "ID34_u_tubes_open",
+    "ID34_solid"
+   ],
+   "vpm_solid_tile": 1044,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 35,
+   "key": "paint_ral1002",
+   "name_ru": "краска RAL 1002 песочно-жёлтая («золото»)",
+   "kind": "paint",
+   "ral": "1002",
+   "target": "#D2AA6D",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_35_paint_ral1002.png",
+    "px": 512,
+    "flat": "#D2AA6D",
+    "source": "Staropetrovskiy BRIEF.md row 35 (flat #D2AA6D); job atlas_layout_v002 cells ID35_radial_soffit, ID35_loop_band_open, ID35_filigree_open, ID35_rod_mesh_open, ID35_solid"
+   },
+   "job_cells": [
+    "ID35_radial_soffit",
+    "ID35_loop_band_open",
+    "ID35_filigree_open",
+    "ID35_rod_mesh_open",
+    "ID35_solid"
+   ],
+   "vpm_solid_tile": 1045,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 36,
+   "key": "paint_ral8004",
+   "name_ru": "краска RAL 8004 медно-коричневая / кортен",
+   "kind": "paint",
+   "ral": "8004",
+   "target": "#9E5A47",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_36_paint_ral8004.png",
+    "px": 512,
+    "flat": "#9E5A47",
+    "source": "delivered NPM map site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png (sha256 0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943) cell ID36_solid content_px [260, 388, 56, 56] per-channel median (flat #9E5A47); VPM tile 1046 the same; brief #8E402A superseded (D358)"
+   },
+   "job_cells": [
+    "ID36_lamellas_open",
+    "ID36_radial_slots_open",
+    "ID36_solid"
+   ],
+   "vpm_solid_tile": 1046,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID; colour measured in the delivered maps"
+  },
+  {
+   "id": 37,
+   "key": "concrete_beige",
+   "name_ru": "фибробетон / СФБ бежевый (индивидуальные МАФ)",
+   "kind": "mineral",
+   "ral": null,
+   "target": "#CDBFA3",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_37_concrete_beige.png",
+    "px": 512,
+    "flat": "#CDBFA3",
+    "source": "Staropetrovskiy BRIEF.md row 37 (flat #CDBFA3); job atlas_layout_v002 cells ID37_concrete, ID37_gold_lines, ID37_flutes"
+   },
+   "job_cells": [
+    "ID37_concrete",
+    "ID37_gold_lines",
+    "ID37_flutes"
+   ],
+   "vpm_solid_tile": null,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 38,
+   "key": "glass_frosted_white",
+   "name_ru": "стекло матовое белое (арт-объект A01 «Рассветное солнце»), непрозрачная заливка",
+   "kind": null,
+   "ral": null,
+   "target": "#EEF1F2",
+   "size": "S",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_38_glass_frosted_white.png",
+    "px": 512,
+    "flat": "#EEF1F2",
+    "source": "Staropetrovskiy BRIEF.md row 38 (flat #EEF1F2); job atlas_layout_v002 cells ID38_solid"
+   },
+   "job_cells": [
+    "ID38_solid"
+   ],
+   "vpm_solid_tile": 1047,
+   "spec_rows": [],
+   "review": [
+    "kind null: no library kind fits an opaque frosted-glass colour cell (decisions_night #16); translucent = GroundElGlass without texture"
+   ],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 39,
+   "key": "glass_frosted_amber",
+   "name_ru": "стекло матовое янтарное (арт-объект A02 «Закатное солнце»), непрозрачная заливка",
+   "kind": null,
+   "ral": null,
+   "target": "#E8A878",
+   "size": "S",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_39_glass_frosted_amber.png",
+    "px": 512,
+    "flat": "#E8A878",
+    "source": "Staropetrovskiy BRIEF.md row 39 (flat #E8A878); job atlas_layout_v002 cells ID39_solid"
+   },
+   "job_cells": [
+    "ID39_solid"
+   ],
+   "vpm_solid_tile": 1048,
+   "spec_rows": [],
+   "review": [
+    "kind null: as ID 38"
+   ],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  }
+ ]
+}
