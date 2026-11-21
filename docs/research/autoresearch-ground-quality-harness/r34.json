@@ -1,0 +1,1041 @@
+{
+  "variant": "Qfan indexed / no weld",
+  "hypothesis": "refuted",
+  "inputs": {
+    "A1": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A1_Vatutino_v015_NPM.npz",
+      "sha256": "58dacd6edf346d2e90f37b76a3e696cc69924d167f601383ac089adf0dc76523",
+      "part": "SM_Vatutino_Ground",
+      "clean": {
+        "D": 59,
+        "T": 46479,
+        "Q": 12.693904774199101,
+        "ids": [
+          3506,
+          5862,
+          5881,
+          6010,
+          6044,
+          6345,
+          6889,
+          6964,
+          7118,
+          7122,
+          7299,
+          7302,
+          7304,
+          7307,
+          7310,
+          7368,
+          8148,
+          8159,
+          8192,
+          8239,
+          8245,
+          8316,
+          8341,
+          8927,
+          9522,
+          9922,
+          9944,
+          9949,
+          9953,
+          9957,
+          9959,
+          10150,
+          10160,
+          10564,
+          10711,
+          10768,
+          10853,
+          10930,
+          11256,
+          11862,
+          11933,
+          11974,
+          12112,
+          12135,
+          12142,
+          12145,
+          12198,
+          12204,
+          12205,
+          12274,
+          12630,
+          12635,
+          12636,
+          12643,
+          12734,
+          12786,
+          12883,
+          12938,
+          19844
+        ]
+      },
+      "clean_Q_runs": [
+        12.693904774199101,
+        12.693904774199101,
+        12.693904774199101
+      ],
+      "repeat_exact": true,
+      "median": 12.693904774199101,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 12.693904774199101,
+      "injected": {
+        "D": 69,
+        "T": 46489,
+        "Q": 14.8422207403902,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          3506,
+          5862,
+          5881,
+          6010,
+          6044,
+          6345,
+          6889,
+          6964,
+          7118,
+          7122,
+          7299,
+          7302,
+          7304,
+          7307,
+          7310,
+          7368,
+          8148,
+          8159,
+          8192,
+          8239,
+          8245,
+          8316,
+          8341,
+          8927,
+          9522,
+          9922,
+          9944,
+          9949,
+          9953,
+          9957,
+          9959,
+          10150,
+          10160,
+          10564,
+          10711,
+          10768,
+          10853,
+          10930,
+          11256,
+          11862,
+          11933,
+          11974,
+          12112,
+          12135,
+          12142,
+          12145,
+          12198,
+          12204,
+          12205,
+          12274,
+          12630,
+          12635,
+          12636,
+          12643,
+          12734,
+          12786,
+          12883,
+          12938,
+          19844
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": true
+      }
+    },
+    "F4": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\F4_r4.npz",
+      "sha256": "9b7d26af84d142448fe1363a816eef1e1e4fc5c8b6ff191995dcf958ca1ac922",
+      "part": "SM_SIL13_Ground",
+      "clean": {
+        "D": 0,
+        "T": 37370,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 421.72865935242174,
+      "delta_vs_Qv": -421.72865935242174
+    },
+    "A2": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A2_Skolkovo_NPM.npz",
+      "sha256": "3cc015f237244077084274e7afc2a53a019f04ec72a4b9c72cb014d815f3a715",
+      "part": "SM_BolshoyBulvar_64_Ground",
+      "clean": {
+        "D": 0,
+        "T": 5733,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 0.0,
+      "injected": {
+        "D": 10,
+        "T": 5743,
+        "Q": 17.41250217656277,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": true
+      }
+    },
+    "A3": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A3_COD_NPM.npz",
+      "sha256": "4424863c981f2779b5dc23a778e1ccdd9812759003a5ca1c37e1ebeef427c4c6",
+      "part": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+      "clean": {
+        "D": 7,
+        "T": 2801,
+        "Q": 24.991074616208497,
+        "ids": [
+          9,
+          10,
+          748,
+          749,
+          750,
+          751,
+          756
+        ]
+      },
+      "clean_Q_runs": [
+        24.991074616208497,
+        24.991074616208497,
+        24.991074616208497
+      ],
+      "repeat_exact": true,
+      "median": 24.991074616208497,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 24.991074616208497,
+      "injected": {
+        "D": 16,
+        "T": 2811,
+        "Q": 56.91924581999289,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          748,
+          749,
+          750,
+          751,
+          756
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": false
+      }
+    },
+    "A4": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A4_Donskoy_NPM.npz",
+      "sha256": "98a8592309bc55e3ba3dafaa4f5e9a9c6667938a563aeffa13053d155f30c3b5",
+      "part": "SM_5jDonskoyProezd_Vl_15_Ground",
+      "clean": {
+        "D": 2,
+        "T": 11528,
+        "Q": 1.7349063150589867,
+        "ids": [
+          5558,
+          5973
+        ]
+      },
+      "clean_Q_runs": [
+        1.7349063150589867,
+        1.7349063150589867,
+        1.7349063150589867
+      ],
+      "repeat_exact": true,
+      "median": 1.7349063150589867,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 1.7349063150589867,
+      "injected": {
+        "D": 12,
+        "T": 11538,
+        "Q": 10.400416016640666,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          5558,
+          5973
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": true
+      }
+    },
+    "A5": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A5_Ostrov_NPM.npz",
+      "sha256": "5c3fd2f73d10fa366eb7423e411a616e671b341caedfdbbb16c86ef18624be9a",
+      "part": "SM_NizhnieMnevniki_ZU_66_Ground",
+      "clean": {
+        "D": 1,
+        "T": 29760,
+        "Q": 0.33602150537634407,
+        "ids": [
+          14181
+        ]
+      },
+      "clean_Q_runs": [
+        0.33602150537634407,
+        0.33602150537634407,
+        0.33602150537634407
+      ],
+      "repeat_exact": true,
+      "median": 0.33602150537634407,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 0.33602150537634407,
+      "injected": {
+        "D": 11,
+        "T": 29770,
+        "Q": 3.694994961370507,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          14181
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": true
+      }
+    },
+    "A6": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A6_Kasatkino_NPM.npz",
+      "sha256": "3020f77108bb208b03a39b7a1df36765e6288fd78666dc28cdc2f7a265b9cbf9",
+      "part": "SM_Kasatkina_Vl_11_Ground",
+      "clean": {
+        "D": 1,
+        "T": 59290,
+        "Q": 0.16866250632484397,
+        "ids": [
+          30194
+        ]
+      },
+      "clean_Q_runs": [
+        0.16866250632484397,
+        0.16866250632484397,
+        0.16866250632484397
+      ],
+      "repeat_exact": true,
+      "median": 0.16866250632484397,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 0.16866250632484397,
+      "injected": {
+        "D": 11,
+        "T": 59300,
+        "Q": 1.854974704890388,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          30194
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": true
+      }
+    },
+    "A7": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A7_Volokolamskoe_NPM.npz",
+      "sha256": "c3fef038731551fab80f64018ccf14dd1b864d62718657214dcc7309aeecbfad",
+      "part": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+      "clean": {
+        "D": 0,
+        "T": 20614,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 0.0,
+      "injected": {
+        "D": 10,
+        "T": 20624,
+        "Q": 4.848719937936385,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": true
+      }
+    },
+    "A8": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\A8_Stolbovo_NPM.npz",
+      "sha256": "94b8482a2e167d9cf4d31e9f33e19e0048bacd43639930afa5dcc8065f4c17bd",
+      "part": "SM_DerevnyaStolbovo_Uch_23_Ground",
+      "clean": {
+        "D": 0,
+        "T": 10930,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 0.0,
+      "delta_vs_Qv": 0.0,
+      "injected": {
+        "D": 10,
+        "T": 10940,
+        "Q": 9.140767824497258,
+        "ids": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "rigid": true,
+        "reindex": true,
+        "anchors": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "witness": true
+      }
+    },
+    "F1": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\F1_r1_geometry.npz",
+      "sha256": "41816fc73523e630b52658941f094bdb7d29d56440f63f7b3bff74420fd1f9b3",
+      "part": "SM_SIL13_Ground",
+      "clean": {
+        "D": 0,
+        "T": 36549,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 484.00777039043476,
+      "delta_vs_Qv": -484.00777039043476,
+      "open_edges": 843
+    },
+    "F2": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\F2_r2.npz",
+      "sha256": "b9f521c4b37acb8bf7d5a5708d776e5ebd8edb81385f5d4081ba39a96a583f4e",
+      "part": "SM_SIL13_Ground",
+      "clean": {
+        "D": 0,
+        "T": 37386,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 472.636815920398,
+      "delta_vs_Qv": -472.636815920398
+    },
+    "F3": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\F3_r3.npz",
+      "sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+      "part": "SM_SIL13_Ground",
+      "clean": {
+        "D": 0,
+        "T": 37370,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 468.5576665774686,
+      "delta_vs_Qv": -468.5576665774686
+    },
+    "F5": {
+      "path": "C:\\x\\ev_t_193a0887\\dumps-v002\\F5_r5.npz",
+      "sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+      "part": "SM_SIL13_Ground",
+      "clean": {
+        "D": 0,
+        "T": 37370,
+        "Q": 0.0,
+        "ids": []
+      },
+      "clean_Q_runs": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "repeat_exact": true,
+      "median": 0.0,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true,
+      "T_parity": true,
+      "prior_Qv": 468.5576665774686,
+      "delta_vs_Qv": -468.5576665774686
+    },
+    "W1": {
+      "path": "C:\\x\\ev_t_304e8c0c\\dumps\\W1_Vatutino_v014_NPM.npz",
+      "sha256": "29393a0b5ed7ce39a2e5a8d8c7b0014885ecf4bfcde5a9ae07088bfc76aa6683",
+      "part": "SM_Vatutino_Ground",
+      "clean": {
+        "D": 59,
+        "T": 46343,
+        "Q": 12.73115680901107,
+        "ids": [
+          3511,
+          5862,
+          5881,
+          6008,
+          6041,
+          6341,
+          6884,
+          6959,
+          7110,
+          7114,
+          7291,
+          7294,
+          7296,
+          7299,
+          7302,
+          7360,
+          8116,
+          8127,
+          8160,
+          8207,
+          8213,
+          8284,
+          8309,
+          8894,
+          9488,
+          9885,
+          9907,
+          9912,
+          9916,
+          9920,
+          9922,
+          10112,
+          10122,
+          10521,
+          10663,
+          10720,
+          10805,
+          10882,
+          11208,
+          11814,
+          11885,
+          11926,
+          12064,
+          12087,
+          12094,
+          12097,
+          12150,
+          12156,
+          12157,
+          12223,
+          12572,
+          12577,
+          12578,
+          12585,
+          12672,
+          12723,
+          12819,
+          12874,
+          19772
+        ]
+      },
+      "clean_Q_runs": [
+        12.73115680901107,
+        12.73115680901107,
+        12.73115680901107
+      ],
+      "repeat_exact": true,
+      "median": 12.73115680901107,
+      "spread": 0.0,
+      "rigid": true,
+      "reindex": true
+    }
+  },
+  "not_measured": [
+    "VPM",
+    "skirt",
+    "visible deviation",
+    "triangle budget",
+    "new native Max readback",
+    "#1738 core (calibration prerequisite or OBJ parity/budget did not pass)"
+  ],
+  "synthetic": {
+    "open_edge_shared": {
+      "D": 0,
+      "T": 2,
+      "Q": 0.0,
+      "ids": []
+    },
+    "point_only_shared": {
+      "D": 1,
+      "T": 2,
+      "Q": 5000.0,
+      "ids": [
+        0
+      ]
+    }
+  },
+  "budget": {
+    "first_pair_s": 7.072854300000472,
+    "projected_s": 99.01996020000661,
+    "cap_s": 120
+  },
+  "paired_gaps": {
+    "F1-A1": {
+      "median": -12.693904774199101,
+      "spread": 0.0
+    },
+    "F1-A2": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F1-A3": {
+      "median": -24.991074616208497,
+      "spread": 0.0
+    },
+    "F1-A4": {
+      "median": -1.7349063150589867,
+      "spread": 0.0
+    },
+    "F1-A5": {
+      "median": -0.33602150537634407,
+      "spread": 0.0
+    },
+    "F1-A6": {
+      "median": -0.16866250632484397,
+      "spread": 0.0
+    },
+    "F1-A7": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F1-A8": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F2-A1": {
+      "median": -12.693904774199101,
+      "spread": 0.0
+    },
+    "F2-A2": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F2-A3": {
+      "median": -24.991074616208497,
+      "spread": 0.0
+    },
+    "F2-A4": {
+      "median": -1.7349063150589867,
+      "spread": 0.0
+    },
+    "F2-A5": {
+      "median": -0.33602150537634407,
+      "spread": 0.0
+    },
+    "F2-A6": {
+      "median": -0.16866250632484397,
+      "spread": 0.0
+    },
+    "F2-A7": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F2-A8": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F3-A1": {
+      "median": -12.693904774199101,
+      "spread": 0.0
+    },
+    "F3-A2": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F3-A3": {
+      "median": -24.991074616208497,
+      "spread": 0.0
+    },
+    "F3-A4": {
+      "median": -1.7349063150589867,
+      "spread": 0.0
+    },
+    "F3-A5": {
+      "median": -0.33602150537634407,
+      "spread": 0.0
+    },
+    "F3-A6": {
+      "median": -0.16866250632484397,
+      "spread": 0.0
+    },
+    "F3-A7": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F3-A8": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F4-A1": {
+      "median": -12.693904774199101,
+      "spread": 0.0
+    },
+    "F4-A2": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F4-A3": {
+      "median": -24.991074616208497,
+      "spread": 0.0
+    },
+    "F4-A4": {
+      "median": -1.7349063150589867,
+      "spread": 0.0
+    },
+    "F4-A5": {
+      "median": -0.33602150537634407,
+      "spread": 0.0
+    },
+    "F4-A6": {
+      "median": -0.16866250632484397,
+      "spread": 0.0
+    },
+    "F4-A7": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F4-A8": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F5-A1": {
+      "median": -12.693904774199101,
+      "spread": 0.0
+    },
+    "F5-A2": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F5-A3": {
+      "median": -24.991074616208497,
+      "spread": 0.0
+    },
+    "F5-A4": {
+      "median": -1.7349063150589867,
+      "spread": 0.0
+    },
+    "F5-A5": {
+      "median": -0.33602150537634407,
+      "spread": 0.0
+    },
+    "F5-A6": {
+      "median": -0.16866250632484397,
+      "spread": 0.0
+    },
+    "F5-A7": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "F5-A8": {
+      "median": 0.0,
+      "spread": 0.0
+    },
+    "W1-A1": {
+      "median": 0.037252034811968926,
+      "spread": 0.0
+    },
+    "W1-A2": {
+      "median": 12.73115680901107,
+      "spread": 0.0
+    },
+    "W1-A3": {
+      "median": -12.259917807197427,
+      "spread": 0.0
+    },
+    "W1-A4": {
+      "median": 10.996250493952083,
+      "spread": 0.0
+    },
+    "W1-A5": {
+      "median": 12.395135303634726,
+      "spread": 0.0
+    },
+    "W1-A6": {
+      "median": 12.562494302686225,
+      "spread": 0.0
+    },
+    "W1-A7": {
+      "median": 12.73115680901107,
+      "spread": 0.0
+    },
+    "W1-A8": {
+      "median": 12.73115680901107,
+      "spread": 0.0
+    }
+  },
+  "calibration_margin": -24.991074616208497,
+  "held_out_margin": -12.259917807197427,
+  "accepted_trigger_controls": [
+    "A1",
+    "A3",
+    "A4",
+    "A5",
+    "A6"
+  ],
+  "checks": {
+    "separation": false,
+    "held_out": false,
+    "parity": true,
+    "clean": true,
+    "injection": false,
+    "synthetic": true
+  },
+  "elapsed_s": 36.46015090000583
+}
