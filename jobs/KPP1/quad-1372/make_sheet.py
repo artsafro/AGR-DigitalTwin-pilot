@@ -21,9 +21,9 @@ SETS = {  # camera rows and column labels per camera set of render_before_after.
                      'BEFORE: quad master v003 (rejected corners)',
                      'AFTER: v004 draft: W/S/N planes rebuilt whole, posts separate'),
     'ground-v004': ([f'{c}_ground' for c in ('sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n')],  # #1609 w13
-                    'BEFORE: quad master v003', 'AFTER: v004 w13: walls + reveals one conforming body, posts separate'),
+                    'BEFORE: quad master v003', 'AFTER: v004 w16: walls + reveals one conforming body, posts separate'),
     'elevations-v004': (['elev_W', 'elev_S', 'elev_N'],  # #1609: straight-on orthographic elevation per facade
-                        'BEFORE: quad master v003', 'AFTER: v004 w13', 'stacked'),
+                        'BEFORE: quad master v003', 'AFTER: v004 w16', 'stacked'),
 }
 
 
