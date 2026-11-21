@@ -28,17 +28,18 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
 | 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
-| 4 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
-| 5 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
-| 6 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
-| 7 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
-| 8 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
-| 9 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/qa/verifier.py` → `verifier.json` [#1577] |
-| 10 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
-| 11 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 12 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
-| 13 | `geojson` GeoJSON | пробел |
-| 14 | `light-fbx` `_Light.fbx` | пробел |
+| 4 | `mesh-quality` качество сетки в конце `body` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
+| 5 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
+| 6 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
+| 7 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
+| 8 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
+| 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
+| 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
+| 11 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 12 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
+| 13 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
+| 14 | `geojson` GeoJSON | пробел |
+| 15 | `light-fbx` `_Light.fbx` | пробел |
 
 ### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
 
@@ -46,15 +47,17 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 |---|---|---|
 | 1 | `inspect` | `agr inspect --manifest JOB.json` |
 | 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
-| 3 | `brick-seams` кирпичные швы | пробел |
-| 4 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
-| 5 | `master-qa` | `tools/qa/master_topology.py` |
-| 6 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 7 | `build-manifest` манифест выпуска | `agr build-manifest record` |
-| 8 | `package-npm` пакет | `agr package-npm` → `package_core._write_zip` |
-| 9 | `validate` | `agr validate` |
-| 10 | `review-scene` сцена для приёмки | пробел |
-| 11 | `checker` | `agr checker` |
+| 3 | `mesh-quality` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
+| 4 | `brick-seams` кирпичные швы | пробел |
+| 5 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
+| 6 | `master-qa` | `tools/qa/master_topology.py` |
+| 7 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
+| 8 | `verifier` (observe) | `tools/blender/verifier_views.py` → `tools/qa/verifier.py` → `verifier.json` [#1739] |
+| 9 | `build-manifest` манифест выпуска | `agr build-manifest record` |
+| 10 | `package-npm` пакет | `agr package-npm` → `package_core._write_zip` |
+| 11 | `validate` | `agr validate` |
+| 12 | `review-scene` сцена для приёмки | пробел |
+| 13 | `checker` | `agr checker` |
 
 ### `npm-to-vpm` — existing NPM -> VPM (OKS cells `oks-npm` -> `oks-vpm`)
 
@@ -171,10 +174,11 @@ Master/QA checks on these parts are element-wise; no check may require welding i
 
 ## Verifier step before showing Artem (#1577, observe mode)
 
-`oks-vpm`, `ground-npm` and `ground-vpm` (MAF and Flora are built inside the ground cells) run `verifier` right after
-`readback` and before the model is shown to Artem:
+`oks-vpm`, `oks-npm` (#1739), `ground-npm` and `ground-vpm` (MAF and Flora are built inside the ground cells) run
+`verifier` right after `readback` and before the model is shown to Artem. The 6 views come from the read-back export:
 
 ```
+blender --background --factory-startup --python-exit-code 1 --python tools/blender/verifier_views.py -- --vpm VPM --npm NPM --out NEW_DIR
 uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 views> --slide <slide.png> \
   --facades south=<label>,north=..,east=..,west=.. [--legend jobs/<ID>/vpm_textures.json]
 ```
@@ -194,6 +198,23 @@ uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 vie
 - After Artem's review the job records `verifier_review.json` (`{"reviews": [{"verifier": "verifier.json",
   "artem_corrected": ["material:base_color"]}]}`); `uv run python tools/qa/verifier_summary.py --jobs jobs` shows per
   job how often the main discrepancy matched his correction.
+
+## Observe week: mesh-quality + verifier on every sheet (#1739)
+
+Artem 2026-11-21, decision 7: the mesh-quality score and the verifier only **record** for one week; he sees their
+output next to each sheet, then sets a threshold from the numbers. Until then nothing returns work to the agent.
+
+- Stage `mesh-quality` at the end of `body` in `oks-vpm` and `oks-npm`:
+  `uv run python tools/qa/mesh_quality_observe.py stage MASTER --out NEW/mesh_quality.json [--cell-m 3.0]`.
+  It writes the unchanged #1616 score plus the per-facade-cell defect signal (#1724: irregular / sliver / n-gon
+  faces, and triangles in a quad master, per facade cell `side u z` of `cell_m`), so a local corner defect is not
+  averaged away. `returns_work` is always `false`, a `fail` status still exits 0; there is no threshold, return or
+  refusal option. Errors (unreadable / non-finite geometry, output aliasing the input or existing) exit 2.
+- Every sheet sent to Artem carries ONE line, printed by
+  `uv run python tools/qa/verifier_summary.py --sheet-line --verifier V.json --mesh-quality MQ.json`.
+- The status push carries the weekly line `uv run python tools/qa/verifier_summary.py --jobs jobs --digest`.
+- Return/fix mode stays off: the verifier needs `config.verifier_mode = "fix"`; mesh-quality has no return mode.
+  Both change only after Artem's word on the week's numbers.
 
 ## How a job configures the skeleton (one config file)
 
