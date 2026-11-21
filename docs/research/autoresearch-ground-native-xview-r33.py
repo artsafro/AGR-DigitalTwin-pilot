@@ -33,7 +33,7 @@ EV = Path('C:/x/ev_t_304e8c0c')
 DCC = Path('C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py')
 CAP_S = 45 * 60
 MAX_VERSION = '2024'   # amendment 1: the runner's CSharpCodeProvider fails on Max 2026 (.NET 8)
-PREFIX = 'm2024-'
+PREFIX = 'm2024b-'
 NODES = {'A1': 'SM_Vatutino_Ground', 'A2': 'SM_BolshoyBulvar_64_Ground', 'A3': 'SM_Tup_Skladochnyj_ZU_5_1_Ground',
          'A4': 'SM_5jDonskoyProezd_Vl_15_Ground', 'A5': 'SM_NizhnieMnevniki_ZU_66_Ground',
          'A6': 'SM_Kasatkina_Vl_11_Ground', 'A7': 'SM_VolokolamskoeShosse_Vl_71_22_Ground',
@@ -99,6 +99,16 @@ def dump_w1():
     return dst, info
 
 
+def settle():
+    """Amendment 2: start Max only after the previous 3dsmax.exe has exited, plus 20 s (back-to-back start crashed)."""
+    for _ in range(120):
+        tl = subprocess.run(['tasklist', '/FI', 'IMAGENAME eq 3dsmax.exe'], capture_output=True, text=True).stdout
+        if '3dsmax.exe' not in tl.lower():
+            break
+        time.sleep(5)
+    time.sleep(20)
+
+
 def max_run(name, ids, mode, ins):
     name = PREFIX + name
     out = EV / 'max' / name
@@ -109,6 +119,7 @@ def max_run(name, ids, mode, ins):
             for i in ids]
     xview_parity.prepare_run(jobs, out, EV / 'max' / f'{name}-stage')
     env = dict(os.environ, XVIEW_OUT=str(out), XVIEW_TEMP=str(EV / 'max' / f'{name}-stage'))
+    settle()
     t0 = time.monotonic()
     proc = subprocess.run([sys.executable, str(DCC), 'max', '--version', MAX_VERSION, '--file',
                            str(ROOT / 'tools/qa/xview_dump.ms'), '--timeout', '2400', '--wait', '1800',

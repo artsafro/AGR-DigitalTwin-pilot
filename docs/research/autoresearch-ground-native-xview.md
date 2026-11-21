@@ -59,6 +59,11 @@ receipt `C:/x/ev_t_304e8c0c/r33.json` (`inconclusive`, first pair failed). The s
 route with retained native evidence (`docs/pipeline-tools.md`, #528). Everything else in the contract is unchanged.
 Fixing the runner for 2026 is outside this card (side finding).
 
+**Amendment 2 (after the 2024 first pair succeeded and run1 crashed at start-up, minidump 12:13, no listener output):**
+receipt `C:/x/ev_t_304e8c0c/r33b.json` (`inconclusive`). Each Max call now waits until no `3dsmax.exe` is running,
+plus 20 s; the whole series (first pair included) is re-run under the prefix `m2024b-`. Counts from `r33b` are
+reported only as a cross-check, not as series runs.
+
 ## Round log
 
 _Filled in after the series._
