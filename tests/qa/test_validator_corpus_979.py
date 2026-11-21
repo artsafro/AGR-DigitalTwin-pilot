@@ -252,6 +252,30 @@ def test_light_scene_reads_root_parents_and_types():
     assert names["SM_X_Spot_001"]["parent"] == 5000 and names["SM_X_Root"]["parent"] == 0
 
 
+def test_light_fbx_rejects_legacy_sm_names():
+    data = light_fbx(root="SM_X_Root", lights=[("SM_X_Spot_001", 2)])
+    findings = vp.light_findings("L.fbx", data, "SM_X", [])
+    assert {(f.status, f.data.get("code")) for f in findings} == {
+        ("fail", "light_root"), ("fail", "light_name"),
+    }
+
+
+@pytest.mark.parametrize("address", ["Example_17", "Example_17_Ground"])
+def test_light_prefix_matrix(address):
+    from itertools import product
+
+    for root_sm, spot_sm, omni_sm, reverse in product((False, True), repeat=4):
+        root = ("SM_" if root_sm else "") + address + "_Root"
+        lights = [(("SM_" if spot_sm else "") + address + "_Spot_001", 2),
+                  (("SM_" if omni_sm else "") + address + "_Omni_050", 0)]
+        findings = vp.light_findings("L.fbx", light_fbx(root, lights[::-1] if reverse else lights),
+                                     "SM_" + address, [])
+        want = ["light_root"] * root_sm + ["light_name"] * (int(spot_sm) + int(omni_sm))
+        assert sorted((f.status, f.data.get("code")) for f in findings) == (
+            [("fail", code) for code in sorted(want)] if want else [("pass", None)]
+        ), (address, root, lights, reverse)
+
+
 def test_light_fbx_good_passes():
     assert _light(light_fbx()) == set()
     assert _light(light_fbx(root="SM_X_Ground_Root", lights=[("SM_X_Ground_Omni_002", 0)]), "SM_X_Ground") == set()
