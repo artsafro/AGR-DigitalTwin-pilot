@@ -1,0 +1,99 @@
+{
+  "accepted_near_irregular_faces": 0,
+  "clean": {
+    "accepted": {
+      "irregular_area": 0.0,
+      "irregular_faces": 0,
+      "near_area": 0.0,
+      "near_area_pct": null,
+      "near_faces": 0
+    },
+    "controls": {
+      "63C_v001": {
+        "irregular_area": 154.46819,
+        "irregular_faces": 176,
+        "near_area": 154.46819,
+        "near_area_pct": 100.0,
+        "near_faces": 176
+      },
+      "63C_v002": {
+        "irregular_area": 0.0,
+        "irregular_faces": 0,
+        "near_area": 0.0,
+        "near_area_pct": null,
+        "near_faces": 0
+      }
+    },
+    "corner_support": [
+      135,
+      135,
+      135,
+      135,
+      135,
+      135
+    ],
+    "corners": [
+      [
+        527.783,
+        969.813
+      ],
+      [
+        533.461,
+        974.442
+      ],
+      [
+        555.794,
+        992.649
+      ],
+      [
+        561.472,
+        997.277
+      ],
+      [
+        583.934,
+        1015.588
+      ],
+      [
+        589.611,
+        1020.217
+      ]
+    ],
+    "near_orientation_face_degrees": {}
+  },
+  "core_blob": "7f27daca7d33b317272017577a2a38f4914fb2b7",
+  "injected": {
+    "wrong_hash_refused": true
+  },
+  "inputs": {
+    "63C_v001": [
+      "C:/x/ar15/r1/tmp/63C-v001.1/dump.json",
+      "d8e64e2a54a66b2b1b377ae4e9c1b2f21ac3e53deadd26e25f361631e88197a7"
+    ],
+    "63C_v002": [
+      "C:/x/ar15/r1/tmp/63C-v002.1/dump.json",
+      "19ee7c2046e37a5eeff76522a4b62a3f468f4fb02f1fd210cf912a8b2274ae7e"
+    ],
+    "G22_k1_v003": [
+      "C:/x/ev_1619/r3/k1_v003.mq.json",
+      "0939980dc8e9717657f437d2c840a77e6241f27ea5171ae402677def11f80db1"
+    ]
+  },
+  "not_measured": [
+    "new score calibration",
+    "native readback",
+    "rebuild",
+    "per-face window ownership",
+    "designer intent",
+    "G22 k2/k3",
+    "package parity"
+  ],
+  "paired_spread": 0,
+  "parent": "9aa36ea48d918482b4bc785b8df1c60aef3d7df2:docs/research/autoresearch-body-corner-windows-harness/r23.json",
+  "parent_sha256": "ddcf27b6af9d57a43e3be81b298d8cfa4e13e60491cf43ba54908386bb1c9391",
+  "repeats": [
+    0,
+    0,
+    0
+  ],
+  "threshold": 0
+}
