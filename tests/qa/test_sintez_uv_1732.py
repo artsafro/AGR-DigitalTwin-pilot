@@ -1,5 +1,7 @@
 """SINTEZ 1.6.1 per-polygon parity (#1732, recurrence of #432): mirrored, collapsed, out-of-tile, density, doubles.
 
+Pattern: n/a | new-case: regression tests of twinqa.sintez_uv (#1732).
+
 Staropetrovskiy VPM v001-v007 (2026-11-20): SINTEZ failed single triangles inside islands our per-mesh/per-edge
 checks passed. Every mesh below is a SYNTHETIC fixture, not data of a real object.
 """
