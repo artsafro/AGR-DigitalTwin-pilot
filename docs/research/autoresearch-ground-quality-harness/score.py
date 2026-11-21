@@ -83,7 +83,9 @@ def rigid(parts):
 
 
 def inject(parts, n=50):
-    p0 = parts[0]
+    gi = [i for i, p in enumerate(parts) if p.name.endswith("_Ground")]
+    gi = gi[0] if gi else 0                       # the scored Ground part (r31 bug: parts[0] was Flora on A3-A8)
+    p0 = parts[gi]
     v = np.asarray(p0.vertices, dtype=np.float64)
     border = set(open_edges(p0.faces).ravel().tolist())
     first = {}
@@ -100,7 +102,9 @@ def inject(parts, n=50):
         extra.append(v[x] + np.array([0.001, 0.0, 0.0]))
         faces[fi][faces[fi].index(x)] = len(v) + len(extra) - 1
     nv = np.vstack([v, np.array(extra)]) if extra else v
-    return [Part(p0.name, nv, tuple(tuple(f) for f in faces), p0.location)] + list(parts[1:]), len(pick)
+    out = list(parts)
+    out[gi] = Part(p0.name, nv, tuple(tuple(f) for f in faces), p0.location)
+    return out, len(pick)
 
 
 def score(parts, ground_only=True) -> dict:
