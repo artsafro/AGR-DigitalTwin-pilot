@@ -3,9 +3,9 @@
 **Кратко.** Агент кладёт в библиотеку то, что намоделил (МАФ, Флора, окна, крышное оборудование [D361]),
 одной командой `agr library publish <партия>`: приём копии партии → дубль/вариант/новый → библиотечное имя →
 проверка ВПМ и НПМ → неизменяемая версия `vNNN` на Диске + черновик (`draft`) в каталоге git → лист превью
-Артёму. Другие агенты и браузер `assets` видят запись только после его «ок» (`agr library accept`) [D360].
+Артёму. Другие агенты и браузер `assets` видят запись только после его «ок» (`agr library accept`) [D371].
 
-## Where things are [D357]
+## Where things are [D368]
 
 | What | Where |
 |---|---|
@@ -41,7 +41,7 @@ Exit: 0 done, 1 a QA failure / refused record, 2 invalid input. `--assets-root` 
    `duplicate` (same maker, size within 10 %, `intake_identify.dims_check`) is NOT registered; `variant` (same
    article, other maker or size, or size unknown) and `new` are registered. A previous version of the same library
    name is not a duplicate: publishing again gives `vNNN+1`.
-3. `name` [D358] — sidecar identity, else `--identity` JSON `{object: {manufacturer, title_ru, article}}` with a
+3. `name` [D369] — sidecar identity, else `--identity` JSON `{object: {manufacturer, title_ru, article}}` with a
    source per entry, else `AGR_<kind>_<Name>_<NNN>`. Transliteration and ё=е from `assets_library.translit`.
    A manufacturer without an article or object name is an error. Library names only; delivery names stay per D166.
 4. `qa` — each profile's FBX is read back by `tools/blender/fbx_readback.py`; checks: non-empty mesh, triangles,
@@ -50,13 +50,13 @@ Exit: 0 done, 1 a QA failure / refused record, 2 invalid input. `--assets-root` 
    Flora [D100]: lowest vertex −0.10 ±0.005 m;
    windows: bounds from [0,0,0]), MAF `twinqa.maf_checks.maf_findings` (smoothing, flips). A missing NPM or VPM is a
    failing check. QA failure still registers the draft (Artem sees it); `accept` refuses it unless `--despite-qa`.
-5. `register` [D359] — copies the object files into `<kind>/<name>/vNNN.partial/`, checks every copy's SHA-256, writes
+5. `register` [D370] — copies the object files into `<kind>/<name>/vNNN.partial/`, checks every copy's SHA-256, writes
    `RECORD.json` + `SHA256SUMS.txt`, renames to `vNNN`. An existing `vNNN` or `vNNN.partial` is never written; an
    assets root overlapping the batch is refused before any write.
 6. `sheet` — one new folder per batch (never overwritten): table object / identify / name / version / QA / findings /
    preview, the drop list, `sheet.html` contact view, `SHA256SUMS.txt`, `publish.json`.
 
-## Read path [D360]
+## Read path [D371]
 
 `draft` and `rejected` are not available. `publish.available(catalogue)` returns only `accepted`; the assets browser
 (`assets_core.scan_maf`) hides every zip under `<name>/vNNN/` that the catalogue does not list as accepted, every

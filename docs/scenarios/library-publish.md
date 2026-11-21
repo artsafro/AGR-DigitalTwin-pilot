@@ -1,7 +1,7 @@
 # Library publish (agent-made assets → AGR library)
 
 **Кратко:** собрал МАФ / Флору / окна / крышное оборудование — публикуй одной командой
-`agr library publish <партия>`; запись остаётся черновиком, пока Артём не скажет «ок» [D360].
+`agr library publish <партия>`; запись остаётся черновиком, пока Артём не скажет «ок» [D371].
 
 ## Read first
 
@@ -13,7 +13,7 @@
 
 `intake` → `identify` → `name` → `qa` → `register` → `sheet`, all in `tools/library/publish.py`, one command.
 Work on a copy of the batch (`C:/x/library-publish/inbox/<batch>` + SHA256SUMS); the `_inbox` original stays
-read-only. Names by [D358]; files on Drive and catalogue in git by [D357]; an immutable `vNNN` per publish [D359];
+read-only. Names by [D369]; files on Drive and catalogue in git by [D368]; an immutable `vNNN` per publish [D370];
 kinds by [D361]. Send Artem the sheet path; `agr library accept|reject` only with his words.
 
 ## Stop

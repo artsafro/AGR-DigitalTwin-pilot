@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://agr.local/schemas/library_published.schema.json",
   "title": "AGR published library catalogue (#1743): draft / accepted / rejected versions of agent-made assets",
-  "description": "Written by tools/library/publish.py (agr library publish|accept|reject); semantic check publish.catalogue_problems. Files live on Drive under AGR-assets/<kind>/<name>/vNNN/ [D357]; agents read only accepted records [D360]. docs/library/PUBLISH.md.",
+  "description": "Written by tools/library/publish.py (agr library publish|accept|reject); semantic check publish.catalogue_problems. Files live on Drive under AGR-assets/<kind>/<name>/vNNN/ [D368]; agents read only accepted records [D371]. docs/library/PUBLISH.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema", "records"],

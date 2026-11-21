@@ -325,7 +325,7 @@ def inspect_maf_zip(path, base):
     return found, members, meta
 
 
-# ---- published library versions (#1743 [D360]) ----------------------------------------------------------------
+# ---- published library versions (#1743 [D371]) ----------------------------------------------------------------
 PUBLISHED_VERSION = re.compile(r'^v\d{3}(\.partial)?$', re.IGNORECASE)
 PUBLISHED_CATALOGUE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'library',
                                    'published', 'catalogue.json')
@@ -352,7 +352,7 @@ def published_gate(rel, accepted):
             if p.lower().endswith('.partial'):
                 return 'unfinished publish (.partial)'
             if i == 0 or (parts[i - 1].lower(), p.lower()) not in accepted:
-                return 'published version not accepted (draft/rejected/unknown) [D360]'
+                return 'published version not accepted (draft/rejected/unknown) [D371]'
             return None
     return None
 

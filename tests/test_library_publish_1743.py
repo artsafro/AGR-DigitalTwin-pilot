@@ -1,4 +1,4 @@
-"""#1743 skeleton cell library-publish: agr library publish|accept|reject ([D357]-[D361]).
+"""#1743 skeleton cell library-publish: agr library publish|accept|reject ([D361], [D368]-[D371]).
 
 Synthetic batches only (marked synthetic); FBX readback is replaced by fixed reports (Blender is not needed).
 """
@@ -460,6 +460,6 @@ def test_skeleton_cell_library_publish_has_the_six_stages():
 
 def test_decisions_rows_for_the_five_answers():
     text = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
-    for d in ("D357", "D358", "D359", "D360", "D361"):
+    for d in ("D368", "D369", "D370", "D371", "D361"):
         assert f"| {d} | 2026-11-21 |" in text and "#1743" in next(l for l in text.splitlines()
                                                                    if l.startswith(f"| {d} |")), d

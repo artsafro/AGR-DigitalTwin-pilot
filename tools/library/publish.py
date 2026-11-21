@@ -1,4 +1,4 @@
-"""new-case: skeleton cell `library-publish` (#1743, [D357]-[D361]): put agent-made MAF / Flora / windows / roof
+"""new-case: skeleton cell `library-publish` (#1743, [D361], [D368]-[D371]): put agent-made MAF / Flora / windows / roof
 equipment into the AGR library as immutable `draft` versions; Artem's word flips them to `accepted`.
 
     agr library publish BATCH [--kind maf] [--identity IDS.json] [--assets-root ROOT] [--catalogue CAT.json]
@@ -11,12 +11,12 @@ Stages (docs/agents/skeletons.json, cell library-publish), each on its existing 
             file superseded by an A101 zip, or a drop with its reason. Nothing is written into the batch.
   identify  unified library (library/assets/maf_unified.json = A101 + legacy, assets_library article/maker keys,
             intake_identify.dims_check +-10 %) and the publish catalogue: duplicate / variant / new.
-  name      [D358] Manufacturer_NameLatin_Article (assets_library.propose_maf_name, translit, ё=е);
+  name      [D369] Manufacturer_NameLatin_Article (assets_library.propose_maf_name, translit, ё=е);
             without a manufacturer AGR_<kind>_<Name>_<NNN>.
   qa        VPM (`_high`) and NPM (`_low`) FBX read back by tools/blender/fbx_readback.py (blender_runner);
             ngons, triangles, materials + maps, pivot/seating per kind, twinqa.maf_checks smoothing/flips.
   register  files to <assets-root>/<kind>/<name>/vNNN/ (new version, written as vNNN.partial then renamed,
-            never overwritten [D359]), record `draft` in library/published/catalogue.json [D360].
+            never overwritten [D370]), record `draft` in library/published/catalogue.json [D371].
   sheet     one preview sheet per batch (sheet.md + sheet.html + previews + SHA256SUMS.txt) for Artem.
 
 Exit codes: 0 done, 1 an object failed QA / a command refused a record, 2 invalid input. QA failure does not
@@ -139,7 +139,7 @@ def write_json_atomic(path, data):
 
 
 def available(catalogue, kind=None):
-    """The agents' read path [D360]: only `accepted` versions; draft and rejected are not available."""
+    """The agents' read path [D371]: only `accepted` versions; draft and rejected are not available."""
     return [r for r in catalogue.get("records", []) if r.get("status") == "accepted"
             and (kind is None or r.get("kind") == kind)]
 
@@ -249,7 +249,7 @@ def _size_mm(obj):
 
 def identify_object(obj, unified, catalogue, kind="maf", name=None):
     """duplicate (same maker + article, size within 10 %) / variant (same article, other maker or size) / new.
-    Published versions of the SAME library name are not a duplicate: publishing again makes vNNN+1 [D359]."""
+    Published versions of the SAME library name are not a duplicate: publishing again makes vNNN+1 [D370]."""
     ident = obj.get("identity") or {}
     art = _akey(ident.get("article") or "")
     mk = lib.maker_key(ident.get("manufacturer") or "")
@@ -295,7 +295,7 @@ def _camel(text):
 
 
 def library_name(kind, identity, catalogue, key):
-    """[D358] Manufacturer_NameLatin_Article; without a manufacturer AGR_<kind>_<Name>_<NNN>. ё=е, translit."""
+    """[D369] Manufacturer_NameLatin_Article; without a manufacturer AGR_<kind>_<Name>_<NNN>. ё=е, translit."""
     if kind not in KINDS:
         raise PublishError(f"kind {kind!r} is not a library kind {KINDS}")
     ident = identity or {}
@@ -394,7 +394,7 @@ def _twinqa_maf():
 
 
 def qa_object(obj, kind, readbacks):
-    """readbacks: {'vpm': report|None, 'npm': report|None}. A missing profile is a failing check [D359]."""
+    """readbacks: {'vpm': report|None, 'npm': report|None}. A missing profile is a failing check [D370]."""
     out = {}
     for profile in ("vpm", "npm"):
         rep = readbacks.get(profile)
