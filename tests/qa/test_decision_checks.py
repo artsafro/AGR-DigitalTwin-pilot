@@ -72,7 +72,7 @@ def test_v009_slot_from_material_when_slots_differ_on_a_tile():
 
 def test_v009_placeholder_tile_is_exempt():
     got = {f.name: f.status for f in v009(textured(uv_side=0.01), diffuse_px={(1, 1001): 256})}
-    assert got == {"texel density": "pass", "texel density upper": "pass"}
+    assert got == {"texel density": "pass", "texel density upper": "pass", "texel density per polygon": "pass"}
 
 
 def test_v009_glass_mesh_is_exempt():
