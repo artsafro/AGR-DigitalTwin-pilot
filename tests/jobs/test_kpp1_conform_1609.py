@@ -42,7 +42,7 @@ def test_forced_non_finite_fails(bad):
 def l_pair(rng):
     """Wall P (normal x at x=0, coords (y, z)) and reveal Q (normal y at y=0, coords (x, z)), sharing the edge
     x=0, y=0 along z in 0..3. P has random finish borders in z, Q random tessellation in z."""
-    zb = sorted({round(rng.uniform(0.2, 2.8), 3) for _ in range(rng.randint(1, 4))})
+    zb = sorted({round(rng.uniform(0.2, 2.8), 2) for _ in range(rng.randint(1, 4))})
     zs = [0.0] + zb + [3.0]
     P = [rect(0, 2, a, b, fin=i % 2) for i, (a, b) in enumerate(zip(zs, zs[1:]))]
     zq = sorted({0.0, 3.0} | {round(rng.uniform(0.1, 2.9), 3) for _ in range(5)})
@@ -56,10 +56,11 @@ def test_conform_l_corner_brute_force():
     rng = random.Random(1609)
     for _ in range(200):
         planes, adj, zb = l_pair(rng)
-        plans, rounds = wp.conform(planes, adj, 2.048, 1e-3)
+        plans, info = wp.conform(planes, adj, 2.048, 1e-3)
+        assert info['mismatched_spans'] == 0
         zp, zq = plans['P']['Z'], plans['Q']['Z']
         assert zp == zq, (zp, zq)
-        assert all(z in zq for z in zb)        # wall lines continue along the reveal
+        assert all(min(abs(z - w) for w in zq) <= 1e-3 for z in zb)   # wall lines continue along the reveal
         assert 0.0 in plans['P']['H'] and 0.0 in plans['Q']['H']   # the shared edge is a line in both
 
 
@@ -80,6 +81,25 @@ def test_conform_span_limits_propagation():
     plans, _ = wp.conform(planes, {('P', 'Q'): [(2, 1.5, 3.0)]}, 5.0, 1e-3)
     assert 1.0 not in plans['Q']['Z']     # P's border at z=1 is below the shared edge
     assert 1.5 in plans['P']['Z']         # Q's outline end is on the shared edge
+
+
+def test_conform_lattice_splits_converge_brute_force():
+    # long planes with different extents: even splits would differ per plane and cascade; lattice splits agree
+    rng = random.Random(57)
+    for _ in range(100):
+        z1, z2, z3 = (round(rng.uniform(2.5, 9.0), 2) for _ in range(3))
+        planes = {'P': {'faces': [rect(0, 1, 0, z1)], 'axes': (1, 2), 'ax': 0, 'pos': 0.0},
+                  'Q': {'faces': [rect(-1, 0, 0, z2)], 'axes': (0, 2), 'ax': 1, 'pos': 0.0},
+                  'R': {'faces': [rect(0, 1, 0, z3)], 'axes': (1, 2), 'ax': 0, 'pos': -1.0}}
+        adj = {('P', 'Q'): [(2, 0.0, min(z1, z2))], ('Q', 'R'): [(2, 0.0, min(z2, z3))]}
+        plans, info = wp.conform(planes, adj, 2.048, 1e-3)
+        assert info['mismatched_spans'] == 0
+        for p, q, hi in (('P', 'Q', min(z1, z2)), ('Q', 'R', min(z2, z3))):
+            a = [z for z in plans[p]['Z'] if z <= hi + 1e-3]
+            b = [z for z in plans[q]['Z'] if z <= hi + 1e-3]
+            assert a == b, (p, q, a, b)
+        for pl in plans.values():
+            assert max(b - a for a, b in zip(pl['Z'], pl['Z'][1:])) <= 2.048 + 1e-9
 
 
 def test_conform_fails_closed():

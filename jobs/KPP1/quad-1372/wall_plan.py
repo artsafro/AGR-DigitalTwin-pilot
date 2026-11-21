@@ -83,11 +83,37 @@ def inside(p, poly, tol=1e-9):
     return hit
 
 
-def raster(faces, tol=TOL):
-    """Fine lines (hs, zs) and the state grid st[i][j] of the cell (hs[i]..hs[i+1], zs[j]..zs[j+1])."""
+def _forced(values, lo, hi, tol):
+    out = []
+    for v in values:
+        if not isinstance(v, (int, float)) or not math.isfinite(v):
+            raise ValueError(f'forced line {v!r} is not a finite number')
+        if lo - tol <= v <= hi + tol:
+            out.append(float(v))
+    return sorted(set(out))
+
+
+def snap_forced(vals, forced, tol):
+    """Every cluster centre within `tol` of a forced value becomes that value exactly (the smallest forced value of
+    the cluster wins, so neighbour planes converge on one value)."""
+    out = list(vals)
+    for f in sorted(forced, reverse=True):
+        k = bisect.bisect_left(out, f)
+        near = [i for i in (k - 1, k) if 0 <= i < len(out) and abs(out[i] - f) <= tol]
+        if near:
+            out[min(near, key=lambda i: abs(out[i] - f))] = f
+    return sorted(out)
+
+
+def raster(faces, tol=TOL, forced=((), ())):
+    """Fine lines (hs, zs) and the state grid st[i][j] of the cell (hs[i]..hs[i+1], zs[j]..zs[j+1]). `forced`:
+    (h values, z values) that must be lines (a neighbour plane's lines on the shared edge, #1609 variant A)."""
     _check(faces)
-    hs = unique([p[0] for poly, _ in faces for p in poly], tol)
-    zs = unique([p[1] for poly, _ in faces for p in poly], tol)
+    hv = [p[0] for poly, _ in faces for p in poly]
+    zv = [p[1] for poly, _ in faces for p in poly]
+    fh, fz = _forced(forced[0], min(hv), max(hv), tol), _forced(forced[1], min(zv), max(zv), tol)
+    hs = snap_forced(unique(hv + fh, tol), fh, tol)
+    zs = snap_forced(unique(zv + fz, tol), fz, tol)
     st = [[EMPTY] * (len(zs) - 1) for _ in range(len(hs) - 1)]
     for poly, fin in faces:
         h0, h1 = min(p[0] for p in poly), max(p[0] for p in poly)
@@ -127,18 +153,26 @@ def fill_wild(st):
     return st
 
 
-def lines(hs, zs, st, max_cell):
-    """Coarse grid lines: fine lines across which the state changes, plus the outer ones; long intervals split."""
+def lines(hs, zs, st, max_cell, forced=((), ()), lattice=False):
+    """Coarse grid lines: fine lines across which the state changes, forced lines, plus the outer ones; long
+    intervals split - evenly, or with `lattice` at the global multiples of max_cell / 2 that lie >= max_cell / 8
+    inside the interval (every plane then splits at the same world values, so conforming neighbours converge)."""
     if not max_cell > 0:
         raise ValueError('max_cell must be > 0')
     ni, nj = len(hs) - 1, len(zs) - 1
-    keep_h = {0, ni} | {i for i in range(1, ni) if any(st[i - 1][j] != st[i][j] for j in range(nj))}
-    keep_z = {0, nj} | {j for j in range(1, nj) if any(st[i][j - 1] != st[i][j] for i in range(ni))}
+    fh, fz = set(forced[0]), set(forced[1])
+    keep_h = {0, ni} | {i for i in range(1, ni) if hs[i] in fh or any(st[i - 1][j] != st[i][j] for j in range(nj))}
+    keep_z = {0, nj} | {j for j in range(1, nj) if zs[j] in fz or any(st[i][j - 1] != st[i][j] for i in range(ni))}
 
     def split(vals):
         out = [vals[0]]
         for b in vals[1:]:
             a = out[-1]
+            if lattice and b - a > max_cell + 1e-9:
+                step, margin = max_cell / 2, max_cell / 8
+                k0, k1 = math.ceil((a + margin) / step - 1e-9), math.floor((b - margin) / step + 1e-9)
+                out += [k * step for k in range(k0, k1 + 1)] + [b]
+                continue
             n = math.ceil((b - a) / max_cell - 1e-9)
             out += [a + (b - a) * k / n for k in range(1, n)] + [b]
         return out
@@ -289,12 +323,13 @@ def relax_shifts(cells, H, Z, shifts, min_d, rounds=60):
     raise ValueError(f'relax_shifts did not converge in {rounds} rounds')
 
 
-def plan(faces, max_cell, tol=TOL):
+def plan(faces, max_cell, tol=TOL, forced=((), ()), lattice=False):
     """Whole plan: fine raster, coarse lines, coarse cells {(a, b): finish}, area check per finish. Vertex
-    coordinates within `tol` collapse onto one line (the cluster centre); `snap_max_m` reports the largest move."""
-    hs, zs, st = raster(faces, tol)
+    coordinates within `tol` collapse onto one line (the cluster centre, or the forced value in it); `snap_max_m`
+    reports the largest move."""
+    hs, zs, st = raster(faces, tol, forced)
     fill_wild(st)
-    H, Z = lines(hs, zs, st, max_cell)
+    H, Z = lines(hs, zs, st, max_cell, forced, lattice)
     cells = coarse(hs, zs, st, H, Z)   # H, Z are copies of hs, zs (or inside one fine cell)
     fa = finish_areas([f for f in faces if f[1] is not None])
     ra = raster_areas(hs, zs, st)
@@ -305,3 +340,81 @@ def plan(faces, max_cell, tol=TOL):
             'area_input_m2': fa, 'area_raster_m2': ra,
             'area_error_m2': {k: ra.get(k, 0.0) - fa.get(k, 0.0) for k in set(fa) | set(ra)},
             'min_gap_m': gaps[0] if gaps else None}
+
+
+def conform(planes, adj, max_cell, tol=TOL, rounds=50, log=None):
+    """Plans for planes that share edges, with the same nodes on every shared edge (#1609 variant A, Artem
+    2026-11-20 «принимаю рекомендации»: walls are one body with the reveals, wall lines continue along the reveals).
+
+    planes: {pid: {'faces': faces2d, 'axes': (a1, a2) world axes of h and z, 'ax': normal axis, 'pos': position}}.
+    adj: {(p, q): [(t, lo, hi), ...]} - p and q share edges along world axis t over lo..hi. Each plane gets the
+    neighbour's position as a line (the shared edge) and, to a fixpoint, every neighbour line along t inside a
+    shared span (closure over the spans; own lines stay, splits on the global lattice). Returns ({pid: plan},
+    {'closure_steps', 'mismatched_spans'}). Fail-closed: no planes, unknown plane, parallel neighbours, an edge axis
+    that is not in both planes, no fixpoint."""
+    if not planes:
+        raise ValueError('no planes')
+    for (p, q), spans in adj.items():
+        for k in (p, q):
+            if k not in planes:
+                raise ValueError(f'unknown plane {k!r} in adjacency')
+        if planes[p]['ax'] == planes[q]['ax']:
+            raise ValueError(f'parallel planes {p!r} and {q!r} cannot share an edge')
+        for t, _lo, _hi in spans:
+            if t not in planes[p]['axes'] or t not in planes[q]['axes']:
+                raise ValueError(f'edge axis {t} of {p!r}/{q!r} is not an in-plane axis of both')
+    # 1. own lines (outline, finish borders, lattice splits) - sticky: a later forced line only shortens intervals,
+    #    so no new lattice value can appear (lattice splits never cascade)
+    forced = {}
+    for k, pl in planes.items():
+        p0 = plan(pl['faces'], max_cell, tol, lattice=True)
+        forced[k] = {pl['axes'][0]: set(p0['H']), pl['axes'][1]: set(p0['Z'])}
+    for (p, q) in adj:
+        forced[p][planes[q]['ax']].add(planes[q]['pos'])
+        forced[q][planes[p]['ax']].add(planes[p]['pos'])
+    # 2. closure over the shared spans (set operations only)
+    nb = {}
+    for (p, q), spans in adj.items():
+        for t, lo, hi in spans:
+            nb.setdefault(p, []).append((q, t, lo, hi))
+            nb.setdefault(q, []).append((p, t, lo, hi))
+    work, n = set(nb), 0
+    while work:
+        n += 1
+        if n > rounds * max(len(planes), 1):
+            raise ValueError(f'no conforming fixpoint after {n} steps')
+        k = min(work, key=str)
+        work.discard(k)
+        for q, t, lo, hi in nb[k]:
+            new = {v for v in forced[k][t] if lo - tol <= v <= hi + tol} - forced[q][t]
+            if new:
+                forced[q][t] |= new
+                work.add(q)
+    # 3. one value per cluster along each world axis (no two planes keep 1-3 mm different copies of a line)
+    for a in range(3):
+        vals = sorted({v for k in forced for v in forced[k].get(a, ())})
+        if not vals:
+            continue
+        canon, c0, group = {}, vals[0], []
+        for v in vals + [math.inf]:
+            if v - c0 > tol:
+                for g in group:
+                    canon[g] = (group[0] + group[-1]) / 2
+                c0, group = v, []
+            group.append(v)
+        for k in forced:
+            if a in forced[k]:
+                forced[k][a] = {canon[v] for v in forced[k][a]}
+    plans = {}
+    for k, pl in planes.items():
+        a1, a2 = pl['axes']
+        plans[k] = plan(pl['faces'], max_cell, tol, (forced[k][a1], forced[k][a2]), lattice=True)
+    bad = 0
+    for (p, q), spans in adj.items():
+        for t, lo, hi in spans:
+            side = [[v for v in (plans[s]['H'] if planes[s]['axes'][0] == t else plans[s]['Z'])
+                     if lo - tol <= v <= hi + tol] for s in (p, q)]
+            bad += side[0] != side[1]
+    if log:
+        log(n, bad)
+    return plans, {'closure_steps': n, 'mismatched_spans': bad}

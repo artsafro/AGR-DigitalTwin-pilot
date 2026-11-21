@@ -44,7 +44,10 @@ EMB_M = 3e-3         # w9 (default): outline nodes reach 3 mm past the old outli
                      # between elements). BODY_WELD=True (w10/w11 probes) sets EMB_M = 0 and welds walls to the body.
 BODY_WELD = False    # w10: weld only (dup 199 + self-int 40, but ~2 900 T-junction fans at the reveals);
                      # w11: + collapse the T vertices onto wall nodes (V004 129, but 6 333 triangles): both rejected
-if BODY_WELD:
+CONFORM = True       # w12 (variant A, Artem 2026-11-20 «принимаю рекомендации»): every flat axis plane of the body
+                     # (walls, reveals, niches, sills, heads) on one conforming line set (`wall_plan.conform`), welded
+                     # as one body; posts separate elements. Replaces the per-plane walls + embed of w9.
+if BODY_WELD or CONFORM:
     EMB_M = 0.0
 WELD_BODY_M = 2.1e-3  # wall/body vertices closer than the 2 mm V004/xView tolerance (+0.1 mm) are welded (body only)
 AREA_MIN = 0.5       # m2; smaller planes stay as in v003
@@ -149,6 +152,254 @@ def build_wall(bm, name, w, plane, old, contact, uvl, fl, tile_of_finish):
                   'area_error_m2': {str(k): round(v, 6) for k, v in p['area_error_m2'].items()},
                   'nodes': len(nodes), 'nodes_embedded': len(shifts), 'nodes_stuck': len(stuck), 'nodes_clamped': len(clamped), 'nodes_relaxed': relaxed,
                   'uv_segments_t': len(set(t_start)), 'uv_segments_z': len(set(z_start))}
+
+
+def axes2d(ax):
+    """World axes of the in-plane (h, z) coordinates of a plane with normal axis `ax`."""
+    return {0: (1, 2), 1: (0, 2), 2: (0, 1)}[ax]
+
+
+def all_planes(bm, posts, wall_dirs):
+    """Variant A: every connected flat axis-aligned piece of the body, all six normal directions. Faces at
+    positions within PLANE_M + 1 mm are one plane (the r1 0.4 mm double layer); a plane splits into components
+    (faces linked by vertices, merged while their 2D boxes touch). Post faces join only the W/S/N directions
+    (`wall_dirs`, their flush faces become wall as in w9); posts stay separate elements otherwise."""
+    found = {}
+    for f in bm.faces:
+        n = f.normal
+        ax = max(range(3), key=lambda i: abs(n[i]))
+        if abs(n[ax]) < 0.999:
+            continue
+        sg = 1 if n[ax] > 0 else -1
+        if f in posts and (ax, sg) not in wall_dirs:
+            continue
+        vals = [v.co[ax] for v in f.verts]
+        if max(vals) - min(vals) > FLAT_M:
+            continue
+        found.setdefault((ax, sg), {}).setdefault(round(sum(vals) / len(vals), 3), []).append(f)
+    out = []
+    for (ax, sg), d in sorted(found.items()):
+        groups = []
+        for k in sorted(d):
+            if groups and k - groups[-1][-1] <= PLANE_M + 1e-3:
+                groups[-1].append(k)
+            else:
+                groups.append([k])
+        a1, a2 = axes2d(ax)
+        for g in groups:
+            faces = [f for k in g for f in d[k]]
+            parent = {f: f for f in faces}
+
+            def root(f):
+                while parent[f] is not f:
+                    parent[f] = parent[parent[f]]
+                    f = parent[f]
+                return f
+            by_v = {}
+            for f in faces:
+                for v in f.verts:
+                    by_v.setdefault(v, []).append(f)
+            for fs in by_v.values():
+                for f in fs[1:]:
+                    a, b = root(fs[0]), root(f)
+                    if a is not b:
+                        parent[a] = b
+            comps = {}
+            for f in faces:
+                comps.setdefault(root(f), []).append(f)
+            boxes = []
+            for fs in comps.values():
+                co = [v.co for f in fs for v in f.verts]
+                boxes.append([fs, min(c[a1] for c in co), max(c[a1] for c in co),
+                              min(c[a2] for c in co), max(c[a2] for c in co)])
+            merged = True
+            while merged:
+                merged = False
+                for i in range(len(boxes)):
+                    for j in range(i + 1, len(boxes)):
+                        p, q = boxes[i], boxes[j]
+                        if p[1] <= q[2] + SNAP_M and q[1] <= p[2] + SNAP_M and p[3] <= q[4] + SNAP_M \
+                                and q[3] <= p[4] + SNAP_M:
+                            boxes[i] = [p[0] + q[0], min(p[1], q[1]), max(p[2], q[2]), min(p[3], q[3]), max(p[4], q[4])]
+                            del boxes[j]
+                            merged = True
+                            break
+                    if merged:
+                        break
+            for fs, h0, h1, z0, z1 in boxes:
+                pos = sum(v.co[ax] for f in fs for v in f.verts) / sum(len(f.verts) for f in fs)
+                out.append({'ax': ax, 'sg': sg, 'axes': (a1, a2), 'pos': pos, 'faces': fs, 'box': (h0, h1, z0, z1)})
+    return out
+
+
+def adjacency(bm, face_pid, planes):
+    """{(p, q): [(t, lo, hi)]} from the body edges between two plane components with different normal axes; spans
+    along the same axis are merged. Returns (adj, skipped edges that are not axis-aligned)."""
+    raw, skipped = {}, 0
+    for e in bm.edges:
+        lf = [face_pid.get(f) for f in e.link_faces]
+        if len(lf) != 2 or None in lf or lf[0] == lf[1]:
+            continue
+        p, q = sorted(lf)
+        if planes[p]['ax'] == planes[q]['ax']:
+            continue
+        d = e.verts[1].co - e.verts[0].co
+        t = 3 - planes[p]['ax'] - planes[q]['ax']
+        if d.length < 1e-9 or abs(d[t]) < 0.999 * d.length:
+            skipped += 1
+            continue
+        lo, hi = sorted((e.verts[0].co[t], e.verts[1].co[t]))
+        raw.setdefault((p, q, t), []).append((lo, hi))
+    adj = {}
+    for (p, q, t), spans in raw.items():
+        spans.sort()
+        merged = [list(spans[0])]
+        for lo, hi in spans[1:]:
+            if lo <= merged[-1][1] + SNAP_M:
+                merged[-1][1] = max(merged[-1][1], hi)
+            else:
+                merged.append([lo, hi])
+        adj.setdefault((p, q), []).extend((t, lo, hi) for lo, hi in merged)
+    return adj, skipped
+
+
+def uv_axes(faces, uvl, axes):
+    """(u from h or z, u sign, v sign) of the old UV: least squares of the in-face UV deltas against the in-plane
+    coordinate deltas (R1-atlas seam offsets drop out of in-face deltas). Default (h, +, +) when unmeasurable."""
+    a1, a2 = axes
+    s = [[0.0, 0.0], [0.0, 0.0]]   # s[uv][coord] = sum duv * dcoord
+    for f in faces:
+        lps = list(f.loops)
+        for la, lb in zip(lps, lps[1:] + lps[:1]):
+            dc = (lb.vert.co[a1] - la.vert.co[a1], lb.vert.co[a2] - la.vert.co[a2])
+            du = (lb[uvl].uv[0] - la[uvl].uv[0], lb[uvl].uv[1] - la[uvl].uv[1])
+            for i in range(2):
+                for j in range(2):
+                    s[i][j] += du[i] * dc[j]
+    if abs(s[0][0]) + abs(s[0][1]) < 1e-9:
+        return 0, 1, 1
+    uax = 0 if abs(s[0][0]) >= abs(s[0][1]) else 1
+    usg = 1 if s[0][uax] >= 0 else -1
+    vsg = 1 if s[1][1 - uax] >= 0 else -1
+    return uax, usg, vsg
+
+
+def build_plane(bm, pl, p, uvl, fl, tile_of_finish):
+    """Grid of plan `p` on plane component `pl` (welded later: variant A, the walls are one body with the reveals).
+    UV planar 1/S per metre, axes and signs as the old faces (`uv_axes`), continuous inside segments of <= S."""
+    ax, sg, (a1, a2), pos = pl['ax'], pl['sg'], pl['axes'], pl['pos']
+    H, Z, cells = p['H'], p['Z'], p['cells']
+    uax, usg, vsg = pl['uv']
+    lines_ = (H, Z)
+
+    def seg(vals, sign):
+        tl = vals if sign > 0 else [-x for x in reversed(vals)]
+        st = wp.uv_segments(tl, S)
+        return lambda a: st[a if sign > 0 else len(vals) - 2 - a]
+    su, sv = seg(lines_[uax], usg), seg(lines_[1 - uax], vsg)
+    nodes = {}
+
+    def node(a, b):
+        if (a, b) not in nodes:
+            co = [0.0, 0.0, 0.0]
+            co[ax], co[a1], co[a2] = pos, H[a], Z[b]
+            nodes[(a, b)] = bm.verts.new(co)
+        return nodes[(a, b)]
+    e1, e2 = [0.0] * 3, [0.0] * 3
+    e1[a1], e2[a2] = 1.0, 1.0
+    flip = Vector(e1).cross(Vector(e2))[ax] * sg < 0
+    made = []
+    for (a, b), fin in sorted(cells.items()):
+        if fin not in tile_of_finish:
+            raise ValueError(f'plane {ax}{sg:+d}@{pos:.3f}: finish {fin} has no UDIM tile in the master')
+        u0, v0 = tile_origin(tile_of_finish[fin])
+        ij = (a, b)
+        us, vs = su(ij[uax]), sv(ij[1 - uax])
+        ring = [(a, b), (a + 1, b), (a + 1, b + 1), (a, b + 1)]
+        if flip:
+            ring = ring[::-1]
+        f = bm.faces.new([node(*k) for k in ring])
+        for loop, k in zip(f.loops, ring):
+            cu, cv = lines_[uax][k[uax]], lines_[1 - uax][k[1 - uax]]
+            loop[uvl].uv = (u0 + (usg * cu - us) / S, v0 + (vsg * cv - vs) / S)
+        if face_tile([tuple(lp[uvl].uv) for lp in f.loops]) != tile_of_finish[fin]:
+            raise ValueError(f'plane {ax}{sg:+d}@{pos:.3f}: cell {a},{b} UV left its tile')
+        f[fl] = fin
+        f.material_index = 0
+        f.smooth = False
+        made.append(f)
+    return made
+
+
+def conform_rebuild(bm, posts, contact, uvl, fl, tile_of_finish, rep):
+    """Variant A (Artem 2026-11-20 «принимаю рекомендации»): all flat axis planes of the body rebuilt on one
+    conforming set of grid lines (`wall_plan.conform`), then welded: walls, reveals, niches, sills and heads are one
+    body whose nodes coincide on every shared edge; posts stay separate elements [D336]."""
+    import time
+    t0 = time.perf_counter()
+    wall_dirs = {(w['ax'], w['sg']) for w in WALLS.values()}
+    planes = all_planes(bm, set(posts), wall_dirs)
+    print('CONFORM planes', len(planes), round(time.perf_counter() - t0, 1), flush=True)
+    face_pid = {f: i for i, pl in enumerate(planes) for f in pl['faces']}
+    adj, skipped = adjacency(bm, face_pid, planes)
+    print('CONFORM adj', len(adj), round(time.perf_counter() - t0, 1), flush=True)
+    unplaced = 0
+    kplanes = {}
+    for i, pl in enumerate(planes):
+        pl['uv'] = uv_axes(pl['faces'], uvl, pl['axes'])
+        a1, a2 = pl['axes']
+        kplanes[i] = {'faces': [([(v.co[a1], v.co[a2]) for v in f.verts], f[fl]) for f in pl['faces']],
+                      'axes': pl['axes'], 'ax': pl['ax'], 'pos': pl['pos']}
+    for corners_, n in contact:
+        ax = max(range(3), key=lambda i: abs(n[i]))
+        a1, a2 = axes2d(ax)
+        hit = None
+        for i, pl in enumerate(planes):
+            if pl['ax'] != ax or (pl['ax'], pl['sg']) not in wall_dirs:
+                continue
+            if not all(abs(c[ax] - pl['pos']) <= PLANE_M for c in corners_):
+                continue
+            h0, h1, z0, z1 = pl['box']
+            if min(c[a1] for c in corners_) <= h1 + 0.05 and max(c[a1] for c in corners_) >= h0 - 0.05 \
+                    and min(c[a2] for c in corners_) <= z1 + 0.05 and max(c[a2] for c in corners_) >= z0 - 0.05:
+                hit = i
+                break
+        if hit is None:
+            unplaced += 1
+        else:
+            kplanes[hit]['faces'].append(([(c[a1], c[a2]) for c in corners_], None))
+    print('CONFORM plan start', round(time.perf_counter() - t0, 1), flush=True)
+    plans, rounds = wp.conform(kplanes, adj, MAX_CELL, SNAP_M,
+                               log=lambda n, d: print('CONFORM round', n, 'dirty', d, round(time.perf_counter() - t0, 1), flush=True))
+    print('CONFORM fixpoint', rounds, round(time.perf_counter() - t0, 1), flush=True)
+    old = [f for pl in planes for f in pl['faces']]
+    old_verts = {v for f in old for v in f.verts}
+    made = []
+    for i, pl in enumerate(planes):
+        made += build_plane(bm, pl, plans[i], uvl, fl, tile_of_finish)
+    bmesh.ops.delete(bm, geom=old, context='FACES_ONLY')
+    loose = [v for v in old_verts if v.is_valid and not v.link_faces]
+    bmesh.ops.delete(bm, geom=loose, context='VERTS')
+    by_dir = {}
+    for i, pl in enumerate(planes):
+        k = f"{'xyz'[pl['ax']]}{'+' if pl['sg'] > 0 else '-'}"
+        d = by_dir.setdefault(k, {'planes': 0, 'faces_old': 0, 'faces_new': 0})
+        d['planes'] += 1
+        d['faces_old'] += len(pl['faces'])
+        d['faces_new'] += len(plans[i]['cells'])
+    rep['conform'] = {'planes': len(planes), 'adjacent_pairs': len(adj), 'edges_not_axis_aligned': skipped,
+                      'conform': rounds, 'contact_unplaced': unplaced, 'by_direction': by_dir,
+                      'faces_old': len(old), 'faces_new': len(made),
+                      'area_error_m2_max': round(max((abs(v) for p in plans.values()
+                                                      for v in p['area_error_m2'].values()), default=0.0), 6)}
+    return made
+
+
+def boundary_edges(bm, posts):
+    """Open edges of the body (non-post faces): T-junction / gap witness after the weld."""
+    post = set(posts)
+    return sum(1 for e in bm.edges if sum(1 for f in e.link_faces if f not in post) == 1
+               and all(f not in post for f in e.link_faces))
 
 
 def _elements(bm):
@@ -338,7 +589,10 @@ def main(master, r1, out_dir):
         rep['posts'][name].update({k: v for k, v in info.items() if k not in ('xs', 'ys', 'zs')})
         post_faces += made
     new_faces, rebuilt, wall_faces = [], [], []
-    for name, w in WALLS.items():
+    if CONFORM:
+        wall_faces = conform_rebuild(bm, post_faces, contact, uvl, fl, tile_of_finish, rep)
+        new_faces += wall_faces
+    for name, w in WALLS.items() if not CONFORM else ():
         rep['walls'][name] = []
         for plane, old, area in facade_planes(bm, w):
             made, info = build_wall(bm, name, w, plane, old, contact, uvl, fl, tile_of_finish)
@@ -354,8 +608,11 @@ def main(master, r1, out_dir):
     new_faces += post_left
     loose = [v for v in bm.verts if not v.link_faces]
     bmesh.ops.delete(bm, geom=loose, context='VERTS')
-    if BODY_WELD:
+    if BODY_WELD or CONFORM:
         rep['body_vertices_welded'] = weld_body(bm, post_left, WELD_BODY_M)
+    if CONFORM:
+        rep['open_body_edges'] = boundary_edges(bm, [f for f in post_left if f.is_valid])
+    if BODY_WELD and not CONFORM:
         rep['t_vertices_collapsed'] = collapse_t_vertices(bm, wall_faces, post_left)
     rep['bowties_split'] = split_bowties(bm, uvl, BOWTIE_M)
     near = near_pairs(bm, XVIEW_M)
