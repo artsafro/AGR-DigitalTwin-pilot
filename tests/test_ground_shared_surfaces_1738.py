@@ -230,6 +230,16 @@ def test_export_skirt_check_corner_ignores_perpendicular_wall(tmp_path, z):
     assert r["min_drop_m"] == pytest.approx(-z)
 
 
+def test_export_skirt_check_notch_hidden_by_next_quad_fails(tmp_path):
+    """r2 hostile: quad 0's bottom at s=2.5 raised to -0.6 while quad 1 starts at -1.5; the notch left of the shared
+    station must count (one-sided limit), not the next quad's full depth."""
+    p = _segmented_wall_obj(tmp_path / "n.obj")
+    txt = p.read_text(encoding="utf-8").replace("v 2.5 0.0 -1.5", "v 2.5 0.0 -0.6", 1)  # quad 0's b-bottom only
+    p.write_text(txt, encoding="utf-8")
+    r = gs.skirt_check_export(p, 1.0)
+    assert r["status"] == "fail" and r["gap_count"] == 1 and r["min_drop_m"] == pytest.approx(0.6)
+
+
 def test_export_skirt_check_corner_and_removed_quad_combined(tmp_path):
     """r2 regression combined with r1: shallow corner on edge 0 + removed inner quad on edge 2 -> two failing edges."""
     p = _segmented_wall_obj(tmp_path / "cq.obj", {(2, 1)})
