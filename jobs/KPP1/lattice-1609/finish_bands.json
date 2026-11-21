@@ -1,0 +1,9 @@
+{
+ "why": "KPP1 facade finish bands W/S/N (zone list for the lattice, #1609 decision 2). Source: customer ИД TEC26 slides 25-30 (jobs/KPP1/STATE.md: plinth RAL 7004, blue cassette band 2.7-7.1, top band above) and Revit stacked wall slices 0.9/2.7/7.1 (census walls_ext). Read-only check on the R1 v003 NPM texture (render_lines.py columns S x=3.0, S x=13.5, N x=24.0, W y=2.0): dark below 0.89, light 0.89-2.71, blue 2.71-7.10, light 7.10-8.65; the Revit split at 8.1 has the same finish above and below.",
+ "bands": [
+  {"z0": -1.0, "z1": 0.9, "finish": "Plinth_RAL7004"},
+  {"z0": 0.9, "z1": 2.7, "finish": "Cassette_RAL7047"},
+  {"z0": 2.7, "z1": 7.1, "finish": "Cassette_RAL5015"},
+  {"z0": 7.1, "z1": 9.0, "finish": "Cassette_RAL5015_Top"}
+ ]
+}
