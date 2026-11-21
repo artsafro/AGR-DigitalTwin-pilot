@@ -49,9 +49,11 @@ VERSION_RE = re.compile(r"^v(\d{3})$")
 SKIP_FILES = {"desktop.ini", "sha256sums.txt", "thumbs.db"}
 FBX_ROLES = {"vpm": "_high", "npm": "_low"}
 TOL_M = 0.01      # pivot centring tolerance, m
-SINK_M = 0.10     # [D095] MAF / [D100] Flora: lowest point 0.1 m below the pivot
+SINK_M = 0.10     # [D100] Flora: lowest vertex 0.1 m below the pivot (TEMPLATE flora-bbox-plus-0.1)
 SEAT_TOL_M = 0.005
-PIVOT = {"maf": ("center", -SINK_M), "flora": ("center", -SINK_M), "roof_equipment": ("center", 0.0),
+# A101 library standard (library/assets/INTAKE.md step 5, docs/library/TEMPLATE.md): MAF and roof equipment pivot at
+# the XY centre at ground level (bottom-center, base Z=0); the [D095] 0.1 m sink is placement in a delivery scene.
+PIVOT = {"maf": ("center", 0.0), "flora": ("center", -SINK_M), "roof_equipment": ("center", 0.0),
          "windows": ("min", 0.0)}
 
 
@@ -305,7 +307,7 @@ def library_name(kind, identity, catalogue, key):
             raise PublishError(f"{key}: manufacturer {maker!r} without an article; give the article or drop the maker")
         if ident.get("object_latin"):
             obj = re.sub(r"[^0-9A-Za-z]", "", ident["object_latin"])
-            mk = lib.propose_maf_name(maker, "x", "0").split("_")[0]
+            mk = maker if re.fullmatch(r"[A-Za-z0-9]+", maker) else lib.propose_maf_name(maker, "x", "0").split("_")[0]
             artn = lib.propose_maf_name("x", "x", art).split("_")[-1]
             name = f"{mk}_{obj}_{artn}"
         else:
@@ -431,7 +433,8 @@ def extract_members(obj, work):
 
 # ---- 5 register ------------------------------------------------------------------------------------------------
 def _inside(a, b):
-    a, b = Path(a).resolve(), Path(b).resolve()
+    """a is b or lies inside b; resolved, case-folded on Windows (path aliases: case, `..`, symlinks)."""
+    a, b = (Path(os.path.normcase(str(Path(x).resolve()))) for x in (a, b))
     return a == b or b in a.parents
 
 
@@ -669,6 +672,9 @@ def main(argv=None):
                 print(f"{r['object']}: {r['identify']['result']} -> {r['name']} {r.get('version', '-')} "
                       f"QA {(r.get('qa') or {}).get('verdict', r.get('skip'))}")
             print(f"sheet: {res['sheet']}; drops {len(res['drops'])}")
+            if not res["rows"]:
+                print("ERROR: no library object in the batch; every file is in the drop list", file=sys.stderr)
+                return 1
             return 0 if all((r.get("qa") or {}).get("verdict", "pass") == "pass" for r in res["rows"]) else 1
         if a.cmd == "accept":
             recs = accept_records(cat, a.refs, a.words, a.despite_qa)

@@ -30,7 +30,7 @@ core = _load("assets_core_1743", "adapters/max/agr_tools/assets_core.py")
 ZIP = "Adanat_KachalkaSynth_19121"
 
 
-def _report(size=(0.6, 0.6, 0.8), sink=-0.1, ngons=0, maps=True, mats=("matid_1",), bounds=None):
+def _report(size=(0.6, 0.6, 0.8), sink=0.0, ngons=0, maps=True, mats=("matid_1",), bounds=None):
     lo = [-size[0] / 2, -size[1] / 2, sink]
     hi = [size[0] / 2, size[1] / 2, sink + size[2]]
     mesh = {"name": "X_GroundEl", "polygons": 10, "triangles": 20, "polygon_degrees": {"4": 10, "5": ngons},
@@ -140,6 +140,9 @@ def test_name_manufacturer_rule_translit_and_yo():
     assert n == "Mesto_PesochnayaFabrikaElka_171620"
     assert pub.library_name("maf", {"manufacturer": "Adanat", "object_latin": "Kachalka", "article": "ЛГК-11.21"},
                             cat, "k") == "Adanat_Kachalka_LGK-11.21"
+    # a Latin sidecar maker keeps its case (GKVysota, not Gkvysota)
+    assert pub.library_name("maf", {"manufacturer": "GKVysota", "object_latin": "Stol", "article": "VST9504-1"},
+                            cat, "k") == "GKVysota_Stol_VST9504-1"
 
 
 def test_name_without_manufacturer_is_agr_kind_counter():
@@ -183,7 +186,7 @@ def test_qa_pass_and_each_failure_is_named():
     cases = {"no NPM version": {"vpm": _report(), "npm": None},
              "n-gons": {"vpm": _report(ngons=2), "npm": _report()},
              "without texture maps": {"vpm": _report(maps=False), "npm": _report()},
-             "pivot/seating": {"vpm": _report(sink=0.0), "npm": _report()},
+             "pivot/seating": {"vpm": _report(sink=-0.1), "npm": _report()},  # D095 sink is placement, not library
              "not finite": {"vpm": _report(bounds=[[0, 0, math.nan], [1, 1, 1]]), "npm": _report()},
              "no non-empty mesh": {"vpm": {"readback_ok": False, "meshes": []}, "npm": _report()},
              "no material": {"vpm": _report(mats=()), "npm": _report()}}
@@ -193,8 +196,11 @@ def test_qa_pass_and_each_failure_is_named():
 
 
 def test_qa_pivot_rule_per_kind_and_tolerance_bounds():
-    assert pub.qa_profile(_report(sink=-0.096), "maf", "vpm")["verdict"] == "pass"
-    assert pub.qa_profile(_report(sink=-0.094), "maf", "vpm")["verdict"] == "fail"
+    assert pub.qa_profile(_report(sink=-0.004), "maf", "vpm")["verdict"] == "pass"
+    assert pub.qa_profile(_report(sink=0.006), "maf", "vpm")["verdict"] == "fail"
+    assert pub.qa_profile(_report(sink=-0.096), "flora", "vpm")["verdict"] == "pass"
+    assert pub.qa_profile(_report(sink=-0.094), "flora", "vpm")["verdict"] == "fail"
+    assert pub.qa_profile(_report(sink=0.0), "flora", "vpm")["verdict"] == "fail"
     assert pub.qa_profile(_report(sink=0.0), "roof_equipment", "vpm")["verdict"] == "pass"
     win = _report(bounds=[[0, 0, 0], [1.2, 0.1, 1.5]])
     assert pub.qa_profile(win, "windows", "vpm")["verdict"] == "pass"
@@ -288,10 +294,11 @@ def test_duplicate_is_not_registered(tmp_path):
     assert not (tmp_path / "assets").exists()
 
 
-@pytest.mark.parametrize("where", ["batch", "inside"])
+@pytest.mark.parametrize("where", ["batch", "inside", "alias", "parent"])
 def test_assets_root_overlapping_the_batch_is_refused_and_writes_nothing(tmp_path, where):
     b, cat = make_batch(tmp_path, folder=False), pub.empty_catalogue()
-    root = b if where == "batch" else b / "maf"
+    root = {"batch": b, "inside": b / "maf", "parent": tmp_path,
+            "alias": Path(str(b / "maf" / ".." ).upper() if os.name == "nt" else str(b / "maf" / ".."))}[where]
     before = sorted(p for p in b.rglob("*"))
     with pytest.raises(pub.PublishError, match="overlaps"):
         pub.publish(b, "maf", cat, _unified(), root, tmp_path / "ev", {}, None, good_readback, work=tmp_path / "w")
@@ -432,6 +439,12 @@ def test_cli_publish_refuses_bad_batch_and_unknown_kind(tmp_path):
     r = _cli("publish", str(tmp_path), "--kind", "materials", "--catalogue", str(cat), "--evidence", str(tmp_path))
     assert r.returncode == 2
     assert json.loads(cat.read_text()) == pub.empty_catalogue()
+    only = tmp_path / "tex"
+    only.mkdir()
+    (only / "T_Roza.png").write_bytes(b"t")
+    r = _cli("publish", str(only), "--catalogue", str(cat), "--evidence", str(tmp_path / "e2"),
+             "--assets-root", str(tmp_path / "a"))
+    assert r.returncode == 1 and "no library object" in r.stderr  # nothing to publish is never a pass
 
 
 def test_skeleton_cell_library_publish_has_the_six_stages():

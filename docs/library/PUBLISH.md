@@ -46,7 +46,8 @@ Exit: 0 done, 1 a QA failure / refused record, 2 invalid input. `--assets-root` 
    A manufacturer without an article or object name is an error. Library names only; delivery names stay per D166.
 4. `qa` — each profile's FBX is read back by `tools/blender/fbx_readback.py`; checks: non-empty mesh, triangles,
    0 n-gons, topology measured, a material on every mesh and texture maps on every used material, pivot/seating
-   (MAF [D095] and Flora [D100]: XY centred ±0.01 m, lowest point −0.10 ±0.005 m; roof equipment: base at 0;
+   (A101 standard, `library/assets/INTAKE.md` step 5: MAF and roof equipment XY centred ±0.01 m, base at 0 ±0.005 m;
+   Flora [D100]: lowest vertex −0.10 ±0.005 m;
    windows: bounds from [0,0,0]), MAF `twinqa.maf_checks.maf_findings` (smoothing, flips). A missing NPM or VPM is a
    failing check. QA failure still registers the draft (Artem sees it); `accept` refuses it unless `--despite-qa`.
 5. `register` [D359] — copies the object files into `<kind>/<name>/vNNN.partial/`, checks every copy's SHA-256, writes
