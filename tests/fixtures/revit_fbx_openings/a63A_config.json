@@ -1,0 +1,12 @@
+{"note": "#1784 second Revit FBX test: STLB-04_RR_AR.fbx (sha 2b4d0201...), tower A crop (docs/research/body-training-1619/README.md). Catch-all drop is explicit.",
+ "crop": [80.0, 63.0, 121.0, 97.0],
+ "rules": [
+  ["Окн_Окн_", "surrounds"], ["Окн_ББлок_", "surrounds"],
+  ["Окн_Вит_", "curtain"],
+  ["Двр_Двр_", "doors"],
+  ["Базовая стена Вент", "wall"], ["Базовая стена Шт_ф", "wall"], ["Базовая стена башн", "wall"], ["Базовая стена Башн", "wall"],
+  ["Базовая стена (В)", "drop", "interior wall"], ["Базовая стена ОБЩИ", "drop", "interior wall"],
+  ["Прямоугольный импо", "drop", "curtain-wall mullion: texture (D336)"],
+  ["*", "drop", "63A test config: other category, not facade (explicit catch-all)"]
+ ],
+ "interior": ["Базовая стена (В)", "Базовая стена ОБЩИ"]}
