@@ -42,11 +42,11 @@
 | `sources` | нет команды | PDF / DWG через PyMuPDF и `ezdxf` по навыку `model-maf`, шаг 1 |
 | `library` | нет команды | `library/maf/catalogue.json` (`tools/library/maf_catalogue.py`), превью вне git |
 | `pick` | нет команды | глаз агента по превью + слово Артёма; «Верона» — генератор `maf_gen_bench.py` |
-| `dims` | нет команды | `twinqa.maf_checks.maf_findings`, `maf_site_set.dimension_verdict` |
+| `dims` | нет команды | `twinqa.maf_checks.maf_findings`, `maf_site_set.dimension_verdict` (сохранённый вердикт v005 им не воспроизведён — `dims-writer`) |
 | `ids` | нет команды | список ID `library/maf/material_ids_v007.json`, сглаживание в Blender / Max |
 | `vpm` | нет команды | раскладка `tools/library/maf_atlas_layout.py` |
-| `placement` | `dt place site` / `agr place` (#1407) | NPM и ВПМ в одни точки одним запуском (D293, D329); Ватутино — `jobs/VATUTINO-SITE/place_site.py` поверх команды |
-| `npm` | `dt derive maf-npm-light` / `agr npm-light` (#1410) | НПМ-light + UV на атлас одним запуском (ветка «конвертация», D293); атлас — `tools/materials/atlas_maf.py`, перенос UV — `tools/materials/maf_uv_remap.py` |
+| `placement` | `dt place site` / `agr place` (#1407) | NPM и ВПМ в одни точки одним запуском (D293, D329); вход — уже готовые модели МАФ; строгий режим останавливает расхождение НПМ / ВПМ (код 4). Ватутино — `jobs/VATUTINO-SITE/place_site.py` в legacy-режиме (`strict=False`): расхождение только записывается в `results.json` `parity`, статус может быть `pass`; сводка `placement-report.json` поле `parity` не переносит. Зазор до Ground в сцене Max — отдельная проверка `place.maf_checks` / `place_core.maf_verdict` (только чтение; `gap_m` по умолчанию 0 — не замена утопления 10 см D095; не дубль `twinqa.maf_checks.maf_findings`) |
+| `npm` | `dt derive maf-npm-light` / `agr npm-light` (#1410) | НПМ-light + UV на атлас одним запуском (ветка «конвертация», D293); вход — `source_fbx` позиций, не точки расстановки (сквозная передача не проверена); атлас — `atlas_maf.build_atlas` (PNG + UV JSON, ключ — имя материала), перенос UV — `tools/materials/maf_uv_remap.py`. Отдельный производитель в Max — `atlas_groundel` (`flora_atlas_max.py`): свой атлас из сцены, пару PNG / JSON не читает; инструмент выбирает агент. #1410 — технический прогон на копиях, не сдача и не доказательство переноса ID v007 |
 | `ucx` | нет команды | для МАФ UCX не строятся (MAF-22); UCX Ground — маршрут Ground |
 | `showcase` | нет команды (человеческий шлюз) | Артём смотрит витрину НПМ / ВПМ |
 
@@ -55,6 +55,8 @@
 - `npm-candidates` — каталог — технический аудит; у 695 из 931 МАФ нет кандидата НПМ.
 - `budget` — МАФ 60 000 из 180 000 (D097); Ватутино 59 148; делит Артём (D167).
 - `placement-tool` — команда `dt place site` есть (#1407); на Ground v015 расстановка не перезапущена.
+- `placement-parity` — Ватутино `place_site.py` в legacy-режиме: `pass` возможен при расхождении НПМ / ВПМ; `placement-report.json` без `parity`; архив не меняется.
+- `dims-writer` — вердикт габаритов набора v005 (`checks.dimension_counts`) сохранён, но писатель не воспроизведён в записанных командах.
 - `checks-coverage` — 8 из 24 строк МАФ без автопроверки (у каждой причина); `maf_findings` — только НПМ GroundEl.
 
 ### Красные блоки: решение
@@ -67,6 +69,8 @@
 | `uv-remap` | снята | #1410: общий перенос UV на атлас `tools/materials/maf_uv_remap.py` — им пользуются `maf_site_set_build.py` (МАФ) и `flora_atlas_from_scene.remap_uv` (Флора) |
 | `budget` | открыта | правило D167 действует: агент приносит 2–3 варианта, режет Артём |
 | `placement-tool` | обновлена | #1407: общая команда `dt place site` / `agr place` (НПМ и ВПМ в одни точки, D329); осталось: перезапуск на Ground v015 |
+| `placement-parity` | открыта | #1715: `site.run(strict=False)` пишет `parity`, но не останавливается (код 4 — только `strict`), итог `pass`; `placement_report.py` принимает `pass` и пишет сводку без `parity`. Нужен строгий перезапуск, архив Ватутино не трогается |
+| `dims-writer` | открыта | #1715: записанные команды `site-maf-set.json` — атлас, сборка, чтение FBX; ни одна не пишет `dimension_counts`; писатель не назван, пока не воспроизведён |
 | `ucx-fences` | снята | решение Артёма [D298]: UCX ограждениям и навесам МАФ не строятся при любой толщине — практика проекта выше прочтения регламента p.36 §13.2 (≤ 5 см); стадия «UCX» ссылается на D298 |
 | `checks-coverage` | обновлена | #1409: у MAF-05/08/15/17/22/24 названы существующие проверки `scene_findings`; осталось 8 строк `none`, у каждой причина «No repo check» в листе МАФ |
 

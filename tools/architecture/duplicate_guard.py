@@ -41,6 +41,9 @@ Rules (stdlib `ast`, no imports of the scanned code):
   imported from dt_ai.placement.engine. Every row must say why it stays (`ru`).
 - `window-generator` owner adapters/max/agr_tools/windowgen_core.py (#1405): definitions named build_type or
   assign_glass under jobs/ + tools/ + src/ are refused; imports/calls remain valid. No legacy copies are allowlisted.
+- `poly63-window-match` owner jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py (#1714): the one POLY63 stage-2 opening ->
+  window-type matcher (`claim_openings`, 63A pick `match_openings`; 63C/63B pass their own pick). Definitions named
+  claim_openings or match_openings under jobs/ + tools/ + src/ are refused; calls remain valid. No copies are allowlisted.
 The owner file of a rule is never a copy of that rule.
 
 Guarded scope per rule (GUARDED): `udim-tile` jobs/ + tools/ + src/ (#1376: the live NPM-route copies in tools/
@@ -102,6 +105,7 @@ RULES = {
     "seam-seal": "tools/blender/seam_seal.py",
     "site-placement": "src/dt_ai/placement/site.py",
     "window-generator": "adapters/max/agr_tools/windowgen_core.py",
+    "poly63-window-match": "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
 }
 WRITE_MODES = {"w", "x", "a"}
 SCAN_PATTERN = "*.py"
@@ -112,15 +116,17 @@ GUARDED = {"udim-tile": ("jobs", "tools", "src"), "delivery-zip": ("jobs", "tool
            "vpm-uv": ("jobs", "tools", "src"),   # #1380: periodic VPM UV, not NPM atlas
            "seam-seal": ("jobs", "tools", "src"),   # #1381
            "site-placement": ("jobs", "tools", "src"),   # #1407: one site placement run, guarded from the start
-           "window-generator": ("jobs", "tools", "src")}
+           "window-generator": ("jobs", "tools", "src"),
+           "poly63-window-match": ("jobs", "tools", "src")}   # #1714: one stage-2 matcher for 63A/63C/63B
 # rules whose allowlist rows must carry a non-empty `ru` reason (#1377: why a writer stays outside the owner)
 REASON_REQUIRED = {"delivery-zip", "blender-launch", "sintez-checker", "master-qa", "vpm-uv", "seam-seal",
-                   "site-placement", "window-generator"}
+                   "site-placement", "window-generator", "poly63-window-match"}
 
 
 OWNED_NAMES = {"udim-tile": {"udim_tile", "udim_of_cell", "tile_origin", "face_tile"},
                "master-qa": {"world_bm"},
-               "seam-seal": {"seal", "ring_split", "t_junctions"}}
+               "seam-seal": {"seal", "ring_split", "t_junctions"},
+               "poly63-window-match": {"claim_openings", "match_openings"}}
 SINTEZ_ENTRY = "calculate_all_checks"   # the checker's own "Check AGR zip-files" entry point
 
 _AST = ast.AST
@@ -370,9 +376,15 @@ def _window_hits(tree):
             and node.name in {'build_type', 'assign_glass'}]
 
 
+def _poly63_match_hits(tree):
+    """Definitions of the POLY63 stage-2 matcher names (#1714); the towers call the owner with their own pick."""
+    return [node for node in _walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name in OWNED_NAMES["poly63-window-match"]]
+
+
 CHECKS = {"udim-tile": _udim_hits, "delivery-zip": _zip_hits, "blender-launch": _blender_hits,
           "sintez-checker": _sintez_hits, "master-qa": _master_hits, "vpm-uv": _vpm_uv_hits, "seam-seal": _seal_hits,
-          "site-placement": _place_hits, "window-generator": _window_hits}
+          "site-placement": _place_hits, "window-generator": _window_hits, "poly63-window-match": _poly63_match_hits}
 MODULE = "<module>"
 QUALNAME = r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*|<module>"
 HASH = re.compile(r"^[0-9a-f]{10}$")

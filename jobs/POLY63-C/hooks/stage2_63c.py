@@ -13,19 +13,49 @@ from pathlib import Path
 import numpy as np
 
 
-def registry_types(names):
-    """Validate the matched openings against the 63C AR export's name format."""
-    types, unresolved = {}, []
-    for opening, name in names.items():
-        label, _, suffix = (name or '').rpartition(' [')
-        instance = re.fullmatch(r'([0-9]+)\]', suffix)
-        if not instance or not re.fullmatch(r'Окн_\S+ .+ Комфорт ОК-[0-9]+-[0-9]+', label):
-            unresolved.append(f'opening {opening}, instance {instance[1] if instance else "unknown"}')
-        else:
-            types[opening] = label
-    if unresolved:
-        raise ValueError('Unresolved Revit family/type: ' + '; '.join(unresolved))
-    return types
+OPENINGS = 363  # 63C tower census of the accepted v002 body (tower-specific parameter)
+
+
+def revit_type(name):
+    """63C AR export name format: the type label, or None when the Revit family/type is unresolved."""
+    label, _, suffix = (name or '').rpartition(' [')
+    if re.fullmatch(r'[0-9]+\]', suffix) and re.fullmatch(r'Окн_\S+ .+ Комфорт ОК-[0-9]+-[0-9]+', label):
+        return label
+    return None
+
+
+def match_registry(a, ops, reg, modules):
+    """63C pick for the shared POLY63 matcher (stage2_plan.claim_openings, #1714): only rows on this sill,
+    with the module centre < 0.8 m along the wall and W/H within 2 mm; exactly one row; registry centroid within 2 mm.
+    A claimed row must carry a resolved Revit family/type name. Stops before writing on any problem."""
+    def pick(o, centre):
+        sill = np.asarray(o['border'])[:, 2].min()
+        candidates = []
+        for k, row in enumerate(reg):
+            if abs(float(row['sill_m']) - sill) > .002: continue
+            w = modules[int(row['module_opening_1based'])-1]
+            delta = w['centre'][:2] - centre[:2]
+            if np.linalg.norm(delta) < .8 and abs(w['W']-o['w']) < .002 and abs(w['H']-o['h']) < .002:
+                candidates.append(k)
+        if len(candidates) != 1:
+            return None, 'no registry row' if not candidates else 'several registry rows: ' + ', '.join(
+                repr(reg[k].get('fbx_model')) for k in candidates)
+        k = candidates[0]; row = reg[k]; w = modules[int(row['module_opening_1based'])-1]
+        if np.linalg.norm(w['centre'][:2]-[float(row['ref_centroid_x']),float(row['ref_centroid_y'])]) > .002:
+            return None, 'registry mismatch {!r}'.format(row.get('fbx_model'))
+        return k, (w, row.get('fbx_model'))
+
+    def label(k):
+        return 'registry row {} {!r}'.format(k + 1, reg[k].get('fbx_model'))
+
+    def unresolved(k, owners):
+        name = reg[k].get('fbx_model')
+        if revit_type(name) is None:
+            instance = re.fullmatch(r'.* \[([0-9]+)\]', name or '')
+            return 'Unresolved Revit family/type: {}, instance {}'.format(
+                '; '.join(owners), instance[1] if instance else 'unknown')
+        return None
+    return a.claim_openings(ops, len(reg), pick, label, unresolved)
 
 
 def build(helper, dump, crop, registry, floor, standard, output):
@@ -36,7 +66,7 @@ def build(helper, dump, crop, registry, floor, standard, output):
     std = a.windowgen_core.load_standard(json.loads(Path(standard).read_text(encoding='utf8')))
     v, f = a.body_mesh(dump)
     ops = a.openings_core.find_openings_report({'verts': v, 'faces': f, 'ref': {'name': 'SM_Body_Main'}})['openings']
-    if len(reg) != len(ops) or len(ops) != 363 or any(o['status'] != 'ok' for o in ops):
+    if len(reg) != len(ops) or len(ops) != OPENINGS or any(o['status'] != 'ok' for o in ops):
         raise ValueError('unexpected opening census')
     d = np.load(crop); names = list(d['names']); ix = d['obj']; tris = d['tri']
     modules = []
@@ -65,26 +95,14 @@ def build(helper, dump, crop, registry, floor, standard, output):
         if not 0.02 < w['depth'] < 0.4: raise ValueError(('frame depth', name, w['depth']))
         modules.append(w)
     prof = a.measure_profile(modules); els = []; rows = []; caps = []
+    ordered = sorted(ops, key=lambda o: (round(o['frame']['origin'][2], 2), o['id']))
     matched = []
-    for i, o in enumerate(sorted(ops, key=lambda o: (round(o['frame']['origin'][2], 2), o['id'])), 1):
-        bd = np.asarray(o['border']); sill = bd[:, 2].min(); c = bd.mean(0)
-        # Match only on this sill; prove along-wall fit separately from reveal displacement.
-        candidates = []
-        for row in reg:
-            if abs(float(row['sill_m']) - sill) > .002: continue
-            w = modules[int(row['module_opening_1based'])-1]
-            delta = w['centre'][:2] - c[:2]
-            if np.linalg.norm(delta) < .8 and abs(w['W']-o['w']) < .002 and abs(w['H']-o['h']) < .002:
-                candidates.append((row, w))
-        if len(candidates) != 1: raise ValueError(('unresolved opening', i, candidates))
-        row, w = candidates[0]; key = row.get('fbx_model')
-        if np.linalg.norm(w['centre'][:2]-[float(row['ref_centroid_x']),float(row['ref_centroid_y'])]) > .002:
-            raise ValueError(('registry mismatch', key))
-        matched.append((i, o, bd, sill, w, key))
+    for i, (o, _, (w, key)) in enumerate(match_registry(a, ordered, reg, modules), 1):
+        bd = np.asarray(o['border']); matched.append((i, o, bd, bd[:, 2].min(), w, key))
     names = {i: key for i, _, _, _, _, key in matched}
-    types = registry_types(names)
+    types = {i: revit_type(key) for i, key in names.items()}
     if len(set(names.values())) != len(names):
-        raise ValueError('duplicate registry name')
+        a.stop(['duplicate registry name'])
     for i, o, bd, sill, w, key in matched:
         u = np.array(o['frame']['x'])[:2]
         typ = types[i]; fd = w['depth']; W,H = o['w'],o['h']
