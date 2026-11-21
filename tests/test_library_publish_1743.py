@@ -132,6 +132,57 @@ def test_intake_ambiguous_folder_is_an_error_naming_it(tmp_path):
         pub.intake_batch(b)
 
 
+@pytest.mark.parametrize(
+    ("key", "profiles", "expected_tris", "findings"),
+    [
+        ("M3", ("high", "low"), {"vpm": 32, "npm": 12}, []),
+        ("M4", ("low",), {"vpm": None, "npm": 12}, ["vpm: no VPM version in the object"]),
+    ],
+)
+def test_publish_own_folder_fbx_roles(tmp_path, key, profiles, expected_tris, findings):
+    batch = make_batch(tmp_path, folder=False)
+    folder = batch / key
+    folder.mkdir()
+    tri_counts = {"high": 32, "low": 12}
+    for profile in profiles:
+        (folder / f"{key}_GroundEl_{profile}.fbx").write_bytes(profile.encode())
+    before = _tree(batch)
+
+    def readback(fbx, out):
+        report = _report()
+        report["meshes"][0]["triangles"] = tri_counts[fbx.read_text()]
+        return report
+
+    cat = pub.empty_catalogue()
+    publish(tmp_path, batch, cat, readback=readback)
+    rec = next(r for r in cat["records"] if r["origin"]["object"] == key)
+    assert rec["card"]["tris"] == expected_tris
+    assert rec["qa"] == {"verdict": "fail" if findings else "pass", "findings": findings}
+    roles = {"high": "vpm", "low": "npm"}
+    assert {Path(f["path"]).name: f["role"] for f in rec["files"]} == {
+        f"{key}_GroundEl_{p}.fbx": roles[p] for p in profiles
+    }
+    assert _tree(batch) == before
+
+
+@pytest.mark.parametrize("suffix", ["high", "low", "legacy"])
+@pytest.mark.parametrize("pair", [False, True])
+def test_probe_own_folder_role_is_case_insensitive_and_unique(tmp_path, suffix, pair):
+    folder = tmp_path / "synthetic"
+    folder.mkdir()
+    fbx = folder / f"X_GroundEl_{suffix.upper()}.FBX"
+    fbx.write_bytes(b"first")
+    if pair:
+        other = folder / f"X_GroundEl_v002_{suffix}.fbx"
+        other.write_bytes(b"second")
+        with pytest.raises(pub.PublishError, match="synthetic.*ambiguous object.*2 FBX") as exc:
+            pub.intake_batch(tmp_path)
+        assert fbx.name in str(exc.value) and other.name in str(exc.value)
+    else:
+        [obj] = pub.intake_batch(tmp_path)["objects"]
+        assert obj["members"] == {"npm" if suffix == "low" else "vpm": str(fbx)}
+
+
 # ---- name -----------------------------------------------------------------------------------------------------
 def test_name_manufacturer_rule_translit_and_yo():
     cat = pub.empty_catalogue()
