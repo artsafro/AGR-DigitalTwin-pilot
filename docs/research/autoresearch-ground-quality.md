@@ -135,7 +135,7 @@ are customer packages and are not committed).
 Contract commit c21df288; harness + amendment 1 ccedad3b; injection fix 85b28693 (the first series injected into
 `parts[0]`, which is Flora on A3-A8; it was stopped after A1-A6, whose clean and rigid rows are byte-identical to
 the second series; only the injection rows changed). Receipt: `docs/research/autoresearch-ground-quality-harness/r31.json`
-(= `C:/x/ev_t_193a0887/r31b.json`, SHA-256 `4d0fe3d6570f81c1ef05edc8fdbc131409b5796253f992a62fb506c383ca3870`).
+(= `C:/x/ev_t_193a0887/r31b.json` with CRLF -> LF; SHA-256 committed LF `f409f12d9520a5553ec31627a8d059b06856d3bc5cbdb1bb5e5bbee63bde1963`, scratch CRLF `4d0fe3d6570f81c1ef05edc8fdbc131409b5796253f992a62fb506c383ca3870`).
 Dumps: `dumps.sha256` (metres, Blender 5.1.2, all METRIC scale 1.0, 0 dropped objects).
 
 Budget: first pair (A1 + F5) scored in about 8 s; the full series (13 inputs x 3 repeats + rigid + inject) took
