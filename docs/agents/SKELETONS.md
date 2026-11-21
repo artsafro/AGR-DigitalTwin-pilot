@@ -115,7 +115,7 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `sources-ground` приём СПОЗУ | `tools/source/inspect_ground_dxf.py` |
-| 2 | `surfaces` плоский Ground | пробел (кирпичики `src/dt_ai/geometry/ground_cake.py`) |
+| 2 | `surfaces` Ground из исходных границ покрытий | `agr ground site SPEC NEW_OUT`, `params.surfaces: "shared"` — одна грань на точку плана, верхнее покрытие, общий набор вершин на каждой границе (#1738) |
 | 3 | `quads` квадраты и швы | `dt ground v015` только для Ватутино; `ground_quads.py` |
 | 4 | `library` МАФ и Флора, атласы | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
 | 5 | `maf-light` лёгкий МАФ | пробел |
@@ -135,11 +135,11 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 |---|---|---|
 | 1 | `sources-ground` | `tools/source/inspect_ground_dxf.py` |
 | 2 | `zero` граница и нуль | пробел |
-| 3 | `surfaces` | пробел (кирпичики `ground_cake.build_flat`) |
+| 3 | `surfaces` | `agr ground site` (`surfaces: "shared"`, #1738) |
 | 4 | `quads` | `dt ground v015` только для Ватутино |
 | 5 | `ground-textures` ID и текстуры | пробел |
 | 6 | `relief` проекция на рельеф | пробел (кирпичики `ground_cake.project_z`) |
-| 7 | `skirt` юбка | `agr ground` только замороженный Ватутино |
+| 7 | `skirt` юбка | `agr ground site`: `ground_cake.add_skirt` >= 1 м + `ground_site.skirt_check_export` на записанном OBJ (#1738) |
 | 8 | `ucx-ground` коллизии Ground | пробел (прецедент `tools/blender/ucx_build.py`) |
 | 9 | `library` | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
 | 10 | `placement` | `uv run python -m dt_ai.placement.engine` |
@@ -312,11 +312,9 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 - `review-scene` — `agr open-in-max` / `agr contact-renders` недоступны: мост Max или рендеры работы.
 - `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.
 - `zero` — нет команды границы и нуля проекта; читать ПЗУ / вертикальную планировку, спрашивать [D279].
-- `surfaces` — нет общего построителя покрытий; `ground_cake` — только кирпичики.
 - `quads` — нет команды раскроя/спаривания для нового участка; `dt ground v015` повторяет только Ватутино.
 - `ground-textures` — нет общей команды ID/UV/текстур плоского Ground.
 - `relief` — нет общей команды проекции на рельеф для нового участка [D293].
-- `skirt` — юбка нового участка [D251] — работа в DCC, общей команды нет.
 - `ucx-ground` — `agr ucx` недоступен; `ucx_build.py` — прецедент, не команда для реального участка.
 - `maf-light` — нет инструмента лёгкой НПМ-версии / перекладки UV для МАФ.
 - `flora-star` — нет построителя НПМ-звёзд Флоры [D102].

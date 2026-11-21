@@ -132,7 +132,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
                origin_xy=None, cell: float = 4.0, chord: float = 0.02, step: float = 0.006, snap: float = 0.001,
                relief_tol: float = 0.01, skirt_m: float = 1.0, tex_px: int = 4096,
                footprint_min_area: float = 1000.0, crop_box=None, unhatched: dict | None = None,
-               relief_extension: dict | None = None) -> SiteResult:
+               relief_extension: dict | None = None, surfaces: str = "layered") -> SiteResult:
     """Build one site's Ground in the D293 order and return flat + projected meshes and the stage report.
 
     ``unhatched``: boundary area under no hatch (smaller than ``footprint_min_area``) lands on the base cover only
@@ -141,6 +141,8 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     Coordinates: XY local = source XY - ``origin_xy``; Z local = source Z - ``project_zero_m`` (FBX Z 0 = ±0.000).
     """
     report: dict = {"order": list(STAGES), "passed": False, "stages": {}}
+    if surfaces not in gc.SURFACES:
+        raise ValueError(f"surfaces {surfaces!r}: expected one of {gc.SURFACES} (#1738)")
     zero = _finite("project_zero_m", project_zero_m)
     height_values(zero, 0.0, 0.0)  # same validation as the project zero command (D279)
     for name, value in (("cell", cell), ("step", step), ("relief_tol", relief_tol)):
@@ -192,14 +194,14 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     if unhatched is not None:
         if unhatched.get("cover_id") != base_id or not str(unhatched.get("reason", "")).strip():
             raise ValueError(f"unhatched policy must name the base cover {base_id} and a reason, got {unhatched}")
-    report["stages"]["surfaces"] = {"plan": plan.report, "unhatched_m2": sliver,
+    report["stages"]["surfaces"] = {"mode": surfaces, "plan": plan.report, "unhatched_m2": sliver,
                                     "unhatched_policy": unhatched, "ids": [
         {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": 1000 + c.id, "colour_rgb": list(c.colour),
          "colour_source": c.colour_source, "sources": c.sources,
          "area_m2": round(sum(p.area for p in c.polygons), 6)} for c in covers]}
 
     # quads: flat Ground first (no relief), one partition with shared seams and inset layers
-    flat = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap)
+    flat = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap, surfaces=surfaces)
     _udim_by_id(flat, by_name)
     cov = gc.measure_coverage(flat, plan, tol=snap)
     report["stages"]["quads"] = {"flat_triangles": int(len(flat.faces)), "flat_vertices": int(len(flat.verts)),
@@ -210,7 +212,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     for stage in ("flat", "refined"):
         if stage == "refined":
             refined = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap, sampler=sampler,
-                                    tol=relief_tol)
+                                    tol=relief_tol, surfaces=surfaces)
         verts = flat.verts if stage == "flat" else refined.verts
         _, hit = sampler.sample(verts[:, :2])
         if hit.all():
@@ -358,6 +360,77 @@ def skirt_gaps(mesh: gc.Mesh, drop_m: float, xy_tol: float = 1e-6) -> list:
         elif best[0] < drop_m - 1e-9:
             gaps.append({"edge": [a, b], "reason": f"drop < {drop_m} m", "drop_m": round(best[0], 6)})
     return gaps
+
+
+def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy_tol: float = 1e-6) -> dict:
+    """GND-03 on the EXPORTED file (#1738): groups, levels and slot names are ignored, only geometry counts.
+
+    Top faces = triangles whose normal z > ``up_cos``; every top edge used by exactly one top face is an outer
+    edge and needs a skirt quad (``skirt_gaps``) at least ``drop_m`` deep. Empty, non-finite or non-triangle
+    input is an error; a file without upward faces fails (never a pass on nothing measured)."""
+    drop_m = _finite("drop_m", drop_m, positive=True)
+    verts, faces = [], []
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        head, _, rest = line.partition(" ")
+        if head == "v":
+            verts.append([float(t) for t in rest.split()[:3]])
+        elif head == "f":
+            ids = [int(c.split("/")[0]) - 1 for c in rest.split()]
+            if len(ids) != 3:
+                raise ValueError(f"{path}: non-triangle face {rest!r}")
+            faces.append(ids)
+    if not faces:
+        raise ValueError(f"{path}: no faces to measure")
+    v = np.array(verts, float)
+    if not np.isfinite(v).all():
+        raise ValueError(f"{path}: vertices must be finite")
+    f = np.array(faces, int)
+    n = np.cross(v[f[:, 1]] - v[f[:, 0]], v[f[:, 2]] - v[f[:, 0]])
+    ln = np.linalg.norm(n, axis=1)
+    nz = np.where(ln > 0, n[:, 2] / np.where(ln > 0, ln, 1.0), 0.0)
+    level = np.where(nz > up_cos, 0, -1)
+    mesh = gc.Mesh(v, f, ["x"] * len(f), level, np.zeros((len(f), 3, 2)), 1.0)
+    count: dict = {}
+    directed: dict = {}
+    for tri in f[level == 0]:
+        for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])):
+            k = (min(a, b), max(a, b))
+            count[k] = count.get(k, 0) + 1
+            directed[k] = (int(a), int(b))
+    # an open top edge with top surface on its outer side in plan (a layered inset rim over the base) is not the
+    # perimeter: probe 0.1 mm to the right of the CCW-directed edge
+    from shapely import STRtree, points as _pts
+    top_polys = [Polygon(v[t, :2]) for t in f[level == 0]]
+    tree = STRtree(top_polys) if top_polys else None
+    open_edges = [k for k, c in count.items() if c == 1]
+    probes = []
+    for k in open_edges:
+        a, b = directed[k]
+        d = v[b, :2] - v[a, :2]
+        ln_ = float(np.hypot(*d)) or 1.0
+        probes.append((v[a, :2] + v[b, :2]) / 2 + np.array([d[1], -d[0]]) / ln_ * 1e-4)
+    covered = set()
+    if probes and tree is not None:
+        hit = tree.query(_pts(np.array(probes)), predicate="intersects")
+        covered = {open_edges[i] for i in hit[0].tolist()}
+    outer_set = {k for k in open_edges if k not in covered}
+    gaps = [g for g in skirt_gaps(mesh, drop_m, xy_tol) if tuple(sorted(g["edge"])) in outer_set]
+    outer = len(outer_set)
+    top = int((level == 0).sum())
+    drops = [g["drop_m"] for g in gaps]
+    # min drop over every outer edge: a passing edge is >= drop_m; measure its real depth from the skirt bottom
+    zmin_skirt = float(v[f[level < 0]].reshape(-1, 3)[:, 2].min()) if (level < 0).any() else None
+    status = "pass" if top and outer and not gaps else "fail"
+    min_drop = min(drops) if drops else (None if not outer else drop_m)
+    if status == "pass":
+        tops = {int(i) for k in outer_set for i in k}
+        xy = {}
+        for i in range(len(v)):
+            xy.setdefault((round(v[i, 0], 6), round(v[i, 1], 6)), []).append(float(v[i, 2]))
+        min_drop = min(float(v[i, 2]) - min(xy[(round(v[i, 0], 6), round(v[i, 1], 6))]) for i in tops)
+    return {"file": str(path), "drop_required_m": drop_m, "status": status, "top_faces": top,
+            "outer_edges": outer, "gaps": gaps[:20], "gap_count": len(gaps),
+            "min_drop_m": None if min_drop is None else round(min_drop, 6), "skirt_bottom_z": zmin_skirt}
 
 
 def _retained(flat_xy: np.ndarray, xy: np.ndarray, tol: float) -> dict:

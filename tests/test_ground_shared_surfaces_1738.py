@@ -141,6 +141,16 @@ def test_export_skirt_check_rejects_downward_top(tmp_path):
     assert r["status"] == "fail" and r["top_faces"] == 0
 
 
+def test_export_skirt_check_layered_inset_rim_is_not_perimeter(tmp_path):
+    """A layered inset rim (open edge with base under its outer side) is not the perimeter: no false gap."""
+    m = gc.add_skirt(gc.build_flat(_plan(), cell=3.0), 1.0)
+    r = gs.skirt_check_export(_write(tmp_path, m), 1.0)
+    assert r["status"] == "pass", r["gaps"][:3]
+    assert r["outer_edges"] == gs.skirt_check_export(
+        _write(tmp_path, gc.add_skirt(gc.build_flat(_plan(), cell=3.0, surfaces="shared"), 1.0), "s.obj"),
+        1.0)["outer_edges"]
+
+
 def _relief(w, h, n=6, margin=1.0):
     pts = []
     for i in range(n):
@@ -185,3 +195,76 @@ def test_cli_accepts_surfaces_param():
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     assert "surfaces" in mod.PARAMS and "adapter" in mod.TOP_KEYS
+
+
+def _cli():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("bgs2", Path(__file__).resolve().parents[1]
+                                                  / "tools/ground/build_ground_site.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _adapter(tmp_path, extra_cov=None):
+    import json
+    from shapely.geometry import mapping
+    cov = {"base": {"geometry": mapping(box(0, 0, 20, 20))}, "tile": {"geometry": mapping(box(5, 5, 12, 12))},
+           "deck": {"geometry": {"type": "MultiPolygon", "coordinates": []}}, **(extra_cov or {})}
+    d = {"boundary": mapping(box(0, 0, 20, 20)), "coverings": cov,
+         "elevations": [{"x": x, "y": y, "z": z} for x, y, z in _relief(20, 20)]}
+    p = tmp_path / "adapter.json"
+    p.write_text(json.dumps(d), encoding="utf-8")
+    return p
+
+
+def _adapter_spec(tmp_path, adapter, **kw):
+    import json
+    spec = {"site": "SYN", "adapter": {"path": str(adapter), "sha256": gs.sha256(adapter)},
+            "zero": {"project_zero_m": 100.0, "source": "synthetic"}, "base_id": 1,
+            "covers": [{"id": 1, "name": "Base", "adapter_keys": ["base"], "colour": [1, 2, 3], "colour_reason": "syn"},
+                       {"id": 2, "name": "Tile", "adapter_keys": ["tile"], "colour": [4, 5, 6], "colour_reason": "syn"}],
+            "adapter_empty": ["deck"], "params": {"origin_xy": [0, 0], "cell": 3.0, "snap": 0.003,
+                                                  "surfaces": "shared"}}
+    spec.update(kw)
+    p = tmp_path / "spec.json"
+    p.write_text(json.dumps(spec), encoding="utf-8")
+    return p
+
+
+def test_cli_adapter_shared_builds_xview_zero_and_skirt(tmp_path):
+    import json
+    mod = _cli()
+    a = _adapter(tmp_path)
+    s = _adapter_spec(tmp_path, a)
+    before = a.read_bytes(), s.read_bytes()
+    assert mod.run(s, tmp_path / "out") == 0
+    rep = json.loads((tmp_path / "out/ground-report.json").read_text(encoding="utf-8"))
+    assert rep["skirt_export_check"]["status"] == "pass" and rep["skirt_export_check"]["min_drop_m"] >= 1.0
+    assert rep["xview"]["passed"] and (rep["xview"]["vertex_pairs"], rep["xview"]["face_pairs"]) == (0, 0)
+    assert rep["stages"]["surfaces"]["mode"] == "shared"
+    assert (a.read_bytes(), s.read_bytes()) == before  # inputs untouched
+
+
+@pytest.mark.parametrize("case", ["unmapped", "twice", "empty_not_empty", "no_colour", "both_sources", "out_is_input"])
+def test_cli_adapter_fail_closed(tmp_path, case):
+    from shapely.geometry import mapping
+    mod = _cli()
+    a = _adapter(tmp_path, {"extra": {"geometry": mapping(box(1, 1, 2, 2))}} if case == "unmapped" else None)
+    kw = {}
+    if case == "twice":
+        kw["covers"] = [{"id": 1, "name": "Base", "adapter_keys": ["base"], "colour": [1, 2, 3], "colour_reason": "s"},
+                        {"id": 2, "name": "Tile", "adapter_keys": ["tile", "base"], "colour": [1, 2, 3],
+                         "colour_reason": "s"}]
+    if case == "empty_not_empty":
+        kw["adapter_empty"] = ["deck", "tile"]
+    if case == "no_colour":
+        kw["covers"] = [{"id": 1, "name": "Base", "adapter_keys": ["base"]},
+                        {"id": 2, "name": "Tile", "adapter_keys": ["tile"], "colour": [1, 2, 3], "colour_reason": "s"}]
+    if case == "both_sources":
+        kw["dxf"] = {"path": str(a), "sha256": "x"}
+    s = _adapter_spec(tmp_path, a, **kw)
+    out = a if case == "out_is_input" else tmp_path / "out"
+    with pytest.raises(ValueError):
+        mod.run(s, out)
+    assert not (tmp_path / "out").exists() and not (tmp_path / "out.partial").exists()
