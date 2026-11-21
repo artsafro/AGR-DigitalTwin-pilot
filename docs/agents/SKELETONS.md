@@ -80,6 +80,23 @@ An explicit cleanup approval records exact source polygon drops on a new copy,
 never a general geometry repair. A selected seam policy does not waive mixed
 material boundaries, singular UV metrics, texel bounds or native readback.
 
+### `maf-npm-to-vpm` — МАФ, НПМ → ВПМ
+
+`uv run agr maf-npm-to-vpm --plan` reads the registry and prints the route; it does not start a DCC, convert files, or pass QA.
+
+| # | Stage | Shared owner / checkpoint |
+|---|---|---|
+| 1 | `maf-segments` | Manual: extra segments on measured circular profiles, on copies only; keep UV seams and measure silhouette and triangle delta |
+| 2 | `maf-texture-class` | Manual: classify finishes per MAF; use 256 solid only when the finish qualifies, retain Diffuse alpha on cut-outs |
+| 3 | `maf-atlas-strategy` | Try one shared 4K tile for non-uniform finishes, then grouped 4K tiles, then per-MAF UDIM; keep eligible solids in 256 tiles |
+| 4 | `maf-pack` | `atlas_maf`, `vpm_uv` and `udimtile_core`; pixel fit is not physical density or export approval |
+| 5 | `maf-stubs` | Manual: 256 RGB Normal/ERM stubs if eligible, separate from alpha in Diffuse |
+| 6–8 | `master-qa` → `readback` → `checker` | Shared QA, export readback, then `agr checker` on a separate diagnostic or delivery archive; report scope |
+| 9 | `maf-sheet` | Before/after sheet and evidence for Artem |
+
+Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
+[`jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json`](../../jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json).
+
 ### `oks-npm-lite` — ОКС, упрощённая НПМ
 
 Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
@@ -248,6 +265,11 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
+- `maf-segments` — ручная правка кругового профиля с замером отклонения и бюджета.
+- `maf-texture-class` — ручное подтверждение происхождения отделки и альфы.
+- `maf-atlas-strategy` — выбор по замерам плотности, отступов и швов.
+- `maf-stubs` — подготовка согласованной тройки карт и контроль применимости заглушек.
+- `maf-sheet` — парные виды и замеры для Артёма.
 - `geojson` — нет готового к сдаче генератора GeoJSON, пока не изучены примеры заказчика [D220].
 - `light-fbx` — нет стадии валидатора для содержимого `_Light.fbx`.
 - `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
