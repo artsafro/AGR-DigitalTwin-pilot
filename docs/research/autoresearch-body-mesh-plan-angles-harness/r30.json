@@ -1,0 +1,1241 @@
+{
+  "variant": "#29 + all nondegenerate unsigned A/B source contour angles, 63B only",
+  "baseline_revision": "8aa66dc6a402e394f357d1c10cc5c6732d86a6a1",
+  "baseline_M": -0.10622444630252276,
+  "poses": [
+    [
+      0,
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    [
+      17,
+      [
+        3,
+        -4,
+        7
+      ]
+    ],
+    [
+      -31,
+      [
+        -9,
+        6,
+        -2
+      ]
+    ]
+  ],
+  "plan_revision": "ed4c418e087391cd453182c985a7a8b38a4fb601",
+  "plan_sha256": {
+    "tests/fixtures/poly63b/floor_A.json": "7a2c67765e4b4d057c8ec88469906da2480ae1dec131f162443056b62f2fdc49",
+    "tests/fixtures/poly63b/floor_B.json": "87564d7c021af07fd8dd3b36ecabbc13ca95ace4eebf2f8688c0d2a290a50fac"
+  },
+  "allowed_angles_63B": [
+    45.0,
+    69.972366002828,
+    70.88588856724843,
+    70.91720688528746,
+    71.31505181719665,
+    71.32119661294985,
+    72.95718486462188,
+    73.84020953584397,
+    73.89329996278175,
+    74.05207694534118,
+    74.8462244320686,
+    90.0,
+    90.22414756320971,
+    90.34268255337595,
+    90.34708114584303,
+    90.34940000299895,
+    90.66879884501296,
+    90.96482518063195,
+    90.9759756136969,
+    91.09825103893017,
+    91.10309111073977,
+    91.28685062523428,
+    91.28950007089523,
+    91.31941283930806,
+    91.4564208433775,
+    92.8297642862142,
+    92.83097147871355,
+    93.0096930420585,
+    93.01060261863098,
+    93.52872139998759,
+    93.53596913547003,
+    93.53911840647372,
+    93.66712331161328,
+    93.6694181008916,
+    110.76573330689236,
+    111.77193488656944,
+    112.03720321102247,
+    112.19577072383127,
+    112.5668821233806,
+    112.58003287691494,
+    112.95839709231262,
+    112.9854342840288,
+    113.74828226431516,
+    116.81353004848806,
+    135.0,
+    136.17072475438422,
+    166.1619394121075,
+    166.16356160881926,
+    166.1908801437366,
+    166.2158574180204,
+    168.6234627029511,
+    168.64062586509573,
+    168.64648214430656,
+    168.64980727944848,
+    168.65148873670321,
+    168.6577064568602,
+    168.65889682317257,
+    168.66686287525627,
+    168.66829817478583,
+    168.67090617805368,
+    168.67150145899944,
+    168.97925536640233,
+    168.98174323654456,
+    168.98291897252443,
+    168.98592843046572,
+    168.98726936704696,
+    168.99488706528578,
+    168.99696466612826,
+    168.9972961978937,
+    169.00023781345618,
+    169.00640254585082,
+    169.00646691496124,
+    169.00748534068765,
+    169.01410066074746,
+    169.01452705956723,
+    169.0158701676904,
+    169.01694232704082,
+    169.0194793978289,
+    169.0275745925511,
+    171.11561836450016,
+    171.12536949172153,
+    171.12956964832455,
+    171.1308562450314,
+    171.1319908522533,
+    171.13423156265443,
+    171.1386450012638,
+    171.50481181100238,
+    171.51164793331196,
+    171.51322984456246,
+    171.51376838442656,
+    171.51720806092635,
+    171.51899939996727,
+    171.52310243786684,
+    171.52670582746006,
+    171.52837499200947,
+    171.53657174180938,
+    171.5378824479665,
+    171.5407952308173,
+    171.5445791085274,
+    171.54839106730316,
+    171.55013693142803,
+    171.55028220564046,
+    171.5585753605504,
+    171.5586800079864,
+    171.5593600134116,
+    171.56240723908135,
+    171.56351019259915,
+    171.57028983287898,
+    171.57510135919946,
+    171.57615900677368,
+    172.86226945809736,
+    173.08670865108297,
+    173.09644827562906,
+    174.32264842621058,
+    174.32385652131583,
+    174.32792339659898,
+    174.34187948347136,
+    174.49620581431728,
+    174.49796244825546,
+    174.50442186843117,
+    174.50625365569428,
+    175.57219826898398,
+    175.57572295910194,
+    175.74414202028146,
+    175.74538997770713,
+    175.7746317193341,
+    175.77527178873657
+  ],
+  "replay_sha256": "fea7acf0e890d2379d684d12de734a781842c979b83630034d151124831df6e5",
+  "budget_s": 180,
+  "identity_pair_s": 2.27142219999223,
+  "elapsed_s": 21.366600299996207,
+  "M": -0.10249842615957745,
+  "worst_rejected": [
+    0.049387156448633326,
+    "63B-v004"
+  ],
+  "worst_accepted": [
+    0.15188558260821078,
+    "63B-v007"
+  ],
+  "pose_margins": [
+    {
+      "M": -0.10249842615957797,
+      "worst_rejected": [
+        0.04938715644863333,
+        "63B-v004"
+      ],
+      "worst_accepted": [
+        0.1518855826082113,
+        "63B-v007"
+      ]
+    },
+    {
+      "M": -0.10249842615957738,
+      "worst_rejected": [
+        0.0493871564486332,
+        "63B-v004"
+      ],
+      "worst_accepted": [
+        0.15188558260821058,
+        "63B-v007"
+      ]
+    },
+    {
+      "M": -0.10249842615957745,
+      "worst_rejected": [
+        0.049387156448633326,
+        "63B-v004"
+      ],
+      "worst_accepted": [
+        0.15188558260821078,
+        "63B-v007"
+      ]
+    }
+  ],
+  "accepted_trigger": true,
+  "hypothesis": "refuted",
+  "clean": {
+    "r29_full_exact": true,
+    "area_face_parity": true,
+    "outside_63B_unchanged": true,
+    "rejected_63C_sentinel": true,
+    "square": [
+      0.0,
+      0.0
+    ],
+    "input_hashes_verified": true
+  },
+  "injected": {
+    "plan_matched_48": [
+      1.0,
+      0.0
+    ],
+    "unmatched_72": [
+      1.0,
+      1.0
+    ],
+    "inherited_r29_witnesses": {
+      "wrong_hash_refused": true,
+      "rhombus48_Q": 1.0,
+      "offgrid_pentagon_Q": 0.0
+    }
+  },
+  "not_measured": [
+    "source CAD verification",
+    "independent labels",
+    "face/plan ownership",
+    "native rebuild/readback",
+    "score change",
+    "package QA"
+  ],
+  "rows": {
+    "63B-v001": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v001.1/dump.json",
+      "sha256": "d98a129ee2035c1436763a5c47c0705edd39a5c4ccf7675584d87b4f0a3a6f57",
+      "pairs": [
+        {
+          "base": {
+            "area": 1474.807196848628,
+            "flagged_area": 72.98455158123846,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9526,
+            "Q": 0.04948752063130153
+          },
+          "candidate": {
+            "area": 1474.807196848628,
+            "flagged_area": 72.98455158123846,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9526,
+            "Q": 0.04948752063130153
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8071968486279,
+            "flagged_area": 72.98455158123838,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9526,
+            "Q": 0.04948752063130148
+          },
+          "candidate": {
+            "area": 1474.8071968486279,
+            "flagged_area": 72.98455158123838,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9526,
+            "Q": 0.04948752063130148
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8071968486283,
+            "flagged_area": 72.98455158123845,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9526,
+            "Q": 0.04948752063130152
+          },
+          "candidate": {
+            "area": 1474.8071968486283,
+            "flagged_area": 72.98455158123845,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9526,
+            "Q": 0.04948752063130152
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.04948752063130152
+    },
+    "63B-v002": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v002.1/dump.json",
+      "sha256": "b1d2098f34e97a07578adf06b4c83f96279f70564c4383f66f9221ee09979981",
+      "pairs": [
+        {
+          "base": {
+            "area": 1474.808845077209,
+            "flagged_area": 72.98455158123846,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9377,
+            "Q": 0.04948746532464523
+          },
+          "candidate": {
+            "area": 1474.808845077209,
+            "flagged_area": 72.98455158123846,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9377,
+            "Q": 0.04948746532464523
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8088450772088,
+            "flagged_area": 72.98455158123838,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9377,
+            "Q": 0.04948746532464518
+          },
+          "candidate": {
+            "area": 1474.8088450772088,
+            "flagged_area": 72.98455158123838,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9377,
+            "Q": 0.04948746532464518
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8088450772095,
+            "flagged_area": 72.98455158123845,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9377,
+            "Q": 0.04948746532464521
+          },
+          "candidate": {
+            "area": 1474.8088450772095,
+            "flagged_area": 72.98455158123845,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9377,
+            "Q": 0.04948746532464521
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.04948746532464521
+    },
+    "63B-v003": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v003.1/dump.json",
+      "sha256": "1263be647aa9fd3b09714c6763d46676c735a13939dff587ccd342cb498b2a3d",
+      "pairs": [
+        {
+          "base": {
+            "area": 1474.8808977170327,
+            "flagged_area": 72.98389767420346,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9541,
+            "Q": 0.04948460434139136
+          },
+          "candidate": {
+            "area": 1474.8808977170327,
+            "flagged_area": 72.98389767420346,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9541,
+            "Q": 0.04948460434139136
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8808977170324,
+            "flagged_area": 72.98389767420338,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9541,
+            "Q": 0.04948460434139131
+          },
+          "candidate": {
+            "area": 1474.8808977170324,
+            "flagged_area": 72.98389767420338,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9541,
+            "Q": 0.04948460434139131
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8808977170315,
+            "flagged_area": 72.98389767420346,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9541,
+            "Q": 0.049484604341391396
+          },
+          "candidate": {
+            "area": 1474.8808977170315,
+            "flagged_area": 72.98389767420346,
+            "flagged_faces": 160,
+            "horizontal_quads": 1090,
+            "faces": 9541,
+            "Q": 0.049484604341391396
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.04948460434139136
+    },
+    "63B-v004": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v004.1/dump.json",
+      "sha256": "bf115523c6dde6387a8c929342cf501fd179c8b22df1810ba6784280497ff30b",
+      "pairs": [
+        {
+          "base": {
+            "area": 1474.8539342593815,
+            "flagged_area": 72.83884199015046,
+            "flagged_faces": 160,
+            "horizontal_quads": 1091,
+            "faces": 9463,
+            "Q": 0.04938715644863333
+          },
+          "candidate": {
+            "area": 1474.8539342593815,
+            "flagged_area": 72.83884199015046,
+            "flagged_faces": 160,
+            "horizontal_quads": 1091,
+            "faces": 9463,
+            "Q": 0.04938715644863333
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8539342593838,
+            "flagged_area": 72.83884199015037,
+            "flagged_faces": 160,
+            "horizontal_quads": 1091,
+            "faces": 9463,
+            "Q": 0.0493871564486332
+          },
+          "candidate": {
+            "area": 1474.8539342593838,
+            "flagged_area": 72.83884199015037,
+            "flagged_faces": 160,
+            "horizontal_quads": 1091,
+            "faces": 9463,
+            "Q": 0.0493871564486332
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1474.8539342593817,
+            "flagged_area": 72.83884199015046,
+            "flagged_faces": 160,
+            "horizontal_quads": 1091,
+            "faces": 9463,
+            "Q": 0.049387156448633326
+          },
+          "candidate": {
+            "area": 1474.8539342593817,
+            "flagged_area": 72.83884199015046,
+            "flagged_faces": 160,
+            "horizontal_quads": 1091,
+            "faces": 9463,
+            "Q": 0.049387156448633326
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.049387156448633326
+    },
+    "63B-v005": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v005.1/dump.json",
+      "sha256": "03db41df0ce700bad640633246590cf08a33d85a551e9a8391d45bbc785d9554",
+      "pairs": [
+        {
+          "base": {
+            "area": 1398.8368917749563,
+            "flagged_area": 217.62635089682487,
+            "flagged_faces": 364,
+            "horizontal_quads": 1091,
+            "faces": 9525,
+            "Q": 0.15557664526611328
+          },
+          "candidate": {
+            "area": 1398.8368917749563,
+            "flagged_area": 217.62635089682487,
+            "flagged_faces": 364,
+            "horizontal_quads": 1091,
+            "faces": 9525,
+            "Q": 0.15557664526611328
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1398.8368917749551,
+            "flagged_area": 217.62635089682522,
+            "flagged_faces": 364,
+            "horizontal_quads": 1091,
+            "faces": 9525,
+            "Q": 0.15557664526611364
+          },
+          "candidate": {
+            "area": 1398.8368917749551,
+            "flagged_area": 217.62635089682522,
+            "flagged_faces": 364,
+            "horizontal_quads": 1091,
+            "faces": 9525,
+            "Q": 0.15557664526611364
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1398.8368917749558,
+            "flagged_area": 217.626350896825,
+            "flagged_faces": 364,
+            "horizontal_quads": 1091,
+            "faces": 9525,
+            "Q": 0.15557664526611342
+          },
+          "candidate": {
+            "area": 1398.8368917749558,
+            "flagged_area": 217.626350896825,
+            "flagged_faces": 364,
+            "horizontal_quads": 1091,
+            "faces": 9525,
+            "Q": 0.15557664526611342
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.15557664526611342
+    },
+    "63B-v006": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63B-v006.1/dump.json",
+      "sha256": "fc41ff9ef238e5adceb114b7198f75bec2d08ebca12564bba925f02aca91fa04",
+      "pairs": [
+        {
+          "base": {
+            "area": 1450.3976940568584,
+            "flagged_area": 416.4139745618246,
+            "flagged_faces": 647,
+            "horizontal_quads": 1910,
+            "faces": 10747,
+            "Q": 0.28710330709164816
+          },
+          "candidate": {
+            "area": 1450.3976940568584,
+            "flagged_area": 411.96319284580454,
+            "flagged_faces": 643,
+            "horizontal_quads": 1910,
+            "faces": 10747,
+            "Q": 0.284034644107518
+          },
+          "delta": -0.003068662984130166
+        },
+        {
+          "base": {
+            "area": 1450.3976940568625,
+            "flagged_area": 416.4139745618251,
+            "flagged_faces": 647,
+            "horizontal_quads": 1910,
+            "faces": 10747,
+            "Q": 0.2871033070916477
+          },
+          "candidate": {
+            "area": 1450.3976940568625,
+            "flagged_area": 411.96319284580505,
+            "flagged_faces": 643,
+            "horizontal_quads": 1910,
+            "faces": 10747,
+            "Q": 0.28403464410751755
+          },
+          "delta": -0.003068662984130166
+        },
+        {
+          "base": {
+            "area": 1450.397694056859,
+            "flagged_area": 416.41397456182466,
+            "flagged_faces": 647,
+            "horizontal_quads": 1910,
+            "faces": 10747,
+            "Q": 0.28710330709164805
+          },
+          "candidate": {
+            "area": 1450.397694056859,
+            "flagged_area": 411.9631928458046,
+            "flagged_faces": 643,
+            "horizontal_quads": 1910,
+            "faces": 10747,
+            "Q": 0.2840346441075179
+          },
+          "delta": -0.003068662984130166
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.2840346441075179
+    },
+    "63C-v001": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/63C-v001.1/dump.json",
+      "sha256": "d8e64e2a54a66b2b1b377ae4e9c1b2f21ac3e53deadd26e25f361631e88197a7",
+      "pairs": [
+        {
+          "base": {
+            "area": 739.8079652993965,
+            "flagged_area": 154.46819036972127,
+            "flagged_faces": 176,
+            "horizontal_quads": 814,
+            "faces": 4125,
+            "Q": 0.20879498142089992
+          },
+          "candidate": {
+            "area": 739.8079652993965,
+            "flagged_area": 154.46819036972127,
+            "flagged_faces": 176,
+            "horizontal_quads": 814,
+            "faces": 4125,
+            "Q": 0.20879498142089992
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 739.8079652993965,
+            "flagged_area": 154.46819036972076,
+            "flagged_faces": 176,
+            "horizontal_quads": 814,
+            "faces": 4125,
+            "Q": 0.20879498142089922
+          },
+          "candidate": {
+            "area": 739.8079652993965,
+            "flagged_area": 154.46819036972076,
+            "flagged_faces": 176,
+            "horizontal_quads": 814,
+            "faces": 4125,
+            "Q": 0.20879498142089922
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 739.807965299397,
+            "flagged_area": 154.46819036972053,
+            "flagged_faces": 176,
+            "horizontal_quads": 814,
+            "faces": 4125,
+            "Q": 0.20879498142089878
+          },
+          "candidate": {
+            "area": 739.807965299397,
+            "flagged_area": 154.46819036972053,
+            "flagged_faces": 176,
+            "horizontal_quads": 814,
+            "faces": 4125,
+            "Q": 0.20879498142089878
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.20879498142089922
+    },
+    "KPP1-v003-corners": {
+      "label": "rejected",
+      "path": "ar15/r1/tmp/KPP1-v003-corners.1/dump.json",
+      "sha256": "4565eabf45a333868ea410358aa240a8c89dcac56175d67a697a098c36867596",
+      "pairs": [
+        {
+          "base": {
+            "area": 1922.7054644968052,
+            "flagged_area": 293.8545180153083,
+            "flagged_faces": 12501,
+            "horizontal_quads": 18795,
+            "faces": 61765,
+            "Q": 0.15283387052328035
+          },
+          "candidate": {
+            "area": 1922.7054644968052,
+            "flagged_area": 293.8545180153083,
+            "flagged_faces": 12501,
+            "horizontal_quads": 18795,
+            "faces": 61765,
+            "Q": 0.15283387052328035
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1922.705464496804,
+            "flagged_area": 293.85451801530814,
+            "flagged_faces": 12501,
+            "horizontal_quads": 18795,
+            "faces": 61765,
+            "Q": 0.15283387052328035
+          },
+          "candidate": {
+            "area": 1922.705464496804,
+            "flagged_area": 293.85451801530814,
+            "flagged_faces": 12501,
+            "horizontal_quads": 18795,
+            "faces": 61765,
+            "Q": 0.15283387052328035
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 1922.705464496805,
+            "flagged_area": 293.8545180153084,
+            "flagged_faces": 12501,
+            "horizontal_quads": 18795,
+            "faces": 61765,
+            "Q": 0.15283387052328037
+          },
+          "candidate": {
+            "area": 1922.705464496805,
+            "flagged_area": 293.8545180153084,
+            "flagged_faces": 12501,
+            "horizontal_quads": 18795,
+            "faces": 61765,
+            "Q": 0.15283387052328037
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.15283387052328035
+    },
+    "63B-v007": {
+      "label": "accepted",
+      "path": "ar15/r1/tmp/63B-v007.1/dump.json",
+      "sha256": "c8d65372d76148d38ffeb6a14e0dbc0c3449536f2ddb627bbd7a3c24ff6ca416",
+      "pairs": [
+        {
+          "base": {
+            "area": 1163.7077050415392,
+            "flagged_area": 181.08642111538353,
+            "flagged_faces": 664,
+            "horizontal_quads": 2620,
+            "faces": 13644,
+            "Q": 0.1556116027511561
+          },
+          "candidate": {
+            "area": 1163.7077050415392,
+            "flagged_area": 176.7504227658987,
+            "flagged_faces": 660,
+            "horizontal_quads": 2620,
+            "faces": 13644,
+            "Q": 0.1518855826082113
+          },
+          "delta": -0.0037260201429447914
+        },
+        {
+          "base": {
+            "area": 1163.7077050415428,
+            "flagged_area": 181.08642111538342,
+            "flagged_faces": 664,
+            "horizontal_quads": 2620,
+            "faces": 13644,
+            "Q": 0.15561160275115551
+          },
+          "candidate": {
+            "area": 1163.7077050415428,
+            "flagged_area": 176.7504227658984,
+            "flagged_faces": 660,
+            "horizontal_quads": 2620,
+            "faces": 13644,
+            "Q": 0.15188558260821058
+          },
+          "delta": -0.0037260201429449302
+        },
+        {
+          "base": {
+            "area": 1163.7077050415407,
+            "flagged_area": 181.08642111538325,
+            "flagged_faces": 664,
+            "horizontal_quads": 2620,
+            "faces": 13644,
+            "Q": 0.15561160275115565
+          },
+          "candidate": {
+            "area": 1163.7077050415407,
+            "flagged_area": 176.75042276589832,
+            "flagged_faces": 660,
+            "horizontal_quads": 2620,
+            "faces": 13644,
+            "Q": 0.15188558260821078
+          },
+          "delta": -0.0037260201429448747
+        }
+      ],
+      "paired_spread": 1.3877787807814457e-16,
+      "Q": 0.15188558260821078
+    },
+    "63C-v002": {
+      "label": "accepted",
+      "path": "ar15/r1/tmp/63C-v002.1/dump.json",
+      "sha256": "19ee7c2046e37a5eeff76522a4b62a3f468f4fb02f1fd210cf912a8b2274ae7e",
+      "pairs": [
+        {
+          "base": {
+            "area": 624.9078430541085,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 726,
+            "faces": 4081,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 624.9078430541085,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 726,
+            "faces": 4081,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 624.9078430541094,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 726,
+            "faces": 4081,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 624.9078430541094,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 726,
+            "faces": 4081,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 624.9078430541085,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 726,
+            "faces": 4081,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 624.9078430541085,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 726,
+            "faces": 4081,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.0
+    },
+    "63A-v005": {
+      "label": "accepted",
+      "path": "ev_t_f55bc192/63A.dump.json",
+      "sha256": "3960fbdbc38f86d3f167128c1e7761928802d10a1f0d5726514a9afc2aa02b32",
+      "pairs": [
+        {
+          "base": {
+            "area": 458.9534274030701,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 864,
+            "faces": 4560,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 458.9534274030701,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 864,
+            "faces": 4560,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 458.9534274030682,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 864,
+            "faces": 4560,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 458.9534274030682,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 864,
+            "faces": 4560,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 458.9534274030668,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 864,
+            "faces": 4560,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 458.9534274030668,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 864,
+            "faces": 4560,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.0
+    },
+    "G22-k2-v002r1": {
+      "label": "accepted",
+      "path": "ev_1619/r7/k2_v002r1.mq.json",
+      "sha256": "2e922754e8b77f854627267fc75b1ba9c22c41a7c4713333fc34ba0ffaff431b",
+      "pairs": [
+        {
+          "base": {
+            "area": 215.30667384954972,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 882,
+            "faces": 3933,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 215.30667384954972,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 882,
+            "faces": 3933,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 215.30667384959872,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 882,
+            "faces": 3933,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 215.30667384959872,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 882,
+            "faces": 3933,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 215.30667384951832,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 882,
+            "faces": 3933,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 215.30667384951832,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 882,
+            "faces": 3933,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.0
+    },
+    "G22-etalon-k1": {
+      "label": "accepted",
+      "path": "ev_1619/r2/etalon_k1.mq.json",
+      "sha256": "413515339be03d1aa8eb88d23c487ce81f1605eced51d3b822d2919141acefb1",
+      "pairs": [
+        {
+          "base": {
+            "area": 2468.908701623751,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 8996,
+            "faces": 51603,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 2468.908701623751,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 8996,
+            "faces": 51603,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 2468.9087016236476,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 8996,
+            "faces": 51603,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 2468.9087016236476,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 8996,
+            "faces": 51603,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 2468.90870162365,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 8996,
+            "faces": 51603,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 2468.90870162365,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 8996,
+            "faces": 51603,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.0
+    },
+    "G22-etalon-k2": {
+      "label": "accepted",
+      "path": "ev_1619/r4/etalon_k2.mq.json",
+      "sha256": "50df5fb7252078a3fc1edc9076b9e0043051f897bb3aa363b2014b404e6f8d0d",
+      "pairs": [
+        {
+          "base": {
+            "area": 507.67108973986444,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3066,
+            "faces": 17606,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 507.67108973986444,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3066,
+            "faces": 17606,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 507.67108973992646,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3066,
+            "faces": 17606,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 507.67108973992646,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3066,
+            "faces": 17606,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 507.67108973987615,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3066,
+            "faces": 17606,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 507.67108973987615,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3066,
+            "faces": 17606,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.0
+    },
+    "G22-etalon-k3": {
+      "label": "accepted",
+      "path": "ev_1619/r1/etalon_k3.mq.json",
+      "sha256": "dc389b008673016871591e1cb42f151379b63aa2ffe271590c52b3009a7d4a13",
+      "pairs": [
+        {
+          "base": {
+            "area": 759.8821496834596,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3337,
+            "faces": 17901,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 759.8821496834596,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3337,
+            "faces": 17901,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 759.8821496835266,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3337,
+            "faces": 17901,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 759.8821496835266,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3337,
+            "faces": 17901,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        },
+        {
+          "base": {
+            "area": 759.8821496834751,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3337,
+            "faces": 17901,
+            "Q": 0.0
+          },
+          "candidate": {
+            "area": 759.8821496834751,
+            "flagged_area": 0.0,
+            "flagged_faces": 0,
+            "horizontal_quads": 3337,
+            "faces": 17901,
+            "Q": 0.0
+          },
+          "delta": 0.0
+        }
+      ],
+      "paired_spread": 0.0,
+      "Q": 0.0
+    }
+  }
+}
