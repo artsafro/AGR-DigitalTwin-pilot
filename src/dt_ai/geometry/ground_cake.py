@@ -27,6 +27,7 @@ from shapely.geometry import MultiPoint, MultiPolygon, Point, Polygon, box
 from shapely.ops import unary_union
 
 GRID = 1e-6
+SURFACES = ("layered", "shared")  # build_flat modes (#1738)
 _spec = importlib.util.spec_from_file_location(
     "udimtile_core_ground", Path(__file__).resolve().parents[3] / "adapters/max/agr_tools/udimtile_core.py")
 assert _spec is not None and _spec.loader is not None
@@ -235,8 +236,13 @@ def _lines(g) -> list:
 
 def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple[float, float] | None = None,
                sampler: "ReliefSampler | None" = None, tol: float = 0.01, max_iter: int = 8,
-               snap: float = GRID) -> Mesh:
+               snap: float = GRID, surfaces: str = "layered") -> Mesh:
     """Flat Ground mesh: one plane per layer at z = level * step, cut at ``cell`` + covering edges.
+
+    ``surfaces`` (#1738): ``"layered"`` (method C, default, accepted bytes) emits a triangle once per layer covering
+    it; ``"shared"`` emits every triangle ONCE, at z = 0, with the slot of the topmost covering (the underlay exists
+    only where no covering hides it). The partition is the same, so every covering boundary is one vertex set
+    shared by both sides: no stacked or overlapping faces can appear (build, never repair).
 
     All layers share ONE planar partition (snap-rounded noding of the surface outline, the upper-layer outlines and
     the ``cell`` grid lines): every face is triangulated once and emitted once per layer covering it (own vertices
@@ -253,6 +259,8 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
     """
     if not (math.isfinite(snap) and 0 < snap <= 0.01):
         raise ValueError("snap must be in (0, 0.01] m")
+    if surfaces not in SURFACES:
+        raise ValueError(f"surfaces {surfaces!r}: expected one of {SURFACES}")
     if not (math.isfinite(cell) and cell > 0 and math.isfinite(chord) and chord >= 0):
         raise ValueError("cell must be > 0 and chord >= 0, finite")
     if sampler is not None and not (math.isfinite(tol) and tol > 0):
@@ -390,25 +398,26 @@ def build_flat(plan: Plan, cell: float = 4.0, chord: float = 0.02, origin: tuple
     for i in range(len(Ta)):
         cx0, cy0 = x0 + tix[i] * cell, y0 + tiy[i] * cell
         cs = Va[Ta[i]]
-        for li in labels[i]:
+        for li in (labels[i] if surfaces == "layered" else labels[i][-1:]):
             lay = plan.layers[li]
-            z = lay.level * plan.step
+            lev = lay.level if surfaces == "layered" else 0
+            z = lev * plan.step
             ids = []
             for v in Ta[i]:
-                kk = (lay.level, int(v))  # same level welded across slots
+                kk = (lev, int(v))  # same level welded across slots
                 if kk not in index:
                     index[kk] = len(verts)
                     verts.append((Va[v, 0], Va[v, 1], z))
                 ids.append(index[kk])
             fl.append(ids)
             slots.append(lay.slot)
-            levels.append(lay.level)
+            levels.append(lev)
             # stacked tiling UV: one grid cell = [0, 1]^2, clipped to the closed tile (vertices sit on the cell
             # border at most; the clip only removes float noise)
             uvs.append(np.clip([((x - cx0) / cell, (y - cy0) / cell) for x, y in cs], 0.0, 1.0).tolist())
     m = Mesh(np.array(verts, float), np.array(fl, int).reshape(-1, 3), slots, np.array(levels, int),
              np.array(uvs, float).reshape(-1, 3, 2), cell)
-    m.report = {"triangulation_repairs": len(_TRI_REPAIRS), "xy_cells": len(cells_total),
+    m.report = {"surfaces": surfaces, "triangulation_repairs": len(_TRI_REPAIRS), "xy_cells": len(cells_total),
                 "xy_cells_with_extra_cuts": len(cells_extra), "partition_faces": len(faces),
                 "triangles": len(fl), "origin": list(origin),
                 "outline_recovery": {**outl, "cells": [list(c) for c in outline_cells]}, "chord_m": chord, "cell_m": cell, "snap_m": snap}

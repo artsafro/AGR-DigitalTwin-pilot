@@ -576,6 +576,17 @@
 /docs/research/autoresearch-body-mesh-r3-localize-harness/r19.json
 /docs/research/autoresearch-body-mesh-r3-localize.md
 /docs/research/autoresearch-checker-mutation.md
+/docs/research/autoresearch-ground-quality-harness/dump.py
+/docs/research/autoresearch-ground-quality-harness/dumps.json
+/docs/research/autoresearch-ground-quality-harness/dumps.sha256
+/docs/research/autoresearch-ground-quality-harness/fbx_to_blend.py
+/docs/research/autoresearch-ground-quality-harness/inputs.sha256
+/docs/research/autoresearch-ground-quality-harness/r31.json
+/docs/research/autoresearch-ground-quality-harness/score.py
+/docs/research/autoresearch-ground-quality.md
+/docs/research/autoresearch-ground-short-edges-r35.json
+/docs/research/autoresearch-ground-short-edges-r35.py
+/docs/research/autoresearch-ground-short-edges.md
 /docs/research/autoresearch-guard-scan-r4.md
 /docs/research/autoresearch-pdf-binding-harness/ar_candidate_r2.py
 /docs/research/autoresearch-pdf-binding-harness/ar_pdf_binding.py
@@ -617,9 +628,6 @@
 /docs/research/body-gn-triangle-count-boundary.md
 /docs/research/body-gn-union-interface-mechanism.md
 /docs/research/body-gn-z0-snap-attribute-probe.md
-/docs/research/body-mesh-method.md
-/docs/research/body-mesh-method/loop_anatomy.py
-/docs/research/body-mesh-method/proto_lattice.py
 /docs/research/body-mesh-method/run_anat.sh
 /docs/research/body-training-1619/README.md
 /docs/research/body-training-1619/band_compare.py

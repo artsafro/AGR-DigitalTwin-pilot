@@ -1,10 +1,58 @@
 """new-case: AGR aliases dispatch at the existing CLI subprocess boundary."""
 import importlib
+import json
+import subprocess
 import sys
 from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
+
+
+MAF_STAGES = ["maf-segments", "maf-texture-class", "maf-atlas-strategy", "maf-pack",
+              "maf-stubs", "master-qa", "readback", "checker", "maf-sheet"]
+
+
+def test_maf_plan_fresh_process(tmp_path):
+    command = [sys.executable, "-m", "dt_ai.cli.agr", "maf-npm-to-vpm", "--plan"]
+    outputs = [subprocess.run(command, cwd=tmp_path, capture_output=True, encoding="utf-8") for _ in range(2)]
+    assert [r.returncode for r in outputs] == [0, 0], outputs[0].stderr
+    assert outputs[0].stdout == outputs[1].stdout
+    plan = json.loads(outputs[0].stdout)
+    assert plan["status"] == "plan_only" and plan["passed"] is False
+    assert [s["id"] for s in plan["stages"]] == MAF_STAGES
+    assert not list(tmp_path.iterdir())
+
+
+@pytest.mark.parametrize("tail", [[], ["--run"], ["NaN"], ["inf"], ["--plan", "--plan"],
+                                  ["--plan", "extra"], ["same.fbx", "same.fbx"]])
+def test_maf_plan_rejects_execution(tail, monkeypatch, capsys, tmp_path):
+    agr = importlib.import_module("dt_ai.cli.agr")
+    monkeypatch.chdir(tmp_path)
+    source = tmp_path / "same.fbx"
+    source.write_bytes(b"input")
+    run = Mock()
+    monkeypatch.setattr(agr.subprocess, "run", run)
+    assert agr.main(["maf-npm-to-vpm", *tail]) == 2
+    assert "maf-npm-to-vpm --plan" in capsys.readouterr().err
+    run.assert_not_called()
+    assert list(tmp_path.iterdir()) == [source]
+    assert source.read_bytes() == b"input"
+
+
+def test_maf_plan_registered_owners(capsys):
+    from tools.architecture import skeleton_guard
+
+    agr = importlib.import_module("dt_ai.cli.agr")
+    root = Path(agr.__file__).resolve().parents[3]
+    registry = skeleton_guard.load_skeletons(root)
+    assert registry["cells"].get("maf-npm-to-vpm", {}).get("stages") == MAF_STAGES
+    assert agr.main(["maf-npm-to-vpm", "--plan"]) == 0
+    plan = json.loads(capsys.readouterr().out)
+    assert plan["stages"] == [{"id": sid, **registry["stages"][sid]} for sid in MAF_STAGES]
+    assert {"tools/materials/atlas_maf.py", "tools/blender/vpm_uv.py",
+            "adapters/max/agr_tools/udimtile_core.py"} <= set(registry["stages"]["maf-pack"]["owners"])
+    assert not skeleton_guard.check_job(root, root / "jobs/VATUTINO-SITE/maf-npm-to-vpm-1745", registry)
 
 
 @pytest.mark.parametrize("alias,prefix", [

@@ -4,7 +4,7 @@ Every dated user decision, one line each, sorted by date. The line is a pointer,
 lives where "Applies to" says, and that text carries the id (`[D012]`). ADRs (`docs/adr/`) stay for
 architectural forks; conflicts keep their `C<N>` in `docs/domain/conflicts.md` and are logged here when decided.
 
-Add a decision: next free id (`python tools/git-hooks/decision_ids.py next --fetch`; procedure in
+Add a decision: reserve the next free id (`python tools/git-hooks/decision_ids.py next --all-branches --fetch`; procedure in
 `docs/agents/WORKFLOW.md`, #1037), the date the user decided, one sentence, the file or pattern it applies to, and the
 source (PR, issue or `chat`). Put `[D<n>]` next to the decision in that file. Superseded decisions stay, with
 "superseded by D<n>". Format and references: `tests/test_decisions.py`. A row that needs more than one sentence keeps
