@@ -61,6 +61,27 @@ def _icon_png(svg_text, size):
     return ICONS.png_bytes(svg_text, size)
 
 
+@pytest.mark.parametrize('approve', [False, True])
+def test_fbx_maps_row_lists_missing_before_optional_reconnect(qtbot, monkeypatch, approve):
+    backend = FakeBackend()
+    panel = ui.AgrPanel(backend)
+    qtbot.addWidget(panel)
+    button = panel.findChild(QtWidgets.QToolButton, 'agr_fbx_maps')
+    assert button is not None
+    monkeypatch.setattr(QtWidgets.QFileDialog, 'getOpenFileName', lambda *args: ('customer.fbx', ''))
+    box = QtWidgets.QMessageBox
+
+    def confirm(dialog):
+        assert 'Ground_m_1.png' in dialog.detailedText()
+        assert 'Ground.reflectionMap' in dialog.detailedText()
+        return box.Yes if approve else box.No
+
+    monkeypatch.setattr(box, 'exec', confirm)
+    button.click()
+    assert panel.report['status'] == ('pass' if approve else 'fail')
+    assert ('reconnect', 'customer.fbx') in backend.events if approve else ('reconnect', 'customer.fbx') not in backend.events
+
+
 class FakeBackend:
     def __init__(self, n=1000, cancel_at=None):
         self.nodes = list(range(1, n + 1))
@@ -75,6 +96,17 @@ class FakeBackend:
 
     def suite(self):
         return roadmap.load_file(SUITE)
+
+    def check_fbx_maps(self, path, confirm):
+        self.events.append(('readback', path))
+        missing = {'file': 'Ground_m_1.png', 'materials': [('Ground', 'ReflectionFactor', 'metallic')]}
+        plan = {'connect': [{'file': missing['file'], 'material': 'Ground', 'slot': 'reflectionMap'}], 'failures': []}
+        before = {'status': 'fail', 'embedded': 1, 'connected': 0, 'conflicts': [], 'unconnected': [missing]}
+        after = None
+        if confirm(before, plan):
+            self.events.append(('reconnect', path))
+            after = dict(before, status='pass', connected=1, unconnected=[])
+        return {'before': before, 'after': after, 'failures': []}
 
     def last_reports(self):
         return dict(self.reports)
