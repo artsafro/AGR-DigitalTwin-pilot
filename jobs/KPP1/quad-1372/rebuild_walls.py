@@ -544,7 +544,17 @@ def untwist_quads(bm, limit=0.005):
         if e.calc_length() > limit:
             raise ValueError(f'twisted quad at {tuple(bad.calc_center_median())} has no edge <= {limit} m')
         out.append([round(c, 4) for c in bad.calc_center_median()])
+        vs = set(bad.verts) - set(e.verts)
         bmesh.ops.collapse(bm, edges=[e], uvs=True)
+        # w14: the collapsed sliver is a triangle < limit wide lying on its neighbour (xView face pair): drop it;
+        # the neighbour already covers its area (separation 0)
+        for f in {f for v in vs if v.is_valid for f in v.link_faces}:
+            if len(f.verts) == 3:
+                a, b, c = (v.co for v in f.verts)
+                longest = max((a - b).length, (b - c).length, (c - a).length)
+                if longest > 0 and 2 * f.calc_area() / longest < limit:
+                    out[-1].append('sliver triangle dropped')
+                    bmesh.ops.delete(bm, geom=[f], context='FACES_ONLY')
     raise ValueError('more than 100 twisted quads')
 
 
@@ -553,6 +563,7 @@ def split_bowties(bm, uvl, sep):
     bow-tie. Keep the largest fan on it; every other fan gets its own copy moved `sep` towards that fan's centre (in
     the fan, hidden under the wall embed). Face and loop data are kept. Returns [[x, y, z, fans], ...]."""
     out = []
+    kd, made = None, []   # made: copies so far (not in the tree; w15: two copies 1.1 mm apart at E x 14.18)
     for v in list(bm.verts):
         faces = list(v.link_faces)
         if len(faces) < 2:
@@ -581,7 +592,21 @@ def split_bowties(bm, uvl, sep):
             d = centre - v.co
             if d.length < 1e-9:
                 raise ValueError(f'bow-tie fan at {tuple(v.co)} has no direction')
-            nv = bm.verts.new(v.co + d.normalized() * sep)
+            # w14: a copy 2.5 mm into its fan landed 1.1 mm from another body vertex (8 xView pairs): step further
+            # into the fan (up to 4 x sep) until no other vertex lies within the xView limit
+            if kd is None:
+                kd = KDTree(len(bm.verts))
+                for i, x in enumerate(bm.verts):
+                    kd.insert(x.co, i)
+                kd.balance()
+            for k in (1, 1.5, 2, 3, 4):
+                co = v.co + d.normalized() * sep * k
+                if not kd.find_range(co, XVIEW_M + 1e-4) and all((co - c).length > XVIEW_M + 1e-4 for c in made):
+                    break
+            else:
+                raise ValueError(f'bow-tie copy at {tuple(v.co)} finds no clear spot within {4 * sep} m')
+            nv = bm.verts.new(co)
+            made.append(co.copy())
             for f in g:
                 uvs = [tuple(lp[uvl].uv) for lp in f.loops]
                 nf = bm.faces.new([nv if x is v else x for x in f.verts], f)
