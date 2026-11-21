@@ -6,7 +6,23 @@ No delivered package and no other card's file is edited.
 
 ## Итог (по-русски)
 
-(заполняется после замера, см. Round log)
+**H37 опровергнута (только OBSERVE, ничего не внедряется).** Короткие рёбра (≤ 2 мм) в Ground влитого ядра
+#1738 (ab5a8f4d, вывод v006) появляются **не на этапе плоской разбивки, а на этапе рельефа**.
+
+- SIL13, ядро v006 (те же байты, что v003 из #35): E = 185, T = 26 491, Qe = **69,84** (совпадает с #35).
+  По этапам: рельеф **167**, юбка 9, стык «верх/юбка» 9, плоская разбивка **0** (0 %, порог гипотезы 90 %).
+  У всех 167 рельефных рёбер **оба конца — новые вершины**, которых нет в `ground-flat.obj`. 128 из 167 лежат
+  внутри плоских граней, 39 — на рёбрах разбивки (вставлены при разрезании). 17 рёбер нулевой длины, 9 на открытой
+  границе (это юбка), на границе материалов — 0.
+- Ватутино, ядро v006 (раньше не измерялось): E = **3**, Qe = **1,20** против **0** у принятого Артёмом v015. Ядро
+  добавляет короткие рёбра даже на исходниках принятого участка: рельеф 2, плоская разбивка 1 (1,5 мм, отрезок по
+  одной оси; 1 ребро на границе двух плиток).
+- Проверки: 3 повтора и повторный запуск дают тот же результат; сдвиг с поворотом на 30° не меняют E, T и классы;
+  50 внесённых рёбер на Ватутино видны (3 → 53); сумма классов = E. Счёт E, T совпадает с #35.
+- Для #1738 (без ремонта, только адрес): если нужен Qe = 0, расстояние между вершинами нужно ограничивать на этапе
+  **рельефа** (вставка/разрезание), а не разбивки. Координаты первых 400 рёбер лежат в квитанции (`rows.*.samples`).
+- Не измерено: нативный 3ds Max; принятый контроль, на котором правило срабатывает (у принятых Ground E = 0, а
+  Ватутино ядра не принят: в его отчёте `geometry_status: fail`).
 
 ## Why this candidate (continuing #35/#36, no new harness)
 
@@ -67,4 +83,22 @@ E, editing core outputs or etalons, editing #1738 files.
 
 ## Round log
 
-(filled after the run)
+Round 1 (only round; stop rule reached). Variant: Qe = 1e4·E(≤ 2 mm)/T, #35 tolerance, stage classes as frozen.
+Receipt `docs/research/autoresearch-ground-core-localize-r37.json` (sha256 in the PR body / backlog); replay into
+`C:/x/ev_t_e5884443/r37-replay.json` is identical except `series_seconds` (1.90 s / 1.74 s, cap 300 s).
+
+| id | sha256 (OBJ / flat) | E | T | Qe | flat | relief | seam | skirt | zero | open | mtl |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| C1 SIL13 core v006 | `8f519409…` / `fdda9363…` | 185 | 26491 | 69.835 | 0 | 167 | 9 | 9 | 17 | 9 | 0 |
+| C2 Vatutino core v006 | `2ba2811d…` / `be4268b7…` | 3 | 25011 | 1.199 | 1 | 2 | 0 | 0 | 0 | 0 | 1 |
+
+Relief detail (diagnostic, not scored): C1 167/167 ground-only short edges have 0 endpoints on a flat vertex;
+endpoints on a flat edge 0/1/2 = 128/17/22. C2: on flat vertex 2/0 = 1/2; on flat edge 2/1 = 1/2.
+Matcher sanity (scratch probe, same functions): 9 954 of 34 784 C1 ground edges and 17 978 of 31 297 C2 ground edges
+classify as `flat`, so a 0 % flat share is not a matcher failure.
+
+Checks — clean: repeats ✓, rigid E/T ✓, rigid classes ✓ (flat index moved jointly), partition ✓, parity #35
+(185, 26491) ✓. Injected: C2 +50 moved → E 3 → 53, T unchanged ✓. Not measured: native Max; accepted control that
+fires.
+
+**H37: refuted** — (a) flat share 0.0 < 0.9; (b) C2 Qe 1.20 ≠ 0. Review readiness is separate: no code is kept.
