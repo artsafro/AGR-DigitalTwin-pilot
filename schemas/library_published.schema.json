@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agr.local/schemas/library_published.schema.json",
+  "title": "AGR published library catalogue (#1743): draft / accepted / rejected versions of agent-made assets",
+  "description": "Written by tools/library/publish.py (agr library publish|accept|reject); semantic check publish.catalogue_problems. Files live on Drive under AGR-assets/<kind>/<name>/vNNN/ [D357]; agents read only accepted records [D360]. docs/library/PUBLISH.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "records"],
+  "properties": {
+    "schema": {"const": "agr-library-publish/1"},
+    "records": {"type": "array", "items": {"$ref": "#/$defs/record"}}
+  },
+  "$defs": {
+    "file": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256", "role"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(maf|flora|windows|roof_equipment)/[A-Za-z0-9_.-]+/v[0-9]{3}/.+$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "role": {"enum": ["archive", "vpm", "npm", "max", "blend", "preview", "source", "other"]}
+      }
+    },
+    "profile_list": {"type": "object", "additionalProperties": false, "required": ["vpm", "npm"],
+      "properties": {"vpm": {}, "npm": {}}},
+    "record": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "kind", "version", "status", "published", "origin", "identify", "card", "preview", "files",
+                   "qa", "accepted", "rejected"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[A-Za-z0-9]+_[A-Za-z0-9_]+_[A-Za-z0-9.-]+$"},
+        "kind": {"enum": ["maf", "flora", "windows", "roof_equipment"]},
+        "version": {"type": "string", "pattern": "^v[0-9]{3}$"},
+        "status": {"enum": ["draft", "accepted", "rejected"]},
+        "published": {"type": "string"},
+        "origin": {"type": "object", "required": ["batch", "object", "issue"],
+          "properties": {"batch": {"type": "string"}, "object": {"type": "string"}, "issue": {"type": ["string", "null"]}}},
+        "identify": {"type": "object", "required": ["result", "of", "reason"],
+          "properties": {"result": {"enum": ["new", "variant", "duplicate"]}, "of": {"type": "array"}, "reason": {"type": "string"}}},
+        "card": {"type": "object", "required": ["manufacturer", "title_ru", "article", "size_m", "tris", "materials"],
+          "properties": {
+            "size_m": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+            "tris": {"$ref": "#/$defs/profile_list"},
+            "materials": {"$ref": "#/$defs/profile_list"}}},
+        "preview": {"type": ["string", "null"]},
+        "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/file"}},
+        "qa": {"type": "object", "required": ["verdict", "findings"],
+          "properties": {"verdict": {"enum": ["pass", "fail"]}, "findings": {"type": "array", "items": {"type": "string"}}}},
+        "accepted": {"type": ["object", "null"], "required": ["date", "by", "words", "despite_qa"]},
+        "rejected": {"type": ["object", "null"], "required": ["date", "by", "words"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "accepted"}}}, "then": {"properties": {"accepted": {"type": "object"}}}},
+        {"if": {"properties": {"status": {"const": "rejected"}}}, "then": {"properties": {"rejected": {"type": "object"}}}}
+      ]
+    }
+  }
+}

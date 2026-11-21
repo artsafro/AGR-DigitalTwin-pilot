@@ -325,8 +325,40 @@ def inspect_maf_zip(path, base):
     return found, members, meta
 
 
+# ---- published library versions (#1743 [D360]) ----------------------------------------------------------------
+PUBLISHED_VERSION = re.compile(r'^v\d{3}(\.partial)?$', re.IGNORECASE)
+PUBLISHED_CATALOGUE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'library',
+                                   'published', 'catalogue.json')
+
+
+def published_accepted(path=None):
+    """{(name, vNNN)} of `accepted` records in library/published/catalogue.json (tools/library/publish.py).
+    Missing or unreadable catalogue -> empty set: every published version stays hidden (fail-closed)."""
+    try:
+        with open(path or PUBLISHED_CATALOGUE, encoding='utf-8') as f:
+            data = json.load(f)
+        return {(str(r['name']).lower(), str(r['version']).lower()) for r in data.get('records', [])
+                if r.get('status') == 'accepted'}
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return set()
+
+
+def published_gate(rel, accepted):
+    """None when a zip may be offered; else the reason it is hidden. Only the publish layout
+    `<name>/vNNN/<file>` is gated: a draft, rejected, unknown or unfinished (`vNNN.partial`) version is hidden."""
+    parts = str(rel).replace('\\', '/').split('/')[:-1]
+    for i, p in enumerate(parts):
+        if PUBLISHED_VERSION.match(p):
+            if p.lower().endswith('.partial'):
+                return 'unfinished publish (.partial)'
+            if i == 0 or (parts[i - 1].lower(), p.lower()) not in accepted:
+                return 'published version not accepted (draft/rejected/unknown) [D360]'
+            return None
+    return None
+
+
 def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, progress=None, override_dir=None,
-             meta_dir=None):
+             meta_dir=None, published=None):
     """Index a MAF folder (recursive). Unchanged zips (size+mtime) reuse their record; previews are extracted once
     into <cache>/previews/. Unreadable / partially synced zips go to `problems`, never stop the scan.
     override_dir: corrected archives (same file name) used INSTEAD of the originals (originals stay untouched);
@@ -338,6 +370,9 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
         for f in files:
             if f.lower().endswith('.zip'):
                 zips.append(os.path.relpath(os.path.join(dirpath, f), root).replace('\\', '/'))
+    accepted = published_accepted() if published is None else published
+    hidden = [{'path': z, 'reason': published_gate(z, accepted)} for z in zips if published_gate(z, accepted)]
+    zips = [z for z in zips if not published_gate(z, accepted)]
     base_root = os.path.normpath(root)
     if override_dir is None and os.path.isdir(base_root + '_fixed'):  # convention: <library>_fixed next to it
         override_dir = base_root + '_fixed'
@@ -415,7 +450,7 @@ def scan_maf(root, cache_dir, lib='maf', old_index=None, hash_sources=False, pro
                 templated += 1
     report = {'archives': len(zips), 'indexed': len(records), 'problems': problems,
               'with_sidecar': sum(1 for r in records if r.get('meta')), 'templated': templated,
-              'overridden': sum(1 for z in zips if z.startswith('..'))}
+              'overridden': sum(1 for z in zips if z.startswith('..')), 'hidden_unaccepted': hidden}
     return new_index(lib, 'maf_zip', root, records, sources, report)
 
 

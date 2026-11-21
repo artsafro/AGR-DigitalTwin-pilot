@@ -97,9 +97,9 @@ def publish(tmp_path, batch, cat, ids=None, readback=good_readback, ev="ev1", un
 # ---- intake ---------------------------------------------------------------------------------------------------
 def test_intake_every_file_is_an_object_file_or_a_reported_drop(tmp_path):
     b = make_batch(tmp_path)
-    inv = pub.intake(b, "maf")
+    inv = pub.intake_batch(b, "maf")
     keys = sorted(o["key"] for o in inv["objects"])
-    assert keys == ["M171620", ZIP]
+    assert keys == sorted(["M171620", ZIP])
     listed = {Path(p).resolve() for o in inv["objects"] for p in o["files"]}
     listed |= {(b / d["path"]).resolve() for d in inv["drops"]}
     every = {p.resolve() for p in b.rglob("*") if p.is_file() and p.name != "desktop.ini"}
@@ -113,23 +113,23 @@ def test_intake_every_file_is_an_object_file_or_a_reported_drop(tmp_path):
 @pytest.mark.parametrize("kind", ["materials", "", "MAF"])
 def test_intake_unsupported_kind_is_an_error(tmp_path, kind):
     with pytest.raises(pub.PublishError, match="not a library kind"):
-        pub.intake(make_batch(tmp_path), kind)
+        pub.intake_batch(make_batch(tmp_path), kind)
 
 
 def test_intake_empty_or_missing_batch_is_an_error(tmp_path):
     (tmp_path / "empty").mkdir()
     (tmp_path / "empty" / "desktop.ini").write_text("")
     with pytest.raises(pub.PublishError, match="empty"):
-        pub.intake(tmp_path / "empty")
+        pub.intake_batch(tmp_path / "empty")
     with pytest.raises(pub.PublishError, match="not a folder"):
-        pub.intake(tmp_path / "nope")
+        pub.intake_batch(tmp_path / "nope")
 
 
 def test_intake_ambiguous_folder_is_an_error_naming_it(tmp_path):
     b = make_batch(tmp_path)
     (b / "M171620" / "M171620_GroundEl_v002.fbx").write_bytes(b"other")
     with pytest.raises(pub.PublishError, match="M171620.*2 FBX"):
-        pub.intake(b)
+        pub.intake_batch(b)
 
 
 # ---- name -----------------------------------------------------------------------------------------------------
@@ -168,18 +168,18 @@ def test_identify_duplicate_variant_new():
     a101 = {"name": "Adanat_Kachalka_19121", "manufacturer": "Adanat", "article": "19121", "source": "a101",
             "bbox_mm": {"high": {"x": 610, "y": 600, "z": 790}}}
     uni, cat = _unified(a101), pub.empty_catalogue()
-    assert pub.identify(_obj(), uni, cat)["result"] == "duplicate"
-    assert pub.identify(_obj(size=(900, 600, 800)), uni, cat)["result"] == "variant"
-    assert pub.identify(_obj(maker="Leber"), uni, cat)["result"] == "variant"
-    assert pub.identify(_obj(article="77777"), uni, cat)["result"] == "new"
-    assert pub.identify(_obj(article=""), uni, cat)["result"] == "new"
+    assert pub.identify_object(_obj(), uni, cat)["result"] == "duplicate"
+    assert pub.identify_object(_obj(size=(900, 600, 800)), uni, cat)["result"] == "variant"
+    assert pub.identify_object(_obj(maker="Leber"), uni, cat)["result"] == "variant"
+    assert pub.identify_object(_obj(article="77777"), uni, cat)["result"] == "new"
+    assert pub.identify_object(_obj(article=""), uni, cat)["result"] == "new"
     no_size = {"identity": {"manufacturer": "Adanat", "article": "19121"}}
-    assert pub.identify(no_size, uni, cat)["result"] == "variant"  # unknown size is never a duplicate
+    assert pub.identify_object(no_size, uni, cat)["result"] == "variant"  # unknown size is never a duplicate
 
 
 # ---- qa -------------------------------------------------------------------------------------------------------
 def test_qa_pass_and_each_failure_is_named():
-    assert pub.qa({}, "maf", {"vpm": _report(), "npm": _report()})["verdict"] == "pass"
+    assert pub.qa_object({}, "maf", {"vpm": _report(), "npm": _report()})["verdict"] == "pass"
     cases = {"no NPM version": {"vpm": _report(), "npm": None},
              "n-gons": {"vpm": _report(ngons=2), "npm": _report()},
              "without texture maps": {"vpm": _report(maps=False), "npm": _report()},
@@ -188,7 +188,7 @@ def test_qa_pass_and_each_failure_is_named():
              "no non-empty mesh": {"vpm": {"readback_ok": False, "meshes": []}, "npm": _report()},
              "no material": {"vpm": _report(mats=()), "npm": _report()}}
     for text, reps in cases.items():
-        res = pub.qa({}, "maf", reps)
+        res = pub.qa_object({}, "maf", reps)
         assert res["verdict"] == "fail" and any(text in f for f in res["findings"]), text
 
 
@@ -323,33 +323,33 @@ def test_draft_is_not_available_accept_makes_it_available(tmp_path):
     _b, cat = _drafts(tmp_path)
     assert pub.available(cat) == []
     with pytest.raises(pub.PublishError, match="words"):
-        pub.accept(cat, [ZIP], "  ")
-    pub.accept(cat, [ZIP], "ок")
+        pub.accept_records(cat, [ZIP], "  ")
+    pub.accept_records(cat, [ZIP], "ок")
     assert [r["name"] for r in pub.available(cat)] == [ZIP]
     assert pub.accepted_paths(cat) == {f"maf/{ZIP}/v001".lower()}
     with pytest.raises(pub.PublishError, match="0 matching draft"):
-        pub.accept(cat, [ZIP], "ок")  # already accepted: no draft left
+        pub.accept_records(cat, [ZIP], "ок")  # already accepted: no draft left
 
 
 def test_accept_refuses_qa_failed_unless_despite_qa(tmp_path):
     _b, cat = _drafts(tmp_path)
     failed = next(r["name"] for r in cat["records"] if r["qa"]["verdict"] == "fail")
     with pytest.raises(pub.PublishError, match="QA fail"):
-        pub.accept(cat, [failed, ZIP], "ок")
+        pub.accept_records(cat, [failed, ZIP], "ок")
     assert all(r["status"] == "draft" for r in cat["records"])  # all-or-nothing
-    pub.accept(cat, [failed], "ок, без НПМ пока", despite_qa=True)
+    pub.accept_records(cat, [failed], "ок, без НПМ пока", despite_qa=True)
     rec = next(r for r in cat["records"] if r["name"] == failed)
     assert rec["status"] == "accepted" and rec["accepted"]["despite_qa"] is True
 
 
 def test_reject_writes_remark_to_inbox_and_stays_unavailable(tmp_path):
     b, cat = _drafts(tmp_path)
-    pub.reject(cat, ZIP, "пропорции не те", tmp_path)
+    pub.reject_record(cat, ZIP, "пропорции не те", tmp_path)
     text = (b / "REJECTED.md").read_text(encoding="utf-8")
     assert ZIP in text and "пропорции не те" in text
     assert pub.available(cat) == []
     with pytest.raises(pub.PublishError):
-        pub.accept(cat, [f"{ZIP}@v001"], "ок")
+        pub.accept_records(cat, [f"{ZIP}@v001"], "ок")
 
 
 def test_catalogue_alternate_form_records_are_rejected():
