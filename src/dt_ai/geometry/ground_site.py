@@ -367,8 +367,9 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
     """GND-03 on the EXPORTED file (#1738): groups, levels and slot names are ignored, only geometry counts.
 
     Top faces = triangles whose normal z > ``up_cos``. An outer edge is a top edge used by one top face with no top
-    face on its outer side in plan (a layered inset rim over the base is not the perimeter). Below three points of
-    every outer edge (ends inset 0.1 %, middle) the vertical line must be covered by wall triangles without a gap
+    face on its outer side in plan (a layered inset rim over the base is not the perimeter). At every station of an
+    outer edge (both ends, every wall vertex on the edge's vertical plane, midpoints between them) the vertical line must
+    be covered by wall triangles without a gap
     from the surface down to ``drop_m``; any wall topology counts (per-edge quads, n-gon fans), only the covered
     depth is measured. ``rings="outer"`` checks only the exterior ring of each component (D251: inner rings are
     exempt); ``"all"`` checks holes too. Empty, non-finite or non-triangle input is an error; a file without
@@ -460,10 +461,29 @@ def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy
                 low = min(low, lo)
         return float(z_top - low)
 
+    def stations(a, b):
+        """Edge ends + every wall vertex on the edge's vertical plane + midpoints between them (#1738 r1 P1-1).
+
+        Between two consecutive wall-vertex stations every wall span is linear in s, so a gap (a removed quad,
+        a shallow vertex) shows at a station or at the midpoint; three fixed samples missed inner quads."""
+        e = v[b, :2] - v[a, :2]
+        el = float(np.linalg.norm(e))
+        ts = {0.0, 1.0}
+        if wtree is not None and el > 1e-9:
+            u = e / el
+            for wi in wtree.query(LineString([v[a, :2], v[b, :2]]).buffer(xy_tol)).tolist():
+                for q in v[f[walls[wi]], :2] - v[a, :2]:
+                    if abs(float(u[0] * q[1] - u[1] * q[0])) <= xy_tol:
+                        t = float(q @ u) / el
+                        if 0.0 < t < 1.0:
+                            ts.add(round(t, 9))
+        ts = sorted(ts)
+        return ts + [(t0 + t1) / 2 for t0, t1 in zip(ts, ts[1:])]
+
     gaps, drops = [], []
     for a, b in outer_set:
         d = []
-        for t in (0.001, 0.5, 0.999):
+        for t in stations(a, b):
             p = v[a] + t * (v[b] - v[a])
             d.append(depth_at(p[:2], float(p[2])))
         drop = min(d)
