@@ -1,4 +1,4 @@
-"""#1757 (#1752 r1): the INSTALLED AGR Tools assets browser must find the publish catalogue.
+"""new-case: #1757 (#1752 r1): the INSTALLED AGR Tools assets browser must find the publish catalogue.
 
 Installed layout = install.ms: every top-level `agr_tools/*` file of the MZP copied flat into
 `<userScripts>/AGRTools-1.1.0/`. There the repo path `../../../library/published/catalogue.json` does not exist,
