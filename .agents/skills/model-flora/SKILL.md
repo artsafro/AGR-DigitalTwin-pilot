@@ -1,6 +1,6 @@
 ---
 name: model-flora
-description: 'Produce Flora (trees, bushes, modelled flower beds) from the planting schedule and the SPOZU points: library species or a new one, NPM star / VPM shell, placement, one 2048 Flora atlas, checks. Use when: «сделай Флору по ведомости озеленения», «расставь кусты и деревья по СПОЗУ», «новый вид растения для библиотеки».'
+description: 'Produce Flora (trees, bushes, modelled flower beds) from the planting schedule and the SPOZU points: library species or a new one, NPM star / VPM shell, placement, one 2048 Flora atlas, checks. Also covers planting in NPM MAF planters. Use when: «сделай Флору по ведомости озеленения», «расставь кусты и деревья по СПОЗУ», «посади кусты в кашпо МАФ», «новый вид растения для библиотеки».'
 ---
 
 # Model Flora from the planting schedule
@@ -165,6 +165,9 @@ here; a species added later goes back through steps 3-8 before the atlas is pack
   its bed area, seating depth 10 cm measured on a sample, the
   seed and the per-instance rotation and scale written to the run record.
 
+For shrubs in NPM planters, follow [Planting into MAF planters](#planting-into-maf-planters-npm)
+before packing the Flora atlas. This is not SPOZU placement.
+
 ### Step 9 — One 2048 Flora atlas from the placed scene
 
 From the placed scene list the species actually used, take each one's diffuse and opacity map and pack them into
@@ -199,6 +202,28 @@ collision on plants (FLO-15), triangulation (FLO-16), transforms and seating (FL
   `verifier.json`, docs/agents/SKELETONS.md). The VLM confirms; positions/counts come from geometry/vectors
   (CrossProjection: 82 % view matching vs 22 % line localisation) — plant counts and positions are taken from the
   SPOZU points and the read-back scene, never from a render.
+
+## Planting into MAF planters (NPM)
+
+1. Locate the soil/sand cell on this object's GroundEl atlas. Select upward faces only when all face-corner UVs
+   lie inside that cell on the atlas UV channel. Select by UV, not by material ID. Leave MAF materials unchanged.
+2. Copy a shrub from the customer Flora for the same object at its own size (no random scale).
+   Before placing, record the step sizes and minimum size (floor) in metres for the job. At each spot, try
+   the original size first, then uniformly shrink in descending size steps only if it intersects. Keep the
+   first intersection-free size (largest tested). Check the planter walls and other MAF geometry, as well as
+   existing Flora and newly placed shrubs; intended seating in the soil is not a wall intersection.
+   If the floor still intersects, leave the spot unplanted and report why; do not shrink further.
+3. Count the new shrubs in the shared NPM cap of 180,000 triangles (MAF-07) for Ground + GroundEl + Flora.
+   Keep three separate texture sets: GroundEl atlas (≤ 512 × 512 px, MAF-09), Flora atlas, and Ground maps.
+   Never merge these sets. See the [MAF sheet](../../../docs/domain/areas/groundel-maf.md) for both limits.
+
+- Route: headless DCC on a copy; spot finder is job-local. See the
+  [v008 case](../../../docs/cases/staropetrovskiy-npm-planters-v008.md) for an example, not default parameters.
+- Needs: atlas cell and UV readback, same-object customer Flora, fit checks and triangle counts.
+- Done when: verify that any UV/ID disagreement follows UV, MAF materials are unchanged, every planted shrub
+  uses the largest checked size that fits with no shrub overlaps, and readback confirms the shared cap and
+  separate sets. List skipped spots and reasons; missing or ambiguous evidence is `review`, not a pass.
+  This includes unreadable UVs, an unconfirmed soil cell, missing counts, or non-finite measurements.
 
 ## Report
 

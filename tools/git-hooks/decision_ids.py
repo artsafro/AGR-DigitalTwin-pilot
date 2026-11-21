@@ -2,7 +2,7 @@
 
 Pattern: new-case: allocation and collision check of decision ids across parallel branches.
 
-    python tools/git-hooks/decision_ids.py next --fetch       # next free id over main, this branch, open PRs
+    python tools/git-hooks/decision_ids.py next --all-branches --fetch [--reservations FILE]
     python tools/git-hooks/decision_ids.py check [--staged]   # fail on a reused id (pre-commit: --staged --fetch)
 
 "New" ids are the rows of `docs/decisions.md` in the branch that the merge-base with the base ref (default
@@ -74,8 +74,8 @@ def find_collisions(branch: str, base: str | None, main: str, others: dict[str, 
     return problems
 
 
-def next_free(*texts: str | None) -> str:
-    top = max((number(did) for text in texts for did, _ in rows(text)), default=0)
+def next_free(*texts: str | None, reserved: tuple[int, ...] = ()) -> str:
+    top = max(max(reserved, default=0), max((number(did) for text in texts for did, _ in rows(text)), default=0))
     return f"D{top + 1:03d}"
 
 
@@ -90,8 +90,64 @@ def show(rev: str, cwd: Path) -> str | None:
     return r.stdout if r.returncode == 0 else None
 
 
+def required_log(oid: str, label: str, cwd: Path) -> str:
+    text = show(oid, cwd)
+    if text is None or not rows(text):
+        raise CheckError(f"{label}: no decision rows read from {LOG} at {oid}")
+    return text
+
+
+def fetched_branch_logs(base: str, cwd: Path) -> tuple[dict[str, str], int]:
+    remote, _, branch = base.partition("/")
+    prefix = f"refs/remotes/{remote}/"
+    if not branch or git("remote", "get-url", "--", remote, cwd=cwd).returncode != 0:
+        raise CheckError(f"--all-branches needs a configured remote in --base, got {base!r}")
+    r = git("for-each-ref", "--format=%(objectname)%09%(refname)%09%(symref)", prefix, cwd=cwd)
+    if r.returncode != 0:
+        raise CheckError(f"cannot list fetched branch heads in {prefix}: {r.stderr.strip()}")
+    heads = {}
+    for line in r.stdout.splitlines():
+        oid, ref, symref = line.split("\t")
+        if not symref:  # skip the remote HEAD symbolic alias
+            heads[ref] = oid
+    if f"{prefix}{branch}" not in heads:
+        raise CheckError(f"no fetched base head {prefix}{branch} (run with --fetch)")
+    # Use the captured object IDs rather than resolving moving refs again.
+    logs = {}
+    for ref, oid in heads.items():
+        if oid not in logs:
+            logs[oid] = required_log(oid, ref, cwd)
+    return logs, len(heads)
+
+
+def reservation_numbers(path: Path) -> tuple[int, ...]:
+    def unique_object(pairs):
+        obj = dict(pairs)
+        if len(obj) != len(pairs):
+            raise ValueError("duplicate record field")
+        return obj
+
+    try:
+        records = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique_object)
+        if not isinstance(records, list):
+            raise ValueError("expected a JSON array of active reservations")
+        numbers = []
+        fields = {"id", "card", "reserved_at"}
+        for i, record in enumerate(records, 1):
+            if (not isinstance(record, dict) or record.keys() != fields
+                    or any(not isinstance(record[key], str) or not record[key].strip() for key in fields)):
+                raise ValueError(f"record {i}: expected nonempty string fields id, card, reserved_at")
+            did = record["id"]
+            if not re.fullmatch(r"D[0-9]{3,}", did) or did != f"D{number(did):03d}" or number(did) == 0:
+                raise ValueError(f"record {i}: invalid decision ID {did!r}")
+            numbers.append(number(did))
+        return tuple(numbers)
+    except (OSError, ValueError, RecursionError) as exc:
+        raise CheckError(f"reservations {path}: {exc}") from exc
+
+
 def commit_of(ref: str, cwd: Path) -> str:
-    r = git("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}", cwd=cwd)
+    r = git("rev-parse", "--verify", "--quiet", "--end-of-options", f"{ref}^{{commit}}", cwd=cwd)
     if r.returncode != 0 or not r.stdout.strip():
         raise CheckError(f"base ref {ref!r} not found (run `git fetch origin`)")
     return r.stdout.strip()
@@ -107,8 +163,9 @@ def is_own_head(oid: str, cwd: Path) -> bool:
     return git("merge-base", "--is-ancestor", oid, "HEAD", cwd=cwd).returncode == 0
 
 
-def open_pr_logs(cwd: Path, repo: str | None, remote: str = "origin") -> dict[str, str | None]:
-    """PR label -> log at its head, for every open PR except the one of the current branch."""
+def open_pr_logs(cwd: Path, repo: str | None, remote: str = "origin", *,
+                 complete: bool = False) -> dict[str, str | None]:
+    """PR label -> head log. Allocation with complete=True includes even our own PR."""
     cmd = ["gh", "pr", "list", "--state", "open", "--limit", "1000", "--json", "number,headRefName,headRefOid"]
     if repo:
         cmd += ["--repo", repo]
@@ -122,22 +179,34 @@ def open_pr_logs(cwd: Path, repo: str | None, remote: str = "origin") -> dict[st
         prs = json.loads(r.stdout)
     except json.JSONDecodeError as exc:
         raise CheckError(f"gh pr list returned no JSON: {exc}") from exc
+    if not isinstance(prs, list) or (complete and len(prs) >= 1000):
+        raise CheckError("gh pr list returned an invalid or potentially truncated PR inventory")
     mine, out = current_branch(cwd), {}
+    seen = set()
     for pr in prs:
+        if not isinstance(pr, dict):
+            raise CheckError("gh pr list returned an invalid PR record")
         name = pr.get("headRefName")
-        if name == mine:
-            continue
         oid = pr.get("headRefOid")
-        label = f"PR #{pr.get('number')} ({name})"
+        pr_number = pr.get("number")
+        if complete and (type(pr_number) is not int or pr_number < 1 or pr_number in seen
+                         or not isinstance(name, str) or not name.strip()
+                         or not isinstance(oid, str) or not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", oid)):
+            raise CheckError(f"gh pr list returned an invalid or duplicate PR record: {pr_number!r}")
+        if complete:
+            seen.add(pr_number)
+        if not complete and name == mine:
+            continue
+        label = f"PR #{pr_number} ({name})"
         if not oid:
             raise CheckError(f"{label}: no head commit in gh output")
-        if is_own_head(oid, cwd):
+        if not complete and is_own_head(oid, cwd):
             continue
         if git("cat-file", "-e", f"{oid}^{{commit}}", cwd=cwd).returncode != 0:
-            git("fetch", "-q", remote, f"pull/{pr.get('number')}/head", cwd=cwd)
-            if git("cat-file", "-e", f"{oid}^{{commit}}", cwd=cwd).returncode != 0:
+            fetch = git("fetch", "-q", "--no-write-fetch-head", "--", remote, f"refs/pull/{pr_number}/head", cwd=cwd)
+            if fetch.returncode != 0 or git("cat-file", "-e", f"{oid}^{{commit}}", cwd=cwd).returncode != 0:
                 raise CheckError(f"{label}: head {oid[:10]} cannot be fetched")
-        out[label] = show(oid, cwd)
+        out[label] = required_log(oid, label, cwd) if complete else show(oid, cwd)
     return out
 
 
@@ -159,13 +228,16 @@ def other_logs(args, cwd: Path) -> tuple[dict[str, str | None], str]:
             label, _, rev = item.partition("=")
             if not label or not rev:
                 raise CheckError(f"--pr-rev needs LABEL=REV, got {item!r}")
-            commit_of(rev, cwd)
-            out[label] = show(rev, cwd)
+            oid = commit_of(rev, cwd)
+            if args.all_branches and label in out:
+                raise CheckError(f"duplicate --pr-rev label {label!r}")
+            out[label] = required_log(oid, label, cwd) if args.all_branches else show(oid, cwd)
         return out, f"{len(out)} given PR heads"
     if args.no_open_prs:
         return {}, "open PRs NOT checked (--no-open-prs)"
     repo = args.repo or github_repo(args.base, cwd)
-    out = open_pr_logs(cwd, repo, args.base.partition("/")[0] if "/" in args.base else "origin")
+    out = open_pr_logs(cwd, repo, args.base.partition("/")[0] if "/" in args.base else "origin",
+                       complete=args.all_branches)
     return out, f"{len(out)} open PR heads of {repo}"
 
 
@@ -187,16 +259,31 @@ def run(args) -> int:
     cwd = Path(args.repo_dir).resolve()
     if args.fetch:
         remote, _, ref = args.base.partition("/")
-        if not ref or git("fetch", "-q", remote, ref, cwd=cwd).returncode != 0:
+        if args.all_branches:
+            if not ref:
+                raise CheckError("--all-branches --fetch needs --base <remote>/<branch>")
+            fetch = git("fetch", "-q", "--atomic", "--prune", "--no-tags", "--no-prune-tags",
+                        "--no-write-fetch-head", "--refmap=",
+                        "--", remote, f"refs/heads/*:refs/remotes/{remote}/*", cwd=cwd)
+            if fetch.returncode != 0:
+                raise CheckError(f"cannot fetch branch heads from {remote}: {fetch.stderr.strip()}")
+        elif not ref or git("fetch", "-q", remote, ref, cwd=cwd).returncode != 0:
             raise CheckError(f"cannot fetch {args.base}")
-    base_commit = commit_of(args.base, cwd)
+    base_ref = f"refs/remotes/{args.base}" if args.all_branches else args.base
+    base_commit = commit_of(base_ref, cwd)
     main = show(base_commit, cwd) or ""
     if not rows(main):
         raise CheckError(f"no decision rows in {LOG} at {args.base}")
     branch = branch_log(args, cwd)
     others, scope = other_logs(args, cwd)
     if args.command == "next":
-        print(next_free(main, branch, *others.values()))
+        logs = {}
+        if args.all_branches:
+            logs, count = fetched_branch_logs(args.base, cwd)
+            scope += f", {count} fetched {args.base.partition('/')[0]} branch heads"
+        reserved = reservation_numbers(args.reservations) if args.reservations is not None else ()
+        scope += f", {len(reserved)} active reservation records" if args.reservations is not None else ", no reservation export supplied"
+        print(next_free(main, branch, *others.values(), *logs.values(), reserved=reserved))
         print(f"decision_ids: next free id over {args.base}, this branch and {scope}", file=sys.stderr)
         return 0
     head = args.rev or "HEAD"
@@ -225,13 +312,19 @@ def main(argv: list[str] | None = None) -> int:
     prs.add_argument("--no-open-prs", action="store_true", help="compare with the base ref only")
     prs.add_argument("--pr-rev", action="append", metavar="LABEL=REV", help="compare with these revisions "
                      "instead of the open PRs from gh")
-    ap.add_argument("--fetch", action="store_true", help="fetch the base ref (<remote>/<branch>) first")
+    ap.add_argument("--all-branches", action="store_true", help="next: also scan the base remote's fetched branch heads")
+    ap.add_argument("--reservations", type=Path, metavar="JSON", help="next: read an active reservations JSON export")
+    ap.add_argument("--fetch", action="store_true", help="fetch the base ref first (all remote heads with --all-branches)")
     ap.add_argument("--repo", help="GitHub owner/name for gh (default: the url of the base ref's remote)")
     ap.add_argument("--repo-dir", default=".", help="git work tree (default: current directory)")
     args = ap.parse_args(argv)
     try:
+        if args.command != "next" and (args.all_branches or args.reservations is not None):
+            raise CheckError("--all-branches and --reservations are only supported by next")
+        if args.all_branches and args.no_open_prs:
+            raise CheckError("--all-branches cannot skip open PRs with --no-open-prs")
         return run(args)
-    except CheckError as exc:
+    except (CheckError, OSError, UnicodeError) as exc:
         print(f"decision_ids: cannot check: {exc}", file=sys.stderr)
         return 2
 
