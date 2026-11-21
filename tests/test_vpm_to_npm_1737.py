@@ -6,9 +6,15 @@ UDIM 1011 (interior) and two glass panes in two objects.
 import json
 import math
 import random
+import subprocess
+import sys
+import zipfile
 from pathlib import Path
 
 import pytest
+from PIL import Image
+
+from dt_ai.core.blender_runner import blender_command, blender_executable
 
 from tools.derive import vpm_npm_core as core
 
@@ -195,4 +201,62 @@ def test_budget_ladder_fail_closed():
     rep = core.budget_ladder(300, 150, {"cylinder-segments": lambda t: t - 10})
     assert not rep["within"] and rep["missing"] == ["opacity-planes", "window-planes"]
     with pytest.raises(core.VpmNpmError, match="did not reduce"):
-        core.budget_ladder(300, 150, {"cylinder-segments": lambda t: t})
+        core.budget_ladder(300, 150, {"opacity-planes": lambda t: t})
+
+
+@pytest.mark.blender
+def test_shared_route_packages_interior_free_white_glass_fixture(tmp_path):
+    exe = blender_executable()
+    if not Path(exe).is_file():
+        pytest.skip("Blender not installed")
+    src = tmp_path / "src"
+    src.mkdir()
+    fbx = src / "source.fbx"
+    script = tmp_path / "fixture.py"
+    objects = {"SM_X_Main": _fixture()[:6], "SM_X_MainGlass": _glass()[:1], "Glass2": _glass()[1:]}
+    script.write_text(f"""
+import bpy
+bpy.ops.wm.read_factory_settings(use_empty=True)
+for name, faces in {objects!r}.items():
+    me = bpy.data.meshes.new(name)
+    n = 0
+    idx = []
+    for face in faces:
+        idx.append(list(range(n, n + len(face['verts']))))
+        n += len(face['verts'])
+    me.from_pydata([v for f in faces for v in f['verts']], [], idx)
+    uv = me.uv_layers.new(name='UVMap')
+    for i, value in enumerate(v for f in faces for v in f['uv']):
+        uv.data[i].uv = value
+    bpy.context.scene.collection.objects.link(bpy.data.objects.new(name, me))
+bpy.ops.export_scene.fbx(filepath={str(fbx)!r})
+""", encoding="utf-8")
+    subprocess.run(blender_command(str(script), executable=exe), check=True, capture_output=True)
+    Image.new("RGB", (16, 16), (20, 30, 40)).save(src / "d.1001.png")
+    job = tmp_path / "job"
+    job.mkdir()
+    (job / "skeleton.json").write_text(json.dumps({"scenario": "vpm-to-npm", "config": {
+        "vpm": str(fbx), "budget": 11, "interiors": {"udims": [1011], "objects": []},
+        "glass": ["SM_X_MainGlass", "Glass2"], "atlas": {"size": 2048, "diffuse": "d.<UDIM>.png"},
+        "npm": {"address": "X", "prefix": "0607", "index": 1},
+    }}))
+    out = tmp_path / "out"
+    before = {p.name: p.read_bytes() for p in src.iterdir()}
+    result = subprocess.run([sys.executable, "tools/derive/vpm_to_npm.py", "--job", str(job), "--out", str(out),
+                             "--blender", exe], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    assert result.returncode == 0, result.stdout + result.stderr
+    report = json.loads((out / "vpm_to_npm_report.json").read_text())
+    assert report["npm_tris"] == 11 and report["budget_ladder"]["ran"] == []
+    assert report["remove_interiors"]["dropped_by_reason"] == {"interior_udim 1011": 2}
+    assert report["glass_merge"]["white_samples"] == 7
+    assert list((out / "derivation").glob("*.json"))
+    pkg = subprocess.run([sys.executable, "-m", "dt_ai.cli.agr", "package-npm", str(out / "npm"),
+                          "--allow-incomplete"], capture_output=True, text=True, encoding="utf-8", errors="replace")
+    assert pkg.returncode == 1, pkg.stdout + pkg.stderr  # OKS-only is diagnostic, never a pass
+    archive = out / "0607_X.zip"
+    with zipfile.ZipFile(archive) as z:
+        assert z.namelist() == ["0607_X_01.fbx"]
+        assert z.read(z.namelist()[0]) == (out / "npm/0607_X_01.fbx").read_bytes()
+    delivery = json.loads(Path(str(archive) + ".delivery.json").read_text(encoding="utf-8"))
+    assert delivery["status"] == "incomplete" and delivery["passed"] is False
+    assert all(p.read_bytes() == data for name, data in before.items() if (p := src / name))
