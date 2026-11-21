@@ -15,6 +15,7 @@ import subprocess
 import sys
 import zipfile
 from io import BytesIO
+from itertools import product
 from pathlib import Path
 
 import pytest
@@ -225,7 +226,7 @@ def _p(name, kind, *values):
     return ("P", (name, kind, "", "A") + tuple(values))
 
 
-def light_fbx(root="SM_X_Root", lights=(("SM_X_Spot_001", 2), ("SM_X_Omni_001", 0)), root_t=(0.0, 0.0, 0.0),
+def light_fbx(root="X_Root", lights=(("X_Spot_001", 2), ("X_Omni_001", 0)), root_t=(0.0, 0.0, 0.0),
               parented=True, extra_models=(), extra_links=()):
     objects, links = [], []
     objects.append(("Model", (5000, root + "\x00\x01Model", "Null"),
@@ -248,8 +249,8 @@ def _light(data, cipher="SM_X"):
 def test_light_scene_reads_root_parents_and_types():
     models = vp.light_scene(light_fbx())
     names = {m["name"]: m for m in models.values()}
-    assert names["SM_X_Spot_001"]["light"] == "Spot" and names["SM_X_Omni_001"]["light"] == "Omni"
-    assert names["SM_X_Spot_001"]["parent"] == 5000 and names["SM_X_Root"]["parent"] == 0
+    assert names["X_Spot_001"]["light"] == "Spot" and names["X_Omni_001"]["light"] == "Omni"
+    assert names["X_Spot_001"]["parent"] == 5000 and names["X_Root"]["parent"] == 0
 
 
 def test_light_fbx_rejects_legacy_sm_names():
@@ -262,8 +263,6 @@ def test_light_fbx_rejects_legacy_sm_names():
 
 @pytest.mark.parametrize("address", ["Example_17", "Example_17_Ground"])
 def test_light_prefix_matrix(address):
-    from itertools import product
-
     for root_sm, spot_sm, omni_sm, reverse in product((False, True), repeat=4):
         root = ("SM_" if root_sm else "") + address + "_Root"
         lights = [(("SM_" if spot_sm else "") + address + "_Spot_001", 2),
@@ -278,17 +277,17 @@ def test_light_prefix_matrix(address):
 
 def test_light_fbx_good_passes():
     assert _light(light_fbx()) == set()
-    assert _light(light_fbx(root="SM_X_Ground_Root", lights=[("SM_X_Ground_Omni_002", 0)]), "SM_X_Ground") == set()
+    assert _light(light_fbx(root="X_Ground_Root", lights=[("X_Ground_Omni_002", 0)]), "SM_X_Ground") == set()
 
 
 LIGHT_CASES = {
     "light_root": lambda: light_fbx(root="Root"),
     "light_root_transform": lambda: light_fbx(root_t=(1.0, 0.0, 0.0)),
     "light_parent": lambda: light_fbx(parented=False),
-    "light_name": lambda: light_fbx(lights=[("SM_X_Lamp_001", 0)]),
-    "light_number": lambda: light_fbx(lights=[("SM_X_Omni_051", 0)]),
-    "light_type": lambda: light_fbx(lights=[("SM_X_Spot_001", 0)]),
-    "light_count": lambda: light_fbx(lights=[("SM_X_Omni_{:03d}".format(i % 50 + 1), 0) for i in range(251)]),
+    "light_name": lambda: light_fbx(lights=[("X_Lamp_001", 0)]),
+    "light_number": lambda: light_fbx(lights=[("X_Omni_051", 0)]),
+    "light_type": lambda: light_fbx(lights=[("X_Spot_001", 0)]),
+    "light_count": lambda: light_fbx(lights=[("X_Omni_{:03d}".format(i % 50 + 1), 0) for i in range(251)]),
     "light_unreadable": lambda: b"Kaydara FBX Binary  \x00\x1a\x00" + struct.pack("<I", 7400) + b"\x05",
 }
 
@@ -306,6 +305,21 @@ def test_light_rules_run_inside_the_vpm_archive(tmp_path):
     good.mkdir()
     rep = vp.validate(write_zip(good / "SM_X.zip", vpm_files(**{"SM_X_Light.fbx": light_fbx()})), None, PROFILES)
     assert not {c for _s, c in _codes(rep)} & {"light_root", "light_parent", "light_name", "light_type"}
+
+
+def test_light_cli_rejects_prefixed_nodes_without_changing_archive(tmp_path):
+    light = light_fbx("SM_X_Root", [("X_Spot_001", 2), ("SM_X_Omni_001", 0)])
+    path = write_zip(tmp_path / "SM_X.zip", vpm_files(**{"SM_X_Light.fbx": light}))
+    original = path.read_bytes()
+    proc = subprocess.run([sys.executable, str(ROOT / "tools/qa/validate_package.py"), str(path), "--json"],
+                          cwd=tmp_path, capture_output=True)
+    assert proc.returncode == 1, proc.stderr
+    report = json.loads(proc.stdout.decode("utf-8"))
+    stage = next(item for item in report["stages"] if item["id"] == "V012")
+    assert sorted((f["status"], f["data"]["code"]) for f in stage["findings"] if f["name"] == "light FBX") == [
+        ("fail", "light_name"), ("fail", "light_root"),
+    ]
+    assert path.read_bytes() == original
 
 
 def test_delivered_elv_light_names_run_inside_vpm_archive(tmp_path):
@@ -337,7 +351,7 @@ def test_elv_light_rejects_bad_root_vectors(t):
 
 @pytest.mark.parametrize("models,links,code", [
     ([("Model", (9000, "UnplannedMesh", "Mesh"), [])], [("C", ("OO", 9000, 5000))], "light_type"),
-    ([("Model", (5000, "SM_X_Root", "Null"), [])], [], "light_unreadable"),
+    ([("Model", (5000, "X_Root", "Null"), [])], [], "light_unreadable"),
     ([], [("C", ("OO", 6000, 5000))], "light_unreadable"),
 ])
 def test_light_does_not_silently_discard_binary_records(models, links, code):

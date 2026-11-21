@@ -264,7 +264,7 @@ LIGHT_FBX_PARAMS = (('Animation', False), ('Cameras', False), ('Lights', True), 
                     ('FileVersion', 'FBX201400'), ('EmbedTextures', False), ('ConvertUnit', 'm'), ('UpAxis', 'Z'))
 FBX_VERSION = 7400
 STEM = re.compile(r'^SM_[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*$')
-ROOT_OF_STEM = re.compile(r'^(?P<stem>SM_[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*)_Root$')
+ROOT_OF_ADDRESS = re.compile(r'^(?P<addr>[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*)_Root$')
 ROOT_GEOAGR = re.compile(r'^Root_(?P<addr>[A-Za-z0-9]+(?:_[A-Za-z0-9]+)*)$')   # GeoAGR btnCreateRoot style
 DIRECTION_TOL_DEG = 0.05
 EXPORT_CODES = ('light_outside_root', 'light_root_many', 'light_root_name', 'light_type', 'light_fbx_exists',
@@ -351,7 +351,7 @@ def export_plan(lights, helpers, opts, exists=_os.path.exists):
     elif len(tops) == 1:
         root = by_handle[next(iter(tops))]
     elif not tops:
-        blockers.append('нет корневого Dummy над источниками: нужен один <stem>_Root (qa.package 0.9)')
+        blockers.append('нет корневого Dummy над источниками: нужен один <Address>_Root')
     else:
         names = sorted(by_handle[h]['name'] for h in tops)
         for h in tops:
@@ -359,14 +359,15 @@ def export_plan(lights, helpers, opts, exists=_os.path.exists):
         blockers.append('несколько корней: ' + ', '.join(names))
     stem = opts.get('stem')
     if root is not None:
-        m = ROOT_OF_STEM.match(root['name'])
+        m = ROOT_OF_ADDRESS.fullmatch(root['name'])
         g = ROOT_GEOAGR.match(root['name'])
         if stem is None:
-            stem = m.group('stem') if m else ('SM_' + g.group('addr') if g else None)
+            address = m.group('addr').removeprefix('SM_') if m else (g.group('addr') if g else None)
+            stem = 'SM_' + address if address else None
         if stem is None:
-            blockers.append('корень {!r} не по маске SM_<Address>_Root: укажите options.stem'.format(root['name']))
-        elif root['name'] != stem + '_Root':
-            add(root['handle'], 'light_root_name', 'корень {} != {}_Root (qa.package 0.9)'.format(root['name'], stem))
+            blockers.append('корень {!r} не по маске <Address>_Root: укажите options.stem'.format(root['name']))
+        elif root['name'] not in (stem + '_Root', stem.removeprefix('SM_') + '_Root'):
+            add(root['handle'], 'light_root_name', 'корень {} != {}_Root'.format(root['name'], stem.removeprefix('SM_')))
     mine = tops.get(root['handle'], []) if root is not None else []
     mine_h = {r['handle'] for r in mine}
     root_name = root['name'] if root is not None else NO_ROOT
@@ -386,11 +387,23 @@ def export_plan(lights, helpers, opts, exists=_os.path.exists):
             add(root['handle'], 'light_fbx_exists', wanted + ' уже есть: отказ (on_exists=refuse)')
         else:
             target = _new_version(wanted, exists)
+
+    def export_name(name):
+        # Keep SM_ in the file stem, not in nodes belonging to that address.
+        return name.removeprefix('SM_') if stem and name.startswith(stem + '_') else name
+
     export = ([root['handle']] if root is not None else []) + sorted(mine_h)
-    rows = [{'handle': r['handle'], 'name': r['name'], 'cls': str(r['cls']), 'kind': kind_of(r['cls']),
+    rows = [{'handle': r['handle'], 'name': export_name(r['name']), 'cls': str(r['cls']), 'kind': kind_of(r['cls']),
              'rot': _rot_of(r), 'target': r.get('target') is not None}
             for r in sorted(mine, key=lambda r: r['handle'])]
-    return {'root': None if root is None else {'handle': root['handle'], 'name': root['name']}, 'stem': stem,
+    exported_root = None if root is None else {'handle': root['handle'], 'name': export_name(root['name'])}
+    seen_names = set()
+    for row in ([exported_root] if exported_root else []) + rows:
+        name = row['name']
+        if name in seen_names:
+            blockers.append('duplicate Light FBX node name: ' + name)
+        seen_names.add(name)
+    return {'root': exported_root, 'stem': stem,
             'target': target, 'wanted': wanted, 'export': export, 'lights': rows, 'findings': found,
             'blockers': blockers}
 

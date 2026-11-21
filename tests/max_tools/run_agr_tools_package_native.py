@@ -140,8 +140,8 @@ def zip_folder():
     d = OUT / 'zip'
     d.mkdir()
     files = {'0123_X_01.fbx': FBX, '0123_X_02.fbx': FBX, '0123_X_Ground.fbx': FBX, 'SM_X.fbx': FBX,
-             'SM_X_Light.fbx': light_fbx('SM_X'), 'SM_X.geojson': geojson(), 'SM_X_Ground.fbx': FBX,
-             'SM_X_Ground_Light.fbx': light_fbx('SM_X_Ground'), 'SM_X_Ground.geojson': geojson(),
+             'SM_X_Light.fbx': light_fbx('X'), 'SM_X.geojson': geojson(), 'SM_X_Ground.fbx': FBX,
+             'SM_X_Ground_Light.fbx': light_fbx('X_Ground'), 'SM_X_Ground.geojson': geojson(),
              'SM_X_0011.fbx': FBX,
              'SM_X_0011.geojson': geojson(), 'T_X_0011_Diffuse_1.1001.png': png((1, 2, 3)),
              '0123_Other_01.fbx': FBX, 'notes.txt': b'decoy'}

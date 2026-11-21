@@ -325,7 +325,7 @@ def test_measured_max_target_spot_rotation_matches_its_aim():
 def test_red_lost_omni_is_found_by_the_readback(tmp_path):
     lights, helpers, opts = light_scene(tmp_path)
     plan = lc.export_plan(lights, helpers, opts)
-    found, _ = lc.readback_findings(plan, _scene_fbx(plan, drop=('SM_TestAddr_Omni_001', 'SM_TestAddr_Photo_001')))
+    found, _ = lc.readback_findings(plan, _scene_fbx(plan, drop=('TestAddr_Omni_001', 'TestAddr_Photo_001')))
     assert {c for c, _ in found[23]} == {'light_readback_missing'}
     assert 'light_readback_count' in {c for c, _ in found[10]}
 
@@ -481,7 +481,7 @@ def test_light_export_rejects_stale_preview(monkeypatch, tmp_path):
     lm, ctx, nodes, lights = _export_fixture(monkeypatch, tmp_path, 'TestAddr', True, writer)
     preview = lm.light_export(ctx, 'preview', None, None)
     nodes[1].name = lights[0]['name'] = 'TestAddr_Spot_002'
-    with pytest.raises(ValueError, match='stale'):
+    with pytest.raises(ValueError, match='scene changed since the preview'):
         lm.light_export(ctx, 'apply', None, preview)
     assert list(tmp_path.iterdir()) == [] and nodes[1].name == 'TestAddr_Spot_002'
 
