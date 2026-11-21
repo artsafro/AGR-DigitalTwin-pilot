@@ -217,14 +217,17 @@ def intake_batch(batch, kind="maf"):
                 used.add(p)
             continue
         members = {}
+        base_stems = set()
         for p in fbx:
-            role = next((role for role, suffix in FBX_ROLES.items() if p.stem.lower().endswith(suffix)), None)
-            if role is None and len(fbx) == 1:
-                role = "vpm"  # Legacy single export without a profile suffix.
+            stem = p.stem.lower()
+            role = next((role for role, suffix in FBX_ROLES.items() if stem.endswith(suffix)), None)
             if role is not None:
                 members[role] = str(p)
-        # Only an object subfolder establishes that multiple exports belong together.
-        if len(members) != len(fbx) or (d == root and len(fbx) > 1):
+                base_stems.add(stem.removesuffix(FBX_ROLES[role]))
+            elif len(fbx) == 1:
+                members["vpm"] = str(p)  # Legacy single export without a profile suffix.
+        # Multiple exports must be in an object subfolder and share a base stem, as in an A101 zip.
+        if len(members) != len(fbx) or len(base_stems) > 1 or (d == root and len(fbx) > 1):
             raise PublishError(f"{d}: ambiguous object, {len(fbx)} FBX files: {[p.name for p in fbx]}")
         pngs = [p for p in own if p.suffix.lower() == ".png" and "source" not in p.parts]
         objects.append({"key": key, "source": "folder", "folder": str(d), "members": members,
