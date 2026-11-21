@@ -59,6 +59,43 @@ STEP_RE = re.compile(r"^### Step (\d+) — (.+)$", re.M)
 LINK_RE = re.compile(r"\]\(([^)#\s]+)(#[^)\s]*)?\)")
 
 
+def test_npm_planter_checklist(text):
+    heading = "## Planting into MAF planters (NPM)"
+    anchor = "#planting-into-maf-planters-npm"
+    step8 = text.split("### Step 8 —", 1)[1].split("### Step 9 —", 1)[0]
+    assert f"]({anchor})" in step8, "route planters before packing the Flora atlas"
+    assert text.count(heading) == 1
+    step = " ".join(text.split(heading, 1)[1].split("\n## ", 1)[0].split())
+    for rule in (
+        "upward faces", "all face-corner UVs", "soil/sand cell", "not by material ID",
+        "Leave MAF materials unchanged", "customer Flora for the same object",
+        "at its own size", "no random scale", "descending size steps",
+        "first intersection-free size", "planter walls and other MAF geometry",
+        "existing Flora and newly placed shrubs", "record the step sizes and minimum size",
+        "If the floor still intersects, leave the spot unplanted",
+        "180,000 triangles (MAF-07)", "Ground + GroundEl + Flora",
+        "three separate texture sets", "GroundEl atlas (≤ 512 × 512 px, MAF-09)",
+        "Flora atlas, and Ground maps", "Never merge these sets",
+        "job-local", "UV/ID disagreement", "missing or ambiguous evidence",
+    ):
+        assert rule in step, rule
+    maf = (SKILL.parent.parent / "model-maf/SKILL.md").read_text(encoding="utf-8")
+    assert f"](../model-flora/SKILL.md{anchor})" in maf
+
+
+def test_staropetrovskiy_planter_case():
+    cases = ROOT / "docs/cases.md"
+    row, = (line for line in cases.read_text(encoding="utf-8").splitlines()
+            if line.startswith("| Staropetrovskiy NPM planter shrubs"))
+    assert all(value in row for value in ("313 shrubs", "231", "1.23 m", "0.55 m"))
+    link, = LINK_RE.findall(row)
+    report = (cases.parent / link[0]).read_text(encoding="utf-8")
+    assert "site4/staropetrovskiy_maf_site_v008.max" in report
+    assert "does not establish delivery acceptance" in report
+    for script in ("inspect_soil2", "plan_shrubs3", "fix_plan3", "shrubs_max3", "dump_flora3", "check_shrubs3"):
+        assert f"site4/work/{script}.py" in report
+
+
 def _steps(text: str) -> list[tuple[int, str, str]]:
     marks = list(STEP_RE.finditer(text))
     out = []

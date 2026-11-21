@@ -383,7 +383,8 @@ class AssetsWindow(QtWidgets.QWidget):
         self.spn_fbx.setEnabled(self.cmb_src.currentData() == 'fbx')
 
     def _cfg(self):
-        return {'lib': self.lib(), 'root': self.ed_lib.text().strip(), 'preview_dirs': list(self.s.get('preview_dirs') or [])}
+        return {'lib': self.lib(), 'root': self.ed_lib.text().strip(), 'preview_dirs': list(self.s.get('preview_dirs') or []),
+                'published_catalogue': self.s.get('published_catalogue') or ''}
 
     def load_current(self):
         idx = self.indexes.get(self.lib())
@@ -515,7 +516,9 @@ class MaxBackend(object):
         if cfg['lib'] == 'flora':
             return self.mx.scan_flora(cfg['root'], cache_dir, lib='flora',
                                       extra_preview_dirs=cfg.get('preview_dirs') or ())
-        idx = core.scan_maf(cfg['root'], cache_dir, lib='maf', old_index=core.load_index(cache_dir, 'maf'))
+        published = core.published_accepted(core.published_catalogue_path(cfg.get('published_catalogue')))  # #1757
+        idx = core.scan_maf(cfg['root'], cache_dir, lib='maf', old_index=core.load_index(cache_dir, 'maf'),
+                            published=published)
         core.save_index(cache_dir, idx)
         return idx
 

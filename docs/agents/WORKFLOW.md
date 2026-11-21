@@ -444,8 +444,15 @@ A rule question is looked up in the order of `AGENTS.md` ("Where things are"): d
 
 ### Decision ids on parallel branches (#1037)
 
-A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --fetch`: the next free id over
-`origin/main`, this branch and every open PR head (`gh pr list`). The pre-commit hook runs `check --staged
+A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --all-branches --fetch --reservations FILE`:
+one above the highest ID across `origin/main`, this branch, every open pilot PR head and fetched `origin` branch
+heads. Orchestrator preflight: export active reservation comments read-only as a fresh UTF-8 JSON array of
+`{"id", "card", "reserved_at"}` records (string fields; `[]` means a confirmed empty snapshot), then pass it as
+`FILE`. Omitting the export does not check the board. Under rule 42,
+reserve the concrete ID on the owning card; refresh sources and recheck that ID against other cards' reservations
+and pilot branch/PR heads immediately before writing and before every push. Stop if a source cannot be checked
+or a competing claim is found; the printed next ID is not a lock. If the export is not available yet, check the
+active reservation comments manually. The pre-commit hook runs `check --staged
 --fetch` whenever `docs/decisions.md` is staged and blocks a commit whose new id (absent at the merge-base with
 `origin/main`) is already used by `origin/main` or by an open PR with a different row, or appears twice; exit 2
 (no base, no `gh`, unreadable PR head) blocks too. Offline, `git config twin.decisionIds main-only` skips the
@@ -465,7 +472,7 @@ driver (`--install`, once per clone), merges, takes the HEAD maps, resolves `doc
 `python tools/decisions_merge.py` (union of D-rows, HEAD wins on the same id, id order), regenerates, runs
 `--check` and commits; after merges done by hand run it without `--merge`. Exit 1 leaves the merge for you:
 another file conflicts, or `decisions_merge.py` reported a same-id collision - the incoming row gets a new id
-(`decision_ids.py next --fetch`, then its `[D<n>]` references). Never resolve a map by hand.
+(follow the decision ID procedure above, then update its `[D<n>]` references). Never resolve a map by hand.
 
 ## Harness inventory (#129)
 

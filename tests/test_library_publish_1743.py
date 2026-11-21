@@ -319,6 +319,138 @@ def test_identity_file_naming_an_unknown_object_is_an_error(tmp_path):
         publish(tmp_path, make_batch(tmp_path), pub.empty_catalogue(), {"NOPE": {"manufacturer": "X"}})
 
 
+# ---- #1755: a refused batch writes nothing to the assets root ---------------------------------------------------
+def two_folders(root, *keys):
+    """SYNTHETIC batch of own-folder objects (default M1, M2), one FBX each."""
+    b = root / "batch-two"
+    for k in keys or ("M1", "M2"):
+        (b / k).mkdir(parents=True)
+        (b / k / f"{k}_GroundEl_quad.fbx").write_bytes(k.encode())
+    return b
+
+
+def _tree(p):
+    return sorted(x.relative_to(p).as_posix() for x in p.rglob("*")) if p.exists() else None
+
+
+@pytest.mark.parametrize("bad", ["evidence", "identity", "both", "late_identity_after_two"])
+def test_refused_batch_leaves_assets_root_unchanged(tmp_path, bad):
+    keys = ("M1", "M2", "M3") if bad == "late_identity_after_two" else ("M1", "M2")
+    b, cat = two_folders(tmp_path, *keys), pub.empty_catalogue()
+    assets = tmp_path / "assets"
+    (assets / "maf" / "Other_X_1" / "v001").mkdir(parents=True)  # pre-existing library content stays as it is
+    before = _tree(assets)
+    ids = {}
+    if bad in ("evidence", "both"):
+        (tmp_path / "ev1").mkdir()
+        (tmp_path / "ev1" / "old.md").write_text("old")
+    if bad != "evidence":
+        ids = {keys[-1]: {"manufacturer": "Acme"}}  # maker without an article: refused
+    with pytest.raises(pub.PublishError, match="not empty|without an article"):
+        publish(tmp_path, b, cat, ids)
+    assert _tree(assets) == before and cat == pub.empty_catalogue()
+
+
+def test_same_stem_objects_in_one_batch_keep_distinct_counter_names(tmp_path):
+    b, cat = two_folders(tmp_path), pub.empty_catalogue()
+    same = {"title_ru": "Скамья"}
+    publish(tmp_path, b, cat, {"M1": same, "M2": same})
+    assert sorted(r["name"] for r in cat["records"]) == ["AGR_maf_Skamya_001", "AGR_maf_Skamya_002"]
+
+
+def test_same_library_name_twice_in_one_batch_gives_two_versions(tmp_path):
+    b, cat = two_folders(tmp_path), pub.empty_catalogue()
+    same = {"manufacturer": "Acme", "title_ru": "Скамья", "article": "777"}
+    publish(tmp_path, b, cat, {"M1": same, "M2": same})
+    assert [(r["name"], r["version"]) for r in cat["records"]] == [("Acme_Skamya_777", "v001"),
+                                                                   ("Acme_Skamya_777", "v002")]
+    assert sorted(p.name for p in (tmp_path / "assets" / "maf" / "Acme_Skamya_777").iterdir()) == ["v001", "v002"]
+
+
+def _corrupt_copy_of(monkeypatch, key):
+    real = pub.shutil.copyfile
+
+    def copy(src, dst):
+        out = real(src, dst)
+        if Path(src).parent.name == key and "assets" in Path(dst).parts:
+            Path(dst).write_bytes(b"corrupt")
+        return out
+    monkeypatch.setattr(pub.shutil, "copyfile", copy)
+
+
+def test_late_failure_reports_versions_already_made_and_keeps_their_records(tmp_path, monkeypatch):
+    b, cat = two_folders(tmp_path), pub.empty_catalogue()
+    _corrupt_copy_of(monkeypatch, "M2")
+    with pytest.raises(pub.PublishError, match="does not match") as ei:
+        publish(tmp_path, b, cat)
+    made = tmp_path / "assets" / "maf" / "AGR_maf_M1_001" / "v001"
+    assert made.is_dir() and str(made) in str(ei.value)
+    assert [r["name"] for r in ei.value.registered] == ["AGR_maf_M1_001"]
+    assert [(r["name"], r["version"]) for r in cat["records"]] == [("AGR_maf_M1_001", "v001")]
+
+
+def test_cli_late_failure_writes_the_catalogue_for_versions_made(tmp_path, monkeypatch):
+    b, catp = two_folders(tmp_path), tmp_path / "cat.json"
+    catp.write_text(json.dumps(pub.empty_catalogue()))
+    monkeypatch.setattr(pub, "blender_readback", lambda f, o, blender=None: _report())
+    _corrupt_copy_of(monkeypatch, "M2")
+    rc = pub.main(["publish", str(b), "--catalogue", str(catp), "--evidence", str(tmp_path / "ev"),
+                   "--assets-root", str(tmp_path / "assets"), "--unified", str(catp)])
+    recs = json.loads(catp.read_text(encoding="utf-8"))["records"]
+    assert rc == 2 and [(r["name"], r["version"]) for r in recs] == [("AGR_maf_M1_001", "v001")]
+    assert sorted(p.name for p in (tmp_path / "assets" / "maf").iterdir()) == ["AGR_maf_M1_001", "AGR_maf_M2_001"]
+    assert not (tmp_path / "assets" / "maf" / "AGR_maf_M2_001" / "v001").exists()  # only its .partial is kept
+
+
+def test_cli_fresh_process_refused_batch_writes_no_version(tmp_path):
+    b, catp = two_folders(tmp_path), tmp_path / "cat.json"
+    catp.write_text(json.dumps(pub.empty_catalogue()))
+    (tmp_path / "ev").mkdir()
+    (tmp_path / "ev" / "old.md").write_text("old")
+    r = _cli("publish", str(b), "--catalogue", str(catp), "--evidence", str(tmp_path / "ev"),
+             "--assets-root", str(tmp_path / "assets"), "--blender", str(tmp_path / "no-blender.exe"))
+    assert r.returncode == 2 and "not empty" in r.stderr
+    assert json.loads(catp.read_text()) == pub.empty_catalogue() and not (tmp_path / "assets").exists()
+
+
+def test_probe_every_version_on_disk_is_described_or_none_is_written(tmp_path, monkeypatch):
+    """Probe: N objects (1..5), refusal or copy failure at object k (seeded) -> assets root unchanged on a refusal;
+    on a late failure every vNNN on disk is in the catalogue and named in the error."""
+    import random
+    rnd, real, runs = random.Random(1755), pub.shutil.copyfile, 0
+    for i in range(40):
+        n = rnd.randint(1, 5)
+        k = rnd.randrange(n)
+        mode = rnd.choice(["identity", "evidence", "copy"])
+        base = tmp_path / f"r{i}"
+        keys = tuple(f"M{j}" for j in range(n))
+        b, cat = two_folders(base, *keys), pub.empty_catalogue()
+        ids = {keys[k]: {"manufacturer": "Acme"}} if mode == "identity" else {}
+        if mode == "evidence":
+            (base / "ev1").mkdir()
+            (base / "ev1" / "x").write_text("x")
+        bad = keys[k]
+
+        def copy(src, dst, bad=bad):
+            out = real(src, dst)
+            if mode == "copy" and Path(src).parent.name == bad and "assets" in Path(dst).parts:
+                Path(dst).write_bytes(b"corrupt")
+            return out
+        monkeypatch.setattr(pub.shutil, "copyfile", copy)
+        with pytest.raises(pub.PublishError) as ei:
+            publish(base, b, cat, ids)
+        on_disk = sorted(f"{p.parent.name}/{p.name}" for p in (base / "assets").rglob("v[0-9][0-9][0-9]")
+                         if p.is_dir()) if (base / "assets").exists() else []
+        described = sorted(f"{r['name']}/{r['version']}" for r in cat["records"])
+        assert on_disk == described, (i, mode, n, k)
+        if mode != "copy":
+            assert not (base / "assets").exists() and not cat["records"]
+        else:
+            assert len(described) == k and all(d.replace("/", os.sep) in str(ei.value) for d in described)
+        runs += 1
+    assert runs == 40
+
+
 # ---- accept / reject / read path --------------------------------------------------------------------------------
 def _drafts(tmp_path):
     b, cat = make_batch(tmp_path), pub.empty_catalogue()

@@ -445,21 +445,25 @@ def next_version(target_dir, catalogue, name):
     return "v{:03d}".format(max(nums, default=0) + 1)
 
 
-def register_version(obj, name, kind, qa_result, ident, catalogue, assets_root, batch, issue=None, preview=None):
-    """Copy the object's files into a NEW <kind>/<name>/vNNN/ and append a `draft` record. Never overwrites."""
-    root = Path(assets_root)
-    for src in obj["files"]:
+def _check_overlaps(root, srcs, batch):
+    for src in srcs:
         if _inside(root, src) or _inside(src, root):
             raise PublishError(f"assets root {root} overlaps the input {src}")
     if _inside(root, batch) or _inside(batch, root):
         raise PublishError(f"assets root {root} overlaps the batch {batch}")
+
+
+def plan_version(obj, name, kind, qa_result, ident, catalogue, assets_root, batch, issue=None, preview=None):
+    """Every refusal of one version that is known before writing; returns the plan and writes NOTHING [#1755].
+    `catalogue` may be a shadow copy holding the batch's earlier planned records (counter names, vNNN)."""
+    root = Path(assets_root)
+    _check_overlaps(root, obj["files"], batch)
     base = root / kind / name
     version = next_version(base, catalogue, name)
     final, partial = base / version, base / (version + ".partial")
     if final.exists() or partial.exists():
         raise PublishError(f"{final} already exists; a version is never overwritten")
-    partial.mkdir(parents=True)
-    files = []
+    copies, files, seen = [], [], set()
     srcs = list(obj["files"])
     if preview and Path(preview) not in srcs:
         srcs.append(Path(preview))
@@ -467,18 +471,16 @@ def register_version(obj, name, kind, qa_result, ident, catalogue, assets_root, 
         rel = Path(src).name if obj["source"] == "a101_zip" else Path(src).relative_to(obj["folder"]).as_posix()
         if src == preview and obj["source"] == "a101_zip":
             rel = "preview_" + Path(src).name
-        dest = partial / rel
-        if dest.exists():
-            raise PublishError(f"two inputs map to {dest}")
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(src, dest)
-        h = sha256_file(dest)
-        if h != sha256_file(src):
-            raise PublishError(f"copy of {src} does not match its source")
-        role = ("archive" if dest.suffix.lower() == ".zip" else
+        if os.path.normcase(rel) in seen:
+            raise PublishError(f"two inputs map to {partial / rel}")
+        seen.add(os.path.normcase(rel))
+        h = sha256_file(src)
+        suffix = Path(rel).suffix.lower()
+        role = ("archive" if suffix == ".zip" else
                 next((r for r, m in obj["members"].items() if Path(m) == Path(src)), None) or
                 {".max": "max", ".blend": "blend", ".png": "preview", ".jpg": "source", ".dwg": "source"}.get(
-                    dest.suffix.lower(), "other"))
+                    suffix, "other"))
+        copies.append((Path(src), rel, h))
         files.append({"path": f"{kind}/{name}/{version}/{rel}", "sha256": h, "role": role})
     card = {"manufacturer": (obj.get("identity") or {}).get("manufacturer"),
             "title_ru": (obj.get("identity") or {}).get("title_ru"),
@@ -494,9 +496,27 @@ def register_version(obj, name, kind, qa_result, ident, catalogue, assets_root, 
               "identify": ident, "card": card, "preview": preview_path, "files": files,
               "qa": {"verdict": qa_result["verdict"], "findings": qa_result["findings"]},
               "accepted": None, "rejected": None}
+    return {"record": record, "copies": copies, "final": final, "partial": partial, "root": root, "batch": batch}
+
+
+def write_version(plan, catalogue):
+    """Copy a planned version into <kind>/<name>/vNNN.partial, verify hashes, rename to vNNN, append the record."""
+    final, partial, record = plan["final"], plan["partial"], plan["record"]
+    _check_overlaps(plan["root"], [c[0] for c in plan["copies"]], plan["batch"])
+    if final.exists() or partial.exists():
+        raise PublishError(f"{final} already exists; a version is never overwritten")
+    partial.mkdir(parents=True)
+    for src, rel, h in plan["copies"]:
+        dest = partial / rel
+        if dest.exists():
+            raise PublishError(f"two inputs map to {dest}")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dest)
+        if sha256_file(dest) != h or sha256_file(src) != h:
+            raise PublishError(f"copy of {src} does not match its source")
     (partial / "RECORD.json").write_text(json.dumps(record, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (partial / "SHA256SUMS.txt").write_text("".join(
-        f"{f['sha256']} *{f['path'].split('/', 3)[3]}\n" for f in files), encoding="utf-8")
+        f"{f['sha256']} *{f['path'].split('/', 3)[3]}\n" for f in record["files"]), encoding="utf-8")
     if final.exists():
         raise PublishError(f"{final} appeared during the run; {partial} kept, nothing overwritten")
     try:
@@ -507,11 +527,22 @@ def register_version(obj, name, kind, qa_result, ident, catalogue, assets_root, 
     return record
 
 
+def register_version(obj, name, kind, qa_result, ident, catalogue, assets_root, batch, issue=None, preview=None):
+    """Copy the object's files into a NEW <kind>/<name>/vNNN/ and append a `draft` record. Never overwrites."""
+    return write_version(plan_version(obj, name, kind, qa_result, ident, catalogue, assets_root, batch, issue,
+                                      preview), catalogue)
+
+
 # ---- 6 sheet ---------------------------------------------------------------------------------------------------
-def write_sheet(out_dir, batch_name, rows, drops, assets_root):
+def check_sheet_folder(out_dir):
     out = Path(out_dir)
-    if out.exists() and any(out.iterdir()):
+    if out.exists() and (not out.is_dir() or any(out.iterdir())):
         raise PublishError(f"sheet folder {out} is not empty; a sheet is never overwritten")
+    return out
+
+
+def write_sheet(out_dir, batch_name, rows, drops, assets_root):
+    out = check_sheet_folder(out_dir)
     (out / "previews").mkdir(parents=True, exist_ok=True)
     md = [f"# Library publish — {batch_name}", "",
           "Проверка Артёму: «ок» → `agr library accept <имена> --words \"...\"`; отказ → "
@@ -545,30 +576,46 @@ def write_sheet(out_dir, batch_name, rows, drops, assets_root):
 
 
 # ---- publish / accept / reject ---------------------------------------------------------------------------------
+class OrphanVersions(PublishError):
+    """A failure after some versions were written; `registered` holds their records (already in the catalogue)."""
+
+    def __init__(self, msg, registered):
+        super().__init__(msg)
+        self.registered = registered
+
+
 def publish(batch, kind, catalogue, unified, assets_root, evidence, identities=None, issue=None, readback=None,
             work=None):
-    """Stages 1-6 for one batch. readback(fbx_path, out_json) -> report (Blender by default)."""
+    """Stages 1-6 for one batch. readback(fbx_path, out_json) -> report (Blender by default).
+    Plan pass first: every refusal known before writing (overlaps, sheet folder, identities, names, versions) for
+    ALL objects; only then does the write pass touch the assets root [#1755]. A failure in the write pass raises
+    OrphanVersions naming the versions already made by path; their draft records are in `catalogue`."""
     inv = intake_batch(batch, kind)
     readback = readback or blender_readback
     work = Path(work or Path(evidence).parent / "work" / inv["batch"])
     for p in (work, evidence):
         if _inside(p, batch) or _inside(batch, p):
             raise PublishError(f"{p} overlaps the batch {batch}")
+    _check_overlaps(Path(assets_root), [f for o in inv["objects"] for f in o["files"]], batch)
+    check_sheet_folder(evidence)
     identities = identities or {}
     unknown = sorted(set(identities) - {o["key"] for o in inv["objects"]})
     if unknown:
         raise PublishError(f"identity file names objects not in the batch: {unknown}")
-    rows = []
     for obj in inv["objects"]:
         if obj["key"] in identities:
             obj["identity"] = dict(obj["identity"], **identities[obj["key"]])
+        library_name(kind, obj["identity"], catalogue, obj["key"])  # identity refusals before any readback
+    shadow = dict(catalogue, records=list(catalogue["records"]))  # planned records: counters and vNNN in order
+    rows, plans = [], []
+    for obj in inv["objects"]:
         fbx = extract_members(obj, work / obj["key"])
         reps = {role: readback(path, work / obj["key"] / f"readback_{role}.json") for role, path in fbx.items()}
         q = qa_object(obj, kind, reps)
         if q["vpm"]["size_m"]:
             obj["size_mm"] = dict(zip("xyz", [v * 1000 for v in q["vpm"]["size_m"]]))
-        name = library_name(kind, obj["identity"], catalogue, obj["key"])
-        ident = identify_object(obj, unified, catalogue, kind, name)
+        name = library_name(kind, obj["identity"], shadow, obj["key"])
+        ident = identify_object(obj, unified, shadow, kind, name)
         preview = obj.get("preview_file")
         if obj["source"] == "a101_zip" and obj.get("preview_member"):
             preview = work / obj["key"] / Path(obj["preview_member"]).name
@@ -578,14 +625,28 @@ def publish(batch, kind, catalogue, unified, assets_root, evidence, identities=N
         if ident["result"] == "duplicate":
             row["skip"] = "duplicate: not registered, use " + ident["of"][0]["name"]
         else:
-            rec = register_version(obj, name, kind, q, ident, catalogue, assets_root, batch, issue,
-                           preview=obj.get("preview_file"))
-            row.update(version=rec["version"], qa=rec["qa"])
+            plan = plan_version(obj, name, kind, q, ident, shadow, assets_root, batch, issue,
+                                preview=obj.get("preview_file"))
+            shadow["records"].append(plan["record"])
+            plans.append((row, plan))
         rows.append(row)
-    sheet = write_sheet(Path(evidence), inv["batch"], rows, inv["drops"], assets_root)
-    summary = {"batch": inv["batch"], "files": inv["files"], "objects": len(inv["objects"]),
-               "drops": inv["drops"], "rows": rows, "sheet": str(sheet)}
-    write_json_atomic(Path(evidence) / "publish.json", summary)
+    check_sheet_folder(evidence)
+    made = []
+    try:
+        for row, plan in plans:
+            rec = write_version(plan, catalogue)
+            made.append(rec)
+            row.update(version=rec["version"], qa=rec["qa"])
+        sheet = write_sheet(Path(evidence), inv["batch"], rows, inv["drops"], assets_root)
+        summary = {"batch": inv["batch"], "files": inv["files"], "objects": len(inv["objects"]),
+                   "drops": inv["drops"], "rows": rows, "sheet": str(sheet)}
+        write_json_atomic(Path(evidence) / "publish.json", summary)
+    except (PublishError, OSError) as exc:
+        if not made:
+            raise
+        paths = [str(Path(assets_root) / kind / r["name"] / r["version"]) for r in made]
+        raise OrphanVersions(f"{exc}; versions already written (draft records kept in the catalogue): "
+                             + ", ".join(paths), made) from exc
     return summary
 
 
@@ -685,6 +746,8 @@ def main(argv=None):
             print(f"{r['name']}@{r['version']}: {r['status']}")
         return 0
     except PublishError as exc:
+        if getattr(exc, "registered", None):
+            write_json_atomic(a.catalogue, cat)  # describe the versions already made; never leave them orphan
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1 if a.cmd in ("accept", "reject") and "not accepted" in str(exc) else 2
     except (OSError, ValueError) as exc:

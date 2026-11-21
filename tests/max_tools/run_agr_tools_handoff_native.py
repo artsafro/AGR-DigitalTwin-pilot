@@ -3,14 +3,17 @@
 Run via the lab DCC runner (script_in_place) in two Max jobs around one Blender job (tools/blender/handoff_blender.py):
 
   AGR_HANDOFF_PHASE=export   builds the synthetic scene in CENTIMETRES and saves it under OUT (never elsewhere):
-      bundle 001  BODY_Brick_001 (octagonal prism: two 8-gon caps, 3 matIDs, smoothing: smooth sides + hard caps,
+      bundle 001  BODY_Brick_001 (octagonal prism, each 8-gon cap split into two pentagons (#1761: one 6+-gon makes
+                  the Max FBX exporter triangulate the whole object and the #1730 work-FBX gate refuses it),
+                  3 matIDs, smoothing: smooth sides + hard caps,
                   UV channel 1 in UDIM 1001 and channel 2 in 1002, pivot moved off the geometry, rotated 30 deg),
                   BODY_Brick_002 (an INSTANCE of it), GLASS_001 (child of BODY_Brick_001); materials Standard Legacy
                   with Bitmaptexture maps diffuse (U tiling 2), bump, opacity and a Multi/Sub 1/2/3; markers OPEN_001
                   and LEVEL_L1 (sidecar only);
       bundle 002  KPP1-like copy (facade of J_build.facade with the KPP1 openings, parapet of K_build, bolts) with the
                   library ids 3/9/12/16/29/35 on the faces (Multi/Sub with gaps);
-      then handoff.export preview -> apply for both (job_dir under OUT).
+      then handoff.export preview -> apply for both (job_dir under OUT); negative row export_ngon_refused: an
+      unsplit 8-gon prism (after the scene save, own job_dir) must be refused by the work-FBX degree gate.
   AGR_HANDOFF_PHASE=return   loads that scene (AGR_HANDOFF_SCENE), and per bundle (AGR_HANDOFF_JOB/handoff/<seq>) with
       the FBX of the Blender job (AGR_HANDOFF_BLENDER/<seq>/return/model.fbx): handoff.import -> handoff.verify
       (Max + Blender readbacks against readback_max.json) -> «Восстановить материалы» (001: reuse of the scene
@@ -130,6 +133,56 @@ def add_channel2(c):
         po.setMapFace(c, 2, f, po.getMapFace(c, 1, f))
 
 
+def ngon_diagonal(n):
+    """#1761: the corner pair (a, b) of one diagonal that splits an n-gon into two pieces of n // 2 + 1 and
+    n - n // 2 + 1 corners, or None for n <= 5 (the Max FBX exporter keeps triangles, quads and pentagons)."""
+    if not isinstance(n, int) or n < 3:
+        raise ValueError('ngon_diagonal: a face has at least 3 corners, got {!r}'.format(n))
+    return None if n <= 5 else (0, n // 2)
+
+
+def split_ngons(node):
+    """Split every 6+-gon of an Editable_Poly by diagonals (polyop.createEdge keeps matID, smoothing and map
+    faces) until no face has more than 5 corners. Returns the number of diagonals."""
+    po = rt.polyop
+    cuts = 0
+    while True:
+        for f in range(1, int(po.getNumFaces(node)) + 1):
+            vs = [int(v) for v in po.getFaceVerts(node, f)]
+            d = ngon_diagonal(len(vs))
+            if d is not None:
+                if not int(po.createEdge(node, vs[d[0]], vs[d[1]])):
+                    raise RuntimeError('split_ngons: no diagonal {} on face {} of {}'.format(d, f, node.name))
+                cuts += 1
+                break
+        else:
+            return cuts
+
+
+def export_ngon_refused():
+    """Negative row: an unsplit 8-gon prism must be refused by the handoff.export work-FBX gate (#1730)."""
+    import pymxs
+    with pymxs.undo(False):
+        n = rt.Cylinder(radius=50, height=120, sides=8, heightsegs=1, capsegs=1, smooth=True, mapcoords=True)
+        n.name = 'BODY_Ngon_001'
+        rt.convertToPoly(n)
+        rt.setUserProp(n, 'agr_role', 'body')
+    job = OUT / 'job_ngon_refused'
+    job.mkdir()
+    try:
+        press(CORE.TOOL_EXPORT, GLUE.handoff_export, CORE, [n], {'job_dir': str(job), 'seq': '001'},
+              key='export_ngon_refused')
+    except RuntimeError as e:
+        msg = str(e)
+        assert 'BODY_Ngon_001: triangulated' in msg, msg
+        return {'refused': True, 'error': msg[:400]}
+    finally:
+        with pymxs.undo(False):
+            if rt.isValidNode(n):
+                rt.delete(n)
+    raise AssertionError('handoff.export accepted an unsplit 8-gon prism')
+
+
 def diag_triangulation():
     """Which property makes the Max 2024 FBX exporter write triangles (measured, parsed offline): one FBX per case."""
     import pymxs
@@ -227,6 +280,7 @@ def build_synthetic():
         c = rt.Cylinder(radius=50, height=120, sides=8, heightsegs=1, capsegs=1, smooth=True, mapcoords=True)
         c.name = 'BODY_Brick_001'
         rt.convertToPoly(c)
+        assert split_ngons(c) == 2, 'two 8-gon caps -> two diagonals'
         add_channel2(c)
         c.pos = rt.Point3(250, -130, 40)
         rt.rotate(c, rt.EulerAngles(0, 0, 30))
@@ -360,6 +414,7 @@ def phase_export():
                     'slots': {o['name']: o['slots'] for o in man['objects']},
                     'instance_of': {o['name']: o['instance_of'] for o in man['objects']}}
         check('export_' + seq, run)
+    check('export_ngon_refused', export_ngon_refused)
 
 
 # ---- phase return --------------------------------------------------------------------------------------------------
