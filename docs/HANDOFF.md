@@ -1,96 +1,59 @@
-# Handoff — 2026-11-15 16:00
+# Handoff — 2026-11-22 23:47 +0100
 
-Branch: `job/4bk-k3-vpm` · Commit: `6aa786d9` · Worktree: `C:\Users\artsafro\.AGR-DigitalTwin_pilot\.claude\worktrees\4bk-corpus-k3-modeling-6cfe72` · Job: `4bk-k3`
-Transcript: `C:\Users\artsafro\.AGR-DigitalTwin_pilot\logs\transcripts\job-4bk-k3-vpm-pr1443-0a3a9c47-6962-4b43-a975-fa2a4cb6a4ab.jsonl`
+Branch: `main` · Commit: `a3cba07c` · Worktree: `-` · Job: `-`
+Transcript: -
 
-<!-- Written by /handover (.claude/commands/handover.md), read by tools/hooks/session_context.py and /takeover.
-Keep the `Branch:` line as is (the hook parses it). Facts only, no history: git log and the pull requests hold
-that. The whole file stays under 7000 characters so the SessionStart hook passes it in full. Empty section: "-". -->
+<!-- Shared pilot main snapshot for takeover; not ownership of a consuming feature branch. -->
 
 ## Where we are
 
-Job 4bk-k3: VPM of K3 tower floor 1 (A) and the stand-alone stylobate (B), built from Revit view `K3_stylobate_v001`.
-- Both are at about 80 %. Artem accepted geometry (A v004, B v003), UV and UCX (A and B v001).
-- Artem hand-finished both buildings. The etalon files are `…\63_4BK_vlad\bldA.max` and `bldB.max`.
-- The combined scene is `…\63_4BK_vlad\scene_build_A_build_B_v002.max`, with layers Build_A, Build_B, UCX_A and UCX_B.
-- Decisions are in `jobs/4bk-k3/TASK.md` and the status in `jobs/4bk-k3/STATE.md` (commit 6aa786d9, PR #1443).
-- UCX gates pass on readback: `build\gf_parts\ucx_{A,B}\*_report.json`.
+Goal: use the shared AGR routes and verify the intended shape, not just mesh topology.
+- Pilot main `a3cba07c2b03a350ff6dc6601691734c94ab7470` includes #1796, #1787 Ground surfaces/skirt, #1791 Ground research in OBSERVE, #1777 library fix, #1782 decision IDs, #1785 light names, #1778 planter rules, #1754 MAF conversion and #1774 review scene. Ground kernel delivery is not complex delivery acceptance.
+- **KNOWN RED:** non-DCC full suite `20261121j` on this exact main: 29,377 passed, 1 failed, 194 skipped, 49 xfailed. `tests/test_skills_sync.py::test_claude_skills_match_agents_skills`: `model-flora/SKILL.md: differs or missing`. #1796 fixed the canonical description but did not sync its generated `.claude/skills` copy. Last full green receipt was on `13e8235b` (29,266 passed), not current main. No CI or DCC pass implied.
+- Prior handoff was specific to 4bk-k3, whose job records remain under `jobs/4bk-k3/`. The earlier PR #1443 is merged; do not replay its old handoff or operate on user scenes.
 
 ## In progress
 
-- Artem is working on the big tower (typical floors) by hand. Nothing is running on our side.
-- Local state outside git, all under `C:\Users\artsafro\Desktop\!3D viz\!А101\63_4BK_vlad\`:
-  - `build\gf_parts\`: parts, UV, UCX, checks, `_review\max\` scenes, the analyses `artem_v007_analysis\` and `artem_final_analysis\`;
-  - `bldA.max`, `bldB.max`, `scene_build_A_build_B*.max`.
-- **Our textures were edited in place.** Artem painted the joints directly into our `_uv\textures_A_v003` Brick and AKP diffuse maps. Our originals exist only as a rebuild in the session scratchpad.
-- **Max 2026 processes started by agents may still be open:** 916456, 816344, 924440, 948024, 316280 (combined scene). 936984 and 947044 were Artem's sessions. Close only the agent ones, and only after asking.
-- **Stray files the user deletes by hand:**
-  - `C:\png_v003`
-  - `C:\dbg\top_op11_15.png`
-  - `C:\gf_parts`
-  - `C:\x\chk-4bk-k3-v005`
+- Production pause remains; only bounded, explicitly authorized work took place afterward. Do not resume broadly or start #1608 without separate authorization.
+- KPP1 NW: local-only `49326e15` on `fix/kpp1-nw-measured-reveal-pilot` changes the research prototype, not shared #1770. Evidence: `C:/x/kpp1-nw-a-t_aadee92c/v002/REPORT.md`. FBX readback on the crop: 90 degrees on three slices, no stray north gap or crop caps, two open apertures and four measured 110 mm front jambs. Six focused tests and 542 guards passed; back reveals and post seating unmeasured. Original scene unchanged. No production acceptance or remote publication.
+- Audit plan: `agr-pilot` card `t_8e7524e7` comment 9671 and CLEAN review 9672. Observed AC09 ZIP-owner bypass, stale Flora pointer, D336 category-check gap and conflicting handoff template. Cross-session memory import not reproduced. Held-out Codex test on another equivalent ambiguity not started. No runtime policy changes.
 
 ## User decisions not in the code
 
-All decisions are in `jobs/4bk-k3/TASK.md`, dated 2026-11-15:
-- After Artem accepts the geometry, it is frozen. Defects go to him as helpers, without QA loops.
-- A UV/UCX use the accepted set: body v004, windows v003, roof v003.
-- A long wall that overflows a UDIM tile is cut with full-height vertical loops (Connect), on the joints or about every 4 m.
-- In a delivery, the main glass is always a separate object.
-- RAL 020 30 20 = 104,64,58 is the truth.
-- Стемалит, burgundy and the capsule are conventional colours; Artem chooses them.
-- Known window defects go to a separate kanban card:
-  - glass and grille without outline or embed;
-  - frames too thin because the interiors were extruded from them.
-- The UCX plan:
-  - band envelopes, convex pieces;
-  - bottom at −2.305;
-  - roof slab and parapet ring are separate pieces;
-  - the arcade stays free;
-  - railing under 5 cm gets no UCX.
-- The facade grid rule:
-  - orthogonal edges where they serve joints;
-  - one diagonal is better than a cut through the whole facade;
-  - count thin strips.
-
-  Mode: report-only, not blocking. Write it after acceptance.
+- 2026-11-22: "А, прямой угол" on KPP1 NW only: 90 degrees, no chamfer. SHEET v003, `KPP1-NW-A-v001.json`, SHA-256 `d4c18c361b2d5953b8a264fc289706a023be47a74df0c202c52071d4e2c1074f`. No approval of post seating, unmeasured backs or other corners. Contour comparison observe-only, no automatic repair.
+- KPP1 stage 3 remains rejected; `s_podz` is empty per D306/V011, no #1608 run. G22: customer provides GeoJSON; retain the exterior and trim neighboring faces up to 275 mm under D374 only where exterior is known. Sixteen pairs still need a reference.
+- Sokolniki: rings by volume, up to three floor levels, 20 cm snap, openings cut with separate textured planes in NPM. Do not build before sheet v002 approval or edit Ground.
 
 ## Waiting for the user
 
-- **Address and naming, and the model rotation angle.** These block naming, GeoJSON, pivot and the full texture set.
-- **Typical canopy model.** We will place it at the 10 Revit positions on A and B.
-- **Box projection on diagonal facades.** Artem's brick UV is non-metric there (441 against 613 px/m). Is it a rule or an exception?
-- **Merge PR #1443.** Waiting for Artem's command. The branch is 45 merges behind main.
+- #1649: corrected `mesh001` or exterior reference for the remaining 16 pairs (Kanban comment 9630). No release with xView FAIL.
+- #1784: visual approval of sheet v002 and decision on local +2.175 m cuts for the 16 doors outside snap tolerance; see PR #1786.
+- Production resume and cold run #1608 require explicit authorization.
 
 ## Next step
 
-When Artem sends the canopy model or the address and rotation: place the canopies, then name A and B, set the pivot, write GeoJSON and package.
+Keep the merge/work holds; reconcile the generated skill copy and retest on an authorized repair, then run the held-out contour test before promoting the pilot behavior.
 
 ## Rules broken
 
-- **QA loops on accepted geometry.** After Artem accepted A v004, five QA rounds (v005–v009) changed the accepted body and cost half a day. The memory line `accepted-geometry-freeze` was added.
-- **First texture delivery of A was on v008e, not on the accepted v004.** Artem rejected it, and it was redone on v004.
-- **The orthogonal-grid order made strips denser.** My instruction to cut body A to an orthogonal grid added dense thin strips. It was stopped and replaced by the frozen geometry.
-- **The combined-scene agent read Artem's live Max sessions.** It made read-only queries there before Artem supplied the file paths.
-- **A versioned file name was not used for the review scene.** Artem's A work was saved over our `_review\max\K3_A_tex_review_v003.max`, and his joints went into our maps in `textures_A_v003`. These were his own saves, not agent writes.
-- **The B UCX re-check against Artem's geometry was skipped.** Artem checked it himself and accepted it.
+- KPP1 sheet and audit plan reached the default reviewer despite Codex-only scope. The later local pilot completed on Codex without handoff.
+- #1796 omitted the generated skill copy, causing the integrated failure above. No production repair during handover.
 
 ## Open PRs and issues for this task
 
-- #1443 job(4bk-k3): K3 floor 1 A + stylobate B VPM at 80 %. Open, waiting for the merge command.
-- Retro `docs/retros/2026-11-15-4bk-k3-gf-stylobate.md`: issues #1445–#1451 (needs-triage, retro; all pass the
-  ready gate). Already covered by #1365 and #1363. #1451 collects the decisions that need Artem's word, including the
-  texel ≥ 520 px/m rule, which conflicts with [D160].
+- #1770 `c97cf3ec`: shared body core, open; last explicit CLEAN named `ca865516`, before main reconciliation. Revalidate current head before merge. #1771 `052c4c28` and #1773 `055b0c7d` also open; #1770/#1773 touch the same skeleton entry.
+- #1797 `5ad78d86`: Blender xView, 67 affected tests, local review on `t_35f403b8`. #1798 `d453175c`: native Max xView preflight, 141 offline tests, independent review pending; native smoke not run.
+- #1794 G22 draft, #1786 Sokolniki sheet, #1722 63B stage 2 visual acceptance, #1792 draft (blocks #1781), #1793 library and #1795 Ground research open. #1315 not delivered.
 
 ## Agent trace
 
-- Sessions: `0a3a9c47-6962-4b43-a975-fa2a4cb6a4ab`
-- Written by: -
-- Subagents: general-purpose 13, independent-checker 5, source-inspector 1
-- Skills: 3dsmax-mcp-dev 3, blender-mcp 1, revit-mcp 1, workflow-authoring 1
-- Commands: none
-- Hook denials: 4: mcp__revit-http-2025__revit_get_document_info - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_list_levels - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_list_categories - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call ; mcp__revit-http-2025__revit_get_linked_files - Load the `revit-mcp` skill first (Skill tool), follow it, then repeat this call
-- Retries: none
-- Context at handover: 32 % (325k of 1000k tokens)
-- Duration: 26 h 44 min (2026-11-14T12:00:18Z - 2026-11-15T14:45:05Z, UTC)
-- Commits: `bd842f97..6aa786d9` (7 commits)
+- Sessions: not measured (no transcript)
+- Written by: Hermes orchestrator (shared main checkpoint)
+- Subagents: not measured (no usage log, no transcript)
+- Skills: not measured (no usage log, no transcript)
+- Commands: not measured (no usage log, no transcript)
+- Hook denials: not measured (no transcript)
+- Retries: not measured (no transcript)
+- Context at handover: not measured (no transcript)
+- Duration: not measured (no transcript)
+- Commits: `a3cba07c..a3cba07c` (0 commits)
