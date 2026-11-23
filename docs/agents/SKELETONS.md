@@ -36,7 +36,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
 | 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
-| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip`; STOP до ZIP без `export_meta` нового FBX и его readback. Для перекраски с выпуском ZIP указать оба владельца: R1 + рецепт job (АС.09: AC08 v010 через [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py)) и `agr package-vpm`; см. [маршрут ОКС ВПМ](../scenarios/oks-vpm.md#route-by-stage). |
 | 13 | `light-fbx` `_Light.fbx` | `agr validate ZIP --profile vpm`: V012, строки Light FBX ([контракт](../research/elv-agent-vs-delivered.md#контракт-light-fbx)) |
 | 14 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
 | 15 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved`: копия в `C:/x/review-<job>/`, новый Max 2026, Blender если Max занят [D255, D270] (#1740) |
