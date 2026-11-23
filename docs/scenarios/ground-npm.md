@@ -35,7 +35,7 @@ project are the `oks-npm` cell. Router table: [scenarios.json](scenarios.json); 
 | SPOZU DWG intake | `tools/source/inspect_ground_dxf.py` (AutoCAD core console → DXF → `ezdxf`) | automated and tested |
 | Ground surface | `src/dt_ai/geometry/ground_cake.py`, `ground_quads.py`; builder `dt ground v015` (`tools/ground/build_ground_v015.py`, #1106) | library tested; v015 replay byte-identical to the accepted masters |
 | MAF | `library/maf/catalogue.json`, `tools/library/maf_gen_bench.py`, `tools/materials/atlas_maf.py` | library + atlas automated; NPM light version and UV remap have no tool |
-| Flora | `library/flora/catalogue.json`, `dt_ai.materials.flora`, `tools/flora/` | textures only accepted; no NPM star builder |
+| Flora | Look up the species in [`library/flora/catalogue.json`](../../library/flora/catalogue.json); build the NPM star with [`tools/flora/build_flora_star.py`](../../tools/flora/build_flora_star.py) (#1146), then `agr place` → [`src/dt_ai/placement/site.py`](../../src/dt_ai/placement/site.py) → `engine.place` | Use the confirmed species, dimensions and approved diffuse/opacity pair; require the confirmed SPOZU point for placement. Work on a new copy, not the accepted v015 master or library original. |
 | Placement | `src/dt_ai/placement/engine.py` (MAF sinking, Flora points) | ran on Vatutino v014, `passed=false`; re-placement on v015 open (#298) |
 | Optimisation | ProOptimizer in Max (Ground LOD, ad hoc) | manual |
 | Delivery | `tools/qa/validate_package.py` (NPM stages), SINTEZ AGR Checker | no Ground package has reached passed=true |
