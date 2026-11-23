@@ -59,6 +59,8 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
 # procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
 DATA_DIR = 'data'
 SUITE_JSON = ROOT / 'docs/plans/agr-tools-suite.json'  # «Путь» source of truth, shipped as agr-tools-suite.json
+# #1757: publish catalogue [D371], shipped as published-catalogue.json (the installed assets browser reads it)
+PUBLISHED_CATALOGUE = ROOT / 'library/published/catalogue.json'
 BUNDLE = 'AGR-Tools.bundle'
 ICONS = ROOT / 'tools/max/agr_icons.py'
 
@@ -235,6 +237,8 @@ def _collect():
     inputs[UCX_AUDIT] = UCX_AUDIT.read_bytes()
     inputs[SUITE_JSON] = SUITE_JSON.read_bytes()
     entries['agr-tools-suite.json'] = inputs[SUITE_JSON].replace(b'\r\n', b'\n')
+    inputs[PUBLISHED_CATALOGUE] = PUBLISHED_CATALOGUE.read_bytes()
+    entries['published-catalogue.json'] = inputs[PUBLISHED_CATALOGUE].replace(b'\r\n', b'\n')
     entries['hygiene_core.py'] = hygiene_slice(inputs[HYGIENE].decode('utf-8').replace('\r\n', '\n'))
     entries['uv_nudge_core.py'] = nudge_slice(
         inputs[NUDGE].decode('utf-8').replace('\r\n', '\n'),

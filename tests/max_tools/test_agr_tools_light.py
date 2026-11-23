@@ -356,6 +356,9 @@ def test_options_are_validated():
 def test_glue_never_recolours_or_moves():
     src = (PKG / 'light_max.py').read_text(encoding='utf-8')
     tree = ast.parse(src)
+    export = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'light_export')
+    export_attrs = set(ast.walk(export))
     stores = [n for n in ast.walk(tree) if isinstance(n, ast.Attribute) and isinstance(n.ctx, ast.Store)]
-    assert stores == []  # Light_Metr set wirecolor outside undo (T05); the check assigns nothing
+    # The read-only check still assigns nothing. Only light.export may temporarily set node names.
+    assert all(n in export_attrs and n.attr == 'name' for n in stores)
     assert 'select' not in {n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}

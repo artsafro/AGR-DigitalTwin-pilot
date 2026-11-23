@@ -1,0 +1,156 @@
+{
+ "note": "#1738 shared-surface rebuild of Vatutino Ground from the typed SPOZU adapter JSON used by v011-v015 (paving DWG copy); slots = build_ground SLOTS (Gate 1 2026-10-19). Not delivery acceptance.",
+ "site": "VATUTINO",
+ "adapter": {
+  "path": "C:/x/t_d94665f2/paving_ground_inputs_v4.json",
+  "sha256": "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502"
+ },
+ "zero": {
+  "project_zero_m": 0.0,
+  "source": "diagnostic #1738: the adapter has no project zero; Z kept as the source marks (v015 practice: absolute marks), not a D279 answer"
+ },
+ "covers": [
+  {
+   "id": 1,
+   "name": "TileLight",
+   "adapter_keys": [
+    "tile_light"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 2,
+   "name": "TileRed",
+   "adapter_keys": [
+    "tile_red"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 3,
+   "name": "TileDark",
+   "adapter_keys": [
+    "tile_dark"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 4,
+   "name": "Pebbles",
+   "adapter_keys": [
+    "pebbles"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 5,
+   "name": "Gravel",
+   "adapter_keys": [
+    "gravel_screening"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 6,
+   "name": "Mulch",
+   "adapter_keys": [
+    "mulch"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 7,
+   "name": "LawnReinforced",
+   "adapter_keys": [
+    "lawn_reinforced"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 8,
+   "name": "LawnRolled",
+   "adapter_keys": [
+    "lawn_rolled"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  },
+  {
+   "id": 9,
+   "name": "FlowerBed",
+   "adapter_keys": [
+    "flower_bed_01",
+    "flower_bed_02",
+    "flower_bed_03",
+    "flower_bed_04",
+    "flower_bed_05",
+    "flower_bed_06",
+    "flower_bed_07",
+    "flower_bed_08"
+   ],
+   "colour": [
+    128,
+    128,
+    128
+   ],
+   "colour_reason": "diagnostic ID placeholder; the adapter carries no hatch colour; slots as Vatutino build_ground SLOTS (#295 Gate 1)"
+  }
+ ],
+ "base_id": 1,
+ "params": {
+  "cell": 4.0,
+  "chord": 0.02,
+  "snap": 0.003,
+  "relief_tol": 0.01,
+  "skirt_m": 1.0,
+  "tex_px": 4096,
+  "footprint_min_area": 1000.0,
+  "surfaces": "shared"
+ },
+ "adapter_empty": [
+  "decking"
+ ],
+ "unhatched": {
+  "cover_id": 1,
+  "reason": "Vatutino Gate 1 (user, 2026-10-19, build_ground.py docstring): slivers -> base tile_light"
+ }
+}
