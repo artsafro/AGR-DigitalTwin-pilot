@@ -1,0 +1,1955 @@
+{
+  "hypothesis": "inconclusive",
+  "scorer": "ec403b83113d89f6b8a98f648421a33a17819603",
+  "vpm_fixture_revision": "c6e4fb78d6a77b1809600ef453a80a718d15ca0c",
+  "candidate_sha256": "62773499a68e3b50e646fb2f1509b67fc393a8e6f329d35f51ea8129c550733b",
+  "numpy": "2.5.3",
+  "python": "3.14.7",
+  "states": [
+    "raw",
+    "fan0",
+    "fan1"
+  ],
+  "tolerance_m": 0.002,
+  "separation": {
+    "raw": {
+      "max_A": 0.0,
+      "min_F": 215.94862188921596,
+      "margin": 215.94862188921596,
+      "pass_margin": true,
+      "accepted_triggers": []
+    },
+    "fan0": {
+      "max_A": 0.0,
+      "min_F": 215.94862188921596,
+      "margin": 215.94862188921596,
+      "pass_margin": true,
+      "accepted_triggers": []
+    },
+    "fan1": {
+      "max_A": 0.0,
+      "min_F": 215.94862188921596,
+      "margin": 215.94862188921596,
+      "pass_margin": true,
+      "accepted_triggers": []
+    }
+  },
+  "rows": {
+    "A1": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A1_Vatutino_v015_NPM.npz",
+      "sha256": "58dacd6edf346d2e90f37b76a3e696cc69924d167f601383ac089adf0dc76523",
+      "part": "SM_Vatutino_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 27496,
+          "ngon_faces": 18983,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 46479,
+          "ngon_faces": 0,
+          "inserted_diagonals": 18983
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 46479,
+          "ngon_faces": 0,
+          "inserted_diagonals": 18983
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "invariant"
+    },
+    "F4": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/F4_r4.npz",
+      "sha256": "9b7d26af84d142448fe1363a816eef1e1e4fc5c8b6ff191995dcf958ca1ac922",
+      "part": "SM_SIL13_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            }
+          ],
+          "median_Qe": 215.94862188921596,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            }
+          ],
+          "median_Qe": 215.94862188921596,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            }
+          ],
+          "median_Qe": 215.94862188921596,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "Donskoy_VPM": {
+      "input": "C:/x/ev_t_cb0ffb18/r36-v001/Donskoy_VPM/metres.npz",
+      "sha256": "dac721925189d6dcc47341c9a60a5f9c8dfdae6a525a9e69bfaa4247f95e7eae",
+      "part": "SM_5jDonskoyProezd_Vl_15_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 989408,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 989408,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 989408,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "A2": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A2_Skolkovo_NPM.npz",
+      "sha256": "3cc015f237244077084274e7afc2a53a019f04ec72a4b9c72cb014d815f3a715",
+      "part": "SM_BolshoyBulvar_64_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 5733,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 5733,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 5733,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 5733,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "A3": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A3_COD_NPM.npz",
+      "sha256": "4424863c981f2779b5dc23a778e1ccdd9812759003a5ca1c37e1ebeef427c4c6",
+      "part": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 2801,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 2801,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 2801,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 2801,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "A4": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A4_Donskoy_NPM.npz",
+      "sha256": "98a8592309bc55e3ba3dafaa4f5e9a9c6667938a563aeffa13053d155f30c3b5",
+      "part": "SM_5jDonskoyProezd_Vl_15_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 11528,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 11528,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 11528,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 11528,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "A5": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A5_Ostrov_NPM.npz",
+      "sha256": "5c3fd2f73d10fa366eb7423e411a616e671b341caedfdbbb16c86ef18624be9a",
+      "part": "SM_NizhnieMnevniki_ZU_66_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 29760,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 29760,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 29760,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 29760,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "A6": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A6_Kasatkino_NPM.npz",
+      "sha256": "3020f77108bb208b03a39b7a1df36765e6288fd78666dc28cdc2f7a265b9cbf9",
+      "part": "SM_Kasatkina_Vl_11_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 59290,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 59290,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 59290,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 59290,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "A7": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A7_Volokolamskoe_NPM.npz",
+      "sha256": "c3fef038731551fab80f64018ccf14dd1b864d62718657214dcc7309aeecbfad",
+      "part": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 20614,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 20614,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 20614,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 20614,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "A8": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A8_Stolbovo_NPM.npz",
+      "sha256": "94b8482a2e167d9cf4d31e9f33e19e0048bacd43639930afa5dcc8065f4c17bd",
+      "part": "SM_DerevnyaStolbovo_Uch_23_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 10930,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 10930,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 10930,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 10930,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "COD_VPM": {
+      "input": "C:/x/ev_t_cb0ffb18/r36-v001/COD_VPM/metres.npz",
+      "sha256": "4fbf96af0f41a0d8215188f49dcbf9baa70de68ea63f446bad3b3043aedc4828",
+      "part": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 47677,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 47677,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 47677,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 47677,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "F1": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/F1_r1_geometry.npz",
+      "sha256": "41816fc73523e630b52658941f094bdb7d29d56440f63f7b3bff74420fd1f9b3",
+      "part": "SM_SIL13_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            },
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            },
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            }
+          ],
+          "median_Qe": 250.34884675367314,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 36549,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            },
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            },
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            }
+          ],
+          "median_Qe": 250.34884675367314,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 36549,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            },
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            },
+            {
+              "E": 915,
+              "T": 36549,
+              "Qe": 250.34884675367314,
+              "V": 1769
+            }
+          ],
+          "median_Qe": 250.34884675367314,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 36549,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "F2": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/F2_r2.npz",
+      "sha256": "b9f521c4b37acb8bf7d5a5708d776e5ebd8edb81385f5d4081ba39a96a583f4e",
+      "part": "SM_SIL13_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            },
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            },
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            }
+          ],
+          "median_Qe": 244.47654202107742,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37386,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            },
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            },
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            }
+          ],
+          "median_Qe": 244.47654202107742,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37386,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            },
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            },
+            {
+              "E": 914,
+              "T": 37386,
+              "Qe": 244.47654202107742,
+              "V": 1767
+            }
+          ],
+          "median_Qe": 244.47654202107742,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37386,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "F3": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/F3_r3.npz",
+      "sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+      "part": "SM_SIL13_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            }
+          ],
+          "median_Qe": 242.44046026224245,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            }
+          ],
+          "median_Qe": 242.44046026224245,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            }
+          ],
+          "median_Qe": 242.44046026224245,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "F5": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/F5_r5.npz",
+      "sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+      "part": "SM_SIL13_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            }
+          ],
+          "median_Qe": 242.44046026224245,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            }
+          ],
+          "median_Qe": 242.44046026224245,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            },
+            {
+              "E": 906,
+              "T": 37370,
+              "Qe": 242.44046026224245,
+              "V": 1751
+            }
+          ],
+          "median_Qe": 242.44046026224245,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 37370,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    },
+    "Skolkovo_VPM": {
+      "input": "C:/x/ev_t_cb0ffb18/r36-v001/Skolkovo_VPM/metres.npz",
+      "sha256": "d2a804cd6a46d040fb8068f262ae82d36f19ee0ec27c374b7b24deebbe772685",
+      "part": "SM_BolshoyBulvar_64_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 19673,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 19673,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 19673,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true,
+          "face_count": 19673,
+          "ngon_faces": 0,
+          "inserted_diagonals": 0
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "status": "not_exercised"
+    }
+  },
+  "injected": {
+    "states": {
+      "raw": {
+        "runs": [
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          }
+        ],
+        "median_Qe": 0.0,
+        "spread": 0.0,
+        "added_short_edges": [],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true,
+        "face_count": 27497,
+        "ngon_faces": 18984,
+        "inserted_diagonals": 0
+      },
+      "fan0": {
+        "runs": [
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          }
+        ],
+        "median_Qe": 0.0,
+        "spread": 0.0,
+        "added_short_edges": [],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true,
+        "face_count": 46481,
+        "ngon_faces": 0,
+        "inserted_diagonals": 18984
+      },
+      "fan1": {
+        "runs": [
+          {
+            "E": 1,
+            "T": 46481,
+            "Qe": 0.21514167079021534,
+            "V": 2
+          },
+          {
+            "E": 1,
+            "T": 46481,
+            "Qe": 0.21514167079021534,
+            "V": 2
+          },
+          {
+            "E": 1,
+            "T": 46481,
+            "Qe": 0.21514167079021534,
+            "V": 2
+          }
+        ],
+        "median_Qe": 0.21514167079021534,
+        "spread": 0.0,
+        "added_short_edges": [
+          [
+            27432,
+            27434
+          ]
+        ],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true,
+        "face_count": 46481,
+        "ngon_faces": 0,
+        "inserted_diagonals": 18984
+      }
+    },
+    "parity": true,
+    "valid": true,
+    "delta": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "expected": true,
+    "status": "changed"
+  },
+  "core": {
+    "input": "C:/x/ev_t193/sil13_shared_v003/SM_SIL13_Ground.obj",
+    "sha256": "8f51940939e921dc206280c385c6f045da13fc2c1b78d685bf63d0c7d0f1a450",
+    "part": "SM_SIL13_Ground",
+    "states": {
+      "raw": {
+        "runs": [
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          },
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          },
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          }
+        ],
+        "median_Qe": 69.83503831489939,
+        "spread": 0.0,
+        "added_short_edges": [],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true,
+        "face_count": 26491,
+        "ngon_faces": 0,
+        "inserted_diagonals": 0
+      },
+      "fan0": {
+        "runs": [
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          },
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          },
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          }
+        ],
+        "median_Qe": 69.83503831489939,
+        "spread": 0.0,
+        "added_short_edges": [],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true,
+        "face_count": 26491,
+        "ngon_faces": 0,
+        "inserted_diagonals": 0
+      },
+      "fan1": {
+        "runs": [
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          },
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          },
+          {
+            "E": 185,
+            "T": 26491,
+            "Qe": 69.83503831489939,
+            "V": 290
+          }
+        ],
+        "median_Qe": 69.83503831489939,
+        "spread": 0.0,
+        "added_short_edges": [],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true,
+        "face_count": 26491,
+        "ngon_faces": 0,
+        "inserted_diagonals": 0
+      }
+    },
+    "parity": true,
+    "valid": true,
+    "status": "not_exercised"
+  },
+  "timing": {
+    "pair_s": 4.010538699978497,
+    "estimated_s": 223.22994199977256,
+    "elapsed_s": 112.3161813999759,
+    "cap_s": 240,
+    "inputs_s": {
+      "A1": 2.9176794000086375,
+      "F4": 1.0928419000119902,
+      "Donskoy_VPM": 91.5622774999938,
+      "A2": 0.18046549998689443,
+      "A3": 0.12356870001531206,
+      "A4": 0.5799700999923516,
+      "A5": 1.4978884999873117,
+      "A6": 3.590106999996351,
+      "A7": 0.8585375999973621,
+      "A8": 0.5123690000036731,
+      "COD_VPM": 1.927717600017786,
+      "F1": 1.158521200006362,
+      "F2": 1.364379300008295,
+      "F3": 1.335631599999033,
+      "F5": 1.290278499975102,
+      "Skolkovo_VPM": 0.6618594999890774
+    }
+  },
+  "not_measured": [
+    "native exporter",
+    "rejected VPM",
+    "independent rejected site",
+    "UV/visual",
+    "triggering accepted controls in states whose accepted_triggers list is empty"
+  ],
+  "coverage": {
+    "accepted": [
+      "A1"
+    ],
+    "rejected": []
+  },
+  "provenance": {
+    "mode": "offline_census",
+    "source": "C:/x/review-t_2bd82699/REVIEW-r38-replay.json",
+    "sha256": "acda9aed450dc64cf87984d55fd2e726339b217d196168036e5d0f3a38375651",
+    "original_hypothesis": "confirmed",
+    "geometry_metrics": "from reviewer replay",
+    "observer_sha256": "1a0501bf98f1ea88f391338f1d7f619abd7308257b80523899c5cd03573ca96a"
+  }
+}
