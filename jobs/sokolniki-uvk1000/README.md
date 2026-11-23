@@ -49,3 +49,24 @@ textured planes, no lattice lines on the planes.
 
 Status: waiting for Artem's visual decision on v002 and on the conflicting door heads; no body built.
 Ground, live DCC sessions and `C:/x/sokolniki-npm/` were not changed.
+
+## Step 2 — body through the shared lattice core ([D375])
+
+Artem accepted v002 on 2026-11-23 (and the +2.175 m door local cuts on 2026-11-22): [D375].
+The core #1736 is not merged; it is used read-only from the PR #1770 head (`c97cf3ec`).
+
+```
+uv run python tools/methods/body/volume_body.py C:/x/ev_1784/step2/volume-lines-v002.json C:/x/ev_1784/step2/build-v004 --core <core>/tools/methods/body
+blender44 -b --factory-startup --python tools/methods/body/volume_body_blender.py -- C:/x/ev_1784/step2/build-v004/meshes.json C:/x/ev_1784/step2/build-v004
+uv run dt qa xview C:/x/ev_1784/step2/build-v004/body_quad.fbx --out .../xview_quad.json --profile NPM
+uv run python tools/methods/body/volume_body_sheet.py C:/x/ev_1784/step2/volume-lines-v002.json C:/x/ev_1784/step2/build-v004 <sheet dir>
+```
+
+Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v004/` (`sok-step2.pdf`, 2 iso views and
+elevations of every visible side with the closure result per volume, local-cut cells outlined orange, uncut
+source rectangles dashed red; `metrics.md` table against the night v020; `SHA256SUMS.txt`, 23 files).
+
+Result (quad copy): 4 volumes, 3 771 faces, 7 831 triangles after triangulation (v020: 51 737), 0 facade
+triangles, every ring closed (N 10/10, D 13/13, S 10/10, H 2/2 levels, all stations continuous), 0 defect cells,
+0 non-manifold edges, xView NPM 0/0 PASS, V004 has no fail (co-directional clearance `review`: 0 pairs under 20 mm).
+Not in this body yet: insets [D336], 47 curtain-wall bboxes left uncut in v002 (F05 is blank), 16 `zone` panels.
