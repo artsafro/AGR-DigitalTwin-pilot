@@ -45,3 +45,35 @@ are not targets. Native Max/Blender exporter, rejected VPM, independent rejected
 
 **Replay** (repo root; same PC only, customer inputs outside Git):
 `../../.venv/Scripts/python.exe docs/research/autoresearch-ground-qe-triangulation-r38.py docs/research/NEW-r38.json`.
+
+## Итог: OBSERVE, H38 inconclusive
+
+Серия остановлена по зафиксированному правилу: первая пара заняла 4,754 с, крупнейший ВПМ — 105,046 с.
+Прогноз 257,635 с превысил лимит 240 с. Это остановка по бюджету, а не отказ Qe. Замерены 3 из 16
+входов, после 109,800 с. Перенос между состояниями для всей выборки не подтверждён; порог не вводится.
+
+| Clean input | E: raw / fan0 / fan1 | T | Median Qe: raw / fan0 / fan1 | Paired ΔQe / repeat spread |
+|---|---|---:|---|---|
+| A1 Vatutino v015 NPM | 0 / 0 / 0 | 46 479 | 0 / 0 / 0 | 0 / 0 |
+| F4 SIL13 r4 NPM | 807 / 807 / 807 | 37 370 | 215.949 / 215.949 / 215.949 | 0 / 0 |
+| Donskoy VPM | 0 / 0 / 0 | 989 408 | 0 / 0 / 0 | 0 / 0 |
+
+- **Clean:** полный паритет E/T/Qe/V с #35/#36 на этих трёх входах; три повтора на состояние. `pass_margin` в
+  JSON относится только к замеренному поднабору, не к полной калибровке.
+- **Injected:** A1 + синтетический четырёхугольник, ΔT = +2 во всех состояниях, ΔE = 0/0/+1; короткая
+  диагональ `(27432, 27434)` появилась только в fan1. Это подтверждает чувствительность к диагоналям в
+  контролируемом примере, не различие на реальных поставках.
+- **Не измерено:** A2–A8, F1–F3, F5, Skolkovo и COD ВПМ, #1738 в обоих fan-вариантах (прежний Qe v003
+  от #35 остаётся 69,835 для исходного OBJ), повтор в новом процессе и влияние на принятый вход с E>0.
+  Два измеренных принятых входа не сработали; нативный экспорт также не измерялся.
+
+Contract commit `850249e3`; exact measured harness `762a01d1`, SHA-256
+`62773499a68e3b50e646fb2f1509b67fc393a8e6f329d35f51ea8129c550733b`.
+Partial receipt [`autoresearch-ground-qe-triangulation-r38.json`](autoresearch-ground-qe-triangulation-r38.json),
+SHA-256 `63d4db84b33abd1bb146e158ff08b02a87a096de000c87dfef5f53607cd0127f`.
+Same command above for an exact fresh replay on this PC; no repeat was used to bypass the stop rule.
+For a full follow-up, first freeze a new budget or a faster parity-proven observer; do not revise this receipt.
+
+Affected tests: `PYTHONPATH=src ../../.venv/Scripts/python.exe -m pytest -q tests/ops/test_xview_gate.py tests/ops/test_inv_xview.py tests/test_ground_shared_surfaces_1738.py` — 199 passed.
+`bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 542 passed; `repo_guards: GREEN`.
+Full suite: deferred to merge batch (rule 68); no PR or production changes. Review readiness: partial OBSERVE receipt only.

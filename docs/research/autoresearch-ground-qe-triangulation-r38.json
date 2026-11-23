@@ -1,0 +1,451 @@
+{
+  "hypothesis": "inconclusive",
+  "scorer": "ec403b83113d89f6b8a98f648421a33a17819603",
+  "vpm_fixture_revision": "c6e4fb78d6a77b1809600ef453a80a718d15ca0c",
+  "candidate_sha256": "62773499a68e3b50e646fb2f1509b67fc393a8e6f329d35f51ea8129c550733b",
+  "numpy": "2.5.3",
+  "python": "3.14.7",
+  "states": [
+    "raw",
+    "fan0",
+    "fan1"
+  ],
+  "tolerance_m": 0.002,
+  "separation": {
+    "raw": {
+      "max_A": 0.0,
+      "min_F": 215.94862188921596,
+      "margin": 215.94862188921596,
+      "pass_margin": true,
+      "accepted_triggers": []
+    },
+    "fan0": {
+      "max_A": 0.0,
+      "min_F": 215.94862188921596,
+      "margin": 215.94862188921596,
+      "pass_margin": true,
+      "accepted_triggers": []
+    },
+    "fan1": {
+      "max_A": 0.0,
+      "min_F": 215.94862188921596,
+      "margin": 215.94862188921596,
+      "pass_margin": true,
+      "accepted_triggers": []
+    }
+  },
+  "rows": {
+    "A1": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/A1_Vatutino_v015_NPM.npz",
+      "sha256": "58dacd6edf346d2e90f37b76a3e696cc69924d167f601383ac089adf0dc76523",
+      "part": "SM_Vatutino_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            },
+            {
+              "E": 0,
+              "T": 46479,
+              "Qe": 0.0,
+              "V": 0
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "invariant": true
+    },
+    "F4": {
+      "input": "C:/x/ev_t_193a0887/dumps-v002/F4_r4.npz",
+      "sha256": "9b7d26af84d142448fe1363a816eef1e1e4fc5c8b6ff191995dcf958ca1ac922",
+      "part": "SM_SIL13_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            }
+          ],
+          "median_Qe": 215.94862188921596,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            }
+          ],
+          "median_Qe": 215.94862188921596,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            },
+            {
+              "E": 807,
+              "T": 37370,
+              "Qe": 215.94862188921596,
+              "V": 1576
+            }
+          ],
+          "median_Qe": 215.94862188921596,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "invariant": true
+    },
+    "Donskoy_VPM": {
+      "input": "C:/x/ev_t_cb0ffb18/r36-v001/Donskoy_VPM/metres.npz",
+      "sha256": "dac721925189d6dcc47341c9a60a5f9c8dfdae6a525a9e69bfaa4247f95e7eae",
+      "part": "SM_5jDonskoyProezd_Vl_15_Ground",
+      "states": {
+        "raw": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        },
+        "fan0": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        },
+        "fan1": {
+          "runs": [
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            },
+            {
+              "E": 0,
+              "T": 989408,
+              "Qe": 0.0,
+              "V": 6
+            }
+          ],
+          "median_Qe": 0.0,
+          "spread": 0.0,
+          "added_short_edges": [],
+          "removed_short_edges": [],
+          "oracle": true,
+          "repeat": true
+        }
+      },
+      "parity": true,
+      "valid": true,
+      "invariant": true
+    }
+  },
+  "injected": {
+    "states": {
+      "raw": {
+        "runs": [
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          }
+        ],
+        "median_Qe": 0.0,
+        "spread": 0.0,
+        "added_short_edges": [],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true
+      },
+      "fan0": {
+        "runs": [
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          },
+          {
+            "E": 0,
+            "T": 46481,
+            "Qe": 0.0,
+            "V": 2
+          }
+        ],
+        "median_Qe": 0.0,
+        "spread": 0.0,
+        "added_short_edges": [],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true
+      },
+      "fan1": {
+        "runs": [
+          {
+            "E": 1,
+            "T": 46481,
+            "Qe": 0.21514167079021534,
+            "V": 2
+          },
+          {
+            "E": 1,
+            "T": 46481,
+            "Qe": 0.21514167079021534,
+            "V": 2
+          },
+          {
+            "E": 1,
+            "T": 46481,
+            "Qe": 0.21514167079021534,
+            "V": 2
+          }
+        ],
+        "median_Qe": 0.21514167079021534,
+        "spread": 0.0,
+        "added_short_edges": [
+          [
+            27432,
+            27434
+          ]
+        ],
+        "removed_short_edges": [],
+        "oracle": true,
+        "repeat": true
+      }
+    },
+    "parity": true,
+    "valid": true,
+    "invariant": false,
+    "delta": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "expected": true
+  },
+  "core": null,
+  "timing": {
+    "pair_s": 4.754278300009901,
+    "estimated_s": 257.6345664001419,
+    "elapsed_s": 109.8003083000076,
+    "cap_s": 240,
+    "inputs_s": {
+      "A1": 3.4180238000117242,
+      "F4": 1.3362337999860756,
+      "Donskoy_VPM": 105.04589170002146
+    }
+  },
+  "not_measured": [
+    "native exporter",
+    "rejected VPM",
+    "independent rejected site",
+    "UV/visual",
+    "triggering accepted controls in states whose accepted_triggers list is empty"
+  ]
+}
