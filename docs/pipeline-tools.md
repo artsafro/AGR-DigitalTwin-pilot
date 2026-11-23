@@ -134,6 +134,9 @@ Environment and test commands: `docs/agents/agents-reference.md`.
 
 ### 3ds Max xView runner — `tools/qa/xview_dump.ms` (#528)
 - Status: contract-tested and native-measured on Max 2024 (2026-10-24) via the supported batch route `dcc_batch.py max --version 2024 --file tools/qa/xview_dump.ms` (3dsmaxbatch, shared lock, run on copies); this is the only launcher evidenced by the retained `SUMMARY.md` and the four JSON (the JSON carry no launcher identity). The startup invocation `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` below is documented but has no retained native measurement.
+  Max 2025 and later are refused by the script with `XVIEW_UNSUPPORTED_MAX_VERSION` before job access or staging
+  (#1790): the file-identity helper uses CodeDOM compilation, which .NET 8 does not support. This refusal does not
+  write or delete run receipts. Use Max 2024 and a fresh prepared run; do not collect old receipts after a failed launch.
   `3dsmax.exe -U MAXScript tools/qa/xview_dump.ms` with `XVIEW_OUT` (alias `TOW02_XV_OUT`) a directory that
   already contains `jobs.txt`. The receipt line is `#nonce:<id>`; each model is exactly six fields
   `label|path|node|mode|material|slot`. Path is `.fbx` (import into a reset scene) or `.max`
