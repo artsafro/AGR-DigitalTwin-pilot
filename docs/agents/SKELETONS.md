@@ -137,7 +137,7 @@ Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
 | 3 | `quads` квадраты и швы | `dt ground v015` только для Ватутино; `ground_quads.py` |
 | 4 | `library` МАФ и Флора, атласы | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
 | 5 | `maf-light` лёгкий МАФ | пробел |
-| 6 | `flora-star` звёзды Флоры | [`tools/flora/build_flora_star.py`](../../tools/flora/build_flora_star.py) (#1146): утверждённые diffuse/opacity; затем `agr place` → [`placement/site.py`](../../src/dt_ai/placement/site.py) → `engine.place` |
+| 6 | `flora-star` звёзды Флоры | Каталог → при отсутствии принятого куста [`tools/flora/build_flora_star.py`](../../tools/flora/build_flora_star.py) (#1146) → расчёт НПМ-точки через `engine.place`. `agr place` → [`placement/site.py`](../../src/dt_ai/placement/site.py) вызывает то же ядро только для пары НПМ + ВПМ. Указать обе точки входа, даже если план останавливается на сверке вида, карт и точки СПОЗУ. |
 | 7 | `placement` расстановка | `uv run python -m dt_ai.placement.engine` |
 | 8 | `optimise` бюджет НПМ (без ProOptimizer) | пробел |
 | 9 | `master-qa` | `tools/qa/master_topology.py` |
