@@ -46,6 +46,24 @@ are not targets. Native Max/Blender exporter, rejected VPM, independent rejected
 **Replay** (repo root; same PC only, customer inputs outside Git):
 `../../.venv/Scripts/python.exe docs/research/autoresearch-ground-qe-triangulation-r38.py docs/research/NEW-r38.json`.
 
+## Review addendum contract (before remeasurement)
+
+Same inputs, scorer, metric, three repeats, bounds, oracle and timing cap as above; one corrected replay,
+zero new candidates. Keep the original receipt untouched. For each state record face count, n>3 face count
+and inserted diagonals (one insertion per interior triangulation edge per source polygon, `n−3` for a
+simple n-gon; not the global count of unique edges). Raw has zero insertions. With zero insertions in either
+fan the perturbation is `not_exercised`, never invariant. Require at least one exercised accepted and one
+exercised rejected input in addition to the original confirmation conditions. Core and injected witness
+are not calibration labels. An observed counterexample on an exercised fixture or a failed separation
+still refutes on a complete valid run; otherwise missing coverage makes the result inconclusive.
+
+Corrected replay: `../../.venv/Scripts/python.exe docs/research/autoresearch-ground-qe-triangulation-r38.py docs/research/NEW-r38-addendum.json`.
+For the review addendum use one offline coverage pass over the complete reviewer replay (no new metric
+measurements or timing-based verdict; zero candidate runs). Bind the source replay by SHA-256, verify every
+input hash, and combine its recorded parity/spread/margins with the corrected coverage rule. The command is
+`../../.venv/Scripts/python.exe docs/research/autoresearch-ground-qe-triangulation-r38.py docs/research/NEW-r38-addendum.json --review-replay C:/x/review-t_2bd82699/REVIEW-r38-replay.json`.
+The corrected live replay remains subject to its original runtime stop.
+
 ## Итог: OBSERVE, H38 inconclusive
 
 Серия остановлена по зафиксированному правилу: первая пара заняла 4,754 с, крупнейший ВПМ — 105,046 с.
