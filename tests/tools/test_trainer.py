@@ -58,6 +58,13 @@ def test_task_text_never_contains_key_or_rejected():
         for tok in T.secret_tokens(e):
             assert tok not in text, (e["id"], tok)
         assert e["key"]["sha256"] not in text
+        assert "[D389]" in text and "accoreconsole" in text and "3ds Max is NOT available" in text
+
+
+def test_d389_row_recorded_once():
+    rows = [ln for ln in (T.ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
+            if ln.startswith("| D389 |")]
+    assert len(rows) == 1 and "AutoCAD Core Console" in rows[0] and "3ds Max" in rows[0]
 
 
 def test_task_text_refuses_a_leaking_task():

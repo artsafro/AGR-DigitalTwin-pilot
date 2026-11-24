@@ -215,7 +215,9 @@ def task_text(e, inputs_dir, out_dir):
               f"Deliverable: {e.get('deliverable', 'one FBX of the result')} in that folder.",
               "Follow AGENTS.md and docs/agents/SKELETONS.md. You run headless: nobody answers questions; when a",
               "decision only the user can make blocks you, write the question into QUESTIONS.md in the output",
-              "folder and continue with the documented default or stop. Do not commit or push."]
+              "folder and continue with the documented default or stop. Do not commit or push.",
+              "DCC [D389]: AutoCAD Core Console (accoreconsole, headless DWG->DXF via the skeleton's converter)",
+              "and Blender are allowed; live 3ds Max is NOT available in a practice run."]
     text = "\n".join(lines) + "\n"
     leaks = [t for t in secret_tokens(e) if t in text]
     if leaks:

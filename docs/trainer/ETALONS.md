@@ -5,6 +5,8 @@ Issue #1855. Репо учится строить, пересобирая при
 или ядро. Саму модель в прогоне не правят. Машинный банк: [`etalons.json`](etalons.json). Журнал: [`ledger.json`](ledger.json).
 Код: `tools/trainer/trainer.py` (`agr trainer`), тесты: `tests/tools/test_trainer.py`.
 Улики (правило 57): `G:/Мой диск/AGR-evidence/1855-trainer-v0/` + `SHA256SUMS.txt`.
+DCC в тренировочном прогоне [D389]: AutoCAD Core Console (headless DWG→DXF через конвертер скелета) и Blender
+разрешены; живой 3ds Max исключён. Текст задачи говорит об этом агенту.
 
 ## Команды
 
