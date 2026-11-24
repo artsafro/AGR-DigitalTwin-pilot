@@ -183,3 +183,32 @@ def test_roof_face_selects_inside_ring_above_level_only():
     assert not pp.roof_face((0.0, y1 + 0.3, 8.0), RECT, 7.85)         # outside elements are not roof
     with pytest.raises(ValueError):
         pp.roof_face((0.0, 0.0, math.nan), RECT, 7.85)
+
+
+def test_clamp_outside_moves_points_in_front_of_the_ring_plane():
+    x0, y0, x1, y1 = RECT
+    pts = [(0.0, y0 - 0.5, 1.0), (0.0, y0 + 0.16, 1.0), (0.0, y0 - 0.006, 1.0), (0.0, y0 - 0.005, 1.0)]
+    out, moved = pp.clamp_outside(pts, 'S', RECT, 0.006)
+    assert moved == 2                                   # inside the ring and 5 mm out; exactly at the gap stays
+    assert out[0] == pts[0] and out[2] == pts[2]
+    assert out[1][1] == pytest.approx(y0 - 0.006) and out[3][1] == pytest.approx(y0 - 0.006)
+    assert pp.clamp_outside([(x1 + 0.001, 0, 0)], 'E', RECT, 0.006)[0][0][0] == pytest.approx(x1 + 0.006)
+
+
+@pytest.mark.parametrize('pts,side,gap', [([(0, 0, 0)], 'X', 0.006), ([(0, 0, 0)], 'S', 0.0),
+                                          ([(math.nan, 0, 0)], 'S', 0.006), ([(0, 0, 0)], 'S', math.inf)])
+def test_clamp_outside_fails_closed(pts, side, gap):
+    with pytest.raises(ValueError):
+        pp.clamp_outside(pts, side, RECT, gap)
+
+
+def test_clamp_outside_probe_every_point_at_least_gap_outside():
+    rng = random.Random(16093)
+    planes = {'W': (0, -1, RECT[0]), 'E': (0, 1, RECT[2]), 'S': (1, -1, RECT[1]), 'N': (1, 1, RECT[3])}
+    for _ in range(300):
+        side = rng.choice('WESN')
+        ax, sg, plane = planes[side]
+        pts = [tuple(rng.uniform(-20, 20) for _ in range(3)) for _ in range(rng.randint(1, 8))]
+        out, moved = pp.clamp_outside(pts, side, RECT, 0.006)
+        assert all((q[ax] - plane) * sg >= 0.006 - 1e-12 for q in out)
+        assert moved == sum(1 for p, q in zip(pts, out) if p != q)

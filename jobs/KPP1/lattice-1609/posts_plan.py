@@ -183,6 +183,32 @@ def glass_target(depths, behind, cap_max, gap):
     return glass_shift(depths, cap), ('reveal' if cap == cap_max else 'surface')
 
 
+def clamp_outside(points, side, rect, gap):
+    """Kept v003 elements reach into the ring (a portal's sides run 0.16 m into the old wall), where the lattice body
+    now stands: they would pierce it (V004 self-intersections per mesh). Every point less than `gap` outside the
+    `side` ring plane moves onto plane + gap (outward), so the element stops just in front of the body and never
+    touches it (gap > the 2 mm duplicate tolerance). Returns (points, moved count). Unknown side / gap <= 0 = error."""
+    x0, y0, x1, y1 = check_rect(rect)
+    _finite([gap], 'gap')
+    if gap <= 0:
+        raise ValueError(f'gap {gap} must be > 0')
+    if side not in ('W', 'E', 'S', 'N'):
+        raise ValueError(f'unknown side {side!r}')
+    ax = 0 if side in 'WE' else 1
+    sg = -1 if side in 'WS' else 1
+    plane = {'W': x0, 'E': x1, 'S': y0, 'N': y1}[side]
+    limit = plane + sg * gap
+    out, moved = [], 0
+    for p in points:
+        _finite(p, 'point')
+        q = list(p)
+        if (q[ax] - limit) * sg < 0:
+            q[ax] = limit
+            moved += 1
+        out.append(tuple(q))
+    return out, moved
+
+
 def roof_face(centre, rect, z_min, tol=0.002):
     """A source face belongs to the roof element (#1609 package step: the lattice body is an open facade tube, the
     v003 roof slab, parapet top / inner faces and roof equipment stay as one separate element [D336]) if its centre

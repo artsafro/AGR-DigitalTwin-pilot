@@ -51,6 +51,9 @@ GLASS_GAP = 0.01   # glass sits 1 cm in front of the body surface behind it
 SEE_M = 0.6   # body faces up to 0.6 m behind the ring plane read the v003 finish at their place (doors/frames 0.3-0.45)
 REACH_M = 1.5   # how far behind the ring plane a ray looks for that v003 surface (N entrance vestibule ~1 m deep)
 ROOF_Z = 7.85   # v003 roof slab at 7.91, parapet top 8.65: faces inside the ring at or above this are the roof element
+KEEP_GAP_M = 0.006   # kept v003 elements stop 6 mm in front of the body: > 2 mm duplicates, > 5 mm co-directional
+KEEP_MERGE_M = 0.0021   # > the 2 mm xView / V004 duplicate-vertex tolerance
+NICHE_M = 0.15   # a frame reaches back to a body surface at most this deep (0.11 niches; not the 0.25 openings)
 OUT_SIGN = {'SW': (-1, -1), 'SE': (1, -1), 'NE': (1, 1), 'NW': (-1, 1)}
 
 
@@ -117,7 +120,7 @@ def check_tile_scheme(src, uvl, finish_of_udim, bands):
     return {band: round(a, 2) for band, (fin, a) in best.items()}
 
 
-def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M):
+def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M, body_tree=None):
     """Voxel rebuild of one axis-aligned outside component on the snapped planes of its own faces [D336]:
     `corner_plan.post_cells` (rays: outward axis first), voxels inside the ring are body, contact faces on the ring
     planes are not built. Finish per quad = the UDIM tile of the nearest coplanar source face (v003 tile scheme).
@@ -142,11 +145,45 @@ def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M):
     x0, y0, x1, y1 = RECT
     lo = [min(p[a] for t in tris for p in t) - 1e-3 for a in range(3)]
     hi = [max(p[a] for t in tris for p in t) + 1e-3 for a in range(3)]
+    if body_tree is not None:
+        # frames reach back to a body surface <= NICHE_M behind them (a ground-floor niche 0.11 deep would leave the
+        # frame floating 11 cm in front of the wall): that surface's plane becomes a line of the outward axis
+        ax, sg = rays[0]
+        plane = {(0, -1): x0, (0, 1): x1, (1, -1): y0, (1, 1): y1}[(ax, sg)]
+        a2, b2 = [k for k in range(3) if k != ax]
+        d_dir = Vector([0.0, 0.0, 0.0])
+        d_dir[ax] = -sg
+        for i in range(5):
+            for j in range(5):
+                o = Vector([0.0, 0.0, 0.0])
+                o[ax] = plane + sg * 0.5
+                o[a2] = lo[a2] + (hi[a2] - lo[a2]) * (i + 0.5) / 5
+                o[b2] = lo[b2] + (hi[b2] - lo[b2]) * (j + 0.5) / 5
+                hit = body_tree.ray_cast(o, d_dir, 1.0)
+                if hit[2] is not None and 0.002 < hit[3] - 0.5 <= NICHE_M:
+                    (xs_raw, ys_raw, zs_raw)[ax].append(hit[0][ax])
+        lo[ax] = min(lo[ax], min((xs_raw, ys_raw, zs_raw)[ax]) - 1e-3)
+        hi[ax] = max(hi[ax], max((xs_raw, ys_raw, zs_raw)[ax]) + 1e-3)
     xs, _ = cp.snap_values(xs_raw, snap, prefer=[v for v in (x0, x1) if lo[0] <= v <= hi[0]])
     ys, _ = cp.snap_values(ys_raw, snap, prefer=[v for v in (y0, y1) if lo[1] <= v <= hi[1]])
     zs, _ = cp.snap_values(zs_raw, snap)
-    cells = cp.post_cells(tris, xs, ys, zs, rays=tuple(rays), skip=lambda c: pp.inside_ring(c, RECT))
-    quads = cp.post_faces(cells, xs, ys, zs, hidden=lambda c, n: pp.ring_contact(c, n, RECT))
+    if body_tree is None:     # posts: every voxel inside the ring is body
+        skip = lambda c: pp.inside_ring(c, RECT)  # noqa: E731
+    else:                     # frames: a voxel is body only behind a body surface (outward ray hits the body), so a
+        out_dir = Vector([0.0, 0.0, 0.0])        # frame in front of a recessed wall keeps its inner part (no gap)
+        out_dir[rays[0][0]] = rays[0][1]
+        skip = lambda c: body_tree.ray_cast(Vector(c), out_dir, 2.0)[2] is not None  # noqa: E731
+    cells = cp.post_cells(tris, xs, ys, zs, rays=tuple(rays), skip=skip)
+    def hidden(c, n):
+        """Contact with the body: on the ring plane facing in, or (frames) facing a body surface within 1 mm."""
+        if pp.ring_contact(c, n, RECT):
+            return True
+        if body_tree is None:
+            return False
+        nv = Vector(n)
+        hit = body_tree.ray_cast(Vector(c) - nv * 0.001, nv, 0.002)
+        return hit[2] is not None
+    quads = cp.post_faces(cells, xs, ys, zs, hidden=hidden)
     out = []
     for corners_, n in quads:
         cen = Vector([sum(c[k] for c in corners_) / 4 for k in range(3)])
@@ -159,20 +196,31 @@ def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M):
                  'cells': len(cells), 'quads': len(out), 'finishes': sorted({o[2] for o in out})}
 
 
-def keep_element(src, uvl, fids, finish_of_udim, label):
+def keep_element(src, uvl, fids, finish_of_udim, label, side=None):
     """A flat or slanted outside component keeps its v003 faces (quads) as its own element [D336]; finish per face
-    from its v003 UDIM tile (unmapped tile = error)."""
-    out = []
+    from its v003 UDIM tile (unmapped tile = error). With `side`, points inside the ring (or closer than KEEP_GAP_M
+    to its plane) move to KEEP_GAP_M in front of it (`posts_plan.clamp_outside`: no piercing of the lattice body);
+    a face that collapses there (area < 1e-8 m2, it lay inside the wall) is dropped and counted."""
+    out, moved, dropped = [], 0, 0
     for fi in fids:
         f = src.faces[fi]
         tile = face_tile([tuple(lp[uvl].uv) for lp in f.loops])
         if tile not in finish_of_udim:
             raise ValueError(f'{label}: face {fi} UDIM {tile} has no finish in the v003 tile scheme')
-        out.append(([tuple(v.co) for v in f.verts], tuple(f.normal), finish_of_udim[tile]))
-    return out
+        pts = [tuple(v.co) for v in f.verts]
+        if side is not None:
+            pts, m = pp.clamp_outside(pts, side, RECT, KEEP_GAP_M)
+            moved += m
+            vs = [Vector(p) for p in pts]
+            area = sum(((vs[k] - vs[0]).cross(vs[k + 1] - vs[0])).length for k in range(1, len(vs) - 1)) / 2
+            if area < 1e-8 or len({tuple(round(c, 6) for c in p) for p in pts}) < len(pts):
+                dropped += 1
+                continue
+        out.append((pts, tuple(f.normal), finish_of_udim[tile]))
+    return out, {'points_moved': moved, 'faces_dropped': dropped}
 
 
-def post_plans(path, finish_of_udim, bands, with_elements=False):
+def post_plans(path, finish_of_udim, bands, with_elements=False, body_tree=None):
     src = import_fbx(path, lambda o: o.name.startswith('SM_Kpp_1_Main') and 'Glass' not in o.name)
     uvl = src.loops.layers.uv.active
     scheme_ok = check_tile_scheme(src, uvl, finish_of_udim, bands)
@@ -206,11 +254,12 @@ def post_plans(path, finish_of_udim, bands, with_elements=False):
             row.update(name=name, area_m2=round(area, 3), slanted_area_m2=round(slanted, 3), method=plan['method'],
                        why=plan['why'], own_planes=planes)
             if plan['method'] == 'voxel':
-                out, r = voxel_element(src, uvl, fs, plan['rays'], finish_of_udim, name, ELEMENT_SNAP_M)
+                out, r = voxel_element(src, uvl, fs, plan['rays'], finish_of_udim, name, ELEMENT_SNAP_M, body_tree)
                 row.update(r)
             else:
-                out = keep_element(src, uvl, fs, finish_of_udim, name)
-                row.update(quads=sum(1 for o in out if len(o[0]) == 4), finishes=sorted({o[2] for o in out}))
+                out, clamp = keep_element(src, uvl, fs, finish_of_udim, name,
+                                          None if plan['why'] == 'flat' else plan['side'])
+                row.update(clamp=clamp, quads=sum(1 for o in out if len(o[0]) == 4), finishes=sorted({o[2] for o in out}))
             if not out:
                 raise ValueError(f'{name}: rebuild gave no faces ({row})')
             elements[name] = out
@@ -219,7 +268,7 @@ def post_plans(path, finish_of_udim, bands, with_elements=False):
         roof = [f.index for f in src.faces if pp.roof_face(tuple(f.calc_center_median()), RECT, ROOF_Z)]
         if not roof:
             raise ValueError(f'no v003 roof faces inside the ring above z {ROOF_Z}')
-        elements['SM_Kpp_1_Main_Roof'] = keep_element(src, uvl, roof, finish_of_udim, 'SM_Kpp_1_Main_Roof')
+        elements['SM_Kpp_1_Main_Roof'], _ = keep_element(src, uvl, roof, finish_of_udim, 'SM_Kpp_1_Main_Roof')
         other.append({'name': 'SM_Kpp_1_Main_Roof', 'faces': len(roof), 'method': 'keep',
                       'why': f'v003 roof inside the ring above z {ROOF_Z} (the lattice body is an open facade tube)',
                       'quads': sum(1 for o in elements['SM_Kpp_1_Main_Roof'] if len(o[0]) == 4),
@@ -255,7 +304,7 @@ def finish_uv(bm, names, spec):
     return nb, qa, dens
 
 
-def to_object(bm, name, mat):
+def to_object(bm, name, mat, names):
     me = bpy.data.meshes.new(name)
     bm.to_mesh(me)
     me.materials.append(mat)
@@ -266,6 +315,7 @@ def to_object(bm, name, mat):
         me.uv_layers.remove(me.uv_layers['UVM'])
     me.uv_layers.active = me.uv_layers['UVMap']
     ob = bpy.data.objects.new(name, me)
+    ob['finish_names'] = ','.join(names)   # face attribute 'finish' index -> name (export_npm reads it)
     bpy.context.scene.collection.objects.link(ob)
     return ob
 
@@ -406,6 +456,46 @@ def opening_finishes(body, v003_fbx, finish_of_udim, names, bands, report):
     report['opening_finish'] = {'faces_seen': seen, 'changed': changed, 'see_m': SEE_M, 'reach_m': REACH_M}
 
 
+def delivery_master(objs, out):
+    """Delivery copy of the element master (package step): the regulation objects are SM_<A>_Main, SM_<A>_MainGlass
+    and UCX hulls (export_vpm / export_npm take exactly one *_Main), so every separate element is joined into
+    SM_Kpp_1_Main as its own LOOSE part - objects joined, no vertex merged [D336]; per-part face counts are kept in
+    the report and a loose-part count below the element count is an error (something got welded)."""
+    main = objs['SM_Kpp_1_Main']
+    parts = [o for n, o in objs.items() if n != 'SM_Kpp_1_Main']
+    def islands(me):
+        bm = bmesh.new()
+        bm.from_mesh(me)
+        seen, n = set(), 0
+        for f0 in bm.faces:
+            if f0.index in seen:
+                continue
+            n += 1
+            stack = [f0]
+            seen.add(f0.index)
+            while stack:
+                f = stack.pop()
+                for v in f.verts:
+                    for nf in v.link_faces:
+                        if nf.index not in seen:
+                            seen.add(nf.index)
+                            stack.append(nf)
+        bm.free()
+        return n
+    want = sum(islands(o.data) for o in [main] + parts)
+    faces = {o.name: len(o.data.polygons) for o in [main] + parts}
+    with bpy.context.temp_override(active_object=main, selected_editable_objects=[main] + parts):
+        bpy.ops.object.join()
+    got = islands(main.data)
+    if got != want or len(main.data.polygons) != sum(faces.values()):
+        raise ValueError(f'join changed the parts: islands {want} -> {got}, faces {sum(faces.values())} -> '
+                         f'{len(main.data.polygons)}')
+    path = os.path.join(out, 'master-v004-delivery.blend')
+    bpy.ops.wm.save_as_mainfile(filepath=path, copy=True)
+    return {'file': 'master-v004-delivery.blend', 'joined_into': 'SM_Kpp_1_Main', 'parts_faces': faces,
+            'loose_parts': got, 'objects': sorted(o.name for o in bpy.context.scene.objects)}
+
+
 def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
     if mode not in ('posts', 'package'):
         raise SystemExit(f'unknown mode {mode!r}: posts | package')
@@ -427,7 +517,8 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
         raise SystemExit(f'{v003_textures}: finishes {unknown} are not in vpm_textures.json')
     bpy.ops.wm.read_factory_settings(use_empty=True)
     body, body_count = body_bmesh(body_fbx, names, bands)
-    plans, post_rep, other, elements, outside, scheme = post_plans(v003_fbx, finish_of_udim, bands, with_elements)
+    plans, post_rep, other, elements, outside, scheme = post_plans(v003_fbx, finish_of_udim, bands, with_elements,
+                                                                    BVHTree.FromBMesh(body))
     missing = sorted(set(pp.ring_corners(RECT)) - set(plans))
     mat = vpm_uv.main_material(bpy, spec, tex_dir)
     objs, qa = {}, {}
@@ -435,14 +526,23 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
     if with_elements:
         opening_finishes(body, v003_fbx, finish_of_udim, names, bands, carry_rep)
     nb, q, d = finish_uv(body, names, spec)
-    objs['SM_Kpp_1_Main'] = to_object(nb, 'SM_Kpp_1_Main', mat)
+    objs['SM_Kpp_1_Main'] = to_object(nb, 'SM_Kpp_1_Main', mat, names)
     qa['SM_Kpp_1_Main'] = {'uv': q, 'density_px_m': d, 'faces_before_texel_cut': None}
     nb.free()
     parts = [(f'SM_Kpp_1_Main_Post_{corner}', quads) for corner, quads in sorted(plans.items())]
     for name, quads in parts + sorted(elements.items()):
-        nb, q, d = finish_uv(post_bmesh(quads, names), names, spec)
-        objs[name] = to_object(nb, name, mat)
-        qa[name] = {'uv': q, 'density_px_m': d}
+        bm = post_bmesh(quads, names)
+        merged = None
+        if any(r.get('name') == name and r.get('clamp', {}).get('points_moved') for r in other):
+            # clamped kept element: points that met on the clamp plane closer than the xView vertex threshold (2 mm)
+            # are one point of this element (its own topology, never welded to the body)
+            nv = len(bm.verts)
+            bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=KEEP_MERGE_M)
+            bmesh.ops.dissolve_degenerate(bm, edges=bm.edges[:], dist=1e-6)
+            merged = {'verts_merged': nv - len(bm.verts), 'tris': sum(1 for f in bm.faces if len(f.verts) == 3)}
+        nb, q, d = finish_uv(bm, names, spec)
+        objs[name] = to_object(nb, name, mat, names)
+        qa[name] = {'uv': q, 'density_px_m': d, 'clamp_merge': merged}
         nb.free()
     carried = {}
     if with_elements:
@@ -468,6 +568,8 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, 'master-v004-lattice.blend'), copy=True)
     bpy.ops.export_scene.fbx(filepath=os.path.join(out, 'SM_Kpp_1.v004-lattice.fbx'), use_selection=False,
                              mesh_smooth_type='FACE', path_mode='STRIP')
+    if with_elements:
+        rep['delivery_master'] = delivery_master(objs, out)
     with open(os.path.join(out, 'assemble.json'), 'x', encoding='utf-8') as fh:
         json.dump(rep, fh, indent=1, default=str)
     print('ASSEMBLE', json.dumps({'objects': rep['objects'], 'missing': missing, 'other': len(other)}))
