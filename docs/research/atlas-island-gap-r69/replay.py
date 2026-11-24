@@ -35,6 +35,12 @@ VERSIONS = {  # label, SM_Nku_1.zip SHA-256 (same pins as #67/#68)
 }
 FLOOR_PX, UV_EPS, OVERLAP_PX2, TEXTURED = 8.0, 1e-6, 0.01, 4096
 ROUNDS, READBACK_LIMIT_S, BUDGET_S = 3, 120.0, 900.0
+# R2 amendment: the real NPM (export_npm_meta.json -> package-npm) on its 2048 atlas next to the ZIP.
+NPM = {"v007": ("0d1fa6c036bb553459dd0e9baec8be4ace8bc61d5acea6aab585d713f2292d0f",
+                "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516"),
+       "v010": ("8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3",
+                "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278")}
+PACKAGE = "vpm"  # set by main(): "vpm" = R1 frozen fixture SM_Nku_1.zip, "npm" = R2 0000_Nku_1.zip
 
 
 def _tile(uv):
@@ -104,10 +110,11 @@ def census(isl, sides):
                        "min_gap_px": round(min(gaps), 6) if gaps else None}
     tex = [t for t in tiles.values() if t["textured"]]
     gaps = [t["min_gap_px"] for t in tex if t["min_gap_px"] is not None]
-    return {"N69": sum(t["sub_floor_pairs"] for t in tex),
+    measured = sum(t["pairs"] - t["overlap_pairs"] for t in tex)  # R2: empty gap set = not applicable
+    return {"N69": sum(t["sub_floor_pairs"] for t in tex), "measured_gaps": measured,
             "overlap_pairs_textured": sum(t["overlap_pairs"] for t in tex),
             "min_gap_px_textured": min(gaps) if gaps else None,
-            "applicable": any(t["islands"] >= 2 for t in tex), "tiles": {str(k): v for k, v in tiles.items()}}
+            "applicable": measured > 0, "tiles": {str(k): v for k, v in tiles.items()}}
 
 
 def witness(isl, sides, target_px):
@@ -141,11 +148,19 @@ def witness(isl, sides, target_px):
 
 
 def fixture(v):
-    return DRIVE / f"559-tec26-oks-ac08-pilot-{v}" / "SM_Nku_1.zip"
+    d = DRIVE / f"559-tec26-oks-ac08-pilot-{v}"
+    return d / ("0000_Nku_1.zip" if PACKAGE == "npm" else "SM_Nku_1.zip")
+
+
+def npm_atlas(v):
+    return DRIVE / f"559-tec26-oks-ac08-pilot-{v}" / "T_Nku_1_001_Main_d_1.png"
 
 
 def preflight():
-    pins = PINS | {fixture(v): h for v, (_, h) in VERSIONS.items()}
+    if PACKAGE == "npm":
+        pins = PINS | {fixture(v): z for v, (z, _) in NPM.items()} | {npm_atlas(v): a for v, (_, a) in NPM.items()}
+    else:
+        pins = PINS | {fixture(v): h for v, (_, h) in VERSIONS.items()}
     for p, expected in pins.items():
         with p.open("rb") as f:
             if hashlib.file_digest(f, "sha256").hexdigest() != expected:
@@ -158,10 +173,16 @@ def preflight():
 def one(v, out, timeout):
     from twinqa.scene import readback
 
-    fbx = out / f"{v}_SM_Nku_1.fbx"
+    member = "0000_Nku_1_01.fbx" if PACKAGE == "npm" else "SM_Nku_1.fbx"
+    fbx = out / f"{v}_{member}"
     sides = {}
+    if PACKAGE == "npm":  # one 2048 atlas = tile 1001, decoded side checked
+        with Image.open(npm_atlas(v)) as im:
+            if im.size != (TEXTURED, TEXTURED):
+                raise ValueError(f"{v}: NPM atlas {im.size} != {TEXTURED}")
+        sides = {1001: TEXTURED}
     with zipfile.ZipFile(fixture(v)) as z:
-        fbx.write_bytes(z.read("SM_Nku_1.fbx"))
+        fbx.write_bytes(z.read(member))
         for name in z.namelist():
             if "_Diffuse_" in name and name.endswith(".png"):
                 with Image.open(io.BytesIO(z.read(name))) as im:
@@ -183,7 +204,11 @@ def one(v, out, timeout):
     return row
 
 
-def main(out):
+def main(out, package="vpm"):
+    global PACKAGE, TEXTURED
+    PACKAGE = package
+    if package == "npm":
+        TEXTURED = 2048
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     pins = preflight()
@@ -212,7 +237,7 @@ def main(out):
         verdict = "inconclusive"
     else:
         verdict = "confirmed" if n7 > n10 else "refuted"
-    receipt = {"card": "t_de9ede95", "contract": "docs/research/autoresearch-atlas-island-gap.md", "base": BASE,
+    receipt = {"card": "t_de9ede95", "package": PACKAGE, "contract": "docs/research/autoresearch-atlas-island-gap.md", "base": BASE,
                "pins": pins, "labels": {v: lab for v, (lab, _) in VERSIONS.items()}, "status": status,
                "wall_s": round(wall, 3), "rounds": rounds, "summary": summary, "stable": stable,
                "applicable": applicable, "N69_median": {"v007": n7, "v010": n10}, "H69": verdict,
@@ -223,4 +248,4 @@ def main(out):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], "npm" if "--npm" in sys.argv[2:] else "vpm")
