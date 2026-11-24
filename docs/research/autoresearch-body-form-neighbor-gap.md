@@ -1,0 +1,24 @@
+# Body form — neighboring gap collateral, standing #50 (frozen)
+
+**Резюме.** Проверяем одну вещь: не исчезает ли настоящий лишний проём рядом с конфликтом сечений, когда наблюдатель #48 снимает двойной FN+FP. Только OBSERVE, без изменения тела или валидатора.
+
+Base `49997a1d4f347c1b01bf6d0c4b2c348ff8796b0c`, readiness `2026-11-24_0543`, areas 3–4. Continue the #48 replay and its exact observer (`903a6501eca965bb4cce4bb0fc410031bdd05562:docs/research/autoresearch-body-form-r48/probe.py`), including its pinned #44/#42 and full-manifest preflight. #42 preflights Blender executable and every entry in the held-out protocol/key and #40 packs; repeat preflight at end. Use evaluator side only of `C:/x/t_563a40f7/PROTOCOL.md` §3–5. Do not invoke `tools/review/verdict.py` (writes decisions); reuse #40 labels. No competing Ground #1738/#1816, body build #1770/#1784/#1818, cold delivery #1315, suite #1615 or VLM round #49. KPP1 contour A and the Sokolniki v002/D375 sheet establish source intent, not accepted body bytes, so no new pair score there.
+
+## Fixed fixture and metric
+
+Three fresh native pairs of #40's accepted A=v002r1 (`5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200`) and rejected R=v001 (`8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519`), G22 k2 SE, sections 16.85/17.8/18.2/19.8 m. Clean A/R bounds 6/0/0 and 0/0/6 TP/FP/FN, median raw score margin ≥5 pp (spread ≤0.1 pp), plus existing #48/J1–J4 controls. This is retrospective calibration on one pair, not a holdout or a readiness gate.
+
+Primary `L50 = median_3(sum across A,R of count of planted neighboring gap identities not retained in the observer's diagnostic extra list))` on the mixed state (lower better). An extra identity is the original scorer row (segment and rounded [lo,hi]); compare the retained list by subtracting only observer-designated indices. No count-only match. Use the frozen source frame for target opening `4259581`, seg 24–25. Plant adjacent unlisted gap [3.20, 3.70] m at both opening heights by subtracting that interval only from supporting segments (same angle and perp-search predicate as original scorer, both endpoint distances <0.12 m; clip crossing segments in XY by interpolation; no edits to FBX, loops, contour heights or other segments). Require raw extra identity within 3 mm at both endpoints (recognition binding only; checker tolerances unchanged). Two states per variant:
+
+| Variant/state | Injection | Raw TP/FP/FN | Diagnostic TP/FP/FN | Conflicts |
+| --- | --- | --- | --- | --- |
+| A neighbor-only | gap only | 6/1/0 | 6/1/0 | 0 |
+| A mixed | gap + exact #48 low-slice +110 mm strip at target | 5/2/1 | 5/1/0 | 1 for target |
+| R neighbor-only | gap only | 0/1/6 | 0/1/6 | 0 |
+| R mixed | gap + subtract target source span at upper slice only | 0/2/6 | 0/1/5 | 1 for target |
+
+Expect only the mixed state's target extra to disappear and only its FN to be relabelled as a conflict, never upgraded to TP. Require added/removed segment counts >0 for both slices on every planted row, log counts per input/state, exact equality of untouched fields/heights, untouched scorer item parity against clean except `openings:no_extra_in_box` and the target's four items on mixed rows. Clean/neighbor-only observer no-op = `not_exercised` for relabeling. If any raw bound, exact witness binding, control or parity fails, inconclusive (fault injection failed qualification), not a zero. Eligible witness on both sides and L50=0 with zero spread and exact diagnostic table → confirmed (bounded to this intervention); stable positive losses or stable non-parity in diagnostic with raw qualification → refuted; otherwise inconclusive. Report each repetition and spread. Two physical mixed-height apertures or other projects are not exercised. No fresh render judging; existing #40/#41/#49 measurements not rerun or treated as additional pairs.
+
+## Stop, scope and replay
+
+Confirmation budget one #48 full replay (inherits disciplined timing from #42/#44/#48) + one first mixed A/R pair to project remaining 5 pairs at 1.5× first-pair time; total cap 240 s. If projection is over remaining time or runtime cap hits, emit incomplete receipt, no short series. New candidate budget 0; no KEEP threshold for code adoption (diagnostic confirmation threshold above). No shortened series, weakened checks/tolerances, test deselection, touching another card's files, edits to deliveries, model repairs, live scene, or 3ds Max. Use same CPython and their Blender 5.1.2 readback. Before measuring seal driver SHA-256 and prior Git revisions; old manifests remain authoritative. Use unused output directory and `python docs/research/autoresearch-body-form-r50/probe.py .ar50-replay-new`; if timing stops, rerun unchanged with idle slot and new directory. Replay is PC-limited to #40/held-out packs. Publish branch commit and receipt hash, not private scene dumps or hidden key.
