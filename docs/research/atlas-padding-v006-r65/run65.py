@@ -56,12 +56,16 @@ def one(v, work):
     u = npm_uv_findings(rb, atlas, fbx.name)
     meshes = [m for m in rb.get("meshes") or [] if not str(m.get("name", "")).upper().startswith("UCX_")
               and not str(m.get("name", "")).endswith(("MainGlass", "GroundGlass", "GroundElGlass"))]
-    f = fold(meshes, atlas, tile_px)
     rec = {"U": [{"status": x.status, "observed": x.observed[:300], "bad_faces": (x.data or {}).get("bad_faces")}
                  for x in u],
-           "F": {"faces": f["faces"], "B65": len(f["bad"]), "errors": f["errors"][:5], "tiles": f["tiles"],
-                 "bad": f["bad"][:10]},
-           "images": rb.get("images"), "meshes": [m.get("name") for m in meshes]}
+           "images": rb.get("images"), "meshes": [m.get("name") for m in meshes], "tile_px": tile_px}
+    try:
+        f = fold(meshes, atlas, tile_px)
+    except ValueError as exc:  # R0: frozen precondition failed -> F not measured (run inconclusive)
+        rec["F"] = {"not_measured": str(exc)}
+        return rec
+    rec["F"] = {"faces": f["faces"], "B65": len(f["bad"]), "errors": f["errors"][:5], "tiles": f["tiles"],
+                "bad": f["bad"][:10]}
     if v == "v010":
         hits = target_faces(meshes, atlas)
         if not hits:
@@ -111,6 +115,12 @@ def main(out):
                                          sort_keys=True, default=str)
             rep["stable"] = len({key(x) for x in rep["rounds"]}) == 1
             last = rep["rounds"][-1]
+            rep["U_fail_all"] = all(u["status"] == "fail" and u["bad_faces"] is None for x in rep["rounds"]
+                                    for v in ZIPS for u in x[v]["U"])
+            if any("not_measured" in last[v]["F"] for v in ZIPS):
+                rep["hypothesis"] = "inconclusive"
+                rep["F_not_measured"] = {v: last[v]["F"].get("not_measured") for v in ZIPS}
+                raise StopIteration
             b = {v: statistics.median(x[v]["F"]["B65"] for x in rep["rounds"]) for v in ZIPS}
             applicable = all(all(u["bad_faces"] is not None for u in last[v]["U"]) for v in ZIPS)
             sens = {s: (x["B65"], x["expected_bad"]) for s, x in last["v010"]["sens"].items()}
@@ -120,6 +130,8 @@ def main(out):
             rep["witness_fired"] = witness
             ok = rep["stable"] and rep["inputs_match_after"] and witness
             rep["hypothesis"] = verdict(applicable, b["v007"], b["v010"], sens) if ok else "inconclusive"
+    except StopIteration:
+        pass
     except Exception as exc:  # noqa: BLE001 - recorded, run is inconclusive
         rep["status"] = f"error: {type(exc).__name__}: {exc}"
     rep["seconds"] = round(time.monotonic() - start, 3)

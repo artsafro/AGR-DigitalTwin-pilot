@@ -53,3 +53,49 @@ H65 (one hypothesis, three frozen parts):
 
 Replay: `uv run --frozen python docs/research/atlas-padding-v006-r65/run65.py tmp/r65-run-NEW` (Windows, pinned
 Blender, Drive ZIPs; replay limited to readers with `G:/Мой диск/AGR-evidence/559-*`).
+
+## R0 — inconclusive (OBSERVE); part (a) does not hold
+
+**Итог (рус.):** штатная проверка V006 «UV atlas padding» (`twinqa.npm_uv`, #1580) **не применима** к реальным
+НПМ-пакетам АС.08: на обоих (v007 отклонён, v010 принят) она падает одинаково по формальной причине — «нет
+встроенного атласа 2048×2048» (FBX без встроенных картинок), до проверки граней. Значит, отличить отклонённый
+пакет от принятого она не может, а на любом UDIM-пакете НПМ даст ложный fail. Причина глубже: `npm_atlas.json`
+описывает один атлас 2048 px с ячейками 409/397/6 px, а в поставке — UDIM-тайлы по одному материалу на тайл
+(Diffuse 4096 px у текстурных, 256 px у одноцветных), UV лежат на весь тайл (например, тайл 1001: u 0,04–0,75).
+Заранее замороженный UDIM-вариант `F` требовал тайлы 2048 px и поэтому **не измерен**; чувствительность к сдвигу и
+калибровка v007/v010 по отступам — **не измерены**. Производство и пакеты не менялись.
+
+Run R0a (`tmp/r65-run-001`, harness `4baf2042`): stopped at the frozen `F` precondition before recording `U`;
+receipt `atlas-padding-v006-r65/receipt-r0.json` (SHA-256 `63e8ba5e…13e9bb`). The driver was then changed only
+to record `U` and mark `F` as `not_measured` instead of aborting (no rule, grid, label or tolerance changed).
+
+Run R0b (`tmp/r65-run-002`, harness at the commit of this section): status `completed`, hypothesis
+**inconclusive** (frozen rule: `F` precondition failed, witness `m+1` not measured). Wall 9.545 s; rounds
+3.204 / 2.978 / 3.088 s; 3 fresh Blender readbacks per package; `stable: true`; inputs equal before/after.
+
+| Check | v007 (rejected) | v010 (accepted) | Status |
+|---|---|---|---|
+| `U` unchanged `npm_uv_findings` | fail: no embedded 2048 px atlas (images []) | same | measured ×3, identical; face check never reached |
+| Diffuse tile px (ZIP PNG headers) | 1001: 4096; 1002–1004: 256 | 1001–1002: 4096; 1003–1005: 256 | measured |
+| `F` UDIM fold, `B65` | — | — | **not measured** (frozen 2048 px tile precondition fails) |
+| shift sensitivity `+1/+5/m+1/m+pad+1` | — | — | **not measured** |
+
+Diagnostic only (one readback, not stability evidence): per-tile UV bbox of `SM_Nku_1_Main` — v010 tile 1001
+u 0.0418–0.6676 / v 0.0276–0.5857 (30 faces), 1002 u 0.0455–0.5912 (8 faces), solid tiles 0.05–0.95; v007
+similar. Nearest corner to a tile edge ≈ 0.0276 × 4096 ≈ 113 px on the 4096 tiles, so with one finish per tile
+the 8 px inter-finish padding class has no exercised case on AC08.
+
+Hypothesis result: **inconclusive**; part (a) applicability **does not hold** (measured, 3/3); (b), (c) not measured.
+Would change (OBSERVE, not applied; needs its own issue + review): make V006 UDIM-aware — read the tile resolution
+from the delivered Diffuse PNGs and the layout from the exported UDIM tiles (`npm_atlas_udim`), not from the
+2048 px planning atlas; until then V006 on a UDIM NPM is a false fail, not a texture signal.
+
+Receipt: `atlas-padding-v006-r65/receipt.json` SHA-256 `fc211371d1d89e945466bc966e96ed3838e35c9f903cc77eb3dcef9d618cbbd1`.
+No large evidence (only JSON receipts; inputs are the pinned Drive ZIPs). Replay limited to readers of
+`G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v00{7,10}/`.
+
+Affected tests: `uv run --frozen pytest -q -o addopts= docs/research/atlas-padding-v006-r65/test_r65.py tests/test_npm_atlas_padding.py tests/qa/test_npm_uv_1580.py` — 121 passed, 1 warning. The synthetic test first failed (test fixture put two finishes in one 2048 cell, rejected by the unchanged `load_layout`), then passed after moving the second finish to its own cell.
+
+`bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 553 passed, `repo_guards: GREEN`.
+
+Full suite: deferred to merge batch (rule 68)

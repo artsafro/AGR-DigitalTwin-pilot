@@ -1,0 +1,20 @@
+{
+ "status": "error: ValueError: no 2048 px Diffuse PNG for tiles [1001, 1002, 1003, 1004]: {1001: [4096, 4096], 1002: [256, 256], 1003: [256, 256], 1004: [256, 256]}",
+ "hypothesis": "inconclusive",
+ "rounds": [],
+ "code": {
+  "src/twinqa/npm_uv.py": "4ddad09040625146503ab726f71ae25d3b62798cc95df012dda16b1d76f153cc",
+  "tools/blender/fbx_readback.py": "09c9e9bcfbc75598dd483b39a2e48c3f23cc2be7719d85583d7cbd1a0f1e095b",
+  "src/twinqa/scene.py": "bcbf5f9c5dd1318802a0b547bdc072bca73d5263a1dbb18534f9017e24b811a2",
+  "r65.py": "6708f2594685316d4d62b2bb71b05845364b5f9ab6f4d92fd7b6b70530cd04c2",
+  "run65.py": "c7860ce265efa1849a6eb33ba6567004ff7e21a44c6f6c7e7d439310b19ade8f"
+ },
+ "inputs": {
+  "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+  "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\npm_atlas.json": "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2",
+  "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+  "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\npm_atlas.json": "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc",
+  "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5"
+ },
+ "seconds": 1.27
+}
