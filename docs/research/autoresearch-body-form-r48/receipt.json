@@ -1,0 +1,1880 @@
+{
+  "status": "complete",
+  "hypothesis": "confirmed",
+  "contract": "86a36bb3",
+  "candidate_sha256": "fa79d05ae0ed8a99e2ce97902857296cd88e60e50314a5448c7a570af0d70f01",
+  "controls": {
+    "C_none-1": {
+      "extract_sha256": "4d9f7f1bd2770fb96eb9598691afc9d0033dab64f4d2f21dc6a885ac4917bf3f",
+      "raw_score_sha256": "4d40dd72d247ab4a969016876aa8e87df556e0735ecca00dd13b5e44af7caff1",
+      "fbx_sha256": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "J4_clean_preflight": {
+      "extract_sha256": "4d9f7f1bd2770fb96eb9598691afc9d0033dab64f4d2f21dc6a885ac4917bf3f",
+      "raw_score_sha256": "cbbfffaeb77f09f452a82fe78be55b5ddaa5caa19494d855c4a59eb373f54f04",
+      "fbx_sha256": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+      "raw": "not_measured",
+      "diagnostic": "not_measured",
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_measured",
+      "segments_added_by_z": {},
+      "raw_form_score": null,
+      "raw_unknown_pct": null,
+      "raw_outline_sections_m": {},
+      "raw_measured_depths_m": []
+    },
+    "A-1": {
+      "extract_sha256": "1f5a9ae413c5ce0895b6c7d4ca2d5c645649d20f8f573271afc47fae5b018562",
+      "raw_score_sha256": "30ab93482d078098746931f5fa05b1f3871466175c8d94376cdae077b5f47a8a",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-1": {
+      "extract_sha256": "cde2682788485574e4550372739616cb80d22ddf7a7ba2f1ff498e06512d291c",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2": {
+      "extract_sha256": "1f5a9ae413c5ce0895b6c7d4ca2d5c645649d20f8f573271afc47fae5b018562",
+      "raw_score_sha256": "30ab93482d078098746931f5fa05b1f3871466175c8d94376cdae077b5f47a8a",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-2": {
+      "extract_sha256": "cde2682788485574e4550372739616cb80d22ddf7a7ba2f1ff498e06512d291c",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3": {
+      "extract_sha256": "1f5a9ae413c5ce0895b6c7d4ca2d5c645649d20f8f573271afc47fae5b018562",
+      "raw_score_sha256": "30ab93482d078098746931f5fa05b1f3871466175c8d94376cdae077b5f47a8a",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-3": {
+      "extract_sha256": "cde2682788485574e4550372739616cb80d22ddf7a7ba2f1ff498e06512d291c",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "C_shift_opening-1": {
+      "extract_sha256": "9a74bfd3a5c02acd3b4a2cf52beed59c0d026ed6d886cbfe43229c87cdc20e57",
+      "raw_score_sha256": "738fb65393c6a75dd5b22b29d9d57ae92c8dbb879980fcbcd1a7c8bc931928e9",
+      "fbx_sha256": "513d5ab4b2bcb100964386109ee2104dd06c7a488774aa18c162032948fa159b",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 96.96969696969697,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "C_shift_wall-1": {
+      "extract_sha256": "1b85b0a98f351624a28c73dc5076461262fb6ea53b9ce95f6bb1da9e94535da7",
+      "raw_score_sha256": "240abd49a10d87089a7e6880637eb441f57fe5644dc4dba25e7bb32639348b52",
+      "fbx_sha256": "b79ecca635ea49e2581f40d019c86ee2275bb6f1fb43565a54932ef4af418592",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 90.9090909090909,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.1,
+        "contour@19.8": 0.1
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "J1_missing_4259581": {
+      "extract_sha256": "5bc476043b26d5801a65243d640fbc2685b0b483518138a0a05409a183b2b806",
+      "raw_score_sha256": "f43d0296bbb880d0fd3ce51af8b09e6a74eefb3c16889b4509863ca409e95118",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "J2_extra_endwall": {
+      "extract_sha256": "07a5d75dc47d15fb99e937b860375f756291e204194e40c96b3f8ac8a6d6bbe6",
+      "raw_score_sha256": "04dddb2682ff8171fb86ad74a81c6bc7814082d94fdacc3d58cd0d4abd89b50b",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 95.45454545454545,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "J3_stair_cut_basket": {
+      "extract_sha256": "5f5466e0f21c1d2b662de20bbba4bf3716069932fa8196bfb34769c53215dd52",
+      "raw_score_sha256": "4d40639167af7ef35d86655a71462daf1e6f5beef406fd1d5ed90eafca34010b",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 92.42424242424242,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.77,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "J4_stale_key": {
+      "extract_sha256": "1f5a9ae413c5ce0895b6c7d4ca2d5c645649d20f8f573271afc47fae5b018562",
+      "raw_score_sha256": "65f7b02c67c9e35427a84e5c8ec779edf747526be8011c8595043fd513d8932d",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": "not_measured",
+      "diagnostic": "not_measured",
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_measured",
+      "segments_added_by_z": {},
+      "raw_form_score": null,
+      "raw_unknown_pct": null,
+      "raw_outline_sections_m": {},
+      "raw_measured_depths_m": []
+    },
+    "R-mask": {
+      "extract_sha256": "92837f098b2c714fa720d3414d600658996562560b9adce06ecd4fde047bc0ea",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_measured",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    }
+  },
+  "matrix": {
+    "A-1.one_110": {
+      "extract_sha256": "9708f06a7045ea4c4ecbbb803d83137608a237e0050903b22a8087ee7c6e969d",
+      "raw_score_sha256": "c39fb8c4f6d6b0ec333f072ed864fb3fdace8ffc2fdece08963c799bc259e771",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "changed_count": 1,
+      "exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "raw_form_score": 81.81818181818181,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-1.one_110": {
+      "extract_sha256": "aaf89cf1468531e03905bc2721fc2df741d8b4ab57f2b545506c26df422bbb58",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2.one_110": {
+      "extract_sha256": "9708f06a7045ea4c4ecbbb803d83137608a237e0050903b22a8087ee7c6e969d",
+      "raw_score_sha256": "c39fb8c4f6d6b0ec333f072ed864fb3fdace8ffc2fdece08963c799bc259e771",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "changed_count": 1,
+      "exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "raw_form_score": 81.81818181818181,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-2.one_110": {
+      "extract_sha256": "aaf89cf1468531e03905bc2721fc2df741d8b4ab57f2b545506c26df422bbb58",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3.one_110": {
+      "extract_sha256": "9708f06a7045ea4c4ecbbb803d83137608a237e0050903b22a8087ee7c6e969d",
+      "raw_score_sha256": "c39fb8c4f6d6b0ec333f072ed864fb3fdace8ffc2fdece08963c799bc259e771",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "changed_count": 1,
+      "exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "raw_form_score": 81.81818181818181,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-3.one_110": {
+      "extract_sha256": "aaf89cf1468531e03905bc2721fc2df741d8b4ab57f2b545506c26df422bbb58",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-1.both_060": {
+      "extract_sha256": "d4bda3150f25b0e955f3bdb5478c46ef890962d1537636797a1b2cfaae85eb44",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-1.both_060": {
+      "extract_sha256": "a48e7afd35a30ace72211b3c2ee9e937ce5c0dc2fc7b46e9550f3d4b5de61439",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2.both_060": {
+      "extract_sha256": "d4bda3150f25b0e955f3bdb5478c46ef890962d1537636797a1b2cfaae85eb44",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-2.both_060": {
+      "extract_sha256": "a48e7afd35a30ace72211b3c2ee9e937ce5c0dc2fc7b46e9550f3d4b5de61439",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3.both_060": {
+      "extract_sha256": "d4bda3150f25b0e955f3bdb5478c46ef890962d1537636797a1b2cfaae85eb44",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-3.both_060": {
+      "extract_sha256": "a48e7afd35a30ace72211b3c2ee9e937ce5c0dc2fc7b46e9550f3d4b5de61439",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-1.both_110": {
+      "extract_sha256": "331ef68dcf908d005f84cbfb5d0f99b79432e827187021fec22973a98709d979",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-1.both_110": {
+      "extract_sha256": "2484efe5bf63e86ec2d3bd4ea6b79135af5cb239ea35004072075c65a9664442",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2.both_110": {
+      "extract_sha256": "331ef68dcf908d005f84cbfb5d0f99b79432e827187021fec22973a98709d979",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-2.both_110": {
+      "extract_sha256": "2484efe5bf63e86ec2d3bd4ea6b79135af5cb239ea35004072075c65a9664442",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3.both_110": {
+      "extract_sha256": "331ef68dcf908d005f84cbfb5d0f99b79432e827187021fec22973a98709d979",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-3.both_110": {
+      "extract_sha256": "2484efe5bf63e86ec2d3bd4ea6b79135af5cb239ea35004072075c65a9664442",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-1.both_n110": {
+      "extract_sha256": "3591142705ba9baaee657316c80c8b501b6d7c8b042cc705f4d340adc22b51e4",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-1.both_n110": {
+      "extract_sha256": "7d67c060fea1e3f224235ebb9234636bedd2e7f769fdac098b9dea4ac98c09af",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2.both_n110": {
+      "extract_sha256": "3591142705ba9baaee657316c80c8b501b6d7c8b042cc705f4d340adc22b51e4",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-2.both_n110": {
+      "extract_sha256": "7d67c060fea1e3f224235ebb9234636bedd2e7f769fdac098b9dea4ac98c09af",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3.both_n110": {
+      "extract_sha256": "3591142705ba9baaee657316c80c8b501b6d7c8b042cc705f4d340adc22b51e4",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-3.both_n110": {
+      "extract_sha256": "7d67c060fea1e3f224235ebb9234636bedd2e7f769fdac098b9dea4ac98c09af",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-1.both_130": {
+      "extract_sha256": "3e6009de78f41302b6c8464726704dfab7ff417e080e8dc068498e0309e01e3e",
+      "raw_score_sha256": "30ab93482d078098746931f5fa05b1f3871466175c8d94376cdae077b5f47a8a",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-1.both_130": {
+      "extract_sha256": "e1f86da1286c6f2b03c124d24ad3fa82dea6135b343823bef810f0fce42f3668",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2.both_130": {
+      "extract_sha256": "3e6009de78f41302b6c8464726704dfab7ff417e080e8dc068498e0309e01e3e",
+      "raw_score_sha256": "30ab93482d078098746931f5fa05b1f3871466175c8d94376cdae077b5f47a8a",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-2.both_130": {
+      "extract_sha256": "e1f86da1286c6f2b03c124d24ad3fa82dea6135b343823bef810f0fce42f3668",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3.both_130": {
+      "extract_sha256": "3e6009de78f41302b6c8464726704dfab7ff417e080e8dc068498e0309e01e3e",
+      "raw_score_sha256": "30ab93482d078098746931f5fa05b1f3871466175c8d94376cdae077b5f47a8a",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-3.both_130": {
+      "extract_sha256": "e1f86da1286c6f2b03c124d24ad3fa82dea6135b343823bef810f0fce42f3668",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-1.one_hi_110": {
+      "extract_sha256": "8090d2a3718f1cfaf8c24858553666519fe4b1664654618a1db578b3d87cc340",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "17.8",
+          "extra_index": null
+        }
+      ],
+      "changed_count": 1,
+      "exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 0,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-1.one_hi_110": {
+      "extract_sha256": "674a8fcaedc3177069f0bf5f579c5a7ef0da14e1207439866e71b87e177d133b",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 0,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2.one_hi_110": {
+      "extract_sha256": "8090d2a3718f1cfaf8c24858553666519fe4b1664654618a1db578b3d87cc340",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "17.8",
+          "extra_index": null
+        }
+      ],
+      "changed_count": 1,
+      "exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 0,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-2.one_hi_110": {
+      "extract_sha256": "674a8fcaedc3177069f0bf5f579c5a7ef0da14e1207439866e71b87e177d133b",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 0,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3.one_hi_110": {
+      "extract_sha256": "8090d2a3718f1cfaf8c24858553666519fe4b1664654618a1db578b3d87cc340",
+      "raw_score_sha256": "4b1c2df236e29a3a5d85692419cff7d8c508d69614260e3e8c69ae57e0dad1df",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "17.8",
+          "extra_index": null
+        }
+      ],
+      "changed_count": 1,
+      "exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 0,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 86.36363636363636,
+      "raw_unknown_pct": 9.090909090909092,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ]
+    },
+    "R-3.one_hi_110": {
+      "extract_sha256": "674a8fcaedc3177069f0bf5f579c5a7ef0da14e1207439866e71b87e177d133b",
+      "raw_score_sha256": "4a8716ea25f2a0b58c7118375a40b9e3eaa2ea3239c233d128d653632cdce253",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 0,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    }
+  },
+  "r44_sha256": "9cab9c1e218487e62b871cb7286ab5aa660693d9b456fa26dbd5418c5b6690e0",
+  "prior_wall_s": 15.801,
+  "native_first_pair_s": 2.07,
+  "prior_parity": true,
+  "clean_margin_pp": [
+    95.45454545454545,
+    95.45454545454545,
+    95.45454545454545
+  ],
+  "clean_margin_spread_pp": 0.0,
+  "control_bounds": {
+    "C_none-1": true,
+    "J4_clean_preflight": true,
+    "A-1": true,
+    "R-1": true,
+    "A-2": true,
+    "R-2": true,
+    "A-3": true,
+    "R-3": true,
+    "C_shift_opening-1": true,
+    "C_shift_wall-1": true,
+    "J1_missing_4259581": true,
+    "J2_extra_endwall": true,
+    "J3_stair_cut_basket": true,
+    "J4_stale_key": true,
+    "R-mask": true,
+    "A-1.one_110": true,
+    "R-1.one_110": true,
+    "A-2.one_110": true,
+    "R-2.one_110": true,
+    "A-3.one_110": true,
+    "R-3.one_110": true,
+    "A-1.both_060": true,
+    "R-1.both_060": true,
+    "A-2.both_060": true,
+    "R-2.both_060": true,
+    "A-3.both_060": true,
+    "R-3.both_060": true,
+    "A-1.both_110": true,
+    "R-1.both_110": true,
+    "A-2.both_110": true,
+    "R-2.both_110": true,
+    "A-3.both_110": true,
+    "R-3.both_110": true,
+    "A-1.both_n110": true,
+    "R-1.both_n110": true,
+    "A-2.both_n110": true,
+    "R-2.both_n110": true,
+    "A-3.both_n110": true,
+    "R-3.both_n110": true,
+    "A-1.both_130": true,
+    "R-1.both_130": true,
+    "A-2.both_130": true,
+    "R-2.both_130": true,
+    "A-3.both_130": true,
+    "R-3.both_130": true,
+    "A-1.one_hi_110": true,
+    "R-1.one_hi_110": true,
+    "A-2.one_hi_110": true,
+    "R-2.one_hi_110": true,
+    "A-3.one_hi_110": true,
+    "R-3.one_hi_110": true
+  },
+  "wall_s": 16.098,
+  "diagnostic_first_pair_s": 0.0036,
+  "remaining_estimate_s": 0.0929,
+  "D_baseline": 1,
+  "D": 0,
+  "D_spread": 0,
+  "D_raw_rows": [
+    1,
+    1,
+    1
+  ],
+  "D_diagnostic_rows": [
+    0,
+    0,
+    0
+  ]
+}
