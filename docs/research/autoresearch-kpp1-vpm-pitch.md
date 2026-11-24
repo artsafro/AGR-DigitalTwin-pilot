@@ -55,9 +55,26 @@ Replay from repo root: `uv run --frozen python docs/research/kpp1-vpm-pitch-r77/
 
 - R1 (frozen harness, commit `da84071e` contract): first round 143.432 s > 30 s first-round limit -> `budget_stop`,
   **H77 inconclusive for R1** (one round, not three). The budget was frozen without a measured round (contract defect).
-  Round-1 rows are preserved unchanged in `kpp1-vpm-pitch-r77/attempt-001.json` (SHA-256
-  `03cffb043beac07d14acfae4d74968e92f574af1f2345f0d0500f8361d2b588c`) and are not used as evidence for the R2 verdict.
+  Round-1 rows are preserved unchanged in `kpp1-vpm-pitch-r77/attempt-001.json` (committed LF blob SHA-256
+  `c33e67d54f10eca5410c8f7ebc974a065d9fc676cc128522b19e89d77f57e1f6`) and are not used as evidence for the R2 verdict.
 - Amendment A1 (committed before R2; implementation speed only): the modal colour for tile binding is computed with
   `np.bincount` over packed 24-bit RGB instead of `np.unique(axis=0)` (same argmax colour; ties resolve to the lowest
   packed value in both). Metric, census, binding rule, bounds, witnesses and budget limits (30 s / 120 s) unchanged.
   Parity proof: R2 per-tile `modal_rgb`, `finishes`, `expected_px` must equal R1 round-1 rows, otherwise R2 is void.
+- R2 (harness at `ebb6448e`, A1): status `complete`, rounds 16.508 / 14.652 / 15.556 s (each < 30 s), total 46.716 s
+  (< 120 s). A1 binding parity vs R1: true; every per-tile row of R2 round 1 is byte-equal (JSON) to R1 round 1; rows
+  identical across all three rounds, spread 0.
+  - Measured 5 bound 4K tiles; 10 x 256 px solid placeholders and tile 1015 (modal RGB 144/146/148, no `full` finish)
+    `not_exercised`.
+  - 1001 Plinth_RAL7004 300 -> 300 px, E 0; 1005/1007 Cassette_RAL5015(_Top) 600 -> 600 px, E 0; 1006 Cassette_RAL7047
+    600 -> 600 px, E 0. Half-pitch witness exercised on all four (E 0.5, in [0.45, 0.55]); brightness +8 exercised
+    (16 777 216 px changed per tile), dE 0.
+  - **1008 Perforated_RAL9016: expected 600 px, observed 120 px, E 0.8 > 0.03 -> flagged on an accepted tile.** Runs per
+    row 7 / 41 / 7: rows 25 % and 75 % see the 600 mm panel joints, the 50 % row crosses a perforation-hole row; the
+    pooled-gap median is then the hole pitch (6 + 6 + 40 gaps). Brightness +8 dE 0; half-pitch E 0.9 (bound not
+    applicable, clean already out of bound).
+  - **H77 refuted** (OBSERVE): E72 unchanged is not specific on a second accepted object; E77 median 0.8, 1 of 5 measured
+    accepted tiles flags (4/5 quiet, 0.0). The AC08 confirmation (#72) stands for plain vertical-joint panels only.
+- Would change (not applied, new candidate needing its own frozen run): per-row median gap, then median over rows
+  (here 600/120/600 -> 600, E 0), or restrict the census to finishes with `pattern` in {cassette, tile300, panel};
+  either must still score AC08 v007 >= 1.0 and v010 <= 0.03 before any gate. No keep, no PR to production code.
