@@ -75,4 +75,8 @@ t_563a40f7 `extract.py` + `score_heldout.py` byte-identical, the form checks tra
 
 ## Round log
 
-(filled after the run)
+- R0 (run1, wall 26.9 s, complete, hashes OK): v007 F = 4, v002–v006 F = 0, spread 0 everywhere; W_shift_opening
+  fired (+1), W_shift_wall masked (not measured). **H51 = inconclusive** (frozen rules: v007 contour > 0.5 m at both
+  sections, not-measured 3/18 > 10 %, one witness not exercised). Post-hoc: the key ring closes a source recess
+  [3.414, 4.718] m that v007 keeps (gap [3.444, 4.715]) — the key, not the accepted body, is off. No candidate, no
+  keep. Details: [r51/REPORT.md](autoresearch-body-form-r51/REPORT.md).

@@ -1,0 +1,1213 @@
+{
+ "card": "t_fb3a0b98",
+ "status": "complete",
+ "preflight": {
+  "source": {
+   "sha256": "f1865bdde9ca0b3553777cf6e1d71cd8aee915998d342ec789bfc4fd6cdf47a2",
+   "pin": "f1865bdde9ca0b3553777cf6e1d71cd8aee915998d342ec789bfc4fd6cdf47a2",
+   "ok": true
+  },
+  "key": {
+   "sha256": "67a1ae5b88beec6eefc51d51ccdab496daa256709ec484793caee4097f6b6b14",
+   "pin": "67a1ae5b88beec6eefc51d51ccdab496daa256709ec484793caee4097f6b6b14",
+   "ok": true
+  },
+  "key_sections": {
+   "sha256": "07ce9a5bff8a9e4e82bf8346daef191ca5e0ba626ccd900aaca290a29fb698b6",
+   "pin": "07ce9a5bff8a9e4e82bf8346daef191ca5e0ba626ccd900aaca290a29fb698b6",
+   "ok": true
+  },
+  "fbx:v007": {
+   "sha256": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+   "pin": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+   "ok": true
+  },
+  "fbx:v002": {
+   "sha256": "a57cb3fb66e628e6d1fe1272d16bc592604389b52be6cb4af6a4259b75746a9d",
+   "pin": "a57cb3fb66e628e6d1fe1272d16bc592604389b52be6cb4af6a4259b75746a9d",
+   "ok": true
+  },
+  "fbx:v003": {
+   "sha256": "83f3289c70a2bf8727cc5a0a8d85d12a8f6e90c803c3c37dfc904856588211aa",
+   "pin": "83f3289c70a2bf8727cc5a0a8d85d12a8f6e90c803c3c37dfc904856588211aa",
+   "ok": true
+  },
+  "fbx:v004": {
+   "sha256": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+   "pin": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+   "ok": true
+  },
+  "fbx:v005": {
+   "sha256": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+   "pin": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+   "ok": true
+  },
+  "fbx:v006": {
+   "sha256": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+   "pin": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+   "ok": true
+  },
+  "detector:extract.py": {
+   "sha256": "ee50925b8a45d6b55d4409cc21893d7932ae7b76d66c3a7c7c4b6b4bb51875af",
+   "frozen": "ee50925b8a45d6b55d4409cc21893d7932ae7b76d66c3a7c7c4b6b4bb51875af",
+   "ok": true
+  },
+  "detector:score_heldout.py": {
+   "sha256": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942",
+   "frozen": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942",
+   "ok": true
+  }
+ },
+ "label_to_real_z": {
+  "16.85": 8.03,
+  "17.8": 8.98,
+  "18.2": 9.38,
+  "19.8": 10.98
+ },
+ "witnesses": {
+  "W_shift_opening": {
+   "moved": "MUTATE shift_opening moved 8",
+   "sha256": "489d1c0e2fd7330db85d35c5e6d5b4253a2140a44f052bf8d812bdd9ec76aca9"
+  },
+  "W_shift_wall": {
+   "moved": "MUTATE shift_wall moved 714",
+   "sha256": "9f84008b4629b0651842a7209fed8c2966d7c1ac43325c20b273af92ee1c4d3b"
+  }
+ },
+ "wall_s": 26.862,
+ "runs": {
+  "v007": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "4e626bf87b2cbf966ef25a6aeff81232540cc11e5114f7c43eda437197b4eadf",
+    "vs_key_sha256": "503a4fd32dcb5d708bae33445045608a27e3b8eae48b2aefd22c3fe2bade0a66",
+    "F": 4,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "4e626bf87b2cbf966ef25a6aeff81232540cc11e5114f7c43eda437197b4eadf",
+    "vs_key_sha256": "503a4fd32dcb5d708bae33445045608a27e3b8eae48b2aefd22c3fe2bade0a66",
+    "F": 4,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "4e626bf87b2cbf966ef25a6aeff81232540cc11e5114f7c43eda437197b4eadf",
+    "vs_key_sha256": "503a4fd32dcb5d708bae33445045608a27e3b8eae48b2aefd22c3fe2bade0a66",
+    "F": 4,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   }
+  ],
+  "v002": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "90edc030fe003eb16159b88433b601b906d6eb038599374487982507df50eed7",
+    "vs_key_sha256": "a758e0687054cc7360f7809762441597d7aefef842ab9f2fb77593ec50f7c1ab",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9377,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "90edc030fe003eb16159b88433b601b906d6eb038599374487982507df50eed7",
+    "vs_key_sha256": "a758e0687054cc7360f7809762441597d7aefef842ab9f2fb77593ec50f7c1ab",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9377,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "90edc030fe003eb16159b88433b601b906d6eb038599374487982507df50eed7",
+    "vs_key_sha256": "a758e0687054cc7360f7809762441597d7aefef842ab9f2fb77593ec50f7c1ab",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9377,
+    "objects": 1
+   }
+  ],
+  "v003": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "2487ad5bb9dd7f87720ce167bbe8dc2e7de22f0d4613473e18e083810e995dae",
+    "vs_key_sha256": "c98fba9a73b3b10bbae7022136049e8a6eb977be0f710c29cee06752d8160a0c",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9541,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "2487ad5bb9dd7f87720ce167bbe8dc2e7de22f0d4613473e18e083810e995dae",
+    "vs_key_sha256": "c98fba9a73b3b10bbae7022136049e8a6eb977be0f710c29cee06752d8160a0c",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9541,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "2487ad5bb9dd7f87720ce167bbe8dc2e7de22f0d4613473e18e083810e995dae",
+    "vs_key_sha256": "c98fba9a73b3b10bbae7022136049e8a6eb977be0f710c29cee06752d8160a0c",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9541,
+    "objects": 1
+   }
+  ],
+  "v004": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "67d2252cf84fbe8f673678850d674505425a06fbdf73a52360486d1af46c61f3",
+    "vs_key_sha256": "3569ab6f9529caf8910efbe7c0c46af87da06f6042f5d00c9f686c33c26b94ca",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9463,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "67d2252cf84fbe8f673678850d674505425a06fbdf73a52360486d1af46c61f3",
+    "vs_key_sha256": "3569ab6f9529caf8910efbe7c0c46af87da06f6042f5d00c9f686c33c26b94ca",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9463,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "67d2252cf84fbe8f673678850d674505425a06fbdf73a52360486d1af46c61f3",
+    "vs_key_sha256": "3569ab6f9529caf8910efbe7c0c46af87da06f6042f5d00c9f686c33c26b94ca",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9463,
+    "objects": 1
+   }
+  ],
+  "v005": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "8fabf880dd1e62a1fc4a59800ed3c0776fa8afe4edf52d2aea4b64a6ecde0b90",
+    "vs_key_sha256": "f0ea1dcc937e458cd5563e623eb6fe249a492a2978cc24a77c58f74ea7b6fdab",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9525,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "8fabf880dd1e62a1fc4a59800ed3c0776fa8afe4edf52d2aea4b64a6ecde0b90",
+    "vs_key_sha256": "f0ea1dcc937e458cd5563e623eb6fe249a492a2978cc24a77c58f74ea7b6fdab",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9525,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "8fabf880dd1e62a1fc4a59800ed3c0776fa8afe4edf52d2aea4b64a6ecde0b90",
+    "vs_key_sha256": "f0ea1dcc937e458cd5563e623eb6fe249a492a2978cc24a77c58f74ea7b6fdab",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 9525,
+    "objects": 1
+   }
+  ],
+  "v006": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "de812cbd21ecbea601d25a5863cb8be9588981bc96ad179ec97029e28218d5d3",
+    "vs_key_sha256": "1d88d4d172089b478632b1459c7bf3ea9ec7f58dd095035d95f045f03740d408",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 10747,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "de812cbd21ecbea601d25a5863cb8be9588981bc96ad179ec97029e28218d5d3",
+    "vs_key_sha256": "1d88d4d172089b478632b1459c7bf3ea9ec7f58dd095035d95f045f03740d408",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 10747,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "de812cbd21ecbea601d25a5863cb8be9588981bc96ad179ec97029e28218d5d3",
+    "vs_key_sha256": "1d88d4d172089b478632b1459c7bf3ea9ec7f58dd095035d95f045f03740d408",
+    "F": 0,
+    "F_not_measured": 5,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 0,
+     "key_total": 5
+    },
+    "extras": [],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.000 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.000 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.000 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "opening:рт О_194b464:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_010a21f:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)"
+    },
+    "faces": 10747,
+    "objects": 1
+   }
+  ],
+  "W_shift_opening": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "c90b910d4aa47732d8cdffee800cb3f8ee9639b234bc22da457e5fbb93b812ef",
+    "vs_key_sha256": "8048f057beab0dd7732da6887fa2fda7fd8400cd21deda94212f40bec2d800e6",
+    "F": 5,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:edges": "fail: max edge delta 0.100 m (key 5.595..7.305)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "c90b910d4aa47732d8cdffee800cb3f8ee9639b234bc22da457e5fbb93b812ef",
+    "vs_key_sha256": "8048f057beab0dd7732da6887fa2fda7fd8400cd21deda94212f40bec2d800e6",
+    "F": 5,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:edges": "fail: max edge delta 0.100 m (key 5.595..7.305)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "c90b910d4aa47732d8cdffee800cb3f8ee9639b234bc22da457e5fbb93b812ef",
+    "vs_key_sha256": "8048f057beab0dd7732da6887fa2fda7fd8400cd21deda94212f40bec2d800e6",
+    "F": 5,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:edges": "fail: max edge delta 0.100 m (key 5.595..7.305)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   }
+  ],
+  "W_shift_wall": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "bba927eb886d0b3033686417102527d91f4da16254e51d9c972859a1ae0d3d51",
+    "vs_key_sha256": "ee1765bb7df0256e3528eebbebd0ec9e617b650e0a375c3f1c0ce2618fbe697a",
+    "F": 4,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "bba927eb886d0b3033686417102527d91f4da16254e51d9c972859a1ae0d3d51",
+    "vs_key_sha256": "ee1765bb7df0256e3528eebbebd0ec9e617b650e0a375c3f1c0ce2618fbe697a",
+    "F": 4,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "bba927eb886d0b3033686417102527d91f4da16254e51d9c972859a1ae0d3d51",
+    "vs_key_sha256": "ee1765bb7df0256e3528eebbebd0ec9e617b650e0a375c3f1c0ce2618fbe697a",
+    "F": 4,
+    "F_not_measured": 3,
+    "F_items": 18,
+    "openings": {
+     "TP": 5,
+     "FN": 0,
+     "FP_extra": 2,
+     "key_total": 5
+    },
+    "extras": [
+     {
+      "ring_seg": [
+       15,
+       16
+      ],
+      "gap_m": [
+       0.05,
+       0.678
+      ]
+     },
+     {
+      "ring_seg": [
+       18,
+       19
+      ],
+      "gap_m": [
+       3.444,
+       4.715
+      ]
+     }
+    ],
+    "reveal_depth": {
+     "opening:рт О_194b464:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_415705d:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_6189f94:reveal_depth": "fail: depth 0.500 vs key 0.710",
+     "opening:рт О_010a21f:reveal_depth": "fail: depth 0.500 vs key 0.713",
+     "opening:рт О_1198368:reveal_depth": "fail: depth 0.500 vs key 0.713"
+    },
+    "scope": "pass",
+    "non_pass": {
+     "contour@16.85": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "contour@19.8": "fail: two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19",
+     "opening:рт О_194b464:edges": "fail: max edge delta 0.087 m (key 1.138..3.438)",
+     "opening:рт О_415705d:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_6189f94:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "opening:рт О_1198368:sill_head": "not_measured: no open back rim (closed or filled back)",
+     "openings:no_extra_in_box": "fail: extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+    },
+    "faces": 13644,
+    "objects": 1
+   }
+  ]
+ },
+ "summary": {
+  "v007": {
+   "verdict": "accepted 2026-11-20",
+   "reps_scored": 3,
+   "F_median": 4,
+   "F_spread": 0,
+   "F_nm_median": 3,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 2,
+    "key_total": 5
+   },
+   "payload_identical": true
+  },
+  "v002": {
+   "verdict": "rejected",
+   "reps_scored": 3,
+   "F_median": 0,
+   "F_spread": 0,
+   "F_nm_median": 5,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 0,
+    "key_total": 5
+   },
+   "payload_identical": true
+  },
+  "v003": {
+   "verdict": "rejected",
+   "reps_scored": 3,
+   "F_median": 0,
+   "F_spread": 0,
+   "F_nm_median": 5,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 0,
+    "key_total": 5
+   },
+   "payload_identical": true
+  },
+  "v004": {
+   "verdict": "rejected 2026-11-17",
+   "reps_scored": 3,
+   "F_median": 0,
+   "F_spread": 0,
+   "F_nm_median": 5,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 0,
+    "key_total": 5
+   },
+   "payload_identical": true
+  },
+  "v005": {
+   "verdict": "rejected 2026-11-18",
+   "reps_scored": 3,
+   "F_median": 0,
+   "F_spread": 0,
+   "F_nm_median": 5,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 0,
+    "key_total": 5
+   },
+   "payload_identical": true
+  },
+  "v006": {
+   "verdict": "rejected 2026-11-18",
+   "reps_scored": 3,
+   "F_median": 0,
+   "F_spread": 0,
+   "F_nm_median": 5,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 0,
+    "key_total": 5
+   },
+   "payload_identical": true
+  },
+  "W_shift_opening": {
+   "verdict": "planted witness on v007 copy",
+   "reps_scored": 3,
+   "F_median": 5,
+   "F_spread": 0,
+   "F_nm_median": 3,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 2,
+    "key_total": 5
+   },
+   "payload_identical": true
+  },
+  "W_shift_wall": {
+   "verdict": "planted witness on v007 copy",
+   "reps_scored": 3,
+   "F_median": 4,
+   "F_spread": 0,
+   "F_nm_median": 3,
+   "openings_rep1": {
+    "TP": 5,
+    "FN": 0,
+    "FP_extra": 2,
+    "key_total": 5
+   },
+   "payload_identical": true
+  }
+ },
+ "postflight_ok": true
+}
