@@ -78,3 +78,4 @@ Replay from repo root: `uv run --frozen python docs/research/kpp1-vpm-pitch-r77/
 - Would change (not applied, new candidate needing its own frozen run): per-row median gap, then median over rows
   (here 600/120/600 -> 600, E 0), or restrict the census to finishes with `pattern` in {cassette, tile300, panel};
   either must still score AC08 v007 >= 1.0 and v010 <= 0.03 before any gate. No keep, no PR to production code.
+- Receipt: `kpp1-vpm-pitch-r77/receipt.json` (committed LF blob SHA-256 `199de106f93ea61dd638f897c7bd7d422e6f8d2355d0b178afbba8312cdb9168`); replay ~47 s, Windows + Drive fixture + pinned Git objects (replay limited).
