@@ -163,7 +163,7 @@ evidence; neither changes the other's raw findings.
 Read-only replay for validation triage/readiness (no DCC and no packaging):
 
 ```bash
-uv run python jobs/KPP1/lattice-1609/acceptance_1817.py 'G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25-r1'
+uv run python tests/jobs/kpp1_acceptance_1817_replay.py 'G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25-r1'
 ```
 
 The replay verifies both ZIPs, the four saved validator reports and the copied Ground
