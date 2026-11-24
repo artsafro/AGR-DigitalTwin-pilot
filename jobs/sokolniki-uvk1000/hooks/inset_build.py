@@ -589,6 +589,191 @@ def f05_glazing(mesh, pts, a, t, n, bands, mats):
     return pts
 
 
+def _line_x(p, d, q, e):
+    """Plan intersection of the lines p + a d and q + b e (None when parallel)."""
+    den = d[0] * e[1] - d[1] * e[0]
+    if abs(den) < 1e-9:
+        return None
+    a = ((q[0] - p[0]) * e[1] - (q[1] - p[1]) * e[0]) / den
+    return (p[0] + a * d[0], p[1] + a * d[1])
+
+
+def mitre_ends(reliefs, joint, reach=0.6, cos_max=0.9, z_min=0.1):
+    """[D384] Corner panels: Revit runs two non-parallel panels into the same corner (their rim boxes overlap). Each
+    such end gets a mitre - the end v at the back plane and at the rim front from the intersections of the two
+    panels' back lines and front lines - pulled back by joint / 2 along the panel, so the two end faces stay apart.
+    Returns per panel {"vb": [v0, v1], "vf": [v0, v1]} (back / front v of both ends) and the mitre count."""
+    ends = [{"vb": list(r["v"]), "vf": list(r["v"])} for r in reliefs]
+    h, count = joint / 2.0, 0
+
+    def line(r, t):
+        o, N = r["origin"], r["N"]
+        return (o[0] + t * N[0], o[1] + t * N[1]), (r["V"][0], r["V"][1])
+
+    def vcoord(r, p):
+        return (p[0] - r["origin"][0]) * r["V"][0] + (p[1] - r["origin"][1]) * r["V"][1]
+    for i, a in enumerate(reliefs):
+        for j in range(i + 1, len(reliefs)):
+            b = reliefs[j]
+            if abs(a["N"][0] * b["N"][0] + a["N"][1] * b["N"][1]) > cos_max:
+                continue
+            if min(a["z"][1], b["z"][1]) - max(a["z"][0], b["z"][0]) < z_min:
+                continue
+            pb = _line_x(*line(a, a["t_back"]), *line(b, b["t_back"]))
+            pf = _line_x(*line(a, a["t_front"]), *line(b, b["t_front"]))
+            if pb is None or pf is None:
+                continue
+            sides = []
+            for r in (a, b):
+                vb, vf = vcoord(r, pb), vcoord(r, pf)
+                k = 0 if abs(vb - r["v"][0]) < abs(vb - r["v"][1]) else 1
+                if abs(vb - r["v"][k]) > reach or abs(vf - r["v"][k]) > reach:
+                    break
+                sides.append((k, vb, vf))
+            if len(sides) < 2:
+                continue
+            for e, (k, vb, vf) in zip((ends[i], ends[j]), sides):
+                sg = 1.0 if k == 0 else -1.0
+                e["vb"][k], e["vf"][k] = vb + sg * h, vf + sg * h
+            count += 1
+    return ends, count
+
+
+def relief_panel(mesh, r, mat, top_min=0.05, margin=0.02, joint=0.0, ends=None):
+    """[D384] Closed pyramid relief solid of one decor panel (10 quads, all planar): back quad, 4 rim quads from the
+    back plane to the front rim, 4 facets from the rim to the apex truncated by a homothety about the apex (top side
+    `top_min`), and the top quad. The rect shrinks by `joint` / 2 per side (abutting panels never share a face);
+    `ends` (mitre_ends) gives the mitred back / front v of a corner end. Raises if the apex is not inside the rim by
+    `margin`."""
+    o, N, V = r["origin"], r["N"], r["V"]
+    h = joint / 2.0
+    e = ends or {"vb": list(r["v"]), "vf": list(r["v"])}
+    vb = [e["vb"][0] + (h if e["vb"][0] == r["v"][0] else 0.0), e["vb"][1] - (h if e["vb"][1] == r["v"][1] else 0.0)]
+    vf = [e["vf"][0] + (h if e["vf"][0] == r["v"][0] else 0.0), e["vf"][1] - (h if e["vf"][1] == r["v"][1] else 0.0)]
+    (v0, v1), (z0, z1) = vf, (r["z"][0] + h, r["z"][1] - h)
+    if not (v0 + margin < r["apex_v"] < v1 - margin and z0 + margin < r["apex_z"] < z1 - margin):
+        raise ValueError("relief apex (%.3f, %.3f) outside the panel rim" % (r["apex_v"], r["apex_z"]))
+    if not r["t_back"] < r["t_front"] < r["t_apex"]:
+        raise ValueError("relief depths must rise back < rim < apex, got %r" % ([r["t_back"], r["t_front"], r["t_apex"]],))
+
+    def P(v, z, t):
+        return [o[0] + v * V[0] + t * N[0], o[1] + v * V[1] + t * N[1], z]
+    k = top_min / min(v1 - v0, z1 - z0)
+    av, az, at = r["apex_v"], r["apex_z"], r["t_apex"]
+    rect = [(v0, z0), (v1, z0), (v1, z1), (v0, z1)]
+    back = [P(vb[0] if v == v0 else vb[1], z, r["t_back"]) for v, z in rect]
+    rim = [P(v, z, r["t_front"]) for v, z in rect]
+    top = [P(av + k * (v - av), az + k * (z - az), at + k * (r["t_front"] - at)) for v, z in rect]
+    c = P((v0 + v1) / 2.0, (z0 + z1) / 2.0, (r["t_back"] + r["t_front"]) / 2.0)
+    mesh.face(back, mat, want=_mul(N, -1))
+    mesh.face(top, mat, want=N)
+    for i in range(4):
+        j = (i + 1) % 4
+        mid = _mul(_add(rim[i], rim[j]), 0.5)
+        out = _sub(mid, c)
+        mesh.face([back[i], back[j], rim[j], rim[i]], mat, want=_sub(out, _mul(N, _dot(out, N))))
+        fm = _mul(_add(rim[i], rim[j], top[j], top[i]), 0.25)
+        mesh.face([rim[i], rim[j], top[j], top[i]], mat, want=_add(_sub(fm, P(av, az, r["t_front"])), _mul(N, 0.05)))
+    return at - (at + k * (r["t_front"] - at))
+
+
+def flashing_quad(mesh, center, axes, half, mat):
+    """[D384] One quad on the upper face of a thin sloped sheet (window flashing), normal up."""
+    a = [_mul(_unit(axes[i]), half[i]) for i in range(3)]
+    up = a[2] if a[2][2] >= 0 else _mul(a[2], -1)
+    c = _add(center, up)
+    pts = [_add(c, _mul(a[0], -1), _mul(a[1], -1)), _add(c, a[0], _mul(a[1], -1)), _add(c, a[0], a[1]),
+           _add(c, _mul(a[0], -1), a[1])]
+    mesh.face(pts, mat, want=[0.0, 0.0, 1.0])
+
+
+def _box_sz(obj, a, t, n):
+    """Plan extent of an OBB in the (s along t, out along n) frame of a face line starting at a."""
+    ss, oo = [], []
+    ax, hf, c = obj["axes"], obj["half"], obj["center"]
+    for i in (-1, 1):
+        for j in (-1, 1):
+            for k in (-1, 1):
+                p = _add(c, _mul(ax[0], i * hf[0]), _mul(ax[1], j * hf[1]), _mul(ax[2], k * hf[2]))
+                ss.append((p[0] - a[0]) * t[0] + (p[1] - a[1]) * t[1])
+                oo.append((p[0] - a[0]) * n[0] + (p[1] - a[1]) * n[1])
+    return min(ss), max(ss), min(oo), max(oo)
+
+
+def f05_ground(objs, vl, g, sill):
+    """[D384] F05 ground floor: piers (columns) and the glazing between them, in the frame of the body face `edge`.
+
+    Piers = exterior-wall pieces standing 0..7.5 m within `pier_out` of the face line, grouped by station (gap <
+    `pier_gap_m`); one box per pier: Revit station range and front, back `embed_m` behind the face. Glazing = Revit
+    curtain panels under `glass_zmax` behind the face; one quad per bay (glass station range minus the piers),
+    `glass_out_m` in front of the face, from the base 0.0 to `sill` (the F05 mouth sill). Returns two meshes + report."""
+    a, t, n, length = f05_frame(vl, [g["edge"]])
+    pieces = []
+    for o in objs:
+        if o["family"] != "pier" or not (g["pier_z"][0] <= o["zmin"] and g["pier_zmax_min"] <= o["zmax"] <= g["pier_z"][1]):
+            continue
+        s0, s1, o0, o1 = _box_sz(o, a, t, n)
+        if s1 < 0 or s0 > length or o1 < g["pier_out"][0] or o0 > g["pier_out"][1]:
+            continue
+        if max(s1 - s0, o1 - o0) > g["pier_piece_max_m"]:
+            continue
+        pieces.append([s0, s1, o0, o1, o["zmin"], o["zmax"], o["name"]])
+    pieces.sort()
+    piers = []
+    for p in pieces:
+        if piers and p[0] <= piers[-1]["s"][1] + g["pier_gap_m"]:
+            q = piers[-1]
+            q["s"] = [min(q["s"][0], p[0]), max(q["s"][1], p[1])]
+            q["out"] = [min(q["out"][0], p[2]), max(q["out"][1], p[3])]
+            q["z"] = [min(q["z"][0], p[4]), max(q["z"][1], p[5])]
+            q["names"].append(p[6])
+        else:
+            piers.append({"s": [p[0], p[1]], "out": [p[2], p[3]], "z": [p[4], p[5]], "names": [p[6]]})
+
+    def w(s, out, z):
+        return [a[0] + t[0] * s + n[0] * out, a[1] + t[1] * s + n[1] * out, z]
+    pm = Mesh()
+    t3, n3 = [t[0], t[1], 0.0], [n[0], n[1], 0.0]
+    for q in piers:
+        if q["out"][1] <= g["embed_m"]:
+            raise ValueError("pier %s does not stand in front of the face" % q["names"][0])
+        pm.begin_element()
+        s0, s1 = q["s"]
+        ob, of = -g["embed_m"], q["out"][1]
+        zb, zt = max(0.0, q["z"][0]), q["z"][1]
+        c = w((s0 + s1) / 2.0, (ob + of) / 2.0, (zb + zt) / 2.0)
+        box(pm, c, [t3, n3, [0.0, 0.0, 1.0]], [(s1 - s0) / 2.0, (of - ob) / 2.0, (zt - zb) / 2.0], g["pier_material"])
+    glass = [o for o in objs if o["family"] == "curtain_glass" and o["zmax"] <= g["glass_zmax"]]
+    runs = []
+    for o in glass:
+        s0, s1, o0, o1 = _box_sz(o, a, t, n)
+        if s1 < 0 or s0 > length or o1 < g["glass_out"][0] or o0 > g["glass_out"][1]:
+            continue
+        runs.append((max(0.0, s0), min(length, s1), (o0 + o1) / 2.0))
+    if not runs:
+        raise ValueError("no F05 ground-floor glass panels behind %s" % g["edge"])
+    lo, hi = min(r[0] for r in runs), max(r[1] for r in runs)
+    bays, cur = [], lo
+    for q in sorted(piers, key=lambda q: q["s"][0]):
+        if q["s"][1] <= lo or q["s"][0] >= hi:
+            continue
+        if q["s"][0] > cur + 1e-3:
+            bays.append((cur, q["s"][0]))
+        cur = max(cur, q["s"][1])
+    if hi > cur + 1e-3:
+        bays.append((cur, hi))
+    gm = Mesh()
+    for s0, s1 in bays:
+        gm.face([w(s0, g["glass_out_m"], 0.0), w(s1, g["glass_out_m"], 0.0), w(s1, g["glass_out_m"], sill),
+                 w(s0, g["glass_out_m"], sill)], g["glass_material"], want=n3)
+    rep = {"piers": [{"s": [round(x, 3) for x in q["s"]], "revit_out": [round(x, 3) for x in q["out"]],
+                      "z": q["z"], "revit_pieces": len(q["names"])} for q in piers],
+           "glass_panels": len(runs), "glass_out_revit_m": [round(min(r[2] for r in runs), 3),
+                                                            round(max(r[2] for r in runs), 3)],
+           "bays": [[round(s0, 3), round(s1, 3)] for s0, s1 in bays], "sill_z": sill}
+    return pm, gm, rep
+
+
 def build(obb, vl, cfg, body_cfg):
     fams = cfg["families"]
     meshes, report = {}, {"families": {}, "decisions": []}
@@ -613,11 +798,23 @@ def build(obb, vl, cfg, body_cfg):
         if fam == "canopy":
             boxes, dup = merge_runs(boxes, cc["merge_tol_m"])
             report["merged_runs"][fam] = {"members": len(members), "boxes": len(boxes), "duplicates_dropped": dup}
-        for o in boxes:
+        depth_lost = []
+        if fam == "decor_panel":
+            mends, n_mitre = mitre_ends([m["relief"] for m in members], cfg["relief"].get("joint_m", 0.0))
+            report.setdefault("relief_mitres", n_mitre)
+            mend = iter(mends)
+        for o, m in zip(boxes, members if fam in ("decor_panel", "flashing", "hatch") else [None] * len(boxes)):
             mesh.begin_element()
-            if fam in ("cage_column", "lamella", "canopy"):
+            if fam in ("cage_column", "lamella", "canopy", "hatch"):
                 box(mesh, o["center"], o["axes"], o["half"], spec["material"],
                     embed_down=cfg["cage"]["column_embed_m"] if fam == "cage_column" else 0.0)
+            elif fam == "decor_panel":
+                rc = cfg["relief"]
+                assert m is not None
+                depth_lost.append(relief_panel(mesh, m["relief"], spec["material"], rc["top_min_m"],
+                                               rc["apex_margin_m"], rc.get("joint_m", 0.0), next(mend)))
+            elif fam == "flashing":
+                flashing_quad(mesh, o["center"], o["axes"], o["half"], spec["material"])
             elif fam == "cage_beam":
                 box(mesh, o["c"], [o["u"], o["d1"], o["d2"]], [o["hl"], o["r"], o["r"]], spec["material"])
             elif fam == "mesh":
@@ -628,6 +825,8 @@ def build(obb, vl, cfg, body_cfg):
         report["families"][fam] = {"revit_members": len(members), "revit_tris": sum(o["tris"] for o in members),
                                    "object": spec["object"], "material": spec["material"],
                                    "faces": len(mesh.faces) - before}
+        if depth_lost:
+            report["families"][fam]["relief_depth_lost_max_m"] = round(max(depth_lost), 4)
     f = cfg["f05"]
     a, t, n, length = f05_frame(vl, f["edges"])
     bands = [tuple(r["projected_rect"]) for r in body_cfg["extra_rectangles"]
@@ -645,6 +844,12 @@ def build(obb, vl, cfg, body_cfg):
         "out_min_m": round(min(o for _, o in pts), 3), "out_max_m": round(max(o for _, o in pts), 3),
         "returns": sum(1 for p, q in zip(pts, pts[1:]) if abs(q[1] - p[1]) > q[0] - p[0]),
         "mouth_bands": [list(b) for b in bands]}
+    if cfg.get("f05_ground"):
+        g = cfg["f05_ground"]
+        pm, gg, grep_ = f05_ground(objs, vl, g, min(b[2] for b in bands))
+        meshes[g["pier_object"]], meshes[g["glass_object"]] = pm, gg
+        report["families"]["f05_ground"] = dict(grep_, objects=[g["pier_object"], g["glass_object"]],
+                                                faces=len(pm.faces) + len(gg.faces))
     out = {k: m.as_dict() for k, m in meshes.items()}
     tot = {"faces": 0, "tris": 0, "non_quads": 0}
     for k, m in out.items():

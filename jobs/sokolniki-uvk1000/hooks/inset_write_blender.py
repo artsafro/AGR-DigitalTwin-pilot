@@ -5,7 +5,9 @@ adds one object per inset family from inset_build.py's insets_meshes.json with i
 body_v006.blend + body_v006_quad.fbx (quad review copy; triangulation is the delivery step [D270]).
 
     blender44 -b --factory-startup --python jobs/sokolniki-uvk1000/hooks/inset_write_blender.py -- \
-        V005_BODY.blend INSETS_MESHES.json NEW_OUT_DIR
+        BODY.blend INSETS_MESHES.json NEW_OUT_DIR [TAG=v006]
+
+v007 [D384]: BODY.blend is the roof-well body (volume_body.py with body_config_v007.json), TAG v007.
 
 Writes NEW_OUT_DIR/blender_write.json: per object verts/faces/materials and, for every v005 body object, the
 sha256 of its world vertex coordinates + face indices before and after (equal = body untouched).
@@ -19,7 +21,9 @@ import bpy  # noqa: E402
 
 COLORS = {"04_cassette_fin_RAL8023": (0.55, 0.30, 0.20, 1), "05_cw_structural_RAL7016": (0.30, 0.50, 0.68, 1),
           "10_mesh_20_RAL9003": (0.45, 0.62, 0.50, 1), "12_frame_RAL9003": (0.95, 0.95, 0.93, 1),
-          "14_flashing_RAL7016": (0.22, 0.24, 0.26, 1), "M_Glass_01": (0.62, 0.82, 0.86, 1)}
+          "14_flashing_RAL7016": (0.22, 0.24, 0.26, 1), "M_Glass_01": (0.62, 0.82, 0.86, 1),
+          "13_decor_relief_RAL9003": (0.97, 0.96, 0.92, 1), "15_roof_hatch_RAL7016": (0.25, 0.27, 0.30, 1),
+          "16_pier_facade": (0.80, 0.78, 0.74, 1)}
 
 
 def geo_hash(ob):
@@ -58,8 +62,9 @@ def make(name, data):
 
 
 def main(argv):
-    body_blend, src, out = argv
-    if os.path.exists(os.path.join(out, "body_v006.blend")):
+    body_blend, src, out = argv[:3]
+    tag = argv[3] if len(argv) > 3 else "v006"  # v007 [D384]: the body is the v007 roof-well build
+    if os.path.exists(os.path.join(out, "body_%s.blend" % tag)):
         print("refused: output exists", file=sys.stderr)
         sys.exit(2)
     os.makedirs(out, exist_ok=True)
@@ -74,11 +79,11 @@ def main(argv):
         ob, mats = make(name, meshes[name])
         stats[name] = {"verts": len(ob.data.vertices), "faces": len(ob.data.polygons), "materials": mats}
     after = {n: geo_hash(bpy.data.objects[n]) for n in body}
-    bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, "body_v006.blend"), copy=True)
-    bpy.ops.export_scene.fbx(filepath=os.path.join(out, "body_v006_quad.fbx"), use_selection=False,
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, "body_%s.blend" % tag), copy=True)
+    bpy.ops.export_scene.fbx(filepath=os.path.join(out, "body_%s_quad.fbx" % tag), use_selection=False,
                              mesh_smooth_type="FACE", apply_unit_scale=True, axis_forward="-Y", axis_up="Z")
     doc = {"blender": bpy.app.version_string, "source_body": os.path.realpath(body_blend), "insets": stats,
-           "body_unchanged": {n: {"v005": body[n], "v006": after[n], "equal": body[n] == after[n]} for n in body}}
+           "body_unchanged": {n: {"before": body[n], "after": after[n], "equal": body[n] == after[n]} for n in body}}
     with open(os.path.join(out, "blender_write.json"), "w", encoding="utf-8") as fh:
         json.dump(doc, fh, indent=1)
     print("WROTE", len(stats), "insets; body unchanged:", all(v["equal"] for v in doc["body_unchanged"].values()))

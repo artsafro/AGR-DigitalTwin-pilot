@@ -1,0 +1,71 @@
+{
+ "_comment": "[D384] Artem 2026-11-24 ~19:55: v007 = the accepted v005 lattice + roof wells inside the parapets of S/N/D (decks dropped to the Revit roof levels so the steel pergolas stand free); facades, parapets and openings unchanged. Everything else is the [D378] v005 config. Synthetic: none.",
+ "extra_rectangles": [
+  {
+   "name": "F05-glazing-lower [D378]",
+   "facade": "F05",
+   "kind": "contour",
+   "edge": "D06",
+   "projected_rect": [
+    0.0,
+    28.13837429828251,
+    7.525,
+    13.5
+   ],
+   "state": "contour_cut",
+   "source": "Revit FBX sokolniki_ar_r23_v1 (feaae527), F05 curtain panels (195 members, compare-v004 curtain_groups) projected on D06/D07: glass z 7.525..18.47-18.97 on D06 s 0..28.138, z 12.225..18.97 on D07; C:/x/t_c15955e5/f05_contour2.py"
+  },
+  {
+   "name": "F05-glazing-upper [D378]",
+   "facade": "F05",
+   "kind": "contour",
+   "edge": "D06",
+   "projected_rect": [
+    0.0,
+    41.23692762561245,
+    13.5,
+    18.47
+   ],
+   "state": "contour_cut",
+   "source": "Revit FBX sokolniki_ar_r23_v1 (feaae527), F05 curtain panels (195 members, compare-v004 curtain_groups) projected on D06/D07: glass z 7.525..18.47-18.97 on D06 s 0..28.138, z 12.225..18.97 on D07; C:/x/t_c15955e5/f05_contour2.py",
+   "note": "runs over D07 (collinear with D06); below 13.5 D07 is hidden by S (seam J-DS1)"
+  }
+ ],
+ "reveal_m_by_name": {
+  "WB_Окно_2Створки_1Фрамуга_Слева _71d52e7": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _cc2a4e7": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _2e4ad7c": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _bbaa44e": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _2de6d50": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _0a5888d": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _a410cb4": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _4732cf2": 0.394
+ },
+ "_reveal_note": "F13 pairs: one mouth per pair, the seat at the back of the inner Revit frame (depth 0.25..0.394 m)",
+ "agreed_edge_clamps": {
+  "AC_ДверьВитражная_Двупольная_А_22daf24": 0.268
+ },
+ "roof_wells": {
+  "S": {
+   "deck_z": 11.12,
+   "parapet_m": 0.15
+  },
+  "N": {
+   "deck_z": 13.22,
+   "parapet_m": 0.15
+  },
+  "D": {
+   "deck_z": 17.42,
+   "parapet_m": 0.15,
+   "parapet_m_by_edge": {
+    "D06": 0.3,
+    "D07": 0.3
+   }
+  }
+ },
+ "_roof_wells_source": "Revit FBX sokolniki_ar_r23_v1 (feaae527): 'Базовая крыша ADSK_Плоская_Покр' finish tops S 9955613 z 11.12, N 775bf3c z 13.22, D 17ec87d z 17.42; roof slab edges 0.05-0.30 m (median 0.10-0.15) inside the v002 rings -> parapet 0.15 m. D06/D07 0.30 m: the F05 upper mouth (head 18.47 > deck) has its window plane at the 0.15 m reveal back, so the well wall stands 0.15 m behind it.",
+ "base_by_volume": {
+  "H": 17.42
+ },
+ "_base_by_volume_source": "H stands on the dropped D deck (v002 base 17.50 would leave an 8 cm slit over the deck 17.42); inside the D parapet, top unchanged."
+}

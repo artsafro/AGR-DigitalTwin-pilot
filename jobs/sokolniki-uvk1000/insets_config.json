@@ -1,66 +1,353 @@
 {
- "_comment": "#1784 step 3 inset families [D378] (Artem 2026-11-24): lamellas, roof steel cage, mesh, canopies = separate insets; F05 outer glazing = inset with own ends; cassette folds = texture. Synthetic: none.",
+ "_comment": "#1784 step 3 inset families [D378] (Artem 2026-11-24): lamellas, roof steel cage, mesh, canopies = separate insets; F05 outer glazing = inset with own ends; cassette folds = texture. Synthetic: none. v007 [D384] (Artem 2026-11-24 ~19:55): + decor panels as relief insets, F05 piers (columns), F05 ground-floor glazing, window flashings, roof hatches; pergolas = the cage on the roof wells of body v007.",
  "families": {
-  "cage_column": {"prefixes": ["ADSK_КолоннаНесущая_Труба"], "material": "12_frame_RAL9003", "object": "SM_Sokolniki_OKS_Cage"},
-  "cage_beam": {"prefixes": ["ADSK_КаркасНесущий_Труба"], "material": "12_frame_RAL9003", "object": "SM_Sokolniki_OKS_Cage"},
-  "mesh": {"prefixes": ["Базовая стена ADSK_Сетка_кровля"], "material": "10_mesh_20_RAL9003", "object": "SM_Sokolniki_OKS_Mesh"},
-  "canopy": {"prefixes": ["ASML_АР_Козырьки стекло"], "material": "M_Glass_01", "pane": true, "object": "SM_Sokolniki_OKS_Canopy"},
-  "lamella": {"prefixes": ["Панель фасадная 1 Фигурная"], "material": "04_cassette_fin_RAL8023", "object": "SM_Sokolniki_OKS_Lamella"},
-  "cassette": {"prefixes": ["Панель фасадная 2 Фигурная"], "material": null, "object": null},
-  "curtain_glass": {"prefixes": ["Системная панель"], "material": "05_cw_structural_RAL7016", "object": "SM_Sokolniki_OKS_F05_Glazing"},
-  "beam_bm": {"prefixes": ["(BM)_ADSK_Брус"], "material": null, "object": null}
+  "cage_column": {
+   "prefixes": [
+    "ADSK_КолоннаНесущая_Труба"
+   ],
+   "material": "12_frame_RAL9003",
+   "object": "SM_Sokolniki_OKS_Cage"
+  },
+  "cage_beam": {
+   "prefixes": [
+    "ADSK_КаркасНесущий_Труба"
+   ],
+   "material": "12_frame_RAL9003",
+   "object": "SM_Sokolniki_OKS_Cage"
+  },
+  "mesh": {
+   "prefixes": [
+    "Базовая стена ADSK_Сетка_кровля"
+   ],
+   "material": "10_mesh_20_RAL9003",
+   "object": "SM_Sokolniki_OKS_Mesh"
+  },
+  "canopy": {
+   "prefixes": [
+    "ASML_АР_Козырьки стекло"
+   ],
+   "material": "M_Glass_01",
+   "pane": true,
+   "object": "SM_Sokolniki_OKS_Canopy"
+  },
+  "lamella": {
+   "prefixes": [
+    "Панель фасадная 1 Фигурная"
+   ],
+   "material": "04_cassette_fin_RAL8023",
+   "object": "SM_Sokolniki_OKS_Lamella"
+  },
+  "curtain_glass": {
+   "prefixes": [
+    "Системная панель"
+   ],
+   "material": "05_cw_structural_RAL7016",
+   "object": "SM_Sokolniki_OKS_F05_Glazing"
+  },
+  "beam_bm": {
+   "prefixes": [
+    "(BM)_ADSK_Брус"
+   ],
+   "material": null,
+   "object": null
+  },
+  "decor_panel": {
+   "prefixes": [
+    "Панель фасадная 2 Фигурная"
+   ],
+   "material": "13_decor_relief_RAL9003",
+   "relief": true,
+   "object": "SM_Sokolniki_OKS_DecorPanel"
+  },
+  "flashing": {
+   "prefixes": [
+    "B2B_Отлив"
+   ],
+   "material": "14_flashing_RAL7016",
+   "object": "SM_Sokolniki_OKS_Flashing"
+  },
+  "hatch": {
+   "prefixes": [
+    "Люк выхода на кровлю"
+   ],
+   "material": "15_roof_hatch_RAL7016",
+   "object": "SM_Sokolniki_OKS_RoofHatch"
+  },
+  "pier": {
+   "prefixes": [
+    "Базовая стена ADSK_Наружная"
+   ],
+   "material": "16_pier_facade",
+   "object": null
+  }
  },
- "cage": {"beam_end_run_on_r": 0.37, "contained_slack_m": 0.01, "parallel_gap_m": 0.006, "flatten_slope": 0.01, "thin_m": 0.008, "snap_reach_m": 0.05, "beam_near_m": 0.05, "beam_cos_min": 0.9999, "column_embed_m": 0.02, "merge_tol_m": 0.005},
- "f05": {"edges": ["D06", "D07"], "object": "SM_Sokolniki_OKS_F05_Glazing", "material": "05_cw_structural_RAL7016",
-         "end_material": "14_flashing_RAL7016", "normal_tol": 0.02, "max_out": 2.0, "mullion_gap": 0.15,
-         "step_tol": 0.1, "return_min_m": 0.05},
+ "cage": {
+  "beam_end_run_on_r": 0.37,
+  "contained_slack_m": 0.01,
+  "parallel_gap_m": 0.006,
+  "flatten_slope": 0.01,
+  "thin_m": 0.008,
+  "snap_reach_m": 0.05,
+  "beam_near_m": 0.05,
+  "beam_cos_min": 0.9999,
+  "column_embed_m": 0.02,
+  "merge_tol_m": 0.005
+ },
+ "f05": {
+  "edges": [
+   "D06",
+   "D07"
+  ],
+  "object": "SM_Sokolniki_OKS_F05_Glazing",
+  "material": "05_cw_structural_RAL7016",
+  "end_material": "14_flashing_RAL7016",
+  "normal_tol": 0.02,
+  "max_out": 2.0,
+  "mullion_gap": 0.15,
+  "step_tol": 0.1,
+  "return_min_m": 0.05
+ },
  "decisions": [
   "cage: columns = world-aligned square boxes (round tubes have no section axes); exact duplicate and touching/overlapping posts joined into one box; a column top just under a beam runs up to the beam axis; columns embedded 0.02 m into the roof below",
   "cage: beams = diamond section (square turned 45 deg, faces at the tube radius) so no beam face is parallel to a column or a crossing beam; near-level beams (slope < 0.01) drawn level; ends inside a column footprint snapped to its axis, then every end runs on 0.37 r; collinear touching same-section segments joined; a stub inside a bigger parallel tube dropped; a thinner end-to-end beam laps 0.02 m into the thicker; parallel neighbours within 6 mm thinned 8 mm; an end face within 6 mm of a column face pushed 9 mm in",
   "mesh: one quad per Revit mesh wall in its mid-plane (opacity sheet), normal away from the building centre (vertical) or up (roof mesh)",
   "canopy: the glass sheet only (largest flat sheet of the family, hangers left out), closed box 6 quads; touching collinear sheets joined",
   "lamella: closed box from the Revit panel box; the fold is texture [D378]",
-  "F05: glass over the Revit panel facets in front of the D06/D07 face line (sawtooth: 7 facets, 7 returns over the mullion gap, so every closure is a quad), clipped to the body mouth (contour_cut rects); top/bottom closures and end quads close the gap to the face [D378]"
+  "F05: glass over the Revit panel facets in front of the D06/D07 face line (sawtooth: 7 facets, 7 returns over the mullion gap, so every closure is a quad), clipped to the body mouth (contour_cut rects); top/bottom closures and end quads close the gap to the face [D378]",
+  "[D384] decor panels: each Revit 'Панель фасадная 2 Фигурная' = closed relief solid of 10 quads, rect shrunk by half the 0.02 m panel joint per side (Revit neighbours overlap up to 4 mm) (abutting Revit panels would share faces, xView): back quad at the Revit back plane, 4 rim quads to the front rim, 4 pyramid facets to the Revit apex truncated by a homothety about the apex to a 0.05 m top (every facet a planar trapezoid, real depth minus <= 0.025 m)",
+  "[D384] F05 piers (columns): the 0..7.5 m exterior-wall pieces in front of D06 (top >= 7.4 m, each piece <= 1.2 m in plan) grouped by station (gap < 0.3 m) -> one box per pier aligned to the body face D06 (Revit runs 2 deg off), front = Revit front, back 0.05 m behind the body face",
+  "[D384] F05 ground-floor glazing: one quad per bay between the piers, 0.02 m in front of the body face, from the base to the F05 mouth sill (the upper glazing closure); Revit glass stands 1.6-2.5 m behind the face line, inside the accepted body",
+  "[D384] flashings: one sloped quad per Revit flashing (its upper face, normal up); hatches: closed box from the Revit box"
  ],
  "decor": [
-  {"prefix": "ADSK_КаркасНесущий_Труба", "decision": "вставка", "target": "Cage / 12_frame_RAL9003", "why": "ригели каркаса кровли [D378]"},
-  {"prefix": "ADSK_КолоннаНесущая_Труба", "decision": "вставка", "target": "Cage / 12_frame_RAL9003", "why": "стойки каркаса кровли [D378]"},
-  {"prefix": "Базовая стена ADSK_Сетка_кровля", "decision": "вставка", "target": "Mesh / 10_mesh_20_RAL9003", "why": "сетка 20x20, плоскость opacity [D378]"},
-  {"prefix": "ASML_АР_Козырьки", "decision": "вставка", "target": "Canopy / M_Glass_01", "why": "стеклянный лист; подвесы не моделируются"},
-  {"prefix": "Панель фасадная 1 Фигурная", "decision": "вставка", "target": "Lamella / 04_cassette_fin_RAL8023", "why": "ламели RAL 8023 (intake P7) [D378]"},
-  {"prefix": "Системная панель Монтажный", "decision": "вне", "target": "", "why": "монтажный заполнитель витража, не виден"},
-  {"prefix": "Системная панель ADSK_Cтемалит", "decision": "текстура", "target": "", "why": "стемалит в витражах (09_stemalit)"},
-  {"prefix": "Системная панель", "decision": "вставка", "target": "F05_Glazing / 05 + тело", "why": "F05: 198 панелей -> вставка витража; прочие: плоскость окна в проёме тела v005"},
-  {"prefix": "Прямоугольный импост", "decision": "текстура", "target": "", "why": "импосты витражей и окон"},
-  {"prefix": "WB_Окно", "decision": "тело", "target": "проём + плоскость окна v005", "why": "окно обрезано по принятому проёму [D375]"},
-  {"prefix": "WB_ДверьВитражная", "decision": "тело", "target": "проём + плоскость окна v005", "why": "по принятым проёмам [D375]"},
-  {"prefix": "AC_ДверьВитражная", "decision": "тело", "target": "проём + плоскость окна v005", "why": "по принятым проёмам [D375]"},
-  {"prefix": "WB_Дв_2Пл", "decision": "тело", "target": "проём + плоскость окна v005", "why": "по принятым проёмам [D375]"},
-  {"prefix": "AC_Дверь_Однопольная_Стальная", "decision": "тело", "target": "проём + плоскость окна v005", "why": "по принятым проёмам [D375]"},
-  {"prefix": "Панель фасадная 2 Фигурная", "decision": "текстура", "target": "03_cassette_folded_RAL9003", "why": "фальц кассет — текстура [D378]"},
-  {"prefix": "Панель фасадная 2 Глухая", "decision": "текстура", "target": "", "why": "гладкая панель — зона отделки"},
-  {"prefix": "Панель фасадная 1 Глухая", "decision": "текстура", "target": "", "why": "гладкая панель — зона отделки"},
-  {"prefix": "Базовая стена ADSK_Наружная", "decision": "тело", "target": "SM_Sokolniki_OKS_N/D/S/H", "why": "наружные стены = оболочка v005"},
-  {"prefix": "Базовая стена ADSK_Отделка", "decision": "текстура", "target": "", "why": "отделочный слой стены"},
-  {"prefix": "Базовая крыша", "decision": "тело", "target": "крышка тела v005", "why": "кровля = верхняя грань объёма"},
-  {"prefix": "Перекрытие", "decision": "вне", "target": "", "why": "перекрытия внутри оболочки"},
-  {"prefix": "Базовая стена ADSK_Внутренн", "decision": "вне", "target": "", "why": "внутренние стены"},
-  {"prefix": "Базовая стена ADSK_Перегородка", "decision": "вне", "target": "", "why": "перегородки"},
-  {"prefix": "Базовая стена Базовая", "decision": "вне", "target": "", "why": "внутренние стены"},
-  {"prefix": "Базовая стена ВС_Кладка", "decision": "вне", "target": "", "why": "внутренняя кладка"},
-  {"prefix": "Монолитная лестница", "decision": "вне", "target": "", "why": "интерьер"},
-  {"prefix": "Лестницы", "decision": "вне", "target": "", "why": "интерьер"},
-  {"prefix": "ADSK_КолоннаЖБ", "decision": "вне", "target": "", "why": "колонны внутри оболочки"},
-  {"prefix": "В2В_Подоконник", "decision": "вне", "target": "", "why": "внутренний подоконник"},
-  {"prefix": "B2B_Отлив", "decision": "вне", "target": "", "why": "не в составе шага 3 — вопрос 1"},
-  {"prefix": "Ограждение", "decision": "вне", "target": "", "why": "не в составе шага 3 — вопрос 2"},
-  {"prefix": "(BM)_ADSK_Брус", "decision": "вне", "target": "", "why": "147 брусьев h 3,9 м у земли — вопрос 3"},
-  {"prefix": "Люк выхода на кровлю", "decision": "вне", "target": "", "why": "мелкий элемент кровли"}
+  {
+   "prefix": "ADSK_КаркасНесущий_Труба",
+   "decision": "вставка",
+   "target": "Cage / 12_frame_RAL9003",
+   "why": "ригели перголы на кровле; видны над колодцем кровли v007 [D384]"
+  },
+  {
+   "prefix": "ADSK_КолоннаНесущая_Труба",
+   "decision": "вставка",
+   "target": "Cage / 12_frame_RAL9003",
+   "why": "стойки перголы на кровле; стоят на площадке колодца [D384]"
+  },
+  {
+   "prefix": "Панель фасадная 2 Фигурная",
+   "decision": "вставка",
+   "target": "DecorPanel / 13_decor_relief_RAL9003",
+   "why": "объёмные декор-панели: рельеф пирамиды, 10 квадов [D384]"
+  },
+  {
+   "prefix": "B2B_Отлив",
+   "decision": "вставка",
+   "target": "Flashing / 14_flashing_RAL7016",
+   "why": "отливы окон, наклонная плоскость (решение 2026-11-24 ~16:00)"
+  },
+  {
+   "prefix": "Люк выхода на кровлю",
+   "decision": "вставка",
+   "target": "RoofHatch / 15_roof_hatch_RAL7016",
+   "why": "видны на площадке кровли [D384]"
+  },
+  {
+   "prefix": "Базовая стена ADSK_Наружная",
+   "decision": "тело",
+   "target": "SM_Sokolniki_OKS_N/D/S/H + 4 пилона F05 вставкой",
+   "why": "наружные стены = оболочка; пилоны F05 0..7,5 м = колонны (F05_Piers / 16_pier_facade) [D384]"
+  },
+  {
+   "prefix": "Базовая крыша",
+   "decision": "тело",
+   "target": "площадка колодца v007 S 11.12 / N 13.22 / D 17.42",
+   "why": "кровля опущена внутри парапетов [D384]"
+  },
+  {
+   "prefix": "(BM)_ADSK_Брус",
+   "decision": "вне",
+   "target": "",
+   "why": "147 реек — интерьерный экран внутри оболочки D/N [D384]"
+  },
+  {
+   "prefix": "Ограждение",
+   "decision": "вне",
+   "target": "",
+   "why": "перила — отдельная карточка на общем ядре ограждений (решение 2026-11-24 ~16:00)"
+  },
+  {
+   "prefix": "Базовая стена ADSK_Сетка_кровля",
+   "decision": "вставка",
+   "target": "Mesh / 10_mesh_20_RAL9003",
+   "why": "сетка 20x20, плоскость opacity [D378]"
+  },
+  {
+   "prefix": "ASML_АР_Козырьки",
+   "decision": "вставка",
+   "target": "Canopy / M_Glass_01",
+   "why": "стеклянный лист; подвесы не моделируются"
+  },
+  {
+   "prefix": "Панель фасадная 1 Фигурная",
+   "decision": "вставка",
+   "target": "Lamella / 04_cassette_fin_RAL8023",
+   "why": "ламели RAL 8023 (intake P7) [D378]"
+  },
+  {
+   "prefix": "Системная панель Монтажный",
+   "decision": "вне",
+   "target": "",
+   "why": "монтажный заполнитель витража, не виден"
+  },
+  {
+   "prefix": "Системная панель ADSK_Cтемалит",
+   "decision": "текстура",
+   "target": "",
+   "why": "стемалит в витражах (09_stemalit)"
+  },
+  {
+   "prefix": "Системная панель",
+   "decision": "вставка",
+   "target": "F05_Glazing / 05 + тело",
+   "why": "F05: 198 панелей -> вставка витража; прочие: плоскость окна в проёме тела v005"
+  },
+  {
+   "prefix": "Прямоугольный импост",
+   "decision": "текстура",
+   "target": "",
+   "why": "импосты витражей и окон"
+  },
+  {
+   "prefix": "WB_Окно",
+   "decision": "тело",
+   "target": "проём + плоскость окна v005",
+   "why": "окно обрезано по принятому проёму [D375]"
+  },
+  {
+   "prefix": "WB_ДверьВитражная",
+   "decision": "тело",
+   "target": "проём + плоскость окна v005",
+   "why": "по принятым проёмам [D375]"
+  },
+  {
+   "prefix": "AC_ДверьВитражная",
+   "decision": "тело",
+   "target": "проём + плоскость окна v005",
+   "why": "по принятым проёмам [D375]"
+  },
+  {
+   "prefix": "WB_Дв_2Пл",
+   "decision": "тело",
+   "target": "проём + плоскость окна v005",
+   "why": "по принятым проёмам [D375]"
+  },
+  {
+   "prefix": "AC_Дверь_Однопольная_Стальная",
+   "decision": "тело",
+   "target": "проём + плоскость окна v005",
+   "why": "по принятым проёмам [D375]"
+  },
+  {
+   "prefix": "Панель фасадная 2 Глухая",
+   "decision": "текстура",
+   "target": "",
+   "why": "гладкая панель — зона отделки"
+  },
+  {
+   "prefix": "Панель фасадная 1 Глухая",
+   "decision": "текстура",
+   "target": "",
+   "why": "гладкая панель — зона отделки"
+  },
+  {
+   "prefix": "Базовая стена ADSK_Отделка",
+   "decision": "текстура",
+   "target": "",
+   "why": "отделочный слой стены"
+  },
+  {
+   "prefix": "Перекрытие",
+   "decision": "вне",
+   "target": "",
+   "why": "перекрытия внутри оболочки"
+  },
+  {
+   "prefix": "Базовая стена ADSK_Внутренн",
+   "decision": "вне",
+   "target": "",
+   "why": "внутренние стены"
+  },
+  {
+   "prefix": "Базовая стена ADSK_Перегородка",
+   "decision": "вне",
+   "target": "",
+   "why": "перегородки"
+  },
+  {
+   "prefix": "Базовая стена Базовая",
+   "decision": "вне",
+   "target": "",
+   "why": "внутренние стены"
+  },
+  {
+   "prefix": "Базовая стена ВС_Кладка",
+   "decision": "вне",
+   "target": "",
+   "why": "внутренняя кладка"
+  },
+  {
+   "prefix": "Монолитная лестница",
+   "decision": "вне",
+   "target": "",
+   "why": "интерьер"
+  },
+  {
+   "prefix": "Лестницы",
+   "decision": "вне",
+   "target": "",
+   "why": "интерьер"
+  },
+  {
+   "prefix": "ADSK_КолоннаЖБ",
+   "decision": "вне",
+   "target": "",
+   "why": "колонны внутри оболочки"
+  },
+  {
+   "prefix": "В2В_Подоконник",
+   "decision": "вне",
+   "target": "",
+   "why": "внутренний подоконник"
+  }
  ],
- "decor_questions": [
-  "1. Отливы B2B_Отлив (232 шт.): по [D336] это вставки, в состав шага 3 не входили. Делать в v007? Рекомендация: да, полоса на окно.",
-  "2. Ограждения (МГН h900 и стандартные): вне шага 3. Рекомендация: отдельная карточка, agr railing.",
-  "3. 147 брусьев (BM)_ADSK_Брус h 3,9 м у земли (x~15, y~82): пергола/ограда участка? Рекомендация: вне здания (Ground/МАФ).",
-  "4. Каркас: 66 дублей стоек Revit убраны, касающиеся стойки слиты, ригели — сечение «ромб» того же радиуса. Принимаешь?"
- ]
+ "decor_questions": [],
+ "relief": {
+  "top_min_m": 0.05,
+  "apex_margin_m": 0.02,
+  "joint_m": 0.02
+ },
+ "f05_ground": {
+  "edge": "D06",
+  "pier_z": [
+   -0.05,
+   7.6
+  ],
+  "pier_out": [
+   -2.0,
+   2.0
+  ],
+  "pier_gap_m": 0.3,
+  "embed_m": 0.05,
+  "pier_object": "SM_Sokolniki_OKS_F05_Piers",
+  "pier_material": "16_pier_facade",
+  "glass_zmax": 7.6,
+  "glass_out": [
+   -3.0,
+   0.1
+  ],
+  "glass_out_m": 0.02,
+  "glass_object": "SM_Sokolniki_OKS_F05_GroundGlazing",
+  "glass_material": "05_cw_structural_RAL7016",
+  "pier_zmax_min": 7.4,
+  "pier_piece_max_m": 1.2
+ }
 }
