@@ -57,6 +57,39 @@ def _git_add(root):
     subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
 
 
+DOC_INDEX = "docs/architecture/README.md"
+DOC_TABLE = """## Documentation ownership
+
+| Topic | Owner | Related |
+|---|---|---|
+| index | [Architecture](README.md) | |
+| guide | [Guide](../guide.md) | |
+"""
+
+
+def _docs_repo(tmp_path, files=None, *, index=DOC_TABLE, historical=""):
+    return _repo(tmp_path, {DOC_INDEX: index, "docs/guide.md": "# Guide\n", **(files or {})},
+                 config=CONFIG + historical)
+
+
+def _check_docs(root, capsys):
+    code = sn.main(["--root", str(root), "--check-docs"])
+    return code, capsys.readouterr().out
+
+
+def test_docs_guard_rejects_unindexed_docs_then_recovers(tmp_path, capsys):
+    root = _docs_repo(tmp_path, {"docs/unindexed.md": "# Synthetic unstated ownership\n"})
+    sn.write_block(root, [], ["docs/unindexed.md"])
+    before = (root / ".ignore").read_bytes()
+    for _ in range(2):
+        code, out = _check_docs(root, capsys)
+        assert code == 1
+        assert "docs/unindexed.md: missing ownership row" in out
+        assert (root / ".ignore").read_bytes() == before
+    (root / DOC_INDEX).write_text(DOC_TABLE + "| new | [New](../unindexed.md) | |\n", encoding="utf-8")
+    assert _check_docs(root, capsys)[0] == 0
+
+
 def _rg(root):
     out = subprocess.run([RG, "--files", "--path-separator", "/"], cwd=root, capture_output=True, text=True).stdout
     return set(out.splitlines())
