@@ -1,0 +1,335 @@
+{
+ "card": "t_e8aea693",
+ "r72": "e9179247c4934756170f3db7c8e2e8fe36e05487",
+ "base": "01e48513aa9bba11553bc3c0c296414e7ba26c6d",
+ "fixture": {
+  "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-assets\\KPP1\\delivered-customer-2026-11-14\\SM_77_05_0009005_117_002.zip",
+  "sha256": "caef3a21acdb8aee1fee9e496e26bd9f9adaeef2a17272e8189bb634aee13ecf"
+ },
+ "status": "budget_stop",
+ "wall_total_s": 143.432,
+ "round_wall_s": [
+  143.432
+ ],
+ "E77_per_round": [
+  0.8
+ ],
+ "E77_median": 0.8,
+ "spread": 0.0,
+ "rows_identical_across_rounds": true,
+ "round1": {
+  "rows": [
+   {
+    "udim": 1001,
+    "size": 4096,
+    "modal_rgb": [
+     150,
+     153,
+     146
+    ],
+    "finishes": [
+     "Plinth_RAL7004"
+    ],
+    "expected_px": 300.0,
+    "state": "measured",
+    "observed_px": 300.0,
+    "runs": [
+     13,
+     13,
+     13
+    ],
+    "E": 0.0,
+    "flagged": false,
+    "half_pitch": {
+     "state": "exercised",
+     "observed_px": 150.0,
+     "runs": [
+      27,
+      27,
+      27
+     ],
+     "E": 0.5,
+     "changed_px": 15468328,
+     "in_bound": true,
+     "bound_applies": true
+    },
+    "brightness_plus8": {
+     "state": "exercised",
+     "observed_px": 300.0,
+     "runs": [
+      13,
+      13,
+      13
+     ],
+     "E": 0.0,
+     "changed_px": 16777216,
+     "in_bound": true,
+     "bound_applies": true
+    }
+   },
+   {
+    "udim": 1002,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1003,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1004,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1005,
+    "size": 4096,
+    "modal_rgb": [
+     34,
+     113,
+     179
+    ],
+    "finishes": [
+     "Cassette_RAL5015",
+     "Cassette_RAL5015_Top"
+    ],
+    "expected_px": 600.0,
+    "state": "measured",
+    "observed_px": 600.0,
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "E": 0.0,
+    "flagged": false,
+    "half_pitch": {
+     "state": "exercised",
+     "observed_px": 300.0,
+     "runs": [
+      14,
+      14,
+      14
+     ],
+     "E": 0.5,
+     "changed_px": 15386328,
+     "in_bound": true,
+     "bound_applies": true
+    },
+    "brightness_plus8": {
+     "state": "exercised",
+     "observed_px": 600.0,
+     "runs": [
+      7,
+      7,
+      7
+     ],
+     "E": 0.0,
+     "changed_px": 16777216,
+     "in_bound": true,
+     "bound_applies": true
+    }
+   },
+   {
+    "udim": 1006,
+    "size": 4096,
+    "modal_rgb": [
+     208,
+     208,
+     208
+    ],
+    "finishes": [
+     "Cassette_RAL7047"
+    ],
+    "expected_px": 600.0,
+    "state": "measured",
+    "observed_px": 600.0,
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "E": 0.0,
+    "flagged": false,
+    "half_pitch": {
+     "state": "exercised",
+     "observed_px": 300.0,
+     "runs": [
+      14,
+      14,
+      14
+     ],
+     "E": 0.5,
+     "changed_px": 15175520,
+     "in_bound": true,
+     "bound_applies": true
+    },
+    "brightness_plus8": {
+     "state": "exercised",
+     "observed_px": 600.0,
+     "runs": [
+      7,
+      7,
+      7
+     ],
+     "E": 0.0,
+     "changed_px": 16777216,
+     "in_bound": true,
+     "bound_applies": true
+    }
+   },
+   {
+    "udim": 1007,
+    "size": 4096,
+    "modal_rgb": [
+     34,
+     113,
+     179
+    ],
+    "finishes": [
+     "Cassette_RAL5015",
+     "Cassette_RAL5015_Top"
+    ],
+    "expected_px": 600.0,
+    "state": "measured",
+    "observed_px": 600.0,
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "E": 0.0,
+    "flagged": false,
+    "half_pitch": {
+     "state": "exercised",
+     "observed_px": 300.0,
+     "runs": [
+      14,
+      14,
+      14
+     ],
+     "E": 0.5,
+     "changed_px": 15176464,
+     "in_bound": true,
+     "bound_applies": true
+    },
+    "brightness_plus8": {
+     "state": "exercised",
+     "observed_px": 600.0,
+     "runs": [
+      7,
+      7,
+      7
+     ],
+     "E": 0.0,
+     "changed_px": 16777216,
+     "in_bound": true,
+     "bound_applies": true
+    }
+   },
+   {
+    "udim": 1008,
+    "size": 4096,
+    "modal_rgb": [
+     236,
+     236,
+     234
+    ],
+    "finishes": [
+     "Perforated_RAL9016"
+    ],
+    "expected_px": 600.0,
+    "state": "measured",
+    "observed_px": 120.0,
+    "runs": [
+     7,
+     41,
+     7
+    ],
+    "E": 0.8,
+    "flagged": true,
+    "half_pitch": {
+     "state": "exercised",
+     "observed_px": 60.0,
+     "runs": [
+      14,
+      82,
+      14
+     ],
+     "E": 0.9,
+     "changed_px": 3693799,
+     "in_bound": false,
+     "bound_applies": false
+    },
+    "brightness_plus8": {
+     "state": "exercised",
+     "observed_px": 120.0,
+     "runs": [
+      7,
+      41,
+      7
+     ],
+     "E": 0.8,
+     "changed_px": 16777216,
+     "in_bound": true,
+     "bound_applies": true
+    }
+   },
+   {
+    "udim": 1009,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1010,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1011,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1012,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1013,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1014,
+    "size": 256,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1015,
+    "size": 4096,
+    "modal_rgb": [
+     144,
+     146,
+     148
+    ],
+    "finishes": [],
+    "expected_px": null,
+    "state": "not_exercised"
+   },
+   {
+    "udim": 1016,
+    "size": 256,
+    "state": "not_exercised"
+   }
+  ],
+  "E77": 0.8,
+  "measured": 5,
+  "flagged": [
+   1008
+  ],
+  "wall_s": 143.432
+ },
+ "H77": "inconclusive"
+}

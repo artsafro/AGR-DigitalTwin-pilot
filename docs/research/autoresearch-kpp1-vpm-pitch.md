@@ -52,3 +52,12 @@ Replay from repo root: `uv run --frozen python docs/research/kpp1-vpm-pitch-r77/
 (needs Drive fixture above and the two pinned Git objects; replay limited outside this environment).
 
 ## Round log
+
+- R1 (frozen harness, commit `da84071e` contract): first round 143.432 s > 30 s first-round limit -> `budget_stop`,
+  **H77 inconclusive for R1** (one round, not three). The budget was frozen without a measured round (contract defect).
+  Round-1 rows are preserved unchanged in `kpp1-vpm-pitch-r77/attempt-001.json` (SHA-256
+  `03cffb043beac07d14acfae4d74968e92f574af1f2345f0d0500f8361d2b588c`) and are not used as evidence for the R2 verdict.
+- Amendment A1 (committed before R2; implementation speed only): the modal colour for tile binding is computed with
+  `np.bincount` over packed 24-bit RGB instead of `np.unique(axis=0)` (same argmax colour; ties resolve to the lowest
+  packed value in both). Metric, census, binding rule, bounds, witnesses and budget limits (30 s / 120 s) unchanged.
+  Parity proof: R2 per-tile `modal_rgb`, `finishes`, `expected_px` must equal R1 round-1 rows, otherwise R2 is void.
