@@ -292,6 +292,15 @@ def post_cells(tris, xs, ys, zs, rays=((0, -1), (2, 1)), skip=lambda centre: Fal
     A disagreement between the rays is an error naming the voxel. `skip(centre)` voxels (inside the body: the
     hidden inset part of a post, open in the source) are never post cells."""
     cells = set()
+    boxes = [tuple((min(p[d] for p in t), max(p[d] for p in t)) for d in range(3)) for t in tris]
+    column = {}   # (ray axis, voxel index on the other two axes) -> triangles whose bbox holds that ray line
+
+    def near(c, ax, idx):
+        key = (ax,) + tuple(idx[d] for d in range(3) if d != ax)
+        if key not in column:
+            column[key] = [t for t, bb in zip(tris, boxes)
+                           if all(bb[d][0] - 1e-9 <= c[d] <= bb[d][1] + 1e-9 for d in range(3) if d != ax)]
+        return column[key]
     for i in range(len(xs) - 1):
         for j in range(len(ys) - 1):
             for k in range(len(zs) - 1):
@@ -300,7 +309,7 @@ def post_cells(tris, xs, ys, zs, rays=((0, -1), (2, 1)), skip=lambda centre: Fal
                      zs[k] + (zs[k + 1] - zs[k]) * 0.3679)
                 if skip(c):
                     continue
-                par = [_ray_hits(c, ax, sg, tris) % 2 for ax, sg in rays]
+                par = [_ray_hits(c, ax, sg, near(c, ax, (i, j, k))) % 2 for ax, sg in rays]
                 if len(set(par)) != 1:
                     raise ValueError(f'ray parity disagrees at voxel {(i, j, k)} centre {c}: {par}')
                 if par[0]:

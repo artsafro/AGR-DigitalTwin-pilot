@@ -112,6 +112,53 @@ def outside_components(verts, faces, rect, near_m=0.4, out_tol=1e-3):
     return {'posts': posts, 'other': other, 'bbox': boxes, 'outside_faces': len(out)}
 
 
+OUT_RAYS = {'W': ((0, -1),), 'E': ((0, 1),), 'S': ((1, -1),), 'N': ((1, 1),)}
+
+
+def element_plan(lo, hi, area, nonaxis_area, rect, tol=1e-3, flat_m=1e-4, planes=None):
+    """Package step (#1609, Artem 2026-11-24): plan of one non-post outside component of quad-v003.
+
+    side = the one ring side the plan bbox reaches beyond (more than tol); rays = the outward axis only: frames are
+    open along the facade (no end caps, e.g. x 4.9-5.4 on S), only the outward view is closed.
+    method: 'voxel' for an all-axis-aligned solid (rebuilt on its own plane lines
+    [D336]); 'keep' for a flat, slanted or open component (its v003 quads stay, as a separate element). planes =
+    distinct own plane counts per axis (x, y, z); a voxel solid needs >= 2 on both axes other than the outward one.
+    kind: ground-standing (lo z <= 1 cm) slanted = Portal, ground-standing axis = Annex, else Frame.
+    Fail-closed: NaN/inf, lo > hi, area <= 0, nonaxis_area outside 0..area, no side or two sides."""
+    _finite(list(lo) + list(hi) + [area, nonaxis_area], 'element')
+    if len(lo) != 3 or len(hi) != 3 or any(a > b for a, b in zip(lo, hi)):
+        raise ValueError(f'element bbox {lo}..{hi} is not a box')
+    if not area > 0 or not 0 <= nonaxis_area <= area + TOL:
+        raise ValueError(f'element area {area} / non-axis area {nonaxis_area} out of range')
+    x0, y0, x1, y1 = check_rect(rect)
+    sides = [s for s, out in (('W', lo[0] < x0 - tol), ('E', hi[0] > x1 + tol),
+                              ('S', lo[1] < y0 - tol), ('N', hi[1] > y1 + tol)) if out]
+    if len(sides) != 1:
+        raise ValueError(f'element {lo}..{hi} lies beyond ring sides {sides} (needs exactly one)')
+    side = sides[0]
+    flat = min(b - a for a, b in zip(lo, hi)) < flat_m
+    slanted = nonaxis_area > TOL
+    out_axis = OUT_RAYS[side][0][0]
+    open_axes = [] if planes is None else [a for a in range(3) if a != out_axis and planes[a] < 2]
+    method = 'keep' if flat or slanted or open_axes else 'voxel'
+    ground = lo[2] <= 0.01
+    kind = ('Portal' if slanted else 'Annex') if ground else 'Frame'
+    why = ('flat' if flat else 'slanted faces' if slanted
+           else f'open surface: < 2 own planes on axis {"xyz"[open_axes[0]]}' if open_axes else 'axis-aligned solid')
+    return {'side': side, 'kind': kind, 'method': method, 'rays': OUT_RAYS[side], 'why': why}
+
+
+def glass_shift(depths, cap):
+    """Shift (m, >= 0) that moves a glass component inward-to-outward so its deepest face lies at most `cap` behind
+    the ring plane (in front of the lattice opening back face). depths = per-face distance from the ring plane."""
+    _finite(list(depths) + [cap], 'glass depth')
+    if not depths:
+        raise ValueError('glass component without faces')
+    if min(depths) < 0 or cap <= 0:
+        raise ValueError(f'glass depth {min(depths)} / cap {cap} out of range')
+    return max(0.0, max(depths) - cap)
+
+
 def check_bands(bands):
     if not bands:
         raise ValueError('no finish bands')

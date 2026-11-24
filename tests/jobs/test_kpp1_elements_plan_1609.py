@@ -18,7 +18,15 @@ RECT = (-14.985, -5.685, 12.675, 5.975)
 
 def test_window_frame_on_south_is_voxel_frame_with_outward_ray():
     p = pp.element_plan([-7.055, -5.885, 4.775], [-2.98, -5.685, 6.725], 9.98, 0.0, RECT)
-    assert p == {'side': 'S', 'kind': 'Frame', 'method': 'voxel', 'rays': ((1, -1), (0, 1))}
+    assert p == {'side': 'S', 'kind': 'Frame', 'method': 'voxel', 'rays': ((1, -1),), 'why': 'axis-aligned solid'}
+
+
+def test_open_strip_without_closing_planes_is_kept():
+    # S strip x 6.6-6.675 (v003 component 11): only y faces, no x end caps, no z caps -> cannot be voxelised
+    p = pp.element_plan([6.6, -5.729, 1.2], [6.675, -5.636, 3.0], 0.14, 0.0, RECT, planes=(0, 3, 0))
+    assert (p['method'], p['why']) == ('keep', 'open surface: < 2 own planes on axis x')
+    closed = pp.element_plan([6.6, -5.729, 1.2], [6.675, -5.636, 3.0], 0.14, 0.0, RECT, planes=(2, 1, 2))
+    assert closed['method'] == 'voxel'
 
 
 def test_each_side_gets_its_outward_ray():
