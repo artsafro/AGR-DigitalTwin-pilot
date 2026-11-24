@@ -158,6 +158,20 @@ def test_zip_without_manifest_raw_path_shorthand_still_feeds_the_quad_check(tmp_
     assert unused(r) == [] and "oks_master.bin" in scene_double
 
 
+@pytest.mark.parametrize("target_of", [single_fbx, zip_without_manifest])
+def test_same_input_read_by_the_quad_check_is_not_unused_under_another_role(tmp_path, scene_double, target_of):
+    m = masters(tmp_path)
+    alias = tmp_path / "sub" / ".." / m["oks"].name  # same file, other spelling
+    (tmp_path / "sub").mkdir()
+    target = target_of(tmp_path)
+    r = vp.validate(target, None, PROFILES, scene=True, master={"oks": m["oks"], "ground": alias})
+    assert unused(r) == [] and "oks_master.bin" in scene_double
+    other = vp.validate(target, None, PROFILES, scene=True, master={"oks": m["oks"], "ground": [alias, m["ground"]]})
+    one_per_role(other, ["ground"])  # one of its sources was never read
+    no_scene = vp.validate(target, None, PROFILES, master={"oks": m["oks"], "ground": alias})
+    one_per_role(no_scene, ["oks", "ground"])  # nothing read the file without --scene
+
+
 def test_zip_with_unreadable_manifest_reports_roles_unused_and_keeps_the_fail(tmp_path):
     m = masters(tmp_path)
     target = zip_without_manifest(tmp_path)
