@@ -7,8 +7,9 @@ Documentation contracts, not geometry checks or delivery acceptance. Pins the co
   existing `npm_atlas_udim.py` live bypass under the shared atlas owner `atlas_core.py`;
 - GND-09 links the NPM atlas contract to UV-08 while keeping GND-08 as the density reference;
 - `xview-parked` cites Vatutino v015 as the 2026-11-09 delivery report names it, without clearing the xView findings.
+
+Pattern: n/a | new-case: Ground route-map documentation regression test (#1853).
 """
-import json
 import sys
 from pathlib import Path
 
