@@ -27,7 +27,7 @@
 <tspan x="30" dy="24">Маршрут «Пакет и сдача» (НПМ + ВПМ) — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: 6b2730b31953abda32c38a0bbfd2ff9eaee062cfeaaccdbd023d53b7408791ff</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 36f1b69ad9bce87dd020263a07120bae1ef8189b2cad4defd40c6a4905deebc9</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: Сцена НПМ / ВПМ, ревизия и SHA-256 исходников; связь с FBX через существующий export_meta</tspan>

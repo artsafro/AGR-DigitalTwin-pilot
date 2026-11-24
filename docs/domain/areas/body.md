@@ -50,6 +50,9 @@ manual gates remain required. Partial coverage is explicitly qualified.
 | BODY-Y — Scene collection ceiling | reg p.28 §3.2 | No transferred VPM layer mandate; cleanup under BODY-B | At most 1 default layer/collection | Inspect source scene collections; FBX mesh-only checks do not establish the source layer count | none | [Scene organization](../geometry.md#regulation-geometry-rules-both-profiles-unless-noted) |
 | BODY-Z — Roof screen enclosure | [D067]; [D086] | Silhouette enclosure via the linked pattern; source-module top follows source | Closed shell of the screen's thickness inward (spec v0.7 `thickness_m`, #91); bounded draft-pattern support, not official VPM certification | Check marked screen outline, roof boundary classification and the shell's thickness/closed-solid guards; a profile other than `npm_min`/`mid` still stops | `tests/test_spec_extract.py` (screen extraction); `tests/qa/test_from_spec.py` (mid/VPM shell build, thickness fallback, grid/closed-solid guards, touch/overlap stop); `src/twinqa/geometry/checks.py:check_mesh` (partial: enclosure boundary classification) | [Roof screen enclosure](../patterns/roof-screen-enclosure.md) |
 
+KPP1 NW only [D380]: scope of the selected contour A is a square exterior corner, without a chamfer.
+The selection does not define the back reveals or post seat and is not mesh acceptance.
+
 ## Master topology before export [D312]
 
 The editable master prefers quads; unavoidable triangles are allowed and reported
@@ -74,8 +77,10 @@ Follow [BM-01..BM-14](../../research/body-modelling.md#5-правила) for the
 Rounded corners use a 2 cm chord sagitta, then snap to the texture step [D337]. Edges only on finish-zone
 borders and window lines; the panel step and loops without a material/opening reason are texture; dark/light
 cladding zones get separate material IDs with a vertical at the joint [D344]. The body outline is the outer
-envelope only: openings sealed by their filling, no face inside or facing inward, relief < 0.4 m is texture,
-a deeper niche stays geometry only where the etalon has it; zones keep the 4 atlas IDs [D341]. Typical-facade
+envelope only: sealing openings by their filling applies only to the computed section, with no face inside or
+facing inward; the G22 relief threshold (< 0.4 m is texture, a deeper niche stays geometry only where the
+object's own etalon or agreed reference has it) applies to facade relief, never to window/door openings; zones
+keep the 4 atlas IDs [D341]. Typical-facade
 thresholds are quads >= 95 %, slivers <= 0.5 % [D338]: WARN-only (OBSERVE) for the first week,
 not a blocking gate or a waiver of [D312]. Posts remain inset geometry by default [D336];
 panels are texture with a seam. Training-polygon validation is still open, not certified here.

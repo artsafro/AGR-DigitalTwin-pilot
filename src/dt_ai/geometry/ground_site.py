@@ -116,6 +116,13 @@ def slot_name(cover: Cover) -> str:
     return f"ID{cover.id:02d}_{cover.name}"
 
 
+def _cover_udim(cover_id: int) -> int:
+    """First-row UDIM tile of a Ground cover ID (1..MAX_ID -> cell (cover_id - 1, 0)) via udimtile_core."""
+    if isinstance(cover_id, bool):
+        raise gc._udimtile.UdimDomainError(f"cover_id must be an integer, got {cover_id!r}")
+    return gc._udimtile.udim_of_cell(cover_id - 1, 0)
+
+
 def relief_margin(snap, extension):
     """Fail-closed explicit bound for a user-authorized nearest-TIN-plane continuation."""
     snap = _finite("snap", snap, positive=True)
@@ -206,7 +213,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
             raise ValueError(f"unhatched policy must name the base cover {base_id} and a reason, got {unhatched}")
     report["stages"]["surfaces"] = {"mode": surfaces, "plan": plan.report, "unhatched_m2": sliver,
                                     "unhatched_policy": unhatched, "ids": [
-        {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": 1000 + c.id, "colour_rgb": list(c.colour),
+        {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": _cover_udim(c.id), "colour_rgb": list(c.colour),
          "colour_source": c.colour_source, "sources": c.sources,
          "area_m2": round(sum(p.area for p in c.polygons), 6)} for c in covers]}
 
@@ -256,7 +263,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     tiles = gc.uv_tile_report(mesh.uv)
     dens = gc.texel_density(mesh.verts, mesh.faces, mesh.uv, tex_px)
     top = mesh.level >= 0
-    report["stages"]["textures"] = {"tiles": tiles, "expected_tiles": [1000 + c.id for c in covers
+    report["stages"]["textures"] = {"tiles": tiles, "expected_tiles": [_cover_udim(c.id) for c in covers
                                                                         if slots[c.name] in set(mesh.slot)],
                                     "tex_px": tex_px,
                                     "density_px_per_m_top": [float(np.nanmin(dens[top])), float(np.nanmax(dens[top]))]}

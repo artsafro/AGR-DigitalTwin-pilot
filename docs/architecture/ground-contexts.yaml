@@ -12,7 +12,7 @@ rules:
     owner: adapters/max/agr_tools/udimtile_core.py
     ru: "своя формула UDIM 1001 + u + 10·v вместо общей функции (охрана — contexts.yaml, #1376)"
 shared_kernel:
-  serves_stage: textures
+  serves_stage: export
   id: udim
   ru: "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)"
   owner: adapters/max/agr_tools/udimtile_core.py
@@ -31,7 +31,7 @@ contexts:
     ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"
     area: docs/agents/CAPABILITIES.md
     owner: src/dt_ai/core/blender_runner.py
-    owner_ru: "исходники DWG / ПЗУ / PDF / 3D-рельеф; агент работает там, где удобно (D293)"
+    owner_ru: "агент выбирает DCC (D293); agr inspect читает манифест, инвентарь inspect_ground_dxf.py помогает сверить легенду, но не подтверждает сверку"
     functions:
       - name: blender_executable
         contract: "--blender > DT_BLENDER (CLI dt qa / agr) > TWINQA_BLENDER (blender_runner) > установка 5.1.2; путь к Blender"
@@ -42,7 +42,7 @@ contexts:
     ru: "Граница участка и нулевая отметка"
     area: docs/domain/areas/ground-surface.md
     owner: src/dt_ai/core/heights.py
-    owner_ru: "высоты App.3 от нуля проекта (D279); граница и ноль — из проекта или агент уточняет (D293)"
+    owner_ru: "граница и ноль — из проекта или агент уточняет (D293); agr zero проверяет OBJ по заданному нулю, не определяет его"
     functions:
       - name: height_values
         contract: "ноль проекта, м; Z нуля в FBX, м; верх модели, м -> высоты App.3 с округлением только в конце"
@@ -50,13 +50,13 @@ contexts:
         contract: "ноль проекта, Z нуля в FBX, вершины верха Ground (XY, Z, уровень), рельеф в XY -> pass / fail по каждой вершине (agr zero, #1406)"
   - id: ground
     grid: "2/1"
-    ru: "Поверхность Ground: плоские покрытия → проекция на рельеф → юбка"
+    ru: "Поверхность Ground: плоские UV → проекция → UDIM поверхности и UV юбки"
     area: docs/domain/areas/ground-surface.md
     owner: src/dt_ai/geometry/ground_site.py
-    owner_ru: "Ground любого участка в порядке D293 (agr ground site / dt ground site, #1406); Ватутино v015 — замороженная запись dt ground v015"
+    owner_ru: "agr ground site / dt ground site пишут ground-flat.obj, SM_<site>_Ground.obj и ground-report.json; не файлы текстур, атлас или рабочий FBX с квадами (D366)"
     functions:
       - name: build_site
-        contract: "граница, покрытия с ID, базовый ID, точки рельефа, ноль -> плоский Ground, проекция, юбка ≥ 1 м и отчёт стадий"
+        contract: "граница, покрытия с ID, базовый ID, точки рельефа, ноль -> плоский и спроецированный меши с UV, юбка ≥ 1 м, отчёт стадий"
       - name: covers_from_dxf
         contract: "DXF, строки покрытий (ID, имя, штриховки) -> покрытия; цвет ID = фон штриховки или цвет из спецификации с причиной"
       - name: relief_from_dxf
@@ -68,14 +68,14 @@ contexts:
     ru: "Текстуры по ID: UV-острова, тайлы, UDIM / атлас"
     area: docs/domain/areas/uv-atlas.md
     owner: adapters/max/agr_tools/atlas_core.py
-    owner_ru: "ВПМ: UDIM = ID; НПМ: та же геометрия на атласе (D293); упаковка атласа (D225)"
+    owner_ru: "цель D293: та же поверхность, НПМ на атласе вместо UDIM; agr vpm-to-npm не конвертирует Ground, ground_site назначает UV отдельно"
     functions:
       - name: pack
         contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
       - name: atlas_png
         contract: "раскладка -> PNG атласа"
   - id: validation
-    grid: "2/4"
+    grid: "2/5"
     ru: "Проверки Ground, xView, СИНТЕЗ"
     area: docs/domain/areas/package.md
     owner: tools/qa/validate_package.py
@@ -86,8 +86,8 @@ contexts:
       - name: validate_npm_zip
         contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
   - id: package
-    grid: "2/3"
-    ru: "Экспорт и пакеты НПМ / ВПМ"
+    grid: "2/4"
+    ru: "Упаковка готовых файлов НПМ / ВПМ в ZIP"
     area: docs/domain/areas/package.md
     owner: adapters/max/agr_tools/package_core.py
     owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
@@ -117,7 +117,7 @@ contexts:
     ru: "Расстановка МАФ и Флоры"
     area: docs/domain/areas/groundel-maf.md
     owner: src/dt_ai/placement/engine.py
-    owner_ru: "один экземпляр на точку СПОЗУ по высоте Ground; low-poly и high-poly — в одни точки (D293)"
+    owner_ru: "agr place / dt place site (placement/site.py): на профиль master JSON + (offset или readback) + (FBX или mesh). OBJ сборщика напрямую не подключён."
     functions:
       - name: place
         contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом"
@@ -130,7 +130,7 @@ contexts:
     ru: "Коллизии UCX рельефа (только ВПМ)"
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/ucx10_core.py
-    owner_ru: "зазоры UCX (D330: ядро на функцию); строит src/dt_ai/geometry/ucx_build.py; команда agr ucx (#1404)"
+    owner_ru: "agr ucx: FBX / Blend → FBX (#1404); OBJ сборщика напрямую не подключён. Строит src/dt_ai/geometry/ucx_build.py, зазоры — здесь (D330)."
     functions:
       - name: piece
         contract: "вершины, треугольники -> выпуклый кусок с нормалями и рёбрами"
@@ -142,6 +142,15 @@ contexts:
         issue: "#1383"
         ru: "UCX Ground v014 / v015 — выходы ucx_build для сданного Ватутино; agr ucx повторяет v014 (#1404)"
         status: historical
+  - id: ground-export
+    grid: "2/3"
+    ru: "Экспорт Ground отдельно от ZIP"
+    area: docs/domain/export-import.md
+    owner: tools/blender/ground_json_to_fbx.py
+    owner_ru: "инструмент Blender читает JSON-мастер, не OBJ сборщика; D366 отдельно требует рабочий FBX с квадами вместе с FBX сдачи"
+    functions:
+      - name: build
+        contract: "JSON-мастер меша, адрес -> FBX и метаданные экспорта"
 relations:
   - from: dcc
     to: heights
@@ -149,30 +158,15 @@ relations:
   - from: heights
     to: ground
     ru: "граница и ноль"
-  - from: ground
-    to: uv-atlas
-    ru: "плоский Ground с ID"
   - from: udim
-    to: uv-atlas
-    ru: "тайл UDIM = ID"
-  - from: ground
-    to: placement
-    ru: "рельеф для высот"
-  - from: ground
-    to: ucx
-    ru: "рельеф"
+    to: ground-export
+    ru: "проверка тайлов при чтении FBX"
   - from: placement
     to: npm
     ru: "точки МАФ / Флоры"
-  - from: npm
+  - from: ground-export
     to: package
-    ru: "НПМ на атласе"
-  - from: uv-atlas
-    to: package
-    ru: "атлас / UDIM"
-  - from: ucx
-    to: package
-    ru: "коллизии UCX_"
+    ru: "готовые FBX"
   - from: package
     to: validation
     ru: "ZIP / FBX сдачи"

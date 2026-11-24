@@ -22,7 +22,7 @@ REPORT = ARCH / "report-routes-vpm-ground.md"
 VPM_STAGES = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "master-topology", "npm", "package",
               "readback", "validate", "sintez", "delivered"]
 GROUND_STAGES = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
-                 "package", "validate", "sintez"]
+                 "export", "package", "validate", "sintez"]
 
 
 def _routes():
