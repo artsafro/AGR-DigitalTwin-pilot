@@ -43,6 +43,7 @@ NOT_DECISIONS = [
     ("docs/experiments/flora-library-audit.md", "user Flora grilling notes (2026-10-15)"),
     ("tests/contracts/test_parts_list.py", 'approval = {"actor": "user", "date": "2026-10-18"'),  # synthetic approval fixture, not a decision
     ("docs/backlog.md", "AGR_Project-uncommitted-2026-10-06.zip"),  # an archive name next to "the user plans"
+    ("docs/architecture/README.md", "](../deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md)"),  # index link, not prose
     ("tests/test_ready_gate.py", "(user, 2026-10-14)"),  # a quoted chat fixture line
     ("tests/test_area_requirement_sheet.py", "Decided 2026-10-15 [{record}] (user)"),  # an f-string template asserting the format
     ("evals/subagent-timebox/task.md", "user intervention at 2026-11-16T00:05:54"),  # a transcript timestamp

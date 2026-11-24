@@ -78,6 +78,10 @@ def tracked(root):
     return [p for p in files if (Path(root) / p).is_file()]
 
 
+def _doc_sections(text):
+    return ("\n" + text).partition("\n" + DOC_SECTION + "\n")
+
+
 def refs(root, rel, fileset, dirs):
     """Tracked files named by `rel`: link targets, backticked and bare repo paths, relative or from the root; a
     named directory keeps its README.md / INDEX.md."""
@@ -90,7 +94,7 @@ def refs(root, rel, fileset, dirs):
         return set()
     if rel == DOC_INDEX:
         # The ownership inventory is a lookup, not a dependency of every route or job.
-        text = text.partition("\n" + DOC_SECTION + "\n")[0]
+        text = _doc_sections(text)[0]
     here, out = rel.rsplit("/", 1)[0] if "/" in rel else "", set()
     for m in _REF.finditer(text):
         raw = next(g for g in m.groups() if g).split("#")[0].split("?")[0].strip("'\"").rstrip(".,;:'\"")
@@ -289,7 +293,7 @@ def _ownership_rows(root, files):
     """Read the final ownership table in the existing route index, or reject its exact malformed locator."""
     path = root / DOC_INDEX
     text = path.read_text(encoding="utf-8") if DOC_INDEX in files else ""
-    before, marker, section = ("\n" + text).partition("\n" + DOC_SECTION + "\n")
+    before, marker, section = _doc_sections(text)
     if not marker or DOC_SECTION in before.splitlines() or DOC_SECTION in section.splitlines():
         return {}, [f"{DOC_INDEX}: missing ownership table or duplicate heading"]
     lines = [line for line in section.splitlines() if line.strip()]
