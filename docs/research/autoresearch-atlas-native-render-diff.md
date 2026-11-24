@@ -35,4 +35,8 @@ Run status `budget_stop`, hypothesis `inconclusive`, wall 125.387 s; round 1 too
 
 Receipt `atlas-native-render-diff-r64/receipt.json` (LF SHA-256 `f67b9ce50594442dfd99a884742e3767a59c2d2d3a269363356b43a5149a3882`); refused attempt beside it. Shared evidence `G:/Мой диск/AGR-evidence/standing64-native-render-diff-r001/` (134 files, copy hashes verified; SHA256SUMS `bd0794b4367ec6adb48e5f801c753381baa3f2f97cef0802bca81c019f9f8000`). The Drive receipt hash is `576fb2a84f4c164831ea143d016da81b6aab8ad0e640ed4d73c4a4b11beeb6d6` (CRLF). Replay is limited to the pinned renderer, Drive originals and Git revisions named above.
 
+Affected tests: `uv run --frozen pytest -q -o addopts= docs/research/atlas-native-render-diff-r64/test_replay.py` — 4 passed; no production modules changed or import the adapter. Initial RED: absent replay module. Pilot guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 553 passed, 1 warning, `repo_guards: GREEN`.
+
+Related checks: `uv run --frozen pytest -q -o addopts= -n 4 --basetemp C:/x/pytest-t-f177057f-affected-03 docs/research/atlas-native-render-diff-r64/test_replay.py tests/jobs/test_tec26_ac08_pilot.py tests/jobs/test_tec26_ac08_slide_overlay.py tests/jobs/test_tec26_joint_visibility_controls.py tests/test_npm_atlas_padding.py` — 157 passed, 25 skipped in 177.80 s. First serial attempt hit the outer 120 s tool timeout; the first parallel attempt had 3 `FileNotFoundError`s under the shared fallback temp path. A unique absolute `--basetemp` restored the unchanged suite.
+
 Full suite: deferred to merge batch (rule 68)
