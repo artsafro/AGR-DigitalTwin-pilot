@@ -11,7 +11,8 @@ UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readba
 (tools/blender/fbx_readback.py) on every FBX.
 Manual stages (V015-V017) always need a signed review.
 --master reads the quad work FBX back (DER-03, [D021], [D198]): V003 "master quads" / "master quad size";
-with --scene and no --master that part of V003 stays not_run.
+with --scene and no --master that part of V003 stays not_run. An explicit `--master role=PATH` that neither the build
+manifest compared nor the quad check read is a V001 not_run `master_role_unused` naming the role and why (#1810).
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
@@ -26,6 +27,7 @@ evidence_missing (target gone or changed; exit 4). The result is written to a NE
 """
 import argparse
 import json
+import math
 import os
 import re
 import sys
@@ -48,6 +50,7 @@ from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, 
                              snapshot_digest, snapshot_validator)
 from twinqa.report import Finding, Stage, ValidationReport, code_commit, recheck, recheck_summary  # noqa: E402
 from twinqa.scene import check_ground_area, check_ground_materials, readback, scene_findings  # noqa: E402
+from twinqa.maf_checks import dimensions_not_run as maf_dimensions_not_run  # noqa: E402
 from twinqa.npm_uv import NAME as NPM_UV_NAME, load_layout, npm_uv_findings  # noqa: E402
 from twinqa.uv import sequential_tiles  # noqa: E402
 
@@ -192,33 +195,44 @@ def light_scene(data: bytes) -> dict:
         models, attrs, links = {}, {}, []
         for node in _fbx_children(data, top["Objects"], version) if "Objects" in top else []:
             vals = _fbx_props(data, node)
-            if node["name"] == "Model" and len(vals) >= 3:
+            if node["name"] == "Model":
+                if len(vals) < 3 or type(vals[0]) is not int or vals[0] == 0 or vals[0] in models or vals[0] in attrs:
+                    raise ValueError(f"invalid or duplicate Model record: {vals[:3]}")
                 p = _p70(data, node, version)
                 models[vals[0]] = {"name": str(vals[1]).split("\x00", 1)[0], "kind": vals[2], "parent": 0,
                                    "light": None, "t": tuple(p.get("Lcl Translation", (0.0, 0.0, 0.0))),
                                    "r": tuple(p.get("Lcl Rotation", (0.0, 0.0, 0.0))),
                                    "s": tuple(p.get("Lcl Scaling", (1.0, 1.0, 1.0)))}
             elif node["name"] == "NodeAttribute" and len(vals) >= 3 and vals[2] == "Light":
+                if type(vals[0]) is not int or vals[0] == 0 or vals[0] in models or vals[0] in attrs:
+                    raise ValueError(f"invalid or duplicate Light attribute: {vals[:3]}")
                 lt = _p70(data, node, version).get("LightType", [0])
-                attrs[vals[0]] = LIGHT_TYPES.get(int(lt[0]) if lt else 0, "Other")
+                attrs[vals[0]] = LIGHT_TYPES.get(lt[0], "Other") if len(lt) == 1 and type(lt[0]) is int else "Other"
         for node in _fbx_children(data, top["Connections"], version) if "Connections" in top else []:
             vals = _fbx_props(data, node)
             if len(vals) >= 3 and vals[0] == "OO":
                 links.append((vals[1], vals[2]))
     except (_FbxError, KeyError, IndexError, TypeError, ValueError) as exc:
         raise ValueError(f"unreadable FBX scene: {exc}") from exc
+    linked_models, linked_attrs = set(), set()
     for child, parent in links:
-        if child in attrs and parent in models:
+        if child in attrs:
+            if child in linked_attrs or parent not in models or models[parent]["light"] is not None:
+                raise ValueError(f"ambiguous or unbound Light attribute link {child} -> {parent}")
+            linked_attrs.add(child)
             models[parent]["light"] = attrs[child]
         elif child in models:
+            if child in linked_models or (parent != 0 and parent not in models):
+                raise ValueError(f"ambiguous or unbound Model link {child} -> {parent}")
+            linked_models.add(child)
             models[child]["parent"] = parent
+    if linked_attrs != attrs.keys():
+        raise ValueError(f"unbound Light attributes: {sorted(attrs.keys() - linked_attrs)}")
     return models
 
 
 def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
-    """Light FBX of a VPM set (`SM_<a>[_Ground]_Light.fbx`): exactly one `<cipher>_Root` (`_Ground_Root` for Ground)
-    with reset transforms, every light parented to it, names `<cipher>_[Spot|Omni]_NNN` 001..050, <= 250 lights,
-    the name type equal to the light type. Idea of AGR Checker (T04, measured); no checker code is reproduced."""
+    """Validate VPM light nodes against the address, without the file stem's SM_ prefix."""
     try:
         models = light_scene(data)
     except ValueError as exc:
@@ -227,7 +241,11 @@ def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
     out = []
     lights = [m for m in models.values() if m["light"] is not None]
     roots = [(k, m) for k, m in models.items() if m["light"] is None and m["parent"] == 0]
-    want_root = f"{cipher}_Root"
+    prefix = cipher.removeprefix("SM_")
+    want_root = f"{prefix}_Root"
+
+    def vector(v):
+        return len(v) == 3 and all(type(x) in (float, int) and math.isfinite(x) for x in v)
 
     def bad(code, observed, expected):
         out.append(finding("fail", "light FBX", f"{name}: {observed}", expected, pages, CHECKER, data={"code": code}))
@@ -235,23 +253,33 @@ def light_findings(name: str, data: bytes, cipher: str, pages) -> list:
         bad("light_root", f"{len(roots)} root objects {[m['name'] for _k, m in roots][:5]}", f"exactly one {want_root}")
     else:
         rid, root = roots[0]
-        if root["name"] != want_root:
+        if root["name"] != want_root or root["kind"] != "Null":
             bad("light_root", f"root {root['name']!r}", want_root)
-        reset = (all(abs(float(v)) < 1e-6 for v in root["t"] + root["r"])
+        reset = (all(vector(root[k]) for k in ("t", "r", "s"))
+                 and all(abs(float(v)) < 1e-6 for v in root["t"] + root["r"])
                  and all(abs(float(v) - 1.0) < 1e-6 for v in root["s"]))
         if not reset:
             bad("light_root_transform", f"root t={root['t']} r={root['r']} s={root['s']}", "reset transforms")
         orphans = sorted(m["name"] for m in lights if m["parent"] != rid)
         if orphans:
             bad("light_parent", f"not under the root: {orphans[:5]}", f"every light parented to {want_root}")
-    if len(lights) > LIGHT_MAX:
-        bad("light_count", f"{len(lights)} lights", f"<= {LIGHT_MAX}")
-    pat = re.compile(rf"^{re.escape(cipher)}_(Spot|Omni)_(\d{{3}})$")
+        for key, model in models.items():
+            if key != rid and (model["kind"] != "Light" or model["light"] is None):
+                bad("light_type", f"unexpected model {model['name']!r}", "one Null root and only Spot/Omni children")
+    if not 1 <= len(lights) <= LIGHT_MAX:
+        bad("light_count", f"{len(lights)} lights", f"1..{LIGHT_MAX}")
+    pat = re.compile(rf"{re.escape(prefix)}_(Spot|Omni)_([0-9]{{3}})")
+    seen = set()
     for m in sorted(lights, key=lambda x: x["name"]):
-        hit = pat.match(m["name"])
+        if not all(vector(m[k]) for k in ("t", "r", "s")):
+            bad("light_transform", m["name"], "finite XYZ translation, rotation and scale")
+        hit = pat.fullmatch(m["name"])
         if not hit:
-            bad("light_name", f"{m['name']!r}", f"{cipher}_[Spot|Omni]_NNN")
+            bad("light_name", f"{m['name']!r}", f"{prefix}_[Spot|Omni]_NNN")
             continue
+        if m["name"] in seen:
+            bad("light_name", f"duplicate {m['name']!r}", "unique light names")
+        seen.add(m["name"])
         if not 1 <= int(hit.group(2)) <= LIGHT_NUMBER_MAX:
             bad("light_number", f"{m['name']}", f"number 001..{LIGHT_NUMBER_MAX:03d}")
         actual = "Spot" if m["light"] == "Spot" else "Omni" if m["light"] == "Omni" else m["light"]
@@ -445,6 +473,10 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                                    footprint_holes=footprint_holes, diffuse_px=diffuse_px,
                                    ground_materials=ground_materials,
                                    export_meta=height_meta)
+            if rb.get("readback_ok") and isinstance(rb.get("meshes"), list):
+                # #1716: no MAF schedule reaches this path, so a recognized GroundEl mesh gets an explicit not_run
+                v004 = found.setdefault("V004", [])
+                v004.extend(maf_dimensions_not_run(rb["meshes"], name, v004))
             if kind == "npm":
                 _no_texture_findings(found, fbx_role(name), name, rb)
                 if role != "light":
@@ -463,10 +495,12 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
 
 
 def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
-                       master: Path | dict | None, manifest: Path | None, notes: list[str], kind: str | None = None):
+                       master: Path | dict | None, manifest: Path | None, notes: list[str],
+                       kind: str | None = None) -> str | None:
     """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written.
 
-    master: one path, or {role: path} ([D328]: OKS master, Ground source)."""
+    master: one path, or {role: path} ([D328]: OKS master, Ground source). Returns None when the manifest compared
+    the given master roles (match, stale or foreign role), else why no role was compared (#1810)."""
     path = manifest if manifest is not None else Path(build_manifest.manifest_path(target))
     if os.path.normcase(str(path.resolve())) == os.path.normcase(str(target.resolve())):
         raise ValueError(f"build manifest {path} is the package itself")
@@ -489,27 +523,61 @@ def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: d
         v1.findings.append(finding(status, "build manifest", detail, "one master revision; hashes of every zipped "
                                    "artifact and check report match; required checks passed (#1423)",
                                    v1.source_pdf_pages, path.name, data={"code": code} if status != "pass" else None))
-    if raw is not None:
-        notes.append(f"build manifest: {path.name}")
+    if raw is None:
+        return f"no build manifest {path.name} beside {target.name}, so the stale check compared no master"
+    notes.append(f"build manifest: {path.name}")
+    if not members or any(code == "manifest_unreadable" for _, code, _ in rows):
+        return f"build manifest {path.name} could not be read against the package, so no master was compared"
+    return None
 
 
-def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list[str]):
-    """DER-03 quad master: read the work FBX back, or leave V003 'master quads' not_run ([D021], [D198])."""
+def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list[str]) -> bool:
+    """DER-03 quad master: read the work FBX back, or leave V003 'master quads' not_run ([D021], [D198]).
+
+    True when the V003 check took the master input (a failed readback is its own V003 not_run naming the file)."""
     if "V003" not in st:
-        return
+        return False
     if master is None:
         st["V003"].findings.append(finding("not_run", "master quads", "quad work FBX not given (--master)",
                                            "quad master; VPM faces <= 4 m [D021]", [8, 29], "DER-03"))
-        return
+        return False
     try:
         rb = readback(master)
     except (OSError, RuntimeError) as exc:
         notes.append(f"master readback skipped for {master.name}: {exc}")
         st["V003"].findings.append(finding("not_run", "master quads", f"{master.name}: readback failed",
                                            "quad master; VPM faces <= 4 m [D021]", [8, 29], "DER-03"))
-        return
+        return True
     st["V003"].findings.extend(master_findings(rb, kind))
     notes.append(f"master readback: {master.name} in Blender {rb.get('blender')}")
+    return True
+
+
+def _same_file(a, b) -> bool:
+    return os.path.normcase(str(Path(a).resolve())) == os.path.normcase(str(Path(b).resolve()))
+
+
+def add_unused_roles(st: dict[str, Stage], master, compared: str | None, read: Path | None, oks_reason: str | None,
+                     notes: list[str]):
+    """#1810: one V001 not_run `master_role_unused` per explicit --master role that no check used; never fail/pass.
+
+    compared: None = the build manifest compared every given role, else why it did not; read: the file the V003 quad
+    check took (a role whose every source is that file, under any spelling, was used); oks_reason: why the oks input
+    was not read. Hashing a file is not a use. An unkeyed path is not a role and keeps its note."""
+    if compared is None or not isinstance(master, dict) or "V001" not in st:
+        return
+    for role in sorted(master):
+        paths = master[role] if isinstance(master[role], list) else [master[role]]
+        if read is not None and all(_same_file(p, read) for p in paths):
+            continue  # the independent OKS quad check used this input
+        reason = compared + (f"; {oks_reason}" if role == "oks" and oks_reason else "")
+        names = ", ".join(Path(p).name for p in paths)
+        st["V001"].findings.append(finding(
+            "not_run", "master role", f"--master {role}={names} unused: {reason}",
+            "every given master role compared by the build manifest or used by the quad master check (#1810)",
+            st["V001"].source_pdf_pages, names,
+            data={"code": "master_role_unused", "role": role, "reason": reason, "paths": [str(p) for p in paths]}))
+        notes.append(f"master role {role} unused: {reason}")
 
 
 def _resolve_npm_atlas(npm_atlas, target: Path, files: dict, kind, scene: bool, notes: list[str]) -> dict:
@@ -557,6 +625,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     data = target.read_bytes()
     suffix = target.suffix.lower()
     files, notes = {}, []
+    compared = f"a single {suffix or 'extensionless'} file has no build manifest, so no master was compared"
     if suffix == ".geojson":
         kind = "vpm"
     elif kind is None and suffix in (".zip", ".fbx"):
@@ -610,7 +679,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
-        add_build_manifest(st, target, data, files, master, manifest, notes, kind)
+        compared = add_build_manifest(st, target, data, files, master, manifest, notes, kind)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
                       ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta, atlases)
@@ -635,15 +704,22 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     # profiles check Ground footprint coverage. Anywhere else the value is unused.
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
     quad = master.get('oks') if isinstance(master, dict) else master
+    oks_reason, read = None, None
     if isinstance(quad, list):
         notes.append('multiple OKS sources: quad master not selected; V003 master check remains not_run')
+        oks_reason = "several OKS sources: the quad master check takes one work FBX and never picks one [D332]"
         quad = None  # [D332]: independent dependencies are not permission to choose the first source.
     elif quad is not None:
         quad = Path(quad)
     if scene_readback:
-        add_master(st, kind, quad, notes)
+        if add_master(st, kind, quad, notes):
+            read = quad
+        elif oks_reason is None:
+            oks_reason = f"the {str(kind).upper()} profile has no V003 quad master check"
     elif quad is not None:
         notes.append(f"master {quad.name} unused: the master check runs with --scene on a ZIP or FBX")
+        oks_reason = "the quad master check runs only with --scene on a ZIP or FBX"
+    add_unused_roles(st, master, compared, read, oks_reason, notes)
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:

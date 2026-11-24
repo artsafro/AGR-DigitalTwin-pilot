@@ -1,0 +1,788 @@
+{
+ "rows": {
+  "63B-v001": {
+   "label": "rejected",
+   "path": "C:/x/poly63-scratch-b/.poly63_out/63B_Stage1_v001.fbx",
+   "sha256": "e9ad706c8b37f55c125be98d77e1607cc227d60279e7a794e4ba92276fd3a851",
+   "args": [],
+   "scores": [
+    82.368,
+    82.368,
+    82.368
+   ],
+   "median": 82.368,
+   "identical_payloads": true,
+   "seconds": [
+    2.1,
+    2.5,
+    3.1
+   ],
+   "components": {
+    "irregular_area_share": 0.070969,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.000197,
+    "pole_share": 0.0,
+    "sliver_share": 0.024774,
+    "tri_share": 0.102456,
+    "weld_share": 0.174088
+   },
+   "totals": {
+    "area": 7165.060977,
+    "body_elements": 1,
+    "body_faces": 9526,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 20255,
+    "elements": 1,
+    "elements_not_all_quads": 1,
+    "faces": 9526,
+    "flat_vertices": 1260,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 508.49605,
+    "irregular_faces": 1132,
+    "long_faces": 0,
+    "manifold_edges": 16865,
+    "ngons": 0,
+    "open_seam_edges": 4,
+    "poles": 0,
+    "quads": 8550,
+    "slivers": 236,
+    "tris": 976,
+    "welded_edges": 2936
+   },
+   "problems": []
+  },
+  "63B-v002": {
+   "label": "rejected",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v002/63B_Stage1_v002.fbx",
+   "sha256": "a57cb3fb66e628e6d1fe1272d16bc592604389b52be6cb4af6a4259b75746a9d",
+   "args": [],
+   "scores": [
+    82.354,
+    82.354,
+    82.354
+   ],
+   "median": 82.354,
+   "identical_payloads": true,
+   "seconds": [
+    3.2,
+    3.4,
+    2.5
+   ],
+   "components": {
+    "irregular_area_share": 0.070969,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.024315,
+    "tri_share": 0.103231,
+    "weld_share": 0.176655
+   },
+   "totals": {
+    "area": 7165.061885,
+    "body_elements": 1,
+    "body_faces": 9377,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 19954,
+    "elements": 1,
+    "elements_not_all_quads": 1,
+    "faces": 9377,
+    "flat_vertices": 1134,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 508.497698,
+    "irregular_faces": 1124,
+    "long_faces": 0,
+    "manifold_edges": 16586,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 8409,
+    "slivers": 228,
+    "tris": 968,
+    "welded_edges": 2930
+   },
+   "problems": []
+  },
+  "63B-v003": {
+   "label": "rejected",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v003/63B_Stage1_v003.fbx",
+   "sha256": "83f3289c70a2bf8727cc5a0a8d85d12a8f6e90c803c3c37dfc904856588211aa",
+   "args": [],
+   "scores": [
+    82.363,
+    82.363,
+    82.363
+   ],
+   "median": 82.363,
+   "identical_payloads": true,
+   "seconds": [
+    3.0,
+    2.4,
+    2.7
+   ],
+   "components": {
+    "irregular_area_share": 0.070975,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.025993,
+    "tri_share": 0.102295,
+    "weld_share": 0.172915
+   },
+   "totals": {
+    "area": 7165.436102,
+    "body_elements": 1,
+    "body_faces": 9541,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 20278,
+    "elements": 1,
+    "elements_not_all_quads": 1,
+    "faces": 9541,
+    "flat_vertices": 1098,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 508.570405,
+    "irregular_faces": 1132,
+    "long_faces": 0,
+    "manifold_edges": 16910,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 8565,
+    "slivers": 248,
+    "tris": 976,
+    "welded_edges": 2924
+   },
+   "problems": []
+  },
+  "63B-v004": {
+   "label": "rejected",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v004/63B_Stage1_v004.fbx",
+   "sha256": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+   "args": [],
+   "scores": [
+    82.37,
+    82.37,
+    82.37
+   ],
+   "median": 82.37,
+   "identical_payloads": true,
+   "seconds": [
+    2.0,
+    2.1,
+    2.5
+   ],
+   "components": {
+    "irregular_area_share": 0.070973,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.024517,
+    "tri_share": 0.102716,
+    "weld_share": 0.174515
+   },
+   "totals": {
+    "area": 7165.275941,
+    "body_elements": 1,
+    "body_faces": 9463,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 20125,
+    "elements": 1,
+    "elements_not_all_quads": 1,
+    "faces": 9463,
+    "flat_vertices": 1100,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 508.544104,
+    "irregular_faces": 1128,
+    "long_faces": 0,
+    "manifold_edges": 16755,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 8491,
+    "slivers": 232,
+    "tris": 972,
+    "welded_edges": 2924
+   },
+   "problems": []
+  },
+  "63B-v005": {
+   "label": "rejected",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v005/63B_Stage1_v005.fbx",
+   "sha256": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+   "args": [],
+   "scores": [
+    82.244,
+    82.244,
+    82.244
+   ],
+   "median": 82.244,
+   "identical_payloads": true,
+   "seconds": [
+    1.9,
+    4.0,
+    3.0
+   ],
+   "components": {
+    "irregular_area_share": 0.084594,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.018478,
+    "tri_share": 0.108556,
+    "weld_share": 0.171164
+   },
+   "totals": {
+    "area": 7089.258899,
+    "body_elements": 1,
+    "body_faces": 9525,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 19983,
+    "elements": 1,
+    "elements_not_all_quads": 1,
+    "faces": 9525,
+    "flat_vertices": 1100,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 599.706662,
+    "irregular_faces": 1342,
+    "long_faces": 0,
+    "manifold_edges": 17083,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 8491,
+    "slivers": 176,
+    "tris": 1034,
+    "welded_edges": 2924
+   },
+   "problems": []
+  },
+  "63B-v006": {
+   "label": "rejected",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v006/63B_Stage1_v006.fbx",
+   "sha256": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+   "args": [],
+   "scores": [
+    83.385,
+    83.385,
+    83.385
+   ],
+   "median": 83.385,
+   "identical_payloads": true,
+   "seconds": [
+    3.9,
+    3.8,
+    3.5
+   ],
+   "components": {
+    "irregular_area_share": 0.054939,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.016749,
+    "tri_share": 0.0,
+    "weld_share": 0.182698
+   },
+   "totals": {
+    "area": 7253.31354,
+    "body_elements": 1,
+    "body_faces": 10747,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 23037,
+    "elements": 1,
+    "elements_not_all_quads": 0,
+    "faces": 10747,
+    "flat_vertices": 2136,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 398.48955,
+    "irregular_faces": 583,
+    "long_faces": 0,
+    "manifold_edges": 19951,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 10747,
+    "slivers": 180,
+    "tris": 0,
+    "welded_edges": 3645
+   },
+   "problems": []
+  },
+  "63B-v007": {
+   "label": "accepted",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v007/63B_Stage1_v007.fbx",
+   "sha256": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+   "args": [],
+   "scores": [
+    84.332,
+    84.332,
+    84.332
+   ],
+   "median": 84.332,
+   "identical_payloads": true,
+   "seconds": [
+    4.1,
+    4.3,
+    3.8
+   ],
+   "components": {
+    "irregular_area_share": 0.019689,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.006157,
+    "tri_share": 0.0,
+    "weld_share": 0.141762
+   },
+   "totals": {
+    "area": 6553.527042,
+    "body_elements": 1,
+    "body_faces": 13644,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 28885,
+    "elements": 1,
+    "elements_not_all_quads": 0,
+    "faces": 13644,
+    "flat_vertices": 4086,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 129.031609,
+    "irregular_faces": 448,
+    "long_faces": 0,
+    "manifold_edges": 25691,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 13644,
+    "slivers": 84,
+    "tris": 0,
+    "welded_edges": 3642
+   },
+   "problems": []
+  },
+  "63C-v001": {
+   "label": "rejected",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-C/v001/63C_stage1_QUAD.fbx",
+   "sha256": "dcbfc39d5ceed7146c2cb280c727a5755cfec8704a602d34d0f6efce481d2526",
+   "args": [],
+   "scores": [
+    83.479,
+    83.479,
+    83.479
+   ],
+   "median": 83.479,
+   "identical_payloads": true,
+   "seconds": [
+    2.9,
+    2.9,
+    4.1
+   ],
+   "components": {
+    "irregular_area_share": 0.03062,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.0,
+    "tri_share": 0.0,
+    "weld_share": 0.251634
+   },
+   "totals": {
+    "area": 5044.741572,
+    "body_elements": 1,
+    "body_faces": 4125,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 9156,
+    "elements": 1,
+    "elements_not_all_quads": 0,
+    "faces": 4125,
+    "flat_vertices": 84,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 154.46819,
+    "irregular_faces": 176,
+    "long_faces": 0,
+    "manifold_edges": 7344,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 4125,
+    "slivers": 0,
+    "tris": 0,
+    "welded_edges": 1848
+   },
+   "problems": []
+  },
+  "63C-v002": {
+   "label": "accepted",
+   "path": "G:/Мой диск/AGR-evidence/1619-body-training/tower-C/v002/63C_stage1_v002_QUAD.fbx",
+   "sha256": "462ba61b2c379de53a72667635fd0714703764b2409407cc67ff28d8684de1da",
+   "args": [],
+   "scores": [
+    83.906,
+    83.906,
+    83.906
+   ],
+   "median": 83.906,
+   "identical_payloads": true,
+   "seconds": [
+    3.0,
+    3.0,
+    3.7
+   ],
+   "components": {
+    "irregular_area_share": 0.0,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 1.0,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.0,
+    "tri_share": 0.0,
+    "weld_share": 0.253151
+   },
+   "totals": {
+    "area": 4970.977713,
+    "body_elements": 1,
+    "body_faces": 4081,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 9024,
+    "elements": 1,
+    "elements_not_all_quads": 0,
+    "faces": 4081,
+    "flat_vertices": 84,
+    "inset_elements": 0,
+    "inset_faces": 0,
+    "irregular_area": 0.0,
+    "irregular_faces": 0,
+    "long_faces": 0,
+    "manifold_edges": 7300,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 4081,
+    "slivers": 0,
+    "tris": 0,
+    "welded_edges": 1848
+   },
+   "problems": []
+  },
+  "KPP1-v003-corners": {
+   "label": "rejected",
+   "path": "C:/x/ev_1616/inputs/master-quad-v003.blend",
+   "sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
+   "args": [
+    "--zone",
+    "-17.5,-8.2,-12.5,-3.2",
+    "--zone",
+    "-17.5,3.5,-12.5,8.5"
+   ],
+   "scores": [
+    76.684,
+    76.684,
+    76.684
+   ],
+   "median": 76.684,
+   "identical_payloads": true,
+   "seconds": [
+    8.8,
+    7.8,
+    7.7
+   ],
+   "components": {
+    "irregular_area_share": 0.282978,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 0.997589,
+    "open_seam_share": 0.0,
+    "pole_share": 0.174416,
+    "sliver_share": 0.22102,
+    "tri_share": 0.0,
+    "weld_share": 0.091474
+   },
+   "totals": {
+    "area": 152.24073,
+    "body_elements": 1,
+    "body_faces": 5793,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 11840,
+    "elements": 8,
+    "elements_not_all_quads": 0,
+    "faces": 5823,
+    "flat_vertices": 3807,
+    "inset_elements": 7,
+    "inset_faces": 30,
+    "irregular_area": 43.080729,
+    "irregular_faces": 2814,
+    "long_faces": 0,
+    "manifold_edges": 11752,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 664,
+    "quads": 5823,
+    "slivers": 1287,
+    "tris": 0,
+    "welded_edges": 1075
+   },
+   "problems": []
+  },
+  "KPP1-v003-rest": {
+   "label": "accepted",
+   "path": "C:/x/ev_1616/inputs/master-quad-v003.blend",
+   "sha256": "b54c5f72cca60e8cd8cd0401eec7f283ce67d371c1fae6e387d189fae588ab53",
+   "args": [
+    "--exclude-zone",
+    "-17.5,-8.2,-12.5,-3.2",
+    "--exclude-zone",
+    "-17.5,3.5,-12.5,8.5"
+   ],
+   "scores": [
+    77.402,
+    77.402,
+    77.402
+   ],
+   "median": 77.402,
+   "identical_payloads": true,
+   "seconds": [
+    8.5,
+    8.9,
+    8.1
+   ],
+   "components": {
+    "irregular_area_share": 0.218385,
+    "long_share": 0.000107,
+    "ngon_share": 0.0,
+    "one_mesh_share": 0.999335,
+    "open_seam_share": 0.0,
+    "pole_share": 0.168265,
+    "sliver_share": 0.234426,
+    "tri_share": 0.0,
+    "weld_share": 0.092406
+   },
+   "totals": {
+    "area": 1876.939781,
+    "body_elements": 1,
+    "body_faces": 55621,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 112009,
+    "elements": 42,
+    "elements_not_all_quads": 0,
+    "faces": 55894,
+    "flat_vertices": 36609,
+    "inset_elements": 41,
+    "inset_faces": 273,
+    "irregular_area": 409.894854,
+    "irregular_faces": 26393,
+    "long_faces": 6,
+    "manifold_edges": 111432,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 6160,
+    "quads": 55894,
+    "slivers": 13103,
+    "tris": 0,
+    "welded_edges": 10297
+   },
+   "problems": []
+  },
+  "G22-k1-v002": {
+   "label": "rejected",
+   "path": "C:/x/ev_1619/r2/k1_v002.mq.json",
+   "sha256": "cbee5a4481d73c80ebe0a4c669393f5404308d112be894011879ae0883588bf9",
+   "args": [],
+   "scores": [
+    91.016,
+    91.016,
+    91.016
+   ],
+   "median": 91.016,
+   "identical_payloads": true,
+   "seconds": [
+    1.6,
+    2.0,
+    1.5
+   ],
+   "components": {
+    "irregular_area_share": 0.0,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 0.79375,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.0,
+    "tri_share": 0.0,
+    "weld_share": 0.082744
+   },
+   "totals": {
+    "area": 28440.476459,
+    "body_elements": 1,
+    "body_faces": 11430,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 29181,
+    "elements": 496,
+    "elements_not_all_quads": 0,
+    "faces": 14400,
+    "flat_vertices": 7337,
+    "inset_elements": 495,
+    "inset_faces": 2970,
+    "irregular_area": 0.0,
+    "irregular_faces": 0,
+    "long_faces": 0,
+    "manifold_edges": 22479,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 14400,
+    "slivers": 0,
+    "tris": 0,
+    "welded_edges": 1860
+   },
+   "problems": []
+  },
+  "G22-k1-v003": {
+   "label": "accepted",
+   "path": "C:/x/ev_1619/r3/k1_v003.mq.json",
+   "sha256": "0939980dc8e9717657f437d2c840a77e6241f27ea5171ae402677def11f80db1",
+   "args": [],
+   "scores": [
+    92.044,
+    92.044,
+    92.044
+   ],
+   "median": 92.044,
+   "identical_payloads": true,
+   "seconds": [
+    1.4,
+    1.5,
+    1.4
+   ],
+   "components": {
+    "irregular_area_share": 0.0,
+    "long_share": 0.0,
+    "ngon_share": 0.0,
+    "one_mesh_share": 0.762019,
+    "open_seam_share": 0.0,
+    "pole_share": 0.0,
+    "sliver_share": 0.0,
+    "tri_share": 0.0,
+    "weld_share": 0.065765
+   },
+   "totals": {
+    "area": 23699.466823,
+    "body_elements": 1,
+    "body_faces": 9510,
+    "body_hole_edges": 0,
+    "body_holes": 0,
+    "edges": 25277,
+    "elements": 496,
+    "elements_not_all_quads": 0,
+    "faces": 12480,
+    "flat_vertices": 6699,
+    "inset_elements": 495,
+    "inset_faces": 2970,
+    "irregular_area": 0.0,
+    "irregular_faces": 0,
+    "long_faces": 0,
+    "manifold_edges": 18703,
+    "ngons": 0,
+    "open_seam_edges": 0,
+    "poles": 0,
+    "quads": 12480,
+    "slivers": 0,
+    "tris": 0,
+    "welded_edges": 1230
+   },
+   "problems": []
+  }
+ },
+ "margin_required": 0.5,
+ "pairs": [
+  {
+   "accepted": "63B-v007",
+   "rejected": "63B-v001",
+   "margin": 1.964,
+   "pass": true
+  },
+  {
+   "accepted": "63B-v007",
+   "rejected": "63B-v002",
+   "margin": 1.978,
+   "pass": true
+  },
+  {
+   "accepted": "63B-v007",
+   "rejected": "63B-v003",
+   "margin": 1.969,
+   "pass": true
+  },
+  {
+   "accepted": "63B-v007",
+   "rejected": "63B-v004",
+   "margin": 1.962,
+   "pass": true
+  },
+  {
+   "accepted": "63B-v007",
+   "rejected": "63B-v005",
+   "margin": 2.088,
+   "pass": true
+  },
+  {
+   "accepted": "63B-v007",
+   "rejected": "63B-v006",
+   "margin": 0.947,
+   "pass": true
+  },
+  {
+   "accepted": "63C-v002",
+   "rejected": "63C-v001",
+   "margin": 0.427,
+   "pass": false
+  },
+  {
+   "accepted": "KPP1-v003-rest",
+   "rejected": "KPP1-v003-corners",
+   "margin": 0.718,
+   "pass": true
+  },
+  {
+   "accepted": "G22-k1-v003",
+   "rejected": "G22-k1-v002",
+   "margin": 1.028,
+   "pass": true
+  }
+ ],
+ "min_margin": 0.427,
+ "calibrated": false
+}

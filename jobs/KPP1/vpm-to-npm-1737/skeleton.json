@@ -1,0 +1,10 @@
+{"scenario": "vpm-to-npm",
+ "config": {"sources": "jobs/KPP1/delivered-1371/REPORT.md",
+            "vpm": "C:/x/1737-vpm-to-npm/src/SM_77_05_0009005_117_002.fbx",
+            "interiors": {"udims": [1011], "objects": []},
+            "glass": ["SM_77_05_0009005_117_002_MainGlass"],
+            "budget": 150000,
+            "npm": {"address": "77_05_0009005_117", "prefix": "0607", "index": 1},
+            "atlas": {"size": 2048, "diffuse": "T_77_05_0009005_117_002_Diffuse_1.<UDIM>.png"},
+            "etalon": "C:/x/1737-vpm-to-npm/src/0607_77_05_0009005_117_02.fbx"},
+ "hooks": []}

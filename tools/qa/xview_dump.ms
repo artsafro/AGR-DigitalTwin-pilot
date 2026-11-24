@@ -10,6 +10,7 @@
 -- Face tolerance is units.decodeValue "5mm", so both stay 5 mm / 2 mm in any system unit.
 -- A non-ASCII path is copied to XVIEW_TEMP under an ASCII name; SHA-256 of the copy must equal the source.
 -- SHA-256 of the opened file is taken before the load and after the checks; a change is an error.
+-- Max 2025+ is refused before job processing: the file-identity helper needs .NET Framework CodeDOM.
 -- xv_preflight runs before any createFile, deleteFile or stage copy. It rejects duplicate labels,
 -- '|' and control characters, a non-canonical slot token, and same-file identity (normalized path
 -- plus GetFileInformationByHandle) across inputs, <label>.json, jobs.txt, report.jsonl, done.txt,
@@ -297,6 +298,8 @@
   local ready = false
   local idType = undefined
   try (
+  local maxRelease = (maxVersion())[1]
+  if maxRelease >= 27000 do throw ("XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release " + (maxRelease as string) + "); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024.")
   if outp == undefined or outp == "" then throw "XVIEW_OUT is empty"
   local report = outp + "/report.jsonl"
   local doneP = outp + "/done.txt"

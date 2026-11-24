@@ -20,14 +20,15 @@ FIX_TOOL = 'qa.names_fix'
 LAYER = 'AGR_export_names'
 FIX_OPTIONS = {'model', 'donor', 'replace_material', 'profile', 'folder', 'address', 'oks'}
 
-# Material class -> [(property path, role)] = names_core.SLOT_TABLE (V13 slot table, #979 E1); role None: the
-# slot has no texture role and its bitmap is reported, never renamed (reflection is not `_m`). A Normal_Bump in a
+# Material class -> [(property path, role)] = names_core.SLOT_TABLE (V13 slot table, #979 E1; #1729: Standard `_m`
+# is reflectionMap, FBX ReflectionColor = SINTEZ Metallic); role None: the slot has no texture role and its bitmap is
+# reported, never renamed (specularLevelMap is not `_m`). A Normal_Bump in a
 # bump slot is followed to its normal map. Kept here as constants: this file loads without the core.
 PHYSICAL = (('base_color_map', 'diffuse'), ('bump_map', 'normal'), ('roughness_map', 'roughness'),
             ('metalness_map', 'metalness'), ('cutout_map', 'opacity'), ('transparency_map', 'opacity'),
             ('emission_map', 'emission'), ('reflectivity_map', None))
 STANDARD = (('diffuseMap', 'diffuse'), ('bumpMap', 'normal'), ('opacityMap', 'opacity'),
-            ('glossinessMap', 'roughness'), ('specularLevelMap', 'metalness'), ('reflectionMap', None),
+            ('glossinessMap', 'roughness'), ('specularLevelMap', None), ('reflectionMap', 'metalness'),
             ('specularMap', None))
 
 

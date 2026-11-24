@@ -67,12 +67,15 @@ def crop_objects(path, prefixes, band):
     return out
 
 
-def revit_window(tri):
-    """Local frame and glass rectangles [u0, z0, u1, z1] (from the bottom-left of the window) of one Revit window."""
+def revit_window(tri, u=None):
+    """Local frame and glass rectangles [u0, z0, u1, z1] (from the bottom-left of the window) of one Revit window.
+    `u` (unit wall direction) overrides the PCA axis; None keeps the 63A behaviour."""
     p = tri.reshape(-1, 3)
     xy = p[:, :2] - p[:, :2].mean(0)
-    _, vec = np.linalg.eigh(xy.T @ xy)
-    u = vec[:, 1]
+    if u is None:
+        _, vec = np.linalg.eigh(xy.T @ xy)
+        u = vec[:, 1]
+    u = np.asarray(u, dtype=float)
     nrm = np.array([-u[1], u[0]])
     lu, ln = xy @ u, xy @ nrm
     lu, ln, lz = lu - lu.min(), ln - ln.min(), p[:, 2] - p[:, 2].min()
@@ -163,11 +166,18 @@ def stop(problems):
              + '\n'.join(problems))
 
 
-def match_openings(openings, wins):
-    """Check all nearest claims before building; do not reassign a collision to a second choice."""
+def claim_openings(openings, n_sources, pick, source_label, check_claimed=None):
+    """THE stage-2 opening -> window-type resolution of every POLY63 tower (63A here, 63C stage2_63c.py, 63B from
+    the start; #1714, duplicate_guard rule `poly63-window-match`). Tower-specific matching stays in `pick`.
+
+    pick(opening, centre) -> (source index, info) resolves the opening to exactly one source, or (None, problem text).
+    Every one of the `n_sources` sources must be claimed exactly once; check_claimed(index, owners) -> problem text
+    or None checks a claimed source (63A: measured glass; 63C: resolved Revit family/type name).
+    All problems are listed first, then `stop` exits BEFORE anything is built or written (#1676/#1695); a collision
+    is never reassigned to a second choice. Returns [(opening + centre, source index, info)] in opening order.
+    """
     problems, matches = [], []
     claims = collections.defaultdict(list)
-    wc = np.array([w['centre'] for w in wins])
     if not openings:
         problems.append('no openings recognized in the body')
     for o in openings:
@@ -181,38 +191,52 @@ def match_openings(openings, wins):
         if o['status'] != 'ok':
             problems.append('{}: {}: {}'.format(label, o['status'], '; '.join(o['why'])))
             continue
-        if not wins:
-            problems.append(label + ': no Revit window in band')
+        j, info = pick(o, centre)
+        if j is None:
+            problems.append('{}: {}'.format(label, info))
             continue
-        distances = np.linalg.norm(wc - centre, axis=1)
-        if not np.isfinite(distances).all():
-            problems.append(label + ': non-finite Revit match distances')
-            continue
-        distance = float(distances.min())
-        if distance >= MATCH_LIMIT_M:
-            problems.append('{}: nearest Revit window at {:.6g} m; requires < {} m'.format(
-                label, distance, MATCH_LIMIT_M))
-            continue
-        candidates = np.flatnonzero(distances == distance)
-        if len(candidates) != 1:
-            problems.append('{}: tied nearest windows: {}'.format(label, ', '.join(
-                '#{} {!r}'.format(j + 1, wins[j]['name']) for j in candidates)))
-            continue
-        j = int(candidates[0])
         claims[j].append(label)
-        matches.append((dict(o, centre=centre), wins[j], distance))
+        matches.append((dict(o, centre=centre), j, info))
 
-    for j, w in enumerate(wins):
-        label = 'Revit window #{} {!r} centre_m={}'.format(j + 1, w['name'], w['centre'].tolist())
+    for j in range(n_sources):
+        label = source_label(j)
         owners = claims.get(j, [])
         if not owners:
             problems.append(label + ': unused')
         elif len(owners) > 1:
             problems.append(label + ': matched more than once: ' + '; '.join(owners))
-        if owners and not w['glass']:
-            problems.append(label + ': no measured glass panes for ' + '; '.join(owners))
+        problem = check_claimed(j, owners) if owners and check_claimed else None
+        if problem:
+            problems.append('{}: {}'.format(label, problem))
     if problems:
         stop(problems)
+    return matches
+
+
+def match_openings(openings, wins):
+    """63A pick: the uniquely nearest Revit window, strictly under MATCH_LIMIT_M from the opening centre."""
+    wc = np.array([w['centre'] for w in wins])
+
+    def nearest(o, centre):
+        if not wins:
+            return None, 'no Revit window in band'
+        distances = np.linalg.norm(wc - centre, axis=1)
+        if not np.isfinite(distances).all():
+            return None, 'non-finite Revit match distances'
+        distance = float(distances.min())
+        if distance >= MATCH_LIMIT_M:
+            return None, 'nearest Revit window at {:.6g} m; requires < {} m'.format(distance, MATCH_LIMIT_M)
+        candidates = np.flatnonzero(distances == distance)
+        if len(candidates) != 1:
+            return None, 'tied nearest windows: {}'.format(', '.join(
+                '#{} {!r}'.format(j + 1, wins[j]['name']) for j in candidates))
+        return int(candidates[0]), distance
+
+    claimed = claim_openings(
+        openings, len(wins), nearest,
+        lambda j: 'Revit window #{} {!r} centre_m={}'.format(j + 1, wins[j]['name'], wins[j]['centre'].tolist()),
+        lambda j, owners: None if wins[j]['glass'] else 'no measured glass panes for ' + '; '.join(owners))
+    matches = [(o, wins[j], distance) for o, j, distance in claimed]
     cx, cy = wc[:, 0].mean(), wc[:, 1].mean()
     matches.sort(key=lambda m: (round(m[0]['centre'][2], 1),
                                 math.atan2(m[0]['centre'][1] - cy, m[0]['centre'][0] - cx)))

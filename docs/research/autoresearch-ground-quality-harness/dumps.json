@@ -1,0 +1,116 @@
+[
+ {
+  "id": "A1",
+  "input": "A1_Vatutino_v015_NPM.fbx",
+  "input_sha256": "17e1ad24557599ec53be2ab77f2906d840f03fd706efcc3fb93c08458749a36b",
+  "dump": "A1_Vatutino_v015_NPM.npz",
+  "dump_sha256": "58dacd6edf346d2e90f37b76a3e696cc69924d167f601383ac089adf0dc76523",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "A2",
+  "input": "A2_Skolkovo_NPM.fbx",
+  "input_sha256": "91910cb6f4741fc4f376f25f7a2e994e88c1a16c434f33f188b6e35666906d55",
+  "dump": "A2_Skolkovo_NPM.npz",
+  "dump_sha256": "3cc015f237244077084274e7afc2a53a019f04ec72a4b9c72cb014d815f3a715",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "A3",
+  "input": "A3_COD_NPM.fbx",
+  "input_sha256": "01d5fb3b013eee95eae5f61ab73361fe1012a0a7348b2ca0738267ceac0412df",
+  "dump": "A3_COD_NPM.npz",
+  "dump_sha256": "4424863c981f2779b5dc23a778e1ccdd9812759003a5ca1c37e1ebeef427c4c6",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "A4",
+  "input": "A4_Donskoy_NPM.fbx",
+  "input_sha256": "943bfb01e4f3cd949ac57227546842f0cf5ea238e6f6dd27d23476fa867c8306",
+  "dump": "A4_Donskoy_NPM.npz",
+  "dump_sha256": "98a8592309bc55e3ba3dafaa4f5e9a9c6667938a563aeffa13053d155f30c3b5",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "A5",
+  "input": "A5_Ostrov_NPM.fbx",
+  "input_sha256": "8ceb215e14581d9be3ebad8a3ed3ce1a3d5959f7e6c218e6986ceea1cc70f4dc",
+  "dump": "A5_Ostrov_NPM.npz",
+  "dump_sha256": "5c3fd2f73d10fa366eb7423e411a616e671b341caedfdbbb16c86ef18624be9a",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "A6",
+  "input": "A6_Kasatkino_NPM.fbx",
+  "input_sha256": "6c3bb2b208c10673623435edcda893d72beece38918d0274b7ecd2c88993c20e",
+  "dump": "A6_Kasatkino_NPM.npz",
+  "dump_sha256": "3020f77108bb208b03a39b7a1df36765e6288fd78666dc28cdc2f7a265b9cbf9",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "A7",
+  "input": "A7_Volokolamskoe_NPM.fbx",
+  "input_sha256": "dd7e2db2ce0201d230552fc9450e63d17ef81fc831de6c09227a6af4ab55f848",
+  "dump": "A7_Volokolamskoe_NPM.npz",
+  "dump_sha256": "c3fef038731551fab80f64018ccf14dd1b864d62718657214dcc7309aeecbfad",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "A8",
+  "input": "A8_Stolbovo_NPM.fbx",
+  "input_sha256": "b50c8a07c01e52bd1f9b31258b5f622cf8727cecedf06d688914f7918ac51f50",
+  "dump": "A8_Stolbovo_NPM.npz",
+  "dump_sha256": "94b8482a2e167d9cf4d31e9f33e19e0048bacd43639930afa5dcc8065f4c17bd",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "F1",
+  "input": "F1_r1_geometry_raw.npz",
+  "input_sha256": "41ae641c3849f24f1519d5622f2f4224a958e70ed31cb139865dc61ff772de98",
+  "dump": "F1_r1_geometry.npz",
+  "dump_sha256": "41816fc73523e630b52658941f094bdb7d29d56440f63f7b3bff74420fd1f9b3",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "F2",
+  "input": "F2_r2.npz",
+  "input_sha256": "930e9a5319e40a018ce226dcee0e879a1270bfeae76df8194d1a6b5e7d2fe839",
+  "dump": "F2_r2.npz",
+  "dump_sha256": "b9f521c4b37acb8bf7d5a5708d776e5ebd8edb81385f5d4081ba39a96a583f4e",
+  "seconds": 0.0,
+  "reused": true
+ },
+ {
+  "id": "F3",
+  "input": "F3_r3.npz",
+  "input_sha256": "eb7220953734db318b7bf681bf89b297eae4d47c2995fa7ed7d19023d1d0c0ce",
+  "dump": "F3_r3.npz",
+  "dump_sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+  "seconds": 0.1
+ },
+ {
+  "id": "F4",
+  "input": "F4_r4.npz",
+  "input_sha256": "1b062437f0af324b78228735a82a3ae12993888963c106be20c14b87835c8edf",
+  "dump": "F4_r4.npz",
+  "dump_sha256": "9b7d26af84d142448fe1363a816eef1e1e4fc5c8b6ff191995dcf958ca1ac922",
+  "seconds": 0.1
+ },
+ {
+  "id": "F5",
+  "input": "F5_r5.npz",
+  "input_sha256": "26912e7868d9e8756a18fd67f008c853a1e26b0f75f6dc8d1e4defa3cce9bfb8",
+  "dump": "F5_r5.npz",
+  "dump_sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+  "seconds": 0.2
+ }
+]

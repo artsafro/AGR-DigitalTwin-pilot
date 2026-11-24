@@ -49,7 +49,10 @@ lists; they do not define a production step.
    2026-11-14 17:31, then five QA rounds v005–v009 and texture work on v008e instead of
    body A v004 / windows A v003 / roof A v003. See the [fixed format and incident evidence](../procedure/ACCEPTED_GEOMETRY.md).
 6. **Verify independently.** The executor's report, exit 0 or a child agent's summary is
-   not evidence. Read the actual files back. Classify a failure (source / tool / code /
+   not evidence. Read the actual files back. For a decision sheet (including no-PR pilots),
+   render the published file and check that the legend visibly distinguishes measured and
+   proposed/unknown features at the decision locations; record the page/view and file hash.
+   Classify a failure (source / tool / code /
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
    path, save the state and propose the next step. The limit is recorded in
@@ -64,8 +67,10 @@ lists; they do not define a production step.
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
    and what is open. Provide receipts per
-   [Before requesting review (author)](#before-requesting-review-author). On restart, read saved outputs and
-   hashes before repeating any mutation (`run-evidence` skill).
+   [Before requesting review (author)](#before-requesting-review-author). Before citing a decision
+   sheet in a handoff or plan, check its exact version against the producer's latest verdict;
+   name its status and keep sheet review separate from user acceptance of any candidate. On
+   restart, read saved outputs and hashes before repeating any mutation (`run-evidence` skill).
 
 ## Before requesting review (author)
 
@@ -130,6 +135,9 @@ line below exactly once (`.github/pull_request_template.md`, "Evidence"), and th
 ```bash
 uv run dt evals --check-handoff <pr-body.md> --sha <full HEAD sha> --output <worktree>/tmp/evals
 ```
+For rule-21 cards, use the exact published body (`gh pr view <PR> --json body --jq .body`) and add
+`--require-acceptance-table`: a top-level `Acceptance table` heading must have a Markdown table with
+`Input` (or `Input (exact)`), `Expected` (or `Expected output`), and `Test` columns populated in at least one row.
 - `Affected tests:` names the head sha, the command, `N passed`, `0 failed`; `not run`, `pending`, `n/a` are not a run.
 - `Full suite: deferred to merge batch (D297)` (optional; any other deferral wording is an error). A real
   `suite_slot.py` run (`C:\Users\artsafro\hermes_kanban\scripts\`) on the head or an ancestor is still accepted,
@@ -441,8 +449,15 @@ A rule question is looked up in the order of `AGENTS.md` ("Where things are"): d
 
 ### Decision ids on parallel branches (#1037)
 
-A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --fetch`: the next free id over
-`origin/main`, this branch and every open PR head (`gh pr list`). The pre-commit hook runs `check --staged
+A new `D<n>` is the output of `python tools/git-hooks/decision_ids.py next --all-branches --fetch --reservations FILE`:
+one above the highest ID across `origin/main`, this branch, every open pilot PR head and fetched `origin` branch
+heads. Orchestrator preflight: export active reservation comments read-only as a fresh UTF-8 JSON array of
+`{"id", "card", "reserved_at"}` records (string fields; `[]` means a confirmed empty snapshot), then pass it as
+`FILE`. Omitting the export does not check the board. Under rule 42,
+reserve the concrete ID on the owning card; refresh sources and recheck that ID against other cards' reservations
+and pilot branch/PR heads immediately before writing and before every push. Stop if a source cannot be checked
+or a competing claim is found; the printed next ID is not a lock. If the export is not available yet, check the
+active reservation comments manually. The pre-commit hook runs `check --staged
 --fetch` whenever `docs/decisions.md` is staged and blocks a commit whose new id (absent at the merge-base with
 `origin/main`) is already used by `origin/main` or by an open PR with a different row, or appears twice; exit 2
 (no base, no `gh`, unreadable PR head) blocks too. Offline, `git config twin.decisionIds main-only` skips the
@@ -462,7 +477,7 @@ driver (`--install`, once per clone), merges, takes the HEAD maps, resolves `doc
 `python tools/decisions_merge.py` (union of D-rows, HEAD wins on the same id, id order), regenerates, runs
 `--check` and commits; after merges done by hand run it without `--merge`. Exit 1 leaves the merge for you:
 another file conflicts, or `decisions_merge.py` reported a same-id collision - the incoming row gets a new id
-(`decision_ids.py next --fetch`, then its `[D<n>]` references). Never resolve a map by hand.
+(follow the decision ID procedure above, then update its `[D<n>]` references). Never resolve a map by hand.
 
 ## Harness inventory (#129)
 

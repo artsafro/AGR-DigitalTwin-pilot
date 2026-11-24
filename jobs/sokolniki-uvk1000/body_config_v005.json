@@ -1,0 +1,48 @@
+{
+ "_comment": "[D378] Artem 2026-11-24: v005 decisions on the step2-compare-v004 sheet (#1784). Synthetic: none.",
+ "extra_rectangles": [
+  {
+   "name": "F05-glazing-lower [D378]",
+   "facade": "F05",
+   "kind": "contour",
+   "edge": "D06",
+   "projected_rect": [
+    0.0,
+    28.13837429828251,
+    7.525,
+    13.5
+   ],
+   "state": "contour_cut",
+   "source": "Revit FBX sokolniki_ar_r23_v1 (feaae527), F05 curtain panels (195 members, compare-v004 curtain_groups) projected on D06/D07: glass z 7.525..18.47-18.97 on D06 s 0..28.138, z 12.225..18.97 on D07; C:/x/t_c15955e5/f05_contour2.py"
+  },
+  {
+   "name": "F05-glazing-upper [D378]",
+   "facade": "F05",
+   "kind": "contour",
+   "edge": "D06",
+   "projected_rect": [
+    0.0,
+    41.23692762561245,
+    13.5,
+    18.47
+   ],
+   "state": "contour_cut",
+   "source": "Revit FBX sokolniki_ar_r23_v1 (feaae527), F05 curtain panels (195 members, compare-v004 curtain_groups) projected on D06/D07: glass z 7.525..18.47-18.97 on D06 s 0..28.138, z 12.225..18.97 on D07; C:/x/t_c15955e5/f05_contour2.py",
+   "note": "runs over D07 (collinear with D06); below 13.5 D07 is hidden by S (seam J-DS1)"
+  }
+ ],
+ "reveal_m_by_name": {
+  "WB_Окно_2Створки_1Фрамуга_Слева _71d52e7": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _cc2a4e7": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _2e4ad7c": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _bbaa44e": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _2de6d50": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _0a5888d": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _a410cb4": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _4732cf2": 0.394
+ },
+ "_reveal_note": "F13 pairs: one mouth per pair, the seat at the back of the inner Revit frame (depth 0.25..0.394 m)",
+ "agreed_edge_clamps": {
+  "AC_ДверьВитражная_Двупольная_А_22daf24": 0.268
+ }
+}

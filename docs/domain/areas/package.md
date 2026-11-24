@@ -67,6 +67,8 @@ partial rows above keep their unchecked part manual.
   ours (PKG-24); `FNO_code` / `FNO_name` (PKG-21) come from SINTEZ after that placement, never invented or asked of
   the customer; the УКЭП signature is the customer's [D163]. The customer's GeoJSON is the reference until our own
   tool or skill is built from it; AGR Tools `export.geojson_write` output is not delivery-ready until then.
+  [D350] Fill the insertion point only from an approved placement with a known DWG source. Otherwise leave
+  it empty and record a blocker in the delivery report; this is a delivery rule, not a claim of CLI support.
 - **V012** (both, names): PKG-08, PKG-13; light names PKG-14 not checked; mesh and material names in the geometry sheets.
 - **V013** (VPM, pivot and MSK-77): PKG-24 position `not_run`; pivot in [UCX R17](ucx.md) and the geometry sheets; lighting root pivot PKG-18 not checked.
 - **V014** (NPM, Moscow coordinates, reg p.10): placement area, no sheet yet; unimplemented.
@@ -83,6 +85,11 @@ failed checks or open automatic checks (including validator exit 2) write `ОШ�
 with archive names and fail/open finding codes. Only pending manual reviews V015-V017
 are allowed alongside `ГОТОВО.txt`, with the line «ждут ручной приёмки Артёма: V015, V016, V017»
 (pending IDs only). This is technical readiness, not manual approval or publication.
+
+The package route distinguishes preliminary SINTEZ from the final check after Artem's acceptance [D104, D352].
+Fix SINTEZ findings only when Artem asks, never automatically [D365].
+Record the separate customer hand-off with one line «передано заказчику, <дата>» in the delivery report only
+on Artem's word [D351]. Neither technical readiness nor upload establishes that the hand-off happened.
 
 The complete validator report is saved as `<archive>.zip.validation.json` beside each
 checked ZIP, separately from the compact `report.json` stage table. Recheck a moved copy:

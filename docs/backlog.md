@@ -11,6 +11,8 @@ items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/co
   and the YAML `conflicts:` block (status `noted`).
 - **G1** — GLOSSARY: expansion of "AGR", Master scene, Source album, Current album,
   Production asset. Owner: user + Claude.
+- **Vatutino survey datum and vertical height reference** (unresolved). The Vatutino SPOZU DWGs carry local CAD coordinates (`x ≈ -7 600, y ≈ -15 300 m`, `$INSUNITS=6`, no `GEODATA`, no named UCS) and preliminary vertical-planning elevations (`141.83–154.40 m`) without stating the horizontal CRS (MSK-77) or vertical datum (e.g., Baltic / BSV-77). Local SINTEZ territorial-code output (`0817`) is not a survey/vertical-datum certificate ([D279]: keep `height_system` unknown until established). Sources: [spozu-vatutino-inventory.md](research/spozu-vatutino-inventory.md#open-questions-for-the-user) (question 6; sections *Units, coordinates, extents* and *Vertical planning*), [ground-parts.md](../jobs/VATUTINO-SITE/ground-parts.md#questions) (question 6), [vatutino-site-2026-11-09.md](deliveries/vatutino-site-2026-11-09.md) (rows 13–16, 22, 24), [placement-heights-1330.md](research/placement-heights-1330.md). Owner: user + Claude.
+- **Disputed V011 result when VPM GeoJSON insertion point is missing / non-numeric with a documented blocker** (undecided; no validator changes). Under [D350] ([package.md](domain/areas/package.md#validator-map-v001-v017), PKG-24), `coordinates` is filled only from an approved placement with a known DWG source, and otherwise left empty with a blocker in the delivery report; `agr package-vpm` writes `[null, null]` with a blocker entry (`tools/derive/package_vpm.py`, [package-route.events.yaml](architecture/package-route.events.yaml) `geojson-tool`), while [`src/twinqa/geojson.py`](../src/twinqa/geojson.py#L135-L136) currently returns V011 `coordinates: fail`. Undecided whether V011 should keep `fail` or use a distinct non-passing status (`review` / `not_run`) when the point is intentionally left empty / non-numeric with a documented blocker (never `pass`); see also [geojson-overflow-caller-exposure.md](research/geojson-overflow-caller-exposure.md). No validator code or policy changes until decided. Owner: user + Codex.
 
 ## Production stages (default owner Claude; code parts handed to Codex)
 
@@ -267,6 +269,23 @@ effort <S/M/L>`. The user or the owner turns one into a task or drops it.
   export (per-part BVH diff in a shared local frame, xView and `inv_xview` on both, checker parity, cause class
   per defect, time from transcripts, follow-up issues through the ready gate); seen 2 times (#424 retro, #514);
   effort M
+- **R21** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Blender part assembly — append part .blend files, place
+  module instances at level offsets (k·3.15), export a non-triangulated FBX + a slot→image manifest JSON; seen 6 times
+  (assembly v001–v006 via sed-edited copies of one script); effort S
+- **R22** proposal 2026-11-14, job/4bk-k3-vpm - CLI command: Max scene refresh from such an FBX — delete the layer's
+  generated objects except a keep-list, import #add, rebuild one Multi/Sub (Physical) per part group from the manifest
+  (Bitmap / MultiTile), assign, save a new version; seen 3 times (3k_v002→v004); effort M
+- **R23** proposal 2026-11-14, job/4bk-k3-vpm - pattern: АКП joint UV by left-edge stacking (Artem's method — every
+  joint is an edge, panels share one texel and stack by their joint edge on one painted line; long faces with mid
+  joints go to a second tile); seen 1 user explanation + 3 agent runs re-deriving joint layouts; effort M
+- **R24** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: assemble a review .blend from named part files
+  (`assemble_files.py out typ name=path ...`, append objects read-only, one collection per part); seen 4 times
+  (K3_GF_full_review_v006–v009); effort S
+- **R25** proposal 2026-11-15, job/4bk-k3-vpm - CLI command: build a 3ds Max QUAD review scene from a part FBX with
+  one Multi/Sub of viewport-visible UDIM bitmaps per ID, then readback (material per face, bitmap on disk, UV inside
+  its tile) and 2-3 captures; seen 9 times (STY_B_uv_review v002–v007, K3_A_tex_review v001–v003); effort M
+- **R26** proposal 2026-11-19, job/colleague-maf-models - skill: MAF from a manufacturer page (download renders+DWG, DWG->DXF dims, part breakdown, `maf_parts.py` quad builders in headless Blender, preview, open versioned .blend for review); builders live outside git in `C:/x/two-mafs/work/scripts/`; seen 2 times (MG4013, 171620); effort M
+- **R27** proposal 2026-11-19, job/colleague-maf-models - CLI command: accepted Blender MAF -> one quad mesh, pivot D095, quad FBX -> 3dsmaxbatch Editable Poly + Multi/Sub with library IDs from the `<id>_<name>` material prefix + readback log (`export_maf_fbx.py` + `fbx_to_max.ms`); seen 2 times; effort S
 
 ## Harness and organization (default owner Codex)
 

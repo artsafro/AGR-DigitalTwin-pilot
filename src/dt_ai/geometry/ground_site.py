@@ -31,6 +31,8 @@ from dt_ai.geometry import ground_cake as gc
 
 STAGES = ("sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx")
 UCX_OWNER = "#1404 compaction 7 (ucx10_core.py, D225)"
+FBX_ZERO_NOT_MEASURED = {"status": "not_measured",
+                         "reason": "no FBX is exported or read back by the site build (OBJ only, #1821)"}
 MAX_ID = 10  # UDIM = 1000 + ID in the first row 1001-1010; slot "IDnn_" parsing assumes two digits
 
 
@@ -114,6 +116,13 @@ def slot_name(cover: Cover) -> str:
     return f"ID{cover.id:02d}_{cover.name}"
 
 
+def _cover_udim(cover_id: int) -> int:
+    """First-row UDIM tile of a Ground cover ID (1..MAX_ID -> cell (cover_id - 1, 0)) via udimtile_core."""
+    if isinstance(cover_id, bool):
+        raise gc._udimtile.UdimDomainError(f"cover_id must be an integer, got {cover_id!r}")
+    return gc._udimtile.udim_of_cell(cover_id - 1, 0)
+
+
 def relief_margin(snap, extension):
     """Fail-closed explicit bound for a user-authorized nearest-TIN-plane continuation."""
     snap = _finite("snap", snap, positive=True)
@@ -132,15 +141,21 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
                origin_xy=None, cell: float = 4.0, chord: float = 0.02, step: float = 0.006, snap: float = 0.001,
                relief_tol: float = 0.01, skirt_m: float = 1.0, tex_px: int = 4096,
                footprint_min_area: float = 1000.0, crop_box=None, unhatched: dict | None = None,
-               relief_extension: dict | None = None) -> SiteResult:
+               relief_extension: dict | None = None, surfaces: str = "layered") -> SiteResult:
     """Build one site's Ground in the D293 order and return flat + projected meshes and the stage report.
 
     ``unhatched``: boundary area under no hatch (smaller than ``footprint_min_area``) lands on the base cover only
     with ``{"cover_id": base_id, "reason": ...}`` (e.g. D283 / D284); without it any such area is a finding.
 
-    Coordinates: XY local = source XY - ``origin_xy``; Z local = source Z - ``project_zero_m`` (FBX Z 0 = ±0.000).
+    Coordinates: XY local = source XY - ``origin_xy``; Z local = source Z - ``project_zero_m`` (local Z 0 = ±0.000
+    by construction). No FBX is written or read here: the FBX Z of the zero is reported ``not_measured`` (#1821).
+
+    Report (#1821): ``geometry_failures`` decide ``geometry_status`` (and the CLI exit code); ``advisories`` (e.g.
+    ``UCX not built``) never do; ``findings`` = failures + advisories, kept for compatibility.
     """
     report: dict = {"order": list(STAGES), "passed": False, "stages": {}}
+    if surfaces not in gc.SURFACES:
+        raise ValueError(f"surfaces {surfaces!r}: expected one of {gc.SURFACES} (#1738)")
     zero = _finite("project_zero_m", project_zero_m)
     height_values(zero, 0.0, 0.0)  # same validation as the project zero command (D279)
     for name, value in (("cell", cell), ("step", step), ("relief_tol", relief_tol)):
@@ -172,15 +187,19 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     for p in relief_xyz:
         x, y, z = (_finite("relief point", v) for v in p)
         pts.append((x - ox, y - oy, z - zero))
-    tin = gc.build_tin(pts)
+    tin = gc.build_tin(pts, peel_slivers=True)  # relief stage: no sub-grid border slivers (#1315)
     if tin.contradictory:
         raise ValueError(f"{len(tin.contradictory)} relief points with the same XY and other Z, first "
                          f"{tin.contradictory[0]}: resolve the source marks, no average")
     zabs = tin.pts[:, 2] + zero
-    report["stages"]["zero"] = {"project_zero_m": zero, "h_relief": round(zero, 2), "fbx_z_of_zero_m": 0.0,
+    report["stages"]["zero"] = {"project_zero_m": zero, "project_zero_role": "supplied by the project (caller input)",
+                                "h_relief": round(zero, 2), "local_z_of_project_zero_m": 0.0,
+                                "local_z_rule": "Z local = source Z - project_zero_m (construction, not a measurement)",
+                                "fbx_z_of_zero": dict(FBX_ZERO_NOT_MEASURED),
                                 "relief_abs_range_m": [float(zabs.min()), float(zabs.max())],
                                 "tin_points": int(len(tin.pts)), "tin_triangles": int(len(tin.tris)),
-                                "merged_duplicates": tin.merged}
+                                "merged_duplicates": tin.merged, "tin_slivers_peeled": tin.slivers_peeled,
+                                "tin_slivers_inner": tin.slivers_inner}
 
     # surfaces: covers -> IDs (ID colour = hatch background colour)
     by_name = {c.name: c for c in covers}
@@ -192,14 +211,14 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     if unhatched is not None:
         if unhatched.get("cover_id") != base_id or not str(unhatched.get("reason", "")).strip():
             raise ValueError(f"unhatched policy must name the base cover {base_id} and a reason, got {unhatched}")
-    report["stages"]["surfaces"] = {"plan": plan.report, "unhatched_m2": sliver,
+    report["stages"]["surfaces"] = {"mode": surfaces, "plan": plan.report, "unhatched_m2": sliver,
                                     "unhatched_policy": unhatched, "ids": [
-        {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": 1000 + c.id, "colour_rgb": list(c.colour),
+        {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": _cover_udim(c.id), "colour_rgb": list(c.colour),
          "colour_source": c.colour_source, "sources": c.sources,
          "area_m2": round(sum(p.area for p in c.polygons), 6)} for c in covers]}
 
     # quads: flat Ground first (no relief), one partition with shared seams and inset layers
-    flat = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap)
+    flat = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap, surfaces=surfaces)
     _udim_by_id(flat, by_name)
     cov = gc.measure_coverage(flat, plan, tol=snap)
     report["stages"]["quads"] = {"flat_triangles": int(len(flat.faces)), "flat_vertices": int(len(flat.verts)),
@@ -210,7 +229,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     for stage in ("flat", "refined"):
         if stage == "refined":
             refined = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap, sampler=sampler,
-                                    tol=relief_tol)
+                                    tol=relief_tol, surfaces=surfaces)
         verts = flat.verts if stage == "flat" else refined.verts
         _, hit = sampler.sample(verts[:, :2])
         if hit.all():
@@ -225,7 +244,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     kept = _retained(flat.verts[:, :2], mesh.verts[:, :2], snap)
     err = gc.measure_relief_error(mesh, sampler, step, tol=relief_tol)
     report["stages"]["relief"] = {"triangles": int(len(mesh.faces)), "flat_vertices_retained": kept,
-                                  "relief_error": err, "uv_unchanged_by_projection": True,
+                                  "relief_error": err, "uv_parity": _uv_parity_not_measured(flat, refined),
                                   "snap_margin_vertices": len(sampler.margin_uses),
                                   "snap_margin_max_m": max(sampler.margin_uses.values(), default=0.0)}
 
@@ -244,13 +263,13 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     tiles = gc.uv_tile_report(mesh.uv)
     dens = gc.texel_density(mesh.verts, mesh.faces, mesh.uv, tex_px)
     top = mesh.level >= 0
-    report["stages"]["textures"] = {"tiles": tiles, "expected_tiles": [1000 + c.id for c in covers
+    report["stages"]["textures"] = {"tiles": tiles, "expected_tiles": [_cover_udim(c.id) for c in covers
                                                                         if slots[c.name] in set(mesh.slot)],
                                     "tex_px": tex_px,
                                     "density_px_per_m_top": [float(np.nanmin(dens[top])), float(np.nanmax(dens[top]))]}
     report["stages"]["skirt"] = {"drop_m": skirt_m, "skirt_faces": int((~top).sum()), "skirt_gap_edges": gaps}
     report["stages"]["ucx"] = {"status": "not_run", "owner": UCX_OWNER}
-    findings = []
+    findings = []  # geometry failures (#1821: the status follows these only)
     if tiles["straddling"] or tiles["outside_udim_range"]:
         findings.append(f"UV: {tiles['straddling']} straddling, {tiles['outside_udim_range']} outside UDIM range")
     if sorted(tiles["tiles"]) != sorted(report["stages"]["textures"]["expected_tiles"]):
@@ -263,11 +282,38 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
         findings.append(f"relief: {err['over_tol']} samples over {relief_tol} m")
     if cov.get("uncovered_beyond_tol_m2", 0) > 1e-6:
         findings.append(f"flat coverage gap {cov['uncovered_beyond_tol_m2']} m2")
-    findings.append("UCX not built: " + UCX_OWNER)
-    report["findings"] = findings
-    report["geometry_status"] = "fail" if len(findings) > 1 else "built"
+    report["geometry_failures"] = findings
+    report["advisories"] = ["UCX not built: " + UCX_OWNER]
+    finalize_geometry(report)
     out_slots = [slots[c.name] for c in sorted(covers, key=lambda c: c.id)]
     return SiteResult(flat, mesh, out_slots, report)
+
+
+def finalize_geometry(report: dict) -> bool:
+    """Set ``geometry_status`` and the compatibility ``findings`` from ``geometry_failures`` only (#1821).
+
+    Advisories (informational, e.g. ``UCX not built``) never change the status, whatever their count. Returns True
+    when the geometry failed. Missing or malformed lists raise (fail closed, never ``built``)."""
+    lists = {}
+    for key in ("geometry_failures", "advisories"):
+        items = report[key]
+        if not isinstance(items, list) or not all(isinstance(m, str) and m.strip() for m in items):
+            raise ValueError(f"report {key} must be a list of non-empty messages, got {items!r}")
+        lists[key] = items
+    failed = bool(lists["geometry_failures"])
+    report["findings"] = lists["geometry_failures"] + lists["advisories"]
+    report["findings_scope"] = "compatibility: geometry_failures + advisories; status follows geometry_failures"
+    report["geometry_status"] = "fail" if failed else "built"
+    return failed
+
+
+def _uv_parity_not_measured(flat: gc.Mesh, relief: gc.Mesh) -> dict:
+    """UV parity across the relief stage is not measured here (#1821): the relief refinement adds vertices, so a
+    row-by-row UV comparison with the flat stage is meaningless, and UDIM tiles per ID only prove tile assignment."""
+    return {"status": "not_measured", "flat_vertices": int(len(flat.verts)), "relief_vertices": int(len(relief.verts)),
+            "reason": "relief refinement can add vertices (see flat_vertices vs relief_vertices), so UV rows are not "
+                      "comparable; no before/after UV comparison is done, and UDIM tile assignment per ID "
+                      "(stages.textures) is not UV-parity proof"}
 
 
 def _udim_by_id(mesh: gc.Mesh, by_name: dict) -> None:
@@ -358,6 +404,160 @@ def skirt_gaps(mesh: gc.Mesh, drop_m: float, xy_tol: float = 1e-6) -> list:
         elif best[0] < drop_m - 1e-9:
             gaps.append({"edge": [a, b], "reason": f"drop < {drop_m} m", "drop_m": round(best[0], 6)})
     return gaps
+
+
+def skirt_check_export(path: Path, drop_m: float = 1.0, up_cos: float = 1e-9, xy_tol: float = 1e-4,
+                       rings: str = "all") -> dict:
+    """GND-03 on the EXPORTED file (#1738): groups, levels and slot names are ignored, only geometry counts.
+
+    Top faces = triangles whose normal z > ``up_cos``. An outer edge is a top edge used by one top face with no top
+    face on its outer side in plan (a layered inset rim over the base is not the perimeter). At every station of an
+    outer edge (both ends, every wall vertex on the edge's vertical plane, midpoints between them) the vertical line must
+    be covered by wall triangles parallel to the edge (its own vertical plane; the neighbour's perpendicular wall at
+    a corner does not count) without a gap
+    from the surface down to ``drop_m``; any wall topology counts (per-edge quads, n-gon fans), only the covered
+    depth is measured. ``rings="outer"`` checks only the exterior ring of each component (D251: inner rings are
+    exempt); ``"all"`` checks holes too. Empty, non-finite or non-triangle input is an error; a file without
+    upward faces or without outer edges fails (never a pass on nothing measured)."""
+    from shapely import STRtree, points as _pts
+    from shapely.geometry import LineString
+    from shapely.ops import unary_union
+    drop_m = _finite("drop_m", drop_m, positive=True)
+    if rings not in ("all", "outer"):
+        raise ValueError(f"rings {rings!r}: expected 'all' or 'outer'")
+    verts, faces = [], []
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        head, _, rest = line.partition(" ")
+        if head == "v":
+            verts.append([float(t) for t in rest.split()[:3]])
+        elif head == "f":
+            ids = [int(c.split("/")[0]) - 1 for c in rest.split()]
+            if len(ids) != 3:
+                raise ValueError(f"{path}: non-triangle face {rest!r}")
+            faces.append(ids)
+    if not faces:
+        raise ValueError(f"{path}: no faces to measure")
+    v = np.array(verts, float)
+    if not np.isfinite(v).all():
+        raise ValueError(f"{path}: vertices must be finite")
+    f = np.array(faces, int)
+    n = np.cross(v[f[:, 1]] - v[f[:, 0]], v[f[:, 2]] - v[f[:, 0]])
+    ln = np.linalg.norm(n, axis=1)
+    nz = np.where(ln > 0, n[:, 2] / np.where(ln > 0, ln, 1.0), 0.0)
+    is_top = nz > up_cos
+    is_wall = (ln > 0) & (np.abs(nz) <= 1e-3)
+    count: dict = {}
+    directed: dict = {}
+    for tri in f[is_top]:
+        for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])):
+            k = (min(a, b), max(a, b))
+            count[k] = count.get(k, 0) + 1
+            directed[k] = (int(a), int(b))
+    top_polys = [Polygon(v[t, :2]) for t in f[is_top]]
+    tree = STRtree(top_polys) if top_polys else None
+    open_edges = [k for k, c in count.items() if c == 1]
+    probes = []
+    for k in open_edges:
+        a, b = directed[k]
+        d = v[b, :2] - v[a, :2]
+        probes.append((v[a, :2] + v[b, :2]) / 2 + np.array([d[1], -d[0]]) / (float(np.hypot(*d)) or 1.0) * 1e-4)
+    covered = set()
+    if probes and tree is not None:
+        hit = tree.query(_pts(np.array(probes)), predicate="intersects")
+        covered = {open_edges[i] for i in hit[0].tolist()}
+    outer_set = [k for k in open_edges if k not in covered]
+    if rings == "outer" and outer_set:
+        shell = unary_union([p.buffer(0) for p in top_polys])
+        ext = unary_union([LineString(p.exterior.coords) for p in gc._polys(shell)])
+        outer_set = [k for k in outer_set if ext.distance(_pts((v[k[0], :2] + v[k[1], :2]) / 2)) <= xy_tol]
+    walls = np.nonzero(is_wall)[0]
+    wtree = STRtree([LineString(v[f[i], :2]).envelope.buffer(xy_tol) for i in walls]) if len(walls) else None
+
+    def depth_at(p_xy, z_top, u, side, reach):
+        """Covered depth below ``z_top`` at ``p_xy`` by walls in the vertical plane of the edge with unit plan
+        direction ``u``, as the one-sided limit from ``side`` (+1 towards b, -1 towards a): a wall counts only when
+        it extends more than ``reach`` from the station to that side. A perpendicular wall of the neighbour edge
+        also contains the corner line, and the next quad's full-depth side hides a shallow vertex of this quad;
+        neither may count (#1738 r2 P1-1)."""
+        if wtree is None:
+            return 0.0
+        spans = []
+        for wi in wtree.query(_pts(p_xy)).tolist():
+            P = v[f[walls[wi]]]
+            pairs = [P[j, :2] - P[i, :2] for i, j in ((0, 1), (1, 2), (0, 2))]
+            h = max(pairs, key=lambda w: float(np.linalg.norm(w)))  # longest plan span: stable wall direction
+            hl = float(np.linalg.norm(h))
+            if hl < 1e-9:
+                continue
+            h = h / hl
+            if abs(float(h[0] * u[1] - h[1] * u[0])) > 1e-3:
+                continue  # not parallel to the edge: another edge's wall
+            q = p_xy - P[0, :2]
+            if abs(float(h[0] * q[1] - h[1] * q[0])) > xy_tol:
+                continue  # not in this wall's vertical plane
+            su = (P[:, :2] - p_xy) @ u  # one-sided limit: the wall must extend from the station towards ``side``
+            if (side > 0 and su.max() <= reach) or (side < 0 and su.min() >= -reach):
+                continue
+            s = (P[:, :2] - P[0, :2]) @ h
+            sp = float((p_xy - P[0, :2]) @ h)
+            zs = []
+            for i, j in ((0, 1), (1, 2), (2, 0)):
+                s0, s1 = s[i], s[j]
+                if min(s0, s1) - xy_tol <= sp <= max(s0, s1) + xy_tol:
+                    if abs(s1 - s0) < 1e-9:
+                        zs += [P[i, 2], P[j, 2]]
+                    else:
+                        t = min(1.0, max(0.0, (sp - s0) / (s1 - s0)))
+                        zs.append(P[i, 2] + t * (P[j, 2] - P[i, 2]))
+            if zs:
+                spans.append((min(zs), max(zs)))
+        low = z_top
+        for lo, hi in sorted(spans, key=lambda s: -s[1]):  # walk down while the spans touch
+            if hi >= low - 1e-6:
+                low = min(low, lo)
+        return float(z_top - low)
+
+    def stations(a, b):
+        """Edge ends + every wall vertex on the edge's vertical plane + midpoints between them (#1738 r1 P1-1).
+
+        Between two consecutive wall-vertex stations every wall span is linear in s, so a gap (a removed quad,
+        a shallow vertex) shows at a station or at the midpoint; three fixed samples missed inner quads."""
+        e = v[b, :2] - v[a, :2]
+        el = float(np.linalg.norm(e))
+        ts = {0.0, 1.0}
+        if wtree is not None and el > 1e-9:
+            u = e / el
+            for wi in wtree.query(LineString([v[a, :2], v[b, :2]]).buffer(xy_tol)).tolist():
+                for q in v[f[walls[wi]], :2] - v[a, :2]:
+                    if abs(float(u[0] * q[1] - u[1] * q[0])) <= xy_tol:
+                        t = float(q @ u) / el
+                        if 0.0 < t < 1.0:
+                            ts.add(round(t, 9))
+        ts = sorted(ts)
+        return ts + [(t0 + t1) / 2 for t0, t1 in zip(ts, ts[1:])]
+
+    gaps, drops = [], []
+    for a, b in outer_set:
+        d = []
+        e = v[b, :2] - v[a, :2]
+        el = float(np.linalg.norm(e))
+        u = e / (el or 1.0)
+        for t in stations(a, b):
+            p = v[a] + t * (v[b] - v[a])
+            # a side exists while the edge continues that way; the wall must reach min(xy_tol, half the rest)
+            sides = [(s, min(xy_tol, r / 2)) for s, r in ((-1, t * el), (1, (1 - t) * el)) if r > 1e-12]
+            d.append(min(depth_at(p[:2], float(p[2]), u, s, r) for s, r in sides) if sides else 0.0)
+        drop = min(d)
+        drops.append(drop)
+        if drop < drop_m - 1e-6:
+            gaps.append({"edge": [int(a), int(b)], "reason": "no skirt wall" if drop <= 1e-9 else f"drop < {drop_m} m",
+                         "drop_m": round(drop, 6), "xy": v[a, :2].round(3).tolist()})
+    top = int(is_top.sum())
+    status = "pass" if top and outer_set and not gaps else "fail"
+    return {"file": str(path), "drop_required_m": drop_m, "rings": rings, "status": status, "top_faces": top,
+            "outer_edges": len(outer_set), "gaps": gaps[:20], "gap_count": len(gaps),
+            "min_drop_m": round(min(drops), 6) if drops else None,
+            "median_drop_m": round(float(np.median(drops)), 6) if drops else None}
 
 
 def _retained(flat_xy: np.ndarray, xy: np.ndarray, tol: float) -> dict:
@@ -455,7 +655,7 @@ def relief_z_at(relief_xyz, margin: float = 0.001, origin_xy=(0.0, 0.0)):
             raise ValueError(f"relief point {p!r}: expected (x, y, z)")
         x, y, z = (_finite("relief point", v) for v in p)
         pts.append((x - ox, y - oy, z))
-    tin = gc.build_tin(pts)
+    tin = gc.build_tin(pts, peel_slivers=True)  # relief stage: no sub-grid border slivers (#1315)
     if tin.contradictory:
         raise ValueError(f"{len(tin.contradictory)} relief points with the same XY and other Z, first "
                          f"{tin.contradictory[0]}: resolve the source marks, no average")

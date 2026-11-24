@@ -31,6 +31,9 @@ finished_jobs:
   - job: jobs/VATUTINO-SITE
     evidence: docs/deliveries/vatutino-site-2026-11-09.md
     match: "Vatutino site slice"
+  - job: jobs/vyatskaya-tow02
+    evidence: jobs/vyatskaya-tow02/STATE.md
+    match: "user's hand-finished for_placement/0213_Vyatskaya_Vl_47_49_05.fbx kept as delivered"
 # Source-backed current commands/candidates missed by Python-only imports (#1441).
 # ELV inventory is NOT authorization to resume parked #1104.
 entrypoints:
@@ -642,9 +645,9 @@ contexts:
         rule: sintez-checker
         issue: "#1379"
         hash: "24c2c8e59a"
-        ru: "остаётся: замороженная версия v003 запуска чекера сдачи elv-tc-vpm (версионированный скрипт не переписывается); новый запуск — agr checker"
-        status: own-duty
-        why: "замороженный диагностический запуск черновика ЭЛВ, не сдача и не twinQA"
+        ru: "замороженная версия v003 запуска чекера сдачи elv-tc-vpm (версионированный скрипт не переписывается); новый запуск — agr checker"
+        status: superseded
+        why: "заменён командой agr checker; ЭЛВ не сдан, поэтому не historical (finished_jobs), живого вызова нет"
       - at: "jobs/PSU275/scripts/qa_master_psu275.py::world_bm"
         rule: master-qa
         issue: "#1379"

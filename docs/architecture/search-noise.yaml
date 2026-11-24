@@ -1,0 +1,63 @@
+# Agent-search noise (#1614, [D327]): classification of every jobs/<ID> folder for tools/architecture/search_noise.py.
+# A folder is either delivered (`finished_jobs` of docs/architecture/contexts.yaml, evidence-backed) or listed in
+# `kept_jobs` here with the reason it stays visible (Russian, for Artem). An unclassified or doubly classified folder
+# is an error. `live_paths`: job sub-folders (or a whole delivered job) and docs that an open issue or a running
+# scenario still uses; they stay visible. Check: uv run python tools/architecture/search_noise.py
+kept_jobs:
+  - job: jobs/_template
+    ru: "шаблон новой работы (SKELETONS.md), нужен каждой новой задаче"
+  - job: jobs/4bk-k3
+    ru: "работа со скелетом skeleton.json, два корпуса около 80 %, не сдана"
+  - job: jobs/4bk-k3-course-grid-1326
+    ru: "пилот #1326 ждёт визуальной приёмки Артёма (STATE.md, Next gate), не сдан"
+  - job: jobs/COD-20207
+    ru: "второй участок Ground, сценарий ground-npm называет его (v016 trial, не сдан)"
+  - job: jobs/G22
+    ru: "открытые #1649 и #1619; скелет npm2vpm-1630"
+  - job: jobs/KERNEL-SYNTHETIC
+    ru: "синтетика для проверки ядра, 2 файла"
+  - job: jobs/OBJ03
+    ru: "черновой эталонный кейс (draft), записи о сдаче нет"
+  - job: jobs/ORCH-OBR22-NPM
+    ru: "пилот переноса, визуальная приёмка не закрыта, записи о сдаче нет"
+  - job: jobs/POLY63-A
+    ru: "полигон #1619 (открыт), скелеты stage2"
+  - job: jobs/POLY63-B
+    ru: "полигон #1619 (открыт), скелет stage2"
+  - job: jobs/POLY63-C
+    ru: "полигон #1619 (открыт), скелет stage2"
+  - job: jobs/SIL13-COLD-1315
+    ru: "холодный прогон #1315 (открыт)"
+  - job: jobs/SYNTH-001
+    ru: "синтетический фикстурный проект, delivery passed=false"
+  - job: jobs/butovskaya-sosh1000
+    ru: "эксперимент autoresearch #118, не сдан; D327 скрывает только сданные работы"
+  - job: jobs/elv-tc-vpm
+    ru: "открытые #1104 (сдача ELV VPM) и #1509; сценарий oks-vpm называет работу"
+  - job: jobs/garibaldi22
+    ru: "полигон #1619 (открыт), скелет body-training-1619"
+  - job: jobs/kasatkino-ground
+    ru: "только LESSONS.md; сценарий ground-vpm ссылается на уроки"
+  - job: jobs/maf-atlas-512
+    ru: "2 файла, записи о сдаче нет"
+  - job: jobs/master-topology-1420
+    ru: "диагностика только для чтения (2026-11-15), записи о сдаче нет"
+  - job: jobs/ogorodnyj-proezd-zu4-3
+    ru: "только LESSONS.md — уроки для следующих участков"
+  - job: jobs/silikatniy-uvk-pzu-viz
+    ru: "только LESSONS.md; сценарий ground-vpm ссылается на уроки"
+  - job: jobs/silikatny-maf-viz
+    ru: "только README.md"
+  - job: jobs/sokolniki-uvk1000
+    ru: "открытый #1784 (PR #1786): тело по решётке, шаг 2 v005 ждёт приёмки, впереди шаг 3"
+live_paths:
+  - path: docs/plans/manual-mode-no-ai.md
+    ru: "открытые #1507, #1508, #1509, #1512 (ручной режим) ссылаются на план"
+  - path: jobs/KPP1/quad-1372
+    ru: "открыт #1609: квад-мастер v003, углы пересобрать"
+  - path: jobs/KPP1/package-1361
+    ru: "открыт #1609: упаковка КПП1 на quad-v003"
+  - path: jobs/TEC26-OKS/AC08
+    ru: "открыт #1105: AC08 через этапы AGR Tools 1-9"
+  - path: jobs/VATUTINO-SITE
+    ru: "открыты #1499, #1699, #1700; сценарии ground-npm/ground-vpm берут её как эталон"

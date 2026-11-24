@@ -1,0 +1,165 @@
+{
+ "schema": "agr.mesh_quality_stage/1",
+ "stage": "mesh-quality",
+ "mode": "observe",
+ "returns_work": false,
+ "input": {
+  "path": "C:\\x\\ev_1609\\s4\\w9\\master-quad-v004.blend",
+  "sha256": "dd11ed62ac345fe9f4807ee70f6b5f5bda621835c2baf6e047a2edb56c1e99fc",
+  "kind": "blend",
+  "blender": "5.1.2",
+  "coverage": "evaluated scene meshes before export triangulation"
+ },
+ "score": 71.711,
+ "status": "measured",
+ "components": {
+  "tri_share": 0.0,
+  "ngon_share": 0.0,
+  "sliver_share": 0.236061,
+  "pole_share": 0.17786,
+  "one_mesh_share": 0.774606,
+  "weld_share": 0.047948,
+  "long_share": 0.000133,
+  "irregular_area_share": 0.152758,
+  "open_seam_share": 0.002449
+ },
+ "dropped": [
+  {
+   "name": "UCX_SM_Kpp_1_Main_001",
+   "reason": "collision hull (UCX_)"
+  },
+  {
+   "name": "UCX_SM_Kpp_1_Main_002",
+   "reason": "collision hull (UCX_)"
+  },
+  {
+   "name": "UCX_SM_Kpp_1_Main_003",
+   "reason": "collision hull (UCX_)"
+  },
+  {
+   "name": "UCX_SM_Kpp_1_Main_004",
+   "reason": "collision hull (UCX_)"
+  }
+ ],
+ "cells": {
+  "cell_m": 3.0,
+  "triangulated_input": false,
+  "measured_faces": 45018,
+  "facade_faces": 26250,
+  "non_facade_faces": 18768,
+  "degenerate_faces": 0,
+  "defect_faces": 20882,
+  "facade_defect_faces": 9929,
+  "non_facade_defect_faces": 10953,
+  "max_cell_defect_faces": 692,
+  "max_cell_defect_area_m2": 11.813707,
+  "cells_with_defects": 81,
+  "worst": [
+   {
+    "side": "+X",
+    "u": -2,
+    "z": 0,
+    "faces": 1496,
+    "defect_faces": 692,
+    "defect_area_m2": 11.813707
+   },
+   {
+    "side": "+X",
+    "u": -2,
+    "z": 1,
+    "faces": 1233,
+    "defect_faces": 688,
+    "defect_area_m2": 6.543426
+   },
+   {
+    "side": "+X",
+    "u": 1,
+    "z": 0,
+    "faces": 1161,
+    "defect_faces": 582,
+    "defect_area_m2": 8.295897
+   },
+   {
+    "side": "-X",
+    "u": -2,
+    "z": 1,
+    "faces": 839,
+    "defect_faces": 400,
+    "defect_area_m2": 2.771773
+   },
+   {
+    "side": "+X",
+    "u": -2,
+    "z": 2,
+    "faces": 820,
+    "defect_faces": 370,
+    "defect_area_m2": 1.575408
+   },
+   {
+    "side": "+X",
+    "u": 1,
+    "z": 1,
+    "faces": 567,
+    "defect_faces": 352,
+    "defect_area_m2": 5.505818
+   },
+   {
+    "side": "-X",
+    "u": 0,
+    "z": 0,
+    "faces": 661,
+    "defect_faces": 312,
+    "defect_area_m2": 1.2198
+   },
+   {
+    "side": "-Y",
+    "u": 1,
+    "z": 0,
+    "faces": 651,
+    "defect_faces": 288,
+    "defect_area_m2": 1.041765
+   },
+   {
+    "side": "+X",
+    "u": 0,
+    "z": 0,
+    "faces": 802,
+    "defect_faces": 285,
+    "defect_area_m2": 5.02149
+   },
+   {
+    "side": "+Y",
+    "u": 0,
+    "z": 0,
+    "faces": 571,
+    "defect_faces": 277,
+    "defect_area_m2": 2.265298
+   }
+  ],
+  "dropped": [
+   {
+    "name": "UCX_SM_Kpp_1_Main_001",
+    "reason": "collision hull (UCX_)"
+   },
+   {
+    "name": "UCX_SM_Kpp_1_Main_002",
+    "reason": "collision hull (UCX_)"
+   },
+   {
+    "name": "UCX_SM_Kpp_1_Main_003",
+    "reason": "collision hull (UCX_)"
+   },
+   {
+    "name": "UCX_SM_Kpp_1_Main_004",
+    "reason": "collision hull (UCX_)"
+   }
+  ],
+  "thresholds": {
+   "irregular_deg": 15.0,
+   "tri_min_angle_deg": 10.0,
+   "quad_min_angle_deg": 30.0,
+   "facade_max_nz": 0.5
+  }
+ },
+ "signal": "score 71.71 (measured); worst cell +X u-2 z0: 692 defect faces of 1496 (11.81 m2); 81 cells with defects, 20882/45018 defect faces"
+}

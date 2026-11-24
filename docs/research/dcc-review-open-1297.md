@@ -78,3 +78,24 @@ and the explicit launch flag, not an implemented conversation state machine.
 Context-diet repair: retained every baseline rule (verbatim preservation test),
 moved the rule-lookup paragraph into the already-linked on-demand agent reference,
 and compacted pointer prose rather than raising the entry budget.
+
+## `agr open-review` live test (#1740, 2026-11-21)
+
+Sample: copy of the accepted 63A stage-2 FBX (`C:/x/review-63A/63A_Stage2_v001.fbx`, sha256 `3f9d89f3…ce774c`,
+equal to that folder's `SHA256SUMS.txt`) at `C:/x/ev_t_964ab17e/src/`. Review folder `C:/x/review-1740-63A/`.
+
+- Headless check of the copy: `blender -b --factory-startup --python tools/blender/fbx_readback.py -- <copy> <json>`:
+  `readback_ok=true`, 1297 meshes, 41 424 polygons, 82 848 triangles (2.00 per polygon: all quads).
+- Max 2026: `agr open-review <sample> --job 1740-63A --open-approved` -> `app=max`, new PID; Max imported the copy
+  (1297 objects selected, screenshot `max_open_copy.png`). Artem's two open Max sessions (PIDs 26480, 63700) were
+  running before and after, untouched.
+- Attempt 1 used `3dsmax.exe -mxs "importFile ..."`: Max imported, then quit cleanly ~2 min later (twice, PIDs 161260
+  and 59224, `Max.log` "Stop network" right after the script). Fixed: a startup script `<copy>.open.ms` run with
+  `-U MAXScript` keeps the session open (PID 164388 alive after 270 s).
+- Blender fallback: a simulated held `max-live` lock (`AGR_MCP_LOCK_DIR`, live pid, until +900 s) -> `app=blender`,
+  `app_reason=max-live lock held (...)`, lock bytes unchanged; Blender 5.1.2 imported and framed the copy
+  (`blender_open_copy.png`; the splash stays, one click closes it).
+- Every copy has the source sha256; the source is unchanged. Agent-launched Max/Blender were closed by their own PIDs.
+
+Evidence: `G:/Мой диск/AGR-evidence/1740-open-review/` + `SHA256SUMS.txt`
+(`max_open_copy.png` `a03b48a1…`, `blender_open_copy.png` `de1ba999…`).

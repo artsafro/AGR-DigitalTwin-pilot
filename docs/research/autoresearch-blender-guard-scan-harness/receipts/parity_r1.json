@@ -1,0 +1,17 @@
+{
+ "head": "b96f0223c73860b2e568a26064980c849c2cd26e",
+ "guard_sha256": "a5f05c9f35f0b916bd358646e0da2d8d34e55ad933fcaa79f257b7b800d50360",
+ "candidate": "r1_one_walk",
+ "p1_repo_equal": true,
+ "p1_violations": 0,
+ "p2_py_files": 1814,
+ "p2_md_files": 760,
+ "p2_diff_files": [],
+ "p2_equal": true,
+ "p3_programs": 3000,
+ "p3_with_violations": 1882,
+ "p3_diff": 0,
+ "p3_equal": true,
+ "p3_first_diff": null,
+ "parity": true
+}

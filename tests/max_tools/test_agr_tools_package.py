@@ -41,7 +41,7 @@ pc = _load(PKG / 'package_core.py', 'agr_tools_package_core_t')
 FBX = b'Kaydara FBX Binary  \x00\x1a\x00' + struct.pack('<I', 7400) + b'\x00' * 64
 PY, RUN = sys.executable, pc.subprocess_runner
 LIGHT = light_fbx()
-GROUND_LIGHT = light_fbx(root='SM_X_Ground_Root', lights=[('SM_X_Ground_Omni_001', 0)])
+GROUND_LIGHT = light_fbx(root='X_Ground_Root', lights=[('X_Ground_Omni_001', 0)])
 
 
 def _png(colour):
@@ -1110,6 +1110,23 @@ def test_point_only_from_the_pivot_place_preview(tmp_path):
     src = (PKG / 'package_core.py').read_text(encoding='utf-8') + (PKG / 'package_max.py').read_text(encoding='utf-8')
     assert 'geom_core' not in src.replace("'geom_core'", '') and 'import geom' not in src
     assert "edits_080('export.pivot_place', 'preview'" in src
+
+
+def test_elv_passport_requires_customer_area_and_preserves_supplied_metrics(tmp_path):
+    facts = dict(PROPS, ZU_area=1.0386, h_relief=167.65, h_otn=16.22, h_abs=183.87, s_podz='')
+    def plan(props):
+        return pc.geojson_plan(['SM_Elevatornaya_1_Main'], props, _jpeg(),
+                               pivot_preview(9676.668, -7136.160), [], str(tmp_path))
+    blocked = plan(facts)
+    assert any('s_podz is empty' in detail for _, detail in blocked['findings'])
+    assert any(f.name == 's_podz empty' and f.status == 'fail' for f in _checker(blocked['data']))
+    complete = plan(dict(facts, s_podz=0.0))  # synthetic explicitly supplied value, not an ELV correction
+    assert not complete['findings']
+    feature = json.loads(complete['data'])['features'][0]
+    assert all(feature['properties'][k] == facts[k] for k in ('ZU_area', 'h_relief', 'h_otn', 'h_abs'))
+    assert feature['geometry']['coordinates'] == [9676.668, -7136.16]
+    malformed = plan(dict(facts, s_podz=0.0, ZU_area='1.0386', h_relief=True))
+    assert {text.split()[0] for _, text in malformed['findings']} == {'ZU_area', 'h_relief'}
 
 
 def test_one_set_and_one_address_per_passport(tmp_path):

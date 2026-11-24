@@ -1,8 +1,8 @@
 # Review checklist
 
-Reviewer: any agent that is not the author (now Codex). The reviewer checks evidence, not
+Reviewer: any agent that is not the author. The reviewer checks evidence, not
 confidence. Current checklist: this file. Historical source: `archive/2026-11:docs/HARNESS_PLAN.md` §8. Post the answer as a PR comment: verdict
-(clean / changes needed), the four answers with numbers, findings by severity (P1/P2/P3).
+(clean / changes needed), answers to the checklist with numbers, findings by severity (P1/P2/P3).
 
 1. **Pattern / scope.** Does each NEW module refer to a pattern in `docs/domain/patterns/INDEX.md`,
    or is it honestly marked `new-case` in the module docstring and PR body (author receipt verified per
@@ -53,8 +53,11 @@ The reviewer independently attacks the guarantee; the author's probe is input, n
    repository and not the full suite. The author runs the affected tests before every review request and
    every benchmark once; the full suite runs once in the merge batch before main, and a red batch suite sends
    the PR back to rework [D297].
-4. **Timing.** Round 1 starts right after the first code commit; docs and tests are written meanwhile. The
-   last round reviews the final version.
+4. **Timing.** Start formal round 1 on the author's review-ready revision. Apply each applicable item
+   above in that round, report inapplicable items as `n/a` with a reason, and return all independently
+   checkable P1s together. For a new job hook, check the skeleton entry, failure on incomplete input, and
+   refusal to overwrite an input on a disposable fixture in the same round. Later rounds recheck prior
+   fixes and any guarantees affected by the new diff. The last verdict identifies the exact reviewed head.
 
 ## Verification boundary
 
@@ -65,6 +68,12 @@ that limitation and rerun affected checks. Keep author full-suite counts separat
 Missing telemetry is `not measured`, never zero or pass. State the known CI limitation once; a billing
 lock is not a test failure or a successful CI run. This line supplements the existing risk-based review
 rounds and required reruns; it does not waive them.
+
+For a claim backed by a replay artifact, verify the published command and its pinned inputs from the
+review lane. Use the manifest check as published; if it needs local scratch or manual line-ending repair,
+report the replay as limited and name the condition. For a comparison, state the exercised cohort and
+denominator. If the examples were used to tune the change, report that result separately from an unseen
+check; without an unseen check, generalization is `not measured`.
 
 PR authors use `.github/pull_request_template.md` for the same evidence boundary. Keep verification
 commands, RED/GREEN results and environment outside the generated `## Agent trace` block: its fixed

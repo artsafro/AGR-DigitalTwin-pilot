@@ -4,6 +4,7 @@ Pattern: n/a | new-case: aliases over existing CLI processes, without geometry c
 """
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -23,7 +24,11 @@ GROUND_STEPS = ("site", "zero", "v015")
 # build-manifest (#1423): core adapters/max/agr_tools/build_manifest.py (delivery set consistency, FBX export owner).
 SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validate_package.py", "export-meta": "tools/derive/export_meta.py",
            "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py",
-           "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py"}
+           "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py",
+           "railing": "tools/blender/railing.py",
+           "library": "tools/library/publish.py",  # #1743: publish|accept|reject [D372, D368-D371]
+           # open-review (#1740): skeleton stage review-scene; copy to C:/x/review-<job>/, new Max 2026 or Blender
+           "open-review": "tools/open_review_scene.py"}
 
 
 STUBS = {
@@ -53,6 +58,8 @@ def _dispatch(args: list[str]) -> int:
         print("  ground site|zero   dt ground site SPEC NEW_OUT (any site, D293 order) | dt ground zero (#1406)")
         print("  brick-seams        tools.materials.brick_seams (shared stdlib core, JSON candidate)")
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
+        print("  maf-npm-to-vpm     --plan: inspect the MAF skeleton (no conversion)")
+        print("  body               stage-1 body core tools/methods/body/body_lattice.py in Blender (#1736)")
         print("  ucx                UCX Main/Ground: ucx_build -> readback -> ucx10_core gap + V010 [D330]")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
@@ -63,6 +70,8 @@ def _dispatch(args: list[str]) -> int:
               "PDF intake: dt index-pdf --help; exported topology: dt qa xview --help.\n"
               "Arguments and relative paths are unchanged; existing tools own validation and writes.")
         return 0
+    if args[:1] == ["maf-npm-to-vpm"]:
+        return _maf_plan(args[1:])
     if args and args[0] in STUBS:
         print(f"ERROR: {args[0]} is not implemented; use {STUBS[args[0]]}", file=sys.stderr)
         return 2
@@ -76,6 +85,21 @@ def _dispatch(args: list[str]) -> int:
     if args and args[0] in SCRIPTS:
         script = Path(__file__).resolve().parents[3] / SCRIPTS[args[0]]
         return subprocess.run([sys.executable, str(script), *args[1:]], check=False).returncode
+    if args and args[0] == "body":
+        # #1736: ONE stage-1 body builder; core tools/methods/body/body_lattice.py, Blender front body_lattice_blender.py
+        tail = args[1:]
+        if tail in ([], ["--help"], ["-h"]):
+            print("usage: agr body [--blender EXE] PLAN.json NEW_OUT_DIR [--tex DIR] [--max-side M]\n"
+                  "PLAN = schemas/BodyPlan.schema.json (Revit: floor_from_dump.py; DWG: plan_adapter_dwg.py).\n"
+                  "Writes module.blend, body.blend, body.fbx, build.json; OUT must be new. TWINQA_BLENDER is used\n"
+                  "when --blender is omitted.")
+            return 0 if tail else 2
+        exe = None
+        if tail[:1] == ["--blender"] and len(tail) >= 2:
+            exe, tail = tail[1], tail[2:]
+        from dt_ai.core.blender_runner import blender_command
+        script = Path(__file__).resolve().parents[3] / "tools/methods/body/body_lattice_blender.py"
+        return subprocess.run(blender_command(script, tail, executable=exe), check=False).returncode
     if args and args[0] == "ucx":
         # #1404 [D330]: one UCX command; build core ucx_build, gap core ucx10_core (also AGR Tools in Max)
         from dt_ai.geometry import ucx_command
@@ -108,6 +132,30 @@ def _dispatch(args: list[str]) -> int:
         return npm_uv_readback(tail[split + 1:], blender)
     print(f"ERROR: unknown or missing command {args[:1]!r}; use agr --help (routes/npm-oks.md)", file=sys.stderr)
     return 2
+
+
+def _maf_plan(args: list[str]) -> int:
+    """Expose the reviewed skeleton, not an execution or delivery receipt."""
+    usage = "agr maf-npm-to-vpm --plan (read-only skeleton; no conversion or QA)"
+    if args in (["-h"], ["--help"]):
+        print(usage)
+        return 0
+    if args != ["--plan"]:
+        print(f"ERROR: use {usage}", file=sys.stderr)
+        return 2
+    scenario = "maf-npm-to-vpm"
+    path = Path(__file__).resolve().parents[3] / "docs/agents/skeletons.json"
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        ids = data["cells"][scenario]["stages"]
+        if not isinstance(ids, list) or not ids or len(ids) != len(set(ids)):
+            raise ValueError("missing or duplicate stages")
+        stages = [{"id": sid, **data["stages"][sid]} for sid in ids]
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"ERROR: {path}: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps({"scenario": scenario, "status": "plan_only", "passed": False, "stages": stages}, indent=2))
+    return 0
 
 
 NPM_VALUE_OPTIONS = {"--address", "--index", "--pivot", "--recipe-dir"}

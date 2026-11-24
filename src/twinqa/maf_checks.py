@@ -7,6 +7,9 @@ from twinqa.report import Finding
 
 SMOOTHING_ANGLE_DEG = 40.0  # user practice: hard edges by angle 30-45 (MAF grilling 2026-10-15), configurable
 DIMENSION_TOL_M = 0.10  # [D094]
+DIMENSION_NAME = "MAF dimensions vs specification"
+DIMENSION_EXPECTED = ("|bbox - spec| <= 0.1 m per axis on overall dimensions; "
+                      "the 10 cm sink is a translation [D094, D095]")
 
 
 def is_groundel(name: str) -> bool:
@@ -152,6 +155,13 @@ def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg
             flip_status, flip_observed = "pass", f"{src}: outward"
         out.append(_finding("MAF flipped normals", flip_status, flip_observed, flip_expected, [8, 29], src))
 
+    if maf_sizes is not None and not maf_sizes:
+        if groundel:
+            out.append(_finding(DIMENSION_NAME, "not_run",
+                                f"{src}: dimension check did not run: supplied MAF schedule has no rows",
+                                DIMENSION_EXPECTED, [4, 24], src))
+        return out
+
     if maf_sizes is not None:
         by_name = {m.get("name"): m for m in meshes}
         failed = []
@@ -172,11 +182,26 @@ def maf_findings(meshes: list[dict], role: str, src: str, *, smoothing_angle_deg
             deltas = (plan_b[0] - plan_s[0], plan_b[1] - plan_s[1], size[2] - sz)
             if any(abs(d) > tol_m + 1e-9 for d in deltas):
                 failed.append(f"{name}: plan {deltas[0]:.3f} {deltas[1]:.3f} Z {deltas[2]:.3f}")
-        expected = "|bbox - spec| <= 0.1 m per axis on overall dimensions; the 10 cm sink is a translation [D094, D095]"
+        expected = DIMENSION_EXPECTED
         if failed:
-            out.append(_finding("MAF dimensions vs specification", "fail", f"{src}: {'; '.join(failed[:5])}",
+            out.append(_finding(DIMENSION_NAME, "fail", f"{src}: {'; '.join(failed[:5])}",
                                 expected, [4, 24], src))
         else:
-            out.append(_finding("MAF dimensions vs specification", "pass",
+            out.append(_finding(DIMENSION_NAME, "pass",
                                 f"{src}: all {len(maf_sizes)} within 0.1 m", expected, [4, 24], src))
     return out
+
+
+def dimensions_not_run(meshes, src: str, findings) -> list[Finding]:
+    """#1716: a caller without a MAF schedule (the shared package path) discloses the skipped dimension check.
+
+    maf_findings keeps its optional contract (no maf_sizes -> no dimension row); this returns one not_run row
+    when the readback has a recognized GroundEl mesh and no dimension finding exists yet, else nothing."""
+    if any(getattr(f, "name", None) == DIMENSION_NAME for f in findings):
+        return []
+    names = sorted({m["name"] for m in meshes or ()
+                    if isinstance(m, dict) and isinstance(m.get("name"), str) and is_groundel(m["name"])})
+    if not names:
+        return []
+    observed = f"{src}: MAF schedule (maf_sizes) not given to package validation; unmeasured: {', '.join(names)}"
+    return [_finding(DIMENSION_NAME, "not_run", observed, DIMENSION_EXPECTED, [4, 24], src)]

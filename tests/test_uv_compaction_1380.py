@@ -1,5 +1,6 @@
 """new-case: #1380 VPM UV extraction and tile-size limit; synthetic inputs, no delivery writes."""
 import importlib.util
+import json
 import math
 import subprocess
 import sys
@@ -152,8 +153,19 @@ def test_no_delivery_changes():
     # The #1406 Ground site command pilot keeps its input and its JSON report in the job (not a delivery).
     # The #1410 MAF NPM-light proof keeps its spec and proof atlas list in the job (inputs, not deliveries).
     # The #1619 body-training hooks read their zone maps from the job (G22 palette, site-63 wall-type map; inputs).
+    # The #1619 tower 63B job keeps its source receipt and its wall-type map (inputs, not deliveries).
+    # The #1784 Sokolniki job keeps its openings config and its v005 body config [D378] (inputs, not deliveries).
+    # The #1609 KPP1 lattice job keeps its inputs: finish bands and the NPM derive spec.
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json',
-          '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json')
-    allowed = lambda p: p.endswith(ok) or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith('.txt')
+          '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json',
+          '/POLY63-B/sources.json', '/POLY63-B/zonemap63b.json',
+          '/sokolniki-uvk1000/openings_config.json', '/sokolniki-uvk1000/body_config_v005.json',
+          '/lattice-1609/finish_bands.json', '/lattice-1609/spec_v004.json')
+    # #1614 moves large data of delivered jobs to the evidence store: a path listed in its job's EVIDENCE-MOVED.json
+    # (sha256 + evidence copy) and the manifest itself are not delivery changes.
+    moved = {r['path'] for m in (ROOT / 'jobs').glob('*/EVIDENCE-MOVED.json')
+             for r in json.loads(m.read_text(encoding='utf-8'))['files']}
+    allowed = lambda p: p.endswith(ok + ('/EVIDENCE-MOVED.json',)) or p in moved \
+        or p.startswith('jobs/KPP1/window-command-1405/') and p.endswith('.txt')
     assert all(allowed(p) for p in paths), [p for p in paths if not allowed(p)]

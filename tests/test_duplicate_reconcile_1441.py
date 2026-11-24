@@ -22,7 +22,7 @@ def test_council_responsibilities():
         'jobs/TEC26-OKS/scripts/ucx_tri_core.py:44': 'wrapper',
         'jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py:29': 'wrapper',
         'jobs/elv-tc-vpm/scripts/ucx_dev_by_part_v001.py:24': 'own-duty',
-        'jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>': 'own-duty',
+        'jobs/elv-tc-vpm/scripts/run_agr_checker_v003.py::<module>': 'superseded',  # #1673
     }
     for at, status in expected.items():
         found = [r for r in rows() if r.at == at]

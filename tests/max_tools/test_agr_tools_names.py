@@ -482,20 +482,23 @@ def test_V13_foreign_target_never_overwritten_nor_linked():
     assert nc.names_fix_plan(same, {})['files'][0]['action'] == 'reuse existing file (not overwritten)'
 
 
-def test_V13_m_comes_from_one_slot_reflection_is_reported():
+def test_V13_m_comes_from_one_slot_specular_level_is_reported():
+    """V2 one slot per role; #1729 moved the Standard `_m` slot to reflectionMap (FBX ReflectionColor = SINTEZ
+    Metallic), specularLevelMap (FBX SpecularFactor) is the slot reported now."""
     maps = {'specularLevelMap': ('C:/t/spec.png', 'S'), 'reflectionMap': ('C:/t/refl.png', 'R')}
     _, files, disk = SourceRenamerV13.run([('SM_Bench_001_Main', 1, maps)], {})
-    state = {'objects': [_obj(1, 'SM_Bench_001_Main', _std('Old', [('specularLevelMap', 'metalness', 'C:/t/spec.png'),
-                                                                    ('reflectionMap', None, None)]))],
-             'files': {'C:/t/spec.png': {'exists': True, 'sha256': 's' * 64}}, 'export_names': []}
+    state = {'objects': [_obj(1, 'SM_Bench_001_Main', _std('Old', [('specularLevelMap', None, 'C:/t/spec.png'),
+                                                                    ('reflectionMap', 'metalness', 'C:/t/refl.png')]))],
+             'files': {'C:/t/spec.png': {'exists': True, 'sha256': 's' * 64},
+                       'C:/t/refl.png': {'exists': True, 'sha256': 'r' * 64}}, 'export_names': []}
     plan = nc.names_fix_plan(state, {})
 
     def one_m(targets):
         m = [t for t in targets if t.endswith('_m_1.png')]
         return len(m) == len(set(m)) == 1
     red_green(one_m, lambda: list(files[1].values()), lambda: [f['target'] for f in plan['files']])
-    assert any('reflectionMap' in f['reason'] and 'no NPM/VPM texture role' in f['reason'] for f in plan['failures'])
-    assert dict(nc.SLOT_TABLE['Standardmaterial'])['reflectionMap'] is None
+    assert any('specularLevelMap' in f['reason'] and 'no NPM/VPM texture role' in f['reason'] for f in plan['failures'])
+    assert dict(nc.SLOT_TABLE['Standardmaterial'])['specularLevelMap'] is None
 
 
 def test_V13_prefix_collision_and_two_character_cut():
@@ -612,9 +615,8 @@ def test_names_fix_address_option_names_by_role():
 def test_names_fix_acceptance_t06_scene():
     """#979 acceptance on the T06 scene: prefix collision, shared material, read-only (foreign) target, odd
     inputs. Foreign file untouched, `_m` from one slot, 0 duplicate names after the fix."""
-    shared = _std('Shared', [('diffuseMap', 'diffuse', 'C:/t/src_d.png'), ('specularLevelMap', 'metalness',
-                                                                           'C:/t/spec.png'),
-                             ('reflectionMap', None, None)])
+    shared = _std('Shared', [('diffuseMap', 'diffuse', 'C:/t/src_d.png'), ('specularLevelMap', None, None),
+                             ('reflectionMap', 'metalness', 'C:/t/spec.png')])  # #1729: `_m` slot = reflectionMap
     state = {'objects': [_obj(1, 'SM_Chair_001_Main', shared), _obj(2, 'XX_Chair_001_Main', shared),
                          _obj(3, 'SM_Bench_002_Main', _std('B', [('diffuseMap', 'diffuse', 'C:/t/bench.png')])),
                          _obj(4, 'Bench', _std('Odd', [])), _obj(5, 'UCX_SM_Chair_001_Main_01', None)],
@@ -630,7 +632,7 @@ def test_names_fix_acceptance_t06_scene():
     assert not any(f['target'] == 'C:/t/T_Bench_002_Main_d_1.png' and not f['action'].startswith('keep')
                    for f in plan['files'])
     m = [f['target'] for f in plan['files'] if f['target'].endswith('_m_1.png')]
-    assert len(m) == len(set(m)) == 2  # one `_m` per object, from specularLevelMap only
+    assert len(m) == len(set(m)) == 2  # one `_m` per object, from reflectionMap only (#1729)
     mats = [x['new'] for x in plan['materials'] if x.get('new')]
     assert len(mats) == len(set(mats))
     assert {s['item'] for s in plan['skipped']} == {'Bench'}

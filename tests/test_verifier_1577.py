@@ -1,7 +1,7 @@
 """new-case: verifier step before showing Artem (#1577): observe-mode VLM checklist + material rubric.
 
 Acceptance table (every row is a test here):
-- verifier stage right after readback in oks-vpm / ground-npm / ground-vpm, nowhere else -> test_skeleton_*
+- verifier stage right after readback in oks-vpm / oks-npm (#1739) / ground-npm / ground-vpm, nowhere else -> test_skeleton_*
 - material rubric fail-closed (missing / duplicate / unknown / non-integer / out of range / NaN / bad reason) -> test_rubric_*
 - ONE main discrepancy, fix order missing -> base_color -> borders -> scale, threshold exactly at 3 -> test_main_*
 - verifier.json schema (Python validator and schemas/Verifier.schema.json agree) -> test_report_*
@@ -37,7 +37,7 @@ vf = _load("verifier", "tools/qa/verifier.py")
 vs = _load("verifier_summary", "tools/qa/verifier_summary.py")
 SK = json.loads((ROOT / "docs/agents/skeletons.json").read_text(encoding="utf-8"))
 FAC = {"south": "2-1", "north": "1-2", "east": "Б-А", "west": "А-Б"}
-CELLS = ("oks-vpm", "ground-npm", "ground-vpm")
+CELLS = ("oks-vpm", "oks-npm", "ground-npm", "ground-vpm", "vpm-to-npm")  # oks-npm #1739; vpm-to-npm #1737 (Artem 2026-11-21: verifier step in the VPM->NPM skeleton)
 
 
 def _scores(**over):
