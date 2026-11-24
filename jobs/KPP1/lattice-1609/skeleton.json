@@ -1,0 +1,11 @@
+{
+  "scenario": "oks-npm",
+  "config": {"profile": "NPM"},
+  "hooks": [
+    {"script": "hooks/kpp1_lattice.py", "stage": "body", "point": "before"},
+    {"script": "hooks/kpp1_elements.py", "stage": "body", "point": "after"},
+    {"script": "hooks/kpp1_assemble.py", "stage": "body", "point": "after"},
+    {"script": "hooks/kpp1_sheets.py", "stage": "verifier", "point": "after"},
+    {"script": "hooks/kpp1_package.py", "stage": "package-npm", "point": "before"}
+  ]
+}

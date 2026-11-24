@@ -1,0 +1,5 @@
+{
+  "scenario": "oks-vpm",
+  "config": {"profile": "VPM"},
+  "hooks": []
+}
