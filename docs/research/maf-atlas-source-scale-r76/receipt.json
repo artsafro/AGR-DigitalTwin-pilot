@@ -1,0 +1,1197 @@
+{
+ "status": "series_completed",
+ "hypothesis": "confirmed_fixture_only",
+ "D76_median": 0.16451612903225799,
+ "paired_spread": 0.0,
+ "wall_s": 14.73415119999845,
+ "rounds": [
+  {
+   "inputs": [
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/_inbox/telegram-materials-2026-11/53407__atlas_maf_high_low_frame_id.png",
+     "sha256": "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8",
+     "size": [
+      4096,
+      4096
+     ]
+    },
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/maf/atlas/v007/T_MAF_Atlas_v007_GroundEl_d_512.png",
+     "sha256": "55e654a2e04ce2e828cd1f7a1f585d54263a01050f00cb60d5d3bab4f6d0cf6d",
+     "bytes": 217050,
+     "size": [
+      512,
+      512
+     ],
+     "mode": "RGB"
+    },
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/maf/atlas/v007/T_MAF_Atlas_v007_GroundEl_d_512_r2.png",
+     "sha256": "a30dac001483b42d99afee0fc315e58ddc4ba1ce10d7bb58e8565017e4b3f340",
+     "bytes": 327025,
+     "size": [
+      512,
+      512
+     ],
+     "mode": "RGB"
+    }
+   ],
+   "D76": 0.16451612903225799,
+   "rows": [
+    {
+     "revision": "r1",
+     "id": 1,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 2,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 3,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 5,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 6,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 7,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 8,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 15,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 18,
+     "kind": "patterned",
+     "label": "rejected",
+     "source_size": [
+      108,
+      108
+     ],
+     "content_size": [
+      120,
+      120
+     ],
+     "E76": 0.09999999999999998,
+     "flagged": true,
+     "parity_changed_px": 0,
+     "parity_compared_px": 16060,
+     "control_state": "exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 20,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 23,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 27,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 28,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 30,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 33,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 1,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 2,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 3,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 5,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 6,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 7,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 8,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 15,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      264,
+      264
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -0.06451612903225801,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 20,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 23,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 27,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 28,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 30,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 33,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    }
+   ],
+   "controls": [
+    {
+     "revision": "r1",
+     "id": 18,
+     "variant": "brightness_plus_8",
+     "E76": 0.09999999999999998,
+     "expected": 0.09999999999999998,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      108,
+      108
+     ],
+     "changed_px": 14400,
+     "unchanged_px": 0,
+     "state": "exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 18,
+     "variant": "center_trim_107",
+     "E76": 0.10833333333333328,
+     "expected": 0.10833333333333334,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      107,
+      107
+     ],
+     "changed_px": 14336,
+     "unchanged_px": 64,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "brightness_plus_8",
+     "E76": -0.06451612903225801,
+     "expected": -0.06451612903225801,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      264,
+      264
+     ],
+     "changed_px": 61504,
+     "unchanged_px": 0,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_247",
+     "E76": 0.0040322580645161255,
+     "expected": 0.004032258064516129,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      247,
+      247
+     ],
+     "changed_px": 61475,
+     "unchanged_px": 29,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_248",
+     "E76": 0.0,
+     "expected": 0.0,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      248,
+      248
+     ],
+     "changed_px": 61474,
+     "unchanged_px": 30,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_249",
+     "E76": -0.0040322580645162365,
+     "expected": -0.004032258064516129,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      249,
+      249
+     ],
+     "changed_px": 61484,
+     "unchanged_px": 20,
+     "state": "exercised"
+    }
+   ],
+   "clean_flags_ok": true,
+   "parity_ok": true,
+   "controls_ok": true,
+   "wall_s": 4.584684900008142,
+   "process_wall_s": 5.160336700006155
+  },
+  {
+   "inputs": [
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/_inbox/telegram-materials-2026-11/53407__atlas_maf_high_low_frame_id.png",
+     "sha256": "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8",
+     "size": [
+      4096,
+      4096
+     ]
+    },
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/maf/atlas/v007/T_MAF_Atlas_v007_GroundEl_d_512.png",
+     "sha256": "55e654a2e04ce2e828cd1f7a1f585d54263a01050f00cb60d5d3bab4f6d0cf6d",
+     "bytes": 217050,
+     "size": [
+      512,
+      512
+     ],
+     "mode": "RGB"
+    },
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/maf/atlas/v007/T_MAF_Atlas_v007_GroundEl_d_512_r2.png",
+     "sha256": "a30dac001483b42d99afee0fc315e58ddc4ba1ce10d7bb58e8565017e4b3f340",
+     "bytes": 327025,
+     "size": [
+      512,
+      512
+     ],
+     "mode": "RGB"
+    }
+   ],
+   "D76": 0.16451612903225799,
+   "rows": [
+    {
+     "revision": "r1",
+     "id": 1,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 2,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 3,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 5,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 6,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 7,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 8,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 15,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 18,
+     "kind": "patterned",
+     "label": "rejected",
+     "source_size": [
+      108,
+      108
+     ],
+     "content_size": [
+      120,
+      120
+     ],
+     "E76": 0.09999999999999998,
+     "flagged": true,
+     "parity_changed_px": 0,
+     "parity_compared_px": 16060,
+     "control_state": "exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 20,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 23,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 27,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 28,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 30,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 33,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 1,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 2,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 3,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 5,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 6,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 7,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 8,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 15,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      264,
+      264
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -0.06451612903225801,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 20,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 23,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 27,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 28,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 30,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 33,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    }
+   ],
+   "controls": [
+    {
+     "revision": "r1",
+     "id": 18,
+     "variant": "brightness_plus_8",
+     "E76": 0.09999999999999998,
+     "expected": 0.09999999999999998,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      108,
+      108
+     ],
+     "changed_px": 14400,
+     "unchanged_px": 0,
+     "state": "exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 18,
+     "variant": "center_trim_107",
+     "E76": 0.10833333333333328,
+     "expected": 0.10833333333333334,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      107,
+      107
+     ],
+     "changed_px": 14336,
+     "unchanged_px": 64,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "brightness_plus_8",
+     "E76": -0.06451612903225801,
+     "expected": -0.06451612903225801,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      264,
+      264
+     ],
+     "changed_px": 61504,
+     "unchanged_px": 0,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_247",
+     "E76": 0.0040322580645161255,
+     "expected": 0.004032258064516129,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      247,
+      247
+     ],
+     "changed_px": 61475,
+     "unchanged_px": 29,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_248",
+     "E76": 0.0,
+     "expected": 0.0,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      248,
+      248
+     ],
+     "changed_px": 61474,
+     "unchanged_px": 30,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_249",
+     "E76": -0.0040322580645162365,
+     "expected": -0.004032258064516129,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      249,
+      249
+     ],
+     "changed_px": 61484,
+     "unchanged_px": 20,
+     "state": "exercised"
+    }
+   ],
+   "clean_flags_ok": true,
+   "parity_ok": true,
+   "controls_ok": true,
+   "wall_s": 4.426671100009116,
+   "process_wall_s": 4.943690900006914
+  },
+  {
+   "inputs": [
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/_inbox/telegram-materials-2026-11/53407__atlas_maf_high_low_frame_id.png",
+     "sha256": "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8",
+     "size": [
+      4096,
+      4096
+     ]
+    },
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/maf/atlas/v007/T_MAF_Atlas_v007_GroundEl_d_512.png",
+     "sha256": "55e654a2e04ce2e828cd1f7a1f585d54263a01050f00cb60d5d3bab4f6d0cf6d",
+     "bytes": 217050,
+     "size": [
+      512,
+      512
+     ],
+     "mode": "RGB"
+    },
+    {
+     "path": "G:/\u041c\u043e\u0439 \u0434\u0438\u0441\u043a/AGR-assets/maf/atlas/v007/T_MAF_Atlas_v007_GroundEl_d_512_r2.png",
+     "sha256": "a30dac001483b42d99afee0fc315e58ddc4ba1ce10d7bb58e8565017e4b3f340",
+     "bytes": 327025,
+     "size": [
+      512,
+      512
+     ],
+     "mode": "RGB"
+    }
+   ],
+   "D76": 0.16451612903225799,
+   "rows": [
+    {
+     "revision": "r1",
+     "id": 1,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 2,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 3,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 5,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 6,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 7,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 8,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 15,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 18,
+     "kind": "patterned",
+     "label": "rejected",
+     "source_size": [
+      108,
+      108
+     ],
+     "content_size": [
+      120,
+      120
+     ],
+     "E76": 0.09999999999999998,
+     "flagged": true,
+     "parity_changed_px": 0,
+     "parity_compared_px": 16060,
+     "control_state": "exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 20,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 23,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 27,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 28,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 30,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 33,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 1,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 2,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 3,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 5,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 6,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 7,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 8,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 15,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      264,
+      264
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -0.06451612903225801,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 20,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 23,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 27,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 28,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 30,
+     "kind": "solid",
+     "state": "not_exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 33,
+     "kind": "patterned",
+     "label": "accepted",
+     "source_size": [
+      1520,
+      1520
+     ],
+     "content_size": [
+      248,
+      248
+     ],
+     "E76": -5.129032258064516,
+     "flagged": false,
+     "parity_changed_px": 0,
+     "parity_compared_px": 64092,
+     "control_state": "not_exercised"
+    }
+   ],
+   "controls": [
+    {
+     "revision": "r1",
+     "id": 18,
+     "variant": "brightness_plus_8",
+     "E76": 0.09999999999999998,
+     "expected": 0.09999999999999998,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      108,
+      108
+     ],
+     "changed_px": 14400,
+     "unchanged_px": 0,
+     "state": "exercised"
+    },
+    {
+     "revision": "r1",
+     "id": 18,
+     "variant": "center_trim_107",
+     "E76": 0.10833333333333328,
+     "expected": 0.10833333333333334,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      107,
+      107
+     ],
+     "changed_px": 14336,
+     "unchanged_px": 64,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "brightness_plus_8",
+     "E76": -0.06451612903225801,
+     "expected": -0.06451612903225801,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      264,
+      264
+     ],
+     "changed_px": 61504,
+     "unchanged_px": 0,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_247",
+     "E76": 0.0040322580645161255,
+     "expected": 0.004032258064516129,
+     "flagged": true,
+     "expected_flagged": true,
+     "source_size": [
+      247,
+      247
+     ],
+     "changed_px": 61475,
+     "unchanged_px": 29,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_248",
+     "E76": 0.0,
+     "expected": 0.0,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      248,
+      248
+     ],
+     "changed_px": 61474,
+     "unchanged_px": 30,
+     "state": "exercised"
+    },
+    {
+     "revision": "r2",
+     "id": 18,
+     "variant": "center_trim_249",
+     "E76": -0.0040322580645162365,
+     "expected": -0.004032258064516129,
+     "flagged": false,
+     "expected_flagged": false,
+     "source_size": [
+      249,
+      249
+     ],
+     "changed_px": 61484,
+     "unchanged_px": 20,
+     "state": "exercised"
+    }
+   ],
+   "clean_flags_ok": true,
+   "parity_ok": true,
+   "controls_ok": true,
+   "wall_s": 4.1047131000086665,
+   "process_wall_s": 4.626643499999773
+  }
+ ]
+}

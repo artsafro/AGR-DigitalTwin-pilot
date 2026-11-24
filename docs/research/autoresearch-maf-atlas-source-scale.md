@@ -13,3 +13,18 @@
 **Replay and budget.** `uv run --frozen python docs/research/maf-atlas-source-scale-r76/replay.py tmp/r76-NEW`. One pair times both real labels, collateral and controls; keep that pair, then repeat exactly twice in fresh processes with fresh PNG reads. Budget 1 calibration + 2 confirmation pairs, zero new candidates, hard stop 120 s for the measurement series or remaining card time if shorter. Each child gets the remaining series budget; after the first pair only continue if 2x its elapsed time fits. On a stop keep completed raw rows, report inconclusive for the run, and rerun the same command with a new directory and enough wall-clock time. Record median, three raw pairs, spread and elapsed separately. No pytest/delivery acceptance inferred from this replay.
 
 **Do not touch:** released packages, sources, production atlas builders, geometry, UV, thresholds/checkers, test selection or other cards' files. No DCC needed for this PNG-crop stage. Skip AC08 pitch/width, padding and cross-profile drift already tested in #58–#74; KPP1 #1817/#1818, G22 #1649, MAF numbering #1809 and Staropetrovskiy #1500 are separately owned. No measurement on AC08, KPP1 v004, Vatutino or Staropetrovskiy in this round, and no transfer from this labelled atlas to those models. Closed form research remains closed.
+
+## Round log — R1 complete, confirmed on this fixture only
+
+Contract commit `b685d3c2bbdf102c9e873cac115ed6670ca20666`. Readback of source and released PNGs succeeded in three fresh child processes, with zero changed pixels across 336,520 compared patterned slot pixels per pair (including gutters, excluding numbered corners). Per pair: r1 ID18 `108 -> 120`, E76 `+0.100000`; r2 ID18 `264 -> 248`, E76 `-0.064516`; the other four accepted patterned rows were `1520 -> 248`, E76 `-5.129032`. Across all three pairs the only real alert is r1 ID18, D76 median `0.164516129032258`, spread `0`. Full series 14.734 s, process wall times 5.160 / 4.944 / 4.627 s. The first pair's estimated 10.321 s for two confirmations fit the remaining series budget.
+
+| Control | Score | Alert | Changed content pixels per run |
+|---|---:|---|---:|
+| r1 trim to 107 | +0.108333 | yes | 14336 |
+| r1 RGB +8 | +0.100000 | yes | 14400 |
+| r2 trim to 247 | +0.004032 | yes | 61475 |
+| r2 trim to 248 | 0 | no | 61474 |
+| r2 trim to 249 | −0.004032 | no | 61484 |
+| r2 RGB +8 | −0.064516 | no | 61504 |
+
+The 24 solid rows and perturbations on the other four patterned rows were not exercised; board seams, cross-profile renders, VPM texel density, UV padding and actual packages/FBX are not measured by this variant. PNG parity is not a UV or rendering claim. See `maf-atlas-source-scale-r76/receipt.json` for all three pairs. This candidate would annotate upscaling at bake time; no code path consumes the annotation. No changes to production or deliveries, no PR; independent review of the observation only.
