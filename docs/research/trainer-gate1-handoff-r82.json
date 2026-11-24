@@ -1,0 +1,36 @@
+{
+  "rows": {
+    "kpp1-v004": {
+      "worktree_head": "c20ef4efd0afe0a60f3507088f46f7fc84a2b89c",
+      "files": {
+        "last.txt": "bb1cbb5960aab8a63c614eda374f4b720bc2e1eb9bbd9404dd157b8bf328fe2d",
+        "run.json": "b7c8d37efb84b9779e12a840c6843d0744d1067c800054b9e7aadba5ca984b89"
+      },
+      "proposals": []
+    },
+    "g22-k2-stage1": {
+      "worktree_head": "c20ef4efd0afe0a60f3507088f46f7fc84a2b89c",
+      "files": {
+        "last.txt": "e0fd9bffc86cb845d71cfb2f5d36f89444eae17c53433eb3e1ee14cc1827e755",
+        "run.json": "cf442c5d41669c78aff0115832a24123172727a42d3d5f7ab9a987f79b074c9b"
+      },
+      "proposals": []
+    },
+    "63a-stage1": {
+      "worktree_head": "c20ef4efd0afe0a60f3507088f46f7fc84a2b89c",
+      "files": {
+        "last.txt": "8dfe65b4b9a6ea74bfa26248b448a32b577656a482573ce2e25a593c10baa520",
+        "run.json": "d0fc75edcad2ac4c3d24e54cd88b16ac6cb743f19aac8a30626330313e90052c"
+      },
+      "proposals": []
+    }
+  },
+  "series": [
+    0,
+    0,
+    0
+  ],
+  "median": 0,
+  "spread": 0,
+  "held_out": "not_measured"
+}
