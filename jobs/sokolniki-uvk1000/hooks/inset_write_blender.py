@@ -1,0 +1,88 @@
+"""#1784 step 3 hook (stage `body`, point `after`), Blender side: v006 = accepted body v005 + inset objects.
+
+Pattern: n/a | new-case: thin Blender writer - opens the v005 body.blend read-only (the body objects are not edited),
+adds one object per inset family from inset_build.py's insets_meshes.json with its own material slots, saves a new
+body_v006.blend + body_v006_quad.fbx (quad review copy; triangulation is the delivery step [D270]).
+
+    blender44 -b --factory-startup --python jobs/sokolniki-uvk1000/hooks/inset_write_blender.py -- \
+        V005_BODY.blend INSETS_MESHES.json NEW_OUT_DIR
+
+Writes NEW_OUT_DIR/blender_write.json: per object verts/faces/materials and, for every v005 body object, the
+sha256 of its world vertex coordinates + face indices before and after (equal = body untouched).
+"""
+import hashlib
+import json
+import os
+import sys
+
+import bpy  # noqa: E402
+
+COLORS = {"04_cassette_fin_RAL8023": (0.55, 0.30, 0.20, 1), "05_cw_structural_RAL7016": (0.30, 0.50, 0.68, 1),
+          "10_mesh_20_RAL9003": (0.45, 0.62, 0.50, 1), "12_frame_RAL9003": (0.95, 0.95, 0.93, 1),
+          "14_flashing_RAL7016": (0.22, 0.24, 0.26, 1), "M_Glass_01": (0.62, 0.82, 0.86, 1)}
+
+
+def geo_hash(ob):
+    h = hashlib.sha256()
+    mw = ob.matrix_world
+    for v in ob.data.vertices:
+        h.update(("%.5f,%.5f,%.5f;" % tuple(mw @ v.co)).encode())
+    for p in ob.data.polygons:
+        h.update((",".join(str(i) for i in p.vertices) + "|%d;" % p.material_index).encode())
+    return h.hexdigest()
+
+
+def material(name):
+    if name not in COLORS:
+        raise ValueError("unmapped inset material %r" % name)
+    m = bpy.data.materials.get(name) or bpy.data.materials.new(name)
+    m.diffuse_color = COLORS[name]
+    return m
+
+
+def make(name, data):
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([tuple(v) for v in data["verts"]], [], [tuple(f["v"]) for f in data["faces"]])
+    me.validate(clean_customdata=False)
+    mats = sorted({f["mat"] for f in data["faces"]})
+    for m in mats:
+        me.materials.append(material(m))
+    uv = me.uv_layers.new(name="UVMap")
+    for p, f in zip(me.polygons, data["faces"]):
+        p.material_index = mats.index(f["mat"])
+        for j in range(p.loop_total):
+            uv.data[p.loop_start + j].uv = f["uv"][j]
+    ob = bpy.data.objects.new(name, me)
+    bpy.context.scene.collection.objects.link(ob)
+    return ob, mats
+
+
+def main(argv):
+    body_blend, src, out = argv
+    if os.path.exists(os.path.join(out, "body_v006.blend")):
+        print("refused: output exists", file=sys.stderr)
+        sys.exit(2)
+    os.makedirs(out, exist_ok=True)
+    bpy.ops.wm.open_mainfile(filepath=body_blend)
+    body = {ob.name: geo_hash(ob) for ob in bpy.context.scene.objects if ob.type == "MESH"}
+    with open(src, encoding="utf-8") as fh:
+        meshes = json.load(fh)
+    stats = {}
+    for name in sorted(meshes):
+        if name in body:
+            raise ValueError("inset object %s collides with a body object" % name)
+        ob, mats = make(name, meshes[name])
+        stats[name] = {"verts": len(ob.data.vertices), "faces": len(ob.data.polygons), "materials": mats}
+    after = {n: geo_hash(bpy.data.objects[n]) for n in body}
+    bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, "body_v006.blend"), copy=True)
+    bpy.ops.export_scene.fbx(filepath=os.path.join(out, "body_v006_quad.fbx"), use_selection=False,
+                             mesh_smooth_type="FACE", apply_unit_scale=True, axis_forward="-Y", axis_up="Z")
+    doc = {"blender": bpy.app.version_string, "source_body": os.path.realpath(body_blend), "insets": stats,
+           "body_unchanged": {n: {"v005": body[n], "v006": after[n], "equal": body[n] == after[n]} for n in body}}
+    with open(os.path.join(out, "blender_write.json"), "w", encoding="utf-8") as fh:
+        json.dump(doc, fh, indent=1)
+    print("WROTE", len(stats), "insets; body unchanged:", all(v["equal"] for v in doc["body_unchanged"].values()))
+
+
+if __name__ == "__main__":
+    main(sys.argv[sys.argv.index("--") + 1:])

@@ -1,0 +1,11 @@
+{
+  "scenario": "oks-npm",
+  "config": {"profile": "NPM"},
+  "hooks": [
+    {"script": "hooks/inset_obb_blender.py", "stage": "body", "point": "after"},
+    {"script": "hooks/inset_build.py", "stage": "body", "point": "after"},
+    {"script": "hooks/inset_write_blender.py", "stage": "body", "point": "after"},
+    {"script": "hooks/inset_sheet_blender.py", "stage": "verifier", "point": "after"},
+    {"script": "hooks/inset_sheet.py", "stage": "verifier", "point": "after"}
+  ]
+}

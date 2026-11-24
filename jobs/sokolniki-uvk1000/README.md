@@ -98,3 +98,34 @@ triangulation, 0 facade triangles, 0 non-manifold edges, 0 bow-tie vertices, rin
 v004 on 21 of 22 measured facades; F04 missing wall +2.874 m2 = Revit wall inside the 7 new D02 window rects (frame
 overlap, same rule as every cut). No opening ID got worse; 7 D02 windows went from missing to shifted. Waiting for
 Artem's picture approval before step 3 (insets).
+
+## Step 3 — insets on the accepted body v005 ([D378])
+
+Artem 2026-11-24 ~14:15 started step 3 on the accepted v005: lamellas, roof steel cage, mesh and canopies = separate
+insets, cassette folds = texture, the F05 outer glazing = an inset with its own ends closing the gap to the face.
+The skeleton `oks-npm` is configured by `skeleton.json` (5 hooks, `skeleton_guard` exit 0); the body is not rebuilt:
+
+```
+blender44 -b --factory-startup --python-exit-code 1 --python jobs/sokolniki-uvk1000/hooks/inset_obb_blender.py -- C:/x/sokolniki-npm/intake/oks/src_copy/sokolniki_ar_r23_v1.fbx jobs/sokolniki-uvk1000/insets_config.json C:/x/ev_1784/step3/revit_obb3.json
+uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py C:/x/ev_1784/step3/revit_obb3.json C:/x/ev_1784/step2/volume-lines-v002.json C:/x/ev_1784/step3/build-v006
+blender44 -b --factory-startup --python-exit-code 1 --python jobs/sokolniki-uvk1000/hooks/inset_write_blender.py -- C:/x/ev_1784/step2/build-v005/body.blend C:/x/ev_1784/step3/build-v006/insets_meshes.json C:/x/ev_1784/step3/build-v006
+uv run dt qa xview C:/x/ev_1784/step3/build-v006/body_v006_quad.fbx --out .../xview_quad.json --profile NPM
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py views C:/x/ev_1784/step2/volume-lines-v002.json <views.json>
+blender44 -b --factory-startup --python-exit-code 1 --python jobs/sokolniki-uvk1000/hooks/inset_sheet_blender.py -- <model> <views.json> <renders> v005|v006|revit
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py decor C:/x/ev_1784/sok_dump.json <decor_table.json>
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py sheet <renders> <views.json> <build-v006> <decor_table.json> <new.pdf>
+```
+
+Modelling split [D336]: plinth=one_with_body; inset=roof_cage, roof_mesh, glass_canopies, lamellas_RAL8023,
+F05_outer_glazing; texture=folded_cassettes, mullions, stemalit, finish_layer; reason=NPM, accepted body v005 untouched,
+step-3 composition of [D378]; windows stay body cutouts with their v005 planes (trimmed to the accepted openings);
+exception: flashings (D336 insets) and railings left out of step 3 - questions on the sheet.
+
+Result (quad copy `body_v006_quad.fbx`): 5 inset objects, 6 122 quads, 12 244 triangles (Revit cage alone 3 152 968):
+cage 610 columns -> 540 boxes (66 exact Revit duplicates, 4 touching pairs joined) and 498 beams -> 436 diamond tubes;
+101 mesh planes; 10 canopy sheets; 7 lamellas; F05 glazing over 198 Revit panels, a 7-step sawtooth 0.03..1.70 m in
+front of D06/D07, clipped to the v005 mouth, top/bottom closures and end quads to the face. Body hash N/D/S/H before =
+after; master_topology pass for all 5 inset objects (body n-gons = accepted v005); xView NPM 0/0/0 PASS; FBX readback ok.
+3ds Max was not run: native Max checks `not measured`. Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step3-insets-v006/`
+(`sok-step3-v006.pdf` 30 sheets: summary, decor table of all 53 Revit families with 4 questions, 27 facades
+v005 | v006 | Revit, iso; `SHA256SUMS.txt` 97 files, manifest `cddc38a5…`). Waiting for Artem's picture approval.
