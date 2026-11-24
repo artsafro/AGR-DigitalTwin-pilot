@@ -8,16 +8,18 @@ Opens the stage-2 .blend (never saves it), adds black Wireframe-modifier copies 
 solid) and renders with Workbench (object material colours): 1 iso of the tower, 2 one window from the street,
 3 the same opening without the body (frame + glass + capsule from the side: the capsule depth), 4 the AC basket
 status of STAGE2.json (none in the typical band -> the numbers, no invented basket). Tiles 2 x 2 into OUT.png.
-Refuses OUT.png next to SCENE.blend.
+Refuses OUT.png next to SCENE.blend. Wire copies, Workbench, camera aim, show-only and 2 x 2 tiling are the owner
+tools/blender/stage2_review.py (t_3820c6be); this hook keeps the 63A panels, perspective cameras and captions.
 """
 import json
-import math
 import os
 import sys
 
 import bpy
-import numpy as np
 from mathutils import Vector
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', '..', 'tools', 'blender'))
+import stage2_review as sr  # noqa: E402
 
 argv = sys.argv[sys.argv.index('--') + 1:]
 blend, plan_path, out_png = argv[:3]
@@ -35,48 +37,16 @@ if pick is None:  # a 3-bay window on a middle floor
 objs = {o.name: o for o in scene.objects}
 frame, glass, cap = (objs['SM_Win_{:03d}_Frame'.format(pick)], objs['SM_Win_{:03d}_Glass'.format(pick)],
                      objs['CAPSULE_63A_{:03d}'.format(pick)])
-
-
-def centre(ob):
-    vs = [ob.matrix_world @ v.co for v in ob.data.vertices]
-    return sum(vs, Vector()) / len(vs)
-
-
-wc, cc = centre(frame), centre(cap)
-out_dir = wc - cc
-out_dir.z = 0
-out_dir.normalize()
-side = Vector((-out_dir.y, out_dir.x, 0))
-
-black = bpy.data.materials.new('WIRE')
-black.diffuse_color = (0.02, 0.02, 0.02, 1)
+wc, cc, out_dir, side = sr.opening_axes(frame, cap, sr.vertex_centre)
+black = sr.wire_material('WIRE', (0.02, 0.02, 0.02, 1))
 wires = {}
-
-
-def wire_of(ob, t):
-    w = ob.copy()
-    w.data = ob.data
-    w.name = ob.name + '_wire'
-    for c in ob.users_collection:
-        c.objects.link(w)
-    m = w.modifiers.new('wire', 'WIREFRAME')
-    m.thickness, m.use_replace, m.use_even_offset = t, True, False
-    m.material_offset = len(ob.data.materials)
-    w.data = ob.data.copy()
-    w.data.materials.append(black)
-    wires[ob.name] = w
-    return w
-
 
 cam_data = bpy.data.cameras.new('cam')
 cam = bpy.data.objects.new('cam', cam_data)
 scene.collection.objects.link(cam)
 scene.camera = cam
-scene.render.engine = 'BLENDER_WORKBENCH'
-scene.display.shading.light = 'STUDIO'
-scene.display.shading.color_type = 'MATERIAL'
+sr.workbench(scene, 900, 900)
 scene.display.shading.show_backface_culling = False
-scene.render.resolution_x = scene.render.resolution_y = 900
 scene.render.film_transparent = False
 scene.world = bpy.data.worlds.new('sheet_bg')
 scene.world.color = (0.93, 0.93, 0.93)
@@ -86,9 +56,7 @@ os.makedirs(tmp, exist_ok=True)
 
 
 def look(eye, target, lens=35.0, ortho=None):
-    cam.location = eye
-    d = (Vector(target) - Vector(eye)).normalized()
-    cam.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler()
+    sr.aim(cam, eye, (Vector(target) - Vector(eye)).normalized())
     if ortho:
         cam_data.type, cam_data.ortho_scale = 'ORTHO', ortho
     else:
@@ -109,11 +77,7 @@ def label(text, size):
 
 
 def show_only(names):
-    for o in scene.objects:
-        if o.type in ('MESH',) and not o.name.endswith('_wire'):
-            o.hide_render = o.name not in names
-            if o.name in wires:
-                wires[o.name].hide_render = o.hide_render
+    sr.show_only(meshes, wires, {o for o in meshes if o.name in names})
 
 
 def render(i, text, size):
@@ -126,7 +90,7 @@ def render(i, text, size):
 
 meshes = [o for o in scene.objects if o.type == 'MESH']
 for o in meshes:
-    wire_of(o, 0.012 if o.name.startswith('SM_Body') else 0.006)
+    wires[o] = sr.wire_copy(o, 0.012 if o.name.startswith('SM_Body') else 0.006, black, o.users_collection[0])
 allnames = {o.name for o in meshes}
 panels = []
 # 1 iso of the tower
@@ -137,11 +101,11 @@ mid = (lo + hi) / 2
 show_only(allnames)
 look(mid + Vector((-60, -60, 30)), mid, ortho=62)
 for o in meshes:  # thicker wire on the overview
-    wires[o.name].modifiers['wire'].thickness = 0.03 if o.name.startswith('SM_Body') else 0.015
+    wires[o].modifiers['wire'].thickness = 0.03 if o.name.startswith('SM_Body') else 0.015
 panels.append(render(1, '63A stage 2 v001: body v005 + {} windows + {} capsules (iso)'.format(
     rep['openings']['ok'], rep['capsules']['made']), 0.018))
 for o in meshes:
-    wires[o.name].modifiers['wire'].thickness = 0.012 if o.name.startswith('SM_Body') else 0.004
+    wires[o].modifiers['wire'].thickness = 0.012 if o.name.startswith('SM_Body') else 0.004
 # 2 one window from the street
 r = rows[pick]
 look(wc + out_dir * 3.2 + side * 1.4 + Vector((0, 0, 0.8)), wc, lens=30)
@@ -160,17 +124,5 @@ txt = ('AC baskets: Revit has {} in the typical band\n+10.15..+47.95 (stage 1 fl
 look(Vector((0, -10, 0)), Vector((0, 0, 0)), lens=35)
 panels.append(render(4, txt, 0.03))
 
-imgs = []
-for p in panels:
-    im = bpy.data.images.load(p)
-    a = np.array(im.pixels[:], dtype=np.float32).reshape(im.size[1], im.size[0], 4)
-    imgs.append(a)
-top = np.concatenate([imgs[2], imgs[3]], axis=1)  # pixel rows start at the bottom
-bot = np.concatenate([imgs[0], imgs[1]], axis=1)
-sheet = np.concatenate([top, bot], axis=0)
-h, w = sheet.shape[:2]
-img = bpy.data.images.new('sheet', w, h, alpha=True)
-img.pixels[:] = sheet.ravel()
-img.filepath_raw, img.file_format = out_png, 'PNG'
-img.save()
+w, h = sr.tile_2x2(panels, out_png)
 print('STAGE2_SHEET', out_png, 'opening', pick, json.dumps({'w': w, 'h': h}))

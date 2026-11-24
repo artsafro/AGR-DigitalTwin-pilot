@@ -34,7 +34,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 6 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
 | 7 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
 | 8 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
-| 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
+| 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152]; лист приёмки этапа 2 (изометрия + окно + капсула, каркас поверх Workbench): `tools/blender/stage2_review.py` [t_3820c6be] |
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
 | 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
 | 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip`; STOP до ZIP без `export_meta` нового FBX и его readback. Для перекраски с выпуском ZIP указать оба владельца: R1 + рецепт job (АС.09: AC08 v010 через [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py)) и `agr package-vpm`; см. [маршрут ОКС ВПМ](../scenarios/oks-vpm.md#route-by-stage). |
