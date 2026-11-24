@@ -1,5 +1,12 @@
 # Standing #67 — AC08 cross-seam Diffuse continuity (OBSERVE)
 
+**Итог (R2, гипотеза подтверждена только на паре AC08, OBSERVE):** разрыв текстуры на UV-швах панельной 4K-отделки
+у отклонённой v007 вдвое больше, чем у принятой v010: 0,1435 против 0,0716 (разница +0,0719, три свежих импорта,
+разброс 0). Сигнал не требует исходника и ВПМ. Но искусственный сдвиг одной стороны шва на 5 px поднимает оценку
+очень слабо (v007 +0,00001, v010 +0,0009), а v007 и v010 запечены разными картинками. Поэтому это не детектор швов
+и не порог приёмки: разделение может идти от контраста текстуры. Пакеты и производственный код не менялись, PR
+только с исследованием.
+
 ## Frozen contract (written before the runner exists and before any score)
 
 H67: on the delivered AC08 NPM, the texture break across UV seams of the 4K panel finish is larger on the
@@ -83,3 +90,29 @@ R1 exactly (same bytes, fresh imports) — any difference = instability. Confirm
 above. Known confound recorded in advance: v007 and v010 bake different Diffuse images, so SD67 also scales
 with texture contrast; one labelled pair cannot separate "seam break" from "contrast". R2 can only confirm the
 calibration on this pair, not a general seam detector.
+
+## R2 — confirmed (AC08 pair only); completed, OBSERVE only
+
+Runner commit `20e3fd79` (SHA-256 `08d588c414edb6a26aa20d9e32496d294958e7faa49814511801d77ddce42efd`),
+`tmp/r67-run-002`, receipt [`atlas-seam-r67/receipt.json`](atlas-seam-r67/receipt.json) (git blob
+`3614db3561598bcce8e27513e2d327be51854d1f`). 3 fresh pairs (2.447 / 2.386 / 2.376 s, total 7.452 s), every
+state spread 0, input parity held, clean states byte-equal to R1 on both labels.
+
+| Label | SD67 clean | +2 px | +5 px | witness faces (non-target) |
+| --- | ---: | ---: | ---: | ---: |
+| v007 (rejected) | 0.1434673 | 0.1434725 | 0.1434792 | 10 (0) |
+| v010 (accepted) | 0.0715975 | 0.0719720 | 0.0725363 | 10 (0) |
+
+D67 = +0.0718698 (spread 0) ≥ max(0.01, 0.0179) → **confirmed** by the frozen rule. Measured, clean:
+seam edges 10 / 9522 samples per label on tile 1001. Injected: seam-first V shift, 10 faces per label, strictly
+raises SD67 (both labels). Not measured: v010 tile 1002 (no seam edges), 256 px solid tiles, VPM, other objects,
+padding, MAF.
+
+Limits (decide before any gate): (1) the witness response is 10^-5 (v007) to 10^-3 (v010) against a D67 of
+7·10^-2 — a 5 px phase break barely moves the pooled mean, so the separation is not shown to come from seam
+phase; (2) v007/v010 have identical seam topology (census equal) but different Diffuse bakes, so texture
+contrast is a live confound; (3) one labelled pair. Would change (not applied): nothing in production; a
+contrast-normalised score (cross-seam difference / same-face difference at the same distance) is the next
+candidate. Replay: same command in a fresh directory, about 8 s.
+
+RED: `ModuleNotFoundError: replay` (R1 tests), `KeyError: 'witness'` / unexpected `witness` argument (R2 tests).
