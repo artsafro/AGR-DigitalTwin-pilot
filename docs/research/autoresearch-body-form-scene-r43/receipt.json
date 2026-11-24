@@ -1,0 +1,379 @@
+{
+ "card": "t_bb31603d",
+ "hypothesis": "H43",
+ "result": "confirmed",
+ "M43": {
+  "base": {
+   "detected": 8,
+   "of": 12,
+   "accepted_false_fails": 0,
+   "missed": [
+    "P_recess_0.03",
+    "P_recess_0.06",
+    "P_recess_0.11",
+    "P_corner_0.05"
+   ]
+  },
+  "c1": {
+   "detected": 10,
+   "of": 12,
+   "accepted_false_fails": 0,
+   "missed": [
+    "P_recess_0.03",
+    "P_corner_0.05"
+   ]
+  }
+ },
+ "A_extract_distinct_hashes_of_3": 1,
+ "inputs_sha256": {
+  "A_rt": "00aa2c15ffc32bb5ea902f44e41385fcf39cc68a4436c17ad1d3da6a43f371f1",
+  "P_fill": "1690daf7bcf5841f43aa8186ae1125cac1318a15356e29258155103d7f1f4cd7",
+  "P_recess_0.03": "402943b786df650601802b4f070c07ca26c6ffbd61d24271a5e43e0c28f1016f",
+  "P_recess_0.06": "1b95e1907c8fb0387593c7b56c9b8f5e761c2ce3aedd0f1ba1ec3aea1c48f56d",
+  "P_recess_0.11": "dbbbe0e5d2a34e5ce6e1beaf7cbc1d600e17f8506c97100f610bf850815013ed",
+  "P_recess_0.13": "191c5da6f0af0bd4597560dc564885f72ff3cf650f1096b87361f1ad91486c3d",
+  "P_recess_0.20": "a440959a3a3e9ff5b16841c2c5fabf19a18079e3668b2e036f7a8a72870a3bf6",
+  "P_corner_0.05": "2fccd1cd6cf98ca1e02004fa5dc19a85ad6330e3318372c2b07eb26c36581181",
+  "P_corner_0.10": "aa40dc0e649b9202de66b678a4d1fdf6d43e5ee516486a5e17e8becbabdcefa9",
+  "P_corner_0.20": "8e1e4224e8d759d92e020f659f9dec4c5913a3386800d0f9a2e4d6a7c06c0e88",
+  "P_corner_0.40": "cde64015da5acdb4728129410cd6103d9a604fe5b491dbb02d8fe29f669b2032",
+  "P_corner_0.80": "3981b447eb82ac0956324067b73f54ca828fca95ca311ccbcbb8c373e8224a9b",
+  "A": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+  "R": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+  "C_none": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+  "C_shift_opening": "513d5ab4b2bcb100964386109ee2104dd06c7a488774aa18c162032948fa159b",
+  "C_shift_wall": "b79ecca635ea49e2581f40d019c86ee2275bb6f1fb43565a54932ef4af418592"
+ },
+ "variants": {
+  "A": {
+   "class": "accepted",
+   "base_detected": false,
+   "base_groupA": {
+    "pass": 29,
+    "fail": 0,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": false,
+   "c1_new_items": {
+    "contour@17.8": "pass: two-sided max 0.000 m",
+    "contour@18.2": "pass: two-sided max 0.000 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "A_rt": {
+   "class": "accepted",
+   "base_detected": false,
+   "base_groupA": {
+    "pass": 29,
+    "fail": 0,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": false,
+   "c1_new_items": {
+    "contour@17.8": "pass: two-sided max 0.000 m",
+    "contour@18.2": "pass: two-sided max 0.000 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "C_none": {
+   "class": "accepted",
+   "base_detected": false,
+   "base_groupA": {
+    "pass": 29,
+    "fail": 0,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": false,
+   "c1_new_items": {
+    "contour@17.8": "pass: two-sided max 0.000 m",
+    "contour@18.2": "pass: two-sided max 0.000 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "R": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 1,
+    "fail": 10,
+    "not_measured": 18,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 1.500 m",
+    "contour@18.2": "fail: two-sided max 1.500 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_fill": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 25,
+    "fail": 1,
+    "not_measured": 3,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.901 m",
+    "contour@18.2": "fail: two-sided max 0.901 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_recess_0.03": {
+   "class": "negative",
+   "base_detected": false,
+   "base_groupA": {
+    "pass": 29,
+    "fail": 0,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": false,
+   "c1_new_items": {
+    "contour@17.8": "pass: two-sided max 0.030 m",
+    "contour@18.2": "pass: two-sided max 0.030 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_recess_0.06": {
+   "class": "negative",
+   "base_detected": false,
+   "base_groupA": {
+    "pass": 29,
+    "fail": 0,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.060 m",
+    "contour@18.2": "fail: two-sided max 0.060 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_recess_0.11": {
+   "class": "negative",
+   "base_detected": false,
+   "base_groupA": {
+    "pass": 29,
+    "fail": 0,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.110 m",
+    "contour@18.2": "fail: two-sided max 0.110 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_recess_0.13": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 28,
+    "fail": 1,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.130 m",
+    "contour@18.2": "fail: two-sided max 0.130 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_recess_0.20": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 28,
+    "fail": 1,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.200 m",
+    "contour@18.2": "fail: two-sided max 0.200 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_corner_0.05": {
+   "class": "negative",
+   "base_detected": false,
+   "base_groupA": {
+    "pass": 29,
+    "fail": 0,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": false,
+   "c1_new_items": {
+    "contour@17.8": "pass: two-sided max 0.035 m",
+    "contour@18.2": "pass: two-sided max 0.035 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_corner_0.10": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 27,
+    "fail": 2,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.071 m",
+    "contour@18.2": "fail: two-sided max 0.071 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_corner_0.20": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 27,
+    "fail": 2,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.141 m",
+    "contour@18.2": "fail: two-sided max 0.141 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_corner_0.40": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 26,
+    "fail": 3,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.283 m",
+    "contour@18.2": "fail: two-sided max 0.283 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "P_corner_0.80": {
+   "class": "negative",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 26,
+    "fail": 3,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.566 m",
+    "contour@18.2": "fail: two-sided max 0.566 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "C_shift_opening": {
+   "class": "injected",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 28,
+    "fail": 1,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.100 m",
+    "contour@18.2": "fail: two-sided max 0.100 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "C_shift_wall": {
+   "class": "injected",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 27,
+    "fail": 2,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.100 m",
+    "contour@18.2": "fail: two-sided max 0.100 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "J1_missing_4259581": {
+   "class": "frozen_dump",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 25,
+    "fail": 1,
+    "not_measured": 3,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.900 m",
+    "contour@18.2": "fail: two-sided max 0.900 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "J2_extra_endwall": {
+   "class": "frozen_dump",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 28,
+    "fail": 1,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "fail: two-sided max 0.581 m",
+    "contour@18.2": "fail: two-sided max 0.581 m"
+   },
+   "preexisting_items_changed": 0
+  },
+  "J3_stair_cut_basket": {
+   "class": "frozen_dump",
+   "base_detected": true,
+   "base_groupA": {
+    "pass": 27,
+    "fail": 2,
+    "not_measured": 0,
+    "not_applicable": 0
+   },
+   "c1_detected": true,
+   "c1_new_items": {
+    "contour@17.8": "pass: two-sided max 0.000 m",
+    "contour@18.2": "pass: two-sided max 0.000 m"
+   },
+   "preexisting_items_changed": 0
+  }
+ },
+ "evidence": {
+  "local": "C:/x/autoresearch-body-form-r43/",
+  "drive": "G:/Мой диск/AGR-evidence/standing43-body-form-scene/",
+  "SHA256SUMS.txt": "f962c390a344192359125181b502b6318b8810c44da3a50aa8204b75b71602bc",
+  "result43.json": "4645e5922624f533fb0a00573402dde05060eec909248faee879125e486a1be8"
+ },
+ "frozen_detector": {
+  "extract.py": "ee50925b8a45d6b55d4409cc21893d7932ae7b76d66c3a7c7c4b6b4bb51875af",
+  "score_heldout.py": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942"
+ }
+}
