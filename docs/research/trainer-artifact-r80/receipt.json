@@ -1,0 +1,114 @@
+{
+  "run_status": "complete_preflight_only",
+  "hypothesis": "inconclusive",
+  "measured_artifact_attempts": 0,
+  "ledger_artifact": {
+    "kpp1-v004": {
+      "status": "fail",
+      "reason": "no FBX in the built result",
+      "gate1_report_sha256": "3f494b8f2b327cc960a18051b24e834b3c63004e1f7e8895671b8ef9957747d5"
+    },
+    "g22-k2-stage1": {
+      "status": "fail",
+      "reason": "no FBX in the built result",
+      "gate1_report_sha256": "e011dba5c9c72bbbc8b563473721b397c3fd4f1a630093f446c48bba71361407"
+    },
+    "63a-stage1": {
+      "status": "fail",
+      "reason": "no FBX in the built result",
+      "gate1_report_sha256": "ea4d6bac179a045ff263b9f6f7a32c95b570bd78e0cb4275f3f1290ce2992630"
+    }
+  },
+  "1608_skeleton_stop": "sources-dwg",
+  "rounds": [
+    {
+      "round": 1,
+      "source_preflight": {
+        "source_bytes": 171522800,
+        "source_sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+        "source_changed_bytes_in_stream": 1,
+        "mutant_sha256": "b4598457a1fd1cbd7dae2f2e1c24a62bcde04f0c4f68a55efde7f76bb29055df"
+      },
+      "dry_run": {
+        "63a-stage1": {
+          "exit": 0,
+          "eligible": 1,
+          "output_directory_written": false,
+          "reason": "prompt emitted"
+        },
+        "63b-stage1": {
+          "exit": 2,
+          "eligible": 0,
+          "output_directory_written": false,
+          "reason": "not practice_ready"
+        }
+      },
+      "delta": -1,
+      "wall_s": 1.833,
+      "paired_dry_run_wall_s": 1.251
+    },
+    {
+      "round": 2,
+      "source_preflight": {
+        "source_bytes": 171522800,
+        "source_sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+        "source_changed_bytes_in_stream": 1,
+        "mutant_sha256": "b4598457a1fd1cbd7dae2f2e1c24a62bcde04f0c4f68a55efde7f76bb29055df"
+      },
+      "dry_run": {
+        "63a-stage1": {
+          "exit": 0,
+          "eligible": 1,
+          "output_directory_written": false,
+          "reason": "prompt emitted"
+        },
+        "63b-stage1": {
+          "exit": 2,
+          "eligible": 0,
+          "output_directory_written": false,
+          "reason": "not practice_ready"
+        }
+      },
+      "delta": -1,
+      "wall_s": 1.906,
+      "paired_dry_run_wall_s": 1.06
+    },
+    {
+      "round": 3,
+      "source_preflight": {
+        "source_bytes": 171522800,
+        "source_sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+        "source_changed_bytes_in_stream": 1,
+        "mutant_sha256": "b4598457a1fd1cbd7dae2f2e1c24a62bcde04f0c4f68a55efde7f76bb29055df"
+      },
+      "dry_run": {
+        "63a-stage1": {
+          "exit": 0,
+          "eligible": 1,
+          "output_directory_written": false,
+          "reason": "prompt emitted"
+        },
+        "63b-stage1": {
+          "exit": 2,
+          "eligible": 0,
+          "output_directory_written": false,
+          "reason": "not practice_ready"
+        }
+      },
+      "delta": -1,
+      "wall_s": 1.602,
+      "paired_dry_run_wall_s": 1.126
+    }
+  ],
+  "median_delta": -1,
+  "delta_min_max": [
+    -1,
+    -1
+  ],
+  "median_wall_s": 1.833,
+  "wall_s_min_max": [
+    1.602,
+    1.906
+  ],
+  "python": "3.14.7"
+}
