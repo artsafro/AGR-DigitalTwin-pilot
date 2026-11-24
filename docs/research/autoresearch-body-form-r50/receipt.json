@@ -1,0 +1,1144 @@
+{
+  "contract": "a2a770b7a7fc2cb36fc9e7319f7b24fd8405f1c5",
+  "driver_sha256": "4db60a170f6bd583e37840cf596f57486549ef3fd1676201fb23c58ea4135fbe",
+  "rows": {
+    "A-1.mixed": {
+      "raw": [
+        5,
+        2,
+        1
+      ],
+      "diagnostic": [
+        5,
+        1,
+        0
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            1.14,
+            2.94
+          ]
+        },
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "exercise": "exercised",
+      "changed_count": 1,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        },
+        "target": {
+          "17.8": {
+            "added": 1,
+            "removed": 0
+          }
+        }
+      },
+      "scorer_diffs": [
+        "opening:4259581:edges",
+        "opening:4259581:present",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head",
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "injected_extract_sha256": "6a8edabe65ca36876fa2628a0b2cd1b88be660fc051e17d08d6ae98e61376947",
+      "score_sha256": "b55abb0502db2ab5ed0e7cdc2c45b66a7d77f8ed6e00d4163991a15bb67c0621"
+    },
+    "R-1.mixed": {
+      "raw": [
+        0,
+        2,
+        6
+      ],
+      "diagnostic": [
+        0,
+        1,
+        5
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            1.14,
+            2.94
+          ]
+        },
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "exercise": "exercised",
+      "changed_count": 1,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        },
+        "target": {
+          "18.2": {
+            "removed": 2,
+            "added": 2
+          }
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "injected_extract_sha256": "c4ffef0b5746f5ba4251538572764c1eddedc6d26a930b6e891959b2a720cf70",
+      "score_sha256": "e442f550125f04c90a158abb712d5e19ec6de82e04440d374df988f721810d0a"
+    },
+    "A-1.neighbor": {
+      "raw": [
+        6,
+        1,
+        0
+      ],
+      "diagnostic": [
+        6,
+        1,
+        0
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [],
+      "exercise": "not_exercised",
+      "changed_count": 0,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "injected_extract_sha256": "d8a00abdf6194ed161239c7c21828ff8032be8e5ed2e0c3ebba39888c82ed982",
+      "score_sha256": "4db62f88960f5527aabb9f78a48f2ff495aaed3d4d52e011cfee3ced5babca12"
+    },
+    "R-1.neighbor": {
+      "raw": [
+        0,
+        1,
+        6
+      ],
+      "diagnostic": [
+        0,
+        1,
+        6
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [],
+      "exercise": "not_exercised",
+      "changed_count": 0,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "injected_extract_sha256": "abdca5d35b31bf3c0b810eb3cc2d70f417e6260069b259b73ef713d21042c5b1",
+      "score_sha256": "283de74a4b3e5d6cfe961eb4e678d0daac4ef64226eb4525a2251887a9c7f4c2"
+    },
+    "A-2.mixed": {
+      "raw": [
+        5,
+        2,
+        1
+      ],
+      "diagnostic": [
+        5,
+        1,
+        0
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            1.14,
+            2.94
+          ]
+        },
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "exercise": "exercised",
+      "changed_count": 1,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        },
+        "target": {
+          "17.8": {
+            "added": 1,
+            "removed": 0
+          }
+        }
+      },
+      "scorer_diffs": [
+        "opening:4259581:edges",
+        "opening:4259581:present",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head",
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "injected_extract_sha256": "6a8edabe65ca36876fa2628a0b2cd1b88be660fc051e17d08d6ae98e61376947",
+      "score_sha256": "b55abb0502db2ab5ed0e7cdc2c45b66a7d77f8ed6e00d4163991a15bb67c0621"
+    },
+    "R-2.mixed": {
+      "raw": [
+        0,
+        2,
+        6
+      ],
+      "diagnostic": [
+        0,
+        1,
+        5
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            1.14,
+            2.94
+          ]
+        },
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "exercise": "exercised",
+      "changed_count": 1,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        },
+        "target": {
+          "18.2": {
+            "removed": 2,
+            "added": 2
+          }
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "injected_extract_sha256": "c4ffef0b5746f5ba4251538572764c1eddedc6d26a930b6e891959b2a720cf70",
+      "score_sha256": "e442f550125f04c90a158abb712d5e19ec6de82e04440d374df988f721810d0a"
+    },
+    "A-2.neighbor": {
+      "raw": [
+        6,
+        1,
+        0
+      ],
+      "diagnostic": [
+        6,
+        1,
+        0
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [],
+      "exercise": "not_exercised",
+      "changed_count": 0,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "injected_extract_sha256": "d8a00abdf6194ed161239c7c21828ff8032be8e5ed2e0c3ebba39888c82ed982",
+      "score_sha256": "4db62f88960f5527aabb9f78a48f2ff495aaed3d4d52e011cfee3ced5babca12"
+    },
+    "R-2.neighbor": {
+      "raw": [
+        0,
+        1,
+        6
+      ],
+      "diagnostic": [
+        0,
+        1,
+        6
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [],
+      "exercise": "not_exercised",
+      "changed_count": 0,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "injected_extract_sha256": "abdca5d35b31bf3c0b810eb3cc2d70f417e6260069b259b73ef713d21042c5b1",
+      "score_sha256": "283de74a4b3e5d6cfe961eb4e678d0daac4ef64226eb4525a2251887a9c7f4c2"
+    },
+    "A-3.mixed": {
+      "raw": [
+        5,
+        2,
+        1
+      ],
+      "diagnostic": [
+        5,
+        1,
+        0
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            1.14,
+            2.94
+          ]
+        },
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "exercise": "exercised",
+      "changed_count": 1,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        },
+        "target": {
+          "17.8": {
+            "added": 1,
+            "removed": 0
+          }
+        }
+      },
+      "scorer_diffs": [
+        "opening:4259581:edges",
+        "opening:4259581:present",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head",
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "injected_extract_sha256": "6a8edabe65ca36876fa2628a0b2cd1b88be660fc051e17d08d6ae98e61376947",
+      "score_sha256": "b55abb0502db2ab5ed0e7cdc2c45b66a7d77f8ed6e00d4163991a15bb67c0621"
+    },
+    "R-3.mixed": {
+      "raw": [
+        0,
+        2,
+        6
+      ],
+      "diagnostic": [
+        0,
+        1,
+        5
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            1.14,
+            2.94
+          ]
+        },
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [
+        {
+          "opening_id": "4259581",
+          "gap_z": "18.2",
+          "extra_index": 0
+        }
+      ],
+      "exercise": "exercised",
+      "changed_count": 1,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        },
+        "target": {
+          "18.2": {
+            "removed": 2,
+            "added": 2
+          }
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "injected_extract_sha256": "c4ffef0b5746f5ba4251538572764c1eddedc6d26a930b6e891959b2a720cf70",
+      "score_sha256": "e442f550125f04c90a158abb712d5e19ec6de82e04440d374df988f721810d0a"
+    },
+    "A-3.neighbor": {
+      "raw": [
+        6,
+        1,
+        0
+      ],
+      "diagnostic": [
+        6,
+        1,
+        0
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [],
+      "exercise": "not_exercised",
+      "changed_count": 0,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "injected_extract_sha256": "d8a00abdf6194ed161239c7c21828ff8032be8e5ed2e0c3ebba39888c82ed982",
+      "score_sha256": "4db62f88960f5527aabb9f78a48f2ff495aaed3d4d52e011cfee3ced5babca12"
+    },
+    "R-3.neighbor": {
+      "raw": [
+        0,
+        1,
+        6
+      ],
+      "diagnostic": [
+        0,
+        1,
+        6
+      ],
+      "raw_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "remaining_extras": [
+        {
+          "ring_seg": [
+            24,
+            25
+          ],
+          "gap_m": [
+            3.2,
+            3.7
+          ]
+        }
+      ],
+      "conflicts": [],
+      "exercise": "not_exercised",
+      "changed_count": 0,
+      "changes": {
+        "17.8": {
+          "removed": 1,
+          "added": 2
+        },
+        "18.2": {
+          "removed": 1,
+          "added": 2
+        }
+      },
+      "scorer_diffs": [
+        "openings:no_extra_in_box"
+      ],
+      "raw_ok": true,
+      "diagnostic_ok": true,
+      "loss": 0,
+      "native_extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "injected_extract_sha256": "abdca5d35b31bf3c0b810eb3cc2d70f417e6260069b259b73ef713d21042c5b1",
+      "score_sha256": "283de74a4b3e5d6cfe961eb4e678d0daac4ef64226eb4525a2251887a9c7f4c2"
+    }
+  },
+  "status": "complete",
+  "hypothesis": "confirmed",
+  "observer_sha256": "fa79d05ae0ed8a99e2ce97902857296cd88e60e50314a5448c7a570af0d70f01",
+  "prior": {
+    "status": "complete",
+    "hypothesis": "confirmed",
+    "wall_s": 15.293,
+    "native_first_pair_s": 2.04
+  },
+  "prior_receipt_sha256": "e6a08ed736815e96cd0e35b977e9a146a44e24bfebe5b0735a60fbe261ffdd1b",
+  "clean": {
+    "A-1": {
+      "extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "raw_score_sha256": "a938aab1a0c56577505c90021399caf9b2068944d3e1d2a721151affdb364713",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-1": {
+      "extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "raw_score_sha256": "81388b3a5c4618b1f7262f107a49e343728625f1e126c3655a144a483bd5c701",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-2": {
+      "extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "raw_score_sha256": "a938aab1a0c56577505c90021399caf9b2068944d3e1d2a721151affdb364713",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-2": {
+      "extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "raw_score_sha256": "81388b3a5c4618b1f7262f107a49e343728625f1e126c3655a144a483bd5c701",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "A-3": {
+      "extract_sha256": "7815ce6e75a1f11c43d46f00799dea68eb443d7a8649f3e915fff5e05aeb8784",
+      "raw_score_sha256": "a938aab1a0c56577505c90021399caf9b2068944d3e1d2a721151affdb364713",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 100.0,
+      "raw_unknown_pct": 0.0,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ]
+    },
+    "R-3": {
+      "extract_sha256": "e404b88f36d857590d248e159f31a6f3f18a8ebd2327cf15e6827e715cc7e733",
+      "raw_score_sha256": "81388b3a5c4618b1f7262f107a49e343728625f1e126c3655a144a483bd5c701",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_exercised",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    },
+    "R-mask": {
+      "extract_sha256": "252202409c8d9f65053a34f8f8799b6c3bed9d255d9cb6c4c3ade89b644d04b4",
+      "raw_score_sha256": "81388b3a5c4618b1f7262f107a49e343728625f1e126c3655a144a483bd5c701",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "diagnostic": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "conflicts": [],
+      "changed_count": 0,
+      "exercise": "not_measured",
+      "segments_added_by_z": {},
+      "raw_form_score": 4.545454545454546,
+      "raw_unknown_pct": 54.54545454545455,
+      "raw_outline_sections_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_measured_depths_m": []
+    }
+  },
+  "controls": {
+    "C_none-1": true,
+    "J4_clean_preflight": true,
+    "A-1": true,
+    "R-1": true,
+    "A-2": true,
+    "R-2": true,
+    "A-3": true,
+    "R-3": true,
+    "C_shift_opening-1": true,
+    "C_shift_wall-1": true,
+    "J1_missing_4259581": true,
+    "J2_extra_endwall": true,
+    "J3_stair_cut_basket": true,
+    "J4_stale_key": true,
+    "R-mask": true,
+    "A-1.one_110": true,
+    "R-1.one_110": true,
+    "A-2.one_110": true,
+    "R-2.one_110": true,
+    "A-3.one_110": true,
+    "R-3.one_110": true,
+    "A-1.both_060": true,
+    "R-1.both_060": true,
+    "A-2.both_060": true,
+    "R-2.both_060": true,
+    "A-3.both_060": true,
+    "R-3.both_060": true,
+    "A-1.both_110": true,
+    "R-1.both_110": true,
+    "A-2.both_110": true,
+    "R-2.both_110": true,
+    "A-3.both_110": true,
+    "R-3.both_110": true,
+    "A-1.both_n110": true,
+    "R-1.both_n110": true,
+    "A-2.both_n110": true,
+    "R-2.both_n110": true,
+    "A-3.both_n110": true,
+    "R-3.both_n110": true,
+    "A-1.both_130": true,
+    "R-1.both_130": true,
+    "A-2.both_130": true,
+    "R-2.both_130": true,
+    "A-3.both_130": true,
+    "R-3.both_130": true,
+    "A-1.one_hi_110": true,
+    "R-1.one_hi_110": true,
+    "A-2.one_hi_110": true,
+    "R-2.one_hi_110": true,
+    "A-3.one_hi_110": true,
+    "R-3.one_hi_110": true
+  },
+  "clean_margin_pp": [
+    95.45454545454545,
+    95.45454545454545,
+    95.45454545454545
+  ],
+  "clean_margin_spread_pp": 0.0,
+  "first_pair_s": 0.285,
+  "remaining_estimate_s": 2.139,
+  "wall_s": 17.14,
+  "losses": [
+    0,
+    0,
+    0
+  ],
+  "L50": 0,
+  "spread": 0
+}
