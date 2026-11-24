@@ -128,7 +128,10 @@ def test_ground_vpm_stage_order():
     import yaml
 
     stages = yaml.safe_load((ROOT / "docs/architecture/ground-route.events.yaml").read_text(encoding="utf-8"))
-    assert tuple(s["id"] for s in stages["stages"]) == GROUND_STAGES
+    ids = tuple(s["id"] for s in stages["stages"])
+    # The scenario groups export/readback and packaging in one row; the map shows the handoff.
+    assert ids[ids.index("npm") + 1:ids.index("validate")] == ("export", "package")
+    assert tuple(s for s in ids if s != "export") == GROUND_STAGES
     assert tuple(_ground_stages(GROUND_VPM.read_text(encoding="utf-8"))) == GROUND_STAGES
 
 
