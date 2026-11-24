@@ -1,0 +1,1512 @@
+{
+  "rev54": "cc470a6d6e01a5a861f4c00b1145caec727a7d00",
+  "r54_replay_sha256": "f1d1d5c5256a3d2d78ba6a74f5e7876f856058d8dbabc7a44d57112f0a0401f3",
+  "script_sha256": "127ab1123662b51374890a6c8fb130c8d228c7f19133b473937df60fd6a1c157",
+  "hypothesis": "refuted",
+  "raw_receipt": "C:\\x\\t_c5f7b734-r55\\run01\\run\\receipt.json",
+  "raw_sha256": "d215ee1b84ba3401fee99bc0d0349167069a8b8d69666de6e5a70530596058c5",
+  "r54_status": "complete",
+  "r54_hypothesis": "confirmed",
+  "r54_all_guards": true,
+  "r54_primary_m": 4.782285678572862e-14,
+  "wall_s": 34.008,
+  "postflight": true,
+  "calibration": {
+    "v007": [
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v002": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v003": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v004": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v005": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v006": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "G22_C_none": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "G22_C_shift_wall": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "A": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "R": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      }
+    ]
+  },
+  "trials": [
+    {
+      "fixture": "G22_C_none",
+      "rep": 1,
+      "probe": "rear_in",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.05001814435791663,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 1,
+      "probe": "front_in",
+      "decoy_d": 0.04998596296377529,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.050061779122674066,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 1,
+      "probe": "one_side",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          1
+        ],
+        "18.2": [
+          2,
+          1
+        ]
+      },
+      "flank_spread": 0.05001814435791663,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 1,
+      "probe": "rear_out",
+      "decoy_d": -0.20001403703622472,
+      "decoy_in_band": false,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.1500403735728516,
+      "clean_depth": 0.1500403735728516,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 7.992348046592657e-05,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 1,
+      "probe": "near_miss",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.1500403735728516,
+      "clean_depth": 0.1500403735728516,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 7.992348046592657e-05,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 1,
+      "probe": "tiny",
+      "decoy_d": -0.010014037036224712,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.14500948401157565,
+      "clean_depth": 0.1500403735728516,
+      "delta": -0.005030889561275953,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.01001814435799675,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 1,
+      "probe": "rail",
+      "decoy_d": 0.07998596296377529,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "flank_missing",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          0,
+          0
+        ],
+        "18.2": [
+          0,
+          0
+        ]
+      },
+      "flank_spread": null,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 2,
+      "probe": "rear_in",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.05001814435791663,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 2,
+      "probe": "front_in",
+      "decoy_d": 0.04998596296377529,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.050061779122674066,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 2,
+      "probe": "one_side",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          1
+        ],
+        "18.2": [
+          2,
+          1
+        ]
+      },
+      "flank_spread": 0.05001814435791663,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 2,
+      "probe": "rear_out",
+      "decoy_d": -0.20001403703622472,
+      "decoy_in_band": false,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.1500403735728516,
+      "clean_depth": 0.1500403735728516,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 7.992348046592657e-05,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 2,
+      "probe": "near_miss",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.1500403735728516,
+      "clean_depth": 0.1500403735728516,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 7.992348046592657e-05,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 2,
+      "probe": "tiny",
+      "decoy_d": -0.010014037036224712,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.14500948401157565,
+      "clean_depth": 0.1500403735728516,
+      "delta": -0.005030889561275953,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.01001814435799675,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 2,
+      "probe": "rail",
+      "decoy_d": 0.07998596296377529,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "flank_missing",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          0,
+          0
+        ],
+        "18.2": [
+          0,
+          0
+        ]
+      },
+      "flank_spread": null,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 3,
+      "probe": "rear_in",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.05001814435791663,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 3,
+      "probe": "front_in",
+      "decoy_d": 0.04998596296377529,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.050061779122674066,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 3,
+      "probe": "one_side",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "noncoplanar",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          2,
+          1
+        ],
+        "18.2": [
+          2,
+          1
+        ]
+      },
+      "flank_spread": 0.05001814435791663,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 3,
+      "probe": "rear_out",
+      "decoy_d": -0.20001403703622472,
+      "decoy_in_band": false,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.1500403735728516,
+      "clean_depth": 0.1500403735728516,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 7.992348046592657e-05,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 3,
+      "probe": "near_miss",
+      "decoy_d": -0.050014037036224715,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.1500403735728516,
+      "clean_depth": 0.1500403735728516,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 7.992348046592657e-05,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 3,
+      "probe": "tiny",
+      "decoy_d": -0.010014037036224712,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.14500948401157565,
+      "clean_depth": 0.1500403735728516,
+      "delta": -0.005030889561275953,
+      "flank_counts": {
+        "17.8": [
+          2,
+          2
+        ],
+        "18.2": [
+          2,
+          2
+        ]
+      },
+      "flank_spread": 0.01001814435799675,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "G22_C_none",
+      "rep": 3,
+      "probe": "rail",
+      "decoy_d": 0.07998596296377529,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "flank_missing",
+      "depth": null,
+      "clean_depth": 0.1500403735728516,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          0,
+          0
+        ],
+        "18.2": [
+          0,
+          0
+        ]
+      },
+      "flank_spread": null,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 1,
+      "probe": "rear_in",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 1,
+      "probe": "front_in",
+      "decoy_d": 0.050092199562160725,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 1,
+      "probe": "one_side",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 1,
+      "probe": "rear_out",
+      "decoy_d": -0.1999078004378393,
+      "decoy_in_band": false,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 1,
+      "probe": "near_miss",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 1,
+      "probe": "tiny",
+      "decoy_d": -0.009907800437839278,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 1,
+      "probe": "rail",
+      "decoy_d": 0.08009219956216072,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "flank_missing",
+      "depth": null,
+      "clean_depth": 0.4999990211296034,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          0,
+          0
+        ],
+        "18.2": [
+          0,
+          0
+        ]
+      },
+      "flank_spread": null,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 2,
+      "probe": "rear_in",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 2,
+      "probe": "front_in",
+      "decoy_d": 0.050092199562160725,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 2,
+      "probe": "one_side",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 2,
+      "probe": "rear_out",
+      "decoy_d": -0.1999078004378393,
+      "decoy_in_band": false,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 2,
+      "probe": "near_miss",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 2,
+      "probe": "tiny",
+      "decoy_d": -0.009907800437839278,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 2,
+      "probe": "rail",
+      "decoy_d": 0.08009219956216072,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "flank_missing",
+      "depth": null,
+      "clean_depth": 0.4999990211296034,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          0,
+          0
+        ],
+        "18.2": [
+          0,
+          0
+        ]
+      },
+      "flank_spread": null,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 3,
+      "probe": "rear_in",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 3,
+      "probe": "front_in",
+      "decoy_d": 0.050092199562160725,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 3,
+      "probe": "one_side",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 3,
+      "probe": "rear_out",
+      "decoy_d": -0.1999078004378393,
+      "decoy_in_band": false,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 3,
+      "probe": "near_miss",
+      "decoy_d": -0.04990780043783928,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    },
+    {
+      "fixture": "v007",
+      "rep": 3,
+      "probe": "tiny",
+      "decoy_d": -0.009907800437839278,
+      "decoy_in_band": true,
+      "added_per_slice": 2,
+      "exercised": true,
+      "status": "measured",
+      "depth": 0.4999990211296034,
+      "clean_depth": 0.4999990211296034,
+      "delta": 0.0,
+      "flank_counts": {
+        "17.8": [
+          1,
+          1
+        ],
+        "18.2": [
+          1,
+          1
+        ]
+      },
+      "flank_spread": 0.00029247432137025076,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": false
+    },
+    {
+      "fixture": "v007",
+      "rep": 3,
+      "probe": "rail",
+      "decoy_d": 0.08009219956216072,
+      "decoy_in_band": true,
+      "added_per_slice": 1,
+      "exercised": true,
+      "status": "flank_missing",
+      "depth": null,
+      "clean_depth": 0.4999990211296034,
+      "delta": null,
+      "flank_counts": {
+        "17.8": [
+          0,
+          0
+        ],
+        "18.2": [
+          0,
+          0
+        ]
+      },
+      "flank_spread": null,
+      "off_target": [],
+      "false_depth": false,
+      "as_expected": true
+    }
+  ],
+  "F55": 0,
+  "n_trials": 42,
+  "exercised": 42,
+  "as_expected": 30,
+  "off_target": 0,
+  "fail_closed_losses": {
+    "rear_in": 3,
+    "front_in": 3,
+    "one_side": 3,
+    "rear_out": 0,
+    "near_miss": 0,
+    "tiny": 0,
+    "rail": 6
+  },
+  "spread": {
+    "G22_C_none:rear_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_spread": null
+    },
+    "G22_C_none:front_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_spread": null
+    },
+    "G22_C_none:one_side": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_spread": null
+    },
+    "G22_C_none:rear_out": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "G22_C_none:near_miss": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "G22_C_none:tiny": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "G22_C_none:rail": {
+      "statuses": [
+        "flank_missing"
+      ],
+      "depth_spread": null
+    },
+    "v007:rear_in": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "v007:front_in": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "v007:one_side": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "v007:rear_out": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "v007:near_miss": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "v007:tiny": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_spread": 0.0
+    },
+    "v007:rail": {
+      "statuses": [
+        "flank_missing"
+      ],
+      "depth_spread": null
+    }
+  }
+}
