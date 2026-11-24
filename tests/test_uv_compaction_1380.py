@@ -161,6 +161,7 @@ def test_no_delivery_changes():
           '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json',
           '/POLY63-B/sources.json', '/POLY63-B/zonemap63b.json',
           '/sokolniki-uvk1000/openings_config.json', '/sokolniki-uvk1000/body_config_v005.json',
+          '/sokolniki-uvk1000/insets_config.json',
           '/lattice-1609/finish_bands.json', '/lattice-1609/spec_v004.json')
     # #1614 moves large data of delivered jobs to the evidence store: a path listed in its job's EVIDENCE-MOVED.json
     # (sha256 + evidence copy) and the manifest itself are not delivery changes.
