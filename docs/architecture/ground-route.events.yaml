@@ -31,8 +31,8 @@ scheme:
       gate_ru: "Прямого перехода от OBJ к agr ucx нет в общем маршруте; швы и юбку проверить"
     - stages: "placement,npm"
       ru: "Расставить МАФ / Флору и получить НПМ"
-      artifact_ru: "Сцены НПМ / ВПМ + список удалённых объектов с причинами"
-      gate_ru: "Расстановка: master JSON + (offset или readback) + (FBX или mesh), не OBJ сборщика; agr vpm-to-npm не конвертирует Ground"
+      artifact_ru: "Сцены НПМ / ВПМ, engine_report.json и results.json (список excluded с причинами / stopped)"
+      gate_ru: "Расстановка (dt_ai.placement): master JSON + (offset или readback) + (FBX или mesh), не OBJ сборщика; цель D302 vs команда — только одобренные исключения по точке и sha256 Ground пропускаются, новый промах останавливает прогон до инстансирования; agr vpm-to-npm не конвертирует Ground"
     - stages: "export"
       ru: "Экспортировать НПМ / ВПМ отдельно от упаковки"
       artifact_ru: "Ground FBX сдачи и рабочий FBX с квадами (D366)"
@@ -192,7 +192,7 @@ stages:
       - src/dt_ai/geometry/ucx_command.py
       - docs/domain/areas/ground-surface.md
   - id: placement
-    event_ru: "МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт"
+    event_ru: "МАФ и Флора расставлены по точкам / JSON (D329): цель D302 — удаление вне Ground с отчётом; команда dt place site / agr place исключает только одобренные точки (снимок + sha256 Ground), а новый промах останавливает прогон до инстансирования"
     actor: agent
     context: placement
     commands:
@@ -205,8 +205,11 @@ stages:
       - D166
       - D302
     evidence:
-      - jobs/VATUTINO-SITE/placement-report.md
+      - src/dt_ai/placement/engine.py
       - src/dt_ai/placement/site.py
+      - src/dt_ai/placement/scene.py
+      - jobs/VATUTINO-SITE/ground-exceptions-v015.json
+      - jobs/VATUTINO-SITE/placement-report.md
       - jobs/VATUTINO-SITE/place_site.py
   - id: npm
     event_ru: "НПМ-версия в координатах: МАФ НПМ и Флора НПМ на атласе, Ground на атласе"
@@ -318,13 +321,14 @@ hotspots:
       - src/dt_ai/core/heights.py
   - id: pairing
     stage: quads
-    ru: "agr ground site выдаёт треугольники в OBJ, не рабочий FBX с квадами (D366). Для v015: D192 заменено D157 (≤ 35 % остаточных треугольников), маршрут A с исключением texel_ready (D193)."
+    ru: "agr ground site выдаёт треугольники в OBJ, не рабочий FBX с квадами (D366). Историческая agr ground v015 / dt ground v015 (build_ground_v015.py) повторяет только Ватутино v014→v015 и спаривает треугольники уже после рельефа, не закрывая общий дорельефный этап quads. Для v015: D192 заменено D157 (≤ 35 % остаточных треугольников), маршрут A с исключением texel_ready (D193)."
     rules:
       - D157
       - D192
       - D193
     evidence:
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
+      - tools/ground/build_ground_v015.py
   - id: flat-uv
     stage: textures
     ru: "ground_site назначает плоским граням UV / UDIM по ID до проекции, без файлов текстур и атласа НПМ."
@@ -363,6 +367,18 @@ hotspots:
     ru: "На каждый профиль: master JSON + (offset или readback с placement_offset) + (FBX или mesh). Прямой переход от OBJ сборщика не подключён в общем маршруте."
     evidence:
       - src/dt_ai/placement/site.py
+  - id: outside-ground-stop
+    stage: placement
+    ru: "D302 vs команда (dt_ai.placement, D329): целевое правило D302 — удалить объект вне Ground и записать в отчёт. В dt place site / agr place (site.py + scene.py) одобренные исключения из spec.exceptions (apply_ground_exceptions: approved + снимок точки + ground_master_sha256) исключаются до engine.place и пишутся в results.json (excluded: ground_exception; при новом Ground становятся stale). Новый промах вне Ground (point_outside_ground / point_over_ground_hole в engine_report.json) останавливает строгий парный прогон в make_plan (status=stopped, выход 1) до инстансирования."
+    rules:
+      - D302
+      - D329
+    evidence:
+      - src/dt_ai/placement/engine.py
+      - src/dt_ai/placement/site.py
+      - src/dt_ai/placement/scene.py
+      - jobs/VATUTINO-SITE/ground-exceptions-v015.json
+      - jobs/VATUTINO-SITE/placement-report.md
   - id: ground-atlas
     stage: npm
     ru: "agr vpm-to-npm не конвертирует Ground. Числа треугольников v015 показывают бюджет, но не доказывают совпадение поверхности."
