@@ -1,0 +1,3099 @@
+{
+  "card": "t_b481fff8",
+  "candidate": "median_of_row_medians",
+  "candidate_sha256": "ae6bc5e5fa2fe5b5b4c43a98fbfff86f81242a2163d445f3d59b35a7626e476a",
+  "revisions": {
+    "ac08": "e9179247c4934756170f3db7c8e2e8fe36e05487",
+    "kpp1": "d4335c4916ed7c7d7545c68cd14c47c99df90001",
+    "loader": "b105d8bcf04c437b3f746a02bc4cf817b5f1265e",
+    "lock": "01e48513aa9bba11553bc3c0c296414e7ba26c6d"
+  },
+  "pin_manifest": {
+    "ac08_root": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence",
+    "ac08_hashes": {
+      "v007": [
+        "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+        "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516",
+        "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2"
+      ],
+      "v010": [
+        "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+        "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+        "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+      ]
+    },
+    "ac08_artifacts_in_order": [
+      "SM_Nku_1.zip",
+      "T_Nku_1_001_Main_d_1.png",
+      "npm_atlas.json"
+    ],
+    "kpp1": {
+      "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-assets\\KPP1\\delivered-customer-2026-11-14\\SM_77_05_0009005_117_002.zip": "caef3a21acdb8aee1fee9e496e26bd9f9adaeef2a17272e8189bb634aee13ecf"
+    }
+  },
+  "versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.3",
+    "pillow": "12.3.0"
+  },
+  "status": "complete",
+  "error": null,
+  "H78": "confirmed",
+  "D78": [
+    2.219375889401926,
+    2.219375889401926,
+    2.219375889401926
+  ],
+  "median": 2.219375889401926,
+  "spread": 0.0,
+  "wall_s": 126.3494561999978,
+  "round_wall_s": [
+    37.91534130000218,
+    42.962067499989644,
+    45.37072400000761
+  ],
+  "rounds": [
+    {
+      "wall_s": 37.91534130000218,
+      "scores": {
+        "baseline_parity": true,
+        "inventory_parity": true,
+        "coverage": true,
+        "E": {
+          "v007": 2.220998038374616,
+          "v010": 0.001622148972689974,
+          "kpp1": 0.0
+        },
+        "D": 2.219375889401926,
+        "clean_in_bound": true,
+        "witnesses_ok": true
+      },
+      "rows": {
+        "pooled": {
+          "ac08": {
+            "v007": {
+              "label": "rejected_600mm_pitch",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.5359659246574,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.6104990191873081,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 2.220998038374616,
+                "half_pitch": 0.6104990191873081,
+                "brightness_plus8": 2.220998038374616
+              }
+            },
+            "v010": {
+              "label": "accepted_visual",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 98.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.49825113127858267,
+                    "runs": [
+                      41,
+                      41,
+                      41
+                    ],
+                    "changed_px": 15020506
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 93.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.5007453040519345,
+                    "runs": [
+                      43,
+                      43,
+                      43
+                    ],
+                    "changed_px": 15052324
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 0.001622148972689974,
+                "half_pitch": 0.5007453040519345,
+                "brightness_plus8": 0.001622148972689974
+              }
+            }
+          },
+          "kpp1": [
+            {
+              "udim": 1001,
+              "size": 4096,
+              "modal_rgb": [
+                150,
+                153,
+                146
+              ],
+              "finishes": [
+                "Plinth_RAL7004"
+              ],
+              "expected_px": 300.0,
+              "state": "measured",
+              "observed_px": 300.0,
+              "runs": [
+                13,
+                13,
+                13
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 150.0,
+                "runs": [
+                  27,
+                  27,
+                  27
+                ],
+                "E": 0.5,
+                "changed_px": 15468328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1002,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1003,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1004,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1005,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15386328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1006,
+              "size": 4096,
+              "modal_rgb": [
+                208,
+                208,
+                208
+              ],
+              "finishes": [
+                "Cassette_RAL7047"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15175520,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1007,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15176464,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1008,
+              "size": 4096,
+              "modal_rgb": [
+                236,
+                236,
+                234
+              ],
+              "finishes": [
+                "Perforated_RAL9016"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 120.0,
+              "runs": [
+                7,
+                41,
+                7
+              ],
+              "E": 0.8,
+              "flagged": true,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 60.0,
+                "runs": [
+                  14,
+                  82,
+                  14
+                ],
+                "E": 0.9,
+                "changed_px": 3693799,
+                "in_bound": false,
+                "bound_applies": false
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 120.0,
+                "runs": [
+                  7,
+                  41,
+                  7
+                ],
+                "E": 0.8,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1009,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1010,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1011,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1012,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1013,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1014,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1015,
+              "size": 4096,
+              "modal_rgb": [
+                144,
+                146,
+                148
+              ],
+              "finishes": [],
+              "expected_px": null,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1016,
+              "size": 256,
+              "state": "not_exercised"
+            }
+          ]
+        },
+        "row_median": {
+          "ac08": {
+            "v007": {
+              "label": "rejected_600mm_pitch",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.5359659246574,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.6104990191873081,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 2.220998038374616,
+                "half_pitch": 0.6104990191873081,
+                "brightness_plus8": 2.220998038374616
+              }
+            },
+            "v010": {
+              "label": "accepted_visual",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 98.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.49825113127858267,
+                    "runs": [
+                      41,
+                      41,
+                      41
+                    ],
+                    "changed_px": 15020506
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 93.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.5007453040519345,
+                    "runs": [
+                      43,
+                      43,
+                      43
+                    ],
+                    "changed_px": 15052324
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 0.001622148972689974,
+                "half_pitch": 0.5007453040519345,
+                "brightness_plus8": 0.001622148972689974
+              }
+            }
+          },
+          "kpp1": [
+            {
+              "udim": 1001,
+              "size": 4096,
+              "modal_rgb": [
+                150,
+                153,
+                146
+              ],
+              "finishes": [
+                "Plinth_RAL7004"
+              ],
+              "expected_px": 300.0,
+              "state": "measured",
+              "observed_px": 300.0,
+              "runs": [
+                13,
+                13,
+                13
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 150.0,
+                "runs": [
+                  27,
+                  27,
+                  27
+                ],
+                "E": 0.5,
+                "changed_px": 15468328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1002,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1003,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1004,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1005,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15386328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1006,
+              "size": 4096,
+              "modal_rgb": [
+                208,
+                208,
+                208
+              ],
+              "finishes": [
+                "Cassette_RAL7047"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15175520,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1007,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15176464,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1008,
+              "size": 4096,
+              "modal_rgb": [
+                236,
+                236,
+                234
+              ],
+              "finishes": [
+                "Perforated_RAL9016"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                41,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  82,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 3693799,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  41,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1009,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1010,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1011,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1012,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1013,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1014,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1015,
+              "size": 4096,
+              "modal_rgb": [
+                144,
+                146,
+                148
+              ],
+              "finishes": [],
+              "expected_px": null,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1016,
+              "size": 256,
+              "state": "not_exercised"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "wall_s": 42.962067499989644,
+      "scores": {
+        "baseline_parity": true,
+        "inventory_parity": true,
+        "coverage": true,
+        "E": {
+          "v007": 2.220998038374616,
+          "v010": 0.001622148972689974,
+          "kpp1": 0.0
+        },
+        "D": 2.219375889401926,
+        "clean_in_bound": true,
+        "witnesses_ok": true
+      },
+      "rows": {
+        "pooled": {
+          "ac08": {
+            "v007": {
+              "label": "rejected_600mm_pitch",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.5359659246574,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.6104990191873081,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 2.220998038374616,
+                "half_pitch": 0.6104990191873081,
+                "brightness_plus8": 2.220998038374616
+              }
+            },
+            "v010": {
+              "label": "accepted_visual",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 98.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.49825113127858267,
+                    "runs": [
+                      41,
+                      41,
+                      41
+                    ],
+                    "changed_px": 15020506
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 93.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.5007453040519345,
+                    "runs": [
+                      43,
+                      43,
+                      43
+                    ],
+                    "changed_px": 15052324
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 0.001622148972689974,
+                "half_pitch": 0.5007453040519345,
+                "brightness_plus8": 0.001622148972689974
+              }
+            }
+          },
+          "kpp1": [
+            {
+              "udim": 1001,
+              "size": 4096,
+              "modal_rgb": [
+                150,
+                153,
+                146
+              ],
+              "finishes": [
+                "Plinth_RAL7004"
+              ],
+              "expected_px": 300.0,
+              "state": "measured",
+              "observed_px": 300.0,
+              "runs": [
+                13,
+                13,
+                13
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 150.0,
+                "runs": [
+                  27,
+                  27,
+                  27
+                ],
+                "E": 0.5,
+                "changed_px": 15468328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1002,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1003,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1004,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1005,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15386328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1006,
+              "size": 4096,
+              "modal_rgb": [
+                208,
+                208,
+                208
+              ],
+              "finishes": [
+                "Cassette_RAL7047"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15175520,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1007,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15176464,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1008,
+              "size": 4096,
+              "modal_rgb": [
+                236,
+                236,
+                234
+              ],
+              "finishes": [
+                "Perforated_RAL9016"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 120.0,
+              "runs": [
+                7,
+                41,
+                7
+              ],
+              "E": 0.8,
+              "flagged": true,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 60.0,
+                "runs": [
+                  14,
+                  82,
+                  14
+                ],
+                "E": 0.9,
+                "changed_px": 3693799,
+                "in_bound": false,
+                "bound_applies": false
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 120.0,
+                "runs": [
+                  7,
+                  41,
+                  7
+                ],
+                "E": 0.8,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1009,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1010,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1011,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1012,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1013,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1014,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1015,
+              "size": 4096,
+              "modal_rgb": [
+                144,
+                146,
+                148
+              ],
+              "finishes": [],
+              "expected_px": null,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1016,
+              "size": 256,
+              "state": "not_exercised"
+            }
+          ]
+        },
+        "row_median": {
+          "ac08": {
+            "v007": {
+              "label": "rejected_600mm_pitch",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.5359659246574,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.6104990191873081,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 2.220998038374616,
+                "half_pitch": 0.6104990191873081,
+                "brightness_plus8": 2.220998038374616
+              }
+            },
+            "v010": {
+              "label": "accepted_visual",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 98.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.49825113127858267,
+                    "runs": [
+                      41,
+                      41,
+                      41
+                    ],
+                    "changed_px": 15020506
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 93.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.5007453040519345,
+                    "runs": [
+                      43,
+                      43,
+                      43
+                    ],
+                    "changed_px": 15052324
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 0.001622148972689974,
+                "half_pitch": 0.5007453040519345,
+                "brightness_plus8": 0.001622148972689974
+              }
+            }
+          },
+          "kpp1": [
+            {
+              "udim": 1001,
+              "size": 4096,
+              "modal_rgb": [
+                150,
+                153,
+                146
+              ],
+              "finishes": [
+                "Plinth_RAL7004"
+              ],
+              "expected_px": 300.0,
+              "state": "measured",
+              "observed_px": 300.0,
+              "runs": [
+                13,
+                13,
+                13
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 150.0,
+                "runs": [
+                  27,
+                  27,
+                  27
+                ],
+                "E": 0.5,
+                "changed_px": 15468328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1002,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1003,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1004,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1005,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15386328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1006,
+              "size": 4096,
+              "modal_rgb": [
+                208,
+                208,
+                208
+              ],
+              "finishes": [
+                "Cassette_RAL7047"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15175520,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1007,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15176464,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1008,
+              "size": 4096,
+              "modal_rgb": [
+                236,
+                236,
+                234
+              ],
+              "finishes": [
+                "Perforated_RAL9016"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                41,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  82,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 3693799,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  41,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1009,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1010,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1011,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1012,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1013,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1014,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1015,
+              "size": 4096,
+              "modal_rgb": [
+                144,
+                146,
+                148
+              ],
+              "finishes": [],
+              "expected_px": null,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1016,
+              "size": 256,
+              "state": "not_exercised"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "wall_s": 45.37072400000761,
+      "scores": {
+        "baseline_parity": true,
+        "inventory_parity": true,
+        "coverage": true,
+        "E": {
+          "v007": 2.220998038374616,
+          "v010": 0.001622148972689974,
+          "kpp1": 0.0
+        },
+        "D": 2.219375889401926,
+        "clean_in_bound": true,
+        "witnesses_ok": true
+      },
+      "rows": {
+        "pooled": {
+          "ac08": {
+            "v007": {
+              "label": "rejected_600mm_pitch",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.5359659246574,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.6104990191873081,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 2.220998038374616,
+                "half_pitch": 0.6104990191873081,
+                "brightness_plus8": 2.220998038374616
+              }
+            },
+            "v010": {
+              "label": "accepted_visual",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 98.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.49825113127858267,
+                    "runs": [
+                      41,
+                      41,
+                      41
+                    ],
+                    "changed_px": 15020506
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 93.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.5007453040519345,
+                    "runs": [
+                      43,
+                      43,
+                      43
+                    ],
+                    "changed_px": 15052324
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 0.001622148972689974,
+                "half_pitch": 0.5007453040519345,
+                "brightness_plus8": 0.001622148972689974
+              }
+            }
+          },
+          "kpp1": [
+            {
+              "udim": 1001,
+              "size": 4096,
+              "modal_rgb": [
+                150,
+                153,
+                146
+              ],
+              "finishes": [
+                "Plinth_RAL7004"
+              ],
+              "expected_px": 300.0,
+              "state": "measured",
+              "observed_px": 300.0,
+              "runs": [
+                13,
+                13,
+                13
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 150.0,
+                "runs": [
+                  27,
+                  27,
+                  27
+                ],
+                "E": 0.5,
+                "changed_px": 15468328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1002,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1003,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1004,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1005,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15386328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1006,
+              "size": 4096,
+              "modal_rgb": [
+                208,
+                208,
+                208
+              ],
+              "finishes": [
+                "Cassette_RAL7047"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15175520,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1007,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15176464,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1008,
+              "size": 4096,
+              "modal_rgb": [
+                236,
+                236,
+                234
+              ],
+              "finishes": [
+                "Perforated_RAL9016"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 120.0,
+              "runs": [
+                7,
+                41,
+                7
+              ],
+              "E": 0.8,
+              "flagged": true,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 60.0,
+                "runs": [
+                  14,
+                  82,
+                  14
+                ],
+                "E": 0.9,
+                "changed_px": 3693799,
+                "in_bound": false,
+                "bound_applies": false
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 120.0,
+                "runs": [
+                  7,
+                  41,
+                  7
+                ],
+                "E": 0.8,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1009,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1010,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1011,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1012,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1013,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1014,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1015,
+              "size": 4096,
+              "modal_rgb": [
+                144,
+                146,
+                148
+              ],
+              "finishes": [],
+              "expected_px": null,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1016,
+              "size": 256,
+              "state": "not_exercised"
+            }
+          ]
+        },
+        "row_median": {
+          "ac08": {
+            "v007": {
+              "label": "rejected_600mm_pitch",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.5359659246574,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 300.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.6104990191873081,
+                    "runs": [
+                      13,
+                      13,
+                      13
+                    ],
+                    "changed_px": 15361678
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 2.0719318493148,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ_RAL5015",
+                    "observed_px": 600.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 2.220998038374616,
+                    "runs": [
+                      6,
+                      6,
+                      6
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 2.220998038374616,
+                "half_pitch": 0.6104990191873081,
+                "brightness_plus8": 2.220998038374616
+              }
+            },
+            "v010": {
+              "label": "accepted_visual",
+              "per_finish": {
+                "clean": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": "not_exercised"
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": "not_exercised"
+                  }
+                },
+                "half_pitch": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 98.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.49825113127858267,
+                    "runs": [
+                      41,
+                      41,
+                      41
+                    ],
+                    "changed_px": 15020506
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 93.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.5007453040519345,
+                    "runs": [
+                      43,
+                      43,
+                      43
+                    ],
+                    "changed_px": 15052324
+                  }
+                },
+                "brightness_plus8": {
+                  "PanelVJ30_RAL5015": {
+                    "udim": 1001,
+                    "input_finish": "PanelVJ30_RAL5015",
+                    "observed_px": 195.0,
+                    "expected_px": 195.316833,
+                    "relative_error": 0.001622148972689974,
+                    "runs": [
+                      20,
+                      20,
+                      20
+                    ],
+                    "changed_px": 16777216
+                  },
+                  "PanelVJ12_RAL5015": {
+                    "udim": 1002,
+                    "input_finish": "PanelVJ12_RAL5015",
+                    "observed_px": 186.0,
+                    "expected_px": 186.277667,
+                    "relative_error": 0.0014906081038690289,
+                    "runs": [
+                      21,
+                      21,
+                      21
+                    ],
+                    "changed_px": 16777216
+                  }
+                }
+              },
+              "E72": {
+                "clean": 0.001622148972689974,
+                "half_pitch": 0.5007453040519345,
+                "brightness_plus8": 0.001622148972689974
+              }
+            }
+          },
+          "kpp1": [
+            {
+              "udim": 1001,
+              "size": 4096,
+              "modal_rgb": [
+                150,
+                153,
+                146
+              ],
+              "finishes": [
+                "Plinth_RAL7004"
+              ],
+              "expected_px": 300.0,
+              "state": "measured",
+              "observed_px": 300.0,
+              "runs": [
+                13,
+                13,
+                13
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 150.0,
+                "runs": [
+                  27,
+                  27,
+                  27
+                ],
+                "E": 0.5,
+                "changed_px": 15468328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1002,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1003,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1004,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1005,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15386328,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1006,
+              "size": 4096,
+              "modal_rgb": [
+                208,
+                208,
+                208
+              ],
+              "finishes": [
+                "Cassette_RAL7047"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15175520,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1007,
+              "size": 4096,
+              "modal_rgb": [
+                34,
+                113,
+                179
+              ],
+              "finishes": [
+                "Cassette_RAL5015",
+                "Cassette_RAL5015_Top"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                7,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  14,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 15176464,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  7,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1008,
+              "size": 4096,
+              "modal_rgb": [
+                236,
+                236,
+                234
+              ],
+              "finishes": [
+                "Perforated_RAL9016"
+              ],
+              "expected_px": 600.0,
+              "state": "measured",
+              "observed_px": 600.0,
+              "runs": [
+                7,
+                41,
+                7
+              ],
+              "E": 0.0,
+              "flagged": false,
+              "half_pitch": {
+                "state": "exercised",
+                "observed_px": 300.0,
+                "runs": [
+                  14,
+                  82,
+                  14
+                ],
+                "E": 0.5,
+                "changed_px": 3693799,
+                "in_bound": true,
+                "bound_applies": true
+              },
+              "brightness_plus8": {
+                "state": "exercised",
+                "observed_px": 600.0,
+                "runs": [
+                  7,
+                  41,
+                  7
+                ],
+                "E": 0.0,
+                "changed_px": 16777216,
+                "in_bound": true,
+                "bound_applies": true
+              }
+            },
+            {
+              "udim": 1009,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1010,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1011,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1012,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1013,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1014,
+              "size": 256,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1015,
+              "size": 4096,
+              "modal_rgb": [
+                144,
+                146,
+                148
+              ],
+              "finishes": [],
+              "expected_px": null,
+              "state": "not_exercised"
+            },
+            {
+              "udim": 1016,
+              "size": 256,
+              "state": "not_exercised"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

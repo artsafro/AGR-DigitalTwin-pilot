@@ -13,3 +13,18 @@ Baseline parity: fresh pooled census rows (all measures and variants) must match
 After one timed paired round (old + new on both objects), reserve twice the first-round wall time for two more paired rounds, bounded by a 180 s experiment ceiling and remaining card time (leave 60 s for handoff). Stop `budget_stop` if the reserve cannot fit; do not shrink the series. Publish actual wall times separately from run status. Conditional retry on a quieter host uses the exact command with a fresh directory. No tuning on results.
 
 Not measured: KPP1 v004 (production #1817/#1818), Vatutino MAF, Staropetrovskiy MAF (#1500), NPM render drift, visible seam placement/width, UV gap and texel density. Closed form line, G22 #1649, Ground atlas route #1853 and MAF atlas numbering #1809 are out of scope. This candidate says nothing about cases without a source-derived joint period or textures where more than one of the three rows is dominated by unrelated patterns.
+
+## Round log
+
+- Candidate `4386fc04`, `replay.py` SHA-256 `ae6bc5e5fa2fe5b5b4c43a98fbfff86f81242a2163d445f3d59b35a7626e476a`. Baseline synthetic RED: 4 px instead of 20 (1 failed, 1 passed); candidate GREEN: 2 passed. The synthetic fixture is not a delivery calibration input.
+- **H78 confirmed on the frozen retrospective set only**, run status `complete`. Total wall time 126.349 s; paired rounds 37.915 / 42.962 / 45.371 s. After the first round, two times 37.915 s fit in the 142.085 s remaining core ceiling. D78 per round 2.219376, median 2.219376, range 0. Full fresh-baseline and candidate inventory parity 3/3. Both candidate AC08 reports and all KPP1 rows except 1008 are exactly unchanged versus pooled, including their perturbation reports.
+
+| Clean input | Pooled E | Row-balanced E | Interpretation |
+|---|---:|---:|---|
+| AC08 pilot-v007 VPM | 2.220998 | 2.220998 | Rejected pitch still detected |
+| AC08 pilot-v010 VPM | 0.001622 | 0.001622 | Accepted control remains below 0.03 |
+| KPP1 customer VPM `_002` | 0.800000 | 0.000000 | Five measured tiles; 1008 corrected from 120 to 600 px, with run counts unchanged at 7/41/7 |
+
+- **Injected, not clean evidence:** KPP1 1008 half-pitch changed 3,693,799 pixels and measured 300 px (E 0.5); the four other bound KPP1 tiles also measured E 0.5. AC08 accepted half-pitch max E 0.500745; the rejected shared tile was exercised (15,361,678 pixels changed) and max E fell to 0.610499 as predicted. Brightness +8 exercised all eight distinct measured tiles in the three packages (16,777,216 changed pixels per tile), with zero score movement. Clean reset passed. Per-state counts are in the receipt.
+- **Not measured:** KPP1 ten solid placeholders and unbound 4K tile 1015; the unbound tile must not be treated as in-policy. Other non-target textures, missing labels and profile checks listed above were not measured either. The candidate has not seen a randomly sampled finish set; 1008 informed its design.
+- Receipt `vpm-row-pitch-r78/receipt.json`, SHA-256 `5bff690cd73d351343227a27df40274563165a456ebc03885e2aa2a38af9fab0`. No PR, no production change or acceptance claim. Proposed next validation: independent pitch-labelled VPM pair and another patterned accepted finish with two or more distractor rows, without changing #78's rule before measuring.
