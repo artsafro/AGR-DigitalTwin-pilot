@@ -85,7 +85,17 @@ def main(argv):
         sc.render.resolution_x, sc.render.resolution_y = 1800, 1200
         sc.render.filepath = os.path.join(out, "%s_iso.png" % tag)
         bpy.ops.render.render(write_still=True)
-    print("RENDERED", tag, len(views["facades"]) + (1 if iso else 0))
+    shots = views.get("closeups", [])
+    for c in shots:
+        d = Vector(c["dir"]).normalized()
+        aim(cam, Vector(c["target"]) - d * 200.0, d)
+        cam.data.ortho_scale = c["scale"]
+        cam.data.clip_start, cam.data.clip_end = 1.0, 1000.0
+        cam.data.sensor_fit = "HORIZONTAL"
+        sc.render.resolution_x, sc.render.resolution_y = c.get("res", [1400, 1000])
+        sc.render.filepath = os.path.join(out, "%s_%s.png" % (tag, c["id"]))
+        bpy.ops.render.render(write_still=True)
+    print("RENDERED", tag, len(views["facades"]) + (1 if iso else 0) + len(shots))
 
 
 if __name__ == "__main__":
