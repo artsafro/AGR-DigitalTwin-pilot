@@ -117,10 +117,10 @@ contexts:
     ru: "Расстановка МАФ и Флоры"
     area: docs/domain/areas/groundel-maf.md
     owner: src/dt_ai/placement/engine.py
-    owner_ru: "agr place / dt place site (placement/site.py): на профиль master JSON + (offset или readback) + (FBX или mesh). OBJ сборщика напрямую не подключён."
+    owner_ru: "agr place / dt place site (src/dt_ai/placement/site.py, D329): на профиль master JSON + (offset или readback) + (FBX или mesh); OBJ сборщика напрямую не подключён. Одобренные исключения (exceptions -> apply_ground_exceptions в scene.py) привязаны к снимку точки и sha256 Ground и пишутся в results.json; новый промах вне Ground (engine_report.json) останавливает строгий прогон в make_plan (выход 1) до инстансирования."
     functions:
       - name: place
-        contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом"
+        contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом (point_outside_ground / point_over_ground_hole)"
       - name: bottom_face_verdict
         contract: "нижняя грань в мире -> удалить / на проверку (D095, D096)"
       - name: report_json

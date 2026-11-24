@@ -584,6 +584,98 @@ def test_1820_ground_owns_flat_and_skirt_uv_but_not_npm_atlas():
     assert route_map.route_coverage(events, maps["contexts"], cmap) == []
 
 
+def test_1839_placement_distinguishes_approved_exclusion_from_unresolved_stop():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    placement = _stage(events, "placement")
+    assert {"D302", "D329"} <= set(placement["rules"])
+    assert {"dt place site", "agr place"} <= set(placement["commands"])
+    assert "объект, не попавший на поверхность, удаляется и пишется в отчёт" not in placement["event_ru"]
+    for token in ("D302", "одобрен", "sha256 Ground", "останавливает", "до инстансирования"):
+        assert token in placement["event_ru"], token
+    for path in (
+        "src/dt_ai/placement/engine.py",
+        "src/dt_ai/placement/site.py",
+        "src/dt_ai/placement/scene.py",
+        "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
+        "jobs/VATUTINO-SITE/placement-report.md",
+    ):
+        assert path in placement["evidence"], path
+
+    hotspots = {h["id"]: h for h in events["hotspots"]}
+    note = hotspots["outside-ground-stop"]
+    assert note["stage"] == "placement"
+    assert {"D302", "D329"} <= set(note["rules"])
+    for path in (
+        "src/dt_ai/placement/engine.py",
+        "src/dt_ai/placement/site.py",
+        "src/dt_ai/placement/scene.py",
+        "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
+        "jobs/VATUTINO-SITE/placement-report.md",
+    ):
+        assert path in note["evidence"], path
+    for token in (
+        "D302",
+        "apply_ground_exceptions",
+        "ground_master_sha256",
+        "ground_exception",
+        "results.json",
+        "point_outside_ground",
+        "point_over_ground_hole",
+        "engine_report.json",
+        "make_plan",
+        "до инстансирования",
+    ):
+        assert token in note["ru"], token
+
+    # Existing rendered views: event board, short scheme, context map and owners table.
+    board_text = " ".join(" ".join(el["text"].split()) for el in route_map.route_board(events, maps["contexts"]).elements
+                          if el["type"] == "text")
+    for token in ("apply_ground_exceptions", "make_plan", "до инстансирования", "results.json", "engine_report.json"):
+        assert token in board_text, token
+
+    short_text = " ".join(" ".join(el["text"].split()) for el in route_map.short_route_board(events, cmap, maps).elements
+                          if el["type"] == "text")
+    for token in ("D302", "одобрен", "sha256 Ground", "до инстансирования", "engine_report.json", "results.json"):
+        assert token in short_text, token
+
+    ctx = next(c for c in cmap["contexts"] if c["id"] == "placement")
+    assert ctx["owner"] == "src/dt_ai/placement/engine.py"
+    for token in ("src/dt_ai/placement/site.py", "apply_ground_exceptions", "scene.py", "make_plan",
+                  "engine_report.json", "results.json", "до инстансирования"):
+        assert token in ctx["owner_ru"], token
+    place_contract = next(f["contract"] for f in ctx["functions"] if f["name"] == "place")
+    assert "point_outside_ground" in place_contract and "point_over_ground_hole" in place_contract
+
+    owners_md = route_map.owners_markdown(events, cmap, maps)
+    for path in (
+        "src/dt_ai/placement/engine.py",
+        "src/dt_ai/placement/site.py",
+        "src/dt_ai/placement/scene.py",
+        "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
+        "jobs/VATUTINO-SITE/placement-report.md",
+    ):
+        assert f"[`{path}`]" in owners_md, path
+
+    report = REPORT.read_text(encoding="utf-8")
+    assert re.search(r"^- `outside-ground-stop` — .*apply_ground_exceptions.*make_plan", report, re.M)
+    assert re.search(r"^\| `outside-ground-stop` \| открыта \| .*D302.*до инстансирования", report, re.M)
+
+
+def test_1839_quads_cites_vatutino_v015_only_as_job_specific_post_relief_evidence():
+    events = _routes()["ground-route"]
+    quads = _stage(events, "quads")
+    assert not quads.get("commands")
+    pairing = next(h for h in events["hotspots"] if h["id"] == "pairing")
+    assert pairing["stage"] == "quads"
+    assert "tools/ground/build_ground_v015.py" in pairing["evidence"]
+    for token in ("agr ground v015", "dt ground v015", "после рельефа", "дорельеф"):
+        assert token in pairing["ru"], token
+    report = REPORT.read_text(encoding="utf-8")
+    assert re.search(r"^\| `quads` \| нет команды .*agr ground v015.*после рельефа", report, re.M)
+    assert re.search(r"^- `pairing` — .*agr ground v015.*после рельефа", report, re.M)
+
+
 # ---------------------------------------------------------------- red boxes: resolved or explained
 @pytest.mark.parametrize("name,title", [("vpm-route", "ВПМ ОКС"), ("ground-route", "Ground")])
 def test_every_red_box_is_explained_and_resolved_ones_are_gone(name, title):
