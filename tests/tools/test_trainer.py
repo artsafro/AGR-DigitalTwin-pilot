@@ -314,3 +314,59 @@ def test_scan_tokens_cover_key_rejected_and_skip_short():
     toks = T.scan_tokens(_E)
     assert "k2_v002r1_body_quad.fbx" in toks and "k2_v001_body_quad.fbx" in toks and "ab" * 6 in toks
     assert all(len(t) >= 6 for t in toks)
+
+
+# ---------------------------------------------------------------- r2 P1: practice dir has no shared history
+def _git(wt, *args, check=True):
+    return subprocess.run(["git", "-C", str(wt), *args], capture_output=True, text=True, check=check)
+
+
+def _src_repo(tmp_path):
+    src = _repo(tmp_path, {"docs/clean.md": "ordinary repo file\n",
+                           "docs/trainer/etalons.json": '{"key": "C:/x/review-k2/K2_v002r1_body_quad.fbx"}',
+                           "docs/research/old.md": "k2_v001_body_quad.fbx was rejected",
+                           "jobs/G22/README.md": "history"})
+    for k, v in (("user.email", "t@t"), ("user.name", "t")):
+        _git(src, "config", k, v)
+    _git(src, "commit", "-q", "-m", "one")
+    (src / "docs/later.md").write_text("abababababab sha prefix\n", encoding="utf-8")
+    _git(src, "add", "-A")
+    _git(src, "commit", "-q", "-m", "two")
+    _git(src, "remote", "add", "origin", "https://example.invalid/r.git")
+    return src
+
+
+def test_practice_tree_is_a_fresh_one_commit_repo_without_the_key(tmp_path):
+    src = _src_repo(tmp_path)
+    head = _git(src, "rev-parse", "HEAD").stdout.strip()
+    dst = tmp_path / "practice"
+    removed = T.practice_tree(src, head, dst, _E)
+    assert removed and any(r.startswith("docs/trainer") for r in removed)
+    assert _git(dst, "status", "--porcelain").stdout == ""
+    assert len(_git(dst, "log", "--all", "--oneline").stdout.splitlines()) == 1
+    assert _git(dst, "remote").stdout.strip() == ""
+    assert _git(dst, "show", "HEAD:docs/trainer/etalons.json", check=False).returncode != 0
+    objs = subprocess.run(["git", "-C", str(dst), "cat-file", "--batch-all-objects", "--batch"],
+                          capture_output=True, check=True).stdout.decode("utf-8", "replace").lower()
+    assert not [t for t in T.scan_tokens(_E) if t in objs]
+    assert (dst / "docs/clean.md").read_bytes() == (src / "docs/clean.md").read_bytes()  # control unchanged
+    assert (dst / ".git").is_dir()  # own repository, not a linked worktree (.git file)
+    assert len(_git(src, "worktree", "list").stdout.splitlines()) == 1  # no linked worktree added to src
+
+
+def test_practice_tree_refuses_existing_dst_and_survivor(tmp_path, monkeypatch):
+    src = _src_repo(tmp_path)
+    dst = tmp_path / "practice"
+    dst.mkdir()
+    with pytest.raises(T.TrainerError, match="exists"):
+        T.practice_tree(src, "HEAD", dst, _E)
+    real = T.leaking_files
+    monkeypatch.setattr(T, "leaking_files", lambda w, t: real(w, t) or {"docs/clean.md": [t[0]]})
+    with pytest.raises(T.TrainerError, match="docs/clean.md"):
+        T.practice_tree(src, "HEAD", tmp_path / "p2", _E)
+    assert not (tmp_path / "p2" / ".git").exists()  # refused before any commit
+
+
+def test_cmd_run_does_not_use_git_worktree():
+    src = Path(T.__file__).read_text(encoding="utf-8")
+    assert '"worktree", "add"' not in src and "practice_tree(ROOT" in src

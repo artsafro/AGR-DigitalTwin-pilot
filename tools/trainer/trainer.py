@@ -9,7 +9,7 @@ Pattern: n/a | new-case: trainer v0 - practice-run recorder and step scorer over
     uv run agr trainer ledger [--add SCORE.json --lane L --run RUN_DIR]   # headline: share passed first try
 
 A practice run gets ONLY the task text and the source copies (never the key, rejected versions or the job's
-history: those repo paths are removed from the disposable worktree). Score steps run the existing checkers in
+history: the practice dir is `git archive` + scrub + `git init` with one commit, no origin). Score steps run the existing checkers in
 order - artifact (FBX header), readback (`tools/blender/fbx_readback.py`), bounds, topology (quads), form
 (surface deviation built<->key, Blender BVH), form_v2 (`tools/qa/form_check` detector when the etalon has a
 form-check pair), vlm (form-check pair judge, both orders; only with --vlm), package (`agr validate`). Only
@@ -145,15 +145,11 @@ def scan_tokens(e):
 
 
 def leaking_files(wt, tokens):
-    """Tracked files of the worktree whose bytes contain any token -> {rel: [tokens]}."""
-    rels = subprocess.run(["git", "-C", str(wt), "ls-files", "-z"], capture_output=True, text=True,
-                          check=True).stdout.split("\0")
-    rels += subprocess.run(["git", "-C", str(wt), "ls-files", "-z", "--others", "--exclude-standard"],
-                           capture_output=True, text=True, check=True).stdout.split("\0")
+    """Every file under wt (outside .git/) whose bytes contain any token -> {rel: [tokens]}."""
     hits = {}
-    for rel in sorted({r for r in rels if r}):
-        f = Path(wt) / rel
-        if not f.is_file():
+    for f in sorted(Path(wt).rglob("*")):
+        rel = f.relative_to(wt).as_posix()
+        if ".git" in f.relative_to(wt).parts or not f.is_file() or f.is_symlink():
             continue
         low = f.read_bytes().decode("utf-8", errors="replace").lower()
         found = [t for t in tokens if t in low]
@@ -183,6 +179,32 @@ def scrub_worktree(wt, e):
         rel, found = next(iter(left.items()))
         raise TrainerError(f"practice worktree still names the key: {rel} contains {found[0]!r}")
     return removed
+
+
+def practice_tree(root, head, dst, e):
+    """The practice repo: `git archive <head>` extracted into a NEW dst, scrubbed, then `git init` + ONE commit
+    of the scrubbed tree - no origin, no history, no shared index/refs with root, so neither `git show
+    HEAD:<hidden>` nor `git log --all` reaches the key. -> scrubbed list. Refusal (TrainerError) before commit."""
+    import tarfile
+    dst = Path(dst)
+    if dst.exists():
+        raise TrainerError(f"{dst} exists; a practice tree is a NEW folder")
+    dst.mkdir(parents=True)
+    p = subprocess.Popen(["git", "-C", str(root), "archive", "--format=tar", head], stdout=subprocess.PIPE)
+    with tarfile.open(fileobj=p.stdout, mode="r|") as tar:
+        tar.extractall(dst, filter="data")
+    if p.wait() != 0:
+        raise TrainerError(f"git archive {head} failed in {root}")
+    scrubbed = scrub_worktree(dst, e)
+    env = {**os.environ, "GIT_AUTHOR_NAME": "trainer", "GIT_AUTHOR_EMAIL": "trainer@local",
+           "GIT_COMMITTER_NAME": "trainer", "GIT_COMMITTER_EMAIL": "trainer@local"}
+    for args in (["init", "-q"], ["config", "core.autocrlf", "false"], ["add", "-A", "-f"],
+                 ["commit", "-q", "--no-verify", "-m", "practice tree"]):
+        subprocess.run(["git", "-C", str(dst), *args], check=True, capture_output=True, env=env)
+    left = leaking_files(dst, scan_tokens(e))
+    if left:  # defensive: the committed tree is the scanned tree
+        raise TrainerError(f"practice tree still names the key: {next(iter(left))}")
+    return scrubbed
 
 
 def task_text(e, inputs_dir, out_dir):
@@ -280,9 +302,8 @@ def cmd_run(a, bank):
             raise TrainerError(f"source hash mismatch: {s['path']}")
     head = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main"], capture_output=True, text=True,
                           check=True).stdout.strip()
-    subprocess.run(["git", "-C", str(ROOT), "worktree", "add", "--detach", str(wt), head], check=True,
-                   capture_output=True)
-    scrubbed = scrub_worktree(wt, e)  # the job's history and every file naming the key stay out of the session
+    # archive -> scrub -> git init + one commit: no shared index/history/refs with ROOT, no origin
+    scrubbed = practice_tree(ROOT, head, wt, e)
     (out / "prompt.txt").write_text(text, encoding="utf-8")
     cmd = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--disable", "memories", "-m",
            LANES[a.lane]["model"], "-c", "model_reasoning_effort=high", "--dangerously-bypass-approvals-and-sandbox",
