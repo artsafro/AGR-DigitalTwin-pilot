@@ -36,7 +36,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
 | 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
-| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip`; STOP до ZIP без `export_meta` нового FBX и его readback. Для перекраски с выпуском ZIP указать оба владельца: R1 + рецепт job (АС.09: AC08 v010 через [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py)) и `agr package-vpm`; см. [маршрут ОКС ВПМ](../scenarios/oks-vpm.md#route-by-stage). |
 | 13 | `light-fbx` `_Light.fbx` | `agr validate ZIP --profile vpm`: V012, строки Light FBX ([контракт](../research/elv-agent-vs-delivered.md#контракт-light-fbx)) |
 | 14 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
 | 15 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved`: копия в `C:/x/review-<job>/`, новый Max 2026, Blender если Max занят [D255, D270] (#1740) |
@@ -137,7 +137,7 @@ Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
 | 3 | `quads` квадраты и швы | `dt ground v015` только для Ватутино; `ground_quads.py` |
 | 4 | `library` МАФ и Флора, атласы | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
 | 5 | `maf-light` лёгкий МАФ | пробел |
-| 6 | `flora-star` звёзды Флоры | пробел |
+| 6 | `flora-star` звёзды Флоры | Каталог → при отсутствии принятого куста [`tools/flora/build_flora_star.py`](../../tools/flora/build_flora_star.py) (#1146) → расчёт НПМ-точки через `engine.place`. `agr place` → [`placement/site.py`](../../src/dt_ai/placement/site.py) вызывает то же ядро только для пары НПМ + ВПМ. Указать обе точки входа, даже если план останавливается на сверке вида, карт и точки СПОЗУ. |
 | 7 | `placement` расстановка | `uv run python -m dt_ai.placement.engine` |
 | 8 | `optimise` бюджет НПМ (без ProOptimizer) | пробел |
 | 9 | `master-qa` | `tools/qa/master_topology.py` |
@@ -339,6 +339,5 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 - `relief` — нет общей команды проекции на рельеф для нового участка [D293].
 - `ucx-ground` — `agr ucx` недоступен; `ucx_build.py` — прецедент, не команда для реального участка.
 - `maf-light` — нет инструмента лёгкой НПМ-версии / перекладки UV для МАФ.
-- `flora-star` — нет построителя НПМ-звёзд Флоры [D102].
 - `optimise` — шага ProOptimizer нет (Артём 2026-11-21, #1737); распределение бюджета Флора/МАФ решает Артём
   [D167]; бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`.
