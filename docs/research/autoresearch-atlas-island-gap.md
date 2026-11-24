@@ -88,3 +88,35 @@ decoded side of `T_Nku_1_001_Main_d_1.png` next to the ZIP (pinned), floor 8 px 
 H69b: N69(NPM v007) > N69(NPM v010). Empty gap set -> inconclusive (now enforced in code:
 `measured_gaps == 0` -> not applicable). Same witnesses W1/W2 on v010, same 3 fresh readbacks, same budget.
 Expected: islands of different atlas cells are disjoint (gap >= 2 x pad of `npm_atlas.json`).
+
+### R2 result (NPM `0000_Nku_1_01.fbx`, 2048 atlas) - wall 6.798 s, status complete, 3 fresh readbacks each
+
+| | v007 (rejected, seams) | v010 (visual etalon) |
+|---|---|---|
+| islands on the atlas | 21 | 24 |
+| island pairs / overlapping (same cell, stacked) / measured gaps | 210 / 123 / 87 | 276 / 130 / 146 |
+| N69 (gap < 8 px) | 0, 0, 0 | 0, 0, 0 |
+| min gap px | 51.699951 (spread 0) | 51.699951 (spread 0) |
+| readback s (round 1) | 1.078 | 1.054 |
+
+- Witness W1 (v010, closest pair 51.70 px moved to 4 px, 1 island changed): N69 0 -> 1 in all 3 rounds.
+  W2 (moved to 9 px): N69 stays 0, min gap 9.0. The census is sensitive (in-memory witness only;
+  native export-path perturbation **not measured**).
+- **H69b refuted** on AC08: the rejected and the accepted NPM have identical min island gap
+  (51.70 px = 6.5x the 8 px floor, 1.6x the 32 px gap of D278 16 px/side). The v007 seam rejection is
+  not an island-spacing defect; the 8 px rule does not fire on the accepted control (no collateral).
+- Overlap (stacked islands of one finish inside one cell) is by design on both and does not calibrate
+  (123 < 130, wrong direction).
+
+### Outcome
+
+- H69 (R1, VPM SM_Nku_1): inconclusive - not applicable (all pairs overlap, empty gap set).
+- H69b (R2, NPM 0000_Nku_1): refuted (0 = 0, stable, applicable, witness fires).
+- Kept: nothing in production (OBSERVE). Would change (not applied): add a same-atlas island-gap
+  census to V006 (`twinqa.npm_uv`) so the 8 px floor is measured between real islands, not only cell
+  bands - useful as a regulation check, but it is NOT a seam signal and must not be sold as one.
+- Correction for #65-#68 consumers: their "NPM" fixture `SM_Nku_1.zip` is the VPM package
+  (`export_meta.json` -> `package-vpm`); their seam/texel numbers describe the VPM UDIM tiles.
+
+Receipts: `atlas-island-gap-r69/receipt-r1.json` (VPM), `atlas-island-gap-r69/receipt.json` (NPM, R2).
+Replay R2: `uv run --frozen python docs/research/atlas-island-gap-r69/replay.py tmp/r69-run --npm`.
