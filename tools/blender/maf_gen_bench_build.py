@@ -114,7 +114,7 @@ def write(set_id, mesh_data, fbx_out):
     bpy.ops.object.shade_smooth_by_angle(angle=math.radians(cfg["smoothing_deg"]), keep_sharp_edges=False)
     fbx_out.parent.mkdir(parents=True, exist_ok=True)
     bpy.ops.export_scene.fbx(filepath=str(fbx_out), use_selection=True, object_types={"MESH"},
-                             mesh_smooth_type="FACE", use_mesh_modifiers=True, path_mode="COPY",
+                             mesh_smooth_type="SMOOTH_GROUP", use_mesh_modifiers=True, path_mode="COPY",
                              embed_textures=True, bake_anim=False, add_leaf_bones=False)
     return {"quads_master": quads, "tris": len(me.polygons), "fbx": str(fbx_out).replace("\\", "/"),
             "sha256": sha256(fbx_out)}

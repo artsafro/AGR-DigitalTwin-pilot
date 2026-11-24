@@ -85,7 +85,7 @@ def build(src, out, address, crs="MSK-77", source_id=None):
                "object_location": [0.0, 0.0, 0.0]}, open(out + ".placement.json", "w", encoding="utf-8"), indent=1)
     bpy.ops.export_scene.fbx(filepath=out, use_selection=False, apply_unit_scale=True, global_scale=1.0,
                              apply_scale_options="FBX_SCALE_UNITS", axis_forward="Y", axis_up="Z",
-                             mesh_smooth_type="FACE", use_mesh_modifiers=False, bake_space_transform=False,
+                             mesh_smooth_type="SMOOTH_GROUP", use_mesh_modifiers=False, bake_space_transform=False,
                              add_leaf_bones=False, path_mode="AUTO")
     from adapters.max.agr_tools.export_meta import record_export
     record_export(out, source=str(src), top=float(max(v[2] for v in vs)), address=address + '_Ground', profile='vpm')
