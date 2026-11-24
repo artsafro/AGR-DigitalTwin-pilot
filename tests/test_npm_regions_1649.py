@@ -93,6 +93,42 @@ def test_automatic_patterned_leaf_without_proven_boundaries_stops(tmp_path, stri
     assert explicit['pieces'] == [[{'id': 1, 'uv': [list(uv) for uv in face]}] for face in faces]
 
 
+@pytest.mark.parametrize('exponent', [7, 9, 12, 16, 20])
+def test_patterned_crossing_is_not_overlay_roundoff(tmp_path, exponent):
+    from shapely.geometry import box, mapping
+    from tools.library.npm_ids import recover_regions
+
+    size, seam = 128, 64
+    image = Image.new('RGB', (size, size))
+    image.putdata([(230 if x < seam else 32 + 88 * ((x + y) % 2),) * 3
+                   for y in range(size) for x in range(size)])
+    atlas = tmp_path / 'solid-checker.png'
+    image.save(atlas)
+    touching = [(.25, .75), (.25, .25), (.5, .5)]
+    crossing = [*touching[:2], ((seam + 2.**-exponent) / size, .5)]
+
+    touch = recover_regions(atlas, [touching])
+    assert touch['status'] == 'ok'
+    assert touch['residual'] == []
+    assert touch['pieces'] == [[{'id': 1, 'uv': [list(uv) for uv in touching]}]]
+
+    explicit = recover_regions(atlas, [crossing], cell_regions=[
+        {'id': 'paint', 'kind': 'solid', 'geometry': mapping(box(0, 0, seam, size))},
+        {'id': 'finish', 'kind': 'patterned', 'geometry': mapping(box(seam, 0, size, size))},
+    ])
+    assert explicit['status'] == 'ok'
+    assert explicit['residual'] == []
+    assert {part['id'] for part in explicit['pieces'][0]} == {1, 2}
+    assert max(u for part in explicit['pieces'][0] for u, _ in part['uv']) == crossing[2][0]
+
+    result = recover_regions(atlas, [crossing, touching])
+    assert [cell['kind'] for cell in result['cells']] == ['solid', 'patterned']
+    assert result['status'] == 'manual_required'
+    assert result['residual'] == [0]
+    assert result['pieces'] == [[], touch['pieces'][0]]
+    assert [row['face_count'] for row in result['table']] == [1]
+
+
 @pytest.mark.parametrize('width,seam', [(8, 4), (12, 6), (14, 7), (30, 6)])
 def test_metric_seam_plan_cuts_oversize_but_preserves_surface(width, seam):
     from adapters.max.agr_tools.npm2vpm_core import fit_metric_region

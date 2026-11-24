@@ -197,13 +197,15 @@ def _clip_cell_layout(faces, regions, w, h):
 def _clip_regions(rgb, faces, atlas, colour_tolerance):
     """Internal seam also used to replay hash-bound segmenter evidence offline."""
     w, h = atlas['size']
-    shapes, table, cells = [], [], []
+    shapes, table, cells, patterned = [], [], [], []
     for cell_id, cell in enumerate(atlas['cells'], 1):
         x, y, cw, ch = (cell[k] for k in ('x', 'y', 'w', 'h'))
         bounds = [x, y, x + cw, y + ch]
         kind = cell['kind']
         # The automatic patterned label cannot distinguish a texture motif from
         # a separate finish. Leave it unclassified rather than trust its box.
+        if kind == 'patterned':
+            patterned.append(box(*bounds))
         # Even a majority-solid leaf still needs native palette evidence.
         regions = _palette_shapes(rgb, bounds, colour_tolerance) if kind in ('mixed', 'solid') else ()
         covered = 0.
@@ -214,15 +216,25 @@ def _clip_regions(rgb, faces, atlas, colour_tolerance):
             covered += shape.area
         cells.append({'cell': cell_id, 'bounds_px': bounds, 'kind': kind,
                       'unclassified_px2': cw * ch - covered})
-    pieces, residual = _clip_faces(faces, shapes, table, w, h, STRtree(shapes))
+    pieces, residual = _clip_faces(faces, shapes, table, w, h, STRtree(shapes),
+                                   unresolved=STRtree(patterned) if patterned else None)
     return {'status': 'manual_required' if residual else 'ok', 'pieces': pieces,
             'residual': residual, 'table': table, 'cells': cells, 'atlas_size_px': [w, h],
             'colour_tolerance': colour_tolerance}
 
 
-def _clip_faces(faces, shapes, table, w, h, tree):
+def _clip_faces(faces, shapes, table, w, h, tree, *, unresolved=None):
     pieces, residual = [], []
     for i, face in enumerate(faces):
+        # A two-dimensional interior intersection is missing classification,
+        # not overlay roundoff. Point and edge contact alone are harmless.
+        if unresolved is not None and any(
+            face.relate_pattern(unresolved.geometries[j], '2********')
+            for j in unresolved.query(face)
+        ):
+            pieces.append([])
+            residual.append(i)
+            continue
         overlaps = []
         for j in sorted(tree.query(face, predicate='intersects')):
             shape = shapes[j]
