@@ -1,0 +1,2881 @@
+{
+  "status": "budget_stop",
+  "hypothesis": "inconclusive",
+  "rounds": [
+    {
+      "round": 1,
+      "readback_sha256": "302692b9327cac1dea5ca2d5073e03afdc882c261e7222eecf0b35d263f663ae",
+      "staged_inputs": {
+        "v007": {
+          "0000_Nku_1_01.fbx": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+          "SM_Nku_1.fbx": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b",
+          "spec.json": "9ed6268fd19b070ef7a9aaa5faf0865c9fa96fd20e37dd051e41018d2829ee60",
+          "T_Nku_1_Diffuse_1.1001.png": "2c5a22644b872a909fa5bf301be3e86dd2dd25dbd4b43a74a4da77a9b993b9ef",
+          "T_Nku_1_Diffuse_1.1002.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+          "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+          "T_Nku_1_Diffuse_1.1004.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+          "T_Nku_1_ERM_1.1001.png": "54b733cf7883bb0cfe6b747640ba5313678737ae36400231ce788fa1630c83c0",
+          "T_Nku_1_ERM_1.1002.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+          "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+          "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+          "T_Nku_1_Normal_1.1001.png": "2ba6701da704dceb3dedf851af2e7565d8ff5e3725f5b8880508f38f5332d672",
+          "T_Nku_1_Normal_1.1002.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+          "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+          "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+        },
+        "v010": {
+          "0000_Nku_1_01.fbx": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52",
+          "SM_Nku_1.fbx": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+          "spec.json": "3329bff4bf8e431f1cad2a31a5f2c637f7083d61e8b093c50bd1fd6e8e425722",
+          "T_Nku_1_Diffuse_1.1001.png": "c356199df61a2fc67001296b9bad469efcd4699d5bb44418dd3362b5d1d092a3",
+          "T_Nku_1_Diffuse_1.1002.png": "0b3c7e3b9dd1a45fe1bf228222431f5ec21d061a8aaa0d398232d775c6e52879",
+          "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+          "T_Nku_1_Diffuse_1.1004.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+          "T_Nku_1_Diffuse_1.1005.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+          "T_Nku_1_ERM_1.1001.png": "3f272369ec17df44c25e6a4a32ddaf598342c9f6d46561fc4e1a5e4e7d4bc41c",
+          "T_Nku_1_ERM_1.1002.png": "5857f277740d4fae6656748a432a84716ac0a55149ae6dcb3b83561d5591f23b",
+          "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+          "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+          "T_Nku_1_ERM_1.1005.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+          "T_Nku_1_Normal_1.1001.png": "ac607fb10c6af8f976ffe94090990177dddbd53ab8b4c1176db24b845d088ba1",
+          "T_Nku_1_Normal_1.1002.png": "b8c353401651291411bb5ceae32fc609df7780a09e9c7ebedd143248da328596",
+          "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+          "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+          "T_Nku_1_Normal_1.1005.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+        }
+      },
+      "v007": {
+        "clean": {
+          "JE": 202,
+          "JE_vpm": 202,
+          "compare_exit": 1,
+          "views": {
+            "south": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "e94a756e016f4e54218d54c95ece89a9a503223f09f3bc82e063da77c7336e98"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "8d923a7cc81143b9986c46060153a4149c2c28deeb46b2f85e6e3dd17ed2c4bd"
+              }
+            },
+            "east": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "73865e849205afa21d1bbd8dea8d5075bc760e59666138981c977b20c6808bbb"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "2d700df8b95cc6c941587cd60245c74aa3b9eea738b4d6416f683203e24416d3"
+              }
+            },
+            "north": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "352103e7932c005c399ee6a24f422fce77890f6027aa3d9016951cf4dbf18e8b"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "7febae8624bcc6c43dd4d8e82266567c116de6845d4dbe3528c90e5688b753ba"
+              }
+            },
+            "west": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "51134b31528a40811901d99af377f3e299f6be5a0185244bd9ab1b0f3fd360ed"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "07939f3bdd8c2ab31d85c9638adee27cebb12a03aae61af082e21edabdaaac88"
+              }
+            }
+          },
+          "facades": {
+            "1-2": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 76,
+              "JE_vpm": 76,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 11,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "extra": [
+                    -2.3313,
+                    -1.7288,
+                    -1.1288,
+                    -0.53,
+                    0.0688,
+                    0.6713,
+                    1.2713,
+                    1.8713,
+                    1.935,
+                    2.5288
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.09578,
+                  "first_joint_from_field_m": 0.5987
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "extra": [
+                    -2.3313,
+                    -1.7288,
+                    -1.1288,
+                    -0.53,
+                    0.0688,
+                    0.6713,
+                    1.2713,
+                    1.8713,
+                    1.935,
+                    2.5288
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.09578,
+                  "first_joint_from_field_m": 0.5987
+                }
+              },
+              "npm_found_pitch_m": [
+                0.5994,
+                0.5994
+              ]
+            },
+            "2-1": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 70,
+              "JE_vpm": 70,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 9,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577
+                  ],
+                  "extra": [
+                    -2.3313,
+                    -1.7313,
+                    -1.1288,
+                    -0.53,
+                    0.0688,
+                    0.6688,
+                    1.2713,
+                    1.8713
+                  ],
+                  "hidden_by_other_finish": [
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "max_position_error_m": 0.09578,
+                  "first_joint_from_field_m": 0.5987
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "extra": [
+                    -2.3313,
+                    -1.7313,
+                    -1.1288,
+                    -0.53,
+                    0.0688,
+                    0.67,
+                    1.2713,
+                    1.8713,
+                    1.9338,
+                    2.5288
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.09578,
+                  "first_joint_from_field_m": 0.5987
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6,
+                0.5994
+              ]
+            },
+            "А-Б": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 3,
+              "vpm_joints": 3,
+              "match": false,
+              "JE": 28,
+              "JE_vpm": 28,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5162,
+                    0.0862,
+                    0.685
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.08428,
+                  "first_joint_from_field_m": 0.5994
+                },
+                "z=2.285": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5162,
+                    0.0862,
+                    0.6837
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.08428,
+                  "first_joint_from_field_m": 0.5994
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6006,
+                0.5999
+              ]
+            },
+            "Б-А": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 3,
+              "vpm_joints": 3,
+              "match": false,
+              "JE": 28,
+              "JE_vpm": 28,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5162,
+                    0.0837,
+                    0.6862
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.08178,
+                  "first_joint_from_field_m": 0.5994
+                },
+                "z=2.285": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5162,
+                    0.0837,
+                    0.685
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.08178,
+                  "first_joint_from_field_m": 0.5994
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6012,
+                0.6006
+              ]
+            }
+          },
+          "uv": null,
+          "paired_rgb": {
+            "mean": 0.002489368358653243,
+            "p95": 0.00392156862745098,
+            "injected_mean": 0.6959638336995381,
+            "outside_delta": 0.0,
+            "views": {
+              "south": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "e94a756e016f4e54218d54c95ece89a9a503223f09f3bc82e063da77c7336e98",
+                  "npm": "8d923a7cc81143b9986c46060153a4149c2c28deeb46b2f85e6e3dd17ed2c4bd"
+                }
+              },
+              "east": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "73865e849205afa21d1bbd8dea8d5075bc760e59666138981c977b20c6808bbb",
+                  "npm": "2d700df8b95cc6c941587cd60245c74aa3b9eea738b4d6416f683203e24416d3"
+                }
+              },
+              "north": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "352103e7932c005c399ee6a24f422fce77890f6027aa3d9016951cf4dbf18e8b",
+                  "npm": "7febae8624bcc6c43dd4d8e82266567c116de6845d4dbe3528c90e5688b753ba"
+                }
+              },
+              "west": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "51134b31528a40811901d99af377f3e299f6be5a0185244bd9ab1b0f3fd360ed",
+                  "npm": "07939f3bdd8c2ab31d85c9638adee27cebb12a03aae61af082e21edabdaaac88"
+                }
+              }
+            }
+          }
+        },
+        "small": {
+          "JE": 194,
+          "JE_vpm": 202,
+          "compare_exit": 1,
+          "views": {
+            "south": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "4a4566479744af0647c20d79d47e08473f858a6378d844ab719a424dff6e089d"
+              },
+              "npm": {
+                "changed_rgb": 1436178,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "5bf938b34dfdd07ce6cc657f3eccfdbcc849be16dc4a0b4796a7c50231c70c2a"
+              }
+            },
+            "east": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "f4f99d8f070a2ff3a6b3ba10f05af340ab75b75ced890e70483dc45465254b9d"
+              },
+              "npm": {
+                "changed_rgb": 625899,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "b856c3158d76de69f5aa131a34775d6aff2faca749c57a2aa1f630ef6076b565"
+              }
+            },
+            "north": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "30175bffaa4ab9b9cdf5d5fdf6748ddf98a239a7bc8e91837e9058eb8292add5"
+              },
+              "npm": {
+                "changed_rgb": 1645293,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "49aa4c17ab82635f30f201f2c29d882da03da3dc968f421bd3eae5b41d077863"
+              }
+            },
+            "west": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "ce6be850965240d777f9c69c35d82f0dfc719238d8e74d34b85ea6f1ee3d7a85"
+              },
+              "npm": {
+                "changed_rgb": 625953,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "41d56def2d08bd0ac6525496c5cdd98696344e8eaf3a127531bee8d4deffdf71"
+              }
+            }
+          },
+          "facades": {
+            "1-2": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 72,
+              "JE_vpm": 76,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 11,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436
+                  ],
+                  "extra": [
+                    -2.3263,
+                    -1.7238,
+                    -1.1238,
+                    -0.525,
+                    0.0738,
+                    0.6763,
+                    1.2763,
+                    1.8763,
+                    1.9375
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.09078,
+                  "first_joint_from_field_m": 0.6037
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436
+                  ],
+                  "extra": [
+                    -2.3263,
+                    -1.7238,
+                    -1.1238,
+                    -0.525,
+                    0.0738,
+                    0.6763,
+                    1.2763,
+                    1.8763,
+                    1.9388
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.09078,
+                  "first_joint_from_field_m": 0.6037
+                }
+              },
+              "npm_found_pitch_m": [
+                0.5994,
+                0.5994
+              ]
+            },
+            "2-1": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 66,
+              "JE_vpm": 70,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 9,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577
+                  ],
+                  "extra": [
+                    -1.7363,
+                    -1.1338,
+                    -0.535,
+                    0.0638,
+                    0.6638,
+                    1.2663,
+                    1.8663
+                  ],
+                  "hidden_by_other_finish": [
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "max_position_error_m": 0.09454,
+                  "first_joint_from_field_m": 0.5937
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "extra": [
+                    -1.7363,
+                    -1.1338,
+                    -0.535,
+                    0.0638,
+                    0.6638,
+                    1.2663,
+                    1.8663,
+                    1.9313,
+                    2.5238
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.09454,
+                  "first_joint_from_field_m": 0.5937
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6,
+                0.5994
+              ]
+            },
+            "А-Б": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 3,
+              "vpm_joints": 3,
+              "match": false,
+              "JE": 28,
+              "JE_vpm": 28,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5112,
+                    0.0912,
+                    0.6912
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.08928,
+                  "first_joint_from_field_m": 0.6044
+                },
+                "z=2.285": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.51,
+                    0.0912,
+                    0.6912
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.08928,
+                  "first_joint_from_field_m": 0.6057
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6012,
+                0.6006
+              ]
+            },
+            "Б-А": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 3,
+              "vpm_joints": 3,
+              "match": false,
+              "JE": 28,
+              "JE_vpm": 28,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5212,
+                    0.0787,
+                    0.68
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.07678,
+                  "first_joint_from_field_m": 0.5944
+                },
+                "z=2.285": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5212,
+                    0.0787,
+                    0.68
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.07678,
+                  "first_joint_from_field_m": 0.5944
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6006,
+                0.6006
+              ]
+            }
+          },
+          "uv": {
+            "shift_px": 0.5,
+            "changed_loops": {
+              "PanelVJ_RAL5015": 114
+            },
+            "loops_in_extrusion": {
+              "PanelVJ_RAL5015": 0
+            }
+          },
+          "paired_rgb": {
+            "mean": 0.0036503322544577557,
+            "p95": 0.006535947712418301,
+            "injected_mean": 0.6959638336995381,
+            "outside_delta": 0.0,
+            "views": {
+              "south": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "4a4566479744af0647c20d79d47e08473f858a6378d844ab719a424dff6e089d",
+                  "npm": "5bf938b34dfdd07ce6cc657f3eccfdbcc849be16dc4a0b4796a7c50231c70c2a"
+                }
+              },
+              "east": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "f4f99d8f070a2ff3a6b3ba10f05af340ab75b75ced890e70483dc45465254b9d",
+                  "npm": "b856c3158d76de69f5aa131a34775d6aff2faca749c57a2aa1f630ef6076b565"
+                }
+              },
+              "north": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "30175bffaa4ab9b9cdf5d5fdf6748ddf98a239a7bc8e91837e9058eb8292add5",
+                  "npm": "49aa4c17ab82635f30f201f2c29d882da03da3dc968f421bd3eae5b41d077863"
+                }
+              },
+              "west": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "ce6be850965240d777f9c69c35d82f0dfc719238d8e74d34b85ea6f1ee3d7a85",
+                  "npm": "41d56def2d08bd0ac6525496c5cdd98696344e8eaf3a127531bee8d4deffdf71"
+                }
+              }
+            }
+          }
+        },
+        "trigger": {
+          "JE": 203,
+          "JE_vpm": 202,
+          "compare_exit": 1,
+          "views": {
+            "south": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "ab29ed80f2644762e7400c85b8bdeae56a9fb7648f7971a0341bddf212f9c190"
+              },
+              "npm": {
+                "changed_rgb": 1769702,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "a5760cbe5203935f390c24b6a09b45ce3a91150857da5411609da5c96add0767"
+              }
+            },
+            "east": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "e92649f0df58b9c16a1f64b18df0a668c1f56ed7f9ade05624f843dfa50c28dd"
+              },
+              "npm": {
+                "changed_rgb": 771015,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "dbe6d1ec3752a24ca792d9fba602d5a679f2541ccfe9bba49f4943d1e90701b8"
+              }
+            },
+            "north": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "7a4a4205f7b5097c8dc9cd5125d6fa7329327a6ffe99d01c2085875ba2a12acc"
+              },
+              "npm": {
+                "changed_rgb": 2024072,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "7c34b00dc9fd8a8a21f500364a42fe5bbd5c0370ff3443d2eb0d7256fc3b6965"
+              }
+            },
+            "west": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "c2eafb9e2d3c2bf3536cc3a0abb66d79a446814676cbdc1bfd46a1eec4297dda"
+              },
+              "npm": {
+                "changed_rgb": 771654,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "22286908cf293b256b0f0f85c0807f23f4f69d5a41880e7f82c549c64bc83e03"
+              }
+            }
+          },
+          "facades": {
+            "1-2": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 12,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 82,
+              "JE_vpm": 76,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 12,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.8788,
+                    -2.2788,
+                    -1.6788,
+                    -1.0763,
+                    -0.4788,
+                    0.1213,
+                    0.7213,
+                    1.3225,
+                    1.9213,
+                    1.9813,
+                    2.5813,
+                    2.7825
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.14412,
+                  "first_joint_from_field_m": 0.0512
+                },
+                "z=2.285": {
+                  "joints_found": 12,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.8788,
+                    -2.2788,
+                    -1.6788,
+                    -1.0763,
+                    -0.4788,
+                    0.1213,
+                    0.7213,
+                    1.3238,
+                    1.92,
+                    1.9813,
+                    2.5813,
+                    2.7813
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.14412,
+                  "first_joint_from_field_m": 0.0512
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6,
+                0.6
+              ]
+            },
+            "2-1": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 9,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 63,
+              "JE_vpm": 70,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 8,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -0.9768,
+                    -0.7815,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.3825,
+                    -1.7813,
+                    0.0175,
+                    0.6188,
+                    1.2188,
+                    1.8188
+                  ],
+                  "hidden_by_other_finish": [
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "max_position_error_m": 0.06109,
+                  "first_joint_from_field_m": 0.5474
+                },
+                "z=2.285": {
+                  "joints_found": 9,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -0.9768,
+                    -0.7815,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.3838,
+                    -1.7813,
+                    0.0163,
+                    0.6188,
+                    1.2188,
+                    1.8188,
+                    2.4763
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.06268,
+                  "first_joint_from_field_m": 0.5462
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6,
+                0.6
+              ]
+            },
+            "А-Б": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 4,
+              "vpm_joints": 3,
+              "match": false,
+              "JE": 30,
+              "JE_vpm": 28,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 4,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -1.065,
+                    -0.4637,
+                    0.1362,
+                    0.7362
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.13559,
+                  "first_joint_from_field_m": 0.0507
+                },
+                "z=2.285": {
+                  "joints_found": 4,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -1.065,
+                    -0.4637,
+                    0.1362,
+                    0.7362
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.13559,
+                  "first_joint_from_field_m": 0.0507
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6,
+                0.6
+              ]
+            },
+            "Б-А": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 3,
+              "vpm_joints": 3,
+              "match": false,
+              "JE": 28,
+              "JE_vpm": 28,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5687,
+                    0.0312,
+                    0.6337
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.07294,
+                  "first_joint_from_field_m": 0.5469
+                },
+                "z=2.285": {
+                  "joints_found": 3,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.5687,
+                    0.0325,
+                    0.6337
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.07294,
+                  "first_joint_from_field_m": 0.5469
+                }
+              },
+              "npm_found_pitch_m": [
+                0.6012,
+                0.6012
+              ]
+            }
+          },
+          "uv": {
+            "shift_px": 5.0,
+            "changed_loops": {
+              "PanelVJ_RAL5015": 114
+            },
+            "loops_in_extrusion": {
+              "PanelVJ_RAL5015": 0
+            }
+          },
+          "paired_rgb": {
+            "mean": 0.00771172514937004,
+            "p95": 0.018300653594771243,
+            "injected_mean": 0.6959638336995381,
+            "outside_delta": 0.0,
+            "views": {
+              "south": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "ab29ed80f2644762e7400c85b8bdeae56a9fb7648f7971a0341bddf212f9c190",
+                  "npm": "a5760cbe5203935f390c24b6a09b45ce3a91150857da5411609da5c96add0767"
+                }
+              },
+              "east": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "e92649f0df58b9c16a1f64b18df0a668c1f56ed7f9ade05624f843dfa50c28dd",
+                  "npm": "dbe6d1ec3752a24ca792d9fba602d5a679f2541ccfe9bba49f4943d1e90701b8"
+                }
+              },
+              "north": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "7a4a4205f7b5097c8dc9cd5125d6fa7329327a6ffe99d01c2085875ba2a12acc",
+                  "npm": "7c34b00dc9fd8a8a21f500364a42fe5bbd5c0370ff3443d2eb0d7256fc3b6965"
+                }
+              },
+              "west": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "c2eafb9e2d3c2bf3536cc3a0abb66d79a446814676cbdc1bfd46a1eec4297dda",
+                  "npm": "22286908cf293b256b0f0f85c0807f23f4f69d5a41880e7f82c549c64bc83e03"
+                }
+              }
+            }
+          }
+        }
+      },
+      "v010": {
+        "clean": {
+          "JE": 0,
+          "JE_vpm": 0,
+          "compare_exit": 0,
+          "views": {
+            "south": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "11ac7c15d8af579750216a6cbff9d977abbaa5c6b3a692f0b298d1a6c194bcf4"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "576c8abdbc327facd8090182af658b99f58056d63c3e04948a3bcc8798f60551"
+              }
+            },
+            "east": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "0fed304c0c399bd1c96d8a6cb4988bafde243a135f848a4e31dbfd1f1fdd2535"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "64d50fb57281a5a908198073d2ba2d027679236427ed398411ed9f244631d16e"
+              }
+            },
+            "north": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "32b17c425fc247273e0876013a0908c20130cbf24d7a77fe0efc26cc96bbc495"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "d5c55570bf2c3627e4950932d187b3a17781a043e9dbbc2f245d5c505c9feda8"
+              }
+            },
+            "west": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "3dc31569f14f1eb50f12de5e7b68b8172b74089e238c5d827bfea8294c9517f9"
+              },
+              "npm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "9450a97b737fb57ca9c0162ca171f2ad33e1121bf30a7c37b088fc5e8b4d0298"
+              }
+            }
+          },
+          "facades": {
+            "1-2": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 29,
+              "vpm_joints": 29,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 29,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00173,
+                  "first_joint_from_field_m": 0.1962
+                },
+                "z=2.285": {
+                  "joints_found": 29,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00198,
+                  "first_joint_from_field_m": 0.1962
+                }
+              },
+              "npm_found_pitch_m": [
+                0.195,
+                0.195
+              ]
+            },
+            "2-1": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 29,
+              "vpm_joints": 29,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 25,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "max_position_error_m": 0.00326,
+                  "first_joint_from_field_m": 0.1962
+                },
+                "z=2.285": {
+                  "joints_found": 29,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00243,
+                  "first_joint_from_field_m": 0.1962
+                }
+              },
+              "npm_found_pitch_m": [
+                0.195,
+                0.195
+              ]
+            },
+            "А-Б": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00189,
+                  "first_joint_from_field_m": 0.1857
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00178,
+                  "first_joint_from_field_m": 0.1857
+                }
+              },
+              "npm_found_pitch_m": [
+                0.1857,
+                0.1863
+              ]
+            },
+            "Б-А": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.002,
+                  "first_joint_from_field_m": 0.1869
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.002,
+                  "first_joint_from_field_m": 0.1869
+                }
+              },
+              "npm_found_pitch_m": [
+                0.1862,
+                0.1862
+              ]
+            }
+          },
+          "uv": null,
+          "paired_rgb": {
+            "mean": 0.006831115019831101,
+            "p95": 0.0457516339869281,
+            "injected_mean": 0.6541423992689198,
+            "outside_delta": 0.0,
+            "views": {
+              "south": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "11ac7c15d8af579750216a6cbff9d977abbaa5c6b3a692f0b298d1a6c194bcf4",
+                  "npm": "576c8abdbc327facd8090182af658b99f58056d63c3e04948a3bcc8798f60551"
+                }
+              },
+              "east": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "0fed304c0c399bd1c96d8a6cb4988bafde243a135f848a4e31dbfd1f1fdd2535",
+                  "npm": "64d50fb57281a5a908198073d2ba2d027679236427ed398411ed9f244631d16e"
+                }
+              },
+              "north": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "32b17c425fc247273e0876013a0908c20130cbf24d7a77fe0efc26cc96bbc495",
+                  "npm": "d5c55570bf2c3627e4950932d187b3a17781a043e9dbbc2f245d5c505c9feda8"
+                }
+              },
+              "west": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "3dc31569f14f1eb50f12de5e7b68b8172b74089e238c5d827bfea8294c9517f9",
+                  "npm": "9450a97b737fb57ca9c0162ca171f2ad33e1121bf30a7c37b088fc5e8b4d0298"
+                }
+              }
+            }
+          }
+        },
+        "small": {
+          "JE": 0,
+          "JE_vpm": 0,
+          "compare_exit": 0,
+          "views": {
+            "south": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "b365706c5bb4ae0c2706459ad20e9889526f683d08a03f3aafce26c21f0d2db3"
+              },
+              "npm": {
+                "changed_rgb": 1541250,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "01fda562ea370a4ada3138d429a3e6de21ca9fd742f3adff19142b37cf1e6804"
+              }
+            },
+            "east": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "ef7669bd09dbce69592aeeadc0043dd4fa03c9be55b7cd098d260745af0eb7c6"
+              },
+              "npm": {
+                "changed_rgb": 677320,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "d77b1c63a2f44fcc35407bdba46bcf1d70c48ad6a568fd3b911bc6e71184d392"
+              }
+            },
+            "north": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "87c316b19ab5a04ded2ffe3563e3525f66867860bcebadf5b157e2881351da60"
+              },
+              "npm": {
+                "changed_rgb": 1761054,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "6bc730cae572433abecdb3670ea6099839ab1f6109849f4fdf0bceed6c2d11df"
+              }
+            },
+            "west": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "6bb2f42a67930c7217d67b314fbe2e60afcb23688ca312b254828d0861dedd79"
+              },
+              "npm": {
+                "changed_rgb": 677889,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "0deaed3ec97b7b70902b6defd5cb8930034bf7ecbc28dc13f9746b49d510f864"
+              }
+            }
+          },
+          "facades": {
+            "1-2": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 29,
+              "vpm_joints": 29,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 29,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00676,
+                  "first_joint_from_field_m": 0.2012
+                },
+                "z=2.285": {
+                  "joints_found": 29,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00676,
+                  "first_joint_from_field_m": 0.2012
+                }
+              },
+              "npm_found_pitch_m": [
+                0.195,
+                0.195
+              ]
+            },
+            "2-1": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 29,
+              "vpm_joints": 29,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 25,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "max_position_error_m": 0.00698,
+                  "first_joint_from_field_m": 0.1912
+                },
+                "z=2.285": {
+                  "joints_found": 29,
+                  "joints_expected": 29,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00698,
+                  "first_joint_from_field_m": 0.1912
+                }
+              },
+              "npm_found_pitch_m": [
+                0.195,
+                0.195
+              ]
+            },
+            "А-Б": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00683,
+                  "first_joint_from_field_m": 0.1907
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.00683,
+                  "first_joint_from_field_m": 0.1919
+                }
+              },
+              "npm_found_pitch_m": [
+                0.1857,
+                0.1856
+              ]
+            },
+            "Б-А": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 11,
+              "vpm_joints": 11,
+              "match": true,
+              "JE": 0,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.007,
+                  "first_joint_from_field_m": 0.1819
+                },
+                "z=2.285": {
+                  "joints_found": 11,
+                  "joints_expected": 11,
+                  "missing": [],
+                  "extra": [],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.007,
+                  "first_joint_from_field_m": 0.1819
+                }
+              },
+              "npm_found_pitch_m": [
+                0.1862,
+                0.1863
+              ]
+            }
+          },
+          "uv": {
+            "shift_px": 0.5,
+            "changed_loops": {
+              "PanelVJ30_RAL5015": 90,
+              "PanelVJ12_RAL5015": 24
+            },
+            "loops_in_extrusion": {
+              "PanelVJ30_RAL5015": 0,
+              "PanelVJ12_RAL5015": 0
+            }
+          },
+          "paired_rgb": {
+            "mean": 0.00899838427311292,
+            "p95": 0.054901960784313725,
+            "injected_mean": 0.6541423992689198,
+            "outside_delta": 0.0,
+            "views": {
+              "south": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "b365706c5bb4ae0c2706459ad20e9889526f683d08a03f3aafce26c21f0d2db3",
+                  "npm": "01fda562ea370a4ada3138d429a3e6de21ca9fd742f3adff19142b37cf1e6804"
+                }
+              },
+              "east": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "ef7669bd09dbce69592aeeadc0043dd4fa03c9be55b7cd098d260745af0eb7c6",
+                  "npm": "d77b1c63a2f44fcc35407bdba46bcf1d70c48ad6a568fd3b911bc6e71184d392"
+                }
+              },
+              "north": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "87c316b19ab5a04ded2ffe3563e3525f66867860bcebadf5b157e2881351da60",
+                  "npm": "6bc730cae572433abecdb3670ea6099839ab1f6109849f4fdf0bceed6c2d11df"
+                }
+              },
+              "west": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "6bb2f42a67930c7217d67b314fbe2e60afcb23688ca312b254828d0861dedd79",
+                  "npm": "0deaed3ec97b7b70902b6defd5cb8930034bf7ecbc28dc13f9746b49d510f864"
+                }
+              }
+            }
+          }
+        },
+        "trigger": {
+          "JE": 320,
+          "JE_vpm": 0,
+          "compare_exit": 1,
+          "views": {
+            "south": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "4dc476fd8e5db6a1f78f633b33f19614ffe47216ac350a0e734a4825184a7969"
+              },
+              "npm": {
+                "changed_rgb": 1800714,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "7b8ee112f70741cbb24310dc9b30827c42dbf84f87bbf67295cc79b9c7563c3c"
+              }
+            },
+            "east": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "f99ea701127f7c23ccc5a21656774b6c2e181f4deeab424c56f6d02b412835f8"
+              },
+              "npm": {
+                "changed_rgb": 788387,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "98c015fac08e9671b71fbe13938398080fe9c358c68d397d65ac73614f42267d"
+              }
+            },
+            "north": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "ba1abe6d8e5b89ac99433f927cf1db935f56426865f343da84af74aaac3fd736"
+              },
+              "npm": {
+                "changed_rgb": 2057200,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "7ccb1c82570cd539f75e1d3deaf585186433d1c3c9e69d26b09604f134158b1b"
+              }
+            },
+            "west": {
+              "vpm": {
+                "changed_rgb": 0,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "a3e492273e5df5016cb45d18391959fd8c126a4ee58b763a4b3859e91a129473"
+              },
+              "npm": {
+                "changed_rgb": 788540,
+                "changed_rgba_vs_round1": 0,
+                "sha256": "4b76e4e5816ae6c351e9a4a773a954202ed85cf59a6187b7c7a7eea56e2d2a52"
+              }
+            }
+          },
+          "facades": {
+            "1-2": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 30,
+              "vpm_joints": 29,
+              "match": false,
+              "JE": 118,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 30,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.8788,
+                    -2.6825,
+                    -2.4863,
+                    -2.2913,
+                    -2.0963,
+                    -1.9013,
+                    -1.7063,
+                    -1.5113,
+                    -1.3163,
+                    -1.1213,
+                    -0.9263,
+                    -0.7313,
+                    -0.5338,
+                    -0.3388,
+                    -0.1438,
+                    0.0538,
+                    0.2488,
+                    0.4438,
+                    0.6363,
+                    0.8338,
+                    1.0263,
+                    1.2213,
+                    1.4188,
+                    1.6138,
+                    1.8088,
+                    2.0038,
+                    2.1988,
+                    2.3938,
+                    2.5888,
+                    2.785
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.14412,
+                  "first_joint_from_field_m": 0.0512
+                },
+                "z=2.285": {
+                  "joints_found": 30,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.8788,
+                    -2.6813,
+                    -2.4863,
+                    -2.2913,
+                    -2.0963,
+                    -1.9025,
+                    -1.7063,
+                    -1.5113,
+                    -1.3163,
+                    -1.1213,
+                    -0.9263,
+                    -0.7313,
+                    -0.5338,
+                    -0.3388,
+                    -0.1438,
+                    0.0538,
+                    0.2488,
+                    0.4438,
+                    0.6363,
+                    0.8338,
+                    1.0263,
+                    1.2213,
+                    1.4188,
+                    1.6138,
+                    1.8088,
+                    2.0038,
+                    2.1988,
+                    2.3938,
+                    2.5888,
+                    2.785
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.14412,
+                  "first_joint_from_field_m": 0.0512
+                }
+              },
+              "npm_found_pitch_m": [
+                0.195,
+                0.195
+              ]
+            },
+            "2-1": {
+              "contract_joints": 29,
+              "slide_joints": 29,
+              "npm_joints": 30,
+              "vpm_joints": 29,
+              "match": false,
+              "JE": 110,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 26,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.7863,
+                    -2.59,
+                    -2.3938,
+                    -2.1988,
+                    -2.0038,
+                    -1.81,
+                    -1.6138,
+                    -1.4188,
+                    -1.2238,
+                    -1.0288,
+                    -0.8338,
+                    -0.6388,
+                    -0.4413,
+                    -0.2463,
+                    -0.0513,
+                    0.145,
+                    0.3388,
+                    0.5338,
+                    0.73,
+                    0.9238,
+                    1.1188,
+                    1.3138,
+                    1.51,
+                    1.7063,
+                    1.9013,
+                    2.8788
+                  ],
+                  "hidden_by_other_finish": [
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389
+                  ],
+                  "max_position_error_m": 0.14451,
+                  "first_joint_from_field_m": 0.1437
+                },
+                "z=2.285": {
+                  "joints_found": 30,
+                  "joints_expected": 29,
+                  "missing": [
+                    -2.7346,
+                    -2.5393,
+                    -2.344,
+                    -2.1487,
+                    -1.9534,
+                    -1.758,
+                    -1.5627,
+                    -1.3674,
+                    -1.1721,
+                    -0.9768,
+                    -0.7815,
+                    -0.5861,
+                    -0.3908,
+                    -0.1955,
+                    -0.0002,
+                    0.1951,
+                    0.3904,
+                    0.5858,
+                    0.7811,
+                    0.9764,
+                    1.1717,
+                    1.367,
+                    1.5623,
+                    1.7577,
+                    1.953,
+                    2.1483,
+                    2.3436,
+                    2.5389,
+                    2.7342
+                  ],
+                  "extra": [
+                    -2.7863,
+                    -2.5913,
+                    -2.3938,
+                    -2.1988,
+                    -2.0038,
+                    -1.81,
+                    -1.6138,
+                    -1.4188,
+                    -1.2238,
+                    -1.0288,
+                    -0.8338,
+                    -0.6388,
+                    -0.4413,
+                    -0.2463,
+                    -0.0513,
+                    0.1438,
+                    0.34,
+                    0.5338,
+                    0.73,
+                    0.9238,
+                    1.1188,
+                    1.3138,
+                    1.5113,
+                    1.7063,
+                    1.9013,
+                    2.0988,
+                    2.2938,
+                    2.4888,
+                    2.6838,
+                    2.8788
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.14451,
+                  "first_joint_from_field_m": 0.1437
+                }
+              },
+              "npm_found_pitch_m": [
+                0.195,
+                0.195
+              ]
+            },
+            "А-Б": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 12,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 46,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 12,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -1.0662,
+                    -0.8787,
+                    -0.6925,
+                    -0.5062,
+                    -0.3187,
+                    -0.1312,
+                    0.0537,
+                    0.2412,
+                    0.4275,
+                    0.6137,
+                    0.7987,
+                    0.9862
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.13684,
+                  "first_joint_from_field_m": 0.0494
+                },
+                "z=2.285": {
+                  "joints_found": 12,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -1.0662,
+                    -0.8787,
+                    -0.6912,
+                    -0.5062,
+                    -0.3187,
+                    -0.1312,
+                    0.0537,
+                    0.2412,
+                    0.4287,
+                    0.6137,
+                    0.7987,
+                    0.9862
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.13684,
+                  "first_joint_from_field_m": 0.0494
+                }
+              },
+              "npm_found_pitch_m": [
+                0.1863,
+                0.1875
+              ]
+            },
+            "Б-А": {
+              "contract_joints": 11,
+              "slide_joints": 11,
+              "npm_joints": 12,
+              "vpm_joints": 11,
+              "match": false,
+              "JE": 46,
+              "JE_vpm": 0,
+              "rows_y": [
+                865,
+                179
+              ],
+              "npm_rows": {
+                "z=0.570": {
+                  "joints_found": 12,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.9812,
+                    -0.7962,
+                    -0.6087,
+                    -0.4237,
+                    -0.2362,
+                    -0.0512,
+                    0.1362,
+                    0.3212,
+                    0.5112,
+                    0.6962,
+                    0.8825,
+                    1.0687
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.13539,
+                  "first_joint_from_field_m": 0.1344
+                },
+                "z=2.285": {
+                  "joints_found": 12,
+                  "joints_expected": 11,
+                  "missing": [
+                    -0.9294,
+                    -0.7431,
+                    -0.5569,
+                    -0.3706,
+                    -0.1843,
+                    0.002,
+                    0.1883,
+                    0.3745,
+                    0.5608,
+                    0.7471,
+                    0.9334
+                  ],
+                  "extra": [
+                    -0.9812,
+                    -0.7962,
+                    -0.6087,
+                    -0.4237,
+                    -0.2362,
+                    -0.0512,
+                    0.1362,
+                    0.3212,
+                    0.51,
+                    0.6962,
+                    0.8812,
+                    1.0687
+                  ],
+                  "hidden_by_other_finish": [],
+                  "max_position_error_m": 0.13539,
+                  "first_joint_from_field_m": 0.1344
+                }
+              },
+              "npm_found_pitch_m": [
+                0.1862,
+                0.1862
+              ]
+            }
+          },
+          "uv": {
+            "shift_px": 5.0,
+            "changed_loops": {
+              "PanelVJ30_RAL5015": 90,
+              "PanelVJ12_RAL5015": 24
+            },
+            "loops_in_extrusion": {
+              "PanelVJ30_RAL5015": 0,
+              "PanelVJ12_RAL5015": 0
+            }
+          },
+          "paired_rgb": {
+            "mean": 0.017264333709191546,
+            "p95": 0.14248366013071895,
+            "injected_mean": 0.6541423992689198,
+            "outside_delta": 0.0,
+            "views": {
+              "south": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "4dc476fd8e5db6a1f78f633b33f19614ffe47216ac350a0e734a4825184a7969",
+                  "npm": "7b8ee112f70741cbb24310dc9b30827c42dbf84f87bbf67295cc79b9c7563c3c"
+                }
+              },
+              "east": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "f99ea701127f7c23ccc5a21656774b6c2e181f4deeab424c56f6d02b412835f8",
+                  "npm": "98c015fac08e9671b71fbe13938398080fe9c358c68d397d65ac73614f42267d"
+                }
+              },
+              "north": {
+                "opaque_jaccard": 1.0,
+                "pixels": 4429838,
+                "changed_clean": 0,
+                "changed_injected": 4429838,
+                "changed_outside": 769510,
+                "sha256": {
+                  "vpm": "ba1abe6d8e5b89ac99433f927cf1db935f56426865f343da84af74aaac3fd736",
+                  "npm": "7ccb1c82570cd539f75e1d3deaf585186433d1c3c9e69d26b09604f134158b1b"
+                }
+              },
+              "west": {
+                "opaque_jaccard": 1.0,
+                "pixels": 1781446,
+                "changed_clean": 0,
+                "changed_injected": 1781446,
+                "changed_outside": 311798,
+                "sha256": {
+                  "vpm": "a3e492273e5df5016cb45d18391959fd8c126a4ee58b763a4b3859e91a129473",
+                  "npm": "4b76e4e5816ae6c351e9a4a773a954202ed85cf59a6187b7c7a7eea56e2d2a52"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delta": 320,
+      "seconds": 123.347529199993
+    }
+  ],
+  "attempts": [
+    {
+      "round": 1,
+      "label": "v007",
+      "state": "clean",
+      "status": "scored",
+      "seconds": 11.130148700001882
+    },
+    {
+      "round": 1,
+      "label": "v007",
+      "state": "small",
+      "status": "scored",
+      "seconds": 8.932585400005337
+    },
+    {
+      "round": 1,
+      "label": "v007",
+      "state": "trigger",
+      "status": "scored",
+      "seconds": 7.708559499995317
+    },
+    {
+      "round": 1,
+      "label": "v010",
+      "state": "clean",
+      "status": "scored",
+      "seconds": 7.299810200012871
+    },
+    {
+      "round": 1,
+      "label": "v010",
+      "state": "small",
+      "status": "scored",
+      "seconds": 8.499892899999395
+    },
+    {
+      "round": 1,
+      "label": "v010",
+      "state": "trigger",
+      "status": "scored",
+      "seconds": 8.799984199999017
+    }
+  ],
+  "originals": {
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\0000_Nku_1.zip": "0d1fa6c036bb553459dd0e9baec8be4ace8bc61d5acea6aab585d713f2292d0f",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\0000_Nku_1.zip": "8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\slide49.png": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd",
+    "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5"
+  },
+  "code_and_oracle": {
+    "code\\jobs\\TEC26-OKS\\scripts\\compare_facades.py": "464134aef6ba66b54494d63bb9e33e64c704877ac0af49695dd7350024438c3a",
+    "code\\jobs\\TEC26-OKS\\scripts\\joint_count.py": "231bd9e2e156b4b3be7d3280c1db10f5ee681e5f8e55ffdd6ce1300a4113822e",
+    "code\\jobs\\TEC26-OKS\\scripts\\finish_map.py": "8cbaf4362af912f2e6ec1dcc7d3212bd26286879d0543dede812f2e57b76c938",
+    "code\\jobs\\TEC26-OKS\\scripts\\qa_readback.py": "7a7be5d45a75fdef202af28e0a84d91f9f4bdca6cf2562774e7559e28bab4aae",
+    "code\\jobs\\KPP1\\scripts\\vpm_textures.json": "5f7a1d0a46e1dfbb85b86d26a7ee3fec5d22f8996b69254dcc1a70f3766763cf",
+    "oracle_spec.json": "b56272500ea58c32e62b1a4b83707dcd6378a0787d01edb1d024fab3f26cb5ed",
+    "sheet.json": "ad90d64a8c58fe2ec0787e7654b0d779498776a3b31ed4369fcf82e2e4452d94",
+    "slide49.png": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd",
+    "render_facades.py": "361e2c8e30b76c7d0d22adf12c1a5cf520519e19a1dd88ed3c5710d60adc088e",
+    "render_probe.py": "2b8c1294a9d7e9179ba48a60a05b86638960c4e5044f1489337ef3c3b071679c",
+    "vpm_uv.py": "7d21cde032078758515d2b502bb5f1cbee2b79dbb7a5f4de877838dee44e29a4",
+    "phase.py": "d5d09bdc1911534bc0da198e07da369e3f710e380840547488c756d0d933e519",
+    "r61_replay.py": "26c0a203ffc6c2448d58367559a272ef83d72959548c4d38851064cf47b25ca8",
+    "r58_replay.py": "ec5d127f87214252d13d8229a97efeb78fc5da70cb45431cb5cd3ff40c893cc3",
+    "layout-v007.json": "1bfaba5c93b35ca8d22ce0a286e63db650a5188bb73f922a1c7a3c5db3bf8efd",
+    "layout-v010.json": "f7f7c95af9fe183b32084bb98999b18ea264df32ff9161ad060e0ff9e47617e2",
+    "replay.py": "1a637ddc79fa6f4e77987ea23a3cf7164322cd8ba296ac5b7cf5390701165661",
+    "uv.lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea"
+  },
+  "je_hypothesis_r62": "inconclusive",
+  "r64": {
+    "hypothesis": "inconclusive",
+    "clean_label_order": "not_measured"
+  },
+  "cameras": {
+    "south": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "up": [
+          0.0,
+          -1.6292068494294654e-07,
+          1.0
+        ],
+        "ortho_scale": 6.545000076293945,
+        "res": [
+          2618,
+          1986
+        ],
+        "px_per_m": 399.9999953372685
+      }
+    ],
+    "east": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          -4.371138828673793e-08,
+          1.0,
+          0.0
+        ],
+        "up": [
+          4.371138828673793e-08,
+          1.910685676922942e-15,
+          1.0
+        ],
+        "ortho_scale": 2.634999990463257,
+        "res": [
+          1054,
+          1986
+        ],
+        "px_per_m": 400.00000144770297
+      }
+    ],
+    "north": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          -1.0,
+          0.0,
+          1.5099580252808664e-07
+        ],
+        "up": [
+          1.5099580252808664e-07,
+          7.549790126404332e-08,
+          1.0
+        ],
+        "ortho_scale": 6.545000076293945,
+        "res": [
+          2618,
+          1986
+        ],
+        "px_per_m": 399.9999953372685
+      }
+    ],
+    "west": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          -4.371138828673793e-08,
+          -1.0,
+          0.0
+        ],
+        "up": [
+          -4.371138828673793e-08,
+          1.910685676922942e-15,
+          1.0
+        ],
+        "ortho_scale": 2.634999990463257,
+        "res": [
+          1054,
+          1986
+        ],
+        "px_per_m": 400.00000144770297
+      }
+    ]
+  },
+  "originals_match_after": true,
+  "seconds": 125.38708859999315
+}

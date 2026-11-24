@@ -1,0 +1,45 @@
+{
+  "status": "refused",
+  "hypothesis": "inconclusive",
+  "rounds": [],
+  "attempts": [
+    {
+      "round": 1,
+      "label": "v007",
+      "state": "clean",
+      "status": "rendered",
+      "seconds": 7.595128399989335
+    }
+  ],
+  "originals": {
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\0000_Nku_1.zip": "0d1fa6c036bb553459dd0e9baec8be4ace8bc61d5acea6aab585d713f2292d0f",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\0000_Nku_1.zip": "8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\slide49.png": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd",
+    "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5"
+  },
+  "code_and_oracle": {
+    "code\\jobs\\TEC26-OKS\\scripts\\compare_facades.py": "464134aef6ba66b54494d63bb9e33e64c704877ac0af49695dd7350024438c3a",
+    "code\\jobs\\TEC26-OKS\\scripts\\joint_count.py": "231bd9e2e156b4b3be7d3280c1db10f5ee681e5f8e55ffdd6ce1300a4113822e",
+    "code\\jobs\\TEC26-OKS\\scripts\\finish_map.py": "8cbaf4362af912f2e6ec1dcc7d3212bd26286879d0543dede812f2e57b76c938",
+    "code\\jobs\\TEC26-OKS\\scripts\\qa_readback.py": "7a7be5d45a75fdef202af28e0a84d91f9f4bdca6cf2562774e7559e28bab4aae",
+    "code\\jobs\\KPP1\\scripts\\vpm_textures.json": "5f7a1d0a46e1dfbb85b86d26a7ee3fec5d22f8996b69254dcc1a70f3766763cf",
+    "oracle_spec.json": "3514a88d72a0ee6a0db02379d5e4558ca9708bcf4f9056576df3de351976a452",
+    "sheet.json": "ad90d64a8c58fe2ec0787e7654b0d779498776a3b31ed4369fcf82e2e4452d94",
+    "slide49.png": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd",
+    "render_facades.py": "361e2c8e30b76c7d0d22adf12c1a5cf520519e19a1dd88ed3c5710d60adc088e",
+    "render_probe.py": "2b8c1294a9d7e9179ba48a60a05b86638960c4e5044f1489337ef3c3b071679c",
+    "vpm_uv.py": "7d21cde032078758515d2b502bb5f1cbee2b79dbb7a5f4de877838dee44e29a4",
+    "phase.py": "d5d09bdc1911534bc0da198e07da369e3f710e380840547488c756d0d933e519",
+    "r61_replay.py": "26c0a203ffc6c2448d58367559a272ef83d72959548c4d38851064cf47b25ca8",
+    "r58_replay.py": "ec5d127f87214252d13d8229a97efeb78fc5da70cb45431cb5cd3ff40c893cc3",
+    "layout-v007.json": "1bfaba5c93b35ca8d22ce0a286e63db650a5188bb73f922a1c7a3c5db3bf8efd",
+    "layout-v010.json": "f7f7c95af9fe183b32084bb98999b18ea264df32ff9161ad060e0ff9e47617e2",
+    "replay.py": "d0f0f928f34d6213bb09487301c187dd2735312a83420d3d235c2a1a9c166871",
+    "uv.lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea"
+  },
+  "error": "ValueError: camera mismatch south: [([[-3.029376983642578, -1.2190001010894775, -2.0465455055236816], [3.029376983642578, 1.2190001010894775, 2.550208568572998]], {'center': [0.0, 0.0, 0.2518315315246582], 'right': [1.0, 0.0, 0.0], 'up': [0.0, -1.6292068494294654e-07, 1.0], 'ortho_scale': 6.545000076293945, 'res': [2618, 1986], 'px_per_m': 399.9999953372685}), ([[-3.029376983642578, -1.2190001010894775, -2.0465455055236816], [3.029376983642578, 1.2190001010894775, 2.550208568572998]], {'center': [0.0, 0.0, 0.2518315315246582], 'right': [1.0, 0.0, 0.0], 'up': [0.0, -1.6292068494294654e-07, 1.0], 'ortho_scale': 6.545000076293945, 'res': [2618, 1986], 'px_per_m': 399.9999953372685})] != [[[-3.029376983642578, -1.2190001010894775, -2.0465455055236816], [3.029376983642578, 1.2190001010894775, 2.550208568572998]], {'center': [0.0, 0.0, 0.2518315315246582], 'right': [1.0, 0.0, 0.0], 'up': [0.0, -1.6292068494294654e-07, 1.0], 'ortho_scale': 6.545000076293945, 'res': [2618, 1986], 'px_per_m': 399.9999953372685}]",
+  "originals_match_after": true,
+  "seconds": 17.07896709999477
+}

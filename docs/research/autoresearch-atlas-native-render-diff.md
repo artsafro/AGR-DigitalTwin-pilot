@@ -17,3 +17,22 @@ Replay (requires the pinned Windows Blender, Drive ZIPs/slide and Git objects; r
 ```bash
 uv run --frozen python docs/research/atlas-native-render-diff-r64/replay.py tmp/r64-run-NEW
 ```
+
+## R0 — inconclusive (OBSERVE; no PR)
+
+**Итог:** свежий прогон показал рост RGB-разницы на обеих версиях АС.08 при сдвиге атласа НПМ на +5 px, но успел закончить только **1 из 3** раундов. На принятом визуальном эталоне v010 даже +0,5 px превысили исследовательскую границу 0,002. На чистой паре повторилась обратная сортировка #58: RGB-разница у отклонённого v007 меньше, чем у v010. Метрику не предлагаю для приёмки. Производственный код и пакеты не менялись.
+
+| AC08 | E clean | E +0.5 px | E +5 px | JE clean / +0.5 / +5 |
+|---|---:|---:|---:|---:|
+| v007 (rejected pitch) | 0.00248937 | 0.00365033 | 0.00771173 | 202 / 194 / 203 |
+| v010 (accepted visual reference) | 0.00683112 | 0.00899838 | 0.01726433 | 0 / 0 / 320 |
+
+Run status `budget_stop`, hypothesis `inconclusive`, wall 125.387 s; round 1 took 123.348 s (>105 s, which also leaves less than `2 × round1 + 15 s` within 360 s). The first round's minimum +5 px response was +0.00522236; v010 small response was +0.00216727. Median and paired spread are **not measured**. Do not infer stability or revise the hypothesis from the budget stop. Replay the exact command above in a fresh directory on an idle slot; the same timing check can stop it again. First attempt (`refused`, 17.079 s, no score): #62 camera reference values were lists, #58 compares tuples. Fixed the adapter to keep separate exact reference maps; no fixture, threshold or render change. Measured commit `1fb5052e5e844e04c36e011b664f61e9d5e118dc`; Python 3.14.7 / NumPy 2.5.3 / Pillow 12.3.0.
+
+- **Clean (round 1 only):** all camera tuples matched; each state used 12,422,568 pixels over four facades, opaque Jaccard 1.0; clean design-label delta −0.00434175, consistent with #58's independent result (not a new median).
+- **Injected (round 1 only):** 114 UV loops shifted per version and state; every NPM view changed RGB (625,899–2,057,200 pixels); decoded VPM images and NPM alpha exact; immutable input and staged checks passed. +5 on v010 reproduced JE=320. The mutation guard preserved active UV outside targeted loops and other recorded scene state.
+- **Not measured:** three-round stability, no shift touched the extrusion band (`not_exercised`, all zero), V-axis, other objects, required 8/32 px island spacing, texel density and transfer to MAF. Do not use this as a work-return rule.
+
+Receipt `atlas-native-render-diff-r64/receipt.json` (LF SHA-256 `f67b9ce50594442dfd99a884742e3767a59c2d2d3a269363356b43a5149a3882`); refused attempt beside it. Shared evidence `G:/Мой диск/AGR-evidence/standing64-native-render-diff-r001/` (134 files, copy hashes verified; SHA256SUMS `bd0794b4367ec6adb48e5f801c753381baa3f2f97cef0802bca81c019f9f8000`). The Drive receipt hash is `576fb2a84f4c164831ea143d016da81b6aab8ad0e640ed4d73c4a4b11beeb6d6` (CRLF). Replay is limited to the pinned renderer, Drive originals and Git revisions named above.
+
+Full suite: deferred to merge batch (rule 68)
