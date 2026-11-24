@@ -186,7 +186,11 @@ sources, not just the compatibility summary. Records prove consistency, not regu
 hash captured before loading/rendering. Its stable id defaults to the recipe's original address (before `--address` overrides output names) plus
 `.ground.recipe`; `--source-id` selects another independent recipe identity, never a revision label.
 `ground_json_to_fbx.build` defaults to `<Address>.ground.mesh`; optional positional arguments after
-Address are CRS then source_id for independent meshes. NPM `export_npm` defaults to
+Address are CRS then source_id for independent meshes. Its `--profile npm|vpm` (#1844) is recorded in the
+`<FBX>.export_meta.json` sidecar (not inside the FBX) and checked against a declared profile in the folder's
+`export_meta.json`; a call without it keeps the legacy `vpm`, labelled as a legacy default in provenance.
+`agr package-npm` never binds a `vpm` record (`export_binding.excluded_records` + a problem per claimed
+member); unprofiled/`unknown` legacy records still bind. NPM `export_npm` defaults to
 `<address>.oks.<three-digit-index>.master` and accepts `--source-id`; KPP1 `export_vpm` and
 `quad_provenance` use the fixed job identity `KPP1.oks.master`. These producer defaults do not depend
 on master filenames, version folders or hashes. Retain ids if output address/index changes; override

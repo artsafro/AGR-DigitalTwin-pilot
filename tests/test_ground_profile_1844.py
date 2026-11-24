@@ -76,7 +76,7 @@ def test_profile_contradicting_the_package_record_is_refused(tmp_path, explicit,
     with pytest.raises(ValueError, match='profile') as err:
         em.resolve_export_profile(explicit, fbx, legacy_default='vpm', source='synthetic mesh.json')
     assert 'export_meta.json' in str(err.value) and canonical in str(err.value)
-    assert _outputs(tmp_path) == ['export_meta.json', GROUND]
+    assert _outputs(tmp_path) == sorted(['export_meta.json', GROUND])
 
 
 @pytest.mark.parametrize('profile', ['npm', 'vpm'])
@@ -143,9 +143,19 @@ def test_vpm_ground_record_with_matching_hash_is_refused(tmp_path):
     assert _outputs(tmp_path) == []
 
 
-def test_vpm_ground_record_selected_as_address_sidecar_is_refused(tmp_path):
-    pkg = _pkg(tmp_path, 'vpm')
-    r = _run(pkg, '--meta', str(pkg / (GROUND + '.export_meta.json')))
+@pytest.mark.parametrize('selected', ['canonical', 'sidecar'])
+def test_vpm_ground_record_selected_as_address_sidecar_is_refused(tmp_path, selected):
+    """The VPM Ground record is the address record package_npm selects (canonical, or the sidecar via --meta)."""
+    pkg = tmp_path / 'fbx'
+    pkg.mkdir()
+    (pkg / OKS).write_bytes(b'synthetic OKS')
+    (pkg / GROUND).write_bytes(b'synthetic Ground')
+    em.record_export(pkg / OKS, source='synthetic max scene', top=3.5, profile='npm')
+    meta = em.record_export(pkg / GROUND, source='synthetic ground.json', top=0.2, address='Synthetic', profile='vpm',
+                            metadata_path=pkg / 'export_meta.json' if selected == 'canonical' else None)
+    extra = () if selected == 'canonical' else ('--meta', str(meta))
+    assert em.address_meta_path(pkg, *([str(meta)] if extra else [])) == meta
+    r = _run(pkg, *extra)
     assert r.returncode == 1 and GROUND in r.stderr and 'not NPM binding evidence' in r.stderr, r.stderr
     assert _outputs(tmp_path) == []
 

@@ -2,7 +2,7 @@
 
 Pattern: n/a | new-case: Ground master JSON to FBX with GND-11 names and GND-12 pivot (issue #295).
 
-  blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- build <mesh.json> <out.fbx> <Address>
+  blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- build <mesh.json> <out.fbx> <Address> [<crs> [<source_id>]] [--profile npm|vpm]
   blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- readback <in.fbx> <mesh.json> <report.json> [<tex_px> <lo> <hi>]
   blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- render <in.fbx> <out_dir> <report.json>
 
@@ -14,6 +14,10 @@ origin (Z unchanged: absolute heights, project zero = 0); the MSK-77 offset of t
 read; a change during the build is refused); `agr build-manifest build --master ground=<mesh.json>` reads it.
 The stable source_id defaults to <Address>.ground.mesh, independent of source filename/revision.
 For independent meshes use build <json> <fbx> <Address> <crs> <source_id>; preserve the id on revisions.
+Profile (#1844): `--profile npm|vpm` is recorded in <out.fbx>.export_meta.json (the sidecar beside the FBX, with
+its SHA-256; nothing is embedded in the FBX). A declared npm/vpm in <out dir>/export_meta.json that differs is
+refused before any write. Legacy calls without --profile keep the previous 'vpm' and its provenance says it is a
+legacy default; the NPM ZIP (tools/derive/package_npm.py) never binds such a record, so NPM needs --profile npm.
 readback: in a clean process, imports the FBX and compares triangles, per-face material index (raw
 material_index layer mapped through slot names; by face order and, via ground_readback_match.py, by the face centre
 over the face's own degree with explicit match coverage, #1837), world vertex positions (sorted), unit scale, open edges
@@ -53,13 +57,20 @@ def clean():
     s.unit_settings.scale_length = 1.0
 
 
-def build(src, out, address, crs="MSK-77", source_id=None):
+def build(src, out, address, crs="MSK-77", source_id=None, *, profile=None):
     if crs not in ("SYNTHETIC_LOCAL", "MSK-77"):
         raise ValueError(f"unsupported crs {crs!r}; expected SYNTHETIC_LOCAL or MSK-77")
     import os
     root = str(Path(__file__).resolve().parents[2])
     sys.path.insert(0, root)
     from adapters.max.agr_tools import build_manifest as bm
+    from adapters.max.agr_tools.export_meta import record_export, resolve_export_profile
+    # #1844: the delivery profile is the caller's explicit choice, checked against the package record
+    # <out dir>/export_meta.json before any write; without --profile the legacy 'vpm' is kept and labelled as such.
+    try:
+        profile, profile_why = resolve_export_profile(profile, out, legacy_default="vpm", source=str(src))
+    except ValueError as exc:
+        raise SystemExit(f"refused: {exc}")
     # [D328] / #1525: the Ground FBX keeps its own master = this mesh JSON. Hash it before reading; the derivation
     # record <out>.derivation.json (beside the FBX, like .placement.json) is refused before any write if it exists.
     bm._source_id(address + '.ground.mesh' if source_id is None else source_id)
@@ -93,8 +104,8 @@ def build(src, out, address, crs="MSK-77", source_id=None):
                              apply_scale_options="FBX_SCALE_UNITS", axis_forward="Y", axis_up="Z",
                              mesh_smooth_type="SMOOTH_GROUP", use_mesh_modifiers=False, bake_space_transform=False,
                              add_leaf_bones=False, path_mode="AUTO")
-    from adapters.max.agr_tools.export_meta import record_export
-    record_export(out, source=str(src), top=float(max(v[2] for v in vs)), address=address + '_Ground', profile='vpm')
+    record_export(out, source=str(src), top=float(max(v[2] for v in vs)), address=address + '_Ground', profile=profile,
+                  profile_provenance=profile_why)
     record = bm.write_export_derivation([out], src, os.path.dirname(os.path.abspath(out)), bm.git_commit(root),
                                         master_sha256=src_sha, inputs=[src], role="ground",
                                         source_id=address + '.ground.mesh' if source_id is None else source_id)
@@ -253,7 +264,13 @@ def render(fbx, out_dir, rep):
 
 
 if args[0] == "build":
-    build(*args[1:])
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from adapters.max.agr_tools.export_meta import pop_profile_option
+    try:
+        _rest, _profile = pop_profile_option(args[1:])
+    except ValueError as exc:
+        raise SystemExit(f"refused: {exc}")
+    build(*_rest, profile=_profile)
 elif args[0] == "readback":
     readback(*args[1:])
 elif args[0] == "render":
