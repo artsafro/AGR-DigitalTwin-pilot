@@ -65,6 +65,7 @@ ROOF_Z = 7.85   # v003 roof slab at 7.91, parapet top 8.65: faces inside the rin
 KEEP_GAP_M = 0.006   # kept v003 elements stop 6 mm in front of the body: > 2 mm duplicates, > 5 mm co-directional
 KEEP_MERGE_M = 0.0021   # > the 2 mm xView / V004 duplicate-vertex tolerance
 NICHE_M = 0.15   # a frame reaches back to a body surface at most this deep (0.11 niches; not the 0.25 openings)
+REACH_MARGIN_M = 0.2   # a frame over a lattice opening looks this far around its footprint for the niche beside it
 OUT_SIGN = {'SW': (-1, -1), 'SE': (1, -1), 'NE': (1, 1), 'NW': (-1, 1)}
 
 
@@ -156,23 +157,40 @@ def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M, b
     x0, y0, x1, y1 = RECT
     lo = [min(p[a] for t in tris for p in t) - 1e-3 for a in range(3)]
     hi = [max(p[a] for t in tris for p in t) + 1e-3 for a in range(3)]
+    back = None              # inward normal of a frame whose back reaches a niche line
+    reach_rep = None
     if body_tree is not None:
         # frames reach back to a body surface <= NICHE_M behind them (a ground-floor niche 0.11 deep would leave the
-        # frame floating 11 cm in front of the wall): that surface's plane becomes a line of the outward axis
+        # frame floating 11 cm in front of the wall): that surface's plane becomes a line of the outward axis; a frame
+        # standing over a lattice opening reaches the niche beside it (`posts_plan.frame_reach`, V003 decor embed)
         ax, sg = rays[0]
         plane = {(0, -1): x0, (0, 1): x1, (1, -1): y0, (1, 1): y1}[(ax, sg)]
         a2, b2 = [k for k in range(3) if k != ax]
         d_dir = Vector([0.0, 0.0, 0.0])
         d_dir[ax] = -sg
-        for i in range(5):
-            for j in range(5):
-                o = Vector([0.0, 0.0, 0.0])
-                o[ax] = plane + sg * 0.5
-                o[a2] = lo[a2] + (hi[a2] - lo[a2]) * (i + 0.5) / 5
-                o[b2] = lo[b2] + (hi[b2] - lo[b2]) * (j + 0.5) / 5
-                hit = body_tree.ray_cast(o, d_dir, 1.0)
-                if hit[2] is not None and 0.002 < hit[3] - 0.5 <= NICHE_M:
-                    (xs_raw, ys_raw, zs_raw)[ax].append(hit[0][ax])
+
+        def depth(u, v):
+            o = Vector([0.0, 0.0, 0.0])
+            o[ax], o[a2], o[b2] = plane + sg * 0.5, u, v
+            hit = body_tree.ray_cast(o, d_dir, 1.0)
+            return None if hit[2] is None else hit[3] - 0.5
+        own = [depth(lo[a2] + (hi[a2] - lo[a2]) * (i + 0.5) / 5, lo[b2] + (hi[b2] - lo[b2]) * (j + 0.5) / 5)
+               for i in range(5) for j in range(5)]
+        around = []
+        m = REACH_MARGIN_M
+        for i in range(9):
+            for j in range(9):
+                u = lo[a2] - m + (hi[a2] - lo[a2] + 2 * m) * i / 8
+                v = lo[b2] - m + (hi[b2] - lo[b2] + 2 * m) * j / 8
+                if not (lo[a2] <= u <= hi[a2] and lo[b2] <= v <= hi[b2]):
+                    around.append(depth(u, v))
+        gap = min(body_tree.find_nearest(Vector(q))[3] for tri in tris for q in tri)   # decor-embed metric
+        reach = pp.frame_reach(own, around, gap, NICHE_M)
+        for d in reach:
+            (xs_raw, ys_raw, zs_raw)[ax].append(plane - sg * d)
+        reach_rep = {'gap_m': round(gap, 4), 'reach_m': [round(d, 4) for d in reach]}
+        if reach:
+            back = tuple(-sg if k == ax else 0 for k in range(3))
         lo[ax] = min(lo[ax], min((xs_raw, ys_raw, zs_raw)[ax]) - 1e-3)
         hi[ax] = max(hi[ax], max((xs_raw, ys_raw, zs_raw)[ax]) + 1e-3)
     xs, _ = cp.snap_values(xs_raw, snap, prefer=[v for v in (x0, x1) if lo[0] <= v <= hi[0]])
@@ -198,12 +216,13 @@ def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M, b
     out = []
     for corners_, n in quads:
         cen = Vector([sum(c[k] for c in corners_) / 4 for k in range(3)])
-        if not any(pn == n for p, pn, t in pfaces):
+        if not any(pn == n for p, pn, t in pfaces) and not (back is not None and n == back):
             raise ValueError(f'{label}: quad at {tuple(cen)} normal {n} has no coplanar v003 face')
+        # the back of a frame that reaches a niche (open in v003) takes the finish of the nearest v003 face
         best = min(range(len(pfaces)), key=lambda i: (pfaces[i][1] != n, (pfaces[i][0] - cen).length))
         out.append((corners_, n, finish_of_udim[pfaces[best][2]]))
     gaps = {k: round(min((b - a for a, b in zip(v, v[1:])), default=0), 4) for k, v in (('x', xs), ('y', ys), ('z', zs))}
-    return out, {'source_faces': len(fids), 'lines': [len(xs), len(ys), len(zs)], 'min_gap_m': gaps,
+    return out, {'source_faces': len(fids), 'lines': [len(xs), len(ys), len(zs)], 'min_gap_m': gaps, 'reach': reach_rep,
                  'cells': len(cells), 'quads': len(out), 'finishes': sorted({o[2] for o in out})}
 
 

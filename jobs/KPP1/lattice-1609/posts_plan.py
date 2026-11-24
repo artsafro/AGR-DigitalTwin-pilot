@@ -183,6 +183,24 @@ def glass_target(depths, behind, cap_max, gap):
     return glass_shift(depths, cap), ('reveal' if cap == cap_max else 'surface')
 
 
+def frame_reach(own, around, gap_m, niche_m, contact_m=0.002, touch_m=0.001):
+    """Depths (m behind the ring plane) a frame's back reaches to, as lines of its outward axis (#1609 package review,
+    V003 decor embed [D199]). own = body depths hit by rays under the frame footprint, around = the same in a margin
+    around it (None = miss), gap_m = the frame's minimum distance to the body. A frame that touches the body
+    (gap_m <= touch_m) keeps the old rule: own depths in (contact_m, niche_m]. A floating frame (it stands over a
+    lattice opening) takes those own depths, or if there are none the around depths in (contact_m, niche_m]: it reaches
+    the niche beside it. Sorted unique; never deeper than niche_m. Non-finite / negative input = error."""
+    vals = [d for d in list(own) + list(around) if d is not None]
+    _finite(vals + [gap_m, niche_m, contact_m, touch_m], 'frame reach')
+    if niche_m <= contact_m or contact_m < 0 or touch_m < 0 or gap_m < 0:
+        raise ValueError(f'gap {gap_m} / niche {niche_m} / contact {contact_m} / touch {touch_m} out of range')
+    if any(d < -contact_m for d in vals):
+        raise ValueError(f'body depth {min(vals)} in front of the ring plane')
+    keep = lambda ds: sorted({d for d in ds if d is not None and contact_m < d <= niche_m})  # noqa: E731
+    mine = keep(own)
+    return mine if mine or gap_m <= touch_m else keep(around)
+
+
 def clamp_outside(points, side, rect, gap):
     """Kept v003 elements reach into the ring (a portal's sides run 0.16 m into the old wall), where the lattice body
     now stands: they would pierce it (V004 self-intersections per mesh). Every point less than `gap` outside the
