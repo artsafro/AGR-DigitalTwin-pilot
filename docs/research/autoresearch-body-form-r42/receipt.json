@@ -1,0 +1,707 @@
+{
+  "status": "complete",
+  "rows": {
+    "C_none-1": {
+      "raw_weights": {
+        "pass": 66,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 100.0,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "J4_clean_preflight": {
+      "raw_weights": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 62,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": null,
+      "baseline_unknown_pct": null,
+      "candidate_unknown_pct": null,
+      "excluded_original_weight_pct": null,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 28,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": "not_measured",
+      "candidate_fbx_sha256": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+      "section_maxima_m_rounded": {},
+      "measured_depths_m_rounded": [],
+      "raw_score_parity": true,
+      "native_extract_parity": null
+    },
+    "A-1": {
+      "raw_weights": {
+        "pass": 66,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 100.0,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "R-1": {
+      "raw_weights": {
+        "pass": 3,
+        "fail": 27,
+        "not_measured": 36,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 4.545454545454546,
+      "baseline_unknown_pct": 54.54545454545455,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 54.54545454545455,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 18,
+      "annotation_exercise": "exercised",
+      "covered_both": 6,
+      "eligible_dependents": 18,
+      "raw_groupA": {
+        "pass": 1,
+        "fail": 10,
+        "not_measured": 18,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "measured_depths_m_rounded": [],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "A-2": {
+      "raw_weights": {
+        "pass": 66,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 100.0,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "R-2": {
+      "raw_weights": {
+        "pass": 3,
+        "fail": 27,
+        "not_measured": 36,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 4.545454545454546,
+      "baseline_unknown_pct": 54.54545454545455,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 54.54545454545455,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 18,
+      "annotation_exercise": "exercised",
+      "covered_both": 6,
+      "eligible_dependents": 18,
+      "raw_groupA": {
+        "pass": 1,
+        "fail": 10,
+        "not_measured": 18,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "measured_depths_m_rounded": [],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "A-3": {
+      "raw_weights": {
+        "pass": 66,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 100.0,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "R-3": {
+      "raw_weights": {
+        "pass": 3,
+        "fail": 27,
+        "not_measured": 36,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 4.545454545454546,
+      "baseline_unknown_pct": 54.54545454545455,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 54.54545454545455,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 18,
+      "annotation_exercise": "exercised",
+      "covered_both": 6,
+      "eligible_dependents": 18,
+      "raw_groupA": {
+        "pass": 1,
+        "fail": 10,
+        "not_measured": 18,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "measured_depths_m_rounded": [],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "C_shift_opening-1": {
+      "raw_weights": {
+        "pass": 64,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 96.96969696969697,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 28,
+        "fail": 1,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "513d5ab4b2bcb100964386109ee2104dd06c7a488774aa18c162032948fa159b",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "C_shift_wall-1": {
+      "raw_weights": {
+        "pass": 60,
+        "fail": 6,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 90.9090909090909,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 27,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "b79ecca635ea49e2581f40d019c86ee2275bb6f1fb43565a54932ef4af418592",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.1,
+        "contour@19.8": 0.1
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": true
+    },
+    "J1_missing_4259581": {
+      "raw_weights": {
+        "pass": 57,
+        "fail": 3,
+        "not_measured": 6,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 86.36363636363636,
+      "baseline_unknown_pct": 9.090909090909092,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 9.090909090909092,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 3,
+      "annotation_exercise": "exercised",
+      "covered_both": 1,
+      "eligible_dependents": 3,
+      "raw_groupA": {
+        "pass": 25,
+        "fail": 1,
+        "not_measured": 3,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": null
+    },
+    "J2_extra_endwall": {
+      "raw_weights": {
+        "pass": 63,
+        "fail": 3,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 95.45454545454545,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 28,
+        "fail": 1,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": null
+    },
+    "J3_stair_cut_basket": {
+      "raw_weights": {
+        "pass": 61,
+        "fail": 5,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 92.42424242424242,
+      "baseline_unknown_pct": 0.0,
+      "candidate_unknown_pct": 0.0,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 27,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 0,
+        "fail": 1,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.77,
+        "contour@19.8": 0.0
+      },
+      "measured_depths_m_rounded": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "raw_score_parity": true,
+      "native_extract_parity": null
+    },
+    "J4_stale_key": {
+      "raw_weights": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 62,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": null,
+      "baseline_unknown_pct": null,
+      "candidate_unknown_pct": null,
+      "excluded_original_weight_pct": null,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 0,
+      "raw_groupA": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 28,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": "not_measured",
+      "candidate_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "section_maxima_m_rounded": {},
+      "measured_depths_m_rounded": [],
+      "raw_score_parity": true,
+      "native_extract_parity": null
+    },
+    "R-mask": {
+      "raw_weights": {
+        "pass": 3,
+        "fail": 27,
+        "not_measured": 36,
+        "not_applicable": 0
+      },
+      "raw_form_score_unchanged": 4.545454545454546,
+      "baseline_unknown_pct": 54.54545454545455,
+      "candidate_unknown_pct": 54.54545454545455,
+      "excluded_original_weight_pct": 0.0,
+      "baseline_changed_rows": 0,
+      "candidate_changed_rows": 0,
+      "annotation_exercise": "not_exercised",
+      "covered_both": 0,
+      "eligible_dependents": 18,
+      "raw_groupA": {
+        "pass": 1,
+        "fail": 10,
+        "not_measured": 18,
+        "not_applicable": 0
+      },
+      "raw_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "candidate_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "section_maxima_m_rounded": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "measured_depths_m_rounded": [],
+      "raw_score_parity": null,
+      "native_extract_parity": null
+    }
+  },
+  "wall_s": 15.838,
+  "first_pair_s": 3.152,
+  "offline_mask_removed_segments": 149,
+  "candidate_U_R": 0.0,
+  "baseline_U_R": 54.54545454545455,
+  "coverage_gap_pp": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "coverage_spread_pp": 0.0,
+  "form_gap_pp": [
+    95.45454545454545,
+    95.45454545454545,
+    95.45454545454545
+  ],
+  "form_spread_pp": 0.0,
+  "qualification_checks": {
+    "all_historical_parity": true,
+    "pair_coverage_and_spread": true,
+    "form_bounds": true,
+    "clean_and_shifts": true,
+    "offline_controls": true,
+    "offline_mask": true
+  },
+  "hypothesis": "confirmed"
+}
