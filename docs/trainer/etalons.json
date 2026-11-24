@@ -1,6 +1,6 @@
 {
  "schema": "trainer-etalons/1",
- "decision": "D385",
+ "decision": "D387",
  "note": "Paths only (rule 57): sources, keys and rejected versions live on Google Drive / C:/x with SHA-256. The key and rejected versions are HIDDEN from a practice agent (trainer.secret_tokens). split: tuning = may motivate a repo change; held_out = only re-checks a change made on another etalon (#1803 lesson).",
  "etalons": [
   {
@@ -81,7 +81,7 @@
    "missing": "practice not scheduled in v0; held-out for changes made on 63A/G22",
    "split": "held_out",
    "target": "body",
-   "form_check_pair": "63B",
+   "form_check_pair_unused": "63B: the #1832 detector marks Artem's ACCEPTED v007 as defect (14 pass / 7 fail / 1 expected / 7 not measured, calibration r2), so it cannot rank v007 above v004-v006; form_v2 is not scored for this etalon",
    "task": "Object: site 63, tower B (OKS). Build stage 1 of the VPM body (outer envelope with openings) from the site Revit FBX.",
    "sources": [
     {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}

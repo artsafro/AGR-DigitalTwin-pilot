@@ -1,4 +1,4 @@
-"""Trainer v0 [D385] (#1855): bank, prompt isolation, step verdicts, calibration ranking, ledger headline."""
+"""Trainer v0 [D387] (#1855): bank, prompt isolation, step verdicts, calibration ranking, ledger headline."""
 import json
 import math
 import subprocess
@@ -194,3 +194,123 @@ def test_count_questions():
     assert T.count_questions("1. a?\n2) b\n- c\ntext") == 3
     assert T.count_questions("why?\nok\nhow?") == 2
     assert T.count_questions("") == 0
+
+
+# ---------------------------------------------------------------- r1 P1-1: form-check v2 step
+def _row(v, pair="G22 k2", variant="built"):
+    return {"pair": pair, "variant": variant, "verdict": v, "summary": {}}
+
+
+@pytest.mark.parametrize("det,status", [
+    ([_row("ok")], "pass"), ([_row("defect")], "fail"), ([_row("not_measured")], "not_measured"),
+    ([_row("pass")], "error"), ([_row(None)], "error"), ([], "error"), ([_row("ok"), _row("ok")], "error"),
+    ([_row("ok", variant="v002r1")], "error"), ([_row("ok", pair="63B")], "error"), ({"rows": []}, "error")])
+def test_form_v2_verdict_maps_detector_vocabulary(det, status):
+    assert T.form_v2_verdict(det, "G22 k2")["status"] == status
+
+
+class _P:
+    def __init__(self, rc=0, err=""):
+        self.returncode, self.stdout, self.stderr = rc, "", err
+
+
+def _stub(verdict=None, rc=0, crash=False):
+    def detect(pairs_json, out):
+        if crash:
+            raise RuntimeError("blender died")
+        cfg = json.loads(Path(pairs_json).read_text(encoding="utf-8"))
+        v = cfg["pairs"][0]["variants"][0]
+        assert v["name"] == "built" and len(v["sha"]) == 64  # r1: KeyError 'sha' witness
+        if verdict is not None:
+            Path(out).mkdir(parents=True)
+            (Path(out) / "detector.json").write_text(json.dumps([_row(verdict)]), encoding="utf-8")
+        return _P(rc, "Traceback\nModuleNotFoundError: No module named 'tools'" if rc else "")
+    return detect
+
+
+@pytest.mark.parametrize("kw,status", [
+    ({"verdict": "ok"}, "pass"), ({"verdict": "defect"}, "fail"), ({"verdict": "not_measured"}, "not_measured"),
+    ({"crash": True}, "error"), ({"verdict": "ok", "rc": 1}, "error"), ({}, "error")])
+def test_form_v2_step_stubbed_detector(tmp_path, kw, status):
+    fbx = tmp_path / "b.fbx"
+    fbx.write_bytes(b"Kaydara FBX Binary  \0x")
+    work = tmp_path / "w"
+    work.mkdir()
+    s = T.form_v2_step({"form_check_pair": "G22 k2"}, fbx, work, detect=_stub(**kw))
+    assert s["status"] == status, s
+
+
+def test_form_v2_step_unknown_or_ledger_pair_is_error(tmp_path):
+    fbx = tmp_path / "b.fbx"
+    fbx.write_bytes(b"x")
+    assert T.form_v2_step({"form_check_pair": "nope"}, fbx, tmp_path)["status"] == "error"
+    assert T.form_v2_step({"form_check_pair": "Sokolniki"}, fbx, tmp_path)["status"] == "error"
+    assert T.form_v2_step({}, fbx, tmp_path)["status"] == "not_applicable"
+
+
+def test_form_v2_detect_subprocess_imports_tools(tmp_path):
+    """r1: the real subprocess must import `tools` (calib2 logged ModuleNotFoundError)."""
+    p = T._form_v2_detect(tmp_path / "missing.json", tmp_path / "o")
+    assert "ModuleNotFoundError" not in p.stderr and p.returncode != 0
+
+
+_G22 = {v["name"]: v for p in json.loads((ROOT / "tools/qa/form_check/pairs_v1.json").read_text(encoding="utf-8"))
+        ["pairs"] if p["id"] == "G22 k2" for v in p["variants"]}
+
+
+@pytest.mark.parametrize("name,status", [("v002r1", "pass"), ("v001", "fail")])
+@pytest.mark.skipif(not all(Path(v["fbx"]).is_file() for v in _G22.values()), reason="G22 review FBX not on this PC")
+def test_form_v2_step_real_g22_accepted_pass_rejected_fail(tmp_path, name, status):
+    s = T.form_v2_step({"form_check_pair": "G22 k2"}, _G22[name]["fbx"], tmp_path)
+    assert s["status"] == status, s
+
+
+# ---------------------------------------------------------------- r1 P1-2: practice worktree isolation
+_E = {"key": {"path": "C:/x/review-k2/K2_v002r1_body_quad.fbx", "sha256": "ab" * 32},
+      "rejected": [{"path": "C:/x/review-k2/k2_v001_body_quad.fbx", "sha256": "cd" * 32}],
+      "hidden_repo_paths": ["jobs/G22"]}
+
+
+def _repo(tmp_path, files):
+    wt = tmp_path / "wt"
+    for rel, text in files.items():
+        (wt / rel).parent.mkdir(parents=True, exist_ok=True)
+        (wt / rel).write_text(text, encoding="utf-8")
+    subprocess.run(["git", "init", "-q", str(wt)], check=True)
+    subprocess.run(["git", "-C", str(wt), "add", "-A"], check=True)
+    return wt
+
+
+def test_scrub_removes_every_file_naming_the_key_and_keeps_clean_ones(tmp_path):
+    wt = _repo(tmp_path, {
+        "docs/a.md": "see k2_v002r1_body_quad.fbx",           # basename, other case
+        "docs/b.md": "rejected C:\\x\\review-k2\\k2_v001_body_quad.fbx",  # backslash path
+        "docs/c.json": '{"sha": "abababababab"}',              # 12-char sha prefix
+        "docs/clean.md": "nothing about the answer",
+        "docs/trainer/etalons.json": "{}", "tools/qa/form_check/pairs_v1.json": "{}",
+        "tools/qa/form_check/pairs.py": "clean", "jobs/G22/README.md": "history"})
+    removed = T.scrub_worktree(wt, _E)
+    left = sorted(p.relative_to(wt).as_posix() for p in wt.rglob("*") if p.is_file() and ".git" not in p.parts)
+    assert left == ["docs/clean.md", "tools/qa/form_check/pairs.py"]
+    assert len(removed) == 6 and any(r.startswith("docs/trainer") for r in removed)
+    assert T.leaking_files(wt, T.scan_tokens(_E)) == {}
+
+
+def test_scrub_clean_control_removes_only_always_hidden(tmp_path):
+    wt = _repo(tmp_path, {"docs/clean.md": "x", "README.md": "y"})
+    assert T.scrub_worktree(wt, _E) == []
+    assert (wt / "docs/clean.md").is_file() and (wt / "README.md").is_file()
+
+
+def test_scrub_refuses_when_a_leak_survives(tmp_path, monkeypatch):
+    wt = _repo(tmp_path, {"docs/a.md": "k2_v001_body_quad.fbx"})
+    real = T.leaking_files
+    monkeypatch.setattr(T, "leaking_files", lambda w, t: real(w, t) or {"docs/a.md": [t[0]]})
+    with pytest.raises(T.TrainerError, match="docs/a.md"):
+        T.scrub_worktree(wt, _E)
+
+
+def test_scan_tokens_cover_key_rejected_and_skip_short():
+    toks = T.scan_tokens(_E)
+    assert "k2_v002r1_body_quad.fbx" in toks and "k2_v001_body_quad.fbx" in toks and "ab" * 6 in toks
+    assert all(len(t) >= 6 for t in toks)

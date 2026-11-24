@@ -1,4 +1,4 @@
-"""Trainer v0 [D385] surface deviation, Blender side (read-only import, never saves).
+"""Trainer v0 [D387] surface deviation, Blender side (read-only import, never saves).
 
 new-case: tools/trainer/surface_dev.py - two-sided built<->key surface distance for the trainer form step.
 

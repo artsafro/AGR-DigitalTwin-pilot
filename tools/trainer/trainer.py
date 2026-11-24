@@ -1,4 +1,4 @@
-"""Trainer v0 [D385] (#1855): etalon bank, practice runs on a fresh agent, scoring against the hidden key.
+"""Trainer v0 [D387] (#1855): etalon bank, practice runs on a fresh agent, scoring against the hidden key.
 
 Pattern: n/a | new-case: trainer v0 - practice-run recorder and step scorer over existing checkers.
 
@@ -127,6 +127,64 @@ def secret_tokens(e):
     return {t for t in toks if len(t) >= 6} | set(e.get("hidden_repo_paths", []))
 
 
+# The bank itself and the form-check pair registry name every key; a practice worktree never contains them.
+ALWAYS_HIDDEN = ("docs/trainer", "tools/qa/form_check/pairs_v1.json")
+
+
+def scan_tokens(e):
+    """Content tokens of the hidden key and rejected versions: file names, full paths (both slash forms), sha256
+    and its 12-char prefix (pairs_v1.json pins by prefix). Lower-case; matched case-insensitively."""
+    toks = set()
+    for item in [e["key"], *e.get("rejected", []), e.get("calibration_accepted") or {}]:
+        if item.get("path"):
+            p = str(item["path"])
+            toks |= {p, p.replace("/", "\\"), Path(p).name}
+        if item.get("sha256"):
+            toks |= {item["sha256"], item["sha256"][:12]}
+    return sorted(t.lower() for t in toks if len(t) >= 6)
+
+
+def leaking_files(wt, tokens):
+    """Tracked files of the worktree whose bytes contain any token -> {rel: [tokens]}."""
+    rels = subprocess.run(["git", "-C", str(wt), "ls-files", "-z"], capture_output=True, text=True,
+                          check=True).stdout.split("\0")
+    rels += subprocess.run(["git", "-C", str(wt), "ls-files", "-z", "--others", "--exclude-standard"],
+                           capture_output=True, text=True, check=True).stdout.split("\0")
+    hits = {}
+    for rel in sorted({r for r in rels if r}):
+        f = Path(wt) / rel
+        if not f.is_file():
+            continue
+        low = f.read_bytes().decode("utf-8", errors="replace").lower()
+        found = [t for t in tokens if t in low]
+        if found:
+            hits[rel] = found
+    return hits
+
+
+def scrub_worktree(wt, e):
+    """Remove ALWAYS_HIDDEN + the etalon's hidden_repo_paths, then every file that still names the key or a
+    rejected version. A second scan must be clean, else TrainerError (exit 2) naming the file. -> removed list."""
+    removed = []
+    for rel in [*ALWAYS_HIDDEN, *e.get("hidden_repo_paths", [])]:
+        p = Path(wt) / rel
+        if p.is_dir():
+            shutil.rmtree(p)
+            removed.append(rel + "/")
+        elif p.is_file():
+            p.unlink()
+            removed.append(rel)
+    tokens = scan_tokens(e)
+    for rel, found in leaking_files(wt, tokens).items():
+        (Path(wt) / rel).unlink()
+        removed.append(f"{rel} (names {found[0]})")
+    left = leaking_files(wt, tokens)
+    if left:
+        rel, found = next(iter(left.items()))
+        raise TrainerError(f"practice worktree still names the key: {rel} contains {found[0]!r}")
+    return removed
+
+
 def task_text(e, inputs_dir, out_dir):
     """The only prompt a practice agent receives."""
     lines = [e["task"].strip(), "", f"Inputs (copies of the customer sources, read-only): {inputs_dir}"]
@@ -224,8 +282,7 @@ def cmd_run(a, bank):
                           check=True).stdout.strip()
     subprocess.run(["git", "-C", str(ROOT), "worktree", "add", "--detach", str(wt), head], check=True,
                    capture_output=True)
-    for rel in e.get("hidden_repo_paths", []):  # the job's history stays out of the fresh session
-        shutil.rmtree(wt / rel, ignore_errors=True)
+    scrubbed = scrub_worktree(wt, e)  # the job's history and every file naming the key stay out of the session
     (out / "prompt.txt").write_text(text, encoding="utf-8")
     cmd = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--disable", "memories", "-m",
            LANES[a.lane]["model"], "-c", "model_reasoning_effort=high", "--dangerously-bypass-approvals-and-sandbox",
@@ -251,6 +308,7 @@ def cmd_run(a, bank):
            "questions": questions, "stages_used": used, "stages_bypassed": bypassed,
            "new_code_lines_outside_hooks": code, "new_code_files": code_files,
            "built_files": sorted(p.name for p in built.iterdir()), "hidden_repo_paths": e.get("hidden_repo_paths", []),
+           "scrubbed_files": scrubbed,
            "last_message": (out / "last.txt").read_text(encoding="utf-8", errors="replace")[-2000:]
            if (out / "last.txt").exists() else ""}
     (out / "run.json").write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -409,7 +467,32 @@ def score(e, built, out_dir, vlm=False, allow_key=False):
             "tolerances": TOL}
 
 
-def form_v2_step(e, fbx, work):
+FORM_V2_MAP = {"ok": "pass", "defect": "fail", "not_measured": "not_measured"}
+
+
+def form_v2_verdict(det, pid):
+    """detector.json rows -> step. The detector says ok/defect/not_measured; anything else is an error, never pass."""
+    if not isinstance(det, list):
+        return step("error", reason="detector.json is not a list of rows")
+    rows = [r for r in det if isinstance(r, dict) and r.get("pair") == pid and r.get("variant") == "built"]
+    if len(rows) != 1:
+        return step("error", reason=f"detector.json has {len(rows)} rows for pair {pid!r} variant 'built' (need 1)")
+    v = rows[0].get("verdict")
+    if v not in FORM_V2_MAP:
+        return step("error", reason=f"unknown detector verdict {v!r}")
+    return step(FORM_V2_MAP[v], verdict=v, summary=rows[0].get("summary"))
+
+
+def _form_v2_detect(pairs_json, out):
+    """Run the form-check v2 detector in a fresh process; ROOT (+src) on PYTHONPATH so `tools` is importable."""
+    paths = [str(ROOT), str(ROOT / "src"), os.environ.get("PYTHONPATH", "")]
+    env = dict(os.environ, PYTHONPATH=os.pathsep.join(p for p in paths if p))
+    return subprocess.run([sys.executable, "-m", "tools.qa.form_check.pairs", "detect", "--out", str(out),
+                           "--pairs", str(pairs_json)], capture_output=True, text=True, encoding="utf-8",
+                          errors="replace", cwd=ROOT, env=env)
+
+
+def form_v2_step(e, fbx, work, detect=None):
     pid = e.get("form_check_pair")
     if not pid:
         return step("not_applicable", reason="etalon has no form-check v2 key")
@@ -417,27 +500,27 @@ def form_v2_step(e, fbx, work):
     pair = next((p for p in cfg["pairs"] if p["id"] == pid), None)
     if pair is None:
         return step("error", reason=f"form-check pair {pid!r} not in pairs_v1.json")
-    one = dict(pair, variants=[{"name": "built", "fbx": str(fbx), "artem": "n/a", "cite": "trainer"}],
-               reference="built")
+    if pair.get("kind") != "scene":
+        return step("error", reason=f"form-check pair {pid!r} is kind {pair.get('kind')!r}; only 'scene' scores an FBX")
+    one = dict(pair, variants=[{"name": "built", "fbx": str(fbx), "sha": sha256(fbx), "artem": "n/a",
+                                "cite": "trainer"}], reference="built")
     one.pop("render", None)
+    one.pop("accepted_deviations", None)  # Artem's per-version waivers never carry over to a new build
     tmp = work / "form_v2_pairs.json"
     tmp.write_text(json.dumps({**cfg, "pairs": [one]}, ensure_ascii=False), encoding="utf-8")
-    p = subprocess.run([sys.executable, "-m", "tools.qa.form_check.pairs", "detect", "--out",
-                        str(work / "form_v2"), "--pairs", str(tmp)], capture_output=True, text=True,
-                       encoding="utf-8", errors="replace", cwd=ROOT)
-    (work / "form_v2.log").write_text(p.stdout[-8000:] + p.stderr[-8000:], encoding="utf-8")
+    try:
+        p = (detect or _form_v2_detect)(tmp, work / "form_v2")
+    except Exception as exc:  # noqa: BLE001 - a crashed detector is an error step, never a pass
+        return step("error", reason=f"form-check detect crashed: {type(exc).__name__}: {exc}")
+    (work / "form_v2.log").write_text((p.stdout or "")[-8000:] + (p.stderr or "")[-8000:], encoding="utf-8")
+    if p.returncode != 0:
+        tail = ((p.stderr or "").strip().splitlines() or [""])[-1][:300]
+        return step("error", reason=f"form-check detect exit {p.returncode}: {tail}")
     try:
         det = json.loads((work / "form_v2" / "detector.json").read_text(encoding="utf-8"))
-        rows = det if isinstance(det, list) else det.get("rows", det.get(pid, det))
-        text = json.dumps(rows, ensure_ascii=False)
-        verdict = re.search(r'"verdict":\s*"(\w+)"', text)
     except (OSError, ValueError):
-        return step("error", reason=f"form-check detect exit {p.returncode}, no detector.json")
-    if not verdict:
-        return step("not_measured", reason="no verdict in detector.json")
-    v = verdict.group(1)
-    return step("pass" if v == "pass" else ("fail" if v == "fail" else "not_measured"), verdict=v,
-                fails=text.count('"status": "fail"'))
+        return step("error", reason="form-check detect wrote no readable detector.json")
+    return form_v2_verdict(det, pid)
 
 
 def vlm_step(e, fbx, key, work):
@@ -495,7 +578,7 @@ def sheet(rep, e, png, built_png=None, key_png=None, source_png=None):
     W, H = 1800, 1100
     im = Image.new("RGB", (W, H), "white")
     d = ImageDraw.Draw(im)
-    d.text((30, 20), f"Тренажёр v0 [D385] — {e['object']} ({e['id']}): построено | ключ | источник", fill="black",
+    d.text((30, 20), f"Тренажёр v0 [D387] — {e['object']} ({e['id']}): построено | ключ | источник", fill="black",
            font=font(34))
     for i, (cap, path) in enumerate((("построено", built_png), ("ключ (принято Артёмом)", key_png),
                                      ("источник", source_png))):
@@ -537,7 +620,8 @@ def calibrate(bank, out):
             rows.append({"etalon": e["id"], "accepted": Path(acc_path).name, "rejected": r["version"],
                          "acc_score": ra["score"], "acc_p95": ra["form_p95_m"], "rej_score": rr["score"],
                          "rej_p95": rr["form_p95_m"], "rej_first_failing": rr["first_failing_step"],
-                         "ranked_ok": rank_ok(ra, rr)})
+                         "acc_form_v2": ra["steps"]["form_v2"]["status"],
+                         "rej_form_v2": rr["steps"]["form_v2"]["status"], "ranked_ok": rank_ok(ra, rr)})
     return rows
 
 
