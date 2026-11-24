@@ -48,3 +48,40 @@ magnitude m of the grid) and its detection limit L63 ≤ 2 px (≈ 20.6 mm at 96
 
 Replay: `uv run --frozen python docs/research/atlas-phase-limit-r63/replay.py tmp/r63-run-NEW` (Windows, pinned
 Blender, Drive ZIPs and slide 49 required; replay limited to readers with those inputs and the #58/#61/#62 Git objects).
+
+## R0 — confirmed (OBSERVE)
+
+**Итог:** на АС.08 оракул швов слайда 49 ловит чистый сдвиг UV атласа НПМ (ВПМ не меняется) начиная с **1 px
+атласа (≈10,3 мм при 96,9 px/м)** в обе стороны: L63 = 1 px, медиана трёх свежих раундов, размах 0. ±0,5 px
+(≈5,2 мм) не поднимает JE; знак сдвига на обнаружение не влияет (JE +1 px = 182, −1 px = 186; ±2 px = 312;
+±5 px = 320, свидетель #62 воспроизведён). Отклонённый v007 по-прежнему хуже принятого v010 (JE 202 против 0).
+Это предел чувствительности синтетического сдвига на одном объекте, не порог приёмки и не причина отказа v007.
+
+Run status `completed`, hypothesis `confirmed`; wall 423.699 s (rounds 145.112 / 132.213 / 145.037 s; first-round
+gate ≤ 180 s and remaining-time gate passed). Measured script commit `88f8dc296ba3c862986fb5bd54f82bf09ee58a4a`.
+
+| JE on v010 (all 3 rounds identical) | −5 | −2 | −1 | −0.5 | clean | +0.5 | +1 | +2 | +5 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| JE (missing + extra joints, 8 rows, tol 0.01 m) | 320 | 312 | 186 | 0 | 0 | 0 | 182 | 312 | 320 |
+
+**Clean:** v007 JE 202 > v010 JE 0 in every round; clean-vs-clean NPM repeat across rounds 0 changed pixels.
+**Injected:** every state changed exactly 114 UV loops (PanelVJ30 90, PanelVJ12 24) and RGB pixels in all four NPM
+views (round 1, e.g. ±0.5 px ≈ 0.68–1.76 M, ±5 px ≈ 0.79–2.06 M per view); VPM decoded pixels, NPM alpha, cameras
+and the four original ZIPs + slide + Blender exe unchanged (`originals_match_after: true`).
+**Not measured (`not_exercised`):** no shifted loop entered the 6 px padding band (`loops_in_pad` 0 in all states),
+so cell bleed/padding behaviour is not measured; V-direction drift, v007 perturbations (run in #62), other objects
+(KPP1 / Vatutino / Staropetrovskiy), UV padding 8/32 px, texel density and production false-positive rate.
+
+Interpretation for a future gate (not applied): the oracle resolution equals its 10 mm tolerance; atlas drift
+≤ 0.5 px is invisible to it, and drift ≥ 1 px on a jointed panel would be flagged whichever way it goes.
+Nothing in the pipeline or delivered packages was changed.
+
+Receipt: `atlas-phase-limit-r63/receipt.json` SHA-256 `b390277d7a20799503be1b21e70fadd3993dda4ed1ba88354c0bf27ac25dfe08`.
+Evidence (renders, logs, staged code): `G:/Мой диск/AGR-evidence/standing63-atlas-phase-limit-r001/`, 700 files,
+`SHA256SUMS.txt` SHA-256 `1c207b99299ba528caba39ab2870fe75a508a6a25829d85b427bc71a0c74111d` (verified with `sha256sum -c`).
+
+Affected tests: `uv run --frozen pytest -q -o addopts= docs/research/atlas-phase-limit-r63/test_phase63.py tests/jobs/test_tec26_ac08_pilot.py tests/jobs/test_tec26_ac08_slide_overlay.py tests/jobs/test_tec26_joint_visibility_controls.py tests/test_npm_atlas_padding.py` — 155 passed, 25 skipped (fixture gates), 1 warning. The new verdict test first failed (test bug: float keys via `**`), then passed.
+
+`bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 553 passed, `repo_guards: GREEN`.
+
+Full suite: deferred to merge batch (rule 68)
