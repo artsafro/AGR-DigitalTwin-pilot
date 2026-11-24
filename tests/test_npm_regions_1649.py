@@ -60,6 +60,39 @@ def test_automatic_solid_leaf_does_not_hide_confirmed_colour_island(tmp_path, wi
         assert union.symmetric_difference(Polygon(uv)).area < 1e-12
 
 
+@pytest.mark.parametrize('order', [(0, 1), (1, 0)])
+@pytest.mark.parametrize('stripe_x', [60, 55, 64, None])
+def test_automatic_patterned_leaf_without_proven_boundaries_stops(tmp_path, stripe_x, order):
+    from shapely.geometry import box, mapping
+    from tools.library.npm_ids import recover_regions
+
+    size = 128
+    image = Image.new('RGB', (size, size))
+    image.putdata([(32 + 88 * ((x + y) % 2),) * 3 for y in range(size) for x in range(size)])
+    x = 60 if stripe_x is None else stripe_x
+    if stripe_x is not None:
+        ImageDraw.Draw(image).line((x, 20, x, 107), fill=(230, 230, 230))
+    atlas = tmp_path / 'checker.png'
+    image.save(atlas)
+    crossing = [(0, 1), (1, 1), (0, 0)]
+    inside = [(u / size, 1 - v / size) for u, v in [(x + .125, 30), (x + .875, 30), (x + .125, 90)]]
+    faces = [(crossing, inside)[i] for i in order]
+
+    result = recover_regions(atlas, faces)
+    assert [(c['kind'], c['unclassified_px2']) for c in result['cells']] == [('patterned', size**2)]
+    assert result['status'] == 'manual_required'
+    assert result['residual'] == [0, 1]
+    assert result['pieces'] == [[], []]
+    assert result['table'] == []
+
+    # A supplied boundary, unlike an automatic texture label, is authoritative.
+    explicit = recover_regions(atlas, faces, cell_regions=[
+        {'id': 'finish', 'kind': 'patterned', 'geometry': mapping(box(0, 0, size, size))}])
+    assert explicit['status'] == 'ok'
+    assert explicit['residual'] == []
+    assert explicit['pieces'] == [[{'id': 1, 'uv': [list(uv) for uv in face]}] for face in faces]
+
+
 @pytest.mark.parametrize('width,seam', [(8, 4), (12, 6), (14, 7), (30, 6)])
 def test_metric_seam_plan_cuts_oversize_but_preserves_surface(width, seam):
     from adapters.max.agr_tools.npm2vpm_core import fit_metric_region

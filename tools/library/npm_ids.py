@@ -126,6 +126,8 @@ def recover_regions(atlas_file, face_uvs, *, colour_tolerance=6, segmentation=No
     crossers now get clipped, never centroid-assigned. Palette regions inside a
     mixed or majority-solid leaf may be nonrectangular or have holes. A partial
     intersection is not published when unclassified pixels cover source area.
+    An automatic patterned label does not establish a material boundary;
+    patterned pixels need an explicit layout to be assigned as one region.
     An explicit layout uses native top-left pixel coordinates, classifies cells
     as solid or patterned, and preserves internal texture motifs.
     """
@@ -199,18 +201,18 @@ def _clip_regions(rgb, faces, atlas, colour_tolerance):
     for cell_id, cell in enumerate(atlas['cells'], 1):
         x, y, cw, ch = (cell[k] for k in ('x', 'y', 'w', 'h'))
         bounds = [x, y, x + cw, y + ch]
-        # A majority-solid leaf is a layout hint, not proof that all its
-        # pixels have the same colour. Unknown pixels remain unclassified.
-        use_palette = cell['kind'] in ('mixed', 'solid')
-        regions = (_palette_shapes(rgb, bounds, colour_tolerance) if use_palette
-                   else [(box(*bounds), cell['color'])])
+        kind = cell['kind']
+        # The automatic patterned label cannot distinguish a texture motif from
+        # a separate finish. Leave it unclassified rather than trust its box.
+        # Even a majority-solid leaf still needs native palette evidence.
+        regions = _palette_shapes(rgb, bounds, colour_tolerance) if kind in ('mixed', 'solid') else ()
         covered = 0.
         for shape, colour in regions:
             shapes.append(shape)
-            table.append({'id': len(shapes), 'cell': cell_id, 'kind': 'solid' if use_palette else cell['kind'],
+            table.append({'id': len(shapes), 'cell': cell_id, 'kind': 'solid',
                           'color': colour, 'bounds_px': list(shape.bounds), 'face_count': 0})
             covered += shape.area
-        cells.append({'cell': cell_id, 'bounds_px': bounds, 'kind': cell['kind'],
+        cells.append({'cell': cell_id, 'bounds_px': bounds, 'kind': kind,
                       'unclassified_px2': cw * ch - covered})
     pieces, residual = _clip_faces(faces, shapes, table, w, h, STRtree(shapes))
     return {'status': 'manual_required' if residual else 'ok', 'pieces': pieces,
