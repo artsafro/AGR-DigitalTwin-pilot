@@ -46,4 +46,30 @@ byte-bound atlas crops and the exact recorded resize kernel. Focus: NPM/VPM text
 
 ## Round log
 
-(filled after the run)
+**Итог (по-русски).** H71 **опровергнута** (OBSERVE). Дрейф НПМ-атласа относительно ВПМ-тайла той же отделки у
+отклонённого за швы v007 (0.004014) *меньше*, чем у визуально принятого v010 (0.013968): D71 = −0.009954, разброс 3 свежих
+раундов 0. Сигнал внутри одной версии не видит дефект швов v007: НПМ-регион пересобирается из того же spec, что и ВПМ-тайл,
+поэтому дефект текстуры (если он в рисунке) общий для обоих профилей; v010 выше из-за проектного уширения швов НПМ
+(≥ 8 мм на полушов против 4 мм) на двух панельных отделках. Свидетели срабатывают в ожидаемую сторону, побочные проверки
+чистые. Ничего не применено, гейта нет, production не менялся.
+
+R1 (2026-11-24, base 4288c54d, replay.py SHA-256 `7056cc6d56fff7d55289f9b4870c94f43e993e7f88e8d5f0def43ed6adfe2195`,
+receipt `docs/research/atlas-npm-vpm-drift-r71/receipt.json` SHA-256
+`ec8ac44cf03e4aa2ec5c684a7eb5b82e33be4098c6c847a7b2d36b28c44965ae`), 3 fresh rounds, wall 11.503 s, status complete.
+
+| version | label | textured finishes: mean (p95) | M71 |
+|---|---|---|---|
+| v007 | rejected (seams) | PanelVJ 0.004014 (0.015686) | 0.004014 |
+| v010 | accepted (visual) | VJ30 0.013242 (0.105882); VJ12 0.013968 (0.105882) | 0.013968 |
+| v006 | unlabelled | Cassette 0.013926 (0.125490) | 0.013926 |
+| v009 | unlabelled | = v010 (same atlas bytes; VPM zip differs) | 0.013968 |
+
+- Witness (v010, VPM fixed, NPM-only): +5 px U shift → M71 0.045298 (Δ +0.031330 ≥ 0.005, fires); changed px VJ30
+  150749 / VJ12 151540; Plinth/Frame/Door `not_exercised`. P2 brightness +8 → Δ +0.021296 (in [0.015, 0.032]).
+  P1 finish swap → Δ +0.027653 (> clean).
+- Accepted control where the rule fires: any threshold below 0.013968 fires on accepted v010 and misses rejected v007 —
+  the metric ranks the labelled pair in the wrong direction.
+- Side checks (clean, all 4 versions): solid-finish mean diff 0 levels; pad-band mismatch 0 px for every finish;
+  inter-region gap 12 px (≥ 8 px). Injected: the three witnesses above. Not measured: KPP1 v004, Vatutino, Staropetrovskiy.
+- Replay: `uv run --frozen python docs/research/atlas-npm-vpm-drift-r71/replay.py tmp/r71-NEW` (~12 s; needs the Drive
+  folders, hashes pinned in `PINS`; replay limited to machines with `G:/Мой диск/AGR-evidence`).

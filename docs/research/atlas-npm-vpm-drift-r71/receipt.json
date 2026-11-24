@@ -1,0 +1,513 @@
+{
+ "card": "t_69818899",
+ "base": "4288c54de328db7a5037b57707862319f7aa6ff0",
+ "candidate_sha256": "7056cc6d56fff7d55289f9b4870c94f43e993e7f88e8d5f0def43ed6adfe2195",
+ "pins": {
+  "v006": [
+   "1adaaa707234078a5b887756608bf05432458cf6ee3bcd6cd1f2764301376988",
+   "9ac1768f0e98b4fc6d9aeda3df8f131b3719ebdd3399adf87f89a03fe140d699",
+   "e641bc91456b7de3ac3f6f6913b935db8830a7fea711e72a75881e2c23479a42"
+  ],
+  "v007": [
+   "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+   "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516",
+   "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2"
+  ],
+  "v009": [
+   "d9d8178fd1ebbd06fe961f02d454c94fe013e6afc762e9b2565f0cbb9c5b0b14",
+   "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+   "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+  ],
+  "v010": [
+   "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+   "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+   "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+  ]
+ },
+ "median_m71": {
+  "v006": 0.0139260403,
+  "v007": 0.0040138546,
+  "v009": 0.0139679907,
+  "v010": 0.0139679907
+ },
+ "series": {
+  "v006": [
+   0.0139260403,
+   0.0139260403,
+   0.0139260403
+  ],
+  "v007": [
+   0.0040138546,
+   0.0040138546,
+   0.0040138546
+  ],
+  "v009": [
+   0.0139679907,
+   0.0139679907,
+   0.0139679907
+  ],
+  "v010": [
+   0.0139679907,
+   0.0139679907,
+   0.0139679907
+  ]
+ },
+ "paired_spread": 0.0,
+ "D71": -0.0099541361,
+ "witness_ok": true,
+ "verdict_H71": "refuted",
+ "wall_s": 11.503,
+ "status": "complete",
+ "rounds": [
+  {
+   "result": {
+    "v006": {
+     "label": "unlabelled",
+     "m71": 0.0139260403,
+     "per_finish": {
+      "Cassette_RAL5015": {
+       "mean": 0.0139260403,
+       "p95": 0.1254901961,
+       "reference_finish": "Cassette_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "Cassette_RAL5015": 0,
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v007": {
+     "label": "rejected_seams",
+     "m71": 0.0040138546,
+     "per_finish": {
+      "PanelVJ_RAL5015": {
+       "mean": 0.0040138546,
+       "p95": 0.0156862745,
+       "reference_finish": "PanelVJ_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ_RAL5015": 0,
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v009": {
+     "label": "unlabelled",
+     "m71": 0.0139679907,
+     "per_finish": {
+      "PanelVJ30_RAL5015": {
+       "mean": 0.0132423843,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ30_RAL5015"
+      },
+      "PanelVJ12_RAL5015": {
+       "mean": 0.0139679907,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ12_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ30_RAL5015": 0,
+       "PanelVJ12_RAL5015": 0,
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v010": {
+     "label": "accepted_visual",
+     "m71": 0.0139679907,
+     "per_finish": {
+      "PanelVJ30_RAL5015": {
+       "mean": 0.0132423843,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ30_RAL5015"
+      },
+      "PanelVJ12_RAL5015": {
+       "mean": 0.0139679907,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ12_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ30_RAL5015": 0,
+       "PanelVJ12_RAL5015": 0,
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     },
+     "witness": {
+      "shift_u_5px": {
+       "m71": 0.0452975608,
+       "delta": 0.0313295701,
+       "bound_min": 0.005,
+       "ok": true,
+       "changed_px": {
+        "PanelVJ30_RAL5015": 150749,
+        "PanelVJ12_RAL5015": 151540,
+        "Plinth_RAL7004": "not_exercised",
+        "Frame_RAL5015": "not_exercised",
+        "Door_RAL7004": "not_exercised"
+       }
+      },
+      "p2_brightness_8": {
+       "m71": 0.0352640938,
+       "delta": 0.0212961031,
+       "bounds": [
+        0.015,
+        0.032
+       ],
+       "ok": true
+      },
+      "p1_finish_swap": {
+       "m71": 0.0416213085,
+       "delta": 0.0276533178,
+       "ok": true,
+       "pairs": {
+        "PanelVJ30_RAL5015": "PanelVJ12_RAL5015",
+        "PanelVJ12_RAL5015": "PanelVJ30_RAL5015"
+       }
+      }
+     }
+    }
+   },
+   "wall_s": 5.444
+  },
+  {
+   "result": {
+    "v006": {
+     "label": "unlabelled",
+     "m71": 0.0139260403,
+     "per_finish": {
+      "Cassette_RAL5015": {
+       "mean": 0.0139260403,
+       "p95": 0.1254901961,
+       "reference_finish": "Cassette_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "Cassette_RAL5015": 0,
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v007": {
+     "label": "rejected_seams",
+     "m71": 0.0040138546,
+     "per_finish": {
+      "PanelVJ_RAL5015": {
+       "mean": 0.0040138546,
+       "p95": 0.0156862745,
+       "reference_finish": "PanelVJ_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ_RAL5015": 0,
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v009": {
+     "label": "unlabelled",
+     "m71": 0.0139679907,
+     "per_finish": {
+      "PanelVJ30_RAL5015": {
+       "mean": 0.0132423843,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ30_RAL5015"
+      },
+      "PanelVJ12_RAL5015": {
+       "mean": 0.0139679907,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ12_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ30_RAL5015": 0,
+       "PanelVJ12_RAL5015": 0,
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v010": {
+     "label": "accepted_visual",
+     "m71": 0.0139679907,
+     "per_finish": {
+      "PanelVJ30_RAL5015": {
+       "mean": 0.0132423843,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ30_RAL5015"
+      },
+      "PanelVJ12_RAL5015": {
+       "mean": 0.0139679907,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ12_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ30_RAL5015": 0,
+       "PanelVJ12_RAL5015": 0,
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     },
+     "witness": {
+      "shift_u_5px": {
+       "m71": 0.0452975608,
+       "delta": 0.0313295701,
+       "bound_min": 0.005,
+       "ok": true,
+       "changed_px": {
+        "PanelVJ30_RAL5015": 150749,
+        "PanelVJ12_RAL5015": 151540,
+        "Plinth_RAL7004": "not_exercised",
+        "Frame_RAL5015": "not_exercised",
+        "Door_RAL7004": "not_exercised"
+       }
+      },
+      "p2_brightness_8": {
+       "m71": 0.0352640938,
+       "delta": 0.0212961031,
+       "bounds": [
+        0.015,
+        0.032
+       ],
+       "ok": true
+      },
+      "p1_finish_swap": {
+       "m71": 0.0416213085,
+       "delta": 0.0276533178,
+       "ok": true,
+       "pairs": {
+        "PanelVJ30_RAL5015": "PanelVJ12_RAL5015",
+        "PanelVJ12_RAL5015": "PanelVJ30_RAL5015"
+       }
+      }
+     }
+    }
+   },
+   "wall_s": 3.07
+  },
+  {
+   "result": {
+    "v006": {
+     "label": "unlabelled",
+     "m71": 0.0139260403,
+     "per_finish": {
+      "Cassette_RAL5015": {
+       "mean": 0.0139260403,
+       "p95": 0.1254901961,
+       "reference_finish": "Cassette_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "Cassette_RAL5015": 0,
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v007": {
+     "label": "rejected_seams",
+     "m71": 0.0040138546,
+     "per_finish": {
+      "PanelVJ_RAL5015": {
+       "mean": 0.0040138546,
+       "p95": 0.0156862745,
+       "reference_finish": "PanelVJ_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ_RAL5015": 0,
+       "Panel_RAL5015": 0,
+       "Frame_RAL7004": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v009": {
+     "label": "unlabelled",
+     "m71": 0.0139679907,
+     "per_finish": {
+      "PanelVJ30_RAL5015": {
+       "mean": 0.0132423843,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ30_RAL5015"
+      },
+      "PanelVJ12_RAL5015": {
+       "mean": 0.0139679907,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ12_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ30_RAL5015": 0,
+       "PanelVJ12_RAL5015": 0,
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     }
+    },
+    "v010": {
+     "label": "accepted_visual",
+     "m71": 0.0139679907,
+     "per_finish": {
+      "PanelVJ30_RAL5015": {
+       "mean": 0.0132423843,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ30_RAL5015"
+      },
+      "PanelVJ12_RAL5015": {
+       "mean": 0.0139679907,
+       "p95": 0.1058823529,
+       "reference_finish": "PanelVJ12_RAL5015"
+      }
+     },
+     "side": {
+      "solid_mean_level_diff": {
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "pad_band_mismatch_px": {
+       "PanelVJ30_RAL5015": 0,
+       "PanelVJ12_RAL5015": 0,
+       "Plinth_RAL7004": 0,
+       "Frame_RAL5015": 0,
+       "Door_RAL7004": 0
+      },
+      "inter_region_gap_px": 12.0
+     },
+     "witness": {
+      "shift_u_5px": {
+       "m71": 0.0452975608,
+       "delta": 0.0313295701,
+       "bound_min": 0.005,
+       "ok": true,
+       "changed_px": {
+        "PanelVJ30_RAL5015": 150749,
+        "PanelVJ12_RAL5015": 151540,
+        "Plinth_RAL7004": "not_exercised",
+        "Frame_RAL5015": "not_exercised",
+        "Door_RAL7004": "not_exercised"
+       }
+      },
+      "p2_brightness_8": {
+       "m71": 0.0352640938,
+       "delta": 0.0212961031,
+       "bounds": [
+        0.015,
+        0.032
+       ],
+       "ok": true
+      },
+      "p1_finish_swap": {
+       "m71": 0.0416213085,
+       "delta": 0.0276533178,
+       "ok": true,
+       "pairs": {
+        "PanelVJ30_RAL5015": "PanelVJ12_RAL5015",
+        "PanelVJ12_RAL5015": "PanelVJ30_RAL5015"
+       }
+      }
+     }
+    }
+   },
+   "wall_s": 2.989
+  }
+ ]
+}
