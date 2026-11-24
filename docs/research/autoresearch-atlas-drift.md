@@ -14,3 +14,15 @@ Replay (from branch and `uv sync --frozen`; local Drive access required):
 ```bash
 uv run --frozen python docs/research/atlas-drift-r58/replay.py tmp/r58-run-NEW
 ```
+
+## R0 result — refuted on AC08; no production recommendation
+
+Three fresh pairs, all six native exits 0. Wall times per pair 19.048 / 18.806 / 20.338 s; total 58.766 s, status completed. Every pair gave v007 mean 0.0024893684 and v010 mean 0.0068311150, D58 = −0.0043417467, spread 0. p95 (descriptive) likewise ranks v007 lower (0.0039215686 vs 0.0457516340). Common opaque Jaccard 1.0 in every view; exact reported camera parity; all four ZIP hashes unchanged. This metric measures **profile agreement**, not agreement with the approved design. A common wrong rib pitch may be invisible to it. The exact cause of the higher v010 pixel error was not isolated.
+
+- Clean: four facades, 12,422,568 compared pixels per version per pair, unchanged by the diagnostic. Full native readback of texture/UV topology was not part of this score.
+- Injected (render-array level only): on both labels, each pair changes 12,422,568 in-mask NPM pixels, E increases to 0.6959638337 (v007) / 0.6541423993 (v010). Outside-mask perturbation changes 2,162,616 pixels per version per pair, ΔE = 0. See the receipt for per-view counts. These do not prove detection after UV/atlas edits.
+- Not measured: native atlas-only mutation, KPP1, Vatutino MAF, Staropetrovskiy MAF, padding, texel density, other shaders and candidate impact. KPP1 v004 #1817 labels technical package rows, not this texture defect; Vatutino #1745 is a solid-colour diagnostic without an authoritative rejection pair; Staropetrovskiy #1500 awaits exact reviewed etalon references. Do not substitute those labels or claim calibration across the corpus.
+
+Receipt: `docs/research/atlas-drift-r58/receipt.json`, SHA-256 `e9dc237b7a303bfba0a77ce8408d01e54ddb896b0714e03c6dc14aeb59231e58`. Measurement commit: `9e939fd5f6df1b9f048371c2a568c32f7c832a0b`. The same receipt plus 48 scored PNGs, camera metadata and native logs: `G:/Мой диск/AGR-evidence/standing58-atlas-drift-r001/`; 63-file `SHA256SUMS.txt` SHA-256 `b5f02c861324d3ab2b0fb219d20dd3d6d4fbd1b56f7d0b693b216e62b1267d53`. Replay limited to Windows with the specified Blender build and authorized Drive paths, or equivalents with matching hashes. Reviewable no-PR OBSERVE result; this is not approval to enable a gate.
+
+Next: calibrate joint count/phase error against AC08 slide 49 using the existing joint-count diagnostics; separately test this paired image metric for its narrower purpose on a source-fixed, NPM-only registration mutation. Do not use the latter as a substitute for user-labelled seam quality.
