@@ -52,4 +52,12 @@ Not measured (no byte-bound label pair on Drive for this lane): KPP1 v004, Vatut
 lane: G22 #1649, Staropetrovskiy #1500, KPP1 #1817/#1818, MAF numbering #1809, closed form research. Joint width,
 visibility, UV placement and renders are not covered.
 
+## Amendment A1 (before any real measurement, no score read)
+
+The frozen half-pitch witness `2*x % 397` drops every second joint when joints are 1 px wide: synthetic 397 px region with
+1 px joints at pitch 19 -> RED (`test_half_pitch_witness_on_397_region_halves_period`, 1 failed / 4 passed). NPM joints are
+~1.5 px after LANCZOS, so the copied #72 witness would fail for a resolution reason, not a metric reason. Replaced by a 2:1
+cyclic box downsample of columns (mean of columns 2x and 2x+1 mod 397); test GREEN 5/5. Bounds, metric, thresholds and
+the brightness control are unchanged.
+
 ## Round log
