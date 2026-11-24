@@ -95,3 +95,78 @@ def test_element_plan_probe_side_matches_offset_box():
         lo, hi = {'W': ([x0 - d, a, 1], [x0, b + 0.1, 2]), 'E': ([x1, a, 1], [x1 + d, b + 0.1, 2]),
                   'S': ([a, y0 - d, 1], [b + 0.1, y0, 2]), 'N': ([a, y1, 1], [b + 0.1, y1 + d, 2])}[side]
         assert pp.element_plan(lo, hi, 1.0, 0.0, RECT)['side'] == side
+
+
+def test_majority_finish_door_wins_over_band():
+    hits = ['Door_RAL7004'] * 15 + ['Frame_RAL9016'] * 5 + [None] * 5
+    assert pp.majority_finish(hits, 'Cassette_RAL5015') == ('Door_RAL7004', 0.6)
+
+
+def test_majority_finish_keeps_band_when_nothing_or_too_little_is_seen():
+    assert pp.majority_finish([None] * 25, 'Cassette_RAL5015') == ('Cassette_RAL5015', 0.0)
+    assert pp.majority_finish(['Door_RAL7004'] * 12 + [None] * 13, 'Cassette_RAL5015') == ('Cassette_RAL5015', 0.48)
+
+
+def test_majority_finish_exactly_at_threshold_and_tie_is_deterministic():
+    assert pp.majority_finish(['A'] * 5 + [None] * 5, 'band') == ('A', 0.5)
+    assert pp.majority_finish(['B'] * 3 + ['A'] * 3, 'band', 0.5) == ('A', 0.5)
+
+
+@pytest.mark.parametrize('hits,fallback,share', [([], 'band', 0.5), (['A'], '', 0.5), (['A'], 'band', 0.0),
+                                                 (['A'], 'band', 1.5), (['A'], 'band', math.nan)])
+def test_majority_finish_fails_closed(hits, fallback, share):
+    with pytest.raises(ValueError):
+        pp.majority_finish(hits, fallback, share)
+
+
+def test_majority_finish_probe():
+    rng = random.Random(16091)
+    for _ in range(400):
+        hits = [rng.choice(['A', 'B', 'C', None]) for _ in range(rng.randint(1, 30))]
+        fin, share = pp.majority_finish(hits, 'band')
+        assert 0 <= share <= 1
+        if fin != 'band':
+            assert hits.count(fin) / len(hits) == share >= 0.5
+            assert all(hits.count(fin) >= hits.count(o) for o in 'ABC')
+
+
+def test_outside_ring_keeps_ring_plane_faces_inside():
+    x0, y0, x1, y1 = RECT
+    assert not pp.outside_ring((x0, 0.0), RECT, tol=0.002)          # the N screen / wall face on the ring plane
+    assert not pp.outside_ring((x0 - 0.002, 0.0), RECT, tol=0.002)  # exactly at the threshold: not outside
+    assert pp.outside_ring((x0 - 0.0021, 0.0), RECT, tol=0.002)
+    assert pp.outside_ring((0.0, y1 + 0.2), RECT)
+    with pytest.raises(ValueError):
+        pp.outside_ring((math.nan, 0.0), RECT)
+
+
+def test_glass_target_modes():
+    assert pp.glass_target([0.33, 0.35], [0.25] * 5, 0.24, 0.01) == (pytest.approx(0.11), 'reveal')
+    shift, how = pp.glass_target([0.23, 0.24], [0.11] * 5, 0.24, 0.01)      # niche at 0.11 in front of the pane
+    assert how == 'surface' and 0.24 - shift == pytest.approx(0.10)
+    shift, how = pp.glass_target([0.335, 0.345], [0.0] * 4 + [0.4], 0.24, 0.01)   # solid wall: onto the wall
+    assert how == 'onto_wall' and 0.335 - shift == pytest.approx(-0.02) and 0.345 - shift == pytest.approx(-0.01)
+    assert pp.glass_target([0.3], [0.0, 0.4], 0.24, 0.01)[1] == 'reveal'        # exactly half with room: in place
+    assert pp.glass_target([0.3], [], 0.24, 0.01) == (pytest.approx(0.06), 'reveal')   # nothing behind: reveal cap
+
+
+@pytest.mark.parametrize('depths,behind,cap,gap', [([], [0.2], 0.24, 0.01), ([0.3], [math.nan], 0.24, 0.01),
+                                                   ([0.3], [0.2], 0.24, 0.0), ([0.3], [0.2], 0.01, 0.01)])
+def test_glass_target_fails_closed(depths, behind, cap, gap):
+    with pytest.raises(ValueError):
+        pp.glass_target(depths, behind, cap, gap)
+
+
+def test_glass_target_probe_pane_never_behind_a_body_surface_with_room():
+    rng = random.Random(16092)
+    for _ in range(500):
+        depths = sorted(rng.uniform(0.0, 0.5) for _ in range(2))
+        behind = [rng.choice([0.0, rng.uniform(0.0, 0.6)]) for _ in range(rng.randint(0, 6))]
+        shift, how = pp.glass_target(depths, behind, 0.24, 0.01)
+        deepest = depths[1] - shift
+        assert shift >= 0
+        if how == 'onto_wall':
+            assert deepest == pytest.approx(-0.01)
+        else:
+            assert deepest <= 0.24 + 1e-12
+            assert all(deepest <= d - 0.01 + 1e-12 for d in behind if d >= 0.02)

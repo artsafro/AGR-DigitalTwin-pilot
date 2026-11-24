@@ -47,6 +47,13 @@ def inside_ring(c, rect, tol=1e-3):
     return x0 + tol < c[0] < x1 - tol and y0 + tol < c[1] < y1 - tol
 
 
+def outside_ring(c, rect, tol=1e-3):
+    """True if the plan point c lies more than tol outside the ring (points on the ring planes are not outside)."""
+    x0, y0, x1, y1 = check_rect(rect)
+    _finite(c[:2], 'point')
+    return c[0] < x0 - tol or c[0] > x1 + tol or c[1] < y0 - tol or c[1] > y1 + tol
+
+
 def ring_contact(centre, normal, rect, tol=1e-6):
     """A post face on the ring boundary whose normal points into the ring: hidden contact with the body."""
     x0, y0, x1, y1 = check_rect(rect)
@@ -157,6 +164,46 @@ def glass_shift(depths, cap):
     if min(depths) < 0 or cap <= 0:
         raise ValueError(f'glass depth {min(depths)} / cap {cap} out of range')
     return max(0.0, max(depths) - cap)
+
+
+def glass_target(depths, behind, cap_max, gap):
+    """Shift (m, outward, >= 0) and mode for one glass component (#1609 package step). depths = its face depths behind
+    the ring plane; behind = depths of the lattice body surface seen at its sample points (rays from outside).
+    'reveal'/'surface': the pane moves to at most min(cap_max, nearest body surface with room - gap) behind the ring
+    plane (a sample whose body surface leaves no room, e.g. a pane edge in a jamb, is ignored); 'onto_wall': fewer than
+    half of the samples have room (the body is a solid wall there), the pane moves `gap` in front of the ring plane."""
+    _finite(list(behind) + [cap_max, gap], 'glass target')
+    if gap <= 0 or cap_max <= gap:
+        raise ValueError(f'gap {gap} / cap {cap_max} out of range')
+    room = [d - gap for d in behind if d - gap >= gap]
+    if behind and len(room) < 0.5 * len(behind):
+        glass_shift(depths, cap_max)            # same input checks
+        return max(depths) + gap, 'onto_wall'
+    cap = min([cap_max] + room)
+    return glass_shift(depths, cap), ('reveal' if cap == cap_max else 'surface')
+
+
+def majority_finish(hits, fallback, min_share=0.5):
+    """Finish of a lattice opening back face from the v003 surfaces seen behind it (#1609 package step): `hits` = one
+    entry per sample point, a finish name or None (no v003 surface within reach). The most frequent finish wins if it
+    covers at least `min_share` of ALL samples (ties: alphabetical, deterministic); else the band `fallback` stays.
+    Returns (finish, share). Empty samples or a share outside (0, 1] = error."""
+    if not hits:
+        raise ValueError('no sample points')
+    _finite([min_share], 'min_share')
+    if not 0 < min_share <= 1:
+        raise ValueError(f'min_share {min_share} outside (0, 1]')
+    if not fallback:
+        raise ValueError('no fallback finish')
+    count = {}
+    for h in hits:
+        if h is not None:
+            count[h] = count.get(h, 0) + 1
+    if not count:
+        return fallback, 0.0
+    best = min(count, key=lambda k: (-count[k], k))
+    share = count[best] / len(hits)
+    return (best, share) if share >= min_share else (fallback, share)
 
 
 def check_bands(bands):

@@ -47,6 +47,9 @@ RECT = (-14.985, -5.685, 12.675, 5.975)   # lattice ring in the R1 frame (lattic
 NEAR_M = 0.4
 GLASS_CAP = 0.24   # lattice opening back face at reveal 0.25 (step 2); glass sits 1 cm in front of it
 ELEMENT_SNAP_M = 0.003   # element planes closer than 3 mm are one plane (no 1-2 mm sliver quads, #1609)
+GLASS_GAP = 0.01   # glass sits 1 cm in front of the body surface behind it
+SEE_M = 0.6   # body faces up to 0.6 m behind the ring plane read the v003 finish at their place (doors/frames 0.3-0.45)
+REACH_M = 1.5   # how far behind the ring plane a ray looks for that v003 surface (N entrance vestibule ~1 m deep)
 OUT_SIGN = {'SW': (-1, -1), 'SE': (1, -1), 'NE': (1, 1), 'NW': (-1, 1)}
 
 
@@ -257,10 +260,13 @@ def to_object(bm, name, mat):
     return ob
 
 
-def carry_v003(path, report):
+def carry_v003(path, report, body_tree):
     """Glass and UCX hulls of quad-v003 stay (own objects, own materials). A glass component lying inside the ring
-    deeper than GLASS_CAP moves outward along its side's normal so it sits in front of the lattice opening back face
-    (reveal 0.25, `posts_plan.glass_shift`); glass reaching outside the ring stays and is listed."""
+    deeper than its cap moves outward along its side's normal (`posts_plan.glass_shift`): cap = GLASS_CAP (opening back
+    face at reveal 0.25) or GLASS_GAP in front of the nearest body surface seen behind it (rays from outside at the
+    face centres and corners; `posts_plan.glass_target`), so no glass hides behind the lattice body; where the body is
+    a solid wall (the N screen glazing, not in the body per the line list) the pane goes GLASS_GAP in front of the wall;
+    glass reaching outside the ring stays and is listed."""
     before = set(bpy.data.objects.keys())
     bpy.ops.import_scene.fbx(filepath=str(path))
     new = [o for o in bpy.data.objects if o.name not in before]
@@ -309,12 +315,23 @@ def carry_v003(path, report):
             kept.append({'faces': len(comp), 'lo': lo, 'why': 'reaches outside the ring'})
             continue
         side = max(sides, key=sides.get)
-        shift = pp.glass_shift(depths, GLASS_CAP)
+        nv = Vector({'W': (-1, 0, 0), 'E': (1, 0, 0), 'S': (0, -1, 0), 'N': (0, 1, 0)}[side])
+        plane = {'W': x0, 'E': x1, 'S': y0, 'N': y1}[side]
+        ax = 0 if side in 'WE' else 1
+        behind = []
+        for f in comp:
+            for p in [f.calc_center_median()] + [v.co.lerp(f.calc_center_median(), 0.1) for v in f.verts]:
+                o = p.copy()
+                o[ax] = plane + nv[ax] * 0.5
+                loc, _, idx, dist = body_tree.ray_cast(o, -nv, 0.5 + SEE_M)
+                if idx is not None:
+                    behind.append(dist - 0.5)
+        shift, how = pp.glass_target(depths, behind, GLASS_CAP, GLASS_GAP)
         if shift:
-            vec = Vector({'W': (-1, 0, 0), 'E': (1, 0, 0), 'S': (0, -1, 0), 'N': (0, 1, 0)}[side]) * shift
+            vec = nv * shift
             for v in {v for f in comp for v in f.verts}:
                 v.co += vec
-        moved.append({'faces': len(comp), 'lo': lo, 'side': side, 'shift_m': round(shift, 4),
+        moved.append({'faces': len(comp), 'lo': lo, 'side': side, 'shift_m': round(shift, 4), 'mode': how,
                       'depth_m': [round(min(depths), 4), round(max(depths), 4)]})
     bm.transform(g.matrix_world.inverted())
     bm.to_mesh(g.data)
@@ -323,6 +340,59 @@ def carry_v003(path, report):
                        'shifted': sum(1 for m in moved if m['shift_m'])}
     report['ucx'] = sorted(k for k in keep if k.startswith('UCX_'))
     return keep
+
+
+def opening_finishes(body, v003_fbx, finish_of_udim, names, bands, report):
+    """Outward vertical faces of the lattice body (on the ring plane or up to 0.6 m behind it: walls, opening back
+    faces) take a NON-band finish of the v003 surfaces at their place (door leaves, the N screen, frames, grilles):
+    `posts_plan.majority_finish` over a 5 x 5 sample grid, rays from 2 mm in front of the face's ring plane inward up
+    to REACH_M; a band finish seen (any cassette/plinth, incl. the v003 7047 top) votes for the face's own band, so the
+    band scheme [D376] is never overwritten by v003 cassettes; nothing seen = the band finish stays."""
+    band_fins = {b['finish'] for b in bands} | {b['v003_finish'] for b in bands if b.get('v003_finish')}
+    src = import_fbx(v003_fbx, lambda o: o.name.startswith('SM_Kpp_1_Main') and 'Glass' not in o.name)
+    uvl = src.loops.layers.uv.active
+    src.faces.ensure_lookup_table()
+    fin = {}
+    keep = []
+    for f in src.faces:
+        if not pp.outside_ring(f.calc_center_median(), RECT, tol=0.002):
+            tile = face_tile([tuple(lp[uvl].uv) for lp in f.loops])
+            if tile not in finish_of_udim:
+                raise ValueError(f'v003 face {f.index} UDIM {tile} has no finish in the v003 tile scheme')
+            fin[len(keep)] = finish_of_udim[tile]
+            keep.append([v.index for v in f.verts])
+    src.verts.ensure_lookup_table()
+    tree = BVHTree.FromPolygons([tuple(v.co) for v in src.verts], keep)
+    src.free()
+    fl = body.faces.layers.int['finish']
+    x0, y0, x1, y1 = RECT
+    changed, seen = {}, 0
+    for f in body.faces:
+        n, c = f.normal, f.calc_center_median()
+        side = ('W' if n.x < -0.999 else 'E' if n.x > 0.999 else 'S' if n.y < -0.999 else 'N' if n.y > 0.999 else None)
+        if side is None:
+            continue
+        depth = {'W': c.x - x0, 'E': x1 - c.x, 'S': c.y - y0, 'N': y1 - c.y}[side]
+        if not -0.002 <= depth <= SEE_M or len(f.verts) != 4:
+            continue
+        seen += 1
+        a, b, cc, d = [v.co for v in f.verts]
+        hits = []
+        for i in range(5):
+            for j in range(5):
+                u, w = (i + 0.5) / 5, (j + 0.5) / 5
+                p = a.lerp(b, u).lerp(d.lerp(cc, u), w)
+                o = p + n * (depth + 0.002)
+                loc, _, idx, dist = tree.ray_cast(o, -n, REACH_M)
+                hits.append(fin[idx] if idx is not None else None)
+        band = names[f[fl]]
+        hits = [band if h in band_fins else h for h in hits]
+        new, share = pp.majority_finish(hits, band)
+        if new != band:
+            f[fl] = names.index(new)
+            key = f'{band} -> {new}'
+            changed[key] = changed.get(key, 0) + 1
+    report['opening_finish'] = {'faces_seen': seen, 'changed': changed, 'see_m': SEE_M, 'reach_m': REACH_M}
 
 
 def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
@@ -350,6 +420,9 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
     missing = sorted(set(pp.ring_corners(RECT)) - set(plans))
     mat = vpm_uv.main_material(bpy, spec, tex_dir)
     objs, qa = {}, {}
+    carry_rep = {}
+    if with_elements:
+        opening_finishes(body, v003_fbx, finish_of_udim, names, bands, carry_rep)
     nb, q, d = finish_uv(body, names, spec)
     objs['SM_Kpp_1_Main'] = to_object(nb, 'SM_Kpp_1_Main', mat)
     qa['SM_Kpp_1_Main'] = {'uv': q, 'density_px_m': d, 'faces_before_texel_cut': None}
@@ -361,9 +434,9 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
         qa[name] = {'uv': q, 'density_px_m': d}
         nb.free()
     carried = {}
-    carry_rep = {}
     if with_elements:
-        carried = carry_v003(v003_fbx, carry_rep)
+        dg = bpy.context.evaluated_depsgraph_get()
+        carried = carry_v003(v003_fbx, carry_rep, BVHTree.FromObject(objs['SM_Kpp_1_Main'], dg))
     os.makedirs(out)
     rep = {'inputs': {'body_fbx': os.path.abspath(body_fbx), 'body_sha256': sha(body_fbx),
                       'quad_v003_fbx': os.path.abspath(v003_fbx), 'quad_v003_sha256': sha(v003_fbx),
