@@ -1,0 +1,1241 @@
+{
+  "status": "complete",
+  "hypothesis": "confirmed",
+  "base_prior": "ad00bbb325f2a8f99f4e71c8697f365ce4410a0b",
+  "cap_s": 180,
+  "input_pins": {
+    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "C:/x/t_563a40f7/SHA256SUMS.txt": "867ee607a4f054c70ba05e1466fad639b4579756882d4f443b142a8df79e6488",
+    "C:/x/t_563a40f7/key/SHA256SUMS.txt": "723b11a951e4fa786e4725dc78613d8d3b797b4bc8dd3dc99c9286720491ac88",
+    "C:/x/t_fb3a0b98-r51/key/SHA256SUMS.txt": "2b060600347e4203b70bc23561963a5b2bacd96c8412416084345df816cb0eff",
+    "C:/x/autoresearch-body-form-r40/evidence/A-1.score.json": "8511857ee2e504d5b742cea31f4cddb9e439613c3e05a9ff58255600a5df4bc3",
+    "C:/x/autoresearch-body-form-r40/evidence/R-1.score.json": "8a15e932eb0640bb5e53cfde004e00a30c1075faaf5472271e41096e29a7917d",
+    "C:/x/t_1276e6bc-r53/run01/v007/rep1/vs_key.json": "4e25a03d859af3e9c04ef31b95c5da0ec91ead09cabb7ad040488414ad0f0d74",
+    "C:/x/t_1276e6bc-r53/run01/v002/rep1/vs_key.json": "e07b0d342b2e6b10bf1394112416254fb31652fa9cd3ed938ca8c7efb1809220",
+    "C:/x/t_1276e6bc-r53/run01/v003/rep1/vs_key.json": "3d6f27b841dba7c7d87dce12d51a2e32146da0f679dc9781ce064e69c766be91",
+    "C:/x/t_1276e6bc-r53/run01/v004/rep1/vs_key.json": "262f8e5da637bd2c0379f62fbd6cce652f2c5ea28ec24337a1090662701e4835",
+    "C:/x/t_1276e6bc-r53/run01/v005/rep1/vs_key.json": "b5626a34b8952ad410ea5bcfd799a92bf0b1b7d37d088da15e16345a224ce536",
+    "C:/x/t_1276e6bc-r53/run01/v006/rep1/vs_key.json": "6504b1767d0b8590ac14a25793e87057822e8bebc466457ea0ed3ef19d2adf57",
+    "C:/x/t_1276e6bc-r53/run01/G22_C_none/rep1/vs_key.json": "6637e1b765176fa3f93bca7e1c82ba579a94177929453a038a3b07ef7ad18918",
+    "C:/x/t_1276e6bc-r53/run01/G22_C_shift_wall/rep1/vs_key.json": "35b7a875facd25b1b7261c5de6e79af2abb86460863d2db23b26e472558660b3",
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v002/source_sections_and_openings.json": "f1865bdde9ca0b3553777cf6e1d71cd8aee915998d342ec789bfc4fd6cdf47a2",
+    "C:/x/t_fb3a0b98-r51/key/heldout-key-v001.json": "67a1ae5b88beec6eefc51d51ccdab496daa256709ec484793caee4097f6b6b14",
+    "C:/x/t_fb3a0b98-r51/key/heldout-sections-v001.json": "07ce9a5bff8a9e4e82bf8346daef191ca5e0ba626ccd900aaca290a29fb698b6",
+    "C:/x/t_563a40f7/detector/extract.py": "ee50925b8a45d6b55d4409cc21893d7932ae7b76d66c3a7c7c4b6b4bb51875af",
+    "C:/x/t_563a40f7/detector/score_heldout.py": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-B\\v007\\63B_Stage1_v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-B\\v002\\63B_Stage1_v002.fbx": "a57cb3fb66e628e6d1fe1272d16bc592604389b52be6cb4af6a4259b75746a9d",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-B\\v003\\63B_Stage1_v003.fbx": "83f3289c70a2bf8727cc5a0a8d85d12a8f6e90c803c3c37dfc904856588211aa",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-B\\v004\\63B_Stage1_v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-B\\v005\\63B_Stage1_v005.fbx": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-B\\v006\\63B_Stage1_v006.fbx": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+    "C:\\x\\t_563a40f7\\controls\\C_none.fbx": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+    "C:\\x\\t_563a40f7\\controls\\C_shift_wall.fbx": "b79ecca635ea49e2581f40d019c86ee2275bb6f1fb43565a54932ef4af418592",
+    "C:\\x\\autoresearch-body-form-r40\\evidence\\A.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+    "C:\\x\\autoresearch-body-form-r40\\evidence\\R.fbx": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519"
+  },
+  "scripts": {
+    "replay.py": "f1d1d5c5256a3d2d78ba6a74f5e7876f856058d8dbabc7a44d57112f0a0401f3",
+    "run53.py": "df1eb10e1b7581a70588ba58f48fb1000396bf9913dc74143c5e7a8cc4d01685",
+    "score53.py": "20bfd6927bb557ef75f398b435a02b1c1785309568f97ceda22004e16843bb84"
+  },
+  "timed_pair_s": 2.265,
+  "postflight": true,
+  "calibration": {
+    "v007": [
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v002": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v003": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v004": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v005": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v006": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "G22_C_none": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "G22_C_shift_wall": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "A": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "R": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      }
+    ]
+  },
+  "native_shift": [
+    {
+      "unmeasured": 0,
+      "changed": 0
+    },
+    {
+      "unmeasured": 0,
+      "changed": 0
+    },
+    {
+      "unmeasured": 0,
+      "changed": 0
+    }
+  ],
+  "paired_errors": [
+    [
+      3.608224830031759e-16,
+      4.782285678572862e-14
+    ],
+    [
+      3.608224830031759e-16,
+      4.782285678572862e-14
+    ],
+    [
+      3.608224830031759e-16,
+      4.782285678572862e-14
+    ]
+  ],
+  "primary_m": 4.782285678572862e-14,
+  "spread_m": 0.0,
+  "exercised": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "all_guards": true,
+  "wall_s": 35.485,
+  "raw_receipts": {
+    "run01": {
+      "path": "C:/x/t_15bdb840-r54/run01/receipt.json",
+      "sha256": "5b080a3e7c34cf0ce83cea8bbe3eb740313ffb5c57b9276107c007a2b04a161e"
+    },
+    "run02": {
+      "path": "C:/x/t_15bdb840-r54/run02/receipt.json",
+      "sha256": "5699ecc947d27181cc212faca7c6ddf793a1e3daa30ab05b6c96ed30a4b95c5d"
+    }
+  },
+  "measurement_head": "b78b2a48a85146b5b8591b5a360c9cd8a65f3d0d",
+  "opening_counts": {
+    "v007": [
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 2,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 2,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 2,
+        "key_total": 5
+      }
+    ],
+    "v002": [
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      }
+    ],
+    "v003": [
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      }
+    ],
+    "v004": [
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      }
+    ],
+    "v005": [
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      }
+    ],
+    "v006": [
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      },
+      {
+        "TP": 5,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 5
+      }
+    ],
+    "G22_C_none": [
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    ],
+    "G22_C_shift_wall": [
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    ],
+    "A": [
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    ],
+    "R": [
+      {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    ]
+  },
+  "frozen_group_A": {
+    "v007": [
+      {
+        "pass": 12,
+        "fail": 9,
+        "not_measured": 3,
+        "not_applicable": 0
+      },
+      {
+        "pass": 12,
+        "fail": 9,
+        "not_measured": 3,
+        "not_applicable": 0
+      },
+      {
+        "pass": 12,
+        "fail": 9,
+        "not_measured": 3,
+        "not_applicable": 0
+      }
+    ],
+    "v002": [
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      }
+    ],
+    "v003": [
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      }
+    ],
+    "v004": [
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      }
+    ],
+    "v005": [
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      }
+    ],
+    "v006": [
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      },
+      {
+        "pass": 14,
+        "fail": 5,
+        "not_measured": 5,
+        "not_applicable": 0
+      }
+    ],
+    "G22_C_none": [
+      {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      }
+    ],
+    "G22_C_shift_wall": [
+      {
+        "pass": 27,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      {
+        "pass": 27,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      {
+        "pass": 27,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      }
+    ],
+    "A": [
+      {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      }
+    ],
+    "R": [
+      {
+        "pass": 1,
+        "fail": 10,
+        "not_measured": 18,
+        "not_applicable": 0
+      },
+      {
+        "pass": 1,
+        "fail": 10,
+        "not_measured": 18,
+        "not_applicable": 0
+      },
+      {
+        "pass": 1,
+        "fail": 10,
+        "not_measured": 18,
+        "not_applicable": 0
+      }
+    ]
+  },
+  "max_clean_delta_m": {
+    "v007": 9.902112960341602e-05,
+    "v002": 2.7322296275666957e-05,
+    "v003": 2.7322296275666957e-05,
+    "v004": 2.7322296275666957e-05,
+    "v005": 2.7322296275666957e-05,
+    "v006": 6.828203938447075e-05,
+    "G22_C_none": 7.383576329864083e-05,
+    "G22_C_shift_wall": 7.383576329864083e-05,
+    "A": 7.383576329864083e-05,
+    "R": null
+  },
+  "injected": {
+    "v007": [
+      {
+        "face": {
+          "target": "opening:рт О_194b464",
+          "status": "measured",
+          "depth": 0.5999990211296038,
+          "original_depth": 0.4999990211296034,
+          "delta": 0.10000000000000037,
+          "error": 3.608224830031759e-16,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.10009219956216103
+        },
+        "rigid": {
+          "target": "opening:рт О_194b464",
+          "status": "measured",
+          "depth": 0.49999902112960365,
+          "original_depth": 0.4999990211296034,
+          "delta": 2.220446049250313e-16,
+          "error": 0.09999999999999978,
+          "old_delta": -0.10000000000000009,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.10009219956216103
+        },
+        "lower": {
+          "target": "opening:рт О_194b464",
+          "status": "noncoplanar",
+          "depth": null,
+          "original_depth": 0.4999990211296034,
+          "delta": null,
+          "error": null,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 0
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.05015213304013183
+        }
+      },
+      {
+        "face": {
+          "target": "opening:рт О_194b464",
+          "status": "measured",
+          "depth": 0.5999990211296038,
+          "original_depth": 0.4999990211296034,
+          "delta": 0.10000000000000037,
+          "error": 3.608224830031759e-16,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.10009219956216103
+        },
+        "rigid": {
+          "target": "opening:рт О_194b464",
+          "status": "measured",
+          "depth": 0.49999902112960365,
+          "original_depth": 0.4999990211296034,
+          "delta": 2.220446049250313e-16,
+          "error": 0.09999999999999978,
+          "old_delta": -0.10000000000000009,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.10009219956216103
+        },
+        "lower": {
+          "target": "opening:рт О_194b464",
+          "status": "noncoplanar",
+          "depth": null,
+          "original_depth": 0.4999990211296034,
+          "delta": null,
+          "error": null,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 0
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.05015213304013183
+        }
+      },
+      {
+        "face": {
+          "target": "opening:рт О_194b464",
+          "status": "measured",
+          "depth": 0.5999990211296038,
+          "original_depth": 0.4999990211296034,
+          "delta": 0.10000000000000037,
+          "error": 3.608224830031759e-16,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.10009219956216103
+        },
+        "rigid": {
+          "target": "opening:рт О_194b464",
+          "status": "measured",
+          "depth": 0.49999902112960365,
+          "original_depth": 0.4999990211296034,
+          "delta": 2.220446049250313e-16,
+          "error": 0.09999999999999978,
+          "old_delta": -0.10000000000000009,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.10009219956216103
+        },
+        "lower": {
+          "target": "opening:рт О_194b464",
+          "status": "noncoplanar",
+          "depth": null,
+          "original_depth": 0.4999990211296034,
+          "delta": null,
+          "error": null,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 0
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.05015213304013183
+        }
+      }
+    ],
+    "G22_C_none": [
+      {
+        "face": {
+          "target": "opening:4259581",
+          "status": "measured",
+          "depth": 0.25004037357289943,
+          "original_depth": 0.1500403735728516,
+          "delta": 0.10000000000004783,
+          "error": 4.782285678572862e-14,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.0999859629638231
+        },
+        "rigid": {
+          "target": "opening:4259581",
+          "status": "measured",
+          "depth": 0.15004037357285172,
+          "original_depth": 0.1500403735728516,
+          "delta": 1.1102230246251565e-16,
+          "error": 0.0999999999999999,
+          "old_delta": -0.10000000000004772,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.0999859629638231
+        },
+        "lower": {
+          "target": "opening:4259581",
+          "status": "noncoplanar",
+          "depth": null,
+          "original_depth": 0.1500403735728516,
+          "delta": null,
+          "error": null,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 0
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.049964145581483044
+        }
+      },
+      {
+        "face": {
+          "target": "opening:4259581",
+          "status": "measured",
+          "depth": 0.25004037357289943,
+          "original_depth": 0.1500403735728516,
+          "delta": 0.10000000000004783,
+          "error": 4.782285678572862e-14,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.0999859629638231
+        },
+        "rigid": {
+          "target": "opening:4259581",
+          "status": "measured",
+          "depth": 0.15004037357285172,
+          "original_depth": 0.1500403735728516,
+          "delta": 1.1102230246251565e-16,
+          "error": 0.0999999999999999,
+          "old_delta": -0.10000000000004772,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.0999859629638231
+        },
+        "lower": {
+          "target": "opening:4259581",
+          "status": "noncoplanar",
+          "depth": null,
+          "original_depth": 0.1500403735728516,
+          "delta": null,
+          "error": null,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 0
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.049964145581483044
+        }
+      },
+      {
+        "face": {
+          "target": "opening:4259581",
+          "status": "measured",
+          "depth": 0.25004037357289943,
+          "original_depth": 0.1500403735728516,
+          "delta": 0.10000000000004783,
+          "error": 4.782285678572862e-14,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.0999859629638231
+        },
+        "rigid": {
+          "target": "opening:4259581",
+          "status": "measured",
+          "depth": 0.15004037357285172,
+          "original_depth": 0.1500403735728516,
+          "delta": 1.1102230246251565e-16,
+          "error": 0.0999999999999999,
+          "old_delta": -0.10000000000004772,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 2
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.0999859629638231
+        },
+        "lower": {
+          "target": "opening:4259581",
+          "status": "noncoplanar",
+          "depth": null,
+          "original_depth": 0.1500403735728516,
+          "delta": null,
+          "error": null,
+          "old_delta": 0.0,
+          "changed_segments": {
+            "17.8": 2,
+            "18.2": 0
+          },
+          "off_target": [],
+          "flank_counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "line": 0.049964145581483044
+        }
+      }
+    ]
+  }
+}
