@@ -1,0 +1,618 @@
+{
+  "card": "t_82ef7ef0",
+  "base": "4288c54de328db7a5037b57707862319f7aa6ff0",
+  "loader": "b105d8bcf04c437b3f746a02bc4cf817b5f1265e",
+  "pins": {
+    "v007": [
+      "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+      "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516",
+      "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2"
+    ],
+    "v010": [
+      "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+      "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+      "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+    ]
+  },
+  "candidate_sha256": "5caad2ce664e3d9e482114edc2bdf92b9d9855734ea89da5805563b8b08bb4ce",
+  "python": "3.14.7",
+  "numpy": "2.5.3",
+  "status": "complete",
+  "error": null,
+  "verdict_H72": "confirmed",
+  "median_E72": {
+    "v007": 2.220998038374616,
+    "v010": 0.001622148972689974
+  },
+  "paired_differences": [
+    2.219375889401926,
+    2.219375889401926,
+    2.219375889401926
+  ],
+  "paired_spread": 0.0,
+  "wall_s": 8.3831274999975,
+  "rounds": [
+    {
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 195.316833,
+                "relative_error": 2.0719318493148,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": "not_exercised"
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 186.277667,
+                "relative_error": 2.220998038374616,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": "not_exercised"
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 300.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.5359659246574,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 15361678
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 300.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.6104990191873081,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 15361678
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 195.316833,
+                "relative_error": 2.0719318493148,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 16777216
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 186.277667,
+                "relative_error": 2.220998038374616,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 16777216
+              }
+            }
+          },
+          "E72": {
+            "clean": 2.220998038374616,
+            "half_pitch": 0.6104990191873081,
+            "brightness_plus8": 2.220998038374616
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 195.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.001622148972689974,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": "not_exercised"
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 186.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.0014906081038690289,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": "not_exercised"
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 98.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.49825113127858267,
+                "runs": [
+                  41,
+                  41,
+                  41
+                ],
+                "changed_px": 15020506
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 93.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.5007453040519345,
+                "runs": [
+                  43,
+                  43,
+                  43
+                ],
+                "changed_px": 15052324
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 195.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.001622148972689974,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 16777216
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 186.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.0014906081038690289,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 16777216
+              }
+            }
+          },
+          "E72": {
+            "clean": 0.001622148972689974,
+            "half_pitch": 0.5007453040519345,
+            "brightness_plus8": 0.001622148972689974
+          }
+        }
+      },
+      "wall_s": 2.80207760000485,
+      "witnesses_ok": true
+    },
+    {
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 195.316833,
+                "relative_error": 2.0719318493148,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": "not_exercised"
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 186.277667,
+                "relative_error": 2.220998038374616,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": "not_exercised"
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 300.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.5359659246574,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 15361678
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 300.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.6104990191873081,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 15361678
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 195.316833,
+                "relative_error": 2.0719318493148,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 16777216
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 186.277667,
+                "relative_error": 2.220998038374616,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 16777216
+              }
+            }
+          },
+          "E72": {
+            "clean": 2.220998038374616,
+            "half_pitch": 0.6104990191873081,
+            "brightness_plus8": 2.220998038374616
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 195.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.001622148972689974,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": "not_exercised"
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 186.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.0014906081038690289,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": "not_exercised"
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 98.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.49825113127858267,
+                "runs": [
+                  41,
+                  41,
+                  41
+                ],
+                "changed_px": 15020506
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 93.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.5007453040519345,
+                "runs": [
+                  43,
+                  43,
+                  43
+                ],
+                "changed_px": 15052324
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 195.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.001622148972689974,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 16777216
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 186.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.0014906081038690289,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 16777216
+              }
+            }
+          },
+          "E72": {
+            "clean": 0.001622148972689974,
+            "half_pitch": 0.5007453040519345,
+            "brightness_plus8": 0.001622148972689974
+          }
+        }
+      },
+      "wall_s": 2.78765939999721,
+      "witnesses_ok": true
+    },
+    {
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 195.316833,
+                "relative_error": 2.0719318493148,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": "not_exercised"
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 186.277667,
+                "relative_error": 2.220998038374616,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": "not_exercised"
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 300.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.5359659246574,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 15361678
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 300.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.6104990191873081,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 15361678
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 195.316833,
+                "relative_error": 2.0719318493148,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 16777216
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 600.0,
+                "expected_px": 186.277667,
+                "relative_error": 2.220998038374616,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 16777216
+              }
+            }
+          },
+          "E72": {
+            "clean": 2.220998038374616,
+            "half_pitch": 0.6104990191873081,
+            "brightness_plus8": 2.220998038374616
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 195.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.001622148972689974,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": "not_exercised"
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 186.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.0014906081038690289,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": "not_exercised"
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 98.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.49825113127858267,
+                "runs": [
+                  41,
+                  41,
+                  41
+                ],
+                "changed_px": 15020506
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 93.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.5007453040519345,
+                "runs": [
+                  43,
+                  43,
+                  43
+                ],
+                "changed_px": 15052324
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "udim": 1001,
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 195.0,
+                "expected_px": 195.316833,
+                "relative_error": 0.001622148972689974,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 16777216
+              },
+              "PanelVJ12_RAL5015": {
+                "udim": 1002,
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 186.0,
+                "expected_px": 186.277667,
+                "relative_error": 0.0014906081038690289,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 16777216
+              }
+            }
+          },
+          "E72": {
+            "clean": 0.001622148972689974,
+            "half_pitch": 0.5007453040519345,
+            "brightness_plus8": 0.001622148972689974
+          }
+        }
+      },
+      "wall_s": 2.793009400003939,
+      "witnesses_ok": true
+    }
+  ]
+}

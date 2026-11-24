@@ -1,0 +1,28 @@
+{
+  "card": "t_82ef7ef0",
+  "base": "4288c54de328db7a5037b57707862319f7aa6ff0",
+  "loader": "b105d8bcf04c437b3f746a02bc4cf817b5f1265e",
+  "pins": {
+    "v007": [
+      "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+      "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516",
+      "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2"
+    ],
+    "v010": [
+      "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+      "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+      "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+    ]
+  },
+  "candidate_sha256": "da92584dcc21c142b467eb4c4ef3c575b2452c4d2d34d554506cd647a181c453",
+  "python": "3.14.7",
+  "numpy": "2.5.3",
+  "status": "input_or_measurement_error",
+  "error": "'PanelVJ30_RAL5015'",
+  "verdict_H72": "inconclusive",
+  "median_E72": null,
+  "paired_differences": [],
+  "paired_spread": null,
+  "wall_s": 0.31840040000679437,
+  "rounds": []
+}
