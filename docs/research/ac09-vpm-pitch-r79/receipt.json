@@ -1,0 +1,770 @@
+{
+ "card": "t_724b61aa",
+ "candidate": "r78 median_of_row_medians",
+ "replay_sha256": "97c810d99caf43c4261aae64b0fd8eca99cfedb487ee01a2cbb621b1286f648e",
+ "revisions": {
+  "r78": "1358b8262ce2f93a15d3125443c308305d31b8cf",
+  "spec": "b735e90f",
+  "r72": "e9179247c4934756170f3db7c8e2e8fe36e05487",
+  "r71": "b105d8bcf04c437b3f746a02bc4cf817b5f1265e",
+  "joint": "4288c54de328db7a5037b57707862319f7aa6ff0"
+ },
+ "fixture": {
+  "path": "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\tec26-oks\\FINAL-2026-10-22\\AC09_SAKV\\VPM\\SM_Sakv_1.zip",
+  "sha256": "e41c89a150434145ff8576216b09f71af95564882afea81f0b4ed9d9569ae832",
+  "expected_tiles": [
+   1001,
+   1002,
+   1008,
+   1009
+  ]
+ },
+ "uv_lock_sha256": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
+ "versions": {
+  "python": "3.14.7",
+  "numpy": "2.5.3",
+  "pillow": "12.3.0"
+ },
+ "status": "complete",
+ "error": null,
+ "wall_total_s": 32.835,
+ "round_wall_s": [
+  12.08,
+  9.689,
+  11.064
+ ],
+ "E79_per_round": [
+  0.002143904735248503,
+  0.002143904735248503,
+  0.002143904735248503
+ ],
+ "E79_median": 0.002143904735248503,
+ "spread": 0.0,
+ "rows_identical_across_rounds": true,
+ "H79": "confirmed",
+ "rounds": [
+  {
+   "ac09": {
+    "rows": [
+     {
+      "udim": 1001,
+      "size": 4096,
+      "finish": "Panel1001_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 187.40145365397134,
+      "state": "measured",
+      "observed_px": 187.0,
+      "runs": [
+       21,
+       21,
+       21
+      ],
+      "E": 0.002142212059425219,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 94.0,
+       "runs": [
+        43,
+        43,
+        43
+       ],
+       "E": 0.4984030370779998,
+       "changed_px": 15114895,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 187.0,
+       "runs": [
+        21,
+        21,
+        21
+       ],
+       "E": 0.002142212059425219,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1002,
+      "size": 4096,
+      "finish": "Panel1002_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 204.43829623135653,
+      "state": "measured",
+      "observed_px": 204.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.002143904735248503,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 102.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.5010719523676243,
+       "changed_px": 15101262,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 204.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.002143904735248503,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1003,
+      "size": 256,
+      "finish": "Plinth_RAL7004",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1004,
+      "size": 256,
+      "finish": "Frame_RAL5015",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1005,
+      "size": 256,
+      "finish": "Door_RAL7004",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1006,
+      "size": 256,
+      "finish": "Frame_RAL9016",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1007,
+      "size": 256,
+      "finish": "Interior",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1008,
+      "size": 4096,
+      "finish": "Panel1008_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 199.8669249670846,
+      "state": "measured",
+      "observed_px": 200.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.0006658181834604537,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 100.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.4996670909082698,
+       "changed_px": 15167711,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 200.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.0006658181834604537,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1009,
+      "size": 4096,
+      "finish": "Panel1009_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 199.8669249670846,
+      "state": "measured",
+      "observed_px": 200.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.0006658181834604537,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 100.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.4996670909082698,
+       "changed_px": 15167711,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 200.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.0006658181834604537,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     }
+    ],
+    "E79": 0.002143904735248503,
+    "measured_udims": [
+     1001,
+     1002,
+     1008,
+     1009
+    ],
+    "flagged": []
+   },
+   "control": {
+    "tile": "AC08 v007 1001",
+    "observed_px": 600.0,
+    "runs": [
+     6,
+     6,
+     6
+    ],
+    "E": 2.220998038374616,
+    "parity_vs_r78": true,
+    "fires": true
+   },
+   "wall_s": 12.08
+  },
+  {
+   "ac09": {
+    "rows": [
+     {
+      "udim": 1001,
+      "size": 4096,
+      "finish": "Panel1001_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 187.40145365397134,
+      "state": "measured",
+      "observed_px": 187.0,
+      "runs": [
+       21,
+       21,
+       21
+      ],
+      "E": 0.002142212059425219,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 94.0,
+       "runs": [
+        43,
+        43,
+        43
+       ],
+       "E": 0.4984030370779998,
+       "changed_px": 15114895,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 187.0,
+       "runs": [
+        21,
+        21,
+        21
+       ],
+       "E": 0.002142212059425219,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1002,
+      "size": 4096,
+      "finish": "Panel1002_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 204.43829623135653,
+      "state": "measured",
+      "observed_px": 204.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.002143904735248503,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 102.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.5010719523676243,
+       "changed_px": 15101262,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 204.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.002143904735248503,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1003,
+      "size": 256,
+      "finish": "Plinth_RAL7004",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1004,
+      "size": 256,
+      "finish": "Frame_RAL5015",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1005,
+      "size": 256,
+      "finish": "Door_RAL7004",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1006,
+      "size": 256,
+      "finish": "Frame_RAL9016",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1007,
+      "size": 256,
+      "finish": "Interior",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1008,
+      "size": 4096,
+      "finish": "Panel1008_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 199.8669249670846,
+      "state": "measured",
+      "observed_px": 200.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.0006658181834604537,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 100.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.4996670909082698,
+       "changed_px": 15167711,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 200.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.0006658181834604537,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1009,
+      "size": 4096,
+      "finish": "Panel1009_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 199.8669249670846,
+      "state": "measured",
+      "observed_px": 200.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.0006658181834604537,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 100.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.4996670909082698,
+       "changed_px": 15167711,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 200.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.0006658181834604537,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     }
+    ],
+    "E79": 0.002143904735248503,
+    "measured_udims": [
+     1001,
+     1002,
+     1008,
+     1009
+    ],
+    "flagged": []
+   },
+   "control": {
+    "tile": "AC08 v007 1001",
+    "observed_px": 600.0,
+    "runs": [
+     6,
+     6,
+     6
+    ],
+    "E": 2.220998038374616,
+    "parity_vs_r78": true,
+    "fires": true
+   },
+   "wall_s": 9.689
+  },
+  {
+   "ac09": {
+    "rows": [
+     {
+      "udim": 1001,
+      "size": 4096,
+      "finish": "Panel1001_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 187.40145365397134,
+      "state": "measured",
+      "observed_px": 187.0,
+      "runs": [
+       21,
+       21,
+       21
+      ],
+      "E": 0.002142212059425219,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 94.0,
+       "runs": [
+        43,
+        43,
+        43
+       ],
+       "E": 0.4984030370779998,
+       "changed_px": 15114895,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 187.0,
+       "runs": [
+        21,
+        21,
+        21
+       ],
+       "E": 0.002142212059425219,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1002,
+      "size": 4096,
+      "finish": "Panel1002_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 204.43829623135653,
+      "state": "measured",
+      "observed_px": 204.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.002143904735248503,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 102.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.5010719523676243,
+       "changed_px": 15101262,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 204.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.002143904735248503,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1003,
+      "size": 256,
+      "finish": "Plinth_RAL7004",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1004,
+      "size": 256,
+      "finish": "Frame_RAL5015",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1005,
+      "size": 256,
+      "finish": "Door_RAL7004",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1006,
+      "size": 256,
+      "finish": "Frame_RAL9016",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1007,
+      "size": 256,
+      "finish": "Interior",
+      "state": "not_exercised"
+     },
+     {
+      "udim": 1008,
+      "size": 4096,
+      "finish": "Panel1008_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 199.8669249670846,
+      "state": "measured",
+      "observed_px": 200.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.0006658181834604537,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 100.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.4996670909082698,
+       "changed_px": 15167711,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 200.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.0006658181834604537,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     },
+     {
+      "udim": 1009,
+      "size": 4096,
+      "finish": "Panel1009_RAL5015",
+      "modal_rgb": [
+       34,
+       113,
+       179
+      ],
+      "expected_px": 199.8669249670846,
+      "state": "measured",
+      "observed_px": 200.0,
+      "runs": [
+       20,
+       20,
+       20
+      ],
+      "E": 0.0006658181834604537,
+      "flagged": false,
+      "half_pitch": {
+       "state": "exercised",
+       "observed_px": 100.0,
+       "runs": [
+        41,
+        41,
+        41
+       ],
+       "E": 0.4996670909082698,
+       "changed_px": 15167711,
+       "in_bound": true,
+       "bound_applies": true
+      },
+      "brightness_plus8": {
+       "state": "exercised",
+       "observed_px": 200.0,
+       "runs": [
+        20,
+        20,
+        20
+       ],
+       "E": 0.0006658181834604537,
+       "changed_px": 16777216,
+       "in_bound": true,
+       "bound_applies": true
+      }
+     }
+    ],
+    "E79": 0.002143904735248503,
+    "measured_udims": [
+     1001,
+     1002,
+     1008,
+     1009
+    ],
+    "flagged": []
+   },
+   "control": {
+    "tile": "AC08 v007 1001",
+    "observed_px": 600.0,
+    "runs": [
+     6,
+     6,
+     6
+    ],
+    "E": 2.220998038374616,
+    "parity_vs_r78": true,
+    "fires": true
+   },
+   "wall_s": 11.064
+  }
+ ]
+}

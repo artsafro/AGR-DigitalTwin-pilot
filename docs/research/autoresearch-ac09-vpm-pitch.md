@@ -71,4 +71,32 @@ touching other cards' files; production code changes (OBSERVE only).
 
 ## Round log
 
-(filled after the run, see below)
+**R1 (only run, no amendment)** — `uv run --frozen python docs/research/ac09-vpm-pitch-r79/replay.py tmp/r79-run1`,
+replay at the commit that adds it, receipt `docs/research/ac09-vpm-pitch-r79/receipt.json`.
+
+**H79 = confirmed (OBSERVE, held-out AC09 only).** Status complete, 3 fresh rounds 12.08 / 9.689 / 11.064 s,
+wall 32.835 s; rows identical across rounds; E79 median 0.002144, spread 0.
+
+| UDIM | finish | expected px | observed px | runs per row | E | half_pitch E | +8 RGB E |
+|---|---|---|---|---|---|---|---|
+| 1001 | Panel1001_RAL5015 | 187.401 | 187.0 | 21/21/21 | 0.002142 | 0.4984 | 0.002142 |
+| 1002 | Panel1002_RAL5015 | 204.438 | 204.0 | 20/20/20 | 0.002144 | 0.5011 | 0.002144 |
+| 1008 | Panel1008_RAL5015 | 199.867 | 200.0 | 20/20/20 | 0.000666 | 0.4997 | 0.000666 |
+| 1009 | Panel1009_RAL5015 | 199.867 | 200.0 | 20/20/20 | 0.000666 | 0.4997 | 0.000666 |
+
+- Modal RGB of all four tiles = spec `rgb` [34, 113, 179]; bound by UDIM.
+- Witnesses exercised on every measured tile (half_pitch ~15.1 M changed px, +8 RGB 16 777 216 px), all in bound.
+- Positive control AC08 v007 1001: 600 px, E 2.220998038374616 = #78 receipt (parity true), fires each round.
+- **Not measured / not_exercised:** 1003-1007 (256 px solid placeholders, no pitch requirement); the AC09 NPM;
+  KPP1 v004, Vatutino, Staropetrovskiy.
+
+Caveats (why this is not a gate):
+- AC09 was built with the accepted AC08 v010 joint recipe (`recipe_adapter.py`), so the generator is shared
+  with the #72/#78 accepted control; the object, pitches (187-204 px) and tiles are new.
+- 1008 and 1009 are byte-identical PNGs (same size and score): 3 distinct textures, not 4.
+- Label is "delivered final, no rejection on record", not a dated Artem acceptance.
+- Specificity was checked only; no new rejected example. Precision on a rejected pitch outside AC08 is not measured.
+
+Would change (not applied): nothing in production. If a gate is wanted, a separate issue for a
+`validate` texture-spec pitch check (#78 candidate, bound 0.03) is now supported by 3 objects
+(AC08 v007/v010, KPP1 _002, AC09), still with only one rejected example.
