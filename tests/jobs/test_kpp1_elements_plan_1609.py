@@ -1,7 +1,9 @@
 """#1609 KPP1 package step: plan of the non-post outside elements (frames, portals, annex) and the glass depth cap.
 
 Artem 2026-11-24: posts accepted; the package rebuilds window framings and portals by the same voxel/lattice method
-as separate elements [D336]. Kernel: jobs/KPP1/lattice-1609/posts_plan.py (stdlib).
+as separate elements [D336]; the top belt stays blue (v003 band finishes never override the band scheme [D376]);
+VPM s_podz stays empty, a customer-data exception of the package, not a defect [D377].
+Kernel: jobs/KPP1/lattice-1609/posts_plan.py (stdlib).
 """
 import math
 import random

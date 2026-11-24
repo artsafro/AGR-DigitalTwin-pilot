@@ -17,9 +17,19 @@ are rebuilt as separate voxel elements [D336] (never welded into the body). Blen
    Finish per post quad = the UDIM tile of the coplanar v003 post face nearest to its centre, read with the tile
    scheme of the v003 UVs (V003_TEXTURES = the R1 set textures.json, 1005 = Frame_RAL9016; NOT materials.json, whose
    1005 is the ladder cage); an unmapped tile or a finish missing from vpm_textures.json is an error.
-3. Objects: SM_Kpp_1_Main (body) and SM_Kpp_1_Main_Post_<corner> (separate elements, own vertices); one material
+3. Objects: SM_Kpp_1_Main (body; top belt 7.1-8.65 blue Cassette_RAL5015_Top [D376]) and SM_Kpp_1_Main_Post_<corner>
+   (separate elements, own vertices); one material
    M_Kpp_1_Main_1 (UDIM Diffuse/ERM/Normal from TEX_DIR, vpm_uv.main_material). Writes master-v004-lattice.blend,
    SM_Kpp_1.v004-lattice.fbx and assemble.json (counts, tiles, overflow, density, posts, other components).
+4. PACKAGE mode (6th argument `package`, Artem 2026-11-24 «ок» on the posts): every other outside component of
+   quad-v003 becomes its own element SM_Kpp_1_Main_<Frame|Portal|Annex>_<side><NN> (`posts_plan.element_plan`):
+   axis-aligned solids are voxel-rebuilt on their own planes (3 mm snap, no sliver quads), slanted portals and
+   open/flat strips keep their v003 quads, clamped 6 mm in front of the body (`posts_plan.clamp_outside`, no piercing);
+   the v003 roof inside the ring above ROOF_Z is the roof element (the lattice body is an open facade tube); body
+   faces take the non-band v003 finish at their place (doors, frames, membrane; `posts_plan.majority_finish`);
+   glass and UCX are carried, glass moved in front of the body (`posts_plan.glass_target`). Also writes
+   master-v004-delivery.blend: the elements joined into SM_Kpp_1_Main as loose parts (no vertex merged) for
+   export_npm / export_vpm, which take exactly one *_Main.
 """
 import hashlib
 import json

@@ -93,3 +93,21 @@ uv run python jobs/KPP1/scripts/make_textures.py T
 uv run python jobs/KPP1/lattice-1609/sheet_v004.py O/r2 OUT.png corners|ground TITLE
 ```
 Tests: `tests/jobs/test_kpp1_posts_plan_1609.py`.
+
+## Step 4: package (Artem 2026-11-24: posts accepted, top belt blue [D376])
+
+`assemble_v004.py ... package` builds the package master from the same inputs (b19, `C:/x/ev_1609/s9/b19`):
+- frames and the E annex: voxel-rebuilt on their own planes (`posts_plan.element_plan`, outward ray only, 3 mm snap);
+- slanted portals, open/flat strips and the roof (the lattice body is an open facade tube, no roof): their v003 quads
+  as separate elements, portals clamped 6 mm in front of the body (`posts_plan.clamp_outside`, no piercing);
+- body faces take the non-band v003 finish at their place (doors, frames, membrane; band finishes never override the
+  band scheme [D376]); glass moved in front of the body surface (`posts_plan.glass_target`, 0 m² hidden vs 46 m²);
+- `master-v004-delivery.blend`: elements joined into SM_Kpp_1_Main as loose parts (export_npm takes one *_Main).
+
+`run_package_v004.py PACKET RUN GROUND_NPM_FBX THUMBNAIL GROUND_MASTER` runs derive (`agr vpm-to-npm`, spec
+`spec_v004.json`), readback, xView (whole and element-wise [D336]), the NPM package (OKS + the accepted #1416 Ground
+copy byte-for-byte), the build manifest with masters per role [D328]/[D333] (`record_ground.py` re-records the #1416
+Ground derivation), and `agr validate` (V013 from the fresh readback bounds). VPM `s_podz` stays empty: customer data,
+not a defect [D377]. Modelling split [D336]: plinth=body (finish band); inset=posts, frames, portals, annex, roof,
+glass; texture=cassette panels (UDIM); reason=Artem 2026-11-16/21/24.
+Tests: `tests/jobs/test_kpp1_elements_plan_1609.py`.
