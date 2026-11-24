@@ -1,0 +1,483 @@
+{
+  "hypothesis": "refuted",
+  "paired_differences_mm": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "paired_median_mm": 0.0,
+  "paired_range_mm": 0.0,
+  "median_E74_mm": {
+    "v007": 0.0,
+    "v010": 0.0
+  },
+  "status": "complete",
+  "error": null,
+  "rounds": [
+    {
+      "errors_mm": {
+        "v007": 0.0,
+        "v010": 0.0
+      },
+      "controls_ok": true,
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "bindings": {
+            "PanelVJ30_RAL5015": {
+              "actual_finish": "PanelVJ_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            },
+            "PanelVJ12_RAL5015": {
+              "actual_finish": "PanelVJ_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            }
+          },
+          "distinct_tiles": {
+            "PanelVJ_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 8491
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 12288
+              }
+            }
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "bindings": {
+            "PanelVJ30_RAL5015": {
+              "actual_finish": "PanelVJ30_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            },
+            "PanelVJ12_RAL5015": {
+              "actual_finish": "PanelVJ12_RAL5015",
+              "udim": 1002,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            }
+          },
+          "distinct_tiles": {
+            "PanelVJ30_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 8218
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 12288
+              }
+            },
+            "PanelVJ12_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 8199
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 12288
+              }
+            }
+          }
+        }
+      },
+      "wall_s": 0.8814641999924788
+    },
+    {
+      "errors_mm": {
+        "v007": 0.0,
+        "v010": 0.0
+      },
+      "controls_ok": true,
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "bindings": {
+            "PanelVJ30_RAL5015": {
+              "actual_finish": "PanelVJ_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            },
+            "PanelVJ12_RAL5015": {
+              "actual_finish": "PanelVJ_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            }
+          },
+          "distinct_tiles": {
+            "PanelVJ_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 8491
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 12288
+              }
+            }
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "bindings": {
+            "PanelVJ30_RAL5015": {
+              "actual_finish": "PanelVJ30_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            },
+            "PanelVJ12_RAL5015": {
+              "actual_finish": "PanelVJ12_RAL5015",
+              "udim": 1002,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            }
+          },
+          "distinct_tiles": {
+            "PanelVJ30_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 8218
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 12288
+              }
+            },
+            "PanelVJ12_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 8199
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 12288
+              }
+            }
+          }
+        }
+      },
+      "wall_s": 1.1560639000090305
+    },
+    {
+      "errors_mm": {
+        "v007": 0.0,
+        "v010": 0.0
+      },
+      "controls_ok": true,
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "bindings": {
+            "PanelVJ30_RAL5015": {
+              "actual_finish": "PanelVJ_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            },
+            "PanelVJ12_RAL5015": {
+              "actual_finish": "PanelVJ_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            }
+          },
+          "distinct_tiles": {
+            "PanelVJ_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 8491
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 12288
+              }
+            }
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "bindings": {
+            "PanelVJ30_RAL5015": {
+              "actual_finish": "PanelVJ30_RAL5015",
+              "udim": 1001,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            },
+            "PanelVJ12_RAL5015": {
+              "actual_finish": "PanelVJ12_RAL5015",
+              "udim": 1002,
+              "nominal_mm": 8,
+              "mm_per_px": 1.0,
+              "error_mm": 0.0
+            }
+          },
+          "distinct_tiles": {
+            "PanelVJ30_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 8218
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 12288
+              }
+            },
+            "PanelVJ12_RAL5015": {
+              "clean": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ]
+              },
+              "widen": {
+                "width_mm": 16.0,
+                "width_px": 16.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 8199
+              },
+              "brightness": {
+                "width_mm": 8.0,
+                "width_px": 8.0,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 12288
+              }
+            }
+          }
+        }
+      },
+      "wall_s": 0.878985899995314
+    }
+  ],
+  "wall_s": 3.1399393000028795,
+  "budget_s": 60.0,
+  "R72": "e9179247c4934756170f3db7c8e2e8fe36e05487",
+  "pins": {
+    "v007": [
+      "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+      "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516",
+      "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2"
+    ],
+    "v010": [
+      "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+      "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+      "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+    ]
+  },
+  "python": "3.14.7",
+  "numpy": "2.5.3",
+  "pillow": "12.3.0",
+  "candidate_sha256": "05bc6a1436cddb5a94394530ec87377e21bc1816995290747df52552b8127648",
+  "not_measured": [
+    "NPM",
+    "padding",
+    "density",
+    "UV binding",
+    "renders",
+    "KPP1 v004",
+    "Vatutino",
+    "Staropetrovskiy",
+    "other tiles"
+  ]
+}
