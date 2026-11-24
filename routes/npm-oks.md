@@ -47,6 +47,7 @@ No dependency branch or unmerged recipe file is consumed.
 
 | Step / gate | Proposed interface | Reuse today / boundary | Evidence required |
 |---|---|---|---|
+| 0. Scene prepare [D390] | `agr scene prepare SRC.fbx --out NEW_DIR` | агент предлагает раскладку -> Артём правит в Max и принимает -> агент работает по принятым слоям; later stages read only their accepted layer; Revit FBX only (#1867) | `census.md`, `sheet.png`, `split_PROPOSED.fbx`, 00_РЕШИТЬ_ЧЕЛОВЕКУ listed; Artem's accepted split file |
 | 1. Sources / inputs | `agr inspect --manifest JOB.json`; source inventory remains separate | Source inventory; `tools/research/pdf_corpus/pdf_corpus_inventory.py` if applicable; job source census, not automatic interpretation | Original/copy hashes, units, revision, dimensions, source authority; no writes to originals |
 | 2. Parts / user Gate 1 | Same inspect report into confirmed PartsList, no invented auto-approval | `dt_ai.core.models.PartsList`, job contract and checklist | User confirmation of exact parts hash before construction |
 | 3. BODY / operations | Geometry remains the existing approved source/engine route; no universal `agr build` promised | `src/dt_ai/spec`, `src/dt_ai/parts`, `src/dt_ai/ops` for supported cases; existing job build only for its validated object | Separate body/openings/decor per the OKS modelling split [D336] ([list](../docs/agents/SKELETONS.md#oks-modelling-split-d336)), dimensions and source overlays; before/after invariants; deviation when unsupported |

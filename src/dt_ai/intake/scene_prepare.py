@@ -84,13 +84,14 @@ def load_rules(path) -> dict:
         if not la.get("ru") or not la.get("max_layer") or len(la.get("color", [])) != 3:
             raise ScenePrepareError(f"layer {la['id']}: needs ru, max_layer and an RGB color")
     env = data.get("envelope") or {}
-    for k in ("families", "close_m", "face_m", "z_margin_m", "min_area_m2"):
+    for k in ("families", "slabs", "wall_top", "wall_top_m", "close_m", "face_m", "z_margin_m", "min_area_m2"):
         if k not in env:
             raise ScenePrepareError(f"envelope.{k} missing")
-    for k in ("close_m", "face_m", "z_margin_m", "min_area_m2"):
+    for k in ("wall_top_m", "close_m", "face_m", "z_margin_m", "min_area_m2"):
         if not (isinstance(env[k], (int, float)) and math.isfinite(env[k]) and env[k] >= 0):
             raise ScenePrepareError(f"envelope.{k} must be a finite number >= 0")
     env["_re"] = [re.compile(p) for p in env["families"]]
+    env["_slab_re"] = [re.compile(p) for p in env["slabs"]]
     for i, r in enumerate(data.get("rules", [])):
         _compile(r, "family", f"rules[{i}]", ids)
     for i, r in enumerate(data.get("material_rules", [])):
@@ -135,24 +136,29 @@ def _envelope(objs, env):
     return unary_union(polys)
 
 
-def _local_top(c, objs_env, tree, default):
+def _slabs_at(c, slabs, tree):
     from shapely.geometry import Point
     pt = Point(c)
-    tops = [objs_env[i]["z"][1] for i in tree.query(pt) if objs_env[i]["_poly"].covers(pt)]
-    return max(tops) if tops else default
+    return [slabs[i] for i in tree.query(pt) if slabs[i]["_poly"].covers(pt)]
 
 
-def _place(o, c, foot, env, top, base):
+def _place(o, c, foot, env, slabs_here, base, top):
+    """inside / face / roof / out of one object (centroid c) vs the envelope footprint.
+
+    face = centroid strictly < face_m from the footprint boundary and its centre not above the local envelope top
+    (+ z_margin); roof = near the footprint, standing on an above-ground slab/roof covering c (its top <= z0 +
+    z_margin) with no slab/roof covering c above the object's centre."""
     from shapely.geometry import Point
     z0, z1 = o["z"]
     zc = (z0 + z1) / 2.0
     pt = Point(c)
     d = foot.boundary.distance(pt)
     near = foot.covers(pt) or d < env["face_m"]
-    if near and z0 >= top - env["z_margin_m"] and zc > top + 0.05:
-        return "roof"
     if d < env["face_m"] and base - env["z_margin_m"] <= zc <= top + env["z_margin_m"]:
         return "face"
+    if near and any(base + env["z_margin_m"] < s["z"][1] <= z0 + env["z_margin_m"] for s in slabs_here) \
+            and not any(s["z"][0] >= zc for s in slabs_here):
+        return "roof"
     if foot.covers(pt):
         return "inside"
     return "out"
@@ -186,17 +192,24 @@ def classify(dump: dict, rules: dict) -> dict:
     env = rules["envelope"]
     foot = _envelope(geo, env)
     env_objs = [o for o in geo if any(r.search(o["family"]) for r in env["_re"])]
-    for o in env_objs:
+    slabs = [o for o in geo if any(r.search(o["family"]) for r in env["_slab_re"])]
+    for o in env_objs + slabs:
         o["_poly"] = MultiPoint([tuple(p) for p in o["hull"]]).convex_hull
-    tree = STRtree([o["_poly"] for o in env_objs])
+    tree = STRtree([o["_poly"] for o in slabs])
+    walls = [o for o in env_objs if re.search(env["wall_top"], o["family"])]
+    wtree = STRtree([o["_poly"] for o in walls]) if walls else None
     inside_env = [o for o in env_objs if foot.buffer(env["face_m"]).covers(o["_poly"].centroid)]
     base = min(o["z"][0] for o in inside_env) if inside_env else 0.0
     gtop = max(o["z"][1] for o in inside_env) if inside_env else 0.0
     out_objs, unclassified = [], []
     for o in geo:
         c = (sum(x for x, _ in o["hull"]) / len(o["hull"]), sum(y for _, y in o["hull"]) / len(o["hull"]))
-        top = _local_top(c, env_objs, tree, gtop)
-        place = _place(o, c, foot, env, top, base)
+        top = gtop
+        if wtree is not None:
+            from shapely.geometry import Point
+            near_w = [walls[i]["z"][1] for i in wtree.query(Point(c).buffer(env["wall_top_m"]))]
+            top = max(near_w) if near_w else gtop
+        place = _place(o, c, foot, env, _slabs_at(c, slabs, tree), base, top)
         layer, rule_ref, conf, why = "UNCLASSIFIED", None, "none", "no family or material rule matched"
         for i, r in enumerate(rules.get("rules", [])):
             if r["_re"].search(o["family"]):
