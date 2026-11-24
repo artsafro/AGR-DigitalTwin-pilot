@@ -1,0 +1,583 @@
+{
+ "card": "t_82c59435 standing #47",
+ "contract_commit": "169f08726ecb0619fe8304e36b8739a9adb3c9bc",
+ "base": "49997a1d4f347c1b01bf6d0c4b2c348ff8796b0c",
+ "hypothesis": "H47: VLM form judges do not discriminate form-equivalent mesh-only copies of accepted A (FD47=0)",
+ "result": {
+  "formal": "inconclusive",
+  "why": "core cells (N_tri, N_sub, N_jit_0.005) FD=0/12 meet the confirm clause, but the frozen confirm clause requires FD47=0 over all exercised cells and the stress cell N_jit_0.020 gives 2 (both judges prefer A order-consistently); the refute clause (core FD>=1) is not met",
+  "FD47": 2,
+  "FD47_core": 0,
+  "FD47_stress_jit020": 2
+ },
+ "inputs_sha256": {
+  "A.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200"
+ },
+ "parity": {
+  "A_composite_vs_r45": "byte-identical",
+  "proxy_A_vs_r40": [
+   83.693,
+   83.693
+  ]
+ },
+ "composites_sha256": {
+  "A": "8f46976ab0c749f0817cf11dd07d3cbd106fb9b05693f8c68a6e08a9aaa3ba53",
+  "N_jit_0.005": "d6ecda0c149f8050ad040eff120530716e0a483ecf5d2b315bcbaf8e5e314281",
+  "N_jit_0.020": "92781482f26b77c2b6ce04a2835f01f8fa228c34f8f05fa12c2d8e5414970d79",
+  "N_sub": "8f48f1807043152e46c425f9c5ccffca208849672abb0c371fc814ddb228eea9",
+  "N_tri": "ab9540a4f5935540027ff1ab029618d8c290c9f14a83a4730ee297095cf6d664"
+ },
+ "pixel_diff_vs_A_gray": {
+  "N_tri": {
+   "max": 21,
+   "mean": 0.0001,
+   "px_gt16": 1
+  },
+  "N_sub": {
+   "max": 15,
+   "mean": 0.0002,
+   "px_gt16": 0
+  },
+  "N_jit_0.005": {
+   "max": 51,
+   "mean": 0.0405,
+   "px_gt16": 1300
+  },
+  "N_jit_0.020": {
+   "max": 131,
+   "mean": 0.1575,
+   "px_gt16": 7048
+  }
+ },
+ "max_vertex_disp_m": {
+  "N_jit_0.005": 0.00824,
+  "N_jit_0.020": 0.03294
+ },
+ "proxy_mesh_quality_score": {
+  "A": 83.693,
+  "N_tri": 49.712,
+  "N_sub": 84.772,
+  "N_jit_0.005": 83.693,
+  "N_jit_0.020": 83.601
+ },
+ "proxy_obj_sha256": {
+  "A": "5be945732d14d3c848d4932dcbac953f671df56dc97f7ec34d3847a552b1f994",
+  "N_jit_0.005": "ff4bbbb8bc64726819659b998b067de891208a3125aa08571a9f1275baf5db83",
+  "N_jit_0.020": "18611223f2a5cbbfe221672e9438b683c5eca7a9d953662e393df16387d8607f",
+  "N_sub": "f96e4b227bc87da0af1bf9030cbc8410d31cf0498c6b286929535d47f7608799",
+  "N_tri": "abf972affe9b36748824f8fff76a021d44d8d641e765c95924c07ea50d1f67dd"
+ },
+ "judges": {
+  "claude": {
+   "rubric_majority": {
+    "A": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Unsure",
+     "n": 3
+    },
+    "N_tri": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Unsure",
+     "n": 3
+    },
+    "N_sub": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Yes",
+     "n": 3
+    },
+    "N_jit_0.005": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Unsure",
+     "n": 3
+    },
+    "N_jit_0.020": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Yes",
+     "n": 3
+    }
+   },
+   "rubric_raw": {
+    "A": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Yes",
+      "Unsure",
+      "Unsure"
+     ]
+    },
+    "N_tri": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Unsure",
+      "Unsure",
+      "Yes"
+     ]
+    },
+    "N_sub": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ]
+    },
+    "N_jit_0.005": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Unsure",
+      "Yes",
+      "Unsure"
+     ]
+    },
+    "N_jit_0.020": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ]
+    }
+   },
+   "flips": {
+    "N_tri": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "Unsure"
+     ]
+    },
+    "N_sub": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "Yes"
+     ]
+    },
+    "N_jit_0.005": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "Unsure"
+     ]
+    },
+    "N_jit_0.020": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "Yes"
+     ]
+    }
+   },
+   "pairs": {
+    "N_tri": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_sub": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.005": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.020": {
+     "AB": "X",
+     "BA": "Y",
+     "picked": "A"
+    },
+    "AA": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    }
+   }
+  },
+  "codex": {
+   "rubric_majority": {
+    "A": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Unsure",
+     "n": 3
+    },
+    "N_tri": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Unsure",
+     "n": 3
+    },
+    "N_sub": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Unsure",
+     "n": 3
+    },
+    "N_jit_0.005": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "No",
+     "n": 3
+    },
+    "N_jit_0.020": {
+     "Q1": "Yes",
+     "Q2": "Yes",
+     "Q3": "Yes",
+     "Q5": "Yes",
+     "Q4": "Unsure",
+     "n": 3
+    }
+   },
+   "rubric_raw": {
+    "A": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Unsure",
+      "Unsure",
+      "Unsure"
+     ]
+    },
+    "N_tri": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "No",
+      "Unsure",
+      "Unsure"
+     ]
+    },
+    "N_sub": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Unsure",
+      "Unsure",
+      "No"
+     ]
+    },
+    "N_jit_0.005": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "No",
+      "No",
+      "Unsure"
+     ]
+    },
+    "N_jit_0.020": {
+     "Q1": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q2": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q3": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q5": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "Q4": [
+      "Unsure",
+      "Unsure",
+      "Unsure"
+     ]
+    }
+   },
+   "flips": {
+    "N_tri": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "Unsure"
+     ]
+    },
+    "N_sub": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "Unsure"
+     ]
+    },
+    "N_jit_0.005": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "No"
+     ]
+    },
+    "N_jit_0.020": {
+     "flips": [],
+     "not_measured": [],
+     "q4_noise": [
+      "Unsure",
+      "Unsure"
+     ]
+    }
+   },
+   "pairs": {
+    "N_tri": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_sub": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.005": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.020": {
+     "AB": "X",
+     "BA": "Y",
+     "picked": "A"
+    },
+    "AA": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    }
+   }
+  }
+ },
+ "calls": {
+  "n": 50,
+  "failed": [],
+  "sum_wall_s": 689.9,
+  "max_wall_s": 32.2,
+  "rubric_run_wall_s": 106.1,
+  "pair_run_wall_s": 71.7,
+  "status": "complete",
+  "budget_stop": false
+ },
+ "not_measured": [
+  "rejected-derived fixtures in this round (sensitivity witnesses are #41/#45 on the same rig)",
+  "scene detector C1 (#43) on jitter copies",
+  "second accepted fragment",
+  "KPP1 NW / Sokolniki (no exact accepted/rejected body pair)"
+ ],
+ "evidence": {
+  "path": "G:/Мой диск/AGR-evidence/standing47-body-form-specificity/",
+  "SHA256SUMS.txt": "5439f9800b6f87f421b95ed85e4a7068350c88312bf266f0eb773b8ca575feaf"
+ },
+ "replay": "cd C:/x/autoresearch-body-form-r47 (or a fresh dir with the 5 scripts) && python mk_rig47.py && bash render47.sh && python mk_judge47.py && sha256sum -c FROZEN-before-judge.sha256 && python judge47.py rubric && python judge47.py pair && python aggregate47.py; needs C:/x/autoresearch-body-form-r45, C:/x/autoresearch-body-form-r41, C:/x/t_563a40f7 key; replay limited to this PC",
+ "judge_judge_pair_agreement": {
+  "pairs": 5,
+  "identical": 5,
+  "cohen_kappa": 1.0,
+  "note": "categories Unsure x4, A x1; n=5, small"
+ }
+}

@@ -70,3 +70,51 @@ Forbidden: changing prompts/rubrics/models/seeds after the first call, dropping 
 bodies/deliveries/other cards' files, 3ds Max, weakening validators, deselecting tests. Evidence (PNGs, calls) goes to
 `G:/Мой диск/AGR-evidence/standing47-body-form-specificity/` + `SHA256SUMS.txt`; Git keeps text, hashes and paths only.
 Replay limited to this PC (private key + A copy).
+
+---
+
+## Round log and result (appended after measuring; the contract above is unchanged since `169f0872`)
+
+**Итог (по-русски).** Гипотеза H47 формально **inconclusive**. На ядре (триангуляция, подразбиение, шум вершин
+5 мм) оба судьи не различили копии той же формы: **0 ложных различений из 12** — рубрики Q1/Q2/Q3/Q5 не сменились
+ни разу, в парах оба судьи в обоих порядках отвечали «Unsure», как и на контроле «A против A». Это условие
+подтверждения выполнено. Но на стресс-ячейке (шум до 20 мм по оси, наибольший сдвиг 33 мм — внутри допуска 0,05 м)
+**оба судьи в обоих порядках выбрали A** (2 из 2). Замороженный текст требует FD47 = 0 по всем ячейкам для
+подтверждения, а опровергает только ядро — поэтому ни то, ни другое. Вывод для практики: рубрики (Q1–Q3, Q5)
+устойчивы к сетке и шуму; парное сравнение ранжирует «ближе к идеалу», а не «в допуске / вне допуска», поэтому
+победа A в #45 на фаске 0,05 м (в допуске) — не обнаружение дефекта. Парное сравнение годится для ранжирования,
+не для гейта. Mesh-proxy ведёт себя наоборот: на той же форме после триангуляции падает 83,693 → 49,712
+(−34 балла), судьи не меняются. Q4 (углы) снова шумит (Claude «Yes» на N_sub/N_jit_0.020, Codex «No» на
+N_jit_0.005 при «Unsure» на A). Ничего не внедрено, тела не трогались, PR — только записка.
+
+| Variant | Gray pixel diff vs A: max / mean / px>16 | Proxy score | Rubric flips (Q1,Q2,Q3,Q5) claude / codex | Pair AB / BA claude | Pair AB / BA codex |
+|---|---|---:|---|---|---|
+| A (parity: byte-identical to #45; proxy = #40 83.693) | 0 | 83.693 | — (Yes ×4 both) | — | — |
+| AA control | 0 | — | — | Unsure / Unsure | Unsure / Unsure |
+| N_tri | 21 / 0.0001 / 1 | 49.712 | 0 / 0 | Unsure / Unsure | Unsure / Unsure |
+| N_sub | 15 / 0.0002 / 0 | 84.772 | 0 / 0 | Unsure / Unsure | Unsure / Unsure |
+| N_jit_0.005 (max disp 8.2 mm) | 51 / 0.0405 / 1300 | 83.693 | 0 / 0 | Unsure / Unsure | Unsure / Unsure |
+| N_jit_0.020 (max disp 32.9 mm, stress) | 131 / 0.1575 / 7048 | 83.601 | 0 / 0 | **A / A** | **A / A** |
+
+FD47 = 2 (core 0/12, stress 2/2). Judge–judge agreement on the 5 pairs: 5/5 identical, Cohen's κ = 1.0 (n = 5,
+small). Calls 50/50 parsed, 0 failed, 0 repairs; rubric run 106.1 s, pair run 71.7 s (4 workers), per-call max 32.2 s;
+status complete, no budget stop. Frozen inputs re-checked after judging: 11/11 OK.
+
+**Not measured:** rejected-derived fixtures in this round (the sensitivity witnesses are #41/#45 on the same rig);
+the scene detector C1 (#43) on the jitter copies; a second accepted fragment; KPP1 NW / Sokolniki (no exact accepted
+/ rejected body pair). The N_jit "truth" is by the #43 contour tolerance (0.05 m), not by an Artem verdict — synthetic.
+
+Receipt: [`autoresearch-body-form-judge-r47/receipt.json`](autoresearch-body-form-judge-r47/receipt.json);
+scripts `mk_rig47.py`, `mk_judge47.py`, `render47.sh`, `aggregate47.py` and `FROZEN-before-judge.sha256` in the same
+folder. Evidence (composites, 50 raw calls, proxy reports): `G:/Мой диск/AGR-evidence/standing47-body-form-specificity/`
++ `SHA256SUMS.txt` (SHA-256 `5439f9800b6f87f421b95ed85e4a7068350c88312bf266f0eb773b8ca575feaf`). Replay (this PC only;
+needs `C:/x/autoresearch-body-form-r41`, `-r45` and the `t_563a40f7` key): copy the four scripts into a fresh dir set as
+`E`, then `python mk_rig47.py && bash render47.sh && python mk_judge47.py && sha256sum -c FROZEN-before-judge.sha256 &&
+python judge47.py rubric && python judge47.py pair && python aggregate47.py` (judge answers are fresh samples; rubric
+majority over 3 calls).
+
+Next targets: (1) replace the pairwise «better» question with an equivalence question («do X and Y have the same form
+within 0.05 m?») and measure it on this ladder plus the #45 defect ladder — the number is false «different» on N_*
+and false «same» on P_*; (2) find the jitter amplitude where pairwise starts picking A (between 5 and 20 mm) and
+compare with the render pixel diff — so a gate does not inherit render-cleanliness bias; (3) the corner family needs a
+scene readback, not Q4 (now three rounds of noise).
