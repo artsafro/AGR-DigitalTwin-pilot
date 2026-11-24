@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3800 1478" width="3800" height="1478" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3800 1559" width="3800" height="1559" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3800" height="1478" fill="#ffffff"/>
+<rect x="10" y="-30" width="3800" height="1559" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
@@ -74,8 +74,8 @@
 <rect x="2470" y="766.25" width="230" height="182.5" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="2470" y="964.75" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <rect x="2470" y="1065.75" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="2470" y="1183.0" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="2470" y="1300.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2470" y="1183.0" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2470" y="1381.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2750" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2740" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2700" y1="225.0" x2="2740" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -491,8 +491,13 @@
 <tspan x="2585.0" dy="16.25">треугольников v015 показывают</tspan>
 <tspan x="2585.0" dy="16.25">бюджет, но не доказывают</tspan>
 <tspan x="2585.0" dy="16.25">совпадение поверхности.</tspan>
+<tspan x="2585.0" dy="16.25">npm_atlas_udim.py —</tspan>
+<tspan x="2585.0" dy="16.25">job-specific обход</tspan>
+<tspan x="2585.0" dy="16.25">atlas_core; переход</tspan>
+<tspan x="2585.0" dy="16.25">мастер→атлас→НПМ FBX не</tspan>
+<tspan x="2585.0" dy="16.25">доказан, не измерен.</tspan>
 </text>
-<text x="2585.0" y="1310.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2585.0" y="1391.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="13">⚠ Бюджет НПМ 180 000</tspan>
 <tspan x="2585.0" dy="16.25">(GND-04): Ground 46 479 + МАФ</tspan>
 <tspan x="2585.0" dy="16.25">55 403 + Флора 64 454 = 166</tspan>

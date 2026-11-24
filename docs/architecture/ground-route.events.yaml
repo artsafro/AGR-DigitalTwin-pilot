@@ -221,7 +221,6 @@ stages:
       - D167
     evidence:
       - adapters/max/agr_tools/flora_atlas_max.py
-      - tools/materials/npm_atlas_udim.py
       - jobs/VATUTINO-SITE/site-route-20261109.md
     branches:
       - id: convert
@@ -381,10 +380,11 @@ hotspots:
       - jobs/VATUTINO-SITE/placement-report.md
   - id: ground-atlas
     stage: npm
-    ru: "agr vpm-to-npm не конвертирует Ground. Числа треугольников v015 показывают бюджет, но не доказывают совпадение поверхности."
+    ru: "agr vpm-to-npm не конвертирует Ground. Числа треугольников v015 показывают бюджет, но не доказывают совпадение поверхности. npm_atlas_udim.py — job-specific обход atlas_core; переход мастер→атлас→НПМ FBX не доказан, не измерен."
     evidence:
       - src/dt_ai/cli/agr.py
       - jobs/VATUTINO-SITE/site-route-20261109.md
+      - tools/materials/npm_atlas_udim.py
   - id: budget
     stage: npm
     ru: "Бюджет НПМ 180 000 (GND-04): Ground 46 479 + МАФ 55 403 + Флора 64 454 = 166 336; ВПМ Флора 443 788 — делит Артём (D167)"

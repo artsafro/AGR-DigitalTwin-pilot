@@ -41,11 +41,23 @@ def test_1853_npm_and_convert_do_not_cite_the_oks_atlas_recipe():
     events = _routes()["ground-route"]
     npm = _stage(events, "npm")
     assert "tools/derive/npm_atlas.py" not in npm["evidence"]
-    assert "tools/materials/npm_atlas_udim.py" in npm["evidence"]
+    # npm_atlas_udim.py is a job-specific live bypass of atlas_core with no Ground master->atlas->NPM
+    # FBX run; it is NOT working evidence for "Ground на атласе" and must stay out of npm.evidence.
+    assert "tools/materials/npm_atlas_udim.py" not in npm["evidence"]
     assert "adapters/max/agr_tools/flora_atlas_max.py" in npm["evidence"]
     branches = {b["id"]: b for b in npm["branches"]}
     assert "tools/derive/npm_atlas.py" not in branches["convert"]["evidence"]
     assert branches["convert"]["evidence"] == ["adapters/max/agr_tools/flora_atlas_max.py"]
+
+
+def test_1853_npm_atlas_udim_cited_on_ground_atlas_hotspot_as_unproven_bypass():
+    events = _routes()["ground-route"]
+    hotspot = next(h for h in events["hotspots"] if h["id"] == "ground-atlas")
+    assert hotspot["stage"] == "npm"
+    # the live bypass is shown under the shared atlas owner, not as a working Ground->atlas handoff
+    assert "tools/materials/npm_atlas_udim.py" in hotspot["evidence"]
+    for token in ("job-specific", "обход atlas_core", "не доказан", "не измерен"):
+        assert token in hotspot["ru"], token
 
 
 def test_1853_convert_describes_atlas_groundel_real_scope_not_end_to_end_flora():
