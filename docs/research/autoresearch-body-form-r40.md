@@ -1,0 +1,39 @@
+# Body form vs mesh — R0 receipt (OBSERVE)
+
+**Русское резюме.** Проверка формы отличила принятый бадик G22 к.2 v002r1 от отклонённого v001 там, где балл сетки предпочитал v001. На одном и том же фрагменте в принятом нашлось 6 из 6 проёмов, в отклонённом — 0 из 6. Максимальное отклонение по двум сечениям — 0,000 против 0,610 м. Это результат для одного фрагмента, не калибровка на трёх объектах: гипотеза **inconclusive**. Для КПП1 принят контур А, а для Сокольников — лист v002; это не приёмка конкретных моделей. Рабочие модели, пороги и код проверок не менялись; PR нет.
+
+## Fresh scene measurements
+
+Contract: `4c969b0e72dcb6a15a685ed398ad61fab3a0ecda`, [contract file](autoresearch-body-form.md). Blender 5.1.2 `ec6e62d40fa9`. One timed G22 pair took ~4.0 s including scorer processes; the three repetitions and native controls fit the frozen 180 s extraction/scoring cap. No candidate round. For each of A and R, three separately imported FBXs had identical decoded extract and scorer payloads except the copied FBX path relative to historical receipts. A also exactly reproduced the historic clean extract and score after removing only the path field. The detector and fixture manifests matched before and after, as did staged FBX hashes. The reference key was derived in part from the accepted body: this is retrospective calibration, not independent holdout agreement or evidence of shape accuracy elsewhere.
+
+| Exact body, G22 k2 SE typical floor | Median S / 100 | A: pass / fail / not measured | Unmeasured weight | Gap TP / FP / FN | Slices 16.85 / 19.8 m | Recess depth vs key | Historic whole-body mesh proxy |
+|---|---:|---|---:|---|---|---|---:|
+| v002r1 (Artem accepted stage-1 body) | 100.00 | 29 / 0 / 0 | 0.00% | 6 / 0 / 0 | 0.000 / 0.000 m (rounded) | 0.100/0.130/0.150 m, identical at reported precision | 83.693 |
+| v001 (Artem objected to missing apertures and AC boxes) | 4.55 | 1 / 10 / 18 | 54.55% | 0 / 0 / 6 | 0.610 / 0.610 m (candidate→key, near seg 18–19; AC basket witness) | not measured: apertures absent | 90.830 |
+
+Paired gaps 95.4545 pp ×3, spread 0 pp. Section maxima are not per-facade measurements; group B stair condition passes both and is not in S. The weighted diagnostic ranks both variants in Artem's order, the historical mesh score in reverse (scope differs: full body vs crop). However R lacks 36 of 66 units of measurement coverage (6 × edge/depth/sill-head unavailable), so the frozen 10% coverage gate stops strict calibration even on this pair. No patched missingness policy, no `min_margin_pp` emitted across sites.
+
+### Clean and planted controls (separate from accepted/rejected labels)
+
+- **Clean:** fresh `C_none`, 29/0/0, TP/FP/FN 6/0/0, B pass. Current scorer agrees fully with historical clean JSON modulo FBX path. The accepted control measures real apertures, but does not trigger a mismatch penalty, so there is no collateral-safety claim.
+- **Injected native FBX:** `C_shift_opening` 28/1/0, `C_shift_wall` 27/2/0, both keep 6/0/0. Outline and aperture-position checks add information beyond TP/FP/FN.
+- **Injected frozen extraction replay (not new Blender geometry):** J1 25/1/3, one FN; J2 28/1/0, one extra FP; J3 27/2/0, stair group B fails. All match archived payloads modulo path.
+- **Stale hash:** J4 on fresh `C_none` fails closed (0 passes, 28 unmeasured) but does not have historic operand parity: historical J4 used v002r1 bytes. Kept both receipts; same stale key on fresh A reproduces whole historic payload modulo path. The stale-key schema has fewer rows than normal; do not score it as a model.
+
+## Reference and visual qualification (not labelled-pair scores)
+
+- **KPP1 NW**, accepted A: retain K-C/K-R/K-O/K-J/K-T. Archived pilot `t_aadee92c` shows extended 110 mm recesses and wrong corner on prior step-3 Main. Both rejected pilot alternatives have a north void 0.066 m² despite correct N1/W1 aperture areas; default loses all four outer legs, `--void-reveal` retains 4×110 mm but adds a corner diagonal and 6 top faces. Archived `t_88979f3b` GREEN lab crop (`7e5a3f5bcdcef591b2d2db5653a0a71b7fa0e04080819570dd2f4d4952e263a6`) removes the void, diagonal and caps, preserves both openings/four legs; this is a geometric positive control, not a new Artem body verdict. The openings' N/W areas are 6.591/7.8585 m². Back/head/sill reveals and post seat are not measured. No fresh KPP1 score.
+- **Sokolniki**, v002 source ledger `volume-lines.json` SHA `4166d932188f27b143f9c1a4af45783331ab18ab896e819e9cac388d5cae8e35` and accompanying `measurements-v2.txt` lines 1–8 anchor S-C/S-O/S-D. The sheet contains 225 proposed cuts, 16 door conflicts later resolved by the local-cut decision, and 47 unresolved curtain-wall boxes. Neither count is an FN total. Artem [distinguishes visually preferred grid v004 from accepting the model](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1784#issuecomment-7096881082). D375 therefore defines what to ask, not an accepted mesh to score. No fresh Sokolniki score or whole-building agreement.
+- **Visual preflight:** using existing `tools/blender/verifier_views.py` with fixed bounding box (wrapper in evidence), all 15 Workbench renders were produced, three each for C_none, shifts, A and R; all five camera JSONs share SHA `ae37649ef61a8be9d2da5ee0252265ef568c93e0530d991c8083e9a44b3c4b96`. Default textured mode rendered purple missing-texture shading on the geometry-only copies, the crops include adjacent floors, and the shifted opening is pixel-identical to clean in the chosen iso (east/south have a local delta). Equal poses alone do not give a neutral, source-registered rubric view. Do not turn this preflight into a blinded calibration: no Yes-bias, per-judge agreement, order consistency, or kappa measured. The labels were not submitted to judges, and the frozen rig was not retuned after scoring.
+
+## Replay and next discriminator
+
+`autoresearch-body-form-r40.json` is the branch-side numeric receipt. Raw hashes, copied FBXs, extracts, reports, aggregate and render wrapper/stills are in `C:/x/autoresearch-body-form-r40/evidence/` (`SHA256SUMS.txt`); local-PC replay only. The original held-out evaluator inputs remain in place; no hidden key in this branch or uploaded report. Commands for a new run are in the contract: stage the same five FBX copies, use fresh extraction for C_none and each shift with the same 4 heights, replay original extracts for J1–J3, score J4 with A-1 and the stale key against original sums, and run `python "$D/aggregate.py"` (copy the hash-bound aggregate into the fresh run directory). Visual preflight replay with exact wrapper:
+
+```bash
+"$B" --background --factory-startup --disable-autoexec --threads 1 --python-exit-code 1 --python "$D/render_fixed.py" -- "$ROOT" "$D/$name.fbx" "$D/view-$name"
+```
+
+Next round, before further scoring: obtain exact hash-bound, same-stage human accept/reject pairs for KPP1 NW and Sokolniki; freeze which downstream checks are conditionally inapplicable if an aperture is absent and preserve a distinct unknown class. Register a neutral facade crop/overlay to the measured witness; repeat the same render invocation with a newly frozen wrapper using neutral Workbench shading and an explicit source-frame projection. Run blinded planted cells with both judge families first, then real ordered pairs only if the controls qualify. Keep old proxy parity on the same fixture. If those labels stay unavailable, log an engineering control rather than announcing deployment readiness.
+
+Affected tests: `uv run --offline pytest -q tests/test_body_contours.py tests/test_verifier_1577.py tests/test_blender_exit_code_guard.py --basetemp C:/x/t_210d3ff0-affected` — 122 passed. `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 542 passed, 1 warning; `repo_guards: GREEN`. No full suite; no production changes or PR. Review readiness: documentation and R0 evidence ready for review; metric not ready for adoption.
