@@ -92,7 +92,7 @@ G22 #1649 alone has a source-bound solid placeholder exception for 460 faces
 [D362]; see [the checkpoint](../../jobs/G22/npm2vpm-1649/CHECKPOINT.md). It is not
 an exemption for other faces or a production acceptance. G22's flat Normal maps
 and manual V007 review are separately scoped in [D363]. The G22-only E/22
-projection trim, on the copy without shifting the facade, is scoped in [D364].
+projection trim, on the copy without shifting the facade, is scoped in [D383].
 
 ### `vpm-to-npm` — принятая ВПМ → НПМ по практике Артёма (#1737)
 

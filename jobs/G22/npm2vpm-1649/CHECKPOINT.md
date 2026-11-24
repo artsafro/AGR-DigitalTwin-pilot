@@ -141,7 +141,7 @@ vertices and 2 bow-ties versus 370 / 0 / 4 on the source. The two bow-ties are
 inherited; raw xView is still FAIL. This is a comparative seam result, not an
 absolute QA pass or a VPM export.
 
-[D364]: the E face (100923) is unchanged. Finish 22 (136739/136740) was trimmed
+[D383]: the E face (100923) is unchanged. Finish 22 (136739/136740) was trimmed
 in projection, including the axis-dropped footprint used by xView; maximum
 reach from the original seam was 47.714 mm with the numerical allowance.
 Local stitching/coalescing is recorded separately. A fresh native readback
