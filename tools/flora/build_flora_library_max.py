@@ -286,7 +286,10 @@ def assemble(job):
         try:
             rt.resetMaxFile(rt.Name("noPrompt"))
             for path in parts:
-                if not rt.mergeMAXFile(max_path(path), rt.Name("autoRenameDups"), rt.Name("renameMtlDups"), quiet=True):
+                if not rt.mergeMAXFile(
+                    max_path(path), rt.Name("autoRenameDups"), rt.Name("renameMtlDups"),
+                    rt.Name("neverReparent"), quiet=True,
+                ):
                     raise RuntimeError("mergeMAXFile failed: " + path)
             bind_materials(rt, catalogue["species"])
             if not rt.saveMaxFile(max_path(target), quiet=True):
@@ -314,8 +317,6 @@ def assemble(job):
     with open(job["report"], "w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=1)
         handle.write("\n")
-    library_stem = os.path.splitext(LIBRARY_NAME)[0]
-    print(f"{library_stem} passed={str(report['passed']).lower()} objects={len(expected)} failures={len(failures)}")
     return report
 
 

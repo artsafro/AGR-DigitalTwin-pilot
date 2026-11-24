@@ -49,7 +49,10 @@ lists; they do not define a production step.
    2026-11-14 17:31, then five QA rounds v005–v009 and texture work on v008e instead of
    body A v004 / windows A v003 / roof A v003. See the [fixed format and incident evidence](../procedure/ACCEPTED_GEOMETRY.md).
 6. **Verify independently.** The executor's report, exit 0 or a child agent's summary is
-   not evidence. Read the actual files back. Classify a failure (source / tool / code /
+   not evidence. Read the actual files back. For a decision sheet (including no-PR pilots),
+   render the published file and check that the legend visibly distinguishes measured and
+   proposed/unknown features at the decision locations; record the page/view and file hash.
+   Classify a failure (source / tool / code /
    test / contract), fix the cause, rerun the affected checks. A failed mandatory check is
    never turned into a pass by rewording. After two failures with the same cause, stop that
    path, save the state and propose the next step. The limit is recorded in
@@ -64,8 +67,10 @@ lists; they do not define a production step.
    acceptance in the contract), item by item: met, not met, or changed by a later user decision
    (with its date or `D<n>`); report what is done, what was checked (commands, evidence paths)
    and what is open. Provide receipts per
-   [Before requesting review (author)](#before-requesting-review-author). On restart, read saved outputs and
-   hashes before repeating any mutation (`run-evidence` skill).
+   [Before requesting review (author)](#before-requesting-review-author). Before citing a decision
+   sheet in a handoff or plan, check its exact version against the producer's latest verdict;
+   name its status and keep sheet review separate from user acceptance of any candidate. On
+   restart, read saved outputs and hashes before repeating any mutation (`run-evidence` skill).
 
 ## Before requesting review (author)
 

@@ -336,7 +336,6 @@
 /jobs/TEC26-OKS/AC04/evidence.json
 /jobs/TEC26-OKS/AC04/materials.json
 /jobs/TEC26-OKS/AC04/verification.json
-/jobs/TEC26-OKS/AC09/BUILD_REPORT.md
 /jobs/TEC26-OKS/AC09/DRIVE-SHA256SUMS.txt
 /jobs/TEC26-OKS/AC09/MATERIALS.md
 /jobs/TEC26-OKS/AC09/build-v001/Sakv_1_VPM_master.blend.build.json
@@ -454,6 +453,8 @@
 /docs/evidence/issue-1541/after.txt
 /docs/evidence/issue-1541/before.txt
 /docs/evidence/issue-1541/two-blenders.txt
+/docs/evidence/maxbatch-130/README.md
+/docs/evidence/maxbatch-130/SHA256SUMS.txt
 /docs/experiments/2026-11-02-dreamsim-ac08.md
 /docs/experiments/2026-11-02-dreamsim-ac08/requirements.txt
 /docs/experiments/atlas.groundel.md
@@ -558,6 +559,12 @@
 /docs/research/autoresearch-blender-guard-scan-harness/receipts/parity_r1.json
 /docs/research/autoresearch-blender-guard-scan-harness/receipts/r1.json
 /docs/research/autoresearch-blender-guard-scan.md
+/docs/research/autoresearch-body-form-judge-r41.json
+/docs/research/autoresearch-body-form-judge-r41.md
+/docs/research/autoresearch-body-form-judge.md
+/docs/research/autoresearch-body-form-r40.json
+/docs/research/autoresearch-body-form-r40.md
+/docs/research/autoresearch-body-form.md
 /docs/research/autoresearch-body-mesh-grid-harness/R1.json
 /docs/research/autoresearch-body-mesh-grid-harness/R2.json
 /docs/research/autoresearch-body-mesh-grid-harness/grid.json
@@ -576,6 +583,9 @@
 /docs/research/autoresearch-body-mesh-r3-localize-harness/r19.json
 /docs/research/autoresearch-body-mesh-r3-localize.md
 /docs/research/autoresearch-checker-mutation.md
+/docs/research/autoresearch-ground-core-localize-r37.json
+/docs/research/autoresearch-ground-core-localize-r37.py
+/docs/research/autoresearch-ground-core-localize.md
 /docs/research/autoresearch-ground-quality-harness/dump.py
 /docs/research/autoresearch-ground-quality-harness/dumps.json
 /docs/research/autoresearch-ground-quality-harness/dumps.sha256

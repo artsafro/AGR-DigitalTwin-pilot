@@ -6,6 +6,10 @@ Pattern: none | new-case: tests of the overlap gate (#527).
 import json
 import math
 import os
+import runpy
+import sys
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
@@ -435,6 +439,29 @@ def fake_blender(monkeypatch, parts, scale=1.0, system="METRIC", hook=None, drop
 from pathlib import Path  # noqa: E402
 
 RAIL3 = [part("rail", *rail_soffit(0.003), loc=SITE)]
+
+
+@pytest.mark.parametrize("filename", ["sample.fbx", "Ground With Spaces.FBX"])
+def test_fbx_dump_disables_image_search(tmp_path, monkeypatch, filename):
+    """Run the real dump script with synthetic bpy state, not a Blender process."""
+    src = str(tmp_path / filename)
+    scene = SimpleNamespace(
+        name="Scene", objects=[], unit_settings=SimpleNamespace(system="METRIC", scale_length=1.0),
+    )
+    importer = Mock()
+    bpy = SimpleNamespace(
+        ops=SimpleNamespace(wm=Mock(), import_scene=SimpleNamespace(fbx=importer)),
+        context=SimpleNamespace(scene=scene, evaluated_depsgraph_get=Mock()),
+        app=SimpleNamespace(version_string="fake"),
+    )
+    monkeypatch.setitem(sys.modules, "bpy", bpy)
+    script = str(G.DUMP_SCRIPT)
+    monkeypatch.setattr(sys, "argv", [script, "--", src, str(tmp_path / "dump.npz"),
+                                      str(tmp_path / "manifest.json")])
+
+    runpy.run_path(script, run_name="__main__")
+
+    importer.assert_called_once_with(filepath=src, use_image_search=False)
 
 
 @pytest.mark.parametrize("scale", [1.0, 0.001, 0.01, 1000.0])

@@ -1,6 +1,6 @@
 ---
 name: model-flora
-description: 'Produce Flora (trees, bushes, modelled flower beds) from the planting schedule and the SPOZU points: library species or a new one, NPM star / VPM shell, placement, one 2048 Flora atlas, checks. Also covers planting in NPM MAF planters. Use when: «сделай Флору по ведомости озеленения», «расставь кусты и деревья по СПОЗУ», «посади кусты в кашпо МАФ», «новый вид растения для библиотеки».'
+description: 'Produce Flora (trees, bushes, modelled flower beds) from the planting schedule and the SPOZU points: library species or a new one, NPM star / VPM shell, placement, one 2048 Flora atlas, checks. Also covers planting in NPM MAF planters. Use when: «сделай Флору по ведомости озеленения», «посади кусты в кашпо МАФ», «новый вид растения для библиотеки».'
 ---
 
 # Model Flora from the planting schedule
