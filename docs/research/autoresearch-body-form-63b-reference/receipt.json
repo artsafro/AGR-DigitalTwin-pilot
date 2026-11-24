@@ -1,0 +1,2075 @@
+{
+  "status": "complete",
+  "hypothesis": "confirmed",
+  "cap_s": 150,
+  "runs": {
+    "1": {
+      "v007": {
+        "B": [
+          1.2704532098706087,
+          1.2704532098706087
+        ],
+        "C": [
+          0.03280843069604433,
+          0.03280843069604433
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 2,
+          "key_total": 5
+        },
+        "legacy_extras": [
+          {
+            "ring_seg": [
+              15,
+              16
+            ],
+            "gap_m": [
+              0.05,
+              0.678
+            ]
+          },
+          {
+            "ring_seg": [
+              18,
+              19
+            ],
+            "gap_m": [
+              3.444,
+              4.715
+            ]
+          }
+        ],
+        "legacy_non_pass": {
+          "contour@16.85": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "contour@19.8": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "opening:рт О_194b464:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.087 m (key 1.138..3.438)"
+          },
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "openings:no_extra_in_box": {
+            "status": "fail",
+            "basis": "extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+          }
+        },
+        "extract_sha256": "985b4e30ed4cb5c17129e8a760fd507412f46d31a675e7fe704bd27bea929da0",
+        "legacy_sha256": "2526de2df4a767ba3c10eac7119df7257c8acee8604aab6a356346bc45c1cc1d",
+        "fill_C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "fill_changed_segments": {
+          "16.85": 1,
+          "19.8": 1
+        },
+        "B_max": 1.2704532098706087,
+        "C_max": 0.03280843069604433
+      },
+      "v002": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "d387aab2013f77c48ce42a530e94fe9e092c0c08f909356b14554b36af817e99",
+        "legacy_sha256": "eefad932cc3e5a42f0d996ffccd111428ee12d2fbe41220ac9fec27b7b4e5622",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v003": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "fad6fc4af41018a7656c91a486bbc65ad911eae2c1b39971cfd4ffcce00b169d",
+        "legacy_sha256": "1a6be74f3caea1a1f8cbc6416fe8d4b22d6f99cba4ca67ca0c3c830264630afa",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v004": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "bb796256cc296cb8dd2cdc1ef7d39f8752a49f0f71fecee1a648c5b4a5f95458",
+        "legacy_sha256": "8b0822111fd9d513d0433c1de103b3c2b50296ac7f3b37931f92df20ff08110e",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v005": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "8782bce7daa8cda1bf18df41e3a54a1ccc00eb742a01c821681b176b6ef8da45",
+        "legacy_sha256": "5f426892b53f44ca2d51ea3be5709e60df303aa3475f10041be104c300d88718",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v006": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "7ff80a64c356c13924a2cecca7f10282622b314776ad55e744e7f365acad12f9",
+        "legacy_sha256": "c5097348c6b86cfc636b1f091859e7177ce8f54ef4459760b7f4bb723af3a4cc",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "W_shift_opening": {
+        "B": [
+          1.2704532098706087,
+          1.2704532098706087
+        ],
+        "C": [
+          0.03280843069604433,
+          0.03280843069604433
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 2,
+          "key_total": 5
+        },
+        "legacy_extras": [
+          {
+            "ring_seg": [
+              15,
+              16
+            ],
+            "gap_m": [
+              0.05,
+              0.678
+            ]
+          },
+          {
+            "ring_seg": [
+              18,
+              19
+            ],
+            "gap_m": [
+              3.444,
+              4.715
+            ]
+          }
+        ],
+        "legacy_non_pass": {
+          "contour@16.85": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "contour@19.8": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "opening:рт О_194b464:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.087 m (key 1.138..3.438)"
+          },
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.100 m (key 5.595..7.305)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "openings:no_extra_in_box": {
+            "status": "fail",
+            "basis": "extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+          }
+        },
+        "extract_sha256": "20e9e653639e8cf4d0cb18879a4fd9bc04c0234a00a05958e198c25933e9f8c0",
+        "legacy_sha256": "13688d5f577b1edb42bafff974c9a69dc390787c8899c561471bdaa3ca19ac01",
+        "B_max": 1.2704532098706087,
+        "C_max": 0.03280843069604433
+      }
+    },
+    "2": {
+      "v007": {
+        "B": [
+          1.2704532098706087,
+          1.2704532098706087
+        ],
+        "C": [
+          0.03280843069604433,
+          0.03280843069604433
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 2,
+          "key_total": 5
+        },
+        "legacy_extras": [
+          {
+            "ring_seg": [
+              15,
+              16
+            ],
+            "gap_m": [
+              0.05,
+              0.678
+            ]
+          },
+          {
+            "ring_seg": [
+              18,
+              19
+            ],
+            "gap_m": [
+              3.444,
+              4.715
+            ]
+          }
+        ],
+        "legacy_non_pass": {
+          "contour@16.85": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "contour@19.8": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "opening:рт О_194b464:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.087 m (key 1.138..3.438)"
+          },
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "openings:no_extra_in_box": {
+            "status": "fail",
+            "basis": "extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+          }
+        },
+        "extract_sha256": "985b4e30ed4cb5c17129e8a760fd507412f46d31a675e7fe704bd27bea929da0",
+        "legacy_sha256": "2526de2df4a767ba3c10eac7119df7257c8acee8604aab6a356346bc45c1cc1d",
+        "fill_C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "fill_changed_segments": {
+          "16.85": 1,
+          "19.8": 1
+        },
+        "B_max": 1.2704532098706087,
+        "C_max": 0.03280843069604433
+      },
+      "v002": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "d387aab2013f77c48ce42a530e94fe9e092c0c08f909356b14554b36af817e99",
+        "legacy_sha256": "eefad932cc3e5a42f0d996ffccd111428ee12d2fbe41220ac9fec27b7b4e5622",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v003": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "fad6fc4af41018a7656c91a486bbc65ad911eae2c1b39971cfd4ffcce00b169d",
+        "legacy_sha256": "1a6be74f3caea1a1f8cbc6416fe8d4b22d6f99cba4ca67ca0c3c830264630afa",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v004": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "bb796256cc296cb8dd2cdc1ef7d39f8752a49f0f71fecee1a648c5b4a5f95458",
+        "legacy_sha256": "8b0822111fd9d513d0433c1de103b3c2b50296ac7f3b37931f92df20ff08110e",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v005": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "8782bce7daa8cda1bf18df41e3a54a1ccc00eb742a01c821681b176b6ef8da45",
+        "legacy_sha256": "5f426892b53f44ca2d51ea3be5709e60df303aa3475f10041be104c300d88718",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v006": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "7ff80a64c356c13924a2cecca7f10282622b314776ad55e744e7f365acad12f9",
+        "legacy_sha256": "c5097348c6b86cfc636b1f091859e7177ce8f54ef4459760b7f4bb723af3a4cc",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "W_shift_opening": {
+        "B": [
+          1.2704532098706087,
+          1.2704532098706087
+        ],
+        "C": [
+          0.03280843069604433,
+          0.03280843069604433
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 2,
+          "key_total": 5
+        },
+        "legacy_extras": [
+          {
+            "ring_seg": [
+              15,
+              16
+            ],
+            "gap_m": [
+              0.05,
+              0.678
+            ]
+          },
+          {
+            "ring_seg": [
+              18,
+              19
+            ],
+            "gap_m": [
+              3.444,
+              4.715
+            ]
+          }
+        ],
+        "legacy_non_pass": {
+          "contour@16.85": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "contour@19.8": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "opening:рт О_194b464:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.087 m (key 1.138..3.438)"
+          },
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.100 m (key 5.595..7.305)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "openings:no_extra_in_box": {
+            "status": "fail",
+            "basis": "extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+          }
+        },
+        "extract_sha256": "20e9e653639e8cf4d0cb18879a4fd9bc04c0234a00a05958e198c25933e9f8c0",
+        "legacy_sha256": "13688d5f577b1edb42bafff974c9a69dc390787c8899c561471bdaa3ca19ac01",
+        "B_max": 1.2704532098706087,
+        "C_max": 0.03280843069604433
+      }
+    },
+    "3": {
+      "v007": {
+        "B": [
+          1.2704532098706087,
+          1.2704532098706087
+        ],
+        "C": [
+          0.03280843069604433,
+          0.03280843069604433
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 2,
+          "key_total": 5
+        },
+        "legacy_extras": [
+          {
+            "ring_seg": [
+              15,
+              16
+            ],
+            "gap_m": [
+              0.05,
+              0.678
+            ]
+          },
+          {
+            "ring_seg": [
+              18,
+              19
+            ],
+            "gap_m": [
+              3.444,
+              4.715
+            ]
+          }
+        ],
+        "legacy_non_pass": {
+          "contour@16.85": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "contour@19.8": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "opening:рт О_194b464:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.087 m (key 1.138..3.438)"
+          },
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "openings:no_extra_in_box": {
+            "status": "fail",
+            "basis": "extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+          }
+        },
+        "extract_sha256": "985b4e30ed4cb5c17129e8a760fd507412f46d31a675e7fe704bd27bea929da0",
+        "legacy_sha256": "2526de2df4a767ba3c10eac7119df7257c8acee8604aab6a356346bc45c1cc1d",
+        "fill_C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "fill_changed_segments": {
+          "16.85": 1,
+          "19.8": 1
+        },
+        "B_max": 1.2704532098706087,
+        "C_max": 0.03280843069604433
+      },
+      "v002": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "d387aab2013f77c48ce42a530e94fe9e092c0c08f909356b14554b36af817e99",
+        "legacy_sha256": "eefad932cc3e5a42f0d996ffccd111428ee12d2fbe41220ac9fec27b7b4e5622",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v003": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "fad6fc4af41018a7656c91a486bbc65ad911eae2c1b39971cfd4ffcce00b169d",
+        "legacy_sha256": "1a6be74f3caea1a1f8cbc6416fe8d4b22d6f99cba4ca67ca0c3c830264630afa",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v004": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "bb796256cc296cb8dd2cdc1ef7d39f8752a49f0f71fecee1a648c5b4a5f95458",
+        "legacy_sha256": "8b0822111fd9d513d0433c1de103b3c2b50296ac7f3b37931f92df20ff08110e",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v005": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "8782bce7daa8cda1bf18df41e3a54a1ccc00eb742a01c821681b176b6ef8da45",
+        "legacy_sha256": "5f426892b53f44ca2d51ea3be5709e60df303aa3475f10041be104c300d88718",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "v006": {
+        "B": [
+          0,
+          0
+        ],
+        "C": [
+          1.303261640566653,
+          1.303261640566653
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 0,
+          "key_total": 5
+        },
+        "legacy_extras": [],
+        "legacy_non_pass": {
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_194b464:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_010a21f:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.000 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          }
+        },
+        "extract_sha256": "7ff80a64c356c13924a2cecca7f10282622b314776ad55e744e7f365acad12f9",
+        "legacy_sha256": "c5097348c6b86cfc636b1f091859e7177ce8f54ef4459760b7f4bb723af3a4cc",
+        "B_max": 0,
+        "C_max": 1.303261640566653
+      },
+      "W_shift_opening": {
+        "B": [
+          1.2704532098706087,
+          1.2704532098706087
+        ],
+        "C": [
+          0.03280843069604433,
+          0.03280843069604433
+        ],
+        "changed_sections": 2,
+        "status": "scored",
+        "intervals": {
+          "16.85": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ],
+          "19.8": [
+            [
+              2.8,
+              3.444100199857682
+            ],
+            [
+              4.714553409728291,
+              5.4
+            ]
+          ]
+        },
+        "legacy_equal": true,
+        "legacy_openings": {
+          "TP": 5,
+          "FN": 0,
+          "FP_extra": 2,
+          "key_total": 5
+        },
+        "legacy_extras": [
+          {
+            "ring_seg": [
+              15,
+              16
+            ],
+            "gap_m": [
+              0.05,
+              0.678
+            ]
+          },
+          {
+            "ring_seg": [
+              18,
+              19
+            ],
+            "gap_m": [
+              3.444,
+              4.715
+            ]
+          }
+        ],
+        "legacy_non_pass": {
+          "contour@16.85": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "contour@19.8": {
+            "status": "fail",
+            "basis": "two-sided max 0.768 m at [87.39, 19.381] (candidate->key), nearest ring seg 18-19"
+          },
+          "opening:рт О_194b464:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.087 m (key 1.138..3.438)"
+          },
+          "opening:рт О_194b464:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_415705d:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_6189f94:edges": {
+            "status": "fail",
+            "basis": "max edge delta 0.100 m (key 5.595..7.305)"
+          },
+          "opening:рт О_6189f94:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.710"
+          },
+          "opening:рт О_6189f94:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "opening:рт О_010a21f:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:reveal_depth": {
+            "status": "fail",
+            "basis": "depth 0.500 vs key 0.713"
+          },
+          "opening:рт О_1198368:sill_head": {
+            "status": "not_measured",
+            "basis": "no open back rim (closed or filled back)"
+          },
+          "openings:no_extra_in_box": {
+            "status": "fail",
+            "basis": "extra wall gaps at 18.2: [{'ring_seg': [15, 16], 'gap_m': [0.05, 0.678]}, {'ring_seg': [18, 19], 'gap_m': [3.444, 4.715]}]"
+          }
+        },
+        "extract_sha256": "20e9e653639e8cf4d0cb18879a4fd9bc04c0234a00a05958e198c25933e9f8c0",
+        "legacy_sha256": "13688d5f577b1edb42bafff974c9a69dc390787c8899c561471bdaa3ca19ac01",
+        "B_max": 1.2704532098706087,
+        "C_max": 0.03280843069604433
+      }
+    }
+  },
+  "margins": [
+    {
+      "B": -1.2704532098706087,
+      "C": 1.2704532098706087
+    },
+    {
+      "B": -1.2704532098706087,
+      "C": 1.2704532098706087
+    },
+    {
+      "B": -1.2704532098706087,
+      "C": 1.2704532098706087
+    }
+  ],
+  "manifest": {
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v002/source_sections_and_openings.json": "f1865bdde9ca0b3553777cf6e1d71cd8aee915998d342ec789bfc4fd6cdf47a2",
+    "C:/x/t_fb3a0b98-r51/key/heldout-key-v001.json": "67a1ae5b88beec6eefc51d51ccdab496daa256709ec484793caee4097f6b6b14",
+    "C:/x/t_fb3a0b98-r51/key/heldout-sections-v001.json": "07ce9a5bff8a9e4e82bf8346daef191ca5e0ba626ccd900aaca290a29fb698b6",
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v007/63B_Stage1_v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v002/63B_Stage1_v002.fbx": "a57cb3fb66e628e6d1fe1272d16bc592604389b52be6cb4af6a4259b75746a9d",
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v003/63B_Stage1_v003.fbx": "83f3289c70a2bf8727cc5a0a8d85d12a8f6e90c803c3c37dfc904856588211aa",
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v004/63B_Stage1_v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v005/63B_Stage1_v005.fbx": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+    "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/v006/63B_Stage1_v006.fbx": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+    "C:/x/t_fb3a0b98-r51/run1/fixtures/W_shift_opening.fbx": "489d1c0e2fd7330db85d35c5e6d5b4253a2140a44f052bf8d812bdd9ec76aca9",
+    "C:/x/t_fb3a0b98-r51/key/SHA256SUMS.txt": "2b060600347e4203b70bc23561963a5b2bacd96c8412416084345df816cb0eff",
+    "C:/x/t_563a40f7/detector/extract.py": "ee50925b8a45d6b55d4409cc21893d7932ae7b76d66c3a7c7c4b6b4bb51875af",
+    "C:/x/t_563a40f7/detector/score_heldout.py": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942",
+    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "C:/x/t_fb3a0b98-r51/run1/v007/rep1/vs_key.json": "503a4fd32dcb5d708bae33445045608a27e3b8eae48b2aefd22c3fe2bade0a66",
+    "C:/x/t_fb3a0b98-r51/run1/v007/rep2/vs_key.json": "503a4fd32dcb5d708bae33445045608a27e3b8eae48b2aefd22c3fe2bade0a66",
+    "C:/x/t_fb3a0b98-r51/run1/v007/rep3/vs_key.json": "503a4fd32dcb5d708bae33445045608a27e3b8eae48b2aefd22c3fe2bade0a66",
+    "C:/x/t_fb3a0b98-r51/run1/v002/rep1/vs_key.json": "a758e0687054cc7360f7809762441597d7aefef842ab9f2fb77593ec50f7c1ab",
+    "C:/x/t_fb3a0b98-r51/run1/v002/rep2/vs_key.json": "a758e0687054cc7360f7809762441597d7aefef842ab9f2fb77593ec50f7c1ab",
+    "C:/x/t_fb3a0b98-r51/run1/v002/rep3/vs_key.json": "a758e0687054cc7360f7809762441597d7aefef842ab9f2fb77593ec50f7c1ab",
+    "C:/x/t_fb3a0b98-r51/run1/v003/rep1/vs_key.json": "c98fba9a73b3b10bbae7022136049e8a6eb977be0f710c29cee06752d8160a0c",
+    "C:/x/t_fb3a0b98-r51/run1/v003/rep2/vs_key.json": "c98fba9a73b3b10bbae7022136049e8a6eb977be0f710c29cee06752d8160a0c",
+    "C:/x/t_fb3a0b98-r51/run1/v003/rep3/vs_key.json": "c98fba9a73b3b10bbae7022136049e8a6eb977be0f710c29cee06752d8160a0c",
+    "C:/x/t_fb3a0b98-r51/run1/v004/rep1/vs_key.json": "3569ab6f9529caf8910efbe7c0c46af87da06f6042f5d00c9f686c33c26b94ca",
+    "C:/x/t_fb3a0b98-r51/run1/v004/rep2/vs_key.json": "3569ab6f9529caf8910efbe7c0c46af87da06f6042f5d00c9f686c33c26b94ca",
+    "C:/x/t_fb3a0b98-r51/run1/v004/rep3/vs_key.json": "3569ab6f9529caf8910efbe7c0c46af87da06f6042f5d00c9f686c33c26b94ca",
+    "C:/x/t_fb3a0b98-r51/run1/v005/rep1/vs_key.json": "f0ea1dcc937e458cd5563e623eb6fe249a492a2978cc24a77c58f74ea7b6fdab",
+    "C:/x/t_fb3a0b98-r51/run1/v005/rep2/vs_key.json": "f0ea1dcc937e458cd5563e623eb6fe249a492a2978cc24a77c58f74ea7b6fdab",
+    "C:/x/t_fb3a0b98-r51/run1/v005/rep3/vs_key.json": "f0ea1dcc937e458cd5563e623eb6fe249a492a2978cc24a77c58f74ea7b6fdab",
+    "C:/x/t_fb3a0b98-r51/run1/v006/rep1/vs_key.json": "1d88d4d172089b478632b1459c7bf3ea9ec7f58dd095035d95f045f03740d408",
+    "C:/x/t_fb3a0b98-r51/run1/v006/rep2/vs_key.json": "1d88d4d172089b478632b1459c7bf3ea9ec7f58dd095035d95f045f03740d408",
+    "C:/x/t_fb3a0b98-r51/run1/v006/rep3/vs_key.json": "1d88d4d172089b478632b1459c7bf3ea9ec7f58dd095035d95f045f03740d408",
+    "C:/x/t_fb3a0b98-r51/run1/W_shift_opening/rep1/vs_key.json": "8048f057beab0dd7732da6887fa2fda7fd8400cd21deda94212f40bec2d800e6",
+    "C:/x/t_fb3a0b98-r51/run1/W_shift_opening/rep2/vs_key.json": "8048f057beab0dd7732da6887fa2fda7fd8400cd21deda94212f40bec2d800e6",
+    "C:/x/t_fb3a0b98-r51/run1/W_shift_opening/rep3/vs_key.json": "8048f057beab0dd7732da6887fa2fda7fd8400cd21deda94212f40bec2d800e6"
+  },
+  "preflight": "ok",
+  "reference": {
+    "B": [
+      [
+        2.8,
+        5.4
+      ]
+    ],
+    "C": [
+      [
+        2.8,
+        3.4143736992629528
+      ],
+      [
+        4.717635339829606,
+        5.4
+      ]
+    ],
+    "source_lines": [
+      [
+        "Базовая стена Вентфасад 250 250 к_fd517ed",
+        [
+          [
+            87.33204650878906,
+            18.213659286499023
+          ],
+          [
+            87.84515380859375,
+            18.745620727539062
+          ]
+        ]
+      ],
+      [
+        "Базовая стена Вентфасад 250 250 к_fd517ed",
+        [
+          [
+            87.88938903808594,
+            18.791479110717773
+          ],
+          [
+            87.84515380859375,
+            18.745620727539062
+          ]
+        ]
+      ],
+      [
+        "Базовая стена Вентфасад 250 250 к_185b002",
+        [
+          [
+            88.7941665649414,
+            19.7294921875
+          ],
+          [
+            89.35460662841797,
+            20.310529708862305
+          ]
+        ]
+      ]
+    ]
+  },
+  "timing_pair_s": 2.21200260000478,
+  "postflight": "ok",
+  "margin_summary": {
+    "B": {
+      "median": -1.2704532098706087,
+      "spread": 0.0
+    },
+    "C": {
+      "median": 1.2704532098706087,
+      "spread": 0.0
+    }
+  },
+  "wall_s": 23.62051269999938
+}
