@@ -84,6 +84,8 @@ def main(out):
         score = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(score)
         contour_key = load(key/'heldout-key-v001.json')
+        (shifted_id,) = [o['id'] for o in contour_key['openings'] if o['id'].endswith('6189f94')]
+        shifted_check = f'opening:{shifted_id}:edges'
         ring = {x['ring_index']: x['xy'] for x in contour_key['contour_vertices_in_box']}
         posthoc = old('posthoc51.py').decode('utf-8')
         assert 'A, B = (85.519, 16.334), (95.936, 27.133)' in posthoc
@@ -174,7 +176,8 @@ def main(out):
             last = r['margins'][-1]
             ready &= (max(arow['fill_C']) >= 1 and max(arow['fill_C'])-arow['C_max'] >= 1
                       and max(abs(x-y) for x,y in zip(wrow['C'],arow['C'],strict=True)) <= .001
-                      and wrow['legacy_non_pass'].get('opening:6189f94:edges', {}).get('status') == 'fail')
+                      and shifted_check not in arow['legacy_non_pass']
+                      and wrow['legacy_non_pass'].get(shifted_check, {}).get('status') == 'fail')
             meets &= (last['B'] < 0 and last['C'] >= .20 and arow['C_max'] <= .12
                       and all(rows[n]['C_max'] >= 1 for n in names[1:-1]))
         verify()
