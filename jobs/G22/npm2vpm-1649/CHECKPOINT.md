@@ -1,5 +1,36 @@
 # G22 NPM-to-VPM regions — #1649 checkpoint
 
+## v020 — confirmed finish, source-plane trial (release STOP)
+
+[D381] records Artem's v019 approval: keep face 130433 in the two lower pairs
+and A in all fourteen upper pairs. The v019 Revit-derived orientation and wall
+IDs are retained; the geometry was not shifted to the distant Revit plane.
+For the seven over-limit pairwise cuts, rebuilt the non-overlapped B footprint
+from the measured lattice. A common shadow mask per panel preserved the cut
+across its diagonal. The conforming-edge replay split 12 adjacent faces on
+their existing edges; it did not change their finish or coverage. Fresh
+Blender readback found all six protected source signatures unchanged, and
+maximum reconstruction deviation from a source plane was 0.001181 mm.
+
+All 16 target pairs are gone. Raw xView face pairs went 534 to 523 and
+source-lineage pairs 525 to 509, with no new lineage pair. The raw xView
+face / near-vertex / bow-tie counts were 356/0/2 before, 373/0/14 on the
+first trial, and 373/0/2 on the conforming trial. The affected faces were
+subdivided in five remaining lineage pairs; the release verdict is still
+FAIL. The master and original copies are unchanged; no FBX/ZIP or SINTEZ
+release. No new finish question for the confirmed A faces.
+
+Evidence: `G:/Мой диск/AGR-evidence/1649-g22-outer-pairs/v020/`, 41/41
+verified files; manifest SHA-256
+`e998745f319ae97bd38bc9dfd0011d6084cb429bb247d7127d5669ea826fcdd2`.
+See `g22-v020-outer-pairs.png`, `pairs.csv`, `native-audit.json`, and
+`remaining-xview.csv`. The 13 other deep v018 pairs remain. As a concrete
+STOP witness, source pair 107979/108024 covers a whole native triangle of
+108024 (0.185960 m², zero remainder), but deleting the triangle exposes two
+existing attached edges about 0.994 m and 1.062 m long. The retained face
+shares neither edge. The native edge inventory is in `full-footprint-witness.json`;
+obtain a source-bound roof/reveal stitch before editing that junction.
+
 ## v018 — exterior-finish decision and native trim trial (STOP)
 
 [D374] applies to every deep overlap: retain the confirmed exterior finish,
