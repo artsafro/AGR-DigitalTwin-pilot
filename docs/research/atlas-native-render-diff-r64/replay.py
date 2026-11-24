@@ -63,8 +63,12 @@ def run(out):
     driver.mkdir(parents=True)
     upstream = {name: subprocess.check_output(['git', 'show', f'{R62}:{R62_DIR}/{name}'])
                 for name in ('replay.py', 'phase.py')}
-    source = graft(upstream['replay.py'], b"                    case['status'] = 'scored'\n",
-                   b"                    rnd[v][name]['paired_rgb'] = r58.score(renders, cameras)\n"
+    # #62's camera values are lists; #58's are tuples. Each checks exact equality
+    # independently, using the same metadata. Do not mix their reference maps.
+    source = graft(upstream['replay.py'], b"        cameras, repeats = {}, {}\n",
+                   b"        cameras, repeats, rgb_cameras = {}, {}, {}\n")
+    source = graft(source, b"                    case['status'] = 'scored'\n",
+                   b"                    rnd[v][name]['paired_rgb'] = r58.score(renders, rgb_cameras)\n"
                    b"                    case['status'] = 'scored'\n")
     source = graft(source, b"        report['cameras'] = cameras\n",
                    b"        report['je_hypothesis_r62'] = report['hypothesis']\n"
