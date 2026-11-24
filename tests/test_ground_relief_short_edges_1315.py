@@ -86,3 +86,21 @@ def test_sil13_core_ground_has_no_short_edges(tmp_path):
     assert not r.report["stages"]["skirt"]["skirt_gap_edges"]
     from dt_ai.ops.inv_xview import mesh_report
     assert mesh_report(m.verts, m.faces, profile="NPM-GROUND", part="SM_SIL13_Ground")["vertex_pairs"] == 0
+
+
+# review r1 P1: peeling must never orphan a source mark (its Z would be lost silently)
+ORPHAN_CASES = {
+    "mark_on_hull_chord": [(0, 0, 0), (20, 0, 0), (10, 0, 0), (10, 0.0008, 0.3), (0, 20, 0.5), (20, 20, 0.4)],
+    "two_marks_in_sliver": [(0, 0, 0), (20, 0, 0), (10, 0.0004, 0.3), (10, 0.0009, 0.0), (0, 20, 0.5),
+                            (20, 20, 0.4), (10, 10, 0.2)],
+}
+
+
+@pytest.mark.parametrize("name", sorted(ORPHAN_CASES))
+def test_peel_keeps_every_source_mark(name):
+    pts = ORPHAN_CASES[name]
+    tin = gc.build_tin(pts, peel_slivers=True)
+    assert set(np.unique(tin.tris)) == set(range(len(tin.pts)))  # no mark without a triangle
+    assert tin.slivers_inner >= 1  # the thin triangle kept to hold the mark is reported
+    z, hit = gc.ReliefSampler(tin).sample(tin.pts[:, :2])
+    assert hit.all() and np.allclose(z, tin.pts[:, 2], atol=1e-9)
