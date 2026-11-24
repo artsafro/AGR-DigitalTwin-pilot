@@ -123,7 +123,7 @@ The package stages run as the skeleton commands (section "Skeleton" above, `C:/x
 (`agr vpm-to-npm`, spec `spec_v004.json`), readback + xView (whole and element-wise [D336] via `kpp1_assemble.py split`),
 `kpp1_package.py npm-dir` (OKS + the accepted #1416 Ground copy byte-for-byte, V013 bounds from the fresh readbacks),
 `agr package-npm`, `agr build-manifest build` with masters per role [D328]/[D333] (`kpp1_package.py record-ground`
-re-records the #1416 Ground derivation) and `agr validate`. VPM `s_podz` stays empty: customer data, not a defect [D377].
+re-records the #1416 Ground derivation) and `agr validate`. VPM `s_podz` stays empty as a delivered-project exception [D377].
 Tests: `tests/jobs/test_kpp1_elements_plan_1609.py`.
 
 VPM (sub-job `vpm/skeleton.json`, oks-vpm, no hooks; same delivery master; logs in the evidence folder):
@@ -137,3 +137,37 @@ uv run agr build-manifest build V/SM_Kpp_1.zip --master oks=PACKET/master-v004-d
 uv run agr validate V/SM_Kpp_1.zip --profile vpm --scene --json --export-meta V/export_meta.json --master oks=... --master oks=...
 uv run agr validate V/SM_Kpp_1.zip --profile vpm --scene --json --export-meta V/export_meta.json --master PACKET/SM_Kpp_1.v004-lattice.fbx   # V003 master quads (DER-03)
 ```
+
+### Package acceptance disposition (#1817)
+
+Artem accepted the applicable manual gates [D382] on the 2026-11-24 package sheets
+(`1609-kpp1-package-v004/draft-b25/sheets`): V015/V017 in NPM; V015/V016/V017 in VPM.
+This does not turn an unmeasured automatic finding under V015 into a pass.
+
+| Scope | Accepted disposition [D382] | Raw validation remains |
+| --- | --- | --- |
+| OKS V003 decor embed | Keep portals N01 (56 mm), N02/S01/S02/S03/S04 (nominal 6 mm) and strips Frame_N06/S05/W03 (116/116/153.6 mm). This is an exception to [D199] for KPP1 v004, not a change to the body or posts. | `review` on the work FBX |
+| OKS V004 clearance and duplicates | Keep 0 pairs below 5 mm, 268 in band, 51,781 above 20 mm, and 41 duplicate vertices at NPM loose-part joints [D336]. No weld. | `review` |
+| VPM V007 normal | Keep the procedural flat PNGs; the convention is undecidable on the reported sample. This is separate from ELV [D197]. | `review` |
+| VPM V012 archive name | Keep `SM_Kpp_1`; the manual address/index review remains open. | `review` |
+| NPM Ground V003/V004 | Carry only the [D313] skirt, topology (Flora 150,567 / GroundEl 63,537 / Ground 15,976) and clearance (406 pairs below 5 mm) findings to the byte-identical #1416 `package-v002` Ground FBX. | Three `fail` findings |
+
+For readiness, classify the empty `s_podz` as `accepted_exception` [D377] only for the
+delivered KPP1/ELV projects; do not request that field again. V011 is unchanged. The
+v004 VPM ZIP contains **no** GeoJSON: V001 is `fail`, V011 is `not_run`, and V013 MSK-77
+remains `not_run`. The V010 UCX coverage finding also remains `not_run` [D224]. Ground
+footprint/hole coverage, Flora share and dimensions, V006 atlas padding and other
+unlisted findings are not waived. The role-master and work-FBX runs are complementary
+evidence; neither changes the other's raw findings.
+
+Read-only replay for validation triage/readiness (no DCC and no packaging):
+
+```bash
+uv run python jobs/KPP1/lattice-1609/acceptance_1817.py 'G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25-r1'
+```
+
+The replay verifies both ZIPs, the four saved validator reports and the copied Ground
+member by SHA-256. It writes only to stdout and emits the original reports alongside
+finding-level dispositions. Exit 0 means the overlay was read successfully; all four
+original reports retain `passed=false` and their original exit codes. A different or
+incomplete evidence bundle is refused; do not transfer these dispositions to a new export.

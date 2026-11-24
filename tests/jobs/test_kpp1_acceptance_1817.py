@@ -34,7 +34,7 @@ def packet(tmp_path):
             {"id": "V001", "status": "fail", "gate": "blocking", "findings": [
                 {"name": "GeoJSON", "status": "fail"}]},
             {"id": "V004", "status": "fail", "gate": "blocking", "findings": [
-                {"name": "co-directional clearance", "status": "review"},
+                {"name": "co-directional clearance", "status": "review", "measured": 20.1},
                 {"name": "co-directional clearance", "status": "fail"}]},
             {"id": "V011", "status": "not_run", "gate": "blocking", "findings": []},
             {"id": "V012", "status": "review", "gate": "blocking", "findings": [
@@ -112,10 +112,10 @@ def test_mixed_evidence_refuses_and_resets(tmp_path, packet, mode):
 
 
 @pytest.mark.parametrize("replacement", [b"NaN", b"Infinity", b"5.0", b"[]", b"{}", b"null",
-                                         b'false, "passed": true'])
+                                         b'20.1, "measured": 0', b"20.10"])
 def test_changed_report_is_not_recognized(tmp_path, packet, replacement):
     key = "npm/validate-npm.json"
-    (tmp_path / key).write_bytes(packet[key].replace(b'"passed": false', b'"passed": ' + replacement, 1))
+    (tmp_path / key).write_bytes(packet[key].replace(b'"measured": 20.1', b'"measured": ' + replacement, 1))
     with pytest.raises(ValueError, match="SHA-256 mismatch"):
         replay(tmp_path, packet)
 
