@@ -3,29 +3,45 @@
 Pattern: n/a | new-case: sandbox-safe, no-``uv run`` launcher for the oks-vpm ``inspect`` stage.
 
 The trainer's ``oks-vpm`` lane runs a FRESH Codex agent in a ``codex exec -s workspace-write``
-sandbox. Inside that sandbox ``uv run agr inspect ...`` fails before it reaches ``agr``, because
-``uv`` tries to write its cache / managed-Python directories OUTSIDE the workspace (Windows
-``os error 5``, #1608 -> #1858). The fix is to preflight the environment OUTSIDE the sandbox
-(``uv sync`` -> ``.venv`` inside the checkout) and then launch the venv's own Python directly,
-never through ``uv``:
+sandbox. Inside that sandbox ``uv run agr inspect ...`` fails before it reaches ``agr``
+(Windows ``os error 5``, #1608 -> #1858). The mechanism is not fully diagnosed; the working
+hypothesis is that ``uv`` tries to write its cache / managed-Python directories OUTSIDE the
+workspace, which the sandbox denies (pointing ``UV_CACHE_DIR`` at an unwritable directory
+reproduces ``os error 5`` deterministically). Whatever the exact mechanism, the fix is to
+preflight the environment OUTSIDE the sandbox (``uv sync`` -> ``.venv`` inside the checkout)
+and then launch the venv's own Python directly, never through ``uv``:
 
-    .venv/Scripts/python.exe -m dt_ai.trainer.inspect --manifest JOB.json      (Windows)
-    .venv/bin/python        -m dt_ai.trainer.inspect --manifest JOB.json      (POSIX)
+    .venv/Scripts/python.exe -m dt_ai.trainer.inspect_launcher --manifest JOB.json      (Windows)
+    .venv/bin/python        -m dt_ai.trainer.inspect_launcher --manifest JOB.json      (POSIX)
 
 This reaches the SAME logic as ``agr inspect --manifest`` (``dt_ai.cli.agr`` aliases ``inspect``
 to ``dt_ai.cli.main inspect``) with distinguishable, actionable outcomes:
 
-    EXIT_OK        (0)  manifest valid; Gate 1 (pipeline attempts-gate, #128) open
-    EXIT_BOOTSTRAP (2)  isolated interpreter missing / cannot start -- preflight first
-    EXIT_MISSING   (3)  the --manifest file does not exist
-    EXIT_MALFORMED (4)  the manifest is not a readable BuildJob (bad JSON / validation)
-    EXIT_GATE1     (5)  the manifest's job is locked by the pipeline attempts-gate (#128)
+    EXIT_OK            (0)  manifest valid; pipeline attempts-gate (#128) open
+    EXIT_BOOTSTRAP     (2)  isolated interpreter missing / cannot import dt_ai.cli.main -- preflight first
+    EXIT_MISSING       (3)  the --manifest file does not exist
+    EXIT_MALFORMED     (4)  the manifest is not a readable BuildJob (bad JSON / validation)
+    EXIT_ATTEMPTS_GATE (5)  the manifest's job is locked by the pipeline attempts-gate (#128)
+
+The bootstrap-vs-malformed split is classified INSIDE the launched process: the child runs a
+``-c`` shim that imports ``dt_ai.cli.main`` and exits with a dedicated code on import failure,
+before the manifest is ever read. So an interpreter without ``dt_ai``, or one missing a
+dependency (the #1608 "no shapely/ezdxf" condition), reports EXIT_BOOTSTRAP, never a
+"manifest malformed" verdict.
 
 ``--preflight`` reports whether the isolated environment is ready and, when it is not, prints the
-one command to run outside the sandbox. A practice run must NOT transfer the historical gate
-approvals (``jobs/<JOB>/pipeline/state.json`` stop records): a fresh checkout starts clean, and a
-copied lock is reported as EXIT_GATE1, never silently skipped. The launcher only reads; it writes
+one command to run outside the sandbox.
+
+A practice run must NOT transfer the historical pipeline attempts-gate state
+(``jobs/<JOB>/pipeline/state.json``): a fresh checkout starts clean, and a copied lock is
+reported as EXIT_ATTEMPTS_GATE, never silently skipped. The launcher only reads; it writes
 nothing and never deletes the input.
+
+Gate 1 (the user's ``parts.json`` confirmation, docs/procedure/TASK_TO_MODEL.md, "Gate 1 handoff")
+is OUT OF SCOPE for this launcher: the ``inspect`` step reads a BuildJob manifest
+(``project.json``) and runs before ``parts.json`` exists, so there is no Gate 1 approval to
+transfer or verify at this step. The attempts-gate (#128) is a separate, distinct check and is
+reported under EXIT_ATTEMPTS_GATE, never as "Gate 1".
 """
 from __future__ import annotations
 
@@ -39,7 +55,23 @@ EXIT_OK = 0
 EXIT_BOOTSTRAP = 2
 EXIT_MISSING = 3
 EXIT_MALFORMED = 4
-EXIT_GATE1 = 5
+EXIT_ATTEMPTS_GATE = 5
+
+# The child process exits with this code only when it cannot import dt_ai.cli.main (a bootstrap
+# failure), so a manifest the CLI reads but fails to parse (the CLI exits 1) is never misreported
+# as a bootstrap failure. The value is far from the CLI's own 0/1/2/3 return codes.
+_BOOTSTRAP_CHILD_CODE = 250
+
+_LAUNCH_SHIM = (
+    "import sys\n"
+    "try:\n"
+    "    from dt_ai.cli import main as cli_main\n"
+    "except Exception as exc:\n"
+    "    print('bootstrap: cannot import dt_ai.cli.main: ' + repr(exc), file=sys.stderr)\n"
+    "    sys.exit({code})\n"
+    "sys.argv = ['agr', 'inspect', '--manifest', sys.argv[1]]\n"
+    "sys.exit(cli_main.main())\n"
+).format(code=_BOOTSTRAP_CHILD_CODE)
 
 _VENV_CANDIDATES = (".venv/Scripts/python.exe", ".venv/bin/python")
 
@@ -78,22 +110,34 @@ def manifest_job(root: Path, manifest: Path) -> str | None:
 
 
 def gate_errors(root: Path, job: str) -> list[str]:
-    """Reasons a run of ``jobs/<JOB>`` is denied by the pipeline attempts-gate (#128); [] when open."""
+    """Reasons a run of ``jobs/<JOB>`` is denied by the pipeline attempts-gate (#128); [] when open.
+
+    Fails closed: when the gate script is missing or cannot be loaded, it reports
+    "attempts-gate not checked" instead of silently treating the job as open.
+    """
     gate = repo_root() / "tools" / "git-hooks" / "pipeline_gate.py"
     if not gate.is_file():
-        return []
-    spec = importlib.util.spec_from_file_location("pipeline_gate", gate)
-    if spec is None or spec.loader is None:
-        return []
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.run_errors(root, job)
+        return [f"attempts-gate not checked: {gate} is missing"]
+    try:
+        spec = importlib.util.spec_from_file_location("pipeline_gate", gate)
+        if spec is None or spec.loader is None:
+            return [f"attempts-gate not checked: cannot load {gate}"]
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module.run_errors(root, job)
+    except Exception as exc:  # a gate that cannot run must not count as open
+        return [f"attempts-gate not checked: {gate} failed to load: {exc}"]
 
 
 def launch(python: Path, manifest: Path) -> subprocess.CompletedProcess:
-    """Run the actual ``agr inspect`` logic (``dt_ai.cli.main inspect``) in a fresh subprocess."""
+    """Run the actual ``agr inspect`` logic (``dt_ai.cli.main inspect``) in a fresh subprocess.
+
+    The child is a ``-c`` shim that imports ``dt_ai.cli.main`` FIRST and exits
+    ``_BOOTSTRAP_CHILD_CODE`` when that import fails, so an import/bootstrap failure is
+    distinguishable from a manifest the CLI reads but fails to parse.
+    """
     return subprocess.run(
-        [str(python), "-m", "dt_ai.cli.main", "inspect", "--manifest", str(manifest)],
+        [str(python), "-c", _LAUNCH_SHIM, str(manifest)],
         capture_output=True,
         text=True,
     )
@@ -142,6 +186,12 @@ def run(root: Path, manifest: Path, override: Path | None = None) -> int:
     except OSError as exc:
         print(f"ERROR: bootstrap: cannot start isolated interpreter: {exc}", file=sys.stderr)
         return EXIT_BOOTSTRAP
+    if proc.returncode == _BOOTSTRAP_CHILD_CODE:
+        print("ERROR: bootstrap: isolated interpreter cannot import dt_ai.cli.main", file=sys.stderr)
+        if proc.stderr.strip():
+            print(proc.stderr.rstrip(), file=sys.stderr)
+        print("Preflight outside the sandbox (`uv sync`), then relaunch without `uv run`.", file=sys.stderr)
+        return EXIT_BOOTSTRAP
     if proc.returncode != 0:
         print(f"ERROR: manifest malformed: {manifest}", file=sys.stderr)
         if proc.stderr.strip():
@@ -153,18 +203,18 @@ def run(root: Path, manifest: Path, override: Path | None = None) -> int:
         errors = gate_errors(root, job)
         if errors:
             for error in errors:
-                print(f"ERROR: gate1: {error}", file=sys.stderr)
+                print(f"ERROR: attempts-gate (#128): {error}", file=sys.stderr)
             print(
-                "Do not transfer historical gate approvals (pipeline/state.json) into a practice run.",
+                "Do not transfer historical gate state (pipeline/state.json) into a practice run.",
                 file=sys.stderr,
             )
-            return EXIT_GATE1
+            return EXIT_ATTEMPTS_GATE
     return EXIT_OK
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
-        prog="dt_ai.trainer.inspect",
+        prog="dt_ai.trainer.inspect_launcher",
         description="Isolated (no-`uv run`) launcher for the trainer's `agr inspect --manifest` step.",
     )
     ap.add_argument("--manifest", type=Path, help="BuildJob manifest (JOB.json) to inspect")
