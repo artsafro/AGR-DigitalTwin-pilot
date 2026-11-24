@@ -6,7 +6,8 @@ the only input of openings_from_revit_fbx.py.
 blender -b --factory-startup --python tools/methods/body/revit_fbx_dump_blender.py -- SRC.fbx NEW_DUMP.json
 
 Imports SRC.fbx into an empty scene (never saves a .blend), writes NEW_DUMP.json with schema `revit-fbx-dump/1`:
-{"schema", "source", "sha256", "objects": [{"name", "verts", "tris", "z": [zmin, zmax], "hull": [[x, y], ...]}]}.
+{"schema", "source", "sha256", "objects": [{"name", "verts", "tris", "materials", "z": [zmin, zmax], "hull": [[x, y], ...]}]}.
+`materials` (sorted slot material names) was added for `agr scene prepare` (#1867); older dumps lack it.
 Hull = 2D convex hull of the world-space vertices (metres after import), CCW. Objects without vertices are kept
 with "hull": [] so the extractor reports them. NEW_DUMP.json must not exist and must not be SRC.fbx.
 Blender 5.1.2 crashes on some Revit FBX imports; run this with Blender 4.4 (#1784 intake).
@@ -43,7 +44,8 @@ def main():
             continue
         me, mw = ob.data, ob.matrix_world
         n = len(me.vertices)
-        rec = {"name": ob.name, "verts": n, "tris": sum(len(p.vertices) - 2 for p in me.polygons)}
+        rec = {"name": ob.name, "verts": n, "tris": sum(len(p.vertices) - 2 for p in me.polygons),
+               "materials": sorted({s.material.name for s in ob.material_slots if s.material})}
         if n:
             co = np.empty(n * 3, dtype=np.float64)
             me.vertices.foreach_get("co", co)
