@@ -196,7 +196,8 @@ Stage `body` of `oks-vpm` and `oks-npm`, all OKS buildings; the rule itself is t
 - Per project: `plinth` = `one_with_body` or `inset`; the final split follows the project, its textures and
   texturing convenience.
 - Job report: one line, checked by `skeleton_guard.modelling_split_problems`:
-  `Modelling split [D336]: plinth=<one_with_body|inset>; inset=<parts>; texture=<parts>; reason=<why, for this project>`.
+  `Modelling split [D336]: plinth=<one_with_body|inset>; inset=<parts>; texture=<parts>; reason=<why for this project: profile, sub-stage, object/version, now/later, exception link if any>`.
+  Example (synthetic): `Modelling split [D336]: plinth=one_with_body; inset=windows, stained_glass, roof, flashings, posts; texture=panels; reason=VPM, body stage 1, ExampleBuilding v001; body and windows now, roof/flashings later in stage 2; exception: none`.
 
 Master/QA checks on these parts are element-wise; no check may require welding inset elements into the body:
 
