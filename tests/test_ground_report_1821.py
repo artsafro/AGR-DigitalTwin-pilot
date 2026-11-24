@@ -11,12 +11,13 @@ All site data is SYNTHETIC (generated squares, planes and DXF from test_ground_s
 """
 import importlib.util
 import json
+import math
 import random
 
 import pytest
 
 from dt_ai.geometry import ground_site as gs
-from tests.test_ground_site_1406 import SITE, build, make_spec, run
+from tests.test_ground_site_1406 import SITE, build, make_spec, relief, run
 
 UCX = "UCX not built: " + gs.UCX_OWNER
 
@@ -47,12 +48,14 @@ def test_minimal_built_case_reports_failures_and_advisories_apart():
 
 
 def test_uv_parity_is_not_measured_with_reason():
-    rel = build().report["stages"]["relief"]
-    assert "uv_unchanged_by_projection" not in rel
-    uv = rel["uv_parity"]
-    assert uv["status"] == "not_measured"
-    assert "vertices" in uv["reason"] and "UDIM" in uv["reason"]
-    assert uv["flat_vertices"] < uv["relief_vertices"]  # relief adds vertices: no row-by-row comparison
+    for kw in ({}, {"relief_xyz": relief(n=12, f=lambda x, y: 100.0 + 0.4 * math.sin(x) * math.cos(y))}):
+        rel = build(**kw).report["stages"]["relief"]
+        assert "uv_unchanged_by_projection" not in rel
+        uv = rel["uv_parity"]
+        assert uv["status"] == "not_measured"
+        assert "vertices" in uv["reason"] and "UDIM" in uv["reason"]
+        if kw:  # relief adds vertices: still no row-by-row comparison, still not_measured
+            assert uv["flat_vertices"] < uv["relief_vertices"]
 
 
 def test_zero_supplied_vs_fbx_not_measured_in_builder():
