@@ -45,11 +45,11 @@ def _dxf(path: Path, units=4, entities=True) -> Path:
     return path
 
 
-def _receipt(path: Path, dwg: Path, dxf: Path, **over) -> Path:
+def _receipt(path: Path, dwg_p: Path, dxf_p: Path, **over) -> Path:
     data = {"receipt": "dwg-to-dxf/1", "tool": "tools/methods/body/dwg_to_dxf.py", "status": "pass", "reason": None,
             "returncode": 0, "command": ["accoreconsole.exe", "/i", "C:/x/copy.dwg"],
-            "source": {"path": "C:/elsewhere/L03.dwg", "sha256": _sha(dwg)},
-            "source_sha256_after": _sha(dwg), "dxf": {"path": "C:/elsewhere/L03.dxf", "sha256": _sha(dxf)}}
+            "source": {"path": "C:/elsewhere/L03.dwg", "sha256": _sha(dwg_p)},
+            "source_sha256_after": _sha(dwg_p), "dxf": {"path": "C:/elsewhere/L03.dxf", "sha256": _sha(dxf_p)}}
     data.update(over)
     path.write_text(json.dumps(data), encoding="utf-8")
     return path
