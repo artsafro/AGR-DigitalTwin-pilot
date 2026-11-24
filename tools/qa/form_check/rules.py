@@ -8,6 +8,8 @@ the citation, so the report still shows the number.
 * ACCEPTED - deviations Artem accepted on a named model, given per pair with their citation (e.g. the D341
   step-corner clip of 63B v007, #57: the narrowing is real, it originates in floor_A.json, and v007 is accepted).
   Matched by item name, location (`near_xy` within `radius_m`) and size (`dev_m` <= `max_dev_m`).
+
+new-case: tools/qa/form_check/rules.py - form check v1 Artem rules
 """
 from __future__ import annotations
 

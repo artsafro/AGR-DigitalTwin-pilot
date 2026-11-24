@@ -4,6 +4,8 @@ key uses label heights (63B: label = real + 8.82) and an optional object-name fi
 
 usage: blender -b --factory-startup --python extract_blender.py -- <in.fbx> <out.json> <label=real,...> [name_regex] [dx,dy,dz]
 Never saves the scene; the FBX is only imported.
+
+new-case: tools/qa/form_check/extract_blender.py - form check v1 Blender readback
 """
 import json
 import math

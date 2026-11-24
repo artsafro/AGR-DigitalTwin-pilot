@@ -10,6 +10,8 @@
   "matches the drawing" / "required form" (#47: a better-than question ranks render cleanliness).
 * Judges do not measure depth or ~10 cm chamfers (#45: shading draws a niche at any depth; #49: both judges
   call a 0.10 m chamfer `Same`). Depth comes only from the scene detector.
+
+new-case: tools/qa/form_check/judge.py - form check v1 VLM pair judge
 """
 from __future__ import annotations
 
@@ -140,7 +142,10 @@ def aggregate(records):
         for j, qs in judges.items():
             res[pair][j] = {q: (cell_equivalence if q == "equivalence" else cell_recess)(o.get("AB"), o.get("BA"))
                             for q, o in qs.items()}
+        asked = {q for j in judges for q in res[pair][j]}
         for q in ("equivalence", "recess"):
+            if q not in asked:
+                continue
             cells = [res[pair][j].get(q) for j in judges]
             dec = [c for c in cells if c not in (None, "no_decision", "not_measured")]
             res[pair].setdefault("consensus", {})[q] = (dec[0] if dec and len(set(dec)) == 1 and len(dec) == len(cells)

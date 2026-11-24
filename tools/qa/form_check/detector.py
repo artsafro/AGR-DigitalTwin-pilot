@@ -16,6 +16,8 @@ Statuses: pass / fail / not_measured / not_applicable. Only `pass` counts as suc
 Inputs are plain JSON: the key (`heldout-key/1`, as written by t_563a40f7 `make_key.py`), its sections
 (`{z_label: [[p, q], ...]}`) and a candidate extract (`extract_blender.py`: `sections`, `loops`, `objects`).
 An optional key `profile` overrides the section labels for fragments whose floor is not the G22 one.
+
+new-case: tools/qa/form_check/detector.py - form check v1 scene detector
 """
 from __future__ import annotations
 

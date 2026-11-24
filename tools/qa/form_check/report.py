@@ -1,10 +1,15 @@
-"""Form check v1 - result table and Russian summary sheet (PNG)."""
+"""Form check v1 - result table and Russian summary sheet (PNG).
+
+new-case: tools/qa/form_check/report.py - form check v1 table and sheet
+"""
 from __future__ import annotations
 
 COLS = [("pair", "Пара"), ("variant", "Вариант"), ("artem", "Артём"), ("detector", "Детектор"),
         ("agree_detector", "совп."), ("judge", "Судьи"), ("agree_judge", "совп."), ("not_measured", "Не измерено")]
 GOOD = {"ok", "Same", "accepted"}
 BAD = {"defect", "Different", "rejected"}
+RU = {"accepted": "принят", "rejected": "отклонён", "n/a": "—", "ok": "норма", "defect": "дефект", "yes": "да",
+      "no": "НЕТ", "not_measured": "не измерено"}
 
 
 def agree(tool, artem):
@@ -35,8 +40,8 @@ def sheet_png(rows, notes_ru, out_png, title="Проверка формы v1 —
         return ImageFont.load_default()
 
     f_t, f_h, f_b = font(34, True), font(22, True), font(21)
-    widths = [190, 190, 130, 200, 80, 220, 80, 900]
-    W = sum(widths) + 60
+    widths = [150, 200, 130, 130, 80, 440, 80, 160]
+    W = max(sum(widths) + 60, 1900)
     rh = 34
     H = 140 + rh * (len(rows) + 1) + 40 + 30 * len(notes_ru) + 40
     im = Image.new("RGB", (W, H), "white")
@@ -54,6 +59,7 @@ def sheet_png(rows, notes_ru, out_png, title="Проверка формы v1 —
         for (c, _), w in zip(COLS, widths):
             v = str(r.get(c, ""))
             col = {"yes": (210, 240, 210), "no": (250, 210, 210)}.get(v, "white")
+            v = RU.get(v, v)
             d.rectangle([x, y, x + w, y + rh], fill=col, outline="black")
             maxc = max(4, int(w / 11))
             d.text((x + 6, y + 6), v if len(v) <= maxc else v[: maxc - 1] + "…", fill="black", font=f_b)

@@ -65,9 +65,9 @@
      "cite": "step 3 rejected (110 mm step at the NW corner, SHEET v003 t_933a30b6)"}
    ],
    "reference": "A-proto",
-   "render": {"crop": [-0.2, -6.15, 0.0, 5.2, 0.2, 3.3], "panels": [{"name": "V1", "caption": "V1: фасад N (север)", "dir": [0, -1, 0]},
-              {"name": "V2", "caption": "V2: фасад W (запад)", "dir": [1, 0, 0]}, {"name": "V3", "caption": "V3: угол NW сверху-снаружи", "dir": [1, -1, -0.8]},
-              {"name": "V4", "caption": "V4: план сверху", "dir": [0, 0, -1]}]}
+   "render": {"crop": [-0.2, -6.15, 0.0, 5.2, 0.2, 3.3], "panels": [{"name": "V1", "caption": "V1: elevation of facade N (seen from north)", "dir": [0, -1, 0]},
+              {"name": "V2", "caption": "V2: elevation of facade W (seen from west)", "dir": [1, 0, 0]}, {"name": "V3", "caption": "V3: NW corner, oblique from outside", "dir": [1, -1, -0.8]},
+              {"name": "V4", "caption": "V4: NW corner, steep oblique from above", "dir": [0.6, -0.6, -1.4]}]}
   },
   {
    "id": "Sokolniki",

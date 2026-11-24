@@ -5,8 +5,10 @@ The scene is cropped by bisecting at the six crop-box planes (no caps), so both 
 framed identically. One PNG per panel; `compose` in `pairs.py` builds the labelled 2x2 judge image.
 
 usage: blender -b --factory-startup --python render_blender.py -- <in.fbx> <out_dir> <spec.json>
-spec: {"crop": [x0, y0, z0, x1, y1, z1], "name_re": "..." | null, "x_offset": [dx, dy, dz] | null,
+spec: {"crop": [x0, y0, z0, x1, y1, z1] | "bbox", "name_re": "..." | null, "x_offset": [dx, dy, dz] | null,
        "panels": [{"name": "V1", "dir": [dx, dy, dz]}, ...]}   (dir = view direction, from camera to scene)
+
+new-case: tools/qa/form_check/render_blender.py - form check v1 neutral judge renders
 """
 import json
 import math
@@ -23,6 +25,7 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.fbx(filepath=fbx)
 name_re = re.compile(spec["name_re"]) if spec.get("name_re") else None
 objs = [o for o in bpy.context.scene.objects if o.type == "MESH" and (name_re is None or name_re.search(o.name))]
+obj_names = [o.name for o in objs]
 off = Vector(spec.get("x_offset") or (0, 0, 0))
 bm = bmesh.new()
 for o in objs:
@@ -36,11 +39,16 @@ for o in objs:
     bm.from_mesh(me)
 for o in list(bpy.context.scene.objects):
     bpy.data.objects.remove(o, do_unlink=True)
-x0, y0, z0, x1, y1, z1 = spec["crop"]
-for co, no in (((x0, 0, 0), (-1, 0, 0)), ((x1, 0, 0), (1, 0, 0)), ((0, y0, 0), (0, -1, 0)), ((0, y1, 0), (0, 1, 0)),
-               ((0, 0, z0), (0, 0, -1)), ((0, 0, z1), (0, 0, 1))):
-    bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=co, plane_no=no,
-                           clear_outer=True)
+if spec["crop"] == "bbox":
+    vs = [v.co for v in bm.verts]
+    x0, y0, z0 = (min(c[i] for c in vs) for i in range(3))
+    x1, y1, z1 = (max(c[i] for c in vs) for i in range(3))
+else:
+    x0, y0, z0, x1, y1, z1 = spec["crop"]
+    for co, no in (((x0, 0, 0), (-1, 0, 0)), ((x1, 0, 0), (1, 0, 0)), ((0, y0, 0), (0, -1, 0)),
+                   ((0, y1, 0), (0, 1, 0)), ((0, 0, z0), (0, 0, -1)), ((0, 0, z1), (0, 0, 1))):
+        bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], plane_co=co, plane_no=no,
+                               clear_outer=True)
 me = bpy.data.meshes.new("FormCheckCrop")
 bm.to_mesh(me)
 nfaces = len(bm.faces)
@@ -79,6 +87,6 @@ for p in spec["panels"]:
     sc.render.filepath = f"{out_dir}/{p['name']}.png"
     bpy.ops.render.render(write_still=True)
     rows[p["name"]] = {"dir": list(d), "ortho_scale": cam.data.ortho_scale}
-json.dump({"fbx": fbx, "objects": [o.name for o in objs], "faces_after_crop": nfaces, "panels": rows},
+json.dump({"fbx": fbx, "objects": obj_names, "faces_after_crop": nfaces, "panels": rows},
           open(f"{out_dir}/render.json", "w"), indent=1)
 print("FORMCHECK_RENDER", nfaces, list(rows))

@@ -6,6 +6,8 @@ usage (repo root, uv env):
   python -m tools.qa.form_check.pairs judge  --out ... [--workers 4]
   python -m tools.qa.form_check.pairs table  --out ... [--png <sheet.png>]
 OBSERVE only: reads exact bytes (SHA-256 prefix pinned), never writes next to a source, never gates delivery.
+
+new-case: tools/qa/form_check/pairs.py - form check v1 pair runner
 """
 from __future__ import annotations
 
@@ -232,6 +234,16 @@ def cmd_judge(cfg, out, workers):
         jl = J.jobs(pairs)
         json.dump(jl, open(jf, "w", encoding="utf-8"), indent=1)
     recs = J.run(jl, out / "judge_calls", Path("C:/x/form-check-v1-calls"), workers=workers)
+    # specificity control (#49 'AA'): the accepted reference against itself, equivalence question only
+    cf = out / "judge_jobs_controls.json"
+    if cf.exists():
+        cl = json.load(open(cf, encoding="utf-8"))
+    else:
+        refs = {p["id"].rsplit("|", 1)[0]: p["a_png"] for p in pairs}
+        cl = J.jobs([{"id": f"{k}|control", "a_png": v, "b_png": v} for k, v in refs.items()],
+                    questions=("equivalence",))
+        json.dump(cl, open(cf, "w", encoding="utf-8"), indent=1)
+    recs += J.run(cl, out / "judge_calls", Path("C:/x/form-check-v1-calls"), workers=workers)
     agg = J.aggregate(recs)
     json.dump(agg, open(out / "judge.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(json.dumps(agg, ensure_ascii=False, indent=1))
@@ -252,13 +264,20 @@ def rows_from(cfg, det, agg):
         pair = next(p for p in cfg["pairs"] if p["id"] == r["pair"])
         ref = pair["reference"]
         if r["variant"] == ref:
-            jv = "reference"
+            cell = (agg or {}).get(f"{r['pair']}|{ref}|control")
+            jv = "not run" if cell is None else f"control self-pair: {cell['consensus']['equivalence']}"
+            judge_tool = "n/a"
         else:
             cell = (agg or {}).get(f"{r['pair']}|{ref}|{r['variant']}")
-            jv = "not run" if cell is None else cell["consensus"]["equivalence"]
-        judge_tool = {"Different": "defect", "Same": "ok"}.get(jv, "n/a")
-        if r["variant"] == ref and r["artem"] == "accepted":
-            judge_tool, jv = "n/a", "эталон пары"
+            if cell is None:
+                jv, judge_tool = "not run", "n/a"
+            else:
+                eq = cell["consensus"]["equivalence"]
+                rc = cell["consensus"].get("recess")
+                who = {"A": ref, "B": r["variant"]}.get(rc, rc)
+                jv = f"{eq} vs {ref}; extra recess: {who}"
+                # a judge only says 'differs from the accepted reference'; it cannot say which one is right
+                judge_tool = {"Different": "defect", "Same": "ok"}.get(eq, "n/a")
         nmr = nm_reasons(r)
         rows.append({"pair": r["pair"], "variant": r["variant"], "artem": r["artem"], "detector": r["verdict"],
                      "agree_detector": P.agree(r["verdict"], r["artem"]), "judge": jv,
@@ -276,6 +295,7 @@ def main(argv=None):
     ap.add_argument("--pairs", default=str(HERE / "pairs_v1.json"))
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--png")
+    ap.add_argument("--notes", help="UTF-8 text file, one Russian line per note, printed under the table")
     a = ap.parse_args(argv)
     cfg = json.load(open(a.pairs, encoding="utf-8"))
     out = Path(a.out)
@@ -293,6 +313,13 @@ def main(argv=None):
         json.dump(rows, open(out / "table.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         (out / "table.md").write_text(P.markdown_table(rows), encoding="utf-8")
         print(P.markdown_table(rows))
+        if a.png:
+            notes = Path(a.notes).read_text(encoding="utf-8").splitlines() if a.notes else []
+            short = [{**r, "not_measured": r["not_measured"].split(":")[0] + " п." if r["not_measured"] != "-" else "-",
+                      "judge": r["judge"].replace("control self-pair: ", "контроль: ").replace(" vs ", " с ")
+                      .replace("; extra recess: ", "; ниша: ").replace("Different", "разные").replace("Same", "одинаковы")
+                      .replace("no_decision", "нет решения").replace("None", "нет")} for r in rows]
+            P.sheet_png(short, notes, a.png)
 
 
 if __name__ == "__main__":
