@@ -1,5 +1,7 @@
 # Plan: rolling out the Telegram findings (2026-11-10)
 
+Status: active (2026-11-24)
+
 Source: `docs/research/telegram-3dsmax-chat-2026-11.md` (items, message ids, links). This plan covers the
 digital-twin repository only; archviz items go to the max-viz session (prompt kept with the user).
 One step = one branch / PR unless marked "batch". Status: `done`, `next`, `later`, `blocked`.

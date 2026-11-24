@@ -2,6 +2,8 @@
 
 <smallest diff-sketch or file tree, chosen scope and source issue/card>
 
+New file rationale: <each added file/module → existing owner checked → why it was not extended; n/a if none>
+
 ## Evidence
 
 <!-- `uv run dt evals --check-handoff <this body file> --sha <full HEAD sha> --output <worktree>/tmp/evals`

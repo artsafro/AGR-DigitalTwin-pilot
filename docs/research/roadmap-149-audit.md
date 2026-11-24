@@ -1,5 +1,7 @@
 # Capability roadmap #149: closure audit (#1260)
 
+Status: done (2026-11-24)
+
 ## Verdict and boundary
 
 **Close #149 as a superseded planning umbrella after this report is merged, not as
