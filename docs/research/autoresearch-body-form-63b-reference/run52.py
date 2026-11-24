@@ -80,14 +80,16 @@ def main(out):
         r['preflight'] = 'ok'
         sys.dont_write_bytecode = True
         spec = importlib.util.spec_from_file_location('score_heldout', det/'score_heldout.py')
+        assert spec is not None and spec.loader is not None
         score = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(score)
         contour_key = load(key/'heldout-key-v001.json')
         ring = {x['ring_index']: x['xy'] for x in contour_key['contour_vertices_in_box']}
-        a,u,_ = score.frame(ring,18,19)
         posthoc = old('posthoc51.py').decode('utf-8')
         assert 'A, B = (85.519, 16.334), (95.936, 27.133)' in posthoc
-        assert (a, ring[19]) == ([85.519,16.334], [95.936,27.133])
+        fixed = {18: [85.519,16.334], 19: [95.936,27.133]}
+        assert {i: [round(v,3) for v in ring[i]] for i in fixed} == fixed
+        a,u,_ = score.frame(fixed,18,19)
         raw_ref = load(base.SRC)['modules']['A']['reference']
         source = [(name, (p,q)) for name,(p,q) in raw_ref if all(abs(score.local(x,a,u)[1]) <= .03 for x in (p,q))]
         intervals = lambda segs: clip(score.wall_intervals(segs,a,u))
