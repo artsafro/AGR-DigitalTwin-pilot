@@ -79,4 +79,28 @@ Needs Drive read access to the two PNGs (replay limited without Drive). Receipt:
 
 ## Round log
 
-(filled after measurement)
+### R1 (frozen, no amendment) — H75 **inconclusive**
+
+Replay as above, 3 fresh processes, wall 2.33 s total (rounds 0.36/0.44/0.34 s), run status ok.
+Receipt `docs/research/maf-atlas-sharpness-r75/receipt.json`.
+
+| cell | label | content px | R75 | S75 (diag) | meta src/content |
+|---|---|---|---|---|---|
+| r1 ID 18 wood_log_end | rejected | 120 | **0.97646** | 1.26827 | 0.900 |
+| r2 ID 18 wood_log_end | accepted | 248 | 0.97148 | 1.69193 | 1.065 |
+| r1/r2 ID 15 wood_medium | accepted | 248 | 0.77188 | 2.02088 | 6.129 |
+| r1/r2 ID 33 wood_pine | accepted | 248 | 0.77875 | 2.05858 | 6.129 |
+
+- Ordering holds in 3/3 rounds: rejected R75 above all 5 accepted cells, collateral 0.
+- D75 = +0.004978 (range 0.0) — **below the frozen 0.01 margin**.
+- W1 (1.1x re-up of r2 ID 18): ΔR75 +0.01937, in bound (>= 0.01), exercised 55,362 px.
+- W2 (2x): ΔR75 +0.03799, **out of bound** (>= 0.05): R75 saturates near 1.0 on an already soft cell.
+- P1 +8 brightness ΔR75 +0.00023, P2 contrast x0.8 ΔR75 +0.00128: invariant, both exercised.
+- The same witnesses on r1 ID 18 are all exercised (W1 +0.0193, W2 +0.0344).
+
+Reading: the accepted r2 log end is itself near-saturated (R75 0.971, close to 1:1 from a soft painted
+source), so retention cannot separate "slightly upscaled" from "soft source" with the frozen margin.
+The diagnostic S75 separates the same pair more (1.268 vs 1.692, -25 %) but is content-dependent and
+was not frozen as the decision metric; it is a candidate for an independent pair, not a result here.
+No amended R2: the contract allows one only for a bug, and this is a genuine margin miss.
+OBSERVE: nothing applied, no gate proposed.

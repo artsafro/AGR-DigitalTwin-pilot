@@ -1,0 +1,190 @@
+{
+ "card": "t_4c80effc",
+ "round": "R1 (frozen, no amendment)",
+ "contract": "docs/research/autoresearch-maf-atlas-sharpness.md @ 6a757eae",
+ "replay": "uv run --frozen python docs/research/maf-atlas-sharpness-r75/replay.py tmp/r75-NEW",
+ "inputs": {
+  "r1_png": "55e654a2e04ce2e828cd1f7a1f585d54263a01050f00cb60d5d3bab4f6d0cf6d",
+  "r2_png": "a30dac001483b42d99afee0fc315e58ddc4ba1ce10d7bb58e8565017e4b3f340",
+  "r1_layout": "88535418:library/maf/atlas_512_v007.json",
+  "r2_layout": "01e48513:library/maf/atlas_512_v007.json"
+ },
+ "round_files_sha256": {
+  "round1.json": "af23d60b3f103d1d66e22c7a21c1183978e1d3fe4e076859515c327d88182420",
+  "round2.json": "3ca5887988e7ee62231ef4f0cc85b64e7fdb2f7b9d65ab6685475484e67acef2",
+  "round3.json": "bcb0a591c6a6f319f49b208c691fe67357fab6c120da2c59aea6ac8d338e6f04"
+ },
+ "hypothesis_result": "inconclusive",
+ "summary": {
+  "verdict": "inconclusive",
+  "D75_median": 0.004977591185534425,
+  "D75_range": 0.0,
+  "rejected_above_all_accepted_all_rounds": true,
+  "W1_dR75_median": 0.019368024754870095,
+  "W1_in_bound": true,
+  "W2_dR75_median": 0.03799204392566491,
+  "W2_in_bound": false,
+  "invariance_in_bounds_all_rounds": true,
+  "collateral_max": 0,
+  "wall_s_total": 2.3343618999933824,
+  "round_wall_s": [
+   0.36390250000113156,
+   0.43587320001097396,
+   0.33832180000899825
+  ],
+  "cells_round1": [
+   {
+    "rev": "r1",
+    "id": 15,
+    "key": "wood_medium",
+    "label": "accepted",
+    "content_px": [
+     4,
+     4,
+     248,
+     248
+    ],
+    "crop_sha256": "071cad37deec40c52b671617244edfbde944f8fccc7fbd2f0173b5fb1ca92a7d",
+    "R75": 0.7718776881197585,
+    "S75": 2.0208755395365867,
+    "meta_src_per_content": 6.129032258064516
+   },
+   {
+    "rev": "r1",
+    "id": 18,
+    "key": "wood_log_end",
+    "label": "rejected",
+    "content_px": [
+     4,
+     260,
+     120,
+     120
+    ],
+    "crop_sha256": "36f27f115f0e2ff3559147bb489a3e472c9bebac5b979e288a7d652fb3451c63",
+    "R75": 0.9764560338794276,
+    "S75": 1.2682683809012982,
+    "meta_src_per_content": 0.9
+   },
+   {
+    "rev": "r1",
+    "id": 33,
+    "key": "wood_pine",
+    "label": "accepted",
+    "content_px": [
+     260,
+     4,
+     248,
+     248
+    ],
+    "crop_sha256": "e5ed9377d54cf02e40d06edb70b7bad5b99f5488a6eabefe9fcdea25a19079aa",
+    "R75": 0.7787451748996934,
+    "S75": 2.0585817380616893,
+    "meta_src_per_content": 6.129032258064516
+   },
+   {
+    "rev": "r2",
+    "id": 15,
+    "key": "wood_medium",
+    "label": "accepted",
+    "content_px": [
+     4,
+     4,
+     248,
+     248
+    ],
+    "crop_sha256": "071cad37deec40c52b671617244edfbde944f8fccc7fbd2f0173b5fb1ca92a7d",
+    "R75": 0.7718776881197585,
+    "S75": 2.0208755395365867,
+    "meta_src_per_content": 6.129032258064516
+   },
+   {
+    "rev": "r2",
+    "id": 18,
+    "key": "wood_log_end",
+    "label": "accepted",
+    "content_px": [
+     4,
+     260,
+     248,
+     248
+    ],
+    "crop_sha256": "90b809a6e285a7332c41ae8c6a6b484840d292cfb90b111a6afeeba6dac320dd",
+    "R75": 0.9714784426938932,
+    "S75": 1.691925663071724,
+    "meta_src_per_content": 1.064516129032258
+   },
+   {
+    "rev": "r2",
+    "id": 33,
+    "key": "wood_pine",
+    "label": "accepted",
+    "content_px": [
+     260,
+     4,
+     248,
+     248
+    ],
+    "crop_sha256": "e5ed9377d54cf02e40d06edb70b7bad5b99f5488a6eabefe9fcdea25a19079aa",
+    "R75": 0.7787451748996934,
+    "S75": 2.0585817380616893,
+    "meta_src_per_content": 6.129032258064516
+   }
+  ],
+  "witness_round1": {
+   "r2_18_W1": {
+    "changed_px": 55362,
+    "state": "exercised",
+    "R75": 0.9908464674487633,
+    "dR75": 0.019368024754870095
+   },
+   "r2_18_W2": {
+    "changed_px": 59206,
+    "state": "exercised",
+    "R75": 1.009470486619558,
+    "dR75": 0.03799204392566491
+   },
+   "r2_18_P1": {
+    "changed_px": 59483,
+    "state": "exercised",
+    "R75": 0.9717081843877969,
+    "dR75": 0.0002297416939037733
+   },
+   "r2_18_P2": {
+    "changed_px": 57705,
+    "state": "exercised",
+    "R75": 0.9727591147157141,
+    "dR75": 0.0012806720218209167
+   },
+   "r1_18_W1": {
+    "changed_px": 11735,
+    "state": "exercised",
+    "R75": 0.9957558884581185,
+    "dR75": 0.019299854578690878
+   },
+   "r1_18_W2": {
+    "changed_px": 13339,
+    "state": "exercised",
+    "R75": 1.0108504749135505,
+    "dR75": 0.034394441034122925
+   },
+   "r1_18_P1": {
+    "changed_px": 13455,
+    "state": "exercised",
+    "R75": 0.9774057980457128,
+    "dR75": 0.0009497641662852274
+   },
+   "r1_18_P2": {
+    "changed_px": 12946,
+    "state": "exercised",
+    "R75": 0.9789857668538244,
+    "dR75": 0.0025297329743968477
+   }
+  }
+ },
+ "not_measured": [
+  "solid cells (not_exercised by rule)",
+  "accepted collateral outside this atlas (AC08/KPP1/other MAF atlases)",
+  "Staropetrovskiy, Vatutino board seams, KPP1 v004"
+ ],
+ "replay_limits": "needs Drive read access to the two PNGs and the repo git objects 88535418/01e48513; Python+PIL from uv.lock"
+}
