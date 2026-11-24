@@ -36,6 +36,12 @@ def run(cmd, **kwargs):
     return sp.run(cmd, check=True, capture_output=True, **kwargs).stdout
 
 
+def check_manifest(root):
+    for line in (root/'SHA256SUMS.txt').read_text(encoding='utf-8').splitlines():
+        digest, name = line.split(maxsplit=1)
+        assert sha(root/name.removeprefix('*')) == digest, f'manifest mismatch: {name}'
+
+
 def normalized(report):
     report = copy.deepcopy(report)
     report['provenance'].pop('candidate_fbx')
@@ -136,7 +142,7 @@ def main(out):
         pins = read(Path(__file__).with_name('pins.json'))
         assert all(sha(Path(p)) == h for p, h in pins.items()), 'absolute-path pin mismatch'
         for root in (P, P/'key', K63):
-            run(['sha256sum', '-c', 'SHA256SUMS.txt'], cwd=root)
+            check_manifest(root)
         import run53 as prior
         S = prior.score53.S
         fbxset = {k: (Path(p), h) for k, (_, p, h) in (prior.F63 | prior.FG22).items() if k != 'G22_C_shift_opening'}
@@ -201,7 +207,7 @@ def main(out):
         result['postflight'] = all(sha(Path(p)) == h for p, h in pins.items()) and all(
             sha(out/f'{k}.fbx') == h for k, (_, h) in fbxset.items())
         for root in (P, P/'key', K63):
-            run(['sha256sum', '-c', 'SHA256SUMS.txt'], cwd=root)
+            check_manifest(root)
         if result['status'] == 'running':
             result['status'] = 'complete'
             aggregate(result, S.TOL['reveal_depth_m'], prior.F63)
