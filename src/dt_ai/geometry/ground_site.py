@@ -31,6 +31,8 @@ from dt_ai.geometry import ground_cake as gc
 
 STAGES = ("sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx")
 UCX_OWNER = "#1404 compaction 7 (ucx10_core.py, D225)"
+FBX_ZERO_NOT_MEASURED = {"status": "not_measured",
+                         "reason": "no FBX is exported or read back by the site build (OBJ only, #1821)"}
 MAX_ID = 10  # UDIM = 1000 + ID in the first row 1001-1010; slot "IDnn_" parsing assumes two digits
 
 
@@ -138,7 +140,11 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     ``unhatched``: boundary area under no hatch (smaller than ``footprint_min_area``) lands on the base cover only
     with ``{"cover_id": base_id, "reason": ...}`` (e.g. D283 / D284); without it any such area is a finding.
 
-    Coordinates: XY local = source XY - ``origin_xy``; Z local = source Z - ``project_zero_m`` (FBX Z 0 = ±0.000).
+    Coordinates: XY local = source XY - ``origin_xy``; Z local = source Z - ``project_zero_m`` (local Z 0 = ±0.000
+    by construction). No FBX is written or read here: the FBX Z of the zero is reported ``not_measured`` (#1821).
+
+    Report (#1821): ``geometry_failures`` decide ``geometry_status`` (and the CLI exit code); ``advisories`` (e.g.
+    ``UCX not built``) never do; ``findings`` = failures + advisories, kept for compatibility.
     """
     report: dict = {"order": list(STAGES), "passed": False, "stages": {}}
     if surfaces not in gc.SURFACES:
@@ -179,7 +185,10 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
         raise ValueError(f"{len(tin.contradictory)} relief points with the same XY and other Z, first "
                          f"{tin.contradictory[0]}: resolve the source marks, no average")
     zabs = tin.pts[:, 2] + zero
-    report["stages"]["zero"] = {"project_zero_m": zero, "h_relief": round(zero, 2), "fbx_z_of_zero_m": 0.0,
+    report["stages"]["zero"] = {"project_zero_m": zero, "project_zero_role": "supplied by the project (caller input)",
+                                "h_relief": round(zero, 2), "local_z_of_project_zero_m": 0.0,
+                                "local_z_rule": "Z local = source Z - project_zero_m (construction, not a measurement)",
+                                "fbx_z_of_zero": dict(FBX_ZERO_NOT_MEASURED),
                                 "relief_abs_range_m": [float(zabs.min()), float(zabs.max())],
                                 "tin_points": int(len(tin.pts)), "tin_triangles": int(len(tin.tris)),
                                 "merged_duplicates": tin.merged, "tin_slivers_peeled": tin.slivers_peeled,
@@ -228,7 +237,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     kept = _retained(flat.verts[:, :2], mesh.verts[:, :2], snap)
     err = gc.measure_relief_error(mesh, sampler, step, tol=relief_tol)
     report["stages"]["relief"] = {"triangles": int(len(mesh.faces)), "flat_vertices_retained": kept,
-                                  "relief_error": err, "uv_unchanged_by_projection": True,
+                                  "relief_error": err, "uv_parity": _uv_parity_not_measured(flat, refined),
                                   "snap_margin_vertices": len(sampler.margin_uses),
                                   "snap_margin_max_m": max(sampler.margin_uses.values(), default=0.0)}
 
@@ -253,7 +262,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
                                     "density_px_per_m_top": [float(np.nanmin(dens[top])), float(np.nanmax(dens[top]))]}
     report["stages"]["skirt"] = {"drop_m": skirt_m, "skirt_faces": int((~top).sum()), "skirt_gap_edges": gaps}
     report["stages"]["ucx"] = {"status": "not_run", "owner": UCX_OWNER}
-    findings = []
+    findings = []  # geometry failures (#1821: the status follows these only)
     if tiles["straddling"] or tiles["outside_udim_range"]:
         findings.append(f"UV: {tiles['straddling']} straddling, {tiles['outside_udim_range']} outside UDIM range")
     if sorted(tiles["tiles"]) != sorted(report["stages"]["textures"]["expected_tiles"]):
@@ -266,11 +275,38 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
         findings.append(f"relief: {err['over_tol']} samples over {relief_tol} m")
     if cov.get("uncovered_beyond_tol_m2", 0) > 1e-6:
         findings.append(f"flat coverage gap {cov['uncovered_beyond_tol_m2']} m2")
-    findings.append("UCX not built: " + UCX_OWNER)
-    report["findings"] = findings
-    report["geometry_status"] = "fail" if len(findings) > 1 else "built"
+    report["geometry_failures"] = findings
+    report["advisories"] = ["UCX not built: " + UCX_OWNER]
+    finalize_geometry(report)
     out_slots = [slots[c.name] for c in sorted(covers, key=lambda c: c.id)]
     return SiteResult(flat, mesh, out_slots, report)
+
+
+def finalize_geometry(report: dict) -> bool:
+    """Set ``geometry_status`` and the compatibility ``findings`` from ``geometry_failures`` only (#1821).
+
+    Advisories (informational, e.g. ``UCX not built``) never change the status, whatever their count. Returns True
+    when the geometry failed. Missing or malformed lists raise (fail closed, never ``built``)."""
+    lists = {}
+    for key in ("geometry_failures", "advisories"):
+        items = report[key]
+        if not isinstance(items, list) or not all(isinstance(m, str) and m.strip() for m in items):
+            raise ValueError(f"report {key} must be a list of non-empty messages, got {items!r}")
+        lists[key] = items
+    failed = bool(lists["geometry_failures"])
+    report["findings"] = lists["geometry_failures"] + lists["advisories"]
+    report["findings_scope"] = "compatibility: geometry_failures + advisories; status follows geometry_failures"
+    report["geometry_status"] = "fail" if failed else "built"
+    return failed
+
+
+def _uv_parity_not_measured(flat: gc.Mesh, relief: gc.Mesh) -> dict:
+    """UV parity across the relief stage is not measured here (#1821): the relief refinement adds vertices, so a
+    row-by-row UV comparison with the flat stage is meaningless, and UDIM tiles per ID only prove tile assignment."""
+    return {"status": "not_measured", "flat_vertices": int(len(flat.verts)), "relief_vertices": int(len(relief.verts)),
+            "reason": "relief refinement can add vertices (see flat_vertices vs relief_vertices), so UV rows are not "
+                      "comparable; no before/after UV comparison is done, and UDIM tile assignment per ID "
+                      "(stages.textures) is not UV-parity proof"}
 
 
 def _udim_by_id(mesh: gc.Mesh, by_name: dict) -> None:
