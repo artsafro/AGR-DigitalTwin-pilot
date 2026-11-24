@@ -31,6 +31,8 @@ _spec = importlib.util.spec_from_file_location('run_checks_1372', ROOT / 'jobs/K
 _rc = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_rc)
 verify = _rc.verify
+sys.path.insert(0, str(ROOT / 'src'))
+from dt_ai.core.blender_runner import blender_command  # noqa: E402
 
 
 def sha(p):
@@ -69,7 +71,9 @@ def main(packet, out, ground, thumb, ground_master):
 
     master, spec = packet / 'master-v004-delivery.blend', packet / 'spec_v004.json'
     recipe = ROOT / 'jobs/TEC26-OKS/scripts'
-    bl = [BLENDER, '--background', '--factory-startup', '--disable-autoexec', '--python-exit-code', '1', '--python']
+
+    def bl(script, *args):
+        return blender_command(script, args, executable=BLENDER)   # the one shared Blender command line (#1378)
     try:
         if stage('derive', ['uv', 'run', 'agr', 'vpm-to-npm', '--blender', BLENDER, spec, out / 'atlas',
                             '--master', master, '--recipe-dir', recipe, '--cell', '512', '--pad', '8',
@@ -77,12 +81,11 @@ def main(packet, out, ground, thumb, ground_master):
                             '--recipe-dir', recipe]):
             raise RuntimeError('derive failed')
         fbx = out / 'export/fbx/0000_Kpp_1_01.fbx'
-        stage('readback', bl + [ROOT / 'tools/blender/fbx_readback.py', '--', fbx, out / 'readback.json'])
+        stage('readback', bl(ROOT / 'tools/blender/fbx_readback.py', fbx, out / 'readback.json'))
         stage('export-xview', ['uv', 'run', 'dt', 'qa', 'xview', fbx, '--out', out / 'export-xview.json',
                                '--blender', BLENDER])
-        stage('split-export', bl + [ROOT / 'jobs/KPP1/quad-1372/split_elements.py', '--',
-                                    out / 'export/NPM_export_tri.blend', out / 'export-elements.blend',
-                                    out / 'export-elements.json'])
+        stage('split-export', bl(ROOT / 'jobs/KPP1/quad-1372/split_elements.py', out / 'export/NPM_export_tri.blend',
+                                 out / 'export-elements.blend', out / 'export-elements.json'))
         stage('export-xview-elements', ['uv', 'run', 'dt', 'qa', 'xview', out / 'export-elements.blend',
                                         '--out', out / 'export-xview-elements.json', '--blender', BLENDER])
         # NPM package dir: derived OKS FBX + the accepted Ground copy, one export_meta with fbx_records (V013)
@@ -93,8 +96,8 @@ def main(packet, out, ground, thumb, ground_master):
         if sha(npm / fbx.name) != sha(fbx) or sha(npm / '0000_Kpp_1_Ground.fbx') != ground_sha:
             raise RuntimeError('package copy changed bytes')
         derived = json.loads((out / 'export/fbx/export_meta.json').read_text(encoding='utf-8'))
-        stage('ground-bounds', bl + [ROOT / 'tools/blender/fbx_readback.py', '--', npm / '0000_Kpp_1_Ground.fbx',
-                                     out / 'ground-readback.json'])
+        stage('ground-bounds', bl(ROOT / 'tools/blender/fbx_readback.py', npm / '0000_Kpp_1_Ground.fbx',
+                                  out / 'ground-readback.json'))
         meta = dict(derived)
         meta['exported_files'] = [fbx.name, '0000_Kpp_1_Ground.fbx']
         meta['thumbnail'] = str(thumb)

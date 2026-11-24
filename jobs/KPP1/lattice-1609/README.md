@@ -111,3 +111,14 @@ Ground derivation), and `agr validate` (V013 from the fresh readback bounds). VP
 not a defect [D377]. Modelling split [D336]: plinth=body (finish band); inset=posts, frames, portals, annex, roof,
 glass; texture=cassette panels (UDIM); reason=Artem 2026-11-16/21/24.
 Tests: `tests/jobs/test_kpp1_elements_plan_1609.py`.
+
+VPM (same delivery master; run by hand after the NPM runner, logs in the evidence folder):
+```
+"$B" -b --factory-startup --python jobs/KPP1/scripts/export_vpm.py -- PACKET/master-v004-delivery.blend V/pkg
+# V/tex = the 24 PNG of the 8 UDIM tiles the master uses (1001 1006 1007 1009 1010 1012 1015 1018), make_textures.py
+uv run agr package-vpm V/pkg V/tex --no-geojson --meta V/export_meta.json --deferred-note "GeoJSON deferred [D224]; ..."
+uv run agr build-manifest record V/tex/*.png --master V/vpm_textures.json --role oks --source-id Kpp_1.oks.textures --out ...
+uv run agr build-manifest build V/SM_Kpp_1.zip --master oks=PACKET/master-v004-delivery.blend --master oks=V/vpm_textures.json \
+    --derivation V/derivation V/derivation-tex2 --transform-name "..." --blender "$B"
+uv run agr validate V/SM_Kpp_1.zip --profile vpm --scene --json --export-meta V/export_meta.json --master oks=... --master oks=...
+```
