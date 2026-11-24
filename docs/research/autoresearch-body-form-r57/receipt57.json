@@ -1,0 +1,194 @@
+{
+ "card": "t_04ced2e2",
+ "round": 57,
+ "preflight": {
+  "C:/x/ev_poly63b7/b63B_src.npz": {
+   "sha256": "b5cdbf394e4a10c55db391c13d15096c71e5a4c085be30e0edb595610cd04aea",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/key/heldout-key-v001.json": {
+   "sha256": "67a1ae5b88beec6eefc51d51ccdab496daa256709ec484793caee4097f6b6b14",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/key/heldout-sections-v001.json": {
+   "sha256": "07ce9a5bff8a9e4e82bf8346daef191ca5e0ba626ccd900aaca290a29fb698b6",
+   "ok": true
+  },
+  "C:/x/t_563a40f7/detector/score_heldout.py": {
+   "sha256": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/run1/v002/rep1/candidate.extract.json": {
+   "sha256": "5828266d5e694c1f75889d7bf3e763c05beac75b57ae53908f0f3736962f5f58",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/run1/v003/rep1/candidate.extract.json": {
+   "sha256": "c035a44fe2dafb438f15a1d3127bcbd76587ec228df847116636d51cd8869a1f",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/run1/v004/rep1/candidate.extract.json": {
+   "sha256": "3b29cb977acf28cf8461576e237f53bc90b0e17de89466a977a39562f34417a6",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/run1/v005/rep1/candidate.extract.json": {
+   "sha256": "34b323ffa148dd236ec6c78552b6682330b78b18fd63f60a3a291af592ecf6db",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/run1/v006/rep1/candidate.extract.json": {
+   "sha256": "4d381329b1e17162163e8773b86baf604ebddef1e00000ffb5d1c15bc068ef59",
+   "ok": true
+  },
+  "C:/x/t_fb3a0b98-r51/run1/v007/rep1/candidate.extract.json": {
+   "sha256": "a883a32978a7242d522facf54a781ad3e7f42c4a821f9e060b12aa7cdf20461c",
+   "ok": true
+  }
+ },
+ "runs": [
+  {
+   "file": "run1.json",
+   "sha256": "b0704260d8274bf4de14566c3fa2b968bf3b2094c4616531c76bfc69bf455f1d",
+   "wall_s": 0.773
+  },
+  {
+   "file": "run2.json",
+   "sha256": "b0704260d8274bf4de14566c3fa2b968bf3b2094c4616531c76bfc69bf455f1d",
+   "wall_s": 0.78
+  },
+  {
+   "file": "run3.json",
+   "sha256": "b0704260d8274bf4de14566c3fa2b968bf3b2094c4616531c76bfc69bf455f1d",
+   "wall_s": 0.962
+  }
+ ],
+ "runs_identical": true,
+ "E57_per_run": [
+  0.086736,
+  0.086736,
+  0.086736
+ ],
+ "D57_per_run": [
+  6e-06,
+  6e-06,
+  6e-06
+ ],
+ "H57": "refuted",
+ "controls": {
+  "рт О_415705d": [
+   3.9e-05,
+   3.9e-05
+  ],
+  "рт О_6189f94": [
+   9.2e-05,
+   9.2e-05
+  ],
+  "рт О_010a21f": [
+   9e-05,
+   9e-05
+  ],
+  "рт О_1198368": [
+   8.9e-05,
+   8.9e-05
+  ]
+ },
+ "rescore_frozen_51": {
+  "key_wallhole_sha256": "6097bc9ac338d944efc95fc36352181d7c9e2107679b5a4519e789ae55e9a8f6",
+  "variants": {
+   "v007": {
+    "verdict": "accepted 2026-11-20",
+    "key_v001": {
+     "edges_fail": [
+      "opening:рт О_194b464:edges"
+     ],
+     "edges_not_measured": [],
+     "fail_total": 9
+    },
+    "wallhole": {
+     "edges_fail": [
+      "opening:рт О_194b464:edges"
+     ],
+     "edges_not_measured": [],
+     "fail_total": 9
+    }
+   },
+   "v002": {
+    "verdict": "rejected",
+    "key_v001": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    },
+    "wallhole": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    }
+   },
+   "v003": {
+    "verdict": "rejected",
+    "key_v001": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    },
+    "wallhole": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    }
+   },
+   "v004": {
+    "verdict": "rejected 2026-11-17",
+    "key_v001": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    },
+    "wallhole": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    }
+   },
+   "v005": {
+    "verdict": "rejected 2026-11-18",
+    "key_v001": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    },
+    "wallhole": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    }
+   },
+   "v006": {
+    "verdict": "rejected 2026-11-18",
+    "key_v001": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    },
+    "wallhole": {
+     "edges_fail": [],
+     "edges_not_measured": [],
+     "fail_total": 5
+    }
+   }
+  }
+ },
+ "postflight": {
+  "C:/x/ev_poly63b7/b63B_src.npz": true,
+  "C:/x/t_fb3a0b98-r51/key/heldout-key-v001.json": true,
+  "C:/x/t_fb3a0b98-r51/key/heldout-sections-v001.json": true,
+  "C:/x/t_563a40f7/detector/score_heldout.py": true,
+  "C:/x/t_fb3a0b98-r51/run1/v002/rep1/candidate.extract.json": true,
+  "C:/x/t_fb3a0b98-r51/run1/v003/rep1/candidate.extract.json": true,
+  "C:/x/t_fb3a0b98-r51/run1/v004/rep1/candidate.extract.json": true,
+  "C:/x/t_fb3a0b98-r51/run1/v005/rep1/candidate.extract.json": true,
+  "C:/x/t_fb3a0b98-r51/run1/v006/rep1/candidate.extract.json": true,
+  "C:/x/t_fb3a0b98-r51/run1/v007/rep1/candidate.extract.json": true
+ },
+ "status": "complete",
+ "wall_s_total": 2.848
+}

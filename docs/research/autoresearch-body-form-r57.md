@@ -61,3 +61,7 @@ Readiness `2026-11-24_0944.json` areas 3–4. Continues #56 next-target 1 (origi
 Ground #1738/#1816 (SIL13 under #1622), construction #1736/#1770/#1784, delivery #1817/#1818/#1315, atlas #1649,
 suite #1615, hidden seam #1802, judges #41/#45/#47/#49 (no exact KPP1 NW / Sokolniki body pairs with byte verdicts),
 0.50/0.71 reveal reference (Artem's question since #53).
+
+## Result
+
+**H57 refuted** (source wall hole = key within 6 µm; v007 off by 0.087/0.069 m, E57 = 0.086736, spread 0). See [REPORT](autoresearch-body-form-r57/REPORT.md).
