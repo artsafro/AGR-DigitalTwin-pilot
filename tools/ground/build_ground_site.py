@@ -6,7 +6,11 @@ usage: dt ground site SPEC.json NEW_OUT_DIR
 
 The spec names the DXF (with sha256), boundary handle, project zero (+ source), covers (ID, name, hatch handles;
 ID colour = hatch background colour or a stated colour with reason), base ID, relief marks (block / INSERT names /
-contour layers) and optional crop box and parameters. Output (new directory, written via NEW_OUT_DIR.partial):
+contour layers) and optional crop box and parameters. Cover IDs are 1..10 only (UDIM 1000 + ID = the first row
+1001-1010; ID 11+ is refused, never renumbered). Relief: model space (no ``block``) is read directly; a ``block``
+is placed by an explicit outermost-first ``insert_chain`` (covers-path conventions) or read in its own local
+coordinates via ``definition_only: true`` - a block with neither selector is refused, never silently assumed at
+identity. Output (new directory, written via NEW_OUT_DIR.partial):
 ground-flat.obj (flat-first stage), SM_<site>_Ground.obj (projected + skirt, UDIM = ID), ground-report.json
 (every stage, OBJ readback and the project zero check on the OBJ readback). Exit 0 built (advisories such as
 UCX not_run: #1404 never change it), 1 geometry failures (diagnostic OBJ + failed report are still published,

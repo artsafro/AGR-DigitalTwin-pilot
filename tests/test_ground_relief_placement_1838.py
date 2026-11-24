@@ -7,12 +7,14 @@ model-space INSERTs. The analytic oracle is the covers-path convention
 ``model = insert + R(angle) * (sx*x, sy*y)``, ``z' = iz + sz*z`` with block base point (0, 0, 0).
 """
 import math
+from pathlib import Path
 
 import pytest
 import ezdxf
 
 from dt_ai.geometry import ground_site as gs
 
+ROOT = Path(__file__).resolve().parents[1]
 MARKS = [(0.0, 0.0, 10.0), (10.0, 0.0, 12.0), (0.0, 10.0, 11.0)]
 CONTOUR = [(2.0, 2.0, 5.0), (8.0, 2.0, 5.0), (8.0, 8.0, 5.0)]
 LOCAL = [*MARKS, *CONTOUR]
@@ -184,3 +186,50 @@ def test_relief_non_finite_source_point_refused():
     doc.modelspace().add_blockref("MARK", (0.0, 10.0, 11.0))
     with pytest.raises(ValueError, match="non-finite"):
         gs.relief_from_dxf(doc, {"insert_names": ["MARK"]})
+
+
+def test_cli_placed_block_relief_fresh_process(tmp_path):
+    """Fresh-process `dt ground site` accepts ``insert_chain`` and extracts every placed mark + contour point."""
+    import json
+    import subprocess
+    import sys
+
+    def plane(x, y):
+        return 100.0 + 0.05 * x - 0.03 * y
+
+    grid = [(x, y, plane(x, y)) for x in (-1.0, 7.0, 14.0, 21.0) for y in (-1.0, 7.0, 14.0, 21.0)]
+    doc = ezdxf.new()
+    msp = doc.modelspace()
+    b = msp.add_lwpolyline([(0, 0), (20, 0), (20, 20), (0, 20)], close=True)
+    lawn = msp.add_hatch(color=3)
+    lawn.paths.add_polyline_path([(0, 0), (20, 0), (20, 20), (0, 20)], is_closed=True)
+    lawn.bgcolor = (96, 150, 64)
+    rub = msp.add_hatch(color=253)
+    rub.paths.add_polyline_path([(5, 5), (10, 5), (10, 10), (5, 10)], is_closed=True)
+    rub.bgcolor = (246, 115, 44)
+    blk = doc.blocks.new("RELIEF", base_point=(0.0, 0.0, 0.0))
+    for x, y, z in grid:
+        blk.add_blockref("MARK", (x, y, z))
+    contour = [(2.0, 2.0, plane(2.0, 2.0)), (8.0, 2.0, plane(8.0, 2.0)), (8.0, 8.0, plane(8.0, 8.0))]
+    blk.add_polyline3d(contour, dxfattribs={"layer": "CONT"})
+    ins = msp.add_blockref("RELIEF", (0.0, 0.0, 0.0))  # identity placement
+    dxf = tmp_path / "site.dxf"
+    doc.saveas(dxf)
+    spec = {
+        "site": "SYN", "dxf": {"path": str(dxf), "sha256": gs.sha256(dxf)},
+        "boundary": {"handle": b.dxf.handle},
+        "zero": {"project_zero_m": 100.0, "source": "synthetic"}, "base_id": 1,
+        "covers": [{"id": 1, "name": "Lawn", "hatches": [lawn.dxf.handle]},
+                   {"id": 2, "name": "Rubber", "hatches": [rub.dxf.handle]}],
+        "relief": {"block": "RELIEF", "insert_names": ["MARK"], "contour_layers": ["CONT"],
+                   "insert_chain": [ins.dxf.handle]},
+        "params": {"origin_xy": [0, 0], "cell": 4.0, "chord": 0.02},
+    }
+    p = tmp_path / "spec.json"
+    p.write_text(json.dumps(spec), encoding="utf-8")
+    r = subprocess.run([sys.executable, str(ROOT / "tools/ground/build_ground_site.py"),
+                        str(p), str(tmp_path / "out")], capture_output=True, text=True, cwd=str(ROOT))
+    assert r.returncode == 0, r.stderr
+    rep = json.loads((tmp_path / "out/ground-report.json").read_text(encoding="utf-8"))
+    assert rep["geometry_status"] == "built"
+    assert rep["stages"]["sources"]["relief_points"] == len(grid) + len(contour)
