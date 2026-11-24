@@ -55,7 +55,8 @@ byte-bound atlas crops and the exact recorded resize kernel. Focus: NPM/VPM text
 
 R1 (2026-11-24, base 4288c54d, replay.py SHA-256 `7056cc6d56fff7d55289f9b4870c94f43e993e7f88e8d5f0def43ed6adfe2195`,
 receipt `docs/research/atlas-npm-vpm-drift-r71/receipt.json` SHA-256
-`ec8ac44cf03e4aa2ec5c684a7eb5b82e33be4098c6c847a7b2d36b28c44965ae`), 3 fresh rounds, wall 11.503 s, status complete.
+`ec8ac44cf03e4aa2ec5c684a7eb5b82e33be4098c6c847a7b2d36b28c44965ae` as written (CRLF), git blob LF
+`dda58fc581b9758805a1380d0f7b01b1ed93760a552257c2f7010214167edf2c`), 3 fresh rounds, wall 11.503 s, status complete.
 
 | version | label | textured finishes: mean (p95) | M71 |
 |---|---|---|---|
