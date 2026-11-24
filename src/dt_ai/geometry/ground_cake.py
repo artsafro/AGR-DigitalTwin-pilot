@@ -588,10 +588,57 @@ class Tin:
     tris: np.ndarray  # (m, 3) index into pts
     contradictory: list[tuple[float, float, list[float]]]
     merged: int
+    slivers_peeled: int = 0  # border triangles thinner than the point grid, dropped (``peel_slivers``)
+    slivers_inner: int = 0  # such triangles kept (neighbours on all sides, or last holder of a mark), reported
 
 
-def build_tin(points: list[tuple[float, float, float]], xy_tol: float = 0.001, z_tol: float = 0.001) -> Tin:
-    """Delaunay TIN through the source points; same XY + same Z merged, same XY + other Z -> contradictory (dropped)."""
+def _peel_border_slivers(P: np.ndarray, tris: np.ndarray, height: float) -> tuple[np.ndarray, int, int]:
+    """Drop, from the outside in, every triangle on the TIN border whose height is <= ``height``.
+
+    Delaunay of points rounded to the ``xy_tol`` grid closes the convex hull with near-degenerate triangles over
+    (nearly) collinear border marks: height below the grid step, gradient 10^2-10^4 (a 0.2 m wall over < 1 mm). Their
+    slope is not relief, and the relief stage chases it with micrometre point clusters (#1315 SIL13: 176 top edges
+    <= 2 mm). Peeling never drops a triangle that is the last one holding a source mark, nor one with a neighbour on
+    all sides; both stay and are counted as ``inner``. The border strip it opens is about ``height`` wide (one grid
+    step; SIL13 boundary Hausdorff 1.12 mm at ``height`` 1 mm). Returns (tris, peeled, thin triangles left).
+    """
+    q = P[tris][:, :, :2]
+    ln = np.linalg.norm(q - np.roll(q, -1, axis=1), axis=2)
+    d1, d2 = q[:, 1] - q[:, 0], q[:, 2] - q[:, 0]
+    h = np.abs(d1[:, 0] * d2[:, 1] - d1[:, 1] * d2[:, 0]) / np.maximum(ln.max(axis=1), 1e-300)
+    thin = h <= height
+    alive = np.ones(len(tris), bool)
+    owners: dict[tuple[int, int], list[int]] = {}
+    for ti, t in enumerate(tris.tolist()):
+        for i, j in ((t[0], t[1]), (t[1], t[2]), (t[2], t[0])):
+            owners.setdefault((min(i, j), max(i, j)), []).append(ti)
+
+    def on_border(ti):
+        t = tris[ti]
+        return any(sum(alive[o] for o in owners[(min(i, j), max(i, j))]) == 1
+                   for i, j in ((t[0], t[1]), (t[1], t[2]), (t[2], t[0])))
+
+    uses = np.bincount(tris.ravel(), minlength=len(P))  # alive triangles per source mark
+    peeled, changed = 0, True
+    while changed:
+        changed = False
+        for ti in np.nonzero(thin & alive)[0]:
+            # never orphan a mark: its last triangle stays (counted in ``inner``), else its Z is lost silently
+            if alive.sum() > 1 and (uses[tris[ti]] > 1).all() and on_border(ti):
+                alive[ti] = False
+                uses[tris[ti]] -= 1
+                peeled += 1
+                changed = True
+    return tris[alive], peeled, int((thin & alive).sum())
+
+
+def build_tin(points: list[tuple[float, float, float]], xy_tol: float = 0.001, z_tol: float = 0.001,
+              peel_slivers: bool = False) -> Tin:
+    """Delaunay TIN through the source points; same XY + same Z merged, same XY + other Z -> contradictory (dropped).
+
+    ``peel_slivers`` (#1315, Ground core relief stage): drop border triangles with height <= ``xy_tol`` (see
+    ``_peel_border_slivers``); off by default so accepted producers (v015) keep their bytes.
+    """
     groups: dict[tuple[int, int], list[float]] = {}
     for x, y, z in points:
         if not all(math.isfinite(v) for v in (x, y, z)):
@@ -615,7 +662,11 @@ def build_tin(points: list[tuple[float, float, float]], xy_tol: float = 0.001, z
         tris.append([lookup[(round(x / xy_tol), round(y / xy_tol))] for x, y in cs])
     if not tris:
         raise ValueError("elevation points are collinear: no relief")
-    return Tin(arr, np.array(tris, int), contra, merged)
+    tris = np.array(tris, int)
+    peeled = inner = 0
+    if peel_slivers:
+        tris, peeled, inner = _peel_border_slivers(arr, tris, xy_tol)
+    return Tin(arr, tris, contra, merged, peeled, inner)
 
 
 class ReliefSampler:
