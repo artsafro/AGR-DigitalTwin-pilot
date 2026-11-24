@@ -8,7 +8,9 @@ The spec names the DXF (with sha256), boundary handle, project zero (+ source), 
 ID colour = hatch background colour or a stated colour with reason), base ID, relief marks (block / INSERT names /
 contour layers) and optional crop box and parameters. Output (new directory, written via NEW_OUT_DIR.partial):
 ground-flat.obj (flat-first stage), SM_<site>_Ground.obj (projected + skirt, UDIM = ID), ground-report.json
-(every stage, OBJ readback and the project zero check on the OBJ readback). Exit 0 built (advisories such as
+(every stage, OBJ readback and the project zero check on the OBJ readback). Optional ``materials`` binds every
+cover ID to a library diffuse (``gs.resolve_materials``, #1315): SM_<site>_Ground.mtl + T_<site>_Ground_Diffuse_*.png
+beside the OBJ, recoloured to the cover colour where the spec says so; the core never picks a material. Exit 0 built (advisories such as
 UCX not_run: #1404 never change it), 1 geometry failures (diagnostic OBJ + failed report are still published,
 passed=false: not package readiness evidence), 2 refused. No FBX is written or read: its zero is not_measured.
 """
@@ -23,7 +25,7 @@ from dt_ai.core.heights import export_z_check
 from dt_ai.geometry import ground_site as gs
 
 TOP_KEYS = {"site", "dxf", "adapter", "adapter_empty", "boundary", "crop_box", "zero", "covers", "base_id", "relief", "params", "note",
-            "unhatched"}
+            "unhatched", "materials"}
 PARAMS = {"cell", "chord", "step", "snap", "relief_tol", "skirt_m", "tex_px", "footprint_min_area", "origin_xy",
           "relief_extension", "surfaces"}
 
@@ -114,6 +116,7 @@ def run(spec_path: Path, out: Path) -> int:
         boundary = gs.boundary_from_dxf(doc, spec["boundary"]["handle"])
         covers = gs.covers_from_dxf(doc, spec["covers"], max(chord, 0.002))
         relief = gs.relief_from_dxf(doc, spec["relief"])
+    bindings = gs.resolve_materials(spec["materials"], covers) if "materials" in spec else None
     kw = {k: params[k] for k in params if k in PARAMS and k != "origin_xy"}
     result = gs.build_site(boundary, covers, spec["base_id"], relief, zero["project_zero_m"],
                            origin_xy=params.get("origin_xy"), crop_box=spec.get("crop_box"),
@@ -127,9 +130,17 @@ def run(spec_path: Path, out: Path) -> int:
         raise ValueError("spec or DXF changed during the site build; nothing published")
     rep["stages"]["sources"]["spec_sha256"] = spec_digest
     partial.mkdir(parents=True)
-    gs.write_obj(partial / "ground-flat.obj", result.flat, result.slots, prefix, "flat-first stage, Z = level*step")
+    mtllib = None
+    if bindings is not None:
+        mats = gs.write_materials(partial, prefix, bindings)
+        rep["stages"]["textures"]["materials"] = {"library": str(spec["materials"]["library"]),
+                                                  "decision": spec["materials"]["decision"], **mats}
+        mtllib = mats["mtl"]
+    gs.write_obj(partial / "ground-flat.obj", result.flat, result.slots, prefix, "flat-first stage, Z = level*step",
+                 mtllib)
     gs.write_obj(partial / f"{prefix}.obj", result.mesh, result.slots, prefix,
-                 f"local XY = source - {rep['stages']['sources']['origin_xy_m']}; Z = mark - {zero['project_zero_m']}")
+                 f"local XY = source - {rep['stages']['sources']['origin_xy_m']}; Z = mark - {zero['project_zero_m']}",
+                 mtllib)
     back = gs.read_obj(partial / f"{prefix}.obj")
     rep["readback"] = {k: v for k, v in back.items() if k not in ("z_values", "points")}
     skirt_m = float(params.get("skirt_m", 1.0))

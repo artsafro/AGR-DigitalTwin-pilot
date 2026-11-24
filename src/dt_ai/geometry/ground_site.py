@@ -116,6 +116,13 @@ def slot_name(cover: Cover) -> str:
     return f"ID{cover.id:02d}_{cover.name}"
 
 
+def _cover_udim(cover_id: int) -> int:
+    """First-row UDIM tile of a Ground cover ID (1..MAX_ID -> cell (cover_id - 1, 0)) via udimtile_core."""
+    if isinstance(cover_id, bool):
+        raise gc._udimtile.UdimDomainError(f"cover_id must be an integer, got {cover_id!r}")
+    return gc._udimtile.udim_of_cell(cover_id - 1, 0)
+
+
 def relief_margin(snap, extension):
     """Fail-closed explicit bound for a user-authorized nearest-TIN-plane continuation."""
     snap = _finite("snap", snap, positive=True)
@@ -206,7 +213,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
             raise ValueError(f"unhatched policy must name the base cover {base_id} and a reason, got {unhatched}")
     report["stages"]["surfaces"] = {"mode": surfaces, "plan": plan.report, "unhatched_m2": sliver,
                                     "unhatched_policy": unhatched, "ids": [
-        {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": 1000 + c.id, "colour_rgb": list(c.colour),
+        {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": _cover_udim(c.id), "colour_rgb": list(c.colour),
          "colour_source": c.colour_source, "sources": c.sources,
          "area_m2": round(sum(p.area for p in c.polygons), 6)} for c in covers]}
 
@@ -256,7 +263,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     tiles = gc.uv_tile_report(mesh.uv)
     dens = gc.texel_density(mesh.verts, mesh.faces, mesh.uv, tex_px)
     top = mesh.level >= 0
-    report["stages"]["textures"] = {"tiles": tiles, "expected_tiles": [1000 + c.id for c in covers
+    report["stages"]["textures"] = {"tiles": tiles, "expected_tiles": [_cover_udim(c.id) for c in covers
                                                                         if slots[c.name] in set(mesh.slot)],
                                     "tex_px": tex_px,
                                     "density_px_per_m_top": [float(np.nanmin(dens[top])), float(np.nanmax(dens[top]))]}
@@ -563,9 +570,104 @@ def _retained(flat_xy: np.ndarray, xy: np.ndarray, tol: float) -> dict:
 # ---------------------------------------------------------------- output (OBJ + JSON) and readback
 
 
-def write_obj(path: Path, mesh: gc.Mesh, slots: list, prefix: str, origin: str) -> None:
+MATERIAL_KEYS = {"library", "decision", "by_cover"}
+COVER_MATERIAL_KEYS = {"diffuse", "recolour", "reason"}
+RECOLOUR = ("cover-colour",)  # tint the library map so its mean RGB = the cover ID colour (hatch background)
+
+
+def resolve_materials(materials: dict, covers: list[Cover]) -> list[dict]:
+    """Spec ``materials`` -> one binding per cover (fail closed, before any build or write; #1315 V005).
+
+    ``{"library": DIR, "decision": "who/when/what", "by_cover": {"<id>": {"diffuse": "rel/path.png",
+    "recolour": "cover-colour"?, "reason"?}}}``. Every cover ID needs a library diffuse file inside DIR; nothing
+    is picked by the core."""
+    if not isinstance(materials, dict) or set(materials) - MATERIAL_KEYS:
+        raise ValueError(f"materials: keys {sorted(MATERIAL_KEYS)} only, got {materials!r}")
+    if not str(materials.get("decision", "")).strip():
+        raise ValueError("materials: decision (who approved the cover -> library mapping) is required")
+    lib = Path(str(materials.get("library", "")))
+    if not str(materials.get("library", "")).strip() or not lib.is_dir():
+        raise ValueError(f"materials: library {lib} is not a directory")
+    rows = materials.get("by_cover")
+    if not isinstance(rows, dict):
+        raise ValueError("materials: by_cover must map cover ID -> binding")
+    ids = {str(c.id) for c in covers}
+    if set(rows) - ids:
+        raise ValueError(f"materials: by_cover names unknown cover IDs {sorted(set(rows) - ids)}")
+    out = []
+    for c in sorted(covers, key=lambda c: c.id):
+        row = rows.get(str(c.id))
+        if not isinstance(row, dict) or not row.get("diffuse"):
+            raise ValueError(f"materials: cover {c.id} {c.name} has no library diffuse (ask the user, #1315)")
+        if set(row) - COVER_MATERIAL_KEYS:
+            raise ValueError(f"materials: cover {c.id} unknown keys {sorted(set(row) - COVER_MATERIAL_KEYS)}")
+        recolour = row.get("recolour")
+        if recolour is not None and recolour not in RECOLOUR:
+            raise ValueError(f"materials: cover {c.id} recolour {recolour!r} not in {RECOLOUR}")
+        src = (lib / row["diffuse"]).resolve()
+        if not src.is_relative_to(lib.resolve()):
+            raise ValueError(f"materials: cover {c.id} diffuse {row['diffuse']} must lie inside the library")
+        if not src.is_file():
+            raise ValueError(f"materials: cover {c.id} diffuse {src} does not exist")
+        out.append({"cover": c, "source": src, "diffuse": row["diffuse"], "recolour": recolour,
+                    "reason": row.get("reason")})
+    return out
+
+
+def _recoloured(rgb: np.ndarray, target) -> np.ndarray:
+    """Keep the map's luminance pattern, move its mean to ``target``: per channel ``t + k * (lum - mean lum)``,
+    contrast ``k <= 1`` shrunk so the 0.5-99.5 % luminance range fits 0..255 (a channel at 0 or 255 stays
+    flat), then clipped with mean re-centring."""
+    t = np.asarray(target, dtype=np.float64)
+    lum = rgb.astype(np.float64) @ np.array([0.2126, 0.7152, 0.0722])
+    dev = lum - lum.mean()
+    lo, hi = np.percentile(dev, [0.5, 99.5])
+    k = np.array([min(1.0, (255 - c) / hi if hi > 0 else 1.0, c / -lo if lo < 0 else 1.0) for c in t])
+    out = t + k * dev[..., None]
+    for _ in range(6):
+        out = np.clip(out + (t - out.reshape(-1, 3).mean(0)), 0, 255)
+    return np.rint(out).astype(np.uint8)
+
+
+def write_materials(folder: Path, prefix: str, bindings: list[dict]) -> dict:
+    """``<prefix>.mtl`` (one material per cover slot, map_Kd -> a PNG beside it) + the diffuse PNGs."""
+    from PIL import Image
+    site = prefix.removeprefix("SM_").removesuffix("_Ground")
+    lines, slots = [f"# {prefix}: cover -> library diffuse (#1315)"], []
+    for b in bindings:
+        slot = slot_name(b["cover"])
+        name, tex = f"M_{prefix.removeprefix('SM_')}_{slot}", f"T_{site}_Ground_Diffuse_{slot}.png"
+        with Image.open(b["source"]) as im:
+            rgb = np.asarray(im.convert("RGB"))
+        if b["recolour"] == "cover-colour":
+            rgb = _recoloured(rgb, b["cover"].colour)
+        Image.fromarray(rgb, "RGB").save(folder / tex)
+        lines += [f"newmtl {name}", "Kd 1.000000 1.000000 1.000000", f"map_Kd {tex}", ""]
+        slots.append({"slot": slot, "material": name, "texture": tex, "library_file": b["diffuse"],
+                      "library_sha256": sha256(b["source"]), "texture_sha256": sha256(folder / tex),
+                      "size_px": [int(rgb.shape[1]), int(rgb.shape[0])], "recolour": b["recolour"],
+                      "target_rgb": list(b["cover"].colour) if b["recolour"] else None,
+                      "mean_rgb": [round(float(v), 2) for v in rgb.reshape(-1, 3).mean(0)],
+                      "reason": b["reason"]})
+    (folder / f"{prefix}.mtl").write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    return {"mtl": f"{prefix}.mtl", "slots": slots}
+
+
+def read_mtl(path: Path) -> dict:
+    """Material -> map_Kd of a written MTL."""
+    out, cur = {}, None
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        head, _, rest = line.strip().partition(" ")
+        if head == "newmtl":
+            cur = rest.strip()
+        elif head == "map_Kd" and cur:
+            out[cur] = rest.strip()
+    return out
+
+
+def write_obj(path: Path, mesh: gc.Mesh, slots: list, prefix: str, origin: str, mtllib: str | None = None) -> None:
     order = {s: i for i, s in enumerate(slots)}
-    lines = [f"# {origin}", f"o {prefix}"]
+    lines = [f"# {origin}"] + ([f"mtllib {mtllib}"] if mtllib else []) + [f"o {prefix}"]
     lines += [f"v {x:.6f} {y:.6f} {z:.6f}" for x, y, z in mesh.verts]
     vt = 1
     groups = [("ground" if lv == 0 else f"ground_inset{lv}", mesh.level == lv)
