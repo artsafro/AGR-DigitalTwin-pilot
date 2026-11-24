@@ -280,6 +280,8 @@ def _plan_for_volume(vn, V, cfg):
             lc["zt"] = o["zt"]
         if o["zs"] is not None:
             lc["zs"] = o["zs"]
+            if o["partial_from"] is not None:
+                lc["keep_fill"] = True  # [D376] (1): the front below the opened part keeps its v004 extent
         local.append(lc)
     return {"plan": plan, "local": local, "openings": merged, "dropped": V["dropped"], "seams": V["seams"],
             "agreed_edges": V["agreed_edges"]}
@@ -324,7 +326,8 @@ def apply_local_cuts(core, body, plan, local):
         if lc.get("zt") is not None:
             _local_head(core, body, plan, levels, tex, plan["windows"][lc["window"]], lc["zt"])
         if lc.get("zs") is not None:
-            _local_sill(core, body, plan, levels, tex, plan["windows"][lc["window"]], lc["zs"])
+            _local_sill(core, body, plan, levels, tex, plan["windows"][lc["window"]], lc["zs"],
+                        keep=lc.get("keep_fill", False))
     return body
 
 
@@ -380,7 +383,7 @@ def _local_head(core, body, plan, levels, tex, w, zt):
     return body
 
 
-def _local_sill(core, body, plan, levels, tex, w, zs):
+def _local_sill(core, body, plan, levels, tex, w, zs, keep=False):
     """[D376] local sill: raise the sill of opening `w` from level wl to zs between its own jambs (mirror of the
     [D375] local head): the reveal bottom moves to zs, wall cells level(wl)..zs fill under the opening and the
     neighbour wall cell on each side gets the jamb vertex at zs (no new ring)."""
@@ -433,6 +436,8 @@ def _local_sill(core, body, plan, levels, tex, w, zs):
         q = (Gb[j], Gb[j + 1], P[j + 1], P[j])
         faces.append({"v": q, "mat": zone_mat, "uv": [(ks[j + (1 if k in (1, 2) else 0)][0] / tex, verts[i][2] / tex)
                                                       for k, i in enumerate(q)]})
+        if keep:  # a partial reveal on a seam side: the fill under the opening is not a hidden seam cell
+            faces[-1]["keep"] = True
     body.setdefault("report", {}).setdefault("local_sills", 0)
     body["report"]["local_sills"] += 1
     return body
@@ -559,7 +564,7 @@ def remove_hidden_seam_cells(body, seams, tol=1e-3):
                     and max(p[2] for p in co) <= sm["hidden_to"] + tol and abs(_normal(co)[2]) < 0.1):
                 hit = sm
                 break
-        if hit:
+        if hit and not f.get("keep"):
             dropped += 1
         else:
             keep.append(f)

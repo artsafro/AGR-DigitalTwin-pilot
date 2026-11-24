@@ -48,6 +48,8 @@ kept_jobs:
     ru: "только LESSONS.md; сценарий ground-vpm ссылается на уроки"
   - job: jobs/silikatny-maf-viz
     ru: "только README.md"
+  - job: jobs/sokolniki-uvk1000
+    ru: "открытый #1784 (PR #1786): тело по решётке, шаг 2 v005 ждёт приёмки, впереди шаг 3"
 live_paths:
   - path: docs/plans/manual-mode-no-ai.md
     ru: "открытые #1507, #1508, #1509, #1512 (ручной режим) ссылаются на план"

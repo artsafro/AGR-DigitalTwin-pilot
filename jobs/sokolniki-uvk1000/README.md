@@ -70,3 +70,30 @@ Result (quad copy): 4 volumes, 3 771 faces, 7 831 triangles after triangulation 
 triangles, every ring closed (N 10/10, D 13/13, S 10/10, H 2/2 levels, all stations continuous), 0 defect cells,
 0 non-manifold edges, xView NPM 0/0 PASS, V004 has no fail (co-directional clearance `review`: 0 pairs under 20 mm).
 Not in this body yet: insets [D336], 47 curtain-wall bboxes left uncut in v002 (F05 is blank), 16 `zone` panels.
+
+## Step 2 v005 — decisions on the v004 comparison ([D376])
+
+Artem 2026-11-24 accepted the five recommendations of `step2-compare-v004` ([D376]). The body is rebuilt from the
+lattice with `body_config_v005.json` (no mesh repair):
+
+```
+uv run python tools/methods/body/volume_body.py C:/x/ev_1784/step2/volume-lines-v002.json C:/x/ev_1784/step2/build-v005 --core <core>/tools/methods/body --config jobs/sokolniki-uvk1000/body_config_v005.json
+```
+
+- D02 (F04): the seven `crosses_visible_band` windows open from the seam side's `visible_from` (N top +14.30) to their
+  head +16.44 - a local sill, the mirror of the [D375] local head; the front below keeps its v004 extent.
+- F05: two `contour_cut` runs from the Revit curtain panels (sections D06/D07): D06 +7.525..+18.47 and D06+D07
+  +13.50..+18.47, welded into one mouth (no zero-thickness transom, one glazing seat polygon); the glazing is a step-3 inset.
+- F06 / 22daf24: an opening narrower than its source rect must be listed in `agreed_edge_clamps` (0.268 m) or the
+  build fails; the local head +2.175 m stays.
+- F13: the four window pairs share one mouth each, seat depth 0.394 m (`reveal_m_by_name`; Revit frames at
+  -0.05..+0.094 and +0.25..+0.394 m).
+- #1802: a seam hides only the band both volumes share (`[max base, min top]`); mate ends must coincide within 1 mm.
+
+Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v005/` (`sok-step2-v005-compare.pdf`, 14
+sheets v004 | v005 | Revit, 7 sections; `compare_v005.json` with the t_57b332a4 measure, seat depths 0.15 / 0.394 m;
+`SHA256SUMS.txt`, 23 files, manifest `9760957a…`). Result: 4 volumes, 3 849 faces, 8 019 triangles after
+triangulation, 0 facade triangles, 0 non-manifold edges, 0 bow-tie vertices, rings closed, xView NPM PASS. Walls equal
+v004 on 21 of 22 measured facades; F04 missing wall +2.874 m2 = Revit wall inside the 7 new D02 window rects (frame
+overlap, same rule as every cut). No opening ID got worse; 7 D02 windows went from missing to shifted. Waiting for
+Artem's picture approval before step 3 (insets).

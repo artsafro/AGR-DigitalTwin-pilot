@@ -98,13 +98,16 @@ def test_d376_partial_reveal_above_the_mate_top():
     vl["edges"]["A02"]["visible_from"] = 1.5
     vl["rectangles"].append(_rect("A02", [2.0, 4.0, 0.6, 3.0], "crosses_visible_band", "seven"))
     e = vb.plans_from_volume_lines(vl)["A"]
-    assert len(e["plan"]["windows"]) == 1 and e["local"] == [{"window": 0, "zs": 1.5}]
+    assert len(e["plan"]["windows"]) == 1 and e["local"] == [{"window": 0, "zs": 1.5, "keep_fill": True}]
     assert e["openings"][0]["partial_from"] == 1.5
     r = vb.build_volume(core, e)
     _sound(r["report"])
     win = [f for f in r["body"]["faces"] if f["mat"] == "WINDOW"]
     zs = sorted({round(r["body"]["verts"][i][2], 3) for f in win for i in f["v"]})
     assert zs == [1.5, 3.0]
+    fill = [f for f in _seam_faces(r["body"]) if f["mat"] == "WALL"
+            and sorted({round(r["body"]["verts"][i][2], 3) for i in f["v"]}) == [0.6, 1.5]]
+    assert len(fill) == 1  # the front under the opened part keeps its extent (v004 F04 deviations not worse)
 
 
 def test_d376_partial_reveal_fully_hidden_is_dropped():
