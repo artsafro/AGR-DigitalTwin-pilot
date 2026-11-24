@@ -1,0 +1,174 @@
+{
+ "_doc": "#1609 KPP1 v004 NPM derive spec: the 8 finishes used by master-v004 (assemble.json uv_qa), copied unchanged from jobs/KPP1/scripts/vpm_textures.json (the VPM UDIM scheme of the v004 master: 1001 plinth, 1006/1007 cassettes, 1018 top belt blue [D376], ...). source_ids = the R1 material IDs of the R1 spec (packet-quad-v004-w13/spec.json), unchanged; the v004 master maps faces by UDIM tile, not by ID.",
+ "address": "Kpp_1",
+ "size_full": 4096,
+ "zero_m": 0,
+ "source_ids": {
+  "1": {
+   "finish": "Plinth_RAL7004"
+  },
+  "2": {
+   "finish": "Cassette_RAL7047"
+  },
+  "3": {
+   "finish": "Cassette_RAL5015"
+  },
+  "4": {
+   "finish": "Membrane_Logicroof"
+  },
+  "5": {
+   "finish": "Frame_RAL9016"
+  },
+  "6": {
+   "finish": "Door_RAL7004"
+  },
+  "7": {
+   "finish": "Grille_RAL7004"
+  }
+ },
+ "finishes": {
+  "Plinth_RAL7004": {
+   "udim": 1001,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.3,
+    0.3
+   ],
+   "shift": [
+    true,
+    true
+   ],
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0,
+   "pattern": "tile300"
+  },
+  "Cassette_RAL7047": {
+   "udim": 1006,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.6,
+    1.0
+   ],
+   "shift": [
+    true,
+    true
+   ],
+   "phase": [
+    0.27,
+    0.0
+   ],
+   "rgb": [
+    208,
+    208,
+    208
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "cassette",
+   "h_joints": false
+  },
+  "Cassette_RAL5015": {
+   "udim": 1007,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.6,
+    0.55
+   ],
+   "shift": [
+    true,
+    true
+   ],
+   "phase": [
+    0.27,
+    0.5
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "cassette",
+   "h_joints": true
+  },
+  "Frame_RAL9016": {
+   "udim": 1009,
+   "kind": "placeholder",
+   "rgb": [
+    246,
+    246,
+    246
+   ],
+   "rough": 0.4,
+   "metal": 0.0
+  },
+  "Door_RAL7004": {
+   "udim": 1010,
+   "kind": "placeholder",
+   "rgb": [
+    150,
+    153,
+    146
+   ],
+   "rough": 0.45,
+   "metal": 0.0
+  },
+  "Membrane_Logicroof": {
+   "udim": 1012,
+   "kind": "placeholder",
+   "rgb": [
+    140,
+    143,
+    145
+   ],
+   "rough": 0.8,
+   "metal": 0.0
+  },
+  "Grille_RAL7004": {
+   "udim": 1015,
+   "kind": "placeholder",
+   "rgb": [
+    120,
+    122,
+    117
+   ],
+   "rough": 0.5,
+   "metal": 0.0
+  },
+  "Cassette_RAL5015_Top": {
+   "udim": 1018,
+   "kind": "full",
+   "S": 4.096,
+   "P": [
+    0.6,
+    0.55
+   ],
+   "shift": [
+    true,
+    true
+   ],
+   "phase": [
+    0.27,
+    0.0
+   ],
+   "rgb": [
+    34,
+    113,
+    179
+   ],
+   "rough": 0.5,
+   "metal": 0.0,
+   "pattern": "cassette",
+   "h_joints": false
+  }
+ }
+}

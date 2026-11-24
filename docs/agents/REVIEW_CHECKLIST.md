@@ -69,6 +69,12 @@ Missing telemetry is `not measured`, never zero or pass. State the known CI limi
 lock is not a test failure or a successful CI run. This line supplements the existing risk-based review
 rounds and required reruns; it does not waive them.
 
+For a claim backed by a replay artifact, verify the published command and its pinned inputs from the
+review lane. Use the manifest check as published; if it needs local scratch or manual line-ending repair,
+report the replay as limited and name the condition. For a comparison, state the exercised cohort and
+denominator. If the examples were used to tune the change, report that result separately from an unseen
+check; without an unseen check, generalization is `not measured`.
+
 PR authors use `.github/pull_request_template.md` for the same evidence boundary. Keep verification
 commands, RED/GREEN results and environment outside the generated `## Agent trace` block: its fixed
 fields still come from `tools/hooks/agent_trace.py`. Preserve `not measured` output when the provider's

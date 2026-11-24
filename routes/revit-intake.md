@@ -1,6 +1,6 @@
 # Revit as a source — intake, inventory, export, VPM/NPM modelling (#1362)
 
-**Route for agents; reuse only.** Not approval of any model, export or delivery. It adds no code:
+**Route for agents; reuse existing tools.** Not approval of any model, export or delivery:
 steps without a shared tool are listed under "Candidate commands", not implemented.
 
 ## Кратко (для Артёма)
@@ -88,6 +88,47 @@ facade group with its Revit ids/types and source kind `model`; user Gate 1 befor
   (contour, levels, openings) is the next step; both may be needed. Interior is not exported for a facade
   model (OBR22: a full Revit interior was the wrong composition).
 
+## FBX material-count readback (step 3a)
+
+The [Revit 2026 → Datasmith report](https://forums.unrealengine.com/t/revit-2026-and-tm-2025-material-glitch-in-import-an-datasmith-export/2688236)
+motivates this check, but no configured Datasmith intake was found. Apply it to the grouped **FBX**
+route: the IFC code is a synthetic geometry pilot, and TwinPack `reference.obj` is consumed as
+geometry; the accompanying `floor.json` material metadata is not independent face-material readback.
+
+1. Capture distinct applied material IDs per exported Revit element, from the hashed RVT copy and
+   the same view/visibility scope as the export. Include painted faces if exported. Do not use the
+   document-wide material table, unused type parameters, or the FBX itself to populate this list.
+   Record every intended exported element, including an empty `meshes` list for missing/unresolved
+   elements. Use an empty `material_ids` list only when zero materials are known, not for unknown data.
+2. Record the opened RVT copy and each FBX in the intake folder's `sources.json` (including their
+   SHA-256). Use the existing [FBX structure reader](../tools/blender/fbx_structure.py) on a copied
+   export to produce one `structure-<group>.json` per group in that folder, using a new output file:
+
+   ```bash
+   blender --background --factory-startup --disable-autoexec --python-exit-code 1 --python tools/blender/fbx_structure.py -- GROUP.fbx INTAKE/structure-group.json
+   ```
+
+3. In `INTAKE/revit-materials.json`, list one entry per export. Map each Revit ElementId to exact
+   readback mesh names using confirmed exporter IDs/lineage, not material names or a fuzzy name
+   match. Split meshes are allowed; one mesh cannot be attributed to multiple elements.
+
+   ```json
+   [{"source": "copy.rvt", "source_sha256": "<RVT sha256 from sources.json>",
+     "export": "group.fbx", "readback": "structure-group.json",
+     "elements": [{"id": "314", "family": "Glazed door", "material_ids": ["42", "77"],
+                   "meshes": ["Door", "Handle"]}]}]
+   ```
+
+4. Run `uv run dt intake check --dir INTAKE` and include `revit_material_counts` in the intake
+   report. It reports `mismatch` with family, element ID and both counts; `not_run` means missing,
+   invalid or incomplete evidence, not parity. Without a sidecar, FBXs in an intake with an RVT
+   are flagged as unmeasured candidates, not inferred to be derived exports. The check counts
+   distinct material names **used by faces** across the mapped meshes, not unused slots. It compares
+   recorded hashes against the inventory, does not open the RVT or rehash source files, and relies
+   on the supplied element census and mapping. Equal counts do not prove equal finishes or assignments.
+   These diagnostics are separate from the spec draft's `ok` / `buildable`: do not call the FBX
+   material readback complete until mismatches and coverage gaps are addressed.
+
 ## Done criteria
 
 - Intake: copy hashed, source hash unchanged, route and document confirmed, `modified=false` before and after
@@ -95,6 +136,8 @@ facade group with its Revit ids/types and source kind `model`; user Gate 1 befor
 - Inventory: all nine checklist lines filled with value + call, or listed as an open question.
 - Export: every census category is in an exported group or in the drop list with a reason; per-group counts
   match the census; hashes recorded; no output path equals an input or an accepted version.
+- FBX material readback: per-element count diagnostics recorded in the intake report before using
+  exported materials as evidence; list unresolved elements and mismatches explicitly.
 - Modelling: every dimension, level, type and finish traces to a Revit call, a drawing or Artem; overlay vs
   the Revit reference measured; then the npm-oks definition of done. `passed=true` only per npm-oks.
 
