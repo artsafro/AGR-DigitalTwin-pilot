@@ -425,7 +425,7 @@ def main(argv):
     bpy.ops.export_scene.fbx(filepath=fbx, use_selection=True, object_types={"MESH"},
                              axis_forward="Y", axis_up="Z", apply_unit_scale=True, apply_scale_options="FBX_SCALE_UNITS",
                              global_scale=1.0, bake_space_transform=False, use_mesh_modifiers=False,
-                             mesh_smooth_type="FACE", use_triangles=False, use_custom_props=False,
+                             mesh_smooth_type="SMOOTH_GROUP", use_triangles=False, use_custom_props=False,
                              add_leaf_bones=False, bake_anim=False, path_mode="COPY", embed_textures=True)
 
     def tri(o):
