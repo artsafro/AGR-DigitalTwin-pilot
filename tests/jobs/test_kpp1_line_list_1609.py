@@ -1,4 +1,7 @@
-"""KPP1 lattice line list from the Revit openings/zones census (#1609 restart, BM-00, Artem 2026-11-21 dec. 2-3)."""
+"""KPP1 lattice line list from the Revit openings/zones census (#1609 restart, BM-00, Artem 2026-11-21 dec. 2-3).
+
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/line_list.py.
+"""
 import copy
 import importlib.util
 import json

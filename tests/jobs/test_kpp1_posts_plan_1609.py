@@ -1,4 +1,7 @@
-"""KPP1 lattice step 3 kernel: corner posts as separate elements + body finish bands (#1609, D336)."""
+"""KPP1 lattice step 3 kernel: corner posts as separate elements + body finish bands (#1609, D336).
+
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/posts_plan.py (posts, finish bands).
+"""
 import importlib.util
 import json
 import math

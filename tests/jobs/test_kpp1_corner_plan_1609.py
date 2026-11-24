@@ -1,4 +1,7 @@
-"""#1609 KPP1 quad master corners: pure planning kernel (posts as separate clean elements, conforming wall rectangle)."""
+"""#1609 KPP1 quad master corners: pure planning kernel (posts as separate clean elements, conforming wall rectangle).
+
+Pattern: n/a | new-case: tests of jobs/KPP1/quad-1372/corner_plan.py.
+"""
 import importlib.util
 import math
 import random

@@ -1,5 +1,7 @@
 """#1609 KPP1 package step: plan of the non-post outside elements (frames, portals, annex) and the glass depth cap.
 
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/posts_plan.py (element plan, glass, frame reach).
+
 Artem 2026-11-24: posts accepted; the package rebuilds window framings and portals by the same voxel/lattice method
 as separate elements [D336]; body UV = a new continuous UV per finish, R1-atlas seams dropped [D357]; the top
 belt stays blue (v003 band finishes never override the band scheme [D376]);

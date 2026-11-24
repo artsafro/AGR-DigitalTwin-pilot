@@ -1,4 +1,7 @@
-"""KPP1 lattice body input + check (#1609 step 2, BM-00; Artem 2026-11-21: every level a closed ring)."""
+"""KPP1 lattice body input + check (#1609 step 2, BM-00; Artem 2026-11-21: every level a closed ring).
+
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/lattice_input.py + lattice_check.py.
+"""
 import importlib.util
 import json
 import random

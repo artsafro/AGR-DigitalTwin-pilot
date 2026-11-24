@@ -98,6 +98,7 @@ Tests: `tests/jobs/test_kpp1_posts_plan_1609.py`.
 
 `assemble_v004.py ... package` builds the package master from the same inputs (b19, `C:/x/ev_1609/s9/b19`):
 - frames and the E annex: voxel-rebuilt on their own planes (`posts_plan.element_plan`, outward ray only, 3 mm snap);
+  a frame floating over a lattice opening reaches the 0.11 niche beside it (`posts_plan.frame_reach`, V003 decor embed);
 - slanted portals, open/flat strips and the roof (the lattice body is an open facade tube, no roof): their v003 quads
   as separate elements, portals clamped 6 mm in front of the body (`posts_plan.clamp_outside`, no piercing);
 - body faces take the non-band v003 finish at their place (doors, frames, membrane; band finishes never override the
