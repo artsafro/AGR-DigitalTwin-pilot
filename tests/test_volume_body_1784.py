@@ -1,7 +1,6 @@
 """#1784 step 2: volume-lines -> per-volume BodyPlan + post-ops (tools/methods/body/volume_body.py)."""
 import copy
 import math
-import os
 import sys
 from pathlib import Path
 
@@ -11,14 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools" / "methods" / "body"))
 import volume_body as vb  # noqa: E402
 
-CORE_DIRS = [os.environ.get("AGR_BODY_CORE", ""), str(ROOT / "tools" / "methods" / "body")]
+CORE_DIR = ROOT / "tools" / "methods" / "body"  # shared body core #1736, on main since #1770
 
 
 def _core():
-    for d in CORE_DIRS:
-        if d and (Path(d) / "body_lattice.py").is_file():
-            return vb.load_core(d)
-    pytest.skip("shared body core #1736 (body_lattice.py) not on this branch; set AGR_BODY_CORE")
+    return vb.load_core(str(CORE_DIR))
 
 
 def _vl(clockwise=True):

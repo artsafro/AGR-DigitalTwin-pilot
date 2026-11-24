@@ -347,14 +347,8 @@ def _run_request() -> None:
     if scene:
         if not rt.loadMaxFile(scene, quiet=True, useFileUnits=True):
             raise RuntimeError("cannot load scene")
-    rows = export_nodes(req, req["log_path"])
-    skipped = int(getattr(export_nodes, "skipped", 0))
-    ok = sum(1 for row in rows if row.get("status") == "ok")
-    failed = sum(1 for row in rows if row.get("status") == "failed")
-    done = ok + failed + skipped
-    median = plan.stats([float(row["seconds"]) for row in rows if row.get("status") == "ok" and row.get("seconds") is not None])["median"]
-    median_s = "none" if median is None else ("%.4f" % median)
-    print("AGR_BATCH_EXPORT done=%d ok=%d failed=%d skipped=%d median_s=%s" % (done, ok, failed, skipped, median_s))
+    # export_nodes records per-object diagnostics in the request's JSONL log.
+    export_nodes(req, req["log_path"])
 
 
 if __name__ == "__main__" or os.environ.get("AGR_BATCH_EXPORT_REQUEST"):

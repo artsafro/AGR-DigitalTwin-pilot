@@ -1,0 +1,546 @@
+{
+ "card": "t_9353504e",
+ "contract": "docs/research/autoresearch-body-form-judge.md",
+ "evidence": "G:/Мой диск/AGR-evidence/standing41-body-form-judge/",
+ "sha256sums": "775b206adc40a72ee64496707e860f67378b3a88b6a3ea4a9f647fb814f5e7bd",
+ "result41_sha256": "15e38eb635e64c7ad3e7c6971bc7f4552ed789f37f6028b2c3c12c92f2e6db48",
+ "codex_model": "gpt-6.1-sol",
+ "claude": "claude CLI default model, -p, Read only",
+ "n_calls": 46,
+ "wall_s_sum": 543.4,
+ "unparsed": [],
+ "judges": {
+  "claude": {
+   "cells": {
+    "A.Q1": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "A.Q2": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "A.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "A.Q4": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "A.Q5": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "R.Q1": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "R.Q2": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "R.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "R.Q4": {
+     "calls": [
+      "No",
+      "No",
+      "Unsure"
+     ],
+     "majority": "No"
+    },
+    "R.Q5": {
+     "calls": [
+      "Unsure",
+      "Unsure",
+      "No"
+     ],
+     "majority": "Unsure"
+    },
+    "P_fill.Q1": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_fill.Q2": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "P_fill.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_fill.Q4": {
+     "calls": [
+      "Unsure",
+      "Unsure",
+      "Yes"
+     ],
+     "majority": "Unsure"
+    },
+    "P_fill.Q5": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_recess.Q1": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "P_recess.Q2": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_recess.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_recess.Q4": {
+     "calls": [
+      "No",
+      "Unsure",
+      "Yes"
+     ],
+     "majority": "Unsure"
+    },
+    "P_recess.Q5": {
+     "calls": [
+      "No",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q1": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q2": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q4": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "P_corner.Q5": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    }
+   },
+   "yes_bias": "0/5",
+   "false_yes_cells": [],
+   "false_yes_ge2of3": [],
+   "true_no_on_negatives": "5/5",
+   "true_yes": "6/6",
+   "missed_positive": [],
+   "unsure_labelled": "0/11",
+   "unsure_cells": [],
+   "flip_cells": "5/25",
+   "S": {
+    "A": 14,
+    "R": 3,
+    "P_fill": 8,
+    "P_recess": 8,
+    "P_corner": 11
+   },
+   "calibrated_S_R_lt_S_A": true,
+   "S_planted_lt_S_A": {
+    "P_fill": true,
+    "P_recess": true,
+    "P_corner": true
+   },
+   "qualified": true,
+   "pairs_raw": {
+    "R": {
+     "BA": "A",
+     "AB": "A"
+    },
+    "P_corner": {
+     "BA": "A",
+     "AB": "A"
+    },
+    "P_fill": {
+     "BA": "A",
+     "AB": "A"
+    },
+    "P_recess": {
+     "BA": "A",
+     "AB": "A"
+    }
+   },
+   "pairs_order_consistent": {
+    "R": "A",
+    "P_corner": "A",
+    "P_fill": "A",
+    "P_recess": "A"
+   },
+   "pair_coverage": "4/4",
+   "pair_A_over_R_matches_Artem": true,
+   "pair_planted_matches_truth": "3/3"
+  },
+  "codex": {
+   "cells": {
+    "A.Q1": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "A.Q2": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "A.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "A.Q4": {
+     "calls": [
+      "No",
+      "Unsure",
+      "Unsure"
+     ],
+     "majority": "Unsure"
+    },
+    "A.Q5": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "R.Q1": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "R.Q2": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "R.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "R.Q4": {
+     "calls": [
+      "Unsure",
+      "Unsure",
+      "Unsure"
+     ],
+     "majority": "Unsure"
+    },
+    "R.Q5": {
+     "calls": [
+      "Unsure",
+      "Unsure",
+      "No"
+     ],
+     "majority": "Unsure"
+    },
+    "P_fill.Q1": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_fill.Q2": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "P_fill.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_fill.Q4": {
+     "calls": [
+      "Unsure",
+      "Unsure",
+      "Unsure"
+     ],
+     "majority": "Unsure"
+    },
+    "P_fill.Q5": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_recess.Q1": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "P_recess.Q2": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_recess.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_recess.Q4": {
+     "calls": [
+      "No",
+      "Unsure",
+      "Unsure"
+     ],
+     "majority": "Unsure"
+    },
+    "P_recess.Q5": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q1": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q2": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q3": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    },
+    "P_corner.Q4": {
+     "calls": [
+      "No",
+      "No",
+      "No"
+     ],
+     "majority": "No"
+    },
+    "P_corner.Q5": {
+     "calls": [
+      "Yes",
+      "Yes",
+      "Yes"
+     ],
+     "majority": "Yes"
+    }
+   },
+   "yes_bias": "0/5",
+   "false_yes_cells": [],
+   "false_yes_ge2of3": [],
+   "true_no_on_negatives": "5/5",
+   "true_yes": "5/6",
+   "missed_positive": [
+    "A.Q4"
+   ],
+   "unsure_labelled": "1/11",
+   "unsure_cells": [
+    "A.Q4"
+   ],
+   "flip_cells": "3/25",
+   "S": {
+    "A": 11,
+    "R": 3,
+    "P_fill": 8,
+    "P_recess": 8,
+    "P_corner": 11
+   },
+   "calibrated_S_R_lt_S_A": true,
+   "S_planted_lt_S_A": {
+    "P_fill": true,
+    "P_recess": true,
+    "P_corner": false
+   },
+   "qualified": true,
+   "pairs_raw": {
+    "P_corner": {
+     "AB": "A",
+     "BA": "A"
+    },
+    "P_recess": {
+     "AB": "A",
+     "BA": "A"
+    },
+    "P_fill": {
+     "AB": "A",
+     "BA": "A"
+    },
+    "R": {
+     "BA": "A",
+     "AB": "A"
+    }
+   },
+   "pairs_order_consistent": {
+    "P_corner": "A",
+    "P_recess": "A",
+    "P_fill": "A",
+    "R": "A"
+   },
+   "pair_coverage": "4/4",
+   "pair_A_over_R_matches_Artem": true,
+   "pair_planted_matches_truth": "3/3"
+  }
+ },
+ "pairwise": {
+  "common_pairs": [
+   "P_corner",
+   "P_fill",
+   "P_recess",
+   "R"
+  ],
+  "raw_agreement": "4/4",
+  "kappa": null,
+  "kappa_note": "undefined: every retained verdict is the same label (A), expected agreement = 1"
+ },
+ "proxy": {
+  "mesh_score_r40": {
+   "A": 83.693,
+   "R": 90.83
+  },
+  "proxy_ranks_A_over_R": false,
+  "planted": "not measured"
+ },
+ "H41": "confirmed"
+}

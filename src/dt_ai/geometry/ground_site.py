@@ -174,7 +174,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     for p in relief_xyz:
         x, y, z = (_finite("relief point", v) for v in p)
         pts.append((x - ox, y - oy, z - zero))
-    tin = gc.build_tin(pts)
+    tin = gc.build_tin(pts, peel_slivers=True)  # relief stage: no sub-grid border slivers (#1315)
     if tin.contradictory:
         raise ValueError(f"{len(tin.contradictory)} relief points with the same XY and other Z, first "
                          f"{tin.contradictory[0]}: resolve the source marks, no average")
@@ -182,7 +182,8 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     report["stages"]["zero"] = {"project_zero_m": zero, "h_relief": round(zero, 2), "fbx_z_of_zero_m": 0.0,
                                 "relief_abs_range_m": [float(zabs.min()), float(zabs.max())],
                                 "tin_points": int(len(tin.pts)), "tin_triangles": int(len(tin.tris)),
-                                "merged_duplicates": tin.merged}
+                                "merged_duplicates": tin.merged, "tin_slivers_peeled": tin.slivers_peeled,
+                                "tin_slivers_inner": tin.slivers_inner}
 
     # surfaces: covers -> IDs (ID colour = hatch background colour)
     by_name = {c.name: c for c in covers}
@@ -611,7 +612,7 @@ def relief_z_at(relief_xyz, margin: float = 0.001, origin_xy=(0.0, 0.0)):
             raise ValueError(f"relief point {p!r}: expected (x, y, z)")
         x, y, z = (_finite("relief point", v) for v in p)
         pts.append((x - ox, y - oy, z))
-    tin = gc.build_tin(pts)
+    tin = gc.build_tin(pts, peel_slivers=True)  # relief stage: no sub-grid border slivers (#1315)
     if tin.contradictory:
         raise ValueError(f"{len(tin.contradictory)} relief points with the same XY and other Z, first "
                          f"{tin.contradictory[0]}: resolve the source marks, no average")

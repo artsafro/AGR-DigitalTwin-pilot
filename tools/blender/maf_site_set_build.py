@@ -234,7 +234,7 @@ def build(pos, ratio, fbx_in, fbx_out, floor=None):
     mesh.name = obj.name
     fbx_out.parent.mkdir(parents=True, exist_ok=True)
     bpy.ops.export_scene.fbx(filepath=str(fbx_out), use_selection=True, object_types={"MESH"},
-                             mesh_smooth_type="FACE", use_mesh_modifiers=True, path_mode="COPY",
+                             mesh_smooth_type="SMOOTH_GROUP", use_mesh_modifiers=True, path_mode="COPY",
                              embed_textures=True, bake_anim=False, add_leaf_bones=False)
     return {"tris_source": tris_before, "decimate_ratio": ratio, "light": light, "source_materials": resolved, "wildcard_faces": wildcard,
             "faces_reversed_outward": flipped,

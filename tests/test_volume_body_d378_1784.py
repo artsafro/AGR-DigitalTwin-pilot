@@ -1,11 +1,10 @@
 """#1784 step 2 v005 ([D378]) and #1802: seam band, partial reveal above a joint, contour cuts, reveal seats, edge clamps.
 
-Synthetic data only (not a real object). The core #1736 (body_lattice.py) is needed for the build tests; they skip
-without it (set AGR_BODY_CORE, e.g. the read-only PR #1770 head c97cf3ec).
+Synthetic data only (not a real object). The build tests load the core #1736 (body_lattice.py) from main (merged by
+#1770); they never skip.
 """
 import copy
 import math
-import os
 import sys
 from pathlib import Path
 
@@ -15,14 +14,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools" / "methods" / "body"))
 import volume_body as vb  # noqa: E402
 
-CORE_DIRS = [os.environ.get("AGR_BODY_CORE", ""), str(ROOT / "tools" / "methods" / "body")]
+CORE_DIR = ROOT / "tools" / "methods" / "body"  # shared body core #1736, on main since #1770
 
 
 def _core():
-    for d in CORE_DIRS:
-        if d and (Path(d) / "body_lattice.py").is_file():
-            return vb.load_core(d)
-    pytest.skip("shared body core #1736 (body_lattice.py) not on this branch; set AGR_BODY_CORE")
+    return vb.load_core(str(CORE_DIR))
 
 
 def _vol(vl, name, ring, levels, prefix):

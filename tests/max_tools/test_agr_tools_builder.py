@@ -55,6 +55,18 @@ def test_builder_rejects_changed_inputs_without_publication(tmp_path, monkeypatc
     assert not output.exists()
 
 
+def test_mzp_ships_fbx_readback_and_reconnect(tmp_path):
+    mod = builder()
+    archive = tmp_path / 'readback.mzp'
+    mod.build(archive)
+    with zipfile.ZipFile(archive) as z:
+        top = [name for name in z.namelist() if name.startswith('agr_tools/') and name.count('/') == 1]
+        for filename in ('fbxmaps_core.py', 'fbxmaps_max.py'):
+            assert 'agr_tools/' + filename in top
+            assert z.read('agr_tools/' + filename) == (mod.PACKAGE / filename).read_text(encoding='utf-8').encode()
+        assert f'if files.count < {len(top)} do' in z.read('install.ms').decode()
+
+
 def test_aliases_and_stale_outputs_are_never_overwritten(tmp_path):
     import os
     import pytest

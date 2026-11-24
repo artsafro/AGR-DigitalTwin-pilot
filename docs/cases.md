@@ -11,7 +11,7 @@ The Cause column holds the cause class of a lesson (wrong context, wrong tool, m
 
 | Case | Accepted by the user | Still open | Write-up / job | Cause |
 |---|---|---|---|---|
-| Obr22 typical floor | BODY geometry, material scale, NPM v012, VPM UV v011 | full OKS delivery, Checker | `OBR22_ACCEPTED_WORKFLOW.md`, `jobs/OBR22-K02/` (`APPROVED_VERSIONS.json`) | - |
+| Obr22 typical floor | BODY geometry, material scale, NPM v012, VPM UV v011 | full OKS delivery, Checker | [Accepted workflow](agr/case_studies/OBR22_ACCEPTED_WORKFLOW.md), [APPROVED_VERSIONS.json](../jobs/OBR22-K02/APPROVED_VERSIONS.json) | - |
 | SOSH1150 continuous wall UV + FBX v006 | UV / wall pattern, prepared package | native 3ds Max check | `SOSH1150_CONTINUOUS_WALL_UV_FBX.md`, `technical_library/UV_V006.md`, `archive/2026-11:jobs/UV-CONTINUOUS/` | - |
 | GLB A_Main / B_Main atlases | current scene look; B: IDs/UV, pure-white glass | FBX, Checker; A v005 manual edits not reproducible | `GLB_A_MAIN_ATLAS.md`, `GLB_B_MAIN_ATLAS.md`, `technical_library/glb_atlas/` | - |
 | GLB reference planes / window simplification | — (lesson) | — | `GLB_AB_REFERENCE_AND_PLANES.md`, `docs/agr/lessons/SKETCHUP_COMPOSITE_WINDOW_OPENINGS.md` | wrong conclusion |

@@ -53,7 +53,8 @@ Ground, live DCC sessions and `C:/x/sokolniki-npm/` were not changed.
 ## Step 2 — body through the shared lattice core ([D375])
 
 Artem accepted v002 on 2026-11-23 (and the +2.175 m door local cuts on 2026-11-22): [D375].
-The core #1736 is not merged; it is used read-only from the PR #1770 head (`c97cf3ec`).
+The core #1736 was used read-only from the PR #1770 head (`c97cf3ec`) while building v002-v005; since #1770 merged it
+is loaded from `tools/methods/body/` on main.
 
 ```
 uv run python tools/methods/body/volume_body.py C:/x/ev_1784/step2/volume-lines-v002.json C:/x/ev_1784/step2/build-v004 --core <core>/tools/methods/body
