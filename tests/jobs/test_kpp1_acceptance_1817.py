@@ -10,7 +10,7 @@ from zipfile import ZipFile
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / "jobs/KPP1/lattice-1609/acceptance_1817.py"
+SCRIPT = ROOT / "tests/jobs/kpp1_acceptance_1817_replay.py"
 GROUND = "0000_Kpp_1_Ground.fbx"
 
 
