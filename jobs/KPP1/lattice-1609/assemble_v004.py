@@ -50,6 +50,7 @@ ELEMENT_SNAP_M = 0.003   # element planes closer than 3 mm are one plane (no 1-2
 GLASS_GAP = 0.01   # glass sits 1 cm in front of the body surface behind it
 SEE_M = 0.6   # body faces up to 0.6 m behind the ring plane read the v003 finish at their place (doors/frames 0.3-0.45)
 REACH_M = 1.5   # how far behind the ring plane a ray looks for that v003 surface (N entrance vestibule ~1 m deep)
+ROOF_Z = 7.85   # v003 roof slab at 7.91, parapet top 8.65: faces inside the ring at or above this are the roof element
 OUT_SIGN = {'SW': (-1, -1), 'SE': (1, -1), 'NE': (1, 1), 'NW': (-1, 1)}
 
 
@@ -214,6 +215,15 @@ def post_plans(path, finish_of_udim, bands, with_elements=False):
                 raise ValueError(f'{name}: rebuild gave no faces ({row})')
             elements[name] = out
         other.append(row)
+    if with_elements:
+        roof = [f.index for f in src.faces if pp.roof_face(tuple(f.calc_center_median()), RECT, ROOF_Z)]
+        if not roof:
+            raise ValueError(f'no v003 roof faces inside the ring above z {ROOF_Z}')
+        elements['SM_Kpp_1_Main_Roof'] = keep_element(src, uvl, roof, finish_of_udim, 'SM_Kpp_1_Main_Roof')
+        other.append({'name': 'SM_Kpp_1_Main_Roof', 'faces': len(roof), 'method': 'keep',
+                      'why': f'v003 roof inside the ring above z {ROOF_Z} (the lattice body is an open facade tube)',
+                      'quads': sum(1 for o in elements['SM_Kpp_1_Main_Roof'] if len(o[0]) == 4),
+                      'finishes': sorted({o[2] for o in elements['SM_Kpp_1_Main_Roof']})})
     src.free()
     return plans, rep, other, elements, comps['outside_faces'], scheme_ok
 
@@ -344,7 +354,7 @@ def carry_v003(path, report, body_tree):
 
 def opening_finishes(body, v003_fbx, finish_of_udim, names, bands, report):
     """Outward vertical faces of the lattice body (on the ring plane or up to 0.6 m behind it: walls, opening back
-    faces) take a NON-band finish of the v003 surfaces at their place (door leaves, the N screen, frames, grilles):
+    faces) and up-facing faces (roof, sills; rays downward from 2 mm above the face) take a NON-band finish of the v003 surfaces at their place (door leaves, the N screen, frames, grilles):
     `posts_plan.majority_finish` over a 5 x 5 sample grid, rays from 2 mm in front of the face's ring plane inward up
     to REACH_M; a band finish seen (any cassette/plinth, incl. the v003 7047 top) votes for the face's own band, so the
     band scheme [D376] is never overwritten by v003 cassettes; nothing seen = the band finish stays."""
@@ -369,10 +379,11 @@ def opening_finishes(body, v003_fbx, finish_of_udim, names, bands, report):
     changed, seen = {}, 0
     for f in body.faces:
         n, c = f.normal, f.calc_center_median()
-        side = ('W' if n.x < -0.999 else 'E' if n.x > 0.999 else 'S' if n.y < -0.999 else 'N' if n.y > 0.999 else None)
+        side = ('W' if n.x < -0.999 else 'E' if n.x > 0.999 else 'S' if n.y < -0.999 else 'N' if n.y > 0.999
+                else 'up' if n.z > 0.999 else None)
         if side is None:
             continue
-        depth = {'W': c.x - x0, 'E': x1 - c.x, 'S': c.y - y0, 'N': y1 - c.y}[side]
+        depth = {'W': c.x - x0, 'E': x1 - c.x, 'S': c.y - y0, 'N': y1 - c.y, 'up': 0.0}[side]
         if not -0.002 <= depth <= SEE_M or len(f.verts) != 4:
             continue
         seen += 1

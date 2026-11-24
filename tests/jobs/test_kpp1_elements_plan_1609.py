@@ -170,3 +170,16 @@ def test_glass_target_probe_pane_never_behind_a_body_surface_with_room():
         else:
             assert deepest <= 0.24 + 1e-12
             assert all(deepest <= d - 0.01 + 1e-12 for d in behind if d >= 0.02)
+
+
+def test_roof_face_selects_inside_ring_above_level_only():
+    x0, y0, x1, y1 = RECT
+    assert pp.roof_face((0.0, 0.0, 7.91), RECT, 7.85)                 # roof slab
+    assert pp.roof_face((x0 + 0.15, 0.0, 8.28), RECT, 7.85)           # parapet inner face
+    assert pp.roof_face((0.0, 0.0, 7.85), RECT, 7.85)                 # exactly at the level: roof
+    assert not pp.roof_face((x0, 0.0, 8.3), RECT, 7.85)               # facade face on the ring plane
+    assert not pp.roof_face((x0 + 0.001, 0.0, 8.3), RECT, 7.85)       # within tol of the ring plane
+    assert not pp.roof_face((0.0, 0.0, 7.84), RECT, 7.85)
+    assert not pp.roof_face((0.0, y1 + 0.3, 8.0), RECT, 7.85)         # outside elements are not roof
+    with pytest.raises(ValueError):
+        pp.roof_face((0.0, 0.0, math.nan), RECT, 7.85)

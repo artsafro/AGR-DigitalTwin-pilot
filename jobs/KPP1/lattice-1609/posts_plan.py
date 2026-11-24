@@ -183,6 +183,14 @@ def glass_target(depths, behind, cap_max, gap):
     return glass_shift(depths, cap), ('reveal' if cap == cap_max else 'surface')
 
 
+def roof_face(centre, rect, z_min, tol=0.002):
+    """A source face belongs to the roof element (#1609 package step: the lattice body is an open facade tube, the
+    v003 roof slab, parapet top / inner faces and roof equipment stay as one separate element [D336]) if its centre
+    lies inside the ring (more than tol from the ring planes, so no facade face) at or above z_min."""
+    _finite(list(centre[:3]) + [z_min], 'roof face')
+    return inside_ring(centre, rect, tol) and centre[2] >= z_min
+
+
 def majority_finish(hits, fallback, min_share=0.5):
     """Finish of a lattice opening back face from the v003 surfaces seen behind it (#1609 package step): `hits` = one
     entry per sample point, a finish name or None (no v003 surface within reach). The most frequent finish wins if it
