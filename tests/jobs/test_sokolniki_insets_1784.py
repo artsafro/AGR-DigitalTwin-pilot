@@ -170,3 +170,130 @@ def test_views_outward_normal_and_joined_edges():
     f1 = next(f for f in v['facades'] if f['id'] == 'F01')
     assert f1['edges'] == ['E1', 'E2'] and f1['s'] == [0.0, 10.0]
     assert math.isclose(f1['n'][1], -1.0)  # south face of a CCW ring looks to -y
+
+
+# ---- v007 [D384] -----------------------------------------------------------------------------------------------
+def _closed(mesh):
+    cnt = {}
+    for f in mesh.faces:
+        v = f['v']
+        for a, b in zip(v, v[1:] + v[:1]):
+            k = (min(a, b), max(a, b))
+            cnt[k] = cnt.get(k, 0) + 1
+    return all(c == 2 for c in cnt.values())
+
+
+def _planar(pts, tol=1e-6):
+    n = _normal(pts)
+    L = math.sqrt(sum(c * c for c in n))
+    n = [c / L for c in n]
+    d0 = sum(a * b for a, b in zip(pts[0], n))
+    return all(abs(sum(a * b for a, b in zip(p, n)) - d0) < tol for p in pts)
+
+
+def _relief(origin, N, v=(-0.5, 0.5), z=(0.0, 3.0), apex=(0.0, 1.5)):
+    return {'origin': list(origin), 'N': list(N), 'V': [-N[1], N[0], 0.0], 'v': list(v), 'z': list(z),
+            't_back': 0.03, 't_front': 0.3, 't_apex': 0.5, 'apex_v': apex[0], 'apex_z': apex[1]}
+
+
+def test_relief_panel_is_a_closed_planar_quad_pyramid():
+    m = ib.Mesh()
+    lost = ib.relief_panel(m, _relief((0, 0, 0), (1.0, 0.0, 0.0), apex=(0.1, 1.2)), 'M', 0.05, 0.02, 0.02)
+    faces = _faces(m)
+    assert len(faces) == 10 and all(len(f) == 4 for f in faces)
+    assert all(_planar(f) for f in faces) and _closed(m)
+    xs = [p[0] for p in m.verts]
+    assert min(xs) == 0.03 and math.isclose(max(xs), 0.5 - lost, abs_tol=1e-4) and 0 < lost < 0.02
+    c = [sum(p[i] for p in m.verts) / len(m.verts) for i in range(3)]
+    for f in faces:  # outward normals
+        fc = [sum(p[i] for p in f) / 4 for i in range(3)]
+        assert sum(a * (b - cc) for a, b, cc in zip(_normal(f), fc, c)) > 0
+    ys = [p[1] for p in m.verts]
+    assert math.isclose(min(ys), -0.49) and math.isclose(max(ys), 0.49)  # half the 0.02 joint per side
+
+
+def test_relief_apex_outside_the_rim_is_refused():
+    try:
+        ib.relief_panel(ib.Mesh(), _relief((0, 0, 0), (1.0, 0.0, 0.0), apex=(0.49, 1.5)), 'M')
+    except ValueError as e:
+        assert 'apex' in str(e)
+    else:
+        raise AssertionError('apex on the rim must be refused')
+
+
+def test_mitre_ends_keep_corner_panels_apart():
+    a = _relief((9.5, 0.0, 1.5), (0.0, -1.0, 0.0))   # face y = 0, looks to -y, runs x 9..10
+    b = _relief((10.0, 0.5, 1.5), (1.0, 0.0, 0.0))   # face x = 10, looks to +x, runs y 0..1
+    ends, n = ib.mitre_ends([a, b], 0.02)
+    assert n == 1
+    assert math.isclose(ends[0]['vb'][1], 0.53 - 0.01) and math.isclose(ends[0]['vf'][1], 0.8 - 0.01)
+    assert math.isclose(ends[1]['vb'][0], -0.53 + 0.01) and math.isclose(ends[1]['vf'][0], -0.8 + 0.01)
+    ma, mb = ib.Mesh(), ib.Mesh()
+    ib.relief_panel(ma, a, 'M', joint=0.02, ends=ends[0])
+    ib.relief_panel(mb, b, 'M', joint=0.02, ends=ends[1])
+    # the two mitred end faces are parallel and > 5 mm apart (xView face threshold)
+    pa = [p for p in ma.verts if p[0] - (-p[1]) > 9.9]
+    gap = min(abs((p[0] + p[1]) - (q[0] + q[1])) / math.sqrt(2) for p in pa for q in mb.verts)
+    assert gap > 0.007 and _closed(ma) and _closed(mb)
+
+
+def _vl_d01():
+    ring = [[0, 0], [20, 0], [20, 10], [0, 10]]
+    return {'volumes': {'D': {'ring': ring + [ring[0]]}},
+            'edges': {'D01': {'volume': 'D', 'xy': [[0, 0], [20, 0]]}}}
+
+
+def _obb(fam, c, half3, name):
+    hx, hy, hz = half3
+    return {'family': fam, 'name': name, 'center': list(c), 'axes': [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
+            'half': [hz, hx, hy], 'zmin': c[2] - hz, 'zmax': c[2] + hz}
+
+
+def test_f05_ground_piers_in_front_and_glass_bays_between():
+    g = dict(CFG['f05_ground'], edge='D01')
+    objs = [_obb('pier', (5.0, -0.5, 3.75), (0.45, 0.45, 3.75), 'p1'),        # pier in front of the face (-y)
+            _obb('pier', (5.0, 5.0, 3.75), (0.2, 6.0, 3.75), 'wall'),         # a long wall: not a pier piece
+            _obb('curtain_glass', (2.0, 2.0, 1.0), (0.9, 0.03, 0.95), 'g1'),  # glass 2 m behind the face
+            _obb('curtain_glass', (8.0, 2.0, 1.0), (0.9, 0.03, 0.95), 'g2')]
+    pm, gm, rep = ib.f05_ground(objs, _vl_d01(), g, 7.525)
+    assert len(rep['piers']) == 1 and len(pm.faces) == 6 and _closed(pm)
+    ys = [p[1] for p in pm.verts]
+    assert math.isclose(max(ys), 0.05) and math.isclose(min(ys), -0.95)  # 0.05 into the body, Revit front
+    assert rep['bays'] == [[1.1, 4.55], [5.45, 8.9]]
+    for f in _faces(gm):
+        assert all(math.isclose(p[1], -0.02) for p in f) and _normal(f)[1] < 0  # in front, facing out
+        assert max(p[2] for p in f) == 7.525 and min(p[2] for p in f) == 0.0
+
+
+def test_well_diff_passes_wells_and_flags_a_facade_change():
+    import sys
+    sys.path.insert(0, str(ROOT / 'tools' / 'methods' / 'body'))
+    import volume_body as vb
+    core = vb.load_core(str(ROOT / 'tools' / 'methods' / 'body'))
+    ring = [[0, 0], [12, 0], [12, 8], [0, 8]]
+    vl = {'volumes': {'A': {'ring': ring + [ring[0]], 'levels': [0.0, 3.0, 6.0, 7.2]}}, 'edges': {}, 'rectangles': []}
+    for i in range(4):
+        vl['edges']['A%02d' % (i + 1)] = {'volume': 'A', 'xy': [ring[i], ring[(i + 1) % 4]], 'facade': 'F',
+                                          'seam': None, 'visible_from': 0}
+    cfg = {'roof_wells': {'A': {'deck_z': 6.5, 'parapet_m': 0.2}}}
+    m5 = {'A': {'body': vb.build_volume(core, vb.plans_from_volume_lines(vl, {})['A'])['body']}}
+    m7 = {'A': {'body': vb.build_volume(core, vb.plans_from_volume_lines(vl, cfg)['A'])['body']}}
+    rep = sh.well_diff(m5, m7, cfg, vl)
+    assert rep['pass'] and rep['volumes']['A']['removed'] == 1
+    vv = [list(p) for p in m7['A']['body']['verts']]
+    k = next(i for i, p in enumerate(vv) if p == [0.0, 0.0, 3.0])
+    vv[k][1] -= 0.05  # a facade vertex moved: outside the well
+    m7['A']['body']['verts'] = vv
+    bad = sh.well_diff(m5, m7, cfg, vl)
+    assert not bad['pass'] and bad['outside_diff'] > 0
+
+
+def test_census_rows_count_every_object_and_keep_unclassified():
+    dec = {'rows': [{'family': 'Люк выхода на кровлю с лестнич', 'count': 3, 'decision': 'вставка', 'target': 'x',
+                     'why': 'y', 'tris': 9},
+                    {'family': 'Неизвестное', 'count': 2, 'decision': 'не классифицировано', 'target': '',
+                     'why': 'нет правила', 'tris': 1}]}
+    rows = sh.census_rows(dec, CFG, {'families': {'hatch': {'faces': 18}}})
+    by = {r['family']: r for r in rows}
+    assert by['Люк выхода на кровлю']['v007'] == '3' and by['Неизвестное']['decision'] == 'не классифицировано'
+    assert sum(r['count'] for r in rows) == 5

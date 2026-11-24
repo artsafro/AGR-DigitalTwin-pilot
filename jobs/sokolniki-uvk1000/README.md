@@ -111,7 +111,7 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py C:/x/ev_1784/step3/rev
 blender44 -b --factory-startup --python-exit-code 1 --python jobs/sokolniki-uvk1000/hooks/inset_write_blender.py -- C:/x/ev_1784/step2/build-v005/body.blend C:/x/ev_1784/step3/build-v006/insets_meshes.json C:/x/ev_1784/step3/build-v006
 uv run dt qa xview C:/x/ev_1784/step3/build-v006/body_v006_quad.fbx --out .../xview_quad.json --profile NPM
 uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py views C:/x/ev_1784/step2/volume-lines-v002.json <views.json>
-blender44 -b --factory-startup --python-exit-code 1 --python jobs/sokolniki-uvk1000/hooks/inset_sheet_blender.py -- <model> <views.json> <renders> v005|v006|revit
+blender44 -b --factory-startup --python-exit-code 1 --python jobs/sokolniki-uvk1000/hooks/inset_write_blender.py -- render <model> <views.json> <renders> v005|v006|revit
 uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py decor C:/x/ev_1784/sok_dump.json <decor_table.json>
 uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py sheet <renders> <views.json> <build-v006> <decor_table.json> <new.pdf>
 ```
@@ -129,3 +129,38 @@ after; master_topology pass for all 5 inset objects (body n-gons = accepted v005
 3ds Max was not run: native Max checks `not measured`. Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step3-insets-v006/`
 (`sok-step3-v006.pdf` 30 sheets: summary, decor table of all 53 Revit families with 4 questions, 27 facades
 v005 | v006 | Revit, iso; `SHA256SUMS.txt` 97 files, manifest `cddc38a5…`). Waiting for Artem's picture approval.
+
+### v006 not accepted -> v007 ([D384])
+
+Artem 2026-11-24 ~16:00 rejected v006 («нет колон, нет пергол, нет декор панелей объёмных») and asked for a completeness
+census first; on the census (~19:55, «Принимаю рекомендации», [D384]) he allowed roof wells inside the S/N/D parapets.
+
+```
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py census C:/x/ev_1784/sok_dump.json C:/x/ev_1784/step2/volume-lines-v002.json <census.json>
+uv run python tools/methods/body/volume_body.py C:/x/ev_1784/step2/volume-lines-v002.json C:/x/ev_1784/step3/build-v007-body --core tools/methods/body --config jobs/sokolniki-uvk1000/body_config_v007.json
+blender44 -b --factory-startup --python-exit-code 1 --python tools/methods/body/volume_body_blender.py -- <build-v007-body>/meshes.json <build-v007-body>
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py welldiff C:/x/ev_1784/step2/build-v005/meshes.json <build-v007-body>/meshes.json jobs/sokolniki-uvk1000/body_config_v007.json C:/x/ev_1784/step2/volume-lines-v002.json <well_diff.json>
+blender44 ... hooks/inset_obb_blender.py -- <Revit FBX> jobs/sokolniki-uvk1000/insets_config.json C:/x/ev_1784/step3/revit_obb_v007.json
+uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py C:/x/ev_1784/step3/revit_obb_v007.json C:/x/ev_1784/step2/volume-lines-v002.json C:/x/ev_1784/step3/build-v007 --body-config jobs/sokolniki-uvk1000/body_config_v007.json
+blender44 ... hooks/inset_write_blender.py -- <build-v007-body>/body.blend <build-v007>/insets_meshes.json <build-v007> v007
+uv run dt qa xview <build-v007>/body_v007_quad.fbx --out <build-v007>/xview_quad.json --profile NPM
+blender44 ... hooks/inset_write_blender.py -- render <model> C:/x/ev_1784/step3/views_v007.json <renders7> v007   (+ v006 / revit for C5)
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py sheet7 <renders7> <renders v006> <census closeups> <views_v007.json> <build-v007> <build-v007-body> <decor_v007.json> <new.pdf>
+```
+
+- Census: 8 593 Revit objects, 0 without a rule (table 1 of the sheet). The census and the well proof are subcommands of
+  `inset_sheet.py` and the renders are the `render` mode of `inset_write_blender.py`: the job keeps 4 listed hooks (<= 5, [D324]); `skeleton_guard` exit 0.
+- Body v007 = the v005 lattice + `roof_wells` (`volume_body.py`, [D384]): the flat top cap of S/N/D becomes a parapet top
+  band (0.15 m; 0.30 m on D06/D07 so the well wall stands behind the F05 window plane), inner well walls and a deck at
+  the Revit roof finish 11.12 / 13.22 / 17.42 m; H is re-based 17.50 -> 17.42 onto the D deck (`base_by_volume`).
+  `welldiff`: outside_diff 0 - only the three caps removed, 1 852 / 604 / 1 384 v005 faces of S/N/D unchanged, H only its
+  base. v005 rebuilt with the same code is byte-identical (`meshes.json` sha256 equal). Body: 0 other open edges,
+  0 non-manifold, 0 bow-tie, xView NPM PASS.
+- Insets v007: pergolas = the roof cage (540 posts, 436 beams) now standing on the decks; 234 decor relief solids (10 planar
+  quads: back, rim, 4 pyramid facets to the Revit apex truncated to a 5 cm top, 2 cm joint, 19 mitred corner pairs);
+  4 F05 piers (boxes aligned to the D06 face, Revit front, 5 cm into the body) and 5 ground-floor glazing strips 2 cm in
+  front of the face up to the mouth sill 7.525 m (Revit glass stands 1.6-2.5 m deeper, inside the accepted body);
+  232 flashing quads; 3 roof hatches. 8 741 quads, 17 482 triangles, 0 non-quads; xView NPM 0/0/0 PASS (assembly).
+- 3ds Max was not run: native Max checks `not measured`. Evidence:
+  `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step3-insets-v007/` (`sok-step3-v007.pdf` 35 sheets: summary, table 1,
+  27 facades v006 | v007 | Revit, 5 close-ups C1-C5, iso; `SHA256SUMS.txt`). Waiting for Artem's picture approval.

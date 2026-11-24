@@ -4,6 +4,8 @@ Pattern: n/a | new-case: quad inset families from Revit oriented boxes (inset_ob
 cage, roof mesh, glass canopies, lamellas (accent panels RAL 8023) and the F05 outer glazing with its own ends
 closing the gap to the body face. The body is not read for geometry except the D06/D07 face line and the F05 mouth
 (body_config_v005.json `contour_cut` rectangles); nothing of the body is written.
+v007 [D384]: + relief decor panels (pyramid solids, mitred corners), F05 piers and ground-floor glazing, window
+flashings and roof hatches; the pergolas are the cage standing on the roof wells of the v007 body.
 
     uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py REVIT_OBB.json VOLUME_LINES.json NEW_OUT_DIR \
         [--config jobs/sokolniki-uvk1000/insets_config.json] [--body-config jobs/sokolniki-uvk1000/body_config_v005.json]
