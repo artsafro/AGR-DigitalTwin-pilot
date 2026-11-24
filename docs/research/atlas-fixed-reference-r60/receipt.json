@@ -1,0 +1,720 @@
+{
+  "hypothesis": "confirmed",
+  "status": "completed",
+  "pairs": [
+    {
+      "scores": {
+        "v007": {
+          "clean": 0.1394363111971969,
+          "shift_delta": 0.0009838289438739885,
+          "outside_delta": 0.0
+        },
+        "v010": {
+          "clean": 0.006831115019831101,
+          "shift_delta": 0.011980920631546094,
+          "outside_delta": 0.0
+        }
+      },
+      "views": {
+        "south": {
+          "mask_pixels": 4429838,
+          "interior_pixels": 4393258,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "8bd36a8b961d890c04f2f4571011d0d8254fa912d18aba82bc7c9347ab054a06",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 2766722,
+            "changed_outside": 769510,
+            "sha256": "4bf1ad130c882d92709957bfabee3b3014f78a3879f6867ae3d2ab7de5fbc814"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 2818912,
+            "changed_outside": 769510,
+            "sha256": "2808549bd06b43ad88fe26bb8f7644b5afeb731cccc86fe8eccaa93f3a2fc54c"
+          }
+        },
+        "east": {
+          "mask_pixels": 1781446,
+          "interior_pixels": 1744866,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "01e94bedb68845e028462afd979b5701430e8d09df4bf6be87b3e9bb6241245b",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 1142748,
+            "changed_outside": 311798,
+            "sha256": "9fa078386f61e306cc85944f3764ed65bcef66a00688afa22d34e758ad604463"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 1163560,
+            "changed_outside": 311798,
+            "sha256": "eb5957fc0c16bdc3060f9510b81e715839c2e8fa3d1c3bf95760c22fb44dabd1"
+          }
+        },
+        "north": {
+          "mask_pixels": 4429838,
+          "interior_pixels": 4393258,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "ec103ede81d790dcc69a6747bae3282eaebd1fa026ebfb996ba8fcfe3d30eeae",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 2907041,
+            "changed_outside": 769510,
+            "sha256": "2c60addb06bd563251934b1cbb44bb7003d48f00225b5c6b4733ba6e49fb31b8"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 2963449,
+            "changed_outside": 769510,
+            "sha256": "1428c9e643e79a8939ec9875ff5f2982db553cff8902fff07c075a2faf08d07d"
+          }
+        },
+        "west": {
+          "mask_pixels": 1781446,
+          "interior_pixels": 1744866,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "674f0dfbd95b00b4a5fd86937fe0e11ea8721c1d23c1bec6655657dff73e38c4",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 1142596,
+            "changed_outside": 311798,
+            "sha256": "3bcf5d105897a13fc0d4deb38da874ac6661dc0cef87c00418cee7dd3fa22497"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 1163726,
+            "changed_outside": 311798,
+            "sha256": "a240507d936d96be1f27953c8562ad2bfd15e9015963ca260e2fbde26da32d02"
+          }
+        }
+      },
+      "control_pass": true,
+      "delta": 0.1326051961773658,
+      "round": 1,
+      "native_pair_seconds": 16.037087600008817,
+      "reducer_pair_seconds": 6.472024200003943
+    },
+    {
+      "scores": {
+        "v007": {
+          "clean": 0.1394363111971969,
+          "shift_delta": 0.0009838289438739885,
+          "outside_delta": 0.0
+        },
+        "v010": {
+          "clean": 0.006831115019831101,
+          "shift_delta": 0.011980920631546094,
+          "outside_delta": 0.0
+        }
+      },
+      "views": {
+        "south": {
+          "mask_pixels": 4429838,
+          "interior_pixels": 4393258,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "364214b253905f358395ba59ee52db6d0adcd1098f2f7a516700767e0cb736c0",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 2766722,
+            "changed_outside": 769510,
+            "sha256": "260b48f70a0e29c102797ac4b74399ee596888780c91c4102c5b6bdb6b9cd4e0"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 2818912,
+            "changed_outside": 769510,
+            "sha256": "4a5e4059fc2acec514354368ced841faf8f99647e7f38239b385b78d038e2d0c"
+          }
+        },
+        "east": {
+          "mask_pixels": 1781446,
+          "interior_pixels": 1744866,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "2b4660b2700db45dcfdba7ac521853f578573408243a0645a6f74400112c3510",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 1142748,
+            "changed_outside": 311798,
+            "sha256": "f9aa734a2c206ba2c9b2f055cf460c5b034db1cf8aeb20b570a7664361a4deed"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 1163560,
+            "changed_outside": 311798,
+            "sha256": "0163d1aa9e69548ea4ea466f0e4e1f29a37fe7b53ed5fb91a0425cbebee54ba1"
+          }
+        },
+        "north": {
+          "mask_pixels": 4429838,
+          "interior_pixels": 4393258,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "054309ce30c5d52060989c22bc04fc4b522a4c203d5291a0eb0de157727ce51b",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 2907041,
+            "changed_outside": 769510,
+            "sha256": "6f99b7474ba924773636ef0c45d3d81afc46c52aea436597307bfe7ea1e867cb"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 2963449,
+            "changed_outside": 769510,
+            "sha256": "30f6c357cea5c4384440871dc572f41372684994c7e86a055c3fe37e1511630d"
+          }
+        },
+        "west": {
+          "mask_pixels": 1781446,
+          "interior_pixels": 1744866,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "41a09aa9c6102cf3e076be8824df3d81d73ecb134909e4e2a979925c1ded49a3",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 1142596,
+            "changed_outside": 311798,
+            "sha256": "7b447624c0cba407c72392f46aaded3929130bfaf3cdcdaaf574d061d83b4fc2"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 1163726,
+            "changed_outside": 311798,
+            "sha256": "884749d760bcfca582875c9957f989e8a7f4d09a450b134fa9baf9aa8147b5ac"
+          }
+        }
+      },
+      "control_pass": true,
+      "delta": 0.1326051961773658,
+      "round": 2,
+      "native_pair_seconds": 17.976388600000064,
+      "reducer_pair_seconds": 5.8666034000052605
+    },
+    {
+      "scores": {
+        "v007": {
+          "clean": 0.1394363111971969,
+          "shift_delta": 0.0009838289438739885,
+          "outside_delta": 0.0
+        },
+        "v010": {
+          "clean": 0.006831115019831101,
+          "shift_delta": 0.011980920631546094,
+          "outside_delta": 0.0
+        }
+      },
+      "views": {
+        "south": {
+          "mask_pixels": 4429838,
+          "interior_pixels": 4393258,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "76e6a47da9015dda8cc226a24be18deae2763bffbbfb96178da15afb6d51b945",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 2766722,
+            "changed_outside": 769510,
+            "sha256": "f92117cf23643cc16d525befa46adceb801bb553a97722fa0a5d01802d90fa79"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 2818912,
+            "changed_outside": 769510,
+            "sha256": "dcea2d5a2cc620c817a7800f54a60561dedcef9cb5ae96fe0b16c9613b8514be"
+          }
+        },
+        "east": {
+          "mask_pixels": 1781446,
+          "interior_pixels": 1744866,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "a7e3cc5d8c6effe23fa40a752cde3bc46d99a81d8450e54d5f9672664d874e5e",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 1142748,
+            "changed_outside": 311798,
+            "sha256": "baab1638640f0775741395504c70da8ccba5c68f6aec89b7438e868eb2570cb6"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 1163560,
+            "changed_outside": 311798,
+            "sha256": "17ef4abcb76a5e37c5f27a89ae3e4686ec341e264915aa6469c27ba8536fe691"
+          }
+        },
+        "north": {
+          "mask_pixels": 4429838,
+          "interior_pixels": 4393258,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "eb4de21f38023eb2c75cdb4864a078e4864049a8fd8b9a797543d7ad387b0847",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 2907041,
+            "changed_outside": 769510,
+            "sha256": "34af6c4fcbbd6ded97492ce5175c1f7f126e9da1b4460a2dc8fd1973cbc39257"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 2963449,
+            "changed_outside": 769510,
+            "sha256": "0036711235b07909abc186138ef1b62b801b448cb6e391a7d9ad5355997619e4"
+          }
+        },
+        "west": {
+          "mask_pixels": 1781446,
+          "interior_pixels": 1744866,
+          "opaque_jaccard": 1.0,
+          "ref_sha256": "0b2f7b8c51c585f08898342e9e3c11c9709d476aad20106fb39fac0bbe750a26",
+          "v007": {
+            "changed_clean": 0,
+            "changed_shift": 1142596,
+            "changed_outside": 311798,
+            "sha256": "2a56ea4cf972f1e4aeab5b25fc184a7a28ef36ba220921e1b9301bc5bc129ff1"
+          },
+          "v010": {
+            "changed_clean": 0,
+            "changed_shift": 1163726,
+            "changed_outside": 311798,
+            "sha256": "528dedc70c79e31dd1013b90268ea40cbd9ce0d83f0bc9fc6f93d4bd94a3872f"
+          }
+        }
+      },
+      "control_pass": true,
+      "delta": 0.1326051961773658,
+      "round": 3,
+      "native_pair_seconds": 19.73898019999615,
+      "reducer_pair_seconds": 5.460921200006851
+    }
+  ],
+  "parent": "d45e1ea44471de876f577b63a403f1be43c118ec:docs/research/atlas-drift-r58/replay.py",
+  "parent_sha256": "ec5d127f87214252d13d8229a97efeb78fc5da70cb45431cb5cd3ff40c893cc3",
+  "reducer_sha256": "aa0988dda70f8efefdf8035425667b772500bea9bbff646375af76de38652c7e",
+  "uv_lock_sha256": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
+  "blender_sha256": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+  "native_status": "completed",
+  "native_receipt_sha256": "ff4b827c3c64ef1a2a3fb28ebcd374b12d422684b7d92bd69e61e1403f7cd383",
+  "native_wall_seconds": 54.30955809999432,
+  "native_attempts": [
+    {
+      "round": 1,
+      "version": "v007",
+      "inputs": {
+        "0000_Nku_1_01.fbx": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+        "SM_Nku_1.fbx": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b",
+        "spec.json": "9ed6268fd19b070ef7a9aaa5faf0865c9fa96fd20e37dd051e41018d2829ee60",
+        "T_Nku_1_Diffuse_1.1001.png": "2c5a22644b872a909fa5bf301be3e86dd2dd25dbd4b43a74a4da77a9b993b9ef",
+        "T_Nku_1_Diffuse_1.1002.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_Diffuse_1.1004.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_ERM_1.1001.png": "54b733cf7883bb0cfe6b747640ba5313678737ae36400231ce788fa1630c83c0",
+        "T_Nku_1_ERM_1.1002.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_Normal_1.1001.png": "2ba6701da704dceb3dedf851af2e7565d8ff5e3725f5b8880508f38f5332d672",
+        "T_Nku_1_Normal_1.1002.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+      },
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "1",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\render_facades.py",
+        "--",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v007\\inputs\\spec.json",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v007\\inputs\\SM_Nku_1.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v007\\inputs",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v007\\inputs\\0000_Nku_1_01.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v007\\renders"
+      ],
+      "status": "scored",
+      "exit": 0,
+      "wall_seconds": 5.158984599998803
+    },
+    {
+      "round": 1,
+      "version": "v010",
+      "inputs": {
+        "0000_Nku_1_01.fbx": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52",
+        "SM_Nku_1.fbx": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+        "spec.json": "3329bff4bf8e431f1cad2a31a5f2c637f7083d61e8b093c50bd1fd6e8e425722",
+        "T_Nku_1_Diffuse_1.1001.png": "c356199df61a2fc67001296b9bad469efcd4699d5bb44418dd3362b5d1d092a3",
+        "T_Nku_1_Diffuse_1.1002.png": "0b3c7e3b9dd1a45fe1bf228222431f5ec21d061a8aaa0d398232d775c6e52879",
+        "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_Diffuse_1.1004.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "T_Nku_1_Diffuse_1.1005.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_ERM_1.1001.png": "3f272369ec17df44c25e6a4a32ddaf598342c9f6d46561fc4e1a5e4e7d4bc41c",
+        "T_Nku_1_ERM_1.1002.png": "5857f277740d4fae6656748a432a84716ac0a55149ae6dcb3b83561d5591f23b",
+        "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1005.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_Normal_1.1001.png": "ac607fb10c6af8f976ffe94090990177dddbd53ab8b4c1176db24b845d088ba1",
+        "T_Nku_1_Normal_1.1002.png": "b8c353401651291411bb5ceae32fc609df7780a09e9c7ebedd143248da328596",
+        "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1005.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+      },
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "1",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\render_facades.py",
+        "--",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v010\\inputs\\spec.json",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v010\\inputs\\SM_Nku_1.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v010\\inputs",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v010\\inputs\\0000_Nku_1_01.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r1-v010\\renders"
+      ],
+      "status": "scored",
+      "exit": 0,
+      "wall_seconds": 5.601914600003511
+    },
+    {
+      "round": 2,
+      "version": "v007",
+      "inputs": {
+        "0000_Nku_1_01.fbx": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+        "SM_Nku_1.fbx": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b",
+        "spec.json": "9ed6268fd19b070ef7a9aaa5faf0865c9fa96fd20e37dd051e41018d2829ee60",
+        "T_Nku_1_Diffuse_1.1001.png": "2c5a22644b872a909fa5bf301be3e86dd2dd25dbd4b43a74a4da77a9b993b9ef",
+        "T_Nku_1_Diffuse_1.1002.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_Diffuse_1.1004.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_ERM_1.1001.png": "54b733cf7883bb0cfe6b747640ba5313678737ae36400231ce788fa1630c83c0",
+        "T_Nku_1_ERM_1.1002.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_Normal_1.1001.png": "2ba6701da704dceb3dedf851af2e7565d8ff5e3725f5b8880508f38f5332d672",
+        "T_Nku_1_Normal_1.1002.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+      },
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "1",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\render_facades.py",
+        "--",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v007\\inputs\\spec.json",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v007\\inputs\\SM_Nku_1.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v007\\inputs",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v007\\inputs\\0000_Nku_1_01.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v007\\renders"
+      ],
+      "status": "scored",
+      "exit": 0,
+      "wall_seconds": 5.513689500003238
+    },
+    {
+      "round": 2,
+      "version": "v010",
+      "inputs": {
+        "0000_Nku_1_01.fbx": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52",
+        "SM_Nku_1.fbx": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+        "spec.json": "3329bff4bf8e431f1cad2a31a5f2c637f7083d61e8b093c50bd1fd6e8e425722",
+        "T_Nku_1_Diffuse_1.1001.png": "c356199df61a2fc67001296b9bad469efcd4699d5bb44418dd3362b5d1d092a3",
+        "T_Nku_1_Diffuse_1.1002.png": "0b3c7e3b9dd1a45fe1bf228222431f5ec21d061a8aaa0d398232d775c6e52879",
+        "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_Diffuse_1.1004.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "T_Nku_1_Diffuse_1.1005.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_ERM_1.1001.png": "3f272369ec17df44c25e6a4a32ddaf598342c9f6d46561fc4e1a5e4e7d4bc41c",
+        "T_Nku_1_ERM_1.1002.png": "5857f277740d4fae6656748a432a84716ac0a55149ae6dcb3b83561d5591f23b",
+        "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1005.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_Normal_1.1001.png": "ac607fb10c6af8f976ffe94090990177dddbd53ab8b4c1176db24b845d088ba1",
+        "T_Nku_1_Normal_1.1002.png": "b8c353401651291411bb5ceae32fc609df7780a09e9c7ebedd143248da328596",
+        "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1005.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+      },
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "1",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\render_facades.py",
+        "--",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v010\\inputs\\spec.json",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v010\\inputs\\SM_Nku_1.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v010\\inputs",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v010\\inputs\\0000_Nku_1_01.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r2-v010\\renders"
+      ],
+      "status": "scored",
+      "exit": 0,
+      "wall_seconds": 6.348510099996929
+    },
+    {
+      "round": 3,
+      "version": "v007",
+      "inputs": {
+        "0000_Nku_1_01.fbx": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+        "SM_Nku_1.fbx": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b",
+        "spec.json": "9ed6268fd19b070ef7a9aaa5faf0865c9fa96fd20e37dd051e41018d2829ee60",
+        "T_Nku_1_Diffuse_1.1001.png": "2c5a22644b872a909fa5bf301be3e86dd2dd25dbd4b43a74a4da77a9b993b9ef",
+        "T_Nku_1_Diffuse_1.1002.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_Diffuse_1.1004.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_ERM_1.1001.png": "54b733cf7883bb0cfe6b747640ba5313678737ae36400231ce788fa1630c83c0",
+        "T_Nku_1_ERM_1.1002.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_Normal_1.1001.png": "2ba6701da704dceb3dedf851af2e7565d8ff5e3725f5b8880508f38f5332d672",
+        "T_Nku_1_Normal_1.1002.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+      },
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "1",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\render_facades.py",
+        "--",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v007\\inputs\\spec.json",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v007\\inputs\\SM_Nku_1.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v007\\inputs",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v007\\inputs\\0000_Nku_1_01.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v007\\renders"
+      ],
+      "status": "scored",
+      "exit": 0,
+      "wall_seconds": 5.9853040000016335
+    },
+    {
+      "round": 3,
+      "version": "v010",
+      "inputs": {
+        "0000_Nku_1_01.fbx": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52",
+        "SM_Nku_1.fbx": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+        "spec.json": "3329bff4bf8e431f1cad2a31a5f2c637f7083d61e8b093c50bd1fd6e8e425722",
+        "T_Nku_1_Diffuse_1.1001.png": "c356199df61a2fc67001296b9bad469efcd4699d5bb44418dd3362b5d1d092a3",
+        "T_Nku_1_Diffuse_1.1002.png": "0b3c7e3b9dd1a45fe1bf228222431f5ec21d061a8aaa0d398232d775c6e52879",
+        "T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_Diffuse_1.1004.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+        "T_Nku_1_Diffuse_1.1005.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+        "T_Nku_1_ERM_1.1001.png": "3f272369ec17df44c25e6a4a32ddaf598342c9f6d46561fc4e1a5e4e7d4bc41c",
+        "T_Nku_1_ERM_1.1002.png": "5857f277740d4fae6656748a432a84716ac0a55149ae6dcb3b83561d5591f23b",
+        "T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_ERM_1.1005.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+        "T_Nku_1_Normal_1.1001.png": "ac607fb10c6af8f976ffe94090990177dddbd53ab8b4c1176db24b845d088ba1",
+        "T_Nku_1_Normal_1.1002.png": "b8c353401651291411bb5ceae32fc609df7780a09e9c7ebedd143248da328596",
+        "T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+        "T_Nku_1_Normal_1.1005.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c"
+      },
+      "argv": [
+        "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "1",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\render_facades.py",
+        "--",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v010\\inputs\\spec.json",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v010\\inputs\\SM_Nku_1.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v010\\inputs",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v010\\inputs\\0000_Nku_1_01.fbx",
+        "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_ed69f70c\\tmp\\r60-run-001\\native\\r3-v010\\renders"
+      ],
+      "status": "scored",
+      "exit": 0,
+      "wall_seconds": 6.989415999996709
+    }
+  ],
+  "cameras": {
+    "south": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "up": [
+          0.0,
+          -1.6292068494294654e-07,
+          1.0
+        ],
+        "ortho_scale": 6.545000076293945,
+        "res": [
+          2618,
+          1986
+        ],
+        "px_per_m": 399.9999953372685
+      }
+    ],
+    "east": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          -4.371138828673793e-08,
+          1.0,
+          0.0
+        ],
+        "up": [
+          4.371138828673793e-08,
+          1.910685676922942e-15,
+          1.0
+        ],
+        "ortho_scale": 2.634999990463257,
+        "res": [
+          1054,
+          1986
+        ],
+        "px_per_m": 400.00000144770297
+      }
+    ],
+    "north": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          -1.0,
+          0.0,
+          1.5099580252808664e-07
+        ],
+        "up": [
+          1.5099580252808664e-07,
+          7.549790126404332e-08,
+          1.0
+        ],
+        "ortho_scale": 6.545000076293945,
+        "res": [
+          2618,
+          1986
+        ],
+        "px_per_m": 399.9999953372685
+      }
+    ],
+    "west": [
+      [
+        [
+          -3.029376983642578,
+          -1.2190001010894775,
+          -2.0465455055236816
+        ],
+        [
+          3.029376983642578,
+          1.2190001010894775,
+          2.550208568572998
+        ]
+      ],
+      {
+        "center": [
+          0.0,
+          0.0,
+          0.2518315315246582
+        ],
+        "right": [
+          -4.371138828673793e-08,
+          -1.0,
+          0.0
+        ],
+        "up": [
+          -4.371138828673793e-08,
+          1.910685676922942e-15,
+          1.0
+        ],
+        "ortho_scale": 2.634999990463257,
+        "res": [
+          1054,
+          1986
+        ],
+        "px_per_m": 400.00000144770297
+      }
+    ]
+  },
+  "archives": {
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\0000_Nku_1.zip": "0d1fa6c036bb553459dd0e9baec8be4ace8bc61d5acea6aab585d713f2292d0f",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\0000_Nku_1.zip": "8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3"
+  },
+  "code": {
+    "a1f41ee216ba881ada1d1460e6b67f048446e14e:jobs/TEC26-OKS/scripts/render_facades.py": "361e2c8e30b76c7d0d22adf12c1a5cf520519e19a1dd88ed3c5710d60adc088e",
+    "a1f41ee216ba881ada1d1460e6b67f048446e14e:jobs/TEC26-OKS/scripts/vpm_uv.py": "7d21cde032078758515d2b502bb5f1cbee2b79dbb7a5f4de877838dee44e29a4"
+  },
+  "originals_match_after": true,
+  "median_delta": 0.1326051961773658,
+  "paired_spread": 0.0,
+  "wall_seconds": 72.31318319999264
+}
