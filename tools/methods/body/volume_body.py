@@ -31,6 +31,15 @@ DEFAULT_CFG = {
     "materials": {"WALL": [0.82, 0.80, 0.76], "WINDOW": [0.25, 0.45, 0.65], "ROOF": [0.45, 0.45, 0.47]},
     "build_states": ["cut"],
     "local_states": ["level_conflict"],
+    # [D376] (1): a window crossing the visible band of a seam side opens only above the joint (sill = visible_from)
+    "partial_states": ["crosses_visible_band"],
+    # [D376] (2): a contour cut agreed in sections (F05 glazing) may have a local sill and a local head
+    "contour_states": ["contour_cut"],
+    "extra_rectangles": [],     # job rectangles not in the volume-lines file (the F05 contour), same record format
+    "reveal_m_by_name": {},     # [D376] (4): mouth depth = inset seat for named rectangles (F13 pairs)
+    "agreed_edge_clamps": {},   # [D376] (3): name -> agreed narrowing at the edge end, m (22daf24 0.268)
+    "edge_clamp_tol_m": 0.005,
+    "seam_weld_m": 0.001,       # #1802: mate ends must coincide within 1 mm (was 5 cm -> silent slit)
 }
 
 
@@ -99,8 +108,9 @@ def plans_from_volume_lines(vl, cfg=None):
         if reversed_:
             ring = [ring[0]] + ring[:0:-1]  # same start point: s_ccw = perimeter - s_source
         out[vn] = {"ring": ring, "perim": perim, "levels": levels, "off": off, "reversed": reversed_,
-                   "openings": [], "dropped": [], "seams": []}
-    for vn, V in out.items():  # seam sides hidden by the mate volume up to the lower of both tops
+                   "openings": [], "dropped": [], "seams": [], "agreed_edges": []}
+    weld = cfg["seam_weld_m"]
+    for vn, V in out.items():  # seam sides hidden by the mate volume over the band both volumes share (#1802)
         for k in V["off"]:
             e = edges[k]
             if not e.get("mate"):
@@ -108,17 +118,24 @@ def plans_from_volume_lines(vl, cfg=None):
             mate = edges.get(e["mate"])
             if mate is None or mate.get("volume") not in out:
                 raise ValueError("seam edge %s: mate %r is not an edge of a known volume" % (k, e.get("mate")))
-            same = math.dist(e["xy"][0], mate["xy"][0]) <= 0.05 and math.dist(e["xy"][1], mate["xy"][1]) <= 0.05
-            flip = math.dist(e["xy"][0], mate["xy"][1]) <= 0.05 and math.dist(e["xy"][1], mate["xy"][0]) <= 0.05
+            same = math.dist(e["xy"][0], mate["xy"][0]) <= weld and math.dist(e["xy"][1], mate["xy"][1]) <= weld
+            flip = math.dist(e["xy"][0], mate["xy"][1]) <= weld and math.dist(e["xy"][1], mate["xy"][0]) <= weld
             if not (same or flip):
-                raise ValueError("seam edge %s and its mate %s do not share their ends" % (k, e["mate"]))
-            z_hid = min(V["levels"][-1], out[mate["volume"]]["levels"][-1])
-            V["seams"].append({"edge": k, "mate": e["mate"], "xy": e["xy"], "hidden_to": z_hid})
-    for r in rects:
+                raise ValueError("seam edge %s and its mate %s do not share their ends within %.3f m (a slit or a "
+                                 "lap, #1802)" % (k, e["mate"], weld))
+            M = out[mate["volume"]]
+            z_from = max(V["levels"][0], M["levels"][0])
+            z_hid = min(V["levels"][-1], M["levels"][-1])
+            V["seams"].append({"edge": k, "mate": e["mate"], "xy": e["xy"], "hidden_from": z_from,
+                               "hidden_to": z_hid})
+    local_sill = set(cfg["partial_states"]) | set(cfg["contour_states"])
+    local_head = set(cfg["local_states"]) | set(cfg["contour_states"])
+    built = set(cfg["build_states"]) | local_head | local_sill
+    for r in list(rects) + list(cfg["extra_rectangles"]):
         e = edges.get(r.get("edge")) if r.get("edge") else None
         state = r.get("state")
         name = r.get("name", "?")
-        if state not in cfg["build_states"] + cfg["local_states"]:
+        if state not in built:
             out_v = out.get(e["volume"]) if e else None
             target = out_v["dropped"] if out_v else out.setdefault("_unbound", {"dropped": []})["dropped"]
             target.append({"name": name, "facade": r.get("facade"), "edge": r.get("edge"), "reason": state})
@@ -132,27 +149,50 @@ def plans_from_volume_lines(vl, cfg=None):
         s0, s1, z0, z1 = rect
         if not (s0 < s1 and z0 < z1):
             raise ValueError("rectangle %s: empty rect %r" % (name, rect))
+        _check_edge_clamp(r, rect, V, cfg)
+        partial_from = None
+        if state in cfg["partial_states"]:  # [D376] (1): only the part above the joint is visible
+            vis = float(e.get("visible_from") or 0.0)
+            if z1 <= vis + cfg["level_snap_m"]:
+                V["dropped"].append({"name": name, "facade": r.get("facade"), "edge": r.get("edge"),
+                                     "reason": "hidden_below_visible_band"})
+                continue
+            if z0 < vis:
+                z0 = partial_from = vis
         a, b = V["off"][r["edge"]] + s0, V["off"][r["edge"]] + s1
+        if a < -EPS or b > V["perim"] + EPS:
+            raise ValueError("rectangle %s: [%.3f, %.3f] leaves the ring perimeter %.3f" % (name, a, b, V["perim"]))
         if V["reversed"]:
             a, b = V["perim"] - b, V["perim"] - a
         wl = _level_index(V["levels"], z0, cfg["level_snap_m"])
+        zs = None
         if wl is None:
-            raise ValueError("rectangle %s: bottom %.3f is not within %.2f m of a level" % (name, z0, cfg["level_snap_m"]))
+            if state not in local_sill:
+                raise ValueError("rectangle %s: bottom %.3f is not within %.2f m of a level" % (name, z0, cfg["level_snap_m"]))
+            wl = max((k for k, z in enumerate(V["levels"]) if z < z0 - EPS), default=None)
+            if wl is None:
+                raise ValueError("rectangle %s: sill %.3f below the volume base" % (name, z0))
+            zs = z0
         wh = _level_index(V["levels"], z1, cfg["level_snap_m"])
         zt = None
         if wh is None:
-            if state not in cfg["local_states"]:
+            if state not in local_head:
                 raise ValueError("rectangle %s (%s): head %.3f is not on a level" % (name, state, z1))
             wh = next((k for k, z in enumerate(V["levels"]) if z > z1 + EPS), None)
             if wh is None:
                 raise ValueError("rectangle %s: head %.3f above the volume top" % (name, z1))
             zt = z1
-        elif state in cfg["local_states"]:
-            zt = None  # head is on a level after all: an ordinary cut
         if wh <= wl:
             raise ValueError("rectangle %s: head level %d not above sill level %d" % (name, wh, wl))
+        if zs is not None and zt is not None and wh - wl == 1 and zt - zs < cfg["level_snap_m"]:
+            raise ValueError("rectangle %s: local sill %.3f and head %.3f too close" % (name, zs, zt))
+        rv = float(cfg["reveal_m_by_name"].get(name, cfg["reveal_m"]))
         V["openings"].append({"name": name, "facade": r.get("facade"), "edge": r["edge"], "s": [a, b],
-                              "wl": wl, "wh": wh, "zt": zt, "state": state})
+                              "wl": wl, "wh": wh, "zt": zt, "zs": zs, "r": rv, "state": state,
+                              "partial_from": partial_from})
+    for name, rv in cfg["reveal_m_by_name"].items():
+        if not (_finite(rv) and 0 < rv < 1.0):
+            raise ValueError("reveal_m_by_name %s: reveal must be in (0, 1) m, got %r" % (name, rv))
     result = {}
     for vn, V in out.items():
         if vn == "_unbound":
@@ -161,6 +201,25 @@ def plans_from_volume_lines(vl, cfg=None):
     if "_unbound" in out:
         result["_unbound"] = {"dropped": out["_unbound"]["dropped"]}
     return result
+
+
+def _check_edge_clamp(r, rect, V, cfg):
+    """[D376] (3): an opening narrower than its source rect (cut at the edge end) is built only as an agreed edge."""
+    src, name, tol = r.get("source_rect"), r.get("name", "?"), cfg["edge_clamp_tol_m"]
+    if not (isinstance(src, list) and len(src) == 4 and all(_finite(c) for c in src)):
+        return
+    d = (src[1] - src[0]) - (rect[1] - rect[0])
+    agreed = cfg["agreed_edge_clamps"].get(name)
+    if d <= tol:
+        if agreed is not None:
+            raise ValueError("rectangle %s: agreed edge clamp %.3f m but the rect is not narrowed" % (name, agreed))
+        return
+    if agreed is None:
+        raise ValueError("rectangle %s is %.3f m narrower than its source at the edge end; list it in "
+                         "agreed_edge_clamps [D376] or fix the lines" % (name, d))
+    if abs(agreed - d) > tol:
+        raise ValueError("rectangle %s narrowed by %.3f m, agreed %.3f m" % (name, d, agreed))
+    V["agreed_edges"].append({"name": name, "edge": r.get("edge"), "clamp_m": round(d, 3), "agreed_m": agreed})
 
 
 def _merge_stations(values, tol):
@@ -188,17 +247,17 @@ def _plan_for_volume(vn, V, cfg):
         if o["s"][1] - o["s"][0] < EPS:
             raise ValueError("volume %s: opening %s collapses to zero width after station merge" % (vn, o["name"]))
     # merge openings that overlap or touch with the same levels (a zero pier would give coincident jambs)
-    ops = sorted(V["openings"], key=lambda o: (o["wl"], o["wh"], o["zt"] or 0, o["s"][0]))
+    ops = sorted(V["openings"], key=lambda o: (o["wl"], o["wh"], o["zt"] or 0, o["zs"] or 0, o["r"], o["s"][0]))
     merged = []
     for o in ops:
         m = merged[-1] if merged else None
-        if (m and m["wl"] == o["wl"] and m["wh"] == o["wh"] and m["zt"] == o["zt"]
-                and o["s"][0] <= m["s"][1] + EPS):
+        if (m and m["wl"] == o["wl"] and m["wh"] == o["wh"] and m["zt"] == o["zt"] and m["zs"] == o["zs"]
+                and m["r"] == o["r"] and o["s"][0] <= m["s"][1] + EPS):
             m["s"][1] = max(m["s"][1], o["s"][1])
             m["names"].append(o["name"])
             continue
         merged.append(dict(o, s=list(o["s"]), names=[o["name"]]))
-    for i, a in enumerate(merged):  # different levels sharing cells or a station = an error naming both
+    for i, a in enumerate(merged):  # different levels / seats sharing cells or a station = an error naming both
         for b in merged[i + 1:]:
             if a["s"][0] <= b["s"][1] + EPS and b["s"][0] <= a["s"][1] + EPS and a["wl"] < b["wh"] and b["wl"] < a["wh"]:
                 raise ValueError("volume %s: openings %s and %s overlap or touch with different levels"
@@ -208,12 +267,22 @@ def _plan_for_volume(vn, V, cfg):
     plan = {"step": round(levels[-1] - z0, 6), "z0": z0, "floors": 1,
             "loops": [round(z - z0, 6) for z in levels[:-1]],
             "rings": [{"xy": V["ring"], "cuts": sorted({s for o in merged for s in o["s"]})}],
-            "windows": [[0, o["s"][0], o["s"][1], o["wl"], o["wh"], cfg["reveal_m"]] for o in merged],
+            "windows": [[0, o["s"][0], o["s"][1], o["wl"], o["wh"], o["r"]] for o in merged],
             "materials": cfg["materials"], "wall_tile_m": cfg["wall_tile_m"],
             "provenance": {"volume": vn, "ring_reversed_from_source": V["reversed"]}}
     plan["rings"][0]["zones"] = [[0.0, perim, "WALL"]]
-    local = [{"window": i, "zt": o["zt"]} for i, o in enumerate(merged) if o["zt"] is not None]
-    return {"plan": plan, "local": local, "openings": merged, "dropped": V["dropped"], "seams": V["seams"]}
+    local = []
+    for i, o in enumerate(merged):
+        if o["zt"] is None and o["zs"] is None:
+            continue
+        lc = {"window": i}
+        if o["zt"] is not None:
+            lc["zt"] = o["zt"]
+        if o["zs"] is not None:
+            lc["zs"] = o["zs"]
+        local.append(lc)
+    return {"plan": plan, "local": local, "openings": merged, "dropped": V["dropped"], "seams": V["seams"],
+            "agreed_edges": V["agreed_edges"]}
 
 
 # ---- post-ops on the core output {"verts": [(x,y,z)], "faces": [{"v", "mat", "uv"}]} --------------------------------
@@ -252,16 +321,25 @@ def apply_local_cuts(core, body, plan, local):
     levels = [z0 + z for z in plan["loops"]] + [z0 + plan["step"]]
     tex = plan.get("wall_tile_m", 3.0)
     for lc in local:
-        w = plan["windows"][lc["window"]]
+        if lc.get("zt") is not None:
+            _local_head(core, body, plan, levels, tex, plan["windows"][lc["window"]], lc["zt"])
+        if lc.get("zs") is not None:
+            _local_sill(core, body, plan, levels, tex, plan["windows"][lc["window"]], lc["zs"])
+    return body
+
+
+def _local_head(core, body, plan, levels, tex, w, zt):
+    verts, faces = body["verts"], body["faces"]
+    if True:
         a, b, wl, wh, r = w[1], w[2], int(w[3]), int(w[4]), w[5]
-        zt = lc["zt"]
         if not (levels[wh - 1] + EPS < zt < levels[wh] - EPS):
             raise ValueError("local cut %r: zt %.3f not inside band %d" % (w, zt, wh - 1))
         idx = _Index(verts)
         ks = _stations(core, plan, a, b)
         inner = core.inner_offset([(p[1], p[2]) for p in ks], r)
         G = [idx.one((p[1], p[2], levels[wh]), "local cut %r outer head" % (w,)) for p in ks]
-        Gl = [idx.one((p[1], p[2], levels[wh - 1]), "local cut %r outer below" % (w,)) for p in ks]
+        Gl = {j: idx.one((ks[j][1], ks[j][2], levels[wh - 1]), "local cut %r outer below" % (w,))
+              for j in (0, len(ks) - 1)}  # jamb ends only: grid points inside a multi-band opening are unused
         I = [idx.one((q[0], q[1], levels[wh]), "local cut %r inner head" % (w,)) for q in inner]
         P = []
         for p in ks:
@@ -302,6 +380,99 @@ def apply_local_cuts(core, body, plan, local):
     return body
 
 
+def _local_sill(core, body, plan, levels, tex, w, zs):
+    """[D376] local sill: raise the sill of opening `w` from level wl to zs between its own jambs (mirror of the
+    [D375] local head): the reveal bottom moves to zs, wall cells level(wl)..zs fill under the opening and the
+    neighbour wall cell on each side gets the jamb vertex at zs (no new ring)."""
+    verts, faces = body["verts"], body["faces"]
+    a, b, wl, r = w[1], w[2], int(w[3]), w[5]
+    if not (levels[wl] + EPS < zs < levels[wl + 1] - EPS):
+        raise ValueError("local sill %r: zs %.3f not inside band %d" % (w, zs, wl))
+    idx = _Index(verts)
+    ks = _stations(core, plan, a, b)
+    inner = core.inner_offset([(p[1], p[2]) for p in ks], r)
+    Gb = [idx.one((p[1], p[2], levels[wl]), "local sill %r outer sill" % (w,)) for p in ks]
+    S = [idx.one((q[0], q[1], levels[wl]), "local sill %r inner sill" % (w,)) for q in inner]
+    P = []
+    for p in ks:
+        verts.append((p[1], p[2], zs))
+        P.append(len(verts) - 1)
+    gmap = dict(zip(Gb, P))
+    sset = set(S)
+    for f in faces:  # the opening's own jambs and sill: outer sill vertices -> zs vertices
+        if sset & set(f["v"]):
+            f["v"] = tuple(gmap.get(i, i) for i in f["v"])
+    for i in S:
+        x, y, _ = verts[i]
+        verts[i] = (x, y, zs)
+    for f in faces:
+        if sset & set(f["v"]) or set(P) & set(f["v"]):
+            f["uv"] = _flat_uv(verts, f["v"], tex)
+    for j in (0, len(ks) - 1):  # neighbour wall cell: the edge from the sill corner straight up gets zs
+        g = Gb[j]
+        gx, gy, gz = verts[g]
+        hits = []
+        for f in faces:
+            v = f["v"]
+            n = len(v)
+            for k in range(n):
+                for u, t in ((v[k], v[(k + 1) % n]), (v[(k + 1) % n], v[k])):
+                    if u == g:
+                        q = verts[t]
+                        if abs(q[0] - gx) < 1e-6 and abs(q[1] - gy) < 1e-6 and q[2] > zs + EPS:
+                            hits.append((f, k))
+        if len(hits) != 1:
+            raise ValueError("local sill %r: %d faces on the jamb edge at s=%.3f" % (w, len(hits), ks[j][0]))
+        f, k = hits[0]
+        v = list(f["v"])
+        v.insert(k + 1, P[j])
+        f["v"] = tuple(v)
+        f["uv"] = _flat_uv(verts, f["v"], tex, ks[j][0])
+    zone_mat = plan["rings"][0]["zones"][0][2]
+    for j in range(len(ks) - 1):
+        q = (Gb[j], Gb[j + 1], P[j + 1], P[j])
+        faces.append({"v": q, "mat": zone_mat, "uv": [(ks[j + (1 if k in (1, 2) else 0)][0] / tex, verts[i][2] / tex)
+                                                      for k, i in enumerate(q)]})
+    body.setdefault("report", {}).setdefault("local_sills", 0)
+    body["report"]["local_sills"] += 1
+    return body
+
+
+def weld_stacked(body, grid=1e-3):
+    """Weld vertices at one position (rounded to `grid`) and drop face pairs over the same vertex set.
+
+    Two openings stacked over one level (the [D376] F05 glazing: a lower run with a local sill under a wider upper
+    run) give the core two reveal faces at that level - the head of one and the sill of the other, a zero-thickness
+    transom - and two vertex copies on it. After the weld both faces cover one vertex set and are removed together,
+    leaving one mouth. Returns {"welded": n vertices, "faces_removed": n}."""
+    key = {}
+    remap = []
+    welded = 0
+    for i, p in enumerate(body["verts"]):
+        k = (round(p[0] / grid), round(p[1] / grid), round(p[2] / grid))
+        if k in key:
+            remap.append(key[k])
+            welded += 1
+        else:
+            key[k] = i
+            remap.append(i)
+    seen = {}
+    for fi, f in enumerate(body["faces"]):
+        f["v"] = tuple(remap[i] for i in f["v"])
+        if len(set(f["v"])) != len(f["v"]):
+            raise ValueError("weld collapsed face %d %r" % (fi, f["v"]))
+        seen.setdefault(frozenset(f["v"]), []).append(fi)
+    drop = set()
+    for fs in seen.values():
+        if len(fs) == 2:
+            drop.update(fs)
+        elif len(fs) > 2:
+            raise ValueError("weld: %d faces over one vertex set" % len(fs))
+    body["faces"] = [f for fi, f in enumerate(body["faces"]) if fi not in drop]
+    compact(body)  # the welded copies and the transom-only vertices go, so position lookups stay unique
+    return {"welded": welded, "faces_removed": len(drop)}
+
+
 def _has_edge(v, a, b):
     n = len(v)
     return any({v[k], v[(k + 1) % n]} == {a, b} for k in range(n))
@@ -325,13 +496,14 @@ def window_planes(core, plan, local):
     """Separate window planes at the back of every reveal: one quad per station segment, sill .. head (or zt)."""
     z0 = plan["z0"]
     levels = [z0 + z for z in plan["loops"]] + [z0 + plan["step"]]
-    zt = {lc["window"]: lc["zt"] for lc in local}
+    zt = {lc["window"]: lc["zt"] for lc in local if lc.get("zt") is not None}
+    zsl = {lc["window"]: lc["zs"] for lc in local if lc.get("zs") is not None}
     verts, faces = [], []
     for wi, w in enumerate(plan["windows"]):
         a, b, wl, wh, r = w[1], w[2], int(w[3]), int(w[4]), w[5]
         ks = _stations(core, plan, a, b)
         inner = core.inner_offset([(p[1], p[2]) for p in ks], r)
-        zb, zh = levels[wl], zt.get(wi, levels[wh])
+        zb, zh = zsl.get(wi, levels[wl]), zt.get(wi, levels[wh])
         base = len(verts)  # one welded strip per opening: bottom row then top row (no duplicate vertices)
         verts += [(p[0], p[1], zb) for p in inner] + [(p[0], p[1], zh) for p in inner]
         m = len(inner)
@@ -372,16 +544,19 @@ def merge_planes(body, planes):
 
 
 def remove_hidden_seam_cells(body, seams, tol=1e-3):
-    """Drop the vertical faces of a seam side that the mate volume hides (all vertices on the seam segment and at or
-    below `hidden_to`). The volume's rings were proven closed on the full ring before; here the volumes meet along
-    the seam ([D375]) instead of keeping two coincident walls (V004 co-directional clearance). Returns the count."""
+    """Drop the vertical faces of a seam side that the mate volume hides: all vertices on the seam segment and inside
+    the band both volumes share, [`hidden_from`, `hidden_to`] (#1802: not below the mate's base). The volume's rings
+    were proven closed on the full ring before; here the volumes meet along the seam ([D375]) instead of keeping two
+    coincident walls (V004 co-directional clearance). Returns the count."""
     keep, dropped = [], 0
     for f in body["faces"]:
         co = [body["verts"][i] for i in f["v"]]
         hit = None
         for sm in seams:
-            if all(_on_segment((p[0], p[1], 0.0), ((sm["xy"][0][0], sm["xy"][0][1], 0.0),
-                                                    (sm["xy"][1][0], sm["xy"][1][1], 0.0)), tol) for p in co)                     and max(p[2] for p in co) <= sm["hidden_to"] + tol and abs(_normal(co)[2]) < 0.1:
+            seg = ((sm["xy"][0][0], sm["xy"][0][1], 0.0), (sm["xy"][1][0], sm["xy"][1][1], 0.0))
+            if (all(_on_segment((p[0], p[1], 0.0), seg, tol) for p in co)
+                    and min(p[2] for p in co) >= sm.get("hidden_from", -math.inf) - tol
+                    and max(p[2] for p in co) <= sm["hidden_to"] + tol and abs(_normal(co)[2]) < 0.1):
                 hit = sm
                 break
         if hit:
@@ -495,7 +670,76 @@ def metrics(mesh, min_side=0.05, planar_tol=0.001):
             "tris_after_triangulation": tris, "facade_triangles": facade_tris, "facade_ngons": facade_ngons,
             "open_edges": sum(1 for c in edges.values() if c == 1),
             "non_manifold_edges": sum(1 for c in edges.values() if c > 2),
+            "bowtie_vertices": bowtie_vertices(faces),
             "defect_cells": len(defects), "defects": defects[:50]}
+
+
+def bowtie_vertices(faces):
+    """Vertices whose faces form more than one edge-connected fan (xView 'bow-tie vertices')."""
+    inc = {}
+    for fi, f in enumerate(faces):
+        for i in f["v"]:
+            inc.setdefault(i, []).append(fi)
+    bad = 0
+    for i, fs in inc.items():
+        if len(fs) < 2:
+            continue
+        nb = {}
+        for fi in fs:  # the two edges of face fi at vertex i, as the far vertex of each
+            v = faces[fi]["v"]
+            k = v.index(i)
+            for t in (v[k - 1], v[(k + 1) % len(v)]):
+                nb.setdefault(t, []).append(fi)
+        parent = {fi: fi for fi in fs}
+
+        def root(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+        for group in nb.values():
+            for fi in group[1:]:
+                parent[root(fi)] = root(group[0])
+        if len({root(fi) for fi in fs}) > 1:
+            bad += 1
+    return bad
+
+
+def merge_stacked_planes(body):
+    """Join two WINDOW quads stacked over one shared horizontal edge into one quad (the [D376] F05 glazing seat).
+
+    Without it the weld of stacked openings leaves the jamb fan and the window-plane fan meeting only at the jamb
+    corner of the removed transom (an xView bow-tie vertex). Returns the number of joins."""
+    vv = body["verts"]
+    joins = 0
+    while True:
+        wins = [f for f in body["faces"] if f["mat"] == "WINDOW" and len(f["v"]) == 4]
+        by_bottom = {}
+        for f in wins:  # quads are (b0, b1, t1, t0): bottom edge = v[0], v[1]
+            by_bottom[frozenset(f["v"][:2])] = f
+        pair = None
+        for f in wins:
+            top = frozenset(f["v"][2:])
+            g = by_bottom.get(top)
+            if g is not None and g is not f and vv[g["v"][0]][2] > vv[f["v"][0]][2]:
+                pair = (f, g)
+                break
+        if pair is None:
+            return joins
+        f, g = pair
+        t1, t0 = (g["v"][2], g["v"][3]) if g["v"][1] == f["v"][2] else (g["v"][3], g["v"][2])
+        others = [h for h in body["faces"] if h is not f and h is not g and h["mat"] == "WINDOW"]
+        used = {i for h in others for i in h["v"]}
+        # keep a shared corner another window plane uses (else a T-contact with it); drop it otherwise (bow-tie)
+        q = [f["v"][0], f["v"][1]] + ([f["v"][2]] if f["v"][2] in used else []) + [t1, t0] \
+            + ([f["v"][3]] if f["v"][3] in used else [])
+        zb, zt = vv[f["v"][0]][2], vv[t0][2]
+        ul, ur = f["uv"][0][0], f["uv"][1][0]
+        right = {f["v"][1], f["v"][2], t1}
+        uv = [(ur if i in right else ul, (vv[i][2] - zb) / (zt - zb)) for i in q]
+        body["faces"] = [h for h in body["faces"] if h is not f and h is not g] + [
+            {"v": tuple(q), "mat": "WINDOW", "uv": uv}]
+        joins += 1
 
 
 def _on_segment(p, s, tol=1e-3):
@@ -517,17 +761,23 @@ def build_volume(core, entry):
     module = core.build_module(plan)
     body = core.replicate(module, plan)
     body["verts"] = [(x, y, z + plan["z0"]) for x, y, z in body["verts"]]
+    stacked = weld_stacked(body)
     apply_local_cuts(core, body, plan, entry["local"])
     add_caps(core, body, plan)
     planes = window_planes(core, plan, entry["local"])
     merge_planes(body, planes)
+    plane_joins = merge_stacked_planes(body)
     seam_cells = remove_hidden_seam_cells(body, entry.get("seams", []))
     unused = compact(body)
     rep = {"closure": [r["closure"] for r in module["report"]["rings"]],
            "hidden_seam_cells_removed": seam_cells, "unused_vertices_removed": unused,
            "window_planes": len(planes["faces"]),
            "open_edges": classify_open_edges(body, plan["z0"], entry.get("seams", [])),
-           "openings": len(plan["windows"]), "local_cuts": len(entry["local"]),
+           "openings": len(plan["windows"]),
+           "local_cuts": sum(1 for lc in entry["local"] if lc.get("zt") is not None),
+           "local_sills": sum(1 for lc in entry["local"] if lc.get("zs") is not None),
+           "stacked_faces_removed": stacked["faces_removed"], "stacked_plane_joins": plane_joins, "stacked_vertices_welded": stacked["welded"],
+           "agreed_edges": entry.get("agreed_edges", []),
            "body": metrics(body)}
     return {"body": body, "report": rep}
 
