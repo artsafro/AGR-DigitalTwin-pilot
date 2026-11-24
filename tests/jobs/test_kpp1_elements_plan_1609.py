@@ -214,3 +214,24 @@ def test_clamp_outside_probe_every_point_at_least_gap_outside():
         out, moved = pp.clamp_outside(pts, side, RECT, 0.006)
         assert all((q[ax] - plane) * sg >= 0.006 - 1e-12 for q in out)
         assert moved == sum(1 for p, q in zip(pts, out) if p != q)
+
+
+def test_contiguous_udims_maps_the_kpp1_tiles_onto_1001_1008():
+    got = pp.contiguous_udims([1018, 1001, 1006, 1007, 1009, 1010, 1012, 1015, 1006])
+    assert got == {1001: 1001, 1006: 1002, 1007: 1003, 1009: 1004, 1010: 1005, 1012: 1006, 1015: 1007, 1018: 1008}
+    assert pp.udim_origin(1001) == (0, 0) and pp.udim_origin(1010) == (9, 0) and pp.udim_origin(1018) == (7, 1)
+
+
+@pytest.mark.parametrize('tiles', [[], [1000], [1101], [1001.0], [True]])
+def test_contiguous_udims_fails_closed(tiles):
+    with pytest.raises(ValueError):
+        pp.contiguous_udims(tiles)
+
+
+def test_contiguous_udims_probe_gapless_and_order_preserving():
+    rng = random.Random(16094)
+    for _ in range(300):
+        tiles = rng.sample(range(1001, 1101), rng.randint(1, 30))
+        m = pp.contiguous_udims(tiles)
+        assert sorted(m.values()) == list(range(1001, 1001 + len(set(tiles))))
+        assert all((m[a] < m[b]) == (a < b) for a in tiles for b in tiles)

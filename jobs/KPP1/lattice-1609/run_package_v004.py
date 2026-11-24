@@ -8,7 +8,7 @@ run.json). Never certifies delivery: V015-V017 are manual and s_podz is customer
 
 PACKET (SHA256SUMS.txt + files): master-v004-delivery.blend (oks master, elements joined as loose parts),
 master-v004-lattice.blend (element master), SM_Kpp_1.v004-lattice.fbx (element work FBX for V003 --master),
-spec_v004.json, assemble.json. GROUND_NPM_FBX: the accepted #1416 Ground copy (package-v002, D306-D313), copied
+spec_v004_delivery.json + udim_map.json (assemble_v004 package mode), assemble.json. GROUND_NPM_FBX: the accepted #1416 Ground copy (package-v002, D306-D313), copied
 byte-for-byte. THUMBNAIL: the real site thumbnail (#1361). Stages: derive (agr vpm-to-npm) -> readback -> export
 xView (whole + element-wise [D336]) -> NPM package dir (OKS FBX + Ground + export_meta with fbx_records) ->
 agr package-npm -> agr build-manifest build (masters per role [D328]) -> agr validate ZIP --scene (V013 via
@@ -69,7 +69,7 @@ def main(packet, out, ground, thumb, ground_master):
         verify(packet)
         return r.returncode
 
-    master, spec = packet / 'master-v004-delivery.blend', packet / 'spec_v004.json'
+    master, spec = packet / 'master-v004-delivery.blend', packet / 'spec_v004_delivery.json'   # gapless UDIMs (V008)
     recipe = ROOT / 'jobs/TEC26-OKS/scripts'
 
     def bl(script, *args):

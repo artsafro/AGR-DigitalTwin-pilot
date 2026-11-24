@@ -509,9 +509,30 @@ def delivery_master(objs, out):
     if got != want or len(main.data.polygons) != sum(faces.values()):
         raise ValueError(f'join changed the parts: islands {want} -> {got}, faces {sum(faces.values())} -> '
                          f'{len(main.data.polygons)}')
+    # V008: delivered UDIM tiles run 1001.. without gaps; the delivery copy's UVs move by whole tiles
+    # (`posts_plan.contiguous_udims`), the NPM spec and the VPM PNG names follow udim_map.json
+    me = main.data
+    uv = me.uv_layers['UVMap'].data
+    tiles = [face_tile([tuple(uv[li].uv) for li in p.loop_indices]) for p in me.polygons]
+    umap = pp.contiguous_udims(tiles)
+    for p, t in zip(me.polygons, tiles):
+        (ou, ov), (nu, nv) = pp.udim_origin(t), pp.udim_origin(umap[t])
+        for li in p.loop_indices:
+            uv[li].uv = (uv[li].uv[0] + nu - ou, uv[li].uv[1] + nv - ov)
+    spec = json.loads((HERE / 'spec_v004.json').read_text(encoding='utf-8'))
+    by_udim = {v['udim']: k for k, v in spec['finishes'].items()}
+    missing = sorted(set(umap) - set(by_udim))
+    if missing:
+        raise ValueError(f'delivery tiles {missing} have no finish in spec_v004.json')
+    spec['finishes'] = {by_udim[o]: dict(spec['finishes'][by_udim[o]], udim=n) for o, n in sorted(umap.items())}
+    spec['_doc'] += ' DELIVERY copy: UDIM tiles renumbered gapless (udim_map.json, V008).'
+    with open(os.path.join(out, 'spec_v004_delivery.json'), 'x', encoding='utf-8') as fh:
+        json.dump(spec, fh, indent=1)
+    with open(os.path.join(out, 'udim_map.json'), 'x', encoding='utf-8') as fh:
+        json.dump({str(o): n for o, n in sorted(umap.items())}, fh, indent=1)
     path = os.path.join(out, 'master-v004-delivery.blend')
     bpy.ops.wm.save_as_mainfile(filepath=path, copy=True)
-    return {'file': 'master-v004-delivery.blend', 'joined_into': 'SM_Kpp_1_Main', 'parts_faces': faces,
+    return {'file': 'master-v004-delivery.blend', 'joined_into': 'SM_Kpp_1_Main', 'parts_faces': faces, 'udim_map': umap,
             'loose_parts': got, 'objects': sorted(o.name for o in bpy.context.scene.objects)}
 
 

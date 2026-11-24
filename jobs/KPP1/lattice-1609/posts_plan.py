@@ -217,6 +217,24 @@ def roof_face(centre, rect, z_min, tol=0.002):
     return inside_ring(centre, rect, tol) and centre[2] >= z_min
 
 
+def contiguous_udims(tiles):
+    """V008 UDIM sequence (#1609 package): the delivered tiles must run 1001, 1002, ... without gaps. Maps the used
+    tiles in ascending order onto 1001.. (rank order, so every old tile keeps its neighbours' order). Returns
+    {old: new}. Empty input, a tile outside 1001..1100 or a non-int = error."""
+    tiles = sorted(set(tiles))
+    if not tiles:
+        raise ValueError('no UDIM tiles')
+    for t in tiles:
+        if isinstance(t, bool) or not isinstance(t, int) or not 1001 <= t <= 1100:
+            raise ValueError(f'UDIM tile {t!r} outside 1001..1100')
+    return {t: 1001 + i for i, t in enumerate(tiles)}
+
+
+def udim_origin(tile):
+    """(u, v) origin of a UDIM tile: 1001 -> (0, 0), 1010 -> (9, 0), 1011 -> (0, 1)."""
+    return (tile - 1001) % 10, (tile - 1001) // 10
+
+
 def majority_finish(hits, fallback, min_share=0.5):
     """Finish of a lattice opening back face from the v003 surfaces seen behind it (#1609 package step): `hits` = one
     entry per sample point, a finish name or None (no v003 surface within reach). The most frequent finish wins if it
