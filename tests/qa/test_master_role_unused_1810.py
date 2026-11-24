@@ -1,4 +1,5 @@
-"""#1810: an explicitly supplied `--master role=PATH` that no check used is disclosed, never silently dropped.
+"""new-case: tests/qa/test_master_role_unused_1810.py - an explicitly supplied `--master role=PATH` that no check used
+is disclosed, never silently dropped (#1810).
 
 V001 gets one not_run finding per unused role (data.code=master_role_unused, role, reason) on a single FBX and on a
 ZIP without a build manifest. A role compared by the manifest, or consumed by the independent OKS quad readback,
