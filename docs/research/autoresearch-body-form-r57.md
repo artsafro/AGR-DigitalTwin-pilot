@@ -35,9 +35,11 @@ deterministic slicing, so spread must be exactly 0 (any spread → inconclusive)
 - Accepted controls (collateral impact): the other 4 in-box openings (`415705d`, `6189f94`, `010a21f`, `1198368`).
   v007 already passes `edges` there, so expected |S − K| ≤ 0.03 on each; any control > 0.03 is reported as
   collateral change of the reference (not hidden).
-- Positive trigger witness (injected, section data only): shift source-wall slice segments whose both ends lie within
-  0.40 m of S's left edge by +0.050 m along the segment axis → S left edge moves +0.050 ± 0.001, right edge Δ ≤ 0.001.
-  Negative perturbation: same shift on wall segments > 1.0 m outside the search window → S unchanged (Δ ≤ 0.001).
+- Positive trigger witness (injected, section data only): move every source-wall slice segment **endpoint** whose
+  axis coordinate lies within 0.05 m of S's left edge by +0.050 m along the key axis → S left edge moves
+  +0.050 ± 0.001, right edge Δ ≤ 0.001. Negative perturbation: same move on endpoints > 1.0 m outside the search
+  window → S unchanged (Δ ≤ 0.001). (Amended before any measurement, commit after `d3ce0cc8`: whole-segment shift
+  would leave a long outer-face segment untouched.)
   Record per-input changed segment counts; a witness that changes 0 segments is `not_exercised` (not measured).
 - Calibration consequence (rescoring the frozen #51 extracts — labelled rescoring, **not** stability evidence): copy
   the key with `edge_s_m` replaced by S per opening (other fields unchanged), write its own SHA256SUMS, run the unchanged
