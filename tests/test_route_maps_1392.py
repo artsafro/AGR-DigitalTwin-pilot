@@ -578,6 +578,9 @@ def test_1820_ground_owns_flat_and_skirt_uv_but_not_npm_atlas():
     assert not npm.get("commands") and not any(b.get("commands") for b in npm["branches"])
     assert "tools/source/inspect_ground_dxf.py" in _stage(events, "sources")["evidence"]
     assert "D366" in _stage(events, "export")["rules"]
+    assert not (_stage(events, "export").get("commands"))
+    assert not ({("ground", target) for target in ("placement", "ucx", "ground-export")} &
+                {(r["from"], r["to"]) for r in cmap["relations"]})
     assert route_map.route_coverage(events, maps["contexts"], cmap) == []
 
 

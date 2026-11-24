@@ -10,7 +10,7 @@
 # the flat ground onto the relief), then texture fix + skirt, UCX, MAF + Flora, an NPM stage, export, checks.
 # Checked by tests/test_route_maps_1383.py and tests/test_route_maps_1392.py.
 # Regenerate: uv run python tools/architecture/route_map.py
-title_ru: "Маршрут Ground (НПМ + ВПМ) v2: событийный штурм (Ватутино v015, Силикатный, КПП1, ТЭЦ26)"
+title_ru: "Маршрут Ground (НПМ + ВПМ) — целевой порядок D293: событийный штурм"
 route: ground
 scheme:
   export_context:
@@ -18,24 +18,28 @@ scheme:
   source_ru: "DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников"
   steps:
     - stages: "sources,zero"
-      ru: "Прочитать участок и определить ноль"
+      ru: "Сверить покрытия с легендой, взять границу и ноль из проекта"
       artifact_ru: "Граница, покрытия, отметки и реестр исходников"
-      gate_ru: "Неизвестные отметки уточняются, не угадываются"
+      gate_ru: "Ноль уточнить, если не указан; agr inspect читает манифест, agr zero проверяет OBJ по заданному нулю"
     - stages: "surfaces,quads,textures"
-      ru: "Собрать плоский Ground и текстуры по ID"
-      artifact_ru: "Поверхности с UV / UDIM и материалами"
+      ru: "Собрать плоский Ground, назначить UV / UDIM до проекции"
+      artifact_ru: "ground-flat.obj — треугольники с UV, без файлов текстур"
       gate_ru: "Покрытия сверены с легендой проекта"
     - stages: "relief,skirt,ucx"
-      ru: "Спроецировать рельеф, добавить юбку и UCX ВПМ"
-      artifact_ru: "Рельеф и коллизии ВПМ"
-      gate_ru: "Швы и юбка проверены"
+      ru: "Спроецировать Ground, обработать UV юбки; отдельно построить UCX ВПМ"
+      artifact_ru: "SM_<site>_Ground.obj и ground-report.json; UCX отдельно (вход FBX / Blend)"
+      gate_ru: "Прямого перехода от OBJ к agr ucx нет в общем маршруте; швы и юбку проверить"
     - stages: "placement,npm"
       ru: "Расставить МАФ / Флору и получить НПМ"
       artifact_ru: "Сцены НПМ / ВПМ + список удалённых объектов с причинами"
-      gate_ru: "Расстановка по СПОЗУ, пропуски видны в отчёте"
+      gate_ru: "Расстановка: master JSON + (offset или readback) + (FBX или mesh), не OBJ сборщика; agr vpm-to-npm не конвертирует Ground"
+    - stages: "export"
+      ru: "Экспортировать НПМ / ВПМ отдельно от упаковки"
+      artifact_ru: "Ground FBX сдачи и рабочий FBX с квадами (D366)"
+      gate_ru: "Blender Ground JSON-to-FBX читает JSON-мастер, не OBJ сборщика"
     - stages: "package"
-      ru: "Экспортировать и упаковать"
-      artifact_ru: "Ground FBX и ZIP; схема «Пакет и сдача»"
+      ru: "Упаковать готовые файлы"
+      artifact_ru: "ZIP; схема «Пакет и сдача»"
       gate_ru: "Упаковка не означает приёмку"
     - stages: "validate,sintez"
       ru: "Проверить Ground и передать Артёму"
@@ -65,6 +69,9 @@ local_contexts:
   - id: ucx
     ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
+  - id: ground-export
+    ru: "Экспорт Ground из JSON-мастера"
+    owner: tools/blender/ground_json_to_fbx.py
 stages:
   - id: sources
     event_ru: "Исходники получены: DWG, ПЗУ, PDF и, если есть, 3D-рельеф; легенда и штриховки прочитаны"
@@ -80,6 +87,7 @@ stages:
     evidence:
       - docs/procedure/node-r5-ground.md
       - jobs/silikatniy-uvk-pzu-viz/LESSONS.md
+      - tools/source/inspect_ground_dxf.py
   - id: zero
     event_ru: "Граница участка и нулевая отметка: из проекта или агент уточняет"
     actor: agent
@@ -116,9 +124,6 @@ stages:
     event_ru: "Плоский Ground: треугольники, швы и вставки (квады)"
     actor: agent-dcc
     context: ground
-    commands:
-      - "agr ground site"
-      - "dt ground site"
     rules:
       - D157
       - D129
@@ -128,9 +133,9 @@ stages:
       - jobs/VATUTINO-SITE/ground-v015-pairing-session.md
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
   - id: textures
-    event_ru: "Текстуры по ID: бесшовные UV-острова, тайлы, UDIM = ID"
+    event_ru: "Плоский Ground: текстуры по ID, бесшовные UV-острова до проекции, тайлы UDIM = ID"
     actor: agent-dcc
-    context: uv-atlas
+    context: ground
     commands:
       - "agr ground site"
       - "dt ground site"
@@ -159,7 +164,7 @@ stages:
       - tools/ground/build_ground_v015.py
       - jobs/kasatkino-ground/LESSONS.md
   - id: skirt
-    event_ru: "Текстуры поправлены после проекции; юбка ≥ 1 м вниз по внешнему контуру"
+    event_ru: "После проекции: правка текстур и UV, юбка ≥ 1 м вниз по внешнему контуру"
     actor: agent-dcc
     context: ground
     commands:
@@ -207,8 +212,6 @@ stages:
     event_ru: "НПМ-версия в координатах: МАФ НПМ и Флора НПМ на атласе, Ground на атласе"
     actor: agent-dcc
     context: uv-atlas
-    commands:
-      - "agr vpm-to-npm"
     rules:
       - D293
       - D097
@@ -221,8 +224,6 @@ stages:
       - id: convert
         when_ru: "ВПМ уже расставлена"
         ru: "конвертация ВПМ → НПМ: в тех же точках НПМ-модели МАФ / Флоры на атласе"
-        commands:
-          - "agr vpm-to-npm"
         rules:
           - D293
         evidence:
@@ -237,14 +238,24 @@ stages:
           - src/dt_ai/placement/engine.py
       - id: ground
         when_ru: "Ground (всегда)"
-        ru: "геометрия та же в ВПМ и НПМ; отличаются только атлас и развёртка UDIM"
+        ru: "цель D293: геометрия та же в ВПМ и НПМ; отличаются только атлас и развёртка UDIM"
         rules:
           - D293
           - D210
         evidence:
           - jobs/VATUTINO-SITE/ground-textures.md
+  - id: export
+    event_ru: "Ground НПМ / ВПМ экспортирован; рабочий FBX с квадами вместе с FBX сдачи"
+    actor: agent-dcc
+    context: ground-export
+    rules:
+      - D293
+      - D366
+    evidence:
+      - tools/blender/ground_json_to_fbx.py
+      - docs/domain/export-import.md
   - id: package
-    event_ru: "Экспорт НПМ / ВПМ и пакеты собраны"
+    event_ru: "Готовые файлы НПМ / ВПМ собраны в пакеты"
     actor: agent
     context: package
     commands:
@@ -284,6 +295,12 @@ stages:
       - jobs/VATUTINO-SITE/site-route-20261109.md
       - tools/qa/sintez_checker.py
 hotspots:
+  - id: legend-intake
+    stage: sources
+    ru: "agr inspect читает манифест задания. Инвентаризация DXF (слои, блоки, штриховки) помогает, но не заменяет сверку с легендой проекта."
+    evidence:
+      - src/dt_ai/procedure.py
+      - tools/source/inspect_ground_dxf.py
   - id: hatch-colours
     stage: surfaces
     ru: "Силикатный: цвет ID = фон штриховки (bgcolor), а не цвет линий — agr ground site берёт bgcolor, без фона — только цвет из спецификации с причиной (#1406); остаётся белая разметка на каждом стыке покрытий"
@@ -292,7 +309,7 @@ hotspots:
       - docs/procedure/node-r5-ground.md
   - id: project-zero
     stage: zero
-    ru: "Ноль проекта: h_relief = нулевая отметка (D279), система высот unknown для КПП1 / ТЭЦ26; Силикатный (#1315) — ±0.000 из ПЗУ / ВП_5; нет в проекте — агент уточняет (D293); команда agr zero / dt ground zero проверяет Z экспорта (#1406), система высот КПП1 / ТЭЦ26 по-прежнему unknown"
+    ru: "agr zero проверяет OBJ по рельефу и заданной отметке, не определяет ноль. h_relief = ноль проекта (D279); Силикатный (#1315) — ±0.000 из ПЗУ / ВП_5, система высот КПП1 / ТЭЦ26 — unknown."
     rules:
       - D279
       - D293
@@ -301,13 +318,18 @@ hotspots:
       - src/dt_ai/core/heights.py
   - id: pairing
     stage: quads
-    ru: "Квады v015: разрешение 90 000 квадов (D192) заменено D157 — остаток треугольников ≤ 35 %; маршрут A с исключением texel_ready (D193)"
+    ru: "agr ground site выдаёт треугольники в OBJ, не рабочий FBX с квадами (D366). Для v015: D192 заменено D157 (≤ 35 % остаточных треугольников), маршрут A с исключением texel_ready (D193)."
     rules:
       - D157
       - D192
       - D193
     evidence:
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
+  - id: flat-uv
+    stage: textures
+    ru: "ground_site назначает плоским граням UV / UDIM по ID до проекции, без файлов текстур и атласа НПМ."
+    evidence:
+      - src/dt_ai/geometry/ground_site.py
   - id: steep-step
     stage: relief
     ru: "Ватутино: ступень 80° на южной границе — обрыв TIN между двумя отметками подпорной стены без геометрии (1079ED / 1079EE, 0,75 м в плане, перепад 3,73 м); вырез под пятно — точечные исключения"
@@ -325,6 +347,28 @@ hotspots:
     evidence:
       - docs/research/vatutino-ground-v015-outer-skirt-gap-20-edges.md
       - jobs/TEC26-OKS/STATE.md
+  - id: builder-outputs
+    stage: skirt
+    ru: "ground_site после проекции назначает UDIM по ID поверхности и UV юбки по соседней грани. Выходы: ground-flat.obj, SM_<site>_Ground.obj, ground-report.json."
+    evidence:
+      - src/dt_ai/geometry/ground_site.py
+      - tools/ground/build_ground_site.py
+  - id: obj-to-ucx
+    stage: ucx
+    ru: "agr ucx принимает FBX или Blend, пишет FBX. Прямой переход от OBJ сборщика не подключён в общем маршруте."
+    evidence:
+      - src/dt_ai/geometry/ucx_command.py
+  - id: obj-to-placement
+    stage: placement
+    ru: "На каждый профиль: master JSON + (offset или readback с placement_offset) + (FBX или mesh). Прямой переход от OBJ сборщика не подключён в общем маршруте."
+    evidence:
+      - src/dt_ai/placement/site.py
+  - id: ground-atlas
+    stage: npm
+    ru: "agr vpm-to-npm не конвертирует Ground. Числа треугольников v015 показывают бюджет, но не доказывают совпадение поверхности."
+    evidence:
+      - src/dt_ai/cli/agr.py
+      - jobs/VATUTINO-SITE/site-route-20261109.md
   - id: budget
     stage: npm
     ru: "Бюджет НПМ 180 000 (GND-04): Ground 46 479 + МАФ 55 403 + Флора 64 454 = 166 336; ВПМ Флора 443 788 — делит Артём (D167)"
@@ -342,6 +386,17 @@ hotspots:
       - D288
     evidence:
       - jobs/KPP1/package-1278/latest/REPORT.md
+  - id: obj-to-export
+    stage: export
+    ru: "Blender Ground JSON-to-FBX принимает JSON-мастер, не OBJ. Прямого перехода от сборщика нет в общем маршруте; это не выпуск рабочего FBX по D366."
+    evidence:
+      - tools/blender/ground_json_to_fbx.py
+  - id: package-input
+    stage: package
+    ru: "Упаковка берёт готовые файлы, пишет ZIP и не экспортирует FBX. Маршрут сдачи отдельно (#1805)."
+    evidence:
+      - tools/derive/package_vpm.py
+      - tools/derive/package_npm.py
   - id: xview-parked
     stage: validate
     ru: "xView v015: последняя записанная сессия — xView не чистый; #371 закрыт, участок #298 шёл на v014 — какая версия идёт в сдачу, сверить с Артёмом"
