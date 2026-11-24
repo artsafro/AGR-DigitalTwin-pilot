@@ -1,0 +1,582 @@
+{
+  "card": "t_b8ec6b71",
+  "base": "4288c54de328db7a5037b57707862319f7aa6ff0",
+  "loader": "b105d8bcf04c437b3f746a02bc4cf817b5f1265e",
+  "pins": {
+    "v007": [
+      "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+      "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516",
+      "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2"
+    ],
+    "v010": [
+      "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+      "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+      "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+    ]
+  },
+  "candidate_sha256": "7ffd8a6c68a00ab42f4bdc0c2f8f77e0d643c9f90761b173b79fda7999bdef77",
+  "python": "3.14.7",
+  "numpy": "2.5.3",
+  "status": "complete",
+  "error": null,
+  "verdict_H73": "confirmed",
+  "median_E73": {
+    "v007": 2.2124519814466033,
+    "v010": 0.0036524947148406373
+  },
+  "paired_differences": [
+    2.2087994867317624,
+    2.2087994867317624,
+    2.2087994867317624
+  ],
+  "paired_spread": 0.0,
+  "wall_s": 2.0013861000043107,
+  "rounds": [
+    {
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 2.0637812996558296,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": null
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 2.2124519814466033,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": null
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 29.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.5318906498279148,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 147860
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 29.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.6062259907233016,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 147860
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 2.0637812996558296,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 157609
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 2.2124519814466033,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 157609
+              }
+            }
+          },
+          "E73": {
+            "clean": 2.2124519814466033,
+            "half_pitch": 0.6062259907233016,
+            "brightness_plus8": 2.2124519814466033
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 19.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.0036524947148406373,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": null
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 18.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.0030321436889851894,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": null
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 9.5,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.4981737526425797,
+                "runs": [
+                  41,
+                  41,
+                  41
+                ],
+                "changed_px": 150268
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 9.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.5015160718444927,
+                "runs": [
+                  43,
+                  43,
+                  43
+                ],
+                "changed_px": 150873
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 19.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.0036524947148406373,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 157609
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 18.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.0030321436889851894,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 157609
+              }
+            }
+          },
+          "E73": {
+            "clean": 0.0036524947148406373,
+            "half_pitch": 0.5015160718444927,
+            "brightness_plus8": 0.0036524947148406373
+          }
+        }
+      },
+      "wall_s": 0.7319048999925144,
+      "witnesses_ok": true
+    },
+    {
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 2.0637812996558296,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": null
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 2.2124519814466033,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": null
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 29.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.5318906498279148,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 147860
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 29.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.6062259907233016,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 147860
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 2.0637812996558296,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 157609
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 2.2124519814466033,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 157609
+              }
+            }
+          },
+          "E73": {
+            "clean": 2.2124519814466033,
+            "half_pitch": 0.6062259907233016,
+            "brightness_plus8": 2.2124519814466033
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 19.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.0036524947148406373,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": null
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 18.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.0030321436889851894,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": null
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 9.5,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.4981737526425797,
+                "runs": [
+                  41,
+                  41,
+                  41
+                ],
+                "changed_px": 150268
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 9.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.5015160718444927,
+                "runs": [
+                  43,
+                  43,
+                  43
+                ],
+                "changed_px": 150873
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 19.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.0036524947148406373,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 157609
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 18.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.0030321436889851894,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 157609
+              }
+            }
+          },
+          "E73": {
+            "clean": 0.0036524947148406373,
+            "half_pitch": 0.5015160718444927,
+            "brightness_plus8": 0.0036524947148406373
+          }
+        }
+      },
+      "wall_s": 0.6238607999985106,
+      "witnesses_ok": true
+    },
+    {
+      "rows": {
+        "v007": {
+          "label": "rejected_600mm_pitch",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 2.0637812996558296,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": null
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 2.2124519814466033,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": null
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 29.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.5318906498279148,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 147860
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 29.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.6062259907233016,
+                "runs": [
+                  13,
+                  13,
+                  13
+                ],
+                "changed_px": 147860
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 2.0637812996558296,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 157609
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ_RAL5015",
+                "observed_px": 58.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 2.2124519814466033,
+                "runs": [
+                  6,
+                  6,
+                  6
+                ],
+                "changed_px": 157609
+              }
+            }
+          },
+          "E73": {
+            "clean": 2.2124519814466033,
+            "half_pitch": 0.6062259907233016,
+            "brightness_plus8": 2.2124519814466033
+          }
+        },
+        "v010": {
+          "label": "accepted_visual",
+          "per_finish": {
+            "clean": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 19.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.0036524947148406373,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": null
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 18.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.0030321436889851894,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": null
+              }
+            },
+            "half_pitch": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 9.5,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.4981737526425797,
+                "runs": [
+                  41,
+                  41,
+                  41
+                ],
+                "changed_px": 150268
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 9.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.5015160718444927,
+                "runs": [
+                  43,
+                  43,
+                  43
+                ],
+                "changed_px": 150873
+              }
+            },
+            "brightness_plus8": {
+              "PanelVJ30_RAL5015": {
+                "input_finish": "PanelVJ30_RAL5015",
+                "observed_px": 19.0,
+                "expected_px": 18.930855151611325,
+                "relative_error": 0.0036524947148406373,
+                "runs": [
+                  20,
+                  20,
+                  20
+                ],
+                "changed_px": 157609
+              },
+              "PanelVJ12_RAL5015": {
+                "input_finish": "PanelVJ12_RAL5015",
+                "observed_px": 18.0,
+                "expected_px": 18.054744579833983,
+                "relative_error": 0.0030321436889851894,
+                "runs": [
+                  21,
+                  21,
+                  21
+                ],
+                "changed_px": 157609
+              }
+            }
+          },
+          "E73": {
+            "clean": 0.0036524947148406373,
+            "half_pitch": 0.5015160718444927,
+            "brightness_plus8": 0.0036524947148406373
+          }
+        }
+      },
+      "wall_s": 0.6452710000012303,
+      "witnesses_ok": true
+    }
+  ]
+}

@@ -61,3 +61,26 @@ cyclic box downsample of columns (mean of columns 2x and 2x+1 mod 397); test GRE
 the brightness control are unchanged.
 
 ## Round log
+
+- R1 (only round set, after A1): `uv run --frozen python docs/research/npm-atlas-pitch-r73/replay.py tmp/r73-run1`,
+  status `complete`, three fresh paired rounds 0.732 / 0.624 / 0.645 s, total wall 2.001 s, all witnesses valid.
+  v007 shared `PanelVJ_RAL5015` region: 58.0 px for both targets (6 complete runs per row) -> E73 2.212452.
+  v010: VJ30 19.0 px vs 18.931 expected (20 runs/row), VJ12 18.0 px vs 18.055 (21 runs/row) -> E73 0.003652.
+  Median paired difference +2.208799, range 0. **H73 confirmed (OBSERVE), AC08 NPM only.**
+- Half-pitch witness: v010 0.501516 (in [0.45, 0.55], 150,268 / 150,873 px changed), v007 0.606226 (in [0.50, 0.70],
+  147,860 px changed). Brightness +8: 157,609 px changed per region, E73 unchanged on both labels. Clean score identical
+  after both variants. Excluded `Panel_RAL5015` / solid regions: not measured.
+- Receipt: `npm-atlas-pitch-r73/receipt.json` (copied from `tmp/r73-run1`, SHA-256
+  1149562de0a28fc2b8a54fea8a0d6486aa7214e01c93fb3bf358fa89f222c47b). Candidate SHA-256 7ffd8a6c…bdef77 (replay.py at 4c3c02d0).
+
+Interpretation and limits: the NPM atlas is regenerated from the same spec as the VPM tile (`make_npm_atlas.py:43-45`),
+so E73 repeats #72 (2.2125 vs 2.2210) at 397 px; it is not independent evidence of a separate NPM defect. Resolution is
+~1 px of a ~19 px pitch (VJ30/VJ12 differ by 0.9 px), so E73 can tell 600 mm from ~190 mm but not small pitch drift.
+One labelled pair only; KPP1 v004, Vatutino, Staropetrovskiy not measured. No keep, no gate, no production change.
+
+## Краткий итог (RU, финал)
+
+Шаг вертикальных швов в NPM-атласе AC08 (регион 397 px) совпал с выводом #72 по VPM: отклонённая v007 — шаг 58 px
+(600 мм) против нужных 18,9/18,1 px, E73 = 2,21; принятая v010 — 19/18 px, E73 = 0,0037. Три свежих прогона, разброс 0,
+2 с. Гипотеза H73 подтверждена только на этой паре AC08. Это та же ошибка дизайна текстуры, что и в VPM (NPM строится из
+той же спецификации), а не отдельный дефект NPM. Ничего не применено, PR в продакшен нет.
