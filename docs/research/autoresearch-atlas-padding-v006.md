@@ -66,7 +66,7 @@ Blender, Drive ZIPs; replay limited to readers with `G:/Мой диск/AGR-evid
 калибровка v007/v010 по отступам — **не измерены**. Производство и пакеты не менялись.
 
 Run R0a (`tmp/r65-run-001`, harness `4baf2042`): stopped at the frozen `F` precondition before recording `U`;
-receipt `atlas-padding-v006-r65/receipt-r0.json` (SHA-256 `63e8ba5e…13e9bb`). The driver was then changed only
+receipt `atlas-padding-v006-r65/receipt-r0.json` (committed LF SHA-256 `8832705f9d90114ac97a169295fc5e4b203e44d544882e7e08e213004703464c`). The driver was then changed only
 to record `U` and mark `F` as `not_measured` instead of aborting (no rule, grid, label or tolerance changed).
 
 Run R0b (`tmp/r65-run-002`, harness at the commit of this section): status `completed`, hypothesis
@@ -90,7 +90,7 @@ Would change (OBSERVE, not applied; needs its own issue + review): make V006 UDI
 from the delivered Diffuse PNGs and the layout from the exported UDIM tiles (`npm_atlas_udim`), not from the
 2048 px planning atlas; until then V006 on a UDIM NPM is a false fail, not a texture signal.
 
-Receipt: `atlas-padding-v006-r65/receipt.json` SHA-256 `fc211371d1d89e945466bc966e96ed3838e35c9f903cc77eb3dcef9d618cbbd1`.
+Receipt: `atlas-padding-v006-r65/receipt.json` SHA-256 as committed (LF) `8c8b2fb75d8cd43c1a9160d67ae6d7dcdf35b206ca5cfaed60b37954da880741` (raw CRLF run output `fc211371…cbbd1`).
 No large evidence (only JSON receipts; inputs are the pinned Drive ZIPs). Replay limited to readers of
 `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v00{7,10}/`.
 
