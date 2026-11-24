@@ -56,6 +56,30 @@ equal `4288c54de328db7a5037b57707862319f7aa6ff0`.
 | v010 planning JSON | `338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc` |
 | Blender executable | `1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5` |
 
-## R1
+## R1 — inconclusive (witness not exercised); completed, OBSERVE only
 
-(not run yet)
+Runner `atlas-seam-r67/replay.py` (SHA-256 `e62dbd59…9191`, commit `6b3e09df`), `tmp/r67-run-001`, receipt
+[`atlas-seam-r67/receipt-r1.json`](atlas-seam-r67/receipt-r1.json) (SHA-256 `f8daee54…d0e2`). Status completed,
+3 fresh pairs (2.791 / 2.473 / 2.435 s, total 7.959 s), every state spread 0, input parity before/after held.
+
+| Label | Seam edges / samples (tile 1001) | SD67 clean | p95 | samples > 0.10 |
+| --- | ---: | ---: | ---: | ---: |
+| v007 (rejected) | 10 / 9522 | 0.1434673 | 0.2863 | 52.0 % |
+| v010 (accepted) | 10 / 9522 | 0.0715975 | 0.2797 | 25.9 % |
+
+D67 = +0.0718698 (spread 0) ≥ max(0.01, 0.25 × 0.0716) — the separation condition holds. Edge census is the
+same on both labels (seam 10, continuous 28, tile border 57, non-target 467, boundary 34); v010 tile 1002 has
+no seam edges (**not measured**). Witness **not exercised**: the 4 +X-facing target faces were shifted on both
+labels but none owns a seam edge, so SD67 did not move (+2/+5 px = clean). By the frozen verdict rule the
+hypothesis is **inconclusive** for R1; the separation is descriptive until the score path is shown to react.
+
+## R2 — witness amendment (frozen after R1, before running it)
+
+Only the witness selection changes; the score, sampling, labels, pins, threshold and budget stay as R1.
+Witness faces = for every seam edge on a target tile, the face with the smaller polygon index of the pair
+(the "first side"); V shift +2 / +5 px on those faces only. Expected: +5 px strictly raises SD67 on both
+labels, changed faces > 0 and equal to the number of distinct first-side faces. Clean SD67 and D67 must equal
+R1 exactly (same bytes, fresh imports) — any difference = instability. Confirmed/refuted/inconclusive as frozen
+above. Known confound recorded in advance: v007 and v010 bake different Diffuse images, so SD67 also scales
+with texture contrast; one labelled pair cannot separate "seam break" from "contrast". R2 can only confirm the
+calibration on this pair, not a general seam detector.
