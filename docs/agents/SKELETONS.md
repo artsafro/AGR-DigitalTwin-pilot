@@ -300,6 +300,7 @@ A PR whose job adds its own chain of scripts instead of configuring the skeleton
 
 Once a week a separate orchestrator task collects hook scripts repeated in 2–3 jobs and the lessons, and shows Artem
 a summary; promotion into a skeleton stage happens only there (outside this repo change).
+Reports, one file per week in `docs/agents/skeleton-harvest/`: [2026-11-23](skeleton-harvest/2026-11-23.md) (no promotion, #1804).
 
 ## Historical delivered-job scripts [D327]
 
