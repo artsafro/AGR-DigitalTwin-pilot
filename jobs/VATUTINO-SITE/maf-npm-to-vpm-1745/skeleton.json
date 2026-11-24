@@ -1,0 +1,9 @@
+{
+  "scenario": "maf-npm-to-vpm",
+  "config": {
+    "sources": "C:/x/maf-npm-to-vpm/vatutino-v005/SHA256SUMS",
+    "profile": "vpm",
+    "evidence": "G:/Мой диск/AGR-evidence/1745/"
+  },
+  "hooks": []
+}
