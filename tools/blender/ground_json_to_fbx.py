@@ -15,7 +15,8 @@ read; a change during the build is refused); `agr build-manifest build --master 
 The stable source_id defaults to <Address>.ground.mesh, independent of source filename/revision.
 For independent meshes use build <json> <fbx> <Address> <crs> <source_id>; preserve the id on revisions.
 readback: in a clean process, imports the FBX and compares triangles, per-face material index (raw
-material_index layer mapped through slot names), world vertex positions (sorted), unit scale, open edges
+material_index layer mapped through slot names; by face order and, via ground_readback_match.py, by the face centre
+over the face's own degree with explicit match coverage, #1837), world vertex positions (sorted), unit scale, open edges
 and normals facing down on the surface; with <tex_px lo hi> also the texel density (px per linear metre) of every
 surface face (non-Skirt material) measured on the imported mesh.
 render: Face Orientation equivalent (Cycles emission: front green, back red via the Backfacing attribute) from fixed
@@ -32,6 +33,11 @@ _spec = importlib.util.spec_from_file_location(
 assert _spec is not None and _spec.loader is not None
 _udimtile = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_udimtile)
+_mspec = importlib.util.spec_from_file_location("ground_readback_match", Path(__file__).resolve().with_name(
+    "ground_readback_match.py"))
+assert _mspec is not None and _mspec.loader is not None
+_match = importlib.util.module_from_spec(_mspec)
+_mspec.loader.exec_module(_match)
 
 import bpy
 import bmesh
@@ -116,36 +122,18 @@ def readback(fbx, src, rep, *tex):
     out["materials"] = [m.name for m in me.materials]
     out["triangles"] = sum(len(p.vertices) - 2 for p in me.polygons)
     out["faces_expected"] = len(d["faces"])
-    # raw material index per face -> slot name; compare against the JSON by face centre (FBX may reorder)
-    want = {}
-    for f, mi in zip(d["faces"], d["mat"]):
-        c = tuple(round(sum(d["verts"][i][k] for i in f) / 3, 3) for k in range(3))
-        want[c] = d["slots"][mi]
-    mism = 0
-    found = 0
-    down = 0
-    lv = d["level"]
-    surf_c = {tuple(round(sum(d["verts"][i][k] for i in f) / 3, 3) for k in range(3))
-              for f, l in zip(d["faces"], lv) if l >= 0}
-    for p in me.polygons:
-        c = mw @ p.center
-        key = tuple(round(v, 3) for v in c)
-        slot = me.materials[p.material_index].name.split("_Ground_", 1)[-1]
-        if key in want:
-            found += 1
-            if want[key] != slot:
-                mism += 1
-        if key in surf_c and (mw.to_3x3() @ p.normal).z <= 0:
-            down += 1
-    out["faces_matched_by_centre"] = found
+    # raw material index per face -> slot name; compare against the JSON by face centre (FBX may reorder).
+    # #1837: the source centre divides by the face's own degree (quad /4); coverage is reported, not inferred.
+    imported = [(tuple(round(v, _match.NDIGITS) for v in (mw @ p.center)),
+                 me.materials[p.material_index].name.split("_Ground_", 1)[-1], (mw.to_3x3() @ p.normal).z)
+                for p in me.polygons]
+    out.update(_match.match_by_centre(d, imported))
     # by face order (the FBX importer keeps polygon order): raw material_index -> slot name vs JSON
     names = [m.name.split("_Ground_", 1)[-1] for m in me.materials]
     idx = [0] * len(me.polygons)
     me.polygons.foreach_get("material_index", idx)
     out["material_mismatch_by_order"] = (sum(1 for i, mi in zip(idx, d["mat"]) if names[i] != d["slots"][mi])
                                          if len(idx) == len(d["mat"]) else "count differs")
-    out["material_mismatch"] = mism
-    out["surface_faces_normal_down"] = down
     bm = bmesh.new()
     bm.from_mesh(me)
     out["open_edges"] = sum(1 for e in bm.edges if e.is_boundary)
