@@ -16,12 +16,14 @@ shared_kernel:
   id: udim
   ru: "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)"
   owner: adapters/max/agr_tools/udimtile_core.py
-  owner_ru: "одна функция UDIM (#1337); её дубли охраняет карта НПМ (contexts.yaml)"
+  owner_ru: "одна функция UDIM (#1337); Ground берёт номер тайла через udim_of_cell (UDIM = ID покрытия), её дубли охраняет карта НПМ (contexts.yaml)"
   functions:
     - name: udim_tile
       contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
     - name: face_tile
       contract: "углы UV грани -> тайл грани; угол в чужом тайле — UdimCrossTileError"
+    - name: udim_of_cell
+      contract: "целые (столбец, ряд) -> номер тайла"
 contexts:
   - id: sintez
     ref: package-contexts.yaml#sintez
@@ -74,6 +76,13 @@ contexts:
         contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
       - name: atlas_png
         contract: "раскладка -> PNG атласа"
+    duplicates:
+      - at: "tools/materials/npm_atlas_udim.py:785"
+        match: "def main("
+        issue: "#1141"
+        ru: "job-specific инструмент UV / атласа (обход atlas_core до #1141); подсказка agr unwrap-atlas в src/dt_ai/cli/agr.py:30, не исполняемый алиас"
+        status: live-bypass
+        step: "#1380"
   - id: validation
     grid: "2/5"
     ru: "Проверки Ground, xView, СИНТЕЗ"
@@ -158,6 +167,9 @@ relations:
   - from: heights
     to: ground
     ru: "граница и ноль"
+  - from: udim
+    to: ground
+    ru: "номер тайла (UDIM = ID покрытия)"
   - from: udim
     to: ground-export
     ru: "проверка тайлов при чтении FBX"

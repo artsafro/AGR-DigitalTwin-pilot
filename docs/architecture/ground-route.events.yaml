@@ -221,16 +221,16 @@ stages:
       - D167
     evidence:
       - adapters/max/agr_tools/flora_atlas_max.py
-      - tools/derive/npm_atlas.py
+      - tools/materials/npm_atlas_udim.py
       - jobs/VATUTINO-SITE/site-route-20261109.md
     branches:
       - id: convert
         when_ru: "ВПМ уже расставлена"
-        ru: "конвертация ВПМ → НПМ: в тех же точках НПМ-модели МАФ / Флоры на атласе"
+        ru: "конвертация ВПМ → НПМ: atlas.groundel профиль npm сводит GroundEl / МАФ в атлас до 2048 с заглушками; Флора — отдельный atlas.flora (не сквозная конвертация Флоры); поверхность Ground эти инструменты не покрывают"
         rules:
           - D293
         evidence:
-          - tools/derive/npm_atlas.py
+          - adapters/max/agr_tools/flora_atlas_max.py
       - id: parallel
         when_ru: "расстановка с нуля"
         ru: "low-poly и high-poly МАФ / Флора ставятся вместе в одни точки"
@@ -415,8 +415,9 @@ hotspots:
       - tools/derive/package_npm.py
   - id: xview-parked
     stage: validate
-    ru: "xView v015: последняя записанная сессия — xView не чистый; #371 закрыт, участок #298 шёл на v014 — какая версия идёт в сдачу, сверить с Артёмом"
+    ru: "xView v015: последняя записанная сессия — xView не чистый; срез сдачи 2026-11-09 (option A) называет v015, но xView-находки не сняты и приёмка не подтверждена; #371 закрыт, участок #298 шёл на v014"
     rules:
       - D152
     evidence:
       - jobs/VATUTINO-SITE/ground-v015-final-xview-session.md
+      - docs/deliveries/vatutino-site-2026-11-09.md

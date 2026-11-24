@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3800 1380" width="3800" height="1380" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 3800 1478" width="3800" height="1478" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="3800" height="1380" fill="#ffffff"/>
+<rect x="10" y="-30" width="3800" height="1478" fill="#ffffff"/>
 <rect x="80" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="40" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="40" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
@@ -71,11 +71,11 @@
 <rect x="2470" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="2470" y="596.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="2470" y="676.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="2470" y="766.25" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="2470" y="867.25" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="2470" y="968.25" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<rect x="2470" y="1085.5" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="2470" y="1202.75" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2470" y="766.25" width="230" height="182.5" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="2470" y="964.75" width="230" height="85.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="2470" y="1065.75" width="230" height="101.25" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="2470" y="1183.0" width="230" height="101.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2470" y="1300.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2750" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="2740" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="2700" y1="225.0" x2="2740" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -97,7 +97,7 @@
 <rect x="3280" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="3280" y="596.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="3280" y="676.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="3280" y="766.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="3280" y="766.25" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="3590" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="3550" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <line x1="3510" y1="225.0" x2="3550" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
@@ -462,31 +462,37 @@
 </text>
 <text x="2585.0" y="776.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="13">Ветка: ВПМ уже расставлена</tspan>
-<tspan x="2585.0" dy="16.25">→ конвертация ВПМ → НПМ: в</tspan>
-<tspan x="2585.0" dy="16.25">тех же точках НПМ-модели МАФ</tspan>
-<tspan x="2585.0" dy="16.25">/ Флоры на атласе [D293]</tspan>
+<tspan x="2585.0" dy="16.25">→ конвертация ВПМ → НПМ:</tspan>
+<tspan x="2585.0" dy="16.25">atlas.groundel профиль npm</tspan>
+<tspan x="2585.0" dy="16.25">сводит GroundEl / МАФ в атлас</tspan>
+<tspan x="2585.0" dy="16.25">до 2048 с заглушками; Флора —</tspan>
+<tspan x="2585.0" dy="16.25">отдельный atlas.flora (не</tspan>
+<tspan x="2585.0" dy="16.25">сквозная конвертация Флоры);</tspan>
+<tspan x="2585.0" dy="16.25">поверхность Ground эти</tspan>
+<tspan x="2585.0" dy="16.25">инструменты не покрывают</tspan>
+<tspan x="2585.0" dy="16.25">[D293]</tspan>
 </text>
-<text x="2585.0" y="877.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2585.0" y="974.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="13">Ветка: расстановка с нуля</tspan>
 <tspan x="2585.0" dy="16.25">→ low-poly и high-poly МАФ /</tspan>
 <tspan x="2585.0" dy="16.25">Флора ставятся вместе в одни</tspan>
 <tspan x="2585.0" dy="16.25">точки [D293, D166]</tspan>
 </text>
-<text x="2585.0" y="978.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2585.0" y="1075.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="13">Ветка: Ground (всегда)</tspan>
 <tspan x="2585.0" dy="16.25">→ цель D293: геометрия та же</tspan>
 <tspan x="2585.0" dy="16.25">в ВПМ и НПМ; отличаются</tspan>
 <tspan x="2585.0" dy="16.25">только атлас и развёртка UDIM</tspan>
 <tspan x="2585.0" dy="16.25">[D293, D210]</tspan>
 </text>
-<text x="2585.0" y="1095.5" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2585.0" y="1193.0" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="13">⚠ agr vpm-to-npm не</tspan>
 <tspan x="2585.0" dy="16.25">конвертирует Ground. Числа</tspan>
 <tspan x="2585.0" dy="16.25">треугольников v015 показывают</tspan>
 <tspan x="2585.0" dy="16.25">бюджет, но не доказывают</tspan>
 <tspan x="2585.0" dy="16.25">совпадение поверхности.</tspan>
 </text>
-<text x="2585.0" y="1212.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<text x="2585.0" y="1310.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2585.0" dy="13">⚠ Бюджет НПМ 180 000</tspan>
 <tspan x="2585.0" dy="16.25">(GND-04): Ground 46 479 + МАФ</tspan>
 <tspan x="2585.0" dy="16.25">55 403 + Флора 64 454 = 166</tspan>
@@ -578,10 +584,12 @@
 <text x="3395.0" y="776.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3395.0" dy="13">⚠ xView v015: последняя</tspan>
 <tspan x="3395.0" dy="16.25">записанная сессия — xView не</tspan>
-<tspan x="3395.0" dy="16.25">чистый; #371 закрыт, участок</tspan>
-<tspan x="3395.0" dy="16.25">#298 шёл на v014 — какая</tspan>
-<tspan x="3395.0" dy="16.25">версия идёт в сдачу, сверить</tspan>
-<tspan x="3395.0" dy="16.25">с Артёмом [D152]</tspan>
+<tspan x="3395.0" dy="16.25">чистый; срез сдачи 2026-11-09</tspan>
+<tspan x="3395.0" dy="16.25">(option A) называет v015, но</tspan>
+<tspan x="3395.0" dy="16.25">xView-находки не сняты и</tspan>
+<tspan x="3395.0" dy="16.25">приёмка не подтверждена; #371</tspan>
+<tspan x="3395.0" dy="16.25">закрыт, участок #298 шёл на</tspan>
+<tspan x="3395.0" dy="16.25">v014 [D152]</tspan>
 </text>
 <text x="3665.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3665.0" dy="15">Чекер СИНТЕЗ</tspan>
