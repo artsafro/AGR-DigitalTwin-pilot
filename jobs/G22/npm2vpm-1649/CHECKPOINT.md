@@ -231,15 +231,19 @@ polygons previously approved for removal remain accounted for by #1630.
 ## Shared primitives
 
 - `tools.library.npm_ids.recover_regions` uses the existing facade segmenter
-  and exact pixel-space intersections. A mixed leaf is subdivided by connected
-  palette masks. A source triangle not fully covered remains a reported
-  residual, rather than publishing part of the triangle or guessing a finish.
+  and exact pixel-space intersections. Mixed and majority-solid leaves are
+  checked against connected native-resolution palette masks. A majority
+  label cannot hide a second supported swatch. A source triangle not fully
+  covered remains a reported residual; no partial triangle or guessed finish
+  is published.
   Its explicit cell-layout lane also clips an externally measured partition;
   it rejects duplicate keys, unsupported kinds, invalid polygons and overlaps.
 - `npm2vpm_core.fit_metric_region` uses a *new* metric chart in metres from the
   caller, prefers named panel/zone seam coordinates, clips geometry and UV
-  together, and returns separate tile-local pieces. It does not derive such a
-  chart from distorted NPM UVs or allocate the final finish/UDIM table.
+  together, and returns separate tile-local pieces. Any interior UV overlap
+  in a tile blocks the entire plan and names the conflicting source triangle
+  indices; boundary contact does not block. It does not derive a chart from
+  distorted NPM UVs or allocate the final finish/UDIM table.
 - Next when the atlas partition is resolved: transfer pieces to a conforming
   native copy, lay out textured charts through `vpm_uv`, allocate per-piece
   IDs/tiles, and run Blender readback, checker and xView. No PASS is claimed.

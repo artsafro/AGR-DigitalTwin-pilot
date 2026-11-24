@@ -124,8 +124,8 @@ def recover_regions(atlas_file, face_uvs, *, colour_tolerance=6, segmentation=No
 
     The facade segmenter retains its source UV evidence: supported cell-border
     crossers now get clipped, never centroid-assigned. Palette regions inside a
-    mixed leaf may be nonrectangular or have holes. A partial intersection is
-    not published when the unclassified remainder covers positive source area.
+    mixed or majority-solid leaf may be nonrectangular or have holes. A partial
+    intersection is not published when unclassified pixels cover source area.
     An explicit layout uses native top-left pixel coordinates, classifies cells
     as solid or patterned, and preserves internal texture motifs.
     """
@@ -199,13 +199,15 @@ def _clip_regions(rgb, faces, atlas, colour_tolerance):
     for cell_id, cell in enumerate(atlas['cells'], 1):
         x, y, cw, ch = (cell[k] for k in ('x', 'y', 'w', 'h'))
         bounds = [x, y, x + cw, y + ch]
-        mixed = cell['kind'] == 'mixed'
-        regions = (_palette_shapes(rgb, bounds, colour_tolerance) if mixed
+        # A majority-solid leaf is a layout hint, not proof that all its
+        # pixels have the same colour. Unknown pixels remain unclassified.
+        use_palette = cell['kind'] in ('mixed', 'solid')
+        regions = (_palette_shapes(rgb, bounds, colour_tolerance) if use_palette
                    else [(box(*bounds), cell['color'])])
         covered = 0.
         for shape, colour in regions:
             shapes.append(shape)
-            table.append({'id': len(shapes), 'cell': cell_id, 'kind': 'solid' if mixed else cell['kind'],
+            table.append({'id': len(shapes), 'cell': cell_id, 'kind': 'solid' if use_palette else cell['kind'],
                           'color': colour, 'bounds_px': list(shape.bounds), 'face_count': 0})
             covered += shape.area
         cells.append({'cell': cell_id, 'bounds_px': bounds, 'kind': cell['kind'],

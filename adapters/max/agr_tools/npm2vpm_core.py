@@ -29,6 +29,8 @@ import os
 import struct
 import sys
 import zlib
+from bisect import bisect_right
+from fractions import Fraction
 
 TOOL = 'npm.to_vpm'
 MODES = ('auto', 'table', 'regions')
@@ -767,13 +769,62 @@ def _metric_clip(poly, axis, at, keep_lower):
     return out
 
 
+def _left_of_edge(a, b, p):
+    if p == a or p == b:
+        return False
+    x, y = b[0] - a[0], b[1] - a[1]
+    if not x:
+        return (p[0] < a[0]) if y > 0 else (p[0] > a[0])
+    if not y:
+        return (p[1] > a[1]) if x > 0 else (p[1] < a[1])
+    left, right = x * (p[1] - a[1]), y * (p[0] - a[0])
+    det = left - right
+    if abs(det) > 2e-15 * (abs(left) + abs(right)):
+        return det > 0
+    # No area tolerance: distinguish true boundary contact from a narrow
+    # positive-area overlap in the actual, represented tile coordinates.
+    ax, ay, bx, by, px, py = map(Fraction, (*a, *b, *p))
+    return (bx - ax) * (py - ay) > (by - ay) * (px - ax)
+
+
+def _metric_tile_overlap(pieces):
+    """First strictly overlapping tile-local triangle pair, or None."""
+    boxes = [tuple((min(axis), max(axis)) for axis in zip(*p['uv'])) for p in pieces]
+    def candidates(axis):
+        ends = sorted(box[axis][1] for box in boxes)
+        return sum(len(ends) - bisect_right(ends, box[axis][0]) for box in boxes)
+
+    axis = min(range(2), key=candidates)
+    other = 1 - axis
+    active = []
+    for i in sorted(range(len(boxes)), key=lambda i: boxes[i][axis][0]):
+        lo, _ = boxes[i][axis]
+        lo2, hi2 = boxes[i][other]
+        active = [j for j in active if boxes[j][axis][1] > lo]
+        a = pieces[i]['uv']
+        for j in active:
+            lj, hj = boxes[j][other]
+            if hi2 <= lj or hj <= lo2:
+                continue
+            b = pieces[j]['uv']
+            # Separating axes for two convex CCW triangles. Edge/point
+            # touches are not interior overlap, even across different XYZ.
+            if all(any(_left_of_edge(p, q, r) for r in target)
+                   for ring, target in ((a, b), (b, a))
+                   for p, q in zip(ring, ring[1:] + ring[:1])):
+                return sorted({pieces[i]['source_triangle'], pieces[j]['source_triangle']})
+        active.append(i)
+    return None
+
+
 def fit_metric_region(region_id, xyz, charts, *, preferred_seams=(), density=512, piece_budget=100):
     """Partition one material region in metric chart coordinates, without moving its surface.
 
     `charts` are new, planar isometric UVs in metres, not inherited NPM UVs.
     Output UVs are tile-local; the caller allocates one distinct dense tile/ID
     per piece. A preferred seam is a source-identified constant chart U or V
-    line in metres. A budget or unmeasurable chart fails without partial output.
+    line in metres. A budget, unmeasurable chart or positive-area UV overlap in
+    any piece fails without partial output.
     """
     def finite(x):
         return type(x) in (int, float) and math.isfinite(x)
@@ -826,6 +877,7 @@ def fit_metric_region(region_id, xyz, charts, *, preferred_seams=(), density=512
             raise ValueError('chart extent overflow')
         if lengths[axis] < span:
             piece_count += 1
+            tile_pieces = []
             for src, ring in group:
                 for j in range(1, len(ring) - 1):
                     triangle = [ring[0], ring[j], ring[j + 1]]
@@ -841,9 +893,14 @@ def fit_metric_region(region_id, xyz, charts, *, preferred_seams=(), density=512
                                                      density * math.dist(vertices[i], vertices[i-1]),
                                                      rel_tol=1e-7)) for i in range(3))):
                         raise ValueError('ID {} triangle {}: unrepresentable metric cut output'.format(region_id, src))
-                    pieces.append({'piece': piece_count, 'source_triangle': src,
-                                   'xyz': [list(p) for p in vertices],
-                                   'uv': [list(p) for p in tile_uv]})
+                    tile_pieces.append({'piece': piece_count, 'source_triangle': src,
+                                        'xyz': [list(p) for p in vertices],
+                                        'uv': [list(p) for p in tile_uv]})
+            overlap = _metric_tile_overlap(tile_pieces)
+            if overlap is not None:
+                return {'status': 'blocked', 'id': region_id, 'reason': 'uv_overlap',
+                        'source_triangles': overlap, 'cuts': [], 'pieces': []}
+            pieces.extend(tile_pieces)
             continue
         if piece_count + len(stack) + 2 > piece_budget:
             return {'status': 'blocked', 'id': region_id, 'reason': 'tile_budget',

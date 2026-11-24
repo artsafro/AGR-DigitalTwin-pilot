@@ -34,6 +34,32 @@ def test_two_colour_nonrectangular_cell_splits_crossing_triangle(tmp_path, order
         assert Polygon(piece['uv']).exterior.is_ccw == Polygon([uv[i] for i in order]).exterior.is_ccw
 
 
+@pytest.mark.parametrize('with_island', [False, True])
+def test_automatic_solid_leaf_does_not_hide_confirmed_colour_island(tmp_path, with_island):
+    from tools.library.npm_ids import recover_regions
+
+    image = Image.new('RGB', (128, 128), (32, 32, 32))
+    if with_island:
+        ImageDraw.Draw(image).rectangle((44, 44, 83, 83), fill=(200, 200, 200))
+    atlas = tmp_path / 'facade.png'
+    image.save(atlas)
+    crossing = [(0, 1), (1, 1), (0, 0)]
+    inside = [(.36, .60), (.53, .60), (.45, .46)]
+    result = recover_regions(atlas, [crossing, inside])
+    assert result['status'] == 'ok'
+    assert result['residual'] == []
+    colours = {row['id']: row['color'].lower() for row in result['table']}
+    assert {colours[p['id']] for p in result['pieces'][0]} == (
+        {'#202020', '#c8c8c8'} if with_island else {'#202020'})
+    expected_inside = '#c8c8c8' if with_island else '#202020'
+    assert {colours[p['id']] for p in result['pieces'][1]} == {expected_inside}
+    for uv, pieces in zip((crossing, inside), result['pieces']):
+        polygons = [Polygon(piece['uv']) for piece in pieces]
+        union = unary_union(polygons)
+        assert sum(p.area for p in polygons) == pytest.approx(union.area)
+        assert union.symmetric_difference(Polygon(uv)).area < 1e-12
+
+
 @pytest.mark.parametrize('width,seam', [(8, 4), (12, 6), (14, 7), (30, 6)])
 def test_metric_seam_plan_cuts_oversize_but_preserves_surface(width, seam):
     from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
@@ -96,6 +122,26 @@ def test_seam_plan_refuses_unusable_charts(case):
         fit_metric_region(0 if case == 'unmapped' else 7, xyz, uv)
 
 
+@pytest.mark.parametrize('offset,overlap', [(0, True), (.25, True), (1, False), (2, False)])
+@pytest.mark.parametrize('width', [1, 10])
+def test_metric_region_refuses_shared_texels_in_any_piece(offset, overlap, width):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    coords = [(0, 0, 0), (width, 0, 0), (0, 1, 0)]
+    xyz = [coords, [(x, y, z + 2) for x, y, z in coords]]
+    chart = [(x, y) for x, y, _ in coords]
+    charts = [chart, [(x + offset * width, y) for x, y in chart]]
+    result = fit_metric_region(7, xyz, charts, preferred_seams=[(0, width / 2)])
+    if overlap:
+        assert result['status'] == 'blocked'
+        assert result['reason'] == 'uv_overlap'
+        assert result['source_triangles'] == [0, 1]
+        assert result['pieces'] == result['cuts'] == []
+    else:
+        assert result['status'] == 'ok'
+        assert {piece['source_triangle'] for piece in result['pieces']} == {0, 1}
+
+
 def test_exact_padded_tile_extent_cannot_fit_uncut():
     from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
 
@@ -106,6 +152,29 @@ def test_exact_padded_tile_extent_cannot_fit_uncut():
     assert blocked['reason'] == 'tile_budget'
     assert blocked['source_triangles'] == [0]
     assert blocked['pieces'] == blocked['cuts'] == []
+
+
+@pytest.mark.parametrize('width', [0.25, 1, 2, 4])
+@pytest.mark.parametrize('delta', [-.125, -2**-40, 0, .125])
+@pytest.mark.parametrize('reverse', [False, True])
+def test_metric_overlap_matches_area_oracle_on_shared_diagonal(width, delta, reverse):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    # Both AABBs intersect, regardless of whether the diagonal touches,
+    # overlaps by a very narrow strip, or has a gap.
+    chart_a = [(0, 0), (width, 0), (0, width)]
+    chart_b = [(width + delta, width + delta), (delta, width + delta), (width + delta, delta)]
+    charts = [chart_a, chart_b]
+    if reverse:
+        charts.reverse()
+    overlap = Polygon(chart_a).intersection(Polygon(chart_b)).area > 0
+    assert overlap == (delta < 0)
+    xyz = [[(u, v, i) for u, v in chart] for i, chart in enumerate(charts)]
+    result = fit_metric_region(1, xyz, charts)
+    assert (result['status'] == 'blocked') == overlap
+    if overlap:
+        assert result['source_triangles'] == [0, 1]
+        assert result['cuts'] == result['pieces'] == []
 
 
 @pytest.mark.parametrize('case', ['fit', 'hole', 'overlap', 'duplicate', 'unknown', 'outside', 'nan'])
