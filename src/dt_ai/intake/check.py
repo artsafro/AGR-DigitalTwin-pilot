@@ -35,6 +35,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from dt_ai.intake.model import BLOCKS, REQUIRED, SourcesFile, SpecDraft
+from dt_ai.intake.revit_materials import material_count_report
 from dt_ai.spec import questions_file
 from dt_ai.spec.model import Spec
 
@@ -118,7 +119,8 @@ def _confidence_errors(where, confidence, sources, by_path, anchor_open, capable
 def check(folder):
     """Report of an intake folder: errors (rule breaches), and whether spec-draft.json is buildable."""
     folder = Path(folder)
-    errors, report = [], {"folder": str(folder)}
+    errors = []
+    report: dict = {"folder": str(folder)}
 
     def load(name, model):
         path = folder / name
@@ -136,6 +138,9 @@ def check(folder):
     sources = load("sources.json", SourcesFile)
     draft = load("spec-draft.json", SpecDraft)
     by_path = {f.path: f for f in sources.files} if sources else {}
+    material_counts = material_count_report(folder, by_path)
+    if material_counts:
+        report["revit_material_counts"] = material_counts
     shaped = [f for f in by_path.values() if f.opened and {"geometry", "dimensions"} & set(f.reads)]
     if draft is not None and sources is not None and not shaped and not draft.anchor.needed:
         errors.append("spec-draft.json: only images / sources without dimensions, yet no scale anchor needed (§15)")
