@@ -71,9 +71,9 @@ triangles, every ring closed (N 10/10, D 13/13, S 10/10, H 2/2 levels, all stati
 0 non-manifold edges, xView NPM 0/0 PASS, V004 has no fail (co-directional clearance `review`: 0 pairs under 20 mm).
 Not in this body yet: insets [D336], 47 curtain-wall bboxes left uncut in v002 (F05 is blank), 16 `zone` panels.
 
-## Step 2 v005 — decisions on the v004 comparison ([D376])
+## Step 2 v005 — decisions on the v004 comparison ([D378])
 
-Artem 2026-11-24 accepted the five recommendations of `step2-compare-v004` ([D376]). The body is rebuilt from the
+Artem 2026-11-24 accepted the five recommendations of `step2-compare-v004` ([D378]). The body is rebuilt from the
 lattice with `body_config_v005.json` (no mesh repair):
 
 ```
@@ -92,7 +92,7 @@ uv run python tools/methods/body/volume_body.py C:/x/ev_1784/step2/volume-lines-
 
 Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v005/` (`sok-step2-v005-compare.pdf`, 14
 sheets v004 | v005 | Revit, 7 sections; `compare_v005.json` with the t_57b332a4 measure, seat depths 0.15 / 0.394 m;
-`SHA256SUMS.txt`, 23 files, manifest `9760957a…`). Result: 4 volumes, 3 849 faces, 8 019 triangles after
+`SHA256SUMS.txt`, 23 files, manifest `274dc654…`; decision renumbered D376 -> D378 in review r1). Result: 4 volumes, 3 849 faces, 8 019 triangles after
 triangulation, 0 facade triangles, 0 non-manifold edges, 0 bow-tie vertices, rings closed, xView NPM PASS. Walls equal
 v004 on 21 of 22 measured facades; F04 missing wall +2.874 m2 = Revit wall inside the 7 new D02 window rects (frame
 overlap, same rule as every cut). No opening ID got worse; 7 D02 windows went from missing to shifted. Waiting for

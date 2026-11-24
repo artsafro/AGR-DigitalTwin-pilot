@@ -1,4 +1,4 @@
-"""#1784 step 2 v005 ([D376]) and #1802: seam band, partial reveal above a joint, contour cuts, reveal seats, edge clamps.
+"""#1784 step 2 v005 ([D378]) and #1802: seam band, partial reveal above a joint, contour cuts, reveal seats, edge clamps.
 
 Synthetic data only (not a real object). The core #1736 (body_lattice.py) is needed for the build tests; they skip
 without it (set AGR_BODY_CORE, e.g. the read-only PR #1770 head c97cf3ec).
@@ -90,8 +90,8 @@ def test_1802_seam_ends_must_weld_within_a_millimetre():
     assert ok["A"]["seams"][0]["mate"] == "B04"
 
 
-# ---- [D376] (1) partial reveal above a joint ------------------------------------------------------------------
-def test_d376_partial_reveal_above_the_mate_top():
+# ---- [D378] (1) partial reveal above a joint ------------------------------------------------------------------
+def test_d378_partial_reveal_above_the_mate_top():
     """A window crossing the visible band of a seam side opens only above the joint (sill = the side's visible_from)."""
     core = _core()
     vl = _two(a_levels=(0.0, 0.6, 3.0, 4.0), b_levels=(0.0, 1.5))
@@ -110,7 +110,7 @@ def test_d376_partial_reveal_above_the_mate_top():
     assert len(fill) == 1  # the front under the opened part keeps its extent (v004 F04 deviations not worse)
 
 
-def test_d376_partial_reveal_fully_hidden_is_dropped():
+def test_d378_partial_reveal_fully_hidden_is_dropped():
     vl = _two(b_levels=(0.0, 3.5))
     vl["edges"]["A02"]["visible_from"] = 3.5
     vl["rectangles"].append(_rect("A02", [2.0, 4.0, 0.6, 3.0], "crosses_visible_band", "hidden"))
@@ -118,8 +118,8 @@ def test_d376_partial_reveal_fully_hidden_is_dropped():
     assert e["plan"]["windows"] == [] and e["dropped"][0]["reason"] == "hidden_below_visible_band"
 
 
-# ---- [D376] (2) contour cut with local sill and head, stacked runs welded ---------------------------------------
-def test_d376_contour_cut_local_sill_and_head():
+# ---- [D378] (2) contour cut with local sill and head, stacked runs welded ---------------------------------------
+def test_d378_contour_cut_local_sill_and_head():
     core = _core()
     vl = _one()
     cfg = {"extra_rectangles": [_rect("A01", [1.0, 5.0, 1.2, 3.5], "contour_cut", "glz")]}
@@ -132,14 +132,14 @@ def test_d376_contour_cut_local_sill_and_head():
     assert sorted({round(r["body"]["verts"][i][2], 3) for f in win for i in f["v"]}) == [1.2, 3.5]
 
 
-def test_d376_contour_cut_needs_its_state_for_off_level_sill():
+def test_d378_contour_cut_needs_its_state_for_off_level_sill():
     vl = _one()
     vl["rectangles"].append(_rect("A01", [1.0, 5.0, 1.2, 3.0], "cut", "w"))
     with pytest.raises(ValueError, match="not within"):
         vb.plans_from_volume_lines(vl)
 
 
-def test_d376_stacked_contour_cuts_weld_into_one_mouth():
+def test_d378_stacked_contour_cuts_weld_into_one_mouth():
     """Lower run (sill local) under a wider upper run: the shared level leaves no zero-thickness transom."""
     core = _core()
     vl = _one(levels=(0.0, 0.6, 2.0, 3.0, 3.4, 4.0))  # both runs span two bands: seat side edges are Ts
@@ -160,7 +160,7 @@ def test_d376_stacked_contour_cuts_weld_into_one_mouth():
     assert xs and min(xs) >= 5.0 - 1e-6  # the only horizontal reveal at 3.0 is the sill of "up" beyond x = 5
 
 
-def test_d376_rect_may_run_over_the_next_side_of_the_ring():
+def test_d378_rect_may_run_over_the_next_side_of_the_ring():
     vl = _one()
     cfg = {"extra_rectangles": [_rect("A01", [10.0, 14.0, 0.6, 3.0], "contour_cut", "corner")]}
     e = vb.plans_from_volume_lines(vl, cfg)["A"]
@@ -170,8 +170,8 @@ def test_d376_rect_may_run_over_the_next_side_of_the_ring():
         vb.plans_from_volume_lines(vl, bad)
 
 
-# ---- [D376] (4) one mouth per pair: the seat depth -------------------------------------------------------------
-def test_d376_reveal_by_name_sets_the_seat_and_blocks_merge():
+# ---- [D378] (4) one mouth per pair: the seat depth -------------------------------------------------------------
+def test_d378_reveal_by_name_sets_the_seat_and_blocks_merge():
     core = _core()
     cfg = {"reveal_m_by_name": {"pair": 0.394}}
     vl = _one()
@@ -187,8 +187,8 @@ def test_d376_reveal_by_name_sets_the_seat_and_blocks_merge():
         vb.plans_from_volume_lines(_one(), {"reveal_m_by_name": {"x": 1.2}})
 
 
-# ---- [D376] (3) an opening narrowed at the edge end must be an agreed edge ----------------------------------------
-def test_d376_edge_clamp_must_be_agreed():
+# ---- [D378] (3) an opening narrowed at the edge end must be an agreed edge ----------------------------------------
+def test_d378_edge_clamp_must_be_agreed():
     vl = _one()
     vl["rectangles"].append(_rect("A01", [10.5, 12.0, 0.6, 3.0], name="door", source_rect=[3.0, 4.768, 0.6, 3.0]))
     with pytest.raises(ValueError, match="agreed_edge_clamps"):

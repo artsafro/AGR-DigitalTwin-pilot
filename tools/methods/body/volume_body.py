@@ -31,13 +31,13 @@ DEFAULT_CFG = {
     "materials": {"WALL": [0.82, 0.80, 0.76], "WINDOW": [0.25, 0.45, 0.65], "ROOF": [0.45, 0.45, 0.47]},
     "build_states": ["cut"],
     "local_states": ["level_conflict"],
-    # [D376] (1): a window crossing the visible band of a seam side opens only above the joint (sill = visible_from)
+    # [D378] (1): a window crossing the visible band of a seam side opens only above the joint (sill = visible_from)
     "partial_states": ["crosses_visible_band"],
-    # [D376] (2): a contour cut agreed in sections (F05 glazing) may have a local sill and a local head
+    # [D378] (2): a contour cut agreed in sections (F05 glazing) may have a local sill and a local head
     "contour_states": ["contour_cut"],
     "extra_rectangles": [],     # job rectangles not in the volume-lines file (the F05 contour), same record format
-    "reveal_m_by_name": {},     # [D376] (4): mouth depth = inset seat for named rectangles (F13 pairs)
-    "agreed_edge_clamps": {},   # [D376] (3): name -> agreed narrowing at the edge end, m (22daf24 0.268)
+    "reveal_m_by_name": {},     # [D378] (4): mouth depth = inset seat for named rectangles (F13 pairs)
+    "agreed_edge_clamps": {},   # [D378] (3): name -> agreed narrowing at the edge end, m (22daf24 0.268)
     "edge_clamp_tol_m": 0.005,
     "seam_weld_m": 0.001,       # #1802: mate ends must coincide within 1 mm (was 5 cm -> silent slit)
 }
@@ -151,7 +151,7 @@ def plans_from_volume_lines(vl, cfg=None):
             raise ValueError("rectangle %s: empty rect %r" % (name, rect))
         _check_edge_clamp(r, rect, V, cfg)
         partial_from = None
-        if state in cfg["partial_states"]:  # [D376] (1): only the part above the joint is visible
+        if state in cfg["partial_states"]:  # [D378] (1): only the part above the joint is visible
             vis = float(e.get("visible_from") or 0.0)
             if z1 <= vis + cfg["level_snap_m"]:
                 V["dropped"].append({"name": name, "facade": r.get("facade"), "edge": r.get("edge"),
@@ -204,7 +204,7 @@ def plans_from_volume_lines(vl, cfg=None):
 
 
 def _check_edge_clamp(r, rect, V, cfg):
-    """[D376] (3): an opening narrower than its source rect (cut at the edge end) is built only as an agreed edge."""
+    """[D378] (3): an opening narrower than its source rect (cut at the edge end) is built only as an agreed edge."""
     src, name, tol = r.get("source_rect"), r.get("name", "?"), cfg["edge_clamp_tol_m"]
     if not (isinstance(src, list) and len(src) == 4 and all(_finite(c) for c in src)):
         return
@@ -216,7 +216,7 @@ def _check_edge_clamp(r, rect, V, cfg):
         return
     if agreed is None:
         raise ValueError("rectangle %s is %.3f m narrower than its source at the edge end; list it in "
-                         "agreed_edge_clamps [D376] or fix the lines" % (name, d))
+                         "agreed_edge_clamps [D378] or fix the lines" % (name, d))
     if abs(agreed - d) > tol:
         raise ValueError("rectangle %s narrowed by %.3f m, agreed %.3f m" % (name, d, agreed))
     V["agreed_edges"].append({"name": name, "edge": r.get("edge"), "clamp_m": round(d, 3), "agreed_m": agreed})
@@ -281,7 +281,7 @@ def _plan_for_volume(vn, V, cfg):
         if o["zs"] is not None:
             lc["zs"] = o["zs"]
             if o["partial_from"] is not None:
-                lc["keep_fill"] = True  # [D376] (1): the front below the opened part keeps its v004 extent
+                lc["keep_fill"] = True  # [D378] (1): the front below the opened part keeps its v004 extent
         local.append(lc)
     return {"plan": plan, "local": local, "openings": merged, "dropped": V["dropped"], "seams": V["seams"],
             "agreed_edges": V["agreed_edges"]}
@@ -384,7 +384,7 @@ def _local_head(core, body, plan, levels, tex, w, zt):
 
 
 def _local_sill(core, body, plan, levels, tex, w, zs, keep=False):
-    """[D376] local sill: raise the sill of opening `w` from level wl to zs between its own jambs (mirror of the
+    """[D378] local sill: raise the sill of opening `w` from level wl to zs between its own jambs (mirror of the
     [D375] local head): the reveal bottom moves to zs, wall cells level(wl)..zs fill under the opening and the
     neighbour wall cell on each side gets the jamb vertex at zs (no new ring)."""
     verts, faces = body["verts"], body["faces"]
@@ -446,7 +446,7 @@ def _local_sill(core, body, plan, levels, tex, w, zs, keep=False):
 def weld_stacked(body, grid=1e-3):
     """Weld vertices at one position (rounded to `grid`) and drop face pairs over the same vertex set.
 
-    Two openings stacked over one level (the [D376] F05 glazing: a lower run with a local sill under a wider upper
+    Two openings stacked over one level (the [D378] F05 glazing: a lower run with a local sill under a wider upper
     run) give the core two reveal faces at that level - the head of one and the sill of the other, a zero-thickness
     transom - and two vertex copies on it. After the weld both faces cover one vertex set and are removed together,
     leaving one mouth. Returns {"welded": n vertices, "faces_removed": n}."""
@@ -711,7 +711,7 @@ def bowtie_vertices(faces):
 
 
 def merge_stacked_planes(body):
-    """Join two WINDOW quads stacked over one shared horizontal edge into one quad (the [D376] F05 glazing seat).
+    """Join two WINDOW quads stacked over one shared horizontal edge into one quad (the [D378] F05 glazing seat).
 
     Without it the weld of stacked openings leaves the jamb fan and the window-plane fan meeting only at the jamb
     corner of the removed transom (an xView bow-tie vertex). Returns the number of joins."""

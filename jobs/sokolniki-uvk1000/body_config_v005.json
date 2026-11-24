@@ -1,8 +1,8 @@
 {
- "_comment": "[D376] Artem 2026-11-24: v005 decisions on the step2-compare-v004 sheet (#1784). Synthetic: none.",
+ "_comment": "[D378] Artem 2026-11-24: v005 decisions on the step2-compare-v004 sheet (#1784). Synthetic: none.",
  "extra_rectangles": [
   {
-   "name": "F05-glazing-lower [D376]",
+   "name": "F05-glazing-lower [D378]",
    "facade": "F05",
    "kind": "contour",
    "edge": "D06",
@@ -16,7 +16,7 @@
    "source": "Revit FBX sokolniki_ar_r23_v1 (feaae527), F05 curtain panels (195 members, compare-v004 curtain_groups) projected on D06/D07: glass z 7.525..18.47-18.97 on D06 s 0..28.138, z 12.225..18.97 on D07; C:/x/t_c15955e5/f05_contour2.py"
   },
   {
-   "name": "F05-glazing-upper [D376]",
+   "name": "F05-glazing-upper [D378]",
    "facade": "F05",
    "kind": "contour",
    "edge": "D06",

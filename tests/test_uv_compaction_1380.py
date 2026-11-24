@@ -154,7 +154,7 @@ def test_no_delivery_changes():
     # The #1410 MAF NPM-light proof keeps its spec and proof atlas list in the job (inputs, not deliveries).
     # The #1619 body-training hooks read their zone maps from the job (G22 palette, site-63 wall-type map; inputs).
     # The #1619 tower 63B job keeps its source receipt and its wall-type map (inputs, not deliveries).
-    # The #1784 Sokolniki job keeps its openings config and its v005 body config [D376] (inputs, not deliveries).
+    # The #1784 Sokolniki job keeps its openings config and its v005 body config [D378] (inputs, not deliveries).
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json',
           '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json',
