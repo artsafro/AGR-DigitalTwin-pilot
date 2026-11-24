@@ -1,0 +1,2482 @@
+{
+ "card": "t_1276e6bc",
+ "status": "complete",
+ "preflight": {
+  "source63b": {
+   "sha256": "f1865bdde9ca0b3553777cf6e1d71cd8aee915998d342ec789bfc4fd6cdf47a2",
+   "pin": "f1865bdde9ca0b3553777cf6e1d71cd8aee915998d342ec789bfc4fd6cdf47a2",
+   "ok": true
+  },
+  "key63b": {
+   "sha256": "67a1ae5b88beec6eefc51d51ccdab496daa256709ec484793caee4097f6b6b14",
+   "pin": "67a1ae5b88beec6eefc51d51ccdab496daa256709ec484793caee4097f6b6b14",
+   "ok": true
+  },
+  "key63b_sections": {
+   "sha256": "07ce9a5bff8a9e4e82bf8346daef191ca5e0ba626ccd900aaca290a29fb698b6",
+   "pin": "07ce9a5bff8a9e4e82bf8346daef191ca5e0ba626ccd900aaca290a29fb698b6",
+   "ok": true
+  },
+  "extract.py": {
+   "sha256": "ee50925b8a45d6b55d4409cc21893d7932ae7b76d66c3a7c7c4b6b4bb51875af",
+   "pin": "ee50925b8a45d6b55d4409cc21893d7932ae7b76d66c3a7c7c4b6b4bb51875af",
+   "ok": true
+  },
+  "score_heldout.py": {
+   "sha256": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942",
+   "pin": "e9d6f65b6373a4fc95c91a3ea202d29cfb2f052a2aee4bfe0eb1ee1fb3d9b942",
+   "ok": true
+  },
+  "fbx:v007": {
+   "sha256": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+   "pin": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+   "ok": true
+  },
+  "fbx:v002": {
+   "sha256": "a57cb3fb66e628e6d1fe1272d16bc592604389b52be6cb4af6a4259b75746a9d",
+   "pin": "a57cb3fb66e628e6d1fe1272d16bc592604389b52be6cb4af6a4259b75746a9d",
+   "ok": true
+  },
+  "fbx:v003": {
+   "sha256": "83f3289c70a2bf8727cc5a0a8d85d12a8f6e90c803c3c37dfc904856588211aa",
+   "pin": "83f3289c70a2bf8727cc5a0a8d85d12a8f6e90c803c3c37dfc904856588211aa",
+   "ok": true
+  },
+  "fbx:v004": {
+   "sha256": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+   "pin": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+   "ok": true
+  },
+  "fbx:v005": {
+   "sha256": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+   "pin": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+   "ok": true
+  },
+  "fbx:v006": {
+   "sha256": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+   "pin": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+   "ok": true
+  },
+  "fbx:G22_C_none": {
+   "sha256": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+   "pin": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+   "ok": true
+  },
+  "fbx:G22_C_shift_opening": {
+   "sha256": "513d5ab4b2bcb100964386109ee2104dd06c7a488774aa18c162032948fa159b",
+   "pin": "513d5ab4b2bcb100964386109ee2104dd06c7a488774aa18c162032948fa159b",
+   "ok": true
+  },
+  "fbx:G22_C_shift_wall": {
+   "sha256": "b79ecca635ea49e2581f40d019c86ee2275bb6f1fb43565a54932ef4af418592",
+   "pin": "b79ecca635ea49e2581f40d019c86ee2275bb6f1fb43565a54932ef4af418592",
+   "ok": true
+  }
+ },
+ "rface": {
+  "рт О_194b464": 0.5,
+  "рт О_415705d": 0.5,
+  "рт О_6189f94": 0.5,
+  "рт О_010a21f": 0.5,
+  "рт О_1198368": 0.5
+ },
+ "witness": {
+  "moved": "MUTATE deep moved 4",
+  "sha256": "fae1e11a4b1448460eeb849c2994fbde00a69d31b2082f2b1929d13982db762a"
+ },
+ "wall_s": 32.903,
+ "runs": {
+  "v007": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "ba275f851d5608fe8de639c4dd20614d97d3ac2d1fcae8cb122d1144fa4e93ff",
+    "vs_key_sha256": "4e25a03d859af3e9c04ef31b95c5da0ec91ead09cabb7ad040488414ad0f0d74",
+    "frozen_summaryA": {
+     "pass": 12,
+     "fail": 9,
+     "not_measured": 3,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 3,
+     "fails_vs_key": 5,
+     "fails_vs_face": 0,
+     "fallback_used": 3
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.4999,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "ba275f851d5608fe8de639c4dd20614d97d3ac2d1fcae8cb122d1144fa4e93ff",
+    "vs_key_sha256": "4e25a03d859af3e9c04ef31b95c5da0ec91ead09cabb7ad040488414ad0f0d74",
+    "frozen_summaryA": {
+     "pass": 12,
+     "fail": 9,
+     "not_measured": 3,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 3,
+     "fails_vs_key": 5,
+     "fails_vs_face": 0,
+     "fallback_used": 3
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.4999,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "ba275f851d5608fe8de639c4dd20614d97d3ac2d1fcae8cb122d1144fa4e93ff",
+    "vs_key_sha256": "4e25a03d859af3e9c04ef31b95c5da0ec91ead09cabb7ad040488414ad0f0d74",
+    "frozen_summaryA": {
+     "pass": 12,
+     "fail": 9,
+     "not_measured": 3,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 3,
+     "fails_vs_key": 5,
+     "fails_vs_face": 0,
+     "fallback_used": 3
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.4999,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   }
+  ],
+  "v002": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "58c78ff564da2e19c0b36cae3dedb8812cd0e53bb2ce0b22e61588ef1b954463",
+    "vs_key_sha256": "e07b0d342b2e6b10bf1394112416254fb31652fa9cd3ed938ca8c7efb1809220",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "58c78ff564da2e19c0b36cae3dedb8812cd0e53bb2ce0b22e61588ef1b954463",
+    "vs_key_sha256": "e07b0d342b2e6b10bf1394112416254fb31652fa9cd3ed938ca8c7efb1809220",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "58c78ff564da2e19c0b36cae3dedb8812cd0e53bb2ce0b22e61588ef1b954463",
+    "vs_key_sha256": "e07b0d342b2e6b10bf1394112416254fb31652fa9cd3ed938ca8c7efb1809220",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   }
+  ],
+  "v003": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "9a597801f5f4c9b680f6ac4370ec5852efd80c475b91c263223617f8ab8caa5c",
+    "vs_key_sha256": "3d6f27b841dba7c7d87dce12d51a2e32146da0f679dc9781ce064e69c766be91",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "9a597801f5f4c9b680f6ac4370ec5852efd80c475b91c263223617f8ab8caa5c",
+    "vs_key_sha256": "3d6f27b841dba7c7d87dce12d51a2e32146da0f679dc9781ce064e69c766be91",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "9a597801f5f4c9b680f6ac4370ec5852efd80c475b91c263223617f8ab8caa5c",
+    "vs_key_sha256": "3d6f27b841dba7c7d87dce12d51a2e32146da0f679dc9781ce064e69c766be91",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   }
+  ],
+  "v004": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "b4f84ebc0df5228aa31fdedb29e8ae05a06797d3f4709cd8e5044e19b48a76da",
+    "vs_key_sha256": "262f8e5da637bd2c0379f62fbd6cce652f2c5ea28ec24337a1090662701e4835",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "b4f84ebc0df5228aa31fdedb29e8ae05a06797d3f4709cd8e5044e19b48a76da",
+    "vs_key_sha256": "262f8e5da637bd2c0379f62fbd6cce652f2c5ea28ec24337a1090662701e4835",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "b4f84ebc0df5228aa31fdedb29e8ae05a06797d3f4709cd8e5044e19b48a76da",
+    "vs_key_sha256": "262f8e5da637bd2c0379f62fbd6cce652f2c5ea28ec24337a1090662701e4835",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   }
+  ],
+  "v005": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "b9d6bcc0c9f1c4fb7703c827885eea9e8847ba754157afcbf5a1e40cf792d275",
+    "vs_key_sha256": "b5626a34b8952ad410ea5bcfd799a92bf0b1b7d37d088da15e16345a224ce536",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "b9d6bcc0c9f1c4fb7703c827885eea9e8847ba754157afcbf5a1e40cf792d275",
+    "vs_key_sha256": "b5626a34b8952ad410ea5bcfd799a92bf0b1b7d37d088da15e16345a224ce536",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "b9d6bcc0c9f1c4fb7703c827885eea9e8847ba754157afcbf5a1e40cf792d275",
+    "vs_key_sha256": "b5626a34b8952ad410ea5bcfd799a92bf0b1b7d37d088da15e16345a224ce536",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.713,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   }
+  ],
+  "v006": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "adcb7cd2a7529d0c9d7d6430f204448a0c0d2a80549a2e849766e13150adcfc5",
+    "vs_key_sha256": "6504b1767d0b8590ac14a25793e87057822e8bebc466457ea0ed3ef19d2adf57",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "adcb7cd2a7529d0c9d7d6430f204448a0c0d2a80549a2e849766e13150adcfc5",
+    "vs_key_sha256": "6504b1767d0b8590ac14a25793e87057822e8bebc466457ea0ed3ef19d2adf57",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "adcb7cd2a7529d0c9d7d6430f204448a0c0d2a80549a2e849766e13150adcfc5",
+    "vs_key_sha256": "6504b1767d0b8590ac14a25793e87057822e8bebc466457ea0ed3ef19d2adf57",
+    "frozen_summaryA": {
+     "pass": 14,
+     "fail": 5,
+     "not_measured": 5,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 5,
+     "fails_vs_key": 0,
+     "fails_vs_face": 5,
+     "fallback_used": 5
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.71,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   }
+  ],
+  "G22_C_none": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "b075a4b02ad983484c738838fc6920eda321944c2c631b4ca99328edd7f1e77c",
+    "vs_key_sha256": "6637e1b765176fa3f93bca7e1c82ba579a94177929453a038a3b07ef7ad18918",
+    "frozen_summaryA": {
+     "pass": 29,
+     "fail": 0,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "b075a4b02ad983484c738838fc6920eda321944c2c631b4ca99328edd7f1e77c",
+    "vs_key_sha256": "6637e1b765176fa3f93bca7e1c82ba579a94177929453a038a3b07ef7ad18918",
+    "frozen_summaryA": {
+     "pass": 29,
+     "fail": 0,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "b075a4b02ad983484c738838fc6920eda321944c2c631b4ca99328edd7f1e77c",
+    "vs_key_sha256": "6637e1b765176fa3f93bca7e1c82ba579a94177929453a038a3b07ef7ad18918",
+    "frozen_summaryA": {
+     "pass": 29,
+     "fail": 0,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   }
+  ],
+  "G22_C_shift_opening": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "0d9046acd093a8659c10f6bbda5f7c7dd397b7aa3980895e470e5e19331198e5",
+    "vs_key_sha256": "a7256d00353019d270df2dd50bceb445c72a449ea09e4e7c36c1cea4174bda62",
+    "frozen_summaryA": {
+     "pass": 28,
+     "fail": 1,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "0d9046acd093a8659c10f6bbda5f7c7dd397b7aa3980895e470e5e19331198e5",
+    "vs_key_sha256": "a7256d00353019d270df2dd50bceb445c72a449ea09e4e7c36c1cea4174bda62",
+    "frozen_summaryA": {
+     "pass": 28,
+     "fail": 1,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "0d9046acd093a8659c10f6bbda5f7c7dd397b7aa3980895e470e5e19331198e5",
+    "vs_key_sha256": "a7256d00353019d270df2dd50bceb445c72a449ea09e4e7c36c1cea4174bda62",
+    "frozen_summaryA": {
+     "pass": 28,
+     "fail": 1,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   }
+  ],
+  "G22_C_shift_wall": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "7efc0fd512ea8f0529579486688b5470cb5191ffa61ec5b677ef8764b4b1bd4f",
+    "vs_key_sha256": "35b7a875facd25b1b7261c5de6e79af2abb86460863d2db23b26e472558660b3",
+    "frozen_summaryA": {
+     "pass": 27,
+     "fail": 2,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "7efc0fd512ea8f0529579486688b5470cb5191ffa61ec5b677ef8764b4b1bd4f",
+    "vs_key_sha256": "35b7a875facd25b1b7261c5de6e79af2abb86460863d2db23b26e472558660b3",
+    "frozen_summaryA": {
+     "pass": 27,
+     "fail": 2,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "7efc0fd512ea8f0529579486688b5470cb5191ffa61ec5b677ef8764b4b1bd4f",
+    "vs_key_sha256": "35b7a875facd25b1b7261c5de6e79af2abb86460863d2db23b26e472558660b3",
+    "frozen_summaryA": {
+     "pass": 27,
+     "fail": 2,
+     "not_measured": 0,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 0,
+     "fails_vs_key": 0,
+     "fails_vs_face": 0,
+     "fallback_used": 0
+    },
+    "per_opening": {
+     "opening:4259581": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1501,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259780": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.1,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:6361420": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:3a06c97": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.0999,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259692": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.15,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     },
+     "opening:4259725": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.13,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "not_applicable",
+      "frozen_sill_head": "pass"
+     }
+    }
+   }
+  ],
+  "W_deep": [
+   {
+    "rep": 1,
+    "status": "scored",
+    "raw_extract_sha256": "b9daf6d92988bf0109d9dca31bf7b62d3f1fd9b3298223c922f4535317e0b2e2",
+    "vs_key_sha256": "4057edd41218d1c8f83887dec250d68a0fdd515e6c1c33e5e7038db2251c5d05",
+    "frozen_summaryA": {
+     "pass": 12,
+     "fail": 9,
+     "not_measured": 3,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 3,
+     "fails_vs_key": 4,
+     "fails_vs_face": 1,
+     "fallback_used": 3
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.4999,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.7098,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 2,
+    "status": "scored",
+    "raw_extract_sha256": "b9daf6d92988bf0109d9dca31bf7b62d3f1fd9b3298223c922f4535317e0b2e2",
+    "vs_key_sha256": "4057edd41218d1c8f83887dec250d68a0fdd515e6c1c33e5e7038db2251c5d05",
+    "frozen_summaryA": {
+     "pass": 12,
+     "fail": 9,
+     "not_measured": 3,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 3,
+     "fails_vs_key": 4,
+     "fails_vs_face": 1,
+     "fallback_used": 3
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.4999,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.7098,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   },
+   {
+    "rep": 3,
+    "status": "scored",
+    "raw_extract_sha256": "b9daf6d92988bf0109d9dca31bf7b62d3f1fd9b3298223c922f4535317e0b2e2",
+    "vs_key_sha256": "4057edd41218d1c8f83887dec250d68a0fdd515e6c1c33e5e7038db2251c5d05",
+    "frozen_summaryA": {
+     "pass": 12,
+     "fail": 9,
+     "not_measured": 3,
+     "not_applicable": 0
+    },
+    "overlay": {
+     "frozen_measured_changed": [],
+     "nm": 0,
+     "frozen_sill_nm": 3,
+     "fails_vs_key": 4,
+     "fails_vs_face": 1,
+     "fallback_used": 3
+    },
+    "per_opening": {
+     "opening:рт О_194b464": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.4999,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_415705d": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_6189f94": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.7098,
+      "depth_vs_key": "pass",
+      "depth_vs_face": "fail",
+      "frozen_sill_head": "not_measured"
+     },
+     "opening:рт О_010a21f": {
+      "source": "frozen_match",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "pass"
+     },
+     "opening:рт О_1198368": {
+      "source": "fallback",
+      "sill_head_c": "pass",
+      "depth_rim": 0.5001,
+      "depth_vs_key": "fail",
+      "depth_vs_face": "pass",
+      "frozen_sill_head": "not_measured"
+     }
+    }
+   }
+  ]
+ },
+ "summary": {
+  "v007": {
+   "verdict": "accepted 2026-11-20",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 3,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 5,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 0,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 3,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "194b464": 0.4999,
+    "415705d": 0.5001,
+    "6189f94": 0.5,
+    "010a21f": 0.5,
+    "1198368": 0.5001
+   }
+  },
+  "v002": {
+   "verdict": "rejected",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 5,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 5,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 5,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "194b464": 0.71,
+    "415705d": 0.71,
+    "6189f94": 0.71,
+    "010a21f": 0.713,
+    "1198368": 0.713
+   }
+  },
+  "v003": {
+   "verdict": "rejected",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 5,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 5,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 5,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "194b464": 0.71,
+    "415705d": 0.71,
+    "6189f94": 0.71,
+    "010a21f": 0.713,
+    "1198368": 0.713
+   }
+  },
+  "v004": {
+   "verdict": "rejected 2026-11-17",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 5,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 5,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 5,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "194b464": 0.71,
+    "415705d": 0.71,
+    "6189f94": 0.71,
+    "010a21f": 0.713,
+    "1198368": 0.713
+   }
+  },
+  "v005": {
+   "verdict": "rejected 2026-11-18",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 5,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 5,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 5,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "194b464": 0.71,
+    "415705d": 0.71,
+    "6189f94": 0.71,
+    "010a21f": 0.713,
+    "1198368": 0.713
+   }
+  },
+  "v006": {
+   "verdict": "rejected 2026-11-18",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 5,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 5,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 5,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "194b464": 0.71,
+    "415705d": 0.71,
+    "6189f94": 0.71,
+    "010a21f": 0.71,
+    "1198368": 0.71
+   }
+  },
+  "G22_C_none": {
+   "verdict": "accepted k2 v002r1 copy",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 0,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "4259581": 0.1501,
+    "4259780": 0.1,
+    "6361420": 0.13,
+    "3a06c97": 0.0999,
+    "4259692": 0.15,
+    "4259725": 0.13
+   }
+  },
+  "G22_C_shift_opening": {
+   "verdict": "planted",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 0,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "4259581": 0.1501,
+    "4259780": 0.1,
+    "6361420": 0.13,
+    "3a06c97": 0.0999,
+    "4259692": 0.15,
+    "4259725": 0.13
+   }
+  },
+  "G22_C_shift_wall": {
+   "verdict": "planted",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 0,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 0,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "4259581": 0.1501,
+    "4259780": 0.1,
+    "6361420": 0.13,
+    "3a06c97": 0.0999,
+    "4259692": 0.15,
+    "4259725": 0.13
+   }
+  },
+  "W_deep": {
+   "verdict": "planted witness on v007 copy",
+   "reps": 3,
+   "nm": {
+    "median": 0,
+    "spread": 0
+   },
+   "frozen_sill_nm": {
+    "median": 3,
+    "spread": 0
+   },
+   "fails_vs_key": {
+    "median": 4,
+    "spread": 0
+   },
+   "fails_vs_face": {
+    "median": 1,
+    "spread": 0
+   },
+   "fallback_used": {
+    "median": 3,
+    "spread": 0
+   },
+   "frozen_measured_changed": [],
+   "per_opening_identical": true,
+   "depth_rim_rep1": {
+    "194b464": 0.4999,
+    "415705d": 0.5001,
+    "6189f94": 0.7098,
+    "010a21f": 0.5,
+    "1198368": 0.5001
+   }
+  }
+ },
+ "verdict": {
+  "M1_nm_per_rep": [
+   0,
+   0,
+   0
+  ],
+  "M1_complete": true,
+  "M2_frozen_measured_changed": [],
+  "D_key": 5,
+  "D_face": 0,
+  "depth_fails_median(key,face)": {
+   "v007": [
+    5,
+    0
+   ],
+   "v002": [
+    0,
+    5
+   ],
+   "v003": [
+    0,
+    5
+   ],
+   "v004": [
+    0,
+    5
+   ],
+   "v005": [
+    0,
+    5
+   ],
+   "v006": [
+    0,
+    5
+   ]
+  },
+  "M4_G22_pass_per_rep": [
+   6,
+   6,
+   6
+  ],
+  "G22_fallback_used_per_rep": [
+   0,
+   0,
+   0
+  ],
+  "witness": [
+   {
+    "rep": 1,
+    "target_depth": [
+     0.5,
+     0.7098
+    ],
+    "target_face": [
+     "pass",
+     "fail"
+    ],
+    "others_changed": 0
+   },
+   {
+    "rep": 2,
+    "target_depth": [
+     0.5,
+     0.7098
+    ],
+    "target_face": [
+     "pass",
+     "fail"
+    ],
+    "others_changed": 0
+   },
+   {
+    "rep": 3,
+    "target_depth": [
+     0.5,
+     0.7098
+    ],
+    "target_face": [
+     "pass",
+     "fail"
+    ],
+    "others_changed": 0
+   }
+  ],
+  "witness_ok": true,
+  "G22_invariance_depth_changed_vs_C_none": {
+   "G22_C_shift_opening": [
+    0,
+    0,
+    0
+   ],
+   "G22_C_shift_wall": [
+    0,
+    0,
+    0
+   ]
+  },
+  "H53": "confirmed"
+ },
+ "postflight_ok": true,
+ "harness_sha256": {
+  "run53.py": "df1eb10e1b7581a70588ba58f48fb1000396bf9913dc74143c5e7a8cc4d01685",
+  "score53.py": "20bfd6927bb557ef75f398b435a02b1c1785309568f97ceda22004e16843bb84",
+  "mutate53.py": "5c5904f37413addb7fcdd0ec8001e3e9218ec7660eb62d267cd2c0ac4d192139"
+ }
+}
