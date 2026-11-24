@@ -12,3 +12,43 @@ H62: the unchanged #61 slide-49 joint oracle flags an NPM-only horizontal UV reg
 - Coverage excluded: form check v1 is closed for research. G22 #1649, KPP1 v004 #1817/#1818, Staropetrovskiy #1500, MAF numbering #1809; no authoritative Vatutino MAF rejection pair found in prior rounds. Padding 8/32 px and textured-ID density are distinct hypotheses, not measured here. Readiness 2026-11-24 13:45, areas 4/11.
 
 Replay from this branch with pinned Windows Blender and Drive inputs: `uv run --frozen python docs/research/atlas-native-phase-r62/replay.py tmp/r62-run-NEW`. Replay limited to readers with those inputs and #58/#61 Git objects.
+
+## R0 — confirmed (OBSERVE)
+
+**Итог:** на АС.08 изолированный сдвиг UV на +5 px атласа НПМ дал ΔJE = +320
+(размах 0) относительно чистого v010. Камеры и пиксели ВПМ совпали, исходники
+не изменились. +0.5 px не поднял JE на v010. Это чувствительность к синтетическому сдвигу,
+не доказательство причины исходного отклонения v007 и не порог приёмки.
+
+Run status `completed`; wall 284.155 s. Measured script commit `01ac9d1e7e06fd016a131549a7c287c34dd21b19`.
+First-round budget gate passed; all rounds use fresh native imports and renders.
+
+| Round | Wall, s | v007 JE (clean / +0.5 / +5) | v010 JE (clean / +0.5 / +5) | D62 |
+|---|---:|---|---|---:|
+| 1 | 87.728 | 202 / 194 / 203 | 0 / 0 / 320 | 320 |
+| 2 | 106.347 | 202 / 194 / 203 | 0 / 0 / 320 | 320 |
+| 3 | 88.989 | 202 / 194 / 203 | 0 / 0 / 320 | 320 |
+
+**Clean:** identical historical checker, direct row parity in all states; clean v007 is worse than visual
+reference v010 in every round. **Injected:** all four NPM facade images changed in both variants on both
+labels and all rounds. NPM alpha, exact camera/frame and the four scored VPM decoded images were unchanged;
+full per-view counts (including vs round 1) and hashes are in the receipt. The perturbation never needed
+edge extrusion, hence bleed at the cell boundary was not exercised.
+
+- v007 +0.5 px: {'PanelVJ_RAL5015': 114} UV loops; extrusion loops 0; changed NPM RGB pixels per round: [4333323, 4333323, 4333323].
+- v007 +5 px: {'PanelVJ_RAL5015': 114} UV loops; extrusion loops 0; changed NPM RGB pixels per round: [5336443, 5336443, 5336443].
+- v010 +0.5 px: {'PanelVJ30_RAL5015': 90, 'PanelVJ12_RAL5015': 24} UV loops; extrusion loops 0; changed NPM RGB pixels per round: [4657513, 4657513, 4657513].
+- v010 +5 px: {'PanelVJ30_RAL5015': 90, 'PanelVJ12_RAL5015': 24} UV loops; extrusion loops 0; changed NPM RGB pixels per round: [5434841, 5434841, 5434841].
+
+**Not measured:** other objects (KPP1 / Vatutino / Staropetrovskiy), UV padding, texel density,
+cell bleed, a production false-positive rate, or user acceptance. No checker or delivery change applied.
+
+Receipt: `atlas-native-phase-r62/receipt.json` SHA-256 `d7028637c7b8333d2efb8b8cb9ade95334ecb0d1b38889a1d8d14d29e4cf0124`.
+Verified evidence: `G:/Мой диск/AGR-evidence/standing62-atlas-native-phase-r001/`, `SHA256SUMS.txt`
+SHA-256 `40468e97f2c0e3b14e5c6f33395d33162e1eadaef94e9f1174fb4bba9b7e35f5`. Replay needs the pinned Windows Blender and access to the original packages/slide.
+
+Affected tests: `uv run --frozen pytest -q -o addopts= docs/research/atlas-native-phase-r62/test_phase.py tests/jobs/test_tec26_ac08_pilot.py tests/jobs/test_tec26_ac08_slide_overlay.py tests/jobs/test_tec26_joint_visibility_controls.py tests/test_kpp1_export_safety.py tests/test_npm_atlas_padding.py` — 200 passed, 26 skipped (fixture gates), 1 warning. New selection test initially failed to import the absent probe; then passed.
+
+`bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 542 passed, `repo_guards: GREEN`.
+
+Full suite: deferred to merge batch (rule 68)
