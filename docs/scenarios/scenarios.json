@@ -21,6 +21,7 @@
     "ucx": null
   },
   "cells": [
+    {"id": "sintez-fix", "title": "SINTEZ repair on Artem's explicit request (#1744)", "status": "ready", "card": "docs/research/sintez-fix-1744.md", "reads": ["docs/domain/areas/package.md", "docs/domain/areas/uv-atlas.md"]},
     {"id": "vpm-to-npm", "title": "Accepted VPM to NPM by Artem's practice (#1737)", "status": "ready", "card": "docs/scenarios/vpm-to-npm.md", "reads": ["docs/domain/areas/derivation.md", "docs/domain/areas/uv-atlas.md"]},
     {"id": "maf-npm-to-vpm", "title": "MAF NPM to VPM pilot (explicit config, plan only)", "status": "ready", "card": "docs/research/maf-npm-to-vpm-1745.md", "reads": ["docs/domain/areas/groundel-maf.md", "docs/domain/uv-textures.md"]},
     {"id": "npm-to-vpm", "title": "Existing NPM to VPM conversion workflow (explicit config)", "status": "ready", "card": "docs/scenarios/npm-to-vpm.md", "reads": ["docs/domain/areas/derivation.md", "docs/domain/areas/uv-atlas.md"]},
