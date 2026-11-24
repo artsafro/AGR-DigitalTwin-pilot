@@ -2,7 +2,7 @@
 
 Isolated headless 3ds Max 2026.3 (28.3.0.30732), one process at a time via
 `hermes_kanban/scripts/dcc_batch.py max --version 2026 --file <fixture> --wait 0 --timeout 180`,
-2026-11-24 03:15–03:20, no GUI, no user scene. Synthetic scene only (one box / dummies).
+Run window 03:15–03:20 (night of 24.11.2026), no GUI, no user scene. Synthetic scene only (one box / dummies).
 Raw fixtures, run JSON, records and `merge_src.max`:
 `G:/Мой диск/AGR-evidence/t_9e5904d6-maxbatch-130/` (hashes: `SHA256SUMS.txt` here, 19 files, verified).
 
