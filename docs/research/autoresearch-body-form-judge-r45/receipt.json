@@ -1,0 +1,237 @@
+{
+ "card": "t_cda3b2af",
+ "hypothesis": "H45",
+ "result": "refuted",
+ "base": "49997a1d",
+ "contract_commit": "3517007a",
+ "inputs_sha256": {
+  "A.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+  "key": "843197137db10cdc51417b73df2c7d60ca5badc38e0f45b0ea2e2cfb93832c75"
+ },
+ "parity_vs_r41_comp": {
+  "A": "byte-identical",
+  "W_recess=P_recess(0.13)": "byte-identical",
+  "W_corner=P_corner(0.80)": "byte-identical"
+ },
+ "composites_sha256": {
+  ".png": "8f46976ab0c749f0817cf11dd07d3cbd106fb9b05693f8c68a6e08a9aaa3ba53",
+  "_corner_0.05.png": "83936395398f57ed88753d7f72a4b844c87a488dcdc35ebcbe3e199a7fdabb83",
+  "_corner_0.10.png": "3a7e45dc073dde5cb23163b4396aa87cd3bd530e28ca89f839985fd4e1a4ef5a",
+  "_corner_0.20.png": "ee751143a7e53101955e85bb86af039c81a7094ccf2b4258d717522c4d0fa8ea",
+  "_corner_0.40.png": "a0be3af450139720c8a82c0a5d7ac6b13209d15123875dbc3d72468a3bba6cc5",
+  "_recess_0.03.png": "4ffb7dca7a388636df9c80b5c1d4dd0f2ce00f63fd32e69b4cc28986b1baabc4",
+  "_recess_0.06.png": "d8551f603f131cc30212969f771672d64c00dd54e4c7e8a3bc9466c277d2f21d",
+  "_recess_0.11.png": "56989bc7ce84bcb097ae215727f2bf9c18d4aebc97342ce35537db1db9a670ac",
+  "_recess_0.20.png": "085d007b41b65b862da3332b5a2020fae4b7157e4c7bbfed053cedb89151c8ca",
+  "_corner.png": "314c5df77dfcd661296b8c6b33b0481830e3c21f9e7850572118995597313032",
+  "_recess.png": "e945175662d4294e959c88047dff3b611df976290706f6c1bf7b9084dd440bb1"
+ },
+ "pixel_contrast_vs_A": {
+  "note": "max abs grey diff (0-255) and pixels with diff>30 in the composite",
+  "W_recess": [
+   38,
+   28
+  ],
+  "P_recess_0.20": [
+   43,
+   57
+  ],
+  "P_recess_0.11": [
+   35,
+   17
+  ],
+  "P_recess_0.06": [
+   25,
+   0
+  ],
+  "P_recess_0.03": [
+   14,
+   0
+  ],
+  "W_corner": [
+   103,
+   8543
+  ],
+  "P_corner_0.40": [
+   103,
+   4165
+  ],
+  "P_corner_0.20": [
+   103,
+   2058
+  ],
+  "P_corner_0.10": [
+   102,
+   1181
+  ],
+  "P_corner_0.05": [
+   71,
+   505
+  ]
+ },
+ "judges": {
+  "claude": {
+   "families": {
+    "recess": {
+     "cell": "Q1",
+     "A": "Yes",
+     "witness": "No",
+     "ladder": {
+      "0.20": "No",
+      "0.11": "No",
+      "0.06": "No",
+      "0.03": "No"
+     },
+     "qualified": true,
+     "T": 0.03,
+     "T_C1": 0.06,
+     "less_sensitive_than_C1": false
+    },
+    "corner": {
+     "cell": "Q4",
+     "A": "Unsure",
+     "witness": "No",
+     "ladder": {
+      "0.40": "No",
+      "0.20": "No",
+      "0.10": "Yes",
+      "0.05": "Yes"
+     },
+     "qualified": false,
+     "T": "not measured",
+     "T_C1": 0.1,
+     "less_sensitive_than_C1": null
+    }
+   },
+   "yes_bias_ladder": "2/8",
+   "false_yes_cells": [
+    "P_corner_0.10.Q4",
+    "P_corner_0.05.Q4"
+   ],
+   "flip_cells": "6/55",
+   "S": {
+    "A": 11,
+    "W_recess": 8,
+    "W_corner": 11,
+    "P_recess_0.20": 11,
+    "P_recess_0.11": 11,
+    "P_recess_0.06": 11,
+    "P_recess_0.03": 8,
+    "P_corner_0.40": 11,
+    "P_corner_0.20": 11,
+    "P_corner_0.10": 14,
+    "P_corner_0.05": 14
+   },
+   "pair_coverage": "7/8",
+   "pair_A_wins_kept": "7/7",
+   "pairs_order_consistent": {
+    "P_recess_0.20": "A",
+    "P_corner_0.40": "A",
+    "P_corner_0.10": "A",
+    "P_recess_0.03": "A",
+    "P_recess_0.06": "A",
+    "P_recess_0.11": "A",
+    "P_corner_0.20": "A"
+   }
+  },
+  "codex": {
+   "families": {
+    "recess": {
+     "cell": "Q1",
+     "A": "Yes",
+     "witness": "No",
+     "ladder": {
+      "0.20": "No",
+      "0.11": "No",
+      "0.06": "No",
+      "0.03": "No"
+     },
+     "qualified": true,
+     "T": 0.03,
+     "T_C1": 0.06,
+     "less_sensitive_than_C1": false
+    },
+    "corner": {
+     "cell": "Q4",
+     "A": "Unsure",
+     "witness": "No",
+     "ladder": {
+      "0.40": "No",
+      "0.20": "No",
+      "0.10": "No",
+      "0.05": "No"
+     },
+     "qualified": false,
+     "T": "not measured",
+     "T_C1": 0.1,
+     "less_sensitive_than_C1": null
+    }
+   },
+   "yes_bias_ladder": "0/8",
+   "false_yes_cells": [],
+   "flip_cells": "7/55",
+   "S": {
+    "A": 11,
+    "W_recess": 8,
+    "W_corner": 11,
+    "P_recess_0.20": 8,
+    "P_recess_0.11": 8,
+    "P_recess_0.06": 8,
+    "P_recess_0.03": 8,
+    "P_corner_0.40": 11,
+    "P_corner_0.20": 11,
+    "P_corner_0.10": 11,
+    "P_corner_0.05": 11
+   },
+   "pair_coverage": "7/8",
+   "pair_A_wins_kept": "7/7",
+   "pairs_order_consistent": {
+    "P_recess_0.20": "A",
+    "P_recess_0.11": "A",
+    "P_corner_0.10": "A",
+    "P_corner_0.20": "A",
+    "P_recess_0.03": "A",
+    "P_recess_0.06": "A",
+    "P_corner_0.40": "A"
+   }
+  }
+ },
+ "pairwise": {
+  "common_pairs": [
+   "P_corner_0.10",
+   "P_corner_0.20",
+   "P_corner_0.40",
+   "P_recess_0.03",
+   "P_recess_0.06",
+   "P_recess_0.11",
+   "P_recess_0.20"
+  ],
+  "raw_agreement": "7/7",
+  "kappa": null,
+  "kappa_note": "undefined (single label or no common pairs)"
+ },
+ "proxy": "not measured (planted variants)",
+ "not_measured": [
+  "corner family T for both judges (A.Q4 not Yes: claude Unsure/Yes/Unsure, codex Unsure/No/Unsure)",
+  "KPP1 NW / Sokolniki pairs (no exact labelled body pair)",
+  "opening shift / reveal depth of real openings (no rubric)",
+  "any other fragment; Artem verdict beyond A vs R (#41)"
+ ],
+ "calls": {
+  "n": 98,
+  "unparsed": [],
+  "failed_invocations": 0,
+  "batch_wall_s": {
+   "rubric": 211.5,
+   "pair": 93.5
+  },
+  "call_wall_sum_s": 1179.5
+ },
+ "evidence": {
+  "local": "C:/x/autoresearch-body-form-r45/",
+  "drive": "G:/Мой диск/AGR-evidence/standing45-body-form-judge-small/",
+  "SHA256SUMS.txt": "98371ec8a72aac2f3997e0d8922b4c018815554a569678c6e5cb4910e93a36f9",
+  "entries": 179,
+  "result45.json": "e34944cba25d0684a59e9d874b6d708398f4c21c0c51b9479e646bef88eabb22"
+ }
+}
