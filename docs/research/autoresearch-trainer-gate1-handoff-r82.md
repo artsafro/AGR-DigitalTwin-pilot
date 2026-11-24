@@ -19,7 +19,7 @@ Replay (Bash; no writes to training evidence):
 
 ```bash
 set -o pipefail
-uv run --frozen python docs/research/trainer-gate1-handoff-r82.py | diff -u docs/research/trainer-gate1-handoff-r82.json -
+uv run --frozen python docs/research/trainer-gate1-handoff-r82.py | diff --strip-trailing-cr -u docs/research/trainer-gate1-handoff-r82.json -
 ```
 
 An empty diff/exit 0 checks the digest and path census, not independent-run stability. The receipt pins both evidence files read per run, the archived worktree HEAD and the observed empty proposal sets. Replay is **limited** to the local run directories; the Drive bank is #1861. No accepted/rejected package, hidden key or DCC was opened. No production change is retained; no PR.
