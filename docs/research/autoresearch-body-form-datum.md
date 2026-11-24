@@ -1,0 +1,27 @@
+# Standing #46 — datum-supported opening annotation (OBSERVE)
+
+**Резюме.** Проверяем, спасает ли привязка к наружному контуру от ложного «размеры неприменимы» в G22 к.2. Штатные измерения и тела не меняем. Отдельно проверяем близкий фон: он может пройти тот же допуск, что и стена.
+
+Base `49997a1d4f347c1b01bf6d0c4b2c348ff8796b0c`, readiness `2026-11-24_0142` areas 3–4. Continue #44 after #42. The authority/weighted rubrics for KPP1 NW A and Sokolniki v002/D375 are [frozen in #40](autoresearch-body-form.md#fixed-scopes-and-rubrics); not exact same-stage accepted/rejected body pairs. Existing `tools/review/verdict.py` is a state writer, not run. The scene rubric here concerns only classification of unavailable depth/edge/sill-head, not render yes-bias and pairwise ordering (measured separately in #41/#45). No new render claims. Do not duplicate #43's contour recall, #1770/#1784/#1609 body work, #1738 Ground before relief fix, #1315 cold delivery, #1649 atlas, #1615 suite.
+
+## Frozen experiment
+
+`F = max_state median_3(false not_applicable dependent rows on A against the immutable accepted FBX)`. Lower is better. Check one candidate C1: keep the existing two-slice support requirement (#42), but when attributing support for *annotation only*, require both endpoints of each contributing segment ≤ the detector's existing 0.05 m contour deviation bound in the signed-normal frame of the source segment. Then use original parallel/gap/interval logic; raw scorer, tolerances, outputs, weights and gap TP/FP/FN are untouched. Near-line support is **not** geometric shell ownership. This is scene-readback evidence, not a new truth label. Ranks must stay calibrated: clean A≥95, R≤90, median gap≥5 pp, spread≤0.1 pp. Any unknown stays unknown, never earns pass.
+
+Representative fixture: G22 k2 SE typical-floor accepted A=v002r1 and rejected R=v001, exact SHA-256 as in #40. Original #44 target opening `4259581` (source ring 24→25), one isolated synthetic segment per selected section from mouth start−10 mm to end+10 mm, no native geometry mutated. Repeat #44 states `one_110`, `both_060`, `both_110`, `both_n110`, `both_130`; add `both_030` (+30 mm at 17.8 and 18.2, same generator). Confirm all 3 independent A/R imports and rerun same #42 controls. Freeze both confirmation passes in one execution: one #44 replay (which runs #42 first) and exactly one C1 comparison. No alternative candidates or offset search.
+
+| Witness | Expected base | C1 bound |
+|---|---|---|
+| Clean A | 6/0/0 TP/FP/FN, 0 annotations | 0 annotations, raw report identical; annotation trigger `not_exercised` |
+| Clean R | 0/0/6, 18 true annotations | retain 18; raw identical; positive annotation trigger |
+| In-band ±110/60 both | A has 3 false annotations | 0 for A, R retains 18; specifically exercise rejection of added support on **both** A and R |
+| +110 at one height | A 5/1/1, 0 annotations | 0 annotations; unchanged raw conflict (do not claim fix) |
+| +130 both | outside raw search, A 0 | 0 for A, R 18; candidate-specific trigger `not_exercised` on the injected segment |
+| +30 both | expected A 3 under old support | target 0 (stress case; expected to challenge the ownership proxy), R retains 18 |
+| #42 J1 / J2 / J3 / J4 / masked R / native controls | prior receipt parity | annotation counts and raw findings unchanged; J1 retains 3, stale/masked retain 0 |
+
+Record each repeat's raw shape score, raw gap counts, candidate annotations and change counts; unexercised checks are not measured, not evidence of invariance. For A the true annotation bound is 0; for R 18. Record annotated-ID changes (not just totals) and treatment of each inserted segment at each height, comparing C1 with old eligibility. C1 qualifies for a future independent test only if `F=0`, both variant triggers exercised, all control bounds and parity pass. H46 refuted if a properly injected positive raw witness leaves reproducible false annotations (F>0), or C1 drops true R/J1 annotations, with clean/native and operand parity. Missing/partial/drift/ambiguous controls ⇒ inconclusive, not KEEP. No production retention even if successful; diagnostic branch only.
+
+## Replay and stop
+
+Repo root: `python docs/research/autoresearch-body-form-r46/replay.py tmp/form-r46-fresh` (destination must not exist). #44 fixed revision `3a843a21a5abfdd8835fba8e862b91f282e99ffa`; #42 revision `e63634826fa9c39897602634965e3347929ccf3f`. Load prior drivers from Git blobs; preserve archives, compare #44 non-path metrics and rely on #42 full report/extract parity except staging path. Use #42 full-manifest preflight for `C:/x/t_563a40f7` incl. evaluator key, `C:/x/autoresearch-body-form-r40/evidence` and Blender executable both before/after. Compare per-state intervention to original readback and record exact hashes; no key or native source is copied to Git. Replay limited to the PC with private packets. #44 budget 240 s incl. its first-pair timing/prediction and #42 budget 150 s; outer cap 300 s. After first C1 A/R state pair, stop if 1.5×measured pair wall×remaining pairs exceeds outer remaining; stop inconclusive, retain partial receipt and replay to a fresh path; no shortened series. Status and wall separately. Prohibited: Max, live DCC, writing sources/deliveries/other cards' files, rebuilding bodies, weakening validators, deselecting tests, using a stale extract as native confirmation or opening the held-out builder.
