@@ -85,7 +85,8 @@ def test_sil13_core_ground_has_no_short_edges(tmp_path):
     assert _short_edges(m.verts, m.faces) == 0
     assert not r.report["stages"]["skirt"]["skirt_gap_edges"]
     from dt_ai.ops.inv_xview import mesh_report
-    assert mesh_report(m.verts, m.faces, profile="NPM-GROUND", part="SM_SIL13_Ground")["vertex_pairs"] == 0
+    xv = mesh_report(m.verts, m.faces, profile="NPM-GROUND", part="SM_SIL13_Ground")
+    assert (xv["vertex_pairs"], xv["face_pairs"]) == (0, 0)  # before the #1315 rim-step cut: (0, 2) skirt contacts
 
 
 # review r1 P1: peeling must never orphan a source mark (its Z would be lost silently)
