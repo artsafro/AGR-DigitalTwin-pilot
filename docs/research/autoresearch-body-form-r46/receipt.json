@@ -1,0 +1,1900 @@
+{
+  "status": "complete",
+  "hypothesis": "refuted",
+  "contract": "9effae1be05aa41ea289ff82054966d643937afb",
+  "candidate_sha256": "77a484059fa1fad246181d296f24cd9eff01e9984ec1f653865ac16ea4186c82",
+  "rows": {
+    "A-1.one_110": {
+      "extract_sha256": "6eb615775ccb822cc5cf4107046f3b591c6bc8d4029e046fd7d9e850027f3a71",
+      "raw_report_sha256": "61bdd8c924ef3cde6b172aae287341556093f16127182faaee357a2bc11a8c11",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 81.81818181818181,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 69,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded"
+      }
+    },
+    "R-1.one_110": {
+      "extract_sha256": "84db8db1eef1488fda4abf0b898d675a1f03bbeaf2a31bc1c607235179968e78",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 308,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded"
+      }
+    },
+    "A-2.one_110": {
+      "extract_sha256": "6eb615775ccb822cc5cf4107046f3b591c6bc8d4029e046fd7d9e850027f3a71",
+      "raw_report_sha256": "61bdd8c924ef3cde6b172aae287341556093f16127182faaee357a2bc11a8c11",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 81.81818181818181,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 69,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded"
+      }
+    },
+    "R-2.one_110": {
+      "extract_sha256": "84db8db1eef1488fda4abf0b898d675a1f03bbeaf2a31bc1c607235179968e78",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 308,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded"
+      }
+    },
+    "A-3.one_110": {
+      "extract_sha256": "6eb615775ccb822cc5cf4107046f3b591c6bc8d4029e046fd7d9e850027f3a71",
+      "raw_report_sha256": "61bdd8c924ef3cde6b172aae287341556093f16127182faaee357a2bc11a8c11",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 81.81818181818181,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 69,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded"
+      }
+    },
+    "R-3.one_110": {
+      "extract_sha256": "84db8db1eef1488fda4abf0b898d675a1f03bbeaf2a31bc1c607235179968e78",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 308,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 0,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded"
+      }
+    },
+    "A-1.both_060": {
+      "extract_sha256": "ec732c8c0bd34ef35dcec20d19820edb6421b893a90cab0242f057dcd97a67cc",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-1.both_060": {
+      "extract_sha256": "0750fa224c265f119b9e07da24033190bdb66ecd03db3dcff8fa55d84df2bf0f",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-2.both_060": {
+      "extract_sha256": "ec732c8c0bd34ef35dcec20d19820edb6421b893a90cab0242f057dcd97a67cc",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-2.both_060": {
+      "extract_sha256": "0750fa224c265f119b9e07da24033190bdb66ecd03db3dcff8fa55d84df2bf0f",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-3.both_060": {
+      "extract_sha256": "ec732c8c0bd34ef35dcec20d19820edb6421b893a90cab0242f057dcd97a67cc",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-3.both_060": {
+      "extract_sha256": "0750fa224c265f119b9e07da24033190bdb66ecd03db3dcff8fa55d84df2bf0f",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-1.both_110": {
+      "extract_sha256": "81a78eb7eb024537f902c4d3e7e296eb98afc260fa611d1c77d2e56ee9992440",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-1.both_110": {
+      "extract_sha256": "c5abb958844fdde15cc5fe6729579a8306329112ffbaeeb95c12fd9c1e26c9ed",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-2.both_110": {
+      "extract_sha256": "81a78eb7eb024537f902c4d3e7e296eb98afc260fa611d1c77d2e56ee9992440",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-2.both_110": {
+      "extract_sha256": "c5abb958844fdde15cc5fe6729579a8306329112ffbaeeb95c12fd9c1e26c9ed",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-3.both_110": {
+      "extract_sha256": "81a78eb7eb024537f902c4d3e7e296eb98afc260fa611d1c77d2e56ee9992440",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-3.both_110": {
+      "extract_sha256": "c5abb958844fdde15cc5fe6729579a8306329112ffbaeeb95c12fd9c1e26c9ed",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-1.both_n110": {
+      "extract_sha256": "6d560d58b70dc4c67c33bff84e557be9e5b1e5eab3a32875767009740dd0c816",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-1.both_n110": {
+      "extract_sha256": "95ef14cf899e1e15e4105dfd3915efcaf0e03cbcb17971b0d9c4413f826f59a2",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-2.both_n110": {
+      "extract_sha256": "6d560d58b70dc4c67c33bff84e557be9e5b1e5eab3a32875767009740dd0c816",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-2.both_n110": {
+      "extract_sha256": "95ef14cf899e1e15e4105dfd3915efcaf0e03cbcb17971b0d9c4413f826f59a2",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-3.both_n110": {
+      "extract_sha256": "6d560d58b70dc4c67c33bff84e557be9e5b1e5eab3a32875767009740dd0c816",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 9.090909090909092,
+      "removed_ids": [
+        "opening:4259581:edges",
+        "opening:4259581:reveal_depth",
+        "opening:4259581:sill_head"
+      ],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 70,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "R-3.both_n110": {
+      "extract_sha256": "95ef14cf899e1e15e4105dfd3915efcaf0e03cbcb17971b0d9c4413f826f59a2",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "excluded",
+        "18.2": "excluded"
+      }
+    },
+    "A-1.both_130": {
+      "extract_sha256": "68af62b99057b40ceb8225193e46383b6bf582c1e4cd0d1bdc24da6d94935431",
+      "raw_report_sha256": "c169a8249b059ce25f723506b698c8ea0c7b7ec057f1f34fc6e6bb167cfc7801",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 100.0,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "not_exercised",
+        "18.2": "not_exercised"
+      }
+    },
+    "R-1.both_130": {
+      "extract_sha256": "671c8214de4bd95da650f63e48d069201c80bc37990184b29bc3e6f24973c296",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "not_exercised",
+        "18.2": "not_exercised"
+      }
+    },
+    "A-2.both_130": {
+      "extract_sha256": "68af62b99057b40ceb8225193e46383b6bf582c1e4cd0d1bdc24da6d94935431",
+      "raw_report_sha256": "c169a8249b059ce25f723506b698c8ea0c7b7ec057f1f34fc6e6bb167cfc7801",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 100.0,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "not_exercised",
+        "18.2": "not_exercised"
+      }
+    },
+    "R-2.both_130": {
+      "extract_sha256": "671c8214de4bd95da650f63e48d069201c80bc37990184b29bc3e6f24973c296",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "not_exercised",
+        "18.2": "not_exercised"
+      }
+    },
+    "A-3.both_130": {
+      "extract_sha256": "68af62b99057b40ceb8225193e46383b6bf582c1e4cd0d1bdc24da6d94935431",
+      "raw_report_sha256": "c169a8249b059ce25f723506b698c8ea0c7b7ec057f1f34fc6e6bb167cfc7801",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 100.0,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "not_exercised",
+        "18.2": "not_exercised"
+      }
+    },
+    "R-3.both_130": {
+      "extract_sha256": "671c8214de4bd95da650f63e48d069201c80bc37990184b29bc3e6f24973c296",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 314,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "not_exercised",
+        "18.2": "not_exercised"
+      }
+    },
+    "A-1.both_030": {
+      "extract_sha256": "4d4a5c24e919af8d36220e6b4e67412e035c7e440190947fb43bd866779ec6a2",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 3,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 68,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "retained",
+        "18.2": "retained"
+      }
+    },
+    "R-1.both_030": {
+      "extract_sha256": "b3741eb6aa99f8d828fc5046c4a06ab3d79b3ba7a6b456f18c0b814f426f343b",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 312,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "retained",
+        "18.2": "retained"
+      }
+    },
+    "A-2.both_030": {
+      "extract_sha256": "4d4a5c24e919af8d36220e6b4e67412e035c7e440190947fb43bd866779ec6a2",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 3,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 68,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "retained",
+        "18.2": "retained"
+      }
+    },
+    "R-2.both_030": {
+      "extract_sha256": "b3741eb6aa99f8d828fc5046c4a06ab3d79b3ba7a6b456f18c0b814f426f343b",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 312,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "retained",
+        "18.2": "retained"
+      }
+    },
+    "A-3.both_030": {
+      "extract_sha256": "4d4a5c24e919af8d36220e6b4e67412e035c7e440190947fb43bd866779ec6a2",
+      "raw_report_sha256": "e795a939dacacbff5333594f04604d370dc6c5e3afe8f1675db8adf06fcface2",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 3,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 68,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "retained",
+        "18.2": "retained"
+      }
+    },
+    "R-3.both_030": {
+      "extract_sha256": "b3741eb6aa99f8d828fc5046c4a06ab3d79b3ba7a6b456f18c0b814f426f343b",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 312,
+      "annotation_exercise": "exercised",
+      "segments_added_by_z": {
+        "16.85": 0,
+        "17.8": 1,
+        "18.2": 1,
+        "19.8": 0
+      },
+      "inserted_segment_treatment": {
+        "17.8": "retained",
+        "18.2": "retained"
+      }
+    }
+  },
+  "controls": {
+    "C_none-1": {
+      "extract_sha256": "c9cf4d4268673e144710091a0fa7a1240ff3f8a3450a8a81c823d42dca4468bc",
+      "raw_report_sha256": "a2c50134d3ace6267e2f5971aaeac3d84ab112402f4e99833b7795b1fc9ebd01",
+      "variant_fbx_sha256": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 100.0,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "J4_clean_preflight": {
+      "extract_sha256": "c9cf4d4268673e144710091a0fa7a1240ff3f8a3450a8a81c823d42dca4468bc",
+      "raw_report_sha256": "fafc31bcd8ab0c0a02317bf1d0b0512c3cd39c55bd19748f7a1df37246956a02",
+      "variant_fbx_sha256": "71eb9db8699fe6b94250afd3562a724a87399092b5f2af5d24a4a607b2fc9c39",
+      "raw_gap_counts": "not_measured",
+      "outline_section_maxima_m": {},
+      "raw_score": null,
+      "measured_depths_m": [],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": null,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "A-1": {
+      "extract_sha256": "0ed33734990ca9bc8d1078df1f751ee80a7506c2cccdfd7ef33716cd25dbcfe5",
+      "raw_report_sha256": "c169a8249b059ce25f723506b698c8ea0c7b7ec057f1f34fc6e6bb167cfc7801",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 100.0,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "R-1": {
+      "extract_sha256": "d622f19002c05e494dfb73e997d4e3b8a478e001c00058cf7118353c62b24ee2",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 302,
+      "annotation_exercise": "exercised"
+    },
+    "A-2": {
+      "extract_sha256": "0ed33734990ca9bc8d1078df1f751ee80a7506c2cccdfd7ef33716cd25dbcfe5",
+      "raw_report_sha256": "c169a8249b059ce25f723506b698c8ea0c7b7ec057f1f34fc6e6bb167cfc7801",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 100.0,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "R-2": {
+      "extract_sha256": "d622f19002c05e494dfb73e997d4e3b8a478e001c00058cf7118353c62b24ee2",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 302,
+      "annotation_exercise": "exercised"
+    },
+    "A-3": {
+      "extract_sha256": "0ed33734990ca9bc8d1078df1f751ee80a7506c2cccdfd7ef33716cd25dbcfe5",
+      "raw_report_sha256": "c169a8249b059ce25f723506b698c8ea0c7b7ec057f1f34fc6e6bb167cfc7801",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 100.0,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "R-3": {
+      "extract_sha256": "d622f19002c05e494dfb73e997d4e3b8a478e001c00058cf7118353c62b24ee2",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 18,
+      "C1_annotation": 18,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 302,
+      "annotation_exercise": "exercised"
+    },
+    "C_shift_opening-1": {
+      "extract_sha256": "88c6fc216cd903ac97f76674fb1eac9599a518c4949ea94c8cbda9d99be5e205",
+      "raw_report_sha256": "0b94fd0fc2c8073507aa61f20e14c1aeee5b627198ecf5c36d662272e256a622",
+      "variant_fbx_sha256": "513d5ab4b2bcb100964386109ee2104dd06c7a488774aa18c162032948fa159b",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 96.96969696969697,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "C_shift_wall-1": {
+      "extract_sha256": "2ba4900cf2271f305e0bf25af95f44d32a8d0c2850ae8643ad66c1b7f4e0e419",
+      "raw_report_sha256": "ee090b840c82e932253a4e585b6c607ede1454526ce895c273b88e44dbdf3193",
+      "variant_fbx_sha256": "b79ecca635ea49e2581f40d019c86ee2275bb6f1fb43565a54932ef4af418592",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.1,
+        "contour@19.8": 0.1
+      },
+      "raw_score": 90.9090909090909,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "J1_missing_4259581": {
+      "extract_sha256": "5bc476043b26d5801a65243d640fbc2685b0b483518138a0a05409a183b2b806",
+      "raw_report_sha256": "f43d0296bbb880d0fd3ce51af8b09e6a74eefb3c16889b4509863ca409e95118",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 86.36363636363636,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15
+      ],
+      "old_annotation": 3,
+      "C1_annotation": 3,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 68,
+      "annotation_exercise": "exercised"
+    },
+    "J2_extra_endwall": {
+      "extract_sha256": "07a5d75dc47d15fb99e937b860375f756291e204194e40c96b3f8ac8a6d6bbe6",
+      "raw_report_sha256": "04dddb2682ff8171fb86ad74a81c6bc7814082d94fdacc3d58cd0d4abd89b50b",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 1,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.0,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 95.45454545454545,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "J3_stair_cut_basket": {
+      "extract_sha256": "5f5466e0f21c1d2b662de20bbba4bf3716069932fa8196bfb34769c53215dd52",
+      "raw_report_sha256": "4d40639167af7ef35d86655a71462daf1e6f5beef406fd1d5ed90eafca34010b",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.77,
+        "contour@19.8": 0.0
+      },
+      "raw_score": 92.42424242424242,
+      "measured_depths_m": [
+        0.1,
+        0.1,
+        0.13,
+        0.13,
+        0.15,
+        0.15
+      ],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 0.0,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "J4_stale_key": {
+      "extract_sha256": "0ed33734990ca9bc8d1078df1f751ee80a7506c2cccdfd7ef33716cd25dbcfe5",
+      "raw_report_sha256": "a91b7689a35be162fecba24cfaa146d1b095d1b125e57bce9b14343aa310ed87",
+      "variant_fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "raw_gap_counts": "not_measured",
+      "outline_section_maxima_m": {},
+      "raw_score": null,
+      "measured_depths_m": [],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": null,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 0,
+      "annotation_exercise": "not_exercised"
+    },
+    "R-mask": {
+      "extract_sha256": "6ebdda948c9b00719a28f1a18ac67d8856d2f6cd348f41be8ec13c757321d679",
+      "raw_report_sha256": "ebde2311ebee9f526f28f078f5400c1d8fda6733e2337113583ddca58325f7fa",
+      "variant_fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "raw_gap_counts": {
+        "TP": 0,
+        "FN": 6,
+        "FP_extra": 0,
+        "key_total": 6
+      },
+      "outline_section_maxima_m": {
+        "contour@16.85": 0.61,
+        "contour@19.8": 0.61
+      },
+      "raw_score": 4.545454545454546,
+      "measured_depths_m": [],
+      "old_annotation": 0,
+      "C1_annotation": 0,
+      "C1_unknown_pct": 54.54545454545455,
+      "removed_ids": [],
+      "added_ids": [],
+      "segment_removals_in_annotation_calls": 151,
+      "annotation_exercise": "not_exercised"
+    }
+  },
+  "r44_sha256": "9cab9c1e218487e62b871cb7286ab5aa660693d9b456fa26dbd5418c5b6690e0",
+  "prior_wall_s": 15.496,
+  "native_pair_s": 2.228,
+  "prior_pair_s": 0.276,
+  "baseline_parity": true,
+  "wall_s": 15.834,
+  "candidate_first_pair_s": 0.0059,
+  "candidate_remaining_estimate_s": 0.15001139990999945,
+  "F": 3,
+  "F_baseline": 3,
+  "A_counts": {
+    "one_110": [
+      0,
+      0,
+      0
+    ],
+    "both_060": [
+      0,
+      0,
+      0
+    ],
+    "both_110": [
+      0,
+      0,
+      0
+    ],
+    "both_n110": [
+      0,
+      0,
+      0
+    ],
+    "both_130": [
+      0,
+      0,
+      0
+    ],
+    "both_030": [
+      3,
+      3,
+      3
+    ]
+  },
+  "baseline_A_counts": {
+    "one_110": [
+      0,
+      0,
+      0
+    ],
+    "both_060": [
+      3,
+      3,
+      3
+    ],
+    "both_110": [
+      3,
+      3,
+      3
+    ],
+    "both_n110": [
+      3,
+      3,
+      3
+    ],
+    "both_130": [
+      0,
+      0,
+      0
+    ],
+    "both_030": [
+      3,
+      3,
+      3
+    ]
+  },
+  "clean_gap_pp": [
+    95.45454545454545,
+    95.45454545454545,
+    95.45454545454545
+  ],
+  "pair_gaps_pp": {
+    "one_110": [
+      77.27272727272727,
+      77.27272727272727,
+      77.27272727272727
+    ],
+    "both_060": [
+      81.81818181818181,
+      81.81818181818181,
+      81.81818181818181
+    ],
+    "both_110": [
+      81.81818181818181,
+      81.81818181818181,
+      81.81818181818181
+    ],
+    "both_n110": [
+      81.81818181818181,
+      81.81818181818181,
+      81.81818181818181
+    ],
+    "both_130": [
+      95.45454545454545,
+      95.45454545454545,
+      95.45454545454545
+    ],
+    "both_030": [
+      81.81818181818181,
+      81.81818181818181,
+      81.81818181818181
+    ]
+  },
+  "clean_gap_spread_pp": 0.0,
+  "exercised_variants": [
+    "A",
+    "R"
+  ],
+  "original_annotation_parity": true,
+  "injected_R_bound": true,
+  "raw_positive_A_witnesses": 12
+}
