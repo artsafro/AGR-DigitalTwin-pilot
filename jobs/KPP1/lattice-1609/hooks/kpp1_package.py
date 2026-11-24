@@ -73,10 +73,12 @@ def npm_dir(fbx, ground, thumb, readback, ground_readback, pkg, v013_out):
     if fbx.name == GROUND_NAME:
         raise ValueError(f'the OKS FBX must not be named {GROUND_NAME}')
     meta = json.loads(meta_in.read_text(encoding='utf-8'))
+    fbx_sha, ground_sha = sha(fbx), sha(ground)
+    v013 = {fbx.name: {'bounds_m': bounds(readback), 'fbx_sha256': fbx_sha},     # all reads before any write
+            GROUND_NAME: {'bounds_m': bounds(ground_readback), 'fbx_sha256': ground_sha}}
     pkg.mkdir(parents=True)
     shutil.copy2(fbx, pkg / fbx.name)
     shutil.copy2(ground, pkg / GROUND_NAME)
-    fbx_sha, ground_sha = sha(fbx), sha(ground)
     if sha(pkg / fbx.name) != fbx_sha or sha(pkg / GROUND_NAME) != ground_sha:
         raise RuntimeError('package copy changed bytes')
     meta['exported_files'] = [fbx.name, GROUND_NAME]
@@ -86,8 +88,6 @@ def npm_dir(fbx, ground, thumb, readback, ground_readback, pkg, v013_out):
         f'{fbx.name} = agr vpm-to-npm of master-v004-delivery.blend; {GROUND_NAME} = #1416 package-v002 Ground copy '
         f'byte-for-byte (sha {ground_sha[:16]}) [D306-D313]')
     (pkg / 'export_meta.json').write_text(json.dumps(meta, indent=1), encoding='utf-8')
-    v013 = {fbx.name: {'bounds_m': bounds(readback), 'fbx_sha256': fbx_sha},
-            GROUND_NAME: {'bounds_m': bounds(ground_readback), 'fbx_sha256': ground_sha}}
     v013_out.parent.mkdir(parents=True, exist_ok=True)
     v013_out.write_text(json.dumps(v013, indent=1), encoding='utf-8')
     print('NPM-DIR', pkg, sorted(v013))
