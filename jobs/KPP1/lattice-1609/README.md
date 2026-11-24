@@ -5,6 +5,21 @@ the lattice (BM-00). Ground-floor and band lines come from the Revit/DWG opening
 never from mesh vertices. A line stays if the cell class changes along it over >= 1.5 m or >= the opening width.
 **Step 1 only:** the line list and one ground-floor sheet. The body is built after Artem's «ок».
 
+## Skeleton [D324]
+
+`skeleton.json`: cell `oks-npm` (sub-job `vpm/skeleton.json`: `oks-vpm`, no hooks); 5 hooks in `hooks/`, every other
+stage is the shared command of `docs/agents/SKELETONS.md`:
+
+| Hook | Stage / point | What |
+|---|---|---|
+| `kpp1_lattice.py lines / input / check` | `body` before | Revit line list, ring lattice for `proto_lattice.py --lines`, ring/station/cell check |
+| `kpp1_elements.py` | `body` after | stdlib kernel of the separate elements (posts, frames, portals, glass, finishes), imported by the assemble hook |
+| `kpp1_assemble.py` (`render`, `split`) | `body` after | Blender: body UV/finishes + elements [D336], fixed-camera renders, element-wise split for xView |
+| `kpp1_sheets.py lines / lattice / compose` | `verifier` after | review sheets for Artem |
+| `kpp1_package.py verify / npm-dir / record-ground` | `package-npm` before | frozen-packet check, NPM package dir + V013 bounds, #1416 Ground derivation record |
+
+Modelling split [D336]: plinth=one_with_body; inset=posts, windows, stained_glass, roof, flashings; texture=panels; reason=KPP1 lattice body (Artem 2026-11-16/21/24): the plinth is a finish band of the lattice body, the corner posts, window frames/surrounds, portals, E annex, roof and glass are separate clean-quad elements never welded into the body, the cassette panels are UDIM texture with a whole-period shift.
+
 ## Inputs (read-only)
 
 | Input | sha256 (16) | Role |
@@ -33,10 +48,10 @@ Evidence: `G:/Мой диск/AGR-evidence/1609-kpp1-lattice-lines/step1/` (`kpp
 
 ```
 C=<laughing-hawking>/jobs/KPP1/outputs/census-v001
-uv run python jobs/KPP1/lattice-1609/line_list.py $C/openings_spec.json $C/walls_ext.objects.json OUT/line_list.json --bands jobs/KPP1/lattice-1609/finish_bands.json
+uv run python jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py lines $C/openings_spec.json $C/walls_ext.objects.json OUT/line_list.json --bands jobs/KPP1/lattice-1609/finish_bands.json
 "$B" -b --factory-startup --python docs/research/body-modelling-1618/dump_mesh.py -- kpp1_r1_v003.fbx OUT/dump
 "$B" -b --factory-startup --python docs/research/body-modelling-1618/dump_mesh.py -- run-r1-v003/export/fbx/0000_Kpp_1_01.fbx OUT/dumpnpm
-uv run python jobs/KPP1/lattice-1609/sheets.py lines OUT/line_list.json OUT/dumpnpm/SM_Kpp_1_001_Main.npz OUT/dump/SM_Kpp_1_Main.npz run-r1-v003/atlas/T_Kpp_1_001_Main_d_1.png OUT/kpp1-lattice-lines-ground.png --check OUT/hole_check.json
+uv run python jobs/KPP1/lattice-1609/hooks/kpp1_sheets.py lines OUT/line_list.json OUT/dumpnpm/SM_Kpp_1_001_Main.npz OUT/dump/SM_Kpp_1_Main.npz run-r1-v003/atlas/T_Kpp_1_001_Main_d_1.png OUT/kpp1-lattice-lines-ground.png --check OUT/hole_check.json
 ```
 Tests: `tests/jobs/test_kpp1_line_list_1609.py`.
 
@@ -49,36 +64,35 @@ takes the stations, levels and openings from the list. Every opening cell sits a
 cell keeps the R1 v003 depth (clustered at 3 cm, rounded to 1 cm). A cell where R1 has no surface within 3.5 m is
 a hole the list lacks (glazed side lights at the entrances), so it is treated as an opening.
 
-- `lattice_input.py`: line list → one ring lattice (perimeter s, S→E→N→W, `--shift` into the R1 frame).
-- `lattice_check.py`: per level closed yes/no, per station through yes/no, defects per lattice cell (local signal).
-- `sheets.py lattice`: unrolled S | E | N | W straight elevations, before/after, rings and cells marked.
+- `kpp1_lattice.py input`: line list → one ring lattice (perimeter s, S→E→N→W, `--shift` into the R1 frame).
+- `kpp1_lattice.py check`: per level closed yes/no, per station through yes/no, defects per lattice cell (local signal).
+- `kpp1_sheets.py lattice`: unrolled S | E | N | W straight elevations, before/after, rings and cells marked.
 
 Reproduce (outputs `C:/x/ev_1609/s7`, evidence `G:/Мой диск/AGR-evidence/1609-kpp1-lattice-body/step2/`):
 ```
-uv run python jobs/KPP1/lattice-1609/line_list.py $C/openings_spec.json $C/walls_ext.objects.json O/line_list.json --bands jobs/KPP1/lattice-1609/finish_bands.json
-uv run python jobs/KPP1/lattice-1609/lattice_input.py O/line_list.json O/lattice_r1.json --shift -14.655 -5.355
+uv run python jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py lines $C/openings_spec.json $C/walls_ext.objects.json O/line_list.json --bands jobs/KPP1/lattice-1609/finish_bands.json
+uv run python jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py input O/line_list.json O/lattice_r1.json --shift -14.655 -5.355
 "$B" -b --factory-startup --python docs/research/body-mesh-method/proto_lattice.py -- kpp1_r1_v003.fbx O/p6 --objects SM_Kpp_1_Main --lines O/lattice_r1.json --zmin 0 --zmax 8.65
 "$B" -b --factory-startup --python docs/research/body-modelling-1618/dump_mesh.py -- O/p6/proto.fbx O/d6
-uv run python jobs/KPP1/lattice-1609/lattice_check.py O/d6/SM_Proto_Body.npz O/lattice_r1.json O/qa/check_p6.json
-uv run python jobs/KPP1/lattice-1609/sheets.py lattice O/lattice_r1.json OUT.png --model LABEL NPZ CHECK.json ...
+uv run python jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py check O/d6/SM_Proto_Body.npz O/lattice_r1.json O/qa/check_p6.json
+uv run python jobs/KPP1/lattice-1609/hooks/kpp1_sheets.py lattice O/lattice_r1.json OUT.png --model LABEL NPZ CHECK.json ...
 ```
 Tests: `tests/jobs/test_kpp1_lattice_body_1609.py`, `tests/jobs/test_kpp1_line_list_1609.py`.
 
 ## Step 3: corner posts as separate elements + UV/materials (Artem 2026-11-21: body accepted)
 
-`assemble_v004.py` (Blender) takes the accepted body p6 and the quad-v003 master:
-- body faces get the finish of their z band (`posts_plan.finish_of_face`: sill up = band below, head down = band
+`kpp1_assemble.py` (Blender) takes the accepted body p6 and the quad-v003 master:
+- body faces get the finish of their z band (`kpp1_elements.finish_of_face`: sill up = band below, head down = band
   above), then the shared VPM owner `tools/blender/vpm_uv.py` cuts edge rings for the tile span (no T-junction) and
   packs world-metre UVs into the finish's UDIM tile with a whole-period shift (vpm_textures.json, S 4.096 m);
-- the four corner posts are the quad-v003 faces outside the ring, grouped per corner (`posts_plan.outside_components`),
-  voxelised on their own planes (`quad-1372/corner_plan.post_cells`, rays cast outward), voxels inside the ring are body,
+- the four corner posts are the quad-v003 faces outside the ring, grouped per corner (`kpp1_elements.outside_components`),
+  voxelised on their own planes (`kpp1_elements.post_cells`, rays cast outward), voxels inside the ring are body,
   the contact face on the ring plane is not built; each post is its own object `SM_Kpp_1_Main_Post_<corner>` [D336].
   Post finish = v003 UDIM tile in the R1 tile scheme (`r1230/tex/textures.json`: 1005 = Frame_RAL9016).
 - the other 25 outside components of v003 (window surrounds, portals, E annex, grilles) are listed in `assemble.json`
   for the package step; nothing is dropped silently.
 
-Modelling split [D336]: plinth=body (finish band); inset=corner posts (this step), windows/surrounds/portals/roof/annex
-(package step); texture=cassette panels (UDIM, whole-period shift); reason=Artem 2026-11-16/21.
+The modelling split of the job is the one `Modelling split [D336]` line in the skeleton section at the top.
 
 Draft a2 (`C:/x/ev_1609/s8/a2`, evidence `G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/` + SHA256SUMS):
 body 1134 -> 1244 quads after texel cuts, posts NE 27 / NW 70 / SE 27 / SW 51 quads, 0 tris, 0 n-gons, UV overflow 0,
@@ -87,33 +101,32 @@ posts 0 T / 0 non-manifold (their open rim is the contact with the wall); mesh_q
 
 ```
 uv run python jobs/KPP1/scripts/make_textures.py T
-"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/assemble_v004.py -- O/p6/proto.fbx SM_Kpp_1.quad-v003.fbx O/a2 T C:/x/kpp1/r1230/tex/textures.json
-"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/render_v004.py -- O/a2/master-v004-lattice.blend T O/r2 after
-"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/render_v004.py -- SM_Kpp_1.quad-v003.fbx C:/x/kpp1/r1230/tex O/r2 before
-uv run python jobs/KPP1/lattice-1609/sheets.py compose O/r2 OUT.png corners|ground TITLE
+"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/hooks/kpp1_assemble.py -- O/p6/proto.fbx SM_Kpp_1.quad-v003.fbx O/a2 T C:/x/kpp1/r1230/tex/textures.json
+"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/hooks/kpp1_assemble.py -- render O/a2/master-v004-lattice.blend T O/r2 after
+"$B" -b --factory-startup --python jobs/KPP1/lattice-1609/hooks/kpp1_assemble.py -- render SM_Kpp_1.quad-v003.fbx C:/x/kpp1/r1230/tex O/r2 before
+uv run python jobs/KPP1/lattice-1609/hooks/kpp1_sheets.py compose O/r2 OUT.png corners|ground TITLE
 ```
-Tests: `tests/jobs/test_kpp1_posts_plan_1609.py`.
+Tests: `tests/jobs/test_kpp1_posts_plan_1609.py`, `tests/jobs/test_kpp1_corner_plan_1609.py`.
 
 ## Step 4: package (Artem 2026-11-24: posts accepted, top belt blue [D376])
 
-`assemble_v004.py ... package` builds the package master from the same inputs (b19, `C:/x/ev_1609/s9/b19`):
-- frames and the E annex: voxel-rebuilt on their own planes (`posts_plan.element_plan`, outward ray only, 3 mm snap);
-  a frame floating over a lattice opening reaches the 0.11 niche beside it (`posts_plan.frame_reach`, V003 decor embed);
+`kpp1_assemble.py ... package` builds the package master from the same inputs (b19, `C:/x/ev_1609/s9/b19`):
+- frames and the E annex: voxel-rebuilt on their own planes (`kpp1_elements.element_plan`, outward ray only, 3 mm snap);
+  a frame floating over a lattice opening reaches the 0.11 niche beside it (`kpp1_elements.frame_reach`, V003 decor embed);
 - slanted portals, open/flat strips and the roof (the lattice body is an open facade tube, no roof): their v003 quads
-  as separate elements, portals clamped 6 mm in front of the body (`posts_plan.clamp_outside`, no piercing);
+  as separate elements, portals clamped 6 mm in front of the body (`kpp1_elements.clamp_outside`, no piercing);
 - body faces take the non-band v003 finish at their place (doors, frames, membrane; band finishes never override the
-  band scheme [D376]); glass moved in front of the body surface (`posts_plan.glass_target`, 0 m² hidden vs 46 m²);
+  band scheme [D376]); glass moved in front of the body surface (`kpp1_elements.glass_target`, 0 m² hidden vs 46 m²);
 - `master-v004-delivery.blend`: elements joined into SM_Kpp_1_Main as loose parts (export_npm takes one *_Main).
 
-`run_package_v004.py PACKET RUN GROUND_NPM_FBX THUMBNAIL GROUND_MASTER` runs derive (`agr vpm-to-npm`, spec
-`spec_v004.json`), readback, xView (whole and element-wise [D336]), the NPM package (OKS + the accepted #1416 Ground
-copy byte-for-byte), the build manifest with masters per role [D328]/[D333] (`run_package_v004.py record-ground` re-records the #1416
-Ground derivation), and `agr validate` (V013 from the fresh readback bounds). VPM `s_podz` stays empty: customer data,
-not a defect [D377]. Modelling split [D336]: plinth=body (finish band); inset=posts, frames, portals, annex, roof,
-glass; texture=cassette panels (UDIM); reason=Artem 2026-11-16/21/24.
+The package stages run as the skeleton commands (section "Skeleton" above, `C:/x/ev_1609/s10/chain12.sh`): derive
+(`agr vpm-to-npm`, spec `spec_v004.json`), readback + xView (whole and element-wise [D336] via `kpp1_assemble.py split`),
+`kpp1_package.py npm-dir` (OKS + the accepted #1416 Ground copy byte-for-byte, V013 bounds from the fresh readbacks),
+`agr package-npm`, `agr build-manifest build` with masters per role [D328]/[D333] (`kpp1_package.py record-ground`
+re-records the #1416 Ground derivation) and `agr validate`. VPM `s_podz` stays empty: customer data, not a defect [D377].
 Tests: `tests/jobs/test_kpp1_elements_plan_1609.py`.
 
-VPM (same delivery master; run by hand after the NPM runner, logs in the evidence folder):
+VPM (sub-job `vpm/skeleton.json`, oks-vpm, no hooks; same delivery master; logs in the evidence folder):
 ```
 "$B" -b --factory-startup --python jobs/KPP1/scripts/export_vpm.py -- PACKET/master-v004-delivery.blend V/pkg
 # V/tex = the 24 PNG of the 8 UDIM tiles the master uses (1001 1006 1007 1009 1010 1012 1015 1018), make_textures.py
@@ -122,4 +135,5 @@ uv run agr build-manifest record V/tex/*.png --master V/vpm_textures.json --role
 uv run agr build-manifest build V/SM_Kpp_1.zip --master oks=PACKET/master-v004-delivery.blend --master oks=V/vpm_textures.json \
     --derivation V/derivation V/derivation-tex2 --transform-name "..." --blender "$B"
 uv run agr validate V/SM_Kpp_1.zip --profile vpm --scene --json --export-meta V/export_meta.json --master oks=... --master oks=...
+uv run agr validate V/SM_Kpp_1.zip --profile vpm --scene --json --export-meta V/export_meta.json --master PACKET/SM_Kpp_1.v004-lattice.fbx   # V003 master quads (DER-03)
 ```

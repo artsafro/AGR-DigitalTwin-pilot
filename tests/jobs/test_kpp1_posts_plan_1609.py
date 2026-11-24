@@ -1,6 +1,6 @@
 """KPP1 lattice step 3 kernel: corner posts as separate elements + body finish bands (#1609, D336).
 
-Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/posts_plan.py (posts, finish bands).
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/hooks/kpp1_elements.py (posts, finish bands; was posts_plan.py).
 """
 import importlib.util
 import json
@@ -15,13 +15,13 @@ D = ROOT / 'jobs/KPP1/lattice-1609'
 
 
 def _load(name):
-    spec = importlib.util.spec_from_file_location(name + '_1609s3', D / (name + '.py'))
+    spec = importlib.util.spec_from_file_location(name + '_1609s3', D / 'hooks' / (name + '.py'))
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
 
 
-pp = _load('posts_plan')
+pp = _load('kpp1_elements')
 RECT = (-14.985, -5.685, 12.675, 5.975)
 BANDS = json.loads((D / 'finish_bands.json').read_text(encoding='utf-8'))['bands']
 

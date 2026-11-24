@@ -1,14 +1,14 @@
-"""KPP1 #1609 review sheets of the lattice method (one module for the three sheets, #1614 search-noise budget).
+"""KPP1 #1609 review sheets of the lattice method (oks-npm stage `verifier`, point `after`; one module for the three sheets, #1614 search-noise budget).
 
 Pattern: new-case | new-case: read-only review sheets of the KPP1 lattice method; never a line or mesh source.
 
-    uv run python jobs/KPP1/lattice-1609/sheets.py lines LINE_LIST.json NPM_DUMP.npz R1_DUMP.npz TEXTURE.png OUT.png
+    uv run python jobs/KPP1/lattice-1609/hooks/kpp1_sheets.py lines LINE_LIST.json NPM_DUMP.npz R1_DUMP.npz TEXTURE.png OUT.png
            [--zmin -0.3] [--zmax 4.7] [--ppm 60] [--check OUT_CHECK.json]
-    uv run python jobs/KPP1/lattice-1609/sheets.py lattice LATTICE.json OUT.png --model LABEL MESH.npz CHECK.json
+    uv run python jobs/KPP1/lattice-1609/hooks/kpp1_sheets.py lattice LATTICE.json OUT.png --model LABEL MESH.npz CHECK.json
            [--model ...] [--z 0 8.65] [--s 0 78.64] [--ppm 24] [--title TEXT]
-    uv run python jobs/KPP1/lattice-1609/sheets.py compose RENDER_DIR OUT.png corners|ground|elevations TITLE
+    uv run python jobs/KPP1/lattice-1609/hooks/kpp1_sheets.py compose RENDER_DIR OUT.png corners|ground|elevations TITLE
 
-`lines` (step 1): the planned lattice lines from line_list.py over straight ground-floor W/S/N elevations of R1 v003.
+`lines` (step 1): the planned lattice lines from `kpp1_lattice.py lines` over straight ground-floor W/S/N elevations of R1 v003.
 NPM_DUMP / R1_DUMP: docs/research/body-modelling-1618/dump_mesh.py dumps of the r1-v003 NPM export (same triangles as
 r1-v003, atlas UV, texture) and of r1-v003 itself. Frame: Revit = R1 FBX + (14.655, 5.355, 0) (jobs/KPP1/object.json);
 the NPM dump is moved onto R1 by its bbox (spans must agree within 2 mm). The check JSON gives, per Revit opening, the
@@ -18,9 +18,9 @@ against r1-v003, not a line source. Refuses to write over an input; writes OUT v
 `lattice` (step 2): unrolled straight elevations S | E | N | W along the envelope ring (a ring that dies at a corner
 shows), rings/stations marked closed or broken, lattice cells with defects highlighted (Artem 2026-11-21: ring
 continuity; decision 5: local-signal map next to the wire). MESH.npz = dump_mesh.py output, CHECK.json =
-lattice_check.py output for the same mesh and lattice. OUT.png must not alias an input; written via OUT.png.partial.png.
+`kpp1_lattice.py check` output for the same mesh and lattice. OUT.png must not alias an input; written via OUT.png.partial.png.
 
-`compose` (step 3 / package): before (quad-v003) / after (v004) per camera from render_v004.py outputs; rows = cameras
+`compose` (step 3 / package): before (quad-v003) / after (v004) per camera from `kpp1_assemble.py render` outputs; rows = cameras
 (corner set, the same cameras on the ground floor, or straight-on elevations), columns = v003 wire | v004 wire |
 v003 tex | v004 tex. A missing render is an error naming it; an existing OUT fails (never overwrite).
 """
@@ -33,7 +33,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import lattice_check as lc  # noqa: E402
+import kpp1_lattice as lc  # noqa: E402
 
 R1_TO_REVIT = np.array([14.655, 5.355, 0.0])
 FONT = 'C:/Windows/Fonts/arial.ttf'
@@ -404,7 +404,7 @@ def lattice_main(argv):
 CAMS = ['sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n', 'se_from_se', 'se_from_s', 'ne_from_ne', 'ne_from_n']
 COLS = [('before', 'wire', 'ДО: quad-v003 (сетка)'), ('after', 'wire', 'ПОСЛЕ: решётка v004 + стойки (голубые)'),
         ('before', 'tex', 'ДО: quad-v003 (текстура)'), ('after', 'tex', 'ПОСЛЕ: UDIM по отделкам')]
-ELEV = ['elev_W', 'elev_S', 'elev_N', 'elev_E']   # package step: straight-on facades (render_v004 elevations)
+ELEV = ['elev_W', 'elev_S', 'elev_N', 'elev_E']   # package step: straight-on facades (kpp1_assemble.py render elevations)
 SW, SH, SHEAD = 640, 430, 28
 
 

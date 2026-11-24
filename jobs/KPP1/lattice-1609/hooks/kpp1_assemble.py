@@ -1,19 +1,28 @@
-"""KPP1 lattice step 3 (#1609): accepted lattice body + corner posts as separate inset elements + VPM UV/materials.
+"""KPP1 #1609 assembly hook (oks-npm stage `body`, point `after`; Blender 5.1): lattice body + separate elements [D336].
+
+Pattern: n/a | new-case: KPP1 v004 assembly (body UV/finishes, corner posts, package elements), its fixed-camera renders
+and the element-wise split for xView [D336]. Folded from lattice-1609/assemble_v004.py, render_v004.py and
+quad-1372/split_elements.py (review r1 P1-1, skeleton [D324]); the parts are unchanged.
+
+    blender -b --factory-startup --python kpp1_assemble.py -- BODY.fbx QUAD_V003.fbx OUT_DIR TEX_DIR V003_TEXTURES [package]
+    blender -b --factory-startup --python kpp1_assemble.py -- render MODEL.(fbx|blend) TEX_DIR OUT_DIR TAG [all|elevations]
+    blender -b --factory-startup --python kpp1_assemble.py -- split MASTER.blend NEW_OUT.blend REPORT.json
+
+# ===== assemble (was lattice-1609/assemble_v004.py) =====
+KPP1 lattice step 3 (#1609): accepted lattice body + corner posts as separate inset elements + VPM UV/materials.
 
 Pattern: n/a | new-case: KPP1 v004 draft assembly - the step-2 lattice body (BM-00, accepted 2026-11-21) gets its finish
 bands and periodic UDIM UVs from the shared VPM owner (tools/blender/vpm_uv.py), and the four corner posts of quad-v003
 are rebuilt as separate voxel elements [D336] (never welded into the body). Blender 5.1, writes OUT_DIR only:
 
-    blender -b --factory-startup --python assemble_v004.py -- BODY.fbx QUAD_V003.fbx OUT_DIR TEX_DIR V003_TEXTURES
-
-1. Body: every face of BODY.fbx (lattice p6) gets the finish of its z band (`posts_plan.finish_of_face`,
+1. Body: every face of BODY.fbx (lattice p6) gets the finish of its z band (`kpp1_elements.finish_of_face`,
    finish_bands.json); then `vpm_uv.texel_cut` (edge-ring splits, no T-junction) + `vpm_uv.pack_uv` (world metres,
-   whole-period shift into the finish's UDIM tile): a new continuous UV per finish, R1-atlas seams dropped [D357].
+   whole-period shift into the finish's UDIM tile): a new continuous UV per finish, R1-atlas seams dropped [D379].
 2. Posts: faces of the quad-v003 Main whose centre lies outside the lattice ring, grouped by shared vertices; the group
-   at each ring corner is that corner's post (`posts_plan.outside_components`; the other groups are listed in the
+   at each ring corner is that corner's post (`kpp1_elements.outside_components`; the other groups are listed in the
    report for the package step). Each post is voxelised on the snapped planes of its own faces
-   (`corner_plan.post_cells`, rays cast outward so the open contact side never counts), voxels inside the ring are
-   body; boundary quads are built except the hidden contact on the ring planes (`posts_plan.ring_contact`).
+   (`kpp1_elements.post_cells`, rays cast outward so the open contact side never counts), voxels inside the ring are
+   body; boundary quads are built except the hidden contact on the ring planes (`kpp1_elements.ring_contact`).
    Finish per post quad = the UDIM tile of the coplanar v003 post face nearest to its centre, read with the tile
    scheme of the v003 UVs (V003_TEXTURES = the R1 set textures.json, 1005 = Frame_RAL9016; NOT materials.json, whose
    1005 is the ladder cage); an unmapped tile or a finish missing from vpm_textures.json is an error.
@@ -22,16 +31,17 @@ are rebuilt as separate voxel elements [D336] (never welded into the body). Blen
    M_Kpp_1_Main_1 (UDIM Diffuse/ERM/Normal from TEX_DIR, vpm_uv.main_material). Writes master-v004-lattice.blend,
    SM_Kpp_1.v004-lattice.fbx and assemble.json (counts, tiles, overflow, density, posts, other components).
 4. PACKAGE mode (6th argument `package`, Artem 2026-11-24 «ок» on the posts): every other outside component of
-   quad-v003 becomes its own element SM_Kpp_1_Main_<Frame|Portal|Annex>_<side><NN> (`posts_plan.element_plan`):
+   quad-v003 becomes its own element SM_Kpp_1_Main_<Frame|Portal|Annex>_<side><NN> (`kpp1_elements.element_plan`):
    axis-aligned solids are voxel-rebuilt on their own planes (3 mm snap, no sliver quads), slanted portals and
-   open/flat strips keep their v003 quads, clamped 6 mm in front of the body (`posts_plan.clamp_outside`, no piercing);
+   open/flat strips keep their v003 quads, clamped 6 mm in front of the body (`kpp1_elements.clamp_outside`, no piercing);
    the v003 roof inside the ring above ROOF_Z is the roof element (the lattice body is an open facade tube); body
-   faces take the non-band v003 finish at their place (doors, frames, membrane; `posts_plan.majority_finish`);
-   glass and UCX are carried, glass moved in front of the body (`posts_plan.glass_target`). Also writes
+   faces take the non-band v003 finish at their place (doors, frames, membrane; `kpp1_elements.majority_finish`);
+   glass and UCX are carried, glass moved in front of the body (`kpp1_elements.glass_target`). Also writes
    master-v004-delivery.blend: the elements joined into SM_Kpp_1_Main as loose parts (no vertex merged) for
    export_npm / export_vpm, which take exactly one *_Main.
 """
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -42,14 +52,14 @@ import bpy
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-HERE = Path(__file__).resolve().parent
+HOOKS = Path(__file__).resolve().parent
+HERE = HOOKS.parent            # the job folder jobs/KPP1/lattice-1609 (finish_bands.json, spec_v004.json)
 ROOT = HERE.parents[2]
-sys.path.insert(0, str(HERE))
-sys.path.insert(0, str(HERE.parent / 'quad-1372'))
+sys.path.insert(0, str(HOOKS))
 sys.path.insert(0, str(ROOT / 'tools' / 'blender'))
 sys.path.insert(0, str(ROOT / 'adapters' / 'max' / 'agr_tools'))
-import posts_plan as pp  # noqa: E402
-import corner_plan as cp  # noqa: E402
+import kpp1_elements as pp  # noqa: E402
+cp = pp                        # post voxels (was quad-1372/corner_plan.py) live in the same kernel
 import vpm_uv  # noqa: E402
 from udimtile_core import face_tile, tile_origin  # noqa: E402
 
@@ -134,7 +144,7 @@ def check_tile_scheme(src, uvl, finish_of_udim, bands):
 
 def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M, body_tree=None):
     """Voxel rebuild of one axis-aligned outside component on the snapped planes of its own faces [D336]:
-    `corner_plan.post_cells` (rays: outward axis first), voxels inside the ring are body, contact faces on the ring
+    `kpp1_elements.post_cells` (rays: outward axis first), voxels inside the ring are body, contact faces on the ring
     planes are not built. Finish per quad = the UDIM tile of the nearest coplanar source face (v003 tile scheme).
     A non-axis face, an unmapped tile or a quad without a coplanar source face is an error naming it."""
     tris, pfaces = [], []
@@ -162,7 +172,7 @@ def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M, b
     if body_tree is not None:
         # frames reach back to a body surface <= NICHE_M behind them (a ground-floor niche 0.11 deep would leave the
         # frame floating 11 cm in front of the wall): that surface's plane becomes a line of the outward axis; a frame
-        # standing over a lattice opening reaches the niche beside it (`posts_plan.frame_reach`, V003 decor embed)
+        # standing over a lattice opening reaches the niche beside it (`kpp1_elements.frame_reach`, V003 decor embed)
         ax, sg = rays[0]
         plane = {(0, -1): x0, (0, 1): x1, (1, -1): y0, (1, 1): y1}[(ax, sg)]
         a2, b2 = [k for k in range(3) if k != ax]
@@ -229,7 +239,7 @@ def voxel_element(src, uvl, fids, rays, finish_of_udim, label, snap=cp.SNAP_M, b
 def keep_element(src, uvl, fids, finish_of_udim, label, side=None):
     """A flat or slanted outside component keeps its v003 faces (quads) as its own element [D336]; finish per face
     from its v003 UDIM tile (unmapped tile = error). With `side`, points inside the ring (or closer than KEEP_GAP_M
-    to its plane) move to KEEP_GAP_M in front of it (`posts_plan.clamp_outside`: no piercing of the lattice body);
+    to its plane) move to KEEP_GAP_M in front of it (`kpp1_elements.clamp_outside`: no piercing of the lattice body);
     a face that collapses there (area < 1e-8 m2, it lay inside the wall) is dropped and counted."""
     out, moved, dropped = [], 0, 0
     for fi in fids:
@@ -352,9 +362,9 @@ def to_object(bm, name, mat, names):
 
 def carry_v003(path, report, body_tree):
     """Glass and UCX hulls of quad-v003 stay (own objects, own materials). A glass component lying inside the ring
-    deeper than its cap moves outward along its side's normal (`posts_plan.glass_shift`): cap = GLASS_CAP (opening back
+    deeper than its cap moves outward along its side's normal (`kpp1_elements.glass_shift`): cap = GLASS_CAP (opening back
     face at reveal 0.25) or GLASS_GAP in front of the nearest body surface seen behind it (rays from outside at the
-    face centres and corners; `posts_plan.glass_target`), so no glass hides behind the lattice body; where the body is
+    face centres and corners; `kpp1_elements.glass_target`), so no glass hides behind the lattice body; where the body is
     a solid wall (the N screen glazing, not in the body per the line list) the pane goes GLASS_GAP in front of the wall;
     glass reaching outside the ring stays and is listed."""
     before = set(bpy.data.objects.keys())
@@ -443,7 +453,7 @@ def carry_v003(path, report, body_tree):
 def opening_finishes(body, v003_fbx, finish_of_udim, names, bands, report):
     """Outward vertical faces of the lattice body (on the ring plane or up to 0.6 m behind it: walls, opening back
     faces) and up-facing faces (roof, sills; rays downward from 2 mm above the face) take a NON-band finish of the v003 surfaces at their place (door leaves, the N screen, frames, grilles):
-    `posts_plan.majority_finish` over a 5 x 5 sample grid, rays from 2 mm in front of the face's ring plane inward up
+    `kpp1_elements.majority_finish` over a 5 x 5 sample grid, rays from 2 mm in front of the face's ring plane inward up
     to REACH_M; a band finish seen (any cassette/plinth, incl. the v003 7047 top) votes for the face's own band, so the
     band scheme [D376] is never overwritten by v003 cassettes; nothing seen = the band finish stays."""
     band_fins = {b['finish'] for b in bands} | {b['v003_finish'] for b in bands if b.get('v003_finish')}
@@ -529,7 +539,7 @@ def delivery_master(objs, out):
         raise ValueError(f'join changed the parts: islands {want} -> {got}, faces {sum(faces.values())} -> '
                          f'{len(main.data.polygons)}')
     # V008: delivered UDIM tiles run 1001.. without gaps; the delivery copy's UVs move by whole tiles
-    # (`posts_plan.contiguous_udims`), the NPM spec and the VPM PNG names follow udim_map.json
+    # (`kpp1_elements.contiguous_udims`), the NPM spec and the VPM PNG names follow udim_map.json
     me = main.data
     uv = me.uv_layers['UVMap'].data
     tiles = [face_tile([tuple(uv[li].uv) for li in p.loop_indices]) for p in me.polygons]
@@ -642,8 +652,170 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
     print('ASSEMBLE', json.dumps({'objects': rep['objects'], 'missing': missing, 'other': len(other)}))
 
 
+# ===== render (was lattice-1609/render_v004.py) =====
+# KPP1 lattice step 3 renders (#1609): fixed corner / ground-floor cameras, textured (UDIM) and wire views.
+#
+# Pattern: n/a | new-case: before/after renders of the KPP1 v004 lattice draft against quad-v003 with UDIM textures
+# (the #1563 corner cameras of jobs/KPP1/quad-1372/render_before_after.py, mirrored to the SE / NE corners).
+#
+#     blender -b --factory-startup --python kpp1_assemble.py -- render MODEL.(fbx|blend) TEX_DIR OUT_DIR TAG [all|elevations]
+#
+# Every non-glass material shows TEX_DIR/T_Kpp_1_Diffuse_1.<UDIM>.png as a tiled image (Workbench texture colour).
+# Wire mode: grey body, separate elements (`SM_Kpp_1_Main_*`: posts, frames, portals, annex) light blue, black wireframe on top.
+# UCX hidden. Outputs `<TAG>_<camera>_<tex|wire>.png`; an existing output fails the run.
+
+_spec = importlib.util.spec_from_file_location('rba_1372', HERE.parent / 'quad-1372' / 'render_before_after.py')
+rba = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(rba)
+
+MIRROR_X = -14.985 + 12.675     # x' = MIRROR_X - x maps the W corners onto the E corners (ring x0 + x1)
+
+
+def _mirror(cams, a, b):
+    out = {}
+    for k, (loc, tgt, lens) in cams.items():
+        out[k.replace(a, b)] = ((MIRROR_X - loc[0], loc[1], loc[2]), (MIRROR_X - tgt[0], tgt[1], tgt[2]), lens)
+    return out
+
+
+CAMERAS = {}
+for _set in (rba.CORNER_CAMERAS, rba.GROUND_CAMERAS):
+    CAMERAS.update(_set)
+    CAMERAS.update(_mirror({k: v for k, v in _set.items() if k.startswith('sw')}, 'sw', 'se'))
+    CAMERAS.update(_mirror({k: v for k, v in _set.items() if k.startswith('nw')}, 'nw', 'ne'))
+
+
+ELEVATIONS = dict(rba.ELEVATIONS)
+ELEVATIONS['elev_E'] = ((60.0, 0.1, 4.6), (12.7, 0.1, 4.6), ('ortho', 22.0))   # package step: E facade + annex
+SETS = {'all': CAMERAS, 'elevations': ELEVATIONS}
+
+
+def render_main(model, tex_dir, out_dir, tag, cam_set='all'):
+    if cam_set not in SETS:
+        raise SystemExit(f'unknown camera set {cam_set!r}: {sorted(SETS)}')
+    cams = SETS[cam_set]
+    outs = {(c, m): os.path.join(out_dir, f'{tag}_{c}_{m}.png') for c in cams for m in ('tex', 'wire')}
+    taken = [p for p in outs.values() if os.path.exists(p)]
+    if taken:
+        raise SystemExit(f'outputs exist: {taken[:3]}')
+    if model.lower().endswith('.blend'):
+        bpy.ops.wm.open_mainfile(filepath=model, load_ui=False)
+    else:
+        bpy.ops.wm.read_factory_settings(use_empty=True)
+        bpy.ops.import_scene.fbx(filepath=model)
+    os.makedirs(out_dir, exist_ok=True)
+    sc = bpy.context.scene
+    first = os.path.join(tex_dir, 'T_Kpp_1_Diffuse_1.1001.png')
+    if not os.path.isfile(first):
+        raise SystemExit(f'missing {first}')
+    img = bpy.data.images.load(first, check_existing=False)
+    img.source = 'TILED'
+    meshes = []
+    for o in list(sc.objects):
+        if o.type != 'MESH':
+            bpy.data.objects.remove(o)
+        elif o.name.startswith('UCX_'):
+            o.hide_render = True
+        else:
+            meshes.append(o)
+    for m in bpy.data.materials:
+        m.use_nodes = True
+        nt = m.node_tree
+        if 'Glass' in m.name:
+            continue
+        tex = nt.nodes.new('ShaderNodeTexImage')
+        tex.image = img
+        nt.nodes.active = tex
+    cam = bpy.data.objects.new('Cam', bpy.data.cameras.new('Cam'))
+    sc.collection.objects.link(cam)
+    sc.camera = cam
+    cam.data.clip_start, cam.data.clip_end = 0.05, 500
+    sc.render.engine = 'BLENDER_WORKBENCH'
+    sh = sc.display.shading
+    sh.light = 'STUDIO'
+    sh.show_shadows = False
+    sh.show_cavity = False
+    wires = []
+    for o in meshes:
+        w = o.copy()
+        w.data = o.data.copy()
+        sc.collection.objects.link(w)
+        mod = w.modifiers.new('wire', 'WIREFRAME')
+        mod.thickness, mod.use_relative_offset, mod.use_replace = 0.004, False, True
+        w.color = (0.02, 0.02, 0.02, 1.0)
+        wires.append(w)
+    for mode in ('tex', 'wire'):
+        for w in wires:
+            w.hide_render = mode != 'wire'
+        if mode == 'tex':
+            sh.color_type = 'TEXTURE'
+        else:
+            sh.color_type = 'OBJECT'
+            for o in meshes:
+                sep = o.name.startswith('SM_Kpp_1_Main_') or '_Post_' in o.name
+                o.color = (0.55, 0.75, 0.95, 1.0) if sep else (0.78, 0.78, 0.76, 1.0)
+        for c, (loc, tgt, lens) in cams.items():
+            rba.look_at(cam, loc, tgt)
+            if isinstance(lens, tuple):
+                cam.data.type, cam.data.ortho_scale = 'ORTHO', lens[1]
+            else:
+                cam.data.type, cam.data.lens = 'PERSP', lens
+            sc.render.resolution_x, sc.render.resolution_y = 1280, 860
+            sc.render.filepath = outs[(c, mode)]
+            bpy.ops.render.render(write_still=True)
+    print('RENDERED', len(outs), sorted(cams))
+
+
+# ===== split (was quad-1372/split_elements.py) =====
+# new-case: element-wise copy of a KPP1 quad master for the element-wise xView/V003 checks of [D336] (#1609).
+#
+# D336: inset elements (posts, rebuilt wall planes, windows) may share a delivery object but are never welded, and
+# "quads are judged per element (inset elements validated element-wise)". 3ds Max xView judges one object, so two
+# unwelded elements that touch inside one object always show as overlapping. This writes a NEW blend in which every
+# mesh object is split into its loose parts (one object per element, named `<object>.e<NNNN>` by descending face count);
+# `dt qa xview` on it is the element-wise xView. The input is never written.
+#     blender -b --factory-startup --python kpp1_assemble.py -- split <master.blend> <new out.blend> <report.json>
+
+def split_main(src, out, report):
+    src, out, report = Path(src).resolve(), Path(out).resolve(), Path(report).resolve()
+    if len({src, out, report}) != 3:
+        raise ValueError('input, output and report must be three different files')
+    for p in (out, report):
+        if os.path.lexists(p):
+            raise ValueError(f'{p} exists; never overwrite')
+    bpy.ops.wm.open_mainfile(filepath=str(src))
+    rep = {'input': str(src), 'output': str(out), 'objects': {}}
+    meshes = [o for o in bpy.data.objects if o.type == 'MESH']
+    for o in meshes:
+        faces_before = len(o.data.polygons)
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.context.view_layer.objects.active = o
+        o.select_set(True)
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.mesh.select_all(action='SELECT')
+        bpy.ops.mesh.separate(type='LOOSE')
+        bpy.ops.object.mode_set(mode='OBJECT')
+        parts = sorted(bpy.context.selected_objects, key=lambda x: -len(x.data.polygons))
+        base = o.name
+        for i, p in enumerate(parts):
+            p.name = f'{base}.e{i:04d}'
+        counts = [len(p.data.polygons) for p in parts]
+        if sum(counts) != faces_before:
+            raise ValueError(f'{base}: {sum(counts)} faces after the split, {faces_before} before')
+        rep['objects'][base] = {'faces': faces_before, 'elements': len(parts), 'largest': counts[:10]}
+    out.parent.mkdir(parents=True, exist_ok=True)
+    bpy.ops.wm.save_as_mainfile(filepath=str(out), copy=True)
+    report.write_text(json.dumps(rep, indent=1))
+    print('SPLIT', json.dumps({k: (v['faces'], v['elements']) for k, v in rep['objects'].items()}))
+
+
 if __name__ == '__main__':
     a = sys.argv[sys.argv.index('--') + 1:]
-    if len(a) not in (5, 6):
+    if a[:1] == ['split'] and len(a) == 4:
+        split_main(*a[1:])
+    elif a[:1] == ['render'] and len(a) in (5, 6):
+        render_main(*a[1:])
+    elif a[:1] not in (['split'], ['render']) and len(a) in (5, 6):
+        main(*a)
+    else:
         raise SystemExit(__doc__)
-    main(*a)

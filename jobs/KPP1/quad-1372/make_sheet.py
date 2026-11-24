@@ -17,7 +17,7 @@ SETS = {  # camera rows and column labels per camera set of render_before_after.
     'corners': (['sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n'],  # #1563 SW / NW posts
                 'BEFORE: quad master v002 (from r1-v002)',
                 'AFTER: quad master v003 (from r1-v003 #1246)'),
-    'corners-v004': (['sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n'],  # #1609 option A (D357)
+    'corners-v004': (['sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n'],  # #1609 option A (D379)
                      'BEFORE: quad master v003 (rejected corners)',
                      'AFTER: v004 draft: W/S/N planes rebuilt whole, posts separate'),
     'ground-v004': ([f'{c}_ground' for c in ('sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n')],  # #1609 w13

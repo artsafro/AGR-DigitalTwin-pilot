@@ -1,6 +1,6 @@
 """KPP1 lattice body input + check (#1609 step 2, BM-00; Artem 2026-11-21: every level a closed ring).
 
-Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/lattice_input.py + lattice_check.py.
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py (`input` + `check`, was lattice_input.py + lattice_check.py).
 """
 import importlib.util
 import json
@@ -14,18 +14,18 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 D = ROOT / 'jobs/KPP1/lattice-1609'
-sys.path.insert(0, str(D))
+HOOK = ROOT / 'jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py'
+sys.path.insert(0, str(HOOK.parent))
 
 
 def _load(name):
-    spec = importlib.util.spec_from_file_location(name + '_1609', D / (name + '.py'))
+    spec = importlib.util.spec_from_file_location(name + '_1609', HOOK.parent / (name + '.py'))
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
     return m
 
 
-li = _load('lattice_input')
-lc = _load('lattice_check')
+li = lc = _load('kpp1_lattice')
 
 
 def line_list(extra_open=()):
@@ -174,10 +174,10 @@ def test_cli_refuses_alias_and_writes_atomically(tmp_path):
     src = tmp_path / 'll.json'
     src.write_text(json.dumps(line_list()), encoding='utf-8')
     before = src.read_bytes()
-    r = subprocess.run([sys.executable, str(D / 'lattice_input.py'), str(src), str(src)], capture_output=True, text=True)
+    r = subprocess.run([sys.executable, str(HOOK), 'input', str(src), str(src)], capture_output=True, text=True)
     assert r.returncode != 0 and 'aliases' in r.stdout + r.stderr and src.read_bytes() == before
     out = tmp_path / 'lat.json'
-    r = subprocess.run([sys.executable, str(D / 'lattice_input.py'), str(src), str(out), '--shift', '1', '2'],
+    r = subprocess.run([sys.executable, str(HOOK), 'input', str(src), str(out), '--shift', '1', '2'],
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     assert json.loads(out.read_text(encoding='utf-8'))['shift'] == [1.0, 2.0]

@@ -1,6 +1,6 @@
 """KPP1 lattice line list from the Revit openings/zones census (#1609 restart, BM-00, Artem 2026-11-21 dec. 2-3).
 
-Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/line_list.py.
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py `lines` (was line_list.py).
 """
 import copy
 import importlib.util
@@ -14,10 +14,10 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-_spec = importlib.util.spec_from_file_location('line_list_1609', ROOT / 'jobs/KPP1/lattice-1609/line_list.py')
+_spec = importlib.util.spec_from_file_location('line_list_1609', ROOT / 'jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py')
 ll = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ll)
-SCRIPT = ROOT / 'jobs/KPP1/lattice-1609/line_list.py'
+SCRIPT = ROOT / 'jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py'
 
 BANDS = [{'z0': -1.0, 'z1': 0.9, 'finish': 'plinth'}, {'z0': 0.9, 'z1': 2.7, 'finish': 'grey'},
          {'z0': 2.7, 'z1': 7.1, 'finish': 'blue'}, {'z0': 7.1, 'z1': 9.0, 'finish': 'top'}]
@@ -251,12 +251,12 @@ def test_cli_atomic_and_refuses_alias(tmp_path):
     bd.write_text(json.dumps({'bands': BANDS}), encoding='utf-8')
     snap = {p: p.read_bytes() for p in (a, b, bd)}
     for out in (a, b, bd):
-        r = subprocess.run([sys.executable, str(SCRIPT), str(a), str(b), str(out), '--bands', str(bd)],
+        r = subprocess.run([sys.executable, str(SCRIPT), 'lines', str(a), str(b), str(out), '--bands', str(bd)],
                            capture_output=True, text=True)
         assert r.returncode != 0 and 'aliases' in (r.stderr + r.stdout)
     assert {p: p.read_bytes() for p in (a, b, bd)} == snap
     out = tmp_path / 'out.json'
-    r = subprocess.run([sys.executable, str(SCRIPT), str(a), str(b), str(out), '--bands', str(bd)],
+    r = subprocess.run([sys.executable, str(SCRIPT), 'lines', str(a), str(b), str(out), '--bands', str(bd)],
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     d = json.loads(out.read_text(encoding='utf-8'))

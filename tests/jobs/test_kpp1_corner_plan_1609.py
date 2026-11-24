@@ -1,6 +1,6 @@
 """#1609 KPP1 quad master corners: pure planning kernel (posts as separate clean elements, conforming wall rectangle).
 
-Pattern: n/a | new-case: tests of jobs/KPP1/quad-1372/corner_plan.py.
+Pattern: n/a | new-case: tests of jobs/KPP1/lattice-1609/hooks/kpp1_elements.py (post voxels, was quad-1372/corner_plan.py).
 """
 import importlib.util
 import math
@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-spec = importlib.util.spec_from_file_location('corner_plan', ROOT / 'jobs/KPP1/quad-1372/corner_plan.py')
+spec = importlib.util.spec_from_file_location('corner_plan', ROOT / 'jobs/KPP1/lattice-1609/hooks/kpp1_elements.py')
 cp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cp)
 
@@ -216,7 +216,7 @@ def test_conform_rect_fail_closed_inputs():
         cp.conform_rect({1: [(-0.1, 0), (1, 0), (1, 1)]}, [], [], 0.5, 1, 0, 1)
 
 
-def _verify_plan(r, faces, items, edges, min_gap, tol=cp.TOL):
+def _verify_plan(r, faces, items, edges, min_gap, tol=cp.CORNER_TOL):
     """Independent check of a plan: whole faces, every kept border vertex a line, no line inside a kept edge."""
     S, z0, z1, cols, rows = r['S'], r['z0'], r['z1'], r['cols'], r['rows']
     inside = set(r['faces'])

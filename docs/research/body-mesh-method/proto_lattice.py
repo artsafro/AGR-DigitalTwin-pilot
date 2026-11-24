@@ -7,7 +7,7 @@ blender -b --factory-startup --python proto_lattice.py -- SRC.(fbx|blend) OUT_DI
         (--ring-bbox | --ring-json FLOOR.json) --zmin Z --zmax Z [--sides 0,1,2,3] [--reveal 0.25]
         [--plane-share 0.08] [--snap 0.02] [--lines LATTICE.json]
 
---lines (#1609, BM-00 input): the lattice JSON of jobs/KPP1/lattice-1609/lattice_input.py (ring = rings[0].xy,
+--lines (#1609, BM-00 input): the lattice JSON of jobs/KPP1/lattice-1609/hooks/kpp1_lattice.py input (ring = rings[0].xy,
 stations_s, levels, openings in s/z). Then steps 2 and 4 are replaced by that list (no source-vertex candidates, no
 reason filter - every listed level is a ring around all sides). Step 3: an opening cell of the list = ring plane +
 --reveal; any other cell keeps the source depth of its ray (approved geometry: <= 2 cm or in front = ring plane,
