@@ -815,13 +815,19 @@ def hatch_colour(hatch, spec_colour=None) -> tuple[tuple, str]:
     return tuple(spec_colour), "spec"
 
 
-def _placed_hatch_paths(doc, hatch, chain, chord):
-    """Resolve an outermost-first INSERT chain, then flatten in world units (including MINSERT cells)."""
+def _chain_matrices(doc, chain, owner_prefix: str):
+    """Resolve an outermost-first INSERT chain into validated transform matrices (outermost-first).
+
+    ``owner_prefix`` prefixes chain-level errors (``hatch 1A2`` or ``relief block NAME``); INSERT-level
+    errors keep their ``INSERT <handle>`` prefix. Returns ``(matrices, final_owner)`` where ``final_owner``
+    is the block-record handle of the block the last INSERT references (the block that owns the placed
+    entity). Non-uniform XY scales, singular/zero scales, tilted placements and non-finite values are
+    named errors (the covers-path conventions).
+    """
     from ezdxf.math import Vec3
-    from ezdxf.path import from_hatch
 
     if not isinstance(chain, list):
-        raise ValueError(f"hatch {hatch.dxf.handle}: insert_chain must be a list")
+        raise ValueError(f"{owner_prefix}: insert_chain must be a list")
     owner = doc.modelspace().block_record_handle
     matrices = []
     for ref in chain:
@@ -830,7 +836,7 @@ def _placed_hatch_paths(doc, hatch, chain, chord):
         elif isinstance(ref, dict) and set(ref) <= {"handle", "cell"}:
             handle, cell = ref.get("handle"), ref.get("cell")
         else:
-            raise ValueError(f"hatch {hatch.dxf.handle}: unsupported INSERT reference {ref!r}")
+            raise ValueError(f"{owner_prefix}: unsupported INSERT reference {ref!r}")
         ins = doc.entitydb.get(handle) if isinstance(handle, str) else None
         if ins is None or ins.dxftype() != "INSERT":
             raise ValueError(f"INSERT {handle!r}: not an INSERT in the DXF")
@@ -871,6 +877,14 @@ def _placed_hatch_paths(doc, hatch, chain, chord):
                 or abs(u.z) > 1e-12 * scale or abs(v.z) > 1e-12 * scale):
             raise ValueError(f"INSERT {handle}: non-uniform, singular or unsupported non-planar transform")
         matrices.append(matrix)
+    return matrices, owner
+
+
+def _placed_hatch_paths(doc, hatch, chain, chord):
+    """Resolve an outermost-first INSERT chain, then flatten in world units (including MINSERT cells)."""
+    from ezdxf.path import from_hatch
+
+    matrices, owner = _chain_matrices(doc, chain, f"hatch {hatch.dxf.handle}")
     if hatch.dxf.owner != owner:
         raise ValueError(f"hatch {hatch.dxf.handle}: insert_chain does not place its block definition")
     for path in from_hatch(hatch):
@@ -977,12 +991,50 @@ def relief_from_spec(spec_path: Path) -> tuple[list, dict]:
 
 
 def relief_from_dxf(doc, spec: dict, chord: float = 0.01) -> list:
-    """Native Z of planning marks (INSERT names) and design contours (layers) in a block or model space."""
+    """Planning marks (INSERT names) and design contours (layers), in model space or in a placed block.
+
+    Model space (no ``block``) is read directly and is unchanged. A ``block`` is placed by an explicit
+    outermost-first ``insert_chain`` (the covers-path conventions) and its marks/contours are transformed
+    into modelspace XYZ, so an identity INSERT gives unchanged coordinates. Reading a block definition in
+    its own local coordinates is an explicit opt-in via ``definition_only: true`` (no placement consulted).
+    A ``block`` with neither selector refuses and lists the INSERT handles that place it; never silently
+    assume identity placement. Non-finite source or transformed points are an error.
+    """
+    from ezdxf.math import Vec3
     from ezdxf.path import make_path
     name = spec.get("block")
-    space = doc.blocks.get(name) if name else doc.modelspace()
-    if space is None:
-        raise ValueError(f"relief block {name!r} not in the DXF")
+    chain = spec.get("insert_chain")
+    definition_only = spec.get("definition_only")
+    if definition_only is not None and not isinstance(definition_only, bool):
+        raise ValueError(f"relief: definition_only must be true/false, got {definition_only!r}")
+    if name is None:
+        if chain is not None or definition_only is not None:
+            raise ValueError("relief: insert_chain / definition_only need a block")
+        space = doc.modelspace()
+        matrices = []
+    else:
+        block = doc.blocks.get(name)
+        if block is None:
+            raise ValueError(f"relief block {name!r} not in the DXF")
+        if definition_only and chain is not None:
+            raise ValueError("relief: definition_only and insert_chain are mutually exclusive")
+        if not definition_only and chain is None:
+            handles = sorted(e.dxf.handle for e in doc.modelspace()
+                             if e.dxftype() == "INSERT" and e.dxf.name == name)
+            if handles:
+                raise ValueError(
+                    f"relief block {name!r}: placement must be explicit; INSERT handles that place it: "
+                    f"{', '.join(handles)} - give insert_chain (or definition_only: true for its local "
+                    f"coordinates)")
+            raise ValueError(f"relief block {name!r}: not placed in model space; give insert_chain or "
+                             f"definition_only: true")
+        if definition_only:
+            matrices = []
+        else:
+            matrices, owner = _chain_matrices(doc, chain, f"relief block {name!r}")
+            if owner != block.block_record_handle:
+                raise ValueError(f"relief block {name!r}: insert_chain does not place this block definition")
+        space = block
     inserts, layers = set(spec.get("insert_names") or []), set(spec.get("contour_layers") or [])
     if not inserts and not layers:
         raise ValueError("relief needs insert_names and/or contour_layers")
@@ -992,6 +1044,16 @@ def relief_from_dxf(doc, spec: dict, chord: float = 0.01) -> list:
             pts.append(tuple(e.dxf.insert))
         elif e.dxf.layer in layers and e.dxftype() in ("LWPOLYLINE", "POLYLINE", "LINE", "SPLINE"):
             pts += [tuple(p) for p in make_path(e).flattening(chord)]
+    if matrices:
+        out = []
+        for p in pts:
+            v = Vec3(*p)
+            for matrix in reversed(matrices):
+                v = matrix.transform(v)
+            out.append((v.x, v.y, v.z))
+        pts = out
+    if not all(math.isfinite(x) for p in pts for x in p):
+        raise ValueError(f"relief: non-finite point in {name or 'model space'}")
     if len(pts) < 3:
         raise ValueError(f"relief: {len(pts)} points found in {name or 'model space'}")
     return pts
