@@ -553,19 +553,24 @@ def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list
     return True
 
 
-def add_unused_roles(st: dict[str, Stage], master, compared: str | None, oks_reason: str | None, notes: list[str]):
+def _same_file(a, b) -> bool:
+    return os.path.normcase(str(Path(a).resolve())) == os.path.normcase(str(Path(b).resolve()))
+
+
+def add_unused_roles(st: dict[str, Stage], master, compared: str | None, read: Path | None, oks_reason: str | None,
+                     notes: list[str]):
     """#1810: one V001 not_run `master_role_unused` per explicit --master role that no check used; never fail/pass.
 
-    compared: None = the build manifest compared every given role, else why it did not; oks_reason: None = the V003
-    quad readback took the oks input, else why not. Hashing a file is not a use. An unkeyed path is not a role and
-    keeps its note."""
+    compared: None = the build manifest compared every given role, else why it did not; read: the file the V003 quad
+    check took (a role whose every source is that file, under any spelling, was used); oks_reason: why the oks input
+    was not read. Hashing a file is not a use. An unkeyed path is not a role and keeps its note."""
     if compared is None or not isinstance(master, dict) or "V001" not in st:
         return
     for role in sorted(master):
-        if role == "oks" and oks_reason is None:
-            continue  # the independent OKS quad check used this input
-        reason = compared + (f"; {oks_reason}" if role == "oks" else "")
         paths = master[role] if isinstance(master[role], list) else [master[role]]
+        if read is not None and all(_same_file(p, read) for p in paths):
+            continue  # the independent OKS quad check used this input
+        reason = compared + (f"; {oks_reason}" if role == "oks" and oks_reason else "")
         names = ", ".join(Path(p).name for p in paths)
         st["V001"].findings.append(finding(
             "not_run", "master role", f"--master {role}={names} unused: {reason}",
@@ -699,7 +704,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     # profiles check Ground footprint coverage. Anywhere else the value is unused.
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
     quad = master.get('oks') if isinstance(master, dict) else master
-    oks_reason = None
+    oks_reason, read = None, None
     if isinstance(quad, list):
         notes.append('multiple OKS sources: quad master not selected; V003 master check remains not_run')
         oks_reason = "several OKS sources: the quad master check takes one work FBX and never picks one [D332]"
@@ -707,12 +712,14 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     elif quad is not None:
         quad = Path(quad)
     if scene_readback:
-        if not add_master(st, kind, quad, notes) and oks_reason is None:
+        if add_master(st, kind, quad, notes):
+            read = quad
+        elif oks_reason is None:
             oks_reason = f"the {str(kind).upper()} profile has no V003 quad master check"
     elif quad is not None:
         notes.append(f"master {quad.name} unused: the master check runs with --scene on a ZIP or FBX")
         oks_reason = "the quad master check runs only with --scene on a ZIP or FBX"
-    add_unused_roles(st, master, compared, oks_reason, notes)
+    add_unused_roles(st, master, compared, read, oks_reason, notes)
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:
