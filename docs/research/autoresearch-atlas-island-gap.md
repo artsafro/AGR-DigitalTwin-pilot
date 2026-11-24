@@ -68,4 +68,23 @@ Receipt: `docs/research/atlas-island-gap-r69/receipt.json`.
 
 ## Round log
 
-(filled after the run)
+### R1 (frozen contract, SM_Nku_1.fbx) - wall 6.099 s, status complete, 3 fresh readbacks per version
+
+- Crash before R1 proper: `UCX_SM_Nku_1_Main_001: no polygon_uv` -> UCX collision meshes skipped
+  (commit "skip UCX collision meshes"); no metric was computed before that fix.
+- Every same-tile island pair on every tile OVERLAPS (v007 textured 3/3 pairs, v010 10/10; solid tiles
+  all overlap too). Measured non-overlapping gaps: 0 in both versions -> N69 = 0/0 is an EMPTY check.
+  The frozen harness printed `refuted`; by the contract's not-measured rule this is **not measured**:
+  H69 (R1) = **inconclusive (not applicable)**; W1/W2 `not_exercised` (no pair >= 8 px exists).
+- Overlap count does not calibrate either: rejected v007 3 < accepted v010 10 (wrong direction).
+- Side finding: `export_meta.json` binds `SM_Nku_1.zip` to `package-vpm` and `export_npm_meta.json`
+  binds `0000_Nku_1.zip` to `package-npm`. SM_Nku_1 is the VPM (UDIM, 4K tiles), not the NPM;
+  #65-#68 called it NPM. The NPM is `0000_Nku_1_01.fbx` on the 2048 atlas `T_Nku_1_001_Main_d_1.png`.
+
+### R2 amendment (frozen BEFORE running R2)
+
+Same metric, same code path, on the real NPM: `0000_Nku_1_01.fbx` from `0000_Nku_1.zip`, tile px =
+decoded side of `T_Nku_1_001_Main_d_1.png` next to the ZIP (pinned), floor 8 px (NPM, reg p.9 §5.4).
+H69b: N69(NPM v007) > N69(NPM v010). Empty gap set -> inconclusive (now enforced in code:
+`measured_gaps == 0` -> not applicable). Same witnesses W1/W2 on v010, same 3 fresh readbacks, same budget.
+Expected: islands of different atlas cells are disjoint (gap >= 2 x pad of `npm_atlas.json`).

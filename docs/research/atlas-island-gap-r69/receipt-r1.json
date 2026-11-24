@@ -1,0 +1,428 @@
+{
+ "card": "t_de9ede95",
+ "contract": "docs/research/autoresearch-atlas-island-gap.md",
+ "base": "4288c54de328db7a5037b57707862319f7aa6ff0",
+ "pins": {
+  "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+  "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+  "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb"
+ },
+ "labels": {
+  "v007": "rejected",
+  "v010": "accepted"
+ },
+ "status": "complete",
+ "wall_s": 6.099,
+ "rounds": [
+  {
+   "v007": {
+    "N69": 0,
+    "overlap_pairs_textured": 3,
+    "min_gap_px_textured": null,
+    "applicable": true,
+    "tiles": {
+     "1001": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 3,
+      "pairs": 3,
+      "overlap_pairs": 3,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1002": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 2,
+      "pairs": 1,
+      "overlap_pairs": 1,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1003": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1004": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 16,
+      "pairs": 120,
+      "overlap_pairs": 120,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     }
+    },
+    "readback_s": 0.949,
+    "fbx_sha256": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b"
+   },
+   "v010": {
+    "N69": 0,
+    "overlap_pairs_textured": 10,
+    "min_gap_px_textured": null,
+    "applicable": true,
+    "tiles": {
+     "1001": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 5,
+      "pairs": 10,
+      "overlap_pairs": 10,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1002": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1003": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 2,
+      "pairs": 1,
+      "overlap_pairs": 1,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1004": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1005": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 16,
+      "pairs": 120,
+      "overlap_pairs": 120,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     }
+    },
+    "readback_s": 1.013,
+    "fbx_sha256": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+    "witness": {
+     "W1_4px": null,
+     "W2_9px": null
+    }
+   }
+  },
+  {
+   "v007": {
+    "N69": 0,
+    "overlap_pairs_textured": 3,
+    "min_gap_px_textured": null,
+    "applicable": true,
+    "tiles": {
+     "1001": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 3,
+      "pairs": 3,
+      "overlap_pairs": 3,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1002": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 2,
+      "pairs": 1,
+      "overlap_pairs": 1,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1003": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1004": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 16,
+      "pairs": 120,
+      "overlap_pairs": 120,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     }
+    },
+    "readback_s": 0.956,
+    "fbx_sha256": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b"
+   },
+   "v010": {
+    "N69": 0,
+    "overlap_pairs_textured": 10,
+    "min_gap_px_textured": null,
+    "applicable": true,
+    "tiles": {
+     "1001": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 5,
+      "pairs": 10,
+      "overlap_pairs": 10,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1002": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1003": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 2,
+      "pairs": 1,
+      "overlap_pairs": 1,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1004": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1005": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 16,
+      "pairs": 120,
+      "overlap_pairs": 120,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     }
+    },
+    "readback_s": 0.958,
+    "fbx_sha256": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+    "witness": {
+     "W1_4px": null,
+     "W2_9px": null
+    }
+   }
+  },
+  {
+   "v007": {
+    "N69": 0,
+    "overlap_pairs_textured": 3,
+    "min_gap_px_textured": null,
+    "applicable": true,
+    "tiles": {
+     "1001": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 3,
+      "pairs": 3,
+      "overlap_pairs": 3,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1002": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 2,
+      "pairs": 1,
+      "overlap_pairs": 1,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1003": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1004": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 16,
+      "pairs": 120,
+      "overlap_pairs": 120,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     }
+    },
+    "readback_s": 0.981,
+    "fbx_sha256": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b"
+   },
+   "v010": {
+    "N69": 0,
+    "overlap_pairs_textured": 10,
+    "min_gap_px_textured": null,
+    "applicable": true,
+    "tiles": {
+     "1001": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 5,
+      "pairs": 10,
+      "overlap_pairs": 10,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1002": {
+      "tile_px": 4096,
+      "textured": true,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1003": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 2,
+      "pairs": 1,
+      "overlap_pairs": 1,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1004": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 1,
+      "pairs": 0,
+      "overlap_pairs": 0,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     },
+     "1005": {
+      "tile_px": 256,
+      "textured": false,
+      "islands": 16,
+      "pairs": 120,
+      "overlap_pairs": 120,
+      "sub_floor_pairs": 0,
+      "sub_floor": [],
+      "min_gap_px": null
+     }
+    },
+    "readback_s": 0.972,
+    "fbx_sha256": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+    "witness": {
+     "W1_4px": null,
+     "W2_9px": null
+    }
+   }
+  }
+ ],
+ "summary": {
+  "v007": {
+   "N69": {
+    "values": [
+     0,
+     0,
+     0
+    ],
+    "spread": 0
+   },
+   "min_gap_px_textured": {
+    "values": [
+     null,
+     null,
+     null
+    ],
+    "spread": null
+   },
+   "overlap_pairs_textured": {
+    "values": [
+     3,
+     3,
+     3
+    ],
+    "spread": 0
+   }
+  },
+  "v010": {
+   "N69": {
+    "values": [
+     0,
+     0,
+     0
+    ],
+    "spread": 0
+   },
+   "min_gap_px_textured": {
+    "values": [
+     null,
+     null,
+     null
+    ],
+    "spread": null
+   },
+   "overlap_pairs_textured": {
+    "values": [
+     10,
+     10,
+     10
+    ],
+    "spread": 0
+   }
+  }
+ },
+ "stable": true,
+ "applicable": true,
+ "N69_median": {
+  "v007": 0,
+  "v010": 0
+ },
+ "H69": "refuted",
+ "rule_fires_on_accepted_control": false
+}
