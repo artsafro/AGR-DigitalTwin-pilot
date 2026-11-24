@@ -414,12 +414,6 @@ def carry_v003(path, report, body_tree):
     bm.transform(g.matrix_world.inverted())
     bm.to_mesh(g.data)
     bm.free()
-    for slot in g.material_slots:
-        if slot.material is not None and slot.material.name.split('.')[0] == 'M_Kpp_1_MainGlass_1':
-            other_mat = bpy.data.materials.get('M_Kpp_1_MainGlass_1')
-            if other_mat is not None and other_mat is not slot.material:
-                other_mat.name = 'M_Kpp_1_MainGlass_1_unused'
-            slot.material.name = 'M_Kpp_1_MainGlass_1'
     report['glass_split'] = report_split
     report['glass'] = {'cap_m': GLASS_CAP, 'components': moved, 'outside_ring': kept,
                        'shifted': sum(1 for m in moved if m['shift_m'])}
@@ -574,13 +568,14 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
         dg = bpy.context.evaluated_depsgraph_get()
         carried = carry_v003(v003_fbx, carry_rep, BVHTree.FromObject(objs['SM_Kpp_1_Main'], dg))
     os.makedirs(out)
-    for m in list(bpy.data.materials):          # V012: regulation material names, no import suffix (.001)
-        base = m.name.split('.')[0]
-        if m.users and base != m.name and base in ('M_Kpp_1_Main_1', 'M_Kpp_1_MainGlass_1'):
-            clash = bpy.data.materials.get(base)
-            if clash is not None and clash is not m:
-                clash.name = base + '_unused'
-            m.name = base
+    glass_mat = carried['SM_Kpp_1_MainGlass'].material_slots[0].material if carried else None
+    for target, want in ((mat, 'M_Kpp_1_Main_1'), (glass_mat, 'M_Kpp_1_MainGlass_1')):
+        if target is None:                       # V012: regulation material names, no import suffix (.001)
+            continue
+        clash = bpy.data.materials.get(want)
+        if clash is not None and clash is not target:
+            clash.name = want + '_unused'
+        target.name = want
     rep = {'inputs': {'body_fbx': os.path.abspath(body_fbx), 'body_sha256': sha(body_fbx),
                       'quad_v003_fbx': os.path.abspath(v003_fbx), 'quad_v003_sha256': sha(v003_fbx),
                       'tex_dir': os.path.abspath(tex_dir), 'v003_textures': os.path.abspath(v003_textures),
