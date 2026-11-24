@@ -47,6 +47,8 @@ def islands(rb):
     """{tile: [(face ids, shapely union in tile UV 0..1)]}, faces joined by a shared UV edge on one tile."""
     faces = []  # (tile, local uv ring)
     for mesh in rb["meshes"]:
+        if str(mesh.get("name", "")).startswith("UCX_"):  # collision hulls carry no UV (R1 crash, see log)
+            continue
         for _, _, uv, _ in _polygons(mesh):
             tile, (u0, v0) = _tile(uv)
             faces.append((tile, [(u - u0, v - v0) for u, v in uv]))
