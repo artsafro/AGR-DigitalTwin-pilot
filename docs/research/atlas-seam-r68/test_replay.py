@@ -9,7 +9,27 @@ import numpy as np
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from replay import measure  # noqa: E402
+from replay import measure, summarize  # noqa: E402
+
+
+def test_raw_parity_accepts_json_tile_keys_but_not_changed_raw_values():
+    import json
+
+    def row(ratio):
+        states = {key: {"tiles": {1001: {"samples": 10}}, "score": 0.1,
+                        "changed_faces": 10 if shift else 0, "non_target_changed_faces": 0,
+                        "contrast": {"samples": 10, "ratio": ratio + shift, "rgb_vectors_changed": shift}}
+                  for key, shift in (("clean", 0), ("+2px", 2), ("+5px", 5))}
+        return {"states": states}
+
+    pair = {"v007": row(2), "v010": row(1)}
+    ref = json.loads(json.dumps(pair))
+    for label in ref.values():
+        for state in label["states"].values():
+            state.pop("contrast")
+    assert summarize([pair] * 3, ref)["hypothesis"] == "confirmed"
+    ref["v007"]["states"]["+2px"]["score"] = 0.2
+    assert summarize([pair] * 3, ref)["hypothesis"] == "inconclusive"
 
 SIDE = 64
 LINE_ROW = 38  # one dark horizontal "joint" row, uniform along u

@@ -1,5 +1,23 @@
 # Standing #68 — AC08 contrast-normalized seam readback (OBSERVE)
 
+**Итог: гипотеза подтверждена только на AC08.** После поправки на локальный контраст отклонённая v007 всё ещё хуже визуально принятой v010: 0,69425 против 0,52201, разница +0,17224 при пороге +0,13050. Три свежие пары дали одинаковый результат. Но сдвиг на 5 px изменил оценку всего на +0,000057 / +0,005788: это не доказательство, что разницу объясняет именно фаза шва. Пакеты, производственный код и правила приёмки не менялись.
+
+## Completed rounds
+
+1. R1 ([receipt](atlas-seam-r68/receipt-r1.json)): three fresh pairs, 8.312 s; `inconclusive` because the parity check compared in-process integer tile keys with JSON string tile keys. The recorded raw rows did match when compared as JSON. Keep this receipt unchanged.
+2. R2 ([receipt](atlas-seam-r68/receipt.json)): test-first parity repair (the regression failed `inconclusive != confirmed` and protects against an actual raw value change). Same metric, assets and budget; three new pairs, 2.525/2.439/2.422 s, 7.716 s total, completed. All six fresh readback result rows equal R1 apart from time; raw #67 per-state parity exact, and all input hashes matched again after the run. Candidate SHA-256 `0951dda6840a6e6d4990dee981f6cbc77ad33f3fe39147833f722a1fdb51d4d6`.
+
+| AC08 label | Eligible of 9,522 locations | Cross / within RGB error, clean | Clean C68 | +2 px C68 / changed RGB vectors | +5 px C68 / changed RGB vectors |
+|---|---:|---:|---:|---:|---:|
+| v007 rejected | 9,393 | 0.142067 / 0.204633 | 0.694254 | 0.694278 / 7,423 | 0.694311 / 10,844 |
+| v010 accepted visually | 9,398 | 0.069945 / 0.133990 | 0.522011 | 0.523965 / 7,063 | 0.527799 / 10,491 |
+
+Each nonzero shift selected ten target faces and zero non-target faces per label; clean changed zero faces and zero vectors. Counts are across both offsets and both sides, not unique pixels. The positive shift requirement was exercised on both labels; the synthetic explicit phase break and unclipped 2x gain control passed. Median paired difference +0.1722429444 (range 0) exceeds +0.1305027766; denominator floor did not activate. **Confirmed on this pair, not on the wider corpus.** Not measured: v010 tile 1002 (no eligible seam), solid tiles, cross-UDIM edges, NPM/VPM render drift, other OKS/MAF, and any native shift/export. The contrast correction does not isolate phase from different bakes or joint spacing. Do not keep a production change; use an independently labelled board-seam pair before proposing a gate.
+
+Affected tests: `uv run --frozen pytest -q docs/research/atlas-seam-r68/test_replay.py tests/qa/test_sintez_uv_1732.py` — 49 passed.
+
+Full suite: deferred to merge batch (rule 68).
+
 ## Frozen contract (before candidate code or scoring)
 
 H68: after normalization by local Diffuse variation, visually rejected AC08 pilot v007 still scores worse than visually accepted pilot v010. Label sources: issue #559 comments 6341991856 (wrong seams/pitch) and 6345392389 (visual acceptance). This is not a regulatory check or a delivery verdict.

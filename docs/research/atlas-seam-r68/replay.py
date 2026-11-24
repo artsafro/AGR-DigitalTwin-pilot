@@ -261,11 +261,12 @@ def summarize(rounds, reference):
     scores = {v: {k: stats([c(r[v], k)["ratio"] for r in rounds]) for k in STATES} for v in VERSIONS}
     delta = stats([c(r["v007"], "clean")["ratio"] - c(r["v010"], "clean")["ratio"] for r in rounds])
     stable = all(r[v] == rounds[0][v] for r in rounds for v in VERSIONS)
-    parity = all(
-        r[v] | {"states": {k: {a: b for a, b in row.items() if a != "contrast"}
-                            for k, row in r[v]["states"].items()}} == reference[v]
-        for r in rounds for v in VERSIONS
-    )
+    def legacy_json(row):
+        states = {k: {a: b for a, b in state.items() if a != "contrast"} for k, state in row["states"].items()}
+        # Compare in the receipt's actual representation: JSON turns integer tile keys into strings.
+        return json.loads(json.dumps(row | {"states": states}))
+
+    parity = all(legacy_json(r[v]) == reference[v] for r in rounds for v in VERSIONS)
     support = all(
         len({c(r[v], k)["samples"] for k in STATES}) == 1
         and 10 * c(r[v], "clean")["samples"] >= 9 * sum(t["samples"] for t in r[v]["states"]["clean"]["tiles"].values())
