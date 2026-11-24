@@ -19,3 +19,19 @@ Replay: `uv run --frozen python docs/research/atlas-texel-r66/replay.py tmp/r66-
 | v007 planning JSON | `9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2` |
 | v010 planning JSON | `338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc` |
 | Blender executable | `1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5` |
+
+## R1 — refuted; completed, OBSERVE only
+
+**Итог:** плотность не отличила отклонённую v007 от принятой v010: на обеих версиях около 1000 px/m по всем проверенным 4K ID. Проверка видит искусственное изменение масштаба UV, но не заменяет проверку количества, шага и фазы швов. Не включать этот сигнал как порог приёмки АС.08; пакеты и производственный код не менялись.
+
+Three fresh pairs (3.469 / 3.037 / 3.037 s; total 9.869 s). Clean E66 v007 = `4.07612e-8`, v010 = `5.29454e-8`; median paired rejected-minus-accepted = `−1.21841e-8`, spread 0. The accepted bound passes and the required separation fails (the rejected score is numerically lower). All six state scores have spread 0. Clean density on each of the three IDs is within 0.001 px/m of 1000, including the observed per-face extrema.
+
+| Version / textured tile | Clean faces; median px/m | Changed faces / UV loops at each factor | 0.75 / 0.50 median px/m |
+| --- | ---: | ---: | ---: |
+| v007 / 1001 | 38; 1000.000041 | 38 / 114 | 750.000031 / 500.000020 |
+| v010 / 1001 | 30; 1000.000053 | 30 / 90 | 750.000040 / 500.000026 |
+| v010 / 1002 | 8; 999.999983 | 8 / 24 | 749.999987 / 499.999992 |
+
+Per version, 348 faces on three 256 px IDs were excluded and unchanged; they are **not measured** for density. Clean changes were zero for every measured ID. Injected states were exercised on both labels; their reported results are on readback arrays, not evidence of a native export after injection. Pinned input hashes and reference-code parity held after the run. [Machine receipt](atlas-texel-r66/receipt.json) retains round-level results, FBX member and runner hashes. Same command for idle-slot replay if the frozen timing condition stops a later run. No KPP1/MAF/Staropetrovskiy, VPM, padding/bleed or seam measurement in R1.
+
+RED (research-only tests before runner): import missing (`ModuleNotFoundError: replay`); no production regression was in scope. Affected tests: `uv run --frozen python -m pytest -q --import-mode=prepend docs/research/atlas-texel-r66/test_replay.py tests/qa/test_sintez_uv_1732.py tests/qa/test_texel_metric_divergence.py` — 53 passed. Pilot guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 553 passed. Full suite: deferred to merge batch (rule 68); no merge requested.
