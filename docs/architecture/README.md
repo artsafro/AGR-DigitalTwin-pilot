@@ -427,6 +427,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/job-retro-vyatskaya-tow02-pr392 | [research/job-retro-vyatskaya-tow02-pr392.md](../research/job-retro-vyatskaya-tow02-pr392.md) |  |
 | research/job-retro-vyatskaya-tow02-pr515 | [research/job-retro-vyatskaya-tow02-pr515.md](../research/job-retro-vyatskaya-tow02-pr515.md) |  |
 | research/kpi-card-kind-attribution-boundary | [research/kpi-card-kind-attribution-boundary.md](../research/kpi-card-kind-attribution-boundary.md) |  |
+| research/kpp1-cold-skeleton-1608 | [research/kpp1-cold-skeleton-1608.md](../research/kpp1-cold-skeleton-1608.md) |  |
 | research/link-info-inherit-fbx-2026-11 | [research/link-info-inherit-fbx-2026-11.md](../research/link-info-inherit-fbx-2026-11.md) |  |
 | research/maf-npm-to-vpm-1745 | [research/maf-npm-to-vpm-1745.md](../research/maf-npm-to-vpm-1745.md) |  |
 | research/max-ultra-mcp-vs-agr-mcp-plan | [research/max-ultra-mcp-vs-agr-mcp-plan.md](../research/max-ultra-mcp-vs-agr-mcp-plan.md) |  |
