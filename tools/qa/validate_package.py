@@ -11,7 +11,8 @@ UV islands, UCX, coordinates) are not_run unless --scene runs the Blender readba
 (tools/blender/fbx_readback.py) on every FBX.
 Manual stages (V015-V017) always need a signed review.
 --master reads the quad work FBX back (DER-03, [D021], [D198]): V003 "master quads" / "master quad size";
-with --scene and no --master that part of V003 stays not_run.
+with --scene and no --master that part of V003 stays not_run. An explicit `--master role=PATH` that neither the build
+manifest compared nor the quad check read is a V001 not_run `master_role_unused` naming the role and why (#1810).
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
@@ -494,10 +495,12 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
 
 
 def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: dict[str, bytes],
-                       master: Path | dict | None, manifest: Path | None, notes: list[str], kind: str | None = None):
+                       master: Path | dict | None, manifest: Path | None, notes: list[str],
+                       kind: str | None = None) -> str | None:
     """V001 "build manifest" findings of one ZIP (#1423); the manifest file and the master are read, never written.
 
-    master: one path, or {role: path} ([D328]: OKS master, Ground source)."""
+    master: one path, or {role: path} ([D328]: OKS master, Ground source). Returns None when the manifest compared
+    the given master roles (match, stale or foreign role), else why no role was compared (#1810)."""
     path = manifest if manifest is not None else Path(build_manifest.manifest_path(target))
     if os.path.normcase(str(path.resolve())) == os.path.normcase(str(target.resolve())):
         raise ValueError(f"build manifest {path} is the package itself")
@@ -520,27 +523,56 @@ def add_build_manifest(st: dict[str, Stage], target: Path, data: bytes, files: d
         v1.findings.append(finding(status, "build manifest", detail, "one master revision; hashes of every zipped "
                                    "artifact and check report match; required checks passed (#1423)",
                                    v1.source_pdf_pages, path.name, data={"code": code} if status != "pass" else None))
-    if raw is not None:
-        notes.append(f"build manifest: {path.name}")
+    if raw is None:
+        return f"no build manifest {path.name} beside {target.name}, so the stale check compared no master"
+    notes.append(f"build manifest: {path.name}")
+    if not members or any(code == "manifest_unreadable" for _, code, _ in rows):
+        return f"build manifest {path.name} could not be read against the package, so no master was compared"
+    return None
 
 
-def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list[str]):
-    """DER-03 quad master: read the work FBX back, or leave V003 'master quads' not_run ([D021], [D198])."""
+def add_master(st: dict[str, Stage], kind: str, master: Path | None, notes: list[str]) -> bool:
+    """DER-03 quad master: read the work FBX back, or leave V003 'master quads' not_run ([D021], [D198]).
+
+    True when the V003 check took the master input (a failed readback is its own V003 not_run naming the file)."""
     if "V003" not in st:
-        return
+        return False
     if master is None:
         st["V003"].findings.append(finding("not_run", "master quads", "quad work FBX not given (--master)",
                                            "quad master; VPM faces <= 4 m [D021]", [8, 29], "DER-03"))
-        return
+        return False
     try:
         rb = readback(master)
     except (OSError, RuntimeError) as exc:
         notes.append(f"master readback skipped for {master.name}: {exc}")
         st["V003"].findings.append(finding("not_run", "master quads", f"{master.name}: readback failed",
                                            "quad master; VPM faces <= 4 m [D021]", [8, 29], "DER-03"))
-        return
+        return True
     st["V003"].findings.extend(master_findings(rb, kind))
     notes.append(f"master readback: {master.name} in Blender {rb.get('blender')}")
+    return True
+
+
+def add_unused_roles(st: dict[str, Stage], master, compared: str | None, oks_reason: str | None, notes: list[str]):
+    """#1810: one V001 not_run `master_role_unused` per explicit --master role that no check used; never fail/pass.
+
+    compared: None = the build manifest compared every given role, else why it did not; oks_reason: None = the V003
+    quad readback took the oks input, else why not. Hashing a file is not a use. An unkeyed path is not a role and
+    keeps its note."""
+    if compared is None or not isinstance(master, dict) or "V001" not in st:
+        return
+    for role in sorted(master):
+        if role == "oks" and oks_reason is None:
+            continue  # the independent OKS quad check used this input
+        reason = compared + (f"; {oks_reason}" if role == "oks" else "")
+        paths = master[role] if isinstance(master[role], list) else [master[role]]
+        names = ", ".join(Path(p).name for p in paths)
+        st["V001"].findings.append(finding(
+            "not_run", "master role", f"--master {role}={names} unused: {reason}",
+            "every given master role compared by the build manifest or used by the quad master check (#1810)",
+            st["V001"].source_pdf_pages, names,
+            data={"code": "master_role_unused", "role": role, "reason": reason, "paths": [str(p) for p in paths]}))
+        notes.append(f"master role {role} unused: {reason}")
 
 
 def _resolve_npm_atlas(npm_atlas, target: Path, files: dict, kind, scene: bool, notes: list[str]) -> dict:
@@ -588,6 +620,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     data = target.read_bytes()
     suffix = target.suffix.lower()
     files, notes = {}, []
+    compared = f"a single {suffix or 'extensionless'} file has no build manifest, so no master was compared"
     if suffix == ".geojson":
         kind = "vpm"
     elif kind is None and suffix in (".zip", ".fbx"):
@@ -641,7 +674,7 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
         diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
-        add_build_manifest(st, target, data, files, master, manifest, notes, kind)
+        compared = add_build_manifest(st, target, data, files, master, manifest, notes, kind)
         if scene:
             add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
                       ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta, atlases)
@@ -666,15 +699,20 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     # profiles check Ground footprint coverage. Anywhere else the value is unused.
     scene_readback = bool(scene and kind in ("vpm", "npm") and suffix in (".zip", ".fbx"))
     quad = master.get('oks') if isinstance(master, dict) else master
+    oks_reason = None
     if isinstance(quad, list):
         notes.append('multiple OKS sources: quad master not selected; V003 master check remains not_run')
+        oks_reason = "several OKS sources: the quad master check takes one work FBX and never picks one [D332]"
         quad = None  # [D332]: independent dependencies are not permission to choose the first source.
     elif quad is not None:
         quad = Path(quad)
     if scene_readback:
-        add_master(st, kind, quad, notes)
+        if not add_master(st, kind, quad, notes) and oks_reason is None:
+            oks_reason = f"the {str(kind).upper()} profile has no V003 quad master check"
     elif quad is not None:
         notes.append(f"master {quad.name} unused: the master check runs with --scene on a ZIP or FBX")
+        oks_reason = "the quad master check runs only with --scene on a ZIP or FBX"
+    add_unused_roles(st, master, compared, oks_reason, notes)
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:
