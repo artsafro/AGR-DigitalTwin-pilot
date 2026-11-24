@@ -84,3 +84,50 @@ Evidence root `C:/x/autoresearch-body-form-r49/` mirrored to `G:/Мой диск
 #41/#45/#47 composites): copy the scripts into `E`, copy the 16 composites as listed in `FROZEN-before-judge.sha256`,
 then `sha256sum -c FROZEN-before-judge.sha256 && python judge49.py one && python judge49.py pair && python
 aggregate49.py`. Judge answers are fresh samples. Replay limited to this PC.
+
+---
+
+## Round log and result (appended after judging; the contract above is unchanged since `027a63df`)
+
+**Итог (по-русски).** Гипотеза H49 по замороженным правилам — **inconclusive** (не подтверждена и не опровергнута):
+E49 = 2 из 28 ячеек. Вопрос эквивалентности **убрал** ошибку #47: на шуме до 33 мм (N_jit_0.020) оба судьи в
+обоих порядках ответили «одинаковые» (вопрос «что лучше» там выбирал A у обоих). На всех копиях той же формы
+(A–A, триангуляция, подразбиение, шум 5 и 20 мм) — 10/10 «одинаковые», ложных «разные» 0. Отклонённый Артёмом R оба
+судьи назвали «разные» (калибровка выполнена). Обе ошибки — одна ячейка: **фаска угла 0,10 м** (отклонение 7 см,
+вне допуска 5 см; C1 #43 её ловит) — оба судьи «одинаковые» в обоих порядках. Обнаружение: Claude 8/9, Codex 7/9
+(у Codex фаска 0,20 — разные ответы в двух порядках, нет решения). Граничные ячейки (внутри допуска, в E49 не входят):
+ниша 0,03 м — оба «разные» (рендер показывает закрытую нишу тенью, хотя просили не считать < 5 см), фаска 0,05 —
+оба «одинаковые». Вывод: ни один вопрос не является гейтом по допуску. «Что лучше» чувствителен, но реагирует на
+чистоту рендера; «одинаково ли» устойчив к сетке и шуму, но слеп к фаске ~7 см и, наоборот, видит нишу 3 см. Углы
+по-прежнему нужно мерить сценовым readback (#43 C1), а рендер-судью использовать как ранжирование/вторую пару глаз.
+Ничего не внедрено (OBSERVE), тела, кадры и чужие улики не менялись.
+
+| Cell (A vs …) | Truth | Claude AB / BA → cell | Codex AB / BA → cell | «better» #41/#45/#47 (claude / codex) |
+|---|---|---|---|---|
+| AA, N_tri, N_sub, N_jit_0.005 | Same | Same ×4 | Same ×4 | no decision ×4 / ×4 (Unsure) |
+| N_jit_0.020 (stress) | Same | Same | Same | **Different / Different** (picked A) |
+| R (Artem rejected) | Different | Different | Different | Different / Different |
+| W_recess, W_corner | Different | Different | Different | (#41 witnesses) Different / Different |
+| P_recess_0.20 / 0.11 / 0.06 | Different | Different ×3 | Different ×3 | Different ×3 / ×3 |
+| P_corner_0.40 | Different | Different | Different | Different / Different |
+| P_corner_0.20 | Different | Different | Different / Same → no decision | Different / Different |
+| **P_corner_0.10** | Different | **Same / Same → Same (error)** | **Same / Same → Same (error)** | Different / Different |
+| P_recess_0.03 (boundary) | Same by tol. | Different | Different | Different / Different |
+| P_corner_0.05 (boundary) | Same by tol. | Same | Same | no decision / no decision |
+
+E49 = 2 (claude 1, codex 1, both P_corner_0.10). Decided 14/14 (claude), 13/14 (codex). Judge↔judge on 15 cells
+both decided: 15/15, Cohen's κ = 1.0 (small n, one fragment). Mapped «better» baseline on the same 14 scored cells:
+2 errors as well (both on N_jit_0.020), i.e. the error moved from specificity to corner sensitivity — not removed.
+Calls 64/64 parsed, 0 failed, 0 repairs, 0 retries; batch wall 145.3 s (4 workers), per-call max 19.3 s, sum 594.5 s;
+status complete, no budget stop. Inputs re-checked after judging: `sha256sum -c FROZEN-before-judge.sha256` 16/16 OK.
+
+**Not measured:** a second accepted fragment; KPP1 NW / Sokolniki (no exact accepted/rejected body pair); scene
+rubrics; the C1 detector on these exact composites (its numbers are #43's, by size); repeat samples per order (one
+call per order, as in #41–#47 pairs — answer stability per cell is not measured). Truth for N_jit and the boundary
+cells is the #43 tolerance (synthetic), not an Artem verdict; only A vs R carries Artem's verdict.
+
+Receipt: [`autoresearch-body-form-judge-r49/receipt.json`](autoresearch-body-form-judge-r49/receipt.json) (sha256
+`d9f45d2f4696b7a1…`), scripts `judge49.py`, `aggregate49.py`, `jobs-pair.json`, `FROZEN-before-judge.sha256` in the same
+folder. Evidence (16 composites, 64 raw calls, logs): `G:/Мой диск/AGR-evidence/standing49-body-form-equivalence/` +
+`SHA256SUMS.txt` (87 entries, sha256 `41625dceac06db5d…`, verified on the copy). `aggregate49.py` reads the #41/#45/#47
+result files for the baseline column (this PC only).

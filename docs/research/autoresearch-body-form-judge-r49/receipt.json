@@ -1,0 +1,299 @@
+{
+ "n_calls": 64,
+ "failed": 0,
+ "wall_s_sum": 594.5,
+ "wall_s_max": 19.3,
+ "judges": {
+  "claude": {
+   "raw": {
+    "N_tri": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "N_sub": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "N_jit_0.005": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "N_jit_0.020": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "R": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "W_recess": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "W_corner": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.20": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.11": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.06": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.03": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_corner_0.40": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_corner_0.20": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_corner_0.10": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "P_corner_0.05": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "A": {
+     "AB": "Same",
+     "BA": "Same"
+    }
+   },
+   "cell": {
+    "N_tri": "Same",
+    "N_sub": "Same",
+    "N_jit_0.005": "Same",
+    "N_jit_0.020": "Same",
+    "R": "Different",
+    "W_recess": "Different",
+    "W_corner": "Different",
+    "P_recess_0.20": "Different",
+    "P_recess_0.11": "Different",
+    "P_recess_0.06": "Different",
+    "P_recess_0.03": "Different",
+    "P_corner_0.40": "Different",
+    "P_corner_0.20": "Different",
+    "P_corner_0.10": "Same",
+    "P_corner_0.05": "Same",
+    "A": "Same"
+   },
+   "errors": [
+    "P_corner_0.10"
+   ],
+   "E": 1,
+   "decided": "14/14",
+   "detection": "8/9",
+   "same_correct": [
+    "A",
+    "N_tri",
+    "N_sub",
+    "N_jit_0.005",
+    "N_jit_0.020"
+   ],
+   "boundary": {
+    "P_recess_0.03": "Different",
+    "P_corner_0.05": "Same"
+   }
+  },
+  "codex": {
+   "raw": {
+    "N_tri": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "N_sub": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "N_jit_0.005": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "N_jit_0.020": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "R": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "W_recess": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "W_corner": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.20": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.11": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.06": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_recess_0.03": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_corner_0.40": {
+     "AB": "Different",
+     "BA": "Different"
+    },
+    "P_corner_0.20": {
+     "AB": "Different",
+     "BA": "Same"
+    },
+    "P_corner_0.10": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "P_corner_0.05": {
+     "AB": "Same",
+     "BA": "Same"
+    },
+    "A": {
+     "AB": "Same",
+     "BA": "Same"
+    }
+   },
+   "cell": {
+    "N_tri": "Same",
+    "N_sub": "Same",
+    "N_jit_0.005": "Same",
+    "N_jit_0.020": "Same",
+    "R": "Different",
+    "W_recess": "Different",
+    "W_corner": "Different",
+    "P_recess_0.20": "Different",
+    "P_recess_0.11": "Different",
+    "P_recess_0.06": "Different",
+    "P_recess_0.03": "Different",
+    "P_corner_0.40": "Different",
+    "P_corner_0.20": "no decision",
+    "P_corner_0.10": "Same",
+    "P_corner_0.05": "Same",
+    "A": "Same"
+   },
+   "errors": [
+    "P_corner_0.10"
+   ],
+   "E": 1,
+   "decided": "13/14",
+   "detection": "7/9",
+   "same_correct": [
+    "A",
+    "N_tri",
+    "N_sub",
+    "N_jit_0.005",
+    "N_jit_0.020"
+   ],
+   "boundary": {
+    "P_recess_0.03": "Different",
+    "P_corner_0.05": "Same"
+   }
+  }
+ },
+ "judge_agreement": {
+  "common_decided": 15,
+  "raw": "15/15",
+  "kappa": 1.0
+ },
+ "E49": 2,
+ "H49": "inconclusive",
+ "better_baseline": {
+  "claude": {
+   "R": "Different",
+   "P_recess_0.20": "Different",
+   "P_corner_0.05": "no decision",
+   "P_corner_0.40": "Different",
+   "P_corner_0.10": "Different",
+   "P_recess_0.03": "Different",
+   "P_recess_0.06": "Different",
+   "P_recess_0.11": "Different",
+   "P_corner_0.20": "Different",
+   "_r47_raw": {
+    "N_tri": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_sub": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.005": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.020": {
+     "AB": "X",
+     "BA": "Y",
+     "picked": "A"
+    },
+    "AA": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    }
+   }
+  },
+  "codex": {
+   "R": "Different",
+   "P_recess_0.20": "Different",
+   "P_recess_0.11": "Different",
+   "P_corner_0.10": "Different",
+   "P_corner_0.20": "Different",
+   "P_recess_0.03": "Different",
+   "P_corner_0.05": "no decision",
+   "P_recess_0.06": "Different",
+   "P_corner_0.40": "Different",
+   "_r47_raw": {
+    "N_tri": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_sub": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.005": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    },
+    "N_jit_0.020": {
+     "AB": "X",
+     "BA": "Y",
+     "picked": "A"
+    },
+    "AA": {
+     "AB": "Unsure",
+     "BA": "Unsure",
+     "picked": null
+    }
+   }
+  }
+ }
+}

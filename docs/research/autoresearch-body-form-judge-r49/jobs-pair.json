@@ -1,0 +1,642 @@
+[
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_tri"
+  ],
+  "order": "AB",
+  "id": "945996c6"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "N_tri",
+   "A"
+  ],
+  "order": "BA",
+  "id": "5d25c6e5"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_sub"
+  ],
+  "order": "AB",
+  "id": "7a7f3163"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "N_sub",
+   "A"
+  ],
+  "order": "BA",
+  "id": "0647d0aa"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_jit_0.005"
+  ],
+  "order": "AB",
+  "id": "5e86a1e3"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "N_jit_0.005",
+   "A"
+  ],
+  "order": "BA",
+  "id": "3bbf16ea"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_jit_0.020"
+  ],
+  "order": "AB",
+  "id": "30fff116"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "N_jit_0.020",
+   "A"
+  ],
+  "order": "BA",
+  "id": "a798c617"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "R"
+  ],
+  "order": "AB",
+  "id": "f10d0a29"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "R",
+   "A"
+  ],
+  "order": "BA",
+  "id": "d50dbd2d"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "W_recess"
+  ],
+  "order": "AB",
+  "id": "165b3de5"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "W_recess",
+   "A"
+  ],
+  "order": "BA",
+  "id": "076dfa4e"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "W_corner"
+  ],
+  "order": "AB",
+  "id": "fd242bcb"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "W_corner",
+   "A"
+  ],
+  "order": "BA",
+  "id": "f19dee9f"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.20"
+  ],
+  "order": "AB",
+  "id": "05190237"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.20",
+   "A"
+  ],
+  "order": "BA",
+  "id": "f2e40879"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.11"
+  ],
+  "order": "AB",
+  "id": "eb1ce6e3"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.11",
+   "A"
+  ],
+  "order": "BA",
+  "id": "b09f5c39"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.06"
+  ],
+  "order": "AB",
+  "id": "269486ba"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.06",
+   "A"
+  ],
+  "order": "BA",
+  "id": "2129860d"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.03"
+  ],
+  "order": "AB",
+  "id": "fe16fcbf"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.03",
+   "A"
+  ],
+  "order": "BA",
+  "id": "aa06d609"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.40"
+  ],
+  "order": "AB",
+  "id": "748e2086"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.40",
+   "A"
+  ],
+  "order": "BA",
+  "id": "e9864c25"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.20"
+  ],
+  "order": "AB",
+  "id": "0d4c93e6"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.20",
+   "A"
+  ],
+  "order": "BA",
+  "id": "be741c1b"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.10"
+  ],
+  "order": "AB",
+  "id": "c5f47e99"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.10",
+   "A"
+  ],
+  "order": "BA",
+  "id": "a8bd525d"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.05"
+  ],
+  "order": "AB",
+  "id": "fb4fb39b"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.05",
+   "A"
+  ],
+  "order": "BA",
+  "id": "e11721ad"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "A"
+  ],
+  "order": "AB",
+  "id": "f00d5643"
+ },
+ {
+  "judge": "claude",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "A"
+  ],
+  "order": "BA",
+  "id": "dc67d28e"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_tri"
+  ],
+  "order": "AB",
+  "id": "40849d85"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "N_tri",
+   "A"
+  ],
+  "order": "BA",
+  "id": "8b640a76"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_sub"
+  ],
+  "order": "AB",
+  "id": "f4832008"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "N_sub",
+   "A"
+  ],
+  "order": "BA",
+  "id": "15d985e6"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_jit_0.005"
+  ],
+  "order": "AB",
+  "id": "220e4387"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "N_jit_0.005",
+   "A"
+  ],
+  "order": "BA",
+  "id": "25e39f08"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "N_jit_0.020"
+  ],
+  "order": "AB",
+  "id": "f18c1f89"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "N_jit_0.020",
+   "A"
+  ],
+  "order": "BA",
+  "id": "50dbc3bd"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "R"
+  ],
+  "order": "AB",
+  "id": "39181f21"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "R",
+   "A"
+  ],
+  "order": "BA",
+  "id": "9c008541"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "W_recess"
+  ],
+  "order": "AB",
+  "id": "56365e91"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "W_recess",
+   "A"
+  ],
+  "order": "BA",
+  "id": "5a3a102c"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "W_corner"
+  ],
+  "order": "AB",
+  "id": "b1847110"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "W_corner",
+   "A"
+  ],
+  "order": "BA",
+  "id": "df681260"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.20"
+  ],
+  "order": "AB",
+  "id": "d5911caf"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.20",
+   "A"
+  ],
+  "order": "BA",
+  "id": "5ca3cc07"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.11"
+  ],
+  "order": "AB",
+  "id": "e0e8d299"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.11",
+   "A"
+  ],
+  "order": "BA",
+  "id": "c349e535"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.06"
+  ],
+  "order": "AB",
+  "id": "8e4537fa"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.06",
+   "A"
+  ],
+  "order": "BA",
+  "id": "efc1556d"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_recess_0.03"
+  ],
+  "order": "AB",
+  "id": "6c145733"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_recess_0.03",
+   "A"
+  ],
+  "order": "BA",
+  "id": "bf911c6d"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.40"
+  ],
+  "order": "AB",
+  "id": "b4e4fca9"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.40",
+   "A"
+  ],
+  "order": "BA",
+  "id": "88853228"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.20"
+  ],
+  "order": "AB",
+  "id": "15c7ef5a"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.20",
+   "A"
+  ],
+  "order": "BA",
+  "id": "920a5b3d"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.10"
+  ],
+  "order": "AB",
+  "id": "5bab3e68"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.10",
+   "A"
+  ],
+  "order": "BA",
+  "id": "7a9f5532"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "P_corner_0.05"
+  ],
+  "order": "AB",
+  "id": "682abb5c"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "P_corner_0.05",
+   "A"
+  ],
+  "order": "BA",
+  "id": "4c655a24"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "A"
+  ],
+  "order": "AB",
+  "id": "bf9ca15f"
+ },
+ {
+  "judge": "codex",
+  "kind": "pair",
+  "imgs": [
+   "A",
+   "A"
+  ],
+  "order": "BA",
+  "id": "901c9d4f"
+ }
+]
