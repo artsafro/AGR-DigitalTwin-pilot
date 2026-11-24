@@ -40,6 +40,13 @@ class MaxBackend:
         return icon
 
     # ---- scene --------------------------------------------------------------------------
+    def check_fbx_maps(self, path, confirm):
+        from pymxs import undo
+
+        core = self.agr._load_core('fbxmaps_core.py', 'agr_tools_fbxmaps_core')
+        glue = self.agr._load_core('fbxmaps_max.py', 'agr_tools_fbxmaps_max')
+        return glue.check_selection(rt, core, path, confirm, undo)
+
     def targets(self, scope_all):
         return self.agr._targets(list(rt.geometry) if scope_all else None)
 

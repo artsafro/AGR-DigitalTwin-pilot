@@ -32,8 +32,23 @@ def _load(name, alias):
 
 
 fc = _load('fbxmaps_core.py', 'agr_tools_fbxmaps_core_t1729')
+fm = _load('fbxmaps_max.py', 'agr_tools_fbxmaps_max_t1729')
 nc = _load('names_core.py', 'agr_tools_names_core_t1729')
 tc = _load('tex_core.py', 'agr_tools_tex_core_t1729')
+
+
+def test_max_reports_held_slot_to_reconnect_plan():
+    from types import SimpleNamespace
+
+    bitmap = SimpleNamespace(fileName='already_here.png')
+    material = SimpleNamespace(name='Ground', reflectionMap=bitmap)
+    rt = SimpleNamespace(Bitmaptexture='Bitmaptexture',
+                         classOf=lambda obj: 'Bitmaptexture' if obj is bitmap else 'Standardmaterial')
+    slots = fm.scene_materials(rt, fc.RECONNECT_SLOT, [material])
+    plan = fc.reconnect_plan([{'file': 'missing_m.png',
+                               'materials': [('Ground', 'ReflectionFactor', 'metalness')]}], slots)
+    assert plan['connect'] == []
+    assert 'Ground.reflectionMap already holds already_here.png' in plan['failures'][0]['reason']
 
 
 # ---- minimal binary FBX 7400 writer (Objects: Material/Texture/Video, Connections) --------------------
@@ -97,6 +112,76 @@ def _fbx(materials, embed=True, extra_videos=()):
 def _fixture(case):
     raw = (FIX / '0001_Probe1729_{}_Ground.fbx.gz.b64'.format(case)).read_text(encoding='ascii')
     return gzip.decompress(base64.b64decode(raw))
+
+
+@pytest.mark.parametrize('case', ['approve', 'decline', 'missing_media', 'unknown_channel', 'no_embedded',
+                                 'ambiguous_slot', 'duplicate_material', 'changed_selection', 'empty', 'truncated'])
+def test_panel_reconnect_selection(tmp_path, case):
+    from contextlib import nullcontext
+    from types import SimpleNamespace
+
+    class Bitmap:
+        def __init__(self, fileName):
+            self.fileName = fileName
+
+    name = 'map_m.png'
+    src = tmp_path / 'copy.fbx'
+    links = [('UnknownChannel' if case == 'unknown_channel' else 'ReflectionFactor', name)]
+    if case == 'ambiguous_slot':
+        links.append(('ReflectionColor', 'other_m.png'))
+    data = _fbx({'Ground': links}, embed=case != 'no_embedded')
+    if case == 'truncated':
+        data = data[:30]
+    src.write_bytes(data)
+    folder = src.with_suffix('.fbm')
+    folder.mkdir()
+    if case != 'missing_media':
+        (folder / name).write_bytes(b'PNG' + name.encode())
+    selected = SimpleNamespace(name='Ground', reflectionMap=None)
+    decoy = SimpleNamespace(name='Ground', reflectionMap=Bitmap(name))
+    node = SimpleNamespace(material=selected)
+    decoy_node = SimpleNamespace(material=decoy)
+    rt = SimpleNamespace(selection=[] if case == 'empty' else [node], sceneMaterials=[decoy, selected],
+                         getHandleByAnim=id, getNumSubMtls=lambda m: 0, Bitmaptexture=Bitmap,
+                         classOf=lambda m: Bitmap if isinstance(m, Bitmap) else 'Standardmaterial',
+                         getNumSubTexmaps=lambda m: int(hasattr(m, 'reflectionMap')),
+                         getSubTexmap=lambda m, i: m.reflectionMap, getSubTexmapSlotName=lambda m, i: 'Reflection',
+                         isProperty=hasattr, Name=str)
+    if case == 'duplicate_material':
+        rt.selection.append(decoy_node)
+    prompts = []
+
+    def confirm(before, plan):
+        prompts.append(before['status'])
+        assert [row['file'] for row in before['unconnected']] == [name]
+        assert plan['connect'][0]['slot'] == 'reflectionMap'
+        if case == 'changed_selection':
+            rt.selection[:] = [decoy_node]
+        return case != 'decline'
+
+    def run():
+        return fm.check_selection(rt, fc, str(src), confirm, lambda *_: nullcontext())
+
+    errors = {'empty': 'Select the objects', 'truncated': 'FBX', 'duplicate_material': 'Duplicate material names: Ground',
+              'changed_selection': 'changed'}
+    if case in errors:
+        with pytest.raises(ValueError, match=errors[case]):
+            run()
+    else:
+        result = run()
+        assert result['before']['status'] == ('no_embedded_maps' if case == 'no_embedded' else 'fail')
+        if case == 'approve':
+            assert result['after']['status'] == 'pass' and not result['failures']
+        elif case == 'missing_media':
+            assert result['after']['status'] == 'fail'
+            assert 'not extracted' in result['failures'][0]['reason']
+        else:
+            assert result['after'] is None
+        if case in ('unknown_channel', 'ambiguous_slot'):
+            assert name in {row['file'] for row in result['failures']}
+    assert len(prompts) == int(case in ('approve', 'decline', 'missing_media', 'changed_selection'))
+    assert (selected.reflectionMap is not None) == (case == 'approve')
+    assert src.read_bytes() == data and decoy.reflectionMap.fileName == name
 
 
 def _metal_slot():
