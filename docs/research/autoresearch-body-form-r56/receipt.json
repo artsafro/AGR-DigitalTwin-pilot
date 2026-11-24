@@ -1,0 +1,3604 @@
+{
+  "head": "59f1584927bb6057f91b01fc7269e4d03355eddb",
+  "runner_sha256": "ba2047338bdefa1084a0a7f2add599b266a7068b1fc0e850282362b6791f28f3",
+  "run_status": "complete",
+  "wall_s": 34.614,
+  "timed_pair_s": 2.341,
+  "raw_receipt": "C:\\x\\t_80b4168c-r56\\run01\\fresh\\receipt.json",
+  "raw_sha256": "859ac7304bd735d331123718d86c124c42be6212b2ba59d877ec3f5b3ab2d101",
+  "error": null,
+  "calibration": {
+    "v007": [
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 5,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v002": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v003": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v004": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v005": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "v006": [
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 5,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 5,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "G22_C_none": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "G22_C_shift_wall": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "A": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 0,
+        "old_measured": 6,
+        "preserved": true,
+        "parity": true
+      }
+    ],
+    "R": [
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      },
+      {
+        "wall_fail": 0,
+        "key_fail": 0,
+        "nm": 6,
+        "old_measured": 0,
+        "preserved": true,
+        "parity": true
+      }
+    ]
+  },
+  "calibrated": true,
+  "hypothesis": "confirmed",
+  "rows": {
+    "G22_C_none": [
+      {
+        "fixture": "G22_C_none",
+        "rep": 1,
+        "target": "opening:4259581",
+        "key_edges": [
+          1.14,
+          2.9401
+        ],
+        "gaps": {
+          "17.8": [
+            1.139991688558908,
+            2.9400644090244255
+          ],
+          "18.2": [
+            1.139991688558908,
+            2.9400644090244255
+          ]
+        },
+        "clean": {
+          "depth": 0.1500403735728516,
+          "old": 0.1501,
+          "status": "measured",
+          "line": -1.4037036224712196e-05,
+          "flank_spread": 7.992348046592657e-05,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": false,
+          "wall_fail": null
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.1500403735728516,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.1500403735728516,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.14500948401159064,
+            "delta": -0.005030889561260965,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      },
+      {
+        "fixture": "G22_C_none",
+        "rep": 2,
+        "target": "opening:4259581",
+        "key_edges": [
+          1.14,
+          2.9401
+        ],
+        "gaps": {
+          "17.8": [
+            1.139991688558908,
+            2.9400644090244255
+          ],
+          "18.2": [
+            1.139991688558908,
+            2.9400644090244255
+          ]
+        },
+        "clean": {
+          "depth": 0.1500403735728516,
+          "old": 0.1501,
+          "status": "measured",
+          "line": -1.4037036224712196e-05,
+          "flank_spread": 7.992348046592657e-05,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": false,
+          "wall_fail": null
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.1500403735728516,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.1500403735728516,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.14500948401159064,
+            "delta": -0.005030889561260965,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      },
+      {
+        "fixture": "G22_C_none",
+        "rep": 3,
+        "target": "opening:4259581",
+        "key_edges": [
+          1.14,
+          2.9401
+        ],
+        "gaps": {
+          "17.8": [
+            1.139991688558908,
+            2.9400644090244255
+          ],
+          "18.2": [
+            1.139991688558908,
+            2.9400644090244255
+          ]
+        },
+        "clean": {
+          "depth": 0.1500403735728516,
+          "old": 0.1501,
+          "status": "measured",
+          "line": -1.4037036224712196e-05,
+          "flank_spread": 7.992348046592657e-05,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": false,
+          "wall_fail": null
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.1500403735728516,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.1500403735728516,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.14500948401159064,
+            "delta": -0.005030889561260965,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      }
+    ],
+    "v007": [
+      {
+        "fixture": "v007",
+        "rep": 1,
+        "target": "opening:\u0440\u0442 \u041e_194b464",
+        "key_edges": [
+          1.1376,
+          3.4376
+        ],
+        "gaps": {
+          "17.8": [
+            1.2243420436974417,
+            3.3687068254587578
+          ],
+          "18.2": [
+            1.2243420436974417,
+            3.3687068254587578
+          ]
+        },
+        "clean": {
+          "depth": 0.4999990211296034,
+          "old": 0.4999,
+          "status": "measured",
+          "line": 9.219956216072189e-05,
+          "flank_spread": 0.00029247432137025076,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": true,
+          "wall_fail": false
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.4999990211296034,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.4999990211296034,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.4949558692882465,
+            "delta": -0.005043151841356952,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      },
+      {
+        "fixture": "v007",
+        "rep": 2,
+        "target": "opening:\u0440\u0442 \u041e_194b464",
+        "key_edges": [
+          1.1376,
+          3.4376
+        ],
+        "gaps": {
+          "17.8": [
+            1.2243420436974417,
+            3.3687068254587578
+          ],
+          "18.2": [
+            1.2243420436974417,
+            3.3687068254587578
+          ]
+        },
+        "clean": {
+          "depth": 0.4999990211296034,
+          "old": 0.4999,
+          "status": "measured",
+          "line": 9.219956216072189e-05,
+          "flank_spread": 0.00029247432137025076,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": true,
+          "wall_fail": false
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.4999990211296034,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.4999990211296034,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.4949558692882465,
+            "delta": -0.005043151841356952,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      },
+      {
+        "fixture": "v007",
+        "rep": 3,
+        "target": "opening:\u0440\u0442 \u041e_194b464",
+        "key_edges": [
+          1.1376,
+          3.4376
+        ],
+        "gaps": {
+          "17.8": [
+            1.2243420436974417,
+            3.3687068254587578
+          ],
+          "18.2": [
+            1.2243420436974417,
+            3.3687068254587578
+          ]
+        },
+        "clean": {
+          "depth": 0.4999990211296034,
+          "old": 0.4999,
+          "status": "measured",
+          "line": 9.219956216072189e-05,
+          "flank_spread": 0.00029247432137025076,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": true,
+          "wall_fail": false
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.4999990211296034,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.4999990211296034,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.4949558692882465,
+            "delta": -0.005043151841356952,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      }
+    ],
+    "v006": [
+      {
+        "fixture": "v006",
+        "rep": 1,
+        "target": "opening:\u0440\u0442 \u041e_194b464",
+        "key_edges": [
+          1.1376,
+          3.4376
+        ],
+        "gaps": {
+          "17.8": [
+            1.1375648224837365,
+            3.4376627524630137
+          ],
+          "18.2": [
+            1.1375648224837365,
+            3.4376627524630137
+          ]
+        },
+        "clean": {
+          "depth": 0.7099804918088346,
+          "old": 0.71,
+          "status": "measured",
+          "line": 9.061211814209713e-06,
+          "flank_spread": 6.817289783522806e-05,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": false,
+          "wall_fail": true
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.7099804918088346,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.7099804918088346,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.7049759612029274,
+            "delta": -0.00500453060590722,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      },
+      {
+        "fixture": "v006",
+        "rep": 2,
+        "target": "opening:\u0440\u0442 \u041e_194b464",
+        "key_edges": [
+          1.1376,
+          3.4376
+        ],
+        "gaps": {
+          "17.8": [
+            1.1375648224837365,
+            3.4376627524630137
+          ],
+          "18.2": [
+            1.1375648224837365,
+            3.4376627524630137
+          ]
+        },
+        "clean": {
+          "depth": 0.7099804918088346,
+          "old": 0.71,
+          "status": "measured",
+          "line": 9.061211814209713e-06,
+          "flank_spread": 6.817289783522806e-05,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": false,
+          "wall_fail": true
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.7099804918088346,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.7099804918088346,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.7049759612029274,
+            "delta": -0.00500453060590722,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      },
+      {
+        "fixture": "v006",
+        "rep": 3,
+        "target": "opening:\u0440\u0442 \u041e_194b464",
+        "key_edges": [
+          1.1376,
+          3.4376
+        ],
+        "gaps": {
+          "17.8": [
+            1.1375648224837365,
+            3.4376627524630137
+          ],
+          "18.2": [
+            1.1375648224837365,
+            3.4376627524630137
+          ]
+        },
+        "clean": {
+          "depth": 0.7099804918088346,
+          "old": 0.71,
+          "status": "measured",
+          "line": 9.061211814209713e-06,
+          "flank_spread": 6.817289783522806e-05,
+          "counts": {
+            "17.8": [
+              1,
+              1
+            ],
+            "18.2": [
+              1,
+              1
+            ]
+          },
+          "key_fail": false,
+          "wall_fail": true
+        },
+        "probes": {
+          "rear_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "front_in": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "one_side": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0
+              ],
+              "18.2": [
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                0
+              ],
+              "18.2": [
+                1,
+                0
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "noncoplanar",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rear_out": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": false,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.7099804918088346,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "near_miss": {
+            "state": "negative_control",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.06000000000000005,
+                0.06000000000000005
+              ],
+              "18.2": [
+                0.06000000000000005,
+                0.06000000000000005
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                0,
+                0
+              ],
+              "18.2": [
+                0,
+                0
+              ]
+            },
+            "depth": 0.7099804918088346,
+            "delta": 0.0,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "tiny": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 2,
+              "18.2": 2
+            },
+            "count_delta": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                1,
+                1
+              ],
+              "18.2": [
+                1,
+                1
+              ]
+            },
+            "depth": 0.7049759612029274,
+            "delta": -0.00500453060590722,
+            "status": "measured",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          },
+          "rail": {
+            "state": "exercised",
+            "eligible": true,
+            "in_band": true,
+            "edge_distances_m": {
+              "17.8": [
+                0.0,
+                0.0
+              ],
+              "18.2": [
+                0.0,
+                0.0
+              ]
+            },
+            "added": {
+              "17.8": 1,
+              "18.2": 1
+            },
+            "count_delta": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "expected_counts": {
+              "17.8": [
+                -1,
+                -1
+              ],
+              "18.2": [
+                -1,
+                -1
+              ]
+            },
+            "depth": null,
+            "delta": null,
+            "status": "flank_missing",
+            "off_target": [],
+            "false_depth": false,
+            "as_expected": true
+          }
+        },
+        "state": "clean_measured"
+      }
+    ]
+  },
+  "spread": {
+    "G22_C_none:rear_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "G22_C_none:front_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "G22_C_none:one_side": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "G22_C_none:rear_out": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "G22_C_none:near_miss": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "G22_C_none:tiny": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "G22_C_none:rail": {
+      "statuses": [
+        "flank_missing"
+      ],
+      "depth_m": null
+    },
+    "v007:rear_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "v007:front_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "v007:one_side": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "v007:rear_out": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "v007:near_miss": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "v007:tiny": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "v007:rail": {
+      "statuses": [
+        "flank_missing"
+      ],
+      "depth_m": null
+    },
+    "v006:rear_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "v006:front_in": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "v006:one_side": {
+      "statuses": [
+        "noncoplanar"
+      ],
+      "depth_m": null
+    },
+    "v006:rear_out": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "v006:near_miss": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "v006:tiny": {
+      "statuses": [
+        "measured"
+      ],
+      "depth_m": 0.0
+    },
+    "v006:rail": {
+      "statuses": [
+        "flank_missing"
+      ],
+      "depth_m": null
+    }
+  },
+  "trials": 63,
+  "not_exercised": 0,
+  "F56_counts": [
+    0,
+    0,
+    0
+  ],
+  "F56": 0
+}
