@@ -1,5 +1,25 @@
 # Standing #70 — AC08 packaged NPM seam transfer (OBSERVE)
 
+**Итог OBSERVE: C68 не переносится с ВПМ на НПМ AC08 как критерий приёмки.** На трёх свежих парах НПМ отклонённая v007 получила 0,28447, а визуально принятая v010 — 1,64892: порядок обратный ВПМ. Формальный итог H70 — `inconclusive`: контрольный сдвиг +5 px изменил выборку на обеих версиях, но на v007 снизил, а не повысил оценку. Ничего не меняли в выпусках и производственных проверках.
+
+## Round 1 — completed; H70 inconclusive
+
+| Actual packaged NPM | Clean C68 / locations | +2 px C68 / changed RGB vectors | +5 px C68 / changed RGB vectors |
+|---|---:|---:|---:|
+| AC08 v007, rejected | 0.284474 / 8,163 | 0.282636 / 13,810 | 0.273862 / 14,015 |
+| AC08 v010, visual acceptance | 1.648922 / 8,210 | 1.690078 / 15,269 | 1.686138 / 15,302 |
+
+Six fresh native imports, three complete pairs: 2.384 / 2.427 / 2.336 s (7.147 s measured wall, excluding the hash preflight/postflight; first-pair budget admitted both confirmations). D70 = −1.364448; paired spread 0; required +0.412230. Clean visits 10 same-cell seam edges in each label; clean changed 0 faces/0 vectors; each injected state changed samples belonging to 10 selected first-side faces and 0 non-target faces, with fixed support. RGB vector counts include both offsets and are not unique pixels. The accepted NPM control is exercised and exceeds the VPM accepted reference (1.648922 > 0.522011); the v007 control is exercised but below the predeclared direction. This is evidence against adopting the observed ordering on NPM, not a confirmed seam detector. It does not distinguish atlas bake contrast, quantization/texel resolution, or joint spacing as the cause.
+
+- Parity: original NPM FBXs match #69's packaged member hashes; both embedded Diffuse PNGs match their pinned sidecars byte-for-byte. Blender FBX unit scale 100.0 (metre). All seven external input pins matched before and after; synthetic pixel-address and finish-boundary checks and #68's synthetic phase and contrast-gain controls passed.
+- Not measured: v010 panel 1002 has 8 faces but no eligible same-cell seam; solid regions and cross-finish edges are excluded. Native perturbation, KPP1 and both MAFs, NPM/VPM same-camera drift, and a general false-positive rate were not measured. No basis for the full multi-object calibration claim; do not infer that a source seam is absent from scores alone.
+- Would change, not applied: retain C68 in a profile-specific diagnostic only; for AC08, test a facade-local source joint-count or pitch signal on the NPM image instead of promoting a cross-profile threshold. No production keep or PR.
+- Receipt: [`atlas-npm-seam-r70/receipt.json`](atlas-npm-seam-r70/receipt.json). Candidate SHA-256 `306ac5376f0bf2f59617c8091cddb04051b42099e4d3d0e61c70f6084f9b6eb3`.
+
+Affected tests: `uv run --frozen pytest -q docs/research/atlas-npm-seam-r70/test_replay.py tests/qa/test_sintez_uv_1732.py` — 42 passed; unchanged #68 replay tests (`uv run --frozen pytest -q tmp/r70-legacy/test_replay.py`, both `replay.py` and `test_replay.py` from pinned #68) — 8 passed. The adapter test before implementation failed collection (`ModuleNotFoundError: replay`).
+
+Full suite: deferred to merge batch (rule 68).
+
 ## Frozen contract
 
 H70: on packaged AC08 NPM, the #68 same-finish contrast-normalized seam signal transfers from VPM: rejected v007 scores higher than visually accepted v010. Primary number `D70 = median(C68(v007) - C68(v010))`; threshold `max(0.05, 0.25 * median(C68(v010)))`, unchanged from #68. Higher is worse per version. This is not a delivery or regulatory gate.

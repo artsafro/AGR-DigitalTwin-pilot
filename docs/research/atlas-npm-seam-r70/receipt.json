@@ -1,0 +1,1222 @@
+{
+  "hypothesis": "inconclusive",
+  "clean": {
+    "v007": [
+      0.2844739788868334,
+      0.2844739788868334,
+      0.2844739788868334
+    ],
+    "v010": [
+      1.6489217046672764,
+      1.6489217046672764,
+      1.6489217046672764
+    ]
+  },
+  "controls_pass": {
+    "v007": [
+      false,
+      false,
+      false
+    ],
+    "v010": [
+      true,
+      true,
+      true
+    ]
+  },
+  "paired_median": -1.364447725780443,
+  "paired_spread": 0.0,
+  "bound": 0.4122304261668191,
+  "status": "completed",
+  "error": null,
+  "seconds": 7.147043600009056,
+  "pair_seconds": [
+    2.38359749999654,
+    2.4273188000079244,
+    2.336096999992151
+  ],
+  "rounds": [
+    {
+      "v007": {
+        "fbx_sha256": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+        "atlas_embedded_byte_parity": true,
+        "fbx_units": {
+          "unit_scale_factor": 100.0,
+          "original_unit_scale_factor": 100.0,
+          "error": null
+        },
+        "cell_faces": {
+          "1001": 38,
+          "1002": 36,
+          "1003": 248,
+          "1004": 64
+        },
+        "score": {
+          "states": {
+            "clean": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013784109176822027,
+                  "p95": 0.032679738562091505,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013784109176822027,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.013038587152775276,
+                "within": 0.04583402391950287,
+                "ratio": 0.2844739788868334,
+                "floor_used": false,
+                "rgb_vectors_changed": 0
+              },
+              "changed_faces": 0,
+              "non_target_changed_faces": 0
+            },
+            "+2px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013683207652591248,
+                  "p95": 0.03137254901960784,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013683207652591248,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.012957238103702423,
+                "within": 0.04584419255063698,
+                "ratio": 0.2826364122214732,
+                "floor_used": false,
+                "rgb_vectors_changed": 13810
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            },
+            "+5px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013343574494840294,
+                  "p95": 0.03398692810457516,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013343574494840294,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.012567787538062307,
+                "within": 0.045891032308223216,
+                "ratio": 0.2738615129346368,
+                "floor_used": false,
+                "rgb_vectors_changed": 14015
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            }
+          },
+          "edges": {
+            "non_target": 467,
+            "border": 57,
+            "continuous": 28,
+            "seam": 10,
+            "boundary": 34
+          },
+          "witness": "seam_first",
+          "status": "measured"
+        },
+        "per_finish": {
+          "1001": {
+            "states": {
+              "clean": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013784109176822027,
+                    "p95": 0.032679738562091505,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013784109176822027,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.013038587152775276,
+                  "within": 0.04583402391950287,
+                  "ratio": 0.2844739788868334,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 0
+                },
+                "changed_faces": 0,
+                "non_target_changed_faces": 0
+              },
+              "+2px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013683207652591248,
+                    "p95": 0.03137254901960784,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013683207652591248,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.012957238103702423,
+                  "within": 0.04584419255063698,
+                  "ratio": 0.2826364122214732,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 13810
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              },
+              "+5px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013343574494840294,
+                    "p95": 0.03398692810457516,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013343574494840294,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.012567787538062307,
+                  "within": 0.045891032308223216,
+                  "ratio": 0.2738615129346368,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 14015
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              }
+            },
+            "edges": {
+              "non_target": 467,
+              "border": 57,
+              "continuous": 28,
+              "seam": 10,
+              "boundary": 34
+            },
+            "witness": "seam_first",
+            "status": "measured"
+          }
+        }
+      },
+      "v010": {
+        "fbx_sha256": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52",
+        "atlas_embedded_byte_parity": true,
+        "fbx_units": {
+          "unit_scale_factor": 100.0,
+          "original_unit_scale_factor": 100.0,
+          "error": null
+        },
+        "cell_faces": {
+          "1001": 30,
+          "1002": 8,
+          "1003": 36,
+          "1004": 248,
+          "1005": 64
+        },
+        "score": {
+          "states": {
+            "clean": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.07984879872273772,
+                  "p95": 0.2954248366013072,
+                  "visible_fraction": 0.25866414618777567
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.07984879872273772,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08485777745933941,
+                "within": 0.05146258747104201,
+                "ratio": 1.6489217046672764,
+                "floor_used": false,
+                "rgb_vectors_changed": 0
+              },
+              "changed_faces": 0,
+              "non_target_changed_faces": 0
+            },
+            "+2px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.08244231109793214,
+                  "p95": 0.2954248366013072,
+                  "visible_fraction": 0.2731568998109641
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.08244231109793214,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08678337433227452,
+                "within": 0.051348745750837886,
+                "ratio": 1.6900777821015898,
+                "floor_used": false,
+                "rgb_vectors_changed": 15269
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            },
+            "+5px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.08231683627732407,
+                  "p95": 0.29411764705882354,
+                  "visible_fraction": 0.2754673387943709
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.08231683627732407,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08665424756991713,
+                "within": 0.051392132979866736,
+                "ratio": 1.686138374600342,
+                "floor_used": false,
+                "rgb_vectors_changed": 15302
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            }
+          },
+          "edges": {
+            "non_target": 467,
+            "border": 57,
+            "continuous": 28,
+            "seam": 10,
+            "boundary": 34
+          },
+          "witness": "seam_first",
+          "status": "measured"
+        },
+        "per_finish": {
+          "1001": {
+            "states": {
+              "clean": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.07984879872273772,
+                    "p95": 0.2954248366013072,
+                    "visible_fraction": 0.25866414618777567
+                  }
+                },
+                "score": 0.07984879872273772,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08485777745933941,
+                  "within": 0.05146258747104201,
+                  "ratio": 1.6489217046672764,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 0
+                },
+                "changed_faces": 0,
+                "non_target_changed_faces": 0
+              },
+              "+2px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.08244231109793214,
+                    "p95": 0.2954248366013072,
+                    "visible_fraction": 0.2731568998109641
+                  }
+                },
+                "score": 0.08244231109793214,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08678337433227452,
+                  "within": 0.051348745750837886,
+                  "ratio": 1.6900777821015898,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 15269
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              },
+              "+5px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.08231683627732407,
+                    "p95": 0.29411764705882354,
+                    "visible_fraction": 0.2754673387943709
+                  }
+                },
+                "score": 0.08231683627732407,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08665424756991713,
+                  "within": 0.051392132979866736,
+                  "ratio": 1.686138374600342,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 15302
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              }
+            },
+            "edges": {
+              "non_target": 473,
+              "border": 57,
+              "continuous": 22,
+              "seam": 10,
+              "boundary": 34
+            },
+            "witness": "seam_first",
+            "status": "measured"
+          },
+          "1002": {
+            "status": "not_exercised",
+            "reason": "not_exercised: no seam samples on target tiles"
+          }
+        }
+      }
+    },
+    {
+      "v007": {
+        "fbx_sha256": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+        "atlas_embedded_byte_parity": true,
+        "fbx_units": {
+          "unit_scale_factor": 100.0,
+          "original_unit_scale_factor": 100.0,
+          "error": null
+        },
+        "cell_faces": {
+          "1001": 38,
+          "1002": 36,
+          "1003": 248,
+          "1004": 64
+        },
+        "score": {
+          "states": {
+            "clean": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013784109176822027,
+                  "p95": 0.032679738562091505,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013784109176822027,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.013038587152775276,
+                "within": 0.04583402391950287,
+                "ratio": 0.2844739788868334,
+                "floor_used": false,
+                "rgb_vectors_changed": 0
+              },
+              "changed_faces": 0,
+              "non_target_changed_faces": 0
+            },
+            "+2px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013683207652591248,
+                  "p95": 0.03137254901960784,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013683207652591248,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.012957238103702423,
+                "within": 0.04584419255063698,
+                "ratio": 0.2826364122214732,
+                "floor_used": false,
+                "rgb_vectors_changed": 13810
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            },
+            "+5px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013343574494840294,
+                  "p95": 0.03398692810457516,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013343574494840294,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.012567787538062307,
+                "within": 0.045891032308223216,
+                "ratio": 0.2738615129346368,
+                "floor_used": false,
+                "rgb_vectors_changed": 14015
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            }
+          },
+          "edges": {
+            "non_target": 467,
+            "border": 57,
+            "continuous": 28,
+            "seam": 10,
+            "boundary": 34
+          },
+          "witness": "seam_first",
+          "status": "measured"
+        },
+        "per_finish": {
+          "1001": {
+            "states": {
+              "clean": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013784109176822027,
+                    "p95": 0.032679738562091505,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013784109176822027,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.013038587152775276,
+                  "within": 0.04583402391950287,
+                  "ratio": 0.2844739788868334,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 0
+                },
+                "changed_faces": 0,
+                "non_target_changed_faces": 0
+              },
+              "+2px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013683207652591248,
+                    "p95": 0.03137254901960784,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013683207652591248,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.012957238103702423,
+                  "within": 0.04584419255063698,
+                  "ratio": 0.2826364122214732,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 13810
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              },
+              "+5px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013343574494840294,
+                    "p95": 0.03398692810457516,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013343574494840294,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.012567787538062307,
+                  "within": 0.045891032308223216,
+                  "ratio": 0.2738615129346368,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 14015
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              }
+            },
+            "edges": {
+              "non_target": 467,
+              "border": 57,
+              "continuous": 28,
+              "seam": 10,
+              "boundary": 34
+            },
+            "witness": "seam_first",
+            "status": "measured"
+          }
+        }
+      },
+      "v010": {
+        "fbx_sha256": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52",
+        "atlas_embedded_byte_parity": true,
+        "fbx_units": {
+          "unit_scale_factor": 100.0,
+          "original_unit_scale_factor": 100.0,
+          "error": null
+        },
+        "cell_faces": {
+          "1001": 30,
+          "1002": 8,
+          "1003": 36,
+          "1004": 248,
+          "1005": 64
+        },
+        "score": {
+          "states": {
+            "clean": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.07984879872273772,
+                  "p95": 0.2954248366013072,
+                  "visible_fraction": 0.25866414618777567
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.07984879872273772,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08485777745933941,
+                "within": 0.05146258747104201,
+                "ratio": 1.6489217046672764,
+                "floor_used": false,
+                "rgb_vectors_changed": 0
+              },
+              "changed_faces": 0,
+              "non_target_changed_faces": 0
+            },
+            "+2px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.08244231109793214,
+                  "p95": 0.2954248366013072,
+                  "visible_fraction": 0.2731568998109641
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.08244231109793214,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08678337433227452,
+                "within": 0.051348745750837886,
+                "ratio": 1.6900777821015898,
+                "floor_used": false,
+                "rgb_vectors_changed": 15269
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            },
+            "+5px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.08231683627732407,
+                  "p95": 0.29411764705882354,
+                  "visible_fraction": 0.2754673387943709
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.08231683627732407,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08665424756991713,
+                "within": 0.051392132979866736,
+                "ratio": 1.686138374600342,
+                "floor_used": false,
+                "rgb_vectors_changed": 15302
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            }
+          },
+          "edges": {
+            "non_target": 467,
+            "border": 57,
+            "continuous": 28,
+            "seam": 10,
+            "boundary": 34
+          },
+          "witness": "seam_first",
+          "status": "measured"
+        },
+        "per_finish": {
+          "1001": {
+            "states": {
+              "clean": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.07984879872273772,
+                    "p95": 0.2954248366013072,
+                    "visible_fraction": 0.25866414618777567
+                  }
+                },
+                "score": 0.07984879872273772,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08485777745933941,
+                  "within": 0.05146258747104201,
+                  "ratio": 1.6489217046672764,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 0
+                },
+                "changed_faces": 0,
+                "non_target_changed_faces": 0
+              },
+              "+2px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.08244231109793214,
+                    "p95": 0.2954248366013072,
+                    "visible_fraction": 0.2731568998109641
+                  }
+                },
+                "score": 0.08244231109793214,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08678337433227452,
+                  "within": 0.051348745750837886,
+                  "ratio": 1.6900777821015898,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 15269
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              },
+              "+5px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.08231683627732407,
+                    "p95": 0.29411764705882354,
+                    "visible_fraction": 0.2754673387943709
+                  }
+                },
+                "score": 0.08231683627732407,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08665424756991713,
+                  "within": 0.051392132979866736,
+                  "ratio": 1.686138374600342,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 15302
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              }
+            },
+            "edges": {
+              "non_target": 473,
+              "border": 57,
+              "continuous": 22,
+              "seam": 10,
+              "boundary": 34
+            },
+            "witness": "seam_first",
+            "status": "measured"
+          },
+          "1002": {
+            "status": "not_exercised",
+            "reason": "not_exercised: no seam samples on target tiles"
+          }
+        }
+      }
+    },
+    {
+      "v007": {
+        "fbx_sha256": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+        "atlas_embedded_byte_parity": true,
+        "fbx_units": {
+          "unit_scale_factor": 100.0,
+          "original_unit_scale_factor": 100.0,
+          "error": null
+        },
+        "cell_faces": {
+          "1001": 38,
+          "1002": 36,
+          "1003": 248,
+          "1004": 64
+        },
+        "score": {
+          "states": {
+            "clean": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013784109176822027,
+                  "p95": 0.032679738562091505,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013784109176822027,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.013038587152775276,
+                "within": 0.04583402391950287,
+                "ratio": 0.2844739788868334,
+                "floor_used": false,
+                "rgb_vectors_changed": 0
+              },
+              "changed_faces": 0,
+              "non_target_changed_faces": 0
+            },
+            "+2px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013683207652591248,
+                  "p95": 0.03137254901960784,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013683207652591248,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.012957238103702423,
+                "within": 0.04584419255063698,
+                "ratio": 0.2826364122214732,
+                "floor_used": false,
+                "rgb_vectors_changed": 13810
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            },
+            "+5px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.013343574494840294,
+                  "p95": 0.03398692810457516,
+                  "visible_fraction": 0.0
+                }
+              },
+              "score": 0.013343574494840294,
+              "contrast": {
+                "samples": 8163,
+                "status": "measured",
+                "cross": 0.012567787538062307,
+                "within": 0.045891032308223216,
+                "ratio": 0.2738615129346368,
+                "floor_used": false,
+                "rgb_vectors_changed": 14015
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            }
+          },
+          "edges": {
+            "non_target": 467,
+            "border": 57,
+            "continuous": 28,
+            "seam": 10,
+            "boundary": 34
+          },
+          "witness": "seam_first",
+          "status": "measured"
+        },
+        "per_finish": {
+          "1001": {
+            "states": {
+              "clean": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013784109176822027,
+                    "p95": 0.032679738562091505,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013784109176822027,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.013038587152775276,
+                  "within": 0.04583402391950287,
+                  "ratio": 0.2844739788868334,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 0
+                },
+                "changed_faces": 0,
+                "non_target_changed_faces": 0
+              },
+              "+2px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013683207652591248,
+                    "p95": 0.03137254901960784,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013683207652591248,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.012957238103702423,
+                  "within": 0.04584419255063698,
+                  "ratio": 0.2826364122214732,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 13810
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              },
+              "+5px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.013343574494840294,
+                    "p95": 0.03398692810457516,
+                    "visible_fraction": 0.0
+                  }
+                },
+                "score": 0.013343574494840294,
+                "contrast": {
+                  "samples": 8163,
+                  "status": "measured",
+                  "cross": 0.012567787538062307,
+                  "within": 0.045891032308223216,
+                  "ratio": 0.2738615129346368,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 14015
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              }
+            },
+            "edges": {
+              "non_target": 467,
+              "border": 57,
+              "continuous": 28,
+              "seam": 10,
+              "boundary": 34
+            },
+            "witness": "seam_first",
+            "status": "measured"
+          }
+        }
+      },
+      "v010": {
+        "fbx_sha256": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52",
+        "atlas_embedded_byte_parity": true,
+        "fbx_units": {
+          "unit_scale_factor": 100.0,
+          "original_unit_scale_factor": 100.0,
+          "error": null
+        },
+        "cell_faces": {
+          "1001": 30,
+          "1002": 8,
+          "1003": 36,
+          "1004": 248,
+          "1005": 64
+        },
+        "score": {
+          "states": {
+            "clean": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.07984879872273772,
+                  "p95": 0.2954248366013072,
+                  "visible_fraction": 0.25866414618777567
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.07984879872273772,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08485777745933941,
+                "within": 0.05146258747104201,
+                "ratio": 1.6489217046672764,
+                "floor_used": false,
+                "rgb_vectors_changed": 0
+              },
+              "changed_faces": 0,
+              "non_target_changed_faces": 0
+            },
+            "+2px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.08244231109793214,
+                  "p95": 0.2954248366013072,
+                  "visible_fraction": 0.2731568998109641
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.08244231109793214,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08678337433227452,
+                "within": 0.051348745750837886,
+                "ratio": 1.6900777821015898,
+                "floor_used": false,
+                "rgb_vectors_changed": 15269
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            },
+            "+5px": {
+              "tiles": {
+                "1001": {
+                  "seam_edges": 10,
+                  "samples": 9522,
+                  "mean": 0.08231683627732407,
+                  "p95": 0.29411764705882354,
+                  "visible_fraction": 0.2754673387943709
+                },
+                "1002": {
+                  "seam_edges": 0,
+                  "samples": 0,
+                  "mean": null,
+                  "p95": null,
+                  "visible_fraction": null
+                }
+              },
+              "score": 0.08231683627732407,
+              "contrast": {
+                "samples": 8210,
+                "status": "measured",
+                "cross": 0.08665424756991713,
+                "within": 0.051392132979866736,
+                "ratio": 1.686138374600342,
+                "floor_used": false,
+                "rgb_vectors_changed": 15302
+              },
+              "changed_faces": 10,
+              "non_target_changed_faces": 0
+            }
+          },
+          "edges": {
+            "non_target": 467,
+            "border": 57,
+            "continuous": 28,
+            "seam": 10,
+            "boundary": 34
+          },
+          "witness": "seam_first",
+          "status": "measured"
+        },
+        "per_finish": {
+          "1001": {
+            "states": {
+              "clean": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.07984879872273772,
+                    "p95": 0.2954248366013072,
+                    "visible_fraction": 0.25866414618777567
+                  }
+                },
+                "score": 0.07984879872273772,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08485777745933941,
+                  "within": 0.05146258747104201,
+                  "ratio": 1.6489217046672764,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 0
+                },
+                "changed_faces": 0,
+                "non_target_changed_faces": 0
+              },
+              "+2px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.08244231109793214,
+                    "p95": 0.2954248366013072,
+                    "visible_fraction": 0.2731568998109641
+                  }
+                },
+                "score": 0.08244231109793214,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08678337433227452,
+                  "within": 0.051348745750837886,
+                  "ratio": 1.6900777821015898,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 15269
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              },
+              "+5px": {
+                "tiles": {
+                  "1001": {
+                    "seam_edges": 10,
+                    "samples": 9522,
+                    "mean": 0.08231683627732407,
+                    "p95": 0.29411764705882354,
+                    "visible_fraction": 0.2754673387943709
+                  }
+                },
+                "score": 0.08231683627732407,
+                "contrast": {
+                  "samples": 8210,
+                  "status": "measured",
+                  "cross": 0.08665424756991713,
+                  "within": 0.051392132979866736,
+                  "ratio": 1.686138374600342,
+                  "floor_used": false,
+                  "rgb_vectors_changed": 15302
+                },
+                "changed_faces": 10,
+                "non_target_changed_faces": 0
+              }
+            },
+            "edges": {
+              "non_target": 473,
+              "border": 57,
+              "continuous": 22,
+              "seam": 10,
+              "boundary": 34
+            },
+            "witness": "seam_first",
+            "status": "measured"
+          },
+          "1002": {
+            "status": "not_exercised",
+            "reason": "not_exercised: no seam samples on target tiles"
+          }
+        }
+      }
+    }
+  ],
+  "pins": {
+    "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\0000_Nku_1.zip": "0d1fa6c036bb553459dd0e9baec8be4ace8bc61d5acea6aab585d713f2292d0f",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\T_Nku_1_001_Main_d_1.png": "772a2768ca396a4c6b404357ad30a676de4bf6928be053db1d956fb3b675a516",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\npm_atlas.json": "9feb8685a71dec4cd2bb746bd3695bccdce3e648199dc0f32cb3738f6c430ea2",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\0000_Nku_1.zip": "8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\T_Nku_1_001_Main_d_1.png": "88e0392ea057013e4eb33e9240a3856a1728fb8380433cab9662f73052473278",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\npm_atlas.json": "338edcd767c0c6c99f762d4b7a9dcfd9407da030086ccb5b96e551d3bffae0cc"
+  },
+  "base": "4288c54de328db7a5037b57707862319f7aa6ff0",
+  "evaluator": "a86319003a684b4eccabc7eb524d4e70b829b853:docs/research/atlas-seam-r68/replay.py",
+  "candidate_sha256": "306ac5376f0bf2f59617c8091cddb04051b42099e4d3d0e61c70f6084f9b6eb3"
+}
