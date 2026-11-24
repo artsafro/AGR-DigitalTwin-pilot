@@ -9,7 +9,7 @@ storeys (+23.55, +39.30) the recessed ring B. Every station (corner, cut, max-si
 onto the other and becomes a station there too, so both rings carry the same station sequence and every belt cap
 cell is a quad between station i and i+1 of A and B (no Delaunay fan, no T-junction, belt-cap-quad-ladder rule 1/3).
 B stations within `--snap` of their A partner take the A point (one wall, one line: no sliver cap).
-Writes OUT_DIR/module_<run>.json (module_build input, floor-to-floor modules, base = floor level) and
+Writes OUT_DIR/module_<run>.json (body core plan input, schemas/BodyPlan.schema.json, floor-to-floor modules, base = floor level) and
 OUT_DIR/caps.json (cap cells by xy, z and material). Pure Python; the Blender side is assemble63b.py.
 """
 import argparse
@@ -67,7 +67,7 @@ def project(xy, cum, p):
 
 
 def ring_stations(xy, cuts, max_side):
-    """Perimeter stations s of one ring: corners, cuts, then max-side splits (module_build ring_points order)."""
+    """Perimeter stations s of one ring: corners, cuts, then max-side splits (body_lattice.ring_points order)."""
     cum = perim_s(xy)
     corners = [round(c, 6) for c in cum[:-1]]
     ss = []
@@ -439,6 +439,7 @@ def main(argv=None):
         return {"units": "m", "step": STEP, "z0": z0, "floors": floors, "loops": LOOPS[side],
                 "rings": [{"xy": [[round(x, 6), round(y, 6)] for x, y in xy], "cuts": [], "zones": zones}],
                 "windows": wins, "insets": [], "materials": f["materials"], "wall_tile_m": 3.0,
+                "zone_overlap": "first_listed",  # remapped wrap zone overlaps its neighbour; v007 built so (#1736)
                 "source": {"floor": os.path.basename(a.floor_a if side == "A" else a.floor_b), "ring": side}}
 
     os.makedirs(a.out)

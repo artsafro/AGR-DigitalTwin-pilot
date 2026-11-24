@@ -1,10 +1,10 @@
-"""Hook `after` stage `body` (#1619 polygon 63B v007): join the module_build runs and close the belt caps.
+"""Hook `after` stage `body` (#1619 polygon 63B v007): join the shared body core runs (#1736) and close the belt caps.
 
 Pattern: n/a | new-case: two-ring tower on the 63A module builder.
 
 blender -b --factory-startup --python assemble63b.py -- STACK_DIR OUT_DIR
 
-STACK_DIR holds b_<run>/body.blend (module_build.py outputs, runs A1 B1 A2 B2 A3) and caps.json (stack63b.py).
+STACK_DIR holds b_<run>/body.blend (tools/methods/body/body_lattice_blender.py outputs, runs A1 B1 A2 B2 A3) and caps.json (stack63b.py).
 The cap cells are horizontal quads between the shared stations of ring A and ring B; their corners are looked up
 among the existing loop vertices (1e-4 m), so a cap shares every edge with the walls (no T-junction). A cell where
 ring A lies outside ring B tops the A storey at +23.55/+39.30 (+Z) and is the soffit of A at +26.70/+42.45 (-Z); a
@@ -68,7 +68,7 @@ def _run():
     bpy.ops.object.join()
     body = objs[0]
     body.name = body.data.name = "SM_Body_Main"
-    # world-space vertices (module_build sets object z = z0)
+    # world-space vertices (the core sets object z = z0)
     body.data.transform(body.matrix_world)
     body.matrix_world.identity()
     me = body.data

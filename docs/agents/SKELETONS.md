@@ -27,7 +27,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 |---|---|---|
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
-| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
+| 3 | `body` бадик, окна, капсулы, крыша | Этап 1 (бадик с проёмами): `uv run agr body PLAN NEW_OUT` — общее ядро `tools/methods/body/body_lattice.py` (решётка BM-00, вход `schemas/BodyPlan.schema.json`: Revit `floor_from_dump.py`, DWG `plan_adapter_dwg.py`) [#1736]; этапы 2–4 — AGR Tools (`windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 3a | `body` → вставка ограждения по измеренной оси парапета | [`agr railing`](../procedure/node-r3-fence-railing-gates.md#shared-headless-builder), отдельная геометрия, не приваривать к BODY [D336]; плоскость opacity только в лестнице бюджета НПМ |
 | 4 | `mesh-quality` качество сетки в конце `body` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
 | 5 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
@@ -48,7 +48,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `inspect` | `agr inspect --manifest JOB.json` |
-| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
+| 2 | `body` | Этап 1: `uv run agr body` (ядро `tools/methods/body/body_lattice.py`) [#1736]; этапы 2–4 AGR Tools / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 3 | `mesh-quality` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
 | 4 | `brick-seams` кирпичные швы | пробел |
 | 5 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |

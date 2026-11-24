@@ -638,9 +638,6 @@
 /docs/research/body-gn-triangle-count-boundary.md
 /docs/research/body-gn-union-interface-mechanism.md
 /docs/research/body-gn-z0-snap-attribute-probe.md
-/docs/research/body-mesh-method.md
-/docs/research/body-mesh-method/loop_anatomy.py
-/docs/research/body-mesh-method/proto_lattice.py
 /docs/research/body-mesh-method/run_anat.sh
 /docs/research/body-training-1619/README.md
 /docs/research/body-training-1619/band_compare.py
