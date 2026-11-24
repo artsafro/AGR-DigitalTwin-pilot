@@ -1,0 +1,638 @@
+{
+  "setup": {
+    "status": "ok",
+    "exit_code": 0,
+    "seconds": 58.7,
+    "cmd": [
+      "C:\\Program Files\\Autodesk\\3ds Max 2026\\3dsmaxbatch.exe",
+      "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_14809b3f\\prepare.ms",
+      "-listenerLog",
+      "C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_14809b3f\\listener.log",
+      "-v",
+      "3"
+    ],
+    "warnings": [],
+    "log": "-- ALC Security Tool 1.3 enabled.\r\n-- ALC2 Security Tool 1.3 enabled.\r\n-- PhysXPluginMfx Security Tool 1.3 enabled.\r\n-- PhysXPluginMfx2 Security Tool 1.1 enabled.\r\n-- CRP Security Tool 1.1 enabled.\r\n-- ADSL Security Tool 1.1 enabled.\r\n-- MSCPROP Security Tool 1.0 enabled.\r\n\r\n\r\nRappaTools3.Stuff()\r\nRappaTools3.562 - https://r\u0435musjuncu.\u0441\u043em/\r\nMCP: helpers loaded (safe_mode = false, native bridge = true, tcp idle poll = 250 ms)\r\nAGR_TOOLS_REGISTERED version=1.1.0 category=AGR Tools macros=Open,Classic,XView,MatID,Names,Tris,Textures,Pivot,Nudge,NudgeApply,Atlas,AtlasApply,Texel,Ucx,UcxApply,Cleanup,CleanupApply,Export,Geojson\r\nSYNTHETIC_READY version=#(28000, 68, 0, 28, 3, 0, 30732, 2026, \".3\") units=#millimeters scale=1.0 faces=6 verts=8\r\n-- ALC Security Tool 1.3 disabled.\r\n-- ALC2 Security Tool 1.3 disabled.\r\n-- PhysXPluginMfx Security Tool 1.3 disabled.\r\n-- CRP Security Tool 1.1 disabled.\r\n-- ADSL Security Tool 1.1 disabled.\r\n\n--- process output ---\n24.11.2026 2:58:33;  3ds Max Install Location: C:\\Program Files\\Autodesk\\3ds Max 2026\\\r\n24.11.2026 2:58:33;  3ds Max Executable: 3dsmax.exe\r\n24.11.2026 2:58:33;  Secure Mode: 'OFF'\r\n24.11.2026 2:58:33;  Listener Log File: \"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_14809b3f\\listener.log\"\r\n24.11.2026 2:58:33;  Script command: \" -mxs \"(filein @\\\"C:\\Users\\artsafro\\AppData\\Local\\Temp\\agr-3dsmax-t_14809b3f\\prepare.ms\\\")\"\"\r\n24.11.2026 2:58:34;  Product version: 3ds Max 2026.3 (28.3.0.30732)\r\n24.11.2026 2:58:34;  Data collection and use is 'OFF'. Change your participation anytime in the Help menu of 3ds Max.\r\n24.11.2026 2:58:47;  Initializing Python version: 3.11.12\r\n24.11.2026 2:59:09;  Task Completed Successfully\r\n24.11.2026 2:59:09;  3ds Max Shutting Down\r\n"
+  },
+  "records": [
+    {
+      "implementation": "baseline",
+      "case": "valid",
+      "repeat": 1,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 33.9,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: .NET runtime exception: Operation is not supported on this platform."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "baseline-valid-1\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485572181261100
+        },
+        "baseline-valid-1\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485572182270100
+        },
+        "baseline-valid-1\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485572182270100
+        },
+        "baseline-valid-1\\output\\jobs.txt": {
+          "sha256": "d045b7c958f7ff14d9f802e2d5c41dc4917792f6594fe53ab509b8005a1e075d",
+          "size": 126,
+          "mtime_ns": 1795485572180245100
+        },
+        "baseline-valid-1\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485572181261100
+        },
+        "baseline-valid-1\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485572183278600
+        }
+      },
+      "expected_diagnostic": "Operation is not supported on this platform",
+      "passed": true
+    },
+    {
+      "implementation": "baseline",
+      "case": "valid",
+      "repeat": 2,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 26.7,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: .NET runtime exception: Operation is not supported on this platform."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "baseline-valid-2\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485606216825900
+        },
+        "baseline-valid-2\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485606217831700
+        },
+        "baseline-valid-2\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485606218836800
+        },
+        "baseline-valid-2\\output\\jobs.txt": {
+          "sha256": "d045b7c958f7ff14d9f802e2d5c41dc4917792f6594fe53ab509b8005a1e075d",
+          "size": 126,
+          "mtime_ns": 1795485606216825900
+        },
+        "baseline-valid-2\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485606217831700
+        },
+        "baseline-valid-2\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485606218836800
+        }
+      },
+      "expected_diagnostic": "Operation is not supported on this platform",
+      "passed": true
+    },
+    {
+      "implementation": "baseline",
+      "case": "valid",
+      "repeat": 3,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 26.5,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: .NET runtime exception: Operation is not supported on this platform."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "baseline-valid-3\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485633080379600
+        },
+        "baseline-valid-3\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485633081387500
+        },
+        "baseline-valid-3\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485633082387900
+        },
+        "baseline-valid-3\\output\\jobs.txt": {
+          "sha256": "d045b7c958f7ff14d9f802e2d5c41dc4917792f6594fe53ab509b8005a1e075d",
+          "size": 126,
+          "mtime_ns": 1795485633080379600
+        },
+        "baseline-valid-3\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485633081387500
+        },
+        "baseline-valid-3\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485633082892400
+        }
+      },
+      "expected_diagnostic": "Operation is not supported on this platform",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "absent",
+      "repeat": 1,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 24.4,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-absent-1\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485659722721000
+        },
+        "merged-absent-1\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485659722721000
+        },
+        "merged-absent-1\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485659723804800
+        },
+        "merged-absent-1\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485659722721000
+        },
+        "merged-absent-1\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485659723804800
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "absent",
+      "repeat": 2,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 25.1,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-absent-2\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485684217232300
+        },
+        "merged-absent-2\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485684218393000
+        },
+        "merged-absent-2\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485684218393000
+        },
+        "merged-absent-2\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485684218393000
+        },
+        "merged-absent-2\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485684219401400
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "absent",
+      "repeat": 3,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 25.2,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-absent-3\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485709434130800
+        },
+        "merged-absent-3\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485709434130800
+        },
+        "merged-absent-3\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485709435635300
+        },
+        "merged-absent-3\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485709434130800
+        },
+        "merged-absent-3\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485709435635300
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "partial",
+      "repeat": 1,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 25.9,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-partial-1\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485734762142300
+        },
+        "merged-partial-1\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485734763154700
+        },
+        "merged-partial-1\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485734764160000
+        },
+        "merged-partial-1\\output\\jobs.txt": {
+          "sha256": "3617b5eb834e8ff34820bf700baf6ce09064051dbb198b0b0daa6b915e23c791",
+          "size": 32,
+          "mtime_ns": 1795485734762142300
+        },
+        "merged-partial-1\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485734763154700
+        },
+        "merged-partial-1\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485734764160000
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "partial",
+      "repeat": 2,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 26.2,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-partial-2\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485760777442600
+        },
+        "merged-partial-2\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485760777954400
+        },
+        "merged-partial-2\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485760778465100
+        },
+        "merged-partial-2\\output\\jobs.txt": {
+          "sha256": "3617b5eb834e8ff34820bf700baf6ce09064051dbb198b0b0daa6b915e23c791",
+          "size": 32,
+          "mtime_ns": 1795485760776931700
+        },
+        "merged-partial-2\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485760777442600
+        },
+        "merged-partial-2\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485760778980600
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "partial",
+      "repeat": 3,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 26.1,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-partial-3\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485787085047900
+        },
+        "merged-partial-3\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485787086047900
+        },
+        "merged-partial-3\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485787086554500
+        },
+        "merged-partial-3\\output\\jobs.txt": {
+          "sha256": "3617b5eb834e8ff34820bf700baf6ce09064051dbb198b0b0daa6b915e23c791",
+          "size": 32,
+          "mtime_ns": 1795485787084042100
+        },
+        "merged-partial-3\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485787085047900
+        },
+        "merged-partial-3\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485787086554500
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "valid",
+      "repeat": 1,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 28.5,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-valid-1\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485813291193700
+        },
+        "merged-valid-1\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485813291193700
+        },
+        "merged-valid-1\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485813292199500
+        },
+        "merged-valid-1\\output\\jobs.txt": {
+          "sha256": "d045b7c958f7ff14d9f802e2d5c41dc4917792f6594fe53ab509b8005a1e075d",
+          "size": 126,
+          "mtime_ns": 1795485813290186400
+        },
+        "merged-valid-1\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485813291193700
+        },
+        "merged-valid-1\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485813292199500
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "valid",
+      "repeat": 2,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 28.3,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-valid-2\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485841914178200
+        },
+        "merged-valid-2\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485841915179600
+        },
+        "merged-valid-2\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485841915179600
+        },
+        "merged-valid-2\\output\\jobs.txt": {
+          "sha256": "d045b7c958f7ff14d9f802e2d5c41dc4917792f6594fe53ab509b8005a1e075d",
+          "size": 126,
+          "mtime_ns": 1795485841913181800
+        },
+        "merged-valid-2\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485841914178200
+        },
+        "merged-valid-2\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485841915179600
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    },
+    {
+      "implementation": "merged",
+      "case": "valid",
+      "repeat": 3,
+      "wrapper_exit": 1,
+      "native_exit": 4294967295,
+      "seconds": 27.2,
+      "errors": [
+        "XVIEW_ERROR -- Runtime error: XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version (release 28000); the file-identity helper requires .NET Framework CodeDOM. Use 3ds Max 2024."
+      ],
+      "unchanged": true,
+      "inventory": {
+        "inputs\\synthetic.max": {
+          "sha256": "d8cd654a39c01d961874631c69542242527967d7aa66886a1dca19fe05fb2191",
+          "size": 610304,
+          "mtime_ns": 1795485548024000000
+        },
+        "merged-valid-3\\output\\box.json": {
+          "sha256": "95ba89769d499a892b051977f145a529620fcf2f17c72d25d6e891885ed556b1",
+          "size": 23,
+          "mtime_ns": 1795485870389472000
+        },
+        "merged-valid-3\\output\\done.txt": {
+          "sha256": "05be0ffa65dbbcbd8689859054591fbc6c9fddf9fb2a59bec619ec4ff594f9b0",
+          "size": 23,
+          "mtime_ns": 1795485870390515300
+        },
+        "merged-valid-3\\output\\failed.txt": {
+          "sha256": "3ef549826625a8ced3cfbcdacd3c2c578c85845d6ff7d77f2c30f5960a43cadb",
+          "size": 25,
+          "mtime_ns": 1795485870391519800
+        },
+        "merged-valid-3\\output\\jobs.txt": {
+          "sha256": "d045b7c958f7ff14d9f802e2d5c41dc4917792f6594fe53ab509b8005a1e075d",
+          "size": 126,
+          "mtime_ns": 1795485870389472000
+        },
+        "merged-valid-3\\output\\report.jsonl": {
+          "sha256": "dfc8c6be042b1b536c03f17e1861245c001d3ca3efcc46048820ff300c37dee1",
+          "size": 27,
+          "mtime_ns": 1795485870390515300
+        },
+        "merged-valid-3\\stage\\sentinel.txt": {
+          "sha256": "c425e03b0f29460e12cea3ceb762f13dd0b3e06b42349b7a20dd6bf784204408",
+          "size": 14,
+          "mtime_ns": 1795485870391519800
+        }
+      },
+      "expected_diagnostic": "XVIEW_UNSUPPORTED_MAX_VERSION",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "baseline-valid": {
+      "median_seconds": 26.7,
+      "passed": 3,
+      "runs": 3
+    },
+    "merged-absent": {
+      "median_seconds": 25.1,
+      "passed": 3,
+      "runs": 3
+    },
+    "merged-partial": {
+      "median_seconds": 26.1,
+      "passed": 3,
+      "runs": 3
+    },
+    "merged-valid": {
+      "median_seconds": 28.3,
+      "passed": 3,
+      "runs": 3
+    }
+  }
+}
