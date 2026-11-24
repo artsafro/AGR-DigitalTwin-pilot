@@ -235,3 +235,40 @@ def test_contiguous_udims_probe_gapless_and_order_preserving():
         m = pp.contiguous_udims(tiles)
         assert sorted(m.values()) == list(range(1001, 1001 + len(set(tiles))))
         assert all((m[a] < m[b]) == (a < b) for a in tiles for b in tiles)
+
+
+# ---- frame reach (#1609 package review: V003 decor embed, frames floating 50-154 mm over a lattice opening) ----
+
+def test_frame_over_an_opening_reaches_the_niche_beside_it():
+    # N06: every footprint ray hits the 0.25 opening back (too deep), the niche 0.11 beside it is the contact
+    assert pp.frame_reach([0.256, 0.25, None], [0.11, 0.11, 0.25, None], 0.15) == [0.11]
+
+
+def test_frame_touching_the_plane_or_a_niche_under_it_keeps_its_own_depths():
+    assert pp.frame_reach([0.0, 0.25], [0.11], 0.15) == []          # touches the wall plane: unchanged
+    assert pp.frame_reach([0.11, 0.25], [0.05], 0.15) == [0.11]     # a niche under the footprint: as before
+
+
+def test_frame_reach_threshold_and_nothing_found():
+    assert pp.frame_reach([0.25], [0.15], 0.15) == [0.15]           # exactly at NICHE_M: reached (<=, as before)
+    assert pp.frame_reach([0.25], [0.1500001], 0.15) == []          # beyond: stays floating, reported by decor embed
+    assert pp.frame_reach([None], [None], 0.15) == []
+    assert pp.frame_reach([], [], 0.15) == []
+
+
+@pytest.mark.parametrize('own, around, niche', [([math.nan], [], 0.15), ([0.2], [math.inf], 0.15),
+                                                ([0.2], [-0.01], 0.15), ([0.2], [0.1], 0.0), ([0.2], [0.1], 0.001)])
+def test_frame_reach_fail_closed(own, around, niche):
+    with pytest.raises(ValueError):
+        pp.frame_reach(own, around, niche)
+
+
+def test_frame_reach_probe_never_deeper_than_niche_and_only_when_floating():
+    rng = random.Random(1609)
+    for _ in range(500):
+        own = [rng.choice([None, round(rng.uniform(0, 0.3), 3)]) for _ in range(rng.randint(0, 6))]
+        around = [rng.choice([None, round(rng.uniform(0, 0.3), 3)]) for _ in range(rng.randint(0, 6))]
+        got = pp.frame_reach(own, around, 0.15)
+        assert all(0.002 < d <= 0.15 for d in got)
+        contact = any(d is not None and d <= 0.15 for d in own)
+        assert set(got) <= set(own if contact else around)
