@@ -109,7 +109,8 @@ def test_inside_ring():
 
 
 def test_finish_bands_walls_sills_heads():
-    f = lambda lo, hi, nz: pp.finish_of_face(lo, hi, nz, BANDS)
+    def f(lo, hi, nz):
+        return pp.finish_of_face(lo, hi, nz, BANDS)
     assert f(0.0, 0.9, 0) == 'Plinth_RAL7004'
     assert f(0.9, 1.125, 0) == 'Cassette_RAL7047'
     assert f(2.7, 3.075, 0) == 'Cassette_RAL5015'

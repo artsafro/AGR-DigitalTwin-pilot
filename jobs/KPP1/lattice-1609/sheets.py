@@ -1,22 +1,39 @@
-"""Ground-floor sheet of the planned KPP1 lattice lines over straight W/S/N elevations of R1 v003 (#1609 restart).
+"""KPP1 #1609 review sheets of the lattice method (one module for the three sheets, #1614 search-noise budget).
 
-Pattern: new-case | new-case: read-only review sheet; lattice lines from line_list.py drawn over a textured elevation.
+Pattern: new-case | new-case: read-only review sheets of the KPP1 lattice method; never a line or mesh source.
 
-Usage: uv run python render_lines.py LINE_LIST.json NPM_DUMP.npz R1_DUMP.npz TEXTURE.png OUT.png
-         [--zmin -0.3] [--zmax 4.7] [--ppm 60] [--check OUT_CHECK.json]
-NPM_DUMP / R1_DUMP: docs/research/body-modelling-1618/dump_mesh.py dumps of the r1-v003 NPM export (same
-triangles as r1-v003, atlas UV, texture) and of r1-v003 itself. Frame: Revit = R1 FBX + (14.655, 5.355, 0)
-(jobs/KPP1/object.json); the NPM dump is moved onto R1 by its bbox (spans must agree within 2 mm).
-The check JSON gives, per Revit opening, the share of its area where R1 v003 is on the body plane (hole: low):
-a read-only consistency check of the Revit census against r1-v003, not a line source.
-Refuses to write over an input. Writes OUT via OUT.partial.
+    uv run python jobs/KPP1/lattice-1609/sheets.py lines LINE_LIST.json NPM_DUMP.npz R1_DUMP.npz TEXTURE.png OUT.png
+           [--zmin -0.3] [--zmax 4.7] [--ppm 60] [--check OUT_CHECK.json]
+    uv run python jobs/KPP1/lattice-1609/sheets.py lattice LATTICE.json OUT.png --model LABEL MESH.npz CHECK.json
+           [--model ...] [--z 0 8.65] [--s 0 78.64] [--ppm 24] [--title TEXT]
+    uv run python jobs/KPP1/lattice-1609/sheets.py compose RENDER_DIR OUT.png corners|ground|elevations TITLE
+
+`lines` (step 1): the planned lattice lines from line_list.py over straight ground-floor W/S/N elevations of R1 v003.
+NPM_DUMP / R1_DUMP: docs/research/body-modelling-1618/dump_mesh.py dumps of the r1-v003 NPM export (same triangles as
+r1-v003, atlas UV, texture) and of r1-v003 itself. Frame: Revit = R1 FBX + (14.655, 5.355, 0) (jobs/KPP1/object.json);
+the NPM dump is moved onto R1 by its bbox (spans must agree within 2 mm). The check JSON gives, per Revit opening, the
+share of its area where R1 v003 is on the body plane (hole: low): a read-only consistency check of the Revit census
+against r1-v003, not a line source. Refuses to write over an input; writes OUT via OUT.partial.
+
+`lattice` (step 2): unrolled straight elevations S | E | N | W along the envelope ring (a ring that dies at a corner
+shows), rings/stations marked closed or broken, lattice cells with defects highlighted (Artem 2026-11-21: ring
+continuity; decision 5: local-signal map next to the wire). MESH.npz = dump_mesh.py output, CHECK.json =
+lattice_check.py output for the same mesh and lattice. OUT.png must not alias an input; written via OUT.png.partial.png.
+
+`compose` (step 3 / package): before (quad-v003) / after (v004) per camera from render_v004.py outputs; rows = cameras
+(corner set, the same cameras on the ground floor, or straight-on elevations), columns = v003 wire | v004 wire |
+v003 tex | v004 tex. A missing render is an error naming it; an existing OUT fails (never overwrite).
 """
 import json
 import os
 import sys
+from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import lattice_check as lc  # noqa: E402
 
 R1_TO_REVIT = np.array([14.655, 5.355, 0.0])
 FONT = 'C:/Windows/Fonts/arial.ttf'
@@ -111,7 +128,7 @@ def hole_check(f, F, zb, win, ppm):
     return out
 
 
-def main(a):
+def lines_main(a):
     opts = {}
     for k in ('--zmin', '--zmax', '--ppm', '--check'):
         if k in a:
@@ -243,5 +260,189 @@ def main(a):
     print('sheet', out_p, sheet.size, 'openings solid in R1 (plane share > 0.5):', bad)
 
 
+# ---- step 2: lattice sheet ----
+SIDE_RU = {'S': 'Фасад S (вид с юга)', 'E': 'Фасад E (вид с востока)', 'N': 'Фасад N (вид с севера)',
+           'W': 'Фасад W (вид с запада)'}
+
+
+def panel(lat, verts, fn, fi, chk, s0, s1, z0, z1, ppm, font):
+    segs, perim = lc.ring_frame(lat)
+    S, D, K = lc.place(np.asarray(verts, float), segs, perim)
+    W, H = int((s1 - s0) * ppm) + 1, int((z1 - z0) * ppm) + 1
+    padl, padt, padb = 60, 34, 22
+    img = Image.new('RGB', (W + padl + 10, H + padt + padb), 'white')
+    dr = ImageDraw.Draw(img, 'RGBA')
+
+    def X(s):
+        return padl + (s - s0) * ppm
+
+    def Y(z):
+        return padt + (z1 - z) * ppm
+    starts = np.concatenate([[0], np.cumsum(fn)[:-1]])
+    polys = []
+    for a, n in zip(starts, fn):
+        f = fi[a:a + n]
+        v = verts[f]
+        if (np.abs(D[f]) > lc.BAND).any() or v[:, 2].max() < z0 - 1e-3 or v[:, 2].min() > z1 + 1e-3:
+            continue
+        e1, e2 = v[1] - v[0], v[2] - v[0]
+        nrm = np.cross(e1, e2)
+        if np.linalg.norm(nrm) < 1e-12 or abs(nrm[2]) / np.linalg.norm(nrm) > 0.1:
+            continue
+        ss = S[f].copy()
+        if ss.max() - ss.min() > perim / 2:
+            ss = np.where(ss < perim / 2, ss + perim, ss)
+        if ss.max() < s0 or ss.min() > s1:
+            continue
+        polys.append((float(D[f].mean()), [(X(s), Y(z)) for s, z in zip(ss, v[:, 2])]))
+    for d, pts in sorted(polys, key=lambda p: -p[0]):  # deeper first
+        g = int(max(120, 232 - 120 * max(0.0, d)))
+        dr.polygon(pts, fill=(g, g, g + 8), outline=(40, 40, 40))
+    St = list(lat['stations_s']) + [perim]
+    Z = lat['levels']
+    for c in chk['cells']:
+        if any(c[k] for k in ('tri', 'ngon', 'diagonal', 't_vertex', 'non_manifold')):
+            a, b = St[c['i']], St[c['i'] + 1]
+            za, zb = Z[c['j']], Z[c['j'] + 1]
+            if b < s0 or a > s1 or zb < z0 or za > z1:
+                continue
+            dr.rectangle([X(max(a, s0)), Y(min(zb, z1)), X(min(b, s1)), Y(max(za, z0))], fill=(255, 0, 0, 60),
+                         outline=(220, 0, 0, 255), width=2)
+    for lv in chk['levels']:
+        z = lv['z']
+        if not z0 - 1e-6 <= z <= z1 + 1e-6:
+            continue
+        col = (0, 160, 0) if lv['closed'] else (230, 0, 0)
+        dr.text((4, Y(z) - 7), '%.3f' % z, fill=col, font=font)
+        dr.line([X(s0) - 8, Y(z), X(s0) - 1, Y(z)], fill=col, width=3)
+        for a, b in lv['gaps_s']:
+            if b >= s0 and a <= s1:
+                dr.line([X(max(a, s0)), Y(z), X(min(b, s1)), Y(z)], fill=(255, 0, 0, 150), width=2)
+    for st in chk['stations']:
+        s = st['s']
+        if not s0 - 1e-6 <= s <= s1 + 1e-6:
+            continue
+        col = (0, 160, 0) if st['through'] else (230, 0, 0)
+        dr.line([X(s), padt - 8, X(s), padt - 1], fill=col, width=3)
+        for a, b in st['gaps_z']:
+            if b >= z0 and a <= z1:
+                dr.line([X(s), Y(min(b, z1)), X(s), Y(max(a, z0))], fill=(255, 0, 0, 150), width=2)
+    for k, f in enumerate(lat['sides']):
+        c0 = lat['corners_s'][k]
+        c1 = lat['corners_s'][k + 1] if k + 1 < len(lat['sides']) else perim
+        if c1 >= s0 and c0 <= s1:
+            dr.line([X(max(c0, s0)), padt - 30, X(max(c0, s0)), padt + H], fill=(0, 90, 255), width=2)
+            dr.text((X(max(c0, s0)) + 4, padt - 30), SIDE_RU[f], fill=(0, 60, 200), font=font)
+    return img
+
+
+def lattice_main(argv):
+    a = list(argv)
+
+    def opt(k, n, d):
+        if k in a:
+            i = a.index(k)
+            v = a[i + 1:i + 1 + n]
+            del a[i:i + 1 + n]
+            return v
+        return d
+    models = []
+    while '--model' in a:
+        i = a.index('--model')
+        models.append(a[i + 1:i + 4])
+        del a[i:i + 4]
+    z0, z1 = (float(x) for x in opt('--z', 2, ['nan', 'nan']))
+    sr = opt('--s', 2, None)
+    ppm = float(opt('--ppm', 1, ['24'])[0])
+    title = opt('--title', 1, [''])[0]
+    if len(a) != 2 or not models:
+        raise SystemExit(__doc__)
+    latp, out = a
+    ins = [latp] + [p for m in models for p in m[1:]]
+    tmp = out + '.partial.png'
+    if any(os.path.abspath(out) == os.path.abspath(p) or os.path.abspath(tmp) == os.path.abspath(p) for p in ins):
+        raise SystemExit('output aliases input: %s' % out)
+    lat = json.load(open(latp, encoding='utf-8'))
+    if z0 != z0:
+        z0, z1 = lat['levels'][0], lat['levels'][-1]
+    s0, s1 = (0.0, lat['perimeter']) if sr is None else (float(sr[0]), float(sr[1]))
+    font = ImageFont.truetype(FONT, 13)
+    big = ImageFont.truetype(FONT, 18)
+    tiles = []
+    for label, npz, cj in models:
+        m = np.load(npz)
+        chk = json.load(open(cj, encoding='utf-8'))
+        sm = chk['summary']
+        img = panel(lat, m['verts'], m['fn'], m['fi'], chk, s0, s1, z0, z1, ppm, font)
+        head = ('%s: граней %d (квадов %d, треуг. %d); диагоналей %d, T-вершин %d, неманиф. %d; кольца замкнуты %d/%d; '
+                'станции насквозь %d/%d; ячеек с дефектом %d/%d (%.1f %%)'
+                % (label, sm['faces'], sm['quads'], sm['tris'], sm['diagonal_edges'], sm['t_vertices'],
+                   sm['non_manifold_edges'], sm['levels_closed'], sm['levels'], sm['stations_through'],
+                   sm['stations'], sm['cells_with_defects'], sm['cells_with_faces'], 100 * sm['cells_defect_share']))
+        tiles.append((head, img))
+    legend = ('Развёртка по кольцу оболочки: прямые фасады S | E | N | W подряд, углы — синие линии. '
+              'Зелёный уровень/станция слева и сверху = кольцо/петля замкнуты по всему периметру; красный отрезок = '
+              'разрыв. Красные ячейки = локальный сигнал (треугольник, n-гон, диагональ, T-вершина, неманифолд в '
+              'ячейке решётки). Серый темнее = глубже (откосы, ниши).')
+    W = max(t[1].width for t in tiles) + 20
+    Ht = sum(t[1].height + 30 for t in tiles) + 70
+    sheet = Image.new('RGB', (W, Ht), 'white')
+    dr = ImageDraw.Draw(sheet)
+    dr.text((10, 8), title, fill='black', font=big)
+    dr.text((10, 34), legend, fill=(60, 60, 60), font=font)
+    y = 60
+    for head, img in tiles:
+        dr.text((10, y), head, fill='black', font=font)
+        sheet.paste(img, (10, y + 18))
+        y += img.height + 30
+    sheet.save(tmp, 'PNG')
+    os.replace(tmp, out)
+    print('SHEET', out, sheet.size)
+
+
+# ---- step 3 / package: composed render sheet ----
+CAMS = ['sw_from_sw', 'sw_from_s', 'nw_from_nw', 'nw_from_n', 'se_from_se', 'se_from_s', 'ne_from_ne', 'ne_from_n']
+COLS = [('before', 'wire', 'ДО: quad-v003 (сетка)'), ('after', 'wire', 'ПОСЛЕ: решётка v004 + стойки (голубые)'),
+        ('before', 'tex', 'ДО: quad-v003 (текстура)'), ('after', 'tex', 'ПОСЛЕ: UDIM по отделкам')]
+ELEV = ['elev_W', 'elev_S', 'elev_N', 'elev_E']   # package step: straight-on facades (render_v004 elevations)
+SW, SH, SHEAD = 640, 430, 28
+
+
+def compose_main(render_dir, out, which, title):
+    out = Path(out)
+    if out.exists():
+        raise SystemExit(f'refused: {out} exists')
+    if which not in ('corners', 'ground', 'elevations'):
+        raise SystemExit(f'unknown set {which!r}')
+    cams = (CAMS if which == 'corners' else ELEV if which == 'elevations' else [c + '_ground' for c in CAMS])
+    paths = {(c, t, m): Path(render_dir) / f'{t}_{c}_{m}.png' for c in cams for t, m, _ in COLS}
+    missing = [str(p) for p in paths.values() if not p.is_file()]
+    if missing:
+        raise SystemExit(f'missing renders: {missing[:3]}')
+    sheet = Image.new('RGB', (SW * len(COLS), SHEAD * 2 + SH * len(cams)), 'white')
+    d = ImageDraw.Draw(sheet)
+    font = ImageFont.truetype(FONT, 18)
+    d.text((8, 6), title, fill='black', font=font)
+    for i, (_, _, label) in enumerate(COLS):
+        d.text((i * SW + 8, SHEAD + 6), label, fill='black', font=font)
+    for r, c in enumerate(cams):
+        for i, (t, m, _) in enumerate(COLS):
+            im = Image.open(paths[(c, t, m)]).convert('RGB').resize((SW, SH))
+            sheet.paste(im, (i * SW, SHEAD * 2 + r * SH))
+        d.text((6, SHEAD * 2 + r * SH + 6), c, fill='yellow', font=font)
+    sheet.save(out)
+    print('SHEET', out, sheet.size)
+
+
+def compose_cli(a):
+    if len(a) != 4:
+        raise SystemExit(__doc__)
+    compose_main(*a)
+
+
+COMMANDS = {'lines': lines_main, 'lattice': lattice_main, 'compose': compose_cli}
+
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
+        raise SystemExit(__doc__)
+    COMMANDS[sys.argv[1]](sys.argv[2:])

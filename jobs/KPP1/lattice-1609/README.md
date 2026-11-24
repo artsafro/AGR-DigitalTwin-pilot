@@ -36,7 +36,7 @@ C=<laughing-hawking>/jobs/KPP1/outputs/census-v001
 uv run python jobs/KPP1/lattice-1609/line_list.py $C/openings_spec.json $C/walls_ext.objects.json OUT/line_list.json --bands jobs/KPP1/lattice-1609/finish_bands.json
 "$B" -b --factory-startup --python docs/research/body-modelling-1618/dump_mesh.py -- kpp1_r1_v003.fbx OUT/dump
 "$B" -b --factory-startup --python docs/research/body-modelling-1618/dump_mesh.py -- run-r1-v003/export/fbx/0000_Kpp_1_01.fbx OUT/dumpnpm
-uv run python jobs/KPP1/lattice-1609/render_lines.py OUT/line_list.json OUT/dumpnpm/SM_Kpp_1_001_Main.npz OUT/dump/SM_Kpp_1_Main.npz run-r1-v003/atlas/T_Kpp_1_001_Main_d_1.png OUT/kpp1-lattice-lines-ground.png --check OUT/hole_check.json
+uv run python jobs/KPP1/lattice-1609/sheets.py lines OUT/line_list.json OUT/dumpnpm/SM_Kpp_1_001_Main.npz OUT/dump/SM_Kpp_1_Main.npz run-r1-v003/atlas/T_Kpp_1_001_Main_d_1.png OUT/kpp1-lattice-lines-ground.png --check OUT/hole_check.json
 ```
 Tests: `tests/jobs/test_kpp1_line_list_1609.py`.
 
@@ -51,7 +51,7 @@ a hole the list lacks (glazed side lights at the entrances), so it is treated as
 
 - `lattice_input.py`: line list → one ring lattice (perimeter s, S→E→N→W, `--shift` into the R1 frame).
 - `lattice_check.py`: per level closed yes/no, per station through yes/no, defects per lattice cell (local signal).
-- `render_lattice.py`: unrolled S | E | N | W straight elevations, before/after, rings and cells marked.
+- `sheets.py lattice`: unrolled S | E | N | W straight elevations, before/after, rings and cells marked.
 
 Reproduce (outputs `C:/x/ev_1609/s7`, evidence `G:/Мой диск/AGR-evidence/1609-kpp1-lattice-body/step2/`):
 ```
@@ -60,7 +60,7 @@ uv run python jobs/KPP1/lattice-1609/lattice_input.py O/line_list.json O/lattice
 "$B" -b --factory-startup --python docs/research/body-mesh-method/proto_lattice.py -- kpp1_r1_v003.fbx O/p6 --objects SM_Kpp_1_Main --lines O/lattice_r1.json --zmin 0 --zmax 8.65
 "$B" -b --factory-startup --python docs/research/body-modelling-1618/dump_mesh.py -- O/p6/proto.fbx O/d6
 uv run python jobs/KPP1/lattice-1609/lattice_check.py O/d6/SM_Proto_Body.npz O/lattice_r1.json O/qa/check_p6.json
-uv run python jobs/KPP1/lattice-1609/render_lattice.py O/lattice_r1.json OUT.png --model LABEL NPZ CHECK.json ...
+uv run python jobs/KPP1/lattice-1609/sheets.py lattice O/lattice_r1.json OUT.png --model LABEL NPZ CHECK.json ...
 ```
 Tests: `tests/jobs/test_kpp1_lattice_body_1609.py`, `tests/jobs/test_kpp1_line_list_1609.py`.
 
@@ -90,7 +90,7 @@ uv run python jobs/KPP1/scripts/make_textures.py T
 "$B" -b --factory-startup --python jobs/KPP1/lattice-1609/assemble_v004.py -- O/p6/proto.fbx SM_Kpp_1.quad-v003.fbx O/a2 T C:/x/kpp1/r1230/tex/textures.json
 "$B" -b --factory-startup --python jobs/KPP1/lattice-1609/render_v004.py -- O/a2/master-v004-lattice.blend T O/r2 after
 "$B" -b --factory-startup --python jobs/KPP1/lattice-1609/render_v004.py -- SM_Kpp_1.quad-v003.fbx C:/x/kpp1/r1230/tex O/r2 before
-uv run python jobs/KPP1/lattice-1609/sheet_v004.py O/r2 OUT.png corners|ground TITLE
+uv run python jobs/KPP1/lattice-1609/sheets.py compose O/r2 OUT.png corners|ground TITLE
 ```
 Tests: `tests/jobs/test_kpp1_posts_plan_1609.py`.
 
@@ -106,7 +106,7 @@ Tests: `tests/jobs/test_kpp1_posts_plan_1609.py`.
 
 `run_package_v004.py PACKET RUN GROUND_NPM_FBX THUMBNAIL GROUND_MASTER` runs derive (`agr vpm-to-npm`, spec
 `spec_v004.json`), readback, xView (whole and element-wise [D336]), the NPM package (OKS + the accepted #1416 Ground
-copy byte-for-byte), the build manifest with masters per role [D328]/[D333] (`record_ground.py` re-records the #1416
+copy byte-for-byte), the build manifest with masters per role [D328]/[D333] (`run_package_v004.py record-ground` re-records the #1416
 Ground derivation), and `agr validate` (V013 from the fresh readback bounds). VPM `s_podz` stays empty: customer data,
 not a defect [D377]. Modelling split [D336]: plinth=body (finish band); inset=posts, frames, portals, annex, roof,
 glass; texture=cassette panels (UDIM); reason=Artem 2026-11-16/21/24.

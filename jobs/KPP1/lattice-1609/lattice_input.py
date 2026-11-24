@@ -14,7 +14,7 @@ x0/x1/y0/y1 = W/E/S/N facade planes; every facade extent must span its side (5 m
 Openings (`rect_lattice`, already snapped to the kept lines) go along as s/z rectangles: the class of a cell.
 
 Frame: the line list is in Revit metres; --shift DX DY moves the ring into the delivery frame (KPP1 R1 FBX =
-Revit - (14.655, 5.355), the frame of render_lines.R1_TO_REVIT). s, z and the openings do not change.
+Revit - (14.655, 5.355), the frame of sheets.R1_TO_REVIT). s, z and the openings do not change.
 
 CLI: python lattice_input.py LINE_LIST.json OUT.json [--shift DX DY]
      (OUT must not alias the input; written via OUT.partial)

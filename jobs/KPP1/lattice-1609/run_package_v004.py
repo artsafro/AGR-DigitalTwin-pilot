@@ -5,6 +5,7 @@ jobs/KPP1/quad-1372/run_checks.py (packet verified before/after every stage, NEW
 run.json). Never certifies delivery: V015-V017 are manual and s_podz is customer data [D306, D377].
 
     uv run python jobs/KPP1/lattice-1609/run_package_v004.py PACKET RUN GROUND_NPM_FBX THUMBNAIL GROUND_MASTER
+    uv run python jobs/KPP1/lattice-1609/run_package_v004.py record-ground GROUND_FBX GROUND_MASTER STORE_DIR PARTS_CSV
 
 PACKET (SHA256SUMS.txt + files): master-v004-delivery.blend (oks master, elements joined as loose parts),
 master-v004-lattice.blend (element master), SM_Kpp_1.v004-lattice.fbx (element work FBX for V003 --master),
@@ -121,8 +122,8 @@ def main(packet, out, ground, thumb, ground_master):
         # recorded here at package time because the #1416 record store is not on Drive
         (out / 'derivation-ground').mkdir()
         roles = [a for r in ('ground', 'groundel', 'flora') for a in ('--master', f'{r}={ground_master}')]
-        stage('record-ground', ['uv', 'run', 'python', ROOT / 'jobs/KPP1/lattice-1609/record_ground.py',
-                                npm / '0000_Kpp_1_Ground.fbx', ground_master, out / 'derivation-ground',
+        stage('record-ground', ['uv', 'run', 'python', ROOT / 'jobs/KPP1/lattice-1609/run_package_v004.py',
+                                'record-ground', npm / '0000_Kpp_1_Ground.fbx', ground_master, out / 'derivation-ground',
                                 'SM_Kpp_1_Ground,SM_Kpp_1_GroundEl,SM_Kpp_1_Flora'])
         stage('build-manifest', ['uv', 'run', 'agr', 'build-manifest', 'build', *rec['npm_zip'][:1],
                                  '--master', f'oks={master}', *roles,
@@ -148,7 +149,34 @@ def main(packet, out, ground, thumb, ground_master):
         print(json.dumps({s['name']: s['exit'] for s in rec['stages']}))
 
 
+def record_ground(fbx, master, store, parts_csv):
+    """Derivation record of the accepted #1416 Ground copy, per part role [D328, D333] (was record_ground.py).
+
+    Re-records, at package time, the export record derive_ground_v003.py (#1416) writes but the #1416 Drive evidence
+    does not keep: the Ground FBX (bytes unchanged) was derived from the #1416 v002 Ground copy. One dependency per
+    part role (ground / groundel / flora by build_manifest.role_of), source_id `KPP1.<role>.geometry`; the customer /
+    bridge inputs of #1416 are not re-attested here, so the record names only the geometry source.
+    """
+    sys.path.insert(0, str(ROOT))
+    from adapters.max.agr_tools import build_manifest as bm
+    parts = [p for p in parts_csv.split(',') if p]
+    if not parts:
+        raise SystemExit('no parts named')
+    digest = bm.sha256_file(master)
+    roles = {}
+    for name in parts:
+        roles.setdefault(bm.role_of(name), []).append(name)
+    deps = [{'role': role, 'master': os.path.abspath(master), 'master_sha256': digest, 'parts': sorted(names),
+             'source_id': f'KPP1.{role}.geometry'} for role, names in sorted(roles.items())]
+    rec = bm.write_export_derivation([fbx], master, store, bm.git_commit(str(ROOT)), master_sha256=digest,
+                                     role='ground', dependencies=deps, source_id='KPP1.ground.geometry')
+    print('RECORD', rec if isinstance(rec, str) else 'written', sorted(roles))
+
+
 if __name__ == '__main__':
-    if len(sys.argv) != 6:
+    if len(sys.argv) == 6 and sys.argv[1] == 'record-ground':
+        record_ground(*sys.argv[2:])
+    elif len(sys.argv) == 6:
+        main(*sys.argv[1:])
+    else:
         raise SystemExit(__doc__)
-    main(*sys.argv[1:])

@@ -1,6 +1,5 @@
 """#1609 KPP1 quad master corners: pure planning kernel (posts as separate clean elements, conforming wall rectangle)."""
 import importlib.util
-import itertools
 import math
 import random
 from pathlib import Path

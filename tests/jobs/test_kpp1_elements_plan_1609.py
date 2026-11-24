@@ -1,7 +1,8 @@
 """#1609 KPP1 package step: plan of the non-post outside elements (frames, portals, annex) and the glass depth cap.
 
 Artem 2026-11-24: posts accepted; the package rebuilds window framings and portals by the same voxel/lattice method
-as separate elements [D336]; the top belt stays blue (v003 band finishes never override the band scheme [D376]);
+as separate elements [D336]; body UV = a new continuous UV per finish, R1-atlas seams dropped [D357]; the top
+belt stays blue (v003 band finishes never override the band scheme [D376]);
 VPM s_podz stays empty, a customer-data exception of the package, not a defect [D377].
 Kernel: jobs/KPP1/lattice-1609/posts_plan.py (stdlib).
 """
@@ -219,7 +220,6 @@ def test_clamp_outside_probe_every_point_at_least_gap_outside():
 def test_contiguous_udims_maps_the_kpp1_tiles_onto_1001_1008():
     got = pp.contiguous_udims([1018, 1001, 1006, 1007, 1009, 1010, 1012, 1015, 1006])
     assert got == {1001: 1001, 1006: 1002, 1007: 1003, 1009: 1004, 1010: 1005, 1012: 1006, 1015: 1007, 1018: 1008}
-    assert pp.udim_origin(1001) == (0, 0) and pp.udim_origin(1010) == (9, 0) and pp.udim_origin(1018) == (7, 1)
 
 
 @pytest.mark.parametrize('tiles', [[], [1000], [1101], [1001.0], [True]])

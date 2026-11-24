@@ -15,7 +15,6 @@ from pathlib import Path
 import sys
 
 import bpy
-from mathutils import Vector
 
 HERE = Path(__file__).resolve().parent
 _spec = importlib.util.spec_from_file_location('rba_1372', HERE.parent / 'quad-1372' / 'render_before_after.py')

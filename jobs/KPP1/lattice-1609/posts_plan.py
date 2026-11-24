@@ -230,11 +230,6 @@ def contiguous_udims(tiles):
     return {t: 1001 + i for i, t in enumerate(tiles)}
 
 
-def udim_origin(tile):
-    """(u, v) origin of a UDIM tile: 1001 -> (0, 0), 1010 -> (9, 0), 1011 -> (0, 1)."""
-    return (tile - 1001) % 10, (tile - 1001) // 10
-
-
 def majority_finish(hits, fallback, min_share=0.5):
     """Finish of a lattice opening back face from the v003 surfaces seen behind it (#1609 package step): `hits` = one
     entry per sample point, a finish name or None (no v003 surface within reach). The most frequent finish wins if it

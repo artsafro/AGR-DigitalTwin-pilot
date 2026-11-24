@@ -8,7 +8,7 @@ are rebuilt as separate voxel elements [D336] (never welded into the body). Blen
 
 1. Body: every face of BODY.fbx (lattice p6) gets the finish of its z band (`posts_plan.finish_of_face`,
    finish_bands.json); then `vpm_uv.texel_cut` (edge-ring splits, no T-junction) + `vpm_uv.pack_uv` (world metres,
-   whole-period shift into the finish's UDIM tile).
+   whole-period shift into the finish's UDIM tile): a new continuous UV per finish, R1-atlas seams dropped [D357].
 2. Posts: faces of the quad-v003 Main whose centre lies outside the lattice ring, grouped by shared vertices; the group
    at each ring corner is that corner's post (`posts_plan.outside_components`; the other groups are listed in the
    report for the package step). Each post is voxelised on the snapped planes of its own faces
@@ -51,7 +51,7 @@ sys.path.insert(0, str(ROOT / 'adapters' / 'max' / 'agr_tools'))
 import posts_plan as pp  # noqa: E402
 import corner_plan as cp  # noqa: E402
 import vpm_uv  # noqa: E402
-from udimtile_core import face_tile  # noqa: E402
+from udimtile_core import face_tile, tile_origin  # noqa: E402
 
 RECT = (-14.985, -5.685, 12.675, 5.975)   # lattice ring in the R1 frame (lattice_r1.json rings[0])
 NEAR_M = 0.4
@@ -516,7 +516,7 @@ def delivery_master(objs, out):
     tiles = [face_tile([tuple(uv[li].uv) for li in p.loop_indices]) for p in me.polygons]
     umap = pp.contiguous_udims(tiles)
     for p, t in zip(me.polygons, tiles):
-        (ou, ov), (nu, nv) = pp.udim_origin(t), pp.udim_origin(umap[t])
+        (ou, ov), (nu, nv) = tile_origin(t), tile_origin(umap[t])
         for li in p.loop_indices:
             uv[li].uv = (uv[li].uv[0] + nu - ou, uv[li].uv[1] + nv - ov)
     spec = json.loads((HERE / 'spec_v004.json').read_text(encoding='utf-8'))
