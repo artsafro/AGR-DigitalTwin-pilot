@@ -52,6 +52,86 @@ def folder(tmp_path, files=(FBX, dict(PDF, path="album.pdf"), PNG), facts=FACTS,
     return d
 
 
+@pytest.fixture
+def revit_fbx_intake(tmp_path):
+    rvt = {"path": "model.rvt", "format": "rvt", "reads": ["geometry"], "sha256": "a" * 64,
+           "opened": True, "role": "primary"}
+    fbx = dict(FBX, role="check", sha256="b" * 64)
+    d = folder(tmp_path, files=(rvt, fbx), blocks={
+        k: block(B01[k], sources=("model.rvt",)) for k in ("frame", "levels", "floors", "roof")})
+    evidence = [{"source": "model.rvt", "source_sha256": rvt["sha256"], "export": fbx["path"],
+                 "readback": "structure.json", "elements": [
+                     {"id": "314", "family": "Glazed door", "material_ids": ["42", "77", "77"],
+                      "meshes": ["Door", "Handle"]}]}]
+    # Synthetic excerpt of the existing fbx_structure/1 readback. Unused glass slot must not mask collapse.
+    structure = {"format": "fbx_structure/1", "source": {"sha256": fbx["sha256"]}, "objects": [
+        {"name": name, "type": "MESH", "polygons": 2, "material_slots": ["Metal", "Glass"],
+         "face_material_counts": {"0": 2}} for name in ("Door", "Handle")]}
+    return d, evidence, structure
+
+
+def _write_material_evidence(d, evidence, structure):
+    (d / "revit-materials.json").write_text(json.dumps(evidence), encoding="utf-8")
+    (d / "structure.json").write_text(json.dumps(structure), encoding="utf-8")
+
+
+def test_intake_reports_collapsed_family(revit_fbx_intake, capsys):
+    d, evidence, structure = revit_fbx_intake
+    _write_material_evidence(d, evidence, structure)
+    main(["intake", "check", "--dir", str(d)])
+    report = json.loads(capsys.readouterr().out)
+    [export] = report["revit_material_counts"]
+    assert export["status"] == "mismatch"
+    assert export["export"] == "etalon.fbx"
+    assert export["findings"] == [{"id": "314", "family": "Glazed door", "status": "mismatch",
+                                   "source_count": 2, "export_count": 1}]
+
+
+def test_intake_matches_distinct_materials_across_split_meshes(revit_fbx_intake):
+    d, evidence, structure = revit_fbx_intake
+    structure["objects"][0]["face_material_counts"] = {"0": 1, "1": 1}
+    _write_material_evidence(d, evidence, structure)
+    [export] = check(d)["revit_material_counts"]
+    assert export["status"] == "match"
+    assert export["findings"] == export["unmapped_meshes"] == []
+    assert export["elements_compared"] == 1
+
+
+@pytest.mark.parametrize("fault", ["missing", "stale_readback", "stale_source", "shared_mesh",
+                                   "unknown_mesh", "unmapped_mesh", "invalid_slot"])
+def test_intake_does_not_match_unmeasured_materials(revit_fbx_intake, fault):
+    d, evidence, structure = revit_fbx_intake
+    structure["objects"][0]["face_material_counts"] = {"0": 1, "1": 1}
+    element = evidence[0]["elements"][0]
+    if fault == "stale_readback":
+        structure["source"]["sha256"] = "c" * 64
+    elif fault == "stale_source":
+        evidence[0]["source_sha256"] = "c" * 64
+    elif fault == "shared_mesh":
+        evidence[0]["elements"].append(dict(element, id="315"))
+    elif fault == "unknown_mesh":
+        element["meshes"].append("Not in export")
+    elif fault == "unmapped_mesh":
+        element["meshes"].remove("Handle")
+    elif fault == "invalid_slot":
+        structure["objects"][0]["face_material_counts"] = {"0": 1, "2": 1}
+    if fault != "missing":
+        _write_material_evidence(d, evidence, structure)
+    [export] = check(d)["revit_material_counts"]
+    assert export["status"] == "not_run"
+    assert export.get("reason") or export.get("findings") or export.get("unmapped_meshes")
+
+
+def test_intake_keeps_measured_loss_alongside_unmapped_mesh(revit_fbx_intake):
+    d, evidence, structure = revit_fbx_intake
+    evidence[0]["elements"][0]["meshes"].remove("Handle")
+    _write_material_evidence(d, evidence, structure)
+    [export] = check(d)["revit_material_counts"]
+    assert export["status"] == "mismatch"
+    assert export["unmapped_meshes"] == ["Handle"]
+    assert export["findings"][0]["id"] == "314"
+
+
 @pytest.mark.parametrize("answer,waived", [
     ("Do not waive opening slides.pptx. Read the presentation before building.", False),
     ("The door height is 2.1 m.", False),
