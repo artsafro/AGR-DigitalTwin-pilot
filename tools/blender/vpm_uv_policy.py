@@ -23,3 +23,26 @@ def max_quad_side(tile_px=4096, *, padding_px=None, density_px_per_m=1024):
     if not math.isfinite(side) or side <= 0:
         raise ValueError('tile side is unmeasurable')
     return side
+
+
+def metric_triangle(vertices):
+    """Positive-winding isometric chart from three world-metre corners, independent of source UV."""
+    if (len(vertices) != 3 or any(len(p) != 3 for p in vertices)
+            or any(isinstance(v, bool) or not isinstance(v, numbers.Real) or not math.isfinite(v)
+                   for p in vertices for v in p)):
+        raise ValueError('metric triangle requires three finite XYZ corners')
+    # Take the longest edge as the baseline; cyclic ordering preserves winding.
+    i = max(range(3), key=lambda j: math.dist(vertices[j], vertices[(j + 1) % 3]))
+    a, b, c = (vertices[(i + j) % 3] for j in range(3))
+    e = [y - x for x, y in zip(a, b)]
+    d = [y - x for x, y in zip(a, c)]
+    length = math.hypot(*e)
+    if not math.isfinite(length) or length <= 0:
+        raise ValueError('metric triangle has no measurable baseline')
+    u = [x / length for x in e]
+    along = sum(x * y for x, y in zip(u, d))
+    height = math.hypot(*(u[j] * d[k] - u[k] * d[j] for j, k in ((0, 1), (1, 2), (2, 0))))
+    if not math.isfinite(along) or not math.isfinite(height) or height <= length * 1e-14:
+        raise ValueError('metric triangle has no measurable area')
+    points = [(0., 0.), (length, 0.), (along, height)]
+    return tuple(points[(j - i) % 3] for j in range(3))
