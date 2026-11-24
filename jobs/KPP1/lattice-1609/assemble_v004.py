@@ -57,6 +57,7 @@ RECT = (-14.985, -5.685, 12.675, 5.975)   # lattice ring in the R1 frame (lattic
 NEAR_M = 0.4
 GLASS_CAP = 0.24   # lattice opening back face at reveal 0.25 (step 2); glass sits 1 cm in front of it
 ELEMENT_SNAP_M = 0.003   # element planes closer than 3 mm are one plane (no 1-2 mm sliver quads, #1609)
+GLASS_MAX_M = 3.9   # glass edges longer than this are cut (regulation: no face > 4 m, V003 master quad size)
 GLASS_GAP = 0.01   # glass sits 1 cm in front of the body surface behind it
 SEE_M = 0.6   # body faces up to 0.6 m behind the ring plane read the v003 finish at their place (doors/frames 0.3-0.45)
 REACH_M = 1.5   # how far behind the ring plane a ray looks for that v003 surface (N entrance vestibule ~1 m deep)
@@ -403,9 +404,23 @@ def carry_v003(path, report, body_tree):
                 v.co += vec
         moved.append({'faces': len(comp), 'lo': lo, 'side': side, 'shift_m': round(shift, 4), 'mode': how,
                       'depth_m': [round(min(depths), 4), round(max(depths), 4)]})
+    # V003 master quad size (reg: no face > 4 m): v003 panes up to 5.68 m long are cut in equal parts along their
+    # long edges (grid fill keeps quads); V012: the glass material keeps its regulation name (no import suffix)
+    long_edges = [e for e in bm.edges if e.calc_length() > GLASS_MAX_M]
+    cuts = max([int(e.calc_length() // GLASS_MAX_M) for e in long_edges] or [0])
+    if long_edges:
+        bmesh.ops.subdivide_edges(bm, edges=long_edges, cuts=cuts, use_grid_fill=True)
+    report_split = {'long_edges': len(long_edges), 'cuts': cuts}
     bm.transform(g.matrix_world.inverted())
     bm.to_mesh(g.data)
     bm.free()
+    for slot in g.material_slots:
+        if slot.material is not None and slot.material.name.split('.')[0] == 'M_Kpp_1_MainGlass_1':
+            other_mat = bpy.data.materials.get('M_Kpp_1_MainGlass_1')
+            if other_mat is not None and other_mat is not slot.material:
+                other_mat.name = 'M_Kpp_1_MainGlass_1_unused'
+            slot.material.name = 'M_Kpp_1_MainGlass_1'
+    report['glass_split'] = report_split
     report['glass'] = {'cap_m': GLASS_CAP, 'components': moved, 'outside_ring': kept,
                        'shifted': sum(1 for m in moved if m['shift_m'])}
     report['ucx'] = sorted(k for k in keep if k.startswith('UCX_'))
@@ -559,6 +574,13 @@ def main(body_fbx, v003_fbx, out, tex_dir, v003_textures, mode='posts'):
         dg = bpy.context.evaluated_depsgraph_get()
         carried = carry_v003(v003_fbx, carry_rep, BVHTree.FromObject(objs['SM_Kpp_1_Main'], dg))
     os.makedirs(out)
+    for m in list(bpy.data.materials):          # V012: regulation material names, no import suffix (.001)
+        base = m.name.split('.')[0]
+        if m.users and base != m.name and base in ('M_Kpp_1_Main_1', 'M_Kpp_1_MainGlass_1'):
+            clash = bpy.data.materials.get(base)
+            if clash is not None and clash is not m:
+                clash.name = base + '_unused'
+            m.name = base
     rep = {'inputs': {'body_fbx': os.path.abspath(body_fbx), 'body_sha256': sha(body_fbx),
                       'quad_v003_fbx': os.path.abspath(v003_fbx), 'quad_v003_sha256': sha(v003_fbx),
                       'tex_dir': os.path.abspath(tex_dir), 'v003_textures': os.path.abspath(v003_textures),
